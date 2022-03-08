@@ -57,20 +57,20 @@ class CodeLogicalUnitExecTask (parents: Array[ExecTask], children: Array[ExecTas
   private var id: String = _
 
   private val codeExecTaskExecutorManager = CodeExecTaskExecutorManager.getCodeExecTaskExecutorManager
-  private val askDuration  = Duration(ComputationOrchestratorConf.MAX_ASK_EXECUTOR_TIME.getValue.toLong, TimeUnit.MILLISECONDS)
+  private val askDuration = Duration(ComputationOrchestratorConf.MAX_ASK_EXECUTOR_TIME.getValue.toLong, TimeUnit.MILLISECONDS)
   private var codeLogicalUnit: CodeLogicalUnit = _
 
   private var isCanceled = false
 
   override def execute(): TaskResponse = {
-    info(s"Start to execute CodeLogicalUnitExecTask(${getIDInfo()}).")
+    logger.info(s"Start to execute CodeLogicalUnitExecTask(${getIDInfo()}).")
     var executor: Option[CodeExecTaskExecutor] = None
     var retryException: LinkisRetryException = null
     executor = Utils.tryCatch(codeExecTaskExecutorManager.askExecutor(this)) {
       case retry: LinkisRetryException =>
         retryException = retry
         None
-      case e:ErrorException =>
+      case e: ErrorException =>
         throw e
       case error: Throwable =>
         throw error
@@ -79,9 +79,9 @@ class CodeLogicalUnitExecTask (parents: Array[ExecTask], children: Array[ExecTas
     if (executor.isDefined && !isCanceled) {
       val requestTask = toRequestTask
       val codeExecutor = executor.get
-      val response = Utils.tryCatch(codeExecutor.getEngineConnExecutor.execute(requestTask)){
+      val response = Utils.tryCatch(codeExecutor.getEngineConnExecutor.execute(requestTask)) {
         t: Throwable =>
-          error(s"Failed to submit ${getIDInfo()} to ${codeExecutor.getEngineConnExecutor.getServiceInstance}", t)
+          logger.error(s"Failed to submit ${getIDInfo()} to ${codeExecutor.getEngineConnExecutor.getServiceInstance}", t)
           codeExecTaskExecutorManager.getByExecTaskId(this.getId).foreach { codeEngineConnExecutor =>
             codeExecTaskExecutorManager.markECFailed(this, codeEngineConnExecutor)
           }
@@ -101,8 +101,7 @@ class CodeLogicalUnitExecTask (parents: Array[ExecTask], children: Array[ExecTas
           info(s"failed to submit task to engineConn,reason: $message")
           throw new OrchestratorRetryException(OrchestratorErrorCodeSummary.EXECUTION_FOR_EXECUTION_ERROR_CODE, "failed to submit task to engineConn", t)
       }
-    } else if(null != retryException) {
-
+    } else if (null != retryException) {
       new DefaultFailedTaskResponse(s"ask Engine failed + ${retryException.getMessage}", OrchestratorErrorCodeSummary.EXECUTION_FOR_EXECUTION_ERROR_CODE, retryException)
     } else {
       throw new OrchestratorRetryException(OrchestratorErrorCodeSummary.EXECUTION_FOR_EXECUTION_ERROR_CODE, "Failed to ask executor")
@@ -110,7 +109,7 @@ class CodeLogicalUnitExecTask (parents: Array[ExecTask], children: Array[ExecTas
 
   }
 
-  private def toRequestTask: RequestTask ={
+  private def toRequestTask: RequestTask = {
     val requestTask = new RequestTaskExecute
     requestTask.setCode(getCodeLogicalUnit.toStringCode)
     //getLabels.add(getCodeLogicalUnit.getLabel)

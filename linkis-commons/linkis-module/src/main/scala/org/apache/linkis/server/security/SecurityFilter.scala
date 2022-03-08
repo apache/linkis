@@ -71,7 +71,7 @@ class SecurityFilter extends Filter {
       false
     } else if(request.getRequestURI == ServerConfiguration.BDP_SERVER_RESTFUL_LOGIN_URI.getValue) {
       true
-    } else if( ServerConfiguration.BDP_SERVER_RESTFUL_PASS_AUTH_REQUEST_URI.exists(request.getRequestURI.startsWith)) {
+    } else if( ServerConfiguration.BDP_SERVER_RESTFUL_PASS_AUTH_REQUEST_URI.exists(r => !r.equals("") && request.getRequestURI.startsWith(r))) {
       SecurityFilter.info("pass auth uri: " + request.getRequestURI)
       true
     }else {
@@ -144,7 +144,14 @@ object SecurityFilter extends Logging {
     if(sslEnable) cookie.setSecure(true)
     response.addCookie(cookie)
   }
-  def getLoginUsername(req: HttpServletRequest): String = getLoginUser(req).getOrElse(throw new IllegalUserTicketException( s"Illegal user token information(非法的用户token信息)."))
+  def getLoginUsername(req: HttpServletRequest): String = {
+    if (Configuration.IS_TEST_MODE.getValue) {
+      ServerConfiguration.BDP_TEST_USER.getValue;
+    } else {
+      getLoginUser(req).getOrElse(throw new IllegalUserTicketException(s"Illegal user token information(非法的用户token信息)."))
+    }
+
+  }
   def setLoginUser(resp: HttpServletResponse, username: String): Unit = SSOUtils.setLoginUser(c => resp.addCookie(c), username)
   def removeLoginUser(req: HttpServletRequest, resp: HttpServletResponse): Unit = {
     SSOUtils.removeLoginUser(req.getCookies)

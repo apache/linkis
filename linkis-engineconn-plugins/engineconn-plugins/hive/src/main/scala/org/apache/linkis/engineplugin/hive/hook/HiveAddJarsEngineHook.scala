@@ -27,6 +27,8 @@ import org.apache.linkis.engineplugin.hive.executor.HiveEngineConnExecutor
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.{CodeLanguageLabel, RunType}
 import org.apache.commons.lang.StringUtils
+import org.apache.linkis.common.conf.CommonVars
+import org.apache.linkis.manager.engineplugin.common.launch.process.Environment
 
 import scala.collection.JavaConversions._
 
@@ -43,9 +45,18 @@ class HiveAddJarsEngineHook extends EngineConnHook with Logging {
   override def afterExecutionExecute(engineCreationContext: EngineCreationContext, engineConn: EngineConn): Unit = Utils.tryAndError {
     val options = engineCreationContext.getOptions
     var jars: String = ""
+    val udf_jars = CommonVars(Environment.UDF_JARS.toString, "", "UDF jar PAth").getValue
+    logger.info("udf jar_path:" + udf_jars)
     options foreach {
       case (key, value) => if (JARS.equals(key)) {
         jars = value
+      }
+    }
+    if (StringUtils.isNotEmpty(udf_jars)) {
+      if (StringUtils.isNotEmpty(jars)) {
+        jars = jars + "," + udf_jars
+      } else {
+        jars = udf_jars
       }
     }
     val codeLanguageLabel = new CodeLanguageLabel

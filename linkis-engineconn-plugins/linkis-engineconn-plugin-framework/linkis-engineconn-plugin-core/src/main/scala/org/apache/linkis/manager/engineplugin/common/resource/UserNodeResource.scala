@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.manager.engineplugin.common.resource
 
 import java.util.Date
@@ -24,6 +24,7 @@ import org.apache.linkis.manager.common.entity.resource.{NodeResource, Resource,
 
 class UserNodeResource extends NodeResource {
 
+  private var id: Integer = _
   private var user: String = _
   private var resourceType: ResourceType = _
   private var minResource: Resource = _
@@ -83,4 +84,8 @@ class UserNodeResource extends NodeResource {
   override def setUpdateTime(updateTime: Date): Unit = {
     this.updateTime = updateTime
   }
+
+  override def getId: Integer = id
+
+  override def setId(id: Integer): Unit = this.id = id
 }

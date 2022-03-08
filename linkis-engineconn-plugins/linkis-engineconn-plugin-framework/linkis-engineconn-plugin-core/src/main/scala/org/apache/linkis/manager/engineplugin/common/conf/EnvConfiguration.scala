@@ -34,7 +34,7 @@ object EnvConfiguration {
   val ENGINE_CONN_CLASSPATH_FILES = CommonVars("wds.linkis.engineConn.files", "", "engineConn额外的配置文件")
 
   val ENGINE_CONN_DEFAULT_JAVA_OPTS = CommonVars[String]("wds.linkis.engineConn.javaOpts.default", s"-XX:+UseG1GC -XX:MaxPermSize=250m -XX:PermSize=128m " +
-    s"-Xloggc:%s -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintGCDateStamps -Dwds.linkis.configuration=linkis-engineconn.properties -Dwds.linkis.gateway.url=${Configuration.getGateWayURL()}")
+    s"-Xloggc:%s -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintGCDateStamps -Dwds.linkis.server.conf=linkis-engineconn.properties -Dwds.linkis.gateway.url=${Configuration.getGateWayURL()}")
 
   val ENGINE_CONN_MEMORY = CommonVars("wds.linkis.engineConn.memory", new ByteType("2g"), "Specify the memory size of the java client(指定java进程的内存大小)")
 
@@ -47,7 +47,9 @@ object EnvConfiguration {
 
   val ENGINE_CONN_DEBUG_ENABLE = CommonVars("wds.linkis.engineconn.debug.enable", false)
 
-  val LOG4J2_XML_FILE = CommonVars[String]("wds.linkis.engineconn.log4j2.xml.file", "log4j2-engineconn.xml")
+  val LOG4J2_XML_FILE = CommonVars[String]("wds.linkis.engineconn.log4j2.xml.file", "log4j2.xml")
 
-  val LINKIS_PUBLIC_MODULE_PATH = CommonVars("wds.linkis.public_module.path", Configuration.LINKIS_HOME.getValue + "/lib/linkis-commons/public-module")
+  val LINKIS_PUBLIC_MODULE_PATH = CommonVars("wds.linkis.public_module.path", Configuration.getLinkisHome + "/lib/linkis-commons/public-module")
+
+  val LINKIS_CONF_DIR = CommonVars("LINKIS_CONF_DIR", Configuration.getLinkisHome() + "/conf")
 }

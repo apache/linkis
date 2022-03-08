@@ -181,6 +181,6 @@ if (( NUM_ARGS == 0 )); then
 else
     parse
 fi
-exec ${WORK_DIR}/bin/linkis-cli-start -engineType hive-1.2.1 -codeType hql  "${PARSED_CMD[@]}"
+exec ${WORK_DIR}/bin/linkis-cli -engineType hive-1.2.1 -codeType hql  "${PARSED_CMD[@]}"
 
 

@@ -39,27 +39,12 @@ abstract class EntranceExecutorManager(groupFactory: GroupFactory) extends Execu
 
   private val idGenerator = new AtomicLong(0)
 
-//  private val idToEngines = new util.HashMap[Long, EntranceExecutor]
-
-//  private val instanceToEngines = new util.HashMap[String, EntranceExecutor]
-
-  private val orchestrationToJobs = new ConcurrentHashMap[Orchestration, EntranceJob]()
-
-  private val orchestrationToJobReturns = new ConcurrentHashMap[Orchestration, EngineExecuteAsynReturn]
-
-  private val jobIdToEntranceJobs = new ConcurrentHashMap[String, EntranceJob]()
 
   def getOrCreateInterceptors(): Array[ExecuteRequestInterceptor]
 
   override def delete(executor: Executor): Unit = {
     if (null != executor) {
       executor.close()
-      /*val entranceExecutor = idToEngines.remove(executor.getId)
-//      instanceToEngines.remove(entranceExecutor.getInstance.getInstance)
-      entranceExecutor.getOrchestratorSession() match {
-        case current: ComputationConcurrentEngineConnExecutor =>
-        case _ => engineConnManager.releaseEngineConnExecutor(entranceExecutor.getOrchestratorSession(), entranceExecutor.mark)
-      }*/
     }
   }
 
@@ -124,7 +109,7 @@ abstract class EntranceExecutorManager(groupFactory: GroupFactory) extends Execu
   }
 
   override def getByGroup(groupName: String): Array[Executor] = {
-    //TODO by peaceWong
+    //TODO
     null
   }
 
@@ -157,42 +142,5 @@ abstract class EntranceExecutorManager(groupFactory: GroupFactory) extends Execu
   def getEntranceExecutorByInstance(instance: String): Option[EntranceExecutor] = {
 //    Option(instanceToEngines.get(instance))
     null
-  }
-
-  def getEntranceJobByOrchestration(orchestration: Orchestration): Option[EntranceJob] = {
-    Option(orchestrationToJobs.get(orchestration))
-  }
-
-  def setOrchestrationAndEntranceJob(orchestration: Orchestration, entranceJob: EntranceJob): Unit = {
-    orchestrationToJobs.put(orchestration, entranceJob)
-  }
-
-  def getAsyncJobReturnByOrchestration(orchestration: Orchestration): Option[EngineExecuteAsynReturn] = {
-    Option(orchestrationToJobReturns.get(orchestration))
-  }
-
-  def setOrchestrationAndExecutorAsyncReturn(orchestration: Orchestration, engineExecuteAsynReturn: EngineExecuteAsynReturn): Unit = {
-    orchestrationToJobReturns.put(orchestration, engineExecuteAsynReturn)
-  }
-
-  def clearOrchestrationCache(orchestration: Orchestration): Unit = {
-    if (null != orchestration) {
-      orchestrationToJobs.remove(orchestration)
-      orchestrationToJobReturns.remove(orchestration)
-    }
-  }
-
-  def getEntranceJobByExecId(execId: String): Option[EntranceJob] = {
-    Option(jobIdToEntranceJobs.get(execId))
-  }
-
-  def setJobExecIdAndEntranceJob(execId: String, entranceJob: EntranceJob): Unit = {
-    jobIdToEntranceJobs.put(execId, entranceJob)
-  }
-
-  def clearJobCache(execId: String): Unit = {
-    if (null != execId) {
-      jobIdToEntranceJobs.remove(execId)
-    }
   }
 }

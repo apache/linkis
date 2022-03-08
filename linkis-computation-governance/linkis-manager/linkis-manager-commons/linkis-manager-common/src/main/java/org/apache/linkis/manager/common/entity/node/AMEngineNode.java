@@ -5,16 +5,16 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.manager.common.entity.node;
 
 import org.apache.linkis.common.ServiceInstance;
@@ -28,7 +28,6 @@ import org.apache.linkis.manager.label.entity.Label;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-
 
 public class AMEngineNode implements EngineNode, ScoreServiceInstance {
 
@@ -58,9 +57,11 @@ public class AMEngineNode implements EngineNode, ScoreServiceInstance {
 
     private Date startTime;
 
-    public AMEngineNode() {
+    private Date updateTime;
 
-    }
+    private String ticketId;
+
+    public AMEngineNode() {}
 
     public AMEngineNode(double score, ServiceInstance serviceInstance) {
         this.score = score;
@@ -102,7 +103,7 @@ public class AMEngineNode implements EngineNode, ScoreServiceInstance {
         this.nodeHealthyInfo = nodeHealthyInfo;
     }
 
-  /*  public EMNode getEmNode() {
+    /*  public EMNode getEmNode() {
         return emNode;
     }
 
@@ -137,7 +138,6 @@ public class AMEngineNode implements EngineNode, ScoreServiceInstance {
     public void setEMNode(EMNode emNode) {
         this.emNode = emNode;
     }
-
 
     @Override
     public List<Label> getLabels() {
@@ -190,6 +190,26 @@ public class AMEngineNode implements EngineNode, ScoreServiceInstance {
     }
 
     @Override
+    public String getTicketId() {
+        return ticketId;
+    }
+
+    @Override
+    public void setTicketId(String ticketId) {
+        this.ticketId = ticketId;
+    }
+
+    @Override
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    @Override
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
+    }
+
+    @Override
     public Date getStartTime() {
         return startTime;
     }
@@ -228,11 +248,17 @@ public class AMEngineNode implements EngineNode, ScoreServiceInstance {
 
     @Override
     public String toString() {
-        return "AMEngineNode{" +
-                "nodeStatus=" + nodeStatus +
-                ", lock='" + lock + '\'' +
-                ", serviceInstance=" + serviceInstance +
-                ", owner='" + owner + '\'' +
-                '}';
+        return "AMEngineNode{"
+                + "nodeStatus="
+                + nodeStatus
+                + ", lock='"
+                + lock
+                + '\''
+                + ", serviceInstance="
+                + serviceInstance
+                + ", owner='"
+                + owner
+                + '\''
+                + '}';
     }
 }

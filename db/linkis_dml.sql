@@ -55,11 +55,11 @@ INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, 
 INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`) VALUES ('wds.linkis.rm.instance', '范围：1-20，单位：个', '全局各个引擎最大并发数', '10', 'NumInterval', '[1,20]', '0', '0', '1', '队列资源');
 -- spark
 INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('wds.linkis.rm.instance', '范围：1-20，单位：个', 'spark引擎最大并发数', '10', 'NumInterval', '[1,20]', '0', '0', '1', '队列资源', 'spark');
-INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('spark.executor.instances', '取值范围：1-40，单位：个', 'spark执行器实例最大并发数', '2', 'NumInterval', '[1,40]', '0', '0', '2', 'spark资源设置', 'spark');
-INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('spark.executor.cores', '取值范围：1-8，单位：个', 'spark执行器核心个数',  '2', 'NumInterval', '[1,2]', '0', '0', '1','spark资源设置', 'spark');
-INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('spark.executor.memory', '取值范围：3-15，单位：G', 'spark执行器内存大小', '3g', 'Regex', '^([3-9]|1[0-5])(G|g)$', '0', '0', '3', 'spark资源设置', 'spark');
+INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('spark.executor.instances', '取值范围：1-40，单位：个', 'spark执行器实例最大并发数', '1', 'NumInterval', '[1,40]', '0', '0', '2', 'spark资源设置', 'spark');
+INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('spark.executor.cores', '取值范围：1-8，单位：个', 'spark执行器核心个数',  '1', 'NumInterval', '[1,2]', '0', '0', '1','spark资源设置', 'spark');
+INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('spark.executor.memory', '取值范围：1-15，单位：G', 'spark执行器内存大小', '1g', 'Regex', '^([1-9]|1[0-5])(G|g)$', '0', '0', '3', 'spark资源设置', 'spark');
 INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('spark.driver.cores', '取值范围：只能取1，单位：个', 'spark驱动器核心个数', '1', 'NumInterval', '[1,1]', '0', '1', '1', 'spark资源设置','spark');
-INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('spark.driver.memory', '取值范围：1-15，单位：G', 'spark驱动器内存大小','2g', 'Regex', '^([3-9]|1[0-5])(G|g)$', '0', '0', '1', 'spark资源设置', 'spark');
+INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('spark.driver.memory', '取值范围：1-15，单位：G', 'spark驱动器内存大小','1g', 'Regex', '^([1-9]|1[0-5])(G|g)$', '0', '0', '1', 'spark资源设置', 'spark');
 INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('spark.tispark.pd.addresses', NULL, NULL, 'pd0:2379', 'None', NULL, '0', '0', '1', 'tidb设置', 'spark');
 INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('spark.tispark.tidb.addr', NULL, NULL, 'tidb', 'None', NULL, '0', '0', '1', 'tidb设置', 'spark');
 INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('spark.tispark.tidb.password', NULL, NULL, NULL, 'None', NULL, '0', '0', '1', 'tidb设置', 'spark');
@@ -68,7 +68,7 @@ INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, 
 INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('spark.python.version', '取值范围：python2,python3', 'python版本','python2', 'OFT', '[\"python3\",\"python2\"]', '0', '0', '1', 'spark引擎设置', 'spark');
 -- hive
 INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('wds.linkis.rm.instance', '范围：1-20，单位：个', 'hive引擎最大并发数', '10', 'NumInterval', '[1,20]', '0', '0', '1', '队列资源', 'hive');
-INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('wds.linkis.engineconn.java.driver.memory', '取值范围：1-10，单位：G', 'hive引擎初始化内存大小','2g', 'Regex', '^([1-9]|10)(G|g)$', '0', '0', '1', 'hive引擎设置', 'hive');
+INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('wds.linkis.engineconn.java.driver.memory', '取值范围：1-10，单位：G', 'hive引擎初始化内存大小','1g', 'Regex', '^([1-9]|10)(G|g)$', '0', '0', '1', 'hive引擎设置', 'hive');
 INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('hive.client.java.opts', 'hive客户端进程参数', 'hive引擎启动时jvm参数','', 'None', NULL, '1', '1', '1', 'hive引擎设置', 'hive');
 INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('mapred.reduce.tasks', '范围：1-20，单位：个', 'reduce数', '10', 'NumInterval', '[1,20]', '0', '1', '1', 'hive资源设置', 'hive');
 INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('dfs.block.size', '取值范围：2-10，单位：G', 'map数据块大小', '10', 'NumInterval', '[2,10]', '0', '1', '1', 'hive资源设置', 'hive');
@@ -233,8 +233,7 @@ INNER JOIN linkis_cg_manager_label label ON relation.engine_type_label_id = labe
 
 
 insert  into `linkis_cg_rm_external_resource_provider`(`id`,`resource_type`,`name`,`labels`,`config`) values
-(1,'Yarn','sit',NULL,'{\r\n\"rmWebAddress\": \"@YARN_RESTFUL_URL\",\r\n\"hadoopVersion\": \"2.7.2\",\r\n\"authorEnable\":false,\r\n\"user\":\"hadoop\",\r\n\"pwd\":\"123456\"\r\n}');
-
+(1,'Yarn','sit',NULL,'{\r\n\"rmWebAddress\": \"@YARN_RESTFUL_URL\",\r\n\"hadoopVersion\": \"2.7.2\",\r\n\"authorEnable\":false,\r\n\"user\":\"hadoop\",\r\n\"pwd\":\"123456\",\r\n\"kerberosEnable\":@KERBEROS_ENABLE,\r\n\"principalName\":\"@PRINCIPAL_NAME\",\r\n\"keytabPath\":\"@KEYTAB_PATH\",\r\n\"krb5Path\":\"@KRB5_PATH\"\r\n}');
 -- errorcode 
 INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('10001','会话创建失败，%s队列不存在，请检查队列设置是否正确','queue (\\S+) is not exists in YARN',0);
 INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('10001','会话创建失败，用户%s不能提交应用到队列：%s，请联系提供队列给您的人员','User (\\S+) cannot submit applications to queue (\\S+)',0);
@@ -318,3 +317,21 @@ INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) 
 INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('95005','未配置代理用户，请在ITSM走WTSS用户变更单，为你的用户授权改代理用户','请联系系统管理员为您的用户添加该代理用户',0);
 INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('60079','所查库表无权限','Authorization failed:No privilege',0);
 INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('30002','启动引擎超时，您可以进行任务重试','wait for DefaultEngineConn',0);
+INSERT INTO `linkis_datasource_type` VALUES
+(1,'mysql','mysql数据库','mysql数据库','关系型数据库','',3),
+(2,'kafka','kafka','kafka','消息队列','',2),
+(3,'presto','presto SQL','presto','大数据存储','',3),
+(4,'hive','hive数据库','hive','大数据存储','',3),
+(6,'mongodb','default','default','DEFAULT',NULL,3);
+
+INSERT INTO `linkis_datasource_type_key` VALUES
+(1,1,'host','Host',NULL,'TEXT',NULL,1,'mysql Host ',NULL,NULL,NULL,NULL,'2021-04-08 03:13:36','2021-04-08 03:13:36'),
+(2,1,'port','端口',NULL,'TEXT',NULL,1,'端口',NULL,NULL,NULL,NULL,'2021-04-17 03:10:28','2021-04-17 03:10:28'),
+(3,1,'params','连接参数',NULL,'TEXT',NULL,0,'输入JSON格式: {\"param\":\"value\"}',NULL,NULL,NULL,NULL,'2021-12-06 10:35:00','2021-12-06 10:35:00'),
+(9,1,'username','用户名',NULL,'TEXT',NULL,1,'用户名','^[0-9A-Za-z_-]+$',NULL,NULL,NULL,'2021-04-12 01:54:39','2021-04-12 01:54:39'),
+(10,1,'password','密码',NULL,'PASSWORD',NULL,1,'密码','',NULL,NULL,NULL,'2021-04-12 01:54:39','2021-04-12 01:54:39'),
+(11,4,'envId','集群环境',NULL,'SELECT',NULL,1,'集群环境',NULL,NULL,NULL,'/api/rest_j/v1/data-source-manager/env_list/all/type/4','2021-05-12 03:03:34','2021-05-12 03:03:34');
+
+INSERT INTO `linkis_datasource_env` VALUES
+(1,'测试环境SIT','测试环境SIT',4,'{\"uris\":\"thrift://localhost:9083\", \"hadoopConf\":{\"hive.metastore.execute.setugi\":\"true\"}}','2021-10-26 14:57:29',NULL,'2021-10-26 14:57:29',NULL),
+(2,'测试环境UAT','测试环境UAT',4,'{\"uris\":\"thrift://localhost:9083\", \"hadoopConf\":{\"hive.metastore.execute.setugi\":\"true\"}}','2022-01-04 17:24:20',NULL,'2022-01-04 17:24:20',NULL);

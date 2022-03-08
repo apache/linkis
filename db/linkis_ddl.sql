@@ -88,8 +88,8 @@ CREATE TABLE `linkis_ps_job_history_group_history` (
   `log_path` varchar(200) DEFAULT NULL COMMENT 'File path of the job log',
   `error_code` int DEFAULT NULL COMMENT 'Error code. Generated when the execution of the script fails',
   `error_desc` varchar(1000) DEFAULT NULL COMMENT 'Execution description. Generated when the execution of script fails',
-  `created_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT 'Creation time',
-  `updated_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT 'Update time',
+  `created_time` datetime(3) DEFAULT CURRENT_TIMESTAMP(3) COMMENT 'Creation time',
+  `updated_time` datetime(3) DEFAULT CURRENT_TIMESTAMP(3) COMMENT 'Update time',
   `instances` varchar(250) DEFAULT NULL COMMENT 'Entrance instances',
   `metrics` text DEFAULT NULL COMMENT   'Job Metrics',
   `engine_type` varchar(32) DEFAULT NULL COMMENT 'Engine type',
@@ -108,8 +108,8 @@ CREATE TABLE `linkis_ps_job_history_detail` (
   `execution_content` text DEFAULT NULL COMMENT 'The script code or other execution content executed by this Job',
   `result_array_size` int(4) DEFAULT 0 COMMENT 'size of result array',
   `job_group_info` text DEFAULT NULL COMMENT 'Job group info/path',
-  `created_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT 'Creation time',
-  `updated_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT 'Update time',
+  `created_time` datetime(3) DEFAULT CURRENT_TIMESTAMP(3) COMMENT 'Creation time',
+  `updated_time` datetime(3) DEFAULT CURRENT_TIMESTAMP(3) COMMENT 'Update time',
   `status` varchar(32) DEFAULT NULL COMMENT 'status',
   `priority` int(4) DEFAULT 0 COMMENT 'order of subjob',
   PRIMARY KEY (`id`)
@@ -129,18 +129,6 @@ CREATE TABLE `linkis_ps_udf_manager` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
-
--- ----------------------------
--- Table structure for linkis_ps_udf_shared_group
--- An entry would be added when a user share a function to other user group
--- ----------------------------
-DROP TABLE IF EXISTS `linkis_ps_udf_shared_group`;
-CREATE TABLE `linkis_ps_udf_shared_group` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `udf_id` bigint(20) NOT NULL,
-  `shared_group` varchar(50) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `linkis_ps_udf_shared_user`;
 CREATE TABLE `linkis_ps_udf_shared_user`
@@ -186,8 +174,10 @@ CREATE TABLE `linkis_ps_udf_tree` (
 -- ----------------------------
 DROP TABLE IF EXISTS `linkis_ps_udf_user_load_info`;
 CREATE TABLE `linkis_ps_udf_user_load_info` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `udf_id` int(11) NOT NULL,
-  `user_name` varchar(50) NOT NULL
+  `user_name` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
@@ -542,7 +532,7 @@ create table if not exists linkis_ps_bml_project_user(
   `id` int(10) NOT NULL AUTO_INCREMENT,
   `project_id` int(10) NOT NULL,
   `username` varchar(64) DEFAULT NULL,
-  `priv` int(10) not null default 7,
+  `priv` int(10) not null default 7, -- rwx 421 The permission value is 7. 8 is the administrator, which can authorize other users
   `creator` varchar(128) not null,
   `create_time` datetime DEFAULT now(),
   `expire_time` datetime default null,
@@ -576,11 +566,13 @@ CREATE TABLE `linkis_ps_instance_label` (
 
 DROP TABLE IF EXISTS `linkis_ps_instance_label_value_relation`;
 CREATE TABLE `linkis_ps_instance_label_value_relation` (
+  `id` int(20) NOT NULL AUTO_INCREMENT,
   `label_value_key` varchar(255) COLLATE utf8_bin NOT NULL COMMENT 'value key',
   `label_value_content` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT 'value content',
   `label_id` int(20) DEFAULT NULL COMMENT 'id reference linkis_ps_instance_label -> id',
   `update_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT 'update unix timestamp',
   `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT 'create unix timestamp',
+  PRIMARY KEY (`id`),
   UNIQUE KEY `label_value_key_label_id` (`label_value_key`,`label_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
@@ -700,11 +692,13 @@ CREATE TABLE `linkis_cg_manager_label` (
 DROP TABLE IF EXISTS `linkis_cg_manager_label_value_relation`;
 
 CREATE TABLE `linkis_cg_manager_label_value_relation` (
+  `id` int(20) NOT NULL AUTO_INCREMENT,
   `label_value_key` varchar(255) COLLATE utf8_bin NOT NULL,
   `label_value_content` varchar(255) COLLATE utf8_bin DEFAULT NULL,
   `label_id` int(20) DEFAULT NULL,
   `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
   `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
   UNIQUE KEY `label_value_key_label_id` (`label_value_key`,`label_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
@@ -744,6 +738,7 @@ CREATE TABLE `linkis_cg_manager_label_user` (
 DROP TABLE IF EXISTS `linkis_cg_manager_metrics_history`;
 
 CREATE TABLE `linkis_cg_manager_metrics_history` (
+  `id` int(20) NOT NULL AUTO_INCREMENT,
   `instance_status` int(20) DEFAULT NULL,
   `overload` varchar(255) COLLATE utf8_bin DEFAULT NULL,
   `heartbeat_msg` varchar(255) COLLATE utf8_bin DEFAULT NULL,
@@ -752,7 +747,8 @@ CREATE TABLE `linkis_cg_manager_metrics_history` (
   `creator` varchar(255) COLLATE utf8_bin DEFAULT NULL,
   `ticketID` varchar(255) COLLATE utf8_bin DEFAULT NULL,
   `serviceName` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `instance` varchar(255) COLLATE utf8_bin DEFAULT NULL
+  `instance` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 DROP TABLE IF EXISTS `linkis_cg_manager_service_instance_metrics`;
@@ -783,6 +779,111 @@ CREATE TABLE `linkis_cg_engine_conn_plugin_bml_resources` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
 
+-- ----------------------------
+-- Table structure for linkis_datasource
+-- ----------------------------
+DROP TABLE IF EXISTS `linkis_datasource`;
+CREATE TABLE `linkis_datasource`
+(
+    `id`                   int(11)                       NOT NULL AUTO_INCREMENT,
+    `datasource_name`      varchar(255) COLLATE utf8_bin NOT NULL,
+    `datasource_desc`      varchar(255) COLLATE utf8_bin      DEFAULT NULL,
+    `datasource_type_id`   int(11)                       NOT NULL,
+    `create_identify`      varchar(255) COLLATE utf8_bin      DEFAULT NULL,
+    `create_system`        varchar(255) COLLATE utf8_bin      DEFAULT NULL,
+    `parameter`            varchar(255) COLLATE utf8_bin NULL DEFAULT NULL,
+    `create_time`          datetime                      NULL DEFAULT CURRENT_TIMESTAMP,
+    `modify_time`          datetime                      NULL DEFAULT CURRENT_TIMESTAMP,
+    `create_user`          varchar(255) COLLATE utf8_bin      DEFAULT NULL,
+    `modify_user`          varchar(255) COLLATE utf8_bin      DEFAULT NULL,
+    `labels`               varchar(255) COLLATE utf8_bin      DEFAULT NULL,
+    `version_id`           int(11)                            DEFAULT NULL COMMENT 'current version id',
+    `expire`               tinyint(1)                         DEFAULT 0,
+    `published_version_id` int(11)                            DEFAULT NULL,
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  CHARACTER SET = utf8
+  COLLATE = utf8_bin;
+
+-- ----------------------------
+-- Table structure for linkis_datasource_env
+-- ----------------------------
+DROP TABLE IF EXISTS `linkis_datasource_env`;
+CREATE TABLE `linkis_datasource_env`
+(
+    `id`                 int(11)                       NOT NULL AUTO_INCREMENT,
+    `env_name`           varchar(32) COLLATE utf8_bin  NOT NULL,
+    `env_desc`           varchar(255) COLLATE utf8_bin          DEFAULT NULL,
+    `datasource_type_id` int(11)                       NOT NULL,
+    `parameter`          varchar(255) COLLATE utf8_bin          DEFAULT NULL,
+    `create_time`        datetime                      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `create_user`        varchar(255) COLLATE utf8_bin NULL     DEFAULT NULL,
+    `modify_time`        datetime                      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `modify_user`        varchar(255) COLLATE utf8_bin NULL     DEFAULT NULL,
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  CHARACTER SET = utf8
+  COLLATE = utf8_bin;
 
 
+-- ----------------------------
+-- Table structure for linkis_datasource_type
+-- ----------------------------
+DROP TABLE IF EXISTS `linkis_datasource_type`;
+CREATE TABLE `linkis_datasource_type`
+(
+    `id`          int(11)                      NOT NULL AUTO_INCREMENT,
+    `name`        varchar(32) COLLATE utf8_bin NOT NULL,
+    `description` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+    `option`      varchar(32) COLLATE utf8_bin  DEFAULT NULL,
+    `classifier`  varchar(32) COLLATE utf8_bin NOT NULL,
+    `icon`        varchar(255) COLLATE utf8_bin DEFAULT NULL,
+    `layers`      int(3)                       NOT NULL,
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  CHARACTER SET = utf8
+  COLLATE = utf8_bin;
 
+-- ----------------------------
+-- Table structure for linkis_datasource_type_key
+-- ----------------------------
+DROP TABLE IF EXISTS `linkis_datasource_type_key`;
+CREATE TABLE `linkis_datasource_type_key`
+(
+    `id`                  int(11)                       NOT NULL AUTO_INCREMENT,
+    `data_source_type_id` int(11)                       NOT NULL,
+    `key`                 varchar(32) COLLATE utf8_bin  NOT NULL,
+    `name`                varchar(32) COLLATE utf8_bin  NOT NULL,
+    `default_value`       varchar(50) COLLATE utf8_bin  NULL     DEFAULT NULL,
+    `value_type`          varchar(50) COLLATE utf8_bin  NOT NULL,
+    `scope`               varchar(50) COLLATE utf8_bin  NULL     DEFAULT NULL,
+    `require`             tinyint(1)                    NULL     DEFAULT 0,
+    `description`         varchar(200) COLLATE utf8_bin NULL     DEFAULT NULL,
+    `value_regex`         varchar(200) COLLATE utf8_bin NULL     DEFAULT NULL,
+    `ref_id`              bigint(20)                    NULL     DEFAULT NULL,
+    `ref_value`           varchar(50) COLLATE utf8_bin  NULL     DEFAULT NULL,
+    `data_source`         varchar(200) COLLATE utf8_bin NULL     DEFAULT NULL,
+    `update_time`         datetime                      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `create_time`         datetime                      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  CHARACTER SET = utf8
+  COLLATE = utf8_bin;
+
+-- ----------------------------
+-- Table structure for linkis_datasource_version
+-- ----------------------------
+DROP TABLE IF EXISTS `linkis_datasource_version`;
+CREATE TABLE `linkis_datasource_version`
+(
+    `version_id`    int(11)                        NOT NULL AUTO_INCREMENT,
+    `datasource_id` int(11)                        NOT NULL,
+    `parameter`     varchar(2048) COLLATE utf8_bin NULL DEFAULT NULL,
+    `comment`       varchar(255) COLLATE utf8_bin  NULL DEFAULT NULL,
+    `create_time`   datetime(0)                    NULL DEFAULT CURRENT_TIMESTAMP,
+    `create_user`   varchar(255) COLLATE utf8_bin  NULL DEFAULT NULL,
+    PRIMARY KEY (`version_id`, `datasource_id`) USING BTREE
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 21
+  CHARACTER SET = utf8
+  COLLATE = utf8_bin;

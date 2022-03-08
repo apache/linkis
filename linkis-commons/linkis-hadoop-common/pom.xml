@@ -22,7 +22,7 @@
     <parent>
         <artifactId>linkis</artifactId>
         <groupId>org.apache.linkis</groupId>
-        <version>1.0.3</version>
+        <version>1.1.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -36,6 +36,13 @@
             <artifactId>linkis-common</artifactId>
             <version>${linkis.version}</version>
             <scope>provided</scope>
+        </dependency>
+
+        <!-- for upgrade hadoop-commom-->
+        <dependency>
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils</artifactId>
+            <version>${commons-beanutils.version}</version>
         </dependency>
 
         <dependency>
@@ -129,6 +136,14 @@
                     <artifactId>*</artifactId>
                 </exclusion>
 
+                <exclusion>
+                    <groupId>org.apache.commons</groupId>
+                    <artifactId>commons-compress</artifactId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>commons-beanutils</artifactId>
+                    <groupId>commons-beanutils</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>

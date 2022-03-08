@@ -5,16 +5,16 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.bml.service.impl;
 
 import org.apache.linkis.bml.Entity.Resource;
@@ -25,15 +25,19 @@ import org.apache.linkis.bml.common.ResourceHelperFactory;
 import org.apache.linkis.bml.dao.ResourceDao;
 import org.apache.linkis.bml.dao.VersionDao;
 import org.apache.linkis.bml.service.ResourceService;
+
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotNull;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,12 +48,9 @@ public class ResourceServiceImpl implements ResourceService {
 
     private static final Logger logger = LoggerFactory.getLogger(ResourceServiceImpl.class);
 
-    @Autowired
-    private ResourceDao resourceDao;
+    @Autowired private ResourceDao resourceDao;
 
-    @Autowired
-    private VersionDao versionDao;
-
+    @Autowired private VersionDao versionDao;
 
     private static final String FIRST_VERSION = "v000001";
 
@@ -72,14 +73,19 @@ public class ResourceServiceImpl implements ResourceService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public List<UploadResult> upload(List<MultipartFile> files, String user, Map<String, Object> properties) throws Exception{
+    public List<UploadResult> upload(
+            List<MultipartFile> files, String user, Map<String, Object> properties)
+            throws Exception {
         ResourceHelper resourceHelper = ResourceHelperFactory.getResourceHelper();
-        //List<FormDataBodyPart> files = formDataMultiPart.getFields("file");
+        // List<FormDataBodyPart> files = formDataMultiPart.getFields("file");
         List<UploadResult> results = new ArrayList<>();
         for (MultipartFile p : files) {
             String resourceId = (String) properties.get("resourceId");
             InputStream inputStream = p.getInputStream();
-            String fileName = new String(p.getOriginalFilename().getBytes(Constant.ISO_ENCODE), Constant.UTF8_ENCODE);
+            String fileName =
+                    new String(
+                            p.getOriginalFilename().getBytes(Constant.ISO_ENCODE),
+                            Constant.UTF8_ENCODE);
             fileName = resourceId;
             String path = resourceHelper.generatePath(user, fileName, properties);
             StringBuilder sb = new StringBuilder();
@@ -90,13 +96,15 @@ public class ResourceServiceImpl implements ResourceService {
                 isSuccess = true;
             }
             Resource resource = Resource.createNewResource(resourceId, user, fileName, properties);
-            //插入一条记录到resource表
+            // 插入一条记录到resource表
             long id = resourceDao.uploadResource(resource);
-            logger.info("{} uploaded a resource and resourceId is {}", user, resource.getResourceId());
-            //插入一条记录到resource version表
+            logger.info(
+                    "{} uploaded a resource and resourceId is {}", user, resource.getResourceId());
+            // 插入一条记录到resource version表
             String clientIp = (String) properties.get("clientIp");
-            ResourceVersion resourceVersion = ResourceVersion.createNewResourceVersion(resourceId, path, md5String,
-                    clientIp, size, Constant.FIRST_VERSION, 1);
+            ResourceVersion resourceVersion =
+                    ResourceVersion.createNewResourceVersion(
+                            resourceId, path, md5String, clientIp, size, Constant.FIRST_VERSION, 1);
             versionDao.insertNewVersion(resourceVersion);
             UploadResult uploadResult = new UploadResult(resourceId, FIRST_VERSION, isSuccess);
             results.add(uploadResult);
@@ -109,12 +117,12 @@ public class ResourceServiceImpl implements ResourceService {
         return resourceDao.checkExists(resourceId) == 1;
     }
 
-    public static class UploadResult{
+    public static class UploadResult {
         private String resourceId;
         private String version;
         private boolean isSuccess;
 
-        public UploadResult(String resourceId, String version, boolean isSuccess){
+        public UploadResult(String resourceId, String version, boolean isSuccess) {
             this.resourceId = resourceId;
             this.version = version;
             this.isSuccess = isSuccess;
@@ -145,18 +153,15 @@ public class ResourceServiceImpl implements ResourceService {
         }
     }
 
-
     @Override
     public Resource getResource(String resourceId) {
         return resourceDao.getResource(resourceId);
     }
 
-
     @Override
     public boolean checkAuthority(@NotNull String user, String resourceId) {
         return user.equals(resourceDao.getUserByResourceId(resourceId));
     }
-
 
     @Override
     public boolean checkExpire(String resourceId, String version) {
@@ -168,19 +173,20 @@ public class ResourceServiceImpl implements ResourceService {
         return true;
     }
 
-
     @Override
     public void cleanExpiredResources() {
-       //1 找出已经过期的所有的资源
-       //2 将这些资源干掉
-//        List<Resource> resources = resourceDao.getResources();
-//        List<Resource> expiredResources = new ArrayList<>();
-//        for(Resource resource : resources){
-//            if (resource.isExpire() && resource.isEnableFlag()){
-//                String expiredTimeStr = RestfulUtils.getExpireTime(resource.getCreateTime(), resource.getExpireType(), resource.getExpireTime());
-//
-//            }
-//        }
-        //resourceDao.cleanExpiredResources();
+        // 1 找出已经过期的所有的资源
+        // 2 将这些资源干掉
+        //        List<Resource> resources = resourceDao.getResources();
+        //        List<Resource> expiredResources = new ArrayList<>();
+        //        for(Resource resource : resources){
+        //            if (resource.isExpire() && resource.isEnableFlag()){
+        //                String expiredTimeStr =
+        // RestfulUtils.getExpireTime(resource.getCreateTime(), resource.getExpireType(),
+        // resource.getExpireTime());
+        //
+        //            }
+        //        }
+        // resourceDao.cleanExpiredResources();
     }
 }

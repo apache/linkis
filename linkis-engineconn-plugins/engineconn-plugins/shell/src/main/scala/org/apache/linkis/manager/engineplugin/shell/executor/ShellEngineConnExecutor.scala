@@ -19,7 +19,6 @@ package org.apache.linkis.manager.engineplugin.shell.executor
 
 import java.io.{BufferedReader, InputStreamReader}
 import java.util
-
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.engineconn.computation.executor.execute.{ComputationExecutor, EngineExecutionContext}
 import org.apache.linkis.engineconn.core.EngineConnObject
@@ -32,6 +31,7 @@ import org.apache.linkis.rpc.Sender
 import org.apache.linkis.scheduler.executer.{ErrorExecuteResponse, ExecuteResponse, SuccessExecuteResponse}
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang.StringUtils
+import org.apache.linkis.engineconn.acessible.executor.log.LogHelper
 
 import scala.collection.mutable.ArrayBuffer
 
@@ -77,6 +77,7 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
       }) {
         info(line)
         engineExecutionContext.appendTextResultSet(line)
+        LogHelper.logCache.cacheLog(line)
       }
       val errorLog = Stream.continually(errorsReader.readLine).takeWhile(_ != null).mkString("\n")
       val exitCode = process.waitFor()
@@ -107,9 +108,12 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
 
   override def getId(): String = Sender.getThisServiceInstance.getInstance + "_" + id
 
-  override def getProgressInfo: Array[JobProgressInfo] = {
+  override def getProgressInfo(taskID: String): Array[JobProgressInfo] = {
     val jobProgressInfo = new ArrayBuffer[JobProgressInfo]()
-    if (0.0f == progress()) {
+    if (null == this.engineExecutionContext) {
+      return jobProgressInfo.toArray
+    }
+    if (0.0f == progress(taskID)) {
       jobProgressInfo += JobProgressInfo(engineExecutionContext.getJobId.getOrElse(""), 1, 1, 0, 0)
     } else {
       jobProgressInfo += JobProgressInfo(engineExecutionContext.getJobId.getOrElse(""), 1, 0, 0, 1)
@@ -117,7 +121,7 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
     jobProgressInfo.toArray
   }
 
-  override def progress(): Float = {
+  override def progress(taskID: String): Float = {
     if (null != this.engineExecutionContext) {
       this.engineExecutionContext.getCurrentParagraph / this.engineExecutionContext.getTotalParagraph.asInstanceOf[Float]
     } else {
@@ -144,7 +148,7 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
       }
     }
     val actualUsedResource = new LoadInstanceResource(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.getValue(properties).toLong,
-      EngineConnPluginConf.JAVA_ENGINE_REQUEST_CORES.getValue(properties), EngineConnPluginConf.JAVA_ENGINE_REQUEST_INSTANCE.getValue)
+      EngineConnPluginConf.JAVA_ENGINE_REQUEST_CORES.getValue(properties), EngineConnPluginConf.JAVA_ENGINE_REQUEST_INSTANCE)
     val resource = new CommonNodeResource
     resource.setUsedResource(actualUsedResource)
     resource

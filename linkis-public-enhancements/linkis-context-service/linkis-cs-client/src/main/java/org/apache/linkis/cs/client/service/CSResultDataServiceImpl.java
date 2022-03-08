@@ -5,16 +5,16 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.cs.client.service;
 
 import org.apache.linkis.common.exception.ErrorException;
@@ -28,24 +28,24 @@ import org.apache.linkis.cs.common.entity.source.ContextKey;
 import org.apache.linkis.cs.common.entity.source.ContextValue;
 import org.apache.linkis.cs.common.exception.CSErrorException;
 import org.apache.linkis.cs.common.exception.ErrorCode;
+
 import org.apache.commons.lang.StringUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class CSResultDataServiceImpl  implements CSResultDataService{
+public class CSResultDataServiceImpl implements CSResultDataService {
 
-    private final static Logger logger = LoggerFactory.getLogger(CSResultDataServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(CSResultDataServiceImpl.class);
 
     private SearchService searchService = DefaultSearchService.getInstance();
 
     private static CSResultDataService csResultDataService;
 
-    private CSResultDataServiceImpl() {
-
-    }
+    private CSResultDataServiceImpl() {}
 
     public static CSResultDataService getInstance() {
         if (null == csResultDataService) {
@@ -59,7 +59,8 @@ public class CSResultDataServiceImpl  implements CSResultDataService{
     }
 
     @Override
-    public CSResultData getCSResultData(String contextIDStr, String contextKeyStr) throws CSErrorException {
+    public CSResultData getCSResultData(String contextIDStr, String contextKeyStr)
+            throws CSErrorException {
         if (StringUtils.isBlank(contextIDStr) || StringUtils.isBlank(contextKeyStr)) {
             return null;
         }
@@ -68,14 +69,29 @@ public class CSResultDataServiceImpl  implements CSResultDataService{
             ContextKey contextKey = SerializeHelper.deserializeContextKey(contextKeyStr);
             return searchService.getContextValue(contextID, contextKey, CSResultData.class);
         } catch (ErrorException e) {
-            logger.error("Deserialize failed, invalid contextId : " + contextIDStr + ", or contextKey : " + contextKeyStr + ", e : " + e.getMessage());
+            logger.error(
+                    "Deserialize failed, invalid contextId : "
+                            + contextIDStr
+                            + ", or contextKey : "
+                            + contextKeyStr
+                            + ", e : "
+                            + e.getMessage());
             logger.error("exception ", e);
-            throw new CSErrorException(ErrorCode.DESERIALIZE_ERROR, "Deserialize failed, invalid contextId : " + contextIDStr + ", or contextKey : " + contextKeyStr + ", e : " + e.getMessage());
+            throw new CSErrorException(
+                    ErrorCode.DESERIALIZE_ERROR,
+                    "Deserialize failed, invalid contextId : "
+                            + contextIDStr
+                            + ", or contextKey : "
+                            + contextKeyStr
+                            + ", e : "
+                            + e.getMessage());
         }
     }
 
     @Override
-    public void putCSResultData(String contextIDStr, String contextKeyStr, CSResultData csResultData) throws CSErrorException {
+    public void putCSResultData(
+            String contextIDStr, String contextKeyStr, CSResultData csResultData)
+            throws CSErrorException {
         ContextClient contextClient = ContextClientFactory.getOrCreateContextClient();
         try {
             ContextID contextID = SerializeHelper.deserializeContextID(contextIDStr);
@@ -85,12 +101,14 @@ public class CSResultDataServiceImpl  implements CSResultDataService{
             contextClient.update(contextID, contextKey, contextValue);
         } catch (ErrorException e) {
             logger.error("Deserialize error. e ", e);
-            throw new CSErrorException(ErrorCode.DESERIALIZE_ERROR, "Deserialize error. e : " + e.getDesc());
+            throw new CSErrorException(
+                    ErrorCode.DESERIALIZE_ERROR, "Deserialize error. e : " + e.getDesc());
         }
     }
 
     @Override
-    public List<CSResultData> getUpstreamCSResultData(String contextIDStr, String nodeName) throws CSErrorException {
+    public List<CSResultData> getUpstreamCSResultData(String contextIDStr, String nodeName)
+            throws CSErrorException {
         List<CSResultData> rsList = new ArrayList<>();
         if (StringUtils.isBlank(contextIDStr) || StringUtils.isBlank(nodeName)) {
             return rsList;
@@ -98,12 +116,19 @@ public class CSResultDataServiceImpl  implements CSResultDataService{
         try {
             ContextID contextID = SerializeHelper.deserializeContextID(contextIDStr);
             if (null != contextID) {
-                rsList = searchService.searchUpstreamContext(contextID, nodeName, Integer.MAX_VALUE, CSResultData.class);
+                rsList =
+                        searchService.searchUpstreamContext(
+                                contextID, nodeName, Integer.MAX_VALUE, CSResultData.class);
             }
             return rsList;
         } catch (ErrorException e) {
             logger.error("Deserialize contextID error. contextIDStr : " + contextIDStr, e);
-            throw new CSErrorException(ErrorCode.DESERIALIZE_ERROR, "Deserialize contextID error. contextIDStr : " + contextIDStr + "e : " + e.getDesc());
+            throw new CSErrorException(
+                    ErrorCode.DESERIALIZE_ERROR,
+                    "Deserialize contextID error. contextIDStr : "
+                            + contextIDStr
+                            + "e : "
+                            + e.getDesc());
         }
     }
 }

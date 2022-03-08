@@ -22,7 +22,7 @@
     <parent>
         <artifactId>linkis</artifactId>
         <groupId>org.apache.linkis</groupId>
-        <version>1.0.3</version>
+        <version>1.1.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -64,35 +64,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
             </plugin>
-<!--            <plugin>-->
-<!--                <groupId>org.apache.maven.plugins</groupId>-->
-<!--                <artifactId>maven-assembly-plugin</artifactId>-->
-<!--                <version>2.3</version>-->
-<!--                <inherited>false</inherited>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <id>make-assembly</id>-->
-<!--                        <phase>package</phase>-->
-<!--                        <goals>-->
-<!--                            <goal>single</goal>-->
-<!--                        </goals>-->
-<!--                        <configuration>-->
-<!--                            <descriptors>-->
-<!--                                <descriptor>src/main/assembly/distribution.xml</descriptor>-->
-<!--                            </descriptors>-->
-<!--                        </configuration>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--                <configuration>-->
-<!--                    <skipAssembly>false</skipAssembly>-->
-<!--                    <finalName>linkis-errorcode-server</finalName>-->
-<!--                    <appendAssemblyId>false</appendAssemblyId>-->
-<!--                    <attach>false</attach>-->
-<!--                    <descriptors>-->
-<!--                        <descriptor>src/main/assembly/distribution.xml</descriptor>-->
-<!--                    </descriptors>-->
-<!--                </configuration>-->
-<!--            </plugin>-->
         </plugins>
         <resources>
             <resource>

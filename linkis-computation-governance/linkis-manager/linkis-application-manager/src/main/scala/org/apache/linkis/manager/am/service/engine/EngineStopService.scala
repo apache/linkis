@@ -17,17 +17,20 @@
  
 package org.apache.linkis.manager.am.service.engine
 
-import org.apache.linkis.manager.common.protocol.engine.{EngineStopRequest, EngineSuicideRequest}
-import org.apache.linkis.message.builder.ServiceMethodContext
+import org.apache.linkis.manager.common.protocol.engine.{EngineConnReleaseRequest, EngineStopRequest, EngineSuicideRequest}
 import org.apache.linkis.rpc.Sender
 
 
 trait EngineStopService {
 
 
-  def stopEngine(engineStopRequest: EngineStopRequest, smc: ServiceMethodContext): Unit
+  def stopEngine(engineStopRequest: EngineStopRequest): Unit
 
-  def engineSuicide(engineSuicideRequest: EngineSuicideRequest, smc: ServiceMethodContext): Unit
+  def asyncStopEngine(engineStopRequest: EngineStopRequest): Unit
+
+  def engineSuicide(engineSuicideRequest: EngineSuicideRequest): Unit
+
+  def dealEngineRelease(engineConnReleaseRequest: EngineConnReleaseRequest): Unit
 
 }
 

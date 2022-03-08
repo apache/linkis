@@ -35,7 +35,7 @@ class EngineConnProgressOperator extends OnceJobOperator[EngineConnProgressInfo]
     val progressInfo = progressInfoList.asScala.map(map => JobProgressInfo(map.get("id").asInstanceOf[String], map.get("totalTasks").asInstanceOf[Int],
       map.get("runningTasks").asInstanceOf[Int], map.get("failedTasks").asInstanceOf[Int],
       map.get("succeedTasks").asInstanceOf[Int])).toArray
-    EngineConnProgressInfo(result.getAs("progress"), progressInfo)
+    EngineConnProgressInfo(result.getAs[Double]("progress").toFloat, progressInfo)
   }
 
 }

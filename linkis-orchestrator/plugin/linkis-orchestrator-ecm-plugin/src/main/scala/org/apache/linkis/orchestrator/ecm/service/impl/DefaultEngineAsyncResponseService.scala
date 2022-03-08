@@ -50,7 +50,7 @@ class DefaultEngineAsyncResponseService extends EngineAsyncResponseService with 
 
   @Receiver
   override def onError(engineCreateError: EngineCreateError, smc: ServiceMethodContext): Unit = {
-    info(s"Failed to create engine ${engineCreateError.id}")
+    info(s"Failed to create engine ${engineCreateError.id}, can retry ${engineCreateError.retry}")
     cacheMap.put(engineCreateError.id, engineCreateError)
   }
 

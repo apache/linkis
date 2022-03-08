@@ -18,6 +18,7 @@
 package org.apache.linkis.manager.service.common.pointer
 
 import org.apache.linkis.manager.common.entity.node.EngineNode
+import org.apache.linkis.manager.common.protocol.em.{ECMOperateRequest, ECMOperateResponse}
 import org.apache.linkis.manager.common.protocol.engine.EngineStopRequest
 import org.apache.linkis.manager.engineplugin.common.launch.entity.EngineConnBuildRequest
 
@@ -27,5 +28,7 @@ trait EMNodPointer extends NodePointer {
   def createEngine(engineBuildRequest: EngineConnBuildRequest): EngineNode
 
   def stopEngine(engineStopRequest: EngineStopRequest): Unit
+
+  def executeOperation(request: ECMOperateRequest): ECMOperateResponse
 
 }

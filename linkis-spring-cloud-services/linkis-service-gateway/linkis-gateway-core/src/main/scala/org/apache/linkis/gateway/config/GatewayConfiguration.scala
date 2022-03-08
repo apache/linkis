@@ -63,4 +63,7 @@ object GatewayConfiguration {
 
   val DSS_QUERY_WORKSPACE_SERVICE_NAME = CommonVars("wds.dss.query.workspace.service", "dss-framework-project-server")
   val USER_WORKSPACE_REFLESH_TIME  = CommonVars("wds.linkis.user.workspace.reflesh.time", 10)
+
+  // Use regex to match against URLs, if matched, let them pass anyway(even if not currently logged in), Use "()" and "|" to match against multiple URLs
+  val GATEWAY_NO_AUTH_URL_REGEX = CommonVars("wds.linkis.gateway.no.auth.url.regex", ".*visualis.*share.*")
 }

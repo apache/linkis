@@ -77,6 +77,13 @@ object ProxyUserSSOUtils extends Logging {
     }
   }
 
+  def removeLoginUserByAddCookie(addEmptyCookie: Cookie => Unit): Unit = {
+    val cookie = new Cookie(PROXY_USER_TICKET_ID_STRING, null)
+    cookie.setMaxAge(0)
+    cookie.setPath("/")
+    addEmptyCookie(cookie)
+  }
+
   def getProxyUserUsername(req: HttpServletRequest): Option[String] = {
     val ticketOption = Option(req.getCookies).flatMap(_.find(_.getName == PROXY_USER_TICKET_ID_STRING).map(_.getValue))
     if (ticketOption.isDefined) {

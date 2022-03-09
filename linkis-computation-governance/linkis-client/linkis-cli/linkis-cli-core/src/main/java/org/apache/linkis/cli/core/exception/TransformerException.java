@@ -24,13 +24,11 @@ import org.apache.linkis.cli.common.exception.error.ErrorMsg;
 public class TransformerException extends LinkisClientRuntimeException {
     private static final long serialVersionUID = 5454234257L;
 
-    public TransformerException(
-            String code, ErrorLevel level, ErrorMsg errMsg, String param[], String... extMsg) {
+    public TransformerException(String code, ErrorLevel level, ErrorMsg errMsg, String param[], String... extMsg) {
         super(code, level, errMsg, param, extMsg);
     }
 
-    public TransformerException(
-            String code, ErrorLevel level, ErrorMsg errMsg, Object... paramsList) {
+    public TransformerException(String code, ErrorLevel level, ErrorMsg errMsg, Object... paramsList) {
         super(code, level, errMsg, paramsList);
     }
 }

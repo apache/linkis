@@ -107,10 +107,6 @@ function call_linkis_client() {
         #DEBUG_OPTS="-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"
         LINKIS_CLIENT_OPTS=${LINKIS_CLIENT_OPTS:-" ${DEBUG_OPTS} "}
 
-
-        echo  "=====Java Start Command====="
-        echo "exec ${JAVA} ${LINKIS_CLIENT_HEAP_OPTS} ${LINKIS_CLIENT_GC_OPTS} ${LINKIS_CLIENT_OPTS} -classpath ${LINKIS_CLIENT_CLASSPATH} -Dconf.root=${LINKIS_CLIENT_CONF_DIR} -Dconf.file=${LINKIS_CLIENT_CONF_FILE} ${LINKIS_CLIENT_LOG_OPTS}  ${LINKIS_CLIENT} '${input_args[@]}'"
-
         exec ${JAVA} ${LINKIS_CLIENT_HEAP_OPTS} ${LINKIS_CLIENT_GC_OPTS} ${LINKIS_CLIENT_OPTS} -classpath ${LINKIS_CLIENT_CLASSPATH} -Dconf.root=${LINKIS_CLIENT_CONF_DIR} -Dconf.file=${LINKIS_CLIENT_CONF_FILE} ${LINKIS_CLIENT_LOG_OPTS}  ${LINKIS_CLIENT} "${input_args[@]}"
 }
 

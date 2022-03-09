@@ -17,7 +17,7 @@
 
 package org.apache.linkis.cli.application.interactor.command.template;
 
-import org.apache.linkis.cli.application.constants.LinkisClientKeys;
+import org.apache.linkis.cli.application.constants.AppKeys;
 import org.apache.linkis.cli.application.constants.TestConstants;
 import org.apache.linkis.cli.core.exception.CommandException;
 import org.apache.linkis.cli.core.interactor.command.template.AbstractCmdTemplate;
@@ -50,7 +50,7 @@ public class TestSparkCmdTemplate extends AbstractCmdTemplate {
     protected StdOption<String> userOp =
             option(
                     null,
-                    LinkisClientKeys.JOB_COMMON_SUBMIT_USER,
+                    AppKeys.JOB_COMMON_SUBMIT_USER,
                     new String[] {"-u", "--user"},
                     "specify user",
                     true,
@@ -67,7 +67,7 @@ public class TestSparkCmdTemplate extends AbstractCmdTemplate {
     private StdOption<String> passwordOp =
             option(
                     null,
-                    LinkisClientKeys.JOB_COMMON_SUBMIT_PASSWORD,
+                    AppKeys.JOB_COMMON_SUBMIT_PASSWORD,
                     new String[] {"-pwd", "--passwd"},
                     "specify user password",
                     true,
@@ -101,7 +101,7 @@ public class TestSparkCmdTemplate extends AbstractCmdTemplate {
     private StdOption<Map<String, String>> confMap =
             option(
                     null,
-                    LinkisClientKeys.JOB_PARAM_CONF,
+                    AppKeys.JOB_PARAM_CONF,
                     new String[] {"-confMap"},
                     "confMap",
                     true,

@@ -17,16 +17,20 @@
 
 package org.apache.linkis.cli.core.interactor.command.template.option;
 
-import org.apache.linkis.cli.core.utils.SpecialMap;
+import org.apache.linkis.cli.core.interactor.command.SpecialMap;
 
-/** kv-pairs in SpecialMapOption will be excluded by varAccess */
+/**
+ * kv-pairs in SpecialMapOption will be excluded by varAccess
+ */
 public class SpecialMapOption extends MapOption implements Cloneable {
-    public SpecialMapOption(
-            String keyPrefix,
-            String key,
-            String[] paramNames,
-            String description,
-            boolean isOptional) {
+    public SpecialMapOption(String keyPrefix, String key, String[] paramNames, String description, boolean isOptional) {
         super(keyPrefix, key, paramNames, description, isOptional, new SpecialMap<>());
+    }
+
+    @Override
+    public SpecialMapOption clone() throws CloneNotSupportedException {
+        SpecialMapOption ret = (SpecialMapOption) super.clone();
+        ret.value = new SpecialMap<>(this.value);
+        return ret;
     }
 }

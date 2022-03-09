@@ -21,12 +21,13 @@ import org.apache.linkis.cli.application.data.ProcessedData;
 import org.apache.linkis.cli.application.interactor.command.template.ProcessInputUtil;
 import org.apache.linkis.cli.application.interactor.command.template.TestSparkCmdTemplate;
 
+import org.apache.linkis.cli.core.interactor.job.JobBuilder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class LinkisJobBuilderTest {
-    LinkisJobBuilder builder;
+    JobBuilder builder;
 
     @BeforeEach
     public void before() throws Exception {

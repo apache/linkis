@@ -22,4 +22,5 @@ public class FitterUtils {
     public static boolean isOption(final String arg) {
         return arg.matches("-[a-zA-Z-]+");
     }
+
 }

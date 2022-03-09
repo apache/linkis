@@ -18,11 +18,11 @@
 package org.apache.linkis.cli.application.interactor.command;
 
 import org.apache.linkis.cli.common.entity.command.CmdType;
-import org.apache.linkis.cli.core.constants.Constants;
+import org.apache.linkis.cli.core.constants.CommonConstants;
 
-/** @description: Implements {@link CmdType}. */
 public enum LinkisCmdType implements CmdType {
-    UNIVERSAL(Constants.UNIVERSAL_SUBCMD, 1, Constants.UNIVERSAL_SUBCMD_DESC);
+
+    UNIVERSAL(CommonConstants.UNIVERSAL_SUBCMD, 1, CommonConstants.UNIVERSAL_SUBCMD_DESC);
 
     private int id;
     private String name;
@@ -54,4 +54,6 @@ public enum LinkisCmdType implements CmdType {
     public String getDesc() {
         return this.desc;
     }
+
+
 }

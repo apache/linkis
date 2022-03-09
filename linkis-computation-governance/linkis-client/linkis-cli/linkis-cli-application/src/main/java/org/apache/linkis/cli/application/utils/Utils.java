@@ -17,17 +17,15 @@
 
 package org.apache.linkis.cli.application.utils;
 
-import org.apache.commons.lang3.StringUtils;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Utils {
 
-    public static final Gson GSON =
-            new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
+    public static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
     private static final Logger logger = LoggerFactory.getLogger(Utils.class);
 
     public static boolean isValidExecId(String execId) {
@@ -46,7 +44,8 @@ public class Utils {
         try {
             Thread.sleep(sleepMills);
         } catch (Exception ignore) {
-            // ignored
+            //ignored
         }
     }
+
 }

@@ -22,4 +22,5 @@ public interface ErrorMsg {
     String getMsgTemplate();
 
     void setMsgTemplate(String template);
+
 }

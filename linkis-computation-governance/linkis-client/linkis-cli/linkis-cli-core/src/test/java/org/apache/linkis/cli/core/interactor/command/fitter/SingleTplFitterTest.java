@@ -106,18 +106,18 @@ public class SingleTplFitterTest {
         results[1] = fitter.fit(cmdStr2, new TestSparkCmdTemplate());
         //        System.out.println(results[0].getParsedTemplateCopy().getOptions());
         //        System.out.println(template.getOptions());
-        assertTrue(results[0].getParsedTemplateCopy() instanceof TestSparkCmdTemplate);
+        assertTrue(results[0].getParsedTemplate() instanceof TestSparkCmdTemplate);
         assertEquals(
-                results[0].getParsedTemplateCopy().getOptionsMap().get("--cmd").getValue(),
+                results[0].getParsedTemplate().getOptionsMap().get("--cmd").getValue(),
                 "show tables");
-        assertNotEquals(results[0].getParsedTemplateCopy(), template.getCopy());
+        assertNotEquals(results[0].getParsedTemplate(), template.getCopy());
         assertNotEquals(
-                results[0].getParsedTemplateCopy().getOptions(), template.getCopy().getOptions());
+                results[0].getParsedTemplate().getOptions(), template.getCopy().getOptions());
         assertNotEquals(
-                results[0].getParsedTemplateCopy().getOptions().get(1),
+                results[0].getParsedTemplate().getOptions().get(1),
                 template.getCopy().getOptions().get(1));
         assertEquals(
-                results[0].getParsedTemplateCopy().getOptions().get(1).getValue(),
+                results[0].getParsedTemplate().getOptions().get(1).getValue(),
                 template.getCopy().getOptions().get(1).getValue());
     }
 }

@@ -24,12 +24,13 @@ import org.apache.linkis.cli.common.exception.error.ErrorMsg;
 public class ValidateException extends LinkisClientRuntimeException {
     private static final long serialVersionUID = 5454234257L;
 
-    public ValidateException(
-            String code, ErrorLevel level, ErrorMsg errMsg, String param[], String... extMsg) {
+    public ValidateException(String code, ErrorLevel level, ErrorMsg errMsg, String param[], String... extMsg) {
         super(code, level, errMsg, param, extMsg);
     }
 
     public ValidateException(String code, ErrorLevel level, ErrorMsg errMsg, Object... paramsList) {
         super(code, level, errMsg, paramsList);
     }
+
+
 }

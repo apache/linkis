@@ -21,7 +21,6 @@ import org.apache.linkis.cli.common.entity.properties.ClientProperties;
 import org.apache.linkis.cli.common.exception.error.ErrorLevel;
 import org.apache.linkis.cli.core.exception.PropsException;
 import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
-import org.apache.linkis.cli.core.exception.handler.DefaultExceptionHandler;
 import org.apache.linkis.cli.core.interactor.properties.reader.PropertiesReader;
 
 import java.util.*;
@@ -65,6 +64,7 @@ public class StdPropsLoader implements PropertiesLoader {
         readersMap.remove(identifier);
     }
 
+
     @Override
     public ClientProperties[] loadProperties() {
         checkInit();
@@ -72,16 +72,12 @@ public class StdPropsLoader implements PropertiesLoader {
         PropertiesReader readerTmp;
         for (Map.Entry<String, PropertiesReader> entry : readersMap.entrySet()) {
             readerTmp = entry.getValue();
-            try {
-                Properties props = readerTmp.getProperties();
-                ClientProperties clientProperties = new ClientProperties();
-                clientProperties.putAll(props);
-                clientProperties.setPropsId(readerTmp.getPropsId());
-                clientProperties.setPropertiesSourcePath(readerTmp.getPropsPath());
-                propsList.add(clientProperties);
-            } catch (Exception e) {
-                new DefaultExceptionHandler().handle(e);
-            }
+            Properties props = readerTmp.getProperties();
+            ClientProperties clientProperties = new ClientProperties();
+            clientProperties.putAll(props);
+            clientProperties.setPropsId(readerTmp.getPropsId());
+            clientProperties.setPropertiesSourcePath(readerTmp.getPropsPath());
+            propsList.add(clientProperties);
         }
         return propsList.toArray(new ClientProperties[propsList.size()]);
     }
@@ -89,10 +85,7 @@ public class StdPropsLoader implements PropertiesLoader {
     @Override
     public void checkInit() {
         if (readersMap == null || readersMap.size() == 0) {
-            throw new PropsException(
-                    "PRP0003",
-                    ErrorLevel.ERROR,
-                    CommonErrMsg.PropsLoaderInitErr,
+            throw new PropsException("PRP0003", ErrorLevel.ERROR, CommonErrMsg.PropsLoaderInitErr,
                     "properties loader is not inited because it contains no reader");
         }
     }

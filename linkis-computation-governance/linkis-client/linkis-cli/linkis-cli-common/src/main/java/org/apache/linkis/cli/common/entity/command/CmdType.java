@@ -24,4 +24,5 @@ public interface CmdType extends Cloneable {
     String getName();
 
     String getDesc();
+
 }

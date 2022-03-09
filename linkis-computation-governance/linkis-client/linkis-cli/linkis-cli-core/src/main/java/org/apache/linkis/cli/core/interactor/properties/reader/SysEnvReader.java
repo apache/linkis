@@ -17,8 +17,7 @@
 
 package org.apache.linkis.cli.core.interactor.properties.reader;
 
-import org.apache.linkis.cli.common.constants.CommonConstants;
-
+import org.apache.linkis.cli.core.constants.CommonConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,6 +27,7 @@ public class SysEnvReader implements PropertiesReader {
     private static final Logger logger = LoggerFactory.getLogger(SysEnvReader.class);
     private String propsId = CommonConstants.SYSTEM_ENV_IDENTIFIER;
     private String propsPath = "SYSTEM";
+
 
     @Override
     public String getPropsId() {
@@ -51,6 +51,7 @@ public class SysEnvReader implements PropertiesReader {
         return this;
     }
 
+
     @Override
     public Properties getProperties() {
         checkInit();
@@ -60,5 +61,7 @@ public class SysEnvReader implements PropertiesReader {
     }
 
     @Override
-    public void checkInit() {}
+    public void checkInit() {
+
+    }
 }

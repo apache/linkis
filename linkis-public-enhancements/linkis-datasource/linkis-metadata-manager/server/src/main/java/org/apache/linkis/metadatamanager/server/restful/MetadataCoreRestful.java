@@ -280,8 +280,8 @@ public class MetadataCoreRestful {
             if (e instanceof ErrorException) {
                 uiMessage += " possible reason[可能原因]: (" + e.getMessage() + ")";
             }
-            LOG.error(uiMessage, e);
         }
+        LOG.error(uiMessage, e);
         return Message.error(uiMessage);
     }
 }

@@ -173,7 +173,6 @@ public class QueryPersistenceManager extends PersistenceManager {
 
     @Override
     public void onJobInited(Job job) {
-        updateJobStatus(job);
         cliHeartbeatMonitor.registerIfCliJob(job);
     }
 

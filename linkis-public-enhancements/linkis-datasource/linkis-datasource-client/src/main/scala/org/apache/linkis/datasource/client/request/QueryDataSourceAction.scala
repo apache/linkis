@@ -22,7 +22,7 @@ import org.apache.linkis.datasource.client.exception.DataSourceClientBuilderExce
 import org.apache.linkis.httpclient.request.GetAction
 
 
-class QueryDataSourceAction extends GetAction with DataSourceAction{
+class QueryDataSourceAction extends GetAction with DataSourceAction {
   override def suffixURLs: Array[String] = Array(DATA_SOURCE_SERVICE_MODULE.getValue, "info")
 
   private var user: String = _
@@ -80,24 +80,30 @@ object QueryDataSourceAction {
     }
 
     def build(): QueryDataSourceAction = {
-      if (system == null) throw new DataSourceClientBuilderException("system is needed!")
-      if(name == null) throw new DataSourceClientBuilderException("name is needed!")
-      if(typeId == null) throw new DataSourceClientBuilderException("typeId is needed!")
-      if(identifies == null) throw new DataSourceClientBuilderException("identifies is needed!")
-      if(currentPage == null) throw new DataSourceClientBuilderException("currentPage is needed!")
-      if(pageSize == null) throw new DataSourceClientBuilderException("pageSize is needed!")
-      if(user == null) throw new DataSourceClientBuilderException("user is needed!")
+      if (user == null) throw new DataSourceClientBuilderException("user is needed!")
 
       val queryDataSourceAction = new QueryDataSourceAction
-      queryDataSourceAction.setParameter("system", system)
-      queryDataSourceAction.setParameter("name", name)
-      queryDataSourceAction.setParameter("typeId", typeId)
-      queryDataSourceAction.setParameter("identifies", identifies)
-      queryDataSourceAction.setParameter("currentPage", currentPage)
-      queryDataSourceAction.setParameter("pageSize", pageSize)
+      if (system != null) {
+        queryDataSourceAction.setParameter("system", system)
+      }
+      if (name != null) {
+        queryDataSourceAction.setParameter("name", name)
+      }
+      if (typeId != null) {
+        queryDataSourceAction.setParameter("typeId", typeId)
+      }
+      if (identifies != null) {
+        queryDataSourceAction.setParameter("identifies", identifies)
+      }
+      if (currentPage != null) {
+        queryDataSourceAction.setParameter("currentPage", currentPage)
+      }
+      if (pageSize != null) {
+        queryDataSourceAction.setParameter("pageSize", pageSize)
+      }
       queryDataSourceAction.setUser(user)
-
       queryDataSourceAction
     }
   }
+
 }

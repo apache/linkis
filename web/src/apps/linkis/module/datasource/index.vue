@@ -5,9 +5,9 @@
   ~ The ASF licenses this file to You under the Apache License, Version 2.0
   ~ (the "License"); you may not use this file except in compliance with
   ~ the License.  You may obtain a copy of the License at
-  ~ 
+  ~
   ~   http://www.apache.org/licenses/LICENSE-2.0
-  ~ 
+  ~
   ~ Unless required by applicable law or agreed to in writing, software
   ~ distributed under the License is distributed on an "AS IS" BASIS,
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,9 +37,9 @@
           slot="action"
         >
           <ButtonGroup size="small" :key="row.versionId">
-            
+
             <Button v-if="row.status==0" size="small" type="text" @click="onPublish(row)"> {{$t('message.linkis.datasource.publish')}} </Button>
-                      
+
             <Button size="small" type="text" @click="watch(row, index)">{{$t('message.linkis.datasource.watch')}}</Button>
             <Button v-if="row.status==2" size="small" type="text" @click="onRollback(row)"> {{$t('message.linkis.datasource.rollback')}} </Button>
 
@@ -59,7 +59,7 @@
       v-model="showDataSource"
       :title="`${actionType}${$t('message.linkis.datasource.datasourceSrc')}`">
       <Spin size="large" fix v-if="loadingForm"></Spin>
-      <DataSourceType :data="type_list" v-show="currentStep===0" :onSelected="onSelect"/>
+      <DataSourceType :data="typeList" v-show="currentStep===0" :onSelected="onSelect"/>
       <DatasourceForm :data="currentSourceData" ref="datasourceForm" v-if="showDataSource&&currentStep===1"/>
 
       <div slot="footer">
@@ -84,7 +84,7 @@
       <Col span="6" class="search-item">
         <span class="lable">{{$t('message.linkis.datasource.sourceType')}}</span>
         <Select v-model="dataSourceTypeId" class="input">
-          <Option v-for="item in type_list" :value="item.id" :key="item.id">{{item.name}}</Option>
+          <Option v-for="item in typeList" :value="item.id" :key="item.id">{{item.name}}</Option>
           <Option value="null">{{$t('message.linkis.statusType.all')}}</Option>
         </Select>
       </Col>
@@ -124,7 +124,7 @@
           <Button :disabled="row.expire" size="small" type="primary" @click="modify(row, index)">{{$t('message.linkis.edit')}}</Button>
 
           <Button :disabled="row.expire" size="small" type="primary" @click="overdue(row)"> {{$t('message.linkis.datasource.overdue')}} </Button>
-          
+
           <Button type="primary" @click="onConnectTest(row)"> {{$t('message.linkis.datasource.connectTest')}} </Button>
         </ButtonGroup>
       </template>
@@ -182,8 +182,8 @@ export default {
           minWidth: 100,
           render: (h, params)=>{
             let result = {};
-            if(this.type_list){
-              result = this.type_list.find(item => params.row.dataSourceTypeId == item.id) || {};
+            if(this.typeList){
+              result = this.typeList.find(item => params.row.dataSourceTypeId == item.id) || {};
             }
             return h('span', result.name);
           },
@@ -196,8 +196,8 @@ export default {
         //   minWidth: 100,
         //   render: (h, params)=>{
         //     let result = {};
-        //     if(this.env_list){
-        //       result = this.env_list.find(item => params.row.dataSourceEnvId == item.id) || {envName: '无'};
+        //     if(this.envList){
+        //       result = this.envList.find(item => params.row.dataSourceEnvId == item.id) || {envName: '无'};
         //     }
         //     return h('span', result.envName);
         //   },
@@ -211,8 +211,8 @@ export default {
           align: 'center',
           render: (h, params)=>{
             let result = {};
-            if(this.env_list){
-             
+            if(this.envList){
+
               result = this.tableStatusMap.find(item => params.row.expire == item.status) || {};
             }
             var color = 'green';
@@ -243,7 +243,7 @@ export default {
           title: this.$t('message.linkis.datasource.desc'),
           key: 'dataSourceDesc',
           minWidth: 120,
-          
+
           tooltip: true,
           align: 'center'
         },
@@ -262,7 +262,7 @@ export default {
         },
       ],
       pageDatalist: [],
-      type_list: [],
+      typeList: [],
       versionStatusMap: [{status: 1, name: this.$t('message.linkis.datasource.published')}, {status: 0, name: this.$t('message.linkis.datasource.unpublish')}, {status: 2, name: this.$t('message.linkis.datasource.cannotPublish')} ],
       tableStatusMap: [{status: false, name: this.$t('message.linkis.datasource.used')}, {status: true, name: this.$t('message.linkis.datasource.overdue')} ],
       currentVersionList: [],
@@ -313,20 +313,20 @@ export default {
     }
   },
   created(){
-    
+
     getDataSourceTypeList().then((data)=>{
-      this.type_list = data.type_list;
+      this.typeList = data.typeList;
 
       getEnvList().then((data)=>{
-        this.env_list = data.query_list;
+        this.envList = data.queryList;
 
         this.searchList();
       })
     })
 
-    
 
-    
+
+
   },
   methods: {
     overdue(data){
@@ -341,21 +341,21 @@ export default {
       }
       const data = {
         typeId: this.dataSourceTypeId,
-        pageSize: this.page.pageSize, 
+        pageSize: this.page.pageSize,
         currentPage: this.page.pageNow,
         name: this.searchName
       };
-     
+
       if(data.typeId == 'null'){
         delete data.typeId;
       }
-      
+
       getDataSourceList(
         {
           ...data
         }).then(result=>{
         this.tableLoading = false;
-        this.pageDatalist = result.query_list;
+        this.pageDatalist = result.queryList;
         this.page.totalSize = result.totalPage;
       });
     },
@@ -380,18 +380,18 @@ export default {
           }else{
             element.status = 0;
           }
-        
+
           if(this.currentSourceData.publishedVersionId == element.versionId){
             lastPulishIndex = index;
             element.status = 1;
           }
-        
+
         }
       })
 
 
-      
-      
+
+
     },
     openVersionList(row){
       this.currentSourceData = row;
@@ -433,7 +433,7 @@ export default {
       }else if(this.currentStep>1){
         this.currentStep = 1;
       }
-      
+
     },
     tranceFormData(data){
       const formData = new FormData();
@@ -443,7 +443,7 @@ export default {
         }else {
           formData.append(key, data[key]);
         }
-        
+
       });
       return formData;
     },
@@ -473,7 +473,7 @@ export default {
     },
     onSubmit(){
       this.$refs.datasourceForm.fApi.submit((formData)=>{
-        
+
         const realFormData = {};
         FORM_KEYS.forEach(key=>{
           realFormData[key] = formData[key];
@@ -483,9 +483,9 @@ export default {
         realFormData.createSystem = "Linkis";
         realFormData.dataSourceTypeId = this.currentSourceData.dataSourceTypeId;
 
-        
-        
-        
+
+
+
 
         let postDataSource = createDataSource;
         let commentMsg = this.$t('message.linkis.datasource.initVersion');
@@ -499,8 +499,8 @@ export default {
         postDataSource(realFormData, this.currentSourceData.id).then(data=>{
           this.loadingForm = false;
           // if(连接信息有变化)
-          
-          const sourceId = data.id || data.insert_id || data.update_id;
+
+          const sourceId = data.id || data.insertId || data.updateId;
 
           console.log()
           if(!this.currentSourceData.id || !this.isEqual(this.preProcessData(this.$refs.datasourceForm.sourceConnectData), formData)){
@@ -523,7 +523,7 @@ export default {
             this.searchList();
             this.showDataSource = false;
           }
-          
+
         }).catch(()=>{
           this.loadingForm = false;
         })
@@ -544,7 +544,7 @@ export default {
         connect(data.info).then(()=>{
           this.loadingVersionList = false;
           this.$Message.success('Connect Success');
-  
+
         }).catch(()=>{
           this.loadingVersionList = false;
         })
@@ -557,14 +557,14 @@ export default {
         connect(data.info).then(()=>{
           this.tableLoading = false;
           this.$Message.success('Connect Success');
-  
+
         }).catch(()=>{
           this.tableLoading = false;
         })
       }).catch(()=>{
         this.tableLoading = false;
       })
-      
+
     },
     onConnectFormTest(){
       this.$refs.datasourceForm.fApi.submit(()=>{
@@ -586,7 +586,7 @@ export default {
           }).catch(()=>{this.loadingForm = false;})
         })
       })
-      
+
     },
     onPublish(data){
       this.loadingVersionList = true;
@@ -599,14 +599,14 @@ export default {
     },
     onRollback(data){
       this.showVersionList = false;
-      const sourceId = data.id || data.datasourceId || data.update_id;
-  
+      const sourceId = data.id || data.datasourceId || data.updateId;
+
       saveConnectParams(sourceId, data.connectParams, this.$t('message.linkis.datasource.commentValue', {text: data.versionId})).then(()=>{
         this.$Message.success('onRollback Success');
         this.searchList();
       });
     }
-    
+
   }
 }
 </script>

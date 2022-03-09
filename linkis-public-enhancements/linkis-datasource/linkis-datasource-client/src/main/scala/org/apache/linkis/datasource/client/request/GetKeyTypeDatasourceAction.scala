@@ -25,7 +25,7 @@ import org.apache.linkis.httpclient.request.GetAction
 class GetKeyTypeDatasourceAction extends GetAction with DataSourceAction{
   private var dataSourceTypeId: Long = _
 
-  override def suffixURLs: Array[String] = Array(DATA_SOURCE_SERVICE_MODULE.getValue, "key_define", "type", dataSourceTypeId.toString)
+  override def suffixURLs: Array[String] = Array(DATA_SOURCE_SERVICE_MODULE.getValue, "key-define", "type", dataSourceTypeId.toString)
 
   private var user: String = _
 

@@ -87,6 +87,7 @@ object ProxyUserSSOUtils extends Logging {
   def getProxyUserUsername(req: HttpServletRequest): Option[String] = {
     val ticketOption = Option(req.getCookies).flatMap(_.find(_.getName == PROXY_USER_TICKET_ID_STRING).map(_.getValue))
     if (ticketOption.isDefined) {
+      logger.info(s"PROXY_USER_TICKET_ID_STRING: ${ticketOption.get}")
       getProxyUsernameByTicket(ticketOption.get)
     } else {
       None

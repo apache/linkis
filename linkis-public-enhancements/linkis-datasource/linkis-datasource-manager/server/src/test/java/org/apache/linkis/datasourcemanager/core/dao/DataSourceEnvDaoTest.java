@@ -19,12 +19,14 @@ package org.apache.linkis.datasourcemanager.core.dao;
 
 import org.apache.linkis.datasourcemanager.common.domain.DataSourceEnv;
 import org.apache.linkis.datasourcemanager.core.vo.DataSourceEnvVo;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Date;
 import java.util.List;
@@ -32,8 +34,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-
-class DataSourceEnvDaoTest extends BaseDaoTest{
+class DataSourceEnvDaoTest extends BaseDaoTest {
     private static final Logger logger = LoggerFactory.getLogger(DataSourceEnvDaoTest.class);
 
     @Autowired DataSourceEnvDao dataSourceEnvDao;
@@ -43,7 +44,7 @@ class DataSourceEnvDaoTest extends BaseDaoTest{
      *
      * @return DataSourceEnv
      */
-    private DataSourceEnv insertOne(){
+    private DataSourceEnv insertOne() {
         DataSourceEnv dataSourceEnv = new DataSourceEnv();
         dataSourceEnv.setEnvName("testEnv");
         dataSourceEnv.setEnvDesc("testEnv desc");
@@ -62,34 +63,35 @@ class DataSourceEnvDaoTest extends BaseDaoTest{
     protected static void afterAll() throws Exception {}
 
     @Test
-    void testInsertOne(){
+    void testInsertOne() {
         DataSourceEnv dataSourceEnv = insertOne();
-        assertTrue(dataSourceEnv.getId()>0);
+        assertTrue(dataSourceEnv.getId() > 0);
     }
 
     @Test
-    void testSelectOneDetail(){
+    void testSelectOneDetail() {
         DataSourceEnv dataSourceEnv = insertOne();
         DataSourceEnv result = dataSourceEnvDao.selectOneDetail(dataSourceEnv.getId());
-        assertTrue(result.getId()>0);
+        assertTrue(result.getId() > 0);
     }
 
     @Test
-    void testListByTypeId(){
+    void testListByTypeId() {
         DataSourceEnv dataSourceEnv = insertOne();
-        List<DataSourceEnv> dataSourceEnvs = dataSourceEnvDao.listByTypeId(dataSourceEnv.getDataSourceTypeId());
+        List<DataSourceEnv> dataSourceEnvs =
+                dataSourceEnvDao.listByTypeId(dataSourceEnv.getDataSourceTypeId());
         assertTrue(dataSourceEnvs.size() == 1);
     }
 
     @Test
-    void testRemoveOne(){
+    void testRemoveOne() {
         DataSourceEnv dataSourceEnv = insertOne();
         int res = dataSourceEnvDao.removeOne(dataSourceEnv.getId());
         assertTrue(res == 1);
     }
 
     @Test
-    void testUpdateOne(){
+    void testUpdateOne() {
         DataSourceEnv dataSourceEnv = insertOne();
         dataSourceEnv = dataSourceEnvDao.selectOneDetail(dataSourceEnv.getId());
         dataSourceEnv.setEnvName("modify-testEnv");
@@ -98,23 +100,23 @@ class DataSourceEnvDaoTest extends BaseDaoTest{
         dataSourceEnv.setModifyTime(new Date());
         dataSourceEnv.setModifyUser("modify-test");
         dataSourceEnvDao.updateOne(dataSourceEnv);
-        DataSourceEnv newDataSourceEnv =dataSourceEnvDao.selectOneDetail(dataSourceEnv.getId());
+        DataSourceEnv newDataSourceEnv = dataSourceEnvDao.selectOneDetail(dataSourceEnv.getId());
         assertThat(newDataSourceEnv).usingRecursiveComparison().isEqualTo(dataSourceEnv);
     }
 
     @Test
-    void testSelectByPageVo(){
-        //match
+    void testSelectByPageVo() {
+        // match
         DataSourceEnv dataSourceEnv = insertOne();
-        //match
+        // match
         dataSourceEnv.setEnvName("testEnv1");
         dataSourceEnvDao.insertOne(dataSourceEnv);
 
-        //no match by env name
+        // no match by env name
         dataSourceEnv.setEnvName("devEnv1");
         dataSourceEnvDao.insertOne(dataSourceEnv);
 
-        //on match by dataSourceTypeId
+        // on match by dataSourceTypeId
         dataSourceEnv.setEnvName("testEnv2");
         dataSourceEnv.setDataSourceTypeId(2l);
         dataSourceEnvDao.insertOne(dataSourceEnv);
@@ -124,10 +126,10 @@ class DataSourceEnvDaoTest extends BaseDaoTest{
         dataSourceEnvVo.setDataSourceTypeId(1l);
 
         List<DataSourceEnv> dataSourceEnvs = dataSourceEnvDao.selectByPageVo(dataSourceEnvVo);
-        assertAll("All",()->
-                        assertTrue(dataSourceEnvs.size()==2),
-                ()->assertTrue("testEnv".equals(dataSourceEnvs.get(0).getEnvName())),
-                ()->assertTrue("testEnv1".equals(dataSourceEnvs.get(1).getEnvName())));
+        assertAll(
+                "All",
+                () -> assertTrue(dataSourceEnvs.size() == 2),
+                () -> assertTrue("testEnv".equals(dataSourceEnvs.get(0).getEnvName())),
+                () -> assertTrue("testEnv1".equals(dataSourceEnvs.get(1).getEnvName())));
     }
-
 }

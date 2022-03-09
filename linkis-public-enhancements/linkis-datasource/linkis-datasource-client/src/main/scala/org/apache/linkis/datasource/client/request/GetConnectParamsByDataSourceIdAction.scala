@@ -60,12 +60,15 @@ object GetConnectParamsByDataSourceIdAction {
 
     def build(): GetConnectParamsByDataSourceIdAction = {
       if (dataSourceId == null) throw new DataSourceClientBuilderException("dataSourceId is needed!")
-      if(system == null) throw new DataSourceClientBuilderException("system is needed!")
       if(user == null) throw new DataSourceClientBuilderException("user is needed!")
 
       val getConnectParamsByDataSourceIdAction = new GetConnectParamsByDataSourceIdAction
       getConnectParamsByDataSourceIdAction.dataSourceId = this.dataSourceId
-      getConnectParamsByDataSourceIdAction.setParameter("system", system)
+
+      if(system != null){
+        getConnectParamsByDataSourceIdAction.setParameter("system", system)
+      }
+
       getConnectParamsByDataSourceIdAction.setUser(user)
       getConnectParamsByDataSourceIdAction
     }

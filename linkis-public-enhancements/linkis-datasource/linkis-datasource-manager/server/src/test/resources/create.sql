@@ -18,11 +18,8 @@
 SET FOREIGN_KEY_CHECKS = 0;
 SET REFERENTIAL_INTEGRITY FALSE;
 
--- ----------------------------
--- Table structure for linkis_datasource
--- ----------------------------
-DROP TABLE IF EXISTS linkis_datasource;
-CREATE TABLE linkis_datasource
+DROP TABLE IF EXISTS linkis_ps_dm_datasource;
+CREATE TABLE linkis_ps_dm_datasource
 (
     id                   numeric(20)                     NOT NULL AUTO_INCREMENT,
     datasource_name      varchar(255) NOT NULL,
@@ -42,8 +39,8 @@ CREATE TABLE linkis_datasource
     PRIMARY KEY (id)
 ) ;
 
-DROP TABLE IF EXISTS linkis_datasource_type;
-CREATE TABLE linkis_datasource_type
+DROP TABLE IF EXISTS linkis_ps_dm_datasource_type;
+CREATE TABLE linkis_ps_dm_datasource_type
 (
     id          numeric(20)                      NOT NULL,
     name        varchar(32)  NOT NULL,
@@ -55,8 +52,8 @@ CREATE TABLE linkis_datasource_type
     PRIMARY KEY (id)
 ) ;
 
-DROP TABLE IF EXISTS linkis_datasource_env;
-CREATE TABLE linkis_datasource_env
+DROP TABLE IF EXISTS linkis_ps_dm_datasource_env;
+CREATE TABLE linkis_ps_dm_datasource_env
 (
     id                 numeric(20)                       NOT NULL AUTO_INCREMENT,
     env_name           varchar(32)   NOT NULL,
@@ -69,8 +66,8 @@ CREATE TABLE linkis_datasource_env
     modify_user        varchar(255)  NULL     DEFAULT NULL,
     PRIMARY KEY (id)
 );
-DROP TABLE IF EXISTS linkis_datasource_type_key;
-CREATE TABLE linkis_datasource_type_key
+DROP TABLE IF EXISTS linkis_ps_dm_datasource_type_key;
+CREATE TABLE linkis_ps_dm_datasource_type_key
 (
     id                  numeric(20)                       NOT NULL,
     data_source_type_id numeric(20)                       NOT NULL,
@@ -89,8 +86,8 @@ CREATE TABLE linkis_datasource_type_key
     create_time         datetime(3)                      NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id)
 );
-DROP TABLE IF EXISTS linkis_datasource_version;
-CREATE TABLE linkis_datasource_version
+DROP TABLE IF EXISTS linkis_ps_dm_datasource_version;
+CREATE TABLE linkis_ps_dm_datasource_version
 (
     version_id    numeric(20)                        NOT NULL AUTO_INCREMENT,
     datasource_id numeric(20)                        NOT NULL,
@@ -100,6 +97,6 @@ CREATE TABLE linkis_datasource_version
     create_user   varchar(255)   NULL DEFAULT NULL,
     PRIMARY KEY (version_id, datasource_id)
 );
-INSERT INTO linkis_datasource_type VALUES (1, 'mysql', 'mysql db', 'mysql db','relation database', 2000,3);
-INSERT INTO linkis_datasource_type_key VALUES (1,1, 'host', 'Host', '127.0.0.1','TEXT', 'ENV',1,'host name','',null,null,null,'2021-04-08 03:13:36','2021-04-08 03:13:36');
-INSERT INTO linkis_datasource_type_key VALUES (2,1, 'port', 'Port', '3306','TEXT', null,1,'port name','',null,null,null,'2021-04-08 03:13:36','2021-04-08 03:13:36');
+INSERT INTO linkis_ps_dm_datasource_type VALUES (1, 'mysql', 'mysql db', 'mysql db','relation database', 2000,3);
+INSERT INTO linkis_ps_dm_datasource_type_key VALUES (1,1, 'host', 'Host', '127.0.0.1','TEXT', 'ENV',1,'host name','',null,null,null,'2021-04-08 03:13:36','2021-04-08 03:13:36');
+INSERT INTO linkis_ps_dm_datasource_type_key VALUES (2,1, 'port', 'Port', '3306','TEXT', null,1,'port name','',null,null,null,'2021-04-08 03:13:36','2021-04-08 03:13:36');

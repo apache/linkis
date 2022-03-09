@@ -105,14 +105,14 @@ class DataSourceAdminRestfulApiTest {
         Mockito.doNothing().when(dataSourceInfoService).saveDataSourceEnv(any());
         assertTrue(
                 MessageStatus.SUCCESS() == mvcResult.getStatus()
-                        && "10".equals(mvcResult.getData().get("insert_id").toString()));
+                        && "10".equals(mvcResult.getData().get("insertId").toString()));
     }
 
     @Test
     void getAllEnvListByDataSourceType() throws Exception {
         long dataSourceEnvTypeId = 10l;
         String url =
-                String.format("/data-source-manager/env_list/all/type/%s", dataSourceEnvTypeId);
+                String.format("/data-source-manager/env-list/all/type/%s", dataSourceEnvTypeId);
         MvcUtils mvcUtils = new MvcUtils(mockMvc);
         List<DataSourceEnv> envList = new ArrayList<>();
         Mockito.when(dataSourceInfoService.listDataSourceEnvByType(dataSourceEnvTypeId))
@@ -154,7 +154,7 @@ class DataSourceAdminRestfulApiTest {
         mvcResult = mvcUtils.getMessage(mvcUtils.buildMvcResultDelete(url));
         assertTrue(
                 MessageStatus.SUCCESS() == mvcResult.getStatus()
-                        && "10".equals(mvcResult.getData().get("remove_id").toString()));
+                        && "10".equals(mvcResult.getData().get("removeId").toString()));
     }
 
     @Test

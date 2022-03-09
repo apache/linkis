@@ -45,7 +45,7 @@ abstract class LogManager extends LogListener with Logging {
       //     warn(s"jobid :${job.getId()}\nlog : ${log}")
       job match {
         case entranceExecutionJob: EntranceExecutionJob =>
-          if (entranceExecutionJob.getLogWriter.isEmpty) entranceExecutionJob synchronized {
+          if (entranceExecutionJob.getLogWriter.isEmpty) entranceExecutionJob.getLogWriterLocker synchronized {
             if (entranceExecutionJob.getLogWriter.isEmpty) {
               val logWriter = createLogWriter(entranceExecutionJob)
               if (null == logWriter) {

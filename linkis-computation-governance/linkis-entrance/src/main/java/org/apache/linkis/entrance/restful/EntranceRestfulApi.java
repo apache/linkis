@@ -463,7 +463,10 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
 
     @Override
     @RequestMapping(path = "/killJobs", method = RequestMethod.POST)
-    public Message killJobs(HttpServletRequest req, @RequestBody JsonNode jsonNode, @PathVariable("id") String strongExecId) {
+    public Message killJobs(
+            HttpServletRequest req,
+            @RequestBody JsonNode jsonNode,
+            @PathVariable("id") String strongExecId) {
         JsonNode idNode = jsonNode.get("idList");
         JsonNode taskIDNode = jsonNode.get("taskIDList");
         ArrayList<Long> waitToForceKill = new ArrayList<>();

@@ -18,24 +18,23 @@
 package org.apache.linkis.datasourcemanager.core.dao;
 
 import org.apache.linkis.datasourcemanager.common.domain.DatasourceVersion;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Date;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-
-class DataSourceVersionDaoTest extends BaseDaoTest{
+class DataSourceVersionDaoTest extends BaseDaoTest {
     private static final Logger logger = LoggerFactory.getLogger(DataSourceVersionDaoTest.class);
 
-    @Autowired
-    DataSourceVersionDao dataSourceVersionDao;
+    @Autowired DataSourceVersionDao dataSourceVersionDao;
 
     @AfterAll
     @DisplayName("Each unit test method is executed once before execution")
@@ -47,7 +46,7 @@ class DataSourceVersionDaoTest extends BaseDaoTest{
      *
      * @return DataSource
      */
-    private DatasourceVersion insertOne(){
+    private DatasourceVersion insertOne() {
         DatasourceVersion datasourceVersion = new DatasourceVersion();
         datasourceVersion.setVersionId(1l);
         datasourceVersion.setDatasourceId(1l);
@@ -64,34 +63,34 @@ class DataSourceVersionDaoTest extends BaseDaoTest{
     }
 
     @Test
-    void testInsertOne(){
+    void testInsertOne() {
         insertOne();
-        assertTrue(dataSourceVersionDao.getLatestVersion(1l)==2l);
+        assertTrue(dataSourceVersionDao.getLatestVersion(1l) == 2l);
     }
 
     @Test
-    void testGetLatestVersion(){
+    void testGetLatestVersion() {
         insertOne();
-        assertTrue(dataSourceVersionDao.getLatestVersion(1l)==2l);
+        assertTrue(dataSourceVersionDao.getLatestVersion(1l) == 2l);
     }
+
     @Test
-    void testSelectOneVersion(){
+    void testSelectOneVersion() {
         insertOne();
         String param = dataSourceVersionDao.selectOneVersion(1l, 2l);
         assertTrue("a:b".equals(param));
     }
 
     @Test
-    void testGetVersionsFromDatasourceId(){
+    void testGetVersionsFromDatasourceId() {
         insertOne();
-        assertTrue(dataSourceVersionDao.getVersionsFromDatasourceId(1l).size()==2);
+        assertTrue(dataSourceVersionDao.getVersionsFromDatasourceId(1l).size() == 2);
     }
 
     @Test
-    void testRemoveFromDataSourceId(){
+    void testRemoveFromDataSourceId() {
         insertOne();
         int res = dataSourceVersionDao.removeFromDataSourceId(1l);
         assertTrue(res == 2);
     }
-
 }

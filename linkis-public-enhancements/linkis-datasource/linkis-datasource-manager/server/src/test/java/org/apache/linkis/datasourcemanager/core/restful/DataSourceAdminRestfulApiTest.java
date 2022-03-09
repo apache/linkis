@@ -26,6 +26,17 @@ import org.apache.linkis.datasourcemanager.core.validate.ParameterValidator;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.MessageStatus;
 import org.apache.linkis.server.security.SecurityFilter;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.web.servlet.MockMvc;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Validator;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -34,16 +45,10 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.web.servlet.MockMvc;
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Validator;
+
 import java.io.StringWriter;
 import java.util.*;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.isA;
@@ -53,32 +58,29 @@ import static org.mockito.Mockito.times;
 @AutoConfigureMockMvc
 @SpringBootTest(classes = {WebApplicationServer.class, Scan.class})
 class DataSourceAdminRestfulApiTest {
-    private static final Logger logger = LoggerFactory.getLogger(DataSourceAdminRestfulApiTest.class);
+    private static final Logger logger =
+            LoggerFactory.getLogger(DataSourceAdminRestfulApiTest.class);
 
+    @Autowired protected MockMvc mockMvc;
 
-    @Autowired
-    protected MockMvc mockMvc;
+    @MockBean private Validator beanValidator;
 
-    @MockBean
-    private Validator beanValidator;
+    @MockBean private ParameterValidator parameterValidator;
 
-    @MockBean
-    private ParameterValidator parameterValidator;
-
-    @MockBean
-    private DataSourceInfoService dataSourceInfoService;
+    @MockBean private DataSourceInfoService dataSourceInfoService;
 
     private static MockedStatic<SecurityFilter> securityFilter;
 
     @BeforeAll
-    private static void init(){
+    private static void init() {
         securityFilter = Mockito.mockStatic(SecurityFilter.class);
     }
 
     @AfterAll
-    private static void close(){
+    private static void close() {
         securityFilter.close();
     }
+
     @Test
     void insertJsonEnv() throws Exception {
         long dataSourceEnvId = 10l;
@@ -87,76 +89,105 @@ class DataSourceAdminRestfulApiTest {
         DataSourceEnv dataSourceEnv = new DataSourceEnv();
         dataSourceEnv.setId(dataSourceEnvId);
         StringWriter dsJsonWriter = new StringWriter();
-        JsonUtils.jackson().writeValue(dsJsonWriter,dataSourceEnv);
-        securityFilter.when(()->SecurityFilter.getLoginUsername(isA(HttpServletRequest.class))).thenReturn("testUser","hadoop");
-        Message mvcResult = mvcUtils.getMessage(mvcUtils.buildMvcResultPost(url,dsJsonWriter.toString()));
-        assertTrue(MessageStatus.ERROR() == mvcResult.getStatus() && mvcResult.getMessage().contains("is not admin user"));
+        JsonUtils.jackson().writeValue(dsJsonWriter, dataSourceEnv);
+        securityFilter
+                .when(() -> SecurityFilter.getLoginUsername(isA(HttpServletRequest.class)))
+                .thenReturn("testUser", "hadoop");
+        Message mvcResult =
+                mvcUtils.getMessage(mvcUtils.buildMvcResultPost(url, dsJsonWriter.toString()));
+        assertTrue(
+                MessageStatus.ERROR() == mvcResult.getStatus()
+                        && mvcResult.getMessage().contains("is not admin user"));
 
-        mvcResult = mvcUtils.getMessage(mvcUtils.buildMvcResultPost(url,dsJsonWriter.toString()));
+        mvcResult = mvcUtils.getMessage(mvcUtils.buildMvcResultPost(url, dsJsonWriter.toString()));
 
-        Mockito.doNothing().when(parameterValidator).validate(any(),any());
+        Mockito.doNothing().when(parameterValidator).validate(any(), any());
         Mockito.doNothing().when(dataSourceInfoService).saveDataSourceEnv(any());
-        assertTrue(MessageStatus.SUCCESS() == mvcResult.getStatus() && "10".equals(mvcResult.getData().get("insert_id").toString()));
+        assertTrue(
+                MessageStatus.SUCCESS() == mvcResult.getStatus()
+                        && "10".equals(mvcResult.getData().get("insert_id").toString()));
     }
 
     @Test
     void getAllEnvListByDataSourceType() throws Exception {
         long dataSourceEnvTypeId = 10l;
-        String url = String.format("/data-source-manager/env_list/all/type/%s",dataSourceEnvTypeId);
+        String url =
+                String.format("/data-source-manager/env_list/all/type/%s", dataSourceEnvTypeId);
         MvcUtils mvcUtils = new MvcUtils(mockMvc);
         List<DataSourceEnv> envList = new ArrayList<>();
-        Mockito.when(dataSourceInfoService.listDataSourceEnvByType(dataSourceEnvTypeId)).thenReturn(envList);
+        Mockito.when(dataSourceInfoService.listDataSourceEnvByType(dataSourceEnvTypeId))
+                .thenReturn(envList);
         Message mvcResult = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url));
         assertTrue(MessageStatus.SUCCESS() == mvcResult.getStatus());
-        Mockito.verify(dataSourceInfoService,times(1)).listDataSourceEnvByType(dataSourceEnvTypeId);
+        Mockito.verify(dataSourceInfoService, times(1))
+                .listDataSourceEnvByType(dataSourceEnvTypeId);
     }
 
     @Test
     void getEnvEntityById() throws Exception {
         long dataSourceEnvId = 10l;
-        String url = String.format("/data-source-manager/env/%s",dataSourceEnvId);
+        String url = String.format("/data-source-manager/env/%s", dataSourceEnvId);
         MvcUtils mvcUtils = new MvcUtils(mockMvc);
         List<DataSourceEnv> envList = new ArrayList<>();
-        Mockito.when(dataSourceInfoService.getDataSourceEnv(dataSourceEnvId)).thenReturn(new DataSourceEnv());
+        Mockito.when(dataSourceInfoService.getDataSourceEnv(dataSourceEnvId))
+                .thenReturn(new DataSourceEnv());
         Message mvcResult = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url));
         assertTrue(MessageStatus.SUCCESS() == mvcResult.getStatus());
-        Mockito.verify(dataSourceInfoService,times(1)).getDataSourceEnv(dataSourceEnvId);
+        Mockito.verify(dataSourceInfoService, times(1)).getDataSourceEnv(dataSourceEnvId);
     }
 
     @Test
     void removeEnvEntity() throws Exception {
         long dataSourceEnvId = 10l;
-        String url = String.format("/data-source-manager/env/%s",dataSourceEnvId);
+        String url = String.format("/data-source-manager/env/%s", dataSourceEnvId);
         MvcUtils mvcUtils = new MvcUtils(mockMvc);
-        securityFilter.when(()->SecurityFilter.getLoginUsername(isA(HttpServletRequest.class))).thenReturn("testUser","hadoop");
+        securityFilter
+                .when(() -> SecurityFilter.getLoginUsername(isA(HttpServletRequest.class)))
+                .thenReturn("testUser", "hadoop");
         Message mvcResult = mvcUtils.getMessage(mvcUtils.buildMvcResultDelete(url));
-        assertTrue(MessageStatus.ERROR() == mvcResult.getStatus() && mvcResult.getMessage().contains("is not admin user"));
+        assertTrue(
+                MessageStatus.ERROR() == mvcResult.getStatus()
+                        && mvcResult.getMessage().contains("is not admin user"));
 
-        Mockito.when(dataSourceInfoService.removeDataSourceEnv(dataSourceEnvId)).thenReturn(dataSourceEnvId);
+        Mockito.when(dataSourceInfoService.removeDataSourceEnv(dataSourceEnvId))
+                .thenReturn(dataSourceEnvId);
         mvcResult = mvcUtils.getMessage(mvcUtils.buildMvcResultDelete(url));
-        assertTrue(MessageStatus.SUCCESS() == mvcResult.getStatus() && "10".equals(mvcResult.getData().get("remove_id").toString()));
+        assertTrue(
+                MessageStatus.SUCCESS() == mvcResult.getStatus()
+                        && "10".equals(mvcResult.getData().get("remove_id").toString()));
     }
 
     @Test
     void updateJsonEnv() throws Exception {
         long dataSourceEnvId = 10l;
-        String url = String.format("/data-source-manager/env/%s/json",dataSourceEnvId);
-        
+        String url = String.format("/data-source-manager/env/%s/json", dataSourceEnvId);
+
         DataSourceEnv dataSourceEnv = new DataSourceEnv();
         dataSourceEnv.setId(dataSourceEnvId);
         StringWriter dsJsonWriter = new StringWriter();
-        JsonUtils.jackson().writeValue(dsJsonWriter,dataSourceEnv);
-        
+        JsonUtils.jackson().writeValue(dsJsonWriter, dataSourceEnv);
+
         MvcUtils mvcUtils = new MvcUtils(mockMvc);
-        securityFilter.when(()->SecurityFilter.getLoginUsername(isA(HttpServletRequest.class))).thenReturn("testUser","hadoop");
-        Message mvcResult = mvcUtils.getMessage(mvcUtils.buildMvcResultPut(url,dsJsonWriter.toString()));
-        assertTrue(MessageStatus.ERROR() == mvcResult.getStatus() && mvcResult.getMessage().contains("is not admin user"));
+        securityFilter
+                .when(() -> SecurityFilter.getLoginUsername(isA(HttpServletRequest.class)))
+                .thenReturn("testUser", "hadoop");
+        Message mvcResult =
+                mvcUtils.getMessage(mvcUtils.buildMvcResultPut(url, dsJsonWriter.toString()));
+        assertTrue(
+                MessageStatus.ERROR() == mvcResult.getStatus()
+                        && mvcResult.getMessage().contains("is not admin user"));
 
-        Mockito.when(dataSourceInfoService.getDataSourceEnv(dataSourceEnvId)).thenReturn(null).thenReturn(dataSourceEnv);
-        mvcResult = mvcUtils.getMessage(mvcUtils.buildMvcResultPut(url,dsJsonWriter.toString()));
-        assertTrue(MessageStatus.ERROR() == mvcResult.getStatus() && mvcResult.getMessage().contains("Fail to update data source environment"));
+        Mockito.when(dataSourceInfoService.getDataSourceEnv(dataSourceEnvId))
+                .thenReturn(null)
+                .thenReturn(dataSourceEnv);
+        mvcResult = mvcUtils.getMessage(mvcUtils.buildMvcResultPut(url, dsJsonWriter.toString()));
+        assertTrue(
+                MessageStatus.ERROR() == mvcResult.getStatus()
+                        && mvcResult
+                                .getMessage()
+                                .contains("Fail to update data source environment"));
 
-        mvcResult = mvcUtils.getMessage(mvcUtils.buildMvcResultPut(url,dsJsonWriter.toString()));
+        mvcResult = mvcUtils.getMessage(mvcUtils.buildMvcResultPut(url, dsJsonWriter.toString()));
         assertTrue(MessageStatus.SUCCESS() == mvcResult.getStatus());
     }
 
@@ -164,7 +195,8 @@ class DataSourceAdminRestfulApiTest {
     void queryDataSourceEnv() throws Exception {
         String url = String.format("/data-source-manager/env");
         MvcUtils mvcUtils = new MvcUtils(mockMvc);
-        Mockito.when(dataSourceInfoService.queryDataSourceEnvPage(any())).thenReturn(new ArrayList<>());
+        Mockito.when(dataSourceInfoService.queryDataSourceEnvPage(any()))
+                .thenReturn(new ArrayList<>());
         Message mvcResult = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url));
         assertTrue(MessageStatus.SUCCESS() == mvcResult.getStatus());
         Mockito.verify(dataSourceInfoService, times(1)).queryDataSourceEnvPage(any());

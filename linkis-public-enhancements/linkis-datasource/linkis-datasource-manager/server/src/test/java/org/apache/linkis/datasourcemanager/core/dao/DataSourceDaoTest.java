@@ -19,6 +19,9 @@ package org.apache.linkis.datasourcemanager.core.dao;
 
 import org.apache.linkis.datasourcemanager.common.domain.DataSource;
 import org.apache.linkis.datasourcemanager.core.vo.DataSourceVo;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
 import org.h2.tools.Server;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -26,7 +29,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Date;
 import java.util.List;
@@ -34,8 +36,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-
-class DataSourceDaoTest extends BaseDaoTest{
+class DataSourceDaoTest extends BaseDaoTest {
     private static final Logger logger = LoggerFactory.getLogger(DataSourceDaoTest.class);
 
     @Autowired DataSourceDao dataSourceDao;
@@ -45,7 +46,7 @@ class DataSourceDaoTest extends BaseDaoTest{
      *
      * @return DataSource
      */
-    private DataSource insertOne(){
+    private DataSource insertOne() {
         DataSource dataSource = new DataSource();
         dataSource.setDataSourceName("unitTest");
         dataSource.setDataSourceTypeId(1l);
@@ -66,8 +67,6 @@ class DataSourceDaoTest extends BaseDaoTest{
     protected static void beforeAll() throws Exception {
         // Start the console of h2 to facilitate viewing of h2 data
         Server.createWebServer("-web", "-webAllowOthers", "-webPort", "8082").start();
-
-
     }
 
     @AfterAll
@@ -75,64 +74,64 @@ class DataSourceDaoTest extends BaseDaoTest{
     protected static void afterAll() throws Exception {}
 
     @Test
-    void testInsertOne(){
+    void testInsertOne() {
         DataSource dataSource = insertOne();
-        assertTrue(dataSource.getId()>0);
+        assertTrue(dataSource.getId() > 0);
     }
 
     @Test
-    void testSelectOneDetail(){
+    void testSelectOneDetail() {
         DataSource dataSource = insertOne();
         DataSource result = dataSourceDao.selectOneDetail(dataSource.getId());
-        assertEquals("mysql",result.getDataSourceType().getName());
+        assertEquals("mysql", result.getDataSourceType().getName());
     }
 
     @Test
-    void testSelectOneDetailByName(){
+    void testSelectOneDetailByName() {
         DataSource dataSource = insertOne();
         DataSource result = dataSourceDao.selectOneDetailByName(dataSource.getDataSourceName());
-        assertEquals("mysql",result.getDataSourceType().getName());
+        assertEquals("mysql", result.getDataSourceType().getName());
     }
 
     @Test
-    void testSelectOne(){
+    void testSelectOne() {
         DataSource dataSource = insertOne();
         DataSource result = dataSourceDao.selectOne(dataSource.getId());
-        assertTrue(result.getId()>0);
+        assertTrue(result.getId() > 0);
     }
 
     @Test
-    void testSelectOneByName(){
+    void testSelectOneByName() {
         DataSource dataSource = insertOne();
         DataSource result = dataSourceDao.selectOneByName(dataSource.getDataSourceName());
-        assertTrue(result.getId()>0);
+        assertTrue(result.getId() > 0);
     }
 
     @Test
-    void testRemoveOne(){
+    void testRemoveOne() {
         DataSource dataSource = insertOne();
         int res = dataSourceDao.removeOne(dataSource.getId());
         assertTrue(res == 1);
     }
 
     @Test
-    void testExpireOne(){
+    void testExpireOne() {
         DataSource dataSource = insertOne();
         int res = dataSourceDao.expireOne(dataSource.getId());
         assertTrue(res == 1);
     }
 
     @Test
-    void testUpdateOne(){
+    void testUpdateOne() {
         DataSource dataSource = insertOne();
         dataSource = dataSourceDao.selectOne(dataSource.getId());
-        dataSource.setDataSourceName("modify "+"unitTest");
+        dataSource.setDataSourceName("modify " + "unitTest");
         dataSource.setDataSourceTypeId(1l);
-        dataSource.setDataSourceDesc("modify "+"unit test by h2 database");
-        dataSource.setCreateIdentify("modify "+"unitTest");
-        dataSource.setCreateSystem("modify "+"local");
+        dataSource.setDataSourceDesc("modify " + "unit test by h2 database");
+        dataSource.setCreateIdentify("modify " + "unitTest");
+        dataSource.setCreateSystem("modify " + "local");
         dataSource.setParameter("{}");
-        dataSource.setModifyUser("modify "+"test");
+        dataSource.setModifyUser("modify " + "test");
         dataSource.setModifyTime(new Date());
         dataSourceDao.updateOne(dataSource);
         DataSource newDataSource = dataSourceDao.selectOne(dataSource.getId());
@@ -140,30 +139,30 @@ class DataSourceDaoTest extends BaseDaoTest{
     }
 
     @Test
-    void testSelectByPageVo(){
+    void testSelectByPageVo() {
         Date originDate = new Date();
-        //match
+        // match
         DataSource dataSource = insertOne();
-        //match
+        // match
         dataSource.setDataSourceName("unitTest1");
         dataSource.setCreateTime(new Date());
         dataSourceDao.insertOne(dataSource);
 
-        //match
+        // match
         dataSource.setDataSourceName("unitTest2");
         dataSource.setCreateTime(originDate);
         dataSourceDao.insertOne(dataSource);
 
-        //no match by datasource name
+        // no match by datasource name
         dataSource.setDataSourceName("tmpTest");
         dataSourceDao.insertOne(dataSource);
 
-        //on match by dataSourceTypeId
+        // on match by dataSourceTypeId
         dataSource.setDataSourceName("unitTest3");
         dataSource.setDataSourceTypeId(2l);
         dataSourceDao.insertOne(dataSource);
 
-        //no match by createUser
+        // no match by createUser
         dataSource.setDataSourceName("unitTest4");
         dataSource.setDataSourceTypeId(1l);
         dataSource.setCreateUser("other");
@@ -175,26 +174,27 @@ class DataSourceDaoTest extends BaseDaoTest{
         dataSourceVo.setPermissionUser("test");
 
         List<DataSource> dataSources = dataSourceDao.selectByPageVo(dataSourceVo);
-         assertAll("All",()->
-                assertTrue(dataSources.size()==3),
-                 ()->assertTrue("unitTest".equals(dataSources.get(1).getDataSourceName())),
-                 ()->assertTrue("unitTest1".equals(dataSources.get(0).getDataSourceName())),
-                 ()->assertTrue("unitTest2".equals(dataSources.get(2).getDataSourceName()))
-        );
+        assertAll(
+                "All",
+                () -> assertTrue(dataSources.size() == 3),
+                () -> assertTrue("unitTest".equals(dataSources.get(1).getDataSourceName())),
+                () -> assertTrue("unitTest1".equals(dataSources.get(0).getDataSourceName())),
+                () -> assertTrue("unitTest2".equals(dataSources.get(2).getDataSourceName())));
     }
 
     @Test
-    void testSetPublishedVersionId(){
+    void testSetPublishedVersionId() {
         DataSource dataSource = insertOne();
-        dataSourceDao.setPublishedVersionId(dataSource.getId(),10l);
-        assertTrue(dataSourceDao.selectByPageVo(new DataSourceVo()).get(0).getPublishedVersionId()==10l);
+        dataSourceDao.setPublishedVersionId(dataSource.getId(), 10l);
+        assertTrue(
+                dataSourceDao.selectByPageVo(new DataSourceVo()).get(0).getPublishedVersionId()
+                        == 10l);
     }
 
     @Test
-    void testUpdateVersionId(){
+    void testUpdateVersionId() {
         DataSource dataSource = insertOne();
-        dataSourceDao.updateVersionId(dataSource.getId(),10l);
-        assertTrue(dataSourceDao.selectByPageVo(new DataSourceVo()).get(0).getVersionId()==10l);
+        dataSourceDao.updateVersionId(dataSource.getId(), 10l);
+        assertTrue(dataSourceDao.selectByPageVo(new DataSourceVo()).get(0).getVersionId() == 10l);
     }
-
 }

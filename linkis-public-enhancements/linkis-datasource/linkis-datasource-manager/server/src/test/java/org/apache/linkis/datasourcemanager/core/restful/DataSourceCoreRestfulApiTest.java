@@ -17,7 +17,6 @@
 
 package org.apache.linkis.datasourcemanager.core.restful;
 
-import com.github.pagehelper.PageInfo;
 import org.apache.linkis.common.utils.JsonUtils;
 import org.apache.linkis.datasourcemanager.common.domain.DataSource;
 import org.apache.linkis.datasourcemanager.common.domain.DataSourceParamKeyDefinition;
@@ -32,14 +31,7 @@ import org.apache.linkis.datasourcemanager.core.vo.DataSourceVo;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.MessageStatus;
 import org.apache.linkis.server.security.SecurityFilter;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -49,8 +41,20 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Validator;
+
+import com.github.pagehelper.PageInfo;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.StringWriter;
 import java.util.*;
 
@@ -61,39 +65,33 @@ import static org.mockito.ArgumentMatchers.*;
 
 @ExtendWith({SpringExtension.class})
 @AutoConfigureMockMvc
-@SpringBootTest(classes = {WebApplicationServer.class,Scan.class})
+@SpringBootTest(classes = {WebApplicationServer.class, Scan.class})
 class DataSourceCoreRestfulApiTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(DataSourceCoreRestfulApiTest.class);
+    private static final Logger logger =
+            LoggerFactory.getLogger(DataSourceCoreRestfulApiTest.class);
 
-    @Autowired
-    protected MockMvc mockMvc;
+    @Autowired protected MockMvc mockMvc;
 
-    @MockBean
-    private DataSourceRelateService dataSourceRelateService;
+    @MockBean private DataSourceRelateService dataSourceRelateService;
 
-    @MockBean
-    private DataSourceInfoService dataSourceInfoService;
+    @MockBean private DataSourceInfoService dataSourceInfoService;
 
+    @MockBean private Validator beanValidator;
 
-    @MockBean
-    private Validator beanValidator;
+    @MockBean ParameterValidator parameterValidator;
 
-    @MockBean
-    ParameterValidator parameterValidator;
-
-    @MockBean
-    MetadataOperateService metadataOperateService;
+    @MockBean MetadataOperateService metadataOperateService;
 
     private static MockedStatic<SecurityFilter> securityFilter;
 
     @BeforeAll
-    private static void init(){
+    private static void init() {
         securityFilter = Mockito.mockStatic(SecurityFilter.class);
     }
 
     @AfterAll
-    private static void close(){
+    private static void close() {
         securityFilter.close();
     }
 
@@ -104,7 +102,9 @@ class DataSourceCoreRestfulApiTest {
         Mockito.when(dataSourceRelateService.getAllDataSourceTypes()).thenReturn(dataSourceTypes);
         MvcResult mvcResult = mvcUtils.buildMvcResultGet("/data-source-manager/type/all");
         Message res = mvcUtils.getMessage(mvcResult);
-        assertThat(dataSourceTypes).usingRecursiveComparison().isEqualTo(res.getData().get("type_list"));
+        assertThat(dataSourceTypes)
+                .usingRecursiveComparison()
+                .isEqualTo(res.getData().get("type_list"));
     }
 
     @Test
@@ -112,10 +112,15 @@ class DataSourceCoreRestfulApiTest {
         MvcUtils mvcUtils = new MvcUtils(mockMvc);
         Long dataSourceTypeId = 1l;
         List<DataSourceParamKeyDefinition> keyDefinitions = new ArrayList<>();
-        Mockito.when(dataSourceRelateService.getKeyDefinitionsByType(dataSourceTypeId)).thenReturn(keyDefinitions);
-        MvcResult mvcResult = mvcUtils.buildMvcResultGet(String.format("/data-source-manager/key_define/type/%s",dataSourceTypeId));
+        Mockito.when(dataSourceRelateService.getKeyDefinitionsByType(dataSourceTypeId))
+                .thenReturn(keyDefinitions);
+        MvcResult mvcResult =
+                mvcUtils.buildMvcResultGet(
+                        String.format("/data-source-manager/key_define/type/%s", dataSourceTypeId));
         Message res = mvcUtils.getMessage(mvcResult);
-        assertThat(keyDefinitions).usingRecursiveComparison().isEqualTo(res.getData().get("key_define"));
+        assertThat(keyDefinitions)
+                .usingRecursiveComparison()
+                .isEqualTo(res.getData().get("key_define"));
     }
 
     @Test
@@ -124,15 +129,21 @@ class DataSourceCoreRestfulApiTest {
         DataSource dataSource = new DataSource();
         dataSource.setDataSourceName("test");
         StringWriter dsJsonWriter = new StringWriter();
-        JsonUtils.jackson().writeValue(dsJsonWriter,dataSource);
+        JsonUtils.jackson().writeValue(dsJsonWriter, dataSource);
 
         Mockito.doNothing().when(dataSourceInfoService).saveDataSourceInfo(dataSource);
-        MvcResult mvcResult = mvcUtils.buildMvcResultPost("/data-source-manager/info/json",dsJsonWriter.toString());
+        MvcResult mvcResult =
+                mvcUtils.buildMvcResultPost(
+                        "/data-source-manager/info/json", dsJsonWriter.toString());
         Message res = mvcUtils.getMessage(mvcResult);
         assertEquals(MessageStatus.SUCCESS(), res.getStatus());
 
-        Mockito.when(dataSourceInfoService.existDataSource(dataSource.getDataSourceName())).thenReturn(true);
-        mvcResult = mvcUtils.buildMvcResultPost("/data-source-manager/info/json",dsJsonWriter.toString());;
+        Mockito.when(dataSourceInfoService.existDataSource(dataSource.getDataSourceName()))
+                .thenReturn(true);
+        mvcResult =
+                mvcUtils.buildMvcResultPost(
+                        "/data-source-manager/info/json", dsJsonWriter.toString());
+        ;
         res = mvcUtils.getMessage(mvcResult);
         assertEquals(MessageStatus.ERROR(), res.getStatus());
     }
@@ -141,80 +152,116 @@ class DataSourceCoreRestfulApiTest {
     void updateDataSourceInJson() throws Exception {
         MvcUtils mvcUtils = new MvcUtils(mockMvc);
         long dataSourceId = 1l;
-        String url = String.format("/data-source-manager/info/%s/json",dataSourceId);
+        String url = String.format("/data-source-manager/info/%s/json", dataSourceId);
         DataSource dataSource = new DataSource();
         dataSource.setId(dataSourceId);
         dataSource.setDataSourceName("ds-hive");
         StringWriter dsJsonWriter = new StringWriter();
-        JsonUtils.jackson().writeValue(dsJsonWriter,dataSource);
-        securityFilter.when(()->SecurityFilter.getLoginUsername(isA(HttpServletRequest.class))).thenReturn("testUser");
-        Message res = mvcUtils.getMessage(mvcUtils.buildMvcResultPut(url,dsJsonWriter.toString()));
-        assertTrue(MessageStatus.ERROR()==res.getStatus() && res.getMessage().contains("This data source was not found"));
+        JsonUtils.jackson().writeValue(dsJsonWriter, dataSource);
+        securityFilter
+                .when(() -> SecurityFilter.getLoginUsername(isA(HttpServletRequest.class)))
+                .thenReturn("testUser");
+        Message res = mvcUtils.getMessage(mvcUtils.buildMvcResultPut(url, dsJsonWriter.toString()));
+        assertTrue(
+                MessageStatus.ERROR() == res.getStatus()
+                        && res.getMessage().contains("This data source was not found"));
 
         DataSource oldDataSource = new DataSource();
         oldDataSource.setCreateUser("hadoop");
-        Mockito.when(dataSourceInfoService.getDataSourceInfoBrief(dataSource.getId())).thenReturn(oldDataSource);
-        res = mvcUtils.getMessage(mvcUtils.buildMvcResultPut(url,dsJsonWriter.toString()));
-        assertTrue(MessageStatus.ERROR()==res.getStatus() && res.getMessage().contains("Don't have update permission for data source"));
+        Mockito.when(dataSourceInfoService.getDataSourceInfoBrief(dataSource.getId()))
+                .thenReturn(oldDataSource);
+        res = mvcUtils.getMessage(mvcUtils.buildMvcResultPut(url, dsJsonWriter.toString()));
+        assertTrue(
+                MessageStatus.ERROR() == res.getStatus()
+                        && res.getMessage()
+                                .contains("Don't have update permission for data source"));
 
         oldDataSource.setCreateUser("testUser");
-        res = mvcUtils.getMessage(mvcUtils.buildMvcResultPut(url,dsJsonWriter.toString()));
-        assertTrue(MessageStatus.SUCCESS()==res.getStatus());
+        res = mvcUtils.getMessage(mvcUtils.buildMvcResultPut(url, dsJsonWriter.toString()));
+        assertTrue(MessageStatus.SUCCESS() == res.getStatus());
 
         oldDataSource.setDataSourceName("ds-mysql");
-        Mockito.when(dataSourceInfoService.existDataSource(dataSource.getDataSourceName())).thenReturn(true);
-        res = mvcUtils.getMessage(mvcUtils.buildMvcResultPut(url,dsJsonWriter.toString()));
-        assertTrue(MessageStatus.ERROR()==res.getStatus() && res.getMessage().contains("has been existed"));
-
-
+        Mockito.when(dataSourceInfoService.existDataSource(dataSource.getDataSourceName()))
+                .thenReturn(true);
+        res = mvcUtils.getMessage(mvcUtils.buildMvcResultPut(url, dsJsonWriter.toString()));
+        assertTrue(
+                MessageStatus.ERROR() == res.getStatus()
+                        && res.getMessage().contains("has been existed"));
     }
 
     @Test
     void insertJsonParameter() throws Exception {
         MvcUtils mvcUtils = new MvcUtils(mockMvc);
         Long datasourceId = 1l;
-        String url = String.format("/data-source-manager/parameter/%s/json",datasourceId);
-        Map<String,Object> params = new HashMap<>();
+        String url = String.format("/data-source-manager/parameter/%s/json", datasourceId);
+        Map<String, Object> params = new HashMap<>();
         Map<String, Object> connectParams = new HashMap<>();
-        params.put("connectParams",connectParams);
-        params.put("comment","comment");
+        params.put("connectParams", connectParams);
+        params.put("comment", "comment");
 
         StringWriter dsJsonWriter = new StringWriter();
-        JsonUtils.jackson().writeValue(dsJsonWriter,params);
+        JsonUtils.jackson().writeValue(dsJsonWriter, params);
 
-        securityFilter.when(()->SecurityFilter.getLoginUsername(isA(HttpServletRequest.class))).thenReturn("testUser");
-        Message res = mvcUtils.getMessage(mvcUtils.buildMvcResultPost(url,dsJsonWriter.toString()));
-        assertTrue(MessageStatus.ERROR() == res.getStatus() && res.getMessage().contains("Fail to insert data source parameter"));
+        securityFilter
+                .when(() -> SecurityFilter.getLoginUsername(isA(HttpServletRequest.class)))
+                .thenReturn("testUser");
+        Message res =
+                mvcUtils.getMessage(mvcUtils.buildMvcResultPost(url, dsJsonWriter.toString()));
+        assertTrue(
+                MessageStatus.ERROR() == res.getStatus()
+                        && res.getMessage().contains("Fail to insert data source parameter"));
 
         DataSource dataSource = new DataSource();
         dataSource.setCreateUser("hadoop");
-        Mockito.when(dataSourceInfoService.getDataSourceInfoBrief(datasourceId)).thenReturn(dataSource);
-        res = mvcUtils.getMessage(mvcUtils.buildMvcResultPost(url,dsJsonWriter.toString()));
-        assertTrue(MessageStatus.ERROR() == res.getStatus() && res.getMessage().contains("Don't have update permission"));
+        Mockito.when(dataSourceInfoService.getDataSourceInfoBrief(datasourceId))
+                .thenReturn(dataSource);
+        res = mvcUtils.getMessage(mvcUtils.buildMvcResultPost(url, dsJsonWriter.toString()));
+        assertTrue(
+                MessageStatus.ERROR() == res.getStatus()
+                        && res.getMessage().contains("Don't have update permission"));
 
         dataSource.setCreateUser("testUser");
         List<DataSourceParamKeyDefinition> keyDefinitionList = new ArrayList<>();
-        Mockito.when(dataSourceRelateService.getKeyDefinitionsByType(datasourceId)).thenReturn(keyDefinitionList);
-        Mockito.when(dataSourceInfoService.insertDataSourceParameter(keyDefinitionList,datasourceId,connectParams,"testUser","comment")).thenReturn(10l);
-        res = mvcUtils.getMessage(mvcUtils.buildMvcResultPost(url,dsJsonWriter.toString()));
-        assertTrue(MessageStatus.SUCCESS() == res.getStatus() && "10".equals(res.getData().get("version").toString()));
+        Mockito.when(dataSourceRelateService.getKeyDefinitionsByType(datasourceId))
+                .thenReturn(keyDefinitionList);
+        Mockito.when(
+                        dataSourceInfoService.insertDataSourceParameter(
+                                keyDefinitionList,
+                                datasourceId,
+                                connectParams,
+                                "testUser",
+                                "comment"))
+                .thenReturn(10l);
+        res = mvcUtils.getMessage(mvcUtils.buildMvcResultPost(url, dsJsonWriter.toString()));
+        assertTrue(
+                MessageStatus.SUCCESS() == res.getStatus()
+                        && "10".equals(res.getData().get("version").toString()));
     }
 
     @Test
     void getInfoByDataSourceId() throws Exception {
         MvcUtils mvcUtils = new MvcUtils(mockMvc);
         Long dataSourceId = 1l;
-        String url = String.format("/data-source-manager/info/%s",dataSourceId);
+        String url = String.format("/data-source-manager/info/%s", dataSourceId);
         DataSource dataSource = new DataSource();
         dataSource.setId(dataSourceId);
         dataSource.setCreateUser("hadoop");
-        Mockito.when(dataSourceInfoService.getDataSourceInfo(dataSourceId)).thenReturn(null).thenReturn(dataSource);
+        Mockito.when(dataSourceInfoService.getDataSourceInfo(dataSourceId))
+                .thenReturn(null)
+                .thenReturn(dataSource);
         Message res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url));
-        assertTrue(MessageStatus.ERROR()==res.getStatus() && res.getMessage().contains("No Exists The DataSource"));
+        assertTrue(
+                MessageStatus.ERROR() == res.getStatus()
+                        && res.getMessage().contains("No Exists The DataSource"));
 
-        securityFilter.when(()->SecurityFilter.getLoginUsername(isA(HttpServletRequest.class))).thenReturn("testUser").thenReturn("hadoop");
+        securityFilter
+                .when(() -> SecurityFilter.getLoginUsername(isA(HttpServletRequest.class)))
+                .thenReturn("testUser")
+                .thenReturn("hadoop");
         res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url));
-        assertTrue(MessageStatus.ERROR() == res.getStatus() && res.getMessage().contains("Don't have query permission"));
+        assertTrue(
+                MessageStatus.ERROR() == res.getStatus()
+                        && res.getMessage().contains("Don't have query permission"));
 
         res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url));
         assertTrue(MessageStatus.SUCCESS() == res.getStatus());
@@ -224,17 +271,26 @@ class DataSourceCoreRestfulApiTest {
     void getInfoByDataSourceName() throws Exception {
         MvcUtils mvcUtils = new MvcUtils(mockMvc);
         String dataSourceName = "hive-test";
-        String url = String.format("/data-source-manager/info/name/%s",dataSourceName);
+        String url = String.format("/data-source-manager/info/name/%s", dataSourceName);
         DataSource dataSource = new DataSource();
         dataSource.setDataSourceName(dataSourceName);
         dataSource.setCreateUser("hadoop");
-        Mockito.when(dataSourceInfoService.getDataSourceInfo(dataSourceName)).thenReturn(null).thenReturn(dataSource);
+        Mockito.when(dataSourceInfoService.getDataSourceInfo(dataSourceName))
+                .thenReturn(null)
+                .thenReturn(dataSource);
         Message res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url));
-        assertTrue(MessageStatus.ERROR()==res.getStatus() && res.getMessage().contains("No Exists The DataSource"));
+        assertTrue(
+                MessageStatus.ERROR() == res.getStatus()
+                        && res.getMessage().contains("No Exists The DataSource"));
 
-        securityFilter.when(()->SecurityFilter.getLoginUsername(isA(HttpServletRequest.class))).thenReturn("testUser").thenReturn("hadoop");
+        securityFilter
+                .when(() -> SecurityFilter.getLoginUsername(isA(HttpServletRequest.class)))
+                .thenReturn("testUser")
+                .thenReturn("hadoop");
         res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url));
-        assertTrue(MessageStatus.ERROR() == res.getStatus() && res.getMessage().contains("Don't have query permission"));
+        assertTrue(
+                MessageStatus.ERROR() == res.getStatus()
+                        && res.getMessage().contains("Don't have query permission"));
 
         res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url));
         assertTrue(MessageStatus.SUCCESS() == res.getStatus());
@@ -245,18 +301,27 @@ class DataSourceCoreRestfulApiTest {
         MvcUtils mvcUtils = new MvcUtils(mockMvc);
         long dataSourceId = 1l;
         long version = 1001l;
-        String url = String.format("/data-source-manager/info/%s/%s",dataSourceId,version);
+        String url = String.format("/data-source-manager/info/%s/%s", dataSourceId, version);
         DataSource dataSource = new DataSource();
         dataSource.setId(dataSourceId);
         dataSource.setVersionId(version);
         dataSource.setCreateUser("hadoop");
-        Mockito.when(dataSourceInfoService.getDataSourceInfo(dataSourceId,version)).thenReturn(null).thenReturn(dataSource);
+        Mockito.when(dataSourceInfoService.getDataSourceInfo(dataSourceId, version))
+                .thenReturn(null)
+                .thenReturn(dataSource);
         Message res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url));
-        assertTrue(MessageStatus.ERROR()==res.getStatus() && res.getMessage().contains("No Exists The DataSource"));
+        assertTrue(
+                MessageStatus.ERROR() == res.getStatus()
+                        && res.getMessage().contains("No Exists The DataSource"));
 
-        securityFilter.when(()->SecurityFilter.getLoginUsername(isA(HttpServletRequest.class))).thenReturn("testUser").thenReturn("hadoop");
+        securityFilter
+                .when(() -> SecurityFilter.getLoginUsername(isA(HttpServletRequest.class)))
+                .thenReturn("testUser")
+                .thenReturn("hadoop");
         res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url));
-        assertTrue(MessageStatus.ERROR() == res.getStatus() && res.getMessage().contains("Don't have query permission"));
+        assertTrue(
+                MessageStatus.ERROR() == res.getStatus()
+                        && res.getMessage().contains("Don't have query permission"));
 
         res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url));
         assertTrue(MessageStatus.SUCCESS() == res.getStatus());
@@ -266,17 +331,26 @@ class DataSourceCoreRestfulApiTest {
     void getVersionList() throws Exception {
         MvcUtils mvcUtils = new MvcUtils(mockMvc);
         long dataSourceId = 1l;
-        String url = String.format("/data-source-manager/%s/versions",dataSourceId);
+        String url = String.format("/data-source-manager/%s/versions", dataSourceId);
         DataSource dataSource = new DataSource();
         dataSource.setId(dataSourceId);
         dataSource.setCreateUser("hadoop");
-        Mockito.when(dataSourceInfoService.getDataSourceInfoBrief(dataSourceId)).thenReturn(null).thenReturn(dataSource);
+        Mockito.when(dataSourceInfoService.getDataSourceInfoBrief(dataSourceId))
+                .thenReturn(null)
+                .thenReturn(dataSource);
         Message res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url));
-        assertTrue(MessageStatus.ERROR()==res.getStatus() && res.getMessage().contains("No Exists The DataSource"));
+        assertTrue(
+                MessageStatus.ERROR() == res.getStatus()
+                        && res.getMessage().contains("No Exists The DataSource"));
 
-        securityFilter.when(()->SecurityFilter.getLoginUsername(isA(HttpServletRequest.class))).thenReturn("testUser").thenReturn("hadoop");
+        securityFilter
+                .when(() -> SecurityFilter.getLoginUsername(isA(HttpServletRequest.class)))
+                .thenReturn("testUser")
+                .thenReturn("hadoop");
         res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url));
-        assertTrue(MessageStatus.ERROR() == res.getStatus() && res.getMessage().contains("Don't have query permission"));
+        assertTrue(
+                MessageStatus.ERROR() == res.getStatus()
+                        && res.getMessage().contains("Don't have query permission"));
 
         res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url));
         assertTrue(MessageStatus.SUCCESS() == res.getStatus());
@@ -287,47 +361,72 @@ class DataSourceCoreRestfulApiTest {
         MvcUtils mvcUtils = new MvcUtils(mockMvc);
         long dataSourceId = 1l;
         long version = 1001l;
-        String url = String.format("/data-source-manager/publish/%s/%s",dataSourceId,version);
+        String url = String.format("/data-source-manager/publish/%s/%s", dataSourceId, version);
         DataSource dataSource = new DataSource();
         dataSource.setId(dataSourceId);
         dataSource.setVersionId(version);
         dataSource.setCreateUser("hadoop");
-        Mockito.when(dataSourceInfoService.getDataSourceInfoBrief(dataSourceId)).thenReturn(null).thenReturn(dataSource);
+        Mockito.when(dataSourceInfoService.getDataSourceInfoBrief(dataSourceId))
+                .thenReturn(null)
+                .thenReturn(dataSource);
         Message res = mvcUtils.getMessage(mvcUtils.buildMvcResultPost(url));
-        assertTrue(MessageStatus.ERROR()==res.getStatus() && res.getMessage().contains("No Exists The DataSource"));
+        assertTrue(
+                MessageStatus.ERROR() == res.getStatus()
+                        && res.getMessage().contains("No Exists The DataSource"));
 
-        securityFilter.when(()->SecurityFilter.getLoginUsername(isA(HttpServletRequest.class))).thenReturn("testUser").thenReturn("hadoop");
+        securityFilter
+                .when(() -> SecurityFilter.getLoginUsername(isA(HttpServletRequest.class)))
+                .thenReturn("testUser")
+                .thenReturn("hadoop");
         res = mvcUtils.getMessage(mvcUtils.buildMvcResultPost(url));
-        assertTrue(MessageStatus.ERROR() == res.getStatus() && res.getMessage().contains("Don't have publish permission"));
+        assertTrue(
+                MessageStatus.ERROR() == res.getStatus()
+                        && res.getMessage().contains("Don't have publish permission"));
 
-        Mockito.when(dataSourceInfoService.publishByDataSourceId(dataSourceId,version)).thenReturn(0).thenReturn(1);
+        Mockito.when(dataSourceInfoService.publishByDataSourceId(dataSourceId, version))
+                .thenReturn(0)
+                .thenReturn(1);
         res = mvcUtils.getMessage(mvcUtils.buildMvcResultPost(url));
-        assertTrue(MessageStatus.ERROR() == res.getStatus() && res.getMessage().contains("publish error"));
+        assertTrue(
+                MessageStatus.ERROR() == res.getStatus()
+                        && res.getMessage().contains("publish error"));
 
         res = mvcUtils.getMessage(mvcUtils.buildMvcResultPost(url));
         assertTrue(MessageStatus.SUCCESS() == res.getStatus());
-
     }
 
     @Test
     void removeDataSource() throws Exception {
         MvcUtils mvcUtils = new MvcUtils(mockMvc);
         long dataSourceId = 1l;
-        String url = String.format("/data-source-manager/info/%s",dataSourceId);
+        String url = String.format("/data-source-manager/info/%s", dataSourceId);
         DataSource dataSource = new DataSource();
         dataSource.setId(dataSourceId);
         dataSource.setCreateUser("hadoop");
-        Mockito.when(dataSourceInfoService.getDataSourceInfoBrief(dataSourceId)).thenReturn(null).thenReturn(dataSource);
+        Mockito.when(dataSourceInfoService.getDataSourceInfoBrief(dataSourceId))
+                .thenReturn(null)
+                .thenReturn(dataSource);
         Message res = mvcUtils.getMessage(mvcUtils.buildMvcResultDelete(url));
-        assertTrue(MessageStatus.ERROR()==res.getStatus() && res.getMessage().contains("No Exists The DataSource"));
+        assertTrue(
+                MessageStatus.ERROR() == res.getStatus()
+                        && res.getMessage().contains("No Exists The DataSource"));
 
-        securityFilter.when(()->SecurityFilter.getLoginUsername(isA(HttpServletRequest.class))).thenReturn("testUser").thenReturn("hadoop");
+        securityFilter
+                .when(() -> SecurityFilter.getLoginUsername(isA(HttpServletRequest.class)))
+                .thenReturn("testUser")
+                .thenReturn("hadoop");
         res = mvcUtils.getMessage(mvcUtils.buildMvcResultDelete(url));
-        assertTrue(MessageStatus.ERROR() == res.getStatus() && res.getMessage().contains("Don't have delete permission"));
+        assertTrue(
+                MessageStatus.ERROR() == res.getStatus()
+                        && res.getMessage().contains("Don't have delete permission"));
 
-        Mockito.when(dataSourceInfoService.removeDataSourceInfo(dataSourceId,"")).thenReturn(-1l).thenReturn(1l);
+        Mockito.when(dataSourceInfoService.removeDataSourceInfo(dataSourceId, ""))
+                .thenReturn(-1l)
+                .thenReturn(1l);
         res = mvcUtils.getMessage(mvcUtils.buildMvcResultDelete(url));
-        assertTrue(MessageStatus.ERROR() == res.getStatus() && res.getMessage().contains("Fail to remove data source"));
+        assertTrue(
+                MessageStatus.ERROR() == res.getStatus()
+                        && res.getMessage().contains("Fail to remove data source"));
 
         res = mvcUtils.getMessage(mvcUtils.buildMvcResultDelete(url));
         assertTrue(MessageStatus.SUCCESS() == res.getStatus());
@@ -337,21 +436,34 @@ class DataSourceCoreRestfulApiTest {
     void expireDataSource() throws Exception {
         MvcUtils mvcUtils = new MvcUtils(mockMvc);
         long dataSourceId = 1l;
-        String url = String.format("/data-source-manager/info/%s/expire",dataSourceId);
+        String url = String.format("/data-source-manager/info/%s/expire", dataSourceId);
         DataSource dataSource = new DataSource();
         dataSource.setId(dataSourceId);
         dataSource.setCreateUser("hadoop");
-        Mockito.when(dataSourceInfoService.getDataSourceInfoBrief(dataSourceId)).thenReturn(null).thenReturn(dataSource);
+        Mockito.when(dataSourceInfoService.getDataSourceInfoBrief(dataSourceId))
+                .thenReturn(null)
+                .thenReturn(dataSource);
         Message res = mvcUtils.getMessage(mvcUtils.buildMvcResultPut(url));
-        assertTrue(MessageStatus.ERROR()==res.getStatus() && res.getMessage().contains("No Exists The DataSource"));
+        assertTrue(
+                MessageStatus.ERROR() == res.getStatus()
+                        && res.getMessage().contains("No Exists The DataSource"));
 
-        securityFilter.when(()->SecurityFilter.getLoginUsername(isA(HttpServletRequest.class))).thenReturn("testUser").thenReturn("hadoop");
+        securityFilter
+                .when(() -> SecurityFilter.getLoginUsername(isA(HttpServletRequest.class)))
+                .thenReturn("testUser")
+                .thenReturn("hadoop");
         res = mvcUtils.getMessage(mvcUtils.buildMvcResultPut(url));
-        assertTrue(MessageStatus.ERROR() == res.getStatus() && res.getMessage().contains("Don't have operation permission"));
+        assertTrue(
+                MessageStatus.ERROR() == res.getStatus()
+                        && res.getMessage().contains("Don't have operation permission"));
 
-        Mockito.when(dataSourceInfoService.expireDataSource(dataSourceId)).thenReturn(-1l).thenReturn(1l);
+        Mockito.when(dataSourceInfoService.expireDataSource(dataSourceId))
+                .thenReturn(-1l)
+                .thenReturn(1l);
         res = mvcUtils.getMessage(mvcUtils.buildMvcResultPut(url));
-        assertTrue(MessageStatus.ERROR() == res.getStatus() && res.getMessage().contains("Fail to expire data source"));
+        assertTrue(
+                MessageStatus.ERROR() == res.getStatus()
+                        && res.getMessage().contains("Fail to expire data source"));
 
         res = mvcUtils.getMessage(mvcUtils.buildMvcResultPut(url));
         assertTrue(MessageStatus.SUCCESS() == res.getStatus());
@@ -361,17 +473,26 @@ class DataSourceCoreRestfulApiTest {
     void testGetConnectParamsById() throws Exception {
         MvcUtils mvcUtils = new MvcUtils(mockMvc);
         long dataSourceId = 1l;
-        String url = String.format("/data-source-manager/%s/connect_params",dataSourceId);
+        String url = String.format("/data-source-manager/%s/connect_params", dataSourceId);
         DataSource dataSource = new DataSource();
         dataSource.setId(dataSourceId);
         dataSource.setCreateUser("hadoop");
-        Mockito.when(dataSourceInfoService.getDataSourceInfoForConnect(dataSourceId)).thenReturn(null).thenReturn(dataSource);
+        Mockito.when(dataSourceInfoService.getDataSourceInfoForConnect(dataSourceId))
+                .thenReturn(null)
+                .thenReturn(dataSource);
         Message res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url));
-        assertTrue(MessageStatus.ERROR()==res.getStatus() && res.getMessage().contains("No Exists The DataSource"));
+        assertTrue(
+                MessageStatus.ERROR() == res.getStatus()
+                        && res.getMessage().contains("No Exists The DataSource"));
 
-        securityFilter.when(()->SecurityFilter.getLoginUsername(isA(HttpServletRequest.class))).thenReturn("testUser").thenReturn("hadoop");
+        securityFilter
+                .when(() -> SecurityFilter.getLoginUsername(isA(HttpServletRequest.class)))
+                .thenReturn("testUser")
+                .thenReturn("hadoop");
         res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url));
-        assertTrue(MessageStatus.ERROR() == res.getStatus() && res.getMessage().contains("Don't have query permission"));
+        assertTrue(
+                MessageStatus.ERROR() == res.getStatus()
+                        && res.getMessage().contains("Don't have query permission"));
 
         res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url));
         assertTrue(MessageStatus.SUCCESS() == res.getStatus());
@@ -381,17 +502,26 @@ class DataSourceCoreRestfulApiTest {
     void testGetConnectParamsByName() throws Exception {
         MvcUtils mvcUtils = new MvcUtils(mockMvc);
         String dataSourceName = "hive-test";
-        String url = String.format("/data-source-manager/name/%s/connect_params",dataSourceName);
+        String url = String.format("/data-source-manager/name/%s/connect_params", dataSourceName);
         DataSource dataSource = new DataSource();
         dataSource.setDataSourceName(dataSourceName);
         dataSource.setCreateUser("hadoop");
-        Mockito.when(dataSourceInfoService.getDataSourceInfoForConnect(dataSourceName)).thenReturn(null).thenReturn(dataSource);
+        Mockito.when(dataSourceInfoService.getDataSourceInfoForConnect(dataSourceName))
+                .thenReturn(null)
+                .thenReturn(dataSource);
         Message res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url));
-        assertTrue(MessageStatus.ERROR()==res.getStatus() && res.getMessage().contains("No Exists The DataSource"));
+        assertTrue(
+                MessageStatus.ERROR() == res.getStatus()
+                        && res.getMessage().contains("No Exists The DataSource"));
 
-        securityFilter.when(()->SecurityFilter.getLoginUsername(isA(HttpServletRequest.class))).thenReturn("testUser").thenReturn("hadoop");
+        securityFilter
+                .when(() -> SecurityFilter.getLoginUsername(isA(HttpServletRequest.class)))
+                .thenReturn("testUser")
+                .thenReturn("hadoop");
         res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url));
-        assertTrue(MessageStatus.ERROR() == res.getStatus() && res.getMessage().contains("Don't have query permission"));
+        assertTrue(
+                MessageStatus.ERROR() == res.getStatus()
+                        && res.getMessage().contains("Don't have query permission"));
 
         res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url));
         assertTrue(MessageStatus.SUCCESS() == res.getStatus());
@@ -402,7 +532,7 @@ class DataSourceCoreRestfulApiTest {
         MvcUtils mvcUtils = new MvcUtils(mockMvc);
         long dataSourceId = 1l;
         long version = 1001l;
-        String url = String.format("/data-source-manager/%s/%s/op/connect",dataSourceId,version);
+        String url = String.format("/data-source-manager/%s/%s/op/connect", dataSourceId, version);
         DataSource dataSource = new DataSource();
         dataSource.setId(dataSourceId);
         dataSource.setVersionId(version);
@@ -410,34 +540,51 @@ class DataSourceCoreRestfulApiTest {
         DataSourceType dataSourceType = new DataSourceType();
         dataSourceType.setName("hive");
         dataSource.setDataSourceType(dataSourceType);
-        securityFilter.when(()->SecurityFilter.getLoginUsername(isA(HttpServletRequest.class))).thenReturn("testUser","testUser","testUser","hadoop");
-        Mockito.when(dataSourceInfoService.getDataSourceInfoForConnect(dataSourceId,version)).thenReturn(null).thenReturn(dataSource);
+        securityFilter
+                .when(() -> SecurityFilter.getLoginUsername(isA(HttpServletRequest.class)))
+                .thenReturn("testUser", "testUser", "testUser", "hadoop");
+        Mockito.when(dataSourceInfoService.getDataSourceInfoForConnect(dataSourceId, version))
+                .thenReturn(null)
+                .thenReturn(dataSource);
         Message res = mvcUtils.getMessage(mvcUtils.buildMvcResultPut(url));
-        assertTrue(MessageStatus.ERROR()==res.getStatus() && res.getMessage().contains("No Exists The DataSource"));
+        assertTrue(
+                MessageStatus.ERROR() == res.getStatus()
+                        && res.getMessage().contains("No Exists The DataSource"));
 
         res = mvcUtils.getMessage(mvcUtils.buildMvcResultPut(url));
-        assertTrue(MessageStatus.ERROR() == res.getStatus() && res.getMessage().contains("Don't have operation permission"));
+        assertTrue(
+                MessageStatus.ERROR() == res.getStatus()
+                        && res.getMessage().contains("Don't have operation permission"));
 
-        Mockito.doNothing().when(metadataOperateService).doRemoteConnect("metadata-manager",dataSourceType.getName(),"hadoop",new HashMap<String,Object>());
+        Mockito.doNothing()
+                .when(metadataOperateService)
+                .doRemoteConnect(
+                        "metadata-manager",
+                        dataSourceType.getName(),
+                        "hadoop",
+                        new HashMap<String, Object>());
         res = mvcUtils.getMessage(mvcUtils.buildMvcResultPut(url));
-        assertTrue(MessageStatus.SUCCESS() == res.getStatus() );
+        assertTrue(MessageStatus.SUCCESS() == res.getStatus());
     }
 
     @Test
     void queryDataSource() throws Exception {
         MvcUtils mvcUtils = new MvcUtils(mockMvc);
         String url = String.format("/data-source-manager/info");
-        MultiValueMap<String,String> params = new LinkedMultiValueMap<>();
-        params.add("currentPage","10");
-        params.add("pageSize","20");
-        securityFilter.when(()->SecurityFilter.getLoginUsername(isA(HttpServletRequest.class))).thenReturn("testUser");
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("currentPage", "10");
+        params.add("pageSize", "20");
+        securityFilter
+                .when(() -> SecurityFilter.getLoginUsername(isA(HttpServletRequest.class)))
+                .thenReturn("testUser");
 
         DataSourceVo dataSourceVo = new DataSourceVo();
         PageInfo<DataSource> pageInfo = new PageInfo<>();
         pageInfo.setTotal(10l);
         Mockito.when(dataSourceInfoService.queryDataSourceInfoPage(any())).thenReturn(pageInfo);
-        Message res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url,params));
-        assertTrue(MessageStatus.SUCCESS() == res.getStatus() && "10".equals(res.getData().get("totalPage").toString()));
-
+        Message res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
+        assertTrue(
+                MessageStatus.SUCCESS() == res.getStatus()
+                        && "10".equals(res.getData().get("totalPage").toString()));
     }
 }

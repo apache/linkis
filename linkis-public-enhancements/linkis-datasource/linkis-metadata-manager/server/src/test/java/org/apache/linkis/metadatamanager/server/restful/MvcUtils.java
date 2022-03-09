@@ -19,6 +19,7 @@ package org.apache.linkis.metadatamanager.server.restful;
 
 import org.apache.linkis.common.utils.JsonUtils;
 import org.apache.linkis.server.Message;
+
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -44,7 +45,8 @@ public class MvcUtils {
         return mvcResult;
     }
 
-    public MvcResult buildMvcResultGet(String url, MultiValueMap<String,String> params) throws Exception {
+    public MvcResult buildMvcResultGet(String url, MultiValueMap<String, String> params)
+            throws Exception {
         MvcResult mvcResult =
                 mockMvc.perform(get(url).params(params))
                         .andExpect(status().isOk())
@@ -53,7 +55,7 @@ public class MvcUtils {
         return mvcResult;
     }
 
-    public MvcResult buildMvcResultPost(String url,String json) throws Exception {
+    public MvcResult buildMvcResultPost(String url, String json) throws Exception {
         MvcResult mvcResult =
                 mockMvc.perform(post(url).contentType(MediaType.APPLICATION_JSON).content(json))
                         .andExpect(status().isOk())
@@ -61,6 +63,7 @@ public class MvcUtils {
                         .andReturn();
         return mvcResult;
     }
+
     public MvcResult buildMvcResultPost(String url) throws Exception {
         MvcResult mvcResult =
                 mockMvc.perform(post(url))
@@ -78,6 +81,7 @@ public class MvcUtils {
                         .andReturn();
         return mvcResult;
     }
+
     public MvcResult buildMvcResultPut(String url) throws Exception {
         MvcResult mvcResult =
                 mockMvc.perform(put(url))
@@ -102,5 +106,4 @@ public class MvcUtils {
                         .readValue(mvcResult.getResponse().getContentAsString(), Message.class);
         return res;
     }
-
 }

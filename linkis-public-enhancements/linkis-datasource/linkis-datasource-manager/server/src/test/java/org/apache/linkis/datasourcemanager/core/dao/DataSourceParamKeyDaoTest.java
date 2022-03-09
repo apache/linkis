@@ -17,25 +17,21 @@
 
 package org.apache.linkis.datasourcemanager.core.dao;
 
-import org.apache.linkis.datasourcemanager.common.domain.DataSourceEnv;
 import org.apache.linkis.datasourcemanager.common.domain.DataSourceParamKeyDefinition;
-import org.apache.linkis.datasourcemanager.core.vo.DataSourceEnvVo;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Date;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-
-class DataSourceParamKeyDaoTest extends BaseDaoTest{
+class DataSourceParamKeyDaoTest extends BaseDaoTest {
     private static final Logger logger = LoggerFactory.getLogger(DataSourceParamKeyDaoTest.class);
 
     @Autowired DataSourceParamKeyDao dataSourceParamKeyDao;
@@ -45,16 +41,17 @@ class DataSourceParamKeyDaoTest extends BaseDaoTest{
     protected static void afterAll() throws Exception {}
 
     @Test
-    void testListByDataSourceType(){
-        List<DataSourceParamKeyDefinition> dataSourceParamKeyDefinitions = dataSourceParamKeyDao.listByDataSourceType(1l);
-        assertTrue(dataSourceParamKeyDefinitions.size()==2);
+    void testListByDataSourceType() {
+        List<DataSourceParamKeyDefinition> dataSourceParamKeyDefinitions =
+                dataSourceParamKeyDao.listByDataSourceType(1l);
+        assertTrue(dataSourceParamKeyDefinitions.size() == 2);
     }
 
     @Test
-    void testListByDataSourceTypeAndScope(){
-        List<DataSourceParamKeyDefinition> dataSourceParamKeyDefinitions = dataSourceParamKeyDao.listByDataSourceTypeAndScope(1l,DataSourceParamKeyDefinition.Scope.ENV);
-        assertTrue(dataSourceParamKeyDefinitions.size()==1);
+    void testListByDataSourceTypeAndScope() {
+        List<DataSourceParamKeyDefinition> dataSourceParamKeyDefinitions =
+                dataSourceParamKeyDao.listByDataSourceTypeAndScope(
+                        1l, DataSourceParamKeyDefinition.Scope.ENV);
+        assertTrue(dataSourceParamKeyDefinitions.size() == 1);
     }
-
-
 }

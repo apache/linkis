@@ -51,7 +51,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.*;
 
 @RestController
@@ -231,9 +230,8 @@ public class DataSourceCoreRestfulApi {
         return RestfulApiHelper.doAndResponse(
                 () -> {
                     DataSource dataSource = dataSourceInfoService.getDataSourceInfo(dataSourceId);
-                    if(dataSource == null){
-                        return Message.error(
-                                "No Exists The DataSource [不存在改数据源]");
+                    if (dataSource == null) {
+                        return Message.error("No Exists The DataSource [不存在改数据源]");
                     }
                     if (!AuthContext.hasPermission(dataSource, request)) {
                         return Message.error(
@@ -241,9 +239,9 @@ public class DataSourceCoreRestfulApi {
                     }
                     // Decrypt
                     RestfulApiHelper.decryptPasswordKey(
-                                dataSourceRelateService.getKeyDefinitionsByType(
-                                        dataSource.getDataSourceTypeId()),
-                                dataSource.getConnectParams());
+                            dataSourceRelateService.getKeyDefinitionsByType(
+                                    dataSource.getDataSourceTypeId()),
+                            dataSource.getConnectParams());
                     return Message.ok().data("info", dataSource);
                 },
                 "Fail to access data source[获取数据源信息失败]");
@@ -257,9 +255,8 @@ public class DataSourceCoreRestfulApi {
                 () -> {
                     DataSource dataSource = dataSourceInfoService.getDataSourceInfo(dataSourceName);
 
-                    if(dataSource == null){
-                        return Message.error(
-                                "No Exists The DataSource [不存在改数据源]");
+                    if (dataSource == null) {
+                        return Message.error("No Exists The DataSource [不存在改数据源]");
                     }
 
                     if (!AuthContext.hasPermission(dataSource, request)) {
@@ -268,9 +265,9 @@ public class DataSourceCoreRestfulApi {
                     }
                     // Decrypt
                     RestfulApiHelper.decryptPasswordKey(
-                                dataSourceRelateService.getKeyDefinitionsByType(
-                                        dataSource.getDataSourceTypeId()),
-                                dataSource.getConnectParams());
+                            dataSourceRelateService.getKeyDefinitionsByType(
+                                    dataSource.getDataSourceTypeId()),
+                            dataSource.getConnectParams());
 
                     return Message.ok().data("info", dataSource);
                 },
@@ -294,9 +291,8 @@ public class DataSourceCoreRestfulApi {
                     DataSource dataSource =
                             dataSourceInfoService.getDataSourceInfo(dataSourceId, version);
 
-                    if(dataSource == null){
-                        return Message.error(
-                                "No Exists The DataSource [不存在改数据源]");
+                    if (dataSource == null) {
+                        return Message.error("No Exists The DataSource [不存在改数据源]");
                     }
 
                     if (!AuthContext.hasPermission(dataSource, request)) {
@@ -328,9 +324,8 @@ public class DataSourceCoreRestfulApi {
                     DataSource dataSource =
                             dataSourceInfoService.getDataSourceInfoBrief(dataSourceId);
 
-                    if(dataSource == null){
-                        return Message.error(
-                                "No Exists The DataSource [不存在改数据源]");
+                    if (dataSource == null) {
+                        return Message.error("No Exists The DataSource [不存在改数据源]");
                     }
 
                     if (!AuthContext.hasPermission(dataSource, request)) {
@@ -365,9 +360,8 @@ public class DataSourceCoreRestfulApi {
                     DataSource dataSource =
                             dataSourceInfoService.getDataSourceInfoBrief(dataSourceId);
 
-                    if(dataSource == null){
-                        return Message.error(
-                                "No Exists The DataSource [不存在改数据源]");
+                    if (dataSource == null) {
+                        return Message.error("No Exists The DataSource [不存在改数据源]");
                     }
 
                     if (!AuthContext.hasPermission(dataSource, request)) {
@@ -399,9 +393,8 @@ public class DataSourceCoreRestfulApi {
                     DataSource dataSource =
                             dataSourceInfoService.getDataSourceInfoBrief(dataSourceId);
 
-                    if(dataSource == null){
-                        return Message.error(
-                                "No Exists The DataSource [不存在改数据源]");
+                    if (dataSource == null) {
+                        return Message.error("No Exists The DataSource [不存在改数据源]");
                     }
 
                     if (!AuthContext.hasPermission(dataSource, request)) {
@@ -427,9 +420,8 @@ public class DataSourceCoreRestfulApi {
                     DataSource dataSource =
                             dataSourceInfoService.getDataSourceInfoBrief(dataSourceId);
 
-                    if(dataSource == null){
-                        return Message.error(
-                                "No Exists The DataSource [不存在改数据源]");
+                    if (dataSource == null) {
+                        return Message.error("No Exists The DataSource [不存在改数据源]");
                     }
 
                     if (!AuthContext.hasPermission(dataSource, request)) {
@@ -461,9 +453,8 @@ public class DataSourceCoreRestfulApi {
                     DataSource dataSource =
                             dataSourceInfoService.getDataSourceInfoForConnect(dataSourceId);
 
-                    if(dataSource == null){
-                        return Message.error(
-                                "No Exists The DataSource [不存在改数据源]");
+                    if (dataSource == null) {
+                        return Message.error("No Exists The DataSource [不存在改数据源]");
                     }
 
                     if (!AuthContext.hasPermission(dataSource, req)) {
@@ -489,9 +480,8 @@ public class DataSourceCoreRestfulApi {
                     DataSource dataSource =
                             dataSourceInfoService.getDataSourceInfoForConnect(dataSourceName);
 
-                    if(dataSource == null){
-                        return Message.error(
-                                "No Exists The DataSource [不存在改数据源]");
+                    if (dataSource == null) {
+                        return Message.error("No Exists The DataSource [不存在改数据源]");
                     }
 
                     if (!AuthContext.hasPermission(dataSource, req)) {
@@ -504,7 +494,8 @@ public class DataSourceCoreRestfulApi {
                                     dataSource.getDataSourceTypeId()),
                             connectParams);
                     return Message.ok().data("connectParams", connectParams);
-                }, "Fail to connect data source[连接数据源失败]");
+                },
+                "Fail to connect data source[连接数据源失败]");
     }
 
     @RequestMapping(value = "/{data_source_id}/{version}/op/connect", method = RequestMethod.PUT)
@@ -518,9 +509,8 @@ public class DataSourceCoreRestfulApi {
                     DataSource dataSource =
                             dataSourceInfoService.getDataSourceInfoForConnect(
                                     dataSourceId, version);
-                    if(dataSource == null){
-                        return Message.error(
-                                "No Exists The DataSource [不存在改数据源]");
+                    if (dataSource == null) {
+                        return Message.error("No Exists The DataSource [不存在改数据源]");
                     }
 
                     if (!AuthContext.hasPermission(dataSource, req)) {

@@ -23,6 +23,7 @@ import org.apache.linkis.bml.protocol.BmlUpdateResponse;
 import org.apache.linkis.bml.protocol.BmlUploadResponse;
 import org.apache.linkis.common.exception.ErrorException;
 import org.apache.linkis.datasourcemanager.core.service.impl.BmlAppServiceImpl;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -47,22 +48,23 @@ public class BmlAppServiceTest {
     @Test
     void testClientUploadResource() throws ErrorException {
         InputStream inputStream = Mockito.mock(FileInputStream.class);
-        BmlUploadResponse bmlUploadResponse = new BmlUploadResponse(true,"10001","1");
-        Mockito.when(client.uploadResource("test", "/test/a.txt", inputStream)).thenReturn(bmlUploadResponse);
+        BmlUploadResponse bmlUploadResponse = new BmlUploadResponse(true, "10001", "1");
+        Mockito.when(client.uploadResource("test", "/test/a.txt", inputStream))
+                .thenReturn(bmlUploadResponse);
         String res = bmlAppService.clientUploadResource("test", "/test/a.txt", inputStream);
         assertTrue(res.equals("10001"));
     }
 
     @Test
-    void testClientRemoveResource(){
+    void testClientRemoveResource() {
         String user = "test";
         String resourceId = "10001";
         BmlDeleteResponse bmlDeleteResponse = new BmlDeleteResponse(true);
         Mockito.when(client.deleteResource(user, resourceId)).thenReturn(bmlDeleteResponse);
         try {
-            bmlAppService.clientRemoveResource(user,resourceId);
+            bmlAppService.clientRemoveResource(user, resourceId);
         } catch (ErrorException e) {
-            logger.error("bmlAppService clientRemoveResource error:"+e.getMessage());
+            logger.error("bmlAppService clientRemoveResource error:" + e.getMessage());
         }
     }
 
@@ -72,8 +74,9 @@ public class BmlAppServiceTest {
         String resourceId = "10001";
         String version = "2";
         InputStream inputStream = Mockito.mock(FileInputStream.class);
-        BmlUpdateResponse bmlUpdateResponse = new BmlUpdateResponse(true,resourceId,version);
-        Mockito.when(client.updateResource(userName, resourceId, "filename",inputStream)).thenReturn(bmlUpdateResponse);
+        BmlUpdateResponse bmlUpdateResponse = new BmlUpdateResponse(true, resourceId, version);
+        Mockito.when(client.updateResource(userName, resourceId, "filename", inputStream))
+                .thenReturn(bmlUpdateResponse);
         String res = bmlAppService.clientUpdateResource(userName, resourceId, inputStream);
         assertTrue(version.equals(res));
     }

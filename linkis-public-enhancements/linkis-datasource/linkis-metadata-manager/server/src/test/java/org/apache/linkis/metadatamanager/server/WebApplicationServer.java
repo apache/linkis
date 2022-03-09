@@ -24,5 +24,4 @@ import org.springframework.context.annotation.ComponentScan;
 @EnableAutoConfiguration
 @ServletComponentScan
 @ComponentScan
-public class WebApplicationServer {
-}
+public class WebApplicationServer {}

@@ -28,7 +28,7 @@
         <result property="createUser" column="create_user"/>
         <result property="modifyTime" column="modify_time"/>
         <result property="modifyUser" column="modify_user"/>
-        <result property="dataSourceTypeId" column="data_source_type_id"/>
+        <result property="dataSourceTypeId" column="datasource_type_id"/>
         <association property="dataSourceType" javaType="DataSourceType">
             <result property="icon" column="icon"/>
             <result property="name" column="name"/>
@@ -36,7 +36,7 @@
     </resultMap>
 
     <sql id="data_source_env_insert_columns">
-        `env_name`, `env_desc`, `parameter`, `create_time`,
+        `env_name`, `env_desc`, `datasource_type_id` ,`parameter`, `create_time`,
         `create_user`, `modify_time`, `modify_user`
     </sql>
 
@@ -51,12 +51,12 @@
             FROM `linkis_datasource_env` e WHERE id = #{dataSourceEnvId};]]>
     </select>
 
-    <insert id="insertOne" useGeneratedKeys="true" keyProperty="id" parameterType="DataSourceEnv">
-        <![CDATA[INSERT INTO `linkis_datasource_env`(]]>
+    <insert id="insertOne" useGeneratedKeys="true" keyProperty="id" parameterType="DataSourceType">
+        INSERT INTO `linkis_datasource_env`(
         <include refid="data_source_env_insert_columns"/>
-        <![CDATA[) VALUES(#{envName}, #{envDesc,jdbcType=VARCHAR},
-         #{parameter}, #{createTime}, #{createUser},
-          #{modifyTime,jdbcType=DATE}, #{modifyUser,jdbcType=VARCHAR});]]>
+        ) VALUES(#{envName}, #{envDesc},#{dataSourceTypeId},
+        #{parameter}, #{createTime,jdbcType=TIMESTAMP}, #{createUser},
+        #{modifyTime,jdbcType=TIMESTAMP}, #{modifyUser})
     </insert>
 
     <select id="listByTypeId" resultMap="dataSourceEnvMap">
@@ -88,8 +88,7 @@
             <![CDATA[`env_name` = #{envName},]]>
             <![CDATA[`env_desc` = #{envDesc,jdbcType=VARCHAR},]]>
             <![CDATA[`parameter` = #{parameter},]]>
-            <![CDATA[`parameter` = #{parameter},]]>
-            <![CDATA[`modify_time` = #{modifyTime,jdbcType=DATE},]]>
+            <![CDATA[`modify_time` = #{modifyTime,jdbcType=TIMESTAMP},]]>
             <![CDATA[`modify_user` = #{modifyUser,jdbcType=VARCHAR}]]>
         </set>
         <where>

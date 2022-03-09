@@ -54,6 +54,7 @@ public class EntranceExecutionJob extends EntranceJob implements LogHandler {
 
     private LogReader logReader;
     private LogWriter logWriter;
+    private Object logWriterLocker = new Object();
     private WebSocketCacheLogReader webSocketCacheLogReader;
     private WebSocketLogWriter webSocketLogWriter;
     private static final Logger logger = LoggerFactory.getLogger(EntranceExecutionJob.class);
@@ -62,6 +63,10 @@ public class EntranceExecutionJob extends EntranceJob implements LogHandler {
 
     public EntranceExecutionJob(PersistenceManager persistenceManager) {
         this.persistenceManager = persistenceManager;
+    }
+
+    public Object getLogWriterLocker() {
+        return logWriterLocker;
     }
 
     @Override

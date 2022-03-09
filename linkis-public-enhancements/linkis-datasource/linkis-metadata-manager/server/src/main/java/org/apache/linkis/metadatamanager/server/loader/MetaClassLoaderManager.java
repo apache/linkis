@@ -52,7 +52,8 @@ public class MetaClassLoaderManager {
     public static CommonVars<String> LIB_DIR =
             CommonVars.apply(
                     "wds.linkis.server.mdm.service.lib.dir",
-                    Configuration.getLinkisHome()+"/lib/linkis-public-enhancements/linkis-ps-metadatamanager/service");
+                    Configuration.getLinkisHome()
+                            + "/lib/linkis-public-enhancements/linkis-ps-metadatamanager/service");
     public static CommonVars<Integer> INSTANCE_EXPIRE_TIME =
             CommonVars.apply("wds.linkis.server.mdm.service.instance.expire-in-seconds", 60);
 
@@ -86,15 +87,13 @@ public class MetaClassLoaderManager {
                                     return instance;
                                 }
                                 String lib = LIB_DIR.getValue();
-                                String stdLib =
-                                        lib.endsWith("/")
-                                                ? lib.replaceAll(".$", "")
-                                                : lib;
+                                String stdLib = lib.endsWith("/") ? lib.replaceAll(".$", "") : lib;
                                 String componentLib = stdLib + "/" + dsType;
                                 LOG.info(
                                         "Start to load/reload meta instance of data source type: ["
                                                 + dsType
-                                                + "] from library dir:"+componentLib );
+                                                + "] from library dir:"
+                                                + componentLib);
                                 ClassLoader parentClassLoader =
                                         MetaClassLoaderManager.class.getClassLoader();
                                 ClassLoader metaClassLoader =

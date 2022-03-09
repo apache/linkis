@@ -17,7 +17,6 @@
 
 package org.apache.linkis.datasourcemanager.core.service;
 
-import com.github.pagehelper.PageInfo;
 import org.apache.linkis.common.exception.ErrorException;
 import org.apache.linkis.datasourcemanager.common.domain.DataSource;
 import org.apache.linkis.datasourcemanager.common.domain.DataSourceEnv;
@@ -25,7 +24,8 @@ import org.apache.linkis.datasourcemanager.common.domain.DataSourceParamKeyDefin
 import org.apache.linkis.datasourcemanager.core.dao.*;
 import org.apache.linkis.datasourcemanager.core.service.impl.DataSourceInfoServiceImpl;
 import org.apache.linkis.datasourcemanager.core.vo.DataSourceVo;
-import org.junit.jupiter.api.Assertions;
+
+import com.github.pagehelper.PageInfo;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -38,32 +38,24 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.core.Is.is;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MockitoExtension.class)
 public class DataSourceInfoServiceTest {
     private static final Logger logger = LoggerFactory.getLogger(DataSourceInfoServiceTest.class);
-    @InjectMocks
-    DataSourceInfoServiceImpl dataSourceInfoService;
+    @InjectMocks DataSourceInfoServiceImpl dataSourceInfoService;
 
-    @Mock
-    DataSourceDao dataSourceDao;
+    @Mock DataSourceDao dataSourceDao;
 
-    @Mock
-    DataSourceEnvDao dataSourceEnvDao;
+    @Mock DataSourceEnvDao dataSourceEnvDao;
 
-    @Mock
-    DataSourceVersionDao dataSourceVersionDao;
+    @Mock DataSourceVersionDao dataSourceVersionDao;
 
-    @Mock
-    DataSourceTypeEnvDao dataSourceTypeEnvDao;
+    @Mock DataSourceTypeEnvDao dataSourceTypeEnvDao;
 
-    @Mock
-    DataSourceParamKeyDao dataSourceParamKeyDao;
+    @Mock DataSourceParamKeyDao dataSourceParamKeyDao;
 
-    private DataSource buildDataSource(){
+    private DataSource buildDataSource() {
         DataSource dataSource = new DataSource();
         dataSource.setId(1l);
         dataSource.setDataSourceName("unitTest");
@@ -86,129 +78,171 @@ public class DataSourceInfoServiceTest {
         DataSource dataSource = buildDataSource();
         Mockito.doNothing().when(dataSourceDao).insertOne(dataSource);
         dataSourceInfoService.saveDataSourceInfo(dataSource);
-        Mockito.verify(dataSourceDao,Mockito.times(1)).insertOne(dataSource);
+        Mockito.verify(dataSourceDao, Mockito.times(1)).insertOne(dataSource);
     }
 
     @Test
-    void testAddEnvParamsToDataSource(){
+    void testAddEnvParamsToDataSource() {
         DataSource dataSource = buildDataSource();
         Map<String, Object> envParamMap = new HashMap<>();
-        envParamMap.put("a","b");
+        envParamMap.put("a", "b");
         dataSource.setConnectParams(envParamMap);
         Long dataSourceEnvId = 1l;
         DataSourceEnv dataSourceEnv = new DataSourceEnv();
         Map<String, Object> envAllParamMap = new HashMap<>();
-        envAllParamMap.put("c","d");
+        envAllParamMap.put("c", "d");
         dataSourceEnv.setConnectParams(envAllParamMap);
         envAllParamMap.putAll(envAllParamMap);
         Mockito.when(dataSourceEnvDao.selectOneDetail(dataSourceEnvId)).thenReturn(dataSourceEnv);
-        dataSourceInfoService.addEnvParamsToDataSource(dataSourceEnvId,dataSource);
+        dataSourceInfoService.addEnvParamsToDataSource(dataSourceEnvId, dataSource);
         assertTrue(envAllParamMap.equals(dataSource.getConnectParams()));
     }
 
     @Test
-    void testGetDataSourceInfo(){
+    void testGetDataSourceInfo() {
         DataSource dataSource = buildDataSource();
         Mockito.when(dataSourceDao.selectOneDetail(dataSource.getId())).thenReturn(dataSource);
-        Mockito.when(dataSourceVersionDao.selectOneVersion(dataSource.getId(),dataSource.getVersionId())).thenReturn("a:b");
+        Mockito.when(
+                        dataSourceVersionDao.selectOneVersion(
+                                dataSource.getId(), dataSource.getVersionId()))
+                .thenReturn("a:b");
         dataSource.setParameter("a:b");
-        DataSource actuallyDataSource= dataSourceInfoService.getDataSourceInfo(dataSource.getId());
+        DataSource actuallyDataSource = dataSourceInfoService.getDataSourceInfo(dataSource.getId());
         assertThat(actuallyDataSource).usingRecursiveComparison().isEqualTo(dataSource);
     }
 
     @Test
-    void testGetDataSourceInfoByName(){
+    void testGetDataSourceInfoByName() {
         DataSource dataSource = buildDataSource();
-        Mockito.when(dataSourceDao.selectOneDetailByName(dataSource.getDataSourceName())).thenReturn(dataSource);
-        Mockito.when(dataSourceVersionDao.selectOneVersion(dataSource.getId(),dataSource.getVersionId())).thenReturn("a:b");
+        Mockito.when(dataSourceDao.selectOneDetailByName(dataSource.getDataSourceName()))
+                .thenReturn(dataSource);
+        Mockito.when(
+                        dataSourceVersionDao.selectOneVersion(
+                                dataSource.getId(), dataSource.getVersionId()))
+                .thenReturn("a:b");
         dataSource.setParameter("a:b");
-        DataSource actuallyDataSource= dataSourceInfoService.getDataSourceInfo(dataSource.getDataSourceName());
+        DataSource actuallyDataSource =
+                dataSourceInfoService.getDataSourceInfo(dataSource.getDataSourceName());
         assertThat(actuallyDataSource).usingRecursiveComparison().isEqualTo(dataSource);
     }
 
     @Test
-    void testGetDataSourceInfoByIdAndVerId(){
+    void testGetDataSourceInfoByIdAndVerId() {
         DataSource dataSource = buildDataSource();
         Mockito.when(dataSourceDao.selectOneDetail(dataSource.getId())).thenReturn(dataSource);
-        Mockito.when(dataSourceVersionDao.selectOneVersion(dataSource.getId(),dataSource.getVersionId())).thenReturn("a:b");
+        Mockito.when(
+                        dataSourceVersionDao.selectOneVersion(
+                                dataSource.getId(), dataSource.getVersionId()))
+                .thenReturn("a:b");
         dataSource.setParameter("a:b");
-        DataSource actuallyDataSource= dataSourceInfoService.getDataSourceInfo(dataSource.getId(),dataSource.getVersionId());
+        DataSource actuallyDataSource =
+                dataSourceInfoService.getDataSourceInfo(
+                        dataSource.getId(), dataSource.getVersionId());
         assertThat(actuallyDataSource).usingRecursiveComparison().isEqualTo(dataSource);
     }
 
-
     @Test
-    void testGetDataSourceInfoForConnectById(){
+    void testGetDataSourceInfoForConnectById() {
         DataSource dataSource = buildDataSource();
         Mockito.when(dataSourceDao.selectOneDetail(dataSource.getId())).thenReturn(dataSource);
-        Mockito.when(dataSourceVersionDao.selectOneVersion(dataSource.getId(),dataSource.getPublishedVersionId())).thenReturn("{\"a\":\"b\"}");
-        String res = dataSourceInfoService.getDataSourceInfoForConnect(dataSource.getId()).getConnectParams().toString();
+        Mockito.when(
+                        dataSourceVersionDao.selectOneVersion(
+                                dataSource.getId(), dataSource.getPublishedVersionId()))
+                .thenReturn("{\"a\":\"b\"}");
+        String res =
+                dataSourceInfoService
+                        .getDataSourceInfoForConnect(dataSource.getId())
+                        .getConnectParams()
+                        .toString();
         assertTrue("{a=b}".equals(res));
-        Mockito.verify(dataSourceDao,Mockito.times(1)).selectOneDetail(dataSource.getId());
+        Mockito.verify(dataSourceDao, Mockito.times(1)).selectOneDetail(dataSource.getId());
     }
 
     @Test
-    void testGetDataSourceInfoForConnectByName(){
+    void testGetDataSourceInfoForConnectByName() {
         DataSource dataSource = buildDataSource();
-        Mockito.when(dataSourceDao.selectOneDetailByName(dataSource.getDataSourceName())).thenReturn(dataSource);
-        Mockito.when(dataSourceVersionDao.selectOneVersion(dataSource.getId(),dataSource.getPublishedVersionId())).thenReturn("{\"a\":\"b\"}");
-        String res = dataSourceInfoService.getDataSourceInfoForConnect(dataSource.getDataSourceName()).getConnectParams().toString();
+        Mockito.when(dataSourceDao.selectOneDetailByName(dataSource.getDataSourceName()))
+                .thenReturn(dataSource);
+        Mockito.when(
+                        dataSourceVersionDao.selectOneVersion(
+                                dataSource.getId(), dataSource.getPublishedVersionId()))
+                .thenReturn("{\"a\":\"b\"}");
+        String res =
+                dataSourceInfoService
+                        .getDataSourceInfoForConnect(dataSource.getDataSourceName())
+                        .getConnectParams()
+                        .toString();
         assertTrue("{a=b}".equals(res));
     }
 
     @Test
-    void testGetDataSourceInfoForConnectByIdAndVerId(){
+    void testGetDataSourceInfoForConnectByIdAndVerId() {
         DataSource dataSource = buildDataSource();
         Mockito.when(dataSourceDao.selectOneDetail(dataSource.getId())).thenReturn(dataSource);
-        Mockito.when(dataSourceVersionDao.selectOneVersion(dataSource.getId(),dataSource.getVersionId())).thenReturn("{\"a\":\"b\"}");
-        String res = dataSourceInfoService.getDataSourceInfoForConnect(dataSource.getId(),dataSource.getVersionId()).getConnectParams().toString();
+        Mockito.when(
+                        dataSourceVersionDao.selectOneVersion(
+                                dataSource.getId(), dataSource.getVersionId()))
+                .thenReturn("{\"a\":\"b\"}");
+        String res =
+                dataSourceInfoService
+                        .getDataSourceInfoForConnect(dataSource.getId(), dataSource.getVersionId())
+                        .getConnectParams()
+                        .toString();
         assertTrue("{a=b}".equals(res));
     }
 
     @Test
-    void testExistDataSource(){
+    void testExistDataSource() {
         String dataSourceName = "unitTest";
         DataSource dataSource = buildDataSource();
         Mockito.when(dataSourceDao.selectOneByName(dataSourceName)).thenReturn(dataSource);
         assertTrue(dataSourceInfoService.existDataSource(dataSourceName));
-
     }
 
-
     @Test
-    void testGetDataSourceInfoBrief(){
+    void testGetDataSourceInfoBrief() {
         DataSource dataSource = buildDataSource();
         Mockito.when(dataSourceDao.selectOne(dataSource.getId())).thenReturn(dataSource);
-        assertThat(dataSourceInfoService.getDataSourceInfoBrief(dataSource.getId())).usingRecursiveComparison().isEqualTo(dataSource);
+        assertThat(dataSourceInfoService.getDataSourceInfoBrief(dataSource.getId()))
+                .usingRecursiveComparison()
+                .isEqualTo(dataSource);
     }
 
     @Test
-    void testRemoveDataSourceInfo(){
+    void testRemoveDataSourceInfo() {
         DataSource dataSource = buildDataSource();
-        Mockito.when(dataSourceDao.selectOne(dataSource.getId())).thenReturn(dataSource).thenReturn(null);
+        Mockito.when(dataSourceDao.selectOne(dataSource.getId()))
+                .thenReturn(dataSource)
+                .thenReturn(null);
         Mockito.when(dataSourceDao.removeOne(dataSource.getId())).thenReturn(1);
-        assertTrue(dataSourceInfoService.removeDataSourceInfo(dataSource.getId(),dataSource.getCreateSystem())>0);
-        assertTrue(dataSourceInfoService.removeDataSourceInfo(dataSource.getId(),dataSource.getCreateSystem())==-1);
+        assertTrue(
+                dataSourceInfoService.removeDataSourceInfo(
+                                dataSource.getId(), dataSource.getCreateSystem())
+                        > 0);
+        assertTrue(
+                dataSourceInfoService.removeDataSourceInfo(
+                                dataSource.getId(), dataSource.getCreateSystem())
+                        == -1);
     }
 
-
     @Test
-    void testUpdateDataSourceInfo(){
+    void testUpdateDataSourceInfo() {
         DataSource dataSource = buildDataSource();
         dataSourceInfoService.updateDataSourceInfo(dataSource);
     }
 
     @Test
-    void testQueryDataSourceInfoPage(){
+    void testQueryDataSourceInfoPage() {
         DataSourceVo dataSourceVo = new DataSourceVo();
         dataSourceVo.setPageSize(10);
         dataSourceVo.setCurrentPage(1);
 
-        List<DataSource> dataSources= new ArrayList<>();
+        List<DataSource> dataSources = new ArrayList<>();
         dataSources.add(buildDataSource());
         dataSources.add(buildDataSource());
         Mockito.when(dataSourceDao.selectByPageVo(dataSourceVo)).thenReturn(dataSources);
-        PageInfo<DataSource> dataSourcePageInfo = dataSourceInfoService.queryDataSourceInfoPage(dataSourceVo);
+        PageInfo<DataSource> dataSourcePageInfo =
+                dataSourceInfoService.queryDataSourceInfoPage(dataSourceVo);
         assertTrue(dataSourcePageInfo.getSize() == 2);
     }
 
@@ -223,16 +257,18 @@ public class DataSourceInfoServiceTest {
     }
 
     @Test
-    void testListDataSourceEnvByType(){
+    void testListDataSourceEnvByType() {
         List<DataSourceEnv> dataSourceEnvs = new ArrayList<>();
         dataSourceEnvs.add(new DataSourceEnv());
         dataSourceEnvs.add(new DataSourceEnv());
         Mockito.when(dataSourceEnvDao.listByTypeId(1l)).thenReturn(dataSourceEnvs);
-        List<DataSourceEnv> actuallyDataSourceEnvs = dataSourceInfoService.listDataSourceEnvByType(1l);
-        assertTrue(actuallyDataSourceEnvs.size()==2);
+        List<DataSourceEnv> actuallyDataSourceEnvs =
+                dataSourceInfoService.listDataSourceEnvByType(1l);
+        assertTrue(actuallyDataSourceEnvs.size() == 2);
     }
+
     @Test
-    void testGetDataSourceEnv(){
+    void testGetDataSourceEnv() {
         DataSourceEnv dataSourceEnv = new DataSourceEnv();
         Mockito.when(dataSourceEnvDao.selectOneDetail(1l)).thenReturn(dataSourceEnv);
         DataSourceEnv actuallyDataSourceEnv = dataSourceInfoService.getDataSourceEnv(1l);
@@ -240,27 +276,32 @@ public class DataSourceInfoServiceTest {
     }
 
     @Test
-    void testRemoveDataSourceEnv(){
+    void testRemoveDataSourceEnv() {
         DataSourceEnv dataSourceEnv = new DataSourceEnv();
         dataSourceEnv.setId(1l);
         dataSourceEnv.setDataSourceTypeId(1l);
         Map<String, Object> connectParams = new HashMap<>();
-        connectParams.put("key","value");
+        connectParams.put("key", "value");
         dataSourceEnv.setConnectParams(connectParams);
         List<DataSourceParamKeyDefinition> keyDefinitions = new ArrayList<>();
         DataSourceParamKeyDefinition dsParamKeyDefinition = new DataSourceParamKeyDefinition();
         keyDefinitions.add(dsParamKeyDefinition);
         dsParamKeyDefinition.setKey("key");
         dsParamKeyDefinition.setValueType(DataSourceParamKeyDefinition.ValueType.FILE);
-        Mockito.when(dataSourceEnvDao.selectOneDetail(dataSourceEnv.getId())).thenReturn(dataSourceEnv);
+        Mockito.when(dataSourceEnvDao.selectOneDetail(dataSourceEnv.getId()))
+                .thenReturn(dataSourceEnv);
         Mockito.when(dataSourceEnvDao.removeOne(dataSourceEnv.getId())).thenReturn(1);
-        Mockito.when(dataSourceParamKeyDao.listByDataSourceTypeAndScope(dataSourceEnv.getDataSourceTypeId(),DataSourceParamKeyDefinition.Scope.ENV)).thenReturn(keyDefinitions);
+        Mockito.when(
+                        dataSourceParamKeyDao.listByDataSourceTypeAndScope(
+                                dataSourceEnv.getDataSourceTypeId(),
+                                DataSourceParamKeyDefinition.Scope.ENV))
+                .thenReturn(keyDefinitions);
         Long res = dataSourceInfoService.removeDataSourceEnv(dataSourceEnv.getId());
         assertTrue(res == dataSourceEnv.getId());
     }
 
     @Test
-    void testExpireDataSource(){
+    void testExpireDataSource() {
         DataSource dataSource = buildDataSource();
         Mockito.when(dataSourceDao.selectOne(dataSource.getId())).thenReturn(dataSource);
         Mockito.when(dataSourceDao.expireOne(dataSource.getId())).thenReturn(1);
@@ -269,12 +310,12 @@ public class DataSourceInfoServiceTest {
     }
 
     @Test
-    void testPublishByDataSourceId(){
+    void testPublishByDataSourceId() {
         Mockito.when(dataSourceVersionDao.getLatestVersion(1l)).thenReturn(3l).thenReturn(1l);
-        Mockito.when(dataSourceDao.setPublishedVersionId(1l,2l)).thenReturn(1);
-        int res = dataSourceInfoService.publishByDataSourceId(1l,2l);
+        Mockito.when(dataSourceDao.setPublishedVersionId(1l, 2l)).thenReturn(1);
+        int res = dataSourceInfoService.publishByDataSourceId(1l, 2l);
         assertTrue(res == 1);
-        res = dataSourceInfoService.publishByDataSourceId(1l,2l);
+        res = dataSourceInfoService.publishByDataSourceId(1l, 2l);
         assertTrue(res == 0);
     }
 
@@ -288,7 +329,9 @@ public class DataSourceInfoServiceTest {
         Long curVersion = 1l;
         Long expectedVersion = curVersion + 1l;
         Mockito.when(dataSourceVersionDao.getLatestVersion(1l)).thenReturn(curVersion);
-        Long res = dataSourceInfoService.insertDataSourceParameter(keyDefinitionList, datasourceId, connectParams, username, comment);
+        Long res =
+                dataSourceInfoService.insertDataSourceParameter(
+                        keyDefinitionList, datasourceId, connectParams, username, comment);
         assertTrue(expectedVersion == res);
     }
 }

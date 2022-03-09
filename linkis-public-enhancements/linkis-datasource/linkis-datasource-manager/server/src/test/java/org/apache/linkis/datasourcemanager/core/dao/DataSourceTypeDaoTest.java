@@ -17,21 +17,17 @@
 
 package org.apache.linkis.datasourcemanager.core.dao;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Date;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-
-class DataSourceTypeDaoTest extends BaseDaoTest{
+class DataSourceTypeDaoTest extends BaseDaoTest {
     private static final Logger logger = LoggerFactory.getLogger(DataSourceTypeDaoTest.class);
 
     @Autowired DataSourceTypeDao dataSourceTypeDao;
@@ -41,15 +37,12 @@ class DataSourceTypeDaoTest extends BaseDaoTest{
     protected static void afterAll() throws Exception {}
 
     @Test
-    void testGetAllTypes(){
-        assertTrue(dataSourceTypeDao.getAllTypes().size()==1);
+    void testGetAllTypes() {
+        assertTrue(dataSourceTypeDao.getAllTypes().size() == 1);
     }
 
     @Test
-    void testSelectOne(){
+    void testSelectOne() {
         assertNotNull(dataSourceTypeDao.selectOne(1l));
     }
-
-
-
 }

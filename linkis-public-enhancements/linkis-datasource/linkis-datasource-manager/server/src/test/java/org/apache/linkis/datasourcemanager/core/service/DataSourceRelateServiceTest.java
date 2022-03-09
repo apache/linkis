@@ -24,18 +24,14 @@ import static org.junit.jupiter.api.Assertions.*;
 class DataSourceRelateServiceTest {
 
     @Test
-    void getKeyDefinitionsByType() {
-    }
+    void getKeyDefinitionsByType() {}
 
     @Test
-    void testGetKeyDefinitionsByType() {
-    }
+    void testGetKeyDefinitionsByType() {}
 
     @Test
-    void getAllDataSourceTypes() {
-    }
+    void getAllDataSourceTypes() {}
 
     @Test
-    void getDataSourceType() {
-    }
+    void getDataSourceType() {}
 }

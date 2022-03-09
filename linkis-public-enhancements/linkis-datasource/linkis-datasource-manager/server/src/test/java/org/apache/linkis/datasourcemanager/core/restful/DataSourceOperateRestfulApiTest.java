@@ -19,13 +19,15 @@ package org.apache.linkis.datasourcemanager.core.restful;
 
 import org.apache.linkis.datasourcemanager.core.Scan;
 import org.apache.linkis.datasourcemanager.core.WebApplicationServer;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -34,14 +36,11 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {WebApplicationServer.class, Scan.class})
 class DataSourceOperateRestfulApiTest {
 
-    @Autowired
-    protected MockMvc mockMvc;
+    @Autowired protected MockMvc mockMvc;
 
     @Test
-    void connect() {
-    }
+    void connect() {}
 
     @Test
-    void doConnect() {
-    }
+    void doConnect() {}
 }

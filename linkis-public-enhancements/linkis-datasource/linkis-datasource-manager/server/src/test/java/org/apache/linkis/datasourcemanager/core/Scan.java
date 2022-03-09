@@ -17,8 +17,9 @@
 
 package org.apache.linkis.datasourcemanager.core;
 
-import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+
+import org.mybatis.spring.annotation.MapperScan;
 
 @EnableAutoConfiguration
 @MapperScan("org.apache.linkis.datasourcemanager.core.dao")

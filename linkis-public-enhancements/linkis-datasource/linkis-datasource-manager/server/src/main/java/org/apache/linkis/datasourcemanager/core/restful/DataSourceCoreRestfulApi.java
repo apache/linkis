@@ -445,7 +445,7 @@ public class DataSourceCoreRestfulApi {
      * @param req
      * @return
      */
-    @RequestMapping(value = "/{dataSourceId}/connect_params", method = RequestMethod.GET)
+    @RequestMapping(value = "/{dataSourceId}/connect-params", method = RequestMethod.GET)
     public Message getConnectParams(
             @PathVariable("dataSourceId") Long dataSourceId, HttpServletRequest req) {
         return RestfulApiHelper.doAndResponse(
@@ -471,7 +471,7 @@ public class DataSourceCoreRestfulApi {
                 "Fail to connect data source[连接数据源失败]");
     }
 
-    @RequestMapping(value = "/name/{dataSourceName}/connect_params", method = RequestMethod.GET)
+    @RequestMapping(value = "/name/{dataSourceName}/connect-params", method = RequestMethod.GET)
     public Message getConnectParams(
             @PathVariable("dataSourceName") String dataSourceName, HttpServletRequest req)
             throws UnsupportedEncodingException {

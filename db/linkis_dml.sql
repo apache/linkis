@@ -330,7 +330,7 @@ INSERT INTO `linkis_ps_dm_datasource_type_key` VALUES
 (3,1,'params','连接参数',NULL,'TEXT',NULL,0,'输入JSON格式: {\"param\":\"value\"}',NULL,NULL,NULL,NULL,'2021-12-06 10:35:00','2021-12-06 10:35:00'),
 (9,1,'username','用户名',NULL,'TEXT',NULL,1,'用户名','^[0-9A-Za-z_-]+$',NULL,NULL,NULL,'2021-04-12 01:54:39','2021-04-12 01:54:39'),
 (10,1,'password','密码',NULL,'PASSWORD',NULL,1,'密码','',NULL,NULL,NULL,'2021-04-12 01:54:39','2021-04-12 01:54:39'),
-(11,4,'envId','集群环境',NULL,'SELECT',NULL,1,'集群环境',NULL,NULL,NULL,'/api/rest_j/v1/data-source-manager/env_list/all/type/4','2021-05-12 03:03:34','2021-05-12 03:03:34');
+(11,4,'envId','集群环境',NULL,'SELECT',NULL,1,'集群环境',NULL,NULL,NULL,'/api/rest_j/v1/data-source-manager/env-list/all/type/4','2021-05-12 03:03:34','2021-05-12 03:03:34');
 
 INSERT INTO `linkis_ps_dm_datasource_env` VALUES
 (1,'测试环境SIT','测试环境SIT',4,'{\"uris\":\"thrift://localhost:9083\", \"hadoopConf\":{\"hive.metastore.execute.setugi\":\"true\"}}','2021-10-26 14:57:29',NULL,'2021-10-26 14:57:29',NULL),

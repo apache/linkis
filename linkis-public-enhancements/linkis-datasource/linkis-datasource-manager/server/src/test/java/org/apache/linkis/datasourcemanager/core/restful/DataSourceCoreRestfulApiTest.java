@@ -104,7 +104,7 @@ class DataSourceCoreRestfulApiTest {
         Message res = mvcUtils.getMessage(mvcResult);
         assertThat(dataSourceTypes)
                 .usingRecursiveComparison()
-                .isEqualTo(res.getData().get("type_list"));
+                .isEqualTo(res.getData().get("typeList"));
     }
 
     @Test
@@ -116,11 +116,11 @@ class DataSourceCoreRestfulApiTest {
                 .thenReturn(keyDefinitions);
         MvcResult mvcResult =
                 mvcUtils.buildMvcResultGet(
-                        String.format("/data-source-manager/key_define/type/%s", dataSourceTypeId));
+                        String.format("/data-source-manager/key-define/type/%s", dataSourceTypeId));
         Message res = mvcUtils.getMessage(mvcResult);
         assertThat(keyDefinitions)
                 .usingRecursiveComparison()
-                .isEqualTo(res.getData().get("key_define"));
+                .isEqualTo(res.getData().get("keyDefine"));
     }
 
     @Test
@@ -473,7 +473,7 @@ class DataSourceCoreRestfulApiTest {
     void testGetConnectParamsById() throws Exception {
         MvcUtils mvcUtils = new MvcUtils(mockMvc);
         long dataSourceId = 1l;
-        String url = String.format("/data-source-manager/%s/connect_params", dataSourceId);
+        String url = String.format("/data-source-manager/%s/connect-params", dataSourceId);
         DataSource dataSource = new DataSource();
         dataSource.setId(dataSourceId);
         dataSource.setCreateUser("hadoop");
@@ -502,7 +502,7 @@ class DataSourceCoreRestfulApiTest {
     void testGetConnectParamsByName() throws Exception {
         MvcUtils mvcUtils = new MvcUtils(mockMvc);
         String dataSourceName = "hive-test";
-        String url = String.format("/data-source-manager/name/%s/connect_params", dataSourceName);
+        String url = String.format("/data-source-manager/name/%s/connect-params", dataSourceName);
         DataSource dataSource = new DataSource();
         dataSource.setDataSourceName(dataSourceName);
         dataSource.setCreateUser("hadoop");

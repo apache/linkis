@@ -32,7 +32,7 @@ const getEnvList = ()=>{
 }
 
 const getKeyDefine = (id)=>{
-  return api.fetch(`/data-source-manager/key_define/type/${id}`, {}, 'get')
+  return api.fetch(`/data-source-manager/key-define/type/${id}`, {}, 'get')
 }
 
 /**

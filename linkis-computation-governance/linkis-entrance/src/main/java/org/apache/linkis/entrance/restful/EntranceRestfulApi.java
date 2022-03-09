@@ -73,6 +73,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
      * execution ID is returned to the user. execute函数处理的是用户提交执行任务的请求，返回给用户的是执行ID json Incoming
      * key-value pair(传入的键值对) Repsonse
      */
+    @Override
     @RequestMapping(path = "/execute", method = RequestMethod.POST)
     public Message execute(HttpServletRequest req, @RequestBody Map<String, Object> json) {
         Message message = null;
@@ -125,6 +126,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
         return message;
     }
 
+    @Override
     @RequestMapping(path = "/submit", method = RequestMethod.POST)
     public Message submit(HttpServletRequest req, @RequestBody Map<String, Object> json) {
         Message message = null;
@@ -180,6 +182,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
         entranceServer.getEntranceContext().getOrCreateLogManager().onLogUpdate(job, log);
     }
 
+    @Override
     @RequestMapping(path = "/{id}/status", method = RequestMethod.GET)
     public Message status(
             @PathVariable("id") String id,
@@ -213,6 +216,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
         return message;
     }
 
+    @Override
     @RequestMapping(path = "/{id}/progress", method = RequestMethod.GET)
     public Message progress(@PathVariable("id") String id) {
         Message message = null;
@@ -253,6 +257,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
         return message;
     }
 
+    @Override
     @RequestMapping(path = "/{id}/progressWithResource", method = RequestMethod.GET)
     public Message progressWithResource(@PathVariable("id") String id) {
         Message message = null;
@@ -353,6 +358,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
         list.add(map);
     }
 
+    @Override
     @RequestMapping(path = "/{id}/log", method = RequestMethod.GET)
     public Message log(HttpServletRequest req, @PathVariable("id") String id) {
         String realId = ZuulEntranceUtils.parseExecID(id)[3];
@@ -455,8 +461,9 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
         return message;
     }
 
+    @Override
     @RequestMapping(path = "/killJobs", method = RequestMethod.POST)
-    public Message killJobs(HttpServletRequest req, @RequestBody JsonNode jsonNode) {
+    public Message killJobs(HttpServletRequest req, @RequestBody JsonNode jsonNode, @PathVariable("id") String strongExecId) {
         JsonNode idNode = jsonNode.get("idList");
         JsonNode taskIDNode = jsonNode.get("taskIDList");
         ArrayList<Long> waitToForceKill = new ArrayList<>();
@@ -544,7 +551,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
         return Message.ok("success").data("messages", messages);
     }
 
-    // todo confirm long or Long
+    @Override
     @RequestMapping(path = "/{id}/kill", method = RequestMethod.GET)
     public Message kill(
             @PathVariable("id") String id,
@@ -603,6 +610,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
         return message;
     }
 
+    @Override
     @RequestMapping(path = "/{id}/pause", method = RequestMethod.GET)
     public Message pause(@PathVariable("id") String id) {
         String realId = ZuulEntranceUtils.parseExecID(id)[3];

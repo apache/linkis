@@ -541,8 +541,8 @@ public class DataSourceCoreRestfulApi {
             @RequestParam(value = "name", required = false) String dataSourceName,
             @RequestParam(value = "typeId", required = false) Long dataSourceTypeId,
             @RequestParam(value = "identifies", required = false) String identifies,
-            @RequestParam("currentPage") Integer currentPage,
-            @RequestParam("pageSize") Integer pageSize,
+            @RequestParam(value = "currentPage", required = false) Integer currentPage,
+            @RequestParam(value = "pageSize", required = false) Integer pageSize,
             HttpServletRequest req) {
         return RestfulApiHelper.doAndResponse(
                 () -> {

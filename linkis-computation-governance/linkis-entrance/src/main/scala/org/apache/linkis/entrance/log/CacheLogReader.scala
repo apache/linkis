@@ -30,7 +30,6 @@ class CacheLogReader(logPath: String, charset: String, sharedCache: Cache, user:
 
   def getCache: Cache = sharedCache
 
-  var inputStream: InputStream = _
 
   var fileSystem: Fs = _
 
@@ -38,7 +37,7 @@ class CacheLogReader(logPath: String, charset: String, sharedCache: Cache, user:
 
 
   private def createInputStream: InputStream = {
-    if (fileSystem == null) this synchronized {
+    if (fileSystem == null) lock synchronized {
       if (fileSystem == null) {
         fileSystem = FSFactory.getFsByProxyUser(new FsPath(logPath), user)
         fileSystem.init(new util.HashMap[String, String]())
@@ -50,12 +49,7 @@ class CacheLogReader(logPath: String, charset: String, sharedCache: Cache, user:
 
 
   override def getInputStream: InputStream = {
-    if (inputStream == null) lock.synchronized{
-      if (inputStream == null) {
-        inputStream = createInputStream
-      }
-    }
-    inputStream
+    createInputStream
   }
 
 
@@ -79,12 +73,6 @@ class CacheLogReader(logPath: String, charset: String, sharedCache: Cache, user:
 
   @throws[IOException]
   override def close(): Unit = {
-    if (inputStream != null) {
-      Utils.tryQuietly(inputStream.close(), t => {
-        warn("Error encounters when closing inputStream.", t)
-      })
-      inputStream = null
-    }
     if (fileSystem != null) {
       Utils.tryQuietly(fileSystem.close(), t => {
         warn("Error encounters when closing fileSystem.", t)

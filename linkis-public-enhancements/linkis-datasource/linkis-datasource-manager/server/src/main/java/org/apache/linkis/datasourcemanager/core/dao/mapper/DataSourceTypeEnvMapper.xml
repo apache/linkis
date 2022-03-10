@@ -21,13 +21,13 @@
 <mapper namespace="org.apache.linkis.datasourcemanager.core.dao.DataSourceTypeEnvDao">
 
     <insert id="insertRelation" useGeneratedKeys="true" keyProperty="id">
-        <![CDATA[INSERT INTO `linkis_datasource_type_env`
-        (`data_source_type_id`, `env_id`) VALUES
+        <![CDATA[INSERT INTO `linkis_ps_dm_datasource_type_env`
+        (`data_source_type_id`, `envId`) VALUES
         (#{dataSourceTypeId}, #{dataSourceEnvId});]]>
     </insert>
 
     <delete id="removeRelationsByEnvId">
-        <![CDATA[DELETE FROM `linkis_datasource_type_env` WHERE
-        `env_id` = #{envId};]]>
+        <![CDATA[DELETE FROM `linkis_ps_dm_datasource_type_env` WHERE
+        `envId` = #{envId};]]>
     </delete>
 </mapper>

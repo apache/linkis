@@ -69,18 +69,23 @@ object QueryDataSourceEnvAction {
     }
 
     def build(): QueryDataSourceEnvAction = {
-      if (name == null) throw new DataSourceClientBuilderException("name is needed!")
-      if(typeId == null) throw new DataSourceClientBuilderException("typeId is needed!")
-      if(currentPage == null) throw new DataSourceClientBuilderException("currentPage is needed!")
-      if(pageSize == null) throw new DataSourceClientBuilderException("pageSize is needed!")
       if(user == null) throw new DataSourceClientBuilderException("user is needed!")
 
 
       val queryDataSourceEnvAction = new QueryDataSourceEnvAction
-      queryDataSourceEnvAction.setParameter("name", name)
-      queryDataSourceEnvAction.setParameter("typeId", typeId)
-      queryDataSourceEnvAction.setParameter("currentPage", currentPage)
-      queryDataSourceEnvAction.setParameter("pageSize", pageSize)
+
+      if (name != null) {
+        queryDataSourceEnvAction.setParameter("name", name)
+      }
+      if (typeId != null) {
+        queryDataSourceEnvAction.setParameter("typeId", typeId)
+      }
+      if (currentPage != null) {
+        queryDataSourceEnvAction.setParameter("currentPage", currentPage)
+      }
+      if (pageSize != null) {
+        queryDataSourceEnvAction.setParameter("pageSize", pageSize)
+      }
       queryDataSourceEnvAction.setUser(user)
 
       queryDataSourceEnvAction

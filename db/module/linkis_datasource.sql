@@ -18,10 +18,10 @@
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- ----------------------------
--- Table structure for linkis_datasource
+-- Table structure for linkis_ps_dm_datasource
 -- ----------------------------
-DROP TABLE IF EXISTS `linkis_datasource`;
-CREATE TABLE `linkis_datasource`
+DROP TABLE IF EXISTS `linkis_ps_dm_datasource`;
+CREATE TABLE `linkis_ps_dm_datasource`
 (
     `id`                   int(11)                       NOT NULL AUTO_INCREMENT,
     `datasource_name`      varchar(255) COLLATE utf8_bin NOT NULL,
@@ -44,10 +44,10 @@ CREATE TABLE `linkis_datasource`
   COLLATE = utf8_bin;
 
 -- ----------------------------
--- Table structure for linkis_datasource_env
+-- Table structure for linkis_ps_dm_datasource_env
 -- ----------------------------
-DROP TABLE IF EXISTS `linkis_datasource_env`;
-CREATE TABLE `linkis_datasource_env`
+DROP TABLE IF EXISTS `linkis_ps_dm_datasource_env`;
+CREATE TABLE `linkis_ps_dm_datasource_env`
 (
     `id`                 int(11)                       NOT NULL AUTO_INCREMENT,
     `env_name`           varchar(32) COLLATE utf8_bin  NOT NULL,
@@ -65,10 +65,10 @@ CREATE TABLE `linkis_datasource_env`
 
 
 -- ----------------------------
--- Table structure for linkis_datasource_type
+-- Table structure for linkis_ps_dm_datasource_type
 -- ----------------------------
-DROP TABLE IF EXISTS `linkis_datasource_type`;
-CREATE TABLE `linkis_datasource_type`
+DROP TABLE IF EXISTS `linkis_ps_dm_datasource_type`;
+CREATE TABLE `linkis_ps_dm_datasource_type`
 (
     `id`          int(11)                      NOT NULL AUTO_INCREMENT,
     `name`        varchar(32) COLLATE utf8_bin NOT NULL,
@@ -83,10 +83,10 @@ CREATE TABLE `linkis_datasource_type`
   COLLATE = utf8_bin;
 
 -- ----------------------------
--- Table structure for linkis_datasource_type_key
+-- Table structure for linkis_ps_dm_datasource_type_key
 -- ----------------------------
-DROP TABLE IF EXISTS `linkis_datasource_type_key`;
-CREATE TABLE `linkis_datasource_type_key`
+DROP TABLE IF EXISTS `linkis_ps_dm_datasource_type_key`;
+CREATE TABLE `linkis_ps_dm_datasource_type_key`
 (
     `id`                  int(11)                       NOT NULL AUTO_INCREMENT,
     `data_source_type_id` int(11)                       NOT NULL,
@@ -109,10 +109,10 @@ CREATE TABLE `linkis_datasource_type_key`
   COLLATE = utf8_bin;
 
 -- ----------------------------
--- Table structure for linkis_datasource_version
+-- Table structure for linkis_ps_dm_datasource_version
 -- ----------------------------
-DROP TABLE IF EXISTS `linkis_datasource_version`;
-CREATE TABLE `linkis_datasource_version`
+DROP TABLE IF EXISTS `linkis_ps_dm_datasource_version`;
+CREATE TABLE `linkis_ps_dm_datasource_version`
 (
     `version_id`    int(11)                        NOT NULL AUTO_INCREMENT,
     `datasource_id` int(11)                        NOT NULL,
@@ -122,6 +122,5 @@ CREATE TABLE `linkis_datasource_version`
     `create_user`   varchar(255) COLLATE utf8_bin  NULL DEFAULT NULL,
     PRIMARY KEY (`version_id`, `datasource_id`) USING BTREE
 ) ENGINE = InnoDB
-  AUTO_INCREMENT = 21
   CHARACTER SET = utf8
   COLLATE = utf8_bin;

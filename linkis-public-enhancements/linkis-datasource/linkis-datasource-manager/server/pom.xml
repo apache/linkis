@@ -56,34 +56,12 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!--jersey bean validation-->
         <dependency>
-            <groupId>org.glassfish.jersey.ext</groupId>
-            <artifactId>jersey-bean-validation</artifactId>
-            <version>${jersey.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>javax.ws.rs-api</artifactId>
-                    <groupId>javax.ws.rs</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>hk2-locator</artifactId>
-                    <groupId>org.glassfish.hk2</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>hk2-api</artifactId>
-                    <groupId>org.glassfish.hk2</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>jersey-server</artifactId>
-                    <groupId>org.glassfish.jersey.core</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>jersey-common</artifactId>
-                    <groupId>org.glassfish.jersey.core</groupId>
-                </exclusion>
-            </exclusions>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>5.1.2.Final</version>
         </dependency>
+
         <!--bml client-->
         <dependency>
             <groupId>org.apache.linkis</groupId>

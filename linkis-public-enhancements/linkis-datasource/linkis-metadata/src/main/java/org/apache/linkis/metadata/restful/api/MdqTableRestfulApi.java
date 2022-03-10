@@ -103,7 +103,7 @@ public class MdqTableRestfulApi {
         String userName =
                 ModuleUserUtils.getOperationUser(req, "getTableStatisticInfo " + tableName);
         MdqTableStatisticInfoVO tableStatisticInfo =
-                mdqService.getTableStatisticInfo(database, tableName, userName);
+                mdqService.getTableStatisticInfo(database, tableName, userName, partitionSort);
         int totalSize = 0;
         List<MdqTablePartitionStatisticInfoVO> partitionPage;
         List<MdqTablePartitionStatisticInfoVO> partitions = tableStatisticInfo.getPartitions();

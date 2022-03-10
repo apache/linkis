@@ -45,7 +45,8 @@ public interface MdqService {
      */
     Long persistTable(MdqTableBO mdqTableBO, String userName);
 
-    MdqTableStatisticInfoVO getTableStatisticInfo(String database, String tableName, String user)
+    MdqTableStatisticInfoVO getTableStatisticInfo(
+            String database, String tableName, String user, String partitionSort)
             throws IOException;
 
     /**
@@ -69,7 +70,8 @@ public interface MdqService {
             String database, String tableName, String user);
 
     MdqTableStatisticInfoVO getTableStatisticInfoFromHive(
-            String database, String tableName, String user) throws IOException;
+            String database, String tableName, String user, String partitionSort)
+            throws IOException;
 
     MdqTablePartitionStatisticInfoVO getPartitionStatisticInfo(
             String database, String tableName, String userName, String partitionName)

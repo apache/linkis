@@ -357,9 +357,20 @@ then
   sed -i ${txt}  "s#spring.server.port.*#spring.server.port=$PUBLICSERVICE_PORT#g" $publicservice_conf
 fi
 
+metadatamanage_conf=$LINKIS_HOME/conf/linkis-ps-metadatamanager.properties
+if [ "$METADATA_MANAGER_PORT" != "" ]
+then
+  sed -i ${txt}  "s#spring.server.port.*#spring.server.port=$METADATA_MANAGER_PORT#g" $metadatamanage_conf
+fi
+
 
 ##datasource
-datasource_conf=$LINKIS_HOME/conf/linkis-ps-publicservice.properties
+datasource_conf=$LINKIS_HOME/conf/linkis-ps-data-source-manager.properties
+if [ "$DATASOURCE_MANAGER_PORT" != "" ]
+then
+  sed -i ${txt}  "s#spring.server.port.*#spring.server.port=$DATASOURCE_MANAGER_PORT#g" $datasource_conf
+fi
+
 echo "update conf $datasource_conf"
 if [ "$HIVE_META_URL" != "" ]
 then

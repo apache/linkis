@@ -98,7 +98,7 @@
     </sql>
 
     <insert id="insertOne" useGeneratedKeys="true" keyProperty="id" parameterType="DataSource">
-        INSERT INTO `linkis_datasource`(
+        INSERT INTO `linkis_ps_dm_datasource`(
         <include refid="data_source_insert_columns"/>
         ) VALUES(#{dataSourceName}, #{dataSourceTypeId},
         #{dataSourceDesc,jdbcType=VARCHAR}, #{createIdentify}, #{createSystem}, #{createUser},
@@ -109,8 +109,8 @@
     <select id="selectOneDetail" resultMap="dataSourceDetailMap">
         <![CDATA[SELECT ]]>
         <include refid="data_source_join_type"/>
-        <![CDATA[ FROM `linkis_datasource_type` t
-        INNER JOIN `linkis_datasource` d ON t.`id` = d.`datasource_type_id`]]>
+        <![CDATA[ FROM `linkis_ps_dm_datasource_type` t
+        INNER JOIN `linkis_ps_dm_datasource` d ON t.`id` = d.`datasource_type_id`]]>
         <where>
             d.`id` = #{dataSourceId}
         </where>
@@ -119,8 +119,8 @@
     <select id="selectOneDetailByName" resultMap="dataSourceDetailMap">
         <![CDATA[SELECT ]]>
         <include refid="data_source_join_type"/>
-        <![CDATA[ FROM `linkis_datasource_type` t
-        INNER JOIN `linkis_datasource` d ON t.`id` = d.`datasource_type_id`]]>
+        <![CDATA[ FROM `linkis_ps_dm_datasource_type` t
+        INNER JOIN `linkis_ps_dm_datasource` d ON t.`id` = d.`datasource_type_id`]]>
         <where>
             d.`datasource_name` = #{dataSourceName} LIMIT 1
         </where>
@@ -128,7 +128,7 @@
     <select id="selectOne" resultMap="dataSourceMap">
         <![CDATA[SELECT ]]>
         <include refid="data_source_query_columns"/>
-        <![CDATA[ FROM `linkis_datasource` ]]>
+        <![CDATA[ FROM `linkis_ps_dm_datasource` ]]>
         <where>
             `id` = #{dataSourceId}
         </where>
@@ -137,7 +137,7 @@
     <select id="selectOneByName" resultMap="dataSourceMap">
         <![CDATA[SELECT ]]>
         <include refid="data_source_query_columns"/>
-        <![CDATA[ FROM `linkis_datasource` ]]>
+        <![CDATA[ FROM `linkis_ps_dm_datasource` ]]>
         <where>
             `datasource_name` = #{dataSourceName}
         </where>
@@ -146,20 +146,20 @@
     <select id="selectEnvById" resultType="DataSourceEnv">
         <![CDATA[
         SELECT `env_name`, `parameter` AS `env_parameter`
-        FROM `linkis_datasource_env`
+        FROM `linkis_ps_dm_datasource_env`
         WHERE `id` = #{id};
         ]]>
     </select>
 
     <delete id="removeOne">
-        <![CDATA[DELETE FROM `linkis_datasource`]]>
+        <![CDATA[DELETE FROM `linkis_ps_dm_datasource`]]>
         <where>
             `id` = #{dataSourceId}
         </where>
     </delete>
 
     <update id="updateOne">
-        <![CDATA[UPDATE `linkis_datasource`]]>
+        <![CDATA[UPDATE `linkis_ps_dm_datasource`]]>
         <set>
             <![CDATA[`datasource_name` = #{dataSourceName},]]>
             <![CDATA[`datasource_desc` = #{dataSourceDesc,jdbcType=VARCHAR},]]>
@@ -178,7 +178,7 @@
     </update>
 
     <update id="expireOne">
-        <![CDATA[UPDATE `linkis_datasource`]]>
+        <![CDATA[UPDATE `linkis_ps_dm_datasource`]]>
         <set>
             <![CDATA[`expire` = true]]>
         </set>
@@ -190,8 +190,8 @@
     <select id="selectByPageVo" resultMap="dataSourceMap">
         <![CDATA[SELECT ]]>
         <include refid="data_source_query_page"/>
-        <![CDATA[ FROM `linkis_datasource_type` t
-    INNER JOIN `linkis_datasource` d ON t.`id` = d.`datasource_type_id`]]>
+        <![CDATA[ FROM `linkis_ps_dm_datasource_type` t
+    INNER JOIN `linkis_ps_dm_datasource` d ON t.`id` = d.`datasource_type_id`]]>
         <where>
             <if test="dataSourceName != null and dataSourceName != ''">
                 <![CDATA[AND `datasource_name` like concat('%', #{dataSourceName}, '%')]]>
@@ -202,27 +202,12 @@
             <if test="permissionUser != null and permissionUser != ''">
                 <![CDATA[AND `create_user` = #{permissionUser}]]>
             </if>
-<!--            <if test="createIdentifyList.size() > 0">-->
-<!--                <choose>-->
-<!--                    <when test="createIdentifyList.size() == 1">-->
-<!--                        <foreach collection="createIdentifyList" separator="" item="item" open="AND " close="">-->
-<!--                            <![CDATA[`create_identify` = #{item}]]>-->
-<!--                        </foreach>-->
-<!--                    </when>-->
-<!--                    <otherwise>-->
-<!--                        <foreach collection="createIdentifyList" separator="," item="item"-->
-<!--                                 open="AND `create_identify` IN(" close=")">-->
-<!--                            <![CDATA[#{item}]]>-->
-<!--                        </foreach>-->
-<!--                    </otherwise>-->
-<!--                </choose>-->
-<!--            </if>-->
         </where>
         <![CDATA[ ORDER BY create_time DESC ]]>
     </select>
 
     <update id="setPublishedVersionId">
-        UPDATE `linkis_datasource`
+        UPDATE `linkis_ps_dm_datasource`
         <set>
             <![CDATA[`published_version_id` = #{versionId}]]>
         </set>
@@ -232,7 +217,7 @@
     </update>
 
     <update id="updateVersionId">
-        UPDATE `linkis_datasource`
+        UPDATE `linkis_ps_dm_datasource`
         <set>
             <![CDATA[`version_id` = #{versionId}]]>
         </set>

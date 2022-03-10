@@ -246,8 +246,7 @@ public class MetadataAppServiceImpl implements MetadataAppService {
                 }
             } catch (Exception e) {
                 if (e instanceof MetaRuntimeException) {
-                    throw new MetaMethodInvokeException(
-                            method, methodArgs, -1, e.getMessage(), e.getCause());
+                    throw new MetaMethodInvokeException(method, methodArgs, -1, e.getMessage(), e);
                 }
                 // TODO ERROR CODE
                 throw new MetaMethodInvokeException(

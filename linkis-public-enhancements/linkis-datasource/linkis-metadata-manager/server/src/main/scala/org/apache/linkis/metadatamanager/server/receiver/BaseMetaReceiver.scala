@@ -32,7 +32,7 @@ import scala.concurrent.duration.Duration
 @Component
 class BaseMetaReceiver extends Receiver with Logging{
   @Autowired
-  private var metadataAppService:MetadataAppService = _
+  private var metadataAppService: MetadataAppService = _
 
 
   override def receive(message: Any, sender: Sender): Unit = {}

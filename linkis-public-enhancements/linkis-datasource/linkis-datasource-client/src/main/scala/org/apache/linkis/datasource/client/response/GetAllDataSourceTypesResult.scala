@@ -27,12 +27,12 @@ import scala.beans.BeanProperty
 
 @DWSHttpMessageResult("/api/rest_j/v\\d+/data-source-manager/type/all")
 class GetAllDataSourceTypesResult extends DWSResult {
-  @BeanProperty var type_list: java.util.List[java.util.Map[String, Any]] = _
+  @BeanProperty var typeList: java.util.List[java.util.Map[String, Any]] = _
 
   def getAllDataSourceType: util.List[DataSourceType] = {
     import scala.collection.JavaConverters._
 
-    type_list.asScala.map(x => {
+    typeList.asScala.map(x => {
       val str = DWSHttpClient.jacksonJson.writeValueAsString(x)
       DWSHttpClient.jacksonJson.readValue(str, classOf[DataSourceType])
     }).asJava

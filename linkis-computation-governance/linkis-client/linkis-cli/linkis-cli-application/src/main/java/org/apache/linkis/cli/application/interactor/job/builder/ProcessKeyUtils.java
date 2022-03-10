@@ -17,8 +17,8 @@
 
 package org.apache.linkis.cli.application.interactor.job.builder;
 
-import org.apache.linkis.cli.application.constants.AppKeys;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.linkis.cli.application.constants.AppKeys;
 
 import java.util.HashMap;
 import java.util.Map;

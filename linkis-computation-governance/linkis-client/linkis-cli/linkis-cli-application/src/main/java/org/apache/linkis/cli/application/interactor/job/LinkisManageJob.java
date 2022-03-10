@@ -17,6 +17,7 @@
 
 package org.apache.linkis.cli.application.interactor.job;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.linkis.cli.application.constants.AppConstants;
 import org.apache.linkis.cli.application.interactor.job.data.LinkisJobData;
 import org.apache.linkis.cli.application.interactor.job.data.LinkisLogData;
@@ -36,7 +37,6 @@ import org.apache.linkis.cli.core.interactor.job.*;
 import org.apache.linkis.cli.core.utils.CommonUtils;
 import org.apache.linkis.cli.core.utils.LogUtils;
 import org.apache.linkis.cli.core.utils.SchedulerUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -126,7 +126,7 @@ public class LinkisManageJob extends LinkisJob implements ManagableBackendJob, T
                     data.setSuccess(true);
                 } catch (LinkisClientExecutionException e) {
                     if (e.getCode().equals("EXE0037")) {
-                        ((LinkisResultData)data).sendResultFin(); //inform listener to stop
+                        ((LinkisResultData) data).sendResultFin(); //inform listener to stop
                         data.setSuccess(true);
                     } else {
                         data.setSuccess(false);
@@ -350,7 +350,6 @@ public class LinkisManageJob extends LinkisJob implements ManagableBackendJob, T
         }
         return hasNextResult;
     }
-
 
 
     public void doKill() {

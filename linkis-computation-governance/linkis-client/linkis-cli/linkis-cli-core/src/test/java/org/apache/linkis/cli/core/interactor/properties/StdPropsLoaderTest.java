@@ -19,7 +19,6 @@ package org.apache.linkis.cli.core.interactor.properties;
 
 import org.apache.linkis.cli.common.entity.properties.ClientProperties;
 import org.apache.linkis.cli.core.interactor.properties.reader.PropertiesReader;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -53,45 +52,60 @@ public class StdPropsLoaderTest {
     }
 
     @AfterEach
-    public void after() throws Exception {}
+    public void after() throws Exception {
+    }
 
-    /** Method: setPropertiesReaders(PropertiesReader[] readers) */
+    /**
+     * Method: setPropertiesReaders(PropertiesReader[] readers)
+     */
     @Test
     public void testSetPropertiesReaders() throws Exception {
         // TODO: Test goes here...
     }
 
-    /** Method: getAllReadersAsMap() */
+    /**
+     * Method: getAllReadersAsMap()
+     */
     @Test
     public void testGetAllReadersAsMap() throws Exception {
         // TODO: Test goes here...
     }
 
-    /** Method: addPropertiesReader(PropertiesReader reader) */
+    /**
+     * Method: addPropertiesReader(PropertiesReader reader)
+     */
     @Test
     public void testAddPropertiesReader() throws Exception {
         // TODO: Test goes here...
     }
 
-    /** Method: addPropertiesReaders(PropertiesReader[] readers) */
+    /**
+     * Method: addPropertiesReaders(PropertiesReader[] readers)
+     */
     @Test
     public void testAddPropertiesReaders() throws Exception {
         // TODO: Test goes here...
     }
 
-    /** Method: getPropertiesReader(String identifier) */
+    /**
+     * Method: getPropertiesReader(String identifier)
+     */
     @Test
     public void testGetPropertiesReader() throws Exception {
         // TODO: Test goes here...
     }
 
-    /** Method: removePropertiesReader(String identifier) */
+    /**
+     * Method: removePropertiesReader(String identifier)
+     */
     @Test
     public void testRemovePropertiesReader() throws Exception {
         // TODO: Test goes here...
     }
 
-    /** Method: loadProperties() */
+    /**
+     * Method: loadProperties()
+     */
     @Test
     public void testLoadProperties() throws Exception {
         // TODO: Test goes here...
@@ -104,7 +118,9 @@ public class StdPropsLoaderTest {
         }
     }
 
-    /** Method: checkInit() */
+    /**
+     * Method: checkInit()
+     */
     @Test
     public void testCheckInit() throws Exception {
         // TODO: Test goes here...

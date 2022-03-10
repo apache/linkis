@@ -17,6 +17,7 @@
 
 package org.apache.linkis.cli.core.interactor.command.parser;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.linkis.cli.common.entity.command.CmdOption;
 import org.apache.linkis.cli.common.entity.command.CmdTemplate;
 import org.apache.linkis.cli.common.entity.command.ParamItem;
@@ -29,7 +30,6 @@ import org.apache.linkis.cli.core.interactor.command.SpecialMap;
 import org.apache.linkis.cli.core.interactor.command.fitter.Fitter;
 import org.apache.linkis.cli.core.interactor.command.parser.result.ParseResult;
 import org.apache.linkis.cli.core.interactor.command.parser.transformer.ParamKeyMapper;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -17,6 +17,7 @@
 
 package org.apache.linkis.cli.application.operator.ujes;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.linkis.cli.application.constants.LinkisKeys;
 import org.apache.linkis.cli.application.interactor.job.desc.LinkisSubmitDesc;
 import org.apache.linkis.cli.application.operator.ujes.result.OpenLogResult2;
@@ -33,7 +34,6 @@ import org.apache.linkis.ujes.client.request.JobSubmitAction;
 import org.apache.linkis.ujes.client.request.OpenLogAction;
 import org.apache.linkis.ujes.client.request.ResultSetAction;
 import org.apache.linkis.ujes.client.response.*;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,9 +44,8 @@ import java.text.MessageFormat;
  * Based on UjesClient
  */
 public class LinkisJobOperator implements JobOperator {
-    private Logger logger = LoggerFactory.getLogger(LinkisJobOperator.class);
-
     protected UJESClient client;
+    private Logger logger = LoggerFactory.getLogger(LinkisJobOperator.class);
     private String serverUrl;
 
     public UJESClient getUJESClient() {
@@ -104,7 +103,7 @@ public class LinkisJobOperator implements JobOperator {
                     .build();
             logger.info("Request info to Linkis: \n{}", Utils.GSON.toJson(jobSubmitAction));
 
-      /* Old API */
+            /* Old API */
 //      JobExecuteAction jobExecuteAction = JobExecuteAction.builder()
 //          .setCreator((String) linkisJob.getLabelMap().get(LinkisKeys.KEY_USER_CREATOR))
 //          .setUser(linkisJob.getSubmitUser())

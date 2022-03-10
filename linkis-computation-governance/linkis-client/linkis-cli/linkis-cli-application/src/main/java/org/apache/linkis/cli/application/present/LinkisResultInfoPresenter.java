@@ -17,6 +17,7 @@
 
 package org.apache.linkis.cli.application.present;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.linkis.cli.application.present.model.LinkisResultInfoModel;
 import org.apache.linkis.cli.common.entity.present.Model;
 import org.apache.linkis.cli.common.entity.present.PresentWay;
@@ -28,7 +29,6 @@ import org.apache.linkis.cli.core.present.PresentModeImpl;
 import org.apache.linkis.cli.core.present.display.DisplayOperFactory;
 import org.apache.linkis.cli.core.present.display.data.StdoutDisplayData;
 import org.apache.linkis.cli.core.utils.LogUtils;
-import org.apache.commons.lang3.StringUtils;
 
 public class LinkisResultInfoPresenter implements Presenter {
     @Override

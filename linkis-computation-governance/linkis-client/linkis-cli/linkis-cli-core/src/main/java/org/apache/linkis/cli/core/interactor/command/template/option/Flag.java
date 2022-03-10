@@ -17,8 +17,8 @@
 
 package org.apache.linkis.cli.core.interactor.command.template.option;
 
-import org.apache.linkis.cli.core.utils.converter.PredefinedStringConverters;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.linkis.cli.core.utils.converter.PredefinedStringConverters;
 
 /**
  * Flag is a special type of {@link StdOption}. Its only accepts boolean value.

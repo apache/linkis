@@ -17,6 +17,7 @@
 
 package org.apache.linkis.cli.application.interactor.validate;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.linkis.cli.application.constants.LinkisConstants;
 import org.apache.linkis.cli.application.operator.ujes.UJESClientContext;
 import org.apache.linkis.cli.common.entity.validate.Validator;
@@ -24,7 +25,6 @@ import org.apache.linkis.cli.common.exception.LinkisClientRuntimeException;
 import org.apache.linkis.cli.common.exception.error.ErrorLevel;
 import org.apache.linkis.cli.core.exception.ValidateException;
 import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
-import org.apache.commons.lang3.StringUtils;
 
 public class UJESContextValidator implements Validator {
     @Override

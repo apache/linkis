@@ -17,9 +17,9 @@
 
 package org.apache.linkis.cli.application.interactor.job;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.linkis.cli.application.operator.once.LinkisNodeStatus;
 import org.apache.linkis.cli.common.entity.job.JobStatus;
-import org.apache.commons.lang3.StringUtils;
 
 public enum LinkisJobStatus implements JobStatus {
     UNSUBMITTED("Unsubmitted", 0),
@@ -41,6 +41,40 @@ public enum LinkisJobStatus implements JobStatus {
     LinkisJobStatus(String name, int id) {
         this.name = name;
         this.id = id;
+    }
+
+    public static LinkisJobStatus convertFromJobStatusString(String status) {
+        if (StringUtils.isNotBlank(status)) {
+            if (LinkisJobStatus.INITED.name().equalsIgnoreCase(status)) return LinkisJobStatus.INITED;
+            else if (LinkisJobStatus.WAIT_FOR_RETRY.name().equalsIgnoreCase(status))
+                return LinkisJobStatus.WAIT_FOR_RETRY;
+            else if (LinkisJobStatus.SCHEDULED.name().equalsIgnoreCase(status)) return LinkisJobStatus.SCHEDULED;
+            else if (LinkisJobStatus.RUNNING.name().equalsIgnoreCase(status)) return LinkisJobStatus.RUNNING;
+            else if (LinkisJobStatus.SUCCEED.name().equalsIgnoreCase(status)) return LinkisJobStatus.SUCCEED;
+            else if (LinkisJobStatus.FAILED.name().equalsIgnoreCase(status)) return LinkisJobStatus.FAILED;
+            else if (LinkisJobStatus.CANCELLED.name().equalsIgnoreCase(status)) return LinkisJobStatus.CANCELLED;
+            else if (LinkisJobStatus.TIMEOUT.name().equalsIgnoreCase(status)) return LinkisJobStatus.TIMEOUT;
+            else return LinkisJobStatus.UNKNOWN;
+        } else {
+            return LinkisJobStatus.UNKNOWN;
+        }
+    }
+
+    public static LinkisJobStatus convertFromNodeStatusString(String status) {
+        if (StringUtils.isNotBlank(status)) {
+            if (LinkisNodeStatus.Idle.name().equalsIgnoreCase(status)) return LinkisJobStatus.RUNNING;
+            else if (LinkisNodeStatus.Starting.name().equalsIgnoreCase(status)) return LinkisJobStatus.SCHEDULED;
+            else if (LinkisNodeStatus.Unlock.name().equalsIgnoreCase(status)) return LinkisJobStatus.RUNNING;
+            else if (LinkisNodeStatus.Locked.name().equalsIgnoreCase(status)) return LinkisJobStatus.RUNNING;
+            else if (LinkisNodeStatus.Running.name().equalsIgnoreCase(status)) return LinkisJobStatus.RUNNING;
+            else if (LinkisNodeStatus.Busy.name().equalsIgnoreCase(status)) return LinkisJobStatus.RUNNING;
+            else if (LinkisNodeStatus.Success.name().equalsIgnoreCase(status)) return LinkisJobStatus.SUCCEED;
+            else if (LinkisNodeStatus.Failed.name().equalsIgnoreCase(status)) return LinkisJobStatus.FAILED;
+            else if (LinkisNodeStatus.ShuttingDown.name().equalsIgnoreCase(status)) return LinkisJobStatus.SHUTTINGDOWN;
+            else return LinkisJobStatus.UNKNOWN;
+        } else {
+            return LinkisJobStatus.UNKNOWN;
+        }
     }
 
     @Override
@@ -76,39 +110,5 @@ public enum LinkisJobStatus implements JobStatus {
     @Override
     public final boolean isJobAbnormalStatus() {
         return this == UNKNOWN;
-    }
-
-    public static LinkisJobStatus convertFromJobStatusString(String status) {
-        if (StringUtils.isNotBlank(status)) {
-            if (LinkisJobStatus.INITED.name().equalsIgnoreCase(status)) return LinkisJobStatus.INITED;
-            else if (LinkisJobStatus.WAIT_FOR_RETRY.name().equalsIgnoreCase(status))
-                return LinkisJobStatus.WAIT_FOR_RETRY;
-            else if (LinkisJobStatus.SCHEDULED.name().equalsIgnoreCase(status)) return LinkisJobStatus.SCHEDULED;
-            else if (LinkisJobStatus.RUNNING.name().equalsIgnoreCase(status)) return LinkisJobStatus.RUNNING;
-            else if (LinkisJobStatus.SUCCEED.name().equalsIgnoreCase(status)) return LinkisJobStatus.SUCCEED;
-            else if (LinkisJobStatus.FAILED.name().equalsIgnoreCase(status)) return LinkisJobStatus.FAILED;
-            else if (LinkisJobStatus.CANCELLED.name().equalsIgnoreCase(status)) return LinkisJobStatus.CANCELLED;
-            else if (LinkisJobStatus.TIMEOUT.name().equalsIgnoreCase(status)) return LinkisJobStatus.TIMEOUT;
-            else return LinkisJobStatus.UNKNOWN;
-        } else {
-            return LinkisJobStatus.UNKNOWN;
-        }
-    }
-
-    public static LinkisJobStatus convertFromNodeStatusString(String status) {
-        if (StringUtils.isNotBlank(status)) {
-            if (LinkisNodeStatus.Idle.name().equalsIgnoreCase(status)) return LinkisJobStatus.RUNNING;
-            else if (LinkisNodeStatus.Starting.name().equalsIgnoreCase(status)) return LinkisJobStatus.SCHEDULED;
-            else if (LinkisNodeStatus.Unlock.name().equalsIgnoreCase(status)) return LinkisJobStatus.RUNNING;
-            else if (LinkisNodeStatus.Locked.name().equalsIgnoreCase(status)) return LinkisJobStatus.RUNNING;
-            else if (LinkisNodeStatus.Running.name().equalsIgnoreCase(status)) return LinkisJobStatus.RUNNING;
-            else if (LinkisNodeStatus.Busy.name().equalsIgnoreCase(status)) return LinkisJobStatus.RUNNING;
-            else if (LinkisNodeStatus.Success.name().equalsIgnoreCase(status)) return LinkisJobStatus.SUCCEED;
-            else if (LinkisNodeStatus.Failed.name().equalsIgnoreCase(status)) return LinkisJobStatus.FAILED;
-            else if (LinkisNodeStatus.ShuttingDown.name().equalsIgnoreCase(status)) return LinkisJobStatus.SHUTTINGDOWN;
-            else return LinkisJobStatus.UNKNOWN;
-        } else {
-            return LinkisJobStatus.UNKNOWN;
-        }
     }
 }

@@ -17,6 +17,7 @@
 
 package org.apache.linkis.cli.application.present;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.linkis.cli.application.observer.event.LinkisClientEvent;
 import org.apache.linkis.cli.application.observer.listener.LinkisClientListener;
 import org.apache.linkis.cli.application.present.model.LinkisLogModel;
@@ -31,7 +32,6 @@ import org.apache.linkis.cli.core.present.display.DisplayOperFactory;
 import org.apache.linkis.cli.core.present.display.DisplayOperator;
 import org.apache.linkis.cli.core.present.display.data.StdoutDisplayData;
 import org.apache.linkis.cli.core.utils.CommonUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

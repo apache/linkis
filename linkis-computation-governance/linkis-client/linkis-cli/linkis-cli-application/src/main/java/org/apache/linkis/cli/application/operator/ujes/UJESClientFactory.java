@@ -17,6 +17,7 @@
 
 package org.apache.linkis.cli.application.operator.ujes;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.linkis.cli.application.constants.AppKeys;
 import org.apache.linkis.cli.application.constants.LinkisConstants;
 import org.apache.linkis.cli.application.interactor.validate.UJESContextValidator;
@@ -34,7 +35,6 @@ import org.apache.linkis.httpclient.dws.config.DWSClientConfig;
 import org.apache.linkis.httpclient.dws.config.DWSClientConfigBuilder;
 import org.apache.linkis.ujes.client.UJESClient;
 import org.apache.linkis.ujes.client.UJESClientImpl;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,9 +46,9 @@ public class UJESClientFactory {
     private static UJESClient client;
 
     public static UJESClient getReusable(VarAccess stdVarAccess, VarAccess sysVarAccess) {
-        if(client == null) {
-            synchronized(UJESClientFactory.class) {
-                if(client == null) {
+        if (client == null) {
+            synchronized (UJESClientFactory.class) {
+                if (client == null) {
                     client = getNew(stdVarAccess, sysVarAccess);
                 }
             }

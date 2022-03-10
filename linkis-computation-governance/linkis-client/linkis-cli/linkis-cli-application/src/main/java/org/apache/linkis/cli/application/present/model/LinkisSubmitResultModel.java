@@ -17,13 +17,13 @@
 
 package org.apache.linkis.cli.application.present.model;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.linkis.cli.application.interactor.job.data.LinkisJobDataImpl;
 import org.apache.linkis.cli.common.entity.job.JobStatus;
 import org.apache.linkis.cli.common.entity.present.Model;
 import org.apache.linkis.cli.common.exception.error.ErrorLevel;
 import org.apache.linkis.cli.core.exception.TransformerException;
 import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 
 public class LinkisSubmitResultModel implements Model {
     private String jobId;

@@ -17,6 +17,7 @@
 
 package org.apache.linkis.cli.core.interactor.execution;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.linkis.cli.common.entity.execution.Execution;
 import org.apache.linkis.cli.common.entity.job.Job;
 import org.apache.linkis.cli.common.entity.result.ExecutionResult;
@@ -30,7 +31,6 @@ import org.apache.linkis.cli.core.interactor.result.ExecutionResultImpl;
 import org.apache.linkis.cli.core.interactor.result.ExecutionStatusEnum;
 import org.apache.linkis.cli.core.utils.CommonUtils;
 import org.apache.linkis.cli.core.utils.LogUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

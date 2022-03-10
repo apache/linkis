@@ -31,6 +31,7 @@ public class SchedulerUtils {
     public static ThreadFactory threadFactory(String threadName, Boolean isDaemon) {
         return new ThreadFactory() {
             AtomicInteger num = new AtomicInteger(0);
+
             @Override
             public Thread newThread(Runnable r) {
                 Thread t = new Thread(r);

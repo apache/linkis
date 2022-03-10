@@ -24,7 +24,6 @@ import org.apache.linkis.cli.core.interactor.command.parser.result.ParseResult;
 import org.apache.linkis.cli.core.interactor.command.template.TestParamMapper;
 import org.apache.linkis.cli.core.interactor.command.template.TestSparkCmdTemplate;
 import org.apache.linkis.cli.core.utils.CommonUtils;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,32 +38,32 @@ public class SingleCmdParserTest {
     @BeforeEach
     public void before() throws Exception {
         cmdStr =
-                new String[] {
-                    "-u",
-                    "hadoop",
-                    "-pwd",
-                    "1234",
-                    "-c",
-                    "/path/to/user/config",
-                    "--cmd",
-                    "show tables",
-                    "--split",
-                    "\',\'",
-                    "--queue",
-                    "q05",
-                    "--name",
-                    "testApp",
-                    //      "--hiveconf", "/path/...",
-                    "--num-executors",
-                    "4",
-                    "--executor-cores",
-                    "4",
-                    "--executor-memory",
-                    "4G",
-                    "--shuffle-partitions",
-                    "200",
-                    "--other",
-                    "--other-spark-config=none",
+                new String[]{
+                        "-u",
+                        "hadoop",
+                        "-pwd",
+                        "1234",
+                        "-c",
+                        "/path/to/user/config",
+                        "--cmd",
+                        "show tables",
+                        "--split",
+                        "\',\'",
+                        "--queue",
+                        "q05",
+                        "--name",
+                        "testApp",
+                        //      "--hiveconf", "/path/...",
+                        "--num-executors",
+                        "4",
+                        "--executor-cores",
+                        "4",
+                        "--executor-memory",
+                        "4G",
+                        "--shuffle-partitions",
+                        "200",
+                        "--other",
+                        "--other-spark-config=none",
                 };
 
         TestSparkCmdTemplate template = new TestSparkCmdTemplate();
@@ -73,9 +72,12 @@ public class SingleCmdParserTest {
     }
 
     @AfterEach
-    public void after() throws Exception {}
+    public void after() throws Exception {
+    }
 
-    /** Method: parse(String[] input) */
+    /**
+     * Method: parse(String[] input)
+     */
     @Test
     public void testParse() throws Exception {
 
@@ -92,7 +94,9 @@ public class SingleCmdParserTest {
         System.out.println(CommonUtils.GSON.toJson(result.getRemains()));
     }
 
-    /** Method: parsePrimary(String[] input) */
+    /**
+     * Method: parsePrimary(String[] input)
+     */
     @Test
     public void testParsePrimary() throws Exception {
         // TODO: Test goes here...
@@ -108,7 +112,9 @@ public class SingleCmdParserTest {
         */
     }
 
-    /** Method: parseSingleSub(String[] remains) */
+    /**
+     * Method: parseSingleSub(String[] remains)
+     */
     @Test
     public void testParseSingleSub() throws Exception {
         // TODO: Test goes here...
@@ -124,7 +130,9 @@ public class SingleCmdParserTest {
         */
     }
 
-    /** Method: standardParse(String identifier, String[] args, CmdTemplate templateOri) */
+    /**
+     * Method: standardParse(String identifier, String[] args, CmdTemplate templateOri)
+     */
     @Test
     public void testStandardParse() throws Exception {
         // TODO: Test goes here...

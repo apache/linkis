@@ -462,7 +462,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
     }
 
     @Override
-    @RequestMapping(path = "/killJobs", method = RequestMethod.POST)
+    @RequestMapping(path = "/{id}/killJobs", method = RequestMethod.POST)
     public Message killJobs(
             HttpServletRequest req,
             @RequestBody JsonNode jsonNode,

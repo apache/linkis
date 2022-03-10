@@ -45,7 +45,7 @@ trait EntranceRestfulRemote {
   @RequestMapping(value = Array("/entrance/{id}/log"), method = Array(RequestMethod.GET))
   def log(req: HttpServletRequest, @PathVariable("id") id: String): Message
 
-  @RequestMapping(value = Array("/entrance/killJobs"), method = Array(RequestMethod.POST))
+  @RequestMapping(value = Array("/entrance/{id}/killJobs"), method = Array(RequestMethod.POST))
   def killJobs(req: HttpServletRequest, @RequestBody jsonNode: JsonNode, @PathVariable("id") strongExecId: String): Message
 
   @RequestMapping(value = Array("/entrance/{id}/kill"), method = Array(RequestMethod.GET))

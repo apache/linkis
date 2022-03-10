@@ -6,16 +6,16 @@
   ~ The ASF licenses this file to You under the Apache License, Version 2.0
   ~ (the "License"); you may not use this file except in compliance with
   ~ the License.  You may obtain a copy of the License at
-  ~ 
+  ~
   ~   http://www.apache.org/licenses/LICENSE-2.0
-  ~ 
+  ~
   ~ Unless required by applicable law or agreed to in writing, software
   ~ distributed under the License is distributed on an "AS IS" BASIS,
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-  
+
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -101,7 +101,7 @@
     <properties>
         <linkis.version>1.1.0</linkis.version>
         <hadoop.version>2.7.2</hadoop.version>
-        <spring.boot.version>2.3.2.RELEASE</spring.boot.version>
+        <spring.boot.version>2.3.12.RELEASE</spring.boot.version>
         <guava.version>30.0-jre</guava.version>
         <gson.version>2.8.5</gson.version>
         <fasterxml.jackson.version>2.11.3</fasterxml.jackson.version>
@@ -109,7 +109,7 @@
         <jdk.compile.version>1.8</jdk.compile.version>
         <plugin.scala.version>2.15.2</plugin.scala.version>
         <scala.binary.version>2.11</scala.binary.version>
-        <netty.version>4.1.60.Final</netty.version>
+        <netty.version>4.1.68.Final</netty.version>
         <json4s.version>3.5.3</json4s.version>
         <jersey.version>2.16</jersey.version>
         <jersey.servlet.version>2.23.1</jersey.servlet.version>
@@ -129,6 +129,7 @@
         <commons-lang.version>2.6</commons-lang.version>
         <commons-lang3.version>3.9</commons-lang3.version>
         <commons-io.version>2.11.0</commons-io.version>
+        <commons-beanutils.version>1.9.4</commons-beanutils.version>
         <druid.version>1.1.22</druid.version>
         <apache-rat-plugin.version>0.13</apache-rat-plugin.version>
         <assembly.package.rootpath>${basedir}</assembly.package.rootpath>
@@ -136,7 +137,7 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <log4j2.version>2.17.1</log4j2.version>
         <spotless.version>2.4.2</spotless.version>
-        <junit5.version>5.6.1</junit5.version>
+        <junit5.version>5.7.2</junit5.version>
         <mockito.version>3.9.0</mockito.version>
         <assertj.version>3.17.2</assertj.version>
         <h2.version>1.4.200</h2.version>
@@ -251,7 +252,7 @@
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
-                <version>Hoxton.SR10</version>
+                <version>Hoxton.SR12</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -269,6 +270,11 @@
        <dependency>
            <groupId>org.junit.platform</groupId>
            <artifactId>junit-platform-launcher</artifactId>
+           <scope>test</scope>
+       </dependency>
+       <dependency>
+           <groupId>org.junit.vintage</groupId>
+           <artifactId>junit-vintage-engine</artifactId>
            <scope>test</scope>
        </dependency>
 
@@ -643,10 +649,9 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
+                    <version>3.0.0-M4</version>
                     <configuration>
                         <forkCount>3</forkCount>
-                        <reuseForks>true</reuseForks>
-                        <argLine>-Xmx1024m -XX:MaxPermSize=256m</argLine>
                     </configuration>
                 </plugin>
 

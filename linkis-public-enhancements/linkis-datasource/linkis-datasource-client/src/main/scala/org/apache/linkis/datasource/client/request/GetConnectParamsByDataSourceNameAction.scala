@@ -31,7 +31,7 @@ class GetConnectParamsByDataSourceNameAction extends GetAction with DataSourceAc
 
   private var user: String = _
 
-  override def suffixURLs: Array[String] = Array(DATA_SOURCE_SERVICE_MODULE.getValue, "name", dataSourceName, "connect_params")
+  override def suffixURLs: Array[String] = Array(DATA_SOURCE_SERVICE_MODULE.getValue, "name", dataSourceName, "connect-params")
 
   override def setUser(user: String): Unit = this.user = user
 

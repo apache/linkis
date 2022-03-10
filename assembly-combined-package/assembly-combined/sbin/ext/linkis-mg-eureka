@@ -70,7 +70,7 @@ if [ ! -r "$SERVER_LIB" ] ; then
 fi
 
 ## set class path
-export SERVER_CLASS_PATH=$SERVER_CONF_PATH:$LINKIS_COMMONS_LIB/*:$SERVER_LIB/*
+export SERVER_CLASS_PATH=$SERVER_CONF_PATH:$SERVER_LIB/*:$LINKIS_COMMONS_LIB/*
 
 SERVER_IP="`hostname --fqdn`"
 

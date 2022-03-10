@@ -23,38 +23,38 @@ import org.apache.linkis.httpclient.request.GetAction
 
 class GetDataSourceVersionsAction extends GetAction with DataSourceAction {
   private var user: String = _
-  private var resourceId: String = _
+  private var dataSourceId: Long = _
 
   override def setUser(user: String): Unit = this.user = user
 
   override def getUser: String = this.user
 
-  override def suffixURLs: Array[String] = Array(DATA_SOURCE_SERVICE_MODULE.getValue, resourceId, "versions")
+  override def suffixURLs: Array[String] = Array(DATA_SOURCE_SERVICE_MODULE.getValue, dataSourceId.toString, "versions")
 }
 object GetDataSourceVersionsAction {
   def builder(): Builder = new Builder
 
   class Builder private[GetDataSourceVersionsAction]() {
     private var user: String = _
-    private var resourceId: String = _
+    private var dataSourceId: Long = _
 
     def setUser(user: String): Builder = {
       this.user = user
       this
     }
 
-    def setResourceId(resourceId: String): Builder = {
-      this.resourceId = resourceId
+    def setDataSourceId(dataSourceId: Long): Builder = {
+      this.dataSourceId = dataSourceId
       this
     }
 
     def build(): GetDataSourceVersionsAction = {
-      if (resourceId == null) throw new DataSourceClientBuilderException("resourceId is needed!")
+      if (dataSourceId == null) throw new DataSourceClientBuilderException("dataSourceId is needed!")
       if(user == null) throw new DataSourceClientBuilderException("user is needed!")
 
       val action = new GetDataSourceVersionsAction
       action.user = user
-      action.resourceId = resourceId
+      action.dataSourceId = dataSourceId
 
       action
     }

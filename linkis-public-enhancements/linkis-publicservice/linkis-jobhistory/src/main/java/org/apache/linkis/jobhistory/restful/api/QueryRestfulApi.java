@@ -109,6 +109,7 @@ public class QueryRestfulApi {
             @RequestParam(value = "taskID", required = false) Long taskID,
             @RequestParam(value = "executeApplicationName", required = false)
                     String executeApplicationName,
+            @RequestParam(value = "creator", required = false) String creator,
             @RequestParam(value = "proxyUser", required = false) String proxyUser,
             @RequestParam(value = "isAdminView", required = false) Boolean isAdminView)
             throws IOException, QueryException {
@@ -127,6 +128,9 @@ public class QueryRestfulApi {
         }
         if (startDate == null) {
             startDate = 0L;
+        }
+        if (StringUtils.isEmpty(creator)) {
+            creator = null;
         }
         Date sDate = new Date(startDate);
         Date eDate = new Date(endDate);
@@ -153,7 +157,7 @@ public class QueryRestfulApi {
         try {
             queryTasks =
                     jobHistoryQueryService.search(
-                            taskID, username, status, sDate, eDate, executeApplicationName);
+                            taskID, username, status, creator, sDate, eDate, executeApplicationName);
         } finally {
             PageHelper.clearPage();
         }

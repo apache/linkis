@@ -27,12 +27,12 @@ import scala.beans.BeanProperty
 
 @DWSHttpMessageResult("/api/rest_j/v\\d+/data-source-manager/info")
 class QueryDataSourceResult extends DWSResult{
-  @BeanProperty var query_list: util.List[java.util.Map[String, Any]] = _
+  @BeanProperty var queryList: util.List[java.util.Map[String, Any]] = _
   @BeanProperty var totalPage: Int = _
 
   def getAllDataSource: util.List[DataSource] = {
     import scala.collection.JavaConverters._
-    query_list.asScala.map(x => {
+    queryList.asScala.map(x => {
       val str = DWSHttpClient.jacksonJson.writeValueAsString(x)
       DWSHttpClient.jacksonJson.readValue(str, classOf[DataSource])
     }).asJava

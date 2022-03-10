@@ -24,5 +24,5 @@ import scala.beans.BeanProperty
 
 @DWSHttpMessageResult("/api/rest_j/v\\d+/data-source-manager/info/json")
 class CreateDataSourceResult extends DWSResult{
-  @BeanProperty var insert_id: Long = _
+  @BeanProperty var insertId: Long = _
 }

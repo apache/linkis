@@ -24,5 +24,5 @@ import scala.beans.BeanProperty
 
 @DWSHttpMessageResult("/api/rest_j/v\\d+/data-source-manager/info/(\\S+)/expire")
 class ExpireDataSourceResult extends DWSResult{
-    @BeanProperty var expire_id: Long = _
+    @BeanProperty var expireId: Long = _
 }

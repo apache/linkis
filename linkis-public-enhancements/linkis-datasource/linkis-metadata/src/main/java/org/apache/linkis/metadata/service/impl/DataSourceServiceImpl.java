@@ -18,15 +18,19 @@
 package org.apache.linkis.metadata.service.impl;
 
 import org.apache.linkis.common.utils.ByteTimeUtils;
+import org.apache.linkis.hadoop.common.conf.HadoopConf;
 import org.apache.linkis.hadoop.common.utils.HDFSUtils;
 import org.apache.linkis.metadata.hive.config.DSEnum;
 import org.apache.linkis.metadata.hive.config.DataSource;
 import org.apache.linkis.metadata.hive.dao.HiveMetaDao;
 import org.apache.linkis.metadata.service.DataSourceService;
 import org.apache.linkis.metadata.service.HiveMetaWithPermissionService;
+import org.apache.linkis.metadata.util.DWSConfig;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -61,6 +65,8 @@ public class DataSourceServiceImpl implements DataSourceService {
 
     ObjectMapper jsonMapper = new ObjectMapper();
 
+    private static String dbKeyword = DWSConfig.DB_FILTER_KEYWORDS.getValue();
+
     @DataSource(name = DSEnum.FIRST_DATA_SOURCE)
     @Override
     public JsonNode getDbs(String userName) throws Exception {
@@ -80,6 +86,10 @@ public class DataSourceServiceImpl implements DataSourceService {
         ArrayNode dbNodes = jsonMapper.createArrayNode();
         List<String> dbs = hiveMetaWithPermissionService.getDbsOptionalUserName(userName);
         for (String db : dbs) {
+            if (StringUtils.isBlank(db) || db.contains(dbKeyword)) {
+                logger.info("db  will be filter: " + db);
+                continue;
+            }
             ObjectNode dbNode = jsonMapper.createObjectNode();
             dbNode.put("databaseName", db);
             dbNode.put("tables", queryTables(db, userName));
@@ -161,8 +171,7 @@ public class DataSourceServiceImpl implements DataSourceService {
 
         String tableSize = "";
         try {
-            FileStatus tableFile =
-                    getRootHdfs().getFileStatus(new Path(this.getTableLocation(dbName, tableName)));
+            FileStatus tableFile = getFileStatus(this.getTableLocation(dbName, tableName));
             if (tableFile.isDirectory()) {
                 tableSize =
                         ByteTimeUtils.bytesToString(
@@ -250,7 +259,47 @@ public class DataSourceServiceImpl implements DataSourceService {
         return partitionJson;
     }
 
+    private FileStatus getFileStatus(String location) throws IOException {
+        try {
+            return getRootHdfs().getFileStatus(new Path(location));
+        } catch (IOException e) {
+            String message = e.getMessage();
+            String rootCauseMessage = ExceptionUtils.getRootCauseMessage(e);
+            if ((message != null && message.matches(DWSConfig.HDFS_FILE_SYSTEM_REST_ERRS))
+                    || (rootCauseMessage != null
+                            && rootCauseMessage.matches(DWSConfig.HDFS_FILE_SYSTEM_REST_ERRS))) {
+                logger.info("Failed to getFileStatus, retry", e);
+                resetRootHdfs();
+                return getFileStatus(location);
+            } else {
+                throw e;
+            }
+        }
+    }
+
+    private void resetRootHdfs() {
+        if (HadoopConf.HDFS_ENABLE_CACHE()) {
+            HDFSUtils.closeHDFSFIleSystem(
+                    HDFSUtils.getHDFSRootUserFileSystem(),
+                    HadoopConf.HADOOP_ROOT_USER().getValue(),
+                    true);
+            return;
+        }
+        if (rootHdfs != null) {
+            synchronized (this) {
+                if (rootHdfs != null) {
+                    IOUtils.closeQuietly(rootHdfs);
+                    logger.info("reset RootHdfs");
+                    rootHdfs = HDFSUtils.getHDFSRootUserFileSystem();
+                }
+            }
+        }
+    }
+
     private FileSystem getRootHdfs() {
+        if (HadoopConf.HDFS_ENABLE_CACHE()) {
+            return HDFSUtils.getHDFSRootUserFileSystem();
+        }
         if (rootHdfs == null) {
             synchronized (this) {
                 if (rootHdfs == null) {

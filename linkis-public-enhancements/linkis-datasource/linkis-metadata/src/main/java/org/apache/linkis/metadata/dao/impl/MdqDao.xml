@@ -66,7 +66,7 @@
         VALUES
         <foreach collection="mdqFieldList" item="fields"  separator="," >
             (#{fields.id},#{fields.tableId},#{fields.name},#{fields.alias},#{fields.type},#{fields.comment},
-            #{fields.express},#{fields.rule},#{fields.isPartitionField},#{fields.isPrimary},#{fields.length})
+            #{fields.express},#{fields.rule},#{fields.isPartitionField},#{fields.isPrimary},#{fields.length},#{fields.modeInfo})
         </foreach>
     </insert>
 

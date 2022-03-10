@@ -18,6 +18,7 @@
 package org.apache.linkis.metadata.service.impl;
 
 import org.apache.linkis.common.utils.ByteTimeUtils;
+import org.apache.linkis.hadoop.common.conf.HadoopConf;
 import org.apache.linkis.hadoop.common.utils.HDFSUtils;
 import org.apache.linkis.metadata.dao.MdqDao;
 import org.apache.linkis.metadata.domain.mdq.DomainCoversionUtils;
@@ -40,8 +41,11 @@ import org.apache.linkis.metadata.hive.dao.HiveMetaDao;
 import org.apache.linkis.metadata.service.HiveMetaWithPermissionService;
 import org.apache.linkis.metadata.service.MdqService;
 import org.apache.linkis.metadata.type.MdqImportType;
+import org.apache.linkis.metadata.util.DWSConfig;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -61,6 +65,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class MdqServiceImpl implements MdqService {
+
     @Autowired private MdqDao mdqDao;
 
     @Autowired private HiveMetaDao hiveMetaDao;
@@ -160,9 +165,10 @@ public class MdqServiceImpl implements MdqService {
     @DataSource(name = DSEnum.FIRST_DATA_SOURCE)
     @Override
     public MdqTableStatisticInfoVO getTableStatisticInfo(
-            String database, String tableName, String user) throws IOException {
+            String database, String tableName, String user, String partitionSort)
+            throws IOException {
         MdqTableStatisticInfoVO mdqTableStatisticInfoVO =
-                getTableStatisticInfoFromHive(database, tableName, user);
+                getTableStatisticInfoFromHive(database, tableName, user, partitionSort);
         return mdqTableStatisticInfoVO;
     }
 
@@ -242,7 +248,8 @@ public class MdqServiceImpl implements MdqService {
     @DataSource(name = DSEnum.FIRST_DATA_SOURCE)
     @Override
     public MdqTableStatisticInfoVO getTableStatisticInfoFromHive(
-            String database, String tableName, String user) throws IOException {
+            String database, String tableName, String user, String partitionSort)
+            throws IOException {
         Map<String, String> map = Maps.newHashMap();
         map.put("dbName", database);
         map.put("tableName", tableName);
@@ -263,7 +270,7 @@ public class MdqServiceImpl implements MdqService {
             // 分区表
             mdqTableStatisticInfoVO.setPartitionsNum(getPartitionsNum(tableLocation));
             mdqTableStatisticInfoVO.setPartitions(
-                    getMdqTablePartitionStatisticInfoVO(partitions, ""));
+                    getMdqTablePartitionStatisticInfoVO(partitions, "", partitionSort));
         }
         return mdqTableStatisticInfoVO;
     }
@@ -278,26 +285,8 @@ public class MdqServiceImpl implements MdqService {
         return create(tableLocation + partitionPath);
     }
 
-    public static void main(String[] args) {
-        ArrayList<String> strings =
-                new ArrayList<String>() {
-                    {
-                        add("year=2020/day=0605/time=004");
-                        add("year=2020/day=0605");
-                        add("year=2020/day=0606");
-                        add("year=2019/day=0606");
-                        add("year=2019/day=0605");
-                        add("year=2021");
-                    }
-                };
-        MdqServiceImpl mdqService = new MdqServiceImpl();
-        List<MdqTablePartitionStatisticInfoVO> mdqTablePartitionStatisticInfoVO =
-                mdqService.getMdqTablePartitionStatisticInfoVO(strings, "");
-        System.out.println(mdqTablePartitionStatisticInfoVO);
-    }
-
     public List<MdqTablePartitionStatisticInfoVO> getMdqTablePartitionStatisticInfoVO(
-            List<String> partitions, String partitionPath) {
+            List<String> partitions, String partitionPath, String partitionSort) {
         // part_name(year=2020/day=0605) => MdqTablePartitionStatisticInfoVO 这里只是返回name，没有相关的分区统计数据
         ArrayList<MdqTablePartitionStatisticInfoVO> statisticInfoVOS = new ArrayList<>();
         Map<String, List<Tunple<String, String>>> partitionsStr =
@@ -315,7 +304,25 @@ public class MdqServiceImpl implements MdqService {
                     List<String> subPartitions =
                             v.stream().map(Tunple::getValue).collect(Collectors.toList());
                     List<MdqTablePartitionStatisticInfoVO> childrens =
-                            getMdqTablePartitionStatisticInfoVO(subPartitions, subPartitionPath);
+                            getMdqTablePartitionStatisticInfoVO(
+                                    subPartitions, subPartitionPath, partitionSort);
+                    // 排序
+                    if ("asc".equals(partitionSort))
+                        childrens =
+                                childrens.stream()
+                                        .sorted(
+                                                Comparator.comparing(
+                                                        MdqTablePartitionStatisticInfoVO::getName))
+                                        .collect(Collectors.toList());
+                    else
+                        childrens =
+                                childrens.stream()
+                                        .sorted(
+                                                Comparator.comparing(
+                                                                MdqTablePartitionStatisticInfoVO
+                                                                        ::getName)
+                                                        .reversed())
+                                        .collect(Collectors.toList());
                     mdqTablePartitionStatisticInfoVO.setChildrens(childrens);
                     statisticInfoVOS.add(mdqTablePartitionStatisticInfoVO);
                 });
@@ -345,19 +352,13 @@ public class MdqServiceImpl implements MdqService {
         mdqTablePartitionStatisticInfoVO.setFileNum(getTableFileNum(path));
         mdqTablePartitionStatisticInfoVO.setPartitionSize(getTableSize(path));
         mdqTablePartitionStatisticInfoVO.setModificationTime(getTableModificationTime(path));
-        /* 移除递归。否则hdfs很慢，分区多的时候会超时
-        FileStatus tableFile = getRootHdfs().getFileStatus(new Path(path));
-        FileStatus[] fileStatuses = getRootHdfs().listStatus(tableFile.getPath());
-        List<FileStatus> collect = Arrays.stream(fileStatuses).filter(f -> f.isDirectory()).collect(Collectors.toList());
-        for (FileStatus fileStatuse : collect) {
-            mdqTablePartitionStatisticInfoVO.getChildrens().add(create(fileStatuse.getPath().toString()));
-        }*/
+
         return mdqTablePartitionStatisticInfoVO;
     }
 
     private Date getTableModificationTime(String tableLocation) throws IOException {
         if (StringUtils.isNotBlank(tableLocation)) {
-            FileStatus tableFile = getRootHdfs().getFileStatus(new Path(tableLocation));
+            FileStatus tableFile = getFileStatus(tableLocation);
             return new Date(tableFile.getModificationTime());
         }
         return null;
@@ -366,7 +367,7 @@ public class MdqServiceImpl implements MdqService {
     private int getPartitionsNum(String tableLocation) throws IOException {
         int partitionsNum = 0;
         if (StringUtils.isNotBlank(tableLocation)) {
-            FileStatus tableFile = getRootHdfs().getFileStatus(new Path(tableLocation));
+            FileStatus tableFile = getFileStatus(tableLocation);
             partitionsNum = getRootHdfs().listStatus(tableFile.getPath()).length;
         }
         return partitionsNum;
@@ -385,7 +386,7 @@ public class MdqServiceImpl implements MdqService {
     private int getTableFileNum(String tableLocation) throws IOException {
         int tableFileNum = 0;
         if (StringUtils.isNotBlank(tableLocation)) {
-            FileStatus tableFile = getRootHdfs().getFileStatus(new Path(tableLocation));
+            FileStatus tableFile = getFileStatus(tableLocation);
             tableFileNum =
                     (int) getRootHdfs().getContentSummary(tableFile.getPath()).getFileCount();
         }
@@ -395,7 +396,7 @@ public class MdqServiceImpl implements MdqService {
     private String getTableSize(String tableLocation) throws IOException {
         String tableSize = "0B";
         if (StringUtils.isNotBlank(tableLocation)) {
-            FileStatus tableFile = getRootHdfs().getFileStatus(new Path(tableLocation));
+            FileStatus tableFile = getFileStatus(tableLocation);
             tableSize =
                     ByteTimeUtils.bytesToString(
                             getRootHdfs().getContentSummary(tableFile.getPath()).getLength());
@@ -405,7 +406,49 @@ public class MdqServiceImpl implements MdqService {
 
     private static volatile FileSystem rootHdfs = null;
 
+    private FileStatus getFileStatus(String location) throws IOException {
+        try {
+            return getRootHdfs().getFileStatus(new Path(location));
+        } catch (IOException e) {
+            String message = e.getMessage();
+            String rootCauseMessage = ExceptionUtils.getRootCauseMessage(e);
+            if ((message != null && message.matches(DWSConfig.HDFS_FILE_SYSTEM_REST_ERRS))
+                    || (rootCauseMessage != null
+                            && rootCauseMessage.matches(DWSConfig.HDFS_FILE_SYSTEM_REST_ERRS))) {
+                logger.info("Failed to getFileStatus, retry", e);
+                resetRootHdfs();
+                return getFileStatus(location);
+            } else {
+                throw e;
+            }
+        }
+    }
+
+    private void resetRootHdfs() {
+        if (HadoopConf.HDFS_ENABLE_CACHE()) {
+            HDFSUtils.closeHDFSFIleSystem(
+                    HDFSUtils.getHDFSRootUserFileSystem(),
+                    HadoopConf.HADOOP_ROOT_USER().getValue(),
+                    true);
+            return;
+        }
+        if (rootHdfs != null) {
+            synchronized (this) {
+                if (rootHdfs != null) {
+                    IOUtils.closeQuietly(rootHdfs);
+                    logger.info("reset RootHdfs");
+                    rootHdfs = HDFSUtils.getHDFSRootUserFileSystem();
+                }
+            }
+        }
+    }
+
     private FileSystem getRootHdfs() {
+
+        if (HadoopConf.HDFS_ENABLE_CACHE()) {
+            return HDFSUtils.getHDFSRootUserFileSystem();
+        }
+
         if (rootHdfs == null) {
             synchronized (this) {
                 if (rootHdfs == null) {

@@ -24,5 +24,5 @@ import scala.beans.BeanProperty
 
 @DWSHttpMessageResult("/api/rest_j/v\\d+/data-source-manager/info/(\\S+)")
 class DeleteDataSourceResult extends DWSResult{
-  @BeanProperty var remove_id: Long = _
+  @BeanProperty var removeId: Long = _
 }

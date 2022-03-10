@@ -23,11 +23,11 @@ import org.apache.linkis.httpclient.request.GetAction
 
 
 class MetadataGetPartitionsAction extends GetAction with DataSourceAction {
-  private var dataSourceId: String = _
+  private var dataSourceId: Long = _
   private var database: String = _
   private var table: String = _
 
-  override def suffixURLs: Array[String] = Array(METADATA_SERVICE_MODULE.getValue, "partitions", dataSourceId, "db", database, "table", table)
+  override def suffixURLs: Array[String] = Array(METADATA_SERVICE_MODULE.getValue, "partitions", dataSourceId.toString, "db", database, "table", table)
 
   private var user: String = _
 
@@ -41,7 +41,7 @@ object MetadataGetPartitionsAction {
   def builder(): Builder = new Builder
 
   class Builder private[MetadataGetPartitionsAction]() {
-    private var dataSourceId: String = _
+    private var dataSourceId: Long = _
     private var database: String = _
     private var table: String = _
     private var system: String = _
@@ -52,7 +52,7 @@ object MetadataGetPartitionsAction {
       this
     }
 
-    def setDataSourceId(dataSourceId: String): Builder = {
+    def setDataSourceId(dataSourceId: Long): Builder = {
       this.dataSourceId = dataSourceId
       this
     }

@@ -32,28 +32,28 @@
     </sql>
 
     <select id="getLatestVersion" resultType="Long">
-        SELECT ifnull(max(version_id),0 ) FROM `linkis_datasource_version` WHERE datasource_id = #{dataSourceId};
+        SELECT ifnull(max(version_id),0 ) FROM `linkis_ps_dm_datasource_version` WHERE datasource_id = #{dataSourceId};
     </select>
 
     <insert id="insertOne" parameterType="datasourceVersion">
-        INSERT INTO `linkis_datasource_version`(
+        INSERT INTO `linkis_ps_dm_datasource_version`(
         <include refid="datasource_version_insert_columns"/>
         ) VALUES(#{versionId}, #{datasourceId}, #{parameter}, #{comment}, #{createTime,jdbcType=DATE}, #{createUser})
     </insert>
 
     <select id="selectOneVersion" resultType="string">
         SELECT `parameter`
-         FROM `linkis_datasource_version` WHERE datasource_id = #{dataSourceId} and `version_id` = #{version, jdbcType=INTEGER};
+         FROM `linkis_ps_dm_datasource_version` WHERE datasource_id = #{dataSourceId} and `version_id` = #{version, jdbcType=INTEGER};
     </select>
 
     <select id="getVersionsFromDatasourceId" resultMap="dataSourceVersionMap">
         <![CDATA[SELECT ]]>
         <include refid="datasource_version_insert_columns"/>
-        FROM `linkis_datasource_version` WHERE datasource_id = #{dataSourceId};
+        FROM `linkis_ps_dm_datasource_version` WHERE datasource_id = #{dataSourceId};
     </select>
 
     <delete id="removeFromDataSourceId">
-        <![CDATA[DELETE FROM `linkis_datasource_version`]]>
+        <![CDATA[DELETE FROM `linkis_ps_dm_datasource_version`]]>
         <where>
             `datasource_id` = #{dataSourceId}
         </where>

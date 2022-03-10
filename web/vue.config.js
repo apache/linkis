@@ -26,10 +26,7 @@ const VirtualModulesPlugin = require('webpack-virtual-modules');
 const apps = require('./src/config.json')
 
 const getVersion = () => {
-  const pkgPath = path.join(__dirname, './package.json')
-  let pkg = fs.readFileSync(pkgPath);
-  pkg = JSON.parse(pkg);
-  return pkg.version;
+    return  process.env.VUE_APP_VERSION
 }
 
 // 指定module打包, 不指定则打包全部子应用

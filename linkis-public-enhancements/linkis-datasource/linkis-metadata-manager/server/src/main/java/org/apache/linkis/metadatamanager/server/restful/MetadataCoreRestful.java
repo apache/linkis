@@ -49,9 +49,9 @@ public class MetadataCoreRestful {
 
     @Autowired private MetadataAppService metadataAppService;
 
-    @RequestMapping(value = "/dbs/{data_source_id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/dbs/{dataSourceId}", method = RequestMethod.GET)
     public Message getDatabases(
-            @PathVariable("data_source_id") String dataSourceId,
+            @PathVariable("dataSourceId") String dataSourceId,
             @RequestParam("system") String system,
             HttpServletRequest request) {
         try {
@@ -73,9 +73,9 @@ public class MetadataCoreRestful {
         }
     }
 
-    @RequestMapping(value = "/tables/{data_source_id}/db/{database}", method = RequestMethod.GET)
+    @RequestMapping(value = "/tables/{dataSourceId}/db/{database}", method = RequestMethod.GET)
     public Message getTables(
-            @PathVariable("data_source_id") String dataSourceId,
+            @PathVariable("dataSourceId") String dataSourceId,
             @PathVariable("database") String database,
             @RequestParam("system") String system,
             HttpServletRequest request) {
@@ -105,10 +105,10 @@ public class MetadataCoreRestful {
     }
 
     @RequestMapping(
-            value = "/props/{data_source_id}/db/{database}/table/{table}",
+            value = "/props/{dataSourceId}/db/{database}/table/{table}",
             method = RequestMethod.GET)
     public Message getTableProps(
-            @PathVariable("data_source_id") String dataSourceId,
+            @PathVariable("dataSourceId") String dataSourceId,
             @PathVariable("database") String database,
             @PathVariable("table") String table,
             @RequestParam("system") String system,
@@ -142,10 +142,10 @@ public class MetadataCoreRestful {
     }
 
     @RequestMapping(
-            value = "/props/{data_source_id}/db/{database}/table/{table}/partition/{partition}",
+            value = "/props/{dataSourceId}/db/{database}/table/{table}/partition/{partition}",
             method = RequestMethod.GET)
     public Message getPartitionProps(
-            @PathVariable("data_source_id") String dataSourceId,
+            @PathVariable("dataSourceId") String dataSourceId,
             @PathVariable("database") String database,
             @PathVariable("table") String table,
             @PathVariable("partition") String partition,
@@ -183,10 +183,10 @@ public class MetadataCoreRestful {
     }
 
     @RequestMapping(
-            value = "/partitions/{data_source_id}/db/{database}/table/{table}",
+            value = "/partitions/{dataSourceId}/db/{database}/table/{table}",
             method = RequestMethod.GET)
     public Message getPartitions(
-            @PathVariable("data_source_id") String dataSourceId,
+            @PathVariable("dataSourceId") String dataSourceId,
             @PathVariable("database") String database,
             @PathVariable("table") String table,
             @RequestParam("system") String system,
@@ -220,10 +220,10 @@ public class MetadataCoreRestful {
     }
 
     @RequestMapping(
-            value = "/columns/{data_source_id}/db/{database}/table/{table}",
+            value = "/columns/{dataSourceId}/db/{database}/table/{table}",
             method = RequestMethod.GET)
     public Message getColumns(
-            @PathVariable("data_source_id") String dataSourceId,
+            @PathVariable("dataSourceId") String dataSourceId,
             @PathVariable("database") String database,
             @PathVariable("table") String table,
             @RequestParam("system") String system,
@@ -280,8 +280,8 @@ public class MetadataCoreRestful {
             if (e instanceof ErrorException) {
                 uiMessage += " possible reason[可能原因]: (" + e.getMessage() + ")";
             }
-            LOG.error(uiMessage, e);
         }
+        LOG.error(uiMessage, e);
         return Message.error(uiMessage);
     }
 }

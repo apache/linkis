@@ -17,6 +17,7 @@
 
 package org.apache.linkis.cli.application.suite;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.linkis.cli.application.constants.AppConstants;
 import org.apache.linkis.cli.application.constants.AppKeys;
 import org.apache.linkis.cli.application.interactor.command.LinkisCmdType;
@@ -58,7 +59,6 @@ import org.apache.linkis.cli.core.interactor.job.JobBuilder;
 import org.apache.linkis.cli.core.interactor.result.DefaultResultHandler;
 import org.apache.linkis.cli.core.interactor.result.PresentResultHandler;
 import org.apache.linkis.cli.core.present.DefaultStdOutPresenter;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -177,7 +177,8 @@ public class ExecutionSuiteFactory {
 
                     String mode = stdVarAccess.getVarOrDefault(String.class, AppKeys.LINKIS_CLIENT_MODE_OPT, AppConstants.UJES_MODE);
                     if (StringUtils.equalsIgnoreCase(mode, AppConstants.ONCE_MODE)) {
-                        jobBuilder = new LinkisOnceJobBuilder().setLogListener(new LinkisLogPresenter());;
+                        jobBuilder = new LinkisOnceJobBuilder().setLogListener(new LinkisLogPresenter());
+                        ;
                         validator = new LinkisOnceSubmitValidator();
                     } else {
                         jobBuilder = new LinkisSubmitJobBuilder().setLogListener(new LinkisLogPresenter());

@@ -17,6 +17,7 @@
 
 package org.apache.linkis.cli.application.interactor.validate;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.linkis.cli.application.constants.LinkisKeys;
 import org.apache.linkis.cli.application.interactor.job.LinkisOnceJob;
 import org.apache.linkis.cli.application.interactor.job.desc.LinkisOnceDesc;
@@ -25,7 +26,6 @@ import org.apache.linkis.cli.common.exception.LinkisClientRuntimeException;
 import org.apache.linkis.cli.common.exception.error.ErrorLevel;
 import org.apache.linkis.cli.core.exception.ValidateException;
 import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.Map;
 

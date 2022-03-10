@@ -17,6 +17,7 @@
 
 package org.apache.linkis.cli.application.interactor.job.builder;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.linkis.cli.application.constants.AppConstants;
 import org.apache.linkis.cli.application.constants.AppKeys;
 import org.apache.linkis.cli.application.constants.LinkisKeys;
@@ -31,7 +32,6 @@ import org.apache.linkis.cli.common.entity.present.PresentWay;
 import org.apache.linkis.cli.core.interactor.job.JobBuilder;
 import org.apache.linkis.cli.core.present.PresentModeImpl;
 import org.apache.linkis.cli.core.present.PresentWayImpl;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,7 +80,7 @@ public class LinkisOnceJobBuilder extends JobBuilder {
         labelMap = labelMap == null ? new HashMap<>() : labelMap;
         sourceMap = sourceMap == null ? new HashMap<>() : sourceMap;
         executionMap = executionMap == null ? new HashMap<>() : executionMap;
-        jobContentMap = jobContentMap == null ? new HashMap<>() :jobContentMap;
+        jobContentMap = jobContentMap == null ? new HashMap<>() : jobContentMap;
 
         confMap = ProcessKeyUtils.removePrefixForKeysInMap(confMap);
         runtimeMap = ProcessKeyUtils.removePrefixForKeysInMap(runtimeMap);

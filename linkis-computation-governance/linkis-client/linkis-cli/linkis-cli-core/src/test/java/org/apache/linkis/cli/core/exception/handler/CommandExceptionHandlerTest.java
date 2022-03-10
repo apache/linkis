@@ -19,7 +19,6 @@ package org.apache.linkis.cli.core.exception.handler;
 
 import org.apache.linkis.cli.common.entity.command.CmdTemplate;
 import org.apache.linkis.cli.core.exception.CommandException;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

@@ -17,12 +17,12 @@
 
 package org.apache.linkis.cli.core.interactor.command.parser.transformer;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.linkis.cli.common.exception.LinkisClientRuntimeException;
 import org.apache.linkis.cli.common.exception.error.ErrorLevel;
 import org.apache.linkis.cli.core.exception.CommandException;
 import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
 import org.apache.linkis.cli.core.utils.CommonUtils;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;

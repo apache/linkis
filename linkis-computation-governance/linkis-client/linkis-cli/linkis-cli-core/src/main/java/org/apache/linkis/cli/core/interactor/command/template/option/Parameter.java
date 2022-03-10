@@ -17,8 +17,8 @@
 
 package org.apache.linkis.cli.core.interactor.command.template.option;
 
-import org.apache.linkis.cli.core.utils.converter.AbstractStringConverter;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.linkis.cli.core.utils.converter.AbstractStringConverter;
 
 /**
  * Data Structure for command Parameter. Command String does not contain the name of Parameter.

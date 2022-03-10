@@ -17,6 +17,7 @@
 
 package org.apache.linkis.cli.application.interactor.job.data;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.linkis.cli.application.constants.AppConstants;
 import org.apache.linkis.cli.application.constants.AppKeys;
 import org.apache.linkis.cli.application.constants.LinkisKeys;
@@ -41,36 +42,29 @@ import org.apache.linkis.computation.client.once.simple.SimpleOnceJobBuilder;
 import org.apache.linkis.computation.client.once.simple.SubmittableSimpleOnceJob;
 import org.apache.linkis.computation.client.operator.impl.EngineConnLogOperator;
 import org.apache.linkis.computation.client.operator.impl.EngineConnLogs;
-import org.apache.commons.lang.StringUtils;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingDeque;
 
 public class SimpleOnceJobAdapter implements LinkisLogData {
+    LinkisJobStatus jobStatus = LinkisJobStatus.UNSUBMITTED;
+    EngineConnLogOperator logOperator = null;
     private String serverUrl;
     private SimpleOnceJob onceJob;
     private String engineTypeForECM;
-
     private String message;
     private Exception exception;
     private boolean success;
-
-    LinkisJobStatus jobStatus = LinkisJobStatus.UNSUBMITTED;
-
     private Boolean incLogMode;
     private LinkedBlockingDeque<String> logBuffer = new LinkedBlockingDeque();
-//    private String logPath; // remote path for job log
+    //    private String logPath; // remote path for job log
 //    private Integer nextLogLineIdx = 0;
     private Boolean hasNextLogLine = true;
-
     private String resultLocation;
     private String[] resultSetPaths = null; // remote paths for job result set
     private LinkedBlockingDeque<LinkisResultSet> resultContent = new LinkedBlockingDeque<>();
     private Boolean hasNextResultPage;
-    EngineConnLogOperator logOperator = null;
-
-
     private LinkisClientEvent logstartEvent = new LogStartEvent();
     private TriggerEvent logFinEvent = new TriggerEvent();
     private TriggerEventListener logFinListener = new TriggerEventListener();
@@ -133,7 +127,7 @@ public class SimpleOnceJobAdapter implements LinkisLogData {
 
     public void submit() {
         panicIfNull(onceJob);
-        if(!(onceJob instanceof SubmittableSimpleOnceJob)) {
+        if (!(onceJob instanceof SubmittableSimpleOnceJob)) {
             throw new LinkisClientExecutionException("EXE0041", ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, "onceJob is not properly initiated");
         }
         ((SubmittableSimpleOnceJob) onceJob).submit();
@@ -179,18 +173,18 @@ public class SimpleOnceJobAdapter implements LinkisLogData {
         updateStatus();
         if (logOperator == null) {
             logOperator = (EngineConnLogOperator) onceJob.getOperator(EngineConnLogOperator.OPERATOR_NAME());
-            logOperator.setECMServiceInstance(((SubmittableSimpleOnceJob)onceJob).getECMServiceInstance());
+            logOperator.setECMServiceInstance(((SubmittableSimpleOnceJob) onceJob).getECMServiceInstance());
             logOperator.setEngineConnType(engineTypeForECM);
-    //        logOperator.setPageSize(OnceJobConstants.MAX_LOG_SIZE_ONCE);
+            //        logOperator.setPageSize(OnceJobConstants.MAX_LOG_SIZE_ONCE);
             logOperator.setIgnoreKeywords(OnceJobConstants.LOG_IGNORE_KEYWORDS);
         }
         EngineConnLogs logs = (EngineConnLogs) logOperator.apply(); //for some reason we have to add type conversion, otherwise mvn testCompile fails
         StringBuilder logBuilder = new StringBuilder();
-        for(String log :logs.logs()) {
+        for (String log : logs.logs()) {
             logBuilder.append(log).append(System.lineSeparator());
         }
         appendLog(logBuilder.toString());
-        if ((logs.logs() == null || logs.logs().size() <=0) && jobStatus.isJobFinishedState()) {
+        if ((logs.logs() == null || logs.logs().size() <= 0) && jobStatus.isJobFinishedState()) {
             setHasNextLogLine(false);
         }
 //        System.out.println(logs.logs().size());

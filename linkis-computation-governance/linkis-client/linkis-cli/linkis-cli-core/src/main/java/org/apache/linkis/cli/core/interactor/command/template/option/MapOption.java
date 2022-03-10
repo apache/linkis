@@ -17,10 +17,10 @@
 
 package org.apache.linkis.cli.core.interactor.command.template.option;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.linkis.cli.common.exception.error.ErrorLevel;
 import org.apache.linkis.cli.core.exception.CommandException;
 import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
-import org.apache.commons.lang3.StringUtils;
 
 import java.text.MessageFormat;
 import java.util.HashMap;

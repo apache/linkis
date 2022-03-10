@@ -17,8 +17,8 @@
 
 package org.apache.linkis.cli.core.interactor.command.template.option;
 
-import org.apache.linkis.cli.core.utils.converter.AbstractStringConverter;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.linkis.cli.core.utils.converter.AbstractStringConverter;
 
 public class StdOption<T> extends BaseOption<T> {
     final String[] paramNames;

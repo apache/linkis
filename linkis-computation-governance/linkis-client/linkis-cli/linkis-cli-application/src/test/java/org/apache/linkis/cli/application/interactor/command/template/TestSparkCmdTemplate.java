@@ -22,20 +22,21 @@ import org.apache.linkis.cli.application.constants.TestConstants;
 import org.apache.linkis.cli.core.exception.CommandException;
 import org.apache.linkis.cli.core.interactor.command.template.AbstractCmdTemplate;
 import org.apache.linkis.cli.core.interactor.command.template.option.StdOption;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
 
-/** @description: CommandTemplate for Spark Jobs */
+/**
+ * @description: CommandTemplate for Spark Jobs
+ */
 public class TestSparkCmdTemplate extends AbstractCmdTemplate {
     protected StdOption<String> databaseOp =
             option(
                     null,
                     TestConstants.PARAM_DB,
-                    new String[] {"-d", "--database"},
+                    new String[]{"-d", "--database"},
                     "specify database",
                     true,
                     "");
@@ -43,7 +44,7 @@ public class TestSparkCmdTemplate extends AbstractCmdTemplate {
             option(
                     null,
                     TestConstants.PARAM_PROXY,
-                    new String[] {"-x", "--proxy"},
+                    new String[]{"-x", "--proxy"},
                     "specify proxy url",
                     true,
                     "");
@@ -51,7 +52,7 @@ public class TestSparkCmdTemplate extends AbstractCmdTemplate {
             option(
                     null,
                     AppKeys.JOB_COMMON_SUBMIT_USER,
-                    new String[] {"-u", "--user"},
+                    new String[]{"-u", "--user"},
                     "specify user",
                     true,
                     "");
@@ -59,7 +60,7 @@ public class TestSparkCmdTemplate extends AbstractCmdTemplate {
             option(
                     null,
                     TestConstants.PARAM_USR_CONF,
-                    new String[] {"-c", "--conf"},
+                    new String[]{"-c", "--conf"},
                     "specify configuration from property file",
                     true,
                     "");
@@ -68,7 +69,7 @@ public class TestSparkCmdTemplate extends AbstractCmdTemplate {
             option(
                     null,
                     AppKeys.JOB_COMMON_SUBMIT_PASSWORD,
-                    new String[] {"-pwd", "--passwd"},
+                    new String[]{"-pwd", "--passwd"},
                     "specify user password",
                     true,
                     "");
@@ -76,7 +77,7 @@ public class TestSparkCmdTemplate extends AbstractCmdTemplate {
             option(
                     null,
                     TestConstants.PARAM_SYNC_KEY,
-                    new String[] {"-sk", "--synckey"},
+                    new String[]{"-sk", "--synckey"},
                     "specify sync key",
                     true,
                     "");
@@ -84,7 +85,7 @@ public class TestSparkCmdTemplate extends AbstractCmdTemplate {
             option(
                     null,
                     TestConstants.PARAM_PROXY_USER,
-                    new String[] {"-pu", "--proxy-user"},
+                    new String[]{"-pu", "--proxy-user"},
                     "specify proxy user",
                     true,
                     "");
@@ -93,7 +94,7 @@ public class TestSparkCmdTemplate extends AbstractCmdTemplate {
             option(
                     null,
                     TestConstants.PARAM_HELP,
-                    new String[] {"-h", "--help"},
+                    new String[]{"-h", "--help"},
                     "help info",
                     true,
                     "");
@@ -102,7 +103,7 @@ public class TestSparkCmdTemplate extends AbstractCmdTemplate {
             option(
                     null,
                     AppKeys.JOB_PARAM_CONF,
-                    new String[] {"-confMap"},
+                    new String[]{"-confMap"},
                     "confMap",
                     true,
                     new HashMap<>());
@@ -111,7 +112,7 @@ public class TestSparkCmdTemplate extends AbstractCmdTemplate {
             option(
                     null,
                     TestConstants.PARAM_COMMON_FILE,
-                    new String[] {"--file", "-f"},
+                    new String[]{"--file", "-f"},
                     "Spark SQL File to Execute!",
                     true,
                     "");
@@ -120,7 +121,7 @@ public class TestSparkCmdTemplate extends AbstractCmdTemplate {
             option(
                     null,
                     TestConstants.PARAM_COMMON_CMD,
-                    new String[] {"--cmd"},
+                    new String[]{"--cmd"},
                     "Spark SQL Command to Execute!",
                     true,
                     "");
@@ -129,7 +130,7 @@ public class TestSparkCmdTemplate extends AbstractCmdTemplate {
             option(
                     null,
                     TestConstants.PARAM_COMMON_ARGS,
-                    new String[] {"--args", "-a"},
+                    new String[]{"--args", "-a"},
                     "Set command args, k-v pairs delimited by comma, e.g. key1=value1,key2=value2,...",
                     true,
                     "");
@@ -138,7 +139,7 @@ public class TestSparkCmdTemplate extends AbstractCmdTemplate {
             option(
                     null,
                     TestConstants.PARAM_COMMON_SPLIT,
-                    new String[] {"--split", "-s"},
+                    new String[]{"--split", "-s"},
                     "specify the split character string",
                     true,
                     ",");
@@ -147,7 +148,7 @@ public class TestSparkCmdTemplate extends AbstractCmdTemplate {
             option(
                     null,
                     TestConstants.PARAM_YARN_QUEUE,
-                    new String[] {"--queue", "-q"},
+                    new String[]{"--queue", "-q"},
                     "specify the queue",
                     true,
                     "default");
@@ -156,7 +157,7 @@ public class TestSparkCmdTemplate extends AbstractCmdTemplate {
             option(
                     null,
                     TestConstants.PARAM_SPARK_NAME,
-                    new String[] {"--name", "-n"},
+                    new String[]{"--name", "-n"},
                     "specify the application name. WARNING:this option is deprecated. Linkis does not support this variable",
                     true,
                     "");
@@ -165,7 +166,7 @@ public class TestSparkCmdTemplate extends AbstractCmdTemplate {
             option(
                     null,
                     TestConstants.PARAM_SPARK_HIVECONF,
-                    new String[] {"--hiveconf", "-hc"},
+                    new String[]{"--hiveconf", "-hc"},
                     "specify the hiveconf setting,e.g. hive.cli.print.header=false",
                     true,
                     new HashMap<>());
@@ -174,7 +175,7 @@ public class TestSparkCmdTemplate extends AbstractCmdTemplate {
             option(
                     null,
                     TestConstants.PARAM_SPARK_NUM_EXECUTORS,
-                    new String[] {"--num-executors", "-ne"},
+                    new String[]{"--num-executors", "-ne"},
                     "specify the spark application container",
                     true,
                     3);
@@ -183,7 +184,7 @@ public class TestSparkCmdTemplate extends AbstractCmdTemplate {
             option(
                     null,
                     TestConstants.PARAM_SPARK_EXECUTOR_CORES,
-                    new String[] {"--executor-cores", "-ec"},
+                    new String[]{"--executor-cores", "-ec"},
                     "specify the spark application container vcores(less than queue's max vcores)",
                     true,
                     2);
@@ -192,7 +193,7 @@ public class TestSparkCmdTemplate extends AbstractCmdTemplate {
             option(
                     null,
                     TestConstants.PARAM_SPARK_EXECUTOR_MEMORY,
-                    new String[] {"--executor-memory", "-em"},
+                    new String[]{"--executor-memory", "-em"},
                     "specify the spark application executor's memory, 1.5G-2G/vcore",
                     true,
                     "4G");
@@ -201,7 +202,7 @@ public class TestSparkCmdTemplate extends AbstractCmdTemplate {
             option(
                     null,
                     TestConstants.PARAM_SPARK_SHUFFLE_PARTITIONS,
-                    new String[] {"--shuffle-partitions", "-sp"},
+                    new String[]{"--shuffle-partitions", "-sp"},
                     "specify the spark.sql.shuffle.partitions",
                     true,
                     200);
@@ -210,7 +211,7 @@ public class TestSparkCmdTemplate extends AbstractCmdTemplate {
             option(
                     null,
                     TestConstants.PARAM_COMMON_OTHER_KV,
-                    new String[] {"--other"},
+                    new String[]{"--other"},
                     "specify the other parameters",
                     true,
                     new HashMap<>());
@@ -224,7 +225,8 @@ public class TestSparkCmdTemplate extends AbstractCmdTemplate {
     }
 
     @Override
-    public void checkParams() throws CommandException {}
+    public void checkParams() throws CommandException {
+    }
 
     @Override
     protected Object clone() throws CloneNotSupportedException {

@@ -17,6 +17,7 @@
 
 package org.apache.linkis.cli.application.operator.ujes;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.linkis.cli.application.constants.LinkisKeys;
 import org.apache.linkis.cli.application.interactor.job.LinkisJobStatus;
 import org.apache.linkis.cli.application.interactor.job.data.LinkisResultSet;
@@ -35,7 +36,6 @@ import org.apache.linkis.ujes.client.response.JobInfoResult;
 import org.apache.linkis.ujes.client.response.JobLogResult;
 import org.apache.linkis.ujes.client.response.JobStatusResult;
 import org.apache.linkis.ujes.client.response.JobSubmitResult;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -255,7 +255,7 @@ public class UJESResultAdapter implements LinkisOperResultAdapter {
         if (result instanceof OpenLogResult2 && ((OpenLogResult2) result).getResult() != null && ((OpenLogResult2) result).getResult().getLog() != null) {
             String allLog = ((OpenLogResult2) result).getResult().getLog()[UJESConstants.IDX_FOR_LOG_TYPE_ALL];
             Integer fromLine = ((OpenLogResult2) result).getFromLine();
-            return StringUtils.substring(allLog, OperatorUtils.getFirstIndexSkippingLines(allLog, fromLine == null? 0: fromLine));
+            return StringUtils.substring(allLog, OperatorUtils.getFirstIndexSkippingLines(allLog, fromLine == null ? 0 : fromLine));
         }
         return null;
     }

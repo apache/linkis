@@ -20,7 +20,6 @@ package org.apache.linkis.cli.application.interactor.job;
 import org.apache.linkis.cli.application.data.ProcessedData;
 import org.apache.linkis.cli.application.interactor.command.template.ProcessInputUtil;
 import org.apache.linkis.cli.application.interactor.command.template.TestSparkCmdTemplate;
-
 import org.apache.linkis.cli.core.interactor.job.JobBuilder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,33 +29,33 @@ public class LinkisJobBuilderTest {
     JobBuilder builder;
 
     @BeforeEach
-    public void before() throws Exception {
+    public void before() {
         String[] cmdStr =
-                new String[] {
-                    "-u",
-                    "hadoop",
-                    "-pwd",
-                    "1234",
-                    "-c",
-                    "src/test/resources/conf/user.properties",
-                    "--cmd",
-                    "show tables",
-                    "--split",
-                    "\',\'",
-                    "--queue",
-                    "q05",
-                    "--name",
-                    "testApp",
-                    //      "--hiveconf", "/path/...",
-                    //      "--num-executors", "4",
-                    "--executor-cores",
-                    "4",
-                    "--executor-memory",
-                    "4G",
-                    "--shuffle-partitions",
-                    "200",
-                    "-confMap",
-                    "kk=vv,kkk=vvv,spark.executor.instances=8"
+                new String[]{
+                        "-u",
+                        "hadoop",
+                        "-pwd",
+                        "1234",
+                        "-c",
+                        "src/test/resources/conf/user.properties",
+                        "--cmd",
+                        "show tables",
+                        "--split",
+                        "\',\'",
+                        "--queue",
+                        "q05",
+                        "--name",
+                        "testApp",
+                        //      "--hiveconf", "/path/...",
+                        //      "--num-executors", "4",
+                        "--executor-cores",
+                        "4",
+                        "--executor-memory",
+                        "4G",
+                        "--shuffle-partitions",
+                        "200",
+                        "-confMap",
+                        "kk=vv,kkk=vvv,spark.executor.instances=8"
                 };
         ProcessedData data =
                 ProcessInputUtil.generateProcessedData(cmdStr, new TestSparkCmdTemplate());
@@ -70,38 +69,49 @@ public class LinkisJobBuilderTest {
     }
 
     @AfterEach
-    public void after() throws Exception {}
+    public void after() {
+    }
 
-    /** Method: setIdentifier(String identifier) */
+    /**
+     * Method: setIdentifier(String identifier)
+     */
     @Test
-    public void testSetIdentifier() throws Exception {
+    public void testSetIdentifier() {
         // TODO: Test goes here...
     }
 
-    /** Method: build() */
+    /**
+     * Method: build()
+     */
     @Test
-    public void testBuild() throws Exception {
+    public void testBuild() {
         // TODO: Test goes here...
         //  LinkisJob job = builder.build();
         //  System.out.println(CommonUtils.GSON.toJson(job));
         //  assertEquals(job.getParamConfMap().get("spark.executor.instances"), "8");
     }
 
-    /** Method: setStdVarAccess(VarAccess varAccess) */
+    /**
+     * Method: setStdVarAccess(VarAccess varAccess)
+     */
     @Test
-    public void testSetStdVarAccess() throws Exception {
+    public void testSetStdVarAccess() {
         // TODO: Test goes here...
     }
 
-    /** Method: setSysVarAccess(VarAccess varAccess) */
+    /**
+     * Method: setSysVarAccess(VarAccess varAccess)
+     */
     @Test
-    public void testSetSysVarAccess() throws Exception {
+    public void testSetSysVarAccess() {
         // TODO: Test goes here...
     }
 
-    /** Method: getTargetNewInstance() */
+    /**
+     * Method: getTargetNewInstance()
+     */
     @Test
-    public void testGetTargetNewInstance() throws Exception {
+    public void testGetTargetNewInstance() {
         // TODO: Test goes here...
     }
 }

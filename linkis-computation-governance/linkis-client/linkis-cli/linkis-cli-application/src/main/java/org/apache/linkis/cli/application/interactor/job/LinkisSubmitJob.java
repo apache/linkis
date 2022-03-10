@@ -17,6 +17,8 @@
 
 package org.apache.linkis.cli.application.interactor.job;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.linkis.cli.application.interactor.job.data.LinkisJobData;
 import org.apache.linkis.cli.application.interactor.job.data.LinkisLogData;
 import org.apache.linkis.cli.application.interactor.job.data.LinkisResultData;
@@ -32,8 +34,6 @@ import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
 import org.apache.linkis.cli.core.interactor.job.*;
 import org.apache.linkis.cli.core.utils.CommonUtils;
 import org.apache.linkis.cli.core.utils.LogUtils;
-import org.apache.commons.lang.exception.ExceptionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -190,11 +190,11 @@ public class LinkisSubmitJob extends LinkisJob implements AsyncBackendJob, LogAc
                 data.setSuccess(false);
                 data.setException(e);
             }
-            ((LinkisResultData)data).sendResultFin(); //inform listener to stop
+            ((LinkisResultData) data).sendResultFin(); //inform listener to stop
         } catch (Exception e) {
             data.setSuccess(false);
             data.setException(e);
-            ((LinkisResultData)data).sendResultFin(); //inform listener to stop
+            ((LinkisResultData) data).sendResultFin(); //inform listener to stop
         }
     }
 

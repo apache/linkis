@@ -17,9 +17,9 @@
 
 package org.apache.linkis.cli.core.interactor.command.template.option;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.linkis.cli.common.entity.command.CmdOption;
 import org.apache.linkis.cli.core.utils.converter.AbstractStringConverter;
-import org.apache.commons.lang3.StringUtils;
 
 import java.text.MessageFormat;
 

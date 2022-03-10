@@ -17,6 +17,7 @@
 
 package org.apache.linkis.cli.application.present;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.linkis.cli.application.constants.AppConstants;
 import org.apache.linkis.cli.application.interactor.job.data.LinkisResultSet;
 import org.apache.linkis.cli.application.present.model.LinkisResultModel;
@@ -33,7 +34,6 @@ import org.apache.linkis.cli.core.present.display.DisplayOperator;
 import org.apache.linkis.cli.core.present.display.data.FileDisplayData;
 import org.apache.linkis.cli.core.utils.CommonUtils;
 import org.apache.linkis.cli.core.utils.LogUtils;
-import org.apache.commons.lang3.StringUtils;
 
 import java.text.MessageFormat;
 import java.util.*;

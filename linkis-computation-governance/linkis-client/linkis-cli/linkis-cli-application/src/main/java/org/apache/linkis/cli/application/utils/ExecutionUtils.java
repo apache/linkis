@@ -17,6 +17,7 @@
 
 package org.apache.linkis.cli.application.utils;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.linkis.cli.application.constants.AppKeys;
 import org.apache.linkis.cli.application.constants.LinkisConstants;
 import org.apache.linkis.cli.common.entity.var.VarAccess;
@@ -24,7 +25,6 @@ import org.apache.linkis.cli.common.exception.error.ErrorLevel;
 import org.apache.linkis.cli.core.exception.BuilderException;
 import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
 import org.apache.linkis.cli.core.utils.LogUtils;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.*;
 import java.util.Set;

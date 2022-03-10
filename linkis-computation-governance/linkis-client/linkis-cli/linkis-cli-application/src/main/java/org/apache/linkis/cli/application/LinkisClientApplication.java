@@ -17,6 +17,7 @@
 
 package org.apache.linkis.cli.application;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.linkis.cli.application.constants.AppConstants;
 import org.apache.linkis.cli.application.constants.AppKeys;
 import org.apache.linkis.cli.application.data.FinishedData;
@@ -71,7 +72,6 @@ import org.apache.linkis.cli.core.present.display.PlainTextFileWriter;
 import org.apache.linkis.cli.core.present.display.StdOutWriter;
 import org.apache.linkis.cli.core.utils.LogUtils;
 import org.apache.linkis.cli.core.utils.SchedulerUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

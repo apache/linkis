@@ -17,6 +17,7 @@
 
 package org.apache.linkis.cli.core.interactor.var;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.linkis.cli.common.entity.command.ParamItem;
 import org.apache.linkis.cli.common.entity.command.Params;
 import org.apache.linkis.cli.common.entity.properties.ClientProperties;
@@ -27,7 +28,6 @@ import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
 import org.apache.linkis.cli.core.interactor.command.SpecialMap;
 import org.apache.linkis.cli.core.utils.converter.AbstractStringConverter;
 import org.apache.linkis.cli.core.utils.converter.PredefinedStringConverters;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

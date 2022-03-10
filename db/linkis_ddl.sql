@@ -416,7 +416,7 @@ CREATE TABLE `linkis_ps_cs_context_listener` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
-drop table if exists `linkis_ps_bml_resources`;
+DROP TABLE IF EXISTS `linkis_ps_bml_resources`;
 CREATE TABLE if not exists `linkis_ps_bml_resources` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'Primary key',
   `resource_id` varchar(50) NOT NULL COMMENT 'resource uuid',
@@ -437,7 +437,7 @@ CREATE TABLE if not exists `linkis_ps_bml_resources` (
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4;
 
 
-drop table if exists `linkis_ps_bml_resources_version`;
+DROP TABLE IF EXISTS `linkis_ps_bml_resources_version`;
 CREATE TABLE if not exists `linkis_ps_bml_resources_version` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'Primary key',
   `resource_id` varchar(50) NOT NULL COMMENT 'Resource uuid',
@@ -459,7 +459,7 @@ CREATE TABLE if not exists `linkis_ps_bml_resources_version` (
 
 
 
-drop table if exists `linkis_ps_bml_resources_permission`;
+DROP TABLE IF EXISTS `linkis_ps_bml_resources_permission`;
 CREATE TABLE if not exists `linkis_ps_bml_resources_permission` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'Primary key',
   `resource_id` varchar(50) NOT NULL COMMENT 'Resource uuid',
@@ -473,7 +473,7 @@ CREATE TABLE if not exists `linkis_ps_bml_resources_permission` (
 
 
 
-drop table if exists `linkis_ps_resources_download_history`;
+DROP TABLE IF EXISTS `linkis_ps_resources_download_history`;
 CREATE TABLE if not exists `linkis_ps_resources_download_history` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'primary key',
 	`start_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'start time',
@@ -490,7 +490,7 @@ CREATE TABLE if not exists `linkis_ps_resources_download_history` (
 
 
 -- 创建资源任务表,包括上传,更新,下载
-drop table if exists `linkis_ps_bml_resources_task`;
+DROP TABLE IF EXISTS `linkis_ps_bml_resources_task`;
 CREATE TABLE if not exists `linkis_ps_bml_resources_task` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `resource_id` varchar(50) DEFAULT NULL COMMENT 'resource uuid',
@@ -511,7 +511,7 @@ CREATE TABLE if not exists `linkis_ps_bml_resources_task` (
 
 
 
-drop table if exists linkis_ps_bml_project;
+DROP TABLE IF EXISTS `linkis_ps_bml_project`;
 create table if not exists linkis_ps_bml_project(
   `id` int(10) NOT NULL AUTO_INCREMENT,
   `name` varchar(128) DEFAULT NULL,
@@ -527,7 +527,7 @@ PRIMARY KEY (`id`)
 
 
 
-drop table if exists linkis_ps_bml_project_user;
+DROP TABLE IF EXISTS `linkis_ps_bml_project_user`;
 create table if not exists linkis_ps_bml_project_user(
   `id` int(10) NOT NULL AUTO_INCREMENT,
   `project_id` int(10) NOT NULL,
@@ -541,7 +541,7 @@ PRIMARY KEY (`id`)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin ROW_FORMAT=COMPACT;
 
 
-drop table if exists linkis_ps_bml_project_resource;
+DROP TABLE IF EXISTS `linkis_ps_bml_project_resource`;
 create table if not exists linkis_ps_bml_project_resource(
   `id` int(10) NOT NULL AUTO_INCREMENT,
   `project_id` int(10) NOT NULL,
@@ -609,7 +609,6 @@ CREATE TABLE `linkis_ps_error_code` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 DROP TABLE IF EXISTS `linkis_cg_manager_service_instance`;
-
 CREATE TABLE `linkis_cg_manager_service_instance` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `instance` varchar(128) COLLATE utf8_bin DEFAULT NULL,
@@ -625,7 +624,6 @@ CREATE TABLE `linkis_cg_manager_service_instance` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 DROP TABLE IF EXISTS `linkis_cg_manager_linkis_resources`;
-
 CREATE TABLE `linkis_cg_manager_linkis_resources` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `max_resource` varchar(255) COLLATE utf8_bin DEFAULT NULL,
@@ -644,7 +642,6 @@ CREATE TABLE `linkis_cg_manager_linkis_resources` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 DROP TABLE IF EXISTS `linkis_cg_manager_lock`;
-
 CREATE TABLE `linkis_cg_manager_lock` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `lock_object` varchar(255) COLLATE utf8_bin DEFAULT NULL,
@@ -676,7 +673,6 @@ CREATE TABLE `linkis_cg_manager_engine_em` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 DROP TABLE IF EXISTS `linkis_cg_manager_label`;
-
 CREATE TABLE `linkis_cg_manager_label` (
   `id` int(20) NOT NULL AUTO_INCREMENT,
   `label_key` varchar(32) COLLATE utf8_bin NOT NULL,
@@ -690,7 +686,6 @@ CREATE TABLE `linkis_cg_manager_label` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 DROP TABLE IF EXISTS `linkis_cg_manager_label_value_relation`;
-
 CREATE TABLE `linkis_cg_manager_label_value_relation` (
   `id` int(20) NOT NULL AUTO_INCREMENT,
   `label_value_key` varchar(255) COLLATE utf8_bin NOT NULL,
@@ -736,7 +731,6 @@ CREATE TABLE `linkis_cg_manager_label_user` (
 
 
 DROP TABLE IF EXISTS `linkis_cg_manager_metrics_history`;
-
 CREATE TABLE `linkis_cg_manager_metrics_history` (
   `id` int(20) NOT NULL AUTO_INCREMENT,
   `instance_status` int(20) DEFAULT NULL,
@@ -752,7 +746,6 @@ CREATE TABLE `linkis_cg_manager_metrics_history` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 DROP TABLE IF EXISTS `linkis_cg_manager_service_instance_metrics`;
-
 CREATE TABLE `linkis_cg_manager_service_instance_metrics` (
   `instance` varchar(128) COLLATE utf8_bin NOT NULL,
   `instance_status` int(11) DEFAULT NULL,
@@ -777,13 +770,13 @@ CREATE TABLE `linkis_cg_engine_conn_plugin_bml_resources` (
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'created time',
   `last_update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'updated time',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ----------------------------
--- Table structure for linkis_datasource
+-- Table structure for linkis_ps_dm_datasource
 -- ----------------------------
-DROP TABLE IF EXISTS `linkis_datasource`;
-CREATE TABLE `linkis_datasource`
+DROP TABLE IF EXISTS `linkis_ps_dm_datasource`;
+CREATE TABLE `linkis_ps_dm_datasource`
 (
     `id`                   int(11)                       NOT NULL AUTO_INCREMENT,
     `datasource_name`      varchar(255) COLLATE utf8_bin NOT NULL,
@@ -801,15 +794,13 @@ CREATE TABLE `linkis_datasource`
     `expire`               tinyint(1)                         DEFAULT 0,
     `published_version_id` int(11)                            DEFAULT NULL,
     PRIMARY KEY (`id`)
-) ENGINE = InnoDB
-  CHARACTER SET = utf8
-  COLLATE = utf8_bin;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ----------------------------
--- Table structure for linkis_datasource_env
+-- Table structure for linkis_ps_dm_datasource_env
 -- ----------------------------
-DROP TABLE IF EXISTS `linkis_datasource_env`;
-CREATE TABLE `linkis_datasource_env`
+DROP TABLE IF EXISTS `linkis_ps_dm_datasource_env`;
+CREATE TABLE `linkis_ps_dm_datasource_env`
 (
     `id`                 int(11)                       NOT NULL AUTO_INCREMENT,
     `env_name`           varchar(32) COLLATE utf8_bin  NOT NULL,
@@ -821,16 +812,14 @@ CREATE TABLE `linkis_datasource_env`
     `modify_time`        datetime                      NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `modify_user`        varchar(255) COLLATE utf8_bin NULL     DEFAULT NULL,
     PRIMARY KEY (`id`)
-) ENGINE = InnoDB
-  CHARACTER SET = utf8
-  COLLATE = utf8_bin;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 
 -- ----------------------------
--- Table structure for linkis_datasource_type
+-- Table structure for linkis_ps_dm_datasource_type
 -- ----------------------------
-DROP TABLE IF EXISTS `linkis_datasource_type`;
-CREATE TABLE `linkis_datasource_type`
+DROP TABLE IF EXISTS `linkis_ps_dm_datasource_type`;
+CREATE TABLE `linkis_ps_dm_datasource_type`
 (
     `id`          int(11)                      NOT NULL AUTO_INCREMENT,
     `name`        varchar(32) COLLATE utf8_bin NOT NULL,
@@ -840,15 +829,13 @@ CREATE TABLE `linkis_datasource_type`
     `icon`        varchar(255) COLLATE utf8_bin DEFAULT NULL,
     `layers`      int(3)                       NOT NULL,
     PRIMARY KEY (`id`)
-) ENGINE = InnoDB
-  CHARACTER SET = utf8
-  COLLATE = utf8_bin;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ----------------------------
--- Table structure for linkis_datasource_type_key
+-- Table structure for linkis_ps_dm_datasource_type_key
 -- ----------------------------
-DROP TABLE IF EXISTS `linkis_datasource_type_key`;
-CREATE TABLE `linkis_datasource_type_key`
+DROP TABLE IF EXISTS `linkis_ps_dm_datasource_type_key`;
+CREATE TABLE `linkis_ps_dm_datasource_type_key`
 (
     `id`                  int(11)                       NOT NULL AUTO_INCREMENT,
     `data_source_type_id` int(11)                       NOT NULL,
@@ -866,15 +853,12 @@ CREATE TABLE `linkis_datasource_type_key`
     `update_time`         datetime                      NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `create_time`         datetime                      NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`)
-) ENGINE = InnoDB
-  CHARACTER SET = utf8
-  COLLATE = utf8_bin;
-
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 -- ----------------------------
--- Table structure for linkis_datasource_version
+-- Table structure for linkis_ps_dm_datasource_version
 -- ----------------------------
-DROP TABLE IF EXISTS `linkis_datasource_version`;
-CREATE TABLE `linkis_datasource_version`
+DROP TABLE IF EXISTS `linkis_ps_dm_datasource_version`;
+CREATE TABLE `linkis_ps_dm_datasource_version`
 (
     `version_id`    int(11)                        NOT NULL AUTO_INCREMENT,
     `datasource_id` int(11)                        NOT NULL,
@@ -883,7 +867,4 @@ CREATE TABLE `linkis_datasource_version`
     `create_time`   datetime(0)                    NULL DEFAULT CURRENT_TIMESTAMP,
     `create_user`   varchar(255) COLLATE utf8_bin  NULL DEFAULT NULL,
     PRIMARY KEY (`version_id`, `datasource_id`) USING BTREE
-) ENGINE = InnoDB
-  AUTO_INCREMENT = 21
-  CHARACTER SET = utf8
-  COLLATE = utf8_bin;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;

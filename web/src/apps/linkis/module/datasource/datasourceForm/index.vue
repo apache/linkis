@@ -67,7 +67,7 @@ const typesMap = {
     } catch (error) {
       api.fetch(data.dataSource, {}, 'get').then(result=>{
         delete source.options;
-        source.options = result.env_list.map(item=>{
+        source.options = result.envList.map(item=>{
           return {label: item.envName, value: ''+item.id}
         });
         // console.log('self.rule',self.rule)
@@ -159,7 +159,7 @@ export default {
 
     getKeyDefine(this.data.dataSourceTypeId).then((data)=>{
       this.loading = false;
-      this.transformData(data.key_define);
+      this.transformData(data.keyDefine);
     })
   },
   watch: {

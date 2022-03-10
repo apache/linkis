@@ -17,6 +17,8 @@
 #Actively load user env
 source ~/.bash_profile
 
+source $LINKIS_CONF_DIR/linkis-env.sh
+
 export local_host="`hostname --fqdn`"
 
 ipaddr=$(ip addr | awk '/^[0-9]+: / {}; /inet.*global/ {print gensub(/(.*)\/(.*)/, "\\1", "g", $2)}')

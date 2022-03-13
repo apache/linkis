@@ -50,6 +50,15 @@
           :editable="false"
         />
       </FormItem>
+      <Divider type="vertical" class="divider"/>
+      <FormItem prop="creator" :label="$t('message.linkis.formItems.creator.label')">
+        <Input
+          :maxlength="50"
+          v-model="searchBar.creator"
+          :placeholder="$t('message.linkis.formItems.creator.placeholder')"
+          style="width:120px;"
+        />
+      </FormItem>
       <Divider type="vertical" class="divider" />
       <FormItem prop="engine" :label="$t('message.linkis.formItems.engine.label')">
         <Select v-model="searchBar.engine" style="min-width:70px;">
@@ -143,6 +152,7 @@ export default {
       searchBar: {
         id: null,
         proxyUser: '',
+        creator: '',
         engine: 'all',
         status: '',
         shortcut: [today, today]
@@ -360,6 +370,7 @@ export default {
       const endDate = this.searchBar.shortcut[1]
       const params = {
         taskID: this.searchBar.id,
+        creator: this.searchBar.creator,
         executeApplicationName: this.searchBar.engine,
         status: this.searchBar.status,
         startDate: startDate && startDate.getTime(),
@@ -373,6 +384,7 @@ export default {
         delete params.proxyUser
       }
       if (this.searchBar.id) {
+        delete params.creator
         delete params.executeApplicationName
         delete params.status
         delete params.startDate
@@ -582,6 +594,7 @@ export default {
       this.searchBar = {
         id: null,
         proxyUser: '',
+        creator: '',
         engine: 'all',
         status: 'all',
         shortcut: ''

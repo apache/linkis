@@ -41,6 +41,7 @@
   </div>
 </template>
 <script>
+import storage from '@/common/helper/storage'
 import result from '@/components/consoleComponent/result.vue'
 import log from '@/components/consoleComponent/log.vue'
 import api from '@/common/service/api'
@@ -301,7 +302,17 @@ export default {
         if (this.$route.query.proxyUser) {
           params.proxyUser = this.$route.query.proxyUser
         }
-        let openLog = await api.fetch('/filesystem/openLog', params, 'get')
+        const lastSearch = storage.get('last-searchbar-status')
+        let openLog = {}
+        if (lastSearch && (lastSearch.status === 'Scheduled' || lastSearch.status === 'Running')) {
+          const tempParams = {
+            fromLine: this.fromLine,
+            size: -1,
+          }
+          openLog = await api.fetch(`/entrance/${jobId}/log`, tempParams, 'get')
+        } else {
+          openLog = await api.fetch('/filesystem/openLog', params, 'get')
+        }
         if (openLog) {
           const log = { all: '', error: '', warning: '', info: '' }
           const convertLogs = util.convertLog(openLog.log)

@@ -36,7 +36,7 @@ object EnvConfiguration {
   val ENGINE_CONN_DEFAULT_JAVA_OPTS = CommonVars[String]("wds.linkis.engineConn.javaOpts.default", s"-XX:+UseG1GC -XX:MaxPermSize=250m -XX:PermSize=128m " +
     s"-Xloggc:%s -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+PrintGCDateStamps -Dwds.linkis.server.conf=linkis-engineconn.properties -Dwds.linkis.gateway.url=${Configuration.getGateWayURL()}")
 
-  val ENGINE_CONN_MEMORY = CommonVars("wds.linkis.engineConn.memory", new ByteType("2g"), "Specify the memory size of the java client(指定java进程的内存大小)")
+  val ENGINE_CONN_MEMORY = CommonVars("wds.linkis.engineConn.memory", new ByteType("1g"), "Specify the memory size of the java client(指定java进程的内存大小)")
 
   val ENGINE_CONN_JAVA_EXTRA_OPTS = CommonVars("wds.linkis.engineConn.java.extraOpts", "",
     "Specify the option parameter of the java process (please modify it carefully!!!)")

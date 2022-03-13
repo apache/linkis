@@ -56,7 +56,7 @@ abstract class JavaProcessEngineConnLaunchBuilder extends ProcessEngineConnLaunc
     commandLine += "-server"
     val engineConnMemory = EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.getValue.toString
     commandLine += ("-Xmx" + engineConnMemory)
-    commandLine += ("-Xms" + engineConnMemory)
+    //commandLine += ("-Xms" + engineConnMemory)
     val javaOPTS = getExtractJavaOpts
     if (StringUtils.isNotEmpty(EnvConfiguration.ENGINE_CONN_DEFAULT_JAVA_OPTS.getValue))
       EnvConfiguration.ENGINE_CONN_DEFAULT_JAVA_OPTS.getValue.format(getGcLogDir(engineConnBuildRequest)).split("\\s+").foreach(commandLine += _)

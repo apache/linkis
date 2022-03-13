@@ -153,6 +153,10 @@
                     "label": "起始时间",
                     "placeholder": "请选择起始日期"
                 },
+                "creator": {
+                    "label": "创建人",
+                    "placeholder": "请输入创建人搜索"
+                },
                 "engine": {
                     "label": "引擎"
                 },

@@ -61,9 +61,9 @@ public class SingleCmdParser extends AbstarctParser {
                             + ". Please check help message");
         }
 
-        CmdTemplate parsedCopyOfTemplate = result.getParsedTemplateCopy();
-        Params param = templateToParams(parsedCopyOfTemplate, mapper);
+        CmdTemplate parsedTemplate = result.getParsedTemplate();
+        Params param = templateToParams(parsedTemplate, mapper);
 
-        return new ParseResult(parsedCopyOfTemplate, param, remains);
+        return new ParseResult(parsedTemplate, param, remains);
     }
 }

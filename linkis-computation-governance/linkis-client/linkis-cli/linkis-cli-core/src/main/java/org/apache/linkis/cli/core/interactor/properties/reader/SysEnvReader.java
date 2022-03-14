@@ -17,7 +17,7 @@
 
 package org.apache.linkis.cli.core.interactor.properties.reader;
 
-import org.apache.linkis.cli.common.constants.CommonConstants;
+import org.apache.linkis.cli.core.constants.CommonConstants;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

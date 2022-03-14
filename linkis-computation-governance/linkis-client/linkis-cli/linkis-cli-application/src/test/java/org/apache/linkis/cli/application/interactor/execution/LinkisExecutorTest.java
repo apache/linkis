@@ -24,80 +24,80 @@ import org.junit.jupiter.api.Test;
 public class LinkisExecutorTest {
 
     @BeforeEach
-    public void before() throws Exception {}
+    public void before() {}
 
     @AfterEach
-    public void after() throws Exception {}
+    public void after() {}
 
     /** Method: setDriver(LinkisClientDriver driver) */
     @Test
-    public void testSetDriver() throws Exception {
+    public void testSetDriver() {
         // TODO: Test goes here...
     }
 
     /** Method: setDriverTransformer(DriverTransformer driverTransformer) */
     @Test
-    public void testSetDriverTransformer() throws Exception {
+    public void testSetDriverTransformer() {
         // TODO: Test goes here...
     }
 
     /** Method: getJobID(JobSubmitExec execData) */
     @Test
-    public void testGetJobID() throws Exception {
+    public void testGetJobID() {
         // TODO: Test goes here...
     }
 
     /** Method: submit(Job job) */
     @Test
-    public void testDoAsyncSubmit() throws Exception {
+    public void testDoAsyncSubmit() {
         // TODO: Test goes here...
     }
 
     /** Method: updateJobStatus(JobSubmitExec execData) */
     @Test
-    public void testDoUpdateProgress() throws Exception {
+    public void testDoUpdateProgress() {
         // TODO: Test goes here...
     }
 
     /** Method: checkSubmit(JobSubmitExec execData) */
     @Test
-    public void testDoCheckSubmit() throws Exception {
+    public void testDoCheckSubmit() {
         // TODO: Test goes here...
     }
 
     /** Method: doGetFinalResult(JobSubmitExec execData) */
     @Test
-    public void testDoGetFinalResult() throws Exception {
+    public void testDoGetFinalResult() {
         // TODO: Test goes here...
     }
 
     /** Method: checkInit() */
     @Test
-    public void testCheckInit() throws Exception {
+    public void testCheckInit() {
         // TODO: Test goes here...
     }
 
     /** Method: doKill(Job job) */
     @Test
-    public void testDoKill() throws Exception {
+    public void testDoKill() {
         // TODO: Test goes here...
     }
 
     /** Method: doQuery(Job job) */
     @Test
-    public void testDoQuery() throws Exception {
+    public void testDoQuery() {
         // TODO: Test goes here...
     }
 
     /** Method: doTransform(Job job) */
     @Test
-    public void testDoTransform() throws Exception {
+    public void testDoTransform() {
         // TODO: Test goes here...
     }
 
     /** Method: updateExecDataByDwsResult(JobSubmitExec execData, DWSResult result) */
     @Test
-    public void testUpdateExecDataByDwsResult() throws Exception {
+    public void testUpdateExecDataByDwsResult() {
         // TODO: Test goes here...
         /*
         try {

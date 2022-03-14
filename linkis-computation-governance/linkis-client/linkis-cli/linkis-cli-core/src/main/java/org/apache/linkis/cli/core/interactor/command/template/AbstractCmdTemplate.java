@@ -17,29 +17,29 @@
 
 package org.apache.linkis.cli.core.interactor.command.template;
 
-import org.apache.linkis.cli.common.constants.CommonConstants;
 import org.apache.linkis.cli.common.entity.command.CmdOption;
 import org.apache.linkis.cli.common.entity.command.CmdTemplate;
 import org.apache.linkis.cli.common.entity.command.CmdType;
 import org.apache.linkis.cli.common.exception.LinkisClientRuntimeException;
 import org.apache.linkis.cli.common.exception.error.ErrorLevel;
-import org.apache.linkis.cli.common.utils.converter.AbstractStringConverter;
+import org.apache.linkis.cli.core.constants.CommonConstants;
 import org.apache.linkis.cli.core.exception.CommandException;
 import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
+import org.apache.linkis.cli.core.interactor.command.SpecialMap;
 import org.apache.linkis.cli.core.interactor.command.template.option.*;
-import org.apache.linkis.cli.core.utils.SpecialMap;
+import org.apache.linkis.cli.core.utils.converter.AbstractStringConverter;
 import org.apache.linkis.cli.core.utils.converter.PredefinedStringConverters;
 
 import java.lang.reflect.Field;
 import java.util.*;
 
 /**
- * @description: CmdTemplate defines what CmdOption/Flag/Parameter that a command should contains.
- *     StdOption: CmdOption.name should starts with '-' String that follows is treated as
- *     CmdOption.value. User should input both name and value e.g. --cmd "whoami". Flag: a special
- *     type of CmdOption. Only boolean value allowed Parameter: User only input Parameter.value
+ * CmdTemplate defines what CmdOption/Flag/Parameter that a command should contains. StdOption:
+ * CmdOption.name should starts with '-' String that follows is treated as CmdOption.value. User
+ * should input both name and value e.g. --cmd "whoami". Flag: a special type of CmdOption. Only
+ * boolean value allowed Parameter: User only input Parameter.value
  */
-public abstract class AbstractCmdTemplate implements CmdTemplate {
+public abstract class AbstractCmdTemplate implements CmdTemplate, Cloneable {
     /** members */
     protected CmdType cmdType;
 
@@ -216,6 +216,23 @@ public abstract class AbstractCmdTemplate implements CmdTemplate {
                 isOptional,
                 defaultValue,
                 PredefinedStringConverters.INT_CONVERTER);
+    }
+
+    protected final StdOption<Boolean> option(
+            String keyPrefix,
+            String key,
+            String[] paramName,
+            String description,
+            boolean isOptional,
+            Boolean defaultValue) {
+        return option(
+                keyPrefix,
+                key,
+                paramName,
+                description,
+                isOptional,
+                defaultValue,
+                PredefinedStringConverters.BOOLEAN_CONVERTER);
     }
 
     protected final StdOption<Map<String, String>> option(

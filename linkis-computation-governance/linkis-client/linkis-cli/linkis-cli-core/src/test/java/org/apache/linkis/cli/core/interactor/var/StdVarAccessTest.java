@@ -19,6 +19,7 @@ package org.apache.linkis.cli.core.interactor.var;
 
 import org.apache.linkis.cli.common.entity.command.CmdTemplate;
 import org.apache.linkis.cli.common.entity.properties.ClientProperties;
+import org.apache.linkis.cli.common.entity.var.VarAccess;
 import org.apache.linkis.cli.core.constants.TestConstants;
 import org.apache.linkis.cli.core.interactor.command.TestCmdType;
 import org.apache.linkis.cli.core.interactor.command.fitter.SingleTplFitter;
@@ -95,7 +96,7 @@ public class StdVarAccessTest {
         ParseResult result = parser.parse(cmdStr);
 
         ParsedTplValidator parsedTplValidator = new ParsedTplValidator();
-        parsedTplValidator.doValidation(result.getParsedTemplateCopy());
+        parsedTplValidator.doValidation(result.getParsedTemplate());
 
         System.setProperty("conf.root", "src/test/resources/conf/");
         System.setProperty("conf.file", "linkis-cli.properties");

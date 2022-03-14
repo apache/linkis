@@ -29,8 +29,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @description: Substitute a String key(e.g. spark.executor.cores) into another String key accepted
- *     by Linkis-Client(e.g. wds.linkis.client.conf.spark.executor.cores) according to mapperRules.
+ * Substitute a String key(e.g. spark.executor.cores) into another String key accepted by
+ * Linkis-Client(e.g. wds.linkis.client.conf.spark.executor.cores) according to mapperRules.
+ * 对于同一个参数（如spark.num.executors）, 可能存在不同的key，如： 1.
+ * linkis-client格式wds.linkis.param.conf.spark.num.executors 2. 指令Template中可能存在的map类型参数（e.g.
+ * -confMap）中的原生spark参数：spark.num.executors 3. linkis服务端要求的参数格式, e.g.wds.linkis.spark.num.executors
+ * .... 此时需要将这些key统一map为linkis-client格式， 才能进行下一步varAccess中的按优先级取值
+ * 注意此处不需要穷举所有spark参数，只需要将sparkTemplate option中存在的key值map 成linkis-client格式
  */
 public abstract class ParamKeyMapper {
 

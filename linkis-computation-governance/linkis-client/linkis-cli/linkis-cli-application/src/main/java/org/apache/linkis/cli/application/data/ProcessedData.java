@@ -18,7 +18,7 @@
 package org.apache.linkis.cli.application.data;
 
 import org.apache.linkis.cli.common.entity.command.CmdType;
-import org.apache.linkis.cli.core.interactor.var.VarAccess;
+import org.apache.linkis.cli.common.entity.var.VarAccess;
 
 public class ProcessedData {
     String cid;

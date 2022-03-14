@@ -17,14 +17,11 @@
 
 package org.apache.linkis.cli.core.interactor.command.template.option;
 
-import org.apache.linkis.cli.common.utils.converter.AbstractStringConverter;
+import org.apache.linkis.cli.core.utils.converter.AbstractStringConverter;
 
 import org.apache.commons.lang3.StringUtils;
 
-/**
- * @description: Data Structure for command Parameter. Command String does not contain the name of
- *     Parameter.
- */
+/** Data Structure for command Parameter. Command String does not contain the name of Parameter. */
 public class Parameter<T> extends BaseOption<T> implements Cloneable {
     final String paramName;
 

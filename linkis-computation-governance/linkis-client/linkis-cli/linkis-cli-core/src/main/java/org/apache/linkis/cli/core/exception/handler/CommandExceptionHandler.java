@@ -19,29 +19,25 @@ package org.apache.linkis.cli.core.exception.handler;
 
 import org.apache.linkis.cli.common.entity.command.CmdTemplate;
 import org.apache.linkis.cli.common.exception.handler.ExceptionHandler;
-import org.apache.linkis.cli.core.data.ClientContext;
 import org.apache.linkis.cli.core.exception.CommandException;
-import org.apache.linkis.cli.core.presenter.HelpInfoPresenter;
-import org.apache.linkis.cli.core.presenter.model.HelpInfoModel;
+import org.apache.linkis.cli.core.interactor.command.CmdTemplateFactory;
+import org.apache.linkis.cli.core.present.HelpInfoPresenter;
+import org.apache.linkis.cli.core.present.model.HelpInfoModel;
 
-import java.util.Map;
-
-/** @description: Display help-info if required */
 public class CommandExceptionHandler implements ExceptionHandler {
-    // TODO:move to application
     @Override
     public void handle(Exception e) {
         if (e instanceof CommandException) {
             if (((CommandException) e).requireHelp()) {
 
-                Map<String, CmdTemplate> templateMap = ClientContext.getGeneratedTemplateMap();
                 CmdTemplate template =
-                        templateMap.get(((CommandException) e).getCmdType().getName());
+                        CmdTemplateFactory.getTemplateOri(((CommandException) e).getCmdType());
 
                 if (template != null) {
-                    HelpInfoModel model = new HelpInfoModel(template);
+                    HelpInfoModel model = new HelpInfoModel();
+                    model.buildModel(template);
 
-                    new HelpInfoPresenter().present(model);
+                    new HelpInfoPresenter().present(model, null);
                 }
             }
         }

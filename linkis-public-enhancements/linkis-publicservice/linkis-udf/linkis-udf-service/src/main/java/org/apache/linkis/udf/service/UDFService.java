@@ -115,4 +115,6 @@ public interface UDFService {
     List<String> allUdfUsers();
 
     List<String> getUserDirectory(String user, String category);
+
+    List<UDFInfoVo> getAllUDFSByUserName(String userName) throws UDFException;
 }

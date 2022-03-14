@@ -46,6 +46,10 @@ public interface UDFDao {
     List<UDFInfoVo> getUDFSByTreeIdAndUser(
             Long treeId, String userName, Collection<Integer> categoryCodes);
 
+    List<UDFInfoVo> getUDFSByUsers(Collection<String> users);
+
+    List<UDFInfoVo> getSharedUDFByUser(String user);
+
     List<Long> getSharedUDFIdsByUser(@Param("userName") String userName);
     /*
     List<UDFInfo> getSharedUDFByTreeId(Long treeId, String userName);

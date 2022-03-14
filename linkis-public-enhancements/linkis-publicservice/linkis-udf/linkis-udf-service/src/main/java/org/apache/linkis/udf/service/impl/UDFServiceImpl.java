@@ -680,6 +680,26 @@ public class UDFServiceImpl implements UDFService {
         return udfTreeDao.getUserDirectory(user, category);
     }
 
+    @Override
+    public List<UDFInfoVo> getAllUDFSByUserName(String userName) throws UDFException {
+        logger.info("Start to get all udf {}", userName);
+        List<String> users = new ArrayList<String>();
+        users.add(SYS_USER);
+        users.add(BDP_USER);
+        users.add(userName);
+        List<UDFInfoVo> udfsByUsers = udfDao.getUDFSByUsers(users);
+        List<UDFInfoVo> sharedUDFByUser = udfDao.getSharedUDFByUser(userName);
+        List<UDFInfoVo> udfInfoVos = new ArrayList<>();
+        if (null != udfsByUsers) {
+            udfInfoVos.addAll(udfsByUsers);
+        }
+        if (null != sharedUDFByUser) {
+            udfInfoVos.addAll(sharedUDFByUser);
+        }
+        logger.info("Finished to get all udf {}, size {}", userName, udfInfoVos.size());
+        return udfInfoVos;
+    }
+
     //    @Override
     //    public FsPath copySharedUdfFile(String userName, UDFInfo udfInfo) throws IOException {
     //        String fileName = FilenameUtils.getBaseName(udfInfo.getPath()) +

@@ -112,6 +112,24 @@
         where create_user = #{arg0}
     </select>
 
+    <select id="getUDFSByUsers" resultMap="UDFResultMap">
+        select
+        <include refid="udf_Column_List"/>
+        from linkis_ps_udf_baseinfo
+        where create_user in
+        <foreach collection="arg0" open="(" separator="," close=")" item="item">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="getSharedUDFByUser" resultMap="UDFResultMap">
+        select
+        <include refid="udf_Column_List"/>
+        from linkis_ps_udf_baseinfo
+        where id in
+        (select udf_id from linkis_ps_udf_shared_info where user_name=#{userName})
+    </select>
+
     <select id="getUDFSByTreeIdAndUser" resultType="org.apache.linkis.udf.vo.UDFInfoVo">
         select t1.*,puv.path,puv.register_format,puv.use_format,puv.bml_resource_id,puv.bml_resource_version,puv.description
         from

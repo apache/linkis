@@ -21,7 +21,7 @@ import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.linkis.common.io.FsPath;
 import org.apache.linkis.hadoop.common.conf.HadoopConf;
 import org.apache.linkis.hadoop.common.utils.HDFSUtils;
-import org.apache.linkis.storage.constants.LinkisStorageConf;
+import org.apache.linkis.storage.conf.LinkisStorageConf;
 import org.apache.linkis.storage.domain.FsPathListWithError;
 import org.apache.linkis.storage.fs.FileSystem;
 import org.apache.linkis.storage.utils.StorageConfiguration;

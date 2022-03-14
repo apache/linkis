@@ -17,7 +17,6 @@
 
 package org.apache.linkis.cs.persistence.persistence.impl;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.linkis.cs.common.entity.enumeration.ContextScope;
 import org.apache.linkis.cs.common.entity.enumeration.ContextType;
 import org.apache.linkis.cs.common.entity.source.ContextID;
@@ -37,6 +36,7 @@ import org.apache.linkis.cs.persistence.persistence.ContextMapPersistence;
 import org.apache.linkis.cs.persistence.util.PersistenceUtils;
 import org.apache.linkis.server.BDPJettyServerHelper;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.math3.util.Pair;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -125,14 +125,33 @@ public class ContextMapPersistenceImpl implements ContextMapPersistence {
             PersistenceContextKey pK = (PersistenceContextKey) pKV.getContextKey();
             PersistenceContextValue pV = (PersistenceContextValue) pKV.getContextValue();
             if (PersistenceConf.ENABLE_CS_DESERIALIZE_REPLACE_PACKAGE_HEADER.getValue()) {
-                if (StringUtils.isBlank(pKV.getProps()) || StringUtils.isBlank(PersistenceConf.CS_DESERIALIZE_REPLACE_PACKAGE_HEADER.getValue())) {
-                    logger.error("Props : {} of ContextMap or CSID_REPLACE_PACKAGE_HEADER : {} cannot be empty.", pKV.getProps(), PersistenceConf.CS_DESERIALIZE_REPLACE_PACKAGE_HEADER.getValue());
+                if (StringUtils.isBlank(pKV.getProps())
+                        || StringUtils.isBlank(
+                                PersistenceConf.CS_DESERIALIZE_REPLACE_PACKAGE_HEADER.getValue())) {
+                    logger.error(
+                            "Props : {} of ContextMap or CSID_REPLACE_PACKAGE_HEADER : {} cannot be empty.",
+                            pKV.getProps(),
+                            PersistenceConf.CS_DESERIALIZE_REPLACE_PACKAGE_HEADER.getValue());
                 } else {
-                    if (pKV.getProps().contains(PersistenceConf.CS_DESERIALIZE_REPLACE_PACKAGE_HEADER.getValue())) {
+                    if (pKV.getProps()
+                            .contains(
+                                    PersistenceConf.CS_DESERIALIZE_REPLACE_PACKAGE_HEADER
+                                            .getValue())) {
                         if (logger.isDebugEnabled()) {
-                            logger.debug("Will replace package header of source : {} from : {} to : {}", pKV.getProps(), PersistenceConf.CS_DESERIALIZE_REPLACE_PACKAGE_HEADER.getValue(), PersistenceConf.CSID_PACKAGE_HEADER);
+                            logger.debug(
+                                    "Will replace package header of source : {} from : {} to : {}",
+                                    pKV.getProps(),
+                                    PersistenceConf.CS_DESERIALIZE_REPLACE_PACKAGE_HEADER
+                                            .getValue(),
+                                    PersistenceConf.CSID_PACKAGE_HEADER);
                         }
-                        pKV.setProps(pKV.getProps().replaceAll(PersistenceConf.CS_DESERIALIZE_REPLACE_PACKAGE_HEADER.getValue(), PersistenceConf.CSID_PACKAGE_HEADER));
+                        pKV.setProps(
+                                pKV.getProps()
+                                        .replaceAll(
+                                                PersistenceConf
+                                                        .CS_DESERIALIZE_REPLACE_PACKAGE_HEADER
+                                                        .getValue(),
+                                                PersistenceConf.CSID_PACKAGE_HEADER));
                     }
                 }
             }

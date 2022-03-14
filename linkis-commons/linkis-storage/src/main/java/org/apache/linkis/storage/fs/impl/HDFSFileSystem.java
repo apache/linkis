@@ -17,9 +17,11 @@
 
 package org.apache.linkis.storage.fs.impl;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.linkis.common.io.FsPath;
 import org.apache.linkis.hadoop.common.conf.HadoopConf;
 import org.apache.linkis.hadoop.common.utils.HDFSUtils;
+import org.apache.linkis.storage.constants.LinkisStorageConf;
 import org.apache.linkis.storage.domain.FsPathListWithError;
 import org.apache.linkis.storage.fs.FileSystem;
 import org.apache.linkis.storage.utils.StorageConfiguration;
@@ -50,7 +52,6 @@ public class HDFSFileSystem extends FileSystem {
 
     public static final String HDFS_PREFIX_WITHOUT_AUTH = "hdfs:///";
     public static final String HDFS_PREFIX_WITH_AUTH = "hdfs://";
-    private static final String FS_CLOSED_ERROR = "Filesystem closed";
     private org.apache.hadoop.fs.FileSystem fs = null;
     private Configuration conf = null;
 
@@ -300,7 +301,11 @@ public class HDFSFileSystem extends FileSystem {
         try {
             return fs.exists(new Path(checkHDFSPath(dest.getPath())));
         } catch (IOException e) {
-            if (null != e.getMessage() && e.getMessage().contains(FS_CLOSED_ERROR)) {
+            String message = e.getMessage();
+            String rootCauseMessage = ExceptionUtils.getRootCauseMessage(e);
+            if ((message != null && message.matches(LinkisStorageConf.HDFS_FILE_SYSTEM_REST_ERRS()))
+                    || (rootCauseMessage != null
+                    && rootCauseMessage.matches(LinkisStorageConf.HDFS_FILE_SYSTEM_REST_ERRS()))) {
                 logger.info("Failed to execute exists, retry", e);
                 resetRootHdfs();
                 return fs.exists(new Path(checkHDFSPath(dest.getPath())));

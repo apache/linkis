@@ -17,7 +17,6 @@
 
 package org.apache.linkis.cs.persistence.conf;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.apache.linkis.common.conf.CommonVars;
 
 public class PersistenceConf {
@@ -32,10 +31,13 @@ public class PersistenceConf {
     public static final CommonVars<String> TUNING_METHOD =
             CommonVars.apply("wds.linkis.cs.ha.proxymethod", "getContextHAProxy");
 
-    public static final CommonVars<Boolean> ENABLE_CS_DESERIALIZE_REPLACE_PACKAGE_HEADER = CommonVars.apply("wds.linkis.cs.deserialize.replace_package_header.enable", false);
+    public static final CommonVars<Boolean> ENABLE_CS_DESERIALIZE_REPLACE_PACKAGE_HEADER =
+            CommonVars.apply("wds.linkis.cs.deserialize.replace_package_header.enable", false);
 
-    public static final CommonVars<String> CS_DESERIALIZE_REPLACE_PACKAGE_HEADER = CommonVars.apply("wds.linkis.cs.deserialize.replace_package.header", "com.webank.wedatasphere.linkis");
+    public static final CommonVars<String> CS_DESERIALIZE_REPLACE_PACKAGE_HEADER =
+            CommonVars.apply(
+                    "wds.linkis.cs.deserialize.replace_package.header",
+                    "com.webank.wedatasphere.linkis");
 
     public static final String CSID_PACKAGE_HEADER = "org.apache.linkis";
-
 }

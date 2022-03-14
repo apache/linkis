@@ -89,13 +89,9 @@ public class UDFApi {
                 message = Message.ok();
                 message.data("udfTree", udfTree);
             } else {
-                List<UDFInfoVo> allInfo = Lists.newArrayList();
+                List<UDFInfoVo> allInfo = udfService.getAllUDFSByUserName(userName);
 
-                UDFTree udfTree = udfTreeService.getTreeById(-1L, userName, "self", "udf");
-                fetchUdfInfoRecursively(allInfo, udfTree, userName);
-
-                udfTree = udfTreeService.getTreeById(-1L, userName, "self", "function");
-                fetchUdfInfoRecursively(allInfo, udfTree, userName);
+                UDFTree udfTree = new UDFTree();
 
                 udfTree.setUdfInfos(allInfo);
                 udfTree.setChildrens(Lists.newArrayList());

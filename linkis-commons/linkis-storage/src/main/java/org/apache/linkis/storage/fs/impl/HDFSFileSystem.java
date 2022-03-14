@@ -17,7 +17,6 @@
 
 package org.apache.linkis.storage.fs.impl;
 
-import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.linkis.common.io.FsPath;
 import org.apache.linkis.hadoop.common.conf.HadoopConf;
 import org.apache.linkis.hadoop.common.utils.HDFSUtils;
@@ -30,6 +29,7 @@ import org.apache.linkis.storage.utils.StorageUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileUtil;
@@ -305,7 +305,8 @@ public class HDFSFileSystem extends FileSystem {
             String rootCauseMessage = ExceptionUtils.getRootCauseMessage(e);
             if ((message != null && message.matches(LinkisStorageConf.HDFS_FILE_SYSTEM_REST_ERRS()))
                     || (rootCauseMessage != null
-                    && rootCauseMessage.matches(LinkisStorageConf.HDFS_FILE_SYSTEM_REST_ERRS()))) {
+                            && rootCauseMessage.matches(
+                                    LinkisStorageConf.HDFS_FILE_SYSTEM_REST_ERRS()))) {
                 logger.info("Failed to execute exists, retry", e);
                 resetRootHdfs();
                 return fs.exists(new Path(checkHDFSPath(dest.getPath())));

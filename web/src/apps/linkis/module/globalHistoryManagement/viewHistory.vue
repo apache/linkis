@@ -309,7 +309,7 @@ export default {
             fromLine: this.fromLine,
             size: -1,
           }
-          openLog = await api.fetch(`/entrance/${jobId}/log`, tempParams, 'get')
+          openLog = await api.fetch(`/entrance/${this.$route.query.execID}/log`, tempParams, 'get')
         } else {
           openLog = await api.fetch('/filesystem/openLog', params, 'get')
         }

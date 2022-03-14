@@ -157,7 +157,13 @@ public class QueryRestfulApi {
         try {
             queryTasks =
                     jobHistoryQueryService.search(
-                            taskID, username, status, creator, sDate, eDate, executeApplicationName);
+                            taskID,
+                            username,
+                            status,
+                            creator,
+                            sDate,
+                            eDate,
+                            executeApplicationName);
         } finally {
             PageHelper.clearPage();
         }

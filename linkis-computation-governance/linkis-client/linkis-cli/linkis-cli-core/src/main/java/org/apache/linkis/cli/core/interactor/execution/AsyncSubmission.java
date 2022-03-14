@@ -18,24 +18,94 @@
 package org.apache.linkis.cli.core.interactor.execution;
 
 import org.apache.linkis.cli.common.entity.execution.Execution;
-import org.apache.linkis.cli.common.entity.execution.ExecutionResult;
-import org.apache.linkis.cli.common.entity.execution.executor.Executor;
 import org.apache.linkis.cli.common.entity.job.Job;
+import org.apache.linkis.cli.common.entity.result.ExecutionResult;
+import org.apache.linkis.cli.common.entity.result.ExecutionStatus;
+import org.apache.linkis.cli.common.exception.error.ErrorLevel;
+import org.apache.linkis.cli.core.constants.CommonConstants;
+import org.apache.linkis.cli.core.exception.LinkisClientExecutionException;
+import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
+import org.apache.linkis.cli.core.interactor.job.AsyncBackendJob;
+import org.apache.linkis.cli.core.interactor.result.ExecutionResultImpl;
+import org.apache.linkis.cli.core.interactor.result.ExecutionStatusEnum;
+import org.apache.linkis.cli.core.utils.CommonUtils;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Map;
 
 /**
  * Execute job asynchronously TODO: put exception during execution in ExecutionResult and do not
  * interrupt execution
  */
 public class AsyncSubmission implements Execution {
-    // TODO
+    private static final Logger logger = LoggerFactory.getLogger(AsyncSubmission.class);
 
     @Override
-    public ExecutionResult execute(Executor executor, Job job) {
-        return null;
+    public ExecutionResult execute(Map<String, Job> jobs) {
+        ExecutionStatus executionStatus;
+        Exception exception = null; // TODO
+
+        if (jobs == null || jobs.size() == 0) {
+            throw new LinkisClientExecutionException(
+                    "EXE0001",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.ExecutionInitErr,
+                    "Null or empty Jobs is submitted to current execution");
+        }
+
+        if (jobs.size() > 1) {
+            throw new LinkisClientExecutionException(
+                    "EXE0001",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.ExecutionInitErr,
+                    "Multiple Jobs is not Supported by current execution");
+        }
+
+        Job job = jobs.get(jobs.keySet().toArray(new String[jobs.size()])[0]);
+
+        if (!(job instanceof AsyncBackendJob)) {
+            throw new LinkisClientExecutionException(
+                    "EXE0001",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.ExecutionInitErr,
+                    "Backend for \""
+                            + job.getClass().getCanonicalName()
+                            + "\" does not support async");
+        }
+
+        if (job.getSubType() == null) {
+            throw new LinkisClientExecutionException(
+                    "EXE0001",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.ExecutionInitErr,
+                    "SubExecType should not be null");
+        }
+
+        try {
+            ((AsyncBackendJob) job).submit();
+            CommonUtils.doSleepQuietly(CommonConstants.JOB_QUERY_SLEEP_MILLS);
+            ((AsyncBackendJob) job).updateJobStatus();
+            if (job.getJobData().getJobStatus().isJobSubmitted()) {
+                executionStatus = ExecutionStatusEnum.SUCCEED;
+            } else {
+                executionStatus = ExecutionStatusEnum.FAILED;
+                if (job.getJobData().getException() != null) {
+                    exception = job.getJobData().getException();
+                }
+            }
+        } catch (Exception e) {
+            exception = e;
+            executionStatus = ExecutionStatusEnum.FAILED;
+            logger.warn("Failed to submit job.", e);
+        }
+
+        return new ExecutionResultImpl(jobs, executionStatus, exception);
     }
 
     @Override
-    public boolean terminate(Executor executor, Job job) {
+    public boolean terminate(Map<String, Job> jobs) {
         return true;
     }
 }

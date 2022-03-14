@@ -17,8 +17,6 @@
 
 package org.apache.linkis.cli.common.entity.result;
 
-import org.apache.linkis.cli.common.entity.execution.ExecutionResult;
-
 public interface ResultHandler {
     void process(ExecutionResult executionResult);
 }

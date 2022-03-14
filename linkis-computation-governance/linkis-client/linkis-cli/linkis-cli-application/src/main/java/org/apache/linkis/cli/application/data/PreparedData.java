@@ -17,23 +17,15 @@
 
 package org.apache.linkis.cli.application.data;
 
-import org.apache.linkis.cli.common.entity.command.CmdTemplate;
 import org.apache.linkis.cli.common.entity.properties.ClientProperties;
 
 import java.util.Map;
 
 public class PreparedData {
-    Map<String, CmdTemplate> templateMap;
     Map<String, ClientProperties> propertiesMap;
 
-    public PreparedData(
-            Map<String, CmdTemplate> templateMap, Map<String, ClientProperties> propertiesMap) {
-        this.templateMap = templateMap;
+    public PreparedData(Map<String, ClientProperties> propertiesMap) {
         this.propertiesMap = propertiesMap;
-    }
-
-    public Map<String, CmdTemplate> getTemplateMap() {
-        return templateMap;
     }
 
     public Map<String, ClientProperties> getPropertiesMap() {

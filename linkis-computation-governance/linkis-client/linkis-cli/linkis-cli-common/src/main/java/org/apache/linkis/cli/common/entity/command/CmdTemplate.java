@@ -20,7 +20,6 @@ package org.apache.linkis.cli.common.entity.command;
 import java.util.List;
 import java.util.Map;
 
-/** @description: A CmdTemplate defines what a Command should look like. */
 public interface CmdTemplate extends Cloneable {
     CmdType getCmdType();
 

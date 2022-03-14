@@ -20,11 +20,6 @@ package org.apache.linkis.cli.core.interactor.command.fitter;
 import org.apache.linkis.cli.common.entity.command.CmdTemplate;
 import org.apache.linkis.cli.common.exception.LinkisClientRuntimeException;
 
-/**
- * @description: interface for parsing command arguments and fill them into instance of {@link
- *     CmdTemplate}, note that implementation of this interface should make a deep copy of {@link
- *     CmdTemplate} instance
- */
 public interface Fitter {
     FitterResult fit(String[] input, CmdTemplate templateCopy) throws LinkisClientRuntimeException;
 }

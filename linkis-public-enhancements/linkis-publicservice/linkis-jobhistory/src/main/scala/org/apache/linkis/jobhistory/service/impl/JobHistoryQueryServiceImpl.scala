@@ -20,6 +20,7 @@ package org.apache.linkis.jobhistory.service.impl
 import java.lang
 import java.sql.Timestamp
 import com.google.common.collect.Iterables
+import org.apache.commons.lang.StringUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.governance.common.constant.job.JobRequestConstants
 import org.apache.linkis.governance.common.entity.job.{JobRequest, JobRequestWithDetail, QueryException, SubJobDetail}
@@ -30,6 +31,7 @@ import org.apache.linkis.jobhistory.entity.JobHistory
 import org.apache.linkis.jobhistory.util.QueryUtils
 import org.apache.linkis.rpc.message.annotation.Receiver
 import org.apache.commons.lang.exception.ExceptionUtils
+import org.apache.linkis.jobhistory.conversions.TaskConversions
 
 import scala.collection.JavaConverters.asScalaBufferConverter
 import java.util
@@ -37,6 +39,7 @@ import java.util.Date
 import org.apache.linkis.jobhistory.entity.QueryJobHistory
 import org.apache.linkis.jobhistory.service.JobHistoryQueryService
 import org.apache.linkis.jobhistory.transitional.TaskStatus
+import org.apache.linkis.manager.label.utils.LabelUtil
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
@@ -202,9 +205,7 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
     tasks
   }*/
 
-
-
-   override def getJobHistoryByIdAndName(jobId: java.lang.Long, userName: String): JobHistory = {
+  override def getJobHistoryByIdAndName(jobId: java.lang.Long, userName: String): JobHistory = {
     val jobReq = new JobHistory
     jobReq.setId(jobId)
     jobReq.setSubmitUser(userName)
@@ -212,10 +213,33 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
     if (jobHistoryList.isEmpty) null else jobHistoryList.get(0)
   }
 
-   override def search(jobId: java.lang.Long, username: String, status: String, sDate: Date, eDate: Date, engineType: String): util.List[JobHistory] = {
-
+  override def search(jobId: java.lang.Long, username: String, status: String, creator: String, sDate: Date, eDate: Date, engineType: String): util.List[JobHistory] = {
+    import scala.collection.JavaConversions._
     val split: util.List[String] = if (status != null) status.split(",").toList else null
-    jobHistoryMapper.search(jobId, username, split, sDate, eDate, engineType)
+    val result = jobHistoryMapper.search(jobId, username, split, sDate, eDate, engineType)
+    if (creator == null || result == null | result.size() == 0) {
+      result
+    } else {
+      /* filter result given creator, creator is stored as a label in db, so we cannot filter directly by SQL */
+      filterJobHistoryByCreator(result, creator)
+    }
+  }
+
+  private def filterJobHistoryByCreator(jobHistoryList: util.List[JobHistory], creator: String): util.List[JobHistory] = {
+    jobHistoryList.filter(jobHistory => {
+      val labels = TaskConversions.getLabelListFromJson(jobHistory.getLabels)
+      if (labels == null || labels.size() == 0) {
+        warn("label is null or size is 0 for jobHistory record: " + jobHistory.getId)
+        false
+      } else {
+        val userCreatorLabel = LabelUtil.getUserCreatorLabel(labels)
+        if (userCreatorLabel == null) {
+          false
+        } else {
+          StringUtils.equals(userCreatorLabel.getCreator, creator)
+        }
+      }
+    })
   }
 
   override def getQueryVOList(list: java.util.List[JobHistory]): java.util.List[JobRequest] = {
@@ -229,7 +253,9 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
       TaskStatus.valueOf(oldStatus).ordinal <= TaskStatus.valueOf(newStatus).ordinal && !TaskStatus.isComplete(TaskStatus.valueOf(oldStatus))
     }
   }
-   override def searchOne(jobId: lang.Long, sDate: Date, eDate: Date): JobHistory = {
+
+
+  override def searchOne(jobId: lang.Long, sDate: Date, eDate: Date): JobHistory = {
     Iterables.getFirst(
       jobHistoryMapper.search(jobId, null, null, sDate, eDate, null),
       {

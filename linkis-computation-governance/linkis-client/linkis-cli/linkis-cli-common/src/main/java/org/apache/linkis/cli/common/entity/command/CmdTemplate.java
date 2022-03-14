@@ -25,13 +25,10 @@ public interface CmdTemplate extends Cloneable {
 
     List<CmdOption<?>> getOptions();
 
-    /**
-     * Mapping from option name -> option
-     */
+    /** Mapping from option name -> option */
     Map<String, CmdOption<?>> getOptionsMap();
 
     void checkParams();
 
     CmdTemplate getCopy();
-
 }

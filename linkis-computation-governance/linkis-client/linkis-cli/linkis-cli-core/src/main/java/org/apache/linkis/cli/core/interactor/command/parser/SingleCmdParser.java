@@ -17,7 +17,6 @@
 
 package org.apache.linkis.cli.core.interactor.command.parser;
 
-
 import org.apache.linkis.cli.common.entity.command.CmdTemplate;
 import org.apache.linkis.cli.common.entity.command.Params;
 import org.apache.linkis.cli.common.exception.error.ErrorLevel;
@@ -25,6 +24,7 @@ import org.apache.linkis.cli.core.exception.CommandException;
 import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
 import org.apache.linkis.cli.core.interactor.command.fitter.FitterResult;
 import org.apache.linkis.cli.core.interactor.command.parser.result.ParseResult;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +38,12 @@ public class SingleCmdParser extends AbstarctParser {
         checkInit();
 
         if (input == null || input.length == 0) {
-            throw new CommandException("CMD0015", ErrorLevel.ERROR, CommonErrMsg.ParserParseErr, template.getCmdType(), "nothing to parse");
+            throw new CommandException(
+                    "CMD0015",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.ParserParseErr,
+                    template.getCmdType(),
+                    "nothing to parse");
         }
 
         FitterResult result = fitter.fit(input, template);
@@ -46,7 +51,14 @@ public class SingleCmdParser extends AbstarctParser {
         String[] remains = result.getRemains();
 
         if (remains != null && remains.length != 0) {
-            throw new CommandException("CMD0022", ErrorLevel.ERROR, CommonErrMsg.ParserParseErr, template.getCmdType(), "Cannot parse argument(s): " + Arrays.toString(remains) + ". Please check help message");
+            throw new CommandException(
+                    "CMD0022",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.ParserParseErr,
+                    template.getCmdType(),
+                    "Cannot parse argument(s): "
+                            + Arrays.toString(remains)
+                            + ". Please check help message");
         }
 
         CmdTemplate parsedTemplate = result.getParsedTemplate();
@@ -54,5 +66,4 @@ public class SingleCmdParser extends AbstarctParser {
 
         return new ParseResult(parsedTemplate, param, remains);
     }
-
 }

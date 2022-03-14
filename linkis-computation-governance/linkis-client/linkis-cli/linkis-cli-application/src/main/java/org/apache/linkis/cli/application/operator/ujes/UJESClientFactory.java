@@ -17,7 +17,6 @@
 
 package org.apache.linkis.cli.application.operator.ujes;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.linkis.cli.application.constants.AppKeys;
 import org.apache.linkis.cli.application.constants.LinkisConstants;
 import org.apache.linkis.cli.application.interactor.validate.UJESContextValidator;
@@ -35,6 +34,9 @@ import org.apache.linkis.httpclient.dws.config.DWSClientConfig;
 import org.apache.linkis.httpclient.dws.config.DWSClientConfigBuilder;
 import org.apache.linkis.ujes.client.UJESClient;
 import org.apache.linkis.ujes.client.UJESClientImpl;
+
+import org.apache.commons.lang3.StringUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,92 +65,144 @@ public class UJESClientFactory {
             logger.info("Linkis ujes client inited.");
             return ret;
         } catch (Exception e) {
-            throw new LinkisClientExecutionException("EXE0010", ErrorLevel.ERROR, CommonErrMsg.ExecutionInitErr, "Cannot init UJESClient", e);
+            throw new LinkisClientExecutionException(
+                    "EXE0010",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.ExecutionInitErr,
+                    "Cannot init UJESClient",
+                    e);
         }
     }
 
-    public static DWSClientConfig generateDWSClientConfig(VarAccess stdVarAccess, VarAccess sysVarAccess) {
+    public static DWSClientConfig generateDWSClientConfig(
+            VarAccess stdVarAccess, VarAccess sysVarAccess) {
         UJESClientContext context = generateContext(stdVarAccess, sysVarAccess);
         try {
             AuthenticationStrategy authenticationStrategy;
-            if (StringUtils.isBlank(context.getAuthenticationStrategyStr()) ||
-                    !LinkisConstants.AUTH_STRATEGY_TOKEN.equalsIgnoreCase(context.getAuthenticationStrategyStr())) {
-                authenticationStrategy = new StaticAuthenticationStrategy(); //this has to be newed here otherwise log-in fails for static
+            if (StringUtils.isBlank(context.getAuthenticationStrategyStr())
+                    || !LinkisConstants.AUTH_STRATEGY_TOKEN.equalsIgnoreCase(
+                            context.getAuthenticationStrategyStr())) {
+                authenticationStrategy =
+                        new StaticAuthenticationStrategy(); // this has to be newed here otherwise
+                // log-in fails for static
             } else {
                 authenticationStrategy = new TokenAuthenticationStrategy();
             }
 
             DWSClientConfigBuilder builder = DWSClientConfigBuilder.newBuilder();
-            DWSClientConfig config = ((DWSClientConfigBuilder) (
-                    builder.addServerUrl(context.getGatewayUrl())
-                            .connectionTimeout(30000)
-                            .discoveryEnabled(false).discoveryFrequency(1, TimeUnit.MINUTES)
-                            .loadbalancerEnabled(false)
-                            .maxConnectionSize(5)
-                            .retryEnabled(false).readTimeout(context.getReadTimeoutMills())
-                            .setAuthenticationStrategy(authenticationStrategy)
-                            .setAuthTokenKey(context.getTokenKey())
-                            .setAuthTokenValue(context.getTokenValue())))
-                    .setDWSVersion(context.getDwsVersion())
-                    .build();
+            DWSClientConfig config =
+                    ((DWSClientConfigBuilder)
+                                    (builder.addServerUrl(context.getGatewayUrl())
+                                            .connectionTimeout(30000)
+                                            .discoveryEnabled(false)
+                                            .discoveryFrequency(1, TimeUnit.MINUTES)
+                                            .loadbalancerEnabled(false)
+                                            .maxConnectionSize(5)
+                                            .retryEnabled(false)
+                                            .readTimeout(context.getReadTimeoutMills())
+                                            .setAuthenticationStrategy(authenticationStrategy)
+                                            .setAuthTokenKey(context.getTokenKey())
+                                            .setAuthTokenValue(context.getTokenValue())))
+                            .setDWSVersion(context.getDwsVersion())
+                            .build();
 
             logger.info("Linkis ujes client inited.");
             return config;
         } catch (Exception e) {
-            throw new LinkisClientExecutionException("EXE0010", ErrorLevel.ERROR, CommonErrMsg.ExecutionInitErr, "Cannot init DWSClientConfig", e);
+            throw new LinkisClientExecutionException(
+                    "EXE0010",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.ExecutionInitErr,
+                    "Cannot init DWSClientConfig",
+                    e);
         }
     }
 
-    public static DWSClientConfig generateDWSClientConfigForBML(VarAccess stdVarAccess, VarAccess sysVarAccess) {
+    public static DWSClientConfig generateDWSClientConfigForBML(
+            VarAccess stdVarAccess, VarAccess sysVarAccess) {
         UJESClientContext context = generateContext(stdVarAccess, sysVarAccess);
         try {
             AuthenticationStrategy authenticationStrategy;
-            if (StringUtils.isBlank(context.getAuthenticationStrategyStr()) ||
-                    !LinkisConstants.AUTH_STRATEGY_TOKEN.equalsIgnoreCase(context.getAuthenticationStrategyStr())) {
-                authenticationStrategy = new StaticAuthenticationStrategy(); //this has to be newed here otherwise log-in fails for static
+            if (StringUtils.isBlank(context.getAuthenticationStrategyStr())
+                    || !LinkisConstants.AUTH_STRATEGY_TOKEN.equalsIgnoreCase(
+                            context.getAuthenticationStrategyStr())) {
+                authenticationStrategy =
+                        new StaticAuthenticationStrategy(); // this has to be newed here otherwise
+                // log-in fails for static
             } else {
                 authenticationStrategy = new TokenAuthenticationStrategy();
             }
 
             DWSClientConfigBuilder builder = DWSClientConfigBuilder.newBuilder();
-            DWSClientConfig config = ((DWSClientConfigBuilder) (
-                    builder.addServerUrl(context.getGatewayUrl())
-                            .connectionTimeout(30000)
-                            .discoveryEnabled(false).discoveryFrequency(1, TimeUnit.MINUTES)
-                            .loadbalancerEnabled(false)
-                            .maxConnectionSize(5)
-                            .retryEnabled(false).readTimeout(context.getReadTimeoutMills())
-                            .setAuthenticationStrategy(authenticationStrategy)
-                            .setAuthTokenKey("BML-AUTH")
-                            .setAuthTokenValue("BML-AUTH")))
-                    .setDWSVersion(context.getDwsVersion())
-                    .build();
+            DWSClientConfig config =
+                    ((DWSClientConfigBuilder)
+                                    (builder.addServerUrl(context.getGatewayUrl())
+                                            .connectionTimeout(30000)
+                                            .discoveryEnabled(false)
+                                            .discoveryFrequency(1, TimeUnit.MINUTES)
+                                            .loadbalancerEnabled(false)
+                                            .maxConnectionSize(5)
+                                            .retryEnabled(false)
+                                            .readTimeout(context.getReadTimeoutMills())
+                                            .setAuthenticationStrategy(authenticationStrategy)
+                                            .setAuthTokenKey("BML-AUTH")
+                                            .setAuthTokenValue("BML-AUTH")))
+                            .setDWSVersion(context.getDwsVersion())
+                            .build();
 
             logger.info("Linkis ujes client inited.");
             return config;
         } catch (Exception e) {
-            throw new LinkisClientExecutionException("EXE0010", ErrorLevel.ERROR, CommonErrMsg.ExecutionInitErr, "Cannot init DWSClientConfig", e);
+            throw new LinkisClientExecutionException(
+                    "EXE0010",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.ExecutionInitErr,
+                    "Cannot init DWSClientConfig",
+                    e);
         }
     }
 
-    private static UJESClientContext generateContext(VarAccess stdVarAccess, VarAccess sysVarAccess) {
+    private static UJESClientContext generateContext(
+            VarAccess stdVarAccess, VarAccess sysVarAccess) {
         String gatewayUrl = stdVarAccess.getVar(String.class, AppKeys.LINKIS_COMMON_GATEWAY_URL);
         if (StringUtils.isBlank(gatewayUrl)) {
-            throw new BuilderException("BLD0007", ErrorLevel.ERROR, CommonErrMsg.BuilderBuildErr, "Cannot build UjesClientDriverContext: gatewayUrl is empty");
+            throw new BuilderException(
+                    "BLD0007",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.BuilderBuildErr,
+                    "Cannot build UjesClientDriverContext: gatewayUrl is empty");
         }
 
         String authKey = stdVarAccess.getVar(String.class, AppKeys.LINKIS_COMMON_TOKEN_KEY);
         String authValue = stdVarAccess.getVar(String.class, AppKeys.LINKIS_COMMON_TOKEN_VALUE);
 
-        String authenticationStrategy = stdVarAccess.getVarOrDefault(String.class, AppKeys.LINKIS_COMMON_AUTHENTICATION_STRATEGY, LinkisConstants.AUTH_STRATEGY_STATIC);
+        String authenticationStrategy =
+                stdVarAccess.getVarOrDefault(
+                        String.class,
+                        AppKeys.LINKIS_COMMON_AUTHENTICATION_STRATEGY,
+                        LinkisConstants.AUTH_STRATEGY_STATIC);
 
-        long connectionTimeout = stdVarAccess.getVarOrDefault(Long.class, AppKeys.UJESCLIENT_COMMON_CONNECTT_TIMEOUT, 30000L);
-        boolean discoveryEnabled = stdVarAccess.getVarOrDefault(Boolean.class, AppKeys.UJESCLIENT_COMMON_DISCOVERY_ENABLED, false);
-        boolean loadBalancerEnabled = stdVarAccess.getVarOrDefault(Boolean.class, AppKeys.UJESCLIENT_COMMON_LOADBALANCER_ENABLED, true);
-        int maxConnectionSize = stdVarAccess.getVarOrDefault(Integer.class, AppKeys.UJESCLIENT_COMMON_MAX_CONNECTION_SIZE, 5);
-        boolean retryEnabled = stdVarAccess.getVarOrDefault(Boolean.class, AppKeys.UJESCLIENT_COMMON_RETRY_ENABLED, false);
-        long readTimeout = stdVarAccess.getVarOrDefault(Long.class, AppKeys.UJESCLIENT_COMMON_READTIMEOUT, 30000L);
-        String dwsVersion = stdVarAccess.getVarOrDefault(String.class, AppKeys.UJESCLIENT_COMMON_DWS_VERSION, "v1");
+        long connectionTimeout =
+                stdVarAccess.getVarOrDefault(
+                        Long.class, AppKeys.UJESCLIENT_COMMON_CONNECTT_TIMEOUT, 30000L);
+        boolean discoveryEnabled =
+                stdVarAccess.getVarOrDefault(
+                        Boolean.class, AppKeys.UJESCLIENT_COMMON_DISCOVERY_ENABLED, false);
+        boolean loadBalancerEnabled =
+                stdVarAccess.getVarOrDefault(
+                        Boolean.class, AppKeys.UJESCLIENT_COMMON_LOADBALANCER_ENABLED, true);
+        int maxConnectionSize =
+                stdVarAccess.getVarOrDefault(
+                        Integer.class, AppKeys.UJESCLIENT_COMMON_MAX_CONNECTION_SIZE, 5);
+        boolean retryEnabled =
+                stdVarAccess.getVarOrDefault(
+                        Boolean.class, AppKeys.UJESCLIENT_COMMON_RETRY_ENABLED, false);
+        long readTimeout =
+                stdVarAccess.getVarOrDefault(
+                        Long.class, AppKeys.UJESCLIENT_COMMON_READTIMEOUT, 30000L);
+        String dwsVersion =
+                stdVarAccess.getVarOrDefault(
+                        String.class, AppKeys.UJESCLIENT_COMMON_DWS_VERSION, "v1");
 
         UJESClientContext context = new UJESClientContext();
 

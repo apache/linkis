@@ -17,29 +17,25 @@
 
 package org.apache.linkis.cli.core.interactor.command.parser.transformer;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.linkis.cli.common.exception.LinkisClientRuntimeException;
 import org.apache.linkis.cli.common.exception.error.ErrorLevel;
 import org.apache.linkis.cli.core.exception.CommandException;
 import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
 import org.apache.linkis.cli.core.utils.CommonUtils;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Substitute a String key(e.g. spark.executor.cores) into
- * another String key accepted by Linkis-Client(e.g. wds.linkis.client.conf.spark.executor.cores)
- * according to mapperRules.
- * 对于同一个参数（如spark.num.executors）, 可能存在不同的key，如：
- * 1. linkis-client格式wds.linkis.param.conf.spark.num.executors
- * 2. 指令Template中可能存在的map类型参数（e.g. -confMap）中的原生spark参数：spark.num.executors
- * 3. linkis服务端要求的参数格式, e.g.wds.linkis.spark.num.executors
- * ....
- * 此时需要将这些key统一map为linkis-client格式，
- * 才能进行下一步varAccess中的按优先级取值
- * 注意此处不需要穷举所有spark参数，只需要将sparkTemplate option中存在的key值map
- * 成linkis-client格式
+ * Substitute a String key(e.g. spark.executor.cores) into another String key accepted by
+ * Linkis-Client(e.g. wds.linkis.client.conf.spark.executor.cores) according to mapperRules.
+ * 对于同一个参数（如spark.num.executors）, 可能存在不同的key，如： 1.
+ * linkis-client格式wds.linkis.param.conf.spark.num.executors 2. 指令Template中可能存在的map类型参数（e.g.
+ * -confMap）中的原生spark参数：spark.num.executors 3. linkis服务端要求的参数格式, e.g.wds.linkis.spark.num.executors
+ * .... 此时需要将这些key统一map为linkis-client格式， 才能进行下一步varAccess中的按优先级取值
+ * 注意此处不需要穷举所有spark参数，只需要将sparkTemplate option中存在的key值map 成linkis-client格式
  */
 public abstract class ParamKeyMapper {
 
@@ -55,12 +51,8 @@ public abstract class ParamKeyMapper {
         initMapperRules(mapperRules);
     }
 
-    /**
-     * Executor should overwrite init() method to set key to key mapping
-     */
-
+    /** Executor should overwrite init() method to set key to key mapping */
     public abstract void initMapperRules();
-
 
     public void initMapperRules(Map<String, String> mapperRules) {
         this.mapperRules = mapperRules;
@@ -74,15 +66,18 @@ public abstract class ParamKeyMapper {
      */
     public void updateMapping(String key, String targetKey) {
         if (this.mapperRules.containsKey(key)) {
-            throw new CommandException("CMD0020", ErrorLevel.ERROR, CommonErrMsg.ParserParseErr, "ParamMapper should not map different keys into same key. Key is: " + targetKey);
+            throw new CommandException(
+                    "CMD0020",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.ParserParseErr,
+                    "ParamMapper should not map different keys into same key. Key is: "
+                            + targetKey);
         } else {
             this.mapperRules.put(key, targetKey);
         }
     }
 
-    /**
-     * update keyMapping according to kv-String.
-     */
+    /** update keyMapping according to kv-String. */
     private void updateMappingbyConfig(String kvString) {
         if (StringUtils.isNotBlank(kvString)) {
             Map<String, String> result = CommonUtils.parseKVStringToMap(kvString, ",");
@@ -97,13 +92,19 @@ public abstract class ParamKeyMapper {
      * @param <T>
      * @return
      */
-    public <T> Map<String, T> getMappedMapping(Map<String, T> paramMap) throws LinkisClientRuntimeException {
+    public <T> Map<String, T> getMappedMapping(Map<String, T> paramMap)
+            throws LinkisClientRuntimeException {
         Map<String, T> resultMap = new HashMap<>();
         String targetKey;
         for (Map.Entry<String, T> entry : paramMap.entrySet()) {
             targetKey = getMappedKey(entry.getKey());
             if (resultMap.containsKey(targetKey)) {
-                throw new CommandException("CMD0020", ErrorLevel.ERROR, CommonErrMsg.ParserParseErr, "ParamMapper should not map different keys into same key. Key is: " + targetKey);
+                throw new CommandException(
+                        "CMD0020",
+                        ErrorLevel.ERROR,
+                        CommonErrMsg.ParserParseErr,
+                        "ParamMapper should not map different keys into same key. Key is: "
+                                + targetKey);
             } else {
                 resultMap.put(targetKey, entry.getValue());
             }
@@ -112,8 +113,8 @@ public abstract class ParamKeyMapper {
     }
 
     /**
-     * Get transformed key for executor given linkis-cli key.
-     * If there exists none mapping for linkis-cli key. Then this method returns paramKey.
+     * Get transformed key for executor given linkis-cli key. If there exists none mapping for
+     * linkis-cli key. Then this method returns paramKey.
      *
      * @param paramKey
      * @return
@@ -125,5 +126,4 @@ public abstract class ParamKeyMapper {
             return paramKey;
         }
     }
-
 }

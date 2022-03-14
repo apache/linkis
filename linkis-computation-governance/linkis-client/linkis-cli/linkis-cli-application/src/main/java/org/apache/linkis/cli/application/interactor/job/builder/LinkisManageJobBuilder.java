@@ -17,7 +17,6 @@
 
 package org.apache.linkis.cli.application.interactor.job.builder;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.linkis.cli.application.constants.AppKeys;
 import org.apache.linkis.cli.application.interactor.job.LinkisManageJob;
 import org.apache.linkis.cli.application.interactor.job.data.LinkisJobData;
@@ -34,6 +33,9 @@ import org.apache.linkis.cli.core.interactor.job.JobBuilder;
 import org.apache.linkis.cli.core.operator.JobOperatorFactory;
 import org.apache.linkis.cli.core.present.PresentModeImpl;
 import org.apache.linkis.cli.core.present.PresentWayImpl;
+
+import org.apache.commons.lang3.StringUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -92,14 +94,18 @@ public class LinkisManageJobBuilder extends JobBuilder {
         return data;
     }
 
-
     @Override
     protected LinkisJobOperator buildJobOperator() {
         LinkisJobOperator oper;
         try {
             oper = (LinkisJobOperator) JobOperatorFactory.getReusable(AppKeys.REUSABLE_UJES_CLIENT);
         } catch (Exception e) {
-            throw new LinkisClientRuntimeException("BLD0012", ErrorLevel.ERROR, CommonErrMsg.BuilderBuildErr, "Failed to get a valid operator.", e);
+            throw new LinkisClientRuntimeException(
+                    "BLD0012",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.BuilderBuildErr,
+                    "Failed to get a valid operator.",
+                    e);
         }
         return oper;
     }
@@ -107,7 +113,8 @@ public class LinkisManageJobBuilder extends JobBuilder {
     @Override
     protected PresentWay buildPresentWay() {
         PresentWayImpl presentWay = new PresentWayImpl();
-        String outputPath = stdVarAccess.getVar(String.class, AppKeys.LINKIS_CLIENT_COMMON_OUTPUT_PATH);
+        String outputPath =
+                stdVarAccess.getVar(String.class, AppKeys.LINKIS_CLIENT_COMMON_OUTPUT_PATH);
 
         presentWay.setPath(outputPath);
         presentWay.setMode(PresentModeImpl.STDOUT);

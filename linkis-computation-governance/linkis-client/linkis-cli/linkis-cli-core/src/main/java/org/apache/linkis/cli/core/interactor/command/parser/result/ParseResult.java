@@ -25,8 +25,7 @@ public class ParseResult {
     Params params;
     String[] remains;
 
-    public ParseResult() {
-    }
+    public ParseResult() {}
 
     public ParseResult(CmdTemplate parsedTemplate, Params params, String[] remains) {
         this.parsedTemplate = parsedTemplate;

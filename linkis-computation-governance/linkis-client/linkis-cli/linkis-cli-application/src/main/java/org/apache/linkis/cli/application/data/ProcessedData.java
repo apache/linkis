@@ -26,7 +26,8 @@ public class ProcessedData {
     VarAccess stdVarAccess;
     VarAccess sysVarAccess;
 
-    public ProcessedData(String cid, CmdType cmdType, VarAccess stdVarAccess, VarAccess sysVarAccess) {
+    public ProcessedData(
+            String cid, CmdType cmdType, VarAccess stdVarAccess, VarAccess sysVarAccess) {
         this.cid = cid;
         this.cmdType = cmdType;
         this.stdVarAccess = stdVarAccess;
@@ -48,5 +49,4 @@ public class ProcessedData {
     public VarAccess getSysVarAccess() {
         return sysVarAccess;
     }
-
 }

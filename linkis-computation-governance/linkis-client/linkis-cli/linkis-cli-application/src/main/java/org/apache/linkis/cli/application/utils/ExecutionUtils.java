@@ -17,7 +17,6 @@
 
 package org.apache.linkis.cli.application.utils;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.linkis.cli.application.constants.AppKeys;
 import org.apache.linkis.cli.application.constants.LinkisConstants;
 import org.apache.linkis.cli.common.entity.var.VarAccess;
@@ -26,89 +25,148 @@ import org.apache.linkis.cli.core.exception.BuilderException;
 import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
 import org.apache.linkis.cli.core.utils.LogUtils;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.*;
 import java.util.Set;
 
 public class ExecutionUtils {
-    public static String getSubmitUser(VarAccess stdVarAccess, String osUser, Set<String> adminSet) {
+    public static String getSubmitUser(
+            VarAccess stdVarAccess, String osUser, Set<String> adminSet) {
 
-        String enableSpecifyUserStr = stdVarAccess.getVar(String.class, AppKeys.LINKIS_CLIENT_NONCUSTOMIZABLE_ENABLE_USER_SPECIFICATION);
-        Boolean enableSpecifyUser = Boolean.parseBoolean(enableSpecifyUserStr) || adminSet.contains(osUser);
-        String authenticationStrategy = stdVarAccess.getVarOrDefault(String.class, AppKeys.LINKIS_COMMON_AUTHENTICATION_STRATEGY, LinkisConstants.AUTH_STRATEGY_STATIC);
+        String enableSpecifyUserStr =
+                stdVarAccess.getVar(
+                        String.class,
+                        AppKeys.LINKIS_CLIENT_NONCUSTOMIZABLE_ENABLE_USER_SPECIFICATION);
+        Boolean enableSpecifyUser =
+                Boolean.parseBoolean(enableSpecifyUserStr) || adminSet.contains(osUser);
+        String authenticationStrategy =
+                stdVarAccess.getVarOrDefault(
+                        String.class,
+                        AppKeys.LINKIS_COMMON_AUTHENTICATION_STRATEGY,
+                        LinkisConstants.AUTH_STRATEGY_STATIC);
 
         String submitUsr;
-        if (StringUtils.equalsIgnoreCase(authenticationStrategy, LinkisConstants.AUTH_STRATEGY_TOKEN)) {
+        if (StringUtils.equalsIgnoreCase(
+                authenticationStrategy, LinkisConstants.AUTH_STRATEGY_TOKEN)) {
             /*
-            default -> use current os user
-            enableSpecifyUser -> -submitUser
-            enableSpecifyProxyUser -> -proxyUser
-            ADMIN_USERS can do anything
-         */
+               default -> use current os user
+               enableSpecifyUser -> -submitUser
+               enableSpecifyProxyUser -> -proxyUser
+               ADMIN_USERS can do anything
+            */
             if (enableSpecifyUser) {
                 if (stdVarAccess.hasVar(AppKeys.JOB_COMMON_SUBMIT_USER)) {
                     submitUsr = stdVarAccess.getVar(String.class, AppKeys.JOB_COMMON_SUBMIT_USER);
                     if (!adminSet.contains(osUser) && adminSet.contains(submitUsr)) {
-                        throw new BuilderException("BLD0010", ErrorLevel.ERROR, CommonErrMsg.BuilderBuildErr, "Cannot specify admin-user as submit-user");
+                        throw new BuilderException(
+                                "BLD0010",
+                                ErrorLevel.ERROR,
+                                CommonErrMsg.BuilderBuildErr,
+                                "Cannot specify admin-user as submit-user");
                     }
                 } else {
                     submitUsr = osUser;
-                    LogUtils.getInformationLogger().info("user does not specify submit-user, will use current Linux user \"" + osUser + "\" by default.");
+                    LogUtils.getInformationLogger()
+                            .info(
+                                    "user does not specify submit-user, will use current Linux user \""
+                                            + osUser
+                                            + "\" by default.");
                 }
             } else if (stdVarAccess.hasVar(AppKeys.JOB_COMMON_SUBMIT_USER)) {
                 submitUsr = stdVarAccess.getVar(String.class, AppKeys.JOB_COMMON_SUBMIT_USER);
                 if (!StringUtils.equals(submitUsr, osUser)) {
-                    throw new BuilderException("BLD0010", ErrorLevel.ERROR, CommonErrMsg.BuilderBuildErr, "Cannot specify submit-user when user-specification switch is off");
+                    throw new BuilderException(
+                            "BLD0010",
+                            ErrorLevel.ERROR,
+                            CommonErrMsg.BuilderBuildErr,
+                            "Cannot specify submit-user when user-specification switch is off");
                 }
             } else {
                 submitUsr = osUser;
-                LogUtils.getInformationLogger().info("user does not specify submit-user, will use current Linux user \"" + osUser + "\" by default.");
+                LogUtils.getInformationLogger()
+                        .info(
+                                "user does not specify submit-user, will use current Linux user \""
+                                        + osUser
+                                        + "\" by default.");
             }
-        } else if (StringUtils.equalsIgnoreCase(authenticationStrategy, LinkisConstants.AUTH_STRATEGY_STATIC)) {
+        } else if (StringUtils.equalsIgnoreCase(
+                authenticationStrategy, LinkisConstants.AUTH_STRATEGY_STATIC)) {
             String authKey = stdVarAccess.getVar(String.class, AppKeys.LINKIS_COMMON_TOKEN_KEY);
-            String submitUsrInput = stdVarAccess.getVarOrDefault(String.class, AppKeys.JOB_COMMON_SUBMIT_USER, authKey);
+            String submitUsrInput =
+                    stdVarAccess.getVarOrDefault(
+                            String.class, AppKeys.JOB_COMMON_SUBMIT_USER, authKey);
             if (StringUtils.equalsIgnoreCase(submitUsrInput, authKey)) {
                 submitUsr = authKey;
             } else {
-                throw new BuilderException("BLD0011", ErrorLevel.ERROR, CommonErrMsg.BuilderBuildErr, "Submit-User should be the same as Auth-Key under Static-Authentication-Strategy \'");
+                throw new BuilderException(
+                        "BLD0011",
+                        ErrorLevel.ERROR,
+                        CommonErrMsg.BuilderBuildErr,
+                        "Submit-User should be the same as Auth-Key under Static-Authentication-Strategy \'");
             }
         } else {
-            throw new BuilderException("BLD0011", ErrorLevel.ERROR, CommonErrMsg.BuilderBuildErr, "Authentication strategy \'" + authenticationStrategy + "\' is not supported");
+            throw new BuilderException(
+                    "BLD0011",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.BuilderBuildErr,
+                    "Authentication strategy \'" + authenticationStrategy + "\' is not supported");
         }
 
         return submitUsr;
     }
 
-    public static String getProxyUser(VarAccess stdVarAccess, String submitUsr, Set<String> adminSet) {
+    public static String getProxyUser(
+            VarAccess stdVarAccess, String submitUsr, Set<String> adminSet) {
 
-        String enableSpecifyPRoxyUserStr = stdVarAccess.getVar(String.class, AppKeys.LINKIS_CLIENT_NONCUSTOMIZABLE_ENABLE_PROXY_USER);
-        Boolean enableSpecifyProxyUser = Boolean.parseBoolean(enableSpecifyPRoxyUserStr) || adminSet.contains(submitUsr);
+        String enableSpecifyPRoxyUserStr =
+                stdVarAccess.getVar(
+                        String.class, AppKeys.LINKIS_CLIENT_NONCUSTOMIZABLE_ENABLE_PROXY_USER);
+        Boolean enableSpecifyProxyUser =
+                Boolean.parseBoolean(enableSpecifyPRoxyUserStr) || adminSet.contains(submitUsr);
 
         /*
-            default -> use current -submitUser user
-            enableSpecifyUser -> -submitUser
-            enableSpecifyProxyUser -> -proxyUser
-            ADMIN_USERS can do anything
-         */
+           default -> use current -submitUser user
+           enableSpecifyUser -> -submitUser
+           enableSpecifyProxyUser -> -proxyUser
+           ADMIN_USERS can do anything
+        */
         String proxyUsr;
 
         if (enableSpecifyProxyUser) {
             if (stdVarAccess.hasVar(AppKeys.JOB_COMMON_PROXY_USER)) {
                 proxyUsr = stdVarAccess.getVar(String.class, AppKeys.JOB_COMMON_PROXY_USER);
                 if (!adminSet.contains(submitUsr) && adminSet.contains(proxyUsr)) {
-                    throw new BuilderException("BLD0010", ErrorLevel.ERROR, CommonErrMsg.BuilderBuildErr, "Cannot specify admin-user as proxy-user");
+                    throw new BuilderException(
+                            "BLD0010",
+                            ErrorLevel.ERROR,
+                            CommonErrMsg.BuilderBuildErr,
+                            "Cannot specify admin-user as proxy-user");
                 }
             } else {
                 proxyUsr = submitUsr;
-                LogUtils.getInformationLogger().info("user does not specify proxy-user, will use current submit-user \"" + submitUsr + "\" by default.");
+                LogUtils.getInformationLogger()
+                        .info(
+                                "user does not specify proxy-user, will use current submit-user \""
+                                        + submitUsr
+                                        + "\" by default.");
             }
         } else if (stdVarAccess.hasVar(AppKeys.JOB_COMMON_PROXY_USER)) {
             proxyUsr = stdVarAccess.getVar(String.class, AppKeys.JOB_COMMON_PROXY_USER);
             if (!StringUtils.equals(proxyUsr, submitUsr)) {
-                throw new BuilderException("BLD0010", ErrorLevel.ERROR, CommonErrMsg.BuilderBuildErr, "Cannot specify proxy-user when proxy-user-specification switch is off");
+                throw new BuilderException(
+                        "BLD0010",
+                        ErrorLevel.ERROR,
+                        CommonErrMsg.BuilderBuildErr,
+                        "Cannot specify proxy-user when proxy-user-specification switch is off");
             }
         } else {
             proxyUsr = submitUsr;
-            LogUtils.getInformationLogger().info("user does not specify proxy-user, will use current submit-user \"" + proxyUsr + "\" by default.");
+            LogUtils.getInformationLogger()
+                    .info(
+                            "user does not specify proxy-user, will use current submit-user \""
+                                    + proxyUsr
+                                    + "\" by default.");
         }
         return proxyUsr;
     }
@@ -131,9 +189,19 @@ public class ExecutionUtils {
             return sb.toString();
 
         } catch (FileNotFoundException fe) {
-            throw new BuilderException("BLD0005", ErrorLevel.ERROR, CommonErrMsg.BuilderBuildErr, "User specified script file does not exist: " + path, fe);
+            throw new BuilderException(
+                    "BLD0005",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.BuilderBuildErr,
+                    "User specified script file does not exist: " + path,
+                    fe);
         } catch (Exception e) {
-            throw new BuilderException("BLD0006", ErrorLevel.ERROR, CommonErrMsg.BuilderBuildErr, "Cannot read user specified script file: " + path, e);
+            throw new BuilderException(
+                    "BLD0006",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.BuilderBuildErr,
+                    "Cannot read user specified script file: " + path,
+                    e);
         }
     }
 }

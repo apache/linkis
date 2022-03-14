@@ -31,7 +31,12 @@ public class CmdTemplateFactory {
 
     public static void register(CmdTemplate template) {
         if (templateMap.containsKey(template.getCmdType().getName())) {
-            throw new CommandException("CMD0022", ErrorLevel.ERROR, CommonErrMsg.TemplateGenErr, "template: \"{0}\" already exists", template.getCmdType());
+            throw new CommandException(
+                    "CMD0022",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.TemplateGenErr,
+                    "template: \"{0}\" already exists",
+                    template.getCmdType());
         }
         templateMap.put(template.getCmdType().getName(), template);
     }
@@ -45,8 +50,8 @@ public class CmdTemplateFactory {
     }
 
     /*
-     should not set value to Original template
-     */
+    should not set value to Original template
+    */
     public static CmdTemplate getTemplateOri(CmdType cmdType) {
         return templateMap.get(cmdType.getName());
     }
@@ -62,5 +67,4 @@ public class CmdTemplateFactory {
     public static CmdTemplate getTemplateCopy(String cmdType) {
         return templateMap.get(cmdType).getCopy();
     }
-
 }

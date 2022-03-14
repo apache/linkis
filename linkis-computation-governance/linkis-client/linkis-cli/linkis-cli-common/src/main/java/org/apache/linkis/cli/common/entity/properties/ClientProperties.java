@@ -20,10 +20,9 @@ package org.apache.linkis.cli.common.entity.properties;
 import java.util.HashMap;
 
 public class ClientProperties extends HashMap<Object, Object> {
-    /**
-     * propsId identifies which source this Map belongs to
-     */
+    /** propsId identifies which source this Map belongs to */
     String propsId;
+
     String propertiesSourcePath;
 
     public String getPropsId() {
@@ -41,6 +40,4 @@ public class ClientProperties extends HashMap<Object, Object> {
     public void setPropertiesSourcePath(String propertiesSourcePath) {
         this.propertiesSourcePath = propertiesSourcePath;
     }
-
-
 }

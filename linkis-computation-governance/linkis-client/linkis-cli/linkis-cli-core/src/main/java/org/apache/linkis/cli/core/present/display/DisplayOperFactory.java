@@ -28,9 +28,14 @@ import java.util.concurrent.ConcurrentHashMap;
 public class DisplayOperFactory {
     private static final Map<String, DisplayOperator> operatorMap = new ConcurrentHashMap<>();
 
-    public static synchronized void register(PresentMode mode, DisplayOperator operator) throws Exception {
+    public static synchronized void register(PresentMode mode, DisplayOperator operator)
+            throws Exception {
         if (operatorMap.containsKey(mode.getName())) {
-            throw new PresenterException("PST0012", ErrorLevel.ERROR, CommonErrMsg.PresenterInitErr, "Attempting to register a duplicate DisplayOperator, name: " + mode.getName());
+            throw new PresenterException(
+                    "PST0012",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.PresenterInitErr,
+                    "Attempting to register a duplicate DisplayOperator, name: " + mode.getName());
         }
         operatorMap.put(mode.getName(), operator);
     }

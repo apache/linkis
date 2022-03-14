@@ -20,13 +20,11 @@ package org.apache.linkis.cli.core.interactor.job;
 import org.apache.linkis.cli.common.entity.job.Job;
 import org.apache.linkis.cli.common.entity.job.JobData;
 
-/**
- * If backend supports extracting log while job is running, then implement this interface
- */
+/** If backend supports extracting log while job is running, then implement this interface */
 public interface LogAccessibleJob extends Job {
     /**
-     * Retrieve log. This methods should be non-blocking and log should be appended into
-     * {@link JobData}
+     * Retrieve log. This methods should be non-blocking and log should be appended into {@link
+     * JobData}
      */
     void startRetrieveLog();
 }

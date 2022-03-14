@@ -74,5 +74,4 @@ public abstract class AbstractJob implements Job {
     public void setPresentWay(PresentWay presentWay) {
         this.presentWay = presentWay;
     }
-
 }

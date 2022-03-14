@@ -23,7 +23,8 @@ public class CommonConstants {
     public static final Integer REQUEST_MAX_RETRY_TIME = 3;
 
     public static final String UNIVERSAL_SUBCMD = "linkis-cli";
-    public static final String UNIVERSAL_SUBCMD_DESC = "command for all types of jobs supported by Linkis";
+    public static final String UNIVERSAL_SUBCMD_DESC =
+            "command for all types of jobs supported by Linkis";
 
     public static final String SUCCESS_INDICATOR = "############Execute Success!!!########";
     public static final String FAILURE_INDICATOR = "############Execute Error!!!########";

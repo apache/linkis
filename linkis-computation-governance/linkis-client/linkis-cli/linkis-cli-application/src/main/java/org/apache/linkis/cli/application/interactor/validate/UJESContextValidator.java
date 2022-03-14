@@ -17,7 +17,6 @@
 
 package org.apache.linkis.cli.application.interactor.validate;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.linkis.cli.application.constants.LinkisConstants;
 import org.apache.linkis.cli.application.operator.ujes.UJESClientContext;
 import org.apache.linkis.cli.common.entity.validate.Validator;
@@ -26,11 +25,17 @@ import org.apache.linkis.cli.common.exception.error.ErrorLevel;
 import org.apache.linkis.cli.core.exception.ValidateException;
 import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class UJESContextValidator implements Validator {
     @Override
     public void doValidation(Object input) throws LinkisClientRuntimeException {
         if (!(input instanceof UJESClientContext)) {
-            throw new ValidateException("VLD0009", ErrorLevel.ERROR, CommonErrMsg.ValidationErr, "Input of UJESContextValidator is not instance of UjesClientDriverContext");
+            throw new ValidateException(
+                    "VLD0009",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.ValidationErr,
+                    "Input of UJESContextValidator is not instance of UjesClientDriverContext");
         }
         boolean ok = true;
         StringBuilder reasonSb = new StringBuilder();
@@ -40,11 +45,16 @@ public class UJESContextValidator implements Validator {
             ok = false;
         }
         if (StringUtils.isBlank(context.getAuthenticationStrategyStr())) {
-            reasonSb.append("Authentication Strategy cannot be empty or blank").append(System.lineSeparator());
+            reasonSb.append("Authentication Strategy cannot be empty or blank")
+                    .append(System.lineSeparator());
             ok = false;
-        } else if (!LinkisConstants.AUTH_STRATEGY_STATIC.equalsIgnoreCase(context.getAuthenticationStrategyStr()) &&
-                !LinkisConstants.AUTH_STRATEGY_TOKEN.equalsIgnoreCase(context.getAuthenticationStrategyStr())) {
-            reasonSb.append("Authentication Strategy ").append(context.getAuthenticationStrategyStr()).append(" is not valid");
+        } else if (!LinkisConstants.AUTH_STRATEGY_STATIC.equalsIgnoreCase(
+                        context.getAuthenticationStrategyStr())
+                && !LinkisConstants.AUTH_STRATEGY_TOKEN.equalsIgnoreCase(
+                        context.getAuthenticationStrategyStr())) {
+            reasonSb.append("Authentication Strategy ")
+                    .append(context.getAuthenticationStrategyStr())
+                    .append(" is not valid");
             ok = false;
         }
         if (StringUtils.isBlank(context.getTokenKey())) {
@@ -56,7 +66,11 @@ public class UJESContextValidator implements Validator {
             ok = false;
         }
         if (!ok) {
-            throw new ValidateException("VLD0010", ErrorLevel.ERROR, CommonErrMsg.ValidationErr, "LinkisJob validation failed. Reason: " + reasonSb.toString());
+            throw new ValidateException(
+                    "VLD0010",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.ValidationErr,
+                    "LinkisJob validation failed. Reason: " + reasonSb.toString());
         }
     }
 }

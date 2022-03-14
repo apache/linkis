@@ -38,9 +38,9 @@ public interface LinkisLogData extends LinkisJobData, Cloneable {
     boolean isIncLogMode();
 
     /*
-     incLogMode = true: for sync-submission, wait for job complete while get incremental log
-     incLogMode = false: for async-submission, output all log we have currently
-     */
+    incLogMode = true: for sync-submission, wait for job complete while get incremental log
+    incLogMode = false: for async-submission, output all log we have currently
+    */
     void setIncLogMode(boolean incLogMode);
 
     void sendLogFin();
@@ -48,5 +48,4 @@ public interface LinkisLogData extends LinkisJobData, Cloneable {
     boolean logFinReceived();
 
     LinkisLogData clone() throws CloneNotSupportedException;
-
 }

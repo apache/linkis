@@ -35,5 +35,4 @@ public class OpenLogResult2 implements UJESResult {
     public Integer getFromLine() {
         return fromLine;
     }
-
 }

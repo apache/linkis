@@ -32,18 +32,15 @@ public class UJESConstants {
     public static final String QUERY_END_DATE_MILLS_NAME = "endDateMills";
     public static final String QUERY_PAGE_NOW_NAME = "pageNow";
 
-
     public static final String LINKIS_JOB_LOG_FINISH_INDICATOR = "Your job completed with";
 
     public static final Integer LINKIS_JOB_EXEC_RESULT_EXCEPTION_CODE = 10905;
 
     public static final Integer MAX_LOG_SIZE = -1;
-    public static final Integer IDX_FOR_LOG_TYPE_ALL = 3;// 0: Error 1: WARN 2:INFO 3: ALL
+    public static final Integer IDX_FOR_LOG_TYPE_ALL = 3; // 0: Error 1: WARN 2:INFO 3: ALL
 
     public static final int DEFAULT_PAGE_SIZE = 500;
 
     public static final String DEFAULT_SPARK_ENGINE = "spark-2.4.3";
     public static final String DEFAULT_HIVE_ENGINE = "hive-1.2.1";
-
-
 }

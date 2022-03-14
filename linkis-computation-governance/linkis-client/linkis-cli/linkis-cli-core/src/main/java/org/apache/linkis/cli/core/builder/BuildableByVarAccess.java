@@ -32,8 +32,13 @@ public abstract class BuildableByVarAccess<T> extends AbstractBuilder<T> {
         if (stdVarAccess == null || sysVarAccess == null) {
             ParameterizedType pt = (ParameterizedType) this.getClass().getGenericSuperclass();
             Class<T> clazz = (Class<T>) pt.getActualTypeArguments()[0];
-            throw new BuilderException("BLD0003", ErrorLevel.ERROR, CommonErrMsg.BuilderInitErr, "Cannot init builder: " + clazz.getCanonicalName()
-                    + "Cause: stdVarAccess or sysVarAccess is null");
+            throw new BuilderException(
+                    "BLD0003",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.BuilderInitErr,
+                    "Cannot init builder: "
+                            + clazz.getCanonicalName()
+                            + "Cause: stdVarAccess or sysVarAccess is null");
         }
         stdVarAccess.checkInit();
         sysVarAccess.checkInit();
@@ -48,5 +53,4 @@ public abstract class BuildableByVarAccess<T> extends AbstractBuilder<T> {
         this.sysVarAccess = varAccess;
         return this;
     }
-
 }

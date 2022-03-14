@@ -33,8 +33,13 @@ public class LinkisResultModel implements Model {
     @Override
     public void buildModel(Object data) {
         if (!(data instanceof LinkisResultData)) {
-            throw new TransformerException("TFM0010", ErrorLevel.ERROR, CommonErrMsg.TransformerException,
-                    "Failed to init LinkisResultModel: " + data.getClass().getCanonicalName() + "is not instance of \"LinkisResultData\"");
+            throw new TransformerException(
+                    "TFM0010",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.TransformerException,
+                    "Failed to init LinkisResultModel: "
+                            + data.getClass().getCanonicalName()
+                            + "is not instance of \"LinkisResultData\"");
         }
         this.data = (LinkisResultData) data;
     }

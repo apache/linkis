@@ -17,7 +17,6 @@
 
 package org.apache.linkis.cli.core.interactor.var;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.linkis.cli.common.entity.command.CmdTemplate;
 import org.apache.linkis.cli.common.entity.properties.ClientProperties;
 import org.apache.linkis.cli.common.entity.var.VarAccess;
@@ -34,6 +33,9 @@ import org.apache.linkis.cli.core.interactor.properties.StdPropsLoader;
 import org.apache.linkis.cli.core.interactor.properties.reader.PropertiesReader;
 import org.apache.linkis.cli.core.interactor.properties.reader.PropsFileReader;
 import org.apache.linkis.cli.core.interactor.validate.ParsedTplValidator;
+
+import org.apache.commons.lang3.StringUtils;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -53,32 +55,32 @@ public class StdVarAccessTest {
     @BeforeEach
     public void before() throws Exception {
         cmdStr =
-                new String[]{
-                        "-u",
-                        "hadoop",
-                        "-pwd",
-                        "1234",
-                        "-c",
-                        "src/test/resources/conf/user.properties",
-                        "--cmd",
-                        "show tables",
-                        "--split",
-                        "\',\'",
-                        "--queue",
-                        "q05",
-                        "--name",
-                        "testApp",
-                        //      "--hiveconf", "/path/...",
-                        "--num-executors",
-                        "4",
-                        "--executor-cores",
-                        "4",
-                        "--executor-memory",
-                        "4G",
-                        "--shuffle-partitions",
-                        "200",
-                        "--other",
-                        "--other-spark-config=none",
+                new String[] {
+                    "-u",
+                    "hadoop",
+                    "-pwd",
+                    "1234",
+                    "-c",
+                    "src/test/resources/conf/user.properties",
+                    "--cmd",
+                    "show tables",
+                    "--split",
+                    "\',\'",
+                    "--queue",
+                    "q05",
+                    "--name",
+                    "testApp",
+                    //      "--hiveconf", "/path/...",
+                    "--num-executors",
+                    "4",
+                    "--executor-cores",
+                    "4",
+                    "--executor-memory",
+                    "4G",
+                    "--shuffle-partitions",
+                    "200",
+                    "--other",
+                    "--other-spark-config=none",
                 };
 
         TestSparkCmdTemplate template = new TestSparkCmdTemplate();
@@ -141,84 +143,63 @@ public class StdVarAccessTest {
     }
 
     @AfterEach
-    public void after() throws Exception {
-    }
+    public void after() throws Exception {}
 
-    /**
-     * Method: setPrimaryParam(Params primaryParam)
-     */
+    /** Method: setPrimaryParam(Params primaryParam) */
     @Test
     public void testSetPrimaryParam() throws Exception {
         // TODO: Test goes here...
     }
 
-    /**
-     * Method: getPrimaryParam(String identifier)
-     */
+    /** Method: getPrimaryParam(String identifier) */
     @Test
     public void testGetPrimaryParam() throws Exception {
         // TODO: Test goes here...
     }
 
-    /**
-     * Method: setCmdParams(Params subParam)
-     */
+    /** Method: setCmdParams(Params subParam) */
     @Test
     public void testSetSubParam() throws Exception {
         // TODO: Test goes here...
     }
 
-    /**
-     * Method: getSubParam(String identifier)
-     */
+    /** Method: getSubParam(String identifier) */
     @Test
     public void testGetSubParam() throws Exception {
         // TODO: Test goes here...
     }
 
-    /**
-     * Method: setUserConf(ClientProperties userConf)
-     */
+    /** Method: setUserConf(ClientProperties userConf) */
     @Test
     public void testSetUserConf() throws Exception {
         // TODO: Test goes here...
     }
 
-    /**
-     * Method: getUserConf(String identifier)
-     */
+    /** Method: getUserConf(String identifier) */
     @Test
     public void testGetUserConf() throws Exception {
         // TODO: Test goes here...
     }
 
-    /**
-     * Method: setDefaultConf(ClientProperties defaultConf)
-     */
+    /** Method: setDefaultConf(ClientProperties defaultConf) */
     @Test
     public void testSetDefaultConf() throws Exception {
         // TODO: Test goes here...
     }
 
-    /**
-     * Method: getDefaultConf(String identifier)
-     */
+    /** Method: getDefaultConf(String identifier) */
     @Test
     public void testGetDefaultConf() throws Exception {
         // TODO: Test goes here...
     }
 
-    /**
-     * Method: checkInit()
-     */
+    /** Method: checkInit() */
     @Test
     public void testCheckInit() throws Exception {
         // TODO: Test goes here...
     }
 
-    /**
-     * Method: getVar(Class<T> clazz, String key)
-     */
+    /** Method: getVar(Class<T> clazz, String key) */
     @Test
     public void testGetVar() throws Exception {
         System.out.println(stdVarAccess.getVar(String.class, TestConstants.PARAM_COMMON_CMD));
@@ -245,25 +226,19 @@ public class StdVarAccessTest {
         assertTrue(stdVarAccess.getAllVarKeys().length != 0);
     }
 
-    /**
-     * Method: getVarOrDefault(Class<T> clazz, String key, T defaultValue)
-     */
+    /** Method: getVarOrDefault(Class<T> clazz, String key, T defaultValue) */
     @Test
     public void testGetVarOrDefault() throws Exception {
         // TODO: Test goes here...
     }
 
-    /**
-     * Method: getAllVarKeys()
-     */
+    /** Method: getAllVarKeys() */
     @Test
     public void testGetAllVarKeys() throws Exception {
         // TODO: Test goes here...
     }
 
-    /**
-     * Method: getVarFromParam(Class<T> clazz, String key, Params param)
-     */
+    /** Method: getVarFromParam(Class<T> clazz, String key, Params param) */
     @Test
     public void testGetVarFromParam() throws Exception {
         // TODO: Test goes here...
@@ -279,9 +254,7 @@ public class StdVarAccessTest {
         */
     }
 
-    /**
-     * Method: getDefaultVarFromParam(Class<T> clazz, String key, Params param)
-     */
+    /** Method: getDefaultVarFromParam(Class<T> clazz, String key, Params param) */
     @Test
     public void testGetDefaultVarFromParam() throws Exception {
         // TODO: Test goes here...
@@ -297,9 +270,7 @@ public class StdVarAccessTest {
         */
     }
 
-    /**
-     * Method: getVarFromCfg(Class<T> clazz, String key, ClientProperties conf)
-     */
+    /** Method: getVarFromCfg(Class<T> clazz, String key, ClientProperties conf) */
     @Test
     public void testGetVarFromCfg() throws Exception {
         // TODO: Test goes here...

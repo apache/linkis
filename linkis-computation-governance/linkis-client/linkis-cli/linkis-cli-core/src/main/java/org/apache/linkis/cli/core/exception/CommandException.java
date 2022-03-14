@@ -26,7 +26,8 @@ public class CommandException extends LinkisClientRuntimeException {
     private static final long serialVersionUID = 745261661L;
     private CmdType cmdType = null;
 
-    public CommandException(String code, ErrorLevel level, ErrorMsg errMsg, String param[], String... extMsg) {
+    public CommandException(
+            String code, ErrorLevel level, ErrorMsg errMsg, String param[], String... extMsg) {
         super(code, level, errMsg, param, extMsg);
     }
 
@@ -34,12 +35,19 @@ public class CommandException extends LinkisClientRuntimeException {
         super(code, level, errMsg, paramsList);
     }
 
-    public CommandException(String code, ErrorLevel level, ErrorMsg errMsg, CmdType cmdType, String param[], String... extMsg) {
+    public CommandException(
+            String code,
+            ErrorLevel level,
+            ErrorMsg errMsg,
+            CmdType cmdType,
+            String param[],
+            String... extMsg) {
         super(code, level, errMsg, param, extMsg);
         this.cmdType = cmdType;
     }
 
-    public CommandException(String code, ErrorLevel level, ErrorMsg errMsg, CmdType cmdType, Object... paramsList) {
+    public CommandException(
+            String code, ErrorLevel level, ErrorMsg errMsg, CmdType cmdType, Object... paramsList) {
         super(code, level, errMsg, paramsList);
         this.cmdType = cmdType;
     }

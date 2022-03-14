@@ -24,9 +24,7 @@ import org.apache.linkis.cli.core.utils.LogUtils;
 
 import static java.lang.System.exit;
 
-/**
- * exit -1 when failure and exit 0 when success
- */
+/** exit -1 when failure and exit 0 when success */
 public class DefaultResultHandler implements ResultHandler {
     @Override
     public void process(ExecutionResult executionResult) {

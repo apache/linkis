@@ -17,5 +17,4 @@
 
 package org.apache.linkis.cli.common.entity.present;
 
-public interface PresentWay {
-}
+public interface PresentWay {}

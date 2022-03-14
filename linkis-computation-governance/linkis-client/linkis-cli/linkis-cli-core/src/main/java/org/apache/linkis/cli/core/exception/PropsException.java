@@ -24,7 +24,8 @@ import org.apache.linkis.cli.common.exception.error.ErrorMsg;
 public class PropsException extends LinkisClientRuntimeException {
     private static final long serialVersionUID = 182747823415933L;
 
-    public PropsException(String code, ErrorLevel level, ErrorMsg errMsg, String param[], String... extMsg) {
+    public PropsException(
+            String code, ErrorLevel level, ErrorMsg errMsg, String param[], String... extMsg) {
         super(code, level, errMsg, param, extMsg);
     }
 

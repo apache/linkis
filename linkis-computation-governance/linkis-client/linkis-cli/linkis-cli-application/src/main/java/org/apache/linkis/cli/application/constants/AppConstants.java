@@ -24,7 +24,8 @@ public class AppConstants {
     public static final String RESULTSET_LOGO = "============ RESULT SET {0} ============";
 
     public static final String RESULTSET_META_BEGIN_LOGO = "----------- META DATA ------------";
-    public static final String RESULTSET_META_END_LOGO = "------------ END OF META DATA ------------";
+    public static final String RESULTSET_META_END_LOGO =
+            "------------ END OF META DATA ------------";
 
     public static final String RESULTSET_SEPARATOR_LOGO = "------------------------";
 

@@ -79,5 +79,4 @@ public interface LinkisOperResultAdapter {
     String getExecuteApplicationName();
 
     String getRequestApplicationName();
-
 }

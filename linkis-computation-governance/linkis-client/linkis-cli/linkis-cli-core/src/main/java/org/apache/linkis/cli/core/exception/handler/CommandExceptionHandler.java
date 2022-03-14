@@ -30,7 +30,8 @@ public class CommandExceptionHandler implements ExceptionHandler {
         if (e instanceof CommandException) {
             if (((CommandException) e).requireHelp()) {
 
-                CmdTemplate template = CmdTemplateFactory.getTemplateOri(((CommandException) e).getCmdType());
+                CmdTemplate template =
+                        CmdTemplateFactory.getTemplateOri(((CommandException) e).getCmdType());
 
                 if (template != null) {
                     HelpInfoModel model = new HelpInfoModel();

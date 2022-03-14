@@ -37,16 +37,18 @@ public abstract class AbstractBuilder<T> implements Builder<T> {
 
     protected abstract T getTargetNewInstance();
 
-//    protected T getTargetNewInstance() {
-//        try {
-//            ParameterizedType pt = (ParameterizedType) this.getClass().getGenericSuperclass();
-//            Class<T> clazz = (Class<T>) pt.getActualTypeArguments()[0];
-//            targetObj = clazz.newInstance();
-//        } catch (InstantiationException e) {
-//            throw new BuilderException("BLD0001", ErrorLevel.ERROR, CommonErrMsg.BuilderBuildErr, "Cannot generate new instance.", e);
-//        } catch (IllegalAccessException ie) {
-//            throw new BuilderException("BLD0001", ErrorLevel.ERROR, CommonErrMsg.BuilderBuildErr, "Cannot generate new instance.", ie);
-//        }
-//        return targetObj;
-//    }
+    //    protected T getTargetNewInstance() {
+    //        try {
+    //            ParameterizedType pt = (ParameterizedType) this.getClass().getGenericSuperclass();
+    //            Class<T> clazz = (Class<T>) pt.getActualTypeArguments()[0];
+    //            targetObj = clazz.newInstance();
+    //        } catch (InstantiationException e) {
+    //            throw new BuilderException("BLD0001", ErrorLevel.ERROR,
+    // CommonErrMsg.BuilderBuildErr, "Cannot generate new instance.", e);
+    //        } catch (IllegalAccessException ie) {
+    //            throw new BuilderException("BLD0001", ErrorLevel.ERROR,
+    // CommonErrMsg.BuilderBuildErr, "Cannot generate new instance.", ie);
+    //        }
+    //        return targetObj;
+    //    }
 }

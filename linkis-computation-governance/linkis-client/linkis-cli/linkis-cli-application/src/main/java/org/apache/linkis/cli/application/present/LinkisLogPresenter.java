@@ -17,7 +17,6 @@
 
 package org.apache.linkis.cli.application.present;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.linkis.cli.application.observer.event.LinkisClientEvent;
 import org.apache.linkis.cli.application.observer.listener.LinkisClientListener;
 import org.apache.linkis.cli.application.present.model.LinkisLogModel;
@@ -32,6 +31,9 @@ import org.apache.linkis.cli.core.present.display.DisplayOperFactory;
 import org.apache.linkis.cli.core.present.display.DisplayOperator;
 import org.apache.linkis.cli.core.present.display.data.StdoutDisplayData;
 import org.apache.linkis.cli.core.utils.CommonUtils;
+
+import org.apache.commons.lang3.StringUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,8 +43,11 @@ public class LinkisLogPresenter implements Presenter, LinkisClientListener {
     @Override
     public void present(Model model, PresentWay presentWay) {
         if (!(model instanceof LinkisLogModel)) {
-            throw new PresenterException("PST0001", ErrorLevel.ERROR, CommonErrMsg.PresenterErr, "Input model for \"LinkisLogPresenter\" is not instance of \"LinkisJobIncLogModel\"");
-
+            throw new PresenterException(
+                    "PST0001",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.PresenterErr,
+                    "Input model for \"LinkisLogPresenter\" is not instance of \"LinkisJobIncLogModel\"");
         }
         LinkisLogModel logModel = (LinkisLogModel) model;
         DisplayOperator displayOper = DisplayOperFactory.getDisplayOper(PresentModeImpl.STDOUT);
@@ -65,5 +70,4 @@ public class LinkisLogPresenter implements Presenter, LinkisClientListener {
         model.buildModel(msg);
         this.present(model, null);
     }
-
 }

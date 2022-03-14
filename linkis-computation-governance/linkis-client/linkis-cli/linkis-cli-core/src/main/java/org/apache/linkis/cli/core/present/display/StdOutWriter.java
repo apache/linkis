@@ -23,14 +23,18 @@ import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
 import org.apache.linkis.cli.core.present.display.data.DisplayData;
 import org.apache.linkis.cli.core.present.display.data.StdoutDisplayData;
 import org.apache.linkis.cli.core.utils.LogUtils;
-import org.slf4j.Logger;
 
+import org.slf4j.Logger;
 
 public class StdOutWriter implements DisplayOperator {
     @Override
     public void doOutput(DisplayData data) {
         if (!(data instanceof StdoutDisplayData)) {
-            throw new PresenterException("PST0008", ErrorLevel.ERROR, CommonErrMsg.PresentDriverErr, "input data is not instance of StdoutDisplayData");
+            throw new PresenterException(
+                    "PST0008",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.PresentDriverErr,
+                    "input data is not instance of StdoutDisplayData");
         }
         String content = ((StdoutDisplayData) data).getContent();
         Logger logger = LogUtils.getPlaintTextLogger();

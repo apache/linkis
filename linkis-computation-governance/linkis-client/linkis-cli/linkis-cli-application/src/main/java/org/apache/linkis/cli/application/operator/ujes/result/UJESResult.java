@@ -17,5 +17,4 @@
 
 package org.apache.linkis.cli.application.operator.ujes.result;
 
-public interface UJESResult {
-}
+public interface UJESResult {}

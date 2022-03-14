@@ -32,6 +32,7 @@ import org.apache.linkis.cli.core.present.display.DisplayOperator;
 import org.apache.linkis.cli.core.present.display.StdOutWriter;
 import org.apache.linkis.cli.core.present.display.data.StdoutDisplayData;
 import org.apache.linkis.cli.core.present.model.HelpInfoModel;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,24 +46,24 @@ public class HelpInfoPresenter implements Presenter {
     @Override
     public void present(Model model, PresentWay presentWay) {
         if (!(model instanceof HelpInfoModel)) {
-            throw new PresenterException("PST0010", ErrorLevel.ERROR, CommonErrMsg.PresenterErr, "Input for HelpInfoPresenter is not instance of model");
+            throw new PresenterException(
+                    "PST0010",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.PresenterErr,
+                    "Input for HelpInfoPresenter is not instance of model");
         }
         if (driver == null) {
-            throw new PresenterException("PST0007", ErrorLevel.ERROR, CommonErrMsg.PresenterErr, "Driver is null");
+            throw new PresenterException(
+                    "PST0007", ErrorLevel.ERROR, CommonErrMsg.PresenterErr, "Driver is null");
         }
         HelpInfoModel helpInfoModel = (HelpInfoModel) model;
 
-
         String helpInfo = getUsage(helpInfoModel.getTemplate());
-
 
         driver.doOutput(new StdoutDisplayData(helpInfo));
     }
 
-    /**
-     * Help info for sub-command
-     */
-
+    /** Help info for sub-command */
     private String getUsage(CmdTemplate template) {
         StringBuilder sb = new StringBuilder();
         List<CmdOption<?>> options = template.getOptions();
@@ -79,13 +80,13 @@ public class HelpInfoPresenter implements Presenter {
             }
         }
 
-        sb.append("Usage: ").append(template.getCmdType().getName()).append(
-                options.size() > 0 ? " [OPTIONS] " : " ");
+        sb.append("Usage: ")
+                .append(template.getCmdType().getName())
+                .append(options.size() > 0 ? " [OPTIONS] " : " ");
         for (CmdOption<?> p : parameters) {
             if (p instanceof Parameter<?>) {
                 sb.append(((Parameter<?>) p).repr()).append(" ");
             }
-
         }
         if (!"".equals(template.getCmdType().getDesc())) {
             sb.append("\n\t").append(template.getCmdType().getDesc());

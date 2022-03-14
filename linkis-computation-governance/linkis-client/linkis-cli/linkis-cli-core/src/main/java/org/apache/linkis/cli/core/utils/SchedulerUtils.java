@@ -27,7 +27,6 @@ public class SchedulerUtils {
     private static String THREAD_NAME = "LinkisCli-Scheduler";
     private static Boolean IS_DEAMON = false;
 
-
     public static ThreadFactory threadFactory(String threadName, Boolean isDaemon) {
         return new ThreadFactory() {
             AtomicInteger num = new AtomicInteger(0);
@@ -42,16 +41,22 @@ public class SchedulerUtils {
         };
     }
 
-    public static ThreadPoolExecutor newCachedThreadPool(int threadNum, String threadName, Boolean isDaemon) {
-        ThreadPoolExecutor threadPool = new ThreadPoolExecutor(threadNum, threadNum, 120L, TimeUnit.SECONDS,
-                new LinkedBlockingQueue<Runnable>(10 * threadNum),
-                threadFactory(threadName, isDaemon));
+    public static ThreadPoolExecutor newCachedThreadPool(
+            int threadNum, String threadName, Boolean isDaemon) {
+        ThreadPoolExecutor threadPool =
+                new ThreadPoolExecutor(
+                        threadNum,
+                        threadNum,
+                        120L,
+                        TimeUnit.SECONDS,
+                        new LinkedBlockingQueue<Runnable>(10 * threadNum),
+                        threadFactory(threadName, isDaemon));
         threadPool.allowCoreThreadTimeOut(true);
         return threadPool;
     }
 
-
-    public static ExecutorService newFixedThreadPool(int threadNum, String threadName, Boolean isDaemon) {
+    public static ExecutorService newFixedThreadPool(
+            int threadNum, String threadName, Boolean isDaemon) {
         return Executors.newFixedThreadPool(threadNum, threadFactory(threadName, isDaemon));
     }
 
@@ -85,6 +90,4 @@ public class SchedulerUtils {
             cachedThreadPool.shutdownNow();
         }
     }
-
-
 }

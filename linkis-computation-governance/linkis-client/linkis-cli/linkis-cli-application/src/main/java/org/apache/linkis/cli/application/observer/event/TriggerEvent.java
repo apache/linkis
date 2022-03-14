@@ -17,5 +17,4 @@
 
 package org.apache.linkis.cli.application.observer.event;
 
-public class TriggerEvent extends SingleObserverEvent {
-}
+public class TriggerEvent extends SingleObserverEvent {}

@@ -36,7 +36,11 @@ public class Help implements Execution {
     public ExecutionResult execute(Map<String, Job> jobs) {
 
         if (jobs.size() > 1) {
-            throw new LinkisClientExecutionException("EXE0001", ErrorLevel.ERROR, CommonErrMsg.ExecutionInitErr, "Multiple Jobs is not Supported by current execution");
+            throw new LinkisClientExecutionException(
+                    "EXE0001",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.ExecutionInitErr,
+                    "Multiple Jobs is not Supported by current execution");
         }
 
         HelpInfoModel model = new HelpInfoModel();
@@ -52,5 +56,4 @@ public class Help implements Execution {
     public boolean terminate(Map<String, Job> jobs) {
         return true;
     }
-
 }

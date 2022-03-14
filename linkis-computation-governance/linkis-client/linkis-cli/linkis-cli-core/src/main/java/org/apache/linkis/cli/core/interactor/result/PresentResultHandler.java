@@ -25,6 +25,7 @@ import org.apache.linkis.cli.common.entity.result.ResultHandler;
 import org.apache.linkis.cli.common.exception.error.ErrorLevel;
 import org.apache.linkis.cli.core.exception.LinkisClientExecutionException;
 import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +38,11 @@ public class PresentResultHandler implements ResultHandler {
 
     public void checkInit() {
         if (presenter == null || model == null) {
-            throw new LinkisClientExecutionException("EXE0031", ErrorLevel.ERROR, CommonErrMsg.ExecutionResultErr, "Presenter or model is null");
+            throw new LinkisClientExecutionException(
+                    "EXE0031",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.ExecutionResultErr,
+                    "Presenter or model is null");
         }
     }
 
@@ -53,8 +58,8 @@ public class PresentResultHandler implements ResultHandler {
     public void process(ExecutionResult executionResult) {
         checkInit();
         Map<String, Job> jobs = executionResult.getJobs();
-        //Probably need modification if we further want multiple-jobs support
-        //but we probably don't want to support that
+        // Probably need modification if we further want multiple-jobs support
+        // but we probably don't want to support that
         if (jobs != null) {
             for (Job job : jobs.values()) {
                 if (job != null) {
@@ -63,7 +68,8 @@ public class PresentResultHandler implements ResultHandler {
                 try {
                     presenter.present(model, job.getPresentWay());
                 } catch (Exception e) {
-                    logger.error("Execution failed because exception thrown when presenting data.", e);
+                    logger.error(
+                            "Execution failed because exception thrown when presenting data.", e);
                     executionResult.setExecutionStatus(ExecutionStatusEnum.FAILED);
                     executionResult.setException(e);
                 }

@@ -34,24 +34,40 @@ public class JobManagement implements Execution {
     @Override
     public ExecutionResult execute(Map<String, Job> jobs) {
         ExecutionStatus executionStatus;
-        Exception exception = null; //TODO
+        Exception exception = null; // TODO
 
         if (jobs == null || jobs.size() == 0) {
-            throw new LinkisClientExecutionException("EXE0001", ErrorLevel.ERROR, CommonErrMsg.ExecutionInitErr, "Null or empty Jobs is submitted to current execution");
+            throw new LinkisClientExecutionException(
+                    "EXE0001",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.ExecutionInitErr,
+                    "Null or empty Jobs is submitted to current execution");
         }
 
         if (jobs.size() > 1) {
-            throw new LinkisClientExecutionException("EXE0001", ErrorLevel.ERROR, CommonErrMsg.ExecutionInitErr, "Multiple Jobs is not Supported by current execution");
+            throw new LinkisClientExecutionException(
+                    "EXE0001",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.ExecutionInitErr,
+                    "Multiple Jobs is not Supported by current execution");
         }
 
         Job job = jobs.get(jobs.keySet().toArray(new String[jobs.size()])[0]);
 
         if (!(job instanceof ManagableBackendJob)) {
-            throw new LinkisClientExecutionException("EXE0001", ErrorLevel.ERROR, CommonErrMsg.ExecutionInitErr, "Backend for \"" + job.getClass().getCanonicalName() + "\" is not manageable");
+            throw new LinkisClientExecutionException(
+                    "EXE0001",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.ExecutionInitErr,
+                    "Backend for \"" + job.getClass().getCanonicalName() + "\" is not manageable");
         }
 
         if (job.getSubType() == null) {
-            throw new LinkisClientExecutionException("EXE0001", ErrorLevel.ERROR, CommonErrMsg.ExecutionInitErr, "SubExecType should not be null");
+            throw new LinkisClientExecutionException(
+                    "EXE0001",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.ExecutionInitErr,
+                    "SubExecType should not be null");
         }
 
         try {
@@ -77,5 +93,4 @@ public class JobManagement implements Execution {
     public boolean terminate(Map<String, Job> jobs) {
         return true;
     }
-
 }

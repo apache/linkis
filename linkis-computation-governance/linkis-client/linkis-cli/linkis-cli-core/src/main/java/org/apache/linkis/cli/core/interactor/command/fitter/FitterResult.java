@@ -23,8 +23,7 @@ public class FitterResult {
     String[] remains;
     CmdTemplate parsedTemplate;
 
-    public FitterResult() {
-    }
+    public FitterResult() {}
 
     public FitterResult(String[] remains, CmdTemplate parsedTemplate) {
         this.remains = remains;
@@ -46,5 +45,4 @@ public class FitterResult {
     public void setParsedTemplate(CmdTemplate template) {
         this.parsedTemplate = template;
     }
-
 }

@@ -17,7 +17,6 @@
 
 package org.apache.linkis.cli.application.present;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.linkis.cli.application.constants.AppConstants;
 import org.apache.linkis.cli.application.interactor.job.data.LinkisResultSet;
 import org.apache.linkis.cli.application.present.model.LinkisResultModel;
@@ -35,6 +34,8 @@ import org.apache.linkis.cli.core.present.display.data.FileDisplayData;
 import org.apache.linkis.cli.core.utils.CommonUtils;
 import org.apache.linkis.cli.core.utils.LogUtils;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.text.MessageFormat;
 import java.util.*;
 
@@ -43,61 +44,93 @@ public class LinkisResultPresenter implements Presenter {
     @Override
     public void present(Model model, PresentWay presentWay) {
         if (!(model instanceof LinkisResultModel)) {
-            throw new PresenterException("PST0001", ErrorLevel.ERROR, CommonErrMsg.PresenterErr, "Input model for \"LinkisResultPresenter\" is not instance of \"LinkisResultModel\"");
+            throw new PresenterException(
+                    "PST0001",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.PresenterErr,
+                    "Input model for \"LinkisResultPresenter\" is not instance of \"LinkisResultModel\"");
         }
         if (!(presentWay instanceof PresentWayImpl)) {
-            throw new PresenterException("PST0002", ErrorLevel.ERROR, CommonErrMsg.PresenterErr, "Input PresentWay for \"LinkisResultPresenter\" is not instance of \"PresentWayImpl\"");
+            throw new PresenterException(
+                    "PST0002",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.PresenterErr,
+                    "Input PresentWay for \"LinkisResultPresenter\" is not instance of \"PresentWayImpl\"");
         }
         LinkisResultModel resultModel = (LinkisResultModel) model;
         PresentWayImpl presentWay1 = (PresentWayImpl) presentWay;
 
         if (!resultModel.getJobStatus().isJobSuccess()) {
-            LogUtils.getInformationLogger().info("JobStatus is not \'success\'. Will not retrieve result-set.");
+            LogUtils.getInformationLogger()
+                    .info("JobStatus is not \'success\'. Will not retrieve result-set.");
             return;
         }
-        LogUtils.getInformationLogger().info("Retrieving result-set, may take time if result-set is large, please do not exit program.");
+        LogUtils.getInformationLogger()
+                .info(
+                        "Retrieving result-set, may take time if result-set is large, please do not exit program.");
 
-        final DisplayOperator displayOperator = DisplayOperFactory.getDisplayOper(presentWay1.getMode()); //currently we don't allow printing log to file here
+        final DisplayOperator displayOperator =
+                DisplayOperFactory.getDisplayOper(
+                        presentWay1
+                                .getMode()); // currently we don't allow printing log to file here
 
         int preIdx = -1;
         StringBuilder resultSb = new StringBuilder();
 
         while (!resultModel.resultFinReceived()) {
-            preIdx = presentOneIteration(resultModel, preIdx, presentWay1, resultSb, displayOperator);
+            preIdx =
+                    presentOneIteration(
+                            resultModel, preIdx, presentWay1, resultSb, displayOperator);
             CommonUtils.doSleepQuietly(500l);
         }
         presentOneIteration(resultModel, preIdx, presentWay1, resultSb, displayOperator);
 
-        if (presentWay1.getMode() == PresentModeImpl.TEXT_FILE ||
-                StringUtils.isNotBlank(presentWay1.getPath())) {
-            LogUtils.getInformationLogger().info("ResultSet has been successfully written to path: " +
-                    presentWay1.getPath());
+        if (presentWay1.getMode() == PresentModeImpl.TEXT_FILE
+                || StringUtils.isNotBlank(presentWay1.getPath())) {
+            LogUtils.getInformationLogger()
+                    .info(
+                            "ResultSet has been successfully written to path: "
+                                    + presentWay1.getPath());
         }
     }
 
-    protected int presentOneIteration(LinkisResultModel resultModel, int preIdx, PresentWayImpl presentWay, StringBuilder resultSb, DisplayOperator displayOperator) {
+    protected int presentOneIteration(
+            LinkisResultModel resultModel,
+            int preIdx,
+            PresentWayImpl presentWay,
+            StringBuilder resultSb,
+            DisplayOperator displayOperator) {
         List<LinkisResultSet> linkisResultSets = resultModel.consumeResultContent();
         if (linkisResultSets != null) {
             for (LinkisResultSet c : linkisResultSets) {
                 int idxResultset = c.getResultsetIdx();
                 /**
                  * Notice: we assume result-sets are visited one by one in non-descending order!!!
-                 * i.e. either idxResultset == preIdx or idxResultset - preIdx == 1
-                 * i.e. resultsets[0] -> resultsets[1] -> ...
+                 * i.e. either idxResultset == preIdx or idxResultset - preIdx == 1 i.e.
+                 * resultsets[0] -> resultsets[1] -> ...
                  */
                 if (idxResultset - preIdx != 0 && idxResultset - preIdx != 1) {
-                    throw new PresenterException("PST0002", ErrorLevel.ERROR, CommonErrMsg.PresenterErr, "Linkis resultsets are visited in descending order or are not visited one-by-one");
+                    throw new PresenterException(
+                            "PST0002",
+                            ErrorLevel.ERROR,
+                            CommonErrMsg.PresenterErr,
+                            "Linkis resultsets are visited in descending order or are not visited one-by-one");
                 }
 
                 boolean flag = idxResultset > preIdx;
                 if (presentWay.isDisplayMetaAndLogo()) {
                     if (idxResultset - preIdx == 1) {
                         resultSb.setLength(0);
-                        resultSb.append(MessageFormat.format(AppConstants.RESULTSET_LOGO, idxResultset + 1)).append(System.lineSeparator());
+                        resultSb.append(
+                                        MessageFormat.format(
+                                                AppConstants.RESULTSET_LOGO, idxResultset + 1))
+                                .append(System.lineSeparator());
                         if (c.getResultMeta() != null) {
-                            resultSb.append(AppConstants.RESULTSET_META_BEGIN_LOGO).append(System.lineSeparator());
+                            resultSb.append(AppConstants.RESULTSET_META_BEGIN_LOGO)
+                                    .append(System.lineSeparator());
                             resultSb.append(formatResultMeta(c.getResultMeta()));
-                            resultSb.append(AppConstants.RESULTSET_META_END_LOGO).append(System.lineSeparator());
+                            resultSb.append(AppConstants.RESULTSET_META_END_LOGO)
+                                    .append(System.lineSeparator());
                         }
                     }
                 }
@@ -107,8 +140,19 @@ public class LinkisResultPresenter implements Presenter {
                     resultSb.append(contentStr);
                 }
                 if (resultSb.length() != 0) {
-                    String resultFileName = resultModel.getUser() + "-task-" + resultModel.getJobID() + "-result-" + String.valueOf(idxResultset + 1) + ".txt";
-                    displayOperator.doOutput(new FileDisplayData(presentWay.getPath(), resultFileName, resultSb.toString(), flag));
+                    String resultFileName =
+                            resultModel.getUser()
+                                    + "-task-"
+                                    + resultModel.getJobID()
+                                    + "-result-"
+                                    + String.valueOf(idxResultset + 1)
+                                    + ".txt";
+                    displayOperator.doOutput(
+                            new FileDisplayData(
+                                    presentWay.getPath(),
+                                    resultFileName,
+                                    resultSb.toString(),
+                                    flag));
                     resultSb.setLength(0);
                 }
             }
@@ -126,7 +170,7 @@ public class LinkisResultPresenter implements Presenter {
 
         List<String> titles = new ArrayList<>();
 
-        //gather keys as title
+        // gather keys as title
         for (LinkedHashMap<String, String> mapElement : metaData) {
             if (mapElement == null || mapElement.size() == 0) {
                 continue;
@@ -143,12 +187,11 @@ public class LinkisResultPresenter implements Presenter {
                     outputBuilder.append(key).append("\t");
                 }
             }
-
         }
 
         outputBuilder.append(System.lineSeparator());
 
-        //gather value and print to output
+        // gather value and print to output
         for (LinkedHashMap<String, String> mapElement : metaData) {
             if (mapElement == null || mapElement.size() == 0) {
                 continue;
@@ -167,10 +210,11 @@ public class LinkisResultPresenter implements Presenter {
         return outputBuilder.toString();
     }
 
-    protected String formatResultContent(List<LinkedHashMap<String, String>> metaData, List<List<String>> contentData) {
+    protected String formatResultContent(
+            List<LinkedHashMap<String, String>> metaData, List<List<String>> contentData) {
 
         StringBuilder outputBuilder = new StringBuilder();
-        if (contentData == null || contentData.size() == 0) { //finished
+        if (contentData == null || contentData.size() == 0) { // finished
             return null;
         }
 

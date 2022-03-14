@@ -17,7 +17,6 @@
 
 package org.apache.linkis.cli.application.interactor.job.data;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.linkis.cli.application.constants.AppConstants;
 import org.apache.linkis.cli.application.constants.AppKeys;
 import org.apache.linkis.cli.application.constants.LinkisKeys;
@@ -43,6 +42,8 @@ import org.apache.linkis.computation.client.once.simple.SubmittableSimpleOnceJob
 import org.apache.linkis.computation.client.operator.impl.EngineConnLogOperator;
 import org.apache.linkis.computation.client.operator.impl.EngineConnLogs;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingDeque;
@@ -59,7 +60,7 @@ public class SimpleOnceJobAdapter implements LinkisLogData {
     private Boolean incLogMode;
     private LinkedBlockingDeque<String> logBuffer = new LinkedBlockingDeque();
     //    private String logPath; // remote path for job log
-//    private Integer nextLogLineIdx = 0;
+    //    private Integer nextLogLineIdx = 0;
     private Boolean hasNextLogLine = true;
     private String resultLocation;
     private String[] resultSetPaths = null; // remote paths for job result set
@@ -76,15 +77,16 @@ public class SimpleOnceJobAdapter implements LinkisLogData {
         resultFinEvent.register(resultFinListener);
     }
 
-
     public void init(LinkisOnceDesc desc) {
         VarAccess stdVarAccess = desc.getStdVarAccess();
         VarAccess sysVarAccess = desc.getSysVarAccess();
 
         serverUrl = stdVarAccess.getVar(String.class, AppKeys.LINKIS_COMMON_GATEWAY_URL);
 
-        LinkisJobBuilder$.MODULE$.setDefaultClientConfig(UJESClientFactory.generateDWSClientConfig(stdVarAccess, sysVarAccess));
-        LinkisJobBuilder$.MODULE$.setDefaultUJESClient(UJESClientFactory.getReusable(stdVarAccess, sysVarAccess));
+        LinkisJobBuilder$.MODULE$.setDefaultClientConfig(
+                UJESClientFactory.generateDWSClientConfig(stdVarAccess, sysVarAccess));
+        LinkisJobBuilder$.MODULE$.setDefaultUJESClient(
+                UJESClientFactory.getReusable(stdVarAccess, sysVarAccess));
 
         String engineTypeRaw = (String) desc.getLabelMap().get(LinkisKeys.KEY_ENGINETYPE);
         engineTypeForECM = engineTypeRaw;
@@ -93,18 +95,19 @@ public class SimpleOnceJobAdapter implements LinkisLogData {
             engineTypeForECM = StringUtils.split(engineTypeRaw, "-")[0];
         } else {
             engineTypeForECM = "";
-        } //TODO: remove parsing and let server side parse engineType
+        } // TODO: remove parsing and let server side parse engineType
 
-        onceJob = new SimpleOnceJobBuilder()
-                .setCreateService(AppConstants.LINKIS_CLI)
-                .addExecuteUser(desc.getProxyUser())
-                .setStartupParams(desc.getParamConfMap())
-                .setLabels(desc.getLabelMap())
-                .setRuntimeParams(desc.getParamRunTimeMap())
-                .setSource(desc.getSourceMap())
-                .setVariableMap(desc.getParamVarsMap())
-                .setJobContent(desc.getJobContentMap())
-                .build();
+        onceJob =
+                new SimpleOnceJobBuilder()
+                        .setCreateService(AppConstants.LINKIS_CLI)
+                        .addExecuteUser(desc.getProxyUser())
+                        .setStartupParams(desc.getParamConfMap())
+                        .setLabels(desc.getLabelMap())
+                        .setRuntimeParams(desc.getParamRunTimeMap())
+                        .setSource(desc.getSourceMap())
+                        .setVariableMap(desc.getParamVarsMap())
+                        .setJobContent(desc.getJobContentMap())
+                        .build();
     }
 
     public String getServerUrl() {
@@ -121,14 +124,22 @@ public class SimpleOnceJobAdapter implements LinkisLogData {
 
     private void panicIfNull(Object obj) {
         if (obj == null) {
-            throw new LinkisClientExecutionException("EXE0040", ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, "Instance of " + obj.getClass().getCanonicalName() + " is null");
+            throw new LinkisClientExecutionException(
+                    "EXE0040",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.ExecutionErr,
+                    "Instance of " + obj.getClass().getCanonicalName() + " is null");
         }
     }
 
     public void submit() {
         panicIfNull(onceJob);
         if (!(onceJob instanceof SubmittableSimpleOnceJob)) {
-            throw new LinkisClientExecutionException("EXE0041", ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, "onceJob is not properly initiated");
+            throw new LinkisClientExecutionException(
+                    "EXE0041",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.ExecutionErr,
+                    "onceJob is not properly initiated");
         }
         ((SubmittableSimpleOnceJob) onceJob).submit();
     }
@@ -137,7 +148,6 @@ public class SimpleOnceJobAdapter implements LinkisLogData {
         panicIfNull(onceJob);
         onceJob.kill();
     }
-
 
     public String getJobID() {
         return onceJob.getId();
@@ -172,13 +182,19 @@ public class SimpleOnceJobAdapter implements LinkisLogData {
         panicIfNull(onceJob);
         updateStatus();
         if (logOperator == null) {
-            logOperator = (EngineConnLogOperator) onceJob.getOperator(EngineConnLogOperator.OPERATOR_NAME());
-            logOperator.setECMServiceInstance(((SubmittableSimpleOnceJob) onceJob).getECMServiceInstance());
+            logOperator =
+                    (EngineConnLogOperator)
+                            onceJob.getOperator(EngineConnLogOperator.OPERATOR_NAME());
+            logOperator.setECMServiceInstance(
+                    ((SubmittableSimpleOnceJob) onceJob).getECMServiceInstance());
             logOperator.setEngineConnType(engineTypeForECM);
             //        logOperator.setPageSize(OnceJobConstants.MAX_LOG_SIZE_ONCE);
             logOperator.setIgnoreKeywords(OnceJobConstants.LOG_IGNORE_KEYWORDS);
         }
-        EngineConnLogs logs = (EngineConnLogs) logOperator.apply(); //for some reason we have to add type conversion, otherwise mvn testCompile fails
+        EngineConnLogs logs =
+                (EngineConnLogs)
+                        logOperator.apply(); // for some reason we have to add type conversion,
+        // otherwise mvn testCompile fails
         StringBuilder logBuilder = new StringBuilder();
         for (String log : logs.logs()) {
             logBuilder.append(log).append(System.lineSeparator());
@@ -187,7 +203,7 @@ public class SimpleOnceJobAdapter implements LinkisLogData {
         if ((logs.logs() == null || logs.logs().size() <= 0) && jobStatus.isJobFinishedState()) {
             setHasNextLogLine(false);
         }
-//        System.out.println(logs.logs().size());
+        //        System.out.println(logs.logs().size());
     }
 
     public void registerincLogListener(LinkisClientListener observer) {
@@ -323,7 +339,7 @@ public class SimpleOnceJobAdapter implements LinkisLogData {
     @Override
     public String getExecID() {
         return getJobID();
-    } //No Need
+    } // No Need
 
     @Override
     public float getJobProgress() {
@@ -352,12 +368,12 @@ public class SimpleOnceJobAdapter implements LinkisLogData {
 
     @Override
     public void updateByOperResult(LinkisOperResultAdapter adapter) {
-        //No need
+        // No need
     }
 
     @Override
     public LinkisLogData clone() throws CloneNotSupportedException {
         throw new CloneNotSupportedException();
-//        return null;
+        //        return null;
     }
 }

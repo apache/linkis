@@ -19,8 +19,8 @@ package org.apache.linkis.cli.common.entity.var;
 
 /**
  * @program: linkis-cli
- * @description: Retrieve value from input command/config/sys_prop/sys_env etc.
- * order should be: command > user config > default config > default
+ * @description: Retrieve value from input command/config/sys_prop/sys_env etc. order should be:
+ *     command > user config > default config > default
  */
 public interface VarAccess {
 
@@ -33,5 +33,4 @@ public interface VarAccess {
     boolean hasVar(String key);
 
     String[] getAllVarKeys();
-
 }

@@ -17,7 +17,6 @@
 
 package org.apache.linkis.cli.application.observer.listener;
 
-
 import org.apache.linkis.cli.application.observer.event.LinkisClientEvent;
 
 import java.util.concurrent.atomic.AtomicBoolean;

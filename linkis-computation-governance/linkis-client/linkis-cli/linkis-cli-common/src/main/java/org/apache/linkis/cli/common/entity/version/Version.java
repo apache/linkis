@@ -17,7 +17,4 @@
 
 package org.apache.linkis.cli.common.entity.version;
 
-public interface Version {
-
-
-}
+public interface Version {}

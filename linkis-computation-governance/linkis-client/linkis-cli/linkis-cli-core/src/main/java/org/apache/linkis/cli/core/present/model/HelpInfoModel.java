@@ -29,15 +29,18 @@ public class HelpInfoModel implements Model {
     @Override
     public void buildModel(Object data) {
         if (!(data instanceof CmdTemplate)) {
-            throw new TransformerException("TFM0010", ErrorLevel.ERROR, CommonErrMsg.TransformerException,
-                    "Failed to init HelpInfoModel: " + data.getClass().getCanonicalName() + "is not instance of \"CmdTemplate\"");
+            throw new TransformerException(
+                    "TFM0010",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.TransformerException,
+                    "Failed to init HelpInfoModel: "
+                            + data.getClass().getCanonicalName()
+                            + "is not instance of \"CmdTemplate\"");
         }
         this.template = (CmdTemplate) data;
     }
 
-
     public CmdTemplate getTemplate() {
         return template;
     }
-
 }

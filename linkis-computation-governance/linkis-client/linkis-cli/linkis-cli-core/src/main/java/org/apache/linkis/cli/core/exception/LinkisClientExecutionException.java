@@ -24,12 +24,13 @@ import org.apache.linkis.cli.common.exception.error.ErrorMsg;
 public class LinkisClientExecutionException extends LinkisClientRuntimeException {
     private static final long serialVersionUID = 987189405659L;
 
-    public LinkisClientExecutionException(String code, ErrorLevel level, ErrorMsg errMsg, String param[], String... extMsg) {
+    public LinkisClientExecutionException(
+            String code, ErrorLevel level, ErrorMsg errMsg, String param[], String... extMsg) {
         super(code, level, errMsg, param, extMsg);
     }
 
-    public LinkisClientExecutionException(String code, ErrorLevel level, ErrorMsg errMsg, Object... paramsList) {
+    public LinkisClientExecutionException(
+            String code, ErrorLevel level, ErrorMsg errMsg, Object... paramsList) {
         super(code, level, errMsg, paramsList);
     }
-
 }

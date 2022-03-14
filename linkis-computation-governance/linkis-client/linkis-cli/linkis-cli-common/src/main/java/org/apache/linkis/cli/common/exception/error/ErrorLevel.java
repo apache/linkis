@@ -18,11 +18,7 @@
 package org.apache.linkis.cli.common.exception.error;
 
 public enum ErrorLevel {
-    /**
-     * warn 1
-     * error 2
-     * fatal 3
-     */
+    /** warn 1 error 2 fatal 3 */
     INFO(0, "info"),
     WARN(1, "warn"),
     ERROR(2, "error"),
@@ -54,9 +50,6 @@ public enum ErrorLevel {
 
     @Override
     public String toString() {
-        return "ExceptionLevel{" +
-                "level=" + level +
-                ", name='" + name + '\'' +
-                '}';
+        return "ExceptionLevel{" + "level=" + level + ", name='" + name + '\'' + '}';
     }
 }

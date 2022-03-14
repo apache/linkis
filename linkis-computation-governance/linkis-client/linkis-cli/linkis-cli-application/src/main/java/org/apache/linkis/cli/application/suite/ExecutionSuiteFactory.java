@@ -17,7 +17,6 @@
 
 package org.apache.linkis.cli.application.suite;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.linkis.cli.application.constants.AppConstants;
 import org.apache.linkis.cli.application.constants.AppKeys;
 import org.apache.linkis.cli.application.interactor.command.LinkisCmdType;
@@ -59,6 +58,9 @@ import org.apache.linkis.cli.core.interactor.job.JobBuilder;
 import org.apache.linkis.cli.core.interactor.result.DefaultResultHandler;
 import org.apache.linkis.cli.core.interactor.result.PresentResultHandler;
 import org.apache.linkis.cli.core.present.DefaultStdOutPresenter;
+
+import org.apache.commons.lang3.StringUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,7 +70,8 @@ import java.util.Map;
 public class ExecutionSuiteFactory {
     private static Logger logger = LoggerFactory.getLogger(ExecutionSuiteFactory.class);
 
-    public static ExecutionSuite getSuite(CmdType cmdType, VarAccess stdVarAccess, VarAccess sysVarAccess) {
+    public static ExecutionSuite getSuite(
+            CmdType cmdType, VarAccess stdVarAccess, VarAccess sysVarAccess) {
 
         ExecutionSuite suite;
         Execution execution;
@@ -117,45 +120,49 @@ public class ExecutionSuiteFactory {
                 suite = new ExecutionSuite(execution, jobs, handler, defaultHandler);
             } else if (stdVarAccess.hasVar(AppKeys.LINKIS_CLIENT_HELP_OPT)) {
                 execution = new Help();
-                jobs.put("help", new Job() {
-                    @Override
-                    public String getCid() {
-                        return null;
-                    }
+                jobs.put(
+                        "help",
+                        new Job() {
+                            @Override
+                            public String getCid() {
+                                return null;
+                            }
 
-                    @Override
-                    public CmdType getCmdType() {
-                        return cmdType;
-                    }
+                            @Override
+                            public CmdType getCmdType() {
+                                return cmdType;
+                            }
 
-                    @Override
-                    public JobSubType getSubType() {
-                        return null;
-                    }
+                            @Override
+                            public JobSubType getSubType() {
+                                return null;
+                            }
 
-                    @Override
-                    public JobDescription getJobDesc() {
-                        return null;
-                    }
+                            @Override
+                            public JobDescription getJobDesc() {
+                                return null;
+                            }
 
-                    @Override
-                    public JobData getJobData() {
-                        return null;
-                    }
+                            @Override
+                            public JobData getJobData() {
+                                return null;
+                            }
 
-                    @Override
-                    public JobOperator getJobOperator() {
-                        return null;
-                    }
+                            @Override
+                            public JobOperator getJobOperator() {
+                                return null;
+                            }
 
-                    @Override
-                    public PresentWay getPresentWay() {
-                        return null;
-                    }
-                });
+                            @Override
+                            public PresentWay getPresentWay() {
+                                return null;
+                            }
+                        });
                 return new ExecutionSuite(execution, jobs, null, defaultHandler);
             } else {
-                Boolean asyncSubmission = stdVarAccess.getVarOrDefault(Boolean.class, AppKeys.LINKIS_CLIENT_ASYNC_OPT, false);
+                Boolean asyncSubmission =
+                        stdVarAccess.getVarOrDefault(
+                                Boolean.class, AppKeys.LINKIS_CLIENT_ASYNC_OPT, false);
                 if (asyncSubmission) {
                     execution = new AsyncSubmission();
                     PresentResultHandler handler = new PresentResultHandler();
@@ -175,29 +182,36 @@ public class ExecutionSuiteFactory {
                     handler2.setPresenter(new LinkisResultPresenter());
                     handler2.setModel(new LinkisResultModel());
 
-                    String mode = stdVarAccess.getVarOrDefault(String.class, AppKeys.LINKIS_CLIENT_MODE_OPT, AppConstants.UJES_MODE);
+                    String mode =
+                            stdVarAccess.getVarOrDefault(
+                                    String.class,
+                                    AppKeys.LINKIS_CLIENT_MODE_OPT,
+                                    AppConstants.UJES_MODE);
                     if (StringUtils.equalsIgnoreCase(mode, AppConstants.ONCE_MODE)) {
-                        jobBuilder = new LinkisOnceJobBuilder().setLogListener(new LinkisLogPresenter());
+                        jobBuilder =
+                                new LinkisOnceJobBuilder().setLogListener(new LinkisLogPresenter());
                         ;
                         validator = new LinkisOnceSubmitValidator();
                     } else {
-                        jobBuilder = new LinkisSubmitJobBuilder().setLogListener(new LinkisLogPresenter());
+                        jobBuilder =
+                                new LinkisSubmitJobBuilder()
+                                        .setLogListener(new LinkisLogPresenter());
                         validator = new LinkisSubmitValidator();
                     }
                     suite = new ExecutionSuite(execution, jobs, handler1, handler2, defaultHandler);
                 }
-
-
             }
             /*
             build job
              */
-            Job job = jobBuilder.setCid(AppConstants.DUMMY_CID) //currently we don't need this
-                    .setCmdType(cmdType)
-                    .setJobSubType(subType)
-                    .setStdVarAccess(stdVarAccess)
-                    .setSysVarAccess(sysVarAccess)
-                    .build();
+            Job job =
+                    jobBuilder
+                            .setCid(AppConstants.DUMMY_CID) // currently we don't need this
+                            .setCmdType(cmdType)
+                            .setJobSubType(subType)
+                            .setStdVarAccess(stdVarAccess)
+                            .setSysVarAccess(sysVarAccess)
+                            .build();
             logger.info("==========JOB============\n" + Utils.GSON.toJson(job.getJobDesc()));
             if (validator != null) {
                 validator.doValidation(job);
@@ -207,9 +221,11 @@ public class ExecutionSuiteFactory {
 
             return suite;
         } else {
-            throw new LinkisClientExecutionException("EXE0029", ErrorLevel.ERROR, CommonErrMsg.ExecutionInitErr, "Command Type is not supported");
+            throw new LinkisClientExecutionException(
+                    "EXE0029",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.ExecutionInitErr,
+                    "Command Type is not supported");
         }
-
     }
-
 }

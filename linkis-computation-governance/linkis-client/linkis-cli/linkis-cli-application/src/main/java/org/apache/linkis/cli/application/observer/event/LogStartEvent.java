@@ -17,5 +17,4 @@
 
 package org.apache.linkis.cli.application.observer.event;
 
-public class LogStartEvent extends SingleObserverEvent {
-}
+public class LogStartEvent extends SingleObserverEvent {}

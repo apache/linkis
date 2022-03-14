@@ -22,6 +22,7 @@ import org.apache.linkis.cli.common.entity.var.VarAccess;
 import org.apache.linkis.cli.common.exception.error.ErrorLevel;
 import org.apache.linkis.cli.core.exception.VarAccessException;
 import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,9 +54,12 @@ public class SysVarAccess implements VarAccess {
 
     @Override
     public void checkInit() {
-        if (this.sysProp == null &&
-                this.sysEnv == null) {
-            throw new VarAccessException("VA0001", ErrorLevel.ERROR, CommonErrMsg.VarAccessInitErr, "sys_prop and sys_env are both null");
+        if (this.sysProp == null && this.sysEnv == null) {
+            throw new VarAccessException(
+                    "VA0001",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.VarAccessInitErr,
+                    "sys_prop and sys_env are both null");
         }
     }
 
@@ -63,12 +67,16 @@ public class SysVarAccess implements VarAccess {
     public <T> T getVar(Class<T> clazz, String key) {
         checkInit();
         if (clazz != String.class) {
-            //throw exception
+            // throw exception
         }
         Object o1 = sysProp.get(key);
         Object o2 = sysEnv.get(key);
         if (o1 != null && o2 != null) {
-            throw new VarAccessException("VA0002", ErrorLevel.WARN, CommonErrMsg.VarAccessErr, "same key occurred in sys_prop and sys_env. will use sys_prop");
+            throw new VarAccessException(
+                    "VA0002",
+                    ErrorLevel.WARN,
+                    CommonErrMsg.VarAccessErr,
+                    "same key occurred in sys_prop and sys_env. will use sys_prop");
         }
         Object ret = o1 != null ? o1 : o2;
         return clazz.cast(ret);

@@ -17,7 +17,4 @@
 
 package org.apache.linkis.cli.core.constants;
 
-public class CommonKeys {
-
-
-}
+public class CommonKeys {}

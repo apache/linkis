@@ -21,7 +21,8 @@ import org.apache.linkis.cli.common.entity.job.Job;
 import org.apache.linkis.cli.common.exception.LinkisClientRuntimeException;
 
 /**
- * Backend only supports sync-submission, i.e. submit and wait till job finish and get result in one call, then implement this interface.
+ * Backend only supports sync-submission, i.e. submit and wait till job finish and get result in one
+ * call, then implement this interface.
  */
 public interface SyncBackendJob extends Job {
     void submitAndGetResult() throws LinkisClientRuntimeException;

@@ -23,24 +23,21 @@ import org.apache.linkis.cli.common.entity.operator.JobOperator;
 import org.apache.linkis.cli.common.entity.present.PresentWay;
 
 public interface Job {
-    /**
-     * Linkis-cli specified id, not server-side returned job-id/task-id
-     */
+    /** Linkis-cli specified id, not server-side returned job-id/task-id */
     String getCid();
 
     /**
-     * Command Type for this Job, should be able to use this to find out corresponding {@link CmdTemplate}
+     * Command Type for this Job, should be able to use this to find out corresponding {@link
+     * CmdTemplate}
      */
     CmdType getCmdType();
 
-    /**
-     * specifies which kind of sub-execution: e.g. jobManagement: status/list/log/kill;
-     */
+    /** specifies which kind of sub-execution: e.g. jobManagement: status/list/log/kill; */
     JobSubType getSubType();
 
     /**
-     * input-param/config will be stored in JobDescription
-     * information contained by this data-structure should be passed to server
+     * input-param/config will be stored in JobDescription information contained by this
+     * data-structure should be passed to server
      */
     JobDescription getJobDesc();
 
@@ -50,13 +47,9 @@ public interface Job {
      */
     JobData getJobData();
 
-    /**
-     * operates lower level components(usually encapsulates a client)
-     */
+    /** operates lower level components(usually encapsulates a client) */
     JobOperator getJobOperator();
 
-    /**
-     * decide how result should be presented
-     */
+    /** decide how result should be presented */
     PresentWay getPresentWay();
 }

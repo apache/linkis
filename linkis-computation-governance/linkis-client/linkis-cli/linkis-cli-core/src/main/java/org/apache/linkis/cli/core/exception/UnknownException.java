@@ -21,11 +21,11 @@ import org.apache.linkis.cli.common.exception.LinkisClientRuntimeException;
 import org.apache.linkis.cli.common.exception.error.ErrorLevel;
 import org.apache.linkis.cli.common.exception.error.ErrorMsg;
 
-
 public class UnknownException extends LinkisClientRuntimeException {
     private static final long serialVersionUID = 974159L;
 
-    public UnknownException(String code, ErrorLevel level, ErrorMsg errMsg, String param[], String... extMsg) {
+    public UnknownException(
+            String code, ErrorLevel level, ErrorMsg errMsg, String param[], String... extMsg) {
         super(code, level, errMsg, param, extMsg);
     }
 

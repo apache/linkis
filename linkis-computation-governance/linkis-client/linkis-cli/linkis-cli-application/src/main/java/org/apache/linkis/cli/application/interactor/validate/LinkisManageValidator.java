@@ -17,7 +17,6 @@
 
 package org.apache.linkis.cli.application.interactor.validate;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.linkis.cli.application.interactor.job.LinkisManageJob;
 import org.apache.linkis.cli.application.interactor.job.desc.LinkisJobManDesc;
 import org.apache.linkis.cli.common.entity.validate.Validator;
@@ -26,11 +25,18 @@ import org.apache.linkis.cli.common.exception.error.ErrorLevel;
 import org.apache.linkis.cli.core.exception.ValidateException;
 import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class LinkisManageValidator implements Validator {
     @Override
     public void doValidation(Object input) throws LinkisClientRuntimeException {
         if (!(input instanceof LinkisManageJob)) {
-            throw new ValidateException("VLD0007", ErrorLevel.ERROR, CommonErrMsg.ValidationErr, "Input of LinkisSubmitValidator is not instance of LinkisManageJob. Type: " + input.getClass().getCanonicalName());
+            throw new ValidateException(
+                    "VLD0007",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.ValidationErr,
+                    "Input of LinkisSubmitValidator is not instance of LinkisManageJob. Type: "
+                            + input.getClass().getCanonicalName());
         }
         boolean ok = true;
         StringBuilder reasonSb = new StringBuilder();
@@ -44,7 +50,11 @@ public class LinkisManageValidator implements Validator {
             ok = false;
         }
         if (!ok) {
-            throw new ValidateException("VLD0008", ErrorLevel.ERROR, CommonErrMsg.ValidationErr, "LinkisJobMan validation failed. Reason: " + reasonSb.toString());
+            throw new ValidateException(
+                    "VLD0008",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.ValidationErr,
+                    "LinkisJobMan validation failed. Reason: " + reasonSb.toString());
         }
     }
 }

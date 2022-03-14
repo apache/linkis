@@ -21,10 +21,9 @@ import org.apache.linkis.cli.common.entity.command.Params;
 import org.apache.linkis.cli.core.interactor.command.parser.result.ParseResult;
 
 /**
- * 1. parse cmd arguments and fill into template
- * 2. generate unique identifier for sub command
- * 3. transform parsed template into instance of {@link Params}
- * 4. return parsed copy of template for further validation, and commandParam for submitting to backend
+ * 1. parse cmd arguments and fill into template 2. generate unique identifier for sub command 3.
+ * transform parsed template into instance of {@link Params} 4. return parsed copy of template for
+ * further validation, and commandParam for submitting to backend
  */
 public interface Parser {
     ParseResult parse(String[] input);

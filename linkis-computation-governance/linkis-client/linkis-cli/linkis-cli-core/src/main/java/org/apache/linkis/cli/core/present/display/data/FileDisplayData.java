@@ -22,7 +22,8 @@ public class FileDisplayData extends StdoutDisplayData implements DisplayData {
     private String fileName;
     private Boolean createNewFile;
 
-    public FileDisplayData(String pathName, String fileName, String content, Boolean createNewFile) {
+    public FileDisplayData(
+            String pathName, String fileName, String content, Boolean createNewFile) {
         super(content);
         this.pathName = pathName;
         this.fileName = fileName;

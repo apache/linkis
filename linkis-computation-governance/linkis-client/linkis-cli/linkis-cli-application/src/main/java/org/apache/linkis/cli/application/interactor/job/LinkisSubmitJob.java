@@ -17,8 +17,6 @@
 
 package org.apache.linkis.cli.application.interactor.job;
 
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.linkis.cli.application.interactor.job.data.LinkisJobData;
 import org.apache.linkis.cli.application.interactor.job.data.LinkisLogData;
 import org.apache.linkis.cli.application.interactor.job.data.LinkisResultData;
@@ -34,11 +32,16 @@ import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
 import org.apache.linkis.cli.core.interactor.job.*;
 import org.apache.linkis.cli.core.utils.CommonUtils;
 import org.apache.linkis.cli.core.utils.LogUtils;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LinkisSubmitJob extends LinkisJob implements AsyncBackendJob, LogAccessibleJob, ResultAccessibleJob, TerminatableJob {
-    private final static Logger logger = LoggerFactory.getLogger(LinkisSubmitJob.class);
+public class LinkisSubmitJob extends LinkisJob
+        implements AsyncBackendJob, LogAccessibleJob, ResultAccessibleJob, TerminatableJob {
+    private static final Logger logger = LoggerFactory.getLogger(LinkisSubmitJob.class);
 
     private LinkisSubmitDesc jobDesc;
     private LinkisJobData data;
@@ -57,7 +60,11 @@ public class LinkisSubmitJob extends LinkisJob implements AsyncBackendJob, LogAc
     @Override
     public LinkisJobOperator getJobOperator() {
         if (!(super.getJobOperator() instanceof LinkisJobOperator)) {
-            throw new LinkisClientExecutionException("EXE0003", ErrorLevel.ERROR, CommonErrMsg.ExecutionInitErr, "JobOperator of LinkisManageJob should be instance of LinkisJobOperator");
+            throw new LinkisClientExecutionException(
+                    "EXE0003",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.ExecutionInitErr,
+                    "JobOperator of LinkisManageJob should be instance of LinkisJobOperator");
         }
         return (LinkisJobOperator) super.getJobOperator();
     }
@@ -65,7 +72,11 @@ public class LinkisSubmitJob extends LinkisJob implements AsyncBackendJob, LogAc
     @Override
     public void setOperator(JobOperator operator) {
         if (!(operator instanceof LinkisJobOperator)) {
-            throw new LinkisClientExecutionException("EXE0003", ErrorLevel.ERROR, CommonErrMsg.ExecutionInitErr, "JobOperator of LinkisManageJob should be instance of LinkisJobOperator");
+            throw new LinkisClientExecutionException(
+                    "EXE0003",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.ExecutionInitErr,
+                    "JobOperator of LinkisManageJob should be instance of LinkisJobOperator");
         }
         manageJob.setOperator(operator);
         super.setOperator(operator);
@@ -112,25 +123,34 @@ public class LinkisSubmitJob extends LinkisJob implements AsyncBackendJob, LogAc
         manageJob.setJobDesc(jobManDesc);
         data.updateByOperResult(getJobOperator().queryJobInfo(data.getUser(), data.getJobID()));
         infoBuilder.setLength(0);
-        infoBuilder.append("JobId:").append(data.getJobID()).append(System.lineSeparator())
-                .append("TaskId:").append(data.getJobID()).append(System.lineSeparator())
-                .append("ExecId:").append(data.getExecID());
+        infoBuilder
+                .append("JobId:")
+                .append(data.getJobID())
+                .append(System.lineSeparator())
+                .append("TaskId:")
+                .append(data.getJobID())
+                .append(System.lineSeparator())
+                .append("ExecId:")
+                .append(data.getExecID());
         LogUtils.getPlaintTextLogger().info(infoBuilder.toString());
         if (isAsync) {
             data.setSuccess(data.getJobStatus() != null && data.getJobStatus().isJobSubmitted());
         }
     }
 
-
     @Override
     public void updateJobStatus() throws LinkisClientRuntimeException {
         data.updateByOperResult(getJobOperator().queryJobInfo(data.getUser(), data.getJobID()));
         getJobOperator().queryJobStatus(data.getUser(), data.getJobID(), data.getExecID());
-        String log2 = "\n---------------------------------------------------\n" +
-                "\ttask " + data.getJobID() +
-                " status is " + data.getJobStatus() +
-                ", progress : " + data.getJobProgress() +
-                "\n---------------------------------------------------";
+        String log2 =
+                "\n---------------------------------------------------\n"
+                        + "\ttask "
+                        + data.getJobID()
+                        + " status is "
+                        + data.getJobStatus()
+                        + ", progress : "
+                        + data.getJobProgress()
+                        + "\n---------------------------------------------------";
         logger.info(log2);
     }
 
@@ -139,20 +159,29 @@ public class LinkisSubmitJob extends LinkisJob implements AsyncBackendJob, LogAc
         int retryCnt = 0;
         final int MAX_RETRY = 30;
         while (!data.getJobStatus().isJobFinishedState()) {
-            //query progress
+            // query progress
             try {
-                data.updateByOperResult(getJobOperator().queryJobInfo(data.getUser(), data.getJobID()));
+                data.updateByOperResult(
+                        getJobOperator().queryJobInfo(data.getUser(), data.getJobID()));
                 getJobOperator().queryJobStatus(data.getUser(), data.getJobID(), data.getExecID());
             } catch (Exception e) {
                 logger.warn("", e);
                 retryCnt++;
                 if (retryCnt >= MAX_RETRY) {
-                    throw new LinkisClientExecutionException("EXE0013", ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, "Cannot get jobStatus from server continuously for {0} seconds. Client aborted! Error message: \n", MAX_RETRY * 5 * CommonConstants.JOB_QUERY_SLEEP_MILLS, e);
+                    throw new LinkisClientExecutionException(
+                            "EXE0013",
+                            ErrorLevel.ERROR,
+                            CommonErrMsg.ExecutionErr,
+                            "Cannot get jobStatus from server continuously for {0} seconds. Client aborted! Error message: \n",
+                            MAX_RETRY * 5 * CommonConstants.JOB_QUERY_SLEEP_MILLS,
+                            e);
                 }
-                CommonUtils.doSleepQuietly(5 * CommonConstants.JOB_QUERY_SLEEP_MILLS); //maybe server problem. sleep longer
+                CommonUtils.doSleepQuietly(
+                        5 * CommonConstants.JOB_QUERY_SLEEP_MILLS); // maybe server problem. sleep
+                // longer
                 continue;
             }
-            retryCnt = 0; //reset counter
+            retryCnt = 0; // reset counter
             checkJobAvailability(data);
             CommonUtils.doSleepQuietly(CommonConstants.JOB_QUERY_SLEEP_MILLS);
         }
@@ -165,14 +194,17 @@ public class LinkisSubmitJob extends LinkisJob implements AsyncBackendJob, LogAc
             return;
         }
         int retry = 0;
-        int MAX_RETRY = 300; //wait for 10 minutes after job finish
+        int MAX_RETRY = 300; // wait for 10 minutes after job finish
         while (retry++ < MAX_RETRY) {
             if (((LinkisLogData) data).logFinReceived()) {
                 return;
             }
             CommonUtils.doSleepQuietly(CommonConstants.JOB_QUERY_SLEEP_MILLS);
         }
-        String msg = "Job is in Finished state(SUCCEED/FAILED/CANCELED) but client keep querying inclog for " + (MAX_RETRY * CommonConstants.JOB_QUERY_SLEEP_MILLS / 1000) + "seconds. Execution ends forcefully. Next will try handle execution result.";
+        String msg =
+                "Job is in Finished state(SUCCEED/FAILED/CANCELED) but client keep querying inclog for "
+                        + (MAX_RETRY * CommonConstants.JOB_QUERY_SLEEP_MILLS / 1000)
+                        + "seconds. Execution ends forcefully. Next will try handle execution result.";
         logger.warn(msg);
         LogUtils.getInformationLogger().warn(msg);
     }
@@ -190,24 +222,33 @@ public class LinkisSubmitJob extends LinkisJob implements AsyncBackendJob, LogAc
                 data.setSuccess(false);
                 data.setException(e);
             }
-            ((LinkisResultData) data).sendResultFin(); //inform listener to stop
+            ((LinkisResultData) data).sendResultFin(); // inform listener to stop
         } catch (Exception e) {
             data.setSuccess(false);
             data.setException(e);
-            ((LinkisResultData) data).sendResultFin(); //inform listener to stop
+            ((LinkisResultData) data).sendResultFin(); // inform listener to stop
         }
     }
 
     @Override
     public void startRetrieveLog() {
         if (!(data instanceof LinkisLogData)) {
-            throw new LinkisClientExecutionException("EXE0034", ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, "JobData is not LinkisLogData");
+            throw new LinkisClientExecutionException(
+                    "EXE0034",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.ExecutionErr,
+                    "JobData is not LinkisLogData");
         }
         LinkisLogData dataCopy;
         try {
-            dataCopy = ((LinkisLogData) data).clone();// make a copy to avoid race condition
+            dataCopy = ((LinkisLogData) data).clone(); // make a copy to avoid race condition
         } catch (CloneNotSupportedException e) {
-            throw new LinkisClientExecutionException("EXE0035", ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, "logData is not Cloneable", e);
+            throw new LinkisClientExecutionException(
+                    "EXE0035",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.ExecutionErr,
+                    "logData is not Cloneable",
+                    e);
         }
         dataCopy.setIncLogMode(true);
         manageJob.startRetrieveLogInternal(dataCopy);
@@ -216,7 +257,7 @@ public class LinkisSubmitJob extends LinkisJob implements AsyncBackendJob, LogAc
     @Override
     public void terminate() throws LinkisClientRuntimeException {
         terminateToken.setTerminate();
-        //kill job if job is submitted
+        // kill job if job is submitted
         if (StringUtils.isNotBlank(data.getJobID())) {
             System.out.println("\nKilling job: " + data.getJobID());
             try {
@@ -224,7 +265,11 @@ public class LinkisSubmitJob extends LinkisJob implements AsyncBackendJob, LogAc
                 if (data.getJobStatus().isJobCancelled()) {
                     System.out.println("Successfully killed job: " + data.getJobID() + " on exit");
                 } else {
-                    System.out.println("Failed to kill job: " + data.getJobID() + " on exit. Current job status: " + data.getJobStatus());
+                    System.out.println(
+                            "Failed to kill job: "
+                                    + data.getJobID()
+                                    + " on exit. Current job status: "
+                                    + data.getJobStatus());
                 }
             } catch (Exception e) {
                 System.out.println("Failed to kill job: " + data.getJobID() + " on exit");
@@ -233,11 +278,13 @@ public class LinkisSubmitJob extends LinkisJob implements AsyncBackendJob, LogAc
         }
     }
 
-
     private void checkJobAvailability(LinkisJobData data) throws LinkisClientRuntimeException {
         if (data.getJobStatus().isJobAbnormalStatus()) {
-            throw new LinkisClientExecutionException("EXE0006", ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, "Job is in abnormal status: " + CommonUtils.GSON.toJson(data));
+            throw new LinkisClientExecutionException(
+                    "EXE0006",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.ExecutionErr,
+                    "Job is in abnormal status: " + CommonUtils.GSON.toJson(data));
         }
     }
-
 }

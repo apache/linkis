@@ -26,9 +26,7 @@ public class LinkisResultSet implements Cloneable {
     private List<LinkedHashMap<String, String>> resultMeta;
     private List<List<String>> content;
 
-
-    public LinkisResultSet() {
-    }
+    public LinkisResultSet() {}
 
     public int getResultsetIdx() {
         return resultsetIdx;

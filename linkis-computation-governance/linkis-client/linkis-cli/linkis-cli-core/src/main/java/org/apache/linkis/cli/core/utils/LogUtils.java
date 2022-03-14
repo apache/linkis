@@ -31,5 +31,4 @@ public class LogUtils {
     public static Logger getInformationLogger() {
         return InformationLogger;
     }
-
 }

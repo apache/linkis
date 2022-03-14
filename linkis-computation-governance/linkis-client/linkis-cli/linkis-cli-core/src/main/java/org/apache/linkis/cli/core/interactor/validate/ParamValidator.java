@@ -25,7 +25,7 @@ public class ParamValidator implements Validator {
     @Override
     public void doValidation(Object input) throws LinkisClientRuntimeException {
         if (!(input instanceof Params)) {
-            //TODO:throw
+            // TODO:throw
         }
     }
 }

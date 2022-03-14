@@ -34,14 +34,20 @@ import org.apache.linkis.cli.core.interactor.job.*;
 import org.apache.linkis.cli.core.utils.CommonUtils;
 import org.apache.linkis.cli.core.utils.LogUtils;
 import org.apache.linkis.cli.core.utils.SchedulerUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.text.MessageFormat;
 
-public class LinkisOnceJob extends LinkisJob implements ManagableBackendJob, LogAccessibleJob, ResultAccessibleJob, AsyncBackendJob, TerminatableJob {
+public class LinkisOnceJob extends LinkisJob
+        implements ManagableBackendJob,
+                LogAccessibleJob,
+                ResultAccessibleJob,
+                AsyncBackendJob,
+                TerminatableJob {
 
-    private final static Logger logger = LoggerFactory.getLogger(LinkisOnceJob.class);
+    private static final Logger logger = LoggerFactory.getLogger(LinkisOnceJob.class);
 
     private LinkisOnceDesc jobDesc;
     private LinkisOnceJobData data;
@@ -84,19 +90,23 @@ public class LinkisOnceJob extends LinkisJob implements ManagableBackendJob, Log
         return null;
     }
 
-    /**
-     * AsyncBackendJob
-     */
+    /** AsyncBackendJob */
     @Override
     public void submit() throws LinkisClientRuntimeException {
         StringBuilder infoBuilder = new StringBuilder();
-        infoBuilder.append("connecting to linkis gateway:").append(data.getOnceJobAdapter().getServerUrl());
+        infoBuilder
+                .append("connecting to linkis gateway:")
+                .append(data.getOnceJobAdapter().getServerUrl());
         LogUtils.getInformationLogger().info(infoBuilder.toString());
         data.getOnceJobAdapter().submit();
         data.getOnceJobAdapter().updateStatus();
         infoBuilder.setLength(0);
-        infoBuilder.append("JobId:").append(data.getJobID()).append(System.lineSeparator())
-                .append("ExecId:").append(data.getExecID());
+        infoBuilder
+                .append("JobId:")
+                .append(data.getJobID())
+                .append(System.lineSeparator())
+                .append("ExecId:")
+                .append(data.getExecID());
         LogUtils.getPlaintTextLogger().info(infoBuilder.toString());
         if (isAsync) {
             data.setSuccess(data.getJobStatus() != null && data.getJobStatus().isJobSubmitted());
@@ -107,11 +117,15 @@ public class LinkisOnceJob extends LinkisJob implements ManagableBackendJob, Log
     public void updateJobStatus() throws LinkisClientRuntimeException {
         if (!data.getJobStatus().isJobFinishedState()) {
             data.getOnceJobAdapter().updateStatus();
-            String log2 = "\n---------------------------------------------------\n" +
-                    "\ttask " + data.getJobID() +
-                    " status is " + data.getJobStatus() +
-                    ", progress : " + data.getJobProgress() +
-                    "\n---------------------------------------------------";
+            String log2 =
+                    "\n---------------------------------------------------\n"
+                            + "\ttask "
+                            + data.getJobID()
+                            + " status is "
+                            + data.getJobStatus()
+                            + ", progress : "
+                            + data.getJobProgress()
+                            + "\n---------------------------------------------------";
             logger.info(log2);
         }
     }
@@ -124,9 +138,7 @@ public class LinkisOnceJob extends LinkisJob implements ManagableBackendJob, Log
         waitIncLogComplete(data);
     }
 
-    /**
-     * TerminatableJob
-     */
+    /** TerminatableJob */
     @Override
     public void terminate() throws LinkisClientRuntimeException {
         terminateToken.setTerminate();
@@ -135,7 +147,7 @@ public class LinkisOnceJob extends LinkisJob implements ManagableBackendJob, Log
 
     @Override
     public void startRetrieveResult() {
-        //TODO:wait for OnceJob to support this feature
+        // TODO:wait for OnceJob to support this feature
         data.sendResultFin();
     }
 
@@ -145,13 +157,20 @@ public class LinkisOnceJob extends LinkisJob implements ManagableBackendJob, Log
         startRetrieveLogInternal(data);
     }
 
-
     public void startRetrieveLogInternal(LinkisOnceJobData jobData) {
         if (!(jobData instanceof LinkisLogData)) {
-            throw new LinkisClientExecutionException("EXE0034", ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, "JobData is not LinkisLogData");
+            throw new LinkisClientExecutionException(
+                    "EXE0034",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.ExecutionErr,
+                    "JobData is not LinkisLogData");
         }
         if (jobData.getUser() == null || jobData.getJobID() == null) {
-            throw new LinkisClientExecutionException("EXE0036", ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, "user or jobID is null");
+            throw new LinkisClientExecutionException(
+                    "EXE0036",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.ExecutionErr,
+                    "user or jobID is null");
         }
         LinkisOnceJobData logData = jobData;
         if (logData.getJobStatus() != null) {
@@ -166,18 +185,24 @@ public class LinkisOnceJob extends LinkisJob implements ManagableBackendJob, Log
         }
     }
 
-    private void queryJobLogOneIteration(LinkisOnceJobData data) throws LinkisClientRuntimeException {
+    private void queryJobLogOneIteration(LinkisOnceJobData data)
+            throws LinkisClientRuntimeException {
         try {
             data.getOnceJobAdapter().queryJobLogOneIteration();
-//                data.updateByOperResult(getJobOperator().queryRunTimeLogFromLine(data.getUser(), data.getJobID(), data.getExecID(), fromLine));
+            //
+            // data.updateByOperResult(getJobOperator().queryRunTimeLogFromLine(data.getUser(),
+            // data.getJobID(), data.getExecID(), fromLine));
         } catch (Exception e) {
             // job is finished while we start query log(but request is not send).
             // then probably server cache is gone and we got a exception here.
             // however we cannot know if this happens based on the exception message
-            logger.warn("Caught exception when querying runtime-log. Probably server-side has close stream. Will try openLog api if Job is completed.", e);
+            logger.warn(
+                    "Caught exception when querying runtime-log. Probably server-side has close stream. Will try openLog api if Job is completed.",
+                    e);
             if (data.getJobStatus().isJobFinishedState()) {
                 CommonUtils.doSleepQuietly(500l);
-//                    data.updateByOperResult(getJobOperator().queryPersistedLogFromLine(data.getUser(), data.getJobID(), data.getExecID(), fromLine));
+                //
+                // data.updateByOperResult(getJobOperator().queryPersistedLogFromLine(data.getUser(), data.getJobID(), data.getExecID(), fromLine));
             }
         }
     }
@@ -192,24 +217,35 @@ public class LinkisOnceJob extends LinkisJob implements ManagableBackendJob, Log
                     queryJobLogOneIteration(data);
                 } catch (Exception e) {
                     logger.error("Cannot get inc-log:", e);
-                    //and yes sometimes server may not be able to prepare persisted-log
+                    // and yes sometimes server may not be able to prepare persisted-log
                     retryCnt++;
                     if (retryCnt >= MAX_RETRY) {
-                        logger.error("Continuously failing to query inc-log for " + MAX_RETRY * (MAX_RETRY + 2) * 500 / 1000 + "s. Will no longer try to query log", e);
+                        logger.error(
+                                "Continuously failing to query inc-log for "
+                                        + MAX_RETRY * (MAX_RETRY + 2) * 500 / 1000
+                                        + "s. Will no longer try to query log",
+                                e);
                         break;
                     }
-                    Utils.doSleepQuietly(500l + 500l * retryCnt); //maybe server problem. sleep longer
+                    Utils.doSleepQuietly(
+                            500l + 500l * retryCnt); // maybe server problem. sleep longer
                     continue;
                 }
                 retryCnt = 0;
                 if (data.isIncLogMode()) {
-                    hasNext = data.hasNextLogLine() == null ? !data.getJobStatus().isJobFinishedState() : data.hasNextLogLine();
+                    hasNext =
+                            data.hasNextLogLine() == null
+                                    ? !data.getJobStatus().isJobFinishedState()
+                                    : data.hasNextLogLine();
                 } else {
                     hasNext = false;
                 }
                 if (hasNext) {
-                    String msg = MessageFormat.format("Job is still running, status={0}, progress={1}",
-                            data.getJobStatus(), String.valueOf(data.getJobProgress() * 100) + "%");
+                    String msg =
+                            MessageFormat.format(
+                                    "Job is still running, status={0}, progress={1}",
+                                    data.getJobStatus(),
+                                    String.valueOf(data.getJobProgress() * 100) + "%");
                     logger.info(msg);
                 }
                 Utils.doSleepQuietly(AppConstants.JOB_QUERY_SLEEP_MILLS);
@@ -226,33 +262,32 @@ public class LinkisOnceJob extends LinkisJob implements ManagableBackendJob, Log
             return;
         }
         int retry = 0;
-        int MAX_RETRY = 300; //wait for 10 minutes after job finish
+        int MAX_RETRY = 300; // wait for 10 minutes after job finish
         while (retry++ < MAX_RETRY) {
             if (((LinkisOnceJobData) data).logFinReceived()) {
                 return;
             }
             CommonUtils.doSleepQuietly(CommonConstants.JOB_QUERY_SLEEP_MILLS);
         }
-        String msg = "Job is in Finished state(SUCCEED/FAILED/CANCELED) but client keep querying inclog for " + (MAX_RETRY * CommonConstants.JOB_QUERY_SLEEP_MILLS / 1000) + "seconds. Execution ends forcefully. Next will try handle execution result.";
+        String msg =
+                "Job is in Finished state(SUCCEED/FAILED/CANCELED) but client keep querying inclog for "
+                        + (MAX_RETRY * CommonConstants.JOB_QUERY_SLEEP_MILLS / 1000)
+                        + "seconds. Execution ends forcefully. Next will try handle execution result.";
         logger.warn(msg);
         LogUtils.getInformationLogger().warn(msg);
     }
 
     //    /**
-//     * LogAccessibleJob
-//     */
-//    @Override
-//    public void startRetrieveLog() {
+    //     * LogAccessibleJob
+    //     */
+    //    @Override
+    //    public void startRetrieveLog() {
 
-//    }
+    //    }
 
-    /**
-     * ManagableBackendJob
-     */
+    /** ManagableBackendJob */
     @Override
-    public void doManage() throws LinkisClientRuntimeException {
-
-    }
+    public void doManage() throws LinkisClientRuntimeException {}
 
     @Override
     public boolean isSuccess() {
@@ -269,7 +304,8 @@ public class LinkisOnceJob extends LinkisJob implements ManagableBackendJob, Log
             msg = "Kill job aborted: Job is already in finished-state(SUCCEED/FAILED).";
             data.setSuccess(false);
             data.setMessage(msg);
-//            throw new LinkisClientExecutionException(JobStatus.FAILED, "EXE0004", ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, msg);
+            //            throw new LinkisClientExecutionException(JobStatus.FAILED, "EXE0004",
+            // ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, msg);
         } else {
             data.getOnceJobAdapter().kill();
             updateJobStatus();
@@ -277,6 +313,4 @@ public class LinkisOnceJob extends LinkisJob implements ManagableBackendJob, Log
             data.setMessage("successfully killed job");
         }
     }
-
-
 }

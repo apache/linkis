@@ -34,7 +34,8 @@ public class ExecutionResultImpl implements ExecutionResult {
         this.executionStatus = executionStatus;
     }
 
-    public ExecutionResultImpl(Map<String, Job> jobsMap, ExecutionStatus executionStatus, Exception exception) {
+    public ExecutionResultImpl(
+            Map<String, Job> jobsMap, ExecutionStatus executionStatus, Exception exception) {
         this.jobsMap = jobsMap;
         this.executionStatus = executionStatus;
         this.exception = exception;

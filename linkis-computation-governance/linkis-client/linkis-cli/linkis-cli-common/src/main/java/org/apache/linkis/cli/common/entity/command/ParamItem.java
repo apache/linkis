@@ -24,8 +24,8 @@ public class ParamItem {
     private Object defaultValue;
     private boolean hasVal;
 
-
-    public ParamItem(String keyPrefix, String key, Object value, boolean hasVal, Object defaultValue) {
+    public ParamItem(
+            String keyPrefix, String key, Object value, boolean hasVal, Object defaultValue) {
         this.keyPrefix = keyPrefix;
         this.key = key;
         this.value = value;
@@ -55,11 +55,17 @@ public class ParamItem {
 
     @Override
     public String toString() {
-        return "ParamItem{" +
-                "keyPrefix='" + keyPrefix + '\'' +
-                "key='" + key + '\'' +
-                ", value=" + value +
-                ", defaultValue=" + defaultValue +
-                '}';
+        return "ParamItem{"
+                + "keyPrefix='"
+                + keyPrefix
+                + '\''
+                + "key='"
+                + key
+                + '\''
+                + ", value="
+                + value
+                + ", defaultValue="
+                + defaultValue
+                + '}';
     }
 }

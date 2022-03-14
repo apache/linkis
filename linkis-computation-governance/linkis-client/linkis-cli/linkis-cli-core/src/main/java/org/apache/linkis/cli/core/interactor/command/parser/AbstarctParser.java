@@ -17,7 +17,6 @@
 
 package org.apache.linkis.cli.core.interactor.command.parser;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.linkis.cli.common.entity.command.CmdOption;
 import org.apache.linkis.cli.common.entity.command.CmdTemplate;
 import org.apache.linkis.cli.common.entity.command.ParamItem;
@@ -30,6 +29,9 @@ import org.apache.linkis.cli.core.interactor.command.SpecialMap;
 import org.apache.linkis.cli.core.interactor.command.fitter.Fitter;
 import org.apache.linkis.cli.core.interactor.command.parser.result.ParseResult;
 import org.apache.linkis.cli.core.interactor.command.parser.transformer.ParamKeyMapper;
+
+import org.apache.commons.lang3.StringUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,13 +64,20 @@ public abstract class AbstarctParser implements Parser {
 
     public void checkInit() {
         if (fitter == null) {
-            throw new CommandException("CMD0013", ErrorLevel.ERROR, CommonErrMsg.ParserInitErr, "failed to init parser: \n" + "fitter is null");
+            throw new CommandException(
+                    "CMD0013",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.ParserInitErr,
+                    "failed to init parser: \n" + "fitter is null");
         }
         if (template == null) {
-            throw new CommandException("CMD0013", ErrorLevel.ERROR, CommonErrMsg.ParserInitErr, "failed to init parser: \n" + "template is null");
+            throw new CommandException(
+                    "CMD0013",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.ParserInitErr,
+                    "failed to init parser: \n" + "template is null");
         }
     }
-
 
     public Params templateToParams(CmdTemplate template, ParamKeyMapper mapper) {
         List<CmdOption<?>> options = template.getOptions();
@@ -79,8 +88,13 @@ public abstract class AbstarctParser implements Parser {
         for (CmdOption<?> option : options) {
             ParamItem paramItem = optionToParamItem(option, params, mapper, mapperInfoSb);
             if (params.containsKey(paramItem.getKey())) {
-                throw new TransformerException("TFM0012", ErrorLevel.ERROR, CommonErrMsg.TransformerException,
-                        MessageFormat.format("Failed to convert option into ParamItem: params contains duplicated identifier: \"{0}\"", option.getKey()));
+                throw new TransformerException(
+                        "TFM0012",
+                        ErrorLevel.ERROR,
+                        CommonErrMsg.TransformerException,
+                        MessageFormat.format(
+                                "Failed to convert option into ParamItem: params contains duplicated identifier: \"{0}\"",
+                                option.getKey()));
 
             } else {
                 params.put(paramItem.getKey(), paramItem);
@@ -94,21 +108,30 @@ public abstract class AbstarctParser implements Parser {
         return new Params(null, template.getCmdType(), params, extraProperties);
     }
 
-    protected ParamItem optionToParamItem(CmdOption<?> option, Map<String, ParamItem> params, ParamKeyMapper mapper, StringBuilder mapperInfoSb) {
+    protected ParamItem optionToParamItem(
+            CmdOption<?> option,
+            Map<String, ParamItem> params,
+            ParamKeyMapper mapper,
+            StringBuilder mapperInfoSb) {
         String oriKey = option.getKey();
         String keyPrefix = option.getKeyPrefix();
         String key = oriKey;
         if (params.containsKey(oriKey)) {
-            throw new TransformerException("TFM0012", ErrorLevel.ERROR, CommonErrMsg.TransformerException,
-                    MessageFormat.format("Failed to convert option into ParamItem: params contains duplicated identifier: \"{0}\"", option.getKey()));
+            throw new TransformerException(
+                    "TFM0012",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.TransformerException,
+                    MessageFormat.format(
+                            "Failed to convert option into ParamItem: params contains duplicated identifier: \"{0}\"",
+                            option.getKey()));
         }
         if (mapper != null) {
             key = getMappedKey(oriKey, mapper, mapperInfoSb);
         }
         Object val = option.getValue();
-        if (option.getValue() != null &&
-                option.getValue() instanceof Map &&
-                !(option.getValue() instanceof SpecialMap)) {
+        if (option.getValue() != null
+                && option.getValue() instanceof Map
+                && !(option.getValue() instanceof SpecialMap)) {
             Map<String, Object> subMap;
             try {
                 subMap = (Map<String, Object>) option.getValue();
@@ -128,8 +151,8 @@ public abstract class AbstarctParser implements Parser {
         Map<String, Object> newSubMap = new HashMap<>();
         StringBuilder keyBuilder = new StringBuilder();
         for (Map.Entry<String, Object> entry : subMap.entrySet()) {
-            if (StringUtils.isNotBlank(keyPrefix) &&
-                    !StringUtils.startsWith(entry.getKey(), keyPrefix)) {
+            if (StringUtils.isNotBlank(keyPrefix)
+                    && !StringUtils.startsWith(entry.getKey(), keyPrefix)) {
                 keyBuilder.append(keyPrefix).append('.').append(entry.getKey());
             } else {
                 keyBuilder.append(entry.getKey());
@@ -140,23 +163,16 @@ public abstract class AbstarctParser implements Parser {
         return newSubMap;
     }
 
-    protected String getMappedKey(String keyOri, ParamKeyMapper mapper, StringBuilder mapperInfoSb) {
-        /**
-         * Transform option keys
-         */
+    protected String getMappedKey(
+            String keyOri, ParamKeyMapper mapper, StringBuilder mapperInfoSb) {
+        /** Transform option keys */
         String key = mapper.getMappedKey(keyOri);
         if (!key.equals(keyOri)) {
-            mapperInfoSb.append("\n\t")
-                    .append(keyOri)
-                    .append(" ==> ")
-                    .append(key);
+            mapperInfoSb.append("\n\t").append(keyOri).append(" ==> ").append(key);
         }
         return key;
     }
 
-
     @Override
     public abstract ParseResult parse(String[] input);
-
-
 }

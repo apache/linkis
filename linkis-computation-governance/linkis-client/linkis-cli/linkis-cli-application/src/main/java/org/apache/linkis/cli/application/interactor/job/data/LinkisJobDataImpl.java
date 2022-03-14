@@ -31,7 +31,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingDeque;
 
-public class LinkisJobDataImpl implements LinkisJobData, LinkisLogData, LinkisResultData, Cloneable {
+public class LinkisJobDataImpl
+        implements LinkisJobData, LinkisLogData, LinkisResultData, Cloneable {
 
     private String jobID;
     private String user;
@@ -424,7 +425,9 @@ public class LinkisJobDataImpl implements LinkisJobData, LinkisLogData, LinkisRe
         if (adapter.getErrDesc() != null) {
             setErrDesc(adapter.getErrDesc());
         }
-        if (adapter.getLog() != null && adapter.getNextLogLine() != null && adapter.hasNextLogLine() != null) {
+        if (adapter.getLog() != null
+                && adapter.getNextLogLine() != null
+                && adapter.hasNextLogLine() != null) {
             setNextLogLineIdx(adapter.getNextLogLine());
             setHasNextLogLine(adapter.hasNextLogLine());
             appendLog(adapter.getLog());
@@ -487,8 +490,8 @@ public class LinkisJobDataImpl implements LinkisJobData, LinkisLogData, LinkisRe
             ret.setResultSetPaths(Arrays.copyOf(this.resultSetPaths, this.resultSetPaths.length));
         }
         /*
-         These  be shared and hence should not be deep copied.
-         */
+        These  be shared and hence should not be deep copied.
+        */
         ret.logFinevent = this.logFinevent;
         ret.logFinListener = this.logFinListener;
         ret.resultFinEvent = this.resultFinEvent;

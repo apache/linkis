@@ -22,8 +22,9 @@ import org.apache.linkis.cli.common.entity.job.JobData;
 import org.apache.linkis.cli.common.exception.LinkisClientRuntimeException;
 
 /**
- * If backend supports async-submission, i.e. submit job and then return while job is running. Then implement this.
- * Note that all results return by server should be returned but stored in {@link JobData}
+ * If backend supports async-submission, i.e. submit job and then return while job is running. Then
+ * implement this. Note that all results return by server should be returned but stored in {@link
+ * JobData}
  */
 public interface AsyncBackendJob extends Job {
 
@@ -34,5 +35,4 @@ public interface AsyncBackendJob extends Job {
     void waitJobComplete() throws LinkisClientRuntimeException;
 
     void terminate() throws LinkisClientRuntimeException;
-
 }

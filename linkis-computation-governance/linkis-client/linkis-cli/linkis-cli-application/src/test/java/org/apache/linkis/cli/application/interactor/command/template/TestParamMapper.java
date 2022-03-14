@@ -27,10 +27,8 @@ public class TestParamMapper extends ParamKeyMapper {
         super.updateMapping(TestConstants.PARAM_COMMON_CMD, AppKeys.JOB_EXEC_CODE);
         super.updateMapping(TestConstants.PARAM_PROXY, AppKeys.LINKIS_COMMON_GATEWAY_URL);
         super.updateMapping(TestConstants.PARAM_USER, AppKeys.LINKIS_COMMON_TOKEN_KEY);
-        super.updateMapping(
-                TestConstants.PARAM_USR_CONF, AppKeys.LINKIS_CLIENT_USER_CONFIG);
-        super.updateMapping(
-                TestConstants.PARAM_PASSWORD, AppKeys.LINKIS_COMMON_TOKEN_VALUE);
+        super.updateMapping(TestConstants.PARAM_USR_CONF, AppKeys.LINKIS_CLIENT_USER_CONFIG);
+        super.updateMapping(TestConstants.PARAM_PASSWORD, AppKeys.LINKIS_COMMON_TOKEN_VALUE);
         super.updateMapping(TestConstants.PARAM_PROXY_USER, AppKeys.JOB_COMMON_PROXY_USER);
 
         updateMapping(

@@ -17,7 +17,6 @@
 
 package org.apache.linkis.cli.application.interactor.validate;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.linkis.cli.application.constants.LinkisKeys;
 import org.apache.linkis.cli.application.interactor.job.LinkisOnceJob;
 import org.apache.linkis.cli.application.interactor.job.desc.LinkisOnceDesc;
@@ -27,13 +26,20 @@ import org.apache.linkis.cli.common.exception.error.ErrorLevel;
 import org.apache.linkis.cli.core.exception.ValidateException;
 import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.Map;
 
 public class LinkisOnceSubmitValidator implements Validator {
     @Override
     public void doValidation(Object input) throws LinkisClientRuntimeException {
         if (!(input instanceof LinkisOnceJob)) {
-            throw new ValidateException("VLD0007", ErrorLevel.ERROR, CommonErrMsg.ValidationErr, "Input of LinkisSubmitValidator is not instance of LinkisSubmitJob. Type: " + input.getClass().getCanonicalName());
+            throw new ValidateException(
+                    "VLD0007",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.ValidationErr,
+                    "Input of LinkisSubmitValidator is not instance of LinkisSubmitJob. Type: "
+                            + input.getClass().getCanonicalName());
         }
         boolean ok = true;
         StringBuilder reasonSb = new StringBuilder();
@@ -43,7 +49,8 @@ public class LinkisOnceSubmitValidator implements Validator {
             ok = false;
         }
         if (StringUtils.isBlank(submitDesc.getProxyUser())) {
-            reasonSb.append("proxy(execute) User cannot be empty or blank").append(System.lineSeparator());
+            reasonSb.append("proxy(execute) User cannot be empty or blank")
+                    .append(System.lineSeparator());
             ok = false;
         }
         if (submitDesc.getLabelMap() == null) {
@@ -76,20 +83,26 @@ public class LinkisOnceSubmitValidator implements Validator {
         }
         for (Map.Entry<String, Object> entry : submitDesc.getExecutionMap().entrySet()) {
             if (StringUtils.contains(entry.getKey(), " ")) {
-                reasonSb.append("ExecutionMap key cannot contains space character. key: ").append(entry.getKey()).append(System.lineSeparator());
+                reasonSb.append("ExecutionMap key cannot contains space character. key: ")
+                        .append(entry.getKey())
+                        .append(System.lineSeparator());
                 ok = false;
             }
         }
         for (Map.Entry<String, Object> entry : submitDesc.getLabelMap().entrySet()) {
             if (StringUtils.contains(entry.getKey(), " ")) {
-                reasonSb.append("LabelMap key cannot contains space character. key: ").append(entry.getKey()).append(System.lineSeparator());
+                reasonSb.append("LabelMap key cannot contains space character. key: ")
+                        .append(entry.getKey())
+                        .append(System.lineSeparator());
                 ok = false;
             }
             Object val = entry.getValue();
             if (val instanceof String) {
                 if (StringUtils.contains((String) val, " ")) {
                     reasonSb.append("LabelMap value cannot contains space character. key: ")
-                            .append(entry.getKey()).append("value: ").append(val)
+                            .append(entry.getKey())
+                            .append("value: ")
+                            .append(val)
                             .append(System.lineSeparator());
                     ok = false;
                 }
@@ -97,59 +110,72 @@ public class LinkisOnceSubmitValidator implements Validator {
         }
         for (Map.Entry<String, Object> entry : submitDesc.getParamConfMap().entrySet()) {
             if (StringUtils.contains(entry.getKey(), " ")) {
-                reasonSb.append("startUpMap key cannot contains space character. key: ").append(entry.getKey()).append(System.lineSeparator());
+                reasonSb.append("startUpMap key cannot contains space character. key: ")
+                        .append(entry.getKey())
+                        .append(System.lineSeparator());
                 ok = false;
             }
-//            Object val = entry.getValue();
-//            if (val instanceof String) {
-//                if (StringUtils.contains((String) val, " ")) {
-//                    reasonSb.append("startUpMap value cannot contains space character. key: ")
-//                            .append(entry.getKey()).append("value: ").append(val)
-//                            .append(System.lineSeparator());
-//                    ok = false;
-//                }
-//            }
+            //            Object val = entry.getValue();
+            //            if (val instanceof String) {
+            //                if (StringUtils.contains((String) val, " ")) {
+            //                    reasonSb.append("startUpMap value cannot contains space character.
+            // key: ")
+            //                            .append(entry.getKey()).append("value: ").append(val)
+            //                            .append(System.lineSeparator());
+            //                    ok = false;
+            //                }
+            //            }
         }
-//        for (Map.Entry<String, Object> entry : linkisJob.getParamRunTimeMap().entrySet()) {
-//            if (StringUtils.contains(entry.getKey(), " ")) {
-//                reasonSb.append("runtimeMap key cannot contains space character. key: ").append(entry.getKey()).append(System.lineSeparator());
-//                ok = false;
-//            }
-//            Object val = entry.getValue();
-//            if (val instanceof String) {
-//                if (StringUtils.contains((String) val, " ")) {
-//                    reasonSb.append("runtimeMap value cannot contains space character. key: ")
-//                            .append(entry.getKey()).append("value: ").append(val)
-//                            .append(System.lineSeparator());
-//                    ok = false;
-//                }
-//            }
-//        }
+        //        for (Map.Entry<String, Object> entry : linkisJob.getParamRunTimeMap().entrySet())
+        // {
+        //            if (StringUtils.contains(entry.getKey(), " ")) {
+        //                reasonSb.append("runtimeMap key cannot contains space character. key:
+        // ").append(entry.getKey()).append(System.lineSeparator());
+        //                ok = false;
+        //            }
+        //            Object val = entry.getValue();
+        //            if (val instanceof String) {
+        //                if (StringUtils.contains((String) val, " ")) {
+        //                    reasonSb.append("runtimeMap value cannot contains space character.
+        // key: ")
+        //                            .append(entry.getKey()).append("value: ").append(val)
+        //                            .append(System.lineSeparator());
+        //                    ok = false;
+        //                }
+        //            }
+        //        }
         for (Map.Entry<String, Object> entry : submitDesc.getParamVarsMap().entrySet()) {
             if (StringUtils.contains(entry.getKey(), " ")) {
-                reasonSb.append("variablesMap key cannot contains space character. key: ").append(entry.getKey()).append(System.lineSeparator());
+                reasonSb.append("variablesMap key cannot contains space character. key: ")
+                        .append(entry.getKey())
+                        .append(System.lineSeparator());
                 ok = false;
             }
             Object val = entry.getValue();
-//                if (val instanceof String) {
-//                    if (StringUtils.contains((String) val, " ")) {
-//                        reasonSb.append("variablesMap value cannot contains space character. key: ")
-//                                .append(entry.getKey()).append("value: ").append(val)
-//                                .append(System.lineSeparator());
-//                        ok = false;
-//                    }
-//                }
+            //                if (val instanceof String) {
+            //                    if (StringUtils.contains((String) val, " ")) {
+            //                        reasonSb.append("variablesMap value cannot contains space
+            // character. key: ")
+            //                                .append(entry.getKey()).append("value: ").append(val)
+            //                                .append(System.lineSeparator());
+            //                        ok = false;
+            //                    }
+            //                }
         }
         for (Map.Entry<String, Object> entry : submitDesc.getSourceMap().entrySet()) {
             if (StringUtils.contains(entry.getKey(), " ")) {
-                reasonSb.append("sourceMap key cannot contains space character. key: ").append(entry.getKey()).append(System.lineSeparator());
+                reasonSb.append("sourceMap key cannot contains space character. key: ")
+                        .append(entry.getKey())
+                        .append(System.lineSeparator());
                 ok = false;
             }
             Object val = entry.getValue();
             if (val instanceof String) {
                 if (StringUtils.contains((String) val, " ")) {
                     reasonSb.append("sourceMap value cannot contains space character. key: ")
-                            .append(entry.getKey()).append("value: ").append(val)
+                            .append(entry.getKey())
+                            .append("value: ")
+                            .append(val)
                             .append(System.lineSeparator());
                     ok = false;
                 }
@@ -157,18 +183,21 @@ public class LinkisOnceSubmitValidator implements Validator {
         }
         for (Map.Entry<String, Object> entry : submitDesc.getJobContentMap().entrySet()) {
             if (StringUtils.contains(entry.getKey(), " ")) {
-                reasonSb.append("jobContentMap key cannot contains space character. key: ").append(entry.getKey()).append(System.lineSeparator());
+                reasonSb.append("jobContentMap key cannot contains space character. key: ")
+                        .append(entry.getKey())
+                        .append(System.lineSeparator());
                 ok = false;
             }
-//            Object val = entry.getValue();
-//            if (val instanceof String) {
-//                if (StringUtils.contains((String) val, " ")) {
-//                    reasonSb.append("jobContentMap value cannot contains space character. key: ")
-//                            .append(entry.getKey()).append("value: ").append(val)
-//                            .append(System.lineSeparator());
-//                    ok = false;
-//                }
-//            }
+            //            Object val = entry.getValue();
+            //            if (val instanceof String) {
+            //                if (StringUtils.contains((String) val, " ")) {
+            //                    reasonSb.append("jobContentMap value cannot contains space
+            // character. key: ")
+            //                            .append(entry.getKey()).append("value: ").append(val)
+            //                            .append(System.lineSeparator());
+            //                    ok = false;
+            //                }
+            //            }
         }
         if (StringUtils.isBlank((String) submitDesc.getLabelMap().get(LinkisKeys.KEY_ENGINETYPE))) {
             reasonSb.append(LinkisKeys.KEY_ENGINETYPE)
@@ -178,56 +207,72 @@ public class LinkisOnceSubmitValidator implements Validator {
         }
         if (StringUtils.isBlank((String) submitDesc.getLabelMap().get(LinkisKeys.KEY_CODETYPE))) {
             reasonSb.append(LinkisKeys.KEY_CODETYPE)
-                    .append(" cannot be empty or blank").append(System.lineSeparator());
+                    .append(" cannot be empty or blank")
+                    .append(System.lineSeparator());
             ok = false;
         }
-        if (StringUtils.isBlank((String) submitDesc.getSourceMap().get(LinkisKeys.KEY_SCRIPT_PATH))) {
+        if (StringUtils.isBlank(
+                (String) submitDesc.getSourceMap().get(LinkisKeys.KEY_SCRIPT_PATH))) {
             reasonSb.append(LinkisKeys.KEY_SCRIPT_PATH)
-                    .append(" cannot be empty or blank").append(System.lineSeparator());
+                    .append(" cannot be empty or blank")
+                    .append(System.lineSeparator());
             ok = false;
         }
-        if (StringUtils.isBlank((String) submitDesc.getExecutionMap().get(LinkisKeys.KEY_CODE)) &&
-                StringUtils.indexOfIgnoreCase((String) submitDesc.getLabelMap().get(LinkisKeys.KEY_ENGINETYPE), "sqoop") == -1) {
+        if (StringUtils.isBlank((String) submitDesc.getExecutionMap().get(LinkisKeys.KEY_CODE))
+                && StringUtils.indexOfIgnoreCase(
+                                (String) submitDesc.getLabelMap().get(LinkisKeys.KEY_ENGINETYPE),
+                                "sqoop")
+                        == -1) {
             reasonSb.append(LinkisKeys.KEY_CODE)
-                    .append(" cannot be empty or blank").append(System.lineSeparator());
+                    .append(" cannot be empty or blank")
+                    .append(System.lineSeparator());
             ok = false;
         }
-        if (StringUtils.isBlank((String) submitDesc.getLabelMap().get(LinkisKeys.KEY_USER_CREATOR))) {
+        if (StringUtils.isBlank(
+                (String) submitDesc.getLabelMap().get(LinkisKeys.KEY_USER_CREATOR))) {
             reasonSb.append(LinkisKeys.KEY_USER_CREATOR)
-                    .append(" cannot be empty or blank").append(System.lineSeparator());
+                    .append(" cannot be empty or blank")
+                    .append(System.lineSeparator());
             ok = false;
         } else {
             String userCreator = (String) submitDesc.getLabelMap().get(LinkisKeys.KEY_USER_CREATOR);
             if (StringUtils.indexOf(submitDesc.getProxyUser(), "-") != -1) {
-                reasonSb.append("\'proxyUser\' should not contain special character \'-\'").append(System.lineSeparator());
+                reasonSb.append("\'proxyUser\' should not contain special character \'-\'")
+                        .append(System.lineSeparator());
                 ok = false;
             } else {
                 int idx = StringUtils.indexOf(userCreator, "-");
                 if (idx == -1) {
                     reasonSb.append(LinkisKeys.KEY_USER_CREATOR)
-                            .append("should contain exactly one character \'-\'").append(System.lineSeparator());
+                            .append("should contain exactly one character \'-\'")
+                            .append(System.lineSeparator());
                     ok = false;
                 } else {
                     String user = StringUtils.substring(userCreator, 0, idx);
                     String creator = StringUtils.substring(userCreator, idx + 1);
                     if (StringUtils.isBlank(user) || StringUtils.isBlank(creator)) {
-                        reasonSb.append("user or creator should not be blank").append(System.lineSeparator());
+                        reasonSb.append("user or creator should not be blank")
+                                .append(System.lineSeparator());
                         ok = false;
                     } else {
-//          String forBiddenChars = "~!$%^&*-,./?|{}[]:;'()+=";
+                        //          String forBiddenChars = "~!$%^&*-,./?|{}[]:;'()+=";
                         String forBiddenChars = "-";
                         if (StringUtils.containsAny(creator, forBiddenChars)) {
-                            reasonSb.append("\'creator\' should not contain any special characters except \'_\'").append(System.lineSeparator());
+                            reasonSb.append(
+                                            "\'creator\' should not contain any special characters except \'_\'")
+                                    .append(System.lineSeparator());
                             ok = false;
                         }
                     }
                 }
-
             }
-
         }
         if (!ok) {
-            throw new ValidateException("VLD0008", ErrorLevel.ERROR, CommonErrMsg.ValidationErr, "LinkisJob validation failed. Reason: " + reasonSb.toString());
+            throw new ValidateException(
+                    "VLD0008",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.ValidationErr,
+                    "LinkisJob validation failed. Reason: " + reasonSb.toString());
         }
     }
 }

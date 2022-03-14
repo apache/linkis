@@ -32,5 +32,4 @@ public interface JobStatus {
     boolean isJobTimeout();
 
     boolean isJobAbnormalStatus();
-
 }

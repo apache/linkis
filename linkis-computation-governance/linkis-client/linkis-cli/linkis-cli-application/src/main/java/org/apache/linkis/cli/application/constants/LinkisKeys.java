@@ -36,7 +36,8 @@ public class LinkisKeys {
     public static final String KEY_EXECUTEONCE = "executeOnce";
     public static final String KEY_TENANT = "tenant";
     public static final String META_DATA_COLUMN_NAME = "columnName";
-    public static final String KEY_SHELL_WORKING_DIRECTORY = "wds.linkis.shell.runtime.working.directory";
+    public static final String KEY_SHELL_WORKING_DIRECTORY =
+            "wds.linkis.shell.runtime.working.directory";
     public static final String EXTRA_ARGUMENTS = "extraArguments";
 
     public static final String KEY_INSTANCE = "emInstance";

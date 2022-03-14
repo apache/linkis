@@ -28,7 +28,11 @@ public interface ExecutionResult {
 
     void setExecutionStatus(ExecutionStatus executionStatus);
 
-    Exception getException(); //TODO: put exception during execution in here and do not interrupt execution
+    Exception getException(); // TODO: put exception during execution in here and do not interrupt
+    // execution
 
-    void setException(Exception exception); //TODO: put exception during execution in here and do not interrupt execution
+    void setException(
+            Exception
+                    exception); // TODO: put exception during execution in here and do not interrupt
+    // execution
 }

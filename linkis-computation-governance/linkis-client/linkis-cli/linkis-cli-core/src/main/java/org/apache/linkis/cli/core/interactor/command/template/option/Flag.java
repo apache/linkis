@@ -17,28 +17,42 @@
 
 package org.apache.linkis.cli.core.interactor.command.template.option;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.linkis.cli.core.utils.converter.PredefinedStringConverters;
 
-/**
- * Flag is a special type of {@link StdOption}. Its only accepts boolean value.
- */
+import org.apache.commons.lang3.StringUtils;
+
+/** Flag is a special type of {@link StdOption}. Its only accepts boolean value. */
 public class Flag extends StdOption<Boolean> implements Cloneable {
-    public Flag(final String keyPrefix, final String key, final String[] paramNames, final String description, final boolean isOptional, final boolean defaultValue) {
-        super(keyPrefix, key, paramNames, description, isOptional, defaultValue, PredefinedStringConverters.BOOLEAN_CONVERTER);
+    public Flag(
+            final String keyPrefix,
+            final String key,
+            final String[] paramNames,
+            final String description,
+            final boolean isOptional,
+            final boolean defaultValue) {
+        super(
+                keyPrefix,
+                key,
+                paramNames,
+                description,
+                isOptional,
+                defaultValue,
+                PredefinedStringConverters.BOOLEAN_CONVERTER);
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("\t").append(StringUtils.join(paramNames, "|")).append(" <").append(
-                this.getDefaultValue().getClass().getSimpleName()).append(">").append(System.lineSeparator());
+        sb.append("\t")
+                .append(StringUtils.join(paramNames, "|"))
+                .append(" <")
+                .append(this.getDefaultValue().getClass().getSimpleName())
+                .append(">")
+                .append(System.lineSeparator());
 
         sb.append("\t\t").append(this.getDefaultValue()).append(System.lineSeparator());
 
-        sb.append("\t\tdefault by: ")
-                .append(this.getDefaultValue())
-                .append(System.lineSeparator());
+        sb.append("\t\tdefault by: ").append(this.getDefaultValue()).append(System.lineSeparator());
 
         sb.append("\t\toptional:").append(isOptional());
 

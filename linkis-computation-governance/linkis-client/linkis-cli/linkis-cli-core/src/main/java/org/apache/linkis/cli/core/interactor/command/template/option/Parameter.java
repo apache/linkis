@@ -17,17 +17,22 @@
 
 package org.apache.linkis.cli.core.interactor.command.template.option;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.linkis.cli.core.utils.converter.AbstractStringConverter;
 
-/**
- * Data Structure for command Parameter. Command String does not contain the name of Parameter.
- */
+import org.apache.commons.lang3.StringUtils;
+
+/** Data Structure for command Parameter. Command String does not contain the name of Parameter. */
 public class Parameter<T> extends BaseOption<T> implements Cloneable {
     final String paramName;
 
-    public Parameter(final String keyPrefix, final String key, final String paramName, final String description, final boolean isOptional,
-                     final AbstractStringConverter<T> converter, final T defaultValue) {
+    public Parameter(
+            final String keyPrefix,
+            final String key,
+            final String paramName,
+            final String description,
+            final boolean isOptional,
+            final AbstractStringConverter<T> converter,
+            final T defaultValue) {
         super(keyPrefix, key, description, isOptional, defaultValue, converter);
         this.paramName = paramName;
     }
@@ -49,16 +54,20 @@ public class Parameter<T> extends BaseOption<T> implements Cloneable {
         String description = this.getDescription();
 
         StringBuilder sb = new StringBuilder();
-        sb.append("\t").append(paramName).append(" <").append(
-                defaultValue.getClass().getSimpleName()).append(">").append(System.lineSeparator());
+        sb.append("\t")
+                .append(paramName)
+                .append(" <")
+                .append(defaultValue.getClass().getSimpleName())
+                .append(">")
+                .append(System.lineSeparator());
 
         sb.append("\t\t").append(description).append(System.lineSeparator());
 
         sb.append("\t\tdefault by: ")
                 .append(
-                        defaultValue.getClass().isArray() ? StringUtils.join((Object[]) defaultValue, ", ") :
-                                (defaultValue == null ? "" : defaultValue.toString())
-                )
+                        defaultValue.getClass().isArray()
+                                ? StringUtils.join((Object[]) defaultValue, ", ")
+                                : (defaultValue == null ? "" : defaultValue.toString()))
                 .append(System.lineSeparator());
 
         sb.append("\t\toptional:").append(isOptional());

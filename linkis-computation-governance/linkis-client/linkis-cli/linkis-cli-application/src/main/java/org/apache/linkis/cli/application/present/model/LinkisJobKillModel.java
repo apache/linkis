@@ -17,13 +17,14 @@
 
 package org.apache.linkis.cli.application.present.model;
 
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.linkis.cli.application.interactor.job.data.LinkisJobDataImpl;
 import org.apache.linkis.cli.common.entity.job.JobStatus;
 import org.apache.linkis.cli.common.entity.present.Model;
 import org.apache.linkis.cli.common.exception.error.ErrorLevel;
 import org.apache.linkis.cli.core.exception.TransformerException;
 import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
+
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 public class LinkisJobKillModel implements Model {
 
@@ -37,12 +38,16 @@ public class LinkisJobKillModel implements Model {
     private String user;
     private JobStatus jobStatus;
 
-
     @Override
     public void buildModel(Object data) {
         if (!(data instanceof LinkisJobDataImpl)) {
-            throw new TransformerException("TFM0010", ErrorLevel.ERROR, CommonErrMsg.TransformerException,
-                    "Failed to init LinkisJobKillModel: " + data.getClass().getCanonicalName() + "is not instance of \"LinkisJobDataImpl\"");
+            throw new TransformerException(
+                    "TFM0010",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.TransformerException,
+                    "Failed to init LinkisJobKillModel: "
+                            + data.getClass().getCanonicalName()
+                            + "is not instance of \"LinkisJobDataImpl\"");
         }
         this.jobId = ((LinkisJobDataImpl) data).getJobID();
         this.message = ((LinkisJobDataImpl) data).getMessage();
@@ -55,5 +60,4 @@ public class LinkisJobKillModel implements Model {
             this.cause = ExceptionUtils.getRootCauseMessage(e);
         }
     }
-
 }

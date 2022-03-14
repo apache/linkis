@@ -27,5 +27,4 @@ public class StdoutDisplayData implements DisplayData {
     public String getContent() {
         return content;
     }
-
 }

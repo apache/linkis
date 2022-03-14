@@ -24,12 +24,12 @@ import java.util.Map;
 
 public interface Execution {
     /*
-      start execution
-     */
+     start execution
+    */
     ExecutionResult execute(Map<String, Job> jobs);
 
     /*
-      terminate execution(often used in shutdown hook)
-     */
+     terminate execution(often used in shutdown hook)
+    */
     boolean terminate(Map<String, Job> jobs);
 }

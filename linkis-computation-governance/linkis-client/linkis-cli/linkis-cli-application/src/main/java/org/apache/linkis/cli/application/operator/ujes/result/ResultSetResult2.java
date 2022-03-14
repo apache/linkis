@@ -35,5 +35,4 @@ public class ResultSetResult2 implements UJESResult {
     public int getIdxResultSet() {
         return idxResultSet;
     }
-
 }

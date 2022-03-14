@@ -30,12 +30,20 @@ import java.util.concurrent.locks.ReentrantLock;
 public class JobOperatorFactory {
     private static Map<String, JobOperatorBuilder> builderMap = new ConcurrentHashMap<>();
 
-    private static Map<String, JobOperator> instanceMap = new ConcurrentHashMap<>(); //for singleton
-    private static Map<String, ReentrantLock> lockMap = new ConcurrentHashMap<>(); //for singleton
+    private static Map<String, JobOperator> instanceMap =
+            new ConcurrentHashMap<>(); // for singleton
+    private static Map<String, ReentrantLock> lockMap = new ConcurrentHashMap<>(); // for singleton
 
-    public static synchronized void register(String name, JobOperatorBuilder builder) throws Exception {
-        if (builderMap.containsKey(name) || lockMap.containsKey(name) || instanceMap.containsKey(name)) {
-            throw new LinkisClientExecutionException("EXE0027", ErrorLevel.ERROR, CommonErrMsg.ExecutionInitErr, "Attempting to register a duplicate jobOperator, name: " + name);
+    public static synchronized void register(String name, JobOperatorBuilder builder)
+            throws Exception {
+        if (builderMap.containsKey(name)
+                || lockMap.containsKey(name)
+                || instanceMap.containsKey(name)) {
+            throw new LinkisClientExecutionException(
+                    "EXE0027",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.ExecutionInitErr,
+                    "Attempting to register a duplicate jobOperator, name: " + name);
         }
         builderMap.put(name, builder);
         lockMap.put(name, new ReentrantLock());
@@ -52,12 +60,20 @@ public class JobOperatorFactory {
         ReentrantLock lock = lockMap.get(name);
         JobOperator instance = instanceMap.get(name);
         if (lock == null || builder == null) {
-            throw new LinkisClientExecutionException("EXE0028", ErrorLevel.ERROR, CommonErrMsg.ExecutionInitErr, "Failed to get a reusable joboperator, name: " + name);
+            throw new LinkisClientExecutionException(
+                    "EXE0028",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.ExecutionInitErr,
+                    "Failed to get a reusable joboperator, name: " + name);
         }
         if (instance == null) {
             boolean ok = lock.tryLock(500, TimeUnit.MILLISECONDS);
             if (!ok) {
-                throw new LinkisClientExecutionException("EXE0028", ErrorLevel.ERROR, CommonErrMsg.ExecutionInitErr, "Failed to get a reusable joboperator, name: " + name);
+                throw new LinkisClientExecutionException(
+                        "EXE0028",
+                        ErrorLevel.ERROR,
+                        CommonErrMsg.ExecutionInitErr,
+                        "Failed to get a reusable joboperator, name: " + name);
             }
             if (instance == null) {
                 instance = builder.build();
@@ -71,7 +87,7 @@ public class JobOperatorFactory {
     public static JobOperator getNew(String name) throws Exception {
         JobOperatorBuilder builder = builderMap.get(name);
         if (builder == null) {
-            throw new Exception("TODO"); //TODO
+            throw new Exception("TODO"); // TODO
         }
         return builder.build();
     }

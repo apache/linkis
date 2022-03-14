@@ -64,7 +64,6 @@ public class StdPropsLoader implements PropertiesLoader {
         readersMap.remove(identifier);
     }
 
-
     @Override
     public ClientProperties[] loadProperties() {
         checkInit();
@@ -85,7 +84,10 @@ public class StdPropsLoader implements PropertiesLoader {
     @Override
     public void checkInit() {
         if (readersMap == null || readersMap.size() == 0) {
-            throw new PropsException("PRP0003", ErrorLevel.ERROR, CommonErrMsg.PropsLoaderInitErr,
+            throw new PropsException(
+                    "PRP0003",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.PropsLoaderInitErr,
                     "properties loader is not inited because it contains no reader");
         }
     }

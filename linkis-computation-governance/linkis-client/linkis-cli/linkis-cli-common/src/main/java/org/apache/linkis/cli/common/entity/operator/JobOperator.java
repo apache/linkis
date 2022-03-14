@@ -17,5 +17,4 @@
 
 package org.apache.linkis.cli.common.entity.operator;
 
-public interface JobOperator {
-}
+public interface JobOperator {}

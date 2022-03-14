@@ -29,5 +29,4 @@ public class TerminateToken {
     public void setTerminate() {
         shouldTerminate.set(true);
     }
-
 }

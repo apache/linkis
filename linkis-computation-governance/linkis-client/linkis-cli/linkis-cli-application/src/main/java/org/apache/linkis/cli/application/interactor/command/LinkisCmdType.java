@@ -21,7 +21,6 @@ import org.apache.linkis.cli.common.entity.command.CmdType;
 import org.apache.linkis.cli.core.constants.CommonConstants;
 
 public enum LinkisCmdType implements CmdType {
-
     UNIVERSAL(CommonConstants.UNIVERSAL_SUBCMD, 1, CommonConstants.UNIVERSAL_SUBCMD_DESC);
 
     private int id;
@@ -54,6 +53,4 @@ public enum LinkisCmdType implements CmdType {
     public String getDesc() {
         return this.desc;
     }
-
-
 }

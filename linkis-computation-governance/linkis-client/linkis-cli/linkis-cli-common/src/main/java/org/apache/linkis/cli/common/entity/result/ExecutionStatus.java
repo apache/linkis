@@ -17,6 +17,4 @@
 
 package org.apache.linkis.cli.common.entity.result;
 
-public interface ExecutionStatus {
-
-}
+public interface ExecutionStatus {}

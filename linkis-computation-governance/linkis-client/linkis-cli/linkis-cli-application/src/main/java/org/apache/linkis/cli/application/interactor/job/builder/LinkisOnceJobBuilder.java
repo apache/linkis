@@ -17,7 +17,6 @@
 
 package org.apache.linkis.cli.application.interactor.job.builder;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.linkis.cli.application.constants.AppConstants;
 import org.apache.linkis.cli.application.constants.AppKeys;
 import org.apache.linkis.cli.application.constants.LinkisKeys;
@@ -32,6 +31,9 @@ import org.apache.linkis.cli.common.entity.present.PresentWay;
 import org.apache.linkis.cli.core.interactor.job.JobBuilder;
 import org.apache.linkis.cli.core.present.PresentModeImpl;
 import org.apache.linkis.cli.core.present.PresentWayImpl;
+
+import org.apache.commons.lang3.StringUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -94,37 +96,54 @@ public class LinkisOnceJobBuilder extends JobBuilder {
             if (!(val instanceof Map) && val != null) {
                 // note that we allow it to overwrite existing values in map
                 if (StringUtils.startsWithIgnoreCase(key, AppKeys.JOB_PARAM_CONF)) {
-                    ProcessKeyUtils.removePrefixAndPutValToMap(confMap, key, val, AppKeys.JOB_PARAM_CONF);
+                    ProcessKeyUtils.removePrefixAndPutValToMap(
+                            confMap, key, val, AppKeys.JOB_PARAM_CONF);
                 } else if (StringUtils.startsWithIgnoreCase(key, AppKeys.JOB_PARAM_VAR)) {
-                    ProcessKeyUtils.removePrefixAndPutValToMap(varMap, key, val, AppKeys.JOB_PARAM_VAR);
+                    ProcessKeyUtils.removePrefixAndPutValToMap(
+                            varMap, key, val, AppKeys.JOB_PARAM_VAR);
                 } else if (StringUtils.startsWithIgnoreCase(key, AppKeys.JOB_PARAM_RUNTIME)) {
-                    ProcessKeyUtils.removePrefixAndPutValToMap(runtimeMap, key, val, AppKeys.JOB_PARAM_RUNTIME);
+                    ProcessKeyUtils.removePrefixAndPutValToMap(
+                            runtimeMap, key, val, AppKeys.JOB_PARAM_RUNTIME);
                 } else if (StringUtils.startsWithIgnoreCase(key, AppKeys.JOB_EXEC)) {
-                    ProcessKeyUtils.removePrefixAndPutValToMap(executionMap, key, val, AppKeys.JOB_EXEC);
+                    ProcessKeyUtils.removePrefixAndPutValToMap(
+                            executionMap, key, val, AppKeys.JOB_EXEC);
                 } else if (StringUtils.startsWithIgnoreCase(key, AppKeys.JOB_LABEL)) {
-                    ProcessKeyUtils.removePrefixAndPutValToMap(labelMap, key, val, AppKeys.JOB_LABEL);
+                    ProcessKeyUtils.removePrefixAndPutValToMap(
+                            labelMap, key, val, AppKeys.JOB_LABEL);
                 } else if (StringUtils.startsWithIgnoreCase(key, AppKeys.JOB_SOURCE)) {
-                    ProcessKeyUtils.removePrefixAndPutValToMap(sourceMap, key, val, AppKeys.JOB_SOURCE);
+                    ProcessKeyUtils.removePrefixAndPutValToMap(
+                            sourceMap, key, val, AppKeys.JOB_SOURCE);
                 } else if (StringUtils.startsWithIgnoreCase(key, AppKeys.JOB_CONTENT)) {
-                    ProcessKeyUtils.removePrefixAndPutValToMap(jobContentMap, key, val, AppKeys.JOB_CONTENT);
+                    ProcessKeyUtils.removePrefixAndPutValToMap(
+                            jobContentMap, key, val, AppKeys.JOB_CONTENT);
                 } else if (StringUtils.startsWithIgnoreCase(key, AppKeys.LINKIS_CLIENT_COMMON)) {
-                    //do nothing
+                    // do nothing
                 } else {
-//        confMap.put(key, stdVarAccess.getVar(Object.class, key));
+                    //        confMap.put(key, stdVarAccess.getVar(Object.class, key));
                 }
             }
         }
 
         String creator;
         if (!isAsync) {
-            creator = stdVarAccess.getVarOrDefault(String.class, AppKeys.JOB_COMMON_CREATOR, AppConstants.JOB_CREATOR_DEFAULT);
+            creator =
+                    stdVarAccess.getVarOrDefault(
+                            String.class,
+                            AppKeys.JOB_COMMON_CREATOR,
+                            AppConstants.JOB_CREATOR_DEFAULT);
         } else {
-            creator = stdVarAccess.getVarOrDefault(String.class, AppKeys.JOB_COMMON_CREATOR, AppConstants.JOB_CREATOR_ASYNC_DEFAULT);
+            creator =
+                    stdVarAccess.getVarOrDefault(
+                            String.class,
+                            AppKeys.JOB_COMMON_CREATOR,
+                            AppConstants.JOB_CREATOR_ASYNC_DEFAULT);
         }
         String code = stdVarAccess.getVar(String.class, AppKeys.JOB_EXEC_CODE);
         String engineType = stdVarAccess.getVar(String.class, AppKeys.JOB_LABEL_ENGINE_TYPE);
         String runType = stdVarAccess.getVar(String.class, AppKeys.JOB_LABEL_CODE_TYPE);
-        String scriptPath = stdVarAccess.getVarOrDefault(String.class, AppKeys.JOB_SOURCE_SCRIPT_PATH, "LinkisCli");
+        String scriptPath =
+                stdVarAccess.getVarOrDefault(
+                        String.class, AppKeys.JOB_SOURCE_SCRIPT_PATH, "LinkisCli");
 
         String osUser = sysVarAccess.getVar(String.class, AppKeys.LINUX_USER_KEY);
         String[] adminUsers = StringUtils.split(AppKeys.ADMIN_USERS, ',');
@@ -135,8 +154,9 @@ public class LinkisOnceJobBuilder extends JobBuilder {
         String submitUsr = ExecutionUtils.getSubmitUser(stdVarAccess, osUser, adminSet);
         String proxyUsr = ExecutionUtils.getProxyUser(stdVarAccess, submitUsr, adminSet);
 
-        String enableExecuteOnce = stdVarAccess.getVarOrDefault(String.class, AppKeys.JOB_LABEL_EXECUTEONCE, "true");
-        //default executeOnce-mode
+        String enableExecuteOnce =
+                stdVarAccess.getVarOrDefault(String.class, AppKeys.JOB_LABEL_EXECUTEONCE, "true");
+        // default executeOnce-mode
         if (Boolean.parseBoolean(enableExecuteOnce)) {
             labelMap.put(LinkisKeys.KEY_EXECUTEONCE, "");
         } else {
@@ -144,11 +164,16 @@ public class LinkisOnceJobBuilder extends JobBuilder {
         }
         String codePath = stdVarAccess.getVar(String.class, AppKeys.JOB_COMMON_CODE_PATH);
         Object extraArgsObj = stdVarAccess.getVar(Object.class, AppKeys.JOB_EXTRA_ARGUMENTS);
-        if (extraArgsObj != null && extraArgsObj instanceof String[] && StringUtils.isBlank(code) && StringUtils.isBlank(codePath)) {
+        if (extraArgsObj != null
+                && extraArgsObj instanceof String[]
+                && StringUtils.isBlank(code)
+                && StringUtils.isBlank(codePath)) {
             String[] extraArgs = (String[]) extraArgsObj;
             codePath = extraArgs[0];
             if (extraArgs.length > 1) {
-                runtimeMap.put(LinkisKeys.EXTRA_ARGUMENTS, Arrays.copyOfRange(extraArgs, 1, extraArgs.length));
+                runtimeMap.put(
+                        LinkisKeys.EXTRA_ARGUMENTS,
+                        Arrays.copyOfRange(extraArgs, 1, extraArgs.length));
             }
         }
 
@@ -190,18 +215,21 @@ public class LinkisOnceJobBuilder extends JobBuilder {
 
     @Override
     protected JobOperator buildJobOperator() {
-        //OnceJob is Stateful, should not have an operator
+        // OnceJob is Stateful, should not have an operator
         return null;
     }
 
     @Override
     protected PresentWay buildPresentWay() {
         PresentWayImpl presentWay = new PresentWayImpl();
-        String outputPath = stdVarAccess.getVar(String.class, AppKeys.LINKIS_CLIENT_COMMON_OUTPUT_PATH);
+        String outputPath =
+                stdVarAccess.getVar(String.class, AppKeys.LINKIS_CLIENT_COMMON_OUTPUT_PATH);
 
         presentWay.setPath(outputPath);
         presentWay.setMode(PresentModeImpl.STDOUT);
-        presentWay.setDisplayMetaAndLogo(stdVarAccess.getVarOrDefault(Boolean.class, AppKeys.LINKIS_COMMON_DIAPLAY_META_LOGO, true));
+        presentWay.setDisplayMetaAndLogo(
+                stdVarAccess.getVarOrDefault(
+                        Boolean.class, AppKeys.LINKIS_COMMON_DIAPLAY_META_LOGO, true));
         if (StringUtils.isNotBlank(outputPath)) {
             presentWay.setMode(PresentModeImpl.TEXT_FILE);
         }

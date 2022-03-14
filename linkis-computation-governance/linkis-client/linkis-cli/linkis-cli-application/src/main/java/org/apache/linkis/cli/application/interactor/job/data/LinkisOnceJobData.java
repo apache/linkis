@@ -148,7 +148,6 @@ public class LinkisOnceJobData implements LinkisJobData, LinkisLogData, LinkisRe
         return onceJobAdapter.resultFinReceived();
     }
 
-
     @Override
     public JobStatus getJobStatus() {
         return onceJobAdapter.getJobStatus();
@@ -191,7 +190,7 @@ public class LinkisOnceJobData implements LinkisJobData, LinkisLogData, LinkisRe
     @Override
     public String getExecID() {
         return onceJobAdapter.getJobID();
-    } //No Need
+    } // No Need
 
     @Override
     public float getJobProgress() {
@@ -220,12 +219,12 @@ public class LinkisOnceJobData implements LinkisJobData, LinkisLogData, LinkisRe
 
     @Override
     public void updateByOperResult(LinkisOperResultAdapter adapter) {
-        //No need
+        // No need
     }
 
     @Override
     public LinkisOnceJobData clone() throws CloneNotSupportedException {
         throw new CloneNotSupportedException();
-//        return null;
+        //        return null;
     }
 }

@@ -19,6 +19,7 @@ package org.apache.linkis.cli.application.operator.ujes;
 
 import org.apache.linkis.cli.application.constants.AppKeys;
 import org.apache.linkis.cli.core.operator.JobOperatorBuilder;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,8 +29,10 @@ public class LinkisOperatorBuilder extends JobOperatorBuilder {
     @Override
     public LinkisJobOperator build() {
 
-        ((LinkisJobOperator) targetObj).setUJESClient(UJESClientFactory.getReusable(stdVarAccess, sysVarAccess));
-        ((LinkisJobOperator) targetObj).setServerUrl(stdVarAccess.getVar(String.class, AppKeys.LINKIS_COMMON_GATEWAY_URL));
+        ((LinkisJobOperator) targetObj)
+                .setUJESClient(UJESClientFactory.getReusable(stdVarAccess, sysVarAccess));
+        ((LinkisJobOperator) targetObj)
+                .setServerUrl(stdVarAccess.getVar(String.class, AppKeys.LINKIS_COMMON_GATEWAY_URL));
 
         return (LinkisJobOperator) super.build();
     }

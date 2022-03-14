@@ -29,12 +29,16 @@ public class LinkisLogModel implements Model {
     @Override
     public void buildModel(Object data) {
         if (!(data instanceof LinkisLogData)) {
-            throw new TransformerException("TFM0010", ErrorLevel.ERROR, CommonErrMsg.TransformerException,
-                    "Failed to init LinkisLogModel: " + data.getClass().getCanonicalName() + "is not instance of \"LinkisLogData\"");
+            throw new TransformerException(
+                    "TFM0010",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.TransformerException,
+                    "Failed to init LinkisLogModel: "
+                            + data.getClass().getCanonicalName()
+                            + "is not instance of \"LinkisLogData\"");
         }
         this.data = (LinkisLogData) data;
     }
-
 
     public String consumeLog() {
         return data.consumeLog();
@@ -43,5 +47,4 @@ public class LinkisLogModel implements Model {
     public boolean logFinReceived() {
         return data.logFinReceived();
     }
-
 }

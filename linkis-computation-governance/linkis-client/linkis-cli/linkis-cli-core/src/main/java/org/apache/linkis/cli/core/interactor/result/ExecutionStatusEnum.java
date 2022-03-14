@@ -24,7 +24,6 @@ public enum ExecutionStatusEnum implements ExecutionStatus {
     SUCCEED("Succeed", 2),
     FAILED("Failed", 3);
 
-
     private String name;
     private int id;
 

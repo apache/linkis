@@ -17,8 +17,5 @@
 
 package org.apache.linkis.cli.common.entity.job;
 
-/**
- * Should store all input argument and configurations
- */
-public interface JobDescription {
-}
+/** Should store all input argument and configurations */
+public interface JobDescription {}

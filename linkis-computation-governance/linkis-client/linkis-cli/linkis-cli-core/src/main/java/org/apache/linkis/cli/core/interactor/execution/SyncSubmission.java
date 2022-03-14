@@ -17,7 +17,6 @@
 
 package org.apache.linkis.cli.core.interactor.execution;
 
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.linkis.cli.common.entity.execution.Execution;
 import org.apache.linkis.cli.common.entity.job.Job;
 import org.apache.linkis.cli.common.entity.result.ExecutionResult;
@@ -31,29 +30,41 @@ import org.apache.linkis.cli.core.interactor.result.ExecutionResultImpl;
 import org.apache.linkis.cli.core.interactor.result.ExecutionStatusEnum;
 import org.apache.linkis.cli.core.utils.CommonUtils;
 import org.apache.linkis.cli.core.utils.LogUtils;
+
+import org.apache.commons.lang3.exception.ExceptionUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
 /**
- * Execute job synchronously. i.e. Client submit job, and wait til job finish, and get result, no matter what server behaves.
+ * Execute job synchronously. i.e. Client submit job, and wait til job finish, and get result, no
+ * matter what server behaves.
  */
 public class SyncSubmission implements Execution {
-    private final static Logger logger = LoggerFactory.getLogger(SyncSubmission.class);
+    private static final Logger logger = LoggerFactory.getLogger(SyncSubmission.class);
 
     @Override
     public ExecutionResult execute(Map<String, Job> jobs) {
 
         ExecutionStatus executionStatus;
-        Exception exception = null; //TODO
+        Exception exception = null; // TODO
 
         if (jobs == null || jobs.size() == 0) {
-            throw new LinkisClientExecutionException("EXE0001", ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, "Null or empty Jobs is submitted to current execution");
+            throw new LinkisClientExecutionException(
+                    "EXE0001",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.ExecutionErr,
+                    "Null or empty Jobs is submitted to current execution");
         }
 
         if (jobs.size() > 1) {
-            throw new LinkisClientExecutionException("EXE0001", ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, "Multiple Jobs is not Supported by current execution");
+            throw new LinkisClientExecutionException(
+                    "EXE0001",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.ExecutionErr,
+                    "Multiple Jobs is not Supported by current execution");
         }
 
         Job job = jobs.get(jobs.keySet().toArray(new String[jobs.size()])[0]);
@@ -69,17 +80,24 @@ public class SyncSubmission implements Execution {
                 ExecWithAsyncBackend(job);
             } catch (Exception e) {
                 exception = e;
-                //TODO: throw or fail
+                // TODO: throw or fail
             }
         } else {
-            throw new LinkisClientExecutionException("EXE0002", ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, "Executor Type: \"" + job.getClass().getCanonicalName() + "\" is not Supported");
+            throw new LinkisClientExecutionException(
+                    "EXE0002",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.ExecutionErr,
+                    "Executor Type: \""
+                            + job.getClass().getCanonicalName()
+                            + "\" is not Supported");
         }
 
         if (job.getJobData() != null
                 && job.getJobData().getJobStatus() != null
                 && job.getJobData().getJobStatus().isJobSuccess()) {
             executionStatus = ExecutionStatusEnum.SUCCEED;
-        } else if (job.getJobData().getJobStatus() == null || !job.getJobData().getJobStatus().isJobFinishedState()) {
+        } else if (job.getJobData().getJobStatus() == null
+                || !job.getJobData().getJobStatus().isJobFinishedState()) {
             executionStatus = ExecutionStatusEnum.UNDEFINED;
             if (job.getJobData().getException() != null) {
                 exception = job.getJobData().getException();
@@ -91,7 +109,6 @@ public class SyncSubmission implements Execution {
             }
         }
 
-
         return new ExecutionResultImpl(jobs, executionStatus, exception);
     }
 
@@ -102,18 +119,32 @@ public class SyncSubmission implements Execution {
             if (job.getJobData() == null || job.getJobData().getJobStatus() == null) {
                 continue;
             }
-            String jobId = job.getJobData().getJobID() == null ? "NULL" : job.getJobData().getJobID();
+            String jobId =
+                    job.getJobData().getJobID() == null ? "NULL" : job.getJobData().getJobID();
             if (job instanceof TerminatableJob) {
                 try {
                     ((TerminatableJob) job).terminate();
                 } catch (Exception e) {
-                    System.out.println("Failed to kill job: jobId=" + jobId + ". " + ExceptionUtils.getStackTrace(e));
+                    System.out.println(
+                            "Failed to kill job: jobId="
+                                    + jobId
+                                    + ". "
+                                    + ExceptionUtils.getStackTrace(e));
                 }
-                if (!job.getJobData().getJobStatus().isJobCancelled() || !job.getJobData().getJobStatus().isJobFailure()) {
+                if (!job.getJobData().getJobStatus().isJobCancelled()
+                        || !job.getJobData().getJobStatus().isJobFailure()) {
                     ok = false;
-                    System.out.println("Failed to kill job: jobId=" + jobId + ", current status: " + job.getJobData().getJobStatus().toString());
+                    System.out.println(
+                            "Failed to kill job: jobId="
+                                    + jobId
+                                    + ", current status: "
+                                    + job.getJobData().getJobStatus().toString());
                 } else {
-                    System.out.println("Successfully killed job: jobId=" + jobId + ", current status: " + job.getJobData().getJobStatus().toString());
+                    System.out.println(
+                            "Successfully killed job: jobId="
+                                    + jobId
+                                    + ", current status: "
+                                    + job.getJobData().getJobStatus().toString());
                 }
             } else {
                 System.out.println("Job \"" + jobId + "\"" + "is not terminatable");
@@ -122,11 +153,14 @@ public class SyncSubmission implements Execution {
         return ok;
     }
 
-
     private void ExecWithAsyncBackend(Job job) {
 
         if (!(job instanceof AsyncBackendJob)) {
-            throw new LinkisClientExecutionException("EXE0002", ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, "job is not instance of AsyncBackendJob");
+            throw new LinkisClientExecutionException(
+                    "EXE0002",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.ExecutionErr,
+                    "job is not instance of AsyncBackendJob");
         }
         AsyncBackendJob submitJob = (AsyncBackendJob) job;
 
@@ -134,9 +168,13 @@ public class SyncSubmission implements Execution {
         CommonUtils.doSleepQuietly(CommonConstants.JOB_QUERY_SLEEP_MILLS);
 
         if (!submitJob.getJobData().getJobStatus().isJobSubmitted()) {
-            throw new LinkisClientExecutionException("EXE0005", ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, "Retry exhausted checking job submission. Job is probably not submitted");
+            throw new LinkisClientExecutionException(
+                    "EXE0005",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.ExecutionErr,
+                    "Retry exhausted checking job submission. Job is probably not submitted");
         } else {
-            //Output that job is submitted
+            // Output that job is submitted
             StringBuilder infoBuilder = new StringBuilder();
             infoBuilder.append("Job is successfully submitted!").append(System.lineSeparator());
             LogUtils.getInformationLogger().info(infoBuilder.toString());
@@ -144,8 +182,8 @@ public class SyncSubmission implements Execution {
 
         if (job instanceof LogAccessibleJob) {
             /*
-                Non-blocking, call if back-end supports it
-             */
+               Non-blocking, call if back-end supports it
+            */
             ((LogAccessibleJob) job).startRetrieveLog();
         }
 
@@ -153,12 +191,11 @@ public class SyncSubmission implements Execution {
 
         if (submitJob.getJobData().getJobStatus().isJobFinishedState()) {
             if (job instanceof ResultAccessibleJob) {
-            /*
-                Non-blocking, call if back-end supports it
-             */
+                /*
+                   Non-blocking, call if back-end supports it
+                */
                 ((ResultAccessibleJob) job).startRetrieveResult();
             }
         }
-
     }
 }

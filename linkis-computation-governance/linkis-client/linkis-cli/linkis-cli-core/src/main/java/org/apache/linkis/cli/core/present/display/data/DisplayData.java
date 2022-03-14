@@ -17,5 +17,4 @@
 
 package org.apache.linkis.cli.core.present.display.data;
 
-public interface DisplayData {
-}
+public interface DisplayData {}

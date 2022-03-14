@@ -21,6 +21,7 @@ import org.apache.linkis.cli.application.data.ProcessedData;
 import org.apache.linkis.cli.application.interactor.command.template.ProcessInputUtil;
 import org.apache.linkis.cli.application.interactor.command.template.TestSparkCmdTemplate;
 import org.apache.linkis.cli.core.interactor.job.JobBuilder;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,31 +32,31 @@ public class LinkisJobBuilderTest {
     @BeforeEach
     public void before() {
         String[] cmdStr =
-                new String[]{
-                        "-u",
-                        "hadoop",
-                        "-pwd",
-                        "1234",
-                        "-c",
-                        "src/test/resources/conf/user.properties",
-                        "--cmd",
-                        "show tables",
-                        "--split",
-                        "\',\'",
-                        "--queue",
-                        "q05",
-                        "--name",
-                        "testApp",
-                        //      "--hiveconf", "/path/...",
-                        //      "--num-executors", "4",
-                        "--executor-cores",
-                        "4",
-                        "--executor-memory",
-                        "4G",
-                        "--shuffle-partitions",
-                        "200",
-                        "-confMap",
-                        "kk=vv,kkk=vvv,spark.executor.instances=8"
+                new String[] {
+                    "-u",
+                    "hadoop",
+                    "-pwd",
+                    "1234",
+                    "-c",
+                    "src/test/resources/conf/user.properties",
+                    "--cmd",
+                    "show tables",
+                    "--split",
+                    "\',\'",
+                    "--queue",
+                    "q05",
+                    "--name",
+                    "testApp",
+                    //      "--hiveconf", "/path/...",
+                    //      "--num-executors", "4",
+                    "--executor-cores",
+                    "4",
+                    "--executor-memory",
+                    "4G",
+                    "--shuffle-partitions",
+                    "200",
+                    "-confMap",
+                    "kk=vv,kkk=vvv,spark.executor.instances=8"
                 };
         ProcessedData data =
                 ProcessInputUtil.generateProcessedData(cmdStr, new TestSparkCmdTemplate());
@@ -69,20 +70,15 @@ public class LinkisJobBuilderTest {
     }
 
     @AfterEach
-    public void after() {
-    }
+    public void after() {}
 
-    /**
-     * Method: setIdentifier(String identifier)
-     */
+    /** Method: setIdentifier(String identifier) */
     @Test
     public void testSetIdentifier() {
         // TODO: Test goes here...
     }
 
-    /**
-     * Method: build()
-     */
+    /** Method: build() */
     @Test
     public void testBuild() {
         // TODO: Test goes here...
@@ -91,25 +87,19 @@ public class LinkisJobBuilderTest {
         //  assertEquals(job.getParamConfMap().get("spark.executor.instances"), "8");
     }
 
-    /**
-     * Method: setStdVarAccess(VarAccess varAccess)
-     */
+    /** Method: setStdVarAccess(VarAccess varAccess) */
     @Test
     public void testSetStdVarAccess() {
         // TODO: Test goes here...
     }
 
-    /**
-     * Method: setSysVarAccess(VarAccess varAccess)
-     */
+    /** Method: setSysVarAccess(VarAccess varAccess) */
     @Test
     public void testSetSysVarAccess() {
         // TODO: Test goes here...
     }
 
-    /**
-     * Method: getTargetNewInstance()
-     */
+    /** Method: getTargetNewInstance() */
     @Test
     public void testGetTargetNewInstance() {
         // TODO: Test goes here...

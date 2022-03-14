@@ -37,5 +37,4 @@ public enum LinkisManSubType implements JobSubType {
     public String getName() {
         return this.name;
     }
-
 }

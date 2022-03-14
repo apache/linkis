@@ -28,8 +28,8 @@ public class ExecutionSuite {
     Map<String, Job> jobs;
     ResultHandler[] resultHandlers;
 
-
-    public ExecutionSuite(Execution execution, Map<String, Job> jobs, ResultHandler... resultHandlers) {
+    public ExecutionSuite(
+            Execution execution, Map<String, Job> jobs, ResultHandler... resultHandlers) {
         this.execution = execution;
         this.jobs = jobs;
         this.resultHandlers = resultHandlers;

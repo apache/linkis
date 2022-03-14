@@ -17,10 +17,11 @@
 
 package org.apache.linkis.cli.core.interactor.command.template.option;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.linkis.cli.common.exception.error.ErrorLevel;
 import org.apache.linkis.cli.core.exception.CommandException;
 import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.text.MessageFormat;
 import java.util.HashMap;
@@ -29,13 +30,24 @@ import java.util.Map;
 public class MapOption extends BaseOption<Map<String, String>> implements Cloneable {
     final String[] paramNames;
 
-    public MapOption(String keyPrefix, String key, String[] paramNames, String description, boolean isOptional) {
+    public MapOption(
+            String keyPrefix,
+            String key,
+            String[] paramNames,
+            String description,
+            boolean isOptional) {
         super(keyPrefix, key, description, isOptional, null, null);
         this.paramNames = paramNames;
         super.value = new HashMap<>();
     }
 
-    public MapOption(String keyPrefix, String key, String[] paramNames, String description, boolean isOptional, Map<String, String> value) {
+    public MapOption(
+            String keyPrefix,
+            String key,
+            String[] paramNames,
+            String description,
+            boolean isOptional,
+            Map<String, String> value) {
         super(keyPrefix, key, description, isOptional, null, null);
         this.paramNames = paramNames;
         super.value = value;
@@ -46,15 +58,16 @@ public class MapOption extends BaseOption<Map<String, String>> implements Clonea
         Map<String, String> defaultValue = this.value;
         String description = this.getDescription();
         StringBuilder sb = new StringBuilder();
-        sb.append("\t").append(StringUtils.join(paramNames, "|")).append(" <")
-                .append(defaultValue.getClass().getSimpleName()).append(">").append(System.lineSeparator());
-
+        sb.append("\t")
+                .append(StringUtils.join(paramNames, "|"))
+                .append(" <")
+                .append(defaultValue.getClass().getSimpleName())
+                .append(">")
+                .append(System.lineSeparator());
 
         sb.append("\t\t").append(description).append(System.lineSeparator());
 
-        sb.append("\t\tdefault by: ")
-                .append("null")
-                .append(System.lineSeparator());
+        sb.append("\t\tdefault by: ").append("null").append(System.lineSeparator());
 
         sb.append("\t\toptional:").append(isOptional());
 
@@ -83,16 +96,24 @@ public class MapOption extends BaseOption<Map<String, String>> implements Clonea
             String key = rawVal.substring(0, index).trim();
             String value = StringUtils.strip(rawVal.substring(index + 1).trim(), " \"");
             if (kvMap.containsKey(key) && !StringUtils.equals(kvMap.get(key), value)) {
-                String msg = MessageFormat.format("Multiple values for same key were found! Option: \"{0}\", key: \"{1}\"", this.getParamName(), key);
+                String msg =
+                        MessageFormat.format(
+                                "Multiple values for same key were found! Option: \"{0}\", key: \"{1}\"",
+                                this.getParamName(), key);
                 throw new IllegalArgumentException(msg);
             }
             kvMap.put(key, value);
         } else {
-            throw new CommandException("CMD0021", ErrorLevel.ERROR, CommonErrMsg.ParserParseErr, "Illegal Input: " + rawVal + ". Input should be a Map-entry described by kv-pairs. e.g. key1=value1");
+            throw new CommandException(
+                    "CMD0021",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.ParserParseErr,
+                    "Illegal Input: "
+                            + rawVal
+                            + ". Input should be a Map-entry described by kv-pairs. e.g. key1=value1");
         }
         return kvMap;
     }
-
 
     @Override
     public String getParamName() {

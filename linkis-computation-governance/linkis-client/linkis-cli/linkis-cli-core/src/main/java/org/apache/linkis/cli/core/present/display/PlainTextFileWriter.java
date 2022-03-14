@@ -32,7 +32,11 @@ public class PlainTextFileWriter implements DisplayOperator {
     @Override
     public void doOutput(DisplayData data) {
         if (!(data instanceof FileDisplayData)) {
-            throw new PresenterException("PST0004", ErrorLevel.ERROR, CommonErrMsg.PresentDriverErr, "input data is not instance of FileDisplayData");
+            throw new PresenterException(
+                    "PST0004",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.PresentDriverErr,
+                    "input data is not instance of FileDisplayData");
         }
 
         String pathName = ((FileDisplayData) data).getPathName();
@@ -47,7 +51,12 @@ public class PlainTextFileWriter implements DisplayOperator {
             try {
                 dir.mkdirs();
             } catch (Exception e) {
-                throw new PresenterException("PST0005", ErrorLevel.ERROR, CommonErrMsg.PresentDriverErr, "Cannot mkdir for path: " + dir.getAbsolutePath(), e);
+                throw new PresenterException(
+                        "PST0005",
+                        ErrorLevel.ERROR,
+                        CommonErrMsg.PresentDriverErr,
+                        "Cannot mkdir for path: " + dir.getAbsolutePath(),
+                        e);
             }
         }
 
@@ -55,7 +64,12 @@ public class PlainTextFileWriter implements DisplayOperator {
             try {
                 file.createNewFile();
             } catch (Exception e) {
-                throw new PresenterException("PST0006", ErrorLevel.ERROR, CommonErrMsg.PresentDriverErr, "Cannot create file for path: " + file.getAbsolutePath(), e);
+                throw new PresenterException(
+                        "PST0006",
+                        ErrorLevel.ERROR,
+                        CommonErrMsg.PresentDriverErr,
+                        "Cannot create file for path: " + file.getAbsolutePath(),
+                        e);
             }
         }
 
@@ -68,28 +82,33 @@ public class PlainTextFileWriter implements DisplayOperator {
             bufferedWriter = new BufferedWriter(osWritter, 1024);
             bufferedWriter.write(content + "\n");
         } catch (Exception e) {
-            throw new PresenterException("PST0007", ErrorLevel.ERROR, CommonErrMsg.PresentDriverErr, "Cannot write: " + file.getAbsolutePath(), e);
+            throw new PresenterException(
+                    "PST0007",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.PresentDriverErr,
+                    "Cannot write: " + file.getAbsolutePath(),
+                    e);
 
         } finally {
             if (bufferedWriter != null) {
                 try {
                     bufferedWriter.close();
                 } catch (Exception e) {
-                    //ignore
+                    // ignore
                 }
             }
             if (osWritter != null) {
                 try {
                     osWritter.close();
                 } catch (Exception e) {
-                    //ignore
+                    // ignore
                 }
             }
             if (fos != null) {
                 try {
                     fos.close();
                 } catch (Exception e) {
-                    //ignore
+                    // ignore
                 }
             }
         }

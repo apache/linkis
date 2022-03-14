@@ -17,5 +17,4 @@
 
 package org.apache.linkis.cli.core.utils.converter;
 
-public abstract class AbstractStringConverter<T> implements Converter<String, T> {
-}
+public abstract class AbstractStringConverter<T> implements Converter<String, T> {}

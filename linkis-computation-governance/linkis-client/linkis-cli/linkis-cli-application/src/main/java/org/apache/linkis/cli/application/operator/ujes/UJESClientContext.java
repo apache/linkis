@@ -33,8 +33,7 @@ public class UJESClientContext {
     private Boolean retryEnabled;
     private String dwsVersion;
 
-    public UJESClientContext() {
-    }
+    public UJESClientContext() {}
 
     public String getGatewayUrl() {
         return gatewayUrl;
@@ -131,5 +130,4 @@ public class UJESClientContext {
     public void setDwsVersion(String dwsVersion) {
         this.dwsVersion = dwsVersion;
     }
-
 }

@@ -25,34 +25,31 @@ import java.text.MessageFormat;
 public class LinkisClientRuntimeException extends RuntimeException {
     private static final long serialVersionUID = 342134234324357L;
 
-    /**
-     * 异常错误码
-     **/
+    /** 异常错误码 */
     private String code;
 
-    /**
-     * 异常描述
-     **/
+    /** 异常描述 */
     private String msg;
-    /**
-     * 扩展异常描述（包括msg）
-     **/
+    /** 扩展异常描述（包括msg） */
     private String extMsg;
 
     private ErrorLevel level;
 
     private ErrorMsg errMsg;
 
-    public LinkisClientRuntimeException(String code, ErrorLevel level, ErrorMsg errMsg, String param[], String... extMsg) {
+    public LinkisClientRuntimeException(
+            String code, ErrorLevel level, ErrorMsg errMsg, String param[], String... extMsg) {
         super(null == code ? "" : code);
         init(code, level, errMsg, param, extMsg);
     }
 
-    public LinkisClientRuntimeException(String code, ErrorLevel level, ErrorMsg errMsg, Object... paramsList) {
+    public LinkisClientRuntimeException(
+            String code, ErrorLevel level, ErrorMsg errMsg, Object... paramsList) {
         super(null == code ? "" : code);
         this.code = code;
         Object[] params;
-        if ((paramsList != null) && (paramsList.length > 0)
+        if ((paramsList != null)
+                && (paramsList.length > 0)
                 && ((paramsList[(paramsList.length - 1)] instanceof Throwable))) {
             Object[] newParam = new Object[paramsList.length - 1];
             System.arraycopy(paramsList, 0, newParam, 0, newParam.length);
@@ -68,12 +65,19 @@ public class LinkisClientRuntimeException extends RuntimeException {
         this.extMsg = this.msg;
     }
 
-    public LinkisClientRuntimeException(String code, ErrorLevel level, ErrorMsg errMsg, Throwable e, String param[], String... extMsg) {
+    public LinkisClientRuntimeException(
+            String code,
+            ErrorLevel level,
+            ErrorMsg errMsg,
+            Throwable e,
+            String param[],
+            String... extMsg) {
         super(null == code ? "" : code, e);
         init(code, level, errMsg, param, extMsg);
     }
 
-    private void init(String code, ErrorLevel level, ErrorMsg errMsg, Object param[], String... extMsg) {
+    private void init(
+            String code, ErrorLevel level, ErrorMsg errMsg, Object param[], String... extMsg) {
         this.errMsg = errMsg;
         this.code = null == code ? null : code;
         this.level = null == level ? ErrorLevel.ERROR : level;
@@ -112,5 +116,4 @@ public class LinkisClientRuntimeException extends RuntimeException {
     public String getMessage() {
         return super.getMessage() + "," + this.extMsg;
     }
-
 }

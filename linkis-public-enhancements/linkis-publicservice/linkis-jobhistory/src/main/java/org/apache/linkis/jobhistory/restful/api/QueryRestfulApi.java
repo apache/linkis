@@ -27,6 +27,7 @@ import org.apache.linkis.jobhistory.service.JobHistoryQueryService;
 import org.apache.linkis.jobhistory.util.QueryUtils;
 import org.apache.linkis.protocol.constants.TaskConstant;
 import org.apache.linkis.server.Message;
+import org.apache.linkis.server.security.SecurityFilter;
 import org.apache.linkis.server.utils.ModuleUserUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +42,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.sql.Date;
 import java.util.*;
 
 @RestController
@@ -63,7 +63,7 @@ public class QueryRestfulApi {
 
     @RequestMapping(path = "/{id}/get", method = RequestMethod.GET)
     public Message getTaskByID(HttpServletRequest req, @PathVariable("id") Long jobId) {
-        String username = ModuleUserUtils.getOperationUser(req, "get task " + jobId);
+        String username = SecurityFilter.getLoginUsername(req);
         if (QueryUtils.isJobHistoryAdmin(username)
                 || !JobhistoryConfiguration.JOB_HISTORY_SAFE_TRIGGER()) {
             username = null;
@@ -113,7 +113,7 @@ public class QueryRestfulApi {
             @RequestParam(value = "proxyUser", required = false) String proxyUser,
             @RequestParam(value = "isAdminView", required = false) Boolean isAdminView)
             throws IOException, QueryException {
-        String username = ModuleUserUtils.getOperationUser(req, "list task ");
+        String username = SecurityFilter.getLoginUsername(req);
         if (StringUtils.isEmpty(status)) {
             status = null;
         }

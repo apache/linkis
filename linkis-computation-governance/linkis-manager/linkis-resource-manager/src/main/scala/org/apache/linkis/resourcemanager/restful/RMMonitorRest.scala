@@ -183,8 +183,8 @@ class RMMonitorRest extends Logging {
   }
 
   @RequestMapping(path = Array("allUserResource"), method = Array(RequestMethod.GET))
-  def getAllUserResource(request: HttpServletRequest, @RequestParam(value = "username") username: String,
-                         @RequestParam(value = "creator") creator: String, @RequestParam(value = "engineType") engineType: String,
+  def getAllUserResource(request: HttpServletRequest, @RequestParam(value = "username", required = false) username: String,
+                         @RequestParam(value = "creator", required = false) creator: String, @RequestParam(value = "engineType", required = false) engineType: String,
                          @RequestParam(value = "page", required = false) page: Int, @RequestParam(value = "size", required = false) size: Int): Message = {
     val queryUser = SecurityFilter.getLoginUser(request)
     val admins = RMUtils.GOVERNANCE_STATION_ADMIN.getValue.split(",")

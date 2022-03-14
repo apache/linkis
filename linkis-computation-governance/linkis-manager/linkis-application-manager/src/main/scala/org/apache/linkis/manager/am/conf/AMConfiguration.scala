@@ -61,7 +61,7 @@ object AMConfiguration {
 
 
 
-  val AM_CAN_RETRY_LOGS = CommonVars("wds.linkis.manager.am.can.retry.logs", "already in use")
+  val AM_CAN_RETRY_LOGS = CommonVars("wds.linkis.manager.am.can.retry.logs", "already in use;Cannot allocate memory")
 
   val ASK_ENGINE_ASYNC_MAX_THREAD_SIZE: Int = CommonVars("wds.linkis.ecm.launch.max.thread.size", 200).getValue
 

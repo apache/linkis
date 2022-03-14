@@ -36,22 +36,22 @@ trait EntranceRestfulRemote {
   @RequestMapping(value = Array("/entrance/{id}/status"), method = Array(RequestMethod.GET))
   def status(@PathVariable("id") id : String, @RequestParam(value = "taskID", required = false) taskID: String): Message
 
-  @RequestMapping(value = Array("/entrance/{id}/progress"), method = Array(RequestMethod.POST))
+  @RequestMapping(value = Array("/entrance/{id}/progress"), method = Array(RequestMethod.GET))
   def progress(@PathVariable("id") id: String): Message
 
-  @RequestMapping(value = Array("/entrance/{id}/progressWithResource"), method = Array(RequestMethod.POST))
+  @RequestMapping(value = Array("/entrance/{id}/progressWithResource"), method = Array(RequestMethod.GET))
   def progressWithResource(@PathVariable("id") id: String): Message
 
-  @RequestMapping(value = Array("/entrance/{id}/log"), method = Array(RequestMethod.POST))
+  @RequestMapping(value = Array("/entrance/{id}/log"), method = Array(RequestMethod.GET))
   def log(req: HttpServletRequest, @PathVariable("id") id: String): Message
 
-  @RequestMapping(value = Array("/entrance/killJobs"), method = Array(RequestMethod.POST))
-  def killJobs(req: HttpServletRequest, @RequestBody jsonNode: JsonNode): Message
+  @RequestMapping(value = Array("/entrance/{id}/killJobs"), method = Array(RequestMethod.POST))
+  def killJobs(req: HttpServletRequest, @RequestBody jsonNode: JsonNode, @PathVariable("id") strongExecId: String): Message
 
-  @RequestMapping(value = Array("/entrance/{id}/kill"), method = Array(RequestMethod.POST))
+  @RequestMapping(value = Array("/entrance/{id}/kill"), method = Array(RequestMethod.GET))
   def kill(@PathVariable("id") id: String, @RequestParam("taskID") taskID: java.lang.Long): Message
 
-  @RequestMapping(value = Array("/entrance/{id}/pause"), method = Array(RequestMethod.POST))
+  @RequestMapping(value = Array("/entrance/{id}/pause"), method = Array(RequestMethod.GET))
   def pause(@PathVariable("id") id: String): Message
 
 

@@ -85,7 +85,6 @@ public class DataSourceOperateRestfulApi {
                     doConnect(operator, dataSource);
                     return Message.ok().data("ok", true);
                 },
-                "/data-source-manager/op/connect/json",
                 "");
     }
 

@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# description:  cs start cmd
+# description:  data-source-manager start cmd
 #
 # Modified for Linkis 1.1.0
 #
@@ -22,7 +22,7 @@
 export SERVER_SUFFIX="linkis-public-enhancements/linkis-ps-data-source-manager"
 
 
-export DEBUG_PORT=10019
+#export DEBUG_PORT=
 
 export SERVER_CLASS=org.apache.linkis.datasourcemanager.core.LinkisDataSourceManagerApplication
 

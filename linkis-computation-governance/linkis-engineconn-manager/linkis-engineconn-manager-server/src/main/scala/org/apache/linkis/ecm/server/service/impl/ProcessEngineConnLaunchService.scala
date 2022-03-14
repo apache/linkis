@@ -109,7 +109,7 @@ abstract class ProcessEngineConnLaunchService extends AbstractEngineConnLaunchSe
         throw t
     }
     if (engineConn.getStatus == ShuttingDown) {
-      throw new ECMErrorException(ECMErrorConstants.ECM_ERROR, s"Failed to init $engineConn, status shutting down")
+      throw new ECMErrorException(ECMErrorCode.EC_START_FAILED, errorMsg.toString())
     }
   }
 

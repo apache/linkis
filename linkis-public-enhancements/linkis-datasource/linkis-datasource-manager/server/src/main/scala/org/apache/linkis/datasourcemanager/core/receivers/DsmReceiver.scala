@@ -46,8 +46,10 @@ class DsmReceiver extends Receiver with Logging{
         Utils.tryCatch {
           var dataSource: DataSource = null
           if (Option(name).isDefined) {
+            info("Try to get dataSource by dataSourceName:" + name)
             dataSource = dataSourceInfoService.getDataSourceInfoForConnect(name)
           } else if (id.toLong > 0) {
+            info("Try to get dataSource by dataSourceId:" + id)
             dataSource = dataSourceInfoService.getDataSourceInfoForConnect(id.toLong)
           }
           if (null != dataSource) {
@@ -55,7 +57,10 @@ class DsmReceiver extends Receiver with Logging{
               dataSource.getConnectParams)
             DsInfoResponse(status = true, dataSource.getDataSourceType.getName,
               dataSource.getConnectParams, dataSource.getCreateUser)
-          } else DsInfoResponse(status = true, "", new util.HashMap[String, Object](), "")
+          } else {
+            warn("Can not get any dataSource")
+            DsInfoResponse(status = true, "", new util.HashMap[String, Object](), "")
+          }
         }{
           case e: Exception => logger.error(s"Fail to get data source information, id:$id system:$system", e)
             DsInfoResponse(status = false, "", new util.HashMap[String, Object](), "")
@@ -83,7 +88,7 @@ class DsmReceiver extends Receiver with Logging{
               dataSource.getConnectParams)
             DsInfoResponse(status = true, dataSource.getDataSourceType.getName,
               dataSource.getConnectParams, dataSource.getCreateUser)
-          }else DsInfoResponse(status = true, "", new util.HashMap[String, Object](), "")
+          } else DsInfoResponse(status = true, "", new util.HashMap[String, Object](), "")
         }{
           case e: Exception => logger.error(s"Fail to get data source information, id:$id system:$system", e)
             DsInfoResponse(status = false, "", new util.HashMap[String, Object](), "")

@@ -528,7 +528,8 @@ public class FsRestfulApi {
             @RequestParam(value = "outputFileName", defaultValue = "downloadResultset")
                     String outputFileName,
             @RequestParam(value = "sheetName", defaultValue = "result") String sheetName,
-            @RequestParam(value = "nullValue", defaultValue = "NULL") String nullValue)
+            @RequestParam(value = "nullValue", defaultValue = "NULL") String nullValue,
+            @RequestParam(value = "limit", defaultValue = "0") Integer limit)
             throws WorkSpaceException, IOException {
         ServletOutputStream outputStream = null;
         FsWriter fsWriter = null;
@@ -541,6 +542,11 @@ public class FsRestfulApi {
             boolean isLimitDownloadSize = RESULT_SET_DOWNLOAD_IS_LIMIT.getValue();
             Integer csvDownloadSize = RESULT_SET_DOWNLOAD_MAX_SIZE_CSV.getValue();
             Integer excelDownloadSize = RESULT_SET_DOWNLOAD_MAX_SIZE_EXCEL.getValue();
+            if (limit > 0) {
+                csvDownloadSize = limit;
+                excelDownloadSize = limit;
+            }
+
             if (StringUtils.isEmpty(path)) {
                 throw WorkspaceExceptionManager.createException(80004, path);
             }
@@ -617,7 +623,8 @@ public class FsRestfulApi {
             @RequestParam(value = "path", required = false) String path,
             @RequestParam(value = "outputFileName", defaultValue = "downloadResultset")
                     String outputFileName,
-            @RequestParam(value = "nullValue", defaultValue = "NULL") String nullValue)
+            @RequestParam(value = "nullValue", defaultValue = "NULL") String nullValue,
+            @RequestParam(value = "limit", defaultValue = "0") Integer limit)
             throws WorkSpaceException, IOException {
         ServletOutputStream outputStream = null;
         FsWriter fsWriter = null;
@@ -641,6 +648,9 @@ public class FsRestfulApi {
             FsPath[] fsPaths = fsPathListWithError.getFsPaths().toArray(new FsPath[] {});
             boolean isLimitDownloadSize = RESULT_SET_DOWNLOAD_IS_LIMIT.getValue();
             Integer excelDownloadSize = RESULT_SET_DOWNLOAD_MAX_SIZE_EXCEL.getValue();
+            if (limit > 0) {
+                excelDownloadSize = limit;
+            }
             response.addHeader(
                     "Content-Disposition",
                     "attachment;filename="

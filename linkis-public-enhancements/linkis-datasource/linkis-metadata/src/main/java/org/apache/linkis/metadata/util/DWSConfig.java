@@ -41,4 +41,13 @@ public class DWSConfig {
     public static CommonVars<Boolean> HIVE_PERMISSION_WITH_lOGIN_USER_ENABLED =
             CommonVars$.MODULE$.apply(
                     "linkis.metadata.hive.permission.with-login-user-enabled", true);
+
+    public static final CommonVars<String> DB_FILTER_KEYWORDS =
+            CommonVars.apply("wds.linkis.db.filter.keywords", "bak");
+
+    public static final String HDFS_FILE_SYSTEM_REST_ERRS =
+            CommonVars.apply(
+                            "wds.linkis.hdfs.rest.errs",
+                            ".*Filesystem closed.*|.*Failed to find any Kerberos tgt.*")
+                    .getValue();
 }

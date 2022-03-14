@@ -84,6 +84,12 @@ object SparkConfiguration extends Logging {
 
   val PYSPARK_PYTHON3_PATH = CommonVars[String]("pyspark.python3.path", "/appcom/Install/anaconda3/bin/python")
 
+  val ENABLE_REPLACE_PACKAGE_NAME = CommonVars("wds.linkis.spark.engine.scala.replace_package_header.enable", true)
+
+  val REPLACE_PACKAGE_HEADER = CommonVars("wds.linkis.spark.engine.scala.replace_package.header", "com.webank.wedatasphere.linkis")
+
+  val REPLACE_PACKAGE_TO_HEADER = "org.apache.linkis"
+
   private def getMainJarName(): String = {
     val somePath = ClassUtils.jarOfClass(classOf[SparkEngineConnFactory])
     if (somePath.isDefined) {

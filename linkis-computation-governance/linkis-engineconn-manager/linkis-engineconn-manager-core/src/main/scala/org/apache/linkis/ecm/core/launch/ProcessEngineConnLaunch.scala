@@ -33,6 +33,8 @@ import org.apache.linkis.manager.engineplugin.common.launch.process.LaunchConsta
 import org.apache.linkis.manager.engineplugin.common.launch.process.{Environment, ProcessEngineConnLaunchRequest}
 import org.apache.commons.io.{FileUtils, IOUtils}
 import org.apache.commons.lang.StringUtils
+import org.apache.linkis.common.conf.Configuration
+import org.apache.linkis.server.conf.ServerConfiguration
 
 import scala.collection.JavaConversions._
 
@@ -144,11 +146,16 @@ trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
 
     val eurekaPreferIp: Boolean = Configuration.EUREKA_PREFER_IP
     logger.info(s"EUREKA_PREFER_IP: " + eurekaPreferIp)
-    if(eurekaPreferIp){
+    if (eurekaPreferIp) {
       springConf = springConf + ("eureka.instance.prefer-ip-address" -> "true")
       springConf = springConf + ("eureka.instance.instance-id" -> "\\${spring.cloud.client.ip-address}:\\${spring.application.name}:\\${server.port}")
     }
-
+    if (Configuration.IS_PROMETHEUS_ENABLE.getValue) {
+      logger.info(s"IS_PROMETHEUS_ENABLE: true")
+      springConf = springConf + ("management.endpoints.web.exposure.include" -> "refresh,info,health,metrics,prometheus")
+      val endpoint = ServerConfiguration.BDP_SERVER_RESTFUL_URI.getValue + Configuration.PROMETHEUS_ENDPOINT.getValue
+      springConf = springConf + ("eureka.instance.metadata-map.prometheus.path" -> ("\\${prometheus.path:" + endpoint + "}"))
+    }
     request.creationDesc.properties.filter(_._1.startsWith("spring.")).foreach { case (k, v) =>
       springConf = springConf += (k -> v)
     }

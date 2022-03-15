@@ -30,6 +30,11 @@
     <artifactId>linkis-engineconn-manager-core</artifactId>
 
     <dependencies>
+        <dependency>
+            <groupId>org.apache.linkis</groupId>
+            <artifactId>linkis-module</artifactId>
+            <version>${linkis.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.apache.linkis</groupId>

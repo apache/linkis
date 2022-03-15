@@ -352,6 +352,7 @@ export default {
       const query =  {
         taskID: params.row.taskID,
         execID: params.row.strongerExecId,
+        status: params.row.status,
         fileName
       }
       if (this.isAdminModel) {

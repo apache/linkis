@@ -164,6 +164,27 @@ object CustomVariableUtils extends Logging {
     nameAndType("run_month_end") = MonthType(new CustomMonthType(run_date.toString, false, true))
     nameAndType("run_month_end_std") = MonthType(new CustomMonthType(run_date.toString, true, true))
 
+    nameAndType("run_date_std") = DateType(new CustomDateType(run_date.getStdDate))
+    nameAndType("run_month_begin") = MonthType(new CustomMonthType(run_date.toString, false))
+    nameAndType("run_month_begin_std") = MonthType(new CustomMonthType(run_date.toString))
+    nameAndType("run_month_end") = MonthType(new CustomMonthType(run_date.toString, false, true))
+    nameAndType("run_month_end_std") = MonthType(new CustomMonthType(run_date.toString, true, true))
+
+    nameAndType("run_quarter_begin") = QuarterType(new CustomQuarterType(run_date.toString, false))
+    nameAndType("run_quarter_begin_std") = QuarterType(new CustomQuarterType(run_date.toString))
+    nameAndType("run_quarter_end") = QuarterType(new CustomQuarterType(run_date.toString, false, true))
+    nameAndType("run_quarter_end_std") = QuarterType(new CustomQuarterType(run_date.toString, true, true))
+
+    nameAndType("run_half_year_begin") = HalfYearType(new CustomHalfYearType(run_date.toString, false))
+    nameAndType("run_half_year_begin_std") = HalfYearType(new CustomHalfYearType(run_date.toString))
+    nameAndType("run_half_year_end") = HalfYearType(new CustomHalfYearType(run_date.toString, false, true))
+    nameAndType("run_half_year_end_std") = HalfYearType(new CustomHalfYearType(run_date.toString, true, true))
+
+    nameAndType("run_year_begin") = YearType(new CustomYearType(run_date.toString, false))
+    nameAndType("run_year_begin_std") = YearType(new CustomYearType(run_date.toString))
+    nameAndType("run_year_end") = YearType(new CustomYearType(run_date.toString, false, true))
+    nameAndType("run_year_end_std") = YearType(new CustomYearType(run_date.toString, true, true))
+
     /*
     calculate run_today based on run_date
     */

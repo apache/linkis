@@ -520,13 +520,14 @@ export default {
           title: this.$t('message.linkis.tableColumns.fileName'),
           key: 'source',
           align: 'center',
-          width: 140
+          ellipsis: true,
+          width: 190
         },
         {
           title: this.$t('message.linkis.tableColumns.executionCode'),
           key: 'executionCode',
           align: 'center',
-          width: 450,
+          width: 440,
           // 溢出以...显示
           ellipsis: true
           // renderType: 'tooltip',
@@ -535,7 +536,7 @@ export default {
           title: this.$t('message.linkis.tableColumns.status'),
           key: 'status',
           align: 'center',
-          width: 200,
+          width: 180,
           renderType: 'if',
           renderParams: {
             action: this.setRenderType
@@ -545,7 +546,7 @@ export default {
           title: this.$t('message.linkis.tableColumns.costTime'),
           key: 'costTime',
           align: 'center',
-          width: 100,
+          width: 90,
           renderType: 'convertTime'
         },
         {
@@ -553,7 +554,7 @@ export default {
           key: 'failedReason',
           align: 'center',
           className: 'history-failed',
-          width: 220,
+          width: 210,
           renderType: 'a',
           renderParams: {
             hasDoc: this.checkIfHasDoc,

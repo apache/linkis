@@ -154,8 +154,8 @@
                     "placeholder": "请选择起始日期"
                 },
                 "creator": {
-                    "label": "创建人",
-                    "placeholder": "请输入创建人搜索"
+                    "label": "应用",
+                    "placeholder": "请输入应用搜索"
                 },
                 "engine": {
                     "label": "引擎"

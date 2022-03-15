@@ -164,12 +164,6 @@ object CustomVariableUtils extends Logging {
     nameAndType("run_month_end") = MonthType(new CustomMonthType(run_date.toString, false, true))
     nameAndType("run_month_end_std") = MonthType(new CustomMonthType(run_date.toString, true, true))
 
-    nameAndType("run_date_std") = DateType(new CustomDateType(run_date.getStdDate))
-    nameAndType("run_month_begin") = MonthType(new CustomMonthType(run_date.toString, false))
-    nameAndType("run_month_begin_std") = MonthType(new CustomMonthType(run_date.toString))
-    nameAndType("run_month_end") = MonthType(new CustomMonthType(run_date.toString, false, true))
-    nameAndType("run_month_end_std") = MonthType(new CustomMonthType(run_date.toString, true, true))
-
     nameAndType("run_quarter_begin") = QuarterType(new CustomQuarterType(run_date.toString, false))
     nameAndType("run_quarter_begin_std") = QuarterType(new CustomQuarterType(run_date.toString))
     nameAndType("run_quarter_end") = QuarterType(new CustomQuarterType(run_date.toString, false, true))

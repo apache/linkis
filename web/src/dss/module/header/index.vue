@@ -20,6 +20,7 @@
     <div class="layout-header">
       <div
         class="layout-header-menu-icon"
+        @click="$router.push('/')"
       >
         <div style="display:inline-block;">
           <SvgIcon style="font-size: 28px;" icon-class="common" color="#00FFFF"/>

@@ -163,7 +163,7 @@ public class DataSourceCoreRestfulApi {
                                         + " 已经存在]");
                     }
                     dataSourceInfoService.updateDataSourceInfo(dataSource);
-                    return Message.ok().data("update_id", dataSourceId);
+                    return Message.ok().data("updateId", dataSourceId);
                 },
                 "Fail to update data source[更新数据源失败]");
     }

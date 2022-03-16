@@ -43,23 +43,17 @@
             <div>{{ item.tag || item.categoryName }}</div>
           </div>
           <!-- 引擎编辑 -->
-          <SvgIcon
+          <i 
+            class="material-icons edit"
             v-if="iseditListItem"
             @click="editListItem(index, item)"
-            class="edit"
-            style="font-size: 14px"
-            color="#5580eb"
-            icon-class="common"
-          />
+            style="font-size: 14px">edit</i>
           <!-- 引擎删除 -->
-          <SvgIcon
+          <i 
+            class="material-icons close"
             v-if="isdeleteListItem"
             @click="deleteListItem(index, item)"
-            class="close"
-            style="font-size: 16px"
-            color="#5580eb"
-            icon-class="common"
-          />
+            style="font-size: 16px">delete</i>
         </li>
         <!-- add -->
         <li v-if="isOpenAdd" class="cardItem add" @click="addList">
@@ -72,6 +66,7 @@
   </div>
 </template>
 <script>
+import 'material-design-icons/iconfont/material-icons.css';
 export default {
   name: "cardList",
   props: {

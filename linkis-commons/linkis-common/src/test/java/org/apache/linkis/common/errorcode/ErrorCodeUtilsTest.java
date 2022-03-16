@@ -81,7 +81,6 @@ public class ErrorCodeUtilsTest {
             System.setSecurityManager(null);
         }
         Assertions.assertThat(isExited).isEqualTo(false);
-
     }
 
 } 

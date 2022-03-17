@@ -45,7 +45,7 @@ object GetTableBaseInfoAction {
       this
     }
 
-    def setTablename(tabglename: String): Builder = {
+    def setTablename(tablename: String): Builder = {
       this.tablename = tablename
       this
     }

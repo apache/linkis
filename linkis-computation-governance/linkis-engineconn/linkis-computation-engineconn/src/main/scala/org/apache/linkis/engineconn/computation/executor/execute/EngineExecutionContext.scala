@@ -47,7 +47,7 @@ class EngineExecutionContext(executor: ComputationExecutor, executorUser: String
   private var defaultResultSetWriter: ResultSetWriter[_ <: MetaData, _ <: Record] = _
 
   private var resultSize = 0
-  private var enableResultsetMetaWithTableName = false
+  private var enableResultsetMetaWithTableName = ComputationExecutorConf.HIVE_RESULTSET_USE_TABLE_NAME.getValue
 
   private val properties: java.util.Map[String, Object] = new util.HashMap[String, Object]()
 

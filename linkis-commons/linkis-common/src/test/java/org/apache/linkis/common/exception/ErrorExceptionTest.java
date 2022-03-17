@@ -28,7 +28,8 @@ class ErrorExceptionTest {
         ErrorException errorException1 = new ErrorException(1, "test");
         assertEquals(ExceptionLevel.ERROR, errorException1.getLevel());
         assertEquals("test", errorException1.getDesc());
-        ErrorException errorException2 = new ErrorException(3, "test", "127.0.0.1", 1234, "serviceKind");
+        ErrorException errorException2 =
+                new ErrorException(3, "test", "127.0.0.1", 1234, "serviceKind");
         assertEquals(ExceptionLevel.ERROR, errorException2.getLevel());
         assertEquals("test", errorException2.getDesc());
         assertEquals("127.0.0.1", errorException2.getIp());

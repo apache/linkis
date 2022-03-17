@@ -169,7 +169,6 @@ import WeToolbar from './toolbar.vue';
 import elementResizeEvent from '@/common/helper/elementResizeEvent';
 import resultSetList from './resultSetList.vue';
 import filter from './filter.vue';
-import pinyin from 'pinyin';
 import dataWrangler from './dataWrangler.vue';
 import mixin from '@/common/service/mixin';
 /**
@@ -412,12 +411,6 @@ export default {
       }
       if (charB === undefined || charB === null || charB === '' || charB === ' ' || charB === '　') {
         return 1;
-      }
-      if (!this.notChinese(charA)) {
-        charA = pinyin(charA)[0][0];
-      }
-      if (!this.notChinese(charB)) {
-        charB = pinyin(charB)[0][0];
       }
       return charA.localeCompare(charB);
     },

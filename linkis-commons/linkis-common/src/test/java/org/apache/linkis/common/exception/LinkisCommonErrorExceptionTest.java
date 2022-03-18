@@ -25,7 +25,8 @@ class LinkisCommonErrorExceptionTest {
 
     @Test
     void testLinkisCommonErrorException() {
-        LinkisCommonErrorException linkisCommonErrorException = new LinkisCommonErrorException(1, "test");
+        LinkisCommonErrorException linkisCommonErrorException =
+                new LinkisCommonErrorException(1, "test");
         assertEquals(LinkisCommonErrorException.class, linkisCommonErrorException.getClass());
         assertTrue(linkisCommonErrorException instanceof ErrorException);
     }

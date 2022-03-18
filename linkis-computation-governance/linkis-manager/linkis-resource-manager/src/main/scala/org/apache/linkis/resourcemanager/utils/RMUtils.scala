@@ -17,7 +17,7 @@
  
 package org.apache.linkis.resourcemanager.utils
 
-import org.apache.linkis.common.conf.{CommonVars, TimeType}
+import org.apache.linkis.common.conf.{CommonVars, Configuration, TimeType}
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.manager.common.entity.persistence.PersistenceResource
 import org.apache.linkis.manager.common.entity.resource._
@@ -30,7 +30,6 @@ import org.json4s.DefaultFormats
 import org.json4s.jackson.Serialization.{read, write}
 
 import java.util
-
 import scala.collection.JavaConverters.asScalaBufferConverter
 
 object RMUtils extends Logging {
@@ -51,7 +50,7 @@ object RMUtils extends Logging {
 
   val EXTERNAL_RESOURCE_REFRESH_TIME = CommonVars("wds.linkis.manager.rm.external.resource.regresh.time", new TimeType("30m"))
 
-  val GOVERNANCE_STATION_ADMIN = CommonVars("wds.linkis.governance.station.admin", "hadoop")
+  val GOVERNANCE_STATION_ADMIN = Configuration.GOVERNANCE_STATION_ADMIN
 
   val COMBINED_USERCREATOR_ENGINETYPE = "combined_userCreator_engineType"
 

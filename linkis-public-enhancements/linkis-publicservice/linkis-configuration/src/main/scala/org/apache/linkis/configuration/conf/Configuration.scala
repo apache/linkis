@@ -17,7 +17,7 @@
  
 package org.apache.linkis.configuration.conf
 
-import org.apache.linkis.common.conf.CommonVars
+import org.apache.linkis.common.conf.{CommonVars, Configuration}
 import org.apache.linkis.manager.label.entity.engine.EngineType
 
 import scala.collection.JavaConverters.asScalaBufferConverter
@@ -37,7 +37,7 @@ object Configuration {
 
   val USE_CREATOR_DEFAULE_VALUE = CommonVars.apply("wds.linkis.configuration.use.creator.default.value", false).getValue
 
-  val GOVERNANCE_STATION_ADMIN = CommonVars("wds.linkis.governance.station.admin", "hadoop")
+  val GOVERNANCE_STATION_ADMIN = Configuration.GOVERNANCE_STATION_ADMIN
 
 
 }

@@ -45,6 +45,9 @@ public class DWSConfig {
     public static final CommonVars<String> DB_FILTER_KEYWORDS =
             CommonVars.apply("wds.linkis.db.filter.keywords", "bak");
 
+    public static final CommonVars<String> HIVE_DB_ADMIN_USER =
+            CommonVars.apply("wds.linkis.metadata.hive.db.admin", "hadoop");
+
     public static final String HDFS_FILE_SYSTEM_REST_ERRS =
             CommonVars.apply(
                             "wds.linkis.hdfs.rest.errs",

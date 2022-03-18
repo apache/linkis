@@ -17,7 +17,7 @@
 
 package org.apache.linkis.configuration.restful.api;
 
-import org.apache.linkis.configuration.conf.Configuration;
+import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.configuration.entity.*;
 import org.apache.linkis.configuration.exception.ConfigurationException;
 import org.apache.linkis.configuration.service.CategoryService;
@@ -35,11 +35,7 @@ import org.apache.linkis.server.utils.ModuleUserUtils;
 import org.apache.commons.lang.StringUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -48,7 +44,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -58,9 +53,6 @@ public class ConfigurationRestfulApi {
     @Autowired private ConfigurationService configurationService;
 
     @Autowired private CategoryService categoryService;
-
-    private static String[] adminArray =
-            Configuration.GOVERNANCE_STATION_ADMIN().getValue().split(",");
 
     ObjectMapper mapper = new ObjectMapper();
 
@@ -88,77 +80,6 @@ public class ConfigurationRestfulApi {
         // TODO: 2019/12/30  configKey参数校验
         return Message.ok();
     }
-
-    // TODO addKeyForCreator
-
-    //    @GET
-    //    @Path("/addKeyForCreator")
-    //    public Message addKeyForCreator(HttpServletRequest req,
-    //                                    @RequestParam(value="engineType",required=false) String
-    // engineType,
-    //                                    @RequestParam(value="creator",required=false) String
-    // creator,
-    //                                    @RequestParam(value="token",required=false) String token,
-    //                                    @RequestParam(value="keyJson",required=false) String
-    // keyJson) throws ConfigurationException {
-    //        String username = SecurityFilter.getLoginUsername(req);
-    //        if(StringUtils.isEmpty(engineType) || StringUtils.isEmpty(creator) ||
-    // StringUtils.isEmpty(token)){
-    //            throw new ConfigurationException("params cannot be empty!");
-    //        }
-    //        //todo 检验token
-    //        if(!token.equals(ConfigurationConfiguration.COPYKEYTOKEN)){
-    //            throw new ConfigurationException("token is error");
-    //        }
-    //        List<ConfigKey> keys =
-    // configurationService.listKeyByCreatorAndAppName(creator,engineType);
-    //        if(keys.isEmpty()){
-    //            //判断和copyKeyFromIDE相反,只允许在有key的情况下添加
-    //            throw new ConfigurationException(creator + ":" + engineType +  ",keys is empty
-    // ,cannot add key");
-    //        }
-    //        ConfigKey configKey = BDPJettyServerHelper.gson().fromJson(keyJson, ConfigKey.class);
-    //        // TODO: 2019/12/30  configKey参数校验
-    //        configurationService.addKey(creator,engineType,configKey);
-    //        return Message.ok();
-    //    }
-
-    // TODO copyKey
-
-    //    @GET
-    //    @Path("/copyKeyFromIDE")
-    //    public Message copyKeyFromIDE(HttpServletRequest req,
-    //                                  @RequestParam(value="appName",required=false) String
-    // appName,
-    //                                  @RequestParam(value="creator",required=false) String
-    // creator,
-    //                                  @RequestParam(value="token",required=false) String token)
-    // throws ConfigurationException {
-    //        String username = SecurityFilter.getLoginUsername(req);
-    //        if(StringUtils.isEmpty(appName) || StringUtils.isEmpty(creator) ||
-    // StringUtils.isEmpty(token)){
-    //            throw new ConfigurationException("params cannot be empty!");
-    //        }
-    //        //todo检验token
-    //        if(!token.equals(ConfigurationConfiguration.COPYKEYTOKEN)){
-    //            throw new ConfigurationException("token is error");
-    //        }
-    //        List<ConfigKey> keys =
-    // configurationService.listKeyByCreatorAndAppName(creator,appName);
-    //        if(!keys.isEmpty()){
-    //            throw new ConfigurationException(creator + ":" + appName +  ",keys is no empty,
-    // cannot copy key");
-    //        }
-    //        configurationService.insertCreator(creator);
-    //        List<ConfigKey> IDEkeys =
-    // configurationService.listKeyByCreatorAndAppName("IDE",appName);
-    //        if (IDEkeys.isEmpty()) {
-    //            throw new ConfigurationException("IDE:"+ appName + ",cannot find any key to
-    // copy");
-    //        }
-    //        IDEkeys.forEach(k ->configurationService.copyKeyFromIDE(k,creator,appName));
-    //        return Message.ok();
-    //    }
 
     @RequestMapping(path = "/getFullTreesByAppName", method = RequestMethod.GET)
     public Message getFullTreesByAppName(
@@ -316,7 +237,7 @@ public class ConfigurationRestfulApi {
     }
 
     private void checkAdmin(String userName) throws ConfigurationException {
-        if (adminArray != null && !Arrays.asList(adminArray).contains(userName)) {
+        if (!Configuration.isAdmin(userName)) {
             throw new ConfigurationException("only admin can modify category(只有管理员才能修改目录)");
         }
     }

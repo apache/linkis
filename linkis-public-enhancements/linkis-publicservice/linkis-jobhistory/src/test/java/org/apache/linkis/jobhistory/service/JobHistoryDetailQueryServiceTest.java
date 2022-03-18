@@ -23,10 +23,10 @@ import org.apache.linkis.governance.common.entity.job.SubJobInfo;
 import org.apache.linkis.governance.common.protocol.job.*;
 import org.apache.linkis.jobhistory.dao.JobDetailMapper;
 import org.apache.linkis.jobhistory.service.impl.JobHistoryDetailQueryServiceImpl;
+import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

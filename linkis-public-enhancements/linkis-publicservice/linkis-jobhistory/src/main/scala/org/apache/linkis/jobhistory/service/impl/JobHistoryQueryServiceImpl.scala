@@ -39,6 +39,7 @@ import java.util.Date
 import org.apache.linkis.jobhistory.entity.QueryJobHistory
 import org.apache.linkis.jobhistory.service.JobHistoryQueryService
 import org.apache.linkis.jobhistory.transitional.TaskStatus
+import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel
 import org.apache.linkis.manager.label.utils.LabelUtil
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -216,30 +217,23 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
   override def search(jobId: java.lang.Long, username: String, status: String, creator: String, sDate: Date, eDate: Date, engineType: String): util.List[JobHistory] = {
     import scala.collection.JavaConversions._
     val split: util.List[String] = if (status != null) status.split(",").toList else null
-    val result = jobHistoryMapper.search(jobId, username, split, sDate, eDate, engineType)
-    if (creator == null || result == null | result.size() == 0) {
-      result
-    } else {
-      /* filter result given creator, creator is stored as a label in db, so we cannot filter directly by SQL */
-      filterJobHistoryByCreator(result, creator)
-    }
-  }
-
-  private def filterJobHistoryByCreator(jobHistoryList: util.List[JobHistory], creator: String): util.List[JobHistory] = {
-    jobHistoryList.filter(jobHistory => {
-      val labels = TaskConversions.getLabelListFromJson(jobHistory.getLabels)
-      if (labels == null || labels.size() == 0) {
-        warn("label is null or size is 0 for jobHistory record: " + jobHistory.getId)
-        false
-      } else {
-        val userCreatorLabel = LabelUtil.getUserCreatorLabel(labels)
-        if (userCreatorLabel == null) {
-          false
-        } else {
-          StringUtils.equals(userCreatorLabel.getCreator, creator)
-        }
+    val result = if (StringUtils.isBlank(creator)) {
+      jobHistoryMapper.search(jobId, username, split, sDate, eDate, engineType)
+    } else if(StringUtils.isBlank(username)) {
+      val fakeLabel = new UserCreatorLabel
+      fakeLabel.setUser(username)
+      fakeLabel.setCreator(creator)
+      val userCreator = fakeLabel.getStringValue
+      Utils.tryCatch(fakeLabel.valueCheck(userCreator)) {
+        t => info("input user or creator is not correct", t)
+          throw t
       }
-    })
+      jobHistoryMapper.searchWithCreatorOnly(jobId, username, fakeLabel.getLabelKey, userCreator, split, sDate, eDate, engineType)
+    } else {
+      val fakeLabel = new UserCreatorLabel
+      jobHistoryMapper.searchWithUserCreator(jobId, username, fakeLabel.getLabelKey, creator, split, sDate, eDate, engineType)
+    }
+    result
   }
 
   override def getQueryVOList(list: java.util.List[JobHistory]): java.util.List[JobRequest] = {

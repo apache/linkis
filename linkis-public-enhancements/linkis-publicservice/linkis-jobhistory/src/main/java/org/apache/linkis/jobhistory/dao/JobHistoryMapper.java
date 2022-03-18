@@ -40,5 +40,25 @@ public interface JobHistoryMapper {
             @Param("endDate") Date endDate,
             @Param("engineType") String engineType);
 
+    List<JobHistory> searchWithUserCreator(
+            @Param("id") Long id,
+            @Param("umUser") String username,
+            @Param("userCreatorKey") String userCreatorKey,
+            @Param("userCreatorValue") String userCreator,
+            @Param("status") List<String> status,
+            @Param("startDate") Date startDate,
+            @Param("endDate") Date endDate,
+            @Param("engineType") String engineType);
+
+    List<JobHistory> searchWithCreatorOnly(
+            @Param("id") Long id,
+            @Param("umUser") String username,
+            @Param("userCreatorKey") String userCreatorKey,
+            @Param("creator") String userCreator,
+            @Param("status") List<String> status,
+            @Param("startDate") Date startDate,
+            @Param("endDate") Date endDate,
+            @Param("engineType") String engineType);
+
     String selectJobHistoryStatusForUpdate(Long jobId);
 }

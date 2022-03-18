@@ -34,8 +34,8 @@ class ExceptionManagerTest {
     void testGenerateException() {
         ErrorException errorException =
                 new ErrorException(
-                CommonErrorConstants.COMMON_ERROR(),
-                "The map cannot be parsed normally, "
+                        CommonErrorConstants.COMMON_ERROR(),
+                        "The map cannot be parsed normally, "
                         + "the map is empty or the LEVEL value is missing:(map不能被正常的解析，map为空或者缺少LEVEL值: )"
                         + "null");
         assertEquals(
@@ -51,7 +51,7 @@ class ExceptionManagerTest {
         map.put("serviceKind", LinkisException.applicationName);
         errorException.setDesc(
                 "The map cannot be parsed normally, "
-                + "the map is empty or the LEVEL value is missing:(map不能被正常的解析，map为空或者缺少LEVEL值: )"
+                        + "the map is empty or the LEVEL value is missing:(map不能被正常的解析，map为空或者缺少LEVEL值: )"
                         + map);
         assertEquals(errorException.getClass(), ExceptionManager.generateException(map).getClass());
         assertEquals(errorException.toString(), ExceptionManager.generateException(map).toString());

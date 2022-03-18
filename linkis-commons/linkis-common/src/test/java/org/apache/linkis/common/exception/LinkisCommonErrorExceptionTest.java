@@ -29,5 +29,4 @@ class LinkisCommonErrorExceptionTest {
         assertEquals(LinkisCommonErrorException.class, linkisCommonErrorException.getClass());
         assertTrue(linkisCommonErrorException instanceof ErrorException);
     }
-
 }

@@ -221,6 +221,9 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
       jobHistoryMapper.search(jobId, username, split, sDate, eDate, engineType)
     } else if(StringUtils.isBlank(username)) {
       val fakeLabel = new UserCreatorLabel
+      jobHistoryMapper.searchWithCreatorOnly(jobId, username, fakeLabel.getLabelKey, creator, split, sDate, eDate, engineType)
+    } else {
+      val fakeLabel = new UserCreatorLabel
       fakeLabel.setUser(username)
       fakeLabel.setCreator(creator)
       val userCreator = fakeLabel.getStringValue
@@ -228,10 +231,7 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
         t => info("input user or creator is not correct", t)
           throw t
       }
-      jobHistoryMapper.searchWithCreatorOnly(jobId, username, fakeLabel.getLabelKey, userCreator, split, sDate, eDate, engineType)
-    } else {
-      val fakeLabel = new UserCreatorLabel
-      jobHistoryMapper.searchWithUserCreator(jobId, username, fakeLabel.getLabelKey, creator, split, sDate, eDate, engineType)
+      jobHistoryMapper.searchWithUserCreator(jobId, username, fakeLabel.getLabelKey, userCreator, split, sDate, eDate, engineType)
     }
     result
   }

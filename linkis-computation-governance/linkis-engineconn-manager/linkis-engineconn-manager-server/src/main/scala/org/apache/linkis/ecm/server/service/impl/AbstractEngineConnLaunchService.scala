@@ -103,6 +103,7 @@ abstract class AbstractEngineConnLaunchService extends EngineConnLaunchService w
       future onComplete {
         case Failure(t) =>
           logger.error(s"init ${conn.getServiceInstance} failed.${conn.getEngineConnLaunchRunner.getEngineConnLaunch.getEngineConnManagerEnv().engineConnWorkDir}")
+          LinkisECMApplication.getContext.getECMSyncListenerBus.postToAll(EngineConnStatusChangeEvent(conn.getTickedId, Failed))
         case Success(_) =>
           logger.info(s"init ${conn.getServiceInstance} succeed.${conn.getEngineConnLaunchRunner.getEngineConnLaunch.getEngineConnManagerEnv().engineConnWorkDir}")
       }

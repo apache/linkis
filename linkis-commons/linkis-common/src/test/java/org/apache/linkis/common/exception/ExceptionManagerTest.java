@@ -36,7 +36,7 @@ class ExceptionManagerTest {
                 new ErrorException(
                 CommonErrorConstants.COMMON_ERROR(),
                 "The map cannot be parsed normally, "
-                        + "the map is empty or the LEVEL value is missing:(map不能被正常的解析，map为空或者缺少LEVEL值: )" 
+                        + "the map is empty or the LEVEL value is missing:(map不能被正常的解析，map为空或者缺少LEVEL值: )"
                         + "null");
         assertEquals(
                 errorException.getClass(), ExceptionManager.generateException(null).getClass());
@@ -53,20 +53,16 @@ class ExceptionManagerTest {
                 "The map cannot be parsed normally, "
                 + "the map is empty or the LEVEL value is missing:(map不能被正常的解析，map为空或者缺少LEVEL值: )"
                         + map);
-        assertEquals(
-                errorException.getClass(), ExceptionManager.generateException(map).getClass());
-        assertEquals(
-                errorException.toString(), ExceptionManager.generateException(map).toString());
+        assertEquals(errorException.getClass(), ExceptionManager.generateException(map).getClass());
+        assertEquals(errorException.toString(), ExceptionManager.generateException(map).toString());
         map.replace("level", ERROR.getLevel());
         errorException.setErrCode((Integer) map.get("errCode"));
         errorException.setIp(LinkisException.hostname);
         errorException.setPort(LinkisException.hostPort);
         errorException.setServiceKind(LinkisException.applicationName);
         errorException.setDesc((String) map.get("desc"));
-        assertEquals(
-                errorException.getClass(), ExceptionManager.generateException(map).getClass());
-        assertEquals(
-                errorException.toString(), ExceptionManager.generateException(map).toString());
+        assertEquals(errorException.getClass(), ExceptionManager.generateException(map).getClass());
+        assertEquals(errorException.toString(), ExceptionManager.generateException(map).toString());
         map.replace("level", WARN.getLevel());
         WarnException warnException =
                 new WarnException(
@@ -75,22 +71,18 @@ class ExceptionManagerTest {
                         LinkisException.hostname,
                         LinkisException.hostPort,
                         LinkisException.applicationName);
-        assertEquals(
-                warnException.getClass(), ExceptionManager.generateException(map).getClass());
-        assertEquals(
-                warnException.toString(), ExceptionManager.generateException(map).toString());
+        assertEquals(warnException.getClass(), ExceptionManager.generateException(map).getClass());
+        assertEquals(warnException.toString(), ExceptionManager.generateException(map).toString());
         map.replace("level", FATAL.getLevel());
         FatalException fatalException =
                 new FatalException(
-                (Integer) map.get("errCode"),
+                        (Integer) map.get("errCode"),
                         "test",
                         LinkisException.hostname,
                         LinkisException.hostPort,
                         LinkisException.applicationName);
-        assertEquals(
-                fatalException.getClass(), ExceptionManager.generateException(map).getClass());
-        assertEquals(
-                fatalException.toString(), ExceptionManager.generateException(map).toString());
+        assertEquals(fatalException.getClass(), ExceptionManager.generateException(map).getClass());
+        assertEquals(fatalException.toString(), ExceptionManager.generateException(map).toString());
         map.replace("level", RETRY.getLevel());
         LinkisRetryException retryException =
                 new LinkisRetryException(
@@ -99,18 +91,14 @@ class ExceptionManagerTest {
                         LinkisException.hostname,
                         LinkisException.hostPort,
                         LinkisException.applicationName);
-        assertEquals(
-                retryException.getClass(), ExceptionManager.generateException(map).getClass());
-        assertEquals(
-                retryException.toString(), ExceptionManager.generateException(map).toString());
+        assertEquals(retryException.getClass(), ExceptionManager.generateException(map).getClass());
+        assertEquals(retryException.toString(), ExceptionManager.generateException(map).toString());
         map.replace("level", 123);
         map.put("test", 123);
         errorException.setErrCode(CommonErrorConstants.COMMON_ERROR());
         errorException.setDesc("Exception Map that cannot be parsed:(不能解析的异常Map：)" + map);
-        assertEquals(
-                errorException.getClass(), ExceptionManager.generateException(map).getClass());
-        assertEquals(
-                errorException.toString(), ExceptionManager.generateException(map).toString());
+        assertEquals(errorException.getClass(), ExceptionManager.generateException(map).getClass());
+        assertEquals(errorException.toString(), ExceptionManager.generateException(map).toString());
     }
 
     @Test

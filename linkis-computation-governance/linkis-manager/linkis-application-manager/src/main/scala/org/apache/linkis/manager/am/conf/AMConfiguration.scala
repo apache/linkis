@@ -17,14 +17,14 @@
  
 package org.apache.linkis.manager.am.conf
 
-import org.apache.linkis.common.conf.{CommonVars, TimeType}
+import org.apache.linkis.common.conf.{CommonVars, Configuration, TimeType}
 import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.manager.common.entity.enumeration.MaintainType
 
 
 object AMConfiguration {
 
-  val GOVERNANCE_STATION_ADMIN = CommonVars("wds.linkis.governance.station.admin", "hadoop")
+  val GOVERNANCE_STATION_ADMIN = Configuration.GOVERNANCE_STATION_ADMIN
 
   val ECM_ADMIN_OPERATIONS = CommonVars("wds.linkis.governance.admin.operations", "")
 

@@ -17,7 +17,7 @@
  
 package org.apache.linkis.ecm.core.launch
 
-import java.io.{File, InputStream, OutputStream}
+import java.io.{File, IOException, InputStream, OutputStream}
 import java.net.ServerSocket
 import org.apache.linkis.common.conf.{CommonVars, Configuration}
 import org.apache.linkis.common.exception.ErrorException
@@ -33,7 +33,7 @@ import org.apache.linkis.manager.engineplugin.common.launch.process.LaunchConsta
 import org.apache.linkis.manager.engineplugin.common.launch.process.{Environment, ProcessEngineConnLaunchRequest}
 import org.apache.commons.io.{FileUtils, IOUtils}
 import org.apache.commons.lang.StringUtils
-import org.apache.linkis.common.conf.Configuration
+import org.apache.linkis.ecm.core.utils.PortUtils
 import org.apache.linkis.server.conf.ServerConfiguration
 
 import scala.collection.JavaConversions._
@@ -89,23 +89,18 @@ trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
       case HADOOP_CONF_DIR => putIfExists(HADOOP_CONF_DIR)
       case HIVE_CONF_DIR => putIfExists(HIVE_CONF_DIR)
       case JAVA_HOME => putIfExists(JAVA_HOME)
-      case RANDOM_PORT => environment.put(RANDOM_PORT.toString, findAvailPort().toString)
+      case RANDOM_PORT => environment.put(RANDOM_PORT.toString, PortUtils.findAvailPort().toString)
       case EUREKA_PREFER_IP => environment.put(EUREKA_PREFER_IP.toString, Configuration.EUREKA_PREFER_IP.toString)
       case ENGINECONN_ENVKEYS => environment.put(ENGINECONN_ENVKEYS.toString, GovernanceCommonConf.ENGINECONN_ENVKEYS.toString)
       case _ =>
     }
   }
 
-  private def findAvailPort(): Int = {
-    val socket = new ServerSocket(0)
-    Utils.tryFinally(socket.getLocalPort)(IOUtils.closeQuietly(socket))
-  }
-
   private def setMoreAvailPort(value: String): Unit = {
     val key = RANDOM_PORT.toString + randomPortNum
     // TODO just replace it by sorted RANDOM_PORT, since only one RANDOM_PORT is used now.
     if(value.contains(key)) {
-      processBuilder.setEnv(key, findAvailPort().toString)
+      processBuilder.setEnv(key, PortUtils.findAvailPort().toString)
       randomPortNum += 1
     }
   }
@@ -139,7 +134,7 @@ trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
     if (request.creationDesc.properties.exists { case (k, v) => k.contains(" ") || (v != null && v.contains(" ")) })
       throw new ErrorException(30000, "Startup parameters contain spaces!(启动参数中包含空格！)") //TODO exception
     val arguments = EngineConnArgumentsBuilder.newBuilder()
-    engineConnPort = findAvailPort().toString
+    engineConnPort = PortUtils.findAvailPortByRange(GovernanceCommonConf.ENGINE_CONN_PORT_RANGE.getValue).toString
     var springConf = Map("spring.application.name" -> GovernanceCommonConf.ENGINE_CONN_SPRING_NAME.getValue,
       "server.port" -> engineConnPort, "spring.profiles.active" -> "engineconn",
       "logging.config" -> s"classpath:${EnvConfiguration.LOG4J2_XML_FILE.getValue}") ++: discoveryMsgGenerator.generate(engineConnManagerEnv)
@@ -168,15 +163,15 @@ trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
   }
 
   override def kill(): Unit = {
-    if(process != null){
+    if (process != null) {
       process.destroy()
     }
   }
 
   override def isAlive: Boolean = {
-    if(process != null){
+    if (process != null) {
       process.isAlive
-    }else{
+    } else {
       false
     }
   }
@@ -186,7 +181,7 @@ trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
     initializeEnv()
     //TODO env需要考虑顺序问题
     val classPath = request.environment.remove(CLASSPATH.toString)
-    request.environment.foreach{ case (k, v) =>
+    request.environment.foreach { case (k, v) =>
       val value = v.replaceAll(CLASS_PATH_SEPARATOR, File.pathSeparator)
       setMoreAvailPort(value)
       processBuilder.setEnv(k, processBuilder.replaceExpansionMarker(value))
@@ -198,7 +193,7 @@ trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
     //set other env
     val engineConnEnvKeyArray = engineConnEnvKeys.split(",")
     engineConnEnvKeyArray.foreach(envKey => {
-      if(null != envKey && !"".equals(envKey.trim)) {
+      if (null != envKey && !"".equals(envKey.trim)) {
         processBuilder.setEnv(envKey, GovernanceCommonConf.getEngineEnvValue(envKey))
       }
     })
@@ -220,17 +215,17 @@ trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
   protected def getPreparedExecFile: String = preparedExecFile
 
   def getProcessInputStream: InputStream = {
-    if(process != null){
+    if (process != null) {
       process.getInputStream
-    }else{
+    } else {
       throw new ECMCoreException(ECMErrorCode.PROCESS_WAITFOR_ERROR, "process is not be launch, can not get InputStream!")
     }
   }
 
-  def processWaitFor:Int = {
-    if(process != null){
+  def processWaitFor: Int = {
+    if (process != null) {
       process.waitFor
-    }else{
+    } else {
       throw new ECMCoreException(ECMErrorCode.PROCESS_WAITFOR_ERROR, "process is not be launch, can not get terminated code by wait!")
     }
   }

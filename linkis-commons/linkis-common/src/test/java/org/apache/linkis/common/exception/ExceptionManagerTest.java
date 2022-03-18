@@ -19,7 +19,6 @@ package org.apache.linkis.common.exception;
 
 import org.apache.linkis.common.errorcode.CommonErrorConstants;
 import org.junit.jupiter.api.Test;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,18 +26,19 @@ import static org.apache.linkis.common.exception.ExceptionLevel.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-
 class ExceptionManagerTest {
 
     @Test
     void testGenerateException() {
-        ErrorException errorException = new ErrorException(
+        ErrorException errorException =
+                new ErrorException(
                 CommonErrorConstants.COMMON_ERROR(),
                 "The map cannot be parsed normally, "
                         + "the map is empty or the LEVEL value is missing:(map不能被正常的解析，map为空或者缺少LEVEL值: )"
                         + "null");
         assertEquals(errorException.getClass(), ExceptionManager.generateException(null).getClass());
-        assertEquals(errorException.toString(), ExceptionManager.generateException(null).toString());
+        assertEquals(
+                errorException.toString(), ExceptionManager.generateException(null).toString());
         Map<String, Object> map = new HashMap<>();
         map.put("level", null);
         map.put("errCode", 1);
@@ -46,9 +46,9 @@ class ExceptionManagerTest {
         map.put("ip", LinkisException.hostname);
         map.put("port", LinkisException.hostPort);
         map.put("serviceKind", LinkisException.applicationName);
-        errorException.setDesc("The map cannot be parsed normally, "
-                + "the map is empty or the LEVEL value is missing:(map不能被正常的解析，map为空或者缺少LEVEL值: )"
-                + map);
+        errorException.setDesc(
+                "The map cannot be parsed normally, "
+                + "the map is empty or the LEVEL value is missing:(map不能被正常的解析，map为空或者缺少LEVEL值: )" + map);
         assertEquals(errorException.getClass(), ExceptionManager.generateException(map).getClass());
         assertEquals(errorException.toString(), ExceptionManager.generateException(map).toString());
         map.replace("level", ERROR.getLevel());
@@ -60,9 +60,8 @@ class ExceptionManagerTest {
         assertEquals(errorException.getClass(), ExceptionManager.generateException(map).getClass());
         assertEquals(errorException.toString(), ExceptionManager.generateException(map).toString());
         map.replace("level", WARN.getLevel());
-        WarnException warnException = new WarnException(
-                (Integer) map.get("errCode"),
-                "test", LinkisException.hostname, LinkisException.hostPort, LinkisException.applicationName);
+        WarnException warnException =
+                new WarnException((Integer) map.get("errCode"), "test", LinkisException.hostname, LinkisException.hostPort, LinkisException.applicationName);
         assertEquals(warnException.getClass(), ExceptionManager.generateException(map).getClass());
         assertEquals(warnException.toString(), ExceptionManager.generateException(map).toString());
         map.replace("level", FATAL.getLevel());

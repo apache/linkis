@@ -61,7 +61,7 @@ object EntranceConfiguration {
     */
   val DEFAULT_REQUEST_APPLICATION_NAME = CommonVars("wds.linkis.default.requestApplication.name", "IDE")
 
-  val SQL_LIMIT_CREATOR = CommonVars("wds.linkis.sql.limit.creator", "IDE,Visualis")
+  val SQL_LIMIT_CREATOR = CommonVars("wds.linkis.sql.limit.creator", "IDE")
   /**
     * runType
     */

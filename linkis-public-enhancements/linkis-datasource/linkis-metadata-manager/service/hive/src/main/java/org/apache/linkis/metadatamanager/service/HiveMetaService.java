@@ -44,7 +44,6 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-
 public class HiveMetaService extends AbstractMetaService<HiveConnection> {
 
     private static final Logger LOG = LoggerFactory.getLogger(HiveMetaService.class);
@@ -80,7 +79,7 @@ public class HiveMetaService extends AbstractMetaService<HiveConnection> {
             if (StringUtils.isNotBlank(keytabResourceId)) {
                 LOG.info("Start to download resource id:[" + keytabResourceId + "]");
                 String keytabFilePath =
-                    TMP_FILE_STORE_LOCATION.getValue()
+                        TMP_FILE_STORE_LOCATION.getValue()
                                 + "/"
                                 + UUID.randomUUID().toString().replace("-", "")
                                 + ".keytab";
@@ -114,9 +113,14 @@ public class HiveMetaService extends AbstractMetaService<HiveConnection> {
     private boolean downloadResource(String resourceId, String user, String absolutePath)
             throws IOException {
         LOG.info(
-            "Try to download resource resourceId:[" + resourceId + "]"+",user=["+user+"], will store in path:"+absolutePath);
-        BmlDownloadResponse downloadResponse =
-                client.downloadResource(user, resourceId);
+                "Try to download resource resourceId:["
+                        + resourceId
+                        + "]"
+                        + ",user=["
+                        + user
+                        + "], will store in path:"
+                        + absolutePath);
+        BmlDownloadResponse downloadResponse = client.downloadResource(user, resourceId);
         if (downloadResponse.isSuccess()) {
             IOUtils.copy(downloadResponse.inputStream(), new FileOutputStream(absolutePath));
             return true;

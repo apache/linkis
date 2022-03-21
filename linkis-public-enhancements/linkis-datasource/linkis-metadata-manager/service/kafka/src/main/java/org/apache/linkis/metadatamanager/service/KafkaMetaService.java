@@ -30,9 +30,6 @@ import org.apache.commons.lang.StringUtils;
 
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.stereotype.Component;
-
-import javax.annotation.PostConstruct;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +41,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
 
 public class KafkaMetaService extends AbstractMetaService<KafkaConnection> {
 
@@ -84,10 +80,10 @@ public class KafkaMetaService extends AbstractMetaService<KafkaConnection> {
             if (StringUtils.isNotBlank(keytabResourceId)) {
                 LOG.info("Start to download resource id:[" + keytabResourceId + "]");
                 String keytabFilePath =
-                    TMP_FILE_STORE_LOCATION.getValue()
-                        + "/"
-                        + UUID.randomUUID().toString().replace("-", "")
-                        + ".keytab";
+                        TMP_FILE_STORE_LOCATION.getValue()
+                                + "/"
+                                + UUID.randomUUID().toString().replace("-", "")
+                                + ".keytab";
                 if (!downloadResource(keytabResourceId, operator, keytabFilePath)) {
                     throw new MetaRuntimeException(
                             "Fail to download resource i:[" + keytabResourceId + "]", null);
@@ -126,7 +122,13 @@ public class KafkaMetaService extends AbstractMetaService<KafkaConnection> {
     private boolean downloadResource(String resourceId, String user, String absolutePath)
             throws IOException {
         LOG.info(
-            "Try to download resource resourceId:[" + resourceId + "]"+",user=["+user+"], will store in path:"+absolutePath);
+                "Try to download resource resourceId:["
+                        + resourceId
+                        + "]"
+                        + ",user=["
+                        + user
+                        + "], will store in path:"
+                        + absolutePath);
         BmlDownloadResponse downloadResponse =
                 client.downloadResource(user, resourceId, absolutePath);
         if (downloadResponse.isSuccess()) {

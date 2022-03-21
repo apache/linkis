@@ -47,6 +47,13 @@
             <version>${linkis.version}</version>
             <scope>provided</scope>
         </dependency>
+        <!--bml client-->
+        <dependency>
+            <groupId>org.apache.linkis</groupId>
+            <artifactId>linkis-bml-client</artifactId>
+            <version>${linkis.version}</version>
+        </dependency>
+
         <!--Hive dependencies-->
         <dependency>
             <groupId>org.datanucleus</groupId>
@@ -236,18 +243,6 @@
                 <exclusion>
                     <artifactId>httpcore</artifactId>
                     <groupId>org.apache.httpcomponents</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <!--bml client-->
-        <dependency>
-            <groupId>org.apache.linkis</groupId>
-            <artifactId>linkis-bml-client</artifactId>
-            <version>${linkis.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>linkis-httpclient</artifactId>
-                    <groupId>org.apache.linkis</groupId>
                 </exclusion>
             </exclusions>
         </dependency>

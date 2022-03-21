@@ -29,7 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Component
+
 public class MysqlMetaService extends AbstractMetaService<SqlConnection> {
     @Override
     public MetadataConnection<SqlConnection> getConnection(

@@ -45,16 +45,15 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-@Component
+
 public class KafkaMetaService extends AbstractMetaService<KafkaConnection> {
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaMetaService.class);
     private static final CommonVars<String> TMP_FILE_STORE_LOCATION =
-            CommonVars.apply("wds.linkis.server.mdm.service.temp.location", "classpath:/tmp");
+            CommonVars.apply("wds.linkis.server.mdm.service.temp.location", "/tmp/keytab");
     private BmlClient client;
 
-    @PostConstruct
-    public void buildClient() {
+    public KafkaMetaService() {
         client = BmlClientFactory.createBmlClient();
     }
 
@@ -85,9 +84,10 @@ public class KafkaMetaService extends AbstractMetaService<KafkaConnection> {
             if (StringUtils.isNotBlank(keytabResourceId)) {
                 LOG.info("Start to download resource id:[" + keytabResourceId + "]");
                 String keytabFilePath =
-                        resource.getFile().getAbsolutePath()
-                                + "/"
-                                + UUID.randomUUID().toString().replace("-", "");
+                    TMP_FILE_STORE_LOCATION.getValue()
+                        + "/"
+                        + UUID.randomUUID().toString().replace("-", "")
+                        + ".keytab";
                 if (!downloadResource(keytabResourceId, operator, keytabFilePath)) {
                     throw new MetaRuntimeException(
                             "Fail to download resource i:[" + keytabResourceId + "]", null);
@@ -125,6 +125,8 @@ public class KafkaMetaService extends AbstractMetaService<KafkaConnection> {
 
     private boolean downloadResource(String resourceId, String user, String absolutePath)
             throws IOException {
+        LOG.info(
+            "Try to download resource resourceId:[" + resourceId + "]"+",user=["+user+"], will store in path:"+absolutePath);
         BmlDownloadResponse downloadResponse =
                 client.downloadResource(user, resourceId, absolutePath);
         if (downloadResponse.isSuccess()) {

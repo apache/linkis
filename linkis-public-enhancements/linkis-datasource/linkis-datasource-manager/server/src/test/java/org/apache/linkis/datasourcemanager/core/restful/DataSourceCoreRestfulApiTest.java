@@ -399,7 +399,7 @@ class DataSourceCoreRestfulApiTest {
     void removeDataSource() throws Exception {
         MvcUtils mvcUtils = new MvcUtils(mockMvc);
         long dataSourceId = 1l;
-        String url = String.format("/data-source-manager/info/%s", dataSourceId);
+        String url = String.format("/data-source-manager/info/delete/%s", dataSourceId);
         DataSource dataSource = new DataSource();
         dataSource.setId(dataSourceId);
         dataSource.setCreateUser("hadoop");

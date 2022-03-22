@@ -384,7 +384,7 @@ public class DataSourceCoreRestfulApi {
      * @param dataSourceId
      * @return
      */
-    @RequestMapping(value = "/info/{dataSourceId}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/info/delete/{dataSourceId}", method = RequestMethod.DELETE)
     public Message removeDataSource(
             @PathVariable("dataSourceId") Long dataSourceId, HttpServletRequest request) {
         return RestfulApiHelper.doAndResponse(

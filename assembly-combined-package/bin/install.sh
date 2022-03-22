@@ -126,7 +126,7 @@ echo "[RESULT_SET_ROOT_PATH] try to create directory"
      sudo chmod -R 775 $localRootDir/$deployUser
    elif [[ $RESULT_SET_ROOT_PATH == hdfs://* ]];then
      localRootDir=${RESULT_SET_ROOT_PATH#hdfs://}
-     echo "[RESULT_SET_ROOT_PATH] try to create hdfs dir,cmd is: hdfs dfs -mkdir -p $localRootDir/$deployUser"
+     echo "[RESULT_SET_ROOT_PATH] try to create hdfs dir,cmd is: hdfs dfs -mkdir -p $localRootDir"
      hdfs dfs -mkdir -p $localRootDir
      hdfs dfs -chmod 775 $localRootDir
    else

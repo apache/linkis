@@ -49,10 +49,14 @@
     .ivu-form {
         display: flex;
         .ivu-form-item {
+            margin-right: 4px;
             margin-bottom: 10px;
             .ivu-form-item-content {
                 display: flex !important;
             }
+        }
+        .ivu-input-with-suffix {
+            padding-right: 7px;
         }
     }
     .global-history-table {

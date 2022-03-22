@@ -22,20 +22,18 @@
         <InputNumber
           v-model="searchBar.id"
           :placeholder="$t('message.linkis.formItems.id.placeholder')"
-          style="width:100px;"
+          style="width:60px;"
           :min="1"
         ></InputNumber>
       </FormItem>
-      <Divider type="vertical" class="divider" v-if="isAdminModel" />
       <FormItem prop="proxyUser" :label="$t('message.linkis.userName')" v-if="isAdminModel">
         <Input
           :maxlength="50"
           v-model="searchBar.proxyUser"
           :placeholder="$t('message.linkis.searchName')"
-          style="width:120px;"
+          style="width:60px;"
         />
       </FormItem>
-      <Divider type="vertical" class="divider" />
       <FormItem prop="shortcut" :label="$t('message.linkis.formItems.date.label')">
         <DatePicker
           :transfer="true"
@@ -46,28 +44,25 @@
           placement="bottom-start"
           format="yyyy-MM-dd HH:mm"
           :placeholder="$t('message.linkis.formItems.date.placeholder')"
-          style="width: 200px"
+          style="width: 115px"
           :editable="false"
         />
       </FormItem>
-      <Divider type="vertical" class="divider"/>
       <FormItem prop="creator" :label="$t('message.linkis.formItems.creator.label')">
         <Input
           :maxlength="50"
           v-model="searchBar.creator"
           :placeholder="$t('message.linkis.formItems.creator.placeholder')"
-          style="width:120px;"
+          style="width:80px;"
         />
       </FormItem>
-      <Divider type="vertical" class="divider" />
       <FormItem prop="engine" :label="$t('message.linkis.formItems.engine.label')">
-        <Select v-model="searchBar.engine" style="min-width:70px;">
+        <Select v-model="searchBar.engine" style="width: 70px">
           <Option v-for="(item) in getEngineTypes" :label="item === 'all' ? '全部': item" :value="item" :key="item" />
         </Select>
       </FormItem>
-      <Divider type="vertical" class="divider" />
       <FormItem prop="status" :label="$t('message.linkis.formItems.status.label')">
-        <Select v-model="searchBar.status" style="min-width:90px;">
+        <Select v-model="searchBar.status" style="width: 70px">
           <Option
             v-for="(item) in statusType"
             :label="item.label"
@@ -76,7 +71,6 @@
           />
         </Select>
       </FormItem>
-      <Divider type="vertical" class="divider" />
       <FormItem>
         <Button
           type="primary"

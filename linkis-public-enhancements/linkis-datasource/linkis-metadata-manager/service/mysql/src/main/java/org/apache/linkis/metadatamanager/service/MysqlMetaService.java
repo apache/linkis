@@ -22,14 +22,11 @@ import org.apache.linkis.metadatamanager.common.domain.MetaColumnInfo;
 import org.apache.linkis.metadatamanager.common.service.AbstractMetaService;
 import org.apache.linkis.metadatamanager.common.service.MetadataConnection;
 
-import org.springframework.stereotype.Component;
-
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Component
 public class MysqlMetaService extends AbstractMetaService<SqlConnection> {
     @Override
     public MetadataConnection<SqlConnection> getConnection(

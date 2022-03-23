@@ -47,6 +47,7 @@ abstract class AbstractLabelGatewayRouter extends AbstractGatewayRouter with Log
     if (StringUtils.isNotBlank(serviceInstance.getApplicationName) && StringUtils.isNotBlank(serviceInstance.getInstance)) {
       return serviceInstance
     }
+    //TODO label not exist should throw Exception
     if (null == routeLabels || routeLabels.isEmpty) {
       return null
     }

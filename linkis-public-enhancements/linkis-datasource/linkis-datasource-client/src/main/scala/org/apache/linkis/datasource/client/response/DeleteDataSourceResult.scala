@@ -22,7 +22,7 @@ import org.apache.linkis.httpclient.dws.response.DWSResult
 
 import scala.beans.BeanProperty
 
-@DWSHttpMessageResult("/api/rest_j/v\\d+/data-source-manager/info/(\\S+)")
+@DWSHttpMessageResult("/api/rest_j/v\\d+/data-source-manager/info/delete/(\\S+)")
 class DeleteDataSourceResult extends DWSResult{
   @BeanProperty var removeId: Long = _
 }

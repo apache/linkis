@@ -183,14 +183,14 @@ class MetadataCoreRestfulTest {
             params.add("system", "hive");
             Mockito.when(
                             metadataAppService.getPartitionsByDsId(
-                                    dataSourceId, database, table, ",hive", null))
+                                    dataSourceId, database, table, ",hive", false, null))
                     .thenReturn(new MetaPartitionInfo());
             res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
             Assertions.assertTrue(MessageStatus.SUCCESS() == res.getStatus());
 
             Mockito.doThrow(new ErrorException(1, ""))
                     .when(metadataAppService)
-                    .getPartitionsByDsId(dataSourceId, database, table, ",hive", null);
+                    .getPartitionsByDsId(dataSourceId, database, table, ",hive", false, null);
             res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
             Assertions.assertTrue(
                     MessageStatus.ERROR() == res.getStatus()

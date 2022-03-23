@@ -76,6 +76,8 @@ class NodeHeartbeatMonitor extends ManagerMonitor with Logging {
   private val maxCreateInterval = ManagerMonitorConf.NODE_MAX_CREATE_TIME.getValue.toLong
   private val maxUpdateInterval = ManagerMonitorConf.NODE_HEARTBEAT_MAX_UPDATE_TIME.getValue.toLong
 
+  private val ecmHeartBeatTime = ManagerMonitorConf.ECM_HEARTBEAT_MAX_UPDATE_TIME.getValue.toLong
+
   /**
    * 1. Scan all nodes regularly for three minutes to determine the update time of Metrics,
    * 2. If the update time exceeds a period of time and has not been updated, initiate a Metrics update request proactively.
@@ -157,7 +159,13 @@ class NodeHeartbeatMonitor extends ManagerMonitor with Logging {
   private def dealECMNotExistsInRegistry(ecmNodes: util.List[Node]): Unit = {
     val existingECMInstances = Sender.getInstances(ecmName)
     ecmNodes.foreach { ecm =>
-      if (!existingECMInstances.contains(ecm.getServiceInstance)) {
+      val updateTime = if (null == ecm.getUpdateTime) {
+        ecm.getStartTime.getTime
+      } else {
+        ecm.getUpdateTime.getTime
+      }
+      val updateOverdue = (System.currentTimeMillis() - updateTime) > ecmHeartBeatTime
+      if (!existingECMInstances.contains(ecm.getServiceInstance) && updateOverdue) {
         logger.warn(s"Failed to find ecm instance ${ecm.getServiceInstance} from eureka Registry to kill")
         Utils.tryAndWarnMsg(triggerEMSuicide(ecm.getServiceInstance))(s"ecm ${ecm.getServiceInstance} clear failed")
       }

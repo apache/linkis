@@ -114,12 +114,6 @@ class HiveEngineConnExecutor(id: Int,
 
   override def executeLine(engineExecutorContext: EngineExecutionContext, code: String): ExecuteResponse = {
     this.engineExecutorContext = engineExecutorContext
-    if (engineExecutorContext.getEnableResultsetMetaWithTableName) {
-      hiveConf.setBoolVar(ConfVars.HIVE_RESULTSET_USE_UNIQUE_COLUMN_NAMES, true)
-      info("set HIVE_RESULTSET_USE_UNIQUE_COLUMN_NAMES true")
-    } else {
-      hiveConf.setBoolVar(ConfVars.HIVE_RESULTSET_USE_UNIQUE_COLUMN_NAMES, false)
-    }
     CSHiveHelper.setContextIDInfoToHiveConf(engineExecutorContext, hiveConf)
     singleSqlProgressMap.clear()
     singleCodeCompleted.set(false)

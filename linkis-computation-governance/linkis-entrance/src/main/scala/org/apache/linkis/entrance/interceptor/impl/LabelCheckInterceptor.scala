@@ -70,7 +70,12 @@ class LabelCheckInterceptor extends EntranceInterceptor {
     if (userCreatorLabelOption.isDefined) {
       val userCreator = userCreatorLabelOption.get.asInstanceOf[UserCreatorLabel]
       if (StringUtils.isNotBlank(userCreator.getUser)) {
+        val userInLabel = userCreator.getUser
+        if (userInLabel.equalsIgnoreCase(executeUser)) {
         return
+        } else {
+          throw LabelCheckException(50080, s"SubmitUser : ${submitUser} must be the same as ExecuteUser : ${executeUser} , and user : ${userInLabel} in userCreatorLabel.")
+        }
       }
       //TODO: need one more check to see if userCreatorLabel equals executeUser
     }

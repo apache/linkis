@@ -72,6 +72,7 @@ class LabelCheckInterceptor extends EntranceInterceptor {
       if (StringUtils.isNotBlank(userCreator.getUser)) {
         return
       }
+      //TODO: need one more check to see if userCreatorLabel equals executeUser
     }
     throw LabelCheckException(50079, "UserCreatorLabel must be need")
   }

@@ -228,7 +228,7 @@ class ConfigurationService extends Logging {
         defaultConfig.setIsUserDefined(false)
         configs.asScala.foreach(config => {
           if(config.getKey != null && config.getKey.equals(defaultConfig.getKey)){
-            if(config.getConfigValue != null){
+            if(StringUtils.isNotBlank(config.getConfigValue)) {
               defaultConfig.setConfigValue(config.getConfigValue)
               defaultConfig.setConfigLabelId(config.getConfigLabelId)
               defaultConfig.setValueId(config.getValueId)
@@ -412,12 +412,24 @@ class ConfigurationService extends Logging {
     val map = new util.HashMap[String, String]()
     val allConfig = all.asScala.map(configTree => configTree.getSettings)
     val userConfig = user.asScala.map(configTree => configTree.getSettings)
-    if(filter != null){
-      allConfig.foreach(f => f.asScala.foreach(configKeyValue => if(configKeyValue.getKey.contains(filter)) map.put(configKeyValue.getKey,configKeyValue.getDefaultValue)))
-      userConfig.foreach(f => f.asScala.foreach(configKeyValue => if(configKeyValue.getKey.contains(filter) && StringUtils.isNotEmpty(configKeyValue.getConfigValue)) map.put(configKeyValue.getKey,configKeyValue.getConfigValue)))
-    }else{
-      allConfig.foreach(f => f.asScala.foreach(configKeyValue => map.put(configKeyValue.getKey,configKeyValue.getDefaultValue)))
-      userConfig.foreach(f => f.asScala.foreach(configKeyValue => if(StringUtils.isNotEmpty(configKeyValue.getConfigValue))map.put(configKeyValue.getKey,configKeyValue.getConfigValue)))
+    if (filter != null) {
+      allConfig.foreach(f => f.asScala.foreach(configKeyValue => if (configKeyValue.getKey.contains(filter)) map.put(configKeyValue.getKey, configKeyValue.getDefaultValue)))
+      userConfig.foreach(f => f.asScala.foreach(configKeyValue => if (configKeyValue.getKey.contains(filter)) {
+        if (StringUtils.isNotEmpty(configKeyValue.getConfigValue)) {
+          map.put(configKeyValue.getKey, configKeyValue.getConfigValue)
+        } else {
+          map.put(configKeyValue.getKey, configKeyValue.getDefaultValue)
+        }
+      }))
+    } else {
+      allConfig.foreach(f => f.asScala.foreach(configKeyValue => map.put(configKeyValue.getKey, configKeyValue.getDefaultValue)))
+      userConfig.foreach(f => f.asScala.foreach(configKeyValue => {
+        if (StringUtils.isNotEmpty(configKeyValue.getConfigValue)) {
+          map.put(configKeyValue.getKey, configKeyValue.getConfigValue)
+        } else {
+          map.put(configKeyValue.getKey, configKeyValue.getDefaultValue)
+        }
+      }))
     }
     /*此处的用户配置会覆盖默认的配置*/
     map

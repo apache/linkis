@@ -36,8 +36,6 @@ abstract class SingleThreadUpstreamConnectionMonitor(name: String, infoAccess: C
 
   private val monitorDaemon = new ScheduledThreadPoolExecutor(3, new BasicThreadFactory.Builder().namingPattern(name + "-%d").daemon(true).build)
 
-  private val shouldStart = ComputationExecutorConf.UPSTREAM_MONITOR_ECTASK_SHOULD_START
-
   private var started = false
 
   override def getUpstreamNodeInfoAccess(): ConnectionInfoAccess = infoAccess
@@ -49,10 +47,6 @@ abstract class SingleThreadUpstreamConnectionMonitor(name: String, infoAccess: C
   def generateHandlerRequest(wrapperList: util.List[ConnectionInfoWrapper]): MonitorHandlerRequest
 
   def start(): Unit = this.synchronized {
-    if (!shouldStart) {
-      info("Upstream-monitor is configured to be off. Will not monitor upstream connection for engine-task")
-      return
-    }
     if (!started) {
       panicIfNull(infoAccess, "infoAccess should not be null")
       panicIfNull(handler, "handler should not be null")

@@ -53,7 +53,6 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
     private static final Logger LOG = LoggerFactory.getLogger(DataSourceInfoService.class);
     @Autowired private BmlAppService bmlAppService;
 
-    @Autowired private DataSourceTypeEnvDao dataSourceTypeEnvDao;
 
     @Autowired private DataSourceDao dataSourceDao;
 
@@ -253,9 +252,6 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
                     dataSourceEnv.setParameter(parameter);
                     // Save environment into database
                     dataSourceEnvDao.insertOne(dataSourceEnv);
-                    // Store relation
-                    dataSourceTypeEnvDao.insertRelation(
-                            dataSourceEnv.getDataSourceTypeId(), dataSourceEnv.getId());
                 });
     }
 
@@ -277,8 +273,6 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
             // First to delete record in db
             int affect = dataSourceEnvDao.removeOne(envId);
             if (affect > 0) {
-                // Remove relations
-                dataSourceTypeEnvDao.removeRelationsByEnvId(envId);
                 // Remove resource
                 Map<String, Object> connectParams = dataSourceEnv.getConnectParams();
                 List<DataSourceParamKeyDefinition> keyDefinitions =
@@ -322,12 +316,6 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
                     updatedOne.setParameter(parameter);
                     // Update environment into database
                     dataSourceEnvDao.updateOne(updatedOne);
-                    if (!updatedOne.getDataSourceTypeId().equals(storedOne.getDataSourceTypeId())) {
-                        // Remove old relation and add new relation
-                        dataSourceTypeEnvDao.removeRelationsByEnvId(updatedOne.getId());
-                        dataSourceTypeEnvDao.insertRelation(
-                                updatedOne.getDataSourceTypeId(), updatedOne.getId());
-                    }
                 });
     }
 

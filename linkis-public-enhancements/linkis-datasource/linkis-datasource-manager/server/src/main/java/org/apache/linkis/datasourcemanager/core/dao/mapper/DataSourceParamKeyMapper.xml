@@ -18,7 +18,7 @@
 
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.apache.linkis.datasourcemanager.core.dao.DataSourceParamKeyDao">
-    <resultMap id="paramKeyMap" type="DataSourceParamKeyDefinition">
+    <resultMap id="paramKeyMap" type="org.apache.linkis.datasourcemanager.common.domain.DataSourceParamKeyDefinition">
         <result property="id" column="id"/>
         <result property="key" column="key"/>
         <result property="description" column="description"/>

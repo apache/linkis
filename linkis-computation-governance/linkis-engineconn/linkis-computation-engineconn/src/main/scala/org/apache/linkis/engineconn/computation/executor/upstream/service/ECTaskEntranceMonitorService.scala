@@ -29,7 +29,7 @@ import org.apache.linkis.engineconn.executor.listener.event.EngineConnSyncEvent
 import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
 import org.springframework.stereotype.Component
 
-@Component
+@Component //开关放在这里
 class ECTaskEntranceMonitorService extends TaskStatusChangedForUpstreamMonitorListener with Logging {
   //add a layer
   private val eCTaskEntranceMonitor = new ECTaskEntranceMonitor

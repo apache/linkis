@@ -48,7 +48,7 @@ abstract class AbstractLabelGatewayRouter extends AbstractGatewayRouter with Log
       return serviceInstance
     }
     if (null == routeLabels || routeLabels.isEmpty) {
-      return null
+      return null // TODO: probably throw exception is better
     }
 
     val candidateServices = insLabelService.searchInstancesByLabels(routeLabels)

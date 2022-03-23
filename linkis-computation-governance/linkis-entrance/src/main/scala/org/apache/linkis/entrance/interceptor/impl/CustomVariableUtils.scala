@@ -37,7 +37,7 @@ import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 import scala.util.control.Exception._
 
-
+//TODO: optimize code, 拆分Utils类
 object CustomVariableUtils extends Logging {
   //hql sql jdbc to sql python to py
   private val SQL_TYPE = "sql"

@@ -18,7 +18,6 @@
 package org.apache.linkis.engineconn.computation.executor.upstream.service
 
 import javax.annotation.PostConstruct
-
 import org.apache.linkis.common.listener.Event
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.engineconn.computation.executor.upstream.ECTaskEntranceMonitor
@@ -27,20 +26,19 @@ import org.apache.linkis.engineconn.computation.executor.upstream.listener.TaskS
 import org.apache.linkis.engineconn.executor.listener.ExecutorListenerBusContext
 import org.apache.linkis.engineconn.executor.listener.event.EngineConnSyncEvent
 import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
-import org.springframework.stereotype.Component
+import org.springframework.context.annotation.Conditional
 
-@Component
+@Conditional(Array(classOf[ECTaskEntranceMonitorServiceStartCondition]))
 class ECTaskEntranceMonitorService extends TaskStatusChangedForUpstreamMonitorListener with Logging {
-  //add a layer
+
   private val eCTaskEntranceMonitor = new ECTaskEntranceMonitor
   private val syncListenerBus = ExecutorListenerBusContext.getExecutorListenerBusContext.getEngineConnSyncListenerBus
-  //TODO: configuration for start or not
+
 
   @PostConstruct
   def init(): Unit = {
     syncListenerBus.addListener(this)
     eCTaskEntranceMonitor.start
-    //TODO: shutdown
   }
 
   override def onEvent(event: EngineConnSyncEvent): Unit = event match {
@@ -64,5 +62,9 @@ class ECTaskEntranceMonitorService extends TaskStatusChangedForUpstreamMonitorLi
 
   override def onEventError(event: Event, t: Throwable): Unit = {
 
+  }
+
+  def shutdown(): Unit = {
+    eCTaskEntranceMonitor.shutdown
   }
 }

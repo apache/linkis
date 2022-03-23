@@ -77,6 +77,7 @@ class LabelCheckInterceptor extends EntranceInterceptor {
           throw LabelCheckException(50080, s"SubmitUser : ${submitUser} must be the same as ExecuteUser : ${executeUser} , and user : ${userInLabel} in userCreatorLabel.")
         }
       }
+      //TODO: need one more check to see if userCreatorLabel equals executeUser
     }
     throw LabelCheckException(50079, "UserCreatorLabel must be need")
   }

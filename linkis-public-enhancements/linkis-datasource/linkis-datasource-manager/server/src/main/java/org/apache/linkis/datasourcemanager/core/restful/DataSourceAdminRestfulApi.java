@@ -160,7 +160,7 @@ public class DataSourceAdminRestfulApi {
                     }
                     dataSourceEnv.setCreateUser(storedDataSourceEnv.getCreateUser());
                     updateDataSourceEnv(dataSourceEnv, storedDataSourceEnv);
-                    return Message.ok().data("update_id", envId);
+                    return Message.ok().data("updateId", envId);
                 },
                 "Fail to update data source environment[更新数据源环境失败]");
     }

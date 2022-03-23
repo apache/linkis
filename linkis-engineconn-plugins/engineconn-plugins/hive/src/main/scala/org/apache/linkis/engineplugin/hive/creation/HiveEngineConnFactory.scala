@@ -70,7 +70,7 @@ class HiveEngineConnFactory extends ComputationSingleExecutorEngineConnFactory w
       hiveConf.set("enable_fetch_base64","true")
     }
     //add hive.aux.jars.path to hive conf
-    if(StringUtils.isNotEmpty(HiveEngineConfiguration.HIVE_AUX_JARS_PATH)) {
+    if(StringUtils.isNotBlank(HiveEngineConfiguration.HIVE_AUX_JARS_PATH)) {
       hiveConf.setVar(HiveConf.ConfVars.HIVEAUXJARS, HiveEngineConfiguration.HIVE_AUX_JARS_PATH)
     }
 

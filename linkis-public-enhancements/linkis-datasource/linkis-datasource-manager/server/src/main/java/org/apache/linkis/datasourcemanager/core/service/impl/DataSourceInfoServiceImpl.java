@@ -28,6 +28,7 @@ import org.apache.linkis.datasourcemanager.core.dao.*;
 import org.apache.linkis.datasourcemanager.core.formdata.FormStreamContent;
 import org.apache.linkis.datasourcemanager.core.service.BmlAppService;
 import org.apache.linkis.datasourcemanager.core.service.DataSourceInfoService;
+import org.apache.linkis.datasourcemanager.core.service.hooks.DataSourceParamsHook;
 import org.apache.linkis.datasourcemanager.core.vo.DataSourceEnvVo;
 import org.apache.linkis.datasourcemanager.core.vo.DataSourceVo;
 
@@ -62,6 +63,8 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
     @Autowired private DataSourceParamKeyDao dataSourceParamKeyDao;
 
     @Autowired private DataSourceVersionDao dataSourceVersionDao;
+
+    @Autowired private List<DataSourceParamsHook> dataSourceParamsHooks = new ArrayList<>();
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -412,7 +415,13 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
                 keyDefinitionList.stream()
                         .map(DataSourceParamKeyDefinition::getKey)
                         .collect(Collectors.toList());
-        connectParams.entrySet().removeIf(entry -> !definedKeyNames.contains(entry.getKey()));
+        // Accept the other parameters
+        //        connectParams.entrySet().removeIf(entry ->
+        // !definedKeyNames.contains(entry.getKey()));
+        // 2.1 Invoke the hooks
+        for (DataSourceParamsHook hook : dataSourceParamsHooks) {
+            hook.beforePersist(connectParams, keyDefinitionList);
+        }
         datasourceVersion.setParameter(Json.toJson(connectParams, null));
 
         // 3. insert to dataSourceVersionDao
@@ -501,6 +510,9 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
                                     String.valueOf(storedParams.get(definedKey.getKey())));
                         }
                     });
+            for (DataSourceParamsHook hook : dataSourceParamsHooks) {
+                hook.beforePersist(updatedParams, keyDefinitionList);
+            }
             parameterCallback.accept(Json.toJson(updatedParams, null));
             deleteResources(userName, duplicateResources);
         } catch (Exception e) {
@@ -552,6 +564,9 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
                                 }
                                 return false;
                             });
+            for (DataSourceParamsHook hook : dataSourceParamsHooks) {
+                hook.beforePersist(connectParams, keyDefinitionList);
+            }
             parameterCallback.accept(Json.toJson(connectParams, null));
         } catch (Exception e) {
             deleteResources(userName, uploadedResources);

@@ -37,7 +37,8 @@ object JobSubmitAction {
   class Builder private[JobSubmitAction]() {
     private var user: String = _
 
-    private var executeUser: String = _ //TODO: remove in the future
+    //TODO: remove executeUser in the future
+    private var executeUser: String = _
 
     private var executionContent: util.Map[String, Any] = _
 

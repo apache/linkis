@@ -71,7 +71,8 @@ class LabelCheckInterceptor extends EntranceInterceptor {
       val userCreator = userCreatorLabelOption.get.asInstanceOf[UserCreatorLabel]
       if (StringUtils.isNotBlank(userCreator.getUser)) {
         return
-      } //TODO: check if userCreatorLabel equals executeUser
+      }
+      //TODO: need one more check to see if userCreatorLabel equals executeUser
     }
     throw LabelCheckException(50079, "UserCreatorLabel must be need")
   }

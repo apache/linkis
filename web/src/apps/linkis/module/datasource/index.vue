@@ -266,6 +266,13 @@ export default {
       },
       tableColumnNum: [
         {
+          title: "Id",
+          key: 'id',
+          minWidth: 10,
+          tooltip: true,
+          align: 'center',
+        },
+        {
           title: this.$t('message.linkis.datasource.dataSourceName'),
           key: 'dataSourceName',
           minWidth: 120,
@@ -275,7 +282,7 @@ export default {
         {
           title: this.$t('message.linkis.datasource.dataSourceType'),
           key: 'dataSourceTypeId',
-          minWidth: 100,
+          minWidth: 60,
           render: (h, params) => {
             let result = {}
             if (this.typeList) {
@@ -302,6 +309,13 @@ export default {
         //   },
         //   align: 'center'
         // },
+        {
+          title: this.$t('message.linkis.datasource.createSystem'),
+          key: 'createSystem',
+          minWidth: 50,
+          tooltip: true,
+          align: 'center',
+        },
         {
           title: this.$t('message.linkis.datasource.status'),
           key: 'status',

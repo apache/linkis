@@ -253,6 +253,7 @@
         "versionList": "Version list",
         "dataSourceName": "Data source name",
         "dataSourceType": "Data source type",
+        "createSystem": "Create system",
         "dataSourceEnv": "Available Space",
         "status": "Status",
         "permissions": "Permissions",

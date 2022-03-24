@@ -101,7 +101,7 @@
             <if test="startDate != null">and created_time >= #{startDate} AND created_time <![CDATA[<=]]> #{endDate}</if>
             <if test="status != null">and <foreach collection="status" item="element" close=")" separator="," open="status in (">#{element}</foreach></if>
             <if test="userCreatorKey != null and userCreatorValue != null">
-                and  LOCATE('"${userCreatorKey}":"${userCreatorValue}"', labels) > 0
+                and  LOCATE('"${userCreatorKey}":"${userCreatorValue}', labels) > 0
             </if>
         </where>
         ORDER BY linkis_ps_job_history_group_history.created_time DESC
@@ -116,7 +116,7 @@
             <if test="startDate != null">and created_time >= #{startDate} AND created_time <![CDATA[<=]]> #{endDate}</if>
             <if test="status != null">and <foreach collection="status" item="element" close=")" separator="," open="status in (">#{element}</foreach></if>
             <if test="userCreatorKey != null and creator != null">
-                and labels like '%${userCreatorKey}":"%-${creator}%'
+                and labels like '%"${userCreatorKey}":"%-${creator}%'
             </if>
         </where>
         ORDER BY linkis_ps_job_history_group_history.created_time DESC

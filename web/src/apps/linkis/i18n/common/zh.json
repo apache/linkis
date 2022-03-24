@@ -256,6 +256,7 @@
                 "versionList": "版本列表",
                 "dataSourceName": "数据源名称",
                 "dataSourceType": "数据源类型",
+                "createSystem": "创建系统",
                 "dataSourceEnv": "可用集群",
                 "status": "状态",
                 "permissions": "权限",

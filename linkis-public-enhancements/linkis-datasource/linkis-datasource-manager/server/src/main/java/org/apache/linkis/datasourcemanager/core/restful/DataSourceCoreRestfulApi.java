@@ -29,6 +29,7 @@ import org.apache.linkis.datasourcemanager.core.formdata.MultiPartFormDataTransf
 import org.apache.linkis.datasourcemanager.core.service.DataSourceInfoService;
 import org.apache.linkis.datasourcemanager.core.service.DataSourceRelateService;
 import org.apache.linkis.datasourcemanager.core.service.MetadataOperateService;
+import org.apache.linkis.datasourcemanager.core.service.hooks.DataSourceParamsHook;
 import org.apache.linkis.datasourcemanager.core.validate.ParameterValidateException;
 import org.apache.linkis.datasourcemanager.core.validate.ParameterValidator;
 import org.apache.linkis.datasourcemanager.core.vo.DataSourceVo;
@@ -71,6 +72,8 @@ public class DataSourceCoreRestfulApi {
     @Autowired private MetadataOperateService metadataOperateService;
 
     private MultiPartFormDataTransformer formDataTransformer;
+
+    @Autowired private List<DataSourceParamsHook> dataSourceParamsHooks = new ArrayList<>();
 
     @PostConstruct
     public void initRestful() {
@@ -163,7 +166,7 @@ public class DataSourceCoreRestfulApi {
                                         + " 已经存在]");
                     }
                     dataSourceInfoService.updateDataSourceInfo(dataSource);
-                    return Message.ok().data("update_id", dataSourceId);
+                    return Message.ok().data("updateId", dataSourceId);
                 },
                 "Fail to update data source[更新数据源失败]");
     }
@@ -231,7 +234,7 @@ public class DataSourceCoreRestfulApi {
                 () -> {
                     DataSource dataSource = dataSourceInfoService.getDataSourceInfo(dataSourceId);
                     if (dataSource == null) {
-                        return Message.error("No Exists The DataSource [不存在改数据源]");
+                        return Message.error("No Exists The DataSource [不存在该数据源]");
                     }
                     if (!AuthContext.hasPermission(dataSource, request)) {
                         return Message.error(
@@ -256,7 +259,7 @@ public class DataSourceCoreRestfulApi {
                     DataSource dataSource = dataSourceInfoService.getDataSourceInfo(dataSourceName);
 
                     if (dataSource == null) {
-                        return Message.error("No Exists The DataSource [不存在改数据源]");
+                        return Message.error("No Exists The DataSource [不存在该数据源]");
                     }
 
                     if (!AuthContext.hasPermission(dataSource, request)) {
@@ -292,7 +295,7 @@ public class DataSourceCoreRestfulApi {
                             dataSourceInfoService.getDataSourceInfo(dataSourceId, version);
 
                     if (dataSource == null) {
-                        return Message.error("No Exists The DataSource [不存在改数据源]");
+                        return Message.error("No Exists The DataSource [不存在该数据源]");
                     }
 
                     if (!AuthContext.hasPermission(dataSource, request)) {
@@ -325,7 +328,7 @@ public class DataSourceCoreRestfulApi {
                             dataSourceInfoService.getDataSourceInfoBrief(dataSourceId);
 
                     if (dataSource == null) {
-                        return Message.error("No Exists The DataSource [不存在改数据源]");
+                        return Message.error("No Exists The DataSource [不存在该数据源]");
                     }
 
                     if (!AuthContext.hasPermission(dataSource, request)) {
@@ -361,7 +364,7 @@ public class DataSourceCoreRestfulApi {
                             dataSourceInfoService.getDataSourceInfoBrief(dataSourceId);
 
                     if (dataSource == null) {
-                        return Message.error("No Exists The DataSource [不存在改数据源]");
+                        return Message.error("No Exists The DataSource [不存在该数据源]");
                     }
 
                     if (!AuthContext.hasPermission(dataSource, request)) {
@@ -384,7 +387,7 @@ public class DataSourceCoreRestfulApi {
      * @param dataSourceId
      * @return
      */
-    @RequestMapping(value = "/info/{dataSourceId}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/info/delete/{dataSourceId}", method = RequestMethod.DELETE)
     public Message removeDataSource(
             @PathVariable("dataSourceId") Long dataSourceId, HttpServletRequest request) {
         return RestfulApiHelper.doAndResponse(
@@ -394,7 +397,7 @@ public class DataSourceCoreRestfulApi {
                             dataSourceInfoService.getDataSourceInfoBrief(dataSourceId);
 
                     if (dataSource == null) {
-                        return Message.error("No Exists The DataSource [不存在改数据源]");
+                        return Message.error("No Exists The DataSource [不存在该数据源]");
                     }
 
                     if (!AuthContext.hasPermission(dataSource, request)) {
@@ -421,7 +424,7 @@ public class DataSourceCoreRestfulApi {
                             dataSourceInfoService.getDataSourceInfoBrief(dataSourceId);
 
                     if (dataSource == null) {
-                        return Message.error("No Exists The DataSource [不存在改数据源]");
+                        return Message.error("No Exists The DataSource [不存在该数据源]");
                     }
 
                     if (!AuthContext.hasPermission(dataSource, request)) {
@@ -454,7 +457,7 @@ public class DataSourceCoreRestfulApi {
                             dataSourceInfoService.getDataSourceInfoForConnect(dataSourceId);
 
                     if (dataSource == null) {
-                        return Message.error("No Exists The DataSource [不存在改数据源]");
+                        return Message.error("No Exists The DataSource [不存在该数据源]");
                     }
 
                     if (!AuthContext.hasPermission(dataSource, req)) {
@@ -481,7 +484,7 @@ public class DataSourceCoreRestfulApi {
                             dataSourceInfoService.getDataSourceInfoForConnect(dataSourceName);
 
                     if (dataSource == null) {
-                        return Message.error("No Exists The DataSource [不存在改数据源]");
+                        return Message.error("No Exists The DataSource [不存在该数据源]");
                     }
 
                     if (!AuthContext.hasPermission(dataSource, req)) {
@@ -510,7 +513,7 @@ public class DataSourceCoreRestfulApi {
                             dataSourceInfoService.getDataSourceInfoForConnect(
                                     dataSourceId, version);
                     if (dataSource == null) {
-                        return Message.error("No Exists The DataSource [不存在改数据源]");
+                        return Message.error("No Exists The DataSource [不存在该数据源]");
                     }
 
                     if (!AuthContext.hasPermission(dataSource, req)) {
@@ -525,6 +528,14 @@ public class DataSourceCoreRestfulApi {
                             dataSourceRelateService.getKeyDefinitionsByType(
                                     dataSource.getDataSourceTypeId()),
                             connectParams);
+                    // Get definitions
+                    List<DataSourceParamKeyDefinition> keyDefinitionList =
+                            dataSourceRelateService.getKeyDefinitionsByType(
+                                    dataSource.getDataSourceTypeId());
+                    // For connecting, also need to handle the parameters
+                    for (DataSourceParamsHook hook : dataSourceParamsHooks) {
+                        hook.beforePersist(connectParams, keyDefinitionList);
+                    }
                     metadataOperateService.doRemoteConnect(
                             mdRemoteServiceName,
                             dataSourceTypeName.toLowerCase(),

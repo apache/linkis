@@ -17,6 +17,7 @@
 
 package org.apache.linkis.datasourcemanager.core.restful;
 
+import org.apache.linkis.common.exception.ErrorException;
 import org.apache.linkis.datasourcemanager.common.domain.DataSource;
 import org.apache.linkis.datasourcemanager.common.domain.DataSourceParamKeyDefinition;
 import org.apache.linkis.datasourcemanager.common.domain.DataSourceType;
@@ -25,6 +26,7 @@ import org.apache.linkis.datasourcemanager.core.formdata.MultiPartFormDataTransf
 import org.apache.linkis.datasourcemanager.core.service.DataSourceInfoService;
 import org.apache.linkis.datasourcemanager.core.service.DataSourceRelateService;
 import org.apache.linkis.datasourcemanager.core.service.MetadataOperateService;
+import org.apache.linkis.datasourcemanager.core.service.hooks.DataSourceParamsHook;
 import org.apache.linkis.datasourcemanager.core.validate.ParameterValidateException;
 import org.apache.linkis.datasourcemanager.core.validate.ParameterValidator;
 import org.apache.linkis.metadatamanager.common.MdmConfiguration;
@@ -44,6 +46,7 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 import javax.validation.groups.Default;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -63,6 +66,8 @@ public class DataSourceOperateRestfulApi {
     @Autowired private ParameterValidator parameterValidator;
 
     @Autowired private Validator beanValidator;
+
+    @Autowired private List<DataSourceParamsHook> dataSourceParamsHooks = new ArrayList<>();
 
     private MultiPartFormDataTransformer formDataTransformer;
 
@@ -93,8 +98,7 @@ public class DataSourceOperateRestfulApi {
      *
      * @param dataSource
      */
-    protected void doConnect(String operator, DataSource dataSource)
-            throws ParameterValidateException {
+    protected void doConnect(String operator, DataSource dataSource) throws ErrorException {
         if (dataSource.getConnectParams().containsKey("envId")) {
             try {
                 dataSourceInfoService.addEnvParamsToDataSource(
@@ -109,6 +113,10 @@ public class DataSourceOperateRestfulApi {
         dataSource.setKeyDefinitions(keyDefinitionList);
         Map<String, Object> connectParams = dataSource.getConnectParams();
         parameterValidator.validate(keyDefinitionList, connectParams);
+        // For connecting, also need to handle the parameters
+        for (DataSourceParamsHook hook : dataSourceParamsHooks) {
+            hook.beforePersist(connectParams, keyDefinitionList);
+        }
         DataSourceType dataSourceType =
                 dataSourceRelateService.getDataSourceType(dataSource.getDataSourceTypeId());
         metadataOperateService.doRemoteConnect(

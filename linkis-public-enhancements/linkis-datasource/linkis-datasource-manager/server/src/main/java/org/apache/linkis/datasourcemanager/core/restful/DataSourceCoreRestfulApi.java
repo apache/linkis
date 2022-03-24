@@ -29,6 +29,7 @@ import org.apache.linkis.datasourcemanager.core.formdata.MultiPartFormDataTransf
 import org.apache.linkis.datasourcemanager.core.service.DataSourceInfoService;
 import org.apache.linkis.datasourcemanager.core.service.DataSourceRelateService;
 import org.apache.linkis.datasourcemanager.core.service.MetadataOperateService;
+import org.apache.linkis.datasourcemanager.core.service.hooks.DataSourceParamsHook;
 import org.apache.linkis.datasourcemanager.core.validate.ParameterValidateException;
 import org.apache.linkis.datasourcemanager.core.validate.ParameterValidator;
 import org.apache.linkis.datasourcemanager.core.vo.DataSourceVo;
@@ -71,6 +72,8 @@ public class DataSourceCoreRestfulApi {
     @Autowired private MetadataOperateService metadataOperateService;
 
     private MultiPartFormDataTransformer formDataTransformer;
+
+    @Autowired private List<DataSourceParamsHook> dataSourceParamsHooks = new ArrayList<>();
 
     @PostConstruct
     public void initRestful() {
@@ -525,6 +528,14 @@ public class DataSourceCoreRestfulApi {
                             dataSourceRelateService.getKeyDefinitionsByType(
                                     dataSource.getDataSourceTypeId()),
                             connectParams);
+                    // Get definitions
+                    List<DataSourceParamKeyDefinition> keyDefinitionList =
+                            dataSourceRelateService.getKeyDefinitionsByType(
+                                    dataSource.getDataSourceTypeId());
+                    // For connecting, also need to handle the parameters
+                    for (DataSourceParamsHook hook : dataSourceParamsHooks) {
+                        hook.beforePersist(connectParams, keyDefinitionList);
+                    }
                     metadataOperateService.doRemoteConnect(
                             mdRemoteServiceName,
                             dataSourceTypeName.toLowerCase(),

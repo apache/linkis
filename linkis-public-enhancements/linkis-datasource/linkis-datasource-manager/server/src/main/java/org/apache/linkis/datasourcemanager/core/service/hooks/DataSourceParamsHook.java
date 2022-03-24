@@ -15,27 +15,23 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.datasourcemanager.core.dao;
+package org.apache.linkis.datasourcemanager.core.service.hooks;
 
-import org.apache.ibatis.annotations.Param;
+import org.apache.linkis.common.exception.ErrorException;
+import org.apache.linkis.datasourcemanager.common.domain.DataSourceParamKeyDefinition;
 
-public interface DataSourceTypeEnvDao {
+import java.util.List;
+import java.util.Map;
 
+/** Persist Hook */
+public interface DataSourceParamsHook {
     /**
-     * Insert relation between type and environment
+     * Before persisting params
      *
-     * @param dataSourceTypeId data source type
-     * @param dataSourceEnvId data source env
+     * @param connectParams connect params
+     * @param keyDefinitionList key definitions
      */
-    void insertRelation(
-            @Param("dataSourceTypeId") Long dataSourceTypeId,
-            @Param("dataSourceEnvId") Long dataSourceEnvId);
-
-    /**
-     * Remove relations by environment id
-     *
-     * @param envId
-     * @return
-     */
-    int removeRelationsByEnvId(Long envId);
+    void beforePersist(
+            Map<String, Object> connectParams, List<DataSourceParamKeyDefinition> keyDefinitionList)
+            throws ErrorException;
 }

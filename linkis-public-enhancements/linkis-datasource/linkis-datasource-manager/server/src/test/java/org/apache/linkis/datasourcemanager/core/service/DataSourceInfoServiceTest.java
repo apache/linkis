@@ -51,8 +51,6 @@ public class DataSourceInfoServiceTest {
 
     @Mock DataSourceVersionDao dataSourceVersionDao;
 
-    @Mock DataSourceTypeEnvDao dataSourceTypeEnvDao;
-
     @Mock DataSourceParamKeyDao dataSourceParamKeyDao;
 
     private DataSource buildDataSource() {

@@ -22,7 +22,8 @@
       class="modal"
       v-model="showVersionList"
       :loading="loadingForm"
-      :title="`${actionType}${$t('message.linkis.datasource.versionList')}`">
+      :title="`${actionType}${$t('message.linkis.datasource.versionList')}`"
+    >
       <Spin size="large" fix v-if="loadingVersionList"></Spin>
       <Table
         border
@@ -31,25 +32,42 @@
         :columns="versionTableColumnNum"
         :data="currentVersionList"
         max-height="300"
-        class="table-content">
-        <template
-          slot-scope="{row, index}"
-          slot="action"
-        >
+        class="table-content"
+      >
+        <template slot-scope="{ row, index }" slot="action">
           <ButtonGroup size="small" :key="row.versionId">
+            <Button
+              v-if="row.status == 0"
+              size="small"
+              type="text"
+              @click="onPublish(row)"
+            >
+              {{ $t('message.linkis.datasource.publish') }}
+            </Button>
 
-            <Button v-if="row.status==0" size="small" type="text" @click="onPublish(row)"> {{$t('message.linkis.datasource.publish')}} </Button>
+            <Button size="small" type="text" @click="watch(row, index)">{{
+              $t('message.linkis.datasource.watch')
+            }}</Button>
+            <Button
+              v-if="row.status == 2"
+              size="small"
+              type="text"
+              @click="onRollback(row)"
+            >
+              {{ $t('message.linkis.datasource.rollback') }}
+            </Button>
 
-            <Button size="small" type="text" @click="watch(row, index)">{{$t('message.linkis.datasource.watch')}}</Button>
-            <Button v-if="row.status==2" size="small" type="text" @click="onRollback(row)"> {{$t('message.linkis.datasource.rollback')}} </Button>
-
-            <Button type="primary" @click="onConnectTestFromVersion(row)">{{$t('message.linkis.datasource.connectTest')}}</Button>
+            <Button type="primary" @click="onConnectTestFromVersion(row)">{{
+              $t('message.linkis.datasource.connectTest')
+            }}</Button>
           </ButtonGroup>
         </template>
       </Table>
       <div slot="footer">
-        <div v-if="currentStep===0">
-          <Button @click="showVersionList = false">{{$t('message.linkis.cancel')}}</Button>
+        <div v-if="currentStep === 0">
+          <Button @click="showVersionList = false">{{
+            $t('message.linkis.cancel')
+          }}</Button>
         </div>
       </div>
     </Modal>
@@ -57,48 +75,95 @@
       width="800"
       class="modal"
       v-model="showDataSource"
-      :title="`${actionType}${$t('message.linkis.datasource.datasourceSrc')}`">
+      :title="`${actionType}${$t('message.linkis.datasource.datasourceSrc')}`"
+    >
       <Spin size="large" fix v-if="loadingForm"></Spin>
-      <DataSourceType :data="typeList" v-show="currentStep===0" :onSelected="onSelect"/>
-      <DatasourceForm :data="currentSourceData" ref="datasourceForm" v-if="showDataSource&&currentStep===1"/>
+      <DataSourceType
+        :data="typeList"
+        v-show="currentStep === 0"
+        :onSelected="onSelect"
+      />
+      <DatasourceForm
+        :data="currentSourceData"
+        ref="datasourceForm"
+        v-if="showDataSource && currentStep === 1"
+      />
 
       <div slot="footer">
-        <div v-if="currentStep===0">
-          <Button @click="showDataSource = false">{{$t('message.linkis.cancel')}}</Button>
+        <div v-if="currentStep === 0">
+          <Button @click="showDataSource = false">{{
+            $t('message.linkis.cancel')
+          }}</Button>
         </div>
 
-        <div v-else  class="footer">
-          <div><Button type="primary" @click="onConnectFormTest">{{$t('message.linkis.datasource.connectTest')}}</Button></div>
+        <div v-else class="footer">
           <div>
-            <Button v-if="actionType==$t('message.linkis.create')" @click="stepChange(-1)">{{$t('message.linkis.prev')}}</Button>
-            <Button v-if="actionType==$t('message.linkis.datasource.watch')" type="primary" @click="showDataSource = false">{{$t('message.linkis.close')}}</Button>
-            <Button v-else type="primary" @click="onSubmit">{{$t('message.linkis.complete')}}</Button>
+            <Button type="primary" @click="onConnectFormTest">{{
+              $t('message.linkis.datasource.connectTest')
+            }}</Button>
+          </div>
+          <div>
+            <Button
+              v-if="actionType == $t('message.linkis.create')"
+              @click="stepChange(-1)"
+              >{{ $t('message.linkis.prev') }}</Button
+            >
+            <Button
+              v-if="actionType == $t('message.linkis.datasource.watch')"
+              type="primary"
+              @click="showDataSource = false"
+              >{{ $t('message.linkis.close') }}</Button
+            >
+            <Button v-else type="primary" @click="onSubmit">{{
+              $t('message.linkis.complete')
+            }}</Button>
           </div>
         </div>
       </div>
     </Modal>
     <Row class="search-bar" type="flex" justify="space-around">
       <Col span="6">
-        <Input clearable v-model="searchName" suffix="ios-search" class="input" :placeholder="$t('message.linkis.datasource.sourceName')" @on-enter="searchList(true)"></Input>
+        <Input
+          clearable
+          v-model="searchName"
+          suffix="ios-search"
+          class="input"
+          :placeholder="$t('message.linkis.datasource.sourceName')"
+          @on-enter="searchList(true)"
+        ></Input>
       </Col>
       <Col span="6" class="search-item">
-        <span class="lable">{{$t('message.linkis.datasource.sourceType')}}</span>
+        <span class="lable">{{
+          $t('message.linkis.datasource.sourceType')
+        }}</span>
         <Select v-model="dataSourceTypeId" class="input">
-          <Option v-for="item in typeList" :value="item.id" :key="item.id">{{item.name}}</Option>
-          <Option value="null">{{$t('message.linkis.statusType.all')}}</Option>
+          <Option v-for="item in typeList" :value="item.id" :key="item.id">{{
+            item.name
+          }}</Option>
+          <Option value="null">{{
+            $t('message.linkis.statusType.all')
+          }}</Option>
         </Select>
       </Col>
       <Col span="3">
-        <Button type="primary" class="button" @click="searchList(true)">{{$t('message.linkis.search')}}</Button>
+        <Button type="primary" class="button" @click="searchList(true)">{{
+          $t('message.linkis.search')
+        }}</Button>
       </Col>
       <Col span="3">
-        <Button type="primary" @click="createDatasource">{{$t('message.linkis.datasource.create')}}</Button>
+        <Button type="primary" @click="createDatasource">{{
+          $t('message.linkis.datasource.create')
+        }}</Button>
       </Col>
       <Col span="3">
-        <Button type="primary" disabled>{{$t('message.linkis.datasource.exports')}}</Button>
+        <Button type="primary" disabled>{{
+          $t('message.linkis.datasource.exports')
+        }}</Button>
       </Col>
       <Col span="3">
-        <Button type="primary" disabled>{{$t('message.linkis.datasource.imports')}}</Button>
+        <Button type="primary" disabled>{{
+          $t('message.linkis.datasource.imports')
+        }}</Button>
       </Col>
     </Row>
     <Table
@@ -109,46 +174,77 @@
       :data="pageDatalist"
       max-height="420"
       :loading="tableLoading"
-      class="table-content">
-      <template
-        slot-scope="{row, index}"
-        slot="version"
-      >
-        <Button size="small" type="primary" :disabled="row.expire" @click="openVersionList(row, index)">{{`${row.versionId||'-'}`}}</Button>
+      class="table-content"
+    >
+      <template slot-scope="{ row, index }" slot="version">
+        <Button
+          size="small"
+          type="primary"
+          :disabled="row.expire"
+          @click="openVersionList(row, index)"
+          >{{ `${row.versionId || '-'}` }}</Button
+        >
       </template>
-      <template
-        slot-scope="{row, index}"
-        slot="action"
-      >
+      <template slot-scope="{ row, index }" slot="action">
         <ButtonGroup size="small">
-          <Button :disabled="row.expire" size="small" type="primary" @click="modify(row, index)">{{$t('message.linkis.edit')}}</Button>
+          <Button
+            :disabled="row.expire"
+            size="small"
+            type="primary"
+            @click="modify(row, index)"
+            >{{ $t('message.linkis.edit') }}</Button
+          >
 
-          <Button :disabled="row.expire" size="small" type="primary" @click="overdue(row)"> {{$t('message.linkis.datasource.overdue')}} </Button>
+          <Button
+            :disabled="row.expire"
+            size="small"
+            type="primary"
+            @click="overdue(row)"
+          >
+            {{ $t('message.linkis.datasource.overdue') }}
+          </Button>
 
-          <Button type="primary" @click="onConnectTest(row)"> {{$t('message.linkis.datasource.connectTest')}} </Button>
+          <Button type="primary" @click="onConnectTest(row)">
+            {{ $t('message.linkis.datasource.connectTest') }}
+          </Button>
         </ButtonGroup>
       </template>
     </Table>
-    <div style="margin: 10px;overflow: hidden">
-      <div style="float: right;">
-        <Page :page-size="page.pageSize" :total="page.totalSize" :current="page.pageNow" @on-change="changePage"></Page>
+    <div style="margin: 10px; overflow: hidden">
+      <div style="float: right">
+        <Page
+          :page-size="page.pageSize"
+          :total="page.totalSize"
+          :current="page.pageNow"
+          @on-change="changePage"
+        ></Page>
       </div>
     </div>
   </div>
 </template>
 <script>
-import DatasourceForm from './datasourceForm/index';
-import DataSourceType from './datasourceType/index';
-import {  //createDataSourceForm
-  getDataSourceList,getDataSourceTypeList,getEnvList,createDataSource, saveConnectParams, saveConnectParamsForm,
-  expire, updateDataSource, publish, connect, getDataSourceByIdAndVersion, getVersionListByDatasourceId
-} from './dataSourceApi';
+import DatasourceForm from './datasourceForm/index'
+import DataSourceType from './datasourceType/index'
+import {
+  //createDataSourceForm
+  getDataSourceList,
+  getDataSourceTypeList,
+  getEnvList,
+  createDataSource,
+  saveConnectParams,
+  expire,
+  updateDataSource,
+  publish,
+  connect,
+  getDataSourceByIdAndVersion,
+  getVersionListByDatasourceId,
+} from './dataSourceApi'
 // import _ from 'lodash';
-const FORM_KEYS = ['dataSourceName', 'dataSourceDesc', 'labels']; //'dataSourceEnvId'
+const FORM_KEYS = ['dataSourceName', 'dataSourceDesc', 'labels'] //'dataSourceEnvId'
 export default {
   components: {
     DatasourceForm,
-    DataSourceType
+    DataSourceType,
   },
   data() {
     return {
@@ -166,28 +262,38 @@ export default {
       page: {
         totalSize: 0,
         pageSize: 10,
-        pageNow: 1
+        pageNow: 1,
       },
       tableColumnNum: [
+        {
+          title: "Id",
+          key: 'id',
+          minWidth: 10,
+          tooltip: true,
+          align: 'center',
+        },
         {
           title: this.$t('message.linkis.datasource.dataSourceName'),
           key: 'dataSourceName',
           minWidth: 120,
           tooltip: true,
-          align: 'center'
+          align: 'center',
         },
         {
           title: this.$t('message.linkis.datasource.dataSourceType'),
           key: 'dataSourceTypeId',
-          minWidth: 100,
-          render: (h, params)=>{
-            let result = {};
-            if(this.typeList){
-              result = this.typeList.find(item => params.row.dataSourceTypeId == item.id) || {};
+          minWidth: 60,
+          render: (h, params) => {
+            let result = {}
+            if (this.typeList) {
+              result =
+                this.typeList.find(
+                  (item) => params.row.dataSourceTypeId == item.id
+                ) || {}
             }
-            return h('span', result.name);
+            return h('span', result.name)
           },
-          align: 'center'
+          align: 'center',
         },
         // {
         //   title: this.$t('message.linkis.datasource.dataSourceEnv'),
@@ -204,23 +310,32 @@ export default {
         //   align: 'center'
         // },
         {
+          title: this.$t('message.linkis.datasource.createSystem'),
+          key: 'createSystem',
+          minWidth: 50,
+          tooltip: true,
+          align: 'center',
+        },
+        {
           title: this.$t('message.linkis.datasource.status'),
           key: 'status',
           tooltip: true,
           minWidth: 60,
           align: 'center',
-          render: (h, params)=>{
-            let result = {};
-            if(this.envList){
-
-              result = this.tableStatusMap.find(item => params.row.expire == item.status) || {};
+          render: (h, params) => {
+            let result = {}
+            if (this.envList) {
+              result =
+                this.tableStatusMap.find(
+                  (item) => params.row.expire == item.status
+                ) || {}
             }
-            var color = 'green';
-            if(result.status){
-              color = 'red';
+            var color = 'green'
+            if (result.status) {
+              color = 'red'
             }
-            return h('p',{style: {color: color,},}, result.name);
-          }
+            return h('p', { style: { color: color } }, result.name)
+          },
         },
         {
           title: this.$t('message.linkis.datasource.label'),
@@ -232,7 +347,7 @@ export default {
         {
           title: this.$t('message.linkis.datasource.version'),
           key: 'version',
-          slot: "version",
+          slot: 'version',
           minWidth: 60,
           // render: (h, params)=>{
           //   return h('span', params.row.versionId || '-');
@@ -245,26 +360,33 @@ export default {
           minWidth: 120,
 
           tooltip: true,
-          align: 'center'
+          align: 'center',
         },
         {
           title: this.$t('message.linkis.datasource.createUser'),
           key: 'createUser',
           minWidth: 80,
           tooltip: true,
-          align: 'center'
+          align: 'center',
         },
         {
           title: this.$t('message.linkis.datasource.action'),
           minWidth: 170,
-          slot: "action",
-          align: 'center'
+          slot: 'action',
+          align: 'center',
         },
       ],
       pageDatalist: [],
       typeList: [],
-      versionStatusMap: [{status: 1, name: this.$t('message.linkis.datasource.published')}, {status: 0, name: this.$t('message.linkis.datasource.unpublish')}, {status: 2, name: this.$t('message.linkis.datasource.cannotPublish')} ],
-      tableStatusMap: [{status: false, name: this.$t('message.linkis.datasource.used')}, {status: true, name: this.$t('message.linkis.datasource.overdue')} ],
+      versionStatusMap: [
+        { status: 1, name: this.$t('message.linkis.datasource.published') },
+        { status: 0, name: this.$t('message.linkis.datasource.unpublish') },
+        { status: 2, name: this.$t('message.linkis.datasource.cannotPublish') },
+      ],
+      tableStatusMap: [
+        { status: false, name: this.$t('message.linkis.datasource.used') },
+        { status: true, name: this.$t('message.linkis.datasource.overdue') },
+      ],
       currentVersionList: [],
       showVersionList: false,
       versionTableColumnNum: [
@@ -273,7 +395,7 @@ export default {
           key: 'versionId',
           tooltip: true,
           minWidth: 60,
-          align: 'center'
+          align: 'center',
         },
         {
           title: this.$t('message.linkis.datasource.status'),
@@ -281,10 +403,13 @@ export default {
           tooltip: true,
           minWidth: 60,
           align: 'center',
-          render: (h, params)=>{
-            let result = {};
-            result = this.versionStatusMap.find(item => params.row.status == item.status) || {};
-            return h('span', result.name);
+          render: (h, params) => {
+            let result = {}
+            result =
+              this.versionStatusMap.find(
+                (item) => params.row.status == item.status
+              ) || {}
+            return h('span', result.name)
           },
         },
         {
@@ -292,7 +417,7 @@ export default {
           key: 'comment',
           tooltip: true,
           minWidth: 60,
-          align: 'center'
+          align: 'center',
         },
         // {
         //   title: this.$t('message.linkis.datasource.createTime'),
@@ -307,148 +432,134 @@ export default {
           tooltip: true,
           minWidth: 120,
           align: 'center',
-          slot: 'action'
-        }
-      ]
+          slot: 'action',
+        },
+      ],
     }
   },
-  created(){
+  created() {
+    getDataSourceTypeList().then((data) => {
+      this.typeList = data.typeList
 
-    getDataSourceTypeList().then((data)=>{
-      this.typeList = data.typeList;
+      getEnvList().then((data) => {
+        this.envList = data.queryList
 
-      getEnvList().then((data)=>{
-        this.envList = data.queryList;
-
-        this.searchList();
+        this.searchList()
       })
     })
-
-
-
-
   },
   methods: {
-    overdue(data){
-      expire(data.id).then(()=>{
-        this.searchList();
+    overdue(data) {
+      expire(data.id).then(() => {
+        this.searchList()
       })
     },
-    searchList(isSearch){
-      this.loadingTable = true;
-      if(isSearch) {
-        this.page.pageNow = 1;
+    searchList(isSearch) {
+      this.loadingTable = true
+      if (isSearch) {
+        this.page.pageNow = 1
       }
       const data = {
         typeId: this.dataSourceTypeId,
         pageSize: this.page.pageSize,
         currentPage: this.page.pageNow,
-        name: this.searchName
-      };
-
-      if(data.typeId == 'null'){
-        delete data.typeId;
+        name: this.searchName,
       }
 
-      getDataSourceList(
-        {
-          ...data
-        }).then(result=>{
-        this.tableLoading = false;
-        this.pageDatalist = result.queryList;
-        this.page.totalSize = result.totalPage;
-      });
-    },
-    getVersionListBySourceId(){
+      if (data.typeId == 'null') {
+        delete data.typeId
+      }
 
-      getVersionListByDatasourceId(this.currentSourceData.id).then(result=>{
-        this.currentVersionList = result.versions;
-        this.currentVersionList.sort((a, b)=>{
-          if(a.versionId > b.versionId){
-            return -1;
+      getDataSourceList({
+        ...data,
+      }).then((result) => {
+        this.tableLoading = false
+        this.pageDatalist = result.queryList
+        this.page.totalSize = result.totalPage
+      })
+    },
+    getVersionListBySourceId() {
+      getVersionListByDatasourceId(this.currentSourceData.id).then((result) => {
+        this.currentVersionList = result.versions
+        this.currentVersionList.sort((a, b) => {
+          if (a.versionId > b.versionId) {
+            return -1
           }
-          if(a.versionId < b.versionId){
-            return 1;
+          if (a.versionId < b.versionId) {
+            return 1
           }
           return 0
         })
-        let lastPulishIndex = Infinity;
+        let lastPulishIndex = Infinity
         for (let index = 0; index < this.currentVersionList.length; index++) {
-          const element = this.currentVersionList[index];
-          if(lastPulishIndex < index){  //不能发布
-            element.status = 2;
-          }else{
-            element.status = 0;
+          const element = this.currentVersionList[index]
+          if (lastPulishIndex < index) {
+            //不能发布
+            element.status = 2
+          } else {
+            element.status = 0
           }
 
-          if(this.currentSourceData.publishedVersionId == element.versionId){
-            lastPulishIndex = index;
-            element.status = 1;
+          if (this.currentSourceData.publishedVersionId == element.versionId) {
+            lastPulishIndex = index
+            element.status = 1
           }
-
         }
       })
-
-
-
-
     },
-    openVersionList(row){
-      this.currentSourceData = row;
-      this.getVersionListBySourceId();
-      this.showVersionList = true;
+    openVersionList(row) {
+      this.currentSourceData = row
+      this.getVersionListBySourceId()
+      this.showVersionList = true
     },
 
-    changePage(value){
-      this.page.pageNow = value;
-      this.searchList();
+    changePage(value) {
+      this.page.pageNow = value
+      this.searchList()
     },
     watch(data) {
-      this.actionType = this.$t('message.linkis.datasource.watch');
-      this.showDataSource = true;
-      this.currentSourceData.versionId = data.versionId;
-      this.currentStep = 1;
+      this.actionType = this.$t('message.linkis.datasource.watch')
+      this.showDataSource = true
+      this.currentSourceData.versionId = data.versionId
+      this.currentStep = 1
     },
     modify(data) {
-      this.actionType = this.$t('message.linkis.edit');
-      this.showDataSource = true;
-      this.currentSourceData = data;
-      this.currentStep = 1;
+      this.actionType = this.$t('message.linkis.edit')
+      this.showDataSource = true
+      this.currentSourceData = data
+      this.currentStep = 1
     },
-    createDatasource(){
-      this.currentStep = 0;
-      this.currentSourceData = null;
-      this.actionType = this.$t('message.linkis.create');
-      this.showDataSource = true;
+    createDatasource() {
+      this.currentStep = 0
+      this.currentSourceData = null
+      this.actionType = this.$t('message.linkis.create')
+      this.showDataSource = true
     },
-    onSelect(item){
-      this.currentSourceData = {dataSourceTypeId: item.id};
-      this.currentStep = 1;
+    onSelect(item) {
+      this.currentSourceData = { dataSourceTypeId: item.id }
+      this.currentStep = 1
     },
-    stepChange(step){
-
-      this.currentStep += step;
-      if(this.currentStep<0){
-        this.currentStep = 0;
-      }else if(this.currentStep>1){
-        this.currentStep = 1;
+    stepChange(step) {
+      this.currentStep += step
+      if (this.currentStep < 0) {
+        this.currentStep = 0
+      } else if (this.currentStep > 1) {
+        this.currentStep = 1
       }
-
     },
-    tranceFormData(data){
-      const formData = new FormData();
+    tranceFormData(data) {
+      const formData = new FormData()
       Object.keys(data).forEach((key) => {
-        if(typeof data[key] === 'object'){
-          formData.append(key, JSON.stringify(data[key]));
-        }else {
-          formData.append(key, data[key]);
+        if (typeof data[key] === 'object') {
+          formData.append(key, JSON.stringify(data[key]))
+        } else {
+          formData.append(key, data[key])
         }
-
-      });
-      return formData;
+      })
+      return formData
     },
     isEqual(obj1, obj2) {
-      const isObject = (obj)=> {
+      const isObject = (obj) => {
         return typeof obj === 'object' && obj !== null
       }
       if (!isObject(obj1) || !isObject(obj2)) {
@@ -471,143 +582,166 @@ export default {
       // 否则全相等
       return true
     },
-    onSubmit(){
-      this.$refs.datasourceForm.fApi.submit((formData)=>{
-
-        const realFormData = {};
-        FORM_KEYS.forEach(key=>{
-          realFormData[key] = formData[key];
-          delete formData[key];
+    onSubmit() {
+      this.$refs.datasourceForm.fApi.submit((formData) => {
+        const realFormData = {}
+        FORM_KEYS.forEach((key) => {
+          realFormData[key] = formData[key]
+          delete formData[key]
         })
-        realFormData.connectParams = formData;
-        realFormData.createSystem = "Linkis";
-        realFormData.dataSourceTypeId = this.currentSourceData.dataSourceTypeId;
+        realFormData.connectParams = formData
+        realFormData.createSystem = 'Linkis'
+        realFormData.dataSourceTypeId = this.currentSourceData.dataSourceTypeId
 
-
-
-
-
-        let postDataSource = createDataSource;
-        let commentMsg = this.$t('message.linkis.datasource.initVersion');
-        if(!this.currentSourceData.id){ //新增数据源
-          postDataSource = createDataSource;
-        }else{
-          postDataSource = updateDataSource;
-          commentMsg = this.$t('message.linkis.datasource.updateVersion');
+        let postDataSource = createDataSource
+        let commentMsg = this.$t('message.linkis.datasource.initVersion')
+        if (!this.currentSourceData.id) {
+          //新增数据源
+          postDataSource = createDataSource
+        } else {
+          postDataSource = updateDataSource
+          commentMsg = this.$t('message.linkis.datasource.updateVersion')
         }
-        this.loadingForm = true;
-        postDataSource(realFormData, this.currentSourceData.id).then(data=>{
-          this.loadingForm = false;
-          // if(连接信息有变化)
+        this.loadingForm = true
+        postDataSource(realFormData, this.currentSourceData.id)
+          .then((data) => {
+            this.loadingForm = false
+            // if(连接信息有变化)
 
-          const sourceId = data.id || data.insertId || data.updateId;
+            const sourceId = data.id || data.insertId || data.updateId
 
-          console.log()
-          if(!this.currentSourceData.id || !this.isEqual(this.preProcessData(this.$refs.datasourceForm.sourceConnectData), formData)){
-            if(this.$refs.datasourceForm.file){
-              formData.file = this.$refs.datasourceForm.file;
-              saveConnectParamsForm(sourceId, formData, commentMsg).then(()=>{
-                this.$Message.success('Success');
-                this.searchList();
-              });
-              this.showDataSource = false;
-            }else {
-              saveConnectParams(sourceId, formData, commentMsg).then(()=>{
-                this.$Message.success('Success');
-                this.searchList();
-              });
-              this.showDataSource = false;
+            console.log()
+            if (
+              !this.currentSourceData.id ||
+              !this.isEqual(
+                this.preProcessData(
+                  this.$refs.datasourceForm.sourceConnectData
+                ),
+                formData
+              )
+            ) {
+              // if(this.$refs.datasourceForm.file){
+              //   formData.file = this.$refs.datasourceForm.file;
+              //   saveConnectParamsForm(sourceId, formData, commentMsg).then(()=>{
+              //     this.$Message.success('Success');
+              //     this.searchList();
+              //   });
+              //   this.showDataSource = false;
+              // }else {
+
+              // }
+              saveConnectParams(sourceId, formData, commentMsg).then(() => {
+                this.$Message.success('Success')
+                this.searchList()
+              })
+              this.showDataSource = false
+            } else {
+              this.$Message.success('Success')
+              this.searchList()
+              this.showDataSource = false
             }
-          }else {
-            this.$Message.success('Success');
-            this.searchList();
-            this.showDataSource = false;
-          }
-
-        }).catch(()=>{
-          this.loadingForm = false;
-        })
+          })
+          .catch(() => {
+            this.loadingForm = false
+          })
       })
     },
-    preProcessData(data){
-      Object.keys(data).forEach(item=>{
+    preProcessData(data) {
+      Object.keys(data).forEach((item) => {
         let obj = data[item]
-        if(typeof obj === 'undefined' || obj === null || obj === '') {
-          delete data[item];
+        if (typeof obj === 'undefined' || obj === null || obj === '') {
+          delete data[item]
         }
       })
-      return data;
+      return data
     },
-    onConnectTestFromVersion(data){
-      this.loadingVersionList = true;
-      getDataSourceByIdAndVersion(data.datasourceId, data.versionId).then(data=>{
-        connect(data.info).then(()=>{
-          this.loadingVersionList = false;
-          this.$Message.success('Connect Success');
-
-        }).catch(()=>{
-          this.loadingVersionList = false;
+    onConnectTestFromVersion(data) {
+      this.loadingVersionList = true
+      getDataSourceByIdAndVersion(data.datasourceId, data.versionId).then(
+        (data) => {
+          connect(data.info)
+            .then(() => {
+              this.loadingVersionList = false
+              this.$Message.success('Connect Success')
+            })
+            .catch(() => {
+              this.loadingVersionList = false
+            })
+        }
+      )
+    },
+    onConnectTest(data) {
+      this.currentSourceData = data
+      this.tableLoading = true
+      getDataSourceByIdAndVersion(
+        this.currentSourceData.id,
+        this.currentSourceData.versionId
+      )
+        .then((data) => {
+          connect(data.info)
+            .then(() => {
+              this.tableLoading = false
+              this.$Message.success('Connect Success')
+            })
+            .catch(() => {
+              this.tableLoading = false
+            })
         })
-      })
-    },
-    onConnectTest(data){
-      this.currentSourceData = data;
-      this.tableLoading = true;
-      getDataSourceByIdAndVersion(this.currentSourceData.id, this.currentSourceData.versionId).then(data=>{
-        connect(data.info).then(()=>{
-          this.tableLoading = false;
-          this.$Message.success('Connect Success');
-
-        }).catch(()=>{
-          this.tableLoading = false;
+        .catch(() => {
+          this.tableLoading = false
         })
-      }).catch(()=>{
-        this.tableLoading = false;
-      })
-
     },
-    onConnectFormTest(){
-      this.$refs.datasourceForm.fApi.submit(()=>{
-        this.loadingForm = true;
-        this.$refs.datasourceForm.fApi.submit((formData)=>{
-          const realFormData = {};
-          FORM_KEYS.forEach(key=>{
-            realFormData[key] = formData[key];
-            delete formData[key];
+    onConnectFormTest() {
+      this.$refs.datasourceForm.fApi.submit(() => {
+        this.loadingForm = true
+        this.$refs.datasourceForm.fApi.submit((formData) => {
+          const realFormData = {}
+          FORM_KEYS.forEach((key) => {
+            realFormData[key] = formData[key]
+            delete formData[key]
           })
 
-          realFormData.connectParams = formData;
-          realFormData.createSystem = "Linkis";
-          realFormData.dataSourceTypeId = this.currentSourceData.dataSourceTypeId;
-          realFormData.dataSourceEnvId = parseInt(realFormData.dataSourceEnvId);
-          connect(realFormData).then(()=>{
-            this.loadingForm = false;
-            this.$Message.success('Connect Success');
-          }).catch(()=>{this.loadingForm = false;})
+          realFormData.connectParams = formData
+          realFormData.createSystem = 'Linkis'
+          realFormData.dataSourceTypeId =
+            this.currentSourceData.dataSourceTypeId
+          realFormData.dataSourceEnvId = parseInt(realFormData.dataSourceEnvId)
+          connect(realFormData)
+            .then(() => {
+              this.loadingForm = false
+              this.$Message.success('Connect Success')
+            })
+            .catch(() => {
+              this.loadingForm = false
+            })
         })
       })
-
     },
-    onPublish(data){
-      this.loadingVersionList = true;
-      publish(data.datasourceId, data.versionId).then(()=>{
-        this.showVersionList = false;
-        this.loadingVersionList = false;
-        this.$Message.success('Publish Success');
-        this.searchList();
+    onPublish(data) {
+      this.loadingVersionList = true
+      publish(data.datasourceId, data.versionId).then(() => {
+        this.showVersionList = false
+        this.loadingVersionList = false
+        this.$Message.success('Publish Success')
+        this.searchList()
       })
     },
-    onRollback(data){
-      this.showVersionList = false;
-      const sourceId = data.id || data.datasourceId || data.updateId;
+    onRollback(data) {
+      this.showVersionList = false
+      const sourceId = data.id || data.datasourceId || data.updateId
 
-      saveConnectParams(sourceId, data.connectParams, this.$t('message.linkis.datasource.commentValue', {text: data.versionId})).then(()=>{
-        this.$Message.success('onRollback Success');
-        this.searchList();
-      });
-    }
-
-  }
+      saveConnectParams(
+        sourceId,
+        data.connectParams,
+        this.$t('message.linkis.datasource.commentValue', {
+          text: data.versionId,
+        })
+      ).then(() => {
+        this.$Message.success('onRollback Success')
+        this.searchList()
+      })
+    },
+  },
 }
 </script>
 <style lang="scss" src="./index.scss" scoped></style>

@@ -19,16 +19,18 @@ package org.apache.linkis.datasourcemanager.core.service.hooks;
 
 import org.apache.linkis.common.exception.ErrorException;
 import org.apache.linkis.datasourcemanager.common.domain.DataSourceParamKeyDefinition;
+
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
 
-
 @Component
-public class DefaultDataSourceParamsHook implements DataSourceParamsHook{
+public class DefaultDataSourceParamsHook implements DataSourceParamsHook {
     @Override
-    public void beforePersist(Map<String, Object> connectParams, List<DataSourceParamKeyDefinition> keyDefinitionList) throws ErrorException {
+    public void beforePersist(
+            Map<String, Object> connectParams, List<DataSourceParamKeyDefinition> keyDefinitionList)
+            throws ErrorException {
         // Do nothing
     }
 }

@@ -238,7 +238,7 @@ class PythonSession extends Logging {
     var list: List[Column] = List[Column]()
     for (i <- 0 to length) {
       val col = Column(header.get(i), changeDT(schema.get(i)), null)
-      list = col :: list
+      list = list :+ col
     }
     val metaData = new TableMetaData(list.toArray[Column])
     writer.addMetaData(metaData)

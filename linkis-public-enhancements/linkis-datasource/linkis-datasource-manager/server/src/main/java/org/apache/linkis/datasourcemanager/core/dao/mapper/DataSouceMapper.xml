@@ -19,7 +19,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
 <mapper namespace="org.apache.linkis.datasourcemanager.core.dao.DataSourceDao">
-    <resultMap id="dataSourceDetailMap" type="DataSource">
+    <resultMap id="dataSourceDetailMap" type="org.apache.linkis.datasourcemanager.common.domain.DataSource">
         <result property="id" column="id"/>
         <result property="dataSourceName" column="datasource_name"/>
         <result property="dataSourceDesc" column="datasource_desc"/>
@@ -34,18 +34,18 @@
         <result property="versionId" column="version_id"/>
         <result property="publishedVersionId" column="published_version_id"/>
         <result property="labels" column="labels"/>
-        <association property="dataSourceType" javaType="DataSourceType">
+        <association property="dataSourceType" javaType="org.apache.linkis.datasourcemanager.common.domain.DataSourceType">
             <result property="icon" column="icon"/>
             <result property="name" column="name"/>
         </association>
-        <association property="dataSourceEnv" javaType="DataSourceEnv" column="datasource_env_id"
+        <association property="dataSourceEnv" javaType="org.apache.linkis.datasourcemanager.common.domain.DataSourceEnv" column="datasource_env_id"
                      select="selectEnvById">
             <result property="envName" column="env_name"/>
             <result property="parameter" column="env_parameter"/>
         </association>
     </resultMap>
 
-    <resultMap id="dataSourceMap" type="DataSource">
+    <resultMap id="dataSourceMap" type="org.apache.linkis.datasourcemanager.common.domain.DataSource">
         <result property="id" column="id"/>
         <result property="dataSourceName" column="datasource_name"/>
         <result property="dataSourceDesc" column="datasource_desc"/>
@@ -61,7 +61,7 @@
         <result property="createUser" column="create_user"/>
         <result property="labels" column="labels"/>
         <result property="expire" column="expire"/>
-        <association property="dataSourceType" javaType="DataSourceType">
+        <association property="dataSourceType" javaType="org.apache.linkis.datasourcemanager.common.domain.DataSourceType">
             <result property="id" column="id"/>
             <result property="name" column="name"/>
         </association>
@@ -97,12 +97,32 @@
         d.`modify_user`, d.`modify_time`, d.`version_id`,d.`published_version_id`, d.`labels`
     </sql>
 
-    <insert id="insertOne" useGeneratedKeys="true" keyProperty="id" parameterType="DataSource">
+    <insert id="insertOne" useGeneratedKeys="true" keyProperty="id" parameterType="org.apache.linkis.datasourcemanager.common.domain.DataSource">
         INSERT INTO `linkis_ps_dm_datasource`(
         <include refid="data_source_insert_columns"/>
         ) VALUES(#{dataSourceName}, #{dataSourceTypeId},
         #{dataSourceDesc,jdbcType=VARCHAR}, #{createIdentify}, #{createSystem}, #{createUser},
-        #{parameter}, #{createTime}, #{modifyUser,jdbcType=VARCHAR}, #{modifyTime,jdbcType=TIMESTAMP},
+        #{parameter},
+        <choose>
+            <when test="createTime == null">
+                now(),
+            </when>
+            <otherwise>
+                #{createTime,jdbcType=TIMESTAMP},
+            </otherwise>
+        </choose>
+
+        #{modifyUser,jdbcType=VARCHAR},
+
+        <choose>
+            <when test="modifyTime == null">
+                now(),
+            </when>
+            <otherwise>
+                #{modifyTime,jdbcType=TIMESTAMP},
+            </otherwise>
+        </choose>
+
         #{labels})
     </insert>
 
@@ -168,7 +188,14 @@
             </if>
             <![CDATA[`create_identify` = #{createIdentify,jdbcType=VARCHAR},]]>
             <![CDATA[`create_system` = #{createSystem,jdbcType=VARCHAR},]]>
-            <![CDATA[`modify_time` = #{modifyTime,jdbcType=TIMESTAMP},]]>
+            <choose>
+                <when test="modifyTime == null">
+                    <![CDATA[`modify_time` = now(),]]>
+                </when>
+                <otherwise>
+                    <![CDATA[`modify_time` = #{modifyTime,jdbcType=TIMESTAMP},]]>
+                </otherwise>
+            </choose>
             <![CDATA[`modify_user` = #{modifyUser,jdbcType=VARCHAR},]]>
             <![CDATA[`labels` = #{labels,jdbcType=VARCHAR}]]>
         </set>

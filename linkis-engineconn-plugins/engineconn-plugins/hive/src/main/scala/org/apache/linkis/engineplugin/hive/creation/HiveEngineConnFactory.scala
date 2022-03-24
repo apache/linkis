@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.engineplugin.hive.creation
 
 import java.io.{ByteArrayOutputStream, PrintStream}
 import java.security.PrivilegedExceptionAction
-
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.engineconn.common.creation.EngineCreationContext
 import org.apache.linkis.engineconn.common.engineconn.EngineConn
@@ -69,6 +69,11 @@ class HiveEngineConnFactory extends ComputationSingleExecutorEngineConnFactory w
       hiveConf.setVar(HiveConf.ConfVars.HIVEFETCHOUTPUTSERDE, HiveEngineConfiguration.BASE64_SERDE_CLASS)
       hiveConf.set("enable_fetch_base64","true")
     }
+    //add hive.aux.jars.path to hive conf
+    if(StringUtils.isNotBlank(HiveEngineConfiguration.HIVE_AUX_JARS_PATH)) {
+      hiveConf.setVar(HiveConf.ConfVars.HIVEAUXJARS, HiveEngineConfiguration.HIVE_AUX_JARS_PATH)
+    }
+
     /* //add hook to HiveDriver
      if (StringUtils.isNotBlank(EnvConfiguration.LINKIS_HIVE_POST_HOOKS)) {
        val hooks = if (StringUtils.isNotBlank(hiveConf.get("hive.exec.post.hooks"))) {

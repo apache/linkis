@@ -20,25 +20,28 @@ package org.apache.linkis.engineconn.computation.executor.upstream.service
 import javax.annotation.PostConstruct
 import org.apache.linkis.common.listener.Event
 import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.engineconn.computation.executor.conf.ComputationExecutorConf
 import org.apache.linkis.engineconn.computation.executor.upstream.ECTaskEntranceMonitor
 import org.apache.linkis.engineconn.computation.executor.upstream.event.TaskStatusChangedForUpstreamMonitorEvent
 import org.apache.linkis.engineconn.computation.executor.upstream.listener.TaskStatusChangedForUpstreamMonitorListener
 import org.apache.linkis.engineconn.executor.listener.ExecutorListenerBusContext
 import org.apache.linkis.engineconn.executor.listener.event.EngineConnSyncEvent
 import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
-import org.springframework.context.annotation.Conditional
+import org.springframework.stereotype.Component
 
-@Conditional(Array(classOf[ECTaskEntranceMonitorServiceStartCondition]))
+@Component
 class ECTaskEntranceMonitorService extends TaskStatusChangedForUpstreamMonitorListener with Logging {
 
   private val eCTaskEntranceMonitor = new ECTaskEntranceMonitor
   private val syncListenerBus = ExecutorListenerBusContext.getExecutorListenerBusContext.getEngineConnSyncListenerBus
 
-
   @PostConstruct
   def init(): Unit = {
-    syncListenerBus.addListener(this)
-    eCTaskEntranceMonitor.start
+    val shouldStartMonitor = ComputationExecutorConf.UPSTREAM_MONITOR_ECTASK_SHOULD_START
+    if (shouldStartMonitor) {
+      syncListenerBus.addListener(this)
+      eCTaskEntranceMonitor.start
+    }
   }
 
   override def onEvent(event: EngineConnSyncEvent): Unit = event match {

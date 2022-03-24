@@ -53,7 +53,6 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
     private static final Logger LOG = LoggerFactory.getLogger(DataSourceInfoService.class);
     @Autowired private BmlAppService bmlAppService;
 
-
     @Autowired private DataSourceDao dataSourceDao;
 
     @Autowired private DataSourceEnvDao dataSourceEnvDao;

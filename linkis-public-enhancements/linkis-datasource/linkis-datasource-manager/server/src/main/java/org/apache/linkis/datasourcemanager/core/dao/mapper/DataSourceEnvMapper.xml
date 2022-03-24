@@ -19,7 +19,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
 <mapper namespace="org.apache.linkis.datasourcemanager.core.dao.DataSourceEnvDao">
-    <resultMap id="dataSourceEnvMap" type="DataSourceEnv">
+    <resultMap id="dataSourceEnvMap" type="org.apache.linkis.datasourcemanager.common.domain.DataSourceEnv">
         <result property="id" column="id"/>
         <result property="envName" column="env_name"/>
         <result property="envDesc" column="env_desc"/>
@@ -29,7 +29,7 @@
         <result property="modifyTime" column="modify_time"/>
         <result property="modifyUser" column="modify_user"/>
         <result property="dataSourceTypeId" column="datasource_type_id"/>
-        <association property="dataSourceType" javaType="DataSourceType">
+        <association property="dataSourceType" javaType="org.apache.linkis.datasourcemanager.common.domain.DataSourceType">
             <result property="icon" column="icon"/>
             <result property="name" column="name"/>
         </association>
@@ -51,12 +51,32 @@
             FROM `linkis_ps_dm_datasource_env` e WHERE id = #{dataSourceEnvId};]]>
     </select>
 
-    <insert id="insertOne" useGeneratedKeys="true" keyProperty="id" parameterType="DataSourceType">
+    <insert id="insertOne" useGeneratedKeys="true" keyProperty="id" parameterType="org.apache.linkis.datasourcemanager.common.domain.DataSourceType">
         INSERT INTO `linkis_ps_dm_datasource_env`(
         <include refid="data_source_env_insert_columns"/>
         ) VALUES(#{envName}, #{envDesc},#{dataSourceTypeId},
-        #{parameter}, #{createTime,jdbcType=TIMESTAMP}, #{createUser},
-        #{modifyTime,jdbcType=TIMESTAMP}, #{modifyUser})
+        #{parameter},
+
+        <choose>
+            <when test="createTime == null">
+                now(),
+            </when>
+            <otherwise>
+                #{createTime,jdbcType=TIMESTAMP},
+            </otherwise>
+        </choose>
+
+        #{createUser},
+
+        <choose>
+            <when test="modifyTime == null">
+                now(),
+            </when>
+            <otherwise>
+                #{modifyTime,jdbcType=TIMESTAMP},
+            </otherwise>
+        </choose>
+        #{modifyUser})
     </insert>
 
     <select id="listByTypeId" resultMap="dataSourceEnvMap">
@@ -88,7 +108,15 @@
             <![CDATA[`env_name` = #{envName},]]>
             <![CDATA[`env_desc` = #{envDesc,jdbcType=VARCHAR},]]>
             <![CDATA[`parameter` = #{parameter},]]>
-            <![CDATA[`modify_time` = #{modifyTime,jdbcType=TIMESTAMP},]]>
+<!--            <![CDATA[`modify_time` = #{modifyTime,jdbcType=TIMESTAMP},]]>-->
+            <choose>
+                <when test="modifyTime == null">
+                    <![CDATA[`modify_time` = now(),]]>
+                </when>
+                <otherwise>
+                    <![CDATA[`modify_time` = #{modifyTime,jdbcType=TIMESTAMP},]]>
+                </otherwise>
+            </choose>
             <![CDATA[`modify_user` = #{modifyUser,jdbcType=VARCHAR}]]>
         </set>
         <where>

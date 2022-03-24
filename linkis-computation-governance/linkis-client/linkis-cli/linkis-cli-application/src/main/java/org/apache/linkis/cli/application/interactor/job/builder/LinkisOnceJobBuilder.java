@@ -186,6 +186,7 @@ public class LinkisOnceJobBuilder extends JobBuilder {
         labelMap.put(LinkisKeys.KEY_CODETYPE, runType);
         labelMap.put(LinkisKeys.KEY_USER_CREATOR, proxyUsr + "-" + creator);
         sourceMap.put(LinkisKeys.KEY_SCRIPT_PATH, scriptPath);
+        runtimeMap.put(LinkisKeys.KEY_HIVE_RESULT_DISPLAY_TBALE, true);
 
         desc.setCreator(creator);
         desc.setParamConfMap(confMap);

@@ -36,12 +36,6 @@ import org.apache.hadoop.hive.ql.metadata.HiveException;
 import org.apache.hadoop.hive.ql.metadata.Partition;
 import org.apache.hadoop.hive.ql.metadata.Table;
 
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.stereotype.Component;
-
-import javax.annotation.PostConstruct;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,29 +44,25 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Component
 public class HiveMetaService extends AbstractMetaService<HiveConnection> {
 
     private static final Logger LOG = LoggerFactory.getLogger(HiveMetaService.class);
     private static final CommonVars<String> TMP_FILE_STORE_LOCATION =
-            CommonVars.apply("wds.linkis.server.mdm.service.temp.location", "classpath:/tmp");
+            CommonVars.apply("wds.linkis.server.mdm.service.temp.location", "/tmp/keytab");
 
     private BmlClient client;
 
     private static final String PARTITION_PART_SEPARATOR = ",";
     private static final String PARTITION_KV_SEPARATOR = "=";
 
-    @PostConstruct
-    public void buildClient() {
+    public HiveMetaService() {
         client = BmlClientFactory.createBmlClient();
     }
 
     @Override
     public MetadataConnection<HiveConnection> getConnection(
             String operator, Map<String, Object> params) throws Exception {
-        Resource resource =
-                new PathMatchingResourcePatternResolver()
-                        .getResource(TMP_FILE_STORE_LOCATION.getValue());
+
         String uris =
                 String.valueOf(
                         params.getOrDefault(HiveParamsMapper.PARAM_HIVE_URIS.getValue(), ""));
@@ -89,9 +79,11 @@ public class HiveMetaService extends AbstractMetaService<HiveConnection> {
             if (StringUtils.isNotBlank(keytabResourceId)) {
                 LOG.info("Start to download resource id:[" + keytabResourceId + "]");
                 String keytabFilePath =
-                        resource.getFile().getAbsolutePath()
+                        TMP_FILE_STORE_LOCATION.getValue()
                                 + "/"
-                                + UUID.randomUUID().toString().replace("-", "");
+                                + UUID.randomUUID().toString().replace("-", "")
+                                + ".keytab";
+
                 if (!downloadResource(keytabResourceId, operator, keytabFilePath)) {
                     throw new MetaRuntimeException(
                             "Fail to download resource i:[" + keytabResourceId + "]", null);
@@ -120,8 +112,15 @@ public class HiveMetaService extends AbstractMetaService<HiveConnection> {
      */
     private boolean downloadResource(String resourceId, String user, String absolutePath)
             throws IOException {
-        BmlDownloadResponse downloadResponse =
-                client.downloadResource(user, resourceId, absolutePath);
+        LOG.info(
+                "Try to download resource resourceId:["
+                        + resourceId
+                        + "]"
+                        + ",user=["
+                        + user
+                        + "], will store in path:"
+                        + absolutePath);
+        BmlDownloadResponse downloadResponse = client.downloadResource(user, resourceId);
         if (downloadResponse.isSuccess()) {
             IOUtils.copy(downloadResponse.inputStream(), new FileOutputStream(absolutePath));
             return true;

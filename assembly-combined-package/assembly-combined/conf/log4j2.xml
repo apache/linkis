@@ -19,10 +19,10 @@
 <configuration status="error" monitorInterval="30">
     <appenders>
         <RollingFile name="RollingFile" append="false" fileName="${env:LINKIS_LOG_DIR}/${sys:serviceName}.log"
-                     filePattern="${env:LINKIS_LOG_DIR}/$${date:yyyy-MM}/${sys:serviceName}/linkis-log-%d{yyyy-MM-dd}-%i.log">
+                     filePattern="${env:LINKIS_LOG_DIR}/$${date:yyyy-MM}/${sys:serviceName}/linkis-log-%d{yyyy-MM-dd-hh}-%i.log">
             <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] [%-40t] %c{1.} (%L) [%M] - %msg%xEx%n"/>
             <Policies>
-                <TimeBasedTriggeringPolicy interval="1 hour" />
+                <TimeBasedTriggeringPolicy interval="1" />
                 <SizeBasedTriggeringPolicy size="100MB"/>
             </Policies>
             <DefaultRolloverStrategy max="10"/>

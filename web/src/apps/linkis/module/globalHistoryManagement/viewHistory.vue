@@ -301,7 +301,16 @@ export default {
         if (this.$route.query.proxyUser) {
           params.proxyUser = this.$route.query.proxyUser
         }
-        let openLog = await api.fetch('/filesystem/openLog', params, 'get')
+        let openLog = {}
+        if (this.$route.query.status === 'Scheduled' || this.$route.query.status === 'Running') {
+          const tempParams = {
+            fromLine: this.fromLine,
+            size: -1,
+          }
+          openLog = await api.fetch(`/entrance/${this.$route.query.execID}/log`, tempParams, 'get')
+        } else {
+          openLog = await api.fetch('/filesystem/openLog', params, 'get')
+        }
         if (openLog) {
           const log = { all: '', error: '', warning: '', info: '' }
           const convertLogs = util.convertLog(openLog.log)
@@ -410,6 +419,8 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+
+
 .backButton {
   position: absolute;
   top: 0;

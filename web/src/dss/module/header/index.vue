@@ -20,6 +20,7 @@
     <div class="layout-header">
       <div
         class="layout-header-menu-icon"
+        @click="$router.push('/')"
       >
         <div style="display:inline-block;">
           <SvgIcon style="font-size: 28px;" icon-class="common" color="#00FFFF"/>
@@ -85,10 +86,10 @@ export default {
   },
   methods: {
     init() {
-      let userName = storage.get('userName');
+      this.userName = storage.get('userName');
       GetBaseInfo().then(rst => {
         if (!isEmpty(rst)) {
-          this.userName = userName || rst.username;
+          this.userName = this.userName || rst.username;
           storage.set("baseInfo", rst, "local");
           this.$router.app.$emit("username", rst.username);
           this.$emit("set-init");

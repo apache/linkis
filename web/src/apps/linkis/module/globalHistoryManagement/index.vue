@@ -22,20 +22,18 @@
         <InputNumber
           v-model="searchBar.id"
           :placeholder="$t('message.linkis.formItems.id.placeholder')"
-          style="width:100px;"
+          style="width:60px;"
           :min="1"
         ></InputNumber>
       </FormItem>
-      <Divider type="vertical" class="divider" v-if="isAdminModel" />
       <FormItem prop="proxyUser" :label="$t('message.linkis.userName')" v-if="isAdminModel">
         <Input
           :maxlength="50"
           v-model="searchBar.proxyUser"
           :placeholder="$t('message.linkis.searchName')"
-          style="width:120px;"
+          style="width:60px;"
         />
       </FormItem>
-      <Divider type="vertical" class="divider" />
       <FormItem prop="shortcut" :label="$t('message.linkis.formItems.date.label')">
         <DatePicker
           :transfer="true"
@@ -46,19 +44,25 @@
           placement="bottom-start"
           format="yyyy-MM-dd HH:mm"
           :placeholder="$t('message.linkis.formItems.date.placeholder')"
-          style="width: 200px"
+          style="width: 115px"
           :editable="false"
         />
       </FormItem>
-      <Divider type="vertical" class="divider" />
+      <FormItem prop="creator" :label="$t('message.linkis.formItems.creator.label')">
+        <Input
+          :maxlength="50"
+          v-model="searchBar.creator"
+          :placeholder="$t('message.linkis.formItems.creator.placeholder')"
+          style="width:80px;"
+        />
+      </FormItem>
       <FormItem prop="engine" :label="$t('message.linkis.formItems.engine.label')">
-        <Select v-model="searchBar.engine" style="min-width:70px;">
+        <Select v-model="searchBar.engine" style="width: 70px">
           <Option v-for="(item) in getEngineTypes" :label="item === 'all' ? '全部': item" :value="item" :key="item" />
         </Select>
       </FormItem>
-      <Divider type="vertical" class="divider" />
       <FormItem prop="status" :label="$t('message.linkis.formItems.status.label')">
-        <Select v-model="searchBar.status" style="min-width:90px;">
+        <Select v-model="searchBar.status" style="width: 70px">
           <Option
             v-for="(item) in statusType"
             :label="item.label"
@@ -67,7 +71,6 @@
           />
         </Select>
       </FormItem>
-      <Divider type="vertical" class="divider" />
       <FormItem>
         <Button
           type="primary"
@@ -143,6 +146,7 @@ export default {
       searchBar: {
         id: null,
         proxyUser: '',
+        creator: '',
         engine: 'all',
         status: '',
         shortcut: [today, today]
@@ -341,6 +345,8 @@ export default {
       }
       const query =  {
         taskID: params.row.taskID,
+        execID: params.row.strongerExecId,
+        status: params.row.status,
         fileName
       }
       if (this.isAdminModel) {
@@ -360,6 +366,7 @@ export default {
       const endDate = this.searchBar.shortcut[1]
       const params = {
         taskID: this.searchBar.id,
+        creator: this.searchBar.creator,
         executeApplicationName: this.searchBar.engine,
         status: this.searchBar.status,
         startDate: startDate && startDate.getTime(),
@@ -373,6 +380,7 @@ export default {
         delete params.proxyUser
       }
       if (this.searchBar.id) {
+        delete params.creator
         delete params.executeApplicationName
         delete params.status
         delete params.startDate
@@ -506,13 +514,14 @@ export default {
           title: this.$t('message.linkis.tableColumns.fileName'),
           key: 'source',
           align: 'center',
-          width: 140
+          ellipsis: true,
+          width: 190
         },
         {
           title: this.$t('message.linkis.tableColumns.executionCode'),
           key: 'executionCode',
           align: 'center',
-          width: 450,
+          width: 440,
           // 溢出以...显示
           ellipsis: true
           // renderType: 'tooltip',
@@ -521,7 +530,7 @@ export default {
           title: this.$t('message.linkis.tableColumns.status'),
           key: 'status',
           align: 'center',
-          width: 200,
+          width: 180,
           renderType: 'if',
           renderParams: {
             action: this.setRenderType
@@ -531,7 +540,7 @@ export default {
           title: this.$t('message.linkis.tableColumns.costTime'),
           key: 'costTime',
           align: 'center',
-          width: 100,
+          width: 90,
           renderType: 'convertTime'
         },
         {
@@ -539,7 +548,7 @@ export default {
           key: 'failedReason',
           align: 'center',
           className: 'history-failed',
-          width: 220,
+          width: 210,
           renderType: 'a',
           renderParams: {
             hasDoc: this.checkIfHasDoc,
@@ -582,6 +591,7 @@ export default {
       this.searchBar = {
         id: null,
         proxyUser: '',
+        creator: '',
         engine: 'all',
         status: 'all',
         shortcut: ''

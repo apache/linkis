@@ -26,22 +26,7 @@ export default {
       SUPPORTED_LANG_MODES,
     };
   },
-  beforeRouteLeave(to, from, next) {
-    if (typeof this.beforeLeaveHook === 'function') {
-      let hookRes = this.beforeLeaveHook();
-      if (hookRes === false) {
-        next(false);
-      } else if (hookRes && hookRes.then) {
-        hookRes.then((flag) => {
-          next(flag);
-        });
-      } else {
-        next(true);
-      }
-    } else {
-      next(true);
-    }
-  },
+  
   created: function () {},
   mounted: function () {},
   beforeDestroy: function () {},

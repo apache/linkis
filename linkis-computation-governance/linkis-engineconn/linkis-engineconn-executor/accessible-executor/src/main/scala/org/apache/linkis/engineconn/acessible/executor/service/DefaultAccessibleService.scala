@@ -80,6 +80,7 @@ class DefaultAccessibleService extends AccessibleService with Logging {
     var executor: Executor = ExecutorManager.getInstance.getReportExecutor
     if (null != executor) {
       Utils.tryAndWarn{
+        executor.close()
         executor.tryShutdown()
       }
       warn(s"Engine : ${Sender.getThisInstance} with state has stopped successfully.")

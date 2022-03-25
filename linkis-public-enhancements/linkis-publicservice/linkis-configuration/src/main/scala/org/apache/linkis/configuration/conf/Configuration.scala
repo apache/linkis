@@ -35,9 +35,9 @@ object Configuration {
 
   val GLOBAL_CONF_LABEL = "*-*,*-*"
 
-  val USE_CREATOR_DEFAULE_VALUE = CommonVars.apply("wds.linkis.configuration.use.creator.default.value", false).getValue
+  val USE_CREATOR_DEFAULE_VALUE = CommonVars.apply("wds.linkis.configuration.use.creator.default.value", true).getValue
 
-  val GOVERNANCE_STATION_ADMIN = CommonVars("wds.linkis.governance.station.admin", "hadoop")
+
 
 
 }

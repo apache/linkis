@@ -45,6 +45,14 @@ object Configuration extends Logging {
   //read from env
   val EUREKA_PREFER_IP = CommonVars("EUREKA_PREFER_IP", false).getValue
 
+  val GOVERNANCE_STATION_ADMIN = CommonVars("wds.linkis.governance.station.admin", "hadoop")
+
+  private val adminUsers = GOVERNANCE_STATION_ADMIN.getValue.split(",")
+
+  def isAdmin(username: String): Boolean = {
+    adminUsers.exists(username.equalsIgnoreCase)
+  }
+
   def getGateWayURL(): String = {
     val url = GATEWAY_URL.getValue.trim
     val gatewayUr = if (url.endsWith("/")) {

@@ -17,7 +17,8 @@
 
 package org.apache.linkis.storage.conf
 
-import org.apache.linkis.common.conf.CommonVars
+import org.apache.linkis.common.conf.{ByteType, CommonVars}
+import org.apache.linkis.common.utils.ByteTimeUtils
 
 object LinkisStorageConf {
   val HDFS_FILE_SYSTEM_REST_ERRS: String =
@@ -25,4 +26,9 @@ object LinkisStorageConf {
       "wds.linkis.hdfs.rest.errs",
       ".*Filesystem closed.*|.*Failed to find any Kerberos tgt.*")
       .getValue
+
+  val ROW_BYTE_MAX_LEN_STR = CommonVars("wds.linkis.resultset.row.max.str", "10m").getValue
+
+  val ROW_BYTE_MAX_LEN = ByteTimeUtils.byteStringAsBytes(ROW_BYTE_MAX_LEN_STR)
+
 }

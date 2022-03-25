@@ -112,7 +112,7 @@ object SSOUtils extends Logging {
     cookie.setPath("/")
     if(sslEnable) cookie.setSecure(true)
     addEmptyCookie(cookie)
-    removeLoginUserByAddCookie(addEmptyCookie)
+    ProxyUserSSOUtils.removeLoginUserByAddCookie(addEmptyCookie)
   }
 
   def removeLoginUser(removeKeyReturnValue: String => Option[String]): Unit = removeKeyReturnValue(USER_TICKET_ID_STRING).foreach{ t =>

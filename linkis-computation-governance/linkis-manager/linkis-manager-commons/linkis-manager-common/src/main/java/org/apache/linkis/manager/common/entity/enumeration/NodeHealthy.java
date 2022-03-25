@@ -34,7 +34,7 @@ public enum NodeHealthy {
     StockUnavailable;
 
     public static Boolean isAvailable(NodeHealthy nodeHealthy) {
-        if (Healthy == nodeHealthy || WARN == nodeHealthy || StockAvailable == nodeHealthy) {
+        if (Healthy == nodeHealthy || WARN == nodeHealthy) {
             return true;
         }
         return false;

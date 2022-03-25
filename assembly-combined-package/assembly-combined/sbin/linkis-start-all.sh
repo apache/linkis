@@ -110,12 +110,12 @@ startApp
 if [ "$ENABLE_METADATA_MANAGER" == "true" ]; then
   #linkis-ps-data-source-manager
   SERVER_NAME="ps-data-source-manager"
-  SERVER_IP=$DATASOURCE_MANAGER_IP
+  SERVER_IP=$DATASOURCE_MANAGER_INSTALL_IP
   startApp
 
   #linkis-ps-metadatamanager
   SERVER_NAME="ps-metadatamanager"
-  SERVER_IP=$METADATA_MANAGER_PORT
+  SERVER_IP=$METADATA_MANAGER_INSTALL_IP
   startApp
 fi
 
@@ -197,12 +197,12 @@ checkServer
 if [ "$ENABLE_METADATA_MANAGER" == "true" ]; then
   #linkis-ps-data-source-manager
   SERVER_NAME="ps-data-source-manager"
-  SERVER_IP=$DATASOURCE_MANAGER_IP
+  SERVER_IP=$DATASOURCE_MANAGER_INSTALL_IP
   checkServer
 
   #linkis-ps-metadatamanager
   SERVER_NAME="ps-metadatamanager"
-  SERVER_IP=$METADATA_MANAGER_IP
+  SERVER_IP=$METADATA_MANAGER_INSTALL_IP
   checkServer
 fi
 

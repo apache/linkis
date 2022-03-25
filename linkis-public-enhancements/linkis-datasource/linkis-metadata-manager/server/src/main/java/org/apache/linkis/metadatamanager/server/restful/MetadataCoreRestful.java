@@ -190,6 +190,8 @@ public class MetadataCoreRestful {
             @PathVariable("database") String database,
             @PathVariable("table") String table,
             @RequestParam("system") String system,
+            @RequestParam(name = "traverse", required = false, defaultValue = "false")
+                    Boolean traverse,
             HttpServletRequest request) {
         try {
             if (StringUtils.isBlank(system)) {
@@ -201,6 +203,7 @@ public class MetadataCoreRestful {
                             database,
                             table,
                             system,
+                            traverse,
                             SecurityFilter.getLoginUsername(request));
             return Message.ok().data("props", partitionInfo);
         } catch (Exception e) {

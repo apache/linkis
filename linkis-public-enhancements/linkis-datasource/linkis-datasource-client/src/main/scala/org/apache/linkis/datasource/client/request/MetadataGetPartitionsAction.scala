@@ -26,6 +26,7 @@ class MetadataGetPartitionsAction extends GetAction with DataSourceAction {
   private var dataSourceId: Long = _
   private var database: String = _
   private var table: String = _
+  private var traverse: Boolean = false
 
   override def suffixURLs: Array[String] = Array(METADATA_SERVICE_MODULE.getValue, "partitions", dataSourceId.toString, "db", database, "table", table)
 
@@ -46,6 +47,7 @@ object MetadataGetPartitionsAction {
     private var table: String = _
     private var system: String = _
     private var user: String = _
+    private var traverse: Boolean = false
 
     def setUser(user: String): Builder = {
       this.user = user
@@ -67,6 +69,11 @@ object MetadataGetPartitionsAction {
       this
     }
 
+    def setTraverse(traverse: Boolean): Builder = {
+      this.traverse = traverse
+      this
+    }
+
     def setSystem(system: String): Builder = {
       this.system = system
       this
@@ -84,6 +91,7 @@ object MetadataGetPartitionsAction {
       metadataGetPartitionsAction.table = this.table
       metadataGetPartitionsAction.setParameter("system", system)
       metadataGetPartitionsAction.setUser(user)
+      metadataGetPartitionsAction.traverse=this.traverse
       metadataGetPartitionsAction
     }
   }

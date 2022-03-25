@@ -33,11 +33,11 @@
         <module>linkis-datasource-manager/common</module>
         <module>linkis-datasource-manager/server</module>
         <module>linkis-metadata-manager/common</module>
-        <module>linkis-metadata-manager/server</module>
         <module>linkis-metadata-manager/service/elasticsearch</module>
         <module>linkis-metadata-manager/service/hive</module>
         <module>linkis-metadata-manager/service/kafka</module>
         <module>linkis-metadata-manager/service/mysql</module>
+        <module>linkis-metadata-manager/server</module>
         <module>linkis-datasource-client</module>
     </modules>
 </project>

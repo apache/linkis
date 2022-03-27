@@ -34,6 +34,7 @@ object GetTableStatisticInfoAction {
     private var database: String = _
     private var tableName: String = _
     private var pageSize: Int = 100
+    private var pageNow: Int = 1
     private var partitionSort: String = "desc"
 
     def setUser(user: String): Builder = {
@@ -71,6 +72,7 @@ object GetTableStatisticInfoAction {
       getTableStatisticInfoAction.setUser(user)
       getTableStatisticInfoAction.setParameter("database", database)
       getTableStatisticInfoAction.setParameter("tableName", tableName)
+      getTableStatisticInfoAction.setParameter("pageNow", pageNow)
       getTableStatisticInfoAction.setParameter("pageSize", pageSize)
       getTableStatisticInfoAction.setParameter("partitionSort", partitionSort)
       getTableStatisticInfoAction

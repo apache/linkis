@@ -49,7 +49,9 @@ public class LabelBuilderFactoryContext {
                     if (clazz == StdLabelBuilderFactory.class
                             && StringUtils.isNotBlank(className)) {
                         try {
-                            clazz = (Class<? extends LabelBuilderFactory>) ClassUtils.getClass(className);
+                            clazz =
+                                    (Class<? extends LabelBuilderFactory>)
+                                            ClassUtils.getClass(className);
                         } catch (ClassNotFoundException e) {
                             throw new RuntimeException("find class + " + className + " failed!", e);
                         }

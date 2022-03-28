@@ -17,7 +17,7 @@
  
 package org.apache.linkis.common.conf
 
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 
 import scala.collection.mutable.ArrayBuffer
 import scala.collection.{JavaConversions, mutable}

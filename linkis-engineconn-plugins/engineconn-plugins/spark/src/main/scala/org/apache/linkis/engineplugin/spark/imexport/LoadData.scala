@@ -25,7 +25,7 @@ import org.apache.linkis.engineplugin.spark.imexport.util.{BackGroundServiceUtil
 import org.apache.linkis.hadoop.common.conf.HadoopConf
 import org.apache.linkis.hadoop.common.utils.HDFSUtils
 import org.apache.linkis.storage.excel.XlsUtils
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.hadoop.fs.{FileSystem, Path}
 import org.apache.hadoop.io.IOUtils
 import org.apache.spark.sql.SparkSession

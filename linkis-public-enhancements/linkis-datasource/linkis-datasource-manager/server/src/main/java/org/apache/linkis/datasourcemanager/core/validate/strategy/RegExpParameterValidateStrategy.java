@@ -21,7 +21,7 @@ import org.apache.linkis.datasourcemanager.common.domain.DataSourceParamKeyDefin
 import org.apache.linkis.datasourcemanager.core.validate.ParameterValidateException;
 import org.apache.linkis.datasourcemanager.core.validate.ParameterValidateStrategy;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 import java.util.regex.Pattern;

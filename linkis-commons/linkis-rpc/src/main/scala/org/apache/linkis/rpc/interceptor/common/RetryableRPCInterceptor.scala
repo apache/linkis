@@ -27,7 +27,7 @@ import org.apache.linkis.rpc.exception.DWCRPCRetryException
 import org.apache.linkis.rpc.interceptor.{RPCInterceptor, RPCInterceptorChain, RPCInterceptorExchange, ServiceInstanceRPCInterceptorChain}
 import org.apache.linkis.rpc.utils.RPCUtils
 import feign.RetryableException
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.springframework.stereotype.Component
 
 

@@ -24,7 +24,7 @@ import org.apache.linkis.common.utils.{Logging, RSAUtils, Utils}
 import org.apache.linkis.server.conf.ServerConfiguration
 import org.apache.linkis.server.exception.{IllegalUserTicketException, LoginExpireException, NonLoginException}
 import javax.servlet.http.Cookie
-import org.apache.commons.lang.time.DateFormatUtils
+import org.apache.commons.lang3.time.DateFormatUtils
 import scala.collection.JavaConverters._
 
 object SSOUtils extends Logging {

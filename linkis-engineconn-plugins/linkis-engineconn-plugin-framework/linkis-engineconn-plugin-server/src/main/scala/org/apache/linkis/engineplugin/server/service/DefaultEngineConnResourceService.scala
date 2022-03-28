@@ -31,7 +31,7 @@ import org.apache.linkis.manager.engineplugin.common.exception.EngineConnPluginE
 import org.apache.linkis.manager.engineplugin.common.launch.process.{EngineConnResource, LaunchConstants}
 import org.apache.linkis.message.annotation.Receiver
 import javax.annotation.PostConstruct
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 

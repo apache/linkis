@@ -29,7 +29,7 @@ import org.apache.linkis.httpclient.loadbalancer.{AbstractLoadBalancer, DefaultL
 import org.apache.linkis.httpclient.request._
 import org.apache.linkis.httpclient.response._
 import org.apache.commons.io.IOUtils
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.http.client.CookieStore
 import org.apache.http.client.config.RequestConfig
 import org.apache.http.client.entity.{DeflateDecompressingEntity, GzipDecompressingEntity, UrlEncodedFormEntity}

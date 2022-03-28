@@ -35,7 +35,7 @@ import org.apache.linkis.manager.common.protocol.engine.EngineConnStatusCallback
 import org.apache.linkis.manager.engineplugin.common.launch.entity.EngineConnLaunchRequest
 import org.apache.linkis.rpc.Sender
 import org.apache.commons.io.IOUtils
-import org.apache.commons.lang.exception.ExceptionUtils
+import org.apache.commons.lang3.exception.ExceptionUtils
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Future, TimeoutException}

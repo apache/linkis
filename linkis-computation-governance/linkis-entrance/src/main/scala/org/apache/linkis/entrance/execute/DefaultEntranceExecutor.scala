@@ -41,7 +41,7 @@ import org.apache.linkis.server.BDPJettyServerHelper
 import java.util
 import java.util.Date
 
-import org.apache.commons.lang.exception.ExceptionUtils
+import org.apache.commons.lang3.exception.ExceptionUtils
 import org.apache.linkis.governance.common.entity.job.SubJobInfo
 import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.orchestrator.computation.operation.progress.{DefaultProgressOperation, ProgressProcessor}
@@ -285,7 +285,7 @@ class DefaultEntranceExecutor(id: Long, mark: MarkReq, entranceExecutorManager: 
     } { t: Throwable =>
       if (getEngineExecuteAsyncReturn.isEmpty) {
 
-        val msg = s"task submit failed,reason, ${ExceptionUtils.getFullStackTrace(t)}"
+        val msg = s"task submit failed,reason, ${ExceptionUtils.getStackTrace(t)}"
         entranceExecuteRequest.getJob.getLogListener.foreach(_.onLogUpdate(entranceExecuteRequest.getJob, LogUtils.generateERROR(msg)))
         ErrorExecuteResponse(msg, t)
       } else {

@@ -25,7 +25,7 @@ import org.apache.linkis.rpc.transform.{RPCConsumer, RPCProduct}
 import org.apache.linkis.server.{Message, catchIt}
 import javax.annotation.PostConstruct
 import javax.servlet.http.HttpServletRequest
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.{Import, Primary}
 import org.springframework.stereotype.Component

@@ -26,7 +26,7 @@ import org.apache.linkis.cs.common.entity.metadata.{CSColumn, CSTable}
 import org.apache.linkis.storage.resultset.StorageResultSetWriter
 import org.apache.linkis.storage.resultset.table.{TableMetaData, TableRecord, TableResultSet}
 import org.apache.linkis.storage.utils.StorageUtils
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 
 class CSTableResultSetWriter(tableResult: TableResultSet, maxCacheSize: Long,
                              storePath: FsPath, contextIDStr: String, nodeName: String, alias: String) extends StorageResultSetWriter[TableMetaData, TableRecord](tableResult, maxCacheSize, storePath) with Logging {

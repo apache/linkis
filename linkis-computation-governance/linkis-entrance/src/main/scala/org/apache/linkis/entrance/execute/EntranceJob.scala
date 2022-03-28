@@ -38,7 +38,7 @@ import org.apache.linkis.rpc.utils.RPCUtils
 import org.apache.linkis.scheduler.executer.{CompletedExecuteResponse, ErrorExecuteResponse, SuccessExecuteResponse}
 import org.apache.linkis.scheduler.queue.SchedulerEventState._
 import org.apache.linkis.scheduler.queue.{Job, SchedulerEventState}
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 
 import scala.beans.BeanProperty
 

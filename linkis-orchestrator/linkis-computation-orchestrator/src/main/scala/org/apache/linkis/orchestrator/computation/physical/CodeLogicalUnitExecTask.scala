@@ -39,7 +39,7 @@ import org.apache.linkis.orchestrator.strategy.async.AsyncExecTask
 import org.apache.linkis.orchestrator.strategy.{ResultSetExecTask, StatusInfoExecTask}
 import org.apache.linkis.orchestrator.utils.OrchestratorIDCreator
 import org.apache.linkis.scheduler.executer.{ErrorExecuteResponse, SubmitResponse}
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 
 import scala.concurrent.duration.Duration
 import scala.collection.convert.decorateAsScala._

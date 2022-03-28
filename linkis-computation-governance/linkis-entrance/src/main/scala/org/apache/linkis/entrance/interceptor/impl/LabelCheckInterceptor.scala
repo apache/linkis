@@ -25,7 +25,7 @@ import org.apache.linkis.governance.common.entity.task.RequestPersistTask
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
 import org.apache.linkis.protocol.task.Task
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 
 import scala.collection.JavaConversions._
 

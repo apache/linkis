@@ -29,7 +29,7 @@ import org.apache.linkis.cs.contextcache.ContextCacheService;
 import org.apache.linkis.cs.execution.matcher.ContextSearchMatcher;
 import org.apache.linkis.server.BDPJettyServerHelper;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.google.common.collect.Lists;
 import org.slf4j.Logger;

@@ -33,7 +33,7 @@ import org.apache.linkis.rpc.Sender
 import org.apache.linkis.scheduler.queue.parallelqueue.ParallelGroup
 import org.apache.linkis.scheduler.queue.{Group, GroupFactory, SchedulerEvent}
 import org.apache.linkis.server.JMap
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 
 import scala.collection.JavaConversions._
 

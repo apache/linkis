@@ -31,8 +31,8 @@ import org.apache.linkis.scheduler.executer._
 import org.apache.linkis.scheduler.future.BDPFuture
 import org.apache.linkis.scheduler.listener._
 import org.apache.commons.io.IOUtils
-import org.apache.commons.lang.StringUtils
-import org.apache.commons.lang.exception.ExceptionUtils
+import org.apache.commons.lang3.StringUtils
+import org.apache.commons.lang3.exception.ExceptionUtils
 
 
 
@@ -96,7 +96,7 @@ abstract class Job extends Runnable with SchedulerEvent with Closeable with Logg
     Utils.tryAndWarn {
       logListener.foreach(_.onLogUpdate(this, LogUtils.generateERROR(errorMsg)))
       if(t != null) {
-        logListener.foreach(_.onLogUpdate(this, LogUtils.generateERROR(ExceptionUtils.getFullStackTrace(t))))
+        logListener.foreach(_.onLogUpdate(this, LogUtils.generateERROR(ExceptionUtils.getStackTrace(t))))
       }
     }
     errorExecuteResponse = ErrorExecuteResponse(errorMsg, t)
@@ -206,7 +206,7 @@ abstract class Job extends Runnable with SchedulerEvent with Closeable with Logg
       case e: ErrorExecuteResponse =>
         val canRetry = Utils.tryCatch(isJobShouldRetry(e)) {t =>
           error(s"Job $toString failed to get the retry information!", t)
-          Utils.tryAndWarn(logListener.foreach(_.onLogUpdate(this, LogUtils.generateERROR("failed to get the retry information! " + ExceptionUtils.getFullStackTrace(t)))))
+          Utils.tryAndWarn(logListener.foreach(_.onLogUpdate(this, LogUtils.generateERROR("failed to get the retry information! " + ExceptionUtils.getStackTrace(t)))))
           if(e.t == null) errorExecuteResponse = ErrorExecuteResponse(e.message, t)
           false
         }

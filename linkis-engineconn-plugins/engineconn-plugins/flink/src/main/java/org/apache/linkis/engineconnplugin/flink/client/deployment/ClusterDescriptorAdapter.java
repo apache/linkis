@@ -21,7 +21,7 @@ import org.apache.linkis.engineconnplugin.flink.client.context.ExecutionContext;
 import org.apache.linkis.engineconnplugin.flink.config.FlinkEnvConfiguration;
 import org.apache.linkis.engineconnplugin.flink.exception.JobExecutionException;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.flink.api.common.JobID;
 import org.apache.flink.api.common.JobStatus;
 import org.apache.flink.client.deployment.ClusterRetrieveException;

@@ -27,7 +27,7 @@ import org.apache.linkis.engineplugin.spark.extension.SparkSqlExtension
 import org.apache.linkis.engineplugin.spark.utils.EngineUtils
 import org.apache.linkis.scheduler.executer.{CompletedExecuteResponse, ErrorExecuteResponse, ExecuteResponse, SuccessExecuteResponse}
 import org.apache.linkis.governance.common.paser.SQLCodeParser
-import org.apache.commons.lang.exception.ExceptionUtils
+import org.apache.commons.lang3.exception.ExceptionUtils
 
 
 class SparkSqlExecutor(sparkEngineSession: SparkEngineSession, id: Long) extends SparkEngineConnExecutor(sparkEngineSession.sparkContext, id) {

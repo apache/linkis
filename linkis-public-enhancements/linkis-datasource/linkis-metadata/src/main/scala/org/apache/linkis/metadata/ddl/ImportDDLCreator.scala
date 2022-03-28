@@ -32,8 +32,8 @@ import org.apache.linkis.storage.FSFactory
 import org.apache.linkis.storage.fs.FileSystem
 import org.apache.linkis.storage.utils.FileSystemUtils
 import org.apache.commons.io.IOUtils
-import org.apache.commons.lang.StringUtils
-import org.apache.commons.lang.time.DateFormatUtils
+import org.apache.commons.lang3.StringUtils
+import org.apache.commons.lang3.time.DateFormatUtils
 
 import scala.collection.JavaConversions._
 import scala.collection.mutable.ArrayBuffer

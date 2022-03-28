@@ -23,7 +23,7 @@ import org.apache.linkis.governance.common.entity.job.JobRequest
 import org.apache.linkis.governance.common.entity.task.RequestPersistTask
 import org.apache.linkis.protocol.task.Task
 import org.apache.linkis.scheduler.queue.Job
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.slf4j.{Logger, LoggerFactory}
 
 

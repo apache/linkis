@@ -26,7 +26,7 @@ import org.apache.linkis.rpc.exception.DWCURIException
 import org.apache.linkis.rpc.transform.{RPCConsumer, RPCProduct}
 import org.apache.linkis.server.{Message, catchIt}
 import javax.annotation.PostConstruct
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.web.bind.annotation.{RequestBody, RequestMapping, RequestMethod, RestController}

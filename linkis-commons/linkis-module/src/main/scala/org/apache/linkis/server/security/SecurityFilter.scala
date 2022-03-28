@@ -28,7 +28,7 @@ import org.apache.linkis.server.security.SSOUtils.sslEnable
 import org.apache.linkis.server.{Message, _}
 import javax.servlet._
 import javax.servlet.http.{Cookie, HttpServletRequest, HttpServletResponse}
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 
 
 class SecurityFilter extends Filter {

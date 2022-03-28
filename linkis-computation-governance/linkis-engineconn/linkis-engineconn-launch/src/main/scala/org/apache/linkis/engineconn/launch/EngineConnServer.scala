@@ -34,7 +34,7 @@ import org.apache.linkis.governance.common.utils.EngineConnArgumentsParser
 import org.apache.linkis.manager.engineplugin.common.launch.process.Environment
 import org.apache.linkis.manager.label.builder.factory.{LabelBuilderFactory, LabelBuilderFactoryContext}
 import org.apache.linkis.manager.label.entity.Label
-import org.apache.commons.lang.exception.ExceptionUtils
+import org.apache.commons.lang3.exception.ExceptionUtils
 
 import scala.collection.JavaConversions._
 import scala.collection.mutable.ArrayBuffer

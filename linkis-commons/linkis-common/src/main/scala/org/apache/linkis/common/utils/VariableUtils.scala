@@ -22,8 +22,8 @@ import java.util
 import java.util.{Calendar, Date}
 
 import org.apache.linkis.common.exception.LinkisCommonErrorException
-import org.apache.commons.lang.StringUtils
-import org.apache.commons.lang.time.DateUtils
+import org.apache.commons.lang3.StringUtils
+import org.apache.commons.lang3.time.DateUtils
 
 import scala.collection.mutable
 import scala.collection.convert.WrapAsScala._

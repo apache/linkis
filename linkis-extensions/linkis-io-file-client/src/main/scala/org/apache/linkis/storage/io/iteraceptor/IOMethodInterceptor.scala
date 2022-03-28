@@ -38,7 +38,7 @@ import org.apache.linkis.storage.resultset.{ResultSetFactory, ResultSetReader, R
 import org.apache.linkis.storage.utils.{StorageConfiguration, StorageUtils}
 import org.apache.linkis.storage.io.conf.IOFileClientConf
 import net.sf.cglib.proxy.{MethodInterceptor, MethodProxy}
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 
 import scala.beans.BeanProperty
 import scala.collection.JavaConversions._

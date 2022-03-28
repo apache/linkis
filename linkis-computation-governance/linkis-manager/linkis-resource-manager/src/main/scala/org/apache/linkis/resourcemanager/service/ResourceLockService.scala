@@ -24,7 +24,7 @@ import org.apache.linkis.manager.common.entity.persistence.PersistenceLock
 import org.apache.linkis.manager.label.entity.{EngineNodeLabel, ResourceLabel}
 import org.apache.linkis.manager.persistence.LockManagerPersistence
 import org.apache.linkis.resourcemanager.domain.RMLabelContainer
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 

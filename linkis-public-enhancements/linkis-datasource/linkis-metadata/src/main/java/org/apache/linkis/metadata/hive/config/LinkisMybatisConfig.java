@@ -21,7 +21,7 @@ import org.apache.linkis.hadoop.common.conf.HadoopConf;
 import org.apache.linkis.metadata.util.DWSConfig;
 import org.apache.linkis.metadata.util.HiveUtils;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;

@@ -22,7 +22,7 @@ import java.util.Hashtable
 import org.apache.linkis.common.conf.CommonVars
 import javax.naming.Context
 import javax.naming.ldap.InitialLdapContext
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 
 
 

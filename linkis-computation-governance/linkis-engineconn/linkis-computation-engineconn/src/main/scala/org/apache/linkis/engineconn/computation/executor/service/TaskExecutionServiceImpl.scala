@@ -48,7 +48,7 @@ import org.apache.linkis.rpc.utils.RPCUtils
 import org.apache.linkis.scheduler.executer.{ErrorExecuteResponse, ExecuteResponse, IncompleteExecuteResponse, SubmitResponse}
 import org.apache.linkis.server.BDPJettyServerHelper
 import javax.annotation.PostConstruct
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 

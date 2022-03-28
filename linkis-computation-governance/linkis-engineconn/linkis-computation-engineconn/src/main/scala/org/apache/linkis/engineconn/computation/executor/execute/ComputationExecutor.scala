@@ -45,8 +45,8 @@ import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel
 import org.apache.linkis.manager.label.entity.entrance.ExecuteOnceLabel
 import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.apache.linkis.scheduler.executer._
-import org.apache.commons.lang.StringUtils
-import org.apache.commons.lang.exception.ExceptionUtils
+import org.apache.commons.lang3.StringUtils
+import org.apache.commons.lang3.exception.ExceptionUtils
 
 
 abstract class ComputationExecutor(val outputPrintLimit: Int = 1000) extends AccessibleExecutor with ResourceExecutor with LabelExecutor with Logging {

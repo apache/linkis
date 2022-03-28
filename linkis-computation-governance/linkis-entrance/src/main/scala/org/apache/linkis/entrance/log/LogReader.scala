@@ -22,7 +22,7 @@ import java.io.{Closeable, IOException, InputStream}
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.entrance.exception.LogReadFailedException
 import org.apache.commons.io.{IOUtils, LineIterator}
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.entrance.utils.LogHelper
 
 import scala.util.matching.Regex

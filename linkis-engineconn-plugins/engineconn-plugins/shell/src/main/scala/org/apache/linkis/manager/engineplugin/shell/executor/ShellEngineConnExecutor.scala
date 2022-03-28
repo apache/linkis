@@ -30,7 +30,7 @@ import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.scheduler.executer.{ErrorExecuteResponse, ExecuteResponse, SuccessExecuteResponse}
 import org.apache.commons.io.IOUtils
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.engineconn.acessible.executor.log.LogHelper
 
 import scala.collection.mutable.ArrayBuffer

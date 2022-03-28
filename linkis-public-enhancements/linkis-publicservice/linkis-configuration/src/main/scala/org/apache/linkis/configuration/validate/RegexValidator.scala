@@ -17,7 +17,7 @@
  
 package org.apache.linkis.configuration.validate
 
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 
 class RegexValidator extends Validator{
   override var kind: String = "Regex"

@@ -31,8 +31,8 @@ import org.apache.linkis.message.annotation.{Order, Receiver}
 import org.apache.linkis.message.builder.ServiceMethodContext
 import org.apache.linkis.message.publisher.MessagePublisher
 import org.apache.linkis.protocol.label.NodeLabelAddRequest
-import org.apache.commons.lang.StringUtils
-import org.apache.commons.lang.exception.ExceptionUtils
+import org.apache.commons.lang3.StringUtils
+import org.apache.commons.lang3.exception.ExceptionUtils
 import org.apache.linkis.manager.label.service.NodeLabelAddService
 import org.apache.linkis.resourcemanager.message.RMMessageService
 import org.springframework.beans.factory.annotation.Autowired

@@ -31,7 +31,7 @@ import org.apache.linkis.manager.engineplugin.common.creation.{ExecutorFactory, 
 import org.apache.linkis.manager.label.entity.engine.EngineType
 import org.apache.linkis.manager.label.entity.engine.EngineType.EngineType
 import org.apache.linkis.server.JMap
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.spark.sql.{SQLContext, SparkSession}
 import org.apache.spark.util.SparkUtils
 import org.apache.spark.{SparkConf, SparkContext}

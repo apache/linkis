@@ -37,7 +37,7 @@ import org.apache.linkis.manager.label.entity.Label;
 import org.apache.linkis.manager.label.utils.LabelUtils;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,7 +58,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import static org.apache.commons.lang.math.NumberUtils.isNumber;
+import static org.apache.commons.lang3.math.NumberUtils.isNumber;
 
 @AdapterMode
 @EnableAspectJAutoProxy(proxyTargetClass = true, exposeProxy = true)

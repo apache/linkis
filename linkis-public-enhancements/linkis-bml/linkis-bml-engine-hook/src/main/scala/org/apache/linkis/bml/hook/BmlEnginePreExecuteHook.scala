@@ -30,7 +30,7 @@ import org.apache.linkis.engineconn.computation.executor.hook.ComputationExecuto
 import org.apache.linkis.engineconn.computation.executor.utlis.ComputationEngineConstant
 import org.apache.linkis.engineconn.core.util.EngineConnUtils
 import org.apache.linkis.governance.common.utils.GovernanceConstant
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 
 import scala.collection.JavaConversions.asScalaBuffer
 

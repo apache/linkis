@@ -21,7 +21,7 @@ import java.util
 import java.util.regex.Pattern
 
 import org.apache.linkis.cs.client.service.CSResourceService
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 
 import scala.collection.JavaConversions._
 import scala.collection.mutable.ArrayBuffer

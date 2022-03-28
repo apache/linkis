@@ -21,7 +21,7 @@ import java.io.{File, FileInputStream, IOException, InputStream}
 import java.util.Properties
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.commons.io.IOUtils
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 
 import scala.collection.JavaConversions._
 

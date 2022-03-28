@@ -27,7 +27,7 @@ import org.apache.linkis.configuration.util.LabelEntityParser
 import org.apache.linkis.manager.label.builder.CombinedLabelBuilder
 import org.apache.linkis.manager.label.entity.CombinedLabel
 import org.apache.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.configuration.conf.Configuration
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service

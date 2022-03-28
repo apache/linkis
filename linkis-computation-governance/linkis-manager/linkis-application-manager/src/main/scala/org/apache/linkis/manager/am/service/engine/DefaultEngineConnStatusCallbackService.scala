@@ -17,7 +17,7 @@
  
 package org.apache.linkis.manager.am.service.engine
 
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 
 import java.util
 import org.apache.linkis.common.utils.Logging

@@ -20,7 +20,7 @@ package org.apache.linkis.engineconnplugin.flink.client.result;
 import org.apache.linkis.engineconnplugin.flink.exception.SqlExecutionException;
 import org.apache.linkis.engineconnplugin.flink.listener.RowsType;
 
-import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.flink.api.common.ExecutionConfig;
 import org.apache.flink.api.common.JobExecutionResult;
 import org.apache.flink.api.common.typeinfo.TypeInformation;

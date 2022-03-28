@@ -25,8 +25,8 @@ import org.apache.linkis.storage.utils.StorageConfiguration;
 import org.apache.linkis.storage.utils.StorageUtils;
 
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileStatus;

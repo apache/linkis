@@ -22,7 +22,7 @@ import org.apache.linkis.manager.label.constant.LabelKeyConstant;
 import org.apache.linkis.manager.label.entity.annon.ValueSerialNum;
 import org.apache.linkis.manager.label.exception.LabelErrorException;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashMap;
 

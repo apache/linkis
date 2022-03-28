@@ -29,7 +29,7 @@ import org.apache.linkis.manager.label.constant.LabelKeyConstant
 import org.apache.linkis.message.annotation.Receiver
 import org.apache.linkis.message.builder.ServiceMethodContext
 import org.apache.linkis.rpc.Sender
-import org.apache.commons.lang.exception.ExceptionUtils
+import org.apache.commons.lang3.exception.ExceptionUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 

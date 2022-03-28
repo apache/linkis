@@ -35,7 +35,7 @@ import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.protocol.utils.TaskUtils
 import org.apache.linkis.scheduler.queue.Job
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 
 import scala.collection.JavaConversions._
 

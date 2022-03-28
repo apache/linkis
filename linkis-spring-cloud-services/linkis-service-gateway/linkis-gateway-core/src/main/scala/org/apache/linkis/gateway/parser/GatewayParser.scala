@@ -25,7 +25,7 @@ import org.apache.linkis.rpc.conf.RPCConfiguration
 import org.apache.linkis.rpc.interceptor.ServiceInstanceUtils
 import org.apache.linkis.server.Message
 import org.apache.linkis.server.conf.ServerConfiguration
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 
 trait GatewayParser {
 

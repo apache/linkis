@@ -29,7 +29,7 @@ import org.apache.linkis.cs.common.entity.source.ContextID;
 import org.apache.linkis.cs.common.entity.source.ContextKey;
 import org.apache.linkis.cs.common.utils.CSCommonUtils;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

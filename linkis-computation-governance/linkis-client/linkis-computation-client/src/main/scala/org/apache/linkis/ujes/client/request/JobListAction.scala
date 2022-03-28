@@ -18,7 +18,7 @@
 package org.apache.linkis.ujes.client.request
 
 import org.apache.linkis.httpclient.request.GetAction
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 
 import scala.collection.mutable.ArrayBuffer
 

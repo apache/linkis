@@ -18,7 +18,7 @@
 package org.apache.linkis.common.utils
 
 import org.apache.linkis.common.exception.FatalException
-import org.apache.commons.lang.{ClassUtils => CommonClassUtils}
+import org.apache.commons.lang3.{ClassUtils => CommonClassUtils}
 
 import scala.collection.mutable.ArrayBuffer
 

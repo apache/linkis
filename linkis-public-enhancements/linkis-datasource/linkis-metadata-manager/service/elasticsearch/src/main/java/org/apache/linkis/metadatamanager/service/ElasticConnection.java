@@ -19,7 +19,7 @@ package org.apache.linkis.metadatamanager.service;
 
 import org.apache.linkis.datasourcemanager.common.util.json.Json;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;

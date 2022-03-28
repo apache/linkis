@@ -42,7 +42,7 @@ import org.apache.linkis.scheduler.queue.{Job, SchedulerEventState}
 import org.apache.linkis.server._
 import org.apache.linkis.server.conf.ServerConfiguration
 import org.apache.linkis.server.socket.controller.{ServerEvent, ServerEventService, SocketServerEvent}
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 
 
 class EntranceWebSocketService extends ServerEventService with EntranceEventListener with EntranceLogListener {

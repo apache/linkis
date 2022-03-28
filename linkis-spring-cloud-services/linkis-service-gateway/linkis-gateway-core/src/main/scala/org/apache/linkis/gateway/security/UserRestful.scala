@@ -39,7 +39,7 @@ import org.apache.linkis.rpc.Sender
 import org.apache.linkis.server.conf.ServerConfiguration
 import org.apache.linkis.server.security.SSOUtils
 import org.apache.linkis.server.{Message, _}
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.commons.net.util.Base64
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.impl.client.HttpClients

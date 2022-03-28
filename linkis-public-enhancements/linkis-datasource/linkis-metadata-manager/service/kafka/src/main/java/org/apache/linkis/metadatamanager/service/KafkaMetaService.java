@@ -26,7 +26,7 @@ import org.apache.linkis.metadatamanager.common.service.AbstractMetaService;
 import org.apache.linkis.metadatamanager.common.service.MetadataConnection;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;

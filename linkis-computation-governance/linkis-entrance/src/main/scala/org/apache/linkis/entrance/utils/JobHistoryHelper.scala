@@ -32,7 +32,7 @@ import java.util
 import java.util.Date
 
 import javax.servlet.http.HttpServletRequest
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import sun.net.util.IPAddressUtil
 
 import scala.collection.JavaConversions._

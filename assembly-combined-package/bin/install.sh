@@ -18,6 +18,7 @@
 source ~/.bash_profile
 shellDir=`dirname $0`
 workDir=`cd ${shellDir}/..;pwd`
+common_conf=$LINKIS_HOME/conf/linkis.properties
 
 #To be compatible with MacOS and Linux
 txt=""
@@ -67,77 +68,8 @@ until mysql -h$MYSQL_HOST -P$MYSQL_PORT -u$MYSQL_USER -p$MYSQL_PASSWORD  -e ";" 
      exit 1
 done
 
-echo "======= Step 3: Create necessary directory =========="
 
-echo "[WORKSPACE_USER_ROOT_PATH] try to create directory"
-if [ "$WORKSPACE_USER_ROOT_PATH" != "" ]
-then
-  localRootDir=$WORKSPACE_USER_ROOT_PATH
-  if [[ $WORKSPACE_USER_ROOT_PATH == file://* ]];then
-    localRootDir=${WORKSPACE_USER_ROOT_PATH#file://}
-    echo "[WORKSPACE_USER_ROOT_PATH] try to create local dir,cmd is: mkdir -p $localRootDir/$deployUser"
-    mkdir -p $localRootDir/$deployUser
-    sudo chmod -R 775 $localRootDir/$deployUser
-  elif [[ $WORKSPACE_USER_ROOT_PATH == hdfs://* ]];then
-    localRootDir=${WORKSPACE_USER_ROOT_PATH#hdfs://}
-    echo "[WORKSPACE_USER_ROOT_PATH] try to create hdfs dir,cmd is: hdfs dfs -mkdir -p $localRootDir/$deployUser"
-    hdfs dfs -mkdir -p $localRootDir/$deployUser
-    hdfs dfs -chmod -R 775 $localRootDir/$deployUser
-  else
-    echo "[WORKSPACE_USER_ROOT_PATH] does not support $WORKSPACE_USER_ROOT_PATH filesystem types"
-  fi
-  isSuccess "create WORKSPACE_USER_ROOT_PATH: $WORKSPACE_USER_ROOT_PATH directory"
-fi
-
-
-
-########################  init hdfs and db  ################################
-echo "[HDFS_USER_ROOT_PATH] try to create directory"
- if [ "$HDFS_USER_ROOT_PATH" != "" ]
- then
-     localRootDir=$HDFS_USER_ROOT_PATH
-   if [[ $HDFS_USER_ROOT_PATH == file://* ]];then
-     localRootDir=${HDFS_USER_ROOT_PATH#file://}
-     echo "[HDFS_USER_ROOT_PATH] try to create local dir,cmd is: mkdir -p $localRootDir/$deployUser"
-     mkdir -p $localRootDir/$deployUser
-     sudo chmod -R 775 $localRootDir/$deployUser
-   elif [[ $HDFS_USER_ROOT_PATH == hdfs://* ]];then
-     localRootDir=${HDFS_USER_ROOT_PATH#hdfs://}
-     echo "[HDFS_USER_ROOT_PATH] try to create hdfs dir,cmd is: hdfs dfs -mkdir -p $localRootDir/$deployUser"
-     hdfs dfs -mkdir -p $localRootDir/$deployUser
-   else
-     echo "[HDFS_USER_ROOT_PATH] does not support $HDFS_USER_ROOT_PATH filesystem types"
-   fi
-
-   isSuccess "create HDFS_USER_ROOT_PATH: $HDFS_USER_ROOT_PATH directory"
-
- fi
-
-
-
-echo "[RESULT_SET_ROOT_PATH] try to create directory"
- if [ "$RESULT_SET_ROOT_PATH" != "" ]
- then
-   localRootDir=$RESULT_SET_ROOT_PATH
-   if [[ $RESULT_SET_ROOT_PATH == file://* ]];then
-     localRootDir=${RESULT_SET_ROOT_PATH#file://}
-     echo "[RESULT_SET_ROOT_PATH] try to create local dir,cmd is: mkdir -p $localRootDir/$deployUser"
-     mkdir -p $localRootDir/$deployUser
-     sudo chmod -R 775 $localRootDir/$deployUser
-   elif [[ $RESULT_SET_ROOT_PATH == hdfs://* ]];then
-     localRootDir=${RESULT_SET_ROOT_PATH#hdfs://}
-     echo "[RESULT_SET_ROOT_PATH] try to create hdfs dir,cmd is: hdfs dfs -mkdir -p $localRootDir/$deployUser"
-     hdfs dfs -mkdir -p $localRootDir
-     hdfs dfs -chmod 775 $localRootDir
-   else
-     echo "[RESULT_SET_ROOT_PATH] does not support $RESULT_SET_ROOT_PATH filesystem types"
-   fi
-
-   isSuccess "create RESULT_SET_ROOT_PATH: $RESULT_SET_ROOT_PATH directory"
-
- fi
-
-
+########################  init LINKIS related env  ################################
 if [ "$LINKIS_HOME" = "" ]
 then
   export LINKIS_HOME=${workDir}/LinkisInstall
@@ -170,6 +102,79 @@ fi
 
 cp ${LINKIS_CONFIG_PATH} $LINKIS_HOME/conf
 
+common_conf=$LINKIS_HOME/conf/linkis.properties
+
+echo "======= Step 3: Create necessary directory =========="
+
+echo "[WORKSPACE_USER_ROOT_PATH] try to create directory"
+if [ "$WORKSPACE_USER_ROOT_PATH" != "" ]
+then
+  localRootDir=$WORKSPACE_USER_ROOT_PATH
+  if [[ $WORKSPACE_USER_ROOT_PATH == file://* ]];then
+    localRootDir=${WORKSPACE_USER_ROOT_PATH#file://}
+    echo "[WORKSPACE_USER_ROOT_PATH] try to create local dir,cmd is: mkdir -p $localRootDir/$deployUser"
+    mkdir -p $localRootDir/$deployUser
+    sudo chmod -R 775 $localRootDir/$deployUser
+  elif [[ $WORKSPACE_USER_ROOT_PATH == hdfs://* ]];then
+    localRootDir=${WORKSPACE_USER_ROOT_PATH#hdfs://}
+    echo "[WORKSPACE_USER_ROOT_PATH] try to create hdfs dir,cmd is: hdfs dfs -mkdir -p $localRootDir/$deployUser"
+    hdfs dfs -mkdir -p $localRootDir/$deployUser
+    hdfs dfs -chmod -R 775 $localRootDir/$deployUser
+  else
+    echo "[WORKSPACE_USER_ROOT_PATH] does not support $WORKSPACE_USER_ROOT_PATH filesystem types"
+  fi
+  isSuccess "create WORKSPACE_USER_ROOT_PATH: $WORKSPACE_USER_ROOT_PATH directory"
+fi
+
+
+
+########################  init hdfs and db  ################################
+echo "[HDFS_USER_ROOT_PATH] try to create directory"
+ if [ "$HDFS_USER_ROOT_PATH" != "" ]
+ then
+     localRootDir=$HDFS_USER_ROOT_PATH
+   if [[ $HDFS_USER_ROOT_PATH == file://* ]];then
+     sed -i ${txt}  "s#wds.linkis.bml.is.hdfs.*#wds.linkis.bml.is.hdfs=false#g" $common_conf
+     sed -i ${txt}  "s#\#wds.linkis.bml.local.prefix.*#wds.linkis.bml.local.prefix=$HDFS_USER_ROOT_PATH#g" $common_conf
+     localRootDir=${HDFS_USER_ROOT_PATH#file://}
+     echo "[HDFS_USER_ROOT_PATH] try to create local dir,cmd is: mkdir -p $localRootDir/$deployUser"
+     mkdir -p $localRootDir/$deployUser
+     sudo chmod -R 775 $localRootDir/$deployUser
+   elif [[ $HDFS_USER_ROOT_PATH == hdfs://* ]];then
+     sed -i ${txt}  "s#\#wds.linkis.bml.hdfs.prefix.*#wds.linkis.bml.hdfs.prefix=$HDFS_USER_ROOT_PATH#g" $common_conf
+     localRootDir=${HDFS_USER_ROOT_PATH#hdfs://}
+     echo "[HDFS_USER_ROOT_PATH] try to create hdfs dir,cmd is: hdfs dfs -mkdir -p $localRootDir/$deployUser"
+     hdfs dfs -mkdir -p $localRootDir/$deployUser
+   else
+     echo "[HDFS_USER_ROOT_PATH] does not support $HDFS_USER_ROOT_PATH filesystem types"
+   fi
+
+   isSuccess "create HDFS_USER_ROOT_PATH: $HDFS_USER_ROOT_PATH directory"
+
+ fi
+
+
+echo "[RESULT_SET_ROOT_PATH] try to create directory"
+ if [ "$RESULT_SET_ROOT_PATH" != "" ]
+ then
+   localRootDir=$RESULT_SET_ROOT_PATH
+   if [[ $RESULT_SET_ROOT_PATH == file://* ]];then
+     localRootDir=${RESULT_SET_ROOT_PATH#file://}
+     echo "[RESULT_SET_ROOT_PATH] try to create local dir,cmd is: mkdir -p $localRootDir/$deployUser"
+     mkdir -p $localRootDir/$deployUser
+     sudo chmod -R 775 $localRootDir/$deployUser
+   elif [[ $RESULT_SET_ROOT_PATH == hdfs://* ]];then
+     localRootDir=${RESULT_SET_ROOT_PATH#hdfs://}
+     echo "[RESULT_SET_ROOT_PATH] try to create hdfs dir,cmd is: hdfs dfs -mkdir -p $localRootDir/$deployUser"
+     hdfs dfs -mkdir -p $localRootDir
+     hdfs dfs -chmod 775 $localRootDir
+   else
+     echo "[RESULT_SET_ROOT_PATH] does not support $RESULT_SET_ROOT_PATH filesystem types"
+   fi
+
+   isSuccess "create RESULT_SET_ROOT_PATH: $RESULT_SET_ROOT_PATH directory"
+
+ fi
 
 
 echo "======= Step 4: Create linkis table =========="
@@ -188,7 +193,6 @@ else
   sed -i ${txt}  "s#@KERBEROS_ENABLE#false#g" $LINKIS_HOME/db/linkis_dml.sql
 fi
 
-common_conf=$LINKIS_HOME/conf/linkis.properties
 SERVER_IP=$local_host
 
 ##Label set start
@@ -292,8 +296,6 @@ sed -i ${txt}  "s#wds.linkis.home.*#wds.linkis.home=$LINKIS_HOME#g" $common_conf
 
 sed -i ${txt}  "s#wds.linkis.filesystem.root.path.*#wds.linkis.filesystem.root.path=$WORKSPACE_USER_ROOT_PATH#g" $common_conf
 sed -i ${txt}  "s#wds.linkis.filesystem.hdfs.root.path.*#wds.linkis.filesystem.hdfs.root.path=$HDFS_USER_ROOT_PATH#g" $common_conf
-
-sed -i ${txt}  "s#wds.linkis.bml.hdfs.prefix.*#wds.linkis.bml.hdfs.prefix=$HDFS_USER_ROOT_PATH#g" $common_conf
 
 ##gateway
 gateway_conf=$LINKIS_HOME/conf/linkis-mg-gateway.properties

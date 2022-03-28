@@ -59,16 +59,19 @@ class DefaultEngineConnListService extends EngineConnListService with ECMEventLi
   }
 
   override def killEngineConn(engineConnId: String): Unit = {
-    val conn = engineConnMap.get(engineConnId)
-    if (conn != null) {
-      Utils.tryAndWarn{
-        if (NodeStatus.Failed == conn.getStatus && StringUtils.isNotBlank(conn.getPid)) {
-          killECByEngineConnKillService(conn)
+    var conn = engineConnMap.get(engineConnId)
+    if (conn != null) engineConnId.intern().synchronized {
+      conn = engineConnMap.get(engineConnId)
+      if (conn != null) {
+        Utils.tryAndWarn{
+          if (NodeStatus.Failed == conn.getStatus && StringUtils.isNotBlank(conn.getPid)) {
+            killECByEngineConnKillService(conn)
+          }
+          conn.close()
         }
-        conn.close()
+        engineConnMap.remove(engineConnId)
+        logger.info(s"engineconn ${conn.getServiceInstance} was closed.")
       }
-      engineConnMap.remove(engineConnId)
-      logger.info(s"engineconn ${conn.getServiceInstance} was closed.")
     }
   }
 

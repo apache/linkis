@@ -17,10 +17,8 @@
  
 package org.apache.linkis.ecm.server.service.impl
 
-import java.util
-import java.util.concurrent.ConcurrentHashMap
-
 import com.google.common.collect.Interners
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.DataWorkCloudApplication
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.ecm.core.engineconn.{EngineConn, YarnEngineConn}
@@ -33,9 +31,9 @@ import org.apache.linkis.ecm.server.service.EngineConnListService
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.common.entity.resource.{Resource, ResourceType}
 import org.apache.linkis.manager.common.protocol.engine.EngineStopRequest
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.stereotype.{Component, Service}
 
+import java.util
+import java.util.concurrent.ConcurrentHashMap
 import scala.collection.JavaConversions._
 
 class DefaultEngineConnListService extends EngineConnListService with ECMEventListener with Logging {
@@ -55,23 +53,33 @@ class DefaultEngineConnListService extends EngineConnListService with ECMEventLi
   override def getEngineConns: util.List[EngineConn] = engineConnMap.values().toList
 
   override def addEngineConn(engineConn: EngineConn): Unit = {
+    logger.info(s"add engineConn ${engineConn.getServiceInstance} to engineConnMap")
     if (LinkisECMApplication.isReady)
       engineConnMap.put(engineConn.getTickedId, engineConn)
   }
 
   override def killEngineConn(engineConnId: String): Unit = {
-    val conn = engineConnMap.remove(engineConnId)
-    if (conn != null) {
-      Utils.tryAndWarn{
-        conn.close()
-        info(s"engineconn ${conn.getPid} was closed.")
+    var conn = engineConnMap.get(engineConnId)
+    if (conn != null) engineConnId.intern().synchronized {
+      conn = engineConnMap.get(engineConnId)
+      if (conn != null) {
+        Utils.tryAndWarn{
+          if (NodeStatus.Failed == conn.getStatus && StringUtils.isNotBlank(conn.getPid)) {
+            killECByEngineConnKillService(conn)
+          }
+          conn.close()
+        }
+        engineConnMap.remove(engineConnId)
+        logger.info(s"engineconn ${conn.getServiceInstance} was closed.")
       }
     }
   }
 
   override def getUsedResources: Resource = engineConnMap.values().map(_.getResource.getMinResource).fold(Resource.initResource(ResourceType.Default))(_ + _)
 
-  override def submit(runner: EngineConnLaunchRunner): Option[EngineConn] = ???
+  override def submit(runner: EngineConnLaunchRunner): Option[EngineConn] = {
+    None
+  }
 
   def updateYarnAppId(event: YarnAppIdCallbackEvent): Unit = {
     updateYarnEngineConn(x => x.setApplicationId(event.protocol.applicationId), event.protocol.nodeId)
@@ -139,12 +147,16 @@ class DefaultEngineConnListService extends EngineConnListService with ECMEventLi
   private def shutdownEngineConns(event: ECMClosedEvent): Unit = {
     info("start to kill all engines belonging the ecm")
     engineConnMap.values().foreach(engineconn => {
-      info(s"start to kill engine, pid:${engineconn.getPid}")
-      val engineStopRequest = new EngineStopRequest()
-      engineStopRequest.setServiceInstance(engineconn.getServiceInstance)
-      getEngineConnKillService.dealEngineConnStop(engineStopRequest)
+      killECByEngineConnKillService(engineconn)
     })
     info("Done! success to kill all engines belonging the ecm")
+  }
+
+  private def killECByEngineConnKillService(engineconn: EngineConn): Unit = {
+    info(s"start to kill ec by engineConnKillService ${engineconn.getServiceInstance}")
+    val engineStopRequest = new EngineStopRequest()
+    engineStopRequest.setServiceInstance(engineconn.getServiceInstance)
+    getEngineConnKillService.dealEngineConnStop(engineStopRequest)
   }
 
 }

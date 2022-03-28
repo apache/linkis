@@ -295,7 +295,7 @@ This file is divided into 3 sections:
             <parameter name="regex">org\.apache\.commons\.lang\.</parameter>
         </parameters>
         <customMessage>Use Commons Lang 3 classes (package org.apache.commons.lang3.*) instead
-            of Commons Lang 2 (package org.apache.commons.lang3.*)
+            of Commons Lang 2 (package org.apache.commons.lang.*)
         </customMessage>
     </check>
 

@@ -91,7 +91,7 @@ public class EngineRestfulApi {
     private LabelBuilderFactory stdLabelBuilderFactory =
             LabelBuilderFactoryContext.getLabelBuilderFactory();
 
-    private Logger logger = LoggerFactory.getLogger(EMRestfulApi.class);
+    private Logger logger = LoggerFactory.getLogger(EngineRestfulApi.class);
 
     @RequestMapping(path = "/createEngineConn", method = RequestMethod.POST)
     public Message createEngineConn(HttpServletRequest req, @RequestBody JsonNode jsonNode)
@@ -135,9 +135,8 @@ public class EngineRestfulApi {
         retEngineNode.put("serviceInstance", engineNode.getServiceInstance());
         if (null == engineNode.getNodeStatus()) {
             engineNode.setNodeStatus(NodeStatus.Starting);
-        } else {
-            retEngineNode.put("nodeStatus", engineNode.getNodeStatus().toString());
         }
+        retEngineNode.put("nodeStatus", engineNode.getNodeStatus().toString());
         retEngineNode.put("ticketId", engineNode.getTicketId());
         retEngineNode.put("ecmServiceInstance", engineNode.getEMNode().getServiceInstance());
         return Message.ok("create engineConn succeed.").data("engine", retEngineNode);

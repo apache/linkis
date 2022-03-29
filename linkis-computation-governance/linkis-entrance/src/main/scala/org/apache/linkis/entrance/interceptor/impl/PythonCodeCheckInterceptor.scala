@@ -22,7 +22,7 @@ import org.apache.linkis.entrance.interceptor.EntranceInterceptor
 import org.apache.linkis.entrance.interceptor.exception.PythonCodeCheckException
 import org.apache.linkis.governance.common.entity.job.JobRequest
 import org.apache.linkis.manager.label.utils.LabelUtil
-import org.apache.commons.lang.exception.ExceptionUtils
+import org.apache.commons.lang3.exception.ExceptionUtils
 
 /**
   * Description: Check for python code, prohibiting the use of sys, os, and creating processes(用于python代码的检查，禁止使用sys、os以及创建进程等行为)

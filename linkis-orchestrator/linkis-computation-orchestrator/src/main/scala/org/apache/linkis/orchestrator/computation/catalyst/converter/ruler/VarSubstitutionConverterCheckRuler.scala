@@ -25,7 +25,7 @@ import org.apache.linkis.orchestrator.domain.JobReq
 import org.apache.linkis.orchestrator.extensions.catalyst.ConverterCheckRuler
 import org.apache.linkis.orchestrator.log.LogManager
 import org.apache.linkis.orchestrator.plans.ast.ASTContext
-import org.apache.commons.lang.exception.ExceptionUtils
+import org.apache.commons.lang3.exception.ExceptionUtils
 
 class VarSubstitutionConverterCheckRuler extends ConverterCheckRuler {
 

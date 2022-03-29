@@ -22,7 +22,7 @@ import org.apache.linkis.manager.engineplugin.jdbc.conf.JDBCConfiguration;
 
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.commons.dbcp.BasicDataSourceFactory;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.sql.DataSource;
 

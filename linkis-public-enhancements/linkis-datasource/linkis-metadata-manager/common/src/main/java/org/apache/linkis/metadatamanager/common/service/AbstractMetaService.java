@@ -26,7 +26,7 @@ import org.apache.linkis.metadatamanager.common.domain.MetaColumnInfo;
 import org.apache.linkis.metadatamanager.common.domain.MetaPartitionInfo;
 import org.apache.linkis.metadatamanager.common.exception.MetaRuntimeException;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.PostConstruct;
 

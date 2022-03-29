@@ -23,7 +23,7 @@ import org.apache.linkis.manager.label.conf.LabelCommonConfig;
 import org.apache.linkis.manager.label.entity.engine.EngineType;
 import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;

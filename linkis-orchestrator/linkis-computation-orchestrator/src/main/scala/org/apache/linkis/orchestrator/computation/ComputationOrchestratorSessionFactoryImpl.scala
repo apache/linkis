@@ -40,7 +40,7 @@ import org.apache.linkis.orchestrator.extensions.catalyst._
 import org.apache.linkis.orchestrator.extensions.operation.CancelOperationBuilder
 import org.apache.linkis.orchestrator.extensions.{CatalystExtensions, CheckRulerExtensions, OperationExtensions}
 import org.apache.linkis.orchestrator.{Orchestrator, OrchestratorSession}
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 /**
  *
  *

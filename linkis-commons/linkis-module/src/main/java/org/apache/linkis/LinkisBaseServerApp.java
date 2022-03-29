@@ -20,8 +20,8 @@ package org.apache.linkis;
 import org.apache.linkis.common.utils.Utils;
 import org.apache.linkis.server.utils.LinkisMainHelper;
 
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

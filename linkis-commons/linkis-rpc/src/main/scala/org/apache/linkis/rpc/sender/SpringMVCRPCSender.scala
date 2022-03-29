@@ -30,7 +30,7 @@ import org.apache.linkis.rpc.transform.RPCConsumer
 import org.apache.linkis.rpc.{BaseRPCSender, RPCMessageEvent, RPCSpringBeanCache}
 import org.apache.linkis.server.{BDPJettyServerHelper, Message}
 import feign._
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.springframework.cloud.netflix.ribbon.ServerIntrospector
 import org.springframework.cloud.openfeign.ribbon.{CachingSpringLoadBalancerFactory, FeignLoadBalancer, LoadBalancerFeignClient}
 

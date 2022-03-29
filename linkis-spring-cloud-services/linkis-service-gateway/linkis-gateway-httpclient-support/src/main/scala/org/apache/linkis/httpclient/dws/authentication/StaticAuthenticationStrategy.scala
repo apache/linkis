@@ -23,7 +23,7 @@ import org.apache.linkis.httpclient.dws.exception.AuthenticationFailedException
 import org.apache.linkis.httpclient.dws.request.DWSAuthenticationAction
 import org.apache.linkis.httpclient.dws.response.DWSAuthenticationResult
 import org.apache.linkis.httpclient.request.{Action, UserAction, UserPwdAction}
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.http.HttpResponse
 
 class StaticAuthenticationStrategy(override protected val sessionMaxAliveTime: Long) extends AbstractAuthenticationStrategy {

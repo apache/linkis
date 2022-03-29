@@ -29,7 +29,7 @@ import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.protocol.utils.ZuulEntranceUtils
 import org.apache.linkis.server.{BDPJettyServerHelper, toScalaBuffer, toScalaMap}
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.springframework.beans.BeanUtils
 import java.util
 import java.util.Date

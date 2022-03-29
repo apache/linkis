@@ -30,7 +30,7 @@ import org.apache.linkis.gateway.security.SecurityFilter;
 import org.apache.linkis.gateway.springcloud.SpringCloudGatewayConfiguration;
 import org.apache.linkis.server.Message;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import org.springframework.cloud.gateway.config.GatewayProperties;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;

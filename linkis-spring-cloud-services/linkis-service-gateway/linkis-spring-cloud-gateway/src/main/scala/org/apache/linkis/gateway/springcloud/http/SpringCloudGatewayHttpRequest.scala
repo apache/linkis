@@ -22,7 +22,7 @@ import java.net.{InetSocketAddress, URI}
 import org.apache.linkis.gateway.http.GatewayHttpRequest
 import org.apache.linkis.server._
 import javax.servlet.http.Cookie
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.springframework.http.server.reactive.AbstractServerHttpRequest
 
 import scala.collection.JavaConversions

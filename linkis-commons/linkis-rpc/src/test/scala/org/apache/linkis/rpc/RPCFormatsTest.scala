@@ -21,7 +21,7 @@ import java.lang.reflect.ParameterizedType
 import java.util
 
 import org.apache.linkis.rpc.transform.{JavaCollectionSerializer, JavaMapSerializer}
-import org.apache.commons.lang.ClassUtils
+import org.apache.commons.lang3.ClassUtils
 import org.json4s.JsonAST.JObject
 import org.json4s.JsonDSL._
 import org.json4s.jackson.Serialization

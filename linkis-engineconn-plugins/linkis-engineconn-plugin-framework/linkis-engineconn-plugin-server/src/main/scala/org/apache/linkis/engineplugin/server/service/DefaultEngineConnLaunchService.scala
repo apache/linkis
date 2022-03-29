@@ -25,7 +25,7 @@ import org.apache.linkis.manager.engineplugin.common.launch.entity.{EngineConnBu
 import org.apache.linkis.manager.engineplugin.common.launch.process.{EngineConnResourceGenerator, JavaProcessEngineConnLaunchBuilder}
 import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel
 import org.apache.linkis.message.annotation.Receiver
-import org.apache.commons.lang.exception.ExceptionUtils
+import org.apache.commons.lang3.exception.ExceptionUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 

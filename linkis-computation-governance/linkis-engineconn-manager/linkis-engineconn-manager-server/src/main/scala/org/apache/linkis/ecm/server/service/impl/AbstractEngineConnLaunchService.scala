@@ -37,7 +37,7 @@ import org.apache.linkis.manager.common.entity.node.{AMEngineNode, EngineNode}
 import org.apache.linkis.manager.common.protocol.engine.EngineConnStatusCallbackToAM
 import org.apache.linkis.manager.engineplugin.common.launch.entity.EngineConnLaunchRequest
 import org.apache.linkis.rpc.Sender
-import org.apache.commons.lang.exception.ExceptionUtils
+import org.apache.commons.lang3.exception.ExceptionUtils
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, ExecutionContextExecutorService, Future}

@@ -17,7 +17,7 @@
  
 package org.apache.linkis.server.conf
 
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.springframework.core.`type`.classreading.{MetadataReader, MetadataReaderFactory}
 import org.springframework.core.`type`.filter.TypeFilter
 

@@ -20,7 +20,7 @@ package org.apache.linkis.datasourcemanager.common.domain;
 import org.apache.linkis.datasourcemanager.common.exception.JsonErrorException;
 import org.apache.linkis.datasourcemanager.common.util.json.Json;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;

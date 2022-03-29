@@ -25,7 +25,7 @@ import org.apache.linkis.manager.label.exception.LabelRuntimeException;
 import org.apache.linkis.protocol.util.ImmutablePair;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;

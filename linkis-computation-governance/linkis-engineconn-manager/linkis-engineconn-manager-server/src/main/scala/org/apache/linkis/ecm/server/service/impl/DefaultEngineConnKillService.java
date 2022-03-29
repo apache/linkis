@@ -27,7 +27,7 @@ import org.apache.linkis.manager.common.protocol.engine.EngineStopResponse;
 import org.apache.linkis.manager.common.protocol.engine.EngineSuicideRequest;
 import org.apache.linkis.message.annotation.Receiver;
 import org.apache.linkis.rpc.Sender;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

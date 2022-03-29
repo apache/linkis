@@ -22,7 +22,7 @@ import org.apache.linkis.metadata.service.DataSourceService;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.security.SecurityFilter;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;

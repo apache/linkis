@@ -29,7 +29,7 @@ import org.apache.linkis.ecm.server.service.{EngineConnListService, LocalDirsHan
 import org.apache.linkis.manager.common.operator.Operator
 import org.apache.linkis.manager.common.protocol.em.ECMOperateRequest
 import org.apache.commons.io.IOUtils
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 
 import scala.collection.JavaConverters.asScalaBufferConverter
 import scala.util.matching.Regex

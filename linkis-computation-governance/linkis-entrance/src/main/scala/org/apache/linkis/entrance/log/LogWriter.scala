@@ -25,7 +25,7 @@ import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.entrance.exception.EntranceErrorException
 import org.apache.linkis.storage.FSFactory
 import org.apache.linkis.storage.utils.FileSystemUtils
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.hadoop.hdfs.client.HdfsDataOutputStream
 
 

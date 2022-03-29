@@ -26,7 +26,7 @@ import java.{sql, util}
 
 import org.apache.linkis.ujes.client.request.ResultSetAction
 import org.apache.linkis.ujes.client.response.ResultSetResult
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 
 
 

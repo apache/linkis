@@ -20,8 +20,8 @@ package org.apache.linkis.server
 import java.util
 
 import javax.servlet.http.HttpServletRequest
-import org.apache.commons.lang.StringUtils
-import org.apache.commons.lang.exception.ExceptionUtils
+import org.apache.commons.lang3.StringUtils
+import org.apache.commons.lang3.exception.ExceptionUtils
 import org.slf4j.LoggerFactory
 import org.springframework.web.context.request.{RequestContextHolder, ServletRequestAttributes}
 
@@ -95,13 +95,13 @@ object Message {
   }
   def error(msg: String): Message = error(msg, null)
   implicit def error(t: Throwable): Message = {
-    Message(status =  1).setMessage(ExceptionUtils.getRootCauseMessage(t)) << ("stack", ExceptionUtils.getFullStackTrace(t))
+    Message(status =  1).setMessage(ExceptionUtils.getRootCauseMessage(t)) << ("stack", ExceptionUtils.getStackTrace(t))
   }
   implicit def error(e: (String, Throwable)): Message = error(e._1, e._2)
   implicit def error(msg: String, t: Throwable): Message = {
     val message = Message(status =  1)
     message.setMessage(msg)
-    if(t != null) message << ("stack", ExceptionUtils.getFullStackTrace(t))
+    if(t != null) message << ("stack", ExceptionUtils.getStackTrace(t))
     message
   }
   implicit def warn(msg: String): Message = {
@@ -124,7 +124,7 @@ object Message {
   def noLogin(msg: String, t: Throwable): Message = {
     val message = Message(status = -1)
     message.setMessage(msg)
-    if(t != null) message << ("stack", ExceptionUtils.getFullStackTrace(t))
+    if(t != null) message << ("stack", ExceptionUtils.getStackTrace(t))
     message
   }
   def noLogin(msg: String): Message = noLogin(msg, null)

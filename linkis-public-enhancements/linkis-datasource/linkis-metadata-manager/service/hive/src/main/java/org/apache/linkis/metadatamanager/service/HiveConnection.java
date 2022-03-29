@@ -19,7 +19,7 @@ package org.apache.linkis.metadatamanager.service;
 
 import org.apache.linkis.common.conf.CommonVars;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hadoop.hive.metastore.IMetaStoreClient;

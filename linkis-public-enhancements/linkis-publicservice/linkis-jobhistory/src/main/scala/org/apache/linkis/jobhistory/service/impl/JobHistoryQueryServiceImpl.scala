@@ -32,7 +32,7 @@ import scala.collection.JavaConverters.asScalaBufferConverter
 import java.util
 import java.util.Date
 
-import org.apache.commons.lang.exception.ExceptionUtils
+import org.apache.commons.lang3.exception.ExceptionUtils
 import org.apache.linkis.common.errorcode.LinkisPublicEnhancementErrorCodeSummary
 import org.apache.linkis.common.exception.LinkisRetryException
 import org.apache.linkis.governance.common.constant.job.JobRequestConstants

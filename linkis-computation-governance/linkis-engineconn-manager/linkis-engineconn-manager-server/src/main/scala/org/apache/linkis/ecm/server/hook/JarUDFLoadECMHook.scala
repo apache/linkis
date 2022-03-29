@@ -21,7 +21,7 @@ import org.apache.linkis.ecm.core.engineconn.EngineConn
 import org.apache.linkis.manager.engineplugin.common.launch.entity.EngineConnLaunchRequest
 import org.apache.linkis.manager.engineplugin.common.launch.process.{LaunchConstants, ProcessEngineConnLaunchRequest}
 import org.apache.linkis.udf.UDFClient
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 
 class JarUDFLoadECMHook extends ECMHook with Logging {
 

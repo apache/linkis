@@ -20,7 +20,7 @@ package org.apache.linkis.manager.common.entity.resource
 import org.apache.linkis.common.utils.{ByteTimeUtils, Logging}
 import org.apache.linkis.manager.common.entity.resource.ResourceType._
 import org.apache.linkis.manager.common.exception.ResourceWarnException
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.json4s.JsonAST.JObject
 import org.json4s.JsonDSL._
 import org.json4s.jackson.Serialization

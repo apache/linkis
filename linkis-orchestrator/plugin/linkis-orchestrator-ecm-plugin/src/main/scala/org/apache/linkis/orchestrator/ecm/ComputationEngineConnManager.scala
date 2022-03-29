@@ -38,7 +38,7 @@ import org.apache.linkis.orchestrator.ecm.service.EngineConnExecutor
 import org.apache.linkis.orchestrator.ecm.service.impl.{ComputationConcurrentEngineConnExecutor, ComputationEngineConnExecutor}
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.rpc.exception.DWCRPCRetryException
-import org.apache.commons.lang.exception.ExceptionUtils
+import org.apache.commons.lang3.exception.ExceptionUtils
 
 import scala.collection.JavaConversions._
 import scala.concurrent.duration.Duration

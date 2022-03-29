@@ -51,7 +51,7 @@ import org.apache.linkis.message.builder.ServiceMethodContext
 import org.apache.linkis.resourcemanager.service.ResourceManager
 import org.apache.linkis.resourcemanager.{AvailableResource, NotEnoughResource}
 import org.apache.linkis.server.BDPJettyServerHelper
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 

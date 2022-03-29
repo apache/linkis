@@ -35,7 +35,7 @@ import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.common.protocol.engine.EngineConnReleaseRequest
 import org.apache.linkis.manager.common.protocol.resource.ResourceUsedProtocol
 import org.apache.linkis.rpc.Sender
-import org.apache.commons.lang.exception.ExceptionUtils
+import org.apache.commons.lang3.exception.ExceptionUtils
 
 
 class AccessibleEngineConnExecution extends EngineConnExecution with Logging {

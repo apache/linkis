@@ -27,7 +27,7 @@ import org.apache.linkis.governance.common.entity.job.JobRequest
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.scheduler.queue.{Job, SchedulerEventState}
 import org.apache.linkis.server.conf.ServerConfiguration
-import org.apache.commons.lang.exception.ExceptionUtils
+import org.apache.commons.lang3.exception.ExceptionUtils
 
 
 abstract class EntranceServer extends Logging {

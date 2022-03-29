@@ -39,7 +39,7 @@ import org.apache.linkis.scheduler.executer.{ExecuteResponse, SuccessExecuteResp
 import org.apache.linkis.storage.resultset.ResultSetWriter
 import org.apache.commons.exec.CommandLine
 import org.apache.commons.io.IOUtils
-import org.apache.commons.lang.{RandomStringUtils, StringUtils}
+import org.apache.commons.lang3.{RandomStringUtils, StringUtils}
 import org.apache.spark.api.java.JavaSparkContext
 import org.apache.spark.sql.execution.datasources.csv.UDF
 import org.apache.spark.sql.{DataFrame, SparkSession}

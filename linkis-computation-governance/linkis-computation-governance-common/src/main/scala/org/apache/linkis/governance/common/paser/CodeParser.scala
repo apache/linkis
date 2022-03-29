@@ -20,7 +20,7 @@ package org.apache.linkis.governance.common.paser
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.governance.common.paser.CodeType.CodeType
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.slf4j.{Logger, LoggerFactory}
 
 import scala.collection.mutable
@@ -165,7 +165,7 @@ class PythonCodeParser extends SingleCodeParser {
 
   def recordBrackets(bracketStack: mutable.Stack[String], l: String): Unit = {
     val real = l.replace("\"\"\"", "").replace("'''", "").trim
-    if (StringUtils.endsWithAny(real, openBrackets)) {
+    if (StringUtils.endsWithAny(real, openBrackets: _*)) {
       for (i <- (0 to real.length - 1).reverse) {
         val token = real.substring(i, i + 1)
         if (openBrackets.contains(token)) {
@@ -173,7 +173,7 @@ class PythonCodeParser extends SingleCodeParser {
         }
       }
     }
-    if (StringUtils.startsWithAny(real, closeBrackets)) {
+    if (StringUtils.startsWithAny(real, closeBrackets: _*)) {
       for (i <- 0 to real.length - 1) {
         val token = real.substring(i, i + 1)
         if (closeBrackets.contains(token)) {

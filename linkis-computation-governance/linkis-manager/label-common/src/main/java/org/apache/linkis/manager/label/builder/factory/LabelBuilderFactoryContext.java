@@ -20,8 +20,8 @@ package org.apache.linkis.manager.label.builder.factory;
 import org.apache.linkis.manager.label.builder.LabelBuilder;
 import org.apache.linkis.manager.label.conf.LabelCommonConfig;
 
-import org.apache.commons.lang.ClassUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ClassUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import org.reflections.Reflections;
 import org.slf4j.Logger;
@@ -49,7 +49,9 @@ public class LabelBuilderFactoryContext {
                     if (clazz == StdLabelBuilderFactory.class
                             && StringUtils.isNotBlank(className)) {
                         try {
-                            clazz = ClassUtils.getClass(className);
+                            clazz =
+                                    (Class<? extends LabelBuilderFactory>)
+                                            ClassUtils.getClass(className);
                         } catch (ClassNotFoundException e) {
                             throw new RuntimeException("find class + " + className + " failed!", e);
                         }

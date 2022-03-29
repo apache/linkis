@@ -39,7 +39,7 @@ import org.apache.linkis.manager.engineplugin.common.creation.{ExecutorFactory, 
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.EngineType.EngineType
 import org.apache.linkis.manager.label.entity.engine._
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.flink.configuration._
 import org.apache.flink.runtime.jobgraph.SavepointRestoreSettings
 import org.apache.flink.streaming.api.CheckpointingMode

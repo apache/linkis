@@ -27,7 +27,7 @@ import org.apache.linkis.hadoop.common.conf.HadoopConf
 import org.apache.linkis.hadoop.common.conf.HadoopConf.{hadoopConfDir, _}
 import org.apache.linkis.hadoop.common.entity.HDFSFileSystemContainer
 import org.apache.commons.io.IOUtils
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.{FileSystem, Path}
 import org.apache.hadoop.security.UserGroupInformation

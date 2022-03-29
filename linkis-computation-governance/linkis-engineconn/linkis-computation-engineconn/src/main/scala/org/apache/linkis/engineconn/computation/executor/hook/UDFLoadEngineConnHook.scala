@@ -32,7 +32,7 @@ import org.apache.linkis.udf.UDFClient
 import org.apache.linkis.udf.entity.UDFInfo
 import org.apache.linkis.udf.utils.ConstantVar
 import org.apache.commons.io.FileUtils
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 
 import scala.collection.JavaConversions._
 import scala.collection.mutable.ArrayBuffer

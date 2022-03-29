@@ -27,7 +27,7 @@ import org.apache.linkis.rpc.errorcode.RPCErrorConstants
 import org.apache.linkis.rpc.exception.DWCURIException
 import org.apache.linkis.rpc.serializer.ProtostuffSerializeUtil
 import org.apache.linkis.server.{EXCEPTION_MSG, Message}
-import org.apache.commons.lang.ClassUtils
+import org.apache.commons.lang3.ClassUtils
 import org.json4s.{DefaultFormats, Formats, Serializer}
 
 import scala.collection.JavaConversions

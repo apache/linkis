@@ -27,7 +27,7 @@ import org.apache.linkis.gateway.route.AbstractGatewayRouter
 import org.apache.linkis.instance.label.service.InsLabelService
 import org.apache.linkis.manager.label.entity.route.RouteLabel
 import javax.annotation.Resource
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 
 abstract class AbstractLabelGatewayRouter extends AbstractGatewayRouter with Logging {
 

@@ -31,7 +31,7 @@ import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
 import org.apache.linkis.orchestrator.plugin.UserParallelOrchestratorPlugin
 import org.apache.linkis.rpc.Sender
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.server.BDPJettyServerHelper
 
 import scala.collection.JavaConverters._

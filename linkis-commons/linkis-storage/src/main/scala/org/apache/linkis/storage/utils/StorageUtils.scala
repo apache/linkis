@@ -26,7 +26,7 @@ import org.apache.linkis.hadoop.common.conf.HadoopConf
 import org.apache.linkis.storage.exception.StorageFatalException
 import org.apache.linkis.storage.resultset.{ResultSetFactory, ResultSetReader, ResultSetWriter}
 import org.apache.linkis.storage.{LineMetaData, LineRecord}
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 
 import scala.collection.mutable
 

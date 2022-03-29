@@ -36,7 +36,7 @@ import org.apache.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreat
 import org.apache.linkis.manager.label.entity.{CombinedLabel, CombinedLabelImpl, Label, SerializableLabel}
 import org.apache.linkis.manager.label.utils.{EngineTypeLabelCreator, LabelUtils}
 import org.apache.linkis.rpc.Sender
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional

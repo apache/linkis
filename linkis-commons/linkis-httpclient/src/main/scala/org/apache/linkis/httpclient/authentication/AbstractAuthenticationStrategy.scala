@@ -22,7 +22,7 @@ import java.util.concurrent.ConcurrentHashMap
 import org.apache.linkis.httpclient.Client
 import org.apache.linkis.httpclient.config.ClientConfig
 import org.apache.linkis.httpclient.request.{Action, UserAction}
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.http.HttpResponse
 
 

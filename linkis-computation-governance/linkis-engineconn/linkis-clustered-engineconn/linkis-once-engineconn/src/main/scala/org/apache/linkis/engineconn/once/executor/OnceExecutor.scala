@@ -33,7 +33,7 @@ import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContex
 import org.apache.linkis.manager.label.entity.{JobLabel, Label}
 import org.apache.linkis.scheduler.executer.{AsynReturnExecuteResponse, ErrorExecuteResponse, ExecuteResponse, SuccessExecuteResponse}
 import org.apache.commons.io.IOUtils
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.engineconn.core.hook.ShutdownHook
 
 import scala.collection.convert.wrapAsScala._

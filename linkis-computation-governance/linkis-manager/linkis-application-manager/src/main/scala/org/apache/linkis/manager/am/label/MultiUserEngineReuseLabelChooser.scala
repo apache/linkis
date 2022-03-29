@@ -25,7 +25,7 @@ import org.apache.linkis.manager.am.exception.{AMErrorCode, AMErrorException}
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
 import org.apache.linkis.server.BDPJettyServerHelper
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.springframework.stereotype.Component
 
 import scala.collection.JavaConverters._

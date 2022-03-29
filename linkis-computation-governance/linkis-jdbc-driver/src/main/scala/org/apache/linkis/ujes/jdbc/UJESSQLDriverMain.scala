@@ -23,7 +23,7 @@ import java.util.logging.Logger
 
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.ujes.jdbc.UJESSQLDriverMain._
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 
 import scala.collection.JavaConversions
 

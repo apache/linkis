@@ -23,7 +23,7 @@ import org.apache.linkis.common.exception.ErrorException
 import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.orchestrator.computation.catalyst.converter.exception.{CodeCheckException, PythonCodeCheckException, ScalaCodeCheckException}
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.slf4j.{Logger, LoggerFactory}
 
 import scala.collection.mutable.ArrayBuffer

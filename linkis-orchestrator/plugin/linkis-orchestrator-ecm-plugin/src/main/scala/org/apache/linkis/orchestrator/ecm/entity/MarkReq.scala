@@ -25,7 +25,7 @@ import org.apache.linkis.manager.label.builder.factory.{LabelBuilderFactoryConte
 import org.apache.linkis.manager.label.constant.LabelKeyConstant
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.entrance.LoadBalanceLabel
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.orchestrator.ecm.utils.ECMPUtils
 
 import scala.beans.BeanProperty

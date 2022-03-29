@@ -26,7 +26,7 @@ import org.apache.linkis.jobhistory.service.JobHistoryDetailQueryService
 import org.apache.linkis.message.annotation.Receiver
 import java.util
 
-import org.apache.commons.lang.exception.ExceptionUtils
+import org.apache.commons.lang3.exception.ExceptionUtils
 import org.apache.linkis.common.errorcode.LinkisPublicEnhancementErrorCodeSummary
 import org.apache.linkis.common.exception.LinkisRetryException
 import org.apache.linkis.governance.common.constant.job.JobRequestConstants

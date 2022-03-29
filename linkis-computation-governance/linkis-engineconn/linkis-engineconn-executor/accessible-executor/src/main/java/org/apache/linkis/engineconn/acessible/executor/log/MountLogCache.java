@@ -19,7 +19,7 @@ package org.apache.linkis.engineconn.acessible.executor.log;
 
 import org.apache.linkis.engineconn.acessible.executor.conf.AccessibleExecutorConfiguration;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

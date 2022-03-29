@@ -29,7 +29,7 @@ import org.apache.linkis.metadatamanager.common.service.AbstractMetaService;
 import org.apache.linkis.metadatamanager.common.service.MetadataConnection;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.hive.metastore.api.FieldSchema;
 import org.apache.hadoop.hive.ql.metadata.Hive;
 import org.apache.hadoop.hive.ql.metadata.HiveException;

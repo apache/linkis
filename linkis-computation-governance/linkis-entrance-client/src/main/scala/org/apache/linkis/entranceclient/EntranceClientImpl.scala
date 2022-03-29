@@ -30,7 +30,7 @@ import org.apache.linkis.entranceclient.execute._
 import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.scheduler.queue.parallelqueue.ParallelScheduler
 import org.apache.linkis.server.JMap
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 
 class EntranceClientImpl private() extends EntranceClient with EngineApplicationNameFactory
   with EngineManagerApplicationNameFactory with Logging {

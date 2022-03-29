@@ -37,7 +37,7 @@ import org.apache.linkis.storage.resultset.table.TableResultSet
 import org.apache.linkis.storage.resultset.{ResultSetFactory, ResultSetWriter}
 import org.apache.linkis.storage.{LineMetaData, LineRecord}
 import org.apache.commons.io.IOUtils
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 
 class EngineExecutionContext(executor: ComputationExecutor, executorUser: String = Utils.getJvmUser) extends
     ExecutorExecutionContext with Logging {

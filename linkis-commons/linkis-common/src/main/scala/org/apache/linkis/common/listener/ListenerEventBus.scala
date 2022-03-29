@@ -21,7 +21,7 @@ import java.util.concurrent.atomic.{AtomicBoolean, AtomicLong}
 import java.util.concurrent.{ArrayBlockingQueue, CopyOnWriteArrayList, Future, TimeoutException}
 
 import org.apache.linkis.common.utils.{ByteTimeUtils, Logging, Utils}
-import org.apache.commons.lang.time.DateFormatUtils
+import org.apache.commons.lang3.time.DateFormatUtils
 
 import scala.util.control.NonFatal
 

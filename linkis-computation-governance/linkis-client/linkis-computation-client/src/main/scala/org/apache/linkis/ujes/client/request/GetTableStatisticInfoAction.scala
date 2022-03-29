@@ -59,8 +59,6 @@ object GetTableStatisticInfoAction {
       this
     }
 
-    def getPageNow(): Int = pageNow
-
     def setPageNow(pageNow: Int): Builder = {
       this.pageNow = pageNow
       this

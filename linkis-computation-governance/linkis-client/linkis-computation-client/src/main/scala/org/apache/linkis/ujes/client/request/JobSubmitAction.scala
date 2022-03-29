@@ -144,6 +144,8 @@ object JobSubmitAction {
 
       if (this.labels == null) this.labels = new util.HashMap[String, Any]()
       submitAction.addRequestPayload(TaskConstant.LABELS, this.labels)
+
+      if (this.user != null) submitAction.addRequestPayload(TaskConstant.SUBMIT_USER, this.user)
       submitAction
     }
   }

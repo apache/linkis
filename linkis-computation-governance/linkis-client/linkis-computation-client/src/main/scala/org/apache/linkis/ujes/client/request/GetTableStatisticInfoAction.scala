@@ -59,6 +59,13 @@ object GetTableStatisticInfoAction {
       this
     }
 
+    def setPageNow(pageNow: Int): Builder = {
+      this.pageNow = pageNow
+      this
+    }
+
+    def getPageNow(): Int = pageNow
+
     def setPartitionSort(order: String): Builder = {
       this.partitionSort = order
       this

@@ -77,13 +77,13 @@ fi
 
 if [  -d $LINKIS_HOME ] && [ "$LINKIS_HOME" != "$workDir" ];then
    echo "LINKIS_HOME: $LINKIS_HOME is alread exists and will be backed up"
-   if [  -d $LINKIS_HOME-bak ];then
-    rm -r $LINKIS_HOME-bak
-   fi
 
-   echo "mv  $LINKIS_HOME  $LINKIS_HOME-bak"
-   mv  $LINKIS_HOME  $LINKIS_HOME-bak
-   isSuccess "back up old LINKIS_HOME:$LINKIS_HOME to $LINKIS_HOME-bak"
+   ## Every time, backup the old linkis home with timestamp and not clean them.
+   ## If you want to clean them, please delete them manually.
+   curTs=`date +'%s'`
+   echo "mv  $LINKIS_HOME  $LINKIS_HOME-$curTs"
+   mv  $LINKIS_HOME  $LINKIS_HOME-$curTs
+   isSuccess "back up old LINKIS_HOME:$LINKIS_HOME to $LINKIS_HOME-$curTs"
 fi
 echo "try to create dir LINKIS_HOME: $LINKIS_HOME"
 sudo mkdir -p $LINKIS_HOME;sudo chown -R $deployUser:$deployUser $LINKIS_HOME

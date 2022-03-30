@@ -33,10 +33,12 @@ fi
 info="We will stop all linkis applications, it will take some time, please wait"
 echo ${info}
 
-
-
-
 source ${LINKIS_HOME}/sbin/common.sh
+# set LINKIS_CONF_DIR
+if [ "$LINKIS_CONF_DIR" = "" ]; then
+  export LINKIS_CONF_DIR=$LINKIS_HOME/conf
+fi
+source $LINKIS_CONF_DIR/linkis-env.sh
 
 
 function stopApp(){

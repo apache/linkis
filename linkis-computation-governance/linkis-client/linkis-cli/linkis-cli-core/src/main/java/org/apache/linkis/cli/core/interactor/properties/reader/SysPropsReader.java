@@ -17,14 +17,13 @@
 
 package org.apache.linkis.cli.core.interactor.properties.reader;
 
-import org.apache.linkis.cli.common.constants.CommonConstants;
+import org.apache.linkis.cli.core.constants.CommonConstants;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Properties;
 
-/** @description: Load sys-env & sys-prop */
 public class SysPropsReader implements PropertiesReader {
     private static final Logger logger = LoggerFactory.getLogger(SysPropsReader.class);
     private String propsId = CommonConstants.SYSTEM_PROPERTIES_IDENTIFIER;

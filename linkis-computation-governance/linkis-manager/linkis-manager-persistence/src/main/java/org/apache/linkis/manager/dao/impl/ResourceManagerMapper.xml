@@ -19,15 +19,43 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
 <mapper namespace="org.apache.linkis.manager.dao.ResourceManagerMapper">
-<!--    <sql id="resource">-->
-<!--        `id`,`max_resource`,`min_resource`,`used_resource`,`left_resource`,`expected_resource`,`locked_resource`,`resourceType`,`ticketId`,`update_time`,`create_time`,`updator`,`creator`-->
-<!--    </sql>-->
-<!--    <insert id="registerResource" useGeneratedKeys="true" keyProperty="id"-->
-<!--            parameterType="org.apache.linkis.manager.common.entity.persistence.PersistenceResource">-->
-<!--        <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">-->
-<!--            SELECT LAST_INSERT_ID() AS id-->
-<!--        </selectKey>-->
-<!--        INSERT INTO  linkis_cg_manager_linkis_resources(<include refid="resource"/>)-->
-<!--        VALUES (#{id},#{maxResource},#{minResource},#{usedResource},#{leftResource},#{expectedResource},#{lockedResource},#{resourceType},#{ticketId},#{updateTime},#{createTime},#{updator},#{creator})-->
-<!--    </insert>-->
+
+    <delete id="deleteResourceById">
+        DELETE FROM linkis_cg_manager_linkis_resources WHERE id IN
+        <foreach collection="ids" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
+    </delete>
+
+    <delete id="deleteResourceRelByResourceId">
+        DELETE FROM linkis_cg_manager_label_resource WHERE resource_id IN
+        <foreach collection="ids" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="getResourceById" resultType="org.apache.linkis.manager.common.entity.persistence.PersistenceResource">
+        SELECT * FROM linkis_cg_manager_linkis_resources WHERE id = #{id}
+    </select>
+
+    <select id="getResourceActionRecord" resultType="org.apache.linkis.manager.common.entity.persistence.PersistenceResourceActionRecord">
+        SELECT * FROM linkis_cg_rm_resource_action_record WHERE ticket_id = #{ticketId}
+    </select>
+
+    <update id="updateResourceActionRecord">
+        UPDATE linkis_cg_rm_resource_action_record
+        SET request_times = #{resourceActionRecord.requestTimes}, request_resource_all = #{resourceActionRecord.requestResourceAll},
+        used_times = #{resourceActionRecord.usedTimes}, used_resource_all = #{resourceActionRecord.usedResourceAll},
+        release_times = #{resourceActionRecord.releaseTimes}, release_resource_all = #{resourceActionRecord.releaseResourceAll},
+        update_time = now()
+        WHERE ticket_id = #{resourceActionRecord.ticketId}
+    </update>
+
+    <insert id="insertResourceActionRecord" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO linkis_cg_rm_resource_action_record (label_value, ticket_id, request_times, request_resource_all,
+        used_times, used_resource_all, release_times, release_resource_all)
+        VALUES (#{resourceActionRecord.labelValue}, #{resourceActionRecord.ticketId}, #{resourceActionRecord.requestTimes},
+        #{resourceActionRecord.requestResourceAll}, #{resourceActionRecord.usedTimes}, #{resourceActionRecord.usedResourceAll},
+        #{resourceActionRecord.releaseTimes}, #{resourceActionRecord.releaseResourceAll})
+    </insert>
 </mapper>

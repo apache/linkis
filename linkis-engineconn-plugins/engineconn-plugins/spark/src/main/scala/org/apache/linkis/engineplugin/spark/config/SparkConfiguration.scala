@@ -75,10 +75,20 @@ object SparkConfiguration extends Logging {
   val SQL_EXTENSION_TIMEOUT = CommonVars("wds.linkis.dws.ujes.spark.extension.timeout", 3000L)
   val SPARK_NF_FRACTION_LENGTH = CommonVars[Int]("wds.linkis.engine.spark.fraction.length", 30)
   val SHOW_DF_MAX_RES = CommonVars("wds.linkis.show.df.max.res", Int.MaxValue)
-  val MDQ_APPLICATION_NAME = CommonVars("wds.linkis.mdq.application.name", "linkis-ps-publicservice")
+  val MDQ_APPLICATION_NAME = CommonVars("wds.linkis.mdq.application.name", "linkis-ps-datasource")
   val DOLPHIN_LIMIT_LEN = CommonVars("wds.linkis.dolphin.limit.len", 5000)
 
   val IS_VIEWFS_ENV = CommonVars("wds.linkis.spark.engine.is.viewfs.env", true)
+
+  val ENGINE_SHUTDOWN_LOGS = CommonVars("wds.linkis.spark.engineconn.fatal.log", "error writing class;OutOfMemoryError")
+
+  val PYSPARK_PYTHON3_PATH = CommonVars[String]("pyspark.python3.path", "/appcom/Install/anaconda3/bin/python")
+
+  val ENABLE_REPLACE_PACKAGE_NAME = CommonVars("wds.linkis.spark.engine.scala.replace_package_header.enable", true)
+
+  val REPLACE_PACKAGE_HEADER = CommonVars("wds.linkis.spark.engine.scala.replace_package.header", "com.webank.wedatasphere.linkis")
+
+  val REPLACE_PACKAGE_TO_HEADER = "org.apache.linkis"
 
   private def getMainJarName(): String = {
     val somePath = ClassUtils.jarOfClass(classOf[SparkEngineConnFactory])

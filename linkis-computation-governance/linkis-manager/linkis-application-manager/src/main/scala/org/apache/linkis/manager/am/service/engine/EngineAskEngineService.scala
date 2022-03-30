@@ -18,11 +18,11 @@
 package org.apache.linkis.manager.am.service.engine
 
 import org.apache.linkis.manager.common.protocol.engine.EngineAskRequest
-import org.apache.linkis.message.builder.ServiceMethodContext
+import org.apache.linkis.rpc.Sender
 
 
 trait EngineAskEngineService {
 
-  def askEngine(engineAskRequest: EngineAskRequest, smc: ServiceMethodContext): Any
+  def askEngine(engineAskRequest: EngineAskRequest, sender: Sender): Any
 
 }

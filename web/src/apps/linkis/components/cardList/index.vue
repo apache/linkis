@@ -5,16 +5,16 @@
   ~ The ASF licenses this file to You under the Apache License, Version 2.0
   ~ (the "License"); you may not use this file except in compliance with
   ~ the License.  You may obtain a copy of the License at
-  ~ 
+  ~
   ~   http://www.apache.org/licenses/LICENSE-2.0
-  ~ 
+  ~
   ~ Unless required by applicable law or agreed to in writing, software
   ~ distributed under the License is distributed on an "AS IS" BASIS,
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-  
+
 <template>
   <div class="setListCard" >
     <!-- 左切换 -->
@@ -43,23 +43,17 @@
             <div>{{ item.tag || item.categoryName }}</div>
           </div>
           <!-- 引擎编辑 -->
-          <SvgIcon
+          <i 
+            class="material-icons edit"
             v-if="iseditListItem"
             @click="editListItem(index, item)"
-            class="edit"
-            style="font-size: 14px"
-            color="#5580eb"
-            icon-class="common"
-          />
+            style="font-size: 14px">edit</i>
           <!-- 引擎删除 -->
-          <SvgIcon
+          <i 
+            class="material-icons close"
             v-if="isdeleteListItem"
             @click="deleteListItem(index, item)"
-            class="close"
-            style="font-size: 16px"
-            color="#5580eb"
-            icon-class="common"
-          />
+            style="font-size: 16px">delete</i>
         </li>
         <!-- add -->
         <li v-if="isOpenAdd" class="cardItem add" @click="addList">
@@ -72,6 +66,7 @@
   </div>
 </template>
 <script>
+import 'material-design-icons/iconfont/material-icons.css';
 export default {
   name: "cardList",
   props: {
@@ -118,18 +113,20 @@ export default {
       currentIndex: 0, // 当前高亮
     };
   },
-  watch: {},
+  watch: {
+    categoryList() {
+      this.liWidthTotal = (this.categoryList.length + 1) * (225 + 20);
+    }
+  },
   beforeDestroy() {
     window.removeEventListener("resize", this.getRowWidth);
   },
   mounted() {
-    this.$nextTick(() => {
-      this.getRowWidth();
-      // 监听窗口变化
-      window.addEventListener("resize", this.getRowWidth);
-      // 计算列表的总长度
-      this.liWidthTotal = (this.categoryList.length + 1) * (225 + 20);
-    });
+    this.getRowWidth();
+    // 监听窗口变化
+    window.addEventListener("resize", this.getRowWidth);
+    // 计算列表的总长度
+    this.liWidthTotal = (this.categoryList.length + 1) * (225 + 20);
   },
   methods: {
     // 获取ul的宽度
@@ -160,6 +157,7 @@ export default {
     getRight() {
       // 判断所有li总长度与ul的长度，并作出判断操作
       // 如果ul长度小于li总长，则进行详细判断
+      this.getRowWidth()
       if (this.ulWidth < this.liWidthTotal) {
         // 可移动数量
         let canMoveNum = this.liWidthTotal - this.ulWidth;

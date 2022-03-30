@@ -22,18 +22,18 @@ import org.apache.linkis.ujes.jdbc.hook.JDBCDriverPreExecutionHook
 
 class TableauPreExecutionHook extends JDBCDriverPreExecutionHook{
   override def callPreExecutionHook(sql: String): String = {
-    if (sql.contains("LOCAL TEMPORARY")){
+    if (sql.contains("CREATE INDEX") || sql.contains("CREATE TABLE") || sql.contains("INSERT INTO") || sql.contains("DROP TABLE")) {
+      "SELECT 1"
+    } else if (sql.contains("LOCAL TEMPORARY")) {
       sql.replace("LOCAL TEMPORARY", "").replace("ON COMMIT PRESERVE ROWS", "")
-    } else if (sql.contains("GROUP BY 2")){
-      sql.replace("GROUP BY 2","")
+    } else if (sql.contains("GROUP BY 2")) {
+      sql.replace("GROUP BY 2", "")
     } else if (sql.contains("`#")) {
       sql.replace("`#", "`")
     } else if (sql.startsWith("INSERT")) {
       sql.replace("(COL)", "").replaceAll("VALUES (.*)", "VALUES (1)")
-    } else if (sql.contains("CREATE INDEX")) {
-      "select 1"
-    } else{
-      sql.replace("TOP", "").replace("CHECKTOP","")
+    } else {
+      sql.replace("TOP", "").replace("CHECKTOP", "")
     }
   }
 }

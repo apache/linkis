@@ -33,21 +33,27 @@ trait SensibleExecutor extends Executor {
 
   protected def onStatusChanged(fromStatus: NodeStatus, toStatus: NodeStatus): Unit
 
-  def transition(toStatus: NodeStatus): Unit = this synchronized {
+  def transition(toStatus: NodeStatus): Unit = {
     lastActivityTime = System.currentTimeMillis
     this.status match {
       case NodeStatus.Failed | NodeStatus.Success =>
-        warn(s"$toString attempt to change status ${this.status} => $toStatus, ignore it.")
+        logger.warn(s"$toString attempt to change status ${this.status} => $toStatus, ignore it.")
         return
       case NodeStatus.ShuttingDown =>
         toStatus match {
           case NodeStatus.Failed | NodeStatus.Success =>
           case _ =>
-            warn(s"$toString attempt to change a Executor from ShuttingDown to $toStatus, ignore it.")
+            logger.warn(s"$toString attempt to change a Executor from ShuttingDown to $toStatus, ignore it.")
             return
         }
       case _ =>
 
+    }
+    if (NodeStatus.ShuttingDown != toStatus) {
+      logger.info(s"Waitiing lock release, to change status $status=>$toStatus.")
+      this synchronized {
+        logger.info(s"Finished wait lock release, to change status $status=>$toStatus.")
+      }
     }
     info(s"$toString changed status $status => $toStatus.")
     val oldState = status

@@ -24,8 +24,8 @@ import org.apache.linkis.instance.label.service.{InsLabelRpcService, InsLabelSer
 import org.apache.linkis.manager.label.builder.factory.{LabelBuilderFactory, LabelBuilderFactoryContext}
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.utils.LabelUtils
-import org.apache.linkis.message.annotation.Receiver
-import org.apache.linkis.message.builder.ServiceMethodContext
+import org.apache.linkis.rpc.message.annotation.Receiver
+import org.apache.linkis.rpc.Sender
 import org.apache.linkis.protocol.label._
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -51,7 +51,7 @@ class DefaultInsLabelRpcService extends InsLabelRpcService with Logging {
   }
 
   @Receiver
-  override def attachLabelsToInstance(context: ServiceMethodContext, insLabelAttachRequest: InsLabelAttachRequest): Unit = {
+  override def attachLabelsToInstance(sender: Sender, insLabelAttachRequest: InsLabelAttachRequest): Unit = {
     val labelMap = Option(insLabelAttachRequest.getLabels)
     val instance = Option(insLabelAttachRequest.getServiceInstance).getOrElse(
       throw new ErrorException(-1, "field 'serviceInstance' in attachRequest cannot be blank")
@@ -63,7 +63,7 @@ class DefaultInsLabelRpcService extends InsLabelRpcService with Logging {
   }
 
   @Receiver
-  override def refreshLabelsToInstance(context: ServiceMethodContext, insLabelRefreshRequest: InsLabelRefreshRequest): Unit = {
+  override def refreshLabelsToInstance(sender: Sender, insLabelRefreshRequest: InsLabelRefreshRequest): Unit = {
     val labelMap = Option(insLabelRefreshRequest.getLabels)
     val instance = Option(insLabelRefreshRequest.getServiceInstance).getOrElse(
       throw new ErrorException(-1, "field 'serviceInstance' in refreshRequest cannot be blank")
@@ -83,7 +83,7 @@ class DefaultInsLabelRpcService extends InsLabelRpcService with Logging {
   }
 
   @Receiver
-  override def removeLabelsFromInstance(context: ServiceMethodContext, insLabelRemoveRequest: InsLabelRemoveRequest): Unit = {
+  override def removeLabelsFromInstance(sender: Sender, insLabelRemoveRequest: InsLabelRemoveRequest): Unit = {
     val instance = Option(insLabelRemoveRequest.getServiceInstance).getOrElse(
       throw new ErrorException(-1, "field 'serviceInstance' in removeRequest cannot be blank")
     )
@@ -95,7 +95,7 @@ class DefaultInsLabelRpcService extends InsLabelRpcService with Logging {
   }
 
   @Receiver
-  override def queryLabelsFromInstance(context: ServiceMethodContext, insLabelQueryRequest: InsLabelQueryRequest): InsLabelQueryResponse = {
+  override def queryLabelsFromInstance(sender: Sender, insLabelQueryRequest: InsLabelQueryRequest): InsLabelQueryResponse = {
     Utils.tryAndError {
       val labels = new util.ArrayList[Label[_]]()
       inslabelRelationDao.searchLabelsByInstance(insLabelQueryRequest.getServiceInstance.getInstance).asScala.map(insLabel => labelBuilderFactory.createLabel[Label[_]](insLabel.getLabelKey, insLabel.getStringValue))
@@ -105,7 +105,7 @@ class DefaultInsLabelRpcService extends InsLabelRpcService with Logging {
   }
 
   @Receiver
-  override def queryInstanceFromLabels(context: ServiceMethodContext, labelInsQueryRequest: LabelInsQueryRequest): LabelInsQueryResponse = {
+  override def queryInstanceFromLabels(sender: Sender, labelInsQueryRequest: LabelInsQueryRequest): LabelInsQueryResponse = {
     Utils.tryAndError {
       val labels = LabelBuilderFactoryContext.getLabelBuilderFactory.getLabels(labelInsQueryRequest.getLabels)
       new LabelInsQueryResponse(insLabelService.searchInstancesByLabels(labels))

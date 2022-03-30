@@ -19,7 +19,6 @@ package org.apache.linkis.cli.core.exception.error;
 
 import org.apache.linkis.cli.common.exception.error.ErrorMsg;
 
-/** @description: Default Exception code for parsing, reading config etc. */
 public enum CommonErrMsg implements ErrorMsg {
 
     /** CmdTemplate */
@@ -47,7 +46,7 @@ public enum CommonErrMsg implements ErrorMsg {
     BuilderBuildErr("Failed to build. Message: {0}"),
 
     /** Executor */
-    ExecutionInitErr("Cannot init executor. Message: {0}"),
+    ExecutionInitErr("Fail when initiating execution. Message: {0}"),
     ExecutionErr("Error occured during execution: {0}"),
     ExecutionResultErr("Error occured when processing execute result: {0}"),
     /** Transformer */

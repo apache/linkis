@@ -51,6 +51,8 @@ public class LabelKeyConstant {
 
     public static final String JOB_RUNNING_TIMEOUT_KEY = "jobRunningTimeout";
 
+    public static final String RETRY_TIMEOUT_KEY = "jobRetryTimeout";
+
     public static final String EXECUTE_ONCE_KEY = "executeOnce";
 
     public static final String LOAD_BALANCE_KEY = "loadBalance";

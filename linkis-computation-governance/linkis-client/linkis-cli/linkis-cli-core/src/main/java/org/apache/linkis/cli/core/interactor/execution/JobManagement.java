@@ -18,99 +18,79 @@
 package org.apache.linkis.cli.core.interactor.execution;
 
 import org.apache.linkis.cli.common.entity.execution.Execution;
-import org.apache.linkis.cli.common.entity.execution.ExecutionResult;
-import org.apache.linkis.cli.common.entity.execution.SubExecutionType;
-import org.apache.linkis.cli.common.entity.execution.executor.Executor;
-import org.apache.linkis.cli.common.entity.execution.jobexec.ExecutionStatus;
-import org.apache.linkis.cli.common.entity.execution.jobexec.JobStatus;
 import org.apache.linkis.cli.common.entity.job.Job;
+import org.apache.linkis.cli.common.entity.result.ExecutionResult;
+import org.apache.linkis.cli.common.entity.result.ExecutionStatus;
 import org.apache.linkis.cli.common.exception.error.ErrorLevel;
-import org.apache.linkis.cli.core.exception.ExecutorException;
+import org.apache.linkis.cli.core.exception.LinkisClientExecutionException;
 import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
-import org.apache.linkis.cli.core.interactor.execution.executor.JobManagableBackendExecutor;
-import org.apache.linkis.cli.core.interactor.execution.jobexec.JobManExec;
+import org.apache.linkis.cli.core.interactor.job.ManagableBackendJob;
+import org.apache.linkis.cli.core.interactor.result.ExecutionResultImpl;
+import org.apache.linkis.cli.core.interactor.result.ExecutionStatusEnum;
 
-/** TODO: put exception during execution in ExecutionResult and do not interrupt execution */
+import java.util.Map;
+
 public class JobManagement implements Execution {
-
-    private ExecutionStatus executionStatus = ExecutionStatus.UNDEFINED;
-
     @Override
-    public ExecutionResult execute(Executor executor, Job job) {
-        if (!(executor instanceof JobManagableBackendExecutor)) {
-            throw new ExecutorException(
-                    JobStatus.UNSUBMITTED,
-                    "EXE0004",
-                    ErrorLevel.ERROR,
-                    CommonErrMsg.ExecutionErr,
-                    "Executor \""
-                            + this.getClass().getCanonicalName()
-                            + "\" is not JobManagableBackendExecutor");
-        }
-
-        JobManExec resultData = null;
+    public ExecutionResult execute(Map<String, Job> jobs) {
         ExecutionStatus executionStatus;
         Exception exception = null; // TODO
 
-        JobManagableBackendExecutor jobManExecutor = (JobManagableBackendExecutor) executor;
-        SubExecutionType subExecutionType = job.getSubExecutionType();
-        if (!(subExecutionType instanceof JobManSubType)) {
-            throw new ExecutorException(
-                    JobStatus.UNSUBMITTED,
-                    "EXE0030",
+        if (jobs == null || jobs.size() == 0) {
+            throw new LinkisClientExecutionException(
+                    "EXE0001",
                     ErrorLevel.ERROR,
-                    CommonErrMsg.ExecutionErr,
-                    "SubExecutionType is not instance of JobManSubType");
+                    CommonErrMsg.ExecutionInitErr,
+                    "Null or empty Jobs is submitted to current execution");
         }
-        switch ((JobManSubType) subExecutionType) {
-            case STATUS:
-                try {
-                    resultData = jobManExecutor.queryJobInfo(job);
-                    if (resultData == null || !resultData.isSuccess()) {
-                        executionStatus = ExecutionStatus.FAILED;
-                    } else {
-                        executionStatus = ExecutionStatus.SUCCEED;
-                    }
-                } catch (Exception e) {
-                    executionStatus = ExecutionStatus.FAILED;
-                }
-                break;
-                //            case JOB_DESC:
-                //                result = jobManagableBackendExecutor.queryJobDesc(job);
-                //                break;
-                //            case LOG:
-                //                result = jobManagableBackendExecutor.queryJobLog(job);
-                //                break;
-                //            case LIST:
-                //                result = jobManagableBackendExecutor.queryJobList(job);
-                //                break;
-            case KILL:
-                try {
-                    resultData = jobManExecutor.killJob(job);
-                    if (resultData == null || !resultData.isSuccess()) {
-                        executionStatus = ExecutionStatus.FAILED;
-                    } else {
-                        executionStatus = ExecutionStatus.SUCCEED;
-                    }
-                } catch (Exception e) {
-                    executionStatus = ExecutionStatus.FAILED;
-                }
-                break;
-            default:
-                throw new ExecutorException(
-                        JobStatus.UNSUBMITTED,
-                        "EXE0002",
-                        ErrorLevel.ERROR,
-                        CommonErrMsg.ExecutionErr,
-                        "SubExecutionType + \""
-                                + job.getSubExecutionType()
-                                + "\" is not supported");
+
+        if (jobs.size() > 1) {
+            throw new LinkisClientExecutionException(
+                    "EXE0001",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.ExecutionInitErr,
+                    "Multiple Jobs is not Supported by current execution");
         }
-        return new ExecutionResultImpl(resultData, executionStatus, exception);
+
+        Job job = jobs.get(jobs.keySet().toArray(new String[jobs.size()])[0]);
+
+        if (!(job instanceof ManagableBackendJob)) {
+            throw new LinkisClientExecutionException(
+                    "EXE0001",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.ExecutionInitErr,
+                    "Backend for \"" + job.getClass().getCanonicalName() + "\" is not manageable");
+        }
+
+        if (job.getSubType() == null) {
+            throw new LinkisClientExecutionException(
+                    "EXE0001",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.ExecutionInitErr,
+                    "SubExecType should not be null");
+        }
+
+        try {
+            ((ManagableBackendJob) job).doManage();
+            if (((ManagableBackendJob) job).isSuccess()) {
+                executionStatus = ExecutionStatusEnum.SUCCEED;
+            } else {
+                executionStatus = ExecutionStatusEnum.FAILED;
+                if (job.getJobData() != null && job.getJobData().getException() != null) {
+                    exception = job.getJobData().getException();
+                }
+            }
+
+        } catch (Exception e) {
+            exception = e;
+            executionStatus = ExecutionStatusEnum.FAILED;
+        }
+
+        return new ExecutionResultImpl(jobs, executionStatus, exception);
     }
 
     @Override
-    public boolean terminate(Executor executor, Job job) {
+    public boolean terminate(Map<String, Job> jobs) {
         return true;
     }
 }

@@ -18,30 +18,21 @@
 package org.apache.linkis.cli.application.suite;
 
 import org.apache.linkis.cli.common.entity.execution.Execution;
+import org.apache.linkis.cli.common.entity.job.Job;
 import org.apache.linkis.cli.common.entity.result.ResultHandler;
-import org.apache.linkis.cli.core.interactor.execution.executor.ExecutorBuilder;
-import org.apache.linkis.cli.core.interactor.job.JobBuilder;
+
+import java.util.Map;
 
 public class ExecutionSuite {
     Execution execution;
-    JobBuilder jobBuilder;
-    ExecutorBuilder executorBuilder;
+    Map<String, Job> jobs;
     ResultHandler[] resultHandlers;
 
-    //    ModelConverter presenterModelConverter;
-    //    Presenter resultPresenter;
-
     public ExecutionSuite(
-            Execution execution,
-            JobBuilder jobBuilder,
-            ExecutorBuilder executorBuilder,
-            ResultHandler... resultHandlers) {
+            Execution execution, Map<String, Job> jobs, ResultHandler... resultHandlers) {
         this.execution = execution;
-        this.jobBuilder = jobBuilder;
-        this.executorBuilder = executorBuilder;
+        this.jobs = jobs;
         this.resultHandlers = resultHandlers;
-        //        this.presenterModelConverter = presenterModelConverter;
-        //        this.resultPresenter = resultPresenter;
     }
 
     public Execution getExecution() {
@@ -52,20 +43,12 @@ public class ExecutionSuite {
         this.execution = execution;
     }
 
-    public JobBuilder getJobBuilder() {
-        return jobBuilder;
+    public Map<String, Job> getJobs() {
+        return jobs;
     }
 
-    public void setJobBuilder(JobBuilder jobBuilder) {
-        this.jobBuilder = jobBuilder;
-    }
-
-    public ExecutorBuilder getExecutorBuilder() {
-        return executorBuilder;
-    }
-
-    public void setExecutorBuilder(ExecutorBuilder executorBuilder) {
-        this.executorBuilder = executorBuilder;
+    public void setJobs(Map<String, Job> jobs) {
+        this.jobs = jobs;
     }
 
     public ResultHandler[] getResultHandlers() {

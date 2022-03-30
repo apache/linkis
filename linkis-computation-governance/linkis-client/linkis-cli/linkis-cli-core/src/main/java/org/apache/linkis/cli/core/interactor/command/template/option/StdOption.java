@@ -17,11 +17,10 @@
 
 package org.apache.linkis.cli.core.interactor.command.template.option;
 
-import org.apache.linkis.cli.common.utils.converter.AbstractStringConverter;
+import org.apache.linkis.cli.core.utils.converter.AbstractStringConverter;
 
 import org.apache.commons.lang3.StringUtils;
 
-/** @description: Data Structure for command CmdOption. */
 public class StdOption<T> extends BaseOption<T> {
     final String[] paramNames;
 

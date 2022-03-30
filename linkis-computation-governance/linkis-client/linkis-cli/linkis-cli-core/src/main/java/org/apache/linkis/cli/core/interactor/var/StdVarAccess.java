@@ -20,11 +20,12 @@ package org.apache.linkis.cli.core.interactor.var;
 import org.apache.linkis.cli.common.entity.command.ParamItem;
 import org.apache.linkis.cli.common.entity.command.Params;
 import org.apache.linkis.cli.common.entity.properties.ClientProperties;
+import org.apache.linkis.cli.common.entity.var.VarAccess;
 import org.apache.linkis.cli.common.exception.error.ErrorLevel;
-import org.apache.linkis.cli.common.utils.converter.AbstractStringConverter;
 import org.apache.linkis.cli.core.exception.VarAccessException;
 import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
-import org.apache.linkis.cli.core.utils.SpecialMap;
+import org.apache.linkis.cli.core.interactor.command.SpecialMap;
+import org.apache.linkis.cli.core.utils.converter.AbstractStringConverter;
 import org.apache.linkis.cli.core.utils.converter.PredefinedStringConverters;
 
 import org.apache.commons.lang3.StringUtils;
@@ -34,28 +35,12 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
-/**
- * @description: Retrieve value from input command/config/sys_prop/sys_env etc. order should be:
- *     command option > k-v in map-type option > user config > default config > default
- */
 public class StdVarAccess implements VarAccess {
     private static Logger logger = LoggerFactory.getLogger(StdVarAccess.class);
     private Params cmdParams;
     private ClientProperties userConf;
     private ClientProperties defaultConf;
     private Map<String, String> subMapCache;
-
-    public StdVarAccess() {}
-
-    public StdVarAccess(
-            Params primaryParam,
-            Params cmdParams,
-            ClientProperties userConf,
-            ClientProperties defaultConf) {
-        this.cmdParams = cmdParams;
-        this.userConf = userConf;
-        this.defaultConf = defaultConf;
-    }
 
     public StdVarAccess setCmdParams(Params cmdParams) {
         this.cmdParams = cmdParams;
@@ -283,7 +268,7 @@ public class StdVarAccess implements VarAccess {
                             + strVal
                             + "\" to "
                             + clazz.getCanonicalName()
-                            + "designated type is not supported");
+                            + ": designated type is not supported");
         }
         return clazz.cast(ret);
     }

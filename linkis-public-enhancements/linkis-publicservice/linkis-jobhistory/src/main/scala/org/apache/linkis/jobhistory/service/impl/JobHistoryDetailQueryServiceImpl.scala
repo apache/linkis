@@ -23,7 +23,7 @@ import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.jobhistory.dao.{JobDetailMapper, JobHistoryMapper}
 import org.apache.linkis.jobhistory.entity.JobDetail
 import org.apache.linkis.jobhistory.service.JobHistoryDetailQueryService
-import org.apache.linkis.message.annotation.Receiver
+import org.apache.linkis.rpc.message.annotation.Receiver
 import java.util
 
 import org.apache.commons.lang.exception.ExceptionUtils
@@ -61,7 +61,7 @@ class JobHistoryDetailQueryServiceImpl extends JobHistoryDetailQueryService with
     Utils.tryCatch {
       QueryUtils.storeExecutionCode(jobReqInsert.jobInfo.getSubJobDetail, jobReqInsert.jobInfo.getJobReq.getExecuteUser)
       val jobInsert = subjobDetail2JobDetail(jobReqInsert.jobInfo.getSubJobDetail)
-      jobInsert.setUpdated_time(jobInsert.getCreated_time)
+      jobInsert.setUpdatedTime(jobInsert.getCreatedTime)
       jobDetailMapper.insertJobDetail(jobInsert)
       val map = new util.HashMap[String, Object]()
       map.put(JobRequestConstants.JOB_ID, jobInsert.getId.asInstanceOf[Object])
@@ -93,8 +93,7 @@ class JobHistoryDetailQueryServiceImpl extends JobHistoryDetailQueryService with
       }
       jobDetail.setExecutionContent(null)
       val jobUpdate = subjobDetail2JobDetail(jobDetail)
-
-      if(jobUpdate.getUpdated_time == null) {
+      if(jobUpdate.getUpdatedTime == null) {
         throw new QueryException(120001, s"job${jobUpdate.getId}更新job相关信息失败，请指定该请求的更新时间!")
       }
       jobDetailMapper.updateJobDetail(jobUpdate)
@@ -144,7 +143,7 @@ class JobHistoryDetailQueryServiceImpl extends JobHistoryDetailQueryService with
             }
             jobDetail.setExecutionContent(null)
             val jobUpdate = subjobDetail2JobDetail(jobDetail)
-            if(jobUpdate.getUpdated_time == null) {
+            if(jobUpdate.getUpdatedTime == null) {
               throw new QueryException(120001, s"job${jobUpdate.getId}更新job相关信息失败，请指定该请求的更新时间!")
             }
             jobDetailMapper.updateJobDetail(jobUpdate)
@@ -231,9 +230,9 @@ class JobHistoryDetailQueryServiceImpl extends JobHistoryDetailQueryService with
       jobDetailMapper.search(0l, null, null, sDate, eDate, execId),
       {
         val queryJobDetail = new QueryJobDetail
-        queryJobDetail.setJob_req_id(execId)
+        queryJobDetail.setJobReqId(execId)
         queryJobDetail.setStatus(TaskStatus.Inited.toString)
-        queryJobDetail.setSubmit_user("EMPTY")
+        queryJobDetail.setSubmitUser("EMPTY")
         queryJobDetail
         })
   }

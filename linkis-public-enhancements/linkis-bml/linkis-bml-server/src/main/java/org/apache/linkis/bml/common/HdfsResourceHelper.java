@@ -105,6 +105,9 @@ public class HdfsResourceHelper implements ResourceHelper {
             throw uploadResourceException;
         } finally {
             IOUtils.closeQuietly(outputStream);
+            IOUtils.closeQuietly(inputStream);
+            IOUtils.closeQuietly(is0);
+            IOUtils.closeQuietly(is1);
             if (fileSystem != null) {
                 try {
                     fileSystem.close();
@@ -112,9 +115,6 @@ public class HdfsResourceHelper implements ResourceHelper {
                     logger.error("close filesystem failed", e);
                 }
             }
-            IOUtils.closeQuietly(inputStream);
-            IOUtils.closeQuietly(is0);
-            IOUtils.closeQuietly(is1);
         }
         return size;
     }

@@ -223,6 +223,20 @@ export default {
           return 'PipeLine';
         case 'shell':
           return 'Shell';
+        case 'jdbc':
+          return 'Jdbc';
+        case 'es':
+          return 'Es';
+        case 'presto':
+          return 'Presto';
+        case 'flink':
+          return 'Flink';
+        case 'sqoop':
+          return 'Sqoop';
+        case 'datax':
+          return 'Datax';
+        case 'openlookeng':
+          return 'Openlookeng';
         case 'Unlock':
           return this.$t('message.common.resourceSimple.KX')
         case 'Idle':
@@ -238,6 +252,7 @@ export default {
         case 'Starting':
           return this.$t('message.common.resourceSimple.QD');
         default:
+          return params;
       }
     },
     killJob() {

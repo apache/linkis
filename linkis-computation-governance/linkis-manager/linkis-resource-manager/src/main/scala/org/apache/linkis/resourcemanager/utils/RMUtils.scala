@@ -17,16 +17,19 @@
  
 package org.apache.linkis.resourcemanager.utils
 
-import org.apache.linkis.common.conf.{CommonVars, TimeType}
+import org.apache.linkis.common.conf.{CommonVars, Configuration, TimeType}
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.manager.common.entity.persistence.PersistenceResource
 import org.apache.linkis.manager.common.entity.resource._
 import org.apache.linkis.manager.common.serializer.NodeResourceSerializer
 import org.apache.linkis.manager.label.entity.engine.EngineType
+import org.apache.linkis.resourcemanager.conf.ResourceStatus
+import org.apache.linkis.resourcemanager.restful.vo.UserResourceVo
 import org.apache.linkis.server.BDPJettyServerHelper
 import org.json4s.DefaultFormats
 import org.json4s.jackson.Serialization.{read, write}
 
+import java.util
 import scala.collection.JavaConverters.asScalaBufferConverter
 
 object RMUtils extends Logging {
@@ -47,13 +50,15 @@ object RMUtils extends Logging {
 
   val EXTERNAL_RESOURCE_REFRESH_TIME = CommonVars("wds.linkis.manager.rm.external.resource.regresh.time", new TimeType("30m"))
 
-  val GOVERNANCE_STATION_ADMIN = CommonVars("wds.linkis.governance.station.admin", "hadoop")
+  val GOVERNANCE_STATION_ADMIN = Configuration.GOVERNANCE_STATION_ADMIN
 
   val COMBINED_USERCREATOR_ENGINETYPE = "combined_userCreator_engineType"
 
-  val ENGINE_TYPE = CommonVars.apply("wds.linkis.configuration.engine.type", EngineType.getAllEngineTypes.asScala.mkString(","))
+  val ENGINE_TYPE = CommonVars.apply("wds.linkis.configuration.engine.type", EngineType.getAllEngineTypes().asScala.mkString(","))
 
   val AM_SERVICE_NAME = "linkis-cg-linkismanager"
+
+  val RM_RESOURCE_ACTION_RECORD = CommonVars("wds.linkis.manager.rm.resource.action.record", false)
 
 
 
@@ -65,6 +70,34 @@ object RMUtils extends Logging {
     write(resource)
   }
 
+  def toUserResourceVo(userResource: UserResource): UserResourceVo = {
+    val userResourceVo = new UserResourceVo
+    if(userResource.getCreator != null) userResourceVo.setCreator(userResource.getCreator)
+    if(userResource.getEngineType != null) userResourceVo.setEngineTypeWithVersion(userResource.getEngineType + "-" + userResource.getVersion)
+    if(userResource.getUsername != null) userResourceVo.setUsername(userResource.getUsername)
+    if(userResource.getCreateTime != null) userResourceVo.setCreateTime(userResource.getCreateTime)
+    if(userResource.getUpdateTime != null) userResourceVo.setUpdateTime(userResource.getUpdateTime)
+    if(userResource.getId != null) userResourceVo.setId(userResource.getId)
+    if(userResource.getUsedResource != null) userResourceVo.setUsedResource(mapper.readValue(write(userResource.getUsedResource), classOf[util.Map[String, Any]]))
+    if(userResource.getLeftResource != null) userResourceVo.setLeftResource(mapper.readValue(write(userResource.getLeftResource), classOf[util.Map[String, Any]]))
+    if(userResource.getLockedResource != null) userResourceVo.setLockedResource(mapper.readValue(write(userResource.getLockedResource), classOf[util.Map[String, Any]]))
+    if(userResource.getMaxResource != null) userResourceVo.setMaxResource(mapper.readValue(write(userResource.getMaxResource), classOf[util.Map[String, Any]]))
+    if(userResource.getMinResource != null) userResourceVo.setMinResource(mapper.readValue(write(userResource.getMinResource), classOf[util.Map[String, Any]]))
+    if(userResource.getResourceType != null) userResourceVo.setResourceType(userResource.getResourceType)
+    if (userResource.getLeftResource != null && userResource.getMaxResource != null) {
+      if (userResource.getResourceType.equals(ResourceType.DriverAndYarn)) {
+        val leftDriverResource = userResource.getLeftResource.asInstanceOf[DriverAndYarnResource].loadInstanceResource
+        val leftYarnResource = userResource.getLeftResource.asInstanceOf[DriverAndYarnResource].yarnResource
+        val maxDriverResource = userResource.getMaxResource.asInstanceOf[DriverAndYarnResource].loadInstanceResource
+        val maxYarnResource = userResource.getMaxResource.asInstanceOf[DriverAndYarnResource].yarnResource
+        userResourceVo.setLoadResourceStatus(ResourceStatus.measure(leftDriverResource, maxDriverResource))
+        userResourceVo.setQueueResourceStatus(ResourceStatus.measure(leftYarnResource, maxYarnResource))
+      } else {
+        userResourceVo.setLoadResourceStatus(ResourceStatus.measure(userResource.getLeftResource, userResource.getMaxResource))
+      }
+    }
+    userResourceVo
+  }
 
   def toPersistenceResource(nodeResource: NodeResource) : PersistenceResource = {
     val persistenceResource = new PersistenceResource

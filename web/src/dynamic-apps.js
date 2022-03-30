@@ -5,16 +5,16 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 import { merge } from 'lodash'
 import routes, { subAppRoutes } from "./dss/router"
 // 根据module参数配置要打包的应用，生成的虚拟模块
@@ -23,11 +23,7 @@ const apps = require('dynamic-modules')
 // length ===1 为单个子应用独立运行，否则为dss，包含多个子应用
 let subRoutes = subAppRoutes
 const appsRoutes = Object.values(apps.appsRoutes)
-if (apps.modules.length === 1) {
-  if (appsRoutes[0].subAppRoutes) {
-    subRoutes = appsRoutes[0].subAppRoutes
-  }
-}
+
 /**
  * * 工作流子应用：workflows和scriptis一起打包
  * * npm run build --module=scriptis,workflows --micro_module=workflows
@@ -39,24 +35,17 @@ if (apps.microModule) {
   if (apps.appsRoutes[apps.microModule].subAppRoutes) {
     subRoutes = apps.appsRoutes[apps.microModule].subAppRoutes
   }
-    
-  if (apps.microModule === 'workflows') {
-    subRoutes.redirect =  '/process'
-  }
 
 }
 if (appsRoutes) {
   appsRoutes.forEach(route => {
-    if (apps.microModule === 'apiServices' && route.apiServicesRoutes) {
-      subRoutes.children = subRoutes.children.concat(route.apiServicesRoutes)
-    } else {
-      subRoutes.children = subRoutes.children.concat(route.default)
-    }
+    subRoutes.children = subRoutes.children.concat(route.default)
   });
 }
 
 routes.unshift(subRoutes)
 
+console.log(routes)
 // 公共国际化
 const i18n = {
   'en': require('./common/i18n/en.json'),

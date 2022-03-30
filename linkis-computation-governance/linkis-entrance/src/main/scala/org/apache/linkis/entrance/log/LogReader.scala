@@ -14,11 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.entrance.log
 
-import java.io.{Closeable, IOException, InputStream}
-
+import java.io.{BufferedReader, Closeable, IOException, InputStream, InputStreamReader}
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.entrance.exception.LogReadFailedException
 import org.apache.commons.io.{IOUtils, LineIterator}
@@ -34,7 +33,7 @@ abstract class LogReader(charset: String) extends Closeable with Logging{
   @throws[IOException]
   def getInputStream: InputStream
 
-  def getCharset:String = charset
+  def getCharset: String = charset
 
   /**
     * Get logs and sort by log level(获取日志，并按照日志级别分类)
@@ -57,7 +56,7 @@ abstract class LogReader(charset: String) extends Closeable with Logging{
     val all = new StringBuilder
     val read = readLog(singleLog => {
       val length = 1
-      if (StringUtils.isNotBlank(singleLog)){
+      if (StringUtils.isNotBlank(singleLog)) {
         singleLog match {
           case ERROR_HEADER1() | ERROR_HEADER2() =>
             concatLog(length, singleLog, error, all)
@@ -87,11 +86,11 @@ abstract class LogReader(charset: String) extends Closeable with Logging{
     read
   }
 
-  private def concatLog(length:Int, log:String, flag:StringBuilder, all:StringBuilder):Unit = {
-    if(length == 1){
+  private def concatLog(length: Int, log: String, flag: StringBuilder, all: StringBuilder): Unit = {
+    if (length == 1) {
       flag ++= log ++= "\n"
       all ++= log ++= "\n"
-    }else{
+    } else {
       flag ++= log ++= "\n\n"
       all ++= log ++= "\n\n"
     }
@@ -100,7 +99,7 @@ abstract class LogReader(charset: String) extends Closeable with Logging{
 
   def read(logs: java.lang.StringBuilder, fromLine: Int, size: Int = 100): Int = {
     logs.setLength(0)
-    val read = readLog((r:String) => {
+    val read = readLog((r: String) => {
       logs.append(r)
       logs.append("\n")}, fromLine, size)
     if(logs.length() > 0) logs.setLength(logs.length() - 1)
@@ -108,20 +107,35 @@ abstract class LogReader(charset: String) extends Closeable with Logging{
   }
 
   protected def readLog(deal: String => Unit, fromLine: Int, size: Int = 100): Int = {
-    val from = if(fromLine < 0) 0 else fromLine
+    val from = if (fromLine < 1) 0 else fromLine - 1
     var line, read = 0
-    val lineIterator = IOUtils.lineIterator(getInputStream, charset)
-    Utils.tryFinally(
-      while(lineIterator.hasNext && (read < size || size < 0)) {
-        val r = lineIterator.next()
-        if(line >= from) {
-          deal(r)
-          read += 1
+    val inputStream = getInputStream
+    val bufferReader = new BufferedReader(new InputStreamReader(inputStream, charset))
+    Utils.tryFinally {
+      val skipNum = bufferReader.skip(from)
+      if (skipNum > from && size >= 0) {
+        var lineText = bufferReader.readLine()
+        while (lineText != null && read < size) {
+          val r = lineText
+          if (line >= from) {
+            deal(r)
+            read += 1
+          }
+          line += 1
+          lineText = bufferReader.readLine()
         }
-        line += 1
-      })(LineIterator.closeQuietly(lineIterator))
+      }
+    } {
+      if (null != bufferReader) {
+        IOUtils.closeQuietly(bufferReader)
+      }
+      if (null != inputStream) {
+        IOUtils.closeQuietly(inputStream)
+      }
+    }
     read
   }
+
 }
 object LogReader {
   val ERROR_HEADER1:Regex = "[0-9\\-]{10,10} [0-9:]{8,8}.?\\d{0,3} SYSTEM-ERROR ".r.unanchored

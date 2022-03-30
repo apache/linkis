@@ -25,11 +25,14 @@ public class JobHistory {
 
     private Long id;
 
-    private String job_req_id;
+    /*
+    ExecID
+     */
+    private String jobReqId;
 
-    private String submit_user;
+    private String submitUser;
 
-    private String execute_user;
+    private String executeUser;
 
     private String source;
 
@@ -41,15 +44,15 @@ public class JobHistory {
 
     private String status;
 
-    private String log_path;
+    private String logPath;
 
-    private Integer error_code;
+    private Integer errorCode;
 
-    private String error_desc;
+    private String errorDesc;
 
-    private Date created_time;
+    private Date createdTime;
 
-    private Date updated_time;
+    private Date updatedTime;
 
     private String updateTimeMills;
 
@@ -57,9 +60,15 @@ public class JobHistory {
 
     private String metrics;
 
-    private String engine_type;
+    private String engineType;
 
-    private String execution_code;
+    /*
+    Original execution code
+     */
+    private String executionCode;
+
+    /** result location */
+    private String resultLocation;
 
     public Long getId() {
         return id;
@@ -69,28 +78,28 @@ public class JobHistory {
         this.id = id;
     }
 
-    public String getJob_req_id() {
-        return job_req_id;
+    public String getJobReqId() {
+        return jobReqId;
     }
 
-    public void setJob_req_id(String job_req_id) {
-        this.job_req_id = job_req_id;
+    public void setJobReqId(String jobReqId) {
+        this.jobReqId = jobReqId;
     }
 
-    public String getSubmit_user() {
-        return submit_user;
+    public String getSubmitUser() {
+        return submitUser;
     }
 
-    public void setSubmit_user(String submit_user) {
-        this.submit_user = submit_user;
+    public void setSubmitUser(String submitUser) {
+        this.submitUser = submitUser;
     }
 
-    public String getExecute_user() {
-        return execute_user;
+    public String getExecuteUser() {
+        return executeUser;
     }
 
-    public void setExecute_user(String execute_user) {
-        this.execute_user = execute_user;
+    public void setExecuteUser(String executeUser) {
+        this.executeUser = executeUser;
     }
 
     public String getSource() {
@@ -133,44 +142,44 @@ public class JobHistory {
         this.status = status;
     }
 
-    public String getLog_path() {
-        return log_path;
+    public String getLogPath() {
+        return logPath;
     }
 
-    public void setLog_path(String log_path) {
-        this.log_path = log_path;
+    public void setLogPath(String logPath) {
+        this.logPath = logPath;
     }
 
-    public Integer getError_code() {
-        return error_code;
+    public Integer getErrorCode() {
+        return errorCode;
     }
 
-    public void setError_code(Integer error_code) {
-        this.error_code = error_code;
+    public void setErrorCode(Integer errorCode) {
+        this.errorCode = errorCode;
     }
 
-    public String getError_desc() {
-        return error_desc;
+    public String getErrorDesc() {
+        return errorDesc;
     }
 
-    public void setError_desc(String error_desc) {
-        this.error_desc = error_desc;
+    public void setErrorDesc(String errorDesc) {
+        this.errorDesc = errorDesc;
     }
 
-    public Date getCreated_time() {
-        return created_time;
+    public Date getCreatedTime() {
+        return createdTime;
     }
 
-    public void setCreated_time(Date created_time) {
-        this.created_time = created_time;
+    public void setCreatedTime(Date createdTime) {
+        this.createdTime = createdTime;
     }
 
-    public Date getUpdated_time() {
-        return updated_time;
+    public Date getUpdatedTime() {
+        return updatedTime;
     }
 
-    public void setUpdated_time(Date updated_time) {
-        this.updated_time = updated_time;
+    public void setUpdatedTime(Date updatedTime) {
+        this.updatedTime = updatedTime;
     }
 
     public String getInstances() {
@@ -189,23 +198,45 @@ public class JobHistory {
         this.metrics = metrics;
     }
 
-    public String getEngine_type() {
-        return engine_type;
+    public String getEngineType() {
+        return engineType;
     }
 
-    public void setEngine_type(String engine_type) {
-        this.engine_type = engine_type;
+    public void setEngineType(String engineType) {
+        this.engineType = engineType;
     }
 
-    public String getExecution_code() {
-        return execution_code;
+    public String getExecutionCode() {
+        return executionCode;
     }
 
-    public void setExecution_code(String execution_code) {
-        this.execution_code = execution_code;
+    public void setExecutionCode(String executionCode) {
+        this.executionCode = executionCode;
     }
 
     public String getUpdateTimeMills() {
-        return QueryUtils.dateToString(getUpdated_time());
+        return QueryUtils.dateToString(getUpdatedTime());
+    }
+
+    public String getResultLocation() {
+        return resultLocation;
+    }
+
+    public void setResultLocation(String resultLocation) {
+        this.resultLocation = resultLocation;
+    }
+
+    @Override
+    public String toString() {
+        return "JobHistory{"
+                + "id="
+                + id
+                + ", jobReqId='"
+                + jobReqId
+                + '\''
+                + ", labels='"
+                + labels
+                + '\''
+                + '}';
     }
 }

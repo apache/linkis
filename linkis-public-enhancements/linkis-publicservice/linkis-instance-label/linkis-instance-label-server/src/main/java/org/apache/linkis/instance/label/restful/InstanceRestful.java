@@ -29,7 +29,7 @@ import org.apache.linkis.manager.label.entity.Label;
 import org.apache.linkis.manager.label.entity.UserModifiable;
 import org.apache.linkis.manager.label.utils.LabelUtils;
 import org.apache.linkis.server.Message;
-import org.apache.linkis.server.security.SecurityFilter;
+import org.apache.linkis.server.utils.ModuleUserUtils;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -60,7 +60,6 @@ public class InstanceRestful {
 
     @RequestMapping(path = "/allInstance", method = RequestMethod.GET)
     public Message listAllInstanceWithLabel(HttpServletRequest req) {
-        String username = SecurityFilter.getLoginUsername(req);
         logger.info("start to get all instance informations.....");
         List<InstanceInfo> instances = insLabelService.listAllInstanceWithLabel();
         insLabelService.markInstanceLabel(instances);
@@ -72,7 +71,7 @@ public class InstanceRestful {
     @RequestMapping(path = "/instanceLabel", method = RequestMethod.PUT)
     public Message upDateInstanceLabel(HttpServletRequest req, @RequestBody JsonNode jsonNode)
             throws Exception {
-        String username = SecurityFilter.getLoginUsername(req);
+        String username = ModuleUserUtils.getOperationUser(req);
         String[] adminArray = InstanceConfigration.GOVERNANCE_STATION_ADMIN().getValue().split(",");
         if (adminArray != null && !Arrays.asList(adminArray).contains(username)) {
             throw new Exception("only admin can modify instance label(只有管理员才能修改标签)");

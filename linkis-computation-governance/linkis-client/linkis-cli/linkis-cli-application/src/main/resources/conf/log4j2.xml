@@ -15,7 +15,7 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-  
+
 <configuration status="INFO" monitorInterval="30">
     <properties>
         <property name="LOG_PATH">${sys:log.path}</property>

@@ -28,7 +28,7 @@ import org.apache.linkis.filesystem.service.FsService;
 import org.apache.linkis.filesystem.util.WorkspaceUtil;
 import org.apache.linkis.filesystem.validator.PathValidator$;
 import org.apache.linkis.server.Message;
-import org.apache.linkis.server.security.SecurityFilter;
+import org.apache.linkis.server.utils.ModuleUserUtils;
 import org.apache.linkis.storage.csv.CSVFsWriter;
 import org.apache.linkis.storage.domain.FsPathListWithError;
 import org.apache.linkis.storage.excel.ExcelFsWriter;
@@ -113,7 +113,7 @@ public class FsRestfulApi {
             HttpServletRequest req,
             @RequestParam(value = "pathType", required = false) String pathType)
             throws IOException, WorkSpaceException {
-        String userName = SecurityFilter.getLoginUsername(req);
+        String userName = ModuleUserUtils.getOperationUser(req, "getUserRootPath");
         String hdfsUserRootPathPrefix =
                 WorkspaceUtil.suffixTuning(HDFS_USER_ROOT_PATH_PREFIX.getValue());
         String hdfsUserRootPathSuffix = HDFS_USER_ROOT_PATH_SUFFIX.getValue();
@@ -138,8 +138,9 @@ public class FsRestfulApi {
     @RequestMapping(path = "/createNewDir", method = RequestMethod.POST)
     public Message createNewDir(HttpServletRequest req, @RequestBody JsonNode json)
             throws IOException, WorkSpaceException {
-        String userName = SecurityFilter.getLoginUsername(req);
+
         String path = json.get("path").textValue();
+        String userName = ModuleUserUtils.getOperationUser(req, "createNewDir " + path);
         if (StringUtils.isEmpty(path)) {
             throw WorkspaceExceptionManager.createException(80004, path);
         }
@@ -159,8 +160,8 @@ public class FsRestfulApi {
     @RequestMapping(path = "/createNewFile", method = RequestMethod.POST)
     public Message createNewFile(HttpServletRequest req, @RequestBody JsonNode json)
             throws IOException, WorkSpaceException {
-        String userName = SecurityFilter.getLoginUsername(req);
         String path = json.get("path").textValue();
+        String userName = ModuleUserUtils.getOperationUser(req, "createNewFile " + path);
         if (StringUtils.isEmpty(path)) {
             throw WorkspaceExceptionManager.createException(80004, path);
         }
@@ -182,7 +183,7 @@ public class FsRestfulApi {
             throws IOException, WorkSpaceException {
         String oldDest = json.get("oldDest").textValue();
         String newDest = json.get("newDest").textValue();
-        String userName = SecurityFilter.getLoginUsername(req);
+        String userName = ModuleUserUtils.getOperationUser(req, "rename " + newDest);
         if (FILESYSTEM_PATH_CHECK_TRIGGER.getValue()) {
             LOGGER.info(
                     String.format(
@@ -218,10 +219,11 @@ public class FsRestfulApi {
             @RequestParam("path") String path,
             @RequestParam("file") List<MultipartFile> files)
             throws IOException, WorkSpaceException {
-        String userName = SecurityFilter.getLoginUsername(req);
+
         if (StringUtils.isEmpty(path)) {
             throw WorkspaceExceptionManager.createException(80004, path);
         }
+        String userName = ModuleUserUtils.getOperationUser(req, "upload " + path);
         if (!checkIsUsersDirectory(path, userName)) {
             throw WorkspaceExceptionManager.createException(80010, path);
         }
@@ -244,8 +246,9 @@ public class FsRestfulApi {
     @RequestMapping(path = "/deleteDirOrFile", method = RequestMethod.POST)
     public Message deleteDirOrFile(HttpServletRequest req, @RequestBody JsonNode json)
             throws IOException, WorkSpaceException {
-        String userName = SecurityFilter.getLoginUsername(req);
+
         String path = json.get("path").textValue();
+        String userName = ModuleUserUtils.getOperationUser(req, "deleteDirOrFile " + path);
         if (StringUtils.isEmpty(path)) {
             throw WorkspaceExceptionManager.createException(80004, path);
         }
@@ -269,10 +272,11 @@ public class FsRestfulApi {
     public Message getDirFileTrees(
             HttpServletRequest req, @RequestParam(value = "path", required = false) String path)
             throws IOException, WorkSpaceException {
-        String userName = SecurityFilter.getLoginUsername(req);
+
         if (StringUtils.isEmpty(path)) {
             throw WorkspaceExceptionManager.createException(80004, path);
         }
+        String userName = ModuleUserUtils.getOperationUser(req, "getDirFileTrees " + path);
         if (!checkIsUsersDirectory(path, userName)) {
             throw WorkspaceExceptionManager.createException(80010, path);
         }
@@ -324,8 +328,8 @@ public class FsRestfulApi {
         PrintWriter writer = null;
         try {
             String charset = json.get("charset");
-            String userName = SecurityFilter.getLoginUsername(req);
             String path = json.get("path");
+            String userName = ModuleUserUtils.getOperationUser(req, "download " + path);
             if (StringUtils.isEmpty(path)) {
                 throw WorkspaceExceptionManager.createException(80004, path);
             }
@@ -376,7 +380,7 @@ public class FsRestfulApi {
     public Message isExist(
             HttpServletRequest req, @RequestParam(value = "path", required = false) String path)
             throws IOException, WorkSpaceException {
-        String userName = SecurityFilter.getLoginUsername(req);
+        String userName = ModuleUserUtils.getOperationUser(req, "isExist " + path);
         FsPath fsPath = new FsPath(path);
         if (StringUtils.isEmpty(path)) {
             throw WorkspaceExceptionManager.createException(80004, path);
@@ -388,6 +392,43 @@ public class FsRestfulApi {
         return Message.ok().data("isExist", fileSystem.exists(fsPath));
     }
 
+    @RequestMapping(path = "/fileInfo", method = RequestMethod.GET)
+    public Message fileInfo(
+            HttpServletRequest req,
+            @RequestParam(value = "path", required = false) String path,
+            @RequestParam(value = "pageSize", defaultValue = "5000") Integer pageSize)
+            throws IOException, WorkSpaceException {
+        if (StringUtils.isEmpty(path)) {
+            throw WorkspaceExceptionManager.createException(80004, path);
+        }
+        String userName = ModuleUserUtils.getOperationUser(req, "fileInfo " + path);
+        FsPath fsPath = new FsPath(path);
+        FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
+        // Throws an exception if the file does not have read access(如果文件没读权限，抛出异常)
+        if (!fileSystem.canRead(fsPath)) {
+            throw WorkspaceExceptionManager.createException(80012);
+        }
+        FileSource fileSource = null;
+        try {
+            Message message = Message.ok();
+            fileSource = FileSource$.MODULE$.create(fsPath, fileSystem);
+            Pair<Object, Object>[] fileInfo = fileSource.getFileInfo(pageSize);
+            IOUtils.closeQuietly(fileSource);
+            if (null != fileInfo && fileInfo.length > 0) {
+                message.data("path", path);
+                message.data("colNumber", fileInfo[0].getFirst());
+                message.data("rowNumber", fileInfo[0].getSecond());
+            } else {
+                message.data("path", path);
+                message.data("colNumber", 0);
+                message.data("rowNumber", 0);
+            }
+            return message;
+        } finally {
+            IOUtils.closeQuietly(fileSource);
+        }
+    }
+
     @RequestMapping(path = "/openFile", method = RequestMethod.GET)
     public Message openFile(
             HttpServletRequest req,
@@ -396,11 +437,12 @@ public class FsRestfulApi {
             @RequestParam(value = "pageSize", defaultValue = "5000") Integer pageSize,
             @RequestParam(value = "charset", defaultValue = "utf-8") String charset)
             throws IOException, WorkSpaceException {
-        String userName = SecurityFilter.getLoginUsername(req);
+
         Message message = Message.ok();
         if (StringUtils.isEmpty(path)) {
             throw WorkspaceExceptionManager.createException(80004, path);
         }
+        String userName = ModuleUserUtils.getOperationUser(req, "openFile " + path);
         if (!checkIsUsersDirectory(path, userName)) {
             throw WorkspaceExceptionManager.createException(80010, path);
         }
@@ -436,8 +478,8 @@ public class FsRestfulApi {
     @RequestMapping(path = "/saveScript", method = RequestMethod.POST)
     public Message saveScript(HttpServletRequest req, @RequestBody Map<String, Object> json)
             throws IOException, WorkSpaceException {
-        String userName = SecurityFilter.getLoginUsername(req);
         String path = (String) json.get("path");
+        String userName = ModuleUserUtils.getOperationUser(req, "saveScript " + path);
         if (StringUtils.isEmpty(path)) {
             throw WorkspaceExceptionManager.createException(80004, path);
         }
@@ -486,19 +528,25 @@ public class FsRestfulApi {
             @RequestParam(value = "outputFileName", defaultValue = "downloadResultset")
                     String outputFileName,
             @RequestParam(value = "sheetName", defaultValue = "result") String sheetName,
-            @RequestParam(value = "nullValue", defaultValue = "NULL") String nullValue)
+            @RequestParam(value = "nullValue", defaultValue = "NULL") String nullValue,
+            @RequestParam(value = "limit", defaultValue = "0") Integer limit)
             throws WorkSpaceException, IOException {
         ServletOutputStream outputStream = null;
         FsWriter fsWriter = null;
         PrintWriter writer = null;
         FileSource fileSource = null;
         try {
-            String userName = SecurityFilter.getLoginUsername(req);
+            String userName = ModuleUserUtils.getOperationUser(req, "resultsetToExcel " + path);
             FsPath fsPath = new FsPath(path);
             FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
             boolean isLimitDownloadSize = RESULT_SET_DOWNLOAD_IS_LIMIT.getValue();
             Integer csvDownloadSize = RESULT_SET_DOWNLOAD_MAX_SIZE_CSV.getValue();
             Integer excelDownloadSize = RESULT_SET_DOWNLOAD_MAX_SIZE_EXCEL.getValue();
+            if (limit > 0) {
+                csvDownloadSize = limit;
+                excelDownloadSize = limit;
+            }
+
             if (StringUtils.isEmpty(path)) {
                 throw WorkspaceExceptionManager.createException(80004, path);
             }
@@ -575,14 +623,15 @@ public class FsRestfulApi {
             @RequestParam(value = "path", required = false) String path,
             @RequestParam(value = "outputFileName", defaultValue = "downloadResultset")
                     String outputFileName,
-            @RequestParam(value = "nullValue", defaultValue = "NULL") String nullValue)
+            @RequestParam(value = "nullValue", defaultValue = "NULL") String nullValue,
+            @RequestParam(value = "limit", defaultValue = "0") Integer limit)
             throws WorkSpaceException, IOException {
         ServletOutputStream outputStream = null;
         FsWriter fsWriter = null;
         PrintWriter writer = null;
         FileSource fileSource = null;
         try {
-            String userName = SecurityFilter.getLoginUsername(req);
+            String userName = ModuleUserUtils.getOperationUser(req, "resultsetsToExcel " + path);
             FsPath fsPath = new FsPath(path);
             FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
             if (StringUtils.isEmpty(path)) {
@@ -599,6 +648,9 @@ public class FsRestfulApi {
             FsPath[] fsPaths = fsPathListWithError.getFsPaths().toArray(new FsPath[] {});
             boolean isLimitDownloadSize = RESULT_SET_DOWNLOAD_IS_LIMIT.getValue();
             Integer excelDownloadSize = RESULT_SET_DOWNLOAD_MAX_SIZE_EXCEL.getValue();
+            if (limit > 0) {
+                excelDownloadSize = limit;
+            }
             response.addHeader(
                     "Content-Disposition",
                     "attachment;filename="
@@ -651,10 +703,10 @@ public class FsRestfulApi {
             @RequestParam(value = "quote", defaultValue = "\"") String quote,
             @RequestParam(value = "escapeQuotes", defaultValue = "false") Boolean escapeQuotes)
             throws Exception {
-        String userName = SecurityFilter.getLoginUsername(req);
         if (StringUtils.isEmpty(path)) {
             throw WorkspaceExceptionManager.createException(80004, path);
         }
+        String userName = ModuleUserUtils.getOperationUser(req, "formate " + path);
         if (!checkIsUsersDirectory(path, userName)) {
             throw WorkspaceExceptionManager.createException(80010, path);
         }
@@ -710,10 +762,10 @@ public class FsRestfulApi {
             @RequestParam(value = "path", required = false) String path,
             @RequestParam(value = "proxyUser", required = false) String proxyUser)
             throws IOException, WorkSpaceException {
-        String userName = SecurityFilter.getLoginUsername(req);
         if (StringUtils.isEmpty(path)) {
             throw WorkspaceExceptionManager.createException(80004, path);
         }
+        String userName = ModuleUserUtils.getOperationUser(req, "openLog " + path);
         if (proxyUser != null && WorkspaceUtil.isLogAdmin(userName)) {
             userName = proxyUser;
         }

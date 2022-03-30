@@ -34,8 +34,8 @@ class AvailableNodeSelectRule extends NodeSelectRule with Logging{
     if (null != nodes) {
       nodes.filter {
         case amNode: AMNode =>
-          if (!NodeStatus.isLocked(amNode.getNodeStatus) && NodeStatus.isAvailable(amNode.getNodeStatus)) {
-            null == amNode.getNodeHealthyInfo || null == amNode.getNodeHealthyInfo.getNodeHealthy || NodeHealthy.isAvailable(amNode.getNodeHealthyInfo.getNodeHealthy)
+          if (! NodeStatus.isLocked(amNode.getNodeStatus) && NodeStatus.isAvailable(amNode.getNodeStatus)) {
+            null != amNode.getNodeHealthyInfo && null != amNode.getNodeHealthyInfo.getNodeHealthy && NodeHealthy.isAvailable(amNode.getNodeHealthyInfo.getNodeHealthy)
           } else {
             info(s"engineConn ${amNode.getServiceInstance} cannot be reuse status: ${amNode.getNodeStatus}")
             false

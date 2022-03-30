@@ -17,14 +17,13 @@
 
 package org.apache.linkis.cli.core.builder;
 
+import org.apache.linkis.cli.common.entity.var.VarAccess;
 import org.apache.linkis.cli.common.exception.error.ErrorLevel;
 import org.apache.linkis.cli.core.exception.BuilderException;
 import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
-import org.apache.linkis.cli.core.interactor.var.VarAccess;
 
 import java.lang.reflect.ParameterizedType;
 
-/** @description: Builders that need to access user input or configuration */
 public abstract class BuildableByVarAccess<T> extends AbstractBuilder<T> {
     protected VarAccess stdVarAccess;
     protected VarAccess sysVarAccess;

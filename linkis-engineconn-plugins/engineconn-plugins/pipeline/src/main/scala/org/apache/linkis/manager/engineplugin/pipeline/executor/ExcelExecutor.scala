@@ -36,7 +36,7 @@ class ExcelExecutor extends PipeLineExecutor {
     var fileSource: FileSource = null
     var excelFsWriter: ExcelFsWriter = null
     val sourceFsPath = new FsPath(sourcePath)
-    val destFsPath = new FsPath(s"$destPath.xlsx")
+    val destFsPath = new FsPath(destPath)
     val sourceFs = FSFactory.getFs(sourceFsPath)
     sourceFs.init(null)
     val destFs = FSFactory.getFs(destFsPath)
@@ -73,7 +73,7 @@ class ExcelExecutor extends PipeLineExecutor {
     super.execute(sourcePath, destPath, engineExecutorContext)
   }
 
-  override def Kind: String = "excel"
+  override def Kind: String = "xlsx"
 }
 
 object ExcelExecutor {

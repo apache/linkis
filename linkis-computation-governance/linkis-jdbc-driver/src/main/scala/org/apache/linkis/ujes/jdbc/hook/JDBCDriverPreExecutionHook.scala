@@ -31,18 +31,20 @@ trait JDBCDriverPreExecutionHook {
 
 object JDBCDriverPreExecutionHook extends Logging{
 
-  private val preExecutionHooks:Array[JDBCDriverPreExecutionHook] = {
+  private val preExecutionHooks: Array[JDBCDriverPreExecutionHook] = {
     val hooks = new ArrayBuffer[JDBCDriverPreExecutionHook]()
-    CommonVars("wds.linkis.jdbc.pre.hook.class", "org.apache.linkis.ujes.jdbc.hook.impl.TableauPreExecutionHook").getValue.split(",") foreach {
+    CommonVars("wds.linkis.jdbc.pre.hook.class",
+      "org.apache.linkis.ujes.jdbc.hook.impl.TableauPreExecutionHook," +
+        "org.apache.linkis.ujes.jdbc.hook.impl.NoLimitExecutionHook").getValue.split(",") foreach {
       hookStr => Utils.tryCatch{
         val clazz = Class.forName(hookStr.trim)
         val obj = clazz.newInstance()
         obj match {
-          case hook:JDBCDriverPreExecutionHook => hooks += hook
+          case hook: JDBCDriverPreExecutionHook => hooks += hook
           case _ => warn(s"obj is not a engineHook obj is ${obj.getClass}")
         }
       }{
-        case e:Exception => error(s"failed to load class ${hookStr}", e)
+        case e: Exception => error(s"failed to load class ${hookStr}", e)
       }
     }
     hooks.toArray

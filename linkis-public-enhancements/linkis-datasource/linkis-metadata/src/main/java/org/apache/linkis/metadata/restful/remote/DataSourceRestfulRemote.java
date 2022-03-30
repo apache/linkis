@@ -58,7 +58,8 @@ public interface DataSourceRestfulRemote {
             HttpServletRequest req);
 
     @GetMapping("/api/datasource/all/size")
-    public Message allSizeOf(@RequestParam(value = "database",required = false) String database,
-                             @RequestParam(value = "table",required = false) String table,
-                             HttpServletRequest req);
+    public Message allSizeOf(
+            @RequestParam(value = "database", required = false) String database,
+            @RequestParam(value = "table", required = false) String table,
+            HttpServletRequest req);
 }

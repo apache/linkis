@@ -34,6 +34,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 
 import com.fasterxml.jackson.databind.JsonNode;
+
 import java.util.Map;
 
 @RestController
@@ -124,8 +125,12 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
     }
 
     @Override
-    @RequestMapping(path = "all/size",method = RequestMethod.GET)
-    public Message allSizeOf(@RequestParam(value = "database",required = false) String database, @RequestParam(value = "table",required = false) String table, HttpServletRequest req){
+    @RequestMapping(path = "all/size", method = RequestMethod.GET)
+    public Message allSizeOf(
+            @RequestParam(value = "database", required = false) String database,
+            @RequestParam(value = "table", required = false) String table,
+            HttpServletRequest req) {
+
         String userName = SecurityFilter.getLoginUsername(req);
         try {
             Map<String, Object> allTableSize =

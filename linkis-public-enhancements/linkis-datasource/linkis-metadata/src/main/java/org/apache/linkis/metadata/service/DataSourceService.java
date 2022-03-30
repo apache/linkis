@@ -38,5 +38,5 @@ public interface DataSourceService {
 
     JsonNode getPartitions(String dbName, String tableName, String userName);
 
-    Map<String,Object> getAllTableSize(String dbName, String tableName, String userName);
+    Map<String, Object> getAllTableSize(String dbName, String tableName, String userName);
 }

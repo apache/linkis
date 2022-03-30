@@ -25,5 +25,7 @@ object PipeLineConstant {
   val PIPELINE_OUTPUT_SHUFFLE_NULL_TYPE = "wds.linkis.engine.pipeline.output.shuffle.null.type"
   val PIPELINE_OUTPUT_CHARSET = "wds.linkis.engine.pipeline.output.charset"
   val PIPELINE_FIELD_SPLIT = "wds.linkis.engine.pipeline.field.split"
+  val PIPELINE_FIELD_QUOTE_RETOUCH_CONF = "wds.linkis.engine.pipeline.field.quote.retoch"
+  val PIPELINE_FIELD_ = "wds.linkis.engine.pipeline.field.split"
   val BLANK = "BLANK"
 }

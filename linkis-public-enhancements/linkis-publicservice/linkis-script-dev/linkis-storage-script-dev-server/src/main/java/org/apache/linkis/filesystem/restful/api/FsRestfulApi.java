@@ -486,7 +486,8 @@ public class FsRestfulApi {
             @RequestParam(value = "outputFileName", defaultValue = "downloadResultset")
                     String outputFileName,
             @RequestParam(value = "sheetName", defaultValue = "result") String sheetName,
-            @RequestParam(value = "nullValue", defaultValue = "NULL") String nullValue)
+            @RequestParam(value = "nullValue", defaultValue = "NULL") String nullValue,
+            @RequestParam(value = "quoteRetouch", required = false) boolean quoteRetouch)
             throws WorkSpaceException, IOException {
         ServletOutputStream outputStream = null;
         FsWriter fsWriter = null;
@@ -522,7 +523,7 @@ public class FsRestfulApi {
             switch (outputFileType) {
                 case "csv":
                     if (FileSource$.MODULE$.isTableResultSet(fileSource)) {
-                        fsWriter = CSVFsWriter.getCSVFSWriter(charset, csvSeperator, outputStream);
+                        fsWriter = CSVFsWriter.getCSVFSWriter(charset, csvSeperator, quoteRetouch, outputStream);
                     } else {
                         fsWriter =
                                 ScriptFsWriter.getScriptFsWriter(

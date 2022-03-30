@@ -34,10 +34,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -73,7 +69,6 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
             return Message.error("Failed to queryDbsWithTables", e);
         }
     }
-
 
     @Override
     @RequestMapping(path = "tables", method = RequestMethod.GET)
@@ -128,11 +123,13 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
         }
     }
 
+    @Override
     @RequestMapping(path = "all/size",method = RequestMethod.GET)
     public Message allSizeOf(@RequestParam(value = "database",required = false) String database, @RequestParam(value = "table",required = false) String table, HttpServletRequest req){
         String userName = SecurityFilter.getLoginUsername(req);
         try {
-            Map<String, Object> allTableSize = dataSourceService.getAllTableSize(database, table, userName);
+            Map<String, Object> allTableSize =
+                    dataSourceService.getAllTableSize(database, table, userName);
             return Message.ok("").data("sizeInfo", allTableSize);
         } catch (Exception e) {
             logger.error("Failed to get table partition size(获取表/分区大小失败)", e);

@@ -24,7 +24,6 @@ import java.text.SimpleDateFormat;
 
 public class JacksonUtils {
 
-    // 对象转json
     public static String toJson(Object object) {
         ObjectMapper mapper = new ObjectMapper();
         mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ"));
@@ -36,7 +35,7 @@ public class JacksonUtils {
         }
         return result;
     }
-    // 对象转json(格式化json)
+
     public static String toJsonFormat(Object object) {
         ObjectMapper mapper = new ObjectMapper();
         mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ"));

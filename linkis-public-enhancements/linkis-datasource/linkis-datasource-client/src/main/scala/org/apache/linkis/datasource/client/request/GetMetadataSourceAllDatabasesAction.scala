@@ -21,7 +21,7 @@ import org.apache.linkis.datasource.client.config.DatasourceClientConfig
 import org.apache.linkis.httpclient.request.GetAction
 
 class GetMetadataSourceAllDatabasesAction  extends GetAction with DataSourceAction{
-  override def suffixURLs: Array[String] = Array(DatasourceClientConfig.LINKIS_METADATA_SERVICE_MODULE.getValue, "all", "dbs")
+  override def suffixURLs: Array[String] = Array(DatasourceClientConfig.LINKIS_METADATA_SERVICE_MODULE.getValue, "dbs")
 
   private var user:String = _
 

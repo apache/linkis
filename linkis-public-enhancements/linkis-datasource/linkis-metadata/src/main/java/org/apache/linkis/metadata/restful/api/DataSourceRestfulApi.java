@@ -74,23 +74,6 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
         }
     }
 
-    @RequestMapping(path = "all/dbs",method = RequestMethod.GET)
-    public Message queryAllDatabaseInfo(HttpServletRequest req) {
-        try {
-            JsonNode dbs = dataSourceService.getDbs(null);
-            Iterator<JsonNode> elements = dbs.iterator();
-            List<String> result=new ArrayList<>();
-            while (elements.hasNext()){
-                JsonNode next = elements.next();
-                String dbNameV = next.get("dbName").asText();
-                result.add(dbNameV);
-            }
-            return Message.ok("").data("dbs", result);
-        } catch (Exception e) {
-            logger.error("Failed to get database", e);
-            return Message.error("Failed to get database", e);
-        }
-    }
 
     @Override
     @RequestMapping(path = "tables", method = RequestMethod.GET)

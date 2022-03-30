@@ -20,7 +20,6 @@ package org.apache.linkis.entrance.interceptor.impl
 import java.text.SimpleDateFormat
 import java.util
 import java.util.{Calendar, Date}
-
 import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.entrance.interceptor.exception.VarSubstitutionException
@@ -32,6 +31,8 @@ import org.apache.linkis.rpc.Sender
 import org.apache.commons.lang.StringUtils
 import org.apache.commons.lang.time.DateUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.storage.utils.StorageConfiguration
+import org.apache.linkis.storage.utils.StorageConfiguration.getCodeTypeAndRunTypeRelationMap
 
 import scala.collection.JavaConversions._
 import scala.collection.mutable
@@ -81,16 +82,15 @@ object CustomVariableUtils extends Logging {
     */
   def replaceCustomVar(jobRequest: JobRequest, runType: String): (Boolean, String) = {
     val code: String = jobRequest.getExecutionCode
-    var codeType = SQL_TYPE
-    runType match {
-      case "hql" | "sql" | "jdbc" | "hive"| "psql" => codeType = SQL_TYPE
-      case "python" | "py" => codeType = PY_TYPE
-      case "java" => codeType = JAVA_TYPE
-      case "scala" => codeType = SCALA_TYPE
-      case "sh" | "shell" => codeType = SQL_TYPE
-      case _ => return (false, code)
+    val codeTypeAndRunTypeRelationMap = StorageConfiguration.getCodeTypeAndRunTypeRelationMap
+    if (codeTypeAndRunTypeRelationMap.isEmpty) {
+      return (false, code)
     }
-
+    val allowedRunTypeMap: Map[String, String] = codeTypeAndRunTypeRelationMap.flatMap(x => x._2.map(y => (y, x._1)))
+    val codeType = allowedRunTypeMap.getOrDefault(runType, null)
+    if (codeType == null) {
+      return (false, code)
+    }
     var run_date: CustomDateType = null
     var run_today: CustomDateType = null
     val nameAndType = mutable.Map[String, VariableType]()

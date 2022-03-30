@@ -66,4 +66,32 @@ object StorageConfiguration {
 
   val HDFS_PATH_PREFIX_REMOVE = CommonVars[Boolean]("wds.linkis.storage.hdfs.prefxi.remove", true)
 
+  val CODE_TYPE_AND_RUN_TYPE_RELATION = CommonVars("wds.linkis.storage.codeType.runType.relation", "sql=>hql|sql|jdbc|hive|psql|sh|shell,python=>python|py,java=>java,scala=>scala")
+
+  val RUN_TYPE_SQL = "sql"
+  val RUN_TYPE_PYTHON = "python"
+  val RUN_TYPE_JAVA = "java"
+  val RUN_TYPE_SCALA = "scala"
+
+  def getCodeTypeAndRunTypeRelationMap: Map[String, List[String]] = {
+    if (CODE_TYPE_AND_RUN_TYPE_RELATION.getValue == null || "".equals(CODE_TYPE_AND_RUN_TYPE_RELATION.getValue)) {
+      return Map()
+    }
+
+    CODE_TYPE_AND_RUN_TYPE_RELATION.getValue.split(",")
+      .filter(x => x != null && !"".equals(x))
+      .map(x => {
+        val confArr = x.split("=>")
+        if (confArr.length == 2) (confArr(0), for (x <- confArr(1).split("\\|").toList) yield x.trim) else null
+      }).filter(x => x != null).toMap
+  }
+
+  def getSuffixBelongToRunTypeOrNot(suffix: String, runType: String): Boolean = {
+    val codeTypeAndRunTypeRelationMap = getCodeTypeAndRunTypeRelationMap
+    if (codeTypeAndRunTypeRelationMap.isEmpty) return false
+    val suffixListOfRunType = codeTypeAndRunTypeRelationMap.getOrElse(runType, List())
+    if (suffixListOfRunType.isEmpty) return false
+    if (suffixListOfRunType.contains(suffix)) return true
+    false
+  }
 }

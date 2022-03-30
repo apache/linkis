@@ -17,16 +17,13 @@
  
 package org.apache.linkis.storage.script.parser
 
+import org.apache.linkis.storage.utils.StorageConfiguration
+
 
 class PYScriptParser private extends CommonScriptParser {
   override def prefix: String = "#@set"
 
-  override def belongTo(suffix: String): Boolean = {
-    suffix match {
-      case "python"|"py"|"sh" => true
-      case _ => false
-    }
-  }
+  override def belongTo(suffix: String): Boolean = StorageConfiguration.getSuffixBelongToRunTypeOrNot(suffix, StorageConfiguration.RUN_TYPE_PYTHON)
 
   override def prefixConf: String = "#conf@set"
 }

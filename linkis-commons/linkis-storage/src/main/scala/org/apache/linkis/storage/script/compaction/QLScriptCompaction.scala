@@ -17,16 +17,12 @@
  
 package org.apache.linkis.storage.script.compaction
 
+import org.apache.linkis.storage.utils.StorageConfiguration
 
-class QLScriptCompaction private extends CommonScriptCompaction{
 
-  override def belongTo(suffix: String): Boolean = {
-    suffix match {
-      case "sql" => true
-      case "hql" => true
-      case _ => false
-    }
-  }
+class QLScriptCompaction private extends CommonScriptCompaction {
+
+  override def belongTo(suffix: String): Boolean = StorageConfiguration.getSuffixBelongToRunTypeOrNot(suffix, StorageConfiguration.RUN_TYPE_SQL)
 
   override def prefix: String = "--@set"
 

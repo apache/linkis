@@ -17,14 +17,13 @@
  
 package org.apache.linkis.storage.script.compaction
 
+import org.apache.linkis.storage.utils.StorageConfiguration
+
 
 class ScalaScriptCompaction private extends CommonScriptCompaction{
   override def prefix: String = "//@set"
 
-  override def belongTo(suffix: String): Boolean = suffix match {
-    case "scala" => true
-    case _ => false
-  }
+  override def belongTo(suffix: String): Boolean = StorageConfiguration.getSuffixBelongToRunTypeOrNot(suffix, StorageConfiguration.RUN_TYPE_SCALA)
 
   override def prefixConf: String = "//conf@set"
 }

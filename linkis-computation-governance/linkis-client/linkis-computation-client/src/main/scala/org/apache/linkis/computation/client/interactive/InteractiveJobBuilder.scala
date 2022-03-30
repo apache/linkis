@@ -41,14 +41,15 @@ class InteractiveJobBuilder private[interactive]()
 
   def setCode(code: String): this.type = addJobContent("code", code)
 
-  def setRunType(runType: RunType): this.type= addJobContent("runType", runType.toString)
+  def setRunType(runType: RunType): this.type = addJobContent("runType", runType.toString)
 
   def setRunTypeStr(runType: String): this.type = addJobContent("runType", runType)
 
   override protected def validate(): Unit = {
-    if(labels != null && !labels.containsKey(LabelKeyUtils.USER_CREATOR_LABEL_KEY)
-      && StringUtils.isNotBlank(creator))
+    if (labels != null && !labels.containsKey(LabelKeyUtils.USER_CREATOR_LABEL_KEY)
+      && StringUtils.isNotBlank(creator)) {
       addLabel(LabelKeyUtils.USER_CREATOR_LABEL_KEY, executeUser + "-" + creator)
+    }
     super.validate()
   }
 

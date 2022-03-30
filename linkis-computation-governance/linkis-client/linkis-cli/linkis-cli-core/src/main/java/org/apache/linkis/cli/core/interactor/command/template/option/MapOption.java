@@ -122,6 +122,8 @@ public class MapOption extends BaseOption<Map<String, String>> implements Clonea
 
     @Override
     public MapOption clone() throws CloneNotSupportedException {
-        return (MapOption) super.clone();
+        MapOption ret = (MapOption) super.clone();
+        ret.value = new HashMap<>(this.value);
+        return ret;
     }
 }

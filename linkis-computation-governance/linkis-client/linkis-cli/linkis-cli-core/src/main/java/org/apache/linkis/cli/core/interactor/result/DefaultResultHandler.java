@@ -17,10 +17,9 @@
 
 package org.apache.linkis.cli.core.interactor.result;
 
-import org.apache.linkis.cli.common.entity.execution.ExecutionResult;
-import org.apache.linkis.cli.common.entity.execution.jobexec.ExecutionStatus;
+import org.apache.linkis.cli.common.entity.result.ExecutionResult;
 import org.apache.linkis.cli.common.entity.result.ResultHandler;
-import org.apache.linkis.cli.core.constants.Constants;
+import org.apache.linkis.cli.core.constants.CommonConstants;
 import org.apache.linkis.cli.core.utils.LogUtils;
 
 import static java.lang.System.exit;
@@ -29,11 +28,11 @@ import static java.lang.System.exit;
 public class DefaultResultHandler implements ResultHandler {
     @Override
     public void process(ExecutionResult executionResult) {
-        if (executionResult.getExecutionStatus() == ExecutionStatus.SUCCEED) {
-            LogUtils.getPlaintTextLogger().info(Constants.SUCCESS_INDICATOR);
+        if (executionResult.getExecutionStatus() == ExecutionStatusEnum.SUCCEED) {
+            LogUtils.getPlaintTextLogger().info(CommonConstants.SUCCESS_INDICATOR);
             exit(0);
         } else {
-            LogUtils.getPlaintTextLogger().info(Constants.FAILURE_INDICATOR);
+            LogUtils.getPlaintTextLogger().info(CommonConstants.FAILURE_INDICATOR);
             exit(-1);
         }
     }

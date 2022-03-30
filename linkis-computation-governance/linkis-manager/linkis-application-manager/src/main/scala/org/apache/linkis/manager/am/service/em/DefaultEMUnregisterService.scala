@@ -17,17 +17,14 @@
  
 package org.apache.linkis.manager.am.service.em
 
-import java.util.concurrent.TimeUnit
 import org.apache.linkis.common.utils.{Logging, Utils}
-import org.apache.linkis.manager.am.conf.AMConfiguration
 import org.apache.linkis.manager.am.manager.EMNodeManager
 import org.apache.linkis.manager.common.protocol.em.{EMInfoClearRequest, EMResourceClearRequest, StopEMRequest}
 import org.apache.linkis.manager.label.service.NodeLabelRemoveService
-import org.apache.linkis.message.annotation.Receiver
-import org.apache.linkis.message.builder.ServiceMethodContext
+import org.apache.linkis.rpc.message.annotation.Receiver
 import org.apache.linkis.protocol.label.NodeLabelRemoveRequest
 import org.apache.linkis.resourcemanager.message.RMMessageService
-import org.apache.linkis.rpc.utils.RPCUtils
+import org.apache.linkis.rpc.Sender
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
@@ -43,7 +40,7 @@ class DefaultEMUnregisterService extends EMUnregisterService with Logging {
   private var rmMessageService: RMMessageService = _
 
   @Receiver
-  override def stopEM(stopEMRequest: StopEMRequest): Unit = {
+  override def stopEM(stopEMRequest: StopEMRequest, sender: Sender): Unit = {
     info(s" user ${stopEMRequest.getUser} prepare to stop em ${stopEMRequest.getEm}")
     val node = emNodeManager.getEM(stopEMRequest.getEm)
     if (null == node) return

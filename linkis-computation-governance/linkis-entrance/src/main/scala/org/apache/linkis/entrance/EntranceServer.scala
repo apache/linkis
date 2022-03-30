@@ -102,9 +102,15 @@ abstract class EntranceServer extends Logging {
         t => logger.error("Failed to write init log, reason: ", t)
       }
 
+      /**
+       * job.afterStateChanged() method is only called in job.run(), and job.run() is called only after job is scheduled
+       * so it suggest that we lack a hook for job init, currently we call this to trigger JobListener.onJobinit()
+       * */
+      Utils.tryAndWarn(job.getJobListener.foreach(_.onJobInited(job)))
       getEntranceContext.getOrCreateScheduler().submit(job)
       val msg = s"Job with jobId : ${job.getId} and execID : ${job.getId()} submitted "
       logger.info(msg)
+
       job match {
         case entranceJob: EntranceJob =>
           entranceJob.getJobRequest.setReqId(job.getId())

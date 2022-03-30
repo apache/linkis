@@ -20,11 +20,12 @@ package org.apache.linkis.manager.am.service.engine
 import org.apache.linkis.common.exception.LinkisRetryException
 import org.apache.linkis.manager.common.entity.node.EngineNode
 import org.apache.linkis.manager.common.protocol.engine.EngineReuseRequest
+import org.apache.linkis.rpc.Sender
 
 
 trait EngineReuseService {
 
   @throws[LinkisRetryException]
-  def reuseEngine(engineReuseRequest: EngineReuseRequest): EngineNode
+  def reuseEngine(engineReuseRequest: EngineReuseRequest, sender: Sender): EngineNode
 
 }

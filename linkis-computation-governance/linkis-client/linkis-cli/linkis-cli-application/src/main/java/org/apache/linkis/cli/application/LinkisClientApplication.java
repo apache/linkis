@@ -18,51 +18,38 @@
 package org.apache.linkis.cli.application;
 
 import org.apache.linkis.cli.application.constants.AppConstants;
-import org.apache.linkis.cli.application.constants.LinkisClientKeys;
+import org.apache.linkis.cli.application.constants.AppKeys;
 import org.apache.linkis.cli.application.data.FinishedData;
 import org.apache.linkis.cli.application.data.PreparedData;
 import org.apache.linkis.cli.application.data.ProcessedData;
-import org.apache.linkis.cli.application.driver.LinkisClientDriver;
-import org.apache.linkis.cli.application.driver.UjesClientDriverBuilder;
-import org.apache.linkis.cli.application.driver.transformer.DriverTransformer;
-import org.apache.linkis.cli.application.driver.transformer.UjesClientDriverTransformer;
 import org.apache.linkis.cli.application.interactor.command.LinkisCmdType;
 import org.apache.linkis.cli.application.interactor.command.template.UniversalCmdTemplate;
-import org.apache.linkis.cli.application.interactor.result.PresentResultHandler;
-import org.apache.linkis.cli.application.interactor.validate.LinkisJobValidator;
-import org.apache.linkis.cli.application.presenter.LinkisJobLogPresenter;
-import org.apache.linkis.cli.application.presenter.QueryBasedPresenter;
-import org.apache.linkis.cli.application.presenter.converter.LinkisLogModelConverter;
+import org.apache.linkis.cli.application.operator.ujes.LinkisOperatorBuilder;
 import org.apache.linkis.cli.application.suite.ExecutionSuite;
 import org.apache.linkis.cli.application.suite.ExecutionSuiteFactory;
-import org.apache.linkis.cli.application.suite.SuiteFactoryImpl;
 import org.apache.linkis.cli.application.utils.Utils;
-import org.apache.linkis.cli.common.constants.CommonConstants;
 import org.apache.linkis.cli.common.entity.command.CmdTemplate;
 import org.apache.linkis.cli.common.entity.command.Params;
 import org.apache.linkis.cli.common.entity.execution.Execution;
-import org.apache.linkis.cli.common.entity.execution.ExecutionResult;
-import org.apache.linkis.cli.common.entity.execution.executor.Executor;
-import org.apache.linkis.cli.common.entity.execution.jobexec.ExecutionStatus;
 import org.apache.linkis.cli.common.entity.job.Job;
 import org.apache.linkis.cli.common.entity.properties.ClientProperties;
+import org.apache.linkis.cli.common.entity.result.ExecutionResult;
 import org.apache.linkis.cli.common.entity.result.ResultHandler;
+import org.apache.linkis.cli.common.entity.var.VarAccess;
 import org.apache.linkis.cli.common.exception.LinkisClientRuntimeException;
 import org.apache.linkis.cli.common.exception.error.ErrorLevel;
 import org.apache.linkis.cli.common.exception.handler.ExceptionHandler;
+import org.apache.linkis.cli.core.constants.CommonConstants;
 import org.apache.linkis.cli.core.exception.CommandException;
 import org.apache.linkis.cli.core.exception.PropsException;
 import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
 import org.apache.linkis.cli.core.exception.handler.CommandExceptionHandler;
 import org.apache.linkis.cli.core.exception.handler.DefaultExceptionHandler;
+import org.apache.linkis.cli.core.interactor.command.CmdTemplateFactory;
 import org.apache.linkis.cli.core.interactor.command.fitter.SingleTplFitter;
 import org.apache.linkis.cli.core.interactor.command.parser.Parser;
 import org.apache.linkis.cli.core.interactor.command.parser.SingleCmdParser;
 import org.apache.linkis.cli.core.interactor.command.parser.result.ParseResult;
-import org.apache.linkis.cli.core.interactor.execution.ExecutionResultImpl;
-import org.apache.linkis.cli.core.interactor.execution.SyncSubmission;
-import org.apache.linkis.cli.core.interactor.execution.observer.event.TriggerEvent;
-import org.apache.linkis.cli.core.interactor.execution.observer.listener.IncLogEventListener;
 import org.apache.linkis.cli.core.interactor.properties.PropertiesLoader;
 import org.apache.linkis.cli.core.interactor.properties.PropsFilesScanner;
 import org.apache.linkis.cli.core.interactor.properties.StdPropsLoader;
@@ -71,15 +58,20 @@ import org.apache.linkis.cli.core.interactor.properties.reader.PropsFileReader;
 import org.apache.linkis.cli.core.interactor.properties.reader.SysEnvReader;
 import org.apache.linkis.cli.core.interactor.properties.reader.SysPropsReader;
 import org.apache.linkis.cli.core.interactor.result.DefaultResultHandler;
+import org.apache.linkis.cli.core.interactor.result.ExecutionResultImpl;
+import org.apache.linkis.cli.core.interactor.result.ExecutionStatusEnum;
 import org.apache.linkis.cli.core.interactor.validate.ParsedTplValidator;
-import org.apache.linkis.cli.core.interactor.validate.Validator;
 import org.apache.linkis.cli.core.interactor.var.StdVarAccess;
 import org.apache.linkis.cli.core.interactor.var.SysVarAccess;
-import org.apache.linkis.cli.core.interactor.var.VarAccess;
-import org.apache.linkis.cli.core.presenter.Presenter;
+import org.apache.linkis.cli.core.operator.JobOperatorBuilder;
+import org.apache.linkis.cli.core.operator.JobOperatorFactory;
+import org.apache.linkis.cli.core.present.PresentModeImpl;
+import org.apache.linkis.cli.core.present.display.DisplayOperFactory;
+import org.apache.linkis.cli.core.present.display.PlainTextFileWriter;
+import org.apache.linkis.cli.core.present.display.StdOutWriter;
 import org.apache.linkis.cli.core.utils.LogUtils;
+import org.apache.linkis.cli.core.utils.SchedulerUtils;
 
-import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
 
 import org.slf4j.Logger;
@@ -89,7 +81,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/** @description: Main Enterance */
 public class LinkisClientApplication {
     private static Logger logger = LoggerFactory.getLogger(LinkisClientApplication.class);
 
@@ -103,8 +94,7 @@ public class LinkisClientApplication {
          generate template
         */
         CmdTemplate template = new UniversalCmdTemplate();
-        Map<String, CmdTemplate> templateMap = new HashedMap();
-        templateMap.put(template.getCmdType().getName(), template);
+        CmdTemplateFactory.register(template);
         /*
          load env variables
         */
@@ -117,7 +107,7 @@ public class LinkisClientApplication {
             propertiesMap.put(properties.getPropsId(), properties);
         }
 
-        return new PreparedData(templateMap, propertiesMap);
+        return new PreparedData(propertiesMap);
     }
 
     /**
@@ -136,7 +126,7 @@ public class LinkisClientApplication {
         /*
          user input
         */
-        CmdTemplate template = preparedData.getTemplateMap().get(LinkisCmdType.UNIVERSAL.getName());
+        CmdTemplate template = CmdTemplateFactory.getTemplateCopy(LinkisCmdType.UNIVERSAL);
         Parser parser =
                 new SingleCmdParser()
                         .setMapper(null)
@@ -146,7 +136,7 @@ public class LinkisClientApplication {
         ParseResult result = parser.parse(args);
 
         ParsedTplValidator parsedTplValidator = new ParsedTplValidator();
-        parsedTplValidator.doValidation(result.getParsedTemplateCopy());
+        parsedTplValidator.doValidation(result.getParsedTemplate());
 
         Params params = result.getParams();
         logger.debug("==========params============\n" + Utils.GSON.toJson(params));
@@ -164,19 +154,18 @@ public class LinkisClientApplication {
         LogUtils.getInformationLogger()
                 .info(
                         "LogFile path: "
-                                + sysVarAccess.getVar(String.class, LinkisClientKeys.LOG_PATH_KEY)
+                                + sysVarAccess.getVar(String.class, AppKeys.LOG_PATH_KEY)
                                 + "/"
-                                + sysVarAccess.getVar(String.class, LinkisClientKeys.LOG_FILE_KEY));
+                                + sysVarAccess.getVar(String.class, AppKeys.LOG_FILE_KEY));
         /*
          default config, -Dconf.root & -Dconf.file specifies config path
         */
         // scan config files given root path
-        String configPath =
-                sysVarAccess.getVar(String.class, LinkisClientKeys.CLIENT_CONFIG_ROOT_KEY);
+        String configPath = sysVarAccess.getVar(String.class, AppKeys.CLIENT_CONFIG_ROOT_KEY);
         String defaultConfFileName =
                 sysVarAccess.getVarOrDefault(
                         String.class,
-                        LinkisClientKeys.DEFAULT_CONFIG_FILE_NAME_KEY,
+                        AppKeys.DEFAULT_CONFIG_FILE_NAME_KEY,
                         AppConstants.DEFAULT_CONFIG_NAME);
         if (StringUtils.isBlank(configPath)) {
             throw new PropsException(
@@ -184,7 +173,7 @@ public class LinkisClientApplication {
                     ErrorLevel.ERROR,
                     CommonErrMsg.PropsLoaderErr,
                     "configuration root path specified by env variable: "
-                            + LinkisClientKeys.CLIENT_CONFIG_ROOT_KEY
+                            + AppKeys.CLIENT_CONFIG_ROOT_KEY
                             + " is empty.");
         }
 
@@ -194,17 +183,17 @@ public class LinkisClientApplication {
          user defined config
         */
         String userConfPath = null;
-        if (params.containsParam(LinkisClientKeys.LINKIS_CLIENT_USER_CONFIG)) {
+        if (params.containsParam(AppKeys.LINKIS_CLIENT_USER_CONFIG)) {
             userConfPath =
                     (String)
                             params.getParamItemMap()
-                                    .get(LinkisClientKeys.LINKIS_CLIENT_USER_CONFIG)
+                                    .get(AppKeys.LINKIS_CLIENT_USER_CONFIG)
                                     .getValue();
         }
         if (StringUtils.isNotBlank(userConfPath)) {
             PropertiesReader reader =
                     new PropsFileReader()
-                            .setPropsId(LinkisClientKeys.LINKIS_CLIENT_USER_CONFIG)
+                            .setPropsId(AppKeys.LINKIS_CLIENT_USER_CONFIG)
                             .setPropsPath(userConfPath);
             readersList.add(reader);
         } else {
@@ -220,12 +209,10 @@ public class LinkisClientApplication {
                                 readersList.toArray(new PropertiesReader[readersList.size()]));
         ClientProperties[] loaderResult = loader.loadProperties();
         for (ClientProperties properties : loaderResult) {
-            if (StringUtils.equals(
-                    properties.getPropsId(), LinkisClientKeys.LINKIS_CLIENT_USER_CONFIG)) {
+            if (StringUtils.equals(properties.getPropsId(), AppKeys.LINKIS_CLIENT_USER_CONFIG)) {
                 for (Map.Entry prop : properties.entrySet()) {
                     if (StringUtils.startsWith(
-                            (String) prop.getKey(),
-                            LinkisClientKeys.LINKIS_CLIENT_NONCUSTOMIZABLE)) {
+                            (String) prop.getKey(), AppKeys.LINKIS_CLIENT_NONCUSTOMIZABLE)) {
                         throw new PropsException(
                                 "PRP0007",
                                 ErrorLevel.ERROR,
@@ -244,12 +231,28 @@ public class LinkisClientApplication {
         VarAccess stdVarAccess =
                 new StdVarAccess()
                         .setCmdParams(params)
-                        .setUserConf(propertiesMap.get(LinkisClientKeys.LINKIS_CLIENT_USER_CONFIG))
+                        .setUserConf(propertiesMap.get(AppKeys.LINKIS_CLIENT_USER_CONFIG))
                         .setDefaultConf(propertiesMap.get(defaultConfFileName))
                         .init();
         logger.info("==========std_var============\n" + Utils.GSON.toJson(stdVarAccess));
 
-        return new ProcessedData(null, params.getCmdType(), stdVarAccess, sysVarAccess);
+        /*
+         Prepare operator for accessing linkis
+        */
+        JobOperatorBuilder builder =
+                new LinkisOperatorBuilder()
+                        .setStdVarAccess(stdVarAccess)
+                        .setSysVarAccess(sysVarAccess);
+
+        JobOperatorFactory.register(AppKeys.REUSABLE_UJES_CLIENT, builder);
+        /*
+        Prepare DisplayOperator
+        */
+        DisplayOperFactory.register(PresentModeImpl.STDOUT, new StdOutWriter());
+        DisplayOperFactory.register(PresentModeImpl.TEXT_FILE, new PlainTextFileWriter());
+
+        return new ProcessedData(
+                AppConstants.DUMMY_CID, params.getCmdType(), stdVarAccess, sysVarAccess);
     }
 
     /**
@@ -262,115 +265,29 @@ public class LinkisClientApplication {
             return null;
         }
 
-        /*
-        decide jobBuilder and executorBuilder
-         */
-        ExecutionSuiteFactory suiteFactory = new SuiteFactoryImpl();
-        ExecutionSuite suite = suiteFactory.getSuite(data.getCmdType(), data.getStdVarAccess());
+        ExecutionSuite suite =
+                ExecutionSuiteFactory.getSuite(
+                        data.getCmdType(), data.getStdVarAccess(), data.getSysVarAccess());
 
         /*
-        build job
+        Get everything
          */
-        Executor executor = null;
-        Job job = null;
-        ResultHandler[] resultHandlers = null;
+        Map<String, Job> jobs = suite.getJobs();
+        ResultHandler[] resultHandlers = suite.getResultHandlers();
         Execution execution = suite.getExecution();
-        if (suite.getJobBuilder() != null) {
-            job =
-                    suite.getJobBuilder()
-                            .setStdVarAccess(data.getStdVarAccess())
-                            .setSysVarAccess(data.getSysVarAccess())
-                            .build();
-
-            logger.info("==========job============\n" + Utils.GSON.toJson(job));
-
-            Validator jobValidator = new LinkisJobValidator();
-            jobValidator.doValidation(job);
-        }
-
-        /*
-        prepare executor
-         */
-        if (suite.getExecutorBuilder() != null) {
-            executor =
-                    suite.getExecutorBuilder()
-                            .setStdVarAccess(data.getStdVarAccess())
-                            .setSysVarAccess(data.getSysVarAccess())
-                            .build();
-        }
-
-        /*
-        Execution
-         */
-
-        LinkisClientDriver driver =
-                new UjesClientDriverBuilder()
-                        .setStdVarAccess(data.getStdVarAccess())
-                        .setSysVarAccess(data.getSysVarAccess())
-                        .build();
-        // TODO: use executor rather than driver in presenter
-
-        DriverTransformer driverTransformer = new UjesClientDriverTransformer();
-        if (execution instanceof SyncSubmission) {
-            // TODO: use executor rather than driver in presenter
-            // TODO: let suiteFactory do this, but don't want to new an Executor
-            LinkisJobLogPresenter inclogPresenter = new LinkisJobLogPresenter();
-            inclogPresenter.setClientDriver(driver);
-            inclogPresenter.setTransformer(driverTransformer);
-
-            /*
-            inform incLogPresenter to listen to incLogEvent
-             */
-            IncLogEventListener incLogEventListener = new IncLogEventListener();
-            incLogEventListener.setPresenter(inclogPresenter);
-            incLogEventListener.setConverter(new LinkisLogModelConverter());
-            ((SyncSubmission) execution).registerIncLogEventListener(incLogEventListener);
-
-            /*
-            when incLogPresenter finished it will trigger IncLogFinObserver so that
-            SyncSubmission ends
-             */
-            TriggerEvent logFinEvent = new TriggerEvent();
-            inclogPresenter.setLogFinEvent(logFinEvent);
-            ((SyncSubmission) execution).getIncLogFinObserverRegistered(logFinEvent);
-        }
-
-        /*
-        ResultHandler
-         */
-        if (suite.getResultHandlers() != null) {
-            resultHandlers = suite.getResultHandlers();
-            for (ResultHandler handler : resultHandlers) {
-                if (handler instanceof PresentResultHandler) {
-                    Presenter presenter = ((PresentResultHandler) handler).getPresenter();
-                    if (presenter instanceof QueryBasedPresenter) {
-                        // TODO: use executor rather than driver in presenter
-                        // TODO: let suiteFactory do this, but don't want to new an Executor
-                        ((QueryBasedPresenter) presenter).setClientDriver(driver);
-                        ((QueryBasedPresenter) presenter).setTransformer(driverTransformer);
-                    }
-                }
-            }
-        }
 
         /*
         execute
          */
-        final Executor executorKill = executor;
-        final Job jobKill = job;
-        Thread hook =
-                new Thread(
-                        () ->
-                                execution.terminate(
-                                        executorKill,
-                                        jobKill)); // add ShutdownHook so that job can be killed if
-        // ctrl + c
-        if (executorKill != null && jobKill != null) {
+        final Map<String, Job> jobsToKill = jobs;
+        Thread hook = new Thread(() -> execution.terminate(jobsToKill));
+        if (jobsToKill != null && jobsToKill.size() != 0) {
             Runtime.getRuntime().addShutdownHook(hook);
         }
-        ExecutionResult result = execution.execute(executor, job);
-        Runtime.getRuntime()
-                .removeShutdownHook(hook); // execution complete, no need ShutdownHook anymore
+        ExecutionResult result = execution.execute(jobs);
+
+        Runtime.getRuntime().removeShutdownHook(hook);
+
         return new FinishedData(result, resultHandlers);
     }
 
@@ -379,46 +296,56 @@ public class LinkisClientApplication {
         ExceptionHandler handler = new DefaultExceptionHandler();
         ProcessedData processedData = null;
         FinishedData finishedData = null;
-        ExecutionResult executionResult = new ExecutionResultImpl();
+        ExecutionResult executionResult =
+                new ExecutionResultImpl(null, ExecutionStatusEnum.UNDEFINED);
         PreparedData preparedData = null;
 
         try {
             preparedData = prepare();
         } catch (Exception e) {
             handler.handle(e);
-            executionResult.setExecutionStatus(ExecutionStatus.FAILED);
+            executionResult.setExecutionStatus(ExecutionStatusEnum.FAILED);
         }
 
         try {
             processedData = processInput(args, preparedData);
         } catch (CommandException ce) {
             new CommandExceptionHandler().handle(ce);
-            executionResult.setExecutionStatus(ExecutionStatus.FAILED);
+            executionResult.setExecutionStatus(ExecutionStatusEnum.FAILED);
         } catch (Exception e) {
             handler.handle(e);
-            executionResult.setExecutionStatus(ExecutionStatus.FAILED);
+            executionResult.setExecutionStatus(ExecutionStatusEnum.FAILED);
         }
 
         try {
             finishedData = exec(processedData);
         } catch (Exception e) {
             handler.handle(e);
-            executionResult.setExecutionStatus(ExecutionStatus.FAILED);
+            executionResult.setExecutionStatus(ExecutionStatusEnum.FAILED);
         }
 
         if (finishedData != null) {
             executionResult = finishedData.getExecutionResult();
             if (executionResult == null) {
-                executionResult = new ExecutionResultImpl();
+                executionResult = new ExecutionResultImpl(null, ExecutionStatusEnum.UNDEFINED);
             }
-            if (finishedData.getResultHandlers() != null) {
-                for (ResultHandler processor : finishedData.getResultHandlers()) {
-                    processor.process(executionResult);
+            if (executionResult.getException() != null) {
+                handler.handle(executionResult.getException());
+                new DefaultResultHandler().process(executionResult);
+            } else {
+                if (finishedData.getResultHandlers() != null) {
+                    for (ResultHandler resultHandler : finishedData.getResultHandlers()) {
+                        if (resultHandler != null) {
+                            resultHandler.process(executionResult);
+                        }
+                    }
                 }
             }
         } else {
-            executionResult.setExecutionStatus(ExecutionStatus.FAILED);
+            executionResult.setExecutionStatus(ExecutionStatusEnum.FAILED);
             new DefaultResultHandler().process(executionResult);
         }
+
+        SchedulerUtils.shutDown();
     }
 }

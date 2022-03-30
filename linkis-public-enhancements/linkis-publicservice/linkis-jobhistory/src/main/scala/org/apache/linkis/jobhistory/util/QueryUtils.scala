@@ -83,8 +83,8 @@ object QueryUtils extends Logging {
   // todo exchangeExecutionCode for subJobDetail
   def exchangeExecutionCode(queryTask: JobHistory): Unit = {
     import scala.util.control.Breaks._
-    if (queryTask.getExecution_code == null || !queryTask.getExecution_code.startsWith(StorageUtils.HDFS_SCHEMA)) return
-    val codePath = queryTask.getExecution_code
+    if (queryTask.getExecutionCode == null || !queryTask.getExecutionCode.startsWith(StorageUtils.HDFS_SCHEMA)) return
+    val codePath = queryTask.getExecutionCode
     val path = codePath.substring(0, codePath.lastIndexOf(CODE_SPLIT))
     val codeInfo = codePath.substring(codePath.lastIndexOf(CODE_SPLIT) + 1)
     val infos: Array[String] = codeInfo.split(LENGTH_SPLIT)
@@ -93,7 +93,7 @@ object QueryUtils extends Logging {
     val tub = new Array[Byte](1024)
     val executionCode: StringBuilder = new StringBuilder
     val fsPath: FsPath = new FsPath(path)
-    val fileSystem = FSFactory.getFsByProxyUser(fsPath, queryTask.getExecute_user).asInstanceOf[FileSystem]
+    val fileSystem = FSFactory.getFsByProxyUser(fsPath, queryTask.getExecuteUser).asInstanceOf[FileSystem]
     fileSystem.init(null)
     var is: InputStream = null
     if (!fileSystem.exists(fsPath)) return
@@ -113,7 +113,7 @@ object QueryUtils extends Logging {
       IOUtils.closeQuietly(is)
       if (fileSystem != null) Utils.tryAndWarn(fileSystem.close())
     }
-    queryTask.setExecution_code(executionCode.toString())
+    queryTask.setExecutionCode(executionCode.toString())
   }
 
   private def getCodeStorePath(user: String): String = {

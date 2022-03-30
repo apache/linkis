@@ -18,11 +18,15 @@
 package org.apache.linkis.resourcemanager.restful
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.github.pagehelper.page.PageMethod
 import com.google.common.collect.Lists
+import org.apache.commons.lang.StringUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.manager.common.conf.RMConfiguration
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.common.entity.node.EngineNode
 import org.apache.linkis.manager.common.entity.resource._
+import org.apache.linkis.manager.common.exception.RMErrorException
 import org.apache.linkis.manager.common.serializer.NodeResourceSerializer
 import org.apache.linkis.manager.common.utils.ResourceUtils
 import org.apache.linkis.manager.label.builder.CombinedLabelBuilder
@@ -35,14 +39,17 @@ import org.apache.linkis.manager.service.common.metrics.MetricsConverter
 import org.apache.linkis.resourcemanager.domain.RMLabelContainer
 import org.apache.linkis.resourcemanager.external.service.ExternalResourceService
 import org.apache.linkis.resourcemanager.external.yarn.{YarnAppInfo, YarnResourceIdentifier}
+import org.apache.linkis.resourcemanager.restful.vo.{UserCreatorEngineType, UserResourceVo}
+import org.apache.linkis.resourcemanager.service.impl.UserResourceService
 import org.apache.linkis.resourcemanager.service.{LabelResourceService, ResourceManager}
-import org.apache.linkis.resourcemanager.utils.{RMConfiguration, UserConfiguration}
+import org.apache.linkis.resourcemanager.utils.{RMUtils, UserConfiguration}
 import org.apache.linkis.server.security.SecurityFilter
+import org.apache.linkis.server.utils.ModuleUserUtils
 import org.apache.linkis.server.{BDPJettyServerHelper, Message}
 import org.json4s.DefaultFormats
 import org.json4s.jackson.Serialization.write
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.web.bind.annotation.{RequestBody, RequestMapping, RequestMethod, RestController}
+import org.springframework.web.bind.annotation.{RequestBody, RequestMapping, RequestMethod, RequestParam, RestController}
 
 import java.text.SimpleDateFormat
 import java.util
@@ -92,6 +99,9 @@ class RMMonitorRest extends Logging {
   @Autowired
   var resourceManager: ResourceManager = _
 
+  @Autowired
+  var userResourceService: UserResourceService = _
+
   var COMBINED_USERCREATOR_ENGINETYPE: String = _
 
   def appendMessageData(message: Message, key: String, value: AnyRef): Message = message.data(key, mapper.readTree(write(value)))
@@ -99,7 +109,7 @@ class RMMonitorRest extends Logging {
   @RequestMapping(path = Array("applicationlist"), method = Array(RequestMethod.POST))
   def getApplicationList(request: HttpServletRequest, @RequestBody param: util.Map[String, AnyRef]): Message = {
     val message = Message.ok("")
-    val userName = SecurityFilter.getLoginUsername(request)
+    val userName = ModuleUserUtils.getOperationUser(request, "applicationlist")
     val userCreator = param.get("userCreator").asInstanceOf[String]
     val engineType = if (param.get("engineType") == null) null else param.get("engineType").asInstanceOf[String]
     val nodes = getEngineNodes(userName, true)
@@ -122,6 +132,7 @@ class RMMonitorRest extends Logging {
           applicationList.put("usedResource", applicationList("usedResource").asInstanceOf[Resource] + node.getNodeResource.getUsedResource)
           applicationList.put("maxResource", applicationList("maxResource").asInstanceOf[Resource] + node.getNodeResource.getMaxResource)
           applicationList.put("minResource", applicationList("minResource").asInstanceOf[Resource] + node.getNodeResource.getMinResource)
+          applicationList.put("lockedResource", applicationList("lockedResource").asInstanceOf[Resource] + node.getNodeResource.getLockedResource)
           val engineInstance = new mutable.HashMap[String, Any]
           engineInstance.put("creator", userCreatorLabel.getCreator)
           engineInstance.put("engineType", engineTypeLabel.getEngineType)
@@ -135,7 +146,7 @@ class RMMonitorRest extends Logging {
           }
           engineInstance.put("startTime", dateFormat.format(node.getStartTime))
           engineInstance.put("owner", node.getOwner)
-          applicationList.get("engineInstances").get.asInstanceOf[mutable.ArrayBuffer[Any]].append(engineInstance)
+          applicationList("engineInstances").asInstanceOf[mutable.ArrayBuffer[Any]].append(engineInstance)
         }
       }
     }
@@ -149,13 +160,79 @@ class RMMonitorRest extends Logging {
     message
   }
 
+  @RequestMapping(path = Array("resetResource"), method = Array(RequestMethod.DELETE))
+  def resetUserResource(request: HttpServletRequest, @RequestParam(value = "resourceId", required = false) resourceId: Integer): Message = {
+    val queryUser = SecurityFilter.getLoginUser(request)
+    val admins = RMUtils.GOVERNANCE_STATION_ADMIN.getValue.split(",")
+    if(!admins.contains(queryUser.get)) {
+      throw new RMErrorException(120011, "only admin can reset user's resource.")
+    }
+    if(resourceId == null || resourceId <= 0) {
+      userResourceService.resetAllUserResource(COMBINED_USERCREATOR_ENGINETYPE)
+    } else {
+      userResourceService.resetUserResource(resourceId)
+    }
+    Message.ok("success")
+  }
+
+  @RequestMapping(path = Array("engineType"), method = Array(RequestMethod.GET))
+  def listAllEngineType(request: HttpServletRequest): Message = {
+    val engineTypeString = RMUtils.ENGINE_TYPE.getValue
+    val engineTypeList = engineTypeString.split(",")
+   Message.ok.data("engineType", engineTypeList)
+  }
+
+  @RequestMapping(path = Array("allUserResource"), method = Array(RequestMethod.GET))
+  def getAllUserResource(request: HttpServletRequest, @RequestParam(value = "username", required = false) username: String,
+                         @RequestParam(value = "creator", required = false) creator: String, @RequestParam(value = "engineType", required = false) engineType: String,
+                         @RequestParam(value = "page", required = false) page: Int, @RequestParam(value = "size", required = false) size: Int): Message = {
+    val queryUser = SecurityFilter.getLoginUser(request)
+    val admins = RMUtils.GOVERNANCE_STATION_ADMIN.getValue.split(",")
+    if (!admins.contains(queryUser.get)) {
+      throw new RMErrorException(120010, "only admin can read all user's resource.")
+    }
+    //1. Construct a string for SQL LIKE query, query the label_value of the label table
+    val searchUsername = if (StringUtils.isEmpty(username)) "" else username
+    val searchCreator = if (StringUtils.isEmpty(creator)) "" else creator
+    val searchEngineType = if (StringUtils.isEmpty(engineType)) "" else engineType
+    val labelValuePattern = "%" + searchCreator + "%" + "," + "%" + searchUsername + "%" + "," + "%" + searchEngineType + "%" + "," + "%"
+    if(COMBINED_USERCREATOR_ENGINETYPE == null) {
+      val userCreatorLabel = labelFactory.createLabel(classOf[UserCreatorLabel])
+      val engineTypeLabel = labelFactory.createLabel(classOf[EngineTypeLabel])
+      val combinedLabel = combinedLabelBuilder.build("", Lists.newArrayList(userCreatorLabel, engineTypeLabel))
+      COMBINED_USERCREATOR_ENGINETYPE = combinedLabel.getLabelKey
+    }
+    //2. The resource label of all users, including the associated resourceId
+    val resultPage = PageMethod.startPage(page, size)
+    val userLabels = labelManagerPersistence.getLabelByPattern(labelValuePattern, COMBINED_USERCREATOR_ENGINETYPE, page, size)
+    //3. All user resources, including resourceId
+    val resources = resourceManagerPersistence.getResourceByLabels(userLabels)
+    val userResources = new util.ArrayList[UserResourceVo]()
+    //4. Store users and resources in Vo
+    resources.foreach(resource => {
+      val userResource = ResourceUtils.fromPersistenceResourceAndUser(resource)
+      val userLabel = userLabels.find(_.getResourceId.equals(resource.getId)).orNull
+      if (userLabel != null) {
+        val userCreatorEngineType = gson.fromJson(userLabel.getStringValue, classOf[UserCreatorEngineType])
+        if (userCreatorEngineType != null) {
+          userResource.setUsername(userCreatorEngineType.getUser)
+          userResource.setCreator(userCreatorEngineType.getCreator)
+          userResource.setEngineType(userCreatorEngineType.getEngineType)
+          userResource.setVersion(userCreatorEngineType.getVersion)
+        }
+      }
+      userResources.add(RMUtils.toUserResourceVo(userResource))
+    })
+    Message.ok().data("resources", userResources).data("total", resultPage.getTotal)
+  }
+
   @RequestMapping(path = Array("userresources"), method = Array(RequestMethod.POST))
   def getUserResource(request: HttpServletRequest, @RequestBody(required = false) param: util.Map[String, AnyRef]): Message = {
     val message = Message.ok("")
-    val userName = SecurityFilter.getLoginUsername(request)
+    val userName = ModuleUserUtils.getOperationUser(request, "get userresources")
     var nodes = getEngineNodes(userName, true)
-    if(nodes == null) {
-      nodes = new Array[EngineNode](1)
+    if (nodes == null) {
+      nodes = new Array[EngineNode](0)
     } else {
       nodes = nodes.filter(node => {
         node.getNodeResource != null &&
@@ -169,16 +246,16 @@ class RMMonitorRest extends Logging {
       val userCreatorLabel = node.getLabels.find(_.isInstanceOf[UserCreatorLabel]).get.asInstanceOf[UserCreatorLabel]
       val engineTypeLabel = node.getLabels.find(_.isInstanceOf[EngineTypeLabel]).get.asInstanceOf[EngineTypeLabel]
       val userCreator = getUserCreator(userCreatorLabel)
-      if (!userCreatorEngineTypeResourceMap.contains(userCreator)) {
+      if(!userCreatorEngineTypeResourceMap.contains(userCreator)) {
         userCreatorEngineTypeResourceMap.put(userCreator, new mutable.HashMap[String, NodeResource])
       }
-      val engineTypeResourceMap = userCreatorEngineTypeResourceMap(userCreator)
+      val engineTypeResourceMap = userCreatorEngineTypeResourceMap.get(userCreator).get
       val engineType = getEngineType(engineTypeLabel)
       if (!engineTypeResourceMap.contains(engineType)) {
         val nodeResource = CommonNodeResource.initNodeResource(ResourceType.LoadInstance)
         engineTypeResourceMap.put(engineType, nodeResource)
       }
-      val resource = engineTypeResourceMap(engineType)
+      val resource = engineTypeResourceMap.get(engineType).get
       resource.setUsedResource(node.getNodeResource.getUsedResource + resource.getUsedResource)
       //combined label
       val combinedLabel = combinedLabelBuilder.build("", Lists.newArrayList(userCreatorLabel, engineTypeLabel));
@@ -186,37 +263,81 @@ class RMMonitorRest extends Logging {
       if (labelResource == null) {
         resource.setLeftResource(node.getNodeResource.getMaxResource - resource.getUsedResource)
       } else {
+        labelResource = ResourceUtils.convertTo(labelResource, ResourceType.LoadInstance)
+        resource.setUsedResource(labelResource.getUsedResource)
+        resource.setLockedResource(labelResource.getLockedResource)
         resource.setLeftResource(labelResource.getLeftResource)
+        resource.setMaxResource(labelResource.getMaxResource)
+      }
+      resource.getLeftResource match {
+        case dResource: DriverAndYarnResource =>
+          resource.setLeftResource(dResource.loadInstanceResource)
+        case _ =>
       }
     }
-    val userCreatorEngineTypeResources = userCreatorEngineTypeResourceMap.map{ userCreatorEntry =>
+    val userCreatorEngineTypeResources = userCreatorEngineTypeResourceMap.map { userCreatorEntry =>
       val userCreatorEngineTypeResource = new mutable.HashMap[String, Any]
       userCreatorEngineTypeResource.put("userCreator", userCreatorEntry._1)
-      val engineTypeResources = userCreatorEntry._2.map{ engineTypeEntry =>
+      var totalUsedMemory: Long = 0L
+      var totalUsedCores: Int = 0
+      var totalUsedInstances = 0
+      var totalLockedMemory: Long = 0L
+      var totalLockedCores: Int = 0
+      var totalLockedInstances: Int = 0
+      var totalMaxMemory: Long = 0L
+      var totalMaxCores: Int = 0
+      var totalMaxInstances: Int = 0
+      val engineTypeResources = userCreatorEntry._2.map { engineTypeEntry =>
         val engineTypeResource = new mutable.HashMap[String, Any]
         engineTypeResource.put("engineType", engineTypeEntry._1)
-        engineTypeResource.put("resource", engineTypeEntry._2)
+        val engineResource = engineTypeEntry._2
+        val usedResource = engineResource.getUsedResource.asInstanceOf[LoadInstanceResource]
+        val lockedResource = engineResource.getLockedResource.asInstanceOf[LoadInstanceResource]
+        val maxResource = engineResource.getMaxResource.asInstanceOf[LoadInstanceResource]
+        val usedMemory = usedResource.memory
+        val usedCores = usedResource.cores
+        val usedInstances = usedResource.instances
+        totalUsedMemory += usedMemory
+        totalUsedCores += usedCores
+        totalUsedInstances += usedInstances
+        val lockedMemory = lockedResource.memory
+        val lockedCores = lockedResource.cores
+        val lockedInstances = lockedResource.instances
+        totalLockedMemory += lockedMemory
+        totalLockedCores += lockedCores
+        totalLockedInstances += lockedInstances
+        val maxMemory = maxResource.memory
+        val maxCores = maxResource.cores
+        val maxInstances = maxResource.instances
+        totalMaxMemory += maxMemory
+        totalMaxCores += maxCores
+        totalMaxInstances += maxInstances
+
+        val memoryPercent = if (maxMemory > 0) (usedMemory + lockedMemory) / maxMemory.toDouble else 0
+        val coresPercent = if (maxCores > 0) (usedCores + lockedCores) / maxCores.toDouble else 0
+        val instancePercent = if (maxInstances > 0) (usedInstances + lockedInstances) / maxInstances.toDouble else 0
+        val maxPercent = Math.max(Math.max(memoryPercent, coresPercent), instancePercent)
+        engineTypeResource.put("percent", maxPercent.formatted("%.2f"))
         engineTypeResource
       }
+      val totalMemoryPercent = if (totalMaxMemory > 0) (totalUsedMemory + totalLockedMemory) / totalMaxMemory.toDouble else 0
+      val totalCoresPercent = if (totalMaxCores > 0) (totalUsedCores + totalLockedCores) / totalMaxCores.toDouble else 0
+      val totalInstancePercent = if (totalMaxInstances > 0) (totalUsedInstances + totalLockedInstances) / totalMaxInstances.toDouble else 0
+      val totalPercent = Math.max(Math.max(totalMemoryPercent, totalCoresPercent), totalInstancePercent)
       userCreatorEngineTypeResource.put("engineTypes", engineTypeResources)
+      userCreatorEngineTypeResource.put("percent", totalPercent.formatted("%.2f"))
       userCreatorEngineTypeResource
     }
     appendMessageData(message, "userResources", userCreatorEngineTypeResources)
     message
   }
 
-  private def getUserCreator(userCreatorLabel: UserCreatorLabel): String = {
-    "(" + userCreatorLabel.getUser + "," + userCreatorLabel.getCreator + ")"
-  }
 
-  private def getEngineType(engineTypeLabel: EngineTypeLabel): String = {
-    "(" + engineTypeLabel.getEngineType + "," + engineTypeLabel.getVersion + ")"
-  }
 
   @RequestMapping(path = Array("engines"), method = Array(RequestMethod.POST))
   def getEngines(request: HttpServletRequest, @RequestBody(required = false) param: util.Map[String, AnyRef]): Message = {
     val message = Message.ok("")
-    val userName = SecurityFilter.getLoginUsername(request)
+    val userName = ModuleUserUtils.getOperationUser(request, "get engines")
     val nodes = getEngineNodes(userName, true)
     if(nodes == null || nodes.isEmpty) return message
     val engines = ArrayBuffer[mutable.HashMap[String, Any]]()
@@ -226,7 +347,7 @@ class RMMonitorRest extends Logging {
       val record = new mutable.HashMap[String, Any]
       record.put("applicationName", node.getServiceInstance.getApplicationName)
       record.put("engineInstance", node.getServiceInstance.getInstance)
-      if (node.getEMNode != null) {
+      if (null != node.getEMNode) {
         record.put("moduleName", node.getEMNode.getServiceInstance.getApplicationName)
         record.put("engineManagerInstance", node.getEMNode.getServiceInstance.getInstance)
       }
@@ -321,17 +442,40 @@ class RMMonitorRest extends Logging {
           userResourceRecords.add(userResource)
         }
       }
-    }{
-      case exception: Exception => {
+    }{case exception: Exception =>
         error(s"queresource search failed!", exception)
-      }
       case _ =>
     }
 
     userResourceRecords.sort(new Comparator[mutable.Map[String, Any]]() {
-      override def compare(o1: mutable.Map[String, Any], o2: mutable.Map[String, Any]): Int = if (o1.get("totalPercentage").getOrElse(0.0).asInstanceOf[Double] > o2.get("totalPercentage").getOrElse(0.0).asInstanceOf[Double]) -1 else 1
+      override def compare(o1: mutable.Map[String, Any], o2: mutable.Map[String, Any]): Int = if (o1.getOrElse("totalPercentage", 0.0).asInstanceOf[Double] > o2.getOrElse("totalPercentage", 0.0).asInstanceOf[Double]) -1 else 1
     })
     appendMessageData(message, "userResources", userResourceRecords)
+  }
+
+  @RequestMapping(path = Array("queues"), method = Array(RequestMethod.POST))
+  def getQueues(request: HttpServletRequest, @RequestBody(required = false) param: util.Map[String, AnyRef]): Message = {
+    val message = Message.ok()
+    val userName = ModuleUserUtils.getOperationUser(request, "get queues")
+    val clusters = new mutable.ArrayBuffer[Any]()
+    val clusterInfo = new mutable.HashMap[String, Any]()
+    val queues = new mutable.LinkedHashSet[String]()
+    val userConfiguration = UserConfiguration.getGlobalConfig(userName)
+    val clusterName = RMConfiguration.USER_AVAILABLE_CLUSTER_NAME.getValue(userConfiguration)
+    clusterInfo.put("clustername", clusterName)
+    queues.add(RMConfiguration.USER_AVAILABLE_YARN_QUEUE_NAME.getValue(userConfiguration))
+    queues.add(RMConfiguration.USER_AVAILABLE_YARN_QUEUE_NAME.getValue)
+    clusterInfo.put("queues", queues)
+    clusters.append(clusterInfo)
+    appendMessageData(message, "queues", clusters)
+  }
+
+  private def getUserCreator(userCreatorLabel: UserCreatorLabel): String = {
+    "(" + userCreatorLabel.getUser + "," + userCreatorLabel.getCreator + ")"
+  }
+
+  private def getEngineType(engineTypeLabel: EngineTypeLabel): String = {
+    "(" + engineTypeLabel.getEngineType + "," + engineTypeLabel.getVersion + ")"
   }
 
   private def getEngineNodes(user: String, withResource: Boolean = false): Array[EngineNode] = {
@@ -373,21 +517,6 @@ class RMMonitorRest extends Logging {
     }.filter(_ != null).toArray
   }
 
-  @RequestMapping(path = Array("queues"), method = Array(RequestMethod.POST))
-  def getQueues(request: HttpServletRequest, @RequestBody(required = false) param: util.Map[String, AnyRef]): Message = {
-    val message = Message.ok()
-    val userName = SecurityFilter.getLoginUsername(request)
-    val clusters = new mutable.ArrayBuffer[Any]()
-    val clusterInfo = new mutable.HashMap[String, Any]()
-    val queues = new mutable.LinkedHashSet[String]()
-    val userConfiguration = UserConfiguration.getGlobalConfig(userName)
-    val clusterName = RMConfiguration.USER_AVAILABLE_CLUSTER_NAME.getValue(userConfiguration)
-    clusterInfo.put("clustername", clusterName)
-    queues.add(RMConfiguration.USER_AVAILABLE_YARN_QUEUE_NAME.getValue(userConfiguration))
-    queues.add(RMConfiguration.USER_AVAILABLE_YARN_QUEUE_NAME.getValue)
-    clusterInfo.put("queues", queues)
-    clusters.append(clusterInfo)
-    appendMessageData(message, "queues", clusters)
-  }
+
 
 }

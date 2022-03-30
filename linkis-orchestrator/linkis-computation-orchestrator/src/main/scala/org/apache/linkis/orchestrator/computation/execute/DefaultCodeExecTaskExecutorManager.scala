@@ -39,9 +39,7 @@ import scala.collection.JavaConverters._
 import scala.collection.mutable
 import scala.concurrent.duration.Duration
 
-/**
-  *
-  */
+
 class DefaultCodeExecTaskExecutorManager extends CodeExecTaskExecutorManager with Logging {
 
   private val instanceToExecutors = new mutable.HashMap[ServiceInstance, Array[CodeExecTaskExecutor]]
@@ -177,32 +175,7 @@ class DefaultCodeExecTaskExecutorManager extends CodeExecTaskExecutorManager wit
 
   }
 
-  /**
-   * The job execution process is normal. After the job is completed, you can call this method.
-   * This method will determine the bind engine label. If it is a non-end type job, no operation will be performed.
-   *
-   * @param execTask
-   * @param executor
-   */
-  override def delete(execTask: CodeLogicalUnitExecTask, executor: CodeExecTaskExecutor): Unit = {
-    val jobGroupLabel = LabelUtil.getBindEngineLabel(execTask.getLabels)
-    var isEndJob = false
-    var jobGroupId = ""
-    if (null != jobGroupLabel) {
-      isEndJob = jobGroupLabel.getIsJobGroupEnd
-      jobGroupId = jobGroupLabel.getJobGroupId
-      if (isEndJob) {
-        debug(s"To delete codeExecTaskExecutor  $executor from execTaskToExecutor for lastjob of jobGroupId : ${jobGroupId}")
-        clearExecutorById(executor, execTask.getLabels)
-      } else {
-        removeExecutorFromInstanceToExecutors(executor)
-        info(s"Subjob is not end of JobGroup with id : ${jobGroupId}, we will not delete codeExecTaskExecutor with id : ${executor} ")
-      }
-    } else {
-      debug(s"To delete codeExecTaskExecutor  ${executor}  from execTaskToExecutor.")
-      clearExecutorById(executor, execTask.getLabels)
-    }
-  }
+
 
   /**
    * The method is used to clean up the executor, here will trigger the unlock of ec,
@@ -270,26 +243,53 @@ class DefaultCodeExecTaskExecutorManager extends CodeExecTaskExecutorManager wit
 
   override def getAllExecTaskToExecutorCache(): mutable.HashMap[String, CodeExecTaskExecutor] = execTaskToExecutor
 
-  /**
-   * If the job is executed abnormally, such as execution failure, or being killed,
-   * it will go to the process for cleaning up, and the engineConn lock will be released.
-   *
-   * @param execTask
-   * @param execTaskExecutor
-   */
-  override def unLockEngineConn(execTask: CodeLogicalUnitExecTask, execTaskExecutor: CodeExecTaskExecutor): Unit = {
+
+  override protected def unLockEngineConn(execTask: CodeLogicalUnitExecTask, execTaskExecutor: CodeExecTaskExecutor): Unit = {
     info(s"${execTask.getIDInfo()} task be killed or failed , Now to delete executor ${execTaskExecutor.getEngineConnExecutor.getServiceInstance}")
     clearExecutorById(execTaskExecutor, execTask.getLabels)
   }
 
-  /**
-   * Task failed because ec exited unexpectedly, so need to clean up ec immediately
-   *
-   * @param execTask
-   * @param executor
-   */
-  override def markECFailed(execTask: CodeLogicalUnitExecTask, executor: CodeExecTaskExecutor): Unit = {
+
+  override protected def markECFailed(execTask: CodeLogicalUnitExecTask, executor: CodeExecTaskExecutor): Unit = {
     info(s"${execTask.getIDInfo()} task  failed because executor exit, Now to delete executor ${executor.getEngineConnExecutor.getServiceInstance}")
     clearExecutorById(executor, execTask.getLabels, true)
+  }
+
+  override protected def delete(execTask: CodeLogicalUnitExecTask, executor: CodeExecTaskExecutor): Unit = {
+    val jobGroupLabel = LabelUtil.getBindEngineLabel(execTask.getLabels)
+    var isEndJob = false
+    var jobGroupId = ""
+    if (null != jobGroupLabel) {
+      isEndJob = jobGroupLabel.getIsJobGroupEnd
+      jobGroupId = jobGroupLabel.getJobGroupId
+      if (isEndJob) {
+        debug(s"To delete codeExecTaskExecutor  $executor from execTaskToExecutor for lastjob of jobGroupId : ${jobGroupId}")
+        clearExecutorById(executor, execTask.getLabels)
+      } else {
+        removeExecutorFromInstanceToExecutors(executor)
+        info(s"Subjob is not end of JobGroup with id : ${jobGroupId}, we will not delete codeExecTaskExecutor with id : ${executor} ")
+      }
+    } else {
+      debug(s"To delete codeExecTaskExecutor  ${executor}  from execTaskToExecutor.")
+      clearExecutorById(executor, execTask.getLabels)
+    }
+  }
+
+  override def markTaskCompleted(execTask: CodeLogicalUnitExecTask, executor: CodeExecTaskExecutor, isSucceed: Boolean): Unit = {
+    if (isSucceed) {
+      debug(s"ExecTask(${execTask.getIDInfo()}) execute  success executor be delete.")
+      Utils.tryAndWarn(delete(execTask, executor))
+    } else {
+      if (StringUtils.isBlank(executor.getEngineConnTaskId)) {
+        error(s"${execTask.getIDInfo()} Failed to submit running, now to remove  codeEngineConnExecutor, forceRelease")
+        Utils.tryAndWarn(markECFailed(execTask, executor))
+      } else {
+        debug(s"ExecTask(${execTask.getIDInfo()}) execute  failed executor be unLock.")
+        Utils.tryAndWarn(unLockEngineConn(execTask, executor))
+      }
+    }
+    if (null != executor && executor.getEngineConnExecutor != null) {
+      executor.getEngineConnExecutor.removeTask(executor.getEngineConnTaskId)
+    }
   }
 }

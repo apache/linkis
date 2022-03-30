@@ -17,6 +17,8 @@
  
 package org.apache.linkis.ecm.core.launch
 
+import scala.collection.mutable
+
 
 trait EngineConnManagerEnv {
 
@@ -26,7 +28,7 @@ trait EngineConnManagerEnv {
   val engineConnTempDirs: String
   val engineConnManagerHost: String
   val engineConnManagerPort: String
-  val linkDirs: Map[String, String]
+  val linkDirs: mutable.HashMap[String, String]
   val properties: Map[String, String]
 
 }

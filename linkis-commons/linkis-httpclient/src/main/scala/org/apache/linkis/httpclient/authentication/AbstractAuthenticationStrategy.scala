@@ -18,21 +18,22 @@
 package org.apache.linkis.httpclient.authentication
 
 import java.util.concurrent.ConcurrentHashMap
-
 import org.apache.linkis.httpclient.Client
 import org.apache.linkis.httpclient.config.ClientConfig
 import org.apache.linkis.httpclient.request.{Action, UserAction}
 import org.apache.commons.lang.StringUtils
 import org.apache.http.HttpResponse
+import org.apache.linkis.common.utils.Logging
 
 
-abstract class AbstractAuthenticationStrategy extends AuthenticationStrategy {
+abstract class AbstractAuthenticationStrategy extends AuthenticationStrategy with Logging{
   private var client: Client = _
   private val userNameToAuthentications = new ConcurrentHashMap[String, Authentication]()
   private var clientConfig: ClientConfig = _
   protected val sessionMaxAliveTime: Long
 
   def setClient(client: Client): Unit = this.client = client
+
   def getClient: Client = client
 
   protected def getKeyByUserAndURL(user: String, serverUrl: String): String = user + "@" + serverUrl
@@ -46,25 +47,27 @@ abstract class AbstractAuthenticationStrategy extends AuthenticationStrategy {
 
   protected def getKey(requestAction: Action, serverUrl: String): String = {
     val user = getUser(requestAction)
-    if(user == null) return null
+    if (user == null) return null
     getKeyByUserAndURL(user, serverUrl)
   }
 
   def setClientConfig(clientConfig: ClientConfig): Unit = this.clientConfig = clientConfig
+
   def getClientConfig: ClientConfig = clientConfig
 
   def login(requestAction: Action, serverUrl: String): Authentication = {
     val key = getKey(requestAction, serverUrl)
-    if(key == null) return null
-    if(userNameToAuthentications.containsKey(key) && !isTimeout(userNameToAuthentications.get(key))) {
+    if (key == null) return null
+    if (userNameToAuthentications.containsKey(key) && !isTimeout(userNameToAuthentications.get(key))) {
       val authenticationAction = userNameToAuthentications.get(key)
       authenticationAction.updateLastAccessTime()
       authenticationAction
     } else key.intern() synchronized {
       var authentication = userNameToAuthentications.get(key)
-      if(authentication == null || isTimeout(authentication)) {
+      if (authentication == null || isTimeout(authentication)) {
         authentication = tryLogin(requestAction, serverUrl)
-        userNameToAuthentications.put(key, authentication)
+        putSession(key, authentication)
+        logger.info(s"$key try reLogin")
       }
       authentication
     }
@@ -77,9 +80,23 @@ abstract class AbstractAuthenticationStrategy extends AuthenticationStrategy {
     }
   }
 
+  /**
+   * The static account password method, when the return code is determined to be 401, a mandatory login is triggered
+   * @param requestAction
+   * @param serverUrl
+   * @return
+   */
+  def enforceLogin(requestAction: Action, serverUrl: String): Authentication = {
+    login(requestAction, serverUrl)
+  }
+
   protected def getAuthenticationAction(requestAction: Action, serverUrl: String): AuthenticationAction
 
   def getAuthenticationResult(response: HttpResponse, requestAction: AuthenticationAction): AuthenticationResult
 
   def isTimeout(authentication: Authentication): Boolean = System.currentTimeMillis() - authentication.getLastAccessTime >= sessionMaxAliveTime
+
+  def putSession(key: String, authentication: Authentication): Unit = {
+    this.userNameToAuthentications.put(key, authentication)
+  }
 }

@@ -17,7 +17,7 @@
  
 package org.apache.linkis.manager.am.service.em
 
-import java.util
+import org.apache.commons.collections.MapUtils
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.manager.am.exception.AMErrorException
 import org.apache.linkis.manager.am.manager.{EMNodeManager, EngineNodeManager}
@@ -28,14 +28,14 @@ import org.apache.linkis.manager.common.protocol.em._
 import org.apache.linkis.manager.common.protocol.engine.EngineStopRequest
 import org.apache.linkis.manager.common.utils.ManagerUtils
 import org.apache.linkis.manager.engineplugin.common.launch.entity.EngineConnBuildRequest
+import org.apache.linkis.manager.label.entity.em.EMInstanceLabel
 import org.apache.linkis.manager.label.entity.{EngineNodeLabel, Label}
 import org.apache.linkis.manager.label.service.NodeLabelService
 import org.apache.linkis.manager.service.common.label.LabelFilter
-import org.apache.commons.collections.MapUtils
-import org.apache.linkis.manager.label.entity.em.EMInstanceLabel
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
+import java.util
 import scala.collection.JavaConversions._
 
 
@@ -100,7 +100,7 @@ class DefaultEMEngineService extends EMEngineService with Logging {
     val filterInstanceAndLabel = if (emInstanceLabelOption.isDefined) {
       val emInstanceLabel = emInstanceLabelOption.get.asInstanceOf[EMInstanceLabel]
       info(s"use emInstanceLabel , will be route to ${emInstanceLabel.getServiceInstance}")
-      if (instanceAndLabels.exists(_._1.equals(emInstanceLabel.getServiceInstance))) {
+      if (! instanceAndLabels.exists(_._1.equals(emInstanceLabel.getServiceInstance))) {
         throw new AMErrorException(AMConstant.EM_ERROR_CODE, s"You specified em ${emInstanceLabel.getServiceInstance}, but the corresponding EM does not exist in the Manager")
       }
       instanceAndLabels.filter(_._1.getServiceInstance.equals(emInstanceLabel.getServiceInstance))

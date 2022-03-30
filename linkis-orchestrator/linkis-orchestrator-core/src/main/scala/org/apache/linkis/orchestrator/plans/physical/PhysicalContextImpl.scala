@@ -17,7 +17,6 @@
  
 package org.apache.linkis.orchestrator.plans.physical
 import java.util
-
 import org.apache.linkis.common.listener.Event
 import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
@@ -25,20 +24,17 @@ import org.apache.linkis.orchestrator.exception.OrchestratorErrorCodeSummary
 import org.apache.linkis.orchestrator.execution.impl.DefaultFailedTaskResponse
 import org.apache.linkis.orchestrator.execution.{CompletedTaskResponse, SucceedTaskResponse, TaskResponse}
 import org.apache.linkis.orchestrator.listener._
-import org.apache.linkis.orchestrator.listener.task.{RootTaskResponseEvent, TaskLogEvent, TaskProgressEvent}
+import org.apache.linkis.orchestrator.listener.task.{RootTaskResponseEvent, TaskLogEvent, TaskProgressEvent, TaskYarnResourceEvent}
 
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 
-/**
-  *
-  *
-  */
-class PhysicalContextImpl(private var rootTask: ExecTask,private var leafTasks: Array[ExecTask]) extends PhysicalContext {
 
-  private var syncListenerBus: OrchestratorSyncListenerBus = _ //Orchestartor.getOrchestratorSyncListenerBus
+class PhysicalContextImpl(private var rootTask: ExecTask, private var leafTasks: Array[ExecTask]) extends PhysicalContext {
 
-  private var asyncListenerBus: OrchestratorAsyncListenerBus = _ //OrchestratorListenerBusContext.getListenerBusContext().getOrchestratorAsyncListenerBus
+  private var syncListenerBus: OrchestratorSyncListenerBus = _
+
+  private var asyncListenerBus: OrchestratorAsyncListenerBus = _
 
   private var executionNodeStatus: ExecutionNodeStatus = ExecutionNodeStatus.Inited
 
@@ -103,9 +99,9 @@ class PhysicalContextImpl(private var rootTask: ExecTask,private var leafTasks: 
         val branches = ListBuffer[String]()
         val traversableQueue = new mutable.Queue[ExecTask]()
         traversableQueue.enqueue(task)
-        while(traversableQueue.nonEmpty){
+        while(traversableQueue.nonEmpty) {
           val nodeTask = traversableQueue.dequeue()
-          if(nodeTask.theSame(execTask)){
+          if(nodeTask.theSame(execTask)) {
             return true
           }
           val parent = Option(nodeTask.getParents).getOrElse(Array[ExecTask]())
@@ -113,14 +109,9 @@ class PhysicalContextImpl(private var rootTask: ExecTask,private var leafTasks: 
           if (parent.length < 1 || (parent.length > 1 && branch)) {
             Option(nodeTask.getChildren).getOrElse(Array[ExecTask]())
               .foreach(traversableQueue.enqueue(_))
-            if(branch){branches += nodeTask.getId}
+            if(branch) {branches += nodeTask.getId}
           }
-         /* parent.length match{
-            case v if v <= 1 || (v > 1  && branch ) =>
-              Option(nodeTask.getChildren).getOrElse(Array[ExecTask]())
-                .foreach(traversableQueue.enqueue(_))
-              if(branch){branches += nodeTask.getId}
-          }*/
+
         }
         false
       case None => false
@@ -128,17 +119,17 @@ class PhysicalContextImpl(private var rootTask: ExecTask,private var leafTasks: 
   }
 
   override def getRootTask: ExecTask = {
-    if(Option(rootTask).isEmpty && Option(rootPhysicalContext).isDefined){
+    if (Option(rootTask).isEmpty && Option(rootPhysicalContext).isDefined) {
       rootPhysicalContext.getRootTask
-    }else{
+    } else {
       rootTask
     }
   }
 
   override def getLeafTasks: Array[ExecTask] = {
-    if(Option(leafTasks).isEmpty && Option(rootPhysicalContext).isDefined){
+    if (Option(leafTasks).isEmpty && Option(rootPhysicalContext).isDefined) {
       rootPhysicalContext.getLeafTasks
-    }else{
+    } else {
       leafTasks
     }
   }
@@ -186,6 +177,9 @@ class PhysicalContextImpl(private var rootTask: ExecTask,private var leafTasks: 
 
   override def pushProgress(taskProgressEvent: TaskProgressEvent): Unit = {
     broadcastAsyncEvent(taskProgressEvent)
+  }
+  override def pushYarnResource(taskYarnResourceEvent: TaskYarnResourceEvent): Unit = {
+    broadcastAsyncEvent(taskYarnResourceEvent)
   }
 
   def setAsyncBus(asyncListenerBus: OrchestratorAsyncListenerBus): Unit = {

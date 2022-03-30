@@ -20,11 +20,10 @@ package org.apache.linkis.orchestrator.ecm.service.impl
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.manager.common.protocol.RequestManagerUnlock
 import org.apache.linkis.manager.common.protocol.engine.{EngineCreateError, EngineCreateSuccess}
-import org.apache.linkis.message.annotation.Receiver
-import org.apache.linkis.message.builder.ServiceMethodContext
 import org.apache.linkis.orchestrator.ecm.cache.EngineAsyncResponseCache
 import org.apache.linkis.orchestrator.ecm.service.EngineAsyncResponseService
 import org.apache.linkis.rpc.Sender
+import org.apache.linkis.rpc.message.annotation.Receiver
 import org.springframework.stereotype.Service
 
 /**
@@ -37,19 +36,19 @@ class DefaultEngineAsyncResponseService extends EngineAsyncResponseService with 
   private val cacheMap = EngineAsyncResponseCache.getCache
 
   @Receiver
-  override def onSuccess(engineCreateSuccess: EngineCreateSuccess, smc: ServiceMethodContext): Unit = {
+  override def onSuccess(engineCreateSuccess: EngineCreateSuccess, sender: Sender): Unit = {
     info(s"Success to create engine $engineCreateSuccess")
     Utils.tryCatch(cacheMap.put(engineCreateSuccess.id, engineCreateSuccess)) {
       t: Throwable =>
         error(s"client could be timeout, now to unlock engineNone", t)
         val requestManagerUnlock = RequestManagerUnlock(engineCreateSuccess.engineNode.getServiceInstance,
           engineCreateSuccess.engineNode.getLock, Sender.getThisServiceInstance)
-        smc.send(requestManagerUnlock)
+        sender.send(requestManagerUnlock)
     }
   }
 
   @Receiver
-  override def onError(engineCreateError: EngineCreateError, smc: ServiceMethodContext): Unit = {
+  override def onError(engineCreateError: EngineCreateError, sender: Sender): Unit = {
     info(s"Failed to create engine ${engineCreateError.id}, can retry ${engineCreateError.retry}")
     cacheMap.put(engineCreateError.id, engineCreateError)
   }

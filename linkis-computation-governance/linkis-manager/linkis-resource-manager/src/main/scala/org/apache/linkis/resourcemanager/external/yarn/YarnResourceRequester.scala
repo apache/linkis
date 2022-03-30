@@ -17,41 +17,50 @@
  
 package org.apache.linkis.resourcemanager.external.yarn
 
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.manager.common.entity.resource.{CommonNodeResource, NodeResource, ResourceType, YarnResource}
-import org.apache.linkis.resourcemanager.exception.{RMErrorException, RMWarnException}
 import org.apache.linkis.resourcemanager.external.domain.{ExternalAppInfo, ExternalResourceIdentifier, ExternalResourceProvider}
 import org.apache.linkis.resourcemanager.external.request.ExternalResourceRequester
 import org.apache.http.{HttpHeaders, HttpResponse}
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.impl.client.HttpClients
 import org.apache.http.util.EntityUtils
+import org.apache.linkis.manager.common.conf.RMConfiguration
+import org.apache.linkis.manager.common.exception.{RMErrorException, RMWarnException}
 import org.apache.linkis.resourcemanager.utils.RequestKerberosUrlUtils
 import org.json4s.JValue
 import org.json4s.JsonAST._
 import org.json4s.jackson.JsonMethods.parse
 import sun.misc.BASE64Encoder
 
+import java.util
+import java.util.concurrent.{ConcurrentHashMap, TimeUnit}
 import scala.collection.JavaConversions._
 import scala.collection.mutable.ArrayBuffer
 
 class YarnResourceRequester extends ExternalResourceRequester with Logging {
 
-  private var provider:ExternalResourceProvider = _
+  private val HASTATE_ACTIVE = "active"
+
+  private var provider: ExternalResourceProvider = _
+  private val rmAddressMap: util.Map[String, String] = new ConcurrentHashMap[String, String]()
+
 
   private def getAuthorizationStr = {
-    val user = this.provider.getConfigMap.getOrDefault("user","").asInstanceOf[String]
-    val pwd = this.provider.getConfigMap.getOrDefault("pwd","").asInstanceOf[String]
+    val user = this.provider.getConfigMap.getOrDefault("user", "").asInstanceOf[String]
+    val pwd = this.provider.getConfigMap.getOrDefault("pwd", "").asInstanceOf[String]
     val authKey = user + ":" + pwd
     val base64Encoder = new BASE64Encoder()
     base64Encoder.encode(authKey.getBytes)
   }
 
   override def requestResourceInfo(identifier: ExternalResourceIdentifier, provider: ExternalResourceProvider): NodeResource = {
-    val rmWebAddress = provider.getConfigMap.get("rmWebAddress").asInstanceOf[String]
+    val rmWebHaAddress = provider.getConfigMap.get("rmWebAddress").asInstanceOf[String]
+    this.provider = provider
+    val rmWebAddress = getAndUpdateActiveRmWebAddress(rmWebHaAddress)
     info(s"rmWebAddress: $rmWebAddress")
     val queueName = identifier.asInstanceOf[YarnResourceIdentifier].getQueueName
-    this.provider = provider
 
     def getYarnResource(jValue: Option[JValue]) = jValue.map(r => new YarnResource((r \ "memory").asInstanceOf[JInt].values.toLong * 1024l * 1024l, (r \ "vCores").asInstanceOf[JInt].values.toInt, 0, queueName))
 
@@ -171,7 +180,10 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
   }
 
   override def requestAppInfo(identifier: ExternalResourceIdentifier, provider: ExternalResourceProvider): java.util.List[ExternalAppInfo] = {
-    val rmWebAddress = provider.getConfigMap.get("rmWebAddress").asInstanceOf[String]
+    val rmWebHaAddress = provider.getConfigMap.get("rmWebAddress").asInstanceOf[String]
+
+    val rmWebAddress = getAndUpdateActiveRmWebAddress(rmWebHaAddress)
+
     val queueName = identifier.asInstanceOf[YarnResourceIdentifier].getQueueName
 
     def getYarnResource(jValue: Option[JValue]) = jValue.map(r => new YarnResource((r \ "allocatedMB").asInstanceOf[JInt].values.toLong * 1024l * 1024l, (r \ "allocatedVCores").asInstanceOf[JInt].values.toInt, 0, queueName))
@@ -240,6 +252,60 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
         httpResponse = response
     }
     parse(EntityUtils.toString(httpResponse.getEntity()))
+  }
+
+  def getAndUpdateActiveRmWebAddress(haAddress: String): String = {
+    // todo check if it will stuck for many requests
+    var activeAddress = rmAddressMap.get(haAddress)
+    if (StringUtils.isBlank(activeAddress)) haAddress.intern().synchronized {
+      if (StringUtils.isBlank(activeAddress)) {
+        if (logger.isDebugEnabled()) {
+          logger.debug(s"Cannot find value of haAddress : ${haAddress} in cacheMap with size ${rmAddressMap.size()}")
+        }
+        if (StringUtils.isNotBlank(haAddress)) {
+          haAddress.split(RMConfiguration.DEFAULT_YARN_RM_WEB_ADDRESS_DELIMITER.getValue).foreach(address => {
+            Utils.tryCatch {
+              val response = getResponseByUrl("info", address)
+              response \ "clusterInfo" \ "haState" match {
+                case state: JString =>
+                  if (HASTATE_ACTIVE.equalsIgnoreCase(state.s)) {
+                    activeAddress = address
+                  } else {
+                    logger.warn(s"Resourcemanager : ${address} haState : ${state.s}")
+                  }
+                case _ =>
+              }
+            } {
+              case e: Exception =>
+                logger.error("Get Yarn resourcemanager info error, " + e.getMessage, e)
+            }
+          })
+        }
+        if (StringUtils.isNotBlank(activeAddress)) {
+          if (logger.isDebugEnabled()) {
+            logger.debug(s"Put (${haAddress}, ${activeAddress}) to cacheMap.")
+          }
+          rmAddressMap.put(haAddress, activeAddress)
+        } else {
+          throw new RMErrorException(11007, s"Get active Yarn resourcemanager from : ${haAddress} exception.(从 ${haAddress} 获取主Yarn resourcemanager异常)")
+        }
+      }
+    }
+    if (logger.isDebugEnabled()) {
+      logger.debug(s"Get active rm address : ${activeAddress} from haAddress : ${haAddress}")
+    }
+    activeAddress
+  }
+
+  override def reloadExternalResourceAddress(provider: ExternalResourceProvider): java.lang.Boolean = {
+    if (null == provider) {
+      rmAddressMap.clear()
+    } else {
+      val rmWebHaAddress = provider.getConfigMap.get("rmWebAddress").asInstanceOf[String]
+      rmAddressMap.remove(rmWebHaAddress)
+      getAndUpdateActiveRmWebAddress(rmWebHaAddress)
+    }
+    true
   }
 }
 object YarnResourceRequester extends Logging {

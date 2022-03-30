@@ -62,10 +62,10 @@ class DefaultEMNodeManager extends EMNodeManager with Logging {
     nodeMetricManagerPersistence.addOrupdateNodeMetrics(metricsConverter.getInitMetric(emNode.getServiceInstance))
   }
 
-  override def addEMNodeInstance(emNode: EMNode):Unit = {
-    Utils.tryCatch(nodeManagerPersistence.addNodeInstance(emNode)){
+  override def addEMNodeInstance(emNode: EMNode): Unit = {
+    Utils.tryCatch(nodeManagerPersistence.addNodeInstance(emNode)) {
       case e: NodeInstanceDuplicateException =>
-        warn(s"em instance had exists, $emNode")
+        warn(s"em instance had exists, $emNode.")
         nodeManagerPersistence.updateEngineNode(emNode.getServiceInstance, emNode)
       case t: Throwable => throw t
     }
@@ -113,7 +113,7 @@ class DefaultEMNodeManager extends EMNodeManager with Logging {
         emNode.setServiceInstance(scoreServiceInstances.getServiceInstance)
         emNode
     }
-    //1. 增加nodeMetrics  2 增加RM信息
+    // 1. add nodeMetrics  2 add RM info
     val resourceInfo = resourceManager.getResourceInfo(scoreServiceInstances.map(_.getServiceInstance))
     val nodeMetrics = nodeMetricManagerPersistence.getNodeMetrics(emNodes.toList)
     emNodes.map { emNode =>

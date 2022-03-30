@@ -39,12 +39,12 @@ class DefaultEMNodPointer(val node: Node) extends AbstractNodePointer with EMNod
   override def getNode(): Node = node
 
   override def createEngine(engineBuildRequest: EngineConnBuildRequest): EngineNode = {
-    info(s"Start to createEngine ask em ${getNode().getServiceInstance}")
+    logger.info(s"Start to createEngine ask em ${getNode().getServiceInstance}")
     getSender.ask(engineBuildRequest) match {
       case engineNode: EngineNode =>
-        info(s"Succeed to createEngine ask em ${getNode().getServiceInstance}, engineNode $engineNode ")
+        logger.info(s"Succeed to createEngine ask em ${getNode().getServiceInstance}, engineNode $engineNode ")
         engineNode
-      case _ => throw new AMErrorException(AMConstant.ENGINE_ERROR_CODE, s"Failed to ask engine")
+      case _ => throw new AMErrorException(AMConstant.ENGINE_ERROR_CODE, s"Failed to createEngine ask em ${getNode().getServiceInstance}")
     }
   }
 

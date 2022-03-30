@@ -33,7 +33,7 @@ class CSSparkPreExecutionHook extends SparkPreExecutionHook with Logging{
     SparkPreExecutionHook.register(this)
   }
 
-  private  val  csTableParser = new CSTableParser
+
 
   override def hookName: String = "CSSparkPreExecutionHook"
 
@@ -44,7 +44,7 @@ class CSSparkPreExecutionHook extends SparkPreExecutionHook with Logging{
     val nodeNameStr = ContextServiceUtils.getNodeNameStrByMap(engineExecutionContext.getProperties)
     info(s"Start to call CSSparkPreExecutionHook,contextID is $contextIDValueStr, nodeNameStr is $nodeNameStr")
     parsedCode = try {
-      csTableParser.parse(engineExecutionContext, parsedCode, contextIDValueStr, nodeNameStr)
+      CSTableParser.parse(engineExecutionContext, parsedCode, contextIDValueStr, nodeNameStr)
     } catch {
       case t: Throwable =>
         info("Failed to parser cs table", t)

@@ -21,7 +21,7 @@ import org.apache.linkis.cli.core.utils.converter.PredefinedStringConverters;
 
 import org.apache.commons.lang3.StringUtils;
 
-/** @description: Flag is a special type of {@link StdOption}. Its only accepts boolean value. */
+/** Flag is a special type of {@link StdOption}. Its only accepts boolean value. */
 public class Flag extends StdOption<Boolean> implements Cloneable {
     public Flag(
             final String keyPrefix,

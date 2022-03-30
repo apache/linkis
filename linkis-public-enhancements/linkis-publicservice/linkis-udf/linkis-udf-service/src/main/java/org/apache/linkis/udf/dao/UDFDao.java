@@ -19,6 +19,8 @@ package org.apache.linkis.udf.dao;
 
 import org.apache.linkis.udf.entity.UDFInfo;
 import org.apache.linkis.udf.entity.UDFManager;
+import org.apache.linkis.udf.vo.UDFAddVo;
+import org.apache.linkis.udf.vo.UDFInfoVo;
 
 import org.apache.ibatis.annotations.Param;
 
@@ -37,27 +39,31 @@ public interface UDFDao {
 
     void deleteLoadInfo(Long id, String userName);
 
-    void deleteAllLoadInfo(Long id);
-
     void addLoadInfo(Long id, String userName);
 
     List<UDFInfo> getUDFSByUserName(String userName);
 
-    List<UDFInfo> getUDFSByTreeIdAndUser(
+    List<UDFInfoVo> getUDFSByTreeIdAndUser(
             Long treeId, String userName, Collection<Integer> categoryCodes);
 
-    /*List<UDFInfo> getSharedUDFByUserName(String userName);
+    List<UDFInfoVo> getUDFSByUsers(Collection<String> users);
 
+    List<UDFInfoVo> getSharedUDFByUser(String user);
+
+    List<Long> getSharedUDFIdsByUser(@Param("userName") String userName);
+    /*
     List<UDFInfo> getSharedUDFByTreeId(Long treeId, String userName);
 
     List<UDFInfo> getSysUDF();
 
     List<UDFInfo> getSysUDFByTreeId(Long treeId);*/
 
-    List<UDFInfo> getUDFInfoByTreeId(
+    List<UDFInfoVo> getUDFInfoByTreeId(
             Long treeId, String userName, Collection<Integer> categoryCodes);
 
     List<UDFInfo> getLoadedUDFs(String userName);
+
+    List<Long> getLoadedUDFIds(String userName);
 
     long getSameSysCount(String udfName);
 
@@ -72,11 +78,17 @@ public interface UDFDao {
             @Param("userName") String userName,
             @Param("categoryCodes") Collection<Integer> categoryCodes);
 
-    UDFManager selectUDFManager(String userName);
+    UDFManager selectUDFManager(@Param("userName") String userName);
 
     List<String> selectAllUser();
 
-    long getShareSameNameCountByUser(@Param("udfName") String udfName);
+    long getShareSameNameCountByUser(
+            @Param("udfName") String udfName, @Param("userName") String userName);
+
+    long getShareSameNameCountExcludeUser(
+            @Param("udfName") String udfName,
+            @Param("userName") String userName,
+            @Param("excludeUser") String excludeUser);
 
     void insertUDFSharedUser(
             @Param("udfId") Long udfId, @Param("shareUserName") String shareUserName);
@@ -88,10 +100,10 @@ public interface UDFDao {
 
     Long selectIdByUserName(@Param("userName") String userName);
 
-    void updateSharedUDFInfoExpire(Long shareUDFId);
+    void updateSharedUDFExpire(@Param("udfId") Long udfId);
 
-    List<String> selectAllShareUsersByUDFIdAndUseName(
-            @Param("userName") String userName, @Param("udfName") String udfName);
+    List<String> selectAllShareUsersByUDFId(
+            @Param("userName") String userName, @Param("udfId") Long udfId);
 
     void insertSharedUser(@Param("addSharedUser") String sharedUser, @Param("udfId") Long udfId);
 
@@ -99,4 +111,22 @@ public interface UDFDao {
             @Param("removeSharedUser") String oldsharedUser, @Param("udfId") Long udfId);
 
     void deleteAllSharedUser(@Param("udfId") Long udfId);
+
+    long getSharedUserCountByUdfId(@Param("udfId") long udfId);
+
+    long getUserLoadCountByUdfId(@Param("udfId") long udfId, @Param("owner") String owner);
+
+    void updateLoadUser(
+            @Param("udfId") long udfId,
+            @Param("oldUser") String oldUser,
+            @Param("newUser") String newUser);
+
+    List<UDFAddVo> getUdfInfoByPages(
+            @Param("udfName") String udfName,
+            @Param("udfTypes") Collection<Integer> udfTypes,
+            @Param("createUser") String createUser);
+
+    List<UDFInfoVo> getLatesetPublishedUDF(
+            @Param("userName") String userName,
+            @Param("categoryCodes") Collection<Integer> categoryCodes);
 }

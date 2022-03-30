@@ -18,9 +18,9 @@
 package org.apache.linkis.cli.core.interactor.validate;
 
 import org.apache.linkis.cli.common.entity.properties.ClientProperties;
+import org.apache.linkis.cli.common.entity.validate.Validator;
 import org.apache.linkis.cli.common.exception.LinkisClientRuntimeException;
 
-/** TODO */
 public class PropsValidator implements Validator {
     @Override
     public void doValidation(Object input) throws LinkisClientRuntimeException {

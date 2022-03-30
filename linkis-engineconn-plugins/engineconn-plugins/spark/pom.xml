@@ -182,6 +182,17 @@
 
         <dependency>
             <groupId>org.apache.linkis</groupId>
+            <artifactId>linkis-common</artifactId>
+            <version>${linkis.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.linkis</groupId>
+            <artifactId>linkis-rpc</artifactId>
+            <version>${linkis.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.linkis</groupId>
             <artifactId>linkis-bml-engine-hook</artifactId>
             <version>${linkis.version}</version>
             <exclusions>
@@ -237,6 +248,10 @@
                 <exclusion>
                     <groupId>com.sun.jersey</groupId>
                     <artifactId>jersey-client</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.commons</groupId>
+                    <artifactId>commons-lang3</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -321,6 +336,12 @@
             <artifactId>spark-hive_2.11</artifactId>
             <version>${spark.version}</version>
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.commons</groupId>
+                    <artifactId>commons-lang3</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
     </dependencies>

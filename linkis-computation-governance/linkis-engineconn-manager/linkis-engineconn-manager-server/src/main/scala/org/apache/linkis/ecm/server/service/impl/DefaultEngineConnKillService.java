@@ -20,12 +20,14 @@ package org.apache.linkis.ecm.server.service.impl;
 import org.apache.linkis.common.ServiceInstance;
 import org.apache.linkis.common.utils.Utils;
 import org.apache.linkis.ecm.core.engineconn.EngineConn;
+import org.apache.linkis.ecm.server.conf.ECMConfiguration;
 import org.apache.linkis.ecm.server.service.EngineConnKillService;
 import org.apache.linkis.ecm.server.service.EngineConnListService;
+import org.apache.linkis.governance.common.utils.GovernanceUtils;
 import org.apache.linkis.manager.common.protocol.engine.EngineStopRequest;
 import org.apache.linkis.manager.common.protocol.engine.EngineStopResponse;
 import org.apache.linkis.manager.common.protocol.engine.EngineSuicideRequest;
-import org.apache.linkis.message.annotation.Receiver;
+import org.apache.linkis.rpc.message.annotation.Receiver;
 import org.apache.linkis.rpc.Sender;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -48,6 +50,7 @@ public class DefaultEngineConnKillService implements EngineConnKillService {
     @Override
     @Receiver
     public EngineStopResponse dealEngineConnStop(EngineStopRequest engineStopRequest) {
+        logger.info("received EngineStopRequest " +  engineStopRequest);
         EngineConn engineConn = getEngineConnByServiceInstance(engineStopRequest.getServiceInstance());
         EngineStopResponse response = new EngineStopResponse();
         if (null != engineConn) {
@@ -92,22 +95,10 @@ public class DefaultEngineConnKillService implements EngineConnKillService {
     private boolean killEngineConnByPid(EngineConn engineConn) {
         logger.info("try to kill {} toString with pid({}).", engineConn.getServiceInstance().toString(), engineConn.getPid());
         if (StringUtils.isNotBlank(engineConn.getPid())) {
-            String k15cmd = "sudo kill " + engineConn.getPid();
-            String k9cmd = "sudo kill -9 " + engineConn.getPid();
-            int tryNum = 0;
-            try {
-                while (isProcessAlive(engineConn.getPid()) && tryNum <= 3) {
-                    logger.info("{} still alive with pid({}), use shell command to kill it. try {}++", engineConn.getServiceInstance().toString(), engineConn.getPid(), tryNum++);
-                    if (tryNum <= 3) {
-                        Utils.exec(k15cmd.split(" "), 3000L);
-                    } else {
-                        logger.info("{} still alive with pid({}). try {}, use shell command to kill -9 it", engineConn.getServiceInstance().toString(), engineConn.getPid(), tryNum);
-                        Utils.exec(k9cmd.split(" "), 3000L);
-                    }
-                    Thread.sleep(5000);
-                }
-            } catch (InterruptedException e) {
-                logger.error("Interrupted while killing engine {} with pid({})." + engineConn.getServiceInstance().toString(), engineConn.getPid());
+            if (ECMConfiguration.ECM_PROCESS_SCRIPT_KILL()) {
+                GovernanceUtils.killProcess(engineConn.getPid(), engineConn.getServiceInstance().toString(), true);
+            } else {
+                killProcessByKillCmd(engineConn.getPid(), engineConn.getServiceInstance().toString());
             }
             if (isProcessAlive(engineConn.getPid())) {
                 return false;
@@ -136,4 +127,23 @@ public class DefaultEngineConnKillService implements EngineConnKillService {
         }
     }
 
+    private void killProcessByKillCmd(String pid, String desc ) {
+        String k15cmd = "sudo kill " + pid;
+        String k9cmd = "sudo kill -9 " + pid;
+        int tryNum = 0;
+        try {
+            while (isProcessAlive(pid) && tryNum <= 3) {
+                logger.info("{} still alive with pid({}), use shell command to kill it. try {}++", desc, pid, tryNum++);
+                if (tryNum <= 3) {
+                    Utils.exec(k15cmd.split(" "), 3000L);
+                } else {
+                    logger.info("{} still alive with pid({}). try {}, use shell command to kill -9 it", desc, pid, tryNum);
+                    Utils.exec(k9cmd.split(" "), 3000L);
+                }
+                Thread.sleep(5000);
+            }
+        } catch (InterruptedException e) {
+            logger.error("Interrupted while killing engine {} with pid({})." + desc, pid);
+        }
+    }
 }

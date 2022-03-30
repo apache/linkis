@@ -24,13 +24,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class LinkisClientApplicationTest {
-    private static Logger logger = LoggerFactory.getLogger(LinkisClientApplicationTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(LinkisClientApplicationTest.class);
 
     String[] cmdStr;
     String[] cmdStr2;
 
     @BeforeEach
-    public void before() throws Exception {
+    public void before() {
         System.setProperty("conf.root", "src/test/resources/conf/");
         System.setProperty("user.name", "hadoop");
         cmdStr2 =
@@ -83,7 +83,7 @@ public class LinkisClientApplicationTest {
                     //                "-varMap", "wds.linkis.yarnqueue=q02",
                     //                "-varMap", "name=\"databases\"",
 
-                    /** Test different task type */
+                    /* Test different task type */
 
                     //                "-engineType", "spark-2.4.3",
                     //                "-codeType", "sql",
@@ -109,7 +109,7 @@ public class LinkisClientApplicationTest {
                     //        "-codeType", "scala",
                     //        "-codePath", "src/test/resources/testScala.scala",
 
-                    /** Failed */
+                    /* Failed */
                     //        "-engineType", "jdbc-1",
                     //        "-codeType", "jdbc",
                     //        "-code", "show tables",
@@ -122,17 +122,17 @@ public class LinkisClientApplicationTest {
     }
 
     @AfterEach
-    public void after() throws Exception {}
+    public void after() {}
 
     /** Method: main(String[] args) */
     @Test
-    public void testMain() throws Exception {
+    public void testMain() {
         // TODO: Test goes here...
     }
 
     /** Method: prepare() */
     @Test
-    public void testPrepare() throws Exception {
+    public void testPrepare() {
         // TODO: Test goes here...
         /*
         try {
@@ -148,7 +148,7 @@ public class LinkisClientApplicationTest {
 
     /** Method: processInput(String[] args, PreparedData preparedData) */
     @Test
-    public void testProcessInput() throws Exception {
+    public void testProcessInput() {
         // TODO: Test goes here...
         /*
         try {
@@ -164,8 +164,8 @@ public class LinkisClientApplicationTest {
 
     /** Method: exec(ProcessedData data) */
     @Test
-    public void testExec() throws Exception {
-        //        LinkisClientApplication.main(cmdStr);
+    public void testExec() {
+        //                LinkisClientApplication.main(cmdStr);
         //    LinkisClientApplication.main(cmdStr2);
         /*
         try {

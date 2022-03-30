@@ -21,7 +21,7 @@ import java.io.Closeable
 import java.util
 
 import org.apache.linkis.common.io.{FsReader, FsWriter, MetaData, Record}
-import org.apache.linkis.storage.domain.Column
+import org.apache.linkis.storage.domain.{Column, DataType}
 import org.apache.linkis.storage.resultset.table.{TableMetaData, TableRecord}
 import org.apache.linkis.storage.script.{ScriptMetaData, VariableParser}
 import org.apache.linkis.storage.{LineMetaData, LineRecord}
@@ -78,6 +78,25 @@ class FileSplit(var fsReader: FsReader[_ <: MetaData, _ <: Record], var `type`: 
     t
   }
 
+  /**
+   * Get the colNumber and rowNumber of the row to be counted
+   * @param needToCountRowNumber
+   * @return colNumber, rowNumber
+   */
+  def getFileInfo(needToCountRowNumber: Int = 5000): Pair[Int, Int] = {
+    val metaData = fsReader.getMetaData
+    val colNumber = metaData match {
+      case tableMetaData: TableMetaData => tableMetaData.columns.length
+      case _ => 1
+    }
+    val rowNumber = if (needToCountRowNumber == -1) {
+      fsReader.skip(Int.MaxValue)
+    } else {
+      fsReader.skip(needToCountRowNumber)
+    }
+    new Pair(colNumber, rowNumber)
+  }
+
   def write[K <: MetaData, V <: Record](fsWriter: FsWriter[K, V]): Unit = {
     `while`(fsWriter.addMetaData, fsWriter.addRecord)
   }
@@ -90,7 +109,7 @@ class FileSplit(var fsReader: FsReader[_ <: MetaData, _ <: Record], var `type`: 
 
   def collectRecord(record: Record): Array[String] = {
     record match {
-      case t: TableRecord => t.row.map(_.toString)
+      case t: TableRecord => t.row.map(DataType.valueToString)
       case l: LineRecord => Array(l.getLine)
     }
   }

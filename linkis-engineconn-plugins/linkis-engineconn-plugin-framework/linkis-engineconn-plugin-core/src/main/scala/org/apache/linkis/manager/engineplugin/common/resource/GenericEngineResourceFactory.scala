@@ -22,18 +22,19 @@ import java.util
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.manager.common.entity.resource.{LoadInstanceResource, Resource}
 import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf
-
+import org.apache.commons.lang.StringUtils
 
 class GenericEngineResourceFactory extends AbstractEngineResourceFactory with Logging {
 
   override protected def getRequestResource(properties: util.Map[String, String]): Resource = {
     if (properties.containsKey(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key)) {
       val settingClientMemory = properties.get(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key)
-      if (!settingClientMemory.toLowerCase().endsWith("g")) {
+      if (StringUtils.isBlank(settingClientMemory)) {
+        properties.remove(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key)
+      } else if (!settingClientMemory.toLowerCase().endsWith("g")) {
         properties.put(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key, settingClientMemory + "g")
       }
     }
-
 
     new LoadInstanceResource(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.getValue(properties).toLong,
       EngineConnPluginConf.JAVA_ENGINE_REQUEST_CORES.getValue(properties), EngineConnPluginConf.JAVA_ENGINE_REQUEST_INSTANCE)

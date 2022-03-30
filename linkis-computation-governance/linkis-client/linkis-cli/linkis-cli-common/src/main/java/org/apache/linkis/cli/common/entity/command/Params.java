@@ -19,7 +19,6 @@ package org.apache.linkis.cli.common.entity.command;
 
 import java.util.Map;
 
-/** @description: data structure that stores params parsed from command arguments */
 public class Params {
     /** identifier identifies which command corresponds to this param data structure */
     String cid;

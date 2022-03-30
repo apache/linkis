@@ -20,8 +20,10 @@ package org.apache.linkis.entrance.persistence;
 import org.apache.linkis.common.exception.ErrorException;
 import org.apache.linkis.common.io.FsPath;
 import org.apache.linkis.entrance.EntranceContext;
+import org.apache.linkis.entrance.cli.heartbeat.CliHeartbeatMonitor;
 import org.apache.linkis.entrance.cs.CSEntranceHelper;
 import org.apache.linkis.entrance.execute.EntranceJob;
+import org.apache.linkis.entrance.log.FlexibleErrorCodeManager;
 import org.apache.linkis.governance.common.entity.job.JobRequest;
 import org.apache.linkis.governance.common.entity.job.SubJobInfo;
 import org.apache.linkis.protocol.engine.JobProgressInfo;
@@ -34,6 +36,9 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import scala.Option;
+import scala.Tuple2;
+
 public class QueryPersistenceManager extends PersistenceManager {
 
     private EntranceContext entranceContext;
@@ -42,6 +47,16 @@ public class QueryPersistenceManager extends PersistenceManager {
     private static final Logger logger = LoggerFactory.getLogger(QueryPersistenceManager.class);
     //  private EntranceWebSocketService entranceWebSocketService; //TODO The latter version, to be
     // removed, webSocket unified walk ListenerBus(后面的版本，要去掉，webSocket统一走ListenerBus)
+
+    private CliHeartbeatMonitor cliHeartbeatMonitor;
+
+    public CliHeartbeatMonitor getCliHeartbeatMonitor() {
+        return cliHeartbeatMonitor;
+    }
+
+    public void setCliHeartbeatMonitor(CliHeartbeatMonitor cliHeartbeatMonitor) {
+        this.cliHeartbeatMonitor = cliHeartbeatMonitor;
+    }
 
     public void setPersistenceEngine(PersistenceEngine persistenceEngine) {
         this.persistenceEngine = persistenceEngine;
@@ -83,7 +98,7 @@ public class QueryPersistenceManager extends PersistenceManager {
         String path;
         try {
             path = createResultSetEngine().persistResultSet(job, response);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             String msg =
                     "Persist resultSet failed for subJob : "
                             + job.getId()
@@ -93,7 +108,7 @@ public class QueryPersistenceManager extends PersistenceManager {
             if (null != job) {
                 job.onFailure("persist resultSet failed!", e);
             } else {
-                logger.error("Cannot find job : {} in cache of ExecutorManager.", job.getId());
+                logger.error("Cannot find job : {} in cache of ExecutorManager.", job.getId(), e);
             }
             return;
         }
@@ -113,7 +128,7 @@ public class QueryPersistenceManager extends PersistenceManager {
                                 .getSubJobDetail()
                                 .setResultLocation(new FsPath(path).getSchemaPath());
                         createPersistenceEngine().updateIfNeeded(subJobInfo);
-                    } catch (Throwable e) {
+                    } catch (Exception e) {
                         entranceContext.getOrCreateLogManager().onLogUpdate(job, e.toString());
                     }
                 }
@@ -124,7 +139,7 @@ public class QueryPersistenceManager extends PersistenceManager {
     @Override
     public void onProgressUpdate(Job job, float progress, JobProgressInfo[] progressInfo) {
         float updatedProgress = progress;
-        if (progress < 0) {
+        if (updatedProgress < 0) {
             logger.error(
                     "Got negitive progress : "
                             + progress
@@ -133,11 +148,20 @@ public class QueryPersistenceManager extends PersistenceManager {
             // todo check
             updatedProgress = -1 * progress;
         }
-        if (job.getProgress() >= 0 && job.getProgress() == updatedProgress) {
+        if (Double.isNaN(updatedProgress)) {
+            return;
+        }
+        EntranceJob entranceJob = (EntranceJob) job;
+        float persistedProgress = 0.0f;
+        try {
+            persistedProgress = Float.parseFloat(entranceJob.getJobRequest().getProgress());
+        } catch (Exception e) {
+            logger.warn("Invalid progress : " + entranceJob.getJobRequest().getProgress(), e);
+        }
+        if (job.getProgress() >= 0 && persistedProgress >= updatedProgress) {
             return;
         }
         job.setProgress(updatedProgress);
-        EntranceJob entranceJob = (EntranceJob) job;
         entranceJob.getJobRequest().setProgress(String.valueOf(updatedProgress));
         updateJobStatus(job);
     }
@@ -149,7 +173,7 @@ public class QueryPersistenceManager extends PersistenceManager {
 
     @Override
     public void onJobInited(Job job) {
-        updateJobStatus(job);
+        cliHeartbeatMonitor.registerIfCliJob(job);
     }
 
     @Override
@@ -168,10 +192,24 @@ public class QueryPersistenceManager extends PersistenceManager {
         try {
             if (job.isSucceed()) {
                 CSEntranceHelper.registerCSRSData(job);
+            } else {
+                JobRequest jobRequest =
+                        this.entranceContext.getOrCreateEntranceParser().parseToJobRequest(job);
+                if (null == jobRequest.getErrorCode() || jobRequest.getErrorCode() == 0) {
+                    Option<Tuple2<String, String>> tuple2Option =
+                            FlexibleErrorCodeManager.errorMatch(jobRequest.getErrorDesc());
+                    if (tuple2Option.isDefined()) {
+                        logger.info(jobRequest.getId() + " to reset errorCode by errorMsg");
+                        Tuple2<String, String> errorCodeContent = tuple2Option.get();
+                        jobRequest.setErrorCode(Integer.parseInt(errorCodeContent._1));
+                        jobRequest.setErrorDesc(errorCodeContent._2);
+                    }
+                }
             }
         } catch (Throwable e) {
             logger.error("Failed to register cs rs data ", e);
         }
+        cliHeartbeatMonitor.unRegisterIfCliJob(job);
         updateJobStatus(job);
     }
 
@@ -183,9 +221,8 @@ public class QueryPersistenceManager extends PersistenceManager {
         try {
             jobRequest = this.entranceContext.getOrCreateEntranceParser().parseToJobRequest(job);
             if (job.isSucceed()) {
-                // 如果是job是成功的，那么需要将task的错误描述等都要设置为null
                 jobRequest.setErrorCode(0);
-                jobRequest.setErrorDesc(null);
+                jobRequest.setErrorDesc("");
             }
         } catch (Exception e) {
             entranceContext.getOrCreateLogManager().onLogUpdate(job, e.getMessage());

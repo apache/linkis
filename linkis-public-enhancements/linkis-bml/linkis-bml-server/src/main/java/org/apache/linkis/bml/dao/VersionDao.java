@@ -96,4 +96,8 @@ public interface VersionDao {
             @Param("resourceId") String resourceId, @Param("version") String version);
 
     List<Version> selectVersionByPage(@Param("resourceId") String resourceId);
+
+    @Select(
+            "select * from linkis_ps_bml_resources_version where resource_id=#{resourceId} and enable_flag = 1")
+    List<ResourceVersion> getResourceVersionsByResourceId(@Param("resourceId") String resourceId);
 }

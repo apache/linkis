@@ -189,4 +189,12 @@ public class ResourceServiceImpl implements ResourceService {
         //        }
         // resourceDao.cleanExpiredResources();
     }
+
+    @Override
+    public void changeOwnerByResourceId(String resourceId, String oldOwner, String newOwner) {
+        resourceDao.changeOwner(resourceId, oldOwner, newOwner);
+    }
+
+    @Override
+    public void copyResourceToOtherUser(String resourceId, String otherUser) {}
 }

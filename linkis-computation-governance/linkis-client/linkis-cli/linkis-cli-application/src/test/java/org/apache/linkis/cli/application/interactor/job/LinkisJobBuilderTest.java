@@ -20,16 +20,17 @@ package org.apache.linkis.cli.application.interactor.job;
 import org.apache.linkis.cli.application.data.ProcessedData;
 import org.apache.linkis.cli.application.interactor.command.template.ProcessInputUtil;
 import org.apache.linkis.cli.application.interactor.command.template.TestSparkCmdTemplate;
+import org.apache.linkis.cli.core.interactor.job.JobBuilder;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class LinkisJobBuilderTest {
-    LinkisJobBuilder builder;
+    JobBuilder builder;
 
     @BeforeEach
-    public void before() throws Exception {
+    public void before() {
         String[] cmdStr =
                 new String[] {
                     "-u",
@@ -69,17 +70,17 @@ public class LinkisJobBuilderTest {
     }
 
     @AfterEach
-    public void after() throws Exception {}
+    public void after() {}
 
     /** Method: setIdentifier(String identifier) */
     @Test
-    public void testSetIdentifier() throws Exception {
+    public void testSetIdentifier() {
         // TODO: Test goes here...
     }
 
     /** Method: build() */
     @Test
-    public void testBuild() throws Exception {
+    public void testBuild() {
         // TODO: Test goes here...
         //  LinkisJob job = builder.build();
         //  System.out.println(CommonUtils.GSON.toJson(job));
@@ -88,19 +89,19 @@ public class LinkisJobBuilderTest {
 
     /** Method: setStdVarAccess(VarAccess varAccess) */
     @Test
-    public void testSetStdVarAccess() throws Exception {
+    public void testSetStdVarAccess() {
         // TODO: Test goes here...
     }
 
     /** Method: setSysVarAccess(VarAccess varAccess) */
     @Test
-    public void testSetSysVarAccess() throws Exception {
+    public void testSetSysVarAccess() {
         // TODO: Test goes here...
     }
 
     /** Method: getTargetNewInstance() */
     @Test
-    public void testGetTargetNewInstance() throws Exception {
+    public void testGetTargetNewInstance() {
         // TODO: Test goes here...
     }
 }

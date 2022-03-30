@@ -24,6 +24,9 @@ object EngineConnPluginConfiguration {
 
   val ENGINE_CONN_HOME = CommonVars("wds.linkis.engineconn.home",
     CommonVars[String]("ENGINE_CONN_HOME", Configuration.getLinkisHome() + "/lib/linkis-engineconn-plugins").getValue)
+
   val ENGINE_CONN_DIST_LOAD_ENABLE = CommonVars("wds.linkis.engineconn.dist.load.enable", true)
+
+  val ENABLED_BML_UPLOAD_FAILED_EXIT = CommonVars("wds.linkis.engineconn.bml.upload.failed.enable", true)
 
 }

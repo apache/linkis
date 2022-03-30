@@ -17,10 +17,9 @@
  
 package org.apache.linkis.engineconn.computation.executor.service
 
-import java.util.concurrent.atomic.AtomicInteger
-import java.util.concurrent._
-
 import com.google.common.cache.{Cache, CacheBuilder}
+import org.apache.commons.lang3.StringUtils
+import org.apache.commons.lang3.exception.ExceptionUtils
 import org.apache.linkis.common.listener.Event
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.engineconn.acessible.executor.listener.LogListener
@@ -28,30 +27,36 @@ import org.apache.linkis.engineconn.acessible.executor.listener.event._
 import org.apache.linkis.engineconn.acessible.executor.log.LogHelper
 import org.apache.linkis.engineconn.acessible.executor.service.LockService
 import org.apache.linkis.engineconn.common.conf.{EngineConnConf, EngineConnConstant}
+import org.apache.linkis.engineconn.computation.executor.async.AsyncConcurrentComputationExecutor
 import org.apache.linkis.engineconn.computation.executor.conf.ComputationExecutorConf
 import org.apache.linkis.engineconn.computation.executor.entity.{CommonEngineConnTask, EngineConnTask}
 import org.apache.linkis.engineconn.computation.executor.execute.{ComputationExecutor, ConcurrentComputationExecutor}
+import org.apache.linkis.engineconn.computation.executor.hook.ExecutorLabelsRestHook
 import org.apache.linkis.engineconn.computation.executor.listener.{ResultSetListener, TaskProgressListener, TaskStatusListener}
+import org.apache.linkis.engineconn.computation.executor.upstream.event.TaskStatusChangedForUpstreamMonitorEvent
 import org.apache.linkis.engineconn.computation.executor.utlis.{ComputationEngineConstant, ComputationEngineUtils}
 import org.apache.linkis.engineconn.core.executor.ExecutorManager
+import org.apache.linkis.engineconn.executor.entity.ResourceFetchExecutor
 import org.apache.linkis.engineconn.executor.listener.ExecutorListenerBusContext
 import org.apache.linkis.engineconn.executor.listener.event.EngineConnSyncEvent
 import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
 import org.apache.linkis.governance.common.exception.engineconn.{EngineConnExecutorErrorCode, EngineConnExecutorErrorException}
 import org.apache.linkis.governance.common.protocol.task._
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
-import org.apache.linkis.message.annotation.Receiver
-import org.apache.linkis.message.builder.ServiceMethodContext
+import org.apache.linkis.manager.common.protocol.resource.ResponseTaskYarnResource
+import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.protocol.message.RequestProtocol
 import org.apache.linkis.rpc.Sender
+import org.apache.linkis.rpc.message.annotation.Receiver
 import org.apache.linkis.rpc.utils.RPCUtils
 import org.apache.linkis.scheduler.executer.{ErrorExecuteResponse, ExecuteResponse, IncompleteExecuteResponse, SubmitResponse}
 import org.apache.linkis.server.BDPJettyServerHelper
-import javax.annotation.PostConstruct
-import org.apache.commons.lang.StringUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
+import java.util.concurrent._
+import java.util.concurrent.atomic.AtomicInteger
+import javax.annotation.PostConstruct
 import scala.collection.JavaConverters._
 
 
@@ -102,8 +107,8 @@ class TaskExecutionServiceImpl extends TaskExecutionService with Logging with Re
   }
 
   @Receiver
-  override def execute(requestTask: RequestTask, smc: ServiceMethodContext): ExecuteResponse = {
-    // smc    // todo get sender
+  override def execute(requestTask: RequestTask, sender: Sender): ExecuteResponse = {
+
     // check lock
     info("Received a new task, task content is " + requestTask)
     if (StringUtils.isBlank(requestTask.getLock)) {
@@ -119,7 +124,6 @@ class TaskExecutionServiceImpl extends TaskExecutionService with Logging with Re
       return IncompleteExecuteResponse("Your code is incomplete, it may be that only comments are selected for execution(您的代码不完整，可能是仅仅选中了注释进行执行)")
     }
 
-    // 获取任务类型和任务代码，运行任务
     val taskId: Int = taskExecutedNum.incrementAndGet()
     val retryAble: Boolean = {
       val retry = requestTask.getProperties.getOrDefault(ComputationEngineConstant.RETRYABLE_TYPE_NAME, null)
@@ -133,8 +137,34 @@ class TaskExecutionServiceImpl extends TaskExecutionService with Logging with Re
     task.setStatus(ExecutionNodeStatus.Scheduled)
     val labels = requestTask.getLabels.asScala.toArray
     task.setLabels(labels)
-    val entranceServerInstance = RPCUtils.getServiceInstanceFromSender(smc.getSender)
+    val entranceServerInstance = RPCUtils.getServiceInstanceFromSender(sender)
     task.setCallbackServiceInstance(entranceServerInstance)
+    if (executorManager.containExecutor(labels)) {
+      submitTaskToExecutor(task, labels)
+    } else {
+      logger.info(s"task $taskId need to create executor")
+      val runnable = new Runnable {
+        override def run(): Unit = Utils.tryCatch {
+          submitTaskToExecutor(task, labels) match {
+            case ErrorExecuteResponse(message, throwable) =>
+              sendToEntrance(task, ResponseTaskError(task.getTaskId, message))
+              logger.error(message, throwable)
+              sendToEntrance(task, ResponseTaskStatus(task.getTaskId, ExecutionNodeStatus.Failed))
+            case _ =>
+          }
+        } { t =>
+          logger.warn("Failed to submit task ", t)
+          sendToEntrance(task, ResponseTaskError(task.getTaskId, ExceptionUtils.getRootCauseMessage(t)))
+          sendToEntrance(task, ResponseTaskStatus(task.getTaskId, ExecutionNodeStatus.Failed))
+        }
+      }
+      val submitTaskToExecutorFuture = Utils.defaultScheduler.submit(runnable)
+      SubmitResponse(task.getTaskId)
+    }
+  }
+
+  private def submitTaskToExecutor(task: CommonEngineConnTask, labels: Array[Label[_]]): ExecuteResponse = {
+    val newLabels = restExecutorLabels(labels)
     val executor = executorManager.getExecutorByLabels(labels)
     executor match {
       case computationExecutor: ComputationExecutor =>
@@ -142,14 +172,17 @@ class TaskExecutionServiceImpl extends TaskExecutionService with Logging with Re
         submitTask(task, computationExecutor)
       case o =>
         val labelsStr = if (labels != null) labels.filter(_ != null).map(_.getStringValue).mkString(",") else ""
-        val msg = "Invalid computationExecutor : " + o.getClass.getName + ", labels : " + labelsStr + ", requestTask : " + requestTask
+        val msg = "Invalid computationExecutor : " + o.getClass.getName + ", labels : " + labelsStr + ", requestTask : " + task.getTaskId
         error(msg)
-        ErrorExecuteResponse("Invalid computationExecutor(生成无效的计算引擎，请联系管理员).",
-          new EngineConnExecutorErrorException(EngineConnExecutorErrorCode.INVALID_ENGINE_TYPE, msg))
+        ErrorExecuteResponse("Invalid computationExecutor(生成无效的计算引擎，请联系管理员).", new EngineConnExecutorErrorException(EngineConnExecutorErrorCode.INVALID_ENGINE_TYPE, msg))
     }
-
   }
 
+  private def restExecutorLabels(labels: Array[Label[_]]): Array[Label[_]] = {
+    var newLabels = labels
+    ExecutorLabelsRestHook.getExecutorLabelsRestHooks.foreach(hooke => newLabels = hooke.restExecutorLabels(newLabels))
+    newLabels
+  }
 
   //  override def taskStatus(taskID: String): ResponseTaskStatus = {
   //    val task = taskIdCache.get(taskID)
@@ -159,12 +192,27 @@ class TaskExecutionServiceImpl extends TaskExecutionService with Logging with Re
   private def submitTask(task: CommonEngineConnTask, computationExecutor: ComputationExecutor): ExecuteResponse = {
     info(s"Task ${task.getTaskId} was submited.")
     computationExecutor match {
+      case executor: AsyncConcurrentComputationExecutor =>
+        submitASyncTask(task, executor)
       case concurrentComputationExecutor: ConcurrentComputationExecutor =>
         submitConcurrentTask(task, concurrentComputationExecutor)
       case _ =>
         submitSyncTask(task, computationExecutor)
     }
   }
+
+  private def submitASyncTask(task: CommonEngineConnTask, computationExecutor: ComputationExecutor): ExecuteResponse = {
+    var response: ExecuteResponse = SubmitResponse(task.getTaskId)
+    Utils.tryCatch {
+      computationExecutor.execute(task)
+    } { t =>
+      error(s"Failed to submit task${task.getTaskId} ", t)
+      response = ErrorExecuteResponse("Failed to submit task", t)
+      null
+    }
+    response
+  }
+
 
   private def submitSyncTask(task: CommonEngineConnTask, computationExecutor: ComputationExecutor): ExecuteResponse = {
     val runTask = new Runnable {
@@ -264,11 +312,29 @@ class TaskExecutionServiceImpl extends TaskExecutionService with Logging with Re
         while (null != taskFuture && !taskFuture.isDone) {
           if (ExecutionNodeStatus.isCompleted(task.getStatus) || ExecutionNodeStatus.isRunning(task.getStatus)) {
             sendToEntrance(task, taskProgress(task.getTaskId))
+            taskYarnResource(task.getTaskId) match {
+              case responseTaskYarnResource: ResponseTaskYarnResource => {
+                if (responseTaskYarnResource.resourceMap != null && !responseTaskYarnResource.resourceMap.isEmpty) {
+                  sendToEntrance(task, responseTaskYarnResource)
+                }
+              }
+              case _ =>
+            }
             Thread.sleep(TimeUnit.MILLISECONDS.convert(sleepInterval, TimeUnit.SECONDS))
           }
         }
       }
     })
+  }
+
+  private def taskYarnResource(taskID: String): ResponseTaskYarnResource = {
+    val executor = taskIdCache.getIfPresent(taskID)
+    executor match {
+      case executor: ResourceFetchExecutor =>
+        val resourceWithApplicationId = executor.FetchResource
+        ResponseTaskYarnResource(taskID, resourceWithApplicationId)
+      case _ => null
+    }
   }
 
   override def taskProgress(taskID: String): ResponseTaskProgress = {
@@ -365,6 +431,8 @@ class TaskExecutionServiceImpl extends TaskExecutionService with Logging with Re
     case logUpdateEvent: TaskLogUpdateEvent => onLogUpdate(logUpdateEvent)
     case taskResultCreateEvent: TaskResultCreateEvent => onResultSetCreated(taskResultCreateEvent)
     case taskResultSizeCreatedEvent: TaskResultSizeCreatedEvent => onResultSizeCreated(taskResultSizeCreatedEvent)
+    case taskResponseErrorEvent: TaskResponseErrorEvent => onTaskResponseErrorEvent(taskResponseErrorEvent)
+    case taskStatusChangedEvent2: TaskStatusChangedForUpstreamMonitorEvent => info("ignored TaskStatusChangedEvent2 for entrance monitoring, task: " + taskStatusChangedEvent2.taskId)
     case _ =>
       warn("Unknown event : " + BDPJettyServerHelper.gson.toJson(event))
   }
@@ -403,8 +471,12 @@ class TaskExecutionServiceImpl extends TaskExecutionService with Logging with Re
         LogHelper.pushAllRemainLogs()
       }
       val toStatus = taskStatusChangedEvent.toStatus
-      logger.info(s"send task ${task.getTaskId} status $toStatus to entrance")
-      sendToEntrance(task, ResponseTaskStatus(taskStatusChangedEvent.taskId, taskStatusChangedEvent.toStatus))
+      if (!ComputationExecutorConf.TASK_IGNORE_UNCOMPLETED_STATUS || ExecutionNodeStatus.isCompleted(toStatus)) {
+        logger.info(s"send task ${task.getTaskId} status $toStatus to entrance")
+        sendToEntrance(task, ResponseTaskStatus(taskStatusChangedEvent.taskId, taskStatusChangedEvent.toStatus))
+      } else {
+        logger.info(s"task ${task.getTaskId} status $toStatus will not be send to entrance")
+      }
     } else {
       error("Task cannot null! taskStatusChangedEvent: " + ComputationEngineUtils.GSON.toJson(taskStatusChangedEvent))
     }
@@ -471,6 +543,13 @@ class TaskExecutionServiceImpl extends TaskExecutionService with Logging with Re
         executor.clearTaskCache(taskId)
         taskIdCache.invalidate(taskId)
       }
+    }
+  }
+
+  override def onTaskResponseErrorEvent(taskResponseErrorEvent: TaskResponseErrorEvent): Unit = {
+    val task = getTaskByTaskId(taskResponseErrorEvent.taskId)
+    if (null != task) {
+      sendToEntrance(task, ResponseTaskError(task.getTaskId, taskResponseErrorEvent.errorMsg))
     }
   }
 }

@@ -20,7 +20,7 @@ package org.apache.linkis.engineconn.executor.service
 import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.engineconn.executor.conf.EngineConnExecutorConfiguration
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
-import org.apache.linkis.manager.common.protocol.engine.EngineConnReleaseRequest
+import org.apache.linkis.manager.common.protocol.engine.{ECCanKillRequest, ECCanKillResponse, EngineConnReleaseRequest}
 import org.apache.linkis.manager.common.protocol.node.NodeHeartbeatMsg
 import org.apache.linkis.manager.common.protocol.resource.ResourceUsedProtocol
 import org.apache.linkis.manager.label.entity.Label
@@ -36,6 +36,8 @@ trait ManagerService {
   def heartbeatReport(nodeHeartbeatMsg: NodeHeartbeatMsg): Unit
 
   def reportUsedResource(resourceUsedProtocol: ResourceUsedProtocol): Unit
+
+  def ecCanKillRequest(ecCanKillRequest: ECCanKillRequest): ECCanKillResponse
 
 }
 

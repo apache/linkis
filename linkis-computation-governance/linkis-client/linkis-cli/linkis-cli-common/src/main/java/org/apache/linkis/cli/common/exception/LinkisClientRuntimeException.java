@@ -22,16 +22,15 @@ import org.apache.linkis.cli.common.exception.error.ErrorMsg;
 
 import java.text.MessageFormat;
 
-/** @description: RuntimeException for BdpLinkisClient */
 public class LinkisClientRuntimeException extends RuntimeException {
     private static final long serialVersionUID = 342134234324357L;
 
-    /** ErrorCode */
+    /** 异常错误码 */
     private String code;
 
-    /** Description */
+    /** 异常描述 */
     private String msg;
-    /** extra message */
+    /** 扩展异常描述（包括msg） */
     private String extMsg;
 
     private ErrorLevel level;

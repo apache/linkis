@@ -43,10 +43,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class DataSourceServiceImpl implements DataSourceService {
@@ -248,6 +245,39 @@ public class DataSourceServiceImpl implements DataSourceService {
             }
         }
         return partitionJson;
+    }
+
+    @DataSource(name = DSEnum.FIRST_DATA_SOURCE)
+    @Override
+    public Map<String,Object> getAllTableSize(String dbName, String tableName, String userName) {
+        Map<String, String> map = Maps.newHashMap();
+        map.put("dbName", dbName);
+        map.put("tableName", tableName);
+        List<String> partitions = hiveMetaDao.getPartitions(map);
+        Long totalSize=0L;
+        if(partitions!=null && !partitions.isEmpty()){
+            for(String partitionName:partitions){
+                map.put("partitionName", partitionName);
+                totalSize+=hiveMetaDao.getPartitionSize(map);
+            }
+        }else{
+            try {
+                FileStatus tableFile = getRootHdfs().getFileStatus(new Path(this.getTableLocation(dbName, tableName)));
+                if (tableFile.isDirectory()) {
+                    totalSize = getRootHdfs().getContentSummary(tableFile.getPath()).getLength();
+                } else {
+                    totalSize = tableFile.getLen();
+                }
+            } catch (IOException e) {
+                logger.error("getAllTableSize error:", e);
+            }
+        }
+        Map<String,Object> result =new HashMap<>();
+        result.put("size",totalSize);
+        result.put("sizeStr",ByteTimeUtils.bytesToString(totalSize));
+        result.put("tableName", dbName + "." + tableName);
+
+        return result;
     }
 
     private FileSystem getRootHdfs() {

@@ -15,14 +15,12 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.datasource.client.config
+package org.apache.linkis.datasource.client
 
-import org.apache.linkis.common.conf.CommonVars
+import org.apache.linkis.datasource.client.request.{GetMetadataSourceAllDatabasesAction, GetMetadataSourceAllSizeAction}
+import org.apache.linkis.datasource.client.response.{GetMetadataSourceAllDatabasesResult, GetMetadataSourceAllSizeResult}
 
-object DatasourceClientConfig {
-  var METADATA_SERVICE_MODULE: CommonVars[String] = CommonVars.apply("wds.linkis.server.mdm.module.name", "metadatamanager")
-
-  var DATA_SOURCE_SERVICE_MODULE: CommonVars[String] = CommonVars.apply("wds.linkis.server.dsm.module.name", "data-source-manager")
-
-  var LINKIS_METADATA_SERVICE_MODULE: CommonVars[String] = CommonVars.apply("wds.linkis.server.metadata.module.name", "datasource")
+trait MetadataSourceRemoteClient extends RemoteClient{
+  def getAllDBMetaDataSource(action:GetMetadataSourceAllDatabasesAction):GetMetadataSourceAllDatabasesResult
+  def getAllSizeMetaDataSource(action:GetMetadataSourceAllSizeAction):GetMetadataSourceAllSizeResult
 }

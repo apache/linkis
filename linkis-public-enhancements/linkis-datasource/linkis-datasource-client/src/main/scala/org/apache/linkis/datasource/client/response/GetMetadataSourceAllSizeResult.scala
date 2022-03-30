@@ -15,14 +15,15 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.datasource.client.config
+package org.apache.linkis.datasource.client.response
 
-import org.apache.linkis.common.conf.CommonVars
+import org.apache.linkis.httpclient.dws.annotation.DWSHttpMessageResult
+import org.apache.linkis.httpclient.dws.response.DWSResult
 
-object DatasourceClientConfig {
-  var METADATA_SERVICE_MODULE: CommonVars[String] = CommonVars.apply("wds.linkis.server.mdm.module.name", "metadatamanager")
+import java.util
+import scala.beans.BeanProperty
 
-  var DATA_SOURCE_SERVICE_MODULE: CommonVars[String] = CommonVars.apply("wds.linkis.server.dsm.module.name", "data-source-manager")
-
-  var LINKIS_METADATA_SERVICE_MODULE: CommonVars[String] = CommonVars.apply("wds.linkis.server.metadata.module.name", "datasource")
+@DWSHttpMessageResult("/api/rest_j/v\\d+/datasource/all/size")
+class GetMetadataSourceAllSizeResult extends DWSResult {
+  @BeanProperty var sizeInfo: util.Map[String,Any] = _
 }

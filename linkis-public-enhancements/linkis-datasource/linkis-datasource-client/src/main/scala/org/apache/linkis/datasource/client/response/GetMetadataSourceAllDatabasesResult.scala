@@ -24,7 +24,7 @@ import scala.beans.BeanProperty
 
 @DWSHttpMessageResult("/api/rest_j/v\\d+/datasource/dbs")
 class GetMetadataSourceAllDatabasesResult extends DWSResult {
-  @BeanProperty var dbs: java.util.List[String] = _
+  @BeanProperty var dbs: java.util.List[java.util.Map[String, Any]] = _
 
   def allDbs: java.util.List[String] ={
     import scala.collection.JavaConverters._

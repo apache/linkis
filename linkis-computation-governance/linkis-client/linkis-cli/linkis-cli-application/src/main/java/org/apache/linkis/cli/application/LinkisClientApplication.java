@@ -17,8 +17,6 @@
 
 package org.apache.linkis.cli.application;
 
-import org.apache.commons.collections.map.HashedMap;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.linkis.cli.application.constants.AppConstants;
 import org.apache.linkis.cli.application.constants.LinkisClientKeys;
 import org.apache.linkis.cli.application.data.FinishedData;
@@ -80,6 +78,10 @@ import org.apache.linkis.cli.core.interactor.var.VarAccess;
 import org.apache.linkis.cli.core.presenter.Presenter;
 import org.apache.linkis.cli.core.utils.LogUtils;
 import org.apache.linkis.common.utils.JacksonUtils;
+
+import org.apache.commons.collections.map.HashedMap;
+import org.apache.commons.lang3.StringUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

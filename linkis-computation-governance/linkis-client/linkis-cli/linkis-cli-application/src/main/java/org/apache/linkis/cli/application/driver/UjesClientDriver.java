@@ -17,7 +17,6 @@
 
 package org.apache.linkis.cli.application.driver;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.linkis.cli.application.constants.LinkisConstants;
 import org.apache.linkis.cli.application.constants.LinkisKeys;
 import org.apache.linkis.cli.application.constants.UjesClientDriverConstants;
@@ -43,6 +42,9 @@ import org.apache.linkis.ujes.client.request.JobSubmitAction;
 import org.apache.linkis.ujes.client.request.OpenLogAction;
 import org.apache.linkis.ujes.client.request.ResultSetAction;
 import org.apache.linkis.ujes.client.response.*;
+
+import org.apache.commons.lang3.StringUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -206,7 +208,8 @@ public class UjesClientDriver implements LinkisClientDriver {
             //      jobExecuteResult = client.execute(jobExecuteAction);
 
             jobSubmitResult = client.submit(jobSubmitAction);
-            logger.info("Response info from Linkis: \n{}", JacksonUtils.toJsonFormat(jobSubmitAction));
+            logger.info(
+                    "Response info from Linkis: \n{}", JacksonUtils.toJsonFormat(jobSubmitAction));
 
         } catch (Exception e) {
             // must throw if exception

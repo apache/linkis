@@ -17,8 +17,6 @@
 
 package org.apache.linkis.cs.execution.ruler;
 
-import com.google.common.collect.Lists;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.linkis.common.utils.JacksonUtils;
 import org.apache.linkis.cs.common.entity.enumeration.ContextType;
 import org.apache.linkis.cs.common.entity.object.CSFlowInfos;
@@ -30,6 +28,10 @@ import org.apache.linkis.cs.common.utils.CSCommonUtils;
 import org.apache.linkis.cs.condition.impl.NearestCondition;
 import org.apache.linkis.cs.contextcache.ContextCacheService;
 import org.apache.linkis.cs.execution.matcher.ContextSearchMatcher;
+
+import org.apache.commons.lang3.StringUtils;
+
+import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -69,8 +69,7 @@ public class ExternalResourceProvider {
 
     public Map<String, Object> getConfigMap() {
         if (configMap == null) {
-            configMap =
-                    JacksonUtils.fromJson(config, Map.class);
+            configMap = JacksonUtils.fromJson(config, Map.class);
         }
         return configMap;
     }

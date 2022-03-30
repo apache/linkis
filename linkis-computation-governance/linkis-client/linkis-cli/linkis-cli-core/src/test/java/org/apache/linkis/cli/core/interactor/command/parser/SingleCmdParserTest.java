@@ -24,6 +24,7 @@ import org.apache.linkis.cli.core.interactor.command.parser.result.ParseResult;
 import org.apache.linkis.cli.core.interactor.command.template.TestParamMapper;
 import org.apache.linkis.cli.core.interactor.command.template.TestSparkCmdTemplate;
 import org.apache.linkis.common.utils.JacksonUtils;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

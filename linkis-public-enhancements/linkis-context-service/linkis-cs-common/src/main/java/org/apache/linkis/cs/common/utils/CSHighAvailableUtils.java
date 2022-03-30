@@ -17,12 +17,14 @@
 
 package org.apache.linkis.cs.common.utils;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.linkis.common.utils.JacksonUtils;
 import org.apache.linkis.cs.common.entity.source.CommonHAContextID;
 import org.apache.linkis.cs.common.entity.source.HAContextID;
 import org.apache.linkis.cs.common.exception.CSErrorException;
 import org.apache.linkis.cs.common.exception.ErrorCode;
+
+import org.apache.commons.lang3.StringUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -17,7 +17,6 @@
 
 package org.apache.linkis.cs.highavailable.ha.impl;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.linkis.DataWorkCloudApplication;
 import org.apache.linkis.common.ServiceInstance;
 import org.apache.linkis.common.utils.JacksonUtils;
@@ -29,10 +28,14 @@ import org.apache.linkis.cs.highavailable.exception.CSErrorCode;
 import org.apache.linkis.cs.highavailable.ha.BackupInstanceGenerator;
 import org.apache.linkis.cs.highavailable.ha.ContextHAIDGenerator;
 import org.apache.linkis.cs.highavailable.ha.instancealias.InstanceAliasConverter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import org.apache.commons.lang3.StringUtils;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Component
 public class ContextHAIDGeneratorImpl implements ContextHAIDGenerator {

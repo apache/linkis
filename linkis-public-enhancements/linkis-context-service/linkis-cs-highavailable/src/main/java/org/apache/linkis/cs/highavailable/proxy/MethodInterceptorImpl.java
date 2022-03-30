@@ -17,17 +17,19 @@
 
 package org.apache.linkis.cs.highavailable.proxy;
 
-import net.sf.cglib.proxy.MethodInterceptor;
-import net.sf.cglib.proxy.MethodProxy;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.linkis.common.utils.JacksonUtils;
 import org.apache.linkis.cs.common.entity.source.ContextID;
 import org.apache.linkis.cs.common.entity.source.HAContextID;
 import org.apache.linkis.cs.common.exception.CSErrorException;
 import org.apache.linkis.cs.highavailable.AbstractContextHAManager;
 import org.apache.linkis.cs.highavailable.exception.CSErrorCode;
+
+import org.apache.commons.lang3.StringUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import net.sf.cglib.proxy.MethodInterceptor;
+import net.sf.cglib.proxy.MethodProxy;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -145,10 +147,13 @@ public class MethodInterceptorImpl implements MethodInterceptor {
                                                 .convertHAIDToHAKey(haContextID);
                                 haContextID.setContextId(haId);
                             } else {
-                                logger.error("Invalid HAContextID : " + JacksonUtils.toJson(haContextID));
+                                logger.error(
+                                        "Invalid HAContextID : "
+                                                + JacksonUtils.toJson(haContextID));
                                 throw new CSErrorException(
                                         CSErrorCode.INVAID_HA_CONTEXTID,
-                                        "Invalid HAContextID : " + JacksonUtils.toJson(haContextID));
+                                        "Invalid HAContextID : "
+                                                + JacksonUtils.toJson(haContextID));
                             }
                         }
                     }
@@ -190,7 +195,8 @@ public class MethodInterceptorImpl implements MethodInterceptor {
                     }
                     this.contextHAManager.convertProxyHAID((HAContextID) contextID);
                 } else {
-                    logger.error("Invalid haContextId. contextId : " + JacksonUtils.toJson(contextID));
+                    logger.error(
+                            "Invalid haContextId. contextId : " + JacksonUtils.toJson(contextID));
                     throw new CSErrorException(
                             CSErrorCode.INVALID_HAID,
                             "Invalid haContextId. contextId : " + JacksonUtils.toJson(contextID));

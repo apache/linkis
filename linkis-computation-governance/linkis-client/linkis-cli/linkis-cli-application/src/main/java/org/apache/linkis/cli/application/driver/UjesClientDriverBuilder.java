@@ -17,7 +17,6 @@
 
 package org.apache.linkis.cli.application.driver;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.linkis.cli.application.constants.LinkisClientKeys;
 import org.apache.linkis.cli.application.constants.LinkisConstants;
 import org.apache.linkis.cli.application.driver.context.UjesClientDriverContext;
@@ -29,6 +28,9 @@ import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
 import org.apache.linkis.cli.core.interactor.validate.Validator;
 import org.apache.linkis.cli.core.interactor.var.VarAccess;
 import org.apache.linkis.common.utils.JacksonUtils;
+
+import org.apache.commons.lang3.StringUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -28,14 +28,16 @@ public class TestPersistence {
 
     public HAContextID createHAID(HAContextID haContextID) {
         System.out.println(
-                "TestPersistence: createHAID(), params: haContextID : " + JacksonUtils.toJson(haContextID));
+                "TestPersistence: createHAID(), params: haContextID : "
+                        + JacksonUtils.toJson(haContextID));
         haContextID.setContextId("1");
         return haContextID;
     }
 
     public HAContextID passHAID(HAContextID haContextID) {
         System.out.println(
-                "TestPersistence: passHAID(), params: haContextID : " + JacksonUtils.toJson(haContextID));
+                "TestPersistence: passHAID(), params: haContextID : "
+                        + JacksonUtils.toJson(haContextID));
         return haContextID;
     }
 

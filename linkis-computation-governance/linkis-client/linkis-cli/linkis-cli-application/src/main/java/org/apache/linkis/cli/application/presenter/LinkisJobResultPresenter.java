@@ -17,7 +17,6 @@
 
 package org.apache.linkis.cli.application.presenter;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.linkis.cli.application.constants.AppConstants;
 import org.apache.linkis.cli.application.presenter.model.LinkisJobResultModel;
 import org.apache.linkis.cli.common.entity.job.OutputWay;
@@ -32,6 +31,9 @@ import org.apache.linkis.cli.core.presenter.model.PresenterModel;
 import org.apache.linkis.cli.core.utils.LogUtils;
 import org.apache.linkis.common.utils.JacksonUtils;
 import org.apache.linkis.httpclient.dws.response.DWSResult;
+
+import org.apache.commons.lang3.StringUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -115,7 +117,8 @@ public class LinkisJobResultPresenter extends QueryBasedPresenter {
                     } catch (Exception e) {
                         logger.warn(
                                 "Cannot convert ResultSet-Meta-Data. ResultSet-Meta-Data:"
-                                        + JacksonUtils.toJsonFormat(resultModel.getResultMetaData()),
+                                        + JacksonUtils.toJsonFormat(
+                                                resultModel.getResultMetaData()),
                                 e);
                         continue;
                     }

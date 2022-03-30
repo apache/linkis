@@ -35,9 +35,7 @@ public class CSTableLineageSerializer extends AbstractSerializer<CSTableLineageH
     public CSTableLineageHistory fromJson(String json) throws CSErrorException {
         Map<String, String> map = getMapValue(json);
         CSTableLineageHistory history = get(map, new CSTableLineageHistory());
-        history.setSourceTables(
-                JacksonUtils.fromJson(
-                        map.get("sourceTables"), List.class));
+        history.setSourceTables(JacksonUtils.fromJson(map.get("sourceTables"), List.class));
         history.setTable(JacksonUtils.fromJson(map.get("targetTable"), CSTable.class));
         return history;
     }

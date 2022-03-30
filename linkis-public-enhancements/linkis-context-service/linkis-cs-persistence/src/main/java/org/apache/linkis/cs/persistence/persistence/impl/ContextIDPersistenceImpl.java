@@ -19,6 +19,7 @@ package org.apache.linkis.cs.persistence.persistence.impl;
 
 import org.apache.linkis.cs.common.entity.source.ContextID;
 import org.apache.linkis.cs.common.exception.CSErrorException;
+import org.apache.linkis.cs.persistence.conf.PersistenceConf;
 import org.apache.linkis.cs.persistence.dao.ContextIDMapper;
 import org.apache.linkis.cs.persistence.entity.ExtraFieldClass;
 import org.apache.linkis.cs.persistence.entity.PersistenceContextID;
@@ -26,6 +27,7 @@ import org.apache.linkis.cs.persistence.persistence.ContextIDPersistence;
 import org.apache.linkis.cs.persistence.util.PersistenceUtils;
 import org.apache.linkis.server.BDPJettyServerHelper;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.math3.util.Pair;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,6 +84,39 @@ public class ContextIDPersistenceImpl implements ContextIDPersistence {
         try {
             PersistenceContextID pContextID = contextIDMapper.getContextID(contextId);
             if (pContextID == null) return null;
+            if (PersistenceConf.ENABLE_CS_DESERIALIZE_REPLACE_PACKAGE_HEADER.getValue()) {
+                if (StringUtils.isBlank(pContextID.getSource())
+                        || StringUtils.isBlank(
+                                PersistenceConf.CS_DESERIALIZE_REPLACE_PACKAGE_HEADER.getValue())) {
+                    logger.error(
+                            "Source : {} of ContextID or CSID_REPLACE_PACKAGE_HEADER : {} cannot be empty.",
+                            pContextID.getSource(),
+                            PersistenceConf.CS_DESERIALIZE_REPLACE_PACKAGE_HEADER.getValue());
+                } else {
+                    if (pContextID
+                            .getSource()
+                            .contains(
+                                    PersistenceConf.CS_DESERIALIZE_REPLACE_PACKAGE_HEADER
+                                            .getValue())) {
+                        if (logger.isDebugEnabled()) {
+                            logger.debug(
+                                    "Will replace package header of source : {} from : {} to : {}",
+                                    pContextID.getSource(),
+                                    PersistenceConf.CS_DESERIALIZE_REPLACE_PACKAGE_HEADER
+                                            .getValue(),
+                                    PersistenceConf.CSID_PACKAGE_HEADER);
+                        }
+                        pContextID.setSource(
+                                pContextID
+                                        .getSource()
+                                        .replaceAll(
+                                                PersistenceConf
+                                                        .CS_DESERIALIZE_REPLACE_PACKAGE_HEADER
+                                                        .getValue(),
+                                                PersistenceConf.CSID_PACKAGE_HEADER));
+                    }
+                }
+            }
             ExtraFieldClass extraFieldClass =
                     json.readValue(pContextID.getSource(), ExtraFieldClass.class);
             ContextID contextID = PersistenceUtils.transfer(extraFieldClass, pContextID);

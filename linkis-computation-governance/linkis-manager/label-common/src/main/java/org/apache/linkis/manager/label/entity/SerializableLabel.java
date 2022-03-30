@@ -108,9 +108,6 @@ public abstract class SerializableLabel<T> implements Label<T> {
                 CACHE.put(this.getClass(), orderedValueNames);
             }
             if (stringValueArray.length != orderedValueNames.size()) {
-                // Warn
-                // LOG.info("str_value: [" + stringValue + "] doesn't match ordered_value_name: [" +
-                // StringUtils.join(orderedValueNames, ",") + "]");
                 return;
             }
             for (int i = 0; i < orderedValueNames.size(); i++) {

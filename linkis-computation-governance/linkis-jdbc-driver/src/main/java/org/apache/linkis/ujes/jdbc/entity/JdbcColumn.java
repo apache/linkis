@@ -5,16 +5,16 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.ujes.jdbc.entity;
 
 import org.apache.linkis.ujes.jdbc.UJESSQLTypeParser;
@@ -22,9 +22,7 @@ import org.apache.linkis.ujes.jdbc.UJESSQLTypeParser;
 import java.sql.SQLException;
 import java.sql.Types;
 
-/**
- * Column metadata.
- */
+/** Column metadata. */
 public class JdbcColumn {
 
     private final String columnName;
@@ -34,34 +32,19 @@ public class JdbcColumn {
     private final String comment;
     private final int ordinalPos;
 
-    public JdbcColumn(String columnName, String tableName, String tableCatalog
-            , String type, String comment, int ordinalPos) {
+    public JdbcColumn(
+            String columnName,
+            String tableName,
+            String tableCatalog,
+            String type,
+            String comment,
+            int ordinalPos) {
         this.columnName = columnName;
         this.tableName = tableName;
         this.tableCatalog = tableCatalog;
         this.type = type;
         this.comment = comment;
         this.ordinalPos = ordinalPos;
-    }
-
-    public String getColumnName() {
-        return columnName;
-    }
-
-    public String getTableName() {
-        return tableName;
-    }
-
-    public String getTableCatalog() {
-        return tableCatalog;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public Integer getSqlType() throws SQLException {
-        return UJESSQLTypeParser.parserFromName(type);
     }
 
     static int columnDisplaySize(int columnType) throws SQLException {
@@ -80,10 +63,12 @@ public class JdbcColumn {
                 return 10;
             case Types.TIMESTAMP:
                 return columnPrecision(columnType);
-            // see http://download.oracle.com/javase/6/docs/api/constant-values.html#java.lang.Float.MAX_EXPONENT
+                // see
+                // http://download.oracle.com/javase/6/docs/api/constant-values.html#java.lang.Float.MAX_EXPONENT
             case Types.FLOAT:
                 return 24; // e.g. -(17#).e-###
-            // see http://download.oracle.com/javase/6/docs/api/constant-values.html#java.lang.Double.MAX_EXPONENT
+                // see
+                // http://download.oracle.com/javase/6/docs/api/constant-values.html#java.lang.Double.MAX_EXPONENT
             case Types.DOUBLE:
                 return 25; // e.g. -(17#).e-####
             case Types.DECIMAL:
@@ -93,13 +78,13 @@ public class JdbcColumn {
         }
     }
 
-    static int columnPrecision(int columnType) throws SQLException {
+    public static int columnPrecision(int columnType) throws SQLException {
         // according to hiveTypeToSqlType possible options are:
         switch (columnType) {
             case Types.BOOLEAN:
                 return 1;
             case Types.VARCHAR:
-            case Types.CHAR:
+            case Types.NVARCHAR:
                 return Integer.MAX_VALUE; // hive has no max limit for strings
             case Types.TINYINT:
                 return 3;
@@ -124,12 +109,12 @@ public class JdbcColumn {
         }
     }
 
-    static int columnScale(int columnType) throws SQLException {
+    public static int columnScale(int columnType) throws SQLException {
         // according to hiveTypeToSqlType possible options are:
         switch (columnType) {
             case Types.BOOLEAN:
             case Types.VARCHAR:
-            case Types.CHAR:
+            case Types.NVARCHAR:
             case Types.TINYINT:
             case Types.SMALLINT:
             case Types.INTEGER:
@@ -147,6 +132,26 @@ public class JdbcColumn {
             default:
                 throw new SQLException("Invalid column type: " + columnType);
         }
+    }
+
+    public String getColumnName() {
+        return columnName;
+    }
+
+    public String getTableName() {
+        return tableName;
+    }
+
+    public String getTableCatalog() {
+        return tableCatalog;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public Integer getSqlType() throws SQLException {
+        return UJESSQLTypeParser.parserFromName(type);
     }
 
     public Integer getColumnSize() throws SQLException {

@@ -17,9 +17,10 @@
  
 package org.apache.linkis.scheduler.queue
 
+import org.apache.linkis.common.utils.Logging
 
 
-class LoopArrayQueue(var group: Group) extends ConsumeQueue{
+class LoopArrayQueue(var group: Group) extends ConsumeQueue with Logging {
   private val eventQueue: Array[Any] = new Array[Any](group.getMaximumCapacity)
   private val maxCapacity: Int = group.getMaximumCapacity
 
@@ -198,12 +199,12 @@ override def offer(event: SchedulerEvent): Option[Int] = {
       val _max = max
       if(takeIndex < _min) takeIndex = _min
       else if(takeIndex > _max) {
-        println(s"none, notice...max: ${_max}, takeIndex: $takeIndex, realSize: $realSize.")
+        logger.info(s"none, notice...max: ${_max}, takeIndex: $takeIndex, realSize: $realSize.")
         return None
       }
       val t = get(takeIndex)
       if(t == null) {
-        println("null, notice...")
+        logger.info("null, notice...")
       }
       takeIndex += 1
       t

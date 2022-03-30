@@ -168,6 +168,43 @@ public class ResourceTask {
         return resourceTask;
     }
 
+    public static ResourceTask createRollbackVersionTask(
+            String resourceId,
+            String version,
+            String user,
+            String system,
+            Map<String, Object> properties) {
+        ResourceTask resourceTask = new ResourceTask();
+        resourceTask.setResourceId(resourceId);
+        resourceTask.setVersion(version);
+        resourceTask.setExtraParams(null);
+        resourceTask.setOperation(OperationEnum.ROLLBACK_VERSION.getValue());
+        resourceTask.setState(TaskState.RUNNING.getValue());
+        resourceTask.setSubmitUser(user);
+        resourceTask.setClientIp(properties.get("clientIp").toString());
+        resourceTask.setSystem(system);
+        resourceTask.setInstance(Sender.getThisInstance());
+        resourceTask.setStartTime(new Date());
+        resourceTask.setLastUpdateTime(new Date());
+        return resourceTask;
+    }
+
+    public static ResourceTask createCopyResourceTask(
+            String resourceId, String user, String system, Map<String, Object> properties) {
+        ResourceTask resourceTask = new ResourceTask();
+        resourceTask.setResourceId(resourceId);
+        resourceTask.setExtraParams(null);
+        resourceTask.setOperation(OperationEnum.COPY_RESOURCE.getValue());
+        resourceTask.setState(TaskState.RUNNING.getValue());
+        resourceTask.setSubmitUser(user);
+        resourceTask.setClientIp(properties.get("clientIp").toString());
+        resourceTask.setSystem(system);
+        resourceTask.setInstance(Sender.getThisInstance());
+        resourceTask.setStartTime(new Date());
+        resourceTask.setLastUpdateTime(new Date());
+        return resourceTask;
+    }
+
     public String getResourceId() {
         return resourceId;
     }

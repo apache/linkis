@@ -24,4 +24,6 @@ trait WorkspaceClient {
 
   def requestOpenScriptFromBML(resourceId:String,version:String,fileName:String):ScriptFromBMLResponse
 
+  def requestOpenScriptFromBML(resourceId:String,version:String,fileName:String, user: String):ScriptFromBMLResponse
+
 }

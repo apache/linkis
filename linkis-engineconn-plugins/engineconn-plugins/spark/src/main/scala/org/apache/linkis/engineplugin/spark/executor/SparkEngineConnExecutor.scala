@@ -22,24 +22,26 @@ import java.util.concurrent.atomic.AtomicLong
 import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{ByteTimeUtils, Logging, Utils}
 import org.apache.linkis.engineconn.computation.executor.execute.{ComputationExecutor, EngineExecutionContext}
+import org.apache.linkis.engineconn.executor.entity.ResourceFetchExecutor
 import org.apache.linkis.engineplugin.spark.common.Kind
+import org.apache.linkis.engineplugin.spark.cs.CSSparkHelper
 import org.apache.linkis.engineplugin.spark.extension.{SparkPostExecutionHook, SparkPreExecutionHook}
 import org.apache.linkis.engineplugin.spark.utils.JobProgressUtil
 import org.apache.linkis.governance.common.exception.LinkisJobRetryException
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.common.entity.resource._
+import org.apache.linkis.manager.common.protocol.resource.ResourceWithStatus
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.CodeLanguageLabel
 import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.apache.linkis.scheduler.executer.ExecuteResponse
 import org.apache.spark.SparkContext
-import org.slf4j.LoggerFactory
 
 import scala.collection.JavaConverters._
 import scala.collection.mutable.ArrayBuffer
 
 
-abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long) extends ComputationExecutor with Logging{
+abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long) extends ComputationExecutor with Logging with ResourceFetchExecutor{
 
   private var initialized: Boolean = false
 
@@ -53,16 +55,17 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long) extends C
 
   private var executorLabels: util.List[Label[_]] = new util.ArrayList[Label[_]]()
 
+  private var thread: Thread = _
+
   override def init(): Unit = {
     info(s"Ready to change engine state!")
 //    setCodeParser()  // todo check
     super.init()
   }
 
-
-
   override def executeLine(engineExecutorContext: EngineExecutionContext, code: String): ExecuteResponse = Utils.tryFinally {
     this.engineExecutionContext = engineExecutorContext
+    thread = Thread.currentThread()
     if (sc.isStopped) {
       error("Spark application has already stopped, please restart it.")
       transition(NodeStatus.Failed)
@@ -73,6 +76,7 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long) extends C
     engineExecutorContext.appendStdout(LogUtils.generateInfo(s"yarn application id: ${sc.applicationId}"))
     //Pre-execution hook
     Utils.tryQuietly(SparkPreExecutionHook.getSparkPreExecutionHooks().foreach(hook => preCode = hook.callPreExecutionHook(engineExecutorContext, preCode)))
+    Utils.tryAndWarn(CSSparkHelper.setContextIDInfoToSparkConf(engineExecutorContext, sc))
     val _code = Kind.getRealCode(preCode)
     info(s"Ready to run code with kind $kind.")
     jobGroup = String.valueOf("linkis-spark-mix-code-" + queryNum.incrementAndGet())
@@ -143,6 +147,18 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long) extends C
     null
   }
 
+  override def FetchResource: util.HashMap[String, ResourceWithStatus] = {
+    val resourceMap = new util.HashMap[String, ResourceWithStatus]()
+    val activeJobs = JobProgressUtil.getActiveJobProgressInfo(sc, jobGroup)
+    val applicationStatus = if (activeJobs == null || activeJobs.length == 0) "RUNNING" else "COMPLETED"
+    getCurrentNodeResource().getUsedResource match {
+      case resource: DriverAndYarnResource => resourceMap.put(sc.applicationId,
+        new ResourceWithStatus(resource.yarnResource.queueMemory, resource.yarnResource.queueCores, resource.yarnResource.queueInstances, applicationStatus, resource.yarnResource.queueName))
+      case _ => resourceMap.put(sc.applicationId, new ResourceWithStatus(0, 0, 0, "UNKNOWN", "UNKNOWN"))
+    }
+    resourceMap
+  }
+
   override def getCurrentNodeResource(): NodeResource = {
     info("Begin to get actual used resources!")
     Utils.tryCatch({
@@ -193,6 +209,9 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long) extends C
   override def killTask(taskID: String): Unit = {
     if (!sc.isStopped) {
       sc.cancelAllJobs
+      if (null != thread) {
+        Utils.tryAndWarn(thread.interrupt())
+      }
       killRunningTask()
     }
     super.killTask(taskID)

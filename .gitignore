@@ -10,7 +10,6 @@ linkis.iws
 linkis-commons/linkis-common/target/
 linkis-commons/linkis-hadoop-common/target/
 linkis-commons/linkis-httpclient/target/
-linkis-commons/linkis-message-scheduler/target/
 linkis-commons/linkis-module/target/
 linkis-commons/linkis-mybatis/target/
 linkis-commons/linkis-protocol/target/
@@ -32,7 +31,6 @@ linkis-computation-governance/linkis-engineconn-manager/linkis-engineconn-manage
 linkis-computation-governance/linkis-engineconn/target/
 linkis-computation-governance/linkis-engineconn/linkis-computation-engineconn/target/
 linkis-computation-governance/linkis-engineconn/linkis-engineconn-common/target/
-linkis-computation-governance/linkis-engineconn/linkis-engineconn-launch/target/
 linkis-computation-governance/linkis-engineconn/linkis-engineconn-executor/accessible-executor/target/
 linkis-computation-governance/linkis-engineconn/linkis-engineconn-executor/callback-service/target/
 linkis-computation-governance/linkis-engineconn/linkis-engineconn-executor/executor-core/target/
@@ -49,7 +47,6 @@ linkis-computation-governance/linkis-manager/label-manager/target/
 linkis-computation-governance/linkis-manager/linkis-application-manager/target/
 linkis-computation-governance/linkis-manager/linkis-manager-commons/linkis-manager-common/target/
 linkis-computation-governance/linkis-manager/linkis-manager-commons/linkis-manager-service-common/target/
-linkis-computation-governance/linkis-manager/linkis-manager-commons/linkis-resource-manager-common/target/
 linkis-computation-governance/linkis-manager/linkis-manager-monitor/target/
 linkis-computation-governance/linkis-manager/linkis-manager-persistence/target/
 linkis-computation-governance/linkis-manager/linkis-resource-manager/target/

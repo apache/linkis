@@ -17,7 +17,7 @@
 
 package org.apache.linkis.cli.application.data;
 
-import org.apache.linkis.cli.common.entity.execution.ExecutionResult;
+import org.apache.linkis.cli.common.entity.result.ExecutionResult;
 import org.apache.linkis.cli.common.entity.result.ResultHandler;
 
 public class FinishedData {

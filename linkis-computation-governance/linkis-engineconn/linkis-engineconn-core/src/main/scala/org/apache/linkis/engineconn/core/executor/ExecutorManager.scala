@@ -20,12 +20,12 @@ package org.apache.linkis.engineconn.core.executor
 import java.util
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
-
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.engineconn.common.creation.EngineCreationContext
 import org.apache.linkis.engineconn.common.engineconn.EngineConn
 import org.apache.linkis.engineconn.core.EngineConnObject
 import org.apache.linkis.engineconn.core.engineconn.EngineConnManager
+import org.apache.linkis.engineconn.core.hook.ExecutorHook
 import org.apache.linkis.engineconn.core.util.EngineConnUtils
 import org.apache.linkis.engineconn.executor.conf.EngineConnExecutorConfiguration
 import org.apache.linkis.engineconn.executor.entity.{Executor, LabelExecutor, SensibleExecutor}
@@ -33,6 +33,7 @@ import org.apache.linkis.manager.engineplugin.common.EngineConnPlugin
 import org.apache.linkis.manager.engineplugin.common.creation._
 import org.apache.linkis.manager.engineplugin.common.exception.{EngineConnPluginErrorCode, EngineConnPluginErrorException}
 import org.apache.linkis.manager.label.entity.Label
+import org.apache.linkis.manager.label.utils.LabelUtil
 
 import scala.collection.JavaConverters._
 
@@ -56,6 +57,8 @@ trait LabelExecutorManager extends ExecutorManager {
 
   def removeExecutor(labels: Array[Label[_]]): LabelExecutor
 
+  def containExecutor(labels: Array[Label[_]]): Boolean
+
 }
 
 class LabelExecutorManagerImpl extends LabelExecutorManager with Logging {
@@ -63,6 +66,7 @@ class LabelExecutorManagerImpl extends LabelExecutorManager with Logging {
   private lazy val executors: util.Map[String, LabelExecutor] = new ConcurrentHashMap[String, LabelExecutor](2)
   protected val GSON = EngineConnUtils.GSON
   private val idCreator = new AtomicInteger()
+
 
   protected lazy val engineConn: EngineConn = EngineConnManager.getEngineConnManager.getEngineConn
   protected val engineConnPlugin: EngineConnPlugin = EngineConnObject.getEngineConnPlugin
@@ -97,8 +101,11 @@ class LabelExecutorManagerImpl extends LabelExecutorManager with Logging {
       info("No LabelExecutorFactory matched, use DefaultExecutorFactory to create executor.")
       defaultFactory.createExecutor(engineCreationContext, engineConn).asInstanceOf[LabelExecutor]
     }
+    val codeType = LabelUtil.getCodeType(labelExecutor.getExecutorLabels())
     info(s"Finished to create ${labelExecutor.getClass.getSimpleName}(${labelExecutor.getId}) with labels $labelStr.")
+    ExecutorHook.getAllExecutorHooks().filter(_.isAccepted(codeType)).foreach(_.beforeExecutorInit(labelExecutor))
     labelExecutor.init()
+    ExecutorHook.getAllExecutorHooks().filter(_.isAccepted(codeType)).foreach(_.afterExecutorInit(labelExecutor))
     info(s"Finished to init ${labelExecutor.getClass.getSimpleName}(${labelExecutor.getId}).")
     labelExecutor
   }
@@ -108,24 +115,23 @@ class LabelExecutorManagerImpl extends LabelExecutorManager with Logging {
   protected def createExecutor(engineCreationContext: EngineCreationContext,
                                labels: Array[Label[_]] = null): LabelExecutor = {
     if (null == labels || labels.isEmpty) {
-    defaultFactory match {
-      case labelExecutorFactory: CodeLanguageLabelExecutorFactory =>
+      defaultFactory match {
+        case labelExecutorFactory: CodeLanguageLabelExecutorFactory =>
           val createExecutorLabels = Array[Label[_]](labelExecutorFactory.getDefaultCodeLanguageLabel)
           createLabelExecutor(engineCreationContext, createExecutorLabels)
-      case _ =>
-        val executor = tryCreateExecutor(engineCreationContext, null)
-        executors.put(executor.getId, executor)
-        executor
+        case _ =>
+          val executor = tryCreateExecutor(engineCreationContext, null)
+          executors.put(executor.getId, executor)
+          executor
         //throw new EngineConnPluginErrorException(EngineConnPluginErrorCode.INVALID_LABELS, "no labels and defaultFactory is not CodeLanguageLabelExecutorFactory")
-    }
+      }
     } else {
       createLabelExecutor(engineCreationContext, labels)
-  }
-
+    }
   }
 
   private def createLabelExecutor(engineCreationContext: EngineCreationContext,
-                              labels: Array[Label[_]]): LabelExecutor = {
+                                  labels: Array[Label[_]]): LabelExecutor = {
     val labelKey = getLabelKey(labels)
     if (null == labelKey) {
       val msg = "Cannot get label key. labels : " + GSON.toJson(labels)
@@ -134,8 +140,8 @@ class LabelExecutorManagerImpl extends LabelExecutorManager with Logging {
 
     if (!executors.containsKey(labelKey)) executors synchronized {
       if (!executors.containsKey(labelKey)) {
-    val executor = tryCreateExecutor(engineCreationContext, labels)
-    executors.put(labelKey, executor)
+        val executor = tryCreateExecutor(engineCreationContext, labels)
+        executors.put(labelKey, executor)
       }
     }
     executors.get(labelKey)
@@ -147,26 +153,33 @@ class LabelExecutorManagerImpl extends LabelExecutorManager with Logging {
     val labelKey = getLabelKey(labels)
     if (null == labelKey) return null
     if (!executors.containsKey(labelKey)) executors synchronized {
-    if (!executors.containsKey(labelKey)) {
-      createExecutor(engineConn.getEngineCreationContext, labels)
-    }
+      if (!executors.containsKey(labelKey)) {
+        createExecutor(engineConn.getEngineCreationContext, labels)
+      }
     }
     executors.get(labelKey)
+  }
+
+  override def containExecutor(labels: Array[Label[_]]): Boolean = {
+    val labelKey = getLabelKey(labels)
+    null != labelKey && executors.containsKey(labelKey)
   }
 
   override def getExecutor(id: String): Executor = executors.values().asScala.find(_.getId == id).orNull
 
   override def getExecutors: Array[Executor] = executors.values().asScala.toArray
 
-  override def removeExecutor(labels: Array[Label[_]]): LabelExecutor = {
+  override def removeExecutor(labels: Array[Label[_]]): LabelExecutor = executors.synchronized {
     val labelKey = getLabelKey(labels)
     if (labelKey != null && executors.containsKey(labelKey)) executors.remove(labelKey)
     else null
   }
 
-  override def removeExecutor(id: String): Executor = executors.asScala.find(_._2.getId == id).map{
-    case (k, _) => executors.remove(k)
-  }.orNull
+  override def removeExecutor(id: String): Executor = executors.synchronized {
+    executors.asScala.find(_._2.getId == id).map {
+      case (k, _) => executors.remove(k)
+    }.orNull
+  }
 
   override def getReportExecutor: Executor = if (getExecutors.isEmpty) {
     val labels = defaultFactory match {
@@ -180,9 +193,11 @@ class LabelExecutorManagerImpl extends LabelExecutorManager with Logging {
   } else  {
     getExecutors.maxBy {
       case executor: SensibleExecutor => executor.getStatus.ordinal()
-    case executor: Executor => executor.getId.hashCode
+      case executor: Executor => executor.getId.hashCode
+    }
   }
-}
+
+
 }
 
 object ExecutorManager extends Logging {
@@ -196,8 +211,8 @@ object ExecutorManager extends Logging {
   }
 
   def getInstance: LabelExecutorManager = {
-    if(executorManager == null) synchronized {
-      if(executorManager == null) init()
+    if (executorManager == null) synchronized {
+      if (executorManager == null) init()
     }
     executorManager
   }

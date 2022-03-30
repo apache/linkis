@@ -83,9 +83,9 @@ class SparkVersion(object):
     def isImportAllPackageUnderSparkSql(self):
         return self.version >= self.SPARK_1_3_0
 
-output = Logger()
+linkisOutput = Logger()
 errorOutput = ErrorLogger()
-sys.stdout = output
+sys.stdout = linkisOutput
 sys.stderr = errorOutput
 
 try:
@@ -252,4 +252,4 @@ while True :
         msg = traceback.format_exc()
         intp.setStatementsFinished(msg, True)
 
-    output.reset()
+    linkisOutput.reset()

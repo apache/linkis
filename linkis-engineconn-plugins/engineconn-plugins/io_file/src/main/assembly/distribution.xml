@@ -46,7 +46,8 @@
         <fileSet>
             <directory>${basedir}/src/main/resources</directory>
             <includes>
-                <include>*</include>
+                <include>linkis-engineconn.properties</include>
+                <include>log4j2.xml</include>
             </includes>
             <fileMode>0777</fileMode>
             <outputDirectory>/dist/v${io_file.version}/conf</outputDirectory>

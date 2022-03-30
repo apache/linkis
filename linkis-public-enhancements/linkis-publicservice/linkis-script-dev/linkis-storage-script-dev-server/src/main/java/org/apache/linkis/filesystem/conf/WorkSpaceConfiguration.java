@@ -19,6 +19,7 @@ package org.apache.linkis.filesystem.conf;
 
 import org.apache.linkis.common.conf.CommonVars;
 import org.apache.linkis.common.conf.CommonVars$;
+import org.apache.linkis.common.conf.Configuration;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -49,7 +50,7 @@ public class WorkSpaceConfiguration {
     public static final CommonVars<Boolean> FILESYSTEM_PATH_CHECK_TRIGGER =
             CommonVars$.MODULE$.apply("wds.linkis.workspace.filesystem.path.check", false);
     public static final CommonVars<String> FILESYSTEM_LOG_ADMIN =
-            CommonVars$.MODULE$.apply("wds.linkis.governance.station.admin", "hadoop");
+            Configuration.GOVERNANCE_STATION_ADMIN();
 
     public static final CommonVars<Boolean> FILESYSTEM_PATH_CHECK_OWNER =
             CommonVars$.MODULE$.apply("wds.linkis.workspace.filesystem.owner.check", false);

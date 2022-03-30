@@ -32,7 +32,7 @@
     <dependencies>
         <dependency>
             <groupId>org.apache.linkis</groupId>
-            <artifactId>linkis-message-scheduler</artifactId>
+            <artifactId>linkis-rpc</artifactId>
             <exclusions>
                 <exclusion>
                     <artifactId>asm</artifactId>
@@ -60,6 +60,14 @@
                 <exclusion>
                     <artifactId>linkis-common</artifactId>
                     <groupId>org.apache.linkis</groupId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-jcl</artifactId>
                 </exclusion>
             </exclusions>
             <version>${linkis.version}</version>

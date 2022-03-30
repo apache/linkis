@@ -17,11 +17,11 @@
  
 package org.apache.linkis.instance.label.service.conf
 
-import org.apache.linkis.common.conf.CommonVars
+import org.apache.linkis.common.conf.Configuration
 
 
 object InstanceConfigration {
 
-  val GOVERNANCE_STATION_ADMIN = CommonVars("wds.linkis.governance.station.admin", "hadoop")
+  val GOVERNANCE_STATION_ADMIN = Configuration.GOVERNANCE_STATION_ADMIN
 
 }

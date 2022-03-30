@@ -438,6 +438,8 @@ See licenses-binary/ for text of these licenses.
     (Apache License, Version 2.0) json4s-core (org.json4s:json4s-core_2.11:3.5.3 - https://github.com/json4s/json4s)
     (Apache License, Version 2.0) json4s-jackson (org.json4s:json4s-jackson_2.11:3.5.3 - https://github.com/json4s/json4s)
     (Apache License, Version 2.0) json4s-scalap (org.json4s:json4s-scalap_2.11:3.5.3 - https://github.com/json4s/json4s)
+    (Apache License, Version 2.0) jna (net.java.dev.jna:jna:5.6.0 - https://github.com/java-native-access/jna)
+    (Apache License, Version 2.0) jna-platform (net.java.dev.jna:jna-platform:5.6.0 - https://github.com/java-native-access/jna)
     (Apache License, Version 2.0) micrometer-core (io.micrometer:micrometer-core:1.3.1 - https://github.com/micrometer-metrics/micrometer)
     (Apache License, Version 2.0) mybatis (org.mybatis:mybatis:3.5.6 - http://www.mybatis.org/mybatis-3)
     (Apache License, Version 2.0) mybatis-plus (com.baomidou:mybatis-plus-annotation:3.4.1 - https://github.com/baomidou/mybatis-plus)
@@ -655,6 +657,7 @@ See licenses-binary/ for text of these licenses.
     (MIT License) SLF4J API Module (org.slf4j:slf4j-api:1.7.30 - http://www.slf4j.org)
     (MIT License) pagehelper 5 (com.github.pagehelper:pagehelper:5.1.4 - https://github.com/pagehelper/Mybatis-PageHelper)
     (MIT License) bcprov-jdk15on (org.bouncycastle:bcprov-jdk15on:1.64 - https://www.bouncycastle.org/java.html)
+    (MIT License) oshi-core (com.github.oshi:oshi-core:5.3.4 - https://github.com/oshi/oshi)
     (CUP Parser Generator Copyright Notice, License, and Disclaimer) CUP Parser Generator for Java (edu.princeton.cup:java-cup:10k - http://www.cs.princeton.edu/~appel/modern/java/CUP/)
     (MIT License) scopt:a command line options parsing library (com.github.scopt:scopt_2.11:4.0.1 - https://github.com/scopt/scopt)
 

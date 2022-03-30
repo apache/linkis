@@ -36,6 +36,8 @@ trait FileSource extends Closeable {
 
   def collect(): Array[Pair[Object, util.ArrayList[Array[String]]]]
 
+  def getFileInfo(needToCountRowNumber: Int = 5000): Array[Pair[Int, Int]]
+
   def write[K <: MetaData, V <: Record](fsWriter: FsWriter[K, V]): Unit
 
   def addParams(params: util.Map[String, String]): FileSource

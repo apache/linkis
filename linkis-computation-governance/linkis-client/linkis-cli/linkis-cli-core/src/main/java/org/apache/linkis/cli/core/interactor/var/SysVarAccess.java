@@ -18,6 +18,7 @@
 package org.apache.linkis.cli.core.interactor.var;
 
 import org.apache.linkis.cli.common.entity.properties.ClientProperties;
+import org.apache.linkis.cli.common.entity.var.VarAccess;
 import org.apache.linkis.cli.common.exception.error.ErrorLevel;
 import org.apache.linkis.cli.core.exception.VarAccessException;
 import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
@@ -28,18 +29,10 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-/** @description: visit sys_prop and sys_env */
 public class SysVarAccess implements VarAccess {
     private static Logger logger = LoggerFactory.getLogger(SysVarAccess.class);
     private ClientProperties sysProp;
     private ClientProperties sysEnv;
-
-    public SysVarAccess() {}
-
-    public SysVarAccess(ClientProperties sysProp, ClientProperties sysEnv) {
-        this.sysProp = sysProp;
-        this.sysEnv = sysEnv;
-    }
 
     public SysVarAccess setSysProp(ClientProperties sysProp) {
         this.sysProp = sysProp;

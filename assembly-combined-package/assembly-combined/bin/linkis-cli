@@ -16,6 +16,8 @@
 
 #set -x
 export LANG=en_US.utf-8
+#set -x
+
 LINKIS_CLIENT='org.apache.linkis.cli.application.LinkisClientApplication'
 
 
@@ -36,7 +38,7 @@ done
 
 
 #===============================================
-# finf java_home
+# find java_home
 #===============================================
 locate_java_home() {
   flag=""
@@ -112,6 +114,14 @@ function call_linkis_client() {
         exec ${JAVA} ${LINKIS_CLIENT_HEAP_OPTS} ${LINKIS_CLIENT_GC_OPTS} ${LINKIS_CLIENT_OPTS} -classpath ${LINKIS_CLIENT_CLASSPATH} -Dconf.root=${LINKIS_CLIENT_CONF_DIR} -Dconf.file=${LINKIS_CLIENT_CONF_FILE} ${LINKIS_CLIENT_LOG_OPTS}  ${LINKIS_CLIENT} "${input_args[@]}"
 }
 
+if [ -z $LINKIS_HOME ]; then
+  current_dir=`pwd`
+  work_dir=`dirname "$0"`/../
+  export WORK_DIR=`cd ${work_dir};pwd`
+  cd ${current_dir}/
+else
+  export WORK_DIR=$LINKIS_HOME
+fi
 
 locate_java_home
 JAVA=${JAVA_HOME}/bin/java

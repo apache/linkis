@@ -17,7 +17,9 @@
 
 package org.apache.linkis.bml.service.impl;
 
+import org.apache.linkis.bml.Entity.Resource;
 import org.apache.linkis.bml.Entity.ResourceTask;
+import org.apache.linkis.bml.Entity.ResourceVersion;
 import org.apache.linkis.bml.Entity.Version;
 import org.apache.linkis.bml.common.*;
 import org.apache.linkis.bml.common.Constant;
@@ -28,8 +30,13 @@ import org.apache.linkis.bml.service.ResourceService;
 import org.apache.linkis.bml.service.TaskService;
 import org.apache.linkis.bml.service.VersionService;
 import org.apache.linkis.bml.threading.TaskState;
+import org.apache.linkis.common.io.FsPath;
+import org.apache.linkis.storage.FSFactory;
+import org.apache.linkis.storage.fs.FileSystem;
+import org.apache.linkis.storage.utils.StorageConfiguration;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,11 +47,14 @@ import org.springframework.web.multipart.MultipartFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+import static org.apache.linkis.bml.common.Constant.FIRST_VERSION;
 
 @Service
 public class TaskServiceImpl implements TaskService {
@@ -275,6 +285,121 @@ public class TaskServiceImpl implements TaskService {
                 "The download task information was successfully saved (成功保存下载任务信息).taskId:{},resourceTask:{}",
                 resourceTask.getId(),
                 resourceTask.toString());
+        return resourceTask;
+    }
+
+    @Override
+    public ResourceTask createRollbackVersionTask(
+            String resourceId, String version, String user, Map<String, Object> properties)
+            throws Exception {
+        LOGGER.info("begin to rollback version,resourceId:{}, version:{}", resourceId, version);
+        String lastVersion = getResourceLastVersion(resourceId);
+        String newVersion = generateNewVersion(lastVersion);
+        String firstVersionPath = versionDao.getResourcePath(resourceId);
+        String dest = firstVersionPath + "_" + newVersion;
+        String src;
+        if (version.equals(FIRST_VERSION)) {
+            src = firstVersionPath;
+        } else {
+            src = firstVersionPath + "_" + version;
+        }
+        FileSystem fs = null;
+        ResourceTask resourceTask =
+                ResourceTask.createRollbackVersionTask(
+                        resourceId, newVersion, user, null, properties);
+        try {
+            taskDao.insert(resourceTask);
+            FsPath srcPath = new FsPath(src);
+            FsPath destPath = new FsPath(dest);
+            fs = (FileSystem) FSFactory.getFsByProxyUser(destPath, user);
+            fs.init(null);
+            fs.copyFile(srcPath, destPath);
+            ResourceVersion oldVersion = versionDao.findResourceVersion(resourceId, version);
+            ResourceVersion insertVersion = ResourceVersion.copyFromOldResourceVersion(oldVersion);
+            insertVersion.setResource(dest);
+            insertVersion.setVersion(newVersion);
+            insertVersion.setStartTime(new Date());
+            insertVersion.setEndTime(new Date());
+            versionDao.insertNewVersion(insertVersion);
+            taskDao.updateState(resourceTask.getId(), TaskState.SUCCESS.getValue(), new Date());
+        } catch (Exception e) {
+            taskDao.updateState2Failed(
+                    resourceTask.getId(), TaskState.FAILED.getValue(), new Date(), e.getMessage());
+            throw e;
+        } finally {
+            IOUtils.closeQuietly(fs);
+        }
+        LOGGER.info("end to rollback version,resourceId:{}, version:{}", resourceId, version);
+        return resourceTask;
+    }
+
+    @Override
+    @Transactional
+    public ResourceTask createCopyResourceTask(
+            String resourceId, String anotherUser, Map<String, Object> properties)
+            throws Exception {
+        List<ResourceVersion> resourceVersions =
+                versionDao.getResourceVersionsByResourceId(resourceId);
+        String newResourceId = UUID.randomUUID().toString();
+        ResourceHelper resourceHelper = ResourceHelperFactory.getResourceHelper();
+        String firstPath = resourceHelper.generatePath(anotherUser, newResourceId, properties);
+        FsPath firstDestPath = new FsPath(firstPath);
+        FileSystem hadoopFs =
+                (FileSystem)
+                        FSFactory.getFsByProxyUser(
+                                firstDestPath, StorageConfiguration.HDFS_ROOT_USER().getValue());
+        FileSystem anotherUserFs =
+                (FileSystem) FSFactory.getFsByProxyUser(firstDestPath, anotherUser);
+        try {
+            hadoopFs.init(null);
+            anotherUserFs.init(null);
+            if (!anotherUserFs.exists(firstDestPath.getParent())) {
+                anotherUserFs.mkdirs(firstDestPath.getParent());
+            }
+        } catch (IOException e) {
+            LOGGER.error("failed to get filesystem:", e);
+        }
+        ResourceTask resourceTask =
+                ResourceTask.createCopyResourceTask(newResourceId, anotherUser, null, properties);
+        taskDao.insert(resourceTask);
+        for (ResourceVersion resourceVersion : resourceVersions) {
+            try {
+                FsPath srcPath = new FsPath(resourceVersion.getResource());
+                FsPath destPath = null;
+                if (!resourceVersion.getVersion().equals(FIRST_VERSION)) {
+                    destPath = new FsPath(firstPath + "_" + resourceVersion.getVersion());
+                } else {
+                    destPath = new FsPath(firstPath);
+                    Resource insertResource =
+                            Resource.createNewResource(
+                                    newResourceId, anotherUser, newResourceId, properties);
+                    resourceDao.uploadResource(insertResource);
+                }
+                hadoopFs.copyFile(srcPath, destPath);
+                hadoopFs.setOwner(destPath, anotherUser);
+                ResourceVersion insertVersion =
+                        ResourceVersion.copyFromOldResourceVersion(resourceVersion);
+                insertVersion.setResource(destPath.getSchemaPath());
+                insertVersion.setStartTime(new Date());
+                insertVersion.setEndTime(new Date());
+                insertVersion.setResourceId(newResourceId);
+                versionDao.insertNewVersion(insertVersion);
+            } catch (Exception e) {
+                // 某一个版本copy失败
+                //                LOGGER.error("failed to copy bml file: ", e);
+                taskDao.updateState2Failed(
+                        resourceTask.getId(),
+                        TaskState.FAILED.getValue(),
+                        new Date(),
+                        e.getMessage());
+                IOUtils.closeQuietly(anotherUserFs);
+                IOUtils.closeQuietly(hadoopFs);
+                throw e;
+            }
+        }
+        taskDao.updateState(resourceTask.getId(), TaskState.SUCCESS.getValue(), new Date());
+        IOUtils.closeQuietly(anotherUserFs);
+        IOUtils.closeQuietly(hadoopFs);
         return resourceTask;
     }
 

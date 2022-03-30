@@ -17,6 +17,7 @@
  
 package org.apache.linkis.ecm.linux.launch
 
+import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.ecm.core.launch.ProcessEngineConnLaunch
 
 
@@ -27,4 +28,21 @@ class LinuxProcessEngineConnLaunch extends ProcessEngineConnLaunch {
 
   override protected def sudoCommand(user: String, command: String): Array[String] =
     Array("sudo", "su", "-", user, "-c", command)
+
+  override def getPid(): Option[String] = {
+    Utils.tryCatch {
+      val clazz = Class.forName("java.lang.UNIXProcess");
+      val field = clazz.getDeclaredField("pid");
+      field.setAccessible(true);
+      val pid = field.get(getProcess()).asInstanceOf[Int]
+      if (pid >0) {
+        Some(pid.toString)
+      } else {
+        None
+      }
+    } { t =>
+      info("Failed to acquire pid for shell process", t)
+      None
+    }
+  }
 }

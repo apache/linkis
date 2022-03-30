@@ -30,14 +30,13 @@ import org.apache.linkis.engineconn.executor.service.ManagerService
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.common.protocol.engine.{EngineConnReleaseRequest, EngineSuicideRequest}
 import org.apache.linkis.manager.common.protocol.node.{RequestNodeStatus, ResponseNodeStatus}
-import org.apache.linkis.message.annotation.Receiver
-import org.apache.linkis.message.builder.ServiceMethodContext
 import org.apache.linkis.rpc.Sender
-
-import javax.annotation.PostConstruct
+import org.apache.linkis.rpc.message.annotation.Receiver
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.event.{ContextClosedEvent, EventListener}
 import org.springframework.stereotype.Service
+
+import javax.annotation.PostConstruct
 
 
 @Service
@@ -48,8 +47,10 @@ class DefaultAccessibleService extends AccessibleService with Logging {
 
   private val asyncListenerBusContext = ExecutorListenerBusContext.getExecutorListenerBusContext().getEngineConnAsyncListenerBus
 
+  private var shutDownHooked: Boolean = false
+
   @Receiver
-  override def dealEngineStopRequest(engineSuicideRequest: EngineSuicideRequest, smc: ServiceMethodContext): Unit = {
+  override def dealEngineStopRequest(engineSuicideRequest: EngineSuicideRequest, sender: Sender): Unit = {
     // todo check user
     if (DataWorkCloudApplication.getServiceInstance.equals(engineSuicideRequest.getServiceInstance)) {
       stopEngine()
@@ -64,6 +65,7 @@ class DefaultAccessibleService extends AccessibleService with Logging {
     }
   }
 
+
   @EventListener
   def executorShutDownHook(event: ContextClosedEvent): Unit = {
     info("executorShutDownHook  start to execute.")
@@ -71,13 +73,17 @@ class DefaultAccessibleService extends AccessibleService with Logging {
       warn("EngineConn not ready, do not shutdown")
       return
     }
+    if (shutDownHooked) {
+      warn("had stop, do not  shutdown")
+      return
+    }
     var executor: Executor = ExecutorManager.getInstance.getReportExecutor
-    if (null != executor){
+    if (null != executor) {
       Utils.tryAndWarn{
+        executor.close()
         executor.tryShutdown()
       }
       warn(s"Engine : ${Sender.getThisInstance} with state has stopped successfully.")
-
     } else {
       executor = SensibleExecutor.getDefaultErrorSensibleExecutor
     }
@@ -87,12 +93,15 @@ class DefaultAccessibleService extends AccessibleService with Logging {
     }
     executorHeartbeatService.reportHeartBeatMsg(executor)
     info("Reported status shuttingDown to manager.")
-    Thread.sleep(2000)
+    Utils.tryQuietly(Thread.sleep(2000))
+    shutDownHooked = true
+    ShutdownHook.getShutdownHook.notifyStop()
   }
 
   override def stopExecutor: Unit = {
     // todo
   }
+
 
   override def pauseExecutor: Unit = {
 
@@ -114,9 +123,7 @@ class DefaultAccessibleService extends AccessibleService with Logging {
     }
   }
 
-  /**
-   * service 需要加定时任务判断Executor是否空闲很久，然后调用该方法进行释放
-   */
+
 
   override def requestManagerReleaseExecutor(msg: String): Unit = {
     val engineReleaseRequest = new EngineConnReleaseRequest(Sender.getThisServiceInstance, Utils.getJvmUser, msg, EngineConnObject.getEngineCreationContext.getTicketId)
@@ -127,10 +134,10 @@ class DefaultAccessibleService extends AccessibleService with Logging {
   override def dealRequestNodeStatus(requestNodeStatus: RequestNodeStatus): ResponseNodeStatus = {
     val status = if (EngineConnObject.isReady) {
       ExecutorManager.getInstance.getReportExecutor match {
-      case executor: SensibleExecutor =>
-        executor.getStatus
-      case _ => NodeStatus.Starting
-    }
+        case executor: SensibleExecutor =>
+          executor.getStatus
+        case _ => NodeStatus.Starting
+      }
     } else {
       NodeStatus.Starting
     }
@@ -162,4 +169,3 @@ class DefaultAccessibleService extends AccessibleService with Logging {
   }
 
 }
-

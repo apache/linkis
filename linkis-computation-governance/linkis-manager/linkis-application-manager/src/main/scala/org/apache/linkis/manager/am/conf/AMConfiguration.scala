@@ -17,17 +17,18 @@
  
 package org.apache.linkis.manager.am.conf
 
-import org.apache.linkis.common.conf.{CommonVars, TimeType}
+import org.apache.linkis.common.conf.{CommonVars, Configuration, TimeType}
 import org.apache.linkis.common.utils.Utils
+import org.apache.linkis.manager.common.entity.enumeration.MaintainType
 
 
 object AMConfiguration {
 
-  val GOVERNANCE_STATION_ADMIN = CommonVars("wds.linkis.governance.station.admin", "hadoop")
+  val GOVERNANCE_STATION_ADMIN = Configuration.GOVERNANCE_STATION_ADMIN
 
   val ECM_ADMIN_OPERATIONS = CommonVars("wds.linkis.governance.admin.operations", "")
 
-  val ENGINE_START_MAX_TIME = CommonVars("wds.linkis.manager.am.engine.start.max.time", new TimeType("10m"))
+  val ENGINE_START_MAX_TIME = CommonVars("wds.linkis.manager.am.engine.start.max.time", new TimeType("11m"))
 
   val ENGINE_CONN_START_REST_MAX_WAIT_TIME = CommonVars("wds.linkis.manager.am.engine.rest.start.max.time", new TimeType("40s"))
 
@@ -52,7 +53,7 @@ object AMConfiguration {
 
   val ENGINECONN_DEBUG_ENABLED = CommonVars("wds.linkis.engineconn.debug.mode.enable", false)
 
-  val MULTI_USER_ENGINE_TYPES = CommonVars("wds.linkis.multi.user.engine.types", "jdbc,es,presto,io_file,appconn")
+  val MULTI_USER_ENGINE_TYPES = CommonVars("wds.linkis.multi.user.engine.types", "jdbc,es,presto,io_file,appconn,openlookeng")
 
   val MULTI_USER_ENGINE_USER = CommonVars("wds.linkis.multi.user.engine.user", getDefaultMultiEngineUser)
 
@@ -60,16 +61,21 @@ object AMConfiguration {
 
 
 
-  val AM_CAN_RETRY_LOGS = CommonVars("wds.linkis.manager.am.can.retry.logs", "already in use")
+  val AM_CAN_RETRY_LOGS = CommonVars("wds.linkis.manager.am.can.retry.logs", "already in use;Cannot allocate memory")
 
   val ASK_ENGINE_ASYNC_MAX_THREAD_SIZE: Int = CommonVars("wds.linkis.ecm.launch.max.thread.size", 200).getValue
 
 
   val ASYNC_STOP_ENGINE_MAX_THREAD_SIZE: Int = CommonVars("wds.linkis.async.stop.engine.size", 20).getValue
 
+  val EC_MAINTAIN_TIME_STR = CommonVars("wds.linkis.ec.maintain.time.key", MaintainType.Default.toString)
+
+  val EC_MAINTAIN_WORK_START_TIME = CommonVars("wds.linkis.ec.maintain.time.work.start.time", 8).getValue
+  val EC_MAINTAIN_WORK_END_TIME = CommonVars("wds.linkis.ec.maintain.time.work.end.time", 19).getValue
+
   private def getDefaultMultiEngineUser(): String = {
     val jvmUser = Utils.getJvmUser
-    s""" {jdbc:"$jvmUser", es: "$jvmUser", presto:"$jvmUser",appconn:"$jvmUser", io_file:"root"}"""
+    s""" {jdbc:"$jvmUser", es: "$jvmUser", presto:"$jvmUser", appconn:"$jvmUser", openlookeng:"$jvmUser", io_file:"root"}"""
   }
 
   def isAdmin(userName: String): Boolean = {

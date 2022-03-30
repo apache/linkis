@@ -34,6 +34,23 @@ object ComputationExecutorConf {
 
   val UDF_LOAD_FAILED_IGNORE = CommonVars("wds.linkis.engineconn.udf.load.ignore", true)
 
+  val FUNCTION_LOAD_FAILED_IGNORE = CommonVars("wds.linkis.engineconn.function.load.ignore", true)
+
+  val TASK_IGNORE_UNCOMPLETED_STATUS = CommonVars("wds.linkis.engineconn.task.ignore.uncompleted.status", true).getValue
+
   val ENGINE_CONCURRENT_THREAD_NUM = CommonVars("wds.linkis.engineconn.concurrent.thread.num", 20)
 
+
+  val ASYNC_EXECUTE_MAX_PARALLELISM = CommonVars("wds.linkis.engineconn.max.parallelism", 300)
+
+
+  val DEFAULT_COMPUTATION_EXECUTORMANAGER_CLAZZ = CommonVars("wds.linkis.default.computation.executormanager.clazz", "org.apache.linkis.engineconn.computation.executor.creation.ComputationExecutorManagerImpl")
+
+  val UPSTREAM_MONITOR_ECTASK_SHOULD_START = CommonVars("linkis.upstream.monitor.ectask.should.start", true).getValue
+
+  val UPSTREAM_MONITOR_WRAPPER_ENTRIES_SURVIVE_THRESHOLD_SEC = CommonVars("linkis.upstream.monitor.wrapper.entries.survive.time.sec", 86400).getValue
+
+  val UPSTREAM_MONITOR_ECTASK_ENTRANCE_THRESHOLD_SEC =  CommonVars("linkis.upstream.monitor.ectask.entrance.threshold.sec", 15).getValue
+
+  val HIVE_RESULTSET_USE_TABLE_NAME = CommonVars("hive.resultset.use.unique.column.names", false)
 }

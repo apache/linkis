@@ -131,6 +131,7 @@
         <commons-io.version>2.11.0</commons-io.version>
         <commons-beanutils.version>1.9.4</commons-beanutils.version>
         <druid.version>1.1.22</druid.version>
+        <protobuf.version>3.15.8</protobuf.version>
         <apache-rat-plugin.version>0.13</apache-rat-plugin.version>
         <assembly.package.rootpath>${basedir}</assembly.package.rootpath>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -144,6 +145,7 @@
         <maven-surefire-plugin.version>2.22.1</maven-surefire-plugin.version>
         <jacoco.version>0.8.7</jacoco.version>
         <jacoco.skip>false</jacoco.skip>
+        <junit.version>4.12</junit.version>
     </properties>
 
     <dependencyManagement>

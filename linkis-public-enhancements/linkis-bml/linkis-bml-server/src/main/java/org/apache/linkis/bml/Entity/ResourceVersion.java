@@ -203,4 +203,24 @@ public class ResourceVersion {
         resourceVersion.setEndTime(new Date(System.currentTimeMillis()));
         return resourceVersion;
     }
+
+    public static ResourceVersion copyFromOldResourceVersion(ResourceVersion oldVersion) {
+        ResourceVersion insertVersion = new ResourceVersion();
+        insertVersion.setResourceId(oldVersion.getResourceId());
+        insertVersion.setVersion(oldVersion.getVersion());
+        insertVersion.setResource(oldVersion.getResource());
+        insertVersion.setClientIp(oldVersion.getClientIp());
+        insertVersion.setEnableFlag(true);
+        insertVersion.setStartByte(oldVersion.getStartByte());
+        insertVersion.setEndByte(oldVersion.getEndByte());
+        insertVersion.setSize(oldVersion.getSize());
+        insertVersion.setDescription(oldVersion.getDescription());
+        insertVersion.setSystem(oldVersion.getSystem());
+        insertVersion.setFileMd5(oldVersion.getFileMd5());
+        insertVersion.setUpdator(oldVersion.getUpdator());
+        insertVersion.setUser(oldVersion.getUser());
+        insertVersion.setStartTime(oldVersion.getStartTime());
+        insertVersion.setEndTime(oldVersion.getEndTime());
+        return insertVersion;
+    }
 }

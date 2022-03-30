@@ -18,19 +18,19 @@
 package org.apache.linkis.storage.resultset
 
 import java.io.{IOException, OutputStream}
-
 import org.apache.linkis.common.io.resultset.{ResultSerializer, ResultSet, ResultSetWriter}
 import org.apache.linkis.common.io.{Fs, FsPath, MetaData, Record}
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.storage.FSFactory
+import org.apache.linkis.storage.conf.LinkisStorageConf
 import org.apache.linkis.storage.domain.Dolphin
 import org.apache.linkis.storage.utils.{FileSystemUtils, StorageUtils}
 
 import scala.collection.mutable.ArrayBuffer
 
 
-class StorageResultSetWriter[K <: MetaData, V <: Record](resultSet: ResultSet[K,V], maxCacheSize: Long,
-                           storePath: FsPath) extends ResultSetWriter[K,V](resultSet = resultSet, maxCacheSize = maxCacheSize, storePath = storePath) with Logging{
+class StorageResultSetWriter[K <: MetaData, V <: Record](resultSet: ResultSet[K, V], maxCacheSize: Long,
+                           storePath: FsPath) extends ResultSetWriter[K, V](resultSet = resultSet, maxCacheSize = maxCacheSize, storePath = storePath) with Logging{
 
 
 
@@ -77,6 +77,9 @@ class StorageResultSetWriter[K <: MetaData, V <: Record](resultSet: ResultSet[K,
   }
 
   def writeLine(bytes: Array[Byte], cache: Boolean = false): Unit = {
+    if (bytes.length > LinkisStorageConf.ROW_BYTE_MAX_LEN) {
+      throw new IOException(s"A single row of data cannot exceed ${LinkisStorageConf.ROW_BYTE_MAX_LEN_STR}")
+    }
     if (buffer.length > maxCacheSize && !cache) {
       if (outputStream == null) {
         createNewFile
@@ -89,9 +92,9 @@ class StorageResultSetWriter[K <: MetaData, V <: Record](resultSet: ResultSet[K,
   }
 
   override def toString: String = {
-   if(outputStream == null){
-     if(isEmpty) return ""
-      new String(buffer.toArray,Dolphin.CHAR_SET)
+   if (outputStream == null) {
+     if (isEmpty) return ""
+      new String(buffer.toArray, Dolphin.CHAR_SET)
     } else {
       storePath.getSchemaPath
     }
@@ -100,7 +103,7 @@ class StorageResultSetWriter[K <: MetaData, V <: Record](resultSet: ResultSet[K,
   override def toFSPath: FsPath = storePath
 
   override def addMetaDataAndRecordString(content: String): Unit = {
-    if(!moveToWriteRow){
+    if (!moveToWriteRow) {
       val bytes = content.getBytes(Dolphin.CHAR_SET)
       writeLine(bytes)
     }
@@ -111,7 +114,7 @@ class StorageResultSetWriter[K <: MetaData, V <: Record](resultSet: ResultSet[K,
 
   @scala.throws[IOException]
   override def addMetaData(metaData: MetaData): Unit = {
-    if(!moveToWriteRow) {
+    if (!moveToWriteRow) {
       {
         rMetaData = metaData
         init()
@@ -127,20 +130,20 @@ class StorageResultSetWriter[K <: MetaData, V <: Record](resultSet: ResultSet[K,
 
   @scala.throws[IOException]
   override def addRecord(record: Record): Unit = {
-    if(moveToWriteRow) {
+    if (moveToWriteRow) {
       rowCount = rowCount + 1
       writeLine(serializer.recordToBytes(record))
     }
   }
 
   def closeFs: Unit = {
-    if(fs != null)
+    if (fs != null)
       fs.close()
   }
   override def close(): Unit = {
-    Utils.tryFinally(if(outputStream != null ) flush()){
+    Utils.tryFinally(if (outputStream != null ) flush()){
       closeFs
-      if(outputStream != null){
+      if (outputStream != null) {
       outputStream.close()
     }}
   }
@@ -148,7 +151,7 @@ class StorageResultSetWriter[K <: MetaData, V <: Record](resultSet: ResultSet[K,
   override def flush(): Unit = {
     createNewFile
     if(outputStream != null) {
-      if(buffer.nonEmpty) {
+      if (buffer.nonEmpty) {
         outputStream.write(buffer.toArray)
         buffer.clear()
       }

@@ -91,3 +91,9 @@ case class BmlAttachResourceAndProjectResponse(isSuccess:Boolean) extends BmlRes
 
 
 case class BmlUpdateProjectPrivResponse(isSuccess:Boolean) extends BmlResponse(isSuccess)
+
+case class BmlChangeOwnerResponse(isSuccess: Boolean) extends BmlResponse(isSuccess)
+
+case class BmlCopyResourceResponse(isSuccess: Boolean, resourceId: String) extends BmlResponse(isSuccess)
+
+case class BmlRollbackVersionResponse(isSuccess: Boolean, resourceId: String, version: String) extends BmlResponse(isSuccess)

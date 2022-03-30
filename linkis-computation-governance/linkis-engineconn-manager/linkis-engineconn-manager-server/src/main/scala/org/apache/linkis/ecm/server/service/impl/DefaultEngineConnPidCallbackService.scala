@@ -22,7 +22,7 @@ import org.apache.linkis.ecm.server.LinkisECMApplication
 import org.apache.linkis.ecm.server.listener.EngineConnPidCallbackEvent
 import org.apache.linkis.ecm.server.service.EngineConnPidCallbackService
 import org.apache.linkis.governance.common.protocol.task.ResponseEngineConnPid
-import org.apache.linkis.message.annotation.Receiver
+import org.apache.linkis.rpc.message.annotation.Receiver
 
 
 class DefaultEngineConnPidCallbackService extends EngineConnPidCallbackService with Logging {

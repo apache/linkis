@@ -14,11 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.entrance.interceptor.impl
 
-import org.apache.linkis.common.utils.{Logging, Utils}
-import org.apache.linkis.entrance.cache.GlobalConfigurationKeyValueCache
+import org.apache.commons.lang.time.DateFormatUtils
+import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.entrance.exception.{EntranceErrorCode, EntranceErrorException}
 import org.apache.linkis.entrance.interceptor.EntranceInterceptor
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
@@ -26,7 +26,6 @@ import org.apache.linkis.governance.common.entity.job.JobRequest
 import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.protocol.utils.TaskUtils
 import org.apache.linkis.server.BDPJettyServerHelper
-import org.apache.commons.lang.time.DateFormatUtils
 
 import java.util
 import scala.collection.JavaConverters.{asScalaBufferConverter, mapAsScalaMapConverter}
@@ -34,24 +33,18 @@ import scala.collection.JavaConverters.{asScalaBufferConverter, mapAsScalaMapCon
 
 class StorePathEntranceInterceptor extends EntranceInterceptor with Logging {
   /**
-    * The apply function is to supplement the information of the incoming parameter task, making the content of this task more complete.
-    * Additional information includes: database information supplement, custom variable substitution, code check, limit limit, etc.
-    * apply函数是对传入参数task进行信息的补充，使得这个task的内容更加完整。
-    * 补充的信息包括: 数据库信息补充、自定义变量替换、代码检查、limit限制等
-    *
-    * @param jobReq
-    * @return
-    */
+   * The apply function is to supplement the information of the incoming parameter task, making the content of this task more complete.
+   * Additional information includes: database information supplement, custom variable substitution, code check, limit limit, etc.
+   * apply函数是对传入参数task进行信息的补充，使得这个task的内容更加完整。
+   * 补充的信息包括: 数据库信息补充、自定义变量替换、代码检查、limit限制等
+   *
+   * @param jobReq
+   * @return
+   */
   override def apply(jobReq: JobRequest, logAppender: java.lang.StringBuilder): JobRequest = {
-    val globalConfig = Utils.tryAndWarn(GlobalConfigurationKeyValueCache.getCacheMap(jobReq))
-    var parentPath: String = null
-    if (null != globalConfig && globalConfig.containsKey(GovernanceCommonConf.RESULT_SET_STORE_PATH.key))
-      parentPath = GovernanceCommonConf.RESULT_SET_STORE_PATH.getValue(globalConfig)
-    else {
-      parentPath = GovernanceCommonConf.RESULT_SET_STORE_PATH.getValue
-      if (!parentPath.endsWith("/")) parentPath += "/"
-      parentPath += jobReq.getSubmitUser
-    }
+    var parentPath: String = GovernanceCommonConf.RESULT_SET_STORE_PATH.getValue
+    if (!parentPath.endsWith("/")) parentPath += "/"
+    parentPath += jobReq.getExecuteUser
     if (!parentPath.endsWith("/")) parentPath += "/linkis/"
     else parentPath += "linkis/"
     val userCreator = LabelUtil.getUserCreator(jobReq.getLabels)
@@ -76,6 +69,7 @@ class StorePathEntranceInterceptor extends EntranceInterceptor with Logging {
     TaskUtils.addRuntimeMap(paramsMap, runtimeMap)
     val params = new util.HashMap[String, Object]()
     paramsMap.asScala.foreach(kv => params.put(kv._1, kv._2.asInstanceOf[Object]))
+    jobReq.setResultLocation(parentPath)
     jobReq.setParams(params)
     jobReq
   }

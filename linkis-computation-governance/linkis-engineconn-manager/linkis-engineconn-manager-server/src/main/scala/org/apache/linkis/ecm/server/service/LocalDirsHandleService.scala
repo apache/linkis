@@ -22,13 +22,13 @@ trait LocalDirsHandleService {
 
   def getEngineConnManagerHomeDir: String
 
-  def getEngineConnWorkDir(user: String, ticketId: String): String
+  def getEngineConnWorkDir(user: String, ticketId: String, engineType: String): String
 
   def getEngineConnPublicDir: String
 
-  def getEngineConnLogDir(user: String, ticketId: String): String
+  def getEngineConnLogDir(user: String, ticketId: String, engineType: String): String
 
-  def getEngineConnTmpDir(user: String, ticketId: String): String
+  def getEngineConnTmpDir(user: String, ticketId: String, engineType: String): String
 
   def cleanup(): Unit
 

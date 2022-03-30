@@ -21,7 +21,7 @@ import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.manager.common.entity.node.{AMEngineNode, EngineNode}
 import org.apache.linkis.manager.common.protocol.{RequestEngineLock, RequestEngineUnlock, RequestManagerUnlock}
 import org.apache.linkis.manager.service.common.pointer.NodePointerBuilder
-import org.apache.linkis.message.annotation.Receiver
+import org.apache.linkis.rpc.message.annotation.Receiver
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 

@@ -21,24 +21,19 @@ import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
 import org.apache.linkis.governance.common.protocol.task._
-import org.apache.linkis.message.annotation.Receiver
-import org.apache.linkis.message.builder.ServiceMethodContext
+import org.apache.linkis.manager.common.protocol.resource.ResponseTaskYarnResource
 import org.apache.linkis.orchestrator.computation.execute.CodeExecTaskExecutorManager
-import org.apache.linkis.orchestrator.computation.utils.ComputationOrchestratorUtils
-import org.apache.linkis.orchestrator.core.ResultSet
 import org.apache.linkis.orchestrator.computation.monitor.EngineConnMonitor
+import org.apache.linkis.orchestrator.core.ResultSet
 import org.apache.linkis.orchestrator.ecm.service.TaskExecutionReceiver
 import org.apache.linkis.orchestrator.listener.task._
-import org.apache.linkis.orchestrator.listener.{OrchestratorAsyncListenerBus, OrchestratorListenerBusContext, OrchestratorSyncListenerBus}
+import org.apache.linkis.rpc.Sender
+import org.apache.linkis.rpc.message.annotation.Receiver
 import org.apache.linkis.rpc.utils.RPCUtils
 import org.springframework.stereotype.Service
 
 import javax.annotation.PostConstruct
 
-/**
-  *
-  *
-  */
 @Service
 class ComputationTaskExecutionReceiver extends TaskExecutionReceiver with Logging {
 
@@ -80,8 +75,8 @@ class ComputationTaskExecutionReceiver extends TaskExecutionReceiver with Loggin
   }
 
   @Receiver
-  override def taskLogReceiver(taskLog: ResponseTaskLog, smc: ServiceMethodContext): Unit = {
-    val serviceInstance = RPCUtils.getServiceInstanceFromSender(smc.getSender)
+  override def taskLogReceiver(taskLog: ResponseTaskLog, sender: Sender): Unit = {
+    val serviceInstance = RPCUtils.getServiceInstanceFromSender(sender)
     codeExecTaskExecutorManager.getByEngineConnAndTaskId(serviceInstance, taskLog.execId).foreach { codeExecutor =>
       val event = TaskLogEvent(codeExecutor.getExecTask, taskLog.log)
       codeExecutor.getExecTask.getPhysicalContext.pushLog(event)
@@ -91,8 +86,18 @@ class ComputationTaskExecutionReceiver extends TaskExecutionReceiver with Loggin
   }
 
   @Receiver
-  override def taskProgressReceiver(taskProgress: ResponseTaskProgress, smc: ServiceMethodContext): Unit = {
-    val serviceInstance = RPCUtils.getServiceInstanceFromSender(smc.getSender)
+  override def taskYarnResourceReceiver(taskYarnResource: ResponseTaskYarnResource, sender: Sender): Unit = {
+    val serviceInstance = RPCUtils.getServiceInstanceFromSender(sender)
+    codeExecTaskExecutorManager.getByEngineConnAndTaskId(serviceInstance, taskYarnResource.execId).foreach { codeExecutor =>
+      val event = TaskYarnResourceEvent(codeExecutor.getExecTask, taskYarnResource.resourceMap)
+      codeExecutor.getExecTask.getPhysicalContext.pushYarnResource(event)
+      codeExecutor.getEngineConnExecutor.updateLastUpdateTime()
+    }
+  }
+
+  @Receiver
+  override def taskProgressReceiver(taskProgress: ResponseTaskProgress, sender: Sender): Unit = {
+    val serviceInstance = RPCUtils.getServiceInstanceFromSender(sender)
     codeExecTaskExecutorManager.getByEngineConnAndTaskId(serviceInstance, taskProgress.execId).foreach{ codeExecutor =>
       val event = TaskProgressEvent(codeExecutor.getExecTask, taskProgress.progress, taskProgress.progressInfo)
       codeExecutor.getExecTask.getPhysicalContext.pushProgress(event)
@@ -101,8 +106,8 @@ class ComputationTaskExecutionReceiver extends TaskExecutionReceiver with Loggin
   }
 
   @Receiver
-  override def taskStatusReceiver(taskStatus: ResponseTaskStatus, smc: ServiceMethodContext): Unit = {
-    val serviceInstance = RPCUtils.getServiceInstanceFromSender(smc.getSender)
+  override def taskStatusReceiver(taskStatus: ResponseTaskStatus, sender: Sender): Unit = {
+    val serviceInstance = RPCUtils.getServiceInstanceFromSender(sender)
     var isExist = false
     codeExecTaskExecutorManager.getByEngineConnAndTaskId(serviceInstance, taskStatus.execId).foreach { codeExecutor =>
       val event = TaskStatusEvent(codeExecutor.getExecTask, taskStatus.status)
@@ -117,8 +122,8 @@ class ComputationTaskExecutionReceiver extends TaskExecutionReceiver with Loggin
   }
 
   @Receiver
-  override def taskResultSizeReceiver(taskResultSize: ResponseTaskResultSize, smc: ServiceMethodContext): Unit = {
-    val serviceInstance = RPCUtils.getServiceInstanceFromSender(smc.getSender)
+  override def taskResultSizeReceiver(taskResultSize: ResponseTaskResultSize, sender: Sender): Unit = {
+    val serviceInstance = RPCUtils.getServiceInstanceFromSender(sender)
     var isExist = false
     codeExecTaskExecutorManager.getByEngineConnAndTaskId(serviceInstance, taskResultSize.execId).foreach { codeExecutor =>
       val event = TaskResultSetSizeEvent(codeExecutor.getExecTask, taskResultSize.resultSize)
@@ -133,8 +138,8 @@ class ComputationTaskExecutionReceiver extends TaskExecutionReceiver with Loggin
   }
 
   @Receiver
-  override def taskResultSetReceiver(taskResultSet: ResponseTaskResultSet, smc: ServiceMethodContext): Unit = {
-    val serviceInstance = RPCUtils.getServiceInstanceFromSender(smc.getSender)
+  override def taskResultSetReceiver(taskResultSet: ResponseTaskResultSet, sender: Sender): Unit = {
+    val serviceInstance = RPCUtils.getServiceInstanceFromSender(sender)
     var isExist = false
     codeExecTaskExecutorManager.getByEngineConnAndTaskId(serviceInstance, taskResultSet.execId).foreach { codeExecutor =>
       val event = TaskResultSetEvent(codeExecutor.getExecTask, ResultSet(taskResultSet.output, taskResultSet.alias))
@@ -152,10 +157,9 @@ class ComputationTaskExecutionReceiver extends TaskExecutionReceiver with Loggin
 
 
   @Receiver
-  override def taskErrorReceiver(responseTaskError: ResponseTaskError, smc: ServiceMethodContext): Unit = {
-
-    val serviceInstance = RPCUtils.getServiceInstanceFromSender(smc.getSender)
+  override def taskErrorReceiver(responseTaskError: ResponseTaskError, sender: Sender): Unit = {
     var isExist = false
+    val serviceInstance = RPCUtils.getServiceInstanceFromSender(sender)
     codeExecTaskExecutorManager.getByEngineConnAndTaskId(serviceInstance, responseTaskError.execId).foreach { codeExecutor =>
       val event = TaskErrorResponseEvent(codeExecutor.getExecTask, responseTaskError.errorMsg)
       logger.info(s"From engineConn receive responseTaskError  info$responseTaskError, now post to listenerBus event: $event")

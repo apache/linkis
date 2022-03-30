@@ -20,6 +20,9 @@ spring:
 
 server:
   port: 20303
+  enable-self-preservation: false
+  eviction-interval-timer-in-ms: 3000
+  response-cache-update-interval-ms: 2000
 eureka:
   instance:
     hostname:
@@ -29,9 +32,3 @@ eureka:
 #    fetch-registry: false
     serviceUrl:
       defaultZone: http://127.0.0.1:20303/eureka/
-#  server:
-#    enableSelfPreservation: false
-    enable-self-preservation: false
-    eviction-interval-timer-in-ms: 3000
-  server:
-    response-cache-update-interval-ms: 2000

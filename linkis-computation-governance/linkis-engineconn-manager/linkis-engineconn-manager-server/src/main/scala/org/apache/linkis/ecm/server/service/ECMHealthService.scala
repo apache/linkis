@@ -18,7 +18,8 @@
 package org.apache.linkis.ecm.server.service
 
 import org.apache.linkis.ecm.core.report.ECMHealthReport
-import org.apache.linkis.manager.common.protocol.node.{NodeHeartbeatMsg, NodeHeartbeatRequest}
+import org.apache.linkis.manager.common.entity.enumeration.{NodeHealthy, NodeStatus}
+import org.apache.linkis.manager.common.protocol.node.{NodeHealthyRequest, NodeHeartbeatMsg, NodeHeartbeatRequest}
 
 
 trait ECMHealthService{
@@ -27,8 +28,20 @@ trait ECMHealthService{
 
   def reportHealth(report: ECMHealthReport): Unit
 
-  def generateHealthReport(reportTime:Long): ECMHealthReport
+  def generateHealthReport(reportTime: Long): ECMHealthReport
 
   def dealNodeHeartbeatRequest(nodeHeartbeatRequest: NodeHeartbeatRequest): NodeHeartbeatMsg
+
+  def dealNodeHealthyRequest(nodeHealthyRequest: NodeHealthyRequest): Unit
+
+  def getNodeStatus: NodeStatus
+
+  def getNodeHealthy: NodeHealthy
+
+  def isSetByManager: Boolean
+
+  def transitionStatus(toStatus: NodeStatus): Unit
+
+  def transitionHealthy(toHealthy: NodeHealthy): Unit
 
 }

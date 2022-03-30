@@ -25,35 +25,35 @@ public class JobDetail {
 
     private Long id;
 
-    private Long job_history_id;
+    private Long jobHistoryId;
 
     /*
     separated multi result path
      */
 
-    private String result_location;
+    private String resultLocation;
 
     /*
     how many result sets
      */
 
-    private Integer result_array_size;
+    private Integer resultArraySize;
 
     /*
     code
      */
 
-    private String execution_content;
+    private String executionContent;
 
     /*
     json of jobGroup
      */
 
-    private String job_group_info;
+    private String jobGroupInfo;
 
-    private Date created_time;
+    private Date createdTime;
 
-    private Date updated_time;
+    private Date updatedTime;
 
     private String status;
 
@@ -62,7 +62,7 @@ public class JobDetail {
     private String updatedTimeMills;
 
     public String getUpdatedTimeMills() {
-        return QueryUtils.dateToString(getUpdated_time());
+        return QueryUtils.dateToString(getUpdatedTime());
     }
 
     public Long getId() {
@@ -73,60 +73,60 @@ public class JobDetail {
         this.id = id;
     }
 
-    public Long getJob_history_id() {
-        return job_history_id;
+    public Long getJobHistoryId() {
+        return jobHistoryId;
     }
 
-    public void setJob_history_id(Long job_history_id) {
-        this.job_history_id = job_history_id;
+    public void setJobHistoryId(Long jobHistoryId) {
+        this.jobHistoryId = jobHistoryId;
     }
 
-    public String getResult_location() {
-        return result_location;
+    public String getResultLocation() {
+        return resultLocation;
     }
 
-    public void setResult_location(String result_location) {
-        this.result_location = result_location;
+    public void setResultLocation(String resultLocation) {
+        this.resultLocation = resultLocation;
     }
 
-    public Integer getResult_array_size() {
-        return result_array_size;
+    public Integer getResultArraySize() {
+        return resultArraySize;
     }
 
-    public void setResult_array_size(Integer result_array_size) {
-        this.result_array_size = result_array_size;
+    public void setResultArraySize(Integer resultArraySize) {
+        this.resultArraySize = resultArraySize;
     }
 
-    public String getExecution_content() {
-        return execution_content;
+    public String getExecutionContent() {
+        return executionContent;
     }
 
-    public void setExecution_content(String execution_content) {
-        this.execution_content = execution_content;
+    public void setExecutionContent(String executionContent) {
+        this.executionContent = executionContent;
     }
 
-    public String getJob_group_info() {
-        return job_group_info;
+    public String getJobGroupInfo() {
+        return jobGroupInfo;
     }
 
-    public void setJob_group_info(String job_group_info) {
-        this.job_group_info = job_group_info;
+    public void setJobGroupInfo(String jobGroupInfo) {
+        this.jobGroupInfo = jobGroupInfo;
     }
 
-    public Date getCreated_time() {
-        return created_time;
+    public Date getCreatedTime() {
+        return createdTime;
     }
 
-    public void setCreated_time(Date created_time) {
-        this.created_time = created_time;
+    public void setCreatedTime(Date createdTime) {
+        this.createdTime = createdTime;
     }
 
-    public Date getUpdated_time() {
-        return updated_time;
+    public Date getUpdatedTime() {
+        return updatedTime;
     }
 
-    public void setUpdated_time(Date updated_time) {
-        this.updated_time = updated_time;
+    public void setUpdatedTime(Date updatedTime) {
+        this.updatedTime = updatedTime;
     }
 
     public String getStatus() {

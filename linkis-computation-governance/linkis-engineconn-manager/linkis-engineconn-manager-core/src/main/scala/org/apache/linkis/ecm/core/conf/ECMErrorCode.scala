@@ -20,8 +20,14 @@ package org.apache.linkis.ecm.core.conf
 
 object ECMErrorCode {
 
-  val PROCESS_WAITFOR_ERROR = 20001
+  val EC_START_TIME_OUT = 11100
+
+  val EC_INTERRUPT_TIME_OUT = 11101
 
   val EC_START_FAILED = 11102
+
+  val EC_FETCH_LOG_FAILED = 11110
+
+  val PROCESS_WAITFOR_ERROR = 20001
 
 }

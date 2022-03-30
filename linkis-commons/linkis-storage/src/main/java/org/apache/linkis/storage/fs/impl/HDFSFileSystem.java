@@ -18,7 +18,9 @@
 package org.apache.linkis.storage.fs.impl;
 
 import org.apache.linkis.common.io.FsPath;
+import org.apache.linkis.hadoop.common.conf.HadoopConf;
 import org.apache.linkis.hadoop.common.utils.HDFSUtils;
+import org.apache.linkis.storage.conf.LinkisStorageConf;
 import org.apache.linkis.storage.domain.FsPathListWithError;
 import org.apache.linkis.storage.fs.FileSystem;
 import org.apache.linkis.storage.utils.StorageConfiguration;
@@ -27,8 +29,8 @@ import org.apache.linkis.storage.utils.StorageUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileUtil;
 import org.apache.hadoop.fs.Path;
@@ -192,7 +194,9 @@ public class HDFSFileSystem extends FileSystem {
                 }
             }
         }
-        /*conf.set("fs.hdfs.impl.disable.cache","true");*/
+        if (StorageConfiguration.FS_CACHE_DISABLE().getValue()) {
+            conf.set("fs.hdfs.impl.disable.cache", "true");
+        }
         fs = HDFSUtils.getHDFSUserFileSystem(user, conf);
         if (fs == null) {
             throw new IOException("init HDFS FileSystem failed!");
@@ -238,7 +242,7 @@ public class HDFSFileSystem extends FileSystem {
         if (!overwrite) {
             return fs.append(new Path(path));
         } else {
-            FSDataOutputStream out = fs.create(new Path(path), true);
+            OutputStream out = fs.create(new Path(path), true);
             this.setPermission(dest, this.getDefaultFilePerm());
             return out;
         }
@@ -294,7 +298,38 @@ public class HDFSFileSystem extends FileSystem {
 
     @Override
     public boolean exists(FsPath dest) throws IOException {
-        return fs.exists(new Path(checkHDFSPath(dest.getPath())));
+        try {
+            return fs.exists(new Path(checkHDFSPath(dest.getPath())));
+        } catch (IOException e) {
+            String message = e.getMessage();
+            String rootCauseMessage = ExceptionUtils.getRootCauseMessage(e);
+            if ((message != null && message.matches(LinkisStorageConf.HDFS_FILE_SYSTEM_REST_ERRS()))
+                    || (rootCauseMessage != null
+                            && rootCauseMessage.matches(
+                                    LinkisStorageConf.HDFS_FILE_SYSTEM_REST_ERRS()))) {
+                logger.info("Failed to execute exists, retry", e);
+                resetRootHdfs();
+                return fs.exists(new Path(checkHDFSPath(dest.getPath())));
+            } else {
+                throw e;
+            }
+        }
+    }
+
+    private void resetRootHdfs() {
+        if (fs != null) {
+            synchronized (this) {
+                if (fs != null) {
+                    if (HadoopConf.HDFS_ENABLE_CACHE()) {
+                        HDFSUtils.closeHDFSFIleSystem(fs, user, true);
+                    } else {
+                        HDFSUtils.closeHDFSFIleSystem(fs, user);
+                    }
+                    logger.warn(user + "FS reset close.");
+                    fs = HDFSUtils.getHDFSUserFileSystem(user, conf);
+                }
+            }
+        }
     }
 
     @Override

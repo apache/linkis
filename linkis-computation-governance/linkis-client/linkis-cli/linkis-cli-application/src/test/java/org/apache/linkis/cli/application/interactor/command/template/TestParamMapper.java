@@ -17,21 +17,19 @@
 
 package org.apache.linkis.cli.application.interactor.command.template;
 
-import org.apache.linkis.cli.application.constants.LinkisClientKeys;
+import org.apache.linkis.cli.application.constants.AppKeys;
 import org.apache.linkis.cli.application.constants.TestConstants;
 import org.apache.linkis.cli.core.interactor.command.parser.transformer.ParamKeyMapper;
 
 public class TestParamMapper extends ParamKeyMapper {
     @Override
     public void initMapperRules() {
-        super.updateMapping(TestConstants.PARAM_COMMON_CMD, LinkisClientKeys.JOB_EXEC_CODE);
-        super.updateMapping(TestConstants.PARAM_PROXY, LinkisClientKeys.LINKIS_COMMON_GATEWAY_URL);
-        super.updateMapping(TestConstants.PARAM_USER, LinkisClientKeys.LINKIS_COMMON_TOKEN_KEY);
-        super.updateMapping(
-                TestConstants.PARAM_USR_CONF, LinkisClientKeys.LINKIS_CLIENT_USER_CONFIG);
-        super.updateMapping(
-                TestConstants.PARAM_PASSWORD, LinkisClientKeys.LINKIS_COMMON_TOKEN_VALUE);
-        super.updateMapping(TestConstants.PARAM_PROXY_USER, LinkisClientKeys.JOB_COMMON_PROXY_USER);
+        super.updateMapping(TestConstants.PARAM_COMMON_CMD, AppKeys.JOB_EXEC_CODE);
+        super.updateMapping(TestConstants.PARAM_PROXY, AppKeys.LINKIS_COMMON_GATEWAY_URL);
+        super.updateMapping(TestConstants.PARAM_USER, AppKeys.LINKIS_COMMON_TOKEN_KEY);
+        super.updateMapping(TestConstants.PARAM_USR_CONF, AppKeys.LINKIS_CLIENT_USER_CONFIG);
+        super.updateMapping(TestConstants.PARAM_PASSWORD, AppKeys.LINKIS_COMMON_TOKEN_VALUE);
+        super.updateMapping(TestConstants.PARAM_PROXY_USER, AppKeys.JOB_COMMON_PROXY_USER);
 
         updateMapping(
                 TestConstants.PARAM_SPARK_EXECUTOR_CORES,
@@ -47,7 +45,7 @@ public class TestParamMapper extends ParamKeyMapper {
         updateMapping(
                 TestConstants.PARAM_SPARK_SHUFFLE_PARTITIONS,
                 TestConstants.LINKIS_SPARK_SHUFFLE_PARTITIONS);
-        updateMapping(TestConstants.PARAM_SPARK_RUNTYPE, LinkisClientKeys.JOB_LABEL_CODE_TYPE);
+        updateMapping(TestConstants.PARAM_SPARK_RUNTYPE, AppKeys.JOB_LABEL_CODE_TYPE);
         updateMapping(TestConstants.PARAM_YARN_QUEUE, TestConstants.YARN_QUEUE);
     }
 

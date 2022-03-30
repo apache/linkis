@@ -138,6 +138,8 @@ abstract class Job extends Runnable with SchedulerEvent with Closeable with Logg
 
   def setJobListener(jobListener: JobListener) = this.jobListener = Some(jobListener)
 
+  def getJobListener = jobListener
+
   def setLogListener(logListener: LogListener) = this.logListener = Some(logListener)
 
   def getLogListener = logListener

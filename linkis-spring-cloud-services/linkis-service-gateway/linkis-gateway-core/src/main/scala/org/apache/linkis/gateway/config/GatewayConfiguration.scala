@@ -42,9 +42,8 @@ object GatewayConfiguration {
 
   val USERCONTROL_SWITCH_ON = CommonVars("wds.linkis.gateway.usercontrol_switch_on", false)
 
-  val REDIRECT_SWITCH_ON = CommonVars("wds.linkis.gateway.redirect_switch_on", false)
 
-  val REDIRECT_GATEWAY_URL = CommonVars("wds.linkis.gateway.redirect.url", "http://127.0.0.1:8088/")
+  val PUBLICKEY_GATEWAY_URL = CommonVars("wds.linkis.gateway.publickey.url", "http://127.0.0.1:8088/")
 
   val PROXY_USER_LIST = CommonVars("wds.linkis.gateway.conf.proxy.user.list", "").getValue.split(",")
 
@@ -63,6 +62,15 @@ object GatewayConfiguration {
 
   val DSS_QUERY_WORKSPACE_SERVICE_NAME = CommonVars("wds.dss.query.workspace.service", "dss-framework-project-server")
   val USER_WORKSPACE_REFLESH_TIME  = CommonVars("wds.linkis.user.workspace.reflesh.time", 10)
+
+  val GATEWAY_SERVER_REFRESH_ENABLED  = CommonVars("wds.linkis.gateway.server.reflesh.enabled", false)
+
+  val GATEWAY_HEADER_ALLOW_ORIGIN = CommonVars("wds.linkis.gateway.header.allow.origin", "*")
+
+  val GATEWAY_HEADER_ALLOW_METHOD = CommonVars("wds.linkis.gateway.header.allow.methods", "POST, GET, OPTIONS, PUT, HEAD, DELETE")
+
+
+  val GATEWAY_DOMAIN_LEVEL  = CommonVars("wds.linkis.gateway.domain.level", 3)
 
   // Use regex to match against URLs, if matched, let them pass anyway(even if not currently logged in), Use "()" and "|" to match against multiple URLs
   val GATEWAY_NO_AUTH_URL_REGEX = CommonVars("wds.linkis.gateway.no.auth.url.regex", ".*visualis.*share.*")

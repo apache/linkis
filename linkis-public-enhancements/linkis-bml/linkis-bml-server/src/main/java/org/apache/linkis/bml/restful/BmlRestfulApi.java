@@ -36,6 +36,7 @@ import org.apache.linkis.bml.vo.ResourceVO;
 import org.apache.linkis.bml.vo.ResourceVersionsVO;
 import org.apache.linkis.common.exception.ErrorException;
 import org.apache.linkis.server.Message;
+import org.apache.linkis.server.utils.ModuleUserUtils;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -808,5 +809,80 @@ public class BmlRestfulApi {
             HttpServletRequest request,
             @RequestParam(value = "resourceId", required = false) String resourceId) {
         return Message.ok("Obtained information successfully(获取信息成功)");
+    }
+
+    @RequestMapping(path = "changeOwner", method = RequestMethod.POST)
+    public Message changeOwnerByResourceId(
+            HttpServletRequest request, @RequestBody JsonNode jsonNode) throws ErrorException {
+        String resourceId = jsonNode.get("resourceId").textValue();
+        String oldOwner = jsonNode.get("oldOwner").textValue();
+        String newOwner = jsonNode.get("newOwner").textValue();
+        resourceService.changeOwnerByResourceId(resourceId, oldOwner, newOwner);
+        return Message.ok("更新owner成功！");
+    }
+
+    @RequestMapping(path = "copyResourceToAnotherUser", method = RequestMethod.POST)
+    public Message copyResourceToAnotherUser(
+            HttpServletRequest request, @RequestBody JsonNode jsonNode) {
+        String username = ModuleUserUtils.getOperationUser(request, "copyResourceToAnotherUser");
+        String resourceId = jsonNode.get("resourceId").textValue();
+        String anotherUser = jsonNode.get("anotherUser").textValue();
+        Message message = null;
+        try {
+            logger.info("用户 {} 开始 copy bml resource: {}", username, resourceId);
+            String clientIp = HttpRequestHelper.getIp(request);
+            Map<String, Object> properties = new HashMap<>();
+            properties.put("clientIp", clientIp);
+            properties.put("maxVersion", 0);
+            properties.put("system", "dss");
+            ResourceTask resourceTask = null;
+            synchronized (resourceId.intern()) {
+                resourceTask =
+                        taskService.createCopyResourceTask(resourceId, anotherUser, properties);
+            }
+            message = Message.ok();
+            message.data("resourceId", resourceTask.getResourceId());
+        } catch (Exception e) {
+            logger.error("failed to copy bml resource:", e);
+            message = Message.error(e.getMessage());
+        }
+        logger.info("用户 {} 结束 copy bml resource: {}", username, resourceId);
+        return message;
+    }
+
+    @RequestMapping(path = "rollbackVersion", method = RequestMethod.POST)
+    public Message rollbackVersion(HttpServletRequest request, @RequestBody JsonNode jsonNode) {
+        String username = ModuleUserUtils.getOperationUser(request, "rollbackVersion");
+        String resourceId = jsonNode.get("resourceId").textValue();
+        String rollbackVersion = jsonNode.get("version").textValue();
+        Message message = null;
+        try {
+            logger.info(
+                    "用户 {} 开始rollback bml resource: {}, version:{} ",
+                    username,
+                    resourceId,
+                    rollbackVersion);
+            String clientIp = HttpRequestHelper.getIp(request);
+            Map<String, Object> properties = new HashMap<>();
+            properties.put("clientIp", clientIp);
+            ResourceTask resourceTask = null;
+            synchronized (resourceId.intern()) {
+                resourceTask =
+                        taskService.createRollbackVersionTask(
+                                resourceId, rollbackVersion, username, properties);
+            }
+            message = Message.ok();
+            message.data("resourceId", resourceTask.getResourceId())
+                    .data("version", resourceTask.getVersion());
+        } catch (Exception e) {
+            logger.error("failed to rollback version:", e);
+            message = Message.error(e.getMessage());
+        }
+        logger.info(
+                "用户 {} 结束rollback bml resource: {}, version:{} ",
+                username,
+                resourceId,
+                rollbackVersion);
+        return message;
     }
 }

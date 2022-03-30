@@ -18,10 +18,10 @@
 package org.apache.linkis.cli.core.utils.converter;
 
 import org.apache.linkis.cli.common.exception.error.ErrorLevel;
-import org.apache.linkis.cli.common.utils.converter.AbstractStringConverter;
+import org.apache.linkis.cli.core.constants.CommonConstants;
 import org.apache.linkis.cli.core.exception.CommandException;
 import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
-import org.apache.linkis.cli.core.utils.SpecialMap;
+import org.apache.linkis.cli.core.interactor.command.SpecialMap;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -30,7 +30,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/** @description: Predefined string-converter */
 public class PredefinedStringConverters {
 
     public static final AbstractStringConverter<String> NO_CONVERTER =
@@ -51,7 +50,7 @@ public class PredefinedStringConverters {
                     if (StringUtils.isBlank(from)) {
                         return null;
                     }
-                    String[] ret = from.trim().split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
+                    String[] ret = from.trim().split(CommonConstants.ARRAY_SEQ);
                     for (int i = 0; i < ret.length; i++) {
                         ret[i] = StringUtils.strip(ret[i], " \"");
                     }

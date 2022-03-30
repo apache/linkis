@@ -36,6 +36,8 @@ class JobInfoResult extends DWSResult with UserAction with Status {
   private var requestPersistTask: RequestPersistTask = _
   private var resultSetList: Array[String] = _
 
+  private var strongerExecId: String = _
+
   def setTask(task: util.Map[_, _]): Unit = {
     this.task = task
     requestPersistTask = new RequestPersistTask
@@ -44,6 +46,7 @@ class JobInfoResult extends DWSResult with UserAction with Status {
     task.remove("createdTime")
     task.remove("updatedTime")
     task.remove("engineStartTime")
+    task.remove("labels")
     Utils.tryCatch{
       BeanUtils.populate(requestPersistTask, task.asInstanceOf[util.Map[String, _]])
     }{
@@ -53,11 +56,19 @@ class JobInfoResult extends DWSResult with UserAction with Status {
     requestPersistTask.setCreatedTime(new Date(createdTime))
     requestPersistTask.setUpdatedTime(new Date(updatedTime))
     requestPersistTask.setEngineStartTime(new Date(updatedTime))
+    if (task.containsKey("strongerExecId")) {
+      this.strongerExecId = task.get("strongerExecId").asInstanceOf[String]
+    }
+
   }
 
   def getTask = task
 
   def getRequestPersistTask: RequestPersistTask = requestPersistTask
+
+  def getStrongerExecId: String = {
+    this.strongerExecId
+  }
 
   def getResultSetList(ujesClient: UJESClient): Array[String] = {
     if(isSucceed && resultSetList == null) synchronized {

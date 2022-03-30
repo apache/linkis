@@ -17,88 +17,39 @@
 
 package org.apache.linkis.cli.common.entity.job;
 
-import org.apache.linkis.cli.common.entity.execution.CommonSubExecutionType;
-import org.apache.linkis.cli.common.entity.execution.SubExecutionType;
+import org.apache.linkis.cli.common.entity.command.CmdTemplate;
+import org.apache.linkis.cli.common.entity.command.CmdType;
+import org.apache.linkis.cli.common.entity.operator.JobOperator;
+import org.apache.linkis.cli.common.entity.present.PresentWay;
 
-/** @description Job should encapsulate all data needed for an execution(submit/job-management) */
-public abstract class Job {
-    /** ID for client itself */
-    private String cid;
+public interface Job {
+    /** Linkis-cli specified id, not server-side returned job-id/task-id */
+    String getCid();
 
-    private String submitUser;
-    private String proxyUser;
+    /**
+     * Command Type for this Job, should be able to use this to find out corresponding {@link
+     * CmdTemplate}
+     */
+    CmdType getCmdType();
 
-    private SubExecutionType subExecutionType = CommonSubExecutionType.NONE;
-    private OutputWay outputWay;
-    private String outputPath;
+    /** specifies which kind of sub-execution: e.g. jobManagement: status/list/log/kill; */
+    JobSubType getSubType();
 
-    public String getCid() {
-        return cid;
-    }
+    /**
+     * input-param/config will be stored in JobDescription information contained by this
+     * data-structure should be passed to server
+     */
+    JobDescription getJobDesc();
 
-    public void setCid(String cid) {
-        this.cid = cid;
-    }
+    /**
+     * data generated during execution(e.g. job status, job id, log, result etc.) is stored here
+     * information contained by this data-structure can be further passed to server
+     */
+    JobData getJobData();
 
-    public String getSubmitUser() {
-        return submitUser;
-    }
+    /** operates lower level components(usually encapsulates a client) */
+    JobOperator getJobOperator();
 
-    public void setSubmitUser(String user) {
-        this.submitUser = user;
-    }
-
-    public String getProxyUser() {
-        return proxyUser;
-    }
-
-    public void setProxyUser(String user) {
-        this.proxyUser = user;
-    }
-
-    public SubExecutionType getSubExecutionType() {
-        return subExecutionType;
-    }
-
-    public void setSubExecutionType(SubExecutionType subExecutionType) {
-        this.subExecutionType = subExecutionType;
-    }
-
-    public OutputWay getOutputWay() {
-        return outputWay;
-    }
-
-    public void setOutputWay(OutputWay outputWay) {
-        this.outputWay = outputWay;
-    }
-
-    public String getOutputPath() {
-        return outputPath;
-    }
-
-    public void setOutputPath(String outputPath) {
-        this.outputPath = outputPath;
-    }
-
-    //
-    //  public String getJobInfoStr(Map<String, String> extraInfo) {
-    //    StringBuilder sb = new StringBuilder();
-    //    sb.append("UserName: ").append(getUser()).append(", ")
-    //        .append("JobID: ").append(getJobIDWithPrefix()).append(", ")
-    //        .append("SyncKey: ").append(getSyncKey()).append(", ")
-    //        .append("StartTime: ").append(CommonUtils.formatTime(getStartTime())).append(", ")
-    //        .append("EndTime: ").append(CommonUtils.formatTime(getEndTime())).append(", ")
-    //        .append("JobExecutionType: ").append(getSubExecutionType()).append(", ")
-    //        .append("JobStatus: ").append(getStatus()).append(", ")
-    //        .append("JobProgress: ").append(getProgress()).append(", ")
-    //        .append("ErrorCode: ").append(getErrorCode()).append(", ")
-    //        .append("ErrorMsg: ").append(getErrorMsg()).append(", ")
-    //        .append("ServerAddr: ").append(getServerAddr()).append(", ")
-    //        .append("ClientAddr: ").append(getClientAddr()).append(", ")
-    //        .append("ClientVersion: ").append(getClientVersion()).append(", ")
-    //        .append("ClientPath: ").append(getClientPath()).append(",")
-    //        .append("Elapse: ").append(getEndTime() - getStartTime()).append(",")
-    //        .append("ExtraInfo: ").append(extraInfo.toString());
-    //    return sb.toString();
-    //  }
+    /** decide how result should be presented */
+    PresentWay getPresentWay();
 }

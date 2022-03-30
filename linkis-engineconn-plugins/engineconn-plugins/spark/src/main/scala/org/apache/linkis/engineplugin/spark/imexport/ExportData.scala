@@ -57,15 +57,15 @@ object ExportData extends Logging {
     val isOverwrite = LoadData.getMapValue[Boolean](dest, "isOverwrite", true)
     val sheetName = LoadData.getMapValue[String](dest, "sheetName", "Sheet1")
     val fieldDelimiter = LoadData.getMapValue[String](dest, "fieldDelimiter", ",")
-    val nullValue = LoadData.getMapValue[String](dest,"nullValue","SHUFFLEOFF")
+    val nullValue = LoadData.getMapValue[String](dest, "nullValue", "SHUFFLEOFF")
 
     if (isCsv) {
-      CsvRelation.saveDFToCsv(spark, df, path, hasHeader, isOverwrite,option = Map("fieldDelimiter" -> fieldDelimiter,"exportNullValue" ->nullValue))
+      CsvRelation.saveDFToCsv(spark, df, path, hasHeader, isOverwrite, option = Map("fieldDelimiter" -> fieldDelimiter, "exportNullValue" -> nullValue))
     } else {
       df.write.format("com.webank.wedatasphere.spark.excel")
         .option("sheetName", sheetName)
         .option("useHeader", hasHeader)
-        .option("exportNullValue",nullValue)
+        .option("exportNullValue", nullValue)
         .mode("overwrite").save(path)
     }
     warn(s"Succeed to export data  to path:$path")
@@ -78,7 +78,12 @@ object ExportData extends Logging {
     val tableName = LoadData.getMapValue[String](dataInfo, "tableName")
     val isPartition = LoadData.getMapValue[Boolean](dataInfo, "isPartition", false)
     val partition = LoadData.getMapValue[String](dataInfo, "partition", "ds")
-    val partitionValue = LoadData.getMapValue[String](dataInfo, "partitionValue", "1993-01-02")
+    val partitionValue = if (partition.equals("ds")) {
+      LoadData.getMapValue[String](dataInfo, "partitionValue", "1993-01-02")
+    } else {
+      val value = LoadData.getMapValue[String](dataInfo, "partitionValue", "1993-01-02")
+      s"'$value'"
+    }
     val columns = LoadData.getMapValue[String](dataInfo, "columns", "*")
     sql.append("select ").append(columns).append(" from ").append(s"$database.$tableName")
     if (isPartition) sql.append(" where ").append(s"$partition=$partitionValue")

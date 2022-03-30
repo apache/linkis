@@ -37,13 +37,16 @@ object ECMConfiguration {
   val ECM_ASYNC_BUS_WAITTOEMPTY_TIME: Long = CommonVars("wds.linkis.ecm.async.bus.waittoempty.time", 5000L).getValue
 
   //resource
-  val ECM_MAX_MEMORY_AVAILABLE: Long = CommonVars[Long]("wds.linkis.ecm.memory.max", ByteTimeUtils.byteStringAsBytes("80g")).getValue
-  val ECM_MAX_CORES_AVAILABLE: Int = CommonVars[Integer]("wds.linkis.ecm.cores.max", 50).getValue
+  val ECM_MAX_MEMORY_AVAILABLE: Long = CommonVars[Long]("wds.linkis.ecm.memory.max", ByteTimeUtils.byteStringAsBytes("100g")).getValue
+  val ECM_MAX_CORES_AVAILABLE: Int = CommonVars[Integer]("wds.linkis.ecm.cores.max", 100).getValue
   val ECM_MAX_CREATE_INSTANCES: Int = CommonVars[Integer]("wds.linkis.ecm.engineconn.instances.max", 50).getValue
 
   val ECM_PROTECTED_MEMORY: Long = CommonVars[Long]("wds.linkis.ecm.protected.memory", ByteTimeUtils.byteStringAsBytes("4g")).getValue
+  val ECM_PROTECTED_CPU_LOAD: Double = CommonVars[Double]("wds.linkis.ecm.protected.cpu.load", 0.98D).getValue
   val ECM_PROTECTED_CORES: Int = CommonVars[Integer]("wds.linkis.ecm.protected.cores.max", 2).getValue
   val ECM_PROTECTED_INSTANCES: Int = CommonVars[Integer]("wds.linkis.ecm.protected.engine.instances", 2).getValue
+
+  val ECM_PROTECTED_LOAD_ENABLED: Boolean = CommonVars[Boolean]("wds.linkis.ecm.protected.load.enabled", false).getValue
 
   val MANAGER_SPRING_NAME: String = GovernanceCommonConf.MANAGER_SPRING_NAME.getValue
 
@@ -75,5 +78,6 @@ object ECMConfiguration {
 
   val ENGINE_START_ERROR_MSG_MAX_LEN = CommonVars("wds.linkis.ecm.engine.start.error.msg.max.len", 500)
 
+  val ECM_PROCESS_SCRIPT_KILL: Boolean = CommonVars[Boolean]("wds.linkis.ecm.script.kill.engineconn", true).getValue
 
 }

@@ -26,9 +26,10 @@ object UJESSQLTypeParser {
   def parserFromName(typeName: String): Int = {
     typeName.toLowerCase match {
       case null => throw new UJESSQLException(UJESSQLErrorCode.METADATA_EMPTY)
-      case "string"  => Types.CHAR
+      case "string" => Types.NVARCHAR
       case "short" => Types.SMALLINT
       case "int" => Types.INTEGER
+      case "integer" => Types.INTEGER
       case "long" => Types.BIGINT
       case "float" => Types.FLOAT
       case "double" => Types.DOUBLE
@@ -36,13 +37,21 @@ object UJESSQLTypeParser {
       case "byte" => Types.TINYINT
       case "char" => Types.CHAR
       case "timestamp" => Types.TIMESTAMP
-      case _ => throw new SQLException( s"parameter type error,Type:$typeName")
+      case "varchar" => Types.VARCHAR
+      case "tinyint" => Types.TINYINT
+      case "smallint" => Types.SMALLINT
+      case "decimal" => Types.DECIMAL
+      case "date" => Types.DATE
+      case "bigint" => Types.BIGINT
+      case "array" => Types.ARRAY
+      case "map" => Types.JAVA_OBJECT
+      case _ => throw new SQLException(s"parameter type error,Type:$typeName")
     }
   }
 
-  def parserFromVal(obj: Any): Int ={
+  def parserFromVal(obj: Any): Int = {
     obj match {
-      case _: String => Types.CHAR
+      case _: String => Types.NVARCHAR
       case _: Short => Types.SMALLINT
       case _: Int => Types.INTEGER
       case _: Long => Types.BIGINT
@@ -51,10 +60,12 @@ object UJESSQLTypeParser {
       case _: Boolean => Types.BOOLEAN
       case _: Byte => Types.TINYINT
       case _: Char => Types.CHAR
+      case _: BigDecimal => Types.DECIMAL
       case _: Timestamp => Types.TIMESTAMP
       case _ => throw new UJESSQLException(UJESSQLErrorCode.PREPARESTATEMENT_TYPEERROR)
     }
   }
+
   def parserFromMetaData(dataType: Int): String = {
     dataType match {
       case Types.CHAR => "string"
@@ -67,6 +78,10 @@ object UJESSQLTypeParser {
       case Types.TINYINT => "byte"
       case Types.CHAR => "char"
       case Types.TIMESTAMP => "timestamp"
+      case Types.DECIMAL => "decimal"
+      case Types.VARCHAR => "varchar"
+      case Types.NVARCHAR => "string"
+      case Types.DATE => "date"
       case _ => throw new UJESSQLException(UJESSQLErrorCode.PREPARESTATEMENT_TYPEERROR)
     }
   }

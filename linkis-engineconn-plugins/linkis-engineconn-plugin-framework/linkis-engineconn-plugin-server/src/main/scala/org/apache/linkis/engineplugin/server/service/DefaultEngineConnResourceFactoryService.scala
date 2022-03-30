@@ -23,7 +23,7 @@ import org.apache.linkis.manager.common.entity.resource.NodeResource
 import org.apache.linkis.manager.engineplugin.common.exception.EngineConnPluginErrorException
 import org.apache.linkis.manager.engineplugin.common.resource.{EngineResourceFactory, EngineResourceRequest}
 import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel
-import org.apache.linkis.message.annotation.Receiver
+import org.apache.linkis.rpc.message.annotation.Receiver
 import org.springframework.stereotype.Component
 
 import scala.collection.JavaConversions._

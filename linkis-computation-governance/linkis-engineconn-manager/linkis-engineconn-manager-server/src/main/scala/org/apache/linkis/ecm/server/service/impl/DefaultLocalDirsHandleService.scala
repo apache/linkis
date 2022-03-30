@@ -23,24 +23,33 @@ import java.nio.file.Paths
 import org.apache.linkis.common.io.FsPath
 import org.apache.linkis.ecm.server.conf.ECMConfiguration._
 import org.apache.linkis.ecm.server.service.LocalDirsHandleService
-
+import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang.time.DateFormatUtils
 
 class DefaultLocalDirsHandleService extends LocalDirsHandleService {
 
   // TODO: 检测当前磁盘的健康状态，如果目录满了，需要上报am
 
-  override def cleanup(): Unit = ???
+  override def cleanup(): Unit = {}
 
 
   override def getEngineConnManagerHomeDir: String = ECM_HOME_DIR
 
-  override def getEngineConnWorkDir(user: String, ticketId: String): String = new FsPath(Paths.get(ENGINECONN_ROOT_DIR, user, "workDir", ticketId).toFile.getPath).getPath
+  override def getEngineConnWorkDir(user: String, ticketId: String, engineType: String): String = {
+    val prefix = if (StringUtils.isBlank(engineType)) {
+      Paths.get(ENGINECONN_ROOT_DIR, user, DateFormatUtils.format(System.currentTimeMillis(), "yyyyMMdd")).toFile.getPath
+    } else {
+      Paths.get(ENGINECONN_ROOT_DIR, user, DateFormatUtils.format(System.currentTimeMillis(), "yyyyMMdd"), engineType).toFile.getPath
+    }
+    new FsPath(prefix + File.separator + ticketId).getPath
+  }
 
   override def getEngineConnPublicDir: String = ENGINECONN_PUBLIC_DIR
 
-  override def getEngineConnLogDir(user: String, ticketId: String): String = s"${getEngineConnWorkDir(user, ticketId)}${File.separator}logs"
+  override def getEngineConnLogDir(user: String, ticketId: String, engineType: String): String = s"${getEngineConnWorkDir(user, ticketId, engineType)}${File.separator}logs"
 
-  override def getEngineConnTmpDir(user: String, ticketId: String): String = s"${getEngineConnWorkDir(user, ticketId)}${File.separator}tmp"
+  override def getEngineConnTmpDir(user: String, ticketId: String, engineType: String): String = s"${getEngineConnWorkDir(user, ticketId, engineType)}${File.separator}tmp"
+
 
 
 }

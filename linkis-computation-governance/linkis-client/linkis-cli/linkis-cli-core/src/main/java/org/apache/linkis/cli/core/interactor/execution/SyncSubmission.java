@@ -38,7 +38,7 @@ import org.apache.linkis.cli.core.interactor.execution.observer.listener.LinkisC
 import org.apache.linkis.cli.core.interactor.execution.observer.listener.TriggerObserver;
 import org.apache.linkis.cli.core.utils.CommonUtils;
 import org.apache.linkis.cli.core.utils.LogUtils;
-
+import org.apache.linkis.common.utils.JacksonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -206,7 +206,7 @@ public class SyncSubmission implements Execution {
                     "EXE0006",
                     ErrorLevel.ERROR,
                     CommonErrMsg.ExecutionErr,
-                    "Job is in abnormal status: " + CommonUtils.GSON.toJson(execData));
+                    "Job is in abnormal status: " + JacksonUtils.toJsonFormat(execData));
         }
     }
 

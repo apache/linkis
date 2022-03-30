@@ -17,6 +17,7 @@
 
 package org.apache.linkis.cs.client.test.service;
 
+import org.apache.linkis.common.utils.JacksonUtils;
 import org.apache.linkis.cs.client.Context;
 import org.apache.linkis.cs.client.ContextClient;
 import org.apache.linkis.cs.client.builder.ContextClientFactory;
@@ -29,9 +30,6 @@ import org.apache.linkis.cs.common.entity.resource.BMLResource;
 import org.apache.linkis.cs.common.entity.resource.LinkisBMLResource;
 import org.apache.linkis.cs.common.entity.source.*;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -41,7 +39,6 @@ public class TestSearchService {
 
     public static void main(String[] args) throws Exception {
 
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
         SearchService searchService = DefaultSearchService.getInstance();
         ContextClient contextClient = ContextClientFactory.getOrCreateContextClient();
         LinkisHAWorkFlowContextID contextID = new LinkisHAWorkFlowContextID();
@@ -51,7 +48,7 @@ public class TestSearchService {
             contextID.setFlow("test_client");
             Context context = contextClient.createContext(contextID);
             contextID = (LinkisHAWorkFlowContextID) context.getContextID();
-            System.out.println(new GsonBuilder().setPrettyPrinting().create().toJson(contextID));
+            System.out.println(JacksonUtils.toJsonFormat(contextID));
             ContextKey contextKey = new CommonContextKey();
             contextKey.setKey("node.resource.sql.cooper.txt");
             contextKey.setContextType(ContextType.RESOURCE);
@@ -67,7 +64,7 @@ public class TestSearchService {
             contextClient.setContextKeyValue(contextID, contextKeyValue);
             BMLResource resource =
                     searchService.getContextValue(contextID, contextKey, LinkisBMLResource.class);
-            System.out.println(gson.toJson(resource));
+            System.out.println(JacksonUtils.toJsonFormat(resource));
             ContextValue contextValue1 = contextClient.getContextValue(contextID, contextKey);
             System.out.println(contextValue1.getValue());
         }
@@ -103,12 +100,12 @@ public class TestSearchService {
             contextClient.setContextKeyValue(contextID, contextKeyValue);
             Object flowInfoObject =
                     searchService.getContextValue(contextID, contextKey, Object.class);
-            System.out.println(gson.toJson(flowInfoObject));
+            System.out.println(JacksonUtils.toJsonFormat(flowInfoObject));
         }
 
         BMLResource bmlResource =
                 searchService.searchContext(contextID, "cooper", "sql", LinkisBMLResource.class);
         contextClient.close();
-        System.out.println(gson.toJson(bmlResource));
+        System.out.println(JacksonUtils.toJsonFormat(bmlResource));
     }
 }

@@ -17,19 +17,17 @@
 
 package org.apache.linkis.cs.highavailable.proxy;
 
+import net.sf.cglib.proxy.MethodInterceptor;
+import net.sf.cglib.proxy.MethodProxy;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.linkis.common.utils.JacksonUtils;
 import org.apache.linkis.cs.common.entity.source.ContextID;
 import org.apache.linkis.cs.common.entity.source.HAContextID;
 import org.apache.linkis.cs.common.exception.CSErrorException;
 import org.apache.linkis.cs.highavailable.AbstractContextHAManager;
 import org.apache.linkis.cs.highavailable.exception.CSErrorCode;
-
-import org.apache.commons.lang3.StringUtils;
-
-import net.sf.cglib.proxy.MethodInterceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import net.sf.cglib.proxy.MethodProxy;
-import com.google.gson.Gson;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -44,7 +42,6 @@ import java.util.Map;
 public class MethodInterceptorImpl implements MethodInterceptor {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodInterceptorImpl.class);
-    private static final Gson gson = new Gson();
     private AbstractContextHAManager contextHAManager;
     private Object object;
     private final Map<Integer, String> contextIDCacheMap = new HashMap<Integer, String>();
@@ -148,10 +145,10 @@ public class MethodInterceptorImpl implements MethodInterceptor {
                                                 .convertHAIDToHAKey(haContextID);
                                 haContextID.setContextId(haId);
                             } else {
-                                logger.error("Invalid HAContextID : " + gson.toJson(haContextID));
+                                logger.error("Invalid HAContextID : " + JacksonUtils.toJson(haContextID));
                                 throw new CSErrorException(
                                         CSErrorCode.INVAID_HA_CONTEXTID,
-                                        "Invalid HAContextID : " + gson.toJson(haContextID));
+                                        "Invalid HAContextID : " + JacksonUtils.toJson(haContextID));
                             }
                         }
                     }
@@ -175,11 +172,11 @@ public class MethodInterceptorImpl implements MethodInterceptor {
             if (HAContextID.class.isInstance(contextID)) {
                 logger.error(
                         "ContextId of HAContextID instance cannot be numberic. contextId : "
-                                + gson.toJson(contextID));
+                                + JacksonUtils.toJson(contextID));
                 throw new CSErrorException(
                         CSErrorCode.INVALID_CONTEXTID,
                         "ContextId of HAContextID instance cannot be numberic. contextId : "
-                                + gson.toJson(contextID));
+                                + JacksonUtils.toJson(contextID));
             }
         } else {
             if (HAContextID.class.isInstance(contextID)) {
@@ -193,10 +190,10 @@ public class MethodInterceptorImpl implements MethodInterceptor {
                     }
                     this.contextHAManager.convertProxyHAID((HAContextID) contextID);
                 } else {
-                    logger.error("Invalid haContextId. contextId : " + gson.toJson(contextID));
+                    logger.error("Invalid haContextId. contextId : " + JacksonUtils.toJson(contextID));
                     throw new CSErrorException(
                             CSErrorCode.INVALID_HAID,
-                            "Invalid haContextId. contextId : " + gson.toJson(contextID));
+                            "Invalid haContextId. contextId : " + JacksonUtils.toJson(contextID));
                 }
             }
         }
@@ -213,7 +210,7 @@ public class MethodInterceptorImpl implements MethodInterceptor {
                         logger.warn(
                                 "Method {} returns non-contextid object : {}",
                                 innerMethod.getName(),
-                                gson.toJson(object));
+                                JacksonUtils.toJson(object));
                     }
                 } catch (Exception e) {
                     logger.error("call method : {} error, ", innerMethod.getName(), e);
@@ -251,13 +248,13 @@ public class MethodInterceptorImpl implements MethodInterceptor {
                             "GetContextID method : "
                                     + method.getName()
                                     + " returns invalid haContextID : "
-                                    + gson.toJson(result));
+                                    + JacksonUtils.toJson(result));
                     throw new CSErrorException(
                             CSErrorCode.INVALID_HAID,
                             "GetContextID method : "
                                     + method.getName()
                                     + " returns invalid haContextID : "
-                                    + gson.toJson(result));
+                                    + JacksonUtils.toJson(result));
                 }
             }
         }

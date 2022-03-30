@@ -19,16 +19,10 @@ package org.apache.linkis.cli.core.utils;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 import java.util.HashMap;
 import java.util.Map;
 
 public class CommonUtils {
-
-    public static final Gson GSON =
-            new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 
     public static <T> T castStringToAny(Class<T> clazz, String val) {
         if (StringUtils.isBlank(val)) {

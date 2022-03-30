@@ -17,6 +17,7 @@
 
 package org.apache.linkis.cs.client.test.test_multiuser;
 
+import org.apache.linkis.common.utils.JacksonUtils;
 import org.apache.linkis.cs.client.Context;
 import org.apache.linkis.cs.client.ContextClient;
 import org.apache.linkis.cs.client.builder.ContextClientFactory;
@@ -28,8 +29,6 @@ import org.apache.linkis.cs.common.entity.resource.LinkisBMLResource;
 import org.apache.linkis.cs.common.entity.source.*;
 import org.apache.linkis.cs.common.serialize.helper.ContextSerializationHelper;
 import org.apache.linkis.cs.common.serialize.helper.SerializationHelper;
-
-import com.google.gson.Gson;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -67,7 +66,7 @@ public class TestCreateContext {
                 // test deserialize
                 System.out.println("contextIDStr: " + contextIDStr);
                 Object obj = serializationHelper.deserialize(contextIDStr);
-                System.out.println("Deserialize jsonstr : " + new Gson().toJson(obj));
+                System.out.println("Deserialize jsonstr : " + JacksonUtils.toJson(obj));
             } else {
                 System.out.println("ContextID not saved.");
             }
@@ -93,12 +92,12 @@ public class TestCreateContext {
             BMLResource rs =
                     DefaultSearchService.getInstance()
                             .getContextValue(contextID, contextKey, LinkisBMLResource.class);
-            System.out.println(new Gson().toJson(rs));
+            System.out.println(JacksonUtils.toJson(rs));
             List<String> contains = new ArrayList<>();
             contains.add("cooper");
             List<ContextKeyValue> contextKeyValueList =
                     contextClient.search(context.getContextID(), null, null, contains, null);
-            System.out.println("ContextKVList : " + new Gson().toJson(contextKeyValueList));
+            System.out.println("ContextKVList : " + JacksonUtils.toJson(contextKeyValueList));
         } catch (Exception e) {
             contextClient.close();
             e.printStackTrace();

@@ -17,12 +17,12 @@
 
 package org.apache.linkis.cs.common.serialize.impl.history;
 
+import org.apache.linkis.common.utils.JacksonUtils;
 import org.apache.linkis.cs.common.entity.history.CommonResourceHistory;
 import org.apache.linkis.cs.common.entity.resource.Resource;
 import org.apache.linkis.cs.common.exception.CSErrorException;
 import org.apache.linkis.cs.common.serialize.AbstractSerializer;
 import org.apache.linkis.cs.common.serialize.helper.ContextSerializationHelper;
-import org.apache.linkis.cs.common.utils.CSCommonUtils;
 
 import java.util.Map;
 
@@ -55,6 +55,6 @@ public class CommonResourceHistorySerializer extends AbstractSerializer<CommonRe
         String resourceStr = ContextSerializationHelper.getInstance().serialize(resource);
         Map<String, String> mapValue = getMapValue(commonResourceHistory);
         mapValue.put("resource", resourceStr);
-        return CSCommonUtils.gson.toJson(mapValue);
+        return JacksonUtils.toJson(mapValue);
     }
 }

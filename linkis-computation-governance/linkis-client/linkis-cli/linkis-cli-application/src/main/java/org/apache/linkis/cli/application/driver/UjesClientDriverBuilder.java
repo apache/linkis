@@ -17,20 +17,18 @@
 
 package org.apache.linkis.cli.application.driver;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.linkis.cli.application.constants.LinkisClientKeys;
 import org.apache.linkis.cli.application.constants.LinkisConstants;
 import org.apache.linkis.cli.application.driver.context.UjesClientDriverContext;
 import org.apache.linkis.cli.application.interactor.validate.UjesContextValidator;
-import org.apache.linkis.cli.application.utils.Utils;
 import org.apache.linkis.cli.common.exception.error.ErrorLevel;
 import org.apache.linkis.cli.core.builder.BuildableByVarAccess;
 import org.apache.linkis.cli.core.exception.BuilderException;
 import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
 import org.apache.linkis.cli.core.interactor.validate.Validator;
 import org.apache.linkis.cli.core.interactor.var.VarAccess;
-
-import org.apache.commons.lang3.StringUtils;
-
+import org.apache.linkis.common.utils.JacksonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -101,7 +99,7 @@ public class UjesClientDriverBuilder extends BuildableByVarAccess<UjesClientDriv
         Validator ctxValidator = new UjesContextValidator();
         ctxValidator.doValidation(context);
 
-        logger.info("==========ujes_Ctx============\n" + Utils.GSON.toJson(context));
+        logger.info("==========ujes_Ctx============\n" + JacksonUtils.toJsonFormat(context));
 
         targetObj.initDriver(context);
 

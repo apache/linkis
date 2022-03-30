@@ -17,7 +17,13 @@
 
 package org.apache.linkis.metadata.service.impl;
 
+import com.google.common.collect.Maps;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.hadoop.fs.FileStatus;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
 import org.apache.linkis.common.utils.ByteTimeUtils;
+import org.apache.linkis.common.utils.JacksonUtils;
 import org.apache.linkis.hadoop.common.utils.HDFSUtils;
 import org.apache.linkis.metadata.dao.MdqDao;
 import org.apache.linkis.metadata.domain.mdq.DomainCoversionUtils;
@@ -40,20 +46,11 @@ import org.apache.linkis.metadata.hive.dao.HiveMetaDao;
 import org.apache.linkis.metadata.service.HiveMetaWithPermissionService;
 import org.apache.linkis.metadata.service.MdqService;
 import org.apache.linkis.metadata.type.MdqImportType;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.hadoop.fs.FileStatus;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.google.common.collect.Maps;
-import com.google.gson.Gson;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.*;
@@ -143,7 +140,7 @@ public class MdqServiceImpl implements MdqService {
                     && (importType == MdqImportType.Csv.ordinal()
                             || importType == MdqImportType.Excel.ordinal())) {
                 String destination = mdqTableBO.getImportInfo().getArgs().get("destination");
-                HashMap hashMap = new Gson().fromJson(destination, HashMap.class);
+                HashMap hashMap = JacksonUtils.fromJson(destination, HashMap.class);
                 if (Boolean.valueOf(hashMap.get("importData").toString())) {
                     logger.info(
                             "Simply add a partition column without dropping the original table(只是单纯增加分区列，不删除掉原来的表)");

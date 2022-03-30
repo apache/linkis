@@ -17,16 +17,16 @@
 
 package org.apache.linkis.cs.common.serialize.impl.value.metadata;
 
+import org.apache.linkis.common.utils.JacksonUtils;
 import org.apache.linkis.cs.common.entity.metadata.CSTable;
 import org.apache.linkis.cs.common.exception.CSErrorException;
 import org.apache.linkis.cs.common.serialize.AbstractSerializer;
-import org.apache.linkis.cs.common.utils.CSCommonUtils;
 
 public class CSTableSerializer extends AbstractSerializer<CSTable> {
 
     @Override
     public CSTable fromJson(String json) throws CSErrorException {
-        return CSCommonUtils.gson.fromJson(json, CSTable.class);
+        return JacksonUtils.fromJson(json, CSTable.class);
     }
 
     @Override

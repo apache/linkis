@@ -17,10 +17,9 @@
 
 package org.apache.linkis.cs.common.serialize;
 
-import org.apache.linkis.cs.common.exception.CSErrorException;
-import org.apache.linkis.cs.common.utils.CSCommonUtils;
-
 import org.apache.commons.lang3.StringUtils;
+import org.apache.linkis.common.utils.JacksonUtils;
+import org.apache.linkis.cs.common.exception.CSErrorException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,7 +30,7 @@ public abstract class AbstractSerializer<T> implements ContextSerializer<T> {
 
     public String getJsonValue(T t) throws CSErrorException {
         if (null != t) {
-            return CSCommonUtils.gson.toJson(t);
+            return JacksonUtils.toJson(t);
         }
         return null;
     }
@@ -42,7 +41,7 @@ public abstract class AbstractSerializer<T> implements ContextSerializer<T> {
     public boolean accepts(String json) {
         if (StringUtils.isNotBlank(json)) {
             Map<String, String> value =
-                    CSCommonUtils.gson.fromJson(json, new HashMap<String, String>().getClass());
+                    JacksonUtils.fromJson(json, new HashMap<String, String>().getClass());
             if (getType().equals(value.get(TYPE))) {
                 return true;
             }
@@ -57,7 +56,7 @@ public abstract class AbstractSerializer<T> implements ContextSerializer<T> {
             Map<String, String> map = new HashMap<>();
             map.put(TYPE, getType());
             map.put("value", getJsonValue(t));
-            return CSCommonUtils.gson.toJson(map);
+            return JacksonUtils.toJson(map);
         }
         return null;
     }
@@ -66,7 +65,7 @@ public abstract class AbstractSerializer<T> implements ContextSerializer<T> {
     public T deserialize(String json) throws CSErrorException {
         if (accepts(json)) {
             Map<String, String> jsonObj =
-                    CSCommonUtils.gson.fromJson(json, new HashMap<String, String>().getClass());
+                    JacksonUtils.fromJson(json, new HashMap<String, String>().getClass());
             String value = jsonObj.get("value");
             return fromJson(value);
         }

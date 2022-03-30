@@ -17,6 +17,7 @@
 
 package org.apache.linkis.cs;
 
+import org.apache.linkis.common.utils.JacksonUtils;
 import org.apache.linkis.cs.common.entity.source.ContextID;
 import org.apache.linkis.cs.common.entity.source.ContextKeyValue;
 import org.apache.linkis.cs.condition.Condition;
@@ -26,8 +27,6 @@ import org.apache.linkis.cs.contextcache.ContextCacheService;
 import org.apache.linkis.cs.exception.ContextSearchFailedException;
 import org.apache.linkis.cs.execution.ConditionExecution;
 import org.apache.linkis.cs.execution.impl.*;
-import org.apache.linkis.server.BDPJettyServerHelper;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +43,7 @@ public class DefaultContextSearch implements ContextSearch {
             ContextID contextID,
             Map<Object, Object> conditionMap)
             throws ContextSearchFailedException {
-        logger.info("Got search condition: \n" + BDPJettyServerHelper.gson().toJson(conditionMap));
+        logger.info("Got search condition: \n" + JacksonUtils.toJson(conditionMap));
         ConditionParser conditionParser = ConditionParser.parserMap.get(conditionMap.get("type"));
         return search(contextCacheService, contextID, conditionParser.parse(conditionMap));
     }

@@ -17,15 +17,15 @@
 
 package org.apache.linkis.cs.common.serialize.impl.value.object;
 
+import org.apache.linkis.common.utils.JacksonUtils;
 import org.apache.linkis.cs.common.entity.object.LinkisVariable;
 import org.apache.linkis.cs.common.exception.CSErrorException;
 import org.apache.linkis.cs.common.serialize.AbstractSerializer;
-import org.apache.linkis.cs.common.utils.CSCommonUtils;
 
 public class LinkisVariableSerializer extends AbstractSerializer<LinkisVariable> {
     @Override
     public LinkisVariable fromJson(String json) throws CSErrorException {
-        return CSCommonUtils.gson.fromJson(json, LinkisVariable.class);
+        return JacksonUtils.fromJson(json, LinkisVariable.class);
     }
 
     @Override

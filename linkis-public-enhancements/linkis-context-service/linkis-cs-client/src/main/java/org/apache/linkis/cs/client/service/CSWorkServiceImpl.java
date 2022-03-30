@@ -17,6 +17,7 @@
 
 package org.apache.linkis.cs.client.service;
 
+import org.apache.linkis.common.utils.JacksonUtils;
 import org.apache.linkis.cs.client.ContextClient;
 import org.apache.linkis.cs.client.builder.ContextClientFactory;
 import org.apache.linkis.cs.client.utils.SerializeHelper;
@@ -25,7 +26,6 @@ import org.apache.linkis.cs.common.entity.source.ContextID;
 import org.apache.linkis.cs.common.exception.CSErrorException;
 import org.apache.linkis.cs.common.exception.ErrorCode;
 import org.apache.linkis.cs.common.utils.CSCommonUtils;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,13 +71,13 @@ public class CSWorkServiceImpl implements CSWorkService {
         } catch (Exception e) {
             logger.error(
                     "InitContextInfo error. contextIDStr : {}, workTypes : {}" + contextIDStr,
-                    CSCommonUtils.gson.toJson(workTypes));
+                    JacksonUtils.toJson(workTypes));
             throw new CSErrorException(
                     ErrorCode.DESERIALIZE_ERROR,
                     "InitContextInfo error. contextIDStr : "
                             + contextIDStr
                             + ", workTypes : "
-                            + CSCommonUtils.gson.toJson(workTypes),
+                            + JacksonUtils.toJson(workTypes),
                     e);
         }
     }

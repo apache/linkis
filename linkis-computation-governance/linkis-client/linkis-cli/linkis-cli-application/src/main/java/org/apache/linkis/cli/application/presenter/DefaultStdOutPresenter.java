@@ -21,7 +21,7 @@ import org.apache.linkis.cli.core.presenter.Presenter;
 import org.apache.linkis.cli.core.presenter.display.DisplayDriver;
 import org.apache.linkis.cli.core.presenter.display.StdOutDriver;
 import org.apache.linkis.cli.core.presenter.model.PresenterModel;
-import org.apache.linkis.cli.core.utils.CommonUtils;
+import org.apache.linkis.common.utils.JacksonUtils;
 
 public class DefaultStdOutPresenter implements Presenter {
     DisplayDriver driver = new StdOutDriver();
@@ -31,6 +31,6 @@ public class DefaultStdOutPresenter implements Presenter {
 
     @Override
     public void present(PresenterModel model) {
-        driver.doOutput(CommonUtils.GSON.toJson(model));
+        driver.doOutput(JacksonUtils.toJsonFormat(model));
     }
 }

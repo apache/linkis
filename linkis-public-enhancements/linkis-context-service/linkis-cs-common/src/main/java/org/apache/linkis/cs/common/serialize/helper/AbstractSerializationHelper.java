@@ -17,11 +17,10 @@
 
 package org.apache.linkis.cs.common.serialize.helper;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.linkis.common.utils.JacksonUtils;
 import org.apache.linkis.cs.common.exception.CSErrorException;
 import org.apache.linkis.cs.common.serialize.ContextSerializer;
-import org.apache.linkis.cs.common.utils.CSCommonUtils;
-
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -79,7 +78,7 @@ public abstract class AbstractSerializationHelper implements SerializationHelper
 
         if (StringUtils.isNotBlank(json)) {
             Map<String, String> value =
-                    CSCommonUtils.gson.fromJson(json, new HashMap<String, String>().getClass());
+                    JacksonUtils.fromJson(json, new HashMap<String, String>().getClass());
             String type = value.get("type");
             return getContextSerializerMap().get(type);
         }

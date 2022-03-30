@@ -55,7 +55,6 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 
 import javax.servlet.DispatcherType;
 
-import com.google.gson.Gson;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.FilterHolder;
@@ -70,7 +69,6 @@ public class TestContextHAManager extends SpringBootServletInitializer {
 
     private static ConfigurableApplicationContext applicationContext;
     private static ServiceInstance serviceInstance;
-    private static final Gson gson = new Gson();
 
     public static void main(String[] args) throws ReflectiveOperationException {
 

@@ -82,7 +82,7 @@ public class LinkisJobBuilderTest {
     public void testBuild() throws Exception {
         // TODO: Test goes here...
         //  LinkisJob job = builder.build();
-        //  System.out.println(CommonUtils.GSON.toJson(job));
+        //  System.out.println(JacksonUtils.toJsonFormat(job));
         //  assertEquals(job.getParamConfMap().get("spark.executor.instances"), "8");
     }
 

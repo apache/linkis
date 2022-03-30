@@ -17,6 +17,9 @@
 
 package org.apache.linkis.cs.execution.ruler;
 
+import com.google.common.collect.Lists;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.linkis.common.utils.JacksonUtils;
 import org.apache.linkis.cs.common.entity.enumeration.ContextType;
 import org.apache.linkis.cs.common.entity.object.CSFlowInfos;
 import org.apache.linkis.cs.common.entity.source.CommonContextKey;
@@ -27,11 +30,6 @@ import org.apache.linkis.cs.common.utils.CSCommonUtils;
 import org.apache.linkis.cs.condition.impl.NearestCondition;
 import org.apache.linkis.cs.contextcache.ContextCacheService;
 import org.apache.linkis.cs.execution.matcher.ContextSearchMatcher;
-import org.apache.linkis.server.BDPJettyServerHelper;
-
-import org.apache.commons.lang3.StringUtils;
-
-import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,7 +75,7 @@ public class NearestContextSearchRuler extends AbstractContextSearchRuler {
             CSFlowInfos csFlowInfos = (CSFlowInfos) flowInfos.getContextValue().getValue();
             logger.info(
                     "Calculate nearest nodes based on flow info: \n"
-                            + BDPJettyServerHelper.gson().toJson(csFlowInfos));
+                            + JacksonUtils.toJson(csFlowInfos));
             List<Map<String, String>> edges =
                     (List<Map<String, String>>) csFlowInfos.getInfos().get("edges");
             Map<String, String> idNodeName =

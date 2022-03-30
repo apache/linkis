@@ -17,13 +17,10 @@
 
 package org.apache.linkis.cs.highavailable.test.persist;
 
+import org.apache.linkis.common.utils.JacksonUtils;
 import org.apache.linkis.cs.common.entity.source.HAContextID;
 
-import com.google.gson.Gson;
-
 public class TestPersistence {
-
-    private Gson gson = new Gson();
 
     public void testPrint() {
         System.out.println("TestPersistence: testPrint()");
@@ -31,18 +28,18 @@ public class TestPersistence {
 
     public HAContextID createHAID(HAContextID haContextID) {
         System.out.println(
-                "TestPersistence: createHAID(), params: haContextID : " + gson.toJson(haContextID));
+                "TestPersistence: createHAID(), params: haContextID : " + JacksonUtils.toJson(haContextID));
         haContextID.setContextId("1");
         return haContextID;
     }
 
     public HAContextID passHAID(HAContextID haContextID) {
         System.out.println(
-                "TestPersistence: passHAID(), params: haContextID : " + gson.toJson(haContextID));
+                "TestPersistence: passHAID(), params: haContextID : " + JacksonUtils.toJson(haContextID));
         return haContextID;
     }
 
     public void setContextId(String haid) {
-        System.out.println("TestPersistence: setContextId(), : " + gson.toJson(haid));
+        System.out.println("TestPersistence: setContextId(), : " + JacksonUtils.toJson(haid));
     }
 }

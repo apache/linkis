@@ -17,6 +17,8 @@
 
 package org.apache.linkis.cli.application;
 
+import org.apache.commons.collections.map.HashedMap;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.linkis.cli.application.constants.AppConstants;
 import org.apache.linkis.cli.application.constants.LinkisClientKeys;
 import org.apache.linkis.cli.application.data.FinishedData;
@@ -36,7 +38,6 @@ import org.apache.linkis.cli.application.presenter.converter.LinkisLogModelConve
 import org.apache.linkis.cli.application.suite.ExecutionSuite;
 import org.apache.linkis.cli.application.suite.ExecutionSuiteFactory;
 import org.apache.linkis.cli.application.suite.SuiteFactoryImpl;
-import org.apache.linkis.cli.application.utils.Utils;
 import org.apache.linkis.cli.common.constants.CommonConstants;
 import org.apache.linkis.cli.common.entity.command.CmdTemplate;
 import org.apache.linkis.cli.common.entity.command.Params;
@@ -78,10 +79,7 @@ import org.apache.linkis.cli.core.interactor.var.SysVarAccess;
 import org.apache.linkis.cli.core.interactor.var.VarAccess;
 import org.apache.linkis.cli.core.presenter.Presenter;
 import org.apache.linkis.cli.core.utils.LogUtils;
-
-import org.apache.commons.collections.map.HashedMap;
-import org.apache.commons.lang3.StringUtils;
-
+import org.apache.linkis.common.utils.JacksonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -149,7 +147,7 @@ public class LinkisClientApplication {
         parsedTplValidator.doValidation(result.getParsedTemplateCopy());
 
         Params params = result.getParams();
-        logger.debug("==========params============\n" + Utils.GSON.toJson(params));
+        logger.debug("==========params============\n" + JacksonUtils.toJsonFormat(params));
 
         /*
          VarAccess for sys_prop, sys_env
@@ -159,7 +157,7 @@ public class LinkisClientApplication {
                 new SysVarAccess()
                         .setSysProp(propertiesMap.get(CommonConstants.SYSTEM_PROPERTIES_IDENTIFIER))
                         .setSysEnv(propertiesMap.get(CommonConstants.SYSTEM_ENV_IDENTIFIER));
-        logger.debug("==========sys_var============\n" + Utils.GSON.toJson(sysVarAccess));
+        logger.debug("==========sys_var============\n" + JacksonUtils.toJsonFormat(sysVarAccess));
 
         LogUtils.getInformationLogger()
                 .info(
@@ -247,7 +245,7 @@ public class LinkisClientApplication {
                         .setUserConf(propertiesMap.get(LinkisClientKeys.LINKIS_CLIENT_USER_CONFIG))
                         .setDefaultConf(propertiesMap.get(defaultConfFileName))
                         .init();
-        logger.info("==========std_var============\n" + Utils.GSON.toJson(stdVarAccess));
+        logger.info("==========std_var============\n" + JacksonUtils.toJsonFormat(stdVarAccess));
 
         return new ProcessedData(null, params.getCmdType(), stdVarAccess, sysVarAccess);
     }
@@ -282,7 +280,7 @@ public class LinkisClientApplication {
                             .setSysVarAccess(data.getSysVarAccess())
                             .build();
 
-            logger.info("==========job============\n" + Utils.GSON.toJson(job));
+            logger.info("==========job============\n" + JacksonUtils.toJsonFormat(job));
 
             Validator jobValidator = new LinkisJobValidator();
             jobValidator.doValidation(job);

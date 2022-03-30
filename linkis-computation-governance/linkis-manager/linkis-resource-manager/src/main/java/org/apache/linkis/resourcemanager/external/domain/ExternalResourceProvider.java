@@ -17,9 +17,7 @@
 
 package org.apache.linkis.resourcemanager.external.domain;
 
-import org.apache.linkis.server.BDPJettyServerHelper;
-
-import com.google.gson.reflect.TypeToken;
+import org.apache.linkis.common.utils.JacksonUtils;
 
 import java.util.Map;
 
@@ -72,8 +70,7 @@ public class ExternalResourceProvider {
     public Map<String, Object> getConfigMap() {
         if (configMap == null) {
             configMap =
-                    BDPJettyServerHelper.gson()
-                            .fromJson(config, new TypeToken<Map<String, Object>>() {}.getType());
+                    JacksonUtils.fromJson(config, Map.class);
         }
         return configMap;
     }

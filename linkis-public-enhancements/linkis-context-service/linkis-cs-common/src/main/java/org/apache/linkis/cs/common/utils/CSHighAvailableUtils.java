@@ -17,14 +17,12 @@
 
 package org.apache.linkis.cs.common.utils;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.linkis.common.utils.JacksonUtils;
 import org.apache.linkis.cs.common.entity.source.CommonHAContextID;
 import org.apache.linkis.cs.common.entity.source.HAContextID;
 import org.apache.linkis.cs.common.exception.CSErrorException;
 import org.apache.linkis.cs.common.exception.ErrorCode;
-
-import org.apache.commons.lang3.StringUtils;
-
-import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +35,6 @@ public class CSHighAvailableUtils {
     private static final String HAID_PART_DELEMETER = "--";
     private static final String HAID_INS_LEN_DELEMETER = "-";
     private static final int HAID_PARTS_NUM = 2;
-    private static final Gson gson = new Gson();
 
     private static final int TWO = 2;
 
@@ -82,7 +79,7 @@ public class CSHighAvailableUtils {
                             + ", instance : "
                             + instance
                             + ", backupInstanceList : "
-                            + gson.toJson(backupInstanceList));
+                            + JacksonUtils.toJson(backupInstanceList));
             throw new CSErrorException(
                     ErrorCode.INVALID_HAID_ENCODE_PARAMS,
                     "Cannot encodeHAIDKey, contextID : "
@@ -90,7 +87,7 @@ public class CSHighAvailableUtils {
                             + ", instance : "
                             + instance
                             + ", backupInstanceList : "
-                            + gson.toJson(backupInstanceList));
+                            + JacksonUtils.toJson(backupInstanceList));
         }
         StringBuilder idBuilder = new StringBuilder("");
         StringBuilder instBuilder = new StringBuilder("");
@@ -148,11 +145,11 @@ public class CSHighAvailableUtils {
         System.out.println(haid2);
         System.out.println(checkHAIDBasicFormat(haid2));
         if (checkHAIDBasicFormat(haid2)) {
-            System.out.println(gson.toJson(decodeHAID(haid2)));
+            System.out.println(JacksonUtils.toJson(decodeHAID(haid2)));
         }
         String haid3 = "24-24--YmRwaGRwMTFpZGUwMTo5MTE0YmRwaGRwMTFpZGUwMTo5MTE084855";
         if (checkHAIDBasicFormat(haid3)) {
-            System.out.println(gson.toJson(decodeHAID(haid3)));
+            System.out.println(JacksonUtils.toJson(decodeHAID(haid3)));
         } else {
             System.out.println("Invalid haid3 : " + haid3);
         }

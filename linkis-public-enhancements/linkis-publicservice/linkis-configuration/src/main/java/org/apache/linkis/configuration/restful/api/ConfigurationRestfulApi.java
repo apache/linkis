@@ -17,6 +17,9 @@
 
 package org.apache.linkis.configuration.restful.api;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.linkis.common.utils.JacksonUtils;
 import org.apache.linkis.configuration.entity.*;
 import org.apache.linkis.configuration.exception.ConfigurationException;
 import org.apache.linkis.configuration.service.CategoryService;
@@ -27,23 +30,13 @@ import org.apache.linkis.configuration.util.LabelEntityParser;
 import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel;
 import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel;
 import org.apache.linkis.manager.label.utils.LabelUtils;
-import org.apache.linkis.server.BDPJettyServerHelper;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.security.SecurityFilter;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -78,7 +71,7 @@ public class ConfigurationRestfulApi {
         if (!token.equals(ConfigurationConfiguration.COPYKEYTOKEN)) {
             throw new ConfigurationException("token is error");
         }
-        ConfigKey configKey = BDPJettyServerHelper.gson().fromJson(keyJson, ConfigKey.class);
+        ConfigKey configKey = JacksonUtils.fromJson(keyJson, ConfigKey.class);
         configurationService.addKeyForEngine(engineType, version, configKey);
         // TODO: 2019/12/30  configKey参数校验
         return Message.ok();
@@ -112,7 +105,7 @@ public class ConfigurationRestfulApi {
     //            throw new ConfigurationException(creator + ":" + engineType +  ",keys is empty
     // ,cannot add key");
     //        }
-    //        ConfigKey configKey = BDPJettyServerHelper.gson().fromJson(keyJson, ConfigKey.class);
+    //        ConfigKey configKey = JacksonUtils.fromJson(keyJson, ConfigKey.class);
     //        // TODO: 2019/12/30  configKey参数校验
     //        configurationService.addKey(creator,engineType,configKey);
     //        return Message.ok();
@@ -238,8 +231,8 @@ public class ConfigurationRestfulApi {
         ArrayList<ConfigValue> createList = new ArrayList<>();
         ArrayList<ConfigValue> updateList = new ArrayList<>();
         for (Object o : fullTrees) {
-            String s = BDPJettyServerHelper.gson().toJson(o);
-            ConfigTree fullTree = BDPJettyServerHelper.gson().fromJson(s, ConfigTree.class);
+            String s = JacksonUtils.toJson(o);
+            ConfigTree fullTree = JacksonUtils.fromJson(s, ConfigTree.class);
             List<ConfigKeyValue> settings = fullTree.getSettings();
             Integer userLabelId =
                     configurationService.checkAndCreateUserLabel(settings, username, creator);

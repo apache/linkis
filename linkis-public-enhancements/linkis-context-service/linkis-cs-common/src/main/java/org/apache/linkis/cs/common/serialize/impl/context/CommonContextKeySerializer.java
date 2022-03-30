@@ -17,16 +17,16 @@
 
 package org.apache.linkis.cs.common.serialize.impl.context;
 
+import org.apache.linkis.common.utils.JacksonUtils;
 import org.apache.linkis.cs.common.entity.source.CommonContextKey;
 import org.apache.linkis.cs.common.exception.CSErrorException;
 import org.apache.linkis.cs.common.serialize.AbstractSerializer;
-import org.apache.linkis.cs.common.utils.CSCommonUtils;
 
 public class CommonContextKeySerializer extends AbstractSerializer<CommonContextKey> {
 
     @Override
     public CommonContextKey fromJson(String json) throws CSErrorException {
-        return CSCommonUtils.gson.fromJson(json, CommonContextKey.class);
+        return JacksonUtils.fromJson(json, CommonContextKey.class);
     }
 
     @Override

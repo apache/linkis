@@ -17,6 +17,7 @@
 
 package org.apache.linkis.cli.application.driver;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.linkis.cli.application.constants.LinkisConstants;
 import org.apache.linkis.cli.application.constants.LinkisKeys;
 import org.apache.linkis.cli.application.constants.UjesClientDriverConstants;
@@ -30,6 +31,7 @@ import org.apache.linkis.cli.common.exception.error.ErrorLevel;
 import org.apache.linkis.cli.core.exception.ExecutorException;
 import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
 import org.apache.linkis.common.exception.LinkisException;
+import org.apache.linkis.common.utils.JacksonUtils;
 import org.apache.linkis.httpclient.authentication.AuthenticationStrategy;
 import org.apache.linkis.httpclient.dws.authentication.StaticAuthenticationStrategy;
 import org.apache.linkis.httpclient.dws.authentication.TokenAuthenticationStrategy;
@@ -41,9 +43,6 @@ import org.apache.linkis.ujes.client.request.JobSubmitAction;
 import org.apache.linkis.ujes.client.request.OpenLogAction;
 import org.apache.linkis.ujes.client.request.ResultSetAction;
 import org.apache.linkis.ujes.client.response.*;
-
-import org.apache.commons.lang3.StringUtils;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -184,7 +183,7 @@ public class UjesClientDriver implements LinkisClientDriver {
                             .setLabels(linkisJob.getLabelMap())
                             .setSource(linkisJob.getSourceMap())
                             .build();
-            logger.info("Request info to Linkis: \n{}", Utils.GSON.toJson(jobSubmitAction));
+            logger.info("Request info to Linkis: \n{}", JacksonUtils.toJsonFormat(jobSubmitAction));
 
             /* Old API */
             //      JobExecuteAction jobExecuteAction = JobExecuteAction.builder()
@@ -203,11 +202,11 @@ public class UjesClientDriver implements LinkisClientDriver {
             // linkisJob.getSourceMap().get(LinkisKeys.KEY_SCRIPT_PATH))
             //          .build();
             //      logger.debug("Request info to Linkis Old: \n{}",
-            // Utils.GSON.toJson(jobExecuteAction));
+            // JacksonUtils.toJsonFormat(jobExecuteAction));
             //      jobExecuteResult = client.execute(jobExecuteAction);
 
             jobSubmitResult = client.submit(jobSubmitAction);
-            logger.info("Response info from Linkis: \n{}", Utils.GSON.toJson(jobSubmitAction));
+            logger.info("Response info from Linkis: \n{}", JacksonUtils.toJsonFormat(jobSubmitAction));
 
         } catch (Exception e) {
             // must throw if exception
@@ -253,7 +252,7 @@ public class UjesClientDriver implements LinkisClientDriver {
         while (retryTime++ < MAX_RETRY_TIME) {
             try {
                 jobInfoResult = client.getJobInfo(executeResult);
-                logger.debug("job-info: " + Utils.GSON.toJson(jobInfoResult));
+                logger.debug("job-info: " + JacksonUtils.toJsonFormat(jobInfoResult));
                 if (jobInfoResult == null || 0 != jobInfoResult.getStatus()) {
                     String reason;
                     if (jobInfoResult == null) {
@@ -326,7 +325,7 @@ public class UjesClientDriver implements LinkisClientDriver {
                 logResult =
                         client.log(
                                 jobExecuteResult, fromLine, UjesClientDriverConstants.MAX_LOG_SIZE);
-                logger.debug("runtime-log-result:" + Utils.GSON.toJson(logResult));
+                logger.debug("runtime-log-result:" + JacksonUtils.toJsonFormat(logResult));
                 if (logResult == null || 0 != logResult.getStatus()) {
                     String reason;
                     if (logResult == null) {
@@ -396,7 +395,7 @@ public class UjesClientDriver implements LinkisClientDriver {
                                         .setLogPath(logPath)
                                         .setProxyUser(user)
                                         .build());
-                logger.debug("persisted-log-result:" + Utils.GSON.toJson(openLogResult));
+                logger.debug("persisted-log-result:" + JacksonUtils.toJsonFormat(openLogResult));
                 if (openLogResult == null
                         || 0 != openLogResult.getStatus()
                         || StringUtils.isBlank(
@@ -654,7 +653,7 @@ public class UjesClientDriver implements LinkisClientDriver {
                                 .setPageSize(pageSize)
                                 .build();
                 result = client.resultSet(action);
-                logger.debug("resultset-result:" + Utils.GSON.toJson(result));
+                logger.debug("resultset-result:" + JacksonUtils.toJsonFormat(result));
                 if (result == null || 0 != result.getStatus()) {
                     String reason;
                     if (result == null) {
@@ -724,7 +723,7 @@ public class UjesClientDriver implements LinkisClientDriver {
                 killRequest.setTaskID(taskId);
                 killRequest.setExecID(execId);
                 result = client.kill(killRequest);
-                logger.debug("job-kill-result:" + Utils.GSON.toJson(result));
+                logger.debug("job-kill-result:" + JacksonUtils.toJsonFormat(result));
                 if (result == null || 0 != result.getStatus()) {
                     String reason;
                     if (result == null) {

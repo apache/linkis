@@ -17,6 +17,8 @@
 
 package org.apache.linkis.cli.application.interactor.execution.executor;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.linkis.cli.application.constants.AppConstants;
 import org.apache.linkis.cli.application.driver.LinkisClientDriver;
 import org.apache.linkis.cli.application.driver.transformer.DriverTransformer;
@@ -36,11 +38,8 @@ import org.apache.linkis.cli.core.interactor.execution.executor.AsyncBackendExec
 import org.apache.linkis.cli.core.interactor.execution.executor.LogRetrievable;
 import org.apache.linkis.cli.core.interactor.execution.jobexec.JobSubmitExec;
 import org.apache.linkis.cli.core.utils.LogUtils;
+import org.apache.linkis.common.utils.JacksonUtils;
 import org.apache.linkis.httpclient.dws.response.DWSResult;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -136,7 +135,7 @@ public class LinkisSubmitExecutor implements AsyncBackendExecutor, LogRetrievabl
             try {
                 DWSResult jobInfoResult =
                         driver.queryJobInfo(linkisData.getUser(), linkisData.getTaskID());
-                logger.info("Jobinfo from Linkis: \n{}", Utils.GSON.toJson(jobInfoResult));
+                logger.info("Jobinfo from Linkis: \n{}", JacksonUtils.toJsonFormat(jobInfoResult));
                 linkisData = updateExecDataByDwsResult(linkisData, jobInfoResult);
             } catch (Exception e) {
                 logger.warn("", e);
@@ -217,7 +216,7 @@ public class LinkisSubmitExecutor implements AsyncBackendExecutor, LogRetrievabl
                     "EXE0028",
                     ErrorLevel.ERROR,
                     CommonErrMsg.ExecutionInitErr,
-                    "LinkisSubmitExecutor is not inited." + Utils.GSON.toJson(this));
+                    "LinkisSubmitExecutor is not inited." + JacksonUtils.toJsonFormat(this));
         }
         driver.checkInit();
     }

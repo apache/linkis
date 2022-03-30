@@ -17,8 +17,10 @@
 
 package org.apache.linkis.cs.highavailable.ha.impl;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.linkis.DataWorkCloudApplication;
 import org.apache.linkis.common.ServiceInstance;
+import org.apache.linkis.common.utils.JacksonUtils;
 import org.apache.linkis.cs.common.entity.source.CommonHAContextID;
 import org.apache.linkis.cs.common.entity.source.ContextID;
 import org.apache.linkis.cs.common.entity.source.HAContextID;
@@ -27,15 +29,10 @@ import org.apache.linkis.cs.highavailable.exception.CSErrorCode;
 import org.apache.linkis.cs.highavailable.ha.BackupInstanceGenerator;
 import org.apache.linkis.cs.highavailable.ha.ContextHAIDGenerator;
 import org.apache.linkis.cs.highavailable.ha.instancealias.InstanceAliasConverter;
-
-import org.apache.commons.lang3.StringUtils;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 @Component
 public class ContextHAIDGeneratorImpl implements ContextHAIDGenerator {
@@ -70,7 +67,7 @@ public class ContextHAIDGeneratorImpl implements ContextHAIDGenerator {
         }
         HAContextID haContextID =
                 new CommonHAContextID(mainInstanceAlias, backupInstance, contextIDKey);
-        logger.info("Generate a haContextID : {}" + new Gson().toJson(haContextID));
+        logger.info("Generate a haContextID : {}" + JacksonUtils.toJson(haContextID));
         return haContextID;
     }
 }

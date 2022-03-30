@@ -23,8 +23,7 @@ import org.apache.linkis.cli.core.interactor.command.fitter.SingleTplFitter;
 import org.apache.linkis.cli.core.interactor.command.parser.result.ParseResult;
 import org.apache.linkis.cli.core.interactor.command.template.TestParamMapper;
 import org.apache.linkis.cli.core.interactor.command.template.TestSparkCmdTemplate;
-import org.apache.linkis.cli.core.utils.CommonUtils;
-
+import org.apache.linkis.common.utils.JacksonUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -88,8 +87,8 @@ public class SingleCmdParserTest {
 
         ParseResult result = parser.parse(cmdStr);
         System.out.println(result.getParams().getCmdType());
-        System.out.println(CommonUtils.GSON.toJson(result.getParams()));
-        System.out.println(CommonUtils.GSON.toJson(result.getRemains()));
+        System.out.println(JacksonUtils.toJsonFormat(result.getParams()));
+        System.out.println(JacksonUtils.toJsonFormat(result.getRemains()));
     }
 
     /** Method: parsePrimary(String[] input) */

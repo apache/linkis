@@ -17,6 +17,10 @@
 
 package org.apache.linkis.cs.highavailable;
 
+import net.sf.cglib.proxy.Callback;
+import net.sf.cglib.proxy.Enhancer;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.linkis.common.utils.JacksonUtils;
 import org.apache.linkis.cs.common.entity.source.HAContextID;
 import org.apache.linkis.cs.common.exception.CSErrorException;
 import org.apache.linkis.cs.highavailable.exception.CSErrorCode;
@@ -24,24 +28,16 @@ import org.apache.linkis.cs.highavailable.ha.BackupInstanceGenerator;
 import org.apache.linkis.cs.highavailable.ha.ContextHAChecker;
 import org.apache.linkis.cs.highavailable.ha.ContextHAIDGenerator;
 import org.apache.linkis.cs.highavailable.proxy.MethodInterceptorImpl;
-
-import org.apache.commons.lang3.StringUtils;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import net.sf.cglib.proxy.Callback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import net.sf.cglib.proxy.Enhancer;
-import com.google.gson.Gson;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /** ContextService高可用管理器默认实现 采用CGLib动态代理，一般用于CS持久层存储转换，将HAContextID实例进行转换 */
 @Component
 public class DefaultContextHAManager extends AbstractContextHAManager {
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultContextHAManager.class);
-    private static final Gson gson = new Gson();
 
     @Autowired private ContextHAIDGenerator contextHAIDGenerator;
     @Autowired private ContextHAChecker contextHAChecker;
@@ -88,7 +84,7 @@ public class DefaultContextHAManager extends AbstractContextHAManager {
             } else {
                 throw new CSErrorException(
                         CSErrorCode.INVALID_HAID,
-                        "Invalid contextID in haContextID : " + gson.toJson(haContextID));
+                        "Invalid contextID in haContextID : " + JacksonUtils.toJson(haContextID));
             }
             return haContextID;
         } else {
@@ -105,7 +101,7 @@ public class DefaultContextHAManager extends AbstractContextHAManager {
             } else {
                 throw new CSErrorException(
                         CSErrorCode.INVALID_HAID,
-                        "Invalid contextID in haContextID : " + gson.toJson(haContextID));
+                        "Invalid contextID in haContextID : " + JacksonUtils.toJson(haContextID));
             }
             // todo debug
             if (contextHAChecker.isHAContextIDValid(haContextID)) {

@@ -17,14 +17,13 @@
 
 package org.apache.linkis.metadata.domain.mdq;
 
+import org.apache.linkis.common.utils.JacksonUtils;
 import org.apache.linkis.metadata.domain.mdq.bo.*;
 import org.apache.linkis.metadata.domain.mdq.po.MdqField;
 import org.apache.linkis.metadata.domain.mdq.po.MdqImport;
 import org.apache.linkis.metadata.domain.mdq.po.MdqLineage;
 import org.apache.linkis.metadata.domain.mdq.po.MdqTable;
 import org.apache.linkis.metadata.domain.mdq.vo.*;
-import org.apache.linkis.server.BDPJettyServerHelper;
-
 import org.springframework.beans.BeanUtils;
 
 import java.util.Date;
@@ -92,7 +91,7 @@ public class DomainCoversionUtils {
     public static MdqImport mdqTableImportInfoBOToMdqImport(MdqTableImportInfoBO importInfo) {
         MdqImport mdqImport = new MdqImport();
         mdqImport.setImportType(importInfo.getImportType());
-        mdqImport.setArgs(BDPJettyServerHelper.gson().toJson(importInfo.getArgs()));
+        mdqImport.setArgs(JacksonUtils.toJson(importInfo.getArgs()));
         return mdqImport;
     }
 

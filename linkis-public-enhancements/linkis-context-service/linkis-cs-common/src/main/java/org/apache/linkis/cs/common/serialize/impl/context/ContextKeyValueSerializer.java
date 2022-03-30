@@ -17,14 +17,13 @@
 
 package org.apache.linkis.cs.common.serialize.impl.context;
 
+import org.apache.linkis.common.utils.JacksonUtils;
 import org.apache.linkis.cs.common.entity.source.CommonContextKeyValue;
 import org.apache.linkis.cs.common.entity.source.ContextKey;
 import org.apache.linkis.cs.common.entity.source.ContextValue;
 import org.apache.linkis.cs.common.exception.CSErrorException;
 import org.apache.linkis.cs.common.serialize.AbstractSerializer;
 import org.apache.linkis.cs.common.serialize.helper.ContextSerializationHelper;
-import org.apache.linkis.cs.common.utils.CSCommonUtils;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +42,7 @@ public class ContextKeyValueSerializer extends AbstractSerializer<CommonContextK
             ContextValue contextValue = contextKeyValue.getContextValue();
             map.put("key", ContextSerializationHelper.getInstance().serialize(contextKey));
             map.put("value", ContextSerializationHelper.getInstance().serialize(contextValue));
-            return CSCommonUtils.gson.toJson(map);
+            return JacksonUtils.toJson(map);
         } catch (Exception e) {
             logger.error("Failed to serialize contextKeyValue: ", e);
             throw new CSErrorException(97000, "Failed to serialize contextKeyValue");
@@ -54,7 +53,7 @@ public class ContextKeyValueSerializer extends AbstractSerializer<CommonContextK
     public CommonContextKeyValue fromJson(String json) throws CSErrorException {
         try {
             Map<String, String> jsonObj =
-                    CSCommonUtils.gson.fromJson(json, new HashMap<String, String>().getClass());
+                    JacksonUtils.fromJson(json, new HashMap<String, String>().getClass());
             String key = jsonObj.get("key");
             String value = jsonObj.get("value");
             Object contextKey = ContextSerializationHelper.getInstance().deserialize(key);

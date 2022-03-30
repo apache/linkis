@@ -17,6 +17,7 @@
 
 package org.apache.linkis.cs.client.test.service;
 
+import org.apache.linkis.common.utils.JacksonUtils;
 import org.apache.linkis.cs.client.Context;
 import org.apache.linkis.cs.client.ContextClient;
 import org.apache.linkis.cs.client.builder.ContextClientFactory;
@@ -30,9 +31,6 @@ import org.apache.linkis.cs.common.entity.resource.BMLResource;
 import org.apache.linkis.cs.common.entity.resource.LinkisBMLResource;
 import org.apache.linkis.cs.common.entity.source.*;
 import org.apache.linkis.cs.common.serialize.helper.ContextSerializationHelper;
-import org.apache.linkis.cs.common.utils.CSCommonUtils;
-
-import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -87,12 +85,12 @@ public class TestInfo {
         context.setContextKeyAndValue(contextKeyValue);
         ContextValue myValue = context.getContextValue(contextKey);
         System.out.println(SerializeHelper.serializeContextID(context.getContextID()));
-        System.out.println(CSCommonUtils.gson.toJson(myValue));
+        System.out.println(JacksonUtils.toJson(myValue));
 
         SearchService searchService = DefaultSearchService.getInstance();
         BMLResource bmlResource =
                 searchService.searchContext(contextID, "ql", "sql", LinkisBMLResource.class);
-        System.out.println(new GsonBuilder().setPrettyPrinting().create().toJson(bmlResource));
+        System.out.println(JacksonUtils.toJsonFormat(bmlResource));
 
         contextClient.close();
     }

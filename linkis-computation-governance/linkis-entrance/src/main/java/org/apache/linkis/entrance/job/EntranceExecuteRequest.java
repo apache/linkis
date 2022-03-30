@@ -17,6 +17,7 @@
 
 package org.apache.linkis.entrance.job;
 
+import org.apache.linkis.common.utils.JacksonUtils;
 import org.apache.linkis.entrance.execute.LabelExecuteRequest;
 import org.apache.linkis.entrance.execute.RuntimePropertiesExecuteRequest;
 import org.apache.linkis.entrance.execute.UserExecuteRequest;
@@ -24,8 +25,6 @@ import org.apache.linkis.governance.common.entity.job.SubJobInfo;
 import org.apache.linkis.manager.label.entity.Label;
 import org.apache.linkis.scheduler.executer.ExecuteRequest;
 import org.apache.linkis.scheduler.executer.JobExecuteRequest;
-import org.apache.linkis.server.BDPJettyServerHelper;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,7 +82,7 @@ public class EntranceExecuteRequest
             logger.warn(
                     "Invalid index : {} in jobRequest : {}. ",
                     index,
-                    BDPJettyServerHelper.gson().toJson(jobGroupInfo));
+                    JacksonUtils.toJson(jobGroupInfo));
         }
     }
 

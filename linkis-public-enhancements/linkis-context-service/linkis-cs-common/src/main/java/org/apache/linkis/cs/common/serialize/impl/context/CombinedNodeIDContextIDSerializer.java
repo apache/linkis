@@ -17,10 +17,10 @@
 
 package org.apache.linkis.cs.common.serialize.impl.context;
 
+import org.apache.linkis.common.utils.JacksonUtils;
 import org.apache.linkis.cs.common.entity.source.CombinedNodeIDContextID;
 import org.apache.linkis.cs.common.exception.CSErrorException;
 import org.apache.linkis.cs.common.serialize.AbstractSerializer;
-import org.apache.linkis.cs.common.utils.CSCommonUtils;
 
 public class CombinedNodeIDContextIDSerializer extends AbstractSerializer<CombinedNodeIDContextID> {
 
@@ -31,7 +31,7 @@ public class CombinedNodeIDContextIDSerializer extends AbstractSerializer<Combin
 
     @Override
     public CombinedNodeIDContextID fromJson(String json) throws CSErrorException {
-        return CSCommonUtils.gson.fromJson(json, CombinedNodeIDContextID.class);
+        return JacksonUtils.fromJson(json, CombinedNodeIDContextID.class);
     }
 
     @Override

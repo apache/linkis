@@ -17,12 +17,15 @@
 
 package org.apache.linkis.variable.restful.api;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.security.SecurityFilter;
 import org.apache.linkis.variable.entity.VarKeyValueVO;
 import org.apache.linkis.variable.exception.VariableException;
 import org.apache.linkis.variable.service.VariableService;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,12 +33,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.util.List;
 
@@ -54,8 +51,8 @@ public class VariableRestfulApi {
         String userName = SecurityFilter.getLoginUsername(req);
         List globalVariables = mapper.readValue(json.get("globalVariables"), List.class);
         globalVariables.stream().forEach(f -> {
-            String j = BDPJettyServerHelper.gson().toJson(f);
-            variableService.addGlobalVariable(BDPJettyServerHelper.gson().fromJson(j, VarKeyValueVO.class), userName);
+            String j = JacksonUtils.toJson(f);
+            variableService.addGlobalVariable(JacksonUtils.fromJson(j, VarKeyValueVO.class), userName);
         });
         return Message.ok();
     }

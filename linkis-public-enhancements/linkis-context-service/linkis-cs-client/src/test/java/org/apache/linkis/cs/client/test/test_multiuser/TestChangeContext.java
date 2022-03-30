@@ -17,6 +17,7 @@
 
 package org.apache.linkis.cs.client.test.test_multiuser;
 
+import org.apache.linkis.common.utils.JacksonUtils;
 import org.apache.linkis.cs.client.Context;
 import org.apache.linkis.cs.client.ContextClient;
 import org.apache.linkis.cs.client.builder.ContextClientFactory;
@@ -26,8 +27,6 @@ import org.apache.linkis.cs.common.entity.resource.LinkisBMLResource;
 import org.apache.linkis.cs.common.entity.source.*;
 import org.apache.linkis.cs.common.serialize.helper.ContextSerializationHelper;
 import org.apache.linkis.cs.common.serialize.helper.SerializationHelper;
-
-import com.google.gson.Gson;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -68,7 +67,7 @@ public class TestChangeContext {
                 return;
             }
             Object contextObject = serializationHelper.deserialize(contextIDStr);
-            System.out.println("Deserialized obj : " + new Gson().toJson(contextObject));
+            System.out.println("Deserialized obj : " + JacksonUtils.toJson(contextObject));
             if (!LinkisHAWorkFlowContextID.class.isInstance(contextObject)) {
                 System.out.println(
                         "Invalid contextObject, not LinkisHAWorkFlowContextID instance.");
@@ -95,8 +94,8 @@ public class TestChangeContext {
 
             // 3, get context
             ContextValue contextValueResult = context.getContextValue(contextKey);
-            System.out.println("Got contextValue : " + new Gson().toJson(contextValueResult));
-            System.out.println("Original contextValue : " + new Gson().toJson(contextValue));
+            System.out.println("Got contextValue : " + JacksonUtils.toJson(contextValueResult));
+            System.out.println("Original contextValue : " + JacksonUtils.toJson(contextValue));
 
             contextClient.close();
         } catch (Exception e) {

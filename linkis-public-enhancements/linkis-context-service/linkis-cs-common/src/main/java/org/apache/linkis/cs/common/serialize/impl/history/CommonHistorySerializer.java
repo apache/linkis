@@ -17,9 +17,9 @@
 
 package org.apache.linkis.cs.common.serialize.impl.history;
 
+import org.apache.linkis.common.utils.JacksonUtils;
 import org.apache.linkis.cs.common.entity.enumeration.ContextType;
 import org.apache.linkis.cs.common.entity.history.ContextHistory;
-import org.apache.linkis.cs.common.utils.CSCommonUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -37,7 +37,7 @@ public interface CommonHistorySerializer {
     }
 
     default Map<String, String> getMapValue(String json) {
-        return CSCommonUtils.gson.fromJson(json, new HashMap<String, String>().getClass());
+        return JacksonUtils.fromJson(json, new HashMap<String, String>().getClass());
     }
 
     default <T extends ContextHistory> T get(Map<String, String> map, T t) {

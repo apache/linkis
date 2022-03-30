@@ -17,6 +17,8 @@
 
 package org.apache.linkis.entrance.parser;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.linkis.common.utils.JacksonUtils;
 import org.apache.linkis.entrance.EntranceContext;
 import org.apache.linkis.entrance.EntranceParser;
 import org.apache.linkis.entrance.conf.EntranceConfiguration;
@@ -35,10 +37,6 @@ import org.apache.linkis.manager.label.constant.LabelKeyConstant;
 import org.apache.linkis.manager.label.entity.Label;
 import org.apache.linkis.protocol.utils.TaskUtils;
 import org.apache.linkis.scheduler.queue.Job;
-import org.apache.linkis.server.BDPJettyServerHelper;
-
-import org.apache.commons.lang3.StringUtils;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -129,7 +127,7 @@ public abstract class AbstractEntranceParser extends EntranceParser {
         } else {
             String msg =
                     "JobRequest doesn't hava valid userCreator label. labels : "
-                            + BDPJettyServerHelper.gson().toJson(jobReq.getLabels());
+                            + JacksonUtils.toJson(jobReq.getLabels());
             logger.error(msg);
             throw new EntranceIllegalParamException(
                     EntranceErrorCode.LABEL_PARAMS_INVALID.getErrCode(), msg);

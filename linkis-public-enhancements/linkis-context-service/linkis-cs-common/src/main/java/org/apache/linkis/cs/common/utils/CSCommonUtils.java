@@ -19,9 +19,6 @@ package org.apache.linkis.cs.common.utils;
 
 import org.apache.linkis.common.conf.CommonVars;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 public class CSCommonUtils {
 
     public static final String CONTEXT_ID_STR = "contextID";
@@ -41,9 +38,6 @@ public class CSCommonUtils {
             CommonVars.apply("wds.linkis.production.contextID.env", "BDP_PRODUCTION").getValue();
 
     public static final String CS_TMP_TABLE_PREFIX = "cs_tmp_";
-
-    public static Gson gson =
-            new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").serializeNulls().create();
 
     public static final String NODE_PREFIX = "node.";
 

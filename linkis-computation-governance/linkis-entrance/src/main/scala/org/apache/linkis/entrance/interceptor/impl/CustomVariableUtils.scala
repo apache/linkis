@@ -20,7 +20,7 @@ package org.apache.linkis.entrance.interceptor.impl
 import org.apache.commons.lang.StringUtils
 import org.apache.commons.lang.time.DateUtils
 import org.apache.linkis.common.conf.Configuration
-import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.common.utils.{CodeAndRunTypeUtils, Logging, Utils}
 import org.apache.linkis.entrance.interceptor.exception.VarSubstitutionException
 import org.apache.linkis.entrance.interceptor.impl.CustomVariableUtils.{dateFormatLocal, dateFormatStdLocal}
 import org.apache.linkis.governance.common.entity.job.JobRequest
@@ -40,10 +40,6 @@ import scala.util.control.Exception._
 //TODO: optimize code, 拆分Utils类
 object CustomVariableUtils extends Logging {
   //hql sql jdbc to sql python to py
-  private val SQL_TYPE = "sql"
-  private val PY_TYPE = "python"
-  private val JAVA_TYPE: String = "java"
-  private val SCALA_TYPE: String = "scala"
   private val R_TYPE: String = "r"
   private val RUN_DATE = "run_date"
   private val TEAM: String = "team"
@@ -91,14 +87,14 @@ object CustomVariableUtils extends Logging {
    */
   def replaceCustomVar(jobRequest: JobRequest, runType: String): (Boolean, String) = {
     val code: String = jobRequest.getExecutionCode
-    var codeType = SQL_TYPE
-    runType match {
-      case "hql" | "sql" | "jdbc" | "hive" | "psql" => codeType = SQL_TYPE
-      case "python" | "py" => codeType = PY_TYPE
-      case "java" => codeType = JAVA_TYPE
-      case "scala" => codeType = SCALA_TYPE
-      case "sh" | "shell" => codeType = SQL_TYPE
-      case _ => return (false, code)
+    val codeTypeAndRunTypeRelationMap = CodeAndRunTypeUtils.getCodeTypeAndRunTypeRelationMap
+    if (codeTypeAndRunTypeRelationMap.isEmpty) {
+      return (false, code)
+    }
+    val allowedRunTypeMap: Map[String, String] = CodeAndRunTypeUtils.getRunTypeAndCodeTypeRelationMap
+    val codeType = allowedRunTypeMap.getOrDefault(runType, null)
+    if (codeType == null) {
+      return (false, code)
     }
 
     var run_date: CustomDateType = null
@@ -337,13 +333,13 @@ object CustomVariableUtils extends Logging {
     var errString:String = null
 
     codeType match {
-      case SQL_TYPE => varString = """\s*--@set\s*.+\s*"""
+      case CodeAndRunTypeUtils.RUN_TYPE_SQL => varString = """\s*--@set\s*.+\s*"""
         errString = """\s*--@.*"""
-      case PY_TYPE => varString = """\s*#@set\s*.+\s*"""
+      case CodeAndRunTypeUtils.RUN_TYPE_PYTHON | CodeAndRunTypeUtils.RUN_TYPE_SHELL => varString = """\s*#@set\s*.+\s*"""
         errString = """\s*#@"""
-      case SCALA_TYPE => varString = """\s*//@set\s*.+\s*"""
+      case CodeAndRunTypeUtils.RUN_TYPE_SCALA => varString = """\s*//@set\s*.+\s*"""
         errString = """\s*//@.+"""
-      case JAVA_TYPE => varString = """\s*!!@set\s*.+\s*"""
+      case CodeAndRunTypeUtils.RUN_TYPE_JAVA => varString = """\s*!!@set\s*.+\s*"""
     }
 
     val customRegex = varString.r.unanchored

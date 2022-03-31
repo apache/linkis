@@ -43,6 +43,7 @@ import org.apache.commons.lang3.StringUtils
 import org.apache.flink.configuration._
 import org.apache.flink.runtime.jobgraph.SavepointRestoreSettings
 import org.apache.flink.streaming.api.CheckpointingMode
+import org.apache.flink.streaming.api.environment.CheckpointConfig.ExternalizedCheckpointCleanup
 import org.apache.flink.yarn.configuration.{YarnConfigOptions, YarnDeploymentTarget}
 
 import scala.collection.convert.decorateAsScala._
@@ -71,7 +72,7 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     val shipDirsArray = FLINK_SHIP_DIRECTORIES.getValue(options).split(",")
     val context = new EnvironmentContext(defaultEnv, new Configuration, hadoopConfDir, flinkConfDir, flinkHome,
       flinkDistJarPath, flinkLibRemotePath, providedLibDirsArray, shipDirsArray, null)
-    //Step1: environment-level configurations(第一步: 环境级别配置)
+    // Step1: environment-level configurations(第一步: 环境级别配置)
     val jobName = options.getOrDefault("flink.app.name", "EngineConn-Flink")
     val yarnQueue = LINKIS_QUEUE_NAME.getValue(options)
     val parallelism = FLINK_APP_DEFAULT_PARALLELISM.getValue(options)
@@ -79,17 +80,17 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     val taskManagerMemory = LINKIS_FLINK_TASK_MANAGER_MEMORY.getValue(options) + "G"
     val numberOfTaskSlots = LINKIS_FLINK_TASK_SLOTS.getValue(options)
     info(s"Use yarn queue $yarnQueue, and set parallelism = $parallelism, jobManagerMemory = $jobManagerMemory G, taskManagerMemory = $taskManagerMemory G, numberOfTaskSlots = $numberOfTaskSlots.")
-    //Step2: application-level configurations(第二步: 应用级别配置)
-    //construct app-config(构建应用配置)
+    // Step2: application-level configurations(第二步: 应用级别配置)
+    // construct app-config(构建应用配置)
     val flinkConfig = context.getFlinkConfig
-    //construct jar-dependencies(构建依赖jar包环境)
+    // construct jar-dependencies(构建依赖jar包环境)
     val flinkUserLibRemotePath = FLINK_USER_LIB_REMOTE_PATH.getValue(options).split(",")
     val providedLibDirList = Lists.newArrayList(flinkUserLibRemotePath.filter(StringUtils.isNotBlank): _*)
     val flinkUserRemotePathList = Lists.newArrayList(flinkLibRemotePath.split(",").filter(StringUtils.isNotBlank): _*)
     if (flinkUserRemotePathList != null && flinkUserRemotePathList.size() > 0) providedLibDirList.addAll(flinkUserRemotePathList)
-    //if(StringUtils.isNotBlank(flinkLibRemotePath)) providedLibDirList.add(flinkLibRemotePath)
+    // if(StringUtils.isNotBlank(flinkLibRemotePath)) providedLibDirList.add(flinkLibRemotePath)
     flinkConfig.set(YarnConfigOptions.PROVIDED_LIB_DIRS, providedLibDirList)
-    //construct jar-dependencies(构建依赖jar包环境)
+    // construct jar-dependencies(构建依赖jar包环境)
     flinkConfig.set(YarnConfigOptions.SHIP_ARCHIVES, context.getShipDirs)
     // set user classpaths
     val classpaths = FLINK_APPLICATION_CLASSPATH.getValue(options)
@@ -97,27 +98,33 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
       info(s"Add $classpaths to flink application classpath.")
       flinkConfig.set(PipelineOptions.CLASSPATHS, util.Arrays.asList(classpaths.split(","): _*))
     }
-    //yarn application name(yarn 作业名称)
+    // yarn application name(yarn 作业名称)
     flinkConfig.set(YarnConfigOptions.APPLICATION_NAME, jobName)
     //yarn queue
     flinkConfig.set(YarnConfigOptions.APPLICATION_QUEUE, yarnQueue)
-    //Configure resource/concurrency (设置：资源/并发度)
+    // Configure resource/concurrency (设置：资源/并发度)
     flinkConfig.setInteger(CoreOptions.DEFAULT_PARALLELISM, parallelism)
     flinkConfig.set(JobManagerOptions.TOTAL_PROCESS_MEMORY, MemorySize.parse(jobManagerMemory))
     flinkConfig.set(TaskManagerOptions.TOTAL_PROCESS_MEMORY, MemorySize.parse(taskManagerMemory))
     flinkConfig.setInteger(TaskManagerOptions.NUM_TASK_SLOTS, numberOfTaskSlots)
-    if(FLINK_REPORTER_ENABLE.getValue) {
-      flinkConfig.set(MetricOptions.REPORTER_CLASS, FLINK_REPORTER_CLASS.getValue)
-      flinkConfig.set(MetricOptions.REPORTER_INTERVAL, Duration.ofMillis(FLINK_REPORTER_INTERVAL.getValue.toLong))
+    // set kerberos config
+    if(FLINK_KERBEROS_ENABLE.getValue(options)) {
+      flinkConfig.set(SecurityOptions.KERBEROS_KRB5_PATH, FLINK_KERBEROS_CONF_PATH.getValue(options))
+      flinkConfig.set(SecurityOptions.KERBEROS_LOGIN_PRINCIPAL, FLINK_KERBEROS_LOGIN_PRINCIPAL.getValue(options))
+      flinkConfig.set(SecurityOptions.KERBEROS_LOGIN_KEYTAB, FLINK_KERBEROS_LOGIN_KEYTAB.getValue(options))
     }
-    //set savePoint(设置 savePoint)
+    if(FLINK_REPORTER_ENABLE.getValue(options)) {
+      flinkConfig.set(MetricOptions.REPORTER_CLASS, FLINK_REPORTER_CLASS.getValue(options))
+      flinkConfig.set(MetricOptions.REPORTER_INTERVAL, Duration.ofMillis(FLINK_REPORTER_INTERVAL.getValue(options).toLong))
+    }
+    // set savePoint(设置 savePoint)
     val savePointPath = FLINK_SAVE_POINT_PATH.getValue(options)
     if (StringUtils.isNotBlank(savePointPath)) {
       val allowNonRestoredState = FLINK_APP_ALLOW_NON_RESTORED_STATUS.getValue(options).toBoolean
       val savepointRestoreSettings = SavepointRestoreSettings.forPath(savePointPath, allowNonRestoredState)
       SavepointRestoreSettings.toConfiguration(savepointRestoreSettings, flinkConfig)
     }
-    //Configure user-entrance jar. Can be remote, but only support 1 jar(设置：用户入口jar：可以远程，只能设置1个jar)
+    // Configure user-entrance jar. Can be remote, but only support 1 jar(设置：用户入口jar：可以远程，只能设置1个jar)
     val flinkMainClassJar = FLINK_APPLICATION_MAIN_CLASS_JAR.getValue(options)
     if(StringUtils.isNotBlank(flinkMainClassJar)) {
       val flinkMainClassJarPath = if (new File(flinkMainClassJar).exists()) flinkMainClassJar
@@ -127,7 +134,7 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
       flinkConfig.set(DeploymentOptions.TARGET, YarnDeploymentTarget.APPLICATION.getName)
       context.setDeploymentTarget(YarnDeploymentTarget.APPLICATION)
       addApplicationLabels(engineCreationContext)
-    } else if(isOnceEngineConn(engineCreationContext.getLabels())) {
+    } else if (isOnceEngineConn(engineCreationContext.getLabels())) {
       flinkConfig.set(DeploymentOptions.TARGET, YarnDeploymentTarget.PER_JOB.getName)
     } else {
       flinkConfig.set(DeploymentOptions.TARGET, YarnDeploymentTarget.SESSION.getName)
@@ -161,11 +168,13 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     val environment = environmentContext.getDeploymentTarget match {
       case YarnDeploymentTarget.PER_JOB | YarnDeploymentTarget.SESSION =>
         val planner = FlinkEnvConfiguration.FLINK_SQL_PLANNER.getValue(options)
-        if (!ExecutionEntry.AVAILABLE_PLANNERS.contains(planner.toLowerCase))
+        if (!ExecutionEntry.AVAILABLE_PLANNERS.contains(planner.toLowerCase)) {
           throw new FlinkInitFailedException("Planner must be one of these: " + String.join(", ", ExecutionEntry.AVAILABLE_PLANNERS))
+        }
         val executionType = FlinkEnvConfiguration.FLINK_SQL_EXECUTION_TYPE.getValue(options)
-        if (!ExecutionEntry.AVAILABLE_EXECUTION_TYPES.contains(executionType.toLowerCase))
+        if (!ExecutionEntry.AVAILABLE_EXECUTION_TYPES.contains(executionType.toLowerCase)) {
           throw new FlinkInitFailedException("Execution type must be one of these: " + String.join(", ", ExecutionEntry.AVAILABLE_EXECUTION_TYPES))
+        }
         val properties = new util.HashMap[String, String]
         properties.put(Environment.EXECUTION_ENTRY + "." + ExecutionEntry.EXECUTION_PLANNER, planner)
         properties.put(Environment.EXECUTION_ENTRY + "." + ExecutionEntry.EXECUTION_TYPE, executionType)
@@ -202,6 +211,8 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
       }
       checkpointConfig.setCheckpointTimeout(checkpointTimeout)
       checkpointConfig.setMinPauseBetweenCheckpoints(checkpointMinPause)
+      checkpointConfig.enableExternalizedCheckpoints(ExternalizedCheckpointCleanup.RETAIN_ON_CANCELLATION)
+      checkpointConfig.configure(environmentContext.getFlinkConfig)
     }
     executionContext
   }
@@ -213,7 +224,7 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
 
   override protected def getEngineConnType: EngineType = EngineType.FLINK
 
-  private val executorFactoryArray =  Array[ExecutorFactory](ClassUtil.getInstance(classOf[FlinkSQLExecutorFactory], new FlinkSQLExecutorFactory),
+  private val executorFactoryArray = Array[ExecutorFactory](ClassUtil.getInstance(classOf[FlinkSQLExecutorFactory], new FlinkSQLExecutorFactory),
     ClassUtil.getInstance(classOf[FlinkApplicationExecutorFactory], new FlinkApplicationExecutorFactory),
     ClassUtil.getInstance(classOf[FlinkCodeExecutorFactory], new FlinkCodeExecutorFactory))
 

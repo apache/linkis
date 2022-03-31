@@ -571,7 +571,9 @@ public class FsRestfulApi {
             switch (outputFileType) {
                 case "csv":
                     if (FileSource$.MODULE$.isTableResultSet(fileSource)) {
-                        fsWriter = CSVFsWriter.getCSVFSWriter(charset, csvSeperator, quoteRetouch, outputStream);
+                        fsWriter =
+                                CSVFsWriter.getCSVFSWriter(
+                                        charset, csvSeperator, quoteRetouch, outputStream);
                     } else {
                         fsWriter =
                                 ScriptFsWriter.getScriptFsWriter(

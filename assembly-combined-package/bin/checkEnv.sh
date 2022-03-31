@@ -34,10 +34,13 @@ function checkPythonAndJava(){
     isSuccess "execute cmd: java --version"
 }
 
-function checkHadoopAndHive(){
+function checkHdfs(){
     hadoopVersion="`hdfs version`"
     defaultHadoopVersion="2.7"
     checkversion "$hadoopVersion" $defaultHadoopVersion hadoop
+}
+
+function checkHive(){
     checkversion "$(whereis hive)" "2.3" hive
 }
 
@@ -96,7 +99,18 @@ echo "check sed"
 need_cmd sed
 echo "<-----end to check used cmd---->"
 
-checkSpark
 checkPythonAndJava
-checkHadoopAndHive
 
+if [ "$ENABLE_SPARK" == "true" ]; then
+  checkSpark
+fi
+
+
+if [ "$ENABLE_HDFS" == "true" ]; then
+  checkHdfs
+fi
+
+
+if [ "$ENABLE_HIVE" == "true" ]; then
+  checkHive
+fi

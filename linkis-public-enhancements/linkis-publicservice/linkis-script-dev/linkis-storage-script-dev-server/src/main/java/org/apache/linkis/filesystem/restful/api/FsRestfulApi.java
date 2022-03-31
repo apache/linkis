@@ -525,6 +525,7 @@ public class FsRestfulApi {
             @RequestParam(value = "charset", defaultValue = "utf-8") String charset,
             @RequestParam(value = "outputFileType", defaultValue = "csv") String outputFileType,
             @RequestParam(value = "csvSeperator", defaultValue = ",") String csvSeperator,
+            @RequestParam(value = "quoteRetouch", required = false) boolean quoteRetouch,
             @RequestParam(value = "outputFileName", defaultValue = "downloadResultset")
                     String outputFileName,
             @RequestParam(value = "sheetName", defaultValue = "result") String sheetName,
@@ -570,7 +571,7 @@ public class FsRestfulApi {
             switch (outputFileType) {
                 case "csv":
                     if (FileSource$.MODULE$.isTableResultSet(fileSource)) {
-                        fsWriter = CSVFsWriter.getCSVFSWriter(charset, csvSeperator, outputStream);
+                        fsWriter = CSVFsWriter.getCSVFSWriter(charset, csvSeperator, quoteRetouch, outputStream);
                     } else {
                         fsWriter =
                                 ScriptFsWriter.getScriptFsWriter(

@@ -350,7 +350,7 @@ then
 fi
 if [ "$RESULT_SET_ROOT_PATH" != "" ]
 then
-  sed -i ${txt}  "s#wds.linkis.resultSet.store.path.*wds.linkis.resultSet.store.path=$RESULT_SET_ROOT_PATH#g" $entrance_conf
+  sed -i ${txt}  "s#wds.linkis.resultSet.store.path.*#wds.linkis.resultSet.store.path=$RESULT_SET_ROOT_PATH#g" $entrance_conf
 fi
 
 publicservice_conf=$LINKIS_HOME/conf/linkis-ps-publicservice.properties

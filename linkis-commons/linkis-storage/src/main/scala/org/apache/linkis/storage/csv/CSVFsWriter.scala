@@ -25,10 +25,10 @@ import org.apache.linkis.common.io.FsWriter
 abstract class CSVFsWriter extends FsWriter {
   val charset: String
   val separator: String
-  val quoteRetouchValue: Boolean
+  val quoteRetouchEnable: Boolean
 }
 
 object CSVFsWriter {
-  def getCSVFSWriter(charset: String, separator: String, quoteRetouchValue: Boolean, outputStream: OutputStream): CSVFsWriter = new StorageCSVWriter(charset, separator, quoteRetouchValue, outputStream)
+  def getCSVFSWriter(charset: String, separator: String, quoteRetouchEnable: Boolean, outputStream: OutputStream): CSVFsWriter = new StorageCSVWriter(charset, separator, quoteRetouchEnable, outputStream)
 }
 

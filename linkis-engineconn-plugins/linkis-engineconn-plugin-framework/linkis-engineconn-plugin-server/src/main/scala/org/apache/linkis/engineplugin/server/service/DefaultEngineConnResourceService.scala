@@ -18,7 +18,6 @@
 package org.apache.linkis.engineplugin.server.service
 
 import java.util.Date
-
 import org.apache.linkis.bml.client.BmlClientFactory
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.engineplugin.server.conf.EngineConnPluginConfiguration
@@ -29,9 +28,10 @@ import org.apache.linkis.manager.common.protocol.bml.BmlResource
 import org.apache.linkis.manager.common.protocol.bml.BmlResource.BmlResourceVisibility
 import org.apache.linkis.manager.engineplugin.common.exception.EngineConnPluginErrorException
 import org.apache.linkis.manager.engineplugin.common.launch.process.{EngineConnResource, LaunchConstants}
-import org.apache.linkis.message.annotation.Receiver
+
 import javax.annotation.PostConstruct
 import org.apache.commons.lang.StringUtils
+import org.apache.linkis.rpc.message.annotation.Receiver
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
@@ -71,28 +71,34 @@ class DefaultEngineConnResourceService extends EngineConnResourceService with Lo
     bmlResource
   }
 
-  override def refreshAll(wait: Boolean = false): Unit = {
+  override def refreshAll(iswait: Boolean = false): Unit = {
     if (!isRefreshing) {
       synchronized {
         if (!isRefreshing) {
           val refreshTask = new Runnable {
             override def run(): Unit = {
               isRefreshing = true
-              info(s"Try to initialize the dist resources of all EngineConns.")
+              logger.info(s"Try to initialize the dist resources of all EngineConns. ")
               engineConnBmlResourceGenerator.getEngineConnTypeListFromDisk foreach { engineConnType =>
-                Utils.tryAndError {
-                  info(s"Try to initialize all versions of ${engineConnType}EngineConn.")
+                Utils.tryCatch{
+                  logger.info(s"Try to initialize all versions of ${engineConnType}EngineConn.")
                   engineConnBmlResourceGenerator.generate(engineConnType).foreach { case (version, localize) =>
-                    info(s"Try to initialize ${engineConnType}EngineConn-$version.")
+                    logger.info(s" Try to initialize ${engineConnType}EngineConn-$version.")
                     refresh(localize, engineConnType, version)
                   }
+                } { t =>
+                  if (! iswait && EngineConnPluginConfiguration.ENABLED_BML_UPLOAD_FAILED_EXIT.getValue) {
+                    logger.error("Failed to upload engine conn to bml, now exit!", t)
+                    System.exit(1)
+                  }
+                  logger.error("Failed to upload engine conn to bml", t)
                 }
               }
               isRefreshing = false
             }
           }
           val future = Utils.defaultScheduler.submit(refreshTask)
-          if (wait) {
+          if (iswait) {
             Utils.tryAndWarn(future.get())
           }
         } else {

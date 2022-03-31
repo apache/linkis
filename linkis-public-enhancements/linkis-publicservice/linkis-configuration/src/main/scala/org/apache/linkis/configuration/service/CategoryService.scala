@@ -18,8 +18,8 @@
 package org.apache.linkis.configuration.service
 
 import java.util
-
-import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.configuration.conf.Configuration
 import org.apache.linkis.configuration.dao.{ConfigMapper, LabelMapper}
 import org.apache.linkis.configuration.entity.{CategoryLabel, CategoryLabelVo, ConfigValue}
 import org.apache.linkis.configuration.exception.ConfigurationException
@@ -27,13 +27,15 @@ import org.apache.linkis.configuration.util.LabelEntityParser
 import org.apache.linkis.manager.label.builder.CombinedLabelBuilder
 import org.apache.linkis.manager.label.entity.CombinedLabel
 import org.apache.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
+import org.apache.linkis.manager.label.utils.LabelUtils
 import org.apache.commons.lang.StringUtils
-import org.apache.linkis.configuration.conf.Configuration
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.dao.DuplicateKeyException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 import scala.collection.JavaConverters._
+import scala.collection.mutable.ArrayBuffer
 
 
 @Service
@@ -144,7 +146,7 @@ class CategoryService extends Logging{
           configValue.setConfigLabelId(labelId)
           configValueList.add(configValue)
         })
-        configMapper.insertValueList(configValueList)
+        Utils.tryQuietly(configMapper.insertValueList(configValueList))
       }
     }
   }
@@ -164,7 +166,12 @@ class CategoryService extends Logging{
     }
     val combinedLabel = configurationService.generateCombinedLabel(engineType,version,null,creator)
     val parsedLabel = LabelEntityParser.parseToConfigLabel(combinedLabel)
-    labelMapper.insertLabel(parsedLabel)
+    Utils.tryCatch(labelMapper.insertLabel(parsedLabel)) {
+      case exception: DuplicateKeyException => {
+        parsedLabel.setId(labelMapper.getLabelByKeyValue(parsedLabel.getLabelKey, parsedLabel.getStringValue).getId)
+      }
+      case exception: Exception => throw exception
+    }
     if(parsedLabel.getId != null){
       val categoryLabel = generateCategoryLabel(parsedLabel.getId, description, 2)
       configMapper.insertCategory(categoryLabel)
@@ -174,7 +181,10 @@ class CategoryService extends Logging{
       //2.Now all the default configurations obtained are the default configuration of the engine level, and there is no default configuration of the application level for the time being.
       // If you need to consider, you need to change the creator of the label generated here to the corresponding application, and you need to modify the getFullTree to obtain the label of the defaultConfig, and also replace its creator with the creator of the application.
       val linkedEngineTypeLabel = configurationService.generateCombinedLabel(engineType,version,null, null)
-      associateConfigKey(parsedLabel.getId, linkedEngineTypeLabel.getStringValue)
+      val linkedEngineTypeLabelInDb = labelMapper.getLabelByKeyValue(linkedEngineTypeLabel.getLabelKey, linkedEngineTypeLabel.getStringValue)
+      if(linkedEngineTypeLabelInDb != null){
+        associateConfigKey(linkedEngineTypeLabelInDb.getId, linkedEngineTypeLabel.getStringValue)
+      }
     }
   }
 

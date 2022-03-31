@@ -20,13 +20,14 @@ package org.apache.linkis.bml.restful;
 import org.apache.linkis.bml.Entity.DownloadModel;
 import org.apache.linkis.bml.Entity.ResourceTask;
 import org.apache.linkis.bml.common.BmlProjectNoEditException;
+import org.apache.linkis.bml.common.BmlQueryFailException;
 import org.apache.linkis.bml.common.BmlServerParaErrorException;
 import org.apache.linkis.bml.conf.BmlServerConfiguration;
 import org.apache.linkis.bml.service.*;
 import org.apache.linkis.bml.util.HttpRequestHelper;
 import org.apache.linkis.common.exception.ErrorException;
 import org.apache.linkis.server.Message;
-import org.apache.linkis.server.security.SecurityFilter;
+import org.apache.linkis.server.utils.ModuleUserUtils;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -48,8 +49,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.*;
-
-import static org.apache.linkis.bml.restful.BmlRestfulApi.URL_PREFIX;
 
 @RequestMapping(path = "/bml")
 @RestController
@@ -75,8 +74,10 @@ public class BmlProjectRestful {
 
     @RequestMapping(path = "createBmlProject", method = RequestMethod.POST)
     public Message createBmlProject(HttpServletRequest request, @RequestBody JsonNode jsonNode) {
-        String username = SecurityFilter.getLoginUsername(request);
+
         String projectName = jsonNode.get(PROJECT_NAME_STR).textValue();
+        String username =
+                ModuleUserUtils.getOperationUser(request, "createBmlProject" + projectName);
         LOGGER.info("{} begins to create a project {} in bml", username, projectName);
         JsonNode editUserNode = jsonNode.get(EDIT_USERS_STR);
         JsonNode accessUserNode = jsonNode.get(ACCESS_USERS_STR);
@@ -109,7 +110,7 @@ public class BmlProjectRestful {
             @RequestParam(name = "projectName") String projectName,
             @RequestParam(name = "file") List<MultipartFile> files)
             throws ErrorException {
-        String username = SecurityFilter.getLoginUsername(request);
+        String username = ModuleUserUtils.getOperationUser(request, "uploadShareResource");
         Message message;
         try {
             LOGGER.info(
@@ -174,7 +175,8 @@ public class BmlProjectRestful {
             @RequestParam("resourceId") String resourceId,
             @RequestParam("file") MultipartFile file)
             throws ErrorException {
-        String username = SecurityFilter.getLoginUsername(request);
+        String username =
+                ModuleUserUtils.getOperationUser(request, "updateShareResource:" + resourceId);
         if (StringUtils.isEmpty(resourceId) || !resourceService.checkResourceId(resourceId)) {
             LOGGER.error("the error resourceId  is {} ", resourceId);
             throw new BmlServerParaErrorException(
@@ -262,7 +264,7 @@ public class BmlProjectRestful {
     }
 
     @RequestMapping(path = "downloadShareResource", method = RequestMethod.GET)
-    public Message downloadShareResource(
+    public void downloadShareResource(
             @RequestParam(value = "resourceId", required = false) String resourceId,
             @RequestParam(value = "version", required = false) String version,
             HttpServletResponse resp,
@@ -309,11 +311,7 @@ public class BmlProjectRestful {
                             properties);
             downloadModel.setEndTime(new Date(System.currentTimeMillis()));
             downloadModel.setState(0);
-            if (downloadResult) {
-                message = Message.ok("Download resource successfully(下载资源成功)");
-                message.setStatus(0);
-                message.setMethod(URL_PREFIX + "download");
-            } else {
+            if (!downloadResult) {
                 LOGGER.warn(
                         "ResourceId :{}, version:{} has a problem when user {} downloads the resource. The copied size is less than 0 (用户 {} 下载资源 resourceId: {}, version:{} 出现问题,复制的size小于0)",
                         user,
@@ -323,9 +321,7 @@ public class BmlProjectRestful {
                         resourceId,
                         version);
                 downloadModel.setState(1);
-                message = Message.error("Failed to download the resource(下载资源失败)");
-                message.setStatus(1);
-                message.setMethod(URL_PREFIX + "download");
+                throw new BmlQueryFailException("Failed to download the resource(下载资源失败)");
             }
             downloadService.addDownloadRecord(downloadModel);
             LOGGER.info(
@@ -373,7 +369,6 @@ public class BmlProjectRestful {
                 resourceId,
                 user,
                 resourceId);
-        return message;
     }
 
     @RequestMapping(path = "getProjectInfo", method = RequestMethod.GET)
@@ -386,7 +381,7 @@ public class BmlProjectRestful {
     @RequestMapping(path = "attachResourceAndProject", method = RequestMethod.POST)
     public Message attachResourceAndProject(
             HttpServletRequest request, @RequestBody JsonNode jsonNode) throws ErrorException {
-        String username = SecurityFilter.getLoginUsername(request);
+        String username = ModuleUserUtils.getOperationUser(request, "attachResourceAndProject");
         String projectName = jsonNode.get(PROJECT_NAME_STR).textValue();
         String resourceId = jsonNode.get("resourceId").textValue();
         LOGGER.info("begin to attach {}  and {}", projectName, username);
@@ -397,7 +392,7 @@ public class BmlProjectRestful {
     @RequestMapping(path = "updateProjectUsers", method = RequestMethod.POST)
     public Message updateProjectUsers(HttpServletRequest request, @RequestBody JsonNode jsonNode)
             throws ErrorException {
-        String username = SecurityFilter.getLoginUsername(request);
+        String username = ModuleUserUtils.getOperationUser(request, "updateProjectUsers");
         String projectName = jsonNode.get("projectName").textValue();
         LOGGER.info("{} begins to update project users for {}", username, projectName);
         List<String> editUsers = new ArrayList<>();

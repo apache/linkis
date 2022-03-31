@@ -14,36 +14,43 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.entrance.log
 
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
+import org.apache.linkis.entrance.conf.EntranceConfiguration
 
-class CacheLogWriter(logPath:String,
-                     charset:String,
-                     sharedCache:Cache,
+import java.sql.Date
+
+class CacheLogWriter(logPath: String,
+                     charset: String,
+                     sharedCache: Cache,
                      user: String)
   extends AbstractLogWriter(logPath, user, charset) {
 
-  def getCache:Option[Cache] = Some(sharedCache)
+  val pushTime: Date = new Date(System.currentTimeMillis() + EntranceConfiguration.LOG_PUSH_INTERVAL_TIME.getValue)
 
-  private def cache(msg:String): Unit = {
+  def getCache: Option[Cache] = Some(sharedCache)
+
+  private def cache(msg: String): Unit = {
     this synchronized {
       val removed = sharedCache.cachedLogs.add(msg)
-      if (removed != null){
+      val currentTime = new Date(System.currentTimeMillis())
+      if (removed != null || currentTime.after(pushTime)) {
         val logs = sharedCache.cachedLogs.toList
         val sb = new StringBuilder
-        sb.append(removed).append("\n")
+        if(removed != null) sb.append(removed).append("\n")
         logs.filter(_ != null).foreach(log => sb.append(log).append("\n"))
         sharedCache.cachedLogs.fakeClear()
         super.write(sb.toString())
+        pushTime.setTime(currentTime.getTime + EntranceConfiguration.LOG_PUSH_INTERVAL_TIME.getValue)
       }
     }
   }
   override def write(msg: String): Unit = {
-    if (StringUtils.isBlank(msg)){
+    if (StringUtils.isBlank(msg)) {
       cache("")
-    }else{
+    } else {
       val rows = msg.split("\n")
       rows.foreach(row => {
         if (row == null) cache("") else cache(row)
@@ -52,8 +59,10 @@ class CacheLogWriter(logPath:String,
   }
 
   override def flush(): Unit = {
-    sharedCache.cachedLogs.toList.filter(StringUtils.isNotEmpty).foreach(super.write)
+    val sb = new StringBuilder
+    sharedCache.cachedLogs.toList.filter(StringUtils.isNotEmpty).foreach(sb.append(_).append("\n"))
     sharedCache.cachedLogs.clear()
+    super.write(sb.toString())
     super.flush()
   }
 

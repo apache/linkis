@@ -43,7 +43,7 @@ import org.apache.linkis.manager.label.entity.UserModifiable;
 import org.apache.linkis.manager.label.exception.LabelErrorException;
 import org.apache.linkis.manager.label.service.NodeLabelService;
 import org.apache.linkis.server.Message;
-import org.apache.linkis.server.security.SecurityFilter;
+import org.apache.linkis.server.utils.ModuleUserUtils;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
@@ -92,6 +92,12 @@ public class EMRestfulApi {
 
     private String[] adminOperations = AMConfiguration.ECM_ADMIN_OPERATIONS().getValue().split(",");
 
+    private void checkAdmin(String userName) throws AMErrorException {
+        if (!AMConfiguration.isAdmin(userName)) {
+            throw new AMErrorException(210003, "Only admin can modify ECMs(只有管理员才能修改ECM).");
+        }
+    }
+
     // todo add healthInfo
     @RequestMapping(path = "/listAllEMs", method = RequestMethod.GET)
     public Message listAllEMs(
@@ -100,11 +106,8 @@ public class EMRestfulApi {
             @RequestParam(value = "nodeHealthy", required = false) String nodeHealthy,
             @RequestParam(value = "owner", required = false) String owner)
             throws AMErrorException {
-        String userName = SecurityFilter.getLoginUsername(req);
-        String[] adminArray = AMConfiguration.GOVERNANCE_STATION_ADMIN().getValue().split(",");
-        if (adminArray != null && !Arrays.asList(adminArray).contains(userName)) {
-            throw new AMErrorException(210003, "only admin can search ECMs(只有管理员才能查询ECM)");
-        }
+        String userName = ModuleUserUtils.getOperationUser(req, "listAllEMs");
+        checkAdmin(userName);
         EMNode[] allEM = emInfoService.getAllEM();
         ArrayList<EMNodeVo> allEMVo = AMUtils.copyToEMVo(allEM);
         ArrayList<EMNodeVo> allEMVoFilter1 = allEMVo;
@@ -125,12 +128,11 @@ public class EMRestfulApi {
                             allEMVoFilter2.stream()
                                     .filter(
                                             em -> {
-                                                return em.getNodeHealthy() != null
-                                                        ? em.getNodeHealthy()
+                                                return em.getNodeHealthy() == null
+                                                        || em.getNodeHealthy()
                                                                 .equals(
                                                                         NodeHealthy.valueOf(
-                                                                                nodeHealthy))
-                                                        : true;
+                                                                                nodeHealthy));
                                             })
                                     .collect(Collectors.toList());
         }
@@ -170,12 +172,8 @@ public class EMRestfulApi {
     @Transactional(rollbackFor = Exception.class)
     public Message modifyEMInfo(HttpServletRequest req, @RequestBody JsonNode jsonNode)
             throws AMErrorException, LabelErrorException {
-        String username = SecurityFilter.getLoginUsername(req);
-        String[] adminArray = AMConfiguration.GOVERNANCE_STATION_ADMIN().getValue().split(",");
-        if (adminArray != null && !Arrays.asList(adminArray).contains(username)) {
-            throw new AMErrorException(
-                    210003, "only admin can modify ecm information(只有管理员才能修改EM信息)");
-        }
+        String username = ModuleUserUtils.getOperationUser(req, "modifyEMInfo");
+        checkAdmin(username);
         String applicationName = jsonNode.get("applicationName").asText();
         String instance = jsonNode.get("instance").asText();
         if (StringUtils.isEmpty(applicationName)) {
@@ -194,9 +192,9 @@ public class EMRestfulApi {
                     AMErrorCode.QUERY_PARAM_NULL.getCode(),
                     "serviceInstance:"
                             + applicationName
-                            + " non-existent(服务实例"
+                            + " non-existent("
                             + applicationName
-                            + "不存在)");
+                            + ")");
         }
         String healthyStatus = jsonNode.get("emStatus").asText();
         if (healthyStatus != null) {
@@ -228,14 +226,15 @@ public class EMRestfulApi {
             nodeLabelService.updateLabelsToNode(serviceInstance, newLabelList);
             logger.info("success to update label of instance: " + serviceInstance.getInstance());
         }
-        return Message.ok("修改EM信息成功");
+        return Message.ok("success");
     }
 
     @RequestMapping(path = "/executeECMOperationByEC", method = RequestMethod.POST)
     public Message executeECMOperationByEC(HttpServletRequest req, @RequestBody JsonNode jsonNode)
             throws AMErrorException {
-        String userName = SecurityFilter.getLoginUsername(req);
+
         ServiceInstance serviceInstance = EngineRestfulApi.getServiceInstance(jsonNode);
+        String userName = ModuleUserUtils.getOperationUser(req, "executeECMOperationByEC");
         logger.info(
                 "User {} try to execute ECM Operation by EngineConn {}.",
                 userName,
@@ -270,7 +269,7 @@ public class EMRestfulApi {
     @RequestMapping(path = "/executeECMOperation", method = RequestMethod.POST)
     public Message executeECMOperation(HttpServletRequest req, @RequestBody JsonNode jsonNode)
             throws AMErrorException {
-        String userName = SecurityFilter.getLoginUsername(req);
+        String userName = ModuleUserUtils.getOperationUser(req, "executeECMOperation");
         ServiceInstance serviceInstance = EngineRestfulApi.getServiceInstance(jsonNode);
         logger.info("User {} try to execute ECM Operation with {}.", userName, serviceInstance);
         EMNode ecmNode = this.emInfoService.getEM(serviceInstance);
@@ -296,7 +295,7 @@ public class EMRestfulApi {
     @RequestMapping(path = "/openEngineLog", method = RequestMethod.POST)
     public Message openEngineLog(HttpServletRequest req, @RequestBody JsonNode jsonNode)
             throws AMErrorException {
-        String userName = SecurityFilter.getLoginUsername(req);
+        String userName = ModuleUserUtils.getOperationUser(req, "openEngineLog");
         EMNode ecmNode;
         Map<String, Object> parameters;
         try {

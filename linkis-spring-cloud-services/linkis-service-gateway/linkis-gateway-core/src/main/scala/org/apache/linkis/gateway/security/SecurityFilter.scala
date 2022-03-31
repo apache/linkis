@@ -36,6 +36,7 @@ import org.apache.linkis.server.exception.{LoginExpireException, NonLoginExcepti
 import org.apache.linkis.server.{Message, validateFailed}
 import org.apache.commons.lang.StringUtils
 import org.apache.commons.lang.exception.ExceptionUtils
+import java.util.regex.Pattern
 
 object SecurityFilter extends Logging {
 
@@ -92,7 +93,7 @@ object SecurityFilter extends Logging {
           case dwc: LinkisException => dwc.getMessage
           case _ => "login failed! reason: " + ExceptionUtils.getRootCauseMessage(t)
         }
-        GatewaySSOUtils.error("login failed!", t)
+        GatewaySSOUtils.error("login failed! Reason: " + message, t)
         filterResponse(gatewayContext, Message.error(message).<<(gatewayContext.getRequest.getRequestURI))
       }
       false
@@ -132,6 +133,9 @@ object SecurityFilter extends Logging {
             .data("enableSSO", true).data("SSOURL", SSOInterceptor.getSSOInterceptor.redirectTo(gatewayContext.getRequest.getURI)) << gatewayContext.getRequest.getRequestURI)
           false
         }
+      } else if (gatewayContext.getRequest.getRequestURI.matches(GatewayConfiguration.GATEWAY_NO_AUTH_URL_REGEX.getValue)){
+        GatewaySSOUtils.info("Not logged in, still let it pass (GATEWAY_NO_AUTH_URL): " + gatewayContext.getRequest.getRequestURI)
+        true
       } else {
         filterResponse(gatewayContext, Message.noLogin("You are not logged in, please login first(您尚未登录，请先登录)!") << gatewayContext.getRequest.getRequestURI)
         false
@@ -155,17 +159,17 @@ object SecurityFilter extends Logging {
       val authFile = new File(this.getClass.getClassLoader.getResource(AUTH_IP_FILE.getValue).toURI.getPath)
       import scala.io.Source
       val source = Source.fromFile(authFile, "UTF-8")
-      val lines = source.getLines().toArray
+      val lines = Utils.tryFinally(source.getLines().toArray)(source.close())
       lines.foreach(ipSet.add)
     }
   }
 
   protected def addAccessHeaders(gatewayContext: GatewayContext) {
     val response = gatewayContext.getResponse
-    response.setHeader("Access-Control-Allow-Origin", "*")
+    response.setHeader("Access-Control-Allow-Origin", GatewayConfiguration.GATEWAY_HEADER_ALLOW_ORIGIN.getValue)
     response.setHeader("Access-Control-Allow-Credentials", "true")
     response.setHeader("Access-Control-Allow-Headers", "authorization,Content-Type")
-    response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, HEAD, DELETE")
+    response.setHeader("Access-Control-Allow-Methods", GatewayConfiguration.GATEWAY_HEADER_ALLOW_METHOD.getValue)
     val fullDateFormatEN = DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL, new Locale("EN", "en"))
     response.setHeader("Date", fullDateFormatEN.format(new Date))
   }

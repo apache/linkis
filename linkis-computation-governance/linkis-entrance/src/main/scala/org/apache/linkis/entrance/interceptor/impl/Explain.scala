@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.entrance.interceptor.impl
 
 import java.util.regex.Pattern
@@ -26,6 +26,7 @@ import org.apache.linkis.entrance.conf.EntranceConfiguration
 import org.apache.linkis.entrance.interceptor.exception.{PythonCodeCheckException, ScalaCodeCheckException}
 import org.apache.linkis.governance.common.entity.job.JobRequest
 import org.apache.commons.lang.StringUtils
+import org.apache.linkis.entrance.exception.{EntranceErrorCode, EntranceIllegalParamException}
 import org.slf4j.{Logger, LoggerFactory}
 
 import scala.collection.mutable.ArrayBuffer
@@ -33,11 +34,11 @@ import scala.collection.mutable.ArrayBuffer
 
 abstract class Explain extends Logging {
   /**
-    * 用于检查code是否符合规范
-    * @param code
-    * @param error
-    * @return
-    */
+   * 用于检查code是否符合规范
+   * @param code
+   * @param error
+   * @return
+   */
   @throws[ErrorException]
   def authPass(code: String, error: StringBuilder): Boolean
 }
@@ -96,11 +97,11 @@ object SQLExplain extends Explain {
   }
 
   /**
-    * to deal with sql limit
-    *
-    * @param executionCode sql code
-    * @param requestPersistTask use to store inited logs
-    */
+   * to deal with sql limit
+   *
+   * @param executionCode sql code
+   * @param requestPersistTask use to store inited logs
+   */
   def dealSQLLimit(executionCode:String, requestPersistTask: JobRequest, logAppender: java.lang.StringBuilder):Unit = {
     val fixedCode:ArrayBuffer[String] = new ArrayBuffer[String]()
     val tempCode = SQLCommentHelper.dealComment(executionCode)
@@ -158,7 +159,10 @@ object SQLExplain extends Explain {
     }
     logAppender.append(LogUtils.generateInfo("SQL code check has passed" + "\n"))
     requestPersistTask.setExecutionCode(fixedCode.mkString(";\n"))
-    info(s"after sql limit code is ${requestPersistTask.getExecutionCode}")
+    if(StringUtils.isEmpty(requestPersistTask.getExecutionCode)){
+      throw new EntranceIllegalParamException(EntranceErrorCode.EXECUTION_CODE_ISNULL.getErrCode,EntranceErrorCode.EXECUTION_CODE_ISNULL.getDesc)
+    }
+    debug(s"after sql limit code is ${requestPersistTask.getExecutionCode}")
   }
 
   private def findRealSemicolonIndex(tempCode: String):Array[Int] = {
@@ -200,8 +204,12 @@ object SQLExplain extends Explain {
     }
     val a = words.toArray
     val length = a.length
-    val second_last = a(length - 2)
-    !"limit".equals(second_last.toLowerCase())
+    if(a.length > 1) {
+      val second_last = a(length - 2)
+      !"limit".equals(second_last.toLowerCase())
+    } else {
+      false
+    }
   }
 
   private def cleanComment(sql:String):String = {
@@ -237,10 +245,10 @@ object SQLExplain extends Explain {
   }
 
   /**
-    * 修改正确
-    * @param cmd code
-    * @return String
-    */
+   * 修改正确
+   * @param cmd code
+   * @return String
+   */
   def repairSelectOverLimit(cmd: String): String = {
     var code = cmd.trim
     var preCode=""
@@ -262,18 +270,18 @@ object SQLExplain extends Explain {
 
 object PythonExplain extends Explain{
   /**
-    * User is not allowed to import sys module(不允许用户导入sys模块)
-    */
+   * User is not allowed to import sys module(不允许用户导入sys模块)
+   */
   private val IMPORT_SYS_MOUDLE = """import\s+sys""".r.unanchored
   private val FROM_SYS_IMPORT = """from\s+sys\s+import\s+.*""".r.unanchored
   /**
-    * User is not allowed to import os module(不允许用户导入os模块)
-    */
+   * User is not allowed to import os module(不允许用户导入os模块)
+   */
   private val IMPORT_OS_MOUDLE = """import\s+os""".r.unanchored
   private val FROM_OS_IMPORT = """from\s+os\s+import\s+.*""".r.unanchored
   /**
-    * Do not allow users to open the process privately(不允许用户私自开启进程)
-    */
+   * Do not allow users to open the process privately(不允许用户私自开启进程)
+   */
   private val IMPORT_PROCESS_MODULE = """import\s+multiprocessing""".r.unanchored
   private val FROM_MULTIPROCESS_IMPORT = """from\s+multiprocessing\s+import\s+.*""".r.unanchored
   private val IMPORT_SUBPORCESS_MODULE = """import\s+subprocess""".r.unanchored
@@ -290,8 +298,8 @@ object PythonExplain extends Explain{
   private val CAN_PASS_CODES = "subprocess.run;subprocess.Popen;subprocess.check_output"
 
   /**
-    * Forbidden user stop sparkContext(禁止用户stop sparkContext)
-    */
+   * Forbidden user stop sparkContext(禁止用户stop sparkContext)
+   */
   private val SC_STOP = """sc\.stop""".r.unanchored
   override def authPass(code: String, error: StringBuilder): Boolean = {
     if (EntranceConfiguration.SKIP_AUTH.getValue) {
@@ -308,8 +316,6 @@ object PythonExplain extends Explain{
           throw PythonCodeCheckException(20072, "can not use process module")
         else if (SC_STOP.findAllIn(code).nonEmpty)
           throw PythonCodeCheckException(20073, "You can not stop SparkContext, It's dangerous")
-        else if (FROM_NUMPY_IMPORT.findAllIn(code).nonEmpty)
-          throw PythonCodeCheckException(20074, "Numpy packages cannot be imported in this way")
         else if (FROM_NUMPY_IMPORT.findAllIn(code).nonEmpty)
           throw PythonCodeCheckException(20074, "Numpy packages cannot be imported in this way")
       }

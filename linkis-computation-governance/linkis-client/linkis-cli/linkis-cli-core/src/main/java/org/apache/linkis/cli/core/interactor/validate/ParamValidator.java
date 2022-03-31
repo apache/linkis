@@ -18,9 +18,9 @@
 package org.apache.linkis.cli.core.interactor.validate;
 
 import org.apache.linkis.cli.common.entity.command.Params;
+import org.apache.linkis.cli.common.entity.validate.Validator;
 import org.apache.linkis.cli.common.exception.LinkisClientRuntimeException;
 
-// TODO
 public class ParamValidator implements Validator {
     @Override
     public void doValidation(Object input) throws LinkisClientRuntimeException {

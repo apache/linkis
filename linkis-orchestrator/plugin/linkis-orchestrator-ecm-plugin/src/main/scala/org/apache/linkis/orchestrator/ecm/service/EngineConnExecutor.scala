@@ -17,15 +17,18 @@
  
 package org.apache.linkis.orchestrator.ecm.service
 
+import org.apache.commons.lang.StringUtils
+
 import java.io.Closeable
 import java.util
-
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
 import org.apache.linkis.governance.common.protocol.task.RequestTask
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.scheduler.executer.ExecuteResponse
+
+import java.util.concurrent.ConcurrentHashMap
 
 
 trait EngineConnExecutor extends Closeable {
@@ -44,6 +47,8 @@ trait EngineConnExecutor extends Closeable {
   def unUseEngineConn: Unit
 
   def getRunningTaskCount: Int
+
+  def removeTask(engineConnTaskId: String): RequestTask
 
   def execute(requestTask: RequestTask): ExecuteResponse
 
@@ -93,7 +98,7 @@ abstract class AbstractEngineConnExecutor extends EngineConnExecutor with Loggin
 
   private var lastUpdateTime: Long = System.currentTimeMillis()
 
-  private val runningTask: util.Map[String, RequestTask] = new util.HashMap[String, RequestTask]()
+  private val runningTask: util.Map[String, RequestTask] = new ConcurrentHashMap[String, RequestTask]()
 
 
   override def getLastUpdateTime(): Long = lastUpdateTime
@@ -110,6 +115,14 @@ abstract class AbstractEngineConnExecutor extends EngineConnExecutor with Loggin
 
   protected def getRunningTasks: util.Map[String, RequestTask] = {
     this.runningTask
+  }
+
+  override def removeTask(engineConnTaskId: String): RequestTask = {
+    if (StringUtils.isNotBlank(engineConnTaskId)) {
+      runningTask.remove(engineConnTaskId)
+    } else {
+      null
+    }
   }
 
 }

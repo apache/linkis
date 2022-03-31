@@ -20,8 +20,9 @@ package org.apache.linkis.manager.am.conf
 import java.util
 
 import org.apache.linkis.common.conf.Configuration
-import org.apache.linkis.governance.common.protocol.conf.{RequestQueryEngineConfig, RequestQueryGlobalConfig, ResponseQueryConfig}
+import org.apache.linkis.governance.common.protocol.conf.{RequestQueryEngineConfig, RequestQueryGlobalConfig, RequestQueryEngineConfigWithGlobalConfig, ResponseQueryConfig}
 import org.apache.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
+import org.apache.linkis.manager.label.utils.EngineTypeLabelCreator
 import org.apache.linkis.protocol.CacheableProtocol
 import org.apache.linkis.rpc.RPCMapCache
 
@@ -38,10 +39,11 @@ object ConfigurationMapCache {
     }
   }
 
+
   val engineMapCache = new RPCMapCache[(UserCreatorLabel, EngineTypeLabel), String, String](
     Configuration.CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME.getValue) {
     override protected def createRequest(labelTuple: (UserCreatorLabel, EngineTypeLabel)): CacheableProtocol =
-      RequestQueryEngineConfig(labelTuple._1, labelTuple._2)
+    RequestQueryEngineConfigWithGlobalConfig(labelTuple._1, labelTuple._2)
 
     override protected def createMap(any: Any): util.Map[String, String] = any match {
       case response: ResponseQueryConfig => response.getKeyAndValue

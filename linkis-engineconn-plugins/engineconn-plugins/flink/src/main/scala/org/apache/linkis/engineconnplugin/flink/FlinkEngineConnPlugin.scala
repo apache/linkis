@@ -33,37 +33,34 @@ class FlinkEngineConnPlugin extends EngineConnPlugin {
   private var engineConnLaunchBuilder: EngineConnLaunchBuilder = _
   private var engineConnFactory: EngineConnFactory = _
 
-  private val EP_CONTEXT_CONSTRUCTOR_LOCK = new Object()
+  private val lock = new Array[Byte](0)
 
 
   override def init(params: java.util.Map[String, Any]): Unit = {}
 
   override def getEngineResourceFactory: EngineResourceFactory = {
-    EP_CONTEXT_CONSTRUCTOR_LOCK.synchronized{
-      if(null == engineResourceFactory){
-        engineResourceFactory = new FlinkEngineConnResourceFactory
+      if (null == engineResourceFactory) lock.synchronized {
+        if (null == engineResourceFactory) engineResourceFactory = new FlinkEngineConnResourceFactory
       }
       engineResourceFactory
-    }
   }
 
   override def getEngineConnLaunchBuilder: EngineConnLaunchBuilder = {
-    EP_CONTEXT_CONSTRUCTOR_LOCK.synchronized {
-      // todo check
+    if (null == engineResourceFactory) lock.synchronized {
       if (null == engineConnLaunchBuilder) {
         engineConnLaunchBuilder = new FlinkEngineConnLaunchBuilder()
       }
-      engineConnLaunchBuilder
     }
+    engineConnLaunchBuilder
   }
 
   override def getEngineConnFactory: EngineConnFactory = {
-    EP_CONTEXT_CONSTRUCTOR_LOCK.synchronized {
+    if (null == engineConnFactory) lock.synchronized {
       if (null == engineConnFactory) {
         engineConnFactory = new FlinkEngineConnFactory
       }
-      engineConnFactory
     }
+    engineConnFactory
   }
 
   override def getDefaultLabels: java.util.List[Label[_]] = new java.util.ArrayList[Label[_]]

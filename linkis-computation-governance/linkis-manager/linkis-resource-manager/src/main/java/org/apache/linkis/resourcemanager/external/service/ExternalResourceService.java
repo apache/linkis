@@ -19,10 +19,11 @@ package org.apache.linkis.resourcemanager.external.service;
 
 import org.apache.linkis.manager.common.entity.resource.NodeResource;
 import org.apache.linkis.manager.common.entity.resource.ResourceType;
+import org.apache.linkis.manager.common.exception.RMErrorException;
 import org.apache.linkis.resourcemanager.domain.RMLabelContainer;
-import org.apache.linkis.resourcemanager.exception.RMErrorException;
 import org.apache.linkis.resourcemanager.external.domain.ExternalAppInfo;
 import org.apache.linkis.resourcemanager.external.domain.ExternalResourceIdentifier;
+import org.apache.linkis.resourcemanager.external.domain.ExternalResourceProvider;
 
 import java.util.List;
 import java.util.Map;
@@ -52,4 +53,7 @@ public interface ExternalResourceService {
             RMLabelContainer labelContainer,
             ExternalResourceIdentifier identifier)
             throws RMErrorException;
+
+    ExternalResourceProvider chooseProvider(
+            ResourceType resourceType, RMLabelContainer labelContainer) throws RMErrorException;
 }

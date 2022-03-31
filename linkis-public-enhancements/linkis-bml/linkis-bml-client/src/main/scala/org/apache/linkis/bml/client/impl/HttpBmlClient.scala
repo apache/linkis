@@ -14,12 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.bml.client.impl
 
-import java.io.{File, IOException, InputStream}
+import java.io.{OutputStream, File, IOException, InputStream}
 import java.util
-
 import org.apache.linkis.bml.client.AbstractBmlClient
 import org.apache.linkis.bml.common._
 import org.apache.linkis.bml.conf.BmlConfiguration._
@@ -29,7 +28,7 @@ import org.apache.linkis.bml.request._
 import org.apache.linkis.bml.response.{BmlCreateBmlProjectResult, _}
 import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.io.FsPath
-import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.httpclient.authentication.AuthenticationStrategy
 import org.apache.linkis.httpclient.config.ClientConfigBuilder
 import org.apache.linkis.httpclient.dws.DWSHttpClient
@@ -38,6 +37,8 @@ import org.apache.linkis.httpclient.dws.config.DWSClientConfig
 import org.apache.linkis.storage.FSFactory
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang.StringUtils
+import org.apache.http.client.methods.CloseableHttpResponse
+
 
 class HttpBmlClient(clientConfig: DWSClientConfig,
                    serverUrl: String,
@@ -101,9 +102,18 @@ class HttpBmlClient(clientConfig: DWSClientConfig,
     import scala.collection.JavaConversions._
     bmlDownloadAction.getParameters += "resourceId" -> resourceId
     // TODO: 不能放非空的参数
-    if(version != null)bmlDownloadAction.getParameters += "version" -> version
+    if (version != null) bmlDownloadAction.getParameters += "version" -> version
     bmlDownloadAction.setUser(user)
-    val result = dwsClient.execute(bmlDownloadAction)
+    val downloadResult = dwsClient.execute(bmlDownloadAction)
+//    val retIs = new ByteArrayInputStream(IOUtils.toString(bmlDownloadAction.getInputStream).getBytes("UTF-8"))
+//    if (downloadResult != null) {
+//      bmlDownloadAction.getResponse match {
+//        case r: CloseableHttpResponse =>
+//          Utils.tryAndWarn(r.close())
+//        case o: Any =>
+//          info(s"Download response : ${o.getClass.getName} cannot close.")
+//      }
+//    }
     BmlDownloadResponse(isSuccess = true, bmlDownloadAction.getInputStream, resourceId, version, null)
   }
 
@@ -116,7 +126,7 @@ class HttpBmlClient(clientConfig: DWSClientConfig,
     * @param overwrite 是否是追加
     * @return 返回的inputStream已经被全部读完，所以返回一个null,另外的fullFileName是整个文件的名字
     */
-  override def downloadResource(user: String, resourceId: String, version: String, path: String, overwrite:Boolean = false): BmlDownloadResponse = {
+  override def downloadResource(user: String, resourceId: String, version: String, path: String, overwrite: Boolean = false): BmlDownloadResponse = {
     val fsPath = new FsPath(path)
     val fileSystem = FSFactory.getFsByProxyUser(fsPath, user)
     fileSystem.init(new util.HashMap[String, String]())
@@ -126,29 +136,34 @@ class HttpBmlClient(clientConfig: DWSClientConfig,
     downloadAction.getParameters += "resourceId" -> resourceId
     if(StringUtils.isNotEmpty(version)) downloadAction.getParameters += "version" -> version
     downloadAction.setUser(user)
-    val downloadResult = dwsClient.execute(downloadAction)
-    val fullFilePath = new FsPath(fullFileName)
-    if (downloadResult != null){
-      val inputStream = downloadAction.getInputStream
-      val outputStream = fileSystem.write(fullFilePath, overwrite)
-      try{
+      var inputStream: InputStream = null
+      var outputStream: OutputStream = null
+      try {
+        dwsClient.execute(downloadAction)
+        val fullFilePath = new FsPath(fullFileName)
+        outputStream = fileSystem.write(fullFilePath, overwrite)
+        inputStream = downloadAction.getInputStream
         IOUtils.copy(inputStream, outputStream)
-      }catch{
-        case e:IOException => logger.error("failed to copy inputStream and outputStream (inputStream和outputStream流copy失败)", e)
+        downloadAction.getResponse match {
+          case r: CloseableHttpResponse =>
+            Utils.tryAndWarn(r.close())
+          case o: Any =>
+            info(s"Download response : ${o.getClass.getName} cannot close.")
+        }
+      } catch {
+        case e: IOException => logger.error("failed to copy inputStream and outputStream (inputStream和outputStream流copy失败)", e)
           val exception = BmlClientFailException("failed to copy inputStream and outputStream (inputStream和outputStream流copy失败)")
           exception.initCause(e)
-          throw e
-        case t:Throwable => logger.error("failed to copy stream (流复制失败)",t)
+          throw exception
+        case t: Throwable => logger.error("failed to copy stream (流复制失败)", t)
           throw t
-      }finally{
-        IOUtils.closeQuietly(inputStream)
-        IOUtils.closeQuietly(outputStream)
+      } finally {
+        if (null != inputStream) IOUtils.closeQuietly(inputStream)
+        if (null != outputStream) IOUtils.closeQuietly(outputStream)
+        fileSystem.close()
       }
       BmlDownloadResponse(isSuccess = true, null, resourceId, version, fullFileName)
-    }else{
-      BmlDownloadResponse(isSuccess = false, null, null, null, null)
     }
-  }
 
 
   override def downloadShareResource(user: String, resourceId: String, version: String, path: String,
@@ -162,28 +177,27 @@ class HttpBmlClient(clientConfig: DWSClientConfig,
     downloadAction.getParameters += "resourceId" -> resourceId
     if(StringUtils.isNotEmpty(version)) downloadAction.getParameters += "version" -> version
     downloadAction.setUser(user)
-    val downloadResult = dwsClient.execute(downloadAction)
-    val fullFilePath = new FsPath(fullFileName)
-    if (downloadResult != null){
-      val inputStream = downloadAction.getInputStream
-      val outputStream = fileSystem.write(fullFilePath, overwrite)
-      try{
+    var inputStream: InputStream = null
+    var outputStream: OutputStream = null
+    try {
+      dwsClient.execute(downloadAction)
+      val fullFilePath = new FsPath(fullFileName)
+      outputStream = fileSystem.write(fullFilePath, overwrite)
+      inputStream = downloadAction.getInputStream
         IOUtils.copy(inputStream, outputStream)
-      }catch{
+      } catch {
         case e:IOException => logger.error("failed to copy inputStream and outputStream (inputStream和outputStream流copy失败)", e)
           val exception = BmlClientFailException("failed to copy inputStream and outputStream (inputStream和outputStream流copy失败)")
           exception.initCause(e)
           throw e
         case t:Throwable => logger.error("failed to copy stream (流复制失败)",t)
           throw t
-      }finally{
-        IOUtils.closeQuietly(inputStream)
-        IOUtils.closeQuietly(outputStream)
+      } finally {
+       if (null != inputStream) IOUtils.closeQuietly(inputStream)
+       if (null != outputStream) IOUtils.closeQuietly(outputStream)
+        fileSystem.close()
       }
       BmlDownloadResponse(isSuccess = true, null, resourceId, version, fullFileName)
-    }else{
-      BmlDownloadResponse(isSuccess = false, null, null, null, null)
-    }
   }
 
 
@@ -482,6 +496,65 @@ class HttpBmlClient(clientConfig: DWSClientConfig,
       case r:BmlResult => logger.error(s"result type ${r.getResultType} not match BmlUpdateProjectResult")
         throw POSTResultNotMatchException()
       case _ =>  throw POSTResultNotMatchException()
+    }
+  }
+
+  override def changeOwnerByResourceId(resourceId: String, oldOwner: String, newOwner: String): BmlChangeOwnerResponse = {
+    val bmlChangeOwnerAction = BmlChangeOwnerAction()
+    bmlChangeOwnerAction.setUser(oldOwner)
+    bmlChangeOwnerAction.getRequestPayloads.put("resourceId", resourceId)
+    bmlChangeOwnerAction.getRequestPayloads.put("oldOwner", oldOwner)
+    bmlChangeOwnerAction.getRequestPayloads.put("newOwner", newOwner)
+    val result = dwsClient.execute(bmlChangeOwnerAction)
+    result match {
+      case _ => BmlChangeOwnerResponse(true)
+    }
+  }
+
+  override def copyResourceToAnotherUser(resourceId: String, anotherUser: String, originOwner: String): BmlCopyResourceResponse = {
+    val copyResourceAction = BmlCopyResourceAction()
+    copyResourceAction.setUser(originOwner)
+    copyResourceAction.getRequestPayloads.put("resourceId", resourceId)
+    copyResourceAction.getRequestPayloads.put("anotherUser", anotherUser)
+    val result = dwsClient.execute(copyResourceAction)
+    result match {
+      case copyResult: BmlCopyResourceResult =>
+        val isSuccess = if (copyResult.getStatus == 0) true else false
+        if (isSuccess) {
+          val resourceId = copyResult.getResourceId
+          BmlCopyResourceResponse(isSuccess, resourceId)
+        } else {
+          logger.error(s"user $user copy resource failed, status code is ${copyResult.getStatusCode}")
+          BmlCopyResourceResponse(isSuccess, null)
+        }
+      case r: BmlResult =>
+        logger.error(s"result type ${r.getResultType} not match BmlCopyResourceResult")
+        throw POSTResultNotMatchException()
+      case _ => throw POSTResultNotMatchException()
+    }
+  }
+
+  override def rollbackVersion(resourceId: String, version: String, user: String): BmlRollbackVersionResponse = {
+    val rollbackVersionAction = BmlRollbackVersionAction()
+    rollbackVersionAction.setUser(user)
+    rollbackVersionAction.getRequestPayloads.put("resourceId", resourceId)
+    rollbackVersionAction.getRequestPayloads.put("version", version)
+    val result = dwsClient.execute(rollbackVersionAction)
+    result match {
+      case rollbackResult: BmlRollbackVersionResult =>
+        val isSuccess = if (rollbackResult.getStatus == 0) true else false
+        if (isSuccess) {
+          val resourceId = rollbackResult.getResourceId
+          val version = rollbackResult.getVersion
+          BmlRollbackVersionResponse(isSuccess, resourceId, version)
+        } else {
+          logger.error(s"user $user rollback version failed, status code is ${rollbackResult.getStatusCode}")
+          BmlRollbackVersionResponse(isSuccess, null, null)
+        }
+      case r: BmlResult =>
+        logger.error(s"result type ${r.getResultType} not match BmlRollbackVersionResult")
+        throw POSTResultNotMatchException()
+      case _ => throw POSTResultNotMatchException()
     }
   }
 

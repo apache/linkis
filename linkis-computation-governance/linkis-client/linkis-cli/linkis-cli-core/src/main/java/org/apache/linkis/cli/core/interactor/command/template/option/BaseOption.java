@@ -18,15 +18,15 @@
 package org.apache.linkis.cli.core.interactor.command.template.option;
 
 import org.apache.linkis.cli.common.entity.command.CmdOption;
-import org.apache.linkis.cli.common.utils.converter.AbstractStringConverter;
+import org.apache.linkis.cli.core.utils.converter.AbstractStringConverter;
 
 import org.apache.commons.lang3.StringUtils;
 
 import java.text.MessageFormat;
 
 /**
- * @description: Abstract StdOption for CommandTemplate. key:unique id key for an option.
- *     defaultValue takes no effect other than displaying default value
+ * Abstract StdOption for CommandTemplate. key:unique id key for an option. defaultValue takes no
+ * effect other than displaying default value
  */
 public abstract class BaseOption<T> implements CmdOption<T>, Cloneable {
     private final String keyPrefix;
@@ -125,7 +125,10 @@ public abstract class BaseOption<T> implements CmdOption<T>, Cloneable {
     @Override
     public BaseOption<T> clone() throws CloneNotSupportedException {
         BaseOption<T> ret = (BaseOption<T>) super.clone();
-        ret.value = StringUtils.isBlank(rawVal) ? null : ret.converter.convert(rawVal);
+        ret.value =
+                StringUtils.isBlank(rawVal) || ret.converter == null
+                        ? null
+                        : ret.converter.convert(rawVal);
         return ret;
     }
 

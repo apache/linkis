@@ -23,11 +23,12 @@ import org.apache.linkis.httpclient.request.GetAction
 
 
 class MetadataGetPartitionsAction extends GetAction with DataSourceAction {
-  private var dataSourceId: String = _
+  private var dataSourceId: Long = _
   private var database: String = _
   private var table: String = _
+  private var traverse: Boolean = false
 
-  override def suffixURLs: Array[String] = Array(METADATA_SERVICE_MODULE.getValue, "partitions", dataSourceId, "db", database, "table", table)
+  override def suffixURLs: Array[String] = Array(METADATA_SERVICE_MODULE.getValue, "partitions", dataSourceId.toString, "db", database, "table", table)
 
   private var user: String = _
 
@@ -41,18 +42,19 @@ object MetadataGetPartitionsAction {
   def builder(): Builder = new Builder
 
   class Builder private[MetadataGetPartitionsAction]() {
-    private var dataSourceId: String = _
+    private var dataSourceId: Long = _
     private var database: String = _
     private var table: String = _
     private var system: String = _
     private var user: String = _
+    private var traverse: Boolean = false
 
     def setUser(user: String): Builder = {
       this.user = user
       this
     }
 
-    def setDataSourceId(dataSourceId: String): Builder = {
+    def setDataSourceId(dataSourceId: Long): Builder = {
       this.dataSourceId = dataSourceId
       this
     }
@@ -64,6 +66,11 @@ object MetadataGetPartitionsAction {
 
     def setTable(table: String): Builder = {
       this.table = table
+      this
+    }
+
+    def setTraverse(traverse: Boolean): Builder = {
+      this.traverse = traverse
       this
     }
 
@@ -84,6 +91,7 @@ object MetadataGetPartitionsAction {
       metadataGetPartitionsAction.table = this.table
       metadataGetPartitionsAction.setParameter("system", system)
       metadataGetPartitionsAction.setUser(user)
+      metadataGetPartitionsAction.traverse=this.traverse
       metadataGetPartitionsAction
     }
   }

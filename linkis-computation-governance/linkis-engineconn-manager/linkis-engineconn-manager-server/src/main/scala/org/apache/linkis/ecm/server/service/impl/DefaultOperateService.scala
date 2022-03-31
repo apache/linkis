@@ -22,7 +22,7 @@ import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.ecm.server.service.OperateService
 import org.apache.linkis.manager.common.operator.OperatorFactory
 import org.apache.linkis.manager.common.protocol.em.{ECMOperateRequest, ECMOperateResponse}
-import org.apache.linkis.message.annotation.Receiver
+import org.apache.linkis.rpc.message.annotation.Receiver
 import org.springframework.stereotype.Service
 
 import scala.collection.JavaConverters.mapAsScalaMapConverter

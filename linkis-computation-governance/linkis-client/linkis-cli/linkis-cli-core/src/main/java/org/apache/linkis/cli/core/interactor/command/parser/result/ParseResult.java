@@ -21,24 +21,24 @@ import org.apache.linkis.cli.common.entity.command.CmdTemplate;
 import org.apache.linkis.cli.common.entity.command.Params;
 
 public class ParseResult {
-    CmdTemplate parsedTemplateCopy;
+    CmdTemplate parsedTemplate;
     Params params;
     String[] remains;
 
     public ParseResult() {}
 
-    public ParseResult(CmdTemplate parsedTemplateCopy, Params params, String[] remains) {
-        this.parsedTemplateCopy = parsedTemplateCopy;
+    public ParseResult(CmdTemplate parsedTemplate, Params params, String[] remains) {
+        this.parsedTemplate = parsedTemplate;
         this.params = params;
         this.remains = remains;
     }
 
-    public CmdTemplate getParsedTemplateCopy() {
-        return parsedTemplateCopy;
+    public CmdTemplate getParsedTemplate() {
+        return parsedTemplate;
     }
 
-    public void setParsedTemplateCopy(CmdTemplate parsedTemplateCopy) {
-        this.parsedTemplateCopy = parsedTemplateCopy;
+    public void setParsedTemplate(CmdTemplate parsedTemplate) {
+        this.parsedTemplate = parsedTemplate;
     }
 
     public Params getParams() {

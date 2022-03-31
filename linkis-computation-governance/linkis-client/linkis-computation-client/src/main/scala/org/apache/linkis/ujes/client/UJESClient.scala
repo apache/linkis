@@ -91,6 +91,18 @@ abstract class UJESClient extends Closeable {
     executeUJESJob(getColumnsAction).asInstanceOf[GetColumnsResult]
   }
 
+  def getTableStatisticInfo(getTableStatisticInfoAction: GetTableStatisticInfoAction): GetTableStatisticInfoResult = {
+    executeUJESJob(getTableStatisticInfoAction).asInstanceOf[GetTableStatisticInfoResult]
+  }
+
+  def getTableBaseInfo(getTableBaseInfoAction: GetTableBaseInfoAction): GetTableBaseInfoResult = {
+    executeUJESJob(getTableBaseInfoAction).asInstanceOf[GetTableBaseInfoResult]
+  }
+
+  def getPartitionStatisticInfo(getPartitionStatisticInfoAction: GetPartitionStatisticInfoAction): GetPartitionStatisticInfoResult = {
+    executeUJESJob(getPartitionStatisticInfoAction).asInstanceOf[GetPartitionStatisticInfoResult]
+  }
+
 }
 object UJESClient {
   def apply(clientConfig: DWSClientConfig): UJESClient = new UJESClientImpl(clientConfig)

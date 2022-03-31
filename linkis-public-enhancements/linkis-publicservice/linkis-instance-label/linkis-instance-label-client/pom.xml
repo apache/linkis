@@ -32,7 +32,7 @@
     <dependencies>
         <dependency>
             <groupId>org.apache.linkis</groupId>
-            <artifactId>linkis-message-scheduler</artifactId>
+            <artifactId>linkis-rpc</artifactId>
             <version>${linkis.version}</version>
             <scope>provided</scope>
         </dependency>

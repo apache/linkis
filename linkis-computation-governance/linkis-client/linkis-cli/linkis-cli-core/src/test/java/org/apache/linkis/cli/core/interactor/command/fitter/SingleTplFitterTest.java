@@ -20,17 +20,18 @@ package org.apache.linkis.cli.core.interactor.command.fitter;
 import org.apache.linkis.cli.common.entity.command.CmdTemplate;
 import org.apache.linkis.cli.core.interactor.command.template.TestSparkCmdTemplate;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SingleTplFitterTest {
     Fitter fitter;
     CmdTemplate template;
     String[] cmdStr, cmdStr2;
 
-    @Before
+    @BeforeEach
     public void before() throws Exception {
         cmdStr =
                 new String[] {
@@ -94,7 +95,7 @@ public class SingleTplFitterTest {
         fitter = new SingleTplFitter();
     }
 
-    @After
+    @AfterEach
     public void after() throws Exception {}
 
     /** Method: fit(TemplateFitterInput[] inputs) */
@@ -105,18 +106,18 @@ public class SingleTplFitterTest {
         results[1] = fitter.fit(cmdStr2, new TestSparkCmdTemplate());
         //        System.out.println(results[0].getParsedTemplateCopy().getOptions());
         //        System.out.println(template.getOptions());
-        Assert.assertTrue(results[0].getParsedTemplateCopy() instanceof TestSparkCmdTemplate);
-        Assert.assertEquals(
-                results[0].getParsedTemplateCopy().getOptionsMap().get("--cmd").getValue(),
+        assertTrue(results[0].getParsedTemplate() instanceof TestSparkCmdTemplate);
+        assertEquals(
+                results[0].getParsedTemplate().getOptionsMap().get("--cmd").getValue(),
                 "show tables");
-        Assert.assertNotEquals(results[0].getParsedTemplateCopy(), template.getCopy());
-        Assert.assertNotEquals(
-                results[0].getParsedTemplateCopy().getOptions(), template.getCopy().getOptions());
-        Assert.assertNotEquals(
-                results[0].getParsedTemplateCopy().getOptions().get(1),
+        assertNotEquals(results[0].getParsedTemplate(), template.getCopy());
+        assertNotEquals(
+                results[0].getParsedTemplate().getOptions(), template.getCopy().getOptions());
+        assertNotEquals(
+                results[0].getParsedTemplate().getOptions().get(1),
                 template.getCopy().getOptions().get(1));
-        Assert.assertEquals(
-                results[0].getParsedTemplateCopy().getOptions().get(1).getValue(),
+        assertEquals(
+                results[0].getParsedTemplate().getOptions().get(1).getValue(),
                 template.getCopy().getOptions().get(1).getValue());
     }
 }

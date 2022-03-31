@@ -22,12 +22,6 @@ import org.apache.linkis.common.conf.CommonVars$;
 
 public class DWSConfig {
 
-    public static CommonVars<String> HADOOP_CONF_DIR =
-            CommonVars$.MODULE$.apply(
-                    "hadoop.config.dir",
-                    CommonVars$.MODULE$
-                            .apply("HADOOP_CONF_DIR", "/appcom/config/hadoop-config")
-                            .getValue());
     public static CommonVars<String> HIVE_CONF_DIR =
             CommonVars$.MODULE$.apply(
                     "hive.config.dir",
@@ -40,58 +34,6 @@ public class DWSConfig {
     public static CommonVars<String> HIVE_META_PASSWORD =
             CommonVars$.MODULE$.apply("hive.meta.password", "");
 
-    public static final CommonVars<String> BDP_SERVER_MYBATIS_MAPPER_LOCATIONS =
-            CommonVars.apply("wds.linkis.server.mybatis.mapperLocations", "");
-    public static final CommonVars<String> BDP_SERVER_MYBATIS_TYPEALIASESPACKAGE =
-            CommonVars.apply("wds.linkis.server.mybatis.typeAliasesPackage", "");
-    public static final CommonVars<String> BDP_SERVER_MYBATIS_CONFIGLOCATION =
-            CommonVars.apply(
-                    "wds.linkis.server.mybatis.configLocation", "classpath:/mybatis-config.xml");
-    public static final CommonVars<String> BDP_SERVER_MYBATIS_BASEPACKAGE =
-            CommonVars.apply("wds.linkis.server.mybatis.BasePackage", "");
-    public static final CommonVars<String> BDP_SERVER_MYBATIS_DATASOURCE_URL =
-            CommonVars.apply("wds.linkis.server.mybatis.datasource.url", "");
-    public static final CommonVars<String> BDP_SERVER_MYBATIS_DATASOURCE_USERNAME =
-            CommonVars.apply("wds.linkis.server.mybatis.datasource.username", "");
-    public static final CommonVars<String> BDP_SERVER_MYBATIS_DATASOURCE_PASSWORD =
-            CommonVars.apply("wds.linkis.server.mybatis.datasource.password", "");
-    public static final CommonVars<String> BDP_SERVER_MYBATIS_DATASOURCE_DRIVER_CLASS_NAME =
-            CommonVars.apply(
-                    "wds.linkis.server.mybatis.datasource.driver-class-name",
-                    "com.mysql.jdbc.Driver");
-    public static final CommonVars<Integer> BDP_SERVER_MYBATIS_DATASOURCE_INITIALSIZE =
-            CommonVars.apply("wds.linkis.server.mybatis.datasource.initialSize", new Integer(1));
-    public static final CommonVars<Integer> BDP_SERVER_MYBATIS_DATASOURCE_MINIDLE =
-            CommonVars.apply("wds.linkis.server.mybatis.datasource.minIdle", new Integer(1));
-    public static final CommonVars<Integer> BDP_SERVER_MYBATIS_DATASOURCE_MAXACTIVE =
-            CommonVars.apply("wds.linkis.server.mybatis.datasource.maxActive", new Integer(20));
-    public static final CommonVars<Integer> BDP_SERVER_MYBATIS_DATASOURCE_MAXWAIT =
-            CommonVars.apply("wds.linkis.server.mybatis.datasource.maxWait", new Integer(6000));
-    public static final CommonVars<Integer> BDP_SERVER_MYBATIS_DATASOURCE_TBERM =
-            CommonVars.apply(
-                    "wds.linkis.server.mybatis.datasource.timeBetweenEvictionRunsMillis",
-                    new Integer(60000));
-    public static final CommonVars<Integer> BDP_SERVER_MYBATIS_DATASOURCE_MEITM =
-            CommonVars.apply(
-                    "wds.linkis.server.mybatis.datasource.minEvictableIdleTimeMillis",
-                    new Integer(300000));
-    public static final CommonVars<String> BDP_SERVER_MYBATIS_DATASOURCE_VALIDATIONQUERY =
-            CommonVars.apply("wds.linkis.server.mybatis.datasource.validationQuery", "SELECT 1");
-
-    public static final CommonVars<Boolean> BDP_SERVER_MYBATIS_DATASOURCE_TESTWHILEIDLE =
-            CommonVars.apply(
-                    "wds.linkis.server.mybatis.datasource.testWhileIdle", new Boolean(true));
-    public static final CommonVars<Boolean> BDP_SERVER_MYBATIS_DATASOURCE_TESTONBORROW =
-            CommonVars.apply(
-                    "wds.linkis.server.mybatis.datasource.testOnBorrow", new Boolean(false));
-    public static final CommonVars<Boolean> BDP_SERVER_MYBATIS_DATASOURCE_TESTONRETURN =
-            CommonVars.apply(
-                    "wds.linkis.server.mybatis.datasource.testOnReturn", new Boolean(false));
-    public static final CommonVars<Boolean> BDP_SERVER_MYBATIS_DATASOURCE_POOLPREPAREDSTATEMENTS =
-            CommonVars.apply(
-                    "wds.linkis.server.mybatis.datasource.poolPreparedStatements",
-                    new Boolean(true));
-
     // wds.linkis.metadata.hive.encode.enable配置HIVE BASE64加解密
     public static final CommonVars<Boolean> HIVE_PASS_ENCODE_ENABLED =
             CommonVars.apply("wds.linkis.metadata.hive.encode.enabled", new Boolean(false));
@@ -99,4 +41,16 @@ public class DWSConfig {
     public static CommonVars<Boolean> HIVE_PERMISSION_WITH_lOGIN_USER_ENABLED =
             CommonVars$.MODULE$.apply(
                     "linkis.metadata.hive.permission.with-login-user-enabled", true);
+
+    public static final CommonVars<String> DB_FILTER_KEYWORDS =
+            CommonVars.apply("wds.linkis.db.filter.keywords", "bak");
+
+    public static final CommonVars<String> HIVE_DB_ADMIN_USER =
+            CommonVars.apply("wds.linkis.metadata.hive.db.admin", "hadoop");
+
+    public static final String HDFS_FILE_SYSTEM_REST_ERRS =
+            CommonVars.apply(
+                            "wds.linkis.hdfs.rest.errs",
+                            ".*Filesystem closed.*|.*Failed to find any Kerberos tgt.*")
+                    .getValue();
 }

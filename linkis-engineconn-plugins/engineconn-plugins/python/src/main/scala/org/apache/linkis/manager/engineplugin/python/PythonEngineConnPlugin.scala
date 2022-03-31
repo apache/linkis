@@ -26,12 +26,16 @@ import org.apache.linkis.manager.engineplugin.common.resource.{EngineResourceFac
 import org.apache.linkis.manager.engineplugin.python.factory.PythonEngineConnFactory
 import org.apache.linkis.manager.engineplugin.python.launch.PythonProcessEngineConnLaunchBuilder
 import org.apache.linkis.manager.label.entity.Label
-import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel
-
+import org.apache.linkis.manager.label.entity.engine.{EngineType, EngineTypeLabel}
+import org.apache.linkis.manager.label.utils.EngineTypeLabelCreator
 
 class PythonEngineConnPlugin extends EngineConnPlugin {
 
-  private val EP_CONTEXT_CONSTRUCTOR_LOCK = new Object()
+  private val resourceLocker = new Object()
+
+  private val engineLaunchBuilderLocker = new Object()
+
+  private val engineFactoryLocker = new Object()
 
   private var engineResourceFactory: EngineResourceFactory = _
 
@@ -42,37 +46,26 @@ class PythonEngineConnPlugin extends EngineConnPlugin {
   private val defaultLabels: util.List[Label[_]] = new util.ArrayList[Label[_]]()
 
   override def init(params: util.Map[String, Any]): Unit = {
-    val typeMap = new util.HashMap[String,String]()
-    typeMap.put("type","python")
-    typeMap.put("version","2")
-    val typeLabel =new EngineTypeLabel()
-    typeLabel.setValue(typeMap)
-    this.defaultLabels.add(typeLabel)
+    val engineTypeLabel = EngineTypeLabelCreator.createEngineTypeLabel(EngineType.PYTHON.toString)
+    this.defaultLabels.add(engineTypeLabel)
   }
 
-  override def getEngineResourceFactory: EngineResourceFactory = EP_CONTEXT_CONSTRUCTOR_LOCK.synchronized {
-    if (null == engineResourceFactory) {
+  override def getEngineResourceFactory: EngineResourceFactory = {
+    if (null == engineResourceFactory) resourceLocker synchronized {
       engineResourceFactory = new GenericEngineResourceFactory
     }
     engineResourceFactory
   }
 
   override def getEngineConnLaunchBuilder: EngineConnLaunchBuilder = {
-    EP_CONTEXT_CONSTRUCTOR_LOCK.synchronized {
-      if (null == engineLaunchBuilder) {
-        engineLaunchBuilder = new PythonProcessEngineConnLaunchBuilder
-      }
-      engineLaunchBuilder
-    }
+    new PythonProcessEngineConnLaunchBuilder
   }
 
   override def getEngineConnFactory: EngineConnFactory = {
-    EP_CONTEXT_CONSTRUCTOR_LOCK.synchronized {
-      if (null == engineFactory) {
+      if (null == engineFactory) engineFactoryLocker synchronized {
         engineFactory = new PythonEngineConnFactory
       }
       engineFactory
-    }
   }
 
   override def getDefaultLabels: util.List[Label[_]] = this.defaultLabels

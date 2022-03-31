@@ -27,16 +27,14 @@ import org.apache.linkis.manager.am.service.heartbeat.AMHeartbeatService
 import org.apache.linkis.manager.common.entity.enumeration.{NodeHealthy, NodeStatus}
 import org.apache.linkis.manager.common.entity.metrics.{NodeHealthyInfo, NodeMetrics}
 import org.apache.linkis.manager.common.entity.node.Node
-import org.apache.linkis.manager.common.entity.persistence.PersistenceNodeEntity
 import org.apache.linkis.manager.common.monitor.ManagerMonitor
 import org.apache.linkis.manager.common.protocol.em.StopEMRequest
-import org.apache.linkis.manager.common.protocol.engine.{EngineStopRequest, EngineSuicideRequest}
+import org.apache.linkis.manager.common.protocol.engine.EngineStopRequest
 import org.apache.linkis.manager.common.protocol.node.{NodeHeartbeatMsg, NodeHeartbeatRequest}
 import org.apache.linkis.manager.common.utils.ManagerUtils
 import org.apache.linkis.manager.persistence.{NodeManagerPersistence, NodeMetricManagerPersistence}
 import org.apache.linkis.manager.service.common.label.ManagerLabelService
 import org.apache.linkis.manager.service.common.metrics.MetricsConverter
-import org.apache.linkis.message.publisher.MessagePublisher
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.rpc.exception.NoInstanceExistsException
 import org.springframework.beans.factory.annotation.Autowired
@@ -44,7 +42,7 @@ import org.springframework.stereotype.Component
 
 import java.lang.reflect.UndeclaredThrowableException
 import java.util
-import java.util.concurrent.{ExecutorService, TimeUnit}
+import java.util.concurrent.ExecutorService
 import scala.collection.JavaConversions._
 
 @Component
@@ -77,6 +75,8 @@ class NodeHeartbeatMonitor extends ManagerMonitor with Logging {
   private val ecmName = GovernanceCommonConf.ENGINE_CONN_MANAGER_SPRING_NAME.getValue
   private val maxCreateInterval = ManagerMonitorConf.NODE_MAX_CREATE_TIME.getValue.toLong
   private val maxUpdateInterval = ManagerMonitorConf.NODE_HEARTBEAT_MAX_UPDATE_TIME.getValue.toLong
+
+  private val ecmHeartBeatTime = ManagerMonitorConf.ECM_HEARTBEAT_MAX_UPDATE_TIME.getValue.toLong
 
   /**
    * 1. Scan all nodes regularly for three minutes to determine the update time of Metrics,
@@ -159,7 +159,13 @@ class NodeHeartbeatMonitor extends ManagerMonitor with Logging {
   private def dealECMNotExistsInRegistry(ecmNodes: util.List[Node]): Unit = {
     val existingECMInstances = Sender.getInstances(ecmName)
     ecmNodes.foreach { ecm =>
-      if (!existingECMInstances.contains(ecm.getServiceInstance)) {
+      val updateTime = if (null == ecm.getUpdateTime) {
+        ecm.getStartTime.getTime
+      } else {
+        ecm.getUpdateTime.getTime
+      }
+      val updateOverdue = (System.currentTimeMillis() - updateTime) > ecmHeartBeatTime
+      if (!existingECMInstances.contains(ecm.getServiceInstance) && updateOverdue) {
         logger.warn(s"Failed to find ecm instance ${ecm.getServiceInstance} from eureka Registry to kill")
         Utils.tryAndWarnMsg(triggerEMSuicide(ecm.getServiceInstance))(s"ecm ${ecm.getServiceInstance} clear failed")
       }
@@ -331,14 +337,15 @@ class NodeHeartbeatMonitor extends ManagerMonitor with Logging {
   }
 
   private def clearUnhealthyNode(ownerNodeMetrics: OwnerNodeMetrics): Unit = {
+    val sender = Sender.getSender(Sender.getThisServiceInstance)
     if (managerLabelService.isEM(ownerNodeMetrics.nodeMetrics.getServiceInstance)) {
       val stopEMRequest = new StopEMRequest
       stopEMRequest.setEm(ownerNodeMetrics.nodeMetrics.getServiceInstance)
       stopEMRequest.setUser(ownerNodeMetrics.owner)
-      emUnregisterService.stopEM(stopEMRequest)
+      emUnregisterService.stopEM(stopEMRequest, sender)
     } else {
       val stopEngineRequest = new EngineStopRequest(ownerNodeMetrics.nodeMetrics.getServiceInstance, ownerNodeMetrics.owner)
-      engineStopService.stopEngine(stopEngineRequest)
+      engineStopService.stopEngine(stopEngineRequest, sender)
     }
   }
 
@@ -347,7 +354,7 @@ class NodeHeartbeatMonitor extends ManagerMonitor with Logging {
     val stopEngineRequest = new EngineStopRequest(instance, ManagerUtils.getAdminUser)
     val sender = Sender.getSender(Sender.getThisServiceInstance)
     Utils.tryCatch {
-      engineStopService.stopEngine(stopEngineRequest)
+      engineStopService.stopEngine(stopEngineRequest, sender)
     } { e =>
       error(s"Em failed to kill engine $instance", e)
       Utils.tryAndWarn(triggerEngineSuicide(instance))
@@ -358,7 +365,8 @@ class NodeHeartbeatMonitor extends ManagerMonitor with Logging {
   private def triggerEMToStopEngine(instance: ServiceInstance): Unit = Utils.tryAndError {
     warn(s"Manager Monitor prepare to kill engine $instance by em")
     val stopEngineRequest = new EngineStopRequest(instance, ManagerUtils.getAdminUser)
-    engineStopService.stopEngine(stopEngineRequest)
+    val sender = Sender.getSender(Sender.getThisServiceInstance)
+    engineStopService.stopEngine(stopEngineRequest, sender)
   }
 
   private def triggerEngineSuicide(instance: ServiceInstance): Unit = Utils.tryAndError {
@@ -373,7 +381,7 @@ class NodeHeartbeatMonitor extends ManagerMonitor with Logging {
     stopEMRequest.setEm(instance)
     stopEMRequest.setUser(ManagerUtils.getAdminUser)
     val sender = Sender.getSender(Sender.getThisServiceInstance)
-    emUnregisterService.stopEM(stopEMRequest)
+    emUnregisterService.stopEM(stopEMRequest, sender)
   }
 
 

@@ -17,7 +17,36 @@
 
 package org.apache.linkis.cli.core.interactor.job;
 
-import org.apache.linkis.cli.common.entity.job.Job;
+import org.apache.linkis.cli.common.entity.command.CmdType;
+import org.apache.linkis.cli.common.entity.job.JobData;
+import org.apache.linkis.cli.common.entity.job.JobDescription;
+import org.apache.linkis.cli.common.entity.job.JobSubType;
+import org.apache.linkis.cli.common.entity.operator.JobOperator;
+import org.apache.linkis.cli.common.entity.present.PresentWay;
 import org.apache.linkis.cli.core.builder.BuildableByVarAccess;
 
-public abstract class JobBuilder extends BuildableByVarAccess<Job> {}
+public abstract class JobBuilder extends BuildableByVarAccess<AbstractJob> {
+
+    public JobBuilder setCid(String cid) {
+        targetObj.setCid(cid);
+        return this;
+    }
+
+    public JobBuilder setCmdType(CmdType cmdType) {
+        targetObj.setCmdType(cmdType);
+        return this;
+    }
+
+    public JobBuilder setJobSubType(JobSubType subType) {
+        targetObj.setSubType(subType);
+        return this;
+    }
+
+    protected abstract JobDescription buildJobDesc();
+
+    protected abstract JobData buildJobData();
+
+    protected abstract JobOperator buildJobOperator();
+
+    protected abstract PresentWay buildPresentWay();
+}

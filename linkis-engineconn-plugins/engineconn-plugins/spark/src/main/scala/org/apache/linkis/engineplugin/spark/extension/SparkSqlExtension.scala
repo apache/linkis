@@ -21,17 +21,14 @@ import java.util.concurrent._
 
 import org.apache.linkis.common.conf.CommonVars
 import org.apache.linkis.common.utils.{Logging, Utils}
-import org.apache.spark.sql.execution.QueryExecution
+import org.apache.commons.lang.StringUtils
 import org.apache.spark.sql.{DataFrame, SQLContext}
 
-import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.duration.Duration
-/**
-  *
-  */
-abstract class SparkSqlExtension extends Logging{
 
-  private val maxPoolSize = CommonVars("wds.linkis.dws.ujes.spark.extension.max.pool",5).getValue
+trait SparkSqlExtension extends Logging {
+
+  private val maxPoolSize = CommonVars("wds.linkis.park.extension.max.pool", 2).getValue
 
   private  val executor = new ThreadPoolExecutor(2, maxPoolSize, 2, TimeUnit.SECONDS, new LinkedBlockingQueue[Runnable](), new ThreadFactory {
     override def newThread(r: Runnable): Thread = {
@@ -41,34 +38,52 @@ abstract class SparkSqlExtension extends Logging{
     }
   })
 
-  final def afterExecutingSQL(sqlContext: SQLContext,command: String,dataFrame: DataFrame,timeout:Long,sqlStartTime:Long):Unit = {
-    try {
+  def afterExecutingSQL(sqlContext: SQLContext, command: String, dataFrame: DataFrame, timeout: Long, sqlStartTime: Long): Unit = {
+    Utils.tryCatch {
       val thread = new Runnable {
-        override def run(): Unit = extensionRule(sqlContext,command,dataFrame.queryExecution,sqlStartTime)
+        override def run(): Unit = extensionRule(sqlContext, command, dataFrame, sqlStartTime)
       }
       val future = executor.submit(thread)
       val duration = Duration(timeout, TimeUnit.MILLISECONDS)
       Utils.waitUntil(future.isDone, duration)
-    } catch {
-      case e: Throwable => info("Failed to execute SparkSqlExtension: ", e)
+    } {
+      case e: Throwable => info("Failed to execute SparkSqlExtension:", e)
     }
   }
 
-  protected def extensionRule(sqlContext: SQLContext,command: String,queryExecution: QueryExecution,sqlStartTime:Long):Unit
+  protected def extensionRule(sqlContext: SQLContext, command: String, dataFrame: DataFrame, sqlStartTime: Long): Unit
 
 
 }
 
 object SparkSqlExtension extends Logging {
 
-  private val extensions = ArrayBuffer[SparkSqlExtension]()
 
-  def register(sqlExtension: SparkSqlExtension):Unit = {
-    info("Get a sqlExtension register")
-    extensions.append(sqlExtension)
+  val SQL_EXTENSION_CLAZZ = CommonVars("wds.linkis.spark.extension.clazz", "org.apache.linkis.engineplugin.spark.lineage.LineageSparkSqlExtension")
+
+
+  private val extensions = initSparkSqlExtensions
+
+  private def initSparkSqlExtensions: Array[SparkSqlExtension] = {
+
+    val hooks = SQL_EXTENSION_CLAZZ.getValue
+    if (StringUtils.isNotBlank(hooks)) {
+      val clazzArr = hooks.split(",")
+      if (null != clazzArr && clazzArr.nonEmpty) {
+        clazzArr.map { clazz =>
+          Utils.tryAndWarn(Utils.getClassInstance[SparkSqlExtension](clazz))
+        }.filter(_ != null)
+      } else {
+        Array.empty
+      }
+    } else {
+      Array.empty
+    }
+
   }
 
-  def getSparkSqlExtensions():Array[SparkSqlExtension] = {
-    extensions.toArray
+  def getSparkSqlExtensions(): Array[SparkSqlExtension] = {
+    logger.info(s"getSparkSqlExtensions classLoader ${this.getClass.getClassLoader}")
+    extensions
   }
 }

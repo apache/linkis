@@ -17,12 +17,14 @@
  
 package org.apache.linkis.engineconn.computation.executor.listener
 
-import org.apache.linkis.engineconn.acessible.executor.listener.event.TaskStatusChangedEvent
+import org.apache.linkis.engineconn.acessible.executor.listener.event.{TaskResponseErrorEvent, TaskStatusChangedEvent}
 import org.apache.linkis.engineconn.executor.listener.EngineConnSyncListener
 
 
 trait TaskStatusListener extends EngineConnSyncListener {
 
   def onTaskStatusChanged(taskStatusChangedEvent: TaskStatusChangedEvent): Unit
+
+  def onTaskResponseErrorEvent(taskResponseErrorEvent: TaskResponseErrorEvent): Unit
 
 }

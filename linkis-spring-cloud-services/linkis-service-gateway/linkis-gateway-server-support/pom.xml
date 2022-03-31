@@ -53,7 +53,19 @@
                     <groupId>com.github.xiaoymin</groupId>
                     <artifactId>knife4j-spring-boot-starter</artifactId>
                 </exclusion>
-
+              
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-databind</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-annotations</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
 
@@ -66,20 +78,17 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
-            <version>${spring.version}</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-actuator-autoconfigure</artifactId>
-            <version>${spring.cloud.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
-            <version>${spring.version}</version>
         </dependency>
 
         <dependency>
@@ -93,6 +102,12 @@
             <groupId>org.apache.linkis</groupId>
             <artifactId>linkis-instance-label-server</artifactId>
             <version>${linkis.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${fasterxml.jackson.version}</version>
         </dependency>
 
     </dependencies>
@@ -145,6 +160,18 @@
         <resources>
             <resource>
                 <directory>${basedir}/src/main/resources</directory>
+            </resource>
+            <resource>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**/*.xml</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/scala</directory>
+                <includes>
+                    <include>**/*.xml</include>
+                </includes>
             </resource>
         </resources>
         <finalName>${project.artifactId}-${project.version}</finalName>

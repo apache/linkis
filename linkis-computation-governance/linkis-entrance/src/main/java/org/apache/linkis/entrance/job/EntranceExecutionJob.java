@@ -54,6 +54,7 @@ public class EntranceExecutionJob extends EntranceJob implements LogHandler {
 
     private LogReader logReader;
     private LogWriter logWriter;
+    private Object logWriterLocker = new Object();
     private WebSocketCacheLogReader webSocketCacheLogReader;
     private WebSocketLogWriter webSocketLogWriter;
     private static final Logger logger = LoggerFactory.getLogger(EntranceExecutionJob.class);
@@ -64,40 +65,9 @@ public class EntranceExecutionJob extends EntranceJob implements LogHandler {
         this.persistenceManager = persistenceManager;
     }
 
-    /*public class StorePathEntranceExecuteRequest extends EntranceExecuteRequest implements StorePathExecuteRequest {
-        @Override
-        public String storePath() {
-            //TODO storePath should be made an interceptor(storePath应该做成一个拦截器)
-            return ((RequestPersistTask) getTask()).getResultLocation();
-        }
+    public Object getLogWriterLocker() {
+        return logWriterLocker;
     }
-
-    //TODO HA method needs to be improved(HA方法还需要再完善)
-    public class ReconnectEntranceExecuteRequest extends EntranceExecuteRequest implements ReconnectExecuteRequest {
-
-        @Override
-        public String execId() {
-            return getTask().getExecId();
-        }
-
-        @Override
-        public Map<String, Object> properties() {
-            Map<String, Object> properties = TaskUtils.getRuntimeMap(getParams());
-            RequestPersistTask task = getRequestPersistTask();
-            if(task != null) {
-                properties.put(TaskConstant.RUNTYPE, task.getRunType());
-            }
-            return properties;
-        }
-    }
-
-    public class ReconnectStorePathEntranceExecuteRequest extends ReconnectEntranceExecuteRequest implements StorePathExecuteRequest {
-        @Override
-        public String storePath() {
-            RequestPersistTask task = getRequestPersistTask();
-            return task.getResultLocation();
-        }
-    }*/
 
     @Override
     public void setLogReader(LogReader logReader) {
@@ -147,6 +117,7 @@ public class EntranceExecutionJob extends EntranceJob implements LogHandler {
                         .map(
                                 code -> {
                                     SubJobInfo subJobInfo = new SubJobInfo();
+                                    // todo don't need whole jobRequest, but need executeUser
                                     subJobInfo.setJobReq(getJobRequest());
                                     subJobInfo.setStatus(SchedulerEventState.Inited().toString());
                                     subJobInfo.setCode(code);
@@ -181,22 +152,8 @@ public class EntranceExecutionJob extends EntranceJob implements LogHandler {
             throw errList.get(0);
         }
         setJobGroups(subJobInfos);
+        updateNewestAccessByClientTimestamp();
     }
-
-    /*protected RequestPersistTask getRequestPersistTask() {
-        if(getTask() instanceof HaPersistenceTask) {
-            Task task = ((HaPersistenceTask) getTask()).task();
-            if(task instanceof RequestPersistTask) {
-                return (RequestPersistTask) task;
-            } else {
-                return null;
-            }
-        } else if(getTask() instanceof RequestPersistTask) {
-            return (RequestPersistTask) getTask();
-        } else {
-            return null;
-        }
-    }*/
 
     @Override
     public SubJobInfo getRunningSubJob() {
@@ -304,7 +261,7 @@ public class EntranceExecutionJob extends EntranceJob implements LogHandler {
 
     @Override
     public String getName() {
-        return "taskID:" + String.valueOf(getJobRequest().getId()) + "execID:" + getId();
+        return "jobGroupId:" + String.valueOf(getJobRequest().getId()) + " execID:" + getId();
     }
 
     @Override
@@ -376,12 +333,15 @@ public class EntranceExecutionJob extends EntranceJob implements LogHandler {
 
     @Override
     public void close() throws IOException {
-        logger.info("job:" + id() + " is closing");
+        logger.info("job:" + jobRequest().getId() + " is closing");
 
         try {
             // todo  Do a lot of aftercare work when close(close时候要做很多的善后工作)
             if (this.getLogWriter().isDefined()) {
                 IOUtils.closeQuietly(this.getLogWriter().get());
+                // this.setLogWriter(null);
+            } else {
+                logger.info("job:" + jobRequest().getId() + "LogWriter is null");
             }
             if (this.getLogReader().isDefined()) {
                 IOUtils.closeQuietly(getLogReader().get());
@@ -423,5 +383,10 @@ public class EntranceExecutionJob extends EntranceJob implements LogHandler {
             return progressInfoList.toArray(new JobProgressInfo[] {});
         }
         return super.getProgressInfo();
+    }
+
+    @Override
+    public int getRunningSubJobIndex() {
+        return runningIndex;
     }
 }

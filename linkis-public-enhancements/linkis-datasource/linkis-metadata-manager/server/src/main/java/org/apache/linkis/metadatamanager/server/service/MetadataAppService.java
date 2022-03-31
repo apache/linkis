@@ -57,6 +57,25 @@ public interface MetadataAppService {
      * @param dataSourceId data source id
      * @param database database
      * @param table table
+     * @param partition partition
+     * @param system system
+     * @param userName userName
+     * @return
+     * @throws ErrorException
+     */
+    Map<String, String> getPartitionPropsByDsId(
+            String dataSourceId,
+            String database,
+            String table,
+            String partition,
+            String system,
+            String userName)
+            throws ErrorException;
+
+    /**
+     * @param dataSourceId data source id
+     * @param database database
+     * @param table table
      * @param system system
      * @return
      */
@@ -71,7 +90,12 @@ public interface MetadataAppService {
      * @return
      */
     MetaPartitionInfo getPartitionsByDsId(
-            String dataSourceId, String database, String table, String system, String userName)
+            String dataSourceId,
+            String database,
+            String table,
+            String system,
+            Boolean traverse,
+            String userName)
             throws ErrorException;
 
     /**

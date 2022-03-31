@@ -9,15 +9,17 @@
       "name": "Name",
       "order": "Order",
       "addParameterConfig": "Add parameter configuration",
+      "addEngineType": "Add engine type",
       "editDescriptionEngineConfig": "Edit description engine config",
       "addAppType": "Add application type",
       "editContents": "Add contents",
+      "ConfirmEdit": "Done",
       "eurekeRegisterCenter": "Eureke Register Center",
       "addTags": "Add Tags",
       "unfold": "Unfold",
       "fold": "Fold",
       "jumpPage": "Please check in the jump page...",
-      "initiator": "Initiator",
+      "initiator": "Created From",
       "find": "Find",
       "errorCode": "Error code",
       "errorDescription": "Error description",
@@ -41,19 +43,24 @@
       "instanceName": "Instance Name",
       "resources": "Resources",
       "reset": "Reset",
+      "clearSearch": "Clear",
+      "resetAll": "Reset All",
       "remove": "Remove",
       "submit": "Submit",
       "search": "Search",
       "save": "Save",
       "edit": "Edit",
       "cancel": "Cancel",
+      "create": "Create",
       "noDataText": "No data yet",
       "userName": "Username",
       "unselect": "Please select task",
+      "noselection": "Please select first",
       "searchName": "Please enter username to search",
       "generalView": "Switch to the common view",
       "manageView": "Switch to the admin view",
       "back": "Back",
+      "create": "Create",
       "warning": {
         "api": "Requesting API, please hold on!",
         "data": "Requesting data, please hold on!",
@@ -65,7 +72,7 @@
       "resourceManagement": {
         "resourceUsage": "Resource usage",
         "applicationList": "Application List"
-      },
+    },
       "time": {
         "second": "Second",
         "minute": "Minute",
@@ -77,6 +84,7 @@
         "initiator": "Initiator",
         "engineInstance": "Engine instance",
         "engineType": "Engine type",
+        "appType": "App Type",
         "taskID": "Task ID",
         "fileName": "Source",
         "executionCode": "Execution Code",
@@ -84,6 +92,7 @@
         "label": "Label",
         "engineVersion": "Engine Version",
         "engineVersionCannotBeNull": "Engine Version Cannot Be Null",
+        "lockedResource": "Locked resources",
         "usedResources": "Used resources",
         "maximumAvailableResources": "Maximum available resources",
         "minimumAvailableResources": "Minimum available resources",
@@ -98,7 +107,13 @@
         "control": {
           "title": "Handle",
           "label": "View"
-        }
+        },
+        "queenRemain": "队列剩余资源",
+        "queenUsed": "队列已用资源",
+        "queenTop": "队列上限资源",
+        "engineRemain": "引擎剩余资源",
+        "engineUsed": "引擎已用资源",
+        "engineTop": "引擎上限资源"
       },
       "logLoading": "Requesting logs, please hold on",
       "title": "Linkis Control Panel",
@@ -121,6 +136,7 @@
             "globalValiable": "Frequently Asked",
             "microserviceManage": "Microservice management",
             "ECMManage": "ECM Management",
+            "udfFunctionManage": "UDF Management",
             "dataSourceManage": "DataSource Manage"
           }
         }
@@ -133,12 +149,18 @@
           "label": " Start Date",
           "placeholder": "Please choose the start date"
         },
+        "creator": {
+          "label": "creator",
+          "placeholder": "Please search by entering the creator"
+        },
         "engine": {
           "label": "Engine"
         },
         "status": {
           "label": "Status"
-        }
+        },
+        "appType": "App Type",
+        "engineType": "Engine"
       },
       "columns": {
         "taskID": "Task ID",
@@ -237,41 +259,47 @@
       "success": {
         "update": "Successfully updated global variables!"
       },
+      "searchAppType": "Please enter App Type",
+      "resetTip": "Are you sure to reset the resource?",
+      "resetAllTip": "Whether to reset all user resources (this operation will only clean up user resource records, not the resources that have been generated)?",
+      "viewlog": "View Log",
       "datasource": {
         "pleaseInput": "Please input",
         "datasourceSrc": "Datasource",
-        "connectTest": "Test Connection",
+        "connectTest": "Test connection",
         "sourceName": "Data source name",
         "sourceDec": "Data source description",
         "sourceType": "Data source type:",
         "creator": "Creator:",
-        "create": "New data source",
-        "exports": "Demonstration export data source",
-        "imports": "Demonstration of importing data sources",
-        "Expired": "Expired",
-        "versionList": "Version List",
-        "dataSourceName": "Data Source Name",
-        "dataSourceType": "Data Source Type",
+        "create": "add source",
+        "exports": "export source",
+        "imports": "importing sources",
+        "overdue": "Expire",
+        "versionList": "Version list",
+        "dataSourceName": "Data source name",
+        "dataSourceType": "Data source type",
+        "createSystem": "Create system",
         "dataSourceEnv": "Available Space",
         "status": "Status",
         "permissions": "Permissions",
         "label": "label",
-        "Version": "Version",
+        "version": "Version",
         "desc": "Description",
         "action": "Action",
-        "createUser": "Create User",
-        "createTime": "Create Time",
-        "versionDec": "Version Description",
+        "createUser": "Create user",
+        "createTime": "Create time",
+        "versionDec": "Version description",
         "watch": "View",
         "rollback": "Rollback",
         "publish": "Publish",
-        "initVersion": "Initial Version",
+        "initVersion": "Initial version",
         "updateVersion": "Version update",
         "published": "Published",
         "unpublish": "Unpublished",
-        "cannotPublish": "Cannot Publish",
+        "cannotPublish": "Cannot publish",
         "used": "Available",
-        "commentValue": "Roll back from version {text}"
+        "commentValue": "Roll back from version {text}",
+        "undefinedVersion": "Cannot find the version of data source"
       }
     }
   }

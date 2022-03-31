@@ -5,23 +5,25 @@
   ~ The ASF licenses this file to You under the Apache License, Version 2.0
   ~ (the "License"); you may not use this file except in compliance with
   ~ the License.  You may obtain a copy of the License at
-  ~ 
+  ~
   ~   http://www.apache.org/licenses/LICENSE-2.0
-  ~ 
+  ~
   ~ Unless required by applicable law or agreed to in writing, software
   ~ distributed under the License is distributed on an "AS IS" BASIS,
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-  
+
 <template>
   <div class="setting" style="height: 100%">
     <!-- tab组件只做切换选择 -->
     <Tabs
       class="tabs"
+      v-model="currentTabName"
       @on-click="clickTabChange"
       @on-tab-remove="removeTab"
+      :before-remove="showConfirm"
       :animated="false"
       :type="isTypeCard ? 'card' : 'line'"
       closable
@@ -48,17 +50,20 @@
         </cardList>
       </TabPane>
       <!-- 应用编辑按钮 -->
-      <Button @click="handleTabsEdit" size="small" slot="extra" v-show="isLogAdmin">{{
-        $t("message.linkis.editContents")
+      <Button @click="handleTabsEdit" size="small" slot="extra" v-show="isLogAdmin" :class="{active:  iseditListItem || isdeleteListItem}">{{
+        iseditListItem || isdeleteListItem ? $t("message.linkis.ConfirmEdit") : $t("message.linkis.editContents")
       }}</Button>
       <Button @click="handleTabsAdd" size="small" type="primary" slot="extra" v-show="isLogAdmin">{{
         $t("message.linkis.addAppType")
+      }}</Button>
+      <Button @click="handleEngineAdd" size="small" type="primary" slot="extra" v-show="isLogAdmin">{{
+        $t("message.linkis.addEngineType")
       }}</Button>
     </Tabs>
     <!-- 参数详情 -->
     <div v-if="fullTree && fullTree.length" class="setting-content">
       <div class="setting-content-header">
-        <Button @click="toggleAdvance"
+        <Button @click="toggleAdvance" :class="{active:isAdvancedShow}"
         >{{
           isAdvancedShow
             ? $t("message.linkis.setting.hide")
@@ -207,7 +212,6 @@ export default {
       menuList: [],
       activeMenu: "", // 当前打开目录
       currentTabName: "",
-      currentTabId: 0, //当前tab的Id
       fullTree: [],
       engineType: [], //引擎类型数据
       loading: false,
@@ -216,7 +220,6 @@ export default {
       isChildCategory: false,
       isEditChildCategory: false, //编辑引擎的对话框
       isAddApptype: false,  //新增应用的对话框
-      clickChild: {},
       isTypeCard: false, //tab栏是否开启card类型
       iseditListItem: false, //应用下的引擎编辑功能是否开启
       isdeleteListItem: false, //应用下的引擎删除功能是否开启
@@ -256,21 +259,29 @@ export default {
       },
     };
   },
- 
+
   mounted() {
-    this.isLogAdmin = storage.get("isLogAdmin");
+    this.subCategory = {}
     // 获取设置目录
     api.fetch("/configuration/getCategory", "get").then((rst) => {
       this.menuList = rst.Category || [];
       this.$nextTick(() => {
         this.getAppVariable(this.menuList[0].categoryName || "");
         this.currentTabName = `${this.menuList[0].categoryName}`;
+        if (this.menuList[0] && this.menuList[0].childCategory && this.menuList[0].childCategory.length) {
+          this.subCategory = {
+            [this.menuList[0].categoryName]: this.menuList[0].childCategory[0]
+          }
+        }
       });
     });
     //获取所有引擎类型
     api.fetch("/configuration/engineType", "get").then((rst) => {
       this.engineType = rst.engineType;
     });
+    setTimeout(() => {
+      this.isLogAdmin = storage.get("isLogAdmin");
+    }, 1500)
   },
 
   methods: {
@@ -278,13 +289,18 @@ export default {
       api.fetch("/configuration/getCategory", "get").then((rst) => {
         this.menuList = rst.Category || [];
         this.$nextTick(() => {
-          this.getAppVariable(this.currentTabName || "");
-          this.currentTabName = `${this.currentTabName}`;
+          if (this.currentTabName) {
+            this.getAppVariable(this.currentTabName || "");
+            this.currentTabName = `${this.currentTabName}`;
+          } else {
+            this.getAppVariable(this.menuList[0].categoryName || "");
+            this.currentTabName = `${this.menuList[0].categoryName}`;
+          }
         });
       });
     },
 
-    getAppVariable(type) {
+    getAppVariable(type = '') {
       this.activeMenu = type;
       let parameter = type.split("-"); // 切割目录name
       // 如果只有一级目录则直接返回['creator'],如果为二级目录则['creator', 'engineType', 'version']
@@ -362,6 +378,7 @@ export default {
         .fetch("/configuration/saveFullTree", {
           fullTree: this.fullTree,
           creator: this.currentTabName,
+          engineType: this.subCategory[this.currentTabName] ? this.subCategory[this.currentTabName].categoryName : null
         })
         .then(() => {
           this.getAppVariable(this.activeMenu);
@@ -421,26 +438,24 @@ export default {
     // tag切换触发
     clickTabChange(name) {
       this.currentTabName = name;
-      // 切换tab 并更新currentTabId
-      this.menuList.map((item) => {
-        item.categoryName === name && (this.currentTabId = item.categoryId);
-      });
       // 初始化显示数据，筛选index
       let index = this.menuList.findIndex((item) => item.categoryName === name);
       if (index !== -1) {
         let menuListItem = this.menuList[index];
+        let type = ''
         // 判断是否存在子项，如果存在就进行拼接
-        let type =
-          menuListItem.childCategory && menuListItem.childCategory.length
-            ? `${menuListItem.categoryName}-${menuListItem.childCategory[0].categoryName}`
-            : menuListItem.categoryName;
-        // 如果this.clickChild存在当前tab的缓存则使用当前缓存，没有则缓存并使用type
-        if (this.clickChild[name]) {
-          type = this.clickChild[name];
-          this.clickChild[name] = type;
+        if (menuListItem.childCategory && menuListItem.childCategory.length) {
+          if (!this.subCategory[menuListItem.categoryName]) {
+            this.subCategory[menuListItem.categoryName] = menuListItem.childCategory[0]
+          }
+          type = `${menuListItem.categoryName}-${menuListItem.childCategory[0].categoryName}`
+        } else {
+          type =  menuListItem.categoryName
         }
-
-        this.getAppVariable(type || "");
+        if (this.subCategory[menuListItem.categoryName] && this.subCategory[menuListItem.categoryName]._subCategoryType) {
+          type =  this.subCategory[menuListItem.categoryName]._subCategoryType
+        }
+        this.getAppVariable(type);
       } else {
         this.$Message.error("Failed");
       }
@@ -449,9 +464,12 @@ export default {
       this.isChildCategory = true;
     },
     // 点击子项设置
-    clickChildCategory(title) {
+    clickChildCategory(title, index, item) {
       // 记录当前tab的子项显示,如果想缓存子项详情则改为getAppVariable内存储
-      this.clickChild[this.currentTabName] = title;
+      this.subCategory[this.currentTabName]= {
+        ...item,
+        _subCategoryType: title
+      };
       this.getAppVariable(title);
     },
     //编辑引擎
@@ -486,16 +504,19 @@ export default {
     },
 
     // 删除子项设置(删除应用下的引擎)
-    deleteChildCategory(index, item) {
-      api
-        .fetch(
-          "/configuration/deleteCategory",
-          { categoryId: item.categoryId },
-          "post"
-        )
-        .then(() => {
-          this.getMenuList(); //调用getMenuList 重新渲染新增的menuList数据
-        });
+    async deleteChildCategory(index, item) {
+      let confirm = await this.showConfirm(index, {
+        content: '删除引擎将会删除该应用下此引擎的所有配置，且不可恢复(对所有用户生效)'
+      })
+      if (confirm) {
+        await api
+          .fetch(
+            "/configuration/deleteCategory",
+            { categoryId: item.categoryId },
+            "post"
+          )
+        this.getMenuList(); //调用getMenuList 重新渲染新增的menuList数据
+      }
     },
     // 点击编辑目录 显示应用和引擎的删除按钮
     handleTabsEdit() {
@@ -539,20 +560,42 @@ export default {
       }
     },
 
+    showConfirm(index, options = {}) {
+      return new Promise((resolve, reject)=> {
+        this.$Modal.confirm({
+          title: "提示",
+          content: '删除应用将会删除该应用下所有的引擎配置，且不可恢复(对所有用户生效)',
+          onOk: () => {
+            resolve(true)
+          },
+          onCancel: () => {
+            reject('cancel close')
+          },
+          ...options
+        })
+      })
+    },
+
     // 显示新增应用类型modal
     handleTabsAdd() {
       this.isAddApptype = true;
+    },
+    handleEngineAdd() {
+      this.isChildCategory = true;
     },
     // 新增引擎配置
     addParameterSet() {
       /* 对输入的 引擎版本信息进行校验 */
       this.$refs.formValidate.validate((valid) => {
         if (valid) {
+          const currentTab = this.menuList.find((item) => {
+            return item.categoryName === this.currentTabName;
+          });
           api
             .fetch(
               "/configuration/createSecondCategory",
               {
-                categoryId: this.currentTabId, //应用Id为后端返回的值
+                categoryId: currentTab ? currentTab.categoryId: '',
                 engineType: this.childCategoryFormItem.type,
                 version: this.childCategoryFormItem.version,
                 description: this.childCategoryFormItem.desc,
@@ -569,7 +612,7 @@ export default {
     },
     // 新增应用类型
     addApptype() {
-      
+
       api
         .fetch(
           "/configuration/createFirstCategory",
@@ -582,7 +625,7 @@ export default {
         .then(() => {
           this.getMenuList(); //调用getMenuList 重新渲染新增的menuList数据
         });
-      
+
     },
   },
 };

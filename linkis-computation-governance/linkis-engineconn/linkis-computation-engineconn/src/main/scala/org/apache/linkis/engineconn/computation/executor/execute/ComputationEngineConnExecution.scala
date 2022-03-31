@@ -21,6 +21,7 @@ import org.apache.linkis.DataWorkCloudApplication
 import org.apache.linkis.engineconn.common.creation.EngineCreationContext
 import org.apache.linkis.engineconn.common.engineconn.EngineConn
 import org.apache.linkis.engineconn.common.execution.EngineConnExecution
+import org.apache.linkis.engineconn.computation.executor.conf.ComputationExecutorConf
 import org.apache.linkis.engineconn.core.execution.AbstractEngineConnExecution
 import org.apache.linkis.engineconn.executor.conf.EngineConnExecutorConfiguration
 import org.apache.linkis.engineconn.executor.entity.Executor
@@ -64,8 +65,8 @@ class ComputationExecutorManagerEngineConnExecution extends EngineConnExecution 
       case _ =>
     }
     if(shouldSet) DataWorkCloudApplication.setProperty(EngineConnExecutorConfiguration.EXECUTOR_MANAGER_CLASS.key,
-      "org.apache.linkis.engineconn.computation.executor.creation.ComputationExecutorManagerImpl")
-}
+      ComputationExecutorConf.DEFAULT_COMPUTATION_EXECUTORMANAGER_CLAZZ.getValue)
+  }
 
   /**
     * The smallest got the first execution opportunity.

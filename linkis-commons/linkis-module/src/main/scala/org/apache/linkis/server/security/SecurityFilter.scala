@@ -106,10 +106,10 @@ class SecurityFilter extends Filter {
   }
 
   protected def addAccessHeaders(response: HttpServletResponse) {
-    response.setHeader("Access-Control-Allow-Origin", "*")
+    response.setHeader("Access-Control-Allow-Origin", ServerConfiguration.BDP_SERVER_WEB_ALLOW_ORIGIN.getValue)
     response.setHeader("Access-Control-Allow-Credentials", "true")
     response.setHeader("Access-Control-Allow-Headers", "authorization,Content-Type")
-    response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, HEAD, DELETE")
+    response.setHeader("Access-Control-Allow-Methods", ServerConfiguration.BDP_SERVER_WEB_ALLOW_METHOD.getValue)
     val fullDateFormatEN = DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL, new Locale("EN", "en"))
     response.setHeader("Date", fullDateFormatEN.format(new Date))
   }

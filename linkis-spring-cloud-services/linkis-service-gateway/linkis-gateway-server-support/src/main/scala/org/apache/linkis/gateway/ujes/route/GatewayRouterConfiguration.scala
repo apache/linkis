@@ -31,12 +31,12 @@ import org.springframework.context.annotation.{Bean, Configuration, Scope}
 class GatewayRouterConfiguration extends Logging{
    @Bean
    @Scope("prototype")
-   @ConditionalOnMissingBean(Array(classOf[RouteLabelParser]))
+//   @ConditionalOnMissingBean(Array(classOf[RouteLabelParser]))
    def routeLabelParser(): RouteLabelParser ={
       new GenericRoueLabelParser()
    }
    @Bean
-   @ConditionalOnMissingBean(Array(classOf[AbstractLabelGatewayRouter]))
+//   @ConditionalOnMissingBean(Array(classOf[AbstractLabelGatewayRouter]))
    def labelGatewayRouter(routeLabelParsers: util.List[RouteLabelParser]): AbstractLabelGatewayRouter ={
       info("Use default label gateway router: [" + classOf[DefaultLabelGatewayRouter].getName + "]")
       new DefaultLabelGatewayRouter(routeLabelParsers)

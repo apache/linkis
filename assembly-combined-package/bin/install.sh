@@ -18,6 +18,7 @@
 source ~/.bash_profile
 shellDir=`dirname $0`
 workDir=`cd ${shellDir}/..;pwd`
+common_conf=$LINKIS_HOME/conf/linkis.properties
 
 #To be compatible with MacOS and Linux
 txt=""
@@ -46,174 +47,52 @@ fi
 ## import common.sh
 source ${workDir}/bin/common.sh
 
-
-
-function checkPythonAndJava(){
-    python --version
-    isSuccess "execute python --version"
-    java -version
-    isSuccess "execute java --version"
-}
-
-function checkHadoopAndHive(){
-    hadoopVersion="`hdfs version`"
-    defaultHadoopVersion="2.7"
-    checkversion "$hadoopVersion" $defaultHadoopVersion hadoop
-    checkversion "$(whereis hive)" "2.3" hive
-}
-
-function checkversion(){
-versionStr=$1
-defaultVersion=$2
-module=$3
-
-result=$(echo $versionStr | grep "$defaultVersion")
-if [ -n "$result" ]; then
-    echo "$module version match"
-else
-   echo "WARN: Your $module version is not $defaultVersion, there may be compatibility issues:"
-   echo " 1: Continue installation, there may be compatibility issues"
-   echo " 2: Exit installation"
-   echo ""
-   read -p "Please input the choice:"  idx
-   if [[ '2' = "$idx" ]];then
-    echo "You chose  Exit installation"
-    exit 1
-   fi
-fi
-}
-
-function checkSpark(){
- spark-submit --version
- isSuccess "execute spark-submit --version"
-}
-
-say() {
-    printf 'check command fail \n %s\n' "$1"
-}
-
-err() {
-    say "$1" >&2
-    exit 1
-}
-
-check_cmd() {
-    command -v "$1" > /dev/null 2>&1
-}
-
-need_cmd() {
-    if ! check_cmd "$1"; then
-        err "need '$1' (command not found)"
-    fi
-}
-
-
-
-sh ${workDir}/bin/checkEnv.sh
-isSuccess "check env"
-
 ##load config
-echo "step1:load config "
+echo "======= Step 1: Load deploy-config/* =========="
 export LINKIS_CONFIG_PATH=${LINKIS_CONFIG_PATH:-"${workDir}/deploy-config/linkis-env.sh"}
 export LINKIS_DB_CONFIG_PATH=${LINKIS_DB_CONFIG_PATH:-"${workDir}/deploy-config/db.sh"}
+
 source ${LINKIS_CONFIG_PATH}
 source ${LINKIS_DB_CONFIG_PATH}
 
-
 isSuccess "load config"
 
-##env check
-echo "Do you want to clear Linkis table information in the database?"
-echo " 1: Do not execute table-building statements"
-echo " 2: Dangerous! Clear all data and rebuild the tables"
-echo " other: exit"
-echo ""
 
-MYSQL_INSTALL_MODE=1
+echo "======= Step 2: Check env =========="
+## check env
+sh ${workDir}/bin/checkEnv.sh
+isSuccess "check env"
 
-read -p "Please input the choice:"  idx
-if [[ '2' = "$idx" ]];then
-  MYSQL_INSTALL_MODE=2
-  echo "You chose Rebuild the table"
-elif [[ '1' = "$idx" ]];then
-  MYSQL_INSTALL_MODE=1
-  echo "You chose not execute table-building statements"
-else
-  echo "no choice,exit!"
-  exit 1
-fi
-
-echo "create hdfs  directory and local directory"
-if [ "$WORKSPACE_USER_ROOT_PATH" != "" ]
-then
-  localRootDir=$WORKSPACE_USER_ROOT_PATH
-  if [[ $WORKSPACE_USER_ROOT_PATH == file://* ]];then
-    localRootDir=${WORKSPACE_USER_ROOT_PATH#file://}
-    mkdir -p $localRootDir/$deployUser
-    sudo chmod -R 775 $localRootDir/$deployUser
-  elif [[ $WORKSPACE_USER_ROOT_PATH == hdfs://* ]];then
-    localRootDir=${WORKSPACE_USER_ROOT_PATH#hdfs://}
-    hdfs dfs -mkdir -p $localRootDir/$deployUser
-    hdfs dfs -chmod -R 775 $localRootDir/$deployUser
-  else
-    echo "does not support $WORKSPACE_USER_ROOT_PATH filesystem types"
-  fi
-fi
-isSuccess "create  $WORKSPACE_USER_ROOT_PATH directory"
+until mysql -h$MYSQL_HOST -P$MYSQL_PORT -u$MYSQL_USER -p$MYSQL_PASSWORD  -e ";" ; do
+     echo "try to connect to linkis mysql $MYSQL_HOST:$MYSQL_PORT/$MYSQL_DB failed, please check db configuration in:$LINKIS_DB_CONFIG_PATH"
+     exit 1
+done
 
 
-########################  init hdfs and db  ################################
- if [ "$HDFS_USER_ROOT_PATH" != "" ]
- then
-     localRootDir=$HDFS_USER_ROOT_PATH
-   if [[ $HDFS_USER_ROOT_PATH == file://* ]];then
-     localRootDir=${HDFS_USER_ROOT_PATH#file://}
-     mkdir -p $localRootDir/$deployUser
-     sudo chmod -R 775 $localRootDir/$deployUser
-   elif [[ $HDFS_USER_ROOT_PATH == hdfs://* ]];then
-     localRootDir=${HDFS_USER_ROOT_PATH#hdfs://}
-     hdfs dfs -mkdir -p $localRootDir/$deployUser
-   else
-     echo "does not support $HDFS_USER_ROOT_PATH filesystem types"
-   fi
- fi
- isSuccess "create  $HDFS_USER_ROOT_PATH directory"
-
-
- if [ "$RESULT_SET_ROOT_PATH" != "" ]
- then
-   localRootDir=$RESULT_SET_ROOT_PATH
-   if [[ $RESULT_SET_ROOT_PATH == file://* ]];then
-     localRootDir=${RESULT_SET_ROOT_PATH#file://}
-         mkdir -p $localRootDir/$deployUser
-         sudo chmod -R 775 $localRootDir/$deployUser
-   elif [[ $RESULT_SET_ROOT_PATH == hdfs://* ]];then
-     localRootDir=${RESULT_SET_ROOT_PATH#hdfs://}
-         hdfs dfs -mkdir -p $localRootDir
-         hdfs dfs -chmod 775 $localRootDir
-   else
-     echo "does not support $RESULT_SET_ROOT_PATH filesystem types"
-   fi
- fi
- isSuccess "create  $RESULT_SET_ROOT_PATH directory"
-
+########################  init LINKIS related env  ################################
 if [ "$LINKIS_HOME" = "" ]
 then
   export LINKIS_HOME=${workDir}/LinkisInstall
 fi
+
 if [  -d $LINKIS_HOME ] && [ "$LINKIS_HOME" != "$workDir" ];then
-   rm -r $LINKIS_HOME-bak
-   echo "mv  $LINKIS_HOME  $LINKIS_HOME-bak"
-   mv  $LINKIS_HOME  $LINKIS_HOME-bak
+   echo "LINKIS_HOME: $LINKIS_HOME is alread exists and will be backed up"
+
+   ## Every time, backup the old linkis home with timestamp and not clean them.
+   ## If you want to clean them, please delete them manually.
+   curTs=`date +'%s'`
+   echo "mv  $LINKIS_HOME  $LINKIS_HOME-$curTs"
+   mv  $LINKIS_HOME  $LINKIS_HOME-$curTs
+   isSuccess "back up old LINKIS_HOME:$LINKIS_HOME to $LINKIS_HOME-$curTs"
 fi
-echo "create dir LINKIS_HOME: $LINKIS_HOME"
+echo "try to create dir LINKIS_HOME: $LINKIS_HOME"
 sudo mkdir -p $LINKIS_HOME;sudo chown -R $deployUser:$deployUser $LINKIS_HOME
-isSuccess "Create the dir of  $LINKIS_HOME"
+isSuccess "create the dir of LINKIS_HOME:$LINKIS_HOME"
 
 LINKIS_PACKAGE=${workDir}/linkis-package
 
 if ! test -d ${LINKIS_PACKAGE}; then
-    echo "**********Error: please put ${LINKIS_PACKAGE} in $workDir! "
+    echo "**********${RED}Error${NC}: please put ${LINKIS_PACKAGE} in $workDir! "
     exit 1
 else
     echo "Start to cp ${LINKIS_PACKAGE} to $LINKIS_HOME."
@@ -223,6 +102,82 @@ fi
 
 cp ${LINKIS_CONFIG_PATH} $LINKIS_HOME/conf
 
+common_conf=$LINKIS_HOME/conf/linkis.properties
+
+echo "======= Step 3: Create necessary directory =========="
+
+echo "[WORKSPACE_USER_ROOT_PATH] try to create directory"
+if [ "$WORKSPACE_USER_ROOT_PATH" != "" ]
+then
+  localRootDir=$WORKSPACE_USER_ROOT_PATH
+  if [[ $WORKSPACE_USER_ROOT_PATH == file://* ]];then
+    localRootDir=${WORKSPACE_USER_ROOT_PATH#file://}
+    echo "[WORKSPACE_USER_ROOT_PATH] try to create local dir,cmd is: mkdir -p $localRootDir/$deployUser"
+    mkdir -p $localRootDir/$deployUser
+    sudo chmod -R 775 $localRootDir/$deployUser
+  elif [[ $WORKSPACE_USER_ROOT_PATH == hdfs://* ]];then
+    localRootDir=${WORKSPACE_USER_ROOT_PATH#hdfs://}
+    echo "[WORKSPACE_USER_ROOT_PATH] try to create hdfs dir,cmd is: hdfs dfs -mkdir -p $localRootDir/$deployUser"
+    hdfs dfs -mkdir -p $localRootDir/$deployUser
+    hdfs dfs -chmod -R 775 $localRootDir/$deployUser
+  else
+    echo "[WORKSPACE_USER_ROOT_PATH] does not support $WORKSPACE_USER_ROOT_PATH filesystem types"
+  fi
+  isSuccess "create WORKSPACE_USER_ROOT_PATH: $WORKSPACE_USER_ROOT_PATH directory"
+fi
+
+
+
+########################  init hdfs and db  ################################
+echo "[HDFS_USER_ROOT_PATH] try to create directory"
+ if [ "$HDFS_USER_ROOT_PATH" != "" ]
+ then
+     localRootDir=$HDFS_USER_ROOT_PATH
+   if [[ $HDFS_USER_ROOT_PATH == file://* ]];then
+     sed -i ${txt}  "s#wds.linkis.bml.is.hdfs.*#wds.linkis.bml.is.hdfs=false#g" $common_conf
+     sed -i ${txt}  "s#\#wds.linkis.bml.local.prefix.*#wds.linkis.bml.local.prefix=$HDFS_USER_ROOT_PATH#g" $common_conf
+     localRootDir=${HDFS_USER_ROOT_PATH#file://}
+     echo "[HDFS_USER_ROOT_PATH] try to create local dir,cmd is: mkdir -p $localRootDir/$deployUser"
+     mkdir -p $localRootDir/$deployUser
+     sudo chmod -R 775 $localRootDir/$deployUser
+   elif [[ $HDFS_USER_ROOT_PATH == hdfs://* ]];then
+     sed -i ${txt}  "s#\#wds.linkis.bml.hdfs.prefix.*#wds.linkis.bml.hdfs.prefix=$HDFS_USER_ROOT_PATH#g" $common_conf
+     localRootDir=${HDFS_USER_ROOT_PATH#hdfs://}
+     echo "[HDFS_USER_ROOT_PATH] try to create hdfs dir,cmd is: hdfs dfs -mkdir -p $localRootDir/$deployUser"
+     hdfs dfs -mkdir -p $localRootDir/$deployUser
+   else
+     echo "[HDFS_USER_ROOT_PATH] does not support $HDFS_USER_ROOT_PATH filesystem types"
+   fi
+
+   isSuccess "create HDFS_USER_ROOT_PATH: $HDFS_USER_ROOT_PATH directory"
+
+ fi
+
+
+echo "[RESULT_SET_ROOT_PATH] try to create directory"
+ if [ "$RESULT_SET_ROOT_PATH" != "" ]
+ then
+   localRootDir=$RESULT_SET_ROOT_PATH
+   if [[ $RESULT_SET_ROOT_PATH == file://* ]];then
+     localRootDir=${RESULT_SET_ROOT_PATH#file://}
+     echo "[RESULT_SET_ROOT_PATH] try to create local dir,cmd is: mkdir -p $localRootDir/$deployUser"
+     mkdir -p $localRootDir/$deployUser
+     sudo chmod -R 775 $localRootDir/$deployUser
+   elif [[ $RESULT_SET_ROOT_PATH == hdfs://* ]];then
+     localRootDir=${RESULT_SET_ROOT_PATH#hdfs://}
+     echo "[RESULT_SET_ROOT_PATH] try to create hdfs dir,cmd is: hdfs dfs -mkdir -p $localRootDir"
+     hdfs dfs -mkdir -p $localRootDir
+     hdfs dfs -chmod 775 $localRootDir
+   else
+     echo "[RESULT_SET_ROOT_PATH] does not support $RESULT_SET_ROOT_PATH filesystem types"
+   fi
+
+   isSuccess "create RESULT_SET_ROOT_PATH: $RESULT_SET_ROOT_PATH directory"
+
+ fi
+
+
+echo "======= Step 4: Create linkis table =========="
 ## sql init
 if [ "$YARN_RESTFUL_URL" != "" ]
 then
@@ -238,7 +193,6 @@ else
   sed -i ${txt}  "s#@KERBEROS_ENABLE#false#g" $LINKIS_HOME/db/linkis_dml.sql
 fi
 
-common_conf=$LINKIS_HOME/conf/linkis.properties
 SERVER_IP=$local_host
 
 ##Label set start
@@ -260,6 +214,26 @@ then
   sed -i ${txt}  "s#\#wds.linkis.python.engine.version.*#wds.linkis.python.engine.version=$PYTHON_VERSION#g" $common_conf
 fi
 
+echo "Linkis mysql DB will use this config: $MYSQL_HOST:$MYSQL_PORT/$MYSQL_DB"
+echo "Do you want to clear Linkis table information in the database?"
+echo " 1: Do not execute table-building statements"
+echo -e "${RED} 2: Dangerous! Clear all data and rebuild the tables${NC}"
+echo -e " other: exit\n"
+
+MYSQL_INSTALL_MODE=1
+
+read -p "[Please input your choice]:"  idx
+if [[ '2' = "$idx" ]];then
+  MYSQL_INSTALL_MODE=2
+  echo "You chose Rebuild the table"
+elif [[ '1' = "$idx" ]];then
+  MYSQL_INSTALL_MODE=1
+  echo "You chose not execute table-building statements"
+else
+  echo "no choice,exit!"
+  exit 1
+fi
+
 ##Label set end
 
 #Deal special symbol '#'
@@ -279,7 +253,8 @@ fi
 
 
 #Deal common config
-echo "Update config..."
+echo ""
+echo "======= Step 5: Update config =========="
 
 if test -z "$EUREKA_INSTALL_IP"
 then
@@ -321,8 +296,6 @@ sed -i ${txt}  "s#wds.linkis.home.*#wds.linkis.home=$LINKIS_HOME#g" $common_conf
 
 sed -i ${txt}  "s#wds.linkis.filesystem.root.path.*#wds.linkis.filesystem.root.path=$WORKSPACE_USER_ROOT_PATH#g" $common_conf
 sed -i ${txt}  "s#wds.linkis.filesystem.hdfs.root.path.*#wds.linkis.filesystem.hdfs.root.path=$HDFS_USER_ROOT_PATH#g" $common_conf
-
-sed -i ${txt}  "s#wds.linkis.bml.hdfs.prefix.*#wds.linkis.bml.hdfs.prefix=$HDFS_USER_ROOT_PATH#g" $common_conf
 
 ##gateway
 gateway_conf=$LINKIS_HOME/conf/linkis-mg-gateway.properties
@@ -386,9 +359,20 @@ then
   sed -i ${txt}  "s#spring.server.port.*#spring.server.port=$PUBLICSERVICE_PORT#g" $publicservice_conf
 fi
 
+metadatamanage_conf=$LINKIS_HOME/conf/linkis-ps-metadatamanager.properties
+if [ "$METADATA_MANAGER_PORT" != "" ]
+then
+  sed -i ${txt}  "s#spring.server.port.*#spring.server.port=$METADATA_MANAGER_PORT#g" $metadatamanage_conf
+fi
+
 
 ##datasource
-datasource_conf=$LINKIS_HOME/conf/linkis-ps-publicservice.properties
+datasource_conf=$LINKIS_HOME/conf/linkis-ps-data-source-manager.properties
+if [ "$DATASOURCE_MANAGER_PORT" != "" ]
+then
+  sed -i ${txt}  "s#spring.server.port.*#spring.server.port=$DATASOURCE_MANAGER_PORT#g" $datasource_conf
+fi
+
 echo "update conf $datasource_conf"
 if [ "$HIVE_META_URL" != "" ]
 then
@@ -413,6 +397,7 @@ then
   sed -i ${txt}  "s#spring.server.port.*#spring.server.port=$CS_PORT#g" $cs_conf
 fi
 
+echo -e "\n"
 
-echo "Congratulations! You have installed Linkis $LINKIS_VERSION successfully, please use sh $LINKIS_HOME/sbin/linkis-start-all.sh to start it!"
-echo "Your default account/password is $deployUser/$defaultPwd"
+echo -e "${GREEN}Congratulations!${NC} You have installed Linkis $LINKIS_VERSION successfully, please use sh $LINKIS_HOME/sbin/linkis-start-all.sh to start it!"
+echo -e "Your default account/password is ${GREEN}[$deployUser/$defaultPwd]${NC}, you can find in $LINKIS_HOME/conf/linkis-mg-gateway.properties"

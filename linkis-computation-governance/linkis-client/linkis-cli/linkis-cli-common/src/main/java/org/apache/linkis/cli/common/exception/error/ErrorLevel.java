@@ -17,7 +17,6 @@
 
 package org.apache.linkis.cli.common.exception.error;
 
-/** @description: Error level: Info/warn/error/fatal */
 public enum ErrorLevel {
     /** warn 1 error 2 fatal 3 */
     INFO(0, "info"),

@@ -20,12 +20,13 @@ package org.apache.linkis.storage.domain
 import java.sql.{Date, Timestamp}
 
 import org.apache.linkis.common.utils.{Logging, Utils}
-
+import java.math.{BigDecimal => JavaBigDecimal}
 
 object DataType extends Logging{
 
 
   val NULL_VALUE = "NULL"
+  val LOWCASE_NULL_VALUE = "null"
   //TODO Change to fine-grained regular expressions(改为精细化正则表达式)
   val DECIMAL_REGEX = "^decimal\\(\\d*\\,\\d*\\)".r.unanchored
 
@@ -74,22 +75,40 @@ object DataType extends Logging{
   def toValue(dataType: DataType, value: String): Any = Utils.tryCatch(dataType match {
     case NullType => null
     case StringType | CharType | VarcharType | StructType | ListType | ArrayType | MapType => value
-    case BooleanType =>  if(isNull(value)) null else value.toBoolean
-    case ShortIntType => if(isNull(value)) null else value.toShort
-    case IntType =>if(isNull(value)) null else value.toInt
-    case LongType | BigIntType => if(isNull(value)) null else value.toLong
-    case FloatType => if(isNull(value)) null else value.toFloat
-    case DoubleType  => if(isNull(value)) null else value.toDouble
-    case DecimalType => if(isNull(value)) null else BigDecimal(value)
-    case DateType => if(isNull(value)) null else Date.valueOf(value)
-    case TimestampType => if(isNull(value)) null else Timestamp.valueOf(value).toString.stripSuffix(".0")
+    case BooleanType =>  if(isNumberNull(value)) null else value.toBoolean
+    case ShortIntType => if(isNumberNull(value)) null else value.toShort
+    case IntType =>if(isNumberNull(value)) null else value.toInt
+    case LongType | BigIntType => if(isNumberNull(value)) null else value.toLong
+    case FloatType => if(isNumberNull(value)) null else value.toFloat
+    case DoubleType  => if(isNumberNull(value)) null else value.toDouble
+    case DecimalType => if(isNumberNull(value)) null else new JavaBigDecimal(value)
+    case DateType => if(isNumberNull(value)) null else Date.valueOf(value)
+    case TimestampType => if(isNumberNull(value)) null else Timestamp.valueOf(value).toString.stripSuffix(".0")
     case BinaryType => if(isNull(value)) null else value.getBytes()
     case _ => value
   }){
-    t => warn(s"Failed to  $value switch  to dataType:",t)
+    t =>
+      logger.debug(s"Failed to  $value switch  to dataType:", t)
       value
   }
-  def isNull(value:String):Boolean= if(value == null || value == NULL_VALUE || value.trim == "") true else false
+
+  def isNull(value: String): Boolean = if (value == null || value == NULL_VALUE || value.trim == "") true else false
+
+  def isNumberNull(value: String): Boolean = if (null == value || NULL_VALUE.equalsIgnoreCase(value)  || value.trim == "") {
+    true
+  } else {
+    false
+  }
+
+  def valueToString(value: Any): String = {
+    if (null == value) return LOWCASE_NULL_VALUE
+    value match {
+      case javaDecimal: JavaBigDecimal =>
+        javaDecimal.toPlainString
+      case _ => value.toString
+    }
+  }
+
 }
 
 abstract class DataType(val typeName:String,

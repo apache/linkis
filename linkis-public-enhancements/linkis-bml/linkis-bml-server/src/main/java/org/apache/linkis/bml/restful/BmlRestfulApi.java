@@ -36,6 +36,7 @@ import org.apache.linkis.bml.vo.ResourceVO;
 import org.apache.linkis.bml.vo.ResourceVersionsVO;
 import org.apache.linkis.common.exception.ErrorException;
 import org.apache.linkis.server.Message;
+import org.apache.linkis.server.utils.ModuleUserUtils;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -494,12 +495,12 @@ public class BmlRestfulApi {
      * @param version 资源版本，如果不指定，默认为最新
      * @param resp httpServletResponse
      * @param request httpServletRequest
-     * @return Message
+     * @return void
      * @throws IOException
      * @throws ErrorException
      */
     @RequestMapping(path = "download", method = RequestMethod.GET)
-    public Message download(
+    public void download(
             @RequestParam(value = "resourceId", required = false) String resourceId,
             @RequestParam(value = "version", required = false) String version,
             HttpServletResponse resp,
@@ -508,35 +509,28 @@ public class BmlRestfulApi {
         String user = RestfulUtils.getUserName(request);
 
         if (StringUtils.isBlank(resourceId) || !resourceService.checkResourceId(resourceId)) {
-            Message message =
-                    Message.error(
-                            "ResourceID :"
-                                    + resourceId
-                                    + " is empty, illegal or has been deleted (resourceId:"
-                                    + resourceId
-                                    + "为空,非法或者已被删除!)");
-            message.setMethod(URL_PREFIX + "download");
-            message.setStatus(1);
-            return message;
+            throw new BmlQueryFailException(
+                    "ResourceID :"
+                            + resourceId
+                            + " is empty, illegal or has been deleted (resourceId:"
+                            + resourceId
+                            + "为空,非法或者已被删除!)");
         }
 
         if (!resourceService.checkAuthority(user, resourceId)) {
             throw new BmlPermissionDeniedException(
                     "You do not have permission to download this resource (您没有权限下载此资源)");
         }
-        // 判version空,返回最新版本
+        // version is null get NewestVersion
         if (StringUtils.isBlank(version)) {
             version = versionService.getNewestVersion(resourceId);
         }
-        // 判version不存在或者非法
+        // check version
         if (!versionService.checkVersion(resourceId, version)) {
-            Message message =
-                    Message.error("version:" + version + "is empty, illegal or has been deleted");
-            message.setMethod(URL_PREFIX + "download");
-            message.setStatus(1);
-            return message;
+            throw new BmlQueryFailException(
+                    "version:" + version + "is empty, illegal or has been deleted");
         }
-        // 判resourceId和version是否过期
+        // checkExpire
         if (!resourceService.checkExpire(resourceId, version)) {
             throw new BmlResourceExpiredException(resourceId);
         }
@@ -559,11 +553,7 @@ public class BmlRestfulApi {
                             user, resourceId, version, resp.getOutputStream(), properties);
             downloadModel.setEndTime(new Date(System.currentTimeMillis()));
             downloadModel.setState(0);
-            if (downloadResult) {
-                message = Message.ok("Download resource successfully (下载资源成功)");
-                message.setStatus(0);
-                message.setMethod(URL_PREFIX + "download");
-            } else {
+            if (!downloadResult) {
                 logger.warn(
                         "ResourceId :{}, version:{} has a problem when user {} downloads the resource. The copied size is less than 0(用户 {} 下载资源 resourceId: {}, version:{} 出现问题,复制的size小于0)",
                         resourceId,
@@ -573,9 +563,7 @@ public class BmlRestfulApi {
                         resourceId,
                         version);
                 downloadModel.setState(1);
-                message = Message.error("Failed to download the resource(下载资源失败)");
-                message.setStatus(1);
-                message.setMethod(URL_PREFIX + "download");
+                throw new BmlQueryFailException("Failed to download the resource(下载资源失败)");
             }
             downloadService.addDownloadRecord(downloadModel);
             logger.info(
@@ -624,7 +612,6 @@ public class BmlRestfulApi {
                 resourceId,
                 user,
                 resourceId);
-        return message;
     }
 
     @RequestMapping(path = "upload", method = RequestMethod.POST)
@@ -822,5 +809,80 @@ public class BmlRestfulApi {
             HttpServletRequest request,
             @RequestParam(value = "resourceId", required = false) String resourceId) {
         return Message.ok("Obtained information successfully(获取信息成功)");
+    }
+
+    @RequestMapping(path = "changeOwner", method = RequestMethod.POST)
+    public Message changeOwnerByResourceId(
+            HttpServletRequest request, @RequestBody JsonNode jsonNode) throws ErrorException {
+        String resourceId = jsonNode.get("resourceId").textValue();
+        String oldOwner = jsonNode.get("oldOwner").textValue();
+        String newOwner = jsonNode.get("newOwner").textValue();
+        resourceService.changeOwnerByResourceId(resourceId, oldOwner, newOwner);
+        return Message.ok("更新owner成功！");
+    }
+
+    @RequestMapping(path = "copyResourceToAnotherUser", method = RequestMethod.POST)
+    public Message copyResourceToAnotherUser(
+            HttpServletRequest request, @RequestBody JsonNode jsonNode) {
+        String username = ModuleUserUtils.getOperationUser(request, "copyResourceToAnotherUser");
+        String resourceId = jsonNode.get("resourceId").textValue();
+        String anotherUser = jsonNode.get("anotherUser").textValue();
+        Message message = null;
+        try {
+            logger.info("用户 {} 开始 copy bml resource: {}", username, resourceId);
+            String clientIp = HttpRequestHelper.getIp(request);
+            Map<String, Object> properties = new HashMap<>();
+            properties.put("clientIp", clientIp);
+            properties.put("maxVersion", 0);
+            properties.put("system", "dss");
+            ResourceTask resourceTask = null;
+            synchronized (resourceId.intern()) {
+                resourceTask =
+                        taskService.createCopyResourceTask(resourceId, anotherUser, properties);
+            }
+            message = Message.ok();
+            message.data("resourceId", resourceTask.getResourceId());
+        } catch (Exception e) {
+            logger.error("failed to copy bml resource:", e);
+            message = Message.error(e.getMessage());
+        }
+        logger.info("用户 {} 结束 copy bml resource: {}", username, resourceId);
+        return message;
+    }
+
+    @RequestMapping(path = "rollbackVersion", method = RequestMethod.POST)
+    public Message rollbackVersion(HttpServletRequest request, @RequestBody JsonNode jsonNode) {
+        String username = ModuleUserUtils.getOperationUser(request, "rollbackVersion");
+        String resourceId = jsonNode.get("resourceId").textValue();
+        String rollbackVersion = jsonNode.get("version").textValue();
+        Message message = null;
+        try {
+            logger.info(
+                    "用户 {} 开始rollback bml resource: {}, version:{} ",
+                    username,
+                    resourceId,
+                    rollbackVersion);
+            String clientIp = HttpRequestHelper.getIp(request);
+            Map<String, Object> properties = new HashMap<>();
+            properties.put("clientIp", clientIp);
+            ResourceTask resourceTask = null;
+            synchronized (resourceId.intern()) {
+                resourceTask =
+                        taskService.createRollbackVersionTask(
+                                resourceId, rollbackVersion, username, properties);
+            }
+            message = Message.ok();
+            message.data("resourceId", resourceTask.getResourceId())
+                    .data("version", resourceTask.getVersion());
+        } catch (Exception e) {
+            logger.error("failed to rollback version:", e);
+            message = Message.error(e.getMessage());
+        }
+        logger.info(
+                "用户 {} 结束rollback bml resource: {}, version:{} ",
+                username,
+                resourceId,
+                rollbackVersion);
+        return message;
     }
 }

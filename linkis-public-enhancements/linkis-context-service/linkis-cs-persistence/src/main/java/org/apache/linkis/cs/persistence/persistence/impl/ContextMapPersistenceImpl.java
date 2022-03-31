@@ -26,6 +26,7 @@ import org.apache.linkis.cs.common.entity.source.ContextValue;
 import org.apache.linkis.cs.common.exception.CSErrorException;
 import org.apache.linkis.cs.common.serialize.helper.ContextSerializationHelper;
 import org.apache.linkis.cs.common.serialize.helper.SerializationHelper;
+import org.apache.linkis.cs.persistence.conf.PersistenceConf;
 import org.apache.linkis.cs.persistence.dao.ContextMapMapper;
 import org.apache.linkis.cs.persistence.entity.ExtraFieldClass;
 import org.apache.linkis.cs.persistence.entity.PersistenceContextKey;
@@ -35,6 +36,7 @@ import org.apache.linkis.cs.persistence.persistence.ContextMapPersistence;
 import org.apache.linkis.cs.persistence.util.PersistenceUtils;
 import org.apache.linkis.server.BDPJettyServerHelper;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.math3.util.Pair;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -122,6 +124,37 @@ public class ContextMapPersistenceImpl implements ContextMapPersistence {
             // TODO: 2020/2/14 null return
             PersistenceContextKey pK = (PersistenceContextKey) pKV.getContextKey();
             PersistenceContextValue pV = (PersistenceContextValue) pKV.getContextValue();
+            if (PersistenceConf.ENABLE_CS_DESERIALIZE_REPLACE_PACKAGE_HEADER.getValue()) {
+                if (StringUtils.isBlank(pKV.getProps())
+                        || StringUtils.isBlank(
+                                PersistenceConf.CS_DESERIALIZE_REPLACE_PACKAGE_HEADER.getValue())) {
+                    logger.error(
+                            "Props : {} of ContextMap or CSID_REPLACE_PACKAGE_HEADER : {} cannot be empty.",
+                            pKV.getProps(),
+                            PersistenceConf.CS_DESERIALIZE_REPLACE_PACKAGE_HEADER.getValue());
+                } else {
+                    if (pKV.getProps()
+                            .contains(
+                                    PersistenceConf.CS_DESERIALIZE_REPLACE_PACKAGE_HEADER
+                                            .getValue())) {
+                        if (logger.isDebugEnabled()) {
+                            logger.debug(
+                                    "Will replace package header of source : {} from : {} to : {}",
+                                    pKV.getProps(),
+                                    PersistenceConf.CS_DESERIALIZE_REPLACE_PACKAGE_HEADER
+                                            .getValue(),
+                                    PersistenceConf.CSID_PACKAGE_HEADER);
+                        }
+                        pKV.setProps(
+                                pKV.getProps()
+                                        .replaceAll(
+                                                PersistenceConf
+                                                        .CS_DESERIALIZE_REPLACE_PACKAGE_HEADER
+                                                        .getValue(),
+                                                PersistenceConf.CSID_PACKAGE_HEADER));
+                    }
+                }
+            }
             ExtraFieldClass extraFieldClass = json.readValue(pKV.getProps(), ExtraFieldClass.class);
             ContextKey key = PersistenceUtils.transfer(extraFieldClass.getOneSub(0), pK);
             ContextValue value = PersistenceUtils.transfer(extraFieldClass.getOneSub(1), pV);

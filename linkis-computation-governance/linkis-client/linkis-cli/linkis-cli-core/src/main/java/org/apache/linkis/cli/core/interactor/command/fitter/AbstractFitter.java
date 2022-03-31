@@ -17,11 +17,12 @@
 
 package org.apache.linkis.cli.core.interactor.command.fitter;
 
-import org.apache.linkis.cli.common.constants.CommonConstants;
 import org.apache.linkis.cli.common.entity.command.CmdOption;
 import org.apache.linkis.cli.common.entity.command.CmdTemplate;
+import org.apache.linkis.cli.common.entity.command.CmdType;
 import org.apache.linkis.cli.common.exception.LinkisClientRuntimeException;
 import org.apache.linkis.cli.common.exception.error.ErrorLevel;
+import org.apache.linkis.cli.core.constants.CommonConstants;
 import org.apache.linkis.cli.core.exception.CommandException;
 import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
 import org.apache.linkis.cli.core.interactor.command.template.option.Flag;
@@ -38,10 +39,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @description: fit command arguments and fill them into {@link
- *     org.apache.linkis.cli.common.entity.command.CmdTemplate}. Stores all that cannot be parsed.
- */
 public abstract class AbstractFitter implements Fitter {
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractFitter.class);
@@ -60,8 +57,20 @@ public abstract class AbstractFitter implements Fitter {
         String msg = "Parsing command: \"{0}\" into template: \"{1}\"";
         logger.info(
                 MessageFormat.format(msg, StringUtils.join(args, " "), templateCopy.getCmdType()));
-
-        doFit(args, 0, templateCopy, remains);
+        List<CmdOption<?>> parameters = new ArrayList<>();
+        for (CmdOption<?> option : templateCopy.getOptions()) {
+            if (option instanceof Parameter<?>) {
+                parameters.add(option);
+            }
+        }
+        doFit(
+                args,
+                0,
+                templateCopy.getCmdType(),
+                templateCopy.getOptionsMap(),
+                templateCopy.getOptions(),
+                parameters,
+                remains);
 
         return templateCopy;
     }
@@ -74,31 +83,40 @@ public abstract class AbstractFitter implements Fitter {
      * @throws LinkisClientRuntimeException when some argument is not configured
      */
     private final void doFit(
-            final String[] args, int start, CmdTemplate templateCopy, List<String> remains)
+            final String[] args,
+            int start,
+            CmdType cmdType,
+            Map<String, CmdOption<?>> optionsMap,
+            List<CmdOption<?>> options,
+            List<CmdOption<?>> parameters,
+            List<String> remains)
             throws LinkisClientRuntimeException {
-        doFit(args, start, 0, templateCopy, remains);
+        doFit(args, start, 0, cmdType, optionsMap, options, parameters, remains);
     }
 
     private final void doFit(
             final String[] args,
             final int argIdx,
             final int paraIdx,
-            CmdTemplate templateCopy,
+            CmdType cmdType,
+            Map<String, CmdOption<?>> optionsMap,
+            List<CmdOption<?>> options,
+            List<CmdOption<?>> parameters,
             List<String> remains)
             throws LinkisClientRuntimeException {
         if (args.length <= argIdx || args.length <= paraIdx) {
             return;
         }
 
-        if (FitterUtils.isOption(args[argIdx])) {
+        if (FitterUtils.isOption(args[argIdx]) && optionsMap.containsKey(args[argIdx])) {
 
-            int index = setOptionValue(args, argIdx, templateCopy, remains);
+            int index = setOptionValue(args, argIdx, cmdType, optionsMap, remains);
             // fit from the new index
-            doFit(args, index, paraIdx, templateCopy, remains);
+            doFit(args, index, paraIdx, cmdType, optionsMap, options, parameters, remains);
         } else {
-            int index = setParameterValue(args, argIdx, paraIdx, templateCopy, remains);
+            int index = setParameterValue(args, argIdx, paraIdx, parameters, remains);
             // fit from argIdx + 1
-            doFit(args, index, paraIdx + 1, templateCopy, remains);
+            doFit(args, index, paraIdx + 1, cmdType, optionsMap, options, parameters, remains);
         }
     }
 
@@ -106,18 +124,23 @@ public abstract class AbstractFitter implements Fitter {
      * If an input option is not defined by template. Then its name and value(if exists) is recorded
      * in 'remains'
      *
-     * @param args java options
+     * @param args java arguments
      * @param index argument index
-     * @param commandTemplate
+     * @param cmdType command type
+     * @param optionsMap optionName -> option
+     * @param remains what's left after parsing
      * @return next argument index
      * @throws LinkisClientRuntimeException when some argument is not configured
      */
     private final int setOptionValue(
-            final String[] args, final int index, CmdTemplate commandTemplate, List<String> remains)
+            final String[] args,
+            final int index,
+            CmdType cmdType,
+            Map<String, CmdOption<?>> optionsMap,
+            List<String> remains)
             throws LinkisClientRuntimeException {
         int next = index + 1;
         String arg = args[index];
-        Map<String, CmdOption<?>> optionsMap = commandTemplate.getOptionsMap();
         if (optionsMap.containsKey(args[index])) {
             CmdOption<?> cmdOption = optionsMap.get(arg);
             if (cmdOption instanceof Flag) {
@@ -129,11 +152,7 @@ public abstract class AbstractFitter implements Fitter {
                                     "Illegal Arguement \"{0}\" for option \"{1}\"",
                                     args[next], cmdOption.getParamName());
                     throw new CommandException(
-                            "CMD0010",
-                            ErrorLevel.ERROR,
-                            CommonErrMsg.TemplateFitErr,
-                            commandTemplate.getCmdType(),
-                            msg);
+                            "CMD0010", ErrorLevel.ERROR, CommonErrMsg.TemplateFitErr, cmdType, msg);
                 }
                 return next;
             } else if (cmdOption instanceof CmdOption<?>) {
@@ -143,11 +162,7 @@ public abstract class AbstractFitter implements Fitter {
                                     "Cannot parse command: option \"{0}\" is specified without value.",
                                     arg);
                     throw new CommandException(
-                            "CMD0011",
-                            ErrorLevel.ERROR,
-                            CommonErrMsg.TemplateFitErr,
-                            commandTemplate.getCmdType(),
-                            msg);
+                            "CMD0011", ErrorLevel.ERROR, CommonErrMsg.TemplateFitErr, cmdType, msg);
                 }
                 try {
                     cmdOption.setValueWithStr(args[next]);
@@ -157,11 +172,7 @@ public abstract class AbstractFitter implements Fitter {
                                     "Illegal Arguement \"{0}\" for option \"{1}\". Msg: {2}",
                                     args[next], cmdOption.getParamName(), ie.getMessage());
                     throw new CommandException(
-                            "CMD0010",
-                            ErrorLevel.ERROR,
-                            CommonErrMsg.TemplateFitErr,
-                            commandTemplate.getCmdType(),
-                            msg);
+                            "CMD0010", ErrorLevel.ERROR, CommonErrMsg.TemplateFitErr, cmdType, msg);
                 }
 
                 return next + 1;
@@ -197,16 +208,10 @@ public abstract class AbstractFitter implements Fitter {
             final String[] args,
             final int argIdx,
             final int paraIdx,
-            CmdTemplate templateCopy,
+            List<CmdOption<?>> parameters,
             List<String> remains)
             throws LinkisClientRuntimeException {
-        List<CmdOption<?>> options = templateCopy.getOptions();
-        List<CmdOption<?>> parameters = new ArrayList<>();
-        for (CmdOption<?> option : options) {
-            if (option instanceof Parameter<?>) {
-                parameters.add(option);
-            }
-        }
+
         if (parameters.size() <= paraIdx) {
             remains.add(args[argIdx]);
             return argIdx + 1;

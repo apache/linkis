@@ -19,12 +19,6 @@ package org.apache.linkis.cli.core.interactor.properties.reader;
 
 import java.util.Properties;
 
-/**
- * ent
- *
- * @description: read properties. one instance of PropertiesReader corresponds to one source
- *     (file/sys_prop/sys_env etc)
- */
 public interface PropertiesReader {
 
     String getPropsId();

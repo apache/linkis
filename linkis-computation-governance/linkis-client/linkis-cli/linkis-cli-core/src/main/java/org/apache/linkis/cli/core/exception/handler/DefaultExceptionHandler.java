@@ -22,11 +22,11 @@ import org.apache.linkis.cli.common.exception.handler.ExceptionHandler;
 import org.apache.linkis.cli.core.utils.LogUtils;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/** @description: write log to stdout, stderr and log file */
 public class DefaultExceptionHandler implements ExceptionHandler {
     private static Logger logger = LoggerFactory.getLogger(DefaultExceptionHandler.class);
 
@@ -41,11 +41,11 @@ public class DefaultExceptionHandler implements ExceptionHandler {
                     break;
                 case WARN:
                     logger.warn(e.getMessage(), e);
-                    LogUtils.getInformationLogger().warn(e.getMessage());
+                    LogUtils.getInformationLogger().warn(getErrInfoWithoutStacktrace(e));
                     break;
                 case ERROR:
                     logger.error(e.getMessage(), e);
-                    LogUtils.getInformationLogger().error(e.getMessage(), e);
+                    LogUtils.getInformationLogger().error(getErrInfoWithoutStacktrace(e));
                     break;
                 case FATAL:
                     String msg = StringUtils.substringAfter(e.getMessage(), "[ERROR]");
@@ -59,5 +59,25 @@ public class DefaultExceptionHandler implements ExceptionHandler {
             logger.error(exception.getMessage(), exception);
             LogUtils.getInformationLogger().error(exception.getMessage(), exception);
         }
+    }
+
+    private String getErrInfoWithoutStacktrace(Exception e) {
+        if (e == null) {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder();
+        if (e instanceof NullPointerException) {
+            sb.append(ExceptionUtils.getStackTrace(e));
+        } else {
+            sb.append(e.getMessage());
+        }
+        if (e.getCause() != null) {
+            sb.append(System.lineSeparator())
+                    .append("Caused by: ")
+                    .append((e.getCause().getClass().getCanonicalName()))
+                    .append(": ")
+                    .append(e.getCause().getMessage());
+        }
+        return sb.toString();
     }
 }

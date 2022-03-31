@@ -17,6 +17,7 @@
 
 package org.apache.linkis.configuration.restful.api;
 
+import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.configuration.entity.*;
 import org.apache.linkis.configuration.exception.ConfigurationException;
 import org.apache.linkis.configuration.service.CategoryService;
@@ -29,15 +30,12 @@ import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel;
 import org.apache.linkis.manager.label.utils.LabelUtils;
 import org.apache.linkis.server.BDPJettyServerHelper;
 import org.apache.linkis.server.Message;
-import org.apache.linkis.server.security.SecurityFilter;
+import org.apache.linkis.server.utils.ModuleUserUtils;
+
+import org.apache.commons.lang.StringUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -68,10 +66,9 @@ public class ConfigurationRestfulApi {
             @RequestParam(value = "token", required = false) String token,
             @RequestParam(value = "keyJson", required = false) String keyJson)
             throws ConfigurationException {
-        String username = SecurityFilter.getLoginUsername(req);
-        if (StringUtils.isEmpty(engineType)
-                || StringUtils.isEmpty(version)
-                || StringUtils.isEmpty(token)) {
+        if (StringUtils.isBlank(engineType)
+                || StringUtils.isBlank(version)
+                || StringUtils.isBlank(token)) {
             throw new ConfigurationException("params cannot be empty!");
         }
         // todo 检验token
@@ -84,77 +81,6 @@ public class ConfigurationRestfulApi {
         return Message.ok();
     }
 
-    // TODO addKeyForCreator
-
-    //    @GET
-    //    @Path("/addKeyForCreator")
-    //    public Message addKeyForCreator(HttpServletRequest req,
-    //                                    @RequestParam(value="engineType",required=false) String
-    // engineType,
-    //                                    @RequestParam(value="creator",required=false) String
-    // creator,
-    //                                    @RequestParam(value="token",required=false) String token,
-    //                                    @RequestParam(value="keyJson",required=false) String
-    // keyJson) throws ConfigurationException {
-    //        String username = SecurityFilter.getLoginUsername(req);
-    //        if(StringUtils.isEmpty(engineType) || StringUtils.isEmpty(creator) ||
-    // StringUtils.isEmpty(token)){
-    //            throw new ConfigurationException("params cannot be empty!");
-    //        }
-    //        //todo 检验token
-    //        if(!token.equals(ConfigurationConfiguration.COPYKEYTOKEN)){
-    //            throw new ConfigurationException("token is error");
-    //        }
-    //        List<ConfigKey> keys =
-    // configurationService.listKeyByCreatorAndAppName(creator,engineType);
-    //        if(keys.isEmpty()){
-    //            //判断和copyKeyFromIDE相反,只允许在有key的情况下添加
-    //            throw new ConfigurationException(creator + ":" + engineType +  ",keys is empty
-    // ,cannot add key");
-    //        }
-    //        ConfigKey configKey = BDPJettyServerHelper.gson().fromJson(keyJson, ConfigKey.class);
-    //        // TODO: 2019/12/30  configKey参数校验
-    //        configurationService.addKey(creator,engineType,configKey);
-    //        return Message.ok();
-    //    }
-
-    // TODO copyKey
-
-    //    @GET
-    //    @Path("/copyKeyFromIDE")
-    //    public Message copyKeyFromIDE(HttpServletRequest req,
-    //                                  @RequestParam(value="appName",required=false) String
-    // appName,
-    //                                  @RequestParam(value="creator",required=false) String
-    // creator,
-    //                                  @RequestParam(value="token",required=false) String token)
-    // throws ConfigurationException {
-    //        String username = SecurityFilter.getLoginUsername(req);
-    //        if(StringUtils.isEmpty(appName) || StringUtils.isEmpty(creator) ||
-    // StringUtils.isEmpty(token)){
-    //            throw new ConfigurationException("params cannot be empty!");
-    //        }
-    //        //todo检验token
-    //        if(!token.equals(ConfigurationConfiguration.COPYKEYTOKEN)){
-    //            throw new ConfigurationException("token is error");
-    //        }
-    //        List<ConfigKey> keys =
-    // configurationService.listKeyByCreatorAndAppName(creator,appName);
-    //        if(!keys.isEmpty()){
-    //            throw new ConfigurationException(creator + ":" + appName +  ",keys is no empty,
-    // cannot copy key");
-    //        }
-    //        configurationService.insertCreator(creator);
-    //        List<ConfigKey> IDEkeys =
-    // configurationService.listKeyByCreatorAndAppName("IDE",appName);
-    //        if (IDEkeys.isEmpty()) {
-    //            throw new ConfigurationException("IDE:"+ appName + ",cannot find any key to
-    // copy");
-    //        }
-    //        IDEkeys.forEach(k ->configurationService.copyKeyFromIDE(k,creator,appName));
-    //        return Message.ok();
-    //    }
-
     @RequestMapping(path = "/getFullTreesByAppName", method = RequestMethod.GET)
     public Message getFullTreesByAppName(
             HttpServletRequest req,
@@ -162,7 +88,7 @@ public class ConfigurationRestfulApi {
             @RequestParam(value = "version", required = false) String version,
             @RequestParam(value = "creator", required = false) String creator)
             throws ConfigurationException {
-        String username = SecurityFilter.getLoginUsername(req);
+        String username = ModuleUserUtils.getOperationUser(req, "getFullTreesByAppName");
         if (creator != null && (creator.equals("通用设置") || creator.equals("全局设置"))) {
             engineType = "*";
             version = "*";
@@ -178,7 +104,6 @@ public class ConfigurationRestfulApi {
 
     @RequestMapping(path = "/getCategory", method = RequestMethod.GET)
     public Message getCategory(HttpServletRequest req) {
-        String username = SecurityFilter.getLoginUsername(req);
         List<CategoryLabelVo> categoryLabelList = categoryService.getAllCategory();
         return Message.ok().data("Category", categoryLabelList);
     }
@@ -186,19 +111,25 @@ public class ConfigurationRestfulApi {
     @RequestMapping(path = "/createFirstCategory", method = RequestMethod.POST)
     public Message createFirstCategory(HttpServletRequest request, @RequestBody JsonNode jsonNode)
             throws ConfigurationException {
-        String username = SecurityFilter.getLoginUsername(request);
+        String username = ModuleUserUtils.getOperationUser(request, "createFirstCategory");
+        checkAdmin(username);
         String categoryName = jsonNode.get("categoryName").asText();
         String description = jsonNode.get("description").asText();
         if (StringUtils.isEmpty(categoryName) || categoryName.equals(NULL)) {
             throw new ConfigurationException("categoryName is null, cannot be added");
+        }
+        if (StringUtils.isEmpty(categoryName) || categoryName.contains("-")) {
+            throw new ConfigurationException("categoryName cannot be included '-'");
         }
         categoryService.createFirstCategory(categoryName, description);
         return Message.ok();
     }
 
     @RequestMapping(path = "/deleteCategory", method = RequestMethod.POST)
-    public Message deleteCategory(HttpServletRequest request, @RequestBody JsonNode jsonNode) {
-        String username = SecurityFilter.getLoginUsername(request);
+    public Message deleteCategory(HttpServletRequest request, @RequestBody JsonNode jsonNode)
+            throws ConfigurationException {
+        String username = ModuleUserUtils.getOperationUser(request, "deleteCategory");
+        checkAdmin(username);
         Integer categoryId = jsonNode.get("categoryId").asInt();
         categoryService.deleteCategory(categoryId);
         return Message.ok();
@@ -207,12 +138,11 @@ public class ConfigurationRestfulApi {
     @RequestMapping(path = "/createSecondCategory", method = RequestMethod.POST)
     public Message createSecondCategory(HttpServletRequest request, @RequestBody JsonNode jsonNode)
             throws ConfigurationException {
-        String username = SecurityFilter.getLoginUsername(request);
         Integer categoryId = jsonNode.get("categoryId").asInt();
         String engineType = jsonNode.get("engineType").asText();
         String version = jsonNode.get("version").asText();
         String description = jsonNode.get("description").asText();
-        if (StringUtils.isEmpty(categoryId) || categoryId <= 0) {
+        if (categoryId <= 0) {
             throw new ConfigurationException("creator is null, cannot be added");
         }
         if (StringUtils.isEmpty(engineType) || engineType.toLowerCase().equals(NULL)) {
@@ -234,7 +164,7 @@ public class ConfigurationRestfulApi {
         if (creator != null && (creator.equals("通用设置") || creator.equals("全局设置"))) {
             creator = "*";
         }
-        String username = SecurityFilter.getLoginUsername(req);
+        String username = ModuleUserUtils.getOperationUser(req, "saveFullTree");
         ArrayList<ConfigValue> createList = new ArrayList<>();
         ArrayList<ConfigValue> updateList = new ArrayList<>();
         for (Object o : fullTrees) {
@@ -273,7 +203,6 @@ public class ConfigurationRestfulApi {
     @RequestMapping(path = "/updateCategoryInfo", method = RequestMethod.POST)
     public Message updateCategoryInfo(HttpServletRequest request, @RequestBody JsonNode jsonNode)
             throws ConfigurationException {
-        String username = SecurityFilter.getLoginUsername(request);
         String description = null;
         Integer categoryId = null;
         try {
@@ -305,5 +234,11 @@ public class ConfigurationRestfulApi {
         configurationService.queryConfig(userCreatorLabel, engineTypeLabel, "wds.linkis.rm");
         Message message = Message.ok();
         return message;
+    }
+
+    private void checkAdmin(String userName) throws ConfigurationException {
+        if (!Configuration.isAdmin(userName)) {
+            throw new ConfigurationException("only admin can modify category(只有管理员才能修改目录)");
+        }
     }
 }

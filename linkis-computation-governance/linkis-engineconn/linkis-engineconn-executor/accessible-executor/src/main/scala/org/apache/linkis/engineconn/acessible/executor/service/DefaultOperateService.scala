@@ -20,7 +20,7 @@ import org.apache.commons.lang.exception.ExceptionUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.manager.common.operator.OperatorFactory
 import org.apache.linkis.manager.common.protocol.engine.{EngineOperateRequest, EngineOperateResponse}
-import org.apache.linkis.message.annotation.Receiver
+import org.apache.linkis.rpc.message.annotation.Receiver
 import org.springframework.stereotype.Service
 
 import scala.collection.JavaConverters.mapAsScalaMapConverter
@@ -31,7 +31,7 @@ class DefaultOperateService extends OperateService with Logging {
   @Receiver
   override def executeOperation(engineOperateRequest: EngineOperateRequest): EngineOperateResponse = {
     val parameters = engineOperateRequest.parameters.asScala.toMap
-    val operator = Utils.tryCatch(OperatorFactory().getOperatorRequest(parameters)){ t =>
+    val operator = Utils.tryCatch(OperatorFactory().getOperatorRequest(parameters)) { t =>
       error(s"Get operator failed, parameters is ${engineOperateRequest.parameters}.", t)
       return EngineOperateResponse(Map.empty, true, ExceptionUtils.getRootCauseMessage(t))
     }

@@ -19,7 +19,6 @@ package org.apache.linkis.cli.common.entity.properties;
 
 import java.util.HashMap;
 
-/** @description: configurations/system variables in the form of kv-pairs */
 public class ClientProperties extends HashMap<Object, Object> {
     /** propsId identifies which source this Map belongs to */
     String propsId;

@@ -17,6 +17,7 @@
 
 package org.apache.linkis.metadata.domain.mdq;
 
+import org.apache.linkis.common.utils.JsonUtils;
 import org.apache.linkis.metadata.domain.mdq.bo.*;
 import org.apache.linkis.metadata.domain.mdq.po.MdqField;
 import org.apache.linkis.metadata.domain.mdq.po.MdqImport;
@@ -27,12 +28,17 @@ import org.apache.linkis.server.BDPJettyServerHelper;
 
 import org.springframework.beans.BeanUtils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 public class DomainCoversionUtils {
+    private static Logger logger = LoggerFactory.getLogger(DomainCoversionUtils.class);
+
     public static MdqTableBaseInfoVO mdqTableToMdqTableBaseInfoVO(MdqTable table) {
         MdqTableBaseInfoVO mdqTableBaseInfoVO = new MdqTableBaseInfoVO();
         BaseVO baseVO = new BaseVO();
@@ -86,6 +92,14 @@ public class DomainCoversionUtils {
         MdqField mdqField = new MdqField();
         mdqField.setTableId(tableId);
         BeanUtils.copyProperties(tableFieldsInfo, mdqField);
+        try {
+            if (null != tableFieldsInfo.getModeInfo()) {
+                mdqField.setModeInfo(
+                        JsonUtils.jackson().writeValueAsString(tableFieldsInfo.getModeInfo()));
+            }
+        } catch (Exception e) {
+            logger.info("Failed to convert modeInfo ", e);
+        }
         return mdqField;
     }
 

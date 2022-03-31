@@ -36,8 +36,17 @@ object VariableUtils extends Logging {
   /**
     * date Format
     */
-  val dateFormat = new SimpleDateFormat("yyyyMMdd")
-  val dateFormat_std = new SimpleDateFormat("yyyy-MM-dd")
+  //val dateFormat = new SimpleDateFormat("yyyyMMdd")
+  //val dateFormat_std = new SimpleDateFormat("yyyy-MM-dd")
+
+  val dateFormatLocal = new ThreadLocal[SimpleDateFormat]() {
+    override protected def initialValue = new SimpleDateFormat("yyyyMMdd")
+  }
+
+  val dateFormatStdLocal = new ThreadLocal[SimpleDateFormat]() {
+    override protected def initialValue = new SimpleDateFormat("yyyy-MM-dd")
+  }
+
   val codeReg: Regex = "\\$\\{\\s*[A-Za-z][A-Za-z0-9_\\.]*\\s*[\\+\\-\\*/]?\\s*[A-Za-z0-9_\\.]*\\s*\\}".r
   val calReg: Regex = "(\\s*[A-Za-z][A-Za-z0-9_\\.]*\\s*)([\\+\\-\\*/]?)(\\s*[A-Za-z0-9_\\.]*\\s*)".r
 
@@ -124,6 +133,8 @@ object VariableUtils extends Logging {
     * @return
     */
   private def getYesterday(std: Boolean = true): String = {
+    val dateFormat = dateFormatLocal.get()
+    val dateFormat_std = dateFormatStdLocal.get()
     val cal: Calendar = Calendar.getInstance()
     cal.add(Calendar.DATE, -1)
     if (std) {
@@ -141,6 +152,8 @@ object VariableUtils extends Logging {
     * @return
     */
   private[utils] def getMonth(date: Date, std: Boolean = true, isEnd: Boolean = false): String = {
+    val dateFormat = dateFormatLocal.get()
+    val dateFormat_std = dateFormatStdLocal.get()
     val cal = Calendar.getInstance()
     cal.setTime(date)
     cal.set(Calendar.DATE, 1)
@@ -232,7 +245,8 @@ case class StringType(value: String) extends VariableType {
 
 import VariableUtils._
 class CustomDateType(date: String, std: Boolean = true) {
-
+  protected val dateFormat = dateFormatLocal.get()
+  protected val dateFormat_std = dateFormatStdLocal.get()
   def -(days: Int): String = {
     if (std) {
       dateFormat_std.format(DateUtils.addDays(dateFormat_std.parse(date), -days))

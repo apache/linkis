@@ -19,7 +19,7 @@ package org.apache.linkis.manager.am.service.engine
 
 import org.apache.linkis.manager.common.entity.node.EngineNode
 import org.apache.linkis.manager.common.protocol.engine.EngineSwitchRequest
-import org.apache.linkis.message.annotation.Receiver
+import org.apache.linkis.rpc.message.annotation.Receiver
 import org.springframework.stereotype.Service
 
 

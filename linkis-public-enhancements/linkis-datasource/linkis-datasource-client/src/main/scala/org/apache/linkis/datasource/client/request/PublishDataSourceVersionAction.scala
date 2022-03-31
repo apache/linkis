@@ -26,34 +26,34 @@ import org.apache.linkis.httpclient.request.POSTAction
 class PublishDataSourceVersionAction extends POSTAction with DataSourceAction{
   override def getRequestPayload: String = DWSHttpClient.jacksonJson.writeValueAsString(getRequestPayloads)
   private var user: String = _
-  private var dataSourceId: String = _
-  private var versionId: String = _
+  private var dataSourceId: Long = _
+  private var versionId: Long = _
 
   override def setUser(user: String): Unit = this.user = user
 
   override def getUser: String = this.user
 
-  override def suffixURLs: Array[String] = Array(DATA_SOURCE_SERVICE_MODULE.getValue, "publish", dataSourceId, versionId)
+  override def suffixURLs: Array[String] = Array(DATA_SOURCE_SERVICE_MODULE.getValue, "publish", dataSourceId.toString, versionId.toString)
 }
 object PublishDataSourceVersionAction {
   def builder(): Builder = new Builder
 
   class Builder private[PublishDataSourceVersionAction]() {
     private var user: String = _
-    private var dataSourceId: String = _
-    private var versionId: String = _
+    private var dataSourceId: Long = _
+    private var versionId: Long = _
 
     def setUser(user: String): Builder = {
       this.user = user
       this
     }
 
-    def setDataSourceId(dataSourceId: String): Builder = {
+    def setDataSourceId(dataSourceId: Long): Builder = {
       this.dataSourceId = dataSourceId
       this
     }
 
-    def setVersion(versionId: String): Builder = {
+    def setVersion(versionId: Long): Builder = {
       this.versionId = versionId
       this
     }

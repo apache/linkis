@@ -20,16 +20,17 @@ package org.apache.linkis.cli.application.interactor.job;
 import org.apache.linkis.cli.application.data.ProcessedData;
 import org.apache.linkis.cli.application.interactor.command.template.ProcessInputUtil;
 import org.apache.linkis.cli.application.interactor.command.template.TestSparkCmdTemplate;
+import org.apache.linkis.cli.core.interactor.job.JobBuilder;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class LinkisJobBuilderTest {
-    LinkisJobBuilder builder;
+    JobBuilder builder;
 
-    @Before
-    public void before() throws Exception {
+    @BeforeEach
+    public void before() {
         String[] cmdStr =
                 new String[] {
                     "-u",
@@ -68,39 +69,39 @@ public class LinkisJobBuilderTest {
         //      .setSysVarAccess(data.getSysVarAccess());
     }
 
-    @After
-    public void after() throws Exception {}
+    @AfterEach
+    public void after() {}
 
     /** Method: setIdentifier(String identifier) */
     @Test
-    public void testSetIdentifier() throws Exception {
+    public void testSetIdentifier() {
         // TODO: Test goes here...
     }
 
     /** Method: build() */
     @Test
-    public void testBuild() throws Exception {
+    public void testBuild() {
         // TODO: Test goes here...
         //  LinkisJob job = builder.build();
         //  System.out.println(CommonUtils.GSON.toJson(job));
-        //  Assert.assertEquals(job.getParamConfMap().get("spark.executor.instances"), "8");
+        //  assertEquals(job.getParamConfMap().get("spark.executor.instances"), "8");
     }
 
     /** Method: setStdVarAccess(VarAccess varAccess) */
     @Test
-    public void testSetStdVarAccess() throws Exception {
+    public void testSetStdVarAccess() {
         // TODO: Test goes here...
     }
 
     /** Method: setSysVarAccess(VarAccess varAccess) */
     @Test
-    public void testSetSysVarAccess() throws Exception {
+    public void testSetSysVarAccess() {
         // TODO: Test goes here...
     }
 
     /** Method: getTargetNewInstance() */
     @Test
-    public void testGetTargetNewInstance() throws Exception {
+    public void testGetTargetNewInstance() {
         // TODO: Test goes here...
     }
 }

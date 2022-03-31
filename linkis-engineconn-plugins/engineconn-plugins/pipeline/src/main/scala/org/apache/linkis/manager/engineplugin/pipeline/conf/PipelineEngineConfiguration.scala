@@ -26,6 +26,6 @@ object PipelineEngineConfiguration {
 
   val PIPELINE_OUTPUT_CHARSET_STR = CommonVars(PIPELINE_OUTPUT_CHARSET, "UTF-8")
 
-  val PIPELINE_FIELD_SPLIT_STR = CommonVars(PIPELINE_FIELD_SPLIT, " ")
+  val PIPELINE_FIELD_SPLIT_STR = CommonVars(PIPELINE_FIELD_SPLIT, ",")
 
 }

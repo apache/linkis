@@ -53,8 +53,14 @@
         </dependency>
 
         <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>${httpclient.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.apache.linkis</groupId>
-            <artifactId>linkis-message-scheduler</artifactId>
+            <artifactId>linkis-rpc</artifactId>
             <version>${linkis.version}</version>
             <exclusions>
                 <exclusion>

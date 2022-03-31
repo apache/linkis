@@ -17,7 +17,6 @@
 
 package org.apache.linkis.cli.common.entity.command;
 
-/** @description: param value and default value */
 public class ParamItem {
     private String keyPrefix;
     private String key;

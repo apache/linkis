@@ -33,4 +33,6 @@ public interface ExternalResourceRequester {
             ExternalResourceIdentifier identifier, ExternalResourceProvider provider);
 
     ResourceType getResourceType();
+
+    Boolean reloadExternalResourceAddress(ExternalResourceProvider provider);
 }

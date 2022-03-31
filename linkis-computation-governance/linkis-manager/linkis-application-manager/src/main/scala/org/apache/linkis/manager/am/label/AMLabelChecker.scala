@@ -45,10 +45,3 @@ class AMLabelChecker extends LabelChecker {
   }
 }
 
-object AD{
-  def main(args: Array[String]): Unit = {
-    val label = new UserCreatorLabel
-    val checker = new AMLabelChecker
-    println(checker.checkCorrespondingLabel(util.Arrays.asList(label),classOf[UserCreatorLabel]))
-  }
-}

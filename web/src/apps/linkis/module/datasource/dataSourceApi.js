@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,110 +20,110 @@ import { serialize } from 'object-to-formdata';
 
 
 const getDataSourceList = (params)=>{
-  return api.fetch('data_source/info', params, 'get')
+  return api.fetch('data-source-manager/info', params, 'get')
 }
 
 const getDataSourceTypeList = ()=>{
-  return api.fetch('/data_source/type/all', {}, 'get')
+  return api.fetch('/data-source-manager/type/all', {}, 'get')
 }
 
 const getEnvList = ()=>{
-  return api.fetch('data_source/env', {}, 'get')
+  return api.fetch('data-source-manager/env', {}, 'get')
 }
 
 const getKeyDefine = (id)=>{
-  return api.fetch(`/data_source/key_define/type/${id}`, {}, 'get')
+  return api.fetch(`/data-source-manager/key-define/type/${id}`, {}, 'get')
 }
 
 /**
  * createDataSource
- * @param {*} realFormData 
- * @returns 
+ * @param {*} realFormData
+ * @returns
  */
 const createDataSource = (realFormData)=>{
-  return api.fetch('data_source/info/json', realFormData)
+  return api.fetch('data-source-manager/info/json', realFormData)
 }
 
 /**
  * createDataSource formdata
- * @param {*} realFormData 
- * @returns 
+ * @param {*} realFormData
+ * @returns
  */
 const createDataSourceForm = (realFormData)=>{
-  return api.fetch('data_source/info/form', realFormData, {methed: 'post', 'Content-Type': 'text/plain'})
+  return api.fetch('data-source-manager/info/form', realFormData, {methed: 'post', 'Content-Type': 'text/plain'})
 }
 
 /**
- * @param {*} datasourceId 
- * @param {*} data 
- * @returns 
+ * @param {*} datasourceId
+ * @param {*} data
+ * @returns
  */
 const updateDataSource = (data, datasourceId)=>{
-  return api.fetch(`data_source/info/${datasourceId}/json`, data, 'put')
+  return api.fetch(`data-source-manager/info/${datasourceId}/json`, data, 'put')
 }
 
 /**
- * 
- * @param  datasourceId 
- * @param  data 
- * @returns 
+ *
+ * @param  datasourceId
+ * @param  data
+ * @returns
  */
 const saveConnectParams = (datasourceId, data, comment)=>{
-  return api.fetch(`/data_source/parameter/${datasourceId}/json`, {connectParams: data, comment})//{connectParams: data, comment}
+  return api.fetch(`/data-source-manager/parameter/${datasourceId}/json`, {connectParams: data, comment})//{connectParams: data, comment}
 }
 
 /**
- * @param {*} realFormData 
- * @returns 
+ * @param {*} realFormData
+ * @returns
  */
 const saveConnectParamsForm = (datasourceId, data, comment)=>{
   const formData = serialize({connectParams: data, comment});
-  return api.fetch(`/data_source/parameter/${datasourceId}/form`, formData, {methed: 'post', 'Content-Type': 'text/plain'})
+  return api.fetch(`/data-source-manager/parameter/${datasourceId}/form`, formData, {methed: 'post', 'Content-Type': 'text/plain'})
 }
-  
+
 
 /**
- * @param  datasourceId 
- * @returns 
+ * @param  datasourceId
+ * @returns
  */
 const getDataSourceByIdAndVersion = (datasourceId, version)=>{
-  return api.fetch(`/data_source/info/${datasourceId}/${version}`, {}, 'get')
+  return api.fetch(`/data-source-manager/info/${datasourceId}/${version}`, {}, 'get')
 }
 /**
- * @param datasourceId 
- * @returns 
+ * @param datasourceId
+ * @returns
  */
 const getVersionListByDatasourceId = (datasourceId)=>{
-  return api.fetch(`/data_source/${datasourceId}/versions`, {}, 'get')
+  return api.fetch(`/data-source-manager/${datasourceId}/versions`, {}, 'get')
 }
-  
+
 
 
 
 /**
- * @param datasourceId 
- * @returns 
+ * @param datasourceId
+ * @returns
  */
 const expire = (datasourceId)=>{
-  return api.fetch(`/data_source/info/${datasourceId}/expire`, {}, 'put')
+  return api.fetch(`/data-source-manager/info/${datasourceId}/expire`, {}, 'put')
 }
 
 /**
  * publish datasource
- * @param {*} datasourceId 
- * @param {*} versionId 
- * @returns 
+ * @param {*} datasourceId
+ * @param {*} versionId
+ * @returns
  */
 const publish = (datasourceId, versionId)=>{
-  return api.fetch(`data_source/publish/${datasourceId}/${versionId}`, {}, 'post')
+  return api.fetch(`data-source-manager/publish/${datasourceId}/${versionId}`, {}, 'post')
 }
 
 /**
- * @param data 
- * @returns 
+ * @param data
+ * @returns
  */
 const connect = (data)=> {
-  return api.fetch(`data_source/op/connect/json`, data);
+  return api.fetch(`data-source-manager/op/connect/json`, data);
 }
 
 export  {

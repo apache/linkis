@@ -21,13 +21,13 @@ import org.apache.linkis.cli.common.entity.command.CmdTemplate;
 
 public class FitterResult {
     String[] remains;
-    CmdTemplate parsedTemplateCopy;
+    CmdTemplate parsedTemplate;
 
     public FitterResult() {}
 
-    public FitterResult(String[] remains, CmdTemplate parsedTemplateCopy) {
+    public FitterResult(String[] remains, CmdTemplate parsedTemplate) {
         this.remains = remains;
-        this.parsedTemplateCopy = parsedTemplateCopy;
+        this.parsedTemplate = parsedTemplate;
     }
 
     public String[] getRemains() {
@@ -38,11 +38,11 @@ public class FitterResult {
         this.remains = remains;
     }
 
-    public CmdTemplate getParsedTemplateCopy() {
-        return parsedTemplateCopy;
+    public CmdTemplate getParsedTemplate() {
+        return parsedTemplate;
     }
 
-    public void setParsedTemplateCopy(CmdTemplate copy) {
-        this.parsedTemplateCopy = copy;
+    public void setParsedTemplate(CmdTemplate template) {
+        this.parsedTemplate = template;
     }
 }

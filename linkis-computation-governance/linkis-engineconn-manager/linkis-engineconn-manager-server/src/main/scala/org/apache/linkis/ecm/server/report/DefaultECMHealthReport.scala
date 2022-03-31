@@ -52,7 +52,7 @@ class DefaultECMHealthReport extends ECMHealthReport {
 
   override def getOverload: NodeOverLoadInfo = overload
 
-  override def setRunningEngineConns(runningEngines: Array[EngineConn]): Unit = this.runningEngineConns = runningEngineConns
+  override def setRunningEngineConns(runningEngines: Array[EngineConn]): Unit = this.runningEngineConns = runningEngines
 
   override def getRunningEngineConns: Array[EngineConn] = runningEngineConns
 

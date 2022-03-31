@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.computation.client
 
 import java.util
@@ -40,10 +40,11 @@ trait LinkisJobBuilder[Job <: LinkisJob] {
   protected var params: util.Map[String, Any] = _
   protected var source: util.Map[String, Any] = _
 
-  protected def ensureNotNull(obj: Any, errorMsg: String): Unit = if(obj == null)
+  protected def ensureNotNull(obj: Any, errorMsg: String): Unit = if (obj == null) {
     throw new UJESJobException(s"$errorMsg cannot be null.")
+  }
 
-  protected def nullThenSet(obj: Any)(setTo: => Unit): Unit = if(obj == null) setTo
+  protected def nullThenSet(obj: Any)(setTo: => Unit): Unit = if (obj == null) setTo
 
   def addExecuteUser(executeUser: String): this.type = {
     this.executeUser = executeUser
@@ -56,7 +57,7 @@ trait LinkisJobBuilder[Job <: LinkisJob] {
   }
 
   def addJobContent(key: String, value: Any): this.type = {
-    if(jobContent == null) jobContent = new util.HashMap[String, Any]
+    if (jobContent == null) jobContent = new util.HashMap[String, Any]
     jobContent.put(key, value)
     this
   }
@@ -67,7 +68,7 @@ trait LinkisJobBuilder[Job <: LinkisJob] {
   }
 
   def addLabel(key: String, value: Any): this.type = {
-    if(labels == null) labels = new util.HashMap[String, Any]
+    if (labels == null) labels = new util.HashMap[String, Any]
     labels.put(key, value)
     this
   }
@@ -83,7 +84,7 @@ trait LinkisJobBuilder[Job <: LinkisJob] {
   }
 
   def addSource(key: String, value: Any): this.type = {
-    if(source == null) source = new util.HashMap[String, Any]
+    if (source == null) source = new util.HashMap[String, Any]
     source.put(key, value)
     this
   }
@@ -165,7 +166,7 @@ object LinkisJobBuilder {
   def setDefaultClientConfig(clientConfig: DWSClientConfig): Unit = this.clientConfig = clientConfig
 
   def getDefaultClientConfig: DWSClientConfig = {
-    if(clientConfig == null) synchronized {
+    if (clientConfig == null) synchronized {
       if (clientConfig == null) buildDefaultConfig()
     }
     clientConfig
@@ -174,9 +175,9 @@ object LinkisJobBuilder {
   def setDefaultUJESClient(ujesClient: UJESClient): Unit = this.ujesClient = ujesClient
 
   def getDefaultServerUrl: String = {
-    if(StringUtils.isEmpty(serverUrl)) {
+    if (StringUtils.isEmpty(serverUrl)) {
       serverUrl = Configuration.getGateWayURL()
-      if(StringUtils.isEmpty(serverUrl)) throw new UJESClientBuilderException("serverUrl must be set!")
+      if (StringUtils.isEmpty(serverUrl)) throw new UJESClientBuilderException("serverUrl must be set!")
     }
     serverUrl
   }
@@ -188,8 +189,8 @@ object LinkisJobBuilder {
   private[client] def justGetDefaultUJESClient: UJESClient = ujesClient
 
   def getDefaultUJESClient: UJESClient = {
-    if(ujesClient == null) synchronized {
-      if(clientConfig == null) buildDefaultConfig()
+    if (ujesClient == null) synchronized {
+      if (clientConfig == null) buildDefaultConfig()
       if(ujesClient == null) {
         ujesClient = new UJESClientImpl(clientConfig)
       }

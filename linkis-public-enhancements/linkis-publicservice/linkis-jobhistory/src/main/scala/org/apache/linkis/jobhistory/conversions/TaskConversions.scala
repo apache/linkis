@@ -123,24 +123,25 @@ object TaskConversions extends Logging {
     if (null == job) return null
     val jobReq = new JobRequest
     jobReq.setId(job.getId)
-    jobReq.setReqId(job.getJob_req_id)
+    jobReq.setReqId(job.getJobReqId)
     //    jobReq.setPriority(job.getPriority)
-    jobReq.setSubmitUser(job.getSubmit_user)
-    jobReq.setExecuteUser(job.getExecute_user)
+    jobReq.setSubmitUser(job.getSubmitUser)
+    jobReq.setExecuteUser(job.getExecuteUser)
     if (null != job.getSource) jobReq.setSource(BDPJettyServerHelper.gson.fromJson(job.getSource, classOf[util.Map[String, Object]]))
     if (null != job.getLabels) jobReq.setLabels(getLabelListFromJson(job.getLabels))
     jobReq.setParams(BDPJettyServerHelper.gson.fromJson(job.getParams, classOf[util.Map[String, Object]]))
     jobReq.setProgress(job.getProgress)
     jobReq.setStatus(job.getStatus)
-    jobReq.setLogPath(job.getLog_path)
-    jobReq.setErrorCode(job.getError_code)
-    jobReq.setErrorDesc(job.getError_desc)
-    jobReq.setCreatedTime(job.getCreated_time)
-    jobReq.setUpdatedTime(job.getUpdated_time)
+    jobReq.setLogPath(job.getLogPath)
+    jobReq.setErrorCode(job.getErrorCode)
+    jobReq.setErrorDesc(job.getErrorDesc)
+    jobReq.setCreatedTime(job.getCreatedTime)
+    jobReq.setUpdatedTime(job.getUpdatedTime)
     jobReq.setMetrics(BDPJettyServerHelper.gson.fromJson((job.getMetrics), classOf[util.Map[String, Object]]))
     jobReq.setInstances(job.getInstances)
+    jobReq.setResultLocation(job.getResultLocation)
     QueryUtils.exchangeExecutionCode(job)
-    jobReq.setExecutionCode(job.getExecution_code)
+    jobReq.setExecutionCode(job.getExecutionCode)
     jobReq
   }
 
@@ -148,10 +149,10 @@ object TaskConversions extends Logging {
     if (null == jobReq) return null
     val jobHistory = new JobHistory
     jobHistory.setId(jobReq.getId)
-    jobHistory.setJob_req_id(jobReq.getReqId)
+    jobHistory.setJobReqId(jobReq.getReqId)
     //    jobHistory.setPriority(jobReq.getProgress)
-    jobHistory.setSubmit_user(jobReq.getSubmitUser)
-    jobHistory.setExecute_user(jobReq.getExecuteUser)
+    jobHistory.setSubmitUser(jobReq.getSubmitUser)
+    jobHistory.setExecuteUser(jobReq.getExecuteUser)
     jobHistory.setSource(BDPJettyServerHelper.gson.toJson(jobReq.getSource))
     if (null != jobReq.getLabels) {
       val labelMap = new util.HashMap[String, String](jobReq.getLabels.size())
@@ -161,16 +162,19 @@ object TaskConversions extends Logging {
     if (null != jobReq.getParams) jobHistory.setParams(BDPJettyServerHelper.gson.toJson(jobReq.getParams))
     jobHistory.setProgress(jobReq.getProgress)
     jobHistory.setStatus(jobReq.getStatus)
-    jobHistory.setLog_path(jobReq.getLogPath)
-    jobHistory.setError_code(jobReq.getErrorCode)
-    jobHistory.setError_desc(jobReq.getErrorDesc)
-    if (null != jobReq.getCreatedTime) jobHistory.setCreated_time(new Date(jobReq.getCreatedTime.getTime))
-    if (null != jobReq.getUpdatedTime) jobHistory.setUpdated_time(new Date(jobReq.getUpdatedTime.getTime))
+    jobHistory.setLogPath(jobReq.getLogPath)
+    jobHistory.setErrorCode(jobReq.getErrorCode)
+    jobHistory.setErrorDesc(jobReq.getErrorDesc)
+    jobHistory.setResultLocation(jobReq.getResultLocation)
+    if (null != jobReq.getCreatedTime) jobHistory.setCreatedTime(new Date(jobReq.getCreatedTime.getTime))
+    if (null != jobReq.getUpdatedTime) {
+      jobHistory.setUpdatedTime(new Date(jobReq.getUpdatedTime.getTime))
+    }
     jobHistory.setInstances(jobReq.getInstances)
     if (null != jobReq.getMetrics) jobHistory.setMetrics(BDPJettyServerHelper.gson.toJson(jobReq.getMetrics))
     val engineType = LabelUtil.getEngineType(jobReq.getLabels)
-    jobHistory.setEngine_type(engineType)
-    jobHistory.setExecution_code(jobReq.getExecutionCode)
+    jobHistory.setEngineType(engineType)
+    jobHistory.setExecutionCode(jobReq.getExecutionCode)
     jobHistory
   }
 
@@ -191,13 +195,13 @@ object TaskConversions extends Logging {
     if (null == subjob) return null
     val jobDetail = new JobDetail
     jobDetail.setId(subjob.getId)
-    jobDetail.setJob_history_id(subjob.getJobGroupId)
-    jobDetail.setResult_location(subjob.getResultLocation)
-    jobDetail.setResult_array_size(subjob.getResultSize)
-    jobDetail.setExecution_content(subjob.getExecutionContent)
-    jobDetail.setJob_group_info(subjob.getJobGroupInfo)
-    jobDetail.setCreated_time(subjob.getCreatedTime)
-    jobDetail.setUpdated_time(subjob.getUpdatedTime)
+    jobDetail.setJobHistoryId(subjob.getJobGroupId)
+    jobDetail.setResultLocation(subjob.getResultLocation)
+    jobDetail.setResultArraySize(subjob.getResultSize)
+    jobDetail.setExecutionContent(subjob.getExecutionContent)
+    jobDetail.setJobGroupInfo(subjob.getJobGroupInfo)
+    jobDetail.setCreatedTime(subjob.getCreatedTime)
+    jobDetail.setUpdatedTime(subjob.getUpdatedTime)
     jobDetail.setStatus(subjob.getStatus)
     jobDetail.setPriority(subjob.getPriority)
     jobDetail
@@ -207,13 +211,13 @@ object TaskConversions extends Logging {
     if (null == jobdetail) return null
     val subjobDetail = new SubJobDetail
     subjobDetail.setId(jobdetail.getId)
-    subjobDetail.setJobGroupId(jobdetail.getJob_history_id)
-    subjobDetail.setResultLocation(jobdetail.getResult_location)
-    subjobDetail.setResultSize(jobdetail.getResult_array_size)
-    subjobDetail.setExecutionContent(jobdetail.getExecution_content)
-    subjobDetail.setJobGroupInfo(jobdetail.getJob_group_info)
-    subjobDetail.setCreatedTime(jobdetail.getCreated_time)
-    subjobDetail.setUpdatedTime(jobdetail.getUpdated_time)
+    subjobDetail.setJobGroupId(jobdetail.getJobHistoryId)
+    subjobDetail.setResultLocation(jobdetail.getResultLocation)
+    subjobDetail.setResultSize(jobdetail.getResultArraySize)
+    subjobDetail.setExecutionContent(jobdetail.getExecutionContent)
+    subjobDetail.setJobGroupInfo(jobdetail.getJobGroupInfo)
+    subjobDetail.setCreatedTime(jobdetail.getCreatedTime)
+    subjobDetail.setUpdatedTime(jobdetail.getUpdatedTime)
     subjobDetail.setStatus(jobdetail.getStatus)
     subjobDetail.setPriority(jobdetail.getPriority)
     subjobDetail
@@ -224,16 +228,17 @@ object TaskConversions extends Logging {
     val taskVO = new QueryTaskVO
     taskVO.setTaskID(job.getId)
     taskVO.setInstance(job.getInstances)
-    taskVO.setExecId(job.getJob_req_id)
-    taskVO.setUmUser(job.getSubmit_user)
+    taskVO.setExecId(job.getJobReqId)
+    taskVO.setUmUser(job.getSubmitUser)
     taskVO.setEngineInstance(null)
     taskVO.setProgress(job.getProgress)
-    taskVO.setLogPath(job.getLog_path)
+    taskVO.setLogPath(job.getLogPath)
     taskVO.setStatus(job.getStatus)
-    if (null != job.getCreated_time) taskVO.setCreatedTime(new Date(job.getCreated_time.getTime))
-    if (null != job.getUpdated_time) taskVO.setUpdatedTime(new Date(job.getUpdated_time.getTime))
+    taskVO.setResultLocation(job.getResultLocation)
+    if (null != job.getCreatedTime) taskVO.setCreatedTime(new Date(job.getCreatedTime.getTime))
+    if (null != job.getUpdatedTime) taskVO.setUpdatedTime(new Date(job.getUpdatedTime.getTime))
     val labelList = getLabelListFromJson(job.getLabels)
-    var engineType = job.getEngine_type
+    var engineType = job.getEngineType
     var codeType = ""
     var creator = ""
     if (null != labelList && labelList.size() > 0) {
@@ -247,14 +252,17 @@ object TaskConversions extends Logging {
       }
     }
     taskVO.setEngineType(engineType)
-    taskVO.setExecuteApplicationName(job.getEngine_type)
+    taskVO.setExecuteApplicationName(job.getEngineType)
     taskVO.setRequestApplicationName(creator)
     taskVO.setRunType(codeType)
     taskVO.setParamsJson(job.getParams)
-    taskVO.setCreatedTime(job.getCreated_time)
-    taskVO.setUpdatedTime(job.getUpdated_time)
-    taskVO.setErrCode(job.getError_code)
-    taskVO.setErrDesc(job.getError_desc)
+    taskVO.setCreatedTime(job.getCreatedTime)
+    taskVO.setUpdatedTime(job.getUpdatedTime)
+    taskVO.setErrCode(job.getErrorCode)
+    taskVO.setErrDesc(job.getErrorDesc)
+    val labelStringList = new util.ArrayList[String]()
+    labelList.foreach(label => labelStringList.add(label.getLabelKey + ":" + label.getStringValue))
+    taskVO.setLabels(labelStringList)
 
     val metrics = BDPJettyServerHelper.gson.fromJson((job.getMetrics), classOf[util.Map[String, Object]])
     var completeTime: Date = null
@@ -265,21 +273,29 @@ object TaskConversions extends Logging {
     if(null != metrics && metrics.containsKey(TaskConstant.ENTRANCEJOB_SUBMIT_TIME) && metrics.get(TaskConstant.ENTRANCEJOB_SUBMIT_TIME) != null){
       createTime = dealString2Date(metrics.get(TaskConstant.ENTRANCEJOB_SUBMIT_TIME).toString)
     }
-    if(isJobFinished(job.getStatus) && null != completeTime && null != createTime){
-      taskVO.setCostTime(completeTime.getTime - createTime.getTime)
-    }else if (null != createTime){
-      taskVO.setCostTime(System.currentTimeMillis() - createTime.getTime)
+    if (null != createTime) {
+      if(isJobFinished(job.getStatus)) {
+        if (null != completeTime) {
+          taskVO.setCostTime(completeTime.getTime - createTime.getTime)
+        } else if (null != job.getUpdatedTime) {
+          taskVO.setCostTime(job.getUpdatedTime.getTime - createTime.getTime)
+        } else {
+          taskVO.setCostTime(System.currentTimeMillis() - createTime.getTime)
+        }
+      } else{
+        taskVO.setCostTime(System.currentTimeMillis() - createTime.getTime)
+      }
     }
 
     val entranceName = JobhistoryConfiguration.ENTRANCE_SPRING_NAME.getValue
     val instances = job.getInstances().split(JobhistoryConfiguration.ENTRANCE_INSTANCE_DELEMITER.getValue)
-    taskVO.setStrongerExecId(ZuulEntranceUtils.generateExecID(job.getJob_req_id, entranceName, instances))
+    taskVO.setStrongerExecId(ZuulEntranceUtils.generateExecID(job.getJobReqId, entranceName, instances))
     taskVO.setSourceJson(job.getSource)
-    if (StringUtils.isNotBlank(job.getExecution_code)) {
-          taskVO.setExecutionCode(job.getExecution_code)
-        }
-        // Do not attach subjobs for performance
-    //    taskVO.setSubJobs(subjobs)
+    if (StringUtils.isNotBlank(job.getExecutionCode)) {
+      taskVO.setExecutionCode(job.getExecutionCode)
+    }
+    // Do not attach subjobs for performance
+//    taskVO.setSubJobs(subjobs)
     taskVO.setSourceJson(job.getSource)
     if (StringUtils.isNotBlank(job.getSource)) {
       Utils.tryCatch {

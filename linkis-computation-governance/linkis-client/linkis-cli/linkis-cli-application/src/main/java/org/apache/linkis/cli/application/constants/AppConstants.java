@@ -21,24 +21,25 @@ public class AppConstants {
 
     public static final String DEFAULT_CONFIG_NAME = "linkis-cli.properties";
     public static final Long JOB_QUERY_SLEEP_MILLS = 2000l;
-    public static final String RESULTSET_BEGIN_LOGO = "============RESULT SET============";
-    public static final String RESULTSET_END_LOGO = "============END OF RESULT SET============";
+    public static final String RESULTSET_LOGO = "============ RESULT SET {0} ============";
 
-    public static final String RESULTSET_META_BEGIN_LOGO =
-            "-----------RESULT SET META DATA------------";
+    public static final String RESULTSET_META_BEGIN_LOGO = "----------- META DATA ------------";
     public static final String RESULTSET_META_END_LOGO =
-            "------------END OF RESULT SET META DATA------------";
-
-    public static final String RESULTSET_CONTENT_BEGIN_LOGO =
-            "------------RESULT SET CONTENT------------";
-    public static final String RESULTSET_CONTENT_END_LOGO =
-            "------------END OF RESULT SET CONTENT------------";
+            "------------ END OF META DATA ------------";
 
     public static final String RESULTSET_SEPARATOR_LOGO = "------------------------";
 
-    public static final String JOB_ID_PREFIX = "";
     public static final Integer RESULTSET_PAGE_SIZE = 5000;
 
-    public static final String KILL_SUCCESS = "kill.success";
-    public static final String KILL_MSG = "kill.msg";
+    public static final String JOB_CREATOR_DEFAULT = "LINKISCLI";
+
+    public static final String JOB_CREATOR_ASYNC_DEFAULT = "LINKISCLIASYNC";
+
+    public static final String DUMMY_CID = "dummy";
+
+    public static final String LINKIS_CLI = "LinkisCli";
+
+    public static final String UJES_MODE = "ujes";
+
+    public static final String ONCE_MODE = "once";
 }

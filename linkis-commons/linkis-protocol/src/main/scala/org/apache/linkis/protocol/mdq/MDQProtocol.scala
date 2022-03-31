@@ -17,8 +17,10 @@
  
 package org.apache.linkis.protocol.mdq
 
+import org.apache.linkis.protocol.message.RequestProtocol
+
 import java.util
-trait MDQProtocol {
+trait MDQProtocol extends RequestProtocol{
 
 }
 

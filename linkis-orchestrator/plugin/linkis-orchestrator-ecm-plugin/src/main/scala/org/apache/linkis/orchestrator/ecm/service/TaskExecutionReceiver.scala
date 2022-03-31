@@ -18,22 +18,25 @@
 package org.apache.linkis.orchestrator.ecm.service
 
 import org.apache.linkis.governance.common.protocol.task._
-import org.apache.linkis.message.builder.ServiceMethodContext
+import org.apache.linkis.manager.common.protocol.resource.ResponseTaskYarnResource
+import org.apache.linkis.rpc.Sender
 
 
 
 trait TaskExecutionReceiver {
 
 
-  def taskLogReceiver(taskLog: ResponseTaskLog, smc: ServiceMethodContext): Unit
+  def taskLogReceiver(taskLog: ResponseTaskLog, sender: Sender): Unit
 
-  def taskProgressReceiver(taskProgress: ResponseTaskProgress, smc: ServiceMethodContext): Unit
+  def taskProgressReceiver(taskProgress: ResponseTaskProgress, sender: Sender): Unit
 
-  def taskStatusReceiver(taskStatus: ResponseTaskStatus, smc: ServiceMethodContext): Unit
+  def taskYarnResourceReceiver(taskYarnResource: ResponseTaskYarnResource, sender: Sender): Unit
 
-  def taskResultSizeReceiver(taskResultSize: ResponseTaskResultSize, smc: ServiceMethodContext): Unit
+  def taskStatusReceiver(taskStatus: ResponseTaskStatus, sender: Sender): Unit
 
-  def taskResultSetReceiver(taskResultSet: ResponseTaskResultSet, smc: ServiceMethodContext): Unit
+  def taskResultSizeReceiver(taskResultSize: ResponseTaskResultSize, sender: Sender): Unit
 
-  def taskErrorReceiver(responseTaskError: ResponseTaskError, smc: ServiceMethodContext): Unit
+  def taskResultSetReceiver(taskResultSet: ResponseTaskResultSet, sender: Sender): Unit
+
+  def taskErrorReceiver(responseTaskError: ResponseTaskError, sender: Sender): Unit
 }

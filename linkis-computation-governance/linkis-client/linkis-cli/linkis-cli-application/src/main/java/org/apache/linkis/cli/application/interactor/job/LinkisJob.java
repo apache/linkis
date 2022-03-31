@@ -17,68 +17,10 @@
 
 package org.apache.linkis.cli.application.interactor.job;
 
-import org.apache.linkis.cli.common.entity.job.Job;
+import org.apache.linkis.cli.application.interactor.job.data.LinkisJobData;
+import org.apache.linkis.cli.core.interactor.job.AbstractJob;
 
-import java.util.Map;
-
-public class LinkisJob extends Job {
-
-    private Map<String, Object> executionMap;
-    private Map<String, Object> paramConfMap;
-    private Map<String, Object> paramRunTimeMap;
-    private Map<String, Object> paramVarsMap;
-    private Map<String, Object> labelMap;
-    private Map<String, Object> sourceMap;
-
-    public LinkisJob() {
-        super();
-    }
-
-    public Map<String, Object> getParamConfMap() {
-        return paramConfMap;
-    }
-
-    public void setParamConfMap(Map<String, Object> paramConfMap) {
-        this.paramConfMap = paramConfMap;
-    }
-
-    public Map<String, Object> getParamRunTimeMap() {
-        return paramRunTimeMap;
-    }
-
-    public void setParamRunTimeMap(Map<String, Object> paramRunTimeMap) {
-        this.paramRunTimeMap = paramRunTimeMap;
-    }
-
-    public Map<String, Object> getExecutionMap() {
-        return executionMap;
-    }
-
-    public void setExecutionMap(Map<String, Object> executionMap) {
-        this.executionMap = executionMap;
-    }
-
-    public Map<String, Object> getParamVarsMap() {
-        return paramVarsMap;
-    }
-
-    public void setParamVarsMap(Map<String, Object> paramVarsMap) {
-        this.paramVarsMap = paramVarsMap;
-    }
-
-    public Map<String, Object> getSourceMap() {
-        return sourceMap;
-    }
-
-    public void setSourceMap(Map<String, Object> sourceMap) {
-        this.sourceMap = sourceMap;
-    }
-
-    public Map<String, Object> getLabelMap() {
-        return labelMap;
-    }
-
-    public void setLabelMap(Map<String, Object> labelMap) {
-        this.labelMap = labelMap;
-    }
+public abstract class LinkisJob extends AbstractJob {
+    @Override
+    public abstract LinkisJobData getJobData();
 }

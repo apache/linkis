@@ -17,21 +17,18 @@
  
 package org.apache.linkis.storage.script.compaction
 
+import org.apache.linkis.common.utils.CodeAndRunTypeUtils
+
 
 class ShellScriptCompaction private extends CommonScriptCompaction{
   override def prefixConf: String = "#conf@set"
 
   override def prefix: String = "#@set"
 
-  override def belongTo(suffix: String): Boolean ={
-    suffix match {
-      case "sh"=>true
-      case _=>false
-    }
-  }
+  override def belongTo(suffix: String): Boolean = CodeAndRunTypeUtils.getSuffixBelongToRunTypeOrNot(suffix, CodeAndRunTypeUtils.RUN_TYPE_SHELL)
 }
 object ShellScriptCompaction{
-  val shellScriptCompaction:ShellScriptCompaction=new ShellScriptCompaction
+  val shellScriptCompaction: ShellScriptCompaction = new ShellScriptCompaction
 
   def apply(): CommonScriptCompaction = shellScriptCompaction
 }

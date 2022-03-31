@@ -41,9 +41,13 @@ object CodeAndRunTypeUtils {
     }).filter(x => x != null).toMap
   }
 
-  def getCodeTypeAndRunTypeRelationMap: Map[String, List[String]] = CONF_LOCK.synchronized {
-    if (null == codeTypeAndRunTypeRelationMap) {
-      codeTypeAndRunTypeRelationMap = codeTypeAndRunTypeRelationMapParser(CODE_TYPE_AND_RUN_TYPE_RELATION.getValue)
+  def getCodeTypeAndRunTypeRelationMap: Map[String, List[String]] = {
+    if (codeTypeAndRunTypeRelationMap == null) {
+      CONF_LOCK.synchronized {
+        if (codeTypeAndRunTypeRelationMap == null) {
+          codeTypeAndRunTypeRelationMap = codeTypeAndRunTypeRelationMapParser(CODE_TYPE_AND_RUN_TYPE_RELATION.getValue)
+        }
+      }
     }
     codeTypeAndRunTypeRelationMap
   }

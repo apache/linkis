@@ -304,9 +304,9 @@ object CodeType extends Enumeration {
 
   def getType(codeType: String): CodeType = {
     val runTypeAndCodeTypeRelationMap: Map[String, String] = CodeAndRunTypeUtils.getRunTypeAndCodeTypeRelationMap
-    if (runTypeAndCodeTypeRelationMap.isEmpty) return Other
-    val runType = runTypeAndCodeTypeRelationMap.getOrDefault(codeType.toLowerCase, null)
-    if (runType == null) return Other
+    if (runTypeAndCodeTypeRelationMap.isEmpty || ! runTypeAndCodeTypeRelationMap.contains(codeType.toLowerCase)) return Other
+
+    val runType = runTypeAndCodeTypeRelationMap(codeType.toLowerCase)
     runType match {
       case CodeAndRunTypeUtils.RUN_TYPE_PYTHON => Python
       case CodeAndRunTypeUtils.RUN_TYPE_SQL => SQL

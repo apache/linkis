@@ -60,8 +60,6 @@
                 <exclude>org.springframework:spring-beans:jar</exclude>
                 <exclude>org.springframework:spring-core:jar</exclude>
                 <exclude>org.springframework:spring-jcl:jar</exclude>
-                <exclude>org.springframework:spring-tx:jar</exclude>
-
             </excludes>
         </dependencySet>
     </dependencySets>

@@ -23,6 +23,12 @@ import java.util
 import java.util.Collections
 
 import com.google.common.collect.Lists
+import org.apache.commons.lang3.StringUtils
+import org.apache.flink.configuration._
+import org.apache.flink.runtime.jobgraph.SavepointRestoreSettings
+import org.apache.flink.streaming.api.CheckpointingMode
+import org.apache.flink.streaming.api.environment.CheckpointConfig.ExternalizedCheckpointCleanup
+import org.apache.flink.yarn.configuration.{YarnConfigOptions, YarnDeploymentTarget}
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.engineconn.common.creation.EngineCreationContext
 import org.apache.linkis.engineconnplugin.flink.client.config.Environment
@@ -39,12 +45,6 @@ import org.apache.linkis.manager.engineplugin.common.creation.{ExecutorFactory, 
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.EngineType.EngineType
 import org.apache.linkis.manager.label.entity.engine._
-import org.apache.commons.lang3.StringUtils
-import org.apache.flink.configuration._
-import org.apache.flink.runtime.jobgraph.SavepointRestoreSettings
-import org.apache.flink.streaming.api.CheckpointingMode
-import org.apache.flink.streaming.api.environment.CheckpointConfig.ExternalizedCheckpointCleanup
-import org.apache.flink.yarn.configuration.{YarnConfigOptions, YarnDeploymentTarget}
 
 import scala.collection.convert.decorateAsScala._
 
@@ -109,6 +109,7 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     flinkConfig.setInteger(TaskManagerOptions.NUM_TASK_SLOTS, numberOfTaskSlots)
     // set kerberos config
     if(FLINK_KERBEROS_ENABLE.getValue(options)) {
+      flinkConfig.set(SecurityOptions.KERBEROS_LOGIN_CONTEXTS, FLINK_KERBEROS_LOGIN_CONTEXTS.getValue(options))
       flinkConfig.set(SecurityOptions.KERBEROS_KRB5_PATH, FLINK_KERBEROS_CONF_PATH.getValue(options))
       flinkConfig.set(SecurityOptions.KERBEROS_LOGIN_PRINCIPAL, FLINK_KERBEROS_LOGIN_PRINCIPAL.getValue(options))
       flinkConfig.set(SecurityOptions.KERBEROS_LOGIN_KEYTAB, FLINK_KERBEROS_LOGIN_KEYTAB.getValue(options))

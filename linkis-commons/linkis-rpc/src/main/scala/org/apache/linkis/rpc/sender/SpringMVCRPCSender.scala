@@ -18,7 +18,6 @@
 package org.apache.linkis.rpc.sender
 
 import java.lang.reflect.Field
-
 import com.netflix.client.ClientRequest
 import com.netflix.client.config.IClientConfig
 import com.netflix.loadbalancer.reactive.LoadBalancerCommand
@@ -31,6 +30,7 @@ import org.apache.linkis.rpc.{BaseRPCSender, RPCMessageEvent, RPCSpringBeanCache
 import org.apache.linkis.server.{BDPJettyServerHelper, Message}
 import feign._
 import org.apache.commons.lang.StringUtils
+import org.apache.linkis.rpc.message.utils.LoadBalancerOptionsUtils
 import org.springframework.cloud.netflix.ribbon.ServerIntrospector
 import org.springframework.cloud.openfeign.ribbon.{CachingSpringLoadBalancerFactory, FeignLoadBalancer, LoadBalancerFeignClient}
 
@@ -78,6 +78,7 @@ private[rpc] class SpringMVCRPCSender private[rpc](private[rpc] val serviceInsta
         }
       }
     }, getClientFactory)
+    builder.options(LoadBalancerOptionsUtils.getDefaultOptions)
     super.doBuilder(builder)
     builder.contract(getContract)
       .encoder(getEncoder).decoder(getDecoder)

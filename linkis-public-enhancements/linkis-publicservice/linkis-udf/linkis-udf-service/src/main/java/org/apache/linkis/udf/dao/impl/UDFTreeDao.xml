@@ -51,7 +51,7 @@
         user_name = #{userName,jdbcType=VARCHAR},
         description=#{description,jdbcType=VARCHAR},
         update_time=#{updateTime,jdbcType=TIMESTAMP}
-        WHERE id = #{id,jdbcType=BIGINT}
+        WHERE id = #{id,jdbcType=BIGINT} and user_name = #{userName,jdbcType=VARCHAR}
     </update>
 
     <delete id="deleteTree">
@@ -64,6 +64,13 @@
         <include refid="udf_Tree_List"/>
         from linkis_ps_udf_tree
         where id = #{arg0} and category = #{arg1}
+    </select>
+
+    <select id="getTreeByIdAndCategoryAndUserName" resultMap="UDFTreeResultMap">
+        select
+        <include refid="udf_Tree_List"/>
+        from linkis_ps_udf_tree
+        where id = #{arg0} and category = #{arg1} and user_name=#{arg2}
     </select>
 
     <select id="getTreesByParentId" resultMap="UDFTreeResultMap" parameterType="java.util.Map">

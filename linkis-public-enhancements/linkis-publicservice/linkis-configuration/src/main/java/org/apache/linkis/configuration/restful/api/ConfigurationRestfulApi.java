@@ -138,6 +138,8 @@ public class ConfigurationRestfulApi {
     @RequestMapping(path = "/createSecondCategory", method = RequestMethod.POST)
     public Message createSecondCategory(HttpServletRequest request, @RequestBody JsonNode jsonNode)
             throws ConfigurationException {
+        String username = ModuleUserUtils.getOperationUser(request, "createSecondCategory");
+        checkAdmin(username);
         Integer categoryId = jsonNode.get("categoryId").asInt();
         String engineType = jsonNode.get("engineType").asText();
         String version = jsonNode.get("version").asText();

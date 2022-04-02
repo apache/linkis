@@ -731,7 +731,7 @@ CREATE TABLE `linkis_cg_manager_label_resource` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 DROP TABLE IF EXISTS `linkis_cg_rm_resource_action_record`;
-CREATE TABLE linkis_cg_rm_resource_action_record (
+CREATE TABLE `linkis_cg_rm_resource_action_record` (
   `id` INT(20) NOT NULL AUTO_INCREMENT,
   `label_value` VARCHAR(100) NOT NULL,
   `ticket_id` VARCHAR(100) NOT NULL,
@@ -745,7 +745,7 @@ CREATE TABLE linkis_cg_rm_resource_action_record (
   `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `label_value_ticket_id` (`label_value`, `ticket_id`)
-)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 DROP TABLE IF EXISTS `linkis_cg_manager_label_service_instance`;
 CREATE TABLE `linkis_cg_manager_label_service_instance` (

@@ -23,7 +23,7 @@ export SERVER_SUFFIX="linkis-public-enhancements/linkis-ps-publicservice"
 
 #export DEBUG_PORT=
 
-export SERVER_CLASS=org.apache.linkis.jobhistory.LinkisPublicServiceApp
+export SERVER_CLASS=org.apache.linkis.filesystem.LinkisPublicServiceApp
 
 export COMMON_START_BIN=$LINKIS_HOME/sbin/ext/linkis-common-start
 if [[ ! -f "${COMMON_START_BIN}" ]]; then

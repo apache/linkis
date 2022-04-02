@@ -1,10 +1,10 @@
 package org.apache.linkis.entrance.utils;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.linkis.common.utils.JsonUtils;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -12,6 +12,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -38,10 +39,10 @@ public class PlaceHolder {
     private static final String[] CYCLES  = new String[]{CYCLE_YEAR, CYCLE_MONTH, CYCLE_DAY, CYCLE_HOUR, CYCLE_MINUTE, CYCLE_SECOND};
 
     public static void main(String[] args) {
-        String str = "abc${yyyyMMdd}def";
+        String str = "abc${yyyyMMdd%-1d}def";
         System.out.println(str);
         System.out.println(replaces(ZonedDateTime.now(),str));
-        String json = "{\"a\":\"${yyyyMMdd}\"}";
+        String json = "{\"name\":\"${yyyyMMdd%-1d}\",\"address\":{\"street\":\"${yyyyMMdd%-1y}\"},\"links\":[{\"name\":\"${yyyyMMdd%-1M}\"}]}";
         System.out.println(json);
         System.out.println(replaces(ZonedDateTime.now(),json));
     }
@@ -78,10 +79,10 @@ public class PlaceHolder {
      */
     public static String replaces(ZonedDateTime dateTime,String str,boolean format){
         try {
-            final JsonElement parse = new JsonParser().parse(str);
-            if (parse.isJsonArray() || parse.isJsonObject()){
-                replaceJson(dateTime,parse);
-                return parse.toString();
+            JsonNode rootNode = JsonUtils.jackson().readTree(str);
+            if (rootNode.isArray() || rootNode.isObject()){
+                replaceJson(dateTime,rootNode);
+                return rootNode.toString();
             }
         }catch (Exception e){}
         return replace(dateTime,str);
@@ -207,29 +208,31 @@ public class PlaceHolder {
      * @param object
      */
     @SuppressWarnings("DuplicatedCode")
-    private static void replaceJson(ZonedDateTime dateTime, JsonElement object){
-        if(object.isJsonArray()){
-            JsonArray array = object.getAsJsonArray();
-            for(int i = 0;i <array.size();i++){
-                JsonElement temp = array.get(i);
-                if(temp.isJsonArray()){
+    private static void replaceJson(ZonedDateTime dateTime, JsonNode object){
+        if(object.isArray()){
+            ArrayNode arrayNode = (ArrayNode)object;
+            for (int i = 0; i < arrayNode.size(); i++) {
+                final JsonNode temp = arrayNode.get(i);
+                if(temp.isArray()){
                     replaceJson(dateTime,temp);
-                }else if(temp.isJsonObject()){
+                }else if(temp.isObject()){
                     replaceJson(dateTime,temp);
                 }else{
-                    array.add(replace(dateTime,temp.toString()));
+                    arrayNode.insert(i,replace(dateTime,temp.toString()));
                 }
             }
-        }else if(object.isJsonObject()) {
-            JsonObject jsonObject = object.getAsJsonObject();
-            for(Map.Entry<String,JsonElement> entry : jsonObject.entrySet()){
-                JsonElement temp = entry.getValue();
-                if(temp.isJsonArray()){
+        }else if(object.isObject()) {
+            ObjectNode objectNode = (ObjectNode) object;
+            final Iterator<Map.Entry<String, JsonNode>> fields = object.fields();
+            while (fields.hasNext()) {
+                final Map.Entry<String, JsonNode> field = fields.next();
+                final JsonNode temp = field.getValue();
+                if(temp.isArray()){
                     replaceJson(dateTime,temp);
-                }else if(temp.isJsonObject()){
+                }else if(temp.isObject()){
                     replaceJson(dateTime,temp);
-                }else{
-                    jsonObject.addProperty(entry.getKey(), replace(dateTime, temp.toString()));
+                }else {
+                    objectNode.put(field.getKey(), replace(dateTime, temp.toString()));
                 }
             }
         }

@@ -24,7 +24,7 @@ import java.util.Map;
  * Description: 占位符操作
  * Date: 2021/5/7 11:10
  */
-public class PlaceHolder {
+public class FormattedTimeOperationPlaceholders {
 
     private static final String DOLLAR = "$";
     private static final String PLACEHOLDER_SPLIT = "%";
@@ -37,15 +37,6 @@ public class PlaceHolder {
     private static final String CYCLE_MINUTE = "m";
     private static final String CYCLE_SECOND = "s";
     private static final String[] CYCLES  = new String[]{CYCLE_YEAR, CYCLE_MONTH, CYCLE_DAY, CYCLE_HOUR, CYCLE_MINUTE, CYCLE_SECOND};
-
-    public static void main(String[] args) {
-        String str = "abc${yyyyMMdd%-1d}def";
-        System.out.println(str);
-        System.out.println(replaces(ZonedDateTime.now(),str));
-        String json = "{\"name\":\"${yyyyMMdd%-1d}\",\"address\":{\"street\":\"${yyyyMMdd%-1y}\"},\"links\":[{\"name\":\"${yyyyMMdd%-1M}\"}]}";
-        System.out.println(json);
-        System.out.println(replaces(ZonedDateTime.now(),json));
-    }
 
     /**
      * 处理时间 yyyy-MM-dd HH:mm:ss
@@ -245,7 +236,7 @@ public class PlaceHolder {
      * @return
      */
     public static String format(CharSequence template, Map<?, ?> map) {
-        return PlaceHolder.format(template,map,"${","}",true);
+        return FormattedTimeOperationPlaceholders.format(template,map,"${","}",true);
     }
 
     /**

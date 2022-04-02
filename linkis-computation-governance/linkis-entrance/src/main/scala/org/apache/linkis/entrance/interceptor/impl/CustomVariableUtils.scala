@@ -23,7 +23,7 @@ import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.entrance.interceptor.exception.VarSubstitutionException
 import org.apache.linkis.entrance.interceptor.impl.CustomVariableUtils.{dateFormatLocal, dateFormatStdLocal}
-import org.apache.linkis.entrance.utils.PlaceHolder
+import org.apache.linkis.entrance.utils.FormattedTimeOperationPlaceholders
 import org.apache.linkis.governance.common.entity.job.JobRequest
 import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.protocol.utils.TaskUtils
@@ -240,8 +240,8 @@ object CustomVariableUtils extends Logging {
    * @return
    */
   def parserDate(code: String,run_date: CustomDateType):String ={
-    val zonedDateTime:ZonedDateTime = PlaceHolder.toZonedDateTime(run_date.getDate)
-    PlaceHolder.replaces(zonedDateTime,code)
+    val zonedDateTime:ZonedDateTime = FormattedTimeOperationPlaceholders.toZonedDateTime(run_date.getDate)
+    FormattedTimeOperationPlaceholders.replaces(zonedDateTime,code)
   }
 
   /**

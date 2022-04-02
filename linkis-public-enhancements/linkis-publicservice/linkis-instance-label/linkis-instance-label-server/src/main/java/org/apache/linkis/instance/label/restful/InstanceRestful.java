@@ -18,8 +18,8 @@
 package org.apache.linkis.instance.label.restful;
 
 import org.apache.linkis.common.ServiceInstance;
+import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.instance.label.entity.InstanceInfo;
-import org.apache.linkis.instance.label.service.conf.InstanceConfigration;
 import org.apache.linkis.instance.label.service.impl.DefaultInsLabelService;
 import org.apache.linkis.instance.label.utils.EntityParser;
 import org.apache.linkis.instance.label.vo.InstanceInfoVo;
@@ -61,7 +61,7 @@ public class InstanceRestful {
     @RequestMapping(path = "/allInstance", method = RequestMethod.GET)
     public Message listAllInstanceWithLabel(HttpServletRequest req) throws Exception {
         String userName = ModuleUserUtils.getOperationUser(req);
-        if (!isAdmin(userName)) {
+        if (!Configuration.isAdmin(userName)) {
             throw new Exception(
                     String.format(
                             "Only admin can view all instances(只有管理员才能查看所有实例). The user [%s] is not admin.",
@@ -80,7 +80,7 @@ public class InstanceRestful {
     public Message upDateInstanceLabel(HttpServletRequest req, @RequestBody JsonNode jsonNode)
             throws Exception {
         String userName = ModuleUserUtils.getOperationUser(req);
-        if (!isAdmin(userName)) {
+        if (!Configuration.isAdmin(userName)) {
             throw new Exception(
                     String.format(
                             "Only admin can modify instance label(只有管理员才能修改标签). The user [%s] is not admin",
@@ -135,10 +135,5 @@ public class InstanceRestful {
     public Message getEurekaURL(HttpServletRequest request) throws Exception {
         String eurekaURL = insLabelService.getEurekaURL();
         return Message.ok().data("url", eurekaURL);
-    }
-
-    private Boolean isAdmin(String userName) {
-        String[] admins = InstanceConfigration.GOVERNANCE_STATION_ADMIN().getValue().split(",");
-        return admins == null || Arrays.asList(admins).contains(userName);
     }
 }

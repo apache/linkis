@@ -23,6 +23,7 @@ import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.entrance.interceptor.exception.VarSubstitutionException
 import org.apache.linkis.entrance.interceptor.impl.CustomVariableUtils.{dateFormatLocal, dateFormatStdLocal}
+import org.apache.linkis.entrance.utils.PlaceHolder
 import org.apache.linkis.governance.common.entity.job.JobRequest
 import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.protocol.utils.TaskUtils
@@ -30,6 +31,7 @@ import org.apache.linkis.protocol.variable.{RequestQueryAppVariable, RequestQuer
 import org.apache.linkis.rpc.Sender
 
 import java.text.SimpleDateFormat
+import java.time.ZonedDateTime
 import java.util
 import java.util.{Calendar, Date}
 import scala.collection.JavaConversions._
@@ -37,6 +39,7 @@ import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 import scala.util.control.Exception._
 
+//noinspection ScalaStyle
 //TODO: optimize code, 拆分Utils类
 object CustomVariableUtils extends Logging {
   //hql sql jdbc to sql python to py
@@ -90,7 +93,7 @@ object CustomVariableUtils extends Logging {
    * @return
    */
   def replaceCustomVar(jobRequest: JobRequest, runType: String): (Boolean, String) = {
-    val code: String = jobRequest.getExecutionCode
+    var code: String = jobRequest.getExecutionCode
     var codeType = SQL_TYPE
     runType match {
       case "hql" | "sql" | "jdbc" | "hive" | "psql" => codeType = SQL_TYPE
@@ -111,6 +114,7 @@ object CustomVariableUtils extends Logging {
           val run_date_str = value.asInstanceOf[String]
           if (StringUtils.isNotEmpty(run_date_str)) {
             run_date = new CustomDateType(run_date_str, false)
+
             nameAndType(RUN_DATE) = DateType(run_date)
           }
         }
@@ -158,6 +162,7 @@ object CustomVariableUtils extends Logging {
       run_date = new CustomDateType(getYesterday(false), false)
       nameAndType(RUN_DATE) = DateType(new CustomDateType(run_date.toString, false))
     }
+    code = parserDate(code,run_date)
     nameAndType("run_date_std") = DateType(new CustomDateType(run_date.getStdDate))
     nameAndType("run_month_begin") = MonthType(new CustomMonthType(run_date.toString, false))
     nameAndType("run_month_begin_std") = MonthType(new CustomMonthType(run_date.toString))
@@ -227,6 +232,17 @@ object CustomVariableUtils extends Logging {
     (true, parserVar(code, nameAndType))
   }
 
+  /**
+   * 支持任意时间格式化和加减运算
+   * 例如:${yyyyMMdd%-1d}/${yyyy-MM-01%-2M}等等
+   * @param code
+   * @param run_date
+   * @return
+   */
+  def parserDate(code: String,run_date: CustomDateType):String ={
+    val zonedDateTime:ZonedDateTime = PlaceHolder.toZonedDateTime(run_date.getDate)
+    PlaceHolder.replaces(zonedDateTime,code)
+  }
 
   /**
     * Parse and replace the value of the variable

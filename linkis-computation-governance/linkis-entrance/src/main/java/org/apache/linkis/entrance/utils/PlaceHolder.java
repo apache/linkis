@@ -1,11 +1,10 @@
 package org.apache.linkis.entrance.utils;
 
-import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.util.StrUtil;
-import cn.hutool.json.JSONArray;
-import cn.hutool.json.JSONConfig;
-import cn.hutool.json.JSONObject;
-import cn.hutool.json.JSONUtil;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import org.apache.commons.lang3.StringUtils;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -38,6 +37,14 @@ public class PlaceHolder {
     private static final String CYCLE_SECOND = "s";
     private static final String[] CYCLES  = new String[]{CYCLE_YEAR, CYCLE_MONTH, CYCLE_DAY, CYCLE_HOUR, CYCLE_MINUTE, CYCLE_SECOND};
 
+    public static void main(String[] args) {
+        String str = "abc${yyyyMMdd}def";
+        System.out.println(str);
+        System.out.println(replaces(ZonedDateTime.now(),str));
+        String json = "{\"a\":\"${yyyyMMdd}\"}";
+        System.out.println(json);
+        System.out.println(replaces(ZonedDateTime.now(),json));
+    }
 
     /**
      * 处理时间 yyyy-MM-dd HH:mm:ss
@@ -52,39 +59,6 @@ public class PlaceHolder {
     }
 
     /**
-     * 处理时间
-     * @param text
-     * @param pattern
-     * @return
-     */
-    public static ZonedDateTime toZonedDateTime(CharSequence text, String pattern) {
-        LocalDateTime time = DateUtil.parseLocalDateTime(text,pattern);
-        ZoneId zoneId = ZoneId.of("+08:00");
-        return time.atZone(zoneId);
-    }
-
-    /**
-     * json中时间占位符的替换
-     * @param dateTime
-     * @param str
-     * @param format
-     * @return
-     */
-    public static String replaces(ZonedDateTime dateTime,String str,boolean format){
-        if (JSONUtil.isJson(str)){
-            try {
-                JSONUtil.parse(str);
-                Object object = JSONUtil.parse(str,JSONConfig.create().setOrder(true));
-                replaceJson(dateTime,object);
-                if (format)
-                    return JSONUtil.formatJsonStr(object.toString());
-                else return object.toString();
-            }catch (Exception e){}
-        }
-        return replace(dateTime,str);
-    }
-
-    /**
      * json中时间占位符的替换
      * @param dateTime
      * @param str
@@ -94,6 +68,24 @@ public class PlaceHolder {
         return replaces(dateTime,str,true);
     }
 
+
+    /**
+     * json中时间占位符的替换
+     * @param dateTime
+     * @param str
+     * @param format
+     * @return
+     */
+    public static String replaces(ZonedDateTime dateTime,String str,boolean format){
+        try {
+            final JsonElement parse = new JsonParser().parse(str);
+            if (parse.isJsonArray() || parse.isJsonObject()){
+                replaceJson(dateTime,parse);
+                return parse.toString();
+            }
+        }catch (Exception e){}
+        return replace(dateTime,str);
+    }
 
     /**
      * 具体的替换方法
@@ -210,83 +202,34 @@ public class PlaceHolder {
     }
 
     /**
-     * 替换导入导出的json文件中的占位符
-     * @param keyValue
-     * @param object
-     */
-    @SuppressWarnings("DuplicatedCode")
-    private static void replaceJson(Map<String,String> keyValue, Object object){
-
-        if(object instanceof JSONArray){
-            JSONArray array = (JSONArray)object;
-            for(int i = 0;i <array.size();i++){
-                Object temp = array.get(i);
-                if(temp instanceof JSONArray){
-                    replaceJson(keyValue,temp);
-                }else if(temp instanceof JSONObject){
-                    replaceJson(keyValue,temp);
-                }else{
-                    array.set(i, replace(keyValue,temp.toString()));
-                }
-            }
-        }else if(object instanceof JSONObject) {
-            JSONObject jsonObject = (JSONObject) object;
-            for(Map.Entry<String,Object> entry : jsonObject.entrySet()){
-                Object temp = entry.getValue();
-                if(temp instanceof JSONArray){
-                    replaceJson(keyValue,temp);
-                }else if(temp instanceof JSONObject){
-                    replaceJson(keyValue,temp);
-                }else{
-                    jsonObject.set(entry.getKey(), replace(keyValue, temp.toString()));
-                }
-            }
-        }
-
-    }
-
-    /**
-     * 替换
-     * @param keyValue
-     * @param json
-     * @return
-     */
-    private static String replaceJson(Map<String,String> keyValue,String json){
-        Object object = JSONUtil.parse(json);
-        replaceJson(keyValue,object);
-        return object.toString();
-    }
-
-    /**
      * 替换resource目录下的json文件中的占位符
      * @param dateTime
      * @param object
      */
     @SuppressWarnings("DuplicatedCode")
-    private static void replaceJson(ZonedDateTime dateTime, Object object){
-
-        if(object instanceof JSONArray){
-            JSONArray array = (JSONArray)object;
+    private static void replaceJson(ZonedDateTime dateTime, JsonElement object){
+        if(object.isJsonArray()){
+            JsonArray array = object.getAsJsonArray();
             for(int i = 0;i <array.size();i++){
-                Object temp = array.get(i);
-                if(temp instanceof JSONArray){
+                JsonElement temp = array.get(i);
+                if(temp.isJsonArray()){
                     replaceJson(dateTime,temp);
-                }else if(temp instanceof JSONObject){
+                }else if(temp.isJsonObject()){
                     replaceJson(dateTime,temp);
                 }else{
-                    array.set(i, replace(dateTime,temp.toString()));
+                    array.add(replace(dateTime,temp.toString()));
                 }
             }
-        }else if(object instanceof JSONObject) {
-            JSONObject jsonObject = (JSONObject) object;
-            for(Map.Entry<String,Object> entry : jsonObject.entrySet()){
-                Object temp = entry.getValue();
-                if(temp instanceof JSONArray){
+        }else if(object.isJsonObject()) {
+            JsonObject jsonObject = object.getAsJsonObject();
+            for(Map.Entry<String,JsonElement> entry : jsonObject.entrySet()){
+                JsonElement temp = entry.getValue();
+                if(temp.isJsonArray()){
                     replaceJson(dateTime,temp);
-                }else if(temp instanceof JSONObject){
+                }else if(temp.isJsonObject()){
                     replaceJson(dateTime,temp);
                 }else{
-                    jsonObject.set(entry.getKey(), replace(dateTime, temp.toString()));
+                    jsonObject.addProperty(entry.getKey(), replace(dateTime, temp.toString()));
                 }
             }
         }
@@ -321,22 +264,22 @@ public class PlaceHolder {
             return template.toString();
         }
 
-        if (StrUtil.isBlank(leftStr)) {
+        if (StringUtils.isBlank(leftStr)) {
             leftStr = "";
         }
 
-        if (StrUtil.isBlank(rightStr)) {
+        if (StringUtils.isBlank(rightStr)) {
             rightStr = "";
         }
 
         String template2 = template.toString();
         String value;
         for (Map.Entry<?, ?> entry : map.entrySet()) {
-            value = StrUtil.utf8Str(entry.getValue());
+            value = entry.getValue().toString();
             if (null == value && ignoreNull) {
                 continue;
             }
-            template2 = StrUtil.replace(template2, leftStr.toString() + entry.getKey() + rightStr, value);
+            template2 = StringUtils.replace(template2, leftStr.toString() + entry.getKey() + rightStr, value);
         }
         return template2;
     }

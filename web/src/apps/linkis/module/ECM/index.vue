@@ -240,7 +240,7 @@ export default {
         }
         return data;
       }
-      return  v && (v.cores !== undefined || v.memonry !== undefined) ? `${calcCompany(v.cores)}cores,${calcCompany(v.memory, true)}G` : ''
+      return  v && (v.cores !== undefined || v.memonry !== undefined || v.instances !== undefined) ? `${calcCompany(v.cores)}cores,${calcCompany(v.memory, true)}G,${calcCompany(v.instances)}apps` : ''
     }
   },
   created() {

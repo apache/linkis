@@ -47,7 +47,6 @@ trait StorableLinkisJob extends AbstractLinkisJob {
     if(jobInfoResult.isCompleted) {
       getJobMetrics.setClientFinishedTime(System.currentTimeMillis)
       completedJobInfoResult = jobInfoResult
-
       info(s"Job-$getId is completed with status " + completedJobInfoResult.getJobStatus)
       getJobListeners.foreach(_.onJobFinished(this))
     } else if(jobInfoResult.isRunning)

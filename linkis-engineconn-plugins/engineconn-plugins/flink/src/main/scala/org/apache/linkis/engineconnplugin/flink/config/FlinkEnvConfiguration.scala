@@ -64,6 +64,9 @@ object FlinkEnvConfiguration {
   val FLINK_REPORTER_CLASS = CommonVars("linkis.flink.reporter.class", "")
   val FLINK_REPORTER_INTERVAL = CommonVars("linkis.flink.reporter.interval", new TimeType("60s"))
 
+  val FLINK_EXECUTION_ATTACHED = CommonVars("linkis.flink.execution.attached", true)
+  val FLINK_CONFIG_PREFIX = "_FLINK_CONFIG_."
+
   val FLINK_KERBEROS_ENABLE = CommonVars("linkis.flink.kerberos.enable", false)
   val FLINK_KERBEROS_LOGIN_CONTEXTS = CommonVars("linkis.flink.kerberos.login.contexts", "Client,KafkaClient")
   val FLINK_KERBEROS_LOGIN_KEYTAB = CommonVars("linkis.flink.kerberos.login.keytab", "")

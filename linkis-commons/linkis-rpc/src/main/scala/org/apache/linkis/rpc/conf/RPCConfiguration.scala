@@ -50,6 +50,8 @@ object RPCConfiguration {
 
   val SERVICE_SCAN_PACKAGE = CommonVars("wds.linkis.ms.service.scan.package", "org.apache.linkis").getValue
 
+  val ENABLE_SPRING_PARAMS = CommonVars("wds.linkis.rpc.spring.params.enable", false).getValue
+
   val REFLECTIONS = new Reflections(SERVICE_SCAN_PACKAGE, new MethodAnnotationsScanner(), new TypeAnnotationsScanner(), new SubTypesScanner())
 
 }

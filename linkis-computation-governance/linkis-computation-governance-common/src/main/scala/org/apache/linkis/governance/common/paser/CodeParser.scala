@@ -302,7 +302,7 @@ object CodeType extends Enumeration {
 
   def getType(codeType: String): CodeType = codeType.toLowerCase() match {
     case "python" | "pyspark" | "py" => Python
-    case "sql" | "hql" | "psql" => SQL
+    case "sql" | "hql" | "psql" | "jdbc" => SQL
     case "scala" => Scala
     case "shell" | "sh" => Shell
     case _ => Other

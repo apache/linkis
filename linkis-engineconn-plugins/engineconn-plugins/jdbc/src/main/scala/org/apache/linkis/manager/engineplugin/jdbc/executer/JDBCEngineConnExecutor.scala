@@ -40,6 +40,7 @@ import org.apache.linkis.governance.common.protocol.conf.{RequestQueryEngineConf
 import org.apache.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
 import org.apache.linkis.protocol.CacheableProtocol
 import org.springframework.util.CollectionUtils
+import org.apache.linkis.governance.common.paser.SQLCodeParser
 
 import scala.collection.JavaConversions._
 import scala.collection.mutable.ArrayBuffer
@@ -55,6 +56,7 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int) ex
   private var connection: Connection = null
 
   override def init(): Unit = {
+    setCodeParser(new SQLCodeParser)
     super.init()
     connectionManager.startRefreshKerberosLoginStatusThread()
   }

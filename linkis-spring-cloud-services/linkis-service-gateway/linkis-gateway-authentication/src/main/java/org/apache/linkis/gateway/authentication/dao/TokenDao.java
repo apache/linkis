@@ -17,6 +17,7 @@
 
 package org.apache.linkis.gateway.authentication.dao;
 
+import org.apache.ibatis.annotations.Param;
 import org.apache.linkis.gateway.authentication.entity.TokenEntity;
 
 import java.util.List;
@@ -28,7 +29,7 @@ public interface TokenDao {
 
     Boolean removeToken(TokenEntity token); // TODO
 
-    List<TokenEntity> selectTokenByName(String tokenName);
+    TokenEntity selectTokenByName(@Param("tokenName") String tokenName);
 
     List<TokenEntity> getAllTokens();
 }

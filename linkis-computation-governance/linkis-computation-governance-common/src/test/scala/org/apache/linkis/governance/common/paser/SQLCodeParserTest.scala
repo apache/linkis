@@ -17,14 +17,15 @@
 
 package org.apache.linkis.governance.common.paser
 
-import org.junit.{Assert, Test}
+import org.junit.jupiter.api.{DisplayName, Test}
+import org.junit.jupiter.api.Assertions.assertTrue
 
 import java.util.regex.Pattern
 
-@Test
-class SQLCodeParserTest extends Assert {
+class SQLCodeParserTest {
 
   @Test
+  @DisplayName("testParseSql")
   def testParseSql(): Unit = {
     val parser = new SQLCodeParser
     val sqlString: String =
@@ -50,6 +51,6 @@ class SQLCodeParserTest extends Assert {
     // val p = Pattern.compile("(?ms)('(?:''|[^'])*')|--.*?$|//.*?$|/\\*.*?\\*/|#.*?$|")
     // val result = p.matcher(sqlString).replaceAll("$1")
     val strings = parser.parse(sqlString)
-    assert(strings.length == 2)
+    assertTrue(strings.length == 2)
   }
 }

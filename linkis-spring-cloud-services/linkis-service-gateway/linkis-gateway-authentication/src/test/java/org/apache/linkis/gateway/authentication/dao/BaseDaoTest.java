@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,20 +17,15 @@
 
 package org.apache.linkis.gateway.authentication.dao;
 
-import org.apache.linkis.gateway.authentication.entity.TokenEntity;
+import org.apache.linkis.gateway.authentication.Scan;
 
-import org.apache.ibatis.annotations.Param;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
-public interface TokenDao {
-    Boolean insertToken(TokenEntity token); // TODO
-
-    Boolean updateToken(TokenEntity token); // TODO
-
-    Boolean removeToken(TokenEntity token); // TODO
-
-    TokenEntity selectTokenByName(@Param("tokenName") String tokenName);
-
-    List<TokenEntity> getAllTokens();
-}
+@SpringBootTest(classes = Scan.class)
+@Transactional
+@Rollback(true)
+@EnableTransactionManagement
+public abstract class BaseDaoTest {}

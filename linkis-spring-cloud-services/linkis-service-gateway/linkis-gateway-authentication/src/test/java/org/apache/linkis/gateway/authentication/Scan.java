@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,22 +15,12 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.gateway.authentication.dao;
+package org.apache.linkis.gateway.authentication;
 
-import org.apache.linkis.gateway.authentication.entity.TokenEntity;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 
-import org.apache.ibatis.annotations.Param;
+import org.mybatis.spring.annotation.MapperScan;
 
-import java.util.List;
-
-public interface TokenDao {
-    Boolean insertToken(TokenEntity token); // TODO
-
-    Boolean updateToken(TokenEntity token); // TODO
-
-    Boolean removeToken(TokenEntity token); // TODO
-
-    TokenEntity selectTokenByName(@Param("tokenName") String tokenName);
-
-    List<TokenEntity> getAllTokens();
-}
+@EnableAutoConfiguration
+@MapperScan("org.apache.linkis.gateway.authentication")
+public class Scan {}

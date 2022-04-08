@@ -17,8 +17,9 @@
 
 package org.apache.linkis.gateway.authentication.dao;
 
-import org.apache.ibatis.annotations.Param;
 import org.apache.linkis.gateway.authentication.entity.TokenEntity;
+
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 

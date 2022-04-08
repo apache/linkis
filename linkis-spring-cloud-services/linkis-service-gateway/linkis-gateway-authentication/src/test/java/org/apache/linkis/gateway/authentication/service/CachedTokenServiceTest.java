@@ -19,13 +19,15 @@ package org.apache.linkis.gateway.authentication.service;
 import org.apache.linkis.gateway.authentication.Scan;
 import org.apache.linkis.gateway.authentication.WebApplicationServer;
 import org.apache.linkis.gateway.authentication.exception.TokenAuthException;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -36,8 +38,7 @@ public class CachedTokenServiceTest {
 
     private static String TokenName = "BML-AUTH";
 
-    @Autowired
-    CachedTokenService tokenService;
+    @Autowired CachedTokenService tokenService;
 
     @Test
     void testIsTokenValid() {
@@ -66,10 +67,16 @@ public class CachedTokenServiceTest {
         boolean isOk = tokenService.doAuth(TokenName, "test", "127.0.0.1");
         assertTrue(isOk);
 
-        Exception exception = assertThrows(TokenAuthException.class, () ->tokenService.doAuth(TokenName, "test1", "127.0.0.1"));
+        Exception exception =
+                assertThrows(
+                        TokenAuthException.class,
+                        () -> tokenService.doAuth(TokenName, "test1", "127.0.0.1"));
         logger.info("assertThrows：{}", exception.getMessage());
 
-        exception = assertThrows(TokenAuthException.class, () ->tokenService.doAuth(TokenName, "test", "10.10.10.10"));
+        exception =
+                assertThrows(
+                        TokenAuthException.class,
+                        () -> tokenService.doAuth(TokenName, "test", "10.10.10.10"));
         logger.info("assertThrows：{}", exception.getMessage());
     }
 }

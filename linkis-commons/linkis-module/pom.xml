@@ -328,7 +328,6 @@
         <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-server</artifactId>
-            <version>1.19.1</version>
             <exclusions>
                 <exclusion>
                     <artifactId>jsr311-api</artifactId>
@@ -343,17 +342,14 @@
         <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-servlet</artifactId>
-            <version>1.19.1</version>
         </dependency>
         <dependency>
             <groupId>org.glassfish.jersey.containers</groupId>
             <artifactId>jersey-container-servlet</artifactId>
-            <version>${jersey.servlet.version}</version>
         </dependency>
         <dependency>
             <groupId>org.glassfish.jersey.containers</groupId>
             <artifactId>jersey-container-servlet-core</artifactId>
-            <version>${jersey.servlet.version}</version>
             <exclusions>
                 <exclusion>
                     <artifactId>javax.ws.rs-api</artifactId>
@@ -375,7 +371,6 @@
                     <groupId>com.sun.jersey</groupId>
                 </exclusion>
             </exclusions>
-            <version>1.19</version>
         </dependency>
 
         <dependency>

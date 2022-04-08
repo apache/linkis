@@ -64,6 +64,3 @@ class ClassUtilsTest {
     assertTrue(ClassUtils.isInterfaceOrAbstract(Class.forName("java.util.Dictionary")))
   }
 }
-
-
-

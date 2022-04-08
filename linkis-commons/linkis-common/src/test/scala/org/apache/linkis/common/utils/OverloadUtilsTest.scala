@@ -35,20 +35,23 @@ class OverloadUtilsTest {
   }
 
   @Test private[utils] def testGetProcessUsedMemory():Unit = {
-    val a = OverloadUtils.getProcessUsedMemory
-    val b = ManagementFactory.getMemoryMXBean.getHeapMemoryUsage.getUsed
-    assertEquals(a, b)
+    this.synchronized {
+      assertEquals(OverloadUtils.getProcessUsedMemory,
+        ManagementFactory.getMemoryMXBean.getHeapMemoryUsage.getUsed)
+    }
   }
 
   @Test private[utils] def testGetSystemCPUUsed():Unit = {
-    val a = OverloadUtils.getSystemCPUUsed
-    val b = ManagementFactory.getOperatingSystemMXBean.getSystemLoadAverage.toFloat
-    assertEquals(a, b)
+    this.synchronized {
+      assertEquals(OverloadUtils.getSystemCPUUsed,
+        ManagementFactory.getOperatingSystemMXBean.getSystemLoadAverage.toFloat)
+    }
   }
 
   @Test private[utils] def testGetSystemFreeMemory():Unit = {
-    val a = OverloadUtils.getSystemFreeMemory
-    val b = OverloadUtils.getOSBean.getFreePhysicalMemorySize
-    assertEquals(a, b)
+    this.synchronized {
+      assertEquals(OverloadUtils.getSystemFreeMemory,
+        OverloadUtils.getOSBean.getFreePhysicalMemorySize)
+    }
   }
 }

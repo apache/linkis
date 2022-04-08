@@ -237,7 +237,7 @@ class SQLCodeParser extends SingleCodeParser with Logging  {
       return ""
     }
     val p = Pattern.compile("(?ms)('(?:''|[^'])*')|--.*?$|/\\*.*?\\*/")
-    val sql = p.matcher(code).replaceAll("")
+    val sql = p.matcher(code).replaceAll("$1")
     sql.trim
   }
 

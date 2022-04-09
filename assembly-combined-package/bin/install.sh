@@ -162,6 +162,9 @@ echo "[RESULT_SET_ROOT_PATH] try to create directory"
      localRootDir=${RESULT_SET_ROOT_PATH#file://}
      echo "[RESULT_SET_ROOT_PATH] try to create local dir,cmd is: mkdir -p $localRootDir/$deployUser"
      mkdir -p $localRootDir/$deployUser
+
+     # we should provide the permission to the user (not in deployUser group), otherwise the user can not read/write the result set
+     sudo chmod -R 777 $localRootDir
      sudo chmod -R 775 $localRootDir/$deployUser
    elif [[ $RESULT_SET_ROOT_PATH == hdfs://* ]];then
      localRootDir=${RESULT_SET_ROOT_PATH#hdfs://}
@@ -330,7 +333,7 @@ if [ ! -d $ENGINECONN_ROOT_PATH ] ;then
     echo "create dir ENGINECONN_ROOT_PATH: $ENGINECONN_ROOT_PATH"
     mkdir -p $ENGINECONN_ROOT_PATH
 fi
-sudo chmod -R 771 $ENGINECONN_ROOT_PATH
+sudo chmod -R 777 $ENGINECONN_ROOT_PATH
 
 if [ "$ENGINECONNMANAGER_PORT" != "" ]
 then

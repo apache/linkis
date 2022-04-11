@@ -42,6 +42,7 @@ import org.apache.linkis.engineconn.executor.listener.event.EngineConnSyncEvent
 import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
 import org.apache.linkis.governance.common.exception.engineconn.{EngineConnExecutorErrorCode, EngineConnExecutorErrorException}
 import org.apache.linkis.governance.common.protocol.task._
+import org.apache.linkis.governance.common.utils.JobUtils
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.common.protocol.resource.ResponseTaskYarnResource
 import org.apache.linkis.manager.label.entity.Label
@@ -130,6 +131,8 @@ class TaskExecutionServiceImpl extends TaskExecutionService with Logging with Re
       if (null != retry) retry.asInstanceOf[Boolean]
       else false
     }
+    val jobId = JobUtils.getJobIdFromMap(requestTask.getProperties)
+    logger.info(s"Received job with id ${jobId}.")
     val task = new CommonEngineConnTask(String.valueOf(taskId), retryAble)
     task.setCode(requestTask.getCode)
     task.setProperties(requestTask.getProperties)

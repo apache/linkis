@@ -187,7 +187,8 @@ public class EntranceExecutionJob extends EntranceJob implements LogHandler {
             runtimeMapOri = TaskUtils.getRuntimeMap(getParams());
         }
         if (!runtimeMapOri.containsKey(JobRequestConstants.JOB_ID())) {
-            runtimeMapOri.put(JobRequestConstants.JOB_ID(), String.valueOf(getJobRequest().getId()));
+            runtimeMapOri.put(
+                    JobRequestConstants.JOB_ID(), String.valueOf(getJobRequest().getId()));
         }
         Map<String, String> runtimeMapTmp = new HashMap<>();
         for (Map.Entry<String, Object> entry : runtimeMapOri.entrySet()) {

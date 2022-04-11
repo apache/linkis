@@ -25,6 +25,7 @@ import org.apache.linkis.entrance.execute.EntranceJob;
 import org.apache.linkis.entrance.log.*;
 import org.apache.linkis.entrance.persistence.PersistenceManager;
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf;
+import org.apache.linkis.governance.common.constant.job.JobRequestConstants;
 import org.apache.linkis.governance.common.entity.job.SubJobDetail;
 import org.apache.linkis.governance.common.entity.job.SubJobInfo;
 import org.apache.linkis.governance.common.protocol.task.RequestTask$;
@@ -169,6 +170,12 @@ public class EntranceExecutionJob extends EntranceJob implements LogHandler {
         // add resultSet path root
         Map<String, String> starupMapTmp = new HashMap<String, String>();
         Map<String, Object> starupMapOri = TaskUtils.getStartupMap(getParams());
+        if (starupMapOri.isEmpty()) {
+            TaskUtils.addStartupMap(getParams(), starupMapOri);
+        }
+        if (!starupMapOri.containsKey(JobRequestConstants.JOB_REQUEST_LIST())) {
+            starupMapOri.put(JobRequestConstants.JOB_ID(), String.valueOf(getJobRequest().getId()));
+        }
         for (Map.Entry<String, Object> entry : starupMapOri.entrySet()) {
             if (null != entry.getKey() && null != entry.getValue()) {
                 starupMapTmp.put(entry.getKey(), entry.getValue().toString());
@@ -178,6 +185,10 @@ public class EntranceExecutionJob extends EntranceJob implements LogHandler {
         if (null == runtimeMapOri || runtimeMapOri.isEmpty()) {
             TaskUtils.addRuntimeMap(getParams(), new HashMap<>());
             runtimeMapOri = TaskUtils.getRuntimeMap(getParams());
+        }
+        if (!runtimeMapOri.containsKey(JobRequestConstants.JOB_ID())) {
+            runtimeMapOri.put(
+                    JobRequestConstants.JOB_ID(), String.valueOf(getJobRequest().getId()));
         }
         Map<String, String> runtimeMapTmp = new HashMap<>();
         for (Map.Entry<String, Object> entry : runtimeMapOri.entrySet()) {

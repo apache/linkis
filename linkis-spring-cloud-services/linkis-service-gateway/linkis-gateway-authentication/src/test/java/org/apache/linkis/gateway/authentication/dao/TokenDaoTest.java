@@ -19,18 +19,32 @@ package org.apache.linkis.gateway.authentication.dao;
 
 import org.apache.linkis.gateway.authentication.entity.TokenEntity;
 
-import org.apache.ibatis.annotations.Param;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-public interface TokenDao {
-    Boolean insertToken(TokenEntity token); // TODO
+import static org.junit.jupiter.api.Assertions.*;
 
-    Boolean updateToken(TokenEntity token); // TODO
+class TokenDaoTest extends BaseDaoTest {
 
-    Boolean removeToken(TokenEntity token); // TODO
+    private static final Logger logger = LoggerFactory.getLogger(BaseDaoTest.class);
 
-    TokenEntity selectTokenByName(@Param("tokenName") String tokenName);
+    private static String TokenName = "BML-AUTH";
+    @Autowired TokenDao tokenDao;
 
-    List<TokenEntity> getAllTokens();
+    @Test
+    void testSelectTokenByName() {
+        TokenEntity result = tokenDao.selectTokenByName(TokenName);
+        assertEquals(result.getTokenName(), TokenName);
+    }
+
+    @Test
+    void testGetAllTokens() {
+        List<TokenEntity> result = tokenDao.getAllTokens();
+        assertNotEquals(result.size(), 0);
+    }
 }

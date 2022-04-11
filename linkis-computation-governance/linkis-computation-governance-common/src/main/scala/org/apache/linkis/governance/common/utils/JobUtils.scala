@@ -15,22 +15,23 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.gateway.authentication.dao;
+package org.apache.linkis.governance.common.utils
 
-import org.apache.linkis.gateway.authentication.entity.TokenEntity;
+import org.apache.linkis.governance.common.constant.job.JobRequestConstants
+import org.apache.linkis.protocol.utils.TaskUtils
 
-import org.apache.ibatis.annotations.Param;
+import java.util;
 
-import java.util.List;
+object JobUtils {
 
-public interface TokenDao {
-    Boolean insertToken(TokenEntity token); // TODO
+  def getJobIdFromMap(map: util.Map[String, Object]): String = {
+    if (null != map && map.containsKey(JobRequestConstants.JOB_ID)) {
+      val value = map.get(JobRequestConstants.JOB_ID)
+      if (null != value) {
+        return value.toString
+      }
+    }
+    null
+  }
 
-    Boolean updateToken(TokenEntity token); // TODO
-
-    Boolean removeToken(TokenEntity token); // TODO
-
-    TokenEntity selectTokenByName(@Param("tokenName") String tokenName);
-
-    List<TokenEntity> getAllTokens();
 }

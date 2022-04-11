@@ -34,19 +34,19 @@
         <result property="updateBy" column="update_by"/>
     </resultMap>
 
-    <sql id="table_name">linkis_mg_gateway_auth_token</sql>
+    <sql id="tableName">linkis_mg_gateway_auth_token</sql>
 
     <select id="selectTokenByName" parameterType="String" resultMap="tokenEntityMap">
         select * from
-        <include refid="table_name"/>
+        <include refid="tableName"/>
         <where>
-            token_name = #{token_name}
+            token_name = #{tokenName}
         </where>
     </select>
 
     <select id="getAllTokens" resultMap="tokenEntityMap">
         select * from
-        <include refid="table_name"/>
+        <include refid="tableName"/>
     </select>
 
 

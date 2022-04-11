@@ -59,6 +59,12 @@
             <artifactId>linkis-common</artifactId>
             <version>${linkis.version}</version>
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <artifactId>jackson-databind</artifactId>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- openLooKeng -->
@@ -79,6 +85,10 @@
                     <groupId>com.google.inject</groupId>
                     <artifactId>guice</artifactId>
                 </exclusion>
+                <exclusion>
+                    <artifactId>jackson-databind</artifactId>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
 
@@ -87,8 +97,19 @@
             <artifactId>linkis-rpc</artifactId>
             <version>1.1.0</version>
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <artifactId>jackson-databind</artifactId>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${fasterxml.jackson.version}</version>
+        </dependency>
        <!-- <dependency>
             <groupId>com.facebook.presto</groupId>
             <artifactId>presto-resource-group-managers</artifactId>

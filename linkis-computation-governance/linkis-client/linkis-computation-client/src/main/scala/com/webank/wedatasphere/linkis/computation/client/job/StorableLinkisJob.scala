@@ -35,7 +35,7 @@ trait StorableLinkisJob extends AbstractLinkisJob {
 
   protected def getJobSubmitResult: JobSubmitResult
 
-  override protected def wrapperObj[T](obj: Object, errorMsg: String)(op: => T): T = wrapperId {
+  override protected def wrapperObj[T](obj: Object, errorMsg: String)(op: => T): T = {
     super.wrapperObj(obj, errorMsg)(op)
   }
 
@@ -46,8 +46,8 @@ trait StorableLinkisJob extends AbstractLinkisJob {
     getJobMetrics.addClientGetJobInfoTime(System.currentTimeMillis - startTime)
     if(jobInfoResult.isCompleted) {
       getJobMetrics.setClientFinishedTime(System.currentTimeMillis)
-      info(s"Job-$getId is completed with status " + completedJobInfoResult.getJobStatus)
       completedJobInfoResult = jobInfoResult
+      info(s"Job-$getId is completed with status " + completedJobInfoResult.getJobStatus)
       getJobListeners.foreach(_.onJobFinished(this))
     } else if(jobInfoResult.isRunning)
       getJobListeners.foreach(_.onJobRunning(this))

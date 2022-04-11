@@ -17,6 +17,8 @@
  
 package org.apache.linkis.engineplugin.spark.executor
 
+import org.apache.commons.lang3.StringUtils
+
 import java.util
 import java.util.concurrent.atomic.AtomicLong
 import org.apache.linkis.common.log.LogUtils
@@ -28,6 +30,7 @@ import org.apache.linkis.engineplugin.spark.cs.CSSparkHelper
 import org.apache.linkis.engineplugin.spark.extension.{SparkPostExecutionHook, SparkPreExecutionHook}
 import org.apache.linkis.engineplugin.spark.utils.JobProgressUtil
 import org.apache.linkis.governance.common.exception.LinkisJobRetryException
+import org.apache.linkis.governance.common.utils.JobUtils
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.common.entity.resource._
 import org.apache.linkis.manager.common.protocol.resource.ResourceWithStatus
@@ -79,7 +82,13 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long) extends C
     Utils.tryAndWarn(CSSparkHelper.setContextIDInfoToSparkConf(engineExecutorContext, sc))
     val _code = Kind.getRealCode(preCode)
     info(s"Ready to run code with kind $kind.")
-    jobGroup = String.valueOf("linkis-spark-mix-code-" + queryNum.incrementAndGet())
+    val jobId = JobUtils.getJobIdFromMap(engineExecutorContext.getProperties)
+    val jobGroupId = if (StringUtils.isNotBlank(jobId)) {
+      jobId
+    } else {
+      queryNum.incrementAndGet()
+    }
+    jobGroup = String.valueOf("linkis-spark-mix-code-" + jobGroupId)
     //    val executeCount = queryNum.get().toInt - 1
     info("Set jobGroup to " + jobGroup)
     sc.setJobGroup(jobGroup, _code, true)

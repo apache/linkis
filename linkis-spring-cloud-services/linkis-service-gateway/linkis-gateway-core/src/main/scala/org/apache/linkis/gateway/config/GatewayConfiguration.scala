@@ -70,7 +70,8 @@ object GatewayConfiguration {
   val GATEWAY_HEADER_ALLOW_METHOD = CommonVars("wds.linkis.gateway.header.allow.methods", "POST, GET, OPTIONS, PUT, HEAD, DELETE")
 
 
-  val GATEWAY_DOMAIN_LEVEL  = CommonVars("wds.linkis.gateway.domain.level", 3)
+  val GATEWAY_DOMAIN_LEVEL = CommonVars("wds.linkis.gateway.domain.level", 3)
+  val GATEWAY_COOKIE_DOMAIN_SETUP_SWITCH = CommonVars("wds.linkis.gateway.cookie.domain.setup.switch", false)
 
   // Use regex to match against URLs, if matched, let them pass anyway(even if not currently logged in), Use "()" and "|" to match against multiple URLs
   val GATEWAY_NO_AUTH_URL_REGEX = CommonVars("wds.linkis.gateway.no.auth.url.regex", ".*visualis.*share.*")

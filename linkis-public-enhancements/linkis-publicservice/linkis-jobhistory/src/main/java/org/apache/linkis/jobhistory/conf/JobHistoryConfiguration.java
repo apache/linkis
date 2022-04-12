@@ -15,17 +15,14 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.jobhistory.cache;
+package org.apache.linkis.jobhistory.conf;
 
-import org.apache.linkis.jobhistory.cache.impl.UserTaskResultCache;
+import org.apache.linkis.common.conf.CommonVars;
 
-public interface QueryCacheManager {
+public class JobHistoryConfiguration {
+    public static CommonVars<Long> UNDONE_JOB_MINIMUM_ID =
+            CommonVars.apply("wds.linkis.jobhistory.undone.job.minimum.id", 0L);
 
-    UserTaskResultCache getCache(String user, String engineType);
-
-    void cleanAll();
-
-    void refreshAll();
-
-    void refreshUndoneTask();
+    public static CommonVars<String> UNDONE_JOB_REFRESH_TIME_DAILY =
+            CommonVars.apply("wds.linkis.jobhistory.undone.job.refreshtime.daily", "00:15");
 }

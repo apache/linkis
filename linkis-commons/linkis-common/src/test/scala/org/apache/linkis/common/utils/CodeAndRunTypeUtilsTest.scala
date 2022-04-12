@@ -16,38 +16,41 @@
  */
 
 package org.apache.linkis.common.utils
-import org.junit.{Assert, Test}
+
+import org.junit.jupiter.api.Assertions._
+import org.junit.jupiter.api.Test
+
 
 @Test
-class CodeAndRunTypeUtilsTest extends Assert {
+class CodeAndRunTypeUtilsTest {
 
   @Test
   def testGetCodeTypeAndRunTypeRelationMap(): Unit = {
     val codeTypeAndRunTypeRelationMap = CodeAndRunTypeUtils.getCodeTypeAndRunTypeRelationMap
-    assert(codeTypeAndRunTypeRelationMap.nonEmpty)
-    assert(codeTypeAndRunTypeRelationMap.keySet.contains("sql"))
-    assert(codeTypeAndRunTypeRelationMap("python").size == 3)
+    assertTrue(codeTypeAndRunTypeRelationMap.nonEmpty)
+    assertTrue(codeTypeAndRunTypeRelationMap.keySet.contains("sql"))
+    assertEquals(3, codeTypeAndRunTypeRelationMap("python").size)
   }
 
   @Test
   def testGetRunTypeAndCodeTypeRelationMap(): Unit = {
     val runTypeAndCodeTypeRelationMap = CodeAndRunTypeUtils.getRunTypeAndCodeTypeRelationMap
-    assert(runTypeAndCodeTypeRelationMap.nonEmpty)
-    assert(CodeAndRunTypeUtils.RUN_TYPE_SHELL.equals(runTypeAndCodeTypeRelationMap("sh")))
-    assert(CodeAndRunTypeUtils.RUN_TYPE_SQL.equals(runTypeAndCodeTypeRelationMap("psql")))
+    assertTrue(runTypeAndCodeTypeRelationMap.nonEmpty)
+    assertTrue(CodeAndRunTypeUtils.RUN_TYPE_SHELL.equals(runTypeAndCodeTypeRelationMap("sh")))
+    assertTrue(CodeAndRunTypeUtils.RUN_TYPE_SQL.equals(runTypeAndCodeTypeRelationMap("psql")))
   }
 
   @Test
   def testGetSuffixBelongToRunTypeOrNot(): Unit = {
     val shell = CodeAndRunTypeUtils.getSuffixBelongToRunTypeOrNot("sh", CodeAndRunTypeUtils.RUN_TYPE_SHELL)
-    assert(shell)
+    assertTrue(shell)
     val sql = CodeAndRunTypeUtils.getSuffixBelongToRunTypeOrNot("jdbc", CodeAndRunTypeUtils.RUN_TYPE_SQL)
-    assert(sql)
+    assertTrue(sql)
     val hql = CodeAndRunTypeUtils.getSuffixBelongToRunTypeOrNot("hql", CodeAndRunTypeUtils.RUN_TYPE_SQL)
-    assert(hql)
+    assertTrue(hql)
     val python = CodeAndRunTypeUtils.getSuffixBelongToRunTypeOrNot("py", CodeAndRunTypeUtils.RUN_TYPE_PYTHON)
-    assert(python)
+    assertTrue(python)
     val scala = CodeAndRunTypeUtils.getSuffixBelongToRunTypeOrNot("java", CodeAndRunTypeUtils.RUN_TYPE_SCALA)
-    assert(!scala)
+    assertTrue(!scala)
   }
 }

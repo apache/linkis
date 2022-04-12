@@ -34,7 +34,7 @@ object AMConfiguration {
 
   val ENGINE_REUSE_MAX_TIME = CommonVars("wds.linkis.manager.am.engine.reuse.max.time", new TimeType("5m"))
 
-  val ENGINE_REUSE_COUNT_LIMIT = CommonVars("wds.linkis.manager.am.engine.reuse.count.limit", 10)
+  val ENGINE_REUSE_COUNT_LIMIT = CommonVars("wds.linkis.manager.am.engine.reuse.count.limit", 2)
 
   val NODE_STATUS_HEARTBEAT_TIME = CommonVars("wds.linkis.manager.am.node.heartbeat", new TimeType("3m"))
 

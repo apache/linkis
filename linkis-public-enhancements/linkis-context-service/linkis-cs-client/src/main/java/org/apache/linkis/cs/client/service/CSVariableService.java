@@ -52,6 +52,7 @@ public class CSVariableService implements VariableService {
             throws CSErrorException {
         List<LinkisVariable> rsList = new ArrayList<>();
         if (StringUtils.isBlank(contextIDStr) || StringUtils.isBlank(nodeName)) {
+            logger.warn("contextIDStr or nodeName cannot null");
             return rsList;
         }
         try {
@@ -60,6 +61,11 @@ public class CSVariableService implements VariableService {
                 rsList =
                         searchService.searchUpstreamContext(
                                 contextID, nodeName, Integer.MAX_VALUE, LinkisVariable.class);
+                logger.info(
+                        "contextID {} and nodeName {} succeed to getUpstreamVariables size {}",
+                        contextID.getContextId(),
+                        nodeName,
+                        rsList.size());
             }
             return rsList;
         } catch (Throwable e) {
@@ -81,6 +87,11 @@ public class CSVariableService implements VariableService {
             ContextValue contextValue = new CommonContextValue();
             contextValue.setValue(linkisVariable);
             contextClient.update(contextID, contextKey, contextValue);
+            logger.info(
+                    "contextID {} and contextKeyStr {} succeed to putVariable {}",
+                    contextID.getContextId(),
+                    contextKeyStr,
+                    linkisVariable.getValue());
         } catch (ErrorException e) {
             logger.error("Deserialize error. e ");
             throw new CSErrorException(ErrorCode.DESERIALIZE_ERROR, "Deserialize error. e : ", e);

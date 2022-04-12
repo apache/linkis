@@ -214,14 +214,14 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
     if (jobHistoryList.isEmpty) null else jobHistoryList.get(0)
   }
 
-  override def search(jobId: java.lang.Long, username: String, status: String, creator: String, sDate: Date, eDate: Date, engineType: String): util.List[JobHistory] = {
+  override def search(jobId: java.lang.Long, username: String, status: String, creator: String, sDate: Date, eDate: Date, engineType: String, startJobId: java.lang.Long): util.List[JobHistory] = {
     import scala.collection.JavaConversions._
     val split: util.List[String] = if (status != null) status.split(",").toList else null
     val result = if (StringUtils.isBlank(creator)) {
-      jobHistoryMapper.search(jobId, username, split, sDate, eDate, engineType)
+      jobHistoryMapper.search(jobId, username, split, sDate, eDate, engineType, startJobId)
     } else if(StringUtils.isBlank(username)) {
       val fakeLabel = new UserCreatorLabel
-      jobHistoryMapper.searchWithCreatorOnly(jobId, username, fakeLabel.getLabelKey, creator, split, sDate, eDate, engineType)
+      jobHistoryMapper.searchWithCreatorOnly(jobId, username, fakeLabel.getLabelKey, creator, split, sDate, eDate, engineType, startJobId)
     } else {
       val fakeLabel = new UserCreatorLabel
       fakeLabel.setUser(username)
@@ -231,7 +231,7 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
         t => info("input user or creator is not correct", t)
           throw t
       }
-      jobHistoryMapper.searchWithUserCreator(jobId, username, fakeLabel.getLabelKey, userCreator, split, sDate, eDate, engineType)
+      jobHistoryMapper.searchWithUserCreator(jobId, username, fakeLabel.getLabelKey, userCreator, split, sDate, eDate, engineType, startJobId)
     }
     result
   }
@@ -251,7 +251,7 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
 
   override def searchOne(jobId: lang.Long, sDate: Date, eDate: Date): JobHistory = {
     Iterables.getFirst(
-      jobHistoryMapper.search(jobId, null, null, sDate, eDate, null),
+      jobHistoryMapper.search(jobId, null, null, sDate, eDate, null, null),
       {
         val queryJobHistory = new QueryJobHistory
         queryJobHistory.setId(jobId)

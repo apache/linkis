@@ -20,11 +20,9 @@ package org.apache.linkis.governance.common.paser
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.governance.common.paser.CodeType.CodeType
-import org.apache.linkis.common.utils.CodeAndRunTypeUtils
 import org.apache.commons.lang.StringUtils
 import org.slf4j.{Logger, LoggerFactory}
 
-import scala.collection.JavaConversions._
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 import java.util

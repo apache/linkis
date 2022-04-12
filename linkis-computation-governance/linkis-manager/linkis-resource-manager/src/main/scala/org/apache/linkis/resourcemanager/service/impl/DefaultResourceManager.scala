@@ -222,6 +222,7 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
       labelContainer.getResourceLabels.foreach(label => {
         //check all resource of label
         Utils.tryCatch {
+          labelContainer.setCurrentLabel(label)
           if (!requestResourceService.canRequest(labelContainer, resource)) {
             return NotEnoughResource(s"Labels:${label.getStringValue} not enough resource")
           }

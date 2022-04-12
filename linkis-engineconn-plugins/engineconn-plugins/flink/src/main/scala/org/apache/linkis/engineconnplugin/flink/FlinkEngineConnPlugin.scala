@@ -30,32 +30,29 @@ import org.apache.linkis.manager.label.entity.Label
 class FlinkEngineConnPlugin extends EngineConnPlugin {
 
   private var engineResourceFactory: EngineResourceFactory = _
-  private var engineConnLaunchBuilder: EngineConnLaunchBuilder = _
+
   private var engineConnFactory: EngineConnFactory = _
 
-  private val lock = new Array[Byte](0)
+  private val resourceLocker = new Array[Byte](0)
+
+  private val engineFactoryLocker = new Array[Byte](0)
 
 
   override def init(params: java.util.Map[String, Any]): Unit = {}
 
   override def getEngineResourceFactory: EngineResourceFactory = {
-      if (null == engineResourceFactory) lock.synchronized {
+      if (null == engineResourceFactory) resourceLocker.synchronized {
         if (null == engineResourceFactory) engineResourceFactory = new FlinkEngineConnResourceFactory
       }
       engineResourceFactory
   }
 
   override def getEngineConnLaunchBuilder: EngineConnLaunchBuilder = {
-    if (null == engineResourceFactory) lock.synchronized {
-      if (null == engineConnLaunchBuilder) {
-        engineConnLaunchBuilder = new FlinkEngineConnLaunchBuilder()
-      }
-    }
-    engineConnLaunchBuilder
+    new FlinkEngineConnLaunchBuilder()
   }
 
   override def getEngineConnFactory: EngineConnFactory = {
-    if (null == engineConnFactory) lock.synchronized {
+    if (null == engineConnFactory) engineFactoryLocker.synchronized {
       if (null == engineConnFactory) {
         engineConnFactory = new FlinkEngineConnFactory
       }

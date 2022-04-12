@@ -210,7 +210,7 @@ public class QueryRestfulApi {
             throws IOException, QueryException {
         String username = SecurityFilter.getLoginUsername(req);
         if (StringUtils.isEmpty(status)) {
-            status = null;
+            status = "Running,Inited,Scheduled";
         }
         if (StringUtils.isEmpty(pageNow)) {
             pageNow = 1;

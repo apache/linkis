@@ -18,6 +18,7 @@
 package org.apache.linkis.jobhistory.cache.impl;
 
 import org.apache.linkis.jobhistory.cache.QueryCacheManager;
+import org.apache.linkis.jobhistory.conf.JobHistoryConfiguration;
 import org.apache.linkis.jobhistory.dao.JobHistoryMapper;
 import org.apache.linkis.jobhistory.entity.JobHistory;
 import org.apache.linkis.jobhistory.util.QueryConfig;
@@ -53,7 +54,7 @@ public class DefaultQueryCacheManager implements QueryCacheManager, Initializing
     private Map<String, Cache<String, UserTaskResultCache>> engineUserCaches =
             Maps.newConcurrentMap();
 
-    private Long undoneTaskMinId = 0L;
+    private Long undoneTaskMinId = JobHistoryConfiguration.UNDONE_JOB_MINIMUM_ID.getValue();
 
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -94,8 +95,27 @@ public class DefaultQueryCacheManager implements QueryCacheManager, Initializing
             logger.info("Submitted cache 00:00 refresh job.");
         }
 
+        int hour = 0;
+        int minute = 15;
+
+        try {
+            String refreshTime = JobHistoryConfiguration.UNDONE_JOB_REFRESH_TIME_DAILY.getValue();
+            String[] parts = refreshTime.split(":");
+            if (parts.length != 2) {
+                logger.error(
+                        "Invalid UNDONE_JOB_REFRESH_TIME_DAILY value: {}. It should be the format of '00:15'. Will use the default value '00:15'",
+                        refreshTime);
+            }
+            hour = Integer.parseInt(parts[0]);
+            minute = Integer.parseInt(parts[1]);
+        } catch (Exception ignored) {
+            logger.warn(
+                    "parse the config 'wds.linkis.jobhistory.undone.job.refreshtime.daily' failed. ",
+                    ignored);
+        }
+
         CronScheduleBuilder refreshUndoneJobBuilder =
-                CronScheduleBuilder.dailyAtHourAndMinute(0, 15);
+                CronScheduleBuilder.dailyAtHourAndMinute(hour, minute);
         JobDetail refreshUndoneJobDetail =
                 JobBuilder.newJob(ScheduledRefreshUndoneJob.class)
                         .withIdentity("ScheduledRefreshUndoneJob")
@@ -152,7 +172,7 @@ public class DefaultQueryCacheManager implements QueryCacheManager, Initializing
         try {
             queryTasks =
                     jobHistoryMapper.searchWithIdOrderAsc(
-                            null,
+                            undoneTaskMinId,
                             null,
                             Arrays.asList("Running", "Inited", "Scheduled"),
                             null,
@@ -166,6 +186,7 @@ public class DefaultQueryCacheManager implements QueryCacheManager, Initializing
         List<JobHistory> list = pageInfo.getList();
         if (!list.isEmpty()) {
             undoneTaskMinId = list.get(0).getId();
+            logger.info("Refreshing undone tasks, minimum id: {}", undoneTaskMinId);
         }
     }
 

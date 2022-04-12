@@ -24,7 +24,7 @@
     <parent>
         <artifactId>linkis</artifactId>
         <groupId>org.apache.linkis</groupId>
-        <version>1.1.0</version>
+        <version>1.1.1</version>
         <relativePath>../../../pom.xml</relativePath>
     </parent>
 
@@ -101,7 +101,6 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>${fasterxml.jackson.version}</version>
         </dependency>
 
     </dependencies>

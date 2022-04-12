@@ -123,7 +123,7 @@ class HiveEngineConnExecutor(id: Int,
     LOG.info(s"hive client begins to run hql code:\n ${realCode.trim}")
     val jobId = JobUtils.getJobIdFromMap(engineExecutorContext.getProperties)
     if (StringUtils.isNotBlank(jobId)) {
-      LOG.info(s"set apred.job.name=$jobId")
+      LOG.info(s"set mapred.job.name=LINKIS_$jobId")
       hiveConf.set("mapred.job.name", s"LINKIS_$jobId")
     }
     if (realCode.trim.length > 500) {

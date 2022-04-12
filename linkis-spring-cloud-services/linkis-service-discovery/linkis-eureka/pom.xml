@@ -22,7 +22,7 @@
     <parent>
         <artifactId>linkis</artifactId>
         <groupId>org.apache.linkis</groupId>
-        <version>1.1.0</version>
+        <version>1.1.1</version>
     </parent>
 
     <artifactId>linkis-eureka</artifactId>
@@ -111,7 +111,6 @@
         <dependency>
             <artifactId>jackson-databind</artifactId>
             <groupId>com.fasterxml.jackson.core</groupId>
-            <version>${fasterxml.jackson.version}</version>
         </dependency>
     </dependencies>
     <build>

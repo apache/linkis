@@ -17,7 +17,7 @@
  
 package org.apache.linkis.governance.common.paser
 
-import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.common.utils.{CodeAndRunTypeUtils, Logging}
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.governance.common.paser.CodeType.CodeType
 import org.apache.commons.lang.StringUtils
@@ -26,6 +26,7 @@ import org.slf4j.{Logger, LoggerFactory}
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 import java.util
+import java.util.regex.Pattern
 
 
 trait CodeParser {
@@ -212,18 +213,32 @@ class SQLCodeParser extends SingleCodeParser with Logging  {
 
   override def parse(code: String): Array[String] = {
     val codeBuffer = new ArrayBuffer[String]()
+    if (StringUtils.isBlank(code)) {
+      return codeBuffer.toArray
+    }
+    val codeAfterClearComment = clearSqlComment(code)
+
     def appendStatement(sqlStatement: String): Unit = {
       codeBuffer.append(sqlStatement)
     }
-    val indices = findRealSemicolonIndex(code)
+    val indices = findRealSemicolonIndex(codeAfterClearComment)
     var oldIndex = 0
     indices.foreach {
       index =>
-        val singleCode = code.substring(oldIndex, index)
+        val singleCode = codeAfterClearComment.substring(oldIndex, index)
         oldIndex = index + 1
         if (StringUtils.isNotBlank(singleCode)) appendStatement(singleCode)
     }
     codeBuffer.toArray
+  }
+
+  def clearSqlComment(code: String): String = {
+    if (StringUtils.isBlank(code)) {
+      return ""
+    }
+    val p = Pattern.compile("(?ms)('(?:''|[^'])*')|--.*?$|/\\*.*?\\*/")
+    val sql = p.matcher(code).replaceAll("$1")
+    sql.trim
   }
 
   def isSelectCmdNoLimit(cmd: String): Boolean = {

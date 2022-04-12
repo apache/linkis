@@ -241,7 +241,7 @@ class DevFlinkSQLStreamingListener(jobOperation: JobOperation,
   }
 
   private val future = Utils.defaultScheduler.scheduleAtFixedRate(new Runnable {
-    override def run(): Unit = if (System.currentTimeMillis - lastPulledTime > maxWaitForResultTime) {
+    override def run(): Unit = if (System.currentTimeMillis - lastPulledTime >= maxWaitForResultTime) {
       warn(s"Job killed since reached the max time ${ByteTimeUtils.msDurationToString(maxWaitForResultTime)} of waiting for resultSet. Notice: only the dev environment will touch off the automatic kill.")
       stopJobOperation()
     }

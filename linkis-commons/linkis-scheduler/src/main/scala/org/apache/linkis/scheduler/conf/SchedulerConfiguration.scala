@@ -23,9 +23,9 @@ object SchedulerConfiguration {
 
     val FIFO_CONSUMER_AUTO_CLEAR_ENABLED = CommonVars("wds.linkis.fifo.consumer.auto.clear.enabled", true)
 
-    val FIFO_CONSUMER_MAX_IDLE_TIME = CommonVars("wds.linkis.fifo.consumer.max.idle.time", new TimeType("2h")).getValue.toLong
+    val FIFO_CONSUMER_MAX_IDLE_TIME = CommonVars("wds.linkis.fifo.consumer.max.idle.time", new TimeType("1h")).getValue.toLong
 
-    val FIFO_CONSUMER_IDLE_SCAN_INTERVAL = CommonVars("wds.linkis.fifo.consumer.idle.scan.interval", new TimeType("6h"))
+    val FIFO_CONSUMER_IDLE_SCAN_INTERVAL = CommonVars("wds.linkis.fifo.consumer.idle.scan.interval", new TimeType("2h"))
 
     val FIFO_CONSUMER_IDLE_SCAN_INIT_TIME = CommonVars("wds.linkis.fifo.consumer.idle.scan.init.time", new TimeType("1s"))
 

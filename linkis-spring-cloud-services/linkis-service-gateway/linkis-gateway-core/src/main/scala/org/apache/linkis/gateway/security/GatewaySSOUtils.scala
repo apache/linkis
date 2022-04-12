@@ -33,6 +33,7 @@ object GatewaySSOUtils extends Logging {
   private val IP_REGEX = "([^:]+):.+".r
 
   private val level = GatewayConfiguration.GATEWAY_DOMAIN_LEVEL.getValue
+  private val cookieDomainSetupSwitch = GatewayConfiguration.GATEWAY_COOKIE_DOMAIN_SETUP_SWITCH.getValue
 
   /**
     * "dss.com" -> "dss.com"
@@ -69,8 +70,10 @@ object GatewaySSOUtils extends Logging {
   def setLoginUser(gatewayContext: GatewayContext, username: String): Unit = {
     val proxyUser = ProxyUserUtils.getProxyUser(username)
     SSOUtils.setLoginUser(c => {
-      val host = gatewayContext.getRequest.getHeaders.get("Host")
-      if(host != null && host.nonEmpty) c.setDomain(getCookieDomain(host.head))
+      if (cookieDomainSetupSwitch) {
+        val host = gatewayContext.getRequest.getHeaders.get("Host")
+        if(host != null && host.nonEmpty) c.setDomain(getCookieDomain(host.head))
+      }
       gatewayContext.getResponse.addCookie(c)
     }, proxyUser)
   }

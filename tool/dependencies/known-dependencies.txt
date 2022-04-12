@@ -206,8 +206,10 @@ jackson-annotations-2.11.3.jar
 jackson-annotations-2.11.4.jar
 jackson-annotations-2.13.2.jar
 jackson-core-2.11.4.jar
+jackson-core-2.13.2.jar
 jackson-core-asl-1.9.13.jar
 jackson-core-asl-1.9.2.jar
+jackson-databind-2.11.4.jar
 jackson-databind-2.13.2.jar
 jackson-dataformat-xml-2.11.4.jar
 jackson-datatype-jdk8-2.11.4.jar
@@ -223,6 +225,7 @@ jackson-module-parameter-names-2.11.4.jar
 jackson-module-paranamer-2.11.4.jar
 jackson-module-scala_2.11-2.11.3.jar
 jackson-module-scala_2.11-2.11.4.jar
+jackson-module-scala_2.11-2.13.2.jar
 jackson-xc-1.9.13.jar
 jackson-xc-1.9.2.jar
 jakarta.activation-1.2.2.jar
@@ -329,9 +332,14 @@ libthrift-0.9.3.jar
 listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar
 log-0.193.jar
 log4j-1.2-api-2.13.3.jar
+log4j-1.2.16.jar
+log4j-1.2.17.jar
 log4j-2.17.1.jar
+log4j-api-2.13.3.jar
 log4j-api-2.17.1.jar
+log4j-core-2.13.3.jar
 log4j-core-2.17.1.jar
+log4j-jul-2.13.3.jar
 log4j-jul-2.17.1.jar
 log4j-slf4j-impl-2.13.3.jar
 log4j-slf4j-impl-2.17.1.jar

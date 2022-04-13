@@ -68,6 +68,7 @@ public class CSWorkServiceImpl implements CSWorkService {
             for (WorkType type : workTypes) {
                 contextClient.removeAllValueByKeyPrefix(contextID, getWorkTypePrefix(type));
             }
+            logger.info("contextID: {} initContextServiceInfo", contextID.getContextId());
         } catch (Exception e) {
             logger.error(
                     "InitContextInfo error. contextIDStr : {}, workTypes : {}" + contextIDStr,

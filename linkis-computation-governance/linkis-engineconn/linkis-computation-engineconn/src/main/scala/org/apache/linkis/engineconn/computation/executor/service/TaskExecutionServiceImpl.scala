@@ -133,7 +133,7 @@ class TaskExecutionServiceImpl extends TaskExecutionService with Logging with Re
     }
     val jobId = JobUtils.getJobIdFromMap(requestTask.getProperties)
     if (StringUtils.isNotBlank(jobId)) {
-      System.getenv().put(ComputationExecutorConf.JOB_ID_TO_ENV_KEY, jobId)
+      System.getProperties().put(ComputationExecutorConf.JOB_ID_TO_ENV_KEY, jobId)
       logger.info(s"Received job with id ${jobId}.")
     }
     val task = new CommonEngineConnTask(String.valueOf(taskId), retryAble)

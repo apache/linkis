@@ -53,4 +53,6 @@ object ComputationExecutorConf {
   val UPSTREAM_MONITOR_ECTASK_ENTRANCE_THRESHOLD_SEC =  CommonVars("linkis.upstream.monitor.ectask.entrance.threshold.sec", 15).getValue
 
   val HIVE_RESULTSET_USE_TABLE_NAME = CommonVars("hive.resultset.use.unique.column.names", false)
+
+  val JOB_ID_TO_ENV_KEY = CommonVars("wds.linkis.ec.job.id.env.key", "LINKIS_JOB_ID").getValue
 }

@@ -20,6 +20,8 @@ package org.apache.linkis.cli.core.interactor.command.template;
 import org.apache.linkis.cli.core.constants.TestConstants;
 import org.apache.linkis.cli.core.interactor.command.parser.transformer.ParamKeyMapper;
 
+import org.junit.jupiter.api.Test;
+
 public class TestParamMapper extends ParamKeyMapper {
 
     @Override
@@ -31,5 +33,15 @@ public class TestParamMapper extends ParamKeyMapper {
         //    super.updateMapping("TestConstants.PARAM_SPARK_CMD", "spark.cmd");
         //    super.updateMapping("TestConstants.PARAM_SPARK_CMD", "spark.cmd");
 
+    }
+
+    @Test
+    public void testUpdateMapping() {
+        super.updateMapping(TestConstants.SPARK, "converted.cmd");
+        super.updateMapping(TestConstants.PARAM_COMMON_ARGS, "converted.args");
+        super.updateMapping(TestConstants.PARAM_COMMON_SPLIT, "converted.split");
+        //    super.updateMapping("key1", "spark.cmd"); //should throw exception
+        //    super.updateMapping("TestConstants.PARAM_SPARK_CMD", "spark.cmd");
+        //    super.updateMapping("TestConstants.PARAM_SPARK_CMD", "spark.cmd");
     }
 }

@@ -75,7 +75,7 @@ public class ContextServiceImpl extends ContextService {
         ContextKeyValue keyValue = contextCacheService.get(contextID, contextKey);
         if (keyValue == null) {
             logger.info(
-                    "getContextValue is null contextId {}, key {}",
+                    "getContextValue is null contextId: {}, key: {}",
                     contextID.getContextId(),
                     contextKey.getKey());
             return null;

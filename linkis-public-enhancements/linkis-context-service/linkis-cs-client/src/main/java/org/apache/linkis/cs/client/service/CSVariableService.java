@@ -62,7 +62,7 @@ public class CSVariableService implements VariableService {
                         searchService.searchUpstreamContext(
                                 contextID, nodeName, Integer.MAX_VALUE, LinkisVariable.class);
                 logger.info(
-                        "contextID {} and nodeName {} succeed to getUpstreamVariables size {}",
+                        "contextID: {} and nodeName: {} succeed to getUpstreamVariables size {}",
                         contextID.getContextId(),
                         nodeName,
                         rsList.size());
@@ -88,7 +88,7 @@ public class CSVariableService implements VariableService {
             contextValue.setValue(linkisVariable);
             contextClient.update(contextID, contextKey, contextValue);
             logger.info(
-                    "contextID {} and contextKeyStr {} succeed to putVariable {}",
+                    "contextID: {} and contextKeyStr: {} succeed to putVariable {}",
                     contextID.getContextId(),
                     contextKeyStr,
                     linkisVariable.getValue());

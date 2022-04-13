@@ -68,7 +68,7 @@ public class LinkisJobDataServiceImpl implements LinkisJobDataService {
             LinkisJobData jobData =
                     searchService.getContextValue(contextID, contextKey, LinkisJobData.class);
             logger.info(
-                    "contextID {} and contextKeyStr {} succeed to getLinkisJobData  {}",
+                    "contextID: {} and contextKeyStr: {} succeed to getLinkisJobData  {}",
                     contextID.getContextId(),
                     contextKeyStr,
                     jobData.getJobID());
@@ -105,7 +105,7 @@ public class LinkisJobDataServiceImpl implements LinkisJobDataService {
             contextValue.setValue(linkisJobData);
             contextClient.update(contextID, contextKey, contextValue);
             logger.info(
-                    "contextID {} and contextKeyStr {} succeed to putLinkisJobData  {}",
+                    "contextID: {} and contextKeyStr: {} succeed to putLinkisJobData  {}",
                     contextID.getContextId(),
                     contextKeyStr,
                     linkisJobData.getJobID());

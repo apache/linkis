@@ -101,7 +101,7 @@ public class CSResultDataServiceImpl implements CSResultDataService {
             contextValue.setValue(csResultData);
             contextClient.update(contextID, contextKey, contextValue);
             logger.info(
-                    "succeed to update cs result data,contextIDStr {}, contextKeyStr {}",
+                    "succeed to update cs result data,contextIDStr: {}, contextKeyStr: {}",
                     contextKey,
                     contextKeyStr);
         } catch (ErrorException e) {

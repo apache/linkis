@@ -69,7 +69,7 @@ public class CSTableService implements TableService {
         }
         CSTable csTable = searchService.getContextValue(contextID, contextKey, CSTable.class);
         logger.info(
-                "contextID {} and contextKey {} succeed to get table tableName {}",
+                "contextID: {} and contextKey: {} succeed to get table tableName {}",
                 contextID.getContextId(),
                 contextKey.getKey(),
                 csTable.getName());
@@ -96,7 +96,7 @@ public class CSTableService implements TableService {
                                 contextID, nodeName, Integer.MAX_VALUE, CSTable.class);
             }
             logger.info(
-                    "contextID {} and nodeName {} succeed to get tables size {}",
+                    "contextID: {} and nodeName: {} succeed to get tables size {}",
                     contextID.getContextId(),
                     nodeName,
                     rsList.size());
@@ -124,7 +124,7 @@ public class CSTableService implements TableService {
                 }
                 csTable = searchService.searchContext(contextID, keyword, nodeName, CSTable.class);
                 logger.info(
-                        "contextID {} , nodeName {}, keyword {} succeed to getUpstreamSuitableTable tableName {}",
+                        "contextID: {} , nodeName: {}, keyword {} succeed to getUpstreamSuitableTable tableName {}",
                         contextID.getContextId(),
                         nodeName,
                         keyword,
@@ -169,7 +169,7 @@ public class CSTableService implements TableService {
             }
             contextClient.update(contextID, contextKey, contextValue);
             logger.info(
-                    "contextID {} , contextKeyStr {} succeed to putCSTable tableName {}",
+                    "contextID: {} , contextKeyStr: {} succeed to putCSTable tableName {}",
                     contextID.getContextId(),
                     contextKeyStr,
                     csTable.getName());

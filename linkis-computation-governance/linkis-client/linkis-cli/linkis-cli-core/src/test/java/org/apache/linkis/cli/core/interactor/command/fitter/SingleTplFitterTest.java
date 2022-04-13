@@ -104,8 +104,7 @@ public class SingleTplFitterTest {
         FitterResult[] results = new FitterResult[2];
         results[0] = fitter.fit(cmdStr, template);
         results[1] = fitter.fit(cmdStr2, new TestSparkCmdTemplate());
-        //        System.out.println(results[0].getParsedTemplateCopy().getOptions());
-        //        System.out.println(template.getOptions());
+
         assertTrue(results[0].getParsedTemplate() instanceof TestSparkCmdTemplate);
         assertEquals(
                 results[0].getParsedTemplate().getOptionsMap().get("--cmd").getValue(),

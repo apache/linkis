@@ -76,8 +76,8 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     val jobName = options.getOrDefault("flink.app.name", "EngineConn-Flink")
     val yarnQueue = LINKIS_QUEUE_NAME.getValue(options)
     val parallelism = FLINK_APP_DEFAULT_PARALLELISM.getValue(options)
-    val jobManagerMemory = LINKIS_FLINK_JOB_MANAGER_MEMORY.getValue(options) + "G"
-    val taskManagerMemory = LINKIS_FLINK_TASK_MANAGER_MEMORY.getValue(options) + "G"
+    val jobManagerMemory = LINKIS_FLINK_JOB_MANAGER_MEMORY.getValue(options) + "M"
+    val taskManagerMemory = LINKIS_FLINK_TASK_MANAGER_MEMORY.getValue(options) + "M"
     val numberOfTaskSlots = LINKIS_FLINK_TASK_SLOTS.getValue(options)
     info(s"Use yarn queue $yarnQueue, and set parallelism = $parallelism, jobManagerMemory = $jobManagerMemory G, taskManagerMemory = $taskManagerMemory G, numberOfTaskSlots = $numberOfTaskSlots.")
     // Step2: application-level configurations
@@ -137,7 +137,7 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
       info(s"Ready to use $flinkMainClassJarPath as main class jar to submit application to Yarn.")
       flinkConfig.set(PipelineOptions.JARS, Collections.singletonList(flinkMainClassJarPath))
       flinkConfig.set(DeploymentOptions.TARGET, YarnDeploymentTarget.APPLICATION.getName)
-      flinkConfig.set(DeploymentOptions.ATTACHED, FLINK_EXECUTION_ATTACHED.getValue(options))
+      flinkConfig.setBoolean(DeploymentOptions.ATTACHED, FLINK_EXECUTION_ATTACHED.getValue(options))
       context.setDeploymentTarget(YarnDeploymentTarget.APPLICATION)
       addApplicationLabels(engineCreationContext)
     } else if (isOnceEngineConn(engineCreationContext.getLabels())) {

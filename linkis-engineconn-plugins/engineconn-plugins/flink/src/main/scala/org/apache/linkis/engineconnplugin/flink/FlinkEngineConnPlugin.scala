@@ -46,7 +46,7 @@ class FlinkEngineConnPlugin extends EngineConnPlugin {
   }
 
   override def getEngineConnLaunchBuilder: EngineConnLaunchBuilder = {
-    if (null == engineResourceFactory) lock.synchronized {
+    if (null == engineConnLaunchBuilder) lock.synchronized {
       if (null == engineConnLaunchBuilder) {
         engineConnLaunchBuilder = new FlinkEngineConnLaunchBuilder()
       }

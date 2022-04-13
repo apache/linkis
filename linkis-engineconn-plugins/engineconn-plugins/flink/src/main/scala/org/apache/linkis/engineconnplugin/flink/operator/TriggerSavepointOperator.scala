@@ -34,7 +34,7 @@ class TriggerSavepointOperator extends Operator with Logging {
     val mode = getAsThrow("mode")
     info(s"try to $mode savepoint with path $savepoint.")
     OnceExecutorManager.getInstance.getReportExecutor match {
-      case flinkExecutor: FlinkOnceExecutor[ClusterDescriptorAdapter] =>
+      case flinkExecutor: FlinkOnceExecutor[_] =>
         val writtenSavepoint = flinkExecutor.getClusterDescriptorAdapter.doSavepoint(savepoint, mode)
         Map("writtenSavepoint" -> writtenSavepoint)
       case executor => throw new JobExecutionException("Not support to do savepoint for " + executor.getClass.getSimpleName)

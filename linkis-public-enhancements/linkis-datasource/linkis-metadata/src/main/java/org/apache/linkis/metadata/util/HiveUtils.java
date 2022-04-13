@@ -20,15 +20,16 @@ package org.apache.linkis.metadata.util;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
-import org.apache.log4j.Logger;
 
 import java.io.File;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sun.misc.BASE64Decoder;
 
 public class HiveUtils {
 
-    static Logger logger = Logger.getLogger(HiveUtils.class);
+    static Logger logger = LoggerFactory.getLogger(HiveUtils.class);
 
     public static Configuration getDefaultConf(String userName) {
         Configuration conf = new Configuration();

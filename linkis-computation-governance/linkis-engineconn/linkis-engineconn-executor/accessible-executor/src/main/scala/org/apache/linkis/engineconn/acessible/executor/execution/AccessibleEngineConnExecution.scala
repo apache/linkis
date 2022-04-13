@@ -85,9 +85,11 @@ class AccessibleEngineConnExecution extends EngineConnExecution with Logging {
         }
         if (NodeStatus.isCompleted(accessibleExecutor.getStatus)) {
           error(s"${accessibleExecutor.getId} has completed with status ${accessibleExecutor.getStatus}, now stop it.")
+          requestManagerReleaseExecutor("Completed release")
           ShutdownHook.getShutdownHook.notifyStop()
         } else if (accessibleExecutor.getStatus == NodeStatus.ShuttingDown) {
           logger.warn(s"${accessibleExecutor.getId} is ShuttingDown...")
+          requestManagerReleaseExecutor(" ShuttingDown release")
           ShutdownHook.getShutdownHook.notifyStop()
         } else if (maxFreeTime > 0 && (NodeStatus.Unlock.equals(accessibleExecutor.getStatus) || NodeStatus.Idle.equals(accessibleExecutor.getStatus))
           && System.currentTimeMillis - accessibleExecutor.getLastActivityTime > maxFreeTime) {

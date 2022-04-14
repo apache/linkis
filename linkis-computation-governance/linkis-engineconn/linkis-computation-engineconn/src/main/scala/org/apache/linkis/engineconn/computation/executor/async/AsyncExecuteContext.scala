@@ -18,6 +18,7 @@
 package org.apache.linkis.engineconn.computation.executor.async
 
 import org.apache.linkis.engineconn.computation.executor.conf.ComputationExecutorConf
+import org.apache.linkis.scheduler.queue.fifoqueue.FIFOGroupFactory
 import org.apache.linkis.scheduler.queue.parallelqueue.{ParallelScheduler, ParallelSchedulerContextImpl}
 import org.apache.linkis.scheduler.{Scheduler, SchedulerContext}
 
@@ -44,6 +45,11 @@ class AsyncExecuteContextImpl extends AsyncExecuteContext {
   private def createSchedulerContext(executor: AsyncConcurrentComputationExecutor): SchedulerContext = {
      val parallelSchedulerContext = new ParallelSchedulerContextImpl(ComputationExecutorConf.ASYNC_EXECUTE_MAX_PARALLELISM.getValue)
      parallelSchedulerContext.setExecutorManager(new AsyncExecutorManager(executor))
+    parallelSchedulerContext.getOrCreateGroupFactory match {
+      case groupFactory: FIFOGroupFactory =>
+        groupFactory.setDefaultMaxRunningJobs(ComputationExecutorConf.ASYNC_SCHEDULER_MAX_RUNNING_JOBS)
+      case _ =>
+    }
     parallelSchedulerContext
   }
 

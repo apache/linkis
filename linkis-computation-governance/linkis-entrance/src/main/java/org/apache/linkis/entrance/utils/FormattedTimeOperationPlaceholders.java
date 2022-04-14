@@ -37,7 +37,6 @@ import java.util.Map;
  * 支持任意时间格式化和加减运算
  * 例如:${yyyyMMdd%-1d}/${yyyy-MM-01%-2M}等等
  *
- * Author: duhanmin
  * Description: 占位符操作
  * Date: 2021/5/7 11:10
  */

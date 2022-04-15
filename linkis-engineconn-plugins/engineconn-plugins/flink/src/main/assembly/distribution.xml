@@ -20,16 +20,19 @@
         xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/2.3"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/2.3 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
-    <id>flink</id>
+    <id>linkis-engineconn-plugin-flink</id>
     <formats>
         <format>dir</format>
+        <format>zip</format>
     </formats>
     <includeBaseDirectory>true</includeBaseDirectory>
-    <baseDirectory>/</baseDirectory>
+    <baseDirectory>flink</baseDirectory>
 
     <dependencySets>
         <dependencySet>
-            <outputDirectory>/lib</outputDirectory>
+            <!-- Enable access to all projects in the current multimodule build! <useAllReactorProjects>true</useAllReactorProjects> -->
+            <!-- Now, select which projects to include in this module-set. -->
+            <outputDirectory>/dist/v${flink.version}/lib</outputDirectory>
             <useProjectArtifact>true</useProjectArtifact>
             <useTransitiveDependencies>true</useTransitiveDependencies>
             <unpack>false</unpack>
@@ -100,7 +103,7 @@
                 <exclude>org.apache.commons:commons-math3:jar</exclude>
                 <exclude>org.apache.curator:*:jar</exclude>
                 <exclude>org.apache.directory.*:*:jar</exclude>
-                 <exclude>org.apache.hadoop:hadoop-annotations:jar</exclude>
+                <exclude>org.apache.hadoop:hadoop-annotations:jar</exclude>
                 <exclude>org.apache.hadoop:hadoop-auth:jar</exclude>
                 <exclude>org.apache.hadoop:hadoop-common:jar</exclude>
                 <exclude>org.apache.hadoop:hadoop-hdfs:jar</exclude>
@@ -182,6 +185,7 @@
                 <exclude>xmlpull:xmlpull:jar</exclude>
                 <exclude>xpp3:xpp3_min:jar</exclude>
             </excludes>
+
         </dependencySet>
     </dependencySets>
 
@@ -194,10 +198,21 @@
             </includes>
             <fileMode>0777</fileMode>
             <directoryMode>0755</directoryMode>
-            <outputDirectory>/conf</outputDirectory>
+            <outputDirectory>./dist/v${flink.version}/conf</outputDirectory>
             <lineEnding>unix</lineEnding>
         </fileSet>
 
+        <fileSet>
+            <directory>${basedir}/target</directory>
+            <includes>
+                <include>*.jar</include>
+            </includes>
+            <excludes>
+                <exclude>*doc.jar</exclude>
+            </excludes>
+            <fileMode>0777</fileMode>
+            <outputDirectory>./plugin/${flink.version}</outputDirectory>
+        </fileSet>
 
     </fileSets>
 

@@ -216,10 +216,10 @@ class ConfigurationService extends Logging {
           if (config.getKey != null && config.getKey.equals(defaultConfig.getKey)) {
             if (StringUtils.isNotBlank(config.getConfigValue)) {
               defaultConfig.setConfigValue(config.getConfigValue)
-              defaultConfig.setConfigLabelId(config.getConfigLabelId)
-              defaultConfig.setValueId(config.getValueId)
-              defaultConfig.setIsUserDefined(true)
             }
+            defaultConfig.setConfigLabelId(config.getConfigLabelId)
+            defaultConfig.setValueId(config.getValueId)
+            defaultConfig.setIsUserDefined(true)
           }
         })
       })

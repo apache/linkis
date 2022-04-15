@@ -110,24 +110,18 @@ abstract class LogReader(charset: String) extends Closeable with Logging{
     val from = if (fromLine < 1) 0 else fromLine - 1
     var line, read = 0
     val inputStream = getInputStream
-    val bufferReader = new BufferedReader(new InputStreamReader(inputStream, charset))
-    Utils.tryFinally {
-      val skipNum = bufferReader.skip(from)
-      if (skipNum > from && size >= 0) {
-        var lineText = bufferReader.readLine()
-        while (lineText != null && read < size) {
-          val r = lineText
-          if (line >= from) {
-            deal(r)
-            read += 1
-          }
-          line += 1
-          lineText = bufferReader.readLine()
+    val lineIterator = IOUtils.lineIterator(inputStream, charset)
+    Utils.tryFinally(
+      while (lineIterator.hasNext && (read < size || size < 0)) {
+        val r = lineIterator.next()
+        if (line >= from) {
+          deal(r)
+          read += 1
         }
-      }
-    } {
-      if (null != bufferReader) {
-        IOUtils.closeQuietly(bufferReader)
+        line += 1
+      }) {
+      if (null != lineIterator) {
+        LineIterator.closeQuietly(lineIterator)
       }
       if (null != inputStream) {
         IOUtils.closeQuietly(inputStream)

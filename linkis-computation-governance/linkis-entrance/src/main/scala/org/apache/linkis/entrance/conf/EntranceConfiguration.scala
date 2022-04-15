@@ -69,7 +69,7 @@ object EntranceConfiguration {
 
   val DEFAULT_CREATE_SERVICE = CommonVars("wds.linkis.default.create.service", "default_create_service")
 
-  val LOG_WARN_EXCLUDE = CommonVars("wds.linkis.warn.log.exclude", "org.apache,hive.ql,hive.metastore,com.netflix,org.apache.linkis")
+  val LOG_WARN_EXCLUDE = CommonVars("wds.linkis.warn.log.exclude", "com.netflix")
 
   val CLEAR_LOG = CommonVars("wds.linkis.log.clear", false)
 

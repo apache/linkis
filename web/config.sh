@@ -21,4 +21,4 @@ linkis_port="8088"
 linkis_url="http://localhost:20401"
 
 #linkis ip address
-linkis_ipaddr=$(ip addr | awk '/^[0-9]+: / {}; /inet.*global/ {print gensub(/(.*)\/(.*)/, "\\1", "g", $2)}')
+linkis_ipaddr=localhost

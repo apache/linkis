@@ -22,9 +22,7 @@
         class="layout-header-menu-icon"
         @click="$router.push('/')"
       >
-        <div style="display:inline-block;">
-          <SvgIcon style="font-size: 28px;" icon-class="common" color="#00FFFF"/>
-        </div>
+
         <div class="logo">
           <img
             class="logo-img"
@@ -58,13 +56,11 @@
   </div>
 </template>
 <script>
-import { isEmpty } from "lodash";
 import storage from "@/common/helper/storage";
 import userMenu from "./userMenu.vue";
 import clickoutside from "@/common/helper/clickoutside";
 import mixin from '@/common/service/mixin';
 import util from '@/common/util';
-import { GetBaseInfo } from '@/common/service/apiCommonMethod.js';
 export default {
   directives: {
     clickoutside
@@ -87,14 +83,6 @@ export default {
   methods: {
     init() {
       this.userName = storage.get('userName');
-      GetBaseInfo().then(rst => {
-        if (!isEmpty(rst)) {
-          this.userName = this.userName || rst.username;
-          storage.set("baseInfo", rst, "local");
-          this.$router.app.$emit("username", rst.username);
-          this.$emit("set-init");
-        }
-      });
     },
     handleOutsideClick() {
       this.isUserMenuShow = false;

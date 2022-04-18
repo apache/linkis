@@ -18,7 +18,7 @@
 package org.apache.linkis.jobhistory.cache.impl;
 
 import org.apache.linkis.jobhistory.cache.QueryCacheManager;
-import org.apache.linkis.jobhistory.conf.JobHistoryConfiguration;
+import org.apache.linkis.jobhistory.conf.JobhistoryConfiguration;
 import org.apache.linkis.jobhistory.dao.JobHistoryMapper;
 import org.apache.linkis.jobhistory.entity.JobHistory;
 import org.apache.linkis.jobhistory.util.QueryConfig;
@@ -54,7 +54,9 @@ public class DefaultQueryCacheManager implements QueryCacheManager, Initializing
     private Map<String, Cache<String, UserTaskResultCache>> engineUserCaches =
             Maps.newConcurrentMap();
 
-    private Long undoneTaskMinId = JobHistoryConfiguration.UNDONE_JOB_MINIMUM_ID.getValue();
+    private Long undoneTaskMinId =
+            Long.valueOf(
+                    String.valueOf(JobhistoryConfiguration.UNDONE_JOB_MINIMUM_ID().getValue()));
 
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -99,7 +101,7 @@ public class DefaultQueryCacheManager implements QueryCacheManager, Initializing
         int minute = 15;
 
         try {
-            String refreshTime = JobHistoryConfiguration.UNDONE_JOB_REFRESH_TIME_DAILY.getValue();
+            String refreshTime = JobhistoryConfiguration.UNDONE_JOB_REFRESH_TIME_DAILY().getValue();
             String[] parts = refreshTime.split(":");
             if (parts.length != 2) {
                 logger.error(

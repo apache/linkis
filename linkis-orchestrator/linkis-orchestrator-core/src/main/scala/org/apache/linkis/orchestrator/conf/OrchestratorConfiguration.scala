@@ -70,4 +70,6 @@ object OrchestratorConfiguration {
 
   val ORCHESTRATOR_METRIC_LOG_TIME = CommonVars("wds.linkis.orchestrator.metric.log.time", new TimeType("1h"))
 
+  val REHEATER_KEY = "Reheat_successful"
+
 }

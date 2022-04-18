@@ -27,7 +27,6 @@ import router from './router'
 import i18n from './common/i18n'
 import mixinDispatch from './common/service/moduleMixin'
 
-import API_PATH from './common/config/apiPath.js'
 import 'iview/dist/styles/iview.css'
 
 // Icon
@@ -57,8 +56,6 @@ Vue.config.productionTip = false
 Vue.prototype.$Message.config({
   duration: 3
 })
-// 全局变量
-Vue.prototype.$API_PATH = API_PATH;
 
 new Vue({
   router,

@@ -100,7 +100,7 @@
     </modules>
     <properties>
         <linkis.version>1.1.1</linkis.version>
-        <hadoop.version>2.7.2</hadoop.version>
+        <hadoop.version>3.2.3</hadoop.version>
         <zookeeper.version>3.5.9</zookeeper.version>
         <spring.boot.version>2.3.12.RELEASE</spring.boot.version>
         <guava.version>30.0-jre</guava.version>

@@ -49,7 +49,7 @@ object SparkConfiguration extends Logging {
 
   val SPARK_SUBMIT_PATH = CommonVars[String]("wds.linkis.spark.sparksubmit.path", "spark-submit")
 
-  val MAPRED_OUTPUT_COMPRESS = CommonVars[String]("mapred.output.compress", "true", "Whether the map output is compressed（map输出结果是否压缩）")
+  val MAPRED_OUTPUT_COMPRESS = CommonVars[Boolean]("mapred.output.compress", false, "Whether the map output is compressed（map输出结果是否压缩）")
 
   val MAPRED_OUTPUT_COMPRESSION_CODEC = CommonVars[String]("mapred.output.compression.codec", "org.apache.hadoop.io.compress.GzipCodec", "Map output compression method（map输出结果压缩方式）")
 

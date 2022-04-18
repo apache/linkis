@@ -66,7 +66,6 @@ import storage from '@/common/helper/storage';
 import { db } from '@/common/service/db/index.js';
 import { config } from '@/common/config/db.js';
 import { RSA } from '@/common/util/ras.js';
-import util from '@/common/util/';
 import tab from '@/apps/scriptis/service/db/tab.js';
 export default {
   data() {
@@ -102,17 +101,6 @@ export default {
   mounted() {
   },
   methods: {
-    // 获取登录后的url调转
-    getPageHomeUrl() {
-      const currentModules = util.currentModules();
-      return api.fetch(`${this.$API_PATH.WORKSPACE_PATH}getWorkspaceHomePage`, {
-        micro_module: currentModules.microModule || 'dss'
-      }, 'get').then((res) => {
-        return res.workspaceHomePage.homePageUrl;
-      }).catch(() => {
-        return '/'
-      });
-    },
     // 获取公钥接口
     getPublicKey() {
       api.fetch('/user/publicKey', 'get').then((res) => {
@@ -175,7 +163,7 @@ export default {
               }
               if (err.message.indexOf('已经登录，请先退出再进行登录') !== -1) {
                 this.getPageHomeUrl().then((res) => {
-                  this.$router.push({path: res});
+                  this.$router.push({path: '/'});
                 })
               }
               this.loading = false;

@@ -1,3 +1,20 @@
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one or more
+  ~ contributor license agreements.  See the NOTICE file distributed with
+  ~ this work for additional information regarding copyright ownership.
+  ~ The ASF licenses this file to You under the Apache License, Version 2.0
+  ~ (the "License"); you may not use this file except in compliance with
+  ~ the License.  You may obtain a copy of the License at
+  ~ 
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~ 
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+  
 <template>
   <div
     class="login"
@@ -41,27 +58,14 @@
         </FormItem>
       </Form>
     </div>
-    <Modal
-      v-model="showProxyList"
-      :loading="selectProxyLoading"
-      title="请选择需要的角色进入或取消直接进入"
-      @on-ok="onOk"
-      @on-cancel="onCancel">
-      <RadioGroup class="radioGroup" v-model="proxyUser" vertical>
-        <Radio v-for="(item, index) in proxyList" :key="index" :label="item"></Radio>
-      </RadioGroup>
-    </Modal>
   </div>
 </template>
 <script>
 import api from '@/common/service/api';
 import storage from '@/common/helper/storage';
-// 【dss-scriptis】前端执行接口降级
-// import socket from '@/apps/scriptis/module/webSocket';
 import { db } from '@/common/service/db/index.js';
 import { config } from '@/common/config/db.js';
 import { RSA } from '@/common/util/ras.js';
-import util from '@/common/util/';
 import tab from '@/apps/scriptis/service/db/tab.js';
 export default {
   data() {
@@ -71,10 +75,6 @@ export default {
         user: '',
         password: '',
       },
-      proxyList: [],
-      selectProxyLoading: true,
-      showProxyList: false,
-      proxyUser: '',
       ruleInline: {
         user: [
           { required: true, message: this.$t('message.common.login.userName'), trigger: 'blur' },
@@ -101,17 +101,6 @@ export default {
   mounted() {
   },
   methods: {
-    // 获取登录后的url调转
-    getPageHomeUrl() {
-      const currentModules = util.currentModules();
-      return api.fetch(`${this.$API_PATH.WORKSPACE_PATH}getWorkspaceHomePage`, {
-        micro_module: currentModules.microModule || 'dss'
-      }, 'get').then((res) => {
-        return res.workspaceHomePage.homePageUrl;
-      }).catch(() => {
-        return '/'
-      });
-    },
     // 获取公钥接口
     getPublicKey() {
       api.fetch('/user/publicKey', 'get').then((res) => {
@@ -163,23 +152,9 @@ export default {
                 storage.set('saveUserNameAndPass', `${this.loginForm.user}&${this.loginForm.password}`, 'local');
               }
               if (rst) {
-                // 获取代理用户列表并选择代理用户
-                this.getProxyList(rst.userName, (proxy) => {
-                  // 判断代理用户是否开启或存在，如果请求错误直接按原逻辑走
-                  if(proxy && proxy.proxyEnable && proxy.proxyUsers && proxy.proxyUsers.length > 0) {
-                    this.proxyList = proxy.proxyUsers;
-                    this.userName = rst.userName;
-                    this.showProxyList = true;
-                  } else {
-                    // 登录之后需要获取当前用户的调转首页的路径
-                    this.getPageHomeUrl().then(() => {
-                      // this.$router.push({path: res});
-                      // 直接跳转管理台页面
-                      this.$router.push({path: '/console'});
-                      this.$Message.success(this.$t('message.common.login.loginSuccess'));
-                    })
-                  }
-                })
+                this.userName = rst.userName;
+                this.$router.push({path: '/console'});
+                this.$Message.success(this.$t('message.common.login.loginSuccess'));
               }
             })
             .catch((err) => {
@@ -188,7 +163,7 @@ export default {
               }
               if (err.message.indexOf('已经登录，请先退出再进行登录') !== -1) {
                 this.getPageHomeUrl().then((res) => {
-                  this.$router.push({path: res});
+                  this.$router.push({path: '/'});
                 })
               }
               this.loading = false;
@@ -197,53 +172,6 @@ export default {
           this.$Message.error(this.$t('message.common.login.vaildFaild'));
         }
       });
-    },
-    // 弹出代理用户选择模态框操作
-    onOk() {
-      // 判断用户是否选择代理用户
-      if(!this.proxyUser) {
-        this.selectProxyLoading = false;
-        this.$nextTick(() => {this.selectProxyLoading = true})
-        return this.$Message.warning(this.$t('message.common.login.selectProxyTip'))
-      }
-      let params = {userName: this.userName, proxyUser: this.proxyUser};
-      this.showProxyList = false;
-      this.bindProxyList(params)
-    },
-    onCancel() {
-      // 登录之后需要获取当前用户的调转首页的路径
-      let params = {userName: this.userName, proxyUser: this.userName};
-      this.bindProxyList(params)
-      this.showProxyList = false;
-    },
-    // 获取代理用户列表
-    getProxyList(data, callback) {
-      if(data) {
-        api.fetch('/user/proxyInfo?userName=' + data, 'get').then((res) => {
-          callback(res);
-        }).catch((err) => {
-          window.console.error(err);
-          callback(false);
-        });
-      } else {
-        throw new Error('用户名无效！');
-      }
-    },
-    // 绑定用户代理接口
-    bindProxyList(params) {
-      api.fetch(`/user/bindUser`, params).then(res => {
-        if(res) {
-          // 登录之后需要获取当前用户的调转首页的路径
-          this.getPageHomeUrl().then((urlRes) => {
-            this.$router.push({ path: urlRes })
-            this.$Message.success(this.$t('message.common.login.loginSuccess'))
-          })
-        } else {
-          this.$Message.error(res.message)
-        }
-      }).catch(() => {
-        throw new Error('绑定失败！')
-      })
     },
     // 清楚本地缓存
     clearSession() {

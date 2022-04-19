@@ -1,20 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright 2019 WeBank
-  ~
-  ~ Licensed under the Apache License, Version 2.0 (the "License");
-  ~  you may not use this file except in compliance with the License.
-  ~ You may obtain a copy of the License at
-  ~
-  ~ http://www.apache.org/licenses/LICENSE-2.0
-  ~
+  ~ Licensed to the Apache Software Foundation (ASF) under one or more
+  ~ contributor license agreements.  See the NOTICE file distributed with
+  ~ this work for additional information regarding copyright ownership.
+  ~ The ASF licenses this file to You under the Apache License, Version 2.0
+  ~ (the "License"); you may not use this file except in compliance with
+  ~ the License.  You may obtain a copy of the License at
+  ~ 
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~ 
   ~ Unless required by applicable law or agreed to in writing, software
   ~ distributed under the License is distributed on an "AS IS" BASIS,
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
-  ~
   -->
-
+  
 <assembly
         xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/2.3"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -22,7 +23,6 @@
     <id>linkis-application-manager</id>
     <formats>
         <format>dir</format>
-        <format>zip</format>
     </formats>
     <includeBaseDirectory>false</includeBaseDirectory>
     <baseDirectory>linkis-application-manager</baseDirectory>
@@ -35,9 +35,31 @@
             <useProjectArtifact>true</useProjectArtifact>
             <useTransitiveDependencies>true</useTransitiveDependencies>
             <unpack>false</unpack>
-            <useStrictFiltering>true</useStrictFiltering>
+            <useStrictFiltering>false</useStrictFiltering>
             <useTransitiveFiltering>true</useTransitiveFiltering>
             <excludes>
+                <exclude>com.google.code.findbugs:annotations:jar</exclude>
+                <exclude>commons-beanutils:commons-beanutils:jar</exclude>
+                <exclude>commons-codec:commons-codec:jar</exclude>
+                <exclude>commons-collections:commons-collections:jar</exclude>
+                <exclude>commons-io:commons-io:jar</exclude>
+                <exclude>commons-logging:commons-logging:jar</exclude>
+                <exclude>com.google.errorprone:error_prone_annotations:jar</exclude>
+                <exclude>com.google.guava:failureaccess:jar</exclude>
+                <exclude>com.google.guava:guava:jar</exclude>
+                <exclude>com.google.j2objc:j2objc-annotations:jar</exclude>
+                <exclude>org.javassist:javassist:jar</exclude>
+                <exclude>javax.inject:javax.inject:jar</exclude>
+                <exclude>javax.xml.bind:jaxb-api:jar</exclude>
+                <exclude>com.sun.jersey.contribs:jersey-guice:jar</exclude>
+                <exclude>com.google.code.findbugs:jsr305:jar</exclude>
+                <exclude>com.google.guava:listenablefuture:jar:9999.0-empty-to-avoid-conflict-with-guava</exclude>
+                <exclude>com.google.protobuf:protobuf-java:jar</exclude>
+                <exclude>org.reflections:reflections:jar</exclude>
+                <exclude>org.slf4j:slf4j-api:jar</exclude>
+                <exclude>org.springframework:spring-beans:jar</exclude>
+                <exclude>org.springframework:spring-core:jar</exclude>
+                <exclude>org.springframework:spring-jcl:jar</exclude>
             </excludes>
         </dependencySet>
     </dependencySets>

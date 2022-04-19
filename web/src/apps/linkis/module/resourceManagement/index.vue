@@ -1,24 +1,93 @@
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one or more
+  ~ contributor license agreements.  See the NOTICE file distributed with
+  ~ this work for additional information regarding copyright ownership.
+  ~ The ASF licenses this file to You under the Apache License, Version 2.0
+  ~ (the "License"); you may not use this file except in compliance with
+  ~ the License.  You may obtain a copy of the License at
+  ~
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
 <template>
-  <div>
+  <div class="resource-page">
     <Spin
       v-if="loading"
       size="large"
       fix/>
-    <div class="resource-title">
-      <span class="title-text" >{{$t('message.linkis.resourceManagement.resourceUsage')}}</span>
-      <Icon class="title-icon" @click="refreshResource" type="md-refresh"></Icon>
+    <div class="resource-title" :class="{'admin-title': !isAdminModel}">
+      <!-- <span class="title-text" >{{$t('message.linkis.resourceManagement.resourceUsage')}}</span>
+      <Icon class="title-icon" @click="refreshResource" type="md-refresh"></Icon> -->
+      <Form v-if="isLogAdmin" class="global-history-searchbar" :style="{float: isAdminModel ? 'none' : 'right'}" :model="searchBar" inline>
+        <FormItem v-show="isAdminModel" prop="userName" :label="$t('message.linkis.userName')">
+          <Input
+            :maxlength="50"
+            v-model="searchBar.userName"
+            :placeholder="$t('message.linkis.searchName')"
+            style="width:120px;"
+          />
+        </FormItem>
+        <FormItem v-show="isAdminModel" prop="appType" :label="$t('message.linkis.formItems.appType')">
+          <Input
+            :maxlength="50"
+            v-model="searchBar.appType"
+            :placeholder="$t('message.linkis.searchAppType')"
+            style="width:120px;"
+          />
+        </FormItem>
+        <FormItem v-show="isAdminModel" prop="status" :label="$t('message.linkis.formItems.engineType')">
+          <Select v-model="searchBar.engineType" style="min-width:90px;">
+            <Option
+              v-for="(item) in engines"
+              :label="item"
+              :value="item"
+              :key="item"
+            />
+          </Select>
+        </FormItem>
+        <FormItem>
+          <Button
+            v-show="isAdminModel"
+            type="primary"
+            @click="search"
+            style="margin-right: 10px;margin-left: 20px;"
+          >{{ $t('message.linkis.search') }}</Button>
+          <Button
+            v-show="isAdminModel"
+            type="warning"
+            @click="clearsearch"
+            style="margin-right: 10px;"
+          >{{ $t('message.linkis.clearSearch') }}</Button>
+          <Button
+            type="primary"
+            @click="switchAdmin"
+          >{{ isAdminModel ? $t('message.linkis.generalView') : $t('message.linkis.manageView') }}</Button>
+          <Button
+            v-show="isAdminModel"
+            type="error" @click="() => {this.resetAll()}" style="margin-left: 10px;">{{$t('message.linkis.resetAll')}}</Button>
+        </FormItem>
+      </Form>
     </div>
-    <div class="noData" v-if="progressDataList.length <= 0">No data, try refresh</div>
+    <div class="noData" v-if="!isAdminModel && progressDataList.length <= 0">No data, try refresh</div>
     <!-- 进度条 -->
-    <template  v-for="item in progressDataList" >
-      <WbProgress @expandChange="expandChange" :key="item.id" :progressData="item">
-      </WbProgress>
-      <template v-for="subItem in item.engineTypes">
-        <WbProgress v-if="item.expand" :key="subItem.id" @expandChange="expandChange" :progressData="subItem" :children="true"></WbProgress>
-      </template>
+    <template v-if="!isAdminModel">
+      <div v-for="item in progressDataList" :key="item.id">
+        <WbProgress @expandChange="expandChange" :progressData="item">
+        </WbProgress>
+        <template v-for="subItem in item.engineTypes">
+          <WbProgress v-if="item.expand" :key="subItem.id" @expandChange="expandChange" :progressData="subItem" :children="true"></WbProgress>
+        </template>
+      </div>
     </template>
+
     <!-- 应用列表 -->
-    <template v-if="isShowTable">
+    <template v-if="isShowTable && !isAdminModel">
       <div class="resource-title appListTitle">
         {{$t('message.linkis.resourceManagement.applicationList')}}
       </div>
@@ -31,14 +100,14 @@
         <div class="resourceList">
           <span>{{$t('message.linkis.resources')}}：</span>
           <span v-if="applicationList.usedResource">
-            <Tag color="success">{{`${calcCompany(applicationList.usedResource.cores)}cores,${calcCompany(applicationList.usedResource.memory, true)}G`}}(used)</Tag>
-            <Tag color="error">{{`${calcCompany(applicationList.maxResource.cores)}cores,${calcCompany(applicationList.maxResource.memory, true)}G`}}(max)</Tag>
-            <Tag color="warning">{{`${calcCompany(applicationList.minResource.cores)}cores,${calcCompany(applicationList.minResource.memory, true)}G`}}(min)</Tag>
+            <Tag color="success">{{`${calcCompany(applicationList.usedResource.cores)},${calcCompany(applicationList.usedResource.memory, true)}`}}(used)</Tag>
+            <Tag color="error">{{`${calcCompany(applicationList.maxResource.cores)},${calcCompany(applicationList.maxResource.memory, true)}`}}(max)</Tag>
+            <Tag color="warning" v-if="applicationList.leftResource">{{`${calcCompany(applicationList.leftResource.cores)},${calcCompany(applicationList.leftResource.memory, true)}`}}(remain)</Tag>
           </span>
         </div>
         <div class="instanceNum" >
           <span>{{$t('message.linkis.instanceNum')}}：</span>
-          <span v-if="applicationList.usedResource">{{calcCompany(applicationList.usedResource.instance)}} / {{calcCompany(applicationList.maxResource.instance)}}</span>
+          <span v-if="applicationList.usedResource">{{applicationList.usedResource.instance}} / {{applicationList.maxResource.instance}}</span>
         </div>
       </div>
       <Table  class="table-content" border :width="tableWidth" :columns="columns" :data="tableData">
@@ -46,16 +115,47 @@
           <span>{{`${row.engineType}:${row.instance}`}}</span>
         </template>
         <template slot-scope="{row}" slot="usedResource">
-          <span>Linkis:({{`${calcCompany(row.resource.usedResource.cores)}cores,${calcCompany(row.resource.usedResource.memory, true)}G`}})</span>
+          <span>{{`${calcCompany(row.resource.usedResource.cores)},${calcCompany(row.resource.usedResource.memory, true)}`}}</span>
+        </template>
+        <template slot-scope="{row}" slot="lockedResource">
+          <span>{{`${calcCompany(row.resource.lockedResource.cores)},${calcCompany(row.resource.lockedResource.memory, true)}`}}</span>
         </template>
         <template slot-scope="{row}" slot="maxResource">
-          <span>Linkis:({{`${calcCompany(row.resource.maxResource.cores)}cores,${calcCompany(row.resource.maxResource.memory, true)}G`}})</span>
+          <span>{{`${calcCompany(row.resource.maxResource.cores)},${calcCompany(row.resource.maxResource.memory, true)}`}}</span>
+        </template>
+        <template slot-scope="{row}" slot="leftResource">
+          <span>{{`${calcCompany(row.resource.leftResource.cores)},${calcCompany(row.resource.leftResource.memory, true)}`}}</span>
         </template>
         <template slot-scope="{row}" slot="minResource">
-          <span>Linkis:({{`${calcCompany(row.resource.minResource.cores)}cores,${calcCompany(row.resource.minResource.memory, true)}G`}})</span>
+          <span>{{`${calcCompany(row.resource.minResource.cores)},${calcCompany(row.resource.minResource.memory, true)}`}}</span>
         </template>
         <template slot-scope="{row}" slot="startTime">
           <span>{{ timeFormat(row) }}</span>
+        </template>
+      </Table>
+    </template>
+    <template v-if="isAdminModel">
+      <Table class="table-content" border :width="tableWidth" :columns="admincolumns" :data="adminTableData">
+        <template slot-scope="{row}" slot="usedResource">
+          <span>{{`${calcCompanyAdmin(row, 'usedResource', 'cores')},${calcCompanyAdmin(row, 'usedResource', 'memory')}`}}</span>
+        </template>
+        <template slot-scope="{row}" slot="lockedResource">
+          <span>{{`${calcCompanyAdmin(row, 'lockedResource', 'cores')},${calcCompanyAdmin(row, 'lockedResource', 'memory')}`}}</span>
+        </template>
+        <template slot-scope="{row}" slot="maxResource">
+          <span>{{`${calcCompanyAdmin(row, 'maxResource', 'cores')},${calcCompanyAdmin(row, 'maxResource', 'memory')}`}}</span>
+        </template>
+        <template slot-scope="{row}" slot="leftResource">
+          <span :class="'label-'+row.loadResourceStatus">{{`${calcCompanyAdmin(row, 'leftResource', 'cores')},${calcCompanyAdmin(row, 'leftResource', 'memory')}`}}</span>
+        </template>
+        <template slot-scope="{row}" slot="yarnUsedResource">
+          <span>{{`${calcCompanyAdmin(row, 'usedResource', 'cores', true)},${calcCompanyAdmin(row, 'usedResource', 'memory', true)}`}}</span>
+        </template>
+        <template slot-scope="{row}" slot="yarnMaxResource">
+          <span>{{`${calcCompanyAdmin(row, 'maxResource', 'cores', true)},${calcCompanyAdmin(row, 'maxResource', 'memory', true)}`}}</span>
+        </template>
+        <template slot-scope="{row}" slot="yarnLeftResource">
+          <span :class="'label-'+row.queueResourceStatus">{{`${calcCompanyAdmin(row, 'leftResource', 'cores', true)},${calcCompanyAdmin(row, 'leftResource', 'memory', true)}`}}</span>
         </template>
       </Table>
       <div class="page-bar">
@@ -69,31 +169,17 @@
           size="small"
           show-total
           show-sizer
+          prev-text="上一页" next-text="下一页"
           @on-change="change"
           @on-page-size-change="changeSize" />
       </div>
     </template>
-    <Modal
-      @on-ok="submitTagEdit"
-      :title="$t('message.linkis.tagEdit')"
-      v-model="isTagEdit"
-      :mask-closable="false">
-      <Form :label-width="80" :model="formItem">
-        <FormItem :label="`${$t('message.linkis.instanceName')}：`">
-          <Input disabled v-model="formItem.instance" ></Input>
-        </FormItem>
-        <FormItem class="addTagClass" :label="`${$t('message.linkis.tableColumns.label')}：`">
-          <WbTag :tagList="formItem.labels" :selectList="keyList" @addEnter="addEnter" @onCloseTag="onCloseTag"></WbTag>
-        </FormItem>
-      </Form>
-    </Modal>
   </div>
 </template>
 <script>
 import WbProgress from '@/apps/linkis/components/progress';
 import moment from "moment";
 import api from '@/common/service/api';
-import WbTag from '@/apps/linkis/components/tag';
 export default {
   name: 'resourceManagement',
   data() {
@@ -110,23 +196,11 @@ export default {
       },
       tagTitle: [],
       applicationList: {},
-      addTag: true, // 是否显示添加tag按钮
-      addTagForm: { // 新增标签的form表单
-        key: '',
-        value: ''
-      },
       currentEngineData: {}, // 当前点击的引擎列表
       currentParentsData: {}, // 当前点击的主引擎
       isShowTable: false,
-      addTagFormRule: { // 验证规则
-        key: [
-          { required: true, message: this.$t('message.linkis.keyTip'), trigger: 'blur' }
-        ]
-      },
       progressDataList: [],
       tableWidth: 0,
-      // 开启标签修改弹框
-      isTagEdit: false,
       tableData: [],
       page: {
         totalSize: 0,
@@ -144,7 +218,7 @@ export default {
         },
         {
           title: this.$t('message.linkis.tableColumns.engineType'),
-          key: 'engineType',  
+          key: 'engineType',
           minWidth: 100,
           className: 'table-project-column'
         },
@@ -168,18 +242,11 @@ export default {
           minWidth: 150,
         },
         {
-          title: this.$t('message.linkis.tableColumns.maximumAvailableResources'),
-          key: 'maxResource',
-          slot: 'maxResource',
+          title: this.$t('message.linkis.tableColumns.lockedResource'),
+          key: 'lockedResource',
           className: 'table-project-column',
+          slot: 'lockedResource',
           minWidth: 150,
-        },
-        {
-          title: this.$t('message.linkis.tableColumns.minimumAvailableResources'),
-          key: 'minResource',
-          slot: 'minResource',
-          minWidth: 150,
-          className: 'table-project-column',
         },
         {
           title: this.$t('message.linkis.tableColumns.requestApplicationName'),
@@ -218,7 +285,7 @@ export default {
                       onOk: () => {
                         let data = [];
                         data.push({
-                          engineType: 'EngineConn', // 当期需求是写死此参数
+                          engineType: params.row.applicationName, // 当期需求是写死此参数
                           engineInstance: params.row.instance,
                         });
                         api.fetch(`/linkisManager/rm/enginekill`, data).then(() => {
@@ -237,54 +304,119 @@ export default {
                   }
                 }
               }, this.$t('message.linkis.stop')),
-              /*               h('Button', {
-                props: {
-                  type: 'primary',
-                  size: 'small'
-                },
-                on: {
-                  click: () => {
-                    this.isTagEdit = true;
-                    let obj = {};
-                    console.log(params)
-                    obj.instance = params.row.instance;
-                    let labels = params.row.labels || [];
-                    // 将标签数据转换成组件可渲染格式
-                    obj.labels = labels.map(item => {
-                      return {
-                        key: item.labelKey,
-                        value: item.stringValue,
-                      }
-                    })
-                    obj.applicationName = params.row.applicationName;
-                    this.formItem = Object.assign(this.formItem, obj)
-                  }
-                }
-              }, this.$t('message.linkis.tagEdit')) */
             ]);
           }
         }
       ],
+      admincolumns: [
+        {
+          title: this.$t('message.linkis.userName'),
+          key: 'username',
+          minWidth: 100,
+          className: 'table-project-column',
+        },
+        {
+          title: this.$t('message.linkis.tableColumns.appType'),
+          key: 'creator',
+          minWidth: 100,
+          className: 'table-project-column',
+        },
+        {
+          title: this.$t('message.linkis.tableColumns.engineType'),
+          key: 'engineTypeWithVersion',
+          minWidth: 100,
+          className: 'table-project-column'
+        },
+        {
+          title: this.$t('message.linkis.tableColumns.engineUsed'),
+          key: 'usedResource',
+          minWidth: 100,
+          className: 'table-project-column',
+          slot: 'usedResource',
+        },
+        {
+          title: this.$t('message.linkis.tableColumns.engineTop'),
+          key: 'maxResource',
+          minWidth: 150,
+          className: 'table-project-column',
+          slot: 'maxResource',
+        },
+        {
+          title: this.$t('message.linkis.tableColumns.engineRemain'),
+          key: 'leftResource',
+          className: 'table-project-column',
+          slot: 'leftResource',
+          minWidth: 150,
+        },
+        {
+          title: this.$t('message.linkis.tableColumns.queenUsed'),
+          key: 'yarnUsedResource',
+          minWidth: 150,
+          className: 'table-project-column',
+          slot: 'yarnUsedResource',
+        },
+        {
+          title: this.$t('message.linkis.tableColumns.queenTop'),
+          key: 'yarnMaxResource',
+          minWidth: 150,
+          className: 'table-project-column',
+          slot: 'yarnMaxResource',
+        },
+        {
+          title: this.$t('message.linkis.tableColumns.queenRemain'),
+          key: 'yarnLeftResource',
+          className: 'table-project-column',
+          slot: 'yarnLeftResource',
+          minWidth: 150,
+        },
+        {
+          title: this.$t('message.linkis.tableColumns.control.title'),
+          key: 'action',
+          width: '215',
+          align: 'center',
+          render: (h, params) => {
+            return h('div', [
+              h('Button', {
+                props: {
+                  type: 'error',
+                  size: 'small',
+                  disabled: params.row.isStop
+                },
+                style: {
+                  marginRight: '5px',
+                },
+                on: {
+                  click: () => {
+                    this.resetAll(params.row.id)
+                  }
+                }
+              }, this.$t('message.linkis.reset'))
+            ]);
+          }
+        }
+      ],
+      engines: [],
+      searchBar: {},
+      isAdminModel: false,
+      adminTableData: []
     }
   },
   components: {
-    WbProgress,
-    WbTag,
+    WbProgress
   },
   computed: {
-    pageDatalist() {// 展示的数据
-      return this.tableData.filter((item, index) => {
-        return (this.page.pageNow - 1) * this.page.pageSize <= index && index < this.page.pageNow * this.page.pageSize;
-      })
-    },
   },
   created() {
     // 获取是否是历史管理员权限
     api.fetch('/jobhistory/governanceStationAdmin', 'get').then((res) => {
       this.isLogAdmin = res.admin;
+      this.initExpandList();
+      this.getKeyList();
     })
-    this.initExpandList();
-    this.getKeyList();
+    api.fetch('/linkisManager/rm/engineType', 'get').then(res => {
+      this.engines =  ['all'].concat(res.engineType)
+    })
+
   },
   methods: {
     // 刷新进度条
@@ -328,57 +460,19 @@ export default {
         let engines = await api.fetch('/linkisManager/rm/userresources','post') || {};
         // 获取使用的引擎资源列表
         let enginesList = engines.userResources || [];
-        enginesList.forEach((userItem, userIndex) => {
-          userItem.id = new Date().valueOf() + userIndex * 1000; // 设置唯一id,将时间多乘以2000防止运行过慢导致的id重复
-          userItem.expand = userIndex === 0 ? true : false;
-          userItem.title = userItem.userCreator;
-          // 统计获取使用量和未使用量的总量数据
-          let usedResourceMemoryTotal = 0;
-          let usedResourceCoresTotal = 0;
-          let usedResourceInstanceTotal = 0;
-          let leftResourceMemoryTotal = 0;
-          let leftResourceCoresTotal = 0;
-          let leftResourceInstanceTotal = 0;
-          // 处理engineTypes，计算百分比
-          userItem.engineTypes.forEach((engineItem,engineIndex) => {
-            // 获取使用量和未使用量的对象数据
-            let usedResource = engineItem.resource.usedResource || {};
-            let leftResource = engineItem.resource.leftResource || {};
-            // 分别获取各个的memory，cores，instance
-            // usedResource
-            let usedResourceMemory = usedResource.memory > 0 ? usedResource.memory : 0;
-            let usedResourceCores = usedResource.cores > 0 ? usedResource.cores : 0;
-            let usedResourceInstance = usedResource.instance > 0 ? usedResource.instance : 0;
-            // 统计总的使用量
-            usedResourceMemoryTotal += usedResourceMemory;
-            usedResourceCoresTotal += usedResourceCores;
-            usedResourceInstanceTotal += usedResourceInstance;
-            // leftResource
-            let leftResourceMemory = leftResource.memory > 0 ? leftResource.memory : 0;
-            let leftResourceCores = leftResource.cores > 0 ? leftResource.cores : 0;
-            let leftResourceInstance = leftResource.instance > 0 ? leftResource.instance : 0;
-            // 统计总的未使用量
-            leftResourceMemoryTotal += leftResourceMemory;
-            leftResourceCoresTotal += leftResourceCores;
-            leftResourceInstanceTotal += leftResourceInstance;
-            // 计算各个的比例
-            let usedResourceMemoryPercent = leftResourceMemory === 0 ? 0 : (usedResourceMemory / (usedResourceMemory + leftResourceMemory)).toFixed(2);
-            let usedResourceCoresPercent = leftResourceCores === 0 ? 0 : (usedResourceCores / (usedResourceCores + leftResourceCores)).toFixed(2);
-            let usedResourceInstancePercent = leftResourceInstance === 0 ? 0 : (usedResourceInstance / (usedResourceInstance + leftResourceInstance)).toFixed(2);
-            // 取这三个比例中最大的进行显示
-            let max = Math.max(usedResourceMemoryPercent, usedResourceCoresPercent, usedResourceInstancePercent) * 100 + '%';
-            engineItem.percent =  max;
-            engineItem.expand = false;
-            engineItem.title = engineItem.engineType;
-            engineItem.id = new Date().valueOf() + (engineIndex + 1 + userIndex ) * 2000; // 设置唯一id,将时间多乘以2000防止运行过慢导致的id重复
-          })
-          // 计算各个总量的比例
-          let usedResourceMemoryTotalPercent = leftResourceMemoryTotal === 0 ? 0 : (usedResourceMemoryTotal / (usedResourceMemoryTotal + leftResourceMemoryTotal)).toFixed(2);
-          let usedResourceCoresTotalPercent = leftResourceCoresTotal === 0 ? 0 : (usedResourceCoresTotal / (usedResourceCoresTotal + leftResourceCoresTotal)).toFixed(2);
-          let usedResourceInstanceTotalPercent = leftResourceInstanceTotal === 0 ? 0 : (usedResourceInstanceTotal / (usedResourceInstanceTotal + leftResourceInstanceTotal)).toFixed(2);
-          // 取这三个比例中最大的进行显示
-          let max = Math.max(usedResourceMemoryTotalPercent, usedResourceCoresTotalPercent, usedResourceInstanceTotalPercent) * 100 + '%';
-          userItem.percent = max;
+        enginesList.forEach((it, index) => {
+          it.id = it.userCreator + index
+          it.percent = it.percent * 100 + '%'
+          it.title = it.userCreator
+          it.expand = index === 0
+          if (it.engineTypes) {
+            it.engineTypes.forEach(sub => {
+              sub.id = sub.engineType + 'sub' + index
+              sub.percent = sub.percent * 100 + '%'
+              sub.title = sub.engineType
+              sub.expand = false
+            })
+          }
         })
         this.progressDataList = enginesList || [];
         if(enginesList.length) await this.expandChange(enginesList[0])
@@ -389,13 +483,13 @@ export default {
       }
     },
     // 展开和关闭
-    async expandChange(item, isChildren = false, isRefresh = false) {
+    async expandChange(item, isChildren = false) {
       // 显示表格
       this.isShowTable = true;
       this.isChildren = isChildren;
       // 如果点击的不为子列表则缓存下当前数据
       // 如果两次点击同一元素则阻止
-      if(item.id === this.currentEngineData.id && !isRefresh) return;
+      if(item.id === this.currentEngineData.id) return;
       // if(item.id === this.currentParentsData.id && !isChildren) return;
       this.currentEngineData = item;
       this.loading = true;
@@ -424,7 +518,7 @@ export default {
         })
         this.tableData = tableData;
         //更新formItem.applicationName 的数据
-        this.formItem.applicationName = this.tableData[0].engineType; 
+        this.formItem.applicationName = this.tableData[0].engineType;
         this.page.totalSize = this.tableData.length;
       } catch (errorMsg) {
         console.error(errorMsg);
@@ -439,32 +533,16 @@ export default {
     onCloseTag (name, index) {
       this.formItem.labels.splice(index, 1);
     },
-    //  提交修改
-    submitTagEdit() {
-      let param = JSON.parse(JSON.stringify(this.formItem));
-      param.applicationName = this.tableData[0].engineType
-      param.labels = param.labels.map(item => {
-        return {
-          labelKey: item.key,
-          stringValue: item.value,
-        }
-      })
-      api.fetch('/linkisManager/modifyEngineInfo', param, 'put').then(() => {
-        this.isTagEdit = false;
-        this.$Message.success(this.$t('message.linkis.editedSuccess'));
-        this.expandChange(this.currentEngineData, this.isChildren, true);
-      }).catch(() => {
-        this.isTagEdit = false;
-      })
-    },
     // 切换分页
     change(val) {
       this.page.pageNow = val;
+      this.search();
     },
     // 页容量变化
     changeSize(val) {
       this.page.pageSize = val;
       this.page.pageNow = 1;
+      this.search();
     },
     // 时间格式转换
     timeFormat(row) {
@@ -472,22 +550,113 @@ export default {
     },
     calcCompany(num, isCompany = false) {
       let data = num > 0 ? num : 0;
-      if(isCompany) {
-        return data / 1024 / 1024 / 1024;
+      if (isCompany) {
+        data = data / 1024 / 1024 / 1024 + 'G'
+      } else {
+        data = data + 'cores'
       }
       return data;
     },
+    calcCompanyAdmin(row, field, type, yarn) {
+      let data = ' -- '
+      if (row.resourceType === 'LoadInstance') {
+        if (!yarn) {
+          data = row[field][type]
+        }
+      } else {
+        if (yarn) {
+          const yarnType = type === 'memory' ? 'queueMemory' : 'queueCores'
+          data = row[field].DriverAndYarnResource.yarnResource[yarnType]
+        } else {
+          data = row[field].DriverAndYarnResource.loadInstanceResource[type]
+        }
+      }
+      if (type === 'memory' && data !== ' -- ') {
+        data = data / 1024 / 1024 / 1024;
+      }
+      if (data !== ' -- ') {
+        if (type === 'memory') {
+          data = data + 'G'
+        } else {
+          data = data + 'cores'
+        }
+      }
+      return data;
+    },
+    switchAdmin() {
+      this.isAdminModel = !this.isAdminModel
+      this.page = {
+        totalSize: 0,
+        sizeOpts: [15, 30, 45],
+        pageSize: 15,
+        pageNow: 1
+      }
+      this.search()
+    },
+    search() {
+      const param = {
+        username: this.searchBar.userName,
+        creator: this.searchBar.appType,
+        engineType: this.searchBar.engineType === 'all' ? '' : this.searchBar.engineType,
+        page: this.page.pageNow,
+        size: this.page.pageSize
+      }
+      api.fetch('/linkisManager/rm/allUserResource', param, 'get').then((res) => {
+        this.adminTableData = res.resources
+        this.page.totalSize = res.total
+      }).catch(() => {
+      })
+    },
+    clearsearch() {
+      this.searchBar.userName = ''
+      this.searchBar.appType = ''
+      this.searchBar.engineType = ''
+      this.search()
+    },
+    resetAll(resourceId) {
+      this.$Modal.confirm({
+        title: this.$t('message.linkis.reset'),
+        content: resourceId !== undefined ? this.$t('message.linkis.resetTip'): this.$t('message.linkis.resetAllTip'),
+        onOk: () => {
+          const param = resourceId !== undefined ? { resourceId } : { }
+          api.fetch('linkisManager/rm/resetResource', param, 'delete').then(() => {
+            this.$Message.success(this.$t('message.linkis.editedSuccess'));
+            this.search()
+          }).catch(() => {
+          })
+        }
+      })
+
+    }
   }
 }
 </script>
 
 <style src="./index.scss" lang="scss" scoped></style>
-<style lang="scss" scoped>
-  .noData {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%,-50%)
+<style lang="scss">
+  .resource-page {
+    min-height: 250px;
+    .admin-title {
+      top: 36px;
+      position: absolute;
+      right: 40px;
+    }
+    .noData {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%,-50%)
+      }
+    .resource-title {
+      .ivu-form {
+        display: flex;
+        .ivu-form-item {
+            margin-bottom: 10px;
+            .ivu-form-item-content {
+                display: flex !important;
+            }
+        }
+      }
+    }
   }
-
 </style>

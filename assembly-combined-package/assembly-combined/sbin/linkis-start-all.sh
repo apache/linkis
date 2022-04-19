@@ -1,13 +1,12 @@
 #!/bin/bash
 #
-# Copyright 2019 WeBank
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-#  you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
 # http://www.apache.org/licenses/LICENSE-2.0
-#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,10 +35,13 @@ info="We will start all linkis applications, it will take some time, please wait
 echo ${info}
 
 
-
-
-
 source ${LINKIS_HOME}/sbin/common.sh
+
+# set LINKIS_CONF_DIR
+if [ "$LINKIS_CONF_DIR" = "" ]; then
+  export LINKIS_CONF_DIR=$LINKIS_HOME/conf
+fi
+source $LINKIS_CONF_DIR/linkis-env.sh
 
 
 function startApp(){
@@ -59,18 +61,18 @@ sleep 3
 }
 
 
-#eureka
+#linkis-mg-eureka
 export SERVER_NAME="mg-eureka"
 SERVER_IP=$EUREKA_INSTALL_IP
 startApp
 
 
-#gateway
+#linkis-mg-gateway
 SERVER_NAME="mg-gateway"
 SERVER_IP=$GATEWAY_INSTALL_IP
 startApp
 
-#publicenservice
+#linkis-ps-publicservice
 SERVER_NAME="ps-publicservice"
 SERVER_IP=$PUBLICSERVICE_INSTALL_IP
 startApp
@@ -78,7 +80,7 @@ startApp
 
 
 
-#manager
+#linkis-cg-linkismanage
 SERVER_NAME="cg-linkismanager"
 SERVER_IP=$MANAGER_INSTALL_IP
 startApp
@@ -86,30 +88,46 @@ startApp
 
 sleep 15
 
-#cs-server
+#linkis-ps-cs
 SERVER_NAME="ps-cs"
 SERVER_IP=$CS_INSTALL_IP
 startApp
 
 
-#entrnace
+#linkis-cg-entrance
 SERVER_NAME="cg-entrance"
 SERVER_IP=$ENTRANCE_INSTALL_IP
 startApp
 
-#ecm
+#linkis-cg-engineconnmanager(ecm)
 SERVER_NAME="cg-engineconnmanager"
 SERVER_IP=$ENGINECONNMANAGER_INSTALL_IP
 startApp
 
-#ecp
+#linkis-cg-engineplugin(ecp)
 SERVER_NAME="cg-engineplugin"
 SERVER_IP=$ENGINECONN_PLUGIN_SERVER_INSTALL_IP
 startApp
 
+
+if [ "$ENABLE_METADATA_MANAGER" == "true" ]; then
+  #linkis-ps-data-source-manager
+  SERVER_NAME="ps-data-source-manager"
+  SERVER_IP=$DATASOURCE_MANAGER_INSTALL_IP
+  startApp
+
+  #linkis-ps-metadatamanager
+  SERVER_NAME="ps-metadatamanager"
+  SERVER_IP=$METADATA_MANAGER_INSTALL_IP
+  startApp
+fi
+
+
+
+
 echo "start-all shell script executed completely"
 
-echo "Start to check all dss microservice"
+echo "Start to check all linkis microservice"
 
 function checkServer() {
 echo "<-------------------------------->"
@@ -137,50 +155,58 @@ echo "<-------------------------------->"
 sleep 3
 }
 
-#eureka
+#linkis-mg-eureka
 export SERVER_NAME="mg-eureka"
 SERVER_IP=$EUREKA_INSTALL_IP
 checkServer
 
 
-#gateway
+#linkis-mg-gateway
 SERVER_NAME="mg-gateway"
 SERVER_IP=$GATEWAY_INSTALL_IP
 checkServer
 
-#publicenhancements
+#linkis-ps-publicservice
 SERVER_NAME="ps-publicservice"
 SERVER_IP=$PUBLICSERVICE_INSTALL_IP
 checkServer
 
-#cs-server
+#linkis-ps-cs
 SERVER_NAME="ps-cs"
 SERVER_IP=$CS_INSTALL_IP
 checkServer
 
-#manager
+#linkis-cg-linkismanager
 SERVER_NAME="cg-linkismanager"
 SERVER_IP=$MANAGER_INSTALL_IP
 checkServer
 
 
-#entrnace
+#linkis-cg-entrance
 SERVER_NAME="cg-entrance"
 SERVER_IP=$ENTRANCE_INSTALL_IP
 checkServer
 
-#ecm
+#linkis-cg-engineconnmanager(ecm)
 SERVER_NAME="cg-engineconnmanager"
 SERVER_IP=$ENGINECONNMANAGER_INSTALL_IP
 checkServer
 
-#ecp
+#linkis-cg-engineplugin(ecp)
 SERVER_NAME="cg-engineplugin"
 SERVER_IP=$ENGINECONN_PLUGIN_SERVER_INSTALL_IP
 checkServer
 
+if [ "$ENABLE_METADATA_MANAGER" == "true" ]; then
+  #linkis-ps-data-source-manager
+  SERVER_NAME="ps-data-source-manager"
+  SERVER_IP=$DATASOURCE_MANAGER_INSTALL_IP
+  checkServer
 
-
-
+  #linkis-ps-metadatamanager
+  SERVER_NAME="ps-metadatamanager"
+  SERVER_IP=$METADATA_MANAGER_INSTALL_IP
+  checkServer
+fi
 
 echo "Linkis started successfully"

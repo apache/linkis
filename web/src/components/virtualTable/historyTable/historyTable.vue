@@ -1,3 +1,20 @@
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one or more
+  ~ contributor license agreements.  See the NOTICE file distributed with
+  ~ this work for additional information regarding copyright ownership.
+  ~ The ASF licenses this file to You under the Apache License, Version 2.0
+  ~ (the "License"); you may not use this file except in compliance with
+  ~ the License.  You may obtain a copy of the License at
+  ~
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
 <template>
   <div
     class="we-table-wrap"
@@ -16,7 +33,12 @@
             :key="th.key"
             :style="{'min-width': th.width + 'px', 'text-align': th.align}"
             class="we-table-thead-cell">
-            {{ th.title || '#' }}
+            <Checkbox
+              v-if="th.renderType === 'checkbox'"
+              :disabled="allDisbled"
+              v-model="checkAll"
+              @on-change="checkAllChange">{{''}}</Checkbox>
+            <span v-else>{{ th.title || '' }}</span>
           </th>
         </tr>
       </thead>
@@ -33,7 +55,7 @@
             <div
               class="we-table-row-label"
               :style="{'width': th.width ? th.width + 'px' : getComputedWidth(th)}"
-              :class="{'ellipsis': th.ellipsis}"
+              :class="{'ellipsis': th.ellipsis, [th.className]: true}"
               :title="th.ellipsis ? td[th.key] : ''">
               <table-expand
                 v-if="th.renderType"
@@ -74,7 +96,18 @@ export default {
   data() {
     return {
       offsetWidth: 0,
+      checkAll: false
     };
+  },
+  computed: {
+    allDisbled (){
+      return this.data.every(it => it.disabled)
+    }
+  },
+  watch: {
+    data() {
+      this.checkAll = this.data.every(it => it.disabled || it.checked )
+    }
   },
   mounted() {
     elementResizeEvent.bind(this.$el, this.resize);
@@ -212,16 +245,24 @@ export default {
       const getList = (h) => {
         const list = [];
         params.forEach((item) => {
-          list.push(h('button', {
-            class: {
-              'render-btn': true,
-            },
-            on: {
-              click: () => {
-                item.action({ row: cell });
+          let match = true
+          if (typeof item.match === 'function') {
+            match = item.match(value, cell)
+          }
+          if (match) {
+            list.push(h('button', {
+              class: {
+                'render-btn': true,
+                ...item.class
               },
-            },
-          }, item.label));
+              style: item.style,
+              on: {
+                click: () => {
+                  item.action({ row: cell });
+                },
+              },
+            }, item.label));
+          }
         });
         return list;
       };
@@ -333,6 +374,9 @@ export default {
     resize() {
       this.offsetWidth = this.$el && this.$el.offsetWidth;
     },
+    checkAllChange(v) {
+      this.$emit('checkall', v)
+    }
   },
 };
 </script>

@@ -1,3 +1,20 @@
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one or more
+  ~ contributor license agreements.  See the NOTICE file distributed with
+  ~ this work for additional information regarding copyright ownership.
+  ~ The ASF licenses this file to You under the Apache License, Version 2.0
+  ~ (the "License"); you may not use this file except in compliance with
+  ~ the License.  You may obtain a copy of the License at
+  ~
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
 <template>
   <div class="ecm" >
     <Search :statusList="healthyStatusList" :ownerList="ownerList" @search="search" />
@@ -15,12 +32,15 @@
       <template slot-scope="{row}" slot="maxResource">
         <span>{{ row.maxResource | formatResource }}</span>
       </template>
+      <template slot-scope="{row}" slot="lockedResource">
+        <span>{{ row.lockedResource | formatResource }}</span>
+      </template>
       <template slot-scope="{row}" slot="startTime">
         <span>{{ timeFormat(row) }}</span>
       </template>
       <template slot-scope="{row}" slot="labels">
-        <Tooltip v-for="(item, index) in row.labels" :key="index" :content="`${item.labelKey}-${item.stringValue}`" placement="top">
-          <Tag type="border" color="primary">{{`${item.labelKey}-${item.stringValue}`}}</Tag>
+        <Tooltip v-for="(item, index) in row.labels" :key="index" :content="`${item.stringValue}`" placement="top">
+          <Tag type="border" color="primary">{{`${item.stringValue}`}}</Tag>
         </Tooltip>
       </template>
     </Table>
@@ -35,11 +55,13 @@
         size="small"
         show-total
         show-sizer
+        prev-text="上一页" next-text="下一页"
         @on-change="change"
         @on-page-size-change="changeSize" />
     </div>
     <Modal
       @on-ok="submitTagEdit"
+      @on-visible-change="resetTagAdd"
       :title="$t('message.linkis.tagEdit')"
       v-model="isTagEdit"
       :mask-closable="false">
@@ -48,7 +70,7 @@
           <Input disabled v-model="formItem.instance" />
         </FormItem>
         <FormItem class="addTagClass" :label="`${$t('message.linkis.tableColumns.label')}：`">
-          <WbTag :tagList="formItem.labels" :selectList="keyList" @addEnter="addEnter" @onCloseTag="onCloseTag" @editEnter="editEnter" ></WbTag>
+          <WbTag ref="wbtags" :tagList="formItem.labels" :selectList="keyList" @addEnter="addEnter" @onCloseTag="onCloseTag" @editEnter="editEnter" ></WbTag>
         </FormItem>
         <FormItem :label="`${$t('message.linkis.tableColumns.status')}：`">
           <Select v-model="formItem.emStatus">
@@ -106,7 +128,7 @@ export default {
       },
       columns: [
         {
-          title: "实例名称", // 实例名称
+          title: this.$t('message.linkis.tableColumns.instanceName'), // 实例名称
           key: 'instance',
           minWidth: 150,
           className: 'table-project-column',
@@ -140,7 +162,14 @@ export default {
           minWidth: 150,
         },
         {
-          title: "启动者", // 启动者
+          title: this.$t('message.linkis.tableColumns.lockedResource'), // 最大可用资源
+          key: 'lockedResource',
+          slot: 'lockedResource',
+          className: 'table-project-column',
+          minWidth: 150,
+        },
+        {
+          title: this.$t('message.linkis.tableColumns.initiator'), // 启动者
           key: 'owner',
           className: 'table-project-column',
           minWidth: 150,
@@ -211,7 +240,7 @@ export default {
         }
         return data;
       }
-      return  v && (v.cores !== undefined || v.memonry !== undefined) ? `Linkis:(${calcCompany(v.cores)}cores,${calcCompany(v.memory, true)}G)` : ''
+      return  v && (v.cores !== undefined || v.memonry !== undefined) ? `${calcCompany(v.cores)}cores,${calcCompany(v.memory, true)}G` : ''
     }
   },
   created() {
@@ -265,7 +294,7 @@ export default {
     async getListAllNodeHealthyStatus() {
       try {
         let healthyStatusList = await api.fetch('/linkisManager/listAllECMHealthyStatus', { onlyEditable: true }, 'get') || {};
-        
+
         let list = healthyStatusList.nodeHealthy || [];
         this.healthyStatusList = [...list];
       } catch (err) {
@@ -286,7 +315,7 @@ export default {
     addEnter (key, value) {
       this.formItem.labels.push({ key, value });
     },
-    
+
     // 修改tag
     editEnter(editInputKey, editInputValue,editedInputValue) {
       let index = this.formItem.labels.findIndex((item)=>{
@@ -348,6 +377,11 @@ export default {
     // 时间格式转换
     timeFormat(row) {
       return moment(new Date(row.startTime)).format('YYYY-MM-DD HH:mm:ss')
+    },
+    resetTagAdd(v) {
+      if (v===false && this.$refs.wbtags) {
+        this.$refs.wbtags.resetTagAdd()
+      }
     }
   }
 }

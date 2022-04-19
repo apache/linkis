@@ -1,3 +1,20 @@
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one or more
+  ~ contributor license agreements.  See the NOTICE file distributed with
+  ~ this work for additional information regarding copyright ownership.
+  ~ The ASF licenses this file to You under the Apache License, Version 2.0
+  ~ (the "License"); you may not use this file except in compliance with
+  ~ the License.  You may obtain a copy of the License at
+  ~
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
 <template>
   <div class="engine-box">
     <Spin
@@ -33,7 +50,8 @@
               v-if="subitem.engineType === item || subitem.engineStatus === item || (item === 'Idle' && (subitem.engineStatus === 'Error' || subitem.engineStatus === 'ShuttingDown' || subitem.engineStatus === 'Dead'))"
               :key="index"
               @click="subitem.isActive = !subitem.isActive">
-              <SvgIcon class='engine-icon job-content-icon' :class="supportIcon(subitem).className" :icon-class="supportIcon(subitem).icon" style='font-size: 30px;' :color="supportIcon(subitem).color === 'yellow' ? '#f4cf2a': supportIcon(subitem).color"/>
+              <span>{{ calssifyName(subitem.engineType) }}</span>
+              <!-- <SvgIcon class='engine-icon job-content-icon' :class="supportIcon(subitem).className" icon-class="common" style='font-size: 30px;' :color="supportIcon(subitem).color === 'yellow' ? '#f4cf2a': supportIcon(subitem).color"/> -->
               <Icon
                 v-show="subitem.isActive"
                 class="engine-right"
@@ -73,7 +91,8 @@
               v-if="subitem.engineType === item || subitem.engineStatus === item || (item === 'Idle' && (subitem.engineStatus === 'Error' || subitem.engineStatus === 'ShuttingDown' || subitem.engineStatus === 'Dead'))"
               :key="index"
               @click="subitem.isActive = !subitem.isActive">
-              <SvgIcon class='engine-icon job-content-icon' :class="supportIcon(subitem).className" :icon-class="supportIcon(subitem).icon" style='font-size: 30px;' :color="supportIcon(subitem).color === 'yellow' ? '#f4cf2a': supportIcon(subitem).color"/>
+              <span>{{ calssifyName(subitem.engineType) }}</span>
+              <!-- <SvgIcon class='engine-icon job-content-icon' :class="supportIcon(subitem).className" icon-class="common" style='font-size: 30px;' :color="supportIcon(subitem).color === 'yellow' ? '#f4cf2a': supportIcon(subitem).color"/>-->
               <Icon
                 v-show="subitem.isActive"
                 class="engine-right"
@@ -113,7 +132,8 @@
               v-if="subitem.engineType === item || subitem.engineStatus === item || (item === 'Idle' && (subitem.engineStatus === 'Error' || subitem.engineStatus === 'ShuttingDown' || subitem.engineStatus === 'Dead'))"
               :key="index"
               @click="subitem.isActive = !subitem.isActive">
-              <SvgIcon class='engine-icon job-content-icon' :class="supportIcon(subitem).className" :icon-class="supportIcon(subitem).icon" style='font-size: 30px;' :color="supportIcon(subitem).color === 'yellow' ? '#f4cf2a': supportIcon(subitem).color"/>
+              <span>{{ calssifyName(subitem.engineType) }}</span>
+              <!--  <SvgIcon class='engine-icon job-content-icon' :class="supportIcon(subitem).className" icon-class="common" style='font-size: 30px;' :color="supportIcon(subitem).color === 'yellow' ? '#f4cf2a': supportIcon(subitem).color"/>-->
               <Icon
                 v-show="subitem.isActive"
                 class="engine-right"
@@ -203,15 +223,36 @@ export default {
           return 'PipeLine';
         case 'shell':
           return 'Shell';
+        case 'jdbc':
+          return 'Jdbc';
+        case 'es':
+          return 'Es';
+        case 'presto':
+          return 'Presto';
+        case 'flink':
+          return 'Flink';
+        case 'sqoop':
+          return 'Sqoop';
+        case 'datax':
+          return 'Datax';
+        case 'openlookeng':
+          return 'Openlookeng';
+        case 'Unlock':
+          return this.$t('message.common.resourceSimple.KX')
         case 'Idle':
           return this.$t('message.common.resourceSimple.KX');
         case 'Error':
+          return this.$t('message.common.resourceSimple.KX');
+        case 'ShuttingDown':
+          return this.$t('message.common.resourceSimple.KX');
+        case 'Dead':
           return this.$t('message.common.resourceSimple.KX');
         case 'Busy':
           return this.$t('message.common.resourceSimple.FM');
         case 'Starting':
           return this.$t('message.common.resourceSimple.QD');
         default:
+          return params;
       }
     },
     killJob() {
@@ -338,3 +379,18 @@ export default {
   },
 };
 </script>
+
+<style scoped type="text/css">
+  .yellow {
+    color: #f4cf2a;
+  }
+
+  .green {
+    color: #19be6b;
+  }
+
+  .blue {
+    color: #2d8cf0;
+  }
+</style>
+

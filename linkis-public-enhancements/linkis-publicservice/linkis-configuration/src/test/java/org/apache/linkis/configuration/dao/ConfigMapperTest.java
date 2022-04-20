@@ -21,10 +21,6 @@ import org.apache.linkis.configuration.entity.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import org.h2.tools.Server;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -127,7 +123,7 @@ public class ConfigMapperTest extends BaseDaoTest {
     @Test
     void testListKeyByStringValue() {
         List<ConfigKey> configKeyList = configMapper.listKeyByStringValue("*-*,*-*");
-//        assertEquals(7, configKeyList.size());
+        //        assertEquals(7, configKeyList.size());
     }
 
     @Test
@@ -145,7 +141,7 @@ public class ConfigMapperTest extends BaseDaoTest {
     @Test
     void testGetCategoryById() {
         CategoryLabel categoryLabel = configMapper.getCategoryById(1);
-//        assertEquals(1, categoryLabel.getLevel());
+        //        assertEquals(1, categoryLabel.getLevel());
     }
 
     @Test
@@ -162,7 +158,7 @@ public class ConfigMapperTest extends BaseDaoTest {
     void testDeleteCategory() {
         configMapper.deleteCategory(Arrays.asList(1, 3));
         List<CategoryLabel> categoryLabelList = configMapper.getCategory();
-//        assertEquals(1, categoryLabelList.size());
+        //        assertEquals(1, categoryLabelList.size());
     }
 
     @Test
@@ -181,6 +177,6 @@ public class ConfigMapperTest extends BaseDaoTest {
         configKey.setKey("wds.linkis.rm.instance.max.max");
         configMapper.insertKey(configKey);
         ConfigKey result = configMapper.selectKeyByKeyID(8L);
-//        assertEquals("wds.linkis.rm.instance.max.max", result.getKey());
+        //        assertEquals("wds.linkis.rm.instance.max.max", result.getKey());
     }
 }

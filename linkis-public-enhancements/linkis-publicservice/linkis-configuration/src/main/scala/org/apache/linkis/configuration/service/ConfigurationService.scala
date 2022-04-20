@@ -176,7 +176,10 @@ class ConfigurationService extends Logging {
       if (setting.getId != null) {
         key = configMapper.selectKeyByKeyID(setting.getId)
       } else {
-        key = configMapper.seleteKeyByKeyName(setting.getKey)
+        val keys = configMapper.seleteKeyByKeyName(setting.getKey)
+        if (null != keys && !keys.isEmpty) {
+          key = keys.get(0)
+        }
       }
       if (key == null) {
         throw new ConfigurationException("config key is null, please check again!(配置信息为空，请重新检查key值)")
@@ -237,18 +240,7 @@ class ConfigurationService extends Logging {
   }
 
 
-  def labelCheck(labelList: java.util.List[Label[_]]): Boolean = {
-    if (!CollectionUtils.isEmpty(labelList)) {
-      labelList.asScala.foreach {
-        case a: UserCreatorLabel => Unit
-        case a: EngineTypeLabel => Unit
-        case label => throw new ConfigurationException(s"this type of label is not supported:${label.getClass}")
-      }
-      true
-    } else {
-      throw new ConfigurationException("The label parameter is empty")
-    }
-  }
+
 
   def replaceCreatorToEngine(defaultCreatorConfigs: util.List[ConfigKeyValue], defaultEngineConfigs: util.List[ConfigKeyValue]): Unit = {
     defaultCreatorConfigs.asScala.foreach(creatorConfig => {
@@ -272,7 +264,7 @@ class ConfigurationService extends Logging {
    * @return
    */
   def getFullTreeByLabelList(labelList: java.util.List[Label[_]], useDefaultConfig: Boolean = true): util.ArrayList[ConfigTree] = {
-    labelCheck(labelList)
+    LabelParameterParser.labelCheck(labelList)
     val combinedLabel = combinedLabelBuilder.build("", labelList).asInstanceOf[CombinedLabelImpl]
     val label = labelMapper.getLabelByKeyValue(combinedLabel.getLabelKey, combinedLabel.getStringValue)
     var configs: util.List[ConfigKeyValue] = new util.ArrayList[ConfigKeyValue]()
@@ -337,7 +329,7 @@ class ConfigurationService extends Logging {
   }
 
     def queryConfigByLabel(labelList: java.util.List[Label[_]], isMerge: Boolean = true, filter: String = null): ResponseQueryConfig = {
-      labelCheck(labelList)
+      LabelParameterParser.labelCheck(labelList)
       val allGolbalUserConfig = getFullTreeByLabelList(labelList)
       val defaultLabel = LabelParameterParser.changeUserToDefault(labelList)
       val allGolbalDefaultConfig = getFullTreeByLabelList(defaultLabel)

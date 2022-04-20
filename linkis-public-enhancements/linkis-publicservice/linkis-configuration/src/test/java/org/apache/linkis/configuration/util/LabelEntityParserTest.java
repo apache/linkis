@@ -17,20 +17,12 @@
 
 package org.apache.linkis.configuration.util;
 
-import org.apache.linkis.configuration.entity.ConfigLabel;
-import org.apache.linkis.manager.label.entity.CombinedLabel;
-import org.apache.linkis.manager.label.entity.Label;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /** LabelEntityParser Tester */
 public class LabelEntityParserTest {
@@ -47,10 +39,10 @@ public class LabelEntityParserTest {
 
     @Test
     public void testParseToConfigLabel() throws Exception {
-//        List<Label<?>> list = new ArrayList<>();
-//
-//        ConfigLabel configLabel = labelEntityParser.parseToConfigLabel(CombinedLabel);
-//        assertEquals(10,configLabel.getId());
+        //        List<Label<?>> list = new ArrayList<>();
+        //
+        //        ConfigLabel configLabel = labelEntityParser.parseToConfigLabel(CombinedLabel);
+        //        assertEquals(10,configLabel.getId());
     }
 
     @Test

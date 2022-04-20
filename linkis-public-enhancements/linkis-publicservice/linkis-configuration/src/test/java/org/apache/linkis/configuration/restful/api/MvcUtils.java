@@ -19,6 +19,7 @@ package org.apache.linkis.configuration.restful.api;
 
 import org.apache.linkis.common.utils.JsonUtils;
 import org.apache.linkis.server.Message;
+
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -66,6 +67,16 @@ public class MvcUtils {
     public MvcResult buildMvcResultPost(String url) throws Exception {
         MvcResult mvcResult =
                 mockMvc.perform(post(url))
+                        .andExpect(status().isOk())
+                        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                        .andReturn();
+        return mvcResult;
+    }
+
+    public MvcResult buildMvcResultPost(String url, MultiValueMap<String, String> params)
+            throws Exception {
+        MvcResult mvcResult =
+                mockMvc.perform(post(url, params))
                         .andExpect(status().isOk())
                         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                         .andReturn();

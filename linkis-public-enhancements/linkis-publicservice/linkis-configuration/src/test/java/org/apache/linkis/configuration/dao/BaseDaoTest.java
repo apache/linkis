@@ -26,6 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest(classes = Scan.class)
 @Transactional
-@Rollback(true)
+@Rollback()
 @EnableTransactionManagement
 public abstract class BaseDaoTest {}

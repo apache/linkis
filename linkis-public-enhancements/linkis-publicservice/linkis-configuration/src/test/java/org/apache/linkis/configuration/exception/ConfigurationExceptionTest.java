@@ -17,9 +17,4 @@ package org.apache.linkis.configuration.exception;
  * limitations under the License.
  */
 
-import org.apache.linkis.common.errorcode.ErrorCodeUtils;
-import org.junit.jupiter.api.Test;
-
-public class ConfigurationExceptionTest {
-
-}
+public class ConfigurationExceptionTest {}

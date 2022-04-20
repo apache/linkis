@@ -15,20 +15,23 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.configuration.exception;
+package org.apache.linkis.configuration.service;
 
-import org.apache.linkis.common.exception.ErrorException;
+import org.apache.linkis.configuration.entity.ConfigKeyValue;
+import org.apache.linkis.configuration.entity.ConfigValue;
+import org.apache.linkis.configuration.exception.ConfigurationException;
+import org.apache.linkis.manager.label.entity.Label;
 
-public class ConfigurationException extends ErrorException {
+import java.util.List;
 
-    public static final int CONFIGURATION_ERROR_CODE = 14100;
+public interface ConfigKeyService {
 
-    public ConfigurationException(String message) {
-        super(14100, message);
-    }
+    ConfigValue saveConfigValue(ConfigKeyValue configKeyValue, List<Label<?>> labelList)
+            throws ConfigurationException;
 
-    public ConfigurationException(String message, Throwable throwable) {
-        super(14100, message);
-        initCause(throwable);
-    }
+    List<ConfigValue> getConfigValue(String configKey, List<Label<?>> labelList)
+            throws ConfigurationException;
+
+    List<ConfigValue> deleteConfigValue(String configKey, List<Label<?>> labelList)
+            throws ConfigurationException;
 }

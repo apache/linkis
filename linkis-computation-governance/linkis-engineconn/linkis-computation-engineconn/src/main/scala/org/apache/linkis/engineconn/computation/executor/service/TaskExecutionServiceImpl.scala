@@ -83,13 +83,15 @@ class TaskExecutionServiceImpl extends TaskExecutionService with Logging with Re
   lazy private val cachedThreadPool = Utils.newCachedThreadPool(ComputationExecutorConf.ENGINE_CONCURRENT_THREAD_NUM.getValue,
     "ConcurrentEngineConnThreadPool")
 
+  private val CONCURRENT_TASK_LOCKER = new Object
+
   @PostConstruct
   def init(): Unit = {
     LogHelper.setLogListener(this)
     syncListenerBus.addListener(this)
   }
 
-  private def sendToEntrance(task: EngineConnTask, msg: RequestProtocol): Unit = synchronized {
+  private def sendToEntrance(task: EngineConnTask, msg: RequestProtocol): Unit = {
     Utils.tryCatch {
       var sender: Sender = null
       if (null != task && null != task.getCallbackServiceInstance() && null != msg) {
@@ -234,13 +236,13 @@ class TaskExecutionServiceImpl extends TaskExecutionService with Logging with Re
   }
 
   private def submitConcurrentTask(task: CommonEngineConnTask, executor: ConcurrentComputationExecutor): ExecuteResponse = {
-    if (null == concurrentTaskQueue) synchronized {
+    if (null == concurrentTaskQueue) CONCURRENT_TASK_LOCKER.synchronized {
       if (null == concurrentTaskQueue) {
         concurrentTaskQueue = new LinkedBlockingDeque[EngineConnTask]()
       }
     }
     concurrentTaskQueue.put(task)
-    if (null == consumerThread) synchronized {
+    if (null == consumerThread) CONCURRENT_TASK_LOCKER.synchronized {
       if (null == consumerThread) {
         consumerThread = new Thread(createConsumerRunnable(executor))
         consumerThread.setDaemon(true)

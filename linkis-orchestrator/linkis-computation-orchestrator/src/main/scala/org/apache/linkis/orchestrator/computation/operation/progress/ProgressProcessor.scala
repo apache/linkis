@@ -47,6 +47,7 @@ class ProgressProcessor(rootExecTaskId: String,
   }
 
   override def close(): Unit = {
-    this.progressObtainOperation
+    progressObtainOperation.removeLogProcessor(rootExecTaskId)
+    listeners.clear()
   }
 }

@@ -40,7 +40,7 @@
           class="datepicker"
           :options="shortcutOpt"
           v-model="searchBar.shortcut"
-          type="datetimerange"
+          type="daterange"
           placement="bottom-start"
           format="yyyy-MM-dd"
           :placeholder="$t('message.linkis.formItems.date.placeholder')"

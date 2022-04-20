@@ -56,22 +56,19 @@ public class ConfigurationRestfulApiTest {
 
     @Test
     public void TestAddKeyForEngine() throws Exception {
+        MvcUtils mvcUtils = new MvcUtils(mockMvc);
         MultiValueMap<String, String> paramsMap = new LinkedMultiValueMap<>();
         paramsMap.add("engineType","1");
         paramsMap.add("version","1");
         paramsMap.add("token","1");
         paramsMap.add("keyJson","1");
         String url = "/configuration/addKeyForEngine";
-        MvcResult mvcResult =
-                mockMvc.perform(get(url))
-                        .andExpect(status().isOk())
-                        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                        .andReturn();
-        Message res =
-                JsonUtils.jackson()
-                        .readValue(mvcResult.getResponse().getContentAsString(), Message.class);
-        assertEquals(MessageStatus.SUCCESS(), res.getStatus());
-        logger.info(mvcResult.getResponse().getContentAsString());
+        Message mvcResult =
+                mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, paramsMap));
+
+        assertEquals(MessageStatus.SUCCESS(), mvcResult.getStatus());
+
+        logger.info(String.valueOf(mvcResult));
     }
 
     @Test

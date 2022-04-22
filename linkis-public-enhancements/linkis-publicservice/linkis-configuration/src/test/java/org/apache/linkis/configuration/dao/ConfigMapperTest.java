@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ConfigMapperTest extends BaseDaoTest {
     @Autowired ConfigMapper configMapper;
 
-    private ConfigValue insertConfigValue(){
+    private ConfigValue insertConfigValue() {
         ConfigValue configValue = new ConfigValue();
         configValue.setId(8L);
         configValue.setConfigKeyId(8L);
@@ -42,7 +42,7 @@ public class ConfigMapperTest extends BaseDaoTest {
         return configValue;
     }
 
-    private List<ConfigValue> insertConfigValueList(){
+    private List<ConfigValue> insertConfigValueList() {
         ConfigValue configValue = new ConfigValue();
         configValue.setConfigKeyId(9L);
         configValue.setConfigValue("100G");
@@ -125,15 +125,16 @@ public class ConfigMapperTest extends BaseDaoTest {
     @Test
     void testSeleteKeyByKeyName() {
         // TODO 查询结果转换异常
-//                ConfigKey configKey = configMapper.seleteKeyByKeyName("wds.linkis.rm.yarnqueue");
-//                assertEquals("ide", configKey.getDefaultValue());
-//                System.out.println(configKey.getDefaultValue());
+        //                ConfigKey configKey =
+        // configMapper.seleteKeyByKeyName("wds.linkis.rm.yarnqueue");
+        //                assertEquals("ide", configKey.getDefaultValue());
+        //                System.out.println(configKey.getDefaultValue());
     }
 
     @Test
     void testListKeyByStringValue() {
-//        List<ConfigKey> configKeyList = configMapper.listKeyByStringValue("*-*,*-*");
-//        assertEquals(7, configKeyList.size());
+        //        List<ConfigKey> configKeyList = configMapper.listKeyByStringValue("*-*,*-*");
+        //        assertEquals(7, configKeyList.size());
     }
 
     @Test

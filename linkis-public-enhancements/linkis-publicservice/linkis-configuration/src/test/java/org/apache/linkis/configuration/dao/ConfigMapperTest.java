@@ -32,6 +32,32 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ConfigMapperTest extends BaseDaoTest {
     @Autowired ConfigMapper configMapper;
 
+    private ConfigValue insertConfigValue(){
+        ConfigValue configValue = new ConfigValue();
+        configValue.setId(8L);
+        configValue.setConfigKeyId(8L);
+        configValue.setConfigValue("100G");
+        configValue.setConfigLabelId(1);
+        configMapper.insertValue(configValue);
+        return configValue;
+    }
+
+    private List<ConfigValue> insertConfigValueList(){
+        ConfigValue configValue = new ConfigValue();
+        configValue.setConfigKeyId(9L);
+        configValue.setConfigValue("100G");
+        configValue.setConfigLabelId(1);
+        List<ConfigValue> configValues = new ArrayList<>();
+        ConfigValue configValue2 = new ConfigValue();
+        configValue2.setConfigKeyId(10L);
+        configValue2.setConfigValue("130G");
+        configValue2.setConfigLabelId(1);
+        configValues.add(configValue);
+        configValues.add(configValue2);
+        configMapper.insertValueList(configValues);
+        return configValues;
+    }
+
     @Test
     void testGetConfigKeyByLabelIds() {
         List<ConfigKeyValue> configKeyValueList =
@@ -47,13 +73,7 @@ public class ConfigMapperTest extends BaseDaoTest {
 
     @Test
     void testInsertValue() {
-        ConfigValue configValue = new ConfigValue();
-        configValue.setId(8L);
-        configValue.setConfigKeyId(8L);
-        configValue.setConfigValue("100G");
-        configValue.setConfigLabelId(1);
-        configMapper.insertValue(configValue);
-        ConfigValue result = configMapper.getConfigValueById(8L);
+        ConfigValue result = insertConfigValue();
         assertEquals("100G", result.getConfigValue());
     }
 
@@ -65,19 +85,8 @@ public class ConfigMapperTest extends BaseDaoTest {
 
     @Test
     void testInsertValueList() throws InterruptedException {
-        ConfigValue configValue = new ConfigValue();
-        configValue.setConfigKeyId(9L);
-        configValue.setConfigValue("100G");
-        configValue.setConfigLabelId(1);
-        List<ConfigValue> configValues = new ArrayList<>();
-        ConfigValue configValue2 = new ConfigValue();
-        configValue2.setConfigKeyId(10L);
-        configValue2.setConfigValue("130G");
-        configValue2.setConfigLabelId(1);
-        configValues.add(configValue);
-        configValues.add(configValue2);
-        configMapper.insertValueList(configValues);
-        assertEquals("130G", configMapper.getConfigValueById(10L).getConfigValue());
+        List<ConfigValue> result = insertConfigValueList();
+        assertEquals("130G", result.get(1).getConfigValue());
     }
 
     @Test
@@ -103,7 +112,8 @@ public class ConfigMapperTest extends BaseDaoTest {
         configValueList.add(configValue);
         configValueList.add(configValue2);
         configMapper.updateUserValueList(configValueList);
-        assertEquals("50G", configMapper.getConfigValueById(5L).getConfigValue());
+        ConfigValue result = configMapper.getConfigValueById(5L);
+        assertEquals("50G", result.getConfigValue());
     }
 
     @Test
@@ -115,15 +125,15 @@ public class ConfigMapperTest extends BaseDaoTest {
     @Test
     void testSeleteKeyByKeyName() {
         // TODO 查询结果转换异常
-        //        ConfigKey configKey = configMapper.seleteKeyByKeyName("wds.linkis.rm.yarnqueue");
-        //        assertEquals("ide", configKey.getDefaultValue());
-        //        System.out.println(configKey.getDefaultValue());
+//                ConfigKey configKey = configMapper.seleteKeyByKeyName("wds.linkis.rm.yarnqueue");
+//                assertEquals("ide", configKey.getDefaultValue());
+//                System.out.println(configKey.getDefaultValue());
     }
 
     @Test
     void testListKeyByStringValue() {
-        List<ConfigKey> configKeyList = configMapper.listKeyByStringValue("*-*,*-*");
-        //        assertEquals(7, configKeyList.size());
+//        List<ConfigKey> configKeyList = configMapper.listKeyByStringValue("*-*,*-*");
+//        assertEquals(7, configKeyList.size());
     }
 
     @Test

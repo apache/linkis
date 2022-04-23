@@ -204,6 +204,5 @@ fi
 if [[ $version -eq 7 ]]; then
     centos7
 fi
-echo '安装visualis前端,用户自行编译linkis前端安装包，则安装时需要把visualis的前端安装包放置于此'$linkis_basepath/linkis/visualis'，用于自动化安装:'
-cd $linkis_basepath/linkis/visualis;unzip -o build.zip  > /dev/null
+
 echo "请浏览器访问：http://${linkis_ipaddr}:${linkis_port}"

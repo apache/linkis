@@ -80,10 +80,22 @@ public class ConfigKeyServiceImpl implements ConfigKeyService {
             labelMapper.insertLabel(configLabel);
             logger.info("succeed to create label: {}", configLabel.getStringValue());
         }
-        ConfigValue configValue = new ConfigValue();
-        configValue.setConfigKeyId(configKey.getId());
-        configValue.setConfigValue(configKeyValue.getConfigValue());
-        configValue.setConfigLabelId(configLabel.getId());
+        List<ConfigValue> configValues = getConfigValue(configKeyValue.getKey(), labelList);
+        ConfigValue configValue = null;
+        if (configValues.size() > 1) {
+            throw new ConfigurationException(
+                    combinedLabel.getStringValue()
+                            + "There are multiple values for the corresponding Key： "
+                            + configKeyValue.getKey());
+        } else if (configValues.size() == 1) {
+            configValue = configValues.get(0);
+            configValue.setConfigValue(configKeyValue.getConfigValue());
+        } else {
+            configValue = new ConfigValue();
+            configValue.setConfigKeyId(configKey.getId());
+            configValue.setConfigValue(configKeyValue.getConfigValue());
+            configValue.setConfigLabelId(configLabel.getId());
+        }
         configMapper.insertValue(configValue);
         logger.info(
                 "succeed to save key: {} by label: {} value: {} ",

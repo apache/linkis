@@ -182,8 +182,10 @@ abstract class EntranceJob extends Job {
   }
 
   override def onFailure(errorMsg: String, t: Throwable): Unit = {
-    val generatedMsg = LogUtils.generateERROR(s"Sorry, your job executed failed with reason: $errorMsg")
-    getLogListener.foreach(_.onLogUpdate(this, generatedMsg))
+    if (!isCompleted) {
+      val generatedMsg = LogUtils.generateERROR(s"Sorry, your job executed failed with reason: $errorMsg")
+      getLogListener.foreach(_.onLogUpdate(this, generatedMsg))
+    }
     super.onFailure(errorMsg, t)
   }
 

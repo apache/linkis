@@ -1,4 +1,3 @@
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -16,43 +15,35 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.variable.restful.api; 
- 
+package org.apache.linkis.variable.restful.api;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
-/** 
- * VariableRestfulApi Tester
-*/ 
-public class VariableRestfulApiTest { 
- 
-    @Autowired
-    private VariableRestfulApi variableRestfulApi;
- 
+/** VariableRestfulApi Tester */
+public class VariableRestfulApiTest {
+
+    @Autowired private VariableRestfulApi variableRestfulApi;
+
     @BeforeEach
     @DisplayName("Each unit test method is executed once before execution")
-    public void before() throws Exception {
-    }
- 
+    public void before() throws Exception {}
+
     @AfterEach
     @DisplayName("Each unit test method is executed once after execution")
-    public void after() throws Exception {
+    public void after() throws Exception {}
+
+    @Test
+    public void testListGlobalVariable() throws Exception {
+        // TODO: Test goes here...
     }
- 
- 
+
     @Test
-    public void testListGlobalVariable() throws Exception { 
-        //TODO: Test goes here... 
-    } 
- 
- 
-    @Test
-    public void testSaveGlobalVariable() throws Exception { 
-        //TODO: Test goes here... 
-    } 
- 
- 
-} 
+    public void testSaveGlobalVariable() throws Exception {
+        // TODO: Test goes here...
+    }
+}

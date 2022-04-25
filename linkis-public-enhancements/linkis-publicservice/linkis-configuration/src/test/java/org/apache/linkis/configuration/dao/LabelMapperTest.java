@@ -35,6 +35,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class LabelMapperTest extends BaseDaoTest {
     @Autowired private LabelMapper labelMapper;
 
+    public ConfigLabel insertConfigLabel() {
+        ConfigLabel configLabel = new ConfigLabel();
+        configLabel.setLabelKey("h");
+        configLabel.setStringValue("spark");
+        configLabel.setCreator("linkis");
+        configLabel.setLabelValueSize(2);
+        configLabel.setUpdator("tom");
+        configLabel.setCreateTime(new Date());
+        configLabel.setUpdateTime(new Date());
+        labelMapper.insertLabel(configLabel);
+        return configLabel;
+    }
+
     @BeforeAll
     @DisplayName("Each unit test method is executed once before execution")
     protected static void beforeAll() throws Exception {
@@ -55,16 +68,8 @@ public class LabelMapperTest extends BaseDaoTest {
 
     @Test
     void testInsertLabel() {
-        ConfigLabel configLabel = new ConfigLabel();
-        configLabel.setLabelKey("h");
-        configLabel.setStringValue("spark");
-        configLabel.setCreator("linkis");
-        configLabel.setLabelValueSize(2);
-        configLabel.setUpdator("tom");
-        configLabel.setCreateTime(new Date());
-        configLabel.setUpdateTime(new Date());
-        labelMapper.insertLabel(configLabel);
-        assertEquals(labelMapper.getLabelByKeyValue("h", "spark"), configLabel);
+        ConfigLabel configLabel = insertConfigLabel();
+        assertEquals("tom", configLabel.getUpdator());
     }
 
     @Test

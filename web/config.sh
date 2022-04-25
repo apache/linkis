@@ -14,11 +14,13 @@
 # limitations under the License.
 #
 
-#Configuring front-end ports
-linkis_port="8088"
 
-#URL of the backend linkis gateway
-linkis_url="http://localhost:20401"
 
-#linkis ip address
-linkis_ipaddr=localhost
+#URL of the backend service of linkis-mg-gateway
+linkis_url="http://127.0.0.1:9001"
+
+#linkis ip address，the http access address for linkis-web will be http://${linkis_ipaddr}:${linkis_port}
+linkis_ipaddr=127.0.0.1
+linkis_port=8088
+
+web/install.sh

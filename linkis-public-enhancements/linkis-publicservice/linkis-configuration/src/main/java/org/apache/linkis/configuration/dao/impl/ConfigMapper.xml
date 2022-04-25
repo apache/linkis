@@ -15,7 +15,7 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-  
+
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
 <mapper namespace="org.apache.linkis.configuration.dao.ConfigMapper">
@@ -179,7 +179,7 @@
     </update>
 
     <!--ConfigValue-->
-    <insert id="insertValue" useGeneratedKeys="true" keyProperty="id" parameterType="org.apache.linkis.configuration.entity.ConfigValue">
+    <insert id="insertValue"  parameterType="org.apache.linkis.configuration.entity.ConfigValue">
         REPLACE INTO linkis_ps_configuration_config_value(
             id, config_key_id, config_value, config_label_id, create_time, update_time)
         VALUES (

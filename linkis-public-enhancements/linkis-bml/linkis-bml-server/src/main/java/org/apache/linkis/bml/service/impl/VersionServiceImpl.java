@@ -101,11 +101,10 @@ public class VersionServiceImpl implements VersionService {
         String clientIp = params.get("clientIp").toString();
         // 生成新的version
         // String lastVersion = versionDao.getNewestVersion(resourceId);
-        long startByte = 0L;
         // 更新resource_version表
         ResourceVersion resourceVersion =
                 ResourceVersion.createNewResourceVersion(
-                        resourceId, path, md5String, clientIp, size, newVersion, startByte);
+                        resourceId, path, md5String, clientIp, size, newVersion, 1);
         versionDao.insertNewVersion(resourceVersion);
         // }
         return newVersion;

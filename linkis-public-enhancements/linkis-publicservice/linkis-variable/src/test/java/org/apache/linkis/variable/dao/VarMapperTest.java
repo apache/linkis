@@ -2,30 +2,28 @@ package org.apache.linkis.variable.dao;
 
 import org.apache.linkis.variable.entity.VarKey;
 import org.apache.linkis.variable.entity.VarKeyUser;
-import org.apache.linkis.variable.entity.VarKeyValueVO;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
 import org.h2.tools.Server;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class VarMapperTest extends BaseDaoTest{
-    @Autowired
-    private VarMapper varMapper;
+class VarMapperTest extends BaseDaoTest {
+    @Autowired private VarMapper varMapper;
 
-    private VarKey insertVarKey(){
+    private VarKey insertVarKey() {
         VarKey varKey = new VarKey();
         varKey.setKey("myWork6");
         varKey.setApplicationID(-1L);
         return varKey;
     }
 
-    private VarKeyUser InsertVarKeyUser(){
+    private VarKeyUser InsertVarKeyUser() {
         VarKeyUser varKeyUser = new VarKeyUser();
         varKeyUser.setApplicationID(-1L);
         varKeyUser.setUserName("tom6");
@@ -48,15 +46,15 @@ class VarMapperTest extends BaseDaoTest{
 
     @Test
     void testListGlobalVariable() {
-        //h2数据库执行生成的sql语句报错,在mysql数据库中可以正常运行
-//        List<VarKeyValueVO> varKeyValueVOList = varMapper.listGlobalVariable("tom1");
-//        assertEquals(1,varKeyValueVOList.size());
+        // h2数据库执行生成的sql语句报错,在mysql数据库中可以正常运行
+        //        List<VarKeyValueVO> varKeyValueVOList = varMapper.listGlobalVariable("tom1");
+        //        assertEquals(1,varKeyValueVOList.size());
     }
 
     @Test
     void testGetValueByKeyID() {
         VarKeyUser varKeyUser = varMapper.getValueByKeyID(3L);
-        assertEquals("tom3",varKeyUser.getUserName());
+        assertEquals("tom3", varKeyUser.getUserName());
     }
 
     @Test
@@ -67,24 +65,24 @@ class VarMapperTest extends BaseDaoTest{
     @Test
     void testRemoveValue() {
         varMapper.removeValue(1L);
-        assertEquals(null,varMapper.getValueByKeyID(1L));
+        assertEquals(null, varMapper.getValueByKeyID(1L));
     }
 
     @Test
     void testInsertKey() {
         VarKey varKey = insertVarKey();
-        assertEquals("myWork6",varKey.getKey());
+        assertEquals("myWork6", varKey.getKey());
     }
 
     @Test
     void testInsertValue() {
         VarKeyUser varKeyUser = InsertVarKeyUser();
-        assertEquals("sing",varKeyUser.getValue());
+        assertEquals("sing", varKeyUser.getValue());
     }
 
     @Test
     void testUpdateValue() {
-        varMapper.updateValue(5L,"sing too");
-        assertEquals("sing too",varMapper.getValueByKeyID(5L).getValue());
+        varMapper.updateValue(5L, "sing too");
+        assertEquals("sing too", varMapper.getValueByKeyID(5L).getValue());
     }
 }

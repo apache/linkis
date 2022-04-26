@@ -52,4 +52,8 @@ object EnvConfiguration {
   val LINKIS_PUBLIC_MODULE_PATH = CommonVars("wds.linkis.public_module.path", Configuration.getLinkisHome + "/lib/linkis-commons/public-module")
 
   val LINKIS_CONF_DIR = CommonVars("LINKIS_CONF_DIR", Configuration.getLinkisHome() + "/conf")
+
+  val HADOOP_LIB_CLASSPATH = CommonVars("wds.linkis.hadoop.lib.classpath", "/usr/local/hadoop-3.2.1/share/hadoop/hdfs::/usr/local/hadoop-3.2.1/share/hadoop/hdfs/*:/usr/local/hadoop-3.2.1/share/hadoop/mapreduce/*:/usr/local/hadoop-3.2.1/share/hadoop/yarn:/usr/local/hadoop-3.2.1/share/hadoop/yarn/lib/*:/usr/local/hadoop-3.2.1/share/hadoop/yarn/*")
+
+  val HBASE_LIB_CLASSPATH = CommonVars("wds.linkis.hbase.lib.classpath","")
 }

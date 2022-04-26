@@ -48,10 +48,10 @@ class CliHeartbeatMonitor(handler: HeartbeatLossHandler) extends Logging {
         if (isCliJob(entranceJob)) {
           val id = entranceJob.getJobRequest.getId.toString
           if (infoMap.containsKey(id)) {
-            error("registered duplicate job!! job-id: " + id)
+            logger.error(s"registered duplicate job!! job id: $id")
           } else {
             infoMap.put(id, entranceJob)
-            info("registered cli job: " + id)
+            logger.info(s"registered cli job id: $id")
           }
         }
       case _ =>
@@ -67,7 +67,7 @@ class CliHeartbeatMonitor(handler: HeartbeatLossHandler) extends Logging {
         if (isCliJob(entranceJob)) {
           val id = entranceJob.getJobRequest.getId.toString
           infoMap.remove(id)
-          info("unregistered cli job: " + id)
+          logger.info(s"unregistered cli job id: $id")
         }
       case _ =>
     }
@@ -82,7 +82,7 @@ class CliHeartbeatMonitor(handler: HeartbeatLossHandler) extends Logging {
       case entranceJob: EntranceJob =>
         if (isCliJob(entranceJob)) {
           val id = entranceJob.getJobRequest.getId.toString
-          if (!infoMap.containsKey(id)) error("heartbeat on non-existing job!! job-id: " + id)
+          if (!infoMap.containsKey(id)) logger.error(s"heartbeat on non-existing job!! job id: $id")
           else infoMap.get(id).updateNewestAccessByClientTimestamp()
         }
       case _ =>
@@ -93,10 +93,10 @@ class CliHeartbeatMonitor(handler: HeartbeatLossHandler) extends Logging {
     panicIfNull(handler, "handler should not be null")
     clientHeartbeatDaemon.scheduleAtFixedRate(new Runnable {
       override def run(): Unit = Utils.tryCatch(scanOneIteration()) {
-        t => error("ClientHeartbeatMonitor failed to scan for one iteration", t)
+        t => logger.error("ClientHeartbeatMonitor failed to scan for one iteration", t)
       }
     }, 0, 5, TimeUnit.SECONDS)
-    info("started cliHeartbeatMonitor")
+    logger.info("started cliHeartbeatMonitor")
     Utils.addShutdownHook(() -> this.shutdown())
   }
 
@@ -106,9 +106,9 @@ class CliHeartbeatMonitor(handler: HeartbeatLossHandler) extends Logging {
     val problemJobs = new util.ArrayList[EntranceJob]
     while (entries.hasNext) {
       val entry = entries.next
-      debug("Scanned job: " + entry.getKey());
+      logger.debug(s"Scanned job id: ${entry.getKey}");
       if (!isAlive(currentTime, entry.getValue)) {
-        info("Found linkis-cli connection lost job: " + entry.getKey())
+        logger.info(s"Found linkis-cli connection lost job id: ${entry.getKey}")
         problemJobs.add(entry.getValue)
       }
     }
@@ -122,7 +122,7 @@ class CliHeartbeatMonitor(handler: HeartbeatLossHandler) extends Logging {
     if (problemJobs.size > 0) {
       handler.handle(problemJobs.asScala.toList)
     }
-    debug("ClientHeartbeatMonitor ends scanning for one iteration")
+    logger.debug("ClientHeartbeatMonitor ends scanning for one iteration")
   }
 
   private val monitorCreators = EntranceConfiguration.CLIENT_MONITOR_CREATOR.getValue.split(",")

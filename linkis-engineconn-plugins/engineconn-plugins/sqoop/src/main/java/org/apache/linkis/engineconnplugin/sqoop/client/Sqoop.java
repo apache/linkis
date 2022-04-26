@@ -34,7 +34,6 @@ import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 import org.apache.sqoop.manager.SqlManager;
 import org.apache.sqoop.manager.oracle.OraOopManagerFactory;
-import org.apache.sqoop.mapreduce.JobBase;
 import org.apache.sqoop.util.LoggingUtils;
 
 import java.io.File;

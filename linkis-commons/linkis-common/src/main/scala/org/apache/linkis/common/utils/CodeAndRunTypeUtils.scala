@@ -17,6 +17,7 @@
 
 package org.apache.linkis.common.utils
 
+import org.apache.commons.lang.StringUtils
 import org.apache.linkis.common.conf.CommonVars
 
 object CodeAndRunTypeUtils {
@@ -56,6 +57,13 @@ object CodeAndRunTypeUtils {
     val codeTypeAndRunTypeRelationMap = getCodeTypeAndRunTypeRelationMap
     if (codeTypeAndRunTypeRelationMap.isEmpty) Map()
     else codeTypeAndRunTypeRelationMap.flatMap(x => x._2.map(y => (y, x._1)))
+  }
+
+  def getRunTypeByCodeType(codeType: String, defaultRunType: String = ""): String = {
+    if (StringUtils.isBlank(codeType)) {
+      return ""
+    }
+    getRunTypeAndCodeTypeRelationMap.getOrElse(codeType, defaultRunType)
   }
 
   def getSuffixBelongToRunTypeOrNot(suffix: String, runType: String): Boolean = {

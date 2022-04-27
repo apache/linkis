@@ -41,6 +41,13 @@ class CodeAndRunTypeUtilsTest {
   }
 
   @Test
+  def testGetRunTypeByCodeType(): Unit = {
+    val codeType = "psql"
+    val runType = CodeAndRunTypeUtils.getRunTypeByCodeType(codeType)
+    assertTrue(CodeAndRunTypeUtils.RUN_TYPE_SQL.equals(runType))
+  }
+
+  @Test
   def testGetSuffixBelongToRunTypeOrNot(): Unit = {
     val shell = CodeAndRunTypeUtils.getSuffixBelongToRunTypeOrNot("sh", CodeAndRunTypeUtils.RUN_TYPE_SHELL)
     assertTrue(shell)

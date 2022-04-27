@@ -17,6 +17,7 @@
  
 package org.apache.linkis.entrance.interceptor.impl
 
+import org.apache.linkis.common.utils.CodeAndRunTypeUtils
 import org.apache.linkis.entrance.interceptor.EntranceInterceptor
 import org.apache.linkis.entrance.interceptor.exception.CodeCheckException
 import org.apache.linkis.governance.common.entity.job.JobRequest
@@ -27,8 +28,9 @@ class SQLCodeCheckInterceptor extends EntranceInterceptor {
 
   override def apply(jobRequest: JobRequest, logAppender: java.lang.StringBuilder): JobRequest = {
     val engineType = LabelUtil.getEngineType(jobRequest.getLabels)
-    engineType.toLowerCase() match {
-        case "hql" | "sql" | "jdbc" | "hive" =>
+    val runType = CodeAndRunTypeUtils.getRunTypeByCodeType(engineType.toLowerCase())
+    runType match {
+        case CodeAndRunTypeUtils.RUN_TYPE_SQL =>
           val sb: StringBuilder = new StringBuilder
         val isAuth: Boolean = SQLExplain.authPass(jobRequest.getExecutionCode, sb)
           if (!isAuth) {

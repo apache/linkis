@@ -25,6 +25,21 @@ import java.util.regex.Pattern
 class SQLCodeParserTest {
 
   @Test
+  @DisplayName("testParseSqlWithSemicolon")
+  def testParseSqlWithSemicolon(): Unit = {
+    val parser = new SQLCodeParser
+    val sqlString: String =
+      """
+        |select * from test.table1;
+        |select
+        | *
+        | from test.table2 where name like ';_'
+        |""".stripMargin
+    val strings = parser.parse(sqlString)
+    assertTrue(strings.length == 2)
+  }
+
+  @Test
   @DisplayName("testParseSql")
   def testParseSql(): Unit = {
     val parser = new SQLCodeParser

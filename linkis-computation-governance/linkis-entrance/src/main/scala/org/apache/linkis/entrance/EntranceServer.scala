@@ -108,7 +108,7 @@ abstract class EntranceServer extends Logging {
        * */
       Utils.tryAndWarn(job.getJobListener.foreach(_.onJobInited(job)))
       getEntranceContext.getOrCreateScheduler().submit(job)
-      val msg = s"Job with jobId : ${job.getId} and execID : ${job.getId()} submitted "
+      val msg = s"Job with jobId : ${jobRequest.getId} and execID : ${job.getId()} submitted "
       logger.info(msg)
 
       job match {

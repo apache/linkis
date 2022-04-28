@@ -176,4 +176,6 @@ object EntranceConfiguration {
   val GRORUP_CACHE_MAX = CommonVars("wds.linkis.consumer.group.cache.capacity", 5000)
 
   val GRORUP_CACHE_EXPITE_TIME = CommonVars("wds.linkis.consumer.group.expire.time.hour", 50)
+
+  val CLIENT_MONITOR_CREATOR = CommonVars("wds.linkis.entrance.client.monitor.creator", "LINKISCLI")
 }

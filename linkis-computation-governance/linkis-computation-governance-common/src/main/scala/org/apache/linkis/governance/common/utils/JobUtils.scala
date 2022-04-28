@@ -18,7 +18,6 @@
 package org.apache.linkis.governance.common.utils
 
 import org.apache.linkis.governance.common.constant.job.JobRequestConstants
-import org.apache.linkis.protocol.utils.TaskUtils
 
 import java.util;
 
@@ -29,6 +28,16 @@ object JobUtils {
       val value = map.get(JobRequestConstants.JOB_ID)
       if (null != value) {
         return value.toString
+      }
+    }
+    null
+  }
+
+  def getJobIdFromStringMap(map: util.Map[String, String]): String = {
+    if (null != map && map.containsKey(JobRequestConstants.JOB_ID)) {
+      val value = map.get(JobRequestConstants.JOB_ID)
+      if (null != value) {
+        return value
       }
     }
     null

@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.linkis</groupId>
         <artifactId>linkis</artifactId>
-        <version>1.0.3</version>
+        <version>1.1.0</version>
     </parent>
 
 
@@ -62,15 +62,10 @@
             <artifactId>cglib</artifactId>
             <version>2.2.2</version>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>net.sourceforge.javacsv</groupId>-->
-<!--            <artifactId>javacsv</artifactId>-->
-<!--            <version>2.0</version>-->
-<!--        </dependency>-->
         <dependency>
             <groupId>com.github.pjfanning</groupId>
             <artifactId>excel-streaming-reader</artifactId>
-            <version>3.4.0</version>
+            <version>3.6.0</version>
         </dependency>
 
     </dependencies>

@@ -22,7 +22,7 @@
     <parent>
         <artifactId>linkis-engineconn-plugins</artifactId>
         <groupId>org.apache.linkis</groupId>
-        <version>1.0.3</version>
+        <version>1.1.0</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -181,12 +181,6 @@
             </exclusions>
         </dependency>
 
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.12</version>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-connector-hive_${scala.binary.version}</artifactId>

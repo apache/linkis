@@ -36,6 +36,7 @@ import org.apache.linkis.server.exception.{LoginExpireException, NonLoginExcepti
 import org.apache.linkis.server.{Message, validateFailed}
 import org.apache.commons.lang.StringUtils
 import org.apache.commons.lang.exception.ExceptionUtils
+import java.util.regex.Pattern
 
 object SecurityFilter extends Logging {
 
@@ -132,6 +133,9 @@ object SecurityFilter extends Logging {
             .data("enableSSO", true).data("SSOURL", SSOInterceptor.getSSOInterceptor.redirectTo(gatewayContext.getRequest.getURI)) << gatewayContext.getRequest.getRequestURI)
           false
         }
+      } else if (gatewayContext.getRequest.getRequestURI.matches(GatewayConfiguration.GATEWAY_NO_AUTH_URL_REGEX.getValue)){
+        GatewaySSOUtils.info("Not logged in, still let it pass (GATEWAY_NO_AUTH_URL): " + gatewayContext.getRequest.getRequestURI)
+        true
       } else {
         filterResponse(gatewayContext, Message.noLogin("You are not logged in, please login first(您尚未登录，请先登录)!") << gatewayContext.getRequest.getRequestURI)
         false

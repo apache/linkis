@@ -196,11 +196,16 @@ class SQLCodeParser extends SingleCodeParser with Logging  {
 
   val defaultLimit: Int = GovernanceCommonConf.ENGINE_DEFAULT_LIMIT.getValue
 
-  private def findRealSemicolonIndex(tempCode: String):Array[Int] = {
-    val realTempCode = if (!tempCode.endsWith(""";""")) tempCode + ";" else tempCode
+  private def findRealSemicolonIndex(tempCode: String): Array[Int] = {
+    var realTempCode = if (!tempCode.endsWith(""";""")) tempCode + ";" else tempCode
+    //    replace \" or \' to  AA(only as placeholders ) .
+    realTempCode = realTempCode.replace("""\"""", "AA").replace("""\'""", "AA")
+    val re = """(['"])(?:(?!\1).)*?\1""".r
     val array = new ArrayBuffer[Int]()
-    for(i <- 0 until realTempCode.length - 1){
-      if ('\\' != realTempCode.charAt(i) && ';' == realTempCode.charAt(i + 1)) array += ( i + 1)
+    val uglyIndices = re.findAllMatchIn(realTempCode).map(m => (m.start, m.end)).toList
+    for (i <- 0 until realTempCode.length) {
+      if (';' == realTempCode.charAt(i) && uglyIndices.forall(se => i < se._1 || i >= se._2))
+        array += i
     }
     array.toArray
   }
@@ -210,26 +215,13 @@ class SQLCodeParser extends SingleCodeParser with Logging  {
     def appendStatement(sqlStatement: String): Unit = {
       codeBuffer.append(sqlStatement)
     }
-    if (StringUtils.contains(code, specialSeparator)) {
-      val indices = findRealSemicolonIndex(code)
-      var oldIndex = 0
-      indices.foreach{
-        index => val singleCode = code.substring(oldIndex, index)
-          oldIndex = index + 1
-          if(StringUtils.isNotBlank(singleCode)) appendStatement(singleCode)
-      }
-    } else if (StringUtils.contains(code, separator)) {
-      StringUtils.split(code, ";").foreach{
-        case s if StringUtils.isBlank(s) =>
-        case s if isSelectCmdNoLimit(s) => appendStatement(s);
-        case s => appendStatement(s);
-      }
-    } else {
-      code match {
-        case s if StringUtils.isBlank(s) =>
-        case s if isSelectCmdNoLimit(s) => appendStatement(s);
-        case s => appendStatement(s);
-      }
+    val indices = findRealSemicolonIndex(code)
+    var oldIndex = 0
+    indices.foreach {
+      index =>
+        val singleCode = code.substring(oldIndex, index)
+        oldIndex = index + 1
+        if (StringUtils.isNotBlank(singleCode)) appendStatement(singleCode)
     }
     codeBuffer.toArray
   }

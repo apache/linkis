@@ -20,14 +20,12 @@ package org.apache.linkis.server
 import java.util
 
 import javax.servlet.http.HttpServletRequest
-import javax.xml.bind.annotation.XmlRootElement
 import org.apache.commons.lang.StringUtils
 import org.apache.commons.lang.exception.ExceptionUtils
 import org.slf4j.LoggerFactory
 import org.springframework.web.context.request.{RequestContextHolder, ServletRequestAttributes}
 
 
-@XmlRootElement(name = "message")
 class Message(private var method: String,
               private var status: Int = 0,          //-1 no login, 0 success, 1 error, 2 validate failed, 3 auth failed, 4 warning
               private var message: String,
@@ -139,4 +137,14 @@ object Message {
     case 3 => 403
     case 4 => 206
   }
+}
+
+object MessageStatus {
+
+  val NO_LOGIN: Int = -1
+  val SUCCESS: Int = 0
+  val ERROR: Int = 1
+  val VALIDATE_FAILED : Int = 2
+  val AUTH_FAILED: Int = 3
+  val WARNING: Int = 4
 }

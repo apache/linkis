@@ -107,6 +107,32 @@ public class MetadataAppServiceImpl implements MetadataAppService {
     }
 
     @Override
+    public Map<String, String> getPartitionPropsByDsId(
+            String dataSourceId,
+            String database,
+            String table,
+            String partition,
+            String system,
+            String userName)
+            throws ErrorException {
+        DsInfoResponse dsInfoResponse = reqToGetDataSourceInfo(dataSourceId, system, userName);
+        if (StringUtils.isNotBlank(dsInfoResponse.dsType())) {
+            return invokeMetaMethod(
+                    dsInfoResponse.dsType(),
+                    "getPartitionProps",
+                    new Object[] {
+                        dsInfoResponse.creator(),
+                        dsInfoResponse.params(),
+                        database,
+                        table,
+                        partition
+                    },
+                    Map.class);
+        }
+        return new HashMap<>();
+    }
+
+    @Override
     public Map<String, String> getTablePropsByDsId(
             String dataSourceId, String database, String table, String system, String userName)
             throws ErrorException {
@@ -125,7 +151,12 @@ public class MetadataAppServiceImpl implements MetadataAppService {
 
     @Override
     public MetaPartitionInfo getPartitionsByDsId(
-            String dataSourceId, String database, String table, String system, String userName)
+            String dataSourceId,
+            String database,
+            String table,
+            String system,
+            Boolean traverse,
+            String userName)
             throws ErrorException {
         DsInfoResponse dsInfoResponse = reqToGetDataSourceInfo(dataSourceId, system, userName);
         if (StringUtils.isNotBlank(dsInfoResponse.dsType())) {
@@ -133,7 +164,7 @@ public class MetadataAppServiceImpl implements MetadataAppService {
                     dsInfoResponse.dsType(),
                     "getPartitions",
                     new Object[] {
-                        dsInfoResponse.creator(), dsInfoResponse.params(), database, table
+                        dsInfoResponse.creator(), dsInfoResponse.params(), database, table, traverse
                     },
                     MetaPartitionInfo.class);
         }
@@ -220,8 +251,7 @@ public class MetadataAppServiceImpl implements MetadataAppService {
                 }
             } catch (Exception e) {
                 if (e instanceof MetaRuntimeException) {
-                    throw new MetaMethodInvokeException(
-                            method, methodArgs, -1, e.getMessage(), e.getCause());
+                    throw new MetaMethodInvokeException(method, methodArgs, -1, e.getMessage(), e);
                 }
                 // TODO ERROR CODE
                 throw new MetaMethodInvokeException(

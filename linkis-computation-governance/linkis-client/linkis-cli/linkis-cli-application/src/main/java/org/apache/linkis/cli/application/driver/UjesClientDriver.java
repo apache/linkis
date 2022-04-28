@@ -179,6 +179,7 @@ public class UjesClientDriver implements LinkisClientDriver {
                             .addExecuteCode(
                                     (String) linkisJob.getExecutionMap().get(LinkisKeys.KEY_CODE))
                             .setStartupParams(linkisJob.getParamConfMap())
+                            .setRuntimeParams(linkisJob.getParamRunTimeMap())
                             .setVariableMap(linkisJob.getParamVarsMap())
                             .setLabels(linkisJob.getLabelMap())
                             .setSource(linkisJob.getSourceMap())

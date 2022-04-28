@@ -18,7 +18,7 @@
 
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.apache.linkis.datasourcemanager.core.dao.DataSourceTypeDao">
-    <resultMap id="dataSourceTypeMap" type="dataSourceType">
+    <resultMap id="dataSourceTypeMap" type="org.apache.linkis.datasourcemanager.common.domain.DataSourceType">
         <result property="id" column="id"/>
         <result property="name" column="name"/>
         <result property="description" column="description"/>
@@ -29,10 +29,10 @@
     </resultMap>
 
     <select id="getAllTypes" resultMap="dataSourceTypeMap">
-        SELECT * FROM `linkis_datasource_type`;
+        SELECT * FROM `linkis_ps_dm_datasource_type`;
     </select>
 
     <select id="selectOne" resultMap="dataSourceTypeMap">
-        SELECT * FROM `linkis_datasource_type` WHERE id = #{id};
+        SELECT * FROM `linkis_ps_dm_datasource_type` WHERE id = #{id};
     </select>
 </mapper>

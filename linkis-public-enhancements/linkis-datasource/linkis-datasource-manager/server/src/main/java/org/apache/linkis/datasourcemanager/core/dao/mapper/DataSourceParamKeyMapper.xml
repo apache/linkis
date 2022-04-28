@@ -18,7 +18,7 @@
 
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.apache.linkis.datasourcemanager.core.dao.DataSourceParamKeyDao">
-    <resultMap id="paramKeyMap" type="DataSourceParamKeyDefinition">
+    <resultMap id="paramKeyMap" type="org.apache.linkis.datasourcemanager.common.domain.DataSourceParamKeyDefinition">
         <result property="id" column="id"/>
         <result property="key" column="key"/>
         <result property="description" column="description"/>
@@ -39,12 +39,12 @@
     <select id="listByDataSourceType" resultMap="paramKeyMap" parameterType="Long">
         SELECT
         <include refid="param_key_query"/>
-        FROM `linkis_datasource_type_key` WHERE `data_source_type_id` = #{dataSourceTypeId};
+        FROM `linkis_ps_dm_datasource_type_key` WHERE `data_source_type_id` = #{dataSourceTypeId};
     </select>
     <select id="listByDataSourceTypeAndScope" resultMap="paramKeyMap">
         <![CDATA[SELECT ]]>
         <include refid="param_key_query"/>
-        <![CDATA[ FROM `linkis_datasource_type_key`
+        <![CDATA[ FROM `linkis_ps_dm_datasource_type_key`
         WHERE `data_source_type_id` = #{dataSourceTypeId} AND `scope` = #{scope};]]>
     </select>
 </mapper>

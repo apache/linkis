@@ -35,6 +35,10 @@ public class EngineTypeLabelCreator {
 
     private static Map<String, String> defaultVersion = null;
 
+    static {
+        init();
+    }
+
     private static void init() {
         if (null == defaultVersion) {
             synchronized (EngineTypeLabelCreator.class) {

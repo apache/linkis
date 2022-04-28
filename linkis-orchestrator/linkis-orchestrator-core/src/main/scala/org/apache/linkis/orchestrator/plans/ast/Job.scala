@@ -17,6 +17,8 @@
  
 package org.apache.linkis.orchestrator.plans.ast
 
+import org.apache.commons.lang.StringUtils
+import org.apache.linkis.governance.common.utils.JobUtils
 import org.apache.linkis.orchestrator.utils.OrchestratorIDCreator
 
 /**
@@ -27,6 +29,8 @@ trait Job extends ASTOrchestration[Job] {
   private var visited: Boolean = false
 
   private var id: String = _
+
+  private var idInfo: String = _
 
   override def isVisited: Boolean = visited
 
@@ -40,7 +44,7 @@ trait Job extends ASTOrchestration[Job] {
 
   def copyWithNewStages(stages: Array[Stage]): Job
 
-  override def getId: String =  {
+  override def getId: String = {
     if (null == id) synchronized {
       if (null == id) {
         id = OrchestratorIDCreator.getAstJobIDCreator.nextID("astJob")
@@ -49,4 +53,23 @@ trait Job extends ASTOrchestration[Job] {
     id
   }
 
+  def getIDInfo(): String = {
+    if (null == idInfo) synchronized {
+      if (null == idInfo) {
+        val context = getASTContext
+        if (null != context && null != context.getParams && null != context.getParams.getRuntimeParams && null != context.getParams.getRuntimeParams.toMap) {
+          val runtimeMap = context.getParams.getRuntimeParams.toMap
+          val taskId = JobUtils.getJobIdFromMap(runtimeMap)
+          if (StringUtils.isNotBlank(taskId)) {
+            idInfo = s"TaskID_${taskId}_otJobId_${getId}"
+          } else {
+            idInfo = getId
+          }
+        } else {
+          idInfo = getId
+        }
+      }
+    }
+    idInfo
+  }
 }

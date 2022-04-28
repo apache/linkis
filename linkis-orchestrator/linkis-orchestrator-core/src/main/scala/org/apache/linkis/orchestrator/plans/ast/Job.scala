@@ -32,6 +32,9 @@ trait Job extends ASTOrchestration[Job] {
 
   private var idInfo: String = _
 
+  private val idLock = new Array[Byte](0)
+  private val idInfoLock = new Array[Byte](0)
+
   override def isVisited: Boolean = visited
 
   override def setVisited(): Unit = this.visited = true
@@ -45,7 +48,7 @@ trait Job extends ASTOrchestration[Job] {
   def copyWithNewStages(stages: Array[Stage]): Job
 
   override def getId: String = {
-    if (null == id) synchronized {
+    if (null == id) idLock synchronized {
       if (null == id) {
         id = OrchestratorIDCreator.getAstJobIDCreator.nextID("astJob")
       }
@@ -54,7 +57,7 @@ trait Job extends ASTOrchestration[Job] {
   }
 
   def getIDInfo(): String = {
-    if (null == idInfo) synchronized {
+    if (null == idInfo) idInfoLock synchronized {
       if (null == idInfo) {
         val context = getASTContext
         if (null != context && null != context.getParams && null != context.getParams.getRuntimeParams && null != context.getParams.getRuntimeParams.toMap) {

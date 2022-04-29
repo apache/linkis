@@ -83,7 +83,8 @@ public class OpenLooKengEngineConnExecutor extends ConcurrentComputationExecutor
     private Cache<String, ClientSession> clientSessionCache =
             CacheBuilder.newBuilder()
                     .expireAfterAccess(
-                            (Long) EngineConnConf.ENGINE_TASK_EXPIRE_TIME().getValue(),
+                            Long.valueOf(
+                                    EngineConnConf.ENGINE_TASK_EXPIRE_TIME().getValue().toString()),
                             TimeUnit.MILLISECONDS)
                     .maximumSize(EngineConnConstant.MAX_TASK_NUM())
                     .build();

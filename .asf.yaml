@@ -65,5 +65,5 @@ github:
         required_approving_review_count: 1
 notifications:
   commits: commits@linkis.apache.org
-  issues: dev@linkis.apache.org
-  pullrequests: commits@linkis.apache.org
+  issues: notifications@linkis.apache.org
+  pullrequests: notifications@linkis.apache.org

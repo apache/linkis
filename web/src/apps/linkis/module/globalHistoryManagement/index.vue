@@ -18,7 +18,7 @@
 <template>
   <div class="global-history">
     <Form class="global-history-searchbar" :model="searchBar" inline>
-      <FormItem prop="id" label="JobID">
+      <FormItem prop="id" :label="$t('message.linkis.jobId')">
         <InputNumber
           v-model="searchBar.id"
           :placeholder="$t('message.linkis.formItems.id.placeholder')"
@@ -40,11 +40,11 @@
           class="datepicker"
           :options="shortcutOpt"
           v-model="searchBar.shortcut"
-          type="datetimerange"
+          type="daterange"
           placement="bottom-start"
-          format="yyyy-MM-dd HH:mm"
+          format="yyyy-MM-dd"
           :placeholder="$t('message.linkis.formItems.date.placeholder')"
-          style="width: 115px"
+          style="width: 160px"
           :editable="false"
         />
       </FormItem>
@@ -274,7 +274,7 @@ export default {
   beforeDestroy() {
     // 监听窗口变化，获取浏览器宽高
     storage.set('last-admin-model', this.isAdminModel)
-    storage.set('last-searchbar-status', this.searchBar)
+    // storage.set('last-searchbar-status', this.searchBar)
     window.removeEventListener('resize', this.getHeight)
   },
   activated() {

@@ -29,7 +29,7 @@ class JobUtilsTest {
   def testGetJobIdFromMap(): Unit = {
     val map: util.Map[String, Object] = new util.HashMap[String, Object]()
     Assertions.assertNull(JobUtils.getJobIdFromMap(map))
-    map.put(JobRequestConstants.JOB_ID, 100L)
+    map.put(JobRequestConstants.JOB_ID, "100")
     Assertions.assertNotNull(JobUtils.getJobIdFromMap(map))
   }
 

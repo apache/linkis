@@ -147,5 +147,8 @@ LINKIS_PUBLIC_MODULE=lib/linkis-commons/public-module
 ## If SKYWALKING_AGENT_PATH is set, the Linkis components will be started with Skywalking agent
 #SKYWALKING_AGENT_PATH=/appcom/config/skywalking-agent/skywalking-agent.jar
 
+##If you want to enable prometheus for monitoring linkis, you can set this export PROMETHEUS_ENABLE=true
+export PROMETHEUS_ENABLE=false
+
 #If you want to start metadata related microservices, you can set this export ENABLE_METADATA_MANAGE=true
 export ENABLE_METADATA_MANAGER=false

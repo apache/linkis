@@ -186,7 +186,7 @@ CREATE TABLE `linkis_ps_udf_tree` (
 DROP TABLE IF EXISTS `linkis_ps_udf_user_load`;
 CREATE TABLE `linkis_ps_udf_user_load` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `udf_id` int(11) NOT NULL,
+  `udf_id` bigint(20) NOT NULL,
   `user_name` varchar(50) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

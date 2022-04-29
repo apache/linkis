@@ -216,29 +216,19 @@ class SQLCodeParser extends SingleCodeParser with Logging  {
     if (StringUtils.isBlank(code)) {
       return codeBuffer.toArray
     }
-    val codeAfterClearComment = clearSqlComment(code)
 
     def appendStatement(sqlStatement: String): Unit = {
       codeBuffer.append(sqlStatement)
     }
-    val indices = findRealSemicolonIndex(codeAfterClearComment)
+    val indices = findRealSemicolonIndex(code)
     var oldIndex = 0
     indices.foreach {
       index =>
-        val singleCode = codeAfterClearComment.substring(oldIndex, index)
+        val singleCode = code.substring(oldIndex, index)
         oldIndex = index + 1
         if (StringUtils.isNotBlank(singleCode)) appendStatement(singleCode)
     }
     codeBuffer.toArray
-  }
-
-  def clearSqlComment(code: String): String = {
-    if (StringUtils.isBlank(code)) {
-      return ""
-    }
-    val p = Pattern.compile("(?ms)('(?:''|[^'])*')|--.*?$|/\\*.*?\\*/")
-    val sql = p.matcher(code).replaceAll("$1")
-    sql.trim
   }
 
   def isSelectCmdNoLimit(cmd: String): Boolean = {

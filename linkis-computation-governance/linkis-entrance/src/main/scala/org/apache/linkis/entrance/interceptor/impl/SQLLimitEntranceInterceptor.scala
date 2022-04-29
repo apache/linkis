@@ -18,6 +18,7 @@
 package org.apache.linkis.entrance.interceptor.impl
 
 import org.apache.linkis.common.log.LogUtils
+import org.apache.linkis.common.utils.CodeAndRunTypeUtils
 import org.apache.linkis.entrance.conf.EntranceConfiguration
 import org.apache.linkis.entrance.interceptor.EntranceInterceptor
 import org.apache.linkis.governance.common.entity.job.JobRequest
@@ -41,9 +42,10 @@ class SQLLimitEntranceInterceptor extends EntranceInterceptor {
         ""
       }
     }
+    val runType = CodeAndRunTypeUtils.getRunTypeByCodeType(codeType)
     task match {
-      case jobRequest: JobRequest=> codeType match {
-        case "hql" | "sql" | "jdbc" | "hive" | "psql" => val executionCode = jobRequest.getExecutionCode
+      case jobRequest: JobRequest => runType match {
+        case CodeAndRunTypeUtils.RUN_TYPE_SQL => val executionCode = jobRequest.getExecutionCode
           SQLExplain.dealSQLLimit(executionCode, jobRequest, logAppender)
         case _ =>
       }

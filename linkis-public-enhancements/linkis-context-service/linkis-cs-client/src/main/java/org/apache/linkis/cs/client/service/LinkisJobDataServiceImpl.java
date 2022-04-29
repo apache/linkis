@@ -67,11 +67,12 @@ public class LinkisJobDataServiceImpl implements LinkisJobDataService {
             ContextKey contextKey = SerializeHelper.deserializeContextKey(contextKeyStr);
             LinkisJobData jobData =
                     searchService.getContextValue(contextID, contextKey, LinkisJobData.class);
-            logger.info(
-                    "contextID: {} and contextKeyStr: {} succeed to getLinkisJobData  {}",
-                    contextID.getContextId(),
-                    contextKeyStr,
-                    jobData.getJobID());
+            if (null != jobData)
+                logger.info(
+                        "contextID: {} and contextKeyStr: {} succeed to getLinkisJobData  {}",
+                        contextID.getContextId(),
+                        contextKeyStr,
+                        jobData.getJobID());
             return jobData;
         } catch (ErrorException e) {
             logger.error(

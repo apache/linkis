@@ -56,6 +56,12 @@ trait Job extends ASTOrchestration[Job] {
     id
   }
 
+  /**
+   * JonIDINFO generation method:
+   * 1. If taskID exists in startUp, use taskID as prefix
+   * 2. If the taskID does not exist or is empty, use the job id directly
+   * @return
+   */
   def getIDInfo(): String = {
     if (null == idInfo) idInfoLock synchronized {
       if (null == idInfo) {

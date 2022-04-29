@@ -29,7 +29,7 @@
         </template>
         <template slot-scope="{row}" slot="usedResource">
           <!-- 后台未做返回时的处理，下面几个可按照处理 -->
-          <span v-if="row.usedResource">{{`${calcCompany(row.usedResource.cores)}cores,${calcCompany(row.usedResource.memory, true)}G,${calcCompany(row.usedResource.instances)}apps`}}</span>
+          <span v-if="row.usedResource">{{`${calcCompany(row.usedResource.cores)}cores,${calcCompany(row.usedResource.memory, true)}G,${calcCompany(row.usedResource.instance)}apps`}}</span>
           <span v-else>Null cores,Null G</span>
         </template>
         <!-- <template slot-scope="{row}" slot="maxResource">

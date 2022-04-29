@@ -22,5 +22,3 @@ linkis_url="http://127.0.0.1:9001"
 #linkis ip address，the http access address for linkis-web will be http://${linkis_ipaddr}:${linkis_port}
 linkis_ipaddr=127.0.0.1
 linkis_port=8088
-
-web/install.sh

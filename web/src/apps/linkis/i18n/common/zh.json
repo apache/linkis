@@ -53,6 +53,7 @@
             "cancel": "取消",
             "create": "新建",
             "noDataText": "暂无数据",
+            "jobId": "任务ID",
             "userName": "用户名",
             "unselect": "请选择",
             "noselection": "请先选择",
@@ -63,7 +64,6 @@
             "prev": "上一步",
             "complete": "完成",
             "close": "关闭",
-            "create": "新建",
             "warning": {
                 "api": "接口请求中，请稍候！",
                 "data": "数据请求中，请稍候！",

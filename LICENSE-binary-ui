@@ -230,7 +230,6 @@ See licenses-binary-ui/ for text of these licenses.
     (The MIT License) mitt@1.2.0 (https://github.com/developit/mitt)
     (The MIT License) moment@2.29.1 (https://github.com/moment/moment)
     (The MIT License) monaco-editor@0.19.3 (https://github.com/Microsoft/monaco-editor)
-    (The MIT License) pinyin@2.9.1 (https://github.com/hotoo/pinyin)
     (The MIT License) reconnecting-websocket@4.4.0 (https://github.com/pladaria/reconnecting-websocket)
     (The MIT License) sql-formatter@2.3.3 (https://github.com/zeroturnaround/sql-formatter)
     (The MIT License) svgo@1.3.0 (https://github.com/svg/svgo)
@@ -242,3 +241,4 @@ See licenses-binary-ui/ for text of these licenses.
     (The MIT License) worker-loader@2.0.0 (https://github.com/webpack-contrib/worker-loader)
     (The MIT License) @form-create/iview@2.5.13 (https://github.com/xaboy/form-create)
     (The MIT License) object-to-formdata@4.2.2 (https://github.com/therealparmesh/object-to-formdata)
+    (The Apache-2.0 License) material-design-icons@^3.0.1 (https://github.com/google/material-design-icons)

@@ -25,7 +25,7 @@ SET @PIPELINE_LABEL="pipeline-1";
 SET @JDBC_LABEL="jdbc-4";
 SET @PRESTO_LABEL="presto-0.234";
 SET @IO_FILE_LABEL="io_file-1.0";
-SET @OPENLOOKENG_LABEL="openlookend-1.5.0"
+SET @OPENLOOKENG_LABEL="openlookeng-1.5.0";
 -- 衍生变量：
 SET @SPARK_ALL=CONCAT('*-*,',@SPARK_LABEL);
 SET @SPARK_IDE=CONCAT('*-IDE,',@SPARK_LABEL);
@@ -113,6 +113,12 @@ insert into `linkis_ps_configuration_config_key` (`key`, `description`, `name`, 
 INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('wds.linkis.rm.instance', '范围：1-20，单位：个', 'io_file引擎最大并发数', '10', 'NumInterval', '[1,20]', '0', '0', '1', 'io_file引擎资源上限', 'io_file');
 INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('wds.linkis.rm.client.memory.max', '取值范围：1-50，单位：G', 'io_file引擎最大内存', '20G', 'Regex', '^([1-9]\\d{0,1}|100)(G|g)$', '0', '0', '1', 'io_file引擎资源上限', 'io_file');
 INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('wds.linkis.rm.client.core.max', '取值范围：1-100，单位：个', 'io_file引擎最大核心数', '40', 'Regex', '^(?:[1-9]\\d?|[1234]\\d{2}|128)$', '0', '0', '1', 'io_file引擎资源上限', 'io_file');
+
+-- openlookeng
+INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `engine_conn_type`, `is_hidden`, `is_advanced`, `level`, `treeName`) VALUES ('linkis.openlookeng.url', '例如:http://127.0.0.1:8080', '连接地址', 'http://127.0.0.1:8080', 'Regex', '^\\s*http://([^:]+)(:\\d+)(/[^\\?]+)?(\\?\\S*)?$', 'openlookeng', 0, 0, 1, '数据源配置');
+INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `engine_conn_type`, `is_hidden`, `is_advanced`, `level`, `treeName`) VALUES ('linkis.openlookeng.catalog', 'catalog', 'catalog', 'system', 'None', '', 'openlookeng', 0, 0, 1, '数据源配置');
+INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `engine_conn_type`, `is_hidden`, `is_advanced`, `level`, `treeName`) VALUES ('linkis.openlookeng.source', 'source', 'source', 'global', 'None', '', 'openlookeng', 0, 0, 1, '数据源配置');
+
 
 -- Configuration first level directory
 insert into `linkis_cg_manager_label` (`label_key`, `label_value`, `label_feature`, `label_value_size`, `update_time`, `create_time`) VALUES ('combined_userCreator_engineType','*-全局设置,*-*', 'OPTIONAL', 2, now(), now());
@@ -218,6 +224,9 @@ select @label_id := id from linkis_cg_manager_label where `label_value` = @PIPEL
 insert into linkis_ps_configuration_category (`label_id`, `level`) VALUES (@label_id, 2);
 
 select @label_id := id from linkis_cg_manager_label where `label_value` = @JDBC_IDE;
+insert into linkis_ps_configuration_category (`label_id`, `level`) VALUES (@label_id, 2);
+
+select @label_id := id from linkis_cg_manager_label where `label_value` = @OPENLOOKENG_IDE;
 insert into linkis_ps_configuration_category (`label_id`, `level`) VALUES (@label_id, 2);
 
 select @label_id := id from linkis_cg_manager_label where `label_value` =  @SPARK_VISUALIS;

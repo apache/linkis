@@ -45,14 +45,21 @@ import org.apache.linkis.manager.engineplugin.common.creation.{ExecutorFactory, 
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.EngineType.EngineType
 import org.apache.linkis.manager.label.entity.engine._
-
-import scala.collection.convert.decorateAsScala._
+import scala.collection.JavaConverters._
 
 
 class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging {
 
   override protected def createEngineConnSession(engineCreationContext: EngineCreationContext): Any = {
-    val options = engineCreationContext.getOptions
+    var options = engineCreationContext.getOptions
+    // Filter the options (startUpParams)
+    options = options.asScala.mapValues{
+      case value if value.contains(FLINK_PARAMS_BLANK_PLACEHOLER.getValue) =>
+        info(s"Transform option value: [$value]")
+        value.replace(FLINK_PARAMS_BLANK_PLACEHOLER.getValue, " ")
+      case v1 => v1
+    }.toMap.asJava
+    engineCreationContext.setOptions(options)
     val environmentContext = createEnvironmentContext(engineCreationContext)
     val flinkEngineConnContext = createFlinkEngineConnContext(environmentContext)
     val executionContext = createExecutionContext(options, environmentContext)
@@ -69,7 +76,15 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     val flinkLibRemotePath = FLINK_LIB_REMOTE_PATH.getValue(options)
     val flinkDistJarPath = FLINK_DIST_JAR_PATH.getValue(options)
     val providedLibDirsArray = FLINK_LIB_LOCAL_PATH.getValue(options).split(",")
-    val shipDirsArray = FLINK_SHIP_DIRECTORIES.getValue(options).split(",")
+    var shipDirsArray = FLINK_SHIP_DIRECTORIES.getValue(options).split(",")
+    shipDirsArray = shipDirsArray match {
+      case pathArray: Array[String] =>
+        pathArray.map(dir => {
+          if (new File(dir).exists()) dir
+          else getClass.getClassLoader.getResource(dir).getPath
+        })
+      case _ => new Array[String](0)
+    }
     val context = new EnvironmentContext(defaultEnv, new Configuration, hadoopConfDir, flinkConfDir, flinkHome,
       flinkDistJarPath, flinkLibRemotePath, providedLibDirsArray, shipDirsArray, null)
     // Step1: environment-level configurations
@@ -79,7 +94,7 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     val jobManagerMemory = LINKIS_FLINK_JOB_MANAGER_MEMORY.getValue(options) + "M"
     val taskManagerMemory = LINKIS_FLINK_TASK_MANAGER_MEMORY.getValue(options) + "M"
     val numberOfTaskSlots = LINKIS_FLINK_TASK_SLOTS.getValue(options)
-    info(s"Use yarn queue $yarnQueue, and set parallelism = $parallelism, jobManagerMemory = $jobManagerMemory G, taskManagerMemory = $taskManagerMemory G, numberOfTaskSlots = $numberOfTaskSlots.")
+    info(s"Use yarn queue $yarnQueue, and set parallelism = $parallelism, jobManagerMemory = $jobManagerMemory, taskManagerMemory = $taskManagerMemory, numberOfTaskSlots = $numberOfTaskSlots.")
     // Step2: application-level configurations
     // construct app-config
     val flinkConfig = context.getFlinkConfig
@@ -91,7 +106,7 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     // if(StringUtils.isNotBlank(flinkLibRemotePath)) providedLibDirList.add(flinkLibRemotePath)
     flinkConfig.set(YarnConfigOptions.PROVIDED_LIB_DIRS, providedLibDirList)
     // construct jar-dependencies
-    flinkConfig.set(YarnConfigOptions.SHIP_ARCHIVES, context.getShipDirs)
+    flinkConfig.set(YarnConfigOptions.SHIP_FILES, context.getShipDirs)
     // set user classpaths
     val classpaths = FLINK_APPLICATION_CLASSPATH.getValue(options)
     if (StringUtils.isNotBlank(classpaths)) {

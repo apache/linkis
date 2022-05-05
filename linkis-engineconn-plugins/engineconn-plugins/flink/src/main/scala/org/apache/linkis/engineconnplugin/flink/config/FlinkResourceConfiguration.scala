@@ -22,7 +22,7 @@ import org.apache.linkis.common.conf.CommonVars
 
 object FlinkResourceConfiguration {
 
-  val LINKIS_FLINK_CLIENT_MEMORY = CommonVars[Int]("flink.client.memory", 4) //Unit: G(单位为G)
+  val LINKIS_FLINK_CLIENT_MEMORY = CommonVars[Int]("flink.client.memory", 1024) //Unit: M(单位为M)
   val LINKIS_FLINK_CLIENT_CORES = 1 //Fixed to 1（固定为1） CommonVars[Int]("wds.linkis.driver.cores", 1)
 
 

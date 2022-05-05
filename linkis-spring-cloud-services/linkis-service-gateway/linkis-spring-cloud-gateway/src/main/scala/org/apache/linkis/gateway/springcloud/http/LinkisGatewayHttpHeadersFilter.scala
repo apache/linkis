@@ -15,29 +15,42 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.gateway.http
+package org.apache.linkis.gateway.springcloud.http
 
 import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.gateway.config.GatewayConfiguration.{THIS_GATEWAY_SCHEMA, THIS_GATEWAY_URL}
 import org.apache.linkis.rpc.Sender
+import org.springframework.cloud.gateway.filter.headers.HttpHeadersFilter
+import org.springframework.core.Ordered
+import org.springframework.http.HttpHeaders
+import org.springframework.http.server.reactive.ServerHttpRequest
+import org.springframework.web.server.ServerWebExchange
 
-
-object GatewayHttpUtils {
+class LinkisGatewayHttpHeadersFilter extends HttpHeadersFilter with  Ordered{
 
   private val GATEWAY_URL = "GATEWAY_URL"
 
-  def addGateWayUrlToRequest(gatewayContext: GatewayContext): Unit = {
+  override def filter(input: HttpHeaders, exchange: ServerWebExchange): HttpHeaders = {
+    val request: ServerHttpRequest = exchange.getRequest
+    val updated: HttpHeaders = new HttpHeaders
+    val iterator = input.entrySet().iterator()
+    while (iterator.hasNext) {
+      val next = iterator.next()
+      updated.addAll(next.getKey, next.getValue)
+    }
     val gatewWayURL = if (StringUtils.isNotBlank(THIS_GATEWAY_URL.getValue)) {
       THIS_GATEWAY_URL.getValue
     } else {
       val schema = if (StringUtils.isNotBlank(THIS_GATEWAY_SCHEMA.getValue)) {
         THIS_GATEWAY_SCHEMA.getValue
       } else {
-        gatewayContext.getRequest.getURI.getScheme
+        request.getURI.getScheme
       }
       s"$schema://${Sender.getThisInstance}"
     }
-    val array = Array(gatewWayURL)
-    gatewayContext.getRequest.addHeader(GATEWAY_URL, array)
+    updated.add(GATEWAY_URL, gatewWayURL)
+    updated
   }
+
+  override def getOrder: Int = 1
 }

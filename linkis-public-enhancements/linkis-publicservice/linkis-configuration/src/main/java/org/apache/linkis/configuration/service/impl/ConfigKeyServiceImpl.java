@@ -32,10 +32,10 @@ import org.apache.linkis.manager.label.entity.CombinedLabel;
 import org.apache.linkis.manager.label.entity.Label;
 import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel;
 import org.apache.linkis.manager.label.exception.LabelErrorException;
+import org.apache.linkis.manager.label.utils.LabelUtil;
 
 import org.apache.commons.lang3.StringUtils;
 
-import org.apache.linkis.manager.label.utils.LabelUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -72,9 +72,12 @@ public class ConfigKeyServiceImpl implements ConfigKeyService {
         }
         ConfigKey configKey = configKeys.get(0);
         EngineTypeLabel engineTypeLabel = LabelUtil.getEngineTypeLabel(labelList);
-        for (ConfigKey key:configKeys) {
+        for (ConfigKey key : configKeys) {
             if (engineTypeLabel.getEngineType().equalsIgnoreCase(key.getEngineType())) {
-                logger.info("config key:{} will be use engineType {}", key.getKey(),key.getEngineType());
+                logger.info(
+                        "config key:{} will be use engineType {}",
+                        key.getKey(),
+                        key.getEngineType());
                 configKey = key;
             }
         }

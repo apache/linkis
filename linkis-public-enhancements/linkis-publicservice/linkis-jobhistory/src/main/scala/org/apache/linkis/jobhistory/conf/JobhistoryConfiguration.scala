@@ -30,4 +30,8 @@ object JobhistoryConfiguration {
   val UPDATE_RETRY_TIMES = CommonVars("wds.linkis.jobhistory.update.retry.times", 3)
   val UPDATE_RETRY_INTERVAL = CommonVars("wds.linkis.jobhistory.update.retry.interval", 3 * 1000)
 
+  val UNDONE_JOB_MINIMUM_ID: CommonVars[Long] = CommonVars("wds.linkis.jobhistory.undone.job.minimum.id", 0L)
+
+  val UNDONE_JOB_REFRESH_TIME_DAILY: CommonVars[String] = CommonVars("wds.linkis.jobhistory.undone.job.refreshtime.daily", "00:15")
+
 }

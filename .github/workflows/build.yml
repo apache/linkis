@@ -21,6 +21,9 @@ on:
   push:
   pull_request:
 
+env:
+  MAVEN_OPTS: -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.http.retryHandler.class=standard -Dmaven.wagon.http.retryHandler.count=3 -Dmaven.wagon.httpconnectionManager.ttlSeconds=120
+
 jobs:
   build:
 
@@ -51,6 +54,10 @@ jobs:
       run: |
           ./mvnw -N install
           ./mvnw clean package
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3.0.0
+#      with:
+#        token: ${{ secrets.CODECOV_TOKEN }}
     - name: Build frontend by node.js
       run: |
           cd web

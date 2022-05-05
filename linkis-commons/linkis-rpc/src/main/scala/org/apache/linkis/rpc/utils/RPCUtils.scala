@@ -19,7 +19,6 @@ package org.apache.linkis.rpc.utils
 
 import java.lang.reflect.UndeclaredThrowableException
 import java.net.ConnectException
-
 import com.netflix.client.ClientException
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.rpc.exception.NoInstanceExistsException
@@ -27,6 +26,7 @@ import org.apache.linkis.rpc.sender.{SpringCloudFeignConfigurationCache, SpringM
 import org.apache.linkis.rpc.{BaseRPCSender, Sender}
 import feign.RetryableException
 import org.apache.commons.lang.StringUtils
+import org.apache.linkis.rpc.conf.RPCConfiguration
 
 import scala.collection.JavaConversions._
 
@@ -70,6 +70,19 @@ object RPCUtils {
         ServiceInstance(baseRPCSender.getApplicationName, null)
       case _ =>
         null
+    }
+  }
+
+  def isPublicService(appName: String): Boolean = {
+    if (! RPCConfiguration.ENABLE_PUBLIC_SERVICE.getValue || StringUtils.isBlank(appName)) {
+      return false
+    }
+    val appNameLower = appName.toLowerCase()
+    if (appNameLower.startsWith(RPCConfiguration.PUBLIC_SERVICE_APP_PREFIX)) {
+      val serviceName = appNameLower.replaceFirst(RPCConfiguration.PUBLIC_SERVICE_APP_PREFIX, "")
+      RPCConfiguration.PUBLIC_SERVICE_LIST.exists(_.equalsIgnoreCase(serviceName))
+    } else {
+      false
     }
   }
 

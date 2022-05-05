@@ -17,8 +17,18 @@
 
 package org.apache.linkis.configuration.exception;
 
-public class ConfigurationException extends Exception {
+import org.apache.linkis.common.exception.ErrorException;
+
+public class ConfigurationException extends ErrorException {
+
+    public static final int CONFIGURATION_ERROR_CODE = 14100;
+
     public ConfigurationException(String message) {
-        super(message);
+        super(14100, message);
+    }
+
+    public ConfigurationException(String message, Throwable throwable) {
+        super(14100, message);
+        initCause(throwable);
     }
 }

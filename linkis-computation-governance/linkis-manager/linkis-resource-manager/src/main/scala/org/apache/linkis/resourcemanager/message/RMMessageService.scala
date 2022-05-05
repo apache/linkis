@@ -45,7 +45,8 @@ class RMMessageService extends Logging {
     Utils.tryCatch(resourceManager.resourceUsed(labels, resourceUsedProtocol.engineResource)) {
       case exception: Exception => {
         val nodeLabels = new RMLabelContainer(labels)
-        warn(s"usedResource failed, request from:${nodeLabels.getCombinedUserCreatorEngineTypeLabel.getStringValue}, request engine: ${nodeLabels.getEngineInstanceLabel}, " +
+        val value: String = Option(nodeLabels.getCombinedUserCreatorEngineTypeLabel).map(_.getStringValue).getOrElse("")
+        warn(s"usedResource failed, request from:$value, request engine: ${nodeLabels.getEngineInstanceLabel}, " +
           s"reason:${exception.getMessage}")
         throw exception
       }

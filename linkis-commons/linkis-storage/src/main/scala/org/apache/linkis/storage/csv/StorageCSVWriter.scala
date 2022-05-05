@@ -26,7 +26,7 @@ import org.apache.linkis.storage.resultset.table.{TableMetaData, TableRecord}
 import org.apache.commons.io.IOUtils
 
 
-class StorageCSVWriter(val charset: String, val separator: String, val outputStream: OutputStream) extends CSVFsWriter with Logging {
+class StorageCSVWriter(val charset: String, val separator: String, val quoteRetouchEnable: Boolean, val outputStream: OutputStream) extends CSVFsWriter with Logging {
 
   private val delimiter = separator match {
     case "," => ','
@@ -43,8 +43,18 @@ class StorageCSVWriter(val charset: String, val separator: String, val outputStr
   }
 
   private def compact(row: Array[String]): String = {
-    val tmp = row.foldLeft("")((l, r) => l + delimiter + r)
-    tmp.substring(1, tmp.length) + "\n"
+    val quotationMarks: String = "\""
+    def decorateValue(v: String): String = {
+      if (v == null || "".equals(v.trim)) v
+      else {
+        if (quoteRetouchEnable) {
+          s"$quotationMarks${v.replaceAll(quotationMarks, "")}$quotationMarks"
+        }
+        else v
+      }
+    }
+
+    row.map(x => decorateValue(x)).toList.mkString(delimiter.toString) + "\n"
   }
 
   private def write(row: Array[String]) = {

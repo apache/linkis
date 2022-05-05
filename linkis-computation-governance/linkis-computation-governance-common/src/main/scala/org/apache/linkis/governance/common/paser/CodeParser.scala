@@ -17,7 +17,7 @@
  
 package org.apache.linkis.governance.common.paser
 
-import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.common.utils.{CodeAndRunTypeUtils, Logging}
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.governance.common.paser.CodeType.CodeType
 import org.apache.commons.lang.StringUtils
@@ -26,6 +26,7 @@ import org.slf4j.{Logger, LoggerFactory}
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 import java.util
+import java.util.regex.Pattern
 
 
 trait CodeParser {
@@ -212,6 +213,10 @@ class SQLCodeParser extends SingleCodeParser with Logging  {
 
   override def parse(code: String): Array[String] = {
     val codeBuffer = new ArrayBuffer[String]()
+    if (StringUtils.isBlank(code)) {
+      return codeBuffer.toArray
+    }
+
     def appendStatement(sqlStatement: String): Unit = {
       codeBuffer.append(sqlStatement)
     }
@@ -300,12 +305,18 @@ object CodeType extends Enumeration {
   type CodeType = Value
   val Python, SQL, Scala, Shell, Other, Remain, JSON = Value
 
-  def getType(codeType: String): CodeType = codeType.toLowerCase() match {
-    case "python" | "pyspark" | "py" => Python
-    case "sql" | "hql" | "psql" => SQL
-    case "scala" => Scala
-    case "shell" | "sh" => Shell
-    case _ => Other
+  def getType(codeType: String): CodeType = {
+    val runTypeAndCodeTypeRelationMap: Map[String, String] = CodeAndRunTypeUtils.getRunTypeAndCodeTypeRelationMap
+    if (runTypeAndCodeTypeRelationMap.isEmpty || ! runTypeAndCodeTypeRelationMap.contains(codeType.toLowerCase)) return Other
+
+    val runType = runTypeAndCodeTypeRelationMap(codeType.toLowerCase)
+    runType match {
+      case CodeAndRunTypeUtils.RUN_TYPE_PYTHON => Python
+      case CodeAndRunTypeUtils.RUN_TYPE_SQL => SQL
+      case CodeAndRunTypeUtils.RUN_TYPE_SCALA => Scala
+      case CodeAndRunTypeUtils.RUN_TYPE_SHELL => Shell
+      case _ => Other
+    }
   }
 }
 

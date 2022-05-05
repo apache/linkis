@@ -55,6 +55,7 @@ import org.apache.linkis.engineconn.executor.entity.ResourceFetchExecutor
 import org.apache.linkis.engineplugin.hive.conf.Counters
 import org.apache.linkis.manager.common.protocol.resource.ResourceWithStatus
 import org.apache.commons.lang.StringUtils
+import org.apache.linkis.engineconn.computation.executor.utlis.ProgressUtils
 import org.apache.linkis.governance.common.utils.JobUtils
 
 import scala.collection.JavaConversions._
@@ -405,8 +406,12 @@ class HiveEngineConnExecutor(id: Int,
       }
 
       logger.debug(s"hive progress is $totalProgress")
-      if (totalProgress.isNaN || totalProgress.isInfinite) return currentBegin
-      totalProgress + currentBegin
+      val newProgress = if (totalProgress.isNaN || totalProgress.isInfinite)  currentBegin else totalProgress + currentBegin
+      val oldProgress = ProgressUtils.getOldProgress(this.engineExecutorContext)
+      if(newProgress < oldProgress) oldProgress else {
+        ProgressUtils.putProgress(newProgress, this.engineExecutorContext)
+        newProgress
+      }
     } else 0.0f
   }
 

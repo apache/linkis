@@ -36,7 +36,7 @@ class FlinkEngineConnLaunchBuilder extends JavaProcessEngineConnLaunchBuilder {
 
   override protected def getCommands(implicit engineConnBuildRequest: EngineConnBuildRequest): Array[String] = {
     val properties = engineConnBuildRequest.engineConnCreationDesc.properties
-    properties.put(EnvConfiguration.ENGINE_CONN_MEMORY.key, FlinkResourceConfiguration.LINKIS_FLINK_CLIENT_MEMORY.getValue(properties) + "G")
+    properties.put(EnvConfiguration.ENGINE_CONN_MEMORY.key, FlinkResourceConfiguration.LINKIS_FLINK_CLIENT_MEMORY.getValue(properties) + "M")
     super.getCommands
   }
 

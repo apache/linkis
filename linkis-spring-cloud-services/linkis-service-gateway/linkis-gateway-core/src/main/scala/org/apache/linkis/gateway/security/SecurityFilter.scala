@@ -17,26 +17,25 @@
  
 package org.apache.linkis.gateway.security
 
-import java.io.File
-import java.text.DateFormat
-import java.util
-import java.util.concurrent.TimeUnit
-import java.util.{Date, Locale}
+import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang.exception.ExceptionUtils
 import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.exception.LinkisException
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.gateway.config.GatewayConfiguration
 import org.apache.linkis.gateway.config.GatewayConfiguration._
-import org.apache.linkis.gateway.http.{GatewayContext, GatewayHttpUtils}
+import org.apache.linkis.gateway.http.GatewayContext
 import org.apache.linkis.gateway.security.sso.SSOInterceptor
 import org.apache.linkis.gateway.security.token.TokenAuthentication
 import org.apache.linkis.server.conf.ServerConfiguration
 import org.apache.linkis.server.exception.{LoginExpireException, NonLoginException}
 import org.apache.linkis.server.{Message, validateFailed}
-import org.apache.commons.lang.StringUtils
-import org.apache.commons.lang.exception.ExceptionUtils
 
-import java.util.regex.Pattern
+import java.io.File
+import java.text.DateFormat
+import java.util
+import java.util.concurrent.TimeUnit
+import java.util.{Date, Locale}
 
 object SecurityFilter extends Logging {
 
@@ -63,7 +62,6 @@ object SecurityFilter extends Logging {
         return false
       }
     }
-    GatewayHttpUtils.addGateWayUrlToRequest(gatewayContext)
     if (refererValidate) {
       //Security certification support, referer limited(安全认证支持，referer限定)
       val referer = gatewayContext.getRequest.getHeaders.get("Referer")

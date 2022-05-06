@@ -36,7 +36,7 @@ function isLocal(){
         return 0
     elif [ "$1" == $local_host ]; then
         return 0
-    elif [ "$1" == $ipaddr ]; then
+    elif [ `echo "$ipaddr" | grep  "^$1$" |wc -l` -gt 0 ]; then
         return 0
     fi
         return 1

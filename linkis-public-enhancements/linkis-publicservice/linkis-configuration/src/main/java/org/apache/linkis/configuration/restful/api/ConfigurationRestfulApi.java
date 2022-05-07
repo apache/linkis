@@ -213,6 +213,8 @@ public class ConfigurationRestfulApi {
     @RequestMapping(path = "/updateCategoryInfo", method = RequestMethod.POST)
     public Message updateCategoryInfo(HttpServletRequest request, @RequestBody JsonNode jsonNode)
             throws ConfigurationException {
+        String username = ModuleUserUtils.getOperationUser(request, "updateCategoryInfo");
+        checkAdmin(username);
         String description = null;
         Integer categoryId = null;
         try {

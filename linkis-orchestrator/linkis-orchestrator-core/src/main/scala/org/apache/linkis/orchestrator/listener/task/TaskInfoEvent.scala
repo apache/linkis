@@ -55,7 +55,7 @@ case class TaskResultSetSizeEvent(execTask: ExecTask, resultSize: Int) extends T
 
 case class TaskErrorResponseEvent(execTask: ExecTask, errorMsg: String) extends TaskInfoEvent with OrchestratorSyncEvent {
   override def toString: String = {
-    s"task ${execTask.getIDInfo()}, errorMsg ${errorMsg}"
+    s"task ${execTask.getIDInfo()}"
   }
 }
 

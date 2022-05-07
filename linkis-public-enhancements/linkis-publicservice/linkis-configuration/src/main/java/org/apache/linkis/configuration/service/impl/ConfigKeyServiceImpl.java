@@ -30,7 +30,9 @@ import org.apache.linkis.configuration.util.LabelParameterParser;
 import org.apache.linkis.manager.label.builder.CombinedLabelBuilder;
 import org.apache.linkis.manager.label.entity.CombinedLabel;
 import org.apache.linkis.manager.label.entity.Label;
+import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel;
 import org.apache.linkis.manager.label.exception.LabelErrorException;
+import org.apache.linkis.manager.label.utils.LabelUtil;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -69,7 +71,16 @@ public class ConfigKeyServiceImpl implements ConfigKeyService {
             throw new ConfigurationException("config key not exists: " + configKeyValue.getKey());
         }
         ConfigKey configKey = configKeys.get(0);
-
+        EngineTypeLabel engineTypeLabel = LabelUtil.getEngineTypeLabel(labelList);
+        for (ConfigKey key : configKeys) {
+            if (engineTypeLabel.getEngineType().equalsIgnoreCase(key.getEngineType())) {
+                logger.info(
+                        "config key:{} will be use engineType {}",
+                        key.getKey(),
+                        key.getEngineType());
+                configKey = key;
+            }
+        }
         CombinedLabel combinedLabel = getCombinedLabel(labelList);
 
         ConfigLabel configLabel =

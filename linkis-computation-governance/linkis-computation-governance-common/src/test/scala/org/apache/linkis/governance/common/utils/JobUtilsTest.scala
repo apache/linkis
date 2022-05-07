@@ -18,29 +18,28 @@
 package org.apache.linkis.governance.common.utils
 
 import org.apache.linkis.governance.common.constant.job.JobRequestConstants
+import org.junit.jupiter.api.{Assertions, DisplayName, Test}
 
-import java.util;
+import java.util
 
-object JobUtils {
+class JobUtilsTest {
 
-  def getJobIdFromMap(map: util.Map[String, Object]): String = {
-    if (null != map && map.containsKey(JobRequestConstants.JOB_ID)) {
-      val value = map.get(JobRequestConstants.JOB_ID)
-      if (null != value) {
-        return value.toString
-      }
-    }
-    null
+  @Test
+  @DisplayName("testGetJobIdFromMap")
+  def testGetJobIdFromMap(): Unit = {
+    val map: util.Map[String, Object] = new util.HashMap[String, Object]()
+    Assertions.assertNull(JobUtils.getJobIdFromMap(map))
+    map.put(JobRequestConstants.JOB_ID, "100")
+    Assertions.assertNotNull(JobUtils.getJobIdFromMap(map))
   }
 
-  def getJobIdFromStringMap(map: util.Map[String, String]): String = {
-    if (null != map && map.containsKey(JobRequestConstants.JOB_ID)) {
-      val value = map.get(JobRequestConstants.JOB_ID)
-      if (null != value) {
-        return value
-      }
-    }
-    null
+  @Test
+  @DisplayName("getJobIdFromStringMap")
+  def testGetJobIdFromStringMap(): Unit = {
+    val map: util.Map[String, String] = new util.HashMap[String, String]()
+    Assertions.assertNull(JobUtils.getJobIdFromStringMap(map))
+    map.put(JobRequestConstants.JOB_ID, "100")
+    Assertions.assertNotNull(JobUtils.getJobIdFromStringMap(map))
   }
 
 }

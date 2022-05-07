@@ -14,14 +14,14 @@
 # limitations under the License.
 #
 
-#当前路径
+#current directory
 workDir=$(cd `dirname $0`; pwd)
 
 
-echo "linkis front-end deployment script"
+echo "linkis frontend deployment script"
 
 source $workDir/config.sh
-# 前端放置目录，默认为解压目录
+# frontend directory,decompression directory by default
 linkis_basepath=$workDir
 
 #To be compatible with MacOS and Linux
@@ -52,23 +52,23 @@ else
     exit 1
 fi
 
-# 区分版本
+# distinguish version
 version=`cat /etc/redhat-release|sed -r 's/.* ([0-9]+)\..*/\1/'`
 
 
-echo "========================================================================配置信息======================================================================="
+echo "================================== print config info begin =================================="
 
-echo "前端访问端口：${linkis_port}"
-echo "后端Linkis的地址：${linkis_url}"
-echo "静态文件地址：${linkis_basepath}/dist"
-echo "当前路径：${workDir}"
-echo "本机ip：${linkis_ipaddr}"
+echo "frontend port：${linkis_port}"
+echo "backend address：${linkis_url}"
+echo "static file directory：${linkis_basepath}/dist"
+echo "current directory：${workDir}"
+echo "local ip：${linkis_ipaddr}"
 
-echo "========================================================================配置信息======================================================================="
+echo "================================== print config info end =================================="
 echo ""
 
 
-# 创建文件并配置nginx
+#create nginx conf file
 linkisConf(){
 
 	  s_host='$host'
@@ -77,27 +77,27 @@ linkisConf(){
     s_http_upgrade='$http_upgrade'
     echo "
         server {
-            listen       $linkis_port;# 访问端口
+            listen       $linkis_port;#access port
             server_name  localhost;
             #charset koi8-r;
             #access_log  /var/log/nginx/host.access.log  main;
             location /linkis/visualis {
-            root   ${linkis_basepath}/linkis/visualis; # 静态文件目录
+            root   ${linkis_basepath}/linkis/visualis; #static directory
             autoindex on;
             }
             location / {
-            root   ${linkis_basepath}/dist; # 静态文件目录
+            root   ${linkis_basepath}/dist; #static directory
             index  index.html index.html;
             }
             location /ws {
-            proxy_pass $linkis_url;#后端Linkis的地址
+            proxy_pass $linkis_url;#Linkis backend address
             proxy_http_version 1.1;
             proxy_set_header Upgrade $s_http_upgrade;
             proxy_set_header Connection "upgrade";
             }
 
             location /api {
-            proxy_pass $linkis_url; #后端Linkis的地址
+            proxy_pass $linkis_url; #Linkis backend address
             proxy_set_header Host $s_host;
             proxy_set_header X-Real-IP $s_remote_addr;
             proxy_set_header x_real_ipP $s_remote_addr;
@@ -125,30 +125,30 @@ linkisConf(){
 
 
 centos7(){
-    # nginx是否安装
+    # to install nginx
     #sudo rpm -Uvh http://nginx.org/packages/centos/7/noarch/RPMS/nginx-release-centos-7-0.el7.ngx.noarch.rpm
     sudo yum install -y nginx
-    echo "nginx 安装成功"
+    echo "install nginx success"
 
-    # 配置nginx
+    # config inginx
     linkisConf
 
-    # 解决 0.0.0.0:8888 问题
+    # fix 0.0.0.0:8888 problem
     yum -y install policycoreutils-python
     semanage port -a -t http_port_t -p tcp $linkis_port
 
-    # 开放前端访问端口
+    # Open front-end access port
     firewall-cmd --zone=public --add-port=$linkis_port/tcp --permanent
 
-    # 重启防火墙
+    # restart firewall
     firewall-cmd --reload
 
-    # 启动nginx
+    # start nginx
     systemctl restart nginx
 
-    # 调整SELinux的参数
+    # adjust SELinux parameter
     sed -i "s/SELINUX=enforcing/SELINUX=disabled/g" /etc/selinux/config
-    # 临时生效
+    # take effect temporarily
     setenforce 0
 
 }
@@ -169,28 +169,28 @@ centos6(){
     # install nginx
     yum install nginx -y
 
-    # 配置nginx
+    # config inginx
     linkisConf
 
-    # 防火墙
+    # firewall
     S_iptables=`lsof -i:$linkis_port | wc -l`
     if [ "$S_iptables" -gt "0" ];then
-    # 已开启端口防火墙重启
-    service iptables restart
+      # allow to access port,restart firewall
+      service iptables restart
     else
-    # 未开启防火墙添加端口再重启
-    iptables -I INPUT 5 -i eth0 -p tcp --dport $linkis_port -m state --state NEW,ESTABLISHED -j ACCEPT
-    service iptables save
-    service iptables restart
+      # not allow to access port,add port rule,restart firewall
+      iptables -I INPUT 5 -i eth0 -p tcp --dport $linkis_port -m state --state NEW,ESTABLISHED -j ACCEPT
+      service iptables save
+      service iptables restart
     fi
 
-    # start
+    # start nginx
     /etc/init.d/nginx start
 
-    # 调整SELinux的参数
+     # adjust SELinux parameter
     sed -i "s/SELINUX=enforcing/SELINUX=disabled/g" /etc/selinux/config
 
-    # 临时生效
+    # take effect temporarily
     setenforce 0
 
 }
@@ -204,6 +204,5 @@ fi
 if [[ $version -eq 7 ]]; then
     centos7
 fi
-echo '安装visualis前端,用户自行编译linkis前端安装包，则安装时需要把visualis的前端安装包放置于此'$linkis_basepath/linkis/visualis'，用于自动化安装:'
-cd $linkis_basepath/linkis/visualis;unzip -o build.zip  > /dev/null
-echo "请浏览器访问：http://${linkis_ipaddr}:${linkis_port}"
+
+echo "Please open the link in the browser：http://${linkis_ipaddr}:${linkis_port}"

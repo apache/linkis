@@ -24,6 +24,7 @@ import org.apache.linkis.common.exception.LinkisRetryException
 import org.apache.linkis.common.utils.{ByteTimeUtils, Logging, Utils}
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf.ENGINE_CONN_MANAGER_SPRING_NAME
+import org.apache.linkis.governance.common.utils.JobUtils
 import org.apache.linkis.manager.am.conf.{AMConfiguration, EngineConnConfigurationService}
 import org.apache.linkis.manager.am.exception.{AMErrorCode, AMErrorException}
 import org.apache.linkis.manager.am.label.EngineReuseLabelChooser
@@ -139,7 +140,8 @@ class DefaultEngineCreateService extends AbstractEngineService with EngineCreate
   @throws[LinkisRetryException]
   override def createEngine(engineCreateRequest: EngineCreateRequest, sender: Sender): EngineNode = {
     val startTime = System.currentTimeMillis
-    info(s"Start to create Engine for request: $engineCreateRequest.")
+    val taskId = JobUtils.getJobIdFromStringMap(engineCreateRequest.getProperties)
+    logger.info(s"Task: $taskId start to create Engine for request: $engineCreateRequest.")
     val labelBuilderFactory = LabelBuilderFactoryContext.getLabelBuilderFactory
     val timeout = if (engineCreateRequest.getTimeOut <= 0) AMConfiguration.ENGINE_START_MAX_TIME.getValue.toLong else engineCreateRequest.getTimeOut
 
@@ -207,7 +209,7 @@ class DefaultEngineCreateService extends AbstractEngineService with EngineCreate
         throw t
     }
 
-    info(s"Finished to create  engineConn $engineNode. ticketId is $resourceTicketId")
+    info(s"Task: $taskId finished to create  engineConn $engineNode. ticketId is $resourceTicketId")
     engineNode.setTicketId(resourceTicketId)
     //7. 更新持久化信息：包括插入engine/metrics
 
@@ -225,9 +227,9 @@ class DefaultEngineCreateService extends AbstractEngineService with EngineCreate
     val leftWaitTime = timeout - (System.currentTimeMillis - startTime)
     if (ECAvailableRule.getInstance.isNeedAvailable(labelList)) {
       ensureECAvailable(engineNode, resourceTicketId, leftWaitTime)
-      logger.info(s"Finished to create Engine for request: $engineCreateRequest and get engineNode $engineNode. time taken ${System.currentTimeMillis() - startTime}ms")
+      logger.info(s"Task: $taskId finished to create Engine for request: $engineCreateRequest and get engineNode $engineNode. time taken ${System.currentTimeMillis() - startTime}ms")
     } else {
-      logger.info(s"Finished to create Engine for request: $engineCreateRequest and get engineNode $engineNode.And did not judge the availability,time taken ${System.currentTimeMillis() - startTime}ms")
+      logger.info(s"Task: $taskId finished to create Engine for request: $engineCreateRequest and get engineNode $engineNode.And did not judge the availability,time taken ${System.currentTimeMillis() - startTime}ms")
     }
     engineNode
   }

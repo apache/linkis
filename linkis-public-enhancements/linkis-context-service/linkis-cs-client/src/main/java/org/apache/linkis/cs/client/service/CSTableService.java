@@ -68,11 +68,12 @@ public class CSTableService implements TableService {
             contextID = ((CombinedNodeIDContextID) contextID).getLinkisHaWorkFlowContextID();
         }
         CSTable csTable = searchService.getContextValue(contextID, contextKey, CSTable.class);
-        logger.info(
-                "contextID: {} and contextKey: {} succeed to get table tableName {}",
-                contextID.getContextId(),
-                contextKey.getKey(),
-                csTable.getName());
+        if (null != csTable)
+            logger.info(
+                    "contextID: {} and contextKey: {} succeed to get table tableName {}",
+                    contextID.getContextId(),
+                    contextKey.getKey(),
+                    csTable.getName());
         return csTable;
     }
 
@@ -95,11 +96,12 @@ public class CSTableService implements TableService {
                         searchService.searchUpstreamContext(
                                 contextID, nodeName, Integer.MAX_VALUE, CSTable.class);
             }
-            logger.info(
-                    "contextID: {} and nodeName: {} succeed to get tables size {}",
-                    contextID.getContextId(),
-                    nodeName,
-                    rsList.size());
+            if (null != rsList)
+                logger.info(
+                        "contextID: {} and nodeName: {} succeed to get tables size {}",
+                        contextID.getContextId(),
+                        nodeName,
+                        rsList.size());
             return rsList;
         } catch (ErrorException e) {
             logger.error("Deserialize contextID error. contextIDStr : " + contextIDStr);
@@ -123,12 +125,13 @@ public class CSTableService implements TableService {
                             ((CombinedNodeIDContextID) contextID).getLinkisHaWorkFlowContextID();
                 }
                 csTable = searchService.searchContext(contextID, keyword, nodeName, CSTable.class);
-                logger.info(
-                        "contextID: {} , nodeName: {}, keyword {} succeed to getUpstreamSuitableTable tableName {}",
-                        contextID.getContextId(),
-                        nodeName,
-                        keyword,
-                        csTable.getName());
+                if (null != csTable)
+                    logger.info(
+                            "contextID: {} , nodeName: {}, keyword {} succeed to getUpstreamSuitableTable tableName {}",
+                            contextID.getContextId(),
+                            nodeName,
+                            keyword,
+                            csTable.getName());
             }
         } catch (ErrorException e) {
             throw new CSErrorException(

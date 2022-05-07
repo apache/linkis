@@ -22,12 +22,10 @@ apacheds-kerberos-codec-2.0.0-M15.jar
 api-asn1-api-1.0.0-M20.jar
 api-util-1.0.0-M20.jar
 archaius-core-0.7.7.jar
-asm-3.3.1.jar
-asm-analysis-9.0.jar
-asm-commons-3.1.jar
-asm-commons-9.0.jar
-asm-tree-3.1.jar
-asm-tree-9.0.jar
+asm-9.3.jar
+asm-analysis-9.3.jar
+asm-commons-9.3.jar
+asm-tree-9.3.jar
 aspectjweaver-1.9.6.jar
 audience-annotations-0.5.0.jar
 avatica-1.8.0.jar
@@ -42,7 +40,7 @@ caffeine-2.8.8.jar
 calcite-core-1.10.0.jar
 calcite-druid-1.10.0.jar
 calcite-linq4j-1.10.0.jar
-cglib-2.2.2.jar
+cglib-3.3.0.jar
 checker-qual-3.4.0.jar
 checker-qual-3.5.0.jar
 checker-qual-3.8.0.jar

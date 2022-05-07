@@ -207,6 +207,12 @@ export default {
     // api.fetch('/configuration/engineType', 'get').then(res => {
     //   this.getCreators = ['all', ...res.engineType]
     // })
+    // 所有用户列表，移交时选择用户
+    api.fetch('/dss/framework/workspace/listAllUsers', 'get').then(res => {
+      let allUsers =  (res.users || []).map(it => it.username)
+      this.udfUsers = allUsers.slice(0, 150)
+      this.allUsers = allUsers
+    })
   },
   mounted() {
     this.init()

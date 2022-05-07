@@ -136,16 +136,19 @@
         <commons-beanutils.version>1.9.4</commons-beanutils.version>
         <druid.version>1.1.22</druid.version>
         <protobuf.version>3.15.8</protobuf.version>
-        <apache-rat-plugin.version>0.13</apache-rat-plugin.version>
-        <assembly.package.rootpath>${basedir}</assembly.package.rootpath>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <cglib.version>3.3.0</cglib.version>
+        <asm-bom.version>9.3</asm-bom.version>
         <log4j2.version>2.17.2</log4j2.version>
         <spotless.version>2.4.2</spotless.version>
         <junit5.version>5.7.2</junit5.version>
         <mockito.version>3.9.0</mockito.version>
         <assertj.version>3.17.2</assertj.version>
         <h2.version>1.4.200</h2.version>
+
+        <apache-rat-plugin.version>0.13</apache-rat-plugin.version>
+        <assembly.package.rootpath>${basedir}</assembly.package.rootpath>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
         <maven-surefire-plugin.version>2.22.1</maven-surefire-plugin.version>
         <jacoco.version>0.8.7</jacoco.version>
         <jacoco.skip>false</jacoco.skip>
@@ -769,7 +772,18 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-
+            <dependency>
+                <groupId>cglib</groupId>
+                <artifactId>cglib</artifactId>
+                <version>${cglib.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.ow2.asm</groupId>
+                <artifactId>asm-bom</artifactId>
+                <version>${asm-bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

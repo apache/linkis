@@ -74,7 +74,7 @@ class AccessibleEngineConnExecution extends EngineConnExecution with Logging {
     val maxFreeTimeVar = AccessibleExecutorConfiguration.ENGINECONN_MAX_FREE_TIME.getValue(context.getOptions)
     val maxFreeTimeStr = maxFreeTimeVar.toString
     val maxFreeTime = maxFreeTimeVar.toLong
-    logger.info("executorStatusChecker created， maxFreeTimeMills is " + maxFreeTime)
+    logger.info("executorStatusChecker created, maxFreeTimeMills is " + maxFreeTime)
     Utils.defaultScheduler.scheduleAtFixedRate(new Runnable {
       override def run(): Unit = Utils.tryAndWarn {
         val accessibleExecutor = ExecutorManager.getInstance.getReportExecutor match {
@@ -104,7 +104,7 @@ class AccessibleEngineConnExecution extends EngineConnExecution with Logging {
 
         }
       }
-    }, 3 * 60 * 1000, AccessibleExecutorConfiguration.ENGINECONN_HEARTBEAT_TIME.getValue.toLong, TimeUnit.MILLISECONDS)
+    }, 3 * 60 * 1000, AccessibleExecutorConfiguration.ENGINECONN_STATUS_SCAN_TIME.getValue.toLong, TimeUnit.MILLISECONDS)
   }
 
   def requestManagerReleaseExecutor(msg: String): Unit = {

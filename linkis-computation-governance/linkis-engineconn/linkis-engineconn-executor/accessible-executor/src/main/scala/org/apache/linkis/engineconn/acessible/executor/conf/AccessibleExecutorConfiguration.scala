@@ -45,6 +45,7 @@ object AccessibleExecutorConfiguration {
 
   val ENGINECONN_HEARTBEAT_TIME = CommonVars("wds.linkis.engineconn.heartbeat.time", new TimeType("2m"))
 
+  val ENGINECONN_STATUS_SCAN_TIME = CommonVars("wds.linkis.engineconn.status.scan.time", new TimeType("1m"))
 
   val ENABLE_MAINTAIN = CommonVars("wds.linkis.engineconn.maintain.enable", false)
 

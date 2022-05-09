@@ -17,13 +17,13 @@
 
 package org.apache.linkis.entrance.log
 
-import java.io.{BufferedReader, Closeable, IOException, InputStream, InputStreamReader}
-import org.apache.linkis.common.utils.{Logging, Utils}
-import org.apache.linkis.entrance.exception.LogReadFailedException
 import org.apache.commons.io.{IOUtils, LineIterator}
 import org.apache.commons.lang.StringUtils
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.entrance.exception.LogReadFailedException
 import org.apache.linkis.entrance.utils.LogHelper
 
+import java.io.{Closeable, IOException, InputStream}
 import scala.util.matching.Regex
 
 
@@ -107,27 +107,21 @@ abstract class LogReader(charset: String) extends Closeable with Logging{
   }
 
   protected def readLog(deal: String => Unit, fromLine: Int, size: Int = 100): Int = {
-    val from = if (fromLine < 1) 0 else fromLine - 1
+    val from = if (fromLine < 0) 0 else fromLine
     var line, read = 0
     val inputStream = getInputStream
-    val bufferReader = new BufferedReader(new InputStreamReader(inputStream, charset))
-    Utils.tryFinally {
-      val skipNum = bufferReader.skip(from)
-      if (skipNum > from && size >= 0) {
-        var lineText = bufferReader.readLine()
-        while (lineText != null && read < size) {
-          val r = lineText
-          if (line >= from) {
-            deal(r)
-            read += 1
-          }
-          line += 1
-          lineText = bufferReader.readLine()
+    val lineIterator = IOUtils.lineIterator(inputStream, charset)
+    Utils.tryFinally(
+      while (lineIterator.hasNext && (read < size || size < 0)) {
+        val r = lineIterator.next()
+        if (line >= from) {
+          deal(r)
+          read += 1
         }
-      }
-    } {
-      if (null != bufferReader) {
-        IOUtils.closeQuietly(bufferReader)
+        line += 1
+      }) {
+      if (null != lineIterator) {
+        LineIterator.closeQuietly(lineIterator)
       }
       if (null != inputStream) {
         IOUtils.closeQuietly(inputStream)

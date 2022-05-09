@@ -25,22 +25,30 @@ import org.apache.linkis.udf.service.UDFTreeService;
 import org.apache.linkis.udf.vo.UDFInfoVo;
 
 import org.apache.commons.collections.map.HashedMap;
-import org.apache.log4j.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import com.google.common.collect.Iterables;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import static org.apache.linkis.udf.utils.ConstantVar.*;
+import static org.apache.linkis.udf.utils.ConstantVar.BDP_USER;
+import static org.apache.linkis.udf.utils.ConstantVar.EXPIRE_USER;
+import static org.apache.linkis.udf.utils.ConstantVar.SHARE_USER;
+import static org.apache.linkis.udf.utils.ConstantVar.SYS_USER;
 
 @Service
 public class UDFTreeServiceImpl implements UDFTreeService {
 
-    private static final Logger logger = Logger.getLogger(UDFTreeServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(UDFTreeServiceImpl.class);
 
     @Autowired private UDFTreeDao udfTreeDao;
     @Autowired private UDFService udfService;

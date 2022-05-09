@@ -17,7 +17,6 @@
 
 
 import storage from '@/common/helper/storage';
-import api from '@/common/service/api';
 import SUPPORTED_LANG_MODES from '@/common/config/scriptis';
 
 export default {
@@ -58,24 +57,13 @@ export default {
     getSupportModes() {
       return this.SUPPORTED_LANG_MODES;
     },
-    getCommonProjectId(type, query) {
-      return api.fetch(`/dss/getAppjointProjectIDByApplicationName`, {
-        projectID: query.projectID,
-        applicationName: type
-      }, 'get').then((res) => {
-        localStorage.setItem('appJointProjectId', res.appJointProjectID);
-      })
-    },
     async gotoCommonIframe(type, query = {}) {
       const baseInfo = storage.get('baseInfo', 'local');
       if (!baseInfo) return;
       const info = baseInfo.applications.find((item) => item.name === type) || {};
       // 根据是否有projectid来确定是走首页还是工程页
       let url = '';
-      if (query.projectID) {
-        await this.getCommonProjectId(type, query);
-        url = info.projectUrl
-      } else {
+      if (!query.projectID) {
         localStorage.removeItem('appJointProjectId')
         url = info.homepageUrl
       }

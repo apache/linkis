@@ -34,7 +34,6 @@ import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.apache.log4j.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,6 +44,8 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -55,7 +56,7 @@ import java.util.Map;
 @Service
 public class DataSourceServiceImpl implements DataSourceService {
 
-    private static final Logger logger = Logger.getLogger(DataSourceServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(DataSourceServiceImpl.class);
 
     private static FileSystem rootHdfs = null;
 

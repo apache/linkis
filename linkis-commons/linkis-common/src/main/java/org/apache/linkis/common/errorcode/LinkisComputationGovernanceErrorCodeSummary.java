@@ -18,14 +18,15 @@
 package org.apache.linkis.common.errorcode;
 
 public enum LinkisComputationGovernanceErrorCodeSummary {
-    ENGINE_LAUNCH_REQUEST_USER_BLANK(20000, "请求引擎的参数中user为空", "请求引擎的参数中user为空", "EngineConnManger"),
+    ENGINE_LAUNCH_REQUEST_USER_BLANK(
+            20000, "请求引擎的参数中user为空", "请求引擎的参数中user为空", "EngineConnManager"),
     ENGINE_LAUNCH_REQUEST_CREATOR_BLANK(
             20001, "请求启动引擎的参数中creator为空", "请求启动引擎的参数中creator为空", "EngineConnManager"),
     ENGINE_INIT_FAILED(20002, "引擎初始化失败", "引擎初始化失败", "EngineConnManager"),
 
-    ENGINE_REQUEST_USER_BLANK(20000, "请求引擎的参数中user为空", "请求引擎的参数中user为空", "EngineConnManger"),
+    ENGINE_REQUEST_USER_BLANK(20000, "请求引擎的参数中user为空", "请求引擎的参数中user为空", "EngineConnManager"),
 
-    AM_EM_NOT_FOUND(20100, "请求引擎的参数中user为空", "请求引擎的参数中user为空", "EngineConnManger");
+    AM_EM_NOT_FOUND(20100, "请求引擎的参数中user为空", "请求引擎的参数中user为空", "EngineConnManager");
     /** 错误码 */
     private int errorCode;
     /** 错误描述 */

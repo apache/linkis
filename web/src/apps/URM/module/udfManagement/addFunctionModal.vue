@@ -626,6 +626,13 @@ export default {
     },
 
     submitForm(formName) {
+      if (this.fnType === 2) {
+        if (!this.setting.scalaTypeL) return this.$Message.warning(this.$t('message.linkis.datasource.pleaseInput') + this.$t('message.linkis.udf.returnType'))
+        if (!this.setting.scalaTypeR) return this.$Message.warning(this.$t('message.linkis.datasource.pleaseInput') + this.$t('message.linkis.udf.inputType'))
+      } else {
+        if (!this.setting.useFormatParaL) return this.$Message.warning(this.$t('message.linkis.datasource.pleaseInput') + this.$t('message.linkis.udf.returnType'))
+        if (!this.setting.useFormatParaR) return this.$Message.warning(this.$t('message.linkis.datasource.pleaseInput') + this.$t('message.linkis.udf.inputType'))
+      }
       this.$refs[formName].validate((valid) => {
         if (valid) {
           let { name, description, defaultLoad, directory, clusterName} = this.setting;

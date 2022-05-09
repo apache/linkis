@@ -16,53 +16,78 @@
  */
 
 package org.apache.linkis.engineconnplugin.sqoop.client.utils;
+
+import org.apache.commons.lang3.Validate;
+import sun.misc.Resource;
+import sun.misc.SharedSecrets;
+import sun.misc.URLClassPath;
+
 import java.io.File;
 import java.io.FileFilter;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.security.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-
+import java.util.Objects;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
+import java.util.stream.Collectors;
 
 public class JarLoader extends URLClassLoader {
+    private  AccessControlContext acc;
 
-    public JarLoader(String[] paths) throws Exception {
-        this(paths, JarLoader.class.getClassLoader());
+    public JarLoader(String[] paths){
+        this(paths, false);
     }
 
-    public JarLoader(String[] paths, ClassLoader parent) throws Exception {
-        super(getURLs(paths), parent);
+    public JarLoader(String[] paths, boolean recursive) {
+        this(paths, recursive, JarLoader.class.getClassLoader());
     }
 
-    private static URL[] getURLs(String[] paths) throws Exception {
+    public JarLoader(String[] paths, boolean recursive, ClassLoader parent) {
+        super(getURLs(paths, recursive), parent);
+    }
 
-        List<String> dirs = new ArrayList<String>();
-        for (String path : paths) {
-            dirs.add(path);
-            collectDirs(path, dirs);
-        }
-
-        List<URL> urls = new ArrayList<URL>();
-        for (String path : dirs) {
-            urls.addAll(doGetURLs(path));
+    private static URL[] getURLs(String[] paths, boolean recursive) {
+        List<URL> urls = new ArrayList<>();
+        if (recursive) {
+            List<String> dirs = new ArrayList<>();
+            for (String path : paths) {
+                dirs.add(path);
+                collectDirs(path, dirs);
+            }
+            for (String path : dirs) {
+                urls.addAll(doGetURLs(path));
+            }
+        }else{
+            //For classpath, classloader will recursive automatically
+            urls.addAll(Arrays.stream(paths).map(File::new).filter(File::exists).map(f -> {
+                try {
+                    return f.toURI().toURL();
+                } catch (MalformedURLException e) {
+                    //Ignore
+                    return null;
+                }
+            }).collect(Collectors.toList()));
         }
         return urls.toArray(new URL[0]);
     }
 
-    public void addURL(String path) throws MalformedURLException {
-        File file = new File(path);
-        if(file.isDirectory()){
-            File[] subFiles = file.listFiles();
-            for (File f:subFiles) {
-                super.addURL(f.toURI().toURL());
+    public void addJarURL(String path){
+        //Single jar
+        File singleJar = new File(path);
+        if (singleJar.exists() && singleJar.isFile()){
+            try {
+                this.addURL(singleJar.toURI().toURL());
+            } catch (MalformedURLException e) {
+                //Ignore
             }
-        }else{
-            super.addURL(file.toURI().toURL());
         }
-
     }
-
     private static void collectDirs(String path, List<String> collector) {
 
 
@@ -72,7 +97,7 @@ public class JarLoader extends URLClassLoader {
         }
 
         if(null != current.listFiles()) {
-            for (File child : current.listFiles()) {
+            for (File child : Objects.requireNonNull(current.listFiles())) {
                 if (!child.isDirectory()) {
                     continue;
                 }
@@ -83,33 +108,28 @@ public class JarLoader extends URLClassLoader {
         }
     }
 
-    private static List<URL> doGetURLs(final String path) throws Exception {
-        List<URL> jarURLs = new ArrayList<URL>();
+    private static List<URL> doGetURLs(final String path) {
+
 
         File jarPath = new File(path);
 
-        if(!jarPath.isDirectory()){
-            if(!jarPath.getName().endsWith(".jar")){
-                throw new RuntimeException("The Single File Must Be Jar File");
-            }
-            jarURLs.add(jarPath.toURI().toURL());
-            return jarURLs;
-        }
+        Validate.isTrue(jarPath.exists() && jarPath.isDirectory(),
+                "jar包路径必须存在且为目录.");
 
         /* set filter */
-        FileFilter jarFilter = new FileFilter() {
-            @Override
-            public boolean accept(File pathname) {
-                return pathname.getName().endsWith(".jar");
-            }
-        };
+        FileFilter jarFilter = pathname -> pathname.getName().endsWith(".jar");
 
         /* iterate all jar */
         File[] allJars = new File(path).listFiles(jarFilter);
+        assert allJars != null;
+        List<URL> jarURLs = new ArrayList<>(allJars.length);
 
-
-        for (int i = 0; i < allJars.length; i++) {
-            jarURLs.add(allJars[i].toURI().toURL());
+        for (File allJar : allJars) {
+            try {
+                jarURLs.add(allJar.toURI().toURL());
+            } catch (Exception e) {
+                //Ignore
+            }
         }
 
         return jarURLs;
@@ -117,8 +137,8 @@ public class JarLoader extends URLClassLoader {
 
     /**
      * change the order to load class
-     * @param name
-     * @param resolve
+     * @param name name
+     * @param resolve isResolve
      * @return
      * @throws ClassNotFoundException
      */
@@ -148,4 +168,6 @@ public class JarLoader extends URLClassLoader {
             return c;
         }
     }
+
 }
+

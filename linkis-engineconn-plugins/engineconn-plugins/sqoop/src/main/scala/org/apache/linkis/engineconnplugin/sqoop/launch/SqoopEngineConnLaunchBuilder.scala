@@ -27,19 +27,12 @@ import org.apache.linkis.manager.engineplugin.common.launch.process.JavaProcessE
 import java.io.File
 import java.util
 import org.apache.commons.lang.StringUtils
-import org.apache.linkis.manager.common.protocol.bml.BmlResource
 import org.apache.linkis.manager.engineplugin.common.conf.EnvConfiguration.{HADOOP_LIB_CLASSPATH, HBASE_LIB_CLASSPATH, LINKIS_PUBLIC_MODULE_PATH}
 
 import java.nio.file.Paths
 import scala.collection.JavaConversions._
 
 class SqoopEngineConnLaunchBuilder extends JavaProcessEngineConnLaunchBuilder{
-  override protected def getBmlResources(implicit engineConnBuildRequest: EngineConnBuildRequest): util.List[BmlResource] = {
-    val filterList: List[String] = List( "lib2.zip",
-      "conf.zip",
-      "lib.zip")
-    super.getBmlResources.filter(b=>filterList.contains(b.getFileName))
-  }
   override protected def getEnvironment(implicit engineConnBuildRequest: EngineConnBuildRequest): util.Map[String, String] = {
     info("Setting up the launch environment for engineconn.")
     val environment = new util.HashMap[String, String]

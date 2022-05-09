@@ -69,19 +69,7 @@
                 <exclude>com.google.j2objc:j2objc-annotations</exclude>
                 <exclude>org.javassist:javassist</exclude>
                 <exclude>com.google.code.findbugs:jsr305</exclude>
-                <exclude>org.apache.sqoop:sqoop</exclude>
             </excludes>
-        </dependencySet>
-        <dependencySet>
-            <outputDirectory>/dist/v${sqoop.version}/lib2</outputDirectory>
-            <useProjectArtifact>false</useProjectArtifact>
-            <useTransitiveDependencies>true</useTransitiveDependencies>
-            <unpack>false</unpack>
-            <useStrictFiltering>false</useStrictFiltering>
-            <useTransitiveFiltering>true</useTransitiveFiltering>
-            <includes>
-                <include>org.apache.sqoop:sqoop</include>
-            </includes>
         </dependencySet>
     </dependencySets>
 

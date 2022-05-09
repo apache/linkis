@@ -20,7 +20,7 @@ package org.apache.linkis.engineconnplugin.sqoop.client;
 import org.apache.linkis.engineconnplugin.sqoop.client.utils.JarLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import org.apache.sqoop.SqoopOptions;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -32,16 +32,27 @@ public class LinkisSqoopClient {
     private static Class sqoopEngineClass;
     private static Logger logger = LoggerFactory.getLogger(LinkisSqoopClient.class);
     private static JarLoader jarLoader = null;
-    public static int run(Map<String,String> params,String appHome) {
+    public static int run(Map<String,String> params) {
+        JarLoader jarLoader;
         try {
-            jarLoader = new JarLoader(new String[]{LinkisSqoopClient.class.getProtectionDomain().getCodeSource().getLocation().getPath()});
-            sqoopEngineClass=jarLoader.loadClass("org.apache.linkis.engineconnplugin.sqoop.client.Sqoop");
+            jarLoader = new JarLoader(new String[]{
+                    LinkisSqoopClient.class.getProtectionDomain().getCodeSource().getLocation().getPath()
+            });
+            //Load the sqoop class redefined by progress, notice that is not be resolved
+            jarLoader.loadClass("org.apache.sqoop.mapreduce.JobBase", false);
+            //Add the sqoop-{version}.jar to class path
+            jarLoader.addJarURL(SqoopOptions.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+            //Update the context loader
             Thread.currentThread().setContextClassLoader(jarLoader);
-            jarLoader.addURL(appHome+"/lib2");
+            sqoopEngineClass = jarLoader.loadClass("org.apache.linkis.engineconnplugin.sqoop.client.Sqoop");
             Method method = sqoopEngineClass.getDeclaredMethod("main",java.util.Map.class);
-            return (Integer) method.invoke(null,(Object) params);
+            return (Integer) method.invoke(null, params);
         } catch (Throwable e) {
-            getLog(e);
+            Writer result = new StringWriter();
+            PrintWriter printWriter = new PrintWriter(result);
+            e.printStackTrace(printWriter);
+            e.printStackTrace();
+            logger.error("Run Error Message:"+result.toString());
             return -1;
         }
     }

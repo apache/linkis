@@ -406,7 +406,7 @@ class HiveEngineConnExecutor(id: Int,
       }
 
       logger.debug(s"hive progress is $totalProgress")
-      val newProgress = if (totalProgress.isNaN || totalProgress.isInfinite)  currentBegin else totalProgress + currentBegin
+      val newProgress = if (totalProgress.isNaN || totalProgress.isInfinite) currentBegin else totalProgress + currentBegin
       val oldProgress = ProgressUtils.getOldProgress(this.engineExecutorContext)
       if(newProgress < oldProgress) oldProgress else {
         ProgressUtils.putProgress(newProgress, this.engineExecutorContext)

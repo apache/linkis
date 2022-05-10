@@ -213,7 +213,10 @@ class DefaultEngineCreateService extends AbstractEngineService with EngineCreate
     engineNode.setTicketId(resourceTicketId)
     //7. 更新持久化信息：包括插入engine/metrics
 
-    getEngineNodeManager.updateEngineNode(oldServiceInstance, engineNode)
+    Utils.tryCatch(getEngineNodeManager.updateEngineNode(oldServiceInstance, engineNode)) { t =>
+      warn(s"Failed to update engineNode $engineNode", t)
+      throw new LinkisRetryException(AMConstant.EM_ERROR_CODE, s"Failed to update engineNode: ${t.getMessage}")
+    }
 
     //8. 新增 EngineConn的Label,添加engineConn的Alias
     val engineConnAliasLabel = labelBuilderFactory.createLabel(classOf[AliasServiceInstanceLabel])

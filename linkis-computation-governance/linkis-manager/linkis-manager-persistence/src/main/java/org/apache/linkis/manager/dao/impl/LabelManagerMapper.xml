@@ -83,7 +83,8 @@
     </insert>
 
     <insert id="replaceIntoLabelKeyValue">
-        REPLACE INTO linkis_cg_manager_label_value_relation (label_value_key,label_value_content,label_id,update_time,create_time) VALUES(#{labelKey}, #{labelStringValue},#{labelId},now(),now())
+        INSERT INTO linkis_cg_manager_label_value_relation (label_value_key,label_value_content,label_id,update_time,create_time) VALUES(#{labelKey}, #{labelStringValue},#{labelId},now(),now())
+            ON DUPLICATE KEY UPDATE label_value_content=#{labelStringValue},update_time=now()
     </insert>
 
     <select id="getLabel" resultMap="persistenceLabelResultMap">

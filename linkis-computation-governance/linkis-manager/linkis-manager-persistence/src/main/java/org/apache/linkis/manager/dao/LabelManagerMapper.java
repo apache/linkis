@@ -39,6 +39,11 @@ public interface LabelManagerMapper {
             @Param("labelValueKeyAndContent") Map<String, String> labelValueKeyAndContent,
             @Param("labelId") int labelId);
 
+    void replaceIntoLabelKeyValue(
+            @Param("labelKey") String labelKey,
+            @Param("labelStringValue") String labelStringValue,
+            @Param("labelId") int labelId);
+
     PersistenceLabel getLabel(@Param("id") int id);
 
     void deleteLabel(@Param("id") int id);

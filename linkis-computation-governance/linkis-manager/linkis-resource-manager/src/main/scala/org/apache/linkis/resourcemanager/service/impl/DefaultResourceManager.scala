@@ -54,37 +54,37 @@ import scala.collection.JavaConversions._
 class DefaultResourceManager extends ResourceManager with Logging with InitializingBean {
 
   @Autowired
-  var resourceManagerPersistence: ResourceManagerPersistence = _
+  private var resourceManagerPersistence: ResourceManagerPersistence = _
 
   @Autowired
-  var nodeManagerPersistence: NodeManagerPersistence = _
+  private var nodeManagerPersistence: NodeManagerPersistence = _
 
   @Autowired
-  var resourceLockService: ResourceLockService = _
+  private var resourceLockService: ResourceLockService = _
 
   @Autowired
-  var labelResourceService: LabelResourceService = _
+  private var labelResourceService: LabelResourceService = _
 
   @Autowired
-  var externalResourceService: ExternalResourceService = _
+  private var externalResourceService: ExternalResourceService = _
 
   @Autowired
-  var resourceLogService: ResourceLogService = _
+  private var resourceLogService: ResourceLogService = _
 
   @Autowired
-  var labelManagerPersistence: LabelManagerPersistence = _
+  private var labelManagerPersistence: LabelManagerPersistence = _
 
   @Autowired
-  private var nodeMetricManagerPersistence: NodeMetricManagerPersistence = _
+  private private var nodeMetricManagerPersistence: NodeMetricManagerPersistence = _
 
   @Autowired
   private var nodeLabelService: NodeLabelService = _
 
-  var requestResourceServices: Array[RequestResourceService] = _
+  private var requestResourceServices: Array[RequestResourceService] = _
 
-  val gson = BDPJettyServerHelper.gson
+  private val gson = BDPJettyServerHelper.gson
 
-  val labelFactory = LabelBuilderFactoryContext.getLabelBuilderFactory
+  private val labelFactory = LabelBuilderFactoryContext.getLabelBuilderFactory
 
 
   override def afterPropertiesSet(): Unit = {

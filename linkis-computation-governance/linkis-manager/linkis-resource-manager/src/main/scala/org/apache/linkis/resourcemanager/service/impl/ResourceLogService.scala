@@ -17,26 +17,24 @@
 
 package org.apache.linkis.resourcemanager.service.impl
 
+import org.apache.commons.lang.time.DateFormatUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord
-import org.apache.linkis.manager.common.entity.resource.{Resource, ResourceActionRecord, ResourceType}
-import org.apache.linkis.manager.common.exception.ResourceWarnException
-import org.apache.linkis.manager.common.utils.ResourceUtils
+import org.apache.linkis.manager.common.entity.resource.Resource
 import org.apache.linkis.manager.dao.ECResourceRecordMapper
-import org.apache.linkis.manager.label.entity.{CombinedLabel, Label}
+import org.apache.linkis.manager.label.entity.CombinedLabel
 import org.apache.linkis.manager.label.entity.em.EMInstanceLabel
 import org.apache.linkis.manager.label.entity.engine.EngineInstanceLabel
-import org.apache.linkis.manager.persistence.ResourceManagerPersistence
 import org.apache.linkis.resourcemanager.domain.RMLabelContainer
-import org.apache.linkis.resourcemanager.service.LabelResourceService
 import org.apache.linkis.resourcemanager.utils.RMUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
+import java.io.File
 import java.util.Date
 
 @Component
-case class ResourceLogService extends Logging {
+class ResourceLogService extends Logging {
 
 
   @Autowired
@@ -137,7 +135,8 @@ case class ResourceLogService extends Logging {
     if (null == userCreatorEngineType) return
     var ecResourceInfoRecord = ecResourceRecordMapper.getECResourceInfoRecord(ticketId)
     if (ecResourceInfoRecord == null) {
-      ecResourceInfoRecord = new ECResourceInfoRecord(userCreatorEngineType.getStringValue, ticketId, resource)
+      val logDirSuffix = getECLogDirSuffix(labelContainer, ticketId)
+      ecResourceInfoRecord = new ECResourceInfoRecord(userCreatorEngineType.getStringValue, ticketId, resource, logDirSuffix)
       ecResourceRecordMapper.insertECResourceInfoRecord(ecResourceInfoRecord)
     }
     if (null != engineInstanceLabel) {
@@ -166,6 +165,23 @@ case class ResourceLogService extends Logging {
         ecResourceInfoRecord.setReleaseTime(new Date(System.currentTimeMillis))
     }
     ecResourceRecordMapper.updateECResourceInfoRecord(ecResourceInfoRecord)
+  }
+
+  def getECLogDirSuffix(labelContainer: RMLabelContainer, ticketId: String): String = {
+    val engineTypeLabel = labelContainer.getEngineTypeLabel
+    val userCreatorLabel = labelContainer.getUserCreatorLabel
+    if (null == engineTypeLabel || null == userCreatorLabel) {
+      return ""
+    }
+    val pathBuilder = new StringBuilder
+    pathBuilder.append(userCreatorLabel.getUser)
+      .append(File.pathSeparator)
+      .append(DateFormatUtils.format(System.currentTimeMillis(), "yyyyMMdd"))
+      .append(File.pathSeparator)
+      .append(engineTypeLabel.getEngineType)
+      .append(File.pathSeparator)
+      .append(ticketId)
+   pathBuilder.toString()
   }
 
 }

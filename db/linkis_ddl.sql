@@ -737,6 +737,7 @@ CREATE TABLE `linkis_cg_ec_resource_info_record` (
     `instance` varchar(128) COLLATE utf8_bin DEFAULT NULL,
     `ecm_instance` varchar(128) COLLATE utf8_bin DEFAULT NULL,
     `ticket_id` VARCHAR(100) NOT NULL,
+    `log_dir_suffix` varchar(128) COLLATE utf8_bin DEFAULT NULL,
     `request_times` INT(8),
     `request_resource_all` VARCHAR(100),
     `used_times` INT(8),

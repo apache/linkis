@@ -50,14 +50,18 @@ public class ECResourceInfoRecord {
 
     private Date releaseTime;
 
+    private String logDirSuffix;
+
     public ECResourceInfoRecord() {}
 
-    public ECResourceInfoRecord(String labelValue, String ticketId, Resource resource) {
+    public ECResourceInfoRecord(
+            String labelValue, String ticketId, Resource resource, String logDirPath) {
         this.labelValue = labelValue;
         this.ticketId = ticketId;
         if (null != resource) {
             this.requestResource = ResourceUtils.serializeResource(resource);
         }
+        this.logDirSuffix = logDirPath;
     }
 
     public Integer getId() {
@@ -170,6 +174,14 @@ public class ECResourceInfoRecord {
 
     public void setEcmInstance(String ecmInstance) {
         this.ecmInstance = ecmInstance;
+    }
+
+    public String getLogDirSuffix() {
+        return logDirSuffix;
+    }
+
+    public void setLogDirSuffix(String logDirSuffix) {
+        this.logDirSuffix = logDirSuffix;
     }
 
     @Override

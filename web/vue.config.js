@@ -159,7 +159,7 @@ module.exports = {
               { source: './install.sh', destination: `./dist/install.sh`,toType: 'file' },
               { source: '../NOTICE-binary-ui', destination: `./dist/NOTICE`,toType: 'file'},
               { source: '../LICENSE-binary-ui', destination: `./dist/LICENSE`,toType: 'file'},
-              { source: '../DISCLAIMER-WIP', destination: `./dist/DISCLAIMER-WIP`,toType: 'file'},
+              { source: '../DISCLAIMER', destination: `./dist/DISCLAIMER`,toType: 'file'},
               { source: '../licenses-binary-ui', destination: `./dist/licenses` }
             ],
             // 先删除根目录下的zip包

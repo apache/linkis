@@ -20,7 +20,7 @@ package org.apache.linkis.orchestrator.plans.logical
 import java.util
 
 import org.apache.linkis.common.listener.Event
-import org.apache.linkis.orchestrator.listener.task.{TaskLogEvent, TaskProgressEvent}
+import org.apache.linkis.orchestrator.listener.task.{TaskLogEvent, TaskRunningInfoEvent}
 
 import scala.collection.mutable.ArrayBuffer
 
@@ -95,7 +95,7 @@ class LogicalContextImpl extends LogicalContext{
 
   override def pushLog(taskLogEvent: TaskLogEvent): Unit = {}
 
-  override def pushProgress(taskProgressEvent: TaskProgressEvent): Unit = {}
+  override def pushProgress(taskProgressEvent: TaskRunningInfoEvent): Unit = {}
 
   override def broadcastAsyncEvent(event: Event): Unit = {}
 

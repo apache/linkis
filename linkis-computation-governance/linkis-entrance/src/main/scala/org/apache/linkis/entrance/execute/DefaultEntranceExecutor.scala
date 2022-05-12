@@ -75,23 +75,7 @@ class DefaultEntranceExecutor(id: Long, mark: MarkReq, entranceExecutorManager: 
     logProcessor
   }
 
-  def dealResourceReport(orchestratorFuture: OrchestrationFuture, job: EntranceJob): ResourceReportProcessor = {
-    val resourceReportProcessor = orchestratorFuture.operate[ResourceReportProcessor](ResourceReportOperation.RESOURCE)
-    resourceReportProcessor.registerResourceReportNotify(resourceReportEvent => {
-      if (job.getJobRequest.getMetrics == null) {
-        job.getJobRequest.setMetrics(new util.HashMap[String, Object]())
-      }
-      val resourceMap = job.getJobRequest.getMetrics.get(TaskConstant.ENTRANCEJOB_YARNRESOURCE)
-      if(resourceMap != null) {
-        resourceMap.asInstanceOf[util.HashMap[String, ResourceWithStatus]].putAll(resourceReportEvent.resourceMap)
-      } else {
-        job.getJobRequest.getMetrics.put(TaskConstant.ENTRANCEJOB_YARNRESOURCE, resourceReportEvent.resourceMap)
-      }
-    })
-    resourceReportProcessor
-  }
-
-  def dealProgress(orchestratorFuture: OrchestrationFuture, entranceJob: EntranceJob): ProgressProcessor = {
+  def dealProgressWithResource(orchestratorFuture: OrchestrationFuture, entranceJob: EntranceJob): ProgressProcessor = {
     val progressProcessor = orchestratorFuture.operate[ProgressProcessor](DefaultProgressOperation.PROGRESS_NAME)
     progressProcessor.doOnObtain(progressInfoEvent => {
       if (null != entranceJob) {
@@ -117,6 +101,35 @@ class DefaultEntranceExecutor(id: Long, mark: MarkReq, entranceExecutorManager: 
         } else {
           entranceJob.getProgressListener.foreach(_.onProgressUpdate(entranceJob, progressInfoEvent.progress,
             entranceJob.getProgressInfo))
+        }
+        // update resource
+        if (entranceJob.getJobRequest.getMetrics == null) {
+          entranceJob.getJobRequest.setMetrics(new util.HashMap[String, Object]())
+        }
+        val metricsMap = entranceJob.getJobRequest.getMetrics
+        val resourceMap = metricsMap.get(TaskConstant.ENTRANCEJOB_YARNRESOURCE)
+        if(resourceMap != null) {
+          resourceMap.asInstanceOf[util.HashMap[String, ResourceWithStatus]].putAll(progressInfoEvent.resourceMap)
+        } else {
+          metricsMap.put(TaskConstant.ENTRANCEJOB_YARNRESOURCE, progressInfoEvent.resourceMap)
+        }
+        // update engine info
+        // todo
+        var engineInstanceMap: util.HashMap[String, Object] = null
+        if (metricsMap.containsKey(TaskConstant.ENTRANCEJOB_ENGINECONN_MAP)) {
+          engineInstanceMap = metricsMap.get(TaskConstant.ENTRANCEJOB_ENGINECONN_MAP).asInstanceOf[util.HashMap[String, Object]]
+        } else {
+          engineInstanceMap = new util.HashMap[String, Object]()
+          metricsMap.put(TaskConstant.ENTRANCEJOB_ENGINECONN_MAP, engineInstanceMap)
+        }
+        val infoMap = progressInfoEvent.infoMap
+        if (infoMap.containsKey(TaskConstant.ENGINE_INSTANCE)) {
+          val instance = infoMap.get(TaskConstant.ENGINE_INSTANCE).asInstanceOf[String]
+          val engineExtraInfoMap =  engineInstanceMap.getOrDefault(instance, new util.HashMap[String, Object]).asInstanceOf[util.HashMap[String, Object]]
+          engineInstanceMap.put(instance, engineExtraInfoMap)
+          engineExtraInfoMap.putAll(infoMap)
+        } else {
+          logger.warn("Engine extra info map must contains engineInstance")
         }
       }
     })
@@ -288,8 +301,7 @@ class DefaultEntranceExecutor(id: Long, mark: MarkReq, entranceExecutorManager: 
       }
       // 2. deal log And Response
       val logProcessor = dealLog(orchestratorFuture, entranceExecuteRequest.getJob)
-      val progressProcessor = dealProgress(orchestratorFuture, entranceExecuteRequest.getJob)
-      val resourceReportProcessor = dealResourceReport(orchestratorFuture, entranceExecuteRequest.getJob)
+      val progressAndResourceProcessor = dealProgressWithResource(orchestratorFuture, entranceExecuteRequest.getJob)
       orchestratorFuture.notifyMe(orchestrationResponse => {
         dealResponse(orchestrationResponse, entranceExecuteRequest, orchestration)
       }
@@ -302,7 +314,7 @@ class DefaultEntranceExecutor(id: Long, mark: MarkReq, entranceExecutorManager: 
         logger.info(s"For job ${entranceExecuteRequest.getJob.getId} and subJob ${compJobReq.getId} to create EngineExecuteAsyncReturn")
         new EngineExecuteAsyncReturn(request, null)
       }
-      jobReturn.setOrchestrationObjects(orchestratorFuture, logProcessor, progressProcessor, resourceReportProcessor)
+      jobReturn.setOrchestrationObjects(orchestratorFuture, logProcessor, progressAndResourceProcessor)
       jobReturn.setSubJobId(compJobReq.getId)
       setEngineReturn(jobReturn)
       jobReturn

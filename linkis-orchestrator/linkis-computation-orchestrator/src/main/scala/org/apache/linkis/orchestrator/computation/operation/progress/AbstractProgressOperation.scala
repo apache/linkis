@@ -24,7 +24,7 @@ import org.apache.linkis.orchestrator.computation.operation.progress.ProgressPro
 import org.apache.linkis.orchestrator.core.AbstractOrchestration
 import org.apache.linkis.orchestrator.extensions.operation.Operation
 import org.apache.linkis.orchestrator.extensions.operation.Operation.OperationBuilder
-import org.apache.linkis.orchestrator.listener.task.{TaskProgressEvent, TaskProgressListener}
+import org.apache.linkis.orchestrator.listener.task.{TaskRunningInfoEvent, TaskProgressListener}
 import org.apache.linkis.orchestrator.listener.{OrchestratorAsyncEvent, OrchestratorListenerBusContext}
 import org.apache.linkis.orchestrator.{Orchestration, OrchestratorSession}
 
@@ -55,8 +55,8 @@ abstract class AbstractProgressOperation(orchestratorSession: OrchestratorSessio
 
   override def onEvent(event: OrchestratorAsyncEvent): Unit = {
     event match {
-      case progressEvent: TaskProgressEvent =>
-        onProgressOn(progressEvent)
+      case progressWithResourceEvent: TaskRunningInfoEvent =>
+        onProgressOn(progressWithResourceEvent)
       case _ =>
     }
   }
@@ -65,14 +65,6 @@ abstract class AbstractProgressOperation(orchestratorSession: OrchestratorSessio
     this.execTaskToProgressProcessor.remove(execTaskId)
   }
 
-  override def onProgressOn(taskProgressEvent: TaskProgressEvent): Unit = {
-    /*val execTask = taskProgressEvent.execTask
-    Option(execTaskToProgressProcessor.get(execTask.getPhysicalContext.getRootTask.getId)).foreach( progress => {
-      progress.onProgress(taskProgressEvent.progress,
-        taskProgressEvent.progressInfo)
-    })*/
-    warn("Should not be called.")
-  }
 
   override def onEventError(event: Event, t: Throwable): Unit = {
     var eventName: String = "Null Event"

@@ -61,14 +61,14 @@ public class ECResourceInfoRecord {
             String createUser,
             String ticketId,
             Resource resource,
-            String logDirPath) {
+            String logDirSuffix) {
         this.labelValue = labelValue;
         this.ticketId = ticketId;
         this.createUser = createUser;
         if (null != resource) {
             this.requestResource = ResourceUtils.serializeResource(resource);
         }
-        this.logDirSuffix = logDirPath;
+        this.logDirSuffix = logDirSuffix;
     }
 
     public Integer getId() {

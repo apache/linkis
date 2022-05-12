@@ -26,25 +26,25 @@
 
 
     <insert id="insertECResourceInfoRecord" flushCache="true" useGeneratedKeys="true" keyProperty="id" parameterType="org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord">
-        INSERT INTO linkis_ps_job_history_group_history(label_value,create_user, ticket_id, instance, request_times, request_resource_all,
-                                                        used_times, used_resource_all, release_times, release_resource_all,release_time,used_time,ecm_instance,log_dir_suffix)
+        INSERT INTO linkis_cg_ec_resource_info_record(label_value,create_user, ticket_id, service_instance, request_times, request_resource,
+                                                        used_times, used_resource, release_times, released_resource,release_time,used_time,ecm_instance,log_dir_suffix)
         VALUES (#{labelValue},#{createUser},#{ticketId},#{serviceInstance},#{requestTimes},
         #{requestResource},#{usedTimes},#{usedResource},
-        #{releaseTimes},#{releasedResource},#{releaseTime},#{usedTime},#{ecmInstance},#{logDirPath})
+        #{releaseTimes},#{releasedResource},#{releaseTime},#{usedTime},#{ecmInstance},#{logDirSuffix})
     </insert>
 
     <update id="updateECResourceInfoRecord" flushCache="true" parameterType="org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord">
         UPDATE linkis_cg_ec_resource_info_record
         <trim prefix="set" suffixOverrides=",">
-            <if test="serviceInstance != null">instance = #{serviceInstance},</if>
+            <if test="serviceInstance != null">service_instance = #{serviceInstance},</if>
             <if test="requestTimes != null">request_times = #{requestTimes},</if>
             <if test="usedTimes != null">used_times = #{usedTimes},</if>
             <if test="releaseTimes != null">release_times = #{releaseTimes},</if>
             <if test="usedTime != null">used_time = #{usedTime},</if>
             <if test="releaseTime != null">release_time = #{releaseTime},</if>
-            <if test="usedResource != null">used_resource_all = #{usedResource},</if>
-            <if test="requestResource != null">request_resource_all = #{requestResource},</if>
-            <if test="releasedResource != null">release_resource_all = #{releasedResource},</if>
+            <if test="usedResource != null">used_resource = #{usedResource},</if>
+            <if test="requestResource != null">request_resource = #{requestResource},</if>
+            <if test="releasedResource != null">released_resource = #{releasedResource},</if>
             <if test="ecmInstance != null">ecm_instance = #{ecmInstance},</if>
         </trim>
         <![CDATA[
@@ -53,11 +53,11 @@
     </update>
 
     <delete id="deleteECResourceInfoRecordByTicketId">
-        delete from linkis_cg_manager_label  WHERE ticket_id = #{ticketId}
+        delete from linkis_cg_ec_resource_info_record  WHERE ticket_id = #{ticketId}
     </delete>
 
     <delete id="deleteECResourceInfoRecord">
-        delete from linkis_cg_manager_label  WHERE id = #{id}
+        delete from linkis_cg_ec_resource_info_record  WHERE id = #{id}
     </delete>
 
 </mapper>

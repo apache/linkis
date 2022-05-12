@@ -735,21 +735,21 @@ CREATE TABLE `linkis_cg_ec_resource_info_record` (
     `id` INT(20) NOT NULL AUTO_INCREMENT,
     `label_value` VARCHAR(255) NOT NULL,
     `create_user` VARCHAR(128) NOT NULL,
-    `instance` varchar(128) COLLATE utf8_bin DEFAULT NULL,
+    `service_instance` varchar(128) COLLATE utf8_bin DEFAULT NULL,
     `ecm_instance` varchar(128) COLLATE utf8_bin DEFAULT NULL,
     `ticket_id` VARCHAR(100) NOT NULL,
     `log_dir_suffix` varchar(128) COLLATE utf8_bin DEFAULT NULL,
     `request_times` INT(8),
-    `request_resource_all` VARCHAR(100),
+    `request_resource` VARCHAR(100),
     `used_times` INT(8),
-    `used_resource_all` VARCHAR(100),
+    `used_resource` VARCHAR(100),
     `release_times` INT(8),
-    `release_resource_all` VARCHAR(100),
+    `released_resource` VARCHAR(100),
     `release_time` datetime DEFAULT NULL,
     `used_time` datetime DEFAULT NULL,
     `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
-    KEY (`ticket_id`)
+    KEY (`ticket_id`),
     UNIQUE KEY `label_value_ticket_id` (`ticket_id`,`label_value`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 

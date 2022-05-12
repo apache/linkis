@@ -29,7 +29,7 @@ public interface ECResourceRecordMapper {
 
     void updateECResourceInfoRecord(ECResourceInfoRecord resourceActionRecord);
 
-    ECResourceInfoRecord insertECResourceInfoRecord(ECResourceInfoRecord resourceActionRecord);
+    void insertECResourceInfoRecord(ECResourceInfoRecord resourceActionRecord);
 
     void deleteECResourceInfoRecordByTicketId(@Param("ticketId") String ticketId);
 

@@ -17,12 +17,23 @@
 
 package org.apache.linkis.engineconnplugin.sqoop.context
 
-import org.apache.linkis.common.conf.CommonVars
+import org.apache.linkis.common.conf.{CommonVars, TimeType}
 
 object SqoopEnvConfiguration {
-  val HADOOP_SITE_FILE = CommonVars("wds.linkis.hadoop.site.xml", "core-site.xml;hdfs-site.xml;yarn-site.xml;mapred-site.xml")
-  val LINKIS_SQOOP_TASK_MANAGER_MEMORY = CommonVars[Int]("sqoop.taskmanager.memory", 4)
-  val LINKIS_SQOOP_TASK_MANAGER_CPU_CORES = CommonVars[Int]("sqoop.taskmanager.cpu.cores", 1)
-  val LINKIS_QUEUE_NAME = CommonVars[String]("wds.linkis.rm.yarnqueue", "default")
 
+  val SQOOP_HADOOP_SITE_FILE: CommonVars[String] = CommonVars("wds.linkis.hadoop.site.xml", "core-site.xml;hdfs-site.xml;yarn-site.xml;mapred-site.xml")
+
+  val SQOOP_STATUS_FETCH_INTERVAL: CommonVars[TimeType] = CommonVars("sqoop.fetch.status.interval", new TimeType("5s"))
+
+  val LINKIS_DATASOURCE_SERVICE_NAME: CommonVars[String] = CommonVars("wds.linkis.datasource.service.name", "linkis-ps-data-source-manager")
+
+  val SQOOP_HOME: CommonVars[String] = CommonVars("SQOOP_HOME", "")
+
+  val  SQOOP_CONF_DIR: CommonVars[String] = CommonVars("SQOOP_CONF_DIR", "")
+
+  val SQOOP_HCAT_HOME: CommonVars[String] = CommonVars("HCAT_HOME", "")
+
+  val SQOOP_HBASE_HOME: CommonVars[String] = CommonVars("HBASE_HOME", "")
+
+  val SQOOP_ZOOCFGDIR: CommonVars[String] = CommonVars("ZOOCFGDIR", "")
 }

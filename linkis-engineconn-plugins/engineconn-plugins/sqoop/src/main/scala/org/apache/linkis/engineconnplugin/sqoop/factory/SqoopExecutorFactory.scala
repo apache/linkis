@@ -21,6 +21,7 @@ import org.apache.linkis.engineconn.common.creation.EngineCreationContext
 import org.apache.linkis.engineconn.common.engineconn.EngineConn
 import org.apache.linkis.engineconn.once.executor.OnceExecutor
 import org.apache.linkis.engineconn.once.executor.creation.OnceExecutorFactory
+import org.apache.linkis.engineconnplugin.sqoop.context.SqoopEngineConnContext
 import org.apache.linkis.engineconnplugin.sqoop.executor.SqoopOnceCodeExecutor
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.RunType.{APPCONN, RunType}

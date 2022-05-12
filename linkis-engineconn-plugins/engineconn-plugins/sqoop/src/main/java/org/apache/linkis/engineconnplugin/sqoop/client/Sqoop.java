@@ -1,13 +1,12 @@
-/**
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,14 +21,18 @@ import com.cloudera.sqoop.SqoopOptions;
 import com.cloudera.sqoop.manager.DefaultManagerFactory;
 import com.cloudera.sqoop.tool.SqoopTool;
 import com.cloudera.sqoop.util.OptionsFileUtil;
-import org.apache.hadoop.mapred.TIPStatus;
-import org.apache.hadoop.mapreduce.*;
 import org.apache.linkis.engineconnplugin.sqoop.client.config.ParamsMapping;
+import org.apache.linkis.engineconnplugin.sqoop.client.exception.JobClosableException;
 import org.apache.linkis.engineconnplugin.sqoop.context.SqoopEnvConfiguration;
+import org.apache.linkis.engineconnplugin.sqoop.context.SqoopParamsConfiguration;
+import org.apache.linkis.protocol.engine.JobProgressInfo;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
+import org.apache.hadoop.mapred.TIPStatus;
+import org.apache.hadoop.mapreduce.*;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 import org.apache.sqoop.manager.SqlManager;
@@ -38,9 +41,12 @@ import org.apache.sqoop.util.LoggingUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.net.MalformedURLException;
+import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 
@@ -55,13 +61,11 @@ public class Sqoop extends Configured implements Tool {
   public static volatile AtomicReference<Job> job = new AtomicReference<>();
   public static SqlManager sqlManager;
   public static final String[] DEFAULT_FACTORY_CLASS_NAMES_ARR =
-          {OraOopManagerFactory.class.getName(),
+          {  OraOopManagerFactory.class.getName(),
                   DefaultManagerFactory.class.getName(),};
   public static final String FACTORY_CLASS_NAMES_KEY =
           "sqoop.connection.factories";
-  private static Map<String,Map<String,Long>> metrics= new HashMap<>();
-  private static Map<String,String[]> diagnosis = new HashMap<>();
-  private static Map<String, Integer> infoMap = new HashMap();
+  public static final String METRICS_RUN_TIME = "MetricsRunTime";
   private static Float progress = 0.0f;
 
   /**
@@ -82,12 +86,11 @@ public class Sqoop extends Configured implements Tool {
 
   private SqoopTool tool;
   private SqoopOptions options;
-  private String[] childPrgmArgs;
+  private String [] childPrgmArgs;
 
   /**
    * Creates a new instance of Sqoop set to run the supplied SqoopTool
    * with the default configuration.
-   *
    * @param tool the SqoopTool to run in the main body of Sqoop.
    */
   public Sqoop(SqoopTool tool) {
@@ -97,7 +100,6 @@ public class Sqoop extends Configured implements Tool {
   /**
    * Creates a new instance of Sqoop set to run the supplied SqoopTool
    * with the provided configuration.
-   *
    * @param tool the SqoopTool to run in the main body of Sqoop.
    * @param conf the Configuration to use (e.g., from ToolRunner).
    */
@@ -108,7 +110,6 @@ public class Sqoop extends Configured implements Tool {
   /**
    * Creates a new instance of Sqoop set to run the supplied SqoopTool
    * with the provided configuration and SqoopOptions.
-   *
    * @param tool the SqoopTool to run in the main body of Sqoop.
    * @param conf the Configuration to use (e.g., from ToolRunner).
    * @param opts the SqoopOptions which control the tool's parameters.
@@ -144,11 +145,11 @@ public class Sqoop extends Configured implements Tool {
   /**
    * Actual main entry-point for the program
    */
-  public int run(String[] args) {
+  public int run(String [] args) {
     if (options.getConf() == null) {
       options.setConf(getConf());
     }
-    options.getConf().setStrings(FACTORY_CLASS_NAMES_KEY, DEFAULT_FACTORY_CLASS_NAMES_ARR);
+    options.getConf().setStrings(FACTORY_CLASS_NAMES_KEY,DEFAULT_FACTORY_CLASS_NAMES_ARR);
     try {
       options = tool.parseArguments(args, null, options, false);
       tool.appendArgs(this.childPrgmArgs);
@@ -157,7 +158,7 @@ public class Sqoop extends Configured implements Tool {
         LoggingUtils.setDebugLevel();
       }
     } catch (Exception e) {
-      LOG.debug(e.getMessage(), e);
+      LOG.error(e.getMessage(), e);
       System.err.println(e.getMessage());
       return 1;
     }
@@ -171,11 +172,10 @@ public class Sqoop extends Configured implements Tool {
    * ToolRunner/GenericOptionsParser will cull out this argument. We remove
    * the child-program arguments in advance, and store them to be readded
    * later.
-   *
    * @param argv the argv in to the SqoopTool
    * @return the argv with a "--" and any subsequent arguments removed.
    */
-  private String[] stashChildPrgmArgs(String[] argv) {
+  private String [] stashChildPrgmArgs(String [] argv) {
     for (int i = 0; i < argv.length; i++) {
       if ("--".equals(argv[i])) {
         this.childPrgmArgs = Arrays.copyOfRange(argv, i, argv.length);
@@ -195,7 +195,7 @@ public class Sqoop extends Configured implements Tool {
    * it has a chance to stash child program arguments before
    * GenericOptionsParser would remove them.
    */
-  public static int runSqoop(Sqoop sqoop, String[] args) {
+  public static int runSqoop(Sqoop sqoop, String [] args) {
     String[] toolArgs = sqoop.stashChildPrgmArgs(args);
     try {
       return ToolRunner.run(sqoop.getConf(), sqoop, toolArgs);
@@ -222,12 +222,12 @@ public class Sqoop extends Configured implements Tool {
    * Entry-point that parses the correct SqoopTool to use from the args,
    * but does not call System.exit() as main() will.
    */
-  public static int runTool(Map<String, String> argsMap, Configuration conf) {
+  public static int runTool(Map<String,String> argsMap, Configuration conf) {
 
     // Expand the options
     String[] expandedArgs = null;
     try {
-      String[] flatArgs = convertParamsMapToAarray(argsMap);
+      String[] flatArgs = convertParamsMapToAarray(argsMap, conf);
       expandedArgs = OptionsFileUtil.expandArguments(flatArgs);
     } catch (Exception ex) {
       LOG.error("Error while expanding arguments", ex);
@@ -241,49 +241,63 @@ public class Sqoop extends Configured implements Tool {
     SqoopTool tool = SqoopTool.getTool(toolName);
     if (null == tool) {
       System.err.println("No such sqoop tool: " + toolName
-              + ". See 'sqoop help'.");
+          + ". See 'sqoop help'.");
       return 1;
     }
 
     Sqoop sqoop = new Sqoop(tool, pluginConf);
     return runSqoop(sqoop,
-            Arrays.copyOfRange(expandedArgs, 1, expandedArgs.length));
+        Arrays.copyOfRange(expandedArgs, 1, expandedArgs.length));
   }
 
-  private static String[] convertParamsMapToAarray(Map<String, String> paramsMap) throws Exception {
+  private static String[] convertParamsMapToAarray(Map<String,String> paramsMap,
+    Configuration conf) throws Exception {
     List<String> paramsList = new ArrayList<>();
 
-    for (Map.Entry<String, String> entry : paramsMap.entrySet()) {
-      String key = entry.getKey().toLowerCase();
-      if (key.equals("sqoop.mode")) {
-        paramsList.add(0, entry.getValue());
-        continue;
-      }
-      String conKey = ParamsMapping.mapping.get(key);
-      if (conKey != null) {
-        if (entry.getValue() != null && entry.getValue().length() != 0) {
-          paramsList.add(conKey);
-          paramsList.add(entry.getValue());
-        } else {
-          paramsList.add(conKey);
+    for (Map.Entry<String,String> entry:paramsMap.entrySet()) {
+      if (StringUtils.isNotBlank(entry.getKey())) {
+        String key = entry.getKey().toLowerCase();
+        if (key.equals(SqoopParamsConfiguration.SQOOP_PARAM_MODE().getValue())) {
+          paramsList.add(0, entry.getValue());
+          continue;
         }
-      } else {
-        throw new Exception("The Key " + entry.getKey() + " Is Not Supported");
+        if (key.startsWith(SqoopParamsConfiguration.SQOOP_PARAM_ENV_PREFIX().getValue())) {
+           key = key.substring(SqoopParamsConfiguration.SQOOP_PARAM_ENV_PREFIX().getValue().length());
+           conf.set(key, entry.getValue());
+           continue;
+        }
+        String conKey = ParamsMapping.mapping.get(key);
+        if (conKey != null) {
+          if (entry.getValue() != null && entry.getValue().length() != 0) {
+            paramsList.add(conKey);
+            paramsList.add(entry.getValue());
+          } else {
+            paramsList.add(conKey);
+          }
+        } else {
+          // Ignore the unrecognized params
+          LOG.warn("The Key " + entry.getKey() + " Is Not Supported");
+        }
       }
     }
-    return paramsList.toArray(new String[paramsList.size()]);
+    return paramsList.toArray(new String[0]);
   }
 
   /**
    * Entry-point that parses the correct SqoopTool to use from the args,
    * but does not call System.exit() as main() will.
    */
-  public static int runTool(Map<String, String> params) {
+  public static int runTool(Map<String,String> params) {
     Configuration conf = new Configuration();
     try {
-      for (String fileName : SqoopEnvConfiguration.HADOOP_SITE_FILE().getValue().split(";")) {
-        conf.addResource(new File(fileName).toURI().toURL());
+      for (String fileName: SqoopEnvConfiguration.SQOOP_HADOOP_SITE_FILE().getValue().split(";")) {
+        File resourceFile = Paths.get(fileName).toFile();
+        if (resourceFile.exists()){
+          LOG.info("Append resource: [" + resourceFile.getPath() + "] to configuration");
+          conf.addResource(resourceFile.toURI().toURL());
+        }
       }
+
     } catch (MalformedURLException e) {
       e.printStackTrace();
       System.exit(1);
@@ -291,161 +305,224 @@ public class Sqoop extends Configured implements Tool {
     return runTool(params, conf);
   }
 
-  public static int main(Map<String, String> code) {
+  public static int main(Map<String,String> code) {
     return runTool(code);
   }
 
-  public static void close() {
+  /**
+   * Close method
+   * @throws JobClosableException
+   */
+  public static void close() throws JobClosableException {
+    Job runnableJob = job.get();
     try {
-      if (job.get()!=null) {
-        job.get().killJob();
+      if(Objects.nonNull(runnableJob)) {
+        runnableJob.killJob();
       }
-      if (sqlManager != null && sqlManager.getConnection() != null) {
+      if(sqlManager != null && sqlManager.getConnection() !=null){
         sqlManager.getConnection().close();
       }
-    } catch (IOException | SQLException e) {
-      LOG.error(e);
+    } catch (IllegalStateException se) {
+      if (isJobReady(runnableJob)) {
+        LOG.warn("Unable to close the mapReduce job, it seems that the job isn't connected to the cluster");
+      } else if(Objects.nonNull(runnableJob)) {
+        String cluster = "UNKNOWN";
+        try {
+           cluster = runnableJob.getCluster().getFileSystem().getCanonicalServiceName();
+        } catch (Exception e){
+          // Ignore
+        }
+        throw new JobClosableException("Unable to close the mapReduce job related to cluster [" + cluster + "]", se);
+      }
+    } catch(IOException | SQLException e) {
+      throw new JobClosableException( "Error in closing sqoop client", e);
     }
   }
 
+  /**
+   * Get application id
+   * @return string value
+   */
   public static String getApplicationId() {
+    String applicationId = "";
     try {
-      if (job.get() != null) {
-        if (job.get().getJobID() != null) {
-          return job.get().getJobID().toString();
+      Job runnableJob = job.get();
+      if (Objects.nonNull(runnableJob)) {
+         JobID jobId = runnableJob.getJobID();
+         if (Objects.nonNull(jobId)){
+           applicationId = jobId.toString();
         }
       }
     }catch (Exception e){
-      LOG.error("GetApplicationId-->"+e);
+      // Not throw exception
+      LOG.error("GetApplicationId in sqoop Error", e);
     }
-    return "";
+    return applicationId;
   }
 
+  /**
+   * Get application url
+   * @return url
+   */
   public static String getApplicationURL() {
+    String applicationUrl = "";
+    Job runnableJob = job.get();
     try {
-      if (job.get() != null) {
-        return job.get().getTrackingURL();
+      if (Objects.nonNull(runnableJob)) {
+        return runnableJob.getTrackingURL();
       }
-    }catch (Exception e){
-      LOG.error("GetApplicationURL-->"+e);
+    } catch (Exception e){
+      if (e instanceof  IllegalStateException && !isJobReady(runnableJob)){
+        LOG.trace("The mapReduce job is not ready, wait for the job status to be Running");
+      } else {
+        LOG.error("GetApplicationURL in sqoop Error", e);
+      }
     }
-   return "";
+   return applicationUrl;
   }
 
+  /**
+   * Get progress value
+   * @return float value
+   */
   public static Float progress() {
+    Job runnableJob = job.get();
     try {
-      Job j = job.get();
-      if (j != null && !j.isComplete() && !j.isSuccessful()) {
-        progress = (j.mapProgress() + j.reduceProgress()) / 2;
-      } else if (j.isComplete() || j.isSuccessful()) {
-        progress = 1.0f;
+      if (Objects.nonNull(runnableJob)){
+          // Count by two paragraphs
+          progress  = (runnableJob.mapProgress() + runnableJob.reduceProgress()) / 2.0f;
       }
     } catch (Exception e) {
-      LOG.error("Progress-->"+e);
+      if (e instanceof  IllegalStateException && !isJobReady(runnableJob)){
+        LOG.trace("The mapReduce job is not ready, the value of progress is 0.0 always");
+      } else {
+        LOG.error("Get progress in sqoop Error", e);
+      }
     }
     return progress;
   }
 
-  public static Map<String, Integer> getProgressInfo() {
-    if(infoMap.size() == 0) {
-      infoMap.put("totalTasks", 0);
-      infoMap.put("runningTasks", 0);
-      infoMap.put("failedTasks", 0);
-      infoMap.put("succeedTasks", 0);
-    }
+  /**
+   * Get progress info
+   * @return info
+   */
+  public static JobProgressInfo getProgressInfo() {
+    Job runnableJob = job.get();
     try {
-      if (job.get() != null) {
-        if(job.get().isComplete()){
-          return infoMap;
+      if (Objects.nonNull(runnableJob) ){
+        AtomicInteger totalTasks = new AtomicInteger();
+        AtomicInteger failedTasks = new AtomicInteger();
+        AtomicInteger runTasks = new AtomicInteger();
+        AtomicInteger successTasks = new AtomicInteger();
+        TaskType[] analyzeTypes = new TaskType[]{TaskType.MAP, TaskType.REDUCE};
+        for(TaskType taskType : analyzeTypes){
+          TaskReport[]  taskReports = runnableJob.getTaskReports(taskType);
+          Optional.ofNullable(taskReports).ifPresent(reports -> {
+            totalTasks.addAndGet(reports.length);
+             for(TaskReport report : reports){
+               TIPStatus tipStatus = report.getCurrentStatus();
+               switch (tipStatus) {
+                 case FAILED:
+                 case KILLED:
+                   failedTasks.getAndIncrement();
+                   break;
+                 case PENDING:
+                 case RUNNING:
+                   runTasks.getAndIncrement();
+                   break;
+                 case COMPLETE:
+                   successTasks.getAndIncrement();
+                   break;
+                 default:
+               }
+             }
+          });
         }
-        int totalTasks = 0;
-        int failedTasks = 0;
-        int runTasks = 0;
-        int succTasks = 0;
-        for (TaskType taskType : TaskType.values()) {
-          if (taskType != TaskType.MAP && taskType != TaskType.REDUCE) {
-            continue;
-          }
-          TaskReport[] taskReports = job.get().getTaskReports(taskType);
-          if (taskReports == null) {
-            continue;
-          }
-          totalTasks = totalTasks + taskReports.length;
-          for (TaskReport taskReport : taskReports) {
-            TIPStatus tipStatus = taskReport.getCurrentStatus();
-            switch (tipStatus) {
-              case FAILED:
-              case KILLED:
-                failedTasks++;
-                break;
-              case PENDING:
-              case RUNNING:
-                runTasks++;
-                break;
-              case COMPLETE:
-                succTasks++;
-                break;
-            }
-          }
-        }
-        infoMap.put("totalTasks", totalTasks);
-        infoMap.put("runningTasks", runTasks);
-        infoMap.put("failedTasks", failedTasks);
-        infoMap.put("succeedTasks", succTasks);
-        return infoMap;
+        return new JobProgressInfo(getApplicationId(), totalTasks.get(), runTasks.get(), failedTasks.get(), successTasks.get());
+      }
+    }catch (Exception e){
+      if (e instanceof  IllegalStateException && !isJobReady(runnableJob)){
+        LOG.trace("The mapReduce job is not ready, the value of progressInfo is always empty");
       } else {
-        return infoMap;
+        LOG.error("Get progress info in sqoop Error", e);
       }
-    }catch (Exception e){
-      LOG.error("getProgressInfo->"+e);
-      return infoMap;
     }
+    return new JobProgressInfo(getApplicationId(), 0, 0, 0, 0);
   }
 
-  public static Map<String,Map<String,Long>> getMetrics(){
+  /**
+   * Get metrics
+   * @return metrics map
+   */
+  public static Map<String, Object> getMetrics(){
+    Job runnableJob = job.get();
+    // Actual the counter map
+    Map<String, Object> metricsMap = new HashMap<>();
     try {
-      if(job.get() !=null && job.get().getJobState() == JobStatus.State.RUNNING){
-        if(job.get().isComplete()){
-          return metrics;
+      if (Objects.nonNull(runnableJob)) {
+          Counters counters = runnableJob.getCounters();
+          counters.forEach(group -> metricsMap.computeIfAbsent(group.getName(), (groupName) -> {
+            Map<String, Object> map = new HashMap<>();
+            group.forEach(counter -> map.put(counter.getName(), counter.getValue()));
+            return map;
+          }));
+          long startTime = runnableJob.getStartTime();
+          long endTime = runnableJob.getFinishTime() > 0 ? runnableJob.getFinishTime() : System.currentTimeMillis();
+          // Analyze the run time
+          metricsMap.put(METRICS_RUN_TIME, startTime > 0 ? endTime - startTime : 0);
         }
-        Counters counters = job.get().getCounters();
-        Iterator<String> g = job.get().getCounters().getGroupNames().iterator();
-        while (g.hasNext()){
-          String groupName = g.next();
-          Map<String,Long> sub = new HashMap<>();
-          Iterator<Counter> cs = counters.getGroup(groupName).iterator();
-          while (cs.hasNext()){
-            Counter c = cs.next();
-            sub.put(c.getName(),c.getValue());
-          }
-          metrics.put(groupName,sub);
-        }
-      }
     } catch (Exception e) {
-      LOG.error("getMetrics-->"+e);
-      return metrics;
+      if (e instanceof  IllegalStateException && !isJobReady(runnableJob)){
+        LOG.trace("The mapReduce job is not ready, the value of metricsMap is always empty");
+      } else {
+        LOG.error("Get metrics info in sqoop Error", e);
+      }
     }
-    return metrics;
+    return metricsMap;
   }
 
-  public static Map<String,String[]> getDiagnosis(){
+  /**
+   * Get diagnosis
+   * @return
+   */
+  public static Map<String, Object> getDiagnosis(){
+    Job runnableJob = job.get();
+    Map<String, Object> diagnosis = new HashMap<>();
     try {
-      if(job.get() != null) {
-        if(job.get().isComplete()){
-          return diagnosis;
+        if (Objects.nonNull(runnableJob)) {
+          TaskType[] analyzeTypes = new TaskType[]{TaskType.MAP, TaskType.REDUCE};
+          List<TaskReport> listReports = new ArrayList<>();
+          for(TaskType taskType : analyzeTypes) {
+            listReports.addAll(Arrays.asList(runnableJob.getTaskReports(taskType)));
+          }
+          listReports.forEach(report -> diagnosis.put(report.getTaskId(), report.getDiagnostics()));
         }
-        List<TaskReport> listReports = new ArrayList<>();
-        listReports.addAll(Arrays.asList(job.get().getTaskReports(TaskType.MAP)));
-        listReports.addAll(Arrays.asList(job.get().getTaskReports(TaskType.REDUCE)));
-        for (TaskReport t : listReports) {
-          diagnosis.put(t.getTaskId(),t.getDiagnostics());
-        }
+    } catch (Exception e){
+      if (e instanceof  IllegalStateException && !isJobReady(runnableJob)){
+        LOG.trace("The mapReduce job is not ready, the value of diagnosis is always empty");
+      } else {
+        LOG.error("Get diagnosis info in sqoop Error", e);
       }
-      return diagnosis;
-    }catch (Exception e){
-      LOG.error("getDiagnosis->"+e);
     }
     return diagnosis;
+  }
+
+  /**
+   * If the job is ready
+   * @param runnableJob job
+   * @return
+   */
+  private static boolean isJobReady(Job runnableJob){
+    boolean ready = false;
+    try {
+      Field stateField = Job.class.getDeclaredField("state");
+      stateField.setAccessible(true);
+      Job.JobState state = (Job.JobState)stateField.get(runnableJob);
+      ready =  state.equals(Job.JobState.RUNNING);
+    } catch (NoSuchFieldException | IllegalAccessException e) {
+      //Ignore
+    }
+    return ready;
   }
 
 }

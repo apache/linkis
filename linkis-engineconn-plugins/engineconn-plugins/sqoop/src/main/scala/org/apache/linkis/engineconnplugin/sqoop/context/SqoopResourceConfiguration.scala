@@ -15,17 +15,16 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineconnplugin.sqoop.resource
+package org.apache.linkis.engineconnplugin.sqoop.context
 
-import org.apache.linkis.manager.common.entity.resource.{LoadInstanceResource, Resource}
-import org.apache.linkis.manager.engineplugin.common.resource.AbstractEngineResourceFactory
+import org.apache.linkis.common.conf.CommonVars
 
-import java.util
 
-class SqoopEngineConnResourceFactory extends AbstractEngineResourceFactory{
-  override protected def getRequestResource(properties: util.Map[String, String]): Resource = {
-    new LoadInstanceResource(1,
-      1,
-      1)
-  }
+object SqoopResourceConfiguration {
+
+  val LINKIS_SQOOP_TASK_MAP_MEMORY: CommonVars[Int] = CommonVars[Int]("sqoop.task.map.memory", 2)
+
+  val LINKIS_SQOOP_TASK_MAP_CPU_CORES: CommonVars[Int] = CommonVars[Int]("sqoop.task.map.cpu.cores", 1)
+
+  val LINKIS_QUEUE_NAME: CommonVars[String] = CommonVars[String]("wds.linkis.rm.yarnqueue", "default")
 }

@@ -19,6 +19,8 @@ package org.apache.linkis.engineconnplugin.sqoop.factory
 
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.engineconn.common.creation.EngineCreationContext
+import org.apache.linkis.engineconnplugin.sqoop.context.SqoopEngineConnContext
+import org.apache.linkis.engineconnplugin.sqoop.util.ClassUtil
 import org.apache.linkis.manager.engineplugin.common.creation.{ExecutorFactory, MultiExecutorEngineConnFactory}
 import org.apache.linkis.manager.label.entity.engine.EngineType
 import org.apache.linkis.manager.label.entity.engine.EngineType.EngineType
@@ -39,5 +41,5 @@ class SqoopEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
   }
 
 
-  private val executorFactoryArray =  Array[ExecutorFactory](ClassUtil.getInstance(classOf[SqoopExecutorFactory], new SqoopExecutorFactory))
+  private val executorFactoryArray = Array[ExecutorFactory](ClassUtil.getInstance(classOf[SqoopExecutorFactory], new SqoopExecutorFactory))
 }

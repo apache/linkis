@@ -17,63 +17,76 @@
 
 package org.apache.linkis.engineconnplugin.sqoop.launch
 
-
-import org.apache.linkis.manager.engineplugin.common.conf.EnvConfiguration
-import org.apache.linkis.manager.engineplugin.common.launch.entity.{EngineConnBuildRequest, RicherEngineConnBuildRequest}
-import org.apache.linkis.manager.engineplugin.common.launch.process.Environment.{HADOOP_CONF_DIR, HIVE_CONF_DIR, PWD, variable}
-import org.apache.linkis.manager.engineplugin.common.launch.process.LaunchConstants.{ENGINE_CONN_CONF_DIR_NAME, ENGINE_CONN_LIB_DIR_NAME, addPathToClassPath}
-import org.apache.linkis.manager.engineplugin.common.launch.process.JavaProcessEngineConnLaunchBuilder
-
-import java.io.File
-import java.util
-import org.apache.commons.lang.StringUtils
-import org.apache.linkis.manager.engineplugin.common.conf.EnvConfiguration.{HADOOP_LIB_CLASSPATH, HBASE_LIB_CLASSPATH, LINKIS_PUBLIC_MODULE_PATH}
-
 import java.nio.file.Paths
-import scala.collection.JavaConversions._
+import java.util
+import java.util.concurrent.TimeUnit
+
+import org.apache.linkis.engineconnplugin.sqoop.context.SqoopEnvConfiguration._
+import org.apache.linkis.manager.engineplugin.common.launch.entity.EngineConnBuildRequest
+import org.apache.linkis.manager.engineplugin.common.launch.process.Environment.{variable, _}
+import org.apache.linkis.manager.engineplugin.common.launch.process.JavaProcessEngineConnLaunchBuilder
+import org.apache.linkis.manager.engineplugin.common.launch.process.LaunchConstants._
+import org.apache.commons.io.IOUtils
+import org.apache.commons.lang3.StringUtils
+
+import scala.collection.JavaConverters._
 
 class SqoopEngineConnLaunchBuilder extends JavaProcessEngineConnLaunchBuilder{
-  override protected def getEnvironment(implicit engineConnBuildRequest: EngineConnBuildRequest): util.Map[String, String] = {
-    info("Setting up the launch environment for engineconn.")
-    val environment = new util.HashMap[String, String]
-    if(ifAddHiveConfigPath) {
-      addPathToClassPath(environment, variable(HADOOP_CONF_DIR))
-      addPathToClassPath(environment, variable(HIVE_CONF_DIR))
-    }
-    addPathToClassPath(environment,HADOOP_LIB_CLASSPATH.getValue)
-    addPathToClassPath(environment,HBASE_LIB_CLASSPATH.getValue)
-    //    addPathToClassPath(environment, variable(PWD))
-    // first, add engineconn conf dirs.
-    addPathToClassPath(environment, Seq(variable(PWD), ENGINE_CONN_CONF_DIR_NAME))
-    // second, add engineconn libs.
-    addPathToClassPath(environment, Seq(variable(PWD), ENGINE_CONN_LIB_DIR_NAME + "/*"))
-    // then, add public modules.
-    if (!enablePublicModule) {
-      addPathToClassPath(environment, Seq(LINKIS_PUBLIC_MODULE_PATH.getValue + "/*"))
-    }
-    // finally, add the suitable properties key to classpath
-    engineConnBuildRequest.engineConnCreationDesc.properties.foreach { case (key, value) =>
-      if (key.startsWith("engineconn.classpath") || key.startsWith("wds.linkis.engineconn.classpath")) {
-        addPathToClassPath(environment, value)
-      }
-    }
-    getExtraClassPathFile.foreach { file: String =>
-      addPathToClassPath(environment, file)
-    }
-    engineConnBuildRequest match {
-      case richer: RicherEngineConnBuildRequest =>
-        def addFiles(files: String): Unit = if (StringUtils.isNotBlank(files)) {
-          files.split(",").foreach(file => addPathToClassPath(environment, Seq(variable(PWD), new File(file).getName)))
-        }
 
-        val configs: util.Map[String, String] = richer.getStartupConfigs.filter(_._2.isInstanceOf[String]).map { case (k, v: String) => k -> v }
-        val jars: String = EnvConfiguration.ENGINE_CONN_JARS.getValue(configs)
-        addFiles(jars)
-        val files: String = EnvConfiguration.ENGINE_CONN_CLASSPATH_FILES.getValue(configs)
-        addFiles(files)
-      case _ =>
+  override protected def getEnvironment(implicit engineConnBuildRequest: EngineConnBuildRequest): util.Map[String, String] = {
+    val environment = super.getEnvironment
+    // Basic classpath
+    addPathToClassPath(environment, variable(HADOOP_CONF_DIR))
+    addExistPathToClassPath(environment, Seq(SQOOP_CONF_DIR.getValue))
+    if (StringUtils.isNotBlank(SQOOP_HOME.getValue)) {
+      addPathToClassPath(environment, Seq(SQOOP_HOME.getValue, "/*"))
+      addPathToClassPath(environment, Seq(SQOOP_HOME.getValue, "/lib/*"))
     }
+    // HBase classpath
+    if (StringUtils.isNotBlank(SQOOP_HBASE_HOME.getValue) && Paths.get(SQOOP_HBASE_HOME.getValue).toFile.exists()) {
+      resolveCommandToClassPath(environment, SQOOP_HBASE_HOME.getValue + "/bin/hbase classpath")
+    }
+    // HCat classpath
+    if (StringUtils.isNotBlank(SQOOP_HCAT_HOME.getValue) && Paths.get(SQOOP_HCAT_HOME.getValue).toFile.exists()) {
+      resolveCommandToClassPath(environment, SQOOP_HCAT_HOME.getValue + "/bin/hcat -classpath")
+    }
+    addExistPathToClassPath(environment, Seq(SQOOP_ZOOCFGDIR.getValue))
     environment
   }
+
+
+  override protected def getNecessaryEnvironment(implicit engineConnBuildRequest: EngineConnBuildRequest): Array[String] = {
+    // To submit a mapReduce job, we should load the configuration from hadoop config dir
+    Array(HADOOP_CONF_DIR.toString, SQOOP_HOME.key)
+  }
+
+  private def addExistPathToClassPath(env: util.Map[String, String], path: String): Unit = {
+    if (StringUtils.isNotBlank(path) && Paths.get(path).toFile.exists()) {
+      addPathToClassPath(env, path)
+    }
+  }
+  private def resolveCommandToClassPath(env: util.Map[String, String], command: String): Unit = {
+    trace(s"Invoke command [${command}] to get class path sequence")
+    val builder = new ProcessBuilder(Array("/bin/bash", "-c", command): _*)
+    // Set the environment
+    builder.environment.putAll(sys.env.asJava)
+    builder.redirectErrorStream(false)
+    val process = builder.start()
+    if(process.waitFor(5, TimeUnit.SECONDS) &&
+       process.waitFor() == 0) {
+       val jarPathSerial = IOUtils.toString(process.getInputStream).trim()
+       // TODO we should decide separator in different environment
+      val separatorChar = ":"
+       val jarPathList = StringUtils.split(jarPathSerial, separatorChar).filterNot(jarPath => {
+         val splitIndex = jarPath.lastIndexOf("/")
+         val jarName = if (splitIndex >= 0) jarPath.substring(splitIndex + 1) else jarPath
+         jarName.matches("^jasper-compiler-[\\s\\S]+?\\.jar$") || jarName.matches("^jsp-[\\s\\S]+?\\.jar$") || jarName.matches("^disruptor-[\\s\\S]+?\\.jar")
+       }).toList
+       addPathToClassPath(env, StringUtils.join(jarPathList.asJava, separatorChar))
+    }
+    // Release the process
+    process.destroy();
+  }
   private implicit def buildPath(paths: Seq[String]): String = Paths.get(paths.head, paths.tail: _*).toFile.getPath
+
 }

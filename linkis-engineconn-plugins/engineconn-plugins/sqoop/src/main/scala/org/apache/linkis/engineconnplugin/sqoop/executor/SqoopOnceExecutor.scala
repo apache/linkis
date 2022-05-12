@@ -17,12 +17,14 @@
 
 package org.apache.linkis.engineconnplugin.sqoop.executor
 
+import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.engineconn.core.hook.ShutdownHook
 import org.apache.linkis.engineconn.once.executor.{ManageableOnceExecutor, OnceExecutorExecutionContext}
 import org.apache.linkis.engineconnplugin.sqoop.client.LinkisSqoopClient
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
-import org.apache.linkis.server.toScalaMap
 import org.apache.linkis.engineconnplugin.sqoop.client.{LinkisSqoopClient, Sqoop}
+
+import scala.collection.convert.WrapAsScala._
 
 
 trait SqoopOnceExecutor extends ManageableOnceExecutor with SqoopExecutor{
@@ -38,24 +40,24 @@ trait SqoopOnceExecutor extends ManageableOnceExecutor with SqoopExecutor{
 
   val id: Long
 
-  override def getId: String = "SqoopOnceApp_"+ id
+  override def getId: String = "SqoopOnceApp_" + id
   override def close(): Unit = {
-    LinkisSqoopClient.close()
+    Sqoop.close()
     super.close()
   }
   override def trySucceed(): Boolean = {
     super.trySucceed()
-    warn(s"$getId has finished with status $getStatus, now stop it.")
-    ShutdownHook.getShutdownHook.notifyStop()
-    true
+  }
+
+
+  override def ensureAvailable[A](f: => A): A = {
+    // Not need to throws exception
+    Utils.tryQuietly{ super.ensureAvailable(f) }
   }
 
   override def tryFailed(): Boolean = {
     LinkisSqoopClient.close()
     super.tryFailed()
-    error(s"$getId has failed with status $getStatus, now stop it.")
-    ShutdownHook.getShutdownHook.notifyStop()
-    true
   }
 
   override def supportCallBackLogs(): Boolean = true

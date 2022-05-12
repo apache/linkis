@@ -18,21 +18,22 @@
 package org.apache.linkis.engineconnplugin.sqoop.executor
 
 import org.apache.linkis.engineconn.executor.entity.{LabelExecutor, ResourceExecutor, YarnExecutor}
-import org.apache.linkis.engineconnplugin.sqoop.context.SqoopEnvConfiguration.LINKIS_QUEUE_NAME
+import org.apache.linkis.engineconnplugin.sqoop.client.Sqoop
+import org.apache.linkis.engineconnplugin.sqoop.context.SqoopResourceConfiguration.LINKIS_QUEUE_NAME
 import org.apache.linkis.manager.common.entity.resource.NodeResource
 import org.apache.linkis.manager.label.entity.Label
-import org.apache.linkis.engineconnplugin.sqoop.client.{LinkisSqoopClient, Sqoop}
+import java.util
+
+import org.apache.linkis.engineconnplugin.sqoop.client.Sqoop
 import org.apache.linkis.engineconnplugin.sqoop.client.exception.JobExecutionException
 import org.apache.linkis.engineconnplugin.sqoop.context.SqoopEngineConnContext
-
-import java.util
 
 trait SqoopExecutor extends YarnExecutor with LabelExecutor with ResourceExecutor{
   private var yarnMode: String = "Client"
   private var executorLabels: util.List[Label[_]] = new util.ArrayList[Label[_]]
-  override def getApplicationId: String = LinkisSqoopClient.getApplicationId
+  override def getApplicationId: String = Sqoop.getApplicationId
 
-  override def getApplicationURL: String = LinkisSqoopClient.getApplicationURL
+  override def getApplicationURL: String = Sqoop.getApplicationURL
 
   override def getYarnMode: String = yarnMode
   def setYarnMode(yarnMode: String): Unit = this.yarnMode = yarnMode

@@ -15,17 +15,24 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineconnplugin.sqoop.resource
+package org.apache.linkis.engineconnplugin.sqoop.client.exception;
 
-import org.apache.linkis.manager.common.entity.resource.{LoadInstanceResource, Resource}
-import org.apache.linkis.manager.engineplugin.common.resource.AbstractEngineResourceFactory
+import org.apache.linkis.common.exception.ErrorException;
 
-import java.util
+/**
+ * Exception in closing/destroying the job
+ */
+public class JobClosableException extends ErrorException {
+    private static final long serialVersionUID = 1L;
 
-class SqoopEngineConnResourceFactory extends AbstractEngineResourceFactory{
-  override protected def getRequestResource(properties: util.Map[String, String]): Resource = {
-    new LoadInstanceResource(1,
-      1,
-      1)
-  }
+    public static final int ERROR_CODE = 16025;
+
+    public JobClosableException(String message) {
+        super(ERROR_CODE, message);
+    }
+
+    public JobClosableException(String message, Throwable e) {
+        super(ERROR_CODE, message);
+        this.initCause(e);
+    }
 }

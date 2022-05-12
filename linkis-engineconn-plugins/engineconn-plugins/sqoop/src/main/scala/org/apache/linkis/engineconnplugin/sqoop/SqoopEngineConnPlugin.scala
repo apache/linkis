@@ -20,11 +20,10 @@ package org.apache.linkis.engineconnplugin.sqoop
 import org.apache.linkis.manager.engineplugin.common.EngineConnPlugin
 import org.apache.linkis.manager.engineplugin.common.creation.EngineConnFactory
 import org.apache.linkis.manager.engineplugin.common.launch.EngineConnLaunchBuilder
-import org.apache.linkis.manager.engineplugin.common.resource.EngineResourceFactory
+import org.apache.linkis.manager.engineplugin.common.resource.{EngineResourceFactory, GenericEngineResourceFactory}
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.engineconnplugin.sqoop.factory.SqoopEngineConnFactory
 import org.apache.linkis.engineconnplugin.sqoop.launch.SqoopEngineConnLaunchBuilder
-import org.apache.linkis.engineconnplugin.sqoop.resource.SqoopEngineConnResourceFactory
 
 
 class SqoopEngineConnPlugin extends EngineConnPlugin{
@@ -38,7 +37,7 @@ class SqoopEngineConnPlugin extends EngineConnPlugin{
 
     EP_CONTEXT_CONSTRUCTOR_LOCK.synchronized{
       if(null == engineResourceFactory){
-        engineResourceFactory = new SqoopEngineConnResourceFactory
+        engineResourceFactory = new GenericEngineResourceFactory
       }
       engineResourceFactory
     }

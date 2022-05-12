@@ -18,13 +18,9 @@
 package org.apache.linkis.engineconnplugin.sqoop.client.utils;
 
 import org.apache.commons.lang3.Validate;
-import sun.misc.Resource;
-import sun.misc.SharedSecrets;
-import sun.misc.URLClassPath;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -33,8 +29,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.jar.Attributes;
-import java.util.jar.Manifest;
 import java.util.stream.Collectors;
 
 public class JarLoader extends URLClassLoader {
@@ -170,4 +164,3 @@ public class JarLoader extends URLClassLoader {
     }
 
 }
-

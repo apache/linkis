@@ -15,17 +15,20 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineconnplugin.sqoop.resource
-
-import org.apache.linkis.manager.common.entity.resource.{LoadInstanceResource, Resource}
-import org.apache.linkis.manager.engineplugin.common.resource.AbstractEngineResourceFactory
+package org.apache.linkis.engineconnplugin.sqoop.params
 
 import java.util
 
-class SqoopEngineConnResourceFactory extends AbstractEngineResourceFactory{
-  override protected def getRequestResource(properties: util.Map[String, String]): Resource = {
-    new LoadInstanceResource(1,
-      1,
-      1)
-  }
+import org.apache.linkis.engineconn.common.creation.EngineCreationContext
+/**
+  * Resolve the engine job params
+ */
+trait SqoopParamsResolver {
+
+  /**
+   * main method
+   * @param params input
+   * @return
+   */
+  def resolve(params: util.Map[String, String], context: EngineCreationContext): util.Map[String, String]
 }

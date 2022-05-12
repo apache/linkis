@@ -17,151 +17,132 @@
 
 package org.apache.linkis.engineconnplugin.sqoop.client;
 
+import org.apache.linkis.common.exception.ErrorException;
 import org.apache.linkis.engineconnplugin.sqoop.client.utils.JarLoader;
+import org.apache.linkis.protocol.engine.JobProgressInfo;
+import org.apache.sqoop.SqoopOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.apache.sqoop.SqoopOptions;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
-public class LinkisSqoopClient {
-    private static Class sqoopEngineClass;
+public class LinkisSqoopClient{
+    private static Class<?> sqoopEngineClass;
     private static Logger logger = LoggerFactory.getLogger(LinkisSqoopClient.class);
-    private static JarLoader jarLoader = null;
+    private static JarLoader jarLoader;
     public static int run(Map<String,String> params) {
-        JarLoader jarLoader;
         try {
             jarLoader = new JarLoader(new String[]{
                     LinkisSqoopClient.class.getProtectionDomain().getCodeSource().getLocation().getPath()
             });
-            //Load the sqoop class redefined by progress, notice that is not be resolved
+            // Load the sqoop class redefined by progress, notice that is not be resolved
             jarLoader.loadClass("org.apache.sqoop.mapreduce.JobBase", false);
-            //Add the sqoop-{version}.jar to class path
+            // Add the sqoop-{version}.jar to class path
             jarLoader.addJarURL(SqoopOptions.class.getProtectionDomain().getCodeSource().getLocation().getPath());
-            //Update the context loader
+            // Update the context loader
             Thread.currentThread().setContextClassLoader(jarLoader);
             sqoopEngineClass = jarLoader.loadClass("org.apache.linkis.engineconnplugin.sqoop.client.Sqoop");
-            Method method = sqoopEngineClass.getDeclaredMethod("main",java.util.Map.class);
+            Method method = sqoopEngineClass.getDeclaredMethod("main", Map.class);
             return (Integer) method.invoke(null, params);
         } catch (Throwable e) {
-            Writer result = new StringWriter();
-            PrintWriter printWriter = new PrintWriter(result);
-            e.printStackTrace(printWriter);
-            e.printStackTrace();
-            logger.error("Run Error Message:"+result.toString());
+            logger.error("Run Error Message:" + getLog(e), e);
             return -1;
         }
     }
+
+    /**
+     * Close
+     */
     public static void close(){
-        try {
-            Thread.currentThread().setContextClassLoader(jarLoader);
-            if(sqoopEngineClass !=null) {
-                Method method = sqoopEngineClass.getDeclaredMethod("close");
-                method.invoke(null);
-            }
-        } catch (Throwable e) {
-            logger.error("Close Error Message:"+getLog(e));
-        }
-
+        operateInClassLoader(jarLoader, () -> {
+            Method method = sqoopEngineClass.getDeclaredMethod("close");
+            method.invoke(null);
+            return null;
+        }, e -> logger.error("Close Error Message: {}", getLog(e)));
     }
 
+    /**
+     * Fetch application id
+     * @return application id
+     */
     public static String getApplicationId(){
-        try {
-            Thread.currentThread().setContextClassLoader(jarLoader);
-            if(sqoopEngineClass != null){
-                Method method = sqoopEngineClass.getDeclaredMethod("getApplicationId");
-                return (String) method.invoke(null);
-            }
-        }catch (Throwable e){
-            logger.error("LinkisSqoopClient getApplicationId:"+getLog(e));
-        }
-        return "";
+        return operateInClassLoader(jarLoader, () -> {
+            Method method = sqoopEngineClass.getDeclaredMethod("getApplicationId");
+            return (String) method.invoke(null);
+        }, e -> logger.error("Linkis SqoopClient getApplicationId: {}", getLog(e)));
     }
 
+
+    /**
+     * Fetch application url
+     * @return url
+     */
     public static String getApplicationURL(){
-        try {
-            Thread.currentThread().setContextClassLoader(jarLoader);
-            if(sqoopEngineClass != null){
-                Method method = sqoopEngineClass.getDeclaredMethod("getApplicationURL");
-                return (String) method.invoke(null);
-            }
-        }catch (Throwable e){
-            logger.error("LinkisSqoopClient getApplicationURL:"+getLog(e));
-        }
-        return "";
+        return operateInClassLoader(jarLoader, () -> {
+            Method method = sqoopEngineClass.getDeclaredMethod("getApplicationURL");
+            return (String) method.invoke(null);
+        }, e -> logger.error("Linkis SqoopClient getApplicationURL: {}", getLog(e)));
     }
 
-    public static float progress(){
-        try {
-            Thread.currentThread().setContextClassLoader(jarLoader);
-            if(sqoopEngineClass != null){
-                Method method = sqoopEngineClass.getDeclaredMethod("progress");
-                Float ret =  (Float) method.invoke(null);
-                logger.info("LinkisSqoopClient progress ret:"+ret);
-                return ret;
-            }
-        }catch (Throwable e){
-            logger.error("LinkisSqoopClient progress:"+getLog(e));
-        }
-        return 0.0f;
+    /**
+     * Progress value
+     * @return progress
+     */
+    public static Float progress(){
+        return operateInClassLoader(jarLoader, () -> {
+            Method method = sqoopEngineClass.getDeclaredMethod("progress");
+            return (Float) method.invoke(null);
+        }, e -> logger.error("Linkis SqoopClient progress: {}", getLog(e)) );
     }
 
 
-    public static Map<String,Integer> getProgressInfo(){
-        Map<String, Integer> infoMap = new HashMap();
-        infoMap.put("totalTasks", 0);
-        infoMap.put("runningTasks", 0);
-        infoMap.put("failedTasks", 0);
-        infoMap.put("succeedTasks", 0);
-        Thread.currentThread().setContextClassLoader(jarLoader);
-        try {
-            if(sqoopEngineClass != null){
-                Method method = sqoopEngineClass.getDeclaredMethod("getProgressInfo");
-                infoMap = (Map<String,Integer>) method.invoke(null);
-                logger.error("LinkisSqoopClient getProgressInfo ret:"+infoMap.toString());
-                return infoMap;
-            }
-        }catch (Throwable e){
-            logger.error("LinkisSqoopClient getProgressInfo:"+getLog(e));
-        }
-        return infoMap;
+    /**
+     * ProgressInfo
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    public static JobProgressInfo getProgressInfo(){
+        return operateInClassLoader(jarLoader, () -> {
+            Method method = sqoopEngineClass.getDeclaredMethod("getProgressInfo");
+            return (JobProgressInfo)method.invoke(null);
+        }, e -> logger.error("Linkis SqoopClient getProgressInfo: {}", getLog(e)));
     }
 
-    public static Map<String,Map<String,Long>> getMetrics(){
-        Map<String,Map<String,Long>> metrics = new HashMap<>();
-        Thread.currentThread().setContextClassLoader(jarLoader);
-        try {
-            if(sqoopEngineClass != null){
-                Method method = sqoopEngineClass.getDeclaredMethod("getMetrics");
-                metrics = (Map<String,Map<String,Long>>) method.invoke(null);
-                logger.error("LinkisSqoopClient getMetrics ret:"+metrics.toString());
-                return metrics;
-            }
-        }catch (Throwable e){
-            logger.error("LinkisSqoopClient getMetrics:"+getLog(e));
-        }
-        return metrics;
-    }
-    public static Map<String,String[]> getDiagnosis(){
-        Map<String,String[]> diagnosis = new HashMap<>();
-        Thread.currentThread().setContextClassLoader(jarLoader);
-        try {
-            if(sqoopEngineClass != null){
-                Method method = sqoopEngineClass.getDeclaredMethod("getDiagnosis");
-                diagnosis = (Map<String,String[]>) method.invoke(null);
-                logger.error("LinkisSqoopClient getDiagnosis ret:"+diagnosis.toString());
-                return diagnosis;
-            }
-        }catch (Throwable e){
-            logger.error("LinkisSqoopClient getDiagnosis:"+getLog(e));
-        }
-        return diagnosis;
+    /**
+     * Get metrics
+     * @return map value
+     */
+    @SuppressWarnings("unchecked")
+    public static Map<String, Object> getMetrics(){
+        return operateInClassLoader(jarLoader, () -> {
+            Method method = sqoopEngineClass.getDeclaredMethod("getMetrics");
+            return (Map<String, Object>) method.invoke(null);
+        }, e -> logger.error("Linkis SqoopClient getMetrics: {}", getLog(e)));
     }
 
+    /**
+     * Get diagnosis
+     * @return map value
+     */
+    @SuppressWarnings("unchecked")
+    public static Map<String, Object> getDiagnosis(){
+        return operateInClassLoader(jarLoader, () -> {
+            Method method = sqoopEngineClass.getDeclaredMethod("getDiagnosis");
+            return (Map<String, Object>) method.invoke(null);
+        }, e -> logger.error("Linkis SqoopClient getDiagnosis: {}", getLog(e)));
+    }
+
+    /**
+     * Console log
+     * @param e throwable
+     * @return log
+     */
     private static String getLog(Throwable e){
         Writer result = new StringWriter();
         PrintWriter printWriter = new PrintWriter(result);
@@ -169,5 +150,37 @@ public class LinkisSqoopClient {
         return e.toString();
     }
 
-}
+    /**
+     * Operate in special classloader
+     * @param classLoader classloader
+     * @param operation operation
+     * @param resolver resolver
+     * @param <R> return type
+     * @return return
+     */
+    private static <R>R operateInClassLoader(ClassLoader classLoader, ClientOperation<R> operation, Consumer<Throwable> resolver){
+        ClassLoader currentLoader = Thread.currentThread().getContextClassLoader();
+        R result = null;
+        try {
+            Thread.currentThread().setContextClassLoader(classLoader);
+            result =operation.operate();
+        } catch (Exception t){
+            resolver.accept(t);
+        } finally {
+            Thread.currentThread().setContextClassLoader(currentLoader);
+        }
+        return result;
+    }
 
+
+    @FunctionalInterface
+    interface ClientOperation<T>{
+
+        /**
+         * Operate
+         * @return T
+         * @throws ErrorException error exception
+         */
+        T operate() throws ErrorException, NoSuchMethodException, InvocationTargetException, IllegalAccessException;
+    }
+}

@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.sqoop.mapreduce;
 
 import java.io.File;
@@ -82,7 +81,7 @@ public class JobBase {
                    final Class<? extends Mapper> mapperClass,
                    final Class<? extends InputFormat> inputFormatClass,
                    final Class<? extends OutputFormat> outputFormatClass) {
-
+        System.out.println(SqoopOptions.class.getClassLoader());
         this.options = opts;
         this.mapperClass = mapperClass;
         this.inputFormatClass = inputFormatClass;

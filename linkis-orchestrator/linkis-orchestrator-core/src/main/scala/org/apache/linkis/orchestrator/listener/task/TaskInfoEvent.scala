@@ -70,7 +70,8 @@ case class KillRootExecTaskEvent(execTask: ExecTask) extends  TaskInfoEvent with
 
 case class TaskReheaterEvent(execTask: ExecTask) extends TaskInfoEvent with OrchestratorAsyncEvent
 
-case class TaskProgressEvent(execTask: ExecTask, progress: Float, progressInfo: Array[JobProgressInfo]) extends TaskInfoEvent with OrchestratorAsyncEvent {
+case class TaskRunningInfoEvent(execTask: ExecTask, progress: Float, progressInfo: Array[JobProgressInfo],
+                                resourceMap: util.HashMap[String, ResourceWithStatus], infoMap: util.HashMap[String, Object]) extends TaskInfoEvent with OrchestratorAsyncEvent {
   override def toString: String = {
     s"task ${execTask.getIDInfo()}, progress ${progress}"
   }

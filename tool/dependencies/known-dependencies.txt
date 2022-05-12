@@ -272,6 +272,7 @@ jetty-util-9.4.42.v20210604.jar
 jetty-util-ajax-9.4.42.v20210604.jar
 jetty-webapp-9.4.42.v20210604.jar
 jetty-xml-9.4.42.v20210604.jar
+jetty-util-6.1.26.jar
 jline-2.14.6.jar
 jna-5.6.0.jar
 jna-platform-5.6.0.jar
@@ -464,6 +465,8 @@ spring-tx-5.2.15.RELEASE.jar
 spring-web-5.2.15.RELEASE.jar
 spring-webflux-5.2.15.RELEASE.jar
 spring-webmvc-5.2.15.RELEASE.jar
+sqoop-1.4.6.jar
+sqoop-1.4.7.jar
 ssl-config-core_2.11-0.3.7.jar
 stax2-api-4.2.1.jar
 stringtemplate-3.2.1.jar

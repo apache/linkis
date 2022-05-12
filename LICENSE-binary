@@ -574,6 +574,7 @@ See licenses-binary/ for text of these licenses.
     (Apache License, version 2.0) XmlBeans:XmlBeans main jar (org.apache.xmlbeans:xmlbeans:5.0.3 - https://xmlbeans.apache.org/)
     (Apache License, version 2.0) XStream Core (com.thoughtworks.xstream:xstream:1.4.18)
     (Apache License, version 2.0) Apache ZooKeeper - Server (org.apache.zookeeper:zookeeper:3.4.6 - https://zookeeper.apache.org/)
+    (Apache License, version 2.0) Apache Sqoop - Server (org.apache.sqoop:sqoop:1.4.6 - https://github.com/apache/sqoop/)
 
 ========================================================================
 Third party CDDL licenses

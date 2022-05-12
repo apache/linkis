@@ -45,7 +45,6 @@
             <groupId>org.apache.sqoop</groupId>
             <artifactId>sqoop</artifactId>
             <version>1.4.6</version>
-            <classifier>hadoop200</classifier>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>

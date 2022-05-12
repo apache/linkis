@@ -272,6 +272,7 @@ jetty-util-9.4.42.v20210604.jar
 jetty-util-ajax-9.4.42.v20210604.jar
 jetty-webapp-9.4.42.v20210604.jar
 jetty-xml-9.4.42.v20210604.jar
+jetty-util-6.1.26.jar
 jline-2.14.6.jar
 jna-5.6.0.jar
 jna-platform-5.6.0.jar

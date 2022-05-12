@@ -61,11 +61,12 @@ class DefaultProgressOperation(orchestratorSession: OrchestratorSession) extends
     var taskRunningInfoEvent: TaskRunningInfoEvent = null
     val execTaskInfo = generateExecTaskInfo(oriTaskRunningInfoEvent.execTask)
     if (null != taskRunningInfoEvent.infoMap) {
+      taskRunningInfoEvent.infoMap.putAll(execTaskInfo)
       taskRunningInfoEvent = TaskRunningInfoEvent(oriTaskRunningInfoEvent.execTask, oriTaskRunningInfoEvent.progress,
-        oriTaskRunningInfoEvent.progressInfo, oriTaskRunningInfoEvent.resourceMap, ta)
+        oriTaskRunningInfoEvent.progressInfo, oriTaskRunningInfoEvent.resourceMap, taskRunningInfoEvent.infoMap)
     } else {
       taskRunningInfoEvent = TaskRunningInfoEvent(oriTaskRunningInfoEvent.execTask, oriTaskRunningInfoEvent.progress,
-        oriTaskRunningInfoEvent.progressInfo, oriTaskRunningInfoEvent.resourceMap, generateExecTaskInfo(oriTaskRunningInfoEvent.execTask))
+        oriTaskRunningInfoEvent.progressInfo, oriTaskRunningInfoEvent.resourceMap, execTaskInfo)
     }
     val execTask = taskRunningInfoEvent.execTask
     Option(execTask).foreach(task => {
@@ -100,7 +101,7 @@ class DefaultProgressOperation(orchestratorSession: OrchestratorSession) extends
       }
 
       Option(execTaskToProgressProcessor.get(execTask.getPhysicalContext.getRootTask.getId)).foreach( progress => {
-        progress.onProgress(event.progress, event.progressInfo, event.resourceMap, event.resourceMap, event.infoMap)
+        progress.onProgress(event.progress, event.progressInfo, event.resourceMap, event.infoMap)
       })
     })
 
@@ -112,7 +113,7 @@ class DefaultProgressOperation(orchestratorSession: OrchestratorSession) extends
       logger.warn("TaskRunningInfoEvent got null execTask.")
       return map
     }
-    map.put(TaskConstants.EXEC_ID, task.getId())
+    map.put(TaskConstants.EXEC_ID, task.getId)
     map.put(TaskConstants.ID_INFO, task.getIDInfo())
     map.put(TaskConstants.TASK_CLASSNAME, task.getClass.getSimpleName)
     map.put(TaskConstants.TASK_NAME, task.getName)

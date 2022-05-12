@@ -44,8 +44,9 @@ import org.apache.linkis.governance.common.exception.engineconn.{EngineConnExecu
 import org.apache.linkis.governance.common.protocol.task._
 import org.apache.linkis.governance.common.utils.JobUtils
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
-import org.apache.linkis.manager.common.protocol.resource.ResponseTaskYarnResource
+import org.apache.linkis.manager.common.protocol.resource.{ResponseTaskRunningInfo, ResponseTaskYarnResource}
 import org.apache.linkis.manager.label.entity.Label
+import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.protocol.message.RequestProtocol
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.rpc.message.annotation.Receiver
@@ -55,6 +56,7 @@ import org.apache.linkis.server.BDPJettyServerHelper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
+import java.util
 import java.util.concurrent._
 import java.util.concurrent.atomic.AtomicInteger
 import javax.annotation.PostConstruct
@@ -319,15 +321,30 @@ class TaskExecutionServiceImpl extends TaskExecutionService with Logging with Re
         Utils.tryQuietly(Thread.sleep(TimeUnit.MILLISECONDS.convert(1, TimeUnit.SECONDS)))
         while (null != taskFuture && !taskFuture.isDone) {
           if (ExecutionNodeStatus.isCompleted(task.getStatus) || ExecutionNodeStatus.isRunning(task.getStatus)) {
-            sendToEntrance(task, taskProgress(task.getTaskId))
-            taskYarnResource(task.getTaskId) match {
+            val progressResponse = taskProgress(task.getTaskId)
+            val resourceResponse: ResponseTaskYarnResource = taskYarnResource(task.getTaskId) match {
               case responseTaskYarnResource: ResponseTaskYarnResource => {
                 if (responseTaskYarnResource.resourceMap != null && !responseTaskYarnResource.resourceMap.isEmpty) {
-                  sendToEntrance(task, responseTaskYarnResource)
+                  responseTaskYarnResource
+                } else {
+                  null
                 }
               }
               case _ =>
+                null
             }
+            val extraInfoMap = new util.HashMap[String, Object]()
+            extraInfoMap.put(TaskConstant.ENGINE_INSTANCE, Sender.getThisInstance)
+            // todo add other info
+            var respRunningInfo: ResponseTaskRunningInfo = null
+            if (null != resourceResponse) {
+              respRunningInfo = ResponseTaskRunningInfo(progressResponse.execId, progressResponse.progress, progressResponse.progressInfo,
+                resourceResponse.resourceMap, extraInfoMap)
+            } else {
+              respRunningInfo = ResponseTaskRunningInfo(progressResponse.execId, progressResponse.progress, progressResponse.progressInfo,
+                null, extraInfoMap)
+            }
+            sendToEntrance(task, respRunningInfo)
             Thread.sleep(TimeUnit.MILLISECONDS.convert(sleepInterval, TimeUnit.SECONDS))
           }
         }

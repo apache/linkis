@@ -25,11 +25,11 @@ import org.apache.linkis.cli.core.exception.CommandException;
 import org.apache.linkis.cli.core.exception.ValidateException;
 import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.text.MessageFormat;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 1. Check if there is missing or unknown option. 2. Call checkParam method for command-specific

@@ -19,12 +19,12 @@ package org.apache.linkis.bml.common;
 
 import org.apache.linkis.bml.conf.BmlServerConfiguration;
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
-
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 /** 线程池管理器，用于获取各个线程池单例 */
 public class ExecutorManager {

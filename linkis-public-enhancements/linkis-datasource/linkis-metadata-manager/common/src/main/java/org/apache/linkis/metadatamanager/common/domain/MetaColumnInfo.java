@@ -17,10 +17,10 @@
 
 package org.apache.linkis.metadatamanager.common.domain;
 
+import java.io.Serializable;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
-import java.io.Serializable;
 
 /** The meta information of field */
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_EMPTY)

@@ -22,17 +22,17 @@ import org.apache.linkis.manager.label.entity.InheritableLabel;
 import org.apache.linkis.manager.label.entity.Label;
 import org.apache.linkis.manager.label.utils.LabelUtils;
 
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.type.TypeFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
 import java.util.*;
 import java.util.function.Function;
+
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.type.TypeFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.linkis.manager.label.utils.LabelUtils.Jackson.*;
 

@@ -32,13 +32,13 @@ import org.apache.linkis.cli.core.interactor.command.parser.transformer.ParamKey
 
 import org.apache.commons.lang3.StringUtils;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class AbstarctParser implements Parser {
     private static final Logger logger = LoggerFactory.getLogger(AbstarctParser.class);

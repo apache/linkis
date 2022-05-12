@@ -25,9 +25,9 @@ import org.apache.linkis.cs.condition.impl.ContainsCondition;
 import org.apache.linkis.cs.condition.impl.ContextValueTypeCondition;
 import org.apache.linkis.cs.condition.impl.RegexCondition;
 
-import com.google.common.collect.Maps;
-
 import java.util.Map;
+
+import com.google.common.collect.Maps;
 
 public class ConditionCostCalculator {
 

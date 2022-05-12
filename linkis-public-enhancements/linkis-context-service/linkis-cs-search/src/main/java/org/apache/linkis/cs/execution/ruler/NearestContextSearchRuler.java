@@ -31,13 +31,13 @@ import org.apache.linkis.server.BDPJettyServerHelper;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.google.common.collect.Lists;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+
+import com.google.common.collect.Lists;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class NearestContextSearchRuler extends AbstractContextSearchRuler {
 

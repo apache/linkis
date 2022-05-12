@@ -28,10 +28,10 @@ import org.apache.linkis.cs.persistence.persistence.ContextMapPersistence;
 
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-
 import java.util.List;
 import java.util.Random;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 public class ContextMapTest {
     AnnotationConfigApplicationContext context = null;

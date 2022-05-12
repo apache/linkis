@@ -140,7 +140,7 @@
         <cglib.version>3.3.0</cglib.version>
         <asm-bom.version>9.3</asm-bom.version>
         <log4j2.version>2.17.2</log4j2.version>
-        <spotless.version>2.4.2</spotless.version>
+        <spotless.version>2.22.5</spotless.version>
         <junit5.version>5.7.2</junit5.version>
         <mockito.version>3.9.0</mockito.version>
         <assertj.version>3.17.2</assertj.version>
@@ -1199,7 +1199,7 @@
 
                             <!-- \# refers to the static imports -->
                             <importOrder>
-                                <order>org.apache.linkis,org.apache,org.springframework,javax,java,scala,\#</order>
+                                <order>org.apache.linkis,org.apache,org.springframework,javax,java,scala,,\#</order>
                             </importOrder>
 
                             <removeUnusedImports />

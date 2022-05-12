@@ -35,10 +35,10 @@ import org.apache.linkis.cli.core.utils.CommonUtils;
 import org.apache.linkis.cli.core.utils.LogUtils;
 import org.apache.linkis.cli.core.utils.SchedulerUtils;
 
+import java.text.MessageFormat;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.text.MessageFormat;
 
 public class LinkisOnceJob extends LinkisJob
         implements ManagableBackendJob,

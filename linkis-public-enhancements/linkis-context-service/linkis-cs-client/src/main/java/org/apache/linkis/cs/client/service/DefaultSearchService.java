@@ -31,14 +31,14 @@ import org.apache.linkis.cs.common.exception.ErrorCode;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
-import com.google.gson.Gson;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.google.gson.Gson;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DefaultSearchService implements SearchService {
     private static final Logger logger = LoggerFactory.getLogger(DefaultSearchService.class);

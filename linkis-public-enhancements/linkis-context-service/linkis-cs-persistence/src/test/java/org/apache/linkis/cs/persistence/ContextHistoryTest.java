@@ -26,10 +26,10 @@ import org.apache.linkis.cs.persistence.persistence.KeywordContextHistoryPersist
 
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-
 import java.util.List;
 import java.util.Random;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 public class ContextHistoryTest {
     AnnotationConfigApplicationContext context = null;

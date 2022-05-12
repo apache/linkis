@@ -38,15 +38,15 @@ import org.apache.linkis.httpclient.dws.DWSHttpClient;
 import org.apache.linkis.httpclient.dws.config.DWSClientConfig;
 import org.apache.linkis.httpclient.response.Result;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Description: heartbeater类的作用是为了csclient能够和csserver进行每秒钟交互的一个类，从server中获取内容， 然后封装成事件投递到

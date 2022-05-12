@@ -26,10 +26,6 @@ import org.apache.linkis.errorcode.common.LinkisErrorCode;
 import org.apache.commons.io.Charsets;
 import org.apache.commons.lang.StringUtils;
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.*;
 import java.nio.charset.Charset;
 import java.util.*;
@@ -37,6 +33,10 @@ import java.util.concurrent.*;
 
 import scala.Option;
 import scala.Tuple2;
+
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class LinkisErrorCodeHandler
         implements LogErrorCodeHandler, LogFileErrorCodeHandler, ExceptionErrorCodeHandler {

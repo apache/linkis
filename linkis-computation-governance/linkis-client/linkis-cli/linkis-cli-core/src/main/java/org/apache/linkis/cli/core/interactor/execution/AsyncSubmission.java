@@ -30,10 +30,10 @@ import org.apache.linkis.cli.core.interactor.result.ExecutionResultImpl;
 import org.apache.linkis.cli.core.interactor.result.ExecutionStatusEnum;
 import org.apache.linkis.cli.core.utils.CommonUtils;
 
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Map;
 
 /**
  * Execute job asynchronously TODO: put exception during execution in ExecutionResult and do not

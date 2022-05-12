@@ -21,7 +21,7 @@ import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
 import org.apache.linkis.governance.common.protocol.task._
-import org.apache.linkis.manager.common.protocol.resource.ResponseTaskYarnResource
+import org.apache.linkis.manager.common.protocol.resource.{ResponseTaskRunningInfo, ResponseTaskYarnResource}
 import org.apache.linkis.orchestrator.computation.execute.CodeExecTaskExecutorManager
 import org.apache.linkis.orchestrator.computation.monitor.EngineConnMonitor
 import org.apache.linkis.orchestrator.core.ResultSet
@@ -86,20 +86,11 @@ class ComputationTaskExecutionReceiver extends TaskExecutionReceiver with Loggin
   }
 
   @Receiver
-  override def taskYarnResourceReceiver(taskYarnResource: ResponseTaskYarnResource, sender: Sender): Unit = {
+  override def taskProgressReceiver(taskProgressWithResource: ResponseTaskRunningInfo, sender: Sender): Unit = {
     val serviceInstance = RPCUtils.getServiceInstanceFromSender(sender)
-    codeExecTaskExecutorManager.getByEngineConnAndTaskId(serviceInstance, taskYarnResource.execId).foreach { codeExecutor =>
-      val event = TaskYarnResourceEvent(codeExecutor.getExecTask, taskYarnResource.resourceMap)
-      codeExecutor.getExecTask.getPhysicalContext.pushYarnResource(event)
-      codeExecutor.getEngineConnExecutor.updateLastUpdateTime()
-    }
-  }
-
-  @Receiver
-  override def taskProgressReceiver(taskProgress: ResponseTaskProgress, sender: Sender): Unit = {
-    val serviceInstance = RPCUtils.getServiceInstanceFromSender(sender)
-    codeExecTaskExecutorManager.getByEngineConnAndTaskId(serviceInstance, taskProgress.execId).foreach{ codeExecutor =>
-      val event = TaskProgressEvent(codeExecutor.getExecTask, taskProgress.progress, taskProgress.progressInfo)
+    codeExecTaskExecutorManager.getByEngineConnAndTaskId(serviceInstance, taskProgressWithResource.execId).foreach{ codeExecutor =>
+      val event = TaskRunningInfoEvent(codeExecutor.getExecTask, taskProgressWithResource.progress,
+        taskProgressWithResource.progressInfo, taskProgressWithResource.resourceMap, taskProgressWithResource.extraInfoMap)
       codeExecutor.getExecTask.getPhysicalContext.pushProgress(event)
       codeExecutor.getEngineConnExecutor.updateLastUpdateTime()
     }

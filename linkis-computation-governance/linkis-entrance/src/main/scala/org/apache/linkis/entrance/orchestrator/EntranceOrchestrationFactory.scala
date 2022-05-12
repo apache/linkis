@@ -37,7 +37,6 @@ object EntranceOrchestrationFactory {
     val addOnOperation = new OperationExtensionsBuilder {
       override def apply(v1: OperationExtensions): Unit = {
         v1.injectOperation(new ProgressOperationBuilder())
-        v1.injectOperation(new ResourceReportOperationBuilder())
       }
     }
     orchestratorSessionBuilder.withOperationExtensions(addOnOperation)

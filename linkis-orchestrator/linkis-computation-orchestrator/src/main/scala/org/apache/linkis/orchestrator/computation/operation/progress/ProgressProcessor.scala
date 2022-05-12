@@ -41,7 +41,7 @@ class ProgressProcessor(rootExecTaskId: String,
   }
 
   def onProgress(progress: Float, progressInfo: Array[JobProgressInfo], resourceMap: util.HashMap[String, ResourceWithStatus], infoMap: util.HashMap[String, Object]): Unit = {
-     val progressInfoWithResourceEvent = ProgressInfoEvent(orchestration, progress, progressInfo, resourceMap)
+     val progressInfoWithResourceEvent = ProgressInfoEvent(orchestration, progress, progressInfo, resourceMap, infoMap: util.HashMap[String, Object])
      listeners.foreach(_(progressInfoWithResourceEvent))
   }
 

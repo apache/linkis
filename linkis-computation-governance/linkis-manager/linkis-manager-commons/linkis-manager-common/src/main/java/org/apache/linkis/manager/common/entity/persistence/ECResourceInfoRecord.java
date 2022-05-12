@@ -26,6 +26,8 @@ public class ECResourceInfoRecord {
 
     private Integer id;
 
+    private String createUser;
+
     private String labelValue;
 
     private String ticketId;
@@ -55,9 +57,10 @@ public class ECResourceInfoRecord {
     public ECResourceInfoRecord() {}
 
     public ECResourceInfoRecord(
-            String labelValue, String ticketId, Resource resource, String logDirPath) {
+            String labelValue, String createUser, String ticketId, Resource resource, String logDirPath) {
         this.labelValue = labelValue;
         this.ticketId = ticketId;
+        this.createUser = createUser;
         if (null != resource) {
             this.requestResource = ResourceUtils.serializeResource(resource);
         }
@@ -184,14 +187,20 @@ public class ECResourceInfoRecord {
         this.logDirSuffix = logDirSuffix;
     }
 
+    public String getCreateUser() {
+        return createUser;
+    }
+
+    public void setCreateUser(String createUser) {
+        this.createUser = createUser;
+    }
+
     @Override
     public String toString() {
-        return "ECResourceInfoRecord{"
-                + "id="
-                + id
-                + ", serviceInstance='"
-                + serviceInstance
-                + '\''
-                + '}';
+        return "ECResourceInfoRecord{" +
+                "createUser='" + createUser + '\'' +
+                ", ticketId='" + ticketId + '\'' +
+                ", serviceInstance='" + serviceInstance + '\'' +
+                '}';
     }
 }

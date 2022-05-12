@@ -19,6 +19,7 @@ package org.apache.linkis.resourcemanager.service.impl
 
 import org.apache.commons.lang.time.DateFormatUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.governance.common.utils.ECPathUtils
 import org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord
 import org.apache.linkis.manager.common.entity.resource.Resource
 import org.apache.linkis.manager.dao.ECResourceRecordMapper
@@ -136,7 +137,8 @@ class ResourceLogService extends Logging {
     var ecResourceInfoRecord = ecResourceRecordMapper.getECResourceInfoRecord(ticketId)
     if (ecResourceInfoRecord == null) {
       val logDirSuffix = getECLogDirSuffix(labelContainer, ticketId)
-      ecResourceInfoRecord = new ECResourceInfoRecord(userCreatorEngineType.getStringValue, ticketId, resource, logDirSuffix)
+      val user = if (null != labelContainer.getUserCreatorLabel) labelContainer.getUserCreatorLabel.getUser else ""
+      ecResourceInfoRecord = new ECResourceInfoRecord(userCreatorEngineType.getStringValue, user, ticketId, resource, logDirSuffix)
       ecResourceRecordMapper.insertECResourceInfoRecord(ecResourceInfoRecord)
     }
     if (null != engineInstanceLabel) {
@@ -173,15 +175,8 @@ class ResourceLogService extends Logging {
     if (null == engineTypeLabel || null == userCreatorLabel) {
       return ""
     }
-    val pathBuilder = new StringBuilder
-    pathBuilder.append(userCreatorLabel.getUser)
-      .append(File.pathSeparator)
-      .append(DateFormatUtils.format(System.currentTimeMillis(), "yyyyMMdd"))
-      .append(File.pathSeparator)
-      .append(engineTypeLabel.getEngineType)
-      .append(File.pathSeparator)
-      .append(ticketId)
-   pathBuilder.toString()
+    val suffix = ECPathUtils.getECWOrkDirPathSuffix(userCreatorLabel.getUser, ticketId, engineTypeLabel.getEngineType)
+    suffix + File.separator + "logs"
   }
 
 }

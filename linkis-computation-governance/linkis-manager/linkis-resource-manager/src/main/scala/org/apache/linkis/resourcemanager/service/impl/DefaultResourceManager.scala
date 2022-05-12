@@ -75,7 +75,7 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
   private var labelManagerPersistence: LabelManagerPersistence = _
 
   @Autowired
-  private private var nodeMetricManagerPersistence: NodeMetricManagerPersistence = _
+  private var nodeMetricManagerPersistence: NodeMetricManagerPersistence = _
 
   @Autowired
   private var nodeLabelService: NodeLabelService = _

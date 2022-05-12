@@ -26,9 +26,9 @@
 
 
     <insert id="insertECResourceInfoRecord" flushCache="true" useGeneratedKeys="true" keyProperty="id" parameterType="org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord">
-        INSERT INTO linkis_ps_job_history_group_history(label_value, ticket_id, instance, request_times, request_resource_all,
+        INSERT INTO linkis_ps_job_history_group_history(label_value,create_user, ticket_id, instance, request_times, request_resource_all,
                                                         used_times, used_resource_all, release_times, release_resource_all,release_time,used_time,ecm_instance,log_dir_suffix)
-        VALUES (#{labelValue},#{ticketId},#{serviceInstance},#{requestTimes},
+        VALUES (#{labelValue},#{createUser},#{ticketId},#{serviceInstance},#{requestTimes},
         #{requestResource},#{usedTimes},#{usedResource},
         #{releaseTimes},#{releasedResource},#{releaseTime},#{usedTime},#{ecmInstance},#{logDirPath})
     </insert>

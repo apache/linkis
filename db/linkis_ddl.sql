@@ -733,7 +733,8 @@ CREATE TABLE `linkis_cg_manager_label_resource` (
 DROP TABLE IF EXISTS `linkis_cg_ec_resource_info_record`;
 CREATE TABLE `linkis_cg_ec_resource_info_record` (
     `id` INT(20) NOT NULL AUTO_INCREMENT,
-    `label_value` VARCHAR(100) NOT NULL,
+    `label_value` VARCHAR(255) NOT NULL,
+    `create_user` VARCHAR(128) NOT NULL,
     `instance` varchar(128) COLLATE utf8_bin DEFAULT NULL,
     `ecm_instance` varchar(128) COLLATE utf8_bin DEFAULT NULL,
     `ticket_id` VARCHAR(100) NOT NULL,

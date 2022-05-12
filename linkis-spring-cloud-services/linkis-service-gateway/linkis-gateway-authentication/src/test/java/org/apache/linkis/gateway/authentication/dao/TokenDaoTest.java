@@ -21,11 +21,11 @@ import org.apache.linkis.gateway.authentication.entity.TokenEntity;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 

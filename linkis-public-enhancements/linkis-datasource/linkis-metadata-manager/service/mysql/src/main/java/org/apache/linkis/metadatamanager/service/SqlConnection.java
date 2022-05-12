@@ -20,9 +20,6 @@ package org.apache.linkis.metadatamanager.service;
 import org.apache.linkis.common.conf.CommonVars;
 import org.apache.linkis.metadatamanager.common.domain.MetaColumnInfo;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.Closeable;
 import java.io.IOException;
 import java.sql.*;
@@ -30,6 +27,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SqlConnection implements Closeable {
 

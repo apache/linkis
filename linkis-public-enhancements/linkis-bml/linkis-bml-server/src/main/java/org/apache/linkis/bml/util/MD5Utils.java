@@ -19,10 +19,10 @@ package org.apache.linkis.bml.util;
 
 import org.apache.linkis.bml.common.Constant;
 
+import java.security.MessageDigest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.security.MessageDigest;
 
 public class MD5Utils {
 

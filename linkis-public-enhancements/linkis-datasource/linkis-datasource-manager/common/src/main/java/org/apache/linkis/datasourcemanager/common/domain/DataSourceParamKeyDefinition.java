@@ -17,14 +17,14 @@
 
 package org.apache.linkis.datasourcemanager.common.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
 import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 /** Parameter key definition for data source type */
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_EMPTY)

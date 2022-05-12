@@ -20,9 +20,9 @@ package org.apache.linkis.resourcemanager.restful.vo;
 import org.apache.linkis.manager.common.entity.resource.Resource;
 import org.apache.linkis.manager.common.entity.resource.ResourceType;
 
-import com.google.common.collect.Lists;
-
 import java.util.List;
+
+import com.google.common.collect.Lists;
 
 public class ApplicationListVo {
 

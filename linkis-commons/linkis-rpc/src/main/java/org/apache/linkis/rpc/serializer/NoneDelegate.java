@@ -17,12 +17,12 @@
 
 package org.apache.linkis.rpc.serializer;
 
-import io.protostuff.*;
-import io.protostuff.runtime.Delegate;
-
 import java.io.IOException;
 
 import scala.Option;
+
+import io.protostuff.*;
+import io.protostuff.runtime.Delegate;
 
 public class NoneDelegate implements Delegate<Option> {
     @Override

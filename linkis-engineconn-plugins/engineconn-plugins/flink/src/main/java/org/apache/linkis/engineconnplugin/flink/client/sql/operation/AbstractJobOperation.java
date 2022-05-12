@@ -32,11 +32,11 @@ import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.table.types.logical.VarCharType;
 import org.apache.flink.types.Row;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.List;
 import java.util.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /** A default implementation of JobOperation. */
 public abstract class AbstractJobOperation extends FlinkListenerGroupImpl implements JobOperation {

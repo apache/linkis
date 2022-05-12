@@ -42,14 +42,14 @@ import org.apache.linkis.scheduler.queue.SchedulerEventState;
 
 import org.apache.commons.io.IOUtils;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 import scala.Option;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EntranceExecutionJob extends EntranceJob implements LogHandler {
 

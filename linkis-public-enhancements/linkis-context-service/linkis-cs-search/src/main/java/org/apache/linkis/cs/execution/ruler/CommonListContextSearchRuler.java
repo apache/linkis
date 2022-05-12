@@ -22,11 +22,11 @@ import org.apache.linkis.cs.execution.matcher.ContextSearchMatcher;
 
 import org.apache.commons.collections.CollectionUtils;
 
+import java.util.List;
+
 import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
 
 public class CommonListContextSearchRuler extends AbstractContextSearchRuler {
 

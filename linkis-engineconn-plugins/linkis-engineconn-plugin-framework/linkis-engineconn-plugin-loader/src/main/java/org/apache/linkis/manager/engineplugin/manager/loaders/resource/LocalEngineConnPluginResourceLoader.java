@@ -24,12 +24,12 @@ import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel;
 
 import org.apache.commons.io.FileUtils;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.net.URL;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class LocalEngineConnPluginResourceLoader implements EngineConnPluginsResourceLoader {
 

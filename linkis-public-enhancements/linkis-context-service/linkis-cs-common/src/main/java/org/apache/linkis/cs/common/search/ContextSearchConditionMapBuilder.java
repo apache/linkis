@@ -20,9 +20,9 @@ package org.apache.linkis.cs.common.search;
 import org.apache.linkis.cs.common.entity.enumeration.ContextScope;
 import org.apache.linkis.cs.common.entity.enumeration.ContextType;
 
-import com.google.common.collect.Maps;
-
 import java.util.Map;
+
+import com.google.common.collect.Maps;
 
 public class ContextSearchConditionMapBuilder {
 

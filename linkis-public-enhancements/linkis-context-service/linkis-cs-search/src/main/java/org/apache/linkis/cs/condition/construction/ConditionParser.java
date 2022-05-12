@@ -19,11 +19,11 @@ package org.apache.linkis.cs.condition.construction;
 
 import org.apache.linkis.cs.condition.Condition;
 
-import com.google.common.collect.Lists;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.google.common.collect.Lists;
 
 public interface ConditionParser {
 

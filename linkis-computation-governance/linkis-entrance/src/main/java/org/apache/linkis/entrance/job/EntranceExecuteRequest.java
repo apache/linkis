@@ -26,12 +26,12 @@ import org.apache.linkis.scheduler.executer.ExecuteRequest;
 import org.apache.linkis.scheduler.executer.JobExecuteRequest;
 import org.apache.linkis.server.BDPJettyServerHelper;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EntranceExecuteRequest
         implements ExecuteRequest,

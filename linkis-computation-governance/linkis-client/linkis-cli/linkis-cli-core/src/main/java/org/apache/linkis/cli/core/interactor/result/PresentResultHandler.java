@@ -26,10 +26,10 @@ import org.apache.linkis.cli.common.exception.error.ErrorLevel;
 import org.apache.linkis.cli.core.exception.LinkisClientExecutionException;
 import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
 
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Map;
 
 public class PresentResultHandler implements ResultHandler {
     private static Logger logger = LoggerFactory.getLogger(PresentResultHandler.class);

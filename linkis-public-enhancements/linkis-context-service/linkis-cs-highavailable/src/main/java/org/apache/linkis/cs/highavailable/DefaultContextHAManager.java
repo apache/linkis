@@ -30,11 +30,11 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.google.gson.Gson;
 import net.sf.cglib.proxy.Callback;
+import net.sf.cglib.proxy.Enhancer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import net.sf.cglib.proxy.Enhancer;
-import com.google.gson.Gson;
 
 /** ContextService高可用管理器默认实现 采用CGLib动态代理，一般用于CS持久层存储转换，将HAContextID实例进行转换 */
 @Component

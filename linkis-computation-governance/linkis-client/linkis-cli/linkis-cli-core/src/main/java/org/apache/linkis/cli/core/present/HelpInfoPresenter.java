@@ -33,11 +33,11 @@ import org.apache.linkis.cli.core.present.display.StdOutWriter;
 import org.apache.linkis.cli.core.present.display.data.StdoutDisplayData;
 import org.apache.linkis.cli.core.present.model.HelpInfoModel;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HelpInfoPresenter implements Presenter {
     private static Logger logger = LoggerFactory.getLogger(HelpInfoPresenter.class);

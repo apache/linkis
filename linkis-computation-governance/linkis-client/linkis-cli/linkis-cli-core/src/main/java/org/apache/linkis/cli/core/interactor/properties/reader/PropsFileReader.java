@@ -23,14 +23,14 @@ import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
 
 import org.apache.commons.lang3.StringUtils;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Properties;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PropsFileReader implements PropertiesReader {
     private static final Logger logger = LoggerFactory.getLogger(PropsFileReader.class);

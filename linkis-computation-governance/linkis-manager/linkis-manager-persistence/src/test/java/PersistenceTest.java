@@ -28,12 +28,12 @@ import org.apache.commons.beanutils.BeanUtils;
 
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class PersistenceTest {
 

@@ -29,7 +29,7 @@
 
     <artifactId>linkis-engineplugin-sqoop</artifactId>
     <properties>
-        <sqoop.version>1.4.6</sqoop.version>
+        <sqoop.version>1.4.7</sqoop.version>
         <hive.version>3.1.2</hive.version>
     </properties>
 
@@ -40,11 +40,12 @@
             <scope>provided</scope>
             <version>1.3</version>
         </dependency>
-        <!--Get from apache maven repository-->
         <dependency>
             <groupId>org.apache.sqoop</groupId>
             <artifactId>sqoop</artifactId>
-            <version>1.4.6</version>
+            <version>${sqoop.version}</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/src/main/java/lib/sqoop-1.4.7.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>

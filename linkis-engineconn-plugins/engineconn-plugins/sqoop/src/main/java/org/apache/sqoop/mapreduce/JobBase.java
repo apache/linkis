@@ -16,14 +16,8 @@
  */
 package org.apache.sqoop.mapreduce;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.linkis.engineconnplugin.sqoop.client.Sqoop;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
@@ -35,6 +29,7 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.OutputFormat;
 import org.apache.hadoop.util.StringUtils;
 import org.apache.sqoop.config.ConfigurationConstants;
+
 import com.cloudera.sqoop.SqoopOptions;
 import com.cloudera.sqoop.config.ConfigurationHelper;
 import com.cloudera.sqoop.manager.ConnManager;
@@ -42,9 +37,16 @@ import com.cloudera.sqoop.tool.SqoopTool;
 import com.cloudera.sqoop.util.ClassLoaderStack;
 import com.cloudera.sqoop.util.Jars;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 /**
- * Base class for configuring and running a MapReduce job.
- * Allows dependency injection, etc, for easy customization of import job types.
+ * Base class for configuring and running a MapReduce job. Allows dependency injection, etc, for
+ * easy customization of import job types.
  */
 public class JobBase {
 
@@ -52,10 +54,8 @@ public class JobBase {
 
     public static final String SERIALIZE_SQOOPOPTIONS = "sqoop.jobbase.serialize.sqoopoptions";
     public static final boolean SERIALIZE_SQOOPOPTIONS_DEFAULT = false;
-    public static final String HADOOP_MAP_TASK_MAX_ATTEMTPS =
-            "mapreduce.map.maxattempts";
-    public static final String HADOOP_REDUCE_TASK_MAX_ATTEMTPS =
-            "mapreduce.reduce.maxattempts";
+    public static final String HADOOP_MAP_TASK_MAX_ATTEMTPS = "mapreduce.map.maxattempts";
+    public static final String HADOOP_REDUCE_TASK_MAX_ATTEMTPS = "mapreduce.reduce.maxattempts";
 
     protected SqoopOptions options;
     protected Class<? extends Mapper> mapperClass;
@@ -77,10 +77,11 @@ public class JobBase {
         this(opts, null, null, null);
     }
 
-    public JobBase(final SqoopOptions opts,
-                   final Class<? extends Mapper> mapperClass,
-                   final Class<? extends InputFormat> inputFormatClass,
-                   final Class<? extends OutputFormat> outputFormatClass) {
+    public JobBase(
+            final SqoopOptions opts,
+            final Class<? extends Mapper> mapperClass,
+            final Class<? extends InputFormat> inputFormatClass,
+            final Class<? extends OutputFormat> outputFormatClass) {
         System.out.println(SqoopOptions.class.getClassLoader());
         this.options = opts;
         this.mapperClass = mapperClass;
@@ -89,27 +90,18 @@ public class JobBase {
         isHCatJob = options.getHCatTableName() != null;
     }
 
-    /**
-     * @return the mapper class to use for the job.
-     */
-    protected Class<? extends Mapper> getMapperClass()
-            throws ClassNotFoundException {
+    /** @return the mapper class to use for the job. */
+    protected Class<? extends Mapper> getMapperClass() throws ClassNotFoundException {
         return this.mapperClass;
     }
 
-    /**
-     * @return the inputformat class to use for the job.
-     */
-    protected Class<? extends InputFormat> getInputFormatClass()
-            throws ClassNotFoundException {
+    /** @return the inputformat class to use for the job. */
+    protected Class<? extends InputFormat> getInputFormatClass() throws ClassNotFoundException {
         return this.inputFormatClass;
     }
 
-    /**
-     * @return the outputformat class to use for the job.
-     */
-    protected Class<? extends OutputFormat> getOutputFormatClass()
-            throws ClassNotFoundException {
+    /** @return the outputformat class to use for the job. */
+    protected Class<? extends OutputFormat> getOutputFormatClass() throws ClassNotFoundException {
         return this.outputFormatClass;
     }
 
@@ -128,20 +120,18 @@ public class JobBase {
         this.mapperClass = cls;
     }
 
-    /**
-     * Set the SqoopOptions configuring this job.
-     */
+    /** Set the SqoopOptions configuring this job. */
     public void setOptions(SqoopOptions opts) {
         this.options = opts;
     }
 
     /**
      * Put jar files required by Sqoop into the DistributedCache.
+     *
      * @param job the Job being submitted.
      * @param mgr the ConnManager to use.
      */
-    protected void cacheJars(Job job, ConnManager mgr)
-            throws IOException {
+    protected void cacheJars(Job job, ConnManager mgr) throws IOException {
         if (options.isSkipDistCache()) {
             LOG.info("Not adding sqoop jars to distributed cache as requested");
             return;
@@ -181,13 +171,13 @@ public class JobBase {
                 addDirToCache(sqoopLibFile, fs, localUrls);
             }
         } else {
-            LOG.warn("SQOOP_HOME is unset. May not be able to find "
-                    + "all job dependencies.");
+            LOG.warn("SQOOP_HOME is unset. May not be able to find " + "all job dependencies.");
         }
 
         // If the user run import into hive as Parquet file,
         // Add anything in $HIVE_HOME/lib.
-        if (options.doHiveImport() && (options.getFileLayout() == SqoopOptions.FileLayout.ParquetFile)) {
+        if (options.doHiveImport()
+                && (options.getFileLayout() == SqoopOptions.FileLayout.ParquetFile)) {
             String hiveHome = options.getHiveHome();
             if (null != hiveHome) {
                 File hiveHomeFile = new File(hiveHome);
@@ -246,44 +236,36 @@ public class JobBase {
         localUrls.add(qualified);
     }
 
-    /**
-     * Add the .jar elements of a directory to the DCache classpath,
-     * nonrecursively.
-     */
+    /** Add the .jar elements of a directory to the DCache classpath, nonrecursively. */
     private void addDirToCache(File dir, FileSystem fs, Set<String> localUrls) {
         if (null == dir) {
             return;
         }
 
         for (File libfile : dir.listFiles()) {
-            if (libfile.exists() && !libfile.isDirectory()
-                    && libfile.getName().endsWith("jar")) {
+            if (libfile.exists() && !libfile.isDirectory() && libfile.getName().endsWith("jar")) {
                 addToCache(libfile.toString(), fs, localUrls);
             }
         }
     }
 
-    /**
-     * If jars must be loaded into the local environment, do so here.
-     */
-    protected void loadJars(Configuration conf, String ormJarFile,
-                            String tableClassName) throws IOException {
+    /** If jars must be loaded into the local environment, do so here. */
+    protected void loadJars(Configuration conf, String ormJarFile, String tableClassName)
+            throws IOException {
 
-        boolean isLocal = "local".equals(conf.get("mapreduce.jobtracker.address"))
-                || "local".equals(conf.get("mapred.job.tracker"));
+        boolean isLocal =
+                "local".equals(conf.get("mapreduce.jobtracker.address"))
+                        || "local".equals(conf.get("mapred.job.tracker"));
         if (isLocal) {
             // If we're using the LocalJobRunner, then instead of using the compiled
             // jar file as the job source, we're running in the current thread. Push
             // on another classloader that loads from that jar in addition to
             // everything currently on the classpath.
-            this.prevClassLoader = ClassLoaderStack.addJarFile(ormJarFile,
-                    tableClassName);
+            this.prevClassLoader = ClassLoaderStack.addJarFile(ormJarFile, tableClassName);
         }
     }
 
-    /**
-     * If any classloader was invoked by loadJars, free it here.
-     */
+    /** If any classloader was invoked by loadJars, free it here. */
     protected void unloadJars() {
         if (null != this.prevClassLoader) {
             // unload the special classloader for this jar.
@@ -291,40 +273,36 @@ public class JobBase {
         }
     }
 
-    /**
-     * Configure the inputformat to use for the job.
-     */
-    protected void configureInputFormat(Job job, String tableName,
-                                        String tableClassName, String splitByCol)
+    /** Configure the inputformat to use for the job. */
+    protected void configureInputFormat(
+            Job job, String tableName, String tableClassName, String splitByCol)
             throws ClassNotFoundException, IOException {
-        //TODO: 'splitByCol' is import-job specific; lift it out of this API.
+        // TODO: 'splitByCol' is import-job specific; lift it out of this API.
         Class<? extends InputFormat> ifClass = getInputFormatClass();
         LOG.debug("Using InputFormat: " + ifClass);
         job.setInputFormatClass(ifClass);
     }
 
-    /**
-     * Configure the output format to use for the job.
-     */
-    protected void configureOutputFormat(Job job, String tableName,
-                                         String tableClassName) throws ClassNotFoundException, IOException {
+    /** Configure the output format to use for the job. */
+    protected void configureOutputFormat(Job job, String tableName, String tableClassName)
+            throws ClassNotFoundException, IOException {
         Class<? extends OutputFormat> ofClass = getOutputFormatClass();
         LOG.debug("Using OutputFormat: " + ofClass);
         job.setOutputFormatClass(ofClass);
     }
 
     /**
-     * Set the mapper class implementation to use in the job,
-     * as well as any related configuration (e.g., map output types).
+     * Set the mapper class implementation to use in the job, as well as any related configuration
+     * (e.g., map output types).
      */
-    protected void configureMapper(Job job, String tableName,
-                                   String tableClassName) throws ClassNotFoundException, IOException {
+    protected void configureMapper(Job job, String tableName, String tableClassName)
+            throws ClassNotFoundException, IOException {
         job.setMapperClass(getMapperClass());
     }
 
     /**
-     * Configure the number of map/reduce tasks to use in the job,
-     * returning the number of map tasks for backward compatibility.
+     * Configure the number of map/reduce tasks to use in the job, returning the number of map tasks
+     * for backward compatibility.
      */
     protected int configureNumTasks(Job job) throws IOException {
         int numMapTasks = configureNumMapTasks(job);
@@ -332,9 +310,7 @@ public class JobBase {
         return numMapTasks;
     }
 
-    /**
-     * Configure the number of map tasks to use in the job.
-     */
+    /** Configure the number of map tasks to use in the job. */
     protected int configureNumMapTasks(Job job) throws IOException {
         int numMapTasks = options.getNumMappers();
         if (numMapTasks < 1) {
@@ -345,9 +321,7 @@ public class JobBase {
         return numMapTasks;
     }
 
-    /**
-     * Configure the number of reduce tasks to use in the job.
-     */
+    /** Configure the number of reduce tasks to use in the job. */
     protected int configureNumReduceTasks(Job job) throws IOException {
         job.setNumReduceTasks(0);
         return 0;
@@ -360,10 +334,7 @@ public class JobBase {
         Sqoop.job.set(job);
     }
 
-    /**
-     * @return the main MapReduce job that is being run, or null if no
-     * job has started.
-     */
+    /** @return the main MapReduce job that is being run, or null if no job has started. */
     public Job getJob() {
         return mrJob;
     }
@@ -376,7 +347,7 @@ public class JobBase {
      */
     public Job createJob(Configuration configuration) throws IOException {
         // Put the SqoopOptions into job if requested
-        if(configuration.getBoolean(SERIALIZE_SQOOPOPTIONS, SERIALIZE_SQOOPOPTIONS_DEFAULT)) {
+        if (configuration.getBoolean(SERIALIZE_SQOOPOPTIONS, SERIALIZE_SQOOPOPTIONS_DEFAULT)) {
             putSqoopOptionsToConfiguration(options, configuration);
         }
 
@@ -384,16 +355,15 @@ public class JobBase {
     }
 
     /**
-     * Iterates over serialized form of SqoopOptions and put them into Configuration
-     * object.
+     * Iterates over serialized form of SqoopOptions and put them into Configuration object.
      *
      * @param opts SqoopOptions that should be serialized
      * @param configuration Target configuration object
      */
     public void putSqoopOptionsToConfiguration(SqoopOptions opts, Configuration configuration) {
-        for(Map.Entry<Object, Object> e : opts.writeProperties().entrySet()) {
-            String key = (String)e.getKey();
-            String value = (String)e.getValue();
+        for (Map.Entry<Object, Object> e : opts.writeProperties().entrySet()) {
+            String key = (String) e.getKey();
+            String value = (String) e.getValue();
 
             // We don't need to do if(value is empty) because that is already done
             // for us by the SqoopOptions.writeProperties() method.
@@ -401,17 +371,16 @@ public class JobBase {
         }
     }
 
-    /**
-     * Actually run the MapReduce job.
-     */
-    protected boolean runJob(Job job) throws ClassNotFoundException, IOException,
-            InterruptedException {
+    /** Actually run the MapReduce job. */
+    protected boolean runJob(Job job)
+            throws ClassNotFoundException, IOException, InterruptedException {
         return job.waitForCompletion(true);
     }
 
     /**
-     * Display a notice on the log that the current MapReduce job has
-     * been retired, and thus Counters are unavailable.
+     * Display a notice on the log that the current MapReduce job has been retired, and thus
+     * Counters are unavailable.
+     *
      * @param log the Log to display the info to.
      */
     protected void displayRetiredJobNotice(Log log) {
@@ -426,9 +395,9 @@ public class JobBase {
     }
 
     /**
-     * Save interesting options to constructed job. Goal here is to propagate some
-     * of them to the job itself, so that they can be easily accessed. We're
-     * propagating only interesting global options (like verbose flag).
+     * Save interesting options to constructed job. Goal here is to propagate some of them to the
+     * job itself, so that they can be easily accessed. We're propagating only interesting global
+     * options (like verbose flag).
      *
      * @param job Destination job to save options
      */

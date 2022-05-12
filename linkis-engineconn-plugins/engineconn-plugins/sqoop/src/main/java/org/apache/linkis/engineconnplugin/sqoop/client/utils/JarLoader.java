@@ -32,9 +32,9 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class JarLoader extends URLClassLoader {
-    private  AccessControlContext acc;
+    private AccessControlContext acc;
 
-    public JarLoader(String[] paths){
+    public JarLoader(String[] paths) {
         this(paths, false);
     }
 
@@ -57,40 +57,46 @@ public class JarLoader extends URLClassLoader {
             for (String path : dirs) {
                 urls.addAll(doGetURLs(path));
             }
-        }else{
-            //For classpath, classloader will recursive automatically
-            urls.addAll(Arrays.stream(paths).map(File::new).filter(File::exists).map(f -> {
-                try {
-                    return f.toURI().toURL();
-                } catch (MalformedURLException e) {
-                    //Ignore
-                    return null;
-                }
-            }).collect(Collectors.toList()));
+        } else {
+            // For classpath, classloader will recursive automatically
+            urls.addAll(
+                    Arrays.stream(paths)
+                            .map(File::new)
+                            .filter(File::exists)
+                            .map(
+                                    f -> {
+                                        try {
+                                            return f.toURI().toURL();
+                                        } catch (MalformedURLException e) {
+                                            // Ignore
+                                            return null;
+                                        }
+                                    })
+                            .collect(Collectors.toList()));
         }
         return urls.toArray(new URL[0]);
     }
 
-    public void addJarURL(String path){
-        //Single jar
+    public void addJarURL(String path) {
+        // Single jar
         File singleJar = new File(path);
-        if (singleJar.exists() && singleJar.isFile()){
+        if (singleJar.exists() && singleJar.isFile()) {
             try {
                 this.addURL(singleJar.toURI().toURL());
             } catch (MalformedURLException e) {
-                //Ignore
+                // Ignore
             }
         }
     }
-    private static void collectDirs(String path, List<String> collector) {
 
+    private static void collectDirs(String path, List<String> collector) {
 
         File current = new File(path);
         if (!current.exists() || !current.isDirectory()) {
             return;
         }
 
-        if(null != current.listFiles()) {
+        if (null != current.listFiles()) {
             for (File child : Objects.requireNonNull(current.listFiles())) {
                 if (!child.isDirectory()) {
                     continue;
@@ -104,11 +110,9 @@ public class JarLoader extends URLClassLoader {
 
     private static List<URL> doGetURLs(final String path) {
 
-
         File jarPath = new File(path);
 
-        Validate.isTrue(jarPath.exists() && jarPath.isDirectory(),
-                "jar包路径必须存在且为目录.");
+        Validate.isTrue(jarPath.exists() && jarPath.isDirectory(), "jar包路径必须存在且为目录.");
 
         /* set filter */
         FileFilter jarFilter = pathname -> pathname.getName().endsWith(".jar");
@@ -122,7 +126,7 @@ public class JarLoader extends URLClassLoader {
             try {
                 jarURLs.add(allJar.toURI().toURL());
             } catch (Exception e) {
-                //Ignore
+                // Ignore
             }
         }
 
@@ -131,6 +135,7 @@ public class JarLoader extends URLClassLoader {
 
     /**
      * change the order to load class
+     *
      * @param name name
      * @param resolve isResolve
      * @return
@@ -138,29 +143,28 @@ public class JarLoader extends URLClassLoader {
      */
     @Override
     public Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
-        synchronized (getClassLoadingLock(name)){
-            //First, check if the class has already been loaded
+        synchronized (getClassLoadingLock(name)) {
+            // First, check if the class has already been loaded
             Class<?> c = findLoadedClass(name);
-            if(c == null){
+            if (c == null) {
                 long t0 = System.nanoTime();
                 try {
-                    //invoke findClass in this class
+                    // invoke findClass in this class
                     c = findClass(name);
-                }catch(ClassNotFoundException e){
+                } catch (ClassNotFoundException e) {
                     // ClassNotFoundException thrown if class not found
                 }
-                if(c == null){
+                if (c == null) {
                     return super.loadClass(name, resolve);
                 }
-                //For compatibility with higher versions > java 1.8.0_141
-//                sun.misc.PerfCounter.getFindClasses().addElapsedTimeFrom(t0);
-//                sun.misc.PerfCounter.getFindClasses().increment();
+                // For compatibility with higher versions > java 1.8.0_141
+                //                sun.misc.PerfCounter.getFindClasses().addElapsedTimeFrom(t0);
+                //                sun.misc.PerfCounter.getFindClasses().increment();
             }
-            if(resolve){
+            if (resolve) {
                 resolveClass(c);
             }
             return c;
         }
     }
-
 }

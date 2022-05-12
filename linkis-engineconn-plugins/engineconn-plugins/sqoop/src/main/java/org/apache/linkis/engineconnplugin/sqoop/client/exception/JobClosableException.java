@@ -19,9 +19,7 @@ package org.apache.linkis.engineconnplugin.sqoop.client.exception;
 
 import org.apache.linkis.common.exception.ErrorException;
 
-/**
- * Exception in closing/destroying the job
- */
+/** Exception in closing/destroying the job */
 public class JobClosableException extends ErrorException {
     private static final long serialVersionUID = 1L;
 

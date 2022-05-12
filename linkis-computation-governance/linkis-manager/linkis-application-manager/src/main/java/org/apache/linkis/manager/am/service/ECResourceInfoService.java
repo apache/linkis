@@ -17,7 +17,6 @@
 
 package org.apache.linkis.manager.am.service;
 
-
 import org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord;
 
 public interface ECResourceInfoService {
@@ -28,6 +27,6 @@ public interface ECResourceInfoService {
 
     void deleteECResourceInfoRecord(Integer id);
 
-    //TODO add search method
+    // TODO add search method
 
 }

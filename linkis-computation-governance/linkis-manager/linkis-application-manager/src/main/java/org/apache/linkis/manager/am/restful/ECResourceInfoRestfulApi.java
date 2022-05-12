@@ -23,6 +23,7 @@ import org.apache.linkis.manager.am.service.ECResourceInfoService;
 import org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,15 +34,18 @@ import javax.servlet.http.HttpServletRequest;
         produces = {"application/json"})
 @RestController
 public class ECResourceInfoRestfulApi {
-    @Autowired
-    private ECResourceInfoService ecResourceInfoService;
+    @Autowired private ECResourceInfoService ecResourceInfoService;
 
     @RequestMapping(path = "/get", method = RequestMethod.GET)
-    public Message getECInfo(HttpServletRequest req, @RequestParam(value = "ticketid") String ticketid)
+    public Message getECInfo(
+            HttpServletRequest req, @RequestParam(value = "ticketid") String ticketid)
             throws AMErrorException {
         String userName = ModuleUserUtils.getOperationUser(req, "getECInfo");
-        ECResourceInfoRecord ecResourceInfoRecord = ecResourceInfoService.getECResourceInfoRecord(ticketid);
-        if (null != ecResourceInfoRecord && (userName.equalsIgnoreCase(ecResourceInfoRecord.getCreateUser()) || Configuration.isAdmin(userName))){
+        ECResourceInfoRecord ecResourceInfoRecord =
+                ecResourceInfoService.getECResourceInfoRecord(ticketid);
+        if (null != ecResourceInfoRecord
+                && (userName.equalsIgnoreCase(ecResourceInfoRecord.getCreateUser())
+                        || Configuration.isAdmin(userName))) {
             return Message.ok().data("ecResourceInfoRecord", ecResourceInfoRecord);
         } else {
             return Message.error("tickedId not exist:" + ticketid);
@@ -52,13 +56,15 @@ public class ECResourceInfoRestfulApi {
     public Message deleteECInfo(HttpServletRequest req, @PathVariable("ticketid") String ticketid)
             throws AMErrorException {
         String userName = ModuleUserUtils.getOperationUser(req, "deleteECInfo");
-        ECResourceInfoRecord ecResourceInfoRecord = ecResourceInfoService.getECResourceInfoRecord(ticketid);
-        if (null != ecResourceInfoRecord && (userName.equalsIgnoreCase(ecResourceInfoRecord.getCreateUser()) || Configuration.isAdmin(userName))){
+        ECResourceInfoRecord ecResourceInfoRecord =
+                ecResourceInfoService.getECResourceInfoRecord(ticketid);
+        if (null != ecResourceInfoRecord
+                && (userName.equalsIgnoreCase(ecResourceInfoRecord.getCreateUser())
+                        || Configuration.isAdmin(userName))) {
             ecResourceInfoService.deleteECResourceInfoRecord(ecResourceInfoRecord.getId());
             return Message.ok().data("ecResourceInfoRecord", ecResourceInfoRecord);
         } else {
             return Message.error("tickedId not exist:" + ticketid);
         }
     }
-
 }

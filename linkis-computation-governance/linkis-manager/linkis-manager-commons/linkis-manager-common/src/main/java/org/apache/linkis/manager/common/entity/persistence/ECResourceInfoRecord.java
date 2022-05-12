@@ -57,7 +57,11 @@ public class ECResourceInfoRecord {
     public ECResourceInfoRecord() {}
 
     public ECResourceInfoRecord(
-            String labelValue, String createUser, String ticketId, Resource resource, String logDirPath) {
+            String labelValue,
+            String createUser,
+            String ticketId,
+            Resource resource,
+            String logDirPath) {
         this.labelValue = labelValue;
         this.ticketId = ticketId;
         this.createUser = createUser;
@@ -197,10 +201,16 @@ public class ECResourceInfoRecord {
 
     @Override
     public String toString() {
-        return "ECResourceInfoRecord{" +
-                "createUser='" + createUser + '\'' +
-                ", ticketId='" + ticketId + '\'' +
-                ", serviceInstance='" + serviceInstance + '\'' +
-                '}';
+        return "ECResourceInfoRecord{"
+                + "createUser='"
+                + createUser
+                + '\''
+                + ", ticketId='"
+                + ticketId
+                + '\''
+                + ", serviceInstance='"
+                + serviceInstance
+                + '\''
+                + '}';
     }
 }

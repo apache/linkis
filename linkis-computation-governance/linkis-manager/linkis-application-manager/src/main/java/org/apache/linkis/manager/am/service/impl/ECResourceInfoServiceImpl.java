@@ -17,21 +17,23 @@
 
 package org.apache.linkis.manager.am.service.impl;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.linkis.manager.am.restful.EMRestfulApi;
 import org.apache.linkis.manager.am.service.ECResourceInfoService;
 import org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord;
 import org.apache.linkis.manager.dao.ECResourceRecordMapper;
+
+import org.apache.commons.lang3.StringUtils;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class ECResourceInfoServiceImpl implements ECResourceInfoService {
 
-    private final static Logger logger = LoggerFactory.getLogger(EMRestfulApi.class);
+    private static final Logger logger = LoggerFactory.getLogger(EMRestfulApi.class);
 
-    @Autowired
-    private ECResourceRecordMapper ecResourceRecordMapper;
+    @Autowired private ECResourceRecordMapper ecResourceRecordMapper;
 
     @Override
     public ECResourceInfoRecord getECResourceInfoRecord(String ticketId) {

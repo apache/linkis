@@ -58,7 +58,9 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int) ex
   override def init(): Unit = {
     setCodeParser(new SQLCodeParser)
     super.init()
-    connectionManager.startRefreshKerberosLoginStatusThread()
+    if (JDBCConfiguration.JDBC_KERBEROS_ENABLE.getValue) {
+      connectionManager.startRefreshKerberosLoginStatusThread()
+    }
   }
 
   override def executeLine(engineExecutorContext: EngineExecutionContext, code: String): ExecuteResponse = {
@@ -164,7 +166,9 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int) ex
     if (connection != null) {
       connection.close()
     }
-    connectionManager.shutdownRefreshKerberosLoginService()
+    if (JDBCConfiguration.JDBC_KERBEROS_ENABLE.getValue) {
+      connectionManager.shutdownRefreshKerberosLoginService()
+    }
   }
 
   override def executeCompletely(engineExecutorContext: EngineExecutionContext, code: String, completedLine: String): ExecuteResponse = null

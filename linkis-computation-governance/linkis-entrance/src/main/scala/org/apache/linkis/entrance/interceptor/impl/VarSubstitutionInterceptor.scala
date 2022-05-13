@@ -38,8 +38,7 @@ class VarSubstitutionInterceptor extends EntranceInterceptor {
         Utils.tryThrow {
           logAppender.append(LogUtils.generateInfo("Program is substituting variables for you") + "\n")
           val codeType = LabelUtil.getCodeType(jobRequest.getLabels)
-          val (result, code) = CustomVariableUtils.replaceCustomVar(jobRequest, codeType)
-          if (result) jobRequest.setExecutionCode(code)
+          jobRequest.setExecutionCode(CustomVariableUtils.replaceCustomVar(jobRequest, codeType))
           logAppender.append(LogUtils.generateInfo("Variables substitution ended successfully") + "\n")
           jobRequest
         } {

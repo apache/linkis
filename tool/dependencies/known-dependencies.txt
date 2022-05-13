@@ -465,7 +465,7 @@ spring-tx-5.2.15.RELEASE.jar
 spring-web-5.2.15.RELEASE.jar
 spring-webflux-5.2.15.RELEASE.jar
 spring-webmvc-5.2.15.RELEASE.jar
-sqoop-1.4.6.jar
+sqoop-1.4.6-hadoop200.jar
 sqoop-1.4.7.jar
 ssl-config-core_2.11-0.3.7.jar
 stax2-api-4.2.1.jar

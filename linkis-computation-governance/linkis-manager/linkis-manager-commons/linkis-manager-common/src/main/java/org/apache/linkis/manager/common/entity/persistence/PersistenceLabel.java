@@ -83,10 +83,12 @@ public class PersistenceLabel extends GenericLabel {
         this.creator = creator;
     }
 
+    @Override
     public void setStringValue(String stringValue) {
         this.stringValue = stringValue;
     }
 
+    @Override
     public String getStringValue() {
         return this.stringValue == null ? LabelUtils.Jackson.toJson(value, null) : this.stringValue;
     }

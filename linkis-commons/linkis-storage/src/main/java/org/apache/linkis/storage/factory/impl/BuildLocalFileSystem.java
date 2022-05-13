@@ -27,7 +27,6 @@ import org.apache.linkis.storage.utils.StorageUtils;
 
 import org.springframework.cglib.proxy.Enhancer;
 
-
 public class BuildLocalFileSystem implements BuildFactory {
 
     @Override

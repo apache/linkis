@@ -55,6 +55,10 @@ export default {
     showFooter() {
       return this.$route.query.noFooter || location.search.indexOf('noFooter') < 0
     },
+    isEmbedInFrame() {
+      // 如果是被iframe引入时 top !== self 返回true，用来区分单独跑还是被引入，只有单独跑时要加水印
+      return top !== self;
+    }
   },
   methods: {
     setInit() {
@@ -83,12 +87,16 @@ export default {
     }
   },
   created() {
-    this.setWaterMark();
-    this.interval = setInterval(this.setWaterMark, 1000)
+    if (!this.isEmbedInFrame) {
+      this.setWaterMark();
+      this.interval = setInterval(this.setWaterMark, 1000)
+    }
   },
   beforeDestroy() {
-    Vue.prototype.$watermark.clear();
-    clearInterval(this.interval)
+    if (!this.isEmbedInFrame) {
+      Vue.prototype.$watermark.clear();
+      clearInterval(this.interval)
+    }
   }
 };
 </script>

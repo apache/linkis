@@ -31,6 +31,8 @@
   </div>
 </template>
 <script>
+import Vue from 'vue'
+import storage from '@/common/helper/storage';
 import headerModule from '@/dss/module/header';
 import footerModule from '@/dss/module/footer';
 import layoutMixin from '@/common/service/layoutMixin.js';
@@ -41,7 +43,8 @@ export default {
   },
   data() {
     return {
-      isInit: false
+      isInit: false,
+      interval: null
     }
   },
   mixins: [layoutMixin],
@@ -51,12 +54,41 @@ export default {
     },
     showFooter() {
       return this.$route.query.noFooter || location.search.indexOf('noFooter') < 0
-    }
+    },
   },
   methods: {
     setInit() {
       this.isInit = true;
     },
+    showTime(now) {
+      const year = now.getFullYear();
+      const month = now.getMonth();
+      const date = now.getDate();
+      const hour = this.addZero(now.getHours());
+      const minute = this.addZero(now.getMinutes());
+      return `${year}-${month}-${date} ${hour}:${minute}`
+    },
+    addZero(num) {
+      if (num < 10) return '0' + num
+      return num + '';
+    },
+    setWaterMark() {
+      let userNameAndPass = storage.get('saveUserNameAndPass', 'local');
+      let watermark = null;
+      const username = userNameAndPass.split('&')[0];
+      if (username) {
+        watermark = username + ' ' + this.showTime(new Date());
+        Vue.prototype.$watermark.set(watermark)
+      }
+    }
   },
+  created() {
+    this.setWaterMark();
+    this.interval = setInterval(this.setWaterMark, 1000)
+  },
+  beforeDestroy() {
+    Vue.prototype.$watermark.clear();
+    clearInterval(this.interval)
+  }
 };
 </script>

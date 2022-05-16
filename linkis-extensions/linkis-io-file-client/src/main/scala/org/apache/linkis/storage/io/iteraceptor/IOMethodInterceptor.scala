@@ -17,18 +17,12 @@
  
 package org.apache.linkis.storage.io.iteraceptor
 
-import java.io.{IOException, InputStream, OutputStream}
-import java.lang.reflect.Method
-import java.net.InetAddress
-
 import com.google.gson.reflect.TypeToken
+import org.apache.commons.lang.StringUtils
 import org.apache.linkis.common.io.FsPath
 import org.apache.linkis.common.utils.{Logging, Utils}
-import org.apache.linkis.storage.io.client.IOClient
-import org.apache.linkis.storage.io.utils.IOClientUtils
 import org.apache.linkis.manager.label.constant.LabelKeyConstant
-import org.apache.linkis.manager.label.entity.engine.EngineInstanceLabel
-import org.apache.linkis.manager.label.entity.entrance.{BindEngineLabel, LoadBalanceLabel}
+import org.apache.linkis.manager.label.entity.entrance.BindEngineLabel
 import org.apache.linkis.storage.domain.{FsPathListWithError, MethodEntity, MethodEntitySerializer}
 import org.apache.linkis.storage.exception.{FSNotInitException, StorageErrorException}
 import org.apache.linkis.storage.io.client.IOClient
@@ -36,10 +30,11 @@ import org.apache.linkis.storage.io.utils.IOClientUtils
 import org.apache.linkis.storage.resultset.io.{IOMetaData, IORecord}
 import org.apache.linkis.storage.resultset.{ResultSetFactory, ResultSetReader, ResultSetWriter}
 import org.apache.linkis.storage.utils.{StorageConfiguration, StorageUtils}
-import org.apache.linkis.storage.io.conf.IOFileClientConf
-import net.sf.cglib.proxy.{MethodInterceptor, MethodProxy}
-import org.apache.commons.lang.StringUtils
+import org.springframework.cglib.proxy.{MethodInterceptor, MethodProxy}
 
+import java.io.{IOException, InputStream, OutputStream}
+import java.lang.reflect.Method
+import java.net.InetAddress
 import scala.beans.BeanProperty
 import scala.collection.JavaConversions._
 import scala.collection.mutable
@@ -199,7 +194,7 @@ class IOMethodInterceptor(fsType: String) extends MethodInterceptor with Logging
   class IOInputStream(args: Array[AnyRef]) extends InputStream {
     private var fetched: Array[Byte] = _
     private var index = 0
-    private var position = 0l
+    private var position = 0L
     private var markPosition = 0L
     private var readable = true
     private var canContinueFetch = true
@@ -240,8 +235,9 @@ class IOMethodInterceptor(fsType: String) extends MethodInterceptor with Logging
 
     override def available(): Int = {
       if (!readable) return 0
-      if (!canContinueFetch)
+      if (!canContinueFetch) {
         return fetched.length - index
+      }
       beforeOperation()
       val params = Array(MethodEntitySerializer.serializerJavaObject(args(0)), position).map(_.asInstanceOf[AnyRef])
       val available = if (fetched != null) fetched.length - index else 0

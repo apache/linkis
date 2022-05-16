@@ -74,12 +74,12 @@ abstract class AbstractProgressOperation(orchestratorSession: OrchestratorSessio
       eventName = event.getClass.getName
     }
     if (null != t) {
-      message = t.getMessage
+      message = t.getClass.getSimpleName + t.getMessage
       if (null != t.getCause) {
         cause = t.getCause.getMessage
       }
     }
-    debug(s"Accept error event ${eventName} in progress operation, message: ${message}, cause : ${cause}")
+    logger.warn(s"Accept error event ${eventName} in progress operation, message: ${message}, cause : ${cause}")
   }
 }
 

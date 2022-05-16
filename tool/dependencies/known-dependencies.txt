@@ -499,6 +499,7 @@ spring-webmvc-5.2.15.RELEASE.jar
 ssl-config-core_2.11-0.3.7.jar
 stax2-api-4.2.1.jar
 stringtemplate-3.2.1.jar
+sqoop-1.4.6-hadoop200.jar
 tephra-api-0.6.0.jar
 tephra-core-0.6.0.jar
 tephra-hbase-compat-1.0-0.6.0.jar

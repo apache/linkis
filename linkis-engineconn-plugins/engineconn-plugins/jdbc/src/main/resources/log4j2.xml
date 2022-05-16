@@ -18,10 +18,15 @@
   
 <configuration status="error" monitorInterval="30">
     <appenders>
-        <Console name="Console" target="SYSTEM_OUT">
-            <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
-            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%t] %logger{36} %L %M - %msg%xEx%n"/>
-        </Console>
+        <RollingFile name="RollingFile" append="true" fileName="${env:LOG_DIRS}/${sys:serviceName}.log"
+                     filePattern="${env:LOG_DIRS}/$${date:yyyy-MM}/${sys:serviceName}/linkis-log-%d{yyyy-MM-dd-hh}-%i.log">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] [%-40t] %c{1.} (%L) [%M] - %msg%xEx%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1"/>
+                <SizeBasedTriggeringPolicy size="100MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
 
         <Send name="Send" >
             <Filters>
@@ -38,7 +43,7 @@
     <loggers>
         <root level="INFO">
             <appender-ref ref="stderr"/>
-            <appender-ref ref="Console"/>
+            <appender-ref ref="RollingFile"/>
             <appender-ref ref="Send"/>
         </root>
         <logger name="org.springframework.boot.diagnostics.LoggingFailureAnalysisReporter" level="error" additivity="true">

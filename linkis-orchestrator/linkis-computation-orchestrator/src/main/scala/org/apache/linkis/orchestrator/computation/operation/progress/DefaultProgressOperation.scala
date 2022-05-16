@@ -60,10 +60,10 @@ class DefaultProgressOperation(orchestratorSession: OrchestratorSession) extends
   override def onProgressOn(oriTaskRunningInfoEvent: TaskRunningInfoEvent): Unit = {
     var taskRunningInfoEvent: TaskRunningInfoEvent = null
     val execTaskInfo = generateExecTaskInfo(oriTaskRunningInfoEvent.execTask)
-    if (null != taskRunningInfoEvent.infoMap) {
-      taskRunningInfoEvent.infoMap.putAll(execTaskInfo)
+    if (null != oriTaskRunningInfoEvent.infoMap) {
+      oriTaskRunningInfoEvent.infoMap.putAll(execTaskInfo)
       taskRunningInfoEvent = TaskRunningInfoEvent(oriTaskRunningInfoEvent.execTask, oriTaskRunningInfoEvent.progress,
-        oriTaskRunningInfoEvent.progressInfo, oriTaskRunningInfoEvent.resourceMap, taskRunningInfoEvent.infoMap)
+        oriTaskRunningInfoEvent.progressInfo, oriTaskRunningInfoEvent.resourceMap, oriTaskRunningInfoEvent.infoMap)
     } else {
       taskRunningInfoEvent = TaskRunningInfoEvent(oriTaskRunningInfoEvent.execTask, oriTaskRunningInfoEvent.progress,
         oriTaskRunningInfoEvent.progressInfo, oriTaskRunningInfoEvent.resourceMap, execTaskInfo)

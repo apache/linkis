@@ -576,6 +576,7 @@ See licenses-binary/ for text of these licenses.
     (Apache License, version 2.0) Apache ZooKeeper - Server (org.apache.zookeeper:zookeeper:3.4.6 - https://zookeeper.apache.org/)
     (Apache License, version 2.0) Apache twill (org.apache.twill:* - https://twill.apache.org/)
     (Apache License, version 2.0) Apache tephra (co.cask.tephra:* - https://tephra.apache.org/)
+    (Apache License, version 2.0) Apache Sqoop - Server (org.apache.sqoop:sqoop:1.4.6 - https://github.com/apache/sqoop/)
 
 ========================================================================
 Third party CDDL licenses

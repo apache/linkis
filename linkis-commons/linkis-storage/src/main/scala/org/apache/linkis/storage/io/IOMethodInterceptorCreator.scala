@@ -18,7 +18,8 @@
 package org.apache.linkis.storage.io
 
 import org.apache.linkis.storage.exception.StorageErrorException
-import net.sf.cglib.proxy.MethodInterceptor
+import org.springframework.cglib.proxy.MethodInterceptor
+
 
 
 trait IOMethodInterceptorCreator {

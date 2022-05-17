@@ -44,6 +44,7 @@
             "instanceName": "实例名称",
             "reset": "重置",
             "clearSearch": "清空",
+            "showOperations": "显示操作",
             "resetAll": "全部重置",
             "remove": "移除",
             "submit": "确定",
@@ -64,6 +65,8 @@
             "prev": "上一步",
             "complete": "完成",
             "close": "关闭",
+            "udfName": "UDF名称",
+            "udfType": "UDF类型",
             "warning": {
                 "api": "接口请求中，请稍候！",
                 "data": "数据请求中，请稍候！",
@@ -112,8 +115,8 @@
                     "label": "查看"
                 },
                 "queenRemain": "队列剩余资源",
-                "queenUsed": "队列已用资源",
-                "queenTop": "队列上限资源",
+                "queueUsed": "队列已用资源",
+                "queueTop": "队列上限资源",
                 "engineRemain": "引擎剩余资源",
                 "engineUsed": "引擎已用资源",
                 "engineTop": "引擎上限资源"
@@ -139,9 +142,11 @@
                         "globalValiable": "常见问题",
                         "ECMManage": "ECM管理",
                         "microserviceManage": "微服务管理",
+                        "udfFunctionTitle": "UDF函数",
                         "udfFunctionManage": "UDF管理",
                         "functionManagement": "函数管理",
-                        "dataSourceManage": "数据源管理"
+                        "dataSourceManage": "数据源管理",
+                        "userResourceManagement": "用户资源管理"
                     }
                 }
             },
@@ -273,8 +278,8 @@
                 "connectTest": "测试连接",
                 "sourceName": "数据源名称",
                 "sourceDec": "数据源描述",
-                "sourceType": "数据源类型:",
-                "creator": "创建人:",
+                "sourceType": "数据源类型",
+                "creator": "创建人",
                 "create": "新增数据源",
                 "exports": "批量导出数据源",
                 "imports": "批量导入数据源",

@@ -87,13 +87,13 @@ export default {
     }
   },
   created() {
-    if (!this.isEmbedInFrame) {
+    if (!this.isEmbedInFrame && storage.get('enableWatermark')) {
       this.setWaterMark();
       this.interval = setInterval(this.setWaterMark, 1000)
     }
   },
   beforeDestroy() {
-    if (!this.isEmbedInFrame) {
+    if (!this.isEmbedInFrame && storage.get('enableWatermark')) {
       Vue.prototype.$watermark.clear();
       clearInterval(this.interval)
     }

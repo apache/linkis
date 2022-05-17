@@ -216,7 +216,7 @@ export default {
   },
   mounted() {
     this.init()
-    this.moduleHeight = this.$parent.$el.clientHeight - 268
+    this.moduleHeight = this.$parent.$el.clientHeight - 228
     // 监听窗口变化，获取浏览器宽高
     window.addEventListener('resize', this.getHeight)
     this.getRootPath(() => {
@@ -306,7 +306,7 @@ export default {
       })
     },
     getHeight() {
-      this.moduleHeight = this.$parent.$el.clientHeight - 268
+      this.moduleHeight = this.$parent.$el.clientHeight - 228
     },
     init() {
       const lastSearch = storage.get('last-fnsearchbar-status')
@@ -504,14 +504,18 @@ export default {
               action: this.edit,
               match: (v, row)=>{  return row.operationStatus.canUpdate},
               style: {
-                color: '#2d8cf0'
+                backgroundColor: '#2d8cf0',
+                color: '#fff',
+                padding: '1px 7px 2px 7px !important'
               }
             },
             {
               label: this.$t('message.linkis.udf.action.vlist'),
               action: this.vlist,
               style: {
-                color: '#2d8cf0'
+                backgroundColor: '#2d8cf0',
+                color: '#fff',
+                padding: '1px 7px 2px 7px !important'
               }
             },
             {
@@ -519,7 +523,9 @@ export default {
               action: this.share,
               match: (v, row)=>{  return row.operationStatus.canShare},
               style: {
-                color: '#2d8cf0'
+                backgroundColor: '#2d8cf0',
+                color: '#fff',
+                padding: '1px 7px 2px 7px !important'
               }
             },
             {
@@ -527,7 +533,9 @@ export default {
               action: this.changeUser,
               match: (v, row)=>{  return row.operationStatus.canHandover},
               style: {
-                color: '#2d8cf0'
+                backgroundColor: '#2d8cf0',
+                color: '#fff',
+                padding: '1px 7px 2px 7px !important'
               }
             },
             {
@@ -535,7 +543,9 @@ export default {
               action: this.delete,
               match: (v, row)=>{  return row.operationStatus.canDelete},
               style: {
-                color: '#ed4014'
+                backgroundColor: '#ed4014',
+                color: '#fff',
+                padding: '1px 7px 2px 7px !important'
               }
             },
             {
@@ -543,7 +553,9 @@ export default {
               action: this.expire,
               match: (v, row)=>{  return row.operationStatus.canExpire},
               style: {
-                color: '#ff9900'
+                backgroundColor: '#ff9900',
+                color: '#fff',
+                padding: '1px 7px 2px 7px !important'
               }
             },
           ]

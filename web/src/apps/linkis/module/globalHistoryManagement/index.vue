@@ -90,8 +90,8 @@
         >{{ isAdminModel ? $t('message.linkis.generalView') : $t('message.linkis.manageView') }}</Button>
       </FormItem>
     </Form>
-    <div>
-      <div class="global-history-table" :style="{'height': moduleHeight+'px'}">
+    <div >
+      <div class="global-history-table" :style="{width: '100%', 'height': moduleHeight+'px'}">
         <Icon v-show="isLoading" type="ios-loading" size="30" class="global-history-loading" />
         <history-table
           v-if="!isLoading"
@@ -267,7 +267,7 @@ export default {
   },
   mounted() {
     this.init()
-    this.moduleHeight = this.$parent.$el.clientHeight - 268
+    this.moduleHeight = this.$parent.$el.clientHeight - 220
     // 监听窗口变化，获取浏览器宽高
     window.addEventListener('resize', this.getHeight)
   },
@@ -282,7 +282,7 @@ export default {
   },
   methods: {
     getHeight() {
-      this.moduleHeight = this.$parent.$el.clientHeight - 268
+      this.moduleHeight = this.$parent.$el.clientHeight - 228
     },
     init() {
       let isAdminModel = storage.get('last-admin-model')
@@ -515,13 +515,13 @@ export default {
           key: 'source',
           align: 'center',
           ellipsis: true,
-          width: 190
+          width: 120
         },
         {
           title: this.$t('message.linkis.tableColumns.executionCode'),
           key: 'executionCode',
           align: 'center',
-          width: 440,
+          width: 150,
           // 溢出以...显示
           ellipsis: true
           // renderType: 'tooltip',
@@ -530,7 +530,7 @@ export default {
           title: this.$t('message.linkis.tableColumns.status'),
           key: 'status',
           align: 'center',
-          width: 180,
+          width: 164,
           renderType: 'if',
           renderParams: {
             action: this.setRenderType
@@ -548,7 +548,8 @@ export default {
           key: 'failedReason',
           align: 'center',
           className: 'history-failed',
-          width: 210,
+          // width: 240,
+          // ellipsis: true,
           renderType: 'a',
           renderParams: {
             hasDoc: this.checkIfHasDoc,
@@ -571,13 +572,13 @@ export default {
           title: this.$t('message.linkis.tableColumns.user'),
           key: 'umUser',
           align: 'center',
-          width: 100
+          width: 80
         },
         {
           title: this.$t('message.linkis.tableColumns.createdTime'),
           key: 'createdTime',
           align: 'center',
-          width: 90,
+          width: 150,
           renderType: 'formatTime'
         }
       ]

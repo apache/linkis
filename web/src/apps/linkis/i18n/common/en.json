@@ -44,6 +44,7 @@
       "resources": "Resources",
       "reset": "Reset",
       "clearSearch": "Clear",
+      "showOperations": "Show Operations",
       "resetAll": "Reset All",
       "remove": "Remove",
       "submit": "Submit",
@@ -61,6 +62,8 @@
       "generalView": "Switch to the common view",
       "manageView": "Switch to the admin view",
       "back": "Back",
+      "udfName": "UDF Name",
+      "udfType": "UDF Type",
       "warning": {
         "api": "Requesting API, please hold on!",
         "data": "Requesting data, please hold on!",
@@ -108,12 +111,12 @@
           "title": "Handle",
           "label": "View"
         },
-        "queenRemain": "队列剩余资源",
-        "queenUsed": "队列已用资源",
-        "queenTop": "队列上限资源",
-        "engineRemain": "引擎剩余资源",
-        "engineUsed": "引擎已用资源",
-        "engineTop": "引擎上限资源"
+        "queenRemain": "Queen Remain",
+        "queueUsed": "Queue Used",
+        "queueTop": "Queue Top",
+        "engineRemain": "Engine Remain",
+        "engineUsed": "Engine Used",
+        "engineTop": "Engine Top"
       },
       "logLoading": "Requesting logs, please hold on",
       "title": "Linkis Control Panel",
@@ -136,8 +139,10 @@
             "globalValiable": "Frequently Asked",
             "microserviceManage": "Microservice management",
             "ECMManage": "ECM Management",
+            "udfFunctionTitle": "UDF Function",
             "udfFunctionManage": "UDF Management",
-            "dataSourceManage": "DataSource Manage"
+            "dataSourceManage": "DataSource Manage",
+            "userResourceManagement": "User Resource Management"
           }
         }
       },

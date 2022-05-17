@@ -70,7 +70,7 @@
         v-model="isTagEdit"
         :mask-closable="false">
         <Form :model="formItem" :label-width="80">
-          <FormItem :label="`${$t('message.linkis.instanceName')}：`">
+          <FormItem :label="`${$t('message.linkis.instanceName')}`">
             <Input disabled v-model="formItem.instance" ></Input>
           </FormItem>
           <FormItem class="addTagClass" :label="`${$t('message.linkis.tableColumns.label')}：`">

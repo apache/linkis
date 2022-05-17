@@ -17,7 +17,7 @@
 
 <template>
   <Form :model="searchBar" :rules="ruleInline" inline>
-    <FormItem prop="instance">
+    <FormItem prop="instance" :label="`${$t('message.linkis.instanceName')}`">
       <Input :maxlength="50" v-model="searchBar.instance" :placeholder="$t('message.linkis.instanceName')"/>
     </FormItem>
     <FormItem prop="nodeHealthy" :label="$t('message.linkis.formItems.status.label')">

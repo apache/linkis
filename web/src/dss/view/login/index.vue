@@ -147,6 +147,7 @@ export default {
             .then((rst) => {
               this.loading = false;
               storage.set('userName',rst.userName,'session')
+              storage.set('enableWatermark',rst.enableWatermark ? true : false,'session')
               // 保存用户名
               if (this.rememberUserNameAndPass) {
                 storage.set('saveUserNameAndPass', `${this.loginForm.user}&${this.loginForm.password}`, 'local');
@@ -162,7 +163,7 @@ export default {
                 storage.set('saveUserNameAndPass', `${this.loginForm.user}&${this.loginForm.password}`, 'local');
               }
               if (err.message.indexOf('已经登录，请先退出再进行登录') !== -1) {
-                this.getPageHomeUrl().then((res) => {
+                this.getPageHomeUrl().then(() => {
                   this.$router.push({path: '/'});
                 })
               }

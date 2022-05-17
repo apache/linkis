@@ -52,7 +52,7 @@ class StorePathEntranceInterceptor extends EntranceInterceptor with Logging {
       val labelJson = BDPJettyServerHelper.gson.toJson(jobReq.getLabels.asScala.filter(_ != null).map(_.toString))
       throw new EntranceErrorException(EntranceErrorCode.LABEL_PARAMS_INVALID.getErrCode, s"UserCreator cannot be empty in labels : ${labelJson} of job with id : ${jobReq.getId}")
     }
-    parentPath += DateFormatUtils.format(System.currentTimeMillis, "yyyyMMdd_HHmmss") + "/" +
+    parentPath += DateFormatUtils.format(System.currentTimeMillis, "yyyy/MM-dd/HHmmss") + "/" +
       userCreator._2 + "/" + jobReq.getId
     val paramsMap = {
       val map = new util.HashMap[String, Any]()

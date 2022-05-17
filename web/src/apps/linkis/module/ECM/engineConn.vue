@@ -1,73 +1,94 @@
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one or more
+  ~ contributor license agreements.  See the NOTICE file distributed with
+  ~ this work for additional information regarding copyright ownership.
+  ~ The ASF licenses this file to You under the Apache License, Version 2.0
+  ~ (the "License"); you may not use this file except in compliance with
+  ~ the License.  You may obtain a copy of the License at
+  ~
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
 <template>
-  <div class="ecmEngine">
-    <Search :statusList="statusList" :ownerList="ownerList" @search="search" />
-    <Spin
-      v-if="loading"
-      size="large"
-      fix/>
-    <Table class="table-content" border :width="tableWidth" :columns="columns" :data="pageDatalist">
-      <template slot-scope="{row}" slot="engineInstance">
-        <span>{{row.instance}}</span>
-      </template>
-      <template slot-scope="{row}" slot="usedResource">
-        <!-- 后台未做返回时的处理，下面几个可按照处理 -->
-        <span v-if="row.usedResource">Linkis:({{`${calcCompany(row.usedResource.cores)}cores,${calcCompany(row.usedResource.memory, true)}G `}})</span>
-        <span v-else>Linkis:(Null cores,Null G)</span>
-      </template>
-      <!-- <template slot-scope="{row}" slot="maxResource">
-        <span>Linkis:({{`${calcCompany(row.minResource.cores)}cores,${calcCompany(row.minResource.memory, true)}G`}})</span>
-      </template> -->
-      <!-- <template slot-scope="{row}" slot="minResource">
-        <span>Linkis:({{`${calcCompany(row.maxResource.cores)}cores,${calcCompany(row.maxResource.memory, true)}G`}})</span>
-      </template> -->
-      <template slot-scope="{row}" slot="labels" >
-        <div class="tag-box">
-          <Tooltip v-for="(item, index) in row.labels" :key="index" :content="`${item.labelKey}-${item.stringValue}`" placement="top">
-            <Tag class="tag-item" type="border" color="primary">{{`${item.labelKey}-${item.stringValue}`}}</Tag>
-          </Tooltip>
-        </div>
-      </template>
-      <template slot-scope="{row}" slot="startTime">
-        <span>{{ timeFormat(row) }}</span>
-      </template>
-    </Table>
-    <div class="page-bar">
-      <Page
-        ref="page"
-        :total="this.tableData.length"
-        :page-size-opts="page.sizeOpts"
-        :page-size="page.pageSize"
-        :current="page.pageNow"
-        class-name="page"
-        size="small"
-        show-total
-        show-sizer
-        @on-change="change"
-        @on-page-size-change="changeSize" />
+  <div>
+    <div v-show="!showviewlog" class="ecmEngine">
+      <Search :statusList="statusList" :ownerList="ownerList" :engineTypes="engineTypes" @search="search" @stop="stopAll" :stopbtn="true" />
+      <Spin
+        v-if="loading"
+        size="large"
+        fix/>
+      <Table class="table-content" border :width="tableWidth" :columns="columns" :data="pageDatalist" @on-selection-change="selctionChange">
+        <template slot-scope="{row}" slot="engineInstance">
+          <span>{{row.instance}}</span>
+        </template>
+        <template slot-scope="{row}" slot="usedResource">
+          <!-- 后台未做返回时的处理，下面几个可按照处理 -->
+          <span v-if="row.usedResource">{{`${calcCompany(row.usedResource.cores)}cores,${calcCompany(row.usedResource.memory, true)}G `}}</span>
+          <span v-else>Null cores,Null G</span>
+        </template>
+        <!-- <template slot-scope="{row}" slot="maxResource">
+          <span>Linkis:({{`${calcCompany(row.minResource.cores)}cores,${calcCompany(row.minResource.memory, true)}G`}})</span>
+        </template> -->
+        <!-- <template slot-scope="{row}" slot="minResource">
+          <span>Linkis:({{`${calcCompany(row.maxResource.cores)}cores,${calcCompany(row.maxResource.memory, true)}G`}})</span>
+        </template> -->
+        <template slot-scope="{row}" slot="labels" >
+          <div class="tag-box">
+            <Tooltip v-for="(item, index) in row.labels" :key="index" :content="`${item.stringValue}`" placement="top">
+              <Tag class="tag-item" type="border" color="primary">{{`${item.stringValue}`}}</Tag>
+            </Tooltip>
+          </div>
+        </template>
+        <template slot-scope="{row}" slot="startTime">
+          <span>{{ timeFormat(row) }}</span>
+        </template>
+      </Table>
+      <div class="page-bar">
+        <Page
+          ref="page"
+          :total="this.tableData.length"
+          :page-size-opts="page.sizeOpts"
+          :page-size="page.pageSize"
+          :current="page.pageNow"
+          class-name="page"
+          size="small"
+          show-total
+          show-sizer
+          prev-text="上一页" next-text="下一页"
+          @on-change="change"
+          @on-page-size-change="changeSize" />
+      </div>
+      <Modal
+        @on-ok="submitTagEdit"
+        :title="$t('message.linkis.tagEdit')"
+        v-model="isTagEdit"
+        :mask-closable="false">
+        <Form :model="formItem" :label-width="80">
+          <FormItem :label="`${$t('message.linkis.instanceName')}：`">
+            <Input disabled v-model="formItem.instance" ></Input>
+          </FormItem>
+          <FormItem class="addTagClass" :label="`${$t('message.linkis.tableColumns.label')}：`">
+            <WbTag :tagList="formItem.labels" :selectList="keyList" @addEnter="addEnter" @onCloseTag="onCloseTag" @editEnter="editEnter"></WbTag>
+          </FormItem>
+          <FormItem :label="`${$t('message.linkis.tableColumns.status')}：`">
+            <Select v-model="formItem.emStatus" disabled>
+              <Option
+                v-for="(item) in statusList"
+                :label="item"
+                :value="item"
+                :key="item"/>
+            </Select>
+          </FormItem>
+        </Form>
+      </Modal>
     </div>
-    <Modal
-      @on-ok="submitTagEdit"
-      :title="$t('message.linkis.tagEdit')"
-      v-model="isTagEdit"
-      :mask-closable="false">
-      <Form :model="formItem" :label-width="80">
-        <FormItem :label="`${$t('message.linkis.instanceName')}：`">
-          <Input disabled v-model="formItem.instance" ></Input>
-        </FormItem>
-        <FormItem class="addTagClass" :label="`${$t('message.linkis.tableColumns.label')}：`">
-          <WbTag :tagList="formItem.labels" :selectList="keyList" @addEnter="addEnter" @onCloseTag="onCloseTag" @editEnter="editEnter"></WbTag>
-        </FormItem>
-        <FormItem :label="`${$t('message.linkis.tableColumns.status')}：`">
-          <Select v-model="formItem.emStatus" disabled>
-            <Option
-              v-for="(item) in statusList"
-              :label="item"
-              :value="item"
-              :key="item"/>
-          </Select>
-        </FormItem>
-      </Form>
-    </Modal>
+    <ViewLog ref="logPanel" v-show="showviewlog" @back="showviewlog = false" />
   </div>
 </template>
 <script>
@@ -75,13 +96,16 @@ import api from '@/common/service/api';
 import moment from "moment";
 import Search from '@/apps/linkis/module/ECM/search.vue';
 import WbTag from '@/apps/linkis/components/tag';
+import ViewLog from './log'
 export default {
   name: 'engineConn',
   data() {
     return {
+      showviewlog: false,
       loading: false,
       healthyStatusList: [],
       ownerList: [],
+      engineTypes: [],
       applicationName: '',
       instance: '',
       keyList: [],
@@ -117,6 +141,11 @@ export default {
       },
       columns: [
         {
+          type: 'selection',
+          width: 60,
+          align: 'center'
+        },
+        {
           title: this.$t('message.linkis.tableColumns.engineInstance'),
           key: 'engineInstance',
           minWidth: 150,
@@ -138,7 +167,7 @@ export default {
         {
           title: this.$t('message.linkis.tableColumns.label'),
           key: 'labels',
-          minWidth: 150,
+          minWidth: 300,
           className: 'table-project-column',
           slot: 'labels'
         },
@@ -185,6 +214,24 @@ export default {
             return h('div', [
               h('Button', {
                 props: {
+                  size: 'small'
+                },
+                style: {
+                  marginRight: '5px'
+                },
+                on: {
+                  click: () => {
+                    this.showviewlog = true
+                    this.$refs.logPanel.getLogs(0, {
+                      emInstance: params.row.emInstance,
+                      instance: params.row.instance,
+                      applicationName: params.row.applicationName
+                    })
+                  }
+                }
+              }, this.$t('message.linkis.viewlog')),
+              h('Button', {
+                props: {
                   type: 'error',
                   size: 'small'
                 },
@@ -199,7 +246,7 @@ export default {
                       onOk: () => {
                         let data = [];
                         data.push({
-                          engineType: 'EngineConn', // 当期需求是写死此参数
+                          engineType: params.row.applicationName, // 当期需求是写死此参数
                           engineInstance: params.row.instance,
                         });
                         api.fetch(`/linkisManager/rm/enginekill`, data).then(() => {
@@ -250,6 +297,7 @@ export default {
   components: {
     Search,
     WbTag,
+    ViewLog
   },
   computed: {
     pageDatalist() {// 展示的数据
@@ -268,6 +316,31 @@ export default {
     this.getKeyList();
   },
   methods: {
+    stopAll() {
+      if (this.selection && this.selection.length) {
+        let data = [];
+        this.selection.forEach(row => {
+          data.push({
+            engineType: row.applicationName,
+            engineInstance: row.instance,
+          });
+        })
+        api.fetch(`/linkisManager/rm/enginekill`, data).then(() => {
+          this.initExpandList();
+          this.$Message.success({
+            background: true,
+            content: 'Stop Success！！'
+          });
+        }).catch((err) => {
+          console.err(err)
+        });
+      } else {
+        this.$Message.warning(this.$t('message.linkis.noselection'));
+      }
+    },
+    selctionChange(selection) {
+      this.selection = selection
+    },
     // 刷新进度条
     refreshResource() {
       this.initExpandList();
@@ -288,15 +361,16 @@ export default {
         let engines = await api.fetch('/linkisManager/listEMEngines', params, 'post') || {};
         // 获取使用的引擎资源列表
         let enginesList = engines.engines || [];
-        enginesList.forEach((userItem, userIndex) => {
-          userItem.id = new Date().valueOf() + userIndex * 2000; // 设置唯一id,将时间多乘以2000防止运行过慢导致的id重复
-        })
         this.allEngines = [ ...enginesList ];
         this.tableData = [ ...enginesList ];
         this.ownerList = [];
+        this.engineTypes = []
         enginesList.forEach(item => {
-          if(this.ownerList.indexOf(item.owner) === -1) {
+          if (this.ownerList.indexOf(item.owner) === -1) {
             this.ownerList.push(item.owner)
+          }
+          if (this.engineTypes.indexOf(item.engineType) === -1) {
+            this.engineTypes.push(item.engineType)
           }
         })
         this.loading = false;
@@ -340,7 +414,7 @@ export default {
     // 添加tag
     addEnter (key, value) {
       this.formItem.labels.push({ key, value });
-      
+
     },
     // 修改标签
     editEnter(editInputKey, editInputValue,editedInputValue) {
@@ -392,7 +466,8 @@ export default {
         },
         emInstance: e.instance,
         nodeStatus: e.nodeHealthy,
-        owner: e.owner
+        owner: e.owner,
+        engineType: e.engineType
       }
       api.fetch('/linkisManager/listEMEngines',param,'post').then((res)=>{
         this.tableData=res.engines

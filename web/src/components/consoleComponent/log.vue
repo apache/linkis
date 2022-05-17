@@ -1,3 +1,20 @@
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one or more
+  ~ contributor license agreements.  See the NOTICE file distributed with
+  ~ this work for additional information regarding copyright ownership.
+  ~ The ASF licenses this file to You under the Apache License, Version 2.0
+  ~ (the "License"); you may not use this file except in compliance with
+  ~ the License.  You may obtain a copy of the License at
+  ~
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
 <template>
   <div class="workbench-log-view" :style="{height:height+'px'}">
     <div class="log-tools">
@@ -6,18 +23,22 @@
           v-model="curPage"
           class="log-tabs">
           <TabPane
+            v-if="logs.all !== undefined"
             name="all"
             label="All"
           />
           <TabPane
+            v-if="logs.error !== undefined"
             :label="errorLabel"
             name="error"
           />
           <TabPane
+            v-if="logs.warning !== undefined"
             :label="warnLabel"
             name="warning"
           />
           <TabPane
+            v-if="logs.info !== undefined"
             name="info"
             label="Info"/>
         </Tabs>
@@ -133,12 +154,7 @@ export default {
       this.$refs.logEditor.editor.setScrollPosition({ scrollTop: this.scriptViewState.cacheLogScroll || 0 });
     },
     formattedLogs() {
-      let logs = {
-        all: '',
-        error: '',
-        warning: '',
-        info: '',
-      };
+      let logs = {};
       Object.keys(this.logs).map((key) => {
         logs[key] = this.getSearchList(this.logs[key]);
       });
@@ -198,13 +214,13 @@ export default {
         top: 2px;
         .log-tabs {
           display: inline-block;
-          position: $absolute;
+          position: relative;
         }
         .log-search {
           width: 100px;
-          position: $absolute;
-          left: 350px;
-          top: 5px;
+          position: relative;
+          top: 3px;
+          vertical-align: top;
           font-size: $font-size-small;
         }
         .err-badge {

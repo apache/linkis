@@ -1,3 +1,20 @@
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one or more
+  ~ contributor license agreements.  See the NOTICE file distributed with
+  ~ this work for additional information regarding copyright ownership.
+  ~ The ASF licenses this file to You under the Apache License, Version 2.0
+  ~ (the "License"); you may not use this file except in compliance with
+  ~ the License.  You may obtain a copy of the License at
+  ~
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
 <template>
   <div>
     <div class="layout-header">
@@ -7,10 +24,10 @@
         <div class="logo">
           <img
             class="logo-img"
-            src="../../assets/images/dssLogo5.png"
+            src=""
             :alt="$t('message.common.logoName')"
           >
-          <span class="version">{{sysVersion}}</span>
+          <span class="version">v{{sysVersion}}</span>
         </div>
       </div>
       <div
@@ -40,13 +57,11 @@
   </div>
 </template>
 <script>
-import { isEmpty } from "lodash";
 import storage from "@/common/helper/storage";
 import userMenu from "./userMenu.vue";
 import clickoutside from "@/common/helper/clickoutside";
 import mixin from '@/common/service/mixin';
 import util from '@/common/util';
-import { GetBaseInfo } from '@/common/service/apiCommonMethod.js';
 export default {
   directives: {
     clickoutside
@@ -68,14 +83,7 @@ export default {
   },
   methods: {
     init() {
-      GetBaseInfo().then(rst => {
-        if (!isEmpty(rst)) {
-          this.userName = rst.username;
-          storage.set("baseInfo", rst, "local");
-          this.$router.app.$emit("username", rst.username);
-          this.$emit("set-init");
-        }
-      });
+      this.userName = storage.get('userName');
     },
     handleOutsideClick() {
       this.isUserMenuShow = false;

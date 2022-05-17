@@ -1,9 +1,27 @@
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one or more
+  ~ contributor license agreements.  See the NOTICE file distributed with
+  ~ this work for additional information regarding copyright ownership.
+  ~ The ASF licenses this file to You under the Apache License, Version 2.0
+  ~ (the "License"); you may not use this file except in compliance with
+  ~ the License.  You may obtain a copy of the License at
+  ~
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
 <template>
   <div
     ref="view"
     class="we-result-view">
     <we-toolbar
       ref="toolbar"
+      v-show="result.path"
       :current-path="result.path"
       :show-filter="tableData.type !== 'normal'"
       :script="script"
@@ -12,6 +30,7 @@
       :dispatch="dispatch"
       :getResultUrl="getResultUrl"
       :comData="comData"
+      :result-type="resultType"
       @on-analysis="$emit('on-analysis', arguments[0])"
       @on-filter="handleFilterView" />
     <we-filter-view
@@ -43,13 +62,12 @@
       v-else-if="resultType === '2' && tableData.type && visualShow=== 'table'"
       class="result-table-content"
       :class="{'table-box': tableData.type === 'normal'}">
-      <template v-if="tableData.type === 'normal'">
+      <template v-if="tableData.type === 'normal' && !result.hugeData">
         <wb-table
           border
           highlight-row
           outer-sort
           :tableHeight="resultHeight"
-          :loadNum="25"
           :columns="data.headRows"
           :tableList="data.bodyRows"
           @on-current-change="onRowClick"
@@ -62,7 +80,7 @@
           :text="watermaskText"
           ref="watermask"></we-water-mask>
       </template>
-      <template v-else>
+      <template v-else-if="!result.hugeData">
         <we-table
           ref="resultTable"
           :data="data"
@@ -77,6 +95,9 @@
           :text="watermaskText"
           ref="watermask"></we-water-mask>
       </template>
+      <div v-if="result.hugeData" :style="{height: resultHeight+'px', padding: '15px'}">
+        因为您的结果集较大，为了更好的体验，<a :href="`/#/results?resultPath=${resultPath}&fileName=${$route.query.fileName}`" target="_blank">点击查看结果集</a>
+      </div>
     </div>
     <div v-else-if="['visual', 'dataWrangler'].includes(visualShow)  && resultType === '2'">
       <visualAnalysis v-if="visualShow === 'visual' && visualParams"
@@ -125,6 +146,7 @@
         size="small"
         show-total
         show-sizer
+        prev-text="上一页" next-text="下一页"
         @on-change="change"
         @on-page-size-change="changeSize" />
     </div>
@@ -147,7 +169,6 @@ import WeToolbar from './toolbar.vue';
 import elementResizeEvent from '@/common/helper/elementResizeEvent';
 import resultSetList from './resultSetList.vue';
 import filter from './filter.vue';
-import pinyin from 'pinyin';
 import dataWrangler from './dataWrangler.vue';
 import mixin from '@/common/service/mixin';
 /**
@@ -207,7 +228,7 @@ export default {
       page: {
         current: 1,
         size: 50,
-        sizeOpts: [25, 50, 80, 100],
+        sizeOpts: [20, 50, 80, 100],
       },
       isLoading: false,
       // 当前高亮的行
@@ -233,11 +254,21 @@ export default {
       }
       return res;
     },
+    htmlData() {
+      return this.result.bodyRows[0] && this.result.bodyRows[0][0]
+    },
     resultType() {
       return this.result.type;
     },
     resultHeight() {
       return this.scriptViewState.bottomContentHeight
+    },
+    resultPath() {
+      let path = ''
+      if (this.script.resultList && this.script.resultSet !== undefined) {
+        path =  this.script.resultList[this.script.resultSet].path
+      }
+      return path
     }
   },
   watch: {
@@ -380,12 +411,6 @@ export default {
       }
       if (charB === undefined || charB === null || charB === '' || charB === ' ' || charB === '　') {
         return 1;
-      }
-      if (!this.notChinese(charA)) {
-        charA = pinyin(charA)[0][0];
-      }
-      if (!this.notChinese(charB)) {
-        charB = pinyin(charB)[0][0];
       }
       return charA.localeCompare(charB);
     },

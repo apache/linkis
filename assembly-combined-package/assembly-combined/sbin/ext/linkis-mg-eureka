@@ -1,5 +1,18 @@
 #!/bin/bash
 #
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+# http://www.apache.org/licenses/LICENSE-2.0
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
 # description:  eureka start cmd
 #
 # Modified for Linkis 1.0.0
@@ -28,16 +41,26 @@ then
    export DEBUG_CMD="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=$DEBUG_PORT"
 fi
 
-if test -z "$SERVER_JAVA_OPTS"
-then
-  export SERVER_JAVA_OPTS=" -DserviceName=$SERVER_NAME -Xmx$SERVER_HEAP_SIZE -XX:+UseG1GC -Xloggc:$LINKIS_LOG_DIR/${SERVER_NAME}-gc.log $DEBUG_CMD "
+if [[ -e "$SKYWALKING_AGENT_PATH" && -e $SKYWALKING_AGENT_PATH ]]; then
+    export JAVA_AGENT_OPTS="-javaagent:$SKYWALKING_AGENT_PATH=agent.service_name=$SERVER_NAME"
 fi
 
-export SERVER_CLASS=com.webank.wedatasphere.linkis.eureka.SpringCloudEurekaApplication
+if test -z "$SERVER_JAVA_OPTS"
+then
+  export SERVER_JAVA_OPTS=" $JAVA_AGENT_OPTS -DserviceName=$SERVER_NAME -Xmx$SERVER_HEAP_SIZE -XX:+UseG1GC -Xloggc:$LINKIS_LOG_DIR/${SERVER_NAME}-gc.log $DEBUG_CMD "
+fi
+
+export SERVER_CLASS=org.apache.linkis.eureka.SpringCloudEurekaApplication
 
 ## conf dir
 export SERVER_CONF_PATH=$LINKIS_CONF_DIR
 
+## commons lib
+export LINKIS_COMMONS_LIB=$LINKIS_HOME/$LINKIS_PUBLIC_MODULE
+if [ ! -r "$LINKIS_COMMONS_LIB" ] ; then
+    echo "linkis commons lib not exists $LINKIS_COMMONS_LIB"
+    exit 1
+fi
 
 ## server lib
 export SERVER_LIB=$LINKIS_HOME/lib/$SERVER_SUFFIX
@@ -47,7 +70,7 @@ if [ ! -r "$SERVER_LIB" ] ; then
 fi
 
 ## set class path
-export SERVER_CLASS_PATH=$SERVER_CONF_PATH:$SERVER_LIB/*
+export SERVER_CLASS_PATH=$SERVER_CONF_PATH:$SERVER_LIB/*:$LINKIS_COMMONS_LIB/*
 
 SERVER_IP="`hostname --fqdn`"
 
@@ -67,6 +90,8 @@ else
 fi
 
 SPRING_ARGS="$SPRING_ARGS --spring.profiles.active=eureka"
+echo  "=====Java Start Command====="
+echo  "nohup java $SERVER_JAVA_OPTS -cp $SERVER_CLASS_PATH $SERVER_CLASS $SPRING_ARGS 2>&1 > $LINKIS_LOG_DIR/${SERVER_NAME}.out &"
 nohup java $SERVER_JAVA_OPTS -cp $SERVER_CLASS_PATH $SERVER_CLASS $SPRING_ARGS 2>&1 > $LINKIS_LOG_DIR/${SERVER_NAME}.out &
 
 pid=$!

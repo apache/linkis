@@ -1,24 +1,39 @@
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one or more
+  ~ contributor license agreements.  See the NOTICE file distributed with
+  ~ this work for additional information regarding copyright ownership.
+  ~ The ASF licenses this file to You under the Apache License, Version 2.0
+  ~ (the "License"); you may not use this file except in compliance with
+  ~ the License.  You may obtain a copy of the License at
+  ~
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
 <template>
   <div class="global-history">
     <Form class="global-history-searchbar" :model="searchBar" inline>
-      <FormItem prop="id" label="JobID">
+      <FormItem prop="id" :label="$t('message.linkis.jobId')">
         <InputNumber
           v-model="searchBar.id"
           :placeholder="$t('message.linkis.formItems.id.placeholder')"
-          style="width:100px;"
+          style="width:60px;"
           :min="1"
         ></InputNumber>
       </FormItem>
-      <Divider type="vertical" class="divider" v-if="isAdminModel" />
       <FormItem prop="proxyUser" :label="$t('message.linkis.userName')" v-if="isAdminModel">
         <Input
           :maxlength="50"
           v-model="searchBar.proxyUser"
           :placeholder="$t('message.linkis.searchName')"
-          style="width:120px;"
+          style="width:60px;"
         />
       </FormItem>
-      <Divider type="vertical" class="divider" />
       <FormItem prop="shortcut" :label="$t('message.linkis.formItems.date.label')">
         <DatePicker
           :transfer="true"
@@ -27,20 +42,27 @@
           v-model="searchBar.shortcut"
           type="daterange"
           placement="bottom-start"
+          format="yyyy-MM-dd"
           :placeholder="$t('message.linkis.formItems.date.placeholder')"
-          style="width: 200px"
+          style="width: 160px"
           :editable="false"
         />
       </FormItem>
-      <Divider type="vertical" class="divider" />
+      <FormItem prop="creator" :label="$t('message.linkis.formItems.creator.label')">
+        <Input
+          :maxlength="50"
+          v-model="searchBar.creator"
+          :placeholder="$t('message.linkis.formItems.creator.placeholder')"
+          style="width:80px;"
+        />
+      </FormItem>
       <FormItem prop="engine" :label="$t('message.linkis.formItems.engine.label')">
-        <Select v-model="searchBar.engine" style="min-width:70px;">
-          <Option v-for="(item) in getEngineTypes" :label="item" :value="item" :key="item" />
+        <Select v-model="searchBar.engine" style="width: 70px">
+          <Option v-for="(item) in getEngineTypes" :label="item === 'all' ? '全部': item" :value="item" :key="item" />
         </Select>
       </FormItem>
-      <Divider type="vertical" class="divider" />
       <FormItem prop="status" :label="$t('message.linkis.formItems.status.label')">
-        <Select v-model="searchBar.status" style="min-width:90px;">
+        <Select v-model="searchBar.status" style="width: 70px">
           <Option
             v-for="(item) in statusType"
             :label="item.label"
@@ -49,7 +71,6 @@
           />
         </Select>
       </FormItem>
-      <Divider type="vertical" class="divider" />
       <FormItem>
         <Button
           type="primary"
@@ -60,7 +81,7 @@
           type="warning"
           @click="reset"
           style="margin-right: 10px;"
-        >{{ $t('message.linkis.reset') }}</Button>
+        >{{ $t('message.linkis.clearSearch') }}</Button>
         <Button type="error" @click="stop" style="margin-right: 10px;">{{$t('message.linkis.stop')}}</Button>
         <Button
           type="primary"
@@ -80,6 +101,8 @@
           :no-data-text="$t('message.linkis.noDataText')"
           border
           stripe
+          @checkall="checkChange"
+          @select-change="selectChange"
         />
       </div>
       <div class="global-history-page">
@@ -90,6 +113,7 @@
           size="small"
           show-total
           show-elevator
+          prev-text="上一页" next-text="下一页"
           @on-change="changePage"
         />
       </div>
@@ -97,6 +121,7 @@
   </div>
 </template>
 <script>
+import storage from '@/common/helper/storage'
 import table from '@/components/virtualTable'
 import mixin from '@/common/service/mixin'
 import api from '@/common/service/api'
@@ -107,6 +132,7 @@ export default {
   },
   mixins: [mixin],
   data() {
+    const today = new Date(new Date().toLocaleDateString())
     return {
       list: [],
       column: [],
@@ -120,9 +146,10 @@ export default {
       searchBar: {
         id: null,
         proxyUser: '',
+        creator: '',
         engine: 'all',
-        status: 'all',
-        shortcut: ''
+        status: '',
+        shortcut: [today, today]
       },
       inputType: 'number',
       shortcutOpt: {
@@ -235,7 +262,7 @@ export default {
       this.isLogAdmin = res.admin
     })
     api.fetch('/configuration/engineType', 'get').then(res => {
-      this.getEngineTypes = res.engineType
+      this.getEngineTypes = ['all', ...res.engineType]
     })
   },
   mounted() {
@@ -246,6 +273,8 @@ export default {
   },
   beforeDestroy() {
     // 监听窗口变化，获取浏览器宽高
+    storage.set('last-admin-model', this.isAdminModel)
+    // storage.set('last-searchbar-status', this.searchBar)
     window.removeEventListener('resize', this.getHeight)
   },
   activated() {
@@ -256,7 +285,27 @@ export default {
       this.moduleHeight = this.$parent.$el.clientHeight - 268
     },
     init() {
-      this.search()
+      let isAdminModel = storage.get('last-admin-model')
+      const lastSearch = storage.get('last-searchbar-status')
+      const lastPage = storage.get('last-pageSetting-status')
+      if (lastSearch) {
+        if (lastSearch.shortcut[0] && lastSearch.shortcut[1]) {
+          lastSearch.shortcut = [new Date(lastSearch.shortcut[0]), new Date(lastSearch.shortcut[1])]
+        } else {
+          const today = new Date(new Date().toLocaleDateString())
+          lastSearch.shortcut = [today, today]
+        }
+        this.searchBar = lastSearch
+      }
+      if (lastPage) {
+        this.pageSetting = lastPage
+      }
+      if (isAdminModel) {
+        this.switchAdmin()
+      } else {
+        this.search()
+      }
+      storage.remove('last-pageSetting-status')
     },
     convertTimes(runningTime) {
       const time = Math.floor(runningTime / 1000)
@@ -279,12 +328,32 @@ export default {
     },
     // 点击查看历史详情日志和返回结果
     async viewHistory(params) {
+      let sourceJson = params.row.sourceJson
+      if (typeof sourceJson === 'string') {
+        try {
+          sourceJson = JSON.parse(sourceJson)
+        } catch (error) {
+          console.log(sourceJson)
+        }
+      }
+      let fileName = ''
+      if (sourceJson && sourceJson.scriptPath) {
+        fileName = sourceJson.scriptPath.split('/').pop()
+      }
+      if (sourceJson && sourceJson.nodeName) {
+        fileName = sourceJson.nodeName
+      }
       const query =  {
-        taskID: params.row.taskID
+        taskID: params.row.taskID,
+        execID: params.row.strongerExecId,
+        status: params.row.status,
+        fileName
       }
       if (this.isAdminModel) {
         query.proxyUser = params.row.umUser
       }
+      storage.set('last-searchbar-status', this.searchBar)
+      storage.set('last-pageSetting-status', this.pageSetting)
       // 跳转查看历史详情页面
       this.$router.push({
         path: '/console/viewHistory',
@@ -297,22 +366,26 @@ export default {
       const endDate = this.searchBar.shortcut[1]
       const params = {
         taskID: this.searchBar.id,
+        creator: this.searchBar.creator,
         executeApplicationName: this.searchBar.engine,
         status: this.searchBar.status,
         startDate: startDate && startDate.getTime(),
         endDate: endDate && endDate.getTime(),
         pageNow: page || this.pageSetting.current,
         pageSize: this.pageSetting.pageSize,
-        proxyUser: this.searchBar.proxyUser
+        proxyUser: this.searchBar.proxyUser,
+        isAdminView: this.isAdminModel
       }
       if (!this.isAdminModel) {
         delete params.proxyUser
       }
       if (this.searchBar.id) {
+        delete params.creator
         delete params.executeApplicationName
         delete params.status
         delete params.startDate
         delete params.endDate
+        delete params.proxyUser
       } else {
         let { engine, status, shortcut } = this.searchBar
         if (engine === 'all') {
@@ -373,8 +446,7 @@ export default {
       if (!this.isAdminModel) {
         return list.map(item => {
           return {
-            disabled:
-              ['Submitted', 'Inited', 'Scheduled', 'Running'].indexOf(item.status) === -1,
+            disabled: ['Submitted', 'Inited', 'Scheduled', 'Running'].indexOf(item.status) === -1,
             taskID: item.taskID,
             strongerExecId: item.strongerExecId,
             source: item.sourceTailor,
@@ -399,6 +471,15 @@ export default {
         })
       })
     },
+    checkChange(v) {
+      this.list = this.list.map(it => {
+        it.checked = !it.disabled && v
+        return it
+      })
+    },
+    selectChange() {
+      this.list = this.list.slice(0)
+    },
     getColumns() {
       const column = [
         {
@@ -413,7 +494,7 @@ export default {
           key: 'control',
           fixed: 'right',
           align: 'center',
-          width: 118,
+          width: 60,
           className: 'history-control',
           renderType: 'button',
           renderParams: [
@@ -427,19 +508,20 @@ export default {
           title: this.$t('message.linkis.tableColumns.taskID'),
           key: 'taskID',
           align: 'center',
-          width: 100
+          width: 80
         },
         {
           title: this.$t('message.linkis.tableColumns.fileName'),
           key: 'source',
           align: 'center',
-          width: 150
+          ellipsis: true,
+          width: 190
         },
         {
           title: this.$t('message.linkis.tableColumns.executionCode'),
           key: 'executionCode',
           align: 'center',
-          width: 500,
+          width: 440,
           // 溢出以...显示
           ellipsis: true
           // renderType: 'tooltip',
@@ -448,7 +530,7 @@ export default {
           title: this.$t('message.linkis.tableColumns.status'),
           key: 'status',
           align: 'center',
-          width: 200,
+          width: 180,
           renderType: 'if',
           renderParams: {
             action: this.setRenderType
@@ -458,8 +540,20 @@ export default {
           title: this.$t('message.linkis.tableColumns.costTime'),
           key: 'costTime',
           align: 'center',
-          width: 100,
+          width: 90,
           renderType: 'convertTime'
+        },
+        {
+          title: this.$t('message.linkis.tableColumns.failedReason'),
+          key: 'failedReason',
+          align: 'center',
+          className: 'history-failed',
+          width: 210,
+          renderType: 'a',
+          renderParams: {
+            hasDoc: this.checkIfHasDoc,
+            action: this.linkTo
+          }
         },
         {
           title: `${this.$t(
@@ -483,20 +577,8 @@ export default {
           title: this.$t('message.linkis.tableColumns.createdTime'),
           key: 'createdTime',
           align: 'center',
-          width: 100,
+          width: 90,
           renderType: 'formatTime'
-        },
-        {
-          title: this.$t('message.linkis.tableColumns.failedReason'),
-          key: 'failedReason',
-          align: 'center',
-          className: 'history-failed',
-          width: 220,
-          renderType: 'a',
-          renderParams: {
-            hasDoc: this.checkIfHasDoc,
-            action: this.linkTo
-          }
         }
       ]
       if (!this.isAdminModel) {
@@ -509,6 +591,7 @@ export default {
       this.searchBar = {
         id: null,
         proxyUser: '',
+        creator: '',
         engine: 'all',
         status: 'all',
         shortcut: ''
@@ -557,18 +640,27 @@ export default {
     stop() {
       const selected = this.list.filter(it => it.checked)
       if (selected.length) {
-        const taskIDList = []
-        const idList = []
+        const inst = {}
         selected.forEach(it => {
-          taskIDList.push(it.taskID)
-          idList.push(it.strongerExecId)
+          if (inst[it.instance]) {
+            inst[it.instance].taskIDList.push(it.taskID)
+            inst[it.instance].idList.push(it.strongerExecId)
+          } else {
+            inst[it.instance] = {
+              taskIDList: [it.taskID],
+              idList: [it.strongerExecId]
+            }
+          }
         })
-        api
-          .fetch('/entrance/killJobs', { idList, taskIDList }, 'post')
-          .then(() => {
-            this.$Message.success(this.$t('message.linkis.editedSuccess'))
-            this.search()
-          })
+        const p = []
+        Object.keys(inst).forEach(instkey => {
+          if (instkey) p.push(api.fetch(`/entrance/${inst[instkey].idList[0]}/killJobs`, { idList: inst[instkey].idList, taskIDList: inst[instkey].taskIDList }, 'post'))
+        })
+
+        Promise.all(p).then(()=> {
+          this.$Message.success(this.$t('message.linkis.editedSuccess'))
+          this.search()
+        })
       } else {
         this.$Message.warning(this.$t('message.linkis.unselect'))
       }

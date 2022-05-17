@@ -1,3 +1,18 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+# http://www.apache.org/licenses/LICENSE-2.0
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
 import os, sys, getopt, traceback, json, re
 import resource
 
@@ -40,6 +55,66 @@ class Logger(object):
   def flush(self):
     pass
 
+class ErrorLogger(object):
+    def __init__(self):
+        self.out = ""
+
+    def write(self, message):
+        intp.appendErrorOutput(message)
+
+    def reset(self):
+        self.out = ""
+
+    def flush(self):
+        pass
+
+def handler_stop_signals(sig, frame):
+  sys.exit("Got signal : " + str(sig))
+
+signal.signal(signal.SIGINT, handler_stop_signals)
+
+_pUserQueryNameSpace = {}
+client = GatewayClient(port=int(sys.argv[1]))
+
+#gateway = JavaGateway(client, auto_convert = True)
+gateway = JavaGateway(client)
+
+linkisOutput = Logger()
+errorOutput = ErrorLogger()
+sys.stdout = linkisOutput
+sys.stderr = errorOutput
+intp = gateway.entry_point
+
+def show_matplotlib(p, fmt="png", width="auto", height="auto",
+                    **kwargs):
+  """Matplotlib show function
+  """
+  if fmt == "png":
+    img = BytesIO()
+    p.savefig(img, format=fmt)
+    img_str = b"data:image/png;base64,"
+    img_str += base64.b64encode(img.getvalue().strip())
+    img_tag = "<img src={img} style='width={width};height:{height}'>"
+    # Decoding is necessary for Python 3 compability
+    img_str = img_str.decode("utf-8")
+    img_str = img_tag.format(img=img_str, width=width, height=height)
+  elif fmt == "svg":
+    img = StringIO()
+    p.savefig(img, format=fmt)
+    img_str = img.getvalue()
+  else:
+    raise ValueError("fmt must be 'png' or 'svg'")
+
+  html = "<div style='width:{width};height:{height}'>{img}<div>"
+  #print(html.format(width=width, height=height, img=img_str))
+  intp.showHTML(html.format(width=width, height=height, img=img_str))
+  img.close()
+
+def printlog(obj):
+    try:
+        intp.printLog(obj)
+    except Exception as e:
+        print("send log failed")
 
 class PythonContext(object):
   """ A context impl that uses Py4j to communicate to JVM
@@ -87,26 +162,7 @@ class PythonContext(object):
                       **kwargs):
     """Matplotlib show function
     """
-    if fmt == "png":
-      img = BytesIO()
-      p.savefig(img, format=fmt)
-      img_str = b"data:image/png;base64,"
-      img_str += base64.b64encode(img.getvalue().strip())
-      img_tag = "<img src={img} style='width={width};height:{height}'>"
-      # Decoding is necessary for Python 3 compability
-      img_str = img_str.decode("utf-8")
-      img_str = img_tag.format(img=img_str, width=width, height=height)
-    elif fmt == "svg":
-      img = StringIO()
-      p.savefig(img, format=fmt)
-      img_str = img.getvalue()
-    else:
-      raise ValueError("fmt must be 'png' or 'svg'")
-
-    html = "<div style='width:{width};height:{height}'>{img}<div>"
-    #print(html.format(width=width, height=height, img=img_str))
-    intp.showHTML(html.format(width=width, height=height, img=img_str))
-    img.close()
+    show_matplotlib(p, fmt,width, height, **kwargs)
 
   def configure_mpl(self, **kwargs):
     import mpl_config
@@ -116,72 +172,9 @@ class PythonContext(object):
     # If we don't have matplotlib installed don't bother continuing
     try:
       import matplotlib
+      matplotlib.use('Agg')
     except ImportError:
       return
-    # Make sure custom backends are available in the PYTHONPATH
-    rootdir = os.environ.get('ZEPPELIN_HOME', os.getcwd())
-    mpl_path = os.path.join(rootdir, 'interpreter', 'lib', 'python')
-    if mpl_path not in sys.path:
-      sys.path.append(mpl_path)
-
-    # Finally check if backend exists, and if so configure as appropriate
-    try:
-      matplotlib.use('module://backend_zinline')
-      import backend_zinline
-
-      # Everything looks good so make config assuming that we are using
-      # an inline backend
-      self.configure_mpl(width=600, height=400, dpi=72,
-                         fontsize=10, interactive=True, format='png')
-    except ImportError:
-      # Fall back to Agg if no custom backend installed
-      matplotlib.use('Agg')
-      warnings.warn("Unable to load inline matplotlib backend, "
-                    "falling back to Agg")
-
-
-def handler_stop_signals(sig, frame):
-  sys.exit("Got signal : " + str(sig))
-
-
-
-def show_matplotlib(self, p, fmt="png", width="auto", height="auto",
-                    **kwargs):
-  """Matplotlib show function
-  """
-  if fmt == "png":
-    img = BytesIO()
-    p.savefig(img, format=fmt)
-    img_str = b"data:image/png;base64,"
-    img_str += base64.b64encode(img.getvalue().strip())
-    img_tag = "<img src={img} style='width={width};height:{height}'>"
-    # Decoding is necessary for Python 3 compability
-    img_str = img_str.decode("utf-8")
-    img_str = img_tag.format(img=img_str, width=width, height=height)
-  elif fmt == "svg":
-    img = StringIO()
-    p.savefig(img, format=fmt)
-    img_str = img.getvalue()
-  else:
-    raise ValueError("fmt must be 'png' or 'svg'")
-
-  html = "<div style='width:{width};height:{height}'>{img}<div>"
-  #print(html.format(width=width, height=height, img=img_str))
-  intp.showHTML(html.format(width=width, height=height, img=img_str))
-  img.close()
-
-signal.signal(signal.SIGINT, handler_stop_signals)
-
-_pUserQueryNameSpace = {}
-client = GatewayClient(port=int(sys.argv[1]))
-
-#gateway = JavaGateway(client, auto_convert = True)
-gateway = JavaGateway(client)
-
-output = Logger()
-sys.stdout = output
-sys.stderr = output
-intp = gateway.entry_point
 
 show = __show__ = PythonContext(intp)
 __show__._setup_matplotlib()
@@ -198,7 +191,7 @@ while True :
     final_code = None
 #     ori_code = req.statements()
 #     if ori_code:
-#         output.write(ori_code)
+#         linkisOutput.write(ori_code)
 
     for bdp_dwc_s in stmts:
       if bdp_dwc_s == None:
@@ -231,4 +224,4 @@ while True :
   except:
     intp.setStatementsFinished(traceback.format_exc(), True)
 
-  output.reset()
+  linkisOutput.reset()

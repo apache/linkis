@@ -1,23 +1,23 @@
 /*
- * Copyright 2019 WeBank
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
+
 
 // vue.config.js
 const path = require('path')
-const fs = require('fs')
 const FileManagerPlugin = require('filemanager-webpack-plugin');
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 // const CspHtmlWebpackPlugin = require('csp-html-webpack-plugin');
@@ -25,10 +25,7 @@ const VirtualModulesPlugin = require('webpack-virtual-modules');
 const apps = require('./src/config.json')
 
 const getVersion = () => {
-  const pkgPath = path.join(__dirname, './package.json')
-  let pkg = fs.readFileSync(pkgPath);
-  pkg = JSON.parse(pkg);
-  return pkg.version;
+  return  process.env.VUE_APP_VERSION
 }
 
 // 指定module打包, 不指定则打包全部子应用
@@ -155,18 +152,34 @@ module.exports = {
       .end()
     if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'sandbox' || process.env.NODE_ENV === 'bdp') {
       config.plugin('compress').use(FileManagerPlugin, [{
-        onEnd: {
-          copy: [
-            { source: './config.sh', destination: `./dist` },
-            { source: './install.sh', destination: `./dist` }
-          ],
-          // 先删除根目录下的zip包
-          delete: [`./wedatasphere-linkis-${getVersion()}-dist.zip`],
-          // 将dist文件夹下的文件进行打包
-          archive: [
-            { source: './dist', destination: `./wedatasphere-linkis-${getVersion()}-dist.zip` },
-          ]
-        },
+        events: {
+          onEnd: {
+            copy: [
+              { source: './config.sh', destination: `./dist/config.sh`,toType: 'file'},
+              { source: './install.sh', destination: `./dist/install.sh`,toType: 'file' },
+              { source: '../NOTICE-binary-ui', destination: `./dist/NOTICE`,toType: 'file'},
+              { source: '../LICENSE-binary-ui', destination: `./dist/LICENSE`,toType: 'file'},
+              { source: '../DISCLAIMER', destination: `./dist/DISCLAIMER`,toType: 'file'},
+              { source: '../licenses-binary-ui', destination: `./dist/licenses` }
+            ],
+            // 先删除根目录下的zip包
+            delete: [`./apache-linkis-${getVersion()}-incubating-web-bin.tar.gz`],
+            // 将dist文件夹下的文件进行打包
+            archive: [
+              { source: './dist', destination: `./apache-linkis-${getVersion()}-incubating-web-bin.tar.gz`,format: 'tar' ,
+                options: {
+                  gzip: true,
+                  gzipOptions: {
+                    level: 1,
+                  },
+                  globOptions: {
+                    dot: true,
+                  },
+                }
+              },
+            ]
+          },
+        }
       }])
     }
   },
@@ -189,7 +202,7 @@ module.exports = {
   devServer: {
     proxy: {
       '/api': {
-        target: 'http://127.0.0.1:8899', // linkis
+        target: 'http://127.0.0.1:8080', // linkis
         changeOrigin: true,
         pathRewrite: {
           '^/api': '/api'

@@ -1,3 +1,20 @@
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one or more
+  ~ contributor license agreements.  See the NOTICE file distributed with
+  ~ this work for additional information regarding copyright ownership.
+  ~ The ASF licenses this file to You under the Apache License, Version 2.0
+  ~ (the "License"); you may not use this file except in compliance with
+  ~ the License.  You may obtain a copy of the License at
+  ~
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
 <template>
   <div class="global-history">
     <Tabs @on-click="onClickTabs">
@@ -124,17 +141,32 @@ export default {
             'get'
           )
           .then(ret => {
-            console.log(ret)
-            const result = {
-              headRows: ret.metadata,
-              bodyRows: ret.fileContent,
-              // 如果totalLine是null，就显示为0
-              total: ret.totalLine ? ret.totalLine : 0,
-              // 如果内容为null,就显示暂无数据
-              type: ret.fileContent ? ret.type : 0,
-              path: resultPath,
-              current: 1,
-              size: 20
+            let result = {}
+            if (ret.metadata && ret.metadata.length >= 500) {
+              result = {
+                headRows: [],
+                bodyRows: [],
+                // 如果totalLine是null，就显示为0
+                total: ret.totalLine ? ret.totalLine : 0,
+                // 如果内容为null,就显示暂无数据
+                type: ret.fileContent ? ret.type : 0,
+                path: resultPath,
+                current: 1,
+                size: 20,
+                hugeData: true
+              }
+            } else {
+              result = {
+                headRows: ret.metadata,
+                bodyRows: ret.fileContent,
+                // 如果totalLine是null，就显示为0
+                total: ret.totalLine ? ret.totalLine : 0,
+                // 如果内容为null,就显示暂无数据
+                type: ret.fileContent ? ret.type : 0,
+                path: resultPath,
+                current: 1,
+                size: 20
+              }
             }
 
             this.script.resultList[resultSet].result = result
@@ -142,12 +174,6 @@ export default {
             this.script = {
               ...this.script
             }
-            this.updateResult({
-              tabId: this.script.id,
-              resultSet,
-              showPanel: 'result',
-              ...this.script.resultList
-            })
             cb()
           })
           .catch(() => {
@@ -158,12 +184,6 @@ export default {
         this.script = {
           ...this.script
         }
-        this.updateResult({
-          tabId: this.script.id,
-          resultSet: resultSet,
-          showPanel: 'result',
-          ...this.script.resultList
-        })
         cb()
       }
     },
@@ -281,7 +301,16 @@ export default {
         if (this.$route.query.proxyUser) {
           params.proxyUser = this.$route.query.proxyUser
         }
-        let openLog = await api.fetch('/filesystem/openLog', params, 'get')
+        let openLog = {}
+        if (this.$route.query.status === 'Scheduled' || this.$route.query.status === 'Running') {
+          const tempParams = {
+            fromLine: this.fromLine,
+            size: -1,
+          }
+          openLog = await api.fetch(`/entrance/${this.$route.query.execID}/log`, tempParams, 'get')
+        } else {
+          openLog = await api.fetch('/filesystem/openLog', params, 'get')
+        }
         if (openLog) {
           const log = { all: '', error: '', warning: '', info: '' }
           const convertLogs = util.convertLog(openLog.log)
@@ -330,22 +359,34 @@ export default {
                 'get'
               )
               .then(ret => {
-                let tmpResult = {
-                  headRows: ret.metadata,
-                  bodyRows: ret.fileContent,
-                  total: ret.totalLine,
-                  type: ret.type,
-                  path: currentResultPath
+                let tmpResult = {}
+                if (ret.metadata && ret.metadata.length >= 500) {
+                  tmpResult = {
+                    headRows: [],
+                    bodyRows: [],
+                    total: ret.totalLine,
+                    type: ret.type,
+                    path: currentResultPath,
+                    hugeData: true
+                  }
+                } else {
+                  tmpResult = {
+                    headRows: ret.metadata,
+                    bodyRows: ret.fileContent,
+                    total: ret.totalLine,
+                    type: ret.type,
+                    path: currentResultPath
+                  }
                 }
                 this.script.resultSet = 0
                 this.script.resultList = scriptResultList
                 this.$set(this.script.resultList[0], 'result', {})
                 Object.assign(this.script.resultList[0].result, tmpResult)
                 this.scriptViewState.showPanel = 'result'
+                this.isLoading = false
               })
           }
           this.hasResultData = true
-          this.isLoading = false
         } else {
           // 没有返回则设置一个初始化数据
           let tmpResult = {
@@ -378,6 +419,8 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+
+
 .backButton {
   position: absolute;
   top: 0;

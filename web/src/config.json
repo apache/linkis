@@ -7,7 +7,14 @@
             "zh-CN": "apps/linkis/i18n/common/zh.json"
         },
         "header": "apps/linkis/module/header"
-    }
-    
-  
+    },
+    "URM": {
+      "routes": "apps/URM/router",
+      "module": "apps/URM/module",
+      "i18n": {
+          "en": "apps/URM/i18n/common/en.json",
+          "zh-CN": "apps/URM/i18n/common/zh.json"
+      },
+      "header": "apps/URM/module/header"
+  }
 }

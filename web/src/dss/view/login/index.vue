@@ -1,3 +1,20 @@
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one or more
+  ~ contributor license agreements.  See the NOTICE file distributed with
+  ~ this work for additional information regarding copyright ownership.
+  ~ The ASF licenses this file to You under the Apache License, Version 2.0
+  ~ (the "License"); you may not use this file except in compliance with
+  ~ the License.  You may obtain a copy of the License at
+  ~ 
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~ 
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+  
 <template>
   <div
     class="login"
@@ -49,7 +66,6 @@ import storage from '@/common/helper/storage';
 import { db } from '@/common/service/db/index.js';
 import { config } from '@/common/config/db.js';
 import { RSA } from '@/common/util/ras.js';
-import util from '@/common/util/';
 import tab from '@/apps/scriptis/service/db/tab.js';
 export default {
   data() {
@@ -85,17 +101,6 @@ export default {
   mounted() {
   },
   methods: {
-    // 获取登录后的url调转
-    getPageHomeUrl() {
-      const currentModules = util.currentModules();
-      return api.fetch(`${this.$API_PATH.WORKSPACE_PATH}getWorkspaceHomePage`, {
-        micro_module: currentModules.microModule || 'dss'
-      }, 'get').then((res) => {
-        return res.workspaceHomePage.homePageUrl;
-      }).catch(() => {
-        return '/'
-      });
-    },
     // 获取公钥接口
     getPublicKey() {
       api.fetch('/user/publicKey', 'get').then((res) => {
@@ -158,7 +163,7 @@ export default {
               }
               if (err.message.indexOf('已经登录，请先退出再进行登录') !== -1) {
                 this.getPageHomeUrl().then((res) => {
-                  this.$router.push({path: res});
+                  this.$router.push({path: '/'});
                 })
               }
               this.loading = false;

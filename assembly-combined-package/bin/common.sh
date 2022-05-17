@@ -1,13 +1,12 @@
-#!/bin/sh
+#!/bin/bash
 #
-# Copyright 2019 WeBank
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-#  you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
 # http://www.apache.org/licenses/LICENSE-2.0
-#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,6 +20,12 @@ source ~/.bash_profile
 export local_host="`hostname --fqdn`"
 
 ipaddr=$(ip addr | awk '/^[0-9]+: / {}; /inet.*global/ {print gensub(/(.*)\/(.*)/, "\\1", "g", $2)}')
+
+## color
+RED='\033[0;31m'
+NC='\033[0m' # No Color
+GREEN='\033[0;32m'
+#used as: echo -e "Apache ${RED}Linkis ${NC} Test \n"
 
 function isLocal(){
     if [ "$1" == "127.0.0.1" ];then
@@ -66,9 +71,20 @@ function copyFile(){
 
 function isSuccess(){
 if [ $? -ne 0 ]; then
-    echo "Failed to " + $1
+    echo -e "${RED}Failed${NC} to $1"
+    echo ""
     exit 1
 else
-    echo "Succeed to" + $1
+    echo -e "${GREEN}Succeed${NC} to $1"
+    echo ""
+fi
+}
+
+function isSuccessWithoutExit(){
+if [ $? -ne 0 ]; then
+    echo -e "WARN failed to $1 , but installation will continue,some function may not work properly"
+else
+    echo -e "${GREEN}Succeed${NC} to $1"
+    echo ""
 fi
 }

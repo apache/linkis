@@ -1,3 +1,20 @@
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one or more
+  ~ contributor license agreements.  See the NOTICE file distributed with
+  ~ this work for additional information regarding copyright ownership.
+  ~ The ASF licenses this file to You under the Apache License, Version 2.0
+  ~ (the "License"); you may not use this file except in compliance with
+  ~ the License.  You may obtain a copy of the License at
+  ~
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
 <template>
   <Form :model="searchBar" :rules="ruleInline" inline>
     <FormItem prop="instance">
@@ -21,9 +38,21 @@
           :key="item"/>
       </Select>
     </FormItem>
+    <FormItem v-if="engineTypes.length" prop="engineType" :label="$t('message.linkis.tableColumns.engineType')" >
+      <Select  v-model="searchBar.engineType" style="width:200px" clearable>
+        <Option
+          v-for="(item) in engineTypes"
+          :label="item"
+          :value="item"
+          :key="item"/>
+      </Select>
+    </FormItem>
     <FormItem>
       <Button type="primary" @click="search">
         {{ $t('message.linkis.search') }}
+      </Button>
+      <Button v-if="stopbtn" type="error" @click="stop"  style="margin-left:20px">
+        {{ $t('message.linkis.stop') }}
       </Button>
     </FormItem>
   </Form>
@@ -42,6 +71,13 @@ export default {
     ownerList: {
       type: Array,
       default: () => []
+    },
+    engineTypes: {
+      type: Array,
+      default: () => []
+    },
+    stopbtn: {
+      type: Boolean
     }
   },
   data() {
@@ -67,6 +103,9 @@ export default {
   methods: {
     search() {
       this.$emit("search", this.searchBar)
+    },
+    stop() {
+      this.$emit("stop")
     }
   },
 };

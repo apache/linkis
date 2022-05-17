@@ -1,3 +1,20 @@
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one or more
+  ~ contributor license agreements.  See the NOTICE file distributed with
+  ~ this work for additional information regarding copyright ownership.
+  ~ The ASF licenses this file to You under the Apache License, Version 2.0
+  ~ (the "License"); you may not use this file except in compliance with
+  ~ the License.  You may obtain a copy of the License at
+  ~
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
 <template>
   <div class="console-page">
     <div class="console-page-content-head">
@@ -23,14 +40,14 @@
               :title="item.name"
               :name="item.key"/>
           </CellGroup>
-          
+
         </Card>
       </div>
       <div
         class="content-body-side-right">
         <div class="content-body-side-right-title">
           <Breadcrumb>
-            <BreadcrumbItem :to="skipPath">{{ breadcrumbSecondName }}</BreadcrumbItem>
+            <BreadcrumbItem :to="skipPath"><Icon v-if="skipPath" type="ios-arrow-back" size="16" color="#338cf0"></Icon>{{ breadcrumbSecondName }}</BreadcrumbItem>
             <BreadcrumbItem v-if="$route.name === 'viewHistory'">{{ $route.query.taskID }}</BreadcrumbItem>
             <template v-if="$route.name === 'EngineConnList'">
               <BreadcrumbItem>{{ $route.query.instance }}</BreadcrumbItem>
@@ -67,6 +84,8 @@ export default {
           { key: '1-4', name: this.$t('message.linkis.sideNavList.function.children.dateReport'), path: '/console/globalValiable' },
           { key: '1-6', name: this.$t('message.linkis.sideNavList.function.children.ECMManage'), path: '/console/ECM' },
           { key: '1-7', name: this.$t('message.linkis.sideNavList.function.children.microserviceManage'), path: '/console/microService' },
+          { key: '1-9', name: this.$t('message.linkis.sideNavList.function.children.udfFunctionManage'), path: '/urm/udfManagement' },
+          { key: '1-8', name: this.$t('message.linkis.sideNavList.function.children.dataSourceManage'), path: '/console/dataSource' },
           { key: '1-5', name: this.$t('message.linkis.sideNavList.function.children.globalValiable'), path: '/console/FAQ' },
         ],
       },
@@ -93,7 +112,7 @@ export default {
     api.fetch('/jobhistory/governanceStationAdmin', 'get').then((res) => {
       this.isLogAdmin = res.admin;
       storage.set('isLogAdmin',res.admin,'session');
-    }) 
+    })
   },
   methods: {
     handleCellClick(index) {

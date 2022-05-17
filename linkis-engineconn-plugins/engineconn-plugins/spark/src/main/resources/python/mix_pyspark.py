@@ -1,17 +1,30 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+# http://www.apache.org/licenses/LICENSE-2.0
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
 import sys, getopt, traceback, json, re
 import os
 os.environ['PYSPARK_ALLOW_INSECURE_GATEWAY']='1'
 import matplotlib
-import os
-os.environ['PYSPARK_ALLOW_INSECURE_GATEWAY']='1'
 matplotlib.use('Agg')
-zipPaths = sys.argv[3]
+zipPaths = sys.argv[4]
 paths = zipPaths.split(':')
 for i in range(len(paths)):
     sys.path.insert(0, paths[i])
 
 from py4j.protocol import Py4JJavaError, Py4JNetworkError
-from py4j.java_gateway import java_import, JavaGateway, GatewayClient
+from py4j.java_gateway import java_import, JavaGateway, GatewayClient, GatewayParameters
 from pyspark.conf import SparkConf
 from pyspark.context import SparkContext
 from pyspark.sql.session import SparkSession
@@ -70,16 +83,25 @@ class SparkVersion(object):
     def isImportAllPackageUnderSparkSql(self):
         return self.version >= self.SPARK_1_3_0
 
-output = Logger()
+linkisOutput = Logger()
 errorOutput = ErrorLogger()
-sys.stdout = output
+sys.stdout = linkisOutput
 sys.stderr = errorOutput
 
-client = GatewayClient(port=int(sys.argv[1]))
+try:
+    client = GatewayClient(port=int(sys.argv[1]),
+                           gateway_parameters=GatewayParameters(port = int(sys.argv[1]), auto_convert = True, auth_token = sys.argv[3]))
+except:
+    client = GatewayClient(port=int(sys.argv[1]))
+
 sparkVersion = SparkVersion(int(sys.argv[2]))
 
 if sparkVersion.isAutoConvertEnabled():
-    gateway = JavaGateway(client, auto_convert = True)
+    try:
+        gateway = JavaGateway(client, auto_field = True, auto_convert = True,
+                              gateway_parameters=GatewayParameters(port = int(sys.argv[1]), auto_convert = True, auth_token = sys.argv[3]))
+    except:
+        gateway = JavaGateway(client, auto_convert = True)
 else:
     gateway = JavaGateway(client)
 
@@ -168,7 +190,7 @@ spark = SparkSession(sc, intp.getSparkSession())
 
 ##add pyfiles
 try:
-    pyfile = sys.argv[4]
+    pyfile = sys.argv[5]
     pyfiles = pyfile.split(',')
     for i in range(len(pyfiles)):
         if ""!=pyfiles[i]:
@@ -230,4 +252,4 @@ while True :
         msg = traceback.format_exc()
         intp.setStatementsFinished(msg, True)
 
-    output.reset()
+    linkisOutput.reset()

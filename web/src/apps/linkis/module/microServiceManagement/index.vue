@@ -1,3 +1,20 @@
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one or more
+  ~ contributor license agreements.  See the NOTICE file distributed with
+  ~ this work for additional information regarding copyright ownership.
+  ~ The ASF licenses this file to You under the Apache License, Version 2.0
+  ~ (the "License"); you may not use this file except in compliance with
+  ~ the License.  You may obtain a copy of the License at
+  ~
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
 <template>
   <div class="microService">
     <Spin
@@ -52,11 +69,11 @@
           <Tooltip
             v-for="(item, index) in row.labels"
             :key="index"
-            :content="`${item.labelKey}-${item.stringValue}`"
+            :content="`${item.stringValue}`"
             placement="top"
           >
             <Tag class="tag-item" type="border" color="primary">{{
-              `${item.labelKey}-${item.stringValue}`
+              `${item.stringValue}`
             }}</Tag>
           </Tooltip>
         </div>
@@ -81,6 +98,7 @@
         size="small"
         show-total
         show-sizer
+        prev-text="上一页" next-text="下一页"
         @on-change="change"
         @on-page-size-change="changeSize"
       />
@@ -248,7 +266,7 @@ export default {
           return (
             item.instance.match(instance) &&
             item.applicationName.match(applicationName)
-          ); 
+          );
         });
       } else {
         this.tableData = [...this.allInstance];
@@ -291,7 +309,7 @@ export default {
     // 修改标签
     editEnter(editInputKey, editInputValue,editedInputValue) {
       let index = this.modifyData.labels.findIndex((item)=>{
-        return  item.value === editInputValue
+        return  item.value === editInputValue && item.key === editInputKey
       })
       this.modifyData.labels.splice(index,1,{key: editInputKey,modifiable: true,value: editedInputValue})
     },

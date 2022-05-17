@@ -216,13 +216,14 @@ BSD licenses
 ========================================================================
 
 The following components are provided under the BSD License.
-    linkis-engineconn-plugins/engineconn-plugins/python/src/main/py4j/py4j-*-src.zip(See linkis-engineconn-plugins/engineconn-plugins/python/src/main/py4j/LICENSE-py4j-0.10.7-src.txt for text of this license)
+    linkis-engineconn-plugins/engineconn-plugins/python/src/main/py4j/py4j-*-src.zip
+    (See licenses/LICENSE-py4j-*-src.txt for text of this license)
 
 ========================================================================
 Apache 2.0 licenses
 ========================================================================
 
-The following file are provided under the  Apache 2.0  License.
+The following file are provided under the Apache 2.0 License.
     web/.editorconfig
     web/.env
     web/.eslintignore
@@ -234,5 +235,13 @@ The following file are provided under the  Apache 2.0  License.
     web/src/common/i18n/zh.json
     web/src/config.json
     web/public/favicon.ico
-    Maven Wrapper(mvnw, mvnw.cmd, .mvn/* files in root path), https://github.com/takari/maven-wrapper   Apache 2.0
+
+
+The files:
+.mvn/wrapper/MavenWrapperDownloader.java
+.mvn/wrapper/maven-wrapper.properties
+mvnw
+mvnw.cmd
+Are provided from the Github Project: https://github.com/takari/maven-wrapper
+which is distributed under the Apache 2.0 license.
 

@@ -35,8 +35,8 @@ class ECTaskKillHandler extends MonitorHandler with Logging {
             while (elements.hasNext) {
               val element = elements.next
               Utils.tryCatch{
-                logger.error(s"ERROR: entrance : ${element.getUpstreamConnection().getUpstreamServiceInstanceName()} lose connect, will kill job : ${element.getKey()}")
                 doKill(element)
+                logger.error(s"ERROR: entrance : ${element.getUpstreamConnection().getUpstreamServiceInstanceName()} lose connect, will kill job : ${element.getKey()}")
               } {
                 t => error("Failed to kill job: " + element.getKey, t)
               }

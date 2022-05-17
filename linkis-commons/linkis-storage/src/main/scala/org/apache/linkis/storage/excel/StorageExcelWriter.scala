@@ -76,27 +76,20 @@ class StorageExcelWriter(val charset: String, val sheetName: String, val dateFor
     }
     if (autoFormat) {
       dataType match {
-//        case NullType => style.setDataFormat(format.getFormat(""))
         case StringType => style.setDataFormat(format.getFormat("@"))
-//        case BooleanType => style.setDataFormat(format.getFormat(""))
         case TinyIntType => style.setDataFormat(format.getFormat("0"))
         case ShortIntType => style.setDataFormat(format.getFormat("0"))
         case IntType => style.setDataFormat(format.getFormat("0"))
         case LongType => style.setDataFormat(format.getFormat("0.00E+00"))
         case BigIntType => style.setDataFormat(format.getFormat("0.00E+00"))
-        case FloatType => style.setDataFormat(format.getFormat("0.00"))
-        case DoubleType => style.setDataFormat(format.getFormat("0.00"))
+        case FloatType => style.setDataFormat(format.getFormat("0.0000000000"))
+        case DoubleType => style.setDataFormat(format.getFormat("0.0000000000"))
         case CharType => style.setDataFormat(format.getFormat("@"))
         case VarcharType => style.setDataFormat(format.getFormat("@"))
         case DateType => style.setDataFormat(format.getFormat("m/d/yy h:mm"))
         case TimestampType => style.setDataFormat(format.getFormat("m/d/yy h:mm"))
-//        case BinaryType => style.setDataFormat(format.getFormat(""))
-        case DecimalType => style.setDataFormat(format.getFormat("0.00"))
-//        case ArrayType => style.setDataFormat(format.getFormat(""))
-//        case MapType => style.setDataFormat(format.getFormat(""))
-//        case ListType => style.setDataFormat(format.getFormat(""))
-//        case StructType => style.setDataFormat(format.getFormat(""))
-        case _ => style.setDataFormat(format.getFormat("General"))
+        case DecimalType => style.setDataFormat(format.getFormat("0.0000000000"))
+        case _ => style.setDataFormat(format.getFormat("@"))
       }
     }
     style

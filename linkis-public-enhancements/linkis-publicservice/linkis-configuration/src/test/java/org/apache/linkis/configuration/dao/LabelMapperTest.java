@@ -31,6 +31,7 @@ import java.util.Arrays;
 import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class LabelMapperTest extends BaseDaoTest {
     @Autowired private LabelMapper labelMapper;
@@ -69,7 +70,7 @@ public class LabelMapperTest extends BaseDaoTest {
     @Test
     void testInsertLabel() {
         ConfigLabel configLabel = insertConfigLabel();
-        assertEquals("tom", configLabel.getUpdator());
+        assertTrue(configLabel.getId()>0);
     }
 
     @Test

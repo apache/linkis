@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ConfigMapperTest extends BaseDaoTest {
     @Autowired ConfigMapper configMapper;
@@ -74,7 +74,7 @@ public class ConfigMapperTest extends BaseDaoTest {
     @Test
     void testInsertValue() {
         ConfigValue result = insertConfigValue();
-        assertEquals("100G", result.getConfigValue());
+        assertTrue(result.getId()>0);
     }
 
     @Test
@@ -86,7 +86,7 @@ public class ConfigMapperTest extends BaseDaoTest {
     @Test
     void testInsertValueList() throws InterruptedException {
         List<ConfigValue> result = insertConfigValueList();
-        assertEquals("130G", result.get(1).getConfigValue());
+        assertTrue(result.get(0).getId()>0&&result.get(1).getId()>0);
     }
 
     @Test

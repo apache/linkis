@@ -74,7 +74,7 @@ public class ConfigMapperTest extends BaseDaoTest {
     @Test
     void testInsertValue() {
         ConfigValue result = insertConfigValue();
-        assertTrue(result.getId()>0);
+        assertTrue(result.getId() > 0);
     }
 
     @Test
@@ -86,7 +86,7 @@ public class ConfigMapperTest extends BaseDaoTest {
     @Test
     void testInsertValueList() throws InterruptedException {
         List<ConfigValue> result = insertConfigValueList();
-        assertTrue(result.get(0).getId()>0&&result.get(1).getId()>0);
+        assertTrue(result.get(0).getId() > 0 && result.get(1).getId() > 0);
     }
 
     @Test

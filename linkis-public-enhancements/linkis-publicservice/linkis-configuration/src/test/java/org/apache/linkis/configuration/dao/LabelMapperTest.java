@@ -70,7 +70,7 @@ public class LabelMapperTest extends BaseDaoTest {
     @Test
     void testInsertLabel() {
         ConfigLabel configLabel = insertConfigLabel();
-        assertTrue(configLabel.getId()>0);
+        assertTrue(configLabel.getId() > 0);
     }
 
     @Test

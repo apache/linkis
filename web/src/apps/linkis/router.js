@@ -85,6 +85,24 @@ export default [
         publicPage: true,
       },
     }, {
+      name: 'UdfManagement',
+      path: 'urm/udfManagement',
+      component: () =>
+        import('../URM/module/udfManagement/index.vue'),
+      meta: {
+        title: 'UdfManagement',
+        publicPage: true,
+      },
+    }, {
+      name: 'FunctionManagement',
+      path: 'urm/functionManagement',
+      component: () =>
+        import('../URM/module/functionManagement/index.vue'),
+      meta: {
+        title: 'FunctionManagement',
+        publicPage: true,
+      },
+    }, {
       name: 'EngineConnList',
       path: 'EngineConnList',
       component: () =>

@@ -57,7 +57,7 @@
         </li>
         <!-- add -->
         <li v-if="isOpenAdd" class="cardItem add" @click="addList">
-          <SvgIcon icon-class="common" />
+          <i class="material-icons add" >add</i>
         </li>
       </ul>
     </div>

@@ -23,6 +23,7 @@
       fix/>
     <Row class="search-bar">
       <Col span="6">
+        <span :style="{minWidth: '80px', marginRight: '8px', fontSize: '14px', lineHeight: '32px'}">{{$t('message.linkis.instanceName')}}</span>
         <Input
           v-model="instance"
           suffix="ios-search"
@@ -109,12 +110,12 @@
       @on-ok="modifyOk"
     >
       <Form v-model="modifyData" :label-width="100">
-        <FormItem :label="`${$t('message.linkis.instanceName')}：`">
+        <FormItem :label="`${$t('message.linkis.instanceName')}`">
           <Input disabled v-model="modifyData.instance"></Input>
         </FormItem>
         <FormItem
           class="addTagClass"
-          :label="`${$t('message.linkis.tableColumns.label')}：`"
+          :label="`${$t('message.linkis.tableColumns.label')}`"
         >
           <WbTag
             :tagList="modifyData.labels"

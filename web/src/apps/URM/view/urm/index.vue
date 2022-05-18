@@ -20,7 +20,7 @@
     <div class="console-page-content-head">
       <div>
         <Icon type="ios-arrow-back" size="20" color="#338cf0" class="back" @click="back"></Icon>
-        <span class="console-page-content-title">用户资源管理</span>
+        <span class="console-page-content-title">{{$t('message.linkis.sideNavList.function.children.userResourceManagement')}}</span>
       </div>
     </div>
     <div class="console-page-content-body">

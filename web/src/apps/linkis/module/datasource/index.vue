@@ -106,13 +106,13 @@
             <Button
               v-if="actionType == $t('message.linkis.create')"
               @click="stepChange(-1)"
-              >{{ $t('message.linkis.prev') }}</Button
+            >{{ $t('message.linkis.prev') }}</Button
             >
             <Button
               v-if="actionType == $t('message.linkis.datasource.watch')"
               type="primary"
               @click="showDataSource = false"
-              >{{ $t('message.linkis.close') }}</Button
+            >{{ $t('message.linkis.close') }}</Button
             >
             <Button v-else type="primary" @click="onSubmit">{{
               $t('message.linkis.complete')
@@ -123,6 +123,7 @@
     </Modal>
     <Row class="search-bar" type="flex" justify="space-around">
       <Col span="6">
+        <span :style="{minWidth: '80px', marginRight: '8px', fontSize: '14px', lineHeight: '32px'}">{{$t('message.linkis.datasource.sourceName')}}</span>
         <Input
           clearable
           v-model="searchName"
@@ -133,7 +134,7 @@
         ></Input>
       </Col>
       <Col span="6" class="search-item">
-        <span class="lable">{{
+        <span class="lable" :style="{marginRight: '8px'}">{{
           $t('message.linkis.datasource.sourceType')
         }}</span>
         <Select v-model="dataSourceTypeId" class="input">
@@ -182,7 +183,7 @@
           type="primary"
           :disabled="row.expire"
           @click="openVersionList(row, index)"
-          >{{ `${row.versionId || '-'}` }}</Button
+        >{{ `${row.versionId || '-'}` }}</Button
         >
       </template>
       <template slot-scope="{ row, index }" slot="action">
@@ -192,7 +193,7 @@
             size="small"
             type="primary"
             @click="modify(row, index)"
-            >{{ $t('message.linkis.edit') }}</Button
+          >{{ $t('message.linkis.edit') }}</Button
           >
 
           <Button

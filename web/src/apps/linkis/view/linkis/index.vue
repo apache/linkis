@@ -38,9 +38,22 @@
               :key="index2"
               :class="{ crrentItem: crrentItem === item.key }"
               :title="item.name"
-              :name="item.key"/>
+              :name="item.key">
+              <div>{{item.name}}</div>
+              <div v-if="item.key === '1-9'" >
+                <CellGroup
+                  v-for="(item3, index3) in urmSideNavList.children"
+                  :key="index3"
+                  @on-click="handleCellClick2">
+                  <Cell
+                    :key="index3"
+                    :class="{ crrentItem: crrentItem === item3.key }"
+                    :title="item3.name"
+                    :name="item3.key"/>
+                </CellGroup>
+              </div>
+            </Cell>
           </CellGroup>
-
         </Card>
       </div>
       <div
@@ -84,10 +97,20 @@ export default {
           { key: '1-4', name: this.$t('message.linkis.sideNavList.function.children.dateReport'), path: '/console/globalValiable' },
           { key: '1-6', name: this.$t('message.linkis.sideNavList.function.children.ECMManage'), path: '/console/ECM' },
           { key: '1-7', name: this.$t('message.linkis.sideNavList.function.children.microserviceManage'), path: '/console/microService' },
-          { key: '1-9', name: this.$t('message.linkis.sideNavList.function.children.udfFunctionManage'), path: '/urm/udfManagement' },
+          { key: '1-9', name: this.$t('message.linkis.sideNavList.function.children.udfFunctionTitle'), path: '/console/urm/udfManagement'},
           { key: '1-8', name: this.$t('message.linkis.sideNavList.function.children.dataSourceManage'), path: '/console/dataSource' },
           { key: '1-5', name: this.$t('message.linkis.sideNavList.function.children.globalValiable'), path: '/console/FAQ' },
         ],
+      },
+      urmSideNavList: {
+        key: '1',
+        name: this.$t('message.linkis.sideNavList.function.name'),
+        padding: 0,
+        icon: 'ios-options',
+        children: [
+          {key: '1-9-1', name: this.$t('message.linkis.sideNavList.function.children.udfFunctionManage'), path: '/console/urm/udfManagement'}, 
+          {key: '1-9-2', name: this.$t('message.linkis.sideNavList.function.children.functionManagement'), path: '/console/urm/functionManagement'}
+        ]
       },
       breadcrumbSecondName: this.$t('message.linkis.sideNavList.function.children.globalHistory')
     };
@@ -116,7 +139,22 @@ export default {
   },
   methods: {
     handleCellClick(index) {
+      if (index === '1-9') return
       const activedCellParent = this.sideNavList;
+      this.crrentItem = index;
+      const activedCell = activedCellParent.children.find((item) => item.key === index);
+      this.breadcrumbFirstName = activedCellParent.name;
+      this.breadcrumbSecondName = activedCell.name;
+      storage.set('lastActiveConsole', activedCell);
+      this.$router.push({
+        path: activedCell.path,
+        query: {
+          workspaceId: this.$route.query.workspaceId
+        },
+      });
+    },
+    handleCellClick2(index) {
+      const activedCellParent = this.urmSideNavList;
       this.crrentItem = index;
       const activedCell = activedCellParent.children.find((item) => item.key === index);
       this.breadcrumbFirstName = activedCellParent.name;
@@ -141,7 +179,15 @@ export default {
       // 如果为历史详情则直接刷新
       if(to.name === 'viewHistory') return next();
       next((vm) => {
-        vm.handleCellClick(lastActiveConsole ? lastActiveConsole.key : '1-1');
+        if (lastActiveConsole) {
+          if (lastActiveConsole.key === '1-9-1' || lastActiveConsole.key === '1-9-2') {
+            vm.handleCellClick2(lastActiveConsole.key);
+          } else {
+            vm.handleCellClick(lastActiveConsole.key);
+          }
+        } else {
+          vm.handleCellClick('1-1');
+        }
       });
     }
     next();

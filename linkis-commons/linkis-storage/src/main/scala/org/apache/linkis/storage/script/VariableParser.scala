@@ -77,7 +77,7 @@ object VariableParser {
     }
     val params = new util.HashMap[String, Object]
     if(vars.size() >0)params += VARIABLE -> vars
-    if(vars.size() >0)params += CONFIGURATION -> confs
+    if(confs.size() >0)params += CONFIGURATION -> confs
     params
   }
 

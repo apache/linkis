@@ -55,6 +55,7 @@
             <if test="pHistory.source != null">`source` = #{pHistory.source},</if>
             <if test="pHistory.contextType != null">`context_type` = #{pHistory.contextType},</if>
             <if test="pHistory.keyword != null">`keyword` = #{pHistory.keyword},</if>
+            `update_time` = now()
         </trim>
         WHERE id = #{pHistory.id}
     </update>

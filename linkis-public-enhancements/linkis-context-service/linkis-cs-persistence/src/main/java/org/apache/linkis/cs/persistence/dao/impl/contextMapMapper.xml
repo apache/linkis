@@ -102,6 +102,7 @@
             <if test="contextKey.contextType != null">`context_type` = #{contextKey.contextType},</if>
             <if test="contextValue.valueStr != null">`value` = #{contextValue.valueStr},</if>
             <if test="contextValue.keywords != null">`keywords` = #{contextValue.keywords},</if>
+            `update_time` = now()
         </trim>
         WHERE context_id = #{contextId} AND `key` = #{contextKey.key}
     </update>

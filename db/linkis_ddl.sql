@@ -376,6 +376,8 @@ CREATE TABLE `linkis_ps_cs_context_map` (
   `value` mediumtext,
   `context_id` int(11) DEFAULT NULL,
   `keywords` varchar(255) DEFAULT NULL,
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'update unix timestamp',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'create time',
   PRIMARY KEY (`id`),
   UNIQUE KEY `key` (`key`,`context_id`,`context_type`),
   KEY `keywords` (`keywords`(191))
@@ -389,6 +391,8 @@ CREATE TABLE `linkis_ps_cs_context_map_listener` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `listener_source` varchar(255) DEFAULT NULL,
   `key_id` int(11) DEFAULT NULL,
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'update unix timestamp',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'create time',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -404,7 +408,9 @@ CREATE TABLE `linkis_ps_cs_context_history` (
   `history_json` text,
   `keyword` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `keyword` (`keyword`(191))
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'update unix timestamp',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'create time',
+  KEY `keyword` (`keyword`(191)),
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
@@ -420,6 +426,8 @@ CREATE TABLE `linkis_ps_cs_context_id` (
   `expire_time` datetime DEFAULT NULL,
   `instance` varchar(128) DEFAULT NULL,
   `backup_instance` varchar(255) DEFAULT NULL,
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'update unix timestamp',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'create time',
   PRIMARY KEY (`id`),
   KEY `instance` (`instance`(128)),
   KEY `backup_instance` (`backup_instance`(191)),
@@ -434,6 +442,8 @@ CREATE TABLE `linkis_ps_cs_context_listener` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `listener_source` varchar(255) DEFAULT NULL,
   `context_id` int(11) DEFAULT NULL,
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'update unix timestamp',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'create time',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 

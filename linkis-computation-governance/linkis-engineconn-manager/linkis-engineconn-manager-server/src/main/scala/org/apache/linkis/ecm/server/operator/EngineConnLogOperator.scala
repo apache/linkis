@@ -58,7 +58,7 @@ class EngineConnLogOperator extends Operator with Logging {
       if (tailStartLine > EngineConnLogOperator.MAX_LOG_TAIL_START_SIZE.getValue) {
         throw new ECMErrorException(ECMErrorCode.EC_FETCH_LOG_FAILED, s"Cannot fetch more than ${EngineConnLogOperator.MAX_LOG_TAIL_START_SIZE.getValue} lines of logs.")
       }
-      val logs = Utils.exec(Array("tail", "-n", tailStartLine + "", logPath.getPath, "|", "head", "-n", tailStartLine + ""), 5000).split("\n")
+      val logs = Utils.exec(Array("tail", "-n", tailStartLine + "", logPath.getPath, "|", "head", "-n", pageSize + ""), 5000).split("\n")
       return Map("logs" -> logs, "rows" -> logs.length)
     }
 

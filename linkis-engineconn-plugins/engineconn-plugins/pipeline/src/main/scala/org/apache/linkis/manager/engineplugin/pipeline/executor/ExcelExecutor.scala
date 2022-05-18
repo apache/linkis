@@ -42,6 +42,7 @@ class ExcelExecutor extends PipeLineExecutor {
     val destFs = FSFactory.getFs(destFsPath)
     destFs.init(null)
     val outputStream: OutputStream = destFs.write(destFsPath, PIPELINE_OUTPUT_ISOVERWRITE_SWITCH.getValue(options))
+    val excelAutoFormat = PipelineEngineConfiguration.EXPORT_EXCEL_AUTO_FORMAT.getValue(engineExecutorContext.getProperties.asInstanceOf[java.util.Map[String, String]])
     if (sourcePath.contains(".")) {
       //sourcePaht 是文件形式
       // TODO: fs 加目录判断
@@ -49,11 +50,10 @@ class ExcelExecutor extends PipeLineExecutor {
         throw new PipeLineErrorException(70003, "Not a result set file(不是结果集文件)")
       }
       fileSource = FileSource.create(sourceFsPath, sourceFs)
-      val excelAutoFormat = PipelineEngineConfiguration.EXPORT_EXCEL_AUTO_FORMAT.getValue(engineExecutorContext.getProperties.asInstanceOf[java.util.Map[String, String]])
       excelFsWriter = ExcelFsWriter.getExcelFsWriter(DEFAULTC_HARSET, DEFAULT_SHEETNAME, DEFAULT_DATEFORMATE, outputStream, excelAutoFormat)
     } else {
       //目录形式
-      excelFsWriter = new StorageMultiExcelWriter(outputStream)
+      excelFsWriter = new StorageMultiExcelWriter(outputStream, excelAutoFormat)
       val fsPathListWithError = sourceFs.asInstanceOf[FileSystem].listPathWithError(sourceFsPath)
       if (fsPathListWithError == null) {
         throw new PipeLineErrorException(70005, "empty dir!")

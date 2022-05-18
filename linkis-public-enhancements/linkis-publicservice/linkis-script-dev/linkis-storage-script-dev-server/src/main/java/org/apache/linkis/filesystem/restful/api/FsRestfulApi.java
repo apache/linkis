@@ -531,7 +531,8 @@ public class FsRestfulApi {
                     String outputFileName,
             @RequestParam(value = "sheetName", defaultValue = "result") String sheetName,
             @RequestParam(value = "nullValue", defaultValue = "NULL") String nullValue,
-            @RequestParam(value = "limit", defaultValue = "0") Integer limit)
+            @RequestParam(value = "limit", defaultValue = "0") Integer limit,
+            @RequestParam(value = "autoFormat", defaultValue = "false") Boolean autoFormat)
             throws WorkSpaceException, IOException {
         ServletOutputStream outputStream = null;
         FsWriter fsWriter = null;
@@ -591,7 +592,7 @@ public class FsRestfulApi {
                     }
                     fsWriter =
                             ExcelFsWriter.getExcelFsWriter(
-                                    charset, sheetName, DEFAULT_DATE_TYPE, outputStream);
+                                    charset, sheetName, DEFAULT_DATE_TYPE, outputStream, autoFormat);
                     response.addHeader("Content-Type", XLSX_RESPONSE_CONTENT_TYPE);
                     if (isLimitDownloadSize) {
                         fileSource = fileSource.page(1, excelDownloadSize);
@@ -628,7 +629,8 @@ public class FsRestfulApi {
             @RequestParam(value = "outputFileName", defaultValue = "downloadResultset")
                     String outputFileName,
             @RequestParam(value = "nullValue", defaultValue = "NULL") String nullValue,
-            @RequestParam(value = "limit", defaultValue = "0") Integer limit)
+            @RequestParam(value = "limit", defaultValue = "0") Integer limit,
+            @RequestParam(value = "autoFormat", defaultValue = "false") Boolean autoFormat)
             throws WorkSpaceException, IOException {
         ServletOutputStream outputStream = null;
         FsWriter fsWriter = null;
@@ -672,7 +674,7 @@ public class FsRestfulApi {
             if (!FileSource$.MODULE$.isTableResultSet(fileSource)) {
                 throw WorkspaceExceptionManager.createException(80024);
             }
-            fsWriter = new StorageMultiExcelWriter(outputStream);
+            fsWriter = new StorageMultiExcelWriter(outputStream, autoFormat);
             response.addHeader("Content-Type", XLSX_RESPONSE_CONTENT_TYPE);
             if (isLimitDownloadSize) {
                 fileSource = fileSource.page(1, excelDownloadSize);

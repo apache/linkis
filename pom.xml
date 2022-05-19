@@ -30,7 +30,7 @@
 
     <groupId>org.apache.linkis</groupId>
     <artifactId>linkis</artifactId>
-    <version>1.1.1</version>
+    <version>1.1.2</version>
     <packaging>pom</packaging>
     <name>Linkis Project Parent POM</name>
     <description>Linkis helps easily connect to various back-end computation/storage engines</description>
@@ -99,18 +99,19 @@
         <module>assembly-combined-package</module>
     </modules>
     <properties>
-        <linkis.version>1.1.1</linkis.version>
+        <linkis.version>1.1.2</linkis.version>
         <hadoop.version>2.7.2</hadoop.version>
         <zookeeper.version>3.5.9</zookeeper.version>
         <spring.boot.version>2.3.12.RELEASE</spring.boot.version>
         <guava.version>30.0-jre</guava.version>
         <gson.version>2.8.5</gson.version>
-        <jackson-bom.version>2.13.2.1</jackson-bom.version>
         <scala.version>2.11.12</scala.version>
         <jdk.compile.version>1.8</jdk.compile.version>
         <plugin.scala.version>2.15.2</plugin.scala.version>
         <scala.binary.version>2.11</scala.binary.version>
         <netty.version>4.1.68.Final</netty.version>
+        <jackson-bom.version>2.13.2.1</jackson-bom.version>
+        <!-- spark2.4 use 3.5.3, spark3.2 use 3.7.0-M11 -->
         <json4s.version>3.5.3</json4s.version>
         <jersey.version>1.19.4</jersey.version>
         <jersey.servlet.version>2.23.1</jersey.servlet.version>
@@ -136,16 +137,19 @@
         <commons-beanutils.version>1.9.4</commons-beanutils.version>
         <druid.version>1.1.22</druid.version>
         <protobuf.version>3.15.8</protobuf.version>
-        <apache-rat-plugin.version>0.13</apache-rat-plugin.version>
-        <assembly.package.rootpath>${basedir}</assembly.package.rootpath>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <cglib.version>3.3.0</cglib.version>
+        <asm-bom.version>9.3</asm-bom.version>
         <log4j2.version>2.17.2</log4j2.version>
         <spotless.version>2.4.2</spotless.version>
         <junit5.version>5.7.2</junit5.version>
         <mockito.version>3.9.0</mockito.version>
         <assertj.version>3.17.2</assertj.version>
         <h2.version>1.4.200</h2.version>
+
+        <apache-rat-plugin.version>0.13</apache-rat-plugin.version>
+        <assembly.package.rootpath>${basedir}</assembly.package.rootpath>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
         <maven-surefire-plugin.version>2.22.1</maven-surefire-plugin.version>
         <jacoco.version>0.8.7</jacoco.version>
         <jacoco.skip>false</jacoco.skip>
@@ -266,6 +270,32 @@
                 <version>${jackson-bom.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.json4s</groupId>
+                <artifactId>json4s-core_${scala.binary.version}</artifactId>
+                <version>${json4s.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.json4s</groupId>
+                <artifactId>json4s-jackson_${scala.binary.version}</artifactId>
+                <version>${json4s.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.fasterxml.jackson.core</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.json4s</groupId>
+                <artifactId>json4s-ast_${scala.binary.version}</artifactId>
+                <version>${json4s.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.json4s</groupId>
+                <artifactId>json4s-scalap_${scala.binary.version}</artifactId>
+                <version>${json4s.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.sun.jersey</groupId>
@@ -769,7 +799,18 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-
+            <dependency>
+                <groupId>cglib</groupId>
+                <artifactId>cglib</artifactId>
+                <version>${cglib.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.ow2.asm</groupId>
+                <artifactId>asm-bom</artifactId>
+                <version>${asm-bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

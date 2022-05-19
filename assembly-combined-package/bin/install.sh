@@ -18,6 +18,7 @@
 source ~/.bash_profile
 shellDir=`dirname $0`
 workDir=`cd ${shellDir}/..;pwd`
+common_conf=$LINKIS_HOME/conf/linkis.properties
 
 #To be compatible with MacOS and Linux
 txt=""
@@ -67,6 +68,42 @@ until mysql -h$MYSQL_HOST -P$MYSQL_PORT -u$MYSQL_USER -p$MYSQL_PASSWORD  -e ";" 
      exit 1
 done
 
+
+########################  init LINKIS related env  ################################
+if [ "$LINKIS_HOME" = "" ]
+then
+  export LINKIS_HOME=${workDir}/LinkisInstall
+fi
+
+if [  -d $LINKIS_HOME ] && [ "$LINKIS_HOME" != "$workDir" ];then
+   echo "LINKIS_HOME: $LINKIS_HOME is alread exists and will be backed up"
+
+   ## Every time, backup the old linkis home with timestamp and not clean them.
+   ## If you want to clean them, please delete them manually.
+   curTs=`date +'%s'`
+   echo "mv  $LINKIS_HOME  $LINKIS_HOME-$curTs"
+   mv  $LINKIS_HOME  $LINKIS_HOME-$curTs
+   isSuccess "back up old LINKIS_HOME:$LINKIS_HOME to $LINKIS_HOME-$curTs"
+fi
+echo "try to create dir LINKIS_HOME: $LINKIS_HOME"
+sudo mkdir -p $LINKIS_HOME;sudo chown -R $deployUser:$deployUser $LINKIS_HOME
+isSuccess "create the dir of LINKIS_HOME:$LINKIS_HOME"
+
+LINKIS_PACKAGE=${workDir}/linkis-package
+
+if ! test -d ${LINKIS_PACKAGE}; then
+    echo "**********${RED}Error${NC}: please put ${LINKIS_PACKAGE} in $workDir! "
+    exit 1
+else
+    echo "Start to cp ${LINKIS_PACKAGE} to $LINKIS_HOME."
+    cp -r $LINKIS_PACKAGE/* $LINKIS_HOME
+    isSuccess "cp ${LINKIS_PACKAGE} to $LINKIS_HOME"
+fi
+
+cp ${LINKIS_CONFIG_PATH} $LINKIS_HOME/conf
+
+common_conf=$LINKIS_HOME/conf/linkis.properties
+
 echo "======= Step 3: Create necessary directory =========="
 
 echo "[WORKSPACE_USER_ROOT_PATH] try to create directory"
@@ -97,11 +134,14 @@ echo "[HDFS_USER_ROOT_PATH] try to create directory"
  then
      localRootDir=$HDFS_USER_ROOT_PATH
    if [[ $HDFS_USER_ROOT_PATH == file://* ]];then
+     sed -i ${txt}  "s#wds.linkis.bml.is.hdfs.*#wds.linkis.bml.is.hdfs=false#g" $common_conf
+     sed -i ${txt}  "s#\#wds.linkis.bml.local.prefix.*#wds.linkis.bml.local.prefix=$HDFS_USER_ROOT_PATH#g" $common_conf
      localRootDir=${HDFS_USER_ROOT_PATH#file://}
      echo "[HDFS_USER_ROOT_PATH] try to create local dir,cmd is: mkdir -p $localRootDir/$deployUser"
      mkdir -p $localRootDir/$deployUser
      sudo chmod -R 775 $localRootDir/$deployUser
    elif [[ $HDFS_USER_ROOT_PATH == hdfs://* ]];then
+     sed -i ${txt}  "s#\#wds.linkis.bml.hdfs.prefix.*#wds.linkis.bml.hdfs.prefix=$HDFS_USER_ROOT_PATH#g" $common_conf
      localRootDir=${HDFS_USER_ROOT_PATH#hdfs://}
      echo "[HDFS_USER_ROOT_PATH] try to create hdfs dir,cmd is: hdfs dfs -mkdir -p $localRootDir/$deployUser"
      hdfs dfs -mkdir -p $localRootDir/$deployUser
@@ -114,7 +154,6 @@ echo "[HDFS_USER_ROOT_PATH] try to create directory"
  fi
 
 
-
 echo "[RESULT_SET_ROOT_PATH] try to create directory"
  if [ "$RESULT_SET_ROOT_PATH" != "" ]
  then
@@ -123,6 +162,9 @@ echo "[RESULT_SET_ROOT_PATH] try to create directory"
      localRootDir=${RESULT_SET_ROOT_PATH#file://}
      echo "[RESULT_SET_ROOT_PATH] try to create local dir,cmd is: mkdir -p $localRootDir/$deployUser"
      mkdir -p $localRootDir/$deployUser
+
+     # we should provide the permission to the user (not in deployUser group), otherwise the user can not read/write the result set
+     sudo chmod -R 777 $localRootDir
      sudo chmod -R 775 $localRootDir/$deployUser
    elif [[ $RESULT_SET_ROOT_PATH == hdfs://* ]];then
      localRootDir=${RESULT_SET_ROOT_PATH#hdfs://}
@@ -136,40 +178,6 @@ echo "[RESULT_SET_ROOT_PATH] try to create directory"
    isSuccess "create RESULT_SET_ROOT_PATH: $RESULT_SET_ROOT_PATH directory"
 
  fi
-
-
-if [ "$LINKIS_HOME" = "" ]
-then
-  export LINKIS_HOME=${workDir}/LinkisInstall
-fi
-
-if [  -d $LINKIS_HOME ] && [ "$LINKIS_HOME" != "$workDir" ];then
-   echo "LINKIS_HOME: $LINKIS_HOME is alread exists and will be backed up"
-   if [  -d $LINKIS_HOME-bak ];then
-    rm -r $LINKIS_HOME-bak
-   fi
-
-   echo "mv  $LINKIS_HOME  $LINKIS_HOME-bak"
-   mv  $LINKIS_HOME  $LINKIS_HOME-bak
-   isSuccess "back up old LINKIS_HOME:$LINKIS_HOME to $LINKIS_HOME-bak"
-fi
-echo "try to create dir LINKIS_HOME: $LINKIS_HOME"
-sudo mkdir -p $LINKIS_HOME;sudo chown -R $deployUser:$deployUser $LINKIS_HOME
-isSuccess "create the dir of LINKIS_HOME:$LINKIS_HOME"
-
-LINKIS_PACKAGE=${workDir}/linkis-package
-
-if ! test -d ${LINKIS_PACKAGE}; then
-    echo "**********${RED}Error${NC}: please put ${LINKIS_PACKAGE} in $workDir! "
-    exit 1
-else
-    echo "Start to cp ${LINKIS_PACKAGE} to $LINKIS_HOME."
-    cp -r $LINKIS_PACKAGE/* $LINKIS_HOME
-    isSuccess "cp ${LINKIS_PACKAGE} to $LINKIS_HOME"
-fi
-
-cp ${LINKIS_CONFIG_PATH} $LINKIS_HOME/conf
-
 
 
 echo "======= Step 4: Create linkis table =========="
@@ -188,7 +196,6 @@ else
   sed -i ${txt}  "s#@KERBEROS_ENABLE#false#g" $LINKIS_HOME/db/linkis_dml.sql
 fi
 
-common_conf=$LINKIS_HOME/conf/linkis.properties
 SERVER_IP=$local_host
 
 ##Label set start
@@ -293,8 +300,6 @@ sed -i ${txt}  "s#wds.linkis.home.*#wds.linkis.home=$LINKIS_HOME#g" $common_conf
 sed -i ${txt}  "s#wds.linkis.filesystem.root.path.*#wds.linkis.filesystem.root.path=$WORKSPACE_USER_ROOT_PATH#g" $common_conf
 sed -i ${txt}  "s#wds.linkis.filesystem.hdfs.root.path.*#wds.linkis.filesystem.hdfs.root.path=$HDFS_USER_ROOT_PATH#g" $common_conf
 
-sed -i ${txt}  "s#wds.linkis.bml.hdfs.prefix.*#wds.linkis.bml.hdfs.prefix=$HDFS_USER_ROOT_PATH#g" $common_conf
-
 ##gateway
 gateway_conf=$LINKIS_HOME/conf/linkis-mg-gateway.properties
 echo "update conf $gateway_conf"
@@ -328,7 +333,7 @@ if [ ! -d $ENGINECONN_ROOT_PATH ] ;then
     echo "create dir ENGINECONN_ROOT_PATH: $ENGINECONN_ROOT_PATH"
     mkdir -p $ENGINECONN_ROOT_PATH
 fi
-sudo chmod -R 771 $ENGINECONN_ROOT_PATH
+sudo chmod -R 777 $ENGINECONN_ROOT_PATH
 
 if [ "$ENGINECONNMANAGER_PORT" != "" ]
 then
@@ -348,7 +353,7 @@ then
 fi
 if [ "$RESULT_SET_ROOT_PATH" != "" ]
 then
-  sed -i ${txt}  "s#wds.linkis.resultSet.store.path.*wds.linkis.resultSet.store.path=$RESULT_SET_ROOT_PATH#g" $entrance_conf
+  sed -i ${txt}  "s#wds.linkis.resultSet.store.path.*#wds.linkis.resultSet.store.path=$RESULT_SET_ROOT_PATH#g" $entrance_conf
 fi
 
 publicservice_conf=$LINKIS_HOME/conf/linkis-ps-publicservice.properties

@@ -18,8 +18,8 @@
 package org.apache.linkis.instance.label.restful;
 
 import org.apache.linkis.common.ServiceInstance;
+import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.instance.label.entity.InstanceInfo;
-import org.apache.linkis.instance.label.service.conf.InstanceConfigration;
 import org.apache.linkis.instance.label.service.impl.DefaultInsLabelService;
 import org.apache.linkis.instance.label.utils.EntityParser;
 import org.apache.linkis.instance.label.vo.InstanceInfoVo;
@@ -59,7 +59,15 @@ public class InstanceRestful {
     @Autowired private DefaultInsLabelService insLabelService;
 
     @RequestMapping(path = "/allInstance", method = RequestMethod.GET)
-    public Message listAllInstanceWithLabel(HttpServletRequest req) {
+    public Message listAllInstanceWithLabel(HttpServletRequest req) throws Exception {
+        String userName = ModuleUserUtils.getOperationUser(req);
+        if (!Configuration.isAdmin(userName)) {
+            throw new Exception(
+                    String.format(
+                            "Only admin can view all instances(只有管理员才能查看所有实例). The user [%s] is not admin.",
+                            userName));
+        }
+
         logger.info("start to get all instance informations.....");
         List<InstanceInfo> instances = insLabelService.listAllInstanceWithLabel();
         insLabelService.markInstanceLabel(instances);
@@ -71,10 +79,12 @@ public class InstanceRestful {
     @RequestMapping(path = "/instanceLabel", method = RequestMethod.PUT)
     public Message upDateInstanceLabel(HttpServletRequest req, @RequestBody JsonNode jsonNode)
             throws Exception {
-        String username = ModuleUserUtils.getOperationUser(req);
-        String[] adminArray = InstanceConfigration.GOVERNANCE_STATION_ADMIN().getValue().split(",");
-        if (adminArray != null && !Arrays.asList(adminArray).contains(username)) {
-            throw new Exception("only admin can modify instance label(只有管理员才能修改标签)");
+        String userName = ModuleUserUtils.getOperationUser(req);
+        if (!Configuration.isAdmin(userName)) {
+            throw new Exception(
+                    String.format(
+                            "Only admin can modify instance label(只有管理员才能修改标签). The user [%s] is not admin",
+                            userName));
         }
         String instanceName = jsonNode.get("instance").asText();
         String instanceType = jsonNode.get("applicationName").asText();

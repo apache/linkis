@@ -17,6 +17,7 @@
  
 package org.apache.linkis.entrance.interceptor.impl
 
+import org.apache.linkis.common.utils.CodeAndRunTypeUtils
 import org.apache.linkis.entrance.interceptor.EntranceInterceptor
 import org.apache.linkis.governance.common.entity.job.JobRequest
 import org.apache.linkis.manager.label.utils.LabelUtil
@@ -40,11 +41,12 @@ class CommentInterceptor extends EntranceInterceptor {
    */
   override def apply(task: JobRequest, logAppender: lang.StringBuilder): JobRequest = {
     val codeType = LabelUtil.getCodeType(task.getLabels)
-    codeType match {
-      case "sql" | "hql" | "psql" => task.setExecutionCode(SQLCommentHelper.dealComment(task.getExecutionCode))
-      case "python" | "py" => task.setExecutionCode(PythonCommentHelper.dealComment(task.getExecutionCode))
-      case "scala" | "java" => task.setExecutionCode(ScalaCommentHelper.dealComment(task.getExecutionCode))
-      case "sh" | "shell" =>
+    val runType = CodeAndRunTypeUtils.getRunTypeByCodeType(codeType)
+    runType match {
+      case CodeAndRunTypeUtils.RUN_TYPE_SQL => task.setExecutionCode(SQLCommentHelper.dealComment(task.getExecutionCode))
+      case CodeAndRunTypeUtils.RUN_TYPE_PYTHON => task.setExecutionCode(PythonCommentHelper.dealComment(task.getExecutionCode))
+      case CodeAndRunTypeUtils.RUN_TYPE_SCALA | CodeAndRunTypeUtils.RUN_TYPE_JAVA => task.setExecutionCode(ScalaCommentHelper.dealComment(task.getExecutionCode))
+      case CodeAndRunTypeUtils.RUN_TYPE_SHELL =>
       case _ =>
     }
     task

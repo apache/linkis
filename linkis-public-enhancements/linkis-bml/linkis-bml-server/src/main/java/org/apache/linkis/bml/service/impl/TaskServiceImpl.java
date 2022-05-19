@@ -163,7 +163,7 @@ public class TaskServiceImpl implements TaskService {
             versionService.updateVersion(resourceTask.getResourceId(), user, file, properties);
             taskDao.updateState(resourceTask.getId(), TaskState.SUCCESS.getValue(), new Date());
             LOGGER.info(
-                    "Upload resource successfully. Update task (上传资源失败.更新任务) taskId:{}-resourceId:{}  status is   {}.",
+                    "Upload resource successfully. Update task (上传资源成功.更新任务) taskId:{}-resourceId:{}  status is   {}.",
                     resourceTask.getId(),
                     resourceTask.getResourceId(),
                     TaskState.SUCCESS.getValue());

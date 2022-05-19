@@ -162,7 +162,7 @@ class ComputationTaskExecutionReceiver extends TaskExecutionReceiver with Loggin
     val serviceInstance = RPCUtils.getServiceInstanceFromSender(sender)
     codeExecTaskExecutorManager.getByEngineConnAndTaskId(serviceInstance, responseTaskError.execId).foreach { codeExecutor =>
       val event = TaskErrorResponseEvent(codeExecutor.getExecTask, responseTaskError.errorMsg)
-      logger.info(s"From engineConn receive responseTaskError  info$responseTaskError, now post to listenerBus event: $event")
+      logger.info(s"From engineConn receive responseTaskError  info${responseTaskError.execId}, now post to listenerBus event: ${event.execTask.getIDInfo()}")
       codeExecutor.getExecTask.getPhysicalContext.broadcastSyncEvent(event)
       codeExecutor.getEngineConnExecutor.updateLastUpdateTime()
       isExist = true

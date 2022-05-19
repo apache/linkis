@@ -18,6 +18,9 @@
 package org.apache.linkis.jobhistory.cache.impl;
 
 import org.apache.linkis.jobhistory.cache.QueryCacheManager;
+import org.apache.linkis.jobhistory.conf.JobhistoryConfiguration;
+import org.apache.linkis.jobhistory.dao.JobHistoryMapper;
+import org.apache.linkis.jobhistory.entity.JobHistory;
 import org.apache.linkis.jobhistory.util.QueryConfig;
 
 import org.springframework.beans.factory.InitializingBean;
@@ -25,6 +28,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.stereotype.Component;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Maps;
@@ -32,6 +37,8 @@ import org.quartz.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -42,8 +49,14 @@ public class DefaultQueryCacheManager implements QueryCacheManager, Initializing
 
     @Autowired private SchedulerFactoryBean schedulerFactoryBean;
 
+    @Autowired private JobHistoryMapper jobHistoryMapper;
+
     private Map<String, Cache<String, UserTaskResultCache>> engineUserCaches =
             Maps.newConcurrentMap();
+
+    private Long undoneTaskMinId =
+            Long.valueOf(
+                    String.valueOf(JobhistoryConfiguration.UNDONE_JOB_MINIMUM_ID().getValue()));
 
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -84,6 +97,41 @@ public class DefaultQueryCacheManager implements QueryCacheManager, Initializing
             logger.info("Submitted cache 00:00 refresh job.");
         }
 
+        int hour = 0;
+        int minute = 15;
+
+        try {
+            String refreshTime = JobhistoryConfiguration.UNDONE_JOB_REFRESH_TIME_DAILY().getValue();
+            String[] parts = refreshTime.split(":");
+            if (parts.length != 2) {
+                logger.error(
+                        "Invalid UNDONE_JOB_REFRESH_TIME_DAILY value: {}. It should be the format of '00:15'. Will use the default value '00:15'",
+                        refreshTime);
+            }
+            hour = Integer.parseInt(parts[0]);
+            minute = Integer.parseInt(parts[1]);
+        } catch (Exception ignored) {
+            logger.warn(
+                    "parse the config 'wds.linkis.jobhistory.undone.job.refreshtime.daily' failed. ",
+                    ignored);
+        }
+
+        CronScheduleBuilder refreshUndoneJobBuilder =
+                CronScheduleBuilder.dailyAtHourAndMinute(hour, minute);
+        JobDetail refreshUndoneJobDetail =
+                JobBuilder.newJob(ScheduledRefreshUndoneJob.class)
+                        .withIdentity("ScheduledRefreshUndoneJob")
+                        .storeDurably()
+                        .build();
+        refreshUndoneJobDetail.getJobDataMap().put(QueryCacheManager.class.getName(), this);
+        Trigger refreshTrigger =
+                TriggerBuilder.newTrigger()
+                        .withIdentity("ScheduledRefreshUndoneJob")
+                        .withSchedule(refreshUndoneJobBuilder)
+                        .build();
+        scheduler.scheduleJob(refreshUndoneJobDetail, refreshTrigger);
+        logger.info("Submitted cache 00:15 refresh undone job.");
+
         if (!scheduler.isShutdown()) {
             scheduler.start();
         }
@@ -119,6 +167,31 @@ public class DefaultQueryCacheManager implements QueryCacheManager, Initializing
         foreach(UserTaskResultCache::refresh);
     }
 
+    @Override
+    public void refreshUndoneTask() {
+        PageHelper.startPage(1, 10);
+        List<JobHistory> queryTasks = null;
+        try {
+            queryTasks =
+                    jobHistoryMapper.searchWithIdOrderAsc(
+                            undoneTaskMinId,
+                            null,
+                            Arrays.asList("Running", "Inited", "Scheduled"),
+                            null,
+                            null,
+                            null);
+        } finally {
+            PageHelper.clearPage();
+        }
+
+        PageInfo<JobHistory> pageInfo = new PageInfo<>(queryTasks);
+        List<JobHistory> list = pageInfo.getList();
+        if (!list.isEmpty()) {
+            undoneTaskMinId = list.get(0).getId();
+            logger.info("Refreshing undone tasks, minimum id: {}", undoneTaskMinId);
+        }
+    }
+
     private void foreach(Consumer<UserTaskResultCache> consumer) {
         for (Cache<String, UserTaskResultCache> cacheContainer : engineUserCaches.values()) {
             for (UserTaskResultCache cache : cacheContainer.asMap().values()) {
@@ -129,5 +202,9 @@ public class DefaultQueryCacheManager implements QueryCacheManager, Initializing
 
     private Cache<String, UserTaskResultCache> createUserCaches() {
         return CacheBuilder.newBuilder().build();
+    }
+
+    public Long getUndoneTaskMinId() {
+        return undoneTaskMinId;
     }
 }

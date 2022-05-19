@@ -57,6 +57,7 @@ public class CSResourceService implements ResourceService {
     public Map<ContextKey, BMLResource> getAllUpstreamBMLResource(
             String contextIDStr, String nodeName) throws CSErrorException {
         if (StringUtils.isBlank(contextIDStr) || StringUtils.isBlank(nodeName)) {
+            logger.warn("contextIDStr or nodeName cannot null");
             return null;
         }
         try {
@@ -80,6 +81,7 @@ public class CSResourceService implements ResourceService {
             throws CSErrorException {
         List<BMLResource> rsList = new ArrayList<>();
         if (StringUtils.isBlank(contextIDStr) || StringUtils.isBlank(nodeName)) {
+            logger.warn("contextIDStr or nodeName cannot null");
             return rsList;
         }
         try {

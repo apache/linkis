@@ -21,7 +21,7 @@ import org.apache.linkis.engineconnplugin.flink.client.context.ExecutionContext;
 import org.apache.linkis.engineconnplugin.flink.config.FlinkEnvConfiguration;
 import org.apache.linkis.engineconnplugin.flink.exception.JobExecutionException;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.flink.api.common.JobID;
 import org.apache.flink.api.common.JobStatus;
 import org.apache.flink.client.deployment.ClusterRetrieveException;
@@ -95,6 +95,25 @@ public abstract class ClusterDescriptorAdapter implements Closeable {
         }
         LOG.info("Start to cancel job {}.", jobId);
         bridgeClientRequest(this.executionContext, jobId, () -> clusterClient.cancel(jobId), true);
+    }
+
+    public String doSavepoint(String savepoint, String mode) throws JobExecutionException {
+        LOG.info("try to {} savepoint in path {}.", mode, savepoint);
+        Supplier<CompletableFuture<String>> function;
+        switch (mode) {
+            case "trigger":
+                function = () -> clusterClient.triggerSavepoint(jobId, savepoint);
+                break;
+            case "cancel":
+                function = () -> clusterClient.cancelWithSavepoint(jobId, savepoint);
+                break;
+            case "stop":
+                function = () -> clusterClient.stopWithSavepoint(jobId, false, savepoint);
+                break;
+            default:
+                throw new JobExecutionException("not supported savepoint operator mode " + mode);
+        }
+        return bridgeClientRequest(this.executionContext, jobId, function, false);
     }
 
     /**

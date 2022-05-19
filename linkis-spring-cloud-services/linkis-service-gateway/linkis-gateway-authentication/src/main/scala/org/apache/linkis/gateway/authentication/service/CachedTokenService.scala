@@ -43,11 +43,10 @@ class CachedTokenService extends TokenService {
     .refreshAfterWrite(TokenConfiguration.TOKEN_CACHE_EXPIRE_HOURS, TimeUnit.HOURS)
     .build(
       new CacheLoader[String, Token]() {
-        @Override
-        def load(tokenName: String): Token = {
-          val tokenEntityList: java.util.List[TokenEntity] = tokenDao.selectTokenByName(tokenName)
-          if (tokenEntityList != null && tokenEntityList.size != 0) {
-            new TokenImpl().convertFrom(tokenEntityList.get(0))
+        override def load(tokenName: String): Token = {
+          val tokenEntity: TokenEntity = tokenDao.selectTokenByName(tokenName)
+          if (tokenEntity != null) {
+            new TokenImpl().convertFrom(tokenEntity)
           } else {
             throw new TokenNotExistException(15204, s"Invalid Token")
           }

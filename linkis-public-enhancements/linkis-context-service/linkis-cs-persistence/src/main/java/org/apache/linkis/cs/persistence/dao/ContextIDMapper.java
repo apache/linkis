@@ -17,7 +17,12 @@
 
 package org.apache.linkis.cs.persistence.dao;
 
+import org.apache.ibatis.annotations.Param;
 import org.apache.linkis.cs.persistence.entity.PersistenceContextID;
+import org.apache.linkis.cs.persistence.entity.PersistenceContextKeyValue;
+
+import java.util.Date;
+import java.util.List;
 
 public interface ContextIDMapper {
     void createContextID(PersistenceContextID persistenceContextID);
@@ -27,4 +32,10 @@ public interface ContextIDMapper {
     PersistenceContextID getContextID(String contextId);
 
     void updateContextID(PersistenceContextID persistenceContextID);
+
+    List<PersistenceContextID> searchContextID(PersistenceContextID persistenceContextID);
+
+    List<PersistenceContextID> getAllContextIDByTime(@Param("createTimeStart") Date createTimeStart, @Param("createTimeEnd") Date createTimeEnd,
+                                                            @Param("updateTimeStart") Date updateTimeStart, @Param("updateTimeEnd") Date updateTimeEnd);
+
 }

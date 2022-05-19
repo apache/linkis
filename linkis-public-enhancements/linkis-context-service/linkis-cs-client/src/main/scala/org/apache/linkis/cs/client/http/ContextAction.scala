@@ -20,9 +20,11 @@ package org.apache.linkis.cs.client.http
 import org.apache.linkis.cs.client.utils.{ContextClientUtils, ContextServerHttpConf}
 import org.apache.linkis.httpclient.request.{GetAction, POSTAction, UserAction}
 
+import java.util.Date
+
 trait ContextAction extends UserAction{
 
-  private var user:String = "hadoop"
+  private var user: String = "hadoop"
 
   override def setUser(user: String): Unit = this.user = user
 
@@ -71,11 +73,9 @@ case class ContextResetIDAction() extends ContextPostAction{
 }
 
 
-case class ContextRemoveAction(contextId:String,
-                               contextKey:String) extends ContextPostAction with UserAction {
-
+case class ContextRemoveAction(contextId: String,
+                               contextKey: String) extends ContextPostAction with UserAction {
   override def getURL: String = ContextServerHttpConf.removeValueURL
-
 }
 
 
@@ -90,11 +90,11 @@ case class ContextBindKeyAction() extends ContextPostAction{
 
 
 
-case class ContextFetchAction(contextId:String) extends ContextGETAction{
+case class ContextFetchAction(contextId: String) extends ContextGETAction{
   override def getURL: String = ContextServerHttpConf.getContextIDURL
 }
 
-case class ContextHeartBeatAction(client:String) extends ContextPostAction {
+case class ContextHeartBeatAction(client: String) extends ContextPostAction {
   override def getURL: String = ContextServerHttpConf.heartBeatURL
 }
 
@@ -103,7 +103,19 @@ case class ContextSearchContextAction() extends ContextPostAction{
   override def getURL: String = ContextServerHttpConf.searchURL
 }
 
-case class DefaultContextPostAction(url:String) extends ContextPostAction{
+case class DefaultContextPostAction(url: String) extends ContextPostAction{
   // TODO:  类太多了,放一个default
   override def getURL: String = url
+}
+
+case class ContextSearchIDByTimeAction(createTimeStart: Date, createTimeEnd: Date, updateTimeStart: Date, updateTimeEnd: Date) extends ContextGETAction {
+  override def getURL: String = ContextServerHttpConf.searchContextIDByTime
+}
+
+case class ContextClearByIDAction(idList: java.util.List[String]) extends ContextPostAction {
+  override def getURL: String = ContextServerHttpConf.clearAllContextByID
+}
+
+case class ContextClearByTimeAction(createTimeStart: Date, createTimeEnd: Date, updateTimeStart: Date, updateTimeEnd: Date) extends ContextPostAction {
+  override def getURL: String = ContextServerHttpConf.clearAllContextByTime
 }

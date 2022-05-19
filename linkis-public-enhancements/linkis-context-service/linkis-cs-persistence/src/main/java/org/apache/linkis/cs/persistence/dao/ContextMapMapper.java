@@ -25,6 +25,7 @@ import org.apache.linkis.cs.persistence.entity.PersistenceContextKeyValue;
 
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Date;
 import java.util.List;
 
 public interface ContextMapMapper {
@@ -47,6 +48,11 @@ public interface ContextMapMapper {
 
     List<PersistenceContextKeyValue> getAllContextMapByType(
             @Param("contextID") ContextID contextID, @Param("contextType") ContextType contextType);
+
+    List<PersistenceContextKeyValue> getAllContextMap(PersistenceContextKeyValue pKV);
+
+    List<PersistenceContextKeyValue> getAllContextMapByTime(@Param("createTimeStart") Date createTimeStart, @Param("createTimeEnd") Date createTimeEnd,
+                                                            @Param("updateTimeStart") Date updateTimeStart, @Param("updateTimeEnd") Date updateTimeEnd);
 
     void removeContextMap(
             @Param("contextID") ContextID contextID, @Param("contextKey") ContextKey contextKey);

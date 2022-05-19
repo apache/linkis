@@ -33,7 +33,7 @@ import scala.tools.scalap.scalax.util.StringUtil
 class CacheableRPCInterceptor extends RPCInterceptor with Logging{
 
   private val guavaCache: Cache[Any, Any] = CacheBuilder.newBuilder().concurrencyLevel(5)
-    .expireAfterAccess(120000, TimeUnit.MILLISECONDS).initialCapacity(20)  //TODO Make parameters(做成参数)
+    .expireAfterAccess(RPCConfiguration.BDP_RPC_CACHE_CONF_EXPIRE_TIME.getValue, TimeUnit.MILLISECONDS).initialCapacity(20)  //TODO Make parameters(做成参数)
     .maximumSize(1000).recordStats().removalListener(new RemovalListener[Any, Any] {
     override def onRemoval(removalNotification: RemovalNotification[Any, Any]): Unit = {
       debug(s"CacheSender removed key => ${removalNotification.getKey}, value => ${removalNotification.getValue}.")

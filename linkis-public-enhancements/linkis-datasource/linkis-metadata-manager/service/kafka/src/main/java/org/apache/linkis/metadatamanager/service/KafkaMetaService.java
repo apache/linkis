@@ -17,6 +17,7 @@
 
 package org.apache.linkis.metadatamanager.service;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.linkis.bml.client.BmlClient;
 import org.apache.linkis.bml.client.BmlClientFactory;
 import org.apache.linkis.bml.protocol.BmlDownloadResponse;
@@ -34,6 +35,7 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
@@ -56,6 +58,7 @@ public class KafkaMetaService extends AbstractMetaService<KafkaConnection> {
     @Override
     public MetadataConnection<KafkaConnection> getConnection(
             String operator, Map<String, Object> params) throws Exception {
+        FileUtils.forceMkdir(new File(TMP_FILE_STORE_LOCATION.getValue()));
         Resource resource =
                 new PathMatchingResourcePatternResolver()
                         .getResource(TMP_FILE_STORE_LOCATION.getValue());

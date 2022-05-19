@@ -17,6 +17,7 @@
 
 package org.apache.linkis.metadatamanager.service;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.linkis.bml.client.BmlClient;
 import org.apache.linkis.bml.client.BmlClientFactory;
 import org.apache.linkis.bml.protocol.BmlDownloadResponse;
@@ -39,6 +40,7 @@ import org.apache.hadoop.hive.ql.metadata.Table;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
@@ -77,6 +79,7 @@ public class HiveMetaService extends AbstractMetaService<HiveConnection> {
                     String.valueOf(
                             params.getOrDefault(HiveParamsMapper.PARAM_HIVE_KEYTAB.getValue(), ""));
             if (StringUtils.isNotBlank(keytabResourceId)) {
+                FileUtils.forceMkdir(new File(TMP_FILE_STORE_LOCATION.getValue()));
                 LOG.info("Start to download resource id:[" + keytabResourceId + "]");
                 String keytabFilePath =
                         TMP_FILE_STORE_LOCATION.getValue()

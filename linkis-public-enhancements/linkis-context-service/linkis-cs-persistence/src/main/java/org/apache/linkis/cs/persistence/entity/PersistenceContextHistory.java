@@ -21,6 +21,8 @@ import org.apache.linkis.cs.common.entity.enumeration.ContextType;
 import org.apache.linkis.cs.common.entity.history.ContextHistory;
 import org.apache.linkis.cs.persistence.annotation.Ignore;
 
+import java.util.Date;
+
 @Ignore
 public class PersistenceContextHistory implements ContextHistory {
 
@@ -35,6 +37,10 @@ public class PersistenceContextHistory implements ContextHistory {
     private String historyJson;
 
     private String keyword;
+
+    private Date createTime;
+
+    private Date updateTime;
 
     public String getContextId() {
         return contextId;
@@ -88,5 +94,21 @@ public class PersistenceContextHistory implements ContextHistory {
     @Override
     public void setSource(String source) {
         this.source = source;
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
     }
 }

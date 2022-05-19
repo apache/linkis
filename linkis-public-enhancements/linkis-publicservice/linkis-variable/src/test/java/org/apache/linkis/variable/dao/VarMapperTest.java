@@ -29,6 +29,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class VarMapperTest extends BaseDaoTest {
     @Autowired private VarMapper varMapper;
@@ -40,7 +41,7 @@ class VarMapperTest extends BaseDaoTest {
         return varKey;
     }
 
-    private VarKeyUser InsertVarKeyUser() {
+    private VarKeyUser insertVarKeyUser() {
         VarKeyUser varKeyUser = new VarKeyUser();
         varKeyUser.setApplicationID(-1L);
         varKeyUser.setUserName("tom6");
@@ -88,13 +89,13 @@ class VarMapperTest extends BaseDaoTest {
     @Test
     void testInsertKey() {
         VarKey varKey = insertVarKey();
-        assertEquals("myWork6", varKey.getKey());
+        assertTrue(varKey.getId() > 0);
     }
 
     @Test
     void testInsertValue() {
-        VarKeyUser varKeyUser = InsertVarKeyUser();
-        assertEquals("sing", varKeyUser.getValue());
+        VarKeyUser varKeyUser = insertVarKeyUser();
+        assertTrue(varKeyUser.getId() > 0);
     }
 
     @Test

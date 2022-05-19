@@ -48,6 +48,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -232,4 +234,17 @@ public class ContextMapPersistenceImpl implements ContextMapPersistence {
     public void removeByKeyPrefix(ContextID contextID, ContextType contextType, String keyPrefix) {
         contextMapMapper.removeByKeyPrefixAndContextType(contextID, contextType, keyPrefix);
     }
+
+    @Override
+    public List<ContextKeyValue> searchContextIDByTime(Date createTimeStart, Date createTimeEnd, Date updateTimeStart, Date updateTimeEnd) {
+        List<PersistenceContextKeyValue> result = contextMapMapper.getAllContextMapByTime(createTimeStart, createTimeEnd, updateTimeStart, updateTimeEnd);
+        List<ContextKeyValue> rsList = new ArrayList<>();
+        if (null != result) {
+            for (PersistenceContextKeyValue pKV : result) {
+                rsList.add(pKV);
+            }
+        }
+        return rsList;
+    }
+
 }

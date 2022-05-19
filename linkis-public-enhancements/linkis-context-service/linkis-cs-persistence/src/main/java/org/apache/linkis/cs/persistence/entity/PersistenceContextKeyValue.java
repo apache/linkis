@@ -22,6 +22,8 @@ import org.apache.linkis.cs.common.entity.source.ContextKeyValue;
 import org.apache.linkis.cs.common.entity.source.ContextValue;
 import org.apache.linkis.cs.persistence.annotation.Ignore;
 
+import java.util.Date;
+
 @Ignore
 public class PersistenceContextKeyValue implements ContextKeyValue {
 
@@ -34,6 +36,26 @@ public class PersistenceContextKeyValue implements ContextKeyValue {
     private ContextValue contextValue;
 
     private String props;
+
+    private Date createTime;
+
+    private Date updateTime;
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
+    }
 
     public String getProps() {
         return props;

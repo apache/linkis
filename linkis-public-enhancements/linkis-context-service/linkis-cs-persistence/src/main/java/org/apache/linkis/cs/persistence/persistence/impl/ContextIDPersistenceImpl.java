@@ -39,6 +39,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.Date;
+import java.util.List;
 
 @Component
 public class ContextIDPersistenceImpl implements ContextIDPersistence {
@@ -126,4 +128,19 @@ public class ContextIDPersistenceImpl implements ContextIDPersistence {
             throw new CSErrorException(97000, e.getMessage());
         }
     }
+
+    @Override
+    public List<PersistenceContextID> searchContextID(PersistenceContextID contextID) throws CSErrorException {
+        PersistenceContextID persistenceContextID = new PersistenceContextID();
+        persistenceContextID.setContextId(contextID.getContextId());
+        persistenceContextID.setContextIDType(contextID.getContextIDType());
+        return contextIDMapper.searchContextID(persistenceContextID);
+    }
+
+    @Override
+    public List<PersistenceContextID> searchContextIDByTime(Date createTimeStart, Date createTimeEnd, Date updateTimeStart, Date updateTimeEnd) {
+        return contextIDMapper.getAllContextIDByTime(createTimeStart, createTimeEnd, updateTimeStart, updateTimeEnd);
+    }
+
+
 }

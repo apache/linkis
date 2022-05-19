@@ -21,13 +21,13 @@
 <mapper namespace="org.apache.linkis.cs.persistence.dao.ContextIDMapper">
 
     <sql id="context_id">
-        `id`,`user`,`application`,`source`,`expire_type`,`expire_time`,`instance`,`backup_instance`
+        `id`,`user`,`application`,`source`,`expire_type`,`expire_time`,`instance`,`backup_instance`,`create_time`,`update_time`
     </sql>
 
     <insert id="createContextID" useGeneratedKeys="true" keyProperty="contextId"
             parameterType="org.apache.linkis.cs.persistence.entity.PersistenceContextID">
         INSERT INTO linkis_ps_cs_context_id(<include refid="context_id"/>)
-        VALUES (#{contextId},#{user},#{application},#{source},#{expireType},#{expireTime},#{instance},#{backupInstance})
+        VALUES (#{contextId},#{user},#{application},#{source},#{expireType},#{expireTime},#{instance},#{backupInstance},now(),now())
     </insert>
 
     <delete id="deleteContextID">
@@ -41,6 +41,31 @@
 
     <select id="getContextID" resultMap="PersistenceContextID">
         SELECT * FROM linkis_ps_cs_context_id where id = #{contextId}
+    </select>
+
+    <select id="getAllContextID" parameterMap="org.apache.linkis.cs.persistence.entity.PersistenceContextID" resultMap="PersistenceContextID" >
+        SELECT * FROM linkis_ps_cs_context_id
+        <where>
+            <if test="contextId != null"> AND `id` = #{contextId}</if>
+            <if test="user != null"> AND `user` = #{user}</if>
+            <if test="instance != null"> AND `instance` = #{instance}</if>
+            <if test="backupInstance != null"> AND `backup_instance` = #{backupInstance}</if>
+            <if test="application != null"> AND `application` = #{application}</if>
+            <if test="expireType != null"> AND `expire_type` = #{expireType}</if>
+            <if test="expireTime != null"> AND `expire_time` = #{expireTime}</if>
+            <if test="source != null"> AND `source` = #{source}</if>
+        </where>
+    </select>
+
+
+    <select id="getAllContextIDByTime" resultMap="PersistenceContextID" >
+        SELECT * FROM linkis_ps_cs_context_id
+        <where>
+            <if test="#{createTimeStart} != null">  AND `create_time` &gt;= #{createTimeStart}</if>
+            <if test="#{createTimeEnd} != null">  AND `create_time` &lt;= #{createTimeEnd}</if>
+            <if test="#{updateTimeStart} != null">  AND `update_time` &gt;= #{updateTimeStart}</if>
+            <if test="#{updateTimeEnd} != null">  AND `update_time` &lt;= #{updateTimeEnd}</if>
+        </where>
     </select>
 
     <update id="updateContextID"

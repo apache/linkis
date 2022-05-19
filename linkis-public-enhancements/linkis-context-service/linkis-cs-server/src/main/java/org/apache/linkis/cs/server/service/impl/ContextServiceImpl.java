@@ -27,8 +27,11 @@ import org.apache.linkis.cs.common.entity.source.ContextValue;
 import org.apache.linkis.cs.common.exception.CSErrorException;
 import org.apache.linkis.cs.contextcache.ContextCacheService;
 import org.apache.linkis.cs.exception.ContextSearchFailedException;
+import org.apache.linkis.cs.highavailable.ha.ContextHAChecker;
 import org.apache.linkis.cs.persistence.ContextPersistenceManager;
+import org.apache.linkis.cs.persistence.entity.PersistenceContextID;
 import org.apache.linkis.cs.persistence.entity.PersistenceContextKeyValue;
+import org.apache.linkis.cs.persistence.persistence.ContextIDPersistence;
 import org.apache.linkis.cs.persistence.persistence.ContextMapPersistence;
 import org.apache.linkis.cs.server.enumeration.ServiceType;
 import org.apache.linkis.cs.server.parser.KeywordParser;
@@ -41,9 +44,7 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Component
 public class ContextServiceImpl extends ContextService {
@@ -58,10 +59,16 @@ public class ContextServiceImpl extends ContextService {
 
     @Autowired private KeywordParser keywordParser;
 
+    @Autowired private ContextHAChecker contextHAChecker;
+
     private ObjectMapper jackson = BDPJettyServerHelper.jacksonJson();
 
     private ContextMapPersistence getPersistence() throws CSErrorException {
         return persistenceManager.getContextMapPersistence();
+    }
+
+    private ContextIDPersistence getIDPersistence() throws CSErrorException {
+        return persistenceManager.getContextIDPersistence();
     }
 
     @Override
@@ -270,4 +277,29 @@ public class ContextServiceImpl extends ContextService {
                         "removeAllValueByKeyPrefix, csId:%s,keyPrefix:%s",
                         contextID.getContextId(), keyPrefix));
     }
+
+    @Override
+    public int clearAllContextByID(List<String> idList) throws CSErrorException {
+        int num = 0;
+        for (String csid : idList) {
+            ContextID contextID = contextHAChecker.parseHAIDFromKey(csid);
+            getIDPersistence().deleteContextID(contextID.getContextId());
+            getPersistence().removeAll(contextID);
+            num++;
+        }
+        return num;
+    }
+
+    @Override
+    public int clearAllContextByTime(Date createTimeStart, Date createTimeEnd, Date updateTimeStart, Date updateTimeEnd) throws CSErrorException {
+        int num = 0;
+        List<PersistenceContextID> idList = getIDPersistence().searchContextIDByTime(createTimeStart, createTimeEnd, updateTimeStart, updateTimeEnd);
+        for (PersistenceContextID id : idList) {
+            getIDPersistence().deleteContextID(id.getContextId());
+            getPersistence().removeAll(id);
+            num++;
+        }
+        return num;
+    }
+
 }

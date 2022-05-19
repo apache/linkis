@@ -19,6 +19,8 @@ package org.apache.linkis.cs.persistence.entity;
 
 import org.apache.linkis.cs.common.entity.listener.ListenerDomain;
 
+import java.util.Date;
+
 public class PersistenceContextKeyListener implements ListenerDomain {
 
     private Integer id;
@@ -26,6 +28,10 @@ public class PersistenceContextKeyListener implements ListenerDomain {
     private String source;
 
     private Integer keyId;
+
+    private Date createTime;
+
+    private Date updateTime;
 
     public Integer getId() {
         return id;
@@ -51,5 +57,21 @@ public class PersistenceContextKeyListener implements ListenerDomain {
     @Override
     public void setSource(String source) {
         this.source = source;
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
     }
 }

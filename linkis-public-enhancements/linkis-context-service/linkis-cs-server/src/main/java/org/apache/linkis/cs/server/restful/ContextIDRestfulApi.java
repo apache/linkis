@@ -39,6 +39,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import java.io.IOException;
+import java.util.Date;
 
 @RestController
 @RequestMapping(path = "/contextservice")
@@ -98,6 +99,20 @@ public class ContextIDRestfulApi implements CsRestfulParent {
         }
         HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.REMOVE, id);
         return generateResponse(answerJob, "");
+    }
+
+    @RequestMapping(path = "searchContextIDByTime", method = RequestMethod.GET)
+    public Message searchContextIDByTime(HttpServletRequest req,
+                                         @RequestParam(value = "createTimeStart", required = false) Date createTimeStart,
+                                         @RequestParam(value = "createTimeEnd", required = false) Date createTimeEnd,
+                                         @RequestParam(value = "updateTimeStart", required = false) Date updateTimeStart,
+                                         @RequestParam(value = "updateTimeEnd", required = false) Date updateTimeEnd)
+        throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
+        if (null == createTimeStart && null == createTimeEnd && null == updateTimeStart && null == createTimeEnd) {
+            throw new CSErrorException(97000, "createTimeStart, createTimeEnd, updateTimeStart, updateTimeEnd cannot be all null.");
+        }
+        HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.SEARCH, createTimeStart, createTimeEnd, updateTimeStart, updateTimeEnd);
+        return generateResponse(answerJob, "contextIDs");
     }
 
     @Override

@@ -25,41 +25,48 @@ object ContextServerHttpConf {
     ContextClientConf.URL_PREFIX.getValue.substring(0, ContextClientConf.URL_PREFIX.getValue.length - 1)
   } else ContextClientConf.URL_PREFIX.getValue
 
-  val createContextURL:String = urlPrefix + "/createContextID"
+  val createContextURL: String = urlPrefix + "/createContextID"
 
-  val updateContextURL:String = urlPrefix + "/setValueByKey"
+  val updateContextURL: String = urlPrefix + "/setValueByKey"
 
-  val setKeyValueURL:String = urlPrefix + "/setValue"
+  val setKeyValueURL: String = urlPrefix + "/setValue"
 
-  val resetKeyValueURL:String = urlPrefix + "/resetValue"
+  val resetKeyValueURL: String = urlPrefix + "/resetValue"
 
-  val removeValueURL:String = urlPrefix + "/removeValue"
+  val removeValueURL: String = urlPrefix + "/removeValue"
 
-  val resetContextIdURL:String = urlPrefix + "/removeAllValue"
+  val resetContextIdURL: String = urlPrefix + "/removeAllValue"
 
-  val onBindKeyURL:String = urlPrefix + "/onBindKeyListener"
+  val onBindKeyURL: String = urlPrefix + "/onBindKeyListener"
 
-  val onBindIDURL:String = urlPrefix + "/onBindIDListener"
+  val onBindIDURL: String = urlPrefix + "/onBindIDListener"
 
-  val getContextIDURL:String = urlPrefix + "/getContextID"
+  val getContextIDURL: String = urlPrefix + "/getContextID"
 
-  val heartBeatURL:String = urlPrefix + "/heartbeat"
+  val heartBeatURL: String = urlPrefix + "/heartbeat"
 
-  val searchURL:String = urlPrefix + "/searchContextValue"
+  val searchURL: String = urlPrefix + "/searchContextValue"
 
-  val getContextValueURL:String = urlPrefix + "/getContextValue"
+  val getContextValueURL: String = urlPrefix + "/getContextValue"
 
-  val createContextHistory:String = urlPrefix + "/createHistory"
+  val createContextHistory: String = urlPrefix + "/createHistory"
 
-  val removeContextHistory:String = urlPrefix + "/removeHistory"
+  val removeContextHistory: String = urlPrefix + "/removeHistory"
 
-  val getContextHistories:String = urlPrefix + "/getHistories"
+  val getContextHistories: String = urlPrefix + "/getHistories"
 
-  val getContextHistory:String = urlPrefix + "/getHistory"
+  val getContextHistory: String = urlPrefix + "/getHistory"
 
-  val searchContextHistory:String = urlPrefix + "/searchHistory"
+  val searchContextHistory: String = urlPrefix + "/searchHistory"
 
   val removeAllValueByKeyPrefixAndContextTypeURL: String = urlPrefix + "/removeAllValueByKeyPrefixAndContextType"
 
   val removeAllValueByKeyPrefixURL: String = urlPrefix + "/removeAllValueByKeyPrefix"
+
+  val searchContextIDByTime: String = urlPrefix + "/searchContextIDByTime"
+
+  val clearAllContextByID: String = urlPrefix + "/clearAllContextByID"
+
+  val clearAllContextByTime: String = urlPrefix + "/clearAllContextByTime"
+
 }

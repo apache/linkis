@@ -40,11 +40,15 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -157,6 +161,41 @@ public class ContextRestfulApi implements CsRestfulParent {
         String keyPrefix = jsonNode.get(ContextHTTPConstant.CONTEXT_KEY_PREFIX_STR).textValue();
         HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.REMOVEALL, contextID, keyPrefix);
         return generateResponse(answerJob, "");
+    }
+
+    @RequestMapping(path = "clearAllContextByID", method = RequestMethod.POST)
+    public Message clearAllContextByID(HttpServletRequest req, @RequestBody JsonNode jsonNode)
+            throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
+        if (null == jsonNode || jsonNode.has("idList") ||
+                !jsonNode.get("idList").isArray() ||
+                (jsonNode.get("idList").isArray() && ((ArrayNode) jsonNode.get("idList")).size() == 0)) {
+            throw new CSErrorException(97000, "idList cannot be empty.");
+        }
+        ArrayNode idArray = (ArrayNode) jsonNode.get("idList");
+        List<String> idList = new ArrayList<>(idArray.size());
+        for (int i = 0; i < idArray.size(); i++) {
+            idList.add(idArray.get(i).asText());
+        }
+        HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.CLEAR, idList);
+        return generateResponse(answerJob, "num");
+    }
+
+    @RequestMapping(path = "clearAllContextByTime", method = RequestMethod.POST)
+    public Message clearAllContextByID(HttpServletRequest req, @RequestBody Map<String, Object> bodyMap)
+            throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
+        if (null == bodyMap || bodyMap.isEmpty()) {
+            throw new CSErrorException(97000, "idList cannot be empty.");
+        }
+        Date createTimeStart = null;
+        Date createTimeEnd = null;
+        Date updateTimeStart = null;
+        Date updateTimeEnd = null;
+        if (bodyMap.containsKey("createTimeStart")) createTimeStart = (Date) bodyMap.get("createTimeStart");
+        if (bodyMap.containsKey("createTimeEnd")) createTimeEnd = (Date) bodyMap.get("createTimeEnd");
+        if (bodyMap.containsKey("updateTimeStart")) updateTimeStart = (Date) bodyMap.get("updateTimeStart");
+        if (bodyMap.containsKey("updateTimeEnd")) updateTimeEnd = (Date) bodyMap.get("updateTimeEnd");
+        HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.CLEAR, createTimeStart, createTimeEnd, updateTimeStart, updateTimeEnd);
+        return generateResponse(answerJob, "num");
     }
 
     @Override

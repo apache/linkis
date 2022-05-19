@@ -21,14 +21,14 @@
 <mapper namespace="org.apache.linkis.cs.persistence.dao.ContextMapMapper">
 
     <sql id="context_map">
-        `id`,`key`,`context_scope`,`context_type`,`props`,`value`,`context_id`,`keywords`
+        `id`,`key`,`context_scope`,`context_type`,`props`,`value`,`context_id`,`keywords`,`create_time`,`update_time`
     </sql>
 
     <insert id="createMap"
             parameterType="org.apache.linkis.cs.persistence.entity.PersistenceContextKeyValue">
         INSERT INTO linkis_ps_cs_context_map(<include refid="context_map"/>)
         VALUES (#{id},#{contextKey.key},#{contextKey.contextScope},#{contextKey.contextType},
-        #{props},#{contextValue.valueStr},#{contextId},#{contextValue.keywords})
+        #{props},#{contextValue.valueStr},#{contextId},#{contextValue.keywords},now(),now())
     </insert>
 
     <resultMap id="PersistenceContextKeyValue"
@@ -36,6 +36,8 @@
         <id column="id" property="id"></id>
         <result column="context_id" property="contextId"></result>
         <result column="props" property="props"></result>
+        <result column="create_time" property="createTime"></result>
+        <result column="update_time" property="updateTime"></result>
         <association property="contextKey"
                      javaType="org.apache.linkis.cs.persistence.entity.PersistenceContextKey">
             <result column="key" property="key"></result>
@@ -72,6 +74,31 @@
 
     <select id="getAllContextMapByType" resultMap="PersistenceContextKeyValue">
         SELECT * FROM linkis_ps_cs_context_map WHERE context_id = #{contextID.contextId} AND context_type = #{contextType}
+    </select>
+
+    <select id="getAllContextMap" parameterType="org.apache.linkis.cs.persistence.entity.PersistenceContextKeyValue" resultMap="PersistenceContextKeyValue">
+        SELECT * FROM linkis_ps_cs_context_map
+        <where>
+            <if test="id != null"> AND `id` = #{id}</if>
+            <if test="contextKey != null and contextKey.key != null">  AND `key` = #{contextKey.key}</if>
+            <if test="contextKey != null and contextKey.contextScope != null">  AND `context_scope` = #{contextKey.contextScope}</if>
+            <if test="contextKey != null and contextKey.contextType != null">  AND `context_type` = #{contextKey.contextType}</if>
+            <if test="props != null">  AND `props` = #{props}</if>
+            <if test="contextValue != null and contextValue.valueStr != null">  AND `value` = #{contextValue.valueStr}</if>
+            <if test="contextId != null">  AND `context_id` = #{contextId}</if>
+            <if test="contextValue != null and contextValue.keywords != null">  AND `keywords` = #{contextValue.keywords}</if>
+        </where>
+
+    </select>
+
+    <select id="getAllContextMapByTime" resultMap="PersistenceContextKeyValue">
+        SELECT * FROM linkis_ps_cs_context_map
+        <where>
+            <if test="#{createTimeStart} != null">  AND `create_time` &gt;= #{createTimeStart}</if>
+            <if test="#{createTimeEnd} != null">  AND `create_time` &lt;= #{createTimeEnd}</if>
+            <if test="#{updateTimeStart} != null">  AND `update_time` &gt;= #{updateTimeStart}</if>
+            <if test="#{updateTimeEnd} != null">  AND `update_time` &lt;= #{updateTimeEnd}</if>
+        </where>
     </select>
 
     <delete id="removeContextMap">

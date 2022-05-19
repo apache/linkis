@@ -38,6 +38,7 @@ class VarMapperTest extends BaseDaoTest {
         VarKey varKey = new VarKey();
         varKey.setKey("myWork6");
         varKey.setApplicationID(-1L);
+        varMapper.insertKey(varKey);
         return varKey;
     }
 

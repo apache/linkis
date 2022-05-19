@@ -24,6 +24,7 @@ import org.apache.linkis.rpc.message.exception.MessageErrorException;
 import org.apache.linkis.rpc.message.exception.MessageWarnException;
 import org.apache.linkis.rpc.message.utils.MessageUtils;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -87,7 +88,15 @@ public class MessageExecutor extends JavaLog {
                 }
             } catch (Throwable t) {
                 logger().error(String.format("method %s call failed", methodWrapper.getAlias()), t);
-                throw new MessageWarnException(10000, "method call failed", t);
+
+                final String errorMsg =
+                        t instanceof InvocationTargetException
+                                ? "method call failed: "
+                                        + ((InvocationTargetException) t)
+                                                .getTargetException()
+                                                .getMessage()
+                                : "method call failed.";
+                throw new MessageWarnException(10000, errorMsg, t);
             }
         }
         return result;

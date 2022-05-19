@@ -37,6 +37,8 @@ trait TaskManager extends OrchestratorSyncListener {
 
   def getRunnableTasks: Array[ExecTaskRunner]
 
+  def taskRunnableTasks(execTaskRunners: Array[ExecTaskRunner]): Array[ExecTaskRunner]
+
   def addCompletedTask(task: ExecTaskRunner): Unit
 
   def pollCompletedExecutionTasks: Array[ExecutionTask]

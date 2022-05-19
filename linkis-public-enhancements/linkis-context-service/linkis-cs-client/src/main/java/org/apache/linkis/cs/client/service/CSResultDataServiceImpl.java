@@ -62,6 +62,7 @@ public class CSResultDataServiceImpl implements CSResultDataService {
     public CSResultData getCSResultData(String contextIDStr, String contextKeyStr)
             throws CSErrorException {
         if (StringUtils.isBlank(contextIDStr) || StringUtils.isBlank(contextKeyStr)) {
+            logger.warn("contextIDStr or nodeName cannot null");
             return null;
         }
         try {
@@ -99,6 +100,10 @@ public class CSResultDataServiceImpl implements CSResultDataService {
             ContextValue contextValue = new CommonContextValue();
             contextValue.setValue(csResultData);
             contextClient.update(contextID, contextKey, contextValue);
+            logger.info(
+                    "succeed to update cs result data,contextIDStr: {}, contextKeyStr: {}",
+                    contextKey,
+                    contextKeyStr);
         } catch (ErrorException e) {
             logger.error("Deserialize error. e ", e);
             throw new CSErrorException(
@@ -111,6 +116,7 @@ public class CSResultDataServiceImpl implements CSResultDataService {
             throws CSErrorException {
         List<CSResultData> rsList = new ArrayList<>();
         if (StringUtils.isBlank(contextIDStr) || StringUtils.isBlank(nodeName)) {
+            logger.warn("contextIDStr or nodeName cannot null");
             return rsList;
         }
         try {

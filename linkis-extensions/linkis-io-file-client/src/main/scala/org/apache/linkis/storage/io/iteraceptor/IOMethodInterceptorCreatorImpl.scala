@@ -18,13 +18,13 @@
 package org.apache.linkis.storage.io.iteraceptor
 
 import org.apache.linkis.common.utils.Logging
-import org.apache.linkis.storage.io.client.IOClient
 import org.apache.linkis.storage.io.IOMethodInterceptorCreator
 import org.apache.linkis.storage.io.client.IOClient
-import javax.annotation.PostConstruct
-import net.sf.cglib.proxy.MethodInterceptor
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.cglib.proxy.MethodInterceptor
 import org.springframework.stereotype.Component
+
+import javax.annotation.PostConstruct
 
 @Component("ioMethod")
 class IOMethodInterceptorCreatorImpl extends IOMethodInterceptorCreator with Logging {

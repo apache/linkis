@@ -59,12 +59,21 @@ public class LinkisJobDataServiceImpl implements LinkisJobDataService {
     public LinkisJobData getLinkisJobData(String contextIDStr, String contextKeyStr)
             throws CSErrorException {
         if (StringUtils.isBlank(contextIDStr) || StringUtils.isBlank(contextKeyStr)) {
+            logger.warn("contextIDStr or nodeName cannot null");
             return null;
         }
         try {
             ContextID contextID = SerializeHelper.deserializeContextID(contextIDStr);
             ContextKey contextKey = SerializeHelper.deserializeContextKey(contextKeyStr);
-            return searchService.getContextValue(contextID, contextKey, LinkisJobData.class);
+            LinkisJobData jobData =
+                    searchService.getContextValue(contextID, contextKey, LinkisJobData.class);
+            if (null != jobData)
+                logger.info(
+                        "contextID: {} and contextKeyStr: {} succeed to getLinkisJobData  {}",
+                        contextID.getContextId(),
+                        contextKeyStr,
+                        jobData.getJobID());
+            return jobData;
         } catch (ErrorException e) {
             logger.error(
                     "Deserialize failed, invalid contextId : "
@@ -96,6 +105,11 @@ public class LinkisJobDataServiceImpl implements LinkisJobDataService {
             ContextValue contextValue = new CommonContextValue();
             contextValue.setValue(linkisJobData);
             contextClient.update(contextID, contextKey, contextValue);
+            logger.info(
+                    "contextID: {} and contextKeyStr: {} succeed to putLinkisJobData  {}",
+                    contextID.getContextId(),
+                    contextKeyStr,
+                    linkisJobData.getJobID());
         } catch (ErrorException e) {
             logger.error("Deserialize error. e ", e);
             throw new CSErrorException(

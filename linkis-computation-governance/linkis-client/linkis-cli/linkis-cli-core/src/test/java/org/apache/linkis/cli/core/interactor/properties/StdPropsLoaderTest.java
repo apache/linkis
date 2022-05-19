@@ -24,9 +24,11 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class StdPropsLoaderTest {
     PropertiesLoader loader;
@@ -59,6 +61,7 @@ public class StdPropsLoaderTest {
     @Test
     public void testSetPropertiesReaders() throws Exception {
         // TODO: Test goes here...
+        loader.setPropertiesReaders(new PropertiesReader[0]);
     }
 
     /** Method: getAllReadersAsMap() */
@@ -94,14 +97,19 @@ public class StdPropsLoaderTest {
     /** Method: loadProperties() */
     @Test
     public void testLoadProperties() throws Exception {
-        // TODO: Test goes here...
         ClientProperties[] loaderResult = loader.loadProperties();
-        for (ClientProperties props : loaderResult) {
-            System.out.println(props.getPropsId());
-            System.out.println(props.getPropertiesSourcePath());
-            System.out.println(props);
-            assertFalse(0 == props.size());
-        }
+
+        List<ClientProperties> properties =
+                Arrays.stream(loaderResult)
+                        .sorted((p1, p2) -> p1.size() - p2.size())
+                        .collect(Collectors.toList());
+
+        assertEquals(2, properties.size());
+        assertEquals(properties.get(0).getPropsId(), "user.properties");
+        assertEquals(properties.get(0).size(), 4);
+
+        assertEquals(properties.get(1).getPropsId(), "linkis-cli.properties");
+        assertEquals(properties.get(1).size(), 8);
     }
 
     /** Method: checkInit() */

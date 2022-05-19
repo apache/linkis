@@ -22,6 +22,7 @@ import org.apache.linkis.udf.entity.UDFTree;
 import org.apache.linkis.udf.excepiton.UDFException;
 import org.apache.linkis.udf.service.UDFService;
 import org.apache.linkis.udf.service.UDFTreeService;
+import org.apache.linkis.udf.utils.ConstantVar;
 import org.apache.linkis.udf.vo.UDFInfoVo;
 
 import org.apache.commons.collections.map.HashedMap;
@@ -34,16 +35,9 @@ import com.google.common.collect.Iterables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import static org.apache.linkis.udf.utils.ConstantVar.BDP_USER;
-import static org.apache.linkis.udf.utils.ConstantVar.EXPIRE_USER;
-import static org.apache.linkis.udf.utils.ConstantVar.SHARE_USER;
-import static org.apache.linkis.udf.utils.ConstantVar.SYS_USER;
+import static org.apache.linkis.udf.utils.ConstantVar.*;
 
 @Service
 public class UDFTreeServiceImpl implements UDFTreeService {
@@ -130,6 +124,14 @@ public class UDFTreeServiceImpl implements UDFTreeService {
     public UDFTree addTree(UDFTree udfTree, String userName) throws UDFException {
         if (userName.equals(udfTree.getUserName())) {
             try {
+                UDFTree parentTree = udfTreeDao.getTreeById(udfTree.getParent());
+                if (parentTree != null && !parentTree.getUserName().equals(userName)) {
+                    throw new UDFException(
+                            "user(用户) "
+                                    + userName
+                                    + ", the parent directory is not yours(父目录不是你的)");
+                }
+
                 logger.info(userName + " to add directory");
                 udfTreeDao.addTree(udfTree);
             } catch (Throwable e) {
@@ -194,7 +196,12 @@ public class UDFTreeServiceImpl implements UDFTreeService {
         if (id == null || id < 0) {
             udfTree = initTree(userName, category);
         } else {
-            udfTree = udfTreeDao.getTreeByIdAndCategory(id, category);
+            if (Arrays.asList(ConstantVar.specialTypes).contains(type)) {
+                udfTree = udfTreeDao.getTreeByIdAndCategory(id, category);
+            } else {
+                udfTree = udfTreeDao.getTreeByIdAndCategoryAndUserName(id, category, userName);
+            }
+
             if (udfTree == null) {
                 return udfTree;
             }

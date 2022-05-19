@@ -139,7 +139,7 @@ export SERVER_HEAP_SIZE="512M"
 ##The decompression directory and the installation directory need to be inconsistent
 #LINKIS_HOME=/appcom/Install/LinkisInstall
 
-LINKIS_VERSION=1.1.1
+LINKIS_VERSION=1.1.2
 
 # for install
 LINKIS_PUBLIC_MODULE=lib/linkis-commons/public-module
@@ -149,3 +149,6 @@ LINKIS_PUBLIC_MODULE=lib/linkis-commons/public-module
 
 #If you want to start metadata related microservices, you can set this export ENABLE_METADATA_MANAGE=true
 export ENABLE_METADATA_MANAGER=false
+export ENABLE_HDFS=false
+export ENABLE_HIVE=false
+export ENABLE_SPARK=false

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.configuration.service
 
 import org.apache.commons.lang3.StringUtils
@@ -176,7 +176,10 @@ class ConfigurationService extends Logging {
       if (setting.getId != null) {
         key = configMapper.selectKeyByKeyID(setting.getId)
       } else {
-        key = configMapper.seleteKeyByKeyName(setting.getKey)
+        val keys = configMapper.seleteKeyByKeyName(setting.getKey)
+        if (null != keys && !keys.isEmpty) {
+          key = keys.get(0)
+        }
       }
       if (key == null) {
         throw new ConfigurationException("config key is null, please check again!(配置信息为空，请重新检查key值)")
@@ -237,18 +240,7 @@ class ConfigurationService extends Logging {
   }
 
 
-  def labelCheck(labelList: java.util.List[Label[_]]): Boolean = {
-    if (!CollectionUtils.isEmpty(labelList)) {
-      labelList.asScala.foreach {
-        case a: UserCreatorLabel => Unit
-        case a: EngineTypeLabel => Unit
-        case label => throw new ConfigurationException(s"this type of label is not supported:${label.getClass}")
-      }
-      true
-    } else {
-      throw new ConfigurationException("The label parameter is empty")
-    }
-  }
+
 
   def replaceCreatorToEngine(defaultCreatorConfigs: util.List[ConfigKeyValue], defaultEngineConfigs: util.List[ConfigKeyValue]): Unit = {
     defaultCreatorConfigs.asScala.foreach(creatorConfig => {
@@ -263,16 +255,8 @@ class ConfigurationService extends Logging {
     })
   }
 
-  /**
-   * Priority: User Configuration-->Creator's Default Engine Configuration-->Default Engine Configuration
-   * For database initialization: you need to modify the linkis.dml file--associated label and default configuration,
-   * modify the engine such as label.label_value = @SPARK_ALL to @SPARK_IDE and so on for each application
-   * @param labelList
-   * @param useDefaultConfig
-   * @return
-   */
-  def getFullTreeByLabelList(labelList: java.util.List[Label[_]], useDefaultConfig: Boolean = true): util.ArrayList[ConfigTree] = {
-    labelCheck(labelList)
+  def getConfigsByLabelList(labelList: java.util.List[Label[_]], useDefaultConfig: Boolean = true): (util.List[ConfigKeyValue], util.List[ConfigKeyValue]) = {
+    LabelParameterParser.labelCheck(labelList)
     val combinedLabel = combinedLabelBuilder.build("", labelList).asInstanceOf[CombinedLabelImpl]
     val label = labelMapper.getLabelByKeyValue(combinedLabel.getLabelKey, combinedLabel.getStringValue)
     var configs: util.List[ConfigKeyValue] = new util.ArrayList[ConfigKeyValue]()
@@ -302,12 +286,54 @@ class ConfigurationService extends Logging {
         replaceCreatorToEngine(defaultCreatorConfigs, defaultEngineConfigs)
       }
     }
+    (configs, defaultEngineConfigs)
+  }
+
+  /**
+   * Priority: User Configuration-->Creator's Default Engine Configuration-->Default Engine Configuration
+   * For database initialization: you need to modify the linkis.dml file--associated label and default configuration,
+   * modify the engine such as label.label_value = @SPARK_ALL to @SPARK_IDE and so on for each application
+   * @param labelList
+   * @param useDefaultConfig
+   * @return
+   */
+  def getFullTreeByLabelList(labelList: java.util.List[Label[_]], useDefaultConfig: Boolean = true): util.ArrayList[ConfigTree] = {
+    val (configs, defaultEngineConfigs) = getConfigsByLabelList(labelList, useDefaultConfig)
     buildTreeResult(configs, defaultEngineConfigs)
   }
 
+  /**
+   * Priority: labelList > defaultConfig
+   * @param labelList
+   * @param useDefaultConfig
+   * @return
+   */
+  def getConfigMapByLabels(labelList: java.util.List[Label[_]], useDefaultConfig: Boolean = true): util.Map[String, String] = {
+    val (configs, defaultEngineConfigs) = getConfigsByLabelList(labelList, useDefaultConfig)
+    val configMap = new util.HashMap[String, String]()
+    if (null != defaultEngineConfigs) {
+      defaultEngineConfigs.asScala.foreach{ keyValue =>
+        if (StringUtils.isNoneBlank(keyValue.getKey) && StringUtils.isNotEmpty(keyValue.getConfigValue)) {
+          configMap.put(keyValue.getKey, keyValue.getConfigValue)
+        }
+      }
+    }
+    if (null != configs) {
+      configs.asScala.foreach{ keyValue =>
+        if (StringUtils.isNoneBlank(keyValue.getKey)) {
+          if (StringUtils.isNoneEmpty(keyValue.getConfigValue)) {
+            configMap.put(keyValue.getKey, keyValue.getConfigValue)
+          } else {
+            configMap.put(keyValue.getKey, keyValue.getDefaultValue)
+          }
+        }
+      }
+    }
+    configMap
+  }
 
   @Transactional
-   def persisteUservalue(configs: util.List[ConfigKeyValue], defaultConfigs: util.List[ConfigKeyValue], combinedLabel: CombinedLabel, existsLabel: ConfigLabel): Unit = {
+  def persisteUservalue(configs: util.List[ConfigKeyValue], defaultConfigs: util.List[ConfigKeyValue], combinedLabel: CombinedLabel, existsLabel: ConfigLabel): Unit = {
     info(s"Start checking the integrity of user configuration data(开始检查用户配置数据的完整性): label标签为：${combinedLabel.getStringValue}")
     val userConfigList = configs.asScala
     val userConfigKeyIdList = userConfigList.map(config => config.getId)
@@ -336,15 +362,16 @@ class ConfigurationService extends Logging {
     info(s"User configuration data integrity check completed!(用户配置数据完整性检查完毕！): label标签为：${combinedLabel.getStringValue}")
   }
 
-    def queryConfigByLabel(labelList: java.util.List[Label[_]], isMerge: Boolean = true, filter: String = null): ResponseQueryConfig = {
-      labelCheck(labelList)
-      val allGolbalUserConfig = getFullTreeByLabelList(labelList)
-      val defaultLabel = LabelParameterParser.changeUserToDefault(labelList)
-      val allGolbalDefaultConfig = getFullTreeByLabelList(defaultLabel)
-      val config = new ResponseQueryConfig
-      config.setKeyAndValue(getMap(allGolbalDefaultConfig, allGolbalUserConfig, filter))
-      config
+  def queryConfigByLabel(labelList: java.util.List[Label[_]], isMerge: Boolean = true, filter: String = null): ResponseQueryConfig = {
+    LabelParameterParser.labelCheck(labelList)
+    val allGolbalUserConfig = getConfigMapByLabels(labelList)
+    val defaultLabel = LabelParameterParser.changeUserToDefault(labelList)
+    val allGolbalDefaultConfig = getConfigMapByLabels(defaultLabel)
+    val config = new ResponseQueryConfig
+    config.setKeyAndValue(getMap(allGolbalDefaultConfig, allGolbalUserConfig, filter))
+    config
   }
+
 
 
   def queryDefaultEngineConfig(engineTypeLabel: EngineTypeLabel): ResponseQueryConfig = {
@@ -375,28 +402,26 @@ class ConfigurationService extends Logging {
     engineConfig
   }
 
-  private def getMap(all: util.List[ConfigTree], user: util.List[ConfigTree], filter: String = null): util.Map[String, String] = {
+  private def getMap(all: util.Map[String, String], user: util.Map[String, String], filter: String = null): util.Map[String, String] = {
     val map = new util.HashMap[String, String]()
-    val allConfig = all.asScala.map(configTree => configTree.getSettings)
-    val userConfig = user.asScala.map(configTree => configTree.getSettings)
     if (filter != null) {
-      allConfig.foreach(f => f.asScala.foreach(configKeyValue => if (configKeyValue.getKey.contains(filter)) map.put(configKeyValue.getKey, configKeyValue.getDefaultValue)))
-      userConfig.foreach(f => f.asScala.foreach(configKeyValue => if (configKeyValue.getKey.contains(filter)) {
-        if (StringUtils.isNotEmpty(configKeyValue.getConfigValue)) {
-          map.put(configKeyValue.getKey, configKeyValue.getConfigValue)
-        } else {
-          map.put(configKeyValue.getKey, configKeyValue.getDefaultValue)
+      if (null != all) {
+        all.asScala.foreach { keyValue =>
+          if (keyValue._1.contains(filter)) {
+            map.put(keyValue._1, keyValue._2)
+          }
         }
-      }))
+      }
+      if (null != user) {
+        user.asScala.foreach{ keyValue =>
+          if (keyValue._1.contains(filter)) {
+            map.put(keyValue._1, keyValue._2)
+          }
+        }
+      }
     } else {
-      allConfig.foreach(f => f.asScala.foreach(configKeyValue => map.put(configKeyValue.getKey, configKeyValue.getDefaultValue)))
-      userConfig.foreach(f => f.asScala.foreach(configKeyValue => {
-        if (StringUtils.isNotEmpty(configKeyValue.getConfigValue)) {
-          map.put(configKeyValue.getKey, configKeyValue.getConfigValue)
-        } else {
-          map.put(configKeyValue.getKey, configKeyValue.getDefaultValue)
-        }
-      }))
+      map.putAll(all)
+      map.putAll(user)
     }
     //user conf reset default value
     map

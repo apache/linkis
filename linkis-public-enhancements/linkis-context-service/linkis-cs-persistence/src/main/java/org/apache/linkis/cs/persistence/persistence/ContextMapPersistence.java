@@ -23,7 +23,6 @@ import org.apache.linkis.cs.common.entity.source.ContextID;
 import org.apache.linkis.cs.common.entity.source.ContextKey;
 import org.apache.linkis.cs.common.entity.source.ContextKeyValue;
 import org.apache.linkis.cs.common.exception.CSErrorException;
-import org.apache.linkis.cs.persistence.entity.PersistenceContextID;
 
 import java.util.Date;
 import java.util.List;
@@ -60,6 +59,6 @@ public interface ContextMapPersistence {
 
     void removeByKeyPrefix(ContextID contextID, ContextType contextType, String keyPrefix);
 
-    List<ContextKeyValue> searchContextIDByTime(Date createTimeStart, Date createTimeEnd,
-                                                     Date updateTimeStart, Date updateTimeEnd);
+    List<ContextKeyValue> searchContextIDByTime(
+            Date createTimeStart, Date createTimeEnd, Date updateTimeStart, Date updateTimeEnd);
 }

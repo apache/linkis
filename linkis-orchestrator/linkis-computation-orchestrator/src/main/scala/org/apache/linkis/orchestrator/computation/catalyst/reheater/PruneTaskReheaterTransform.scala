@@ -30,6 +30,9 @@ import org.apache.linkis.orchestrator.listener.task.TaskLogEvent
 import org.apache.linkis.orchestrator.plans.physical.{ExecTask, PhysicalContext, PhysicalOrchestration, ReheatableExecTask, RetryExecTask}
 import org.apache.linkis.orchestrator.strategy.ExecTaskStatusInfo
 
+import java.util
+import scala.collection.JavaConverters.mapAsScalaMapConverter
+
 /**
  * Transform physical tree by pruning it's nodes
  *
@@ -52,7 +55,15 @@ class PruneTaskRetryTransform extends ReheaterTransform with Logging{
                   Utils.tryCatch{
                     task match {
                       case retryExecTask: RetryExecTask => {
-                        if (retryExecTask.getAge() < ComputationOrchestratorConf.RETRYTASK_MAXIMUM_AGE.getValue) {
+                        val runtimeMap = new util.HashMap[String, String]()
+                        Utils.tryAndWarn {
+                          retryExecTask.getTaskDesc.getOrigin.getASTOrchestration.getASTContext.getParams.getRuntimeParams.toMap.asScala.foreach(kv => {
+                            if (kv._2.isInstanceOf[String]) {
+                              runtimeMap.put(kv._1, kv._2.asInstanceOf[String])
+                            }
+                          })
+                        }
+                        if (retryExecTask.getAge() < ComputationOrchestratorConf.RETRYTASK_MAXIMUM_AGE.getValue(runtimeMap)) {
                           val newTask = new RetryExecTask(retryExecTask.getOriginTask, retryExecTask.getAge() + 1)
                           newTask.initialize(retryExecTask.getPhysicalContext)
                           TreeNodeUtil.replaceNode(retryExecTask, newTask)

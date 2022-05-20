@@ -17,7 +17,7 @@
  
 package org.apache.linkis.entrance.interceptor.impl
 
-import org.apache.linkis.common.utils.Utils
+import org.apache.linkis.common.utils.{CodeAndRunTypeUtils, Utils}
 import org.apache.linkis.entrance.interceptor.EntranceInterceptor
 import org.apache.linkis.entrance.interceptor.exception.ScalaCodeCheckException
 import org.apache.linkis.governance.common.entity.job.JobRequest
@@ -28,13 +28,12 @@ import java.lang
 
 class ScalaCodeInterceptor extends EntranceInterceptor {
 
-  private val SCALA_TYPE = "scala"
-
   override def apply(jobRequest: JobRequest, logAppender: lang.StringBuilder): JobRequest = {
     val codeType = LabelUtil.getCodeType(jobRequest.getLabels)
+    val runType = CodeAndRunTypeUtils.getRunTypeByCodeType(codeType)
     val errorBuilder = new StringBuilder("")
-    codeType match {
-      case SCALA_TYPE => Utils.tryThrow(ScalaExplain.authPass(jobRequest.getExecutionCode, errorBuilder)) {
+    runType match {
+      case CodeAndRunTypeUtils.RUN_TYPE_SCALA => Utils.tryThrow(ScalaExplain.authPass(jobRequest.getExecutionCode, errorBuilder)) {
         case ScalaCodeCheckException(errorCode, errDesc) => jobRequest.setErrorCode(errorCode)
           jobRequest.setErrorDesc(errDesc)
             ScalaCodeCheckException(errorCode, errDesc)

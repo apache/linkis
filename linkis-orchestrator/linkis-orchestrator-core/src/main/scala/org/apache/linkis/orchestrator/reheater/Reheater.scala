@@ -24,6 +24,6 @@ import org.apache.linkis.orchestrator.plans.physical.ExecTask
   */
 trait Reheater {
 
-  def reheat(execTask: ExecTask): Unit
+  def reheat(execTask: ExecTask): Boolean
 
 }

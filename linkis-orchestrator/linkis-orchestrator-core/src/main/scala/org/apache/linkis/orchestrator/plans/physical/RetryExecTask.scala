@@ -45,7 +45,7 @@ class RetryExecTask(private val originTask: ExecTask, private val age: Int = 1) 
   private  def getMaxWaitTime(): Long = {
     val userCreatorLabel = LabelUtil.getUserCreatorLabel(getLabels)
     var waitTime: Long = OrchestratorConfiguration.RETRY_TASK_WAIT_TIME.getValue
-    if (null != userCreatorLabel && OrchestratorConfiguration.SCHEDULIS_CREATOR.getValue.equalsIgnoreCase(userCreatorLabel.getCreator)) {
+    if (null != userCreatorLabel && OrchestratorConfiguration.SCHEDULIS_CREATOR.contains(userCreatorLabel.getCreator)) {
       waitTime = OrchestratorConfiguration.SCHEDULER_RETRY_TASK_WAIT_TIME.getValue
     }
     val reTryTimeOutLabel = LabelUtil.getLabelFromList[RetryWaitTimeOutLabel](getLabels)

@@ -75,4 +75,7 @@ object GatewayConfiguration {
 
   // Use regex to match against URLs, if matched, let them pass anyway(even if not currently logged in), Use "()" and "|" to match against multiple URLs
   val GATEWAY_NO_AUTH_URL_REGEX = CommonVars("wds.linkis.gateway.no.auth.url.regex", ".*visualis.*share.*")
+
+  val THIS_GATEWAY_URL = CommonVars("wds.linkis.gateway.this.url", "")
+  val THIS_GATEWAY_SCHEMA = CommonVars("wds.linkis.gateway.this.schema", "")
 }

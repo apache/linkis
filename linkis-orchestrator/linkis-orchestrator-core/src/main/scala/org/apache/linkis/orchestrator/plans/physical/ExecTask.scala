@@ -45,9 +45,9 @@ trait ExecTask extends PhysicalOrchestration[ExecTask] {
     val desc = getTaskDesc
     val jobID = desc.getOrigin.getASTOrchestration match {
       case job: Job =>
-        job.getId
+        job.getIDInfo()
       case stage: Stage =>
-        stage.getJob.getId
+        stage.getJob.getIDInfo()
       case _ => ""
     }
     jobID + "_" + getId

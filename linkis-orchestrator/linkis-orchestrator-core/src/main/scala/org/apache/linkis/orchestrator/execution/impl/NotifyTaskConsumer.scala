@@ -33,20 +33,29 @@ abstract class NotifyTaskConsumer extends TaskConsumer with OrchestratorAsyncLis
 
   protected def getWaitTime: Long = OrchestratorConfiguration.TASK_CONSUMER_WAIT.getValue
 
-  protected def beforeFetchLaunchTask(): Unit = {}
+  protected def beforeFetchLaunchTask(): Array[ExecTaskRunner] = {
+    null
+  }
 
   protected def beforeLaunchTask(runnableTasks: Array[ExecTaskRunner]): Unit = {}
 
   protected def afterLaunchTask(runnableTasks: Array[ExecTaskRunner]): Unit = {}
 
+  /**
+   * 1. The reheater gets the tasks that can be executed and performs the reheater
+   * 2. If a task is reheater, it will not be executed this time until it is scheduled next time
+   * 3. Execute the tasks after the reheater
+   */
   override def run(): Unit = {
     while (!isStopped)
       Utils.tryAndErrorMsg {
-        beforeFetchLaunchTask()
-        val runnableTasks = getExecution.taskManager.getRunnableTasks
-        beforeLaunchTask(runnableTasks)
-        runnableTasks.foreach(getExecution.taskScheduler.launchTask)
-        afterLaunchTask(runnableTasks)
+        val runners = beforeFetchLaunchTask()
+        if (null != runners && runners.nonEmpty) {
+          val runnableTasks = getExecution.taskManager.taskRunnableTasks(runners)
+          beforeLaunchTask(runnableTasks)
+          runnableTasks.foreach(getExecution.taskScheduler.launchTask)
+          afterLaunchTask(runnableTasks)
+        }
         notifyLock synchronized {
           notifyLock.wait(getWaitTime)
         }

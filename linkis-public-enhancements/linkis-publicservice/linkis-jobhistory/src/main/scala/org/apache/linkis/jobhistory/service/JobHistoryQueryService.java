@@ -38,7 +38,7 @@ public interface JobHistoryQueryService {
 
     JobHistory getJobHistoryByIdAndName(Long jobID, String userName);
 
-    List<JobHistory> search(Long jobId, String username, String creator, String status, Date sDate, Date eDate, String executionApplicationName);
+    List<JobHistory> search(Long jobId, String username, String creator, String status, Date sDate, Date eDate, String executionApplicationName, Long startJobId);
 
     JobHistory searchOne(Long jobId, Date sDate, Date eDate);
 

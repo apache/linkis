@@ -147,7 +147,7 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long) exten
 
     res
   }
-  def executeLine(code: String, engineExecutionContext: EngineExecutionContext): ExecuteResponse = synchronized {
+  def executeLine(code: String, engineExecutionContext: EngineExecutionContext): ExecuteResponse = {
     if(sparkContext.isStopped) {
       error("Spark application has already stopped, please restart it.")
       throw new ApplicationAlreadyStoppedException(40004,"Spark application has already stopped, please restart it.")

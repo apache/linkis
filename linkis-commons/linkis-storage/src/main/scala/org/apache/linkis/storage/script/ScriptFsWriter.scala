@@ -22,7 +22,7 @@ import java.io.{InputStream, OutputStream}
 import org.apache.linkis.common.io.{FsPath, FsWriter, MetaData}
 import org.apache.linkis.storage.LineRecord
 import org.apache.linkis.storage.script.compaction.{PYScriptCompaction, QLScriptCompaction, ScalaScriptCompaction, ShellScriptCompaction}
-import org.apache.linkis.storage.script.parser.{PYScriptParser, QLScriptParser, ScalaScriptParser}
+import org.apache.linkis.storage.script.parser.{PYScriptParser, QLScriptParser, ScalaScriptParser, ShellScriptParser}
 import org.apache.linkis.storage.script.writer.StorageScriptFsWriter
 
 abstract class ScriptFsWriter extends FsWriter {
@@ -41,11 +41,11 @@ object ScriptFsWriter {
 
 
 object ParserFactory {
-  def listParsers(): Array[Parser] = Array(PYScriptParser(), QLScriptParser(), ScalaScriptParser())
+  def listParsers(): Array[Parser] = Array(PYScriptParser(), QLScriptParser(), ScalaScriptParser(), ShellScriptParser())
 }
 
 object Compaction {
-  def listCompactions(): Array[Compaction] = Array(PYScriptCompaction(), QLScriptCompaction(), ScalaScriptCompaction(),ShellScriptCompaction())
+  def listCompactions(): Array[Compaction] = Array(PYScriptCompaction(), QLScriptCompaction(), ScalaScriptCompaction(), ShellScriptCompaction())
 }
 
 trait Parser {

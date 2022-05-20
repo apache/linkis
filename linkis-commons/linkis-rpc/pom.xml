@@ -22,7 +22,7 @@
     <parent>
         <artifactId>linkis</artifactId>
         <groupId>org.apache.linkis</groupId>
-        <version>1.1.1</version>
+        <version>1.1.2</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -48,10 +48,6 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-openfeign</artifactId>
             <exclusions>
-                <exclusion>
-                    <artifactId>spring-boot-autoconfigure</artifactId>
-                    <groupId>org.springframework.boot</groupId>
-                </exclusion>
                 <exclusion>
                     <artifactId>spring-boot-starter-aop</artifactId>
                     <groupId>org.springframework.boot</groupId>
@@ -84,10 +80,6 @@
                     <artifactId>spring-cloud-commons</artifactId>
                     <groupId>org.springframework.cloud</groupId>
                 </exclusion>
-                <exclusion>
-                    <artifactId>spring-cloud-starter-openfeign</artifactId>
-                    <groupId>org.springframework.cloud</groupId>
-                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -100,7 +92,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
         <dependency>
             <groupId>io.protostuff</groupId>
             <artifactId>protostuff-core</artifactId>

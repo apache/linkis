@@ -17,30 +17,56 @@
 
 package org.apache.linkis.cli.core.exception.handler;
 
-import org.apache.linkis.cli.common.entity.command.CmdTemplate;
+import org.apache.linkis.cli.common.exception.error.ErrorLevel;
+import org.apache.linkis.cli.common.exception.handler.ExceptionHandler;
 import org.apache.linkis.cli.core.exception.CommandException;
+import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
+import org.apache.linkis.cli.core.interactor.command.TestCmdType;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class CommandExceptionHandlerTest {
-    Exception e;
-    CommandException ce1, ce2, ce3;
-    CmdTemplate template;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
-    @BeforeEach
-    public void init() {
-        //    e = new Exception("exception test");
-        //    template = null;
-        //    ce1 = new CommandException(CommonErrorType.UnknownError, "spark");
-    }
+public class CommandExceptionHandlerTest {
+    ExceptionHandler handler = new CommandExceptionHandler();
 
     @Test
     public void handle() throws Exception {
-        //    ExceptionHandler handler = new CommandExceptionHandler();
-        //    handler.handle(e);
-        //    handler.handle(ce1);
-        //    handler.handle(ce2);
-        //    handler.handle(ce3);
+        CommandException cmdException =
+                new CommandException(
+                        "CODE-001",
+                        ErrorLevel.ERROR,
+                        CommonErrMsg.TemplateGenErr,
+                        "Failed to generate template.");
+        assertDoesNotThrow(() -> handler.handle(cmdException));
+
+        String[] params = {"param1", "param2"};
+        CommandException cmdException2 =
+                new CommandException(
+                        "CODE-001",
+                        ErrorLevel.ERROR,
+                        CommonErrMsg.TemplateGenErr,
+                        params,
+                        "Failed to generate template.");
+        assertDoesNotThrow(() -> handler.handle(cmdException2));
+
+        CommandException cmdException3 =
+                new CommandException(
+                        "CODE-001",
+                        ErrorLevel.ERROR,
+                        CommonErrMsg.TemplateGenErr,
+                        TestCmdType.PRIMARY,
+                        "Failed to generate template.");
+        assertDoesNotThrow(() -> handler.handle(cmdException3));
+
+        CommandException cmdException4 =
+                new CommandException(
+                        "CODE-001",
+                        ErrorLevel.ERROR,
+                        CommonErrMsg.TemplateGenErr,
+                        TestCmdType.PRIMARY,
+                        params,
+                        "Failed to generate template.");
+        assertDoesNotThrow(() -> handler.handle(cmdException4));
     }
 }

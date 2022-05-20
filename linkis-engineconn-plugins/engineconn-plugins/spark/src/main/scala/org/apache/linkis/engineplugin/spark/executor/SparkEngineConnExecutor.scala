@@ -17,17 +17,18 @@
  
 package org.apache.linkis.engineplugin.spark.executor
 
-import java.util
-import java.util.concurrent.atomic.AtomicLong
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{ByteTimeUtils, Logging, Utils}
 import org.apache.linkis.engineconn.computation.executor.execute.{ComputationExecutor, EngineExecutionContext}
+import org.apache.linkis.engineconn.computation.executor.utlis.ProgressUtils
 import org.apache.linkis.engineconn.executor.entity.ResourceFetchExecutor
 import org.apache.linkis.engineplugin.spark.common.Kind
 import org.apache.linkis.engineplugin.spark.cs.CSSparkHelper
 import org.apache.linkis.engineplugin.spark.extension.{SparkPostExecutionHook, SparkPreExecutionHook}
 import org.apache.linkis.engineplugin.spark.utils.JobProgressUtil
 import org.apache.linkis.governance.common.exception.LinkisJobRetryException
+import org.apache.linkis.governance.common.utils.JobUtils
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.common.entity.resource._
 import org.apache.linkis.manager.common.protocol.resource.ResourceWithStatus
@@ -37,6 +38,8 @@ import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.apache.linkis.scheduler.executer.ExecuteResponse
 import org.apache.spark.SparkContext
 
+import java.util
+import java.util.concurrent.atomic.AtomicLong
 import scala.collection.JavaConverters._
 import scala.collection.mutable.ArrayBuffer
 
@@ -45,7 +48,7 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long) extends C
 
   private var initialized: Boolean = false
 
-  private val OLD_PROGRESS_KEY = "oldProgress"
+
 
   private var jobGroup: String = _
 
@@ -79,7 +82,13 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long) extends C
     Utils.tryAndWarn(CSSparkHelper.setContextIDInfoToSparkConf(engineExecutorContext, sc))
     val _code = Kind.getRealCode(preCode)
     info(s"Ready to run code with kind $kind.")
-    jobGroup = String.valueOf("linkis-spark-mix-code-" + queryNum.incrementAndGet())
+    val jobId = JobUtils.getJobIdFromMap(engineExecutorContext.getProperties)
+    val jobGroupId = if (StringUtils.isNotBlank(jobId)) {
+      jobId
+    } else {
+      queryNum.incrementAndGet()
+    }
+    jobGroup = String.valueOf("linkis-spark-mix-code-" + jobGroupId)
     //    val executeCount = queryNum.get().toInt - 1
     info("Set jobGroup to " + jobGroup)
     sc.setJobGroup(jobGroup, _code, true)
@@ -103,28 +112,15 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long) extends C
   }
 
 
-  private def getOldProgress(): Float = {
-    if (null == this.engineExecutionContext) {
-      0f
-    } else {
-      val value = this.engineExecutionContext.getProperties.get(OLD_PROGRESS_KEY)
-      if (null == value) 0f else value.asInstanceOf[Float]
-    }
-  }
 
-  private def putProgress(newProgress: Float): Unit = {
-    if (null != this.engineExecutionContext) {
-      this.engineExecutionContext.getProperties.put(OLD_PROGRESS_KEY, newProgress.asInstanceOf[AnyRef])
-    }
-  }
 
-  override def progress(taskID: String): Float = if (jobGroup == null || engineExecutionContext.getTotalParagraph == 0) getOldProgress()
+  override def progress(taskID: String): Float = if (jobGroup == null || engineExecutionContext.getTotalParagraph == 0) ProgressUtils.getOldProgress(this.engineExecutionContext)
   else {
     val newProgress = (engineExecutionContext.getCurrentParagraph * 1f - 1f)/ engineExecutionContext.getTotalParagraph + JobProgressUtil.progress(sc, jobGroup)/engineExecutionContext.getTotalParagraph
     val normalizedProgress = if (newProgress >= 1) newProgress - 0.1f else newProgress
-    val oldProgress = getOldProgress()
+    val oldProgress = ProgressUtils.getOldProgress(this.engineExecutionContext)
     if(normalizedProgress < oldProgress) oldProgress else {
-      putProgress(normalizedProgress)
+      ProgressUtils.putProgress(normalizedProgress, this.engineExecutionContext)
       normalizedProgress
     }
   }

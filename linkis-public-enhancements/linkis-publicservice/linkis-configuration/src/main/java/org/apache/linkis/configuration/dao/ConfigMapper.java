@@ -43,6 +43,10 @@ public interface ConfigMapper {
 
     ConfigValue getConfigValueById(@Param("id") Long id);
 
+    ConfigValue getConfigValueByKeyAndLabel(ConfigValue configValue);
+
+    void deleteConfigKeyValue(ConfigValue configValue);
+
     void insertValueList(@Param("configValues") List<ConfigValue> configValues);
 
     void updateUserValue(@Param("value") String value, @Param("id") Long id);
@@ -51,7 +55,7 @@ public interface ConfigMapper {
 
     ConfigKey selectKeyByKeyID(@Param("id") Long keyID);
 
-    ConfigKey seleteKeyByKeyName(@Param("keyName") String keyName);
+    List<ConfigKey> seleteKeyByKeyName(@Param("keyName") String keyName);
 
     List<ConfigKey> listKeyByStringValue(@Param("stringValue") String stringValue);
 

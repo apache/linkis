@@ -32,7 +32,6 @@ import traceback
 import warnings
 import signal
 import base64
-import pandas as pd
 from py4j.java_gateway import JavaGateway
 from io import BytesIO
 try:

@@ -291,9 +291,14 @@ public class ContextServiceImpl extends ContextService {
     }
 
     @Override
-    public int clearAllContextByTime(Date createTimeStart, Date createTimeEnd, Date updateTimeStart, Date updateTimeEnd) throws CSErrorException {
+    public int clearAllContextByTime(
+            Date createTimeStart, Date createTimeEnd, Date updateTimeStart, Date updateTimeEnd)
+            throws CSErrorException {
         int num = 0;
-        List<PersistenceContextID> idList = getIDPersistence().searchContextIDByTime(createTimeStart, createTimeEnd, updateTimeStart, updateTimeEnd);
+        List<PersistenceContextID> idList =
+                getIDPersistence()
+                        .searchContextIDByTime(
+                                createTimeStart, createTimeEnd, updateTimeStart, updateTimeEnd);
         for (PersistenceContextID id : idList) {
             getIDPersistence().deleteContextID(id.getContextId());
             getPersistence().removeAll(id);
@@ -301,5 +306,4 @@ public class ContextServiceImpl extends ContextService {
         }
         return num;
     }
-
 }

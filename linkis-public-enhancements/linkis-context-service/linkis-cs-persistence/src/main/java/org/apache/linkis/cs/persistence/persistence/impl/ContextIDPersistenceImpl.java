@@ -130,7 +130,8 @@ public class ContextIDPersistenceImpl implements ContextIDPersistence {
     }
 
     @Override
-    public List<PersistenceContextID> searchContextID(PersistenceContextID contextID) throws CSErrorException {
+    public List<PersistenceContextID> searchContextID(PersistenceContextID contextID)
+            throws CSErrorException {
         PersistenceContextID persistenceContextID = new PersistenceContextID();
         persistenceContextID.setContextId(contextID.getContextId());
         persistenceContextID.setContextIDType(contextID.getContextIDType());
@@ -138,9 +139,9 @@ public class ContextIDPersistenceImpl implements ContextIDPersistence {
     }
 
     @Override
-    public List<PersistenceContextID> searchContextIDByTime(Date createTimeStart, Date createTimeEnd, Date updateTimeStart, Date updateTimeEnd) {
-        return contextIDMapper.getAllContextIDByTime(createTimeStart, createTimeEnd, updateTimeStart, updateTimeEnd);
+    public List<PersistenceContextID> searchContextIDByTime(
+            Date createTimeStart, Date createTimeEnd, Date updateTimeStart, Date updateTimeEnd) {
+        return contextIDMapper.getAllContextIDByTime(
+                createTimeStart, createTimeEnd, updateTimeStart, updateTimeEnd);
     }
-
-
 }

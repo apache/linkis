@@ -51,8 +51,11 @@ public interface ContextMapMapper {
 
     List<PersistenceContextKeyValue> getAllContextMap(PersistenceContextKeyValue pKV);
 
-    List<PersistenceContextKeyValue> getAllContextMapByTime(@Param("createTimeStart") Date createTimeStart, @Param("createTimeEnd") Date createTimeEnd,
-                                                            @Param("updateTimeStart") Date updateTimeStart, @Param("updateTimeEnd") Date updateTimeEnd);
+    List<PersistenceContextKeyValue> getAllContextMapByTime(
+            @Param("createTimeStart") Date createTimeStart,
+            @Param("createTimeEnd") Date createTimeEnd,
+            @Param("updateTimeStart") Date updateTimeStart,
+            @Param("updateTimeEnd") Date updateTimeEnd);
 
     void removeContextMap(
             @Param("contextID") ContextID contextID, @Param("contextKey") ContextKey contextKey);

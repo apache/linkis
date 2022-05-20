@@ -32,7 +32,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -83,20 +82,38 @@ public class ContextIDServiceImpl extends ContextIDService {
     }
 
     @Override
-    public List<ContextID> searchCSIDByTime(Date createTimeStart, Date createTimeEnd, Date updateTimeStart, Date updateTimeEnd) throws CSErrorException {
-        List<PersistenceContextID> rs = getPersistence().searchContextIDByTime(createTimeStart, createTimeEnd, updateTimeStart, updateTimeEnd);
+    public List<ContextID> searchCSIDByTime(
+            Date createTimeStart, Date createTimeEnd, Date updateTimeStart, Date updateTimeEnd)
+            throws CSErrorException {
+        List<PersistenceContextID> rs =
+                getPersistence()
+                        .searchContextIDByTime(
+                                createTimeStart, createTimeEnd, updateTimeStart, updateTimeEnd);
         List<ContextID> result = new ArrayList<>();
         List<ContextID> errList = new ArrayList<>();
-        if (null != rs) rs.stream().forEach((persistenceContextID -> {
-            try {
-                result.add(getPersistence().getContextID(persistenceContextID.getContextId()));
-            } catch (CSErrorException e) {
-                logger.error("getContextError id : {}, source : {}", persistenceContextID.getContextId(), persistenceContextID.getSource());
-                errList.add(persistenceContextID);
-            }
-        }));
+        if (null != rs)
+            rs.stream()
+                    .forEach(
+                            (persistenceContextID -> {
+                                try {
+                                    result.add(
+                                            getPersistence()
+                                                    .getContextID(
+                                                            persistenceContextID.getContextId()));
+                                } catch (CSErrorException e) {
+                                    logger.error(
+                                            "getContextError id : {}, source : {}",
+                                            persistenceContextID.getContextId(),
+                                            persistenceContextID.getSource());
+                                    errList.add(persistenceContextID);
+                                }
+                            }));
         if (errList.size() > 0) {
-            throw new CSErrorException(97001, "There are " + errList.size() + " persistenceContextID that cannot be deserized from source.");
+            throw new CSErrorException(
+                    97001,
+                    "There are "
+                            + errList.size()
+                            + " persistenceContextID that cannot be deserized from source.");
         }
         return result;
     }

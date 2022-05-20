@@ -19,6 +19,7 @@ package org.apache.linkis.jobhistory.restful.api;
 
 import org.apache.linkis.governance.common.constant.job.JobRequestConstants;
 import org.apache.linkis.governance.common.entity.job.QueryException;
+import org.apache.linkis.jobhistory.cache.impl.DefaultQueryCacheManager;
 import org.apache.linkis.jobhistory.conf.JobhistoryConfiguration;
 import org.apache.linkis.jobhistory.conversions.TaskConversions;
 import org.apache.linkis.jobhistory.dao.JobDetailMapper;
@@ -52,6 +53,8 @@ public class QueryRestfulApi {
 
     @Autowired private JobHistoryQueryService jobHistoryQueryService;
     @Autowired private JobDetailMapper jobDetailMapper;
+
+    @Autowired private DefaultQueryCacheManager queryCacheManager;
 
     @RequestMapping(path = "/governanceStationAdmin", method = RequestMethod.GET)
     public Message governanceStationAdmin(HttpServletRequest req) {
@@ -163,7 +166,8 @@ public class QueryRestfulApi {
                             creator,
                             sDate,
                             eDate,
-                            executeApplicationName);
+                            executeApplicationName,
+                            null);
         } finally {
             PageHelper.clearPage();
         }
@@ -185,6 +189,77 @@ public class QueryRestfulApi {
                 }
                 break;
             }*/
+        }
+        return Message.ok()
+                .data(TaskConstant.TASKS, vos)
+                .data(JobRequestConstants.TOTAL_PAGE(), total);
+    }
+
+    /** Method list should not contain subjob, which may cause performance problems. */
+    @RequestMapping(path = "/listundone", method = RequestMethod.GET)
+    public Message listundone(
+            HttpServletRequest req,
+            @RequestParam(value = "startDate", required = false) Long startDate,
+            @RequestParam(value = "endDate", required = false) Long endDate,
+            @RequestParam(value = "status", required = false) String status,
+            @RequestParam(value = "pageNow", required = false) Integer pageNow,
+            @RequestParam(value = "pageSize", required = false) Integer pageSize,
+            @RequestParam(value = "startTaskID", required = false) Long taskID,
+            @RequestParam(value = "engineType", required = false) String engineType,
+            @RequestParam(value = "creator", required = false) String creator)
+            throws IOException, QueryException {
+        String username = SecurityFilter.getLoginUsername(req);
+        if (StringUtils.isEmpty(status)) {
+            status = "Running,Inited,Scheduled";
+        }
+        if (StringUtils.isEmpty(pageNow)) {
+            pageNow = 1;
+        }
+        if (StringUtils.isEmpty(pageSize)) {
+            pageSize = 20;
+        }
+        if (endDate == null) {
+            endDate = System.currentTimeMillis();
+        }
+        if (startDate == null) {
+            startDate = 0L;
+        }
+        if (StringUtils.isEmpty(creator)) {
+            creator = null;
+        }
+        Date sDate = new Date(startDate);
+        Date eDate = new Date(endDate);
+        if (sDate.getTime() == eDate.getTime()) {
+            Calendar instance = Calendar.getInstance();
+            instance.setTimeInMillis(endDate);
+            instance.add(Calendar.DAY_OF_MONTH, 1);
+            eDate = new Date(instance.getTime().getTime()); // todo check
+        }
+        List<JobHistory> queryTasks = null;
+        PageHelper.startPage(pageNow, pageSize);
+        try {
+            queryTasks =
+                    jobHistoryQueryService.search(
+                            taskID,
+                            username,
+                            status,
+                            creator,
+                            sDate,
+                            eDate,
+                            engineType,
+                            queryCacheManager.getUndoneTaskMinId());
+        } finally {
+            PageHelper.clearPage();
+        }
+
+        PageInfo<JobHistory> pageInfo = new PageInfo<>(queryTasks);
+        List<JobHistory> list = pageInfo.getList();
+        long total = pageInfo.getTotal();
+        List<QueryTaskVO> vos = new ArrayList<>();
+        for (JobHistory jobHistory : list) {
+            QueryUtils.exchangeExecutionCode(jobHistory);
+            QueryTaskVO taskVO = TaskConversions.jobHistory2TaskVO(jobHistory, null);
+            vos.add(taskVO);
         }
         return Message.ok()
                 .data(TaskConstant.TASKS, vos)

@@ -18,19 +18,24 @@
 package org.apache.linkis.cli.core.interactor.command.parser;
 
 import org.apache.linkis.cli.common.entity.command.CmdTemplate;
+import org.apache.linkis.cli.common.entity.command.ParamItem;
 import org.apache.linkis.cli.core.interactor.command.TestCmdType;
 import org.apache.linkis.cli.core.interactor.command.fitter.SingleTplFitter;
 import org.apache.linkis.cli.core.interactor.command.parser.result.ParseResult;
 import org.apache.linkis.cli.core.interactor.command.template.TestParamMapper;
 import org.apache.linkis.cli.core.interactor.command.template.TestSparkCmdTemplate;
-import org.apache.linkis.cli.core.utils.CommonUtils;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SingleCmdParserTest {
     String[] cmdStr;
@@ -77,7 +82,7 @@ public class SingleCmdParserTest {
 
     /** Method: parse(String[] input) */
     @Test
-    public void testParse() throws Exception {
+    public void testParse() {
 
         Parser parser =
                 new SingleCmdParser()
@@ -87,9 +92,39 @@ public class SingleCmdParserTest {
                         .setMapper(new TestParamMapper());
 
         ParseResult result = parser.parse(cmdStr);
-        System.out.println(result.getParams().getCmdType());
-        System.out.println(CommonUtils.GSON.toJson(result.getParams()));
-        System.out.println(CommonUtils.GSON.toJson(result.getRemains()));
+
+        assertEquals(result.getParams().getCmdType(), TestCmdType.SPARK);
+
+        Map<String, ParamItem> params = result.getParams().getParamItemMap();
+
+        assertEquals(params.size(), 21);
+
+        List<String> sortedKeys = params.keySet().stream().sorted().collect(Collectors.toList());
+        assertEquals(
+                sortedKeys,
+                Arrays.asList(
+                        "converted.args",
+                        "converted.split",
+                        "param.common.command",
+                        "param.common.file",
+                        "param.common.other.kv",
+                        "param.help",
+                        "param.primary.database",
+                        "param.primary.password",
+                        "param.primary.proxy",
+                        "param.primary.proxyUser",
+                        "param.primary.synckey",
+                        "param.primary.user",
+                        "param.primary.user.conf",
+                        "param.spark.executor.cores",
+                        "param.spark.executor.memory",
+                        "param.spark.hiveconf",
+                        "param.spark.name",
+                        "param.spark.num.executors",
+                        "param.spark.runtype",
+                        "param.spark.shuffle.partitions",
+                        "param.yarn.queue"));
+        assertEquals(result.getRemains().length, 0);
     }
 
     /** Method: parsePrimary(String[] input) */

@@ -76,6 +76,8 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000) extends Acc
 
   private val MAX_TASK_EXECUTE_NUM = ComputationExecutorConf.ENGINE_MAX_TASK_EXECUTE_NUM.getValue
 
+  private val CLOSE_LOCKER = new Object
+
   protected def setInitialized(inited: Boolean = true): Unit = this.engineInitialized = inited
 
   final override def tryReady(): Boolean = {
@@ -120,7 +122,7 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000) extends Acc
   protected def callback(): Unit = {}
 
   override def close(): Unit = {
-    if (null != lastTask) synchronized {
+    if (null != lastTask) CLOSE_LOCKER.synchronized {
       killTask(lastTask.getTaskId)
     } else {
       killTask("By close")

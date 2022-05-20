@@ -17,6 +17,7 @@
  
 package org.apache.linkis.entrance.interceptor.impl
 
+import org.apache.linkis.common.utils.CodeAndRunTypeUtils
 import org.apache.linkis.entrance.interceptor.EntranceInterceptor
 import org.apache.linkis.entrance.interceptor.exception.CodeCheckException
 import org.apache.linkis.governance.common.entity.job.JobRequest
@@ -27,8 +28,9 @@ class SparkCodeCheckInterceptor extends EntranceInterceptor {
 
   override def apply(jobRequest: JobRequest, logAppender: java.lang.StringBuilder): JobRequest = {
     val codeType = LabelUtil.getCodeType(jobRequest.getLabels)
-    codeType match {
-      case "scala" => val codeBuilder: StringBuilder = new StringBuilder()
+    val runType = CodeAndRunTypeUtils.getRunTypeByCodeType(codeType)
+    runType match {
+      case CodeAndRunTypeUtils.RUN_TYPE_SCALA => val codeBuilder: StringBuilder = new StringBuilder()
         val isAuth = SparkExplain.authPass(jobRequest.getExecutionCode, codeBuilder)
             if (!isAuth) {
               throw CodeCheckException(20050, "spark code check failed")

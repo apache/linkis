@@ -46,15 +46,17 @@ import org.apache.hadoop.hive.ql.session.SessionState
 import org.apache.hadoop.mapred.{JobStatus, RunningJob}
 import org.apache.hadoop.security.UserGroupInformation
 import org.slf4j.LoggerFactory
+
 import java.io.ByteArrayOutputStream
 import java.security.PrivilegedExceptionAction
 import java.util
 import java.util.concurrent.atomic.AtomicBoolean
-
 import org.apache.linkis.engineconn.executor.entity.ResourceFetchExecutor
 import org.apache.linkis.engineplugin.hive.conf.Counters
 import org.apache.linkis.manager.common.protocol.resource.ResourceWithStatus
 import org.apache.commons.lang.StringUtils
+import org.apache.linkis.engineconn.computation.executor.utlis.ProgressUtils
+import org.apache.linkis.governance.common.utils.JobUtils
 
 import scala.collection.JavaConversions._
 import scala.collection.mutable
@@ -120,6 +122,11 @@ class HiveEngineConnExecutor(id: Int,
     currentSqlProgress = 0.0f
     val realCode = code.trim()
     LOG.info(s"hive client begins to run hql code:\n ${realCode.trim}")
+    val jobId = JobUtils.getJobIdFromMap(engineExecutorContext.getProperties)
+    if (StringUtils.isNotBlank(jobId)) {
+      LOG.info(s"set mapreduce.job.tags=LINKIS_$jobId")
+      hiveConf.set("mapreduce.job.tags", s"LINKIS_$jobId")
+    }
     if (realCode.trim.length > 500) {
       engineExecutorContext.appendStdout(s"$getId >> ${realCode.trim.substring(0, 500)} ...")
     } else engineExecutorContext.appendStdout(s"$getId >> ${realCode.trim}")
@@ -399,8 +406,12 @@ class HiveEngineConnExecutor(id: Int,
       }
 
       logger.debug(s"hive progress is $totalProgress")
-      if (totalProgress.isNaN || totalProgress.isInfinite) return currentBegin
-      totalProgress + currentBegin
+      val newProgress = if (totalProgress.isNaN || totalProgress.isInfinite) currentBegin else totalProgress + currentBegin
+      val oldProgress = ProgressUtils.getOldProgress(this.engineExecutorContext)
+      if(newProgress < oldProgress) oldProgress else {
+        ProgressUtils.putProgress(newProgress, this.engineExecutorContext)
+        newProgress
+      }
     } else 0.0f
   }
 

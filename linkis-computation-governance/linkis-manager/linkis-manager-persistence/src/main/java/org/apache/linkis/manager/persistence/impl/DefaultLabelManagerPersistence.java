@@ -32,6 +32,7 @@ import org.apache.linkis.manager.util.PersistenceUtils;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,7 +79,7 @@ public class DefaultLabelManagerPersistence implements LabelManagerPersistence {
         // 此处需要修正，要拿到 label_value_key label_value_content  labelValue中有多对参数
         Map<String, String> labelValueKeyAndContent = persistenceLabel.getValue();
 
-        labelManagerMapper.registerLabelKeyValues(labelValueKeyAndContent, labelId);
+        replaceIntoLabelKeyValues(labelValueKeyAndContent, labelId);
     }
 
     @Override
@@ -113,15 +114,26 @@ public class DefaultLabelManagerPersistence implements LabelManagerPersistence {
 
     @Override
     public void updateLabel(int id, PersistenceLabel persistenceLabel) {
-        // 1.更新label表
-        // 2.删掉value
-        // 3.更新labelValue
-        // TODO: 2020/10/12  updateLabel 要重写判空
         persistenceLabel.setUpdateTime(new Date());
         labelManagerMapper.updateLabel(id, persistenceLabel);
         labelManagerMapper.deleteLabelKeyVaules(id);
         if (!persistenceLabel.getValue().isEmpty()) {
-            labelManagerMapper.registerLabelKeyValues(persistenceLabel.getValue(), id);
+            replaceIntoLabelKeyValues(persistenceLabel.getValue(), id);
+        }
+    }
+
+    private void replaceIntoLabelKeyValues(
+            Map<String, String> labelValueKeyAndContent, int labelId) {
+        if (null != labelValueKeyAndContent && labelId > 0) {
+            Iterator<Map.Entry<String, String>> iterator =
+                    labelValueKeyAndContent.entrySet().iterator();
+            while (iterator.hasNext()) {
+                Map.Entry<String, String> labelKeyValue = iterator.next();
+                if (StringUtils.isNotBlank(labelKeyValue.getKey())) {
+                    labelManagerMapper.replaceIntoLabelKeyValue(
+                            labelKeyValue.getKey(), labelKeyValue.getValue(), labelId);
+                }
+            }
         }
     }
 

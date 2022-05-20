@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.linkis</groupId>
         <artifactId>linkis</artifactId>
-        <version>1.1.1</version>
+        <version>1.1.2</version>
     </parent>
 
 
@@ -43,6 +43,18 @@
             <groupId>org.apache.linkis</groupId>
             <artifactId>linkis-hadoop-common</artifactId>
             <version>${linkis.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>protobuf-java</artifactId>
+                    <groupId>com.google.protobuf</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <artifactId>protobuf-java</artifactId>
+            <groupId>com.google.protobuf</groupId>
+            <version>${protobuf.version}</version>
         </dependency>
 
         <dependency>
@@ -59,10 +71,10 @@
         </dependency>
 
         <dependency>
-            <groupId>cglib</groupId>
-            <artifactId>cglib</artifactId>
-            <version>2.2.2</version>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
         </dependency>
+
         <dependency>
             <groupId>com.github.pjfanning</groupId>
             <artifactId>excel-streaming-reader</artifactId>

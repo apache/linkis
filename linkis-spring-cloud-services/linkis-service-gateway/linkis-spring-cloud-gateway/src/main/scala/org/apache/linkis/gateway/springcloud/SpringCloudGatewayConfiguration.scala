@@ -23,12 +23,13 @@ import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.gateway.config.GatewaySpringConfiguration
 import org.apache.linkis.gateway.parser.{DefaultGatewayParser, GatewayParser}
 import org.apache.linkis.gateway.route.{DefaultGatewayRouter, GatewayRouter}
-import org.apache.linkis.gateway.springcloud.http.GatewayAuthorizationFilter
+import org.apache.linkis.gateway.springcloud.http.{GatewayAuthorizationFilter, LinkisGatewayHttpHeadersFilter}
 import org.apache.linkis.gateway.springcloud.websocket.SpringCloudGatewayWebsocketFilter
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.server.conf.ServerConfiguration
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.AutoConfigureAfter
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.cloud.client
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient
 import org.springframework.cloud.gateway.config.{GatewayAutoConfiguration, GatewayProperties}
@@ -82,10 +83,10 @@ class SpringCloudGatewayConfiguration {
       }).build()
 
   @Bean
-  def createLoadBalancerClient(springClientFactory: SpringClientFactory):RibbonLoadBalancerClient = new RibbonLoadBalancerClient(springClientFactory) {
-    override def getServer(serviceId: String): Server = if(isMergeModuleInstance(serviceId)) {
+  def createLoadBalancerClient(springClientFactory: SpringClientFactory): RibbonLoadBalancerClient = new RibbonLoadBalancerClient(springClientFactory) {
+    override def getServer(serviceId: String): Server = if (isMergeModuleInstance(serviceId)) {
       val serviceInstance = getServiceInstance(serviceId)
-      info("redirect to " + serviceInstance)  //TODO test,wait for delete
+      info("redirect to " + serviceInstance)
       val lb = this.getLoadBalancer(serviceInstance.getApplicationName)
       lb.getAllServers.find(_.getHostPort == serviceInstance.getInstance).get
     } else super.getServer(serviceId)
@@ -102,13 +103,19 @@ class SpringCloudGatewayConfiguration {
       serverIntrospector
     }
 
-    override def choose(serviceId: String, hint:Any): client.ServiceInstance = if(isMergeModuleInstance(serviceId)) {
+    override def choose(serviceId: String, hint: Any): client.ServiceInstance = if (isMergeModuleInstance(serviceId)) {
       val serviceInstance = getServiceInstance(serviceId)
       info("redirect to " + serviceInstance)
       val lb = this.getLoadBalancer(serviceInstance.getApplicationName)
       val server = lb.getAllServers.find(_.getHostPort == serviceInstance.getInstance).get
       new RibbonLoadBalancerClient.RibbonServer(serviceId, server, isSecure(server, serviceId), serverIntrospectorFun(serviceId).getMetadata(server))
     } else super.choose(serviceId, hint)
+  }
+
+  @Bean
+  @ConditionalOnProperty(name = Array("spring.cloud.gateway.url.enabled"), matchIfMissing = true)
+  def linkisGatewayHttpHeadersFilter(): LinkisGatewayHttpHeadersFilter = {
+    new LinkisGatewayHttpHeadersFilter()
   }
 
 }

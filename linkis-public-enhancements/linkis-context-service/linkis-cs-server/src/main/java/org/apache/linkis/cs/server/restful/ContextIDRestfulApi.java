@@ -102,16 +102,29 @@ public class ContextIDRestfulApi implements CsRestfulParent {
     }
 
     @RequestMapping(path = "searchContextIDByTime", method = RequestMethod.GET)
-    public Message searchContextIDByTime(HttpServletRequest req,
-                                         @RequestParam(value = "createTimeStart", required = false) Date createTimeStart,
-                                         @RequestParam(value = "createTimeEnd", required = false) Date createTimeEnd,
-                                         @RequestParam(value = "updateTimeStart", required = false) Date updateTimeStart,
-                                         @RequestParam(value = "updateTimeEnd", required = false) Date updateTimeEnd)
-        throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
-        if (null == createTimeStart && null == createTimeEnd && null == updateTimeStart && null == createTimeEnd) {
-            throw new CSErrorException(97000, "createTimeStart, createTimeEnd, updateTimeStart, updateTimeEnd cannot be all null.");
+    public Message searchContextIDByTime(
+            HttpServletRequest req,
+            @RequestParam(value = "createTimeStart", required = false) Date createTimeStart,
+            @RequestParam(value = "createTimeEnd", required = false) Date createTimeEnd,
+            @RequestParam(value = "updateTimeStart", required = false) Date updateTimeStart,
+            @RequestParam(value = "updateTimeEnd", required = false) Date updateTimeEnd)
+            throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
+        if (null == createTimeStart
+                && null == createTimeEnd
+                && null == updateTimeStart
+                && null == createTimeEnd) {
+            throw new CSErrorException(
+                    97000,
+                    "createTimeStart, createTimeEnd, updateTimeStart, updateTimeEnd cannot be all null.");
         }
-        HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.SEARCH, createTimeStart, createTimeEnd, updateTimeStart, updateTimeEnd);
+        HttpAnswerJob answerJob =
+                submitRestJob(
+                        req,
+                        ServiceMethod.SEARCH,
+                        createTimeStart,
+                        createTimeEnd,
+                        updateTimeStart,
+                        updateTimeEnd);
         return generateResponse(answerJob, "contextIDs");
     }
 

@@ -118,10 +118,11 @@ object QueryUtils extends Logging {
 
   private def getCodeStorePath(user: String): String = {
     val date: String = DateFormatUtils.format(new Date, "yyyyMMdd")
+    val suffix: String = DateFormatUtils.format(System.currentTimeMillis, "HH_mm_ss_SSS") + "_scripts"
     if (IS_VIEW_FS_ENV.getValue) {
-      s"${CODE_STORE_PREFIX_VIEW_FS.getValue}${user}${CODE_STORE_SUFFIX.getValue}/executionCode/${date}/_scripts"
-    }else{
-      s"${CODE_STORE_PREFIX.getValue}${user}${CODE_STORE_SUFFIX.getValue}/executionCode/${date}/_scripts"
+      s"${CODE_STORE_PREFIX_VIEW_FS.getValue}${user}${CODE_STORE_SUFFIX.getValue}/executionCode/${date}/$suffix"
+    } else {
+      s"${CODE_STORE_PREFIX.getValue}${user}${CODE_STORE_SUFFIX.getValue}/executionCode/${date}/$suffix"
     }
   }
 

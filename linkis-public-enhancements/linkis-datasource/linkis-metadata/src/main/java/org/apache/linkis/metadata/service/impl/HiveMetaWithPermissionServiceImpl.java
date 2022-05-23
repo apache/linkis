@@ -17,12 +17,15 @@
 package org.apache.linkis.metadata.service.impl;
 
 import org.apache.linkis.metadata.hive.dao.HiveMetaDao;
+import org.apache.linkis.metadata.service.DataSourceService;
 import org.apache.linkis.metadata.service.HiveMetaWithPermissionService;
 import org.apache.linkis.metadata.util.DWSConfig;
+import org.apache.linkis.metadata.utils.MdqConstants;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +39,8 @@ public class HiveMetaWithPermissionServiceImpl implements HiveMetaWithPermission
             LoggerFactory.getLogger(HiveMetaWithPermissionServiceImpl.class);
 
     @Autowired private HiveMetaDao hiveMetaDao;
+
+    @Autowired private DataSourceService dataSourceService;
 
     private String adminUser = DWSConfig.HIVE_DB_ADMIN_USER.getValue();
 
@@ -70,6 +75,41 @@ public class HiveMetaWithPermissionServiceImpl implements HiveMetaWithPermission
         } else {
             log.info("user {} to getTablesByDbName no permission control", userName);
             return hiveMetaDao.getTablesByDbName(map);
+        }
+    }
+
+    @Override
+    public JsonNode getColumnsByDbTableNameAndOptionalUserName(Map<String, String> map) {
+        Boolean flag = DWSConfig.HIVE_PERMISSION_WITH_lOGIN_USER_ENABLED.getValue();
+        if (null == map) {
+            return null;
+        }
+        String userName = map.get(MdqConstants.USERNAME_KEY());
+        String dbName = map.get(MdqConstants.DB_NAME_KEY());
+        String tableName = map.get(MdqConstants.TABLE_NAME_KEY());
+        if (adminUser.equals(userName)) {
+            log.info("admin to get all dbs ");
+            return dataSourceService.queryTableMeta(dbName, tableName, userName);
+        }
+        if (flag) {
+            // with permission
+            Map<String, Object> tableMap = hiveMetaDao.getSIDByDbTableNameAndUser(map);
+            if (null != tableMap
+                    && !tableMap.isEmpty()
+                    && tableMap.containsKey(MdqConstants.SDID_KEY())) {
+                String sdid = tableMap.get(MdqConstants.SDID_KEY()).toString();
+                return dataSourceService.queryTableMetaBySDID(dbName, tableName, sdid);
+            } else {
+                log.error(
+                        "User {} has no read permission for meta of db : {}, table : {}",
+                        userName,
+                        dbName,
+                        tableName);
+                return null;
+            }
+        } else {
+            log.info("user {} to getTablesByDbName no permission control", userName);
+            return dataSourceService.queryTableMeta(dbName, tableName, userName);
         }
     }
 }

@@ -26,6 +26,7 @@ import org.apache.linkis.metadata.hive.dao.HiveMetaDao;
 import org.apache.linkis.metadata.service.DataSourceService;
 import org.apache.linkis.metadata.service.HiveMetaWithPermissionService;
 import org.apache.linkis.metadata.util.DWSConfig;
+import org.apache.linkis.metadata.utils.MdqConstants;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
@@ -135,6 +136,12 @@ public class DataSourceServiceImpl implements DataSourceService {
         param.put("dbName", dbName);
         param.put("tableName", tableName);
         List<Map<String, Object>> columns = hiveMetaDao.getColumns(param);
+        List<Map<String, Object>> partitionKeys = hiveMetaDao.getPartitionKeys(param);
+        return getJsonNodesFromColumnMap(columns, partitionKeys);
+    }
+
+    private ArrayNode getJsonNodesFromColumnMap(
+            List<Map<String, Object>> columns, List<Map<String, Object>> partitionKeys) {
         ArrayNode columnsNode = jsonMapper.createArrayNode();
         for (Map<String, Object> column : columns) {
             ObjectNode fieldNode = jsonMapper.createObjectNode();
@@ -144,7 +151,6 @@ public class DataSourceServiceImpl implements DataSourceService {
             fieldNode.put("partitioned", false);
             columnsNode.add(fieldNode);
         }
-        List<Map<String, Object>> partitionKeys = hiveMetaDao.getPartitionKeys(param);
         for (Map<String, Object> partitionKey : partitionKeys) {
             ObjectNode fieldNode = jsonMapper.createObjectNode();
             fieldNode.put("columnName", (String) partitionKey.get("PKEY_NAME"));
@@ -154,6 +160,19 @@ public class DataSourceServiceImpl implements DataSourceService {
             columnsNode.add(fieldNode);
         }
         return columnsNode;
+    }
+
+    @DataSource(name = DSEnum.FIRST_DATA_SOURCE)
+    @Override
+    public JsonNode queryTableMetaBySDID(String dbName, String tableName, String sdid) {
+        logger.info("getTableMetabysdid : sdid = {}", sdid);
+        Map<String, String> param = Maps.newHashMap();
+        param.put(MdqConstants.DB_NAME_KEY(), dbName);
+        param.put(MdqConstants.TABLE_NAME_KEY(), tableName);
+        param.put(MdqConstants.SDID_KEY(), sdid);
+        List<Map<String, Object>> columns = hiveMetaDao.getColumnsBySDID(param);
+        List<Map<String, Object>> partitionKeys = hiveMetaDao.getPartitionKeys(param);
+        return getJsonNodesFromColumnMap(columns, partitionKeys);
     }
 
     @DataSource(name = DSEnum.FIRST_DATA_SOURCE)

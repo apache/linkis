@@ -592,7 +592,11 @@ public class FsRestfulApi {
                     }
                     fsWriter =
                             ExcelFsWriter.getExcelFsWriter(
-                                    charset, sheetName, DEFAULT_DATE_TYPE, outputStream, autoFormat);
+                                    charset,
+                                    sheetName,
+                                    DEFAULT_DATE_TYPE,
+                                    outputStream,
+                                    autoFormat);
                     response.addHeader("Content-Type", XLSX_RESPONSE_CONTENT_TYPE);
                     if (isLimitDownloadSize) {
                         fileSource = fileSource.page(1, excelDownloadSize);

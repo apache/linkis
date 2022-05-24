@@ -16,6 +16,8 @@
  */
 package org.apache.linkis.metadata.service.impl;
 
+import org.apache.linkis.metadata.hive.config.DSEnum;
+import org.apache.linkis.metadata.hive.config.DataSource;
 import org.apache.linkis.metadata.hive.dao.HiveMetaDao;
 import org.apache.linkis.metadata.service.DataSourceService;
 import org.apache.linkis.metadata.service.HiveMetaWithPermissionService;
@@ -78,6 +80,7 @@ public class HiveMetaWithPermissionServiceImpl implements HiveMetaWithPermission
         }
     }
 
+    @DataSource(name = DSEnum.FIRST_DATA_SOURCE)
     @Override
     public JsonNode getColumnsByDbTableNameAndOptionalUserName(Map<String, String> map) {
         Boolean flag = DWSConfig.HIVE_PERMISSION_WITH_lOGIN_USER_ENABLED.getValue();

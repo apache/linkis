@@ -18,20 +18,23 @@
 
 package org.apache.linkis.ecm.server.operator
 
-import java.io.{File, RandomAccessFile}
-import java.util
+import org.apache.commons.io.IOUtils
+import org.apache.commons.io.input.ReversedLinesFileReader
+import org.apache.commons.lang.StringUtils
 import org.apache.linkis.DataWorkCloudApplication
 import org.apache.linkis.common.conf.CommonVars
 import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.ecm.core.conf.ECMErrorCode
+import org.apache.linkis.ecm.server.conf.ECMConfiguration
 import org.apache.linkis.ecm.server.exception.ECMErrorException
 import org.apache.linkis.ecm.server.service.{EngineConnListService, LocalDirsHandleService}
 import org.apache.linkis.manager.common.operator.Operator
 import org.apache.linkis.manager.common.protocol.em.ECMOperateRequest
-import org.apache.commons.io.IOUtils
-import org.apache.commons.lang.StringUtils
-import org.apache.linkis.ecm.core.conf.ECMErrorCode
-import org.apache.linkis.ecm.server.conf.ECMConfiguration
 
+import java.io.{File, RandomAccessFile}
+import java.nio.charset.Charset
+import java.util
+import java.util.Collections
 import scala.collection.JavaConverters.asScalaBufferConverter
 import scala.util.matching.Regex
 
@@ -53,20 +56,27 @@ class EngineConnLogOperator extends Operator with Logging {
     } else if (lastRows > 0) {
       val logs = Utils.exec(Array("tail", "-n", lastRows + "", logPath.getPath), 5000).split("\n")
       return Map("logs" -> logs, "rows" -> logs.length)
-    } else if (enableTail) {
-      val tailStartLine = pageSize + fromLine
-      if (tailStartLine > EngineConnLogOperator.MAX_LOG_TAIL_START_SIZE.getValue) {
-        throw new ECMErrorException(ECMErrorCode.EC_FETCH_LOG_FAILED, s"Cannot fetch more than ${EngineConnLogOperator.MAX_LOG_TAIL_START_SIZE.getValue} lines of logs.")
-      }
-      val logs = Utils.exec(Array("tail", "-n", tailStartLine + "", logPath.getPath, "|", "head", "-n", pageSize + ""), 5000).split("\n")
-      return Map("logs" -> logs, "rows" -> logs.length)
     }
 
     val ignoreKeywords = getAs("ignoreKeywords", "")
     val ignoreKeywordList = if (StringUtils.isNotEmpty(ignoreKeywords)) ignoreKeywords.split(",") else Array.empty[String]
     val onlyKeywords = getAs("onlyKeywords", "")
     val onlyKeywordList = if (StringUtils.isNotEmpty(onlyKeywords)) onlyKeywords.split(",") else Array.empty[String]
-    val reader = new RandomAccessFile(logPath, "r")
+    var randomReader: RandomAccessFile = null
+    var reversedReader: ReversedLinesFileReader = null
+    if (enableTail) {
+      logger.info("enable log operator from tail to read")
+      reversedReader = new ReversedLinesFileReader(logPath, Charset.defaultCharset())
+    } else {
+      randomReader = new RandomAccessFile(logPath, "r")
+    }
+    def randomAndReversedReadLine(): String = {
+      if (null != randomReader) {
+        randomReader.readLine()
+      } else {
+        reversedReader.readLine()
+      }
+    }
     val logs = new util.ArrayList[String](pageSize)
     var readLine, skippedLine, lineNum = 0
     var rowIgnore = false
@@ -77,7 +87,7 @@ class EngineConnLogOperator extends Operator with Logging {
     }
     val maxMultiline = EngineConnLogOperator.MULTILINE_MAX.getValue
     Utils.tryFinally {
-      var line = reader.readLine()
+      var line = randomAndReversedReadLine()
       while (readLine < pageSize && line != null) {
         lineNum += 1
         if (skippedLine < fromLine - 1) {
@@ -105,11 +115,16 @@ class EngineConnLogOperator extends Operator with Logging {
             readLine += 1
           }
         }
-        line = reader.readLine
+        line = randomAndReversedReadLine()
       }
-    }(IOUtils.closeQuietly(reader))
+    }{
+      IOUtils.closeQuietly(randomReader)
+      IOUtils.closeQuietly(reversedReader)
+    }
+    if (enableTail) Collections.reverse(logs)
     Map("logPath" -> logPath.getPath, "logs" -> logs, "endLine" -> lineNum, "rows" -> readLine)
   }
+
 
   private def includeLine(line: String,
                           onlyKeywordList: Array[String], ignoreKeywordList: Array[String]): Boolean = {

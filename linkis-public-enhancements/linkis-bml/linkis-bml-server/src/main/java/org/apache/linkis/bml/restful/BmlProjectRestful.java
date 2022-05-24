@@ -182,7 +182,7 @@ public class BmlProjectRestful {
             throw new BmlServerParaErrorException(
                     "the resourceId: "
                             + resourceId
-                            + "is Null, illegal, or deleted (resourceId: "
+                            + " is Null, illegal, or deleted (resourceId: "
                             + resourceId
                             + " 为空,非法或者已被删除!)");
         }

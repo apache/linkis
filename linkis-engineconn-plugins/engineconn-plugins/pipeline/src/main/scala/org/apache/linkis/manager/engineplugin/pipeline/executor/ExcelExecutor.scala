@@ -18,7 +18,6 @@
 package org.apache.linkis.manager.engineplugin.pipeline.executor
 
 import java.io.OutputStream
-
 import org.apache.linkis.common.io.FsPath
 import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
 import org.apache.linkis.manager.engineplugin.pipeline.conf.PipelineEngineConfiguration.PIPELINE_OUTPUT_ISOVERWRITE_SWITCH
@@ -30,6 +29,7 @@ import org.apache.linkis.storage.excel.{ExcelFsWriter, StorageMultiExcelWriter}
 import org.apache.linkis.storage.fs.FileSystem
 import org.apache.linkis.storage.source.FileSource
 import org.apache.commons.io.IOUtils
+import org.apache.linkis.manager.engineplugin.pipeline.conf.PipelineEngineConfiguration
 
 class ExcelExecutor extends PipeLineExecutor {
   override def execute(sourcePath: String, destPath: String, engineExecutorContext: EngineExecutionContext): ExecuteResponse = {
@@ -42,6 +42,7 @@ class ExcelExecutor extends PipeLineExecutor {
     val destFs = FSFactory.getFs(destFsPath)
     destFs.init(null)
     val outputStream: OutputStream = destFs.write(destFsPath, PIPELINE_OUTPUT_ISOVERWRITE_SWITCH.getValue(options))
+    val excelAutoFormat = PipelineEngineConfiguration.EXPORT_EXCEL_AUTO_FORMAT.getValue(engineExecutorContext.getProperties.asInstanceOf[java.util.Map[String, String]])
     if (sourcePath.contains(".")) {
       //sourcePaht 是文件形式
       // TODO: fs 加目录判断
@@ -49,10 +50,10 @@ class ExcelExecutor extends PipeLineExecutor {
         throw new PipeLineErrorException(70003, "Not a result set file(不是结果集文件)")
       }
       fileSource = FileSource.create(sourceFsPath, sourceFs)
-      excelFsWriter = ExcelFsWriter.getExcelFsWriter(DEFAULTC_HARSET, DEFAULT_SHEETNAME, DEFAULT_DATEFORMATE, outputStream)
+      excelFsWriter = ExcelFsWriter.getExcelFsWriter(DEFAULTC_HARSET, DEFAULT_SHEETNAME, DEFAULT_DATEFORMATE, outputStream, excelAutoFormat)
     } else {
       //目录形式
-      excelFsWriter = new StorageMultiExcelWriter(outputStream)
+      excelFsWriter = new StorageMultiExcelWriter(outputStream, excelAutoFormat)
       val fsPathListWithError = sourceFs.asInstanceOf[FileSystem].listPathWithError(sourceFsPath)
       if (fsPathListWithError == null) {
         throw new PipeLineErrorException(70005, "empty dir!")

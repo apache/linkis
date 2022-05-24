@@ -55,7 +55,7 @@ trait FileSource extends Closeable {
 
 object FileSource {
 
-  private val fileType = LinkisStorageConf.getFileTypeArr()
+  private val fileType = LinkisStorageConf.getFileTypeArr
   private val suffixPredicate = (path: String, suffix: String) => path.endsWith(s".$suffix")
 
   def isResultSet(path: String): Boolean = {

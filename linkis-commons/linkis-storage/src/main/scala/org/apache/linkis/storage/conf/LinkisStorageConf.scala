@@ -43,7 +43,7 @@ object LinkisStorageConf {
     else fileType.split(",")
   }
 
-  def getFileTypeArr(): Array[String] = {
+  def getFileTypeArr: Array[String] = {
     if (fileTypeArr == null) {
       CONF_LOCK.synchronized {
         if (fileTypeArr == null) {

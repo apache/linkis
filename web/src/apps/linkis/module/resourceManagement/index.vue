@@ -69,14 +69,14 @@
             @click="switchAdmin"
           >{{ isAdminModel ? $t('message.linkis.generalView') : $t('message.linkis.manageView') }}</Button>
           <Button
-            v-show="isAdminModel"
+            v-show="isAdminModel && showOperations"
             type="error" @click="() => {this.resetAll()}" style="margin-left: 10px;">{{$t('message.linkis.resetAll')}}</Button>
           <Button
             v-show="isAdminModel"
             type="primary"
             @click="clickShowOperations"
             style="margin-left: 10px;"
-          >{{ $t('message.linkis.showOperations') }}</Button>
+          >{{ showOperations ? $t('message.linkis.hide') : $t('message.linkis.showOperations') }}</Button>
         </FormItem>
       </Form>
     </div>
@@ -610,7 +610,7 @@ export default {
           {
             title: this.$t('message.linkis.tableColumns.control.title'),
             key: 'action',
-            width: '215',
+            width: '100',
             align: 'center',
             render: (h, params) => {
               return h('div', [
@@ -660,6 +660,7 @@ export default {
   .resource-page {
     min-height: 250px;
     height: 100%;
+    overflow: hidden;
     .ivu-table:before {
       height: 0;
     }

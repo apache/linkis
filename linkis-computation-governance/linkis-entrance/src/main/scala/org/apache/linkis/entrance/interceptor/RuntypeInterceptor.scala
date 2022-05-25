@@ -17,7 +17,7 @@
  
 package org.apache.linkis.entrance.interceptor
 
-import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.common.utils.{CodeAndRunTypeUtils, Logging}
 import org.apache.linkis.governance.common.entity.job.JobRequest
 import org.apache.linkis.manager.label.utils.LabelUtil
 
@@ -29,20 +29,21 @@ class RuntypeInterceptor extends EntranceInterceptor with Logging {
 
   override def apply(task: JobRequest, logAppender: java.lang.StringBuilder): JobRequest = {
     val codeType = LabelUtil.getCodeType(task.getLabels)
-    codeType match {
-      case "python" | "py" | "pyspark" => val code = task.getExecutionCode
+    val runType = CodeAndRunTypeUtils.getRunTypeByCodeType(codeType)
+    runType match {
+      case CodeAndRunTypeUtils.RUN_TYPE_PYTHON => val code = task.getExecutionCode
         task.setExecutionCode("%python\n" + code)
         task
-      case "sql" | "hql" =>
+      case CodeAndRunTypeUtils.RUN_TYPE_SQL =>
         val code = task.getExecutionCode
         task.setExecutionCode("%sql\n" + code)
         task
-      case "scala" =>
+      case CodeAndRunTypeUtils.RUN_TYPE_SCALA =>
         val code = task.getExecutionCode
         task.setExecutionCode("%scala\n" + code)
         task
       case _ =>
-        error(s"Invalid codeType ${codeType}")
+        error(s"Invalid codeType $codeType")
         task
     }
   }

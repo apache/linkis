@@ -32,15 +32,15 @@ import scala.collection.mutable.ArrayBuffer
 object UDFClient {
 
   @Deprecated
-  def getUdfInfos(userName: String, category: String): mutable.ArrayBuffer[UDFInfoVo] = {
-    val udfInfoBuilder = new mutable.ArrayBuffer[UDFInfoVo]
+  def getUdfInfos(userName: String, category: String): ArrayBuffer[UDFInfoVo] = {
+    val udfInfoBuilder = new ArrayBuffer[UDFInfoVo]
     val udfTree = queryUdfRpc(userName, category)
     if (null != udfTree) extractUdfInfos(udfInfoBuilder, udfTree, userName, category)
     udfInfoBuilder
   }
 
-  def getUdfInfosByUdfType(userName: String, category: String, udfType: BigInt): mutable.ArrayBuffer[UDFInfoVo] = {
-    val udfInfoBuilder = new mutable.ArrayBuffer[UDFInfoVo]
+  def getUdfInfosByUdfType(userName: String, category: String, udfType: BigInt): ArrayBuffer[UDFInfoVo] = {
+    val udfInfoBuilder = new ArrayBuffer[UDFInfoVo]
     val udfTree = queryUdfRpc(userName, category)
     if (null != udfTree) extractUdfInfosByUdfType(udfInfoBuilder, udfTree, userName, category, udfType)
     udfInfoBuilder
@@ -66,7 +66,7 @@ object UDFClient {
     getUdfInfosByUdfType(userName, ConstantVar.FUNCTION, ConstantVar.FUNCTION_SCALA)
   }
 
-  private def extractUdfInfos(udfInfoBuilder: mutable.ArrayBuffer[UDFInfoVo], udfTree: UDFTree, userName: String, category: String): Unit = {
+  private def extractUdfInfos(udfInfoBuilder: ArrayBuffer[UDFInfoVo], udfTree: UDFTree, userName: String, category: String): Unit = {
     if (CollectionUtils.isNotEmpty(udfTree.getUdfInfos)) {
       udfTree.getUdfInfos.foreach { udfInfo: UDFInfoVo =>
         udfInfoBuilder.append(udfInfo)
@@ -85,7 +85,7 @@ object UDFClient {
     }
   }
 
-  private def extractUdfInfosByUdfType(udfInfoBuilder: mutable.ArrayBuffer[UDFInfoVo], udfTree: UDFTree,
+  private def extractUdfInfosByUdfType(udfInfoBuilder: ArrayBuffer[UDFInfoVo], udfTree: UDFTree,
                                        userName: String, category: String, udfType: BigInt): Unit = {
     if (CollectionUtils.isNotEmpty(udfTree.getUdfInfos)) {
       udfTree.getUdfInfos.filter(infoVo => infoVo.getUdfType == udfType && infoVo.getLoad == true)

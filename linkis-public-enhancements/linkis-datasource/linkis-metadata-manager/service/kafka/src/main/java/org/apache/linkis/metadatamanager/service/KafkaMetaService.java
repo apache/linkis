@@ -25,6 +25,7 @@ import org.apache.linkis.metadatamanager.common.exception.MetaRuntimeException;
 import org.apache.linkis.metadatamanager.common.service.AbstractMetaService;
 import org.apache.linkis.metadatamanager.common.service.MetadataConnection;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -34,6 +35,7 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
@@ -56,6 +58,7 @@ public class KafkaMetaService extends AbstractMetaService<KafkaConnection> {
     @Override
     public MetadataConnection<KafkaConnection> getConnection(
             String operator, Map<String, Object> params) throws Exception {
+        FileUtils.forceMkdir(new File(TMP_FILE_STORE_LOCATION.getValue()));
         Resource resource =
                 new PathMatchingResourcePatternResolver()
                         .getResource(TMP_FILE_STORE_LOCATION.getValue());

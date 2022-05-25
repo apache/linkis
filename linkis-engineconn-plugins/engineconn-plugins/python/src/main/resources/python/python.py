@@ -39,6 +39,9 @@ try:
 except ImportError:
   from io import StringIO
 
+import time
+import threading
+
 # for back compatibility
 
 class Logger(object):
@@ -179,6 +182,17 @@ show = __show__ = PythonContext(intp)
 __show__._setup_matplotlib()
 
 intp.onPythonScriptInitialized(os.getpid())
+
+def java_watchdog_thread(sleep=10):
+    while True :
+        time.sleep(sleep)
+        try:
+            intp.kind()
+        except Exception as e:
+            print("Failed to detect java daemon, now exit python process")
+            sys.exit(1)
+watchdog_thread = threading.Thread(target=java_watchdog_thread)
+watchdog_thread.start()
 
 while True :
   req = intp.getStatements()

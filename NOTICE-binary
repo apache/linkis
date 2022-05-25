@@ -3441,3 +3441,25 @@ conditions of the subcomponent's license, as noted in the LICENSE file.
    promote products derived from this software without prior written
    permission. For written permission, please contact
    ben.alex@springsource.com.
+
+-------------------------------------- Apache Twill NOTICE --------------------------------------
+Apache Twill
+Copyright 2013-2017 The Apache Software Foundation
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
+
+   -------------------------------------- Sqoop NOTICE --------------------------------------
+   Apache Sqoop
+   Copyright 2011-2013 The Apache Software Foundation
+
+   This product includes software developed at
+   The Apache Software Foundation (http://www.apache.org/).
+
+   Portions of this software were developed at
+   Cloudera, Inc. (http://www.cloudera.com/).
+
+   Patch review tool is based on the Kafka patch review tool.
+   Which is part of the Apache Kafka project, an open source software
+   project with copyright by The Apache Software Foundation.
+   The original source code is available at: http://kafka.apache.org

@@ -18,13 +18,13 @@
 package org.apache.linkis.configuration.util
 
 import java.util
-
 import org.apache.linkis.common.conf.CommonVars
 import org.apache.linkis.configuration.exception.ConfigurationException
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import org.apache.linkis.manager.label.entity.Label
-import org.apache.linkis.manager.label.entity.engine.{EngineType, UserCreatorLabel}
+import org.apache.linkis.manager.label.entity.engine.{EngineType, EngineTypeLabel, UserCreatorLabel}
+import org.springframework.util.CollectionUtils
 
 import scala.collection.JavaConverters._
 
@@ -66,5 +66,18 @@ object LabelParameterParser {
       })
     }
     newList
+  }
+
+  def labelCheck(labelList: java.util.List[Label[_]]): Boolean = {
+    if (!CollectionUtils.isEmpty(labelList)) {
+      labelList.asScala.foreach {
+        case a: UserCreatorLabel => Unit
+        case a: EngineTypeLabel => Unit
+        case label => throw new ConfigurationException(s"this type of label is not supported:${label.getClass}")
+      }
+      true
+    } else {
+      throw new ConfigurationException("The label parameter is empty")
+    }
   }
 }

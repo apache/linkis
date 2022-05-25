@@ -24,7 +24,7 @@ import org.apache.linkis.storage.fs.impl.HDFSFileSystem;
 import org.apache.linkis.storage.io.IOMethodInterceptorCreator$;
 import org.apache.linkis.storage.utils.StorageUtils;
 
-import net.sf.cglib.proxy.Enhancer;
+import org.springframework.cglib.proxy.Enhancer;
 
 public class BuildHDFSFileSystem implements BuildFactory {
 

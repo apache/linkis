@@ -22,7 +22,7 @@
     <parent>
         <artifactId>linkis</artifactId>
         <groupId>org.apache.linkis</groupId>
-        <version>1.1.1</version>
+        <version>1.1.2</version>
         <relativePath>../../../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -125,10 +125,18 @@
                     <groupId>com.sun.jersey</groupId>
                     <artifactId>jersey-client</artifactId>
                 </exclusion>
-
+                <exclusion>
+                    <artifactId>protobuf-java</artifactId>
+                    <groupId>com.google.protobuf</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
 
+        <dependency>
+            <artifactId>protobuf-java</artifactId>
+            <groupId>com.google.protobuf</groupId>
+            <version>${protobuf.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -253,6 +261,10 @@
                     <artifactId>commons-lang3</artifactId>
                 </exclusion>
                 <exclusion>
+                    <artifactId>protobuf-java</artifactId>
+                    <groupId>com.google.protobuf</groupId>
+                </exclusion>
+                <exclusion>
                     <groupId>log4j</groupId>
                     <artifactId>log4j</artifactId>
                 </exclusion>
@@ -297,6 +309,10 @@
                 <exclusion>
                     <groupId>com.sun.jersey</groupId>
                     <artifactId>jersey-client</artifactId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>protobuf-java</artifactId>
+                    <groupId>com.google.protobuf</groupId>
                 </exclusion>
             </exclusions>
         </dependency>

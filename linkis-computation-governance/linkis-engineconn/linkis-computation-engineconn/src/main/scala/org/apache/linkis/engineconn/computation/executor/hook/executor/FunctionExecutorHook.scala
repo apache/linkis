@@ -34,22 +34,15 @@ class PyFunctionEngineHook extends UDFLoad with ExecutorHook {
     "%py\n" + readFile(udfInfo.getCreateUser, udfInfo.getBmlResourceId, udfInfo.getBmlResourceVersion)
   }
 
-  override protected def getRealRunType(runTypeIn: String): RunType = {
-    if (runTypeIn.equals("python")) {
-      return RunType.PYTHON
-    }
-    runType
-  }
-
   override def getHookName(): String = "PyFunctionEngineHook"
 
   override def afterExecutorInit(executor: Executor): Unit = {
-    logger.info("start to register python function ")
+    logger.info("start to register pyspark function ")
     loadFunctions(executor)
-    logger.info("Finished to register python function ")
+    logger.info("Finished to register pyspark function ")
   }
 
-  override def isAccepted(codeType: String): Boolean = runType.toString.equalsIgnoreCase(codeType) || RunType.PYTHON.toString.equalsIgnoreCase(codeType)
+  override def isAccepted(codeType: String): Boolean = runType.toString.equalsIgnoreCase(codeType)
 }
 
 

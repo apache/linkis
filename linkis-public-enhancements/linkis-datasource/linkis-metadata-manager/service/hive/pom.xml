@@ -21,7 +21,7 @@
     <parent>
         <artifactId>linkis</artifactId>
         <groupId>org.apache.linkis</groupId>
-        <version>1.1.1</version>
+        <version>1.1.2</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>linkis-metadata-manager-service-hive</artifactId>
@@ -29,7 +29,6 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <hive.version>2.3.3</hive.version>
-        <!--    <hive.version>1.2.1</hive.version>-->
         <hadoop.version>2.7.2</hadoop.version>
         <datanucleus-api-jdo.version>4.2.4</datanucleus-api-jdo.version>
     </properties>
@@ -97,6 +96,10 @@
             <artifactId>hive-common</artifactId>
             <version>${hive.version}</version>
             <exclusions>
+                <exclusion>
+                    <groupId>asm</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
                 <exclusion>
                     <groupId>org.apache.hadoop</groupId>
                     <artifactId>hadoop-yarn-server-resourcemanager</artifactId>

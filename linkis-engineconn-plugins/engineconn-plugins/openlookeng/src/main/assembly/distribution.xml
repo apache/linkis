@@ -47,7 +47,7 @@
             <directory>${basedir}/src/main/resources</directory>
             <includes>
                 <include>linkis-engineconn.properties</include>
-                <include>log4j2-engineconn.xml</include>
+                <include>log4j2.xml</include>
             </includes>
             <fileMode>0777</fileMode>
             <outputDirectory>/dist/v${openlookeng.version}/conf</outputDirectory>

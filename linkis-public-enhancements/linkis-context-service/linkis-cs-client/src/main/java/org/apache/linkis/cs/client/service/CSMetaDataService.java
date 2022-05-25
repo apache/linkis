@@ -55,6 +55,7 @@ public class CSMetaDataService implements MetaDataService {
     public Map<ContextKey, MetaData> getAllUpstreamMetaData(String contextIDStr, String nodeName)
             throws CSErrorException {
         if (StringUtils.isBlank(contextIDStr) || StringUtils.isBlank(nodeName)) {
+            logger.warn("contextIDStr or nodeName cannot null");
             return null;
         }
         try {

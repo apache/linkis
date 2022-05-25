@@ -26,4 +26,6 @@ public interface QueryCacheManager {
     void cleanAll();
 
     void refreshAll();
+
+    void refreshUndoneTask();
 }

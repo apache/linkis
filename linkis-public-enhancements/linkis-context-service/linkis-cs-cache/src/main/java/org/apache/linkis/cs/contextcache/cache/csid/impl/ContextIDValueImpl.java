@@ -106,8 +106,9 @@ public class ContextIDValueImpl implements ContextIDValue, CSKeyListener {
             this.contextIDMetric.setMemory(getContextIDMetric().getMemory() - size);
         }
         logger.info(
-                "Now, The Memory of ContextID({}) are %d",
-                contextID, getContextIDMetric().getMemory());
+                "Now, The Memory of ContextID({}) are {}",
+                contextID,
+                getContextIDMetric().getMemory());
         logger.debug("Finished to deal csKeyEvent of csID({})", this.contextID);
     }
 

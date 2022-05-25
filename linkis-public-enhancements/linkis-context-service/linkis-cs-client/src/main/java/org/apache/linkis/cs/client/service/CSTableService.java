@@ -61,12 +61,19 @@ public class CSTableService implements TableService {
     @Override
     public CSTable getCSTable(ContextID contextID, ContextKey contextKey) throws CSErrorException {
         if (null == contextID || null == contextKey) {
+            logger.warn("contextIDStr or nodeName cannot null");
             return null;
         }
         if (contextID instanceof CombinedNodeIDContextID) {
             contextID = ((CombinedNodeIDContextID) contextID).getLinkisHaWorkFlowContextID();
         }
         CSTable csTable = searchService.getContextValue(contextID, contextKey, CSTable.class);
+        if (null != csTable)
+            logger.info(
+                    "contextID: {} and contextKey: {} succeed to get table tableName {}",
+                    contextID.getContextId(),
+                    contextKey.getKey(),
+                    csTable.getName());
         return csTable;
     }
 
@@ -75,6 +82,7 @@ public class CSTableService implements TableService {
             throws CSErrorException {
         List<CSTable> rsList = new ArrayList<>();
         if (StringUtils.isBlank(contextIDStr) || StringUtils.isBlank(nodeName)) {
+            logger.warn("contextIDStr or nodeName cannot null");
             return rsList;
         }
         try {
@@ -88,6 +96,12 @@ public class CSTableService implements TableService {
                         searchService.searchUpstreamContext(
                                 contextID, nodeName, Integer.MAX_VALUE, CSTable.class);
             }
+            if (null != rsList)
+                logger.info(
+                        "contextID: {} and nodeName: {} succeed to get tables size {}",
+                        contextID.getContextId(),
+                        nodeName,
+                        rsList.size());
             return rsList;
         } catch (ErrorException e) {
             logger.error("Deserialize contextID error. contextIDStr : " + contextIDStr);
@@ -100,6 +114,7 @@ public class CSTableService implements TableService {
             throws CSErrorException {
         CSTable csTable = null;
         if (StringUtils.isBlank(contextIDStr) || StringUtils.isBlank(nodeName)) {
+            logger.warn("contextIDStr or nodeName cannot null");
             return csTable;
         }
         try {
@@ -110,6 +125,13 @@ public class CSTableService implements TableService {
                             ((CombinedNodeIDContextID) contextID).getLinkisHaWorkFlowContextID();
                 }
                 csTable = searchService.searchContext(contextID, keyword, nodeName, CSTable.class);
+                if (null != csTable)
+                    logger.info(
+                            "contextID: {} , nodeName: {}, keyword {} succeed to getUpstreamSuitableTable tableName {}",
+                            contextID.getContextId(),
+                            nodeName,
+                            keyword,
+                            csTable.getName());
             }
         } catch (ErrorException e) {
             throw new CSErrorException(
@@ -149,6 +171,11 @@ public class CSTableService implements TableService {
                 contextID = ((CombinedNodeIDContextID) contextID).getLinkisHaWorkFlowContextID();
             }
             contextClient.update(contextID, contextKey, contextValue);
+            logger.info(
+                    "contextID: {} , contextKeyStr: {} succeed to putCSTable tableName {}",
+                    contextID.getContextId(),
+                    contextKeyStr,
+                    csTable.getName());
         } catch (ErrorException e) {
             throw new CSErrorException(ErrorCode.DESERIALIZE_ERROR, "putCSTable error ", e);
         }

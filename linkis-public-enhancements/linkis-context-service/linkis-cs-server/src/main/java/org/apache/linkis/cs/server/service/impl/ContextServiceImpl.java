@@ -74,6 +74,10 @@ public class ContextServiceImpl extends ContextService {
         // 从缓存取即可,缓存中无会去数据库中拉取
         ContextKeyValue keyValue = contextCacheService.get(contextID, contextKey);
         if (keyValue == null) {
+            logger.info(
+                    "getContextValue is null contextId: {}, key: {}",
+                    contextID.getContextId(),
+                    contextKey.getKey());
             return null;
         }
         logger.info(

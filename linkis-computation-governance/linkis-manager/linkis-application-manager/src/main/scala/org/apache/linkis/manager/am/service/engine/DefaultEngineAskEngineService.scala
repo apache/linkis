@@ -21,6 +21,7 @@ import feign.RetryableException
 import org.apache.commons.lang.exception.ExceptionUtils
 import org.apache.linkis.common.exception.LinkisRetryException
 import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.governance.common.utils.JobUtils
 import org.apache.linkis.manager.am.conf.AMConfiguration
 import org.apache.linkis.manager.common.constant.AMConstant
 import org.apache.linkis.manager.common.protocol.engine._
@@ -55,7 +56,8 @@ class DefaultEngineAskEngineService extends AbstractEngineService with EngineAsk
 
   @Receiver
   override def askEngine(engineAskRequest: EngineAskRequest, sender: Sender): Any = {
-    logger.info(s"received engineAskRequest $engineAskRequest")
+    val taskId = JobUtils.getJobIdFromStringMap(engineAskRequest.getProperties)
+    logger.info(s"received task: $taskId, engineAskRequest $engineAskRequest")
     if(! engineAskRequest.getLabels.containsKey(LabelKeyConstant.EXECUTE_ONCE_KEY)) {
       val engineReuseRequest = new EngineReuseRequest()
       engineReuseRequest.setLabels(engineAskRequest.getLabels)
@@ -66,21 +68,21 @@ class DefaultEngineAskEngineService extends AbstractEngineService with EngineAsk
         t: Throwable =>
           t match {
             case retryException: LinkisRetryException =>
-              logger.warn(s"user ${engineAskRequest.getUser} reuse engine failed ${t.getMessage}")
+              logger.warn(s"task: $taskId user ${engineAskRequest.getUser} reuse engine failed ${t.getMessage}")
             case _ =>
-              logger.warn(s"user ${engineAskRequest.getUser} reuse engine failed", t)
+              logger.warn(s"task: $taskId user ${engineAskRequest.getUser} reuse engine failed", t)
           }
           null
       }
       if (null != reuseNode) {
-        logger.info(s"Finished to ask engine for user ${engineAskRequest.getUser} by reuse node $reuseNode")
+        logger.info(s"Finished to ask engine for task: $taskId user ${engineAskRequest.getUser} by reuse node $reuseNode")
         return reuseNode
       }
     }
 
     val engineAskAsyncId = getAsyncId
     val createNodeThread = Future {
-      logger.info(s"Start to async($engineAskAsyncId) createEngine, ${engineAskRequest.getCreateService}")
+      logger.info(s"Task: $taskId start to async($engineAskAsyncId) createEngine, ${engineAskRequest.getCreateService}")
       //如果原来的labels含engineInstance ，先去掉
       engineAskRequest.getLabels.remove("engineInstance")
       val engineCreateRequest = new EngineCreateRequest
@@ -96,14 +98,14 @@ class DefaultEngineAskEngineService extends AbstractEngineService with EngineAsk
       if (null == createEngineNode) {
         throw new LinkisRetryException(AMConstant.EM_ERROR_CODE, s"create engine${createNode.getServiceInstance} success, but to use engine failed")
       }
-      logger.info(s"Finished to ask engine for user ${engineAskRequest.getUser} by create node $createEngineNode")
+      logger.info(s"Task: $taskId finished to ask engine for user ${engineAskRequest.getUser} by create node $createEngineNode")
       createEngineNode
     }
 
 
     createNodeThread.onComplete {
       case Success(engineNode) =>
-        logger.info(s"Success to async($engineAskAsyncId) createEngine $engineNode")
+        logger.info(s"Task: $taskId Success to async($engineAskAsyncId) createEngine $engineNode")
         sender.send(EngineCreateSuccess(engineAskAsyncId, engineNode))
       case Failure(exception) =>
         val retryFlag = exception match {
@@ -118,7 +120,7 @@ class DefaultEngineAskEngineService extends AbstractEngineService with EngineAsk
             }
           }
         }
-        logger.info(s"Failed  to async($engineAskAsyncId) createEngine, can Retry $retryFlag", exception)
+        logger.info(s"Task: $taskId Failed  to async($engineAskAsyncId) createEngine, can Retry $retryFlag", exception)
         sender.send(EngineCreateError(engineAskAsyncId, ExceptionUtils.getRootCauseMessage(exception), retryFlag))
     }
 

@@ -119,6 +119,7 @@ public class DefaultContextCache implements ContextCache, CSIDListener {
     public void put(ContextIDValue contextIDValue) throws CSErrorException {
 
         if (contextIDValue != null && StringUtils.isNotBlank(contextIDValue.getContextID())) {
+            logger.info("update contextID:{}", contextIDValue.getContextID());
             cache.put(contextIDValue.getContextID(), contextIDValue);
         }
     }
@@ -181,14 +182,14 @@ public class DefaultContextCache implements ContextCache, CSIDListener {
         logger.info("deal contextID ADD event of {}", contextIDEvent.getContextID());
         getContextCacheMetric().addCount();
         getContextCacheMetric().setCachedCount(getContextCacheMetric().getCachedCount() + 1);
-        logger.info("Now, The cachedCount is (%d)", getContextCacheMetric().getCachedCount());
+        logger.info("Now, The cachedCount is ({})", getContextCacheMetric().getCachedCount());
     }
 
     @Override
     public void onCSIDRemoved(ContextIDEvent contextIDEvent) {
         logger.info("deal contextID remove event of {}", contextIDEvent.getContextID());
         getContextCacheMetric().setCachedCount(getContextCacheMetric().getCachedCount() - 1);
-        logger.info("Now, The cachedCount is (%d)", getContextCacheMetric().getCachedCount());
+        logger.info("Now, The cachedCount is ({})", getContextCacheMetric().getCachedCount());
     }
 
     @Override

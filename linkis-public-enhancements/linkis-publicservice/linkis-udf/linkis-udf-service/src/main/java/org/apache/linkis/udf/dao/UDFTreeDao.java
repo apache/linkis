@@ -34,6 +34,8 @@ public interface UDFTreeDao {
 
     UDFTree getTreeByIdAndCategory(Long id, String category);
 
+    UDFTree getTreeByIdAndCategoryAndUserName(Long id, String category, String userName);
+
     UDFTree getTreeById(@Param("id") Long id);
 
     List<UDFTree> getTreesByParentId(Map<String, Object> params);

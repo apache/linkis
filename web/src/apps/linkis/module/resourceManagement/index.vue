@@ -100,9 +100,9 @@
         <div class="resourceList">
           <span>{{$t('message.linkis.resources')}}：</span>
           <span v-if="applicationList.usedResource">
-            <Tag color="success">{{`${calcCompany(applicationList.usedResource.cores)},${calcCompany(applicationList.usedResource.memory, true)}`}}(used)</Tag>
-            <Tag color="error">{{`${calcCompany(applicationList.maxResource.cores)},${calcCompany(applicationList.maxResource.memory, true)}`}}(max)</Tag>
-            <Tag color="warning" v-if="applicationList.leftResource">{{`${calcCompany(applicationList.leftResource.cores)},${calcCompany(applicationList.leftResource.memory, true)}`}}(remain)</Tag>
+            <Tag color="success">{{`${calcCompany(applicationList.usedResource)}`}}(used)</Tag>
+            <Tag color="error">{{`${calcCompany(applicationList.maxResource)}`}}(max)</Tag>
+            <Tag color="warning" v-if="applicationList.leftResource">{{`${calcCompany(applicationList.leftResource)}`}}(remain)</Tag>
           </span>
         </div>
         <div class="instanceNum" >
@@ -115,19 +115,19 @@
           <span>{{`${row.engineType}:${row.instance}`}}</span>
         </template>
         <template slot-scope="{row}" slot="usedResource">
-          <span>{{`${calcCompany(row.resource.usedResource.cores)},${calcCompany(row.resource.usedResource.memory, true)}`}}</span>
+          <span>{{`${calcCompany(row.resource.usedResource)}`}}</span>
         </template>
         <template slot-scope="{row}" slot="lockedResource">
-          <span>{{`${calcCompany(row.resource.lockedResource.cores)},${calcCompany(row.resource.lockedResource.memory, true)}`}}</span>
+          <span>{{`${calcCompany(row.resource.lockedResource)}`}}</span>
         </template>
         <template slot-scope="{row}" slot="maxResource">
-          <span>{{`${calcCompany(row.resource.maxResource.cores)},${calcCompany(row.resource.maxResource.memory, true)}`}}</span>
+          <span>{{`${calcCompany(row.resource.maxResource)}`}}</span>
         </template>
         <template slot-scope="{row}" slot="leftResource">
-          <span>{{`${calcCompany(row.resource.leftResource.cores)},${calcCompany(row.resource.leftResource.memory, true)}`}}</span>
+          <span>{{`${calcCompany(row.resource.leftResource)}`}}</span>
         </template>
         <template slot-scope="{row}" slot="minResource">
-          <span>{{`${calcCompany(row.resource.minResource.cores)},${calcCompany(row.resource.minResource.memory, true)}`}}</span>
+          <span>{{`${calcCompany(row.resource.minResource)}`}}</span>
         </template>
         <template slot-scope="{row}" slot="startTime">
           <span>{{ timeFormat(row) }}</span>
@@ -137,25 +137,25 @@
     <template v-if="isAdminModel">
       <Table class="table-content" border :width="tableWidth" :columns="admincolumns" :data="adminTableData">
         <template slot-scope="{row}" slot="usedResource">
-          <span>{{`${calcCompanyAdmin(row, 'usedResource', 'cores')},${calcCompanyAdmin(row, 'usedResource', 'memory')}`}}</span>
+          <span>{{`${calcCompanyAdmin(row, 'usedResource', 'cores')},${calcCompanyAdmin(row, 'usedResource', 'memory')},${calcCompanyAdmin(row, 'usedResource', 'instances')}`}}</span>
         </template>
         <template slot-scope="{row}" slot="lockedResource">
-          <span>{{`${calcCompanyAdmin(row, 'lockedResource', 'cores')},${calcCompanyAdmin(row, 'lockedResource', 'memory')}`}}</span>
+          <span>{{`${calcCompanyAdmin(row, 'lockedResource', 'cores')},${calcCompanyAdmin(row, 'lockedResource', 'memory')},${calcCompanyAdmin(row, 'lockedResource', 'instances')}`}}</span>
         </template>
         <template slot-scope="{row}" slot="maxResource">
-          <span>{{`${calcCompanyAdmin(row, 'maxResource', 'cores')},${calcCompanyAdmin(row, 'maxResource', 'memory')}`}}</span>
+          <span>{{`${calcCompanyAdmin(row, 'maxResource', 'cores')},${calcCompanyAdmin(row, 'maxResource', 'memory')},${calcCompanyAdmin(row, 'maxResource', 'instances')}`}}</span>
         </template>
         <template slot-scope="{row}" slot="leftResource">
-          <span :class="'label-'+row.loadResourceStatus">{{`${calcCompanyAdmin(row, 'leftResource', 'cores')},${calcCompanyAdmin(row, 'leftResource', 'memory')}`}}</span>
+          <span :class="'label-'+row.loadResourceStatus">{{`${calcCompanyAdmin(row, 'leftResource', 'cores')},${calcCompanyAdmin(row, 'leftResource', 'memory')},${calcCompanyAdmin(row, 'leftResource', 'instances')}`}}</span>
         </template>
         <template slot-scope="{row}" slot="yarnUsedResource">
-          <span>{{`${calcCompanyAdmin(row, 'usedResource', 'cores', true)},${calcCompanyAdmin(row, 'usedResource', 'memory', true)}`}}</span>
+          <span>{{`${calcCompanyAdmin(row, 'usedResource', 'cores', true)},${calcCompanyAdmin(row, 'usedResource', 'memory', true)},${calcCompanyAdmin(row, 'usedResource', 'instances', true)}`}}</span>
         </template>
         <template slot-scope="{row}" slot="yarnMaxResource">
-          <span>{{`${calcCompanyAdmin(row, 'maxResource', 'cores', true)},${calcCompanyAdmin(row, 'maxResource', 'memory', true)}`}}</span>
+          <span>{{`${calcCompanyAdmin(row, 'maxResource', 'cores', true)},${calcCompanyAdmin(row, 'maxResource', 'memory', true)},${calcCompanyAdmin(row, 'maxResource', 'instances', true)}`}}</span>
         </template>
         <template slot-scope="{row}" slot="yarnLeftResource">
-          <span :class="'label-'+row.queueResourceStatus">{{`${calcCompanyAdmin(row, 'leftResource', 'cores', true)},${calcCompanyAdmin(row, 'leftResource', 'memory', true)}`}}</span>
+          <span :class="'label-'+row.queueResourceStatus">{{`${calcCompanyAdmin(row, 'leftResource', 'cores', true)},${calcCompanyAdmin(row, 'leftResource', 'memory', true)},${calcCompanyAdmin(row, 'leftResource', 'instances', true)}`}}</span>
         </template>
       </Table>
       <div class="page-bar">
@@ -548,20 +548,25 @@ export default {
     timeFormat(row) {
       return moment(new Date(row.startTime)).format('YYYY-MM-DD HH:mm:ss')
     },
-    calcCompany(num, isCompany = false) {
-      let data = num > 0 ? num : 0;
-      if (isCompany) {
-        data = data / 1024 / 1024 / 1024 + 'G'
-      } else {
-        data = data + 'cores'
+    calcCompany(resource) {
+      const calcCompanyToData = function(num, isCompany = false) {
+        let data = num > 0 ? num : 0;
+        if (isCompany) {
+          return data / 1024 / 1024 / 1024;
+        }
+        return data;
       }
-      return data;
+      console.log(resource);
+      return  resource && (resource.cores !== undefined || resource.memonry !== undefined || resource.instance !== undefined) ? `${calcCompanyToData(resource.cores)}cores,${calcCompanyToData(resource.memory, true)}G,${calcCompanyToData(resource.instance)}apps` : ''
     },
     calcCompanyAdmin(row, field, type, yarn) {
       let data = ' -- '
       if (row.resourceType === 'LoadInstance') {
         if (!yarn) {
           data = row[field][type]
+          if (type === 'instances' && data === undefined) {
+            data = row[field]['instance']
+          }
         }
       } else {
         if (yarn) {
@@ -577,6 +582,8 @@ export default {
       if (data !== ' -- ') {
         if (type === 'memory') {
           data = data + 'G'
+        } else if (type === 'instances') {
+          data = data + 'apps'
         } else {
           data = data + 'cores'
         }

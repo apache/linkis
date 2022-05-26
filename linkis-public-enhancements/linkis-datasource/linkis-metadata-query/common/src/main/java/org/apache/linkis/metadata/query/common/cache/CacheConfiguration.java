@@ -15,25 +15,19 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.datasource.client.response
+package org.apache.linkis.metadata.query.common.cache;
 
-import org.apache.linkis.httpclient.dws.DWSHttpClient
-import org.apache.linkis.httpclient.dws.annotation.DWSHttpMessageResult
-import org.apache.linkis.httpclient.dws.response.DWSResult
-import java.util
+import org.apache.linkis.common.conf.CommonVars;
 
-import org.apache.linkis.metadata.query.common.domain.MetaPartitionInfo
+public class CacheConfiguration {
 
-import scala.beans.BeanProperty
+    public static CommonVars<Long> CACHE_MAX_SIZE =
+            CommonVars.apply("wds.linkis.server.mdm.service.cache.max-size", 1000L);
 
-@DWSHttpMessageResult("/api/rest_j/v\\d+/metadatamanager/partitions/(\\S+)/db/(\\S+)/table/(\\S+)")
-class MetadataGetPartitionsResult extends DWSResult{
-  @BeanProperty var props: util.Map[String, Any] = _
-  def getPartitionInfo: MetaPartitionInfo = {
-    this.props match {
-      case map : util.Map[String, Any] =>
-        DWSHttpClient.jacksonJson.convertValue(map, classOf[MetaPartitionInfo])
-      case _ => null
-    }
-  }
+    public static CommonVars<Long> CACHE_EXPIRE_TIME =
+            CommonVars.apply("wds.linkis.server.mdm.service.cache.expire", 600L);
+
+    /** Make a pool for each cache element */
+    public static final CommonVars<Integer> CACHE_IN_POOL_SIZE =
+            CommonVars.apply("wds.linkis.server.mdm.service.cache.in-pool.size", 5);
 }

@@ -15,25 +15,21 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.datasource.client.response
+package org.apache.linkis.metadat.query.service;
 
-import org.apache.linkis.httpclient.dws.DWSHttpClient
-import org.apache.linkis.httpclient.dws.annotation.DWSHttpMessageResult
-import org.apache.linkis.httpclient.dws.response.DWSResult
-import java.util
+import org.apache.linkis.common.conf.CommonVars;
 
-import org.apache.linkis.metadata.query.common.domain.MetaPartitionInfo
+public class HiveParamsMapper {
 
-import scala.beans.BeanProperty
+    public static final CommonVars<String> PARAM_HIVE_PRINCIPLE =
+            CommonVars.apply("wds.linkis.server.mdm.service.hive.principle", "principle");
 
-@DWSHttpMessageResult("/api/rest_j/v\\d+/metadatamanager/partitions/(\\S+)/db/(\\S+)/table/(\\S+)")
-class MetadataGetPartitionsResult extends DWSResult{
-  @BeanProperty var props: util.Map[String, Any] = _
-  def getPartitionInfo: MetaPartitionInfo = {
-    this.props match {
-      case map : util.Map[String, Any] =>
-        DWSHttpClient.jacksonJson.convertValue(map, classOf[MetaPartitionInfo])
-      case _ => null
-    }
-  }
+    public static final CommonVars<String> PARAM_HIVE_URIS =
+            CommonVars.apply("wds.linkis.server.mdm.service.hive.uris", "uris");
+
+    public static final CommonVars<String> PARAM_HIVE_KEYTAB =
+            CommonVars.apply("wds.linkis.server.mdm.service.hive.keytab", "keytab");
+
+    public static final CommonVars<String> PARAM_HADOOP_CONF =
+            CommonVars.apply("wds.linkis.server.mdm.service.hadoop.conf", "hadoopConf");
 }

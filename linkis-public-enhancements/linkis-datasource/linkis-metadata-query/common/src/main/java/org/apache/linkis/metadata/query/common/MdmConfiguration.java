@@ -15,25 +15,15 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.datasource.client.response
+package org.apache.linkis.metadata.query.common;
 
-import org.apache.linkis.httpclient.dws.DWSHttpClient
-import org.apache.linkis.httpclient.dws.annotation.DWSHttpMessageResult
-import org.apache.linkis.httpclient.dws.response.DWSResult
-import java.util
+import org.apache.linkis.common.conf.CommonVars;
 
-import org.apache.linkis.metadata.query.common.domain.MetaPartitionInfo
+public class MdmConfiguration {
 
-import scala.beans.BeanProperty
+    public static CommonVars<String> METADATA_SERVICE_APPLICATION =
+            CommonVars.apply("wds.linkis.server.mdm.service.app.name", "linkis-ps-metadatamanager");
 
-@DWSHttpMessageResult("/api/rest_j/v\\d+/metadatamanager/partitions/(\\S+)/db/(\\S+)/table/(\\S+)")
-class MetadataGetPartitionsResult extends DWSResult{
-  @BeanProperty var props: util.Map[String, Any] = _
-  def getPartitionInfo: MetaPartitionInfo = {
-    this.props match {
-      case map : util.Map[String, Any] =>
-        DWSHttpClient.jacksonJson.convertValue(map, classOf[MetaPartitionInfo])
-      case _ => null
-    }
-  }
+    public static CommonVars<String> DATA_SOURCE_SERVICE_APPLICATION =
+            CommonVars.apply("wds.linkis.server.dsm.app.name", "linkis-ps-data-source-manager");
 }

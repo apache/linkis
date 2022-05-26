@@ -15,25 +15,18 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.datasource.client.response
+package org.apache.linkis.metadat.query.service;
 
-import org.apache.linkis.httpclient.dws.DWSHttpClient
-import org.apache.linkis.httpclient.dws.annotation.DWSHttpMessageResult
-import org.apache.linkis.httpclient.dws.response.DWSResult
-import java.util
+import org.apache.linkis.common.conf.CommonVars;
 
-import org.apache.linkis.metadata.query.common.domain.MetaPartitionInfo
+/** Configuration */
+public class ElasticParamsMapper {
+    public static final CommonVars<String> PARAM_ES_URLS =
+            CommonVars.apply("wds.linkis.server.mdm.service.es.urls", "elasticUrls");
 
-import scala.beans.BeanProperty
+    public static final CommonVars<String> PARAM_ES_USERNAME =
+            CommonVars.apply("wds.linkis.server.mdm.service.es.username", "username");
 
-@DWSHttpMessageResult("/api/rest_j/v\\d+/metadatamanager/partitions/(\\S+)/db/(\\S+)/table/(\\S+)")
-class MetadataGetPartitionsResult extends DWSResult{
-  @BeanProperty var props: util.Map[String, Any] = _
-  def getPartitionInfo: MetaPartitionInfo = {
-    this.props match {
-      case map : util.Map[String, Any] =>
-        DWSHttpClient.jacksonJson.convertValue(map, classOf[MetaPartitionInfo])
-      case _ => null
-    }
-  }
+    public static final CommonVars<String> PARAM_ES_PASSWORD =
+            CommonVars.apply("wds.linkis.server.mdm.service.es.password", "password");
 }

@@ -15,25 +15,17 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.datasource.client.response
+package org.apache.linkis.metadat.query.service;
 
-import org.apache.linkis.httpclient.dws.DWSHttpClient
-import org.apache.linkis.httpclient.dws.annotation.DWSHttpMessageResult
-import org.apache.linkis.httpclient.dws.response.DWSResult
-import java.util
+import org.apache.linkis.common.conf.CommonVars;
 
-import org.apache.linkis.metadata.query.common.domain.MetaPartitionInfo
+public class KafkaParamsMapper {
+    public static final CommonVars<String> PARAM_KAFKA_PRINCIPLE =
+            CommonVars.apply("wds.linkis.server.mdm.service.kafka.principle", "principle");
 
-import scala.beans.BeanProperty
+    public static final CommonVars<String> PARAM_KAFKA_KEYTAB =
+            CommonVars.apply("wds.linkis.server.mdm.service.kafka.keytab", "keytab");
 
-@DWSHttpMessageResult("/api/rest_j/v\\d+/metadatamanager/partitions/(\\S+)/db/(\\S+)/table/(\\S+)")
-class MetadataGetPartitionsResult extends DWSResult{
-  @BeanProperty var props: util.Map[String, Any] = _
-  def getPartitionInfo: MetaPartitionInfo = {
-    this.props match {
-      case map : util.Map[String, Any] =>
-        DWSHttpClient.jacksonJson.convertValue(map, classOf[MetaPartitionInfo])
-      case _ => null
-    }
-  }
+    public static final CommonVars<String> PARAM_KAFKA_BROKERS =
+            CommonVars.apply("wds.linkis.server.mdm.service.kafka.brokers", "brokers");
 }

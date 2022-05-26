@@ -15,25 +15,33 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.datasource.client.response
+package org.apache.linkis.metadata.query.common.exception;
 
-import org.apache.linkis.httpclient.dws.DWSHttpClient
-import org.apache.linkis.httpclient.dws.annotation.DWSHttpMessageResult
-import org.apache.linkis.httpclient.dws.response.DWSResult
-import java.util
+import org.apache.linkis.common.exception.ErrorException;
 
-import org.apache.linkis.metadata.query.common.domain.MetaPartitionInfo
-
-import scala.beans.BeanProperty
-
-@DWSHttpMessageResult("/api/rest_j/v\\d+/metadatamanager/partitions/(\\S+)/db/(\\S+)/table/(\\S+)")
-class MetadataGetPartitionsResult extends DWSResult{
-  @BeanProperty var props: util.Map[String, Any] = _
-  def getPartitionInfo: MetaPartitionInfo = {
-    this.props match {
-      case map : util.Map[String, Any] =>
-        DWSHttpClient.jacksonJson.convertValue(map, classOf[MetaPartitionInfo])
-      case _ => null
+/** Exception in invoking metadata service */
+public class MetaMethodInvokeException extends ErrorException {
+    public MetaMethodInvokeException(int errCode, String desc, Throwable t) {
+        super(errCode, desc);
+        super.initCause(t);
     }
-  }
+
+    public MetaMethodInvokeException(
+            String method, Object[] args, int errCode, String desc, Throwable t) {
+        this(errCode, desc, t);
+        this.method = method;
+        this.args = args;
+    }
+
+    private String method;
+
+    private Object[] args;
+
+    public String getMethod() {
+        return method;
+    }
+
+    public Object[] getArgs() {
+        return args;
+    }
 }

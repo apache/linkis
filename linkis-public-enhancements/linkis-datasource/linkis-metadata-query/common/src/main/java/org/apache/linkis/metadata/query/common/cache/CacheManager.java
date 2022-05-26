@@ -15,25 +15,33 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.datasource.client.response
+package org.apache.linkis.metadata.query.common.cache;
 
-import org.apache.linkis.httpclient.dws.DWSHttpClient
-import org.apache.linkis.httpclient.dws.annotation.DWSHttpMessageResult
-import org.apache.linkis.httpclient.dws.response.DWSResult
-import java.util
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.common.cache.RemovalListener;
 
-import org.apache.linkis.metadata.query.common.domain.MetaPartitionInfo
+public interface CacheManager {
+    /**
+     * build simple cache
+     *
+     * @param cacheId
+     * @param removalListener
+     * @return
+     */
+    <V> Cache<String, V> buildCache(String cacheId, RemovalListener<String, V> removalListener);
 
-import scala.beans.BeanProperty
-
-@DWSHttpMessageResult("/api/rest_j/v\\d+/metadatamanager/partitions/(\\S+)/db/(\\S+)/table/(\\S+)")
-class MetadataGetPartitionsResult extends DWSResult{
-  @BeanProperty var props: util.Map[String, Any] = _
-  def getPartitionInfo: MetaPartitionInfo = {
-    this.props match {
-      case map : util.Map[String, Any] =>
-        DWSHttpClient.jacksonJson.convertValue(map, classOf[MetaPartitionInfo])
-      case _ => null
-    }
-  }
+    /**
+     * build loading cache
+     *
+     * @param cacheId
+     * @param loader
+     * @param removalListener
+     * @return
+     */
+    <V> LoadingCache<String, V> buildCache(
+            String cacheId,
+            CacheLoader<String, V> loader,
+            RemovalListener<String, V> removalListener);
 }

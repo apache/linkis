@@ -26,7 +26,7 @@ import org.apache.linkis.metadata.query.common.domain.MetaPartitionInfo
 
 import scala.beans.BeanProperty
 
-@DWSHttpMessageResult("/api/rest_j/v\\d+/metadatamanager/partitions/(\\S+)/db/(\\S+)/table/(\\S+)")
+@DWSHttpMessageResult("/api/rest_j/v\\d+/metadataquery/partitions/(\\S+)/db/(\\S+)/table/(\\S+)")
 class MetadataGetPartitionsResult extends DWSResult{
   @BeanProperty var props: util.Map[String, Any] = _
   def getPartitionInfo: MetaPartitionInfo = {

@@ -41,7 +41,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping(
-        value = "/metadatamanager",
+        value = "/metadataquery",
         produces = {"application/json"})
 public class MetadataCoreRestful {
 

@@ -70,7 +70,7 @@ class MetadataCoreRestfulTest {
     void testGetDatabases() {
         try {
             String dataSourceId = "1l";
-            String url = String.format("/metadatamanager/dbs/%s", dataSourceId);
+            String url = String.format("/metadataquery/dbs/%s", dataSourceId);
             MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
             params.add("system", "");
             MvcUtils mvcUtils = new MvcUtils(mockMvc);
@@ -100,7 +100,7 @@ class MetadataCoreRestfulTest {
     void testGetTables() throws Exception {
         String dataSourceId = "1l";
         String database = "hivedb";
-        String url = String.format("/metadatamanager/tables/%s/db/%s", dataSourceId, database);
+        String url = String.format("/metadataquery/tables/%s/db/%s", dataSourceId, database);
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("system", "");
         MvcUtils mvcUtils = new MvcUtils(mockMvc);
@@ -132,7 +132,7 @@ class MetadataCoreRestfulTest {
             String table = "testtab";
             String url =
                     String.format(
-                            "/metadatamanager/props/%s/db/%s/table/%s",
+                            "/metadataquery/props/%s/db/%s/table/%s",
                             dataSourceId, database, table);
             MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
             params.add("system", "");
@@ -170,7 +170,7 @@ class MetadataCoreRestfulTest {
             String table = "testtab";
             String url =
                     String.format(
-                            "/metadatamanager/partitions/%s/db/%s/table/%s",
+                            "/metadataquery/partitions/%s/db/%s/table/%s",
                             dataSourceId, database, table);
             MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
             params.add("system", "");
@@ -208,7 +208,7 @@ class MetadataCoreRestfulTest {
             String table = "testtab";
             String url =
                     String.format(
-                            "/metadatamanager/columns/%s/db/%s/table/%s",
+                            "/metadataquery/columns/%s/db/%s/table/%s",
                             dataSourceId, database, table);
             MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
             params.add("system", "");

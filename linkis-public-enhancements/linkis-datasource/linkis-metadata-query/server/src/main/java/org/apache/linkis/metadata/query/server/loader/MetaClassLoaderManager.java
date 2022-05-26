@@ -23,7 +23,7 @@ import org.apache.linkis.common.exception.ErrorException;
 import org.apache.linkis.metadata.query.common.exception.MetaRuntimeException;
 import org.apache.linkis.metadata.query.common.service.AbstractMetaService;
 import org.apache.linkis.metadata.query.common.service.MetadataService;
-import org.apache.linkis.metadatamanager.server.utils.MetadataUtils;
+import org.apache.linkis.metadata.query.server.utils.MetadataUtils;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -53,12 +53,12 @@ public class MetaClassLoaderManager {
             CommonVars.apply(
                     "wds.linkis.server.mdm.service.lib.dir",
                     Configuration.getLinkisHome()
-                            + "/lib/linkis-public-enhancements/linkis-ps-metadatamanager/service");
+                            + "/lib/linkis-public-enhancements/linkis-ps-metadataquery/service");
     public static CommonVars<Integer> INSTANCE_EXPIRE_TIME =
             CommonVars.apply("wds.linkis.server.mdm.service.instance.expire-in-seconds", 60);
 
     private static final String META_CLASS_NAME =
-            "org.apache.linkis.metadatamanager.service.%sMetaService";
+            "org.apache.linkis.metadata.query.service.%sMetaService";
 
     private static final Logger LOG = LoggerFactory.getLogger(MetaClassLoaderManager.class);
 

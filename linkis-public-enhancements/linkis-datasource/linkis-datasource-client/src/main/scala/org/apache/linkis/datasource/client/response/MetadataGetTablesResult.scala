@@ -23,7 +23,7 @@ import org.apache.linkis.httpclient.dws.response.DWSResult
 import java.util
 import scala.beans.BeanProperty
 
-@DWSHttpMessageResult("/api/rest_j/v\\d+/metadatamanager/tables/(\\S+)/db/(\\S+)")
+@DWSHttpMessageResult("/api/rest_j/v\\d+/metadataquery/tables/(\\S+)/db/(\\S+)")
 class MetadataGetTablesResult extends DWSResult{
   @BeanProperty var tables: util.List[String] = _
 }

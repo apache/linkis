@@ -13,16 +13,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# description:  ps-metadatamanager start cmd
+# description:  ps-metadataquery start cmd
 #
 # Modified for Linkis 1.1.0
 #
 
-export SERVER_SUFFIX="linkis-public-enhancements/linkis-ps-metadatamanager"
+export SERVER_SUFFIX="linkis-public-enhancements/linkis-ps-metadataquery"
 
 #export DEBUG_PORT=
 
-export SERVER_CLASS=org.apache.linkis.metadatamanager.server.LinkisMetadataManagerApplication
+export SERVER_CLASS=org.apache.linkis.metadata.query.server.LinkisMetadataManagerApplication
 
 export COMMON_START_BIN=$LINKIS_HOME/sbin/ext/linkis-common-start
 if [[ ! -f "${COMMON_START_BIN}" ]]; then

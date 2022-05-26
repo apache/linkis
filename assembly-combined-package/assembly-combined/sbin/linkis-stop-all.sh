@@ -73,8 +73,8 @@ if [ "$ENABLE_METADATA_MANAGER" == "true" ]; then
   SERVER_IP=$DATASOURCE_MANAGER_INSTALL_IP
   stopApp
 
-  #linkis-ps-metadatamanager
-  SERVER_NAME="ps-metadatamanager"
+  #linkis-ps-metadataquery
+  SERVER_NAME="ps-metadataquery"
   SERVER_IP=$METADATA_MANAGER_INSTALL_IP
   stopApp
 fi

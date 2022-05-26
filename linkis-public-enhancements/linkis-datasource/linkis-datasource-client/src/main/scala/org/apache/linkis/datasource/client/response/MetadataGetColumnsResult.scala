@@ -26,7 +26,7 @@ import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo
 
 import scala.beans.BeanProperty
 
-@DWSHttpMessageResult("/api/rest_j/v\\d+/metadatamanager/columns/(\\S+)/db/(\\S+)/table/(\\S+)")
+@DWSHttpMessageResult("/api/rest_j/v\\d+/metadataquery/columns/(\\S+)/db/(\\S+)/table/(\\S+)")
 class MetadataGetColumnsResult extends DWSResult{
   @BeanProperty var columns: util.List[java.util.Map[String, Any]] = _
 

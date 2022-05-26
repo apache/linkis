@@ -110,7 +110,7 @@ SERVER_IP=$ENGINECONN_PLUGIN_SERVER_INSTALL_IP
 startApp
 
 
-if [ "$ENABLE_METADATA_MANAGER" == "true" ]; then
+if [ "$ENABLE_METADATA_QUERY" == "true" ]; then
   #linkis-ps-data-source-manager
   SERVER_NAME="ps-data-source-manager"
   SERVER_IP=$DATASOURCE_MANAGER_INSTALL_IP
@@ -118,7 +118,7 @@ if [ "$ENABLE_METADATA_MANAGER" == "true" ]; then
 
   #linkis-ps-metadataquery
   SERVER_NAME="ps-metadataquery"
-  SERVER_IP=$METADATA_MANAGER_INSTALL_IP
+  SERVER_IP=$METADATA_QUERY_INSTALL_IP
   startApp
 fi
 
@@ -197,7 +197,7 @@ SERVER_NAME="cg-engineplugin"
 SERVER_IP=$ENGINECONN_PLUGIN_SERVER_INSTALL_IP
 checkServer
 
-if [ "$ENABLE_METADATA_MANAGER" == "true" ]; then
+if [ "$ENABLE_METADATA_QUERY" == "true" ]; then
   #linkis-ps-data-source-manager
   SERVER_NAME="ps-data-source-manager"
   SERVER_IP=$DATASOURCE_MANAGER_INSTALL_IP
@@ -205,7 +205,7 @@ if [ "$ENABLE_METADATA_MANAGER" == "true" ]; then
 
   #linkis-ps-metadataquery
   SERVER_NAME="ps-metadataquery"
-  SERVER_IP=$METADATA_MANAGER_INSTALL_IP
+  SERVER_IP=$METADATA_QUERY_INSTALL_IP
   checkServer
 fi
 

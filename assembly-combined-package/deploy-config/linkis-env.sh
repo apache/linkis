@@ -122,8 +122,8 @@ CS_PORT=9108
 DATASOURCE_MANAGER_PORT=9109
 
 ##linkis-ps-metadataquery
-#METADATA_MANAGER_INSTALL_IP=127.0.0.1
-METADATA_MANAGER_PORT=9110
+#METADATA_QUERY_INSTALL_IP=127.0.0.1
+METADATA_QUERY_PORT=9110
 
 
 ########################################################################################
@@ -148,7 +148,7 @@ LINKIS_PUBLIC_MODULE=lib/linkis-commons/public-module
 #SKYWALKING_AGENT_PATH=/appcom/config/skywalking-agent/skywalking-agent.jar
 
 #If you want to start metadata related microservices, you can set this export ENABLE_METADATA_MANAGE=true
-export ENABLE_METADATA_MANAGER=false
+export ENABLE_METADATA_QUERY=false
 export ENABLE_HDFS=false
 export ENABLE_HIVE=false
 export ENABLE_SPARK=false

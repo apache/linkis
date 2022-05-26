@@ -362,10 +362,10 @@ then
   sed -i ${txt}  "s#spring.server.port.*#spring.server.port=$PUBLICSERVICE_PORT#g" $publicservice_conf
 fi
 
-metadatamanage_conf=$LINKIS_HOME/conf/linkis-ps-metadataquery.properties
-if [ "$METADATA_MANAGER_PORT" != "" ]
+metadataquery_conf=$LINKIS_HOME/conf/linkis-ps-metadataquery.properties
+if [ "$METADATA_QUERY_PORT" != "" ]
 then
-  sed -i ${txt}  "s#spring.server.port.*#spring.server.port=$METADATA_MANAGER_PORT#g" $metadatamanage_conf
+  sed -i ${txt}  "s#spring.server.port.*#spring.server.port=$METADATA_QUERY_PORT#g" $metadataquery_conf
 fi
 
 

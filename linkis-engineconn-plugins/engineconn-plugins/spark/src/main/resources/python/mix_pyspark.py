@@ -221,8 +221,10 @@ def java_watchdog_thread(sleep=10):
             intp.getKind()
         except Exception as e:
             print("Failed to detect java daemon, now exit python process")
+            print(e)
             sys.exit(1)
 watchdog_thread = threading.Thread(target=java_watchdog_thread)
+watchdog_thread.setDaemon(True)
 watchdog_thread.start()
 
 while True :

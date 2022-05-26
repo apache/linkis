@@ -15,6 +15,7 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
+
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -22,28 +23,38 @@
         <artifactId>linkis</artifactId>
         <groupId>org.apache.linkis</groupId>
         <version>1.1.2</version>
-        <relativePath>../../../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>linkis-datasource-client</artifactId>
+    <artifactId>linkis-metadata-query-common</artifactId>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.apache.linkis</groupId>
-            <artifactId>linkis-gateway-httpclient-support</artifactId>
+            <artifactId>linkis-common</artifactId>
+            <scope>provided</scope>
             <version>${linkis.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>asm</artifactId>
+                    <groupId>org.ow2.asm</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
-
+        <!--rpc-->
+        <dependency>
+            <groupId>org.apache.linkis</groupId>
+            <artifactId>linkis-rpc</artifactId>
+            <version>${linkis.version}</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>org.apache.linkis</groupId>
             <artifactId>linkis-datasource-manager-common</artifactId>
-            <version>${linkis.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.linkis</groupId>
-            <artifactId>linkis-metadata-query-common</artifactId>
             <version>${linkis.version}</version>
         </dependency>
     </dependencies>
@@ -62,14 +73,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <configuration>
-                    <excludes>
-                        <exclude>**/*.yml</exclude>
-                        <exclude>**/*.properties</exclude>
-                        <exclude>**/*.sh</exclude>
-                        <exclude>**/log4j2.xml</exclude>
-                    </excludes>
-                </configuration>
             </plugin>
         </plugins>
         <resources>

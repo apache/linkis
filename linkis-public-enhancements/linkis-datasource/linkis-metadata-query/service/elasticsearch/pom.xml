@@ -16,7 +16,8 @@
   ~ limitations under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>linkis</artifactId>
@@ -25,14 +26,20 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>linkis-datasource-manager-server</artifactId>
-
+    <artifactId>linkis-metadata-query-service-es</artifactId>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <es.version>6.7.1</es.version>
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>org.apache.linkis</groupId>
+            <artifactId>linkis-metadata-query-common</artifactId>
+            <version>${linkis.version}</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>org.apache.linkis</groupId>
             <artifactId>linkis-module</artifactId>
@@ -43,65 +50,12 @@
                     <groupId>org.ow2.asm</groupId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <!-- data source manager common dependency-->
-        <dependency>
-            <groupId>org.apache.linkis</groupId>
-            <artifactId>linkis-datasource-manager-common</artifactId>
-            <version>${linkis.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>asm</artifactId>
-                    <groupId>org.ow2.asm</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-validator</artifactId>
-            <version>5.1.2.Final</version>
-        </dependency>
-
-        <!--bml client-->
-        <dependency>
-            <groupId>org.apache.linkis</groupId>
-            <artifactId>linkis-bml-client</artifactId>
-            <version>${linkis.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>guava</artifactId>
-                    <groupId>com.google.guava</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.linkis</groupId>
-            <artifactId>linkis-mybatis</artifactId>
-            <version>${linkis.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>spring-core</artifactId>
-                    <groupId>org.springframework</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>spring-beans</artifactId>
-                    <groupId>org.springframework</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <!--rpc-->
-        <dependency>
-            <groupId>org.apache.linkis</groupId>
-            <artifactId>linkis-rpc</artifactId>
-            <version>${linkis.version}</version>
             <scope>provided</scope>
         </dependency>
-        <!--Metadata common-->
         <dependency>
-            <groupId>org.apache.linkis</groupId>
-            <artifactId>linkis-metadata-query-common</artifactId>
-            <version>${linkis.version}</version>
+            <groupId>org.elasticsearch.client</groupId>
+            <artifactId>elasticsearch-rest-client</artifactId>
+            <version>${es.version}</version>
         </dependency>
     </dependencies>
 
@@ -153,12 +107,6 @@
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
-            </resource>
-            <resource>
-                <directory>src/main/java</directory>
-                <includes>
-                    <include>**/*.xml</include>
-                </includes>
             </resource>
         </resources>
         <finalName>${project.artifactId}-${project.version}</finalName>

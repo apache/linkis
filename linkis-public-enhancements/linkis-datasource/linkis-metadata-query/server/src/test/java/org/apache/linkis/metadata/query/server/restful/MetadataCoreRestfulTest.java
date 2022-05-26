@@ -18,9 +18,9 @@
 package org.apache.linkis.metadata.query.server.restful;
 
 import org.apache.linkis.common.exception.ErrorException;
+import org.apache.linkis.metadata.query.common.domain.MetaPartitionInfo;
 import org.apache.linkis.metadata.query.server.WebApplicationServer;
 import org.apache.linkis.metadata.query.server.service.MetadataAppService;
-import org.apache.linkis.metadata.query.common.domain.MetaPartitionInfo;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.MessageStatus;
 import org.apache.linkis.server.security.SecurityFilter;

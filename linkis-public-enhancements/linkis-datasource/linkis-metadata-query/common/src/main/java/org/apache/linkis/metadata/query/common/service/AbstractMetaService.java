@@ -23,8 +23,8 @@ import org.apache.linkis.metadata.query.common.cache.CacheConfiguration;
 import org.apache.linkis.metadata.query.common.cache.CacheManager;
 import org.apache.linkis.metadata.query.common.cache.ConnCacheManager;
 import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
-import org.apache.linkis.metadata.query.common.exception.MetaRuntimeException;
 import org.apache.linkis.metadata.query.common.domain.MetaPartitionInfo;
+import org.apache.linkis.metadata.query.common.exception.MetaRuntimeException;
 
 import org.apache.commons.lang.StringUtils;
 

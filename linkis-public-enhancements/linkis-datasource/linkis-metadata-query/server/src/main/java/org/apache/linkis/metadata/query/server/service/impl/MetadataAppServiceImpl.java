@@ -17,7 +17,6 @@
 
 package org.apache.linkis.metadata.query.server.service.impl;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.linkis.common.exception.ErrorException;
 import org.apache.linkis.datasourcemanager.common.auth.AuthContext;
 import org.apache.linkis.datasourcemanager.common.protocol.DsInfoQueryRequest;
@@ -31,11 +30,16 @@ import org.apache.linkis.metadata.query.common.service.MetadataConnection;
 import org.apache.linkis.metadata.query.server.loader.MetaClassLoaderManager;
 import org.apache.linkis.metadata.query.server.service.MetadataAppService;
 import org.apache.linkis.rpc.Sender;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import org.apache.commons.lang.StringUtils;
+
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.*;
@@ -61,7 +65,7 @@ public class MetadataAppServiceImpl implements MetadataAppService {
                 invokeMetaMethod(
                         dataSourceType,
                         "getConnection",
-                        new Object[]{operator, params},
+                        new Object[] {operator, params},
                         Map.class);
         if (Objects.nonNull(metadataConnection)) {
             Closeable connection = metadataConnection.getConnection();
@@ -81,7 +85,7 @@ public class MetadataAppServiceImpl implements MetadataAppService {
             return invokeMetaMethod(
                     dsInfoResponse.dsType(),
                     "getDatabases",
-                    new Object[]{dsInfoResponse.creator(), dsInfoResponse.params()},
+                    new Object[] {dsInfoResponse.creator(), dsInfoResponse.params()},
                     List.class);
         }
         return new ArrayList<>();
@@ -96,7 +100,7 @@ public class MetadataAppServiceImpl implements MetadataAppService {
             return invokeMetaMethod(
                     dsInfoResponse.dsType(),
                     "getTables",
-                    new Object[]{dsInfoResponse.creator(), dsInfoResponse.params(), database},
+                    new Object[] {dsInfoResponse.creator(), dsInfoResponse.params(), database},
                     List.class);
         }
         return new ArrayList<>();
@@ -116,12 +120,12 @@ public class MetadataAppServiceImpl implements MetadataAppService {
             return invokeMetaMethod(
                     dsInfoResponse.dsType(),
                     "getPartitionProps",
-                    new Object[]{
-                            dsInfoResponse.creator(),
-                            dsInfoResponse.params(),
-                            database,
-                            table,
-                            partition
+                    new Object[] {
+                        dsInfoResponse.creator(),
+                        dsInfoResponse.params(),
+                        database,
+                        table,
+                        partition
                     },
                     Map.class);
         }
@@ -137,8 +141,8 @@ public class MetadataAppServiceImpl implements MetadataAppService {
             return invokeMetaMethod(
                     dsInfoResponse.dsType(),
                     "getTableProps",
-                    new Object[]{
-                            dsInfoResponse.creator(), dsInfoResponse.params(), database, table
+                    new Object[] {
+                        dsInfoResponse.creator(), dsInfoResponse.params(), database, table
                     },
                     Map.class);
         }
@@ -159,8 +163,8 @@ public class MetadataAppServiceImpl implements MetadataAppService {
             return invokeMetaMethod(
                     dsInfoResponse.dsType(),
                     "getPartitions",
-                    new Object[]{
-                            dsInfoResponse.creator(), dsInfoResponse.params(), database, table, traverse
+                    new Object[] {
+                        dsInfoResponse.creator(), dsInfoResponse.params(), database, table, traverse
                     },
                     MetaPartitionInfo.class);
         }
@@ -176,8 +180,8 @@ public class MetadataAppServiceImpl implements MetadataAppService {
             return invokeMetaMethod(
                     dsInfoResponse.dsType(),
                     "getColumns",
-                    new Object[]{
-                            dsInfoResponse.creator(), dsInfoResponse.params(), database, table
+                    new Object[] {
+                        dsInfoResponse.creator(), dsInfoResponse.params(), database, table
                     },
                     List.class);
         }
@@ -188,7 +192,7 @@ public class MetadataAppServiceImpl implements MetadataAppService {
      * Request to get data source information (type and connection parameters)
      *
      * @param dataSourceId data source id
-     * @param system       system
+     * @param system system
      * @return
      * @throws ErrorException
      */
@@ -208,7 +212,7 @@ public class MetadataAppServiceImpl implements MetadataAppService {
             boolean hasPermission =
                     (AuthContext.isAdministrator(userName)
                             || (StringUtils.isNotBlank(response.creator())
-                            && userName.equals(response.creator())));
+                                    && userName.equals(response.creator())));
             if (!hasPermission) {
                 throw new ErrorException(
                         -1, "Don't have query permission for data source [没有数据源的查询权限]");
@@ -224,7 +228,7 @@ public class MetadataAppServiceImpl implements MetadataAppService {
     /**
      * Invoke method in meta service
      *
-     * @param method     method name
+     * @param method method name
      * @param methodArgs arguments
      */
     @SuppressWarnings("unchecked")

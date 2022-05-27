@@ -44,12 +44,12 @@ import org.apache.linkis.cli.core.utils.LogUtils;
 
 import org.apache.commons.lang3.StringUtils;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ProcessInputUtil {
     private static Logger logger = LoggerFactory.getLogger(ProcessInputUtil.class);

@@ -23,14 +23,14 @@ import org.apache.linkis.manager.engineplugin.common.exception.EngineConnPluginN
 import org.apache.linkis.manager.engineplugin.common.loader.entity.EngineConnPluginInfo;
 import org.apache.linkis.manager.engineplugin.common.loader.entity.EngineConnPluginInstance;
 
+import java.util.concurrent.TimeUnit;
+
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.RemovalCause;
 import com.google.common.cache.RemovalListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.concurrent.TimeUnit;
 
 public class GuavaEngineConnPluginCache implements RefreshableEngineConnPluginCache {
 

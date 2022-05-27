@@ -30,10 +30,10 @@ import org.apache.linkis.cli.core.utils.converter.PredefinedStringConverters;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.*;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.*;
 
 public class StdVarAccess implements VarAccess {
     private static Logger logger = LoggerFactory.getLogger(StdVarAccess.class);

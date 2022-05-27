@@ -30,7 +30,6 @@
     <artifactId>linkis-engineconn-plugin-flink</artifactId>
     <properties>
         <flink.version>1.12.2</flink.version>
-        <hive.version>2.3.3</hive.version>
     </properties>
 
     <dependencies>
@@ -164,6 +163,11 @@
                 </exclusion>
                 <exclusion>
                     <artifactId>hadoop-hdfs</artifactId>
+                    <groupId>org.apache.hadoop</groupId>
+                </exclusion>
+                <!-- for hadoop 3 -->
+                <exclusion>
+                    <artifactId>hadoop-hdfs-client</artifactId>
                     <groupId>org.apache.hadoop</groupId>
                 </exclusion>
                 <exclusion>
@@ -365,10 +369,9 @@
                 </exclusion>
 
                 <exclusion>
-                    <artifactId>hadoop-hdfs</artifactId>
+                    <artifactId>${hadoop-hdfs-client.artifact}</artifactId>
                     <groupId>org.apache.hadoop</groupId>
                 </exclusion>
-
                 <exclusion>
                     <artifactId>hadoop-auth</artifactId>
                     <groupId>org.apache.hadoop</groupId>
@@ -465,13 +468,9 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-deploy-plugin</artifactId>
             </plugin>
-
             <plugin>
                 <groupId>net.alchim31.maven</groupId>
                 <artifactId>scala-maven-plugin</artifactId>
-                <configuration>
-                    <addScalacArgs>-target:jvm-${jdk.compile.version}</addScalacArgs>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -480,7 +479,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <version>3.2.0</version>
                 <inherited>false</inherited>
                 <executions>
                     <execution>

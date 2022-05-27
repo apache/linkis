@@ -36,11 +36,11 @@ import org.apache.linkis.ujes.client.response.*;
 
 import org.apache.commons.lang3.StringUtils;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.text.MessageFormat;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /** Based on UjesClient */
 public class LinkisJobOperator implements JobOperator {

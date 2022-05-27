@@ -17,14 +17,14 @@
 
 package org.apache.linkis.metadatamanager.common.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 /** The meta information of partition */
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_EMPTY)

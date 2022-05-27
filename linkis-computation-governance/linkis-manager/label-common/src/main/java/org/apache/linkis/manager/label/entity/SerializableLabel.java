@@ -21,13 +21,13 @@ import org.apache.linkis.manager.label.utils.LabelUtils;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /** Serialize label value to string value and override the equals method */
 public abstract class SerializableLabel<T> implements Label<T> {

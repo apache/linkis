@@ -24,13 +24,13 @@ import org.apache.linkis.rpc.message.parser.ServiceParser;
 
 import org.springframework.aop.support.AopUtils;
 
-import com.google.common.collect.Interner;
-import com.google.common.collect.Interners;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import com.google.common.collect.Interner;
+import com.google.common.collect.Interners;
 
 public abstract class AbstractServiceRegistry extends JavaLog implements ServiceRegistry {
 

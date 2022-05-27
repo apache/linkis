@@ -25,6 +25,10 @@ import org.apache.linkis.jobhistory.dao.JobDetailMapper;
 import org.apache.linkis.jobhistory.service.impl.JobHistoryDetailQueryServiceImpl;
 import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.function.Predicate;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.junit.jupiter.api.Test;
@@ -32,10 +36,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.function.Predicate;
 
 import static org.junit.jupiter.api.Assertions.*;
 

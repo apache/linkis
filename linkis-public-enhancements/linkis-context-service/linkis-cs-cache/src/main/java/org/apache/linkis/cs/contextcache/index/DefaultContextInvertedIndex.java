@@ -19,12 +19,12 @@ package org.apache.linkis.cs.contextcache.index;
 
 import org.apache.commons.collections.CollectionUtils;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 
 public class DefaultContextInvertedIndex implements ContextInvertedIndex {
 

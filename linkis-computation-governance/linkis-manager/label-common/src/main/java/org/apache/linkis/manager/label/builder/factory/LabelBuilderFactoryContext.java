@@ -23,12 +23,12 @@ import org.apache.linkis.manager.label.conf.LabelCommonConfig;
 import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.StringUtils;
 
+import java.util.Iterator;
+import java.util.Set;
+
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Iterator;
-import java.util.Set;
 
 public class LabelBuilderFactoryContext {
 

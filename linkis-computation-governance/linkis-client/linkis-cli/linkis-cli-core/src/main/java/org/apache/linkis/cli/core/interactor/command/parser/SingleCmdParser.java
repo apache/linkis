@@ -25,10 +25,10 @@ import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
 import org.apache.linkis.cli.core.interactor.command.fitter.FitterResult;
 import org.apache.linkis.cli.core.interactor.command.parser.result.ParseResult;
 
+import java.util.Arrays;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Arrays;
 
 public class SingleCmdParser extends AbstarctParser {
     private static final Logger logger = LoggerFactory.getLogger(SingleCmdParser.class);

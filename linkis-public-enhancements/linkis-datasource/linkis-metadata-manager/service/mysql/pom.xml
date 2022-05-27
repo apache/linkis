@@ -27,11 +27,6 @@
 
     <artifactId>linkis-metadata-manager-service-mysql</artifactId>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <mysql.version>8.0.16</mysql.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.apache.linkis</groupId>
@@ -58,7 +53,6 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>${mysql.version}</version>
         </dependency>
     </dependencies>
 
@@ -80,7 +74,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <version>3.2.0</version>
                 <inherited>false</inherited>
                 <executions>
                     <execution>

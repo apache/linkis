@@ -23,11 +23,11 @@ import org.apache.linkis.cli.common.exception.error.ErrorLevel;
 import org.apache.linkis.cli.core.exception.VarAccessException;
 import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SysVarAccess implements VarAccess {
     private static Logger logger = LoggerFactory.getLogger(SysVarAccess.class);

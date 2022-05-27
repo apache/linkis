@@ -99,14 +99,14 @@ private[conf] object BDPConfiguration extends Logging {
   }
 
   def getOption(key: String): Option[String] = {
-    if(extractConfig.containsKey(key))
+    if (extractConfig.containsKey(key))
       return Some(extractConfig.getProperty(key))
     val value = config.getProperty(key)
     if(StringUtils.isNotEmpty(value)) {
       return Some(value)
     }
     val propsValue =  sysProps.get(key).orElse(sys.props.get(key))
-    if(propsValue.isDefined){
+    if (propsValue.isDefined) {
       return propsValue
     }
     env.get(key)
@@ -121,7 +121,7 @@ private[conf] object BDPConfiguration extends Logging {
     props
   }
 
-  def getOption[T](commonVars: CommonVars[T]): Option[T] = if(commonVars.value != null) Option(commonVars.value)
+  def getOption[T](commonVars: CommonVars[T]): Option[T] = if (commonVars.value != null) Option(commonVars.value)
   else {
     val value = BDPConfiguration.getOption(commonVars.key)
     if (value.isEmpty) Option(commonVars.defaultValue)
@@ -129,7 +129,7 @@ private[conf] object BDPConfiguration extends Logging {
   }
 
   private[common] def formatValue[T](defaultValue: T, value: Option[String]): Option[T] = {
-    if(value.isEmpty || value.exists(StringUtils.isEmpty)) return Option(defaultValue)
+    if (value.isEmpty || value.exists(StringUtils.isEmpty)) return Option(defaultValue)
     val formattedValue = defaultValue match {
       case _: String => value
       case _: Byte => value.map(_.toByte)
@@ -149,9 +149,9 @@ private[conf] object BDPConfiguration extends Logging {
 
   def set(key: String, value: String) = extractConfig.setProperty(key, value)
 
-  def setIfNotExists(key: String, value: String) = if(!config.containsKey(key)) set(key, value)
+  def setIfNotExists(key: String, value: String) = if (!config.containsKey(key)) set(key, value)
 
-  def getBoolean(key: String, default: Boolean):Boolean = getOption(key).map(_.toBoolean).getOrElse(default)
+  def getBoolean(key: String, default: Boolean): Boolean = getOption(key).map(_.toBoolean).getOrElse(default)
   def getBoolean(commonVars: CommonVars[Boolean]): Option[Boolean] = getOption(commonVars)
 
   def get(key: String, default: String): String = getOption(key).getOrElse(default)
@@ -159,7 +159,7 @@ private[conf] object BDPConfiguration extends Logging {
 
   def get(key: String): String = getOption(key).getOrElse(throw new NoSuchElementException(key))
 
-  def getInt(key: String, default: Int):Int = getOption(key).map(_.toInt).getOrElse(default)
+  def getInt(key: String, default: Int): Int = getOption(key).map(_.toInt).getOrElse(default)
   def getInt(commonVars: CommonVars[Int]): Option[Int] = getOption(commonVars)
 
   def contains(key: String): Boolean = getOption(key).isDefined

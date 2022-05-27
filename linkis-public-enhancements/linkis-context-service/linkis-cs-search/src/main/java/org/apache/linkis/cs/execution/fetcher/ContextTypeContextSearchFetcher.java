@@ -22,10 +22,10 @@ import org.apache.linkis.cs.common.entity.source.ContextID;
 import org.apache.linkis.cs.common.entity.source.ContextKeyValue;
 import org.apache.linkis.cs.contextcache.ContextCacheService;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
 
 public class ContextTypeContextSearchFetcher extends AbstractContextCacheFetcher {
 

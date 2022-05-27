@@ -20,10 +20,10 @@ package org.apache.linkis.cs.contextcache.index;
 import org.apache.linkis.cs.common.entity.enumeration.ContextType;
 import org.apache.linkis.cs.common.entity.source.ContextKey;
 
+import java.util.*;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.*;
 
 public class ContextInvertedIndexSetImpl implements ContextInvertedIndexSet {
 

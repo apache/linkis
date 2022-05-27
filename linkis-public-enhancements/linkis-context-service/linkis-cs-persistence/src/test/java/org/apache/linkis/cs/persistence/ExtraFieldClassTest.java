@@ -19,11 +19,11 @@ package org.apache.linkis.cs.persistence;
 
 import org.apache.linkis.cs.persistence.entity.ExtraFieldClass;
 
+import java.util.List;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-
-import java.util.List;
 
 public class ExtraFieldClassTest {
 

@@ -25,10 +25,10 @@ import org.apache.linkis.cs.common.serialize.AbstractSerializer;
 import org.apache.linkis.cs.common.serialize.impl.history.CommonHistorySerializer;
 import org.apache.linkis.cs.common.utils.CSCommonUtils;
 
-import com.google.gson.reflect.TypeToken;
-
 import java.util.List;
 import java.util.Map;
+
+import com.google.gson.reflect.TypeToken;
 
 public class CSTableLineageSerializer extends AbstractSerializer<CSTableLineageHistory>
         implements CommonHistorySerializer {

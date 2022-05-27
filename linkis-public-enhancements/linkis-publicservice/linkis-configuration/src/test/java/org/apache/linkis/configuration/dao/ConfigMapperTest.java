@@ -21,11 +21,11 @@ import org.apache.linkis.configuration.entity.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import org.junit.jupiter.api.Test;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 

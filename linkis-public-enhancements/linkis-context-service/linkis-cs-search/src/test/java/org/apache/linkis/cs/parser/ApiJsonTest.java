@@ -22,6 +22,10 @@ import org.apache.linkis.cs.condition.ConditionType;
 import org.apache.linkis.cs.condition.construction.ConditionParser;
 import org.apache.linkis.server.BDPJettyServerHelper;
 
+import java.io.IOException;
+import java.util.Map;
+import java.util.Set;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,10 +33,6 @@ import com.google.common.collect.Sets;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
-import java.util.Map;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

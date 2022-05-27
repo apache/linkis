@@ -20,14 +20,14 @@ package org.apache.linkis.variable.service;
 import org.apache.linkis.protocol.variable.ResponseQueryVariable;
 import org.apache.linkis.variable.dao.VarMapper;
 
+import java.util.ArrayList;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

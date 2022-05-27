@@ -22,13 +22,13 @@ import org.apache.linkis.datasourcemanager.common.util.json.Json;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 /** Store the data source environment information */
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_EMPTY)

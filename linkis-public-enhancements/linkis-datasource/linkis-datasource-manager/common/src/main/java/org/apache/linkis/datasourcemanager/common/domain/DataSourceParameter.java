@@ -17,11 +17,11 @@
 
 package org.apache.linkis.datasourcemanager.common.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 /** Store the data source information */
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_EMPTY)

@@ -23,11 +23,11 @@ import org.apache.linkis.errorcode.common.LinkisErrorCode;
 import org.apache.linkis.httpclient.dws.DWSHttpClient;
 import org.apache.linkis.httpclient.response.Result;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class LinkisErrorCodeClient {
 

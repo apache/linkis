@@ -19,10 +19,10 @@ package org.apache.linkis.common.exception;
 
 import org.apache.linkis.common.errorcode.CommonErrorConstants;
 
-import org.junit.jupiter.api.Test;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import org.junit.jupiter.api.Test;
 
 import static org.apache.linkis.common.exception.ExceptionLevel.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;

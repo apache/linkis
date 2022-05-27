@@ -31,9 +31,9 @@ import org.apache.linkis.cs.contextcache.test.keyword.TestContextValue;
 
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import org.junit.jupiter.api.BeforeEach;
-
 import java.util.List;
+
+import org.junit.jupiter.api.BeforeEach;
 
 public class TestContextCacheService {
 

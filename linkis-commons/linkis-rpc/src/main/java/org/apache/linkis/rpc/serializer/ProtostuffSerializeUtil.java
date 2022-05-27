@@ -17,6 +17,11 @@
 
 package org.apache.linkis.rpc.serializer;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import scala.Option;
+
 import io.protostuff.LinkedBuffer;
 import io.protostuff.ProtostuffIOUtil;
 import io.protostuff.Schema;
@@ -24,11 +29,6 @@ import io.protostuff.runtime.DefaultIdStrategy;
 import io.protostuff.runtime.Delegate;
 import io.protostuff.runtime.RuntimeEnv;
 import io.protostuff.runtime.RuntimeSchema;
-
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import scala.Option;
 
 public class ProtostuffSerializeUtil {
 

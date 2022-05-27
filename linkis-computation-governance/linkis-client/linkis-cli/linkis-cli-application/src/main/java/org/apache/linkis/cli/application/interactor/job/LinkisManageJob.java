@@ -39,10 +39,10 @@ import org.apache.linkis.cli.core.utils.SchedulerUtils;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.text.MessageFormat;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.text.MessageFormat;
 
 public class LinkisManageJob extends LinkisJob
         implements ManagableBackendJob, TerminatableJob, LogAccessibleJob, ResultAccessibleJob {

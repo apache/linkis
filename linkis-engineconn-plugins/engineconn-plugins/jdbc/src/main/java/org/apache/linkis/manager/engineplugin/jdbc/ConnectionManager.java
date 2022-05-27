@@ -26,6 +26,7 @@ import org.apache.commons.lang.StringUtils;
 
 import javax.sql.DataSource;
 
+import org.apache.linkis.manager.engineplugin.jdbc.constant.JDBCEngineConnConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,10 +101,10 @@ public class ConnectionManager {
 
     private void validateURL(String url) {
         if (StringUtils.isEmpty(url)) {
-            throw new NullPointerException("jdbc.url cannot be null.");
+            throw new NullPointerException(JDBCEngineConnConstant.JDBC_URL + " cannot be null.");
         }
         if (!url.matches("jdbc:\\w+://\\S+:[0-9]{2,6}(/\\S*)?")) {
-            throw new IllegalArgumentException("Unknown jdbc.url " + url);
+            throw new IllegalArgumentException("Unknown the jdbc url: " + url);
         }
         for (String supportedDBName : supportedDBNames) {
             if (url.indexOf(supportedDBName) > 0) {
@@ -124,8 +125,8 @@ public class ConnectionManager {
 
     protected DataSource createDataSources(Map<String, String> properties) throws SQLException {
         String url = getJdbcUrl(properties);
-        String username = properties.getOrDefault("jdbc.username", "");
-        String password = StringUtils.trim(properties.getOrDefault("jdbc.password", ""));
+        String username = properties.getOrDefault(JDBCEngineConnConstant.JDBC_USERNAME, "");
+        String password = StringUtils.trim(properties.getOrDefault(JDBCEngineConnConstant.JDBC_PASSWORD, ""));
         int index = url.indexOf(":") + 1;
         String dbType = url.substring(index, url.indexOf(":", index));
         Properties props = new Properties();
@@ -140,9 +141,9 @@ public class ConnectionManager {
         props.put("validationQuery", this.supportedDBsValidQuery.get(dbType));
 
         if (isKerberosAuthType(properties)) {
-            String jdbcProxyUser = properties.get("jdbc.proxy.user");
+            String jdbcProxyUser = properties.get(JDBCEngineConnConstant.JDBC_PROXY_USER);
             // need proxy user
-            String proxyUserProperty = properties.get("jdbc.proxy.user.property");
+            String proxyUserProperty = properties.get(JDBCEngineConnConstant.JDBC_PROXY_USER_PROPERTY);
             if (StringUtils.isNotBlank(proxyUserProperty)) {
                 url = url.concat(";").concat(proxyUserProperty + "=" + jdbcProxyUser);
                 props.put("url", url);
@@ -185,17 +186,17 @@ public class ConnectionManager {
                 connection = getConnection(url, properties);
                 break;
             case KERBEROS:
-                final String keytab = properties.get("jdbc.keytab.location");
-                final String principal = properties.get("jdbc.principal");
+                final String keytab = properties.get(JDBCEngineConnConstant.JDBC_KERBEROS_AUTH_TYPE_KEYTAB_LOCATION);
+                final String principal = properties.get(JDBCEngineConnConstant.JDBC_KERBEROS_AUTH_TYPE_PRINCIPAL);
                 KerberosUtils.createKerberosSecureConfiguration(keytab, principal);
                 connection = getConnection(url, properties);
                 break;
             case USERNAME:
-                if (StringUtils.isEmpty(properties.get("jdbc.username"))) {
-                    throw new SQLException("jdbc.username is not empty.");
+                if (StringUtils.isEmpty(properties.get(JDBCEngineConnConstant.JDBC_USERNAME))) {
+                    throw new SQLException(JDBCEngineConnConstant.JDBC_USERNAME + " is not empty.");
                 }
-                if (StringUtils.isEmpty(properties.get("jdbc.password"))) {
-                    throw new SQLException("jdbc.password is not empty.");
+                if (StringUtils.isEmpty(properties.get(JDBCEngineConnConstant.JDBC_PASSWORD))) {
+                    throw new SQLException(JDBCEngineConnConstant.JDBC_PASSWORD + " is not empty.");
                 }
                 connection = getConnection(url, properties);
                 break;
@@ -231,9 +232,9 @@ public class ConnectionManager {
     }
 
     private String getJdbcUrl(Map<String, String> properties) throws SQLException {
-        String url = properties.get("jdbc.url");
+        String url = properties.get(JDBCEngineConnConstant.JDBC_URL);
         if (StringUtils.isEmpty(url)) {
-            throw new SQLException("jdbc.url is not empty.");
+            throw new SQLException(JDBCEngineConnConstant.JDBC_URL + " is not empty.");
         }
         url = clearUrl(url);
         validateURL(url);
@@ -249,7 +250,7 @@ public class ConnectionManager {
     }
 
     private JdbcAuthType getJdbcAuthType(Map<String, String> properties) {
-        String authType = properties.getOrDefault("jdbc.auth.type", USERNAME.getAuthType());
+        String authType = properties.getOrDefault(JDBCEngineConnConstant.JDBC_AUTH_TYPE, USERNAME.getAuthType());
         if (authType == null || authType.trim().length() == 0) return of(USERNAME.getAuthType());
         return of(authType.trim().toUpperCase());
     }

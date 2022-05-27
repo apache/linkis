@@ -19,7 +19,6 @@ package org.apache.linkis.manager.engineplugin.jdbc.executer
 
 import java.sql.{Connection, Statement}
 import java.util
-
 import org.apache.linkis.common.utils.{OverloadUtils, Utils}
 import org.apache.linkis.engineconn.computation.executor.execute.{ConcurrentComputationExecutor, EngineExecutionContext}
 import org.apache.linkis.engineconn.core.EngineConnObject
@@ -41,6 +40,7 @@ import org.apache.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreat
 import org.apache.linkis.protocol.CacheableProtocol
 import org.springframework.util.CollectionUtils
 import org.apache.linkis.governance.common.paser.SQLCodeParser
+import org.apache.linkis.manager.engineplugin.jdbc.constant.JDBCEngineConnConstant
 
 import scala.collection.JavaConversions._
 import scala.collection.mutable.ArrayBuffer
@@ -67,17 +67,17 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int) ex
     val realCode = code.trim()
     val properties = engineExecutorContext.getProperties.asInstanceOf[util.Map[String, String]]
 
-    if (properties.get("jdbc.url") == null) {
+    if (properties.get(JDBCEngineConnConstant.JDBC_URL) == null) {
       info(s"jdbc url is empty, adding now...")
       val globalConfig = Utils.tryAndWarn(JDBCEngineConfig.getCacheMap(engineExecutorContext.getLabels))
-      properties.put("jdbc.url", globalConfig.get("wds.linkis.jdbc.connect.url"))
-      properties.put("jdbc.username", globalConfig.get("wds.linkis.jdbc.username"))
-      properties.put("jdbc.password", globalConfig.get("wds.linkis.jdbc.password"))
-      properties.put("jdbc.auth.type", globalConfig.get("wds.linkis.jdbc.auth.type"))
-      properties.put("jdbc.principal", globalConfig.get("wds.linkis.jdbc.principal"))
-      properties.put("jdbc.keytab.location", globalConfig.get("wds.linkis.jdbc.keytab.location"))
-      properties.put("jdbc.proxy.user.property", globalConfig.getOrDefault("wds.linkis.jdbc.proxy.user.property", ""))
-      properties.put("jdbc.proxy.user", globalConfig.getOrDefault("wds.linkis.jdbc.proxy.user", EngineConnObject.getEngineCreationContext.getUser))
+      properties.put(JDBCEngineConnConstant.JDBC_URL, globalConfig.get(JDBCEngineConnConstant.JDBC_URL))
+      properties.put(JDBCEngineConnConstant.JDBC_USERNAME, globalConfig.get(JDBCEngineConnConstant.JDBC_USERNAME))
+      properties.put(JDBCEngineConnConstant.JDBC_PASSWORD, globalConfig.get(JDBCEngineConnConstant.JDBC_PASSWORD))
+      properties.put(JDBCEngineConnConstant.JDBC_AUTH_TYPE, globalConfig.get(JDBCEngineConnConstant.JDBC_AUTH_TYPE))
+      properties.put(JDBCEngineConnConstant.JDBC_KERBEROS_AUTH_TYPE_PRINCIPAL, globalConfig.get(JDBCEngineConnConstant.JDBC_KERBEROS_AUTH_TYPE_PRINCIPAL))
+      properties.put(JDBCEngineConnConstant.JDBC_KERBEROS_AUTH_TYPE_KEYTAB_LOCATION, globalConfig.get(JDBCEngineConnConstant.JDBC_KERBEROS_AUTH_TYPE_KEYTAB_LOCATION))
+      properties.put(JDBCEngineConnConstant.JDBC_PROXY_USER_PROPERTY, globalConfig.getOrDefault(JDBCEngineConnConstant.JDBC_PROXY_USER_PROPERTY, ""))
+      properties.put(JDBCEngineConnConstant.JDBC_PROXY_USER, globalConfig.getOrDefault(JDBCEngineConnConstant.JDBC_PROXY_USER, EngineConnObject.getEngineCreationContext.getUser))
     }
 
     info(s"jdbc client begins to run jdbc code:\n ${realCode.trim}")

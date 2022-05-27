@@ -103,7 +103,7 @@ public class ConnectionManager {
         if (StringUtils.isEmpty(url)) {
             throw new NullPointerException(JDBCEngineConnConstant.JDBC_URL + " cannot be null.");
         }
-        if (!url.matches("jdbc:\\w+://\\S+:[0-9]{2,6}(/\\S*)?")) {
+        if (!url.matches("jdbc:\\w+://\\S+:[0-9]{2,6}(/\\S*)?") && !url.startsWith("jdbc:h2")) {
             throw new IllegalArgumentException("Unknown the jdbc url: " + url);
         }
         for (String supportedDBName : supportedDBNames) {
@@ -180,7 +180,7 @@ public class ConnectionManager {
 
     public Connection getConnection(Map<String, String> properties) throws SQLException {
         String url = getJdbcUrl(properties);
-        logger.info("jdbc is {}", url);
+        logger.info("The jdbc url is: {}", url);
         JdbcAuthType jdbcAuthType = getJdbcAuthType(properties);
         Connection connection = null;
         switch (jdbcAuthType) {

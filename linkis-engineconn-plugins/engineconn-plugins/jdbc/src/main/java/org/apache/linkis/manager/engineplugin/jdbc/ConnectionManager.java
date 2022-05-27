@@ -19,6 +19,7 @@ package org.apache.linkis.manager.engineplugin.jdbc;
 
 import org.apache.linkis.hadoop.common.utils.KerberosUtils;
 import org.apache.linkis.manager.engineplugin.jdbc.conf.JDBCConfiguration;
+import org.apache.linkis.manager.engineplugin.jdbc.constant.JDBCEngineConnConstant;
 
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.commons.dbcp.BasicDataSourceFactory;
@@ -26,7 +27,6 @@ import org.apache.commons.lang.StringUtils;
 
 import javax.sql.DataSource;
 
-import org.apache.linkis.manager.engineplugin.jdbc.constant.JDBCEngineConnConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -126,7 +126,8 @@ public class ConnectionManager {
     protected DataSource createDataSources(Map<String, String> properties) throws SQLException {
         String url = getJdbcUrl(properties);
         String username = properties.getOrDefault(JDBCEngineConnConstant.JDBC_USERNAME, "");
-        String password = StringUtils.trim(properties.getOrDefault(JDBCEngineConnConstant.JDBC_PASSWORD, ""));
+        String password =
+                StringUtils.trim(properties.getOrDefault(JDBCEngineConnConstant.JDBC_PASSWORD, ""));
         int index = url.indexOf(":") + 1;
         String dbType = url.substring(index, url.indexOf(":", index));
         Properties props = new Properties();
@@ -143,7 +144,8 @@ public class ConnectionManager {
         if (isKerberosAuthType(properties)) {
             String jdbcProxyUser = properties.get(JDBCEngineConnConstant.JDBC_PROXY_USER);
             // need proxy user
-            String proxyUserProperty = properties.get(JDBCEngineConnConstant.JDBC_PROXY_USER_PROPERTY);
+            String proxyUserProperty =
+                    properties.get(JDBCEngineConnConstant.JDBC_PROXY_USER_PROPERTY);
             if (StringUtils.isNotBlank(proxyUserProperty)) {
                 url = url.concat(";").concat(proxyUserProperty + "=" + jdbcProxyUser);
                 props.put("url", url);
@@ -186,8 +188,11 @@ public class ConnectionManager {
                 connection = getConnection(url, properties);
                 break;
             case KERBEROS:
-                final String keytab = properties.get(JDBCEngineConnConstant.JDBC_KERBEROS_AUTH_TYPE_KEYTAB_LOCATION);
-                final String principal = properties.get(JDBCEngineConnConstant.JDBC_KERBEROS_AUTH_TYPE_PRINCIPAL);
+                final String keytab =
+                        properties.get(
+                                JDBCEngineConnConstant.JDBC_KERBEROS_AUTH_TYPE_KEYTAB_LOCATION);
+                final String principal =
+                        properties.get(JDBCEngineConnConstant.JDBC_KERBEROS_AUTH_TYPE_PRINCIPAL);
                 KerberosUtils.createKerberosSecureConfiguration(keytab, principal);
                 connection = getConnection(url, properties);
                 break;
@@ -250,7 +255,9 @@ public class ConnectionManager {
     }
 
     private JdbcAuthType getJdbcAuthType(Map<String, String> properties) {
-        String authType = properties.getOrDefault(JDBCEngineConnConstant.JDBC_AUTH_TYPE, USERNAME.getAuthType());
+        String authType =
+                properties.getOrDefault(
+                        JDBCEngineConnConstant.JDBC_AUTH_TYPE, USERNAME.getAuthType());
         if (authType == null || authType.trim().length() == 0) return of(USERNAME.getAuthType());
         return of(authType.trim().toUpperCase());
     }

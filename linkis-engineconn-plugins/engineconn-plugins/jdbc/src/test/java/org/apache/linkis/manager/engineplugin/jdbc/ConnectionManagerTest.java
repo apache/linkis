@@ -17,9 +17,11 @@
 
 package org.apache.linkis.manager.engineplugin.jdbc;
 
+import org.apache.linkis.manager.engineplugin.jdbc.constant.JDBCEngineConnConstant;
+
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.commons.dbcp.BasicDataSourceFactory;
-import org.apache.linkis.manager.engineplugin.jdbc.constant.JDBCEngineConnConstant;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -54,7 +56,6 @@ public class ConnectionManagerTest {
         rs.close();
         statement.close();
         conn.close();
-
     }
 
     @Test
@@ -71,7 +72,8 @@ public class ConnectionManagerTest {
         properties.put("testOnBorrow", false);
         properties.put("testWhileIdle", true);
         properties.put("validationQuery", "select 1");
-        BasicDataSource dataSource = (BasicDataSource) BasicDataSourceFactory.createDataSource(properties);
+        BasicDataSource dataSource =
+                (BasicDataSource) BasicDataSourceFactory.createDataSource(properties);
         Connection conn = dataSource.getConnection();
         Statement statement = conn.createStatement();
         ResultSet rs = statement.executeQuery("show databases;");

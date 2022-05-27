@@ -23,7 +23,8 @@ public class JDBCEngineConnConstant {
     public static final String JDBC_PASSWORD = "wds.linkis.jdbc.password";
     public static final String JDBC_AUTH_TYPE = "wds.linkis.jdbc.auth.type";
     public static final String JDBC_KERBEROS_AUTH_TYPE_PRINCIPAL = "wds.linkis.jdbc.principal";
-    public static final String JDBC_KERBEROS_AUTH_TYPE_KEYTAB_LOCATION = "wds.linkis.jdbc.keytab.location";
+    public static final String JDBC_KERBEROS_AUTH_TYPE_KEYTAB_LOCATION =
+            "wds.linkis.jdbc.keytab.location";
     public static final String JDBC_PROXY_USER_PROPERTY = "wds.linkis.jdbc.proxy.user.property";
     public static final String JDBC_PROXY_USER = "wds.linkis.jdbc.proxy.user";
 }

@@ -27,9 +27,9 @@ object JDBCConfiguration {
 
   val JDBC_QUERY_TIMEOUT = CommonVars("wds.linkis.jdbc.query.timeout", 1800)
 
-  val JDBC_SUPPORT_DBS = CommonVars("wds.linkis.jdbc.support.dbs", "mysql=>com.mysql.jdbc.Driver,postgresql=>org.postgresql.Driver,oracle=>oracle.jdbc.driver.OracleDriver,hive2=>org.apache.hive.jdbc.HiveDriver,presto=>com.facebook.presto.jdbc.PrestoDriver,clickhouse=>ru.yandex.clickhouse.ClickHouseDriver")
+  val JDBC_SUPPORT_DBS = CommonVars("wds.linkis.jdbc.support.dbs", "h2=>org.h2.Driver,mysql=>com.mysql.jdbc.Driver,postgresql=>org.postgresql.Driver,oracle=>oracle.jdbc.driver.OracleDriver,hive2=>org.apache.hive.jdbc.HiveDriver,presto=>com.facebook.presto.jdbc.PrestoDriver,clickhouse=>ru.yandex.clickhouse.ClickHouseDriver")
 
-  val JDBC_SUPPORT_DBS_VALIDATION_QUERY = CommonVars("wds.linkis.jdbc.support.dbs.validation.query", "mysql=>SELECT 1,postgresql=>SELECT 1,oracle=>SELECT 1 FROM dual,hive2=>SELECT 1,presto=>SELECT 1")
+  val JDBC_SUPPORT_DBS_VALIDATION_QUERY = CommonVars("wds.linkis.jdbc.support.dbs.validation.query", "h2=>SELECT 1,mysql=>SELECT 1,postgresql=>SELECT 1,oracle=>SELECT 1 FROM dual,hive2=>SELECT 1,presto=>SELECT 1")
 
   val JDBC_CONCURRENT_LIMIT = CommonVars[Int]("wds.linkis.engineconn.jdbc.concurrent.limit", 100)
 

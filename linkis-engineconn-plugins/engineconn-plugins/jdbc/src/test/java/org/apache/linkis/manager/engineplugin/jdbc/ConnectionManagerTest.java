@@ -38,9 +38,11 @@ public class ConnectionManagerTest {
     @DisplayName("testCreateJdbcConnAndExecSql")
     public void testCreateJdbcConnAndExecSql() throws SQLException {
         Map<String, String> properties = new HashMap<>(8);
-        properties.put(JDBCEngineConnConstant.JDBC_URL, "jdbc:mysql://dev:3306/db?useSSL=false");
-        properties.put(JDBCEngineConnConstant.JDBC_USERNAME, "leo");
-        properties.put(JDBCEngineConnConstant.JDBC_PASSWORD, "Yyf5211314!");
+        properties.put(
+                JDBCEngineConnConstant.JDBC_URL,
+                "jdbc:h2:mem:linkis_db;MODE=MySQL;DATABASE_TO_LOWER=TRUE");
+        properties.put(JDBCEngineConnConstant.JDBC_USERNAME, "user");
+        properties.put(JDBCEngineConnConstant.JDBC_PASSWORD, "password");
         properties.put(JDBCEngineConnConstant.JDBC_AUTH_TYPE, "USERNAME");
         properties.put(JDBCEngineConnConstant.JDBC_KERBEROS_AUTH_TYPE_PRINCIPAL, "");
         properties.put(JDBCEngineConnConstant.JDBC_KERBEROS_AUTH_TYPE_KEYTAB_LOCATION, "");
@@ -62,10 +64,10 @@ public class ConnectionManagerTest {
     @DisplayName("testExecSql")
     public void testExecSql() throws Exception {
         Properties properties = new Properties();
-        properties.put("driverClassName", "com.mysql.jdbc.Driver");
-        properties.put("url", "jdbc:mysql://dev:3306/db?useSSL=false");
-        properties.put("username", "leo");
-        properties.put("password", "Yyf5211314!");
+        properties.put("driverClassName", "org.h2.Driver");
+        properties.put("url", "jdbc:h2:mem:linkis_db;MODE=MySQL;DATABASE_TO_LOWER=TRUE");
+        properties.put("username", "user");
+        properties.put("password", "password");
         properties.put("maxIdle", 20);
         properties.put("minIdle", 0);
         properties.put("initialSize", 1);

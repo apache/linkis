@@ -21,7 +21,7 @@ import org.apache.linkis.common.exception.WarnException
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.metadata.query.common.exception.MetaMethodInvokeException
 import org.apache.linkis.metadata.query.common.protocol.{MetadataConnect, MetadataResponse}
-import org.apache.linkis.metadata.query.server.service.MetadataAppService
+import org.apache.linkis.metadata.query.server.service.MetadataQueryService
 import org.apache.linkis.rpc.{Receiver, Sender}
 import org.apache.linkis.server.BDPJettyServerHelper
 import org.springframework.beans.factory.annotation.Autowired
@@ -32,17 +32,17 @@ import scala.concurrent.duration.Duration
 @Component
 class BaseMetaReceiver extends Receiver with Logging {
   @Autowired
-  private var metadataAppService: MetadataAppService = _
+  private var metadataQueryService: MetadataQueryService = _
 
 
   override def receive(message: Any, sender: Sender): Unit = {}
 
-  override def receiveAndReply(message: Any, sender: Sender): Any = invoke(metadataAppService, message)
+  override def receiveAndReply(message: Any, sender: Sender): Any = invoke(metadataQueryService, message)
 
-  override def receiveAndReply(message: Any, duration: Duration, sender: Sender): Any = invoke(metadataAppService, message)
+  override def receiveAndReply(message: Any, duration: Duration, sender: Sender): Any = invoke(metadataQueryService, message)
 
 
-  def invoke(service: MetadataAppService, message: Any): Any = Utils.tryCatch {
+  def invoke(service: MetadataQueryService, message: Any): Any = Utils.tryCatch {
     val data = message match {
       case MetadataConnect(dataSourceType, operator, params, version) =>
         service.getConnection(dataSourceType, operator, params)

@@ -41,16 +41,15 @@ import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/metadataQuery")
-@Deprecated
-public class MetadataCoreRestful {
+public class MetadataQueryRestful {
 
-    private static final Logger LOG = LoggerFactory.getLogger(MetadataCoreRestful.class);
+    private static final Logger logger = LoggerFactory.getLogger(MetadataQueryRestful.class);
 
-    @Autowired private MetadataQueryService metadataAppService;
+    @Autowired private MetadataQueryService metadataQueryService;
 
-    @RequestMapping(value = "/dbs/{dataSourceId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/getDatabases", method = RequestMethod.GET)
     public Message getDatabases(
-            @PathVariable("dataSourceId") String dataSourceId,
+            @RequestParam("dataSourceName") String dataSourceName,
             @RequestParam("system") String system,
             HttpServletRequest request) {
         try {
@@ -58,13 +57,13 @@ public class MetadataCoreRestful {
                 return Message.error("'system' is missing[缺少系统名]");
             }
             List<String> databases =
-                    metadataAppService.getDatabasesByDsId(
-                            dataSourceId, system, SecurityFilter.getLoginUsername(request));
+                    metadataQueryService.getDatabasesByDsName(
+                            dataSourceName, system, SecurityFilter.getLoginUsername(request));
             return Message.ok().data("dbs", databases);
         } catch (Exception e) {
             return errorToResponseMessage(
-                    "Fail to get database list[获取库信息失败], id:["
-                            + dataSourceId
+                    "Fail to get database list[获取库信息失败], name:["
+                            + dataSourceName
                             + "], system:["
                             + system
                             + "]",
@@ -72,10 +71,10 @@ public class MetadataCoreRestful {
         }
     }
 
-    @RequestMapping(value = "/tables/{dataSourceId}/db/{database}", method = RequestMethod.GET)
+    @RequestMapping(value = "/getTables", method = RequestMethod.GET)
     public Message getTables(
-            @PathVariable("dataSourceId") String dataSourceId,
-            @PathVariable("database") String database,
+            @RequestParam("dataSourceName") String dataSourceName,
+            @RequestParam("database") String database,
             @RequestParam("system") String system,
             HttpServletRequest request) {
         try {
@@ -83,16 +82,16 @@ public class MetadataCoreRestful {
                 return Message.error("'system' is missing[缺少系统名]");
             }
             List<String> tables =
-                    metadataAppService.getTablesByDsId(
-                            dataSourceId,
+                    metadataQueryService.getTablesByDsName(
+                            dataSourceName,
                             database,
                             system,
                             SecurityFilter.getLoginUsername(request));
             return Message.ok().data("tables", tables);
         } catch (Exception e) {
             return errorToResponseMessage(
-                    "Fail to get table list[获取表信息失败], id:["
-                            + dataSourceId
+                    "Fail to get table list[获取表信息失败], name:["
+                            + dataSourceName
                             + "]"
                             + ", system:["
                             + system
@@ -103,13 +102,11 @@ public class MetadataCoreRestful {
         }
     }
 
-    @RequestMapping(
-            value = "/props/{dataSourceId}/db/{database}/table/{table}",
-            method = RequestMethod.GET)
+    @RequestMapping(value = "/getTableProps", method = RequestMethod.GET)
     public Message getTableProps(
-            @PathVariable("dataSourceId") String dataSourceId,
-            @PathVariable("database") String database,
-            @PathVariable("table") String table,
+            @RequestParam("dataSourceName") String dataSourceName,
+            @RequestParam("database") String database,
+            @RequestParam("table") String table,
             @RequestParam("system") String system,
             HttpServletRequest request) {
         try {
@@ -117,8 +114,8 @@ public class MetadataCoreRestful {
                 return Message.error("'system' is missing[缺少系统名]");
             }
             Map<String, String> tableProps =
-                    metadataAppService.getTablePropsByDsId(
-                            dataSourceId,
+                    metadataQueryService.getTablePropsByDsName(
+                            dataSourceName,
                             database,
                             table,
                             system,
@@ -126,8 +123,8 @@ public class MetadataCoreRestful {
             return Message.ok().data("props", tableProps);
         } catch (Exception e) {
             return errorToResponseMessage(
-                    "Fail to get table properties[获取表参数信息失败], id:["
-                            + dataSourceId
+                    "Fail to get table properties[获取表参数信息失败], name:["
+                            + dataSourceName
                             + "]"
                             + ", system:["
                             + system
@@ -140,14 +137,12 @@ public class MetadataCoreRestful {
         }
     }
 
-    @RequestMapping(
-            value = "/props/{dataSourceId}/db/{database}/table/{table}/partition/{partition}",
-            method = RequestMethod.GET)
+    @RequestMapping(value = "getPartitionProps", method = RequestMethod.GET)
     public Message getPartitionProps(
-            @PathVariable("dataSourceId") String dataSourceId,
-            @PathVariable("database") String database,
-            @PathVariable("table") String table,
-            @PathVariable("partition") String partition,
+            @RequestParam("dataSourceName") String dataSourceName,
+            @RequestParam("database") String database,
+            @RequestParam("table") String table,
+            @RequestParam("partition") String partition,
             @RequestParam("system") String system,
             HttpServletRequest request) {
         try {
@@ -155,8 +150,8 @@ public class MetadataCoreRestful {
                 return Message.error("'system' is missing[缺少系统名]");
             }
             Map<String, String> partitionProps =
-                    metadataAppService.getPartitionPropsByDsId(
-                            dataSourceId,
+                    metadataQueryService.getPartitionPropsByDsName(
+                            dataSourceName,
                             database,
                             table,
                             partition,
@@ -165,8 +160,8 @@ public class MetadataCoreRestful {
             return Message.ok().data("props", partitionProps);
         } catch (Exception e) {
             return errorToResponseMessage(
-                    "Fail to get partition properties[获取分区参数信息失败], id:["
-                            + dataSourceId
+                    "Fail to get partition properties[获取分区参数信息失败], name:["
+                            + dataSourceName
                             + "]"
                             + ", system:["
                             + system
@@ -181,13 +176,11 @@ public class MetadataCoreRestful {
         }
     }
 
-    @RequestMapping(
-            value = "/partitions/{dataSourceId}/db/{database}/table/{table}",
-            method = RequestMethod.GET)
+    @RequestMapping(value = "/getPartitions", method = RequestMethod.GET)
     public Message getPartitions(
-            @PathVariable("dataSourceId") String dataSourceId,
-            @PathVariable("database") String database,
-            @PathVariable("table") String table,
+            @RequestParam("dataSourceName") String dataSourceName,
+            @RequestParam("database") String database,
+            @RequestParam("table") String table,
             @RequestParam("system") String system,
             @RequestParam(name = "traverse", required = false, defaultValue = "false")
                     Boolean traverse,
@@ -197,18 +190,18 @@ public class MetadataCoreRestful {
                 return Message.error("'system' is missing[缺少系统名]");
             }
             MetaPartitionInfo partitionInfo =
-                    metadataAppService.getPartitionsByDsId(
-                            dataSourceId,
+                    metadataQueryService.getPartitionsByDsName(
+                            dataSourceName,
                             database,
                             table,
                             system,
                             traverse,
                             SecurityFilter.getLoginUsername(request));
-            return Message.ok().data("props", partitionInfo);
+            return Message.ok().data("partitions", partitionInfo);
         } catch (Exception e) {
             return errorToResponseMessage(
-                    "Fail to get partitions[获取表分区信息失败], id:["
-                            + dataSourceId
+                    "Fail to get partitions[获取表分区信息失败], name:["
+                            + dataSourceName
                             + "]"
                             + ", system:["
                             + system
@@ -221,13 +214,11 @@ public class MetadataCoreRestful {
         }
     }
 
-    @RequestMapping(
-            value = "/columns/{dataSourceId}/db/{database}/table/{table}",
-            method = RequestMethod.GET)
+    @RequestMapping(value = "/getColumns", method = RequestMethod.GET)
     public Message getColumns(
-            @PathVariable("dataSourceId") String dataSourceId,
-            @PathVariable("database") String database,
-            @PathVariable("table") String table,
+            @RequestParam("dataSourceName") String dataSourceName,
+            @RequestParam("database") String database,
+            @RequestParam("table") String table,
             @RequestParam("system") String system,
             HttpServletRequest request) {
         try {
@@ -235,8 +226,8 @@ public class MetadataCoreRestful {
                 return Message.error("'system' is missing[缺少系统名]");
             }
             List<MetaColumnInfo> columns =
-                    metadataAppService.getColumnsByDsName(
-                            dataSourceId,
+                    metadataQueryService.getColumnsByDsName(
+                            dataSourceName,
                             database,
                             table,
                             system,
@@ -244,8 +235,8 @@ public class MetadataCoreRestful {
             return Message.ok().data("columns", columns);
         } catch (Exception e) {
             return errorToResponseMessage(
-                    "Fail to get column list[获取表字段信息失败], id:["
-                            + dataSourceId
+                    "Fail to get column list[获取表字段信息失败], name:["
+                            + dataSourceName
                             + "]"
                             + ", system:["
                             + system
@@ -261,14 +252,14 @@ public class MetadataCoreRestful {
     private Message errorToResponseMessage(String uiMessage, Exception e) {
         if (e instanceof MetaMethodInvokeException) {
             MetaMethodInvokeException invokeException = (MetaMethodInvokeException) e;
-            if (LOG.isDebugEnabled()) {
+            if (logger.isDebugEnabled()) {
                 String argumentJson = null;
                 try {
                     argumentJson = Json.toJson(invokeException.getArgs(), null);
                 } catch (Exception je) {
                     // Ignore
                 }
-                LOG.trace(
+                logger.trace(
                         uiMessage
                                 + " => Method: "
                                 + invokeException.getMethod()
@@ -283,7 +274,7 @@ public class MetadataCoreRestful {
                 uiMessage += " possible reason[可能原因]: (" + e.getMessage() + ")";
             }
         }
-        LOG.error(uiMessage, e);
+        logger.error(uiMessage, e);
         return Message.error(uiMessage);
     }
 }

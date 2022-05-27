@@ -23,7 +23,7 @@ import org.apache.linkis.httpclient.dws.response.DWSResult
 import java.util
 import scala.beans.BeanProperty
 
-@DWSHttpMessageResult("/api/rest_j/v\\d+/metadataquery/dbs/(\\S+)")
+@DWSHttpMessageResult("/api/rest_j/v\\d+/metadataQuery/getDatabases")
 class MetadataGetDatabasesResult extends DWSResult{
   @BeanProperty var dbs: util.List[String] = _
 }

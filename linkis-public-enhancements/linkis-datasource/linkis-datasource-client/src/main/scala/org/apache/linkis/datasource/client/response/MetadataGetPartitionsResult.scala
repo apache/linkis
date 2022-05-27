@@ -26,11 +26,11 @@ import org.apache.linkis.metadata.query.common.domain.MetaPartitionInfo
 
 import scala.beans.BeanProperty
 
-@DWSHttpMessageResult("/api/rest_j/v\\d+/metadataquery/partitions/(\\S+)/db/(\\S+)/table/(\\S+)")
+@DWSHttpMessageResult("/api/rest_j/v\\d+/metadataQuery/getPartitions")
 class MetadataGetPartitionsResult extends DWSResult{
-  @BeanProperty var props: util.Map[String, Any] = _
+  @BeanProperty var partitions: util.Map[String, Any] = _
   def getPartitionInfo: MetaPartitionInfo = {
-    this.props match {
+    this.partitions match {
       case map : util.Map[String, Any] =>
         DWSHttpClient.jacksonJson.convertValue(map, classOf[MetaPartitionInfo])
       case _ => null

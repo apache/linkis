@@ -20,7 +20,7 @@ package org.apache.linkis.metadata.query.server.restful;
 import org.apache.linkis.common.exception.ErrorException;
 import org.apache.linkis.metadata.query.common.domain.MetaPartitionInfo;
 import org.apache.linkis.metadata.query.server.WebApplicationServer;
-import org.apache.linkis.metadata.query.server.service.MetadataAppService;
+import org.apache.linkis.metadata.query.server.service.MetadataQueryService;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.MessageStatus;
 import org.apache.linkis.server.security.SecurityFilter;
@@ -52,7 +52,7 @@ class MetadataCoreRestfulTest {
 
     @Autowired protected MockMvc mockMvc;
 
-    @MockBean private MetadataAppService metadataAppService;
+    @MockBean private MetadataQueryService metadataQueryService;
 
     private static MockedStatic<SecurityFilter> securityFilter;
 
@@ -70,7 +70,7 @@ class MetadataCoreRestfulTest {
     void testGetDatabases() {
         try {
             String dataSourceId = "1l";
-            String url = String.format("/metadataquery/dbs/%s", dataSourceId);
+            String url = String.format("/metadataQuery/dbs/%s", dataSourceId);
             MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
             params.add("system", "");
             MvcUtils mvcUtils = new MvcUtils(mockMvc);
@@ -79,13 +79,13 @@ class MetadataCoreRestfulTest {
                     MessageStatus.ERROR() == res.getStatus()
                             && res.getMessage().contains("'system' is missing"));
             params.add("system", "hive");
-            Mockito.when(metadataAppService.getDatabasesByDsId(dataSourceId, ",hive", null))
+            Mockito.when(metadataQueryService.getDatabasesByDsId(dataSourceId, ",hive", null))
                     .thenReturn(new ArrayList<>());
             res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
             Assertions.assertTrue(MessageStatus.SUCCESS() == res.getStatus());
 
             Mockito.doThrow(new ErrorException(1, ""))
-                    .when(metadataAppService)
+                    .when(metadataQueryService)
                     .getDatabasesByDsId(dataSourceId, ",hive", null);
             res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
             Assertions.assertTrue(
@@ -100,7 +100,7 @@ class MetadataCoreRestfulTest {
     void testGetTables() throws Exception {
         String dataSourceId = "1l";
         String database = "hivedb";
-        String url = String.format("/metadataquery/tables/%s/db/%s", dataSourceId, database);
+        String url = String.format("/metadataQuery/tables/%s/db/%s", dataSourceId, database);
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("system", "");
         MvcUtils mvcUtils = new MvcUtils(mockMvc);
@@ -110,13 +110,13 @@ class MetadataCoreRestfulTest {
                         && res.getMessage().contains("'system' is missing"));
 
         params.add("system", "hive");
-        Mockito.when(metadataAppService.getTablesByDsId(dataSourceId, database, ",hive", null))
+        Mockito.when(metadataQueryService.getTablesByDsId(dataSourceId, database, ",hive", null))
                 .thenReturn(new ArrayList<>());
         res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
         Assertions.assertTrue(MessageStatus.SUCCESS() == res.getStatus());
 
         Mockito.doThrow(new ErrorException(1, ""))
-                .when(metadataAppService)
+                .when(metadataQueryService)
                 .getTablesByDsId(dataSourceId, database, ",hive", null);
         res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
         Assertions.assertTrue(
@@ -132,7 +132,7 @@ class MetadataCoreRestfulTest {
             String table = "testtab";
             String url =
                     String.format(
-                            "/metadataquery/props/%s/db/%s/table/%s",
+                            "/metadataQuery/props/%s/db/%s/table/%s",
                             dataSourceId, database, table);
             MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
             params.add("system", "");
@@ -144,14 +144,14 @@ class MetadataCoreRestfulTest {
 
             params.add("system", "hive");
             Mockito.when(
-                            metadataAppService.getTablePropsByDsId(
+                            metadataQueryService.getTablePropsByDsId(
                                     dataSourceId, database, table, ",hive", null))
                     .thenReturn(new HashMap<>());
             res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
             Assertions.assertTrue(MessageStatus.SUCCESS() == res.getStatus());
 
             Mockito.doThrow(new ErrorException(1, ""))
-                    .when(metadataAppService)
+                    .when(metadataQueryService)
                     .getTablePropsByDsId(dataSourceId, database, table, ",hive", null);
             res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
             Assertions.assertTrue(
@@ -170,7 +170,7 @@ class MetadataCoreRestfulTest {
             String table = "testtab";
             String url =
                     String.format(
-                            "/metadataquery/partitions/%s/db/%s/table/%s",
+                            "/metadataQuery/partitions/%s/db/%s/table/%s",
                             dataSourceId, database, table);
             MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
             params.add("system", "");
@@ -182,14 +182,14 @@ class MetadataCoreRestfulTest {
 
             params.add("system", "hive");
             Mockito.when(
-                            metadataAppService.getPartitionsByDsId(
+                            metadataQueryService.getPartitionsByDsId(
                                     dataSourceId, database, table, ",hive", false, null))
                     .thenReturn(new MetaPartitionInfo());
             res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
             Assertions.assertTrue(MessageStatus.SUCCESS() == res.getStatus());
 
             Mockito.doThrow(new ErrorException(1, ""))
-                    .when(metadataAppService)
+                    .when(metadataQueryService)
                     .getPartitionsByDsId(dataSourceId, database, table, ",hive", false, null);
             res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
             Assertions.assertTrue(
@@ -208,7 +208,7 @@ class MetadataCoreRestfulTest {
             String table = "testtab";
             String url =
                     String.format(
-                            "/metadataquery/columns/%s/db/%s/table/%s",
+                            "/metadataQuery/columns/%s/db/%s/table/%s",
                             dataSourceId, database, table);
             MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
             params.add("system", "");
@@ -220,15 +220,15 @@ class MetadataCoreRestfulTest {
 
             params.add("system", "hive");
             Mockito.when(
-                            metadataAppService.getColumns(
+                            metadataQueryService.getColumnsByDsId(
                                     dataSourceId, database, table, ",hive", null))
                     .thenReturn(new ArrayList<>());
             res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
             Assertions.assertTrue(MessageStatus.SUCCESS() == res.getStatus());
 
             Mockito.doThrow(new ErrorException(1, ""))
-                    .when(metadataAppService)
-                    .getColumns(dataSourceId, database, table, ",hive", null);
+                    .when(metadataQueryService)
+                    .getColumnsByDsId(dataSourceId, database, table, ",hive", null);
             res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
             Assertions.assertTrue(
                     MessageStatus.ERROR() == res.getStatus()

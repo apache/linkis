@@ -17,9 +17,6 @@
 
 package org.apache.linkis.manager.engineplugin.manager.classloader;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -28,6 +25,9 @@ import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EngineConnPluginClassLoader extends URLClassLoader {
 

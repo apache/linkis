@@ -21,9 +21,6 @@ package org.apache.linkis.datasourcemanager.core.formdata;
 // import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 // import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -31,6 +28,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /** Custom Transformer of multipart form */
 public class CustomMultiPartFormDataTransformer implements MultiPartFormDataTransformer {

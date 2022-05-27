@@ -30,19 +30,19 @@ import org.apache.hadoop.mapreduce.OutputFormat;
 import org.apache.hadoop.util.StringUtils;
 import org.apache.sqoop.config.ConfigurationConstants;
 
-import com.cloudera.sqoop.SqoopOptions;
-import com.cloudera.sqoop.config.ConfigurationHelper;
-import com.cloudera.sqoop.manager.ConnManager;
-import com.cloudera.sqoop.tool.SqoopTool;
-import com.cloudera.sqoop.util.ClassLoaderStack;
-import com.cloudera.sqoop.util.Jars;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import com.cloudera.sqoop.SqoopOptions;
+import com.cloudera.sqoop.config.ConfigurationHelper;
+import com.cloudera.sqoop.manager.ConnManager;
+import com.cloudera.sqoop.tool.SqoopTool;
+import com.cloudera.sqoop.util.ClassLoaderStack;
+import com.cloudera.sqoop.util.Jars;
 
 /**
  * Base class for configuring and running a MapReduce job. Allows dependency injection, etc, for

@@ -19,10 +19,10 @@ package org.apache.linkis.cli.core.interactor.properties.reader;
 
 import org.apache.linkis.cli.core.constants.CommonConstants;
 
+import java.util.Properties;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Properties;
 
 public class SysEnvReader implements PropertiesReader {
     private static final Logger logger = LoggerFactory.getLogger(SysEnvReader.class);

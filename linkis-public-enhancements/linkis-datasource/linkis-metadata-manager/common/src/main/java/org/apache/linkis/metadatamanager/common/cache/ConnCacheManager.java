@@ -17,10 +17,10 @@
 
 package org.apache.linkis.metadatamanager.common.cache;
 
-import com.google.common.cache.*;
-
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+
+import com.google.common.cache.*;
 
 public class ConnCacheManager implements CacheManager {
     private ConcurrentHashMap<String, Cache> cacheStore = new ConcurrentHashMap<>();

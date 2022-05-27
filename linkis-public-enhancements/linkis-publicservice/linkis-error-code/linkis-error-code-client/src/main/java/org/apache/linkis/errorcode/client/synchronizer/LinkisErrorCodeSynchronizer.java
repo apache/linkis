@@ -23,13 +23,13 @@ import org.apache.linkis.errorcode.client.ErrorCodeClientBuilder;
 import org.apache.linkis.errorcode.client.LinkisErrorCodeClient;
 import org.apache.linkis.errorcode.common.LinkisErrorCode;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class LinkisErrorCodeSynchronizer {
 

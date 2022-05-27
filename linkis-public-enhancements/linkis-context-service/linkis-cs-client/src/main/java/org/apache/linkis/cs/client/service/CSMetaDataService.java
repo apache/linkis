@@ -27,10 +27,10 @@ import org.apache.linkis.cs.common.exception.ErrorCode;
 
 import org.apache.commons.lang.StringUtils;
 
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Map;
 
 public class CSMetaDataService implements MetaDataService {
 

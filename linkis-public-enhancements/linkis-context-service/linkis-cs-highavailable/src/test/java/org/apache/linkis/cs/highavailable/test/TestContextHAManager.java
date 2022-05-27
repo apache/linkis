@@ -55,13 +55,13 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 
 import javax.servlet.DispatcherType;
 
+import java.util.EnumSet;
+
 import com.google.gson.Gson;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.webapp.WebAppContext;
-
-import java.util.EnumSet;
 
 @SpringBootApplication
 @EnableDiscoveryClient

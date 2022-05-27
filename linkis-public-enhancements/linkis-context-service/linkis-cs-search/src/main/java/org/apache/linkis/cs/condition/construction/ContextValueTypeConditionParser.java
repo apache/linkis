@@ -20,10 +20,10 @@ package org.apache.linkis.cs.condition.construction;
 import org.apache.linkis.cs.condition.Condition;
 import org.apache.linkis.cs.condition.impl.ContextValueTypeCondition;
 
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Map;
 
 public class ContextValueTypeConditionParser implements ConditionParser {
 

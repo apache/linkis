@@ -30,10 +30,6 @@ import org.apache.commons.lang.StringUtils;
 
 import javax.annotation.PostConstruct;
 
-import com.google.common.cache.Cache;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.Closeable;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -44,6 +40,10 @@ import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
+
+import com.google.common.cache.Cache;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class AbstractMetaService<C extends Closeable> implements MetadataService {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractMetaService.class);

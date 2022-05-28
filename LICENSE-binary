@@ -318,7 +318,7 @@ See licenses-binary/ for text of these licenses.
     (Apache License, Version 2.0) Flink : Metrics : Core (org.apache.flink:flink-metrics-core:1.12.2 - https://flink.apache.org/flink-metrics/flink-metrics-core)
     (Apache License, Version 2.0) Google Guice - Core Library (com.google.inject:guice:3.0 - http://code.google.com/p/google-guice/guice/)
     (Apache License, Version 2.0) Google Guice - Extensions - Servlet (com.google.inject.extensions:guice-servlet:3.0 - http://code.google.com/p/google-guice/extensions-parent/guice-servlet/)
-    (Apache License, Version 2.0) Gson (com.google.code.gson:gson:2.8.5 - https://github.com/google/gson/gson)
+    (Apache License, Version 2.0) Gson (com.google.code.gson:gson:2.8.9 - https://github.com/google/gson/gson)
     (Apache License, Version 2.0) Guava InternalFutureFailureAccess and InternalFutures (com.google.guava:failureaccess:1.0.1 - https://github.com/google/guava/failureaccess)
     (Apache License, Version 2.0) Guava ListenableFuture only (com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava - https://github.com/google/guava/listenablefuture)
     (Apache License, Version 2.0) Hadoop Metrics2 Reporter for Dropwizard Metrics (com.github.joshelser:dropwizard-metrics-hadoop-metrics2-reporter:0.1.2 - https://github.com/joshelser/dropwizard-hadoop-metrics2)

@@ -24,7 +24,7 @@ import scala.collection.JavaConversions._
 case class CommonVars[T](key: String, defaultValue: T, value: T, description: String = null) {
   val getValue: T = BDPConfiguration.getOption(this).getOrElse(defaultValue)
   def getValue(properties: java.util.Map[String, String]): T = {
-    if (!(properties == null || !properties.containsKey(key)) && !(properties.get(key) == null)) {
+    if (properties != null && properties.containsKey(key) && properties.get(key) != null) {
       BDPConfiguration.formatValue(defaultValue, Option(properties.get(key))).get
     } else {
       getValue

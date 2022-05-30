@@ -54,8 +54,9 @@
       "cancel": "Cancel",
       "create": "Create",
       "noDataText": "No data yet",
-      "jobId": "JobId",
+      "jobId": "JobID",
       "userName": "Username",
+      "password": "Password",
       "unselect": "Please select task",
       "noselection": "Please select first",
       "searchName": "Please enter username to search",
@@ -64,6 +65,10 @@
       "back": "Back",
       "udfName": "UDF Name",
       "udfType": "UDF Type",
+      "nextPage": "Next Page",
+      "previousPage": "Previous Page",
+      "all": "All",
+      "common": "Common",
       "warning": {
         "api": "Requesting API, please hold on!",
         "data": "Requesting data, please hold on!",
@@ -87,6 +92,7 @@
         "initiator": "Initiator",
         "engineInstance": "Engine instance",
         "engineType": "Engine type",
+        "serveType": "Serve Type",
         "appType": "App Type",
         "taskID": "JobID",
         "fileName": "Source",
@@ -155,7 +161,7 @@
           "placeholder": "Please choose the start date"
         },
         "creator": {
-          "label": "creator",
+          "label": "Creator",
           "placeholder": "Please search by entering the creator"
         },
         "engine": {
@@ -194,9 +200,9 @@
         "username": "Username"
       },
       "shortcuts": {
-        "week": "Recent Week",
-        "month": "Recent Month",
-        "threeMonths": "Recent Three Months"
+        "week": "1Week",
+        "month": "1Month",
+        "threeMonths": "3Months"
       },
       "statusType": {
         "all": "All",
@@ -274,8 +280,8 @@
         "connectTest": "Test connection",
         "sourceName": "Data source name",
         "sourceDec": "Data source description",
-        "sourceType": "Data source type:",
-        "creator": "Creator:",
+        "sourceType": "Data source type",
+        "creator": "Creator",
         "create": "add source",
         "exports": "export source",
         "imports": "importing sources",

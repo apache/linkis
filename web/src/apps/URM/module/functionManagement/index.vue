@@ -28,7 +28,7 @@
       <Divider type="vertical" class="divider" />
       <FormItem prop="functionType" :label="$t('message.linkis.udf.functionType')">
         <Select v-model="searchBar.functionType" style="width:120px;">
-          <Option label="全部" value="3,4" key="3,4" />
+          <Option :label="$t('message.linkis.all')" value="3,4" key="3,4" />
           <Option label="python" value="3" key="3" />
           <Option label="scala" value="4" key="4" />
         </Select>
@@ -82,6 +82,7 @@
           show-total
           show-elevator
           @on-change="changePage"
+          :prev-text="$t('message.linkis.previousPage')" :next-text="$t('message.linkis.nextPage')"
         />
       </div>
     </div>
@@ -443,15 +444,13 @@ export default {
           title: this.$t('message.linkis.udf.functionName'),
           key: 'udfName',
           align: 'center',
-          width: 120,
-          // 溢出以...显示
-          ellipsis: true
+          width: 150,
         },
         {
           title: this.$t('message.linkis.udf.functionType'),
           key: 'udfTypeText',
           align: 'center',
-          width: 80
+          width: 90
         },
         {
           title: this.$t('message.linkis.udf.status'),
@@ -483,20 +482,19 @@ export default {
           title: this.$t('message.linkis.udf.lastModifyTime'),
           key: 'createTimeFormat',
           align: 'center',
-          width: 140,
+          width: 180,
         },
         {
           title: this.$t('message.linkis.udf.creator'),
           key: 'createUser',
           align: 'center',
-          width: 80,
+          width: 120,
         },
         {
           title: this.$t('message.linkis.udf.action.title'),
           key: 'action',
           align: 'center',
-          width: 308,
-          className: 'history-control',
+          width: 360,
           renderType: 'button',
           renderParams: [
             {
@@ -506,7 +504,8 @@ export default {
               style: {
                 backgroundColor: '#2d8cf0',
                 color: '#fff',
-                padding: '1px 7px 2px 7px !important'
+                padding: '1px 7px 2px 7px !important',
+                marginRight: '5px'
               }
             },
             {
@@ -515,7 +514,8 @@ export default {
               style: {
                 backgroundColor: '#2d8cf0',
                 color: '#fff',
-                padding: '1px 7px 2px 7px !important'
+                padding: '1px 7px 2px 7px !important',
+                marginRight: '5px'
               }
             },
             {
@@ -525,7 +525,8 @@ export default {
               style: {
                 backgroundColor: '#2d8cf0',
                 color: '#fff',
-                padding: '1px 7px 2px 7px !important'
+                padding: '1px 7px 2px 7px !important',
+                marginRight: '5px'
               }
             },
             {
@@ -535,7 +536,8 @@ export default {
               style: {
                 backgroundColor: '#2d8cf0',
                 color: '#fff',
-                padding: '1px 7px 2px 7px !important'
+                padding: '1px 7px 2px 7px !important',
+                marginRight: '5px'
               }
             },
             {
@@ -545,7 +547,8 @@ export default {
               style: {
                 backgroundColor: '#ed4014',
                 color: '#fff',
-                padding: '1px 7px 2px 7px !important'
+                padding: '1px 7px 2px 7px !important',
+                marginRight: '5px'
               }
             },
             {

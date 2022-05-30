@@ -22,7 +22,7 @@
       size="large"
       fix/>
     <Row class="search-bar">
-      <Col span="6">
+      <Col span="9">
         <span :style="{minWidth: '80px', marginRight: '8px', fontSize: '14px', lineHeight: '32px'}">{{$t('message.linkis.instanceName')}}</span>
         <Input
           v-model="instance"
@@ -32,7 +32,7 @@
           @on-enter="searchAction"
         ></Input>
       </Col>
-      <Col span="6" class="search-item">
+      <Col span="9" class="search-item">
         <span class="lable">{{
           $t("message.linkis.tableColumns.engineType")
         }}</span>
@@ -54,7 +54,7 @@
       border
       :columns="tableColumnNum"
       :data="pageDatalist"
-      class="table-content"
+      class="table-content micro-service-table"
     >
       <template slot-scope="{ row }" slot="instance">
         <span>{{ row.instance }}</span>
@@ -99,7 +99,7 @@
         size="small"
         show-total
         show-sizer
-        prev-text="上一页" next-text="下一页"
+        :prev-text="$t('message.linkis.previousPage')" :next-text="$t('message.linkis.nextPage')"
         @on-change="change"
         @on-page-size-change="changeSize"
       />
@@ -163,7 +163,7 @@ export default {
           key: "instance",
           align: "center",
           slot: "instance",
-          minWidth: 100,
+          minWidth: 120,
         },
         {
           title: this.$t("message.linkis.tableColumns.label"),
@@ -174,18 +174,18 @@ export default {
           minWidth: 100,
         },
         {
-          title: this.$t("message.linkis.tableColumns.engineType"),
+          title: this.$t("message.linkis.tableColumns.serveType"),
           key: "applicationName",
           align: "center",
           tooltip: true,
-          minWidth: 80,
+          minWidth: 100,
         },
         {
           title: this.$t("message.linkis.tableColumns.createdTime"),
           key: "createTime",
           align: "center",
           tooltip: true,
-          minWidth: 80,
+          minWidth: 120,
           slot: "createTime",
         },
         {
@@ -193,7 +193,7 @@ export default {
           key: "updateTime",
           align: "center",
           tooltip: true,
-          minWidth: 80,
+          minWidth: 120,
           slot: "updateTime",
         },
         {
@@ -336,3 +336,23 @@ export default {
 };
 </script>
 <style lang="scss" src="./index.scss" scoped></style>
+
+<style lang="scss">
+.micro-service-table {
+  border: 0;
+  height: calc(100% - 110px);
+
+  .ivu-table:before {
+    height: 0
+  }
+  
+  .ivu-table:after {
+    width: 0
+  }
+
+  .ivu-table {
+    height: auto;
+    border: 1px solid #dcdee2;
+  }
+}
+</style>

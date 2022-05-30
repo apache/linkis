@@ -12,7 +12,8 @@
       "udf": {
         "functionName": "Function Name",
         "functionType": "Function Type",
-        "creator": "creator",
+        "addUDF": "Add UDF",
+        "creator": "Creator",
         "search": "search",
         "addFunction": "Add Function",
         "updateFunction": "Update Function",

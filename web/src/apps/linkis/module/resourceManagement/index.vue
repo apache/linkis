@@ -175,7 +175,7 @@
           size="small"
           show-total
           show-sizer
-          prev-text="上一页" next-text="下一页"
+          :prev-text="$t('message.linkis.previousPage')" :next-text="$t('message.linkis.nextPage')"
           @on-change="change"
           @on-page-size-change="changeSize" />
       </div>
@@ -325,7 +325,7 @@ export default {
         {
           title: this.$t('message.linkis.tableColumns.appType'),
           key: 'creator',
-          minWidth: 100,
+          minWidth: 120,
           className: 'table-project-column',
         },
         {
@@ -337,7 +337,7 @@ export default {
         {
           title: this.$t('message.linkis.tableColumns.engineUsed'),
           key: 'usedResource',
-          minWidth: 100,
+          minWidth: 120,
           className: 'table-project-column',
           slot: 'usedResource',
         },
@@ -358,14 +358,14 @@ export default {
         {
           title: this.$t('message.linkis.tableColumns.queueUsed'),
           key: 'yarnUsedResource',
-          minWidth: 150,
+          minWidth: 160,
           className: 'table-project-column',
           slot: 'yarnUsedResource',
         },
         {
           title: this.$t('message.linkis.tableColumns.queueTop'),
           key: 'yarnMaxResource',
-          minWidth: 150,
+          minWidth: 160,
           className: 'table-project-column',
           slot: 'yarnMaxResource',
         },
@@ -374,7 +374,7 @@ export default {
           key: 'yarnLeftResource',
           className: 'table-project-column',
           slot: 'yarnLeftResource',
-          minWidth: 150,
+          minWidth: 160,
         },
       ],
       engines: [],
@@ -661,6 +661,9 @@ export default {
     min-height: 250px;
     height: 100%;
     overflow: hidden;
+    .ivu-table {
+      overflow: auto;
+    }
     .ivu-table:before {
       height: 0;
     }

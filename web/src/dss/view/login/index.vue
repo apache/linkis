@@ -29,7 +29,7 @@
           <span class="login-title">{{$t('message.common.login.loginTitle')}}</span>
         </FormItem>
         <FormItem prop="user">
-          <div class="label">用户名</div>
+          <div class="label">{{$t('message.linkis.userName')}}</div>
           <Input
             v-model="loginForm.user"
             type="text"
@@ -37,7 +37,7 @@
             size="large"/>
         </FormItem>
         <FormItem prop="password">
-          <div class="label">密码</div>
+          <div class="label">{{$t('message.linkis.password')}}</div>
           <Input
             v-model="loginForm.password"
             type="password"

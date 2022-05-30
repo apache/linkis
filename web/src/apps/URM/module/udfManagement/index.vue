@@ -27,8 +27,8 @@
       <Divider type="vertical" class="divider" />
       <FormItem prop="functionType" :label="$t('message.linkis.udfName')">
         <Select v-model="searchBar.functionType" style="width:120px;">
-          <Option label="全部" value="0,1,2" key="0,1,2" />
-          <Option label="通用" value="0" key="0" />
+          <Option :label="$t('message.linkis.all')" value="0,1,2" key="0,1,2" />
+          <Option :label="$t('message.linkis.common')" value="0" key="0" />
           <Option label="spark" value="1,2" key="1,2" />
         </Select>
       </FormItem>
@@ -53,7 +53,7 @@
           type="success"
           @click="showAddModal(true)"
           style="margin-right: 10px;"
-        >新增UDF</Button>
+        >{{ $t('message.linkis.udf.addUDF') }}</Button>
       </FormItem>
     </Form>
     <div>
@@ -79,6 +79,7 @@
           size="small"
           show-total
           show-elevator
+          :prev-text="$t('message.linkis.previousPage')" :next-text="$t('message.linkis.nextPage')"
           @on-change="changePage"
         />
       </div>
@@ -437,9 +438,7 @@ export default {
           title: this.$t('message.linkis.udfName'),
           key: 'udfName',
           align: 'center',
-          width: 120,
-          // 溢出以...显示
-          ellipsis: true
+          width: 150,
         },
         {
           title: this.$t('message.linkis.udfType'),
@@ -477,20 +476,19 @@ export default {
           title: this.$t('message.linkis.udf.lastModifyTime'),
           key: 'createTimeFormat',
           align: 'center',
-          width: 140,
+          width: 180,
         },
         {
           title: this.$t('message.linkis.udf.creator'),
           key: 'createUser',
           align: 'center',
-          width: 80,
+          width: 120,
         },
         {
           title: this.$t('message.linkis.udf.action.title'),
           key: 'action',
           align: 'center',
-          width: 308,
-          className: 'history-control',
+          width: 360,
           renderType: 'button',
           renderParams: [
             {
@@ -500,7 +498,8 @@ export default {
               style: {
                 backgroundColor: '#2d8cf0',
                 color: '#fff',
-                padding: '1px 7px 2px 7px !important'
+                padding: '1px 7px 2px 7px !important',
+                marginRight: '5px'
               }
             },
             {
@@ -509,7 +508,8 @@ export default {
               style: {
                 backgroundColor: '#2d8cf0',
                 color: '#fff',
-                padding: '1px 7px 2px 7px !important'
+                padding: '1px 7px 2px 7px !important',
+                marginRight: '5px'
               }
             },
             {
@@ -519,7 +519,8 @@ export default {
               style: {
                 backgroundColor: '#2d8cf0',
                 color: '#fff',
-                padding: '1px 7px 2px 7px !important'
+                padding: '1px 7px 2px 7px !important',
+                marginRight: '5px'
               }
             },
             {
@@ -529,7 +530,8 @@ export default {
               style: {
                 backgroundColor: '#2d8cf0',
                 color: '#fff',
-                padding: '1px 7px 2px 7px !important'
+                padding: '1px 7px 2px 7px !important',
+                marginRight: '5px'
               }
             },
             {

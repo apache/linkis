@@ -58,7 +58,7 @@
       </FormItem>
       <FormItem prop="engine" :label="$t('message.linkis.formItems.engine.label')">
         <Select v-model="searchBar.engine" style="width: 70px">
-          <Option v-for="(item) in getEngineTypes" :label="item === 'all' ? '全部': item" :value="item" :key="item" />
+          <Option v-for="(item) in getEngineTypes" :label="item === 'all' ? $t('message.linkis.engineTypes.all'): item" :value="item" :key="item" />
         </Select>
       </FormItem>
       <FormItem prop="status" :label="$t('message.linkis.formItems.status.label')">
@@ -113,7 +113,7 @@
           size="small"
           show-total
           show-elevator
-          prev-text="上一页" next-text="下一页"
+          :prev-text="$t('message.linkis.previousPage')" :next-text="$t('message.linkis.nextPage')"
           @on-change="changePage"
         />
       </div>
@@ -495,7 +495,6 @@ export default {
           fixed: 'right',
           align: 'center',
           width: 60,
-          className: 'history-control',
           renderType: 'button',
           renderParams: [
             {
@@ -508,20 +507,20 @@ export default {
           title: this.$t('message.linkis.tableColumns.taskID'),
           key: 'taskID',
           align: 'center',
-          width: 80
+          width: 90
         },
         {
           title: this.$t('message.linkis.tableColumns.fileName'),
           key: 'source',
           align: 'center',
-          ellipsis: true,
-          width: 120
+          tooltip: true,
+          width: 190
         },
         {
           title: this.$t('message.linkis.tableColumns.executionCode'),
           key: 'executionCode',
           align: 'center',
-          width: 150,
+          width: 440,
           // 溢出以...显示
           ellipsis: true
           // renderType: 'tooltip',
@@ -548,8 +547,7 @@ export default {
           key: 'failedReason',
           align: 'center',
           className: 'history-failed',
-          // width: 240,
-          // ellipsis: true,
+          width: 210,
           renderType: 'a',
           renderParams: {
             hasDoc: this.checkIfHasDoc,

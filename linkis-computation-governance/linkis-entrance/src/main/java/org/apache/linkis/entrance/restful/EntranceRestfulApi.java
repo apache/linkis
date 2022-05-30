@@ -294,11 +294,13 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
                             (HashMap<String, ResourceWithStatus>)
                                     metrics.get(TaskConstant.ENTRANCEJOB_YARNRESOURCE);
                     ArrayList<YarnResourceWithStatusVo> resoureList = new ArrayList<>(12);
-                    resourceMap.forEach(
-                            (applicationId, resource) -> {
-                                resoureList.add(
-                                        new YarnResourceWithStatusVo(applicationId, resource));
-                            });
+                    if (null != resourceMap && !resourceMap.isEmpty()) {
+                        resourceMap.forEach(
+                                (applicationId, resource) -> {
+                                    resoureList.add(
+                                            new YarnResourceWithStatusVo(applicationId, resource));
+                                });
+                    }
                     metricsVo.put(TaskConstant.ENTRANCEJOB_YARNRESOURCE, resoureList);
                     Optional<Integer> cores =
                             resourceMap.values().stream()

@@ -78,7 +78,7 @@
         <dependency>
             <groupId>com.github.pjfanning</groupId>
             <artifactId>excel-streaming-reader</artifactId>
-            <version>3.6.0</version>
+            <version>4.0.1</version>
         </dependency>
 
     </dependencies>

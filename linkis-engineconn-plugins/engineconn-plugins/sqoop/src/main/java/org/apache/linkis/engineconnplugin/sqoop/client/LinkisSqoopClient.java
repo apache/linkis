@@ -23,6 +23,9 @@ import org.apache.linkis.protocol.engine.JobProgressInfo;
 
 import org.apache.sqoop.SqoopOptions;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -30,9 +33,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.function.Consumer;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class LinkisSqoopClient {
     private static Class<?> sqoopEngineClass;

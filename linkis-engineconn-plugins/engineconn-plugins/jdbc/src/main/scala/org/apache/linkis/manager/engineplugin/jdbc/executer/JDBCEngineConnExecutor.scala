@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.manager.engineplugin.jdbc.executer
 
-import java.sql.{Connection, Statement}
+import java.sql.{Connection, ResultSet, SQLException, Statement}
 import java.util
 import org.apache.linkis.common.utils.{OverloadUtils, Utils}
 import org.apache.linkis.engineconn.computation.executor.execute.{ConcurrentComputationExecutor, EngineExecutionContext}
@@ -34,6 +34,7 @@ import org.apache.linkis.storage.domain.{Column, DataType}
 import org.apache.linkis.storage.resultset.ResultSetFactory
 import org.apache.linkis.storage.resultset.table.{TableMetaData, TableRecord}
 import org.apache.commons.io.IOUtils
+import org.apache.commons.lang.StringUtils
 import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.governance.common.protocol.conf.{RequestQueryEngineConfig, ResponseQueryConfig}
 import org.apache.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
@@ -49,13 +50,11 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int) ex
 
 
   private val connectionManager = ConnectionManager.getInstance()
-
-  private var statement: Statement = null
-
   private val executorLabels: util.List[Label[_]] = new util.ArrayList[Label[_]](2)
-  private var connection: Connection = null
+
 
   override def init(): Unit = {
+    info("jdbc executor start init.")
     setCodeParser(new SQLCodeParser)
     super.init()
     if (JDBCConfiguration.JDBC_KERBEROS_ENABLE.getValue) {
@@ -64,111 +63,151 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int) ex
   }
 
   override def executeLine(engineExecutorContext: EngineExecutionContext, code: String): ExecuteResponse = {
+    val execSqlUser = getExecSqlUser(engineExecutorContext)
     val realCode = code.trim()
+    val taskId = engineExecutorContext.getJobId.get
     val properties = engineExecutorContext.getProperties.asInstanceOf[util.Map[String, String]]
+    var dataSourceName = properties.getOrDefault(JDBCEngineConnConstant.JDBC_ENGINE_RUN_TIME_DS, "")
 
     if (properties.get(JDBCEngineConnConstant.JDBC_URL) == null) {
-      info(s"jdbc url is empty, adding now...")
+      info(s"The jdbc url is empty, adding now...")
       val globalConfig = Utils.tryAndWarn(JDBCEngineConfig.getCacheMap(engineExecutorContext.getLabels))
+      if (StringUtils.isNotBlank(dataSourceName)) {
+        info("Start getting data source connection parameters from the data source hub.")
+        // todo get data source info by data source client
+      }
       properties.put(JDBCEngineConnConstant.JDBC_URL, globalConfig.get(JDBCEngineConnConstant.JDBC_URL))
+      properties.put(JDBCEngineConnConstant.JDBC_DRIVER, globalConfig.get(JDBCEngineConnConstant.JDBC_DRIVER))
       properties.put(JDBCEngineConnConstant.JDBC_USERNAME, globalConfig.get(JDBCEngineConnConstant.JDBC_USERNAME))
       properties.put(JDBCEngineConnConstant.JDBC_PASSWORD, globalConfig.get(JDBCEngineConnConstant.JDBC_PASSWORD))
+      properties.put(JDBCEngineConnConstant.JDBC_POOL_VALIDATION_QUERY, globalConfig.getOrDefault(JDBCEngineConnConstant.JDBC_POOL_VALIDATION_QUERY, JDBCEngineConnConstant.JDBC_POOL_DEFAULT_VALIDATION_QUERY))
       properties.put(JDBCEngineConnConstant.JDBC_AUTH_TYPE, globalConfig.get(JDBCEngineConnConstant.JDBC_AUTH_TYPE))
       properties.put(JDBCEngineConnConstant.JDBC_KERBEROS_AUTH_TYPE_PRINCIPAL, globalConfig.get(JDBCEngineConnConstant.JDBC_KERBEROS_AUTH_TYPE_PRINCIPAL))
       properties.put(JDBCEngineConnConstant.JDBC_KERBEROS_AUTH_TYPE_KEYTAB_LOCATION, globalConfig.get(JDBCEngineConnConstant.JDBC_KERBEROS_AUTH_TYPE_KEYTAB_LOCATION))
       properties.put(JDBCEngineConnConstant.JDBC_PROXY_USER_PROPERTY, globalConfig.getOrDefault(JDBCEngineConnConstant.JDBC_PROXY_USER_PROPERTY, ""))
-      properties.put(JDBCEngineConnConstant.JDBC_PROXY_USER, globalConfig.getOrDefault(JDBCEngineConnConstant.JDBC_PROXY_USER, EngineConnObject.getEngineCreationContext.getUser))
+      properties.put(JDBCEngineConnConstant.JDBC_PROXY_USER, globalConfig.getOrDefault(JDBCEngineConnConstant.JDBC_PROXY_USER, execSqlUser))
+      properties.put(JDBCEngineConnConstant.JDBC_SCRIPTS_EXEC_USER, execSqlUser)
+    }
+    if (StringUtils.isBlank(dataSourceName)) {
+      dataSourceName = JDBCEngineConnConstant.JDBC_DEFAULT_DATASOURCE_TAG;
+    }
+    info(s"The data source name is [$dataSourceName], and the jdbc client begins to run jdbc code:\n ${realCode.trim}")
+    var connection: Connection = null
+    var statement: Statement = null
+    var resultSet: ResultSet = null
+
+    Utils.tryCatch({
+      connection = connectionManager.getConnection(dataSourceName, properties)
+    }) {
+      case e: Exception => return ErrorExecuteResponse("created data source connection error.", e)
     }
 
-    info(s"jdbc client begins to run jdbc code:\n ${realCode.trim}")
-    connection = connectionManager.getConnection(properties)
-    statement = connection.createStatement()
-    info(s"create statement is:  $statement")
-    val isResultSetAvailable = statement.execute(code)
-    info(s"Is ResultSet available ? : $isResultSetAvailable")
-    if (isResultSetAvailable) {
-      info("ResultSet is available")
-      val JDBCResultSet = statement.getResultSet
-      if (isDDLCommand(statement.getUpdateCount(), JDBCResultSet.getMetaData().getColumnCount)) {
-        info(s"current result is a ResultSet Object , but there are no more results :${code} ")
-        Utils.tryQuietly {
-          JDBCResultSet.close()
-          statement.close()
-          connection.close()
+    try {
+      statement.setQueryTimeout(JDBCConfiguration.JDBC_QUERY_TIMEOUT.getValue)
+      statement = connection.createStatement()
+      statement.setFetchSize(outputPrintLimit)
+      statement.setMaxRows(outputPrintLimit)
+      info(s"create statement is:  $statement")
+      connectionManager.saveStatement(taskId, statement)
+      val isResultSetAvailable = statement.execute(code)
+      info(s"Is ResultSet available ? : $isResultSetAvailable")
+      try {
+        if (isResultSetAvailable) {
+          info("ResultSet is available")
+          resultSet = statement.getResultSet
+          return getExecResultSetOutput(engineExecutorContext, statement, resultSet)
+        } else {
+          val updateCount = statement.getUpdateCount
+          info(s"only return affect rows : $updateCount")
+          engineExecutorContext.appendStdout(s"only return affect rows : $updateCount")
+          return SuccessExecuteResponse()
         }
-        SuccessExecuteResponse()
-      } else {
-        val md = JDBCResultSet.getMetaData
-        val metaArrayBuffer = new ArrayBuffer[Tuple2[String, String]]()
-        for (i <- 1 to md.getColumnCount) {
-          metaArrayBuffer.add(Tuple2(md.getColumnName(i), JDBCHelper.getTypeStr(md.getColumnType(i))))
+      } finally {
+        if (resultSet != null) {
+          Utils.tryCatch({ resultSet.close() }) { case e: SQLException => warn(e.getMessage) }
         }
-        val columns = metaArrayBuffer.map { c => Column(c._1, DataType.toDataType(c._2), "") }.toArray[Column]
-        val metaData = new TableMetaData(columns)
-        val resultSetWriter = engineExecutorContext.createResultSetWriter(ResultSetFactory.TABLE_TYPE)
-        resultSetWriter.addMetaData(metaData)
-        var count = 0
-        Utils.tryCatch({
-          while (count < outputPrintLimit && JDBCResultSet.next()) {
-            val r: Array[Any] = columns.indices.map { i =>
-              val data = JDBCResultSet.getObject(i + 1) match {
-                case value: Any => JDBCResultSet.getString(i + 1)
-                case _ => null
-              }
-              data
-            }.toArray
-            resultSetWriter.addRecord(new TableRecord(r))
-            count += 1
-          }
-        }) {
-          case e: Exception => return ErrorExecuteResponse("query jdbc failed", e)
+        if (statement != null) {
+          Utils.tryCatch({ statement.close() }) { case e: SQLException => warn(e.getMessage) }
         }
-        val output = if (resultSetWriter != null) resultSetWriter.toString else null
-        Utils.tryQuietly {
-          JDBCResultSet.close()
-          statement.close()
-          connection.close()
-          IOUtils.closeQuietly(resultSetWriter)
-        }
-        info("sql execute completed")
-        AliasOutputExecuteResponse(null, output)
       }
-    } else {
-      info(s"only return affect rows : ${statement.getUpdateCount}")
-      Utils.tryQuietly {
-        statement.close()
-        connection.close()
+    } catch {
+      case e: Throwable => error(s"Cannot run $code", e)
+    } finally {
+      if (connection != null) {
+        try {
+          if (!connection.getAutoCommit) connection.commit()
+          connection.close()
+        } catch {
+          case e: SQLException => warn("close connection error.", e)
+        }
       }
+      connectionManager.removeStatement(taskId)
+    }
+    SuccessExecuteResponse()
+  }
+
+  private def getExecResultSetOutput(engineExecutorContext: EngineExecutionContext, statement: Statement, resultSet: ResultSet): ExecuteResponse = {
+    if (isDDLCommand(statement.getUpdateCount, resultSet.getMetaData.getColumnCount)) {
+      info(s"current result is a ResultSet Object , but there are no more results!")
+      engineExecutorContext.appendStdout("Query executed successfully.")
       SuccessExecuteResponse()
+    } else {
+      val md = resultSet.getMetaData
+      val metaArrayBuffer = new ArrayBuffer[(String, String)]()
+      for (i <- 1 to md.getColumnCount) {
+        metaArrayBuffer.add(Tuple2(md.getColumnName(i), JDBCHelper.getTypeStr(md.getColumnType(i))))
+      }
+      val columns = metaArrayBuffer.map { c => Column(c._1, DataType.toDataType(c._2), "") }.toArray[Column]
+      val metaData = new TableMetaData(columns)
+      val resultSetWriter = engineExecutorContext.createResultSetWriter(ResultSetFactory.TABLE_TYPE)
+      resultSetWriter.addMetaData(metaData)
+      var count = 0
+      Utils.tryCatch({
+        while (count < outputPrintLimit && resultSet.next()) {
+          val r: Array[Any] = columns.indices.map { i =>
+            val data = resultSet.getObject(i + 1) match {
+              case value: Any => resultSet.getString(i + 1)
+              case _ => null
+            }
+            data
+          }.toArray
+          resultSetWriter.addRecord(new TableRecord(r))
+          count += 1
+        }
+      }) {
+        case e: Exception => return ErrorExecuteResponse("query jdbc failed", e)
+      }
+      val output = if (resultSetWriter != null) resultSetWriter.toString else null
+      Utils.tryQuietly {
+        IOUtils.closeQuietly(resultSetWriter)
+      }
+      info("sql executed completed.")
+      AliasOutputExecuteResponse(null, output)
     }
   }
 
+  private def getExecSqlUser(engineExecutionContext: EngineExecutionContext): String = {
+    val userCreatorLabel = engineExecutionContext.getLabels.find(_.isInstanceOf[UserCreatorLabel]).get.asInstanceOf[UserCreatorLabel]
+    userCreatorLabel.getUser
+  }
+
   protected def isDDLCommand(updatedCount: Int, columnCount: Int): Boolean = {
-    if (updatedCount < 0 && columnCount <= 0) {
-      true
-    } else {
-      false
-    }
+    updatedCount < 0 && columnCount <= 0
   }
 
   override def getProgressInfo(taskID: String): Array[JobProgressInfo] = Array.empty[JobProgressInfo]
 
   override protected def callback(): Unit = {}
 
-  override def progress(taskID: String): Float = {
-    0
-  }
+  override def progress(taskID: String): Float = 0
 
   override def close(): Unit = {
-    if (statement != null) {
-      statement.close()
-    }
-    if (connection != null) {
-      connection.close()
-    }
+    info("Start closing the jdbc engine.")
+    connectionManager.close()
     if (JDBCConfiguration.JDBC_KERBEROS_ENABLE.getValue) {
       connectionManager.shutdownRefreshKerberosLoginService()
     }
+    info("The jdbc engine has closed successfully.")
   }
 
   override def executeCompletely(engineExecutorContext: EngineExecutionContext, code: String, completedLine: String): ExecuteResponse = null
@@ -188,8 +227,8 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int) ex
     val properties = EngineConnObject.getEngineCreationContext.getOptions
     if (properties.containsKey(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key)) {
       val settingClientMemory = properties.get(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key)
-      if (!settingClientMemory.toLowerCase().endsWith("g")) {
-        properties.put(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key, settingClientMemory + "g")
+      if (!settingClientMemory.toLowerCase().endsWith(JDBCEngineConnConstant.JDBC_ENGINE_MEMORY_UNIT)) {
+        properties.put(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key, settingClientMemory + JDBCEngineConnConstant.JDBC_ENGINE_MEMORY_UNIT)
       }
     }
     val resource = new CommonNodeResource
@@ -200,12 +239,21 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int) ex
 
   override def supportCallBackLogs(): Boolean = false
 
-  override def getId(): String = Sender.getThisServiceInstance.getInstance + s"_$id"
+  override def getId: String = Sender.getThisServiceInstance.getInstance + s"_$id"
 
   override def getConcurrentLimit: Int = JDBCConfiguration.JDBC_CONCURRENT_LIMIT.getValue
 
   override def killAll(): Unit = {
+    info("Killing all query task.")
+    connectionManager.initTaskStatementMap()
+    info("All query task has killed successfully.")
+  }
 
+  override def killTask(taskId: String): Unit = {
+    info(s"Killing jdbc query task $taskId")
+    connectionManager.cancelStatement(taskId)
+    super.killTask(taskId)
+    info(s"The query task $taskId has killed successfully.")
   }
 }
 

@@ -37,9 +37,9 @@ public class PersistenceContextKeyValue implements ContextKeyValue {
 
     private String props;
 
-    private Date createTime;
+    private Date createTime = new Date();
 
-    private Date updateTime;
+    private Date updateTime = new Date();
 
     public Date getCreateTime() {
         return createTime;

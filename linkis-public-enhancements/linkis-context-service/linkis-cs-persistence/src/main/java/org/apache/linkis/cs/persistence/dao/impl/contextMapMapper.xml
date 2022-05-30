@@ -28,7 +28,7 @@
             parameterType="org.apache.linkis.cs.persistence.entity.PersistenceContextKeyValue">
         INSERT INTO linkis_ps_cs_context_map(<include refid="context_map"/>)
         VALUES (#{id},#{contextKey.key},#{contextKey.contextScope},#{contextKey.contextType},
-        #{props},#{contextValue.valueStr},#{contextId},#{contextValue.keywords},now(),now())
+        #{props},#{contextValue.valueStr},#{contextId},#{contextValue.keywords},#{createTime},#{updateTime})
     </insert>
 
     <resultMap id="PersistenceContextKeyValue"
@@ -94,10 +94,10 @@
     <select id="getAllContextMapByTime" resultMap="PersistenceContextKeyValue">
         SELECT * FROM linkis_ps_cs_context_map
         <where>
-            <if test="#{createTimeStart} != null">  AND `create_time` &gt;= #{createTimeStart}</if>
-            <if test="#{createTimeEnd} != null">  AND `create_time` &lt;= #{createTimeEnd}</if>
-            <if test="#{updateTimeStart} != null">  AND `update_time` &gt;= #{updateTimeStart}</if>
-            <if test="#{updateTimeEnd} != null">  AND `update_time` &lt;= #{updateTimeEnd}</if>
+            <if test="#{createTimeStart} != null">  AND `create_time` >= #{createTimeStart,jdbcType=TIMESTAMP}</if>
+            <if test="#{createTimeEnd} != null">  AND `create_time` <![CDATA[<=]]> #{createTimeEnd,jdbcType=TIMESTAMP}</if>
+            <if test="#{updateTimeStart} != null">  AND `update_time` >= #{updateTimeStart,jdbcType=TIMESTAMP}</if>
+            <if test="#{updateTimeEnd} != null">  AND `update_time` <![CDATA[<=]]> #{updateTimeEnd,jdbcType=TIMESTAMP}</if>
         </where>
     </select>
 

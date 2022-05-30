@@ -27,7 +27,7 @@
     <insert id="createKeyListener" useGeneratedKeys="true" keyProperty="id"
             parameterType="org.apache.linkis.cs.persistence.entity.PersistenceContextKeyListener">
         INSERT INTO linkis_ps_cs_context_map_listener(<include refid="context_key_listener"/>)
-        VALUES (#{listener.id},#{listener.source},#{listener.keyId},now(),now())
+        VALUES (#{listener.id},#{listener.source},#{listener.keyId},#{createTime},#{updateTime})
     </insert>
 
     <delete id="remove">

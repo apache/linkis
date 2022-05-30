@@ -26,10 +26,10 @@ import org.apache.linkis.cs.contextcache.index.ContextInvertedIndexSetImpl;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
-import java.util.*;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.*;
 
 public class ContextValueMapSetImpl implements ContextValueMapSet {
 

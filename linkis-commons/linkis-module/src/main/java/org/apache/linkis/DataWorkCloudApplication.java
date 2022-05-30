@@ -56,8 +56,6 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 
 import javax.servlet.DispatcherType;
 
-import java.util.EnumSet;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -65,6 +63,8 @@ import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.webapp.WebAppContext;
+
+import java.util.EnumSet;
 
 @SpringBootApplication
 @EnableDiscoveryClient

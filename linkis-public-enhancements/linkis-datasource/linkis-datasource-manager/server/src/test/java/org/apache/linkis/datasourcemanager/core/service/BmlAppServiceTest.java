@@ -24,9 +24,6 @@ import org.apache.linkis.bml.protocol.BmlUploadResponse;
 import org.apache.linkis.common.exception.ErrorException;
 import org.apache.linkis.datasourcemanager.core.service.impl.BmlAppServiceImpl;
 
-import java.io.FileInputStream;
-import java.io.InputStream;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -35,6 +32,9 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.FileInputStream;
+import java.io.InputStream;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

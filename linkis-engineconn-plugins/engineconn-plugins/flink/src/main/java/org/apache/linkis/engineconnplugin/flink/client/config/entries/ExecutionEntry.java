@@ -27,14 +27,14 @@ import org.apache.flink.table.api.EnvironmentSettings;
 import org.apache.flink.table.client.config.ConfigUtil;
 import org.apache.flink.table.descriptors.DescriptorProperties;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.apache.linkis.engineconnplugin.flink.client.config.Environment.EXECUTION_ENTRY;
 

@@ -36,9 +36,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 
-import java.util.Date;
-
 import com.fasterxml.jackson.databind.JsonNode;
+
+import java.util.Date;
 
 @RestController
 @RequestMapping(path = "/contextservice")

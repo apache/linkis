@@ -39,11 +39,11 @@ import org.apache.linkis.server.BDPJettyServerHelper;
 
 import org.apache.commons.lang.StringUtils;
 
-import java.util.Date;
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Date;
+import java.util.Map;
 
 public abstract class AbstractEntranceParser extends EntranceParser {
 

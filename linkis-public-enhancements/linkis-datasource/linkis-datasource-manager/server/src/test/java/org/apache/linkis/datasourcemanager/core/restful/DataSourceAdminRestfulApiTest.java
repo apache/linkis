@@ -37,9 +37,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Validator;
 
-import java.io.StringWriter;
-import java.util.*;
-
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -48,6 +45,9 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.StringWriter;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;

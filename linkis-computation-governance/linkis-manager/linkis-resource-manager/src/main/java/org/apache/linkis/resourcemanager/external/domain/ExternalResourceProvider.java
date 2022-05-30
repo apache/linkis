@@ -19,9 +19,9 @@ package org.apache.linkis.resourcemanager.external.domain;
 
 import org.apache.linkis.server.BDPJettyServerHelper;
 
-import java.util.Map;
-
 import com.google.gson.reflect.TypeToken;
+
+import java.util.Map;
 
 public class ExternalResourceProvider {
 

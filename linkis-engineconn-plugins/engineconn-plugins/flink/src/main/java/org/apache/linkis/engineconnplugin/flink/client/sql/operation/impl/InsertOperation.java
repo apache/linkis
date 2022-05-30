@@ -32,14 +32,14 @@ import org.apache.flink.table.types.logical.BigIntType;
 import org.apache.flink.types.Row;
 import org.apache.flink.util.CloseableIterator;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.Statement;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /** Operation for INSERT command. */
 public class InsertOperation extends AbstractJobOperation {

@@ -161,7 +161,7 @@
         <jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
         <jacoco.skip>false</jacoco.skip>
 
-        <spotless-maven-plugin.version>2.22.5</spotless-maven-plugin.version>
+        <spotless-maven-plugin.version>2.4.2</spotless-maven-plugin.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -1344,7 +1344,7 @@
 
                             <!-- \# refers to the static imports -->
                             <importOrder>
-                                <order>org.apache.linkis,org.apache,org.springframework,javax,java,scala,,\#</order>
+                                <order>org.apache.linkis,org.apache,org.springframework,javax,java,scala,\#</order>
                             </importOrder>
 
                             <removeUnusedImports/>

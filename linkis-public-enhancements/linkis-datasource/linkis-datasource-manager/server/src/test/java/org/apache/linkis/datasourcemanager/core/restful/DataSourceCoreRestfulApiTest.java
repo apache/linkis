@@ -45,9 +45,6 @@ import org.springframework.util.MultiValueMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Validator;
 
-import java.io.StringWriter;
-import java.util.*;
-
 import com.github.pagehelper.PageInfo;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -57,6 +54,9 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.StringWriter;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;

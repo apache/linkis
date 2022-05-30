@@ -43,9 +43,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 
-import java.util.*;
-
 import com.fasterxml.jackson.databind.JsonNode;
+
+import java.util.*;
 
 @RestController
 @RequestMapping(path = "/microservice")

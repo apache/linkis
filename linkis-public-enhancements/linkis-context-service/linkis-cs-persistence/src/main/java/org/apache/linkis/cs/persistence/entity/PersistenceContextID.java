@@ -43,9 +43,9 @@ public class PersistenceContextID implements UserContextID, HAContextID {
 
     private String source;
 
-    private Date createTime;
+    private Date createTime = new Date();
 
-    private Date updateTime;
+    private Date updateTime = new Date();
 
     public String getSource() {
         return source;

@@ -27,7 +27,7 @@
     <insert id="createHistory" useGeneratedKeys="true" keyProperty="id"
             parameterType="org.apache.linkis.cs.persistence.entity.PersistenceContextHistory">
         INSERT INTO linkis_ps_cs_context_history(<include refid="context_history"/>)
-        VALUES (#{id},#{contextId},#{source},#{contextType},#{historyJson},#{keyword},now(),now())
+        VALUES (#{id},#{contextId},#{source},#{contextType},#{historyJson},#{keyword},#{createTime},#{updateTime})
     </insert>
 
 

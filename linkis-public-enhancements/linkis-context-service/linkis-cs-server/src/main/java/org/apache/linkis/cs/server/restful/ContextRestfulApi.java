@@ -24,6 +24,7 @@ import org.apache.linkis.cs.common.entity.source.ContextKeyValue;
 import org.apache.linkis.cs.common.entity.source.ContextValue;
 import org.apache.linkis.cs.common.exception.CSErrorException;
 import org.apache.linkis.cs.common.protocol.ContextHTTPConstant;
+import org.apache.linkis.cs.common.utils.CSCommonUtils;
 import org.apache.linkis.cs.server.enumeration.ServiceMethod;
 import org.apache.linkis.cs.server.enumeration.ServiceType;
 import org.apache.linkis.cs.server.scheduler.CsScheduler;
@@ -46,10 +47,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import static org.apache.linkis.cs.common.utils.CSCommonUtils.localDatetimeToDate;
 
 @RestController
 @RequestMapping(path = "/contextservice")
@@ -193,14 +198,32 @@ public class ContextRestfulApi implements CsRestfulParent {
         Date createTimeEnd = null;
         Date updateTimeStart = null;
         Date updateTimeEnd = null;
+
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern(CSCommonUtils.DEFAULT_TIME_FORMAT);
         if (bodyMap.containsKey("createTimeStart"))
-            createTimeStart = (Date) bodyMap.get("createTimeStart");
+            createTimeStart =
+                    localDatetimeToDate(
+                            LocalDateTime.parse((String) bodyMap.get("createTimeStart"), dtf));
         if (bodyMap.containsKey("createTimeEnd"))
-            createTimeEnd = (Date) bodyMap.get("createTimeEnd");
+            createTimeEnd =
+                    localDatetimeToDate(
+                            LocalDateTime.parse((String) bodyMap.get("createTimeStart"), dtf));
         if (bodyMap.containsKey("updateTimeStart"))
-            updateTimeStart = (Date) bodyMap.get("updateTimeStart");
+            updateTimeStart =
+                    localDatetimeToDate(
+                            LocalDateTime.parse((String) bodyMap.get("createTimeStart"), dtf));
         if (bodyMap.containsKey("updateTimeEnd"))
-            updateTimeEnd = (Date) bodyMap.get("updateTimeEnd");
+            updateTimeEnd =
+                    localDatetimeToDate(
+                            LocalDateTime.parse((String) bodyMap.get("createTimeStart"), dtf));
+        if (null == createTimeStart
+                && null == createTimeEnd
+                && null == updateTimeStart
+                && null == createTimeEnd) {
+            throw new CSErrorException(
+                    97000,
+                    "createTimeStart, createTimeEnd, updateTimeStart, updateTimeEnd cannot be all null.");
+        }
         HttpAnswerJob answerJob =
                 submitRestJob(
                         req,

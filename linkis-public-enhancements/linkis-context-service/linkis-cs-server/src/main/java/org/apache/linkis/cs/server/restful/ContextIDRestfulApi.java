@@ -20,14 +20,16 @@ package org.apache.linkis.cs.server.restful;
 import org.apache.linkis.cs.common.entity.source.ContextID;
 import org.apache.linkis.cs.common.exception.CSErrorException;
 import org.apache.linkis.cs.common.protocol.ContextHTTPConstant;
+import org.apache.linkis.cs.common.utils.CSCommonUtils;
 import org.apache.linkis.cs.server.enumeration.ServiceMethod;
 import org.apache.linkis.cs.server.enumeration.ServiceType;
 import org.apache.linkis.cs.server.scheduler.CsScheduler;
 import org.apache.linkis.cs.server.scheduler.HttpAnswerJob;
 import org.apache.linkis.server.Message;
 
+import org.apache.commons.lang3.StringUtils;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -39,7 +41,11 @@ import javax.servlet.http.HttpServletRequest;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
+
+import static org.apache.linkis.cs.common.utils.CSCommonUtils.localDatetimeToDate;
 
 @RestController
 @RequestMapping(path = "/contextservice")
@@ -104,10 +110,10 @@ public class ContextIDRestfulApi implements CsRestfulParent {
     @RequestMapping(path = "searchContextIDByTime", method = RequestMethod.GET)
     public Message searchContextIDByTime(
             HttpServletRequest req,
-            @RequestParam(value = "createTimeStart", required = false) Date createTimeStart,
-            @RequestParam(value = "createTimeEnd", required = false) Date createTimeEnd,
-            @RequestParam(value = "updateTimeStart", required = false) Date updateTimeStart,
-            @RequestParam(value = "updateTimeEnd", required = false) Date updateTimeEnd)
+            @RequestParam(value = "createTimeStart", required = false) String createTimeStart,
+            @RequestParam(value = "createTimeEnd", required = false) String createTimeEnd,
+            @RequestParam(value = "updateTimeStart", required = false) String updateTimeStart,
+            @RequestParam(value = "updateTimeEnd", required = false) String updateTimeEnd)
             throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
         if (null == createTimeStart
                 && null == createTimeEnd
@@ -117,14 +123,28 @@ public class ContextIDRestfulApi implements CsRestfulParent {
                     97000,
                     "createTimeStart, createTimeEnd, updateTimeStart, updateTimeEnd cannot be all null.");
         }
+        Date createTimeStartDate = null;
+        Date createTimeEndDate = null;
+        Date updateTimeStartDate = null;
+        Date updateTimeEndDate = null;
+
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern(CSCommonUtils.DEFAULT_TIME_FORMAT);
+        if (StringUtils.isNotBlank(createTimeStart))
+            createTimeStartDate = localDatetimeToDate(LocalDateTime.parse(createTimeStart, dtf));
+        if (StringUtils.isNotBlank(createTimeEnd))
+            createTimeEndDate = localDatetimeToDate(LocalDateTime.parse(createTimeEnd, dtf));
+        if (StringUtils.isNotBlank(updateTimeStart))
+            updateTimeStartDate = localDatetimeToDate(LocalDateTime.parse(updateTimeStart, dtf));
+        if (StringUtils.isNotBlank(updateTimeEnd))
+            updateTimeEndDate = localDatetimeToDate(LocalDateTime.parse(updateTimeEnd, dtf));
         HttpAnswerJob answerJob =
                 submitRestJob(
                         req,
                         ServiceMethod.SEARCH,
-                        createTimeStart,
-                        createTimeEnd,
-                        updateTimeStart,
-                        updateTimeEnd);
+                        createTimeStartDate,
+                        createTimeEndDate,
+                        updateTimeStartDate,
+                        updateTimeEndDate);
         return generateResponse(answerJob, "contextIDs");
     }
 

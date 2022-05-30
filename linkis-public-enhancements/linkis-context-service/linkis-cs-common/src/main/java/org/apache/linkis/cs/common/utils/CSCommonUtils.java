@@ -22,6 +22,10 @@ import org.apache.linkis.common.conf.CommonVars;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
+
 public class CSCommonUtils {
 
     public static final String CONTEXT_ID_STR = "contextID";
@@ -84,4 +88,14 @@ public class CSCommonUtils {
 
         return CSCommonUtils.NODE_PREFIX + nodeName + "." + CSCommonUtils.TABLE_PREFIX + tableName;
     }
+
+    public static Date localDatetimeToDate(LocalDateTime ldt) {
+        if (null != ldt) {
+            return Date.from(ldt.atZone(ZoneId.systemDefault()).toInstant());
+        } else {
+            return null;
+        }
+    }
+
+    public static final String DEFAULT_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
 }

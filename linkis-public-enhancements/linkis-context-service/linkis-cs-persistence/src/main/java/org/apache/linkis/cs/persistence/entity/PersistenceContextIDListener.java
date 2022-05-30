@@ -29,9 +29,9 @@ public class PersistenceContextIDListener implements ListenerDomain {
 
     private String contextId;
 
-    private Date createTime;
+    private Date createTime = new Date();
 
-    private Date updateTime;
+    private Date updateTime = new Date();
 
     public Integer getId() {
         return id;

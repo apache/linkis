@@ -38,9 +38,9 @@ public class PersistenceContextHistory implements ContextHistory {
 
     private String keyword;
 
-    private Date createTime;
+    private Date createTime = new Date();
 
-    private Date updateTime;
+    private Date updateTime = new Date();
 
     public String getContextId() {
         return contextId;

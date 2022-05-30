@@ -27,7 +27,7 @@
     <insert id="createContextID" useGeneratedKeys="true" keyProperty="contextId"
             parameterType="org.apache.linkis.cs.persistence.entity.PersistenceContextID">
         INSERT INTO linkis_ps_cs_context_id(<include refid="context_id"/>)
-        VALUES (#{contextId},#{user},#{application},#{source},#{expireType},#{expireTime},#{instance},#{backupInstance},now(),now())
+        VALUES (#{contextId},#{user},#{application},#{source},#{expireType},#{expireTime},#{instance},#{backupInstance},#{createTime},#{updateTime})
     </insert>
 
     <delete id="deleteContextID">
@@ -43,7 +43,7 @@
         SELECT * FROM linkis_ps_cs_context_id where id = #{contextId}
     </select>
 
-    <select id="getAllContextID" parameterMap="org.apache.linkis.cs.persistence.entity.PersistenceContextID" resultMap="PersistenceContextID" >
+    <select id="getAllContextID" parameterType="org.apache.linkis.cs.persistence.entity.PersistenceContextID" resultMap="PersistenceContextID" >
         SELECT * FROM linkis_ps_cs_context_id
         <where>
             <if test="contextId != null"> AND `id` = #{contextId}</if>
@@ -61,10 +61,10 @@
     <select id="getAllContextIDByTime" resultMap="PersistenceContextID" >
         SELECT * FROM linkis_ps_cs_context_id
         <where>
-            <if test="#{createTimeStart} != null">  AND `create_time` &gt;= #{createTimeStart}</if>
-            <if test="#{createTimeEnd} != null">  AND `create_time` &lt;= #{createTimeEnd}</if>
-            <if test="#{updateTimeStart} != null">  AND `update_time` &gt;= #{updateTimeStart}</if>
-            <if test="#{updateTimeEnd} != null">  AND `update_time` &lt;= #{updateTimeEnd}</if>
+            <if test="#{createTimeStart} != null">  AND `create_time` >= #{createTimeStart,jdbcType=TIMESTAMP}</if>
+            <if test="#{createTimeEnd} != null">  AND `create_time` <![CDATA[<=]]>  #{createTimeEnd,jdbcType=TIMESTAMP}</if>
+            <if test="#{updateTimeStart} != null">  AND `update_time` >= #{updateTimeStart,jdbcType=TIMESTAMP}</if>
+            <if test="#{updateTimeEnd} != null">  AND `update_time` <![CDATA[<=]]> #{updateTimeEnd,jdbcType=TIMESTAMP}</if>
         </where>
     </select>
 

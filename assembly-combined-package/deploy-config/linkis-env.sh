@@ -30,7 +30,7 @@ deployUser=hadoop
 LINKIS_SERVER_VERSION=v1
 
 ### Specifies the user workspace, which is used to store the user's script files and log files.
-### Generally local directory，mode can be file:// or hdfs://
+### Generally local directory, mode can be file:// or hdfs://
 WORKSPACE_USER_ROOT_PATH=file:///tmp/linkis/ #
 ### User's root hdfs path, path mode can be file:// or hdfs://
 HDFS_USER_ROOT_PATH=hdfs:///tmp/linkis

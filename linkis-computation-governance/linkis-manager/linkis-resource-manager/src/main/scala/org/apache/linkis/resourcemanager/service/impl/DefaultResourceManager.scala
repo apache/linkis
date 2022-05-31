@@ -271,7 +271,8 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
 
       labelResourceService.setEngineConnLabelResource(engineInstanceLabel, resource, labelContainer.getCombinedUserCreatorEngineTypeLabel.getStringValue)
 
-      val persistenceEngineLabel = labelManagerPersistence.getLabelsByKeyValue(engineInstanceLabel.getLabelKey, engineInstanceLabel.getValue, null)
+      val persistenceLabel = labelFactory.convertLabel(engineInstanceLabel, classOf[PersistenceLabel])
+      val persistenceEngineLabel = labelManagerPersistence.getLabelByKeyValue(persistenceLabel.getLabelKey, persistenceLabel.getStringValue)
 
       // fire timeout check scheduled job
       if (RMConfiguration.RM_WAIT_EVENT_TIME_OUT.getValue > 0) Utils.defaultScheduler.schedule(

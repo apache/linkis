@@ -18,19 +18,23 @@
 
 package org.apache.linkis.ecm.server.operator
 
-import java.io.{File, RandomAccessFile}
-import java.util
+import org.apache.commons.io.IOUtils
+import org.apache.commons.io.input.ReversedLinesFileReader
+import org.apache.commons.lang.StringUtils
 import org.apache.linkis.DataWorkCloudApplication
 import org.apache.linkis.common.conf.CommonVars
 import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.ecm.core.conf.ECMErrorCode
+import org.apache.linkis.ecm.server.conf.ECMConfiguration
 import org.apache.linkis.ecm.server.exception.ECMErrorException
 import org.apache.linkis.ecm.server.service.{EngineConnListService, LocalDirsHandleService}
 import org.apache.linkis.manager.common.operator.Operator
 import org.apache.linkis.manager.common.protocol.em.ECMOperateRequest
-import org.apache.commons.io.IOUtils
-import org.apache.commons.lang.StringUtils
-import org.apache.linkis.ecm.core.conf.ECMErrorCode
 
+import java.io.{File, RandomAccessFile}
+import java.nio.charset.Charset
+import java.util
+import java.util.Collections
 import scala.collection.JavaConverters.asScalaBufferConverter
 import scala.util.matching.Regex
 
@@ -44,19 +48,35 @@ class EngineConnLogOperator extends Operator with Logging {
   override def apply(implicit parameters: Map[String, Any]): Map[String, Any] = {
     val logPath = getLogPath
     val lastRows = getAs("lastRows", 0)
+    val pageSize = getAs("pageSize", 100)
+    val fromLine = getAs("fromLine", 1)
+    val enableTail = getAs("enableTail", false)
     if (lastRows > EngineConnLogOperator.MAX_LOG_FETCH_SIZE.getValue) {
       throw new ECMErrorException(ECMErrorCode.EC_FETCH_LOG_FAILED, s"Cannot fetch more than ${EngineConnLogOperator.MAX_LOG_FETCH_SIZE.getValue} lines of logs.")
     } else if (lastRows > 0) {
       val logs = Utils.exec(Array("tail", "-n", lastRows + "", logPath.getPath), 5000).split("\n")
       return Map("logs" -> logs, "rows" -> logs.length)
     }
-    val pageSize = getAs("pageSize", 100)
-    val fromLine = getAs("fromLine", 1)
+
     val ignoreKeywords = getAs("ignoreKeywords", "")
     val ignoreKeywordList = if (StringUtils.isNotEmpty(ignoreKeywords)) ignoreKeywords.split(",") else Array.empty[String]
     val onlyKeywords = getAs("onlyKeywords", "")
     val onlyKeywordList = if (StringUtils.isNotEmpty(onlyKeywords)) onlyKeywords.split(",") else Array.empty[String]
-    val reader = new RandomAccessFile(logPath, "r")
+    var randomReader: RandomAccessFile = null
+    var reversedReader: ReversedLinesFileReader = null
+    if (enableTail) {
+      logger.info("enable log operator from tail to read")
+      reversedReader = new ReversedLinesFileReader(logPath, Charset.defaultCharset())
+    } else {
+      randomReader = new RandomAccessFile(logPath, "r")
+    }
+    def randomAndReversedReadLine(): String = {
+      if (null != randomReader) {
+        randomReader.readLine()
+      } else {
+        reversedReader.readLine()
+      }
+    }
     val logs = new util.ArrayList[String](pageSize)
     var readLine, skippedLine, lineNum = 0
     var rowIgnore = false
@@ -67,7 +87,7 @@ class EngineConnLogOperator extends Operator with Logging {
     }
     val maxMultiline = EngineConnLogOperator.MULTILINE_MAX.getValue
     Utils.tryFinally {
-      var line = reader.readLine()
+      var line = randomAndReversedReadLine()
       while (readLine < pageSize && line != null) {
         lineNum += 1
         if (skippedLine < fromLine - 1) {
@@ -95,11 +115,16 @@ class EngineConnLogOperator extends Operator with Logging {
             readLine += 1
           }
         }
-        line = reader.readLine
+        line = randomAndReversedReadLine()
       }
-    }(IOUtils.closeQuietly(reader))
+    }{
+      IOUtils.closeQuietly(randomReader)
+      IOUtils.closeQuietly(reversedReader)
+    }
+    if (enableTail) Collections.reverse(logs)
     Map("logPath" -> logPath.getPath, "logs" -> logs, "endLine" -> lineNum, "rows" -> readLine)
   }
+
 
   private def includeLine(line: String,
                           onlyKeywordList: Array[String], ignoreKeywordList: Array[String]): Boolean = {
@@ -114,27 +139,35 @@ class EngineConnLogOperator extends Operator with Logging {
       engineConnListService = DataWorkCloudApplication.getApplicationContext.getBean(classOf[EngineConnListService])
       localDirsHandleService = DataWorkCloudApplication.getApplicationContext.getBean(classOf[LocalDirsHandleService])
     }
-    val engineConnInstance = getAs(ECMOperateRequest.ENGINE_CONN_INSTANCE_KEY, getAs[String]("engineConnInstance", null))
-    val (engineConnLogDir, ticketId) = Option(engineConnInstance).flatMap { instance =>
-      engineConnListService.getEngineConns.asScala.find(_.getServiceInstance.getInstance == instance)
-    }.map(engineConn => (engineConn.getEngineConnManagerEnv.engineConnLogDirs, engineConn.getTickedId)).getOrElse {
+    val logDIrSuffix = getAs("logDirSuffix", "")
+    val (engineConnLogDir, ticketId) = if (StringUtils.isNotBlank(logDIrSuffix)) {
+      val ecLogPath = ECMConfiguration.ENGINECONN_ROOT_DIR + File.pathSeparator + logDIrSuffix
       val ticketId = getAs("ticketId", "")
-      if (StringUtils.isBlank(ticketId)) {
-        throw new ECMErrorException(ECMErrorCode.EC_FETCH_LOG_FAILED, s"the parameters of ${ECMOperateRequest.ENGINE_CONN_INSTANCE_KEY}, engineConnInstance and ticketId are both not exists.")
-      }
-      val logDir = engineConnListService.getEngineConn(ticketId).map(_.getEngineConnManagerEnv.engineConnLogDirs)
-        .getOrElse {
-          val creator = getAsThrow[String]("creator")
-          val engineConnType = getAsThrow[String]("engineConnType")
-          localDirsHandleService.getEngineConnLogDir(creator, ticketId, engineConnType)
+      (ecLogPath, ticketId)
+    } else {
+      val engineConnInstance = getAs(ECMOperateRequest.ENGINE_CONN_INSTANCE_KEY, getAs[String]("engineConnInstance", null))
+      Option(engineConnInstance).flatMap { instance =>
+        engineConnListService.getEngineConns.asScala.find(_.getServiceInstance.getInstance == instance)
+      }.map(engineConn => (engineConn.getEngineConnManagerEnv.engineConnLogDirs, engineConn.getTickedId)).getOrElse {
+        val ticketId = getAs("ticketId", "")
+        if (StringUtils.isBlank(ticketId)) {
+          throw new ECMErrorException(ECMErrorCode.EC_FETCH_LOG_FAILED, s"the parameters of ${ECMOperateRequest.ENGINE_CONN_INSTANCE_KEY}, engineConnInstance and ticketId are both not exists.")
         }
-      (logDir, ticketId)
+        val logDir = engineConnListService.getEngineConn(ticketId).map(_.getEngineConnManagerEnv.engineConnLogDirs)
+          .getOrElse {
+            val creator = getAsThrow[String]("creator")
+            val engineConnType = getAsThrow[String]("engineConnType")
+            localDirsHandleService.getEngineConnLogDir(creator, ticketId, engineConnType)
+          }
+        (logDir, ticketId)
+      }
     }
+
     val logPath = new File(engineConnLogDir, getAs("logType", EngineConnLogOperator.LOG_FILE_NAME.getValue));
     if (!logPath.exists() || !logPath.isFile) {
       throw new ECMErrorException(ECMErrorCode.EC_FETCH_LOG_FAILED, s"LogFile $logPath is not exists or is not a file.")
     }
-    info(s"Try to fetch EngineConn(id: $ticketId, instance: $engineConnInstance) logs from ${logPath.getPath}.")
+    info(s"Try to fetch EngineConn(id: $ticketId, logs from ${logPath.getPath}.")
     logPath
   }
 }
@@ -143,6 +176,8 @@ object EngineConnLogOperator {
   val OPERATOR_NAME = "engineConnLog"
   val LOG_FILE_NAME = CommonVars("linkis.engineconn.log.filename", "stdout")
   val MAX_LOG_FETCH_SIZE = CommonVars("linkis.engineconn.log.fetch.lines.max", 5000)
+
+  val MAX_LOG_TAIL_START_SIZE = CommonVars("linkis.engineconn.log.tail.start.size", 20000)
   // yyyy-MM-dd HH:mm:ss.SSS
   val MULTILINE_PATTERN = CommonVars("linkis.engineconn.log.multiline.pattern", "^\\d{4}-\\d{2}-\\d{2}\\s+\\d{2}:\\d{2}:\\d{2}\\.\\d{3}")
   val MULTILINE_MAX = CommonVars("linkis.engineconn.log.multiline.max", 500)

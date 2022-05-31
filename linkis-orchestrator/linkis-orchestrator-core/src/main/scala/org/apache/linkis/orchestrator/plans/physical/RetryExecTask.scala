@@ -17,8 +17,9 @@
  
 package org.apache.linkis.orchestrator.plans.physical
 
+import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.manager.label.entity.Label
-import org.apache.linkis.manager.label.entity.entrance.RetryWaitTimeOutLabel
+import org.apache.linkis.manager.label.entity.entrance.{RetryCountLabel, RetryWaitTimeOutLabel}
 import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.orchestrator.conf.OrchestratorConfiguration
 import org.apache.linkis.orchestrator.exception.{OrchestratorErrorCodeSummary, OrchestratorErrorException}
@@ -28,6 +29,9 @@ import org.apache.linkis.orchestrator.plans.logical.TaskDesc
 import org.apache.linkis.orchestrator.strategy.{ResultSetExecTask, StatusInfoExecTask}
 import org.apache.linkis.orchestrator.strategy.async.AsyncExecTask
 import org.apache.linkis.orchestrator.utils.OrchestratorIDCreator
+
+import java.util
+import scala.collection.JavaConverters.mapAsScalaMapConverter
 
 
 class RetryExecTask(private val originTask: ExecTask, private val age: Int = 1) extends AbstractExecTask
@@ -53,6 +57,25 @@ class RetryExecTask(private val originTask: ExecTask, private val age: Int = 1) 
       waitTime = reTryTimeOutLabel.getJobRetryTimeout
     }
     waitTime
+  }
+
+  def getMaxRetryCount(): Integer = {
+    var count = -1
+    val retryCountLabel = LabelUtil.getLabelFromList[RetryCountLabel](getLabels)
+    if (null != retryCountLabel) {
+      count = retryCountLabel.getJobRetryCount
+    } else {
+      val runtimeMap = new util.HashMap[String, String]()
+      Utils.tryAndWarn {
+        getTaskDesc.getOrigin.getASTOrchestration.getASTContext.getParams.getRuntimeParams.toMap.asScala.foreach(kv => {
+          if (kv._2.isInstanceOf[String]) {
+            runtimeMap.put(kv._1, kv._2.asInstanceOf[String])
+          }
+        })
+        count = OrchestratorConfiguration.RETRYTASK_MAXIMUM_AGE.getValue(runtimeMap)
+      }
+    }
+    count
   }
 
   def getOriginTask: ExecTask = {

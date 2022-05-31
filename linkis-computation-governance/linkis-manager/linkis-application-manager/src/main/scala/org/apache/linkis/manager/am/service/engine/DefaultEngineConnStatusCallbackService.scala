@@ -46,14 +46,17 @@ class DefaultEngineConnStatusCallbackService extends EngineConnStatusCallbackSer
   @Receiver
   override def dealEngineConnStatusCallback(engineConnStatusCallbackToAM: EngineConnStatusCallbackToAM): Unit = {
 
-    info(s"Start to deal engineConnStatusCallbackToAM $engineConnStatusCallbackToAM")
+    if (null == engineConnStatusCallbackToAM.serviceInstance) {
+      logger.warn(s"call back service instance is null")
+    }
+    logger.info(s"Start to deal engineConnStatusCallbackToAM $engineConnStatusCallbackToAM")
     val nodeMetrics = new AMNodeMetrics
     val heartBeatMsg: java.util.Map[String, Any] = new util.HashMap[String, Any]()
     heartBeatMsg.put(AMConstant.START_REASON, engineConnStatusCallbackToAM.initErrorMsg)
     if (engineConnStatusCallbackToAM.canRetry) {
       heartBeatMsg.put(AMConstant.EC_CAN_RETRY, engineConnStatusCallbackToAM.canRetry)
-    } else if (matchRetryLog(engineConnStatusCallbackToAM.initErrorMsg)){
-      info(s"match canRetry log ${engineConnStatusCallbackToAM.serviceInstance}")
+    } else if (matchRetryLog(engineConnStatusCallbackToAM.initErrorMsg)) {
+      logger.info(s"match canRetry log ${engineConnStatusCallbackToAM.serviceInstance}")
       heartBeatMsg.put(AMConstant.EC_CAN_RETRY, engineConnStatusCallbackToAM.canRetry)
     }
 
@@ -63,7 +66,7 @@ class DefaultEngineConnStatusCallbackService extends EngineConnStatusCallbackSer
 
 
     nodeMetricManagerPersistence.addOrupdateNodeMetrics(nodeMetrics)
-    info(s"Finished to deal engineConnStatusCallbackToAM $engineConnStatusCallbackToAM")
+    logger.info(s"Finished to deal engineConnStatusCallbackToAM $engineConnStatusCallbackToAM")
 
   }
 

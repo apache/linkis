@@ -94,10 +94,10 @@
     <select id="getAllContextMapByTime" resultMap="PersistenceContextKeyValue">
         SELECT * FROM linkis_ps_cs_context_map
         <where>
-            <if test="#{createTimeStart} != null">  AND `create_time` >= #{createTimeStart,jdbcType=TIMESTAMP}</if>
-            <if test="#{createTimeEnd} != null">  AND `create_time` <![CDATA[<=]]> #{createTimeEnd,jdbcType=TIMESTAMP}</if>
-            <if test="#{updateTimeStart} != null">  AND `update_time` >= #{updateTimeStart,jdbcType=TIMESTAMP}</if>
-            <if test="#{updateTimeEnd} != null">  AND `update_time` <![CDATA[<=]]> #{updateTimeEnd,jdbcType=TIMESTAMP}</if>
+            <if test="#{createTimeStart} != null">  AND `create_time` >= #{createTimeStart}</if>
+            <if test="#{createTimeEnd} != null">  AND `create_time` <![CDATA[<=]]> #{createTimeEnd}</if>
+            <if test="#{updateTimeStart} != null">  AND `update_time` >= #{updateTimeStart}</if>
+            <if test="#{updateTimeEnd} != null">  AND `update_time` <![CDATA[<=]]> #{updateTimeEnd}</if>
         </where>
     </select>
 

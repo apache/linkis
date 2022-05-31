@@ -26,8 +26,9 @@ public class SizeEstimator {
 
     private static ClassIntrospector classIntrospector = new ClassIntrospector();
 
+    @Deprecated
     public static Long estimate(Object obj) {
-        try {
+       /* try {
             if (obj == null) {
                 return 0L;
             }
@@ -35,7 +36,7 @@ public class SizeEstimator {
             return info.getDeepSize();
         } catch (Throwable e) {
             logger.info("estimate size failed", e);
-        }
+        }*/
         return 0L;
     }
 }

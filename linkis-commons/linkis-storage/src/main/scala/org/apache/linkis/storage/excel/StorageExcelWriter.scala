@@ -24,6 +24,7 @@ import org.apache.linkis.storage.domain.{BigIntType, DataType, IntType, LongType
 import org.apache.linkis.storage.resultset.table.{TableMetaData, TableRecord}
 import org.apache.commons.io.IOUtils
 import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.storage.domain.DataType.valueToString
 import org.apache.poi.ss.usermodel._
 import org.apache.poi.xssf.streaming.{SXSSFCell, SXSSFSheet, SXSSFWorkbook}
 
@@ -91,6 +92,7 @@ class StorageExcelWriter(val charset: String, val sheetName: String, val dateFor
         case DateType => style.setDataFormat(format.getFormat("m/d/yy h:mm"))
         case TimestampType => style.setDataFormat(format.getFormat("m/d/yy h:mm"))
         case DecimalType => style.setDataFormat(format.getFormat("#.000000000"))
+        case BigDecimalType => style.setDataFormat(format.getFormat("#.000000000"))
         case _ => style.setDataFormat(format.getFormat("@"))
       }
     }
@@ -161,7 +163,8 @@ class StorageExcelWriter(val charset: String, val sheetName: String, val dateFor
       case VarcharType => cell.setCellValue(DataType.valueToString(elem))
       case DateType => cell.setCellValue(getDate(elem))
       case TimestampType => cell.setCellValue(getDate(elem))
-      case DecimalType => cell.setCellValue(getDate(elem))
+      case DecimalType => cell.setCellValue(DataType.valueToString(elem))
+      case BigDecimalType => cell.setCellValue(DataType.valueToString(elem))
       case _ =>
         val value = DataType.valueToString(elem)
         cell.setCellValue(value)

@@ -30,6 +30,9 @@ import org.apache.linkis.storage.fs.FileSystem
 import org.apache.linkis.storage.source.FileSource
 import org.apache.commons.io.IOUtils
 import org.apache.linkis.manager.engineplugin.pipeline.conf.PipelineEngineConfiguration
+import java.util
+
+import scala.collection.JavaConverters.mapAsScalaMapConverter
 
 class ExcelExecutor extends PipeLineExecutor {
   override def execute(sourcePath: String, destPath: String, engineExecutorContext: EngineExecutionContext): ExecuteResponse = {
@@ -42,7 +45,9 @@ class ExcelExecutor extends PipeLineExecutor {
     val destFs = FSFactory.getFs(destFsPath)
     destFs.init(null)
     val outputStream: OutputStream = destFs.write(destFsPath, PIPELINE_OUTPUT_ISOVERWRITE_SWITCH.getValue(options))
-    val excelAutoFormat = PipelineEngineConfiguration.EXPORT_EXCEL_AUTO_FORMAT.getValue(engineExecutorContext.getProperties.asInstanceOf[java.util.Map[String, String]])
+    val paramsMap = new util.HashMap[String, String]()
+    engineExecutorContext.getProperties.asScala.filter(_._2 != null).map(kv => (kv._1, kv._2.toString)).foreach(kv => paramsMap.put(kv._1, kv._2))
+    val excelAutoFormat = PipelineEngineConfiguration.EXPORT_EXCEL_AUTO_FORMAT.getValue(paramsMap)
     if (sourcePath.contains(".")) {
       //sourcePaht 是文件形式
       // TODO: fs 加目录判断

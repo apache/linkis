@@ -43,7 +43,7 @@ public class ConnectionManagerTest {
         properties.put(JDBCEngineConnConstant.JDBC_DRIVER, "org.h2.Driver");
         properties.put(JDBCEngineConnConstant.JDBC_USERNAME, "user");
         properties.put(JDBCEngineConnConstant.JDBC_PASSWORD, "password");
-        properties.put(JDBCEngineConnConstant.JDBC_POOL_DEFAULT_VALIDATION_QUERY, "select 1");
+        properties.put(JDBCEngineConnConstant.JDBC_POOL_DEFAULT_VALIDATION_QUERY, "SELECT 1");
         properties.put(JDBCEngineConnConstant.JDBC_AUTH_TYPE, "USERNAME");
         properties.put(JDBCEngineConnConstant.JDBC_KERBEROS_AUTH_TYPE_PRINCIPAL, "");
         properties.put(JDBCEngineConnConstant.JDBC_KERBEROS_AUTH_TYPE_KEYTAB_LOCATION, "");

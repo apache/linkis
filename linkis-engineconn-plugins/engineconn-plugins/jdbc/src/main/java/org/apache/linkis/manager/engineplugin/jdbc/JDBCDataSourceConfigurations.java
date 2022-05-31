@@ -17,8 +17,6 @@
 
 package org.apache.linkis.manager.engineplugin.jdbc;
 
-import org.apache.commons.dbcp2.PoolingDriver;
-
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Map;
@@ -26,11 +24,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class JDBCDataSourceConfigurations {
     private final Map<String, Statement> taskIdStatementMap;
-    private final Map<String, PoolingDriver> poolingDriverMap;
 
     public JDBCDataSourceConfigurations() {
         taskIdStatementMap = new ConcurrentHashMap<>();
-        poolingDriverMap = new ConcurrentHashMap<>();
     }
 
     public void initTaskIdStatementMap() throws SQLException {
@@ -40,10 +36,6 @@ public class JDBCDataSourceConfigurations {
             }
         }
         taskIdStatementMap.clear();
-    }
-
-    public void initConnectionPoolMap() throws SQLException {
-        poolingDriverMap.clear();
     }
 
     public void saveStatement(String taskId, Statement statement) {
@@ -56,21 +48,5 @@ public class JDBCDataSourceConfigurations {
 
     public void removeStatement(String taskId) {
         taskIdStatementMap.remove(taskId);
-    }
-
-    public void saveDBDriverPool(String dataSource, PoolingDriver driver) {
-        poolingDriverMap.put(dataSource, driver);
-    }
-
-    public PoolingDriver removeDBDriverPool(String dataSource) {
-        return poolingDriverMap.remove(dataSource);
-    }
-
-    public boolean isConnectionInDBDriverPool(String dataSource) {
-        return poolingDriverMap.containsKey(dataSource);
-    }
-
-    public Map<String, PoolingDriver> getDBDriverPool() {
-        return poolingDriverMap;
     }
 }

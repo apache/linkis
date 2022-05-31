@@ -21,6 +21,7 @@ public class JDBCEngineConnConstant {
     private JDBCEngineConnConstant() {}
 
     public static final String JDBC_DEFAULT_DATASOURCE_TAG = "jdbc";
+    public static final String JDBC_PROXY_ANONYMOUS_USER = "anonymous";
     public static final String JDBC_URL = "wds.linkis.jdbc.connect.url";
     public static final String JDBC_DRIVER = "wds.linkis.jdbc.driver";
     public static final String JDBC_USERNAME = "wds.linkis.jdbc.username";
@@ -37,24 +38,24 @@ public class JDBCEngineConnConstant {
     public static final String JDBC_ENGINE_RUN_TIME_DS = "wds.linkis.engine.runtime.datasource";
 
     public static final String JDBC_POOL_TEST_ON_BORROW = "wds.linkis.jdbc.pool.testOnBorrow";
-    public static final String JDBC_POOL_TEST_ON_CREATE = "wds.linkis.jdbc.pool.testOnCreate";
     public static final String JDBC_POOL_TEST_ON_RETURN = "wds.linkis.jdbc.pool.testOnReturn";
     public static final String JDBC_POOL_TEST_WHILE_IDLE = "wds.linkis.jdbc.pool.testWhileIdle";
     public static final String JDBC_POOL_VALIDATION_QUERY = "wds.linkis.jdbc.pool.validationQuery";
-    public static final String JDBC_POOL_DEFAULT_VALIDATION_QUERY = "select 1";
+    public static final String JDBC_POOL_DEFAULT_VALIDATION_QUERY = "SELECT 1";
+    public static final String JDBC_POOL_TIME_BETWEEN_MIN_EVIC_IDLE_MS =
+            "wds.linkis.jdbc.pool.minEvictableIdleTimeMillis";
     public static final String JDBC_POOL_TIME_BETWEEN_EVIC_RUNS_MS =
             "wds.linkis.jdbc.pool.timeBetweenEvictionRunsMillis";
     public static final String JDBC_POOL_MAX_WAIT = "wds.linkis.jdbc.pool.maxWaitMillis";
-    public static final String JDBC_POOL_MAX_IDLE = "wds.linkis.jdbc.pool.maxIdle";
+    public static final String JDBC_POOL_MAX_ACTIVE = "wds.linkis.jdbc.pool.maxActive";
+    public static final String JDBC_POOL_INIT_SIZE = "wds.linkis.jdbc.pool.initialSize";
     public static final String JDBC_POOL_MIN_IDLE = "wds.linkis.jdbc.pool.minIdle";
-    public static final String JDBC_POOL_MAX_TOTAL = "wds.linkis.jdbc.pool.maxTotal";
-    public static final String JDBC_POOL_MAX_CONN_LIFE_TIME =
-            "wds.linkis.jdbc.pool.maxConnLifetime";
-
-    public static final String DBCP2_POOL_URL = "url";
-    public static final String DBCP2_POOL_USER = "user";
-    public static final String DBCP2_POOL_PASSWORD = "password";
-    public static final String DBCP2_POOL_DRIVER_CLASS_NAME = "driverClassName";
+    public static final String JDBC_POOL_PREPARED_STATEMENTS =
+            "wds.linkis.jdbc.pool.poolPreparedStatements";
+    public static final String JDBC_POOL_REMOVE_ABANDONED_ENABLED =
+            "wds.linkis.jdbc.pool.remove.abandoned.enabled";
+    public static final String JDBC_POOL_REMOVE_ABANDONED_TIMEOUT =
+            "wds.linkis.jdbc.pool.remove.abandoned.timeout";
 
     public static final String JDBC_ENGINE_MEMORY_UNIT = "g";
 }

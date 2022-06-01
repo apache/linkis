@@ -356,7 +356,7 @@ class NodeHeartbeatMonitor extends ManagerMonitor with Logging {
     Utils.tryCatch {
       engineStopService.stopEngine(stopEngineRequest, sender)
     } { e =>
-      error(s"Em failed to kill engine $instance", e)
+      logger.error(s"Em failed to kill engine $instance", e)
       Utils.tryAndWarn(triggerEngineSuicide(instance))
       null
     }

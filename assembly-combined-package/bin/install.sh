@@ -400,6 +400,10 @@ then
   sed -i ${txt}  "s#spring.server.port.*#spring.server.port=$CS_PORT#g" $cs_conf
 fi
 
+echo "preveliges linkis command shells"
+sudo chmod -R 777 $LINKIS_HOME/bin/*
+sudo chmod -R 777 $LINKIS_HOME/sbin/*
+
 echo -e "\n"
 
 echo -e "${GREEN}Congratulations!${NC} You have installed Linkis $LINKIS_VERSION successfully, please use sh $LINKIS_HOME/sbin/linkis-start-all.sh to start it!"

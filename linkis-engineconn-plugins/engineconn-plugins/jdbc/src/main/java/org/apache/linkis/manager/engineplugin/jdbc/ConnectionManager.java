@@ -18,18 +18,20 @@
 package org.apache.linkis.manager.engineplugin.jdbc;
 
 import org.apache.linkis.hadoop.common.utils.KerberosUtils;
-import org.apache.linkis.manager.engineplugin.jdbc.conf.JDBCConfiguration;
 import org.apache.linkis.manager.engineplugin.jdbc.constant.JDBCEngineConnConstant;
+import org.apache.linkis.manager.engineplugin.jdbc.exception.JDBCParamsIllegalException;
 
 import org.apache.commons.dbcp.BasicDataSource;
-import org.apache.commons.dbcp.BasicDataSourceFactory;
 import org.apache.commons.lang.StringUtils;
+import org.apache.hadoop.security.UserGroupInformation;
 
 import javax.sql.DataSource;
 
+import com.alibaba.druid.pool.DruidDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.security.PrivilegedExceptionAction;
 import java.sql.*;
 import java.util.*;
 import java.util.concurrent.Callable;
@@ -41,19 +43,19 @@ import static org.apache.linkis.manager.engineplugin.jdbc.JdbcAuthType.*;
 
 public class ConnectionManager {
 
-    Logger logger = LoggerFactory.getLogger(ConnectionManager.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ConnectionManager.class);
 
-    private final Map<String, DataSource> databaseToDataSources = new HashMap<String, DataSource>();
-
-    private final Map<String, String> supportedDBs = new HashMap<String, String>();
-    private final List<String> supportedDBNames = new ArrayList<String>();
-    private final Map<String, String> supportedDBsValidQuery = new HashMap<String, String>();
+    private final Map<String, DataSource> dataSourceFactories;
+    private final JDBCDataSourceConfigurations jdbcDataSourceConfigurations;
 
     private static volatile ConnectionManager connectionManager;
     private ScheduledExecutorService scheduledExecutorService;
     private Integer kinitFailCount = 0;
 
-    private ConnectionManager() {}
+    private ConnectionManager() {
+        jdbcDataSourceConfigurations = new JDBCDataSourceConfigurations();
+        dataSourceFactories = new HashMap<>();
+    }
 
     public static ConnectionManager getInstance() {
         if (connectionManager == null) {
@@ -66,192 +68,297 @@ public class ConnectionManager {
         return connectionManager;
     }
 
-    {
-        String supportedDBString = JDBCConfiguration.JDBC_SUPPORT_DBS().getValue();
-        String[] supportedDBs = supportedDBString.split(",");
-        for (String supportedDB : supportedDBs) {
-            String[] supportedDBInfo = supportedDB.split("=>");
-            if (supportedDBInfo.length != 2) {
-                throw new IllegalArgumentException("Illegal driver info " + supportedDB);
-            }
-            try {
-                Class.forName(supportedDBInfo[1]);
-            } catch (ClassNotFoundException e) {
-                logger.info("Load " + supportedDBInfo[0] + " driver failed", e);
-            }
-            supportedDBNames.add(supportedDBInfo[0]);
-            this.supportedDBs.put(supportedDBInfo[0], supportedDBInfo[1]);
-        }
-    }
-
-    {
-        String supportedDBValidQueryString =
-                JDBCConfiguration.JDBC_SUPPORT_DBS_VALIDATION_QUERY().getValue();
-        String[] supportedDBsValidQuery = supportedDBValidQueryString.split(",");
-        for (String supportedDBValidQuery : supportedDBsValidQuery) {
-            String[] supportedDBValidQueryInfo = supportedDBValidQuery.split("=>");
-            if (supportedDBValidQueryInfo.length != 2) {
-                throw new IllegalArgumentException(
-                        "Illegal validation query info " + supportedDBValidQuery);
-            }
-            this.supportedDBsValidQuery.put(
-                    supportedDBValidQueryInfo[0], supportedDBValidQueryInfo[1]);
-        }
-    }
-
-    private void validateURL(String url) {
-        if (StringUtils.isEmpty(url)) {
-            throw new NullPointerException(JDBCEngineConnConstant.JDBC_URL + " cannot be null.");
-        }
-        if (!url.matches("jdbc:\\w+://\\S+:[0-9]{2,6}(/\\S*)?") && !url.startsWith("jdbc:h2")) {
-            throw new IllegalArgumentException("Unknown the jdbc url: " + url);
-        }
-        for (String supportedDBName : supportedDBNames) {
-            if (url.indexOf(supportedDBName) > 0) {
-                return;
-            }
-        }
-        throw new IllegalArgumentException(
-                "Illegal url or not supported url type (url: " + url + ").");
-    }
-
-    private String getRealURL(String url) {
-        int index = url.indexOf("?");
-        if (index < 0) {
-            index = url.length();
-        }
-        return url.substring(0, index);
-    }
-
-    protected DataSource createDataSources(Map<String, String> properties) throws SQLException {
-        String url = getJdbcUrl(properties);
-        String username = properties.getOrDefault(JDBCEngineConnConstant.JDBC_USERNAME, "");
-        String password =
-                StringUtils.trim(properties.getOrDefault(JDBCEngineConnConstant.JDBC_PASSWORD, ""));
-        int index = url.indexOf(":") + 1;
-        String dbType = url.substring(index, url.indexOf(":", index));
-        Properties props = new Properties();
-        props.put("driverClassName", supportedDBs.get(dbType));
-        props.put("url", url);
-        props.put("maxIdle", 5);
-        props.put("minIdle", 0);
-        props.put("maxActive", 20);
-        props.put("initialSize", 1);
-        props.put("testOnBorrow", false);
-        props.put("testWhileIdle", true);
-        props.put("validationQuery", this.supportedDBsValidQuery.get(dbType));
-
-        if (isKerberosAuthType(properties)) {
-            String jdbcProxyUser = properties.get(JDBCEngineConnConstant.JDBC_PROXY_USER);
-            // need proxy user
-            String proxyUserProperty =
-                    properties.get(JDBCEngineConnConstant.JDBC_PROXY_USER_PROPERTY);
-            if (StringUtils.isNotBlank(proxyUserProperty)) {
-                url = url.concat(";").concat(proxyUserProperty + "=" + jdbcProxyUser);
-                props.put("url", url);
-                logger.info(
-                        String.format(
-                                "Try to Create a new %s JDBC DBCP with url(%s), kerberos, proxyUser(%s).",
-                                dbType, url, jdbcProxyUser));
-            } else {
-                logger.info(
-                        String.format(
-                                "Try to Create a new %s JDBC DBCP with url(%s), kerberos.",
-                                dbType, url));
-            }
-        }
-
-        if (isUsernameAuthType(properties)) {
-            logger.info(
-                    String.format(
-                            "Try to Create a new %s JDBC DBCP with url(%s), username(%s), password(%s).",
-                            dbType, url, username, password));
-            props.put("username", username);
-            props.put("password", password);
-        }
-        BasicDataSource dataSource;
+    public void initTaskStatementMap() {
         try {
-            dataSource = (BasicDataSource) BasicDataSourceFactory.createDataSource(props);
+            jdbcDataSourceConfigurations.initTaskIdStatementMap();
         } catch (Exception e) {
-            throw new SQLException(e);
+            LOG.error("Error while closing taskIdStatementMap statement...", e);
         }
-        return dataSource;
     }
 
-    public Connection getConnection(Map<String, String> properties) throws SQLException {
-        String url = getJdbcUrl(properties);
-        logger.info("The jdbc url is: {}", url);
-        JdbcAuthType jdbcAuthType = getJdbcAuthType(properties);
-        Connection connection = null;
-        switch (jdbcAuthType) {
-            case SIMPLE:
-                connection = getConnection(url, properties);
-                break;
-            case KERBEROS:
-                final String keytab =
-                        properties.get(
-                                JDBCEngineConnConstant.JDBC_KERBEROS_AUTH_TYPE_KEYTAB_LOCATION);
-                final String principal =
-                        properties.get(JDBCEngineConnConstant.JDBC_KERBEROS_AUTH_TYPE_PRINCIPAL);
-                KerberosUtils.createKerberosSecureConfiguration(keytab, principal);
-                connection = getConnection(url, properties);
-                break;
-            case USERNAME:
-                if (StringUtils.isEmpty(properties.get(JDBCEngineConnConstant.JDBC_USERNAME))) {
-                    throw new SQLException(JDBCEngineConnConstant.JDBC_USERNAME + " is not empty.");
-                }
-                if (StringUtils.isEmpty(properties.get(JDBCEngineConnConstant.JDBC_PASSWORD))) {
-                    throw new SQLException(JDBCEngineConnConstant.JDBC_PASSWORD + " is not empty.");
-                }
-                connection = getConnection(url, properties);
-                break;
-            default:
-                break;
+    public void saveStatement(String taskId, Statement statement) {
+        jdbcDataSourceConfigurations.saveStatement(taskId, statement);
+    }
+
+    public void removeStatement(String taskId) {
+        jdbcDataSourceConfigurations.removeStatement(taskId);
+    }
+
+    public void cancelStatement(String taskId) {
+        try {
+            jdbcDataSourceConfigurations.cancelStatement(taskId);
+        } catch (SQLException e) {
+            LOG.error("Error while cancelling task is {} ...", taskId, e);
         }
-        return connection;
     }
 
     public void close() {
-        for (DataSource dataSource : this.databaseToDataSources.values()) {
+        try {
+            initTaskStatementMap();
+        } catch (Exception e) {
+            LOG.error("Error while closing...", e);
+        }
+        for (DataSource dataSource : this.dataSourceFactories.values()) {
             try {
-                // DataSources.destroy(dataSource);
                 ((BasicDataSource) dataSource).close();
             } catch (SQLException e) {
+                LOG.error("Error while closing datasource...", e);
             }
         }
     }
 
-    private Connection getConnection(String url, Map<String, String> properties)
-            throws SQLException {
-        String key = getRealURL(url);
-        DataSource dataSource = databaseToDataSources.get(key);
+    protected DataSource buildDataSource(String dbUrl, Map<String, String> properties)
+            throws JDBCParamsIllegalException {
+        String driverClassName =
+                JDBCPropertiesParser.getString(properties, JDBCEngineConnConstant.JDBC_DRIVER, "");
+
+        if (StringUtils.isBlank(driverClassName)) {
+            LOG.error("The driver class name is not empty.");
+            throw new JDBCParamsIllegalException("The driver class name is not empty.");
+        }
+
+        String username =
+                JDBCPropertiesParser.getString(
+                        properties, JDBCEngineConnConstant.JDBC_USERNAME, "");
+        String password =
+                JDBCPropertiesParser.getString(
+                        properties, JDBCEngineConnConstant.JDBC_PASSWORD, "");
+        JdbcAuthType jdbcAuthType = getJdbcAuthType(properties);
+        switch (jdbcAuthType) {
+            case USERNAME:
+                if (StringUtils.isBlank(username)) {
+                    throw new JDBCParamsIllegalException("The jdbc username is not empty.");
+                }
+                if (StringUtils.isBlank(password)) {
+                    throw new JDBCParamsIllegalException("The jdbc password is not empty.");
+                }
+                break;
+            case SIMPLE:
+                LOG.info("The jdbc auth type is simple.");
+                break;
+            case KERBEROS:
+                LOG.info("The jdbc auth type is kerberos.");
+                break;
+            default:
+                throw new JDBCParamsIllegalException(
+                        "Unsupported jdbc authentication types " + jdbcAuthType.getAuthType());
+        }
+
+        boolean testOnBorrow =
+                JDBCPropertiesParser.getBool(
+                        properties, JDBCEngineConnConstant.JDBC_POOL_TEST_ON_BORROW, false);
+        boolean testOnReturn =
+                JDBCPropertiesParser.getBool(
+                        properties, JDBCEngineConnConstant.JDBC_POOL_TEST_ON_RETURN, false);
+        boolean testWhileIdle =
+                JDBCPropertiesParser.getBool(
+                        properties, JDBCEngineConnConstant.JDBC_POOL_TEST_WHILE_IDLE, true);
+        int minEvictableIdleTimeMillis =
+                JDBCPropertiesParser.getInt(
+                        properties,
+                        JDBCEngineConnConstant.JDBC_POOL_TIME_BETWEEN_MIN_EVIC_IDLE_MS,
+                        300000);
+        long timeBetweenEvictionRunsMillis =
+                JDBCPropertiesParser.getLong(
+                        properties,
+                        JDBCEngineConnConstant.JDBC_POOL_TIME_BETWEEN_EVIC_RUNS_MS,
+                        60000);
+
+        long maxWait =
+                JDBCPropertiesParser.getLong(
+                        properties, JDBCEngineConnConstant.JDBC_POOL_MAX_WAIT, 6000);
+        int maxActive =
+                JDBCPropertiesParser.getInt(
+                        properties, JDBCEngineConnConstant.JDBC_POOL_MAX_ACTIVE, 20);
+        int minIdle =
+                JDBCPropertiesParser.getInt(
+                        properties, JDBCEngineConnConstant.JDBC_POOL_MIN_IDLE, 1);
+        int initialSize =
+                JDBCPropertiesParser.getInt(
+                        properties, JDBCEngineConnConstant.JDBC_POOL_INIT_SIZE, 1);
+        String validationQuery =
+                JDBCPropertiesParser.getString(
+                        properties,
+                        JDBCEngineConnConstant.JDBC_POOL_VALIDATION_QUERY,
+                        JDBCEngineConnConstant.JDBC_POOL_DEFAULT_VALIDATION_QUERY);
+
+        boolean poolPreparedStatements =
+                JDBCPropertiesParser.getBool(
+                        properties, JDBCEngineConnConstant.JDBC_POOL_PREPARED_STATEMENTS, true);
+        boolean removeAbandoned =
+                JDBCPropertiesParser.getBool(
+                        properties,
+                        JDBCEngineConnConstant.JDBC_POOL_REMOVE_ABANDONED_ENABLED,
+                        true);
+        int removeAbandonedTimeout =
+                JDBCPropertiesParser.getInt(
+                        properties, JDBCEngineConnConstant.JDBC_POOL_REMOVE_ABANDONED_TIMEOUT, 300);
+
+        DruidDataSource datasource = new DruidDataSource();
+        LOG.info("Database connection address information(数据库连接地址信息)=" + dbUrl);
+        datasource.setUrl(dbUrl);
+        datasource.setUsername(username);
+        datasource.setPassword(password);
+        datasource.setDriverClassName(driverClassName);
+        datasource.setInitialSize(initialSize);
+        datasource.setMinIdle(minIdle);
+        datasource.setMaxActive(maxActive);
+        datasource.setMaxWait(maxWait);
+        datasource.setTimeBetweenEvictionRunsMillis(timeBetweenEvictionRunsMillis);
+        datasource.setMinEvictableIdleTimeMillis(minEvictableIdleTimeMillis);
+        datasource.setValidationQuery(validationQuery);
+        datasource.setTestWhileIdle(testWhileIdle);
+        datasource.setTestOnBorrow(testOnBorrow);
+        datasource.setTestOnReturn(testOnReturn);
+        datasource.setPoolPreparedStatements(poolPreparedStatements);
+        datasource.setRemoveAbandoned(removeAbandoned);
+        datasource.setRemoveAbandonedTimeout(removeAbandonedTimeout);
+        return datasource;
+    }
+
+    private Connection getConnectionFromDataSource(
+            String dataSourceName, String url, Map<String, String> prop)
+            throws SQLException, JDBCParamsIllegalException {
+        DataSource dataSource = dataSourceFactories.get(dataSourceName);
         if (dataSource == null) {
-            synchronized (databaseToDataSources) {
+            synchronized (dataSourceFactories) {
                 if (dataSource == null) {
-                    dataSource = createDataSources(properties);
-                    databaseToDataSources.put(key, dataSource);
+                    dataSource = buildDataSource(url, prop);
+                    dataSourceFactories.put(dataSourceName, dataSource);
                 }
             }
         }
         return dataSource.getConnection();
     }
 
+    public Connection getConnection(String dataSourceName, Map<String, String> propperties)
+            throws SQLException, JDBCParamsIllegalException {
+        String execUser =
+                JDBCPropertiesParser.getString(
+                        propperties, JDBCEngineConnConstant.JDBC_SCRIPTS_EXEC_USER, "");
+        if (StringUtils.isBlank(execUser)) {
+            LOG.warn("No such execUser: {}", execUser);
+            throw new JDBCParamsIllegalException("No execUser");
+        }
+        Connection connection = null;
+        final String jdbcUrl = getJdbcUrl(propperties);
+        JdbcAuthType jdbcAuthType = getJdbcAuthType(propperties);
+        switch (jdbcAuthType) {
+            case SIMPLE:
+            case USERNAME:
+                connection = getConnectionFromDataSource(dataSourceName, jdbcUrl, propperties);
+                break;
+            case KERBEROS:
+                LOG.debug(
+                        "Calling createKerberosSecureConfiguration(); this will do loginUserFromKeytab() if required");
+                final String keytab =
+                        JDBCPropertiesParser.getString(
+                                propperties,
+                                JDBCEngineConnConstant.JDBC_KERBEROS_AUTH_TYPE_KEYTAB_LOCATION,
+                                "");
+                final String principal =
+                        JDBCPropertiesParser.getString(
+                                propperties,
+                                JDBCEngineConnConstant.JDBC_KERBEROS_AUTH_TYPE_PRINCIPAL,
+                                "");
+                KerberosUtils.createKerberosSecureConfiguration(keytab, principal);
+                LOG.debug("createKerberosSecureConfiguration() returned");
+                boolean isProxyEnabled =
+                        JDBCPropertiesParser.getBool(
+                                propperties,
+                                JDBCEngineConnConstant.JDBC_KERBEROS_AUTH_PROXY_ENABLE,
+                                true);
+
+                if (isProxyEnabled) {
+                    final String jdbcUrlWithProxyUser =
+                            appendProxyUserToJDBCUrl(jdbcUrl, execUser, propperties);
+                    LOG.info(
+                            String.format(
+                                    "Try to Create a new %s JDBC with url(%s), kerberos, proxyUser(%s).",
+                                    dataSourceName, jdbcUrlWithProxyUser, execUser));
+                    connection =
+                            getConnectionFromDataSource(
+                                    dataSourceName, jdbcUrlWithProxyUser, propperties);
+                } else {
+                    UserGroupInformation ugi;
+                    try {
+                        ugi =
+                                UserGroupInformation.createProxyUser(
+                                        execUser, UserGroupInformation.getCurrentUser());
+                    } catch (Exception e) {
+                        LOG.error("Error in getCurrentUser", e);
+                        throw new JDBCParamsIllegalException("Error in getCurrentUser");
+                    }
+
+                    try {
+                        connection =
+                                ugi.doAs(
+                                        (PrivilegedExceptionAction<Connection>)
+                                                () ->
+                                                        getConnectionFromDataSource(
+                                                                dataSourceName,
+                                                                jdbcUrl,
+                                                                propperties));
+                    } catch (Exception e) {
+                        throw new JDBCParamsIllegalException(
+                                "Error in doAs to get one connection.");
+                    }
+                }
+                break;
+            default:
+                throw new JDBCParamsIllegalException(
+                        "Unsupported jdbc authentication types " + jdbcAuthType.getAuthType());
+        }
+        return connection;
+    }
+
     private String getJdbcUrl(Map<String, String> properties) throws SQLException {
         String url = properties.get(JDBCEngineConnConstant.JDBC_URL);
-        if (StringUtils.isEmpty(url)) {
+        if (StringUtils.isBlank(url)) {
             throw new SQLException(JDBCEngineConnConstant.JDBC_URL + " is not empty.");
         }
-        url = clearUrl(url);
-        validateURL(url);
+        url = clearJDBCUrl(url);
+        validateJDBCUrl(url);
         return url.trim();
     }
 
-    private boolean isUsernameAuthType(Map<String, String> properties) {
-        return USERNAME == getJdbcAuthType(properties);
+    private String clearJDBCUrl(String url) {
+        if (url.startsWith("\"") && url.endsWith("\"")) {
+            url = url.trim();
+            return url.substring(1, url.length() - 1);
+        }
+        return url;
     }
 
-    private boolean isKerberosAuthType(Map<String, String> properties) {
-        return KERBEROS == getJdbcAuthType(properties);
+    private void validateJDBCUrl(String url) {
+        if (StringUtils.isEmpty(url)) {
+            throw new NullPointerException(JDBCEngineConnConstant.JDBC_URL + " cannot be null.");
+        }
+        if (!url.matches("jdbc:\\w+://\\S+:[0-9]{2,6}(/\\S*)?") && !url.startsWith("jdbc:h2")) {
+            throw new IllegalArgumentException("JDBC url format error!" + url);
+        }
+    }
+
+    private String appendProxyUserToJDBCUrl(
+            String jdbcUrl, String execUser, Map<String, String> properties) {
+        StringBuilder jdbcUrlSb = new StringBuilder(jdbcUrl);
+        String proxyUserProperty =
+                JDBCPropertiesParser.getString(
+                        properties, JDBCEngineConnConstant.JDBC_PROXY_USER_PROPERTY, "");
+        if (execUser != null
+                && !JDBCEngineConnConstant.JDBC_PROXY_ANONYMOUS_USER.equals(execUser)
+                && StringUtils.isNotBlank(proxyUserProperty)) {
+
+            int lastIndexOfUrl = jdbcUrl.indexOf("?");
+            if (lastIndexOfUrl == -1) {
+                lastIndexOfUrl = jdbcUrl.length();
+            }
+            LOG.info("Using proxy user as: {}", execUser);
+            LOG.info("Using proxy property for user as: {}", proxyUserProperty);
+            jdbcUrlSb.insert(lastIndexOfUrl, ";" + proxyUserProperty + "=" + execUser + ";");
+        }
+
+        return jdbcUrlSb.toString();
     }
 
     private JdbcAuthType getJdbcAuthType(Map<String, String> properties) {
@@ -269,9 +376,9 @@ public class ConnectionManager {
                     @Override
                     public Object call() throws Exception {
                         if (KerberosUtils.runRefreshKerberosLogin()) {
-                            logger.info("Ran runRefreshKerberosLogin command successfully.");
+                            LOG.info("Ran runRefreshKerberosLogin command successfully.");
                             kinitFailCount = 0;
-                            logger.info(
+                            LOG.info(
                                     "Scheduling Kerberos ticket refresh thread with interval {} ms",
                                     KerberosUtils.getKerberosRefreshInterval());
                             scheduledExecutorService.schedule(
@@ -280,13 +387,12 @@ public class ConnectionManager {
                                     TimeUnit.MILLISECONDS);
                         } else {
                             kinitFailCount++;
-                            logger.info(
+                            LOG.info(
                                     "runRefreshKerberosLogin failed for {} time(s).",
                                     kinitFailCount);
                             if (kinitFailCount >= KerberosUtils.kinitFailTimesThreshold()) {
-                                logger.error(
+                                LOG.error(
                                         "runRefreshKerberosLogin failed for max attempts, calling close executor.");
-                                // close();
                             } else {
                                 // wait for 1 second before calling runRefreshKerberosLogin() again
                                 scheduledExecutorService.schedule(this, 1, TimeUnit.SECONDS);
@@ -302,13 +408,5 @@ public class ConnectionManager {
         if (scheduledExecutorService != null) {
             scheduledExecutorService.shutdown();
         }
-    }
-
-    private String clearUrl(String url) {
-        if (url.startsWith("\"") && url.endsWith("\"")) {
-            url = url.trim();
-            return url.substring(1, url.length() - 1);
-        }
-        return url;
     }
 }

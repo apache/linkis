@@ -16,9 +16,9 @@
   -->
 
 <template>
-  <div class="layout-body" :class="{ 'layout-top': showHeader}">
+  <div class="layout-body" :class="{ 'layout-top': showHeader && !isEmbedInFrame}">
     <layout-header
-      v-show="showHeader"
+      v-if="showHeader && !isEmbedInFrame "
       @clear-session="clearSession"
       @set-init="setInit"></layout-header>
     <keep-alive v-if="isInit">
@@ -27,7 +27,7 @@
     </keep-alive>
     <router-view
       v-if="!$route.meta.keepAlive"/>
-    <layout-footer v-show="showFooter"/>
+    <layout-footer v-if="showFooter && !isEmbedInFrame"/>
   </div>
 </template>
 <script>

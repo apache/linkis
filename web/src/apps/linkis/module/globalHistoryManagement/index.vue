@@ -539,7 +539,7 @@ export default {
           title: this.$t('message.linkis.tableColumns.costTime'),
           key: 'costTime',
           align: 'center',
-          width: 90,
+          width: 100,
           renderType: 'convertTime'
         },
         {

@@ -17,13 +17,13 @@
 
 <template>
   <div class="console-page">
-    <div class="console-page-content-head">
+    <div class="console-page-content-head" v-if="!isEmbedInFrame">
       <div>
         <span class="console-page-content-title">{{ $t('message.linkis.title') }}</span>
       </div>
     </div>
     <div class="console-page-content-body">
-      <div class="content-body-side-nav">
+      <div class="content-body-side-nav" v-if="!isEmbedInFrame">
         <Card
           :padding="sideNavList.padding"
           :icon="sideNavList.icon"
@@ -120,6 +120,10 @@ export default {
       if(this.$route.name === 'viewHistory') path = '/console';
       if(this.$route.name === 'EngineConnList') path = '/console/ECM';
       return path;
+    },
+    isEmbedInFrame() {
+      // 如果是被iframe引入时 top !== self 返回true，用来区分单独跑还是被引入
+      return top !== self;
     }
   },
 

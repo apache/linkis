@@ -71,7 +71,9 @@
         "SRCSLX": "Please enter the parameter type",
         "SRFL": "Please enter the directory",
         "XGHS": "Update funtion",
-        "XG": "Update"
+        "XG": "Update",
+        "QPZS": "View In Full Screen",
+        "QXQP": "Cancel Full Screen"
       }
     }
   }

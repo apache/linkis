@@ -652,7 +652,7 @@ export default {
 @import '@/common/style/variables.scss';
 .we-result-view {
   width: 100%;
-  height: 100%;
+  height: calc(100% - 55px);
   overflow: hidden;
   padding-left: $toolbarWidth;
   background: $body-background;
@@ -660,6 +660,7 @@ export default {
     overflow-y: auto;
   }
   .result-table-content {
+    height: calc(100% - 52px);
     .ivu-table-header {
       width: calc(100% - 8px);
       tr > th:nth-last-of-type(2) {

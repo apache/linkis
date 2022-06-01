@@ -41,7 +41,7 @@
           <Input
             v-model="loginForm.password"
             type="password"
-            placeholder="请输入密码"
+            :placeholder="$t('message.common.login.passwordHint')"
             size="large" />
           <Checkbox
             v-model="rememberUserNameAndPass"

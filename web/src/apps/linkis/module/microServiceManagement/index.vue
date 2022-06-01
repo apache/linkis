@@ -47,7 +47,7 @@
           $t("message.linkis.find")
         }}</Button>
         <!-- 跳转 -->
-        <Button class="jump" type="primary" @click="handleTabsJump">{{ $t("message.linkis.eurekeRegisterCenter") }}</Button>
+        <Button class="jump" type="primary" @click="handleTabsJump">{{ $t("message.linkis.eureraRegisterCenter") }}</Button>
       </Col>
     </Row>
     <Table

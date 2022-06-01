@@ -145,16 +145,16 @@
         </Select>
       </Col>
       <Col span="12">
-        <Button type="primary" class="button" :style="{width: '80px', marginRight: '5px', marginLeft: '5px'}" @click="searchList(true)">{{
+        <Button type="primary" class="button" :style="{width: '70px', marginRight: '5px', marginLeft: '5px', padding: '5px'}" @click="searchList(true)">{{
           $t('message.linkis.search')
         }}</Button>
-        <Button type="primary" :style="{width: '100px', marginRight: '5px'}" @click="createDatasource">{{
+        <Button type="primary" :style="{width: '90px', marginRight: '5px', padding: '5px'}" @click="createDatasource">{{
           $t('message.linkis.datasource.create')
         }}</Button>
-        <Button type="primary" :style="{width: '120px', marginRight: '5px'}" disabled>{{
+        <Button type="primary" :style="{width: '120px', marginRight: '5px', padding: '5px'}" disabled>{{
           $t('message.linkis.datasource.exports')
         }}</Button>
-        <Button type="primary" :style="{width: '120px'}" disabled>{{
+        <Button type="primary" :style="{width: '120px', padding: '5px'}" disabled>{{
           $t('message.linkis.datasource.imports')
         }}</Button>
       </Col>

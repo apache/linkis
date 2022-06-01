@@ -342,8 +342,8 @@ export default {
           this.pageSetting.total = rst.total
           this.isLoading = false
           this.list = (rst.infoList || []).map(it=>{
-            it.udfTypeText = it.udfType === 0 ? '通用' : 'Spark'
-            it.status = it.expire ? '过期' : '正常'
+            it.udfTypeText = it.udfType === 0 ? this.$t('message.linkis.udf.common') : 'Spark'
+            it.status = it.expire ? this.$t('message.linkis.udf.expire') : this.$t('message.linkis.udf.normal')
             it.createTimeFormat = moment(it.createTime).format('YYYY-MM-DD HH:mm:ss')
             return it
           })
@@ -444,13 +444,13 @@ export default {
           title: this.$t('message.linkis.udfType'),
           key: 'udfTypeText',
           align: 'center',
-          width: 80
+          width: 90
         },
         {
           title: this.$t('message.linkis.udf.status'),
           key: 'status',
           align: 'center',
-          width: 60,
+          width: 80,
         },
         {
           title: this.$t('message.linkis.udf.availableCluster'),

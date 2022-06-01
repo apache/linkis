@@ -39,6 +39,10 @@
           "expire": "标记过期"
         },
         "common": "通用",
+        "expire": "过期",
+        "normal": "正常",
+        "yes": "是",
+        "no": "否",
         "sprak": "sprak",
         "jarPackage": "jar包",
         "scriptPath": "脚本路径",

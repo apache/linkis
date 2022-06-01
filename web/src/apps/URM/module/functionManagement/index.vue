@@ -349,7 +349,7 @@ export default {
           this.isLoading = false
           this.list = (rst.infoList || []).map(it=>{
             it.udfTypeText = it.udfType === 3 ? 'python' : 'scala'
-            it.status = it.expire ? '过期' : '正常'
+            it.status = it.expire ? this.$t('message.linkis.udf.expire') : this.$t('message.linkis.udf.normal')
             it.createTimeFormat = moment(it.createTime).format('YYYY-MM-DD HH:mm:ss')
             return it
           })
@@ -456,7 +456,7 @@ export default {
           title: this.$t('message.linkis.udf.status'),
           key: 'status',
           align: 'center',
-          width: 60,
+          width: 80,
         },
         {
           title: this.$t('message.linkis.udf.availableCluster'),

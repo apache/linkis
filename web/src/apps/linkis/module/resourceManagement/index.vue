@@ -69,14 +69,14 @@
             @click="switchAdmin"
           >{{ isAdminModel ? $t('message.linkis.generalView') : $t('message.linkis.manageView') }}</Button>
           <Button
-            v-show="isAdminModel && showOperations"
-            type="error" @click="() => {this.resetAll()}" style="margin-left: 10px;">{{$t('message.linkis.resetAll')}}</Button>
-          <Button
             v-show="isAdminModel"
             type="primary"
             @click="clickShowOperations"
             style="margin-left: 10px;"
           >{{ showOperations ? $t('message.linkis.hide') : $t('message.linkis.showOperations') }}</Button>
+          <Button
+            v-show="isAdminModel && showOperations"
+            type="error" @click="() => {this.resetAll()}" style="margin-left: 10px;">{{$t('message.linkis.resetAll')}}</Button>
         </FormItem>
       </Form>
     </div>

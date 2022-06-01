@@ -72,7 +72,7 @@
             "nextPage": "下一页",
             "previousPage": "上一页",
             "all": "全部",
-            "common": "Common",
+            "common": "通用",
             "warning": {
                 "api": "接口请求中，请稍候！",
                 "data": "数据请求中，请稍候！",

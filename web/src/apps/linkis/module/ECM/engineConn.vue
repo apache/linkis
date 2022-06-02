@@ -497,6 +497,7 @@ export default {
 .ecm-engine-table {
   border: 0;
   height: calc(100% - 110px);
+  overflow: auto;
 
   .ivu-table:before {
     height: 0

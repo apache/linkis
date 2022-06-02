@@ -17,13 +17,13 @@
 
 <template>
   <div class="console-page">
-    <div class="console-page-content-head" v-if="!isEmbedInFrame">
+    <div class="console-page-content-head">
       <div>
         <span class="console-page-content-title">{{ $t('message.linkis.title') }}</span>
       </div>
     </div>
     <div class="console-page-content-body">
-      <div class="content-body-side-nav" v-if="!isEmbedInFrame">
+      <div class="content-body-side-nav">
         <Card
           :padding="sideNavList.padding"
           :icon="sideNavList.icon"

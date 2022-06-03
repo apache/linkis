@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit
 object TestDataSourceClient {
   def main(args: Array[String]): Unit = {
     val clientConfig = DWSClientConfigBuilder.newBuilder()
-      .addServerUrl("http://192.168.28.98:9001") //set linkis-mg-gateway url: http://{ip}:{port}
+      .addServerUrl("http://127.0.0.1:9001") //set linkis-mg-gateway url: http://{ip}:{port}
       .connectionTimeout(30000) //connection timtout
       .discoveryEnabled(false) //disable discovery
       .discoveryFrequency(1, TimeUnit.MINUTES)  // discovery frequency

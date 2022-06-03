@@ -17,21 +17,62 @@
 
 package org.apache.linkis.datasource.client.impl
 
+import org.apache.commons.lang.StringUtils
+import org.apache.linkis.common.conf.Configuration
+import org.apache.linkis.datasource.client.config.DatasourceClientConfig._
+import org.apache.linkis.datasource.client.exception.DataSourceClientBuilderException
 import org.apache.linkis.datasource.client.request._
 import org.apache.linkis.datasource.client.response._
 import org.apache.linkis.datasource.client.{AbstractRemoteClient, DataSourceRemoteClient}
+import org.apache.linkis.httpclient.authentication.AuthenticationStrategy
 import org.apache.linkis.httpclient.dws.DWSHttpClient
-import org.apache.linkis.httpclient.dws.config.DWSClientConfig
+import org.apache.linkis.httpclient.dws.authentication.TokenAuthenticationStrategy
+import org.apache.linkis.httpclient.dws.config.{DWSClientConfig, DWSClientConfigBuilder}
+
+import java.util.concurrent.TimeUnit
 
 
-class LinkisDataSourceRemoteClient(clientConfig: DWSClientConfig) extends AbstractRemoteClient with DataSourceRemoteClient {
-  protected override val dwsHttpClient = new DWSHttpClient(clientConfig, "DataSource-Client")
+class LinkisDataSourceRemoteClient(clientConfig: DWSClientConfig, clientName: String) extends AbstractRemoteClient with DataSourceRemoteClient {
+  def this() = this(null, null)
+
+  def this(clientConfig: DWSClientConfig) = this(clientConfig, null)
+
+  protected override val dwsHttpClient: DWSHttpClient = new DWSHttpClient(if (clientConfig != null) clientConfig else createClientConfig(), if (StringUtils.isEmpty(clientName)) DATA_SOURCE_SERVICE_CLIENT_NAME.getValue else clientName)
+
+  def createClientConfig(): DWSClientConfig = {
+    val serverUrl = Configuration.getGateWayURL()
+    if(StringUtils.isEmpty(serverUrl)) throw new DataSourceClientBuilderException("serverUrl cannot be null.")
+
+    val maxConnection: Int = CONNECTION_MAX_SIZE.getValue
+    val connectTimeout: Int = CONNECTION_TIMEOUT.getValue
+    val readTimeout: Int = CONNECTION_READ_TIMEOUT.getValue
+    val tokenKey: String = AUTH_TOKEN_KEY.getValue
+    val tokenValue: String = AUTH_TOKEN_VALUE.getValue
+
+    val authenticationStrategy: AuthenticationStrategy = new TokenAuthenticationStrategy()
+    DWSClientConfigBuilder.newBuilder()
+      .addServerUrl(serverUrl)
+      .connectionTimeout(connectTimeout)
+      .discoveryEnabled(false)
+      .discoveryFrequency(1, TimeUnit.MINUTES)
+      .loadbalancerEnabled(true)
+      .maxConnectionSize(maxConnection)
+      .retryEnabled(false)
+      .readTimeout(readTimeout)
+      .setAuthenticationStrategy(authenticationStrategy)
+      .setAuthTokenKey(tokenKey)
+      .setAuthTokenValue(tokenValue)
+      .setDWSVersion(Configuration.LINKIS_WEB_VERSION.getValue)
+      .build()
+  }
 
   override def getAllDataSourceTypes(action: GetAllDataSourceTypesAction): GetAllDataSourceTypesResult = execute(action).asInstanceOf[GetAllDataSourceTypesResult]
 
   override def queryDataSourceEnv(action: QueryDataSourceEnvAction): QueryDataSourceEnvResult = execute(action).asInstanceOf[QueryDataSourceEnvResult]
 
   override def getInfoByDataSourceId(action: GetInfoByDataSourceIdAction): GetInfoByDataSourceIdResult = execute(action).asInstanceOf[GetInfoByDataSourceIdResult]
+
+  override def getInfoByDataSourceName(action: GetInfoByDataSourceNameAction): GetInfoByDataSourceNameResult = execute(action).asInstanceOf[GetInfoByDataSourceNameResult]
 
   override def queryDataSource(action: QueryDataSourceAction): QueryDataSourceResult = execute(action).asInstanceOf[QueryDataSourceResult]
 

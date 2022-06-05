@@ -28,7 +28,7 @@ public class SizeEstimator {
 
     @Deprecated
     public static Long estimate(Object obj) {
-       /* try {
+        /* try {
             if (obj == null) {
                 return 0L;
             }

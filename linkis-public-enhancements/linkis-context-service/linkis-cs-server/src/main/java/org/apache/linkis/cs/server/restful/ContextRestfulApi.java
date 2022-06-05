@@ -172,7 +172,7 @@ public class ContextRestfulApi implements CsRestfulParent {
     public Message clearAllContextByID(HttpServletRequest req, @RequestBody JsonNode jsonNode)
             throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
         if (null == jsonNode
-                || jsonNode.has("idList")
+                || !jsonNode.has("idList")
                 || !jsonNode.get("idList").isArray()
                 || (jsonNode.get("idList").isArray()
                         && ((ArrayNode) jsonNode.get("idList")).size() == 0)) {
@@ -198,6 +198,8 @@ public class ContextRestfulApi implements CsRestfulParent {
         Date createTimeEnd = null;
         Date updateTimeStart = null;
         Date updateTimeEnd = null;
+        Date accessTimeStart = null;
+        Date accessTimeEnd = null;
 
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern(CSCommonUtils.DEFAULT_TIME_FORMAT);
         if (bodyMap.containsKey("createTimeStart"))
@@ -207,15 +209,23 @@ public class ContextRestfulApi implements CsRestfulParent {
         if (bodyMap.containsKey("createTimeEnd"))
             createTimeEnd =
                     localDatetimeToDate(
-                            LocalDateTime.parse((String) bodyMap.get("createTimeStart"), dtf));
+                            LocalDateTime.parse((String) bodyMap.get("createTimeEnd"), dtf));
         if (bodyMap.containsKey("updateTimeStart"))
             updateTimeStart =
                     localDatetimeToDate(
-                            LocalDateTime.parse((String) bodyMap.get("createTimeStart"), dtf));
+                            LocalDateTime.parse((String) bodyMap.get("updateTimeStart"), dtf));
         if (bodyMap.containsKey("updateTimeEnd"))
             updateTimeEnd =
                     localDatetimeToDate(
-                            LocalDateTime.parse((String) bodyMap.get("createTimeStart"), dtf));
+                            LocalDateTime.parse((String) bodyMap.get("updateTimeEnd"), dtf));
+        if (bodyMap.containsKey("accessTimeStart"))
+            updateTimeStart =
+                    localDatetimeToDate(
+                            LocalDateTime.parse((String) bodyMap.get("accessTimeStart"), dtf));
+        if (bodyMap.containsKey("accessTimeEnd"))
+            updateTimeEnd =
+                    localDatetimeToDate(
+                            LocalDateTime.parse((String) bodyMap.get("accessTimeEnd"), dtf));
         if (null == createTimeStart
                 && null == createTimeEnd
                 && null == updateTimeStart
@@ -231,7 +241,9 @@ public class ContextRestfulApi implements CsRestfulParent {
                         createTimeStart,
                         createTimeEnd,
                         updateTimeStart,
-                        updateTimeEnd);
+                        updateTimeEnd,
+                        accessTimeStart,
+                        accessTimeEnd);
         return generateResponse(answerJob, "num");
     }
 

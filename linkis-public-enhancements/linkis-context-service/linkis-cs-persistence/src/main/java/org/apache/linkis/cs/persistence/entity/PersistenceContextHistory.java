@@ -38,9 +38,11 @@ public class PersistenceContextHistory implements ContextHistory {
 
     private String keyword;
 
-    private Date createTime = new Date();
+    private Date createTime;
 
-    private Date updateTime = new Date();
+    private Date updateTime;
+
+    private Date accessTime;
 
     public String getContextId() {
         return contextId;
@@ -110,5 +112,13 @@ public class PersistenceContextHistory implements ContextHistory {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public Date getAccessTime() {
+        return accessTime;
+    }
+
+    public void setAccessTime(Date accessTime) {
+        this.accessTime = accessTime;
     }
 }

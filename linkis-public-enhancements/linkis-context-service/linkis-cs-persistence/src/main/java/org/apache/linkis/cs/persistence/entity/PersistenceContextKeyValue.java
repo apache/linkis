@@ -37,9 +37,11 @@ public class PersistenceContextKeyValue implements ContextKeyValue {
 
     private String props;
 
-    private Date createTime = new Date();
+    private Date createTime;
 
-    private Date updateTime = new Date();
+    private Date updateTime;
+
+    private Date accessTime;
 
     public Date getCreateTime() {
         return createTime;
@@ -99,5 +101,13 @@ public class PersistenceContextKeyValue implements ContextKeyValue {
 
     public void setContextId(String contextId) {
         this.contextId = contextId;
+    }
+
+    public Date getAccessTime() {
+        return accessTime;
+    }
+
+    public void setAccessTime(Date accessTime) {
+        this.accessTime = accessTime;
     }
 }

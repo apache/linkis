@@ -35,7 +35,14 @@ public abstract class ContextIDService extends AbstractService {
 
     public abstract void removeContextID(String id) throws CSErrorException;
 
-    public abstract List<ContextID> searchCSIDByTime(
-            Date createTimeStart, Date createTimeEnd, Date updateTimeStart, Date updateTimeEnd)
+    public abstract List<String> searchCSIDByTime(
+            Date createTimeStart,
+            Date createTimeEnd,
+            Date updateTimeStart,
+            Date updateTimeEnd,
+            Date accessTimeStart,
+            Date accessTimeEnd,
+            Integer pageNow,
+            Integer pageSize)
             throws CSErrorException;
 }

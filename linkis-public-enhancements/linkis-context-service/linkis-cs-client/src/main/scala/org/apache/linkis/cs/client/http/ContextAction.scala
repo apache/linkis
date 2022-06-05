@@ -108,6 +108,10 @@ case class DefaultContextPostAction(url: String) extends ContextPostAction{
   override def getURL: String = url
 }
 
+case class DefaultContextGetAction(url: String) extends ContextGETAction {
+  override def getURL: String = url
+}
+
 case class ContextSearchIDByTimeAction(createTimeStart: Date, createTimeEnd: Date, updateTimeStart: Date, updateTimeEnd: Date) extends ContextGETAction {
   override def getURL: String = ContextServerHttpConf.searchContextIDByTime
 }

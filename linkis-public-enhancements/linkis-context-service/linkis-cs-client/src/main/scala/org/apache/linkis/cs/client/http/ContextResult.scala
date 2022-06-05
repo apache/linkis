@@ -130,13 +130,13 @@ class ContextSearchIDByTimeResult extends ContextResult {
   var contextIDs: java.util.List[String] = _
 }
 
-@DWSHttpMessageResult("/api/rest_j/v\\d+/contextservice/searchContextIDByTime")
+@DWSHttpMessageResult("/api/rest_j/v\\d+/contextservice/clearAllContextByID")
 class ContextClearByIDResult extends ContextResult {
   var num: Int = _
 }
 
 
-@DWSHttpMessageResult("/api/rest_j/v\\d+/contextservice/searchContextIDByTime")
+@DWSHttpMessageResult("/api/rest_j/v\\d+/contextservice/clearAllContextByTime")
 class ContextClearByTimeResult extends ContextResult {
   var num: Int = _
 }

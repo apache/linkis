@@ -37,6 +37,12 @@ public interface ContextIDPersistence {
     List<PersistenceContextID> searchContextID(PersistenceContextID contextID)
             throws CSErrorException;
 
-    List<PersistenceContextID> searchContextIDByTime(
-            Date createTimeStart, Date createTimeEnd, Date updateTimeStart, Date updateTimeEnd);
+    List<PersistenceContextID> searchCSIDByTime(
+            Date createTimeStart,
+            Date createTimeEnd,
+            Date updateTimeStart,
+            Date updateTimeEnd,
+            Date accessTimeStart,
+            Date accessTimeEnd)
+            throws CSErrorException;
 }

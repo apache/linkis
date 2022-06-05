@@ -281,28 +281,51 @@ public class ContextServiceImpl extends ContextService {
     @Override
     public int clearAllContextByID(List<String> idList) throws CSErrorException {
         int num = 0;
-        for (String csid : idList) {
-            ContextID contextID = contextHAChecker.parseHAIDFromKey(csid);
-            getIDPersistence().deleteContextID(contextID.getContextId());
-            getPersistence().removeAll(contextID);
-            num++;
+        for (String haid : idList) {
+            try {
+                ContextID contextID = contextHAChecker.parseHAIDFromKey(haid);
+                String csid = contextID.getContextId();
+                contextID.setContextId(haid);
+                getPersistence().removeAll(contextID);
+                getIDPersistence().deleteContextID(csid);
+                num++;
+            } catch (Exception e) {
+                logger.warn("clear all for haid : {} failed, {}", haid, e.getMessage(), e);
+            }
         }
         return num;
     }
 
     @Override
     public int clearAllContextByTime(
-            Date createTimeStart, Date createTimeEnd, Date updateTimeStart, Date updateTimeEnd)
+            Date createTimeStart,
+            Date createTimeEnd,
+            Date updateTimeStart,
+            Date updateTimeEnd,
+            Date accessTimeStart,
+            Date accessTimeEnd)
             throws CSErrorException {
         int num = 0;
         List<PersistenceContextID> idList =
                 getIDPersistence()
-                        .searchContextIDByTime(
-                                createTimeStart, createTimeEnd, updateTimeStart, updateTimeEnd);
+                        .searchCSIDByTime(
+                                createTimeStart,
+                                createTimeEnd,
+                                updateTimeStart,
+                                updateTimeEnd,
+                                accessTimeStart,
+                                accessTimeEnd);
         for (PersistenceContextID id : idList) {
-            getIDPersistence().deleteContextID(id.getContextId());
-            getPersistence().removeAll(id);
-            num++;
+            try {
+                String csid = id.getContextId();
+                id.setContextId(contextHAChecker.convertHAIDToHAKey(id));
+                getPersistence().removeAll(id);
+                getIDPersistence().deleteContextID(csid);
+                num++;
+            } catch (Exception e) {
+                logger.error(
+                        "Clear context of id {} failed, {}", id.getContextId(), e.getMessage());
+            }
         }
         return num;
     }

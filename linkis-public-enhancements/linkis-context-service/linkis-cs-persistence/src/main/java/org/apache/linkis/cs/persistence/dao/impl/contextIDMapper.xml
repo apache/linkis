@@ -61,10 +61,12 @@
     <select id="getAllContextIDByTime" resultMap="PersistenceContextID" >
         SELECT * FROM linkis_ps_cs_context_id
         <where>
-            <if test="#{createTimeStart} != null">  AND `create_time` >= #{createTimeStart}</if>
-            <if test="#{createTimeEnd} != null">  AND `create_time` <![CDATA[<=]]>  #{createTimeEnd}</if>
-            <if test="#{updateTimeStart} != null">  AND `update_time` >= #{updateTimeStart}</if>
-            <if test="#{updateTimeEnd} != null">  AND `update_time` <![CDATA[<=]]> #{updateTimeEnd}</if>
+            <if test="createTimeStart != null">  AND `create_time` >= #{createTimeStart}</if>
+            <if test="createTimeEnd != null">  AND `create_time` <![CDATA[<=]]>  #{createTimeEnd}</if>
+            <if test="updateTimeStart != null">  AND `update_time` >= #{updateTimeStart}</if>
+            <if test="updateTimeEnd != null">  AND `update_time` <![CDATA[<=]]> #{updateTimeEnd}</if>
+            <if test="accessTimeStart != null">  AND `access_time` >= #{accessTimeStart}</if>
+            <if test="accessTimeEnd != null">  AND `access_time` <![CDATA[<=]]> #{accessTimeEnd}</if>
         </where>
     </select>
 
@@ -78,7 +80,9 @@
             <if test="expireTime != null">`expire_time` = #{expireTime},</if>
             <if test="instance != null">`instance` = #{instance},</if>
             <if test="backupInstance != null">`backup_instance` = #{backupInstance},</if>
-            `update_time` = now()
+            <if test="updateTime != null">`update_time` = #{updateTime},</if>
+            <if test="createTime != null">`create_time` = #{createTime},</if>
+            <if test="accessTime != null">`access_time` = #{accessTime},</if>
         </trim>
         WHERE id = #{contextId}
     </update>

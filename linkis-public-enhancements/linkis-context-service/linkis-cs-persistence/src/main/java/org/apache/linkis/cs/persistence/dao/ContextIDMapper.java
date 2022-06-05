@@ -39,5 +39,7 @@ public interface ContextIDMapper {
             @Param("createTimeStart") Date createTimeStart,
             @Param("createTimeEnd") Date createTimeEnd,
             @Param("updateTimeStart") Date updateTimeStart,
-            @Param("updateTimeEnd") Date updateTimeEnd);
+            @Param("updateTimeEnd") Date updateTimeEnd,
+            @Param("accessTimeStart") Date accessTimeStart,
+            @Param("accessTimeEnd") Date accessTimeEnd);
 }

@@ -38,6 +38,7 @@ import org.apache.linkis.cs.common.entity.source.*;
 import org.apache.linkis.cs.common.exception.CSErrorException;
 import org.apache.linkis.cs.common.protocol.ContextHTTPConstant;
 import org.apache.linkis.cs.common.search.ContextSearchConditionMapBuilder;
+import org.apache.linkis.cs.common.utils.CSCommonUtils;
 import org.apache.linkis.httpclient.config.ClientConfig;
 import org.apache.linkis.httpclient.dws.DWSHttpClient;
 import org.apache.linkis.httpclient.dws.config.DWSClientConfig;
@@ -45,14 +46,13 @@ import org.apache.linkis.httpclient.dws.response.DWSResult;
 import org.apache.linkis.httpclient.request.Action;
 import org.apache.linkis.httpclient.response.Result;
 
+import org.apache.commons.lang3.StringUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /** Description: HttpContextClient是ContextClient的使用Http方式进行通信的具体实现 一般可以将其做成单例 */
 public class HttpContextClient extends AbstractContextClient {
@@ -742,6 +742,111 @@ public class HttpContextClient extends AbstractContextClient {
                         .addHeader(ContextHTTPConstant.CONTEXT_ID_STR, contextIDStr)
                         .build();
         checkDWSResult(execute(action));
+    }
+
+    @Override
+    public List<String> searchHAIDByTime(
+            String createTimeStart,
+            String createTimeEnd,
+            String updateTimeStart,
+            String updateTimeEnd,
+            String accessTimeStart,
+            String accessTimeEnd,
+            Integer pageNow,
+            Integer pageSize)
+            throws ErrorException {
+        if (StringUtils.isBlank(createTimeStart)
+                && StringUtils.isBlank(createTimeEnd)
+                && StringUtils.isBlank(updateTimeStart)
+                && StringUtils.isBlank(updateTimeEnd)
+                && StringUtils.isBlank(accessTimeStart)
+                && StringUtils.isBlank(accessTimeEnd)) {
+            throw new CSErrorException(
+                    97000,
+                    " createTimeStart,  createTimeEnd,  updateTimeStart,  updateTimeEnd,  accessTimeStart,  accessTimeEnd cannot all be blank.");
+        }
+        DefaultContextGetAction action =
+                new ContextGetActionBuilder(ContextServerHttpConf.searchContextIDByTime())
+                        .with("createTimeStart", createTimeStart)
+                        .with("createTimeEnd", createTimeEnd)
+                        .with("updateTimeStart", updateTimeStart)
+                        .with("updateTimeEnd", updateTimeEnd)
+                        .with("accessTimeStart", accessTimeStart)
+                        .with("accessTimeEnd", accessTimeEnd)
+                        .with("pageNow", pageNow)
+                        .with("pageSize", pageSize)
+                        .build();
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug(action.getURL());
+        }
+        DWSResult dwsResult = checkDWSResult(execute(action));
+        ContextSearchIDByTimeResult result = (ContextSearchIDByTimeResult) dwsResult;
+        if (null != result && null != result.contextIDs()) {
+            return result.contextIDs();
+        } else {
+            return new ArrayList<>();
+        }
+    }
+
+    @Override
+    public int batchClearContextByHAID(List<String> idList) throws ErrorException {
+        if (null == idList) return 0;
+        if (idList.size() > CSCommonUtils.CONTEXT_MAX_PAGE_SIZE) {
+            throw new CSErrorException(
+                    97000,
+                    "idList size : "
+                            + idList.size()
+                            + " is over max page size : "
+                            + CSCommonUtils.CONTEXT_MAX_PAGE_SIZE);
+        }
+        DefaultContextPostAction action =
+                ContextPostActionBuilder.of(ContextServerHttpConf.clearAllContextByID())
+                        .with("idList", idList)
+                        .build();
+        DWSResult dwsResult = checkDWSResult(execute(action));
+        ContextClearByIDResult result = (ContextClearByIDResult) dwsResult;
+        if (null != result) {
+            return result.num();
+        } else {
+            return 0;
+        }
+    }
+
+    @Override
+    public int batchClearContextByTime(
+            String createTimeStart,
+            String createTimeEnd,
+            String updateTimeStart,
+            String updateTimeEnd,
+            String accessTimeStart,
+            String accessTimeEnd)
+            throws ErrorException {
+        if (StringUtils.isBlank(createTimeStart)
+                && StringUtils.isBlank(createTimeEnd)
+                && StringUtils.isBlank(updateTimeStart)
+                && StringUtils.isBlank(updateTimeEnd)
+                && StringUtils.isBlank(accessTimeStart)
+                && StringUtils.isBlank(accessTimeEnd)) {
+            throw new CSErrorException(
+                    97000,
+                    " createTimeStart,  createTimeEnd,  updateTimeStart,  updateTimeEnd,  accessTimeStart,  accessTimeEnd cannot all be blank.");
+        }
+        DefaultContextPostAction action =
+                ContextPostActionBuilder.of(ContextServerHttpConf.clearAllContextByID())
+                        .with("createTimeStart", createTimeStart)
+                        .with("createTimeEnd", createTimeEnd)
+                        .with("updateTimeStart", updateTimeStart)
+                        .with("updateTimeEnd", updateTimeEnd)
+                        .with("accessTimeStart", accessTimeStart)
+                        .with("accessTimeEnd", accessTimeEnd)
+                        .build();
+        DWSResult dwsResult = checkDWSResult(execute(action));
+        ContextClearByTimeResult result = (ContextClearByTimeResult) dwsResult;
+        if (null != result) {
+            return result.num();
+        } else {
+            return 0;
+        }
     }
 
     private Result execute(Action action) throws ErrorException {

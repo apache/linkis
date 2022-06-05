@@ -17,31 +17,27 @@
 
 package org.apache.linkis.datasource.client.request
 
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
-
-import org.apache.linkis.datasource.client.exception.DataSourceClientBuilderException
 import org.apache.linkis.datasource.client.config.DatasourceClientConfig.DATA_SOURCE_SERVICE_MODULE
+import org.apache.linkis.datasource.client.exception.DataSourceClientBuilderException
 import org.apache.linkis.httpclient.request.GetAction
-/**
-  * Get version parameters from data source
- */
-class GetConnectParamsByDataSourceNameAction extends GetAction with DataSourceAction{
+
+
+class GetInfoByDataSourceNameAction extends GetAction with DataSourceAction {
   private var dataSourceName: String = _
+
+  override def suffixURLs: Array[String] = Array(DATA_SOURCE_SERVICE_MODULE.getValue, "info", "name", dataSourceName)
 
   private var user: String = _
 
-  override def suffixURLs: Array[String] = Array(DATA_SOURCE_SERVICE_MODULE.getValue, "name", dataSourceName, "connect-params")
-
   override def setUser(user: String): Unit = this.user = user
 
-  override def getUser: String = user
+  override def getUser: String = this.user
 }
 
-object GetConnectParamsByDataSourceNameAction{
+object GetInfoByDataSourceNameAction {
   def builder(): Builder = new Builder
 
-  class Builder private[GetConnectParamsByDataSourceNameAction]() {
+  class Builder private[GetInfoByDataSourceNameAction]() {
     private var dataSourceName: String = _
     private var system: String = _
     private var user: String = _
@@ -61,23 +57,19 @@ object GetConnectParamsByDataSourceNameAction{
       this
     }
 
-    def build(): GetConnectParamsByDataSourceNameAction = {
+    def build(): GetInfoByDataSourceNameAction = {
       if (dataSourceName == null) throw new DataSourceClientBuilderException("dataSourceName is needed!")
-      if(system == null) throw new DataSourceClientBuilderException("system is needed!")
-      if(user == null) throw new DataSourceClientBuilderException("user is needed!")
-      // Use URIEncoder to encode the datSourceName
-      var requestDataSourceName = this.dataSourceName
-      try {
-        requestDataSourceName = URLEncoder.encode(dataSourceName, StandardCharsets.UTF_8.name())
-      } catch {
-        case e: Exception =>
-          throw new DataSourceClientBuilderException(s"Cannot encode the name of data source:[$dataSourceName] for request", e)
-      }
-      val getConnectParamsByDataSourceNameAction = new GetConnectParamsByDataSourceNameAction
-      getConnectParamsByDataSourceNameAction.dataSourceName = requestDataSourceName
-      getConnectParamsByDataSourceNameAction.setParameter("system", system)
-      getConnectParamsByDataSourceNameAction.setUser(user)
-      getConnectParamsByDataSourceNameAction
+      if (system == null) throw new DataSourceClientBuilderException("system is needed!")
+      if (user == null) throw new DataSourceClientBuilderException("user is needed!")
+
+      val getInfoByDataSourceNameAction = new GetInfoByDataSourceNameAction
+      getInfoByDataSourceNameAction.dataSourceName = this.dataSourceName
+      getInfoByDataSourceNameAction.setParameter("system", system)
+      getInfoByDataSourceNameAction.setUser(user)
+      getInfoByDataSourceNameAction
     }
   }
+
 }
+
+

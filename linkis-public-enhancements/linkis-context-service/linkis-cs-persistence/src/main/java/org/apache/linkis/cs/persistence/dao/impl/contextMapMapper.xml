@@ -94,10 +94,12 @@
     <select id="getAllContextMapByTime" resultMap="PersistenceContextKeyValue">
         SELECT * FROM linkis_ps_cs_context_map
         <where>
-            <if test="#{createTimeStart} != null">  AND `create_time` >= #{createTimeStart}</if>
-            <if test="#{createTimeEnd} != null">  AND `create_time` <![CDATA[<=]]> #{createTimeEnd}</if>
-            <if test="#{updateTimeStart} != null">  AND `update_time` >= #{updateTimeStart}</if>
-            <if test="#{updateTimeEnd} != null">  AND `update_time` <![CDATA[<=]]> #{updateTimeEnd}</if>
+            <if test="createTimeStart != null">  AND `create_time` >= #{createTimeStart}</if>
+            <if test="createTimeEnd != null">  AND `create_time` <![CDATA[<=]]> #{createTimeEnd}</if>
+            <if test="updateTimeStart != null">  AND `update_time` >= #{updateTimeStart}</if>
+            <if test="updateTimeEnd != null">  AND `update_time` <![CDATA[<=]]> #{updateTimeEnd}</if>
+            <if test="accessTimeStart != null">  AND `access_time` >= #{accessTimeStart}</if>
+            <if test="accessTimeEnd != null">  AND `access_time` <![CDATA[<=]]> #{accessTimeEnd}</if>
         </where>
     </select>
 
@@ -129,7 +131,9 @@
             <if test="contextKey.contextType != null">`context_type` = #{contextKey.contextType},</if>
             <if test="contextValue.valueStr != null">`value` = #{contextValue.valueStr},</if>
             <if test="contextValue.keywords != null">`keywords` = #{contextValue.keywords},</if>
-            `update_time` = now()
+            <if test="updateTime != null">`update_time` = #{updateTime},</if>
+            <if test="createTime != null">`create_time` = #{createTime},</if>
+            <if test="accessTime != null">`access_time` = #{accessTime},</if>
         </trim>
         WHERE context_id = #{contextId} AND `key` = #{contextKey.key}
     </update>

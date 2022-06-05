@@ -66,6 +66,11 @@ public abstract class ContextService extends AbstractService {
     public abstract int clearAllContextByID(List<String> idList) throws CSErrorException;
 
     public abstract int clearAllContextByTime(
-            Date createTimeStart, Date createTimeEnd, Date updateTimeStart, Date updateTimeEnd)
+            Date createTimeStart,
+            Date createTimeEnd,
+            Date updateTimeStart,
+            Date updateTimeEnd,
+            Date accessTimeStart,
+            Date accessTimeEnd)
             throws CSErrorException;
 }

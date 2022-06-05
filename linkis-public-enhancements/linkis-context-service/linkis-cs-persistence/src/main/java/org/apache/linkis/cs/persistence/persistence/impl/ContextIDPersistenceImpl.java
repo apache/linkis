@@ -59,6 +59,10 @@ public class ContextIDPersistenceImpl implements ContextIDPersistence {
             Pair<PersistenceContextID, ExtraFieldClass> pContextID =
                     PersistenceUtils.transfer(contextID, pClass);
             pContextID.getFirst().setSource(json.writeValueAsString(pContextID.getSecond()));
+            Date now = new Date();
+            pContextID.getFirst().setCreateTime(now);
+            pContextID.getFirst().setUpdateTime(now);
+            pContextID.getFirst().setAccessTime(now);
             contextIDMapper.createContextID(pContextID.getFirst());
             contextID.setContextId(pContextID.getFirst().getContextId());
             return contextID;
@@ -78,6 +82,7 @@ public class ContextIDPersistenceImpl implements ContextIDPersistence {
         // contextId和source没有设置更新点
         Pair<PersistenceContextID, ExtraFieldClass> pContextID =
                 PersistenceUtils.transfer(contextID, pClass);
+        pContextID.getFirst().setUpdateTime(new Date());
         contextIDMapper.updateContextID(pContextID.getFirst());
     }
 
@@ -139,9 +144,19 @@ public class ContextIDPersistenceImpl implements ContextIDPersistence {
     }
 
     @Override
-    public List<PersistenceContextID> searchContextIDByTime(
-            Date createTimeStart, Date createTimeEnd, Date updateTimeStart, Date updateTimeEnd) {
+    public List<PersistenceContextID> searchCSIDByTime(
+            Date createTimeStart,
+            Date createTimeEnd,
+            Date updateTimeStart,
+            Date updateTimeEnd,
+            Date accessTimeStart,
+            Date accessTimeEnd) {
         return contextIDMapper.getAllContextIDByTime(
-                createTimeStart, createTimeEnd, updateTimeStart, updateTimeEnd);
+                createTimeStart,
+                createTimeEnd,
+                updateTimeStart,
+                updateTimeEnd,
+                accessTimeStart,
+                accessTimeEnd);
     }
 }

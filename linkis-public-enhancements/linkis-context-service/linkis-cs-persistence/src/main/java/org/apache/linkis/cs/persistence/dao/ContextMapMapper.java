@@ -55,7 +55,9 @@ public interface ContextMapMapper {
             @Param("createTimeStart") Date createTimeStart,
             @Param("createTimeEnd") Date createTimeEnd,
             @Param("updateTimeStart") Date updateTimeStart,
-            @Param("updateTimeEnd") Date updateTimeEnd);
+            @Param("updateTimeEnd") Date updateTimeEnd,
+            @Param("accessTimeStart") Date accessTimeStart,
+            @Param("accessTimeEnd") Date accessTimeEnd);
 
     void removeContextMap(
             @Param("contextID") ContextID contextID, @Param("contextKey") ContextKey contextKey);

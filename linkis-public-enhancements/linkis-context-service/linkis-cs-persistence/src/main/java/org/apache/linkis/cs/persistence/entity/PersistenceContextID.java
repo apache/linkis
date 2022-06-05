@@ -43,9 +43,11 @@ public class PersistenceContextID implements UserContextID, HAContextID {
 
     private String source;
 
-    private Date createTime = new Date();
+    private Date createTime;
 
-    private Date updateTime = new Date();
+    private Date updateTime;
+
+    private Date accessTime;
 
     public String getSource() {
         return source;
@@ -133,5 +135,13 @@ public class PersistenceContextID implements UserContextID, HAContextID {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public Date getAccessTime() {
+        return accessTime;
+    }
+
+    public void setAccessTime(Date accessTime) {
+        this.accessTime = accessTime;
     }
 }

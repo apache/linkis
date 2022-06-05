@@ -29,9 +29,11 @@ public class PersistenceContextIDListener implements ListenerDomain {
 
     private String contextId;
 
-    private Date createTime = new Date();
+    private Date createTime;
 
-    private Date updateTime = new Date();
+    private Date updateTime;
+
+    private Date accessTime;
 
     public Integer getId() {
         return id;
@@ -73,5 +75,13 @@ public class PersistenceContextIDListener implements ListenerDomain {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public Date getAccessTime() {
+        return accessTime;
+    }
+
+    public void setAccessTime(Date accessTime) {
+        this.accessTime = accessTime;
     }
 }

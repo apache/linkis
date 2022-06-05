@@ -237,10 +237,20 @@ public class ContextMapPersistenceImpl implements ContextMapPersistence {
 
     @Override
     public List<ContextKeyValue> searchContextIDByTime(
-            Date createTimeStart, Date createTimeEnd, Date updateTimeStart, Date updateTimeEnd) {
+            Date createTimeStart,
+            Date createTimeEnd,
+            Date updateTimeStart,
+            Date updateTimeEnd,
+            Date accessTimeStart,
+            Date accessTimeEnd) {
         List<PersistenceContextKeyValue> result =
                 contextMapMapper.getAllContextMapByTime(
-                        createTimeStart, createTimeEnd, updateTimeStart, updateTimeEnd);
+                        createTimeStart,
+                        createTimeEnd,
+                        updateTimeStart,
+                        updateTimeEnd,
+                        accessTimeStart,
+                        accessTimeEnd);
         List<ContextKeyValue> rsList = new ArrayList<>();
         if (null != result) {
             for (PersistenceContextKeyValue pKV : result) {

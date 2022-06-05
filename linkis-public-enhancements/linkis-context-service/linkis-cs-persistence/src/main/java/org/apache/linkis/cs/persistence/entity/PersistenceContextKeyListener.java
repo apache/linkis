@@ -29,9 +29,11 @@ public class PersistenceContextKeyListener implements ListenerDomain {
 
     private Integer keyId;
 
-    private Date createTime = new Date();
+    private Date createTime;
 
-    private Date updateTime = new Date();
+    private Date updateTime;
+
+    private Date accessTime;
 
     public Integer getId() {
         return id;

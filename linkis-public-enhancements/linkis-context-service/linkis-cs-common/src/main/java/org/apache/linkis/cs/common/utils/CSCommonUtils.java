@@ -79,6 +79,8 @@ public class CSCommonUtils {
 
     public static final String PROJECT_VARIABLE_PREFIX = PROJECT_PREFIX + VARIABLE_PREFIX;
 
+    public static final int CONTEXT_MAX_PAGE_SIZE = 5000;
+
     public static String getVariableKey(String nodeName, String varName) {
 
         return CSCommonUtils.NODE_PREFIX + nodeName + "." + CSCommonUtils.VARIABLE_PREFIX + varName;
@@ -91,7 +93,7 @@ public class CSCommonUtils {
 
     public static Date localDatetimeToDate(LocalDateTime ldt) {
         if (null != ldt) {
-            return Date.from(ldt.atZone(ZoneId.systemDefault()).toInstant());
+            return new Date(ldt.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
         } else {
             return null;
         }

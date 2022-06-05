@@ -113,7 +113,11 @@ public class ContextIDRestfulApi implements CsRestfulParent {
             @RequestParam(value = "createTimeStart", required = false) String createTimeStart,
             @RequestParam(value = "createTimeEnd", required = false) String createTimeEnd,
             @RequestParam(value = "updateTimeStart", required = false) String updateTimeStart,
-            @RequestParam(value = "updateTimeEnd", required = false) String updateTimeEnd)
+            @RequestParam(value = "updateTimeEnd", required = false) String updateTimeEnd,
+            @RequestParam(value = "accessTimeStart", required = false) String accessTimeStart,
+            @RequestParam(value = "accessTimeEnd", required = false) String accessTimeEnd,
+            @RequestParam(value = "pageNow", required = false) Integer paramPageNow,
+            @RequestParam(value = "pageSize", required = false) Integer paramPageSize)
             throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
         if (null == createTimeStart
                 && null == createTimeEnd
@@ -123,10 +127,26 @@ public class ContextIDRestfulApi implements CsRestfulParent {
                     97000,
                     "createTimeStart, createTimeEnd, updateTimeStart, updateTimeEnd cannot be all null.");
         }
+        int pageStart = 0;
+        if (null == paramPageNow || paramPageNow <= 0) {
+            pageStart = 1;
+        } else {
+            pageStart = paramPageNow;
+        }
+        int pageSize = 0;
+        if (null == paramPageSize
+                || paramPageSize <= 0
+                || paramPageSize > CSCommonUtils.CONTEXT_MAX_PAGE_SIZE) {
+            pageSize = CSCommonUtils.CONTEXT_MAX_PAGE_SIZE;
+        } else {
+            pageSize = paramPageSize;
+        }
         Date createTimeStartDate = null;
         Date createTimeEndDate = null;
         Date updateTimeStartDate = null;
         Date updateTimeEndDate = null;
+        Date accessTimeStartDate = null;
+        Date accessTimeEndDate = null;
 
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern(CSCommonUtils.DEFAULT_TIME_FORMAT);
         if (StringUtils.isNotBlank(createTimeStart))
@@ -137,6 +157,10 @@ public class ContextIDRestfulApi implements CsRestfulParent {
             updateTimeStartDate = localDatetimeToDate(LocalDateTime.parse(updateTimeStart, dtf));
         if (StringUtils.isNotBlank(updateTimeEnd))
             updateTimeEndDate = localDatetimeToDate(LocalDateTime.parse(updateTimeEnd, dtf));
+        if (StringUtils.isNotBlank(accessTimeStart))
+            accessTimeStartDate = localDatetimeToDate(LocalDateTime.parse(accessTimeStart, dtf));
+        if (StringUtils.isNotBlank(accessTimeEnd))
+            accessTimeEndDate = localDatetimeToDate(LocalDateTime.parse(accessTimeEnd, dtf));
         HttpAnswerJob answerJob =
                 submitRestJob(
                         req,
@@ -144,7 +168,11 @@ public class ContextIDRestfulApi implements CsRestfulParent {
                         createTimeStartDate,
                         createTimeEndDate,
                         updateTimeStartDate,
-                        updateTimeEndDate);
+                        updateTimeEndDate,
+                        accessTimeStartDate,
+                        accessTimeEndDate,
+                        pageStart,
+                        pageSize);
         return generateResponse(answerJob, "contextIDs");
     }
 

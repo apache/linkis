@@ -559,7 +559,8 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
       if (usedResource != null
         && usedResource.getLockedResource != null
         && usedResource.getLockedResource > Resource.getZeroResource(usedResource.getLockedResource)) {
-        val currnentEngineInstanceLabel = labelManagerPersistence.getLabel(persistenceEngineLabel.getId)
+        val dbEngineInstanceLabel = labelManagerPersistence.getLabel(persistenceEngineLabel.getId)
+        val currnentEngineInstanceLabel = if (null == dbEngineInstanceLabel) persistenceEngineLabel else dbEngineInstanceLabel
         if (LabelKeyConstant.ENGINE_INSTANCE_KEY.equalsIgnoreCase(currnentEngineInstanceLabel.getLabelKey)) {
           ManagerUtils.persistenceLabelToRealLabel(currnentEngineInstanceLabel) match {
             case engineInstanceLabel: EngineInstanceLabel => {

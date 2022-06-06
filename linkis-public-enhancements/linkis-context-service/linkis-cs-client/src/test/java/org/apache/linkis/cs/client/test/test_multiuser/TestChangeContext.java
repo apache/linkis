@@ -52,7 +52,7 @@ public class TestChangeContext {
             String contextIDStr;
             StringBuilder builder = new StringBuilder();
             try (FileReader fr = new FileReader(file);
-                BufferedReader br = new BufferedReader(fr)) {
+                    BufferedReader br = new BufferedReader(fr)) {
                 java.lang.String tmp = br.readLine();
                 while (null != tmp) {
                     builder.append(tmp);

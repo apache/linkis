@@ -17,7 +17,7 @@
  
 package org.apache.linkis.entrance.interceptor.impl
 
-import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.common.utils.{CodeAndRunTypeUtils, Logging, Utils}
 import org.apache.linkis.entrance.interceptor.EntranceInterceptor
 import org.apache.linkis.entrance.interceptor.exception.PythonCodeCheckException
 import org.apache.linkis.governance.common.entity.job.JobRequest
@@ -30,9 +30,10 @@ import org.apache.commons.lang.exception.ExceptionUtils
 class PythonCodeCheckInterceptor extends EntranceInterceptor with Logging {
   override def apply(jobRequest: JobRequest, logAppender: java.lang.StringBuilder): JobRequest = {
     val codeType = LabelUtil.getCodeType(jobRequest.getLabels)
+    val runType = CodeAndRunTypeUtils.getRunTypeByCodeType(codeType)
     val errorBuilder = new StringBuilder
-    codeType match {
-        case "python" | "pyspark" | "py" =>
+    runType match {
+        case CodeAndRunTypeUtils.RUN_TYPE_PYTHON =>
         Utils.tryThrow{
           if (PythonExplain.authPass(jobRequest.getExecutionCode, errorBuilder)) {
             jobRequest

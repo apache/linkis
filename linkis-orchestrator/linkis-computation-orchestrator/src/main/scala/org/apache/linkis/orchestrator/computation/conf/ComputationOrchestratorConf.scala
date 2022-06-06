@@ -47,8 +47,6 @@ object ComputationOrchestratorConf {
 
   val LOG_LEN = CommonVars("wds.linkis.computation.orchestrator.log.len", 100)
 
-  val RETRYTASK_MAXIMUM_AGE = CommonVars("wds.linkis.computation.orchestrator.retry.max.age", 10)
-
 
   val ENGINECONN_LASTUPDATE_TIMEOUT = CommonVars("wds.linkis.orchestrator.engine.lastupdate.timeout", new TimeType("5s"))
   val ENGINECONN_ACTIVITY_TIMEOUT = CommonVars("wds.linkis.orchestrator.engine.timeout", new TimeType("10s"))

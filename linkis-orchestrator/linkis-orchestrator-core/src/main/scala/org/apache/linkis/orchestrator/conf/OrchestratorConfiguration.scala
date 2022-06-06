@@ -52,7 +52,9 @@ object OrchestratorConfiguration {
 
   val TASK_MAX_PERSIST_WAIT_TIME = CommonVars("wds.linkis.orchestrator.task.persist.wait.max", new TimeType("5m"))
 
-  val RETRY_TASK_WAIT_TIME = CommonVars("wds.linkis.orchestrator.task.retry.wait.time", 10000)
+  val RETRY_TASK_WAIT_TIME = CommonVars("wds.linkis.orchestrator.task.retry.wait.time", 30000)
+
+  val RETRYTASK_MAXIMUM_AGE = CommonVars("wds.linkis.computation.orchestrator.retry.max.age", 10)
 
   val SCHEDULER_RETRY_TASK_WAIT_TIME = CommonVars("wds.linkis.orchestrator.task.scheduler.retry.wait.time", 100000)
 
@@ -64,10 +66,12 @@ object OrchestratorConfiguration {
 
   val ORCHESTRATOR_USER_MAX_RUNNING = CommonVars("wds.linkis.task.user.max.running", 5)
 
-  val SCHEDULIS_CREATOR = CommonVars("wds.linkis.orchestrator.task.schedulis.creator", "schedulis")
+  val SCHEDULIS_CREATOR = CommonVars("wds.linkis.orchestrator.task.schedulis.creator", "schedulis,nodeexecution").getValue
 
   val ORCHESTRATOR_METRIC_LOG = CommonVars("wds.linkis.orchestrator.metric.log.enable", true)
 
   val ORCHESTRATOR_METRIC_LOG_TIME = CommonVars("wds.linkis.orchestrator.metric.log.time", new TimeType("1h"))
+
+  val REHEATER_KEY = "Reheat_successful"
 
 }

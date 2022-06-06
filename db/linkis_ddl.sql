@@ -186,7 +186,7 @@ CREATE TABLE `linkis_ps_udf_tree` (
 DROP TABLE IF EXISTS `linkis_ps_udf_user_load`;
 CREATE TABLE `linkis_ps_udf_user_load` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `udf_id` int(11) NOT NULL,
+  `udf_id` bigint(20) NOT NULL,
   `user_name` varchar(50) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -730,21 +730,27 @@ CREATE TABLE `linkis_cg_manager_label_resource` (
   UNIQUE KEY `label_id` (`label_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
-DROP TABLE IF EXISTS `linkis_cg_rm_resource_action_record`;
-CREATE TABLE `linkis_cg_rm_resource_action_record` (
-  `id` INT(20) NOT NULL AUTO_INCREMENT,
-  `label_value` VARCHAR(100) NOT NULL,
-  `ticket_id` VARCHAR(100) NOT NULL,
-  `request_times` INT(8),
-  `request_resource_all` VARCHAR(100),
-  `used_times` INT(8),
-  `used_resource_all` VARCHAR(100),
-  `release_times` INT(8),
-  `release_resource_all` VARCHAR(100),
-  `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
-  `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `label_value_ticket_id` (`label_value`, `ticket_id`)
+DROP TABLE IF EXISTS `linkis_cg_ec_resource_info_record`;
+CREATE TABLE `linkis_cg_ec_resource_info_record` (
+    `id` INT(20) NOT NULL AUTO_INCREMENT,
+    `label_value` VARCHAR(255) NOT NULL COMMENT 'ec labels stringValue',
+    `create_user` VARCHAR(128) NOT NULL COMMENT 'ec create user',
+    `service_instance` varchar(128) COLLATE utf8_bin DEFAULT NULL COMMENT 'ec instance info',
+    `ecm_instance` varchar(128) COLLATE utf8_bin DEFAULT NULL COMMENT 'ecm instance info ',
+    `ticket_id` VARCHAR(100) NOT NULL COMMENT 'ec ticket id',
+    `log_dir_suffix` varchar(128) COLLATE utf8_bin DEFAULT NULL COMMENT 'log path',
+    `request_times` INT(8) COMMENT 'resource request times',
+    `request_resource` VARCHAR(255) COMMENT 'request resource',
+    `used_times` INT(8) COMMENT 'resource used times',
+    `used_resource` VARCHAR(255) COMMENT 'used resource',
+    `release_times` INT(8) COMMENT 'resource released times',
+    `released_resource` VARCHAR(255)  COMMENT 'released resource',
+    `release_time` datetime DEFAULT NULL COMMENT 'released time',
+    `used_time` datetime DEFAULT NULL COMMENT 'used time',
+    `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT 'create time',
+    PRIMARY KEY (`id`),
+    KEY (`ticket_id`),
+    UNIQUE KEY `label_value_ticket_id` (`ticket_id`,`label_value`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 DROP TABLE IF EXISTS `linkis_cg_manager_label_service_instance`;

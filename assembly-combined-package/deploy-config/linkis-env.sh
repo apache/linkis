@@ -46,8 +46,8 @@ ENGINECONN_ROOT_PATH=/appcom/tmp
 RESULT_SET_ROOT_PATH=hdfs:///tmp/linkis ##hdfs:// required
 
 ##YARN REST URL  spark engine required
-# Active resourcemanager address needed. Recommended to add all ha addresses.
-YARN_RESTFUL_URL="http://127.0.0.1:8088;http://127.0.0.1:8088"
+# Active resourcemanager address needed. Recommended to add all ha addresses. eg YARN_RESTFUL_URL="http://127.0.0.1:8088;http://127.0.0.2:8088"
+YARN_RESTFUL_URL="http://127.0.0.1:8088"
 
 ## request spnego enabled Yarn resource restful interface When Yarn enable kerberos
 ## If your environment yarn interface can be accessed directly, ignore it
@@ -139,7 +139,7 @@ export SERVER_HEAP_SIZE="512M"
 ##The decompression directory and the installation directory need to be inconsistent
 #LINKIS_HOME=/appcom/Install/LinkisInstall
 
-LINKIS_VERSION=1.1.1
+LINKIS_VERSION=1.1.2
 
 # for install
 LINKIS_PUBLIC_MODULE=lib/linkis-commons/public-module
@@ -152,3 +152,6 @@ export PROMETHEUS_ENABLE=false
 
 #If you want to start metadata related microservices, you can set this export ENABLE_METADATA_MANAGE=true
 export ENABLE_METADATA_MANAGER=false
+export ENABLE_HDFS=false
+export ENABLE_HIVE=false
+export ENABLE_SPARK=false

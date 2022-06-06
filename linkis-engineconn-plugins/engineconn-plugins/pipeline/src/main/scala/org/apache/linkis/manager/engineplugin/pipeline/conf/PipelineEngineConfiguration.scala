@@ -18,7 +18,7 @@
 package org.apache.linkis.manager.engineplugin.pipeline.conf
 
 import org.apache.linkis.common.conf.CommonVars
-import org.apache.linkis.manager.engineplugin.pipeline.constant.PipeLineConstant.{PIPELINE_FIELD_SPLIT, PIPELINE_OUTPUT_CHARSET, PIPELINE_OUTPUT_ISOVERWRITE}
+import org.apache.linkis.manager.engineplugin.pipeline.constant.PipeLineConstant.{PIPELINE_FIELD_QUOTE_RETOUCH_CONF_ENABLE, PIPELINE_FIELD_SPLIT, PIPELINE_OUTPUT_CHARSET, PIPELINE_OUTPUT_ISOVERWRITE}
 
 object PipelineEngineConfiguration {
 
@@ -28,4 +28,7 @@ object PipelineEngineConfiguration {
 
   val PIPELINE_FIELD_SPLIT_STR = CommonVars(PIPELINE_FIELD_SPLIT, ",")
 
+  val PIPELINE_FIELD_QUOTE_RETOUCH_ENABLE = CommonVars[Boolean](PIPELINE_FIELD_QUOTE_RETOUCH_CONF_ENABLE, false)
+
+  val EXPORT_EXCEL_AUTO_FORMAT = CommonVars("wds.linkis.pipeline.export.excel.auto_format.enable", false)
 }

@@ -24,6 +24,7 @@ import org.apache.linkis.engineconnplugin.flink.client.config.entries.ExecutionE
 
 object FlinkEnvConfiguration {
 
+  val SPARK_LIB_PATH = CommonVars("spark.lib.path", CommonVars("SPARK_HOME", "/appcom/Install/spark").getValue + "/jars")
   val FLINK_HOME_ENV = "FLINK_HOME"
   val FLINK_CONF_DIR_ENV = "FLINK_CONF_DIR"
   val FLINK_VERSION = CommonVars("flink.version", "1.12.2")
@@ -64,4 +65,14 @@ object FlinkEnvConfiguration {
   val FLINK_REPORTER_CLASS = CommonVars("linkis.flink.reporter.class", "")
   val FLINK_REPORTER_INTERVAL = CommonVars("linkis.flink.reporter.interval", new TimeType("60s"))
 
+  val FLINK_EXECUTION_ATTACHED = CommonVars("linkis.flink.execution.attached", true)
+  val FLINK_CONFIG_PREFIX = "_FLINK_CONFIG_."
+
+  val FLINK_KERBEROS_ENABLE = CommonVars("linkis.flink.kerberos.enable", false)
+  val FLINK_KERBEROS_LOGIN_CONTEXTS = CommonVars("linkis.flink.kerberos.login.contexts", "Client,KafkaClient")
+  val FLINK_KERBEROS_LOGIN_KEYTAB = CommonVars("linkis.flink.kerberos.login.keytab", "")
+  val FLINK_KERBEROS_LOGIN_PRINCIPAL = CommonVars("linkis.flink.kerberos.login.principal", "")
+  val FLINK_KERBEROS_CONF_PATH = CommonVars("linkis.flink.kerberos.krb5-conf.path", "")
+
+  val FLINK_PARAMS_BLANK_PLACEHOLER = CommonVars("linkis.flink.params.placeholder.blank", "\\0x001")
 }

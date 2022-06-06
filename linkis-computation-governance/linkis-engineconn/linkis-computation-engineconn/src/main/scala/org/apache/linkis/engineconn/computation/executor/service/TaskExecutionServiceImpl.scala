@@ -42,6 +42,7 @@ import org.apache.linkis.engineconn.executor.listener.event.EngineConnSyncEvent
 import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
 import org.apache.linkis.governance.common.exception.engineconn.{EngineConnExecutorErrorCode, EngineConnExecutorErrorException}
 import org.apache.linkis.governance.common.protocol.task._
+import org.apache.linkis.governance.common.utils.JobUtils
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.common.protocol.resource.ResponseTaskYarnResource
 import org.apache.linkis.manager.label.entity.Label
@@ -82,13 +83,15 @@ class TaskExecutionServiceImpl extends TaskExecutionService with Logging with Re
   lazy private val cachedThreadPool = Utils.newCachedThreadPool(ComputationExecutorConf.ENGINE_CONCURRENT_THREAD_NUM.getValue,
     "ConcurrentEngineConnThreadPool")
 
+  private val CONCURRENT_TASK_LOCKER = new Object
+
   @PostConstruct
   def init(): Unit = {
     LogHelper.setLogListener(this)
     syncListenerBus.addListener(this)
   }
 
-  private def sendToEntrance(task: EngineConnTask, msg: RequestProtocol): Unit = synchronized {
+  private def sendToEntrance(task: EngineConnTask, msg: RequestProtocol): Unit = {
     Utils.tryCatch {
       var sender: Sender = null
       if (null != task && null != task.getCallbackServiceInstance() && null != msg) {
@@ -129,6 +132,11 @@ class TaskExecutionServiceImpl extends TaskExecutionService with Logging with Re
       val retry = requestTask.getProperties.getOrDefault(ComputationEngineConstant.RETRYABLE_TYPE_NAME, null)
       if (null != retry) retry.asInstanceOf[Boolean]
       else false
+    }
+    val jobId = JobUtils.getJobIdFromMap(requestTask.getProperties)
+    if (StringUtils.isNotBlank(jobId)) {
+      System.getProperties().put(ComputationExecutorConf.JOB_ID_TO_ENV_KEY, jobId)
+      logger.info(s"Received job with id ${jobId}.")
     }
     val task = new CommonEngineConnTask(String.valueOf(taskId), retryAble)
     task.setCode(requestTask.getCode)
@@ -228,13 +236,13 @@ class TaskExecutionServiceImpl extends TaskExecutionService with Logging with Re
   }
 
   private def submitConcurrentTask(task: CommonEngineConnTask, executor: ConcurrentComputationExecutor): ExecuteResponse = {
-    if (null == concurrentTaskQueue) synchronized {
+    if (null == concurrentTaskQueue) CONCURRENT_TASK_LOCKER.synchronized {
       if (null == concurrentTaskQueue) {
         concurrentTaskQueue = new LinkedBlockingDeque[EngineConnTask]()
       }
     }
     concurrentTaskQueue.put(task)
-    if (null == consumerThread) synchronized {
+    if (null == consumerThread) CONCURRENT_TASK_LOCKER.synchronized {
       if (null == consumerThread) {
         consumerThread = new Thread(createConsumerRunnable(executor))
         consumerThread.setDaemon(true)

@@ -74,7 +74,7 @@ class AccessibleEngineConnExecution extends EngineConnExecution with Logging {
     val maxFreeTimeVar = AccessibleExecutorConfiguration.ENGINECONN_MAX_FREE_TIME.getValue(context.getOptions)
     val maxFreeTimeStr = maxFreeTimeVar.toString
     val maxFreeTime = maxFreeTimeVar.toLong
-    logger.info("executorStatusChecker created， maxFreeTimeMills is " + maxFreeTime)
+    logger.info("executorStatusChecker created, maxFreeTimeMills is " + maxFreeTime)
     Utils.defaultScheduler.scheduleAtFixedRate(new Runnable {
       override def run(): Unit = Utils.tryAndWarn {
         val accessibleExecutor = ExecutorManager.getInstance.getReportExecutor match {
@@ -85,9 +85,11 @@ class AccessibleEngineConnExecution extends EngineConnExecution with Logging {
         }
         if (NodeStatus.isCompleted(accessibleExecutor.getStatus)) {
           error(s"${accessibleExecutor.getId} has completed with status ${accessibleExecutor.getStatus}, now stop it.")
+          requestManagerReleaseExecutor("Completed release")
           ShutdownHook.getShutdownHook.notifyStop()
         } else if (accessibleExecutor.getStatus == NodeStatus.ShuttingDown) {
           logger.warn(s"${accessibleExecutor.getId} is ShuttingDown...")
+          requestManagerReleaseExecutor(" ShuttingDown release")
           ShutdownHook.getShutdownHook.notifyStop()
         } else if (maxFreeTime > 0 && (NodeStatus.Unlock.equals(accessibleExecutor.getStatus) || NodeStatus.Idle.equals(accessibleExecutor.getStatus))
           && System.currentTimeMillis - accessibleExecutor.getLastActivityTime > maxFreeTime) {
@@ -102,7 +104,7 @@ class AccessibleEngineConnExecution extends EngineConnExecution with Logging {
 
         }
       }
-    }, 3 * 60 * 1000, AccessibleExecutorConfiguration.ENGINECONN_HEARTBEAT_TIME.getValue.toLong, TimeUnit.MILLISECONDS)
+    }, 3 * 60 * 1000, AccessibleExecutorConfiguration.ENGINECONN_STATUS_SCAN_TIME.getValue.toLong, TimeUnit.MILLISECONDS)
   }
 
   def requestManagerReleaseExecutor(msg: String): Unit = {

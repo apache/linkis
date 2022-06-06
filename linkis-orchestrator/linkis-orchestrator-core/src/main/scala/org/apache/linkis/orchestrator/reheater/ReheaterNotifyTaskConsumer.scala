@@ -17,6 +17,7 @@
  
 package org.apache.linkis.orchestrator.reheater
 
+import org.apache.linkis.orchestrator.execution.ExecTaskRunner
 import org.apache.linkis.orchestrator.execution.impl.{DefaultTaskManager, NotifyTaskConsumer}
 import org.apache.linkis.orchestrator.plans.physical.ExecTask
 
@@ -27,14 +28,17 @@ abstract class ReheaterNotifyTaskConsumer extends NotifyTaskConsumer {
 
   val reheater: Reheater
 
-  protected def reheatIt(execTask: ExecTask): Unit = {
+  protected def reheatIt(execTask: ExecTask): Boolean = {
     val key = getReheatableKey(execTask.getId)
-    def compareAndSet(lastRunning: String): Unit = {
+    def compareAndSet(lastRunning: String): Boolean = {
       val thisRunning = getExecution.taskManager.getCompletedTasks(execTask).map(_.task.getId).mkString(",")
       if(thisRunning != lastRunning) {
         logger.debug(s"${execTask.getIDInfo()} Try to reheat this $thisRunning. lastRunning: $lastRunning")
-        reheater.reheat(execTask)
+        val reheaterStatus = reheater.reheat(execTask)
         execTask.getPhysicalContext.set(key, thisRunning)
+        reheaterStatus
+      } else {
+        false
       }
     }
     execTask.getPhysicalContext.get(key) match {
@@ -42,18 +46,20 @@ abstract class ReheaterNotifyTaskConsumer extends NotifyTaskConsumer {
         compareAndSet(lastRunning)
       case _ if getExecution.taskManager.getCompletedTasks(execTask).nonEmpty =>
         compareAndSet(null)
-      case _ =>
-        //info(s"no need to deal ${execTask.getPhysicalContext.get(key) }")
+      case _ => false
+
     }
 
   }
 
   protected def getReheatableKey(id: String): String = ReheaterNotifyTaskConsumer.REHEAT_KEY_PREFIX + id
 
-  override protected def beforeFetchLaunchTask(): Unit = getExecution.taskManager match {
+  override protected def beforeFetchLaunchTask(): Array[ExecTaskRunner] = getExecution.taskManager match {
     case taskManager: DefaultTaskManager =>
-      taskManager.getRunnableExecutionTasks.foreach(t => reheatIt(t.getRootExecTask))
-    case _ =>
+      val (executionTasks, runnableExecTasks) = taskManager.getRunnableExecutionTasksAndExecTask
+      val reheaterRootExecTasks = executionTasks.map(_.getRootExecTask).filter(reheatIt).map(_.getId)
+      runnableExecTasks.filterNot(task => reheaterRootExecTasks.contains(task.task.getPhysicalContext.getRootTask.getId))
+    case _ => null
   }
 
 }

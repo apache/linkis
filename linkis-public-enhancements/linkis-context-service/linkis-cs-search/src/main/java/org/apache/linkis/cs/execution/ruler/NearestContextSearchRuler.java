@@ -168,8 +168,11 @@ public class NearestContextSearchRuler extends AbstractContextSearchRuler {
                             ? nearestCondition.getNumber()
                             : contextKeyValues.size();
             filtered = contextKeyValues.subList(0, endIndex);
+            logger.info(
+                    "Finished to NearestContextSearchRuler nearest nodes based on flow info: \n, filtered size {}"
+                            + BDPJettyServerHelper.gson().toJson(csFlowInfos),
+                    filtered.size());
         }
-
         return filtered;
     }
 }

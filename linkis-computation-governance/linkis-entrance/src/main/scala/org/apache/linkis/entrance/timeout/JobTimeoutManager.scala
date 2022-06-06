@@ -55,7 +55,6 @@ class JobTimeoutManager extends Logging {
     if (null != job) {
       info(s"Deleting Job: ${job.getId()}")
       synchronized {
-        job.kill()
         timeoutJobByName.remove(jobKey)
       }
     }

@@ -525,11 +525,14 @@ public class FsRestfulApi {
             @RequestParam(value = "charset", defaultValue = "utf-8") String charset,
             @RequestParam(value = "outputFileType", defaultValue = "csv") String outputFileType,
             @RequestParam(value = "csvSeperator", defaultValue = ",") String csvSeperator,
+            @RequestParam(value = "quoteRetouchEnable", required = false)
+                    boolean quoteRetouchEnable,
             @RequestParam(value = "outputFileName", defaultValue = "downloadResultset")
                     String outputFileName,
             @RequestParam(value = "sheetName", defaultValue = "result") String sheetName,
             @RequestParam(value = "nullValue", defaultValue = "NULL") String nullValue,
-            @RequestParam(value = "limit", defaultValue = "0") Integer limit)
+            @RequestParam(value = "limit", defaultValue = "0") Integer limit,
+            @RequestParam(value = "autoFormat", defaultValue = "false") Boolean autoFormat)
             throws WorkSpaceException, IOException {
         ServletOutputStream outputStream = null;
         FsWriter fsWriter = null;
@@ -570,7 +573,9 @@ public class FsRestfulApi {
             switch (outputFileType) {
                 case "csv":
                     if (FileSource$.MODULE$.isTableResultSet(fileSource)) {
-                        fsWriter = CSVFsWriter.getCSVFSWriter(charset, csvSeperator, outputStream);
+                        fsWriter =
+                                CSVFsWriter.getCSVFSWriter(
+                                        charset, csvSeperator, quoteRetouchEnable, outputStream);
                     } else {
                         fsWriter =
                                 ScriptFsWriter.getScriptFsWriter(
@@ -587,7 +592,11 @@ public class FsRestfulApi {
                     }
                     fsWriter =
                             ExcelFsWriter.getExcelFsWriter(
-                                    charset, sheetName, DEFAULT_DATE_TYPE, outputStream);
+                                    charset,
+                                    sheetName,
+                                    DEFAULT_DATE_TYPE,
+                                    outputStream,
+                                    autoFormat);
                     response.addHeader("Content-Type", XLSX_RESPONSE_CONTENT_TYPE);
                     if (isLimitDownloadSize) {
                         fileSource = fileSource.page(1, excelDownloadSize);
@@ -624,7 +633,8 @@ public class FsRestfulApi {
             @RequestParam(value = "outputFileName", defaultValue = "downloadResultset")
                     String outputFileName,
             @RequestParam(value = "nullValue", defaultValue = "NULL") String nullValue,
-            @RequestParam(value = "limit", defaultValue = "0") Integer limit)
+            @RequestParam(value = "limit", defaultValue = "0") Integer limit,
+            @RequestParam(value = "autoFormat", defaultValue = "false") Boolean autoFormat)
             throws WorkSpaceException, IOException {
         ServletOutputStream outputStream = null;
         FsWriter fsWriter = null;
@@ -668,7 +678,7 @@ public class FsRestfulApi {
             if (!FileSource$.MODULE$.isTableResultSet(fileSource)) {
                 throw WorkspaceExceptionManager.createException(80024);
             }
-            fsWriter = new StorageMultiExcelWriter(outputStream);
+            fsWriter = new StorageMultiExcelWriter(outputStream, autoFormat);
             response.addHeader("Content-Type", XLSX_RESPONSE_CONTENT_TYPE);
             if (isLimitDownloadSize) {
                 fileSource = fileSource.page(1, excelDownloadSize);

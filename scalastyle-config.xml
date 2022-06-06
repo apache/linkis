@@ -109,7 +109,7 @@ This file is divided into 3 sections:
     <!-- Cyclomatic complexity of a method-->
     <check level="error" class="org.scalastyle.scalariform.CyclomaticComplexityChecker" enabled="true">
         <parameters>
-            <parameter name="maximum">20</parameter>
+            <parameter name="maximum">25</parameter>
         </parameters>
     </check>
 

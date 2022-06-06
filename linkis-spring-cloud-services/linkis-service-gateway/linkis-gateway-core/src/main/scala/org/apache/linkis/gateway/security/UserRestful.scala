@@ -92,7 +92,7 @@ abstract class AbstractUserRestful extends UserRestful with Logging {
 
   def login(gatewayContext: GatewayContext): Message = {
     val message = tryLogin(gatewayContext)
-    message.data("sessionTimeOut", SSOUtils.getSessionTimeOut())
+    message.data("sessionTimeOut", SSOUtils.getSessionTimeOut()).data("enableWatermark", GatewayConfiguration.ENABLE_WATER_MARK.getValue)
     if (securityHooks != null) securityHooks.foreach(_.postLogin(gatewayContext))
     message
   }

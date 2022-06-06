@@ -21,6 +21,7 @@ import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.configuration.entity.*;
 import org.apache.linkis.configuration.exception.ConfigurationException;
 import org.apache.linkis.configuration.service.CategoryService;
+import org.apache.linkis.configuration.service.ConfigKeyService;
 import org.apache.linkis.configuration.service.ConfigurationService;
 import org.apache.linkis.configuration.util.ConfigurationConfiguration;
 import org.apache.linkis.configuration.util.JsonNodeUtil;
@@ -41,18 +42,25 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(path = "/configuration")
 public class ConfigurationRestfulApi {
 
+    private static final Logger logger = LoggerFactory.getLogger(ConfigurationRestfulApi.class);
+
     @Autowired private ConfigurationService configurationService;
 
     @Autowired private CategoryService categoryService;
+
+    @Autowired private ConfigKeyService configKeyService;
 
     ObjectMapper mapper = new ObjectMapper();
 
@@ -138,6 +146,8 @@ public class ConfigurationRestfulApi {
     @RequestMapping(path = "/createSecondCategory", method = RequestMethod.POST)
     public Message createSecondCategory(HttpServletRequest request, @RequestBody JsonNode jsonNode)
             throws ConfigurationException {
+        String username = ModuleUserUtils.getOperationUser(request, "createSecondCategory");
+        checkAdmin(username);
         Integer categoryId = jsonNode.get("categoryId").asInt();
         String engineType = jsonNode.get("engineType").asText();
         String version = jsonNode.get("version").asText();
@@ -203,6 +213,8 @@ public class ConfigurationRestfulApi {
     @RequestMapping(path = "/updateCategoryInfo", method = RequestMethod.POST)
     public Message updateCategoryInfo(HttpServletRequest request, @RequestBody JsonNode jsonNode)
             throws ConfigurationException {
+        String username = ModuleUserUtils.getOperationUser(request, "updateCategoryInfo");
+        checkAdmin(username);
         String description = null;
         Integer categoryId = null;
         try {
@@ -240,5 +252,83 @@ public class ConfigurationRestfulApi {
         if (!Configuration.isAdmin(userName)) {
             throw new ConfigurationException("only admin can modify category(只有管理员才能修改目录)");
         }
+    }
+
+    @RequestMapping(path = "/keyvalue", method = RequestMethod.GET)
+    public Message getKeyValue(
+            HttpServletRequest req,
+            @RequestParam(value = "engineType", required = false, defaultValue = "*")
+                    String engineType,
+            @RequestParam(value = "version", required = false, defaultValue = "*") String version,
+            @RequestParam(value = "creator", required = false, defaultValue = "*") String creator,
+            @RequestParam(value = "configKey") String configKey)
+            throws ConfigurationException {
+        String username = ModuleUserUtils.getOperationUser(req, "saveKey");
+        if (engineType.equals("*") && !version.equals("*")) {
+            return Message.error(
+                    "When engineType is any engine, the version must also be any version");
+        }
+        List labelList =
+                LabelEntityParser.generateUserCreatorEngineTypeLabelList(
+                        username, creator, engineType, version);
+
+        List<ConfigValue> configValues = configKeyService.getConfigValue(configKey, labelList);
+        Message message = Message.ok().data("configValues", configValues);
+        if (configValues.size() > 1) {
+            message.data(
+                    "warnMessage",
+                    "There are multiple values for the corresponding Key： " + configKey);
+        }
+        return message;
+    }
+
+    @RequestMapping(path = "/keyvalue", method = RequestMethod.POST)
+    public Message saveKeyValue(HttpServletRequest req, @RequestBody Map<String, Object> json)
+            throws ConfigurationException {
+        String username = ModuleUserUtils.getOperationUser(req, "saveKey");
+        String engineType = (String) json.getOrDefault("engineType", "*");
+        String version = (String) json.getOrDefault("version", "*");
+        String creator = (String) json.getOrDefault("creator", "*");
+        String configKey = (String) json.get("configKey");
+        String value = (String) json.get("configValue");
+        if (engineType.equals("*") && !version.equals("*")) {
+            return Message.error(
+                    "When engineType is any engine, the version must also be any version");
+        }
+        if (StringUtils.isBlank(configKey) || StringUtils.isBlank(value)) {
+            return Message.error("key or value cannot be empty");
+        }
+        List labelList =
+                LabelEntityParser.generateUserCreatorEngineTypeLabelList(
+                        username, creator, engineType, version);
+
+        ConfigKeyValue configKeyValue = new ConfigKeyValue();
+        configKeyValue.setKey(configKey);
+        configKeyValue.setConfigValue(value);
+
+        ConfigValue configValue = configKeyService.saveConfigValue(configKeyValue, labelList);
+        return Message.ok().data("configValue", configValue);
+    }
+
+    @RequestMapping(path = "/keyvalue", method = RequestMethod.DELETE)
+    public Message deleteKeyValue(HttpServletRequest req, @RequestBody Map<String, Object> json)
+            throws ConfigurationException {
+        String username = ModuleUserUtils.getOperationUser(req, "saveKey");
+        String engineType = (String) json.getOrDefault("engineType", "*");
+        String version = (String) json.getOrDefault("version", "*");
+        String creator = (String) json.getOrDefault("creator", "*");
+        String configKey = (String) json.get("configKey");
+        if (engineType.equals("*") && !version.equals("*")) {
+            return Message.error(
+                    "When engineType is any engine, the version must also be any version");
+        }
+        if (StringUtils.isBlank(configKey)) {
+            return Message.error("key cannot be empty");
+        }
+        List labelList =
+                LabelEntityParser.generateUserCreatorEngineTypeLabelList(
+                        username, creator, engineType, version);
+        List<ConfigValue> configValues = configKeyService.deleteConfigValue(configKey, labelList);
+        return Message.ok().data("configValues", configValues);
     }
 }

@@ -17,17 +17,13 @@
  
 package org.apache.linkis.storage.script.parser
 
+import org.apache.linkis.common.utils.CodeAndRunTypeUtils
+
 
 class QLScriptParser private extends CommonScriptParser {
   override def prefix: String = "--@set"
 
-  override def belongTo(suffix: String): Boolean = {
-    suffix match {
-      case "sql" => true
-      case "hql" => true
-      case _ => false
-    }
-  }
+  override def belongTo(suffix: String): Boolean = CodeAndRunTypeUtils.getSuffixBelongToRunTypeOrNot(suffix, CodeAndRunTypeUtils.RUN_TYPE_SQL)
 
   override def prefixConf: String = "--conf@set"
 }

@@ -35,6 +35,8 @@ class DefaultEngineConnPluginPointer extends EngineConnPluginPointer {
     getEngineConnPluginSender.ask(engineResourceRequest) match {
       case nodeResource: NodeResource =>
         nodeResource
+      case ecpTaskException: Exception =>
+        throw new AMErrorException(AMConstant.ENGINE_ERROR_CODE, ecpTaskException.getMessage, ecpTaskException)
       case _ =>
         throw new AMErrorException(AMConstant.ENGINE_ERROR_CODE, s"Failed to create engineResource")
     }

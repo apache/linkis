@@ -60,19 +60,16 @@ class RetryExecTask(private val originTask: ExecTask, private val age: Int = 1) 
   }
 
   def getMaxRetryCount(): Integer = {
-    var count = -1
+    var count = OrchestratorConfiguration.RETRYTASK_MAXIMUM_AGE.getValue
     val retryCountLabel = LabelUtil.getLabelFromList[RetryCountLabel](getLabels)
     if (null != retryCountLabel) {
       count = retryCountLabel.getJobRetryCount
     } else {
-      val runtimeMap = new util.HashMap[String, String]()
       Utils.tryAndWarn {
-        getTaskDesc.getOrigin.getASTOrchestration.getASTContext.getParams.getRuntimeParams.toMap.asScala.foreach(kv => {
-          if (kv._2.isInstanceOf[String]) {
-            runtimeMap.put(kv._1, kv._2.asInstanceOf[String])
-          }
-        })
-        count = OrchestratorConfiguration.RETRYTASK_MAXIMUM_AGE.getValue(runtimeMap)
+        val params = getTaskDesc.getOrigin.getASTOrchestration.getASTContext.getParams.getRuntimeParams
+        if (null != params && null != params.get(OrchestratorConfiguration.RETRYTASK_MAXIMUM_AGE.key)) {
+          count = params.get(OrchestratorConfiguration.RETRYTASK_MAXIMUM_AGE.key).asInstanceOf[Integer]
+        }
       }
     }
     count

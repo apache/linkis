@@ -58,7 +58,7 @@ class ResourceLogService extends Logging {
     logString.toString()
   }
 
-  def failed(changeType: String, resource: Resource, engineLabel: EngineInstanceLabel = null, ecmLabel: EMInstanceLabel = null, exception: Exception = null): Unit = Utils.tryQuietly {
+  def failed(changeType: String, resource: Resource, engineLabel: EngineInstanceLabel = null, ecmLabel: EMInstanceLabel = null, exception: Exception = null): Unit = Utils.tryAndWarn {
     if (changeType != null) {
       val log: String = changeType match {
         case ChangeType.ENGINE_INIT => {
@@ -89,7 +89,7 @@ class ResourceLogService extends Logging {
     }
   }
 
-  def success(changeType: String, resource: Resource, engineLabel: EngineInstanceLabel = null, ecmLabel: EMInstanceLabel = null): Unit = Utils.tryQuietly {
+  def success(changeType: String, resource: Resource, engineLabel: EngineInstanceLabel = null, ecmLabel: EMInstanceLabel = null): Unit = Utils.tryAndWarn {
     if (changeType != null) {
       val log: String = changeType match {
         case ChangeType.ENGINE_INIT => {

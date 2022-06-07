@@ -17,7 +17,7 @@
 
 package org.apache.linkis.governance.common.constant.job
 
-object TaskConstants {
+object TaskInfoConstants {
 
   val EXEC_ID = "execId"
   val ID_INFO = "idInfo"

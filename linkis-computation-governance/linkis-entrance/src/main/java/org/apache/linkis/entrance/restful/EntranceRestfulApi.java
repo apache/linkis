@@ -311,7 +311,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
                                         .reduce((x, y) -> x + y);
                         float corePercent = 0.0f;
                         float memoryPercent = 0.0f;
-                        if (cores.isPresent()) {
+                        if (cores.isPresent() && memory.isPresent()) {
                             corePercent =
                                     cores.get().floatValue()
                                             / EntranceConfiguration.YARN_QUEUE_CORES_MAX()

@@ -32,13 +32,15 @@ import traceback
 import warnings
 import signal
 import base64
-import pandas as pd
 from py4j.java_gateway import JavaGateway
 from io import BytesIO
 try:
   from StringIO import StringIO
 except ImportError:
   from io import StringIO
+
+import time
+import threading
 
 # for back compatibility
 
@@ -180,6 +182,19 @@ show = __show__ = PythonContext(intp)
 __show__._setup_matplotlib()
 
 intp.onPythonScriptInitialized(os.getpid())
+
+def java_watchdog_thread(sleep=10):
+    while True :
+        time.sleep(sleep)
+        try:
+            intp.kind()
+        except Exception as e:
+            print("Failed to detect java daemon, now exit python process")
+            print(e)
+            sys.exit(1)
+watchdog_thread = threading.Thread(target=java_watchdog_thread)
+watchdog_thread.setDaemon(True)
+watchdog_thread.start()
 
 while True :
   req = intp.getStatements()

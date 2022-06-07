@@ -16,14 +16,14 @@
   -->
 
 <template>
-  <div>
+  <div :style="{height: '100%'}">
     <div v-show="!showviewlog" class="ecmEngine">
       <Search :statusList="statusList" :ownerList="ownerList" :engineTypes="engineTypes" @search="search" @stop="stopAll" :stopbtn="true" />
       <Spin
         v-if="loading"
         size="large"
         fix/>
-      <Table class="table-content" border :width="tableWidth" :columns="columns" :data="pageDatalist" @on-selection-change="selctionChange">
+      <Table class="table-content ecm-engine-table" border :width="tableWidth" :columns="columns" :data="pageDatalist" @on-selection-change="selctionChange">
         <template slot-scope="{row}" slot="engineInstance">
           <span>{{row.instance}}</span>
         </template>
@@ -60,7 +60,7 @@
           size="small"
           show-total
           show-sizer
-          prev-text="上一页" next-text="下一页"
+          :prev-text="$t('message.linkis.previousPage')" :next-text="$t('message.linkis.nextPage')"
           @on-change="change"
           @on-page-size-change="changeSize" />
       </div>
@@ -70,7 +70,7 @@
         v-model="isTagEdit"
         :mask-closable="false">
         <Form :model="formItem" :label-width="80">
-          <FormItem :label="`${$t('message.linkis.instanceName')}：`">
+          <FormItem :label="`${$t('message.linkis.instanceName')}`">
             <Input disabled v-model="formItem.instance" ></Input>
           </FormItem>
           <FormItem class="addTagClass" :label="`${$t('message.linkis.tableColumns.label')}：`">
@@ -493,3 +493,23 @@ export default {
 
 <style src="./index.scss" lang="scss" scoped></style>
 
+<style lang="scss">
+.ecm-engine-table {
+  border: 0;
+  height: calc(100% - 110px);
+  overflow: auto;
+
+  .ivu-table:before {
+    height: 0
+  }
+  
+  .ivu-table:after {
+    width: 0
+  }
+
+  .ivu-table {
+    height: auto;
+    border: 1px solid #dcdee2;
+  }
+}
+</style>

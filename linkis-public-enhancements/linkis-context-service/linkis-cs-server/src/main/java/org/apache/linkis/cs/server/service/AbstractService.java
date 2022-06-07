@@ -80,6 +80,9 @@ public abstract class AbstractService implements Service {
         // 传入参数类型是否是方法参数的子类
         Class<?>[] parameterTypes = method.getParameterTypes();
         for (int i = 0; i < parameterTypes.length; i++) {
+            if (null == parameterTypes[i] || null == objects[i]) {
+                continue;
+            }
             if (!parameterTypes[i].isAssignableFrom(objects[i].getClass())) {
                 flag = false;
                 break;

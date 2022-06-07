@@ -48,16 +48,17 @@ public class TestChangeContext {
                                 + " invalid.");
                 return;
             }
-            FileReader fr = new FileReader(file);
-            BufferedReader br = new BufferedReader(fr);
-            String contextIDStr = null;
-            StringBuilder builder = new StringBuilder("");
-            java.lang.String tmp = br.readLine();
-            while (null != tmp) {
-                builder.append(tmp);
-                tmp = br.readLine();
+
+            String contextIDStr;
+            StringBuilder builder = new StringBuilder();
+            try (FileReader fr = new FileReader(file);
+                    BufferedReader br = new BufferedReader(fr)) {
+                java.lang.String tmp = br.readLine();
+                while (null != tmp) {
+                    builder.append(tmp);
+                    tmp = br.readLine();
+                }
             }
-            br.close();
             contextIDStr = builder.toString();
             System.out.println("Read contextID : " + contextIDStr);
 

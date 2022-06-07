@@ -186,8 +186,8 @@ export default {
           }, 'get')
           .then((res) => {
             this.data = (res.versionList || []).map(it => {
-              it.status = it.expire ? '过期' : '正常'
-              it.publish = it.published ? '是' : '否'
+              it.status = it.expire ? this.$t('message.linkis.udf.expire') : this.$t('message.linkis.udf.normal')
+              it.publish = it.published ? this.$t('message.linkis.udf.yes') : this.$t('message.linkis.udf.no')
               it.createTimeFormat = moment(it.createTime).format('YYYY-MM-DD HH:mm:ss')
               return it
             })

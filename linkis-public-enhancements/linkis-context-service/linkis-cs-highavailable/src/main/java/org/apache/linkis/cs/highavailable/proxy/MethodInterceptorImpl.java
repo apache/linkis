@@ -204,6 +204,9 @@ public class MethodInterceptorImpl implements MethodInterceptor {
     }
 
     private void convertGetContextIDBeforeInvoke(Object object) throws CSErrorException {
+        if (null == object) {
+            return;
+        }
         for (Method innerMethod : object.getClass().getMethods()) {
             if (innerMethod.getName().toLowerCase().contains(GETCONTEXTID)) {
                 try {
@@ -224,16 +227,20 @@ public class MethodInterceptorImpl implements MethodInterceptor {
     }
 
     private void convertGetContextIDAfterInvoke(Object object) throws CSErrorException {
+        if (null == object) {
+            return;
+        }
         for (Method innerMethod : object.getClass().getMethods()) {
-            convertGetContextIDAfterInvokeMethod(innerMethod);
+            convertGetContextIDAfterInvokeMethod(innerMethod, object);
         }
     }
 
-    private void convertGetContextIDAfterInvokeMethod(Method method) throws CSErrorException {
+    private void convertGetContextIDAfterInvokeMethod(Method method, Object methodObject)
+            throws CSErrorException {
         if (method.getName().toLowerCase().contains(GETCONTEXTID)) {
             Object result = null;
             try {
-                result = method.invoke(object);
+                result = method.invoke(methodObject);
             } catch (Exception e) {
                 logger.warn("Invoke method : {} error. ", method.getName(), e);
             }

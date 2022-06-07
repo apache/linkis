@@ -375,7 +375,7 @@ public class HDFSFileSystem extends FileSystem {
             }
             fsPath.setPermissionString(fileStatus.getPermission().toString());
         } catch (Throwable e) {
-            logger.error("Failed to fill storage file：" + fileStatus.getPath(), e);
+            logger.warn("Failed to fill storage file：" + fileStatus.getPath(), e);
         }
         return fsPath;
     }
@@ -448,7 +448,7 @@ public class HDFSFileSystem extends FileSystem {
                         int remainIndex = HDFS_PREFIX_WITH_AUTH.length();
                         String[] t1 = path.substring(remainIndex).split("/", 2);
                         if (t1.length != 2) {
-                            logger.error("checkHDFSPath Invalid path: " + path);
+                            logger.warn("checkHDFSPath Invalid path: " + path);
                             return path;
                         }
                         if (logger.isDebugEnabled()) {
@@ -464,7 +464,7 @@ public class HDFSFileSystem extends FileSystem {
                 }
             }
         } catch (Exception e) {
-            logger.error("checkHDFSPath error. msg : " + e.getMessage() + " ", e);
+            logger.warn("checkHDFSPath error. msg : " + e.getMessage() + " ", e);
         }
         return path;
     }

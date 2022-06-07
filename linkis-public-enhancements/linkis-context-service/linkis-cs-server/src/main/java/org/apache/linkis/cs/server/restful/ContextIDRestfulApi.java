@@ -17,17 +17,21 @@
 
 package org.apache.linkis.cs.server.restful;
 
+import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.cs.common.entity.source.ContextID;
 import org.apache.linkis.cs.common.exception.CSErrorException;
 import org.apache.linkis.cs.common.protocol.ContextHTTPConstant;
+import org.apache.linkis.cs.common.utils.CSCommonUtils;
 import org.apache.linkis.cs.server.enumeration.ServiceMethod;
 import org.apache.linkis.cs.server.enumeration.ServiceType;
 import org.apache.linkis.cs.server.scheduler.CsScheduler;
 import org.apache.linkis.cs.server.scheduler.HttpAnswerJob;
 import org.apache.linkis.server.Message;
+import org.apache.linkis.server.utils.ModuleUserUtils;
+
+import org.apache.commons.lang3.StringUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -37,12 +41,21 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
+
+import static org.apache.linkis.cs.common.utils.CSCommonUtils.localDatetimeToDate;
 
 @RestController
 @RequestMapping(path = "/contextservice")
 public class ContextIDRestfulApi implements CsRestfulParent {
+
+    private static final Logger logger = LoggerFactory.getLogger(ContextIDRestfulApi.class);
 
     @Autowired private CsScheduler csScheduler;
 
@@ -98,6 +111,95 @@ public class ContextIDRestfulApi implements CsRestfulParent {
         }
         HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.REMOVE, id);
         return generateResponse(answerJob, "");
+    }
+
+    @RequestMapping(path = "searchContextIDByTime", method = RequestMethod.GET)
+    public Message searchContextIDByTime(
+            HttpServletRequest req,
+            @RequestParam(value = "createTimeStart", required = false) String createTimeStart,
+            @RequestParam(value = "createTimeEnd", required = false) String createTimeEnd,
+            @RequestParam(value = "updateTimeStart", required = false) String updateTimeStart,
+            @RequestParam(value = "updateTimeEnd", required = false) String updateTimeEnd,
+            @RequestParam(value = "accessTimeStart", required = false) String accessTimeStart,
+            @RequestParam(value = "accessTimeEnd", required = false) String accessTimeEnd,
+            @RequestParam(value = "pageNow", required = false) Integer paramPageNow,
+            @RequestParam(value = "pageSize", required = false) Integer paramPageSize)
+            throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
+        String username = ModuleUserUtils.getOperationUser(req);
+        if (!Configuration.isAdmin(username)) {
+            throw new CSErrorException(97018, "Only station admins are allowed.");
+        }
+        logger.info(
+                "user: {}, searchContextIDByTime : createTimeStart : {}, createTimeEnd : {}, updateTimeStart : {}, updateTimeEnd : {}, accessTimeStart : {}, accessTimeEnd : {}, pageNow : {}, pageSize : {}.",
+                username,
+                createTimeStart,
+                createTimeEnd,
+                updateTimeStart,
+                updateTimeEnd,
+                accessTimeStart,
+                accessTimeEnd,
+                paramPageNow,
+                paramPageSize);
+
+        if (null == createTimeStart
+                && null == createTimeEnd
+                && null == updateTimeStart
+                && null == createTimeEnd
+                && null == accessTimeStart
+                && null == accessTimeEnd) {
+            throw new CSErrorException(
+                    97000,
+                    "createTimeStart, createTimeEnd, updateTimeStart, updateTimeEnd, accessTimeStart, accessTimeEnd cannot be all null.");
+        }
+        int pageStart = 0;
+        if (null == paramPageNow || paramPageNow <= 0) {
+            pageStart = 1;
+        } else {
+            pageStart = paramPageNow;
+        }
+        int pageSize = 0;
+        if (null == paramPageSize
+                || paramPageSize <= 0
+                || paramPageSize > CSCommonUtils.CONTEXT_MAX_PAGE_SIZE) {
+            pageSize = CSCommonUtils.CONTEXT_MAX_PAGE_SIZE;
+        } else {
+            pageSize = paramPageSize;
+        }
+        Date createTimeStartDate = null;
+        Date createTimeEndDate = null;
+        Date updateTimeStartDate = null;
+        Date updateTimeEndDate = null;
+        Date accessTimeStartDate = null;
+        Date accessTimeEndDate = null;
+
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern(CSCommonUtils.DEFAULT_TIME_FORMAT);
+        if (StringUtils.isNotBlank(createTimeStart))
+            createTimeStartDate = localDatetimeToDate(LocalDateTime.parse(createTimeStart, dtf));
+        if (StringUtils.isNotBlank(createTimeEnd))
+            createTimeEndDate = localDatetimeToDate(LocalDateTime.parse(createTimeEnd, dtf));
+        if (StringUtils.isNotBlank(updateTimeStart))
+            updateTimeStartDate = localDatetimeToDate(LocalDateTime.parse(updateTimeStart, dtf));
+        if (StringUtils.isNotBlank(updateTimeEnd))
+            updateTimeEndDate = localDatetimeToDate(LocalDateTime.parse(updateTimeEnd, dtf));
+        if (StringUtils.isNotBlank(accessTimeStart))
+            accessTimeStartDate = localDatetimeToDate(LocalDateTime.parse(accessTimeStart, dtf));
+        if (StringUtils.isNotBlank(accessTimeEnd))
+            accessTimeEndDate = localDatetimeToDate(LocalDateTime.parse(accessTimeEnd, dtf));
+        HttpAnswerJob answerJob =
+                submitRestJob(
+                        req,
+                        ServiceMethod.SEARCH,
+                        createTimeStartDate,
+                        createTimeEndDate,
+                        updateTimeStartDate,
+                        updateTimeEndDate,
+                        accessTimeStartDate,
+                        accessTimeEndDate,
+                        pageStart,
+                        pageSize);
+        Message resp = generateResponse(answerJob, "contextIDs");
+        resp.setMethod("/api/contextservice/searchContextIDByTime");
+        return resp;
     }
 
     @Override

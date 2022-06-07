@@ -31,8 +31,8 @@ import org.apache.linkis.storage.source.FileSource
 import org.apache.commons.io.IOUtils
 import org.apache.linkis.manager.engineplugin.pipeline.conf.PipelineEngineConfiguration
 import java.util
-
 import scala.collection.JavaConverters.mapAsScalaMapConverter
+
 
 class ExcelExecutor extends PipeLineExecutor {
   override def execute(sourcePath: String, destPath: String, engineExecutorContext: EngineExecutionContext): ExecuteResponse = {

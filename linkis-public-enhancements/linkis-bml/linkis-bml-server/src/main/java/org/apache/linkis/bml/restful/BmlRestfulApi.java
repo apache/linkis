@@ -682,7 +682,7 @@ public class BmlRestfulApi {
         if (StringUtils.isEmpty(resourceId) || !resourceService.checkResourceId(resourceId)) {
             logger.error("error resourceId  is {} ", resourceId);
             throw new BmlServerParaErrorException(
-                    "resourceId: " + resourceId + "is Null, illegal, or deleted!");
+                    "resourceId: " + resourceId + " is Null, illegal, or deleted!");
         }
         if (StringUtils.isEmpty(versionService.getNewestVersion(resourceId))) {
             logger.error(

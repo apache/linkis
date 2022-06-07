@@ -30,11 +30,11 @@ import org.apache.poi.xssf.streaming.{SXSSFCell, SXSSFSheet, SXSSFWorkbook}
 
 import scala.collection.mutable.ArrayBuffer
 import org.apache.linkis.storage.domain._
-
 import java.util.Date
 
 
 class StorageExcelWriter(val charset: String, val sheetName: String, val dateFormat: String, val outputStream: OutputStream, val autoFormat: Boolean) extends ExcelFsWriter with Logging {
+
 
   protected var workBook: SXSSFWorkbook = _
   protected var sheet: SXSSFSheet = _

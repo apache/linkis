@@ -28,6 +28,7 @@ import org.apache.linkis.metadatamanager.common.exception.MetaRuntimeException;
 import org.apache.linkis.metadatamanager.common.service.AbstractMetaService;
 import org.apache.linkis.metadatamanager.common.service.MetadataConnection;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.hive.metastore.api.FieldSchema;
@@ -39,6 +40,7 @@ import org.apache.hadoop.hive.ql.metadata.Table;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
@@ -77,6 +79,7 @@ public class HiveMetaService extends AbstractMetaService<HiveConnection> {
                     String.valueOf(
                             params.getOrDefault(HiveParamsMapper.PARAM_HIVE_KEYTAB.getValue(), ""));
             if (StringUtils.isNotBlank(keytabResourceId)) {
+                FileUtils.forceMkdir(new File(TMP_FILE_STORE_LOCATION.getValue()));
                 LOG.info("Start to download resource id:[" + keytabResourceId + "]");
                 String keytabFilePath =
                         TMP_FILE_STORE_LOCATION.getValue()

@@ -39,6 +39,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.Date;
+import java.util.List;
 
 @Component
 public class ContextIDPersistenceImpl implements ContextIDPersistence {
@@ -57,6 +59,10 @@ public class ContextIDPersistenceImpl implements ContextIDPersistence {
             Pair<PersistenceContextID, ExtraFieldClass> pContextID =
                     PersistenceUtils.transfer(contextID, pClass);
             pContextID.getFirst().setSource(json.writeValueAsString(pContextID.getSecond()));
+            Date now = new Date();
+            pContextID.getFirst().setCreateTime(now);
+            pContextID.getFirst().setUpdateTime(now);
+            pContextID.getFirst().setAccessTime(now);
             contextIDMapper.createContextID(pContextID.getFirst());
             contextID.setContextId(pContextID.getFirst().getContextId());
             return contextID;
@@ -76,6 +82,9 @@ public class ContextIDPersistenceImpl implements ContextIDPersistence {
         // contextId和source没有设置更新点
         Pair<PersistenceContextID, ExtraFieldClass> pContextID =
                 PersistenceUtils.transfer(contextID, pClass);
+        if (null == pContextID.getFirst().getAccessTime()) {
+            pContextID.getFirst().setUpdateTime(new Date());
+        }
         contextIDMapper.updateContextID(pContextID.getFirst());
     }
 
@@ -125,5 +134,31 @@ public class ContextIDPersistenceImpl implements ContextIDPersistence {
             logger.error("readJson failed:", e);
             throw new CSErrorException(97000, e.getMessage());
         }
+    }
+
+    @Override
+    public List<PersistenceContextID> searchContextID(PersistenceContextID contextID)
+            throws CSErrorException {
+        PersistenceContextID persistenceContextID = new PersistenceContextID();
+        persistenceContextID.setContextId(contextID.getContextId());
+        persistenceContextID.setContextIDType(contextID.getContextIDType());
+        return contextIDMapper.searchContextID(persistenceContextID);
+    }
+
+    @Override
+    public List<PersistenceContextID> searchCSIDByTime(
+            Date createTimeStart,
+            Date createTimeEnd,
+            Date updateTimeStart,
+            Date updateTimeEnd,
+            Date accessTimeStart,
+            Date accessTimeEnd) {
+        return contextIDMapper.getAllContextIDByTime(
+                createTimeStart,
+                createTimeEnd,
+                updateTimeStart,
+                updateTimeEnd,
+                accessTimeStart,
+                accessTimeEnd);
     }
 }

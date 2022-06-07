@@ -19,6 +19,10 @@ package org.apache.linkis.cs.persistence.persistence;
 
 import org.apache.linkis.cs.common.entity.source.ContextID;
 import org.apache.linkis.cs.common.exception.CSErrorException;
+import org.apache.linkis.cs.persistence.entity.PersistenceContextID;
+
+import java.util.Date;
+import java.util.List;
 
 public interface ContextIDPersistence {
 
@@ -29,4 +33,16 @@ public interface ContextIDPersistence {
     void updateContextID(ContextID contextID) throws CSErrorException;
 
     ContextID getContextID(String contextId) throws CSErrorException;
+
+    List<PersistenceContextID> searchContextID(PersistenceContextID contextID)
+            throws CSErrorException;
+
+    List<PersistenceContextID> searchCSIDByTime(
+            Date createTimeStart,
+            Date createTimeEnd,
+            Date updateTimeStart,
+            Date updateTimeEnd,
+            Date accessTimeStart,
+            Date accessTimeEnd)
+            throws CSErrorException;
 }

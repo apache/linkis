@@ -41,9 +41,9 @@ public interface HiveMetaDao {
 
     List<Map<String, Object>> getColumns(Map<String, String> map);
 
-    Map<String, Object> getSIDByDbTableNameAndUser(Map<String, String> map);
+    Map<String, Object> getStorageDescriptionIDByDbTableNameAndUser(Map<String, String> map);
 
-    List<Map<String, Object>> getColumnsBySDID(Map<String, String> map);
+    List<Map<String, Object>> getColumnsByStorageDescriptionID(Map<String, String> map);
 
     List<Map<String, Object>> getPartitionKeys(Map<String, String> map);
 

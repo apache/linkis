@@ -305,8 +305,7 @@ public class LocalFileSystem extends FileSystem {
         try {
             attr = Files.readAttributes(Paths.get(fsPath.getPath()), PosixFileAttributes.class);
         } catch (NoSuchFileException e) {
-            LOG.warn(
-                    "File or folder does not exist or file name is garbled(文件或者文件夹不存在或者文件名乱码)", e);
+            LOG.warn("File or folder does not exist or file name is garbled(文件或者文件夹不存在或者文件名乱码)", e);
             throw new StorageWarnException(51001, e.getMessage());
         }
 

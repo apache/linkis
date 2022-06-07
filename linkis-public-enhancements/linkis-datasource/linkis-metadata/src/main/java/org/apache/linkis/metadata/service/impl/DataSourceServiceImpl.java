@@ -170,7 +170,7 @@ public class DataSourceServiceImpl implements DataSourceService {
         param.put(MdqConstants.DB_NAME_KEY(), dbName);
         param.put(MdqConstants.TABLE_NAME_KEY(), tableName);
         param.put(MdqConstants.SDID_KEY(), sdid);
-        List<Map<String, Object>> columns = hiveMetaDao.getColumnsBySDID(param);
+        List<Map<String, Object>> columns = hiveMetaDao.getColumnsByStorageDescriptionID(param);
         List<Map<String, Object>> partitionKeys = hiveMetaDao.getPartitionKeys(param);
         return getJsonNodesFromColumnMap(columns, partitionKeys);
     }

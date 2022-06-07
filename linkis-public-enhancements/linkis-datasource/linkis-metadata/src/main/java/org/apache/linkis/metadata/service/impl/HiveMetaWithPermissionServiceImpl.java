@@ -96,7 +96,8 @@ public class HiveMetaWithPermissionServiceImpl implements HiveMetaWithPermission
         }
         if (flag) {
             // with permission
-            Map<String, Object> tableMap = hiveMetaDao.getSIDByDbTableNameAndUser(map);
+            Map<String, Object> tableMap =
+                    hiveMetaDao.getStorageDescriptionIDByDbTableNameAndUser(map);
             if (null != tableMap
                     && !tableMap.isEmpty()
                     && tableMap.containsKey(MdqConstants.SDID_KEY())) {

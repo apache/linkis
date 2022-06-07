@@ -13,28 +13,19 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
-package org.apache.linkis.metadata.service;
+package org.apache.linkis.metadata.utils
 
-import com.fasterxml.jackson.databind.JsonNode;
+object MdqConstants {
 
-public interface DataSourceService {
+  val DB_NAME_KEY = "dbName"
 
-    JsonNode getDbs(String userName) throws Exception;
+  val TABLE_NAME_KEY = "tableName"
 
-    JsonNode getDbsWithTables(String userName) throws Exception;
+  val USERNAME_KEY = "userName"
 
-    JsonNode queryTables(String database, String userName);
+  val SDID_KEY = "SD_ID"
 
-    JsonNode queryTableMeta(String dbName, String tableName, String userName);
-
-    JsonNode queryTableMetaBySDID(String dbName, String tableName, String sdid);
-
-    JsonNode getTableSize(String dbName, String tableName, String userName);
-
-    JsonNode getPartitionSize(
-            String dbName, String tableName, String partitionName, String userName);
-
-    JsonNode getPartitions(String dbName, String tableName, String userName);
 }

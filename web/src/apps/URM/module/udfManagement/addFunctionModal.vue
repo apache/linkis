@@ -19,9 +19,15 @@
   <Modal
     v-model="show"
     :mask-closable="false"
+    :class-name="isFullScreen ? 'full-screen udf-modal' : 'udf-modal'"
   >
     <div slot="header">
       <span>{{ title }}</span>
+      <span class="full-screen-button" @click="isFullScreen = !isFullScreen">
+        <Icon v-if="!isFullScreen" type="ios-expand" />
+        <Icon v-if="isFullScreen" type="ios-contract" />
+        {{ isFullScreen ? $t('message.linkis.udf.QXQP') : $t('message.linkis.udf.QPZS')}}
+      </span>
     </div>
     <Form
       ref="setting"
@@ -423,7 +429,9 @@ export default {
         ]
       },
       directories: [],
-      filterNode: () => {}
+      filterNode: () => {},
+      // 是否全屏展示弹框
+      isFullScreen: false
     };
   },
 
@@ -759,4 +767,43 @@ export default {
 </script>
 <style lang="scss" src="./index.scss">
 
+</style>
+<style lang="scss">
+.udf-modal {
+  .full-screen-button {
+    position: absolute;
+    top: 14px;
+    right: 35px;
+    cursor: pointer;
+    &:hover {
+      color: #2d8cf0;
+    }
+  }
+
+  .ivu-modal-close {
+    top: 3px;
+  }
+}
+
+.full-screen {
+  .ivu-modal {
+    width: 100% !important;
+    height: 100% !important;
+    top: 0 !important;
+
+    .ivu-modal-body {
+      height: calc(100% - 150px) !important;
+      .ivu-form {
+        height: 100% !important;
+      }
+    }
+  
+    .ivu-modal-content {
+      height: 100% !important;
+    }
+    .fn-default-load {
+      bottom: 70px !important;
+    }
+  }
+}
 </style>

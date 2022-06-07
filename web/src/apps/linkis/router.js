@@ -21,7 +21,7 @@ export const subAppRoutes = {
   component: () => import('./view/layout.vue'),
   redirect: '/console',
   meta: {
-    title: 'DataSphere Studio',
+    title: 'Linkis',
     publicPage: true, // 权限公开
   },
   children: []
@@ -82,6 +82,24 @@ export default [
         import('./module/ECM/index.vue'),
       meta: {
         title: 'ECM',
+        publicPage: true,
+      },
+    }, {
+      name: 'UdfManagement',
+      path: 'urm/udfManagement',
+      component: () =>
+        import('../URM/module/udfManagement/index.vue'),
+      meta: {
+        title: 'UdfManagement',
+        publicPage: true,
+      },
+    }, {
+      name: 'FunctionManagement',
+      path: 'urm/functionManagement',
+      component: () =>
+        import('../URM/module/functionManagement/index.vue'),
+      meta: {
+        title: 'FunctionManagement',
         publicPage: true,
       },
     }, {

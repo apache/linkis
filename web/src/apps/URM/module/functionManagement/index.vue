@@ -106,6 +106,7 @@
     >
       <span>移交给：</span>
       <Select ref="userSelect" v-model="handleUser" filterable 
+        v-if=allUsers.length
         :remoteMethod="filterSelect" 
         @on-query-change="queryChange"
         placeholder="请输入用户名" style="width:200px;">
@@ -116,6 +117,7 @@
           :key="item"
         />
       </Select>
+      <Input v-if=!allUsers.length v-model="handleUser" placeholder="请输入用户名" style="width: 250px" />
       <div slot="footer">
         <Button @click="changUserModal=false">取消</Button>
         <Button type="primary" :disabled="!this.handleUser" @click="changeUser">确定</Button>
@@ -194,7 +196,8 @@ export default {
       vlistModal: false,
       sharedUsers: '',
       handleRow: {},
-      udfUsers: []
+      udfUsers: [],
+      allUsers: []
     }
   },
   created() {
@@ -209,11 +212,6 @@ export default {
     //   this.getCreators = ['all', ...res.engineType]
     // })
     // 所有用户列表，移交时选择用户
-    api.fetch('/dss/framework/workspace/listAllUsers', 'get').then(res => {
-      let allUsers =  (res.users || []).map(it => it.username)
-      this.udfUsers = allUsers.slice(0, 150)
-      this.allUsers = allUsers
-    })
   },
   mounted() {
     this.init()
@@ -631,6 +629,15 @@ export default {
         this.handleUser = ''
         this.changUserModal = true
         this.handleRow = args.row
+
+        api.fetch('/dss/framework/workspace/listAllUsers', 'get').then(res => {
+          let allUsers =  (res.users || []).map(it => it.username)
+          this.udfUsers = allUsers.slice(0, 150)
+          this.allUsers = allUsers
+        }).catch(()=>{
+          this.udfUsers = [];
+          this.allUsers = [];
+        })
       } else {
         const params = {
           udfId: this.handleRow.id,
@@ -675,7 +682,7 @@ export default {
     },
     changUserModalChange(v) {
       if (v) {
-        this.$refs.userSelect.setQuery(null);
+        this.$refs.userSelect && this.$refs.userSelect.setQuery(null);
         this.handleUser = ''
         let options = this.allUsers.slice(0, 150)
         this.udfUsers = options

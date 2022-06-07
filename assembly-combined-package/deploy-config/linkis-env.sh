@@ -30,20 +30,21 @@ deployUser=hadoop
 LINKIS_SERVER_VERSION=v1
 
 ### Specifies the user workspace, which is used to store the user's script files and log files.
-### Generally local directory
-WORKSPACE_USER_ROOT_PATH=file:///tmp/linkis/ ##file:// required
-### User's root hdfs path
-HDFS_USER_ROOT_PATH=hdfs:///tmp/linkis ##hdfs:// required
+### Generally local directory, path mode can be [file://] or [hdfs://]
+WORKSPACE_USER_ROOT_PATH=file:///tmp/linkis/
+### User's root hdfs path, path mode can be [file://] or [hdfs://]
+HDFS_USER_ROOT_PATH=hdfs:///tmp/linkis
 
 
 
 ### Path to store started engines and engine logs, must be local
 ENGINECONN_ROOT_PATH=/appcom/tmp
-
+###path mode can be [file://] or [hdfs://]
 #ENTRANCE_CONFIG_LOG_PATH=hdfs:///tmp/linkis/
 
-### Path to store job ResultSet:file or hdfs path
-RESULT_SET_ROOT_PATH=hdfs:///tmp/linkis ##hdfs:// required
+### Path to store job ResultSet
+### path mode can be [file://] or [hdfs://]
+RESULT_SET_ROOT_PATH=hdfs:///tmp/linkis
 
 ##YARN REST URL  spark engine required
 # Active resourcemanager address needed. Recommended to add all ha addresses. eg YARN_RESTFUL_URL="http://127.0.0.1:8088;http://127.0.0.2:8088"
@@ -149,6 +150,10 @@ LINKIS_PUBLIC_MODULE=lib/linkis-commons/public-module
 
 #If you want to start metadata related microservices, you can set this export ENABLE_METADATA_MANAGE=true
 export ENABLE_METADATA_MANAGER=false
-export ENABLE_HDFS=false
-export ENABLE_HIVE=false
-export ENABLE_SPARK=false
+
+#If you only want to experience linkis streamlined services, not rely on hdfs
+#you can set the following configuration to false  and for the configuration related to the file directory,
+#use path mode of [file://] to replace [hdfs://]
+export ENABLE_HDFS=true
+export ENABLE_HIVE=true
+export ENABLE_SPARK=true

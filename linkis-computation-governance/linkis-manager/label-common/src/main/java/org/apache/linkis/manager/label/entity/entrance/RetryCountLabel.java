@@ -33,7 +33,7 @@ public class RetryCountLabel extends GenericLabel implements JobStrategyLabel {
         if (null == getValue()) {
             return -1;
         }
-        return Integer.parseInt(getValue().getOrDefault(LabelKeyConstant.RETRY_COUNT_KEY, "-1"));
+        return Integer.parseInt(getValue().getOrDefault(LabelKeyConstant.RETRY_COUNT_KEY, "10"));
     }
 
     @ValueSerialNum(0)

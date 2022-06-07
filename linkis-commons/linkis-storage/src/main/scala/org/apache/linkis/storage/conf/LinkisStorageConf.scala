@@ -30,7 +30,7 @@ object LinkisStorageConf {
       ".*Filesystem closed.*|.*Failed to find any Kerberos tgt.*")
       .getValue
 
-  val ROW_BYTE_MAX_LEN_STR = CommonVars("wds.linkis.resultset.row.max.str", "10m").getValue
+  val ROW_BYTE_MAX_LEN_STR = CommonVars("wds.linkis.resultset.row.max.str", "2m").getValue
 
   val ROW_BYTE_MAX_LEN = ByteTimeUtils.byteStringAsBytes(ROW_BYTE_MAX_LEN_STR)
 

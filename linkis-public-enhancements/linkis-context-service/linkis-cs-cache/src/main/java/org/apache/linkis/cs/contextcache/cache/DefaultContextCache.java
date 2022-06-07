@@ -73,7 +73,7 @@ public class DefaultContextCache implements ContextCache, CSIDListener {
         listenerBus.addListener(this);
         this.cache =
                 CacheBuilder.newBuilder()
-                        .maximumSize(3000)
+                        .maximumSize(ContextCacheConf.MAX_CACHE_SIZE)
                         .expireAfterWrite(
                                 Duration.ofMillis(ContextCacheConf.MAX_CACHE_READ_EXPIRE_MILLS))
                         .removalListener(contextIDRemoveListener)

@@ -17,6 +17,7 @@
 
 package org.apache.linkis.cs.server.restful;
 
+import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.cs.common.entity.source.ContextID;
 import org.apache.linkis.cs.common.exception.CSErrorException;
 import org.apache.linkis.cs.common.protocol.ContextHTTPConstant;
@@ -26,6 +27,7 @@ import org.apache.linkis.cs.server.enumeration.ServiceType;
 import org.apache.linkis.cs.server.scheduler.CsScheduler;
 import org.apache.linkis.cs.server.scheduler.HttpAnswerJob;
 import org.apache.linkis.server.Message;
+import org.apache.linkis.server.utils.ModuleUserUtils;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -39,6 +41,8 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -50,6 +54,8 @@ import static org.apache.linkis.cs.common.utils.CSCommonUtils.localDatetimeToDat
 @RestController
 @RequestMapping(path = "/contextservice")
 public class ContextIDRestfulApi implements CsRestfulParent {
+
+    private static final Logger logger = LoggerFactory.getLogger(ContextIDRestfulApi.class);
 
     @Autowired private CsScheduler csScheduler;
 
@@ -119,13 +125,31 @@ public class ContextIDRestfulApi implements CsRestfulParent {
             @RequestParam(value = "pageNow", required = false) Integer paramPageNow,
             @RequestParam(value = "pageSize", required = false) Integer paramPageSize)
             throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
+        String username = ModuleUserUtils.getOperationUser(req);
+        if (!Configuration.isAdmin(username)) {
+            throw new CSErrorException(97018, "Only station admins are allowed.");
+        }
+        logger.info(
+                "user: {}, searchContextIDByTime : createTimeStart : {}, createTimeEnd : {}, updateTimeStart : {}, updateTimeEnd : {}, accessTimeStart : {}, accessTimeEnd : {}, pageNow : {}, pageSize : {}.",
+                username,
+                createTimeStart,
+                createTimeEnd,
+                updateTimeStart,
+                updateTimeEnd,
+                accessTimeStart,
+                accessTimeEnd,
+                paramPageNow,
+                paramPageSize);
+
         if (null == createTimeStart
                 && null == createTimeEnd
                 && null == updateTimeStart
-                && null == createTimeEnd) {
+                && null == createTimeEnd
+                && null == accessTimeStart
+                && null == accessTimeEnd) {
             throw new CSErrorException(
                     97000,
-                    "createTimeStart, createTimeEnd, updateTimeStart, updateTimeEnd cannot be all null.");
+                    "createTimeStart, createTimeEnd, updateTimeStart, updateTimeEnd, accessTimeStart, accessTimeEnd cannot be all null.");
         }
         int pageStart = 0;
         if (null == paramPageNow || paramPageNow <= 0) {
@@ -173,7 +197,9 @@ public class ContextIDRestfulApi implements CsRestfulParent {
                         accessTimeEndDate,
                         pageStart,
                         pageSize);
-        return generateResponse(answerJob, "contextIDs");
+        Message resp = generateResponse(answerJob, "contextIDs");
+        resp.setMethod("/api/contextservice/searchContextIDByTime");
+        return resp;
     }
 
     @Override

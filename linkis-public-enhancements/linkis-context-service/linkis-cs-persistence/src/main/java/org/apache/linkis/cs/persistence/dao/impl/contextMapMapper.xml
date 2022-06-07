@@ -21,14 +21,14 @@
 <mapper namespace="org.apache.linkis.cs.persistence.dao.ContextMapMapper">
 
     <sql id="context_map">
-        `id`,`key`,`context_scope`,`context_type`,`props`,`value`,`context_id`,`keywords`,`create_time`,`update_time`
+        `id`,`key`,`context_scope`,`context_type`,`props`,`value`,`context_id`,`keywords`,`create_time`,`update_time`,`access_time`
     </sql>
 
     <insert id="createMap"
             parameterType="org.apache.linkis.cs.persistence.entity.PersistenceContextKeyValue">
         INSERT INTO linkis_ps_cs_context_map(<include refid="context_map"/>)
         VALUES (#{id},#{contextKey.key},#{contextKey.contextScope},#{contextKey.contextType},
-        #{props},#{contextValue.valueStr},#{contextId},#{contextValue.keywords},#{createTime},#{updateTime})
+        #{props},#{contextValue.valueStr},#{contextId},#{contextValue.keywords},#{createTime},#{updateTime},#{accessTime})
     </insert>
 
     <resultMap id="PersistenceContextKeyValue"

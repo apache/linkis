@@ -21,13 +21,13 @@
 <mapper namespace="org.apache.linkis.cs.persistence.dao.ContextHistoryMapper">
 
     <sql id="context_history">
-        `id`,`context_id`,`source`,`context_type`,`history_json`,`keyword`,`create_time`,`update_time`
+        `id`,`context_id`,`source`,`context_type`,`history_json`,`keyword`,`create_time`,`update_time`,`access_time`
     </sql>
 
     <insert id="createHistory" useGeneratedKeys="true" keyProperty="id"
             parameterType="org.apache.linkis.cs.persistence.entity.PersistenceContextHistory">
         INSERT INTO linkis_ps_cs_context_history(<include refid="context_history"/>)
-        VALUES (#{id},#{contextId},#{source},#{contextType},#{historyJson},#{keyword},#{createTime},#{updateTime})
+        VALUES (#{id},#{contextId},#{source},#{contextType},#{historyJson},#{keyword},#{createTime},#{updateTime},#{accessTime})
     </insert>
 
 
@@ -55,7 +55,9 @@
             <if test="pHistory.source != null">`source` = #{pHistory.source},</if>
             <if test="pHistory.contextType != null">`context_type` = #{pHistory.contextType},</if>
             <if test="pHistory.keyword != null">`keyword` = #{pHistory.keyword},</if>
-            `update_time` = now()
+            <if test="updateTime != null">`update_time` = #{updateTime},</if>
+            <if test="createTime != null">`create_time` = #{createTime},</if>
+            <if test="accessTime != null">`access_time` = #{accessTime},</if>
         </trim>
         WHERE id = #{pHistory.id}
     </update>

@@ -23,7 +23,7 @@
       "cancel": "Cancel",
       "delete": "Delete",
       "failedNotice": "Invalid items found, please check and then retry!",
-      "logoName": "DataSphere Studio",
+      "logoName": "Linkis",
       "home": "Home",
       "management": "Console",
       "feedback": "Feedback",
@@ -251,10 +251,11 @@
         "comingSoon": "Planning in progress, please stay tuned!"
       },
       "login": {
-        "loginTitle": "Welcome to DataSphere Studio！",
+        "loginTitle": "Welcome to Linkis Studio！",
         "userName": "Please enter your phone",
         "remenber": "Remember me",
         "login": "Login",
+        "passwordHint": "Please enter your password",
         "password": "Please enter password！",
         "loginSuccess": "Login Success",
         "haveLogin": "You have already logged in, please do not login repeatedly",

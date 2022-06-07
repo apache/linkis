@@ -90,8 +90,10 @@ class DefaultEntranceExecutor(id: Long, mark: MarkReq, entranceExecutorManager: 
             if (runningIndex >= 0 && runningIndex <= jobGroupSize -1) {
               val totalProgress = 1.0 * (runningIndex + progressInfoEvent.progress) / jobGroupSize
               //Update progress info
-              progressInfoEvent.progressInfo.foreach(progressInfo =>
-                subJobInfo.getProgressInfoMap.put(progressInfo.id, progressInfo))
+              if (null != progressInfoEvent.progressInfo) {
+                progressInfoEvent.progressInfo.foreach(progressInfo =>
+                  subJobInfo.getProgressInfoMap.put(progressInfo.id, progressInfo))
+              }
               entranceJob.getProgressListener.foreach(_.onProgressUpdate(entranceJob, totalProgress.toFloat,
                 entranceJob.getProgressInfo))
             } else {
@@ -108,10 +110,11 @@ class DefaultEntranceExecutor(id: Long, mark: MarkReq, entranceExecutorManager: 
         }
         val metricsMap = entranceJob.getJobRequest.getMetrics
         val resourceMap = metricsMap.get(TaskConstant.ENTRANCEJOB_YARNRESOURCE)
+        val ecResourceMap = if (progressInfoEvent.resourceMap == null) new util.HashMap[String, ResourceWithStatus] else progressInfoEvent.resourceMap
         if(resourceMap != null) {
-          resourceMap.asInstanceOf[util.HashMap[String, ResourceWithStatus]].putAll(progressInfoEvent.resourceMap)
+          resourceMap.asInstanceOf[util.HashMap[String, ResourceWithStatus]].putAll(ecResourceMap)
         } else {
-          metricsMap.put(TaskConstant.ENTRANCEJOB_YARNRESOURCE, progressInfoEvent.resourceMap)
+          metricsMap.put(TaskConstant.ENTRANCEJOB_YARNRESOURCE, ecResourceMap)
         }
         // update engine info
         // todo
@@ -123,9 +126,9 @@ class DefaultEntranceExecutor(id: Long, mark: MarkReq, entranceExecutorManager: 
           metricsMap.put(TaskConstant.ENTRANCEJOB_ENGINECONN_MAP, engineInstanceMap)
         }
         val infoMap = progressInfoEvent.infoMap
-        if (infoMap.containsKey(TaskConstant.ENGINE_INSTANCE)) {
+        if (null != infoMap && infoMap.containsKey(TaskConstant.ENGINE_INSTANCE)) {
           val instance = infoMap.get(TaskConstant.ENGINE_INSTANCE).asInstanceOf[String]
-          val engineExtraInfoMap =  engineInstanceMap.getOrDefault(instance, new util.HashMap[String, Object]).asInstanceOf[util.HashMap[String, Object]]
+          val engineExtraInfoMap = engineInstanceMap.getOrDefault(instance, new util.HashMap[String, Object]).asInstanceOf[util.HashMap[String, Object]]
           engineInstanceMap.put(instance, engineExtraInfoMap)
           engineExtraInfoMap.putAll(infoMap)
         } else {

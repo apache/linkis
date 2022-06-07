@@ -55,7 +55,7 @@ class DefaultProgressOperation(orchestratorSession: OrchestratorSession) extends
 
   /**
     * To deal with the progress event from engineConn
-    * @param taskRunningInfoEvent progress event
+    * @param oriTaskRunningInfoEvent progress event
     */
   override def onProgressOn(oriTaskRunningInfoEvent: TaskRunningInfoEvent): Unit = {
     var taskRunningInfoEvent: TaskRunningInfoEvent = null

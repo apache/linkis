@@ -12,7 +12,8 @@
       "udf": {
         "functionName": "Function Name",
         "functionType": "Function Type",
-        "creator": "creator",
+        "addUDF": "Add UDF",
+        "creator": "Creator",
         "search": "search",
         "addFunction": "Add Function",
         "updateFunction": "Update Function",
@@ -37,7 +38,11 @@
           "expire": "Expire",
           "changeuser": "Transfer"
         },
-        "common": "common",
+        "common": "Common",
+        "expire": "Expire",
+        "normal": "Normal",
+        "yes": "Yes",
+        "no": "No",
         "sprak": "sprak",
         "jarPackage": "jar Package",
         "scriptPath": "Script Path",
@@ -52,7 +57,7 @@
         "LJCJ": "Create",
         "QSRMC": "Please enter the name",
         "CDZ": "Length should be between 1 to 100 characters",
-        "ZDYHS": "自定义函数",
+        "ZDYHS": "Self Defining Function",
         "BXYZMKT": "Must starts with alphabetic characters, followed by only alphanumeric, underscore and Chinese characters",
         "QZSXZYZLX": "Please choose at least one type",
         "QSRWZLJ": "Please enter the complete path",
@@ -66,7 +71,9 @@
         "SRCSLX": "Please enter the parameter type",
         "SRFL": "Please enter the directory",
         "XGHS": "Update funtion",
-        "XG": "Update"
+        "XG": "Update",
+        "QPZS": "View In Full Screen",
+        "QXQP": "Cancel Full Screen"
       }
     }
   }

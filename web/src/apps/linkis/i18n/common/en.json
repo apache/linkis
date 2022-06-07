@@ -14,7 +14,7 @@
       "addAppType": "Add application type",
       "editContents": "Add contents",
       "ConfirmEdit": "Done",
-      "eurekeRegisterCenter": "Eureke Register Center",
+      "eurekaRegisterCenter": "Eureka Register Center",
       "addTags": "Add Tags",
       "unfold": "Unfold",
       "fold": "Fold",
@@ -44,6 +44,7 @@
       "resources": "Resources",
       "reset": "Reset",
       "clearSearch": "Clear",
+      "showOperations": "Show Operations",
       "resetAll": "Reset All",
       "remove": "Remove",
       "submit": "Submit",
@@ -53,14 +54,23 @@
       "cancel": "Cancel",
       "create": "Create",
       "noDataText": "No data yet",
-      "jobId": "JobId",
+      "jobId": "JobID",
       "userName": "Username",
+      "password": "Password",
       "unselect": "Please select task",
       "noselection": "Please select first",
       "searchName": "Please enter username to search",
       "generalView": "Switch to the common view",
       "manageView": "Switch to the admin view",
       "back": "Back",
+      "prev": "Previous Step",
+      "complete": "Complete",
+      "udfName": "UDF Name",
+      "udfType": "UDF Type",
+      "nextPage": "Next Page",
+      "previousPage": "Previous Page",
+      "all": "All",
+      "common": "Common",
       "warning": {
         "api": "Requesting API, please hold on!",
         "data": "Requesting data, please hold on!",
@@ -84,6 +94,7 @@
         "initiator": "Initiator",
         "engineInstance": "Engine instance",
         "engineType": "Engine type",
+        "serveType": "Serve Type",
         "appType": "App Type",
         "taskID": "JobID",
         "fileName": "Source",
@@ -108,12 +119,12 @@
           "title": "Handle",
           "label": "View"
         },
-        "queenRemain": "队列剩余资源",
-        "queenUsed": "队列已用资源",
-        "queenTop": "队列上限资源",
-        "engineRemain": "引擎剩余资源",
-        "engineUsed": "引擎已用资源",
-        "engineTop": "引擎上限资源"
+        "queenRemain": "Queen Remain",
+        "queueUsed": "Queue Used",
+        "queueTop": "Queue Top",
+        "engineRemain": "Engine Remain",
+        "engineUsed": "Engine Used",
+        "engineTop": "Engine Top"
       },
       "logLoading": "Requesting logs, please hold on",
       "title": "Linkis Control Panel",
@@ -136,8 +147,10 @@
             "globalValiable": "Frequently Asked",
             "microserviceManage": "Microservice management",
             "ECMManage": "ECM Management",
+            "udfFunctionTitle": "UDF Function",
             "udfFunctionManage": "UDF Management",
-            "dataSourceManage": "DataSource Manage"
+            "dataSourceManage": "DataSource Manage",
+            "userResourceManagement": "User Resource Management"
           }
         }
       },
@@ -150,7 +163,7 @@
           "placeholder": "Please choose the start date"
         },
         "creator": {
-          "label": "creator",
+          "label": "Creator",
           "placeholder": "Please search by entering the creator"
         },
         "engine": {
@@ -189,9 +202,9 @@
         "username": "Username"
       },
       "shortcuts": {
-        "week": "Recent Week",
-        "month": "Recent Month",
-        "threeMonths": "Recent Three Months"
+        "week": "1Week",
+        "month": "1Month",
+        "threeMonths": "3Months"
       },
       "statusType": {
         "all": "All",
@@ -269,10 +282,10 @@
         "connectTest": "Test connection",
         "sourceName": "Data source name",
         "sourceDec": "Data source description",
-        "sourceType": "Data source type:",
-        "creator": "Creator:",
+        "sourceType": "Data source type",
+        "creator": "Creator",
         "create": "add source",
-        "exports": "export source",
+        "exports": "export sources",
         "imports": "importing sources",
         "overdue": "Expire",
         "versionList": "Version list",

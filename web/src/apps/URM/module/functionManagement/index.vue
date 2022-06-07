@@ -28,7 +28,7 @@
       <Divider type="vertical" class="divider" />
       <FormItem prop="functionType" :label="$t('message.linkis.udf.functionType')">
         <Select v-model="searchBar.functionType" style="width:120px;">
-          <Option label="全部" value="3,4" key="3,4" />
+          <Option :label="$t('message.linkis.all')" value="3,4" key="3,4" />
           <Option label="python" value="3" key="3" />
           <Option label="scala" value="4" key="4" />
         </Select>
@@ -82,6 +82,7 @@
           show-total
           show-elevator
           @on-change="changePage"
+          :prev-text="$t('message.linkis.previousPage')" :next-text="$t('message.linkis.nextPage')"
         />
       </div>
     </div>
@@ -216,7 +217,7 @@ export default {
   },
   mounted() {
     this.init()
-    this.moduleHeight = this.$parent.$el.clientHeight - 268
+    this.moduleHeight = this.$parent.$el.clientHeight - 228
     // 监听窗口变化，获取浏览器宽高
     window.addEventListener('resize', this.getHeight)
     this.getRootPath(() => {
@@ -306,7 +307,7 @@ export default {
       })
     },
     getHeight() {
-      this.moduleHeight = this.$parent.$el.clientHeight - 268
+      this.moduleHeight = this.$parent.$el.clientHeight - 228
     },
     init() {
       const lastSearch = storage.get('last-fnsearchbar-status')
@@ -348,7 +349,7 @@ export default {
           this.isLoading = false
           this.list = (rst.infoList || []).map(it=>{
             it.udfTypeText = it.udfType === 3 ? 'python' : 'scala'
-            it.status = it.expire ? '过期' : '正常'
+            it.status = it.expire ? this.$t('message.linkis.udf.expire') : this.$t('message.linkis.udf.normal')
             it.createTimeFormat = moment(it.createTime).format('YYYY-MM-DD HH:mm:ss')
             return it
           })
@@ -443,21 +444,19 @@ export default {
           title: this.$t('message.linkis.udf.functionName'),
           key: 'udfName',
           align: 'center',
-          width: 120,
-          // 溢出以...显示
-          ellipsis: true
+          width: 150,
         },
         {
           title: this.$t('message.linkis.udf.functionType'),
           key: 'udfTypeText',
           align: 'center',
-          width: 80
+          width: 90
         },
         {
           title: this.$t('message.linkis.udf.status'),
           key: 'status',
           align: 'center',
-          width: 60,
+          width: 80,
         },
         {
           title: this.$t('message.linkis.udf.availableCluster'),
@@ -483,20 +482,19 @@ export default {
           title: this.$t('message.linkis.udf.lastModifyTime'),
           key: 'createTimeFormat',
           align: 'center',
-          width: 140,
+          width: 180,
         },
         {
           title: this.$t('message.linkis.udf.creator'),
           key: 'createUser',
           align: 'center',
-          width: 80,
+          width: 120,
         },
         {
           title: this.$t('message.linkis.udf.action.title'),
           key: 'action',
           align: 'center',
-          width: 308,
-          className: 'history-control',
+          width: 360,
           renderType: 'button',
           renderParams: [
             {
@@ -504,14 +502,20 @@ export default {
               action: this.edit,
               match: (v, row)=>{  return row.operationStatus.canUpdate},
               style: {
-                color: '#2d8cf0'
+                backgroundColor: '#2d8cf0',
+                color: '#fff',
+                padding: '1px 7px 2px 7px !important',
+                marginRight: '5px'
               }
             },
             {
               label: this.$t('message.linkis.udf.action.vlist'),
               action: this.vlist,
               style: {
-                color: '#2d8cf0'
+                backgroundColor: '#2d8cf0',
+                color: '#fff',
+                padding: '1px 7px 2px 7px !important',
+                marginRight: '5px'
               }
             },
             {
@@ -519,7 +523,10 @@ export default {
               action: this.share,
               match: (v, row)=>{  return row.operationStatus.canShare},
               style: {
-                color: '#2d8cf0'
+                backgroundColor: '#2d8cf0',
+                color: '#fff',
+                padding: '1px 7px 2px 7px !important',
+                marginRight: '5px'
               }
             },
             {
@@ -527,7 +534,10 @@ export default {
               action: this.changeUser,
               match: (v, row)=>{  return row.operationStatus.canHandover},
               style: {
-                color: '#2d8cf0'
+                backgroundColor: '#2d8cf0',
+                color: '#fff',
+                padding: '1px 7px 2px 7px !important',
+                marginRight: '5px'
               }
             },
             {
@@ -535,7 +545,10 @@ export default {
               action: this.delete,
               match: (v, row)=>{  return row.operationStatus.canDelete},
               style: {
-                color: '#ed4014'
+                backgroundColor: '#ed4014',
+                color: '#fff',
+                padding: '1px 7px 2px 7px !important',
+                marginRight: '5px'
               }
             },
             {
@@ -543,7 +556,9 @@ export default {
               action: this.expire,
               match: (v, row)=>{  return row.operationStatus.canExpire},
               style: {
-                color: '#ff9900'
+                backgroundColor: '#ff9900',
+                color: '#fff',
+                padding: '1px 7px 2px 7px !important'
               }
             },
           ]

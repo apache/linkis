@@ -28,7 +28,7 @@
     <Form
       ref="formDynamic"
       :model="formDynamic"
-      :label-width="100"
+      :label-width="135"
       class="global-valiable-form"
     >
       <FormItem

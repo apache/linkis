@@ -33,6 +33,10 @@ import 'iview/dist/styles/iview.css'
 import './components/svgIcon/index.js'
 import './dss/module/index.js'
 
+// 水印
+import watermark from './utils/watermark.js'
+Vue.prototype.$watermark = watermark
+
 // moduleMixin
 if (apps.requireComponent) {
   apps.requireComponent.forEach(item => {

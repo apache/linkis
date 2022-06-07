@@ -87,6 +87,10 @@ public class ContextMapPersistenceImpl implements ContextMapPersistence {
             pKV.getFirst().setContextId(contextID.getContextId());
             pKV.getFirst().setContextKey(pK.getFirst());
             pKV.getFirst().setContextValue(pV.getFirst());
+            Date now = new Date();
+            pKV.getFirst().setCreateTime(now);
+            pKV.getFirst().setUpdateTime(now);
+            pKV.getFirst().setAccessTime(now);
             contextMapMapper.createMap(pKV.getFirst());
         } catch (JsonProcessingException e) {
             logger.error("writeAsJson failed:", e);
@@ -110,6 +114,9 @@ public class ContextMapPersistenceImpl implements ContextMapPersistence {
         pKV.getFirst().setContextKey(pK.getFirst());
         pKV.getFirst().setContextValue(pV.getFirst());
         pKV.getFirst().setContextId(contextID.getContextId());
+        if (null == pKV.getFirst().getAccessTime()) {
+            pKV.getFirst().setUpdateTime(new Date());
+        }
         contextMapMapper.updateMap(pKV.getFirst());
     }
 

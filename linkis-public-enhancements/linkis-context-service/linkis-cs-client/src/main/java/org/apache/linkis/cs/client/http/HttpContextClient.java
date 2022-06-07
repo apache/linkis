@@ -765,26 +765,40 @@ public class HttpContextClient extends AbstractContextClient {
                     97000,
                     " createTimeStart,  createTimeEnd,  updateTimeStart,  updateTimeEnd,  accessTimeStart,  accessTimeEnd cannot all be blank.");
         }
-        DefaultContextGetAction action =
-                new ContextGetActionBuilder(ContextServerHttpConf.searchContextIDByTime())
-                        .with("createTimeStart", createTimeStart)
-                        .with("createTimeEnd", createTimeEnd)
-                        .with("updateTimeStart", updateTimeStart)
-                        .with("updateTimeEnd", updateTimeEnd)
-                        .with("accessTimeStart", accessTimeStart)
-                        .with("accessTimeEnd", accessTimeEnd)
-                        .with("pageNow", pageNow)
-                        .with("pageSize", pageSize)
-                        .build();
+        ContextSearchIDByTimeAction action = new ContextSearchIDByTimeAction();
+        action.setParameter("createTimeStart", createTimeStart);
+        action.setParameter("createTimeEnd", createTimeEnd);
+        action.setParameter("updateTimeStart", updateTimeStart);
+        action.setParameter("updateTimeEnd", updateTimeEnd);
+        action.setParameter("accessTimeStart", accessTimeStart);
+        action.setParameter("accessTimeEnd", accessTimeEnd);
+        action.setParameter("pageNow", pageNow);
+        action.setParameter("pageSize", pageSize);
+
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug(action.getURL());
         }
-        DWSResult dwsResult = checkDWSResult(execute(action));
-        ContextSearchIDByTimeResult result = (ContextSearchIDByTimeResult) dwsResult;
-        if (null != result && null != result.contextIDs()) {
-            return result.contextIDs();
+        Result result = null;
+        try {
+            result = execute(action);
+        } catch (Exception e) {
+            LOGGER.error("searchHAIDByTime failed, {}", e.getMessage(), e);
+            ExceptionHelper.throwErrorException(80017, "searchHAIDByTime failed.", e);
+        }
+        if (result instanceof ContextSearchIDByTimeResult) {
+            ContextSearchIDByTimeResult contextSearchIDByTimeResult =
+                    (ContextSearchIDByTimeResult) result;
+            if (null != contextSearchIDByTimeResult
+                    && null != contextSearchIDByTimeResult.getContextIDs()) {
+                return contextSearchIDByTimeResult.getContextIDs();
+            } else {
+                return new ArrayList<>();
+            }
+        } else if (null == result) {
+            throw new CSErrorException(80017, "Invalid null result ");
         } else {
-            return new ArrayList<>();
+            throw new CSErrorException(
+                    80017, "Invalid result type : " + result.getClass().getName());
         }
     }
 
@@ -803,12 +817,25 @@ public class HttpContextClient extends AbstractContextClient {
                 ContextPostActionBuilder.of(ContextServerHttpConf.clearAllContextByID())
                         .with("idList", idList)
                         .build();
-        DWSResult dwsResult = checkDWSResult(execute(action));
-        ContextClearByIDResult result = (ContextClearByIDResult) dwsResult;
-        if (null != result) {
-            return result.num();
+        Result result = null;
+        try {
+            result = execute(action);
+        } catch (Exception e) {
+            LOGGER.error("batchClearContextByHAID failed, {}", e.getMessage(), e);
+            ExceptionHelper.throwErrorException(80017, "batchClearContextByHAID failed.", e);
+        }
+        if (result instanceof ContextClearByIDResult) {
+            ContextClearByIDResult contextClearByIDResult = (ContextClearByIDResult) result;
+            if (null != contextClearByIDResult) {
+                return contextClearByIDResult.num();
+            } else {
+                return 0;
+            }
+        } else if (null == result) {
+            throw new CSErrorException(80017, "Invalid null result ");
         } else {
-            return 0;
+            throw new CSErrorException(
+                    80017, "Invalid result type : " + result.getClass().getName());
         }
     }
 
@@ -832,7 +859,7 @@ public class HttpContextClient extends AbstractContextClient {
                     " createTimeStart,  createTimeEnd,  updateTimeStart,  updateTimeEnd,  accessTimeStart,  accessTimeEnd cannot all be blank.");
         }
         DefaultContextPostAction action =
-                ContextPostActionBuilder.of(ContextServerHttpConf.clearAllContextByID())
+                ContextPostActionBuilder.of(ContextServerHttpConf.clearAllContextByTime())
                         .with("createTimeStart", createTimeStart)
                         .with("createTimeEnd", createTimeEnd)
                         .with("updateTimeStart", updateTimeStart)
@@ -840,12 +867,25 @@ public class HttpContextClient extends AbstractContextClient {
                         .with("accessTimeStart", accessTimeStart)
                         .with("accessTimeEnd", accessTimeEnd)
                         .build();
-        DWSResult dwsResult = checkDWSResult(execute(action));
-        ContextClearByTimeResult result = (ContextClearByTimeResult) dwsResult;
-        if (null != result) {
-            return result.num();
+        Result result = null;
+        try {
+            result = execute(action);
+        } catch (Exception e) {
+            LOGGER.error("batchClearContextByTime failed, {}", e.getMessage(), e);
+            ExceptionHelper.throwErrorException(80017, "batchClearContextByTime failed.", e);
+        }
+        if (result instanceof ContextClearByTimeResult) {
+            ContextClearByTimeResult contextClearByTimeResult = (ContextClearByTimeResult) result;
+            if (null != contextClearByTimeResult) {
+                return contextClearByTimeResult.num();
+            } else {
+                return 0;
+            }
+        } else if (null == result) {
+            throw new CSErrorException(80017, "Invalid null result ");
         } else {
-            return 0;
+            throw new CSErrorException(
+                    80017, "Invalid result type : " + result.getClass().getName());
         }
     }
 

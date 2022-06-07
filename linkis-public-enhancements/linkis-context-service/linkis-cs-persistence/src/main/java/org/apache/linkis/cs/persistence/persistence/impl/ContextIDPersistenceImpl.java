@@ -82,7 +82,9 @@ public class ContextIDPersistenceImpl implements ContextIDPersistence {
         // contextId和source没有设置更新点
         Pair<PersistenceContextID, ExtraFieldClass> pContextID =
                 PersistenceUtils.transfer(contextID, pClass);
-        pContextID.getFirst().setUpdateTime(new Date());
+        if (null == pContextID.getFirst().getAccessTime()) {
+            pContextID.getFirst().setUpdateTime(new Date());
+        }
         contextIDMapper.updateContextID(pContextID.getFirst());
     }
 

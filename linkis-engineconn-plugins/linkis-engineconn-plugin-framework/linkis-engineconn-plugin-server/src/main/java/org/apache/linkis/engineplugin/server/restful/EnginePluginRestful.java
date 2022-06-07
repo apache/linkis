@@ -42,9 +42,9 @@ public class EnginePluginRestful {
 
     @Autowired private EngineConnResourceService engineConnResourceService;
 
-    @RequestMapping(path = "/refeshAll", method = RequestMethod.GET)
-    public Message refeshAll(HttpServletRequest req) {
-        String username = ModuleUserUtils.getOperationUser(req, "refeshAll");
+    @RequestMapping(path = "/refreshAll", method = RequestMethod.GET)
+    public Message refreshAll(HttpServletRequest req) {
+        String username = ModuleUserUtils.getOperationUser(req, "refreshAll");
         if (Configuration.isAdmin(username)) {
             log.info("{} start to refresh all ec resource", username);
             engineConnResourceService.refreshAll(true);
@@ -55,12 +55,12 @@ public class EnginePluginRestful {
         }
     }
 
-    @RequestMapping(path = "/refesh", method = RequestMethod.GET)
-    public Message refeshAll(
+    @RequestMapping(path = "/refresh", method = RequestMethod.GET)
+    public Message refreshOne(
             HttpServletRequest req,
             @RequestParam(value = "ecType") String ecType,
             @RequestParam(value = "version", required = false) String version) {
-        String username = ModuleUserUtils.getOperationUser(req, "refeshAll");
+        String username = ModuleUserUtils.getOperationUser(req, "refreshOne");
         if (Configuration.isAdmin(username)) {
             log.info("{} start to refresh {} ec resource", username, ecType);
             RefreshEngineConnResourceRequest refreshEngineConnResourceRequest =

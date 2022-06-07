@@ -17,7 +17,7 @@
  
 package org.apache.linkis.orchestrator.computation.operation.progress
 
-import org.apache.linkis.governance.common.constant.job.TaskConstants
+import org.apache.linkis.governance.common.constant.job.TaskInfoConstants
 import org.apache.linkis.orchestrator.OrchestratorSession
 import org.apache.linkis.orchestrator.computation.physical.CodeLogicalUnitExecTask
 import org.apache.linkis.orchestrator.computation.utils.TaskTreeUtil
@@ -113,10 +113,10 @@ class DefaultProgressOperation(orchestratorSession: OrchestratorSession) extends
       logger.warn("TaskRunningInfoEvent got null execTask.")
       return map
     }
-    map.put(TaskConstants.EXEC_ID, task.getId)
-    map.put(TaskConstants.ID_INFO, task.getIDInfo())
-    map.put(TaskConstants.TASK_CLASSNAME, task.getClass.getSimpleName)
-    map.put(TaskConstants.TASK_NAME, task.getName)
+    map.put(TaskInfoConstants.EXEC_ID, task.getId)
+    map.put(TaskInfoConstants.ID_INFO, task.getIDInfo())
+    map.put(TaskInfoConstants.TASK_CLASSNAME, task.getClass.getSimpleName)
+    map.put(TaskInfoConstants.TASK_NAME, task.getName)
     map
   }
 }

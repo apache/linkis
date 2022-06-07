@@ -314,15 +314,16 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
                         if (cores.isPresent()) {
                             corePercent =
                                     cores.get().floatValue()
-                                            / EntranceConfiguration.YARN_QUEUE_CORES_MAX().getValue();
+                                            / EntranceConfiguration.YARN_QUEUE_CORES_MAX()
+                                                    .getValue();
                             memoryPercent =
                                     memory.get().floatValue()
                                             / (EntranceConfiguration.YARN_QUEUE_MEMORY_MAX()
-                                            .getValue()
-                                            .longValue()
-                                            * 1024
-                                            * 1024
-                                            * 1024);
+                                                            .getValue()
+                                                            .longValue()
+                                                    * 1024
+                                                    * 1024
+                                                    * 1024);
                         }
                         String coreRGB = RGBUtils.getRGB(corePercent);
                         String memoryRGB = RGBUtils.getRGB(memoryPercent);

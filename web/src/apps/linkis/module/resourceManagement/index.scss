@@ -28,7 +28,9 @@
   }
 }
 .table-content {
+  height: calc(100% - 107px);
   margin-top: 15px;
+  border: 0;
   .latestVersion {
     padding:  0 10px;
     background-color: #169bd5;

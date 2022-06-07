@@ -23,7 +23,7 @@
       "cancel": "取消",
       "delete": "删除",
       "failedNotice": "验证项未通过，请检查后再试！",
-      "logoName": "DataSphere Studio",
+      "logoName": "Linkis",
       "project": "工程",
       "home": "首页",
       "management": "管理台",
@@ -252,11 +252,11 @@
         "comingSoon": "尚未开源，敬请期待！"
       },
       "login": {
-        "loginTitle": "欢迎登录DataSphere Studio系统！",
+        "loginTitle": "欢迎登录Linkis系统！",
         "userName": "请输入用户名",
         "remenber": "记住当前用户",
         "login": "登录",
-        "password": "请输入密码！",
+        "passwordHint": "请输入密码！",
         "loginSuccess": "登录成功",
         "haveLogin": "您已经登录，请不要重复登录",
         "vaildFaild": "验证未通过！",

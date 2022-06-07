@@ -17,14 +17,12 @@
  
 package org.apache.linkis.ecm.server.service.impl
 
-import java.io.File
-import java.nio.file.Paths
-
 import org.apache.linkis.common.io.FsPath
 import org.apache.linkis.ecm.server.conf.ECMConfiguration._
 import org.apache.linkis.ecm.server.service.LocalDirsHandleService
-import org.apache.commons.lang.StringUtils
-import org.apache.commons.lang.time.DateFormatUtils
+import org.apache.linkis.governance.common.utils.ECPathUtils
+
+import java.io.File
 
 class DefaultLocalDirsHandleService extends LocalDirsHandleService {
 
@@ -36,12 +34,9 @@ class DefaultLocalDirsHandleService extends LocalDirsHandleService {
   override def getEngineConnManagerHomeDir: String = ECM_HOME_DIR
 
   override def getEngineConnWorkDir(user: String, ticketId: String, engineType: String): String = {
-    val prefix = if (StringUtils.isBlank(engineType)) {
-      Paths.get(ENGINECONN_ROOT_DIR, user, DateFormatUtils.format(System.currentTimeMillis(), "yyyyMMdd")).toFile.getPath
-    } else {
-      Paths.get(ENGINECONN_ROOT_DIR, user, DateFormatUtils.format(System.currentTimeMillis(), "yyyyMMdd"), engineType).toFile.getPath
-    }
-    new FsPath(prefix + File.separator + ticketId).getPath
+    val prefix = ENGINECONN_ROOT_DIR
+    val suffix = ECPathUtils.getECWOrkDirPathSuffix(user, ticketId, engineType)
+    new FsPath(prefix + File.separator + suffix).getPath
   }
 
   override def getEngineConnPublicDir: String = ENGINECONN_PUBLIC_DIR

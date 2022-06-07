@@ -80,6 +80,7 @@ public class Test {
         contextID.setVersion("v00001");
         Context context = contextClient.createContext(contextID);
         System.out.println(context.getContextID().getContextId());
+        String csid = context.getContextID().getContextId();
 
         ContextSerializationHelper contextSerializationHelper =
                 ContextSerializationHelper.getInstance();
@@ -113,5 +114,10 @@ public class Test {
         context.setContextKeyAndValue(contextKeyValue);
         ContextValue myValue = context.getContextValue(contextKey);
         System.out.println(SerializeHelper.serializeContextID(context.getContextID()));
+
+        List<String> idList = new ArrayList<>();
+        idList.add(csid);
+        //        contextClient.
+
     }
 }

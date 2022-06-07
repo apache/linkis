@@ -104,7 +104,7 @@ error_prone_annotations-2.4.0.jar
 eureka-client-1.10.14.jar
 eureka-core-1.10.14.jar
 evictor-1.0.0.jar
-excel-streaming-reader-3.6.0.jar
+excel-streaming-reader-4.0.1.jar
 failureaccess-1.0.1.jar
 fastutil-6.5.6.jar
 feign-core-10.12.jar
@@ -151,7 +151,7 @@ geronimo-annotation_1.0_spec-1.1.1.jar
 geronimo-jaspic_1.0_spec-1.0.jar
 geronimo-jta_1.1_spec-1.1.1.jar
 grizzled-slf4j_2.11-1.3.2.jar
-gson-2.8.5.jar
+gson-2.8.9.jar
 guava-30.0-jre.jar
 guava-retrying-2.0.0.jar
 guice-3.0.jar
@@ -393,10 +393,10 @@ pagehelper-5.1.4.jar
 paranamer-2.3.jar
 paranamer-2.8.jar
 parquet-hadoop-bundle-1.8.1.jar
-poi-5.2.1.jar
-poi-ooxml-5.2.1.jar
-poi-ooxml-lite-5.2.1.jar
-poi-shared-strings-2.5.1.jar
+poi-5.2.2.jar
+poi-ooxml-5.2.2.jar
+poi-ooxml-lite-5.2.2.jar
+poi-shared-strings-2.5.3.jar
 presto-client-1.5.0.jar
 protobuf-java-3.14.0.jar
 protobuf-java-3.15.8.jar

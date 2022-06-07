@@ -16,7 +16,7 @@
   -->
 
 <template>
-  <div>
+  <div :style="{height: '100%', overflow: 'hidden'}">
     <Modal
       width="800"
       class="modal"
@@ -106,13 +106,13 @@
             <Button
               v-if="actionType == $t('message.linkis.create')"
               @click="stepChange(-1)"
-              >{{ $t('message.linkis.prev') }}</Button
+            >{{ $t('message.linkis.prev') }}</Button
             >
             <Button
               v-if="actionType == $t('message.linkis.datasource.watch')"
               type="primary"
               @click="showDataSource = false"
-              >{{ $t('message.linkis.close') }}</Button
+            >{{ $t('message.linkis.close') }}</Button
             >
             <Button v-else type="primary" @click="onSubmit">{{
               $t('message.linkis.complete')
@@ -123,6 +123,7 @@
     </Modal>
     <Row class="search-bar" type="flex" justify="space-around">
       <Col span="6">
+        <span :style="{minWidth: '80px', textOverflow: 'ellipsis', whiteSpace: 'nowrap', overflow: 'hidden', marginRight: '5px', fontSize: '14px', lineHeight: '32px'}" :title="$t('message.linkis.datasource.sourceName')">{{$t('message.linkis.datasource.sourceName')}}</span>
         <Input
           clearable
           v-model="searchName"
@@ -133,9 +134,7 @@
         ></Input>
       </Col>
       <Col span="6" class="search-item">
-        <span class="lable">{{
-          $t('message.linkis.datasource.sourceType')
-        }}</span>
+        <span class="lable" :style="{marginLeft: '5px', marginRight: '5px', minWidth: '80px', textOverflow: 'ellipsis', whiteSpace: 'nowrap', overflow: 'hidden'}" :title="$t('message.linkis.datasource.sourceType')">{{ $t('message.linkis.datasource.sourceType') }}</span>
         <Select v-model="dataSourceTypeId" class="input">
           <Option v-for="item in typeList" :value="item.id" :key="item.id">{{
             item.name
@@ -145,23 +144,17 @@
           }}</Option>
         </Select>
       </Col>
-      <Col span="3">
-        <Button type="primary" class="button" @click="searchList(true)">{{
+      <Col span="12">
+        <Button type="primary" class="button" :style="{width: '70px', marginRight: '5px', marginLeft: '5px', padding: '5px'}" @click="searchList(true)">{{
           $t('message.linkis.search')
         }}</Button>
-      </Col>
-      <Col span="3">
-        <Button type="primary" @click="createDatasource">{{
+        <Button type="primary" :style="{width: '90px', marginRight: '5px', padding: '5px'}" @click="createDatasource">{{
           $t('message.linkis.datasource.create')
         }}</Button>
-      </Col>
-      <Col span="3">
-        <Button type="primary" disabled>{{
+        <Button type="primary" :style="{width: '120px', marginRight: '5px', padding: '5px'}" disabled>{{
           $t('message.linkis.datasource.exports')
         }}</Button>
-      </Col>
-      <Col span="3">
-        <Button type="primary" disabled>{{
+        <Button type="primary" :style="{width: '120px', padding: '5px'}" disabled>{{
           $t('message.linkis.datasource.imports')
         }}</Button>
       </Col>
@@ -172,9 +165,8 @@
       align="center"
       :columns="tableColumnNum"
       :data="pageDatalist"
-      max-height="420"
       :loading="tableLoading"
-      class="table-content"
+      class="table-content data-source-table"
     >
       <template slot-scope="{ row, index }" slot="version">
         <Button
@@ -182,7 +174,7 @@
           type="primary"
           :disabled="row.expire"
           @click="openVersionList(row, index)"
-          >{{ `${row.versionId || '-'}` }}</Button
+        >{{ `${row.versionId || '-'}` }}</Button
         >
       </template>
       <template slot-scope="{ row, index }" slot="action">
@@ -192,7 +184,7 @@
             size="small"
             type="primary"
             @click="modify(row, index)"
-            >{{ $t('message.linkis.edit') }}</Button
+          >{{ $t('message.linkis.edit') }}</Button
           >
 
           <Button
@@ -210,13 +202,17 @@
         </ButtonGroup>
       </template>
     </Table>
-    <div style="margin: 10px; overflow: hidden">
-      <div style="float: right">
+    <div style="margin: 10px; overflow: hidden; textAlign: center">
+      <div>
         <Page
           :page-size="page.pageSize"
           :total="page.totalSize"
           :current="page.pageNow"
           @on-change="changePage"
+          size="small"
+          show-total
+          show-elevator
+          :prev-text="$t('message.linkis.previousPage')" :next-text="$t('message.linkis.nextPage')"
         ></Page>
       </div>
     </div>
@@ -266,23 +262,23 @@ export default {
       },
       tableColumnNum: [
         {
-          title: "Id",
+          title: "ID",
           key: 'id',
-          minWidth: 10,
+          width: 60,
           tooltip: true,
           align: 'center',
         },
         {
           title: this.$t('message.linkis.datasource.dataSourceName'),
           key: 'dataSourceName',
-          minWidth: 120,
+          width: 240,
           tooltip: true,
           align: 'center',
         },
         {
           title: this.$t('message.linkis.datasource.dataSourceType'),
           key: 'dataSourceTypeId',
-          minWidth: 60,
+          width: 150,
           render: (h, params) => {
             let result = {}
             if (this.typeList) {
@@ -299,7 +295,7 @@ export default {
         //   title: this.$t('message.linkis.datasource.dataSourceEnv'),
         //   key: 'dataSourceEnvId',
         //   tooltip: true,
-        //   minWidth: 100,
+        //   width: 100,
         //   render: (h, params)=>{
         //     let result = {};
         //     if(this.envList){
@@ -312,7 +308,7 @@ export default {
         {
           title: this.$t('message.linkis.datasource.createSystem'),
           key: 'createSystem',
-          minWidth: 50,
+          width: 120,
           tooltip: true,
           align: 'center',
         },
@@ -320,7 +316,7 @@ export default {
           title: this.$t('message.linkis.datasource.status'),
           key: 'status',
           tooltip: true,
-          minWidth: 60,
+          width: 120,
           align: 'center',
           render: (h, params) => {
             let result = {}
@@ -341,14 +337,14 @@ export default {
           title: this.$t('message.linkis.datasource.label'),
           key: 'labels',
           tooltip: true,
-          minWidth: 80,
+          width: 120,
           align: 'center',
         },
         {
           title: this.$t('message.linkis.datasource.version'),
           key: 'version',
           slot: 'version',
-          minWidth: 60,
+          width: 80,
           // render: (h, params)=>{
           //   return h('span', params.row.versionId || '-');
           // },
@@ -357,21 +353,20 @@ export default {
         {
           title: this.$t('message.linkis.datasource.desc'),
           key: 'dataSourceDesc',
-          minWidth: 120,
-
+          width: 400,
           tooltip: true,
           align: 'center',
         },
         {
           title: this.$t('message.linkis.datasource.createUser'),
           key: 'createUser',
-          minWidth: 80,
+          width: 120,
           tooltip: true,
           align: 'center',
         },
         {
           title: this.$t('message.linkis.datasource.action'),
-          minWidth: 170,
+          width: 280,
           slot: 'action',
           align: 'center',
         },
@@ -745,3 +740,25 @@ export default {
 }
 </script>
 <style lang="scss" src="./index.scss" scoped></style>
+
+<style lang="scss">
+.data-source-table {
+  border: 0;
+  height: calc(100% - 110px);
+  width: 100%;
+
+  .ivu-table:before {
+    height: 0
+  }
+  
+  .ivu-table:after {
+    width: 0
+  }
+
+  .ivu-table {
+    height: auto;
+    border: 1px solid #dcdee2;
+    width: 100%;
+  }
+}
+</style>

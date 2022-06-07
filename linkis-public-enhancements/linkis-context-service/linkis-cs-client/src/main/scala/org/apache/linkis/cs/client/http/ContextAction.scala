@@ -112,7 +112,7 @@ case class DefaultContextGetAction(url: String) extends ContextGETAction {
   override def getURL: String = url
 }
 
-case class ContextSearchIDByTimeAction(createTimeStart: Date, createTimeEnd: Date, updateTimeStart: Date, updateTimeEnd: Date) extends ContextGETAction {
+case class ContextSearchIDByTimeAction() extends ContextGETAction {
   override def getURL: String = ContextServerHttpConf.searchContextIDByTime
 }
 
@@ -120,6 +120,6 @@ case class ContextClearByIDAction(idList: java.util.List[String]) extends Contex
   override def getURL: String = ContextServerHttpConf.clearAllContextByID
 }
 
-case class ContextClearByTimeAction(createTimeStart: Date, createTimeEnd: Date, updateTimeStart: Date, updateTimeEnd: Date) extends ContextPostAction {
+case class ContextClearByTimeAction() extends ContextPostAction {
   override def getURL: String = ContextServerHttpConf.clearAllContextByTime
 }

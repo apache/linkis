@@ -20,6 +20,7 @@ package org.apache.linkis.cs.client.http
 import org.apache.linkis.cs.listener.callback.imp.ContextKeyValueBean
 import org.apache.linkis.httpclient.dws.annotation.DWSHttpMessageResult
 import org.apache.linkis.httpclient.dws.response.DWSResult
+import java.util
 
 
 abstract class ContextResult extends DWSResult
@@ -44,13 +45,13 @@ class ContextUpdateResult extends ContextResult {
 @DWSHttpMessageResult("/api/rest_j/v\\d+/contextservice/getContext")
 class ContextGetResult extends ContextResult {
   var contextId: String = _
-  var contextKeyValues: java.util.Map[String, String] = _
+  var contextKeyValues: util.Map[String, String] = _
 
   def setContextId(contextId: String): Unit = this.contextId = contextId
   def getContextId: String = this.contextId
 
-  def setContextKeyValues(kvs: java.util.Map[String,String]): Unit = this.contextKeyValues = kvs
-  def getContextKeyValues: java.util.Map[String, String] = this.contextKeyValues
+  def setContextKeyValues(kvs: util.Map[String,String]): Unit = this.contextKeyValues = kvs
+  def getContextKeyValues: util.Map[String, String] = this.contextKeyValues
 
 }
 
@@ -64,7 +65,6 @@ class ContextRemoveResult extends ContextResult {
 
 @DWSHttpMessageResult("/api/rest_j/v\\d+/contextservice/heartbeat")
 class ContextHeartBeatResult extends ContextResult {
-  import java.util
   var contextKeyValueBeans: util.List[ContextKeyValueBean] = _
   def setContextKeyValueBeans(kvs: util.List[ContextKeyValueBean]): Unit = this.contextKeyValueBeans= kvs
   def getContextKeyValueBeans: util.List[ContextKeyValueBean] = this.contextKeyValueBeans;
@@ -112,9 +112,9 @@ class VoidResult extends ContextResult {
 
 @DWSHttpMessageResult("/api/rest_j/v\\d+/contextservice/(getHistories|searchHistory)")
 class ContextHistoriesGetResult extends ContextResult {
-  var contextHistory: java.util.List[String] = _
-  def getContextHistory: java.util.List[String] = this.contextHistory
-  def setContextHistory(contextHistory: java.util.List[String]): Unit = this.contextHistory = contextHistory
+  var contextHistory: util.List[String] = _
+  def getContextHistory: util.List[String] = this.contextHistory
+  def setContextHistory(contextHistory: util.List[String]): Unit = this.contextHistory = contextHistory
 }
 
 @DWSHttpMessageResult("/api/rest_j/v\\d+/contextservice/getHistory")
@@ -127,16 +127,22 @@ class ContextHistoryGetResult extends ContextResult {
 
 @DWSHttpMessageResult("/api/rest_j/v\\d+/contextservice/searchContextIDByTime")
 class ContextSearchIDByTimeResult extends ContextResult {
-  var contextIDs: java.util.List[String] = _
+  var contextIDs: util.List[String] = _
+  def getContextIDs: util.List[String] = contextIDs
+  def setContextIDs(idList: util.List[String]): Unit = this.contextIDs = idList
 }
 
 @DWSHttpMessageResult("/api/rest_j/v\\d+/contextservice/clearAllContextByID")
 class ContextClearByIDResult extends ContextResult {
   var num: Int = _
+  def getNum: Int = num
+  def setNum(num: Int): Unit = this.num = num
 }
 
 
 @DWSHttpMessageResult("/api/rest_j/v\\d+/contextservice/clearAllContextByTime")
 class ContextClearByTimeResult extends ContextResult {
   var num: Int = _
+  def getNum: Int = num
+  def setNum(num: Int): Unit = this.num = num
 }

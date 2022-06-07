@@ -21,13 +21,13 @@
 <mapper namespace="org.apache.linkis.cs.persistence.dao.ContextIDListenerMapper">
 
     <sql id="context_id_listener">
-        `id`,`listener_source`,`context_id`,`create_time`,`update_time`
+        `id`,`listener_source`,`context_id`,`create_time`,`update_time`,`access_time`
     </sql>
 
     <insert id="createIDListener" useGeneratedKeys="true" keyProperty="id"
             parameterType="org.apache.linkis.cs.persistence.entity.PersistenceContextIDListener">
         INSERT INTO linkis_ps_cs_context_listener(<include refid="context_id_listener"/>)
-        VALUES (#{listener.id},#{listener.source},#{listener.contextId},#{createTime},#{updateTime})
+        VALUES (#{listener.id},#{listener.source},#{listener.contextId},#{createTime},#{updateTime},#{accessTime})
     </insert>
 
     <delete id="remove">

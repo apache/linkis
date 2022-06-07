@@ -318,6 +318,7 @@ public class ContextServiceImpl extends ContextService {
         for (PersistenceContextID id : idList) {
             try {
                 String csid = id.getContextId();
+                logger.info("will clear context for csid : {}", csid);
                 id.setContextId(contextHAChecker.convertHAIDToHAKey(id));
                 getPersistence().removeAll(id);
                 getIDPersistence().deleteContextID(csid);

@@ -17,6 +17,7 @@
 
 package org.apache.linkis.cs.server.restful;
 
+import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.cs.common.entity.enumeration.ContextType;
 import org.apache.linkis.cs.common.entity.source.ContextID;
 import org.apache.linkis.cs.common.entity.source.ContextKey;
@@ -30,6 +31,7 @@ import org.apache.linkis.cs.server.enumeration.ServiceType;
 import org.apache.linkis.cs.server.scheduler.CsScheduler;
 import org.apache.linkis.cs.server.scheduler.HttpAnswerJob;
 import org.apache.linkis.server.Message;
+import org.apache.linkis.server.utils.ModuleUserUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -60,7 +62,7 @@ import static org.apache.linkis.cs.common.utils.CSCommonUtils.localDatetimeToDat
 @RequestMapping(path = "/contextservice")
 public class ContextRestfulApi implements CsRestfulParent {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ContextRestfulApi.class);
+    private static final Logger logger = LoggerFactory.getLogger(ContextRestfulApi.class);
 
     @Autowired private CsScheduler csScheduler;
 
@@ -179,18 +181,25 @@ public class ContextRestfulApi implements CsRestfulParent {
             throw new CSErrorException(97000, "idList cannot be empty.");
         }
         ArrayNode idArray = (ArrayNode) jsonNode.get("idList");
+        logger.info("clearAllContextByID idList size : {}", idArray.size());
         List<String> idList = new ArrayList<>(idArray.size());
         for (int i = 0; i < idArray.size(); i++) {
             idList.add(idArray.get(i).asText());
         }
         HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.CLEAR, idList);
-        return generateResponse(answerJob, "num");
+        Message resp = generateResponse(answerJob, "num");
+        resp.setMethod("/api/contextservice/clearAllContextByID");
+        return resp;
     }
 
     @RequestMapping(path = "clearAllContextByTime", method = RequestMethod.POST)
     public Message clearAllContextByID(
             HttpServletRequest req, @RequestBody Map<String, Object> bodyMap)
             throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
+        String username = ModuleUserUtils.getOperationUser(req);
+        if (!Configuration.isAdmin(username)) {
+            throw new CSErrorException(97018, "Only station admins are allowed.");
+        }
         if (null == bodyMap || bodyMap.isEmpty()) {
             throw new CSErrorException(97000, "idList cannot be empty.");
         }
@@ -202,27 +211,27 @@ public class ContextRestfulApi implements CsRestfulParent {
         Date accessTimeEnd = null;
 
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern(CSCommonUtils.DEFAULT_TIME_FORMAT);
-        if (bodyMap.containsKey("createTimeStart"))
+        if (bodyMap.containsKey("createTimeStart") && null != bodyMap.get("createTimeStart"))
             createTimeStart =
                     localDatetimeToDate(
                             LocalDateTime.parse((String) bodyMap.get("createTimeStart"), dtf));
-        if (bodyMap.containsKey("createTimeEnd"))
+        if (bodyMap.containsKey("createTimeEnd") && null != bodyMap.get("createTimeEnd"))
             createTimeEnd =
                     localDatetimeToDate(
                             LocalDateTime.parse((String) bodyMap.get("createTimeEnd"), dtf));
-        if (bodyMap.containsKey("updateTimeStart"))
+        if (bodyMap.containsKey("updateTimeStart") && null != bodyMap.get("updateTimeStart"))
             updateTimeStart =
                     localDatetimeToDate(
                             LocalDateTime.parse((String) bodyMap.get("updateTimeStart"), dtf));
-        if (bodyMap.containsKey("updateTimeEnd"))
+        if (bodyMap.containsKey("updateTimeEnd") && null != bodyMap.get("updateTimeEnd"))
             updateTimeEnd =
                     localDatetimeToDate(
                             LocalDateTime.parse((String) bodyMap.get("updateTimeEnd"), dtf));
-        if (bodyMap.containsKey("accessTimeStart"))
+        if (bodyMap.containsKey("accessTimeStart") && null != bodyMap.get("accessTimeStart"))
             updateTimeStart =
                     localDatetimeToDate(
                             LocalDateTime.parse((String) bodyMap.get("accessTimeStart"), dtf));
-        if (bodyMap.containsKey("accessTimeEnd"))
+        if (bodyMap.containsKey("accessTimeEnd") && null != bodyMap.get("accessTimeEnd"))
             updateTimeEnd =
                     localDatetimeToDate(
                             LocalDateTime.parse((String) bodyMap.get("accessTimeEnd"), dtf));
@@ -234,6 +243,15 @@ public class ContextRestfulApi implements CsRestfulParent {
                     97000,
                     "createTimeStart, createTimeEnd, updateTimeStart, updateTimeEnd cannot be all null.");
         }
+        logger.info(
+                "clearAllContextByTime: user : {}, createTimeStart : {}, createTimeEnd : {}, updateTimeStart : {}, updateTimeEnd : {}, accessTimeStart : {}, accessTimeEnd : {}, pageNow : {}, pageSize : {}.",
+                username,
+                createTimeStart,
+                createTimeEnd,
+                updateTimeStart,
+                updateTimeEnd,
+                accessTimeStart,
+                accessTimeEnd);
         HttpAnswerJob answerJob =
                 submitRestJob(
                         req,
@@ -244,7 +262,9 @@ public class ContextRestfulApi implements CsRestfulParent {
                         updateTimeEnd,
                         accessTimeStart,
                         accessTimeEnd);
-        return generateResponse(answerJob, "num");
+        Message resp = generateResponse(answerJob, "num");
+        resp.setMethod("/api/contextservice/clearAllContextByTime");
+        return resp;
     }
 
     @Override

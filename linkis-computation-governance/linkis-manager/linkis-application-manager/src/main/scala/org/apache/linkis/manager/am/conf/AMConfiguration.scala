@@ -49,6 +49,8 @@ object AMConfiguration {
 
   val EM_LABEL_INIT_WAIT = CommonVars("wds.linkis.manager.am.em.label.init.wait", new TimeType("5m"))
 
+  val EM_NEW_WAIT_MILLS = CommonVars("wds.linkis.manager.am.em.new.wait.mills", 1000 * 60L)
+
   val ENGINECONN_SPRING_APPLICATION_NAME = CommonVars("wds.linkis.engineconn.application.name", "linkis-cg-engineplugin")
 
   val ENGINECONN_DEBUG_ENABLED = CommonVars("wds.linkis.engineconn.debug.mode.enable", false)

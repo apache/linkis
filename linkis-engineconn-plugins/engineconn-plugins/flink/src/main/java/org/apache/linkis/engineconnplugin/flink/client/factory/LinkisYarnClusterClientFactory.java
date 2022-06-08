@@ -57,6 +57,9 @@ public class LinkisYarnClusterClientFactory extends YarnClusterClientFactory imp
     private static final Logger LOG = LoggerFactory.getLogger(LinkisYarnClusterClientFactory.class);
 
     private void initYarnClient(Configuration configuration) {
+        checkNotNull(configuration);
+        String configurationDirectory = configuration.get(DeploymentOptionsInternal.CONF_DIR);
+        YarnLogConfigUtil.setLogConfigFileInConfig(configuration, configurationDirectory);
         String yarnConfDir = configuration.getString(YARN_CONFIG_DIR);
         this.configuration = configuration;
         yarnConfiguration = YarnConfLoader.getYarnConf(yarnConfDir);
@@ -65,11 +68,19 @@ public class LinkisYarnClusterClientFactory extends YarnClusterClientFactory imp
         yarnClient.start();
     }
 
+    public YarnConfiguration getYarnConfiguration(Configuration configuration) {
+        if (yarnClient == null) {
+            synchronized (this) {
+                if (yarnClient == null) {
+                    initYarnClient(configuration);
+                }
+            }
+        }
+        return yarnConfiguration;
+    }
+
     @Override
     public YarnClusterDescriptor createClusterDescriptor(Configuration configuration) {
-        checkNotNull(configuration);
-        final String configurationDirectory = configuration.get(DeploymentOptionsInternal.CONF_DIR);
-        YarnLogConfigUtil.setLogConfigFileInConfig(configuration, configurationDirectory);
         if (yarnClient == null) {
             synchronized (this) {
                 if (yarnClient == null) {

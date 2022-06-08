@@ -531,3 +531,6 @@ zookeeper-3.5.9.jar
 zookeeper-jute-3.5.9.jar
 zstd-jni-1.4.4-7.jar
 zstd-jni-1.4.5-6.jar
+micrometer-registry-prometheus-1.5.14.jar
+simpleclient-0.8.1.jar
+simpleclient_common-0.8.1.jar

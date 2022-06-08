@@ -30,6 +30,10 @@ object Configuration extends Logging {
 
   val IS_TEST_MODE = CommonVars("wds.linkis.test.mode", false)
 
+  val IS_PROMETHEUS_ENABLE = CommonVars("wds.linkis.prometheus.enable", false)
+
+  val PROMETHEUS_ENDPOINT = CommonVars("wds.linkis.prometheus.endpoint", "/actuator/prometheus")
+
   val LINKIS_HOME = CommonVars("wds.linkis.home", CommonVars("LINKIS_HOME", "/tmp").getValue)
 
   val GATEWAY_URL: CommonVars[String] = CommonVars[String]("wds.linkis.gateway.url", "http://127.0.0.1:9001/")

@@ -31,12 +31,12 @@ object FlinkEnvConfiguration {
   val FLINK_HOME = CommonVars("flink.home", CommonVars(FLINK_HOME_ENV, "/appcom/Install/flink").getValue)
   val FLINK_CONF_DIR = CommonVars("flink.conf.dir", CommonVars(FLINK_CONF_DIR_ENV, "/appcom/config/flink-config").getValue)
   val FLINK_DIST_JAR_PATH = CommonVars("flink.dist.jar.path", FLINK_HOME.getValue + s"/lib/flink-dist_2.11-${FLINK_VERSION.getValue}.jar")
-  val FLINK_LIB_REMOTE_PATH = CommonVars("flink.lib.path", "")
-  val FLINK_USER_LIB_REMOTE_PATH = CommonVars("flink.user.lib.path", "", "The hdfs lib path of each user in Flink EngineConn.")
+  val FLINK_PROVIDED_LIB_PATH = CommonVars("flink.lib.path", "")
+  val FLINK_PROVIDED_USER_LIB_PATH = CommonVars("flink.user.lib.path", "", "The hdfs lib path of each user in Flink EngineConn.")
   val FLINK_LIB_LOCAL_PATH = CommonVars("flink.local.lib.path", "/appcom/Install/flink/lib", "The local lib path of Flink EngineConn.")
   val FLINK_USER_LIB_LOCAL_PATH = CommonVars("flink.user.local.lib.path", "/appcom/Install/flink/lib", "The local lib path of each user in Flink EngineConn.")
   val FLINK_SHIP_DIRECTORIES = CommonVars("flink.yarn.ship-directories", "")
-
+  val FLINK_SHIP_REMOTE_DIRECTORIES = CommonVars("flink.yarn.remote.ship-directories", "")
 
   val FLINK_CHECK_POINT_ENABLE = CommonVars("flink.app.checkpoint.enable", false)
   val FLINK_CHECK_POINT_INTERVAL = CommonVars("flink.app.checkpoint.interval", 3000)

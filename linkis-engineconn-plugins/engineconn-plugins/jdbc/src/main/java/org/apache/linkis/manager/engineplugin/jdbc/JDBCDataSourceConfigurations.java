@@ -43,7 +43,10 @@ public class JDBCDataSourceConfigurations {
     }
 
     public void cancelStatement(String taskId) throws SQLException {
-        taskIdStatementMap.get(taskId).cancel();
+        Statement statement = taskIdStatementMap.get(taskId);
+        if (statement != null) {
+            statement.cancel();
+        }
     }
 
     public void removeStatement(String taskId) {

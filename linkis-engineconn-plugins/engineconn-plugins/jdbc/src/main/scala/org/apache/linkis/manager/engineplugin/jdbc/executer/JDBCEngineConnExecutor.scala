@@ -44,6 +44,7 @@ import org.apache.linkis.governance.common.paser.SQLCodeParser
 import org.apache.linkis.manager.engineplugin.jdbc.constant.JDBCEngineConnConstant
 
 import scala.collection.JavaConversions._
+
 import scala.collection.mutable.ArrayBuffer
 
 class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int) extends ConcurrentComputationExecutor(outputPrintLimit) {
@@ -71,10 +72,18 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int) ex
 
     if (properties.get(JDBCEngineConnConstant.JDBC_URL) == null) {
       info(s"The jdbc url is empty, adding now...")
-      val globalConfig = Utils.tryAndWarn(JDBCEngineConfig.getCacheMap(engineExecutorContext.getLabels))
+      val globalConfig: util.Map[String, String] = Utils.tryAndWarn(JDBCEngineConfig.getCacheMap(engineExecutorContext.getLabels))
+      var dataSourceInfo: util.Map[String, String] = new util.HashMap[String, String]()
       if (StringUtils.isNotBlank(dataSourceName)) {
         info("Start getting data source connection parameters from the data source hub.")
-        // todo get data source info by data source client
+        Utils.tryCatch {
+          dataSourceInfo = JDBCMultiDatasourceParser.queryDatasourceInfoByName(dataSourceName, execSqlUser)
+        } {
+          e: Throwable => return ErrorExecuteResponse(e.getMessage, e)
+        }
+        if (!dataSourceInfo.isEmpty) {
+          globalConfig.putAll(dataSourceInfo)
+        }
       }
       properties.put(JDBCEngineConnConstant.JDBC_URL, globalConfig.get(JDBCEngineConnConstant.JDBC_URL))
       properties.put(JDBCEngineConnConstant.JDBC_DRIVER, globalConfig.get(JDBCEngineConnConstant.JDBC_DRIVER))
@@ -95,16 +104,19 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int) ex
     var connection: Connection = null
     var statement: Statement = null
     var resultSet: ResultSet = null
-
+    info(s"The data source properties is $properties")
     Utils.tryCatch({
       connection = connectionManager.getConnection(dataSourceName, properties)
+      info("The jdbc connection has created successfully!")
     }) {
-      case e: Exception => return ErrorExecuteResponse("created data source connection error.", e)
+      e: Throwable =>
+        error(s"created data source connection error! $e")
+        return ErrorExecuteResponse("created data source connection error!", e)
     }
 
     try {
-      statement.setQueryTimeout(JDBCConfiguration.JDBC_QUERY_TIMEOUT.getValue)
       statement = connection.createStatement()
+      statement.setQueryTimeout(JDBCConfiguration.JDBC_QUERY_TIMEOUT.getValue)
       statement.setFetchSize(outputPrintLimit)
       statement.setMaxRows(outputPrintLimit)
       info(s"create statement is:  $statement")
@@ -131,7 +143,9 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int) ex
         }
       }
     } catch {
-      case e: Throwable => error(s"Cannot run $code", e)
+      case e: Throwable =>
+        error(s"Cannot run $code", e)
+        return ErrorExecuteResponse(e.getMessage, e)
     } finally {
       if (connection != null) {
         try {

@@ -19,7 +19,7 @@ package org.apache.linkis.orchestrator.plans.physical
 
 import org.apache.linkis.common.listener.Event
 import org.apache.linkis.orchestrator.execution.TaskResponse
-import org.apache.linkis.orchestrator.listener.task.{TaskLogEvent, TaskProgressEvent, TaskYarnResourceEvent}
+import org.apache.linkis.orchestrator.listener.task.{TaskLogEvent, TaskRunningInfoEvent, TaskYarnResourceEvent}
 import org.apache.linkis.orchestrator.plans.PlanContext
 
 /**
@@ -41,9 +41,7 @@ trait PhysicalContext extends PlanContext {
 
   def pushLog(taskLogEvent: TaskLogEvent): Unit
 
-  def pushProgress(taskProgressEvent: TaskProgressEvent): Unit
-
-  def pushYarnResource(taskProgressEvent: TaskYarnResourceEvent): Unit
+  def pushProgress(taskProgressEvent: TaskRunningInfoEvent): Unit
 
   def belongsTo(execTask: ExecTask): Boolean
 

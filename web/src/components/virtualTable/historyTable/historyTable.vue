@@ -18,7 +18,7 @@
 <template>
   <div
     class="we-table-wrap"
-    :style="{height: height + 'px'}">
+    :style="{width: '100%', height: height + 'px'}">
     <table
       cellspacing="0"
       cellpadding="0"
@@ -250,7 +250,7 @@ export default {
             match = item.match(value, cell)
           }
           if (match) {
-            list.push(h('button', {
+            list.push(h('Button', {
               class: {
                 'render-btn': true,
                 ...item.class

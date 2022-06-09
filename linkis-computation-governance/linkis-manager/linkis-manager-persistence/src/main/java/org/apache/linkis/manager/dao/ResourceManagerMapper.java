@@ -19,13 +19,11 @@ package org.apache.linkis.manager.dao;
 
 import org.apache.linkis.manager.common.entity.persistence.PersistenceLabel;
 import org.apache.linkis.manager.common.entity.persistence.PersistenceResource;
-import org.apache.linkis.manager.common.entity.persistence.PersistenceResourceActionRecord;
 
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
-@Mapper
 public interface ResourceManagerMapper {
     @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
     // @SelectKey(statement = "select last_insert_id() AS id", keyProperty = "id", before = false,
@@ -103,12 +101,4 @@ public interface ResourceManagerMapper {
     void deleteResourceRelByResourceId(@Param("ids") List<Integer> ids);
 
     PersistenceResource getResourceById(@Param("id") Integer id);
-
-    PersistenceResourceActionRecord getResourceActionRecord(@Param("ticketId") String ticketId);
-
-    void updateResourceActionRecord(
-            @Param("resourceActionRecord") PersistenceResourceActionRecord resourceActionRecord);
-
-    PersistenceResourceActionRecord insertResourceActionRecord(
-            @Param("resourceActionRecord") PersistenceResourceActionRecord resourceActionRecord);
 }

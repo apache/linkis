@@ -38,6 +38,7 @@ import org.apache.linkis.cs.common.entity.source.*;
 import org.apache.linkis.cs.common.exception.CSErrorException;
 import org.apache.linkis.cs.common.protocol.ContextHTTPConstant;
 import org.apache.linkis.cs.common.search.ContextSearchConditionMapBuilder;
+import org.apache.linkis.cs.common.utils.CSCommonUtils;
 import org.apache.linkis.httpclient.config.ClientConfig;
 import org.apache.linkis.httpclient.dws.DWSHttpClient;
 import org.apache.linkis.httpclient.dws.config.DWSClientConfig;
@@ -45,14 +46,13 @@ import org.apache.linkis.httpclient.dws.response.DWSResult;
 import org.apache.linkis.httpclient.request.Action;
 import org.apache.linkis.httpclient.response.Result;
 
+import org.apache.commons.lang3.StringUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /** Description: HttpContextClient是ContextClient的使用Http方式进行通信的具体实现 一般可以将其做成单例 */
 public class HttpContextClient extends AbstractContextClient {
@@ -742,6 +742,151 @@ public class HttpContextClient extends AbstractContextClient {
                         .addHeader(ContextHTTPConstant.CONTEXT_ID_STR, contextIDStr)
                         .build();
         checkDWSResult(execute(action));
+    }
+
+    @Override
+    public List<String> searchHAIDByTime(
+            String createTimeStart,
+            String createTimeEnd,
+            String updateTimeStart,
+            String updateTimeEnd,
+            String accessTimeStart,
+            String accessTimeEnd,
+            Integer pageNow,
+            Integer pageSize)
+            throws ErrorException {
+        if (StringUtils.isBlank(createTimeStart)
+                && StringUtils.isBlank(createTimeEnd)
+                && StringUtils.isBlank(updateTimeStart)
+                && StringUtils.isBlank(updateTimeEnd)
+                && StringUtils.isBlank(accessTimeStart)
+                && StringUtils.isBlank(accessTimeEnd)) {
+            throw new CSErrorException(
+                    97000,
+                    " createTimeStart,  createTimeEnd,  updateTimeStart,  updateTimeEnd,  accessTimeStart,  accessTimeEnd cannot all be blank.");
+        }
+        ContextSearchIDByTimeAction action = new ContextSearchIDByTimeAction();
+        action.setParameter("createTimeStart", createTimeStart);
+        action.setParameter("createTimeEnd", createTimeEnd);
+        action.setParameter("updateTimeStart", updateTimeStart);
+        action.setParameter("updateTimeEnd", updateTimeEnd);
+        action.setParameter("accessTimeStart", accessTimeStart);
+        action.setParameter("accessTimeEnd", accessTimeEnd);
+        action.setParameter("pageNow", pageNow);
+        action.setParameter("pageSize", pageSize);
+
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug(action.getURL());
+        }
+        Result result = null;
+        try {
+            result = execute(action);
+        } catch (Exception e) {
+            LOGGER.error("searchHAIDByTime failed, {}", e.getMessage(), e);
+            ExceptionHelper.throwErrorException(80017, "searchHAIDByTime failed.", e);
+        }
+        if (result instanceof ContextSearchIDByTimeResult) {
+            ContextSearchIDByTimeResult contextSearchIDByTimeResult =
+                    (ContextSearchIDByTimeResult) result;
+            if (null != contextSearchIDByTimeResult
+                    && null != contextSearchIDByTimeResult.getContextIDs()) {
+                return contextSearchIDByTimeResult.getContextIDs();
+            } else {
+                return new ArrayList<>();
+            }
+        } else if (null == result) {
+            throw new CSErrorException(80017, "Invalid null result ");
+        } else {
+            throw new CSErrorException(
+                    80017, "Invalid result type : " + result.getClass().getName());
+        }
+    }
+
+    @Override
+    public int batchClearContextByHAID(List<String> idList) throws ErrorException {
+        if (null == idList) return 0;
+        if (idList.size() > CSCommonUtils.CONTEXT_MAX_PAGE_SIZE) {
+            throw new CSErrorException(
+                    97000,
+                    "idList size : "
+                            + idList.size()
+                            + " is over max page size : "
+                            + CSCommonUtils.CONTEXT_MAX_PAGE_SIZE);
+        }
+        DefaultContextPostAction action =
+                ContextPostActionBuilder.of(ContextServerHttpConf.clearAllContextByID())
+                        .with("idList", idList)
+                        .build();
+        Result result = null;
+        try {
+            result = execute(action);
+        } catch (Exception e) {
+            LOGGER.error("batchClearContextByHAID failed, {}", e.getMessage(), e);
+            ExceptionHelper.throwErrorException(80017, "batchClearContextByHAID failed.", e);
+        }
+        if (result instanceof ContextClearByIDResult) {
+            ContextClearByIDResult contextClearByIDResult = (ContextClearByIDResult) result;
+            if (null != contextClearByIDResult) {
+                return contextClearByIDResult.num();
+            } else {
+                return 0;
+            }
+        } else if (null == result) {
+            throw new CSErrorException(80017, "Invalid null result ");
+        } else {
+            throw new CSErrorException(
+                    80017, "Invalid result type : " + result.getClass().getName());
+        }
+    }
+
+    @Override
+    public int batchClearContextByTime(
+            String createTimeStart,
+            String createTimeEnd,
+            String updateTimeStart,
+            String updateTimeEnd,
+            String accessTimeStart,
+            String accessTimeEnd)
+            throws ErrorException {
+        if (StringUtils.isBlank(createTimeStart)
+                && StringUtils.isBlank(createTimeEnd)
+                && StringUtils.isBlank(updateTimeStart)
+                && StringUtils.isBlank(updateTimeEnd)
+                && StringUtils.isBlank(accessTimeStart)
+                && StringUtils.isBlank(accessTimeEnd)) {
+            throw new CSErrorException(
+                    97000,
+                    " createTimeStart,  createTimeEnd,  updateTimeStart,  updateTimeEnd,  accessTimeStart,  accessTimeEnd cannot all be blank.");
+        }
+        DefaultContextPostAction action =
+                ContextPostActionBuilder.of(ContextServerHttpConf.clearAllContextByTime())
+                        .with("createTimeStart", createTimeStart)
+                        .with("createTimeEnd", createTimeEnd)
+                        .with("updateTimeStart", updateTimeStart)
+                        .with("updateTimeEnd", updateTimeEnd)
+                        .with("accessTimeStart", accessTimeStart)
+                        .with("accessTimeEnd", accessTimeEnd)
+                        .build();
+        Result result = null;
+        try {
+            result = execute(action);
+        } catch (Exception e) {
+            LOGGER.error("batchClearContextByTime failed, {}", e.getMessage(), e);
+            ExceptionHelper.throwErrorException(80017, "batchClearContextByTime failed.", e);
+        }
+        if (result instanceof ContextClearByTimeResult) {
+            ContextClearByTimeResult contextClearByTimeResult = (ContextClearByTimeResult) result;
+            if (null != contextClearByTimeResult) {
+                return contextClearByTimeResult.num();
+            } else {
+                return 0;
+            }
+        } else if (null == result) {
+            throw new CSErrorException(80017, "Invalid null result ");
+        } else {
+            throw new CSErrorException(
+                    80017, "Invalid result type : " + result.getClass().getName());
+        }
     }
 
     private Result execute(Action action) throws ErrorException {

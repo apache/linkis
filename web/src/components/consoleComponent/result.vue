@@ -146,7 +146,7 @@
         size="small"
         show-total
         show-sizer
-        prev-text="上一页" next-text="下一页"
+        :prev-text="$t('message.linkis.previousPage')" :next-text="$t('message.linkis.nextPage')"
         @on-change="change"
         @on-page-size-change="changeSize" />
     </div>
@@ -652,7 +652,7 @@ export default {
 @import '@/common/style/variables.scss';
 .we-result-view {
   width: 100%;
-  height: 100%;
+  height: calc(100% - 55px);
   overflow: hidden;
   padding-left: $toolbarWidth;
   background: $body-background;
@@ -660,6 +660,7 @@ export default {
     overflow-y: auto;
   }
   .result-table-content {
+    height: calc(100% - 52px);
     .ivu-table-header {
       width: calc(100% - 8px);
       tr > th:nth-last-of-type(2) {

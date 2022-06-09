@@ -21,7 +21,7 @@ export const subAppRoutes = {
   component: () => import('./view/layout.vue'),
   redirect: '/urm',
   meta: {
-    title: 'DataSphere Studio',
+    title: 'Linkis',
     publicPage: true, // 权限公开
   },
   children: []

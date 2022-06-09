@@ -47,7 +47,7 @@ router.beforeEach((to, from, next) => {
 
 router.afterEach((to) => {
   if (to.meta) {
-    document.title = to.meta.title || 'DataSphere Studio';
+    document.title = to.meta.title || 'Linkis';
   }
 });
 

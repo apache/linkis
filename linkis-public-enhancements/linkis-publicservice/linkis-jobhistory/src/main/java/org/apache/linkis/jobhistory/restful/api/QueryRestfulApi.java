@@ -134,6 +134,17 @@ public class QueryRestfulApi {
         }
         if (StringUtils.isEmpty(creator)) {
             creator = null;
+        } else {
+            if (!QueryUtils.checkNameValid(creator)) {
+                return Message.error("Invalid creator : " + creator);
+            }
+        }
+        if (!StringUtils.isEmpty(executeApplicationName)) {
+            if (!QueryUtils.checkNameValid(executeApplicationName)) {
+                return Message.error("Invalid applicationName : " + executeApplicationName);
+            }
+        } else {
+            executeApplicationName = null;
         }
         Date sDate = new Date(startDate);
         Date eDate = new Date(endDate);

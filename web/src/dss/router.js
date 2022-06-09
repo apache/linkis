@@ -23,7 +23,7 @@ export const subAppRoutes = {
   // 重定向到 管理台页面
   redirect: '/console',
   meta: {
-    title: 'DataSphere Studio',
+    title: 'Linkis',
     publicPage: true, // 权限公开
   },
   children: []
@@ -106,7 +106,7 @@ export default [
   {
     path: '*',
     meta: {
-      title: 'DataSphere Studio',
+      title: 'Linkis',
       publicPage: true,
     },
     component: () =>

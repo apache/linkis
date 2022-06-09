@@ -22,7 +22,7 @@
       v-if="loading"
       size="large"
       fix/>
-    <Table class="table-content" border :width="tableWidth" :columns="columns" :data="pageDatalist">
+    <Table class="table-content ecm-table" border :width="tableWidth" :columns="columns" :data="pageDatalist">
       <template slot-scope="{row}" slot="instance">
         <a @click="getEngineConnList(row)">{{`${row.instance}`}}</a>
       </template>
@@ -55,7 +55,7 @@
         size="small"
         show-total
         show-sizer
-        prev-text="上一页" next-text="下一页"
+        :prev-text="$t('message.linkis.previousPage')" :next-text="$t('message.linkis.nextPage')"
         @on-change="change"
         @on-page-size-change="changeSize" />
     </div>
@@ -184,7 +184,7 @@ export default {
         {
           title: this.$t('message.linkis.tableColumns.control.title'),
           key: 'action',
-          width: '215',
+          width: '80',
           // fixed: 'right',
           align: 'center',
           render: (h, params) => {
@@ -389,3 +389,23 @@ export default {
 
 <style src="./index.scss" lang="scss" scoped></style>
 
+<style lang="scss">
+.ecm-table {
+  border: 0;
+  height: calc(100% - 110px);
+  overflow: auto;
+
+  .ivu-table:before {
+    height: 0
+  }
+  
+  .ivu-table:after {
+    width: 0
+  }
+
+  .ivu-table {
+    height: auto;
+    border: 1px solid #dcdee2;
+  }
+}
+</style>

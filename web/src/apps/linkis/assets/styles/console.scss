@@ -35,9 +35,10 @@
     }
     .console-page-content-body {
         display: flex;
-        height: calc(100% - 68px);
+        height: calc(100%);
         .content-body-side-nav {
-            width: 200px;
+            width: 194px;
+            margin-right: 20px;
            
             .content-body-card {
                 padding: 10px 0 10px;
@@ -45,7 +46,6 @@
         }
         .content-body-side-right {
             flex: 1;
-            margin-left: 20px;
             background: $body-background;
             border-radius: $border-radius-small;
             padding: 10px;
@@ -57,7 +57,11 @@
             }
             .content-body-side-right-content {
                 overflow: auto;
+                height: calc(100% - 40px);
             }
+        }
+        .ivu-checkbox-wrapper {
+            margin-right: 0;
         }
     }
     

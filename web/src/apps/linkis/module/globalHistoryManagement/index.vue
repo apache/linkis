@@ -58,7 +58,7 @@
       </FormItem>
       <FormItem prop="engine" :label="$t('message.linkis.formItems.engine.label')">
         <Select v-model="searchBar.engine" style="width: 70px">
-          <Option v-for="(item) in getEngineTypes" :label="item === 'all' ? '全部': item" :value="item" :key="item" />
+          <Option v-for="(item) in getEngineTypes" :label="item === 'all' ? $t('message.linkis.engineTypes.all'): item" :value="item" :key="item" />
         </Select>
       </FormItem>
       <FormItem prop="status" :label="$t('message.linkis.formItems.status.label')">
@@ -90,8 +90,8 @@
         >{{ isAdminModel ? $t('message.linkis.generalView') : $t('message.linkis.manageView') }}</Button>
       </FormItem>
     </Form>
-    <div>
-      <div class="global-history-table" :style="{'height': moduleHeight+'px'}">
+    <div >
+      <div class="global-history-table" :style="{width: '100%', 'height': moduleHeight+'px'}">
         <Icon v-show="isLoading" type="ios-loading" size="30" class="global-history-loading" />
         <history-table
           v-if="!isLoading"
@@ -113,7 +113,7 @@
           size="small"
           show-total
           show-elevator
-          prev-text="上一页" next-text="下一页"
+          :prev-text="$t('message.linkis.previousPage')" :next-text="$t('message.linkis.nextPage')"
           @on-change="changePage"
         />
       </div>
@@ -267,7 +267,7 @@ export default {
   },
   mounted() {
     this.init()
-    this.moduleHeight = this.$parent.$el.clientHeight - 268
+    this.moduleHeight = this.$parent.$el.clientHeight - 220
     // 监听窗口变化，获取浏览器宽高
     window.addEventListener('resize', this.getHeight)
   },
@@ -282,7 +282,7 @@ export default {
   },
   methods: {
     getHeight() {
-      this.moduleHeight = this.$parent.$el.clientHeight - 268
+      this.moduleHeight = this.$parent.$el.clientHeight - 228
     },
     init() {
       let isAdminModel = storage.get('last-admin-model')
@@ -495,7 +495,6 @@ export default {
           fixed: 'right',
           align: 'center',
           width: 60,
-          className: 'history-control',
           renderType: 'button',
           renderParams: [
             {
@@ -508,13 +507,13 @@ export default {
           title: this.$t('message.linkis.tableColumns.taskID'),
           key: 'taskID',
           align: 'center',
-          width: 80
+          width: 90
         },
         {
           title: this.$t('message.linkis.tableColumns.fileName'),
           key: 'source',
           align: 'center',
-          ellipsis: true,
+          tooltip: true,
           width: 190
         },
         {
@@ -530,7 +529,7 @@ export default {
           title: this.$t('message.linkis.tableColumns.status'),
           key: 'status',
           align: 'center',
-          width: 180,
+          width: 164,
           renderType: 'if',
           renderParams: {
             action: this.setRenderType
@@ -540,7 +539,7 @@ export default {
           title: this.$t('message.linkis.tableColumns.costTime'),
           key: 'costTime',
           align: 'center',
-          width: 90,
+          width: 100,
           renderType: 'convertTime'
         },
         {
@@ -571,13 +570,13 @@ export default {
           title: this.$t('message.linkis.tableColumns.user'),
           key: 'umUser',
           align: 'center',
-          width: 100
+          width: 80
         },
         {
           title: this.$t('message.linkis.tableColumns.createdTime'),
           key: 'createdTime',
           align: 'center',
-          width: 90,
+          width: 150,
           renderType: 'formatTime'
         }
       ]

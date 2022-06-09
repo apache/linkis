@@ -20,6 +20,9 @@ package org.apache.linkis.cs.server.service;
 import org.apache.linkis.cs.common.entity.source.ContextID;
 import org.apache.linkis.cs.common.exception.CSErrorException;
 
+import java.util.Date;
+import java.util.List;
+
 public abstract class ContextIDService extends AbstractService {
 
     public abstract String createContextID(ContextID contextID) throws CSErrorException;
@@ -31,4 +34,15 @@ public abstract class ContextIDService extends AbstractService {
     public abstract void resetContextID(String id) throws CSErrorException;
 
     public abstract void removeContextID(String id) throws CSErrorException;
+
+    public abstract List<String> searchCSIDByTime(
+            Date createTimeStart,
+            Date createTimeEnd,
+            Date updateTimeStart,
+            Date updateTimeEnd,
+            Date accessTimeStart,
+            Date accessTimeEnd,
+            Integer pageNow,
+            Integer pageSize)
+            throws CSErrorException;
 }

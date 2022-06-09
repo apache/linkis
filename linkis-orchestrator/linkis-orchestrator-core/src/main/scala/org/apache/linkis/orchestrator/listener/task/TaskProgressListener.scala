@@ -24,5 +24,5 @@ import org.apache.linkis.orchestrator.listener.OrchestratorAsyncListener
  */
 trait TaskProgressListener extends OrchestratorAsyncListener {
 
-  def onProgressOn(taskProgressEvent: TaskProgressEvent): Unit
+  def onProgressOn(taskProgressEvent: TaskRunningInfoEvent): Unit
 }

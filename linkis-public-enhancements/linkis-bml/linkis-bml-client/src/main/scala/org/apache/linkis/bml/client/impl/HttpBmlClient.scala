@@ -147,8 +147,8 @@ class HttpBmlClient(clientConfig: DWSClientConfig,
         downloadAction.getResponse match {
           case r: CloseableHttpResponse =>
             Utils.tryAndWarn(r.close())
-          case o: Any =>
-            info(s"Download response : ${o.getClass.getName} cannot close.")
+          case _ =>
+            info(s"Download response : ${downloadAction.getResponse} cannot close.")
         }
       } catch {
         case e: IOException => logger.error("failed to copy inputStream and outputStream (inputStream和outputStream流copy失败)", e)

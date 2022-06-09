@@ -22,6 +22,7 @@ import org.apache.linkis.cs.common.entity.source.ContextID;
 import org.apache.linkis.cs.common.exception.CSErrorException;
 import org.apache.linkis.cs.contextcache.cache.csid.ContextIDValue;
 import org.apache.linkis.cs.contextcache.cache.csid.ContextIDValueGenerator;
+import org.apache.linkis.cs.contextcache.conf.ContextCacheConf;
 import org.apache.linkis.cs.contextcache.metric.ContextCacheMetric;
 import org.apache.linkis.cs.contextcache.metric.ContextIDMetric;
 import org.apache.linkis.cs.contextcache.metric.DefaultContextCacheMetric;
@@ -44,6 +45,7 @@ import com.google.common.cache.RemovalListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -71,7 +73,9 @@ public class DefaultContextCache implements ContextCache, CSIDListener {
         listenerBus.addListener(this);
         this.cache =
                 CacheBuilder.newBuilder()
-                        .maximumSize(3000)
+                        .maximumSize(ContextCacheConf.MAX_CACHE_SIZE)
+                        .expireAfterWrite(
+                                Duration.ofMillis(ContextCacheConf.MAX_CACHE_READ_EXPIRE_MILLS))
                         .removalListener(contextIDRemoveListener)
                         .recordStats()
                         .build();

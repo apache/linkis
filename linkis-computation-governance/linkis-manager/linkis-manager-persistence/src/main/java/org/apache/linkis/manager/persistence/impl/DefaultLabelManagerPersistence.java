@@ -79,7 +79,7 @@ public class DefaultLabelManagerPersistence implements LabelManagerPersistence {
         // 此处需要修正，要拿到 label_value_key label_value_content  labelValue中有多对参数
         Map<String, String> labelValueKeyAndContent = persistenceLabel.getValue();
 
-        replaceIntoLabelKeyValues(labelValueKeyAndContent, labelId);
+        // replaceIntoLabelKeyValues(labelValueKeyAndContent, labelId);
     }
 
     @Override
@@ -117,9 +117,9 @@ public class DefaultLabelManagerPersistence implements LabelManagerPersistence {
         persistenceLabel.setUpdateTime(new Date());
         labelManagerMapper.updateLabel(id, persistenceLabel);
         labelManagerMapper.deleteLabelKeyVaules(id);
-        if (!persistenceLabel.getValue().isEmpty()) {
+        /* if (!persistenceLabel.getValue().isEmpty()) {
             replaceIntoLabelKeyValues(persistenceLabel.getValue(), id);
-        }
+        }*/
     }
 
     private void replaceIntoLabelKeyValues(
@@ -171,16 +171,12 @@ public class DefaultLabelManagerPersistence implements LabelManagerPersistence {
     }
 
     @Override
+    @Deprecated
     public List<PersistenceLabel> getLabelsByValueList(
             List<Map<String, String>> valueList, Label.ValueRelation valueRelation) {
         if (PersistenceUtils.valueListIsEmpty(valueList)) return Collections.emptyList();
         if (valueRelation == null) valueRelation = Label.ValueRelation.ALL;
-        return labelManagerMapper
-                .dimListLabelByValueList(
-                        PersistenceUtils.filterEmptyValueList(valueList), valueRelation.name())
-                .stream()
-                .map(PersistenceUtils::setValue)
-                .collect(Collectors.toList());
+        return null;
     }
 
     @Override

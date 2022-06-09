@@ -18,17 +18,17 @@
 <template>
   <div class="function-management">
     <Form class="function-management-searchbar" :model="searchBar" inline>
-      <FormItem prop="functionName" label="UDF名称">
+      <FormItem prop="functionName" :label="$t('message.linkis.udfName')">
         <Input
           v-model="searchBar.functionName"
           style="width:120px;"
         ></Input>
       </FormItem>
       <Divider type="vertical" class="divider" />
-      <FormItem prop="functionType" label="UDF类型">
+      <FormItem prop="functionType" :label="$t('message.linkis.udfName')">
         <Select v-model="searchBar.functionType" style="width:120px;">
-          <Option label="全部" value="0,1,2" key="0,1,2" />
-          <Option label="通用" value="0" key="0" />
+          <Option :label="$t('message.linkis.all')" value="0,1,2" key="0,1,2" />
+          <Option :label="$t('message.linkis.common')" value="0" key="0" />
           <Option label="spark" value="1,2" key="1,2" />
         </Select>
       </FormItem>
@@ -43,7 +43,6 @@
           />
         </Select>
       </FormItem> -->
-      <Divider type="vertical" class="divider" />
       <FormItem>
         <Button
           type="primary"
@@ -54,7 +53,7 @@
           type="success"
           @click="showAddModal(true)"
           style="margin-right: 10px;"
-        >新增UDF</Button>
+        >{{ $t('message.linkis.udf.addUDF') }}</Button>
       </FormItem>
     </Form>
     <div>
@@ -80,6 +79,7 @@
           size="small"
           show-total
           show-elevator
+          :prev-text="$t('message.linkis.previousPage')" :next-text="$t('message.linkis.nextPage')"
           @on-change="changePage"
         />
       </div>
@@ -103,6 +103,7 @@
     >
       <span>移交给：</span>
       <Select ref="userSelect" v-model="handleUser" filterable 
+        v-if=allUsers.length
         :remoteMethod="filterSelectTransUser" 
         @on-query-change="queryChange"
         placeholder="请输入用户名" style="width:200px;">
@@ -113,6 +114,7 @@
           :key="item"
         />
       </Select>
+      <Input v-if=!allUsers.length v-model="handleUser" placeholder="请输入用户名" style="width: 300px" />
       <div slot="footer">
         <Button @click="changUserModal=false">取消</Button>
         <Button type="primary" :disabled="!this.handleUser" @click="changeUser">确定</Button>
@@ -192,7 +194,8 @@ export default {
       sharedUsers: '',
       handleRow: {},
       udfUsers: [],
-      transUsers: []
+      transUsers: [],
+      allUsers: []
     }
   },
   created() {
@@ -207,15 +210,10 @@ export default {
     //   this.getCreators = ['all', ...res.engineType]
     // })
     // 所有用户列表，移交时选择用户
-    api.fetch('/dss/framework/workspace/listAllUsers', 'get').then(res => {
-      let allUsers =  (res.users || []).map(it => it.username)
-      this.udfUsers = allUsers.slice(0, 150)
-      this.allUsers = allUsers
-    })
   },
   mounted() {
     this.init()
-    this.moduleHeight = this.$parent.$el.clientHeight - 268
+    this.moduleHeight = this.$parent.$el.clientHeight - 228
     // 监听窗口变化，获取浏览器宽高
     window.addEventListener('resize', this.getHeight)
     this.getRootPath(() => {
@@ -301,7 +299,7 @@ export default {
       })
     },
     getHeight() {
-      this.moduleHeight = this.$parent.$el.clientHeight - 268
+      this.moduleHeight = this.$parent.$el.clientHeight - 228
     },
     init() {
       const lastSearch = storage.get('last-fnsearchbar-status')
@@ -342,8 +340,8 @@ export default {
           this.pageSetting.total = rst.total
           this.isLoading = false
           this.list = (rst.infoList || []).map(it=>{
-            it.udfTypeText = it.udfType === 0 ? '通用' : 'Spark'
-            it.status = it.expire ? '过期' : '正常'
+            it.udfTypeText = it.udfType === 0 ? this.$t('message.linkis.udf.common') : 'Spark'
+            it.status = it.expire ? this.$t('message.linkis.udf.expire') : this.$t('message.linkis.udf.normal')
             it.createTimeFormat = moment(it.createTime).format('YYYY-MM-DD HH:mm:ss')
             return it
           })
@@ -435,24 +433,22 @@ export default {
     getColumns() {
       const column = [
         {
-          title: 'UDF名称',
+          title: this.$t('message.linkis.udfName'),
           key: 'udfName',
           align: 'center',
-          width: 120,
-          // 溢出以...显示
-          ellipsis: true
+          width: 150,
         },
         {
-          title: 'UDF类型',
+          title: this.$t('message.linkis.udfType'),
           key: 'udfTypeText',
           align: 'center',
-          width: 80
+          width: 90
         },
         {
           title: this.$t('message.linkis.udf.status'),
           key: 'status',
           align: 'center',
-          width: 60,
+          width: 80,
         },
         {
           title: this.$t('message.linkis.udf.availableCluster'),
@@ -478,20 +474,19 @@ export default {
           title: this.$t('message.linkis.udf.lastModifyTime'),
           key: 'createTimeFormat',
           align: 'center',
-          width: 140,
+          width: 180,
         },
         {
           title: this.$t('message.linkis.udf.creator'),
           key: 'createUser',
           align: 'center',
-          width: 80,
+          width: 120,
         },
         {
           title: this.$t('message.linkis.udf.action.title'),
           key: 'action',
           align: 'center',
-          width: 308,
-          className: 'history-control',
+          width: 360,
           renderType: 'button',
           renderParams: [
             {
@@ -499,14 +494,20 @@ export default {
               action: this.edit,
               match: (v, row)=>{  return row.operationStatus.canUpdate},
               style: {
-                color: '#2d8cf0'
+                backgroundColor: '#2d8cf0',
+                color: '#fff',
+                padding: '1px 7px 2px 7px !important',
+                marginRight: '5px'
               }
             },
             {
               label: this.$t('message.linkis.udf.action.vlist'),
               action: this.vlist,
               style: {
-                color: '#2d8cf0'
+                backgroundColor: '#2d8cf0',
+                color: '#fff',
+                padding: '1px 7px 2px 7px !important',
+                marginRight: '5px'
               }
             },
             {
@@ -514,7 +515,10 @@ export default {
               action: this.share,
               match: (v, row)=>{  return row.operationStatus.canShare},
               style: {
-                color: '#2d8cf0'
+                backgroundColor: '#2d8cf0',
+                color: '#fff',
+                padding: '1px 7px 2px 7px !important',
+                marginRight: '5px'
               }
             },
             {
@@ -522,7 +526,10 @@ export default {
               action: this.changeUser,
               match: (v, row)=>{  return row.operationStatus.canHandover},
               style: {
-                color: '#2d8cf0'
+                backgroundColor: '#2d8cf0',
+                color: '#fff',
+                padding: '1px 7px 2px 7px !important',
+                marginRight: '5px'
               }
             },
             {
@@ -530,7 +537,9 @@ export default {
               action: this.delete,
               match: (v, row)=>{  return row.operationStatus.canDelete},
               style: {
-                color: '#ed4014'
+                backgroundColor: '#ed4014',
+                color: '#fff',
+                padding: '1px 7px 2px 7px !important'
               }
             },
             {
@@ -538,7 +547,9 @@ export default {
               action: this.expire,
               match: (v, row)=>{  return row.operationStatus.canExpire},
               style: {
-                color: '#ff9900'
+                backgroundColor: '#ff9900',
+                color: '#fff',
+                padding: '1px 7px 2px 7px !important'
               }
             },
           ]
@@ -611,6 +622,14 @@ export default {
         this.handleUser = ''
         this.changUserModal = true
         this.handleRow = args.row
+        api.fetch('/dss/framework/workspace/listAllUsers', 'get').then(res => {
+          let allUsers =  (res.users || []).map(it => it.username)
+          this.udfUsers = allUsers.slice(0, 150)
+          this.allUsers = allUsers
+        }).catch(()=>{
+          this.udfUsers = [];
+          this.allUsers = [];
+        })
       } else {
         const params = {
           udfId: this.handleRow.id,
@@ -657,7 +676,7 @@ export default {
     },
     changUserModalChange(v) {
       if (v) {
-        this.$refs.userSelect.setQuery(null);
+        this.$refs.userSelect && this.$refs.userSelect.setQuery(null);
         this.handleUser = ''
         let options = this.allUsers.slice(0, 150)
         this.transUsers = options

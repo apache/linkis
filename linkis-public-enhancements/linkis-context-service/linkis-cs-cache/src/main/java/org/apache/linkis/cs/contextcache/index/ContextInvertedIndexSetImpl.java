@@ -24,12 +24,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ContextInvertedIndexSetImpl implements ContextInvertedIndexSet {
 
     private static final Logger logger = LoggerFactory.getLogger(ContextInvertedIndexSetImpl.class);
 
-    private Map<String, ContextInvertedIndex> invertedIndexMap = new HashMap<>();
+    private Map<String, ContextInvertedIndex> invertedIndexMap = new ConcurrentHashMap<>();
 
     @Override
     public ContextInvertedIndex getContextInvertedIndex(ContextType contextType) {

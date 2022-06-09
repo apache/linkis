@@ -135,6 +135,7 @@ case object ArrayType extends DataType("array", 2003)
 case object MapType extends DataType("map", 2000)
 case object ListType extends DataType("list", 2001)
 case object StructType extends DataType("struct", 2002)
+case object BigDecimalType extends DataType("bigdecimal", 3)
 
 case class Column(columnName: String, dataType: DataType, comment: String){
 

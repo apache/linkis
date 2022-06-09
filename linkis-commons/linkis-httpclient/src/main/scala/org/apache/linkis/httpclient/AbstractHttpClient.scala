@@ -312,7 +312,7 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
             case "deflate" => new DeflateDecompressingEntity(entity).getContent
             case str => throw new HttpClientResultException(s"request failed! Reason: not support decompress type $str.")
           } else entity.getContent
-        download.write(inputStream)
+        download.write(inputStream, response)
         Result()
       case heartbeat: HeartbeatAction =>
         discovery.map {

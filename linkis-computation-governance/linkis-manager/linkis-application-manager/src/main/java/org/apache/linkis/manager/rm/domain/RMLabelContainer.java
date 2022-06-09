@@ -17,7 +17,6 @@
 
 package org.apache.linkis.manager.rm.domain;
 
-import com.google.common.collect.Lists;
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf;
 import org.apache.linkis.manager.common.exception.RMErrorException;
 import org.apache.linkis.manager.label.builder.CombinedLabelBuilder;
@@ -29,6 +28,8 @@ import org.apache.linkis.manager.label.entity.engine.EngineInstanceLabel;
 import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel;
 import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel;
 import org.apache.linkis.manager.label.utils.LabelUtils;
+
+import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

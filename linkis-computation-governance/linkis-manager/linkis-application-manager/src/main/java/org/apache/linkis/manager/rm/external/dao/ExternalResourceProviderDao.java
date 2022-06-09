@@ -17,8 +17,9 @@
 
 package org.apache.linkis.manager.rm.external.dao;
 
-import org.apache.ibatis.annotations.Param;
 import org.apache.linkis.manager.rm.external.domain.ExternalResourceProvider;
+
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 

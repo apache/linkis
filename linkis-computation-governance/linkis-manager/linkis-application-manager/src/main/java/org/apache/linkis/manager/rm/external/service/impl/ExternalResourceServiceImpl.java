@@ -17,11 +17,6 @@
 
 package org.apache.linkis.manager.rm.external.service.impl;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.linkis.manager.common.conf.RMConfiguration;
 import org.apache.linkis.manager.common.entity.resource.NodeResource;
 import org.apache.linkis.manager.common.entity.resource.ResourceType;
@@ -40,11 +35,19 @@ import org.apache.linkis.manager.rm.external.request.ExternalResourceRequester;
 import org.apache.linkis.manager.rm.external.service.ExternalResourceService;
 import org.apache.linkis.manager.rm.external.yarn.YarnResourceRequester;
 import org.apache.linkis.manager.rm.utils.RMUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import org.apache.commons.lang.exception.ExceptionUtils;
+
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.ConnectException;
 import java.util.List;

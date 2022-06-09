@@ -17,9 +17,10 @@
 
 package org.apache.linkis.manager.rm.restful.vo;
 
-import com.google.common.collect.Lists;
 import org.apache.linkis.manager.common.entity.resource.Resource;
 import org.apache.linkis.manager.common.entity.resource.ResourceType;
+
+import com.google.common.collect.Lists;
 
 import java.util.List;
 

@@ -17,7 +17,6 @@
 
 package org.apache.linkis.manager.label.entity.route;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.linkis.manager.label.constant.LabelConstant;
 import org.apache.linkis.manager.label.constant.LabelKeyConstant;
 import org.apache.linkis.manager.label.entity.InheritableLabel;
@@ -25,6 +24,8 @@ import org.apache.linkis.manager.label.entity.SerializableLabel;
 import org.apache.linkis.manager.label.entity.UserModifiable;
 import org.apache.linkis.manager.label.entity.annon.ValueSerialNum;
 import org.apache.linkis.manager.label.exception.LabelErrorException;
+
+import org.apache.commons.lang.StringUtils;
 
 public class RouteLabel extends InheritableLabel<String> implements UserModifiable {
 

@@ -17,12 +17,13 @@
 
 package org.apache.linkis.manager.label.builder;
 
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.type.TypeFactory;
 import org.apache.linkis.manager.label.entity.CloneableLabel;
 import org.apache.linkis.manager.label.entity.InheritableLabel;
 import org.apache.linkis.manager.label.entity.Label;
 import org.apache.linkis.manager.label.utils.LabelUtils;
+
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

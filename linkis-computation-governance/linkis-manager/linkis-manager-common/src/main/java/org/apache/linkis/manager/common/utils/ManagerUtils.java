@@ -17,11 +17,12 @@
 
 package org.apache.linkis.manager.common.utils;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.linkis.manager.common.conf.ManagerCommonConf;
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactory;
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext;
 import org.apache.linkis.manager.label.entity.Label;
+
+import org.apache.commons.lang.StringUtils;
 
 import java.util.Map;
 

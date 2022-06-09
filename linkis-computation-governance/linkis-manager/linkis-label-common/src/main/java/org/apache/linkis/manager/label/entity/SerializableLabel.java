@@ -17,9 +17,11 @@
 
 package org.apache.linkis.manager.label.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.apache.commons.lang.StringUtils;
 import org.apache.linkis.manager.label.utils.LabelUtils;
+
+import org.apache.commons.lang.StringUtils;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

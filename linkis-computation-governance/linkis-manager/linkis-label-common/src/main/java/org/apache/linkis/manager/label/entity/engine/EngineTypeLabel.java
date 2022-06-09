@@ -17,13 +17,14 @@
 
 package org.apache.linkis.manager.label.entity.engine;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.linkis.manager.label.constant.LabelKeyConstant;
 import org.apache.linkis.manager.label.entity.EMNodeLabel;
 import org.apache.linkis.manager.label.entity.EngineNodeLabel;
 import org.apache.linkis.manager.label.entity.Feature;
 import org.apache.linkis.manager.label.entity.GenericLabel;
 import org.apache.linkis.manager.label.entity.annon.ValueSerialNum;
+
+import org.apache.commons.lang.StringUtils;
 
 import java.util.HashMap;
 

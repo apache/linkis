@@ -17,8 +17,9 @@
 
 package org.apache.linkis.manager.rm.external.domain;
 
-import com.google.gson.reflect.TypeToken;
 import org.apache.linkis.server.BDPJettyServerHelper;
+
+import com.google.gson.reflect.TypeToken;
 
 import java.util.Map;
 

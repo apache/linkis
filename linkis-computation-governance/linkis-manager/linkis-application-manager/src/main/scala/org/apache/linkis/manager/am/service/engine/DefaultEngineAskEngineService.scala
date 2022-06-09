@@ -68,9 +68,9 @@ class DefaultEngineAskEngineService extends AbstractEngineService with EngineAsk
         t: Throwable =>
           t match {
             case retryException: LinkisRetryException =>
-              logger.warn(s"task: $taskId user ${engineAskRequest.getUser} reuse engine failed ${t.getMessage}")
+              logger.info(s"task: $taskId user ${engineAskRequest.getUser} reuse engine failed ${t.getMessage}")
             case _ =>
-              logger.warn(s"task: $taskId user ${engineAskRequest.getUser} reuse engine failed", t)
+              logger.info(s"task: $taskId user ${engineAskRequest.getUser} reuse engine failed", t)
           }
           null
       }

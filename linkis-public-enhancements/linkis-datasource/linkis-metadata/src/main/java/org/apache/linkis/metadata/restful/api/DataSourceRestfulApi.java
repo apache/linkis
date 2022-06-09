@@ -19,6 +19,8 @@ package org.apache.linkis.metadata.restful.api;
 
 import org.apache.linkis.metadata.restful.remote.DataSourceRestfulRemote;
 import org.apache.linkis.metadata.service.DataSourceService;
+import org.apache.linkis.metadata.service.HiveMetaWithPermissionService;
+import org.apache.linkis.metadata.utils.MdqConstants;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
 
@@ -36,6 +38,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
 @RequestMapping(path = "/datasource")
 public class DataSourceRestfulApi implements DataSourceRestfulRemote {
@@ -43,6 +48,8 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
     private static final Logger logger = LoggerFactory.getLogger(DataSourceRestfulApi.class);
 
     @Autowired DataSourceService dataSourceService;
+
+    @Autowired HiveMetaWithPermissionService hiveMetaWithPermissionService;
 
     @Override
     @RequestMapping(path = "dbs", method = RequestMethod.GET)
@@ -93,7 +100,12 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
             HttpServletRequest req) {
         String userName = ModuleUserUtils.getOperationUser(req, "get columns of table " + table);
         try {
-            JsonNode columns = dataSourceService.queryTableMeta(database, table, userName);
+            Map<String, String> map = new HashMap<String, String>();
+            map.put(MdqConstants.DB_NAME_KEY(), database);
+            map.put(MdqConstants.TABLE_NAME_KEY(), table);
+            map.put(MdqConstants.USERNAME_KEY(), userName);
+            JsonNode columns =
+                    hiveMetaWithPermissionService.getColumnsByDbTableNameAndOptionalUserName(map);
             return Message.ok("").data("columns", columns);
         } catch (Exception e) {
             logger.error("Failed to get data table structure(获取数据表结构失败)", e);

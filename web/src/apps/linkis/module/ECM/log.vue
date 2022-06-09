@@ -30,7 +30,7 @@
       :current="page.pageNow"
       class-name="page engine-log-page"
       size="small"
-      prev-text="上一页" next-text="下一页"
+      :prev-text="$t('message.linkis.previousPage')" :next-text="$t('message.linkis.nextPage')"
       @on-change="change"/>
   </div>
 </template>

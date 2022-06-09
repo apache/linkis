@@ -54,4 +54,5 @@ object RPCConfiguration {
 
   val REFLECTIONS = new Reflections(SERVICE_SCAN_PACKAGE, new MethodAnnotationsScanner(), new TypeAnnotationsScanner(), new SubTypesScanner())
 
+  val BDP_RPC_CACHE_CONF_EXPIRE_TIME = CommonVars("wds.linkis.rpc.cache.expire.time", 120000L)
 }

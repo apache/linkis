@@ -294,43 +294,48 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
                             (HashMap<String, ResourceWithStatus>)
                                     metrics.get(TaskConstant.ENTRANCEJOB_YARNRESOURCE);
                     ArrayList<YarnResourceWithStatusVo> resoureList = new ArrayList<>(12);
-                    resourceMap.forEach(
-                            (applicationId, resource) -> {
-                                resoureList.add(
-                                        new YarnResourceWithStatusVo(applicationId, resource));
-                            });
-                    metricsVo.put(TaskConstant.ENTRANCEJOB_YARNRESOURCE, resoureList);
-                    Optional<Integer> cores =
-                            resourceMap.values().stream()
-                                    .map(resource -> resource.queueCores())
-                                    .reduce((x, y) -> x + y);
-                    Optional<Long> memory =
-                            resourceMap.values().stream()
-                                    .map(resource -> resource.queueMemory())
-                                    .reduce((x, y) -> x + y);
-                    float corePercent = 0.0f;
-                    float memoryPercent = 0.0f;
-                    if (cores.isPresent()) {
-                        corePercent =
-                                cores.get().floatValue()
-                                        / EntranceConfiguration.YARN_QUEUE_CORES_MAX().getValue();
-                        memoryPercent =
-                                memory.get().floatValue()
-                                        / (EntranceConfiguration.YARN_QUEUE_MEMORY_MAX()
-                                                        .getValue()
-                                                        .longValue()
-                                                * 1024
-                                                * 1024
-                                                * 1024);
-                    }
-                    String coreRGB = RGBUtils.getRGB(corePercent);
-                    String memoryRGB = RGBUtils.getRGB(memoryPercent);
-                    metricsVo.put(TaskConstant.ENTRANCEJOB_CORE_PERCENT, corePercent);
-                    metricsVo.put(TaskConstant.ENTRANCEJOB_MEMORY_PERCENT, memoryPercent);
-                    metricsVo.put(TaskConstant.ENTRANCEJOB_CORE_RGB, coreRGB);
-                    metricsVo.put(TaskConstant.ENTRANCEJOB_MEMORY_RGB, memoryRGB);
+                    if (null != resourceMap && !resourceMap.isEmpty()) {
+                        resourceMap.forEach(
+                                (applicationId, resource) -> {
+                                    resoureList.add(
+                                            new YarnResourceWithStatusVo(applicationId, resource));
+                                });
+                        metricsVo.put(TaskConstant.ENTRANCEJOB_YARNRESOURCE, resoureList);
+                        Optional<Integer> cores =
+                                resourceMap.values().stream()
+                                        .map(resource -> resource.queueCores())
+                                        .reduce((x, y) -> x + y);
+                        Optional<Long> memory =
+                                resourceMap.values().stream()
+                                        .map(resource -> resource.queueMemory())
+                                        .reduce((x, y) -> x + y);
+                        float corePercent = 0.0f;
+                        float memoryPercent = 0.0f;
+                        if (cores.isPresent() && memory.isPresent()) {
+                            corePercent =
+                                    cores.get().floatValue()
+                                            / EntranceConfiguration.YARN_QUEUE_CORES_MAX()
+                                                    .getValue();
+                            memoryPercent =
+                                    memory.get().floatValue()
+                                            / (EntranceConfiguration.YARN_QUEUE_MEMORY_MAX()
+                                                            .getValue()
+                                                            .longValue()
+                                                    * 1024
+                                                    * 1024
+                                                    * 1024);
+                        }
+                        String coreRGB = RGBUtils.getRGB(corePercent);
+                        String memoryRGB = RGBUtils.getRGB(memoryPercent);
+                        metricsVo.put(TaskConstant.ENTRANCEJOB_CORE_PERCENT, corePercent);
+                        metricsVo.put(TaskConstant.ENTRANCEJOB_MEMORY_PERCENT, memoryPercent);
+                        metricsVo.put(TaskConstant.ENTRANCEJOB_CORE_RGB, coreRGB);
+                        metricsVo.put(TaskConstant.ENTRANCEJOB_MEMORY_RGB, memoryRGB);
 
-                    message.data(TaskConstant.ENTRANCEJOB_YARN_METRICS, metricsVo);
+                        message.data(TaskConstant.ENTRANCEJOB_YARN_METRICS, metricsVo);
+                    } else {
+                        message.data(TaskConstant.ENTRANCEJOB_YARNRESOURCE, null);
+                    }
                 } else {
                     message.data(TaskConstant.ENTRANCEJOB_YARNRESOURCE, null);
                 }

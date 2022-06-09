@@ -51,20 +51,7 @@ class EntranceExecutionGatewayParser extends AbstractGatewayParser {
   override def parse(gatewayContext: GatewayContext): Unit = gatewayContext.getRequest.getRequestURI match {
     case EntranceExecutionGatewayParser.ENTRANCE_EXECUTION_REGEX(version, _) =>
       if (sendResponseWhenNotMatchVersion(gatewayContext, version)) return
-      val routeLabelsOption = parseToRouteLabels(gatewayContext)
-      val path = gatewayContext.getRequest.getRequestURI
-      val applicationName = if (routeLabelsOption.isDefined && routeLabelsOption.get.nonEmpty) {
-        val instances = insLabelService.searchInstancesByLabels(routeLabelsOption.get)
-        if (instances.isEmpty) {
-          GatewayConfiguration.ENTRANCE_SPRING_NAME.getValue
-        } else {
-          instances(0).getApplicationName
-        }
-      } else {
-        GatewayConfiguration.ENTRANCE_SPRING_NAME.getValue
-      }
-      info(s"GatewayParser parse requestUri $path to service ${applicationName}.")
-      gatewayContext.getGatewayRoute.setServiceInstance(ServiceInstance(applicationName, null))
+      gatewayContext.getGatewayRoute.setServiceInstance(ServiceInstance(GatewayConfiguration.ENTRANCE_SPRING_NAME.getValue, null))
     case _ =>
   }
 

@@ -76,7 +76,7 @@ export default {
       visualParams: {},
       scriptViewState: {
         // topPanelHeight: '250px',
-        bottomContentHeight: 500,
+        bottomContentHeight: 800,
         topPanelFull: false,
         showPanel: 'log',
         bottomPanelFull: false,
@@ -99,6 +99,8 @@ export default {
   mounted() {
     let taskID = this.$route.query.taskID
     this.initHistory(taskID)
+    const node = document.getElementsByClassName('global-history')[0];
+    this.scriptViewState.bottomContentHeight = node.clientHeight - 55
   },
   methods: {
     // 点击tab时触发请求，log初始就请求了，不做判断

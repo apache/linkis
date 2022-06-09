@@ -32,7 +32,7 @@ public class PersistenceConf {
             CommonVars.apply("wds.linkis.cs.ha.proxymethod", "getContextHAProxy");
 
     public static final CommonVars<Boolean> ENABLE_CS_DESERIALIZE_REPLACE_PACKAGE_HEADER =
-            CommonVars.apply("wds.linkis.cs.deserialize.replace_package_header.enable", false);
+            CommonVars.apply("wds.linkis.cs.deserialize.replace_package_header.enable", true);
 
     public static final CommonVars<String> CS_DESERIALIZE_REPLACE_PACKAGE_HEADER =
             CommonVars.apply(

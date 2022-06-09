@@ -46,11 +46,7 @@
             <version>${linkis.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.apache.linkis</groupId>
-            <artifactId>linkis-manager-service-common</artifactId>
-            <version>${linkis.version}</version>
-        </dependency>
+
 
         <dependency>
             <groupId>org.apache.linkis</groupId>
@@ -70,23 +66,7 @@
             <version>${linkis.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.apache.linkis</groupId>
-            <artifactId>linkis-resource-manager</artifactId>
-            <version>${linkis.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>guice</artifactId>
-                    <groupId>com.google.inject</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
 
-        <dependency>
-            <groupId>org.apache.linkis</groupId>
-            <artifactId>linkis-label-manager</artifactId>
-            <version>${linkis.version}</version>
-        </dependency>
 
         <dependency>
             <groupId>org.apache.linkis</groupId>
@@ -114,6 +94,26 @@
             <artifactId>gson</artifactId>
             <version>${gson.version}</version>
             <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.linkis</groupId>
+            <artifactId>linkis-engineconn-plugin-core</artifactId>
+            <version>${linkis.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.linkis</groupId>
+                    <artifactId>linkis-executor-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.google.code.gson</groupId>
+                    <artifactId>gson</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.linkis</groupId>
+                    <artifactId>linkis-engineconn-common</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
     </dependencies>

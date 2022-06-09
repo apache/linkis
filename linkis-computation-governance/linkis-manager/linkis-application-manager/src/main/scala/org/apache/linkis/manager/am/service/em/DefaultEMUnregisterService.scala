@@ -21,10 +21,10 @@ import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.manager.am.manager.EMNodeManager
 import org.apache.linkis.manager.common.protocol.em.{EMInfoClearRequest, EMResourceClearRequest, StopEMRequest}
 import org.apache.linkis.manager.label.service.NodeLabelRemoveService
-import org.apache.linkis.rpc.message.annotation.Receiver
+import org.apache.linkis.manager.rm.message.RMMessageService
 import org.apache.linkis.protocol.label.NodeLabelRemoveRequest
-import org.apache.linkis.resourcemanager.message.RMMessageService
 import org.apache.linkis.rpc.Sender
+import org.apache.linkis.rpc.message.annotation.Receiver
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 

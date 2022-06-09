@@ -49,6 +49,8 @@
 		<!-- 默认为OTHER,为了解决oracle插入null报错的问题要设置为NULL -->
 		<setting name="jdbcTypeForNull" value="NULL" />
 		<setting name="lazyLoadTriggerMethods" value="equals,clone,hashCode,toString" />
+		<!-- 开启日志 -->
+		<setting name="logImpl" value="LOG4J2" />
 	</settings>
 	
 </configuration>

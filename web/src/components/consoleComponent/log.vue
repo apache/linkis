@@ -132,7 +132,7 @@ export default {
   },
   computed: {
     height() {
-      return this.scriptViewState.bottomContentHeight + 55
+      return this.scriptViewState.bottomContentHeight
     }
   },
   mounted() {

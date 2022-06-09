@@ -180,7 +180,7 @@ export default {
       return this.status && !(this.status === 'Scheduled' || this.status === 'Inited');
     },
     height() {
-      return this.scriptViewState.bottomContentHeight + 46
+      return this.scriptViewState.bottomContentHeight
     }
   },
   methods: {

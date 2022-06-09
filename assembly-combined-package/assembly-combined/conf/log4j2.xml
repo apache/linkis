@@ -22,7 +22,6 @@
                      filePattern="${env:LINKIS_LOG_DIR}/$${date:yyyy-MM}/${sys:serviceName}/linkis-log-%d{yyyy-MM-dd-hh}-%i.log">
             <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] [%-40t] %c{1.} (%L) [%M] - %msg%xEx%n"/>
             <Policies>
-                <TimeBasedTriggeringPolicy interval="1"/>
                 <SizeBasedTriggeringPolicy size="100MB"/>
             </Policies>
             <DefaultRolloverStrategy max="10"/>

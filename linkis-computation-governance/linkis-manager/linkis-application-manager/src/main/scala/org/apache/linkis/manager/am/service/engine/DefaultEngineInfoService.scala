@@ -112,7 +112,7 @@ class DefaultEngineInfoService extends AbstractEngineService with EngineInfoServ
         }
       } {
         case t : Throwable =>
-          error(s"Get engineNode of ${e.toString} error. ", t)
+          logger.info(s"Get engineNode of ${e.toString} error. ", t)
           map.put(e, NodeExistStatus.Unknown)
       }
     })

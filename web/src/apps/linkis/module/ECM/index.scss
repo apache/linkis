@@ -52,6 +52,8 @@ td.table-project-column {
   z-index: 99;
 }
 .ecm, .ecmEngine {
+  height: 100%;
+  overflow: hidden;
   /deep/ .ivu-tag {
     max-width: 140px;
     overflow: hidden;

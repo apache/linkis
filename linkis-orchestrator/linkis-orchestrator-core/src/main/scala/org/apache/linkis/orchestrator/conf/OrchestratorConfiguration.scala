@@ -54,6 +54,8 @@ object OrchestratorConfiguration {
 
   val RETRY_TASK_WAIT_TIME = CommonVars("wds.linkis.orchestrator.task.retry.wait.time", 30000)
 
+  val RETRYTASK_MAXIMUM_AGE = CommonVars("wds.linkis.computation.orchestrator.retry.max.age", 10)
+
   val SCHEDULER_RETRY_TASK_WAIT_TIME = CommonVars("wds.linkis.orchestrator.task.scheduler.retry.wait.time", 100000)
 
   val TASK_SCHEDULER_THREAD_POOL = CommonVars("wds.linkis.orchestrator.task.scheduler.thread.pool", 200)

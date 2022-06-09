@@ -27,6 +27,7 @@ import org.apache.linkis.cs.exception.ContextSearchFailedException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -60,5 +61,16 @@ public abstract class ContextService extends AbstractService {
             ContextID contextID, ContextType contextType, String keyPrefix) throws CSErrorException;
 
     public abstract void removeAllValueByKeyPrefix(ContextID contextID, String keyPrefix)
+            throws CSErrorException;
+
+    public abstract int clearAllContextByID(List<String> idList) throws CSErrorException;
+
+    public abstract int clearAllContextByTime(
+            Date createTimeStart,
+            Date createTimeEnd,
+            Date updateTimeStart,
+            Date updateTimeEnd,
+            Date accessTimeStart,
+            Date accessTimeEnd)
             throws CSErrorException;
 }

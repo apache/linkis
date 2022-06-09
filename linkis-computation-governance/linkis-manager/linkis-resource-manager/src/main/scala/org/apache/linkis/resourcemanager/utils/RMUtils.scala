@@ -58,7 +58,7 @@ object RMUtils extends Logging {
 
   val AM_SERVICE_NAME = "linkis-cg-linkismanager"
 
-  val RM_RESOURCE_ACTION_RECORD = CommonVars("wds.linkis.manager.rm.resource.action.record", false)
+  val RM_RESOURCE_ACTION_RECORD = CommonVars("wds.linkis.manager.rm.resource.action.record", true)
 
 
 

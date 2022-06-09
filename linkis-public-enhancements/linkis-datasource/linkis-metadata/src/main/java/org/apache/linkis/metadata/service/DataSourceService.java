@@ -29,6 +29,8 @@ public interface DataSourceService {
 
     JsonNode queryTableMeta(String dbName, String tableName, String userName);
 
+    JsonNode queryTableMetaBySDID(String dbName, String tableName, String sdid);
+
     JsonNode getTableSize(String dbName, String tableName, String userName);
 
     JsonNode getPartitionSize(

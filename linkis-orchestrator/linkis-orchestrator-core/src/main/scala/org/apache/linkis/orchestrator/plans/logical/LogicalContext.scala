@@ -18,7 +18,7 @@
 package org.apache.linkis.orchestrator.plans.logical
 
 import org.apache.linkis.common.listener.Event
-import org.apache.linkis.orchestrator.listener.task.{TaskLogEvent, TaskProgressEvent}
+import org.apache.linkis.orchestrator.listener.task.{TaskLogEvent, TaskRunningInfoEvent}
 import org.apache.linkis.orchestrator.plans.PlanContext
 
 /**
@@ -38,7 +38,7 @@ trait LogicalContext extends PlanContext {
 
   def pushLog(taskLogEvent: TaskLogEvent): Unit
 
-  def pushProgress(taskProgressEvent: TaskProgressEvent): Unit
+  def pushProgress(taskProgressEvent: TaskRunningInfoEvent): Unit
 
   def broadcastAsyncEvent(event: Event): Unit
 

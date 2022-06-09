@@ -217,7 +217,7 @@ public class LocalFileSystem extends FileSystem {
                 Files.setPosixFilePermissions(Paths.get(dest.getPath()), attr.permissions());
 
             } catch (NoSuchFileException e) {
-                LOG.error(
+                LOG.warn(
                         "File or folder does not exist or file name is garbled(文件或者文件夹不存在或者文件名乱码)",
                         e);
                 throw new StorageWarnException(51001, e.getMessage());
@@ -243,7 +243,7 @@ public class LocalFileSystem extends FileSystem {
                 try {
                     rtn.add(get(f.getPath()));
                 } catch (Throwable e) {
-                    LOG.error("Failed to list path:", e);
+                    LOG.warn("Failed to list path:", e);
                     message =
                             "The file name is garbled. Please go to the shared storage to delete it.(文件名存在乱码，请手动去共享存储进行删除):"
                                     + e.getMessage();
@@ -305,8 +305,7 @@ public class LocalFileSystem extends FileSystem {
         try {
             attr = Files.readAttributes(Paths.get(fsPath.getPath()), PosixFileAttributes.class);
         } catch (NoSuchFileException e) {
-            LOG.error(
-                    "File or folder does not exist or file name is garbled(文件或者文件夹不存在或者文件名乱码)", e);
+            LOG.warn("File or folder does not exist or file name is garbled(文件或者文件夹不存在或者文件名乱码)", e);
             throw new StorageWarnException(51001, e.getMessage());
         }
 

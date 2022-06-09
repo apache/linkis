@@ -33,6 +33,12 @@ trait SchedulerEvent extends Logging {
 
   def getEndTime = endTime
   def getStartTime = startTime
+
+  /*
+   * To be compatible with old versions.
+   * It's not recommonded to use scheduledTime, which was only several mills at most time.
+   */
+  @Deprecated
   def getScheduledTime = scheduledTime
 
   def getId = id

@@ -31,7 +31,7 @@ class CSEntranceInterceptor extends EntranceInterceptor with Logging {
   override def apply(task: JobRequest, logAppender: lang.StringBuilder): JobRequest = {
     logger.debug("Start to execute CSEntranceInterceptor")
     Utils.tryAndWarn(CSEntranceHelper.addCSVariable(task))
-    Utils.tryAndWarn(CSEntranceHelper.resetCreator(task))
+    //Utils.tryAndWarn(CSEntranceHelper.resetCreator(task))
     Utils.tryAndWarn(CSEntranceHelper.initNodeCSInfo(task))
     logger.debug("Finished to execute CSEntranceInterceptor")
     task

@@ -27,6 +27,7 @@
         <result property="createIdentify" column="create_identify"/>
         <result property="createSystem" column="create_system"/>
         <result property="parameter" column="parameter"/>
+        <result property="expire" column="expire"/>
         <result property="createTime" column="create_time"/>
         <result property="modifyTime" column="modify_time"/>
         <result property="modifyUser" column="modify_user"/>
@@ -77,7 +78,7 @@
     <sql id="data_source_query_columns">
         `id`
         , `datasource_name`, `datasource_type_id`, `datasource_desc`,
-        `create_identify`, `create_system`, `create_user`, `parameter`, `create_time`,
+        `create_identify`, `create_system`, `create_user`, `parameter`, `expire`, `create_time`,
         `modify_user`, `modify_time`
     </sql>
 
@@ -94,7 +95,7 @@
         , t.`icon`,
         d.`id`, d.`datasource_name`, d.`datasource_type_id`, d.`datasource_desc`,
         d.`create_identify`, d.`create_system`, d.`create_user`, d.`parameter`, d.`create_time`,
-        d.`modify_user`, d.`modify_time`, d.`version_id`,d.`published_version_id`, d.`labels`
+        d.`modify_user`, d.`modify_time`, d.`version_id`,d.`published_version_id`, d.`labels`, d.`expire`
     </sql>
 
     <insert id="insertOne" useGeneratedKeys="true" keyProperty="id" parameterType="org.apache.linkis.datasourcemanager.common.domain.DataSource">

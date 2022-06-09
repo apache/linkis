@@ -58,8 +58,7 @@ public class ExternalResourceServiceImpl implements ExternalResourceService, Ini
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Autowired
-    ExternalResourceProviderDao providerDao;
+    @Autowired ExternalResourceProviderDao providerDao;
 
     ExternalResourceIdentifierParser[] identifierParsers;
 

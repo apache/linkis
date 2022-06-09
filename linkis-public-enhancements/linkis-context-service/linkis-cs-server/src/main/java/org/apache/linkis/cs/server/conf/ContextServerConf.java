@@ -32,4 +32,7 @@ public class ContextServerConf {
             CommonVars.apply("wds.linkis.cs.ask.executor.times.max", new TimeType("1s"))
                     .getValue()
                     .toLong();
+
+    public static final long CS_SCHEDULER_JOB_WAIT_MILLS =
+            CommonVars.apply("wds.linkis.cs.job.wait.mills", 10000).getValue();
 }

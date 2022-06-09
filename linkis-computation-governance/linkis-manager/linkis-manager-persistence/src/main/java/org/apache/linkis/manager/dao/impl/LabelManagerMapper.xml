@@ -163,6 +163,7 @@
         <foreach collection="labels" index="index" item="label" open="(" close=")" separator=",">
             (#{label.labelKey}, #{label.stringValue})
         </foreach>)
+        ORDER BY A.creator, A.updator ASC
     </select>
 
     <select id="getInstanceIdsByLabelIds" resultType="java.lang.String">

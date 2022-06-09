@@ -28,5 +28,7 @@ public enum ServiceMethod {
     RESET,
     SET,
     BIND,
-    HEARTBEAT
+    HEARTBEAT,
+
+    CLEAR
 }

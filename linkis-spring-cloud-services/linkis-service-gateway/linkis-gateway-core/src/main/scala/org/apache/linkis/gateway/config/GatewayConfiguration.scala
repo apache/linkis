@@ -78,4 +78,6 @@ object GatewayConfiguration {
 
   val THIS_GATEWAY_URL = CommonVars("wds.linkis.gateway.this.url", "")
   val THIS_GATEWAY_SCHEMA = CommonVars("wds.linkis.gateway.this.schema", "")
+
+  val ENABLE_WATER_MARK = CommonVars("wds.linkis.web.enable.water.mark", true)
 }

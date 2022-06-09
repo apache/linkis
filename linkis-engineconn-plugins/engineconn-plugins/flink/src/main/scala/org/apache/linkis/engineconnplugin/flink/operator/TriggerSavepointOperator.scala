@@ -30,8 +30,8 @@ class TriggerSavepointOperator extends Operator with Logging {
   override def getNames: Array[String] = Array("doSavepoint")
 
   override def apply(implicit parameters: Map[String, Any]): Map[String, Any] = {
-    val savepoint = getAsThrow("savepointPath")
-    val mode = getAsThrow("mode")
+    val savepoint = getAsThrow[String]("savepointPath")
+    val mode = getAsThrow[String]("mode")
     info(s"try to $mode savepoint with path $savepoint.")
     OnceExecutorManager.getInstance.getReportExecutor match {
       case flinkExecutor: FlinkOnceExecutor[_] =>

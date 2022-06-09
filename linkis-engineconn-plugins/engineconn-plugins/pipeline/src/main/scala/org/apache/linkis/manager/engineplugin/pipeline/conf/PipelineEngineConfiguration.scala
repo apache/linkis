@@ -30,4 +30,5 @@ object PipelineEngineConfiguration {
 
   val PIPELINE_FIELD_QUOTE_RETOUCH_ENABLE = CommonVars[Boolean](PIPELINE_FIELD_QUOTE_RETOUCH_CONF_ENABLE, false)
 
+  val EXPORT_EXCEL_AUTO_FORMAT = CommonVars("wds.linkis.pipeline.export.excel.auto_format.enable", false)
 }

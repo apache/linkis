@@ -29,6 +29,9 @@ public class CsUtils {
         if (o instanceof String) {
             return (String) o;
         }
+        if (o instanceof Integer) {
+            return String.valueOf((int) o);
+        }
         return SERIALIZE.serialize(o);
     }
 }

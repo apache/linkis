@@ -141,11 +141,10 @@ class EngineExecuteAsyncReturn(val request: ExecuteRequest,
 
   def getLastNotifyTime: Long = lastNotifyTime
 
-  def setOrchestrationObjects(orchestrationFuture: OrchestrationFuture, logProcessor: LogProcessor, progressProcessor: ProgressProcessor, resourceReportProcessor: ResourceReportProcessor): Unit = {
+  def setOrchestrationObjects(orchestrationFuture: OrchestrationFuture, logProcessor: LogProcessor, progressProcessor: ProgressProcessor): Unit = {
     this.orchestrationFuture = orchestrationFuture
     this.logProcessor = logProcessor
     this.progressProcessor = progressProcessor
-    this.resourceReportProcessor = resourceReportProcessor
   }
 
   def getOrchestrationFuture(): Option[OrchestrationFuture] = {
@@ -160,14 +159,9 @@ class EngineExecuteAsyncReturn(val request: ExecuteRequest,
     Option(progressProcessor)
   }
 
-  def getResourceReportProcessor(): Option[ResourceReportProcessor] = {
-    Option(resourceReportProcessor)
-  }
-
   def closeOrchestration(): Unit = {
     getLogProcessor().foreach(IOUtils.closeQuietly(_))
     getProgressProcessor().foreach(IOUtils.closeQuietly(_))
-    getResourceReportProcessor().foreach(IOUtils.closeQuietly(_))
   }
 
   def setSubJobId(subJobId: String): Unit = {

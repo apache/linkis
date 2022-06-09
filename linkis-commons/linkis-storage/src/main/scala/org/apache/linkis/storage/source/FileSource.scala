@@ -19,13 +19,13 @@ package org.apache.linkis.storage.source
 
 import java.io.{Closeable, InputStream}
 import java.util
-
 import org.apache.linkis.common.io._
 import org.apache.linkis.storage.exception.StorageErrorException
 import org.apache.linkis.storage.resultset.{ResultSetFactory, ResultSetReader}
 import org.apache.linkis.storage.script.ScriptFsReader
 import org.apache.linkis.storage.utils.StorageConfiguration
 import org.apache.commons.math3.util.Pair
+import org.apache.linkis.storage.conf.LinkisStorageConf
 
 
 trait FileSource extends Closeable {
@@ -55,7 +55,7 @@ trait FileSource extends Closeable {
 
 object FileSource {
 
-  private val fileType = Array("dolphin", "sql", "scala", "py", "hql", "python", "out", "log", "text", "sh", "jdbc", "ngql", "psql", "fql")
+  private val fileType = LinkisStorageConf.getFileTypeArr
   private val suffixPredicate = (path: String, suffix: String) => path.endsWith(s".$suffix")
 
   def isResultSet(path: String): Boolean = {

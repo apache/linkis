@@ -55,7 +55,7 @@ abstract class AbstractEngineConnLaunchService extends EngineConnLaunchService w
 
 
   def beforeLaunch(request: EngineConnLaunchRequest, conn: EngineConn, duration: Long): Unit = {
-    getECMHooks(request).foreach(_.beforeLaunch(request, conn))
+    Utils.tryAndWarn(getECMHooks(request).foreach(_.beforeLaunch(request, conn)))
   }
 
   def afterLaunch(request: EngineConnLaunchRequest, conn: EngineConn, duration: Long): Unit = {

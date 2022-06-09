@@ -18,7 +18,7 @@
 <template>
   <div class="layout-body" :class="{ 'layout-top': showHeader}">
     <layout-header
-      v-show="showHeader"
+      v-if="showHeader "
       @clear-session="clearSession"
       @set-init="setInit"></layout-header>
     <keep-alive v-if="isInit">
@@ -27,10 +27,12 @@
     </keep-alive>
     <router-view
       v-if="!$route.meta.keepAlive"/>
-    <layout-footer v-show="showFooter"/>
+    <layout-footer v-if="showFooter"/>
   </div>
 </template>
 <script>
+import Vue from 'vue'
+import storage from '@/common/helper/storage';
 import headerModule from '@/dss/module/header';
 import footerModule from '@/dss/module/footer';
 import layoutMixin from '@/common/service/layoutMixin.js';
@@ -41,7 +43,8 @@ export default {
   },
   data() {
     return {
-      isInit: false
+      isInit: false,
+      interval: null
     }
   },
   mixins: [layoutMixin],
@@ -51,12 +54,49 @@ export default {
     },
     showFooter() {
       return this.$route.query.noFooter || location.search.indexOf('noFooter') < 0
+    },
+    isEmbedInFrame() {
+      // 如果是被iframe引入时 top !== self 返回true，用来区分单独跑还是被引入，只有单独跑时要加水印
+      return top !== self;
     }
   },
   methods: {
     setInit() {
       this.isInit = true;
     },
+    showTime(now) {
+      const year = now.getFullYear();
+      const month = now.getMonth();
+      const date = now.getDate();
+      const hour = this.addZero(now.getHours());
+      const minute = this.addZero(now.getMinutes());
+      return `${year}-${month}-${date} ${hour}:${minute}`
+    },
+    addZero(num) {
+      if (num < 10) return '0' + num
+      return num + '';
+    },
+    setWaterMark() {
+      let userNameAndPass = storage.get('saveUserNameAndPass', 'local');
+      let watermark = null;
+      const username = userNameAndPass.split('&')[0];
+      if (username) {
+        watermark = username + ' ' + this.showTime(new Date());
+        Vue.prototype.$watermark.set(watermark)
+      }
+    }
   },
+  created() {
+    if (!this.isEmbedInFrame && storage.get('enableWatermark')) {
+      this.setWaterMark();
+      this.interval = setInterval(this.setWaterMark, 1000)
+    }
+  },
+  beforeDestroy() {
+    if (!this.isEmbedInFrame && storage.get('enableWatermark')) {
+      Vue.prototype.$watermark.clear();
+      clearInterval(this.interval)
+    }
+  }
 };
 </script>

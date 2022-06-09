@@ -230,7 +230,7 @@ object TaskConversions extends Logging {
     taskVO.setInstance(job.getInstances)
     taskVO.setExecId(job.getJobReqId)
     taskVO.setUmUser(job.getSubmitUser)
-    taskVO.setEngineInstance(null)
+
     taskVO.setProgress(job.getProgress)
     taskVO.setLogPath(job.getLogPath)
     taskVO.setStatus(job.getStatus)
@@ -266,15 +266,15 @@ object TaskConversions extends Logging {
 
     val metrics = BDPJettyServerHelper.gson.fromJson((job.getMetrics), classOf[util.Map[String, Object]])
     var completeTime: Date = null
-    if(null != metrics && metrics.containsKey(TaskConstant.ENTRANCEJOB_COMPLETE_TIME) && metrics.get(TaskConstant.ENTRANCEJOB_COMPLETE_TIME) != null){
+    if (null != metrics && metrics.containsKey(TaskConstant.ENTRANCEJOB_COMPLETE_TIME) && metrics.get(TaskConstant.ENTRANCEJOB_COMPLETE_TIME) != null) {
       completeTime = dealString2Date(metrics.get(TaskConstant.ENTRANCEJOB_COMPLETE_TIME).toString)
     }
     var createTime: Date = null
-    if(null != metrics && metrics.containsKey(TaskConstant.ENTRANCEJOB_SUBMIT_TIME) && metrics.get(TaskConstant.ENTRANCEJOB_SUBMIT_TIME) != null){
+    if (null != metrics && metrics.containsKey(TaskConstant.ENTRANCEJOB_SUBMIT_TIME) && metrics.get(TaskConstant.ENTRANCEJOB_SUBMIT_TIME) != null) {
       createTime = dealString2Date(metrics.get(TaskConstant.ENTRANCEJOB_SUBMIT_TIME).toString)
     }
     if (null != createTime) {
-      if(isJobFinished(job.getStatus)) {
+      if (isJobFinished(job.getStatus)) {
         if (null != completeTime) {
           taskVO.setCostTime(completeTime.getTime - createTime.getTime)
         } else if (null != job.getUpdatedTime) {
@@ -285,6 +285,14 @@ object TaskConversions extends Logging {
       } else{
         taskVO.setCostTime(System.currentTimeMillis() - createTime.getTime)
       }
+    }
+    if (metrics.containsKey(TaskConstant.ENTRANCEJOB_ENGINECONN_MAP)) {
+      val engineMap = metrics.get(TaskConstant.ENTRANCEJOB_ENGINECONN_MAP).asInstanceOf[util.Map[String, Object]]
+      if (null != engineMap && !engineMap.isEmpty) {
+        taskVO.setEngineInstance(engineMap.map(_._1).toList.mkString(","))
+      }
+    } else {
+      taskVO.setEngineInstance("EngineInstance not ready in metrics.")
     }
 
     val entranceName = JobhistoryConfiguration.ENTRANCE_SPRING_NAME.getValue

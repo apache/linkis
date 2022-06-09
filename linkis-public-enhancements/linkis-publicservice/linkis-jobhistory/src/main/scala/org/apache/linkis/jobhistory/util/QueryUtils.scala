@@ -35,6 +35,8 @@ import org.apache.linkis.storage.utils.{FileSystemUtils, StorageUtils}
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang.time.DateFormatUtils
 
+import java.util.regex.Pattern
+
 object QueryUtils extends Logging {
 
   private val CODE_STORE_PREFIX = CommonVars("wds.linkis.query.store.prefix", "hdfs:///apps-data/bdp-ide/")
@@ -45,6 +47,8 @@ object QueryUtils extends Logging {
   private val CHARSET = "utf-8"
   private val CODE_SPLIT = ";"
   private val LENGTH_SPLIT = "#"
+  private val NAME_REGEX = "^[a-zA-Z\\d_\\.]+$"
+  private val nameRegexPattern = Pattern.compile(NAME_REGEX)
 
   private val dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS")
 
@@ -118,10 +122,11 @@ object QueryUtils extends Logging {
 
   private def getCodeStorePath(user: String): String = {
     val date: String = DateFormatUtils.format(new Date, "yyyyMMdd")
+    val suffix: String = DateFormatUtils.format(System.currentTimeMillis, "HH_mm_ss_SSS") + "_scripts"
     if (IS_VIEW_FS_ENV.getValue) {
-      s"${CODE_STORE_PREFIX_VIEW_FS.getValue}${user}${CODE_STORE_SUFFIX.getValue}/executionCode/${date}/_scripts"
-    }else{
-      s"${CODE_STORE_PREFIX.getValue}${user}${CODE_STORE_SUFFIX.getValue}/executionCode/${date}/_scripts"
+      s"${CODE_STORE_PREFIX_VIEW_FS.getValue}${user}${CODE_STORE_SUFFIX.getValue}/executionCode/${date}/$suffix"
+    } else {
+      s"${CODE_STORE_PREFIX.getValue}${user}${CODE_STORE_SUFFIX.getValue}/executionCode/${date}/$suffix"
     }
   }
 
@@ -136,4 +141,9 @@ object QueryUtils extends Logging {
   def dateToString(date: Date): String = {
     dateFormat.format(date)
   }
+
+  def checkNameValid(param: String): Boolean = {
+    nameRegexPattern.matcher(param).find()
+  }
+
 }

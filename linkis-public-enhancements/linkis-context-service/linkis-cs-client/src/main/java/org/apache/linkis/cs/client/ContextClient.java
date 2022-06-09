@@ -142,4 +142,26 @@ public interface ContextClient extends Closeable {
             ContextID contextID, ContextType contextType, String keyPrefix) throws ErrorException;
 
     void removeAllValueByKeyPrefix(ContextID contextID, String keyPrefix) throws ErrorException;
+
+    List<String> searchHAIDByTime(
+            String createTimeStart,
+            String createTimeEnd,
+            String updateTimeStart,
+            String updateTimeEnd,
+            String accessTimeStart,
+            String accessTimeEnd,
+            Integer pageNow,
+            Integer pageSize)
+            throws ErrorException;
+
+    int batchClearContextByHAID(List<String> idList) throws ErrorException;
+
+    int batchClearContextByTime(
+            String createTimeStart,
+            String createTimeEnd,
+            String updateTimeStart,
+            String updateTimeEnd,
+            String accessTimeStart,
+            String accessTimeEnd)
+            throws ErrorException;
 }

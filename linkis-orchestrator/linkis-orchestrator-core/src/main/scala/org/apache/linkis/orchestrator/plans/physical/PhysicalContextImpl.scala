@@ -24,7 +24,7 @@ import org.apache.linkis.orchestrator.exception.OrchestratorErrorCodeSummary
 import org.apache.linkis.orchestrator.execution.impl.DefaultFailedTaskResponse
 import org.apache.linkis.orchestrator.execution.{CompletedTaskResponse, SucceedTaskResponse, TaskResponse}
 import org.apache.linkis.orchestrator.listener._
-import org.apache.linkis.orchestrator.listener.task.{RootTaskResponseEvent, TaskLogEvent, TaskProgressEvent, TaskYarnResourceEvent}
+import org.apache.linkis.orchestrator.listener.task.{RootTaskResponseEvent, TaskLogEvent, TaskRunningInfoEvent, TaskYarnResourceEvent}
 
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
@@ -175,11 +175,8 @@ class PhysicalContextImpl(private var rootTask: ExecTask, private var leafTasks:
     broadcastAsyncEvent(taskLogEvent)
   }
 
-  override def pushProgress(taskProgressEvent: TaskProgressEvent): Unit = {
-    broadcastAsyncEvent(taskProgressEvent)
-  }
-  override def pushYarnResource(taskYarnResourceEvent: TaskYarnResourceEvent): Unit = {
-    broadcastAsyncEvent(taskYarnResourceEvent)
+  override def pushProgress(taskRunningInfoEvent: TaskRunningInfoEvent): Unit = {
+    broadcastAsyncEvent(taskRunningInfoEvent)
   }
 
   def setAsyncBus(asyncListenerBus: OrchestratorAsyncListenerBus): Unit = {

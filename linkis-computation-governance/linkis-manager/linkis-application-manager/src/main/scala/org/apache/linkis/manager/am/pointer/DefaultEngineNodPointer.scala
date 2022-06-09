@@ -40,7 +40,7 @@ class DefaultEngineNodPointer(val node: Node) extends AbstractNodePointer with E
         if (lockStatus) {
           Some(lock)
         } else {
-          error(s"Failed to get locker,${node.getServiceInstance}: " + msg)
+          logger.info(s"Failed to get locker,${node.getServiceInstance}: " + msg)
           None
         }
       case _ => None

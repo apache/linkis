@@ -17,9 +17,13 @@
  
 package org.apache.linkis.orchestrator.computation.operation.progress
 
+import org.apache.linkis.manager.common.protocol.resource.ResourceWithStatus
 import org.apache.linkis.orchestrator.Orchestration
 import org.apache.linkis.protocol.engine.JobProgressInfo
+import java.util
 
 
 case class ProgressInfoEvent(orchestration: Orchestration,
-                             progress: Float, progressInfo: Array[JobProgressInfo])
+                             progress: Float, progressInfo: Array[JobProgressInfo],
+                             resourceMap: util.HashMap[String, ResourceWithStatus],
+                             infoMap: util.HashMap[String, Object])

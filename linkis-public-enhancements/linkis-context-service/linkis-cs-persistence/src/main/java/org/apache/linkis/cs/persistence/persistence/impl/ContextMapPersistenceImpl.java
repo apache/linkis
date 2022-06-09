@@ -48,6 +48,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -85,6 +87,10 @@ public class ContextMapPersistenceImpl implements ContextMapPersistence {
             pKV.getFirst().setContextId(contextID.getContextId());
             pKV.getFirst().setContextKey(pK.getFirst());
             pKV.getFirst().setContextValue(pV.getFirst());
+            Date now = new Date();
+            pKV.getFirst().setCreateTime(now);
+            pKV.getFirst().setUpdateTime(now);
+            pKV.getFirst().setAccessTime(now);
             contextMapMapper.createMap(pKV.getFirst());
         } catch (JsonProcessingException e) {
             logger.error("writeAsJson failed:", e);
@@ -108,6 +114,9 @@ public class ContextMapPersistenceImpl implements ContextMapPersistence {
         pKV.getFirst().setContextKey(pK.getFirst());
         pKV.getFirst().setContextValue(pV.getFirst());
         pKV.getFirst().setContextId(contextID.getContextId());
+        if (null == pKV.getFirst().getAccessTime()) {
+            pKV.getFirst().setUpdateTime(new Date());
+        }
         contextMapMapper.updateMap(pKV.getFirst());
     }
 
@@ -231,5 +240,30 @@ public class ContextMapPersistenceImpl implements ContextMapPersistence {
     @Override
     public void removeByKeyPrefix(ContextID contextID, ContextType contextType, String keyPrefix) {
         contextMapMapper.removeByKeyPrefixAndContextType(contextID, contextType, keyPrefix);
+    }
+
+    @Override
+    public List<ContextKeyValue> searchContextIDByTime(
+            Date createTimeStart,
+            Date createTimeEnd,
+            Date updateTimeStart,
+            Date updateTimeEnd,
+            Date accessTimeStart,
+            Date accessTimeEnd) {
+        List<PersistenceContextKeyValue> result =
+                contextMapMapper.getAllContextMapByTime(
+                        createTimeStart,
+                        createTimeEnd,
+                        updateTimeStart,
+                        updateTimeEnd,
+                        accessTimeStart,
+                        accessTimeEnd);
+        List<ContextKeyValue> rsList = new ArrayList<>();
+        if (null != result) {
+            for (PersistenceContextKeyValue pKV : result) {
+                rsList.add(pKV);
+            }
+        }
+        return rsList;
     }
 }

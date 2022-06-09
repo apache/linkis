@@ -14,6 +14,7 @@
         "functionType": "函数类型",
         "creator": "创建者",
         "search": "查询",
+        "addUDF": "新增UDF",
         "addFunction": "新增函数",
         "updateFunction": "更新函数",
         "batchExportFunction": "批量导出函数",
@@ -38,6 +39,10 @@
           "expire": "标记过期"
         },
         "common": "通用",
+        "expire": "过期",
+        "normal": "正常",
+        "yes": "是",
+        "no": "否",
         "sprak": "sprak",
         "jarPackage": "jar包",
         "scriptPath": "脚本路径",
@@ -66,7 +71,9 @@
         "SRCSLX": "请输入参数类型",
         "SRFL": "请输入分类",
         "XGHS": "修改函数",
-        "XG": "修改"
+        "XG": "修改",
+        "QPZS": "全屏展示",
+        "QXQP": "取消全屏"
       }
     }
   }

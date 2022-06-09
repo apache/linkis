@@ -33,6 +33,9 @@
   .jump{
     margin-left: 25px;
   }
+  .ivu-input-wrapper {
+    width: calc(100% - 105px);
+  }
 }
 .table-content {
   margin-top: 25px;
@@ -55,6 +58,7 @@
   padding: 10px 0;
 }
 .microService {
+  height: 100%;
   /deep/ .ivu-tag {
     max-width: 140px;
     overflow: hidden;

@@ -17,6 +17,7 @@
 
 package org.apache.linkis.cs.server.scheduler;
 
+import org.apache.linkis.cs.server.conf.ContextServerConf;
 import org.apache.linkis.cs.server.scheduler.impl.CsJobListener;
 import org.apache.linkis.cs.server.scheduler.impl.CsSchedulerJob;
 import org.apache.linkis.cs.server.service.Service;
@@ -61,7 +62,9 @@ public class DefaultCsScheduler implements CsScheduler {
         scheduler.submit(csJob);
         if (job instanceof HttpAnswerJob) {
             HttpAnswerJob answerJob = (HttpAnswerJob) job;
-            answerJob.getResponseProtocol().waitTimeEnd(5000);
+            answerJob
+                    .getResponseProtocol()
+                    .waitTimeEnd(ContextServerConf.CS_SCHEDULER_JOB_WAIT_MILLS);
         }
     }
 

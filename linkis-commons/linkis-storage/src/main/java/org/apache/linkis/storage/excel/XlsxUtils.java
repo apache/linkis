@@ -42,14 +42,12 @@ public class XlsxUtils {
                         StreamingReader.builder()
                                 .rowCacheSize(
                                         2) // number of rows to keep in memory (defaults to 10)
-                                .setUseSstReadOnly(true)
                                 .open(inputStream);
             } else {
                 wb =
                         StreamingReader.builder()
                                 .rowCacheSize(
                                         2) // number of rows to keep in memory (defaults to 10)
-                                .setUseSstReadOnly(true)
                                 .open(file);
             }
             List<String> sheetNames = new ArrayList<>();

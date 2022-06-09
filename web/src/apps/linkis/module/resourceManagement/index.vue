@@ -70,6 +70,12 @@
           >{{ isAdminModel ? $t('message.linkis.generalView') : $t('message.linkis.manageView') }}</Button>
           <Button
             v-show="isAdminModel"
+            type="primary"
+            @click="clickShowOperations"
+            style="margin-left: 10px;"
+          >{{ showOperations ? $t('message.linkis.hide') : $t('message.linkis.showOperations') }}</Button>
+          <Button
+            v-show="isAdminModel && showOperations"
             type="error" @click="() => {this.resetAll()}" style="margin-left: 10px;">{{$t('message.linkis.resetAll')}}</Button>
         </FormItem>
       </Form>
@@ -94,11 +100,11 @@
       <!-- 应用列表标签 -->
       <div class="appListTag">
         <div class="tagName">
-          <span>{{$t('message.linkis.tableColumns.label')}}：</span>
+          <span>{{$t('message.linkis.tableColumns.label')}}</span>
           <Tag v-for="(item, index) in tagTitle" :key="index" color="primary">{{item}}</Tag>
         </div>
         <div class="resourceList">
-          <span>{{$t('message.linkis.resources')}}：</span>
+          <span>{{$t('message.linkis.resources')}}</span>
           <span v-if="applicationList.usedResource">
             <Tag color="success">{{`${calcCompany(applicationList.usedResource)}`}}(used)</Tag>
             <Tag color="error">{{`${calcCompany(applicationList.maxResource)}`}}(max)</Tag>
@@ -106,7 +112,7 @@
           </span>
         </div>
         <div class="instanceNum" >
-          <span>{{$t('message.linkis.instanceNum')}}：</span>
+          <span>{{$t('message.linkis.instanceNum')}}</span>
           <span v-if="applicationList.usedResource">{{applicationList.usedResource.instance}} / {{applicationList.maxResource.instance}}</span>
         </div>
       </div>
@@ -169,7 +175,7 @@
           size="small"
           show-total
           show-sizer
-          prev-text="上一页" next-text="下一页"
+          :prev-text="$t('message.linkis.previousPage')" :next-text="$t('message.linkis.nextPage')"
           @on-change="change"
           @on-page-size-change="changeSize" />
       </div>
@@ -208,6 +214,7 @@ export default {
         pageSize: 15,
         pageNow: 1
       },
+      showOperations: false,
       columns: [
         {
           title: this.$t('message.linkis.tableColumns.engineInstance'),
@@ -318,7 +325,7 @@ export default {
         {
           title: this.$t('message.linkis.tableColumns.appType'),
           key: 'creator',
-          minWidth: 100,
+          minWidth: 120,
           className: 'table-project-column',
         },
         {
@@ -330,7 +337,7 @@ export default {
         {
           title: this.$t('message.linkis.tableColumns.engineUsed'),
           key: 'usedResource',
-          minWidth: 100,
+          minWidth: 120,
           className: 'table-project-column',
           slot: 'usedResource',
         },
@@ -349,16 +356,16 @@ export default {
           minWidth: 150,
         },
         {
-          title: this.$t('message.linkis.tableColumns.queenUsed'),
+          title: this.$t('message.linkis.tableColumns.queueUsed'),
           key: 'yarnUsedResource',
-          minWidth: 150,
+          minWidth: 160,
           className: 'table-project-column',
           slot: 'yarnUsedResource',
         },
         {
-          title: this.$t('message.linkis.tableColumns.queenTop'),
+          title: this.$t('message.linkis.tableColumns.queueTop'),
           key: 'yarnMaxResource',
-          minWidth: 150,
+          minWidth: 160,
           className: 'table-project-column',
           slot: 'yarnMaxResource',
         },
@@ -367,33 +374,8 @@ export default {
           key: 'yarnLeftResource',
           className: 'table-project-column',
           slot: 'yarnLeftResource',
-          minWidth: 150,
+          minWidth: 160,
         },
-        {
-          title: this.$t('message.linkis.tableColumns.control.title'),
-          key: 'action',
-          width: '215',
-          align: 'center',
-          render: (h, params) => {
-            return h('div', [
-              h('Button', {
-                props: {
-                  type: 'error',
-                  size: 'small',
-                  disabled: params.row.isStop
-                },
-                style: {
-                  marginRight: '5px',
-                },
-                on: {
-                  click: () => {
-                    this.resetAll(params.row.id)
-                  }
-                }
-              }, this.$t('message.linkis.reset'))
-            ]);
-          }
-        }
       ],
       engines: [],
       searchBar: {},
@@ -620,6 +602,40 @@ export default {
       this.searchBar.engineType = ''
       this.search()
     },
+    clickShowOperations () {
+      if (this.showOperations) {
+        this.admincolumns.splice(this.admincolumns.length - 1, 1)
+      } else {
+        this.admincolumns.push(
+          {
+            title: this.$t('message.linkis.tableColumns.control.title'),
+            key: 'action',
+            width: '100',
+            align: 'center',
+            render: (h, params) => {
+              return h('div', [
+                h('Button', {
+                  props: {
+                    type: 'error',
+                    size: 'small',
+                    disabled: params.row.isStop
+                  },
+                  style: {
+                    marginRight: '5px',
+                  },
+                  on: {
+                    click: () => {
+                      this.resetAll(params.row.id)
+                    }
+                  }
+                }, this.$t('message.linkis.reset'))
+              ]);
+            }
+          }
+        )
+      }
+      this.showOperations = !this.showOperations
+    },
     resetAll(resourceId) {
       this.$Modal.confirm({
         title: this.$t('message.linkis.reset'),
@@ -643,6 +659,14 @@ export default {
 <style lang="scss">
   .resource-page {
     min-height: 250px;
+    height: 100%;
+    overflow: hidden;
+    .ivu-table {
+      overflow: auto;
+    }
+    .ivu-table:before {
+      height: 0;
+    }
     .admin-title {
       top: 36px;
       position: absolute;

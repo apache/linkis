@@ -14,302 +14,297 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.common.utils
 
-import java.text.SimpleDateFormat
-import java.util
-import java.util.{Calendar, Date}
-
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.exception.LinkisCommonErrorException
-import org.apache.commons.lang.StringUtils
-import org.apache.commons.lang.time.DateUtils
+import org.apache.linkis.common.variable
+import org.apache.linkis.common.variable.DateTypeUtils.{getMonthDay, getToday, getYesterday}
+import org.apache.linkis.common.variable._
 
-import scala.collection.mutable
+import java.util
+import scala.collection.JavaConverters.mapAsScalaMapConverter
 import scala.collection.convert.WrapAsScala._
-import scala.util.matching.Regex
+import scala.collection.mutable
+import scala.collection.mutable.ArrayBuffer
+import scala.util.control.Exception.allCatch
 
 
 object VariableUtils extends Logging {
 
   val RUN_DATE = "run_date"
+
+  private val codeReg = "\\$\\{\\s*[A-Za-z][A-Za-z0-9_\\.]*\\s*[\\+\\-\\*/]?\\s*[A-Za-z0-9_\\.]*\\s*\\}".r
+
   /**
-    * date Format
-    */
-  //val dateFormat = new SimpleDateFormat("yyyyMMdd")
-  //val dateFormat_std = new SimpleDateFormat("yyyy-MM-dd")
-
-  val dateFormatLocal = new ThreadLocal[SimpleDateFormat]() {
-    override protected def initialValue = new SimpleDateFormat("yyyyMMdd")
-  }
-
-  val dateFormatStdLocal = new ThreadLocal[SimpleDateFormat]() {
-    override protected def initialValue = new SimpleDateFormat("yyyy-MM-dd")
-  }
-
-  val codeReg: Regex = "\\$\\{\\s*[A-Za-z][A-Za-z0-9_\\.]*\\s*[\\+\\-\\*/]?\\s*[A-Za-z0-9_\\.]*\\s*\\}".r
-  val calReg: Regex = "(\\s*[A-Za-z][A-Za-z0-9_\\.]*\\s*)([\\+\\-\\*/]?)(\\s*[A-Za-z0-9_\\.]*\\s*)".r
+   * calculation Reg
+   * Get custom variables, if it is related to the left and right variables of the analytical calculation of the calculation
+   */
+  private val calReg = "(\\s*[A-Za-z][A-Za-z0-9_\\.]*\\s*)([\\+\\-\\*/]?)(\\s*[A-Za-z0-9_\\.]*\\s*)".r
 
   def replace(replaceStr: String): String = replace(replaceStr, new util.HashMap[String, Any](0))
 
   def replace(replaceStr: String, variables: util.Map[String, Any]): String = {
-    val nameAndType = mutable.Map[String, VariableType]()
+    val nameAndType = mutable.Map[String, variable.VariableType]()
     var run_date: CustomDateType = null
     variables foreach {
       case (RUN_DATE, value) if nameAndType.get(RUN_DATE).isEmpty =>
         val run_date_str = value.asInstanceOf[String]
         if (StringUtils.isNotEmpty(run_date_str)) {
           run_date = new CustomDateType(run_date_str, false)
-          nameAndType(RUN_DATE) = DateType(run_date)
+          nameAndType(RUN_DATE) = variable.DateType(run_date)
         }
       case (key, value: String) if !nameAndType.contains(key) && StringUtils.isNotEmpty(value) =>
-        nameAndType(key) = Utils.tryCatch[VariableType](DoubleValue(value.toDouble))(_ => StringType(value))
+        nameAndType(key) = Utils.tryCatch[variable.VariableType](variable.DoubleValue(value.toDouble))(_ => variable.StringType(value))
       case _ =>
     }
-    if(!nameAndType.contains(RUN_DATE) || null == run_date){
+    if (!nameAndType.contains(RUN_DATE) || null == run_date) {
       run_date = new CustomDateType(getYesterday(false), false)
-      nameAndType(RUN_DATE) = DateType(new CustomDateType(run_date.toString, false))
+      nameAndType(RUN_DATE) = variable.DateType(new CustomDateType(run_date.toString, false))
     }
     initAllDateVars(run_date, nameAndType)
     parserVar(replaceStr, nameAndType)
   }
 
-  private def initAllDateVars(run_date: CustomDateType, nameAndType: mutable.Map[String, VariableType]): Unit = {
+  def replace(code: String, runtType: String, variables: util.Map[String, String]): String = {
+    val codeTypeAndRunTypeRelationMap = CodeAndRunTypeUtils.getCodeTypeAndRunTypeRelationMap
+    if (codeTypeAndRunTypeRelationMap.isEmpty) {
+      return code
+    }
+    val allowedRunTypeMap: Map[String, String] = CodeAndRunTypeUtils.getRunTypeAndCodeTypeRelationMap
+    val codeType = allowedRunTypeMap.getOrElse(runtType, null)
+    if (codeType == null) {
+      return code
+    }
+
+    var run_date: CustomDateType = null
+
+    val nameAndType = mutable.Map[String, variable.VariableType]()
+
+    val nameAndValue: mutable.Map[String, String] = getCustomVar(code, codeType)
+
+    def putNameAndType(data: mutable.Map[String, String]): Unit = if (null != data) data foreach {
+      case (key, value) => key match {
+        case RUN_DATE => if (!nameAndType.contains(RUN_DATE)) {
+          val run_date_str = value
+          if (StringUtils.isNotEmpty(run_date_str)) {
+            run_date = new CustomDateType(run_date_str, false)
+            nameAndType(RUN_DATE) = variable.DateType(run_date)
+          }
+        }
+        case _ => if (!nameAndType.contains(key) && StringUtils.isNotEmpty(value)) {
+          if ((allCatch opt value.toDouble).isDefined) {
+            nameAndType(key) = variable.DoubleValue(value.toDouble)
+          } else {
+            nameAndType(key) = variable.StringType(value)
+          }
+        }
+      }
+    }
+    // The first step is to replace the variable from code
+    putNameAndType(nameAndValue)
+    if (variables.containsKey("user")) {
+      nameAndType("user") = variable.StringType(variables.get("user"))
+    }
+    // The sceond step is to replace varibles map
+    if (null != variables) {
+      putNameAndType(variables.asScala)
+    }
+    if (!nameAndType.contains(RUN_DATE) || null == run_date) {
+      run_date = new CustomDateType(getYesterday(false), false)
+      nameAndType(RUN_DATE) = variable.DateType(new CustomDateType(run_date.toString, false))
+    }
+
+    initAllDateVars(run_date, nameAndType)
+    parserVar(code, nameAndType)
+  }
+
+  private def initAllDateVars(run_date: CustomDateType, nameAndType: mutable.Map[String, variable.VariableType]): Unit = {
     val run_data_str = run_date.toString
-    nameAndType("run_date_std") = DateType(new CustomDateType(run_date.getStdDate))
-    nameAndType("run_month_begin") = DateType(new CustomMonthType(run_data_str, false))
-    nameAndType("run_month_begin_std") = DateType(new CustomMonthType(run_data_str))
-    nameAndType("run_month_end") = DateType(new CustomMonthType(run_data_str, false, true))
-    nameAndType("run_month_end_std") = DateType(new CustomMonthType(run_data_str, true, true))
+    nameAndType("run_date_std") = variable.DateType(new CustomDateType(run_date.getStdDate))
+    nameAndType("run_month_begin") = MonthType(new CustomMonthType(run_data_str, false))
+    nameAndType("run_month_begin_std") = variable.MonthType(new CustomMonthType(run_data_str))
+    nameAndType("run_month_end") = variable.MonthType(new CustomMonthType(run_data_str, false, true))
+    nameAndType("run_month_end_std") = variable.MonthType(new CustomMonthType(run_data_str, true, true))
+
+    nameAndType("run_quarter_begin") = QuarterType(new CustomQuarterType(run_data_str, false))
+    nameAndType("run_quarter_begin_std") = QuarterType(new CustomQuarterType(run_data_str))
+    nameAndType("run_quarter_end") = QuarterType(new CustomQuarterType(run_data_str, false, true))
+    nameAndType("run_quarter_end_std") = QuarterType(new CustomQuarterType(run_data_str, true, true))
+
+    nameAndType("run_half_year_begin") = HalfYearType(new CustomHalfYearType(run_data_str, false))
+    nameAndType("run_half_year_begin_std") = HalfYearType(new CustomHalfYearType(run_data_str))
+    nameAndType("run_half_year_end") = HalfYearType(new CustomHalfYearType(run_data_str, false, true))
+    nameAndType("run_half_year_end_std") = HalfYearType(new CustomHalfYearType(run_data_str, true, true))
+
+    nameAndType("run_year_begin") = YearType(new CustomYearType(run_data_str, false))
+    nameAndType("run_year_begin_std") = YearType(new CustomYearType(run_data_str))
+    nameAndType("run_year_end") = YearType(new CustomYearType(run_data_str, false, true))
+    nameAndType("run_year_end_std") = YearType(new CustomYearType(run_data_str, true, true))
+
+    nameAndType("run_date_std") = variable.DateType(new CustomDateType(run_date.getStdDate))
+    nameAndType("run_month_begin") = variable.MonthType(new CustomMonthType(run_data_str, false))
+    nameAndType("run_month_begin_std") = variable.MonthType(new CustomMonthType(run_data_str))
+    nameAndType("run_month_end") = variable.MonthType(new CustomMonthType(run_data_str, false, true))
+    nameAndType("run_month_end_std") = variable.MonthType(new CustomMonthType(run_data_str, true, true))
+
+    nameAndType("run_quarter_begin") = QuarterType(new CustomQuarterType(run_data_str, false))
+    nameAndType("run_quarter_begin_std") = QuarterType(new CustomQuarterType(run_data_str))
+    nameAndType("run_quarter_end") = QuarterType(new CustomQuarterType(run_data_str, false, true))
+    nameAndType("run_quarter_end_std") = QuarterType(new CustomQuarterType(run_data_str, true, true))
+
+    nameAndType("run_half_year_begin") = HalfYearType(new CustomHalfYearType(run_data_str, false))
+    nameAndType("run_half_year_begin_std") = HalfYearType(new CustomHalfYearType(run_data_str))
+    nameAndType("run_half_year_end") = HalfYearType(new CustomHalfYearType(run_data_str, false, true))
+    nameAndType("run_half_year_end_std") = HalfYearType(new CustomHalfYearType(run_data_str, true, true))
+
+    nameAndType("run_year_begin") = YearType(new CustomYearType(run_data_str, false))
+    nameAndType("run_year_begin_std") = YearType(new CustomYearType(run_data_str))
+    nameAndType("run_year_end") = YearType(new CustomYearType(run_data_str, false, true))
+    nameAndType("run_year_end_std") = YearType(new CustomYearType(run_data_str, true, true))
+
+    /*
+    calculate run_today based on run_date
+    */
+    val run_today = new CustomDateType(getToday(false, run_date + 1), false)
+    nameAndType("run_today") = variable.DateType(new CustomDateType(run_today.toString, false))
+    nameAndType("run_today_std") = variable.DateType(new CustomDateType(run_today.getStdDate))
+    nameAndType("run_month_now_begin") = variable.MonthType(new CustomMonthType(new CustomMonthType(run_today.toString, false) - 1, false))
+    nameAndType("run_month_now_begin_std") = variable.MonthType(new CustomMonthType(new CustomMonthType(run_today.toString, false) - 1))
+    nameAndType("run_month_now_end") = variable.MonthType(new CustomMonthType(new CustomMonthType(run_today.toString, false) - 1, false, true))
+    nameAndType("run_month_now_end_std") = variable.MonthType(new CustomMonthType(new CustomMonthType(run_today.toString, false) - 1, true, true))
+
+    // calculate run_mon base on run_date
+    val run_mon = new CustomMonType(getMonthDay(false, run_date.getDate), false)
+    nameAndType("run_mon") = MonType(new CustomMonType(run_mon.toString, false))
+    nameAndType("run_mon_std") = MonType(new CustomMonType(run_mon.toString, true, false))
+    nameAndType("run_mon_start") = MonType(new CustomMonType(run_mon.toString, false, false))
+    nameAndType("run_mon_start_std") = MonType(new CustomMonType(run_mon.toString, true, false))
+    nameAndType("run_mon_end") = MonType(new CustomMonType(run_mon.toString, false, true))
+    nameAndType("run_mon_end_std") = MonType(new CustomMonType(run_mon.toString, true, true))
   }
 
   /**
-    * Parse and replace the value of the variable
-    * 1.Get the expression and calculations
-    * 2.Print user log
-    * 3.Assemble code
-    *
-    * @param replaceStr        : replaceStr
-    * @param nameAndType : variable name and Type
-    * @return
-    */
-  private def parserVar(replaceStr: String, nameAndType: mutable.Map[String, VariableType]): String = {
+   * Parse and replace the value of the variable
+   * 1.Get the expression and calculations
+   * 2.Print user log
+   * 3.Assemble code
+   *
+   * @param code        :code
+   * @param nameAndType : variable name and Type
+   * @return
+   */
+  def parserVar(code: String, nameAndType: mutable.Map[String, VariableType]): String = {
     val parseCode = new StringBuilder
-    val codes = codeReg.split(replaceStr)
+    val codes = codeReg.split(code)
+    val expressionCache = mutable.HashSet[String]()
     var i = 0
-    codeReg.findAllIn(replaceStr).foreach{ str =>
-      i = i + 1
-      calReg.findFirstMatchIn(str).foreach{ ma =>
+    codeReg.findAllIn(code).foreach(str => {
+      calReg.findFirstMatchIn(str).foreach(ma => {
+        i = i + 1
+        /**
+         * name left value
+         * rightValue right value
+         * signal: + - * /
+         */
         val name = ma.group(1)
         val signal = ma.group(2)
-        val bValue = ma.group(3)
-        if (StringUtils.isBlank(name)) {
-          throw new LinkisCommonErrorException(20041,s"[$str] with empty variable name.")
-        }
-        val replacedStr = nameAndType.get(name.trim).map { varType =>
-          if (StringUtils.isNotBlank(signal)) {
-            if (StringUtils.isBlank(bValue)) {
-              throw new LinkisCommonErrorException(20042, s"[$str] expression is not right, please check.")
+        val rightValue = ma.group(3)
+
+        if (name == null || name.trim.isEmpty) {
+           throw new LinkisCommonErrorException(20041, s"[$str] replaced var is null")
+        } else {
+          var expression = name.trim
+          val varType = nameAndType.get(name.trim).orNull
+          if (varType == null) {
+            logger.warn(s"Use undefined variables or use the set method: [$str](使用了未定义的变量或者使用了set方式:[$str])")
+            parseCode ++= codes(i - 1) ++ str
+          } else {
+            var res: String = varType.getValue
+            if (signal != null && !signal.trim.isEmpty) {
+              if (rightValue == null || rightValue.trim.isEmpty) {
+                 throw new LinkisCommonErrorException(20042, s"[$str] expression is not right, please check")
+              } else {
+                expression = expression + "_" + signal.trim + "_" + rightValue.trim
+                val rightToken = rightValue.trim
+                val rightRes = if (nameAndType.contains(rightToken)) {
+                  nameAndType(rightToken).getValue
+                } else {
+                  rightToken
+                }
+                res = varType.calculator(signal.trim, rightRes)
+              }
             }
-            varType.calculator(signal.trim, bValue.trim)
-          } else varType.getValue
-        }.getOrElse {
-          warn(s"Use undefined variables or use the set method: [$str](使用了未定义的变量或者使用了set方式:[$str])")
-          str
+            if (!expressionCache.contains(expression)) {
+              logger.info(s"Variable expression [$str] = $res(变量表达式[$str] = $res)")
+              expressionCache += expression
+            }
+            parseCode ++= codes(i - 1) ++ res
+          }
         }
-        parseCode ++= codes(i - 1) ++ replacedStr
-      }
-    }
+      })
+    })
     if (i == codes.length - 1) {
       parseCode ++= codes(i)
     }
-    StringUtils.strip(parseCode.toString)
+    //val parsedCode = deleteUselessSemicolon(parseCode)
+    StringUtils.strip(parseCode.toString())
   }
+
+
 
   /**
-    * Get Yesterday"s date
-    *
-    * @param std :2017-11-16
-    * @return
-    */
-  private def getYesterday(std: Boolean = true): String = {
-    val dateFormat = dateFormatLocal.get()
-    val dateFormat_std = dateFormatStdLocal.get()
-    val cal: Calendar = Calendar.getInstance()
-    cal.add(Calendar.DATE, -1)
-    if (std) {
-      dateFormat_std.format(cal.getTime)
-    } else {
-      dateFormat.format(cal.getTime)
+   * Get user-defined variables and values
+   *
+   * @param code     :code
+   * @param codeType :SQL,PYTHON
+   * @return
+   */
+  def getCustomVar(code: String, codeType: String): mutable.Map[String, String] = {
+    val nameAndValue = mutable.Map[String, String]()
+
+    var varString: String = null
+    var errString: String = null
+
+    codeType match {
+      case CodeAndRunTypeUtils.RUN_TYPE_SQL => varString = """\s*--@set\s*.+\s*"""
+        errString = """\s*--@.*"""
+      case CodeAndRunTypeUtils.RUN_TYPE_PYTHON | CodeAndRunTypeUtils.RUN_TYPE_SHELL => varString = """\s*#@set\s*.+\s*"""
+        errString = """\s*#@"""
+      case CodeAndRunTypeUtils.RUN_TYPE_SCALA => varString = """\s*//@set\s*.+\s*"""
+        errString = """\s*//@.+"""
+      case CodeAndRunTypeUtils.RUN_TYPE_JAVA => varString = """\s*!!@set\s*.+\s*"""
     }
-  }
 
-  /**
-    * Get Month"s date
-    *
-    * @param std   :2017-11-01
-    * @param isEnd :01 or 30,31
-    * @return
-    */
-  private[utils] def getMonth(date: Date, std: Boolean = true, isEnd: Boolean = false): String = {
-    val dateFormat = dateFormatLocal.get()
-    val dateFormat_std = dateFormatStdLocal.get()
-    val cal = Calendar.getInstance()
-    cal.setTime(date)
-    cal.set(Calendar.DATE, 1)
-    if (isEnd) {
-      cal.roll(Calendar.DATE, -1)
+    val customRegex = varString.r.unanchored
+    val errRegex = errString.r.unanchored
+    code.split("\n").foreach { str => {
+      str match {
+        case customRegex() =>
+          val clearStr = if (str.endsWith(";")) str.substring(0, str.length - 1) else str
+          val res: Array[String] = clearStr.split("=")
+          if (res != null && res.length == 2) {
+            val nameSet = res(0).split("@set")
+            if (nameSet != null && nameSet.length == 2) {
+              val name = nameSet(1).trim
+              nameAndValue(name) = res(1).trim
+            }
+          } else {
+            if (res.length > 2) {
+              throw new LinkisCommonErrorException(20044, s"$str var defined uncorrectly")
+            } else {
+              throw new LinkisCommonErrorException(20045, s"var was defined uncorrectly:$str")
+            }
+          }
+        case errRegex() =>
+          logger.warn(s"The variable definition is incorrect:$str,if it is not used, it will not run the error, but it is recommended to use the correct specification to define")
+        case _ =>
+      }
     }
-    if (std) {
-      dateFormat_std.format(cal.getTime)
-    } else {
-      dateFormat.format(cal.getTime)
     }
+    nameAndValue
   }
 
-}
-
-
-
-trait VariableType {
-
-  def getValue: String
-  def calculator(signal: String, bValue: String): String
-
-}
-
-case class DateType(value: CustomDateType) extends VariableType {
-  override def getValue: String = value.toString
-
-  def calculator(signal: String, bValue: String): String = signal match {
-    case "+" => value + bValue.toInt
-    case "-" => value - bValue.toInt
-    case _ => throw new LinkisCommonErrorException(20046,s"Date class is not supported to uss：$signal.")
-  }
-}
-
-case class LongType(value: Long) extends VariableType {
-  override def getValue: String = value.toString
-
-  def calculator(signal: String, bValue: String): String = signal match {
-    case "+" => val res = value + bValue.toLong; res.toString
-    case "-" => val res = value - bValue.toLong; res.toString
-    case "*" => val res = value * bValue.toLong; res.toString
-    case "/" => val res = value / bValue.toLong; res.toString
-    case _ => throw new LinkisCommonErrorException(20047,s"Int class is not supported to uss：$signal.")
-  }
-}
-
-case class DoubleValue(value: Double) extends VariableType {
-  override def getValue: String = doubleOrLong(value).toString
-
-  def calculator(signal: String, bValue: String): String = signal match {
-    case "+" => val res = value + bValue.toDouble; doubleOrLong(res).toString
-    case "-" => val res = value - bValue.toDouble; doubleOrLong(res).toString
-    case "*" => val res = value * bValue.toDouble; doubleOrLong(res).toString
-    case "/" => val res = value / bValue.toDouble; doubleOrLong(res).toString
-    case _ => throw new LinkisCommonErrorException(20047,s"Double class is not supported to uss：$signal.")
-  }
-
-  private def doubleOrLong(d:Double):AnyVal = {
-    if (d.asInstanceOf[Long] == d) d.asInstanceOf[Long] else d
-  }
-
-}
-
-case class FloatType(value: Float) extends VariableType {
-  override def getValue: String = floatOrLong(value).toString
-
-  def calculator(signal: String, bValue: String): String = signal match {
-    case "+" => val res = value + bValue.toFloat; floatOrLong(res).toString
-    case "-" => val res = value - bValue.toFloat; floatOrLong(res).toString
-    case "*" => val res = value * bValue.toFloat; floatOrLong(res).toString
-    case "/" => val res = value / bValue.toLong; floatOrLong(res).toString
-    case _ => throw new LinkisCommonErrorException(20048,s"Float class is not supported to use：$signal.")
-  }
-
-  private def floatOrLong(f:Float):AnyVal = {
-    if (f.asInstanceOf[Long] == f) f.asInstanceOf[Long] else f
-  }
-
-}
-
-case class StringType(value: String) extends VariableType {
-  override def getValue: String = value.toString
-
-  def calculator(signal: String, bValue: String): String = signal match {
-    case "+" => value + bValue
-    case _ => throw new LinkisCommonErrorException(20049,s"String class is not supported to uss：$signal.")
-  }
-}
-
-import VariableUtils._
-class CustomDateType(date: String, std: Boolean = true) {
-  protected val dateFormat = dateFormatLocal.get()
-  protected val dateFormat_std = dateFormatStdLocal.get()
-  def -(days: Int): String = {
-    if (std) {
-      dateFormat_std.format(DateUtils.addDays(dateFormat_std.parse(date), -days))
-    } else {
-      dateFormat.format(DateUtils.addDays(dateFormat.parse(date), -days))
-    }
-  }
-
-  def +(days: Int): String = {
-    if (std) {
-      dateFormat_std.format(DateUtils.addDays(dateFormat_std.parse(date), days))
-    } else {
-      dateFormat.format(DateUtils.addDays(dateFormat.parse(date), days))
-    }
-  }
-
-  def getDate: Date = {
-    if (std) {
-      dateFormat_std.parse(date)
-    } else {
-      dateFormat.parse(date)
-    }
-  }
-
-  def getStdDate: String = {
-    if (std) {
-      dateFormat_std.format(dateFormat_std.parse(date))
-    } else {
-      dateFormat_std.format(dateFormat.parse(date))
-    }
-  }
-
-  override def toString: String = {
-    if (std) {
-      dateFormat_std.format(dateFormat_std.parse(date))
-    } else {
-      dateFormat.format(dateFormat.parse(date))
-    }
-  }
-}
-
-class CustomMonthType(date: String, std: Boolean = true, isEnd: Boolean = false)
-  extends CustomDateType(date, std) {
-
-  override def -(months: Int): String = if (std) {
-    getMonth(DateUtils.addMonths(dateFormat_std.parse(date), -months), std, isEnd)
-  } else {
-    getMonth(DateUtils.addMonths(dateFormat.parse(date), -months), std, isEnd)
-  }
-
-  override def +(months: Int): String = if (std) {
-    getMonth(DateUtils.addMonths(dateFormat_std.parse(date), months), std, isEnd)
-  } else {
-    getMonth(DateUtils.addMonths(dateFormat.parse(date), months), std, isEnd)
-  }
-
-  override def toString: String = {
-    if (std) {
-      VariableUtils.getMonth(dateFormat_std.parse(date), std, isEnd)
-    } else {
-      val v = dateFormat.parse(date)
-      VariableUtils.getMonth(v, std, isEnd)
-    }
-  }
 
 }

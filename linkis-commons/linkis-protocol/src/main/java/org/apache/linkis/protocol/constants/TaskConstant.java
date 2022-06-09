@@ -61,6 +61,9 @@ public interface TaskConstant {
     String ENTRANCEJOB_CORE_RGB = "coreRGB";
     String ENTRANCEJOB_MEMORY_RGB = "memoryRGB";
 
+    String ENTRANCEJOB_ENGINECONN_MAP = "engineconnMap";
+    String ENGINE_INSTANCE = "engineInstance";
+
     String PARAMS_DATA_SOURCE = "dataSources";
 
     String PARAMS_CONTEXT = "context";

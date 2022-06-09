@@ -319,6 +319,9 @@ public class EMRestfulApi {
             }
             parameters.put(OperateRequest$.MODULE$.OPERATOR_NAME_KEY(), "engineConnLog");
             parameters.put(ECMOperateRequest$.MODULE$.ENGINE_CONN_INSTANCE_KEY(), engineInstance);
+            if (!parameters.containsKey("enableTail")) {
+                parameters.put("enableTail", true);
+            }
         } catch (JsonProcessingException e) {
             logger.error(
                     "Fail to process the operation parameters: [{}] in request",

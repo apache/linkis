@@ -28,6 +28,7 @@ import org.apache.linkis.rpc.Sender
 import org.apache.linkis.scheduler.queue.{Job, SchedulerEventState}
 import org.apache.linkis.server.conf.ServerConfiguration
 import org.apache.commons.lang.exception.ExceptionUtils
+import org.apache.commons.lang3.StringUtils
 
 
 abstract class EntranceServer extends Logging {
@@ -162,6 +163,18 @@ abstract class EntranceServer extends Logging {
     }
     entranceWebSocketService
   } else None
+
+  def getAllUndoneTask(filterWords: String): Array[EntranceJob] = {
+    val consumers = getEntranceContext.getOrCreateScheduler().getSchedulerContext.getOrCreateConsumerManager.listConsumers().toSet
+    val filterConsumer = if (StringUtils.isNotBlank(filterWords)) {
+      consumers.filter(_.getGroup.getGroupName.contains(filterWords))
+    } else {
+      consumers
+    }
+    filterConsumer.flatMap { consumer =>
+      consumer.getRunningEvents ++ consumer.getConsumeQueue.getWaitingEvents
+    }.filter(job => job != null && job.isInstanceOf[EntranceJob]).map(_.asInstanceOf[EntranceJob]).toArray
+  }
 
 }
 object EntranceServer {

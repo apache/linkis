@@ -166,7 +166,7 @@ abstract class EntranceServer extends Logging {
 
   def getAllUndoneTask(filterWords: String): Array[EntranceJob] = {
     val consumers = getEntranceContext.getOrCreateScheduler().getSchedulerContext.getOrCreateConsumerManager.listConsumers().toSet
-    val filterConsumer = if (StringUtils.isNoneBlank(filterWords)) {
+    val filterConsumer = if (StringUtils.isNotBlank(filterWords)) {
       consumers.filter(_.getGroup.getGroupName.contains(filterWords))
     } else {
       consumers

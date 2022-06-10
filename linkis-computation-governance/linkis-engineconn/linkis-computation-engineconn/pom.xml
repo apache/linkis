@@ -49,17 +49,9 @@
             <version>${linkis.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.apache.linkis</groupId>
-            <artifactId>linkis-resource-executor</artifactId>
-            <version>${linkis.version}</version>
-        </dependency>
 
-        <dependency>
-            <groupId>org.apache.linkis</groupId>
-            <artifactId>linkis-callback-service</artifactId>
-            <version>${linkis.version}</version>
-        </dependency>
+
+
 
         <dependency>
             <groupId>org.apache.linkis</groupId>

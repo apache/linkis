@@ -49,13 +49,13 @@ public class EntranceMetricRestfulApi {
     }
 
     @RequestMapping(path = "/taskinfo", method = RequestMethod.GET)
-    public Message status(
+    public Message taskinfo(
             HttpServletRequest req,
             @RequestParam(value = "user", required = false) String user,
             @RequestParam(value = "creator", required = false) String creator,
             @RequestParam(value = "engineTypeLabel", required = false)
                     String engineTypeLabelValue) {
-        String userName = ModuleUserUtils.getOperationUser(req, "taskcount");
+        String userName = ModuleUserUtils.getOperationUser(req, "taskinfo");
         String queryUser = user;
         if (!Configuration.isAdmin(userName)) {
             if (StringUtils.isBlank(queryUser)) {
@@ -66,7 +66,7 @@ public class EntranceMetricRestfulApi {
             }
         }
         String filterWords = creator;
-        if (StringUtils.isNoneBlank(filterWords) && StringUtils.isNoneBlank(queryUser)) {
+        if (StringUtils.isNotBlank(filterWords) && StringUtils.isNotBlank(queryUser)) {
             filterWords = filterWords + "_" + queryUser;
         } else if (StringUtils.isBlank(creator)) {
             filterWords = queryUser;
@@ -78,7 +78,7 @@ public class EntranceMetricRestfulApi {
 
         if (null != undoneTasks) {
             for (EntranceJob task : undoneTasks) {
-                if (StringUtils.isNoneBlank(engineTypeLabelValue)) {
+                if (StringUtils.isNotBlank(engineTypeLabelValue)) {
                     EngineTypeLabel engineTypeLabel =
                             LabelUtil.getEngineTypeLabel(task.getJobRequest().getLabels());
                     // Task types do not match, do not count

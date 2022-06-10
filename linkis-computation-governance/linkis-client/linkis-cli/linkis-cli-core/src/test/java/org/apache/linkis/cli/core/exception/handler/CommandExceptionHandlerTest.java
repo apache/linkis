@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 public class CommandExceptionHandlerTest {
     ExceptionHandler handler = new CommandExceptionHandler();
 
-    //todo
+    // todo
     @Disabled
     @Test
     public void handle() throws Exception {

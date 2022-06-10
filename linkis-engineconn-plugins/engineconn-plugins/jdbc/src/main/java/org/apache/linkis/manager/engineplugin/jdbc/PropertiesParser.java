@@ -23,6 +23,11 @@ import java.util.Map;
 
 public abstract class PropertiesParser {
     interface TypeConversion<T> {
+        /**
+         * String type data is converted to T type
+         * @param oriV origin type
+         * @return T which is target type
+         */
         T convertTo(String oriV);
     }
 

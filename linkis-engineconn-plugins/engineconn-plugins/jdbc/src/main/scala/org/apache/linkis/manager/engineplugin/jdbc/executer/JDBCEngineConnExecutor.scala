@@ -69,20 +69,20 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int) ex
     val taskId = engineExecutorContext.getJobId.get
     val properties = engineExecutorContext.getProperties.asInstanceOf[util.Map[String, String]]
     var dataSourceName = properties.getOrDefault(JDBCEngineConnConstant.JDBC_ENGINE_RUN_TIME_DS, "")
+    val dataSourceQuerySystemParam = properties.getOrDefault(JDBCEngineConnConstant.JDBC_ENGINE_RUN_TIME_DS_SYSTEM_QUERY_PARAM, "")
 
     if (properties.get(JDBCEngineConnConstant.JDBC_URL) == null) {
       info(s"The jdbc url is empty, adding now...")
       val globalConfig: util.Map[String, String] = Utils.tryAndWarn(JDBCEngineConfig.getCacheMap(engineExecutorContext.getLabels))
-      var dataSourceInfo: util.Map[String, String] = new util.HashMap[String, String]()
       if (StringUtils.isNotBlank(dataSourceName)) {
         info("Start getting data source connection parameters from the data source hub.")
         Utils.tryCatch {
-          dataSourceInfo = JDBCMultiDatasourceParser.queryDatasourceInfoByName(dataSourceName, execSqlUser)
+          val dataSourceInfo = JDBCMultiDatasourceParser.queryDatasourceInfoByName(dataSourceName, execSqlUser, dataSourceQuerySystemParam)
+          if (dataSourceInfo != null && !dataSourceInfo.isEmpty) {
+            globalConfig.putAll(dataSourceInfo)
+          }
         } {
-          e: Throwable => return ErrorExecuteResponse(e.getMessage, e)
-        }
-        if (!dataSourceInfo.isEmpty) {
-          globalConfig.putAll(dataSourceInfo)
+          e: Throwable => return ErrorExecuteResponse(s"Failed to get datasource info about [$dataSourceName] from datasource server.", e)
         }
       }
       properties.put(JDBCEngineConnConstant.JDBC_URL, globalConfig.get(JDBCEngineConnConstant.JDBC_URL))

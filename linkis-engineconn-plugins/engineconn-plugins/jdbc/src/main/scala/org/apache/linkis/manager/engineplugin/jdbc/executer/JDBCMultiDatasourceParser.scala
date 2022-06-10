@@ -30,13 +30,13 @@ import scala.collection.JavaConversions._
 
 object JDBCMultiDatasourceParser extends Logging {
 
-  def queryDatasourceInfoByName(datasourceName: String, username: String): util.Map[String, String] = {
-    info(s"Starting query [$username, $datasourceName] datasource info ......")
+  def queryDatasourceInfoByName(datasourceName: String, username: String, system: String): util.Map[String, String] = {
+    info(s"Starting query [$system, $username, $datasourceName] datasource info ......")
     val dataSourceClient = new LinkisDataSourceRemoteClient()
     var dataSource: DataSource = null
     Utils.tryCatch {
       dataSource = dataSourceClient.getInfoByDataSourceName(GetInfoByDataSourceNameAction.builder()
-        .setSystem("")
+        .setSystem(system)
         .setDataSourceName(datasourceName)
         .setUser(username)
         .build()).getDataSource
@@ -49,7 +49,7 @@ object JDBCMultiDatasourceParser extends Logging {
   def queryDatasourceInfo(datasourceName: String, dataSource: DataSource): util.Map[String, String] = {
     val dsConnInfo = new util.HashMap[String, String]()
 
-    if (dataSource == null) {
+    if (strObjIsBlank(dataSource)) {
       throw JDBCParamsIllegalException(s"Data source [$datasourceName] info not found!")
     }
 
@@ -72,7 +72,7 @@ object JDBCMultiDatasourceParser extends Logging {
     }
 
     val driverClassName = dbConnParams.get(JDBCEngineConnConstant.DS_JDBC_DRIVER)
-    if (driverClassName == null || StringUtils.isBlank(driverClassName.toString)) {
+    if (strObjIsBlank(driverClassName)) {
       throw JDBCParamsIllegalException("The data source jdbc driverClassName cannot be null!")
     }
 
@@ -85,24 +85,21 @@ object JDBCMultiDatasourceParser extends Logging {
 
   def createJdbcUrl(dbType: String, dbConnParams: util.Map[String, Object]): String = {
     val host = dbConnParams.get(JDBCEngineConnConstant.DS_JDBC_HOST)
-    if (host == null || StringUtils.isBlank(host.toString)) {
+    if (strObjIsBlank(host)) {
       throw JDBCParamsIllegalException("The data source jdbc connection host cannot be null!")
     }
     val port = dbConnParams.get(JDBCEngineConnConstant.DS_JDBC_PORT)
-    if (port == null || StringUtils.isBlank(port.toString)) {
+    if (strObjIsBlank(port)) {
       throw JDBCParamsIllegalException("The data source jdbc connection port cannot be null!")
     }
     var jdbcUrl = s"jdbc:$dbType://$host:$port"
     val dbName = dbConnParams.get(JDBCEngineConnConstant.DS_JDBC_DB_NAME)
-    if (dbName != null && StringUtils.isNotBlank(dbName.toString)) {
+    if (strObjIsNotBlank(dbName)) {
       jdbcUrl = s"$jdbcUrl/$dbName"
     }
 
     val params = dbConnParams.get(JDBCEngineConnConstant.DS_JDBC_PARAMS)
-    var paramsMap: util.Map[String, Object] = new util.HashMap[String, Object]()
-    if (params != null && StringUtils.isNotBlank(params.toString)) {
-      paramsMap = JsonUtils.jackson.readValue(params.toString, classOf[util.Map[String, Object]])
-    }
+    val paramsMap = if (strObjIsNotBlank(params)) convertJsonStrToMap(params.toString) else new util.HashMap[String, Object]()
 
     if (!paramsMap.isEmpty) {
       val headConf = paramsMap.head
@@ -125,16 +122,15 @@ object JDBCMultiDatasourceParser extends Logging {
     val kerberosPrincipal = dbConnParams.get(JDBCEngineConnConstant.DS_JDBC_KERBEROS_PRINCIPAL)
     val kerberosKeytab = dbConnParams.get(JDBCEngineConnConstant.DS_JDBC_KERBEROS_KEYTAB)
     var authType: JdbcAuthType = JdbcAuthType.SIMPLE
-    if (username != null && StringUtils.isNotBlank(username.toString)
-      && password != null && StringUtils.isNotBlank(password.toString)) {
+    if (strObjIsNotBlank(username) && strObjIsNotBlank(password)) {
       authType = JdbcAuthType.USERNAME
     } else {
-      if (enableKerberos != null && enableKerberos.toString.toBoolean) {
+      if (strObjIsNotBlank(enableKerberos) && enableKerberos.toString.toBoolean) {
         authType = JdbcAuthType.KERBEROS
-        if (kerberosPrincipal == null || StringUtils.isBlank(kerberosPrincipal.toString)) {
+        if (strObjIsBlank(kerberosPrincipal)) {
           throw JDBCParamsIllegalException("In the jdbc authentication mode of kerberos, the kerberos principal cannot be empty!")
         }
-        if (kerberosKeytab == null || StringUtils.isBlank(kerberosKeytab.toString)) {
+        if (strObjIsBlank(kerberosKeytab)) {
           throw JDBCParamsIllegalException("In the jdbc authentication mode of kerberos, the kerberos keytab cannot be empty!")
         }
       } else {
@@ -152,16 +148,28 @@ object JDBCMultiDatasourceParser extends Logging {
         dsConnInfo.put(JDBCEngineConnConstant.JDBC_KERBEROS_AUTH_TYPE_PRINCIPAL, kerberosPrincipal.toString)
         dsConnInfo.put(JDBCEngineConnConstant.JDBC_KERBEROS_AUTH_TYPE_KEYTAB_LOCATION, kerberosKeytab.toString)
         val enableKerberosProxyUser = dbConnParams.get(JDBCEngineConnConstant.DS_JDBC_ENABLE_KERBEROS_PROXY_USER)
-        if (enableKerberosProxyUser != null && StringUtils.isNotBlank(enableKerberosProxyUser.toString)) {
+        if (strObjIsNotBlank(enableKerberosProxyUser)) {
           dsConnInfo.put(JDBCEngineConnConstant.JDBC_KERBEROS_AUTH_PROXY_ENABLE, enableKerberosProxyUser.toString)
         }
         val kerberosProxyUserProperty = dbConnParams.get(JDBCEngineConnConstant.DS_JDBC_KERBEROS_PROXY_USER_PROPERTY)
-        if (kerberosProxyUserProperty != null && StringUtils.isNotBlank(kerberosProxyUserProperty.toString)) {
+        if (strObjIsNotBlank(kerberosProxyUserProperty)) {
           dsConnInfo.put(JDBCEngineConnConstant.JDBC_PROXY_USER_PROPERTY, kerberosProxyUserProperty.toString)
         }
       case _ => throw JDBCParamsIllegalException(s"Unsupported authentication type ${authType.getAuthType}")
     }
     dsConnInfo.put(JDBCEngineConnConstant.JDBC_AUTH_TYPE, authType.getAuthType)
     dsConnInfo
+  }
+
+  private def convertJsonStrToMap(jsonStr: String): util.Map[String, Object] = {
+    JsonUtils.jackson.readValue(jsonStr, classOf[util.Map[String, Object]])
+  }
+
+  private def strObjIsNotBlank(str: Object): Boolean = {
+    str != null && StringUtils.isNotBlank(str.toString)
+  }
+
+  private def strObjIsBlank(str: Object): Boolean = {
+    ! strObjIsNotBlank(str)
   }
 }

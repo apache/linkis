@@ -52,7 +52,10 @@ class EntranceRequestGatewayParser extends AbstractGatewayParser {
 }
 
 object EntranceRequestGatewayParser {
+
   val ENTRANCE_REQUEST_REGEX = (ENTRANCE_HEADER + "([^/]+)/.+").r
+
   val API_REQUEST = "api"
+
   val INSTANCE = "instance"
 }

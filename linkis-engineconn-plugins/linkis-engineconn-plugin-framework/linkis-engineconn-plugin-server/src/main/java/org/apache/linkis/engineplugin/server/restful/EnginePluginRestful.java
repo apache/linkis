@@ -31,6 +31,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.netflix.discovery.DiscoveryClient;
+import com.netflix.discovery.DiscoveryManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +43,8 @@ public class EnginePluginRestful {
     private static final Logger log = LoggerFactory.getLogger(EnginePluginRestful.class);
 
     @Autowired private EngineConnResourceService engineConnResourceService;
+
+    @Autowired private DiscoveryClient client;
 
     @RequestMapping(path = "/refreshAll", method = RequestMethod.GET)
     public Message refreshAll(HttpServletRequest req) {
@@ -72,6 +76,17 @@ public class EnginePluginRestful {
             return Message.ok().data("msg", "Refresh successfully");
         } else {
             return Message.error("Only administrators can operate");
+        }
+    }
+
+    @RequestMapping(path = "/offline", method = RequestMethod.GET)
+    public Message offline(HttpServletRequest req) {
+        String username = ModuleUserUtils.getOperationUser(req, "offline");
+        if (Configuration.isAdmin(username)) {
+            DiscoveryManager.getInstance().shutdownComponent();
+            return Message.ok().data("msg", "Offline successfully.");
+        } else {
+            return Message.error("Only administrators can operate.");
         }
     }
 }

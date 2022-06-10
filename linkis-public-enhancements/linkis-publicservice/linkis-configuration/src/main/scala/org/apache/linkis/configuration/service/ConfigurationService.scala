@@ -313,7 +313,7 @@ class ConfigurationService extends Logging {
     val configMap = new util.HashMap[String, String]()
     if (null != defaultEngineConfigs) {
       defaultEngineConfigs.asScala.foreach{ keyValue =>
-        if (StringUtils.isNoneBlank(keyValue.getKey) && StringUtils.isNotEmpty(keyValue.getConfigValue)) {
+        if (StringUtils.isNotBlank(keyValue.getKey) && StringUtils.isNotEmpty(keyValue.getConfigValue)) {
           configMap.put(keyValue.getKey, keyValue.getConfigValue)
         }
       }

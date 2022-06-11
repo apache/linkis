@@ -97,8 +97,8 @@ class DefaultGatewayParser(gatewayParsers: Array[GatewayParser]) extends Abstrac
         val applicationName = if (RPCConfiguration.ENABLE_PUBLIC_SERVICE.getValue && RPCConfiguration.PUBLIC_SERVICE_LIST.contains(serviceId)) {
           RPCConfiguration.PUBLIC_SERVICE_APPLICATION_NAME.getValue
           // In order to be compatible with metadata module name refactoring,this logic will be removed in subsequent versions
-        } else if (RPCConfiguration.METEDATAQUERY_SERVICE_LIST.contains(serviceId)) {
-          RPCConfiguration.METEDATAQUERY_SERVICE_APPLICATION_NAME.getValue
+        } else if (RPCConfiguration.METADATAQUERY_SERVICE_LIST.contains(serviceId)) {
+          RPCConfiguration.METADATAQUERY_SERVICE_APPLICATION_NAME.getValue
         } else {
           serviceId
         }

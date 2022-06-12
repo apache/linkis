@@ -56,6 +56,7 @@ public class MetadataQueryRestful {
             if (StringUtils.isBlank(system)) {
                 return Message.error("'system' is missing[缺少系统名]");
             }
+
             List<String> databases =
                     metadataQueryService.getDatabasesByDsName(
                             dataSourceName, system, SecurityFilter.getLoginUsername(request));
@@ -137,6 +138,44 @@ public class MetadataQueryRestful {
         }
     }
 
+    @RequestMapping(value = "/getPartitions", method = RequestMethod.GET)
+    public Message getPartitions(
+            @RequestParam("dataSourceName") String dataSourceName,
+            @RequestParam("database") String database,
+            @RequestParam("table") String table,
+            @RequestParam("system") String system,
+            @RequestParam(name = "traverse", required = false, defaultValue = "false")
+                    Boolean traverse,
+            HttpServletRequest request) {
+        try {
+            if (StringUtils.isBlank(system)) {
+                return Message.error("'system' is missing[缺少系统名]");
+            }
+            MetaPartitionInfo partitionInfo =
+                    metadataQueryService.getPartitionsByDsName(
+                            dataSourceName,
+                            database,
+                            table,
+                            system,
+                            traverse,
+                            SecurityFilter.getLoginUsername(request));
+            return Message.ok().data("partitions", partitionInfo);
+        } catch (Exception e) {
+            return errorToResponseMessage(
+                    "Fail to get partitions[获取表分区信息失败], name:["
+                            + dataSourceName
+                            + "]"
+                            + ", system:["
+                            + system
+                            + "], database:["
+                            + database
+                            + "], table:["
+                            + table
+                            + "]",
+                    e);
+        }
+    }
+
     @RequestMapping(value = "getPartitionProps", method = RequestMethod.GET)
     public Message getPartitionProps(
             @RequestParam("dataSourceName") String dataSourceName,
@@ -171,44 +210,6 @@ public class MetadataQueryRestful {
                             + table
                             + "], partition:["
                             + partition
-                            + "]",
-                    e);
-        }
-    }
-
-    @RequestMapping(value = "/getPartitions", method = RequestMethod.GET)
-    public Message getPartitions(
-            @RequestParam("dataSourceName") String dataSourceName,
-            @RequestParam("database") String database,
-            @RequestParam("table") String table,
-            @RequestParam("system") String system,
-            @RequestParam(name = "traverse", required = false, defaultValue = "false")
-                    Boolean traverse,
-            HttpServletRequest request) {
-        try {
-            if (StringUtils.isBlank(system)) {
-                return Message.error("'system' is missing[缺少系统名]");
-            }
-            MetaPartitionInfo partitionInfo =
-                    metadataQueryService.getPartitionsByDsName(
-                            dataSourceName,
-                            database,
-                            table,
-                            system,
-                            traverse,
-                            SecurityFilter.getLoginUsername(request));
-            return Message.ok().data("partitions", partitionInfo);
-        } catch (Exception e) {
-            return errorToResponseMessage(
-                    "Fail to get partitions[获取表分区信息失败], name:["
-                            + dataSourceName
-                            + "]"
-                            + ", system:["
-                            + system
-                            + "], database:["
-                            + database
-                            + "], table:["
-                            + table
                             + "]",
                     e);
         }

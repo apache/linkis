@@ -40,7 +40,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping(value = "/metadataQuery")
+@RequestMapping(value = "/metadatamanager")
 @Deprecated
 public class MetadataCoreRestful {
 
@@ -140,6 +140,47 @@ public class MetadataCoreRestful {
         }
     }
 
+    // Note Result field[`props`] name is inaccurate
+    @RequestMapping(
+            value = "/partitions/{dataSourceId}/db/{database}/table/{table}",
+            method = RequestMethod.GET)
+    public Message getPartitions(
+            @PathVariable("dataSourceId") String dataSourceId,
+            @PathVariable("database") String database,
+            @PathVariable("table") String table,
+            @RequestParam("system") String system,
+            @RequestParam(name = "traverse", required = false, defaultValue = "false")
+                    Boolean traverse,
+            HttpServletRequest request) {
+        try {
+            if (StringUtils.isBlank(system)) {
+                return Message.error("'system' is missing[缺少系统名]");
+            }
+            MetaPartitionInfo partitionInfo =
+                    metadataAppService.getPartitionsByDsId(
+                            dataSourceId,
+                            database,
+                            table,
+                            system,
+                            traverse,
+                            SecurityFilter.getLoginUsername(request));
+            return Message.ok().data("props", partitionInfo);
+        } catch (Exception e) {
+            return errorToResponseMessage(
+                    "Fail to get partitions[获取表分区信息失败], id:["
+                            + dataSourceId
+                            + "]"
+                            + ", system:["
+                            + system
+                            + "], database:["
+                            + database
+                            + "], table:["
+                            + table
+                            + "]",
+                    e);
+        }
+    }
+
     @RequestMapping(
             value = "/props/{dataSourceId}/db/{database}/table/{table}/partition/{partition}",
             method = RequestMethod.GET)
@@ -182,46 +223,6 @@ public class MetadataCoreRestful {
     }
 
     @RequestMapping(
-            value = "/partitions/{dataSourceId}/db/{database}/table/{table}",
-            method = RequestMethod.GET)
-    public Message getPartitions(
-            @PathVariable("dataSourceId") String dataSourceId,
-            @PathVariable("database") String database,
-            @PathVariable("table") String table,
-            @RequestParam("system") String system,
-            @RequestParam(name = "traverse", required = false, defaultValue = "false")
-                    Boolean traverse,
-            HttpServletRequest request) {
-        try {
-            if (StringUtils.isBlank(system)) {
-                return Message.error("'system' is missing[缺少系统名]");
-            }
-            MetaPartitionInfo partitionInfo =
-                    metadataAppService.getPartitionsByDsId(
-                            dataSourceId,
-                            database,
-                            table,
-                            system,
-                            traverse,
-                            SecurityFilter.getLoginUsername(request));
-            return Message.ok().data("props", partitionInfo);
-        } catch (Exception e) {
-            return errorToResponseMessage(
-                    "Fail to get partitions[获取表分区信息失败], id:["
-                            + dataSourceId
-                            + "]"
-                            + ", system:["
-                            + system
-                            + "], database:["
-                            + database
-                            + "], table:["
-                            + table
-                            + "]",
-                    e);
-        }
-    }
-
-    @RequestMapping(
             value = "/columns/{dataSourceId}/db/{database}/table/{table}",
             method = RequestMethod.GET)
     public Message getColumns(
@@ -235,7 +236,7 @@ public class MetadataCoreRestful {
                 return Message.error("'system' is missing[缺少系统名]");
             }
             List<MetaColumnInfo> columns =
-                    metadataAppService.getColumnsByDsName(
+                    metadataAppService.getColumnsByDsId(
                             dataSourceId,
                             database,
                             table,

@@ -59,26 +59,6 @@ public interface MetadataQueryService {
      * @param dataSourceId data source id
      * @param database database
      * @param table table
-     * @param partition partition
-     * @param system system
-     * @param userName userName
-     * @return
-     * @throws ErrorException
-     */
-    @Deprecated
-    Map<String, String> getPartitionPropsByDsId(
-            String dataSourceId,
-            String database,
-            String table,
-            String partition,
-            String system,
-            String userName)
-            throws ErrorException;
-
-    /**
-     * @param dataSourceId data source id
-     * @param database database
-     * @param table table
      * @param system system
      * @return
      */
@@ -100,6 +80,26 @@ public interface MetadataQueryService {
             String table,
             String system,
             Boolean traverse,
+            String userName)
+            throws ErrorException;
+
+    /**
+     * @param dataSourceId data source id
+     * @param database database
+     * @param table table
+     * @param partition partition
+     * @param system system
+     * @param userName userName
+     * @return
+     * @throws ErrorException
+     */
+    @Deprecated
+    Map<String, String> getPartitionPropsByDsId(
+            String dataSourceId,
+            String database,
+            String table,
+            String partition,
+            String system,
             String userName)
             throws ErrorException;
 
@@ -137,25 +137,6 @@ public interface MetadataQueryService {
      * @param dataSourceName data source name
      * @param database database
      * @param table table
-     * @param partition partition
-     * @param system system
-     * @param userName userName
-     * @return
-     * @throws ErrorException
-     */
-    Map<String, String> getPartitionPropsByDsName(
-            String dataSourceName,
-            String database,
-            String table,
-            String partition,
-            String system,
-            String userName)
-            throws ErrorException;
-
-    /**
-     * @param dataSourceName data source name
-     * @param database database
-     * @param table table
      * @param system system
      * @return
      */
@@ -175,6 +156,25 @@ public interface MetadataQueryService {
             String table,
             String system,
             Boolean traverse,
+            String userName)
+            throws ErrorException;
+
+    /**
+     * @param dataSourceName data source name
+     * @param database database
+     * @param table table
+     * @param partition partition
+     * @param system system
+     * @param userName userName
+     * @return
+     * @throws ErrorException
+     */
+    Map<String, String> getPartitionPropsByDsName(
+            String dataSourceName,
+            String database,
+            String table,
+            String partition,
+            String system,
             String userName)
             throws ErrorException;
 

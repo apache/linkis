@@ -405,7 +405,6 @@ if [ "true" == "$PROMETHEUS_ENABLE" ]
 then
   echo "prometheus is enabled"
   sed -i ${txt} '$a \wds.linkis.prometheus.enable={{ PROMETHEUS_ENABLE }}' $LINKIS_HOME/conf/linkis.properties
-  sed -i ${txt} '$a \wds.linkis.server.user.restful.uri.pass.auth=/actuator/prometheus,' $LINKIS_HOME/conf/linkis.properties
   sed -i ${txt}  '/eureka:/a \\  instance:\n    metadata-map:\n      prometheus.path: ${prometheus.path:${prometheus.endpoint}}' $LINKIS_HOME/conf/application-linkis.yml
   sed -i ${txt}  's#include: refresh,info#include: refresh,info,health,metrics,prometheus#g' $LINKIS_HOME/conf/application-linkis.yml
   sed -i ${txt} '/instance:/a \    metadata-map:\n      prometheus.path: ${prometheus.path:/actuator/prometheus}' $LINKIS_HOME/conf/application-eureka.yml

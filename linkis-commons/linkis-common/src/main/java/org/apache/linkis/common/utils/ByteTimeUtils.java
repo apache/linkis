@@ -17,8 +17,6 @@
 
 package org.apache.linkis.common.utils;
 
-import com.google.common.collect.ImmutableMap;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -26,6 +24,8 @@ import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.google.common.collect.ImmutableMap;
 
 public class ByteTimeUtils {
 
@@ -38,7 +38,7 @@ public class ByteTimeUtils {
         return hash != Integer.MIN_VALUE ? Math.abs(hash) : 0;
     }
 
-    /*
+    /**
      * Delete a file or directory and its contents recursively.
      * Don't follow directories if they are symlinks.
      * Throws an exception if deletion is unsuccessful.

@@ -43,24 +43,28 @@ class LoopArray[T](maxCapacity: Int) {
     t
   }
 
+  @throws(classOf[IllegalArgumentException])
   def get(index: Int): T = eventQueue synchronized {
-    val _max = max
-    if (index < realSize) throw new IllegalArgumentException("The index " + index + " has already been deleted, now index must be better than " + realSize)
-    else if(index > _max) throw new IllegalArgumentException("The index " + index + " must be less than " + _max)
-    val _index = (flag + (index - realSize)) % maxCapacity
-    eventQueue(_index).asInstanceOf[T]
+    val curMax = max
+    if (index < realSize) {
+      throw new IllegalArgumentException("The index " + index + " has already been deleted, now index must be better than " + realSize)
+    } else if (index > curMax) {
+      throw new IllegalArgumentException("The index " + index + " must be less than " + curMax)
+    }
+
+    eventQueue(index % maxCapacity).asInstanceOf[T]
   }
 
-  def clear() = eventQueue synchronized {
+  def clear(): Unit = eventQueue synchronized {
     flag = 0
     tail = 0
     realSize = 0
     (0 until maxCapacity).foreach(eventQueue(_) = null)
   }
 
-  def min = realSize
+  def min: Int = realSize
 
-  def max = {
+  def max: Int = {
     var _size = filledSize
     if(_size == 0) {
       _size = 1
@@ -68,17 +72,17 @@ class LoopArray[T](maxCapacity: Int) {
     realSize + _size - 1
   }
 
-  private def filledSize = if(tail >= flag) tail - flag else tail + maxCapacity - flag
+  private def filledSize: Int = if (tail >= flag) tail - flag else tail + maxCapacity - flag
 
-  def size = filledSize
+  def size: Int = filledSize
 
-  def isFull = filledSize == maxCapacity - 1
+  def isFull: Boolean = filledSize == maxCapacity - 1
 
-  def nonEmpty = size > 0
+  def nonEmpty: Boolean = size > 0
 
-  def toList = toIndexedSeq.toList
+  def toList: List[T] = toIndexedSeq.toList
 
-  def toIndexedSeq: IndexedSeq[T] = if(filledSize == 0) IndexedSeq.empty[T] else eventQueue synchronized {(min to max).map(get)}
+  def toIndexedSeq: IndexedSeq[T] = if (filledSize == 0) IndexedSeq.empty[T] else eventQueue synchronized {(min to max).map(get)}
 
 }
 
@@ -98,7 +102,7 @@ class BlockingLoopArray[T](maxCapacity: Int = 32) extends LoopArray[T](maxCapaci
     */
   def put(event: T): Boolean = {
     writeLock synchronized {
-      while(isFull) writeLock.wait(1000)
+      while (isFull) writeLock.wait(1000)
       super.add(event)
     }
     readLock synchronized { readLock.notify() }
@@ -110,9 +114,9 @@ class BlockingLoopArray[T](maxCapacity: Int = 32) extends LoopArray[T](maxCapaci
     * @param event
     * @return
     */
-  def offer(event: T): Boolean = if(isFull) false else {
+  def offer(event: T): Boolean = if (isFull) false else {
     writeLock synchronized {
-      if(isFull) return false
+      if (isFull) return false
       else super.add(event)
     }
     readLock synchronized { readLock.notify() }
@@ -125,10 +129,10 @@ class BlockingLoopArray[T](maxCapacity: Int = 32) extends LoopArray[T](maxCapaci
     */
   def take(): T = {
     val t = readLock synchronized {
-      while(waitingSize == 0 || takeIndex > max) {
+      while (waitingSize == 0 || takeIndex > max) {
         readLock.wait(1000)
       }
-      if(takeIndex < min) takeIndex = min
+      if (takeIndex < min) takeIndex = min
       val t = get(takeIndex)
       takeIndex += 1
       t
@@ -143,8 +147,8 @@ class BlockingLoopArray[T](maxCapacity: Int = 32) extends LoopArray[T](maxCapaci
     * @return
     */
   def peek(): Option[T] = readLock synchronized {
-    if(waitingSize == 0 || takeIndex > max) None
-    else if(takeIndex < min) Some(get(min))
+    if (waitingSize == 0 || takeIndex > max) None
+    else if (takeIndex < min) Some(get(min))
     else Option(get(takeIndex))
   }
 
@@ -154,12 +158,12 @@ class BlockingLoopArray[T](maxCapacity: Int = 32) extends LoopArray[T](maxCapaci
     * @return
     */
   def poll(): Option[T] = {
-    if(waitingSize == 0) return None
+    if (waitingSize == 0) return None
     val event = readLock synchronized {
       val _min = min
       val _max = max
       if(takeIndex < _min) takeIndex = _min
-      else if(takeIndex > _max) return None
+      else if (takeIndex > _max) return None
       val t = get(takeIndex)
       takeIndex += 1
       Option(t)
@@ -168,9 +172,9 @@ class BlockingLoopArray[T](maxCapacity: Int = 32) extends LoopArray[T](maxCapaci
     event
   }
 
-  override def isFull = super.isFull && takeIndex == realSize
+  override def isFull: Boolean = super.isFull && takeIndex == realSize
 
-  def waitingSize: Int = if(takeIndex <= realSize) super.size else {
+  def waitingSize: Int = if (takeIndex <= realSize) super.size else {
     val length = super.size - takeIndex + realSize
     if(length < 0) 0 else length
   }
@@ -180,13 +184,13 @@ class BlockingLoopArray[T](maxCapacity: Int = 32) extends LoopArray[T](maxCapaci
     super.clear()
   }
 
-  override def toIndexedSeq: IndexedSeq[T] = if(waitingSize == 0) IndexedSeq.empty[T] else readLock synchronized {(takeIndex to max).map(get)}
+  override def toIndexedSeq: IndexedSeq[T] = if (waitingSize == 0) IndexedSeq.empty[T] else readLock synchronized {(takeIndex to max).map(get)}
 
 }
 
 object LoopArray {
 
-  def apply[T](maxCapacity: Int) = new LoopArray[T](maxCapacity)
+  def apply[T](maxCapacity: Int): LoopArray[T] = new LoopArray[T](maxCapacity)
 
-  def apply[T]() = new LoopArray[T]()
+  def apply[T](): LoopArray[T] = new LoopArray[T]()
 }

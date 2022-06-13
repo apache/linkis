@@ -413,7 +413,7 @@ CREATE TABLE `linkis_ps_cs_context_history` (
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'update unix timestamp',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'create time',
   `access_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'last access time',
-  KEY `keyword` (`keyword`(191)),
+  KEY `keyword` (`keyword`(191))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------

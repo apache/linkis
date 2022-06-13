@@ -49,17 +49,9 @@
             <version>${linkis.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.apache.linkis</groupId>
-            <artifactId>linkis-resource-executor</artifactId>
-            <version>${linkis.version}</version>
-        </dependency>
 
-        <dependency>
-            <groupId>org.apache.linkis</groupId>
-            <artifactId>linkis-callback-service</artifactId>
-            <version>${linkis.version}</version>
-        </dependency>
+
+
 
         <dependency>
             <groupId>org.apache.linkis</groupId>
@@ -93,6 +85,41 @@
             <version>${linkis.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.linkis</groupId>
+            <artifactId>linkis-bml-client</artifactId>
+            <version>${linkis.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.httpcomponents</groupId>
+                    <artifactId>httpclient</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.httpcomponents</groupId>
+                    <artifactId>httpcore</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.httpcomponents</groupId>
+                    <artifactId>httpcore</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.sun.jersey</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>javax.servlet</groupId>
+                    <artifactId>javax.servlet-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>commons-logging</artifactId>
+                    <groupId>commons-logging</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
     </dependencies>
 

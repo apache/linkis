@@ -27,4 +27,8 @@ object ComputationEngineUtils {
 
   def GSON_PRETTY: Gson = new GsonBuilder().setPrettyPrinting().create()
 
+  private val WORK_DIR_STR = "user.dir"
+  def getCurrentWorkDir: String = System.getProperty(WORK_DIR_STR)
+
+
 }

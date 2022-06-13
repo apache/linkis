@@ -28,10 +28,10 @@ import org.apache.linkis.manager.common.protocol.em.{EMResourceRegisterRequest, 
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import org.apache.linkis.manager.label.entity.em.EMInstanceLabel
 import org.apache.linkis.manager.label.service.NodeLabelAddService
-import org.apache.linkis.rpc.message.annotation.Receiver
+import org.apache.linkis.manager.rm.message.RMMessageService
 import org.apache.linkis.protocol.label.NodeLabelAddRequest
-import org.apache.linkis.resourcemanager.message.RMMessageService
 import org.apache.linkis.rpc.Sender
+import org.apache.linkis.rpc.message.annotation.Receiver
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 

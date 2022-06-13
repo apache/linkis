@@ -31,8 +31,6 @@
 
     <modules>
         <module>linkis-engineconn-plugin-framework/linkis-engineconn-plugin-core</module>
-        <module>linkis-engineconn-plugin-framework/linkis-engineconn-plugin-cache</module>
-        <module>linkis-engineconn-plugin-framework/linkis-engineconn-plugin-loader</module>
         <module>linkis-engineconn-plugin-framework/linkis-engineconn-plugin-server</module>
 
         <module>engineconn-plugins/hive</module>

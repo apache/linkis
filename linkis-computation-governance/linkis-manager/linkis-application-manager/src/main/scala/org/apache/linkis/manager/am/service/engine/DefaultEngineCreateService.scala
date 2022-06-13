@@ -45,11 +45,11 @@ import org.apache.linkis.manager.label.entity.{EngineNodeLabel, Label}
 import org.apache.linkis.manager.label.service.{NodeLabelService, UserLabelService}
 import org.apache.linkis.manager.label.utils.LabelUtils
 import org.apache.linkis.manager.persistence.{NodeManagerPersistence, NodeMetricManagerPersistence, ResourceManagerPersistence}
+import org.apache.linkis.manager.rm.service.ResourceManager
+import org.apache.linkis.manager.rm.{AvailableResource, NotEnoughResource}
 import org.apache.linkis.manager.service.common.label.{LabelChecker, LabelFilter}
-import org.apache.linkis.rpc.message.annotation.Receiver
-import org.apache.linkis.resourcemanager.service.ResourceManager
-import org.apache.linkis.resourcemanager.{AvailableResource, NotEnoughResource}
 import org.apache.linkis.rpc.Sender
+import org.apache.linkis.rpc.message.annotation.Receiver
 import org.apache.linkis.server.BDPJettyServerHelper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service

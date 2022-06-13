@@ -440,17 +440,6 @@
             <artifactId>jackson-databind</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.apache.linkis</groupId>
-            <artifactId>linkis-bml-engine-hook</artifactId>
-            <version>${linkis.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>commons-logging</artifactId>
-                    <groupId>commons-logging</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
       <dependency>
         <groupId>com.github.rholder</groupId>
         <artifactId>guava-retrying</artifactId>

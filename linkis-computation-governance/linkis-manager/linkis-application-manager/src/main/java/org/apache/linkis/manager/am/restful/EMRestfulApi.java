@@ -17,6 +17,8 @@
 
 package org.apache.linkis.manager.am.restful;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.linkis.common.ServiceInstance;
 import org.apache.linkis.common.utils.JsonUtils;
 import org.apache.linkis.manager.am.conf.AMConfiguration;
@@ -69,6 +71,8 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 import java.util.stream.Collectors;
 
+
+@Api(tags = "EM资源信息管理")
 @RequestMapping(
         path = "/linkisManager",
         produces = {"application/json"})
@@ -98,6 +102,7 @@ public class EMRestfulApi {
         }
     }
 
+    @ApiOperation(value="EM资源清单",notes="查获取所有EM资源列表")
     // todo add healthInfo
     @RequestMapping(path = "/listAllEMs", method = RequestMethod.GET)
     public Message listAllEMs(
@@ -149,7 +154,7 @@ public class EMRestfulApi {
         }
         return Message.ok().data("EMs", allEMVoFilter3);
     }
-
+    @ApiOperation(value="资源状态列表",notes="查获取所有资源状态列表")
     @RequestMapping(path = "/listAllECMHealthyStatus", method = RequestMethod.GET)
     public Message listAllNodeHealthyStatus(
             HttpServletRequest req,
@@ -167,7 +172,7 @@ public class EMRestfulApi {
         }
         return Message.ok().data("nodeHealthy", nodeHealthy);
     }
-
+    @ApiOperation(value="修改资源信息",notes="根据需求修改EM资源信息")
     @RequestMapping(path = "/modifyEMInfo", method = RequestMethod.PUT)
     @Transactional(rollbackFor = Exception.class)
     public Message modifyEMInfo(HttpServletRequest req, @RequestBody JsonNode jsonNode)
@@ -228,7 +233,7 @@ public class EMRestfulApi {
         }
         return Message.ok("success");
     }
-
+    @ApiOperation(value="执行ECM操作开始",notes="")
     @RequestMapping(path = "/executeECMOperationByEC", method = RequestMethod.POST)
     public Message executeECMOperationByEC(HttpServletRequest req, @RequestBody JsonNode jsonNode)
             throws AMErrorException {
@@ -265,7 +270,7 @@ public class EMRestfulApi {
         return executeECMOperation(
                 engineNode.getEMNode(), new ECMOperateRequest(userName, parameters));
     }
-
+    @ApiOperation(value="执行ECM操作",notes="")
     @RequestMapping(path = "/executeECMOperation", method = RequestMethod.POST)
     public Message executeECMOperation(HttpServletRequest req, @RequestBody JsonNode jsonNode)
             throws AMErrorException {
@@ -291,7 +296,7 @@ public class EMRestfulApi {
         }
         return executeECMOperation(ecmNode, new ECMOperateRequest(userName, parameters));
     }
-
+    @ApiOperation(value="打开日志",notes="")
     @RequestMapping(path = "/openEngineLog", method = RequestMethod.POST)
     public Message openEngineLog(HttpServletRequest req, @RequestBody JsonNode jsonNode)
             throws AMErrorException {

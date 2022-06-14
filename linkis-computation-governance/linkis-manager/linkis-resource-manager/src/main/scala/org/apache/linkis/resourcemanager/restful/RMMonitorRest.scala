@@ -20,6 +20,7 @@ package org.apache.linkis.resourcemanager.restful
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.pagehelper.page.PageMethod
 import com.google.common.collect.Lists
+import io.swagger.annotations.{Api, ApiOperation}
 import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.manager.common.conf.RMConfiguration
@@ -59,7 +60,7 @@ import scala.collection.JavaConverters._
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 
-
+@Api(value = "资源管理")
 @RestController
 @RequestMapping(path = Array("/linkisManager/rm"))
 class RMMonitorRest extends Logging {
@@ -226,10 +227,11 @@ class RMMonitorRest extends Logging {
     Message.ok().data("resources", userResources).data("total", resultPage.getTotal)
   }
 
+  @ApiOperation(value="资源查询",notes="查询资源使用情况及资源可用列表")
   @RequestMapping(path = Array("userresources"), method = Array(RequestMethod.POST))
   def getUserResource(request: HttpServletRequest, @RequestBody(required = false) param: util.Map[String, AnyRef]): Message = {
     val message = Message.ok("")
-    val userName = ModuleUserUtils.getOperationUser(request, "get userresources")
+    val userName = ModuleUserUtils.getOperationUser(request, "getuserresources")
     var nodes = getEngineNodes(userName, true)
     if (nodes == null) {
       nodes = new Array[EngineNode](0)

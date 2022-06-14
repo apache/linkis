@@ -17,6 +17,11 @@
 
 package org.apache.linkis.jobhistory.restful.api;
 
+import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
+import com.github.xiaoymin.knife4j.annotations.DynamicParameter;
+import com.github.xiaoymin.knife4j.annotations.DynamicResponseParameters;
+import io.swagger.annotations.*;
+import io.swagger.models.Swagger;
 import org.apache.linkis.governance.common.constant.job.JobRequestConstants;
 import org.apache.linkis.governance.common.entity.job.QueryException;
 import org.apache.linkis.jobhistory.cache.impl.DefaultQueryCacheManager;
@@ -45,9 +50,11 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.*;
 
+@Api(tags = "管理台首页功能接口")
 @RestController
 @RequestMapping(path = "/jobhistory")
 public class QueryRestfulApi {
+
 
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -56,14 +63,27 @@ public class QueryRestfulApi {
 
     @Autowired private DefaultQueryCacheManager queryCacheManager;
 
+    @ApiOperation(value="管理员验证", notes="用来验证是否为管理员，如果是则返回true不是则false")
+    /*@ApiOperationSupport(
+            responses = @DynamicResponseParameters(properties = {
+                    @DynamicParameter(value = "验证是否为管理员false不是true即为是管理员",name = "admin", required=true),
+                    @DynamicParameter(value = "名称",name = "name"),
+            })
+
+    )*/
     @RequestMapping(path = "/governanceStationAdmin", method = RequestMethod.GET)
     public Message governanceStationAdmin(HttpServletRequest req) {
+
         String username = ModuleUserUtils.getOperationUser(req, "governanceStationAdmin");
         String[] split = JobhistoryConfiguration.GOVERNANCE_STATION_ADMIN().getValue().split(",");
         boolean match = Arrays.stream(split).anyMatch(username::equalsIgnoreCase);
         return Message.ok().data("admin", match);
     }
+    @ApiOperation(value="历史详细记录", notes="通过历史记录ID获取某条历史的详细信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="id",value="历史记录Id",paramType="query",dataType="Long")
 
+    })
     @RequestMapping(path = "/{id}/get", method = RequestMethod.GET)
     public Message getTaskByID(HttpServletRequest req, @PathVariable("id") Long jobId) {
         String username = SecurityFilter.getLoginUsername(req);
@@ -100,6 +120,20 @@ public class QueryRestfulApi {
         return Message.ok().data(TaskConstant.TASK, taskVO);
     }
 
+    @ApiOperation(value="全局历史", notes="根据条件获取全局历史数据列表默认获取全部")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="taskID",value="ID",paramType="query",dataType="Long"),
+            @ApiImplicitParam(name="tpageNow",value="页码",paramType="query",dataType="Integer"),
+            @ApiImplicitParam(name="pageSize",value="页面数量",paramType="query",dataType="Integer"),
+            @ApiImplicitParam(name="isAdminView",value="是否为管理员模式或者普通模式",paramType="query",dataType="Boolean"),
+            @ApiImplicitParam(name="startDate",value="开始时间",paramType="query",dataType="Long"),
+            @ApiImplicitParam(name="endDate",value="结束时间",paramType="query",dataType="Long"),
+            @ApiImplicitParam(name="status",value="结束时间",paramType="query",dataType="String"),
+            @ApiImplicitParam(name="executeApplicationName",value="操作人",paramType="query",dataType="String"),
+            @ApiImplicitParam(name="creator",value="创建者",paramType="query",dataType="String"),
+            @ApiImplicitParam(name="proxyUser",value="代理用户",paramType="query",dataType="String"),
+
+    })
     /** Method list should not contain subjob, which may cause performance problems. */
     @RequestMapping(path = "/list", method = RequestMethod.GET)
     public Message list(
@@ -120,6 +154,7 @@ public class QueryRestfulApi {
         if (StringUtils.isEmpty(status)) {
             status = null;
         }
+
         if (StringUtils.isEmpty(pageNow)) {
             pageNow = 1;
         }

@@ -257,6 +257,7 @@ public class BmlRestfulApi {
         return message;
     }
 
+
     @RequestMapping(path = "deleteVersion", method = RequestMethod.POST)
     public Message deleteVersion(HttpServletRequest request, @RequestBody JsonNode jsonNode)
             throws IOException, ErrorException {

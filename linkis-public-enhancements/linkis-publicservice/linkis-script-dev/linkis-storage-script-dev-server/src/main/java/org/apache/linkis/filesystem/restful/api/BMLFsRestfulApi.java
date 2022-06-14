@@ -17,6 +17,7 @@
 
 package org.apache.linkis.filesystem.restful.api;
 
+import io.swagger.annotations.Api;
 import org.apache.linkis.common.io.FsPath;
 import org.apache.linkis.filesystem.bml.BMLHelper;
 import org.apache.linkis.filesystem.exception.WorkSpaceException;
@@ -44,6 +45,7 @@ import java.io.InputStream;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Api(tags="用户模块")
 @RestController
 @RequestMapping(path = "/filesystem")
 public class BMLFsRestfulApi {

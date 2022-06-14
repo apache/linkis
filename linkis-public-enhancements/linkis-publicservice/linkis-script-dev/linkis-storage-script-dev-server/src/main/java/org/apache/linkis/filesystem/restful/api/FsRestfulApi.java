@@ -17,6 +17,9 @@
 
 package org.apache.linkis.filesystem.restful.api;
 
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.apache.linkis.common.io.FsPath;
 import org.apache.linkis.common.io.FsWriter;
 import org.apache.linkis.filesystem.conf.WorkSpaceConfiguration;
@@ -268,6 +271,7 @@ public class FsRestfulApi {
         return Message.ok();
     }
 
+    @ApiOperation(value="获取运行结果",notes="根据Id获取历史任务运行结果")
     @RequestMapping(path = "/getDirFileTrees", method = RequestMethod.GET)
     public Message getDirFileTrees(
             HttpServletRequest req, @RequestParam(value = "path", required = false) String path)
@@ -765,7 +769,7 @@ public class FsRestfulApi {
             return Message.ok().data("formate", res);
         }
     }
-
+    @ApiOperation(value="历史日志记录",notes="查看某条历史记录的日志信息")
     @RequestMapping(path = "/openLog", method = RequestMethod.GET)
     public Message openLog(
             HttpServletRequest req,

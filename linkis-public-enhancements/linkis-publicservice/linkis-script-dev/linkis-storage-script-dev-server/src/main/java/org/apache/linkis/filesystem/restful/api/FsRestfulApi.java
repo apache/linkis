@@ -219,6 +219,12 @@ public class FsRestfulApi {
         String filePath = json.get("filePath").textValue();
         String newDir = json.get("newDir").textValue();
         String userName = ModuleUserUtils.getOperationUser(req, "move " + filePath);
+        if (StringUtils.isEmpty(filePath)) {
+            return Message.ok();
+        }
+        if (StringUtils.isEmpty(newDir)) {
+            throw WorkspaceExceptionManager.createException(80004, newDir);
+        }
         if (FILESYSTEM_PATH_CHECK_TRIGGER.getValue()) {
             LOGGER.info(
                     String.format(
@@ -230,11 +236,7 @@ public class FsRestfulApi {
         if (!checkIsUsersDirectory(filePath, userName)) {
             throw WorkspaceExceptionManager.createException(80010, filePath);
         }
-        if (StringUtils.isEmpty(newDir)) {
-            throw WorkspaceExceptionManager.createException(80004, newDir);
-        }
         FsPath flieOldPath = new FsPath(filePath);
-        // 获取文件名
         String name =
                 flieOldPath
                         .getPath()

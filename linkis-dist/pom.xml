@@ -180,7 +180,7 @@
                             <appendAssemblyId>false</appendAssemblyId>
                             <attach>false</attach>
                             <descriptors>
-                                <descriptor>src/main/assembly/assembly.xml</descriptor>
+                                <descriptor>src/main/assembly/distribution.xml</descriptor>
                             </descriptors>
                         </configuration>
                     </execution>

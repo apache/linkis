@@ -94,8 +94,8 @@ function call_linkis_client() {
 
         LINKIS_DEPLOY_LIB_DIR='lib/linkis-computation-governance/linkis-client/linkis-cli/'
         LINKIS_COMMON_LIB_DIR='lib/linkis-commons/public-module/'
-        LINKIS_DEPLOY_CONF_DIR='conf/linkis-cli'
-        LINKIS_DEPLOY_LOG_DIR='logs/linkis-cli'
+#        LINKIS_DEPLOY_CONF_DIR='conf/linkis-cli'
+#        LINKIS_DEPLOY_LOG_DIR='logs/linkis-cli'
         LINKIS_CLIENT_CLASSPATH=${workdir}/${LINKIS_DEPLOY_CONF_DIR}:${workdir}/${LINKIS_DEPLOY_LIB_DIR}*:${workdir}/${LINKIS_COMMON_LIB_DIR}*:${CLASSPATH}
         LINKIS_CLIENT_LOG_DIR=${LINKIS_CLIENT_LOG_DIR:-"${workdir}/${LINKIS_DEPLOY_LOG_DIR}"}
         LINKIS_CLIENT_CONF_DIR=${LINKIS_CLIENT_CONF_DIR:-"${workdir}/${LINKIS_DEPLOY_CONF_DIR}"}

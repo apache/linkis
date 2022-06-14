@@ -135,19 +135,6 @@
             </includes>
         </fileSet>
 
-        <fileSet>
-            <directory>
-                ../linkis-spring-cloud-services/linkis-service-gateway/linkis-gateway-server-support/target/out/conf
-            </directory>
-            <outputDirectory>
-                conf/linkis-spring-cloud-services/linkis-mg-gateway
-            </outputDirectory>
-            <includes>
-                <include>*</include>
-            </includes>
-        </fileSet>
-
-
         <!--linkis-eureka-->
         <fileSet>
             <directory>
@@ -165,9 +152,6 @@
             <directory>
                 ../linkis-spring-cloud-services/linkis-service-discovery/linkis-eureka/target/out/conf
             </directory>
-            <outputDirectory>
-                conf/linkis-spring-cloud-services/linkis-mg-eureka
-            </outputDirectory>
             <includes>
                 <include>*</include>
             </includes>
@@ -205,9 +189,6 @@
             <directory>
                 ../linkis-computation-governance/linkis-engineconn-manager/linkis-engineconn-manager-server/target/out/conf
             </directory>
-            <outputDirectory>
-                conf/linkis-computation-governance/linkis-cg-engineconnmanager
-            </outputDirectory>
             <includes>
                 <include>*</include>
             </includes>
@@ -226,17 +207,7 @@
             </includes>
         </fileSet>
 
-        <fileSet>
-            <directory>
-                ../linkis-engineconn-plugins/linkis-engineconn-plugin-framework/linkis-engineconn-plugin-server/target/out/conf/
-            </directory>
-            <outputDirectory>
-                conf/linkis-computation-governance/linkis-cg-engineplugin
-            </outputDirectory>
-            <includes>
-                <include>*</include>
-            </includes>
-        </fileSet>
+
 
         <!--application-manager-->
         <fileSet>
@@ -251,17 +222,6 @@
             </includes>
         </fileSet>
 
-        <fileSet>
-            <directory>
-                ../linkis-computation-governance/linkis-manager/linkis-application-manager/target/out/conf
-            </directory>
-            <outputDirectory>
-                conf/linkis-computation-governance/linkis-cg-linkismanager
-            </outputDirectory>
-            <includes>
-                <include>*</include>
-            </includes>
-        </fileSet>
 
         <!--entrance-->
         <fileSet>
@@ -273,18 +233,6 @@
             </outputDirectory>
             <includes>
                 <include>*.jar</include>
-            </includes>
-        </fileSet>
-
-        <fileSet>
-            <directory>
-                ../linkis-computation-governance/linkis-entrance/target/out/conf
-            </directory>
-            <outputDirectory>
-                conf/linkis-computation-governance/linkis-cg-entrance
-            </outputDirectory>
-            <includes>
-                <include>*</include>
             </includes>
         </fileSet>
 
@@ -301,17 +249,6 @@
             </includes>
         </fileSet>
 
-        <fileSet>
-            <directory>
-                ../linkis-computation-governance/linkis-client/linkis-cli/linkis-cli-application/target/out/conf
-            </directory>
-            <outputDirectory>
-                conf/linkis-cli
-            </outputDirectory>
-            <includes>
-                <include>*</include>
-            </includes>
-        </fileSet>
 
         <!--lib-->
         <!--linkis-public-enhancements-->

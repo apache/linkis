@@ -60,7 +60,6 @@ class DefaultEngineConnStatusCallbackService extends EngineConnStatusCallbackSer
     if (StringUtils.isNotBlank(initErrorMsg) && initErrorMsg.getBytes("utf-8").length >= initErrorMsgMaxByteNum) {
       initErrorMsg = initErrorMsg.substring(0, initErrorMsgMaxByteNum)
     }
-
     heartBeatMsg.put(AMConstant.START_REASON, initErrorMsg)
 
     if (engineConnStatusCallbackToAM.canRetry) {

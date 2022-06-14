@@ -2,6 +2,7 @@ Linkis
 ==========
 
 [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
+[![codecov](https://codecov.io/gh/apache/incubator-linkis/branch/master/graph/badge.svg)](https://codecov.io/gh/apache/incubator-linkis/branch/master)
 
 [English](README.md) | [中文](README_CN.md)
 
@@ -70,6 +71,18 @@ Since the first release of Linkis in 2019, it has accumulated more than **700** 
 Please go to the [Linkis Releases Page](https://github.com/apache/incubator-linkis/releases) to download a compiled distribution or a source code package of Linkis.
 
 # Compile and deploy
+
+```shell
+
+## compile backend
+./mvnw -N install
+./mvnw  clean install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
+
+## compile web
+cd incubator-linkis/web
+npm install
+npm run build
+```
 Please follow [Compile Guide](https://linkis.apache.org/docs/latest/development/linkis_compile_and_package) to compile Linkis from source code.  
 Please refer to [Deployment Documents](https://linkis.apache.org/docs/latest/deployment/quick_deploy) to do the deployment.
 

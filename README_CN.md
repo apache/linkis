@@ -2,6 +2,7 @@ Linkis
 ============
 
 [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
+[![codecov](https://codecov.io/gh/apache/incubator-linkis/branch/master/graph/badge.svg)](https://codecov.io/gh/apache/incubator-linkis/branch/master)
 
 [English](README.md) | [中文](README_CN.md)
 
@@ -63,6 +64,17 @@ Linkis 自2019年开源发布以来，已累计积累了700多家试验企业和
 请前往[Linkis releases 页面](https://github.com/apache/incubator-linkis/releases) 下载Linkis 的已编译版本或源码包。
 
 # 编译和安装部署
+```shell
+
+## 后端编译
+./mvnw -N install
+./mvnw  clean install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
+
+## 前端编译
+cd incubator-linkis/web
+npm install
+npm run build
+```
 请参照[编译指引](https://linkis.apache.org/zh-CN/docs/latest/development/linkis_compile_and_package) 来编译Linkis 源码。  
 请参考[安装部署文档](https://linkis.apache.org/zh-CN/docs/latest/deployment/quick_deploy) 来部署Linkis。
 

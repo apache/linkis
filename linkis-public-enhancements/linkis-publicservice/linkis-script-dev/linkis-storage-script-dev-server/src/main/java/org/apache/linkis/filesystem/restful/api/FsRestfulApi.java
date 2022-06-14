@@ -214,7 +214,8 @@ public class FsRestfulApi {
     }
 
     @RequestMapping(path = "/move", method = RequestMethod.POST)
-    public Message move(HttpServletRequest req, @RequestBody JsonNode json) throws IOException, WorkSpaceException {
+    public Message move(HttpServletRequest req, @RequestBody JsonNode json)
+            throws IOException, WorkSpaceException {
         String filePath = json.get("filePath").textValue();
         String newDir = json.get("newDir").textValue();
         String userName = ModuleUserUtils.getOperationUser(req, "move " + filePath);
@@ -233,9 +234,12 @@ public class FsRestfulApi {
             throw WorkspaceExceptionManager.createException(80004, newDir);
         }
         FsPath flieOldPath = new FsPath(filePath);
-        //获取文件名
-        String name = flieOldPath.getPath().substring(flieOldPath.getPath().lastIndexOf(FsPath.SEPARATOR)+1);
-        FsPath flieNewPath = new FsPath(newDir+FsPath.SEPARATOR+name);
+        // 获取文件名
+        String name =
+                flieOldPath
+                        .getPath()
+                        .substring(flieOldPath.getPath().lastIndexOf(FsPath.SEPARATOR) + 1);
+        FsPath flieNewPath = new FsPath(newDir + FsPath.SEPARATOR + name);
         FileSystem fileSystem = fsService.getFileSystem(userName, flieOldPath);
         WorkspaceUtil.fileAndDirNameSpecialCharCheck(flieOldPath.getPath());
         WorkspaceUtil.fileAndDirNameSpecialCharCheck(flieNewPath.getPath());

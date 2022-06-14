@@ -32,8 +32,7 @@ import org.apache.linkis.manager.engineplugin.jdbc.factory.JDBCEngineConnFactory
 import org.apache.linkis.manager.label.builder.factory.{LabelBuilderFactory, LabelBuilderFactoryContext}
 import org.apache.linkis.manager.label.entity.Label
 import org.h2.tools.Server
-import org.junit.jupiter.api.Assertions.assertNotNull
-import org.junit.jupiter.api.{Assertions, BeforeAll, BeforeEach, DisplayName, Test}
+import org.junit.jupiter.api.{Assertions, BeforeEach, Test}
 
 import java.util
 import scala.collection.JavaConversions._

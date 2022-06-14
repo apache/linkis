@@ -96,7 +96,8 @@
         <module>linkis-computation-governance</module>
         <module>linkis-engineconn-plugins</module>
         <module>linkis-extensions</module>
-        <module>assembly-combined-package</module>
+<!--        <module>assembly-combined-package</module>-->
+        <module>linkis-dist</module>
     </modules>
     <properties>
         <linkis.version>1.1.2</linkis.version>

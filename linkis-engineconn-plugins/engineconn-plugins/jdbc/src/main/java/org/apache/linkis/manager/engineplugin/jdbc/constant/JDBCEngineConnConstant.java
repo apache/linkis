@@ -36,6 +36,8 @@ public class JDBCEngineConnConstant {
     public static final String JDBC_PROXY_USER = "wds.linkis.jdbc.proxy.user";
     public static final String JDBC_SCRIPTS_EXEC_USER = "execUser";
     public static final String JDBC_ENGINE_RUN_TIME_DS = "wds.linkis.engine.runtime.datasource";
+    public static final String JDBC_ENGINE_RUN_TIME_DS_SYSTEM_QUERY_PARAM =
+            "wds.linkis.engine.runtime.datasource.systemQueryParam";
 
     public static final String JDBC_POOL_TEST_ON_BORROW = "wds.linkis.jdbc.pool.testOnBorrow";
     public static final String JDBC_POOL_TEST_ON_RETURN = "wds.linkis.jdbc.pool.testOnReturn";
@@ -56,6 +58,19 @@ public class JDBCEngineConnConstant {
             "wds.linkis.jdbc.pool.remove.abandoned.enabled";
     public static final String JDBC_POOL_REMOVE_ABANDONED_TIMEOUT =
             "wds.linkis.jdbc.pool.remove.abandoned.timeout";
+
+    public static final String DS_JDBC_HOST = "host";
+    public static final String DS_JDBC_PORT = "port";
+    public static final String DS_JDBC_DB_NAME = "databaseName";
+    public static final String DS_JDBC_USERNAME = "username";
+    public static final String DS_JDBC_PASSWORD = "password";
+    public static final String DS_JDBC_ENABLE_KERBEROS = "enableKerberos";
+    public static final String DS_JDBC_KERBEROS_PRINCIPAL = "kerberosPrincipal";
+    public static final String DS_JDBC_KERBEROS_KEYTAB = "kerberosKeytab";
+    public static final String DS_JDBC_ENABLE_KERBEROS_PROXY_USER = "enableKerberosProxyUser";
+    public static final String DS_JDBC_KERBEROS_PROXY_USER_PROPERTY = "kerberosProxyUserProperty";
+    public static final String DS_JDBC_PARAMS = "params";
+    public static final String DS_JDBC_DRIVER = "driverClassName";
 
     public static final String JDBC_ENGINE_MEMORY_UNIT = "g";
 }

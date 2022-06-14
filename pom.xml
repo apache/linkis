@@ -775,6 +775,11 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.hadoop</groupId>
+                <artifactId>hadoop-yarn-registry</artifactId>
+                <version>${hadoop.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.hadoop</groupId>
                 <artifactId>hadoop-yarn-common</artifactId>
                 <version>${hadoop.version}</version>
                 <exclusions>
@@ -809,6 +814,11 @@
                     <exclusion>
                         <groupId>com.sun.jersey.contribs</groupId>
                         <artifactId>*</artifactId>
+                    </exclusion>
+                    <!-- for hadoop 3.3.3 -->
+                    <exclusion>
+                        <groupId>ch.qos.reload4j</groupId>
+                        <artifactId>reload4j</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>

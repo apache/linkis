@@ -25,4 +25,16 @@ object DatasourceClientConfig {
 
   var DATA_SOURCE_SERVICE_MODULE: CommonVars[String] = CommonVars.apply("linkis.server.dsm.module.name", "data-source-manager")
 
+  val AUTH_TOKEN_KEY: CommonVars[String] = CommonVars[String]("wds.linkis.server.dsm.auth.token.key", "Token-Code")
+
+  val AUTH_TOKEN_VALUE: CommonVars[String] = CommonVars[String]("wds.linkis.server.dsm.auth.token.value", "DSM-AUTH")
+
+  val DATA_SOURCE_SERVICE_CLIENT_NAME: CommonVars[String] = CommonVars[String]("wds.linkis.server.dsm.client.name", "DataSource-Client")
+
+  val CONNECTION_MAX_SIZE: CommonVars[Int] = CommonVars[Int]("wds.linkis.server.dsm.connection.max.size", 10)
+
+  val CONNECTION_TIMEOUT: CommonVars[Int] = CommonVars[Int]("wds.linkis.server.dsm.connection.timeout", 30000)
+
+  val CONNECTION_READ_TIMEOUT: CommonVars[Int] = CommonVars[Int]("wds.linkis.server.dsm.connection.read.timeout", 10 * 60 * 1000)
+
 }

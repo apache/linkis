@@ -62,7 +62,7 @@ object GetConnectParamsByDataSourceNameAction{
     }
 
     def build(): GetConnectParamsByDataSourceNameAction = {
-      if (dataSourceName == null) throw new DataSourceClientBuilderException("dataSourceId is needed!")
+      if (dataSourceName == null) throw new DataSourceClientBuilderException("dataSourceName is needed!")
       if(system == null) throw new DataSourceClientBuilderException("system is needed!")
       if(user == null) throw new DataSourceClientBuilderException("user is needed!")
       // Use URIEncoder to encode the datSourceName

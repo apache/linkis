@@ -46,9 +46,8 @@
         </dependency>
         <dependency>
             <groupId>org.apache.linkis</groupId>
-            <artifactId>linkis-bml</artifactId>
+            <artifactId>linkis-bmlserver</artifactId>
             <version>${linkis.version}</version>
-            <type>pom</type>
         </dependency>
         <dependency>
             <groupId>org.apache.linkis</groupId>

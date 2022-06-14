@@ -25,11 +25,11 @@ import org.apache.linkis.manager.common.exception.RMErrorException
 import org.apache.linkis.manager.common.protocol.engine.{EngineConnReleaseRequest, EngineStopRequest, EngineSuicideRequest}
 import org.apache.linkis.manager.label.service.NodeLabelService
 import org.apache.linkis.manager.label.service.impl.DefaultNodeLabelRemoveService
-import org.apache.linkis.rpc.message.annotation.Receiver
+import org.apache.linkis.manager.rm.exception.RMErrorCode
+import org.apache.linkis.manager.rm.service.impl.DefaultResourceManager
 import org.apache.linkis.protocol.label.NodeLabelRemoveRequest
-import org.apache.linkis.resourcemanager.exception.RMErrorCode
-import org.apache.linkis.resourcemanager.service.impl.DefaultResourceManager
 import org.apache.linkis.rpc.Sender
+import org.apache.linkis.rpc.message.annotation.Receiver
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 

@@ -31,36 +31,10 @@
 
     <packaging>pom</packaging>
     <modules>
-
         <module>linkis-bml-common</module>
         <module>linkis-bml-server</module>
         <module>linkis-bml-client</module>
-        <module>linkis-bml-engine-hook</module>
-
     </modules>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.apache.linkis</groupId>
-            <artifactId>linkis-bmlserver</artifactId>
-            <version>${linkis.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.linkis</groupId>
-            <artifactId>linkis-bml-client</artifactId>
-            <version>${linkis.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.linkis</groupId>
-            <artifactId>linkis-bml-common</artifactId>
-            <version>${linkis.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.linkis</groupId>
-            <artifactId>linkis-bml-engine-hook</artifactId>
-            <version>${linkis.version}</version>
-        </dependency>
-    </dependencies>
 
 
 </project>

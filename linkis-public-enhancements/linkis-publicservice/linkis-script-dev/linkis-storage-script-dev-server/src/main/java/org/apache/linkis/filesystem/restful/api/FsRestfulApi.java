@@ -219,7 +219,7 @@ public class FsRestfulApi {
     public Message move(HttpServletRequest req, @RequestBody JsonNode json) throws IOException, WorkSpaceException {
         String filePath = json.get("filePath").textValue();
         String newDir = json.get("newDir").textValue();
-        String userName = ModuleUserUtils.getOperationUser(req, "move " + filePath);
+        String userName = ModuleUserUtils.getOperationUser(req, "move " + filePath + " to " + newDir);
         if (FILESYSTEM_PATH_CHECK_TRIGGER.getValue()) {
             LOGGER.info(
                     String.format(

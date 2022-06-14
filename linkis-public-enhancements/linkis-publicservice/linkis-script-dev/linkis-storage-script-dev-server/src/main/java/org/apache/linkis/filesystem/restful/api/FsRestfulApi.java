@@ -52,6 +52,8 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.slf4j.Logger;
@@ -210,6 +212,39 @@ public class FsRestfulApi {
             throw WorkspaceExceptionManager.createException(80007);
         }
         fileSystem.renameTo(fsPathOld, fsPathNew);
+        return Message.ok();
+    }
+
+    @RequestMapping(path = "/move", method = RequestMethod.POST)
+    public Message move(HttpServletRequest req, @RequestBody JsonNode json) throws IOException, WorkSpaceException {
+        String filePath = json.get("filePath").textValue();
+        String newDir = json.get("newDir").textValue();
+        String userName = ModuleUserUtils.getOperationUser(req, "move " + filePath);
+        if (FILESYSTEM_PATH_CHECK_TRIGGER.getValue()) {
+            LOGGER.info(
+                    String.format(
+                            "path check trigger is open,now check the path,oldDest:%s,newDest:%s",
+                            filePath, newDir));
+            PathValidator$.MODULE$.validate(filePath, userName);
+            PathValidator$.MODULE$.validate(newDir, userName);
+        }
+        if (!checkIsUsersDirectory(filePath, userName)) {
+            throw WorkspaceExceptionManager.createException(80010, filePath);
+        }
+        if (StringUtils.isEmpty(newDir)) {
+            throw WorkspaceExceptionManager.createException(80004, newDir);
+        }
+        FsPath flieOldPath = new FsPath(filePath);
+        //获取文件名
+        String name = flieOldPath.getPath().substring(flieOldPath.getPath().lastIndexOf(FsPath.SEPARATOR)+1);
+        FsPath flieNewPath = new FsPath(newDir+FsPath.SEPARATOR+name);
+        FileSystem fileSystem = fsService.getFileSystem(userName, flieOldPath);
+        WorkspaceUtil.fileAndDirNameSpecialCharCheck(flieOldPath.getPath());
+        WorkspaceUtil.fileAndDirNameSpecialCharCheck(flieNewPath.getPath());
+        if (!fileSystem.exists(flieOldPath)) {
+            throw WorkspaceExceptionManager.createException(80013);
+        }
+        fileSystem.renameTo(flieOldPath, flieNewPath);
         return Message.ok();
     }
 

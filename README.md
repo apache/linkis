@@ -102,9 +102,9 @@ For code and documentation contributions, please follow the [contribution guide]
 # Contact Us
 
 Any questions or suggestions please kindly submit an issue.  
-You can scan the QR code below to join our WeChat and QQ group to get more immediate response.
+You can scan the QR code below to join our WeChat group to get more immediate response.
 
-![introduction05](https://user-images.githubusercontent.com/7869972/148767386-0663f833-547d-4c30-8876-081bb966ffb8.png)
+![WeChat](https://user-images.githubusercontent.com/11496700/173569063-8615c259-59ef-477a-9cee-825d28b54e7b.png)
 
 Meetup videos on [Bilibili](https://space.bilibili.com/598542776?from=search&seid=14344213924133040656).
 

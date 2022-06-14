@@ -67,8 +67,13 @@ Linkis 自2019年开源发布以来，已累计积累了700多家试验企业和
 ```shell
 
 ## 后端编译
+### Mac OS/Linux
 ./mvnw -N install
 ./mvnw  clean install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
+
+### Windows
+mvnw.cmd -N install
+mvnw.cmd clean install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
 
 ## 前端编译
 cd incubator-linkis/web

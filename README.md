@@ -75,8 +75,13 @@ Please go to the [Linkis Releases Page](https://github.com/apache/incubator-link
 ```shell
 
 ## compile backend
+### Mac OS/Linux
 ./mvnw -N install
 ./mvnw  clean install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
+
+### Windows
+mvnw.cmd -N install
+mvnw.cmd clean install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
 
 ## compile web
 cd incubator-linkis/web

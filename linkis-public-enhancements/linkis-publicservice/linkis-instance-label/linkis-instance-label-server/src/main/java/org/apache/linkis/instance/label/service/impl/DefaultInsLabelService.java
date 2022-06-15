@@ -26,8 +26,8 @@ import org.apache.linkis.instance.label.dao.InsLabelRelationDao;
 import org.apache.linkis.instance.label.dao.InstanceInfoDao;
 import org.apache.linkis.instance.label.dao.InstanceLabelDao;
 import org.apache.linkis.instance.label.entity.InsPersistenceLabel;
-import org.apache.linkis.instance.label.entity.InsPersistenceLabelValue;
 import org.apache.linkis.instance.label.entity.InstanceInfo;
+import org.apache.linkis.instance.label.exception.InstanceErrorException;
 import org.apache.linkis.instance.label.service.InsLabelAccessService;
 import org.apache.linkis.instance.label.service.annotation.AdapterMode;
 import org.apache.linkis.instance.label.vo.InsPersistenceLabelSearchVo;
@@ -97,14 +97,16 @@ public class DefaultInsLabelService implements InsLabelAccessService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void attachLabelToInstance(Label<?> label, ServiceInstance serviceInstance) {
+    public void attachLabelToInstance(Label<?> label, ServiceInstance serviceInstance)
+            throws InstanceErrorException {
         attachLabelsToInstance(Collections.singletonList(label), serviceInstance);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void attachLabelsToInstance(
-            List<? extends Label<?>> labels, ServiceInstance serviceInstance) {
+            List<? extends Label<?>> labels, ServiceInstance serviceInstance)
+            throws InstanceErrorException {
         List<InsPersistenceLabel> insLabels = toInsPersistenceLabels(labels);
         List<InsPersistenceLabel> labelsNeedInsert = filterLabelNeededInsert(insLabels, true);
         if (!labelsNeedInsert.isEmpty()) {
@@ -132,7 +134,8 @@ public class DefaultInsLabelService implements InsLabelAccessService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void refreshLabelsToInstance(
-            List<? extends Label<?>> labels, ServiceInstance serviceInstance) {
+            List<? extends Label<?>> labels, ServiceInstance serviceInstance)
+            throws InstanceErrorException {
         List<InsPersistenceLabel> insLabels = toInsPersistenceLabels(labels);
         // Label candidate to be removed
         List<InsPersistenceLabel> labelsCandidateRemoved =
@@ -189,25 +192,8 @@ public class DefaultInsLabelService implements InsLabelAccessService {
             List<? extends Label<?>> labels, Label.ValueRelation relation) {
         List<InsPersistenceLabel> insLabels = toInsPersistenceLabels(labels);
         if (!insLabels.isEmpty()) {
-            List<Map<String, String>> valueContent = new ArrayList<>();
-            AtomicBoolean searchByValues = new AtomicBoolean(false);
-            insLabels.forEach(
-                    insLabel -> {
-                        // It means that the labels provided is not regular,
-                        // so we should search instances by key-value map of labels
-                        if (StringUtils.isBlank(insLabel.getStringValue())) {
-                            searchByValues.set(true);
-                        }
-                        valueContent.add(insLabel.getValue());
-                    });
-            List<InstanceInfo> instanceInfoList = new ArrayList<>();
-            if ((relation != Label.ValueRelation.ALL || searchByValues.get())
-                    && valueContent.size() > 0) {
-                instanceInfoList =
-                        insLabelRelationDao.searchInsDirectByValues(valueContent, relation.name());
-            } else if (relation == Label.ValueRelation.ALL && !searchByValues.get()) {
-                instanceInfoList = insLabelRelationDao.searchInsDirectByLabels(insLabels);
-            }
+            List<InstanceInfo> instanceInfoList =
+                    insLabelRelationDao.searchInsDirectByLabels(insLabels);
             return instanceInfoList.stream()
                     .map(instanceInfo -> (ServiceInstance) instanceInfo)
                     .collect(Collectors.toList());
@@ -259,7 +245,7 @@ public class DefaultInsLabelService implements InsLabelAccessService {
                                             + insLabel.toString()
                                             + "]");
                             instanceLabelDao.remove(insLabel);
-                            instanceLabelDao.doRemoveKeyValues(insLabel.getId());
+                            // instanceLabelDao.doRemoveKeyValues(insLabel.getId());
                         }
                     }
                 });
@@ -269,6 +255,11 @@ public class DefaultInsLabelService implements InsLabelAccessService {
     public List<InstanceInfo> listAllInstanceWithLabel() {
         List<InstanceInfo> instances = insLabelRelationDao.listAllInstanceWithLabel();
         return instances;
+    }
+
+    @Override
+    public List<ServiceInstance> getInstancesByNames(String appName) {
+        return insLabelRelationDao.getInstancesByNames(appName);
     }
 
     @Override
@@ -368,7 +359,7 @@ public class DefaultInsLabelService implements InsLabelAccessService {
                                 Integer labelId = storedLabel.getId();
                                 labelNeedInsert.setId(labelId);
                                 if (needLock) {
-                                    // Update to lock the record
+                                    // Update time
                                     return instanceLabelDao.updateForLock(labelId) >= 0;
                                 }
                                 return true;
@@ -392,7 +383,7 @@ public class DefaultInsLabelService implements InsLabelAccessService {
                 insLabels,
                 subInsLabels -> instanceLabelDao.insertBatch(subInsLabels),
                 InsLabelConf.DB_PERSIST_BATCH_SIZE.getValue());
-        List<InsPersistenceLabelValue> labelValues =
+        /*List<InsPersistenceLabelValue> labelValues =
                 insLabels.stream()
                         .flatMap(
                                 insLabel -> {
@@ -412,7 +403,7 @@ public class DefaultInsLabelService implements InsLabelAccessService {
         batchOperation(
                 labelValues,
                 subLabelValues -> instanceLabelDao.doInsertKeyValues(subLabelValues),
-                InsLabelConf.DB_PERSIST_BATCH_SIZE.getValue());
+                InsLabelConf.DB_PERSIST_BATCH_SIZE.getValue());*/
     }
 
     /**
@@ -420,12 +411,12 @@ public class DefaultInsLabelService implements InsLabelAccessService {
      *
      * @param serviceInstance service instance
      */
-    private void doInsertInstance(ServiceInstance serviceInstance) {
+    private void doInsertInstance(ServiceInstance serviceInstance) throws InstanceErrorException {
         // ON DUPLICATE KEY
         try {
             instanceDao.insertOne(new InstanceInfo(serviceInstance));
         } catch (Exception e) {
-
+            throw new InstanceErrorException("Failed to insert service instance", e);
         }
     }
 

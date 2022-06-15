@@ -17,6 +17,7 @@
 
 package org.apache.linkis.instance.label.dao;
 
+import org.apache.linkis.common.ServiceInstance;
 import org.apache.linkis.instance.label.entity.InsPersistenceLabel;
 import org.apache.linkis.instance.label.entity.InstanceInfo;
 
@@ -74,6 +75,8 @@ public interface InsLabelRelationDao {
      * @return
      */
     List<InstanceInfo> listAllInstanceWithLabel();
+
+    List<ServiceInstance> getInstancesByNames(String appName);
 
     /**
      * Drop relationships by instance and label ids

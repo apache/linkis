@@ -54,7 +54,7 @@
 
     <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
         <foreach collection="list" item="item" separator="" open="" close="">
-            <![CDATA[INSERT INTO `linkis_ps_instance_label`(]]>
+            <![CDATA[REPLACE INTO `linkis_ps_instance_label`(]]>
             <include refid="label_insert_columns"/>
             <![CDATA[) VALUES(#{item.labelKey}, #{item.stringValue},
              #{item.feature}, #{item.labelValueSize});]]>

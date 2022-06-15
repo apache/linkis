@@ -20,6 +20,7 @@ package org.apache.linkis.instance.label.restful;
 import org.apache.linkis.common.ServiceInstance;
 import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.instance.label.entity.InstanceInfo;
+import org.apache.linkis.instance.label.exception.InstanceErrorException;
 import org.apache.linkis.instance.label.service.impl.DefaultInsLabelService;
 import org.apache.linkis.instance.label.utils.EntityParser;
 import org.apache.linkis.instance.label.vo.InstanceInfoVo;
@@ -62,7 +63,7 @@ public class InstanceRestful {
     public Message listAllInstanceWithLabel(HttpServletRequest req) throws Exception {
         String userName = ModuleUserUtils.getOperationUser(req);
         if (!Configuration.isAdmin(userName)) {
-            throw new Exception(
+            throw new InstanceErrorException(
                     String.format(
                             "Only admin can view all instances(只有管理员才能查看所有实例). The user [%s] is not admin.",
                             userName));
@@ -81,7 +82,7 @@ public class InstanceRestful {
             throws Exception {
         String userName = ModuleUserUtils.getOperationUser(req);
         if (!Configuration.isAdmin(userName)) {
-            throw new Exception(
+            throw new InstanceErrorException(
                     String.format(
                             "Only admin can modify instance label(只有管理员才能修改标签). The user [%s] is not admin",
                             userName));
@@ -115,7 +116,7 @@ public class InstanceRestful {
             }
         }
         if (labelKeySet.size() != labels.size()) {
-            throw new Exception(
+            throw new InstanceErrorException(
                     "Failed to update label, include repeat label(更新label失败，包含重复label)");
         }
         insLabelService.refreshLabelsToInstance(labels, instance);

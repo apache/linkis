@@ -17,10 +17,14 @@
  
 package org.apache.linkis.instance.label.client
 
+import java.util
+
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.protocol.label.{InsLabelAttachRequest, InsLabelRemoveRequest}
 import org.apache.linkis.rpc.Sender
 import javax.annotation.PostConstruct
+import org.apache.commons.lang3.StringUtils
+import org.apache.linkis.manager.label.constant.LabelKeyConstant
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cloud.client.serviceregistry.Registration
 import org.springframework.context.event.{ContextClosedEvent, EventListener}
@@ -35,12 +39,15 @@ class EurekaInstanceLabelClient extends Logging {
   private var registration: Registration = _
 
 
+
   @PostConstruct
   def init(): Unit = {
     info("EurekaInstanceLabelClient init")
     val metadata = registration.getMetadata
-    if (null != metadata) {
+    if (null != metadata && metadata.containsKey(LabelKeyConstant.ROUTE_KEY) && StringUtils.isNoneBlank(metadata.get(LabelKeyConstant.ROUTE_KEY))) {
       info(s"Start to register label for instance $metadata")
+      val labels = new util.HashMap[String, Object]()
+      labels.put(LabelKeyConstant.ROUTE_KEY, metadata.get(LabelKeyConstant.ROUTE_KEY))
       val insLabelAttachRequest = new InsLabelAttachRequest
       insLabelAttachRequest.setLabels(metadata.asInstanceOf[java.util.Map[String, Object]])
       insLabelAttachRequest.setServiceInstance(Sender.getThisServiceInstance)

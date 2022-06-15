@@ -145,7 +145,7 @@
     </delete>
 
     <insert id="insertRelations">
-        INSERT INTO `linkis_ps_instance_label_relation`
+        REPLACE INTO `linkis_ps_instance_label_relation`
         (`service_instance`, `label_id`)
         VALUES
         <foreach collection="labelIds" item="item" open="" close="" separator=",">
@@ -195,4 +195,9 @@
     <select id="listAllInstanceWithLabel" resultMap="instanceInfoCascadeMap">
        SELECT * FROM `linkis_ps_instance_info`
     </select>
+
+    <select id="getInstancesByNames" resultMap="instanceInfoCascadeMap">
+        SELECT * FROM `linkis_ps_instance_info` WHERE `name`= #{appName}
+    </select>
+
 </mapper>

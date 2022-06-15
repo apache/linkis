@@ -80,4 +80,7 @@ object GatewayConfiguration {
   val THIS_GATEWAY_SCHEMA = CommonVars("wds.linkis.gateway.this.schema", "")
 
   val ENABLE_WATER_MARK = CommonVars("wds.linkis.web.enable.water.mark", true)
+
+  val ROUTER_SERVER_LIST = CommonVars("wds.linkis.entrance.name", ENTRANCE_SPRING_NAME.getValue, "List of supported routing services")
+
 }

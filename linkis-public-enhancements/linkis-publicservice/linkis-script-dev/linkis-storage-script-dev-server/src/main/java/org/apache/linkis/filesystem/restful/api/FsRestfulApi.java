@@ -213,6 +213,45 @@ public class FsRestfulApi {
         return Message.ok();
     }
 
+    @RequestMapping(path = "/move", method = RequestMethod.POST)
+    public Message move(HttpServletRequest req, @RequestBody JsonNode json)
+            throws IOException, WorkSpaceException {
+        String filePath = json.get("filePath").textValue();
+        String newDir = json.get("newDir").textValue();
+        String userName = ModuleUserUtils.getOperationUser(req, "move " + filePath);
+        if (StringUtils.isEmpty(filePath)) {
+            return Message.ok();
+        }
+        if (StringUtils.isEmpty(newDir)) {
+            throw WorkspaceExceptionManager.createException(80004, newDir);
+        }
+        if (FILESYSTEM_PATH_CHECK_TRIGGER.getValue()) {
+            LOGGER.info(
+                    String.format(
+                            "path check trigger is open,now check the path,oldDest:%s,newDest:%s",
+                            filePath, newDir));
+            PathValidator$.MODULE$.validate(filePath, userName);
+            PathValidator$.MODULE$.validate(newDir, userName);
+        }
+        if (!checkIsUsersDirectory(filePath, userName)) {
+            throw WorkspaceExceptionManager.createException(80010, filePath);
+        }
+        FsPath flieOldPath = new FsPath(filePath);
+        String name =
+                flieOldPath
+                        .getPath()
+                        .substring(flieOldPath.getPath().lastIndexOf(FsPath.SEPARATOR) + 1);
+        FsPath flieNewPath = new FsPath(newDir + FsPath.SEPARATOR + name);
+        FileSystem fileSystem = fsService.getFileSystem(userName, flieOldPath);
+        WorkspaceUtil.fileAndDirNameSpecialCharCheck(flieOldPath.getPath());
+        WorkspaceUtil.fileAndDirNameSpecialCharCheck(flieNewPath.getPath());
+        if (!fileSystem.exists(flieOldPath)) {
+            throw WorkspaceExceptionManager.createException(80013);
+        }
+        fileSystem.renameTo(flieOldPath, flieNewPath);
+        return Message.ok();
+    }
+
     @RequestMapping(path = "/upload", method = RequestMethod.POST)
     public Message upload(
             HttpServletRequest req,

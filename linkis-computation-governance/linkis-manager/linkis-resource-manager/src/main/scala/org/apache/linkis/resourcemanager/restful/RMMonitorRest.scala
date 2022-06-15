@@ -105,8 +105,9 @@ class RMMonitorRest extends Logging {
 
   var COMBINED_USERCREATOR_ENGINETYPE: String = _
 
-  def appendMessageData(message: Message, key: String, value: AnyRef): Message = message.data(key, mapper.readTree(write(value)))
 
+  @ApiOperation(value="应用列表",notes="获取资源管理中的应用引擎列表清单")
+  def appendMessageData(message: Message, key: String, value: AnyRef): Message = message.data(key, mapper.readTree(write(value)))
   @RequestMapping(path = Array("applicationlist"), method = Array(RequestMethod.POST))
   def getApplicationList(request: HttpServletRequest, @RequestBody param: util.Map[String, AnyRef]): Message = {
     val message = Message.ok("")
@@ -227,7 +228,7 @@ class RMMonitorRest extends Logging {
     Message.ok().data("resources", userResources).data("total", resultPage.getTotal)
   }
 
-  @ApiOperation(value="资源查询",notes="查询资源使用情况及资源可用列表")
+  @ApiOperation(value="资源信息",notes="查询资源列表清单及资源详细数据如使用百分比")
   @RequestMapping(path = Array("userresources"), method = Array(RequestMethod.POST))
   def getUserResource(request: HttpServletRequest, @RequestBody(required = false) param: util.Map[String, AnyRef]): Message = {
     val message = Message.ok("")

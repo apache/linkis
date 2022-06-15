@@ -17,6 +17,14 @@
 
 package org.apache.linkis.manager.am.restful;
 
+import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
+import com.github.xiaoymin.knife4j.annotations.DynamicParameter;
+import com.github.xiaoymin.knife4j.annotations.DynamicResponseParameters;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import org.apache.linkis.MessageJava;
 import org.apache.linkis.common.ServiceInstance;
 import org.apache.linkis.common.utils.ByteTimeUtils;
 import org.apache.linkis.manager.am.conf.AMConfiguration;
@@ -63,7 +71,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
-
+@Api(tags = "引擎管理")
 @RequestMapping(
         path = "/linkisManager",
         produces = {"application/json"})
@@ -162,6 +170,16 @@ public class EngineRestfulApi {
         return Message.ok("Kill engineConn succeed.");
     }
 
+    @ApiOperation(value="停止引擎",notes="资源管理中的关闭引擎，可关闭一个也可关闭多个")
+    @ApiOperationSupport(
+            responses = @DynamicResponseParameters(properties = {
+                    @DynamicParameter(value = "结果集",name = "data",dataTypeClass = MessageJava.class)
+            })
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="engineInstance",dataType="String",value="引擎实例名称，最外层是个数组和engineType参数是一个级别"),
+            @ApiImplicitParam(name="engineType",dataType="String",value="引擎类型，最外层是个数组和engineInstance参数是一个级别")
+    })
     @RequestMapping(path = "/rm/enginekill", method = RequestMethod.POST)
     public Message killEngine(HttpServletRequest req, @RequestBody Map<String, String>[] param)
             throws Exception {
@@ -185,7 +203,22 @@ public class EngineRestfulApi {
         List<EngineNode> engineNodes = engineInfoService.listUserEngines(userName);
         return Message.ok().data("engines", engineNodes);
     }
-
+    @ApiOperation(value="实例详细信息",notes="获取实例的详细信息")
+    @ApiOperationSupport(
+            responses = @DynamicResponseParameters(properties = {
+                    @DynamicParameter(value = "结果集",name = "data",dataTypeClass = MessageJava.class)
+            })
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="em",dataType="Map",value="入参最外层"),
+            @ApiImplicitParam(name="serviceInstance",dataType="Map",value="入参属于‘’em"),
+            @ApiImplicitParam(name="applicationName",dataType="String",value="引擎标签名称，属于serviceInstance中的值"),
+            @ApiImplicitParam(name="instance",dataType="String",value="实例名称"),
+            @ApiImplicitParam(name="emInstance",dataType="String",value="引擎实例名称跟‘em’一个级别属于最外层"),
+            @ApiImplicitParam(name="engineType",dataType="String",value="引擎类型"),
+            @ApiImplicitParam(name="nodeStatus",dataType="String",value="状态"),
+            @ApiImplicitParam(name="owner",dataType="String",value="创建者"),
+    })
     @RequestMapping(path = "/listEMEngines", method = RequestMethod.POST)
     public Message listEMEngines(HttpServletRequest req, @RequestBody JsonNode jsonNode)
             throws IOException, AMErrorException {
@@ -262,7 +295,20 @@ public class EngineRestfulApi {
         }
         return Message.ok().data("engines", allEMVoFilter4);
     }
-
+    @ApiOperation(value="编辑引擎实例",notes="编辑引擎实例内容")
+    @ApiOperationSupport(
+            responses = @DynamicResponseParameters(properties = {
+                    @DynamicParameter(value = "结果集",name = "data",dataTypeClass = MessageJava.class)
+            })
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="applicationName",dataType="String",value="引擎标签"),
+            @ApiImplicitParam(name="emStatus",dataType="String",value="运行状态"),
+            @ApiImplicitParam(name="instance",dataType="String",value="引擎实例名称"),
+            @ApiImplicitParam(name="labels",dataType="List",value="引擎实例更新参数内容，集合存放的是map类型的"),
+            @ApiImplicitParam(name="labelKey",dataType="String",value="添加内容里面的标签，属于labels集合 内 map里的key"),
+            @ApiImplicitParam(name="stringValue",dataType="String",value="添加内容里面的标签对于的值，属于labels集合 内 map里的value")
+    })
     @RequestMapping(path = "/modifyEngineInfo", method = RequestMethod.PUT)
     public Message modifyEngineInfo(HttpServletRequest req, @RequestBody JsonNode jsonNode)
             throws AMErrorException, LabelErrorException {

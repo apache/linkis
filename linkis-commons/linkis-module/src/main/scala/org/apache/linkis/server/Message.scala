@@ -26,10 +26,15 @@ import org.apache.commons.lang.exception.ExceptionUtils
 import org.slf4j.LoggerFactory
 import org.springframework.web.context.request.{RequestContextHolder, ServletRequestAttributes}
 
+@ApiModel
 class Message(
+               @ApiModelProperty(value = "方法名")
                private var method: String,
+               @ApiModelProperty(value = "状态")
                private var status: Int = 0,          //-1 no login, 0 success, 1 error, 2 validate failed, 3 auth failed, 4 warning
+               @ApiModelProperty(value = "描述")
                private var message: String,
+               @ApiModelProperty(value = "返回结果集")
                private var data: util.HashMap[String, Object] = new util.HashMap[String, Object]) {
   def this() = this(null, 0, null)
   def << (key: String, value: Any): Message = {

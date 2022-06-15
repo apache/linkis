@@ -17,6 +17,14 @@
 
 package org.apache.linkis.udf.api;
 
+import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
+import com.github.xiaoymin.knife4j.annotations.DynamicParameter;
+import com.github.xiaoymin.knife4j.annotations.DynamicResponseParameters;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import org.apache.linkis.MessageJava;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
 import org.apache.linkis.udf.entity.UDFInfo;
@@ -56,6 +64,8 @@ import java.util.stream.Collectors;
 
 import static org.apache.linkis.udf.utils.ConstantVar.*;
 
+
+@Api(tags = "UDF管理")
 @RestController
 @RequestMapping(path = "udf")
 public class UDFApi {
@@ -650,6 +660,16 @@ public class UDFApi {
         return message;
     }
 
+
+    @ApiOperation(value="获取用户目录",notes="UDF管理模块下获取用户目录")
+    @ApiOperationSupport(
+            responses = @DynamicResponseParameters(properties = {
+                    @DynamicParameter(value = "结果集",name = "data",dataTypeClass = MessageJava.class)
+            })
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="category",dataType="String",value="获取指定集合类型用户目录，如类型为UDF即获取该类型下的用户目录")
+    })
     @Deprecated
     @RequestMapping(path = "/userDirectory", method = RequestMethod.GET)
     public Message getUserDirectory(

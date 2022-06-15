@@ -101,4 +101,21 @@ public class EntranceMetricRestfulApi {
                 .data("runningNumber", runningNumber)
                 .data("queuedNumber", queuedNumber);
     }
+
+    @RequestMapping(path = "/runningtask", method = RequestMethod.GET)
+    public Message status(HttpServletRequest req) {
+
+        EntranceJob[] undoneTasks = entranceServer.getAllUndoneTask("");
+        Boolean isCompleted = false;
+        if (null == undoneTasks || undoneTasks.length < 1) {
+            isCompleted = true;
+        }
+        int runningTaskNumber = 0;
+        if (undoneTasks != null) {
+            runningTaskNumber = undoneTasks.length;
+        }
+        return Message.ok("success")
+                .data("runningTaskNumber", runningTaskNumber)
+                .data("isCompleted", isCompleted);
+    }
 }

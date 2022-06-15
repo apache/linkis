@@ -19,6 +19,7 @@ package org.apache.linkis.instance.label.service;
 
 import org.apache.linkis.common.ServiceInstance;
 import org.apache.linkis.instance.label.entity.InstanceInfo;
+import org.apache.linkis.instance.label.exception.InstanceErrorException;
 import org.apache.linkis.manager.label.entity.Label;
 
 import java.util.List;
@@ -31,9 +32,11 @@ public interface InsLabelAccessService {
      * @param label label entity
      * @param serviceInstance service instance
      */
-    void attachLabelToInstance(Label<?> label, ServiceInstance serviceInstance);
+    void attachLabelToInstance(Label<?> label, ServiceInstance serviceInstance)
+            throws InstanceErrorException;
 
-    void attachLabelsToInstance(List<? extends Label<?>> labels, ServiceInstance serviceInstance);
+    void attachLabelsToInstance(List<? extends Label<?>> labels, ServiceInstance serviceInstance)
+            throws InstanceErrorException;
 
     /**
      * Refresh all the labels of instance (to init the relationship of instance and labels)
@@ -41,7 +44,8 @@ public interface InsLabelAccessService {
      * @param labels
      * @param serviceInstance
      */
-    void refreshLabelsToInstance(List<? extends Label<?>> labels, ServiceInstance serviceInstance);
+    void refreshLabelsToInstance(List<? extends Label<?>> labels, ServiceInstance serviceInstance)
+            throws InstanceErrorException;
     /**
      * Remove all relationship between label and instance
      *
@@ -93,6 +97,8 @@ public interface InsLabelAccessService {
      * @return
      */
     List<InstanceInfo> listAllInstanceWithLabel();
+
+    List<ServiceInstance> getInstancesByNames(String appName);
 
     void removeInstance(ServiceInstance serviceInstance);
 

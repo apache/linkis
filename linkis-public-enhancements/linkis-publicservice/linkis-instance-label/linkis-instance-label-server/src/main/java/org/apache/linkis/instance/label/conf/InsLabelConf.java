@@ -44,7 +44,7 @@ public class InsLabelConf {
             CommonVars.apply("wds.linkis.instance.label.cache.maximum.size", 1000);
 
     public static final CommonVars<String> CACHE_NAMES =
-            CommonVars.apply("wds.linkis.instance.label.cache.names", "instance,label");
+            CommonVars.apply("wds.linkis.instance.label.cache.names", "instance,label,appInstance");
 
     public static final CommonVars<String> EUREKA_URL =
             CommonVars.apply("wds.linkis.eureka.defaultZone", "http://localhost:20303");

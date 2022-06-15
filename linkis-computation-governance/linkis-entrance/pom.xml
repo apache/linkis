@@ -107,11 +107,11 @@
             <version>${linkis.version}</version>
         </dependency>
 
-        <!--<dependency>
+        <dependency>
             <groupId>org.apache.linkis</groupId>
             <artifactId>linkis-instance-label-client</artifactId>
             <version>${linkis.version}</version>
-        </dependency>-->
+        </dependency>
 
     </dependencies>
 

@@ -22,8 +22,8 @@ import org.apache.linkis.common.exception.WarnException;
 import org.apache.linkis.datasourcemanager.core.formdata.FormStreamContent;
 import org.apache.linkis.datasourcemanager.core.service.BmlAppService;
 import org.apache.linkis.datasourcemanager.core.service.MetadataOperateService;
-import org.apache.linkis.metadatamanager.common.protocol.MetadataConnect;
-import org.apache.linkis.metadatamanager.common.protocol.MetadataResponse;
+import org.apache.linkis.metadata.query.common.protocol.MetadataConnect;
+import org.apache.linkis.metadata.query.common.protocol.MetadataResponse;
 import org.apache.linkis.rpc.Sender;
 
 import org.springframework.beans.factory.annotation.Autowired;

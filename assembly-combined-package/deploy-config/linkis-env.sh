@@ -122,9 +122,9 @@ CS_PORT=9108
 #DATASOURCE_MANAGER_INSTALL_IP=127.0.0.1
 DATASOURCE_MANAGER_PORT=9109
 
-##linkis-ps-metadatamanager
-#METADATA_MANAGER_INSTALL_IP=127.0.0.1
-METADATA_MANAGER_PORT=9110
+##linkis-ps-metadataquery
+#METADATA_QUERY_INSTALL_IP=127.0.0.1
+METADATA_QUERY_PORT=9110
 
 
 ########################################################################################
@@ -152,7 +152,7 @@ LINKIS_PUBLIC_MODULE=lib/linkis-commons/public-module
 export PROMETHEUS_ENABLE=false
 
 #If you want to start metadata related microservices, you can set this export ENABLE_METADATA_MANAGE=true
-export ENABLE_METADATA_MANAGER=false
+export ENABLE_METADATA_QUERY=false
 
 #If you only want to experience linkis streamlined services, not rely on hdfs
 #you can set the following configuration to false  and for the configuration related to the file directory,

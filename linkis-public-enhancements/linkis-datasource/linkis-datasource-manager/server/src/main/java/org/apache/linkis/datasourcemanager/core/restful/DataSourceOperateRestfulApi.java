@@ -29,7 +29,7 @@ import org.apache.linkis.datasourcemanager.core.service.MetadataOperateService;
 import org.apache.linkis.datasourcemanager.core.service.hooks.DataSourceParamsHook;
 import org.apache.linkis.datasourcemanager.core.validate.ParameterValidateException;
 import org.apache.linkis.datasourcemanager.core.validate.ParameterValidator;
-import org.apache.linkis.metadatamanager.common.MdmConfiguration;
+import org.apache.linkis.metadata.query.common.MdmConfiguration;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.security.SecurityFilter;
 

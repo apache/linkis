@@ -16,10 +16,6 @@
  */
 
 package org.apache.linkis.udf.api;
-
-import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
-import com.github.xiaoymin.knife4j.annotations.DynamicParameter;
-import com.github.xiaoymin.knife4j.annotations.DynamicResponseParameters;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -48,7 +44,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.*;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -79,6 +74,10 @@ public class UDFApi {
 
     ObjectMapper mapper = new ObjectMapper();
 
+    @ApiOperation(value="udf树形菜单",notes="获取udf树形菜单详细信息",response = MessageJava.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="path",dataType="String",value="请求路径")
+    })
     @RequestMapping(path = "all", method = RequestMethod.POST)
     public Message allUDF(HttpServletRequest req, String jsonString) {
         Message message = null;
@@ -145,6 +144,13 @@ public class UDFApi {
         }
     }
 
+    @ApiOperation(value="函数列表",notes="获取函数列表",response = MessageJava.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="category",dataType="String",value="类别"),
+            @ApiImplicitParam(name="treeId",dataType="String",value="树形菜单Id"),
+            @ApiImplicitParam(name="type",dataType="String",value="函数类型，比如expire,self,share等类型")
+
+    })
     @RequestMapping(path = "list", method = RequestMethod.POST)
     public Message listUDF(HttpServletRequest req, @RequestBody Map<String, Object> json) {
         Message message = null;
@@ -523,6 +529,14 @@ public class UDFApi {
         return message;
     }
 
+
+    @ApiOperation(value="UDF列表",notes="获取UDF列表",response = MessageJava.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="udfName",dataType="String",value="udf名称"),
+            @ApiImplicitParam(name="curPage",dataType="Integer",value="页码"),
+            @ApiImplicitParam(name="pageSize",dataType="Integer",value="页面大小"),
+            @ApiImplicitParam(name="udfType",dataType="String",value="udf类型")
+    })
     /**
      * manager pages
      *
@@ -661,12 +675,7 @@ public class UDFApi {
     }
 
 
-    @ApiOperation(value="获取用户目录",notes="UDF管理模块下获取用户目录")
-    @ApiOperationSupport(
-            responses = @DynamicResponseParameters(properties = {
-                    @DynamicParameter(value = "结果集",name = "data",dataTypeClass = MessageJava.class)
-            })
-    )
+    @ApiOperation(value="获取用户目录",notes="UDF管理模块下获取用户目录",response = MessageJava.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name="category",dataType="String",value="获取指定集合类型用户目录，如类型为UDF即获取该类型下的用户目录")
     })

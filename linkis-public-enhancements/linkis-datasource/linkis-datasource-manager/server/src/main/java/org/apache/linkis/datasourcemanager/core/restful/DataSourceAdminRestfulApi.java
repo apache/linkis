@@ -17,6 +17,9 @@
 
 package org.apache.linkis.datasourcemanager.core.restful;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.apache.linkis.MessageJava;
 import org.apache.linkis.common.exception.ErrorException;
 import org.apache.linkis.datasourcemanager.common.domain.DataSourceEnv;
 import org.apache.linkis.datasourcemanager.common.domain.DataSourceParamKeyDefinition;
@@ -44,6 +47,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+@Api(tags = "数据源管理")
 @RestController
 @RequestMapping(
         value = "/data-source-manager",
@@ -164,7 +168,7 @@ public class DataSourceAdminRestfulApi {
                 },
                 "Fail to update data source environment[更新数据源环境失败]");
     }
-
+    @ApiOperation(value="环境列表",notes="获取环境列表",response = MessageJava.class)
     @RequestMapping(value = "/env", method = RequestMethod.GET)
     public Message queryDataSourceEnv(
             @RequestParam(value = "name", required = false) String envName,

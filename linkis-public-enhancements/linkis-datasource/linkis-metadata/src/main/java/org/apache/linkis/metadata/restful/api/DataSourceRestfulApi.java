@@ -17,6 +17,10 @@
 
 package org.apache.linkis.metadata.restful.api;
 
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import org.apache.linkis.MessageJava;
 import org.apache.linkis.metadata.restful.remote.DataSourceRestfulRemote;
 import org.apache.linkis.metadata.service.DataSourceService;
 import org.apache.linkis.metadata.service.HiveMetaWithPermissionService;
@@ -51,6 +55,7 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
 
     @Autowired HiveMetaWithPermissionService hiveMetaWithPermissionService;
 
+    @ApiOperation(value="数据库列表",notes="获取数据库列表",response = MessageJava.class)
     @Override
     @RequestMapping(path = "dbs", method = RequestMethod.GET)
     public Message queryDatabaseInfo(HttpServletRequest req) {
@@ -76,7 +81,10 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
             return Message.error("Failed to queryDbsWithTables", e);
         }
     }
-
+    @ApiOperation(value="获取数据库表",notes="根据数据库名获取该数据库表",response = MessageJava.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="database",dataType="String",value="数据库名称")
+    })
     @Override
     @RequestMapping(path = "tables", method = RequestMethod.GET)
     public Message queryTables(

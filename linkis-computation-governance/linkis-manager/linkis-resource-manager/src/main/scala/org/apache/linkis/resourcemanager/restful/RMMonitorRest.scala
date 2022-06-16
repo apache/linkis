@@ -336,7 +336,7 @@ class RMMonitorRest extends Logging {
   }
 
 
-
+  @ApiOperation(value="引擎管理器",notes="引擎管理器")
   @RequestMapping(path = Array("engines"), method = Array(RequestMethod.POST))
   def getEngines(request: HttpServletRequest, @RequestBody(required = false) param: util.Map[String, AnyRef]): Message = {
     val message = Message.ok("")
@@ -370,7 +370,7 @@ class RMMonitorRest extends Logging {
     appendMessageData(message, "engines", engines)
   }
 
-
+  @ApiOperation(value="队列管理器",notes="队列管理器")
   @RequestMapping(path = Array("queueresources"), method = Array(RequestMethod.POST))
   def getQueueResource(request: HttpServletRequest, @RequestBody param: util.Map[String, AnyRef]): Message = {
     val message = Message.ok("")

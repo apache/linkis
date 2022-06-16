@@ -76,24 +76,19 @@ public class VariableRestfulApi {
         variableService.removeGlobalVariable(keyID);
         return Message.ok();
     }*/
-    @ApiOperation(value="全局变量列表",notes="获取全局变量清单")
-    @ApiOperationSupport(
+    @ApiOperation(value="全局变量列表",notes="获取全局变量清单" ,response = MessageJava.class)
+   /* @ApiOperationSupport(
             responses = @DynamicResponseParameters(properties = {
                     @DynamicParameter(value = "结果集",name = "data",dataTypeClass = MessageJava.class)
             })
-    )
+    )*/
     @RequestMapping(path = "listGlobalVariable", method = RequestMethod.GET)
     public Message listGlobalVariable(HttpServletRequest req) {
         String userName = ModuleUserUtils.getOperationUser(req, "listGlobalVariable ");
         List<VarKeyValueVO> kvs = variableService.listGlobalVariable(userName);
         return Message.ok().data("globalVariables", kvs);
     }
-    @ApiOperation(value="添加全局变量",notes="添加全局变量")
-    @ApiOperationSupport(
-            responses = @DynamicResponseParameters(properties = {
-                    @DynamicParameter(value = "结果集",name = "data",dataTypeClass = MessageJava.class)
-            })
-    )
+    @ApiOperation(value="添加全局变量",notes="添加全局变量" ,response = MessageJava.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name="globalVariables",dataType="Map",required=true,value="新增参数数据一对多key:globalVariables,value:List"),
             @ApiImplicitParam(name="key",dataType="String",required=true,value="参数名称，属于globalVariables"),

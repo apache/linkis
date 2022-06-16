@@ -17,6 +17,11 @@
 
 package org.apache.linkis.datasourcemanager.core.restful;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import org.apache.linkis.MessageJava;
 import org.apache.linkis.common.exception.ErrorException;
 import org.apache.linkis.datasourcemanager.common.ServiceErrorCode;
 import org.apache.linkis.datasourcemanager.common.auth.AuthContext;
@@ -54,6 +59,8 @@ import org.slf4j.LoggerFactory;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
 
+
+@Api(tags = "数据源核心")
 @RestController
 @RequestMapping(
         value = "/data-source-manager",
@@ -80,6 +87,9 @@ public class DataSourceCoreRestfulApi {
         this.formDataTransformer = FormDataTransformerFactory.buildCustom();
     }
 
+
+
+    @ApiOperation(value="数据源列表",notes="获取数据源列表",response = MessageJava.class)
     @RequestMapping(value = "/type/all", method = RequestMethod.GET)
     public Message getAllDataSourceTypes() {
         return RestfulApiHelper.doAndResponse(
@@ -90,7 +100,10 @@ public class DataSourceCoreRestfulApi {
                 },
                 "Fail to get all types of data source[获取数据源类型列表失败]");
     }
-
+    @ApiOperation(value="选择数据源弹窗",notes="根据typeId参数返回不同数据源弹窗",response = MessageJava.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "typeId", dataType = "Integer", value = "数据源类型枚举值有1，2，3，4，5，6"),
+    })
     @RequestMapping(value = "/key-define/type/{typeId}", method = RequestMethod.GET)
     public Message getKeyDefinitionsByType(@PathVariable("typeId") Long dataSourceTypeId) {
         return RestfulApiHelper.doAndResponse(
@@ -101,7 +114,22 @@ public class DataSourceCoreRestfulApi {
                 },
                 "Fail to get key definitions of data source type[查询数据源参数键值对失败]");
     }
-
+    @ApiOperation(value="新增数据源",notes="新增数据源",response = MessageJava.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "connectParams", dataType = "Map", value = "新增数据源的内容"),
+            @ApiImplicitParam(name = "host", dataType = "String", required = true, value = "Ip,connectParams中的内容"),
+            @ApiImplicitParam(name = "params", dataType = "String", required = true, value = "连接参数,connectParams中的内容"),
+            @ApiImplicitParam(name = "password", dataType = "String", required = true, value = "密码,connectParams中的内容"),
+            @ApiImplicitParam(name = "port", dataType = "String", required = true, value = "端口,connectParams中的内容"),
+            @ApiImplicitParam(name = "subSystem", dataType = "String", required = true, value = "子系统名,connectParams中的内容"),
+            @ApiImplicitParam(name = "username", dataType = "String", required = true, value = "用户名,connectParams中的内容"),
+            @ApiImplicitParam(name = "createSystem", dataType = "String", required = true, value = "创建系统，跟connectParams一个级别"),
+            @ApiImplicitParam(name = "dataSourceDesc", dataType = "String", required = true, value = "数据源描述，跟connectParams一个级别"),
+            @ApiImplicitParam(name = "dataSourceEnvId", dataType = "String",  value = "数据源EnvId，跟connectParams一个级别"),
+            @ApiImplicitParam(name = "dataSourceName", dataType = "String", required = true, value = "数据源名称，跟connectParams一个级别"),
+            @ApiImplicitParam(name = "dataSourceTypeId", dataType = "String", required = true, value = "数据源类型ID，跟connectParams一个级别"),
+            @ApiImplicitParam(name = "labels", dataType = "String", required = true, value = "标签，跟connectParams一个级别")
+    })
     @RequestMapping(value = "/info/json", method = RequestMethod.POST)
     public Message insertJsonInfo(@RequestBody DataSource dataSource, HttpServletRequest req) {
         return RestfulApiHelper.doAndResponse(
@@ -129,6 +157,25 @@ public class DataSourceCoreRestfulApi {
                 "Fail to insert data source[新增数据源失败]");
     }
 
+
+
+    @ApiOperation(value="修改数据源信息",notes="修改数据源信息",response = MessageJava.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "dataSourceId", dataType = "Long", value = "新增数ID"),
+            @ApiImplicitParam(name = "connectParams", dataType = "Map", value = "新增数据源的内容"),
+            @ApiImplicitParam(name = "host", dataType = "String", required = true, value = "Ip,connectParams中的内容"),
+            @ApiImplicitParam(name = "params", dataType = "String", required = true, value = "连接参数,connectParams中的内容"),
+            @ApiImplicitParam(name = "password", dataType = "String", required = true, value = "密码,connectParams中的内容"),
+            @ApiImplicitParam(name = "port", dataType = "String", required = true, value = "端口,connectParams中的内容"),
+            @ApiImplicitParam(name = "subSystem", dataType = "String", required = true, value = "子系统名,connectParams中的内容"),
+            @ApiImplicitParam(name = "username", dataType = "String", required = true, value = "用户名,connectParams中的内容"),
+            @ApiImplicitParam(name = "createSystem", dataType = "String", required = true, value = "创建系统，跟connectParams一个级别"),
+            @ApiImplicitParam(name = "dataSourceDesc", dataType = "String", required = true, value = "数据源描述，跟connectParams一个级别"),
+            @ApiImplicitParam(name = "dataSourceEnvId", dataType = "String",  value = "数据源EnvId，跟connectParams一个级别"),
+            @ApiImplicitParam(name = "dataSourceName", dataType = "String", required = true, value = "数据源名称，跟connectParams一个级别"),
+            @ApiImplicitParam(name = "dataSourceTypeId", dataType = "String", required = true, value = "数据源类型ID，跟connectParams一个级别"),
+            @ApiImplicitParam(name = "labels", dataType = "String", required = true, value = "标签，跟connectParams一个级别")
+    })
     @RequestMapping(value = "/info/{dataSourceId}/json", method = RequestMethod.PUT)
     public Message updateDataSourceInJson(
             @RequestBody DataSource dataSource,
@@ -178,6 +225,19 @@ public class DataSourceCoreRestfulApi {
      * @param req
      * @return
      */
+
+    @ApiOperation(value="数据源操作记录",notes="数据源操作记录",response = MessageJava.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "dataSourceId", dataType = "Long", value = "数据源Id"),
+            @ApiImplicitParam(name = "connectParams", dataType = "Map", value = "新增数据源的内容"),
+            @ApiImplicitParam(name = "host", dataType = "String", required = true, value = "Ip,connectParams中的内容"),
+            @ApiImplicitParam(name = "params", dataType = "String", required = true, value = "连接参数,connectParams中的内容"),
+            @ApiImplicitParam(name = "password", dataType = "String", required = true, value = "密码,connectParams中的内容"),
+            @ApiImplicitParam(name = "port", dataType = "String", required = true, value = "端口,connectParams中的内容"),
+            @ApiImplicitParam(name = "subSystem", dataType = "String", required = true, value = "子系统名,connectParams中的内容"),
+            @ApiImplicitParam(name = "username", dataType = "String", required = true, value = "用户名,connectParams中的内容"),
+            @ApiImplicitParam(name = "comment", dataType = "String", required = true, value = "描述，跟connectParams一个级别")
+    })
     @RequestMapping(value = "/parameter/{dataSourceId}/json", method = RequestMethod.POST)
     public Message insertJsonParameter(
             @PathVariable("dataSourceId") Long dataSourceId,
@@ -284,6 +344,11 @@ public class DataSourceCoreRestfulApi {
      * @param version
      * @return
      */
+    @ApiOperation(value="编辑数据源",notes="打开编辑数据源",response = MessageJava.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "dataSourceId", dataType = "Long", value = "数据源ID"),
+            @ApiImplicitParam(name = "version", dataType = "Long", value = "数据源弹窗类型，默认1，2，3，4，5，6"),
+    })
     @RequestMapping(value = "/info/{dataSourceId}/{version}", method = RequestMethod.GET)
     public Message getInfoByDataSourceIdAndVersion(
             @PathVariable("dataSourceId") Long dataSourceId,
@@ -387,6 +452,10 @@ public class DataSourceCoreRestfulApi {
      * @param dataSourceId
      * @return
      */
+    @ApiOperation(value="删除数据源",notes="删除数据源",response = MessageJava.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "dataSourceId", dataType = "Long", value = "数据源ID"),
+    })
     @RequestMapping(value = "/info/delete/{dataSourceId}", method = RequestMethod.DELETE)
     public Message removeDataSource(
             @PathVariable("dataSourceId") Long dataSourceId, HttpServletRequest request) {
@@ -414,6 +483,11 @@ public class DataSourceCoreRestfulApi {
                 "Fail to remove data source[删除数据源信息失败]");
     }
 
+
+    @ApiOperation(value="过期数据源",notes="过期数据源",response = MessageJava.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "dataSourceId", dataType = "Long", value = "数据源ID"),
+    })
     @RequestMapping(value = "/info/{dataSourceId}/expire", method = RequestMethod.PUT)
     public Message expireDataSource(
             @PathVariable("dataSourceId") Long dataSourceId, HttpServletRequest request) {
@@ -546,6 +620,13 @@ public class DataSourceCoreRestfulApi {
                 "Fail to connect data source[连接数据源失败]");
     }
 
+    @ApiOperation(value="数据源列表",notes="获取数据源列表",response = MessageJava.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="typeId",dataType="Integer",value="数据源列表"),
+            @ApiImplicitParam(name="pageSize",dataType="Integer",value="页面大小"),
+            @ApiImplicitParam(name="currentPage",dataType="Integer",value="页码"),
+            @ApiImplicitParam(name="name",dataType="String",value="数据源名称"),
+    })
     @RequestMapping(value = "/info", method = RequestMethod.GET)
     public Message queryDataSource(
             @RequestParam(value = "system", required = false) String createSystem,

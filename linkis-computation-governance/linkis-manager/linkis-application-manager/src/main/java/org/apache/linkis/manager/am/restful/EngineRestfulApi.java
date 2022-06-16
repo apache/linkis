@@ -170,12 +170,7 @@ public class EngineRestfulApi {
         return Message.ok("Kill engineConn succeed.");
     }
 
-    @ApiOperation(value="停止引擎",notes="资源管理中的关闭引擎，可关闭一个也可关闭多个")
-    @ApiOperationSupport(
-            responses = @DynamicResponseParameters(properties = {
-                    @DynamicParameter(value = "结果集",name = "data",dataTypeClass = MessageJava.class)
-            })
-    )
+    @ApiOperation(value="停止引擎",notes="关闭引擎，可关闭一个也可关闭多个",response = MessageJava.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name="engineInstance",dataType="String",value="引擎实例名称，最外层是个数组和engineType参数是一个级别"),
             @ApiImplicitParam(name="engineType",dataType="String",value="引擎类型，最外层是个数组和engineInstance参数是一个级别")
@@ -203,12 +198,12 @@ public class EngineRestfulApi {
         List<EngineNode> engineNodes = engineInfoService.listUserEngines(userName);
         return Message.ok().data("engines", engineNodes);
     }
-    @ApiOperation(value="实例详细信息",notes="获取实例的详细信息")
-    @ApiOperationSupport(
+    @ApiOperation(value="实例详细信息",notes="获取实例的详细信息",response = MessageJava.class)
+    /*@ApiOperationSupport(
             responses = @DynamicResponseParameters(properties = {
                     @DynamicParameter(value = "结果集",name = "data",dataTypeClass = MessageJava.class)
             })
-    )
+    )*/
     @ApiImplicitParams({
             @ApiImplicitParam(name="em",dataType="Map",value="入参最外层"),
             @ApiImplicitParam(name="serviceInstance",dataType="Map",value="入参属于‘’em"),
@@ -216,7 +211,7 @@ public class EngineRestfulApi {
             @ApiImplicitParam(name="instance",dataType="String",value="实例名称"),
             @ApiImplicitParam(name="emInstance",dataType="String",value="引擎实例名称跟‘em’一个级别属于最外层"),
             @ApiImplicitParam(name="engineType",dataType="String",value="引擎类型"),
-            @ApiImplicitParam(name="nodeStatus",dataType="String",value="状态"),
+            @ApiImplicitParam(name="nodeStatus",dataType="String",value="状态，状态有以下枚举类型 ‘Healthy‘, ‘UnHealthy‘, ‘WARN‘, ’StockAvailable’, ‘StockUnavailable’"),
             @ApiImplicitParam(name="owner",dataType="String",value="创建者"),
     })
     @RequestMapping(path = "/listEMEngines", method = RequestMethod.POST)
@@ -295,15 +290,10 @@ public class EngineRestfulApi {
         }
         return Message.ok().data("engines", allEMVoFilter4);
     }
-    @ApiOperation(value="编辑引擎实例",notes="编辑引擎实例内容")
-    @ApiOperationSupport(
-            responses = @DynamicResponseParameters(properties = {
-                    @DynamicParameter(value = "结果集",name = "data",dataTypeClass = MessageJava.class)
-            })
-    )
+    @ApiOperation(value="编辑引擎实例",notes="编辑引擎实例内容",response = MessageJava.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name="applicationName",dataType="String",value="引擎标签"),
-            @ApiImplicitParam(name="emStatus",dataType="String",value="运行状态"),
+            @ApiImplicitParam(name="emStatus",dataType="String",value="运行状态,枚举类型有‘Starting’,‘Unlock’,'Locked','Idle','Busy','Running','ShuttingDown','Failed','Success' "),
             @ApiImplicitParam(name="instance",dataType="String",value="引擎实例名称"),
             @ApiImplicitParam(name="labels",dataType="List",value="引擎实例更新参数内容，集合存放的是map类型的"),
             @ApiImplicitParam(name="labelKey",dataType="String",value="添加内容里面的标签，属于labels集合 内 map里的key"),

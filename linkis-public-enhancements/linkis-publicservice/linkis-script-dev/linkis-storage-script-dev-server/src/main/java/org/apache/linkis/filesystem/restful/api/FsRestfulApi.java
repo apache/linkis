@@ -17,9 +17,13 @@
 
 package org.apache.linkis.filesystem.restful.api;
 
+import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
+import com.github.xiaoymin.knife4j.annotations.DynamicParameter;
+import com.github.xiaoymin.knife4j.annotations.DynamicResponseParameters;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.apache.linkis.MessageJava;
 import org.apache.linkis.common.io.FsPath;
 import org.apache.linkis.common.io.FsWriter;
 import org.apache.linkis.filesystem.conf.WorkSpaceConfiguration;
@@ -111,6 +115,11 @@ public class FsRestfulApi {
                 || (requestPath.indexOf(enginconnPath) > -1);
     }
 
+
+    @ApiOperation(value="根路径",notes="获取根路径",response = MessageJava.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "pathType", dataType = "String", value = "文件类型")
+    })
     @RequestMapping(path = "/getUserRootPath", method = RequestMethod.GET)
     public Message getUserRootPath(
             HttpServletRequest req,
@@ -271,7 +280,10 @@ public class FsRestfulApi {
         return Message.ok();
     }
 
-    @ApiOperation(value="获取运行结果",notes="根据Id获取历史任务运行结果")
+    @ApiOperation(value="函数列表",notes="获取udf函数列表",response = MessageJava.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="path",dataType="String",value="请求路径")
+    })
     @RequestMapping(path = "/getDirFileTrees", method = RequestMethod.GET)
     public Message getDirFileTrees(
             HttpServletRequest req, @RequestParam(value = "path", required = false) String path)

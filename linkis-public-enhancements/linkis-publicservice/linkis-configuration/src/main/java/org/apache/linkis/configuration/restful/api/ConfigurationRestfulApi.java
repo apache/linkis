@@ -99,12 +99,12 @@ public class ConfigurationRestfulApi {
         // TODO: 2019/12/30  configKey参数校验
         return Message.ok();
     }
-    @ApiOperation(value="队列资源",notes="参数配置中的队列资源模块返回队列资源的列及值")
-    @ApiOperationSupport(
+    @ApiOperation(value="队列资源",notes="参数配置中的队列资源模块返回队列资源的列及值",response = MessageJava.class)
+   /* @ApiOperationSupport(
             responses = @DynamicResponseParameters(properties = {
                     @DynamicParameter(value = "结果集",name = "data",dataTypeClass = MessageJava.class)
             })
-    )
+    )*/
     @RequestMapping(path = "/getFullTreesByAppName", method = RequestMethod.GET)
     public Message getFullTreesByAppName(
             HttpServletRequest req,
@@ -127,12 +127,7 @@ public class ConfigurationRestfulApi {
     }
 
 
-    @ApiOperation(value="应用类型",notes="参数配置中应用类型标签")
-    @ApiOperationSupport(
-            responses = @DynamicResponseParameters(properties = {
-                    @DynamicParameter(value = "结果集",name = "data",dataTypeClass = MessageJava.class)
-            })
-    )
+    @ApiOperation(value="应用类型",notes="参数配置中应用类型标签",response = MessageJava.class)
     @RequestMapping(path = "/getCategory", method = RequestMethod.GET)
     public Message getCategory(HttpServletRequest req) {
         List<CategoryLabelVo> categoryLabelList = categoryService.getAllCategory();
@@ -140,12 +135,7 @@ public class ConfigurationRestfulApi {
     }
 
 
-    @ApiOperation(value="新增应用类型",notes="新增应用类型标签")
-    @ApiOperationSupport(
-            responses = @DynamicResponseParameters(properties = {
-                    @DynamicParameter(value = "结果集",name = "data",dataTypeClass = MessageJava.class)
-            })
-    )
+    @ApiOperation(value="新增应用类型",notes="新增应用类型标签" ,response = MessageJava.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name="categoryName",dataType="String",required=true,value="引用类型标签名称"),
             @ApiImplicitParam(name="description",dataType="STring",required=true,value="描述")
@@ -168,12 +158,7 @@ public class ConfigurationRestfulApi {
     }
 
 
-    @ApiOperation(value="删除配置",notes="删除参数配置")
-    @ApiOperationSupport(
-            responses = @DynamicResponseParameters(properties = {
-                    @DynamicParameter(value = "结果集",name = "data",dataTypeClass = MessageJava.class)
-            })
-    )
+    @ApiOperation(value="删除配置",notes="删除参数配置", response = MessageJava.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name="categoryId",dataType="String",required=true,value="参数配置Id")
     })
@@ -186,12 +171,7 @@ public class ConfigurationRestfulApi {
         categoryService.deleteCategory(categoryId);
         return Message.ok();
     }
-    @ApiOperation(value="新增参数配置",notes="添加参数配置")
-    @ApiOperationSupport(
-            responses = @DynamicResponseParameters(properties = {
-                    @DynamicParameter(value = "结果集",name = "data",dataTypeClass = MessageJava.class)
-            })
-    )
+    @ApiOperation(value="新增参数配置",notes="添加参数配置",response = MessageJava.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name="categoryId",dataType="String",required=true,value="参数配置Id"),
             @ApiImplicitParam(name="engineType",dataType="String",required=true,value="引擎类型"),
@@ -219,12 +199,7 @@ public class ConfigurationRestfulApi {
         categoryService.createSecondCategory(categoryId, engineType, version, description);
         return Message.ok();
     }
-    @ApiOperation(value="保存队列资源",notes="保存队列资源")
-    @ApiOperationSupport(
-            responses = @DynamicResponseParameters(properties = {
-                    @DynamicParameter(value = "结果集",name = "data",dataTypeClass = MessageJava.class)
-            })
-    )
+    @ApiOperation(value="保存队列资源",notes="保存队列资源",response = MessageJava.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name="creator",dataType="String",required=true,value="应用类型名称"),
             @ApiImplicitParam(name="engineType",dataType="String",required=true,value="引擎类型"),
@@ -271,12 +246,7 @@ public class ConfigurationRestfulApi {
         Message message = Message.ok();
         return message;
     }
-    @ApiOperation(value="引擎类型列表",notes="获取引擎类型列表")
-    @ApiOperationSupport(
-            responses = @DynamicResponseParameters(properties = {
-                    @DynamicParameter(value = "结果集",name = "data",dataTypeClass = MessageJava.class)
-            })
-    )
+    @ApiOperation(value="引擎类型列表",notes="获取引擎类型列表",response = MessageJava.class)
     @RequestMapping(path = "/engineType", method = RequestMethod.GET)
     public Message listAllEngineType(HttpServletRequest request) {
         String[] engineType = configurationService.listAllEngineType();

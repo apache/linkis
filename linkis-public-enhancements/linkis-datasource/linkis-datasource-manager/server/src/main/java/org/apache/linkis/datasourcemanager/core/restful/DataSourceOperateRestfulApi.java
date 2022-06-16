@@ -17,6 +17,11 @@
 
 package org.apache.linkis.datasourcemanager.core.restful;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import org.apache.linkis.MessageJava;
 import org.apache.linkis.common.exception.ErrorException;
 import org.apache.linkis.datasourcemanager.common.domain.DataSource;
 import org.apache.linkis.datasourcemanager.common.domain.DataSourceParamKeyDefinition;
@@ -51,6 +56,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+@Api(tags = "数据源操作")
 @RestController
 @RequestMapping(
         value = "/data-source-manager/op/",
@@ -76,6 +82,23 @@ public class DataSourceOperateRestfulApi {
         this.formDataTransformer = FormDataTransformerFactory.buildCustom();
     }
 
+
+    @ApiOperation(value="测试连接",notes="数据源测试连接",response = MessageJava.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "connectParams", dataType = "Map", value = "新增数据源的内容"),
+            @ApiImplicitParam(name = "host", dataType = "String", required = true, value = "Ip,connectParams中的内容"),
+            @ApiImplicitParam(name = "params", dataType = "String", required = true, value = "连接参数,connectParams中的内容"),
+            @ApiImplicitParam(name = "password", dataType = "String", required = true, value = "密码,connectParams中的内容"),
+            @ApiImplicitParam(name = "port", dataType = "String", required = true, value = "端口,connectParams中的内容"),
+            @ApiImplicitParam(name = "subSystem", dataType = "String", required = true, value = "子系统名,connectParams中的内容"),
+            @ApiImplicitParam(name = "username", dataType = "String", required = true, value = "用户名,connectParams中的内容"),
+            @ApiImplicitParam(name = "createSystem", dataType = "String", required = true, value = "创建系统，跟connectParams一个级别"),
+            @ApiImplicitParam(name = "dataSourceDesc", dataType = "String", required = true, value = "数据源描述，跟connectParams一个级别"),
+            @ApiImplicitParam(name = "dataSourceEnvId", dataType = "String",  value = "数据源EnvId，跟connectParams一个级别"),
+            @ApiImplicitParam(name = "dataSourceName", dataType = "String", required = true, value = "数据源名称，跟connectParams一个级别"),
+            @ApiImplicitParam(name = "dataSourceTypeId", dataType = "String", required = true, value = "数据源类型ID，跟connectParams一个级别"),
+            @ApiImplicitParam(name = "labels", dataType = "String", required = true, value = "标签，跟connectParams一个级别")
+    })
     @RequestMapping(value = "/connect/json", method = RequestMethod.POST)
     public Message connect(@RequestBody DataSource dataSource, HttpServletRequest request) {
         return RestfulApiHelper.doAndResponse(

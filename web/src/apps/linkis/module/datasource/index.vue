@@ -308,7 +308,7 @@ export default {
         {
           title: this.$t('message.linkis.datasource.createSystem'),
           key: 'createSystem',
-          width: 120,
+          width: 125,
           tooltip: true,
           align: 'center',
         },

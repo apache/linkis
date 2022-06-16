@@ -17,17 +17,29 @@
 
 package org.apache.linkis.manager.am.restful;
 
+import com.github.pagehelper.PageHelper;
 import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.manager.am.exception.AMErrorException;
 import org.apache.linkis.manager.am.service.ECResourceInfoService;
+import org.apache.linkis.manager.am.util.QueryUtils;
+import org.apache.linkis.manager.am.util.StrUtils;
+import org.apache.linkis.manager.am.vo.ECRHistroryListVo;
 import org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord;
 import org.apache.linkis.server.Message;
+import org.apache.linkis.server.security.SecurityFilter;
 import org.apache.linkis.server.utils.ModuleUserUtils;
-
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RequestMapping(
         path = "/linkisManager/ecinfo",
@@ -66,5 +78,57 @@ public class ECResourceInfoRestfulApi {
         } else {
             return Message.error("tickedId not exist:" + ticketid);
         }
+    }
+
+    @RequestMapping(path = "/ecrHistoryList", method = RequestMethod.GET)
+    public Message queryEcrHistory(HttpServletRequest req,
+                                   @RequestParam(value = "instance", required = false) String instance,
+                                   @RequestParam(value = "creator", required = false) String creator,
+                                   @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+                                   @RequestParam(value = "startDate", required = false) Date startDate,
+                                   @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+                                   @RequestParam(value = "endDate", required = false,defaultValue = "#{new java.util.Date()}") Date endDate,
+                                   @RequestParam(value = "engineType", required = false) String engineType,
+                                   @RequestParam(value = "pageNow", required = false,defaultValue = "1") Integer pageNow,
+                                   @RequestParam(value = "pageSize", required = false,defaultValue = "20") Integer pageSize) {
+        String username = SecurityFilter.getLoginUsername(req);
+        // Parameter judgment
+        instance    = StrUtils.strCheckAndDef(instance,null);
+        creator     = StrUtils.strCheckAndDef(creator,null);
+        engineType  = StrUtils.strCheckAndDef(engineType,null);
+        if ( null!=creator&&!QueryUtils.checkNameValid(creator)){
+            return Message.error("Invalid creator : " + creator);
+        }
+        if ( null == startDate) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.HOUR_OF_DAY,0);
+            calendar.set(Calendar.MINUTE,0);
+            calendar.set(Calendar.SECOND,0);
+            startDate =calendar.getTime() ;
+        }
+        if (Configuration.isAdmin(username)){
+            username = null;
+            if (!StringUtils.isEmpty(creator)){
+                username = creator ;
+            }
+        }
+        List<ECRHistroryListVo> list =  new ArrayList<>();
+        PageHelper.startPage(pageNow, pageSize);
+        try {
+            List<ECResourceInfoRecord> queryTasks = ecResourceInfoService.getECResourceInfoRecordList(instance,endDate,startDate,username);
+            if (!StringUtils.isEmpty(engineType)){
+                String finalEngineType = engineType;
+                queryTasks = queryTasks.stream().filter(info->info.getLabelValue().contains(finalEngineType)).collect(Collectors.toList());
+            }
+            queryTasks.forEach(info ->{
+                ECRHistroryListVo ecrHistroryListVo = new ECRHistroryListVo();
+                BeanUtils.copyProperties(info,ecrHistroryListVo);
+                ecrHistroryListVo.setEngineType(info.getLabelValue().split(",")[1].split("-")[0]);
+                list.add(ecrHistroryListVo);
+            });
+        } finally {
+            PageHelper.clearPage();
+        }
+        return  Message.ok().data("engineList", list);
     }
 }

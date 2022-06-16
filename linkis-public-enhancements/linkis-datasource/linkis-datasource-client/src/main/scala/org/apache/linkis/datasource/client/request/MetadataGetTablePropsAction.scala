@@ -23,11 +23,12 @@ import org.apache.linkis.httpclient.request.GetAction
 
 
 class MetadataGetTablePropsAction extends GetAction with DataSourceAction {
-  private var dataSourceId: Long = _
+  private var dataSourceName: String = _
+
   private var database: String = _
   private var table: String = _
 
-  override def suffixURLs: Array[String] = Array(METADATA_SERVICE_MODULE.getValue, "props", dataSourceId.toString, "db", database, "table", table)
+  override def suffixURLs: Array[String] = Array(METADATA_SERVICE_MODULE.getValue, "getTableProps")
 
   private var user: String = _
 
@@ -40,7 +41,7 @@ object MetadataGetTablePropsAction {
   def builder(): Builder = new Builder
 
   class Builder private[MetadataGetTablePropsAction]() {
-    private var dataSourceId: Long = _
+    private var dataSourceName: String = _
     private var database: String = _
     private var table: String = _
     private var system: String = _
@@ -51,8 +52,8 @@ object MetadataGetTablePropsAction {
       this
     }
 
-    def setDataSourceId(dataSourceId: Long): Builder = {
-      this.dataSourceId = dataSourceId
+    def setDataSourceName(dataSourceName: String): Builder = {
+      this.dataSourceName = dataSourceName
       this
     }
 
@@ -72,14 +73,14 @@ object MetadataGetTablePropsAction {
     }
 
     def build(): MetadataGetTablePropsAction = {
-      if (dataSourceId == null) throw new DataSourceClientBuilderException("dataSourceId is needed!")
-      if(database == null) throw new DataSourceClientBuilderException("database is needed!")
-      if(table == null) throw new DataSourceClientBuilderException("table is needed!")
-      if(system == null) throw new DataSourceClientBuilderException("system is needed!")
-      if(user == null) throw new DataSourceClientBuilderException("user is needed!")
+      if (dataSourceName == null) throw new DataSourceClientBuilderException("dataSourceName is needed!")
+      if (database == null) throw new DataSourceClientBuilderException("database is needed!")
+      if (table == null) throw new DataSourceClientBuilderException("table is needed!")
+      if (system == null) throw new DataSourceClientBuilderException("system is needed!")
+      if (user == null) throw new DataSourceClientBuilderException("user is needed!")
 
       val metadataGetTablePropsAction = new MetadataGetTablePropsAction
-      metadataGetTablePropsAction.dataSourceId = this.dataSourceId
+      metadataGetTablePropsAction.dataSourceName = this.dataSourceName
       metadataGetTablePropsAction.database = this.database
       metadataGetTablePropsAction.table = this.table
       metadataGetTablePropsAction.setParameter("system", system)

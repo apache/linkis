@@ -353,10 +353,10 @@
       <!-- metadata manager -->
       <fileSet>
           <directory>
-              ../../linkis-public-enhancements/linkis-datasource/linkis-metadata-manager/server/target/out/lib/
+              ../../linkis-public-enhancements/linkis-datasource/linkis-metadata-query/server/target/out/lib/
           </directory>
           <outputDirectory>
-              lib/linkis-public-enhancements/linkis-ps-metadatamanager
+              lib/linkis-public-enhancements/linkis-ps-metadataquery
           </outputDirectory>
           <includes>
               <include>**/*</include>

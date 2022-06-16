@@ -20,9 +20,10 @@ package org.apache.linkis.datasource.client.config
 import org.apache.linkis.common.conf.CommonVars
 
 object DatasourceClientConfig {
-  var METADATA_SERVICE_MODULE: CommonVars[String] = CommonVars.apply("wds.linkis.server.mdm.module.name", "metadatamanager")
 
-  var DATA_SOURCE_SERVICE_MODULE: CommonVars[String] = CommonVars.apply("wds.linkis.server.dsm.module.name", "data-source-manager")
+  var METADATA_SERVICE_MODULE: CommonVars[String] = CommonVars.apply("linkis.server.mdq.module.name", "metadataQuery")
+
+  var DATA_SOURCE_SERVICE_MODULE: CommonVars[String] = CommonVars.apply("linkis.server.dsm.module.name", "data-source-manager")
 
   val AUTH_TOKEN_KEY: CommonVars[String] = CommonVars[String]("wds.linkis.server.dsm.auth.token.key", "Token-Code")
 

@@ -125,7 +125,7 @@ public class ECResourceInfoRestfulApi {
                 BeanUtils.copyProperties(info,ecrHistroryListVo);
                 ecrHistroryListVo.setEngineType(info.getLabelValue().split(",")[1].split("-")[0]);
                 list.add(ecrHistroryListVo);
-            });
+            }) ;
         } finally {
             PageHelper.clearPage();
         }

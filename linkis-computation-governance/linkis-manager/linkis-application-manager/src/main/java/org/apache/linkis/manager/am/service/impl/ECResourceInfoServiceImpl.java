@@ -30,6 +30,9 @@ import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Date;
+import java.util.List;
+
 @Service
 public class ECResourceInfoServiceImpl implements ECResourceInfoService {
 
@@ -57,5 +60,10 @@ public class ECResourceInfoServiceImpl implements ECResourceInfoService {
     public void deleteECResourceInfoRecord(Integer id) {
         logger.info("Start to delete ec id：{} info ", id);
         ecResourceRecordMapper.deleteECResourceInfoRecord(id);
+    }
+
+    @Override
+    public List<ECResourceInfoRecord> getECResourceInfoRecordList(String instance, Date endDate, Date startDate, String username) {
+        return ecResourceRecordMapper.getECResourceInfoHistory(username,instance,endDate,startDate);
     }
 }

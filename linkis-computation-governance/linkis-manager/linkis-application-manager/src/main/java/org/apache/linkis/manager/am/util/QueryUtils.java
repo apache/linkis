@@ -15,23 +15,14 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.manager.am.service;
+package org.apache.linkis.manager.am.util;
+import java.util.regex.Pattern;
 
-import org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord;
+public class QueryUtils {
 
-import java.util.Date;
-import java.util.List;
+    public static String NAME_REGEX = "^[a-zA-Z\\d_\\.]+$";
 
-public interface ECResourceInfoService {
-
-    ECResourceInfoRecord getECResourceInfoRecord(String ticketId);
-
-    void deleteECResourceInfoRecordByTicketId(String ticketId);
-
-    void deleteECResourceInfoRecord(Integer id);
-
-    List<ECResourceInfoRecord> getECResourceInfoRecordList(String instance, Date endDate, Date startDate, String username);
-
-    // TODO add search method
-
+    public static boolean checkNameValid(String creator){
+        return Pattern.compile(NAME_REGEX).matcher(creator).find();
+    }
 }

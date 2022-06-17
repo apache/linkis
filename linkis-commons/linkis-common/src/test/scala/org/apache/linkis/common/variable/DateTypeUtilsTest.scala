@@ -28,7 +28,9 @@ class DateTypeUtilsTest {
     val dateFormat = DateTypeUtils.dateFormatLocal.get()
     val runDateStr = "20220617"
     val cal: Calendar = Calendar.getInstance()
-    val hour = runDateStr + cal.get(Calendar.HOUR_OF_DAY)
+    val hourOfDay = cal.get(Calendar.HOUR_OF_DAY)
+    val hourOfDayStd = if (hourOfDay < 10) "0" + hourOfDay else "" + hourOfDay
+    val hour = runDateStr + hourOfDayStd
     val curHour = DateTypeUtils.getCurHour(false, runDateStr)
     assertEquals(hour, curHour)
   }

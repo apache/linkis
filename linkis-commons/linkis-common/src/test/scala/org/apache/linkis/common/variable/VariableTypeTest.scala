@@ -91,7 +91,9 @@ class VariableTypeTest {
     //add 1 days
     val dateTypeRes = dateType.calculator("+", "1")
     val cal: Calendar = Calendar.getInstance()
-    val hour = dateTypeRes + cal.get(Calendar.HOUR_OF_DAY)
+    val hourOfDay = cal.get(Calendar.HOUR_OF_DAY)
+    val hourOfDayStd = if (hourOfDay < 10) "0" + hourOfDay else "" + hourOfDay
+    val hour = dateTypeRes + hourOfDayStd
     assertEquals(hourTypeRes, hour)
   }
 

@@ -39,13 +39,13 @@ class VariableUtilsTest {
                 |'${run_half_year_begin-1}' as run_half_year_begin_sub1,
                 |'${run_half_year_begin_std}' as run_half_year_begin_std,
                 |'${run_half_year_end}' as run_half_year_end,
-                |'${run_today_h+1}' as run_today_h_add1""".stripMargin
+                |'${run_today_h+12}' as run_today_h_add1""".stripMargin
     val run_date = new CustomDateType(run_date_str, false)
     val dateType = DateType(run_date)
     //add 1 days
     val dateTypeRes = dateType.calculator("+", "1")
     val hourType = HourType(new CustomHourType(getCurHour(false, dateTypeRes), false))
-    val hourTypeRes = hourType.calculator("+", "1")
+    val hourTypeRes = hourType.calculator("+", "12")
     val resSql = s"""select
                     |'20200228' as run_date,
                     |'20200229' as run_today,

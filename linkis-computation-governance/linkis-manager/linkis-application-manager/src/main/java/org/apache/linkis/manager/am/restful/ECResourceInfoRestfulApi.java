@@ -93,39 +93,39 @@ public class ECResourceInfoRestfulApi {
                                    @RequestParam(value = "pageSize", required = false,defaultValue = "20") Integer pageSize) {
         String username = SecurityFilter.getLoginUsername(req);
         // Parameter judgment
-        instance    = StrUtils.strCheckAndDef(instance,null);
-        creator     = StrUtils.strCheckAndDef(creator,null);
-        engineType  = StrUtils.strCheckAndDef(engineType,null);
-        if ( null!=creator&&!QueryUtils.checkNameValid(creator)){
+        instance = StrUtils.strCheckAndDef(instance, null);
+        creator = StrUtils.strCheckAndDef(creator, null);
+        engineType = StrUtils.strCheckAndDef(engineType, null);
+        if (null != creator && !QueryUtils.checkNameValid(creator)) {
             return Message.error("Invalid creator : " + creator);
         }
-        if ( null == startDate) {
+        if (null == startDate) {
             Calendar calendar = Calendar.getInstance();
-            calendar.set(Calendar.HOUR_OF_DAY,0);
-            calendar.set(Calendar.MINUTE,0);
-            calendar.set(Calendar.SECOND,0);
-            startDate =calendar.getTime() ;
+            calendar.set(Calendar.HOUR_OF_DAY, 0);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.SECOND, 0);
+            startDate = calendar.getTime();
         }
-        if (Configuration.isAdmin(username)){
+        if (Configuration.isAdmin(username)) {
             username = null;
-            if (!StringUtils.isEmpty(creator)){
-                username = creator ;
+            if (!StringUtils.isEmpty(creator)) {
+                username = creator;
             }
         }
-        List<ECRHistroryListVo> list =  new ArrayList<>();
+        List<ECRHistroryListVo> list = new ArrayList<>();
         PageHelper.startPage(pageNow, pageSize);
         try {
-            List<ECResourceInfoRecord> queryTasks = ecResourceInfoService.getECResourceInfoRecordList(instance,endDate,startDate,username);
-            if (!StringUtils.isEmpty(engineType)){
+            List<ECResourceInfoRecord> queryTasks = ecResourceInfoService.getECResourceInfoRecordList(instance, endDate, startDate, username);
+            if (!StringUtils.isEmpty(engineType)) {
                 String finalEngineType = engineType;
-                queryTasks = queryTasks.stream().filter(info->info.getLabelValue().contains(finalEngineType)).collect(Collectors.toList());
+                queryTasks = queryTasks.stream().filter(info -> info.getLabelValue().contains(finalEngineType)).collect(Collectors.toList());
             }
-            queryTasks.forEach(info ->{
+            queryTasks.forEach(info -> {
                 ECRHistroryListVo ecrHistroryListVo = new ECRHistroryListVo();
-                BeanUtils.copyProperties(info,ecrHistroryListVo);
+                BeanUtils.copyProperties(info, ecrHistroryListVo);
                 ecrHistroryListVo.setEngineType(info.getLabelValue().split(",")[1].split("-")[0]);
                 list.add(ecrHistroryListVo);
-            }) ;
+            });
         } finally {
             PageHelper.clearPage();
         }

@@ -67,6 +67,14 @@ echo "local ip：${linkis_ipaddr}"
 echo "================================== print config info end =================================="
 echo ""
 
+portIsOccupy=false
+checkPort(){
+    pid=`lsof -nP -iTCP:$linkis_port -sTCP:LISTEN`
+    if [ "$pid" != "" ];then
+      echo "$linkis_port already used"
+      portIsOccupy=true
+    fi
+}
 
 #create nginx conf file
 linkisConf(){
@@ -194,6 +202,12 @@ centos6(){
     setenforce 0
 
 }
+
+checkPort
+if [ "$portIsOccupy" = true ];then
+  echo "The port is already in use, please check before installing"
+  exit 1
+fi
 
 # centos 6
 if [[ $version -eq 6 ]]; then

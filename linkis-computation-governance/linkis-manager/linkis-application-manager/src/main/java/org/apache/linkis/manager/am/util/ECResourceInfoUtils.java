@@ -16,7 +16,6 @@
  */
 package org.apache.linkis.manager.am.util;
 
-
 import org.apache.commons.lang.StringUtils;
 
 import java.util.regex.Pattern;

@@ -60,4 +60,14 @@
         delete from linkis_cg_ec_resource_info_record  WHERE id = #{id}
     </delete>
 
+
+    <select id="getECResourceInfoHistory" resultType="org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord" >
+        select * from linkis_cg_ec_resource_info_record
+        <where>
+            <if test="instance != null"> service_instance = #{instance}</if>
+            <if test="username != null"> and create_user = #{username}</if>
+            <if test="startDate != null">and create_time BETWEEN  #{startDate} AND #{endDate}</if>
+        </where>
+        ORDER BY linkis_cg_ec_resource_info_record.create_time DESC
+    </select>
 </mapper>

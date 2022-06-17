@@ -39,4 +39,6 @@ object RunType extends Enumeration {
   val APPCONN = Value("appconn")
   val FUNCTION_MDQ_TYPE = Value("function.mdq")
 
+  val TRINO_SQL = Value("tsql")
+
 }

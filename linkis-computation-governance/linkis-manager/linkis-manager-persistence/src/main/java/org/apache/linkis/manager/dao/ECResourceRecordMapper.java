@@ -22,6 +22,9 @@ import org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Date;
+import java.util.List;
+
 @Mapper
 public interface ECResourceRecordMapper {
 
@@ -34,4 +37,10 @@ public interface ECResourceRecordMapper {
     void deleteECResourceInfoRecordByTicketId(@Param("ticketId") String ticketId);
 
     void deleteECResourceInfoRecord(@Param("id") Integer id);
+
+    List<ECResourceInfoRecord> getECResourceInfoHistory(
+            @Param("username") String username,
+            @Param("instance") String instance,
+            @Param("endDate") Date endDate,
+            @Param("startDate") Date startDate);
 }

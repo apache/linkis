@@ -307,6 +307,7 @@ public class ConfigurationRestfulApi {
         configKeyValue.setConfigValue(value);
 
         ConfigValue configValue = configKeyService.saveConfigValue(configKeyValue, labelList);
+        configurationService.clearAMCacheConf(username, creator, engineType, version);
         return Message.ok().data("configValue", configValue);
     }
 

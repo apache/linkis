@@ -16,12 +16,12 @@
  */
 package org.apache.linkis.manager.am.vo;
 
-import org.apache.linkis.manager.common.utils.ResourceUtils;
 import org.apache.linkis.manager.common.entity.resource.Resource;
+import org.apache.linkis.manager.common.utils.ResourceUtils;
+
 import java.util.Date;
 
 public class ECResourceInfoRecordVo {
-
 
     private Integer id;
 
@@ -57,9 +57,7 @@ public class ECResourceInfoRecordVo {
 
     private String engineType;
 
-
-    public ECResourceInfoRecordVo() {
-    }
+    public ECResourceInfoRecordVo() {}
 
     public ECResourceInfoRecordVo(
             String labelValue,
@@ -212,27 +210,53 @@ public class ECResourceInfoRecordVo {
         this.engineType = engineType;
     }
 
-
     @Override
     public String toString() {
-        return "ECRHistroryListVo{" +
-                "id=" + id +
-                ", createUser='" + createUser + '\'' +
-                ", labelValue='" + labelValue + '\'' +
-                ", ticketId='" + ticketId + '\'' +
-                ", serviceInstance='" + serviceInstance + '\'' +
-                ", usedResource='" + usedResource + '\'' +
-                ", requestResource='" + requestResource + '\'' +
-                ", releasedResource='" + releasedResource + '\'' +
-                ", ecmInstance='" + ecmInstance + '\'' +
-                ", requestTimes=" + requestTimes +
-                ", usedTimes=" + usedTimes +
-                ", releaseTimes=" + releaseTimes +
-                ", usedTime=" + usedTime +
-                ", createTime=" + createTime +
-                ", releaseTime=" + releaseTime +
-                ", logDirSuffix='" + logDirSuffix + '\'' +
-                ", engineType='" + engineType + '\'' +
-                '}';
+        return "ECRHistroryListVo{"
+                + "id="
+                + id
+                + ", createUser='"
+                + createUser
+                + '\''
+                + ", labelValue='"
+                + labelValue
+                + '\''
+                + ", ticketId='"
+                + ticketId
+                + '\''
+                + ", serviceInstance='"
+                + serviceInstance
+                + '\''
+                + ", usedResource='"
+                + usedResource
+                + '\''
+                + ", requestResource='"
+                + requestResource
+                + '\''
+                + ", releasedResource='"
+                + releasedResource
+                + '\''
+                + ", ecmInstance='"
+                + ecmInstance
+                + '\''
+                + ", requestTimes="
+                + requestTimes
+                + ", usedTimes="
+                + usedTimes
+                + ", releaseTimes="
+                + releaseTimes
+                + ", usedTime="
+                + usedTime
+                + ", createTime="
+                + createTime
+                + ", releaseTime="
+                + releaseTime
+                + ", logDirSuffix='"
+                + logDirSuffix
+                + '\''
+                + ", engineType='"
+                + engineType
+                + '\''
+                + '}';
     }
 }

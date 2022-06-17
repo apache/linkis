@@ -80,16 +80,23 @@ public class ECResourceInfoRestfulApi {
     }
 
     @RequestMapping(path = "/ecrHistoryList", method = RequestMethod.GET)
-    public Message queryEcrHistory(HttpServletRequest req,
-                                   @RequestParam(value = "instance", required = false) String instance,
-                                   @RequestParam(value = "creator", required = false) String creator,
-                                   @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-                                   @RequestParam(value = "startDate", required = false) Date startDate,
-                                   @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-                                   @RequestParam(value = "endDate", required = false,defaultValue = "#{new java.util.Date()}") Date endDate,
-                                   @RequestParam(value = "engineType", required = false) String engineType,
-                                   @RequestParam(value = "pageNow", required = false,defaultValue = "1") Integer pageNow,
-                                   @RequestParam(value = "pageSize", required = false,defaultValue = "20") Integer pageSize) {
+    public Message queryEcrHistory(
+            HttpServletRequest req,
+            @RequestParam(value = "instance", required = false) String instance,
+            @RequestParam(value = "creator", required = false) String creator,
+            @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+                    @RequestParam(value = "startDate", required = false)
+                    Date startDate,
+            @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+                    @RequestParam(
+                            value = "endDate",
+                            required = false,
+                            defaultValue = "#{new java.util.Date()}")
+                    Date endDate,
+            @RequestParam(value = "engineType", required = false) String engineType,
+            @RequestParam(value = "pageNow", required = false, defaultValue = "1") Integer pageNow,
+            @RequestParam(value = "pageSize", required = false, defaultValue = "20")
+                    Integer pageSize) {
         String username = SecurityFilter.getLoginUsername(req);
         // Parameter judgment
         instance = ECResourceInfoUtils.strCheckAndDef(instance, null);
@@ -114,20 +121,27 @@ public class ECResourceInfoRestfulApi {
         List<ECResourceInfoRecordVo> list = new ArrayList<>();
         PageHelper.startPage(pageNow, pageSize);
         try {
-            List<ECResourceInfoRecord> queryTasks = ecResourceInfoService.getECResourceInfoRecordList(instance, endDate, startDate, username);
+            List<ECResourceInfoRecord> queryTasks =
+                    ecResourceInfoService.getECResourceInfoRecordList(
+                            instance, endDate, startDate, username);
             if (StringUtils.isNotBlank(engineType)) {
                 String finalEngineType = engineType;
-                queryTasks = queryTasks.stream().filter(info -> info.getLabelValue().contains(finalEngineType)).collect(Collectors.toList());
+                queryTasks =
+                        queryTasks.stream()
+                                .filter(info -> info.getLabelValue().contains(finalEngineType))
+                                .collect(Collectors.toList());
             }
-            queryTasks.forEach(info -> {
-                ECResourceInfoRecordVo ecrHistroryListVo = new ECResourceInfoRecordVo();
-                BeanUtils.copyProperties(info, ecrHistroryListVo);
-                ecrHistroryListVo.setEngineType(info.getLabelValue().split(",")[1].split("-")[0]);
-                list.add(ecrHistroryListVo);
-            });
+            queryTasks.forEach(
+                    info -> {
+                        ECResourceInfoRecordVo ecrHistroryListVo = new ECResourceInfoRecordVo();
+                        BeanUtils.copyProperties(info, ecrHistroryListVo);
+                        ecrHistroryListVo.setEngineType(
+                                info.getLabelValue().split(",")[1].split("-")[0]);
+                        list.add(ecrHistroryListVo);
+                    });
         } finally {
             PageHelper.clearPage();
         }
-        return  Message.ok().data("engineList", list);
+        return Message.ok().data("engineList", list);
     }
 }

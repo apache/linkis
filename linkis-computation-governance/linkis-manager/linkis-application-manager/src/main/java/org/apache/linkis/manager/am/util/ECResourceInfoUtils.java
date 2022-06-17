@@ -16,22 +16,20 @@
  */
 package org.apache.linkis.manager.am.util;
 
-import org.springframework.util.StringUtils;
+
+import org.apache.commons.lang.StringUtils;
 
 import java.util.regex.Pattern;
 
 public class ECResourceInfoUtils {
 
-
     public static String NAME_REGEX = "^[a-zA-Z\\d_\\.]+$";
 
-    public static boolean checkNameValid(String creator){
+    public static boolean checkNameValid(String creator) {
         return Pattern.compile(NAME_REGEX).matcher(creator).find();
     }
 
-
-    public static String strCheckAndDef(String str,String def){
-        return StringUtils.isEmpty(str)?def:str;
+    public static String strCheckAndDef(String str, String def) {
+        return StringUtils.isBlank(str) ? def : str;
     }
-
 }

@@ -234,7 +234,8 @@ object DateTypeUtils {
     val dateFormat_std = dateFormatHourStdLocal.get()
     val cal: Calendar = Calendar.getInstance()
     val hour = cal.get(Calendar.HOUR_OF_DAY)
-    val curHourStr = dateString + hour
+    val hourOfDayStd = if (hour < 10) "0" + hour else "" + hour
+    val curHourStr = dateString + hourOfDayStd
     val curHour = dateFormat.parse(curHourStr)
     if (std) {
       dateFormat_std.format(curHour)

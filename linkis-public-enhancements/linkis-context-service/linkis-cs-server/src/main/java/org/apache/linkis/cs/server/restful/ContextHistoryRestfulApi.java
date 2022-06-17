@@ -17,6 +17,11 @@
 
 package org.apache.linkis.cs.server.restful;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import org.apache.linkis.MessageJava;
 import org.apache.linkis.cs.common.entity.history.ContextHistory;
 import org.apache.linkis.cs.common.entity.source.ContextID;
 import org.apache.linkis.cs.common.exception.CSErrorException;
@@ -40,6 +45,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 
+
+@Api(tags = "上下文历史记录服务")
 @RestController
 @RequestMapping(path = "/contextservice")
 public class ContextHistoryRestfulApi implements CsRestfulParent {
@@ -47,7 +54,11 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
     @Autowired private CsScheduler csScheduler;
 
     private ObjectMapper objectMapper = new ObjectMapper();
-
+    @ApiOperation(value="创建历史记录",notes="创建历史记录",response = MessageJava.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="contextHistory",dataType="String",value="历史上下文"),
+            @ApiImplicitParam(name="contextID",dataType="String",value="上下文id")
+    })
     @RequestMapping(path = "createHistory", method = RequestMethod.POST)
     public Message createHistory(HttpServletRequest req, @RequestBody JsonNode jsonNode)
             throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
@@ -64,6 +75,11 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
         return generateResponse(answerJob, "");
     }
 
+    @ApiOperation(value="删除历史记录",notes="删除历史记录",response = MessageJava.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="contextHistory",dataType="String",value="历史上下文"),
+            @ApiImplicitParam(name="contextID",dataType="String",value="上下文id")
+    })
     @RequestMapping(path = "removeHistory", method = RequestMethod.POST)
     public Message removeHistory(HttpServletRequest req, @RequestBody JsonNode jsonNode)
             throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
@@ -80,6 +96,10 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
         return generateResponse(answerJob, "");
     }
 
+    @ApiOperation(value="获取多个历史记录",notes="获取多个历史记录",response = MessageJava.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="contextID",dataType="String",value="上下文id")
+    })
     @RequestMapping(path = "getHistories", method = RequestMethod.POST)
     public Message getHistories(HttpServletRequest req, @RequestBody JsonNode jsonNode)
             throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
@@ -92,6 +112,11 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
         return message;
     }
 
+    @ApiOperation(value="获取历史记录",notes="获取历史记录",response = MessageJava.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="contextID",dataType="String",value="上下文Id"),
+            @ApiImplicitParam(name="source",dataType="String",value="上下文源")
+    })
     @RequestMapping(path = "getHistory", method = RequestMethod.POST)
     public Message getHistory(HttpServletRequest req, @RequestBody JsonNode jsonNode)
             throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
@@ -110,6 +135,11 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
         return message;
     }
 
+    @ApiOperation(value="搜索历史记录",notes="搜索历史记录",response = MessageJava.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="contextID",dataType="String",value="上下文Id"),
+            @ApiImplicitParam(name="keywords",dataType="String",value="关键词")
+    })
     @RequestMapping(path = "searchHistory", method = RequestMethod.POST)
     public Message searchHistory(HttpServletRequest req, @RequestBody JsonNode jsonNode)
             throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {

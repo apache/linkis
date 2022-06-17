@@ -17,6 +17,11 @@
 
 package org.apache.linkis.metadatamanager.server.restful;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import org.apache.linkis.MessageJava;
 import org.apache.linkis.common.exception.ErrorException;
 import org.apache.linkis.datasourcemanager.common.util.json.Json;
 import org.apache.linkis.metadatamanager.common.domain.MetaColumnInfo;
@@ -38,7 +43,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
-
+@Api(tags = "元数据管理器")
 @RestController
 @RequestMapping(
         value = "/metadatamanager",
@@ -49,6 +54,10 @@ public class MetadataCoreRestful {
 
     @Autowired private MetadataAppService metadataAppService;
 
+    @ApiOperation(value="获取数据库",notes="获取数据库",response = MessageJava.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="dataSourceId",dataType="String",value="数据源Id")
+    })
     @RequestMapping(value = "/dbs/{dataSourceId}", method = RequestMethod.GET)
     public Message getDatabases(
             @PathVariable("dataSourceId") String dataSourceId,
@@ -73,6 +82,12 @@ public class MetadataCoreRestful {
         }
     }
 
+    @ApiOperation(value="获取数据库表",notes="获取数据库表",response = MessageJava.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="dataSourceId",dataType="String",value="数据源Id"),
+            @ApiImplicitParam(name="database",dataType="String",value="数据源"),
+            @ApiImplicitParam(name="system",dataType="String",value="系统")
+    })
     @RequestMapping(value = "/tables/{dataSourceId}/db/{database}", method = RequestMethod.GET)
     public Message getTables(
             @PathVariable("dataSourceId") String dataSourceId,
@@ -104,6 +119,13 @@ public class MetadataCoreRestful {
         }
     }
 
+    @ApiOperation(value="获取表参数信息",notes="获取表参数信息",response = MessageJava.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="dataSourceId",dataType="String",value="数据源Id"),
+            @ApiImplicitParam(name="database",dataType="String",value="数据源"),
+            @ApiImplicitParam(name="system",dataType="String",value="系统"),
+            @ApiImplicitParam(name="table",dataType="String",value="表")
+    })
     @RequestMapping(
             value = "/props/{dataSourceId}/db/{database}/table/{table}",
             method = RequestMethod.GET)
@@ -141,6 +163,14 @@ public class MetadataCoreRestful {
         }
     }
 
+    @ApiOperation(value="获取分区参数信息",notes="获取分区参数信息",response = MessageJava.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="dataSourceId",dataType="String",value="数据源Id"),
+            @ApiImplicitParam(name="database",dataType="String",value="数据源"),
+            @ApiImplicitParam(name="system",dataType="String",value="系统"),
+            @ApiImplicitParam(name="table",dataType="String",value="表"),
+            @ApiImplicitParam(name="partition",dataType="String",value="分区"),
+    })
     @RequestMapping(
             value = "/props/{dataSourceId}/db/{database}/table/{table}/partition/{partition}",
             method = RequestMethod.GET)
@@ -182,6 +212,13 @@ public class MetadataCoreRestful {
         }
     }
 
+    @ApiOperation(value="获取表分区信息",notes="获取表分区信息",response = MessageJava.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="dataSourceId",dataType="String",value="数据源Id"),
+            @ApiImplicitParam(name="database",dataType="String",value="数据源"),
+            @ApiImplicitParam(name="system",dataType="String",value="系统"),
+            @ApiImplicitParam(name="table",dataType="String",value="表")
+    })
     @RequestMapping(
             value = "/partitions/{dataSourceId}/db/{database}/table/{table}",
             method = RequestMethod.GET)
@@ -222,6 +259,13 @@ public class MetadataCoreRestful {
         }
     }
 
+    @ApiOperation(value="获取表字段信息",notes="获取表字段信息",response = MessageJava.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="dataSourceId",dataType="String",value="数据源Id"),
+            @ApiImplicitParam(name="database",dataType="String",value="数据源"),
+            @ApiImplicitParam(name="system",dataType="String",value="系统"),
+            @ApiImplicitParam(name="table",dataType="String",value="表")
+    })
     @RequestMapping(
             value = "/columns/{dataSourceId}/db/{database}/table/{table}",
             method = RequestMethod.GET)

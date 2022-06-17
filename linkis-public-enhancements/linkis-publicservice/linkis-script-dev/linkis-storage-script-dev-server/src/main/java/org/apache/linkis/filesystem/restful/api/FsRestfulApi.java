@@ -20,6 +20,7 @@ package org.apache.linkis.filesystem.restful.api;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.github.xiaoymin.knife4j.annotations.DynamicParameter;
 import com.github.xiaoymin.knife4j.annotations.DynamicResponseParameters;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -73,6 +74,7 @@ import java.util.*;
 import static org.apache.linkis.filesystem.conf.WorkSpaceConfiguration.*;
 import static org.apache.linkis.filesystem.constant.WorkSpaceConstants.*;
 
+@Api(tags = "文件系统")
 @RestController
 @RequestMapping(path = "/filesystem")
 public class FsRestfulApi {
@@ -147,6 +149,10 @@ public class FsRestfulApi {
         return Message.ok().data(String.format("user%sRootPath", returnType), path);
     }
 
+    @ApiOperation(value="创建新的Dir",notes="创建新的Dir",response = MessageJava.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "path", dataType = "String", value = "路径")
+    })
     @RequestMapping(path = "/createNewDir", method = RequestMethod.POST)
     public Message createNewDir(HttpServletRequest req, @RequestBody JsonNode json)
             throws IOException, WorkSpaceException {
@@ -168,7 +174,10 @@ public class FsRestfulApi {
         fileSystem.mkdirs(fsPath);
         return Message.ok();
     }
-
+    @ApiOperation(value="创建新的文件",notes="创建新的文件",response = MessageJava.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "path", dataType = "String", value = "路径")
+    })
     @RequestMapping(path = "/createNewFile", method = RequestMethod.POST)
     public Message createNewFile(HttpServletRequest req, @RequestBody JsonNode json)
             throws IOException, WorkSpaceException {
@@ -189,7 +198,11 @@ public class FsRestfulApi {
         fileSystem.createNewFile(fsPath);
         return Message.ok();
     }
-
+    @ApiOperation(value="重新命名",notes="重新给文件命名",response = MessageJava.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "oldDest", dataType = "String", value = "旧名称"),
+            @ApiImplicitParam(name = "newDest", dataType = "String", value = "新名称")
+    })
     @RequestMapping(path = "/rename", method = RequestMethod.POST)
     public Message rename(HttpServletRequest req, @RequestBody JsonNode json)
             throws IOException, WorkSpaceException {
@@ -224,7 +237,11 @@ public class FsRestfulApi {
         fileSystem.renameTo(fsPathOld, fsPathNew);
         return Message.ok();
     }
-
+    @ApiOperation(value="上传",notes="上传文件，可传多个文件",response = MessageJava.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "path", dataType = "String", value = "地址"),
+            @ApiImplicitParam(name = "file", dataType = "List<MultipartFile> ", value = "文件")
+    })
     @RequestMapping(path = "/upload", method = RequestMethod.POST)
     public Message upload(
             HttpServletRequest req,
@@ -255,6 +272,11 @@ public class FsRestfulApi {
         return Message.ok();
     }
 
+
+    @ApiOperation(value="删除dir文件或者文件",notes="删除dir文件或者文件",response = MessageJava.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "path", dataType = "String", value = "地址")
+    })
     @RequestMapping(path = "/deleteDirOrFile", method = RequestMethod.POST)
     public Message deleteDirOrFile(HttpServletRequest req, @RequestBody JsonNode json)
             throws IOException, WorkSpaceException {
@@ -333,6 +355,11 @@ public class FsRestfulApi {
         return Message.ok().data("dirFileTrees", dirFileTree);
     }
 
+    @ApiOperation(value="下载",notes="下载",response = MessageJava.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "path", dataType = "String", value = "地址"),
+            @ApiImplicitParam(name = "charset", dataType = "String", value = "字符集")
+    })
     @RequestMapping(path = "/download", method = RequestMethod.POST)
     public void download(
             HttpServletRequest req,
@@ -391,7 +418,10 @@ public class FsRestfulApi {
             IOUtils.closeQuietly(writer);
         }
     }
-
+    @ApiOperation(value="是否存在",notes="是否存在",response = MessageJava.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "path", dataType = "String", value = "地址")
+    })
     @RequestMapping(path = "/isExist", method = RequestMethod.GET)
     public Message isExist(
             HttpServletRequest req, @RequestParam(value = "path", required = false) String path)
@@ -407,7 +437,11 @@ public class FsRestfulApi {
         FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
         return Message.ok().data("isExist", fileSystem.exists(fsPath));
     }
-
+    @ApiOperation(value="文件信息",notes="文件信息",response = MessageJava.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "path", dataType = "String", value = "地址"),
+            @ApiImplicitParam(name = "pageSize", dataType = "Integer", value = "页面大小")
+    })
     @RequestMapping(path = "/fileInfo", method = RequestMethod.GET)
     public Message fileInfo(
             HttpServletRequest req,
@@ -444,7 +478,13 @@ public class FsRestfulApi {
             IOUtils.closeQuietly(fileSource);
         }
     }
-
+    @ApiOperation(value="打开文件",notes="打开文件",response = MessageJava.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "path", dataType = "String", value = "地址"),
+            @ApiImplicitParam(name = "page", dataType = "Integer", value = "页码"),
+            @ApiImplicitParam(name = "pageSize", dataType = "Integer", value = "页面大小"),
+            @ApiImplicitParam(name = "charset", dataType = "String", value = "字符集")
+    })
     @RequestMapping(path = "/openFile", method = RequestMethod.GET)
     public Message openFile(
             HttpServletRequest req,
@@ -491,6 +531,13 @@ public class FsRestfulApi {
      * @return
      * @throws IOException
      */
+    @ApiOperation(value="保存脚本",notes="保存脚本",response = MessageJava.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "path", dataType = "String", value = "地址"),
+            @ApiImplicitParam(name = "scriptContent", dataType = "String", value = "脚本内容"),
+            @ApiImplicitParam(name = "params", dataType = "Object", value = "参数"),
+            @ApiImplicitParam(name = "charset", dataType = "String", value = "字符集")
+    })
     @RequestMapping(path = "/saveScript", method = RequestMethod.POST)
     public Message saveScript(HttpServletRequest req, @RequestBody Map<String, Object> json)
             throws IOException, WorkSpaceException {
@@ -532,7 +579,19 @@ public class FsRestfulApi {
             return Message.ok();
         }
     }
-
+    @ApiOperation(value="结果集转换成Excel",notes="结果集转换成Excel",response = MessageJava.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "path", dataType = "String", value = "地址"),
+            @ApiImplicitParam(name = "charset", dataType = "String", value = "结果集"),
+            @ApiImplicitParam(name = "outputFileType", dataType = "String", value = "输出文件类型"),
+            @ApiImplicitParam(name = "csvSeperator", dataType = "String", value = "csv分隔栏"),
+            @ApiImplicitParam(name = "quoteRetouchEnable", dataType = "boolean", value = "是否引用修饰"),
+            @ApiImplicitParam(name = "outputFileName", dataType = "String", value = "输出文件名称"),
+            @ApiImplicitParam(name = "sheetName", dataType = "String", value = "sheet名称"),
+            @ApiImplicitParam(name = "nullValue", dataType = "String", value = "空值"),
+            @ApiImplicitParam(name = "limit", dataType = "Integer", value = "限度"),
+            @ApiImplicitParam(name = "autoFormat", dataType = "Boolean", value = "是否自动")
+    })
     @RequestMapping(path = "resultsetToExcel", method = RequestMethod.GET)
     public void resultsetToExcel(
             HttpServletRequest req,
@@ -641,6 +700,15 @@ public class FsRestfulApi {
         }
     }
 
+
+    @ApiOperation(value="resultsets转换成Excel",notes="resultsets转换成Excel",response = MessageJava.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "path", dataType = "String", value = "地址"),
+            @ApiImplicitParam(name = "outputFileName", dataType = "String", value = "输出文件名称"),
+            @ApiImplicitParam(name = "nullValue", dataType = "String", value = "空值"),
+            @ApiImplicitParam(name = "limit", dataType = "Integer", value = "限度"),
+            @ApiImplicitParam(name = "autoFormat", dataType = "Boolean", value = "是否自动")
+    })
     @RequestMapping(path = "resultsetsToExcel", method = RequestMethod.GET)
     public void resultsetsToExcel(
             HttpServletRequest req,
@@ -719,6 +787,15 @@ public class FsRestfulApi {
         }
     }
 
+    @ApiOperation(value="formate",notes="formate",response = MessageJava.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "path", dataType = "String", value = "地址"),
+            @ApiImplicitParam(name = "encoding", dataType = "String", value = "编码"),
+            @ApiImplicitParam(name = "fieldDelimiter", dataType = "String", value = "字段分隔符"),
+            @ApiImplicitParam(name = "hasHeader", dataType = "Boolean", value = "哈希值"),
+            @ApiImplicitParam(name = "quote", dataType = "String", value = "引用"),
+            @ApiImplicitParam(name = "escapeQuotes", dataType = "String", value = "escapeQuotes")
+    })
     @RequestMapping(path = "formate", method = RequestMethod.GET)
     public Message formate(
             HttpServletRequest req,

@@ -281,7 +281,7 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
             post.getParameters.foreach {
               case (k, v) => if (v != null) nvps.add(new BasicNameValuePair(k, v.toString))
             }
-            httpPost.setEntity(new UrlEncodedFormEntity(nvps))
+            httpPost.setEntity(new UrlEncodedFormEntity(nvps,Consts.UTF_8))
           } else if (post.getFormParams.nonEmpty) {
             post.getFormParams.foreach {
               case (k, v) => if (v != null) nvps.add(new BasicNameValuePair(k, v.toString))

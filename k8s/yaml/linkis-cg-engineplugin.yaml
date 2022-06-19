@@ -1,0 +1,99 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: linkis-cg-engineplugin
+  namespace: preprod
+  labels:
+    app: linkis-cg-engineplugin
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: linkis-cg-engineplugin
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: linkis-cg-engineplugin
+        version: v1
+    spec:
+      containers:
+        - image: registry.mydomain.com/library/linkis-cg-engineplugin:1.2.0
+          imagePullPolicy: Always
+          name: linkis-cg-engineplugin
+          ports:
+            - containerPort: 9106
+          lifecycle:
+            postStart:
+              exec:
+                command:
+                  - "sh"
+                  - "-c"
+                  - >
+                    \cp /etc/security/keytabs/krb5.conf /etc/krb5.conf;
+                    \cp /etc/security/keytabs/sssd.conf /etc/sssd/sssd.conf;
+                    sssd;
+                    echo "* */1 * * * /etc/security/keytabs/kinit.sh" >> /var/spool/cron/root;
+                    crond;
+          env:
+            - name: EUREKA_URL
+              value: "http://linkis-mg-eureka:20303/eureka/"
+          volumeMounts:
+            - name: log
+              mountPath: /opt/linkis/linkis-cg-engineplugin/logs
+            - name: conf
+              mountPath: /opt/linkis/linkis-cg-engineplugin/conf
+            - name: kerberos
+              mountPath: /etc/security/keytabs/
+              readOnly: true
+            - name: hadoop-config
+              mountPath: /usr/local/hadoop/etc/hadoop
+            - name: hive-config
+              mountPath: /usr/local/hive/conf
+            - name: spark-config
+              mountPath: /usr/local/spark/conf
+            - name: plugin-hive-config
+              mountPath: /opt/linkis/linkis-cg-engineplugin/plugins/hive/dist/v3.1.2/conf/
+            - name: plugin-python-config
+              mountPath: /opt/linkis/linkis-cg-engineplugin/plugins/python/dist/vpython2/conf/
+            - name: plugin-shell-config
+              mountPath: /opt/linkis/linkis-cg-engineplugin/plugins/shell/dist/v1/conf/
+            - name: plugin-spark-config
+              mountPath: /opt/linkis/linkis-cg-engineplugin/plugins/spark/dist/v3.0.3/conf/
+            - name: plugin-jdbc-config
+              mountPath: /opt/linkis/linkis-cg-engineplugin/plugins/jdbc/dist/v4/conf/
+      volumes:
+        - name: log
+          hostPath:
+            path: /data01/rootdir/linkis-1.0/linkis/logs
+        - name: conf
+          hostPath:
+            path: /data01/rootdir/linkis-1.0/linkis/conf
+        - name: kerberos
+          hostPath:
+            path: /data01/rootdir/linkis-1.0/kerberos/
+        - name: hadoop-config
+          hostPath:
+            path: /data01/rootdir/linkis-1.0/ah3/config/hadoop
+        - name: hive-config
+          hostPath:
+            path: /data01/rootdir/linkis-1.0/ah3/config/hive
+        - name: spark-config
+          hostPath:
+            path: /data01/rootdir/linkis-1.0/ah3/config/spark
+        - name: plugin-hive-config
+          hostPath:
+            path: /data01/rootdir/linkis-1.0/linkis/conf/plugins/hive/
+        - name: plugin-python-config
+          hostPath:
+            path: /data01/rootdir/linkis-1.0/linkis/conf/plugins/python/
+        - name: plugin-shell-config
+          hostPath:
+            path: /data01/rootdir/linkis-1.0/linkis/conf/plugins/shell/
+        - name: plugin-spark-config
+          hostPath:
+            path: /data01/rootdir/linkis-1.0/linkis/conf/plugins/spark/
+        - name: plugin-jdbc-config
+          hostPath:
+            path: /data01/rootdir/linkis-1.0/linkis/conf/plugins/jdbc/

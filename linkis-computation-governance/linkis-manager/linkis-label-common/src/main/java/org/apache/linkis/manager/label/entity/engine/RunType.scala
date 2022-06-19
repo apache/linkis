@@ -38,5 +38,7 @@ object RunType extends Enumeration {
   val JAR = Value("jar")
   val APPCONN = Value("appconn")
   val FUNCTION_MDQ_TYPE = Value("function.mdq")
+  val ES_SQL = Value("essql")
+  val ES_JSON = Value("esjson")
 
 }

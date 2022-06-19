@@ -27,3 +27,8 @@ node_modules/
 dist/
 out/
 target/
+/k8s/base/spark
+/k8s/base/hadoop
+/k8s/base/hive
+/k8s/base/javazi-1.8
+/k8s/base/jdk

@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: linkis-ps-cs
+  namespace: preprod
+  labels:
+    app: linkis-ps-cs
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: linkis-ps-cs
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: linkis-ps-cs
+        version: v1
+    spec:
+      containers:
+        - image: registry.mydomain.com/library/linkis-ps-cs:1.2.0
+          imagePullPolicy: Always
+          name: linkis-ps-cs
+          ports:
+            - containerPort: 9106
+          lifecycle:
+            postStart:
+              exec:
+                command:
+                  - "sh"
+                  - "-c"
+                  - >
+                    \cp /etc/security/keytabs/krb5.conf /etc/krb5.conf;
+                    \cp /etc/security/keytabs/sssd.conf /etc/sssd/sssd.conf;
+                    sssd;
+                    echo "* */1 * * * /etc/security/keytabs/kinit.sh" >> /var/spool/cron/root;
+                    crond;
+          env:
+            - name: EUREKA_URL
+              value: "http://linkis-mg-eureka:20303/eureka/"
+          volumeMounts:
+            - name: log
+              mountPath: /opt/linkis/linkis-ps-cs/logs
+            - name: conf
+              mountPath: /opt/linkis/linkis-ps-cs/conf/
+            - name: kerberos
+              mountPath: /etc/security/keytabs/
+              readOnly: true
+            - name: hadoop-config
+              mountPath: /usr/local/hadoop/etc/hadoop
+            - name: hive-config
+              mountPath: /usr/local/hive/conf
+            - name: spark-config
+              mountPath: /usr/local/spark/conf
+      volumes:
+        - name: log
+          hostPath:
+            path: /data01/rootdir/linkis-1.0/linkis/logs
+        - name: conf
+          hostPath:
+            path: /data01/rootdir/linkis-1.0/linkis/conf
+        - name: kerberos
+          hostPath:
+            path: /data01/rootdir/linkis-1.0/kerberos/
+        - name: hadoop-config
+          hostPath:
+            path: /data01/rootdir/linkis-1.0/ah3/config/hadoop
+        - name: hive-config
+          hostPath:
+            path: /data01/rootdir/linkis-1.0/ah3/config/hive
+        - name: spark-config
+          hostPath:
+            path: /data01/rootdir/linkis-1.0/ah3/config/spark

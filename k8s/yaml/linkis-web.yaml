@@ -1,0 +1,57 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: linkis-web
+  namespace: preprod
+  labels:
+    app: linkis-web
+    service: linkis-web
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+  selector:
+    app: linkis-web
+  type: NodePort
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: linkis-web
+  namespace: preprod
+  labels:
+    app: linkis-web
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: linkis-web
+      version: v1
+  template:
+    metadata:
+      namespace: preprod
+      labels:
+        app: linkis-web
+        version: v1
+    spec:
+      containers:
+        - name: linkis-web
+          image: registry.mydomain.com/library/linkis-web:1.2.0
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              memory: "500Mi"
+              cpu: "1000m"
+            limits:
+              memory: "1Gi"
+              cpu: "2000m"
+          volumeMounts:
+            - name: nginx-conf
+              mountPath: /etc/nginx/conf.d/
+      volumes:
+        - name: nginx-conf
+          hostPath: 
+            path: /data01/rootdir/linkis-1.0/nginx/conf.d

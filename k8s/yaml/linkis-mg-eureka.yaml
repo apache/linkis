@@ -1,0 +1,64 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: linkis-mg-eureka
+  namespace: preprod
+  labels:
+    app: linkis-mg-eureka
+    service: linkis-mg-eureka
+spec:
+  ports:
+    - name: http
+      port: 20303
+      targetPort: 20303
+      nodePort: 30353
+  selector:
+    app: linkis-mg-eureka
+  type: NodePort
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: linkis-mg-eureka
+  namespace: preprod
+  labels:
+    app: linkis-mg-eureka
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: linkis-mg-eureka
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: linkis-mg-eureka
+        version: v1
+    spec:
+      volumes:
+        - name: conf
+          configMap: 
+            name: linkis-config
+      containers:
+        - name: linkis-mg-eureka
+          image: registry.mydomain.com/library/linkis-mg-eureka:1.2.0
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 20303
+          env:
+            - name: EUREKA_URL
+              value: "http://127.0.0.1:20303/eureka/"
+            - name: EUREKA_PORT
+              value: "20303"
+          resources:
+            requests:
+              memory: "500Mi"
+              cpu: "1000m"
+            limits:
+              memory: "1Gi"
+              cpu: "2000m"
+          volumeMounts:
+            - name: conf
+              mountPath: /opt/linkis/linkis-mg-eureka/conf/
+

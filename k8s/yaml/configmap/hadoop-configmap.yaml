@@ -1,0 +1,1488 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: hadoop-config
+  namespace: preprod
+data:
+  capacity-scheduler.xml: "<!--\n  Licensed under the Apache License, Version 2.0 (the \"License\");\n  you may not use this file except in compliance with the License.\n  You may obtain a copy of the License at\n\n    http://www.apache.org/licenses/LICENSE-2.0\n\n  Unless required by applicable law or agreed to in writing, software\n  distributed under the License is distributed on an \"AS IS\" BASIS,\n  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n  See the License for the specific language governing permissions and\n  limitations under the License. See accompanying LICENSE file.\n-->\n<configuration>\n\n   <!-- 容量调度器最多可以容纳多少个job-->\n  <property>\n    <name>yarn.scheduler.capacity.maximum-applications</name>\n    <value>10</value>\n    <description>\n      Maximum number of applications that can be pending and running.\n    </description>\n  </property>\n\n  <!-- 当前队列中启动的MRAppMaster进程，所占用的资源可以达到队列总资源的多少\n\t\t通过这个参数可以限制队列中提交的Job数量\n  -->\n  <property>\n    <name>yarn.scheduler.capacity.maximum-am-resource-percent</name>\n    <value>0.5</value>\n    <description>\n      Maximum percent of resources in the cluster which can be used to run \n      application masters i.e. controls number of concurrent running\n      applications.\n    </description>\n  </property>\n\n  <!-- 为Job分配资源时，使用什么策略进行计算\n  -->\n  <property>\n    <name>yarn.scheduler.capacity.resource-calculator</name>\n    <value>org.apache.hadoop.yarn.util.resource.DefaultResourceCalculator</value>\n    <description>\n      The ResourceCalculator implementation to be used to compare \n      Resources in the scheduler.\n      The default i.e. DefaultResourceCalculator only uses Memory while\n      DominantResourceCalculator uses dominant-resource to compare \n      multi-dimensional resources such as Memory, CPU etc.\n    </description>\n  </property>\n\n   <!-- root队列中有哪些子队列-->\n  <property>\n    <name>yarn.scheduler.capacity.root.queues</name>\n    <value>default,ide</value>\n    <description>\n      The queues at the this level (root is the root queue).\n    </description>\n  </property>\n\n  <!-- root队列中default队列占用的容量百分比\n\t\t所有子队列的容量相加必须等于100\n  -->\n  <property>\n    <name>yarn.scheduler.capacity.root.default.capacity</name>\n    <value>50</value>\n    <description>Default queue target capacity.</description>\n  </property>\n  \n  <property>\n    <name>yarn.scheduler.capacity.root.ide.capacity</name>\n    <value>50</value>\n    <description>Default queue target capacity.</description>\n  </property>\n  \n  \n\n    <!-- 队列中用户能使用此队列资源的极限百分比\n  -->\n  <property>\n    <name>yarn.scheduler.capacity.root.default.user-limit-factor</name>\n    <value>1</value>\n    <description>\n      Default queue user limit a percentage from 0.0 to 1.0.\n    </description>\n  </property>\n  \n   <property>\n    <name>yarn.scheduler.capacity.root.ide.user-limit-factor</name>\n    <value>1</value>\n    <description>\n      Default queue user limit a percentage from 0.0 to 1.0.\n    </description>\n  </property>\n \n\n  <!-- root队列中default队列占用的容量百分比的最大值\n  -->\n  <property>\n    <name>yarn.scheduler.capacity.root.default.maximum-capacity</name>\n    <value>50</value>\n    <description>\n      The maximum capacity of the default queue. \n    </description>\n  </property>\n  \n   <property>\n    <name>yarn.scheduler.capacity.root.ide.maximum-capacity</name>\n    <value>50</value>\n    <description>\n      The maximum capacity of the default queue. \n    </description>\n  </property>\n  \n  \n\n    <!-- root队列中每个队列的状态\n  -->\n  <property>\n    <name>yarn.scheduler.capacity.root.default.state</name>\n    <value>RUNNING</value>\n    <description>\n      The state of the default queue. State can be one of RUNNING or STOPPED.\n    </description>\n  </property>\n  \n    <property>\n    <name>yarn.scheduler.capacity.root.ide.state</name>\n    <value>RUNNING</value>\n    <description>\n      The state of the default queue. State can be one of RUNNING or STOPPED.\n    </description>\n  </property>\n\n  \n  <!-- 限制向default队列提交的用户-->\n  <property>\n    <name>yarn.scheduler.capacity.root.default.acl_submit_applications</name>\n    <value>*</value>\n    <description>\n      The ACL of who can submit jobs to the default queue.\n    </description>\n  </property>\n  \n  <property>\n    <name>yarn.scheduler.capacity.root.ide.acl_submit_applications</name>\n    <value>*</value>\n    <description>\n      The ACL of who can submit jobs to the default queue.\n    </description>\n  </property>\n  \n\n  <property>\n    <name>yarn.scheduler.capacity.root.default.acl_administer_queue</name>\n    <value>*</value>\n    <description>\n      The ACL of who can administer jobs on the default queue.\n    </description>\n  </property>\n  \n  <property>\n    <name>yarn.scheduler.capacity.root.ide.acl_administer_queue</name>\n    <value>*</value>\n    <description>\n      The ACL of who can administer jobs on the default queue.\n    </description>\n  </property>\n  \n \n\n  <property>\n    <name>yarn.scheduler.capacity.node-locality-delay</name>\n    <value>40</value>\n    <description>\n      Number of missed scheduling opportunities after which the CapacityScheduler \n      attempts to schedule rack-local containers. \n      Typically this should be set to number of nodes in the cluster, By default is setting \n      approximately number of nodes in one rack which is 40.\n    </description>\n  </property>\n\n  <property>\n    <name>yarn.scheduler.capacity.queue-mappings</name>\n    <value></value>\n    <description>\n      A list of mappings that will be used to assign jobs to queues\n      The syntax for this list is [u|g]:[name]:[queue_name][,next mapping]*\n      Typically this list will be used to map users to queues,\n      for example, u:%user:%user maps all users to queues with the same name\n      as the user.\n    </description>\n  </property>\n\n  <property>\n    <name>yarn.scheduler.capacity.queue-mappings-override.enable</name>\n    <value>false</value>\n    <description>\n      If a queue mapping is present, will it override the value specified\n      by the user? This can be used by administrators to place jobs in queues\n      that are different than the one specified by the user.\n      The default is false.\n    </description>\n  </property>\n\n</configuration>\n"
+  configuration.xsl: >
+    <?xml version="1.0"?>
+
+    <!--
+       Licensed to the Apache Software Foundation (ASF) under one or more
+       contributor license agreements.  See the NOTICE file distributed with
+       this work for additional information regarding copyright ownership.
+       The ASF licenses this file to You under the Apache License, Version 2.0
+       (the "License"); you may not use this file except in compliance with
+       the License.  You may obtain a copy of the License at
+
+           http://www.apache.org/licenses/LICENSE-2.0
+
+       Unless required by applicable law or agreed to in writing, software
+       distributed under the License is distributed on an "AS IS" BASIS,
+       WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+       See the License for the specific language governing permissions and
+       limitations under the License.
+    -->
+
+    <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    version="1.0">
+
+    <xsl:output method="html"/>
+
+    <xsl:template match="configuration">
+
+    <html>
+
+    <body>
+
+    <table border="1">
+
+    <tr>
+     <td>name</td>
+     <td>value</td>
+     <td>description</td>
+    </tr>
+
+    <xsl:for-each select="property">
+
+    <tr>
+      <td><a name="{name}"><xsl:value-of select="name"/></a></td>
+      <td><xsl:value-of select="value"/></td>
+      <td><xsl:value-of select="description"/></td>
+    </tr>
+
+    </xsl:for-each>
+
+    </table>
+
+    </body>
+
+    </html>
+
+    </xsl:template>
+
+    </xsl:stylesheet>
+  container-executor.cfg: >
+    yarn.nodemanager.linux-container-executor.group=#configured value of
+    yarn.nodemanager.linux-container-executor.group
+
+    banned.users=#comma separated list of users who can not run applications
+
+    min.user.id=1000#Prevent other super-users
+
+    allowed.system.users=##comma separated list of system users who CAN run
+    applications
+  core-site.xml: |
+    <?xml version="1.0" encoding="UTF-8"?>
+    <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+    <!--
+      Licensed under the Apache License, Version 2.0 (the "License");
+      you may not use this file except in compliance with the License.
+      You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License. See accompanying LICENSE file.
+    -->
+
+    <!-- Put site-specific property overrides in this file. -->
+
+    <configuration>
+       <property>
+          <name>fs.default.name</name>
+          <value>hdfs://10.0.2.101:9000</value> 
+       </property>
+    </configuration>
+  hadoop-metrics.properties: |+
+    # Configuration of the "dfs" context for null
+    dfs.class=org.apache.hadoop.metrics.spi.NullContext
+
+    # Configuration of the "dfs" context for file
+    #dfs.class=org.apache.hadoop.metrics.file.FileContext
+    #dfs.period=10
+    #dfs.fileName=/tmp/dfsmetrics.log
+
+    # Configuration of the "dfs" context for ganglia
+    # Pick one: Ganglia 3.0 (former) or Ganglia 3.1 (latter)
+    # dfs.class=org.apache.hadoop.metrics.ganglia.GangliaContext
+    # dfs.class=org.apache.hadoop.metrics.ganglia.GangliaContext31
+    # dfs.period=10
+    # dfs.servers=localhost:8649
+
+
+    # Configuration of the "mapred" context for null
+    mapred.class=org.apache.hadoop.metrics.spi.NullContext
+
+    # Configuration of the "mapred" context for file
+    #mapred.class=org.apache.hadoop.metrics.file.FileContext
+    #mapred.period=10
+    #mapred.fileName=/tmp/mrmetrics.log
+
+    # Configuration of the "mapred" context for ganglia
+    # Pick one: Ganglia 3.0 (former) or Ganglia 3.1 (latter)
+    # mapred.class=org.apache.hadoop.metrics.ganglia.GangliaContext
+    # mapred.class=org.apache.hadoop.metrics.ganglia.GangliaContext31
+    # mapred.period=10
+    # mapred.servers=localhost:8649
+
+
+    # Configuration of the "jvm" context for null
+    #jvm.class=org.apache.hadoop.metrics.spi.NullContext
+
+    # Configuration of the "jvm" context for file
+    #jvm.class=org.apache.hadoop.metrics.file.FileContext
+    #jvm.period=10
+    #jvm.fileName=/tmp/jvmmetrics.log
+
+    # Configuration of the "jvm" context for ganglia
+    # jvm.class=org.apache.hadoop.metrics.ganglia.GangliaContext
+    # jvm.class=org.apache.hadoop.metrics.ganglia.GangliaContext31
+    # jvm.period=10
+    # jvm.servers=localhost:8649
+
+    # Configuration of the "rpc" context for null
+    rpc.class=org.apache.hadoop.metrics.spi.NullContext
+
+    # Configuration of the "rpc" context for file
+    #rpc.class=org.apache.hadoop.metrics.file.FileContext
+    #rpc.period=10
+    #rpc.fileName=/tmp/rpcmetrics.log
+
+    # Configuration of the "rpc" context for ganglia
+    # rpc.class=org.apache.hadoop.metrics.ganglia.GangliaContext
+    # rpc.class=org.apache.hadoop.metrics.ganglia.GangliaContext31
+    # rpc.period=10
+    # rpc.servers=localhost:8649
+
+
+    # Configuration of the "ugi" context for null
+    ugi.class=org.apache.hadoop.metrics.spi.NullContext
+
+    # Configuration of the "ugi" context for file
+    #ugi.class=org.apache.hadoop.metrics.file.FileContext
+    #ugi.period=10
+    #ugi.fileName=/tmp/ugimetrics.log
+
+    # Configuration of the "ugi" context for ganglia
+    # ugi.class=org.apache.hadoop.metrics.ganglia.GangliaContext
+    # ugi.class=org.apache.hadoop.metrics.ganglia.GangliaContext31
+    # ugi.period=10
+    # ugi.servers=localhost:8649
+
+  hadoop-policy.xml: |
+    <?xml version="1.0"?>
+    <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+    <!--
+     
+     Licensed to the Apache Software Foundation (ASF) under one
+     or more contributor license agreements.  See the NOTICE file
+     distributed with this work for additional information
+     regarding copyright ownership.  The ASF licenses this file
+     to you under the Apache License, Version 2.0 (the
+     "License"); you may not use this file except in compliance
+     with the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+
+    -->
+
+    <!-- Put site-specific property overrides in this file. -->
+
+    <configuration>
+      <property>
+        <name>security.client.protocol.acl</name>
+        <value>*</value>
+        <description>ACL for ClientProtocol, which is used by user code
+        via the DistributedFileSystem.
+        The ACL is a comma-separated list of user and group names. The user and
+        group list is separated by a blank. For e.g. "alice,bob users,wheel".
+        A special value of "*" means all users are allowed.</description>
+      </property>
+
+      <property>
+        <name>security.client.datanode.protocol.acl</name>
+        <value>*</value>
+        <description>ACL for ClientDatanodeProtocol, the client-to-datanode protocol
+        for block recovery.
+        The ACL is a comma-separated list of user and group names. The user and
+        group list is separated by a blank. For e.g. "alice,bob users,wheel".
+        A special value of "*" means all users are allowed.</description>
+      </property>
+
+      <property>
+        <name>security.datanode.protocol.acl</name>
+        <value>*</value>
+        <description>ACL for DatanodeProtocol, which is used by datanodes to
+        communicate with the namenode.
+        The ACL is a comma-separated list of user and group names. The user and
+        group list is separated by a blank. For e.g. "alice,bob users,wheel".
+        A special value of "*" means all users are allowed.</description>
+      </property>
+
+      <property>
+        <name>security.inter.datanode.protocol.acl</name>
+        <value>*</value>
+        <description>ACL for InterDatanodeProtocol, the inter-datanode protocol
+        for updating generation timestamp.
+        The ACL is a comma-separated list of user and group names. The user and
+        group list is separated by a blank. For e.g. "alice,bob users,wheel".
+        A special value of "*" means all users are allowed.</description>
+      </property>
+
+      <property>
+        <name>security.namenode.protocol.acl</name>
+        <value>*</value>
+        <description>ACL for NamenodeProtocol, the protocol used by the secondary
+        namenode to communicate with the namenode.
+        The ACL is a comma-separated list of user and group names. The user and
+        group list is separated by a blank. For e.g. "alice,bob users,wheel".
+        A special value of "*" means all users are allowed.</description>
+      </property>
+
+     <property>
+        <name>security.admin.operations.protocol.acl</name>
+        <value>*</value>
+        <description>ACL for AdminOperationsProtocol. Used for admin commands.
+        The ACL is a comma-separated list of user and group names. The user and
+        group list is separated by a blank. For e.g. "alice,bob users,wheel".
+        A special value of "*" means all users are allowed.</description>
+      </property>
+
+      <property>
+        <name>security.refresh.user.mappings.protocol.acl</name>
+        <value>*</value>
+        <description>ACL for RefreshUserMappingsProtocol. Used to refresh
+        users mappings. The ACL is a comma-separated list of user and
+        group names. The user and group list is separated by a blank. For
+        e.g. "alice,bob users,wheel".  A special value of "*" means all
+        users are allowed.</description>
+      </property>
+
+      <property>
+        <name>security.refresh.policy.protocol.acl</name>
+        <value>*</value>
+        <description>ACL for RefreshAuthorizationPolicyProtocol, used by the
+        dfsadmin and mradmin commands to refresh the security policy in-effect.
+        The ACL is a comma-separated list of user and group names. The user and
+        group list is separated by a blank. For e.g. "alice,bob users,wheel".
+        A special value of "*" means all users are allowed.</description>
+      </property>
+
+      <property>
+        <name>security.ha.service.protocol.acl</name>
+        <value>*</value>
+        <description>ACL for HAService protocol used by HAAdmin to manage the
+          active and stand-by states of namenode.</description>
+      </property>
+
+      <property>
+        <name>security.zkfc.protocol.acl</name>
+        <value>*</value>
+        <description>ACL for access to the ZK Failover Controller
+        </description>
+      </property>
+
+      <property>
+        <name>security.qjournal.service.protocol.acl</name>
+        <value>*</value>
+        <description>ACL for QJournalProtocol, used by the NN to communicate with
+        JNs when using the QuorumJournalManager for edit logs.</description>
+      </property>
+
+      <property>
+        <name>security.mrhs.client.protocol.acl</name>
+        <value>*</value>
+        <description>ACL for HSClientProtocol, used by job clients to
+        communciate with the MR History Server job status etc. 
+        The ACL is a comma-separated list of user and group names. The user and
+        group list is separated by a blank. For e.g. "alice,bob users,wheel".
+        A special value of "*" means all users are allowed.</description>
+      </property>
+
+      <!-- YARN Protocols -->
+
+      <property>
+        <name>security.resourcetracker.protocol.acl</name>
+        <value>*</value>
+        <description>ACL for ResourceTrackerProtocol, used by the
+        ResourceManager and NodeManager to communicate with each other.
+        The ACL is a comma-separated list of user and group names. The user and
+        group list is separated by a blank. For e.g. "alice,bob users,wheel".
+        A special value of "*" means all users are allowed.</description>
+      </property>
+
+      <property>
+        <name>security.resourcemanager-administration.protocol.acl</name>
+        <value>*</value>
+        <description>ACL for ResourceManagerAdministrationProtocol, for admin commands. 
+        The ACL is a comma-separated list of user and group names. The user and
+        group list is separated by a blank. For e.g. "alice,bob users,wheel".
+        A special value of "*" means all users are allowed.</description>
+      </property>
+
+      <property>
+        <name>security.applicationclient.protocol.acl</name>
+        <value>*</value>
+        <description>ACL for ApplicationClientProtocol, used by the ResourceManager 
+        and applications submission clients to communicate with each other.
+        The ACL is a comma-separated list of user and group names. The user and
+        group list is separated by a blank. For e.g. "alice,bob users,wheel".
+        A special value of "*" means all users are allowed.</description>
+      </property>
+
+      <property>
+        <name>security.applicationmaster.protocol.acl</name>
+        <value>*</value>
+        <description>ACL for ApplicationMasterProtocol, used by the ResourceManager 
+        and ApplicationMasters to communicate with each other.
+        The ACL is a comma-separated list of user and group names. The user and
+        group list is separated by a blank. For e.g. "alice,bob users,wheel".
+        A special value of "*" means all users are allowed.</description>
+      </property>
+
+      <property>
+        <name>security.containermanagement.protocol.acl</name>
+        <value>*</value>
+        <description>ACL for ContainerManagementProtocol protocol, used by the NodeManager 
+        and ApplicationMasters to communicate with each other.
+        The ACL is a comma-separated list of user and group names. The user and
+        group list is separated by a blank. For e.g. "alice,bob users,wheel".
+        A special value of "*" means all users are allowed.</description>
+      </property>
+
+      <property>
+        <name>security.resourcelocalizer.protocol.acl</name>
+        <value>*</value>
+        <description>ACL for ResourceLocalizer protocol, used by the NodeManager 
+        and ResourceLocalizer to communicate with each other.
+        The ACL is a comma-separated list of user and group names. The user and
+        group list is separated by a blank. For e.g. "alice,bob users,wheel".
+        A special value of "*" means all users are allowed.</description>
+      </property>
+
+      <property>
+        <name>security.job.task.protocol.acl</name>
+        <value>*</value>
+        <description>ACL for TaskUmbilicalProtocol, used by the map and reduce
+        tasks to communicate with the parent tasktracker.
+        The ACL is a comma-separated list of user and group names. The user and
+        group list is separated by a blank. For e.g. "alice,bob users,wheel".
+        A special value of "*" means all users are allowed.</description>
+      </property>
+
+      <property>
+        <name>security.job.client.protocol.acl</name>
+        <value>*</value>
+        <description>ACL for MRClientProtocol, used by job clients to
+        communciate with the MR ApplicationMaster to query job status etc. 
+        The ACL is a comma-separated list of user and group names. The user and
+        group list is separated by a blank. For e.g. "alice,bob users,wheel".
+        A special value of "*" means all users are allowed.</description>
+      </property>
+
+      <property>
+        <name>security.applicationhistory.protocol.acl</name>
+        <value>*</value>
+        <description>ACL for ApplicationHistoryProtocol, used by the timeline
+        server and the generic history service client to communicate with each other.
+        The ACL is a comma-separated list of user and group names. The user and
+        group list is separated by a blank. For e.g. "alice,bob users,wheel".
+        A special value of "*" means all users are allowed.</description>
+      </property>
+    </configuration>
+  hdfs-site.xml: |
+    <?xml version="1.0" encoding="UTF-8"?>
+    <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+    <!--
+      Licensed under the Apache License, Version 2.0 (the "License");
+      you may not use this file except in compliance with the License.
+      You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License. See accompanying LICENSE file.
+    -->
+
+    <!-- Put site-specific property overrides in this file. -->
+
+    <configuration>
+       <property>
+          <name>dfs.replication</name>
+          <value>1</value>
+       </property>
+        
+       <property>
+          <name>dfs.name.dir</name>
+          <value>file:///opt/hadoop-2.7.2/tmp/namenode </value>
+       </property>
+        
+       <property>
+          <name>dfs.data.dir</name> 
+          <value>file:///opt/hadoop-2.7.2/tmp/datanode </value> 
+       </property>
+    </configuration>
+  httpfs-log4j.properties: >
+    #
+
+    # Licensed under the Apache License, Version 2.0 (the "License");
+
+    # you may not use this file except in compliance with the License.
+
+    # You may obtain a copy of the License at
+
+    #
+
+    #    http://www.apache.org/licenses/LICENSE-2.0
+
+    #
+
+    # Unless required by applicable law or agreed to in writing, software
+
+    # distributed under the License is distributed on an "AS IS" BASIS,
+
+    # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+
+    # See the License for the specific language governing permissions and
+
+    # limitations under the License. See accompanying LICENSE file.
+
+    #
+
+
+    # If the Java System property 'httpfs.log.dir' is not defined at
+    HttpFSServer start up time
+
+    # Setup sets its value to '${httpfs.home}/logs'
+
+
+    log4j.appender.httpfs=org.apache.log4j.DailyRollingFileAppender
+
+    log4j.appender.httpfs.DatePattern='.'yyyy-MM-dd
+
+    log4j.appender.httpfs.File=${httpfs.log.dir}/httpfs.log
+
+    log4j.appender.httpfs.Append=true
+
+    log4j.appender.httpfs.layout=org.apache.log4j.PatternLayout
+
+    log4j.appender.httpfs.layout.ConversionPattern=%d{ISO8601} %5p %c{1}
+    [%X{hostname}][%X{user}:%X{doAs}] %X{op} %m%n
+
+
+    log4j.appender.httpfsaudit=org.apache.log4j.DailyRollingFileAppender
+
+    log4j.appender.httpfsaudit.DatePattern='.'yyyy-MM-dd
+
+    log4j.appender.httpfsaudit.File=${httpfs.log.dir}/httpfs-audit.log
+
+    log4j.appender.httpfsaudit.Append=true
+
+    log4j.appender.httpfsaudit.layout=org.apache.log4j.PatternLayout
+
+    log4j.appender.httpfsaudit.layout.ConversionPattern=%d{ISO8601} %5p
+    [%X{hostname}][%X{user}:%X{doAs}] %X{op} %m%n
+
+
+    log4j.logger.httpfsaudit=INFO, httpfsaudit
+
+
+    log4j.logger.org.apache.hadoop.fs.http.server=INFO, httpfs
+
+    log4j.logger.org.apache.hadoop.lib=INFO, httpfs
+  httpfs-signature.secret: |
+    hadoop httpfs secret
+  httpfs-site.xml: |
+    <?xml version="1.0" encoding="UTF-8"?>
+    <!--
+      Licensed under the Apache License, Version 2.0 (the "License");
+      you may not use this file except in compliance with the License.
+      You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+    -->
+    <configuration>
+
+    </configuration>
+  kms-acls.xml: |
+    <?xml version="1.0" encoding="UTF-8"?>
+    <!--
+      Licensed under the Apache License, Version 2.0 (the "License");
+      you may not use this file except in compliance with the License.
+      You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+    -->
+    <configuration>
+
+      <!-- This file is hot-reloaded when it changes -->
+
+      <!-- KMS ACLs -->
+
+      <property>
+        <name>hadoop.kms.acl.CREATE</name>
+        <value>*</value>
+        <description>
+          ACL for create-key operations.
+          If the user is not in the GET ACL, the key material is not returned
+          as part of the response.
+        </description>
+      </property>
+
+      <property>
+        <name>hadoop.kms.acl.DELETE</name>
+        <value>*</value>
+        <description>
+          ACL for delete-key operations.
+        </description>
+      </property>
+
+      <property>
+        <name>hadoop.kms.acl.ROLLOVER</name>
+        <value>*</value>
+        <description>
+          ACL for rollover-key operations.
+          If the user is not in the GET ACL, the key material is not returned
+          as part of the response.
+        </description>
+      </property>
+
+      <property>
+        <name>hadoop.kms.acl.GET</name>
+        <value>*</value>
+        <description>
+          ACL for get-key-version and get-current-key operations.
+        </description>
+      </property>
+
+      <property>
+        <name>hadoop.kms.acl.GET_KEYS</name>
+        <value>*</value>
+        <description>
+          ACL for get-keys operations.
+        </description>
+      </property>
+
+      <property>
+        <name>hadoop.kms.acl.GET_METADATA</name>
+        <value>*</value>
+        <description>
+          ACL for get-key-metadata and get-keys-metadata operations.
+        </description>
+      </property>
+
+      <property>
+        <name>hadoop.kms.acl.SET_KEY_MATERIAL</name>
+        <value>*</value>
+        <description>
+          Complementary ACL for CREATE and ROLLOVER operations to allow the client
+          to provide the key material when creating or rolling a key.
+        </description>
+      </property>
+
+      <property>
+        <name>hadoop.kms.acl.GENERATE_EEK</name>
+        <value>*</value>
+        <description>
+          ACL for generateEncryptedKey CryptoExtension operations.
+        </description>
+      </property>
+
+      <property>
+        <name>hadoop.kms.acl.DECRYPT_EEK</name>
+        <value>*</value>
+        <description>
+          ACL for decryptEncryptedKey CryptoExtension operations.
+        </description>
+      </property>
+
+      <property>
+        <name>default.key.acl.MANAGEMENT</name>
+        <value>*</value>
+        <description>
+          default ACL for MANAGEMENT operations for all key acls that are not
+          explicitly defined.
+        </description>
+      </property>
+
+      <property>
+        <name>default.key.acl.GENERATE_EEK</name>
+        <value>*</value>
+        <description>
+          default ACL for GENERATE_EEK operations for all key acls that are not
+          explicitly defined.
+        </description>
+      </property>
+
+      <property>
+        <name>default.key.acl.DECRYPT_EEK</name>
+        <value>*</value>
+        <description>
+          default ACL for DECRYPT_EEK operations for all key acls that are not
+          explicitly defined.
+        </description>
+      </property>
+
+      <property>
+        <name>default.key.acl.READ</name>
+        <value>*</value>
+        <description>
+          default ACL for READ operations for all key acls that are not
+          explicitly defined.
+        </description>
+      </property>
+
+
+    </configuration>
+  kms-log4j.properties: >-
+    #
+
+    # Licensed under the Apache License, Version 2.0 (the "License");
+
+    # you may not use this file except in compliance with the License.
+
+    # You may obtain a copy of the License at
+
+    #
+
+    #    http://www.apache.org/licenses/LICENSE-2.0
+
+    #
+
+    # Unless required by applicable law or agreed to in writing, software
+
+    # distributed under the License is distributed on an "AS IS" BASIS,
+
+    # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+
+    # See the License for the specific language governing permissions and
+
+    # limitations under the License. See accompanying LICENSE file.
+
+    #
+
+
+    # If the Java System property 'kms.log.dir' is not defined at KMS start up
+    time
+
+    # Setup sets its value to '${kms.home}/logs'
+
+
+    log4j.appender.kms=org.apache.log4j.DailyRollingFileAppender
+
+    log4j.appender.kms.DatePattern='.'yyyy-MM-dd
+
+    log4j.appender.kms.File=${kms.log.dir}/kms.log
+
+    log4j.appender.kms.Append=true
+
+    log4j.appender.kms.layout=org.apache.log4j.PatternLayout
+
+    log4j.appender.kms.layout.ConversionPattern=%d{ISO8601} %-5p %c{1} - %m%n
+
+
+    log4j.appender.kms-audit=org.apache.log4j.DailyRollingFileAppender
+
+    log4j.appender.kms-audit.DatePattern='.'yyyy-MM-dd
+
+    log4j.appender.kms-audit.File=${kms.log.dir}/kms-audit.log
+
+    log4j.appender.kms-audit.Append=true
+
+    log4j.appender.kms-audit.layout=org.apache.log4j.PatternLayout
+
+    log4j.appender.kms-audit.layout.ConversionPattern=%d{ISO8601} %m%n
+
+
+    log4j.logger.kms-audit=INFO, kms-audit
+
+    log4j.additivity.kms-audit=false
+
+
+    log4j.rootLogger=ALL, kms
+
+    log4j.logger.org.apache.hadoop.conf=ERROR
+
+    log4j.logger.org.apache.hadoop=INFO
+
+    log4j.logger.com.sun.jersey.server.wadl.generators.WadlGeneratorJAXBGrammarGenerator=OFF
+  kms-site.xml: |
+    <?xml version="1.0" encoding="UTF-8"?>
+    <!--
+      Licensed under the Apache License, Version 2.0 (the "License");
+      you may not use this file except in compliance with the License.
+      You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+    -->
+    <configuration>
+
+      <!-- KMS Backend KeyProvider -->
+
+      <property>
+        <name>hadoop.kms.key.provider.uri</name>
+        <value>jceks://file@/${user.home}/kms.keystore</value>
+        <description>
+          URI of the backing KeyProvider for the KMS.
+        </description>
+      </property>
+
+      <property>
+        <name>hadoop.security.keystore.JavaKeyStoreProvider.password</name>
+        <value>none</value>
+        <description>
+          If using the JavaKeyStoreProvider, the password for the keystore file.
+        </description>
+      </property>
+
+      <!-- KMS Cache -->
+
+      <property>
+        <name>hadoop.kms.cache.enable</name>
+        <value>true</value>
+        <description>
+          Whether the KMS will act as a cache for the backing KeyProvider.
+          When the cache is enabled, operations like getKeyVersion, getMetadata,
+          and getCurrentKey will sometimes return cached data without consulting
+          the backing KeyProvider. Cached values are flushed when keys are deleted
+          or modified.
+        </description>
+      </property>
+
+      <property>
+        <name>hadoop.kms.cache.timeout.ms</name>
+        <value>600000</value>
+        <description>
+          Expiry time for the KMS key version and key metadata cache, in
+          milliseconds. This affects getKeyVersion and getMetadata.
+        </description>
+      </property>
+
+      <property>
+        <name>hadoop.kms.current.key.cache.timeout.ms</name>
+        <value>30000</value>
+        <description>
+          Expiry time for the KMS current key cache, in milliseconds. This
+          affects getCurrentKey operations.
+        </description>
+      </property>
+
+      <!-- KMS Audit -->
+
+      <property>
+        <name>hadoop.kms.audit.aggregation.window.ms</name>
+        <value>10000</value>
+        <description>
+          Duplicate audit log events within the aggregation window (specified in
+          ms) are quashed to reduce log traffic. A single message for aggregated
+          events is printed at the end of the window, along with a count of the
+          number of aggregated events.
+        </description>
+      </property>
+
+      <!-- KMS Security -->
+
+      <property>
+        <name>hadoop.kms.authentication.type</name>
+        <value>simple</value>
+        <description>
+          Authentication type for the KMS. Can be either &quot;simple&quot;
+          or &quot;kerberos&quot;.
+        </description>
+      </property>
+
+      <property>
+        <name>hadoop.kms.authentication.kerberos.keytab</name>
+        <value>${user.home}/kms.keytab</value>
+        <description>
+          Path to the keytab with credentials for the configured Kerberos principal.
+        </description>
+      </property>
+
+      <property>
+        <name>hadoop.kms.authentication.kerberos.principal</name>
+        <value>HTTP/localhost</value>
+        <description>
+          The Kerberos principal to use for the HTTP endpoint.
+          The principal must start with 'HTTP/' as per the Kerberos HTTP SPNEGO specification.
+        </description>
+      </property>
+
+      <property>
+        <name>hadoop.kms.authentication.kerberos.name.rules</name>
+        <value>DEFAULT</value>
+        <description>
+          Rules used to resolve Kerberos principal names.
+        </description>
+      </property>
+
+      <!-- Authentication cookie signature source -->
+
+      <property>
+        <name>hadoop.kms.authentication.signer.secret.provider</name>
+        <value>random</value>
+        <description>
+          Indicates how the secret to sign the authentication cookies will be
+          stored. Options are 'random' (default), 'string' and 'zookeeper'.
+          If using a setup with multiple KMS instances, 'zookeeper' should be used.
+        </description>
+      </property>
+
+      <!-- Configuration for 'zookeeper' authentication cookie signature source -->
+
+      <property>
+        <name>hadoop.kms.authentication.signer.secret.provider.zookeeper.path</name>
+        <value>/hadoop-kms/hadoop-auth-signature-secret</value>
+        <description>
+          The Zookeeper ZNode path where the KMS instances will store and retrieve
+          the secret from.
+        </description>
+      </property>
+
+      <property>
+        <name>hadoop.kms.authentication.signer.secret.provider.zookeeper.connection.string</name>
+        <value>#HOSTNAME#:#PORT#,...</value>
+        <description>
+          The Zookeeper connection string, a list of hostnames and port comma
+          separated.
+        </description>
+      </property>
+
+      <property>
+        <name>hadoop.kms.authentication.signer.secret.provider.zookeeper.auth.type</name>
+        <value>kerberos</value>
+        <description>
+          The Zookeeper authentication type, 'none' or 'sasl' (Kerberos).
+        </description>
+      </property>
+
+      <property>
+        <name>hadoop.kms.authentication.signer.secret.provider.zookeeper.kerberos.keytab</name>
+        <value>/etc/hadoop/conf/kms.keytab</value>
+        <description>
+          The absolute path for the Kerberos keytab with the credentials to
+          connect to Zookeeper.
+        </description>
+      </property>
+
+      <property>
+        <name>hadoop.kms.authentication.signer.secret.provider.zookeeper.kerberos.principal</name>
+        <value>kms/#HOSTNAME#</value>
+        <description>
+          The Kerberos service principal used to connect to Zookeeper.
+        </description>
+      </property>
+
+    </configuration>
+  log4j.properties: >
+    # Licensed to the Apache Software Foundation (ASF) under one
+
+    # or more contributor license agreements.  See the NOTICE file
+
+    # distributed with this work for additional information
+
+    # regarding copyright ownership.  The ASF licenses this file
+
+    # to you under the Apache License, Version 2.0 (the
+
+    # "License"); you may not use this file except in compliance
+
+    # with the License.  You may obtain a copy of the License at
+
+    #
+
+    #     http://www.apache.org/licenses/LICENSE-2.0
+
+    #
+
+    # Unless required by applicable law or agreed to in writing, software
+
+    # distributed under the License is distributed on an "AS IS" BASIS,
+
+    # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+
+    # See the License for the specific language governing permissions and
+
+    # limitations under the License.
+
+
+    # Define some default values that can be overridden by system properties
+
+    hadoop.root.logger=INFO,console
+
+    hadoop.log.dir=.
+
+    hadoop.log.file=hadoop.log
+
+
+    # Define the root logger to the system property "hadoop.root.logger".
+
+    log4j.rootLogger=${hadoop.root.logger}, EventCounter
+
+
+    # Logging Threshold
+
+    log4j.threshold=ALL
+
+
+    # Null Appender
+
+    log4j.appender.NullAppender=org.apache.log4j.varia.NullAppender
+
+
+    #
+
+    # Rolling File Appender - cap space usage at 5gb.
+
+    #
+
+    hadoop.log.maxfilesize=256MB
+
+    hadoop.log.maxbackupindex=20
+
+    log4j.appender.RFA=org.apache.log4j.RollingFileAppender
+
+    log4j.appender.RFA.File=${hadoop.log.dir}/${hadoop.log.file}
+
+
+    log4j.appender.RFA.MaxFileSize=${hadoop.log.maxfilesize}
+
+    log4j.appender.RFA.MaxBackupIndex=${hadoop.log.maxbackupindex}
+
+
+    log4j.appender.RFA.layout=org.apache.log4j.PatternLayout
+
+
+    # Pattern format: Date LogLevel LoggerName LogMessage
+
+    log4j.appender.RFA.layout.ConversionPattern=%d{ISO8601} %p %c: %m%n
+
+    # Debugging Pattern format
+
+    #log4j.appender.RFA.layout.ConversionPattern=%d{ISO8601} %-5p %c{2}
+    (%F:%M(%L)) - %m%n
+
+
+
+    #
+
+    # Daily Rolling File Appender
+
+    #
+
+
+    log4j.appender.DRFA=org.apache.log4j.DailyRollingFileAppender
+
+    log4j.appender.DRFA.File=${hadoop.log.dir}/${hadoop.log.file}
+
+
+    # Rollover at midnight
+
+    log4j.appender.DRFA.DatePattern=.yyyy-MM-dd
+
+
+    log4j.appender.DRFA.layout=org.apache.log4j.PatternLayout
+
+
+    # Pattern format: Date LogLevel LoggerName LogMessage
+
+    log4j.appender.DRFA.layout.ConversionPattern=%d{ISO8601} %p %c: %m%n
+
+    # Debugging Pattern format
+
+    #log4j.appender.DRFA.layout.ConversionPattern=%d{ISO8601} %-5p %c{2}
+    (%F:%M(%L)) - %m%n
+
+
+
+    #
+
+    # console
+
+    # Add "console" to rootlogger above if you want to use this 
+
+    #
+
+
+    log4j.appender.console=org.apache.log4j.ConsoleAppender
+
+    log4j.appender.console.target=System.err
+
+    log4j.appender.console.layout=org.apache.log4j.PatternLayout
+
+    log4j.appender.console.layout.ConversionPattern=%d{yy/MM/dd HH:mm:ss} %p
+    %c{2}: %m%n
+
+
+    #
+
+    # TaskLog Appender
+
+    #
+
+
+    #Default values
+
+    hadoop.tasklog.taskid=null
+
+    hadoop.tasklog.iscleanup=false
+
+    hadoop.tasklog.noKeepSplits=4
+
+    hadoop.tasklog.totalLogFileSize=100
+
+    hadoop.tasklog.purgeLogSplits=true
+
+    hadoop.tasklog.logsRetainHours=12
+
+
+    log4j.appender.TLA=org.apache.hadoop.mapred.TaskLogAppender
+
+    log4j.appender.TLA.taskId=${hadoop.tasklog.taskid}
+
+    log4j.appender.TLA.isCleanup=${hadoop.tasklog.iscleanup}
+
+    log4j.appender.TLA.totalLogFileSize=${hadoop.tasklog.totalLogFileSize}
+
+
+    log4j.appender.TLA.layout=org.apache.log4j.PatternLayout
+
+    log4j.appender.TLA.layout.ConversionPattern=%d{ISO8601} %p %c: %m%n
+
+
+    #
+
+    # HDFS block state change log from block manager
+
+    #
+
+    # Uncomment the following to suppress normal block state change
+
+    # messages from BlockManager in NameNode.
+
+    #log4j.logger.BlockStateChange=WARN
+
+
+    #
+
+    #Security appender
+
+    #
+
+    hadoop.security.logger=INFO,NullAppender
+
+    hadoop.security.log.maxfilesize=256MB
+
+    hadoop.security.log.maxbackupindex=20
+
+    log4j.category.SecurityLogger=${hadoop.security.logger}
+
+    hadoop.security.log.file=SecurityAuth-${user.name}.audit
+
+    log4j.appender.RFAS=org.apache.log4j.RollingFileAppender 
+
+    log4j.appender.RFAS.File=${hadoop.log.dir}/${hadoop.security.log.file}
+
+    log4j.appender.RFAS.layout=org.apache.log4j.PatternLayout
+
+    log4j.appender.RFAS.layout.ConversionPattern=%d{ISO8601} %p %c: %m%n
+
+    log4j.appender.RFAS.MaxFileSize=${hadoop.security.log.maxfilesize}
+
+    log4j.appender.RFAS.MaxBackupIndex=${hadoop.security.log.maxbackupindex}
+
+
+    #
+
+    # Daily Rolling Security appender
+
+    #
+
+    log4j.appender.DRFAS=org.apache.log4j.DailyRollingFileAppender 
+
+    log4j.appender.DRFAS.File=${hadoop.log.dir}/${hadoop.security.log.file}
+
+    log4j.appender.DRFAS.layout=org.apache.log4j.PatternLayout
+
+    log4j.appender.DRFAS.layout.ConversionPattern=%d{ISO8601} %p %c: %m%n
+
+    log4j.appender.DRFAS.DatePattern=.yyyy-MM-dd
+
+
+    #
+
+    # hadoop configuration logging
+
+    #
+
+
+    # Uncomment the following line to turn off configuration deprecation
+    warnings.
+
+    # log4j.logger.org.apache.hadoop.conf.Configuration.deprecation=WARN
+
+
+    #
+
+    # hdfs audit logging
+
+    #
+
+    hdfs.audit.logger=INFO,NullAppender
+
+    hdfs.audit.log.maxfilesize=256MB
+
+    hdfs.audit.log.maxbackupindex=20
+
+    log4j.logger.org.apache.hadoop.hdfs.server.namenode.FSNamesystem.audit=${hdfs.audit.logger}
+
+    log4j.additivity.org.apache.hadoop.hdfs.server.namenode.FSNamesystem.audit=false
+
+    log4j.appender.RFAAUDIT=org.apache.log4j.RollingFileAppender
+
+    log4j.appender.RFAAUDIT.File=${hadoop.log.dir}/hdfs-audit.log
+
+    log4j.appender.RFAAUDIT.layout=org.apache.log4j.PatternLayout
+
+    log4j.appender.RFAAUDIT.layout.ConversionPattern=%d{ISO8601} %p %c{2}: %m%n
+
+    log4j.appender.RFAAUDIT.MaxFileSize=${hdfs.audit.log.maxfilesize}
+
+    log4j.appender.RFAAUDIT.MaxBackupIndex=${hdfs.audit.log.maxbackupindex}
+
+
+    #
+
+    # mapred audit logging
+
+    #
+
+    mapred.audit.logger=INFO,NullAppender
+
+    mapred.audit.log.maxfilesize=256MB
+
+    mapred.audit.log.maxbackupindex=20
+
+    log4j.logger.org.apache.hadoop.mapred.AuditLogger=${mapred.audit.logger}
+
+    log4j.additivity.org.apache.hadoop.mapred.AuditLogger=false
+
+    log4j.appender.MRAUDIT=org.apache.log4j.RollingFileAppender
+
+    log4j.appender.MRAUDIT.File=${hadoop.log.dir}/mapred-audit.log
+
+    log4j.appender.MRAUDIT.layout=org.apache.log4j.PatternLayout
+
+    log4j.appender.MRAUDIT.layout.ConversionPattern=%d{ISO8601} %p %c{2}: %m%n
+
+    log4j.appender.MRAUDIT.MaxFileSize=${mapred.audit.log.maxfilesize}
+
+    log4j.appender.MRAUDIT.MaxBackupIndex=${mapred.audit.log.maxbackupindex}
+
+
+    # Custom Logging levels
+
+
+    #log4j.logger.org.apache.hadoop.mapred.JobTracker=DEBUG
+
+    #log4j.logger.org.apache.hadoop.mapred.TaskTracker=DEBUG
+
+    #log4j.logger.org.apache.hadoop.hdfs.server.namenode.FSNamesystem.audit=DEBUG
+
+
+    # Jets3t library
+
+    log4j.logger.org.jets3t.service.impl.rest.httpclient.RestS3Service=ERROR
+
+
+    # AWS SDK & S3A FileSystem
+
+    log4j.logger.com.amazonaws=ERROR
+
+    log4j.logger.com.amazonaws.http.AmazonHttpClient=ERROR
+
+    log4j.logger.org.apache.hadoop.fs.s3a.S3AFileSystem=WARN
+
+
+    #
+
+    # Event Counter Appender
+
+    # Sends counts of logging messages at different severity levels to Hadoop
+    Metrics.
+
+    #
+
+    log4j.appender.EventCounter=org.apache.hadoop.log.metrics.EventCounter
+
+
+    #
+
+    # Job Summary Appender 
+
+    #
+
+    # Use following logger to send summary to separate file defined by 
+
+    # hadoop.mapreduce.jobsummary.log.file :
+
+    # hadoop.mapreduce.jobsummary.logger=INFO,JSA
+
+    # 
+
+    hadoop.mapreduce.jobsummary.logger=${hadoop.root.logger}
+
+    hadoop.mapreduce.jobsummary.log.file=hadoop-mapreduce.jobsummary.log
+
+    hadoop.mapreduce.jobsummary.log.maxfilesize=256MB
+
+    hadoop.mapreduce.jobsummary.log.maxbackupindex=20
+
+    log4j.appender.JSA=org.apache.log4j.RollingFileAppender
+
+    log4j.appender.JSA.File=${hadoop.log.dir}/${hadoop.mapreduce.jobsummary.log.file}
+
+    log4j.appender.JSA.MaxFileSize=${hadoop.mapreduce.jobsummary.log.maxfilesize}
+
+    log4j.appender.JSA.MaxBackupIndex=${hadoop.mapreduce.jobsummary.log.maxbackupindex}
+
+    log4j.appender.JSA.layout=org.apache.log4j.PatternLayout
+
+    log4j.appender.JSA.layout.ConversionPattern=%d{yy/MM/dd HH:mm:ss} %p %c{2}:
+    %m%n
+
+    log4j.logger.org.apache.hadoop.mapred.JobInProgress$JobSummary=${hadoop.mapreduce.jobsummary.logger}
+
+    log4j.additivity.org.apache.hadoop.mapred.JobInProgress$JobSummary=false
+
+
+    #
+
+    # Yarn ResourceManager Application Summary Log 
+
+    #
+
+    # Set the ResourceManager summary log filename
+
+    yarn.server.resourcemanager.appsummary.log.file=rm-appsummary.log
+
+    # Set the ResourceManager summary log level and appender
+
+    yarn.server.resourcemanager.appsummary.logger=${hadoop.root.logger}
+
+    #yarn.server.resourcemanager.appsummary.logger=INFO,RMSUMMARY
+
+
+    # To enable AppSummaryLogging for the RM, 
+
+    # set yarn.server.resourcemanager.appsummary.logger to 
+
+    # <LEVEL>,RMSUMMARY in hadoop-env.sh
+
+
+    # Appender for ResourceManager Application Summary Log
+
+    # Requires the following properties to be set
+
+    #    - hadoop.log.dir (Hadoop Log directory)
+
+    #    - yarn.server.resourcemanager.appsummary.log.file (resource manager app
+    summary log filename)
+
+    #    - yarn.server.resourcemanager.appsummary.logger (resource manager app
+    summary log level and appender)
+
+
+    log4j.logger.org.apache.hadoop.yarn.server.resourcemanager.RMAppManager$ApplicationSummary=${yarn.server.resourcemanager.appsummary.logger}
+
+    log4j.additivity.org.apache.hadoop.yarn.server.resourcemanager.RMAppManager$ApplicationSummary=false
+
+    log4j.appender.RMSUMMARY=org.apache.log4j.RollingFileAppender
+
+    log4j.appender.RMSUMMARY.File=${hadoop.log.dir}/${yarn.server.resourcemanager.appsummary.log.file}
+
+    log4j.appender.RMSUMMARY.MaxFileSize=256MB
+
+    log4j.appender.RMSUMMARY.MaxBackupIndex=20
+
+    log4j.appender.RMSUMMARY.layout=org.apache.log4j.PatternLayout
+
+    log4j.appender.RMSUMMARY.layout.ConversionPattern=%d{ISO8601} %p %c{2}: %m%n
+
+
+    # HS audit log configs
+
+    #mapreduce.hs.audit.logger=INFO,HSAUDIT
+
+    #log4j.logger.org.apache.hadoop.mapreduce.v2.hs.HSAuditLogger=${mapreduce.hs.audit.logger}
+
+    #log4j.additivity.org.apache.hadoop.mapreduce.v2.hs.HSAuditLogger=false
+
+    #log4j.appender.HSAUDIT=org.apache.log4j.DailyRollingFileAppender
+
+    #log4j.appender.HSAUDIT.File=${hadoop.log.dir}/hs-audit.log
+
+    #log4j.appender.HSAUDIT.layout=org.apache.log4j.PatternLayout
+
+    #log4j.appender.HSAUDIT.layout.ConversionPattern=%d{ISO8601} %p %c{2}: %m%n
+
+    #log4j.appender.HSAUDIT.DatePattern=.yyyy-MM-dd
+
+
+    # Http Server Request Logs
+
+    #log4j.logger.http.requests.namenode=INFO,namenoderequestlog
+
+    #log4j.appender.namenoderequestlog=org.apache.hadoop.http.HttpRequestLogAppender
+
+    #log4j.appender.namenoderequestlog.Filename=${hadoop.log.dir}/jetty-namenode-yyyy_mm_dd.log
+
+    #log4j.appender.namenoderequestlog.RetainDays=3
+
+
+    #log4j.logger.http.requests.datanode=INFO,datanoderequestlog
+
+    #log4j.appender.datanoderequestlog=org.apache.hadoop.http.HttpRequestLogAppender
+
+    #log4j.appender.datanoderequestlog.Filename=${hadoop.log.dir}/jetty-datanode-yyyy_mm_dd.log
+
+    #log4j.appender.datanoderequestlog.RetainDays=3
+
+
+    #log4j.logger.http.requests.resourcemanager=INFO,resourcemanagerrequestlog
+
+    #log4j.appender.resourcemanagerrequestlog=org.apache.hadoop.http.HttpRequestLogAppender
+
+    #log4j.appender.resourcemanagerrequestlog.Filename=${hadoop.log.dir}/jetty-resourcemanager-yyyy_mm_dd.log
+
+    #log4j.appender.resourcemanagerrequestlog.RetainDays=3
+
+
+    #log4j.logger.http.requests.jobhistory=INFO,jobhistoryrequestlog
+
+    #log4j.appender.jobhistoryrequestlog=org.apache.hadoop.http.HttpRequestLogAppender
+
+    #log4j.appender.jobhistoryrequestlog.Filename=${hadoop.log.dir}/jetty-jobhistory-yyyy_mm_dd.log
+
+    #log4j.appender.jobhistoryrequestlog.RetainDays=3
+
+
+    #log4j.logger.http.requests.nodemanager=INFO,nodemanagerrequestlog
+
+    #log4j.appender.nodemanagerrequestlog=org.apache.hadoop.http.HttpRequestLogAppender
+
+    #log4j.appender.nodemanagerrequestlog.Filename=${hadoop.log.dir}/jetty-nodemanager-yyyy_mm_dd.log
+
+    #log4j.appender.nodemanagerrequestlog.RetainDays=3
+  mapred-site.xml: |
+    <?xml version="1.0"?>
+    <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+    <!--
+      Licensed under the Apache License, Version 2.0 (the "License");
+      you may not use this file except in compliance with the License.
+      You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License. See accompanying LICENSE file.
+    -->
+
+    <!-- Put site-specific property overrides in this file. -->
+
+    <configuration>
+       <property> 
+          <name>mapreduce.framework.name</name>
+          <value>yarn</value>
+       </property>
+    </configuration>
+  slaves: |
+    10.0.2.101
+  yarn-site.xml: |
+    <?xml version="1.0"?>
+    <!--
+      Licensed under the Apache License, Version 2.0 (the "License");
+      you may not use this file except in compliance with the License.
+      You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License. See accompanying LICENSE file.
+    -->
+    <configuration>
+
+    <!-- Site specific YARN configuration properties -->
+       <property>
+          <name>yarn.nodemanager.aux-services</name>
+          <value>mapreduce_shuffle</value> 
+       </property>
+    <property>
+        <name>yarn.resourcemanager.webapp.address</name>
+        <value>10.0.2.101:8089</value>
+    </property>
+          <property>
+                  <name>yarn.nodemanager.resource.memory-mb</name>
+                    <value>40960</value>
+                    <discription>分配13g</discription>
+            </property>
+          <property>
+                  <name>yarn.nodemanager.resource.cpu-vcores</name>
+                    <value>18</value>
+                    <discription>分配13g</discription>
+            </property>
+
+          <property>
+                  <name>yarn.scheduler.maximum-allocation-mb</name>
+                    <value>20480</value>
+                    <discription>每个任务最多可用内存,单位MB,默认8182MB</discription>
+            </property>
+            <property>
+                    <name>yarn.scheduler.minimum-allocation-mb</name>
+                    <value>3000</value>
+                    <discription>每个任务最少可用内存</discription>
+            </property>
+            <property>
+                    <name>yarn.nodemanager.vmem-pmem-ratio</name>
+                    <value>4.1</value>
+            </property>
+
+    </configuration>

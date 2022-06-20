@@ -21,9 +21,14 @@ import org.apache.linkis.datasource.client.request._
 import org.apache.linkis.datasource.client.response._
 
 trait MetaDataRemoteClient extends RemoteClient {
+
   def getDatabases(action: MetadataGetDatabasesAction): MetadataGetDatabasesResult
+
   def getTables(action: MetadataGetTablesAction): MetadataGetTablesResult
+
   def getTableProps(action: MetadataGetTablePropsAction): MetadataGetTablePropsResult
+
   def getPartitions(action: MetadataGetPartitionsAction): MetadataGetPartitionsResult
+
   def getColumns(action: MetadataGetColumnsAction): MetadataGetColumnsResult
 }

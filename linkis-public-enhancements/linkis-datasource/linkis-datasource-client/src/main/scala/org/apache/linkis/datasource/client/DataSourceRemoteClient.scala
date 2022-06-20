@@ -22,18 +22,30 @@ import org.apache.linkis.datasource.client.response._
 
 trait DataSourceRemoteClient extends RemoteClient {
   def getAllDataSourceTypes(action: GetAllDataSourceTypesAction): GetAllDataSourceTypesResult
+
   def queryDataSourceEnv(action: QueryDataSourceEnvAction): QueryDataSourceEnvResult
   def getInfoByDataSourceId(action: GetInfoByDataSourceIdAction): GetInfoByDataSourceIdResult
   def getInfoByDataSourceName(action: GetInfoByDataSourceNameAction): GetInfoByDataSourceNameResult
+
   def queryDataSource(action: QueryDataSourceAction): QueryDataSourceResult
+
   def getConnectParams(action: GetConnectParamsByDataSourceIdAction): GetConnectParamsByDataSourceIdResult
+
   def createDataSource(action: CreateDataSourceAction): CreateDataSourceResult
+
   def getDataSourceTestConnect(action: DataSourceTestConnectAction): DataSourceTestConnectResult
+
   def deleteDataSource(action: DeleteDataSourceAction): DeleteDataSourceResult
+
   def expireDataSource(action: ExpireDataSourceAction): ExpireDataSourceResult
+
   def getDataSourceVersions(action: GetDataSourceVersionsAction): GetDataSourceVersionsResult
+
   def publishDataSourceVersion(action: PublishDataSourceVersionAction): PublishDataSourceVersionResult
+
   def updateDataSource(action: UpdateDataSourceAction): UpdateDataSourceResult
+
   def updateDataSourceParameter(action: UpdateDataSourceParameterAction): UpdateDataSourceParameterResult
+
   def getKeyDefinitionsByType(action: GetKeyTypeDatasourceAction): GetKeyTypeDatasourceResult
 }

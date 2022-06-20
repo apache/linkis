@@ -17,7 +17,6 @@
  
 package org.apache.linkis.manager.am.manager
 
-import java.util
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.exception.LinkisRetryException
 import org.apache.linkis.common.utils.{Logging, RetryHandler, Utils}
@@ -31,13 +30,14 @@ import org.apache.linkis.manager.common.protocol.engine.{EngineOperateRequest, E
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import org.apache.linkis.manager.label.entity.engine.EngineInstanceLabel
 import org.apache.linkis.manager.persistence.{LabelManagerPersistence, NodeManagerPersistence, NodeMetricManagerPersistence}
+import org.apache.linkis.manager.rm.service.ResourceManager
 import org.apache.linkis.manager.service.common.metrics.MetricsConverter
 import org.apache.linkis.manager.service.common.pointer.NodePointerBuilder
-import org.apache.linkis.resourcemanager.service.ResourceManager
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 import java.lang.reflect.UndeclaredThrowableException
+import java.util
 import scala.collection.JavaConversions._
 
 

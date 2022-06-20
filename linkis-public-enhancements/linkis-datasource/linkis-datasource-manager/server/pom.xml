@@ -100,7 +100,7 @@
         <!--Metadata common-->
         <dependency>
             <groupId>org.apache.linkis</groupId>
-            <artifactId>linkis-metadata-manager-common</artifactId>
+            <artifactId>linkis-metadata-query-common</artifactId>
             <version>${linkis.version}</version>
         </dependency>
     </dependencies>

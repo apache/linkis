@@ -17,7 +17,7 @@
  
 package org.apache.linkis.engineplugin.server.loader
 
-import org.apache.linkis.manager.engineplugin.manager.loaders.{DefaultEngineConnPluginLoader, EngineConnPluginsLoader}
+import org.apache.linkis.engineplugin.loader.loaders.{DefaultEngineConnPluginLoader, EngineConnPluginsLoader}
 
 
 object EngineConnPluginsLoader {

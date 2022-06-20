@@ -17,13 +17,6 @@
 
 package org.apache.linkis.manager.am.restful;
 
-import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
-import com.github.xiaoymin.knife4j.annotations.DynamicParameter;
-import com.github.xiaoymin.knife4j.annotations.DynamicResponseParameters;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
 import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.manager.am.exception.AMErrorException;
 import org.apache.linkis.manager.am.service.ECResourceInfoService;
@@ -36,8 +29,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
-
-@Api(tags = "EC资源信息管理")
 @RequestMapping(
         path = "/linkisManager/ecinfo",
         produces = {"application/json"})
@@ -45,10 +36,6 @@ import javax.servlet.http.HttpServletRequest;
 public class ECResourceInfoRestfulApi {
     @Autowired private ECResourceInfoService ecResourceInfoService;
 
-    @ApiOperation(value="获取资源清单",notes="查看资源信息")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name="ticketid",value="资源ID",required=true,paramType="query",dataType="String")
-    })
     @RequestMapping(path = "/get", method = RequestMethod.GET)
     public Message getECInfo(
             HttpServletRequest req, @RequestParam(value = "ticketid") String ticketid)
@@ -65,10 +52,6 @@ public class ECResourceInfoRestfulApi {
         }
     }
 
-    @ApiOperation(value="删除资源",notes="根据资源ID删除指定资源")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name="ticketid",value="资源ID",required=true,paramType="query",dataType="String")
-    })
     @RequestMapping(path = "/delete/{ticketid}}", method = RequestMethod.DELETE)
     public Message deleteECInfo(HttpServletRequest req, @PathVariable("ticketid") String ticketid)
             throws AMErrorException {

@@ -69,7 +69,8 @@ object TestMysqlClient {
     val user = "hadoop"
     val system = "Linkis"
     val dataSource = new DataSource();
-    dataSource.setDataSourceName("for-mysql-test")
+    val dataSourceName = "for-mysql-test"
+    dataSource.setDataSourceName(dataSourceName)
     dataSource.setDataSourceDesc("this is for mysql test")
     dataSource.setCreateSystem(system)
     dataSource.setDataSourceTypeId(1L)
@@ -115,7 +116,7 @@ object TestMysqlClient {
     //example of use
     val metadataGetDatabasesAction: MetadataGetDatabasesAction = MetadataGetDatabasesAction.builder()
       .setUser(user)
-      .setDataSourceId(dataSourceId)
+      .setDataSourceName(dataSourceName)
       .setSystem(system)
       .build()
     val metadataGetDatabasesResult: MetadataGetDatabasesResult = metaDataClient.getDatabases(metadataGetDatabasesAction)
@@ -123,7 +124,7 @@ object TestMysqlClient {
 
     val metadataGetTablesAction: MetadataGetTablesAction = MetadataGetTablesAction.builder()
       .setUser(user)
-      .setDataSourceId(dataSourceId)
+      .setDataSourceName(dataSourceName)
       .setDatabase("linkis")
       .setSystem(system)
       .build()
@@ -133,13 +134,12 @@ object TestMysqlClient {
 
     val metadataGetColumnsAction = MetadataGetColumnsAction.builder()
       .setUser(user)
-      .setDataSourceId(dataSourceId)
+      .setDataSourceName(dataSourceName)
       .setDatabase("linkis")
       .setSystem(system)
       .setTable("linkis_datasource")
       .build()
     val metadataGetColumnsResult: MetadataGetColumnsResult = metaDataClient.getColumns(metadataGetColumnsAction)
-
 
   }
 }

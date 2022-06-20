@@ -121,19 +121,19 @@
           <span>{{`${row.engineType}:${row.instance}`}}</span>
         </template>
         <template slot-scope="{row}" slot="usedResource">
-          <span>{{`${calcCompany(row.resource.usedResource)}`}}</span>
+          <span>{{`${calcCompany(row.resource.usedResource ? row.resource.usedResource.DriverAndYarnResource.loadInstanceResource : {})}`}}</span>
         </template>
         <template slot-scope="{row}" slot="lockedResource">
-          <span>{{`${calcCompany(row.resource.lockedResource)}`}}</span>
+          <span>{{`${calcCompany(row.resource.lockedResource ? row.resource.lockedResource.DriverAndYarnResource.loadInstanceResource : {})}`}}</span>
         </template>
         <template slot-scope="{row}" slot="maxResource">
-          <span>{{`${calcCompany(row.resource.maxResource)}`}}</span>
+          <span>{{`${calcCompany(row.resource.maxResource ? row.resource.maxResource.DriverAndYarnResource.loadInstanceResource : {})}`}}</span>
         </template>
         <template slot-scope="{row}" slot="leftResource">
-          <span>{{`${calcCompany(row.resource.leftResource)}`}}</span>
+          <span>{{`${calcCompany(row.resource.leftResource ? row.resource.leftResource.DriverAndYarnResource.loadInstanceResource : {})}`}}</span>
         </template>
         <template slot-scope="{row}" slot="minResource">
-          <span>{{`${calcCompany(row.resource.minResource)}`}}</span>
+          <span>{{`${calcCompany(row.resource.minResource ? row.resource.minResource.DriverAndYarnResource.loadInstanceResource : {})}`}}</span>
         </template>
         <template slot-scope="{row}" slot="startTime">
           <span>{{ timeFormat(row) }}</span>
@@ -538,8 +538,7 @@ export default {
         }
         return data;
       }
-      console.log(resource);
-      return  resource && (resource.cores !== undefined || resource.memonry !== undefined || resource.instance !== undefined) ? `${calcCompanyToData(resource.cores)}cores,${calcCompanyToData(resource.memory, true)}G,${calcCompanyToData(resource.instance)}apps` : ''
+      return resource && (resource.cores !== undefined || resource.memory !== undefined || resource.instance !== undefined) ? `${calcCompanyToData(resource.cores)}cores,${calcCompanyToData(resource.memory, true)}G,${calcCompanyToData(resource.instance)}apps` : ''
     },
     calcCompanyAdmin(row, field, type, yarn) {
       let data = ' -- '

@@ -1,0 +1,115 @@
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+# 
+#   http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: linkis-web
+  namespace: preprod
+  labels:
+    app: linkis-web
+    service: linkis-web
+spec:
+  ports:
+    - name: http
+      port: 8087
+      targetPort: 8087
+  selector:
+    app: linkis-web
+  type: NodePort
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: linkis-web-config
+  namespace: preprod
+data:
+  default.conf: |
+      server {
+        listen       8087;
+        server_name  localhost;
+        access_log  /var/log/nginx/host.access.log  main;
+        error_log  /var/log/nginx/host.error.log;
+        location /ws {
+        proxy_pass http://linkis-mg-gateway:9001;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection upgrade;
+        }
+
+        location ^~/api/ {
+        #rewrite ^/api/(.*)$ /$1 break;
+        proxy_pass http://linkis-mg-gateway.preprod:9001;
+        }
+
+        location / {
+        root   /usr/share/nginx/html; # 静态文件目录
+        index  index.html index.html;
+        }
+        #error_page  404              /404.html;
+        # redirect server error pages to the static page /50x.html
+        #
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+        root   /usr/share/nginx/html;
+        }
+      }
+
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: linkis-web
+  namespace: preprod
+  labels:
+    app: linkis-web
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: linkis-web
+      version: v1
+  template:
+    metadata:
+      namespace: preprod
+      labels:
+        app: linkis-web
+        version: v1
+    spec:
+      volumes:
+        - name: nginx-config
+          configMap:
+            name: linkis-web-config
+            items: 
+            - key: default.conf
+              path: default.conf
+      containers:
+        - name: linkis-web
+          image: registry.mydomain.com/library/linkis-web:1.2.0
+          ports:
+            - containerPort: 8087
+          resources:
+            requests:
+              memory: "500Mi"
+              cpu: "1000m"
+            limits:
+              memory: "1Gi"
+              cpu: "2000m"
+          volumeMounts:
+            - name: nginx-config
+              subPath: default.conf
+              mountPath: /etc/nginx/conf.d/default.conf

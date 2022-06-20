@@ -161,3 +161,15 @@ case class StringType(value: String) extends VariableType {
     }
   }
 }
+
+case class HourType(value: CustomHourType) extends VariableType {
+  override def getValue: String = value.toString
+
+  def calculator(signal: String, bValue: String): String = {
+    signal match {
+      case "+" => value + bValue.toInt
+      case "-" => value - bValue.toInt
+      case _ => throw new LinkisCommonErrorException(20046, s"HourType is not supported to use:$signal")
+    }
+  }
+}

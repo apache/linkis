@@ -38,6 +38,14 @@ object DateTypeUtils {
     override protected def initialValue = new SimpleDateFormat("yyyy-MM")
   }
 
+  val dateFormatHourLocal = new ThreadLocal[SimpleDateFormat]() {
+    override protected def initialValue = new SimpleDateFormat("yyyyMMddHH")
+  }
+
+  val dateFormatHourStdLocal = new ThreadLocal[SimpleDateFormat]() {
+    override protected def initialValue = new SimpleDateFormat("yyyy-MM-dd-HH")
+  }
+
   /**
    * Get Today"s date
    *
@@ -218,6 +226,21 @@ object DateTypeUtils {
       dateFormat_std.format(cal.getTime)
     } else {
       dateFormat.format(cal.getTime)
+    }
+  }
+
+  def getCurHour(std: Boolean = true, dateString: String = null): String = {
+    val dateFormat = dateFormatHourLocal.get()
+    val dateFormat_std = dateFormatHourStdLocal.get()
+    val cal: Calendar = Calendar.getInstance()
+    val hour = cal.get(Calendar.HOUR_OF_DAY)
+    val hourOfDayStd = if (hour < 10) "0" + hour else "" + hour
+    val curHourStr = dateString + hourOfDayStd
+    val curHour = dateFormat.parse(curHourStr)
+    if (std) {
+      dateFormat_std.format(curHour)
+    } else {
+      curHourStr
     }
   }
 

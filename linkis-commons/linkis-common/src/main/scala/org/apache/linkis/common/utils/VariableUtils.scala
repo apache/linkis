@@ -20,14 +20,13 @@ package org.apache.linkis.common.utils
 import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.exception.LinkisCommonErrorException
 import org.apache.linkis.common.variable
-import org.apache.linkis.common.variable.DateTypeUtils.{getMonthDay, getToday, getYesterday}
+import org.apache.linkis.common.variable.DateTypeUtils.{getCurHour, getMonthDay, getToday, getYesterday}
 import org.apache.linkis.common.variable._
 
 import java.util
 import scala.collection.JavaConverters.mapAsScalaMapConverter
 import scala.collection.convert.WrapAsScala._
 import scala.collection.mutable
-import scala.collection.mutable.ArrayBuffer
 import scala.util.control.Exception.allCatch
 
 
@@ -121,48 +120,48 @@ object VariableUtils extends Logging {
   }
 
   private def initAllDateVars(run_date: CustomDateType, nameAndType: mutable.Map[String, variable.VariableType]): Unit = {
-    val run_data_str = run_date.toString
+    val run_date_str = run_date.toString
     nameAndType("run_date_std") = variable.DateType(new CustomDateType(run_date.getStdDate))
-    nameAndType("run_month_begin") = MonthType(new CustomMonthType(run_data_str, false))
-    nameAndType("run_month_begin_std") = variable.MonthType(new CustomMonthType(run_data_str))
-    nameAndType("run_month_end") = variable.MonthType(new CustomMonthType(run_data_str, false, true))
-    nameAndType("run_month_end_std") = variable.MonthType(new CustomMonthType(run_data_str, true, true))
+    nameAndType("run_month_begin") = MonthType(new CustomMonthType(run_date_str, false))
+    nameAndType("run_month_begin_std") = variable.MonthType(new CustomMonthType(run_date_str))
+    nameAndType("run_month_end") = variable.MonthType(new CustomMonthType(run_date_str, false, true))
+    nameAndType("run_month_end_std") = variable.MonthType(new CustomMonthType(run_date_str, true, true))
 
-    nameAndType("run_quarter_begin") = QuarterType(new CustomQuarterType(run_data_str, false))
-    nameAndType("run_quarter_begin_std") = QuarterType(new CustomQuarterType(run_data_str))
-    nameAndType("run_quarter_end") = QuarterType(new CustomQuarterType(run_data_str, false, true))
-    nameAndType("run_quarter_end_std") = QuarterType(new CustomQuarterType(run_data_str, true, true))
+    nameAndType("run_quarter_begin") = QuarterType(new CustomQuarterType(run_date_str, false))
+    nameAndType("run_quarter_begin_std") = QuarterType(new CustomQuarterType(run_date_str))
+    nameAndType("run_quarter_end") = QuarterType(new CustomQuarterType(run_date_str, false, true))
+    nameAndType("run_quarter_end_std") = QuarterType(new CustomQuarterType(run_date_str, true, true))
 
-    nameAndType("run_half_year_begin") = HalfYearType(new CustomHalfYearType(run_data_str, false))
-    nameAndType("run_half_year_begin_std") = HalfYearType(new CustomHalfYearType(run_data_str))
-    nameAndType("run_half_year_end") = HalfYearType(new CustomHalfYearType(run_data_str, false, true))
-    nameAndType("run_half_year_end_std") = HalfYearType(new CustomHalfYearType(run_data_str, true, true))
+    nameAndType("run_half_year_begin") = HalfYearType(new CustomHalfYearType(run_date_str, false))
+    nameAndType("run_half_year_begin_std") = HalfYearType(new CustomHalfYearType(run_date_str))
+    nameAndType("run_half_year_end") = HalfYearType(new CustomHalfYearType(run_date_str, false, true))
+    nameAndType("run_half_year_end_std") = HalfYearType(new CustomHalfYearType(run_date_str, true, true))
 
-    nameAndType("run_year_begin") = YearType(new CustomYearType(run_data_str, false))
-    nameAndType("run_year_begin_std") = YearType(new CustomYearType(run_data_str))
-    nameAndType("run_year_end") = YearType(new CustomYearType(run_data_str, false, true))
-    nameAndType("run_year_end_std") = YearType(new CustomYearType(run_data_str, true, true))
+    nameAndType("run_year_begin") = YearType(new CustomYearType(run_date_str, false))
+    nameAndType("run_year_begin_std") = YearType(new CustomYearType(run_date_str))
+    nameAndType("run_year_end") = YearType(new CustomYearType(run_date_str, false, true))
+    nameAndType("run_year_end_std") = YearType(new CustomYearType(run_date_str, true, true))
 
     nameAndType("run_date_std") = variable.DateType(new CustomDateType(run_date.getStdDate))
-    nameAndType("run_month_begin") = variable.MonthType(new CustomMonthType(run_data_str, false))
-    nameAndType("run_month_begin_std") = variable.MonthType(new CustomMonthType(run_data_str))
-    nameAndType("run_month_end") = variable.MonthType(new CustomMonthType(run_data_str, false, true))
-    nameAndType("run_month_end_std") = variable.MonthType(new CustomMonthType(run_data_str, true, true))
+    nameAndType("run_month_begin") = variable.MonthType(new CustomMonthType(run_date_str, false))
+    nameAndType("run_month_begin_std") = variable.MonthType(new CustomMonthType(run_date_str))
+    nameAndType("run_month_end") = variable.MonthType(new CustomMonthType(run_date_str, false, true))
+    nameAndType("run_month_end_std") = variable.MonthType(new CustomMonthType(run_date_str, true, true))
 
-    nameAndType("run_quarter_begin") = QuarterType(new CustomQuarterType(run_data_str, false))
-    nameAndType("run_quarter_begin_std") = QuarterType(new CustomQuarterType(run_data_str))
-    nameAndType("run_quarter_end") = QuarterType(new CustomQuarterType(run_data_str, false, true))
-    nameAndType("run_quarter_end_std") = QuarterType(new CustomQuarterType(run_data_str, true, true))
+    nameAndType("run_quarter_begin") = QuarterType(new CustomQuarterType(run_date_str, false))
+    nameAndType("run_quarter_begin_std") = QuarterType(new CustomQuarterType(run_date_str))
+    nameAndType("run_quarter_end") = QuarterType(new CustomQuarterType(run_date_str, false, true))
+    nameAndType("run_quarter_end_std") = QuarterType(new CustomQuarterType(run_date_str, true, true))
 
-    nameAndType("run_half_year_begin") = HalfYearType(new CustomHalfYearType(run_data_str, false))
-    nameAndType("run_half_year_begin_std") = HalfYearType(new CustomHalfYearType(run_data_str))
-    nameAndType("run_half_year_end") = HalfYearType(new CustomHalfYearType(run_data_str, false, true))
-    nameAndType("run_half_year_end_std") = HalfYearType(new CustomHalfYearType(run_data_str, true, true))
+    nameAndType("run_half_year_begin") = HalfYearType(new CustomHalfYearType(run_date_str, false))
+    nameAndType("run_half_year_begin_std") = HalfYearType(new CustomHalfYearType(run_date_str))
+    nameAndType("run_half_year_end") = HalfYearType(new CustomHalfYearType(run_date_str, false, true))
+    nameAndType("run_half_year_end_std") = HalfYearType(new CustomHalfYearType(run_date_str, true, true))
 
-    nameAndType("run_year_begin") = YearType(new CustomYearType(run_data_str, false))
-    nameAndType("run_year_begin_std") = YearType(new CustomYearType(run_data_str))
-    nameAndType("run_year_end") = YearType(new CustomYearType(run_data_str, false, true))
-    nameAndType("run_year_end_std") = YearType(new CustomYearType(run_data_str, true, true))
+    nameAndType("run_year_begin") = YearType(new CustomYearType(run_date_str, false))
+    nameAndType("run_year_begin_std") = YearType(new CustomYearType(run_date_str))
+    nameAndType("run_year_end") = YearType(new CustomYearType(run_date_str, false, true))
+    nameAndType("run_year_end_std") = YearType(new CustomYearType(run_date_str, true, true))
 
     /*
     calculate run_today based on run_date
@@ -183,6 +182,11 @@ object VariableUtils extends Logging {
     nameAndType("run_mon_start_std") = MonType(new CustomMonType(run_mon.toString, true, false))
     nameAndType("run_mon_end") = MonType(new CustomMonType(run_mon.toString, false, true))
     nameAndType("run_mon_end_std") = MonType(new CustomMonType(run_mon.toString, true, true))
+
+    // calculate run_mon base on run_date
+    val run_today_h = new CustomHourType(getCurHour(false, run_today.toString), false)
+    nameAndType("run_today_h") = HourType(run_today_h)
+    nameAndType("run_today_h_std") = HourType(new CustomHourType(run_today_h.toString, true))
   }
 
   /**

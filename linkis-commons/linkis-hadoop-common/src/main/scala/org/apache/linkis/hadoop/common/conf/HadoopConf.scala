@@ -44,5 +44,5 @@ object HadoopConf {
 
   val HDFS_ENABLE_CACHE_IDLE_TIME = CommonVars("wds.linkis.hadoop.hdfs.cache.idle.time", 3*60*1000).getValue
 
-  val HDFS_ENABLE_CACHE_MAX_TIME = CommonVars("wds.linkis.hadoop.hdfs.cache.max.time",  new TimeType("12h")).getValue.toLong
+  val HDFS_ENABLE_CACHE_MAX_TIME = CommonVars("wds.linkis.hadoop.hdfs.cache.max.time", new TimeType("12h")).getValue.toLong
 }

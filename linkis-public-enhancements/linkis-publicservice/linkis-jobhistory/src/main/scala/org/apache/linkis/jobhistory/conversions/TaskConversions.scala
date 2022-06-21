@@ -282,7 +282,7 @@ object TaskConversions extends Logging {
         } else {
           taskVO.setCostTime(System.currentTimeMillis() - createTime.getTime)
         }
-      } else{
+      } else {
         taskVO.setCostTime(System.currentTimeMillis() - createTime.getTime)
       }
     }
@@ -290,6 +290,7 @@ object TaskConversions extends Logging {
       val engineMap = metrics.get(TaskConstant.ENTRANCEJOB_ENGINECONN_MAP).asInstanceOf[util.Map[String, Object]]
       if (null != engineMap && !engineMap.isEmpty) {
         taskVO.setEngineInstance(engineMap.map(_._1).toList.mkString(","))
+        taskVO.setCanRetry(true)
       }
     } else {
       taskVO.setEngineInstance("EngineInstance not ready in metrics.")

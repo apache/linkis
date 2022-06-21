@@ -24,7 +24,7 @@ import org.apache.linkis.common.utils.{Logging, RSAUtils, Utils}
 import org.apache.linkis.server.conf.ServerConfiguration
 import org.apache.linkis.server.exception.{IllegalUserTicketException, LoginExpireException, NonLoginException}
 import javax.servlet.http.Cookie
-import org.apache.commons.lang.time.DateFormatUtils
+import org.apache.commons.lang3.time.DateFormatUtils
 import scala.collection.JavaConverters._
 
 object SSOUtils extends Logging {
@@ -58,10 +58,11 @@ object SSOUtils extends Logging {
   )
 
   private[security] def getUserAndLoginTime(userTicketId: String): Option[(String, Long)] = {
-    ServerConfiguration.getUsernameByTicket(userTicketId).map { userAndLoginTime =>
-      if(userAndLoginTime.indexOf(",") < 0) throw new IllegalUserTicketException(s"Illegal user token information(非法的用户token信息).")
+    ServerConfiguration.getUsernameByTicket(userTicketId).map { userAndLoginTime => {
+      if (userAndLoginTime.indexOf(",") < 0) throw new IllegalUserTicketException(s"Illegal user token information(非法的用户token信息).")
       val index = userAndLoginTime.lastIndexOf(",")
       (userAndLoginTime.substring(0, index), userAndLoginTime.substring(index + 1).toLong)
+    }
     }
   }
 
@@ -127,7 +128,7 @@ object SSOUtils extends Logging {
 
   def getLoginUser(getUserTicketId: String => Option[String]): Option[String] = getUserTicketId(USER_TICKET_ID_STRING).map { t =>
     isTimeoutOrNot(t)
-    getUserAndLoginTime(t).getOrElse(throw new IllegalUserTicketException( s"Illegal user token information(非法的用户token信息)."))._1
+    getUserAndLoginTime(t).getOrElse(throw new IllegalUserTicketException(s"Illegal user token information(非法的用户token信息)."))._1
   }
 
   def getLoginUsername(getUserTicketId: String => Option[String]): String = getLoginUser(getUserTicketId).getOrElse(throw new NonLoginException(s"You are not logged in, please login first(您尚未登录，请先登录!)"))
@@ -139,6 +140,7 @@ object SSOUtils extends Logging {
 
   def updateLastAccessTime(getUserTicketId: String => Option[String]): Unit = getUserTicketId(USER_TICKET_ID_STRING).foreach(isTimeoutOrNot)
 
+  @throws(classOf[LoginExpireException])
   private def isTimeoutOrNot(userTicketId: String): Unit = if (!userTicketIdToLastAccessTime.containsKey(userTicketId)) {
     throw new LoginExpireException("You are not logged in, please login first!(您尚未登录，请先登录!)")
   } else {
@@ -154,7 +156,5 @@ object SSOUtils extends Logging {
   }
 
   def getSessionTimeOut(): Long = sessionTimeout
-
-
 
 }

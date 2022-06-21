@@ -18,7 +18,7 @@
   
 <configuration status="error" monitorInterval="30">
     <appenders>
-        <RollingFile name="RollingFile" append="true" fileName="${env:LOG_DIRS}/stdout"
+        <RollingFile name="RollingFile" append="true" fileName="${env:LOG_DIRS:-logs}/stdout"
                      filePattern="${env:LOG_DIRS}/$${date:yyyy-MM}/linkis-log-%d{yyyy-MM-dd-hh}-%i.log">
             <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] [%-40t] %c{1.} (%L) [%M] - %msg%xEx%n"/>
             <Policies>

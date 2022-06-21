@@ -18,7 +18,7 @@
 package org.apache.linkis.engineplugin.hive.executor
 
 import org.apache.linkis.common.exception.ErrorException
-import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.common.utils.{ByteTimeUtils, Logging, Utils}
 import org.apache.linkis.engineconn.computation.executor.execute.{ComputationExecutor, EngineExecutionContext}
 import org.apache.linkis.engineconn.core.EngineConnObject
 import org.apache.linkis.engineplugin.hive.cs.CSHiveHelper
@@ -198,8 +198,8 @@ class HiveEngineConnExecutor(id: Int,
           // todo check uncleared context ?
           return ErrorExecuteResponse(hiveResponse.getErrorMessage, hiveResponse.getException)
         }
-        engineExecutorContext.appendStdout(s"Time taken: ${Utils.msDurationToString(System.currentTimeMillis() - startTime)}, begin to fetch results.")
-        LOG.info(s"$getId >> Time taken: ${Utils.msDurationToString(System.currentTimeMillis() - startTime)}, begin to fetch results.")
+        engineExecutorContext.appendStdout(s"Time taken: ${ByteTimeUtils.msDurationToString(System.currentTimeMillis() - startTime)}, begin to fetch results.")
+        LOG.info(s"$getId >> Time taken: ${ByteTimeUtils.msDurationToString(System.currentTimeMillis() - startTime)}, begin to fetch results.")
 
         val fieldSchemas = if (hiveResponse.getSchema != null) hiveResponse.getSchema.getFieldSchemas
         else if (driver.getSchema != null) driver.getSchema.getFieldSchemas

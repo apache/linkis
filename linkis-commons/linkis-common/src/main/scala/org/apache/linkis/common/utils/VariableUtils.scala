@@ -27,7 +27,6 @@ import java.util
 import scala.collection.JavaConverters.mapAsScalaMapConverter
 import scala.collection.convert.WrapAsScala._
 import scala.collection.mutable
-import scala.collection.mutable.ArrayBuffer
 import scala.util.control.Exception.allCatch
 
 
@@ -218,7 +217,7 @@ object VariableUtils extends Logging {
           var expression = name.trim
           val varType = nameAndType.get(name.trim).orNull
           if (varType == null) {
-            logger.warn(s"Use undefined variables or use the set method: [$str](使用了未定义的变量或者使用了set方式:[$str])")
+            warn(s"Use undefined variables or use the set method: [$str](使用了未定义的变量或者使用了set方式:[$str])")
             parseCode ++= codes(i - 1) ++ str
           } else {
             var res: String = varType.getValue
@@ -237,7 +236,7 @@ object VariableUtils extends Logging {
               }
             }
             if (!expressionCache.contains(expression)) {
-              logger.info(s"Variable expression [$str] = $res(变量表达式[$str] = $res)")
+              info(s"Variable expression [$str] = $res(变量表达式[$str] = $res)")
               expressionCache += expression
             }
             parseCode ++= codes(i - 1) ++ res
@@ -298,13 +297,11 @@ object VariableUtils extends Logging {
             }
           }
         case errRegex() =>
-          logger.warn(s"The variable definition is incorrect:$str,if it is not used, it will not run the error, but it is recommended to use the correct specification to define")
+          warn(s"The variable definition is incorrect:$str,if it is not used, it will not run the error, but it is recommended to use the correct specification to define")
         case _ =>
       }
     }
     }
     nameAndValue
   }
-
-
 }

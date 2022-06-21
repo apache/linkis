@@ -94,6 +94,7 @@ public class VariableRestfulApi {
             @ApiImplicitParam(name="key",dataType="String",required=true,value="参数名称，属于globalVariables"),
             @ApiImplicitParam(name="value",dataType="List",required=true,value="变量值，跟key属于键值对 属于被globalVariables包含")
     })
+    @ApiOperationSupport(ignoreParameters = {"json"})
     @RequestMapping(path = "saveGlobalVariable", method = RequestMethod.POST)
     public Message saveGlobalVariable(HttpServletRequest req, @RequestBody JsonNode json)
             throws IOException, VariableException {

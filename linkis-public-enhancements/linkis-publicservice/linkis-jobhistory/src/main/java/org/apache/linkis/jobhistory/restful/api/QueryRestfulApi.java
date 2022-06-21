@@ -122,16 +122,16 @@ public class QueryRestfulApi {
 
     @ApiOperation(value="全局历史", notes="根据条件获取全局历史数据列表默认获取全部")
     @ApiImplicitParams({
-            @ApiImplicitParam(name="taskID",value="ID",paramType="query",dataType="Long"),
-            @ApiImplicitParam(name="tpageNow",value="页码",paramType="query",dataType="Integer"),
-            @ApiImplicitParam(name="pageSize",value="页面数量",paramType="query",dataType="Integer"),
-            @ApiImplicitParam(name="isAdminView",value="是否为管理员模式或者普通模式",paramType="query",dataType="Boolean"),
-            @ApiImplicitParam(name="startDate",value="开始时间",paramType="query",dataType="Long"),
-            @ApiImplicitParam(name="endDate",value="结束时间",paramType="query",dataType="Long"),
-            @ApiImplicitParam(name="status",value="结束时间",paramType="query",dataType="String"),
-            @ApiImplicitParam(name="executeApplicationName",value="操作人",paramType="query",dataType="String"),
-            @ApiImplicitParam(name="creator",value="创建者",paramType="query",dataType="String"),
-            @ApiImplicitParam(name="proxyUser",value="代理用户",paramType="query",dataType="String"),
+            @ApiImplicitParam(name="taskID", required = false,value="ID",paramType="query",dataType="Long"),
+            @ApiImplicitParam(name="tpageNow", required = false,value="页码",paramType="query",dataType="Integer"),
+            @ApiImplicitParam(name="pageSize", required = false,value="页面数量",paramType="query",dataType="Integer"),
+            @ApiImplicitParam(name="isAdminView", required = false,value="是否为管理员模式或者普通模式",paramType="query",dataType="Boolean"),
+            @ApiImplicitParam(name="startDate", required = false,value="开始时间",paramType="query",dataType="Long"),
+            @ApiImplicitParam(name="endDate", required = false,value="结束时间",paramType="query",dataType="Long"),
+            @ApiImplicitParam(name="status", required = false,value="结束时间",paramType="query",dataType="String"),
+            @ApiImplicitParam(name="executeApplicationName", required = false,value="操作人",paramType="query",dataType="String"),
+            @ApiImplicitParam(name="creator", required = false,value="创建者",paramType="query",dataType="String"),
+            @ApiImplicitParam(name="proxyUser", required = false,value="代理用户",paramType="query",dataType="String"),
 
     })
     /** Method list should not contain subjob, which may cause performance problems. */
@@ -240,7 +240,18 @@ public class QueryRestfulApi {
                 .data(TaskConstant.TASKS, vos)
                 .data(JobRequestConstants.TOTAL_PAGE(), total);
     }
+    @ApiOperation(value="列表撤消", notes="列表撤消")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="startDate", required = false,value="开始时间",dataType="Long "),
+            @ApiImplicitParam(name="endDate", required = false,value="结束时间",dataType="Long"),
+            @ApiImplicitParam(name="status", required = false,value="status",dataType="String"),
+            @ApiImplicitParam(name="pageNow", required = false,value="pageNow",dataType="Integer"),
+            @ApiImplicitParam(name="pageSize", required = false,value="pageSize",dataType="Integer"),
+            @ApiImplicitParam(name="startTaskID", required = false,value="startTaskID",dataType="Long"),
+            @ApiImplicitParam(name="engineType", required = false,value="engineType",dataType="String"),
+            @ApiImplicitParam(name="creator", required = false,value="creator",dataType="String")
 
+    })
     /** Method list should not contain subjob, which may cause performance problems. */
     @RequestMapping(path = "/listundone", method = RequestMethod.GET)
     public Message listundone(

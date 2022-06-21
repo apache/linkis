@@ -142,6 +142,7 @@
           "children": {
             "globalHistory": "Global History",
             "resource": "Resource Manager",
+            "resourceEngineConnList": "History Engine List",
             "setting": "Settings",
             "dateReport": "Global Variables",
             "globalValiable": "Frequently Asked",

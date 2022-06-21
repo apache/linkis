@@ -242,7 +242,7 @@ class LoadInstanceResource(val memory: Long, val cores: Int, val instances: Int)
     case l: LoadResource => new LoadInstanceResource(l.memory, l.cores, 0)
     case m: MemoryResource => new LoadInstanceResource(m.memory, 0, 0)
     case c: CPUResource => new LoadInstanceResource(0, c.cores, 0)
-    case d: DriverAndYarnResource =>  d.loadInstanceResource // yarn resource has special logic
+    case d: DriverAndYarnResource => d.loadInstanceResource // yarn resource has special logic
     case _ => new LoadInstanceResource(Long.MaxValue, Integer.MAX_VALUE, Integer.MAX_VALUE)
   }
 
@@ -285,7 +285,7 @@ class LoadInstanceResource(val memory: Long, val cores: Int, val instances: Int)
 class InstanceResource(val instances: Int) extends CPUResource(instances) {
   override protected def toResource(cores: Int): Resource = new InstanceResource(cores)
 
-  override def toJson: String = s"Instance:$instances"
+  override def toJson: String = s"Instance: $instances"
 
   override def toString: String = toJson
 }

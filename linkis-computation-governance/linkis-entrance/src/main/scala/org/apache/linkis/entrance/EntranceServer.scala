@@ -29,6 +29,10 @@ import org.apache.linkis.scheduler.queue.{Job, SchedulerEventState}
 import org.apache.linkis.server.conf.ServerConfiguration
 import org.apache.commons.lang.exception.ExceptionUtils
 import org.apache.commons.lang3.StringUtils
+import org.apache.linkis.entrance.utils.JobHistoryHelper
+import org.apache.linkis.protocol.constants.TaskConstant
+
+import java.util
 
 
 abstract class EntranceServer extends Logging {
@@ -79,6 +83,10 @@ abstract class EntranceServer extends Logging {
           t.setErrorDesc(error.getDesc)
           t.setStatus(SchedulerEventState.Failed.toString)
           t.setProgress(EntranceJob.JOB_COMPLETED_PROGRESS.toString)
+          val infoMap = new  util.HashMap[String, Object]
+          infoMap.put(TaskConstant.ENGINE_INSTANCE, "NULL")
+          infoMap.put("message", "Task interception failed and cannot be retried")
+          JobHistoryHelper.updateJobRequestMetrics(jobRequest, null, infoMap)
         case _ =>
       }
       getEntranceContext.getOrCreatePersistenceManager().createPersistenceEngine().updateIfNeeded(jobRequest)

@@ -54,13 +54,6 @@ class ResponseHandlerImpl extends ResponseHandler {
           cborMapper.readTree(contentBytes)
         case "application/smile" =>
           smileMapper.readTree(contentBytes)
-//        case "text/csv" =>
-//          csvMapper.readTree(contentBytes)
-//        case "text/tab-separated-values" =>
-//          csvMapper.readTree(contentBytes)
-//          val schema = csvMapper.schemaFor(classOf[Array[Byte]]).withColumnSeparator('\t')
-//          val reader = csvMapper.readerFor(classOf[Array[Byte]]).`with`(schema)
-//          reader.readValue(contentBytes)
         case _ =>
           jsonMapper.readTree(contentBytes)
       }
@@ -154,25 +147,4 @@ class ResponseHandlerImpl extends ResponseHandler {
     }
   }
   // scalastyle:on
-
-//  def writeText(content: String, storePath: String, alias: String, proxyUser: String): String = {
-//    val resultSet = ResultSetFactory.getInstance.getResultSetByType(ResultSetFactory.TEXT_TYPE)
-//    val resultSetPath = resultSet.getResultSetPath(new FsPath(storePath), alias)
-//    val writer = ResultSetWriter.getResultSetWriter(resultSet, ElasticSearchConfiguration.ENGINE_RESULT_SET_MAX_CACHE.getValue.toLong, resultSetPath, proxyUser)
-//    writer.addMetaData(null)
-//    content.split("\\n").foreach(item => writer.addRecord(new LineRecord(item)))
-//    IOUtils.closeQuietly(writer)
-//    writer.toString()
-//  }
-//
-//  def writeTable(metaData: TableMetaData, records: ArrayBuffer[TableRecord], storePath: String, alias: String, proxyUser: String): String = {
-//    val resultSet = ResultSetFactory.getInstance.getResultSetByType(ResultSetFactory.TABLE_TYPE)
-//    val resultSetPath = resultSet.getResultSetPath(new FsPath(storePath), alias)
-//    val writer = ResultSetWriter.getResultSetWriter(resultSet, ElasticSearchConfiguration.ENGINE_RESULT_SET_MAX_CACHE.getValue.toLong, resultSetPath, proxyUser)
-//    writer.addMetaData(metaData)
-//    records.foreach(writer.addRecord)
-//    IOUtils.closeQuietly(writer)
-//    writer.toString()
-//  }
-
 }

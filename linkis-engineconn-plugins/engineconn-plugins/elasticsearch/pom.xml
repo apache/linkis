@@ -31,7 +31,6 @@
 
     <properties>
         <elasticsearch.version>7.6.2</elasticsearch.version>
-        <fasterxml.jackson.version>2.11.3</fasterxml.jackson.version>
     </properties>
 
     <dependencies>
@@ -88,22 +87,18 @@
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-yaml</artifactId>
-            <version>${fasterxml.jackson.version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-cbor</artifactId>
-            <version>${fasterxml.jackson.version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-smile</artifactId>
-            <version>${fasterxml.jackson.version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-csv</artifactId>
-            <version>${fasterxml.jackson.version}</version>
         </dependency>
 
     </dependencies>

@@ -34,6 +34,7 @@ public class InteractiveJobTest {
                         .setCreator("IDE")
                         .setCode("show tables")
                         .addExecuteUser("hadoop")
+                        .setMaxRetry(2) // automatic retry number
                         .build();
         // 3. Submit Job to Linkis
         job.submit();

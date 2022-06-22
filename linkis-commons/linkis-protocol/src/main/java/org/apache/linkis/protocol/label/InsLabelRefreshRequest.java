@@ -22,7 +22,7 @@ import org.apache.linkis.common.ServiceInstance;
 import java.util.HashMap;
 import java.util.Map;
 
-public class InsLabelRefreshRequest {
+public class InsLabelRefreshRequest implements LabelRequest {
 
     /** Service instance */
     private ServiceInstance serviceInstance;

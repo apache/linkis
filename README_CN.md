@@ -2,6 +2,7 @@ Linkis
 ============
 
 [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
+[![codecov](https://codecov.io/gh/apache/incubator-linkis/branch/master/graph/badge.svg)](https://codecov.io/gh/apache/incubator-linkis/branch/master)
 
 [English](README.md) | [中文](README_CN.md)
 
@@ -63,6 +64,22 @@ Linkis 自2019年开源发布以来，已累计积累了700多家试验企业和
 请前往[Linkis releases 页面](https://github.com/apache/incubator-linkis/releases) 下载Linkis 的已编译版本或源码包。
 
 # 编译和安装部署
+```shell
+
+## 后端编译
+### Mac OS/Linux
+./mvnw -N install
+./mvnw  clean install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
+
+### Windows
+mvnw.cmd -N install
+mvnw.cmd clean install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
+
+## 前端编译
+cd incubator-linkis/web
+npm install
+npm run build
+```
 请参照[编译指引](https://linkis.apache.org/zh-CN/docs/latest/development/linkis_compile_and_package) 来编译Linkis 源码。  
 请参考[安装部署文档](https://linkis.apache.org/zh-CN/docs/latest/deployment/quick_deploy) 来部署Linkis。
 
@@ -108,8 +125,8 @@ Linkis 基于微服务架构开发，其服务可以分为3类:计算治理服�
 # 联系我们
 
 对Linkis 的任何问题和建议，敬请提交issue，以便跟踪处理和经验沉淀共享。  
-您也可以扫描下面的二维码，加入我们的微信/QQ群，以获得更快速的响应。
-![introduction05](https://user-images.githubusercontent.com/7869972/148767386-0663f833-547d-4c30-8876-081bb966ffb8.png)
+您也可以扫描下面的二维码，加入我们的微信群，以获得更快速的响应。
+![WeChat](https://user-images.githubusercontent.com/11496700/173569063-8615c259-59ef-477a-9cee-825d28b54e7b.png)
 
 Meetup 视频 [Bilibili](https://space.bilibili.com/598542776?from=search&seid=14344213924133040656).
 

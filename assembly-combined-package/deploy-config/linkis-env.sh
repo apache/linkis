@@ -152,7 +152,7 @@ LINKIS_PUBLIC_MODULE=lib/linkis-commons/public-module
 export PROMETHEUS_ENABLE=false
 
 #If you want to start metadata related microservices, you can set this export ENABLE_METADATA_MANAGE=true
-export ENABLE_METADATA_MANAGER=false
+export ENABLE_METADATA_MANAGER=true
 
 #If you only want to experience linkis streamlined services, not rely on hdfs
 #you can set the following configuration to false  and for the configuration related to the file directory,

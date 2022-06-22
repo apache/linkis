@@ -50,6 +50,12 @@ RESULT_SET_ROOT_PATH=hdfs:///tmp/linkis
 # Active resourcemanager address needed. Recommended to add all ha addresses. eg YARN_RESTFUL_URL="http://127.0.0.1:8088;http://127.0.0.2:8088"
 YARN_RESTFUL_URL="http://127.0.0.1:8088"
 
+## request Yarn resource restful interface When Yarn need auth by user
+## If your environment yarn interface can be accessed directly, ignore it
+#YARN_AUTH_ENABLE=false
+#YARN_AUTH_USER=hadoop
+#YARN_AUTH_PWD=123456
+
 ## request spnego enabled Yarn resource restful interface When Yarn enable kerberos
 ## If your environment yarn interface can be accessed directly, ignore it
 #KERBEROS_ENABLE=true

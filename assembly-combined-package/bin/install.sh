@@ -186,12 +186,24 @@ if [ "$YARN_RESTFUL_URL" != "" ]
 then
   sed -i ${txt}  "s#@YARN_RESTFUL_URL#$YARN_RESTFUL_URL#g" $LINKIS_HOME/db/linkis_dml.sql
 fi
+
+if [ "$YARN_AUTH_ENABLE" != "" ]
+then
+  sed -i ${txt}  "s#@YARN_AUTH_ENABLE#$YARN_AUTH_ENABLE#g" $LINKIS_HOME/db/linkis_dml.sql
+  sed -i ${txt}  "s#@YARN_AUTH_USER#$YARN_AUTH_USER#g" $LINKIS_HOME/db/linkis_dml.sql
+  sed -i ${txt}  "s#@YARN_AUTH_PWD#$YARN_AUTH_PWD#g" $LINKIS_HOME/db/linkis_dml.sql
+else
+  sed -i ${txt}  "s#@YARN_AUTH_ENABLE#false#g" $LINKIS_HOME/db/linkis_dml.sql
+fi
+
+
 if [ "$KERBEROS_ENABLE" != "" ]
 then
   sed -i ${txt}  "s#@KERBEROS_ENABLE#$KERBEROS_ENABLE#g" $LINKIS_HOME/db/linkis_dml.sql
   sed -i ${txt}  "s#@PRINCIPAL_NAME#$PRINCIPAL_NAME#g" $LINKIS_HOME/db/linkis_dml.sql
   sed -i ${txt}  "s#@KEYTAB_PATH#$KEYTAB_PATH#g" $LINKIS_HOME/db/linkis_dml.sql
   sed -i ${txt}  "s#@KRB5_PATH#$KRB5_PATH#g" $LINKIS_HOME/db/linkis_dml.sql
+  sed -i ${txt} '$a \wds.linkis.keytab.enable=true' $LINKIS_HOME/conf/linkis.properties
 else
   sed -i ${txt}  "s#@KERBEROS_ENABLE#false#g" $LINKIS_HOME/db/linkis_dml.sql
 fi

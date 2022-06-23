@@ -29,6 +29,7 @@ import org.apache.linkis.scheduler.queue.{Job, SchedulerEventState}
 import org.apache.linkis.server.conf.ServerConfiguration
 import org.apache.commons.lang.exception.ExceptionUtils
 import org.apache.commons.lang3.StringUtils
+import org.apache.linkis.entrance.cs.CSEntranceHelper
 import org.apache.linkis.entrance.utils.JobHistoryHelper
 import org.apache.linkis.protocol.constants.TaskConstant
 
@@ -59,7 +60,7 @@ abstract class EntranceServer extends Logging {
     var jobRequest = getEntranceContext.getOrCreateEntranceParser().parseToTask(params)
     // tod multi entrance instances
     jobRequest.setInstances(Sender.getThisInstance)
-
+    Utils.tryAndWarn(CSEntranceHelper.resetCreator(jobRequest))
     //After parse the map into a jobRequest, we need to store it in the database, and the jobRequest can get a unique taskID.
     //将map parse 成 jobRequest 之后，我们需要将它存储到数据库中，task可以获得唯一的taskID
     getEntranceContext.getOrCreatePersistenceManager().createPersistenceEngine().persist(jobRequest)

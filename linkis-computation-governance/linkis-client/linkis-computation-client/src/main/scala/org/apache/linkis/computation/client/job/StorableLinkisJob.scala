@@ -35,7 +35,7 @@ trait StorableLinkisJob extends AbstractLinkisJob {
 
   protected def getJobSubmitResult: JobSubmitResult
 
-  override protected def wrapperObj[T](obj: Object, errorMsg: String)(op: => T): T = wrapperId {
+  override protected def wrapperObj[T](obj: Object, errorMsg: String)(op: => T): T = {
     super.wrapperObj(obj, errorMsg)(op)
   }
 
@@ -46,8 +46,8 @@ trait StorableLinkisJob extends AbstractLinkisJob {
     getJobMetrics.addClientGetJobInfoTime(System.currentTimeMillis - startTime)
     if(jobInfoResult.isCompleted) {
       getJobMetrics.setClientFinishedTime(System.currentTimeMillis)
-      info(s"Job-$getId is completed with status " + completedJobInfoResult.getJobStatus)
       completedJobInfoResult = jobInfoResult
+      info(s"Job-$getId is completed with status " + completedJobInfoResult.getJobStatus)
       getJobListeners.foreach(_.onJobFinished(this))
     } else if (jobInfoResult.isRunning) getJobListeners.foreach(_.onJobRunning(this))
     jobInfoResult
@@ -75,10 +75,6 @@ abstract class StorableSubmittableLinkisJob(override protected val ujesClient: U
 
   private var taskId: String = _
   private var jobSubmitResult: JobSubmitResult = _
-  private var maxRetry = 0
-  private var retryNumber = 0
-
-  private var finishedJobInfoResult: JobInfoResult = _
 
   override def getId: String = taskId
 
@@ -96,36 +92,6 @@ abstract class StorableSubmittableLinkisJob(override protected val ujesClient: U
     }
     info("Job submitted with taskId: " + taskId)
   }
-
-  override protected def getJobInfoResult: JobInfoResult = {
-    if (finishedJobInfoResult != null) return finishedJobInfoResult
-    val startTime = System.currentTimeMillis
-    val oldJobSubmitResult = getJobSubmitResult
-    val jobInfoResult = wrapperId(ujesClient.getJobInfo(getJobSubmitResult))
-    getJobMetrics.addClientGetJobInfoTime(System.currentTimeMillis - startTime)
-    if(jobInfoResult.isCompleted) {
-      if (jobInfoResult.isFailed && jobInfoResult.canRetry && getRetryNumber < getMaxRetry) {
-        logger.info(s"Task ${oldJobSubmitResult.taskID} failed to run, retrying automatically, retry number: ${getRetryNumber}")
-        this.submit()
-        addRetryNumber
-        logger.info(s"The task has been retried, and the new task id is: ${getJobSubmitResult.taskID}")
-        return  getJobInfoResult
-      }
-      getJobMetrics.setClientFinishedTime(System.currentTimeMillis)
-      finishedJobInfoResult = jobInfoResult
-      info(s"Job-$getId is completed with status " + finishedJobInfoResult.getJobStatus)
-      getJobListeners.foreach(_.onJobFinished(this))
-    } else if (jobInfoResult.isRunning) getJobListeners.foreach(_.onJobRunning(this))
-    jobInfoResult
-  }
-
-  def getMaxRetry: Int = maxRetry
-
-  def setMaxRetry(maxRetry: Int): Unit = this.maxRetry = maxRetry
-
-  def addRetryNumber: Unit = retryNumber = retryNumber + 1
-
-  def getRetryNumber: Int = retryNumber
 
 }
 

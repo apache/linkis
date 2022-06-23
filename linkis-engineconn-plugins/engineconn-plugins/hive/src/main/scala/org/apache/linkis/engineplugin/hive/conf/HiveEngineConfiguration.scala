@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.engineplugin.hive.conf
 
 import org.apache.linkis.common.conf.CommonVars
@@ -22,7 +22,9 @@ import org.apache.linkis.common.conf.CommonVars
 object HiveEngineConfiguration {
 
   val HIVE_LIB_HOME = CommonVars[String]("hive.lib", CommonVars[String]("HIVE_LIB", "/appcom/Install/hive/lib").getValue)
-  val ENABLE_FETCH_BASE64 = CommonVars[Boolean]("wds.linkis.hive.enable.fetch.base64",false).getValue
-  val BASE64_SERDE_CLASS =  CommonVars[String]("wds.linkis.hive.base64.serde.class","org.apache.linkis.engineplugin.hive.serde.CustomerDelimitedJSONSerDe").getValue
+  val ENABLE_FETCH_BASE64 = CommonVars[Boolean]("wds.linkis.hive.enable.fetch.base64", false).getValue
+  val BASE64_SERDE_CLASS = CommonVars[String]("wds.linkis.hive.base64.serde.class", "org.apache.linkis.engineplugin.hive.serde.CustomerDelimitedJSONSerDe").getValue
   val HIVE_AUX_JARS_PATH = CommonVars[String]("hive.aux.jars.path", CommonVars[String]("HIVE_AUX_JARS_PATH", "").getValue).getValue
+  //根据HIVE_ENGINE_TYPE中选择引擎的不同，控制scripts中cancel任务时调用的逻辑，目前枚举值为mr,tez
+  val HIVE_ENGINE_TYPE = CommonVars[String]("wds.linkis.hive.engine.type", "mr").getValue
 }

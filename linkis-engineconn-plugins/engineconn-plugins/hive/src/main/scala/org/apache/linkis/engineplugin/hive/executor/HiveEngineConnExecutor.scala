@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.engineplugin.hive.executor
 
 import org.apache.linkis.common.exception.ErrorException
@@ -52,9 +52,10 @@ import java.security.PrivilegedExceptionAction
 import java.util
 import java.util.concurrent.atomic.AtomicBoolean
 import org.apache.linkis.engineconn.executor.entity.ResourceFetchExecutor
-import org.apache.linkis.engineplugin.hive.conf.Counters
+import org.apache.linkis.engineplugin.hive.conf.{Counters, HiveEngineConfiguration}
 import org.apache.linkis.manager.common.protocol.resource.ResourceWithStatus
 import org.apache.commons.lang.StringUtils
+import org.apache.hadoop.hive.ql.exec.tez.TezJobExecHelper
 import org.apache.linkis.engineconn.computation.executor.utlis.ProgressUtils
 import org.apache.linkis.governance.common.utils.JobUtils
 
@@ -178,7 +179,7 @@ class HiveEngineConnExecutor(id: Int,
       driver.setTryCount(tryCount + 1)
       val startTime = System.currentTimeMillis()
       try {
-        Utils.tryCatch{
+        Utils.tryCatch {
           val compileRet = driver.compile(realCode)
           if (0 != compileRet) {
             warn(s"compile realCode error status : ${compileRet}")
@@ -187,9 +188,9 @@ class HiveEngineConnExecutor(id: Int,
           val numberOfJobs = Utilities.getMRTasks(queryPlan.getRootTasks).size
           numberOfMRJobs = numberOfJobs
           info(s"there are ${numberOfMRJobs} jobs.")
-        }{
-          case e:Exception => logger.warn("obtain hive execute query plan failed,", e)
-          case t:Throwable => logger.warn("obtain hive execute query plan failed,", t)
+        } {
+          case e: Exception => logger.warn("obtain hive execute query plan failed,", e)
+          case t: Throwable => logger.warn("obtain hive execute query plan failed,", t)
         }
         if (numberOfMRJobs > 0) engineExecutorContext.appendStdout(s"Your hive sql has $numberOfMRJobs MR jobs to do")
         val hiveResponse: CommandProcessorResponse = driver.run(realCode)
@@ -358,7 +359,7 @@ class HiveEngineConnExecutor(id: Int,
     val queue = hiveConf.get("mapreduce.job.queuename")
     HadoopJobExecHelper.runningJobs.foreach(yarnJob => {
       val counters = yarnJob.getCounters
-      if(counters != null) {
+      if (counters != null) {
         val millsMap = counters.getCounter(Counters.MILLIS_MAPS)
         val millsReduces = counters.getCounter(Counters.MILLIS_REDUCES)
         val totalMapCores = counters.getCounter(Counters.VCORES_MILLIS_MAPS)
@@ -367,9 +368,9 @@ class HiveEngineConnExecutor(id: Int,
         val totalReducesMBMemory = counters.getCounter(Counters.MB_MILLIS_REDUCES)
         var avgCores = 0
         var avgMemory = 0L
-        if(millsMap > 0 && millsReduces > 0) {
-          avgCores = Math.ceil(totalMapCores/millsMap + totalReducesCores/millsReduces).toInt
-          avgMemory = Math.ceil(totalMapMBMemory*1024*1024/millsMap + totalReducesMBMemory.toLong*1024*1024/millsReduces).toLong
+        if (millsMap > 0 && millsReduces > 0) {
+          avgCores = Math.ceil(totalMapCores / millsMap + totalReducesCores / millsReduces).toInt
+          avgMemory = Math.ceil(totalMapMBMemory * 1024 * 1024 / millsMap + totalReducesMBMemory.toLong * 1024 * 1024 / millsReduces).toLong
           val yarnResource = new ResourceWithStatus(avgMemory, avgCores, 0, JobStatus.getJobRunState(yarnJob.getJobStatus.getRunState), queue)
           val applicationId = applicationStringName + splitter + yarnJob.getID.getJtIdentifier + splitter + yarnJob.getID.getId
           resourceMap.put(applicationId, yarnResource)
@@ -408,7 +409,7 @@ class HiveEngineConnExecutor(id: Int,
       logger.debug(s"hive progress is $totalProgress")
       val newProgress = if (totalProgress.isNaN || totalProgress.isInfinite) currentBegin else totalProgress + currentBegin
       val oldProgress = ProgressUtils.getOldProgress(this.engineExecutorContext)
-      if(newProgress < oldProgress) oldProgress else {
+      if (newProgress < oldProgress) oldProgress else {
         ProgressUtils.putProgress(newProgress, this.engineExecutorContext)
         newProgress
       }
@@ -446,11 +447,18 @@ class HiveEngineConnExecutor(id: Int,
 
   override def killTask(taskID: String): Unit = {
     LOG.info(s"hive begins to kill job with id : ${taskID}")
-    HadoopJobExecHelper.killRunningJobs()
-    //Utils.tryQuietly(TezJobExecHelper.killRunningJobs())
-    Utils.tryQuietly(HiveInterruptUtils.interrupt())
-    if (null != thread) {
-      Utils.tryAndWarn(thread.interrupt())
+    //通过wds.linkis.hive.engine.type参数配置引擎来控制kill任务时的方式
+    LOG.info(s"hive engine type :${HiveEngineConfiguration.HIVE_ENGINE_TYPE}")
+    HiveEngineConfiguration.HIVE_ENGINE_TYPE match {
+      case "mr" =>
+        HadoopJobExecHelper.killRunningJobs()
+        Utils.tryQuietly(HiveInterruptUtils.interrupt())
+        if (null != thread) {
+          Utils.tryAndWarn(thread.interrupt())
+        }
+      case "tez" =>
+        Utils.tryQuietly(TezJobExecHelper.killRunningJobs())
+        driver.getClass.getMethod("close").invoke(driver)
     }
     clearCurrentProgress()
     singleSqlProgressMap.clear()

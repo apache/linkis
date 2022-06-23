@@ -18,7 +18,7 @@
 <template>
   <div :style="{height: '100%'}">
     <div v-show="!showviewlog" class="ecmEngine">
-      <Search :statusList="statusList" :ownerList="ownerList" :engineTypes="engineTypes" @search="search" @stop="stopAll" :stopbtn="true" />
+      <Search :statusList="statusList" :ownerList="ownerList" :engineTypes="engineTypes" @search="search" :stopbtn="true" />
       <Spin
         v-if="loading"
         size="large"
@@ -136,7 +136,7 @@ export default {
         {
           title: this.$t('message.linkis.tableColumns.engineInstance'),
           key: 'serviceInstance',
-          minWidth: 150,
+          minWidth: 160,
           className: 'table-project-column',
           slot: 'serviceInstance'
         },
@@ -190,7 +190,7 @@ export default {
         {
           title: this.$t('message.linkis.tableColumns.control.title'),
           key: 'action',
-          width: '215',
+          width: '100',
           align: 'center',
           render: (h, params) => {
             return h('div', [
@@ -212,59 +212,6 @@ export default {
                   }
                 }
               }, this.$t('message.linkis.viewlog')),
-              h('Button', {
-                props: {
-                  type: 'error',
-                  size: 'small'
-                },
-                style: {
-                  marginRight: '5px'
-                },
-                on: {
-                  click: () => {
-                    this.$Modal.confirm({
-                      title: this.$t('message.linkis.stop'),
-                      content: this.$t('message.linkis.stopEngineTip'),
-                      onOk: () => {
-                        let data = [];
-                        data.push({
-                          engineInstance: params.row.serviceInstance,
-                        });
-                        api.fetch(`/linkisManager/rm/enginekill`, data).then(() => {
-                          this.initExpandList();
-                          this.$Message.success({
-                            background: true,
-                            content: 'Stop Success！！'
-                          });
-                        }).catch((err) => {
-                          console.err(err)
-                        });
-                      }
-                    })
-                  }
-                }
-              }, this.$t('message.linkis.stop')),
-              h('Button', {
-                props: {
-                  type: 'primary',
-                  size: 'small'
-                },
-                on: {
-                  click: () => {
-                    this.isTagEdit = true;
-                    let obj = {};
-                    obj.serviceInstance = params.row.serviceInstance;
-                    obj.labelValue = params.row.labelValue.split(',').map((item) => {
-                      return {
-                        // key: '',
-                        value: item,
-                      }
-                    })
-                    obj.emStatus = params.row.nodeStatus;
-                    this.formItem = Object.assign(this.formItem, obj)
-                  }
-                }
-              }, this.$t('message.linkis.tagEdit'))
             ]);
           }
         }
@@ -291,28 +238,6 @@ export default {
     this.getKeyList();
   },
   methods: {
-    stopAll() {
-      if (this.selection && this.selection.length) {
-        let data = [];
-        this.selection.forEach(row => {
-          data.push({
-            engineInstance: row.serviceInstance,
-          });
-        })
-        this.$Message.success('In Stoping');
-        api.fetch(`/linkisManager/rm/enginekill`, data).then(() => {
-          this.initExpandList();
-          this.$Message.success({
-            background: true,
-            content: 'Stop Success！！'
-          });
-        }).catch((err) => {
-          console.err(err)
-        });
-      } else {
-        this.$Message.warning(this.$t('message.linkis.noselection'));
-      }
-    },
     selctionChange(selection) {
       this.selection = selection
     },

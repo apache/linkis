@@ -56,9 +56,6 @@
       <Button type="primary" @click="search">
         {{ $t('message.linkis.search') }}
       </Button>
-      <Button v-if="stopbtn" type="error" @click="stop"  style="margin-left:20px">
-        {{ $t('message.linkis.stop') }}
-      </Button>
     </FormItem>
   </Form>
 

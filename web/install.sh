@@ -81,10 +81,7 @@ linkisConf(){
             server_name  localhost;
             #charset koi8-r;
             #access_log  /var/log/nginx/host.access.log  main;
-            location /linkis/visualis {
-            root   ${linkis_basepath}/linkis/visualis; #static directory
-            autoindex on;
-            }
+            
             location / {
             root   ${linkis_basepath}/dist; #static directory
             index  index.html index.html;

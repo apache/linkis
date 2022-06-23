@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.jobhistory.conversions
 
 import org.apache.linkis.common.utils.{Logging, Utils}
@@ -290,10 +290,9 @@ object TaskConversions extends Logging {
       val engineMap = metrics.get(TaskConstant.ENTRANCEJOB_ENGINECONN_MAP).asInstanceOf[util.Map[String, Object]]
       if (null != engineMap && !engineMap.isEmpty) {
         taskVO.setEngineInstance(engineMap.map(_._1).toList.mkString(","))
-        taskVO.setCanRetry(true)
       }
-    } else {
-      taskVO.setEngineInstance("EngineInstance not ready in metrics.")
+    } else if (TaskStatus.Failed.toString.equals(job.getStatus)) {
+      taskVO.setCanRetry(true)
     }
 
     val entranceName = JobhistoryConfiguration.ENTRANCE_SPRING_NAME.getValue
@@ -304,7 +303,7 @@ object TaskConversions extends Logging {
       taskVO.setExecutionCode(job.getExecutionCode)
     }
     // Do not attach subjobs for performance
-//    taskVO.setSubJobs(subjobs)
+    //    taskVO.setSubJobs(subjobs)
     taskVO.setSourceJson(job.getSource)
     if (StringUtils.isNotBlank(job.getSource)) {
       Utils.tryCatch {
@@ -326,13 +325,14 @@ object TaskConversions extends Logging {
     labels
   }
 
-  def dealString2Date(strDate : String) : Date = {
+  def dealString2Date(strDate: String): Date = {
     val df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
-    Utils.tryCatch{
+    Utils.tryCatch {
       val date = df.parse(strDate)
       date
     } {
-      _ => warn("String to Date deserialization failed.")
+      _ =>
+        warn("String to Date deserialization failed.")
         null
     }
   }

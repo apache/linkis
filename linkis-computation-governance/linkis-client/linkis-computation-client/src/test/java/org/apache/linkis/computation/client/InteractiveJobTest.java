@@ -36,6 +36,7 @@ public class InteractiveJobTest {
                         .addExecuteUser("hadoop")
                         .setMaxRetry(2) // automatic retry number
                         .build();
+        job.addLogListener(new TestLogListener());
         // 3. Submit Job to Linkis
         job.submit();
         // 4. Wait for Job completed

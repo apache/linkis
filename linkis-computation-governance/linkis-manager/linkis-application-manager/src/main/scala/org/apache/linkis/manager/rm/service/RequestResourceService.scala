@@ -122,10 +122,10 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
     requestResource match {
       case m: MemoryResource =>
         (RMErrorCode.DRIVER_MEMORY_INSUFFICIENT.getCode, RMErrorCode.DRIVER_MEMORY_INSUFFICIENT.getMessage)
-      case c: CPUResource =>
-        (RMErrorCode.DRIVER_CPU_INSUFFICIENT.getCode, RMErrorCode.DRIVER_CPU_INSUFFICIENT.getMessage)
       case i: InstanceResource =>
         (RMErrorCode.INSTANCES_INSUFFICIENT.getCode, RMErrorCode.INSTANCES_INSUFFICIENT.getMessage)
+      case c: CPUResource =>
+        (RMErrorCode.DRIVER_CPU_INSUFFICIENT.getCode, RMErrorCode.DRIVER_CPU_INSUFFICIENT.getMessage)
       case l: LoadResource =>
         val loadAvailable = availableResource.asInstanceOf[LoadResource]
         if(l.cores > loadAvailable.cores) {

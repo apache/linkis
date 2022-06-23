@@ -96,8 +96,8 @@ object Resource extends Logging {
 
   def getZeroResource(resource: Resource): Resource = resource match {
     case m: MemoryResource => new MemoryResource(0)
-    case c: CPUResource => new CPUResource(0)
     case i: InstanceResource => new InstanceResource(0)
+    case c: CPUResource => new CPUResource(0)
     case l: LoadResource => new LoadResource(0, 0)
     case li: LoadInstanceResource => new LoadInstanceResource(0, 0, 0)
     case yarn: YarnResource => new YarnResource(0, 0, 0)

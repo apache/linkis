@@ -25,6 +25,9 @@
 
 ### deploy user
 deployUser=hadoop
+##If you don't set it, a random password string will be generated during installation
+deployPwd=
+
 
 ##Linkis_SERVER_VERSION
 LINKIS_SERVER_VERSION=v1
@@ -58,25 +61,39 @@ YARN_RESTFUL_URL="http://127.0.0.1:8088"
 
 ## request spnego enabled Yarn resource restful interface When Yarn enable kerberos
 ## If your environment yarn interface can be accessed directly, ignore it
-#KERBEROS_ENABLE=true
-#PRINCIPAL_NAME=yarn
-#KEYTAB_PATH=/etc/security/keytabs/yarn.keytab
-#KRB5_PATH=/etc/krb5.conf
+#YARN_KERBEROS_ENABLE=true
+#YARN_PRINCIPAL_NAME=yarn
+#YARN_KEYTAB_PATH=/etc/security/keytabs/yarn.keytab
+#YARN_KRB5_PATH=/etc/krb5.conf
 
-###HADOOP CONF DIR
+
+##############################################################
+#
+#    NOTICE:
+#         You can also set these variables as system environment in ~/.bashrc file
+
+#HADOOP
+HADOOP_HOME=/appcom/Install/hadoop
 HADOOP_CONF_DIR=/appcom/config/hadoop-config
+#HADOOP_KERBEROS_ENABLE=true
+#HADOOP_KEYTAB_PATH=/appcom/keytab/
 
-###HIVE CONF DIR
+#Hive
+HIVE_HOME=/appcom/Install/hive
 HIVE_CONF_DIR=/appcom/config/hive-config
 
-###SPARK CONF DIR
+#Spark
+SPARK_HOME=/appcom/Install/spark
 SPARK_CONF_DIR=/appcom/config/spark-config
+
 
 ## Engine version conf
 #SPARK_VERSION
 #SPARK_VERSION=2.4.3
+
 ##HIVE_VERSION
 #HIVE_VERSION=2.3.3
+
 #PYTHON_VERSION=python2
 
 ################### The install Configuration of all Micro-Services #####################
@@ -90,7 +107,8 @@ SPARK_CONF_DIR=/appcom/config/spark-config
 
 ###  EUREKA install information
 ###  You can access it in your browser at the address below:http://${EUREKA_INSTALL_IP}:${EUREKA_PORT}
-#EUREKA_INSTALL_IP=127.0.0.1         # Microservices Service Registration Discovery Center
+#EUREKA: Microservices Service Registration Discovery Center
+#EUREKA_INSTALL_IP=127.0.0.1
 EUREKA_PORT=20303
 export EUREKA_PREFER_IP=false
 

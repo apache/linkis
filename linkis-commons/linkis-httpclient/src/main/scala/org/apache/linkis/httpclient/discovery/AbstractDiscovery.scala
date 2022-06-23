@@ -17,17 +17,17 @@
 
 package org.apache.linkis.httpclient.discovery
 
+import org.apache.commons.lang3.StringUtils
+import org.apache.http.HttpResponse
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.httpclient.Client
+import org.apache.linkis.httpclient.config.HttpClientConstant
+import org.apache.linkis.httpclient.exception.DiscoveryException
+
 import java.io.Closeable
 import java.net.ConnectException
 import java.util
 import java.util.concurrent.ScheduledFuture
-import org.apache.commons.lang3.StringUtils
-import org.apache.linkis.common.utils.{Logging, Utils}
-import org.apache.linkis.httpclient.Client
-import org.apache.linkis.httpclient.exception.DiscoveryException
-import org.apache.http.HttpResponse
-import org.apache.linkis.httpclient.config.HttpClientConstant
-
 import scala.collection.JavaConverters._
 import scala.concurrent.duration.TimeUnit
 
@@ -70,12 +70,12 @@ abstract class AbstractDiscovery extends Discovery with Closeable with Logging {
   }
 
   def startHealthyCheck(delayTime: Long): ScheduledFuture[_] = {
-    info("start HealthyCheck thread")
+    logger.info("start HealthyCheck thread")
     Utils.defaultScheduler.scheduleAtFixedRate(new Runnable {
       override def run(): Unit = {
         serverInstances.asScala.foreach { serverUrl =>
           val action = getHeartbeatAction(serverUrl)
-          info("heartbeat to healthy gateway " + serverUrl)
+          logger.info("heartbeat to healthy gateway " + serverUrl)
           Utils.tryCatch(client.execute(action, 3000) match {
             case heartbeat: HeartbeatResult =>
               if (!heartbeat.isHealthy) {
@@ -91,7 +91,7 @@ abstract class AbstractDiscovery extends Discovery with Closeable with Logging {
   }
 
   def startDiscovery(): ScheduledFuture[_] = {
-    info("start Discovery thread")
+    logger.info("start Discovery thread")
     client.execute(getHeartbeatAction(serverUrl), 3000) match {
       case heartbeat: HeartbeatResult => if (!heartbeat.isHealthy) throw new DiscoveryException(s"connect to serverUrl $serverUrl failed! Reason: gateway server is unhealthy!")
       else discoveryListeners.asScala.foreach(_.onServerDiscovered(serverUrl))
@@ -99,7 +99,7 @@ abstract class AbstractDiscovery extends Discovery with Closeable with Logging {
 
     Utils.defaultScheduler.scheduleAtFixedRate(new Runnable {
       override def run(): Unit = Utils.tryAndWarn {
-        info("to discovery gateway" + serverUrl)
+        logger.info("to discovery gateway" + serverUrl)
         val serverUrls = discovery()
         addServerInstances(serverUrls)
       }
@@ -149,7 +149,7 @@ abstract class AbstractDiscovery extends Discovery with Closeable with Logging {
   }
 
   def addUnhealthyServerInstances(unhealthyUrl: String): Unit = {
-    info(s"add  ${unhealthyUrl} to unhealthy list ")
+    logger.info(s"add  ${unhealthyUrl} to unhealthy list ")
     val updateUnhealthyUrl = if (serverInstances.contains(unhealthyUrl)) {
       unhealthyUrl
     } else if (serverInstances.contains(unhealthyUrl + HttpClientConstant.PATH_SPLIT_TOKEN)) {
@@ -158,7 +158,7 @@ abstract class AbstractDiscovery extends Discovery with Closeable with Logging {
       ""
     }
     if (StringUtils.isBlank(updateUnhealthyUrl)) {
-      info(s"${unhealthyUrl}  unhealthy url not exists")
+      logger.info(s"${unhealthyUrl}  unhealthy url not exists")
     } else {
       unhealthyServerInstances synchronized unhealthyServerInstances.add(updateUnhealthyUrl)
       discoveryListeners.asScala.foreach(_.onServerUnhealthy(updateUnhealthyUrl))

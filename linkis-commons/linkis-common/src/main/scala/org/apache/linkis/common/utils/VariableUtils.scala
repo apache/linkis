@@ -217,18 +217,18 @@ object VariableUtils extends Logging {
         val rightValue = ma.group(3)
 
         if (name == null || name.trim.isEmpty) {
-           throw new LinkisCommonErrorException(20041, s"[$str] replaced var is null")
+          throw new LinkisCommonErrorException(20041, s"[$str] replaced var is null")
         } else {
           var expression = name.trim
           val varType = nameAndType.get(name.trim).orNull
           if (varType == null) {
-            warn(s"Use undefined variables or use the set method: [$str](使用了未定义的变量或者使用了set方式:[$str])")
+            logger.warn(s"Use undefined variables or use the set method: [$str](使用了未定义的变量或者使用了set方式:[$str])")
             parseCode ++= codes(i - 1) ++ str
           } else {
             var res: String = varType.getValue
             if (signal != null && !signal.trim.isEmpty) {
               if (rightValue == null || rightValue.trim.isEmpty) {
-                 throw new LinkisCommonErrorException(20042, s"[$str] expression is not right, please check")
+                throw new LinkisCommonErrorException(20042, s"[$str] expression is not right, please check")
               } else {
                 expression = expression + "_" + signal.trim + "_" + rightValue.trim
                 val rightToken = rightValue.trim
@@ -241,7 +241,7 @@ object VariableUtils extends Logging {
               }
             }
             if (!expressionCache.contains(expression)) {
-              info(s"Variable expression [$str] = $res(变量表达式[$str] = $res)")
+              logger.info(s"Variable expression [$str] = $res(变量表达式[$str] = $res)")
               expressionCache += expression
             }
             parseCode ++= codes(i - 1) ++ res
@@ -255,7 +255,6 @@ object VariableUtils extends Logging {
     //val parsedCode = deleteUselessSemicolon(parseCode)
     StringUtils.strip(parseCode.toString())
   }
-
 
 
   /**
@@ -302,7 +301,7 @@ object VariableUtils extends Logging {
             }
           }
         case errRegex() =>
-          warn(s"The variable definition is incorrect:$str,if it is not used, it will not run the error, but it is recommended to use the correct specification to define")
+          logger.warn(s"The variable definition is incorrect:$str,if it is not used, it will not run the error, but it is recommended to use the correct specification to define")
         case _ =>
       }
     }

@@ -50,31 +50,24 @@ public class MybatisConfiguration {
             CommonVars.apply("wds.linkis.server.mybatis.datasource.maxWait", 6000);
     public static final CommonVars<Integer> BDP_SERVER_MYBATIS_DATASOURCE_TBERM =
             CommonVars.apply(
-                    "wds.linkis.server.mybatis.datasource.timeBetweenEvictionRunsMillis",
-                    60000);
+                    "wds.linkis.server.mybatis.datasource.timeBetweenEvictionRunsMillis", 60000);
     public static final CommonVars<Integer> BDP_SERVER_MYBATIS_DATASOURCE_MEITM =
             CommonVars.apply(
-                    "wds.linkis.server.mybatis.datasource.minEvictableIdleTimeMillis",
-                    300000);
+                    "wds.linkis.server.mybatis.datasource.minEvictableIdleTimeMillis", 300000);
     public static final CommonVars<String> BDP_SERVER_MYBATIS_DATASOURCE_VALIDATIONQUERY =
             CommonVars.apply("wds.linkis.server.mybatis.datasource.validationQuery", "SELECT 1");
 
     public static final CommonVars<Boolean> BDP_SERVER_MYBATIS_DATASOURCE_TESTWHILEIDLE =
-            CommonVars.apply(
-                    "wds.linkis.server.mybatis.datasource.testWhileIdle", Boolean.TRUE);
+            CommonVars.apply("wds.linkis.server.mybatis.datasource.testWhileIdle", Boolean.TRUE);
     public static final CommonVars<Boolean> BDP_SERVER_MYBATIS_DATASOURCE_TESTONBORROW =
-            CommonVars.apply(
-                    "wds.linkis.server.mybatis.datasource.testOnBorrow", Boolean.FALSE);
+            CommonVars.apply("wds.linkis.server.mybatis.datasource.testOnBorrow", Boolean.FALSE);
     public static final CommonVars<Boolean> BDP_SERVER_MYBATIS_DATASOURCE_TESTONRETURN =
-            CommonVars.apply(
-                    "wds.linkis.server.mybatis.datasource.testOnReturn", Boolean.FALSE);
+            CommonVars.apply("wds.linkis.server.mybatis.datasource.testOnReturn", Boolean.FALSE);
     public static final CommonVars<Boolean> BDP_SERVER_MYBATIS_DATASOURCE_POOLPREPAREDSTATEMENTS =
             CommonVars.apply(
-                    "wds.linkis.server.mybatis.datasource.poolPreparedStatements",
-                    Boolean.TRUE);
+                    "wds.linkis.server.mybatis.datasource.poolPreparedStatements", Boolean.TRUE);
     public static final CommonVars<Boolean> MYBATIS_DATASOURCE_REMOVE_ABANDONED_ENABLED =
-            CommonVars.apply(
-                    "wds.linkis.server.mybatis.remove.abandoned.enabled", Boolean.TRUE);
+            CommonVars.apply("wds.linkis.server.mybatis.remove.abandoned.enabled", Boolean.TRUE);
     public static final CommonVars<Integer> MYBATIS_DATASOURCE_REMOVE_ABANDONED_TIMEOUT =
             CommonVars.apply("wds.linkis.server.mybatis.remove.abandoned.timeout", 300);
 }

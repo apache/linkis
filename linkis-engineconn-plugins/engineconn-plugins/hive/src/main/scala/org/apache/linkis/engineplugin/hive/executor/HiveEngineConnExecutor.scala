@@ -447,7 +447,7 @@ class HiveEngineConnExecutor(id: Int,
 
   override def killTask(taskID: String): Unit = {
     LOG.info(s"hive begins to kill job with id : ${taskID}")
-    //通过wds.linkis.hive.engine.type参数配置引擎来控制kill任务时的方式
+    //Configure the engine through the wds.linkis.hive.engine.type parameter to control the way the task is killed
     LOG.info(s"hive engine type :${HiveEngineConfiguration.HIVE_ENGINE_TYPE}")
     HiveEngineConfiguration.HIVE_ENGINE_TYPE match {
       case "mr" =>

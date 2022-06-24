@@ -35,37 +35,6 @@ object TokenAuthentication extends Logging {
     this.tokenService = tokenService
   }
 
-  //  private val (props, file) = if(ENABLE_TOKEN_AUTHENTICATION.getValue)
-  //    (new Properties, new File(this.getClass.getClassLoader.getResource(TOKEN_AUTHENTICATION_CONFIG.getValue).toURI.getPath))
-  //  else (null, null)
-  //  private var lastModified = 0l
-  //
-  //  def init(): Unit = {
-  //    if(ENABLE_TOKEN_AUTHENTICATION.getValue) {
-  //      Utils.defaultScheduler.scheduleAtFixedRate(new Runnable {
-  //        override def run(): Unit = Utils.tryAndError(tokenService.init())
-  //      }, TOKEN_AUTHENTICATION_SCAN_INTERVAL.getValue, TOKEN_AUTHENTICATION_SCAN_INTERVAL.getValue, TimeUnit.MILLISECONDS)
-  //      //    init()
-  //      tokenService.init()
-  //    }
-  //  }
-
-  //
-  //  private def init(): Unit = if(file.lastModified() > lastModified) {
-  //    lastModified = file.lastModified()
-  //    info(s"loading token authentication file $file.")
-  //    val newProps = new Properties
-  //    val input = FileUtils.openInputStream(file)
-  //    Utils.tryFinally(newProps.load(input))(IOUtils.closeQuietly(input))
-  //    props.putAll(newProps)
-  //  }
-  //
-  //  private def validateTokenUser(token: String, tokenUser: String): Boolean = {
-  //    val tokenUsers = props.getProperty(token)
-  //    if(tokenUsers == "*" || (StringUtils.isNotBlank(tokenUsers) && tokenUsers.contains(tokenUser))) true
-  //    else false
-  //  }
-
   def isTokenRequest(gatewayContext: GatewayContext) : Boolean = {
     (gatewayContext.getRequest.getHeaders.containsKey(TOKEN_KEY) &&
       gatewayContext.getRequest.getHeaders.containsKey(TOKEN_USER_KEY)) || (

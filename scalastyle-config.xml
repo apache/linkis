@@ -71,7 +71,7 @@ This file is divided into 3 sections:
 
     <check level="error" class="org.scalastyle.file.FileLineLengthChecker" enabled="true">
         <parameters>
-            <parameter name="maxLineLength"><![CDATA[500]]></parameter>
+            <parameter name="maxLineLength"><![CDATA[100]]></parameter>
             <parameter name="tabSize"><![CDATA[2]]></parameter>
             <parameter name="ignoreImports">true</parameter>
         </parameters>
@@ -500,11 +500,14 @@ This file is divided into 3 sections:
 
     <check level="error" class="org.scalastyle.scalariform.ImportOrderChecker" enabled="false">
         <parameters>
-            <parameter name="groups">java,scala,3rdParty,linkis</parameter>
-            <parameter name="group.java">javax?\..*</parameter>
-            <parameter name="group.scala">scala\..*</parameter>
-            <parameter name="group.3rdParty">(?!org\.apache\.linkis\.).*</parameter>
-            <parameter name="group.linkis">org\.apache\.linkis\..*</parameter>
+            <parameter name="groups">linkis, apache, spring, javax, java, scala, 3rdParty</parameter>
+            <parameter name="group.linkis">org\.apache\.linkis.*</parameter>
+            <parameter name="group.apache">org\.apache.*</parameter>
+            <parameter name="group.spring">org\.springframework.*</parameter>
+            <parameter name="group.javax">javax.*</parameter>
+            <parameter name="group.java">java.*</parameter>
+            <parameter name="group.scala">scala.*</parameter>
+            <parameter name="group.3rdParty">(?!org\.apache\.linkis).*</parameter>
         </parameters>
     </check>
 

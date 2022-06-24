@@ -52,9 +52,10 @@ import java.security.PrivilegedExceptionAction
 import java.util
 import java.util.concurrent.atomic.AtomicBoolean
 import org.apache.linkis.engineconn.executor.entity.ResourceFetchExecutor
-import org.apache.linkis.engineplugin.hive.conf.Counters
+import org.apache.linkis.engineplugin.hive.conf.{Counters, HiveEngineConfiguration}
 import org.apache.linkis.manager.common.protocol.resource.ResourceWithStatus
 import org.apache.commons.lang.StringUtils
+import org.apache.hadoop.hive.ql.exec.tez.TezJobExecHelper
 import org.apache.linkis.engineconn.computation.executor.utlis.ProgressUtils
 import org.apache.linkis.governance.common.utils.JobUtils
 
@@ -446,11 +447,18 @@ class HiveEngineConnExecutor(id: Int,
 
   override def killTask(taskID: String): Unit = {
     LOG.info(s"hive begins to kill job with id : ${taskID}")
-    HadoopJobExecHelper.killRunningJobs()
-    //Utils.tryQuietly(TezJobExecHelper.killRunningJobs())
-    Utils.tryQuietly(HiveInterruptUtils.interrupt())
-    if (null != thread) {
-      Utils.tryAndWarn(thread.interrupt())
+    //Configure the engine through the wds.linkis.hive.engine.type parameter to control the way the task is killed
+    LOG.info(s"hive engine type :${HiveEngineConfiguration.HIVE_ENGINE_TYPE}")
+    HiveEngineConfiguration.HIVE_ENGINE_TYPE match {
+      case "mr" =>
+        HadoopJobExecHelper.killRunningJobs()
+        Utils.tryQuietly(HiveInterruptUtils.interrupt())
+        if (null != thread) {
+          Utils.tryAndWarn(thread.interrupt())
+        }
+      case "tez" =>
+        Utils.tryQuietly(TezJobExecHelper.killRunningJobs())
+        driver.close()
     }
     clearCurrentProgress()
     singleSqlProgressMap.clear()

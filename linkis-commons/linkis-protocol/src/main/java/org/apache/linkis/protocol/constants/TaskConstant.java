@@ -25,7 +25,7 @@ public interface TaskConstant {
 
     String EXECUTE_USER = "executeUser";
 
-    String TASKTYPE = "taskType";
+    String TASK_TYPE = "taskType";
     String STORAGETYPE = "storageType";
     String EXECUTIONCODE = "executionCode";
     String JOB_CONTENT = "jobContent";

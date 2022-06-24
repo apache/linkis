@@ -65,6 +65,7 @@ import api from '@/common/service/api';
 import storage from '@/common/helper/storage';
 import { db } from '@/common/service/db/index.js';
 import { config } from '@/common/config/db.js';
+import JSEncrypt from 'jsencrypt';
 import tab from '@/apps/scriptis/service/db/tab.js';
 export default {
   data() {

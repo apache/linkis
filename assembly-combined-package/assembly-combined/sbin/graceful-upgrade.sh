@@ -96,8 +96,25 @@ IP=$2
 getPort
 echo $SERVER_PORT
 
+if [ "$SERVER_NAME" = "cg-entrance" ]; then
+  # mark entrance as offline
+  markOfflineUrl=$IP:$SERVER_PORT/api/rest_j/v1/entrance/operation/label/markoffline
+  curl "$markOfflineUrl"
+
+  # waiting the running tasks to finish
+  while :
+  do
+    metricUrl=$IP:$SERVER_PORT/api/rest_j/v1/entrance/operation/metrics/runningtask
+    res=`curl $metricUrl`
+    runningTaksNum=`jq ".data.runningTaskNumber" res`
+    if [ "$runningTaksNum" = "0" ]; then
+      break
+    fi
+    sleep 30s
+  done
+fi
+
 offlineUrl=$IP:$SERVER_PORT/api/rest_j/v1/offline
 echo "Begin to offline $SERVER_NAME with curl $offlineUrl"
-curl $offlineUrl
-
+curl "$offlineUrl"
 

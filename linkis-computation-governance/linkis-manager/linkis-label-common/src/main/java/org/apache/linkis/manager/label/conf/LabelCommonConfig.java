@@ -83,4 +83,7 @@ public class LabelCommonConfig {
 
     public static final CommonVars<String> ENGINE_CONN_SPRING_NAME =
             CommonVars.apply("wds.linkis.engineconn.name", "linkis-cg-engineconn");
+
+    public static final CommonVars<String> TRINO_ENGINE_CONN_VERSION =
+            CommonVars.apply("wds.linkis.trino.engineconn.version", "371");
 }

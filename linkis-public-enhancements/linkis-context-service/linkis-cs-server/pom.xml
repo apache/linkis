@@ -45,57 +45,17 @@
 
         <dependency>
             <groupId>org.apache.linkis</groupId>
-            <artifactId>linkis-cs-cache</artifactId>
-            <version>${linkis.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.linkis</groupId>
-                    <artifactId>linkis-module</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.linkis</groupId>
             <artifactId>linkis-cs-listener</artifactId>
             <version>${linkis.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.apache.linkis</groupId>
-            <artifactId>linkis-cs-persistence</artifactId>
-            <version>${linkis.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.linkis</groupId>
-                    <artifactId>linkis-module</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
 
         <dependency>
             <groupId>org.apache.linkis</groupId>
-            <artifactId>linkis-cs-highavailable</artifactId>
+            <artifactId>linkis-instance-label-client</artifactId>
             <version>${linkis.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.linkis</groupId>
-                    <artifactId>linkis-rpc</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
-        <dependency>
-            <groupId>org.apache.linkis</groupId>
-            <artifactId>linkis-cs-search</artifactId>
-            <version>${linkis.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.linkis</groupId>
-                    <artifactId>linkis-rpc</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
 
         <dependency>
             <groupId>org.apache.linkis</groupId>
@@ -112,6 +72,17 @@
                     <artifactId>spring-jcl</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.linkis</groupId>
+            <artifactId>linkis-mybatis</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-math3</artifactId>
+            <version>3.1.1</version>
         </dependency>
 
     </dependencies>

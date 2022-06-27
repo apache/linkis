@@ -13,7 +13,6 @@ pipeline {
 mvn -N install
 mvn clean install -DskipTests
 '''
-        sh 'cp -r k8s/jars assembly-combined-package/target/apache-linkis-1.1.0-incubating-bin/linkis-package/'
       }
     }
 
@@ -36,6 +35,9 @@ docker build -f k8s/Dockerfile/linkis-cg-engineplugin.Dockerfile -t linkis-cg-en
 
 docker build -f k8s/Dockerfile/linkis-cg-engineconnmanager.Dockerfile -t linkis-cg-engineconnmanager:1.2 ./assembly-combined-package/target/apache-linkis-1.1.0-incubating-bin/linkis-package
 
+docker build -f k8s/Dockerfile/linkis-ps-metadataquery.Dockerfile -t linkis-ps-metadataquery:1.2 ./assembly-combined-package/target/apache-linkis-1.1.0-incubating-bin/linkis-package
+
+docker build -f k8s/Dockerfile/linkis-ps-data-source-manager.Dockerfile -t linkis-ps-data-source-manager:1.2 ./assembly-combined-package/target/apache-linkis-1.1.0-incubating-bin/linkis-package
 
 
 
@@ -92,7 +94,15 @@ docker tag linkis-cg-engineconnmanager:1.2.0 registry.mydomain.com/library/linki
 docker push registry.mydomain.com/library/linkis-cg-engineconnmanager
 
 docker tag linkis-web:1.2.0 registry.mydomain.com/library/linkis-web:1.2.0
-docker push registry.mydomain.com/library/linkis-web:1.2.0'''
+docker push registry.mydomain.com/library/linkis-web:1.2.0
+
+
+docker tag linkis-ps-data-source-manager:1.2.0 registry.mydomain.com/library/linkis-ps-data-source-manager:1.2.0
+docker push registry.mydomain.com/library/linkis-ps-data-source-manager:1.2.0
+
+
+docker tag linkis-ps-metadataquery:1.2.0 registry.mydomain.com/library/linkis-ps-metadataquery:1.2.0
+docker push registry.mydomain.com/library/linkis-ps-metadataquery:1.2.0'''
       }
     }
 
@@ -107,6 +117,8 @@ kubectl apply -f k8s/yaml/linkis-mg-gateway.yaml --namespace=preprod
 kubectl apply -f k8s/yaml/linkis-mg-eureka.yaml --namespace=preprod
 kubectl apply -f k8s/yaml/linkis-ps-publicservice.yaml --namespace=preprod
 kubectl apply -f k8s/yaml/linkis-ps-cs.yaml --namespace=preprod
+kubectl apply -f k8s/yaml/linkis-ps-metadataquery.yaml --namespace=preprod
+kubectl apply -f k8s/yaml/linkis-ps-data-source-manager.yaml --namespace=preprod
 kubectl apply -f k8s/yaml/linkis-cg-linkismanager.yaml --namespace=preprod
 kubectl apply -f k8s/yaml/linkis-cg-entrance.yaml --namespace=preprod
 kubectl apply -f k8s/yaml/linkis-cg-engineplugin.yaml --namespace=preprod

@@ -69,8 +69,8 @@ public class HiveMetaWithPermissionServiceImpl implements HiveMetaWithPermission
         }
         String userName = map.get("userName");
         if (adminUser.equals(userName)) {
-            log.info("admin to get all dbs ");
-            hiveMetaDao.getTablesByDbName(map);
+            log.info("admin to get all tables ");
+            return hiveMetaDao.getTablesByDbName(map);
         }
         if (flag) {
             return hiveMetaDao.getTablesByDbNameAndUser(map);

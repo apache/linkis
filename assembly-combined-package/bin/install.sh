@@ -186,14 +186,25 @@ if [ "$YARN_RESTFUL_URL" != "" ]
 then
   sed -i ${txt}  "s#@YARN_RESTFUL_URL#$YARN_RESTFUL_URL#g" $LINKIS_HOME/db/linkis_dml.sql
 fi
-if [ "$KERBEROS_ENABLE" != "" ]
+
+if [ "$YARN_AUTH_ENABLE" != "" ]
 then
-  sed -i ${txt}  "s#@KERBEROS_ENABLE#$KERBEROS_ENABLE#g" $LINKIS_HOME/db/linkis_dml.sql
-  sed -i ${txt}  "s#@PRINCIPAL_NAME#$PRINCIPAL_NAME#g" $LINKIS_HOME/db/linkis_dml.sql
-  sed -i ${txt}  "s#@KEYTAB_PATH#$KEYTAB_PATH#g" $LINKIS_HOME/db/linkis_dml.sql
-  sed -i ${txt}  "s#@KRB5_PATH#$KRB5_PATH#g" $LINKIS_HOME/db/linkis_dml.sql
+  sed -i ${txt}  "s#@YARN_AUTH_ENABLE#$YARN_AUTH_ENABLE#g" $LINKIS_HOME/db/linkis_dml.sql
+  sed -i ${txt}  "s#@YARN_AUTH_USER#$YARN_AUTH_USER#g" $LINKIS_HOME/db/linkis_dml.sql
+  sed -i ${txt}  "s#@YARN_AUTH_PWD#$YARN_AUTH_PWD#g" $LINKIS_HOME/db/linkis_dml.sql
 else
-  sed -i ${txt}  "s#@KERBEROS_ENABLE#false#g" $LINKIS_HOME/db/linkis_dml.sql
+  sed -i ${txt}  "s#@YARN_AUTH_ENABLE#false#g" $LINKIS_HOME/db/linkis_dml.sql
+fi
+
+
+if [ "$YARN_KERBEROS_ENABLE" != "" ]
+then
+  sed -i ${txt}  "s#@YARN_KERBEROS_ENABLE#$YARN_KERBEROS_ENABLE#g" $LINKIS_HOME/db/linkis_dml.sql
+  sed -i ${txt}  "s#@YARN_PRINCIPAL_NAME#$YARN_PRINCIPAL_NAME#g" $LINKIS_HOME/db/linkis_dml.sql
+  sed -i ${txt}  "s#@YARN_KEYTAB_PATH#$YARN_KEYTAB_PATH#g" $LINKIS_HOME/db/linkis_dml.sql
+  sed -i ${txt}  "s#@YARN_KRB5_PATH#$YARN_KRB5_PATH#g" $LINKIS_HOME/db/linkis_dml.sql
+else
+  sed -i ${txt}  "s#@YARN_KERBEROS_ENABLE#false#g" $LINKIS_HOME/db/linkis_dml.sql
 fi
 
 SERVER_IP=$local_host
@@ -295,6 +306,13 @@ sed -i ${txt}  "s#\#hive.config.dir.*#hive.config.dir=$HIVE_CONF_DIR#g" $common_
 #spark config
 sed -i ${txt}  "s#\#spark.config.dir.*#spark.config.dir=$SPARK_CONF_DIR#g" $common_conf
 
+if [ "true" == "$HADOOP_KERBEROS_ENABLE" ]
+then
+  sed -i ${txt} '$a \wds.linkis.keytab.enable=true' $LINKIS_HOME/conf/linkis.properties
+  sed -i ${txt} '$a \wds.linkis.keytab.file=$HADOOP_KEYTAB_PATH' $LINKIS_HOME/conf/linkis.properties
+fi
+
+
 sed -i ${txt}  "s#wds.linkis.home.*#wds.linkis.home=$LINKIS_HOME#g" $common_conf
 
 sed -i ${txt}  "s#wds.linkis.filesystem.root.path.*#wds.linkis.filesystem.root.path=$WORKSPACE_USER_ROOT_PATH#g" $common_conf
@@ -303,12 +321,17 @@ sed -i ${txt}  "s#wds.linkis.filesystem.hdfs.root.path.*#wds.linkis.filesystem.h
 ##gateway
 gateway_conf=$LINKIS_HOME/conf/linkis-mg-gateway.properties
 echo "update conf $gateway_conf"
-defaultPwd=`date +%s%N | md5sum |cut -c 1-9`
+if [ "$deployPwd" == "" ]
+then
+  deployPwd=`date +%s%N | md5sum |cut -c 1-9`
+fi
+
+
 sed -i ${txt}  "s#wds.linkis.ldap.proxy.url.*#wds.linkis.ldap.proxy.url=$LDAP_URL#g" $gateway_conf
 sed -i ${txt}  "s#wds.linkis.ldap.proxy.baseDN.*#wds.linkis.ldap.proxy.baseDN=$LDAP_BASEDN#g" $gateway_conf
 sed -i ${txt}  "s#wds.linkis.ldap.proxy.userNameFormat.*#wds.linkis.ldap.proxy.userNameFormat=$LDAP_USER_NAME_FORMAT#g" $gateway_conf
 sed -i ${txt}  "s#wds.linkis.admin.user.*#wds.linkis.admin.user=$deployUser#g" $gateway_conf
-sed -i ${txt}  "s#\#wds.linkis.admin.password.*#wds.linkis.admin.password=$defaultPwd#g" $gateway_conf
+sed -i ${txt}  "s#\#wds.linkis.admin.password.*#wds.linkis.admin.password=$deployPwd#g" $gateway_conf
 if [ "$GATEWAY_PORT" != "" ]
 then
   sed -i ${txt}  "s#spring.server.port.*#spring.server.port=$GATEWAY_PORT#g" $gateway_conf
@@ -405,6 +428,7 @@ if [ "true" == "$PROMETHEUS_ENABLE" ]
 then
   echo "prometheus is enabled"
   sed -i ${txt} '$a \wds.linkis.prometheus.enable={{ PROMETHEUS_ENABLE }}' $LINKIS_HOME/conf/linkis.properties
+  sed -i ${txt} '$a \wds.linkis.server.user.restful.uri.pass.auth=/api/rest_j/v1/actuator/prometheus,' $LINKIS_HOME/conf/linkis.properties
   sed -i ${txt}  '/eureka:/a \\  instance:\n    metadata-map:\n      prometheus.path: ${prometheus.path:${prometheus.endpoint}}' $LINKIS_HOME/conf/application-linkis.yml
   sed -i ${txt}  's#include: refresh,info#include: refresh,info,health,metrics,prometheus#g' $LINKIS_HOME/conf/application-linkis.yml
   sed -i ${txt} '/instance:/a \    metadata-map:\n      prometheus.path: ${prometheus.path:/actuator/prometheus}' $LINKIS_HOME/conf/application-eureka.yml
@@ -418,4 +442,4 @@ sudo chmod -R 777 $LINKIS_HOME/sbin/*
 echo -e "\n"
 
 echo -e "${GREEN}Congratulations!${NC} You have installed Linkis $LINKIS_VERSION successfully, please use sh $LINKIS_HOME/sbin/linkis-start-all.sh to start it!"
-echo -e "Your default account/password is ${GREEN}[$deployUser/$defaultPwd]${NC}, you can find in $LINKIS_HOME/conf/linkis-mg-gateway.properties"
+echo -e "Your default account/password is ${GREEN}[$deployUser/$deployPwd]${NC}, you can find in $LINKIS_HOME/conf/linkis-mg-gateway.properties"

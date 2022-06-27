@@ -5,16 +5,16 @@
   ~ The ASF licenses this file to You under the Apache License, Version 2.0
   ~ (the "License"); you may not use this file except in compliance with
   ~ the License.  You may obtain a copy of the License at
-  ~ 
+  ~
   ~   http://www.apache.org/licenses/LICENSE-2.0
-  ~ 
+  ~
   ~ Unless required by applicable law or agreed to in writing, software
   ~ distributed under the License is distributed on an "AS IS" BASIS,
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-  
+
 <template>
   <div
     class="login"
@@ -65,7 +65,7 @@ import api from '@/common/service/api';
 import storage from '@/common/helper/storage';
 import { db } from '@/common/service/db/index.js';
 import { config } from '@/common/config/db.js';
-import { RSA } from '@/common/util/ras.js';
+import JSEncrypt from 'jsencrypt';
 import tab from '@/apps/scriptis/service/db/tab.js';
 export default {
   data() {
@@ -117,22 +117,23 @@ export default {
           this.loginForm.user = this.loginForm.user.toLocaleLowerCase();
           // 需要判断是否需要给密码加密
           let password = this.loginForm.password;
-          let params = {};
-          if (this.publicKeyData && this.publicKeyData.enableLoginEncrypt) {
-            const key = RSA.getPublicKey(`-----BEGIN PUBLIC KEY-----${this.publicKeyData.publicKey}-----END PUBLIC KEY-----`);
-            password = RSA.encrypt(this.loginForm.password, key);
-            params = {
-              userName: this.loginForm.user,
-              passwdEncrypt: password,
-            };
-          } else {
-            params = {
-              userName: this.loginForm.user,
-              password: password,
-            };
-          }
+           let params = {};
+           if (this.publicKeyData && this.publicKeyData.enableLoginEncrypt) {
+             const key = `-----BEGIN PUBLIC KEY-----${this.publicKeyData.publicKey}-----END PUBLIC KEY-----`;
+             const encryptor = new JSEncrypt()
+             encryptor.setPublicKey(key)
+             password = encryptor.encrypt(this.loginForm.password);
+             params = {
+               userName: this.loginForm.user,
+               password
+             };
+           } else {
+             params = {
+               userName: this.loginForm.user,
+               password
+             };
+           }
           // 登录清掉本地缓存
-          // 保留Scripts页面打开的tab页面
           // 连续两次退出登录后，会导致数据丢失，所以得判断是否已存切没有使用
           let tabs = await tab.get() || [];
           const tablist = storage.get(this.loginForm.user + 'tabs', 'local');

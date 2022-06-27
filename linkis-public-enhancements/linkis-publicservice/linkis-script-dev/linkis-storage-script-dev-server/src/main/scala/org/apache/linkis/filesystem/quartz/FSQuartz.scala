@@ -14,31 +14,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.filesystem.quartz
 
-import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.filesystem.cache.FsCache
+import org.apache.linkis.filesystem.entity.FSInfo
 import org.quartz.JobExecutionContext
 import org.springframework.scheduling.quartz.QuartzJobBean
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
+
+import scala.collection.mutable.ArrayBuffer
 
 class FSQuartz extends QuartzJobBean with Logging{
   override def executeInternal(jobExecutionContext: JobExecutionContext): Unit = {
     info("closing fs...")
-    FsCache.fsInfo.filter(_._2.exists(_.timeout)).foreach{
-      case (_,list) => list synchronized list.filter(_.timeout).foreach{
-        f =>{
-          info(f.id + "---" +f.fs.fsName()+"---"+ f.lastAccessTime)
-          try {
-            f.fs.close()
-          }catch {
-            case e: Exception =>
-              info("Requesting IO-Engine call close failed! But still have to continue to clean up the expired fs!", e)
-          }
+    val clearFS = new ArrayBuffer[FSInfo]
+    FsCache.fsInfo.asScala.filter(_._2.exists(_.timeout)).foreach {
+      case (_, list) => list synchronized list.filter(_.timeout).foreach{
+        f => {
+          clearFS.append(f)
           list -= f
         }
+      }
+    }
+    clearFS.par.foreach{ fsInfo =>
+      info(s"${fsInfo.id} --> ${fsInfo.fs.fsName()} time out ${System.currentTimeMillis() - fsInfo.lastAccessTime}")
+      Utils.tryCatch{
+        fsInfo.fs.close()
+      }{
+        case e: Exception =>
+          info("Requesting IO-Engine call close failed! But still have to continue to clean up the expired fs!", e)
       }
     }
   }

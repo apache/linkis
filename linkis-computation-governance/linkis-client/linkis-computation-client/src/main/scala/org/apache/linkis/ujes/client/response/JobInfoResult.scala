@@ -19,7 +19,6 @@ package org.apache.linkis.ujes.client.response
 
 import java.util
 import java.util.Date
-
 import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.governance.common.entity.task.RequestPersistTask
 import org.apache.linkis.httpclient.dws.annotation.DWSHttpMessageResult
@@ -71,16 +70,25 @@ class JobInfoResult extends DWSResult with UserAction with Status {
   }
 
   def getResultSetList(ujesClient: UJESClient): Array[String] = {
-    if(isSucceed && resultSetList == null) synchronized {
-      if(resultSetList != null) return resultSetList
+    if (isSucceed && resultSetList == null) synchronized {
+      if (resultSetList != null) return resultSetList
       resultSetList = ujesClient.executeUJESJob(ResultSetListAction.builder().set(this).build()) match {
         case resultSetList: ResultSetListResult => resultSetList.getResultSetList
       }
       resultSetList
-    } else if(resultSetList != null) resultSetList
-    else if(isFailed) throw new UJESJobException(requestPersistTask.getErrCode, requestPersistTask.getErrDesc)
+    } else if (resultSetList != null) resultSetList
+    else if (isFailed) throw new UJESJobException(requestPersistTask.getErrCode, requestPersistTask.getErrDesc)
     else throw new UJESJobException(s"job ${requestPersistTask.getTaskID} is still executing with state ${requestPersistTask.getStatus}.")
   }
 
   override def getJobStatus: String = requestPersistTask.getStatus
+
+  def canRetry: Boolean = {
+    val canRetryFlag = "canRetry"
+    if (null != task && task.containsKey(canRetryFlag)) {
+      task.get(canRetryFlag).asInstanceOf[Boolean]
+    } else {
+      false
+    }
+  }
 }

@@ -51,12 +51,12 @@ trait AbstractLinkisJob extends LinkisJob with Logging {
     initJobDaemon()
   }
 
-  protected def initJobDaemon(): Unit = if(future == null) jobListeners synchronized {
-    if(future == null) future = LinkisJobBuilder.getThreadPoolExecutor.scheduleAtFixedRate(new Runnable {
+  protected def initJobDaemon(): Unit = if (future == null) jobListeners synchronized {
+    if (future == null) future = LinkisJobBuilder.getThreadPoolExecutor.scheduleAtFixedRate(new Runnable {
       private var failedNum = 0
       override def run(): Unit = {
         var exception: Throwable = null
-        val isJobCompleted = Utils.tryCatch(isCompleted){t =>
+        val isJobCompleted = Utils.tryCatch(isCompleted) {t =>
           exception = t
           failedNum += 1
           if(failedNum >= maxFailedNum) {
@@ -98,8 +98,8 @@ trait AbstractLinkisJob extends LinkisJob with Logging {
   @throws(classOf[TimeoutException])
   @throws(classOf[InterruptedException])
   override def waitFor(mills: Long): Unit = {
-    val duration = if(mills > 0) Duration(mills, TimeUnit.MILLISECONDS) else Duration.Inf
-    Utils.waitUntil(() => killed || isCompleted,  duration, 500, 5000)
+    val duration = if (mills > 0) Duration(mills, TimeUnit.MILLISECONDS) else Duration.Inf
+    Utils.waitUntil(() => killed || isCompleted, duration, 500, 5000)
     if(killed) throw new UJESJobException(s"$getId is killed!")
   }
 

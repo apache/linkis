@@ -17,11 +17,11 @@
  
 package org.apache.linkis.common.conf
 
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 
+import scala.collection.JavaConverters.mapAsJavaMapConverter
 import scala.collection.mutable.ArrayBuffer
-import scala.collection.{JavaConversions, mutable}
-
+import scala.collection.mutable
 
 object DWCArgumentsParser {
   protected val DWC_CONF = "--engineconn-conf"
@@ -29,7 +29,7 @@ object DWCArgumentsParser {
   private var dwcOptionMap = Map.empty[String, String]
 
   private[linkis] def setDWCOptionMap(dwcOptionMap: Map[String, String]) = this.dwcOptionMap = dwcOptionMap
-  def getDWCOptionMap = dwcOptionMap
+  def getDWCOptionMap: Map[String, String] = dwcOptionMap
 
   def parse(args: Array[String]): DWCArgumentsParser = {
     val keyValueRegex = "([^=]+)=(.+)".r
@@ -85,10 +85,10 @@ class DWCArgumentsParser {
   import DWCArgumentsParser._
   private val dwcOptionMap = new mutable.HashMap[String, String]()
   private val springOptionMap = new mutable.HashMap[String, String]()
-  def getSpringConfMap = springOptionMap.toMap
-  def getSpringConfs = JavaConversions.mapAsJavaMap(springOptionMap)
-  def getDWCConfMap = dwcOptionMap.toMap
-  def setConf(optionType: String, key: String, value: String) = {
+  def getSpringConfMap: Map[String, String] = springOptionMap.toMap
+  def getSpringConfs: java.util.Map[String, String] = springOptionMap.asJava
+  def getDWCConfMap: Map[String, String] = dwcOptionMap.toMap
+  def setConf(optionType: String, key: String, value: String): DWCArgumentsParser = {
     optionType match {
       case DWC_CONF =>
         dwcOptionMap += key -> value
@@ -98,12 +98,12 @@ class DWCArgumentsParser {
     this
   }
   def setSpringConf(optionMap: Map[String, String]): DWCArgumentsParser = {
-    if(optionMap != null) this.springOptionMap ++= optionMap
+    if (optionMap != null) this.springOptionMap ++= optionMap
     this
   }
   def setDWCConf(optionMap: Map[String, String]): DWCArgumentsParser = {
-    if(optionMap != null) this.dwcOptionMap ++= optionMap
+    if (optionMap != null) this.dwcOptionMap ++= optionMap
     this
   }
-  def validate() = {}
+  def validate(): Unit = {}
 }

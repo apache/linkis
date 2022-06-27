@@ -138,6 +138,8 @@ class CustomMonType(date: String, std: Boolean = true, isEnd: Boolean = false) {
 
 }
 
+
+
 /*
  Given a Date, convert into Quarter
  */
@@ -219,6 +221,40 @@ class CustomYearType(date: String, std: Boolean = true, isEnd: Boolean = false) 
     } else {
       val v = dateFormat.parse(date)
       DateTypeUtils.getYear(std, isEnd, v)
+    }
+  }
+
+}
+
+class CustomHourType(dateH: String, std: Boolean = true) {
+
+  def -(hour: Int): String = {
+    val dateFormat = DateTypeUtils.dateFormatHourLocal.get()
+    val dateFormatStd = DateTypeUtils.dateFormatHourStdLocal.get()
+    if (std) {
+      dateFormatStd.format(DateUtils.addHours(dateFormat.parse(dateH), -hour))
+    } else {
+      dateFormat.format(DateUtils.addHours(dateFormat.parse(dateH), -hour))
+    }
+  }
+
+  def +(hour: Int): String = {
+    val dateFormat = DateTypeUtils.dateFormatHourLocal.get()
+    val dateFormatStd = DateTypeUtils.dateFormatHourStdLocal.get()
+    if (std) {
+      dateFormatStd.format(DateUtils.addHours(dateFormat.parse(dateH), hour))
+    } else {
+      dateFormat.format(DateUtils.addHours(dateFormat.parse(dateH), hour))
+    }
+  }
+
+  override def toString: String = {
+    val dateFormat = DateTypeUtils.dateFormatHourLocal.get()
+    val dateFormatStd = DateTypeUtils.dateFormatHourStdLocal.get()
+    if (std) {
+      dateFormatStd.format(dateFormat.parse(dateH))
+    } else {
+      dateH
     }
   }
 

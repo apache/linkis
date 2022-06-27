@@ -18,7 +18,7 @@
 package org.apache.linkis.engineplugin.hive.executor
 
 import org.apache.linkis.common.exception.ErrorException
-import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.common.utils.{ByteTimeUtils, Logging, Utils}
 import org.apache.linkis.engineconn.computation.executor.execute.{ComputationExecutor, EngineExecutionContext}
 import org.apache.linkis.engineconn.core.EngineConnObject
 import org.apache.linkis.engineplugin.hive.cs.CSHiveHelper
@@ -52,9 +52,10 @@ import java.security.PrivilegedExceptionAction
 import java.util
 import java.util.concurrent.atomic.AtomicBoolean
 import org.apache.linkis.engineconn.executor.entity.ResourceFetchExecutor
-import org.apache.linkis.engineplugin.hive.conf.Counters
+import org.apache.linkis.engineplugin.hive.conf.{Counters, HiveEngineConfiguration}
 import org.apache.linkis.manager.common.protocol.resource.ResourceWithStatus
 import org.apache.commons.lang.StringUtils
+import org.apache.hadoop.hive.ql.exec.tez.TezJobExecHelper
 import org.apache.linkis.engineconn.computation.executor.utlis.ProgressUtils
 import org.apache.linkis.governance.common.utils.JobUtils
 
@@ -198,8 +199,8 @@ class HiveEngineConnExecutor(id: Int,
           // todo check uncleared context ?
           return ErrorExecuteResponse(hiveResponse.getErrorMessage, hiveResponse.getException)
         }
-        engineExecutorContext.appendStdout(s"Time taken: ${Utils.msDurationToString(System.currentTimeMillis() - startTime)}, begin to fetch results.")
-        LOG.info(s"$getId >> Time taken: ${Utils.msDurationToString(System.currentTimeMillis() - startTime)}, begin to fetch results.")
+        engineExecutorContext.appendStdout(s"Time taken: ${ByteTimeUtils.msDurationToString(System.currentTimeMillis() - startTime)}, begin to fetch results.")
+        LOG.info(s"$getId >> Time taken: ${ByteTimeUtils.msDurationToString(System.currentTimeMillis() - startTime)}, begin to fetch results.")
 
         val fieldSchemas = if (hiveResponse.getSchema != null) hiveResponse.getSchema.getFieldSchemas
         else if (driver.getSchema != null) driver.getSchema.getFieldSchemas
@@ -446,11 +447,18 @@ class HiveEngineConnExecutor(id: Int,
 
   override def killTask(taskID: String): Unit = {
     LOG.info(s"hive begins to kill job with id : ${taskID}")
-    HadoopJobExecHelper.killRunningJobs()
-    //Utils.tryQuietly(TezJobExecHelper.killRunningJobs())
-    Utils.tryQuietly(HiveInterruptUtils.interrupt())
-    if (null != thread) {
-      Utils.tryAndWarn(thread.interrupt())
+    //Configure the engine through the wds.linkis.hive.engine.type parameter to control the way the task is killed
+    LOG.info(s"hive engine type :${HiveEngineConfiguration.HIVE_ENGINE_TYPE}")
+    HiveEngineConfiguration.HIVE_ENGINE_TYPE match {
+      case "mr" =>
+        HadoopJobExecHelper.killRunningJobs()
+        Utils.tryQuietly(HiveInterruptUtils.interrupt())
+        if (null != thread) {
+          Utils.tryAndWarn(thread.interrupt())
+        }
+      case "tez" =>
+        Utils.tryQuietly(TezJobExecHelper.killRunningJobs())
+        driver.close()
     }
     clearCurrentProgress()
     singleSqlProgressMap.clear()

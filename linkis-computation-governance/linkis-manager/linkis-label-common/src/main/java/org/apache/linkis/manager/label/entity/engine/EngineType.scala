@@ -59,6 +59,8 @@ object EngineType extends Enumeration with Logging {
 
   val TRINO = Value("trino")
 
+  val ELASTICSEARCH = Value("elasticsearch")
+
   def mapFsTypeToEngineType(fsType: String): String = {
     fsType match {
       case "file" =>

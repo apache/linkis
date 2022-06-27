@@ -17,6 +17,7 @@
 shellDir=`dirname $0`
 workDir=`cd ${shellDir}/..;pwd`
 source ${workDir}/bin/common.sh
+source ${workDir}/deploy-config/linkis-env.sh
 
 say() {
     printf 'check command fail \n %s\n' "$1"
@@ -72,6 +73,14 @@ function checkSpark(){
  isSuccess "execute cmd: spark-submit --version "
 }
 
+portIsOccupy=false
+function check_service_port() {
+    pid=`lsof -i :$SERVER_PORT | grep -v "PID"`
+    if [ "$pid" != "" ];then
+      echo "$SERVER_PORT already used"
+      portIsOccupy=true
+    fi
+}
 
 check_cmd() {
     command -v "$1" > /dev/null 2>&1
@@ -97,9 +106,46 @@ echo "check tar"
 need_cmd tar
 echo "check sed"
 need_cmd sed
+echo "check lsof"
+need_cmd lsof
 echo "<-----end to check used cmd---->"
 
 checkPythonAndJava
+
+SERVER_PORT=$EUREKA_PORT
+check_service_port
+
+SERVER_PORT=$GATEWAY_PORT
+check_service_port
+
+SERVER_PORT=$MANAGER_PORT
+check_service_port
+
+SERVER_PORT=$ENGINECONNMANAGER_PORT
+check_service_port
+
+SERVER_PORT=$ENGINECONN_PLUGIN_SERVER_PORT
+check_service_port
+
+SERVER_PORT=$ENTRANCE_PORT
+check_service_port
+
+SERVER_PORT=$PUBLICSERVICE_PORT
+check_service_port
+
+SERVER_PORT=$CS_PORT
+check_service_port
+
+SERVER_PORT=$DATASOURCE_MANAGER_PORT
+check_service_port
+
+SERVER_PORT=$METADATA_MANAGER_PORT
+check_service_port
+
+if [ "$portIsOccupy" = true ];then
+  echo "The port is already in use, please check before installing"
+  exit 1
+fi
 
 if [ "$ENABLE_SPARK" == "true" ]; then
   checkSpark

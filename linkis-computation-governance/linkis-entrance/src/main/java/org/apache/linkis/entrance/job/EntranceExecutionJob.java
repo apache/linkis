@@ -18,11 +18,15 @@
 package org.apache.linkis.entrance.job;
 
 import org.apache.linkis.common.log.LogUtils;
-import org.apache.linkis.common.utils.Utils;
+import org.apache.linkis.common.utils.ByteTimeUtils;
 import org.apache.linkis.entrance.exception.EntranceErrorCode;
 import org.apache.linkis.entrance.exception.EntranceErrorException;
 import org.apache.linkis.entrance.execute.EntranceJob;
-import org.apache.linkis.entrance.log.*;
+import org.apache.linkis.entrance.log.LogHandler;
+import org.apache.linkis.entrance.log.LogReader;
+import org.apache.linkis.entrance.log.LogWriter;
+import org.apache.linkis.entrance.log.WebSocketCacheLogReader;
+import org.apache.linkis.entrance.log.WebSocketLogWriter;
 import org.apache.linkis.entrance.persistence.PersistenceManager;
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf;
 import org.apache.linkis.governance.common.constant.job.JobRequestConstants;
@@ -47,7 +51,12 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import scala.Option;
 
@@ -313,7 +322,7 @@ public class EntranceExecutionJob extends EntranceJob implements LogHandler {
         String runTime;
         if (metricsMap.containsKey(TaskConstant.ENTRANCEJOB_COMPLETE_TIME)) {
             runTime =
-                    Utils.msDurationToString(
+                    ByteTimeUtils.msDurationToString(
                             (((Date) metricsMap.get(TaskConstant.ENTRANCEJOB_COMPLETE_TIME)))
                                             .getTime()
                                     - (((Date)

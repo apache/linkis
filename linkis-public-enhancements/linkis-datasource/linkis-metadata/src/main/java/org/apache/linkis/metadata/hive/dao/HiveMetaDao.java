@@ -17,6 +17,8 @@
 
 package org.apache.linkis.metadata.hive.dao;
 
+import org.apache.linkis.metadata.hive.dto.DatabaseQueryParam;
+
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -24,7 +26,7 @@ import java.util.Map;
 
 public interface HiveMetaDao {
 
-    String getLocationByDbAndTable(Map<String, String> map);
+    String getLocationByDbAndTable(DatabaseQueryParam queryParam);
 
     /**
      * get user's rose by username
@@ -48,21 +50,26 @@ public interface HiveMetaDao {
      */
     List<String> getAllDbs();
 
-    List<Map<String, Object>> getTablesByDbNameAndUserAndRoles(Map<String, Object> params);
+    List<Map<String, Object>> getTablesByDbNameAndUserAndRoles(DatabaseQueryParam queryParam);
 
-    List<Map<String, Object>> getTablesByDbName(Map<String, Object> map);
+    List<Map<String, Object>> getTablesByDbName(DatabaseQueryParam queryParam);
 
-    Long getPartitionSize(Map<String, String> map);
+    /**
+     * get the table partition's size
+     * @param queryParam the database search properties
+     * @return the size
+     */
+    Long getPartitionSize(DatabaseQueryParam queryParam);
 
-    List<String> getPartitions(Map<String, String> map);
+    List<String> getPartitions(DatabaseQueryParam queryParam);
 
-    List<Map<String, Object>> getColumns(Map<String, Object> map);
+    List<Map<String, Object>> getColumns(DatabaseQueryParam queryParam);
 
-    Map<String, Object> getStorageDescriptionIDByDbTableNameAndUser(Map<String, Object> map);
+    Map<String, Object> getStorageDescriptionIDByDbTableNameAndUser(DatabaseQueryParam queryParam);
 
-    List<Map<String, Object>> getColumnsByStorageDescriptionID(Map<String, Object> map);
+    List<Map<String, Object>> getColumnsByStorageDescriptionID(DatabaseQueryParam queryParam);
 
-    List<Map<String, Object>> getPartitionKeys(Map<String, Object> map);
+    List<Map<String, Object>> getPartitionKeys(DatabaseQueryParam queryParam);
 
     String getTableComment(@Param("DbName") String DbName, @Param("tableName") String tableName);
 }

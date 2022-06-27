@@ -17,10 +17,10 @@
 
 package org.apache.linkis.metadata.restful.api;
 
+import org.apache.linkis.metadata.hive.dto.DatabaseQueryParam;
 import org.apache.linkis.metadata.restful.remote.DataSourceRestfulRemote;
 import org.apache.linkis.metadata.service.DataSourceService;
 import org.apache.linkis.metadata.service.HiveMetaWithPermissionService;
-import org.apache.linkis.metadata.utils.MdqConstants;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
 
@@ -33,9 +33,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.slf4j.Logger;
@@ -83,8 +80,9 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
             @RequestParam(value = "database", required = false) String database,
             HttpServletRequest req) {
         String userName = ModuleUserUtils.getOperationUser(req, "get tables");
+        DatabaseQueryParam queryParam = DatabaseQueryParam.of(userName).withDbName(database);
         try {
-            JsonNode tables = dataSourceService.queryTables(database, userName);
+            JsonNode tables = dataSourceService.queryTables(queryParam);
             return Message.ok("").data("tables", tables);
         } catch (Exception e) {
             logger.error("Failed to queryTables", e);
@@ -99,13 +97,10 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
             @RequestParam(value = "table", required = false) String table,
             HttpServletRequest req) {
         String userName = ModuleUserUtils.getOperationUser(req, "get columns of table " + table);
+        DatabaseQueryParam queryParam = DatabaseQueryParam.of(userName).withDbName(database).withTableName(table);
         try {
-            Map<String, Object> map = new HashMap<>();
-            map.put(MdqConstants.DB_NAME_KEY(), database);
-            map.put(MdqConstants.TABLE_NAME_KEY(), table);
-            map.put(MdqConstants.USERNAME_KEY(), userName);
             JsonNode columns =
-                    hiveMetaWithPermissionService.getColumnsByDbTableNameAndOptionalUserName(map);
+                    hiveMetaWithPermissionService.getColumnsByDbTableNameAndOptionalUserName(queryParam);
             return Message.ok("").data("columns", columns);
         } catch (Exception e) {
             logger.error("Failed to get data table structure(获取数据表结构失败)", e);
@@ -121,12 +116,13 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
             @RequestParam(value = "partition", required = false) String partition,
             HttpServletRequest req) {
         String userName = ModuleUserUtils.getOperationUser(req, "get size ");
+        DatabaseQueryParam queryParam = DatabaseQueryParam.of(userName).withDbName(database).withTableName(table).withPartitionName(partition);
         try {
             JsonNode sizeNode;
             if (StringUtils.isBlank(partition)) {
-                sizeNode = dataSourceService.getTableSize(database, table, userName);
+                sizeNode = dataSourceService.getTableSize(queryParam);
             } else {
-                sizeNode = dataSourceService.getPartitionSize(database, table, partition, userName);
+                sizeNode = dataSourceService.getPartitionSize(queryParam);
             }
             return Message.ok("").data("sizeInfo", sizeNode);
         } catch (Exception e) {
@@ -142,8 +138,9 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
             @RequestParam(value = "table", required = false) String table,
             HttpServletRequest req) {
         String userName = ModuleUserUtils.getOperationUser(req, "get partitions of " + table);
+        DatabaseQueryParam queryParam = DatabaseQueryParam.of(userName).withDbName(database).withTableName(table);
         try {
-            JsonNode partitionNode = dataSourceService.getPartitions(database, table, userName);
+            JsonNode partitionNode = dataSourceService.getPartitions(queryParam);
             return Message.ok("").data("partitionInfo", partitionNode);
         } catch (Exception e) {
             logger.error("Failed to get table partition(获取表分区失败)", e);

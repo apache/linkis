@@ -19,6 +19,7 @@ package org.apache.linkis.metadata.service.impl;
 import org.apache.linkis.metadata.hive.config.DSEnum;
 import org.apache.linkis.metadata.hive.config.DataSource;
 import org.apache.linkis.metadata.hive.dao.HiveMetaDao;
+import org.apache.linkis.metadata.hive.dto.DatabaseQueryParam;
 import org.apache.linkis.metadata.service.DataSourceService;
 import org.apache.linkis.metadata.service.HiveMetaWithPermissionService;
 import org.apache.linkis.metadata.util.DWSConfig;
@@ -63,51 +64,50 @@ public class HiveMetaWithPermissionServiceImpl implements HiveMetaWithPermission
     }
 
     @Override
-    public List<Map<String, Object>> getTablesByDbNameAndOptionalUserName(Map<String, Object> map) {
+    public List<Map<String, Object>> getTablesByDbNameAndOptionalUserName(DatabaseQueryParam queryParam) {
         Boolean flag = DWSConfig.HIVE_PERMISSION_WITH_lOGIN_USER_ENABLED.getValue();
-        if (null == map) {
+        if (null == queryParam) {
             return null;
         }
-        String userName = map.get("userName").toString();
+        String userName = queryParam.getUserName();
         if (adminUser.equals(userName)) {
             log.info("admin {} to get all tables ", userName);
-            return hiveMetaDao.getTablesByDbName(map);
+            return hiveMetaDao.getTablesByDbName(queryParam);
         }
         if (flag) {
-            List<String> roles = hiveMetaDao.getRosesByUser(userName);
-            map.put("roles", roles);
-            return hiveMetaDao.getTablesByDbNameAndUserAndRoles(map);
+            List<String> roles = hiveMetaDao.getRosesByUser(queryParam.getUserName());
+            queryParam.withRoles(roles);
+            return hiveMetaDao.getTablesByDbNameAndUserAndRoles(queryParam);
         } else {
-            log.info("user {} to getTablesByDbName no permission control", userName);
-            return hiveMetaDao.getTablesByDbName(map);
+            log.info("user {} to getTablesByDbName no permission control", queryParam.getUserName());
+            return hiveMetaDao.getTablesByDbName(queryParam);
         }
     }
 
     @DataSource(name = DSEnum.FIRST_DATA_SOURCE)
     @Override
-    public JsonNode getColumnsByDbTableNameAndOptionalUserName(Map<String, Object> map) {
+    public JsonNode getColumnsByDbTableNameAndOptionalUserName(DatabaseQueryParam queryParam) {
         Boolean flag = DWSConfig.HIVE_PERMISSION_WITH_lOGIN_USER_ENABLED.getValue();
-        if (null == map) {
+        if (null == queryParam) {
             return null;
         }
-        String userName = map.get(MdqConstants.USERNAME_KEY()).toString();
-        String dbName = map.get(MdqConstants.DB_NAME_KEY()).toString();
-        String tableName = map.get(MdqConstants.TABLE_NAME_KEY()).toString();
+        String userName = queryParam.getUserName();
+        String dbName = queryParam.getDbName();
+        String tableName = queryParam.getTableName();
         if (adminUser.equals(userName)) {
             log.info("admin {} to get all tables ", userName);
-            return dataSourceService.queryTableMeta(dbName, tableName, userName);
+            return dataSourceService.queryTableMeta(queryParam);
         }
         if (flag) {
-
             List<String> roles = hiveMetaDao.getRosesByUser(userName);
-            map.put("roles", roles);
+            queryParam.withRoles(roles);
             // with permission
-            Map<String, Object> tableMap = hiveMetaDao.getStorageDescriptionIDByDbTableNameAndUser(map);
-            if (null != tableMap
-                    && !tableMap.isEmpty()
+            Map<String, Object> tableMap = hiveMetaDao.getStorageDescriptionIDByDbTableNameAndUser(queryParam);
+            if (null != tableMap && !tableMap.isEmpty()
                     && tableMap.containsKey(MdqConstants.SDID_KEY())) {
                 String sdid = tableMap.get(MdqConstants.SDID_KEY()).toString();
-                return dataSourceService.queryTableMetaBySDID(dbName, tableName, sdid);
+                queryParam.setSdId(sdid);
+                return dataSourceService.queryTableMetaBySDID(queryParam);
             } else {
                 log.error(
                         "User {} has no read permission for meta of db : {}, table : {}",
@@ -118,7 +118,7 @@ public class HiveMetaWithPermissionServiceImpl implements HiveMetaWithPermission
             }
         } else {
             log.info("user {} to getTablesByDbName no permission control", userName);
-            return dataSourceService.queryTableMeta(dbName, tableName, userName);
+            return dataSourceService.queryTableMeta(queryParam);
         }
     }
 }

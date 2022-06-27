@@ -23,6 +23,7 @@ import org.apache.linkis.metadata.domain.mdq.vo.MdqTableFieldsInfoVO;
 import org.apache.linkis.metadata.domain.mdq.vo.MdqTablePartitionStatisticInfoVO;
 import org.apache.linkis.metadata.domain.mdq.vo.MdqTableStatisticInfoVO;
 import org.apache.linkis.metadata.exception.MdqIllegalParamException;
+import org.apache.linkis.metadata.hive.dto.DatabaseQueryParam;
 
 import java.io.IOException;
 import java.util.List;
@@ -45,8 +46,7 @@ public interface MdqService {
      */
     Long persistTable(MdqTableBO mdqTableBO, String userName);
 
-    MdqTableStatisticInfoVO getTableStatisticInfo(
-            String database, String tableName, String user, String partitionSort)
+    MdqTableStatisticInfoVO getTableStatisticInfo(DatabaseQueryParam queryParam, String partitionSort)
             throws IOException;
 
     /**
@@ -61,19 +61,16 @@ public interface MdqService {
 
     MdqTableBaseInfoVO getTableBaseInfoFromMdq(String database, String tableName, String user);
 
-    MdqTableBaseInfoVO getTableBaseInfoFromHive(String database, String tableName, String user);
+    MdqTableBaseInfoVO getTableBaseInfoFromHive(DatabaseQueryParam queryParam);
 
     List<MdqTableFieldsInfoVO> getTableFieldsInfoFromMdq(
             String database, String tableName, String user);
 
-    List<MdqTableFieldsInfoVO> getTableFieldsInfoFromHive(
-            String database, String tableName, String user);
+    List<MdqTableFieldsInfoVO> getTableFieldsInfoFromHive(DatabaseQueryParam queryParam);
 
-    MdqTableStatisticInfoVO getTableStatisticInfoFromHive(
-            String database, String tableName, String user, String partitionSort)
+    MdqTableStatisticInfoVO getTableStatisticInfoFromHive(DatabaseQueryParam queryParam, String partitionSort)
             throws IOException;
 
-    MdqTablePartitionStatisticInfoVO getPartitionStatisticInfo(
-            String database, String tableName, String userName, String partitionName)
+    MdqTablePartitionStatisticInfoVO getPartitionStatisticInfo(DatabaseQueryParam queryParam, String partitionName)
             throws IOException, MdqIllegalParamException;
 }

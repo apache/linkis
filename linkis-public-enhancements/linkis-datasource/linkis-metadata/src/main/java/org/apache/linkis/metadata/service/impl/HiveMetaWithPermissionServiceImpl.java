@@ -49,7 +49,7 @@ public class HiveMetaWithPermissionServiceImpl implements HiveMetaWithPermission
     @Override
     public List<String> getDbsOptionalUserName(String userName) {
         if (adminUser.equals(userName)) {
-            log.info("admin {} to get all dbs ",userName);
+            log.info("admin {} to get all dbs ", userName);
             return hiveMetaDao.getAllDbs();
         }
         Boolean flag = DWSConfig.HIVE_PERMISSION_WITH_lOGIN_USER_ENABLED.getValue();
@@ -69,7 +69,7 @@ public class HiveMetaWithPermissionServiceImpl implements HiveMetaWithPermission
         }
         String userName = map.get("userName");
         if (adminUser.equals(userName)) {
-            log.info("admin {} to get all tables ",userName);
+            log.info("admin {} to get all tables ", userName);
             return hiveMetaDao.getTablesByDbName(map);
         }
         if (flag) {
@@ -91,7 +91,7 @@ public class HiveMetaWithPermissionServiceImpl implements HiveMetaWithPermission
         String dbName = map.get(MdqConstants.DB_NAME_KEY());
         String tableName = map.get(MdqConstants.TABLE_NAME_KEY());
         if (adminUser.equals(userName)) {
-            log.info("admin {} to get all tables ",userName);
+            log.info("admin {} to get all tables ", userName);
             return dataSourceService.queryTableMeta(dbName, tableName, userName);
         }
         if (flag) {

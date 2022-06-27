@@ -13,11 +13,26 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+apiVersion: v1
+kind: Service
+metadata:
+  name: headless-linkis-cg-entrance
+  labels:
+    app: headless-linkis-cg-entrance
+    service: headless-linkis-cg-entrance
+spec:
+  ports:
+    - name: http
+      port: 9106
+      targetPort: 9106
+  selector:
+    app: linkis-cg-entrance
+  type: None
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: linkis-cg-entrance
-  namespace: preprod
   labels:
     app: linkis-cg-entrance
     version: v1
@@ -46,9 +61,11 @@ spec:
         - name: spark-config
           configMap: 
             name: spark-config
+        - name: log
+          emptyDir: {}
       containers:
         - image: registry.mydomain.com/library/linkis-cg-entrance:1.2.0
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           name: linkis-cg-entrance
           ports:
             - containerPort: 9106
@@ -71,4 +88,6 @@ spec:
               mountPath: /usr/local/hive/conf
             - name: spark-config
               mountPath: /usr/local/spark/conf
+            - name: log
+              mountPath: /opt/linkis/linkis-cg-entrance/logs
 

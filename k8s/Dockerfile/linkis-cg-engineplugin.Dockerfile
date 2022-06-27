@@ -20,7 +20,7 @@ WORKDIR /opt/linkis
 COPY lib/linkis-commons/public-module/ /opt/linkis/public-module/
 COPY lib/linkis-engineconn-plugins/ /opt/linkis/linkis-cg-engineplugin/plugins/
 COPY lib/linkis-computation-governance/linkis-cg-engineplugin/ /opt/linkis/linkis-cg-engineplugin/lib/
-COPY jars/mysql-connector-java-5.1.49.jar /opt/linkis/linkis-cg-engineplugin/lib/
+RUN curl -L -o /opt/linkis/linkis-cg-engineplugin/lib/mysql-connector-java-5.1.49.jar https://repo1.maven.org/maven2/mysql/mysql-connector-java/5.1.49/mysql-connector-java-5.1.49.jar
 COPY sbin/k8s/linkis-cg-engineplugin.sh /opt/linkis/linkis-cg-engineplugin/bin/startup.sh
 RUN mkdir -p /appcom/Install/LinkisInstall/lib/linkis-engineconn-plugins
 

@@ -17,7 +17,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: linkis-ps-cs
-  namespace: preprod
   labels:
     app: linkis-ps-cs
     version: v1
@@ -46,9 +45,11 @@ spec:
         - name: spark-config
           configMap: 
             name: spark-config
+        - name: log
+          emptyDir: {}
       containers:
         - image: registry.mydomain.com/library/linkis-ps-cs:1.2.0
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           name: linkis-ps-cs
           ports:
             - containerPort: 9106
@@ -71,4 +72,5 @@ spec:
               mountPath: /usr/local/hive/conf
             - name: spark-config
               mountPath: /usr/local/spark/conf
-
+            - name: log
+              mountPath: /opt/linkis/linkis-ps-cs/logs

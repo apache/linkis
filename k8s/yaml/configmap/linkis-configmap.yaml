@@ -17,7 +17,6 @@ kind: ConfigMap
 apiVersion: v1
 metadata:
   name: linkis-config
-  namespace: preprod
 data:
   application-eureka.yml: |+
     #

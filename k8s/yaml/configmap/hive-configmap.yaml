@@ -17,7 +17,6 @@ kind: ConfigMap
 apiVersion: v1
 metadata:
   name: hive-config
-  namespace: preprod
 data:
   hive-site.xml: |+
     <?xml version="1.0"?>
@@ -43,7 +42,7 @@ data:
 
             <property>
               <name>javax.jdo.option.ConnectionPassword</name>
-              <value>7956214</value>
+              <value>123456</value>
               <description>password to use against metastore database</description>
             </property>
 

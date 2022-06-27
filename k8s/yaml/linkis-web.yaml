@@ -17,7 +17,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: linkis-web
-  namespace: preprod
   labels:
     app: linkis-web
     service: linkis-web
@@ -28,13 +27,12 @@ spec:
       targetPort: 8087
   selector:
     app: linkis-web
-  type: NodePort
+  type: ClusterIP
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: linkis-web-config
-  namespace: preprod
 data:
   default.conf: |
       server {
@@ -73,7 +71,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: linkis-web
-  namespace: preprod
   labels:
     app: linkis-web
     version: v1
@@ -85,7 +82,6 @@ spec:
       version: v1
   template:
     metadata:
-      namespace: preprod
       labels:
         app: linkis-web
         version: v1

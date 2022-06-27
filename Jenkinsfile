@@ -1,19 +1,3 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 pipeline {
   agent {
     node {
@@ -115,19 +99,19 @@ docker push registry.mydomain.com/library/linkis-web:1.2.0'''
     stage('deploy on k8s') {
       steps {
         echo 'deploy on k8s'
-        sh '''kubectl apply -f k8s/yaml/configmap/linkis-configmap.yaml
-kubectl apply -f k8s/yaml/configmap/hadoop-configmap.yaml
-kubectl apply -f k8s/yaml/configmap/hive-configmap.yaml
-kubectl apply -f k8s/yaml/configmap/spark-configmap.yaml
-kubectl apply -f k8s/yaml/linkis-mg-gateway.yaml
-kubectl apply -f k8s/yaml/linkis-mg-eureka.yaml
-kubectl apply -f k8s/yaml/linkis-ps-publicservice.yaml
-kubectl apply -f k8s/yaml/linkis-ps-cs.yaml
-kubectl apply -f k8s/yaml/linkis-cg-linkismanager.yaml
-kubectl apply -f k8s/yaml/linkis-cg-entrance.yaml
-kubectl apply -f k8s/yaml/linkis-cg-engineplugin.yaml
-kubectl apply -f k8s/yaml/linkis-cg-engineconnmanager.yaml
-kubectl apply -f k8s/yaml/linkis-web.yaml'''
+        sh '''kubectl apply -f k8s/yaml/configmap/linkis-configmap.yaml --namespace=preprod
+kubectl apply -f k8s/yaml/configmap/hadoop-configmap.yaml --namespace=preprod
+kubectl apply -f k8s/yaml/configmap/hive-configmap.yaml --namespace=preprod
+kubectl apply -f k8s/yaml/configmap/spark-configmap.yaml --namespace=preprod
+kubectl apply -f k8s/yaml/linkis-mg-gateway.yaml --namespace=preprod
+kubectl apply -f k8s/yaml/linkis-mg-eureka.yaml --namespace=preprod
+kubectl apply -f k8s/yaml/linkis-ps-publicservice.yaml --namespace=preprod
+kubectl apply -f k8s/yaml/linkis-ps-cs.yaml --namespace=preprod
+kubectl apply -f k8s/yaml/linkis-cg-linkismanager.yaml --namespace=preprod
+kubectl apply -f k8s/yaml/linkis-cg-entrance.yaml --namespace=preprod
+kubectl apply -f k8s/yaml/linkis-cg-engineplugin.yaml --namespace=preprod
+kubectl apply -f k8s/yaml/linkis-cg-engineconnmanager.yaml --namespace=preprod
+kubectl apply -f k8s/yaml/linkis-web.yaml --namespace=preprod'''
       }
     }
 

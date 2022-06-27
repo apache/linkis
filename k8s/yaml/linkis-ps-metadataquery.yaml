@@ -13,58 +13,49 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-apiVersion: v1
-kind: Service
-metadata:
-  name: linkis-mg-eureka
-  labels:
-    app: linkis-mg-eureka
-    service: linkis-mg-eureka
-spec:
-  ports:
-    - name: http
-      port: 20303
-      targetPort: 20303
-  selector:
-    app: linkis-mg-eureka
-  type: ClusterIP
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: linkis-mg-eureka
+  name: linkis-ps-metadataquery
   labels:
-    app: linkis-mg-eureka
+    app: linkis-ps-metadataquery
     version: v1
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: linkis-mg-eureka
+      app: linkis-ps-metadataquery
       version: v1
   template:
     metadata:
       labels:
-        app: linkis-mg-eureka
+        app: linkis-ps-metadataquery
         version: v1
     spec:
       volumes:
         - name: conf
           configMap: 
             name: linkis-config
+        - name: hadoop-config
+          configMap: 
+            name: hadoop-config
+        - name: hive-config
+          configMap: 
+            name: hive-config
+        - name: spark-config
+          configMap: 
+            name: spark-config
         - name: log
-            emptyDir: { }
+          emptyDir: {}
       containers:
-        - name: linkis-mg-eureka
-          image: registry.mydomain.com/library/linkis-mg-eureka:1.2.0
+        - image: registry.mydomain.com/library/linkis-ps-metadataquery:1.2.0
           imagePullPolicy: IfNotPresent
+          name: linkis-ps-metadataquery
           ports:
-            - containerPort: 20303
+            - containerPort: 9106
           env:
             - name: EUREKA_URL
-              value: "http://127.0.0.1:20303/eureka/"
-            - name: EUREKA_PORT
-              value: "20303"
+              value: "http://linkis-mg-eureka:20303/eureka/"
           resources:
             requests:
               memory: "500Mi"
@@ -74,6 +65,12 @@ spec:
               cpu: "2000m"
           volumeMounts:
             - name: conf
-              mountPath: /opt/linkis/linkis-mg-eureka/conf/
+              mountPath: /opt/linkis/linkis-ps-metadataquery/conf/
+            - name: hadoop-config
+              mountPath: /usr/local/hadoop/etc/hadoop
+            - name: hive-config
+              mountPath: /usr/local/hive/conf
+            - name: spark-config
+              mountPath: /usr/local/spark/conf
             - name: log
-              mountPath: /opt/linkis/linkis-mg-eureka/logs
+              mountPath: /opt/linkis/linkis-ps-metadataquery/logs

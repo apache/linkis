@@ -19,7 +19,7 @@ WORKDIR /opt/linkis
 
 COPY lib/linkis-commons/public-module/ /opt/linkis/public-module/
 COPY lib/linkis-public-enhancements/linkis-ps-publicservice/ /opt/linkis/linkis-ps-publicservice/lib/
-COPY jars/mysql-connector-java-5.1.49.jar /opt/linkis/linkis-ps-publicservice/lib/
+RUN curl -L -o /opt/linkis/linkis-ps-publicservice/lib/mysql-connector-java-5.1.49.jar https://repo1.maven.org/maven2/mysql/mysql-connector-java/5.1.49/mysql-connector-java-5.1.49.jar
 COPY sbin/k8s/linkis-ps-publicservice.sh /opt/linkis/linkis-ps-publicservice/bin/startup.sh
 
 ENTRYPOINT ["linkis-ps-publicservice/bin/startup.sh"]

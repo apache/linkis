@@ -40,7 +40,7 @@ trait StorableLinkisJob extends AbstractLinkisJob {
   }
 
   protected def getJobInfoResult: JobInfoResult = {
-    if(completedJobInfoResult != null) return completedJobInfoResult
+    if (completedJobInfoResult != null) return completedJobInfoResult
     val startTime = System.currentTimeMillis
     val jobInfoResult = wrapperId(ujesClient.getJobInfo(getJobSubmitResult))
     getJobMetrics.addClientGetJobInfoTime(System.currentTimeMillis - startTime)
@@ -49,8 +49,7 @@ trait StorableLinkisJob extends AbstractLinkisJob {
       completedJobInfoResult = jobInfoResult
       info(s"Job-$getId is completed with status " + completedJobInfoResult.getJobStatus)
       getJobListeners.foreach(_.onJobFinished(this))
-    } else if(jobInfoResult.isRunning)
-      getJobListeners.foreach(_.onJobRunning(this))
+    } else if (jobInfoResult.isRunning) getJobListeners.foreach(_.onJobRunning(this))
     jobInfoResult
   }
 

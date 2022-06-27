@@ -34,12 +34,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 @RequestMapping(path = "/datasource")
@@ -100,7 +100,7 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
             HttpServletRequest req) {
         String userName = ModuleUserUtils.getOperationUser(req, "get columns of table " + table);
         try {
-            Map<String, String> map = new HashMap<String, String>();
+            Map<String, Object> map = new HashMap<>();
             map.put(MdqConstants.DB_NAME_KEY(), database);
             map.put(MdqConstants.TABLE_NAME_KEY(), table);
             map.put(MdqConstants.USERNAME_KEY(), userName);

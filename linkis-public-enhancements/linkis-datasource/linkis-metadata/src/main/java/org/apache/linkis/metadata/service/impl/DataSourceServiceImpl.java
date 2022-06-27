@@ -39,20 +39,19 @@ import org.apache.hadoop.fs.Path;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.common.collect.Maps;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 public class DataSourceServiceImpl implements DataSourceService {
@@ -103,9 +102,9 @@ public class DataSourceServiceImpl implements DataSourceService {
     @DataSource(name = DSEnum.FIRST_DATA_SOURCE)
     @Override
     public JsonNode queryTables(String database, String userName) {
-        List<Map<String, Object>> listTables = Lists.newArrayList();
+        List<Map<String, Object>> listTables;
         try {
-            Map<String, String> map = Maps.newHashMap();
+            Map<String, Object> map = Maps.newHashMap();
             map.put("dbName", database);
             map.put("userName", userName);
             listTables = hiveMetaWithPermissionService.getTablesByDbNameAndOptionalUserName(map);
@@ -132,7 +131,7 @@ public class DataSourceServiceImpl implements DataSourceService {
     @Override
     public JsonNode queryTableMeta(String dbName, String tableName, String userName) {
         logger.info("getTable:" + userName);
-        Map<String, String> param = Maps.newHashMap();
+        Map<String, Object> param = Maps.newHashMap();
         param.put("dbName", dbName);
         param.put("tableName", tableName);
         List<Map<String, Object>> columns = hiveMetaDao.getColumns(param);
@@ -166,7 +165,7 @@ public class DataSourceServiceImpl implements DataSourceService {
     @Override
     public JsonNode queryTableMetaBySDID(String dbName, String tableName, String sdid) {
         logger.info("getTableMetabysdid : sdid = {}", sdid);
-        Map<String, String> param = Maps.newHashMap();
+        Map<String, Object> param = Maps.newHashMap();
         param.put(MdqConstants.DB_NAME_KEY(), dbName);
         param.put(MdqConstants.TABLE_NAME_KEY(), tableName);
         param.put(MdqConstants.SDID_KEY(), sdid);

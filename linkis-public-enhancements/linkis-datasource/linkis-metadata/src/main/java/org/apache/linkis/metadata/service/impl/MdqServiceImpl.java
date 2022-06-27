@@ -54,14 +54,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class MdqServiceImpl implements MdqService {
@@ -200,7 +207,7 @@ public class MdqServiceImpl implements MdqService {
     @Override
     public MdqTableBaseInfoVO getTableBaseInfoFromHive(
             String database, String tableName, String user) {
-        Map<String, String> map = Maps.newHashMap();
+        Map<String, Object> map = Maps.newHashMap();
         map.put("dbName", database);
         map.put("userName", user);
         map.put("tableName", tableName);
@@ -232,7 +239,7 @@ public class MdqServiceImpl implements MdqService {
     @Override
     public List<MdqTableFieldsInfoVO> getTableFieldsInfoFromHive(
             String database, String tableName, String user) {
-        Map<String, String> param = Maps.newHashMap();
+        Map<String, Object> param = Maps.newHashMap();
         param.put("dbName", database);
         param.put("tableName", tableName);
         List<Map<String, Object>> columns = hiveMetaDao.getColumns(param);

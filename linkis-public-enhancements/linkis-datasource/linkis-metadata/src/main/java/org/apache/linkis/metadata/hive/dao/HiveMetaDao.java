@@ -26,26 +26,43 @@ public interface HiveMetaDao {
 
     String getLocationByDbAndTable(Map<String, String> map);
 
-    List<String> getDbsByUser(String userName);
+    /**
+     * get user's rose by username
+     * @param userName user's username
+     * @return the rose name list
+     */
+    List<String> getRosesByUser(String userName);
 
-    /** @return get all list of DBS NAME without filtering by userName */
+    /**
+     * get dbs by user's username and user's roles
+     * @param userName user's username
+     * @param roles user's roles
+     * @return the db name list
+     */
+    List<String> getDbsByUserAndRoles(@Param("userName") String userName, @Param("roles") List<String> roles);
+
+    /**
+     * get all list of DBS NAME
+     *
+     * @return  the db name list
+     */
     List<String> getAllDbs();
 
-    List<Map<String, Object>> getTablesByDbNameAndUser(Map<String, String> map);
+    List<Map<String, Object>> getTablesByDbNameAndUserAndRoles(Map<String, Object> params);
 
-    List<Map<String, Object>> getTablesByDbName(Map<String, String> map);
+    List<Map<String, Object>> getTablesByDbName(Map<String, Object> map);
 
     Long getPartitionSize(Map<String, String> map);
 
     List<String> getPartitions(Map<String, String> map);
 
-    List<Map<String, Object>> getColumns(Map<String, String> map);
+    List<Map<String, Object>> getColumns(Map<String, Object> map);
 
-    Map<String, Object> getStorageDescriptionIDByDbTableNameAndUser(Map<String, String> map);
+    Map<String, Object> getStorageDescriptionIDByDbTableNameAndUser(Map<String, Object> map);
 
-    List<Map<String, Object>> getColumnsByStorageDescriptionID(Map<String, String> map);
+    List<Map<String, Object>> getColumnsByStorageDescriptionID(Map<String, Object> map);
 
-    List<Map<String, Object>> getPartitionKeys(Map<String, String> map);
+    List<Map<String, Object>> getPartitionKeys(Map<String, Object> map);
 
     String getTableComment(@Param("DbName") String DbName, @Param("tableName") String tableName);
 }

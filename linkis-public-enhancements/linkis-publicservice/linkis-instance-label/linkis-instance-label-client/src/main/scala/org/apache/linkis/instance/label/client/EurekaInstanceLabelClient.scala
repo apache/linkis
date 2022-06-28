@@ -49,7 +49,7 @@ class EurekaInstanceLabelClient extends Logging {
       val labels = new util.HashMap[String, Object]()
       labels.put(LabelKeyConstant.ROUTE_KEY, metadata.get(LabelKeyConstant.ROUTE_KEY))
       val insLabelRefreshRequest = new InsLabelRefreshRequest
-      insLabelRefreshRequest.setLabels(metadata.asInstanceOf[java.util.Map[String, Object]])
+      insLabelRefreshRequest.setLabels(labels)
       insLabelRefreshRequest.setServiceInstance(Sender.getThisServiceInstance)
       InstanceLabelClient.getInstance.refreshLabelsToInstance(insLabelRefreshRequest)
     }

@@ -26,15 +26,18 @@ import org.apache.commons.lang.exception.ExceptionUtils
 import org.slf4j.LoggerFactory
 import org.springframework.web.context.request.{RequestContextHolder, ServletRequestAttributes}
 
-@ApiModel
+import scala.annotation.meta.field
+
+@ApiModel()
 class Message(
-               @ApiModelProperty(value = "方法名")
+               @(ApiModelProperty @field)("请求url")
                private var method: String,
-               @ApiModelProperty(value = "状态")
-               private var status: Int = 0,          //-1 no login, 0 success, 1 error, 2 validate failed, 3 auth failed, 4 warning
-               @ApiModelProperty(value = "描述")
+               @(ApiModelProperty @field)("状态")
+               private var status: Int = 0,
+               @(ApiModelProperty @field)("描述")//-1 no login, 0 success, 1 error, 2 validate failed, 3 auth failed, 4 warning
                private var message: String,
-               @ApiModelProperty(value = "返回结果集")
+               @(ApiModelProperty @field)("数据集")
+               @ApiModelProperty("data")
                private var data: util.HashMap[String, Object] = new util.HashMap[String, Object]) {
   def this() = this(null, 0, null)
   def << (key: String, value: Any): Message = {
@@ -79,17 +82,17 @@ object Message {
     if (StringUtils.isEmpty(method)) {
       Thread.currentThread().getStackTrace.find(_.getClassName.toLowerCase.endsWith("restfulapi")).foreach {
         stack => {
-            val httpRequest:HttpServletRequest=getCurrentHttpRequest
-            if(httpRequest!=null){
-              val pathInfo=httpRequest.getPathInfo;
-              if(pathInfo!=null) {
-                  val method = if (pathInfo.startsWith("/")) "/api"+ pathInfo else "/api" + "/" + pathInfo
-                  return new Message(method, status, message, data)
-              }else{
-                logger.warn("get HttpServletRequest pathInfo is null,please check it!")
-              }
+          val httpRequest:HttpServletRequest=getCurrentHttpRequest
+          if(httpRequest!=null){
+            val pathInfo=httpRequest.getPathInfo;
+            if(pathInfo!=null) {
+              val method = if (pathInfo.startsWith("/")) "/api"+ pathInfo else "/api" + "/" + pathInfo
+              return new Message(method, status, message, data)
+            }else{
+              logger.warn("get HttpServletRequest pathInfo is null,please check it!")
             }
           }
+        }
       }
     }
     new Message(method, status, message, data)

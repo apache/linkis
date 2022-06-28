@@ -20,7 +20,7 @@ package org.apache.linkis.manager.rm.restful
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.pagehelper.page.PageMethod
 import com.google.common.collect.Lists
-import io.swagger.annotations.{Api, ApiOperation}
+import io.swagger.annotations.{Api, ApiImplicitParams, ApiModel, ApiOperation}
 import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.manager.common.conf.RMConfiguration
@@ -60,11 +60,10 @@ import scala.collection.JavaConverters._
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 
-
 @RestController
-@Api(value = "资源管理")
+@Api(tags = Array("资源管理"))
 @RequestMapping(path = Array("/linkisManager/rm"))
-class RMMonitorRest extends Logging {
+private class RMMonitorRest extends Logging {
 
   implicit val formats = DefaultFormats + ResourceSerializer + NodeResourceSerializer
   val mapper = new ObjectMapper()

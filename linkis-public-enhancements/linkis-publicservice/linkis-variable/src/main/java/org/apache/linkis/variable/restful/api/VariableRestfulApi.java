@@ -24,7 +24,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.apache.linkis.MessageJava;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
 import org.apache.linkis.variable.entity.VarKeyValueVO;
@@ -76,10 +75,10 @@ public class VariableRestfulApi {
         variableService.removeGlobalVariable(keyID);
         return Message.ok();
     }*/
-    @ApiOperation(value="全局变量列表",notes="获取全局变量清单" ,response = MessageJava.class)
+    @ApiOperation(value="全局变量列表",notes="获取全局变量清单" ,response = Message.class)
    /* @ApiOperationSupport(
             responses = @DynamicResponseParameters(properties = {
-                    @DynamicParameter(value = "结果集",name = "data",dataTypeClass = MessageJava.class)
+                    @DynamicParameter(value = "结果集",name = "data",dataTypeClass = Message.class)
             })
     )*/
     @RequestMapping(path = "listGlobalVariable", method = RequestMethod.GET)
@@ -88,7 +87,7 @@ public class VariableRestfulApi {
         List<VarKeyValueVO> kvs = variableService.listGlobalVariable(userName);
         return Message.ok().data("globalVariables", kvs);
     }
-    @ApiOperation(value="添加全局变量",notes="添加全局变量" ,response = MessageJava.class)
+    @ApiOperation(value="添加全局变量",notes="添加全局变量" ,response = Message.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name="globalVariables",dataType="Map",required=true,value="新增参数数据一对多key:globalVariables,value:List"),
             @ApiImplicitParam(name="key",dataType="String",required=true,value="参数名称，属于globalVariables"),

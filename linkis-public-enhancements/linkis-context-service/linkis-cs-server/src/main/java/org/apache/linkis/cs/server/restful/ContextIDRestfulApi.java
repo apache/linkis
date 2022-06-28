@@ -21,7 +21,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.apache.linkis.MessageJava;
 import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.cs.common.entity.source.ContextID;
 import org.apache.linkis.cs.common.exception.CSErrorException;
@@ -64,7 +63,7 @@ public class ContextIDRestfulApi implements CsRestfulParent {
 
     @Autowired private CsScheduler csScheduler;
 
-    @ApiOperation(value="创建文本记录",notes="创建文本记录",response = MessageJava.class)
+    @ApiOperation(value="创建文本记录",notes="创建文本记录",response = Message.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name="contextID",dataType="String",value="上下文Id")
     })
@@ -75,7 +74,7 @@ public class ContextIDRestfulApi implements CsRestfulParent {
         HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.CREATE, contextID);
         return generateResponse(answerJob, "contextId");
     }
-    @ApiOperation(value="获取文本ID",notes="获取文本ID",response = MessageJava.class)
+    @ApiOperation(value="获取文本ID",notes="获取文本ID",response = Message.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name="contextId",dataType="String",value="上下文Id")
     })
@@ -91,7 +90,7 @@ public class ContextIDRestfulApi implements CsRestfulParent {
         return message;
     }
 
-    @ApiOperation(value="修改文本ID",notes="修改文本ID",response = MessageJava.class)
+    @ApiOperation(value="修改文本ID",notes="修改文本ID",response = Message.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name="contextId",dataType="String",value="上下文Id")
     })
@@ -106,7 +105,7 @@ public class ContextIDRestfulApi implements CsRestfulParent {
         return generateResponse(answerJob, "");
     }
 
-    @ApiOperation(value="重置文本ID",notes="重置文本ID",response = MessageJava.class)
+    @ApiOperation(value="重置文本ID",notes="重置文本ID",response = Message.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name="contextId",dataType="String",value="上下文Id")
     })
@@ -122,7 +121,7 @@ public class ContextIDRestfulApi implements CsRestfulParent {
         return generateResponse(answerJob, "");
     }
 
-    @ApiOperation(value="删除文本ID",notes="删除文本ID",response = MessageJava.class)
+    @ApiOperation(value="删除文本ID",notes="删除文本ID",response = Message.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name="contextId",dataType="String",value="上下文Id")
     })
@@ -137,7 +136,7 @@ public class ContextIDRestfulApi implements CsRestfulParent {
         return generateResponse(answerJob, "");
     }
 
-    @ApiOperation(value="搜索文本Id执行时间",notes="搜索文本Id执行时间",response = MessageJava.class)
+    @ApiOperation(value="搜索文本Id执行时间",notes="搜索文本Id执行时间",response = Message.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name="createTimeStart",dataType="String",value="创建时间"),
             @ApiImplicitParam(name="createTimeEnd",dataType="String",value="创建结束时间"),

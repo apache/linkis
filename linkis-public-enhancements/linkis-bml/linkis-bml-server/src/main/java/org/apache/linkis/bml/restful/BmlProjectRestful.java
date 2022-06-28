@@ -21,7 +21,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.apache.linkis.MessageJava;
+import org.apache.linkis.server.Message;
 import org.apache.linkis.bml.Entity.DownloadModel;
 import org.apache.linkis.bml.Entity.ResourceTask;
 import org.apache.linkis.bml.common.BmlProjectNoEditException;
@@ -78,7 +78,7 @@ public class BmlProjectRestful {
     @Autowired private DownloadService downloadService;
 
 
-    @ApiOperation(value="创建Bml项目",notes="创建Bml项目",response =MessageJava.class)
+    @ApiOperation(value="创建Bml项目",notes="创建Bml项目",response =Message.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name="projectName",dataType="String",value="项目名称"),
             @ApiImplicitParam(name="editUsers",dataType="String",value="编辑用户"),
@@ -110,7 +110,7 @@ public class BmlProjectRestful {
         return Message.ok("success to create project(创建工程ok)");
     }
 
-    @ApiOperation(value="上载共享资源",notes="上载共享资源",response =MessageJava.class)
+    @ApiOperation(value="上载共享资源",notes="上载共享资源",response =Message.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name="system",dataType="String",value="系统"),
             @ApiImplicitParam(name="resourceHeader",dataType="String",value="资源标头"),
@@ -191,7 +191,7 @@ public class BmlProjectRestful {
         }
         return message;
     }
-    @ApiOperation(value="更新共享资源",notes="更新共享资源",response =MessageJava.class)
+    @ApiOperation(value="更新共享资源",notes="更新共享资源",response =Message.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name="resourceId",dataType="String",value="资源ID"),
             @ApiImplicitParam(name="file",dataType="MultipartFile",value="文件")
@@ -289,7 +289,7 @@ public class BmlProjectRestful {
                 resourceId);
         return message;
     }
-    @ApiOperation(value="下载共享资源",notes="下载共享资源",response =MessageJava.class)
+    @ApiOperation(value="下载共享资源",notes="下载共享资源",response =Message.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name="resourceId",dataType="String",value="资源ID"),
             @ApiImplicitParam(name="version",dataType="String",value="版本")
@@ -401,7 +401,7 @@ public class BmlProjectRestful {
                 user,
                 resourceId);
     }
-    @ApiOperation(value="项目信息",notes="获取项目信息",response =MessageJava.class)
+    @ApiOperation(value="项目信息",notes="获取项目信息",response =Message.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name="projectName",dataType="String",value="项目名称")
     })
@@ -412,7 +412,7 @@ public class BmlProjectRestful {
         return Message.ok("Obtain project information successfully (获取工程信息成功)");
     }
 
-    @ApiOperation(value="附件资源项目",notes="附件资源项目",response =MessageJava.class)
+    @ApiOperation(value="附件资源项目",notes="附件资源项目",response =Message.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name="projectName",dataType="String",value="项目名称"),
             @ApiImplicitParam(name="resourceId",dataType="String",value="资源名称")
@@ -428,7 +428,7 @@ public class BmlProjectRestful {
         return Message.ok("attach resource and project ok");
     }
 
-    @ApiOperation(value="更新项目用户",notes="更新项目用户",response =MessageJava.class)
+    @ApiOperation(value="更新项目用户",notes="更新项目用户",response =Message.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name="projectName",dataType="String",value="项目名称"),
             @ApiImplicitParam(name="editUsers",dataType="String",value="编辑用户"),

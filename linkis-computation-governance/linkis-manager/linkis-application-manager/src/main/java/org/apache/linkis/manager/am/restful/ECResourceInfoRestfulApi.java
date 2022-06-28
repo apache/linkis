@@ -21,7 +21,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.apache.linkis.MessageJava;
+import org.apache.linkis.server.Message;
 import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.manager.am.exception.AMErrorException;
 import org.apache.linkis.manager.am.service.ECResourceInfoService;
@@ -42,7 +42,7 @@ import javax.servlet.http.HttpServletRequest;
 public class ECResourceInfoRestfulApi {
     @Autowired private ECResourceInfoService ecResourceInfoService;
 
-    @ApiOperation(value="获取EC信息",notes="获取EC信息",response = MessageJava.class)
+    @ApiOperation(value="获取EC信息",notes="获取EC信息",response = Message.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name = "ticketid", required = true, dataType = "String", value = "ticketid")
     })
@@ -61,7 +61,7 @@ public class ECResourceInfoRestfulApi {
             return Message.error("tickedId not exist:" + ticketid);
         }
     }
-    @ApiOperation(value="删除EC信息",notes="删除EC信息",response = MessageJava.class)
+    @ApiOperation(value="删除EC信息",notes="删除EC信息",response = Message.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name = "ticketid", required = true, dataType = "String", value = "ticketid")
     })

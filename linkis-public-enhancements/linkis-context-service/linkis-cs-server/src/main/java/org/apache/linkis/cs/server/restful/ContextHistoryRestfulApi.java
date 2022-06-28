@@ -21,7 +21,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.apache.linkis.MessageJava;
+import org.apache.linkis.server.Message;
 import org.apache.linkis.cs.common.entity.history.ContextHistory;
 import org.apache.linkis.cs.common.entity.source.ContextID;
 import org.apache.linkis.cs.common.exception.CSErrorException;
@@ -54,7 +54,7 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
     @Autowired private CsScheduler csScheduler;
 
     private ObjectMapper objectMapper = new ObjectMapper();
-    @ApiOperation(value="创建历史记录",notes="创建历史记录",response = MessageJava.class)
+    @ApiOperation(value="创建历史记录",notes="创建历史记录",response = Message.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name="contextHistory",dataType="String",value="历史上下文"),
             @ApiImplicitParam(name="contextID",dataType="String",value="上下文id")
@@ -75,7 +75,7 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
         return generateResponse(answerJob, "");
     }
 
-    @ApiOperation(value="删除历史记录",notes="删除历史记录",response = MessageJava.class)
+    @ApiOperation(value="删除历史记录",notes="删除历史记录",response = Message.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name="contextHistory",dataType="String",value="历史上下文"),
             @ApiImplicitParam(name="contextID",dataType="String",value="上下文id")
@@ -96,7 +96,7 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
         return generateResponse(answerJob, "");
     }
 
-    @ApiOperation(value="获取多个历史记录",notes="获取多个历史记录",response = MessageJava.class)
+    @ApiOperation(value="获取多个历史记录",notes="获取多个历史记录",response = Message.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name="contextID",dataType="String",value="上下文id")
     })
@@ -112,7 +112,7 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
         return message;
     }
 
-    @ApiOperation(value="获取历史记录",notes="获取历史记录",response = MessageJava.class)
+    @ApiOperation(value="获取历史记录",notes="获取历史记录",response = Message.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name="contextID",dataType="String",value="上下文Id"),
             @ApiImplicitParam(name="source",dataType="String",value="上下文源")
@@ -135,7 +135,7 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
         return message;
     }
 
-    @ApiOperation(value="搜索历史记录",notes="搜索历史记录",response = MessageJava.class)
+    @ApiOperation(value="搜索历史记录",notes="搜索历史记录",response = Message.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name="contextID",dataType="String",value="上下文Id"),
             @ApiImplicitParam(name="keywords",dataType="String",value="关键词")

@@ -22,7 +22,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.apache.linkis.MessageJava;
 import org.apache.linkis.common.io.FsPath;
 import org.apache.linkis.common.io.FsWriter;
 import org.apache.linkis.filesystem.conf.WorkSpaceConfiguration;
@@ -115,7 +114,7 @@ public class FsRestfulApi {
         return (requestPath.indexOf(workspacePath) > -1)
                 || (requestPath.indexOf(enginconnPath) > -1);
     }
-    @ApiOperation(value="根路径",notes="获取根路径",response = MessageJava.class)
+    @ApiOperation(value="根路径",notes="获取根路径",response = Message.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name = "pathType", required = false,dataType = "String", value = "文件类型")
     })
@@ -145,7 +144,7 @@ public class FsRestfulApi {
         }
         return Message.ok().data(String.format("user%sRootPath", returnType), path);
     }
-    @ApiOperation(value="创建新的Dir",notes="创建新的Dir",response = MessageJava.class)
+    @ApiOperation(value="创建新的Dir",notes="创建新的Dir",response = Message.class)
     @ApiOperationSupport(ignoreParameters = {"json"})
     @ApiImplicitParams({
             @ApiImplicitParam(name = "path",required = true,  dataType = "String", value = "路径")
@@ -171,7 +170,7 @@ public class FsRestfulApi {
         fileSystem.mkdirs(fsPath);
         return Message.ok();
     }
-    @ApiOperation(value="创建新的文件",notes="创建新的文件",response = MessageJava.class)
+    @ApiOperation(value="创建新的文件",notes="创建新的文件",response = Message.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name = "path", required = true,  dataType = "String", value = "路径")
     })
@@ -196,7 +195,7 @@ public class FsRestfulApi {
         fileSystem.createNewFile(fsPath);
         return Message.ok();
     }
-    @ApiOperation(value="重新命名",notes="重新给文件命名",response = MessageJava.class)
+    @ApiOperation(value="重新命名",notes="重新给文件命名",response = Message.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name = "oldDest",required = false, dataType = "String", value = "旧名称"),
             @ApiImplicitParam(name = "newDest",required = false,  dataType = "String", value = "新名称")
@@ -236,7 +235,7 @@ public class FsRestfulApi {
         fileSystem.renameTo(fsPathOld, fsPathNew);
         return Message.ok();
     }
-    @ApiOperation(value="上传",notes="上传文件，可传多个文件",response = MessageJava.class)
+    @ApiOperation(value="上传",notes="上传文件，可传多个文件",response = Message.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name = "path", required = false, dataType = "String", value = "地址"),
             @ApiImplicitParam(name = "file",required = false,  dataType = "List<MultipartFile> ", value = "文件")
@@ -272,7 +271,7 @@ public class FsRestfulApi {
         return Message.ok();
     }
 
-    @ApiOperation(value="删除dir文件或者文件",notes="删除dir文件或者文件",response = MessageJava.class)
+    @ApiOperation(value="删除dir文件或者文件",notes="删除dir文件或者文件",response = Message.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name = "path",required = true, dataType = "String", value = "地址")
     })
@@ -301,7 +300,7 @@ public class FsRestfulApi {
         deleteAllFiles(fileSystem, fsPath);
         return Message.ok();
     }
-    @ApiOperation(value="函数列表",notes="获取udf函数列表",response = MessageJava.class)
+    @ApiOperation(value="函数列表",notes="获取udf函数列表",response = Message.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name="path", required = true,dataType="String",value="请求路径")
     })
@@ -354,7 +353,7 @@ public class FsRestfulApi {
         }
         return Message.ok().data("dirFileTrees", dirFileTree);
     }
-    @ApiOperation(value="下载",notes="下载",response = MessageJava.class)
+    @ApiOperation(value="下载",notes="下载",response = Message.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name = "path",required = true, dataType = "String", value = "地址"),
             @ApiImplicitParam(name = "charset",required = true, dataType = "String", value = "字符集")
@@ -417,7 +416,7 @@ public class FsRestfulApi {
             IOUtils.closeQuietly(writer);
         }
     }
-    @ApiOperation(value="是否存在",notes="是否存在",response = MessageJava.class)
+    @ApiOperation(value="是否存在",notes="是否存在",response = Message.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name = "path", required = true,dataType = "String", value = "地址")
     })
@@ -436,7 +435,7 @@ public class FsRestfulApi {
         FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
         return Message.ok().data("isExist", fileSystem.exists(fsPath));
     }
-    @ApiOperation(value="文件信息",notes="文件信息",response = MessageJava.class)
+    @ApiOperation(value="文件信息",notes="文件信息",response = Message.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name = "path", required = true,dataType = "String", value = "地址"),
             @ApiImplicitParam(name = "pageSize", required = false,dataType = "Integer", value = "页面大小")
@@ -478,7 +477,7 @@ public class FsRestfulApi {
         }
     }
 
-    @ApiOperation(value="打开文件",notes="打开文件",response = MessageJava.class)
+    @ApiOperation(value="打开文件",notes="打开文件",response = Message.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name = "path", required = true,dataType = "String", value = "地址"),
             @ApiImplicitParam(name = "page",required = false, dataType = "Integer", value = "页码"),
@@ -531,7 +530,7 @@ public class FsRestfulApi {
      * @return
      * @throws IOException
      */
-    @ApiOperation(value="保存脚本",notes="保存脚本",response = MessageJava.class)
+    @ApiOperation(value="保存脚本",notes="保存脚本",response = Message.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name = "path",required = true, dataType = "String", value = "地址"),
             @ApiImplicitParam(name = "scriptContent",required = false, dataType = "String", value = "页码"),
@@ -580,7 +579,7 @@ public class FsRestfulApi {
             return Message.ok();
         }
     }
-    @ApiOperation(value="结果集转换成Excel",notes="结果集转换成Excel",response = MessageJava.class)
+    @ApiOperation(value="结果集转换成Excel",notes="结果集转换成Excel",response = Message.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name = "path",required = false, dataType = "String", value = "地址"),
             @ApiImplicitParam(name = "charset", dataType = "String", value = "结果集"),
@@ -601,7 +600,7 @@ public class FsRestfulApi {
             @RequestParam(value = "charset",required = true,  defaultValue = "utf-8") String charset,
             @RequestParam(value = "outputFileType",required = true,  defaultValue = "csv") String outputFileType,
             @RequestParam(value = "csvSeperator", required = true, defaultValue = ",") String csvSeperator,
-            @RequestParam(value = "quoteRetouchEnable",required = true,  required = false)
+            @RequestParam(value = "quoteRetouchEnable",required = true)
                     boolean quoteRetouchEnable,
             @RequestParam(value = "outputFileName",required = true,  defaultValue = "downloadResultset")
                     String outputFileName,
@@ -700,7 +699,7 @@ public class FsRestfulApi {
             IOUtils.closeQuietly(writer);
         }
     }
-    @ApiOperation(value="resultsets转换成Excel",notes="resultsets转换成Excel",response = MessageJava.class)
+    @ApiOperation(value="resultsets转换成Excel",notes="resultsets转换成Excel",response = Message.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name = "path", required = false, dataType = "String", value = "地址"),
             @ApiImplicitParam(name = "outputFileName",required = true, dataType = "String", value = "输出文件名称"),
@@ -785,7 +784,7 @@ public class FsRestfulApi {
             IOUtils.closeQuietly(writer);
         }
     }
-    @ApiOperation(value="formate",notes="resultsets转换成Excel",response = MessageJava.class)
+    @ApiOperation(value="formate",notes="resultsets转换成Excel",response = Message.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name = "path", required = false, dataType = "String", value = "地址"),
             @ApiImplicitParam(name = "encoding",required = true, dataType = "String", value = "编码"),

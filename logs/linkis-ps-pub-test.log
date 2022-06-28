@@ -1,0 +1,57 @@
+2022-06-13 16:43:30.135 [WARN ] [main                                    ] o.a.l.c.c.BDPConfiguration$ (50) [warn] - ******************************** Notice: The Linkis configuration file is linkis.properties ! ***************************
+2022-06-13 16:43:30.182 [WARN ] [main                                    ] o.a.l.c.c.BDPConfiguration$ (50) [warn] - ******************************** Notice: The Linkis serverConf file is linkis.properties ! ***************************
+2022-06-13 16:43:30.370 [INFO ] [main                                    ] o.a.l.LinkisBaseServerApp (50) [main] - Ready to start linkis-ps-pub-test with args: --spring.profiles.active=linkis
+--spring.mvc.servlet.path=/api/rest_j/v1
+--spring.servlet.multipart.max-file-size=500MB
+--spring.servlet.multipart.file-size-threshold=50MB
+--spring.servlet.multipart.max-request-size=500MB
+--server.port=9132
+--spring.main.allow-bean-definition-overriding=true
+--application.name=linkis-ps-pub-test.
+2022-06-13 16:43:33.640 [INFO ] [main                                    ] o.s.c.c.c.ConfigServicePropertySourceLocator (256) [getRemoteEnvironment] - Fetching config from server at : http://localhost:8888
+2022-06-13 16:43:35.932 [INFO ] [main                                    ] o.s.c.c.c.ConfigServicePropertySourceLocator (280) [getRemoteEnvironment] - Connect Timeout Exception on Url - http://localhost:8888. Will be trying the next url if available
+2022-06-13 16:43:35.932 [WARN ] [main                                    ] o.s.c.c.c.ConfigServicePropertySourceLocator (160) [locate] - Could not locate PropertySource: I/O error on GET request for "http://localhost:8888/linkis-ps-pub-test/linkis": Connection refused: connect; nested exception is java.net.ConnectException: Connection refused: connect
+2022-06-13 16:43:35.932 [INFO ] [main                                    ] o.a.l.DataWorkCloudApplication (652) [logStartupProfileInfo] - The following profiles are active: linkis
+2022-06-13 16:43:35.963 [INFO ] [main                                    ] o.a.l.DataWorkCloudApplication (95) [onApplicationEvent] - add config from config server...
+2022-06-13 16:43:35.963 [INFO ] [main                                    ] o.a.l.DataWorkCloudApplication (100) [onApplicationEvent] - initialize DataWorkCloud spring application...
+2022-06-13 16:43:40.041 [WARN ] [main                                    ] o.s.b.a.e.EndpointId (155) [logWarning] - Endpoint ID 'service-registry' contains invalid characters, please migrate to a valid format.
+2022-06-13 16:43:40.277 [WARN ] [main                                    ] o.m.s.m.ClassPathMapperScanner (44) [warn] - No MyBatis mapper was found in '[org.apache.linkis.jobhistory.dao, org.apache.linkis.variable.dao, org.apache.linkis.configuration.dao, org.apache.linkis.udf.dao, org.apache.linkis.instance.label.dao, org.apache.linkis.metadata.hive.dao, org.apache.linkis.metadata.dao, org.apache.linkis.bml.dao, org.apache.linkis.errorcode.server.dao, org.apache.linkis.publicservice.common.lock.dao]' package. Please check your configuration.
+2022-06-13 16:43:40.286 [INFO ] [main                                    ] o.s.c.a.ConfigurationClassPostProcessor (413) [enhanceConfigurationClasses] - Cannot enhance @Configuration bean definition 'myBatisMapperScannerConfig' since its singleton instance has been created too early. The typical cause is a non-static @Bean method with a BeanDefinitionRegistryPostProcessor return type: Consider declaring such methods as 'static'.
+2022-06-13 16:43:40.603 [INFO ] [main                                    ] o.s.c.c.s.GenericScope (295) [setSerializationId] - BeanFactory id=6cc220b8-d5e0-332f-aa89-0a6cee053168
+2022-06-13 16:43:41.964 [INFO ] [main                                    ] o.e.j.u.log (170) [initialized] - Logging initialized @17417ms to org.eclipse.jetty.util.log.Slf4jLog
+2022-06-13 16:43:42.697 [INFO ] [main                                    ] o.s.b.w.e.j.JettyServletWebServerFactory (147) [getWebServer] - Server initialized with port: 9132
+2022-06-13 16:43:42.807 [INFO ] [main                                    ] o.e.j.s.Server (375) [doStart] - jetty-9.4.42.v20210604; built: 2021-06-04T17:33:38.939Z; git: 5cd5e6d2375eeab146813b0de9f19eda6ab6e6cb; jvm 1.8.0_91-b14
+2022-06-13 16:43:42.869 [INFO ] [main                                    ] o.e.j.s.h.C.application (2363) [log] - Initializing Spring embedded WebApplicationContext
+2022-06-13 16:43:42.869 [INFO ] [main                                    ] o.s.b.w.s.c.ServletWebServerApplicationContext (285) [prepareWebApplicationContext] - Root WebApplicationContext: initialization completed in 6890 ms
+2022-06-13 16:43:43.182 [WARN ] [main                                    ] c.n.c.s.URLConfigurationSource (126) [<init>] - No URLs will be polled as dynamic configuration sources.
+2022-06-13 16:43:43.182 [INFO ] [main                                    ] c.n.c.s.URLConfigurationSource (127) [<init>] - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+2022-06-13 16:43:43.432 [INFO ] [main                                    ] c.n.c.DynamicPropertyFactory (281) [getInstance] - DynamicPropertyFactory is initialized with configuration sources: com.netflix.config.ConcurrentCompositeConfiguration@49d42faf
+2022-06-13 16:43:43.791 [INFO ] [main                                    ] o.e.j.s.session (334) [doStart] - DefaultSessionIdManager workerName=node0
+2022-06-13 16:43:43.791 [INFO ] [main                                    ] o.e.j.s.session (339) [doStart] - No SessionScavenger set, using defaults
+2022-06-13 16:43:43.791 [INFO ] [main                                    ] o.e.j.s.session (132) [startScavenging] - node0 Scavenging every 600000ms
+2022-06-13 16:43:43.806 [INFO ] [main                                    ] o.e.j.s.h.ContextHandler (916) [doStart] - Started o.s.b.w.e.j.JettyEmbeddedWebAppContext@14dbfdb1{application,/,[file:///C:/Users/v_binbincheng/AppData/Local/Temp/jetty-docbase.9132.6287426797332067464/],AVAILABLE}
+2022-06-13 16:43:43.806 [INFO ] [main                                    ] o.e.j.s.Server (415) [doStart] - Started @19265ms
+2022-06-13 16:43:44.228 [WARN ] [main                                    ] o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext (559) [refresh] - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'externalResourceServiceImpl': Unsatisfied dependency expressed through field 'providerDao'; nested exception is org.springframework.beans.factory.NoSuchBeanDefinitionException: No qualifying bean of type 'org.apache.linkis.resourcemanager.external.dao.ExternalResourceProviderDao' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {@org.springframework.beans.factory.annotation.Autowired(required=true)}
+2022-06-13 16:43:44.260 [INFO ] [main                                    ] o.e.j.s.session (149) [stopScavenging] - node0 Stopped scavenging
+2022-06-13 16:43:44.260 [INFO ] [main                                    ] o.e.j.s.h.ContextHandler (1154) [doStop] - Stopped o.s.b.w.e.j.JettyEmbeddedWebAppContext@14dbfdb1{application,/,[file:///C:/Users/v_binbincheng/AppData/Local/Temp/jetty-docbase.9132.6287426797332067464/],STOPPED}
+2022-06-13 16:43:44.369 [INFO ] [main                                    ] o.s.b.a.l.ConditionEvaluationReportLoggingListener (136) [logMessage] - 
+
+Error starting ApplicationContext. To display the conditions report re-run your application with 'debug' enabled.
+2022-06-13 16:43:44.416 [ERROR] [main                                    ] o.s.b.d.LoggingFailureAnalysisReporter (40) [report] - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Field providerDao in org.apache.linkis.resourcemanager.external.service.impl.ExternalResourceServiceImpl required a bean of type 'org.apache.linkis.resourcemanager.external.dao.ExternalResourceProviderDao' that could not be found.
+
+The injection point has the following annotations:
+	- @org.springframework.beans.factory.annotation.Autowired(required=true)
+
+
+Action:
+
+Consider defining a bean of type 'org.apache.linkis.resourcemanager.external.dao.ExternalResourceProviderDao' in your configuration.
+

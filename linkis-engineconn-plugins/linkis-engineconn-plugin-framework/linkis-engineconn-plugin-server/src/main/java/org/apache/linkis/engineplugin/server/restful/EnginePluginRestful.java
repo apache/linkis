@@ -21,7 +21,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.apache.linkis.MessageJava;
+import org.apache.linkis.server.Message;
 import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.engineplugin.server.service.EngineConnResourceService;
 import org.apache.linkis.engineplugin.server.service.RefreshEngineConnResourceRequest;
@@ -47,7 +47,7 @@ public class EnginePluginRestful {
 
     @Autowired private EngineConnResourceService engineConnResourceService;
 
-    @ApiOperation(value="刷新所有",notes="刷新所有ec resource",response = MessageJava.class)
+    @ApiOperation(value="刷新所有",notes="刷新所有ec resource",response = Message.class)
     @RequestMapping(path = "/refreshAll", method = RequestMethod.GET)
     public Message refreshAll(HttpServletRequest req) {
         String username = ModuleUserUtils.getOperationUser(req, "refreshAll");
@@ -60,7 +60,7 @@ public class EnginePluginRestful {
             return Message.error("Only administrators can operate");
         }
     }
-    @ApiOperation(value="刷新",notes="刷新单个资源",response = MessageJava.class)
+    @ApiOperation(value="刷新",notes="刷新单个资源",response = Message.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name="ecType",dataType="String",value="类型"),
             @ApiImplicitParam(name="version",dataType="String",value="版本")

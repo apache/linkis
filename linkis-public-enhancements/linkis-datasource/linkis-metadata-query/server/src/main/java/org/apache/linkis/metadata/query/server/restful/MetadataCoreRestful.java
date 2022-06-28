@@ -15,14 +15,14 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.metadatamanager.server.restful;
+package org.apache.linkis.metadata.query.server.restful;
 
 import org.apache.linkis.common.exception.ErrorException;
 import org.apache.linkis.datasourcemanager.common.util.json.Json;
-import org.apache.linkis.metadatamanager.common.domain.MetaColumnInfo;
-import org.apache.linkis.metadatamanager.common.domain.MetaPartitionInfo;
-import org.apache.linkis.metadatamanager.common.exception.MetaMethodInvokeException;
-import org.apache.linkis.metadatamanager.server.service.MetadataAppService;
+import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
+import org.apache.linkis.metadata.query.common.domain.MetaPartitionInfo;
+import org.apache.linkis.metadata.query.common.exception.MetaMethodInvokeException;
+import org.apache.linkis.metadata.query.server.service.MetadataQueryService;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.security.SecurityFilter;
 
@@ -40,14 +40,13 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping(
-        value = "/metadatamanager",
-        produces = {"application/json"})
+@RequestMapping(value = "/metadatamanager")
+@Deprecated
 public class MetadataCoreRestful {
 
     private static final Logger LOG = LoggerFactory.getLogger(MetadataCoreRestful.class);
 
-    @Autowired private MetadataAppService metadataAppService;
+    @Autowired private MetadataQueryService metadataAppService;
 
     @RequestMapping(value = "/dbs/{dataSourceId}", method = RequestMethod.GET)
     public Message getDatabases(
@@ -141,6 +140,47 @@ public class MetadataCoreRestful {
         }
     }
 
+    // Note Result field[`props`] name is inaccurate
+    @RequestMapping(
+            value = "/partitions/{dataSourceId}/db/{database}/table/{table}",
+            method = RequestMethod.GET)
+    public Message getPartitions(
+            @PathVariable("dataSourceId") String dataSourceId,
+            @PathVariable("database") String database,
+            @PathVariable("table") String table,
+            @RequestParam("system") String system,
+            @RequestParam(name = "traverse", required = false, defaultValue = "false")
+                    Boolean traverse,
+            HttpServletRequest request) {
+        try {
+            if (StringUtils.isBlank(system)) {
+                return Message.error("'system' is missing[缺少系统名]");
+            }
+            MetaPartitionInfo partitionInfo =
+                    metadataAppService.getPartitionsByDsId(
+                            dataSourceId,
+                            database,
+                            table,
+                            system,
+                            traverse,
+                            SecurityFilter.getLoginUsername(request));
+            return Message.ok().data("props", partitionInfo);
+        } catch (Exception e) {
+            return errorToResponseMessage(
+                    "Fail to get partitions[获取表分区信息失败], id:["
+                            + dataSourceId
+                            + "]"
+                            + ", system:["
+                            + system
+                            + "], database:["
+                            + database
+                            + "], table:["
+                            + table
+                            + "]",
+                    e);
+        }
+    }
+
     @RequestMapping(
             value = "/props/{dataSourceId}/db/{database}/table/{table}/partition/{partition}",
             method = RequestMethod.GET)
@@ -183,46 +223,6 @@ public class MetadataCoreRestful {
     }
 
     @RequestMapping(
-            value = "/partitions/{dataSourceId}/db/{database}/table/{table}",
-            method = RequestMethod.GET)
-    public Message getPartitions(
-            @PathVariable("dataSourceId") String dataSourceId,
-            @PathVariable("database") String database,
-            @PathVariable("table") String table,
-            @RequestParam("system") String system,
-            @RequestParam(name = "traverse", required = false, defaultValue = "false")
-                    Boolean traverse,
-            HttpServletRequest request) {
-        try {
-            if (StringUtils.isBlank(system)) {
-                return Message.error("'system' is missing[缺少系统名]");
-            }
-            MetaPartitionInfo partitionInfo =
-                    metadataAppService.getPartitionsByDsId(
-                            dataSourceId,
-                            database,
-                            table,
-                            system,
-                            traverse,
-                            SecurityFilter.getLoginUsername(request));
-            return Message.ok().data("props", partitionInfo);
-        } catch (Exception e) {
-            return errorToResponseMessage(
-                    "Fail to get partitions[获取表分区信息失败], id:["
-                            + dataSourceId
-                            + "]"
-                            + ", system:["
-                            + system
-                            + "], database:["
-                            + database
-                            + "], table:["
-                            + table
-                            + "]",
-                    e);
-        }
-    }
-
-    @RequestMapping(
             value = "/columns/{dataSourceId}/db/{database}/table/{table}",
             method = RequestMethod.GET)
     public Message getColumns(
@@ -236,7 +236,7 @@ public class MetadataCoreRestful {
                 return Message.error("'system' is missing[缺少系统名]");
             }
             List<MetaColumnInfo> columns =
-                    metadataAppService.getColumns(
+                    metadataAppService.getColumnsByDsId(
                             dataSourceId,
                             database,
                             table,

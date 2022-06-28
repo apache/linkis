@@ -21,7 +21,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.apache.linkis.MessageJava;
 import org.apache.linkis.errorcode.common.CommonConf;
 import org.apache.linkis.errorcode.common.LinkisErrorCode;
 import org.apache.linkis.errorcode.server.service.LinkisErrorCodeService;
@@ -42,7 +41,7 @@ public class LinkisErrorCodeRestful {
 
     @Autowired private LinkisErrorCodeService linkisErrorCodeService;
 
-    @ApiOperation(value="获取Linkis错误代码",notes="获取Linkis错误代码列表",response = MessageJava.class)
+    @ApiOperation(value="获取Linkis错误代码",notes="获取Linkis错误代码列表",response = Message.class)
     @RequestMapping(path = CommonConf.GET_ERRORCODE_URL, method = RequestMethod.GET)
     public Message getErrorCodes(HttpServletRequest request) {
         List<LinkisErrorCode> errorCodes = linkisErrorCodeService.getAllErrorCodes();

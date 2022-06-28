@@ -24,7 +24,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.apache.linkis.MessageJava;
 import org.apache.linkis.common.ServiceInstance;
 import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.instance.label.entity.InstanceInfo;
@@ -69,7 +68,7 @@ public class InstanceRestful {
     @Autowired private DefaultInsLabelService insLabelService;
 
 
-    @ApiOperation(value="微服务实例列表",notes="获取微服务管理模块实例列表可获取单个或多个默认全部",response = MessageJava.class)
+    @ApiOperation(value="微服务实例列表",notes="获取微服务管理模块实例列表可获取单个或多个默认全部",response = Message.class)
     @RequestMapping(path = "/allInstance", method = RequestMethod.GET)
     public Message listAllInstanceWithLabel(HttpServletRequest req) throws Exception {
         String userName = ModuleUserUtils.getOperationUser(req);
@@ -87,10 +86,10 @@ public class InstanceRestful {
         logger.info("Done, all instance:" + instances);
         return Message.ok().data("instances", instanceVos);
     }
-    @ApiOperation(value="编辑微服务实例",notes="编辑或修改下微服务管理中的实例",response = MessageJava.class)
+    @ApiOperation(value="编辑微服务实例",notes="编辑或修改下微服务管理中的实例",response = Message.class)
   /*  @ApiOperationSupport(
             responses = @DynamicResponseParameters(properties = {
-                    @DynamicParameter(value = "结果集",name = "data",dataTypeClass = MessageJava.class)
+                    @DynamicParameter(value = "结果集",name = "data",dataTypeClass = Message.class)
             })
     )*/
     @ApiImplicitParams({
@@ -100,6 +99,7 @@ public class InstanceRestful {
             @ApiImplicitParam(name="labelKey",dataType="String",value="添加内容里面的标签，属于labels集合 内 map里的key"),
             @ApiImplicitParam(name="stringValue",dataType="String",value="添加内容里面的标签对于的值，属于labels集合 内 map里的value")
     })
+    @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "/instanceLabel", method = RequestMethod.PUT)
     public Message upDateInstanceLabel(HttpServletRequest req, @RequestBody JsonNode jsonNode)
             throws Exception {
@@ -148,16 +148,16 @@ public class InstanceRestful {
         insLabelService.updateInstance(instanceInfo);
         return Message.ok("success").data("labels", labels);
     }
-    @ApiOperation(value="可以修改的label 类型",notes="获取可以修改的label类型列表，列表数据如‘userCreator，route’",response = MessageJava.class)
+    @ApiOperation(value="可以修改的label 类型",notes="获取可以修改的label类型列表，列表数据如‘userCreator，route’",response = Message.class)
     @RequestMapping(path = "/modifiableLabelKey", method = RequestMethod.GET)
     public Message listAllModifiableLabelKey(HttpServletRequest req) {
         Set<String> keyList = LabelUtils.listAllUserModifiableLabel();
         return Message.ok().data("keyList", keyList);
     }
-    @ApiOperation(value="获取eurekaURL",notes="返回eurekaURL",response = MessageJava.class)
+    @ApiOperation(value="获取eurekaURL",notes="返回eurekaURL",response = Message.class)
     /*@ApiOperationSupport(
             responses = @DynamicResponseParameters(properties = {
-                    @DynamicParameter(value = "结果集",name = "data",dataTypeClass = MessageJava.class)
+                    @DynamicParameter(value = "结果集",name = "data",dataTypeClass = Message.class)
             })
     )*/
     @RequestMapping(path = "/eurekaURL", method = RequestMethod.GET)

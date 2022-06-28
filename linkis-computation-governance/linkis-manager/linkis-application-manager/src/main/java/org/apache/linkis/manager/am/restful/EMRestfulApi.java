@@ -22,7 +22,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.apache.linkis.MessageJava;
 import org.apache.linkis.common.ServiceInstance;
 import org.apache.linkis.common.utils.JsonUtils;
 import org.apache.linkis.manager.am.conf.AMConfiguration;
@@ -106,7 +105,7 @@ public class EMRestfulApi {
         }
     }
 
-    @ApiOperation(value="ECM资源清单",notes="获取所有ECM资源详细清单列表可根据条件查询，默认查询所有",response = MessageJava.class)
+    @ApiOperation(value="ECM资源清单",notes="获取所有ECM资源详细清单列表可根据条件查询，默认查询所有",response = Message.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name="instance",required = false,dataType="String",value="实例名称"),
             @ApiImplicitParam(name="nodeHealthy",required = false,dataType="String",value="状态，状态有以下枚举类型 ‘Healthy‘, ‘UnHealthy‘, ‘WARN‘, ’StockAvailable’, ‘StockUnavailable’"),
@@ -163,7 +162,7 @@ public class EMRestfulApi {
         }
         return Message.ok().data("EMs", allEMVoFilter3);
     }
-    @ApiOperation(value="ECM管理中状态列表",notes="获取状态列表清单",response = MessageJava.class)
+    @ApiOperation(value="ECM管理中状态列表",notes="获取状态列表清单",response = Message.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name="onlyEditable",required = false,dataType="Boolean",value="是否仅可编辑")
     })
@@ -184,7 +183,7 @@ public class EMRestfulApi {
         }
         return Message.ok().data("nodeHealthy", nodeHealthy);
     }
-    @ApiOperation(value="编辑EMC实例",notes="编辑或修改下编辑EMC管理下的实例",response = MessageJava.class)
+    @ApiOperation(value="编辑EMC实例",notes="编辑或修改下编辑EMC管理下的实例",response = Message.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name="applicationName",dataType="String",value="引擎标签"),
             @ApiImplicitParam(name="emStatus",dataType="String",value="实例状态,状态有以下枚举类型 ‘Healthy‘, ‘UnHealthy‘, ‘WARN‘, ’StockAvailable’, ‘StockUnavailable’"),
@@ -254,7 +253,7 @@ public class EMRestfulApi {
         }
         return Message.ok("success");
     }
-    @ApiOperation(value="执行ECM操作开始",notes="" ,response = MessageJava.class)
+    @ApiOperation(value="执行ECM操作开始",notes="" ,response = Message.class)
 //    @ApiOperationSupport(
 //            responses = @DynamicResponseParameters(properties = {
 //                    @DynamicParameter(value = "结果集",name = "data",dataTypeClass = Message.class)
@@ -297,7 +296,7 @@ public class EMRestfulApi {
         return executeECMOperation(
                 engineNode.getEMNode(), new ECMOperateRequest(userName, parameters));
     }
-    @ApiOperation(value="执行ECM操作",notes="" ,response = MessageJava.class)
+    @ApiOperation(value="执行ECM操作",notes="" ,response = Message.class)
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "/executeECMOperation", method = RequestMethod.POST)
     public Message executeECMOperation(HttpServletRequest req, @RequestBody JsonNode jsonNode)
@@ -324,7 +323,7 @@ public class EMRestfulApi {
         }
         return executeECMOperation(ecmNode, new ECMOperateRequest(userName, parameters));
     }
-    @ApiOperation(value="打开引擎日志",notes="打开引擎日志，默认打开stdout类型的引擎日志",response = MessageJava.class)
+    @ApiOperation(value="打开引擎日志",notes="打开引擎日志，默认打开stdout类型的引擎日志",response = Message.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name="applicationName",dataType="String",value="引擎标签"),
             @ApiImplicitParam(name="emInstance",dataType="String",value="实例名称"),

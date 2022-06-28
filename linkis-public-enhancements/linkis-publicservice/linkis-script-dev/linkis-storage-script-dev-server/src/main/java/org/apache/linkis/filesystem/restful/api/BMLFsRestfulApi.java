@@ -22,7 +22,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.apache.linkis.MessageJava;
 import org.apache.linkis.common.io.FsPath;
 import org.apache.linkis.filesystem.bml.BMLHelper;
 import org.apache.linkis.filesystem.exception.WorkSpaceException;
@@ -56,7 +55,7 @@ import java.util.stream.Collectors;
 public class BMLFsRestfulApi {
 
     @Autowired BMLHelper bmlHelper;
-    @ApiOperation(value="打开ScriptFromBML",notes="openScriptFromBML",response = MessageJava.class)
+    @ApiOperation(value="打开ScriptFromBML",notes="openScriptFromBML",response = Message.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name = "resourceId", required = false, dataType = "String", value = "资源Id"),
             @ApiImplicitParam(name = "version",required = false, dataType = "String", value = "版本"),
@@ -96,7 +95,7 @@ public class BMLFsRestfulApi {
                     .data("metadata", collect.getFirst());
         }
     }
-    @ApiOperation(value="/product/openScriptFromBML",notes="/product/openScriptFromBML",response = MessageJava.class)
+    @ApiOperation(value="/product/openScriptFromBML",notes="/product/openScriptFromBML",response = Message.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name = "resourceId", required = false, dataType = "String", value = "资源Id"),
             @ApiImplicitParam(name = "version",required = false, dataType = "String", value = "版本"),
@@ -139,7 +138,7 @@ public class BMLFsRestfulApi {
                     .data("metadata", collect.getFirst());
         }
     }
-    @ApiOperation(value="保存来自BML的script",notes="保存来自BML的script",response = MessageJava.class)
+    @ApiOperation(value="保存来自BML的script",notes="保存来自BML的script",response = Message.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name = "scriptContent", required = true, dataType = "String", value = "内容"),
             @ApiImplicitParam(name = "resourceId",required = true, dataType = "String", value = "资源ID"),

@@ -21,7 +21,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.apache.linkis.MessageJava;
+import org.apache.linkis.server.Message;
 import org.apache.linkis.common.exception.ErrorException;
 import org.apache.linkis.datasourcemanager.common.ServiceErrorCode;
 import org.apache.linkis.datasourcemanager.common.auth.AuthContext;
@@ -89,7 +89,7 @@ public class DataSourceCoreRestfulApi {
 
 
 
-    @ApiOperation(value="数据源列表",notes="获取数据源列表",response = MessageJava.class)
+    @ApiOperation(value="数据源列表",notes="获取数据源列表",response = Message.class)
     @RequestMapping(value = "/type/all", method = RequestMethod.GET)
     public Message getAllDataSourceTypes() {
         return RestfulApiHelper.doAndResponse(
@@ -100,7 +100,7 @@ public class DataSourceCoreRestfulApi {
                 },
                 "Fail to get all types of data source[获取数据源类型列表失败]");
     }
-    @ApiOperation(value="选择数据源弹窗",notes="根据typeId参数返回不同数据源弹窗",response = MessageJava.class)
+    @ApiOperation(value="选择数据源弹窗",notes="根据typeId参数返回不同数据源弹窗",response = Message.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name = "typeId", dataType = "Integer", value = "数据源类型枚举值有1，2，3，4，5，6"),
     })
@@ -114,7 +114,7 @@ public class DataSourceCoreRestfulApi {
                 },
                 "Fail to get key definitions of data source type[查询数据源参数键值对失败]");
     }
-    @ApiOperation(value="新增数据源",notes="新增数据源",response = MessageJava.class)
+    @ApiOperation(value="新增数据源",notes="新增数据源",response = Message.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name = "connectParams", dataType = "Map", value = "新增数据源的内容"),
             @ApiImplicitParam(name = "host", dataType = "String", required = true, value = "Ip,connectParams中的内容"),
@@ -159,7 +159,7 @@ public class DataSourceCoreRestfulApi {
 
 
 
-    @ApiOperation(value="修改数据源信息",notes="修改数据源信息",response = MessageJava.class)
+    @ApiOperation(value="修改数据源信息",notes="修改数据源信息",response = Message.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name = "dataSourceId", dataType = "Long", value = "新增数ID"),
             @ApiImplicitParam(name = "connectParams", dataType = "Map", value = "新增数据源的内容"),
@@ -226,7 +226,7 @@ public class DataSourceCoreRestfulApi {
      * @return
      */
 
-    @ApiOperation(value="数据源操作记录",notes="数据源操作记录",response = MessageJava.class)
+    @ApiOperation(value="数据源操作记录",notes="数据源操作记录",response = Message.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name = "dataSourceId", dataType = "Long", value = "数据源Id"),
             @ApiImplicitParam(name = "connectParams", dataType = "Map", value = "新增数据源的内容"),
@@ -344,7 +344,7 @@ public class DataSourceCoreRestfulApi {
      * @param version
      * @return
      */
-    @ApiOperation(value="编辑数据源",notes="打开编辑数据源",response = MessageJava.class)
+    @ApiOperation(value="编辑数据源",notes="打开编辑数据源",response = Message.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name = "dataSourceId", dataType = "Long", value = "数据源ID"),
             @ApiImplicitParam(name = "version", dataType = "Long", value = "数据源弹窗类型，默认1，2，3，4，5，6"),
@@ -452,7 +452,7 @@ public class DataSourceCoreRestfulApi {
      * @param dataSourceId
      * @return
      */
-    @ApiOperation(value="删除数据源",notes="删除数据源",response = MessageJava.class)
+    @ApiOperation(value="删除数据源",notes="删除数据源",response = Message.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name = "dataSourceId", dataType = "Long", value = "数据源ID"),
     })
@@ -484,7 +484,7 @@ public class DataSourceCoreRestfulApi {
     }
 
 
-    @ApiOperation(value="过期数据源",notes="过期数据源",response = MessageJava.class)
+    @ApiOperation(value="过期数据源",notes="过期数据源",response = Message.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name = "dataSourceId", dataType = "Long", value = "数据源ID"),
     })
@@ -620,7 +620,7 @@ public class DataSourceCoreRestfulApi {
                 "Fail to connect data source[连接数据源失败]");
     }
 
-    @ApiOperation(value="数据源列表",notes="获取数据源列表",response = MessageJava.class)
+    @ApiOperation(value="数据源列表",notes="获取数据源列表",response = Message.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name="typeId",dataType="Integer",value="数据源列表"),
             @ApiImplicitParam(name="pageSize",dataType="Integer",value="页面大小"),

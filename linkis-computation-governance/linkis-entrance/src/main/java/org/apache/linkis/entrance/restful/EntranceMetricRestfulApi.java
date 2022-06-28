@@ -21,7 +21,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.apache.linkis.MessageJava;
 import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.entrance.EntranceServer;
 import org.apache.linkis.entrance.annotation.EntranceServerBeanAnnotation;
@@ -54,7 +53,7 @@ public class EntranceMetricRestfulApi {
         this.entranceServer = entranceServer;
     }
 
-    @ApiOperation(value="任务信息",notes="任务信息",response = MessageJava.class)
+    @ApiOperation(value="任务信息",notes="任务信息",response = Message.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name = "user", required = false, dataType = "String", value = "user"),
             @ApiImplicitParam(name = "creator", required = false, dataType = "String", value = "创建者"),
@@ -114,7 +113,7 @@ public class EntranceMetricRestfulApi {
                 .data("queuedNumber", queuedNumber);
     }
 
-    @ApiOperation(value="启动任务",notes="启动任务",response = MessageJava.class)
+    @ApiOperation(value="启动任务",notes="启动任务",response = Message.class)
     @RequestMapping(path = "/runningtask", method = RequestMethod.GET)
     public Message status(HttpServletRequest req) {
 

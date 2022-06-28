@@ -17,11 +17,11 @@
 
 package org.apache.linkis.datasourcemanager.core.restful;
 
+import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.apache.linkis.MessageJava;
 import org.apache.linkis.common.exception.ErrorException;
 import org.apache.linkis.datasourcemanager.common.domain.DataSource;
 import org.apache.linkis.datasourcemanager.common.domain.DataSourceParamKeyDefinition;
@@ -83,7 +83,7 @@ public class DataSourceOperateRestfulApi {
     }
 
 
-    @ApiOperation(value="测试连接",notes="数据源测试连接",response = MessageJava.class)
+    @ApiOperation(value="测试连接",notes="数据源测试连接",response = Message.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name = "connectParams", dataType = "Map", value = "新增数据源的内容"),
             @ApiImplicitParam(name = "host", dataType = "String", required = true, value = "Ip,connectParams中的内容"),
@@ -99,6 +99,7 @@ public class DataSourceOperateRestfulApi {
             @ApiImplicitParam(name = "dataSourceTypeId", dataType = "String", required = true, value = "数据源类型ID，跟connectParams一个级别"),
             @ApiImplicitParam(name = "labels", dataType = "String", required = true, value = "标签，跟connectParams一个级别")
     })
+    @ApiOperationSupport(ignoreParameters = {"dataSource"})
     @RequestMapping(value = "/connect/json", method = RequestMethod.POST)
     public Message connect(@RequestBody DataSource dataSource, HttpServletRequest request) {
         return RestfulApiHelper.doAndResponse(

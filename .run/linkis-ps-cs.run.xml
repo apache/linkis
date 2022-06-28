@@ -1,0 +1,20 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="linkis-ps-cs" type="Application" factoryName="Application">
+    <option name="ALTERNATIVE_JRE_PATH" value="1.8" />
+    <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+    <option name="INCLUDE_PROVIDED_SCOPE" value="true" />
+    <option name="MAIN_CLASS_NAME" value="org.apache.linkis.cs.server.LinkisCSApplication" />
+    <module name="linkis-cs-server" />
+    <shortenClasspath name="MANIFEST" />
+    <option name="VM_PARAMETERS" value="-DserviceName=linkis-ps-cs -Xbootclasspath/a:D:\incubator-linkis\incubator-linkis\assembly-combined-package\assembly-combined\conf" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="org.apache.linkis.cs.server.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

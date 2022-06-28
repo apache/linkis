@@ -28,12 +28,12 @@ import org.apache.linkis.metadata.utils.MdqConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class HiveMetaWithPermissionServiceImpl implements HiveMetaWithPermissionService {
@@ -64,7 +64,8 @@ public class HiveMetaWithPermissionServiceImpl implements HiveMetaWithPermission
     }
 
     @Override
-    public List<Map<String, Object>> getTablesByDbNameAndOptionalUserName(DatabaseQueryParam queryParam) {
+    public List<Map<String, Object>> getTablesByDbNameAndOptionalUserName(
+            DatabaseQueryParam queryParam) {
         Boolean flag = DWSConfig.HIVE_PERMISSION_WITH_lOGIN_USER_ENABLED.getValue();
         if (null == queryParam) {
             return null;
@@ -79,7 +80,8 @@ public class HiveMetaWithPermissionServiceImpl implements HiveMetaWithPermission
             queryParam.withRoles(roles);
             return hiveMetaDao.getTablesByDbNameAndUserAndRoles(queryParam);
         } else {
-            log.info("user {} to getTablesByDbName no permission control", queryParam.getUserName());
+            log.info(
+                    "user {} to getTablesByDbName no permission control", queryParam.getUserName());
             return hiveMetaDao.getTablesByDbName(queryParam);
         }
     }
@@ -102,8 +104,10 @@ public class HiveMetaWithPermissionServiceImpl implements HiveMetaWithPermission
             List<String> roles = hiveMetaDao.getRosesByUser(userName);
             queryParam.withRoles(roles);
             // with permission
-            Map<String, Object> tableMap = hiveMetaDao.getStorageDescriptionIDByDbTableNameAndUser(queryParam);
-            if (null != tableMap && !tableMap.isEmpty()
+            Map<String, Object> tableMap =
+                    hiveMetaDao.getStorageDescriptionIDByDbTableNameAndUser(queryParam);
+            if (null != tableMap
+                    && !tableMap.isEmpty()
                     && tableMap.containsKey(MdqConstants.SDID_KEY())) {
                 String sdid = tableMap.get(MdqConstants.SDID_KEY()).toString();
                 queryParam.setSdId(sdid);

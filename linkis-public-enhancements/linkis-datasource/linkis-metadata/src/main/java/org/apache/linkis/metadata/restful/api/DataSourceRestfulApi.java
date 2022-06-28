@@ -97,10 +97,12 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
             @RequestParam(value = "table", required = false) String table,
             HttpServletRequest req) {
         String userName = ModuleUserUtils.getOperationUser(req, "get columns of table " + table);
-        DatabaseQueryParam queryParam = DatabaseQueryParam.of(userName).withDbName(database).withTableName(table);
+        DatabaseQueryParam queryParam =
+                DatabaseQueryParam.of(userName).withDbName(database).withTableName(table);
         try {
             JsonNode columns =
-                    hiveMetaWithPermissionService.getColumnsByDbTableNameAndOptionalUserName(queryParam);
+                    hiveMetaWithPermissionService.getColumnsByDbTableNameAndOptionalUserName(
+                            queryParam);
             return Message.ok("").data("columns", columns);
         } catch (Exception e) {
             logger.error("Failed to get data table structure(获取数据表结构失败)", e);
@@ -116,7 +118,11 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
             @RequestParam(value = "partition", required = false) String partition,
             HttpServletRequest req) {
         String userName = ModuleUserUtils.getOperationUser(req, "get size ");
-        DatabaseQueryParam queryParam = DatabaseQueryParam.of(userName).withDbName(database).withTableName(table).withPartitionName(partition);
+        DatabaseQueryParam queryParam =
+                DatabaseQueryParam.of(userName)
+                        .withDbName(database)
+                        .withTableName(table)
+                        .withPartitionName(partition);
         try {
             JsonNode sizeNode;
             if (StringUtils.isBlank(partition)) {
@@ -138,7 +144,8 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
             @RequestParam(value = "table", required = false) String table,
             HttpServletRequest req) {
         String userName = ModuleUserUtils.getOperationUser(req, "get partitions of " + table);
-        DatabaseQueryParam queryParam = DatabaseQueryParam.of(userName).withDbName(database).withTableName(table);
+        DatabaseQueryParam queryParam =
+                DatabaseQueryParam.of(userName).withDbName(database).withTableName(table);
         try {
             JsonNode partitionNode = dataSourceService.getPartitions(queryParam);
             return Message.ok("").data("partitionInfo", partitionNode);

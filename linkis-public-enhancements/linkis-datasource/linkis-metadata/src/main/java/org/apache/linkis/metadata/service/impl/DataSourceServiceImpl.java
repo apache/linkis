@@ -27,7 +27,6 @@ import org.apache.linkis.metadata.hive.dto.DatabaseQueryParam;
 import org.apache.linkis.metadata.service.DataSourceService;
 import org.apache.linkis.metadata.service.HiveMetaWithPermissionService;
 import org.apache.linkis.metadata.util.DWSConfig;
-import org.apache.linkis.metadata.utils.MdqConstants;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
@@ -40,12 +39,6 @@ import org.apache.hadoop.fs.Path;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -53,6 +46,12 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class DataSourceServiceImpl implements DataSourceService {
@@ -107,7 +106,8 @@ public class DataSourceServiceImpl implements DataSourceService {
     public JsonNode queryTables(DatabaseQueryParam queryParam) {
         List<Map<String, Object>> listTables;
         try {
-            listTables = hiveMetaWithPermissionService.getTablesByDbNameAndOptionalUserName(queryParam);
+            listTables =
+                    hiveMetaWithPermissionService.getTablesByDbNameAndOptionalUserName(queryParam);
         } catch (Throwable e) {
             logger.error("Failed to list Tables:", e);
             throw new RuntimeException(e);
@@ -162,7 +162,8 @@ public class DataSourceServiceImpl implements DataSourceService {
     @Override
     public JsonNode queryTableMetaBySDID(DatabaseQueryParam queryParam) {
         logger.info("getTableMetabysdid : sdid = {}", queryParam.getSdId());
-        List<Map<String, Object>> columns = hiveMetaDao.getColumnsByStorageDescriptionID(queryParam);
+        List<Map<String, Object>> columns =
+                hiveMetaDao.getColumnsByStorageDescriptionID(queryParam);
         List<Map<String, Object>> partitionKeys = hiveMetaDao.getPartitionKeys(queryParam);
         return getJsonNodesFromColumnMap(columns, partitionKeys);
     }

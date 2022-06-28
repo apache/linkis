@@ -24,34 +24,22 @@ import java.util.List;
 
 public class DatabaseQueryParam {
 
-    /**
-     * the query user's username
-     */
+    /** the query user's username */
     private String userName;
 
-    /**
-     * the query db name
-     */
+    /** the query db name */
     private String dbName;
 
-    /**
-     * the query table name
-     */
+    /** the query table name */
     private String tableName;
 
-    /**
-     * the query table's partition name
-     */
+    /** the query table's partition name */
     private String partitionName;
 
-    /**
-     * the query storage description id
-     */
+    /** the query storage description id */
     private String sdId;
 
-    /**
-     * the user's role
-     */
+    /** the user's role */
     private List<String> roles;
 
     public static DatabaseQueryParam of(String userName) {

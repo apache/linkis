@@ -40,16 +40,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @RestController
 @RequestMapping(path = "/datasource")
@@ -68,7 +68,8 @@ public class MdqTableRestfulApi {
             @RequestParam(value = "tableName", required = false) String tableName,
             HttpServletRequest req) {
         String userName = ModuleUserUtils.getOperationUser(req, "getTableBaseInfo " + tableName);
-        DatabaseQueryParam queryParam = DatabaseQueryParam.of(userName).withDbName(database).withTableName(tableName);
+        DatabaseQueryParam queryParam =
+                DatabaseQueryParam.of(userName).withDbName(database).withTableName(tableName);
         MdqTableBaseInfoVO tableBaseInfo;
         if (mdqService.isExistInMdq(database, tableName, userName)) {
             tableBaseInfo = mdqService.getTableBaseInfoFromMdq(database, tableName, userName);
@@ -84,7 +85,8 @@ public class MdqTableRestfulApi {
             @RequestParam(value = "tableName", required = false) String tableName,
             HttpServletRequest req) {
         String userName = ModuleUserUtils.getOperationUser(req, "getTableFieldsInfo " + tableName);
-        DatabaseQueryParam queryParam = DatabaseQueryParam.of(userName).withDbName(database).withTableName(tableName);
+        DatabaseQueryParam queryParam =
+                DatabaseQueryParam.of(userName).withDbName(database).withTableName(tableName);
         List<MdqTableFieldsInfoVO> tableFieldsInfo;
         if (mdqService.isExistInMdq(database, tableName, userName)) {
             tableFieldsInfo = mdqService.getTableFieldsInfoFromMdq(database, tableName, userName);
@@ -103,9 +105,12 @@ public class MdqTableRestfulApi {
             @RequestParam(value = "partitionSort", defaultValue = "desc") String partitionSort,
             HttpServletRequest req)
             throws IOException {
-        String userName = ModuleUserUtils.getOperationUser(req, "getTableStatisticInfo " + tableName);
-        DatabaseQueryParam queryParam = DatabaseQueryParam.of(userName).withDbName(database).withTableName(tableName);
-        MdqTableStatisticInfoVO tableStatisticInfo = mdqService.getTableStatisticInfo(queryParam, partitionSort);
+        String userName =
+                ModuleUserUtils.getOperationUser(req, "getTableStatisticInfo " + tableName);
+        DatabaseQueryParam queryParam =
+                DatabaseQueryParam.of(userName).withDbName(database).withTableName(tableName);
+        MdqTableStatisticInfoVO tableStatisticInfo =
+                mdqService.getTableStatisticInfo(queryParam, partitionSort);
         int totalSize = 0;
         List<MdqTablePartitionStatisticInfoVO> partitionPage;
         List<MdqTablePartitionStatisticInfoVO> partitions = tableStatisticInfo.getPartitions();
@@ -159,9 +164,12 @@ public class MdqTableRestfulApi {
             @RequestParam(value = "partitionPath", required = false) String partitionName,
             HttpServletRequest req)
             throws IOException, MdqIllegalParamException {
-        String userName = ModuleUserUtils.getOperationUser(req, "getPartitionStatisticInfo " + tableName);
-        DatabaseQueryParam queryParam = DatabaseQueryParam.of(userName).withDbName(database).withTableName(tableName);
-        MdqTablePartitionStatisticInfoVO partition = mdqService.getPartitionStatisticInfo(queryParam, partitionName);
+        String userName =
+                ModuleUserUtils.getOperationUser(req, "getPartitionStatisticInfo " + tableName);
+        DatabaseQueryParam queryParam =
+                DatabaseQueryParam.of(userName).withDbName(database).withTableName(tableName);
+        MdqTablePartitionStatisticInfoVO partition =
+                mdqService.getPartitionStatisticInfo(queryParam, partitionName);
         return Message.ok().data("partitionStatisticInfo", partition);
     }
 

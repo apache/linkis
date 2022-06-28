@@ -30,6 +30,7 @@ public interface HiveMetaDao {
 
     /**
      * get user's rose by username
+     *
      * @param userName user's username
      * @return the rose name list
      */
@@ -37,16 +38,18 @@ public interface HiveMetaDao {
 
     /**
      * get dbs by user's username and user's roles
+     *
      * @param userName user's username
      * @param roles user's roles
      * @return the db name list
      */
-    List<String> getDbsByUserAndRoles(@Param("userName") String userName, @Param("roles") List<String> roles);
+    List<String> getDbsByUserAndRoles(
+            @Param("userName") String userName, @Param("roles") List<String> roles);
 
     /**
      * get all list of DBS NAME
      *
-     * @return  the db name list
+     * @return the db name list
      */
     List<String> getAllDbs();
 
@@ -56,6 +59,7 @@ public interface HiveMetaDao {
 
     /**
      * get the table partition's size
+     *
      * @param queryParam the database search properties
      * @return the size
      */

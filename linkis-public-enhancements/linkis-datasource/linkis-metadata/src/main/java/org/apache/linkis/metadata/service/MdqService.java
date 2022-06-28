@@ -46,8 +46,8 @@ public interface MdqService {
      */
     Long persistTable(MdqTableBO mdqTableBO, String userName);
 
-    MdqTableStatisticInfoVO getTableStatisticInfo(DatabaseQueryParam queryParam, String partitionSort)
-            throws IOException;
+    MdqTableStatisticInfoVO getTableStatisticInfo(
+            DatabaseQueryParam queryParam, String partitionSort) throws IOException;
 
     /**
      * 产生sql给前台，和sparkEngine
@@ -68,9 +68,10 @@ public interface MdqService {
 
     List<MdqTableFieldsInfoVO> getTableFieldsInfoFromHive(DatabaseQueryParam queryParam);
 
-    MdqTableStatisticInfoVO getTableStatisticInfoFromHive(DatabaseQueryParam queryParam, String partitionSort)
-            throws IOException;
+    MdqTableStatisticInfoVO getTableStatisticInfoFromHive(
+            DatabaseQueryParam queryParam, String partitionSort) throws IOException;
 
-    MdqTablePartitionStatisticInfoVO getPartitionStatisticInfo(DatabaseQueryParam queryParam, String partitionName)
+    MdqTablePartitionStatisticInfoVO getPartitionStatisticInfo(
+            DatabaseQueryParam queryParam, String partitionName)
             throws IOException, MdqIllegalParamException;
 }

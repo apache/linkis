@@ -65,7 +65,7 @@ spec:
             emptyDir: { }
       containers:
         - image: registry.mydomain.com/library/linkis-cg-linkismanager:1.2.0
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           name: linkis-cg-linkismanager
           ports:
             - containerPort: 9106

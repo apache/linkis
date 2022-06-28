@@ -57,7 +57,7 @@ spec:
       containers:
         - name: linkis-mg-eureka
           image: registry.mydomain.com/library/linkis-mg-eureka:1.2.0
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - containerPort: 20303
           env:

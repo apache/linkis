@@ -16,20 +16,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: linkis-ps-metadataquery
+  name: linkis-ps-metadatamanager
   labels:
-    app: linkis-ps-metadataquery
+    app: linkis-ps-metadatamanager
     version: v1
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: linkis-ps-metadataquery
+      app: linkis-ps-metadatamanager
       version: v1
   template:
     metadata:
       labels:
-        app: linkis-ps-metadataquery
+        app: linkis-ps-metadatamanager
         version: v1
     spec:
       volumes:
@@ -48,9 +48,9 @@ spec:
         - name: log
           emptyDir: {}
       containers:
-        - image: registry.mydomain.com/library/linkis-ps-metadataquery:1.2.0
-          imagePullPolicy: IfNotPresent
-          name: linkis-ps-metadataquery
+        - image: registry.mydomain.com/library/linkis-ps-metadatamanager:1.2.0
+          imagePullPolicy: Always
+          name: linkis-ps-metadatamanager
           ports:
             - containerPort: 9106
           env:
@@ -65,7 +65,7 @@ spec:
               cpu: "2000m"
           volumeMounts:
             - name: conf
-              mountPath: /opt/linkis/linkis-ps-metadataquery/conf/
+              mountPath: /opt/linkis/linkis-ps-metadatamanager/conf/
             - name: hadoop-config
               mountPath: /usr/local/hadoop/etc/hadoop
             - name: hive-config
@@ -73,4 +73,4 @@ spec:
             - name: spark-config
               mountPath: /usr/local/spark/conf
             - name: log
-              mountPath: /opt/linkis/linkis-ps-metadataquery/logs
+              mountPath: /opt/linkis/linkis-ps-metadatamanager/logs

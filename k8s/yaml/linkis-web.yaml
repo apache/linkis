@@ -96,6 +96,7 @@ spec:
       containers:
         - name: linkis-web
           image: registry.mydomain.com/library/linkis-web:1.2.0
+          imagePullPolicy: Always
           ports:
             - containerPort: 8087
           resources:

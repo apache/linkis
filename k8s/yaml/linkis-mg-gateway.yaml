@@ -56,7 +56,7 @@ spec:
           emptyDir: { }
       containers:
         - image: registry.mydomain.com/library/linkis-mg-gateway:1.2.0
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           name: linkis-mg-gateway
           ports:
             - containerPort: 9001

@@ -35,7 +35,7 @@ docker build -f k8s/Dockerfile/linkis-cg-engineplugin.Dockerfile -t linkis-cg-en
 
 docker build -f k8s/Dockerfile/linkis-cg-engineconnmanager.Dockerfile -t linkis-cg-engineconnmanager:1.2 ./assembly-combined-package/target/apache-linkis-1.1.0-incubating-bin/linkis-package
 
-docker build -f k8s/Dockerfile/linkis-ps-metadataquery.Dockerfile -t linkis-ps-metadataquery:1.2 ./assembly-combined-package/target/apache-linkis-1.1.0-incubating-bin/linkis-package
+docker build -f k8s/Dockerfile/linkis-ps-metadatamanager.Dockerfile -t linkis-ps-metadatamanager:1.2 ./assembly-combined-package/target/apache-linkis-1.1.0-incubating-bin/linkis-package
 
 docker build -f k8s/Dockerfile/linkis-ps-data-source-manager.Dockerfile -t linkis-ps-data-source-manager:1.2 ./assembly-combined-package/target/apache-linkis-1.1.0-incubating-bin/linkis-package
 
@@ -101,8 +101,8 @@ docker tag linkis-ps-data-source-manager:1.2.0 registry.mydomain.com/library/lin
 docker push registry.mydomain.com/library/linkis-ps-data-source-manager:1.2.0
 
 
-docker tag linkis-ps-metadataquery:1.2.0 registry.mydomain.com/library/linkis-ps-metadataquery:1.2.0
-docker push registry.mydomain.com/library/linkis-ps-metadataquery:1.2.0'''
+docker tag linkis-ps-metadatamanager:1.2.0 registry.mydomain.com/library/linkis-ps-metadatamanager:1.2.0
+docker push registry.mydomain.com/library/linkis-ps-metadatamanager:1.2.0'''
       }
     }
 

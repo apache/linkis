@@ -49,7 +49,7 @@ spec:
           emptyDir: {}
       containers:
         - image: registry.mydomain.com/library/linkis-ps-data-source-manager:1.2.0
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           name: linkis-ps-data-source-manager
           ports:
             - containerPort: 9106

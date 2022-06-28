@@ -142,7 +142,7 @@ class EngineConnLogOperator extends Operator with Logging {
     }
     val logDIrSuffix = getAs("logDirSuffix", "")
     val (engineConnLogDir, engineConnInstance, ticketId) = if (StringUtils.isNotBlank(logDIrSuffix)) {
-      val ecLogPath = ECMConfiguration.ENGINECONN_ROOT_DIR + File.pathSeparator + logDIrSuffix
+      val ecLogPath = ECMConfiguration.ENGINECONN_ROOT_DIR + File.separator + logDIrSuffix
       val ticketId = getAs("ticketId", "")
       (ecLogPath, "", ticketId)
     } else {

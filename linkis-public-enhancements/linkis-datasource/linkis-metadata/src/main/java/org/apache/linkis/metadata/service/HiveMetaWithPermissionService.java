@@ -16,7 +16,7 @@
  */
 package org.apache.linkis.metadata.service;
 
-import org.apache.linkis.metadata.hive.dto.DatabaseQueryParam;
+import org.apache.linkis.metadata.hive.dto.MetadataQueryParam;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -27,7 +27,7 @@ public interface HiveMetaWithPermissionService {
 
     List<String> getDbsOptionalUserName(String userName);
 
-    List<Map<String, Object>> getTablesByDbNameAndOptionalUserName(DatabaseQueryParam queryParam);
+    List<Map<String, Object>> getTablesByDbNameAndOptionalUserName(MetadataQueryParam queryParam);
 
-    JsonNode getColumnsByDbTableNameAndOptionalUserName(DatabaseQueryParam queryParam);
+    JsonNode getColumnsByDbTableNameAndOptionalUserName(MetadataQueryParam queryParam);
 }

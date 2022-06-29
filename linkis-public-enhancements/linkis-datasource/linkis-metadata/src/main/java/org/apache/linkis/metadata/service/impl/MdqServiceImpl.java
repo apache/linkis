@@ -38,7 +38,7 @@ import org.apache.linkis.metadata.domain.mdq.vo.MdqTableStatisticInfoVO;
 import org.apache.linkis.metadata.hive.config.DSEnum;
 import org.apache.linkis.metadata.hive.config.DataSource;
 import org.apache.linkis.metadata.hive.dao.HiveMetaDao;
-import org.apache.linkis.metadata.hive.dto.DatabaseQueryParam;
+import org.apache.linkis.metadata.hive.dto.MetadataQueryParam;
 import org.apache.linkis.metadata.service.HiveMetaWithPermissionService;
 import org.apache.linkis.metadata.service.MdqService;
 import org.apache.linkis.metadata.type.MdqImportType;
@@ -172,7 +172,7 @@ public class MdqServiceImpl implements MdqService {
     @DataSource(name = DSEnum.FIRST_DATA_SOURCE)
     @Override
     public MdqTableStatisticInfoVO getTableStatisticInfo(
-            DatabaseQueryParam queryParam, String partitionSort) throws IOException {
+            MetadataQueryParam queryParam, String partitionSort) throws IOException {
         MdqTableStatisticInfoVO mdqTableStatisticInfoVO =
                 getTableStatisticInfoFromHive(queryParam, partitionSort);
         return mdqTableStatisticInfoVO;
@@ -204,7 +204,7 @@ public class MdqServiceImpl implements MdqService {
 
     @DataSource(name = DSEnum.FIRST_DATA_SOURCE)
     @Override
-    public MdqTableBaseInfoVO getTableBaseInfoFromHive(DatabaseQueryParam queryParam) {
+    public MdqTableBaseInfoVO getTableBaseInfoFromHive(MetadataQueryParam queryParam) {
         List<Map<String, Object>> tables =
                 hiveMetaWithPermissionService.getTablesByDbNameAndOptionalUserName(queryParam);
         List<Map<String, Object>> partitionKeys = hiveMetaDao.getPartitionKeys(queryParam);
@@ -234,7 +234,7 @@ public class MdqServiceImpl implements MdqService {
 
     @DataSource(name = DSEnum.FIRST_DATA_SOURCE)
     @Override
-    public List<MdqTableFieldsInfoVO> getTableFieldsInfoFromHive(DatabaseQueryParam queryParam) {
+    public List<MdqTableFieldsInfoVO> getTableFieldsInfoFromHive(MetadataQueryParam queryParam) {
         List<Map<String, Object>> columns = hiveMetaDao.getColumns(queryParam);
         List<Map<String, Object>> partitionKeys = hiveMetaDao.getPartitionKeys(queryParam);
         List<MdqTableFieldsInfoVO> normalColumns =
@@ -248,7 +248,7 @@ public class MdqServiceImpl implements MdqService {
     @DataSource(name = DSEnum.FIRST_DATA_SOURCE)
     @Override
     public MdqTableStatisticInfoVO getTableStatisticInfoFromHive(
-            DatabaseQueryParam queryParam, String partitionSort) throws IOException {
+            MetadataQueryParam queryParam, String partitionSort) throws IOException {
         List<String> partitions = hiveMetaDao.getPartitions(queryParam);
         MdqTableStatisticInfoVO mdqTableStatisticInfoVO = new MdqTableStatisticInfoVO();
         mdqTableStatisticInfoVO.setRowNum(0); // 下个版本
@@ -273,7 +273,7 @@ public class MdqServiceImpl implements MdqService {
     @DataSource(name = DSEnum.FIRST_DATA_SOURCE)
     @Override
     public MdqTablePartitionStatisticInfoVO getPartitionStatisticInfo(
-            DatabaseQueryParam queryParam, String partitionPath) throws IOException {
+            MetadataQueryParam queryParam, String partitionPath) throws IOException {
         String tableLocation = getTableLocation(queryParam);
         logger.info("start to get partitionStatisticInfo,path:{}", tableLocation + partitionPath);
         return create(tableLocation + partitionPath);
@@ -371,7 +371,7 @@ public class MdqServiceImpl implements MdqService {
     }
 
     @DataSource(name = DSEnum.FIRST_DATA_SOURCE)
-    public String getTableLocation(DatabaseQueryParam queryParam) {
+    public String getTableLocation(MetadataQueryParam queryParam) {
         String tableLocation = hiveMetaDao.getLocationByDbAndTable(queryParam);
         logger.info("tableLocation:" + tableLocation);
         return tableLocation;

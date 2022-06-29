@@ -17,7 +17,7 @@
 
 package org.apache.linkis.metadata.restful.api;
 
-import org.apache.linkis.metadata.hive.dto.DatabaseQueryParam;
+import org.apache.linkis.metadata.hive.dto.MetadataQueryParam;
 import org.apache.linkis.metadata.restful.remote.DataSourceRestfulRemote;
 import org.apache.linkis.metadata.service.DataSourceService;
 import org.apache.linkis.metadata.service.HiveMetaWithPermissionService;
@@ -80,7 +80,7 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
             @RequestParam(value = "database", required = false) String database,
             HttpServletRequest req) {
         String userName = ModuleUserUtils.getOperationUser(req, "get tables");
-        DatabaseQueryParam queryParam = DatabaseQueryParam.of(userName).withDbName(database);
+        MetadataQueryParam queryParam = MetadataQueryParam.of(userName).withDbName(database);
         try {
             JsonNode tables = dataSourceService.queryTables(queryParam);
             return Message.ok("").data("tables", tables);
@@ -97,8 +97,8 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
             @RequestParam(value = "table", required = false) String table,
             HttpServletRequest req) {
         String userName = ModuleUserUtils.getOperationUser(req, "get columns of table " + table);
-        DatabaseQueryParam queryParam =
-                DatabaseQueryParam.of(userName).withDbName(database).withTableName(table);
+        MetadataQueryParam queryParam =
+                MetadataQueryParam.of(userName).withDbName(database).withTableName(table);
         try {
             JsonNode columns =
                     hiveMetaWithPermissionService.getColumnsByDbTableNameAndOptionalUserName(
@@ -118,8 +118,8 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
             @RequestParam(value = "partition", required = false) String partition,
             HttpServletRequest req) {
         String userName = ModuleUserUtils.getOperationUser(req, "get size ");
-        DatabaseQueryParam queryParam =
-                DatabaseQueryParam.of(userName)
+        MetadataQueryParam queryParam =
+                MetadataQueryParam.of(userName)
                         .withDbName(database)
                         .withTableName(table)
                         .withPartitionName(partition);
@@ -144,8 +144,8 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
             @RequestParam(value = "table", required = false) String table,
             HttpServletRequest req) {
         String userName = ModuleUserUtils.getOperationUser(req, "get partitions of " + table);
-        DatabaseQueryParam queryParam =
-                DatabaseQueryParam.of(userName).withDbName(database).withTableName(table);
+        MetadataQueryParam queryParam =
+                MetadataQueryParam.of(userName).withDbName(database).withTableName(table);
         try {
             JsonNode partitionNode = dataSourceService.getPartitions(queryParam);
             return Message.ok("").data("partitionInfo", partitionNode);

@@ -23,7 +23,7 @@ import org.apache.linkis.hadoop.common.utils.HDFSUtils;
 import org.apache.linkis.metadata.hive.config.DSEnum;
 import org.apache.linkis.metadata.hive.config.DataSource;
 import org.apache.linkis.metadata.hive.dao.HiveMetaDao;
-import org.apache.linkis.metadata.hive.dto.DatabaseQueryParam;
+import org.apache.linkis.metadata.hive.dto.MetadataQueryParam;
 import org.apache.linkis.metadata.service.DataSourceService;
 import org.apache.linkis.metadata.service.HiveMetaWithPermissionService;
 import org.apache.linkis.metadata.util.DWSConfig;
@@ -86,7 +86,7 @@ public class DataSourceServiceImpl implements DataSourceService {
     public JsonNode getDbsWithTables(String userName) {
         ArrayNode dbNodes = jsonMapper.createArrayNode();
         List<String> dbs = hiveMetaWithPermissionService.getDbsOptionalUserName(userName);
-        DatabaseQueryParam queryParam = DatabaseQueryParam.of(userName);
+        MetadataQueryParam queryParam = MetadataQueryParam.of(userName);
         for (String db : dbs) {
             if (StringUtils.isBlank(db) || db.contains(dbKeyword)) {
                 logger.info("db  will be filter: " + db);
@@ -103,7 +103,7 @@ public class DataSourceServiceImpl implements DataSourceService {
 
     @DataSource(name = DSEnum.FIRST_DATA_SOURCE)
     @Override
-    public JsonNode queryTables(DatabaseQueryParam queryParam) {
+    public JsonNode queryTables(MetadataQueryParam queryParam) {
         List<Map<String, Object>> listTables;
         try {
             listTables =
@@ -129,7 +129,7 @@ public class DataSourceServiceImpl implements DataSourceService {
 
     @DataSource(name = DSEnum.FIRST_DATA_SOURCE)
     @Override
-    public JsonNode queryTableMeta(DatabaseQueryParam queryParam) {
+    public JsonNode queryTableMeta(MetadataQueryParam queryParam) {
         logger.info("getTable:" + queryParam.getTableName());
         List<Map<String, Object>> columns = hiveMetaDao.getColumns(queryParam);
         List<Map<String, Object>> partitionKeys = hiveMetaDao.getPartitionKeys(queryParam);
@@ -160,7 +160,7 @@ public class DataSourceServiceImpl implements DataSourceService {
 
     @DataSource(name = DSEnum.FIRST_DATA_SOURCE)
     @Override
-    public JsonNode queryTableMetaBySDID(DatabaseQueryParam queryParam) {
+    public JsonNode queryTableMetaBySDID(MetadataQueryParam queryParam) {
         logger.info("getTableMetabysdid : sdid = {}", queryParam.getSdId());
         List<Map<String, Object>> columns =
                 hiveMetaDao.getColumnsByStorageDescriptionID(queryParam);
@@ -169,14 +169,14 @@ public class DataSourceServiceImpl implements DataSourceService {
     }
 
     @DataSource(name = DSEnum.FIRST_DATA_SOURCE)
-    public String getTableLocation(DatabaseQueryParam queryParam) {
+    public String getTableLocation(MetadataQueryParam queryParam) {
         String tableLocation = hiveMetaDao.getLocationByDbAndTable(queryParam);
         logger.info("tableLocation:" + tableLocation);
         return tableLocation;
     }
 
     @Override
-    public JsonNode getTableSize(DatabaseQueryParam queryParam) {
+    public JsonNode getTableSize(MetadataQueryParam queryParam) {
         logger.info("getTable:" + queryParam.getTableName());
 
         String tableSize = "";
@@ -201,7 +201,7 @@ public class DataSourceServiceImpl implements DataSourceService {
 
     @DataSource(name = DSEnum.FIRST_DATA_SOURCE)
     @Override
-    public JsonNode getPartitionSize(DatabaseQueryParam queryParam) {
+    public JsonNode getPartitionSize(MetadataQueryParam queryParam) {
 
         Long partitionSize = hiveMetaDao.getPartitionSize(queryParam);
         if (partitionSize == null) {
@@ -216,7 +216,7 @@ public class DataSourceServiceImpl implements DataSourceService {
 
     @DataSource(name = DSEnum.FIRST_DATA_SOURCE)
     @Override
-    public JsonNode getPartitions(DatabaseQueryParam queryParam) {
+    public JsonNode getPartitions(MetadataQueryParam queryParam) {
         List<String> partitions = hiveMetaDao.getPartitions(queryParam);
         Collections.sort(partitions);
         Collections.reverse(partitions);

@@ -22,7 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.Collections;
 import java.util.List;
 
-public class DatabaseQueryParam {
+public class MetadataQueryParam {
 
     /** the query user's username */
     private String userName;
@@ -42,15 +42,15 @@ public class DatabaseQueryParam {
     /** the user's role */
     private List<String> roles;
 
-    public static DatabaseQueryParam of(String userName) {
-        return new DatabaseQueryParam(userName);
+    public static MetadataQueryParam of(String userName) {
+        return new MetadataQueryParam(userName);
     }
 
-    public DatabaseQueryParam() {
+    public MetadataQueryParam() {
         this.roles = Collections.emptyList();
     }
 
-    public DatabaseQueryParam(String username) {
+    public MetadataQueryParam(String username) {
         this.userName = username;
         this.roles = Collections.emptyList();
     }
@@ -63,7 +63,7 @@ public class DatabaseQueryParam {
         this.userName = userName;
     }
 
-    public DatabaseQueryParam withUserName(String userName) {
+    public MetadataQueryParam withUserName(String userName) {
         this.userName = userName;
         return this;
     }
@@ -76,7 +76,7 @@ public class DatabaseQueryParam {
         this.dbName = dbName;
     }
 
-    public DatabaseQueryParam withDbName(String dbName) {
+    public MetadataQueryParam withDbName(String dbName) {
         this.dbName = dbName;
         return this;
     }
@@ -89,7 +89,7 @@ public class DatabaseQueryParam {
         this.tableName = tableName;
     }
 
-    public DatabaseQueryParam withTableName(String tableName) {
+    public MetadataQueryParam withTableName(String tableName) {
         this.tableName = tableName;
         return this;
     }
@@ -102,14 +102,14 @@ public class DatabaseQueryParam {
         this.roles = roles;
     }
 
-    public DatabaseQueryParam withRoles(List<String> roles) {
+    public MetadataQueryParam withRoles(List<String> roles) {
         if (roles != null && !roles.isEmpty()) {
             this.roles.addAll(roles);
         }
         return this;
     }
 
-    public DatabaseQueryParam withRole(String role) {
+    public MetadataQueryParam withRole(String role) {
         if (StringUtils.isNotBlank(role)) {
             this.roles.add(role);
         }
@@ -124,7 +124,7 @@ public class DatabaseQueryParam {
         this.partitionName = partitionName;
     }
 
-    public DatabaseQueryParam withPartitionName(String partitionName) {
+    public MetadataQueryParam withPartitionName(String partitionName) {
         this.partitionName = partitionName;
         return this;
     }
@@ -137,7 +137,7 @@ public class DatabaseQueryParam {
         this.sdId = sdId;
     }
 
-    public DatabaseQueryParam withSdId(String sdId) {
+    public MetadataQueryParam withSdId(String sdId) {
         this.sdId = sdId;
         return this;
     }

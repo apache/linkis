@@ -26,7 +26,7 @@ import org.apache.linkis.metadata.domain.mdq.vo.MdqTableFieldsInfoVO;
 import org.apache.linkis.metadata.domain.mdq.vo.MdqTablePartitionStatisticInfoVO;
 import org.apache.linkis.metadata.domain.mdq.vo.MdqTableStatisticInfoVO;
 import org.apache.linkis.metadata.exception.MdqIllegalParamException;
-import org.apache.linkis.metadata.hive.dto.DatabaseQueryParam;
+import org.apache.linkis.metadata.hive.dto.MetadataQueryParam;
 import org.apache.linkis.metadata.service.MdqService;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
@@ -68,8 +68,8 @@ public class MdqTableRestfulApi {
             @RequestParam(value = "tableName", required = false) String tableName,
             HttpServletRequest req) {
         String userName = ModuleUserUtils.getOperationUser(req, "getTableBaseInfo " + tableName);
-        DatabaseQueryParam queryParam =
-                DatabaseQueryParam.of(userName).withDbName(database).withTableName(tableName);
+        MetadataQueryParam queryParam =
+                MetadataQueryParam.of(userName).withDbName(database).withTableName(tableName);
         MdqTableBaseInfoVO tableBaseInfo;
         if (mdqService.isExistInMdq(database, tableName, userName)) {
             tableBaseInfo = mdqService.getTableBaseInfoFromMdq(database, tableName, userName);
@@ -85,8 +85,8 @@ public class MdqTableRestfulApi {
             @RequestParam(value = "tableName", required = false) String tableName,
             HttpServletRequest req) {
         String userName = ModuleUserUtils.getOperationUser(req, "getTableFieldsInfo " + tableName);
-        DatabaseQueryParam queryParam =
-                DatabaseQueryParam.of(userName).withDbName(database).withTableName(tableName);
+        MetadataQueryParam queryParam =
+                MetadataQueryParam.of(userName).withDbName(database).withTableName(tableName);
         List<MdqTableFieldsInfoVO> tableFieldsInfo;
         if (mdqService.isExistInMdq(database, tableName, userName)) {
             tableFieldsInfo = mdqService.getTableFieldsInfoFromMdq(database, tableName, userName);
@@ -107,8 +107,8 @@ public class MdqTableRestfulApi {
             throws IOException {
         String userName =
                 ModuleUserUtils.getOperationUser(req, "getTableStatisticInfo " + tableName);
-        DatabaseQueryParam queryParam =
-                DatabaseQueryParam.of(userName).withDbName(database).withTableName(tableName);
+        MetadataQueryParam queryParam =
+                MetadataQueryParam.of(userName).withDbName(database).withTableName(tableName);
         MdqTableStatisticInfoVO tableStatisticInfo =
                 mdqService.getTableStatisticInfo(queryParam, partitionSort);
         int totalSize = 0;
@@ -166,8 +166,8 @@ public class MdqTableRestfulApi {
             throws IOException, MdqIllegalParamException {
         String userName =
                 ModuleUserUtils.getOperationUser(req, "getPartitionStatisticInfo " + tableName);
-        DatabaseQueryParam queryParam =
-                DatabaseQueryParam.of(userName).withDbName(database).withTableName(tableName);
+        MetadataQueryParam queryParam =
+                MetadataQueryParam.of(userName).withDbName(database).withTableName(tableName);
         MdqTablePartitionStatisticInfoVO partition =
                 mdqService.getPartitionStatisticInfo(queryParam, partitionName);
         return Message.ok().data("partitionStatisticInfo", partition);

@@ -17,7 +17,7 @@
 
 package org.apache.linkis.metadata.hive.dao;
 
-import org.apache.linkis.metadata.hive.dto.DatabaseQueryParam;
+import org.apache.linkis.metadata.hive.dto.MetadataQueryParam;
 
 import org.apache.ibatis.annotations.Param;
 
@@ -26,7 +26,7 @@ import java.util.Map;
 
 public interface HiveMetaDao {
 
-    String getLocationByDbAndTable(DatabaseQueryParam queryParam);
+    String getLocationByDbAndTable(MetadataQueryParam queryParam);
 
     /**
      * get user's rose by username
@@ -53,9 +53,9 @@ public interface HiveMetaDao {
      */
     List<String> getAllDbs();
 
-    List<Map<String, Object>> getTablesByDbNameAndUserAndRoles(DatabaseQueryParam queryParam);
+    List<Map<String, Object>> getTablesByDbNameAndUserAndRoles(MetadataQueryParam queryParam);
 
-    List<Map<String, Object>> getTablesByDbName(DatabaseQueryParam queryParam);
+    List<Map<String, Object>> getTablesByDbName(MetadataQueryParam queryParam);
 
     /**
      * get the table partition's size
@@ -63,17 +63,17 @@ public interface HiveMetaDao {
      * @param queryParam the database search properties
      * @return the size
      */
-    Long getPartitionSize(DatabaseQueryParam queryParam);
+    Long getPartitionSize(MetadataQueryParam queryParam);
 
-    List<String> getPartitions(DatabaseQueryParam queryParam);
+    List<String> getPartitions(MetadataQueryParam queryParam);
 
-    List<Map<String, Object>> getColumns(DatabaseQueryParam queryParam);
+    List<Map<String, Object>> getColumns(MetadataQueryParam queryParam);
 
-    Map<String, Object> getStorageDescriptionIDByDbTableNameAndUser(DatabaseQueryParam queryParam);
+    Map<String, Object> getStorageDescriptionIDByDbTableNameAndUser(MetadataQueryParam queryParam);
 
-    List<Map<String, Object>> getColumnsByStorageDescriptionID(DatabaseQueryParam queryParam);
+    List<Map<String, Object>> getColumnsByStorageDescriptionID(MetadataQueryParam queryParam);
 
-    List<Map<String, Object>> getPartitionKeys(DatabaseQueryParam queryParam);
+    List<Map<String, Object>> getPartitionKeys(MetadataQueryParam queryParam);
 
     String getTableComment(@Param("DbName") String DbName, @Param("tableName") String tableName);
 }

@@ -55,6 +55,10 @@ public class WorkSpaceConfiguration {
     public static final CommonVars<Boolean> FILESYSTEM_PATH_CHECK_OWNER =
             CommonVars$.MODULE$.apply("wds.linkis.workspace.filesystem.owner.check", false);
 
+    public static final CommonVars<Boolean> FILESYSTEM_AUTO_CREATE_WORKSPACE =
+            CommonVars$.MODULE$.apply(
+                    "wds.linkis.workspace.filesystem.auto.create.workspace", false);
+
     public static final ExecutorService executorService =
             new ThreadPoolExecutor(
                     FILESYSTEM_FS_THREAD_NUM.getValue(),

@@ -45,6 +45,8 @@ public class TestCreateContext {
 
         // 1, create contextid
         ContextClient contextClient = ContextClientFactory.getOrCreateContextClient();
+        FileWriter fr = null;
+        BufferedWriter bw = null;
         try {
 
             Context context =
@@ -58,11 +60,10 @@ public class TestCreateContext {
             if (serializationHelper.accepts(contextID)) {
                 contextIDStr = serializationHelper.serialize(contextID);
                 File file = new File(CONTEXTID_PATH);
-                FileWriter fr = new FileWriter(file);
-                BufferedWriter bw = new BufferedWriter(fr);
+                fr = new FileWriter(file);
+                bw = new BufferedWriter(fr);
                 bw.write(contextIDStr);
                 bw.flush();
-                bw.close();
                 System.out.println("ContextID saved at : " + file.getAbsolutePath());
                 // test deserialize
                 System.out.println("contextIDStr: " + contextIDStr);
@@ -102,6 +103,21 @@ public class TestCreateContext {
         } catch (Exception e) {
             contextClient.close();
             e.printStackTrace();
+        } finally {
+            if (fr != null) {
+                try {
+                    fr.close();
+                } catch (Exception e) {
+                    // ignore
+                }
+            }
+            if (bw != null) {
+                try {
+                    bw.close();
+                } catch (Exception e) {
+                    // ignore
+                }
+            }
         }
     }
 }

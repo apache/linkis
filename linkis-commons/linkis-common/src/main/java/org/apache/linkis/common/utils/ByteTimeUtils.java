@@ -38,10 +38,9 @@ public class ByteTimeUtils {
         return hash != Integer.MIN_VALUE ? Math.abs(hash) : 0;
     }
 
-    /*
-     * Delete a file or directory and its contents recursively.
-     * Don't follow directories if they are symlinks.
-     * Throws an exception if deletion is unsuccessful.
+    /**
+     * Delete a file or directory and its contents recursively. Don't follow directories if they are
+     * symlinks. Throws an exception if deletion is unsuccessful.
      */
     public static void deleteRecursively(File file) throws IOException {
         if (file == null) {

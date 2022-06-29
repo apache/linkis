@@ -23,7 +23,7 @@ import org.apache.linkis.httpclient.config.HttpClientConstant
 import org.apache.linkis.httpclient.discovery.{AbstractDiscovery, HeartbeatAction, HeartbeatResult}
 import org.apache.linkis.httpclient.dws.request.DWSHeartbeatAction
 import org.apache.linkis.httpclient.dws.response.DWSHeartbeatResult
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.http.HttpResponse
 
 class DefaultConfigDiscovery extends AbstractDiscovery {
@@ -48,6 +48,5 @@ class DefaultConfigDiscovery extends AbstractDiscovery {
   override def getHeartbeatResult(response: HttpResponse, requestAction: HeartbeatAction): HeartbeatResult = requestAction match {
     case h: DWSHeartbeatAction => new DWSHeartbeatResult(response, h.serverUrl)
   }
-
 
 }

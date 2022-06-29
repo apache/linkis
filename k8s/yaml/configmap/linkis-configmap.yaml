@@ -448,11 +448,11 @@ data:
 
     ##hive meta
 
-    hive.meta.url=
+    hive.meta.url=jdbc:mysql://10.0.2.101:3306/metastore?useUnicode=true
 
-    hive.meta.user=
+    hive.meta.user=root
 
-    hive.meta.password=
+    hive.meta.password=123456
 
     wds.linkis.metadata.hive.encode.enabled=false
 
@@ -562,7 +562,7 @@ data:
 
     hive.meta.user=root
 
-    hive.meta.password=7956214
+    hive.meta.password=123456
 
     # associated with the logged-in user when querying metadata:default value is
     true
@@ -625,7 +625,7 @@ data:
 
     wds.linkis.server.mybatis.datasource.username=root
 
-    wds.linkis.server.mybatis.datasource.password=7956214
+    wds.linkis.server.mybatis.datasource.password=123456
 
     # mysql
 

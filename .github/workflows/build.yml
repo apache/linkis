@@ -19,12 +19,21 @@ name: Build
 
 on:
   push:
-    branches:
-      - main
+  pull_request:
+
+env:
+  MAVEN_OPTS: -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.http.retryHandler.class=standard -Dmaven.wagon.http.retryHandler.count=3 -Dmaven.wagon.httpconnectionManager.ttlSeconds=120
+
 jobs:
   build:
+
     runs-on: ubuntu-latest
- 
+
+    strategy:
+      matrix:
+        node-version: [14.17.3]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -37,44 +46,20 @@ jobs:
       uses: actions/setup-node@v2
       with:
         node-version: ${{ matrix.node-version }}
+    - name: Code format check
+      run: |
+          ./mvnw -N install
+          ./mvnw spotless:check
     - name: Build backend by maven
       run: |
           ./mvnw -N install
           ./mvnw clean package
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3.0.0
+#      with:
+#        token: ${{ secrets.CODECOV_TOKEN }}
     - name: Build frontend by node.js
       run: |
           cd web
-          sed -i \'/VUE_APP_MN_CONFIG_PREFIX/d\' .env
           npm install
           npm run build
-    - name: Build Docker Image
-      run: |
-        docker build -f k8s/Dockerfile/linkis-mg-gateway.Dockerfile -t linkis-mg-gateway:1.2 ./assembly-combined-package/target/apache-linkis-1.1.0-incubating-bin/linkis-package
-        docker build -f k8s/Dockerfile/linkis-mg-eureka.Dockerfile -t linkis-mg-gateway:1.2 ./assembly-combined-package/target/apache-linkis-1.1.0-incubating-bin/linkis-package
-        docker build -f k8s/Dockerfile/linkis-ps-publicservice.Dockerfile -t linkis-ps-publicservice:1.2 ./assembly-combined-package/target/apache-linkis-1.1.0-incubating-bin/linkis-package
-        docker build -f k8s/Dockerfile/linkis-ps-cs.Dockerfile -t linkis-ps-cs:1.2 ./assembly-combined-package/target/apache-linkis-1.1.0-incubating-bin/linkis-package
-        docker build -f k8s/Dockerfile/linkis-cg-linkismanager.Dockerfile -t linkis-cg-linkismanager:1.2 ./assembly-combined-package/target/apache-linkis-1.1.0-incubating-bin/linkis-package
-        docker build -f k8s/Dockerfile/linkis-cg-entrance.Dockerfile -t linkis-cg-entrance:1.2 ./assembly-combined-package/target/apache-linkis-1.1.0-incubating-bin/linkis-package
-        docker build -f k8s/Dockerfile/linkis-cg-engineplugin.Dockerfile -t linkis-cg-engineplugin:1.2 ./assembly-combined-package/target/apache-linkis-1.1.0-incubating-bin/linkis-package
-        docker build -f k8s/Dockerfile/linkis-cg-engineconnmanager.Dockerfile -t linkis-cg-engineconnmanager:1.2 ./assembly-combined-package/target/apache-linkis-1.1.0-incubating-bin/linkis-package
-        docker build -f k8s/Dockerfile/linkis-web.Dockerfile -t linkis-web:1.2.0 ./web
-    - name: Push Docker Image
-      run: |
-        docker tag linkis-mg-gateway:1.2.0 registry.mydomain.com/library/linkis-mg-gateway:1.2.0
-        docker push registry.mydomain.com/library/linkis-mg-gateway:1.2.0
-        docker tag linkis-mg-eureka:1.2.0 registry.mydomain.com/library/linkis-mg-eureka:1.2.0
-        docker push registry.mydomain.com/library/linkis-mg-eureka:1.2.0
-        docker tag linkis-ps-publicservice:1.2.0 registry.mydomain.com/library/linkis-ps-publicservice:1.2.0
-        docker push registry.mydomain.com/library/linkis-ps-publicservice:1.2.0
-        docker tag linkis-ps-cs:1.2.0 registry.mydomain.com/library/linkis-ps-cs:1.2.0
-        docker push registry.mydomain.com/library/linkis-ps-cs:1.2.0
-        docker tag linkis-cg-linkismanager:1.2.0 registry.mydomain.com/library/linkis-cg-linkismanager:1.2.0
-        docker push registry.mydomain.com/library/linkis-cg-linkismanager:1.2.0
-        docker tag linkis-cg-entrance:1.2.0 registry.mydomain.com/library/linkis-cg-entrance:1.2.0
-        docker push registry.mydomain.com/library/linkis-cg-entrance:1.2.0
-        docker tag linkis-cg-engineplugin:1.2.0 registry.mydomain.com/library/linkis-cg-engineplugin:1.2.0
-        docker push registry.mydomain.com/library/linkis-cg-engineplugin:1.2.0
-        docker tag linkis-cg-engineconnmanager:1.2.0 registry.mydomain.com/library/linkis-cg-engineconnmanager:1.2.0
-        docker push registry.mydomain.com/library/linkis-cg-engineconnmanager
-        docker tag linkis-web:1.2.0 registry.mydomain.com/library/linkis-web:1.2.0
-        docker push registry.mydomain.com/library/linkis-web:1.2.0

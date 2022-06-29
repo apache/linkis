@@ -25,21 +25,11 @@ import org.apache.commons.lang.StringUtils
 
 
 trait EngineConnHook {
-
   def beforeCreateEngineConn(engineCreationContext: EngineCreationContext): Unit
-
   def beforeExecutionExecute(engineCreationContext: EngineCreationContext, engineConn: EngineConn): Unit
-
   def afterExecutionExecute(engineCreationContext: EngineCreationContext, engineConn: EngineConn): Unit
-
-  def afterEngineServerStartFailed(engineCreationContext: EngineCreationContext, throwable: Throwable): Unit = {
-
-  }
-
-  def afterEngineServerStartSuccess(engineCreationContext: EngineCreationContext, engineConn: EngineConn): Unit = {
-
-  }
-
+  def afterEngineServerStartFailed(engineCreationContext: EngineCreationContext, throwable: Throwable): Unit = {}
+  def afterEngineServerStartSuccess(engineCreationContext: EngineCreationContext, engineConn: EngineConn): Unit = {}
 }
 
 object EngineConnHook extends Logging {

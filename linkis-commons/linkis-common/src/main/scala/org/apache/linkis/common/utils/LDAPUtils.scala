@@ -14,21 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.common.utils
 
-import java.util.Hashtable
-
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.conf.CommonVars
+
+import java.util.Hashtable
 import javax.naming.Context
 import javax.naming.ldap.InitialLdapContext
-import org.apache.commons.lang3.StringUtils
 
 object LDAPUtils extends Logging {
 
-  val url = CommonVars("wds.linkis.ldap.proxy.url", "").getValue
+  // make sure the url end with '/', otherwise may get error providerUrl
+  var url: String = CommonVars("wds.linkis.ldap.proxy.url", "").getValue
+  if (!url.endsWith("/")) {
+    url = url + "/"
+  }
+
   val baseDN = CommonVars("wds.linkis.ldap.proxy.baseDN", "").getValue
   val userNameFormat = CommonVars("wds.linkis.ldap.proxy.userNameFormat", "").getValue
+
   def login(userID: String, password: String): Unit = {
     val env = new Hashtable[String, String]()
     val bindDN = if (StringUtils.isBlank(userNameFormat)) userID else {
@@ -40,14 +46,10 @@ object LDAPUtils extends Logging {
     env.put(Context.PROVIDER_URL, url + baseDN)
     env.put(Context.SECURITY_PRINCIPAL, bindDN)
     env.put(Context.SECURITY_CREDENTIALS, bindPassword)
-    //    Utils.tryCatch {
+
     new InitialLdapContext(env, null)
-    info(s"user $userID login success.")
-    //      true
-    //    } { e =>
-    //        error(s"user $userID login failed.", e)
-    //        false
-    //    }
+    logger.info(s"user $userID login success.")
+
   }
 }
 

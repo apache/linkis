@@ -28,16 +28,18 @@ import org.apache.linkis.governance.common.protocol.job._
 import org.apache.linkis.protocol.query.cache.{CacheTaskResult, RequestReadCache}
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.scheduler.queue.SchedulerEventState
+
 import java.util
 import java.util.Date
-
 import javax.servlet.http.HttpServletRequest
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
+import org.apache.linkis.manager.common.protocol.resource.ResourceWithStatus
+import org.apache.linkis.protocol.constants.TaskConstant
 import sun.net.util.IPAddressUtil
 
 import scala.collection.JavaConversions._
 
-object JobHistoryHelper extends Logging{
+object JobHistoryHelper extends Logging {
 
   private val sender = Sender.getSender(EntranceConfiguration.QUERY_PERSISTENCE_SPRING_APPLICATION_NAME.getValue)
 
@@ -46,35 +48,38 @@ object JobHistoryHelper extends Logging{
   def getCache(executionCode: String, user: String, labelStrList: util.List[String], readCacheBefore: Long): CacheTaskResult = {
     val requestReadCache = new RequestReadCache(executionCode, user, labelStrList, readCacheBefore)
     sender.ask(requestReadCache) match {
-      case  c: CacheTaskResult => c
+      case c: CacheTaskResult => c
       case _ => null
     }
   }
 
-  def getStatusByTaskID(taskID:Long):String = {
+  def getStatusByTaskID(taskID: Long): String = {
     val task = getTaskByTaskID(taskID)
     if (task == null) SchedulerEventState.Cancelled.toString
     else task.getStatus
   }
 
-  def getRequestIpAddr(req: HttpServletRequest ): String = {
+  def getRequestIpAddr(req: HttpServletRequest): String = {
     val addrList = List(Option(req.getHeader("x-forwarded-for")).getOrElse("").split(",")(0),
       Option(req.getHeader("Proxy-Client-IP")).getOrElse(""),
       Option(req.getHeader("WL-Proxy-Client-IP")).getOrElse(""),
       Option(req.getHeader("HTTP_CLIENT_IP")).getOrElse(""),
       Option(req.getHeader("HTTP_X_FORWARDED_FOR")).getOrElse("")
     )
-    val afterProxyIp = addrList.find(ip => {StringUtils.isNotEmpty(ip) &&
-      (IPAddressUtil.isIPv4LiteralAddress(ip) || IPAddressUtil.isIPv6LiteralAddress(ip))}).getOrElse("")
-    if(StringUtils.isNotEmpty(afterProxyIp)){
+    val afterProxyIp = addrList.find(ip => {
+      StringUtils.isNotEmpty(ip) &&
+        (IPAddressUtil.isIPv4LiteralAddress(ip) || IPAddressUtil.isIPv6LiteralAddress(ip))
+    }).getOrElse("")
+    if (StringUtils.isNotEmpty(afterProxyIp)) {
       afterProxyIp
-    }else{
+    } else {
       req.getRemoteAddr
     }
   }
 
   /**
    * 对于一个在内存中找不到这个任务的话，可以直接干掉
+   *
    * @param taskID
    */
   def forceKill(taskID: Long): Unit = {
@@ -96,6 +101,7 @@ object JobHistoryHelper extends Logging{
 
   /**
    * 批量强制kill
+   *
    * @param taskIdList
    */
   def forceBatchKill(taskIdList: util.ArrayList[java.lang.Long]): Unit = {
@@ -126,7 +132,7 @@ object JobHistoryHelper extends Logging{
     jobRequest.setId(taskID)
     jobRequest.setSource(null)
     val jobReqQuery = JobReqQuery(jobRequest)
-    val task = Utils.tryCatch{
+    val task = Utils.tryCatch {
       val taskResponse = sender.ask(jobReqQuery)
       taskResponse match {
         case responsePersist: JobRespProtocol =>
@@ -146,13 +152,45 @@ object JobHistoryHelper extends Logging{
         case _ => logger.error("get query response incorrectly")
           throw JobHistoryFailedException("get query response incorrectly")
       }
-    }{
-      case errorException:ErrorException => throw errorException
+    } {
+      case errorException: ErrorException => throw errorException
       case e: Exception => val e1 = JobHistoryFailedException(s"query taskId $taskID error")
         e1.initCause(e)
         throw e
     }
     task
+  }
+
+  def updateJobRequestMetrics(jobRequest: JobRequest, resourceInfo: util.Map[String, ResourceWithStatus],
+                              ecInfo: util.Map[String, Object]): Unit = {
+    // update resource
+    if (jobRequest.getMetrics == null) {
+      jobRequest.setMetrics(new util.HashMap[String, Object]())
+    }
+    val metricsMap = jobRequest.getMetrics
+    val resourceMap = metricsMap.get(TaskConstant.ENTRANCEJOB_YARNRESOURCE)
+    val ecResourceMap = if (resourceInfo == null) new util.HashMap[String, ResourceWithStatus] else resourceInfo
+    if (resourceMap != null) {
+      resourceMap.asInstanceOf[util.HashMap[String, ResourceWithStatus]].putAll(ecResourceMap)
+    } else {
+      metricsMap.put(TaskConstant.ENTRANCEJOB_YARNRESOURCE, ecResourceMap)
+    }
+    var engineInstanceMap: util.HashMap[String, Object] = null
+    if (metricsMap.containsKey(TaskConstant.ENTRANCEJOB_ENGINECONN_MAP)) {
+      engineInstanceMap = metricsMap.get(TaskConstant.ENTRANCEJOB_ENGINECONN_MAP).asInstanceOf[util.HashMap[String, Object]]
+    } else {
+      engineInstanceMap = new util.HashMap[String, Object]()
+      metricsMap.put(TaskConstant.ENTRANCEJOB_ENGINECONN_MAP, engineInstanceMap)
+    }
+    val infoMap = ecInfo
+    if (null != infoMap && infoMap.containsKey(TaskConstant.ENGINE_INSTANCE)) {
+      val instance = infoMap.get(TaskConstant.ENGINE_INSTANCE).asInstanceOf[String]
+      val engineExtraInfoMap = engineInstanceMap.getOrDefault(instance, new util.HashMap[String, Object]).asInstanceOf[util.HashMap[String, Object]]
+      engineExtraInfoMap.putAll(infoMap)
+      engineInstanceMap.put(instance, engineExtraInfoMap)
+    } else {
+      logger.warn("Ec info map must contains ECInstance")
+    }
   }
 
 }

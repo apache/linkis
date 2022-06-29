@@ -41,4 +41,6 @@ object RunType extends Enumeration {
   val ES_SQL = Value("essql")
   val ES_JSON = Value("esjson")
 
+  val TRINO_SQL = Value("tsql")
+
 }

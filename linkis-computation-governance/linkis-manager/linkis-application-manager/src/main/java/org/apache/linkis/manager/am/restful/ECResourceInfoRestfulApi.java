@@ -18,8 +18,6 @@
 package org.apache.linkis.manager.am.restful;
 
 import com.github.pagehelper.PageInfo;
-import org.apache.commons.collections4.MapUtils;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.governance.common.constant.job.JobRequestConstants;
 import org.apache.linkis.manager.am.exception.AMErrorException;
@@ -27,7 +25,6 @@ import org.apache.linkis.manager.am.service.ECResourceInfoService;
 import org.apache.linkis.manager.am.util.ECResourceInfoUtils;
 import org.apache.linkis.manager.am.vo.ECResourceInfoRecordVo;
 import org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord;
-import org.apache.linkis.protocol.constants.TaskConstant;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.security.SecurityFilter;
 import org.apache.linkis.server.utils.ModuleUserUtils;

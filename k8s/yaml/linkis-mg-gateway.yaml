@@ -1,0 +1,79 @@
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+# 
+#   http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: linkis-mg-gateway
+  labels:
+    app: linkis-mg-gateway
+    service: linkis-mg-gateway
+spec:
+  ports:
+    - name: http
+      port: 9001
+      targetPort: 9001
+  selector:
+    app: linkis-mg-gateway
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: linkis-mg-gateway
+  labels:
+    app: linkis-mg-gateway
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: linkis-mg-gateway
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: linkis-mg-gateway
+        version: v1
+    spec:
+      volumes:
+        - name: conf
+          configMap: 
+            name: linkis-config
+        - name: log
+          emptyDir: { }
+      containers:
+        - image: registry.mydomain.com/library/linkis-mg-gateway:1.2.0
+          imagePullPolicy: Always
+          name: linkis-mg-gateway
+          ports:
+            - containerPort: 9001
+          env:
+            - name: EUREKA_URL
+              value: "http://linkis-mg-eureka:20303/eureka/"
+            - name: START_PORT
+              value: "9001"
+          resources:
+            requests:
+              memory: "500Mi"
+              cpu: "1000m"
+            limits:
+              memory: "1Gi"
+              cpu: "2000m"
+          volumeMounts:
+            - name: conf
+              mountPath: /opt/linkis/linkis-mg-gateway/conf/
+            - name: log
+              mountPath: /opt/linkis/linkis-mg-gateway/logs

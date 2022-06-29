@@ -55,7 +55,7 @@ public class HiveMetaWithPermissionServiceImpl implements HiveMetaWithPermission
         }
         Boolean flag = DWSConfig.HIVE_PERMISSION_WITH_lOGIN_USER_ENABLED.getValue();
         if (flag) {
-            List<String> roles = hiveMetaDao.getRosesByUser(userName);
+            List<String> roles = hiveMetaDao.getRolesByUser(userName);
             return hiveMetaDao.getDbsByUserAndRoles(userName, roles);
         } else {
             log.info("user {} to get all dbs no permission control", userName);
@@ -76,7 +76,7 @@ public class HiveMetaWithPermissionServiceImpl implements HiveMetaWithPermission
             return hiveMetaDao.getTablesByDbName(queryParam);
         }
         if (flag) {
-            List<String> roles = hiveMetaDao.getRosesByUser(queryParam.getUserName());
+            List<String> roles = hiveMetaDao.getRolesByUser(queryParam.getUserName());
             queryParam.withRoles(roles);
             return hiveMetaDao.getTablesByDbNameAndUserAndRoles(queryParam);
         } else {
@@ -101,7 +101,7 @@ public class HiveMetaWithPermissionServiceImpl implements HiveMetaWithPermission
             return dataSourceService.queryTableMeta(queryParam);
         }
         if (flag) {
-            List<String> roles = hiveMetaDao.getRosesByUser(userName);
+            List<String> roles = hiveMetaDao.getRolesByUser(userName);
             queryParam.withRoles(roles);
             // with permission
             Map<String, Object> tableMap =

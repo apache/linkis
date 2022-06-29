@@ -29,12 +29,12 @@ public interface HiveMetaDao {
     String getLocationByDbAndTable(MetadataQueryParam queryParam);
 
     /**
-     * get user's rose by username
+     * get user's roles by username
      *
      * @param userName user's username
-     * @return the rose name list
+     * @return the role name list
      */
-    List<String> getRosesByUser(String userName);
+    List<String> getRolesByUser(String userName);
 
     /**
      * get dbs by user's username and user's roles

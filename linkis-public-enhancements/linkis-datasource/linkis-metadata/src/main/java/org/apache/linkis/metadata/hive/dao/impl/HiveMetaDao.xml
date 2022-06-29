@@ -28,7 +28,7 @@
         )
     </select>
 
-    <select id="getRosesByUser" resultType="java.lang.String" parameterType="map">
+    <select id="getRolesByUser" resultType="java.lang.String" parameterType="map">
         SELECT ROLE_NAME
         FROM ROLES r INNER JOIN ROLE_MAP rm
             ON r.ROLE_ID = rm.ROLE_ID

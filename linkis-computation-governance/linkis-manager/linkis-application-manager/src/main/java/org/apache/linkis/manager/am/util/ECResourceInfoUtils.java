@@ -16,8 +16,9 @@
  */
 package org.apache.linkis.manager.am.util;
 
-import com.google.gson.Gson;
 import org.apache.commons.lang.StringUtils;
+
+import com.google.gson.Gson;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,10 +35,11 @@ public class ECResourceInfoUtils {
     public static String strCheckAndDef(String str, String def) {
         return StringUtils.isBlank(str) ? def : str;
     }
+
     public static Map<String, Object> getStringToMap(String str) {
         Gson gson = new Gson();
         Map<String, Object> map = new HashMap<>();
         map = gson.fromJson(str, map.getClass());
-      return map;
+        return map;
     }
 }

@@ -57,4 +57,6 @@ object ComputationExecutorConf {
   val HIVE_RESULTSET_USE_TABLE_NAME = CommonVars("hive.resultset.use.unique.column.names", false)
 
   val JOB_ID_TO_ENV_KEY = CommonVars("wds.linkis.ec.job.id.env.key", "LINKIS_JOB_ID").getValue
+
+  val TASK_ASYNC_MAX_THREAD_SIZE = CommonVars("linkis.ec.task.execution.async.thread.size", 50).getValue
 }

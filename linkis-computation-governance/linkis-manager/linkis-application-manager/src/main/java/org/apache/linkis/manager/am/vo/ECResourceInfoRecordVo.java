@@ -20,6 +20,7 @@ import org.apache.linkis.manager.common.entity.resource.Resource;
 import org.apache.linkis.manager.common.utils.ResourceUtils;
 
 import java.util.Date;
+import java.util.Map;
 
 public class ECResourceInfoRecordVo {
 
@@ -33,7 +34,7 @@ public class ECResourceInfoRecordVo {
 
     private String serviceInstance;
 
-    private String usedResource;
+    private Map usedResource;
 
     private String requestResource;
 
@@ -114,11 +115,11 @@ public class ECResourceInfoRecordVo {
         this.serviceInstance = serviceInstance;
     }
 
-    public String getUsedResource() {
+    public Map getUsedResource() {
         return usedResource;
     }
 
-    public void setUsedResource(String usedResource) {
+    public void setUsedResource(Map usedResource) {
         this.usedResource = usedResource;
     }
 

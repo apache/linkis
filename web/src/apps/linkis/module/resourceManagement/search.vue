@@ -21,7 +21,7 @@
       <Input :maxlength="50" v-model="searchBar.instance" :placeholder="$t('message.linkis.instanceName')"/>
     </FormItem>
     <FormItem prop="owner" :label="$t('message.linkis.initiator')" >
-      <Select  v-model="searchBar.owner" style="width:200px" clearable>
+      <Select  v-model="searchBar.owner" style="width:100px" clearable>
         <Option
           v-for="(item) in ownerList"
           :label="item"
@@ -44,7 +44,7 @@
       />
     </FormItem>
     <FormItem prop="engineType" :label="$t('message.linkis.tableColumns.engineType')" >
-      <Select  v-model="searchBar.engineType" style="width:200px" clearable>
+      <Select  v-model="searchBar.engineType" style="width:80px" clearable>
         <Option
           v-for="(item) in engineTypes"
           :label="item"
@@ -150,7 +150,8 @@ export default {
     display: flex;
     .ivu-form-item {
       display: flex;
-      margin-right: 30px;
+      margin-right: 8px;
+      margin-bottom: 8px;
       flex: none;
     }
   }

@@ -25,19 +25,13 @@
         fix/>
       <Table class="table-content ecm-engine-table" border :width="tableWidth" :columns="columns" :data="pageDatalist" @on-selection-change="selctionChange">
         <template slot-scope="{row}" slot="serviceInstance">
-          <span>{{row.serviceInstance}}</span>
+          <span>{{row.serviceInstance ? row.serviceInstance : '-'}}</span>
         </template>
         <template slot-scope="{row}" slot="usedResource">
           <!-- 后台未做返回时的处理，下面几个可按照处理 -->
           <span v-if="row.usedResource">{{`${calcCompany(row.usedResource.cores)}cores,${calcCompany(row.usedResource.memory, true)}G,${calcCompany(row.usedResource.instance)}apps`}}</span>
-          <span v-else>Null cores,Null G</span>
+          <span v-else>-</span>
         </template>
-        <!-- <template slot-scope="{row}" slot="maxResource">
-          <span>Linkis:({{`${calcCompany(row.minResource.cores)}cores,${calcCompany(row.minResource.memory, true)}G`}})</span>
-        </template> -->
-        <!-- <template slot-scope="{row}" slot="minResource">
-          <span>Linkis:({{`${calcCompany(row.maxResource.cores)}cores,${calcCompany(row.maxResource.memory, true)}G`}})</span>
-        </template> -->
         <template slot-scope="{row}" slot="labelValue" >
           <div class="tag-box">
             <Tooltip v-for="(item, index) in row.labelValue.split(',')" :key="index" :content="`${item}`" placement="top">
@@ -46,7 +40,7 @@
           </div>
         </template>
         <template slot-scope="{row}" slot="usedTime">
-          <span>{{ timeFormat(row) }}</span>
+          <span>{{ row.usedTime ? timeFormat(row) : '-' }}</span>
         </template>
       </Table>
       <div class="page-bar">
@@ -208,6 +202,8 @@ export default {
                       applicationName: "linkis-cg-engineconn",
                       emInstance: params.row.ecmInstance,
                       instance: params.row.serviceInstance,
+                      ticketId: params.row.ticketId,
+                      logDirSuffix: params.row.logDirSuffix,
                     })
                   }
                 }

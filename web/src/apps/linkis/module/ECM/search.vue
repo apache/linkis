@@ -115,7 +115,8 @@ export default {
     display: flex;
     .ivu-form-item {
       display: flex;
-      margin-right: 30px;
+      margin-right: 8px;
+      margin-bottom: 8px;
       flex: none;
     }
   }

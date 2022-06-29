@@ -1,0 +1,93 @@
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+# 
+#   http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: headless-linkis-cg-engineplugin
+  labels:
+    app: headless-linkis-cg-engineplugin
+    service: headless-linkis-cg-engineplugin
+spec:
+  ports:
+    - name: http
+      port: 9106
+      targetPort: 9106
+  selector:
+    app: linkis-cg-engineplugin
+  type: None
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: linkis-cg-engineplugin
+  labels:
+    app: linkis-cg-engineplugin
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: linkis-cg-engineplugin
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: linkis-cg-engineplugin
+        version: v1
+    spec:
+      volumes:
+        - name: conf
+          configMap: 
+            name: linkis-config
+        - name: hadoop-config
+          configMap: 
+            name: hadoop-config
+        - name: hive-config
+          configMap: 
+            name: hive-config
+        - name: spark-config
+          configMap: 
+            name: spark-config
+        - name: log
+            emptyDir: {}
+      containers:
+        - image: registry.mydomain.com/library/linkis-cg-engineplugin:1.2.0
+          imagePullPolicy: Always
+          name: linkis-cg-engineplugin
+          ports:
+            - containerPort: 9106
+          env:
+            - name: EUREKA_URL
+              value: "http://linkis-mg-eureka:20303/eureka/"
+          resources:
+            requests:
+              memory: "500Mi"
+              cpu: "1000m"
+            limits:
+              memory: "1Gi"
+              cpu: "2000m"
+          volumeMounts:
+            - name: conf
+              mountPath: /opt/linkis/linkis-cg-engineplugin/conf
+            - name: hadoop-config
+              mountPath: /usr/local/hadoop/etc/hadoop
+            - name: hive-config
+              mountPath: /usr/local/hive/conf
+            - name: spark-config
+              mountPath: /usr/local/spark/conf
+            - name: log
+              mountPath: /opt/linkis/linkis-cg-engineplugin/logs
+

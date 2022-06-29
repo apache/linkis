@@ -22,7 +22,7 @@ import java.util.Map;
 
 public class WorkspaceExceptionManager {
 
-    private static Map<String, String> desc =
+    private static final Map<String, String> desc =
             new HashMap<String, String>(32) {
                 {
                     put(

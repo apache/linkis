@@ -103,8 +103,7 @@ public class ECResourceInfoRestfulApi {
             @RequestParam(value = "pageNow", required = false, defaultValue = "1") Integer pageNow,
             @RequestParam(value = "pageSize", required = false, defaultValue = "20")
                     Integer pageSize) {
-//        String username = SecurityFilter.getLoginUsername(req);
-        String username = "hadoop";
+        String username = SecurityFilter.getLoginUsername(req);
         // Parameter judgment
         instance = ECResourceInfoUtils.strCheckAndDef(instance, null);
         creator = ECResourceInfoUtils.strCheckAndDef(creator, null);

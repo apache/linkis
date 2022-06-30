@@ -18,12 +18,12 @@
 <template>
   <div :style="{height: '100%'}">
     <div v-show="!showviewlog" class="ecmEngine">
-      <Search :statusList="statusList" :ownerList="ownerList" :engineTypes="engineTypes" @search="search" :stopbtn="true" />
+      <Search ref="search" :statusList="statusList" :ownerList="ownerList" :engineTypes="engineTypes" @search="search" :stopbtn="true" />
       <Spin
         v-if="loading"
         size="large"
         fix/>
-      <Table class="table-content ecm-engine-table" border :width="tableWidth" :columns="columns" :data="pageDatalist" @on-selection-change="selctionChange">
+      <Table class="table-content ecm-engine-table" border :width="tableWidth" :columns="columns" :data="tableData" @on-selection-change="selctionChange">
         <template slot-scope="{row}" slot="serviceInstance">
           <span>{{row.serviceInstance ? row.serviceInstance : '-'}}</span>
         </template>
@@ -46,7 +46,7 @@
       <div class="page-bar">
         <Page
           ref="page"
-          :total="this.tableData.length"
+          :total="page.totalSize"
           :page-size-opts="page.sizeOpts"
           :page-size="page.pageSize"
           :current="page.pageNow"
@@ -219,13 +219,6 @@ export default {
     WbTag,
     ViewLog
   },
-  computed: {
-    pageDatalist() {// 展示的数据
-      return this.tableData.filter((item, index) => {
-        return (this.page.pageNow - 1) * this.page.pageSize <= index && index < this.page.pageNow * this.page.pageSize;
-      })
-    }
-  },
   created() {
     this.initExpandList();
     // 获取状态信息列表
@@ -252,6 +245,7 @@ export default {
         let engines = await api.fetch(url, 'get') || {};
         // 获取使用的引擎资源列表
         let enginesList = engines.engineList || [];
+        this.page.totalSize = engines.totalPage ? engines.totalPage : enginesList.length;
         this.allEngines = [ ...enginesList ];
         this.tableData = [ ...enginesList ];
         this.ownerList = [];
@@ -332,11 +326,13 @@ export default {
     // 切换分页
     change(val) {
       this.page.pageNow = val;
+      this.$refs.search.search();
     },
     // 页容量变化
     changeSize(val) {
       this.page.pageSize = val;
       this.page.pageNow = 1;
+      this.$refs.search.search();
     },
     // 搜索
     search(e) {
@@ -357,10 +353,8 @@ export default {
       if (this.page.pageSize) url += `pageSize=${this.page.pageSize}`
       api.fetch(url,'get').then((res)=>{
         this.tableData=res.engineList
+        this.page.totalSize = res.totalPage ? res.totalPage : this.page.totalSize;
       })
-
-      this.page.pageNow = 1;
-      this.page.totalSize = this.tableData.length;
     },
     // 时间格式转换
     timeFormat(row) {

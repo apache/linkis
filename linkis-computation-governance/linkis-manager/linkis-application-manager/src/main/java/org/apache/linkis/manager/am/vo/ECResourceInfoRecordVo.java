@@ -16,9 +16,6 @@
  */
 package org.apache.linkis.manager.am.vo;
 
-import org.apache.linkis.manager.common.entity.resource.Resource;
-import org.apache.linkis.manager.common.utils.ResourceUtils;
-
 import java.util.Date;
 import java.util.Map;
 
@@ -36,9 +33,9 @@ public class ECResourceInfoRecordVo {
 
     private Map usedResource;
 
-    private String requestResource;
+    private Map requestResource;
 
-    private String releasedResource;
+    private Map releasedResource;
 
     private String ecmInstance;
 
@@ -59,21 +56,6 @@ public class ECResourceInfoRecordVo {
     private String engineType;
 
     public ECResourceInfoRecordVo() {}
-
-    public ECResourceInfoRecordVo(
-            String labelValue,
-            String createUser,
-            String ticketId,
-            Resource resource,
-            String logDirSuffix) {
-        this.labelValue = labelValue;
-        this.ticketId = ticketId;
-        this.createUser = createUser;
-        if (null != resource) {
-            this.requestResource = ResourceUtils.serializeResource(resource);
-        }
-        this.logDirSuffix = logDirSuffix;
-    }
 
     public Integer getId() {
         return id;
@@ -123,19 +105,19 @@ public class ECResourceInfoRecordVo {
         this.usedResource = usedResource;
     }
 
-    public String getRequestResource() {
+    public Map getRequestResource() {
         return requestResource;
     }
 
-    public void setRequestResource(String requestResource) {
+    public void setRequestResource(Map requestResource) {
         this.requestResource = requestResource;
     }
 
-    public String getReleasedResource() {
+    public Map getReleasedResource() {
         return releasedResource;
     }
 
-    public void setReleasedResource(String releasedResource) {
+    public void setReleasedResource(Map releasedResource) {
         this.releasedResource = releasedResource;
     }
 

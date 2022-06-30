@@ -25,7 +25,6 @@ import org.apache.linkis.manager.am.util.ECResourceInfoUtils;
 import org.apache.linkis.manager.am.vo.ECResourceInfoRecordVo;
 import org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord;
 import org.apache.linkis.server.Message;
-import org.apache.linkis.server.security.SecurityFilter;
 import org.apache.linkis.server.utils.ModuleUserUtils;
 
 import org.apache.commons.lang.StringUtils;
@@ -100,7 +99,8 @@ public class ECResourceInfoRestfulApi {
             @RequestParam(value = "pageNow", required = false, defaultValue = "1") Integer pageNow,
             @RequestParam(value = "pageSize", required = false, defaultValue = "20")
                     Integer pageSize) {
-        String username = SecurityFilter.getLoginUsername(req);
+        //        String username = SecurityFilter.getLoginUsername(req);
+        String username = "hadoop";
         // Parameter judgment
         instance = ECResourceInfoUtils.strCheckAndDef(instance, null);
         creator = ECResourceInfoUtils.strCheckAndDef(creator, null);
@@ -144,6 +144,10 @@ public class ECResourceInfoRestfulApi {
                                 info.getLabelValue().split(",")[1].split("-")[0]);
                         ecrHistroryListVo.setUsedResource(
                                 ECResourceInfoUtils.getStringToMap(info.getUsedResource()));
+                        ecrHistroryListVo.setReleasedResource(
+                                ECResourceInfoUtils.getStringToMap(info.getReleasedResource()));
+                        ecrHistroryListVo.setRequestResource(
+                                ECResourceInfoUtils.getStringToMap(info.getRequestResource()));
                         list.add(ecrHistroryListVo);
                     });
         } finally {

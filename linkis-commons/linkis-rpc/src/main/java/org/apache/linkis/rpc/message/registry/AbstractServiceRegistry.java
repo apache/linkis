@@ -17,7 +17,6 @@
 
 package org.apache.linkis.rpc.message.registry;
 
-import org.apache.linkis.common.utils.JavaLog;
 import org.apache.linkis.rpc.message.parser.DefaultServiceParser;
 import org.apache.linkis.rpc.message.parser.ServiceMethod;
 import org.apache.linkis.rpc.message.parser.ServiceParser;
@@ -26,13 +25,17 @@ import org.springframework.aop.support.AopUtils;
 
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public abstract class AbstractServiceRegistry extends JavaLog implements ServiceRegistry {
+public abstract class AbstractServiceRegistry implements ServiceRegistry {
+
+    private static final Logger logger = LoggerFactory.getLogger(AbstractServiceRegistry.class);
 
     @SuppressWarnings("all")
     public final Interner<String> lock = Interners.<String>newWeakInterner();
@@ -54,14 +57,13 @@ public abstract class AbstractServiceRegistry extends JavaLog implements Service
             // 2..解析
             Map<String, List<ServiceMethod>> serviceMethods = serviceParser.parse(service);
             serviceMethods.entrySet().stream()
+                    .filter(entry -> entry.getValue().size() != 1)
                     .forEach(
                             entry -> {
-                                if (entry.getValue().size() != 1) {
-                                    error(
-                                            String.format(
-                                                    "rpc receive method init error! find %s method for the request:%s, this type of rpc request will not be handled!",
-                                                    entry.getValue().size(), entry.getKey()));
-                                }
+                                logger.error(
+                                        String.format(
+                                                "rpc receive method init error! find %s method for the request:%s, this type of rpc request will not be handled!",
+                                                entry.getValue().size(), entry.getKey()));
                             });
             // 3.注册
             serviceMethods.forEach(this::register);

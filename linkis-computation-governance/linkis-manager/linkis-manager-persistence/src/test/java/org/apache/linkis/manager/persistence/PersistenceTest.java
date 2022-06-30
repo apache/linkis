@@ -15,14 +15,16 @@
  * limitations under the License.
  */
 
+package org.apache.linkis.manager.persistence;
+
 import org.apache.linkis.common.ServiceInstance;
+import org.apache.linkis.manager.Scan;
 import org.apache.linkis.manager.common.entity.label.LabelKeyValue;
 import org.apache.linkis.manager.common.entity.persistence.PersistenceLabel;
 import org.apache.linkis.manager.common.entity.persistence.PersistenceResource;
 import org.apache.linkis.manager.dao.LabelManagerMapper;
 import org.apache.linkis.manager.entity.Tunple;
 import org.apache.linkis.manager.label.entity.Label;
-import org.apache.linkis.manager.persistence.ResourceLabelPersistence;
 
 import org.apache.commons.beanutils.BeanUtils;
 
@@ -32,7 +34,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class PersistenceTest {

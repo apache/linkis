@@ -156,7 +156,7 @@ class TaskExecutionServiceImpl extends TaskExecutionService with Logging with Re
     val runnable = new Runnable {
       override def run(): Unit = Utils.tryCatch {
         // Waiting to run, preventing task messages from being sent to submit services before SubmitResponse, such as entry
-        Thread.sleep(2)
+        Thread.sleep(ComputationExecutorConf.TASK_SUBMIT_WAIT_TIME_MS)
         submitTaskToExecutor(task, labels) match {
           case ErrorExecuteResponse(message, throwable) =>
             sendToEntrance(task, ResponseTaskError(task.getTaskId, message))

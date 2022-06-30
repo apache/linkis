@@ -59,4 +59,6 @@ object ComputationExecutorConf {
   val JOB_ID_TO_ENV_KEY = CommonVars("wds.linkis.ec.job.id.env.key", "LINKIS_JOB_ID").getValue
 
   val TASK_ASYNC_MAX_THREAD_SIZE = CommonVars("linkis.ec.task.execution.async.thread.size", 50).getValue
+
+  val TASK_SUBMIT_WAIT_TIME_MS = CommonVars("linkis.ec.task.submit.wait.time.ms", 2L).getValue
 }

@@ -241,4 +241,5 @@ See licenses-binary-ui/ for text of these licenses.
     (The MIT License) worker-loader@2.0.0 (https://github.com/webpack-contrib/worker-loader)
     (The MIT License) @form-create/iview@2.5.13 (https://github.com/xaboy/form-create)
     (The MIT License) object-to-formdata@4.2.2 (https://github.com/therealparmesh/object-to-formdata)
+    (The MIT License) jsencrypt@3.2.1 (https://github.com/travist/jsencrypt)
     (The Apache-2.0 License) material-design-icons@^3.0.1 (https://github.com/google/material-design-icons)

@@ -124,7 +124,7 @@ object EntranceConfiguration {
 
   val FLOW_EXECUTION_CREATOR = CommonVars("wds.linkis.entrance.flow.creator", "nodeexecution")
 
-  val SCHEDULER_CREATOR = CommonVars("wds.linkis.entrance.scheduler.creator", "scheduler")
+  val SCHEDULER_CREATOR = CommonVars("wds.linkis.entrance.scheduler.creator", "Schedulis")
 
 
   val SKIP_AUTH = CommonVars("wds.linkis.entrance.skip.auth", false)

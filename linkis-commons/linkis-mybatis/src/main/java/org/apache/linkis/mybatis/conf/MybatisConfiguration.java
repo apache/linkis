@@ -41,40 +41,33 @@ public class MybatisConfiguration {
                     "wds.linkis.server.mybatis.datasource.driver-class-name",
                     "com.mysql.jdbc.Driver");
     public static final CommonVars<Integer> BDP_SERVER_MYBATIS_DATASOURCE_INITIALSIZE =
-            CommonVars.apply("wds.linkis.server.mybatis.datasource.initialSize", new Integer(1));
+            CommonVars.apply("wds.linkis.server.mybatis.datasource.initialSize", 1);
     public static final CommonVars<Integer> BDP_SERVER_MYBATIS_DATASOURCE_MINIDLE =
-            CommonVars.apply("wds.linkis.server.mybatis.datasource.minIdle", new Integer(1));
+            CommonVars.apply("wds.linkis.server.mybatis.datasource.minIdle", 1);
     public static final CommonVars<Integer> BDP_SERVER_MYBATIS_DATASOURCE_MAXACTIVE =
-            CommonVars.apply("wds.linkis.server.mybatis.datasource.maxActive", new Integer(20));
+            CommonVars.apply("wds.linkis.server.mybatis.datasource.maxActive", 20);
     public static final CommonVars<Integer> BDP_SERVER_MYBATIS_DATASOURCE_MAXWAIT =
-            CommonVars.apply("wds.linkis.server.mybatis.datasource.maxWait", new Integer(6000));
+            CommonVars.apply("wds.linkis.server.mybatis.datasource.maxWait", 6000);
     public static final CommonVars<Integer> BDP_SERVER_MYBATIS_DATASOURCE_TBERM =
             CommonVars.apply(
-                    "wds.linkis.server.mybatis.datasource.timeBetweenEvictionRunsMillis",
-                    new Integer(60000));
+                    "wds.linkis.server.mybatis.datasource.timeBetweenEvictionRunsMillis", 60000);
     public static final CommonVars<Integer> BDP_SERVER_MYBATIS_DATASOURCE_MEITM =
             CommonVars.apply(
-                    "wds.linkis.server.mybatis.datasource.minEvictableIdleTimeMillis",
-                    new Integer(300000));
+                    "wds.linkis.server.mybatis.datasource.minEvictableIdleTimeMillis", 300000);
     public static final CommonVars<String> BDP_SERVER_MYBATIS_DATASOURCE_VALIDATIONQUERY =
             CommonVars.apply("wds.linkis.server.mybatis.datasource.validationQuery", "SELECT 1");
 
     public static final CommonVars<Boolean> BDP_SERVER_MYBATIS_DATASOURCE_TESTWHILEIDLE =
-            CommonVars.apply(
-                    "wds.linkis.server.mybatis.datasource.testWhileIdle", new Boolean(true));
+            CommonVars.apply("wds.linkis.server.mybatis.datasource.testWhileIdle", Boolean.TRUE);
     public static final CommonVars<Boolean> BDP_SERVER_MYBATIS_DATASOURCE_TESTONBORROW =
-            CommonVars.apply(
-                    "wds.linkis.server.mybatis.datasource.testOnBorrow", new Boolean(false));
+            CommonVars.apply("wds.linkis.server.mybatis.datasource.testOnBorrow", Boolean.FALSE);
     public static final CommonVars<Boolean> BDP_SERVER_MYBATIS_DATASOURCE_TESTONRETURN =
-            CommonVars.apply(
-                    "wds.linkis.server.mybatis.datasource.testOnReturn", new Boolean(false));
+            CommonVars.apply("wds.linkis.server.mybatis.datasource.testOnReturn", Boolean.FALSE);
     public static final CommonVars<Boolean> BDP_SERVER_MYBATIS_DATASOURCE_POOLPREPAREDSTATEMENTS =
             CommonVars.apply(
-                    "wds.linkis.server.mybatis.datasource.poolPreparedStatements",
-                    new Boolean(true));
+                    "wds.linkis.server.mybatis.datasource.poolPreparedStatements", Boolean.TRUE);
     public static final CommonVars<Boolean> MYBATIS_DATASOURCE_REMOVE_ABANDONED_ENABLED =
-            CommonVars.apply(
-                    "wds.linkis.server.mybatis.remove.abandoned.enabled", new Boolean(true));
+            CommonVars.apply("wds.linkis.server.mybatis.remove.abandoned.enabled", Boolean.TRUE);
     public static final CommonVars<Integer> MYBATIS_DATASOURCE_REMOVE_ABANDONED_TIMEOUT =
             CommonVars.apply("wds.linkis.server.mybatis.remove.abandoned.timeout", 300);
 }

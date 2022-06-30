@@ -19,19 +19,21 @@ package org.apache.linkis.httpclient.request
 
 import java.net.URLEncoder
 import java.util
-
 import org.apache.linkis.common.conf.Configuration
 
-import scala.collection.JavaConversions
+import scala.collection.JavaConverters._
 
 
 abstract class GetAction extends HttpAction {
   private val queryParams: util.Map[String, Any] = new util.HashMap[String, Any]
+
   def setParameter(key: String, value: Any): Unit = this.queryParams.put(key, value)
+
   def getParameters: util.Map[String, Any] = queryParams
+
   override def getRequestBody: String = {
     val queryString = new StringBuilder
-    JavaConversions.mapAsScalaMap(queryParams).foreach { case (k, v) =>
+    queryParams.asScala.foreach { case (k, v) =>
       queryString.append(URLEncoder.encode(k, Configuration.BDP_ENCODING.getValue)).append("=")
         .append(URLEncoder.encode(v.toString, Configuration.BDP_ENCODING.getValue)).append("&")
     }

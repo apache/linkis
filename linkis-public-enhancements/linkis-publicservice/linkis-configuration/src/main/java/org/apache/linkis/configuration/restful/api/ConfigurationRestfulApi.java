@@ -368,6 +368,7 @@ public class ConfigurationRestfulApi {
         configKeyValue.setConfigValue(value);
 
         ConfigValue configValue = configKeyService.saveConfigValue(configKeyValue, labelList);
+        configurationService.clearAMCacheConf(username, creator, engineType, version);
         return Message.ok().data("configValue", configValue);
     }
     @ApiOperation(value="删除键值",notes="删除键值",response = Message.class)

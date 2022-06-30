@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
 
 @Api(tags = "任务管理")
 @RestController
-@RequestMapping(path = "/entrance/api/metrics")
+@RequestMapping(path = "/entrance/operation/metrics")
 public class EntranceMetricRestfulApi {
 
     private EntranceServer entranceServer;

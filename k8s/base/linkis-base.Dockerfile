@@ -21,7 +21,7 @@ ENV TZ=Asia/Shanghai LANG=zh_CN.utf8 LC_ALL=zh_CN.UTF-8
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo '$TZ' > /etc/timezone
 RUN localedef -c -f UTF-8 -i zh_CN zh_CN.utf8
 
-RUN yum install -y vim unzip sudo krb5-workstation sssd crontabs python-pip && yum clean all
+RUN yum install -y vim unzip curl sudo krb5-workstation sssd crontabs python-pip && yum clean all
 
 COPY jdk /usr/local/jdk
 COPY javazi-1.8 /usr/share/javazi-1.8

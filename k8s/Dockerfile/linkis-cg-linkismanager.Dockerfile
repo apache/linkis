@@ -21,5 +21,6 @@ COPY lib/linkis-commons/public-module/ /opt/linkis/public-module/
 COPY lib/linkis-computation-governance/linkis-cg-linkismanager/ /opt/linkis/linkis-cg-linkismanager/lib/
 RUN curl -L -o /opt/linkis/linkis-cg-linkismanager/lib/mysql-connector-java-5.1.49.jar https://repo1.maven.org/maven2/mysql/mysql-connector-java/5.1.49/mysql-connector-java-5.1.49.jar
 COPY sbin/k8s/linkis-cg-linkismanager.sh /opt/linkis/linkis-cg-linkismanager/bin/startup.sh
+RUN chmod +x /opt/linkis/linkis-cg-linkismanager/bin/startup.sh
 
 ENTRYPOINT ["linkis-cg-linkismanager/bin/startup.sh"]

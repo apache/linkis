@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 
+package org.apache.linkis.manager;
+
 import org.apache.linkis.DataWorkCloudApplication;
 
 import org.springframework.beans.factory.annotation.Autowired;

@@ -29,7 +29,7 @@ public class ServiceMethod {
 
     private String protocolName;
 
-    private int order = 2147483647;
+    private int order = Integer.MAX_VALUE;
 
     private boolean allowImplicit = true;
 

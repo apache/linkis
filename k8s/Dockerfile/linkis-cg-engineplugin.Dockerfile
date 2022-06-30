@@ -23,6 +23,7 @@ COPY lib/linkis-computation-governance/linkis-cg-engineplugin/ /opt/linkis/linki
 RUN curl -L -o /opt/linkis/linkis-cg-engineplugin/lib/mysql-connector-java-5.1.49.jar https://repo1.maven.org/maven2/mysql/mysql-connector-java/5.1.49/mysql-connector-java-5.1.49.jar
 COPY sbin/k8s/linkis-cg-engineplugin.sh /opt/linkis/linkis-cg-engineplugin/bin/startup.sh
 RUN mkdir -p /appcom/Install/LinkisInstall/lib/linkis-engineconn-plugins
+RUN chmod +x /opt/linkis/linkis-cg-engineplugin/bin/startup.sh
 
 
 ENTRYPOINT ["linkis-cg-engineplugin/bin/startup.sh"]

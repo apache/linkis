@@ -50,6 +50,12 @@ public class DefaultServiceParser implements ServiceParser {
     }
 
     private ServiceMethod getServiceMethod(Method method, Object service) {
+        Parameter[] parameters = method.getParameters();
+        if (parameters.length == 0) {
+            return null;
+        }
+        Parameter protocolParameter = parameters[0];
+
         ServiceMethod serviceMethod = new ServiceMethod();
         serviceMethod.setMethod(method);
         serviceMethod.setService(service);
@@ -63,8 +69,7 @@ public class DefaultServiceParser implements ServiceParser {
         if (chain != null) {
             serviceMethod.setChainName(chain.value());
         }
-        Parameter[] parameters = method.getParameters();
-        Parameter protocolParameter = parameters[0];
+
         if (parameters.length == 2) {
             serviceMethod.setHasSender(true);
             if (Sender.class.isAssignableFrom(parameters[0].getType())) {

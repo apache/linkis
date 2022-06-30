@@ -31,26 +31,29 @@ Linkis 自2019年开源发布以来，已累计积累了700多家试验企业和
 
 # 支持的引擎类型
 
-| **引擎** | **引擎版本** | **Linkis 0.X 版本要求**| **Linkis 1.X 版本要求** | **说明** |
+| **引擎名** | **支持底层组件版本<br/>(默认依赖版本)** | **Linkis 版本要求** | **是否默认包含在发布包中** | **说明** |
 |:---- |:---- |:---- |:---- |:---- |
-|Flink |1.12.2|\>=dev-0.12.0, PR #703 尚未合并|>=1.0.2|	Flink EngineConn。支持FlinkSQL 代码，也支持以Flink Jar 形式启动一个新的Yarn 应用程序。|
-|Impala|\>=3.2.0, CDH >=6.3.0"|\>=dev-0.12.0, PR #703 尚未合并|ongoing|Impala EngineConn. 支持Impala SQL 代码.|
-|Presto|\>= 0.180|\>=0.11.0|ongoing|Presto EngineConn. 支持Presto SQL 代码.|
-|ElasticSearch|\>=6.0|\>=0.11.0|ongoing|ElasticSearch EngineConn. 支持SQL 和DSL 代码.|
-|Shell|Bash >=2.0|\>=0.9.3|\>=1.0.0_rc1|Shell EngineConn. 支持Bash shell 代码.|
-|MLSQL|\>=1.1.0|\>=0.9.1|ongoing|MLSQL EngineConn. 支持MLSQL 代码.|
-|JDBC|MySQL >=5.0, Hive >=1.2.1|\>=0.9.0|\>=1.0.0_rc1|JDBC EngineConn. 已支持MySQL 和HiveQL，可快速扩展支持其他有JDBC Driver 包的引擎, 如Oracle.
-|Spark|Apache 2.0.0~2.4.7, CDH >=5.4.0|\>=0.5.0|\>=1.0.0_rc1|Spark EngineConn. 支持SQL, Scala, Pyspark 和R 代码.|
-|Hive|Apache >=1.0.0, CDH >=5.4.0|\>=0.5.0|\>=1.0.0_rc1|Hive EngineConn. 支持HiveQL 代码.|
-|Hadoop|Apache >=2.6.0, CDH >=5.4.0|\>=0.5.0|ongoing|Hadoop EngineConn. 支持Hadoop MR/YARN application.|
-|Python|\>=2.6|\>=0.5.0|\>=1.0.0_rc1|Python EngineConn. 支持python 代码.|
-|TiSpark|1.1|\>=0.5.0|ongoing|TiSpark EngineConn. 支持用SparkSQL 查询TiDB.|
+|Spark|Apache 2.0.0~2.4.7, <br/>CDH >= 5.4.0, <br/>（默认Apache Spark 2.4.3）|\>=1.0.3|是|Spark EngineConn， 支持SQL, Scala, Pyspark 和R 代码|
+|Hive|Apache >= 1.0.0, <br/>CDH >= 5.4.0, <br/>（默认Apache Hive 2.3.3）|\>=1.0.3|是|Hive EngineConn， 支持HiveQL 代码|
+|Python|Python >= 2.6, <br/>（默认Python2*）|\>=1.0.3|是|Python EngineConn， 支持python 代码|
+|Shell|Bash >= 2.0|\>=1.0.3|是|Shell EngineConn， 支持Bash shell 代码|
+|JDBC|MySQL >= 5.0, Hive >=1.2.1, <br/>(默认Hive-jdbc 2.3.4)|\>=1.0.3|否|JDBC EngineConn， 已支持MySQL 和HiveQL，可快速扩展支持其他有JDBC Driver 包的引擎, 如Oracle|
+|Flink |Flink >= 1.12.2, <br/>(默认Apache Flink 1.12.2)|\>=1.0.3|否|Flink EngineConn， 支持FlinkSQL 代码，也支持以Flink Jar 形式启动一个新的Yarn 应用程序|
+|Pipeline|-|\>=1.0.3|否|Pipeline EngineConn， 支持文件的导入和导出|
+|openLooKeng|openLooKeng >= 1.5.0, <br/>(默认openLookEng 1.5.0)|\>=1.1.1|否|openLooKeng EngineConn， 支持用Sql查询数据虚拟化引擎openLooKeng|
+|Sqoop| Sqoop >= 1.4.6, <br/>(默认Apache Sqoop 1.4.6)|\>=1.1.2|否|Sqoop EngineConn， 支持 数据迁移工具 Sqoop 引擎|
+|Impala|Impala >= 3.2.0, CDH >=6.3.0|ongoing|-|Impala EngineConn，支持Impala SQL 代码|
+|Presto|Presto >= 0.180|ongoing|-|Presto EngineConn， 支持Presto SQL 代码|
+|ElasticSearch|ElasticSearch >=6.0|ongoing|-|ElasticSearch EngineConn， 支持SQL 和DSL 代码|
+|MLSQL| MLSQL >=1.1.0|ongoing|-|MLSQL EngineConn， 支持MLSQL 代码.|
+|Hadoop|Apache >=2.6.0, <br/>CDH >=5.4.0|ongoing|-|Hadoop EngineConn， 支持Hadoop MR/YARN application|
+|TiSpark|1.1|ongoing|-|TiSpark EngineConn， 支持用SparkSQL 查询TiDB|
 
 # 生态组件
 
 | 应用工具     | 描述                                                          | Linkis 1.X(推荐1.1.1) 兼容版本    | 
 | --------------- | -------------------------------------------------------------------- | ---------- | 
-| [**DataSphere Studio**](https://github.com/WeBankFinTech/DataSphereStudio/blob/master/README-ZH.md)  | DataSphere Studio（简称 DSS）数据应用开发管理集成框架    | **DSS 1.0.1[已发布][Linkis 推荐1.1.0]** |
+| [**DataSphere Studio**](https://github.com/WeBankFinTech/DataSphereStudio/blob/master/README-ZH.md)  | DataSphere Studio（简称 DSS）数据应用开发管理集成框架    | **DSS 1.0.1[已发布][Linkis 推荐1.1.1]** |
 | [**Scriptis**](https://github.com/WeBankFinTech/Scriptis)   | 支持在线写 SQL、Pyspark、HiveQL 等脚本，提交给[Linkis](https://github.com/apache/incubator-linkis)执行的数据分析 Web 工具。 | 在DSS 1.0.1中[已发布] |
 | [**Schedulis**](https://github.com/WeBankFinTech/Schedulis) | 基于 Azkaban 二次开发的工作流任务调度系统,具备高性能，高可用和多租户资源隔离等金融级特性。  | **Schedulis0.6.2 [已发布]** |
 | [**Qualitis**](https://github.com/WeBankFinTech/Qualitis)   | 数据质量校验工具，提供数据完整性、正确性等数据校验能力  | **Qualitis 0.9.0 [已发布]** |
@@ -138,6 +141,7 @@ Linkis 基于微服务架构开发，其服务可以分为3类:计算治理服�
 - 对Linkis 的任何问题和建议，可以提交issue，以便跟踪处理和经验沉淀共享
 - 通过邮件方式 [dev@linkis.apache.org](mailto:dev@linkis.apache.org) 
 - 可以扫描下面的二维码，加入我们的微信群，以获得更快速的响应
+
 ![wechatgroup](https://user-images.githubusercontent.com/7869972/176336986-d6b9be8f-d1d3-45f1-aa45-8e6adf5dd244.png)
 
 

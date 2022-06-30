@@ -44,7 +44,7 @@ The Linkis source code may have some temporary branches, but only the following 
 
 - Step1 Enter the user project page and select the branch to be updated
 - Step2 Click Fetch upstream under the code download button, select Fetch and merge (if the branch of your own Fork repository is accidentally polluted, you can delete the branch and synchronize the new branch of the Upstream repository to your own Fork repository, see the guide [Synchronize Upstream] The latest code of the warehouse branch to its own Fork warehouse] (#213-synchronize the new branch of the Upstream warehouse to its own Fork warehouse))
-![update-code](https://user-images.githubusercontent.com/29391030/161004948-44469d93-b2d0-48ae-a707-188f20fbb8c3.png)
+![update-code](https://user-images.githubusercontent.com/7869972/176622158-52da5a80-6d6a-4f06-a099-ff65887d002c.png)
 
 #### 2.1.3  Synchronize New Branch
 >Synchronize the new branch of the Upstream repository to your own Fork repository

@@ -24,8 +24,8 @@ trait Task {
 
   def getExecId: String
 
-  def setInstance(instance: String):Unit
+  def setInstance(instance: String): Unit
 
-  def setExecId(execId:String):Unit
+  def setExecId(execId: String): Unit
 
 }

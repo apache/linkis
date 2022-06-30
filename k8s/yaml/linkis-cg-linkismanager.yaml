@@ -27,7 +27,8 @@ spec:
       targetPort: 9106
   selector:
     app: linkis-cg-linkismanager
-  type: None
+  clusterIP: None
+  type: ClusterIP
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -62,7 +63,7 @@ spec:
           configMap: 
             name: spark-config
         - name: log
-            emptyDir: { }
+          emptyDir: {}
       containers:
         - image: registry.mydomain.com/library/linkis-cg-linkismanager:1.2.0
           imagePullPolicy: Always

@@ -53,7 +53,7 @@ spec:
           configMap: 
             name: linkis-config
         - name: log
-            emptyDir: { }
+          emptyDir: {}
       containers:
         - name: linkis-mg-eureka
           image: registry.mydomain.com/library/linkis-mg-eureka:1.2.0

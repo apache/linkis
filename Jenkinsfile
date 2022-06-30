@@ -36,25 +36,25 @@ mvn clean install -DskipTests
     stage('build image') {
       steps {
         echo 'Build Docker Image Stage'
-        sh '''docker build -f k8s/Dockerfile/linkis-mg-gateway.Dockerfile -t linkis-mg-gateway:1.2 ./assembly-combined-package/target/apache-linkis-1.1.0-incubating-bin/linkis-package
+        sh '''docker build -f k8s/Dockerfile/linkis-mg-gateway.Dockerfile -t linkis-mg-gateway:1.2.0 ./assembly-combined-package/target/apache-linkis-1.1.0-incubating-bin/linkis-package
 
-docker build -f k8s/Dockerfile/linkis-mg-eureka.Dockerfile -t linkis-mg-gateway:1.2 ./assembly-combined-package/target/apache-linkis-1.1.0-incubating-bin/linkis-package
+docker build -f k8s/Dockerfile/linkis-mg-eureka.Dockerfile -t linkis-mg-gateway:1.2.0 ./assembly-combined-package/target/apache-linkis-1.1.0-incubating-bin/linkis-package
 
-docker build -f k8s/Dockerfile/linkis-ps-publicservice.Dockerfile -t linkis-ps-publicservice:1.2 ./assembly-combined-package/target/apache-linkis-1.1.0-incubating-bin/linkis-package
+docker build -f k8s/Dockerfile/linkis-ps-publicservice.Dockerfile -t linkis-ps-publicservice:1.2.0 ./assembly-combined-package/target/apache-linkis-1.1.0-incubating-bin/linkis-package
 
-docker build -f k8s/Dockerfile/linkis-ps-cs.Dockerfile -t linkis-ps-cs:1.2 ./assembly-combined-package/target/apache-linkis-1.1.0-incubating-bin/linkis-package
+docker build -f k8s/Dockerfile/linkis-ps-cs.Dockerfile -t linkis-ps-cs:1.2.0 ./assembly-combined-package/target/apache-linkis-1.1.0-incubating-bin/linkis-package
 
-docker build -f k8s/Dockerfile/linkis-cg-linkismanager.Dockerfile -t linkis-cg-linkismanager:1.2 ./assembly-combined-package/target/apache-linkis-1.1.0-incubating-bin/linkis-package
+docker build -f k8s/Dockerfile/linkis-cg-linkismanager.Dockerfile -t linkis-cg-linkismanager:1.2.0 ./assembly-combined-package/target/apache-linkis-1.1.0-incubating-bin/linkis-package
 
-docker build -f k8s/Dockerfile/linkis-cg-entrance.Dockerfile -t linkis-cg-entrance:1.2 ./assembly-combined-package/target/apache-linkis-1.1.0-incubating-bin/linkis-package
+docker build -f k8s/Dockerfile/linkis-cg-entrance.Dockerfile -t linkis-cg-entrance:1.2.0 ./assembly-combined-package/target/apache-linkis-1.1.0-incubating-bin/linkis-package
 
-docker build -f k8s/Dockerfile/linkis-cg-engineplugin.Dockerfile -t linkis-cg-engineplugin:1.2 ./assembly-combined-package/target/apache-linkis-1.1.0-incubating-bin/linkis-package
+docker build -f k8s/Dockerfile/linkis-cg-engineplugin.Dockerfile -t linkis-cg-engineplugin:1.2.0 ./assembly-combined-package/target/apache-linkis-1.1.0-incubating-bin/linkis-package
 
-docker build -f k8s/Dockerfile/linkis-cg-engineconnmanager.Dockerfile -t linkis-cg-engineconnmanager:1.2 ./assembly-combined-package/target/apache-linkis-1.1.0-incubating-bin/linkis-package
+docker build -f k8s/Dockerfile/linkis-cg-engineconnmanager.Dockerfile -t linkis-cg-engineconnmanager:1.2.0 ./assembly-combined-package/target/apache-linkis-1.1.0-incubating-bin/linkis-package
 
-docker build -f k8s/Dockerfile/linkis-ps-metadatamanager.Dockerfile -t linkis-ps-metadatamanager:1.2 ./assembly-combined-package/target/apache-linkis-1.1.0-incubating-bin/linkis-package
+docker build -f k8s/Dockerfile/linkis-ps-metadatamanager.Dockerfile -t linkis-ps-metadatamanager:1.2.0 ./assembly-combined-package/target/apache-linkis-1.1.0-incubating-bin/linkis-package
 
-docker build -f k8s/Dockerfile/linkis-ps-data-source-manager.Dockerfile -t linkis-ps-data-source-manager:1.2 ./assembly-combined-package/target/apache-linkis-1.1.0-incubating-bin/linkis-package
+docker build -f k8s/Dockerfile/linkis-ps-data-source-manager.Dockerfile -t linkis-ps-data-source-manager:1.2.0 ./assembly-combined-package/target/apache-linkis-1.1.0-incubating-bin/linkis-package
 
 
 
@@ -126,7 +126,24 @@ docker push registry.mydomain.com/library/linkis-ps-metadatamanager:1.2.0'''
     stage('deploy on k8s') {
       steps {
         echo 'deploy on k8s'
-        sh '''kubectl apply -f k8s/yaml/configmap/linkis-configmap.yaml --namespace=preprod
+        sh '''kubectl delete -f k8s/yaml/configmap/linkis-configmap.yaml --namespace=preprod
+kubectl delete -f k8s/yaml/configmap/hadoop-configmap.yaml --namespace=preprod
+kubectl delete -f k8s/yaml/configmap/hive-configmap.yaml --namespace=preprod
+kubectl delete -f k8s/yaml/configmap/spark-configmap.yaml --namespace=preprod
+kubectl delete -f k8s/yaml/linkis-mg-gateway.yaml --namespace=preprod
+kubectl delete -f k8s/yaml/linkis-mg-eureka.yaml --namespace=preprod
+kubectl delete -f k8s/yaml/linkis-ps-publicservice.yaml --namespace=preprod
+kubectl delete -f k8s/yaml/linkis-ps-cs.yaml --namespace=preprod
+kubectl delete -f k8s/yaml/linkis-ps-metadatamanager.yaml --namespace=preprod
+kubectl delete -f k8s/yaml/linkis-ps-data-source-manager.yaml --namespace=preprod
+kubectl delete -f k8s/yaml/linkis-cg-linkismanager.yaml --namespace=preprod
+kubectl delete -f k8s/yaml/linkis-cg-entrance.yaml --namespace=preprod
+kubectl delete -f k8s/yaml/linkis-cg-engineplugin.yaml --namespace=preprod
+kubectl delete -f k8s/yaml/linkis-cg-engineconnmanager.yaml --namespace=preprod
+kubectl delete -f k8s/yaml/linkis-web.yaml --namespace=preprod
+
+
+kubectl apply -f k8s/yaml/configmap/linkis-configmap.yaml --namespace=preprod
 kubectl apply -f k8s/yaml/configmap/hadoop-configmap.yaml --namespace=preprod
 kubectl apply -f k8s/yaml/configmap/hive-configmap.yaml --namespace=preprod
 kubectl apply -f k8s/yaml/configmap/spark-configmap.yaml --namespace=preprod
@@ -134,7 +151,7 @@ kubectl apply -f k8s/yaml/linkis-mg-gateway.yaml --namespace=preprod
 kubectl apply -f k8s/yaml/linkis-mg-eureka.yaml --namespace=preprod
 kubectl apply -f k8s/yaml/linkis-ps-publicservice.yaml --namespace=preprod
 kubectl apply -f k8s/yaml/linkis-ps-cs.yaml --namespace=preprod
-kubectl apply -f k8s/yaml/linkis-ps-metadataquery.yaml --namespace=preprod
+kubectl apply -f k8s/yaml/linkis-ps-metadatamanager.yaml --namespace=preprod
 kubectl apply -f k8s/yaml/linkis-ps-data-source-manager.yaml --namespace=preprod
 kubectl apply -f k8s/yaml/linkis-cg-linkismanager.yaml --namespace=preprod
 kubectl apply -f k8s/yaml/linkis-cg-entrance.yaml --namespace=preprod

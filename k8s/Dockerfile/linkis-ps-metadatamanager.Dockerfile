@@ -18,8 +18,10 @@ FROM linkis-base:1.2.0
 WORKDIR /opt/linkis
 
 COPY lib/linkis-commons/public-module/ /opt/linkis/public-module/
-COPY lib/linkis-public-enhancements/linkis-ps-metadataquery/ /opt/linkis/linkis-ps-metadataquery/lib/
-RUN curl -L -o /opt/linkis/linkis-ps-metadataquery/lib/mysql-connector-java-5.1.49.jar https://repo1.maven.org/maven2/mysql/mysql-connector-java/5.1.49/mysql-connector-java-5.1.49.jar
-COPY sbin/k8s/linkis-ps-metadataquery.sh /opt/linkis/linkis-ps-metadataquery/bin/startup.sh
+COPY lib/linkis-public-enhancements/linkis-ps-metadatamanager/ /opt/linkis/linkis-ps-metadatamanager/lib/
+RUN curl -L -o /opt/linkis/linkis-ps-metadatamanager/lib/mysql-connector-java-5.1.49.jar https://repo1.maven.org/maven2/mysql/mysql-connector-java/5.1.49/mysql-connector-java-5.1.49.jar
+RUN mkdir /opt/linkis/linkis-ps-metadatamanager/bin/
+COPY sbin/k8s/linkis-ps-metadatamanager.sh /opt/linkis/linkis-ps-metadatamanager/bin/startup.sh
+RUN chmod +x /opt/linkis/linkis-ps-metadatamanager/bin/startup.sh
 
-ENTRYPOINT ["linkis-ps-metadataquery/bin/startup.sh"]
+ENTRYPOINT ["linkis-ps-metadatamanager/bin/startup.sh"]

@@ -76,12 +76,17 @@ Please go to the [Linkis Releases Page](https://linkis.apache.org/download/main)
 
 # Compile and Deploy
 
+> For more detailed guidance see:
+>[Backend Compileg](https://linkis.apache.org/zh-CN/docs/latest/development/linkis_compile_and_package)
+>[Management Console build](https://linkis.apache.org/zh-CN/docs/latest/development/web_build)
+
 ```shell
 
 ## compile backend
 ### Mac OS/Linux
 ./mvnw -N install
 ./mvnw  clean install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
+
 
 ### Windows
 mvnw.cmd -N install
@@ -92,6 +97,8 @@ cd incubator-linkis/web
 npm install
 npm run build
 ```
+ 
+Please refer to [Deployment Documents](https://linkis.apache.org/docs/latest/deployment/quick_deploy) to do the deployment.
 
 # Examples and Guidance
 - [User Manual](https://linkis.apache.org/docs/latest/user_guide/overview)
@@ -123,11 +130,13 @@ For code and documentation contributions, please follow the [contribution guide]
 
 # Contact Us
 
+
 - Any questions or suggestions please kindly submit an [issue](https://github.com/apache/incubator-linkis/issues).  
 - By mail [dev@linkis.apache.org](mailto:dev@linkis.apache.org)
 - You can scan the QR code below to join our WeChat group to get more immediate response.
 
 ![wechatgroup](https://user-images.githubusercontent.com/7869972/176336986-d6b9be8f-d1d3-45f1-aa45-8e6adf5dd244.png)
+
 
 
 # Who is Using Linkis

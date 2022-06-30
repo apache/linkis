@@ -233,7 +233,7 @@
                 <include>*</include>
             </includes>
             <fileMode>0777</fileMode>
-            <outputDirectory>/dist/v${hive.version}/conf</outputDirectory>
+            <outputDirectory>dist/v${hive.version}/conf</outputDirectory>
             <lineEnding>unix</lineEnding>
         </fileSet>
 
@@ -246,7 +246,7 @@
                 <exclude>*doc.jar</exclude>
             </excludes>
             <fileMode>0777</fileMode>
-            <outputDirectory>/plugin/${hive.version}</outputDirectory>
+            <outputDirectory>plugin/${hive.version}</outputDirectory>
         </fileSet>
 
     </fileSets>

@@ -32,26 +32,13 @@
         <result property="refValue" column="ref_value"/>
         <result property="dataSource" column="data_source" />
     </resultMap>
-    <resultMap id="paramKeyMapEn" type="org.apache.linkis.datasourcemanager.common.domain.DataSourceParamKeyDefinition">
-        <result property="id" column="id"/>
-        <result property="key" column="key"/>
-        <result property="description" column="description_en"/>
-        <result property="name" column="name_en"/>
-        <result property="defaultValue" column="default_value"/>
-        <result property="valueType" column="value_type"/>
-        <result property="scope" column="scope"/>
-        <result property="require" column="require"/>
-        <result property="valueRegex" column="value_regex"/>
-        <result property="refId" column="ref_id"/>
-        <result property="refValue" column="ref_value"/>
-        <result property="dataSource" column="data_source" />
-    </resultMap>
+
     <sql id="param_key_query">
         `id`, `key`, `description`, `name`, `require`, `scope`,
         `default_value`, `value_type`, `value_regex`, `ref_id`, `ref_value`, `data_source`
     </sql>
     <sql id="param_key_query_en">
-        `id`, `key`, `description_en`, `name_en`, `require`, `scope`,
+        `id`, `key`, `description_en` as `description`, `name_en` as `name`, `require`, `scope`,
         `default_value`, `value_type`, `value_regex`, `ref_id`, `ref_value`, `data_source`
     </sql>
     <select id="listByDataSourceType" resultMap="paramKeyMap" parameterType="Long">
@@ -59,7 +46,7 @@
         <include refid="param_key_query"/>
         FROM `linkis_ps_dm_datasource_type_key` WHERE `data_source_type_id` = #{dataSourceTypeId};
     </select>
-    <select id="listByDataSourceTypeEn" resultMap="paramKeyMapEn" parameterType="Long">
+    <select id="listByDataSourceTypeEn" resultMap="paramKeyMap" parameterType="Long">
         SELECT
         <include refid="param_key_query_en"/>
         FROM `linkis_ps_dm_datasource_type_key` WHERE `data_source_type_id` = #{dataSourceTypeId};

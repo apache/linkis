@@ -31,6 +31,8 @@ object IOFileClientConf {
 
   val IO_EXTRA_LABELS = CommonVars("wds.linkis.io.extra.labels", "")
 
+  val IO__JOB_WAIT_S = CommonVars("wds.linkis.io.job.wait.second", 30).getValue
+
   val IO_EXECUTE_FAILED_CODE = 52005
 
   val IO_EXECUTE_UNKNOWN_REASON_CODE = 52006

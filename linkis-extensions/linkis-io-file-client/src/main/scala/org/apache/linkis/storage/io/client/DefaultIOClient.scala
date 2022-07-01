@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.storage.io.client
 
 import java.lang.reflect.UndeclaredThrowableException
@@ -42,9 +42,9 @@ import org.springframework.stereotype.Component
 @Component
 class DefaultIOClient extends IOClient with Logging {
 
-  private  val loadBalanceLabel = IOClientUtils.getDefaultLoadBalanceLabel
+  private val loadBalanceLabel = IOClientUtils.getDefaultLoadBalanceLabel
 
-  private  val extraLabels: Array[Label[_]] = Utils.tryCatch(IOClientUtils.getExtraLabels()){
+  private val extraLabels: Array[Label[_]] = Utils.tryCatch(IOClientUtils.getExtraLabels()) {
     case throwable: Throwable =>
       error("Failed to create extraLabels, No extra labels will be used", throwable)
       Array.empty[Label[_]]
@@ -75,13 +75,20 @@ class DefaultIOClient extends IOClient with Logging {
 
     val orchestration = IOFileOrchestratorFactory.getOrchestratorSession().orchestrate(jobReq)
     val orchestrationTime = System.currentTimeMillis()
-    var response = orchestration.execute()
-    var initCount = 0
-    while (!response.isInstanceOf[SucceedTaskResponse] && initCount < retryLimit) {
-      initCount += 1
-      info(s"JobId ${jobReq.getId} execute method ${methodEntity} failed, to retry $initCount")
-      val reTryOrchestration = IOFileOrchestratorFactory.getOrchestratorSession().orchestrate(jobReq)
-      response = reTryOrchestration.execute()
+    val response = if (retryLimit > 0) {
+      var response = orchestration.execute()
+      var initCount = 0
+      while (!response.isInstanceOf[SucceedTaskResponse] && initCount < retryLimit) {
+        initCount += 1
+        info(s"JobId ${jobReq.getId} execute method ${methodEntity} failed, to retry $initCount")
+        val reTryOrchestration = IOFileOrchestratorFactory.getOrchestratorSession().orchestrate(jobReq)
+        response = reTryOrchestration.execute()
+      }
+      response
+    } else {
+      val future = orchestration.asyncExecute()
+      future.waitForCompleted(IOFileClientConf.IO__JOB_WAIT_S * 10)
+      future.getResponse
     }
     val result: String = response match {
       case succeedResponse: SucceedTaskResponse =>
@@ -103,7 +110,7 @@ class DefaultIOClient extends IOClient with Logging {
         val msg = s"IO_FILE job: ${jobReq.getId} failed to execute code : ${methodEntity}, reason : ${failedResponse.getErrorMsg}."
         info(msg)
         if (failedResponse.getErrorMsg.contains(StorageErrorCode.FS_NOT_INIT.getMessage) || failedResponse.getErrorMsg.contains(ECMPluginConf.ECM_MARK_CACHE_ERROR_CODE.toString)) {
-              throw new FSNotInitException()
+          throw new FSNotInitException()
         }
         throw new StorageErrorException(IOFileClientConf.IO_EXECUTE_FAILED_CODE, msg)
       case o =>

@@ -44,7 +44,7 @@ abstract class StorageResultSet[K <: MetaData, V <: Record] extends ResultSet[K,
   override def belongToPath(path: String): Boolean = path.endsWith(Dolphin.DOLPHIN_FILE_SUFFIX)
 
   override def belongToResultSet(content: String): Boolean = Utils.tryCatch(Dolphin.getType(content) == resultSetType()){ t =>
-    info("Wrong result Set: ", t)
+    logger.info("Wrong result Set: ", t)
     false
   }
 

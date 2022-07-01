@@ -53,12 +53,12 @@ class DefaultEMNodPointer(val node: Node) extends AbstractNodePointer with EMNod
       getSender.ask(engineStopRequest) match {
         case engineStopResponse: EngineStopResponse =>
           if (!engineStopResponse.getStopStatus) {
-            info(s"Kill engine : ${engineStopRequest.getServiceInstance.toString} failed, because ${engineStopResponse.getMsg} . Will ask engine to suicide.")
+            logger.info(s"Kill engine : ${engineStopRequest.getServiceInstance.toString} failed, because ${engineStopResponse.getMsg} . Will ask engine to suicide.")
           } else {
-            info(s"Succeed to kill engine ${engineStopRequest.getServiceInstance.toString}.")
+            logger.info(s"Succeed to kill engine ${engineStopRequest.getServiceInstance.toString}.")
           }
         case o: AnyRef =>
-          warn(s"Ask em : ${getNode().getServiceInstance.toString} to kill engine : ${engineStopRequest.getServiceInstance.toString} failed, response is : ${AMUtils.GSON.toJson(o)}. ")
+          logger.warn(s"Ask em : ${getNode().getServiceInstance.toString} to kill engine : ${engineStopRequest.getServiceInstance.toString} failed, response is : ${AMUtils.GSON.toJson(o)}. ")
       }
     }
   }

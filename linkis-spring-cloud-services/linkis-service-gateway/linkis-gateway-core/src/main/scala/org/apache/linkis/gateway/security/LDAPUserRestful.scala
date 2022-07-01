@@ -27,7 +27,7 @@ class LDAPUserRestful extends UserPwdAbstractUserRestful with Logging {
     LDAPUtils.login(userName.toString, password.toString)
     "login successful(登录成功)！".data("userName", userName).data("isAdmin", false)
   }{ t =>
-    warn("wrong user name or password(用户名或密码错误)！", t)
+    logger.warn("wrong user name or password(用户名或密码错误)！", t)
     Message.error("wrong user name or password(用户名或密码错误)！")
   }
 

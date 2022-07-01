@@ -31,7 +31,7 @@ import scala.collection.JavaConversions._
 object JDBCMultiDatasourceParser extends Logging {
 
   def queryDatasourceInfoByName(datasourceName: String, username: String, system: String): util.Map[String, String] = {
-    info(s"Starting query [$system, $username, $datasourceName] datasource info ......")
+    logger.info(s"Starting query [$system, $username, $datasourceName] datasource info ......")
     val dataSourceClient = new LinkisDataSourceRemoteClient()
     var dataSource: DataSource = null
     Utils.tryCatch {
@@ -41,7 +41,7 @@ object JDBCMultiDatasourceParser extends Logging {
         .setUser(username)
         .build()).getDataSource
     } {
-      case e: Exception => warn(s"Get data source info error, $e")
+      case e: Exception => logger.warn(s"Get data source info error, $e")
     }
     queryDatasourceInfo(datasourceName, dataSource)
   }
@@ -77,7 +77,7 @@ object JDBCMultiDatasourceParser extends Logging {
     }
 
     val jdbcUrl = createJdbcUrl(dbType, dbConnParams)
-    info(s"The url parsed from the data source connection information is $jdbcUrl")
+    logger.info(s"The url parsed from the data source connection information is $jdbcUrl")
     dsConnInfo.put(JDBCEngineConnConstant.JDBC_URL, jdbcUrl)
     dsConnInfo.put(JDBCEngineConnConstant.JDBC_DRIVER, driverClassName.toString)
     appendJdbcAuthType(dbConnParams, dsConnInfo)
@@ -140,7 +140,7 @@ object JDBCMultiDatasourceParser extends Logging {
 
     authType match {
       case JdbcAuthType.SIMPLE =>
-        info("jdbc simple auth type.")
+        logger.info("jdbc simple auth type.")
       case JdbcAuthType.USERNAME =>
         dsConnInfo.put(JDBCEngineConnConstant.JDBC_USERNAME, username.toString)
         dsConnInfo.put(JDBCEngineConnConstant.JDBC_PASSWORD, password.toString)

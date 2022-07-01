@@ -76,7 +76,7 @@ abstract class JavaProcessEngineConnLaunchBuilder extends ProcessEngineConnLaunc
   protected def getMainClass: String = EngineConnPluginConf.ENGINECONN_MAIN_CLASS.getValue
 
   override protected def getEnvironment(implicit engineConnBuildRequest: EngineConnBuildRequest): util.Map[String, String] = {
-    info("Setting up the launch environment for engineconn.")
+    logger.info("Setting up the launch environment for engineconn.")
     val environment = new util.HashMap[String, String]
     if(ifAddHiveConfigPath) {
       addPathToClassPath(environment, variable(HADOOP_CONF_DIR))

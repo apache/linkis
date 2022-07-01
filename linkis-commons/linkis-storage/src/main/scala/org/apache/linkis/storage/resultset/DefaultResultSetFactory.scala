@@ -57,7 +57,7 @@ class DefaultResultSetFactory extends ResultSetFactory with Logging{
   }
 
   override def isResultSet(content: String): Boolean =  Utils.tryCatch(resultClasses.contains(Dolphin.getType(content))){ t =>
-    info("Wrong result Set: " + t.getMessage)
+    logger.info("Wrong result Set: " + t.getMessage)
     false
   }
 
@@ -75,8 +75,8 @@ class DefaultResultSetFactory extends ResultSetFactory with Logging{
   }
 
   override def getResultSetByPath(fsPath: FsPath, proxyUser: String): ResultSet[_ <: MetaData, _ <: Record] = {
-    if(fsPath == null ) return null
-    info("Get Result Set By Path:" + fsPath.getPath)
+    if (fsPath == null ) return null
+    logger.info("Get Result Set By Path:" + fsPath.getPath)
     val fs = FSFactory.getFsByProxyUser(fsPath,proxyUser)
     fs.init(new util.HashMap[String,String]())
     val inputStream = fs.read(fsPath)

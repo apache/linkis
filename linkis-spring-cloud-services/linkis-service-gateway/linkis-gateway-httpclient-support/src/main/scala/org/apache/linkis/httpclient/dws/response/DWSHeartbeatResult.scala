@@ -42,7 +42,7 @@ class DWSHeartbeatResult(response: HttpResponse, serverUrl: String) extends Hear
   }
 
 
-  if (getStatus != 0) warn(s"heartbeat to gateway $serverUrl failed! message: $getMessage.")
+  if (getStatus != 0) logger.warn(s"heartbeat to gateway $serverUrl failed! message: $getMessage.")
   override val isHealthy: Boolean = getData.get("isHealthy") match {
     case b: java.lang.Boolean => b
     case s if s != null => s.toString.toBoolean

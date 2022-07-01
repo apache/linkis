@@ -64,7 +64,7 @@ class IoEngineConnExecutor(val id: Int, val outputLimit: Int = 10) extends Concu
 
   override def init(): Unit = {
     super.init
-    info("Ready to start IoEngine!")
+    logger.info("Ready to start IoEngine!")
     cleanupThread.start()
   }
 
@@ -86,7 +86,7 @@ class IoEngineConnExecutor(val id: Int, val outputLimit: Int = 10) extends Concu
               clearCount = clearCount + 1
           }
         }
-        debug(s"Finished to clear userFs, clear count: $clearCount")
+        logger.debug(s"Finished to clear userFs, clear count: $clearCount")
         Utils.tryQuietly(Thread.sleep(IOEngineConnConfiguration.IO_FS_CLEAR_TIME.getValue))
       }
     }
@@ -214,7 +214,7 @@ class IoEngineConnExecutor(val id: Int, val outputLimit: Int = 10) extends Concu
   }
 
   private def createUserFS(methodEntity: MethodEntity): Long = {
-    info(s"Creator ${methodEntity.creatorUser}准备为用户${methodEntity.proxyUser}初始化FS：$methodEntity")
+    logger.info(s"Creator ${methodEntity.creatorUser}准备为用户${methodEntity.proxyUser}初始化FS：$methodEntity")
     var fsId = methodEntity.id
     val properties = methodEntity.params(0).asInstanceOf[Map[String, String]]
     val proxyUser = methodEntity.proxyUser
@@ -242,7 +242,7 @@ class IoEngineConnExecutor(val id: Int, val outputLimit: Int = 10) extends Concu
   }
 
   private def closeUserFS(methodEntity: MethodEntity): Unit = {
-    info(s"Creator ${methodEntity.creatorUser}为用户${methodEntity.proxyUser} close FS：$methodEntity")
+    logger.info(s"Creator ${methodEntity.creatorUser}为用户${methodEntity.proxyUser} close FS：$methodEntity")
     val proxyUser = methodEntity.proxyUser
     if(!userFSInfos.containsKey(proxyUser)) return
     val userFsInfo = userFSInfos.get(proxyUser)
@@ -252,7 +252,7 @@ class IoEngineConnExecutor(val id: Int, val outputLimit: Int = 10) extends Concu
         Utils.tryFinally(fsInfo.get.fs.close()){
           userFsInfo -= fsInfo.get
           if(userFsInfo.isEmpty) {
-            info(s"Prepare to clear userFsInfo:$methodEntity")
+            logger.info(s"Prepare to clear userFsInfo:$methodEntity")
             userFSInfos.remove(proxyUser)
           }
         }
@@ -269,7 +269,7 @@ class IoEngineConnExecutor(val id: Int, val outputLimit: Int = 10) extends Concu
     if(parameterSize > 0) method.params(0) = MethodEntitySerializer.deserializerToJavaObject(method.params(0).asInstanceOf[String], methodParamType)
     val res = MethodEntitySerializer.serializerJavaObject(ReflectionUtils.invoke(fs, realMethod.get, method.params))
     if("exists" == methodName) {
-      info(s"jobID($jobID),user(${method.proxyUser}) execute exists get res($res) and input code($method)")
+      logger.info(s"jobID($jobID),user(${method.proxyUser}) execute exists get res($res) and input code($method)")
     }
 
     AliasOutputExecuteResponse(method.id.toString, StorageUtils.serializerStringToResult(res))
@@ -278,7 +278,7 @@ class IoEngineConnExecutor(val id: Int, val outputLimit: Int = 10) extends Concu
   override def getConcurrentLimit(): Int = IOEngineConnConfiguration.IO_FILE_CONCURRENT_LIMIT.getValue
 
   override def killTask(taskID: String): Unit = {
-    warn(s"Kill job : ${taskID}")
+    logger.warn(s"Kill job : ${taskID}")
     super.killTask(taskID)
   }
 

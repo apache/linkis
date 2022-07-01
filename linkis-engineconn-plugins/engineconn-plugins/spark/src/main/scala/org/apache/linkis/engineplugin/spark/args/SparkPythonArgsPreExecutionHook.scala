@@ -16,17 +16,16 @@
  */
 
 package org.apache.linkis.engineplugin.spark.args
-import java.util
-
-import org.apache.linkis.common.utils.{Logging, Utils}
-import org.apache.linkis.engineplugin.spark.extension.SparkPreExecutionHook
-import org.springframework.stereotype.Component
-import javax.annotation.PostConstruct
-
-import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
-import org.apache.linkis.engineplugin.spark.common.{SparkEnginePluginConst, SparkKind}
-import org.apache.linkis.manager.label.entity.engine.{CodeLanguageLabel, RunType}
 import org.apache.commons.lang.StringUtils
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
+import org.apache.linkis.engineplugin.spark.common.SparkEnginePluginConst
+import org.apache.linkis.engineplugin.spark.extension.SparkPreExecutionHook
+import org.apache.linkis.manager.label.entity.engine.{CodeLanguageLabel, RunType}
+import org.springframework.stereotype.Component
+
+import java.util
+import javax.annotation.PostConstruct
 
 /**
   * Set sys.argv[] if: 1. it is a pyspark task. 2. user provide with args in runtimeMap. 3. it is at the beginning of the code
@@ -56,10 +55,10 @@ class SparkPythonArgsPreExecutionHook  extends SparkPreExecutionHook with Loggin
       val argsArr = if (engineExecutionContext.getProperties != null && engineExecutionContext.getProperties.containsKey(SparkEnginePluginConst.RUNTIME_ARGS_KEY)) {
         Utils.tryCatch{
           val argsList = engineExecutionContext.getProperties.get(SparkEnginePluginConst.RUNTIME_ARGS_KEY).asInstanceOf[util.ArrayList[String]]
-          info("Will execute pyspark task with user-specified arguments: \'" + argsList.toArray(new Array[String](argsList.size())).mkString("\' \'") + "\'")
+          logger.info("Will execute pyspark task with user-specified arguments: \'" + argsList.toArray(new Array[String](argsList.size())).mkString("\' \'") + "\'")
           argsList.toArray(new Array[String](argsList.size()))
         }{ t =>
-          warn("Cannot read user-input pyspark arguments. Will execute pyspark task without them.", t)
+          logger.warn("Cannot read user-input pyspark arguments. Will execute pyspark task without them.", t)
           null
         }
       } else {
@@ -69,13 +68,13 @@ class SparkPythonArgsPreExecutionHook  extends SparkPreExecutionHook with Loggin
       val parsedCode = if (argsArr != null && argsArr.length!= 0) {
         val argvStrBuilder = new StringBuilder()
         argsArr.foreach(argv => if (StringUtils.isNotBlank(argv)) argvStrBuilder.append("\'").append(argv).append("\' "))
-        info(s"Start to append args. $argvStrBuilder")
+        logger.info(s"Start to append args. $argvStrBuilder")
         val result = Utils.tryCatch(argsAppender.appendArgvs(code, argsArr)) {
           t: Throwable =>
-            error(s"Failed to append args. $argvStrBuilder", t)
+            logger.error(s"Failed to append args. $argvStrBuilder", t)
             code
         }
-        info(s"Finished to append args. $argvStrBuilder")
+        logger.info(s"Finished to append args. $argvStrBuilder")
         result
       } else {
         code

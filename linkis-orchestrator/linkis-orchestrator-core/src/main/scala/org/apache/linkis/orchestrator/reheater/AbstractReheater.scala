@@ -27,7 +27,7 @@ abstract class AbstractReheater extends Reheater with Logging {
 
   override def reheat(execTask: ExecTask): Boolean = execTask match {
     case reheat: ReheatableExecTask =>
-      debug(s"Try to reheat ${execTask.getIDInfo()}")
+      logger.debug(s"Try to reheat ${execTask.getIDInfo()}")
       reheat.setReheating()
       var changed = false
       Utils.tryCatch(Option(reheaterTransforms).foreach { transforms =>

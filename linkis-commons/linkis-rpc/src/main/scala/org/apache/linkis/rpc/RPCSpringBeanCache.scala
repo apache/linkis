@@ -38,7 +38,7 @@ private[rpc] object RPCSpringBeanCache extends Logging {
 
   def registerReceiver(receiverName: String, receiver: Receiver): Unit = {
     if(beanNameToReceivers == null) beanNameToReceivers = getApplicationContext.getBeansOfType(classOf[Receiver])
-    info(s"register a new receiver with name $receiverName, receiver is " + receiver)
+    logger.info(s"register a new receiver with name $receiverName, receiver is " + receiver)
     beanNameToReceivers synchronized beanNameToReceivers.put(receiverName, receiver)
   }
   def registerReceiverChooser(receiverChooser: ReceiverChooser): Unit = {

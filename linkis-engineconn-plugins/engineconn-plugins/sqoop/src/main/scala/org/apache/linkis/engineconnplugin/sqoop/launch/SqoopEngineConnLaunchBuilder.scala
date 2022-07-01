@@ -66,7 +66,7 @@ class SqoopEngineConnLaunchBuilder extends JavaProcessEngineConnLaunchBuilder{
     }
   }
   private def resolveCommandToClassPath(env: util.Map[String, String], command: String): Unit = {
-    trace(s"Invoke command [${command}] to get class path sequence")
+    logger.trace(s"Invoke command [${command}] to get class path sequence")
     val builder = new ProcessBuilder(Array("/bin/bash", "-c", command): _*)
     // Set the environment
     builder.environment.putAll(sys.env.asJava)

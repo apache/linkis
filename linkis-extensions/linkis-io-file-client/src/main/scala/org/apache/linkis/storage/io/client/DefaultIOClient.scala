@@ -17,19 +17,13 @@
  
 package org.apache.linkis.storage.io.client
 
-import java.lang.reflect.UndeclaredThrowableException
-import java.util
-
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.manager.label.entity.Label
-import org.apache.linkis.storage.io.orchestrator.IOFileOrchestratorFactory
-import org.apache.linkis.storage.io.utils.IOClientUtils
 import org.apache.linkis.manager.label.entity.engine.EngineType
 import org.apache.linkis.manager.label.entity.entrance.BindEngineLabel
 import org.apache.linkis.manager.label.utils.{EngineTypeLabelCreator, LabelUtil}
 import org.apache.linkis.orchestrator.ecm.conf.ECMPluginConf
 import org.apache.linkis.orchestrator.execution.{ArrayResultSetTaskResponse, FailedTaskResponse, SucceedTaskResponse}
-import org.apache.linkis.rpc.exception.NoInstanceExistsException
 import org.apache.linkis.server.BDPJettyServerHelper
 import org.apache.linkis.storage.domain.MethodEntity
 import org.apache.linkis.storage.exception.{FSNotInitException, StorageErrorCode, StorageErrorException}
@@ -37,6 +31,8 @@ import org.apache.linkis.storage.io.conf.IOFileClientConf
 import org.apache.linkis.storage.io.orchestrator.IOFileOrchestratorFactory
 import org.apache.linkis.storage.io.utils.IOClientUtils
 import org.springframework.stereotype.Component
+
+import java.util
 
 
 @Component
@@ -46,7 +42,7 @@ class DefaultIOClient extends IOClient with Logging {
 
   private  val extraLabels: Array[Label[_]] = Utils.tryCatch(IOClientUtils.getExtraLabels()){
     case throwable: Throwable =>
-      error("Failed to create extraLabels, No extra labels will be used", throwable)
+      logger.error("Failed to create extraLabels, No extra labels will be used", throwable)
       Array.empty[Label[_]]
   }
 
@@ -79,7 +75,7 @@ class DefaultIOClient extends IOClient with Logging {
     var initCount = 0
     while (!response.isInstanceOf[SucceedTaskResponse] && initCount < retryLimit) {
       initCount += 1
-      info(s"JobId ${jobReq.getId} execute method ${methodEntity} failed, to retry $initCount")
+      logger.info(s"JobId ${jobReq.getId} execute method ${methodEntity} failed, to retry $initCount")
       val reTryOrchestration = IOFileOrchestratorFactory.getOrchestratorSession().orchestrate(jobReq)
       response = reTryOrchestration.execute()
     }
@@ -92,27 +88,27 @@ class DefaultIOClient extends IOClient with Logging {
               // tod check
               firstResultSet.result
             } else {
-              info(s"JobId ${jobReq.getId} execute method ${methodEntity} with null result.")
+              logger.info(s"JobId ${jobReq.getId} execute method ${methodEntity} with null result.")
               IOClientUtils.SUCCESS
             }
           case _ =>
-            info(s"JobId ${jobReq.getId} execute method ${methodEntity} with null result.")
+            logger.info(s"JobId ${jobReq.getId} execute method ${methodEntity} with null result.")
             IOClientUtils.SUCCESS
         }
       case failedResponse: FailedTaskResponse =>
         val msg = s"IO_FILE job: ${jobReq.getId} failed to execute code : ${methodEntity}, reason : ${failedResponse.getErrorMsg}."
-        info(msg)
+        logger.info(msg)
         if (failedResponse.getErrorMsg.contains(StorageErrorCode.FS_NOT_INIT.getMessage) || failedResponse.getErrorMsg.contains(ECMPluginConf.ECM_MARK_CACHE_ERROR_CODE.toString)) {
               throw new FSNotInitException()
         }
         throw new StorageErrorException(IOFileClientConf.IO_EXECUTE_FAILED_CODE, msg)
       case o =>
         val msg = s"IO_FILE job : ${jobReq.getId} failed to execute code : ${methodEntity}, return a unknown response : ${BDPJettyServerHelper.gson.toJson(o)}"
-        warn(msg)
+        logger.warn(msg)
         throw new StorageErrorException(IOFileClientConf.IO_EXECUTE_UNKNOWN_REASON_CODE, msg)
     }
     val executeTime = System.currentTimeMillis()
-    info(s"${jobReq.getId} execute method ${methodEntity.methodName}, orchestratorTime(${orchestrationTime - startTime}ms) execute time(${executeTime - orchestrationTime}ms)")
+    logger.info(s"${jobReq.getId} execute method ${methodEntity.methodName}, orchestratorTime(${orchestrationTime - startTime}ms) execute time(${executeTime - orchestrationTime}ms)")
     result
   }
 

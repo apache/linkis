@@ -33,7 +33,7 @@ object SparkPostExecutionHook extends Logging{
   private val postHooks = ArrayBuffer[SparkPostExecutionHook]()
 
   def register(postExecutionHook: SparkPostExecutionHook):Unit = {
-    info(s"Get a postExecutionHook of ${postExecutionHook.hookName} register")
+    logger.info(s"Get a postExecutionHook of ${postExecutionHook.hookName} register")
     postHooks.append(postExecutionHook)
   }
 

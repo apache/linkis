@@ -16,8 +16,6 @@
  */
 
 package org.apache.linkis.engineconnplugin.flink.setting
-import java.io.File
-import java.util
 import com.google.common.collect.Lists
 import org.apache.commons.collections.CollectionUtils
 import org.apache.commons.lang3.StringUtils
@@ -31,7 +29,8 @@ import org.apache.linkis.engineconn.common.creation.EngineCreationContext
 import org.apache.linkis.engineconnplugin.flink.context.{EnvironmentContext, FlinkEngineConnContext}
 import org.apache.linkis.engineconnplugin.flink.exception.FlinkInitFailedException
 
-import java.net.{URI, URL}
+import java.io.File
+import java.util
 import scala.collection.JavaConverters._
 import scala.collection.mutable
 
@@ -44,7 +43,7 @@ class HudiSettings extends Settings with Logging {
     properties.filter(_._1.startsWith(prefix)).foreach {
       case (key, value) =>
         val realKey = key.substring(prefix.length)
-        info(s"set $realKey=$value.")
+        logger.info(s"set $realKey=$value.")
         set(realKey, value)
     }
   }
@@ -54,13 +53,13 @@ class HudiSettings extends Settings with Logging {
     if (!HudiSettings.HUDI_ENABLE.getValue(engineCreationContext.getOptions)) {
       return
     }
-    info("hudi is enabled, now try to set hudi configurations...")
+    logger.info("hudi is enabled, now try to set hudi configurations...")
     val shipFiles = context.getFlinkConfig.get(YarnConfigOptions.SHIP_FILES)
     val hudiJarPaths = Lists.newArrayList(HudiSettings.getHudiJarPaths(engineCreationContext.getOptions): _*)
     if (CollectionUtils.isEmpty(hudiJarPaths)) {
       throw new FlinkInitFailedException(s"hudi jars is not exists.")
     }
-    info(s"hudi jar is in $hudiJarPaths.")
+    logger.info(s"hudi jar is in $hudiJarPaths.")
     context.getDependencies.addAll(hudiJarPaths.asScala.map(path => new File(path).toURI.toURL).asJava)
     if (CollectionUtils.isEmpty(shipFiles)) {
       context.getFlinkConfig.set(YarnConfigOptions.SHIP_FILES, hudiJarPaths)
@@ -86,7 +85,7 @@ class HudiSettings extends Settings with Logging {
     addExtraClasspath(HudiSettings.HUDI_EXTRA_YARN_CLASSPATH.getValue(engineCreationContext.getOptions))
     addExtraClasspath(HudiSettings.HUDI_EXTRA_YARN_CLASSPATH.getValue)
     configuration.set(YarnConfiguration.YARN_APPLICATION_CLASSPATH, classpath.toSet.mkString(","))
-    info(s"set ${YarnConfiguration.YARN_APPLICATION_CLASSPATH}=${configuration.get(YarnConfiguration.YARN_APPLICATION_CLASSPATH)}.")
+    logger.info(s"set ${YarnConfiguration.YARN_APPLICATION_CLASSPATH}=${configuration.get(YarnConfiguration.YARN_APPLICATION_CLASSPATH)}.")
     setExtraSettings(CommonVars.properties.asScala, HudiSettings.FLINK_YARN_PREFIX, configuration.set)
     setExtraSettings(engineCreationContext.getOptions.asScala, HudiSettings.FLINK_YARN_PREFIX, configuration.set)
   }

@@ -47,10 +47,11 @@ public class DataSourceRelateServiceImpl implements DataSourceRelateService {
     }
 
     @Override
-    public List<DataSourceParamKeyDefinition> getKeyDefinitionsByType(Long dataSourceTypeId, String languageType) {
-        if(languageType.equals("zh-CN")){
+    public List<DataSourceParamKeyDefinition> getKeyDefinitionsByType(
+            Long dataSourceTypeId, String languageType) {
+        if (languageType.equals("zh-CN")) {
             return paramKeyDao.listByDataSourceType(dataSourceTypeId);
-        }else{
+        } else {
             return paramKeyDao.listByDataSourceTypeEn(dataSourceTypeId);
         }
     }

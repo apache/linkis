@@ -52,7 +52,7 @@ trait FlinkOnceExecutor[T <: ClusterDescriptorAdapter] extends ManageableOnceExe
     }
     setApplicationId(clusterDescriptor.getClusterID.toString)
     setApplicationURL(clusterDescriptor.getWebInterfaceUrl)
-    info(s"Application is started, applicationId: $getApplicationId, applicationURL: $getApplicationURL.")
+    logger.info(s"Application is started, applicationId: $getApplicationId, applicationURL: $getApplicationURL.")
     if(clusterDescriptor.getJobId != null) setJobID(clusterDescriptor.getJobId.toHexString)
   }
 
@@ -89,18 +89,18 @@ trait FlinkOnceExecutor[T <: ClusterDescriptorAdapter] extends ManageableOnceExe
       override def run(): Unit = if (!isCompleted) {
         val jobStatus = Utils.tryCatch(clusterDescriptor.getJobStatus) {t =>
           if (fetchJobStatusFailedNum >= FLINK_ONCE_APP_STATUS_FETCH_FAILED_MAX.getValue) {
-            error(s"Fetch job status has failed max ${FLINK_ONCE_APP_STATUS_FETCH_FAILED_MAX.getValue} times, now stop this FlinkEngineConn.", t)
+            logger.error(s"Fetch job status has failed max ${FLINK_ONCE_APP_STATUS_FETCH_FAILED_MAX.getValue} times, now stop this FlinkEngineConn.", t)
             tryFailed()
             close()
           } else {
             fetchJobStatusFailedNum += 1
-            error(s"Fetch job status failed! retried ++$fetchJobStatusFailedNum...", t)
+            logger.error(s"Fetch job status failed! retried ++$fetchJobStatusFailedNum...", t)
           }
           return
         }
         fetchJobStatusFailedNum = 0
         if (jobStatus != lastStatus || System.currentTimeMillis -lastPrintTime >= printInterval) {
-          info(s"The jobStatus of $getJobID is $jobStatus.")
+          logger.info(s"The jobStatus of $getJobID is $jobStatus.")
           lastPrintTime = System.currentTimeMillis
         }
         lastStatus = jobStatus

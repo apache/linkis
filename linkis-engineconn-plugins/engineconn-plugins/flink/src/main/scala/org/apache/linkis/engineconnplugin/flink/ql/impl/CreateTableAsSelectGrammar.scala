@@ -38,7 +38,7 @@ class CreateTableAsSelectGrammar(context: FlinkEngineConnContext, sql: String) e
     */
   override def execute(): ResultSet = sql match {
     case CreateTableAsSelectGrammar.CREATE_TABLE_AS_SELECT_GRAMMAR(_, _, tableName, _, _, select) =>
-      info(s"Ready to create a table $tableName, the sql is: $select.")
+      logger.info(s"Ready to create a table $tableName, the sql is: $select.")
       val function = new java.util.function.Function[TableEnvironmentInternal, Unit] {
         override def apply(t: TableEnvironmentInternal): Unit = {
           val table = t.sqlQuery(select)

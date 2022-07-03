@@ -17,12 +17,9 @@
  
 package org.apache.linkis.manager.engineplugin.python.executor
 
-import java.util
-
 import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.engineconn.computation.executor.execute.{ComputationExecutor, EngineExecutionContext}
 import org.apache.linkis.engineconn.core.EngineConnObject
-import org.apache.linkis.engineconn.core.executor.ExecutorManager
 import org.apache.linkis.engineconn.launch.EngineConnServer
 import org.apache.linkis.governance.common.paser.PythonCodeParser
 import org.apache.linkis.manager.common.entity.resource.{CommonNodeResource, LoadInstanceResource, NodeResource}
@@ -32,8 +29,8 @@ import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.scheduler.executer.{ExecuteResponse, SuccessExecuteResponse}
 
+import java.util
 import scala.collection.mutable.ArrayBuffer
-import scala.collection.JavaConverters._
 
 class PythonEngineConnExecutor(id: Int, pythonSession: PythonSession, outputPrintLimit: Int) extends ComputationExecutor(outputPrintLimit) {
 
@@ -43,7 +40,7 @@ class PythonEngineConnExecutor(id: Int, pythonSession: PythonSession, outputPrin
 
   override def init(): Unit = {
 
-    info(s"Ready to change engine state!")
+    logger.info(s"Ready to change engine state!")
     setCodeParser(new PythonCodeParser)
     super.init
   }
@@ -52,16 +49,16 @@ class PythonEngineConnExecutor(id: Int, pythonSession: PythonSession, outputPrin
 
   override def executeLine(engineExecutionContext: EngineExecutionContext, code: String): ExecuteResponse = {
     val pythonVersion = engineExecutionContext.getProperties.getOrDefault("python.version", pythonDefaultVersion).toString.toLowerCase()
-    info(s" EngineExecutionContext user python.version = > ${pythonVersion}")
+    logger.info(s" EngineExecutionContext user python.version = > ${pythonVersion}")
     System.getProperties.put("python.version", pythonVersion)
-    info(s" System getProperties python.version = > ${System.getProperties.getProperty("python.version")}")
+    logger.info(s" System getProperties python.version = > ${System.getProperties.getProperty("python.version")}")
     //System.getProperties.put("python.application.pyFiles", engineExecutionContext.getProperties.getOrDefault("python.application.pyFiles", "file:///mnt/bdap/test/test/test.zip").toString)
     pythonSession.lazyInitGageWay()
     if(engineExecutionContext != this.engineExecutionContext){
       this.engineExecutionContext = engineExecutionContext
       pythonSession.setEngineExecutionContext(engineExecutionContext)
 //      lineOutputStream.reset(engineExecutorContext)
-      info("Python executor reset new engineExecutorContext!")
+      logger.info("Python executor reset new engineExecutorContext!")
     }
     engineExecutionContext.appendStdout(s"$getId >> ${code.trim}")
     pythonSession.execute(code)
@@ -71,7 +68,7 @@ class PythonEngineConnExecutor(id: Int, pythonSession: PythonSession, outputPrin
 
   override def executeCompletely(engineExecutionContext: EngineExecutionContext, code: String, completedLine: String): ExecuteResponse = {
     val newcode = completedLine + code
-    debug("newcode is " + newcode)
+    logger.debug("newcode is " + newcode)
     executeLine(engineExecutionContext, newcode)
   }
 
@@ -134,17 +131,17 @@ class PythonEngineConnExecutor(id: Int, pythonSession: PythonSession, outputPrin
 
 
   override def killTask(taskID: String): Unit = {
-    info(s"Start to kill python task $taskID")
+    logger.info(s"Start to kill python task $taskID")
     super.killTask(taskID)
-    info(s"To close python cli task $taskID")
+    logger.info(s"To close python cli task $taskID")
     Utils.tryAndError(close())
   }
 
   override def close(): Unit = {
     Utils.tryAndError(pythonSession.close)
-    info(s"To delete python executor")
+    logger.info(s"To delete python executor")
     //Utils.tryAndError(ExecutorManager.getInstance.removeExecutor(getExecutorLabels().asScala.toArray))
-    info(s"Finished to kill python")
+    logger.info(s"Finished to kill python")
   }
 
 }

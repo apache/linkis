@@ -39,7 +39,7 @@ class DefaultEngineConnResourceFactoryService extends EngineConnResourceFactoryS
 
   @Receiver
   override def createEngineResource(engineResourceRequest: EngineResourceRequest): NodeResource = {
-    info(s"To invoke createEngineResource $engineResourceRequest")
+    logger.info(s"To invoke createEngineResource $engineResourceRequest")
     val engineTypeOption = engineResourceRequest.labels.find(_.isInstanceOf[EngineTypeLabel])
 
     if (engineTypeOption.isDefined) {

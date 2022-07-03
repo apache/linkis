@@ -26,11 +26,11 @@ import org.apache.spark.sql.{DataFrame, Dataset, SQLContext, SparkLogicalPlanHel
   * Description:
   */
 class MetaDataInfoTool extends Logging{
-  def getMetaDataInfo(sqlContext:SQLContext, sql:String, dataFrame:DataFrame):String = {
-    info(s"begin to get sql metadata info: ${cutSql(sql)}")
+  def getMetaDataInfo(sqlContext:SQLContext, sql: String, dataFrame: DataFrame): String = {
+    logger.info(s"begin to get sql metadata info: ${cutSql(sql)}")
     val startTime = System.currentTimeMillis
     val inputTables = SparkLogicalPlanHelper.extract(sqlContext, sql, dataFrame.queryExecution, startTime)
-    info(s"end to get sql metadata info: ${cutSql(sql)}, metadata is ${inputTables}")
+    logger.info(s"end to get sql metadata info: ${cutSql(sql)}, metadata is ${inputTables}")
     if (inputTables != null) inputTables.toString else ""
   }
 

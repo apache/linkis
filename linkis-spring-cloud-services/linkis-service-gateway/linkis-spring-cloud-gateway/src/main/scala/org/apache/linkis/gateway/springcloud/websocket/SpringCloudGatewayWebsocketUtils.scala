@@ -59,7 +59,7 @@ object SpringCloudGatewayWebsocketUtils extends Logging {//(websocketRoutingFilt
         session.removeDeadProxySessions()
         session.canRelease
       }.foreach{ case (key, session) =>
-        info(s"remove a dead webSocket connection $key from DWC-UI for user ${session.user}.")
+        logger.info(s"remove a dead webSocket connection $key from DWC-UI for user ${session.user}.")
         session.release()
         cachedWebSocketSessions.remove(key)
       }
@@ -94,7 +94,7 @@ object SpringCloudGatewayWebsocketUtils extends Logging {//(websocketRoutingFilt
     val key = getWebSocketSessionKey(webSocketSession)
     if(!cachedWebSocketSessions.containsKey(key)) cachedWebSocketSessions synchronized {
       if(!cachedWebSocketSessions.containsKey(key)) {
-        info(s"receive a new webSocket connection $key from DWC-UI for user $user.")
+        logger.info(s"receive a new webSocket connection $key from DWC-UI for user $user.")
         cachedWebSocketSessions.put(key, new GatewayWebSocketSessionConnection(webSocketSession, user))
       }
     }

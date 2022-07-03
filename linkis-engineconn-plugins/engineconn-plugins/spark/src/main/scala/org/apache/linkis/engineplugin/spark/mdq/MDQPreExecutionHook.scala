@@ -64,7 +64,7 @@ class MDQPreExecutionHook extends SparkPreExecutionHook with Logging {
       resp = sender.ask(DDLRequest(params))
     } {
       case e: Exception =>
-        error(s"Call MDQ rpc failed, ${e.getMessage}", e)
+        logger.error(s"Call MDQ rpc failed, ${e.getMessage}", e)
         throw new MDQErrorException(40010, s"向MDQ服务请求解析为可以执行的sql时失败, ${e.getMessage}")
     }
     resp match {

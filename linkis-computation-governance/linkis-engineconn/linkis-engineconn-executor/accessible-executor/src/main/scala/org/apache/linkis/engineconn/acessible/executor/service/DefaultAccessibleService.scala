@@ -54,13 +54,13 @@ class DefaultAccessibleService extends AccessibleService with Logging {
     // todo check user
     if (DataWorkCloudApplication.getServiceInstance.equals(engineSuicideRequest.getServiceInstance)) {
       stopEngine()
-      info(s"engine will suiside now.")
+      logger.info(s"engine will suiside now.")
       ShutdownHook.getShutdownHook.notifyStop()
     } else {
       if (null != engineSuicideRequest.getServiceInstance) {
-        error(s"Invalid serviceInstance : ${engineSuicideRequest.getServiceInstance.toString}, will not suicide.")
+        logger.error(s"Invalid serviceInstance : ${engineSuicideRequest.getServiceInstance.toString}, will not suicide.")
       } else {
-        error("Invalid empty serviceInstance.")
+        logger.error("Invalid empty serviceInstance.")
       }
     }
   }
@@ -68,13 +68,13 @@ class DefaultAccessibleService extends AccessibleService with Logging {
 
   @EventListener
   def executorShutDownHook(event: ContextClosedEvent): Unit = {
-    info("executorShutDownHook  start to execute.")
+    logger.info("executorShutDownHook  start to execute.")
     if (! EngineConnObject.isReady) {
-      warn("EngineConn not ready, do not shutdown")
+      logger.warn("EngineConn not ready, do not shutdown")
       return
     }
     if (shutDownHooked) {
-      warn("had stop, do not  shutdown")
+      logger.warn("had stop, do not  shutdown")
       return
     }
     var executor: Executor = ExecutorManager.getInstance.getReportExecutor
@@ -83,16 +83,16 @@ class DefaultAccessibleService extends AccessibleService with Logging {
         executor.close()
         executor.tryShutdown()
       }
-      warn(s"Engine : ${Sender.getThisInstance} with state has stopped successfully.")
+      logger.warn(s"Engine : ${Sender.getThisInstance} with state has stopped successfully.")
     } else {
       executor = SensibleExecutor.getDefaultErrorSensibleExecutor
     }
     ExecutorManager.getInstance.getExecutors.foreach{ closeExecutor =>
       Utils.tryAndWarn(closeExecutor.close())
-      warn(s"executorShutDownHook  start to close executor... $executor")
+      logger.warn(s"executorShutDownHook  start to close executor... $executor")
     }
     executorHeartbeatService.reportHeartBeatMsg(executor)
-    info("Reported status shuttingDown to manager.")
+    logger.info("Reported status shuttingDown to manager.")
     Utils.tryQuietly(Thread.sleep(2000))
     shutDownHooked = true
     ShutdownHook.getShutdownHook.notifyStop()
@@ -147,7 +147,7 @@ class DefaultAccessibleService extends AccessibleService with Logging {
   }
 
   override def onExecutorCreated(executorCreateEvent: ExecutorCreateEvent): Unit = {
-    info(s"Executor(${executorCreateEvent.executor.getId}) created")
+    logger.info(s"Executor(${executorCreateEvent.executor.getId}) created")
   }
 
   override def onExecutorCompleted(executorCompletedEvent: ExecutorCompletedEvent): Unit = {
@@ -162,7 +162,7 @@ class DefaultAccessibleService extends AccessibleService with Logging {
     val reportExecutor = executor match {
       case accessibleExecutor: AccessibleExecutor => accessibleExecutor
       case e: Executor =>
-        warn(s"Executor(${e.getId}) is not a AccessibleExecutor, do noting on status changed.")
+        logger.warn(s"Executor(${e.getId}) is not a AccessibleExecutor, do noting on status changed.")
         return
     }
     executorHeartbeatService.reportHeartBeatMsg(reportExecutor)

@@ -78,12 +78,12 @@ class FIFOUserConsumer(schedulerContext: SchedulerContext,
 
   override def run() = {
     Thread.currentThread().setName(s"${toString}Thread")
-    info(s"$toString thread started!")
+    logger.info(s"$toString thread started!")
     while (!terminate) {
       Utils.tryAndError(loop())
       Utils.tryAndError(Thread.sleep(10))
     }
-    info(s"$toString thread stopped!")
+    logger.info(s"$toString thread stopped!")
   }
 
   protected def askExecutorGap(): Unit = {}
@@ -144,15 +144,15 @@ class FIFOUserConsumer(schedulerContext: SchedulerContext,
         }
       }{
         case _: TimeoutException =>
-          warn(s"Ask executor for Job $job timeout!")
+          logger.warn(s"Ask executor for Job $job timeout!")
           job.onFailure("The request engine times out (请求引擎超时，可能是EngineConnManager 启动EngineConn失败导致，可以去查看看EngineConnManager的linkis.out和linkis.log日志).",
             new SchedulerErrorException(11055, "The request engine times out (请求引擎超时，可能是EngineConnManager 启动EngineConn失败导致，可以去观看EngineConnManager的linkis.out和linkis.log日志)."))
         case error: Throwable =>
           job.onFailure("请求引擎失败，可能是由于后台进程错误!请联系管理员", error)
           if(job.isWaitForRetry) {
-            warn(s"Ask executor for Job $job failed, wait for the next retry!", error)
+            logger.warn(s"Ask executor for Job $job failed, wait for the next retry!", error)
             if(!isRetryJob)  putToRunningJobs(job)
-          } else warn(s"Ask executor for Job $job failed!", error)
+          } else logger.warn(s"Ask executor for Job $job failed!", error)
       }
     }
   }
@@ -172,8 +172,8 @@ class FIFOUserConsumer(schedulerContext: SchedulerContext,
     * @return
     */
   def isIdle: Boolean = {
-    info(s"${getGroup.getGroupName} queue isEmpty:${queue.isEmpty},size ${queue.size}")
-    info(s"${getGroup.getGroupName} running jobs is not empty:${this.runningJobs.exists(job => job !=null && ! job.isCompleted)}")
+    logger.info(s"${getGroup.getGroupName} queue isEmpty:${queue.isEmpty},size ${queue.size}")
+    logger.info(s"${getGroup.getGroupName} running jobs is not empty:${this.runningJobs.exists(job => job !=null && ! job.isCompleted)}")
     this.queue.peek.isEmpty && ! this.runningJobs.exists(job => job !=null && ! job.isCompleted)
   }
 }

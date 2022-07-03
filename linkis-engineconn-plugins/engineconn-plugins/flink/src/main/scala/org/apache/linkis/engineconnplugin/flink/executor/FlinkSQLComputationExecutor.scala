@@ -59,13 +59,13 @@ class FlinkSQLComputationExecutor(id: Long,
       case adapter if adapter != null => throw new ExecutorInitException(s"Not support ${adapter.getClass.getSimpleName} for FlinkSQLComputationExecutor.")
       case _ => throw new ExecutorInitException("Fatal error, ClusterDescriptorAdapter is null, please ask admin for help.")
     }
-    info("Try to start a yarn-session application for interactive query.")
+    logger.info("Try to start a yarn-session application for interactive query.")
     clusterDescriptor.deployCluster()
     val applicationId = ConverterUtils.toString(clusterDescriptor.getClusterID)
     setApplicationId(applicationId)
     setApplicationURL(clusterDescriptor.getWebInterfaceUrl)
     flinkEngineConnContext.getEnvironmentContext.getFlinkConfig.setString(YarnConfigOptions.APPLICATION_ID, applicationId)
-    info(s"Application is started, applicationId: $getApplicationId, applicationURL: $getApplicationURL.")
+    logger.info(s"Application is started, applicationId: $getApplicationId, applicationURL: $getApplicationURL.")
     super.init()
   }
 
@@ -128,7 +128,7 @@ class FlinkSQLComputationExecutor(id: Long,
 
   override def executeCompletely(engineExecutorContext: EngineExecutionContext, code: String, completedLine: String): ExecuteResponse = {
     val newCode = completedLine + code
-    info("newCode is " + newCode)
+    logger.info("newCode is " + newCode)
     executeLine(engineExecutorContext, newCode)
   }
 
@@ -142,7 +142,7 @@ class FlinkSQLComputationExecutor(id: Long,
   override def getProgressInfo(taskID: String): Array[JobProgressInfo] = Array.empty
 
   override def killTask(taskId: String): Unit = {
-    info(s"Start to kill task $taskId, the flink jobId is ${clusterDescriptor.getJobId}.")
+    logger.info(s"Start to kill task $taskId, the flink jobId is ${clusterDescriptor.getJobId}.")
     if(operation != null) operation.cancelJob()
     super.killTask(taskId)
   }
@@ -167,7 +167,7 @@ class FlinkSQLStatusListener(jobOperation: JobOperation, engineExecutionContext:
   override def onSuccess(rows: Int, rowsType: RowsType): Unit = {
     // Only success need to close.
     val executeCostTime = ByteTimeUtils.msDurationToString(System.currentTimeMillis - startTime)
-    info(s"Time taken: $executeCostTime, $rowsType $rows row(s), wait resultSet to be stored.")
+    logger.info(s"Time taken: $executeCostTime, $rowsType $rows row(s), wait resultSet to be stored.")
     Utils.tryCatch(jobOperation.getFlinkListeners.asScala.foreach {
       case listener: Closeable =>
         listener.close()
@@ -178,12 +178,12 @@ class FlinkSQLStatusListener(jobOperation: JobOperation, engineExecutionContext:
     }
     resp = new SuccessExecuteResponse
     val totalCostTime = ByteTimeUtils.msDurationToString(System.currentTimeMillis - startTime)
-    info(s"Time taken: $totalCostTime, $rowsType $rows row(s).")
+    logger.info(s"Time taken: $totalCostTime, $rowsType $rows row(s).")
     Utils.tryFinally(engineExecutionContext.appendStdout(s"Time taken: $totalCostTime, $rowsType $rows row(s)."))(synchronized(notify()))
   }
 
   override def tryFailed(message: String, t: Throwable): Unit = {
-    error("Execute failed! Reason: " + message, t)
+    logger.error("Execute failed! Reason: " + message, t)
     resp = ErrorExecuteResponse(message, t)
     synchronized(notify())
   }
@@ -204,7 +204,7 @@ class FlinkSQLStreamingResultSetListener(jobOperation: JobOperation,
   private val resultSetWriter = engineExecutionContext.createResultSetWriter(ResultSetFactory.TABLE_TYPE)
 
   override def onResultSetPulled(rows: Int): Unit = {
-    info(s"$rows resultSets has pulled.")
+    logger.info(s"$rows resultSets has pulled.")
     FlinkExecutor.writeResultSet(jobOperation.getJobResult.get(), resultSetWriter)
   }
 
@@ -231,18 +231,18 @@ class DevFlinkSQLStreamingListener(jobOperation: JobOperation,
   private var writtenLines = 0
 
   override def onResultSetPulled(rows: Int): Unit = {
-    info("begin to pull result set in DevFlinkSQLStreamingListener")
+    logger.info("begin to pull result set in DevFlinkSQLStreamingListener")
     lastPulledTime = System.currentTimeMillis
     writtenLines += rows
     if(writtenLines >= maxWrittenLines) {
-      warn(s"The returned resultSet reached max lines $writtenLines, now kill the job automatic. Notice: only the dev environment will touch off the automatic kill.")
+      logger.warn(s"The returned resultSet reached max lines $writtenLines, now kill the job automatic. Notice: only the dev environment will touch off the automatic kill.")
       stopJobOperation()
     }
   }
 
   private val future = Utils.defaultScheduler.scheduleAtFixedRate(new Runnable {
     override def run(): Unit = if (System.currentTimeMillis - lastPulledTime >= maxWaitForResultTime) {
-      warn(s"Job killed since reached the max time ${ByteTimeUtils.msDurationToString(maxWaitForResultTime)} of waiting for resultSet. Notice: only the dev environment will touch off the automatic kill.")
+      logger.warn(s"Job killed since reached the max time ${ByteTimeUtils.msDurationToString(maxWaitForResultTime)} of waiting for resultSet. Notice: only the dev environment will touch off the automatic kill.")
       stopJobOperation()
     }
   }, maxWaitForResultTime, maxWaitForResultTime, TimeUnit.MILLISECONDS)

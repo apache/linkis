@@ -43,9 +43,9 @@ class CSSparkPostExecutionHook extends SparkPostExecutionHook with Logging{
     val nodeNameStr = ContextServiceUtils.getNodeNameStrByMap(engineExecutorContext.getProperties)
 
     if (StringUtils.isNotEmpty(contextIDValueStr) && StringUtils.isNotEmpty(nodeNameStr)) {
-      info(s"Start to call CSSparkPostExecutionHook,contextID is $contextIDValueStr, nodeNameStr is $nodeNameStr")
+      logger.info(s"Start to call CSSparkPostExecutionHook,contextID is $contextIDValueStr, nodeNameStr is $nodeNameStr")
       CSTableParser.clearCSTmpView(code, contextIDValueStr, nodeNameStr)
-      info(s"Finished to call CSSparkPostExecutionHook,contextID is $contextIDValueStr, nodeNameStr is $nodeNameStr")
+      logger.info(s"Finished to call CSSparkPostExecutionHook,contextID is $contextIDValueStr, nodeNameStr is $nodeNameStr")
     }
 
   }

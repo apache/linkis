@@ -59,9 +59,9 @@ class HiveEngineConnFactory extends ComputationSingleExecutorEngineConnFactory w
     val hiveConf: HiveConf = HiveUtils.getHiveConf
     hiveConf.setVar(HiveConf.ConfVars.HIVEJAR, HiveUtils.jarOfClass(classOf[Driver])
       .getOrElse(throw HiveSessionStartFailedException(40012, "cannot find hive-exec.jar, start session failed!")))
-    options.foreach { case (k, v) => info(s"key is $k, value is $v") }
+    options.foreach { case (k, v) => logger.info(s"key is $k, value is $v") }
     options.filter { case (k, v) => k.startsWith("hive.") || k.startsWith("mapreduce.") || k.startsWith("mapred.reduce.") || k.startsWith("wds.linkis.") }.foreach { case (k, v) =>
-      info(s"key is $k, value is $v")
+      logger.info(s"key is $k, value is $v")
       if (BDP_QUEUE_NAME.equals(k)) hiveConf.set(HIVE_QUEUE_NAME, v) else hiveConf.set(k, v)
     }
     hiveConf.setVar(HiveConf.ConfVars.HIVE_HADOOP_CLASSPATH, HiveEngineConfiguration.HIVE_LIB_HOME.getValue + "/*")

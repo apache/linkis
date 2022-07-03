@@ -37,7 +37,7 @@ class YarnAppIdExtractor extends Thread with Logging{
   def appendLineToExtractor(content: String): Unit = {
     buff.synchronized {
       if (content.length + buff.length > MAX_BUFFER) {
-        warn(s"input exceed max-buffer-size, will abandon some part of input. maybe will lost some yarn-app-id.")
+        logger.warn(s"input exceed max-buffer-size, will abandon some part of input. maybe will lost some yarn-app-id.")
         buff.append(StringUtils.substring(content, 0, MAX_BUFFER-buff.length)).append(System.lineSeparator())
       } else {
         buff.append(content).append(System.lineSeparator())
@@ -98,10 +98,10 @@ class YarnAppIdExtractor extends Thread with Logging{
       if (StringUtils.isNotBlank(content)) {
         val appIds = doExtractYarnAppId(content)
         if (appIds != null && appIds.length != 0) {
-          info(s"Retrieved new yarn application Id：" + appIds.mkString(" "))
+          logger.info(s"Retrieved new yarn application Id：" + appIds.mkString(" "))
           addYarnAppIds(appIds)
         }
-        debug(s"Yarn-appid-extractor is running")
+        logger.debug(s"Yarn-appid-extractor is running")
       }
       Utils.sleepQuietly(200l)
     }

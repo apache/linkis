@@ -33,7 +33,7 @@ class ServerListenerEventBus(eventQueueCapacity: Int, name: String,
     */
   override protected def doPostEvent(listener: ServerEventService, event: SocketServerEvent): Unit = {
     val serverEvent = event.serverEvent
-    if(StringUtils.isEmpty(serverEvent.getMethod)) info("ignore empty method with " + serverEvent.getData)
+    if(StringUtils.isEmpty(serverEvent.getMethod)) logger.info("ignore empty method with " + serverEvent.getData)
     else if(serverEvent.getMethod.startsWith(listener.serviceName)) {
       val response = listener.onEvent(serverEvent)
       if(response != null) {

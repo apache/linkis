@@ -57,7 +57,7 @@ trait RetryHandler extends Logging {
       if(retry >= retryNum) throw t
       else if (exceptionCanRetry(t)) {
         val retryInterval = nextInterval(retry)
-        info(retryName + s" failed with ${t.getClass.getName}, wait ${ByteTimeUtils.msDurationToString(retryInterval)} for next retry. Retried $retry++ ...")
+        logger.info(retryName + s" failed with ${t.getClass.getName}, wait ${ByteTimeUtils.msDurationToString(retryInterval)} for next retry. Retried $retry++ ...")
         Utils.tryQuietly(Thread.sleep(retryInterval))
         null.asInstanceOf[T]
       } else throw t

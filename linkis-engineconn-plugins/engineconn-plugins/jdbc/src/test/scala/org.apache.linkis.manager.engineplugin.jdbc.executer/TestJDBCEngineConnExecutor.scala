@@ -22,8 +22,6 @@ import org.apache.linkis.engineconn.common.creation.{DefaultEngineCreationContex
 import org.apache.linkis.engineconn.computation.executor.entity.CommonEngineConnTask
 import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
 import org.apache.linkis.engineconn.computation.executor.utlis.ComputationEngineConstant
-import org.apache.linkis.engineconn.core.util.EngineConnUtils
-import org.apache.linkis.engineconn.launch.EngineConnServer.info
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
 import org.apache.linkis.governance.common.utils.EngineConnArgumentsParser
@@ -39,6 +37,8 @@ import scala.collection.JavaConversions._
 import scala.collection.mutable.ArrayBuffer
 
 class TestJDBCEngineConnExecutor {
+
+
 
   private val engineCreationContext: EngineCreationContext = new DefaultEngineCreationContext
   private val labelBuilderFactory: LabelBuilderFactory = LabelBuilderFactoryContext.getLabelBuilderFactory
@@ -125,6 +125,5 @@ class TestJDBCEngineConnExecutor {
     jMap.putAll(engineConf)
     this.engineCreationContext.setOptions(jMap)
     this.engineCreationContext.setArgs(args)
-    info("Finished to init engineCreationContext: " + EngineConnUtils.GSON.toJson(engineCreationContext))
   }
 }

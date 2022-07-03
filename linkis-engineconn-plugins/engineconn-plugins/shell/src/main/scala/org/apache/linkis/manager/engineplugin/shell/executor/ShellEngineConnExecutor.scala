@@ -17,11 +17,9 @@
  
 package org.apache.linkis.manager.engineplugin.shell.executor
 
-import java.io.{BufferedReader, File, InputStreamReader}
-import java.lang.reflect.Field
-import java.util
-import java.util.concurrent.atomic.AtomicBoolean
-
+import org.apache.commons.io.IOUtils
+import org.apache.commons.lang.StringUtils
+import org.apache.hadoop.util.Shell
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.engineconn.acessible.executor.log.LogHelper
 import org.apache.linkis.engineconn.common.conf.EngineConnConf
@@ -36,10 +34,10 @@ import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.scheduler.executer.{ErrorExecuteResponse, ExecuteResponse, SuccessExecuteResponse}
-import org.apache.commons.io.IOUtils
-import org.apache.commons.lang.StringUtils
-import org.apache.hadoop.util.Shell
 
+import java.io.{BufferedReader, File, InputStreamReader}
+import java.util
+import java.util.concurrent.atomic.AtomicBoolean
 import scala.collection.mutable.ArrayBuffer
 
 class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging {
@@ -53,13 +51,13 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
   private var extractor: YarnAppIdExtractor = _
 
   override def init(): Unit = {
-    info(s"Ready to change engine state!")
+    logger.info(s"Ready to change engine state!")
     super.init
   }
 
   override def executeCompletely(engineExecutionContext: EngineExecutionContext, code: String, completedLine: String): ExecuteResponse = {
     val newcode = completedLine + code
-    debug("newcode is " + newcode)
+    logger.debug("newcode is " + newcode)
     executeLine(engineExecutionContext, newcode)
   }
 
@@ -67,7 +65,7 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
 
     if (null != engineExecutionContext) {
       this.engineExecutionContext = engineExecutionContext
-      info("Shell executor reset new engineExecutionContext!")
+      logger.info("Shell executor reset new engineExecutionContext!")
     }
 
     var bufferedReader: BufferedReader = null
@@ -84,10 +82,10 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
         engineExecutionContext.getProperties.containsKey(ShellEngineConnPluginConst.RUNTIME_ARGS_KEY)) {
         Utils.tryCatch{
           val argsList = engineExecutionContext.getProperties.get(ShellEngineConnPluginConst.RUNTIME_ARGS_KEY).asInstanceOf[util.ArrayList[String]]
-          info("Will execute shell task with user-specified arguments: \'" + argsList.toArray(new Array[String](argsList.size())).mkString("\' \'") + "\'")
+          logger.info("Will execute shell task with user-specified arguments: \'" + argsList.toArray(new Array[String](argsList.size())).mkString("\' \'") + "\'")
           argsList.toArray(new Array[String](argsList.size()))
         }{ t =>
-          warn("Cannot read user-input shell arguments. Will execute shell task without them.", t)
+          logger.warn("Cannot read user-input shell arguments. Will execute shell task without them.", t)
           null
         }
       } else {
@@ -100,14 +98,14 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
         Utils.tryCatch{
           val wdStr = engineExecutionContext.getProperties.get(ShellEngineConnPluginConst.SHELL_RUNTIME_WORKING_DIRECTORY).asInstanceOf[String]
           if(isExecutePathExist(wdStr)) {
-            info("Will execute shell task under user-specified working-directory: \'" + wdStr)
+            logger.info("Will execute shell task under user-specified working-directory: \'" + wdStr)
             wdStr
           } else {
-            warn("User-specified working-directory: \'" + wdStr + "\' does not exist or user does not have access permission. Will execute shell task under default working-directory. Please contact BDP!")
+            logger.warn("User-specified working-directory: \'" + wdStr + "\' does not exist or user does not have access permission. Will execute shell task under default working-directory. Please contact BDP!")
             null
           }
         }{ t =>
-          warn("Cannot read user-input working-directory. Will execute shell task under default working-directory.", t)
+          logger.warn("Cannot read user-input working-directory. Will execute shell task under default working-directory.", t)
           null
         }
       } else {
@@ -147,7 +145,7 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
       while ( {
         line = bufferedReader.readLine(); line != null
       }) {
-        debug(s"$getId() >>> $line")
+        logger.debug(s"$getId() >>> $line")
         LogHelper.logCache.cacheLog(line)
         engineExecutionContext.appendTextResultSet(line)
         extractor.appendLineToExtractor(line)
@@ -162,7 +160,7 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
       } else SuccessExecuteResponse()
     } catch {
       case e: Exception => {
-        error("Execute shell code failed, reason:", e)
+        logger.error("Execute shell code failed, reason:", e)
         ErrorExecuteResponse("run shell failed", e)
       }
       case t: Throwable => ErrorExecuteResponse("Internal error executing shell process(执行shell进程内部错误)", t)
@@ -201,7 +199,7 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
       Utils.tryCatch{
         thread.join()
       } { t =>
-        warn("Exception thrown while joining on: " + thread, t)
+        logger.warn("Exception thrown while joining on: " + thread, t)
       }
     }
   }
@@ -277,14 +275,14 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
     if(yarnAppIds != null && yarnAppIds.size != 0) {
       val yarnAppKillScriptPath = EngineConnConf.getWorkHome + "/bin/kill-yarn-jobs.sh"
       val cmd = Array("sh", yarnAppKillScriptPath) ++ yarnAppIds
-      info("Starting to kill yarn applications" + getId() + ". Kill Command: " + cmd.mkString(" "))
+      logger.info("Starting to kill yarn applications" + getId() + ". Kill Command: " + cmd.mkString(" "))
 
       val exec = new Shell.ShellCommandExecutor(cmd, null, null, 600 * 1000l)
       Utils.tryCatch {
         exec.execute()
-        info("Kill Success! id:" + getId() + ". msg:" + exec.getOutput)
+        logger.info("Kill Success! id:" + getId() + ". msg:" + exec.getOutput)
       } { t =>
-        error("Kill Success! id:" + getId() + ". msg:" + exec.getOutput, t)
+        logger.error("Kill Success! id:" + getId() + ". msg:" + exec.getOutput, t)
       }
     }
 
@@ -299,7 +297,7 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
       field.setAccessible(true);
       field.get(process).asInstanceOf[Int]
     } { t =>
-      warn("Failed to acquire pid for shell process")
+      logger.warn("Failed to acquire pid for shell process")
       -1
     }
   }
@@ -309,9 +307,9 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
       process.destroy()
     } catch {
       case e: Exception =>
-        error(s"kill process ${process.toString} failed ", e)
+        logger.error(s"kill process ${process.toString} failed ", e)
       case t: Throwable =>
-        error(s"kill process ${process.toString} failed ", t)
+        logger.error(s"kill process ${process.toString} failed ", t)
     }
     super.close()
   }

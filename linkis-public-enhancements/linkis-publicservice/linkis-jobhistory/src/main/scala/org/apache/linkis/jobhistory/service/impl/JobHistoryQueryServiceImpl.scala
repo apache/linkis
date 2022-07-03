@@ -59,7 +59,7 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
 
   @Receiver
   override def add(jobReqInsert: JobReqInsert): JobRespProtocol = {
-    info("Insert data into the database(往数据库中插入数据)：" + jobReqInsert.toString)
+    logger.info("Insert data into the database(往数据库中插入数据)：" + jobReqInsert.toString)
     val jobResp = new JobRespProtocol
     Utils.tryCatch {
       QueryUtils.storeExecutionCode(jobReqInsert.jobReq)
@@ -83,14 +83,14 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
   override def change(jobReqUpdate: JobReqUpdate): JobRespProtocol = {
     val jobReq = jobReqUpdate.jobReq
     jobReq.setExecutionCode(null)
-    info("Update data to the database(往数据库中更新数据)：task " + jobReq.getId + "status:" + jobReq.getStatus)
+    logger.info("Update data to the database(往数据库中更新数据)：task " + jobReq.getId + "status:" + jobReq.getStatus)
     val jobResp = new JobRespProtocol
     Utils.tryCatch {
       if (jobReq.getErrorDesc != null) {
         if (jobReq.getErrorDesc.length > 256) {
-          info(s"errorDesc is too long,we will cut some message")
+          logger.info(s"errorDesc is too long,we will cut some message")
           jobReq.setErrorDesc(jobReq.getErrorDesc.substring(0, 256))
-          info(s"${jobReq.getErrorDesc}")
+          logger.info(s"${jobReq.getErrorDesc}")
         }
       }
       if (jobReq.getStatus != null) {
@@ -129,14 +129,14 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
       if(jobReqList != null){
         jobReqList.foreach(jobReq =>{
           jobReq.setExecutionCode(null)
-          info("Update data to the database(往数据库中更新数据)：status:" + jobReq.getStatus )
+          logger.info("Update data to the database(往数据库中更新数据)：status:" + jobReq.getStatus )
           val jobResp = new JobRespProtocol
           Utils.tryCatch {
             if (jobReq.getErrorDesc != null) {
               if (jobReq.getErrorDesc.length > 256) {
-                info(s"errorDesc is too long,we will cut some message")
+                logger.info(s"errorDesc is too long,we will cut some message")
                 jobReq.setErrorDesc(jobReq.getErrorDesc.substring(0, 256))
-                info(s"${jobReq.getErrorDesc}")
+                logger.info(s"${jobReq.getErrorDesc}")
               }
             }
             if (jobReq.getStatus != null) {
@@ -174,7 +174,7 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
 
   @Receiver
   override def query(jobReqQuery: JobReqQuery): JobRespProtocol = {
-    info("查询历史task：" + jobReqQuery.toString)
+    logger.info("查询历史task：" + jobReqQuery.toString)
     val jobResp = new JobRespProtocol
     Utils.tryCatch {
       val jobHistory = jobRequest2JobHistory(jobReqQuery.jobReq)
@@ -228,7 +228,7 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
       fakeLabel.setCreator(creator)
       val userCreator = fakeLabel.getStringValue
       Utils.tryCatch(fakeLabel.valueCheck(userCreator)) {
-        t => info("input user or creator is not correct", t)
+        t => logger.info("input user or creator is not correct", t)
           throw t
       }
       jobHistoryMapper.searchWithUserCreator(jobId, username, fakeLabel.getLabelKey, userCreator, split, sDate, eDate, engineType, startJobId)

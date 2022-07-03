@@ -44,7 +44,7 @@ class DefaultNodeLabelRemoveService extends NodeLabelRemoveService with Logging 
 
   @Receiver
   override def removeNodeLabel(nodeLabelRemoveRequest: NodeLabelRemoveRequest): Unit = {
-    info(s"Start to remove labels from node ${nodeLabelRemoveRequest.getServiceInstance}")
+    logger.info(s"Start to remove labels from node ${nodeLabelRemoveRequest.getServiceInstance}")
     if(nodeLabelRemoveRequest.getServiceInstance == null) {
       throw new LabelRuntimeException(130001, "ServiceInstance in request is null, please check label remove request!")
     }
@@ -62,7 +62,7 @@ class DefaultNodeLabelRemoveService extends NodeLabelRemoveService with Logging 
     }
 
     labelPersistence.removeLabel(persistenceLabel)
-    info(s"Finished to remove labels from node ${nodeLabelRemoveRequest.getServiceInstance}")
+    logger.info(s"Finished to remove labels from node ${nodeLabelRemoveRequest.getServiceInstance}")
   }
 
 }

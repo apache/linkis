@@ -45,7 +45,7 @@ trait InteractiveFlinkStatusListener extends FlinkStatusListener with Logging {
   }
 
   override final def onFailed(message: String, t: Throwable, rowsType: RowsType): Unit = if(isMarked) {
-    info("Ignore this error, since we have marked this job as succeed.", t)
+    logger.info("Ignore this error, since we have marked this job as succeed.", t)
     onSuccess(cachedRows, rowsType)
     //isMarked = false
   } else tryFailed(message, t)

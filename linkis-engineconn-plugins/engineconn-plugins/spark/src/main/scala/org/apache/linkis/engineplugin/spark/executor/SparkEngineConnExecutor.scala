@@ -61,7 +61,7 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long) extends C
   private var thread: Thread = _
 
   override def init(): Unit = {
-    info(s"Ready to change engine state!")
+    logger.info(s"Ready to change engine state!")
 //    setCodeParser()  // todo check
     super.init()
   }
@@ -70,7 +70,7 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long) extends C
     this.engineExecutionContext = engineExecutorContext
     thread = Thread.currentThread()
     if (sc.isStopped) {
-      error("Spark application has already stopped, please restart it.")
+      logger.error("Spark application has already stopped, please restart it.")
       transition(NodeStatus.Failed)
       throw new LinkisJobRetryException("Spark application sc has already stopped, please restart it.")
     }
@@ -81,7 +81,7 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long) extends C
     Utils.tryQuietly(SparkPreExecutionHook.getSparkPreExecutionHooks().foreach(hook => preCode = hook.callPreExecutionHook(engineExecutorContext, preCode)))
     Utils.tryAndWarn(CSSparkHelper.setContextIDInfoToSparkConf(engineExecutorContext, sc))
     val _code = Kind.getRealCode(preCode)
-    info(s"Ready to run code with kind $kind.")
+    logger.info(s"Ready to run code with kind $kind.")
     val jobId = JobUtils.getJobIdFromMap(engineExecutorContext.getProperties)
     val jobGroupId = if (StringUtils.isNotBlank(jobId)) {
       jobId
@@ -90,7 +90,7 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long) extends C
     }
     jobGroup = String.valueOf("linkis-spark-mix-code-" + jobGroupId)
     //    val executeCount = queryNum.get().toInt - 1
-    info("Set jobGroup to " + jobGroup)
+    logger.info("Set jobGroup to " + jobGroup)
     sc.setJobGroup(jobGroup, _code, true)
 
     val response = Utils.tryFinally(runCode(this, _code, engineExecutorContext, jobGroup)) {
@@ -107,7 +107,7 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long) extends C
 
   override def executeCompletely(engineExecutorContext: EngineExecutionContext, code: String, completedLine: String): ExecuteResponse = {
     val newcode = completedLine + code
-    info("newcode is " + newcode)
+    logger.info("newcode is " + newcode)
     executeLine(engineExecutorContext, newcode)
   }
 
@@ -127,7 +127,7 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long) extends C
 
   override def getProgressInfo(taskID: String): Array[JobProgressInfo] = if (jobGroup == null) Array.empty
   else {
-    debug("request new progress info for jobGroup is " + jobGroup)
+    logger.debug("request new progress info for jobGroup is " + jobGroup)
     val progressInfoArray = ArrayBuffer[JobProgressInfo]()
     progressInfoArray ++= JobProgressUtil.getActiveJobProgressInfo(sc, jobGroup)
     progressInfoArray ++= JobProgressUtil.getCompletedJobProgressInfo(sc, jobGroup)
@@ -156,7 +156,7 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long) extends C
   }
 
   override def getCurrentNodeResource(): NodeResource = {
-    info("Begin to get actual used resources!")
+    logger.info("Begin to get actual used resources!")
     Utils.tryCatch({
       //      val driverHost: String = sc.getConf.get("spark.driver.host")
       //      val executorMemList = sc.getExecutorMemoryStatus.filter(x => !x._1.split(":")(0).equals(driverHost)).map(x => x._2._1)
@@ -174,7 +174,7 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long) extends C
       val sparkExecutorCores = sc.getConf.get("spark.executor.cores", "2").toInt * executorNum
       val sparkDriverCores = sc.getConf.get("spark.driver.cores", "1").toInt
       val queue = sc.getConf.get("spark.yarn.queue")
-      info("Current actual used resources is driverMem:" + driverMem + ",driverCores:" + sparkDriverCores + ",executorMem:" + executorMem + ",executorCores:" + sparkExecutorCores + ",queue:" + queue)
+      logger.info("Current actual used resources is driverMem:" + driverMem + ",driverCores:" + sparkDriverCores + ",executorMem:" + executorMem + ",executorCores:" + sparkExecutorCores + ",queue:" + queue)
       val uesdResource = new DriverAndYarnResource(
         new LoadInstanceResource(driverMem, sparkDriverCores, 1),
         new YarnResource(executorMem, sparkExecutorCores, 0, queue, sc.applicationId)
@@ -183,7 +183,7 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long) extends C
       nodeResource.setUsedResource(uesdResource)
       nodeResource
     })(t => {
-      warn("Get actual used resource exception", t)
+      logger.warn("Get actual used resource exception", t)
       null
     })
   }
@@ -221,7 +221,7 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long) extends C
         case _ =>
       }
     }
-    warn(s"Kill running job of ${runType} .")
+    logger.warn(s"Kill running job of ${runType} .")
   }
 
   override def close(): Unit = {

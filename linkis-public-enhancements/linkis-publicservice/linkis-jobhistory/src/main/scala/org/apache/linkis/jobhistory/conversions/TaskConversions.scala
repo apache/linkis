@@ -17,27 +17,26 @@
 
 package org.apache.linkis.jobhistory.conversions
 
+import org.apache.commons.lang.StringUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.governance.common.entity.job.{JobRequest, SubJobDetail}
-import org.apache.linkis.governance.common.entity.task.{RequestPersistTask, RequestQueryTask}
+import org.apache.linkis.governance.common.entity.task.RequestQueryTask
 import org.apache.linkis.jobhistory.conf.JobhistoryConfiguration
 import org.apache.linkis.jobhistory.entity.{JobDetail, JobHistory, QueryTask, QueryTaskVO}
 import org.apache.linkis.jobhistory.transitional.TaskStatus
 import org.apache.linkis.jobhistory.util.QueryUtils
-import org.apache.linkis.manager.label.builder.factory.{LabelBuilderFactory, LabelBuilderFactoryContext}
+import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.utils.LabelUtil
+import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.protocol.utils.ZuulEntranceUtils
 import org.apache.linkis.server.{BDPJettyServerHelper, toScalaBuffer, toScalaMap}
-import org.apache.commons.lang.StringUtils
 import org.springframework.beans.BeanUtils
+
+import java.text.SimpleDateFormat
 import java.util
 import java.util.Date
-import java.text.SimpleDateFormat
-
-import org.apache.linkis.protocol.constants.TaskConstant
-
-import scala.collection.JavaConverters.{asJavaIterableConverter, asScalaBufferConverter, mapAsScalaMapConverter}
+import scala.collection.JavaConverters.{asScalaBufferConverter, mapAsScalaMapConverter}
 
 
 object TaskConversions extends Logging {
@@ -310,7 +309,7 @@ object TaskConversions extends Logging {
         val source = BDPJettyServerHelper.gson.fromJson(job.getSource, classOf[util.Map[String, String]])
         taskVO.setSourceTailor(source.map(_._2).foldLeft("")(_ + _ + "-").stripSuffix("-"))
       } {
-        case _ => warn("sourceJson deserialization failed, this task may be the old data.")
+        case _ => logger.warn("sourceJson deserialization failed, this task may be the old data.")
       }
     }
     taskVO
@@ -332,7 +331,7 @@ object TaskConversions extends Logging {
       date
     } {
       _ =>
-        warn("String to Date deserialization failed.")
+        logger.warn("String to Date deserialization failed.")
         null
     }
   }

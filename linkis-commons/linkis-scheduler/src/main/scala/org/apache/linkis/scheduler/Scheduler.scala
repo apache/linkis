@@ -40,7 +40,7 @@ object Scheduler extends Logging{
       case "FIFO" => Some(new FIFOScheduler(schedulerContext))
       case "PARA" => Some(new ParallelScheduler(schedulerContext))
       case _ => {
-        error("Please enter the correct scheduling type!(请输入正确的调度类型!)")
+        logger.error("Please enter the correct scheduling type!(请输入正确的调度类型!)")
         None
       }
     }

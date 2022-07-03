@@ -54,7 +54,7 @@ class DefaultEngineConnLaunchService extends EngineConnLaunchService with Loggin
     if (engineTypeOption.isDefined) {
       val engineTypeLabel = engineTypeOption.get.asInstanceOf[EngineTypeLabel]
       Utils.tryCatch(getEngineLaunchBuilder(engineTypeLabel).buildEngineConn(engineBuildRequest)){ t =>
-        error(s"Failed to createEngineConnLaunchRequest(${engineBuildRequest.ticketId})", t)
+        logger.error(s"Failed to createEngineConnLaunchRequest(${engineBuildRequest.ticketId})", t)
         throw new EngineConnPluginErrorException(10001, s"Failed to createEngineConnLaunchRequest, ${ExceptionUtils.getRootCauseMessage(t)}")
       }
     } else {

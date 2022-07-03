@@ -72,7 +72,7 @@ object EngineUtils extends  Logging{
         case _ => throw new IOException(f"Unable to determing spark-submit version [$exitCode]:\n$output")
       }
     }
-    info("spark version is " + sparkVersion)
+    logger.info("spark version is " + sparkVersion)
     sparkVersion
   }
 

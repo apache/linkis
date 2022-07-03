@@ -54,7 +54,7 @@ class PipelineEngineConnExecutor(val id: Int) extends ComputationExecutor with L
     engineExecutorContext.getProperties.foreach { keyAndValue =>
       newOptions.put(keyAndValue._1, keyAndValue._2.toString)
     }
-    newOptions.foreach({ case (k, v) => info(s"key is $k, value is $v") })
+    newOptions.foreach({ case (k, v) => logger.info(s"key is $k, value is $v") })
     val regex = "(?i)\\s*from\\s+(\\S+)\\s+to\\s+(\\S+)\\s?".r
     try {
       thread = Thread.currentThread()
@@ -66,7 +66,7 @@ class PipelineEngineConnExecutor(val id: Int) extends ComputationExecutor with L
       case e: Exception => failedTasks = 1; succeedTasks = 0; throw e
     }
     finally {
-      info("begin to remove osCache:" + engineExecutorContext.getJobId.get)
+      logger.info("begin to remove osCache:" + engineExecutorContext.getJobId.get)
       OutputStreamCache.osCache.remove(engineExecutorContext.getJobId.get)
       progressInfo = JobProgressInfo(getName + "_" + index, 1, 0, failedTasks, succeedTasks)
     }

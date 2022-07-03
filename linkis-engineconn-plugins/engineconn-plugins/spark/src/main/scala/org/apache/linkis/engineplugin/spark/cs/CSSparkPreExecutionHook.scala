@@ -42,15 +42,15 @@ class CSSparkPreExecutionHook extends SparkPreExecutionHook with Logging{
     var parsedCode = code
     val contextIDValueStr = ContextServiceUtils.getContextIDStrByMap(engineExecutionContext.getProperties)
     val nodeNameStr = ContextServiceUtils.getNodeNameStrByMap(engineExecutionContext.getProperties)
-    info(s"Start to call CSSparkPreExecutionHook,contextID is $contextIDValueStr, nodeNameStr is $nodeNameStr")
+    logger.info(s"Start to call CSSparkPreExecutionHook,contextID is $contextIDValueStr, nodeNameStr is $nodeNameStr")
     parsedCode = try {
       CSTableParser.parse(engineExecutionContext, parsedCode, contextIDValueStr, nodeNameStr)
     } catch {
       case t: Throwable =>
-        info("Failed to parser cs table", t)
+        logger.info("Failed to parser cs table", t)
         parsedCode
     }
-    info(s"Finished to call CSSparkPreExecutionHook,contextID is $contextIDValueStr, nodeNameStr is $nodeNameStr")
+    logger.info(s"Finished to call CSSparkPreExecutionHook,contextID is $contextIDValueStr, nodeNameStr is $nodeNameStr")
     parsedCode
   }
 }

@@ -59,7 +59,7 @@ class DWSHttpClient(clientConfig: DWSClientConfig, clientName: String)
     val url: String = requestAction.getURL
 
     if (null == entity.getContentType && statusCode == 200) {
-      info("response is null, return success Result")
+      logger.info("response is null, return success Result")
       return Some(Result())
     }
     val contentType: String = entity.getContentType.getValue

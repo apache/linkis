@@ -27,19 +27,19 @@ abstract class ConcurrentComputationExecutor(override val outputPrintLimit: Int 
 
   override def execute(engineConnTask: EngineConnTask): ExecuteResponse = {
     if (isBusy) {
-      error(s"Executor is busy but still got new task ! Running task num : ${getRunningTask}")
+      logger.error(s"Executor is busy but still got new task ! Running task num : ${getRunningTask}")
     }
     if (getRunningTask >= getConcurrentLimit) synchronized {
       if (getRunningTask >= getConcurrentLimit && NodeStatus.isIdle(getStatus)) {
-        info(s"running task($getRunningTask) > concurrent limit $getConcurrentLimit, now to mark engine to busy ")
+        logger.info(s"running task($getRunningTask) > concurrent limit $getConcurrentLimit, now to mark engine to busy ")
         transition(NodeStatus.Busy)
       }
     }
-    info(s"engineConnTask(${engineConnTask.getTaskId}) running task is ($getRunningTask) ")
+    logger.info(s"engineConnTask(${engineConnTask.getTaskId}) running task is ($getRunningTask) ")
     val response = super.execute(engineConnTask)
     if (getStatus == NodeStatus.Busy && getConcurrentLimit > getRunningTask) synchronized {
       if (getStatus == NodeStatus.Busy && getConcurrentLimit > getRunningTask) {
-        info(s"running task($getRunningTask) < concurrent limit $getConcurrentLimit, now to mark engine to Unlock ")
+        logger.info(s"running task($getRunningTask) < concurrent limit $getConcurrentLimit, now to mark engine to Unlock ")
         transition(NodeStatus.Unlock)
       }
     }

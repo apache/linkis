@@ -38,7 +38,7 @@ class JobTimeoutManager extends Logging {
   val timeoutScanInterval: Int = EntranceConfiguration.TIMEOUT_SCAN_INTERVAL.getValue
 
   def add(jobKey: String, job: EntranceJob): Unit = {
-    info(s"Adding timeout job: ${job.getId()}")
+    logger.info(s"Adding timeout job: ${job.getId()}")
     if (!timeoutJobByName.contains(jobKey)) {
       synchronized {
         if (!timeoutJobByName.contains(jobKey)) {
@@ -46,14 +46,14 @@ class JobTimeoutManager extends Logging {
         }
       }
     } else {
-      warn(s"Job already exists, invalid addition: ${jobKey}")
+      logger.warn(s"Job already exists, invalid addition: ${jobKey}")
     }
   }
 
   def delete(jobKey: String): Unit = {
     val job = timeoutJobByName.get(jobKey)
     if (null != job) {
-      info(s"Deleting Job: ${job.getId()}")
+      logger.info(s"Deleting Job: ${job.getId()}")
       synchronized {
         timeoutJobByName.remove(jobKey)
       }
@@ -67,7 +67,7 @@ class JobTimeoutManager extends Logging {
   def jobCompleteDelete(jobkey: String): Unit = {
     val job = timeoutJobByName.get(jobkey)
     if (job.isCompleted) {
-      info(s"Job is complete, delete it now: ${job.getId()}")
+      logger.info(s"Job is complete, delete it now: ${job.getId()}")
       delete(jobkey)
     }
   }
@@ -75,7 +75,7 @@ class JobTimeoutManager extends Logging {
   private def timeoutDetective(): Unit = {
     if (timeoutCheck) {
       def checkAndSwitch(job: EntranceJob): Unit = {
-        info(s"Checking whether the job id ${job.getJobRequest.getId()} timed out. ")
+        logger.info(s"Checking whether the job id ${job.getJobRequest.getId()} timed out. ")
         val currentTimeSeconds = System.currentTimeMillis() / 1000
         // job.isWaiting == job in queue
         val jobScheduleStartTimeSeconds = if (job.isWaiting) job.createTime / 1000 else currentTimeSeconds
@@ -116,7 +116,7 @@ class JobTimeoutManager extends Logging {
         timeoutDetective()
       } {
         case t: Throwable =>
-          error(s"TimeoutDetective task failed. ${t.getMessage}", t)
+          logger.error(s"TimeoutDetective task failed. ${t.getMessage}", t)
       }
     }
   }, 0, timeoutScanInterval, TimeUnit.SECONDS)

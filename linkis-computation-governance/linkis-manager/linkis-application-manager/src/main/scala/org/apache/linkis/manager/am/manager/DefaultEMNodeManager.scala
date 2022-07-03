@@ -64,7 +64,7 @@ class DefaultEMNodeManager extends EMNodeManager with Logging {
   override def addEMNodeInstance(emNode: EMNode): Unit = {
     Utils.tryCatch(nodeManagerPersistence.addNodeInstance(emNode)) {
       case e: NodeInstanceDuplicateException =>
-        warn(s"em instance had exists, $emNode.")
+        logger.warn(s"em instance had exists, $emNode.")
         nodeManagerPersistence.updateEngineNode(emNode.getServiceInstance, emNode)
       case t: Throwable => throw t
     }
@@ -128,7 +128,7 @@ class DefaultEMNodeManager extends EMNodeManager with Logging {
   override def getEM(serviceInstance: ServiceInstance): EMNode = {
     val node = nodeManagerPersistence.getNode(serviceInstance)
     if (null == node) {
-      info(s"This em of $serviceInstance not exists in db")
+      logger.info(s"This em of $serviceInstance not exists in db")
       return null
     }
     val emNode = new AMEMNode()
@@ -149,9 +149,9 @@ class DefaultEMNodeManager extends EMNodeManager with Logging {
 
   override def deleteEM(emNode: EMNode): Unit = {
     nodeManagerPersistence.removeNodeInstance(emNode)
-    info(s"Finished to clear emNode instance(${emNode.getServiceInstance}) info ")
+    logger.info(s"Finished to clear emNode instance(${emNode.getServiceInstance}) info ")
     nodeMetricManagerPersistence.deleteNodeMetrics(emNode)
-    info(s"Finished to clear emNode(${emNode.getServiceInstance}) metrics info")
+    logger.info(s"Finished to clear emNode(${emNode.getServiceInstance}) metrics info")
   }
 
 

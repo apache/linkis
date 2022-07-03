@@ -47,7 +47,7 @@ trait StorableLinkisJob extends AbstractLinkisJob {
     if(jobInfoResult.isCompleted) {
       getJobMetrics.setClientFinishedTime(System.currentTimeMillis)
       completedJobInfoResult = jobInfoResult
-      info(s"Job-$getId is completed with status " + completedJobInfoResult.getJobStatus)
+      logger.info(s"Job-$getId is completed with status " + completedJobInfoResult.getJobStatus)
       getJobListeners.foreach(_.onJobFinished(this))
     } else if (jobInfoResult.isRunning) getJobListeners.foreach(_.onJobRunning(this))
     jobInfoResult
@@ -83,14 +83,14 @@ abstract class StorableSubmittableLinkisJob(override protected val ujesClient: U
   protected override def wrapperId[T](op: => T): T = super.wrapperObj(taskId, "Please submit job first.")(op)
 
   override protected def doSubmit(): Unit = {
-    info("Ready to submit job: " + jobSubmitAction.getRequestPayload)
+    logger.info("Ready to submit job: " + jobSubmitAction.getRequestPayload)
     jobSubmitResult = ujesClient.submit(jobSubmitAction)
     taskId = jobSubmitResult.taskID
     addOperatorAction {
       case operator: StorableOperator[_] => operator.setJobSubmitResult(jobSubmitResult).setUJESClient(ujesClient)
       case operator => operator
     }
-    info("Job submitted with taskId: " + taskId)
+    logger.info("Job submitted with taskId: " + taskId)
   }
 
 }

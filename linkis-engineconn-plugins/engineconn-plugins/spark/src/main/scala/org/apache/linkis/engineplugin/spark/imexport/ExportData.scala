@@ -68,7 +68,7 @@ object ExportData extends Logging {
         .option("exportNullValue", nullValue)
         .mode("overwrite").save(path)
     }
-    warn(s"Succeed to export data  to path:$path")
+    logger.warn(s"Succeed to export data  to path:$path")
   }
 
   def getExportSql(dataInfo: Map[String, Any]): String = {
@@ -88,7 +88,7 @@ object ExportData extends Logging {
     sql.append("select ").append(columns).append(" from ").append(s"$database.$tableName")
     if (isPartition) sql.append(" where ").append(s"$partition=$partitionValue")
     val sqlString = sql.toString()
-    warn(s"export sql:$sqlString")
+    logger.warn(s"export sql:$sqlString")
     sqlString
   }
 

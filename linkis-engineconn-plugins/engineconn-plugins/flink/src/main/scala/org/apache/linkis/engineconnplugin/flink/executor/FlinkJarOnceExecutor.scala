@@ -35,9 +35,9 @@ class FlinkJarOnceExecutor(override val id: Long,
   override def doSubmit(onceExecutorExecutionContext: OnceExecutorExecutionContext,
                         options: Map[String, String]): Unit = {
     val args = FLINK_APPLICATION_ARGS.getValue(options)
-    val programArguments = if(StringUtils.isNotEmpty(args)) args.split(" ") else Array.empty[String]
+    val programArguments = if (StringUtils.isNotEmpty(args)) args.split(" ") else Array.empty[String]
     val mainClass = FLINK_APPLICATION_MAIN_CLASS.getValue(options)
-    info(s"Ready to submit flink application, mainClass: $mainClass, args: $args.")
+    logger.info(s"Ready to submit flink application, mainClass: $mainClass, args: $args.")
     clusterDescriptor.deployCluster(programArguments, mainClass)
   }
 

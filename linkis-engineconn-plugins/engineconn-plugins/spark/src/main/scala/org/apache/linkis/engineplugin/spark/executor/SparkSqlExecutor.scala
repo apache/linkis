@@ -17,17 +17,17 @@
  
 package org.apache.linkis.engineplugin.spark.executor
 
-import java.lang.reflect.InvocationTargetException
+import org.apache.commons.lang.exception.ExceptionUtils
 import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
 import org.apache.linkis.engineplugin.spark.common.{Kind, SparkSQL}
 import org.apache.linkis.engineplugin.spark.config.SparkConfiguration
 import org.apache.linkis.engineplugin.spark.entity.SparkEngineSession
-import org.apache.linkis.engineplugin.spark.extension.SparkSqlExtension
 import org.apache.linkis.engineplugin.spark.utils.EngineUtils
-import org.apache.linkis.scheduler.executer.{CompletedExecuteResponse, ErrorExecuteResponse, ExecuteResponse, SuccessExecuteResponse}
 import org.apache.linkis.governance.common.paser.SQLCodeParser
-import org.apache.commons.lang.exception.ExceptionUtils
+import org.apache.linkis.scheduler.executer.{ErrorExecuteResponse, ExecuteResponse, SuccessExecuteResponse}
+
+import java.lang.reflect.InvocationTargetException
 
 
 class SparkSqlExecutor(sparkEngineSession: SparkEngineSession, id: Long) extends SparkEngineConnExecutor(sparkEngineSession.sparkContext, id) {
@@ -37,14 +37,14 @@ class SparkSqlExecutor(sparkEngineSession: SparkEngineSession, id: Long) extends
 
     setCodeParser(new SQLCodeParser)
     super.init()
-    info("spark sql executor start")
+    logger.info("spark sql executor start")
   }
 
   override protected def getKind: Kind = SparkSQL()
 
   override protected def runCode(executor: SparkEngineConnExecutor, code: String, engineExecutionContext: EngineExecutionContext, jobGroup: String): ExecuteResponse = {
 
-    info("SQLExecutor run query: " + code)
+    logger.info("SQLExecutor run query: " + code)
     engineExecutionContext.appendStdout(s"${EngineUtils.getName} >> $code")
     val standInClassLoader = Thread.currentThread().getContextClassLoader
     try {

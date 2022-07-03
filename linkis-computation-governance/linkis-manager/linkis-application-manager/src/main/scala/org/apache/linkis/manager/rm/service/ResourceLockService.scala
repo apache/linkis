@@ -58,13 +58,13 @@ class ResourceLockService extends Logging {
         lockManagerPersistence.lock(persistenceLock, Long.MaxValue)
       }
       if(isLocked) {
-        info(labelContainer.getCurrentLabel + " successfully locked label" + persistenceLock.getLockObject)
+        logger.info(labelContainer.getCurrentLabel + " successfully locked label" + persistenceLock.getLockObject)
         labelContainer.getLockedLabels.add(labelContainer.getCurrentLabel)
       }
       isLocked
     } catch {
       case t: Throwable =>
-        error(s"failed to lock label [${persistenceLock.getLockObject}]", t)
+        logger.error(s"failed to lock label [${persistenceLock.getLockObject}]", t)
         false
     }
   }
@@ -78,10 +78,10 @@ class ResourceLockService extends Logging {
         persistenceLock.setLockObject(label.getStringValue)
         try {
           lockManagerPersistence.unlock(persistenceLock)
-          info("unlocked " + persistenceLock.getLockObject)
+          logger.info("unlocked " + persistenceLock.getLockObject)
         } catch {
           case t: Throwable =>
-            error(s"failed to unlock label [${persistenceLock.getLockObject}]", t)
+            logger.error(s"failed to unlock label [${persistenceLock.getLockObject}]", t)
             throw t
         }
         labelIterator.remove
@@ -94,7 +94,7 @@ class ResourceLockService extends Logging {
     lockManagerPersistence.getAll.foreach{ lock =>
       if (currentTime - lock.getCreateTime.getTime > timeout) {
         lockManagerPersistence.unlock(lock)
-        warn("timeout force unlock " + lock.getLockObject)
+        logger.warn("timeout force unlock " + lock.getLockObject)
       }
     }
   }

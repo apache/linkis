@@ -50,7 +50,7 @@ class AsyncTaskManager extends DefaultTaskManager with TaskStatusListener with T
   }
 
   override def onResultSetCreate(taskResultSetEvent: TaskResultSetEvent): Unit = {
-    debug(s"received taskResultSetEvent ${taskResultSetEvent.execTask.getId}")
+    logger.debug(s"received taskResultSetEvent ${taskResultSetEvent.execTask.getId}")
     findDealEventTaskRunner(taskResultSetEvent).foreach {
       case asyncExecTaskRunner: AsyncExecTaskRunner =>
         asyncExecTaskRunner.addResultSet(taskResultSetEvent.resultSet)
@@ -59,7 +59,7 @@ class AsyncTaskManager extends DefaultTaskManager with TaskStatusListener with T
   }
 
   override def onResultSizeCreated(taskResultSetSizeEvent: TaskResultSetSizeEvent): Unit = {
-    debug(s"received taskResultSetSizeEvent $taskResultSetSizeEvent")
+    logger.debug(s"received taskResultSetSizeEvent $taskResultSetSizeEvent")
     findDealEventTaskRunner(taskResultSetSizeEvent).foreach  {
       case asyncExecTaskRunner: AsyncExecTaskRunner =>
         asyncExecTaskRunner.setResultSize(taskResultSetSizeEvent.resultSize)
@@ -71,17 +71,17 @@ class AsyncTaskManager extends DefaultTaskManager with TaskStatusListener with T
 
     findDealEventTaskRunner(taskErrorResponseEvent).foreach {
       case asyncExecTaskRunner: AsyncExecTaskRunner =>
-        info(s"received taskErrorResponseEvent $taskErrorResponseEvent")
+        logger.info(s"received taskErrorResponseEvent $taskErrorResponseEvent")
         asyncExecTaskRunner.markFailed(taskErrorResponseEvent.errorMsg, null)
       case _ =>
     }
   }
 
   override def onStatusUpdate(taskStatusEvent: TaskStatusEvent): Unit = {
-    debug(s"received taskStatusEvent $taskStatusEvent")
+    logger.debug(s"received taskStatusEvent $taskStatusEvent")
     if (ExecutionNodeStatus.isCompleted(taskStatusEvent.status)) {
       findDealEventTaskRunner(taskStatusEvent).foreach { runner =>
-        info(s"Task(${taskStatusEvent.execTask.getIDInfo()}) is completed, status ${taskStatusEvent.status}")
+        logger.info(s"Task(${taskStatusEvent.execTask.getIDInfo()}) is completed, status ${taskStatusEvent.status}")
         //To transient taskRunner status
         runner.transientStatus(taskStatusEvent.status)
         //addCompletedTask(runner)

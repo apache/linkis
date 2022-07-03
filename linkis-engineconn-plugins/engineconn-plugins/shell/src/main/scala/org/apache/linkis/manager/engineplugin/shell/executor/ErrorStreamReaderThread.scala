@@ -17,11 +17,11 @@
 
 package org.apache.linkis.manager.engineplugin.shell.executor
 
-import java.io.{BufferedReader, IOException}
-
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.engineconn.acessible.executor.log.LogHelper
 import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
+
+import java.io.BufferedReader
 
 class ErrorStreamReaderThread extends Thread with Logging {
   private var engineExecutionContext: EngineExecutionContext = _
@@ -39,7 +39,7 @@ class ErrorStreamReaderThread extends Thread with Logging {
     Utils.tryCatch{
       errReader synchronized errReader.close()
     }{ t =>
-        warn("Error while closing the error stream", t)
+      logger.warn("Error while closing the error stream", t)
     }
   }
 
@@ -49,9 +49,9 @@ class ErrorStreamReaderThread extends Thread with Logging {
       this.start()
     }{ t =>
       if (t.isInstanceOf[OutOfMemoryError]) {
-        warn("Caught " + t + ". One possible reason is that ulimit" + " setting of 'max user processes' is too low. If so, do" + " 'ulimit -u <largerNum>' and try again.")
+        logger.warn("Caught " + t + ". One possible reason is that ulimit" + " setting of 'max user processes' is too low. If so, do" + " 'ulimit -u <largerNum>' and try again.")
       }
-      warn("Cannot start thread to read from error stream", t)
+      logger.warn("Cannot start thread to read from error stream", t)
     }
   }
 
@@ -66,7 +66,7 @@ class ErrorStreamReaderThread extends Thread with Logging {
         line = errReader.readLine
       }
     }{ t =>
-      warn("Error reading the error stream", t)
+      logger.warn("Error reading the error stream", t)
     }
   }
 }

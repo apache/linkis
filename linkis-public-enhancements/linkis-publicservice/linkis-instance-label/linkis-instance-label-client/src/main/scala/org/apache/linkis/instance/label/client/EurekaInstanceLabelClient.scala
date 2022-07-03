@@ -42,10 +42,10 @@ class EurekaInstanceLabelClient extends Logging {
 
   @PostConstruct
   def init(): Unit = {
-    info("EurekaInstanceLabelClient init")
+    logger.info("EurekaInstanceLabelClient init")
     val metadata = registration.getMetadata
     if (null != metadata && metadata.containsKey(LabelKeyConstant.ROUTE_KEY) && StringUtils.isNoneBlank(metadata.get(LabelKeyConstant.ROUTE_KEY))) {
-      info(s"Start to register label for instance $metadata")
+      logger.info(s"Start to register label for instance $metadata")
       val labels = new util.HashMap[String, Object]()
       labels.put(LabelKeyConstant.ROUTE_KEY, metadata.get(LabelKeyConstant.ROUTE_KEY))
       val insLabelRefreshRequest = new InsLabelRefreshRequest
@@ -57,11 +57,11 @@ class EurekaInstanceLabelClient extends Logging {
 
   @EventListener(classes = Array(classOf[ContextClosedEvent]))
   def shutdown(contextClosedEvent: ContextClosedEvent): Unit = {
-    info("To remove labels for instance")
+    logger.info("To remove labels for instance")
     val insLabelRemoveRequest = new InsLabelRemoveRequest
     insLabelRemoveRequest.setServiceInstance(Sender.getThisServiceInstance)
     InstanceLabelClient.getInstance.removeLabelsFromInstance(insLabelRemoveRequest)
-    info("success to send clear label rpc request")
+    logger.info("success to send clear label rpc request")
   }
 
 

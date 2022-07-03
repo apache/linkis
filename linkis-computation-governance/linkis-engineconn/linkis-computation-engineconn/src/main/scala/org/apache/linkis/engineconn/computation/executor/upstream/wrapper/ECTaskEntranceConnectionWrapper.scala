@@ -43,15 +43,15 @@ class ECTaskEntranceConnectionWrapper(taskID: String, engineConnTask: EngineConn
       if (connectionInfo == null || StringUtils.isBlank(connectionInfo.getKey)) {
         connectionInfo = newInfo2
       } else if (!connectionInfo.isSameConnectionAs(newInfo2)) {
-        error("Failed to update connection-info: target connection-info is not same as current." +
+        logger.error("Failed to update connection-info: target connection-info is not same as current." +
           "current: " + connectionInfo.getKey + ", " + connectionInfo.getUpstreamServiceInstanceName +
           "target: " + newInfo2.getKey + ", " + newInfo2.getUpstreamServiceInstanceName)
-      } else if (newInfo2.getPrevUpdatedAliveTimestamp() != -1l) {
+      } else if (newInfo2.getPrevUpdatedAliveTimestamp() != -1L) {
         connectionInfo = newInfo2
       }
       lastUpdateTime = System.currentTimeMillis
     }
-    case _ => error("wrong data-type for UpstreamConnection:" + newInfo.getClass.getCanonicalName)
+    case _ => logger.error("wrong data-type for UpstreamConnection:" + newInfo.getClass.getCanonicalName)
   }
 
   override def getUpstreamConnection(): ECTaskEntranceConnection = connectionInfo

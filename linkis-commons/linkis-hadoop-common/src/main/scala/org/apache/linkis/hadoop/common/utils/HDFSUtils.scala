@@ -40,7 +40,7 @@ object HDFSUtils extends Logging {
   private val LOCKER_SUFFIX = "_HDFS"
 
   if (HadoopConf.HDFS_ENABLE_CACHE) {
-    info("HDFS Cache enabled ")
+    logger.info("HDFS Cache enabled ")
     Utils.defaultScheduler.scheduleAtFixedRate(new Runnable {
       override def run(): Unit = Utils.tryAndWarn {
         fileSystemCache.values().asScala.filter { hdfsFileSystemContainer =>
@@ -51,7 +51,7 @@ object HDFSUtils extends Logging {
             if (hdfsFileSystemContainer.canRemove()) {
               fileSystemCache.remove(hdfsFileSystemContainer.getUser)
               IOUtils.closeQuietly(hdfsFileSystemContainer.getFileSystem)
-              info(s"user${hdfsFileSystemContainer.getUser} to remove hdfsFileSystemContainer,because hdfsFileSystemContainer can remove")
+              logger.info(s"user${hdfsFileSystemContainer.getUser} to remove hdfsFileSystemContainer,because hdfsFileSystemContainer can remove")
             }
           }
         }
@@ -135,7 +135,7 @@ object HDFSUtils extends Logging {
         if (isForce) {
           locker synchronized fileSystemCache.remove(hdfsFileSystemContainer.getUser)
           IOUtils.closeQuietly(hdfsFileSystemContainer.getFileSystem)
-          info(s"user${hdfsFileSystemContainer.getUser} to Force remove hdfsFileSystemContainer")
+          logger.info(s"user${hdfsFileSystemContainer.getUser} to Force remove hdfsFileSystemContainer")
         } else {
           locker synchronized hdfsFileSystemContainer.minusAccessCount()
         }

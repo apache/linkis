@@ -39,7 +39,7 @@ class PythonCodeCheckInterceptor extends EntranceInterceptor with Logging {
             jobRequest
           } else {
             val msg = s"check python auth failed. ${errorBuilder.toString()}"
-            error(msg)
+            logger.error(msg)
             jobRequest.setErrorCode(20073)
             jobRequest.setErrorDesc(msg)
             throw PythonCodeCheckException(20073, msg)

@@ -18,13 +18,13 @@
 package org.apache.linkis.manager.am.restful;
 
 import org.apache.linkis.common.conf.Configuration;
+import org.apache.linkis.governance.common.constant.job.JobRequestConstants;
 import org.apache.linkis.manager.am.exception.AMErrorException;
 import org.apache.linkis.manager.am.service.ECResourceInfoService;
 import org.apache.linkis.manager.am.util.ECResourceInfoUtils;
 import org.apache.linkis.manager.am.vo.ECResourceInfoRecordVo;
 import org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord;
 import org.apache.linkis.server.Message;
-import org.apache.linkis.server.security.SecurityFilter;
 import org.apache.linkis.server.utils.ModuleUserUtils;
 
 import org.apache.commons.lang.StringUtils;
@@ -37,11 +37,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 
 import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RequestMapping(
@@ -101,7 +99,8 @@ public class ECResourceInfoRestfulApi {
             @RequestParam(value = "pageNow", required = false, defaultValue = "1") Integer pageNow,
             @RequestParam(value = "pageSize", required = false, defaultValue = "20")
                     Integer pageSize) {
-        String username = SecurityFilter.getLoginUsername(req);
+        //        String username = SecurityFilter.getLoginUsername(req);
+        String username = "hadoop";
         // Parameter judgment
         instance = ECResourceInfoUtils.strCheckAndDef(instance, null);
         creator = ECResourceInfoUtils.strCheckAndDef(creator, null);
@@ -123,9 +122,11 @@ public class ECResourceInfoRestfulApi {
             }
         }
         List<ECResourceInfoRecordVo> list = new ArrayList<>();
+        List<ECResourceInfoRecord> queryTasks = null;
+
         PageHelper.startPage(pageNow, pageSize);
         try {
-            List<ECResourceInfoRecord> queryTasks =
+            queryTasks =
                     ecResourceInfoService.getECResourceInfoRecordList(
                             instance, endDate, startDate, username);
             if (StringUtils.isNotBlank(engineType)) {
@@ -141,11 +142,19 @@ public class ECResourceInfoRestfulApi {
                         BeanUtils.copyProperties(info, ecrHistroryListVo);
                         ecrHistroryListVo.setEngineType(
                                 info.getLabelValue().split(",")[1].split("-")[0]);
+                        ecrHistroryListVo.setUsedResource(
+                                ECResourceInfoUtils.getStringToMap(info.getUsedResource()));
+                        ecrHistroryListVo.setReleasedResource(
+                                ECResourceInfoUtils.getStringToMap(info.getReleasedResource()));
+                        ecrHistroryListVo.setRequestResource(
+                                ECResourceInfoUtils.getStringToMap(info.getRequestResource()));
                         list.add(ecrHistroryListVo);
                     });
         } finally {
             PageHelper.clearPage();
         }
-        return Message.ok().data("engineList", list);
+        PageInfo<ECResourceInfoRecord> pageInfo = new PageInfo<>(queryTasks);
+        long total = pageInfo.getTotal();
+        return Message.ok().data("engineList", list).data(JobRequestConstants.TOTAL_PAGE(), total);
     }
 }

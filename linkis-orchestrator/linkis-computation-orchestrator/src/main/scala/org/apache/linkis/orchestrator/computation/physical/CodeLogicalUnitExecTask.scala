@@ -39,8 +39,11 @@ import org.apache.linkis.orchestrator.strategy.{ResultSetExecTask, StatusInfoExe
 import org.apache.linkis.orchestrator.utils.OrchestratorIDCreator
 import org.apache.linkis.scheduler.executer.{ErrorExecuteResponse, SubmitResponse}
 import org.apache.commons.lang.StringUtils
-import org.apache.linkis.orchestrator.listener.task.TaskLogEvent
+import org.apache.linkis.manager.common.protocol.resource.ResourceWithStatus
+import org.apache.linkis.orchestrator.listener.task.{TaskLogEvent, TaskRunningInfoEvent}
+import org.apache.linkis.protocol.constants.TaskConstant
 
+import java.util
 import scala.concurrent.duration.Duration
 import scala.collection.convert.decorateAsScala._
 /**
@@ -86,9 +89,13 @@ class CodeLogicalUnitExecTask (parents: Array[ExecTask], children: Array[ExecTas
       }
       response match {
         case SubmitResponse(engineConnExecId) =>
-          //封装engineConnExecId信息
           codeExecutor.setEngineConnTaskId(engineConnExecId)
           codeExecTaskExecutorManager.addEngineConnTaskID(codeExecutor)
+          val infoMap = new  util.HashMap[String, Object]
+          infoMap.put(TaskConstant.ENGINE_INSTANCE, codeExecutor.getEngineConnExecutor.getServiceInstance)
+          val event = TaskRunningInfoEvent(this, 0f,
+            Array.empty, new util.HashMap[String, ResourceWithStatus], infoMap)
+          getPhysicalContext.pushProgress(event)
           getPhysicalContext.pushLog(TaskLogEvent(this, LogUtils.generateInfo(s"Task submit to ec: ${codeExecutor.getEngineConnExecutor.getServiceInstance} get engineConnExecId is: ${engineConnExecId}")))
           new AsyncTaskResponse {
             override def notifyMe(listener: NotifyListener): Unit = null

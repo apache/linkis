@@ -40,7 +40,7 @@ class HashMapHttpResult extends HttpResult {
   def getResultMap: util.Map[String, Object] = resultMap
 
   override def set(responseBody: String, statusCode: Int, url: String, contentType: String): Unit = {
-    if(statusCode != 200) throw new HttpClientResultException(s"URL $url request failed! ResponseBody is $responseBody." )
+    if (statusCode != 200) throw new HttpClientResultException(s"URL $url request failed! ResponseBody is $responseBody." )
     resultMap = JsonUtils.jackson.readValue(responseBody, classOf[util.Map[String, Object]])
     this.responseBody = responseBody
     this.statusCode = statusCode

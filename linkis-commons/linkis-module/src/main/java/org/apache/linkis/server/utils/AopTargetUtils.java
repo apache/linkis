@@ -35,7 +35,8 @@ public class AopTargetUtils {
     public static Object getTarget(Object proxy) throws Exception {
 
         if (!AopUtils.isAopProxy(proxy)) {
-            return proxy; // Not a proxy object(不是代理对象)
+            // Not a proxy object(不是代理对象)
+            return proxy;
         }
 
         if (AopUtils.isJdkDynamicProxy(proxy)) {

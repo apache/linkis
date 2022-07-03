@@ -28,7 +28,7 @@ import org.apache.linkis.server.security.SSOUtils.sslEnable
 import org.apache.linkis.server.{Message, _}
 import javax.servlet._
 import javax.servlet.http.{Cookie, HttpServletRequest, HttpServletResponse}
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 
 
 class SecurityFilter extends Filter {
@@ -120,8 +120,10 @@ class SecurityFilter extends Filter {
 object SecurityFilter extends Logging {
   private[linkis] val OTHER_SYSTEM_IGNORE_UM_USER = "dataworkcloud_rpc_user"
   private[linkis] val ALLOW_ACCESS_WITHOUT_TIMEOUT = "dataworkcloud_inner_request"
+
   def getLoginUserThrowsExceptionWhenTimeout(req: HttpServletRequest): Option[String] = Option(req.getCookies).flatMap(cs => SSOUtils.getLoginUser(cs))
     .orElse(SSOUtils.getLoginUserIgnoreTimeout(key => Option(req.getHeader(key))).filter(_ == OTHER_SYSTEM_IGNORE_UM_USER))
+
   def getLoginUser(req: HttpServletRequest): Option[String] = Utils.tryCatch(getLoginUserThrowsExceptionWhenTimeout(req)) {
     case _: LoginExpireException =>
       SSOUtils.getLoginUserIgnoreTimeout(key => Option(req.getCookies).flatMap(_.find(_.getName == key).map(_.getValue))).filter(user => user != OTHER_SYSTEM_IGNORE_UM_USER &&

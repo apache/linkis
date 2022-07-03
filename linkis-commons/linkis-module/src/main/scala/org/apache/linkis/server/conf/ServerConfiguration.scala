@@ -17,14 +17,14 @@
  
 package org.apache.linkis.server.conf
 
-import java.io.File
-import java.lang.Boolean
-
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.conf.{CommonVars, Configuration, TimeType}
 import org.apache.linkis.common.utils.{DESUtil, Logging, Utils}
 import org.apache.linkis.server.exception.BDPInitServerException
-import org.apache.commons.lang3.StringUtils
 import sun.misc.BASE64Encoder
+
+import java.io.File
+import java.lang
 
 
 object ServerConfiguration extends Logging{
@@ -33,7 +33,7 @@ object ServerConfiguration extends Logging{
   val BDP_SERVER_EXCLUDE_ANNOTATION = CommonVars("wds.linkis.server.component.exclude.annotation", "")
   val BDP_SERVER_SPRING_APPLICATION_LISTENERS = CommonVars("wds.linkis.server.spring.application.listeners", "")
 
-  val BDP_SERVER_VERSION = CommonVars("wds.linkis.server.version", "").getValue
+  val BDP_SERVER_VERSION: String = CommonVars("wds.linkis.server.version", "").getValue
   if(StringUtils.isBlank(BDP_SERVER_VERSION)) {
     throw new BDPInitServerException(10010, "DataWorkCloud service must set the version, please add property [[wds.linkis.server.version]] to properties file.")
   }
@@ -65,19 +65,19 @@ object ServerConfiguration extends Logging{
   val BDP_TEST_USER = CommonVars("wds.linkis.test.user", "")
 
   val BDP_SERVER_HOME = CommonVars("wds.linkis.server.home", CommonVars("LINKIS_HOME", "").getValue)
-  val BDP_SERVER_DISTINCT_MODE = CommonVars("wds.linkis.server.distinct.mode", new Boolean(true))
+  val BDP_SERVER_DISTINCT_MODE: CommonVars[lang.Boolean] = CommonVars("wds.linkis.server.distinct.mode", lang.Boolean.TRUE)
 
   if (!BDP_SERVER_DISTINCT_MODE.getValue && StringUtils.isEmpty(BDP_SERVER_HOME.getValue)) {
     throw new BDPInitServerException(11000, "wds.linkis.server.home或BDP_SERVER_HOME haven't set!")
   }
-  val BDP_SERVER_SOCKET_MODE = CommonVars("wds.linkis.server.socket.mode", new Boolean(false))
+  val BDP_SERVER_SOCKET_MODE: CommonVars[lang.Boolean] = CommonVars("wds.linkis.server.socket.mode", lang.Boolean.FALSE)
   val BDP_SERVER_IDENT_STRING = CommonVars("wds.linkis.server.ident.string", "true")
   val BDP_SERVER_SERVER_JETTY_NAME = CommonVars("wds.linkis.server.jetty.name", "")
   val BDP_SERVER_ADDRESS = CommonVars("wds.linkis.server.address", Utils.getLocalHostname)
   val BDP_SERVER_PORT = CommonVars("wds.linkis.server.port", 20303)
   val BDP_SERVER_SECURITY_FILTER = CommonVars("wds.linkis.server.security.filter", "org.apache.linkis.server.security.SecurityFilter")
   val BDP_SERVER_SECURITY_REFERER_VALIDATE = CommonVars("wds.linkis.server.security.referer.validate", false)
-  val BDP_SERVER_SECURITY_SSL = CommonVars("wds.linkis.server.security.ssl", false)
+  val BDP_SERVER_SECURITY_SSL: CommonVars[Boolean] = CommonVars("wds.linkis.server.security.ssl", false)
   val BDP_SERVER_SECURITY_SSL_EXCLUDE_PROTOCOLS = CommonVars("wds.linkis.server.security.ssl.excludeProtocols", "SSLv2,SSLv3")
   val BDP_SERVER_SECURITY_SSL_KEYSTORE_PATH = CommonVars("wds.linkis.server.security.ssl.keystore.path",
     new File(BDP_SERVER_HOME.getValue, "keystore").getPath)
@@ -88,7 +88,7 @@ object ServerConfiguration extends Logging{
     "")
 
   val BDP_SERVER_SERVER_CONTEXT_PATH = CommonVars("wds.linkis.server.context.path", "/")
-  val BDP_SERVER_RESTFUL_URI = CommonVars("wds.linkis.server.restful.uri", "/api/rest_j/" + BDP_SERVER_VERSION)
+  val BDP_SERVER_RESTFUL_URI: CommonVars[String] = CommonVars("wds.linkis.server.restful.uri", "/api/rest_j/" + BDP_SERVER_VERSION)
   val BDP_SERVER_USER_URI = CommonVars("wds.linkis.server.user.restful.uri", "/api/rest_j/" + BDP_SERVER_VERSION + "/user")
   val BDP_SERVER_RESTFUL_LOGIN_URI = CommonVars("wds.linkis.server.user.restful.login.uri", new File(BDP_SERVER_USER_URI.getValue, "login").getPath)
   val BDP_SERVER_RESTFUL_PASS_AUTH_REQUEST_URI = CommonVars("wds.linkis.server.user.restful.uri.pass.auth", "").getValue.split(",")

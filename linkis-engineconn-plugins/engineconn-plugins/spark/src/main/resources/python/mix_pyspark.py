@@ -16,8 +16,6 @@
 import sys, getopt, traceback, json, re
 import os
 os.environ['PYSPARK_ALLOW_INSECURE_GATEWAY']='1'
-import matplotlib
-matplotlib.use('Agg')
 zipPaths = sys.argv[4]
 paths = zipPaths.split(':')
 for i in range(len(paths)):
@@ -43,6 +41,13 @@ except ImportError:
 
 import time
 import threading
+
+try:
+  import matplotlib
+  matplotlib.use('Agg')
+except Exception as e:
+  print("Failed to import matplotlib")
+  print(e)
 
 # for back compatibility
 from pyspark.sql import SQLContext, HiveContext, Row
@@ -149,9 +154,20 @@ def showAlias(obj,alias):
     else:
         print((str(obj)))
 
-def show_matplotlib(p, fmt="png", width="auto", height="auto", **kwargs):
+def show_matplotlib(p=None, fmt="png", width="auto", height="auto", **kwargs):
     """Matplotlib show function
     """
+    if p==None:
+        try:
+          import matplotlib
+          matplotlib.use('Agg')
+          import matplotlib.pyplot
+          p=matplotlib.pyplot
+        except Exception as e:
+          print("Failed to import matplotlib")
+          print(e)
+          return
+
     if fmt == "png":
         img = BytesIO()
         p.savefig(img, format=fmt)
@@ -226,6 +242,22 @@ def java_watchdog_thread(sleep=10):
 watchdog_thread = threading.Thread(target=java_watchdog_thread)
 watchdog_thread.setDaemon(True)
 watchdog_thread.start()
+
+
+def setup_plt_show():
+    """Override plt.show to show_matplotlib method
+    """
+    try:
+      import matplotlib
+      matplotlib.use('Agg')
+      import matplotlib.pyplot
+      matplotlib.pyplot.show=show_matplotlib
+    except Exception as e:
+      print(e)
+      return
+
+setup_plt_show()
+
 
 while True :
     req = intp.getStatements()

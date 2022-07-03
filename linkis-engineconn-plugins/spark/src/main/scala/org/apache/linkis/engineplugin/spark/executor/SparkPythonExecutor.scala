@@ -99,18 +99,18 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
   override def init(): Unit = {
     setCodeParser(new PythonCodeParser)
     super.init()
-    info("spark sql executor start")
+    logger.info("spark sql executor start")
   }
 
   override def killTask(taskID: String): Unit = {
-    info(s"Start to kill python task $taskID")
+    logger.info(s"Start to kill python task $taskID")
     super.killTask(taskID)
-    info(s"To close python cli task $taskID")
+    logger.info(s"To close python cli task $taskID")
     Utils.tryAndError(close)
   }
 
   override def close: Unit = {
-    info("python executor ready to close")
+    logger.info("python executor ready to close")
     if (process != null) {
       if (gatewayServer != null) {
         Utils.tryAndError(gatewayServer.shutdown())
@@ -123,10 +123,10 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
         process = null
       }("process close failed")
     }
-    info(s"To delete python executor")
+    logger.info(s"To delete python executor")
     Utils.tryAndError(ExecutorManager.getInstance.removeExecutor(getExecutorLabels().asScala.toArray))
-    info(s"Finished to kill python")
-    info("python executor Finished to close")
+    logger.info(s"Finished to kill python")
+    logger.info("python executor Finished to close")
   }
 
   override def getKind: Kind = PySpark()
@@ -148,7 +148,7 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
     gatewayServer = gwBuilder.entryPoint(this).javaPort(port).build()
     gatewayServer.start()
 
-    info("Pyspark process file path is: " + getClass.getClassLoader.getResource(pythonScriptPath).toURI)
+    logger.info("Pyspark process file path is: " + getClass.getClassLoader.getResource(pythonScriptPath).toURI)
     val pythonClasspath = new StringBuilder(pythonPath)
 
     //
@@ -176,14 +176,14 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
 
     val env = builder.environment()
     if (StringUtils.isBlank(sc.getConf.get("spark.pyspark.python", ""))) {
-      info("spark.pyspark.python is null")
+      logger.info("spark.pyspark.python is null")
       if(userDefinePythonVersion.equals("python3")) {
-        info(s"userDefinePythonVersion is $pythonExec will be set to PYSPARK_PYTHON")
+        logger.info(s"userDefinePythonVersion is $pythonExec will be set to PYSPARK_PYTHON")
         env.put("PYSPARK_PYTHON", pythonExec)
       }
     } else {
       val executorPython = sc.getConf.get("spark.pyspark.python")
-      info(s"set PYSPARK_PYTHON spark.pyspark.python is $executorPython")
+      logger.info(s"set PYSPARK_PYTHON spark.pyspark.python is $executorPython")
       env.put("PYSPARK_PYTHON", executorPython)
     }
     env.put("PYTHONPATH", pythonClasspath.toString())
@@ -191,7 +191,7 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
     env.put("PYSPARK_GATEWAY_PORT", "" + port)
     env.put("SPARK_HOME", SparkConfiguration.SPARK_HOME.getValue)
     //    builder.redirectError(Redirect.INHERIT)
-    info("pyspark builder command:" + builder.command().asScala.mkString(" "))
+    logger.info("pyspark builder command:" + builder.command().asScala.mkString(" "))
     builder.redirectErrorStream(true)
     builder.redirectInput(ProcessBuilder.Redirect.PIPE)
     process = builder.start()
@@ -204,7 +204,7 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
     Future {
       val exitCode = process.waitFor()
       pythonScriptInitialized = false
-      info("Pyspark process  has stopped with exit code " + exitCode)
+      logger.info("Pyspark process  has stopped with exit code " + exitCode)
       //      close
       Utils.tryFinally({
         if (promise != null && !promise.isCompleted) {
@@ -280,12 +280,12 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
   def onPythonScriptInitialized(pid: Int) = {
     this.pid = Some(pid.toString)
     pythonScriptInitialized = true
-    info(s"Pyspark process has been initialized.pid is $pid")
+    logger.info(s"Pyspark process has been initialized.pid is $pid")
   }
 
   def getStatements = {
     queryLock synchronized {while(code == null || ! pythonScriptInitialized) queryLock.wait()}
-    info("Prepare to deal python code, code: " + code.substring(0, if (code.indexOf("\n") > 0) code.indexOf("\n") else code.length))
+    logger.info("Prepare to deal python code, code: " + code.substring(0, if (code.indexOf("\n") > 0) code.indexOf("\n") else code.length))
     //    lineOutputStream.reset(this.engineExecutorContext)
     val request = PythonInterpretRequest(code, jobGroup)
     code = null
@@ -293,13 +293,13 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
   }
 
   def setStatementsFinished(out: String, error: Boolean) = {
-    info(s"A python code finished, has some errors happened?  $error.")
+    logger.info(s"A python code finished, has some errors happened?  $error.")
     Utils.tryQuietly(Thread.sleep(10))
     if(! error) {
       promise.success(SUCCESS)
     } else {
       if (promise.isCompleted) {
-        info("promise is completed and should start another python gateway")
+        logger.info("promise is completed and should start another python gateway")
         close
       }else{
         promise.failure(ExecuteError(40003,out))
@@ -308,7 +308,7 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
   }
   def appendOutput(message: String) = {
     if(!pythonScriptInitialized) {
-      info(message)
+      logger.info(message)
     } else {
       lineOutputStream.write(message.getBytes("utf-8"))
     }
@@ -316,26 +316,26 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
 
   def appendErrorOutput(message: String) = {
     if(!pythonScriptInitialized) {
-      info(message)
+      logger.info(message)
     } else {
-      error(message)
+      logger.error(message)
       engineExecutionContext.appendStdout(s"errorMessage is $message")
     }
   }
 
   def showDF(jobGroup: String, df: Any) = {
     SQLSession.showDF(sc, jobGroup, df.asInstanceOf[DataFrame], null, 5000, this.engineExecutionContext)
-    info("Pyspark showDF execute success!")
+    logger.info("Pyspark showDF execute success!")
   }
 
   def showAliasDF(jobGroup: String, df: Any, alias:String) = {
     SQLSession.showDF(sc, jobGroup, df.asInstanceOf[DataFrame], alias, 5000, this.engineExecutionContext)
-    info("Pyspark showAliasDF execute success!")
+    logger.info("Pyspark showAliasDF execute success!")
   }
 
   def showHTML(jobGroup: String, htmlContent: Any)={
     SQLSession.showHTML(sc,jobGroup,htmlContent,this.engineExecutionContext)
-    info("Pyspark showHTML execute success!")
+    logger.info("Pyspark showHTML execute success!")
   }
   def saveDFToCsv(df: Any, path: String, hasHeader: Boolean = true ,
                   isOverwrite: Boolean = false, option: util.Map[String, Any] = new util.HashMap()): Boolean ={

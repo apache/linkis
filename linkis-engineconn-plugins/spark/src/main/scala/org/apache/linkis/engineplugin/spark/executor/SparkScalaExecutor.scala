@@ -17,9 +17,10 @@
  
 package org.apache.linkis.engineplugin.spark.executor
 
-import java.io.{BufferedReader, File}
+import org.apache.commons.io.IOUtils
+import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang.exception.ExceptionUtils
 import org.apache.linkis.common.utils.Utils
-import org.apache.linkis.engineconn.computation.executor.creation.ComputationExecutorManager
 import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
 import org.apache.linkis.engineconn.computation.executor.rs.RsOutputStream
 import org.apache.linkis.engineconn.core.executor.ExecutorManager
@@ -31,14 +32,12 @@ import org.apache.linkis.engineplugin.spark.utils.EngineUtils
 import org.apache.linkis.governance.common.paser.ScalaCodeParser
 import org.apache.linkis.scheduler.executer.{ErrorExecuteResponse, ExecuteResponse, IncompleteExecuteResponse, SuccessExecuteResponse}
 import org.apache.linkis.storage.resultset.ResultSetWriter
-import org.apache.commons.io.IOUtils
-import org.apache.commons.lang.StringUtils
-import org.apache.commons.lang.exception.ExceptionUtils
 import org.apache.spark.repl.SparkILoop
 import org.apache.spark.sql.{SQLContext, SparkSession}
 import org.apache.spark.util.SparkUtils
 import org.apache.spark.{SparkConf, SparkContext}
 
+import java.io.{BufferedReader, File}
 import _root_.scala.tools.nsc.GenericRunnerSettings
 import scala.tools.nsc.interpreter.{IMain, JPrintWriter, NamedParam, Results, SimpleReader, StdReplTags, isReplPower, replProps}
 
@@ -133,7 +132,7 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long) exten
     }{
       case e: Exception =>
         sparkContext.clearJobGroup()
-        error("Interpreter exception", e)
+        logger.error("Interpreter exception", e)
         // _state = Idle()
         return ErrorExecuteResponse("Interpreter exception",e)
     }
@@ -149,17 +148,17 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long) exten
   }
   def executeLine(code: String, engineExecutionContext: EngineExecutionContext): ExecuteResponse = {
     if(sparkContext.isStopped) {
-      error("Spark application has already stopped, please restart it.")
+      logger.error("Spark application has already stopped, please restart it.")
       throw new ApplicationAlreadyStoppedException(40004,"Spark application has already stopped, please restart it.")
     }
     executeCount += 1
     val originalOut = System.out
     val result = scala.Console.withOut(lineOutputStream) {
       Utils.tryCatch(sparkILoop.interpret(code)){ t =>
-        error("task error info:", t)
+        logger.error("task error info:", t)
         val msg = ExceptionUtils.getRootCauseMessage(t)
         if (matchFatalLog(msg)) {
-          error("engine oom now to set status to shutdown")
+          logger.error("engine oom now to set status to shutdown")
           ExecutorManager.getInstance.getReportExecutor.tryShutdown()
         }
         engineExecutionContext.appendStdout("task error info: " + msg)
@@ -187,14 +186,14 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long) exten
           var errorMsg: String = null
             if (StringUtils.isNotBlank(output)) {
               errorMsg = Utils.tryCatch(EngineUtils.getResultStrByDolphinTextContent(output))(t => t.getMessage)
-              error("Execute code error for "+  errorMsg)
+              logger.error("Execute code error for "+  errorMsg)
               engineExecutionContext.appendStdout("Execute code error for "+  errorMsg)
               if (matchFatalLog(errorMsg)) {
-                error("engine log fatal logs now to set status to shutdown")
+                logger.error("engine log fatal logs now to set status to shutdown")
                 ExecutorManager.getInstance.getReportExecutor.tryShutdown()
               }
           } else {
-            error("No error message is captured, please see the detailed log")
+              logger.error("No error message is captured, please see the detailed log")
           }
           ErrorExecuteResponse(errorMsg, ExecuteError(40005, "execute sparkScala failed!"))
       }
@@ -210,7 +209,7 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long) exten
       val errorMsgLowCase = errorMsg.toLowerCase
       fatalLogs.foreach(fatalLog =>
         if (  errorMsgLowCase.contains(fatalLog) ) {
-          error(s"match engineConn log fatal logs,is $fatalLog")
+          logger.error(s"match engineConn log fatal logs,is $fatalLog")
           flag = true
         }
       )
@@ -220,7 +219,7 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long) exten
 
 
   private def createSparkILoop = {
-    info("outputDir====> " + outputDir)
+    logger.info("outputDir====> " + outputDir)
     sparkILoop = Utils.tryCatch{
       new SparkILoop(None, jOut)
     }{
@@ -249,7 +248,7 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long) exten
     //.filterNot(f=> f.contains("spark-") || f.contains("datanucleus"))
     val classpath = jars.mkString(File.pathSeparator) + File.pathSeparator +
       classpathJars.mkString(File.pathSeparator)
-    debug("Spark shell add jars: " + classpath)
+    logger.debug("Spark shell add jars: " + classpath)
     settings.processArguments(List("-Yrepl-class-based",
       "-Yrepl-outdir", s"${outputDir.getAbsolutePath}", "-classpath", classpath), true)
     settings.usejavacp.value = true
@@ -287,7 +286,7 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long) exten
     //Wait up to 10 seconds（最多等待10秒）
     val startTime = System.currentTimeMillis()
     Utils.waitUntil(() => sparkILoop.intp != null && sparkILoop.intp.isInitializeComplete, SparkConfiguration.SPARK_LANGUAGE_REPL_INIT_TIME.getValue.toDuration)
-    warn(s"Start to init sparkILoop cost ${System.currentTimeMillis() - startTime}.")
+    logger.warn(s"Start to init sparkILoop cost ${System.currentTimeMillis() - startTime}.")
     sparkILoop.beSilentDuring {
       sparkILoop.command(":silent")
       sparkILoop.bind("sc", "org.apache.spark.SparkContext", sparkContext, List("""@transient"""))
@@ -318,7 +317,7 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long) exten
       sparkILoop.interpret("implicit def toUDFMethod(udf: UDF.type): UDFRegistration = sqlContext.udf")
       sparkILoop.interpret("implicit val sparkSession = spark")
       bindFlag = true
-      warn(s"Finished to init sparkILoop cost ${System.currentTimeMillis() - startTime}.")
+      logger.warn(s"Finished to init sparkILoop cost ${System.currentTimeMillis() - startTime}.")
     }
   }
 

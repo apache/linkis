@@ -42,10 +42,10 @@ class DefaultEngineRecycleService extends AbstractEngineService with EngineRecyc
   @Receiver
   override def recycleEngine(engineRecyclingRequest: EngineRecyclingRequest): Array[ServiceInstance] = {
     if (null == ruleExecutorList) {
-      error("has not recycling rule")
+      logger.error("has not recycling rule")
       return null
     }
-    info(s"start to recycle engine by ${engineRecyclingRequest.getUser}")
+    logger.info(s"start to recycle engine by ${engineRecyclingRequest.getUser}")
     //1. 规则解析
     val ruleList = engineRecyclingRequest.getRecyclingRuleList
     //2. 返回一系列待回收Engine，
@@ -60,13 +60,13 @@ class DefaultEngineRecycleService extends AbstractEngineService with EngineRecyc
     if (null == recyclingNodeSet) {
       return null
     }
-    info(s"The list of engines recycled this time is as follows:${recyclingNodeSet}")
+    logger.info(s"The list of engines recycled this time is as follows:${recyclingNodeSet}")
     //3. 调用EMService stopEngine
     recyclingNodeSet.foreach { serviceInstance =>
       val stopEngineRequest = new EngineStopRequest(serviceInstance, engineRecyclingRequest.getUser)
       engineStopService.asyncStopEngine(stopEngineRequest)
     }
-    info(s"Finished to recycle engine ,num ${recyclingNodeSet.size}")
+    logger.info(s"Finished to recycle engine ,num ${recyclingNodeSet.size}")
     recyclingNodeSet.toArray
   }
 

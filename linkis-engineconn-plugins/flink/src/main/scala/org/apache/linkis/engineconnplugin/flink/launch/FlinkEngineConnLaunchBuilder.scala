@@ -48,7 +48,7 @@ class FlinkEngineConnLaunchBuilder extends JavaProcessEngineConnLaunchBuilder {
     properties.get("flink.app.main.class.jar.bml.json") match {
       case mainClassJarContent: String =>
         val bmlResource = contentToBmlResource(userName, mainClassJarContent)
-        info(s"Add a BmlResource(${bmlResource.getFileName}, ${bmlResource.getResourceId}, ${bmlResource.getVersion}) for user $userName and ticketId ${engineConnBuildRequest.ticketId}.")
+        logger.info(s"Add a BmlResource(${bmlResource.getFileName}, ${bmlResource.getResourceId}, ${bmlResource.getVersion}) for user $userName and ticketId ${engineConnBuildRequest.ticketId}.")
         bmlResources.add(bmlResource)
         properties.remove("flink.app.main.class.jar.bml.json")
       case _ =>
@@ -57,7 +57,7 @@ class FlinkEngineConnLaunchBuilder extends JavaProcessEngineConnLaunchBuilder {
       case classpathContent: String =>
         val contentList = JsonUtils.jackson.readValue(classpathContent, classOf[util.List[util.Map[String, Object]]])
         contentList.asScala.map(contentToBmlResource(userName, _)).foreach { bmlResource =>
-          info(s"Add a BmlResource(${bmlResource.getFileName}, ${bmlResource.getResourceId}, ${bmlResource.getVersion}) for user $userName and ticketId ${engineConnBuildRequest.ticketId}.")
+          logger.info(s"Add a BmlResource(${bmlResource.getFileName}, ${bmlResource.getResourceId}, ${bmlResource.getVersion}) for user $userName and ticketId ${engineConnBuildRequest.ticketId}.")
           bmlResources.add(bmlResource)
         }
         properties.remove("flink.app.user.class.path.bml.json")

@@ -53,7 +53,7 @@ class HiveAddMetaTableNameHook extends ComputationExecutorHook with Logging {
             Utils.tryCatch {
               val boolValue = value.toBoolean
               if (engineExecutionContext.getProperties.containsKey(ConfVars.HIVE_RESULTSET_USE_UNIQUE_COLUMN_NAMES.varname)) {
-                warn(s"Should not add param ${mather.group()} in both code and starupMap, will use the param in code.")
+                logger.warn(s"Should not add param ${mather.group()} in both code and starupMap, will use the param in code.")
               }
               engineExecutionContext.setEnableResultsetMetaWithTableName(boolValue)
             } {

@@ -75,7 +75,7 @@ class HiveAddJarsEngineHook extends EngineConnHook with Logging {
               case _ =>
             }
           } catch {
-            case t: Throwable => error(s"run hive sql ${addSql + jar} failed", t)
+            case t: Throwable => logger.error(s"run hive sql ${addSql + jar} failed", t)
           }
       }
     }

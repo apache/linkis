@@ -68,7 +68,7 @@ object EngineType extends Enumeration with Logging {
       case "hdfs" =>
         EngineType.IO_ENGINE_HDFS.toString
       case _ =>
-        error(s"In method mapFsTypeToEngineType(): Invalid fsType : ${fsType}, will not convert.")
+        logger.error(s"In method mapFsTypeToEngineType(): Invalid fsType : ${fsType}, will not convert.")
         fsType
     }
   }

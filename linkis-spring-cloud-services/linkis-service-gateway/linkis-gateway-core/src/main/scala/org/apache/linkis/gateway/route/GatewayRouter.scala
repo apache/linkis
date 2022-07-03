@@ -52,7 +52,7 @@ abstract class AbstractGatewayRouter extends GatewayRouter with Logging {
           service = findService
           service.nonEmpty
         }, ServiceInstanceUtils.serviceRefreshMaxWaitTime(), 500, 2000)){ t =>
-          warn(s"Need a random $serviceId instance, but no one can find in Discovery refresh.", t)
+          logger.warn(s"Need a random $serviceId instance, but no one can find in Discovery refresh.", t)
           applicationNotExists.initCause(t)
           applicationNotExists
         }
@@ -99,7 +99,7 @@ class DefaultGatewayRouter(var gatewayRouters: Array[GatewayRouter]) extends Abs
 
   private def findCommonService(parsedServiceId: String) = findService(parsedServiceId, services => {
     val errorMsg = new TooManyServiceException(s"Cannot find a correct serviceId for parsedServiceId $parsedServiceId, service list is: " + services)
-    warn("", errorMsg)
+    logger.warn("", errorMsg)
     throw errorMsg
   })
 
@@ -126,12 +126,12 @@ class DefaultGatewayRouter(var gatewayRouters: Array[GatewayRouter]) extends Abs
     val serviceInstance = Utils.tryCatch(findReallyService(gatewayContext)){ t =>
       val message = Message.error(ExceptionUtils.getRootCauseMessage(t)) << gatewayContext.getRequest.getRequestURI
       message.data("data", gatewayContext.getRequest.getRequestBody)
-      warn("", t)
+      logger.warn("", t)
       if(gatewayContext.isWebSocketRequest) gatewayContext.getResponse.writeWebSocket(message) else gatewayContext.getResponse.write(message)
       gatewayContext.getResponse.sendResponse()
       return null
     }
-    info("GatewayRouter route requestUri " + gatewayContext.getGatewayRoute.getRequestURI + " with parsedService " + parsedService + " to " + serviceInstance)
+    logger.info("GatewayRouter route requestUri " + gatewayContext.getGatewayRoute.getRequestURI + " with parsedService " + parsedService + " to " + serviceInstance)
     serviceInstance
   } else null
 }

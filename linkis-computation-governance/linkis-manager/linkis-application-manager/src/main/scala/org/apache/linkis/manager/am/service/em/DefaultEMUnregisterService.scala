@@ -41,11 +41,11 @@ class DefaultEMUnregisterService extends EMUnregisterService with Logging {
 
   @Receiver
   override def stopEM(stopEMRequest: StopEMRequest, sender: Sender): Unit = {
-    info(s" user ${stopEMRequest.getUser} prepare to stop em ${stopEMRequest.getEm}")
+    logger.info(s" user ${stopEMRequest.getUser} prepare to stop em ${stopEMRequest.getEm}")
     val node = emNodeManager.getEM(stopEMRequest.getEm)
     if (null == node) return
     if (node.getOwner != stopEMRequest.getUser) {
-      info(s" ${stopEMRequest.getUser}  are not owner, will not to stopEM")
+      logger.info(s" ${stopEMRequest.getUser}  are not owner, will not to stopEM")
     }
 
         //clear RM info
@@ -58,7 +58,7 @@ class DefaultEMUnregisterService extends EMUnregisterService with Logging {
     Utils.tryAndWarn(nodeLabelRemoveService.removeNodeLabel(instanceLabelRemoveRequest))
     // 此处需要先清理ECM再等待，避免ECM重启过快，导致ECM资源没清理干净
     clearEMInstanceInfo(emClearRequest)
-    info(s" user ${stopEMRequest.getUser} finished to stop em ${stopEMRequest.getEm}")
+    logger.info(s" user ${stopEMRequest.getUser} finished to stop em ${stopEMRequest.getEm}")
   }
 
   implicit def stopEMRequest2EMResourceClearRequest(stopEMRequest: StopEMRequest): EMResourceClearRequest = {
@@ -69,9 +69,9 @@ class DefaultEMUnregisterService extends EMUnregisterService with Logging {
   }
 
   override def clearEMInstanceInfo(emClearRequest: EMInfoClearRequest): Unit = {
-    info(s" user ${emClearRequest.getUser} prepare to clear em info ${emClearRequest.getEm.getServiceInstance}")
+    logger.info(s" user ${emClearRequest.getUser} prepare to clear em info ${emClearRequest.getEm.getServiceInstance}")
     emNodeManager.deleteEM(emClearRequest.getEm)
-    info(s" user ${emClearRequest.getUser} Finished to clear em info ${emClearRequest.getEm.getServiceInstance}")
+    logger.info(s" user ${emClearRequest.getUser} Finished to clear em info ${emClearRequest.getEm.getServiceInstance}")
   }
 
 

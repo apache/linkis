@@ -29,12 +29,12 @@ class LineageSparkSqlExtension extends SparkSqlExtension with Logging{
       val conf = sqlContext.sparkContext.getConf
       val lineageEnabled = conf.getBoolean("spark.bdp.lineage.enabled", true)
       val startTime = System.currentTimeMillis
-      info("LineageExtractor extract start")
+      logger.info("LineageExtractor extract start")
       if (lineageEnabled) SparkLineageUtils.extract(sqlContext, command, sqlStartTime, dataFrame)
-      info("LineageExtractor extract cost: " + (System.currentTimeMillis - startTime))
+      logger.info("LineageExtractor extract cost: " + (System.currentTimeMillis - startTime))
     } {
       cause: Throwable =>
-        info("Failed to collect lineage info:", cause)
+        logger.info("Failed to collect lineage info:", cause)
     }
 
   }

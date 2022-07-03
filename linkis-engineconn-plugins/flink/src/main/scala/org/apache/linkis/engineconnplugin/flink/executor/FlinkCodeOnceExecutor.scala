@@ -55,27 +55,27 @@ class FlinkCodeOnceExecutor(override val id: Long,
     options(TaskConstant.RUNTYPE) match {
       case "sql" =>
         if(StringUtils.isBlank(codes)) throw new FlinkInitFailedException(s"The sql code is empty.")
-        info(s"Ready to submit flink application, sql is: $codes.")
+        logger.info(s"Ready to submit flink application, sql is: $codes.")
         val variableMap = if(onceExecutorExecutionContext.getOnceExecutorContent.getVariableMap != null)
           onceExecutorExecutionContext.getOnceExecutorContent.getVariableMap.asInstanceOf[util.Map[String, Any]]
         else new util.HashMap[String, Any]
         codes = VariableUtils.replace(codes, variableMap)
-        info(s"After variable replace, sql is: $codes.")
+        logger.info(s"After variable replace, sql is: $codes.")
       case runType =>
         // Now, only support sql code.
         throw new FlinkInitFailedException(s"Not support runType $runType.")
     }
     future = Utils.defaultScheduler.submit(new Runnable {
       override def run(): Unit = {
-        info("Try to execute codes.")
+        logger.info("Try to execute codes.")
         RelMetadataQueryBase.THREAD_PROVIDERS.set(JaninoRelMetadataProvider.of(FlinkDefaultRelMetadataProvider.INSTANCE))
         Utils.tryCatch(CodeParserFactory.getCodeParser(CodeType.SQL).parse(codes).filter(StringUtils.isNotBlank).foreach(runCode)){ t =>
-          error("Run code failed!", t)
+          logger.error("Run code failed!", t)
           setResponse(ErrorExecuteResponse("Run code failed!", t))
           tryFailed()
           return
         }
-        info("All codes completed, now stop FlinkEngineConn.")
+        logger.info("All codes completed, now stop FlinkEngineConn.")
         trySucceed()
       }
     })
@@ -88,7 +88,7 @@ class FlinkCodeOnceExecutor(override val id: Long,
   protected def runCode(code: String): Unit = {
     if(isClosed) return
     val trimmedCode = StringUtils.trim(code)
-    info(s"$getId >> " + trimmedCode)
+    logger.info(s"$getId >> " + trimmedCode)
     val startTime = System.currentTimeMillis
     val callOpt = SqlCommandParser.getSqlCommandParser.parse(code.trim, true)
     if(!callOpt.isPresent) throw new SqlParseException("Unknown statement: " + code)
@@ -104,7 +104,7 @@ class FlinkCodeOnceExecutor(override val id: Long,
     }
     resultSet.foreach(r => r.getResultKind match {
       case SUCCESS_WITH_CONTENT =>
-        info(r.toString)
+        logger.info(r.toString)
         return
       case _ => return
     })
@@ -115,7 +115,7 @@ class FlinkCodeOnceExecutor(override val id: Long,
       val jobClient = tableResult.getJobClient.get
       jobClient match {
         case adaptor: ClusterClientJobClientAdapter[ApplicationId] =>
-          info(s"jobId is ${jobClient.getJobID.toHexString}")
+          logger.info(s"jobId is ${jobClient.getJobID.toHexString}")
           clusterDescriptor.deployCluster(jobClient.getJobID, FlinkCodeOnceExecutor.getClusterClient(adaptor))
       }
       this synchronized notify()
@@ -126,7 +126,7 @@ class FlinkCodeOnceExecutor(override val id: Long,
         tableResult.print()
       case _ =>
     }
-    info(s"Costs ${ByteTimeUtils.msDurationToString(System.currentTimeMillis - startTime)} to complete.")
+    logger.info(s"Costs ${ByteTimeUtils.msDurationToString(System.currentTimeMillis - startTime)} to complete.")
   }
 
   override def close(): Unit = {

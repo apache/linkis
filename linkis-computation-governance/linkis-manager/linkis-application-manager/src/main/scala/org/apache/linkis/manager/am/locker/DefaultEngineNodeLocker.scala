@@ -44,11 +44,11 @@ class DefaultEngineNodeLocker extends EngineNodeLocker with Logging {
 
   @Receiver
   def releaseLock(requestManagerUnlock: RequestManagerUnlock): Unit = {
-    info(s"client${requestManagerUnlock.clientInstance} Start to unlock engine ${requestManagerUnlock.engineInstance}")
+    logger.info(s"client${requestManagerUnlock.clientInstance} Start to unlock engine ${requestManagerUnlock.engineInstance}")
     val engineNode = new AMEngineNode()
     engineNode.setServiceInstance(requestManagerUnlock.engineInstance)
     releaseLock(engineNode, requestManagerUnlock.lock)
-    info(s"client${requestManagerUnlock.clientInstance} Finished to unlock engine ${requestManagerUnlock.engineInstance}")
+    logger.info(s"client${requestManagerUnlock.clientInstance} Finished to unlock engine ${requestManagerUnlock.engineInstance}")
   }
 
 }

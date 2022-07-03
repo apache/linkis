@@ -25,7 +25,7 @@ import org.apache.linkis.manager.label.entity.entrance.ExecuteOnceLabel
 class ECTaskKillHandler extends MonitorHandler with Logging {
   override def handle(request: MonitorHandlerRequest): Unit = {
     if (request == null) {
-      error("illegal input for handler: null")
+      logger.error("illegal input for handler: null")
     } else {
       request match {
         case _: ECTaskKillHandlerRequest => {
@@ -38,12 +38,12 @@ class ECTaskKillHandler extends MonitorHandler with Logging {
                 doKill(element)
                 logger.error(s"ERROR: entrance : ${element.getUpstreamConnection().getUpstreamServiceInstanceName()} lose connect, will kill job : ${element.getKey()}")
               } {
-                t => error("Failed to kill job: " + element.getKey, t)
+                t => logger.error("Failed to kill job: " + element.getKey, t)
               }
             }
           }
         }
-        case _ => error("illegal input for handler: " + request.getClass.getCanonicalName)
+        case _ => logger.error("illegal input for handler: " + request.getClass.getCanonicalName)
       }
     }
   }
@@ -53,19 +53,19 @@ class ECTaskKillHandler extends MonitorHandler with Logging {
       wrapper match {
         case eCTaskEntranceConnectionWrapper: ECTaskEntranceConnectionWrapper => {
           if (eCTaskEntranceConnectionWrapper.getExecutor == null || eCTaskEntranceConnectionWrapper.getEngineConnTask == null) {
-            error("Failed to kill job, executor or engineConnTask in wrapper is null")
+            logger.error("Failed to kill job, executor or engineConnTask in wrapper is null")
           } else {
             eCTaskEntranceConnectionWrapper.getExecutor.killTask(eCTaskEntranceConnectionWrapper.getEngineConnTask.getTaskId)
             if (eCTaskEntranceConnectionWrapper.getEngineConnTask.getLables.exists(_.isInstanceOf[ExecuteOnceLabel])) {
-              warn("upstream monitor tries to shutdown engineConn because executeOnce-label was found")
+              logger.warn("upstream monitor tries to shutdown engineConn because executeOnce-label was found")
               ExecutorManager.getInstance.getReportExecutor.tryShutdown()
             }
           }
         }
-        case _ => error("invalid data-type: " + wrapper.getClass.getCanonicalName)
+        case _ => logger.error("invalid data-type: " + wrapper.getClass.getCanonicalName)
       }
     } else {
-      error("wrapper is null")
+      logger.error("wrapper is null")
     }
   }
 }

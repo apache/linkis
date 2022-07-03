@@ -35,7 +35,7 @@ class DefaultEngineConnBmlResourceGenerator extends AbstractEngineConnBmlResourc
         key -> generateDir(path)
       } {
         case t: Throwable =>
-          error(s"Generate dir : $path error, msg : " + t.getMessage, t)
+          logger.error(s"Generate dir : $path error, msg : " + t.getMessage, t)
           throw t
       }
     }.toMap

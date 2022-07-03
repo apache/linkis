@@ -47,7 +47,7 @@ trait SparkSqlExtension extends Logging {
       val duration = Duration(timeout, TimeUnit.MILLISECONDS)
       Utils.waitUntil(future.isDone, duration)
     } {
-      case e: Throwable => info("Failed to execute SparkSqlExtension:", e)
+      case e: Throwable => logger.info("Failed to execute SparkSqlExtension:", e)
     }
   }
 

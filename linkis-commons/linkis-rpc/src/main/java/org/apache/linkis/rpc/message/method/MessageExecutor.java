@@ -17,12 +17,14 @@
 
 package org.apache.linkis.rpc.message.method;
 
-import org.apache.linkis.common.utils.JavaLog;
 import org.apache.linkis.protocol.message.RequestProtocol;
 import org.apache.linkis.rpc.Sender;
 import org.apache.linkis.rpc.message.exception.MessageErrorException;
 import org.apache.linkis.rpc.message.exception.MessageWarnException;
 import org.apache.linkis.rpc.message.utils.MessageUtils;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -30,20 +32,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class MessageExecutor extends JavaLog {
+public class MessageExecutor {
+    private static final Logger logger = LoggerFactory.getLogger(MessageExecutor.class);
 
     private List<MethodExecuteWrapper> getMinOrderMethodWrapper(
             Map<String, List<MethodExecuteWrapper>> methodWrappers) {
         // get min key order
         List<MethodExecuteWrapper> minOrderMethodWrapper = new ArrayList<>();
+        // opt time complexity from O(n^2) to O(n)
         methodWrappers.forEach(
-                (k, v) ->
-                        v.forEach(
-                                m -> {
-                                    if (MessageUtils.orderIsMin(m, v)) {
-                                        minOrderMethodWrapper.add(m);
-                                    }
-                                }));
+                (k, v) -> minOrderMethodWrapper.addAll(MessageUtils.getMinOrders(v)));
+
         return minOrderMethodWrapper;
     }
 
@@ -87,7 +86,7 @@ public class MessageExecutor extends JavaLog {
                     }
                 }
             } catch (Throwable t) {
-                logger().error(String.format("method %s call failed", methodWrapper.getAlias()), t);
+                logger.error(String.format("method %s call failed", methodWrapper.getAlias()), t);
 
                 final String errorMsg =
                         t instanceof InvocationTargetException

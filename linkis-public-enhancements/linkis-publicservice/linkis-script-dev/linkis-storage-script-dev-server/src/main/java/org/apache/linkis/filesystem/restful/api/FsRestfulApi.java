@@ -104,8 +104,7 @@ public class FsRestfulApi {
         LOGGER.debug("workspacePath:" + workspacePath);
         LOGGER.debug("enginconnPath:" + enginconnPath);
         LOGGER.debug("adminUser:" + WorkSpaceConfiguration.FILESYSTEM_LOG_ADMIN.getValue());
-        return (requestPath.indexOf(workspacePath) > -1)
-                || (requestPath.indexOf(enginconnPath) > -1);
+        return (requestPath.contains(workspacePath)) || (requestPath.contains(enginconnPath));
     }
 
     @RequestMapping(path = "/getUserRootPath", method = RequestMethod.GET)
@@ -130,6 +129,16 @@ public class FsRestfulApi {
         FsPath fsPath = new FsPath(path);
         FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
         if (!fileSystem.exists(fsPath)) {
+
+            if (FILESYSTEM_PATH_AUTO_CREATE.getValue()) {
+                try {
+                    fileSystem.mkdirs(fsPath);
+                    return Message.ok().data(String.format("user%sRootPath", returnType), path);
+                } catch (IOException e) {
+                    LOGGER.error(e.getMessage(), e);
+                    throw WorkspaceExceptionManager.createException(80030);
+                }
+            }
             throw WorkspaceExceptionManager.createException(80003);
         }
         return Message.ok().data(String.format("user%sRootPath", returnType), path);

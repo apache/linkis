@@ -38,7 +38,7 @@ object PipelineExecutorSelector extends Logging {
         case _ => throw new PipeLineErrorException(70008, "unsupport output type")
       }
     } {
-      case e: Exception => error("select executor failed", e); throw new PipeLineErrorException(70008, "unsupport output type")
+      case e: Exception => logger.error("select executor failed", e); throw new PipeLineErrorException(70008, "unsupport output type")
     }
 
   }

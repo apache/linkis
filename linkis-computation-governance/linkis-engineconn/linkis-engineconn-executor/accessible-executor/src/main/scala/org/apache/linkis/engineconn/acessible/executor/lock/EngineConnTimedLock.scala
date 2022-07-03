@@ -17,7 +17,6 @@
  
 package org.apache.linkis.engineconn.acessible.executor.lock
 
-import java.util.concurrent.{ScheduledFuture, ScheduledThreadPoolExecutor, Semaphore, TimeUnit}
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.engineconn.acessible.executor.conf.AccessibleExecutorConfiguration
 import org.apache.linkis.engineconn.acessible.executor.entity.AccessibleExecutor
@@ -25,8 +24,9 @@ import org.apache.linkis.engineconn.acessible.executor.listener.ExecutorStatusLi
 import org.apache.linkis.engineconn.acessible.executor.listener.event.{ExecutorCompletedEvent, ExecutorCreateEvent, ExecutorStatusChangedEvent, ExecutorUnLockEvent}
 import org.apache.linkis.engineconn.core.executor.ExecutorManager
 import org.apache.linkis.engineconn.executor.listener.ExecutorListenerBusContext
-import org.apache.linkis.engineconn.executor.service.ManagerService
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
+
+import java.util.concurrent.{ScheduledFuture, ScheduledThreadPoolExecutor, Semaphore, TimeUnit}
 
 class EngineConnTimedLock(private var timeout: Long) extends TimedLock with Logging with ExecutorStatusListener {
 
@@ -46,11 +46,11 @@ class EngineConnTimedLock(private var timeout: Long) extends TimedLock with Logg
   override def tryAcquire(executor: AccessibleExecutor): Boolean = {
     if (null == executor || NodeStatus.Unlock != executor.getStatus) return false
     val succeed = lock.tryAcquire()
-    debug("try to lock for succeed is  " + succeed.toString)
+    logger.debug("try to lock for succeed is  " + succeed.toString)
     if (succeed) {
       lastLockTime = System.currentTimeMillis()
       lockedBy = executor
-      debug("try to lock for add time out task ! Locked by thread : " + lockedBy.getId)
+      logger.debug("try to lock for add time out task ! Locked by thread : " + lockedBy.getId)
       scheduleTimeout
     }
     succeed
@@ -58,15 +58,15 @@ class EngineConnTimedLock(private var timeout: Long) extends TimedLock with Logg
 
   // Unlock callback is not called in release method, because release method is called actively
   override def release(): Unit = {
-    debug("try to release for lock," + lockedBy + ",current thread " + Thread.currentThread().getName)
+    logger.debug("try to release for lock," + lockedBy + ",current thread " + Thread.currentThread().getName)
     if (lockedBy != null) {
       //&& lockedBy == Thread.currentThread()   Inconsistent thread(线程不一致)
-      debug("try to release for lockedBy and thread ")
+      logger.debug("try to release for lockedBy and thread ")
       if (releaseTask != null) {
         releaseTask.cancel(true)
         releaseTask = null
       }
-      debug("try to release for lock release success")
+      logger.debug("try to release for lock release success")
       lockedBy = null
     }
     unlockCallback(lock.toString)
@@ -99,16 +99,16 @@ class EngineConnTimedLock(private var timeout: Long) extends TimedLock with Logg
             synchronized {
               if (isAcquired() && NodeStatus.Idle == lockedBy.getStatus && isExpired()) {
                 // unlockCallback depends on lockedBy, so lockedBy cannot be set null before unlockCallback
-                info(s"Lock : [${lock.toString} was released due to timeout." )
+                logger.info(s"Lock : [${lock.toString} was released due to timeout." )
                 release()
               } else if (isAcquired() && NodeStatus.Busy == lockedBy.getStatus) {
                 lastLockTime = System.currentTimeMillis()
-                info("Update lastLockTime because executor is busy.")
+                logger.info("Update lastLockTime because executor is busy.")
               }
             }
           }
         }, 3000, AccessibleExecutorConfiguration.ENGINECONN_LOCK_CHECK_INTERVAL.getValue.toLong, TimeUnit.MILLISECONDS)
-        info("Add scheduled timeout task.")
+        logger.info("Add scheduled timeout task.")
       }
     }
   }
@@ -150,7 +150,7 @@ class EngineConnTimedLock(private var timeout: Long) extends TimedLock with Logg
       }
       scheduleTimeout
     } else {
-      error("Lock is not acquired, so cannot be reset-Timeout")
+      logger.error("Lock is not acquired, so cannot be reset-Timeout")
     }
   }
 
@@ -176,7 +176,7 @@ class EngineConnTimedLock(private var timeout: Long) extends TimedLock with Logg
   override def onExecutorStatusChanged(executorStatusChangedEvent: ExecutorStatusChangedEvent): Unit = {
     val toStatus = executorStatusChangedEvent.toStatus
     if (isAcquired() && NodeStatus.Idle == toStatus) {
-      info(s"Status changed to ${toStatus.name()}, update lastUpdatedTime for lock.")
+      logger.info(s"Status changed to ${toStatus.name()}, update lastUpdatedTime for lock.")
       lastLockTime = System.currentTimeMillis()
       scheduleTimeout
     }

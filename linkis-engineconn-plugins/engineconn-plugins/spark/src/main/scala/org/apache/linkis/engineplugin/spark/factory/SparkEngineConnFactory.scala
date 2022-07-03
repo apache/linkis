@@ -46,7 +46,7 @@ class SparkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     val useSparkSubmit = true
     val sparkConf: SparkConf = new SparkConf(true)
     val master = sparkConf.getOption("spark.master").getOrElse(CommonVars("spark.master", "yarn").getValue)
-    info(s"------ Create new SparkContext {$master} -------")
+    logger.info(s"------ Create new SparkContext {$master} -------")
     val pysparkBasePath = SparkConfiguration.SPARK_HOME.getValue
     val pysparkPath = new File(pysparkBasePath, "python" + File.separator + "lib")
     val pythonLibUris = pysparkPath.listFiles().map(_.toURI.toString).filter(_.endsWith(".zip"))
@@ -70,7 +70,7 @@ class SparkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
 
     val outputDir = createOutputDir(sparkConf)
 
-    info("print current thread name " + Thread.currentThread().getContextClassLoader.toString)
+    logger.info("print current thread name " + Thread.currentThread().getContextClassLoader.toString)
     val sparkSession = createSparkSession(outputDir, sparkConf)
     if (sparkSession == null) throw new SparkSessionNullException(40009, "sparkSession can not be null")
 
@@ -93,7 +93,7 @@ class SparkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
       allFiles.filter { _.nonEmpty }
     }
     val master = conf.getOption("spark.master").getOrElse(SparkConfiguration.SPARK_MASTER.getValue)
-    info(s"------ Create new SparkContext {$master} -------")
+    logger.info(s"------ Create new SparkContext {$master} -------")
     if(StringUtils.isNotEmpty(master)) {
       conf.setMaster(master)
     }
@@ -138,12 +138,12 @@ class SparkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     val rootDir = conf.get("spark.repl.classdir", System.getProperty("java.io.tmpdir"))
     Utils.tryThrow {
       val output = SparkUtils.createTempDir(root = rootDir, namePrefix = "repl")
-      info("outputDir====> " + output)
+      logger.info("outputDir====> " + output)
       output.deleteOnExit()
       conf.set("spark.repl.class.outputDir", output.getAbsolutePath)
       output
     }(t => {
-      warn("create spark repl classdir failed", t)
+      logger.warn("create spark repl classdir failed", t)
       throw new SparkCreateFileException(80002, s"spark repl classdir create exception", t)
       null
     })

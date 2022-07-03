@@ -58,7 +58,7 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     // Filter the options (startUpParams)
     options = options.asScala.mapValues{
       case value if value.contains(FLINK_PARAMS_BLANK_PLACEHOLER.getValue) =>
-        info(s"Transform option value: [$value]")
+        logger.info(s"Transform option value: [$value]")
         value.replace(FLINK_PARAMS_BLANK_PLACEHOLER.getValue, " ")
       case v1 => v1
     }.toMap.asJava
@@ -93,7 +93,7 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     val jobManagerMemory = LINKIS_FLINK_JOB_MANAGER_MEMORY.getValue(options) + "M"
     val taskManagerMemory = LINKIS_FLINK_TASK_MANAGER_MEMORY.getValue(options) + "M"
     val numberOfTaskSlots = LINKIS_FLINK_TASK_SLOTS.getValue(options)
-    info(s"Use yarn queue $yarnQueue, and set parallelism = $parallelism, jobManagerMemory = $jobManagerMemory, taskManagerMemory = $taskManagerMemory, numberOfTaskSlots = $numberOfTaskSlots.")
+    logger.info(s"Use yarn queue $yarnQueue, and set parallelism = $parallelism, jobManagerMemory = $jobManagerMemory, taskManagerMemory = $taskManagerMemory, numberOfTaskSlots = $numberOfTaskSlots.")
     // Step2: application-level configurations
     // construct app-config
     val flinkConfig = context.getFlinkConfig
@@ -110,7 +110,7 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     // set user classpaths
     val classpaths = FLINK_APPLICATION_CLASSPATH.getValue(options)
     if (StringUtils.isNotBlank(classpaths)) {
-      info(s"Add $classpaths to flink application classpath.")
+      logger.info(s"Add $classpaths to flink application classpath.")
       flinkConfig.set(PipelineOptions.CLASSPATHS, util.Arrays.asList(classpaths.split(","): _*))
     }
     // yarn application name
@@ -149,7 +149,7 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     if(StringUtils.isNotBlank(flinkMainClassJar)) {
       val flinkMainClassJarPath = if (new File(flinkMainClassJar).exists()) flinkMainClassJar
         else getClass.getClassLoader.getResource(flinkMainClassJar).getPath
-      info(s"Ready to use $flinkMainClassJarPath as main class jar to submit application to Yarn.")
+      logger.info(s"Ready to use $flinkMainClassJarPath as main class jar to submit application to Yarn.")
       flinkConfig.set(PipelineOptions.JARS, Collections.singletonList(flinkMainClassJarPath))
       flinkConfig.set(DeploymentOptions.TARGET, YarnDeploymentTarget.APPLICATION.getName)
       flinkConfig.setBoolean(DeploymentOptions.ATTACHED, FLINK_EXECUTION_ATTACHED.getValue(options))
@@ -182,7 +182,7 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
           else Option(getClass.getClassLoader.getResource(dir)) match {
             case Some(url) => url.getPath
             case _ =>
-              warn(s"Local file/directory [$dir] not found")
+              logger.warn(s"Local file/directory [$dir] not found")
               null
           }
         }).dropWhile(StringUtils.isBlank)
@@ -199,7 +199,7 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
             if ("viewfs".equals(schema) || "hdfs".equals(schema)) {
               shipDirs.add(path)
             } else {
-              warn(s"Unrecognized schema [$schema] for remote file/directory [$path]")
+              logger.warn(s"Unrecognized schema [$schema] for remote file/directory [$path]")
             })
           case _ =>
         })
@@ -244,7 +244,7 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
         Environment.enrich(environmentContext.getDefaultEnv, properties, Collections.emptyMap())
       case YarnDeploymentTarget.APPLICATION => null
       case t =>
-        error(s"Not supported YarnDeploymentTarget ${t.getName}.")
+        logger.error(s"Not supported YarnDeploymentTarget ${t.getName}.")
         throw new FlinkInitFailedException(s"Not supported YarnDeploymentTarget ${t.getName}.")
     }
     val executionContext = ExecutionContext.builder(environmentContext.getDefaultEnv, environment, environmentContext.getDependencies,
@@ -254,7 +254,7 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
       val checkpointMode = FLINK_CHECK_POINT_MODE.getValue(options)
       val checkpointTimeout = FLINK_CHECK_POINT_TIMEOUT.getValue(options)
       val checkpointMinPause = FLINK_CHECK_POINT_MIN_PAUSE.getValue(options)
-      info(s"checkpoint is enabled, checkpointInterval is $checkpointInterval, checkpointMode is $checkpointMode, checkpointTimeout is $checkpointTimeout.")
+      logger.info(s"checkpoint is enabled, checkpointInterval is $checkpointInterval, checkpointMode is $checkpointMode, checkpointTimeout is $checkpointTimeout.")
       executionContext.getTableEnvironment  // This line is need to initialize the StreamExecutionEnvironment.
       executionContext.getStreamExecutionEnvironment.enableCheckpointing(checkpointInterval)
       val checkpointConfig = executionContext.getStreamExecutionEnvironment.getCheckpointConfig
@@ -289,5 +289,5 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
 object FlinkEngineConnFactory extends Logging  {
   private val settings = ClassUtils.reflections.getSubTypesOf(classOf[Settings]).asScala
     .filterNot(ClassUtils.isInterfaceOrAbstract).map(_.newInstance()).toList
-  info(s"Settings list: ${settings.map(_.getClass.getSimpleName)}.")
+  logger.info(s"Settings list: ${settings.map(_.getClass.getSimpleName)}.")
 }

@@ -19,7 +19,6 @@ package org.apache.linkis.engineconnplugin.flink.operator
 
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.engineconn.once.executor.creation.OnceExecutorManager
-import org.apache.linkis.engineconnplugin.flink.client.deployment.ClusterDescriptorAdapter
 import org.apache.linkis.engineconnplugin.flink.exception.JobExecutionException
 import org.apache.linkis.engineconnplugin.flink.executor.FlinkOnceExecutor
 import org.apache.linkis.manager.common.operator.Operator
@@ -32,7 +31,7 @@ class TriggerSavepointOperator extends Operator with Logging {
   override def apply(implicit parameters: Map[String, Any]): Map[String, Any] = {
     val savepoint = getAsThrow[String]("savepointPath")
     val mode = getAsThrow[String]("mode")
-    info(s"try to $mode savepoint with path $savepoint.")
+    logger.info(s"try to $mode savepoint with path $savepoint.")
     OnceExecutorManager.getInstance.getReportExecutor match {
       case flinkExecutor: FlinkOnceExecutor[_] =>
         val writtenSavepoint = flinkExecutor.getClusterDescriptorAdapter.doSavepoint(savepoint, mode)

@@ -69,12 +69,12 @@ trait OnceJobOperator[T] extends Operator[T] with Logging {
     addParameters(builder)
     val engineConnOperateAction = builder.build()
     if (OnceJobOperator.ONCE_JOB_OPERATOR_LOG_ENABLE.getValue) {
-      info(s"$getUser try to ask EngineConn($serviceInstance) to execute $getName operation, parameters is ${engineConnOperateAction.getRequestPayload}.")
+      logger.info(s"$getUser try to ask EngineConn($serviceInstance) to execute $getName operation, parameters is ${engineConnOperateAction.getRequestPayload}.")
     }
     val result = linkisManagerClient.executeEngineConnOperation(engineConnOperateAction)
     if (OnceJobOperator.ONCE_JOB_OPERATOR_LOG_ENABLE.getValue) {
       val resultStr = String.valueOf(result.getResult)
-      info(s"$getUser asked EngineConn($serviceInstance) to execute $getName operation, results is ${if (resultStr.length <= 250) resultStr else resultStr.substring(0, 250) + "..."} .")
+      logger.info(s"$getUser asked EngineConn($serviceInstance) to execute $getName operation, results is ${if (resultStr.length <= 250) resultStr else resultStr.substring(0, 250) + "..."} .")
     }
     resultToObject(result)
   }

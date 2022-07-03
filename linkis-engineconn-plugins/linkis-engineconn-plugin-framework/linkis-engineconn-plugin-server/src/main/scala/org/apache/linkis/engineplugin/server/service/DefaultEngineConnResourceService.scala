@@ -50,7 +50,7 @@ class DefaultEngineConnResourceService extends EngineConnResourceService with Lo
 
   @PostConstruct
   override def init(): Unit = if (EngineConnPluginConfiguration.ENGINE_CONN_DIST_LOAD_ENABLE.getValue) {
-    info("Start to refresh all engineconn plugins when inited.")
+    logger.info("Start to refresh all engineconn plugins when inited.")
     refreshAll(false)
   }
 
@@ -102,7 +102,7 @@ class DefaultEngineConnResourceService extends EngineConnResourceService with Lo
             Utils.tryAndWarn(future.get())
           }
         } else {
-          info ("IsRefreshing EngineConns...")
+          logger.info ("IsRefreshing EngineConns...")
         }
       }
     }
@@ -110,7 +110,7 @@ class DefaultEngineConnResourceService extends EngineConnResourceService with Lo
 
   @Receiver
   def refeshAll(engineConnRefreshAllRequest: RefreshAllEngineConnResourceRequest): Boolean = {
-    info("Start to refresh all engineconn plugins.")
+    logger.info("Start to refresh all engineconn plugins.")
     refreshAll(true)
     true
   }
@@ -120,13 +120,13 @@ class DefaultEngineConnResourceService extends EngineConnResourceService with Lo
     val engineConnType = engineConnRefreshRequest.getEngineConnType
     val version = engineConnRefreshRequest.getVersion
     if ("*" == version || StringUtils.isEmpty(version)) {
-      info(s"Try to refresh all versions of ${engineConnType}EngineConn.")
+      logger.info(s"Try to refresh all versions of ${engineConnType}EngineConn.")
       engineConnBmlResourceGenerator.generate(engineConnType).foreach { case (v, localize) =>
-        info(s"Try to refresh ${engineConnType}EngineConn-$v.")
+        logger.info(s"Try to refresh ${engineConnType}EngineConn-$v.")
         refresh(localize, engineConnType, v)
       }
     } else {
-      info(s"Try to refresh ${engineConnType}EngineConn-$version.")
+      logger.info(s"Try to refresh ${engineConnType}EngineConn-$version.")
       val localize = engineConnBmlResourceGenerator.generate(engineConnType, version)
       refresh(localize, engineConnType, version)
     }
@@ -141,7 +141,7 @@ class DefaultEngineConnResourceService extends EngineConnResourceService with Lo
     localize.foreach { localizeResource =>
       val resource = engineConnBmlResources.find(_.getFileName == localizeResource.fileName)
       if(resource.isEmpty) {
-        info(s"Ready to upload a new bmlResource for ${engineConnType}EngineConn-$version. path: " + localizeResource.fileName)
+        logger.info(s"Ready to upload a new bmlResource for ${engineConnType}EngineConn-$version. path: " + localizeResource.fileName)
         val bmlResource = uploadToBml(localizeResource)
         val engineConnBmlResource = new EngineConnBmlResource
         engineConnBmlResource.setBmlResourceId(bmlResource.getResourceId)
@@ -155,7 +155,7 @@ class DefaultEngineConnResourceService extends EngineConnResourceService with Lo
         engineConnBmlResource.setVersion(version)
         engineConnBmlResourceDao.save(engineConnBmlResource)
       } else if(resource.exists(r => r.getFileSize != localizeResource.fileSize || r.getLastModified != localizeResource.lastModified)) {
-        info(s"Ready to upload a refreshed bmlResource for ${engineConnType}EngineConn-$version. path: " + localizeResource.fileName)
+        logger.info(s"Ready to upload a refreshed bmlResource for ${engineConnType}EngineConn-$version. path: " + localizeResource.fileName)
         val engineConnBmlResource = resource.get
         val bmlResource = uploadToBml(localizeResource, engineConnBmlResource.getBmlResourceId)
         engineConnBmlResource.setBmlResourceVersion(bmlResource.getVersion)
@@ -163,7 +163,7 @@ class DefaultEngineConnResourceService extends EngineConnResourceService with Lo
         engineConnBmlResource.setFileSize(localizeResource.fileSize)
         engineConnBmlResource.setLastModified(localizeResource.lastModified)
         engineConnBmlResourceDao.update(engineConnBmlResource)
-      } else info(s"The file has no change in ${engineConnType}EngineConn-$version, path: " + localizeResource.fileName)
+      } else logger.info(s"The file has no change in ${engineConnType}EngineConn-$version, path: " + localizeResource.fileName)
     }
   }
 

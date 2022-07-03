@@ -36,7 +36,7 @@ trait ListenerBus[L <: EventListener, E <: Event] extends Logging {
     */
   final def addListener(listener: L): Unit = {
     listeners.add(listener)
-    info(toString + " add a new listener => " + listener.getClass)
+    logger.info(toString + " add a new listener => " + listener.getClass)
   }
 
   /**
@@ -105,7 +105,7 @@ abstract class ListenerEventBus[L <: EventListener, E <: Event]
         override def run(): Unit =
           while (!stopped.get) {
             val event = Utils.tryCatch(eventQueue.take()){
-              case t: InterruptedException => info(s"stopped $name thread.")
+              case t: InterruptedException => logger.info(s"stopped $name thread.")
                 return
             }
             while(!eventDealThreads.exists(_.putEvent(event)) && !stopped.get) Utils.tryAndError(Thread.sleep(1))
@@ -171,7 +171,7 @@ abstract class ListenerEventBus[L <: EventListener, E <: Event]
     if (stopped.compareAndSet(false, true)) {
       // Call eventLock.release() so that listenerThread will poll `null` from `eventQueue` and know
       // `stop` is called.
-      info(s"try to stop $name thread.")
+      logger.info(s"try to stop $name thread.")
       //      eventLock.release()
       listenerThread.cancel(true)
       eventDealThreads.foreach(_.shutdown())
@@ -206,7 +206,7 @@ abstract class ListenerEventBus[L <: EventListener, E <: Event]
             if (droppedEventsCounter.compareAndSet(droppedEvents, 0)) {
               val prevLastReportTimestamp = lastReportTimestamp
               lastReportTimestamp = System.currentTimeMillis()
-              warn(s"Dropped $droppedEvents ListenerEvents since " +
+              logger.warn(s"Dropped $droppedEvents ListenerEvents since " +
                 DateFormatUtils.format(prevLastReportTimestamp, "yyyy-MM-dd HH:mm:ss"))
             }
           }
@@ -224,7 +224,7 @@ abstract class ListenerEventBus[L <: EventListener, E <: Event]
       droppedEventsCounter.incrementAndGet()
       if (logDroppedEvent.compareAndSet(false, true)) {
         // Only log the following message once to avoid duplicated annoying logs.
-        error("Dropping ListenerEvent because no remaining room in event queue. " +
+        logger.error("Dropping ListenerEvent because no remaining room in event queue. " +
           "This likely means one of the Listeners is too slow and cannot keep up with " +
           "the rate at which tasks are being started by the scheduler.")
       }
@@ -232,7 +232,7 @@ abstract class ListenerEventBus[L <: EventListener, E <: Event]
     override def onBusStopped(event: E): Unit = {
       droppedEventsCounter.incrementAndGet()
       if (logStoppedEvent.compareAndSet(false, true)) {
-        error(s"$name has already stopped! Dropping event $event.")
+        logger.error(s"$name has already stopped! Dropping event $event.")
       }
     }
   }
@@ -267,9 +267,9 @@ abstract class ListenerEventBus[L <: EventListener, E <: Event]
       val threadName = Thread.currentThread().getName
       val currentThreadName = s"$name-Thread-$index"
       Thread.currentThread().setName(currentThreadName)
-      info(s"$currentThreadName begin.")
+      logger.info(s"$currentThreadName begin.")
       def threadRelease(): Unit = {
-        info(s"$currentThreadName released.")
+        logger.info(s"$currentThreadName released.")
         Thread.currentThread().setName(threadName)
       }
       while(continue) {

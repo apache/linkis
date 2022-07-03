@@ -60,11 +60,11 @@ trait AbstractLinkisJob extends LinkisJob with Logging {
           exception = t
           failedNum += 1
           if(failedNum >= maxFailedNum) {
-            error(s"Get Job-$getId status failed for $failedNum tries, now mark this job failed.", t)
+            logger.error(s"Get Job-$getId status failed for $failedNum tries, now mark this job failed.", t)
             Utils.tryAndWarn(jobListeners.foreach(_.onJobUnknownError(AbstractLinkisJob.this, t)))
             true
           } else {
-            warn(s"Get Job-$getId status failed, wait for the $failedNum+ retries.", t)
+            logger.warn(s"Get Job-$getId status failed, wait for the $failedNum+ retries.", t)
             false
           }
         }
@@ -86,7 +86,7 @@ trait AbstractLinkisJob extends LinkisJob with Logging {
     operatorActions += operatorAction
 
   override def kill(): Unit = {
-    info(s"User try to kill Job-$getId.")
+    logger.info(s"User try to kill Job-$getId.")
     doKill()
     if(future != null) future.cancel(true)
     killed = true

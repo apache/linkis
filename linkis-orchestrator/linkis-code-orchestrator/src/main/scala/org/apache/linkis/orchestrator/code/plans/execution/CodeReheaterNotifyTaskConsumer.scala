@@ -31,7 +31,7 @@ class CodeReheaterNotifyTaskConsumer(override val reheater: Reheater) extends Re
   override def start(): Unit = {
     val thread = new Thread(this, "CodeReheaterNotifyTaskConsumer")
     thread.start()
-    info(s"start consumer ${getClass.getSimpleName} success")
+    logger.info(s"start consumer ${getClass.getSimpleName} success")
   }
 
   override def close(): Unit = {

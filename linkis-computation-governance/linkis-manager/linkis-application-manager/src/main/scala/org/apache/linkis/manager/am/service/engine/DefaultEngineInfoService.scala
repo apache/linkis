@@ -119,7 +119,7 @@ class DefaultEngineInfoService extends AbstractEngineService with EngineInfoServ
     labelKeyValue.asScala.foreach(keyValue => {
       val label = labelBuilderFactory.createLabel(keyValue._1, keyValue._2)
       labelService.updateLabelToNode(instance, label)
-      info(s"instance:${instance} success to update label, labelKey:${keyValue._1} labelValue:${keyValue._2}")
+      logger.info(s"instance:${instance} success to update label, labelKey:${keyValue._1} labelValue:${keyValue._2}")
     })
   }
 

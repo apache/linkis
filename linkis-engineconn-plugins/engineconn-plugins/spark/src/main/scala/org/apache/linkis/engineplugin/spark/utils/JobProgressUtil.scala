@@ -51,7 +51,7 @@ object JobProgressUtil extends Logging{
       val jobProgressInfo = getJobProgressInfoByStages(job, sc, jobGroup)
       val timestamp = DateFormatUtils.format(System.currentTimeMillis, "yyyy-MM-dd HH:mm:ss")
       val progress = jobProgressInfo.succeedTasks * 1d /  jobProgressInfo.totalTasks
-      info(s"${jobProgressInfo.id} numTasks = ${jobProgressInfo.totalTasks}, numCompletedTasks = ${jobProgressInfo.succeedTasks}," +
+      logger.info(s"${jobProgressInfo.id} numTasks = ${jobProgressInfo.totalTasks}, numCompletedTasks = ${jobProgressInfo.succeedTasks}," +
         s" numActiveTasks = ${jobProgressInfo.runningTasks} , completed:${percentageFormat(progress)}")
       jobProgressInfo
     }

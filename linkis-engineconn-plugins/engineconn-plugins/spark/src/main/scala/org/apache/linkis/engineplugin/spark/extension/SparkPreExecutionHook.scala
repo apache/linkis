@@ -33,7 +33,7 @@ object SparkPreExecutionHook extends Logging{
   private val preHooks = ArrayBuffer[SparkPreExecutionHook]()
 
   def register(preExecutionHook: SparkPreExecutionHook):Unit = {
-    info(s"Get a preExecutionHook of ${preExecutionHook.hookName} register")
+    logger.info(s"Get a preExecutionHook of ${preExecutionHook.hookName} register")
     preHooks.append(preExecutionHook)
   }
 

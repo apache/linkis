@@ -175,7 +175,7 @@ private class PythonInterpreter(process: Process, gatewayServer: GatewayServer)
       "msg_type" -> "shutdown_request",
       "content" -> ()
     )).foreach { rep =>
-      warn(f"process failed to shut down while returning $rep")
+      logger.warn(f"process failed to shut down while returning $rep")
     }
   }
 
@@ -290,7 +290,7 @@ object SQLSession extends Logging {
     }
     )
     val colCount = if (columns != null) columns.size else 0
-    warn(s"Fetched $colCount col(s) :  $index row(s).")
+    logger.warn(s"Fetched $colCount col(s) :  $index row(s).")
     sc.clearJobGroup()
     Utils.tryFinally({
       msg.flush();

@@ -17,24 +17,22 @@
 
 package org.apache.linkis.engineconnplugin.sqoop.executor
 
-import org.apache.linkis.common.utils.{JsonUtils, OverloadUtils, Utils}
-import org.apache.linkis.engineconn.once.executor.{OnceExecutorExecutionContext, OperableOnceExecutor}
-import org.apache.linkis.engineconnplugin.sqoop.client.{LinkisSqoopClient, Sqoop}
-import org.apache.linkis.engineconnplugin.sqoop.context.SqoopResourceConfiguration.{LINKIS_QUEUE_NAME, LINKIS_SQOOP_TASK_MAP_CPU_CORES, LINKIS_SQOOP_TASK_MAP_MEMORY}
-import org.apache.linkis.engineconnplugin.sqoop.context.{SqoopEngineConnContext, SqoopParamsConfiguration}
-import org.apache.linkis.manager.common.entity.resource.{CommonNodeResource, DriverAndYarnResource, LoadInstanceResource, NodeResource, YarnResource}
-import org.apache.linkis.scheduler.executer.ErrorExecuteResponse
-import java.util
-import java.util.concurrent.{Future, TimeUnit}
-
+import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.engineconn.common.creation.EngineCreationContext
 import org.apache.linkis.engineconn.core.EngineConnObject
-import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf
-import org.apache.linkis.protocol.engine.JobProgressInfo
+import org.apache.linkis.engineconn.once.executor.{OnceExecutorExecutionContext, OperableOnceExecutor}
 import org.apache.linkis.engineconnplugin.sqoop.client.LinkisSqoopClient
 import org.apache.linkis.engineconnplugin.sqoop.client.exception.JobExecutionException
 import org.apache.linkis.engineconnplugin.sqoop.context.{SqoopEngineConnContext, SqoopEnvConfiguration}
+import org.apache.linkis.engineconnplugin.sqoop.context.SqoopResourceConfiguration.{LINKIS_QUEUE_NAME, LINKIS_SQOOP_TASK_MAP_CPU_CORES, LINKIS_SQOOP_TASK_MAP_MEMORY}
 import org.apache.linkis.engineconnplugin.sqoop.params.SqoopParamsResolver
+import org.apache.linkis.manager.common.entity.resource._
+import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf
+import org.apache.linkis.protocol.engine.JobProgressInfo
+import org.apache.linkis.scheduler.executer.ErrorExecuteResponse
+
+import java.util
+import java.util.concurrent.{Future, TimeUnit}
 
 
 class SqoopOnceCodeExecutor(override val id: Long,
@@ -52,13 +50,13 @@ class SqoopOnceCodeExecutor(override val id: Long,
       override def run(): Unit = {
         // TODO filter job content
         params = onceExecutorExecutionContext.getOnceExecutorContent.getJobContent.asInstanceOf[util.Map[String, String]]
-        info("Try to execute params." + params)
+        logger.info("Try to execute params." + params)
           if(runSqoop(params, onceExecutorExecutionContext.getEngineCreationContext) != 0) {
             isFailed = true
             tryFailed()
             setResponse(ErrorExecuteResponse("Run code failed!", new JobExecutionException("Exec Sqoop Code Error")))
           }
-          info("All codes completed, now to stop SqoopEngineConn.")
+        logger.info("All codes completed, now to stop SqoopEngineConn.")
           closeDaemon()
           if (!isFailed) {
             trySucceed()
@@ -75,7 +73,7 @@ class SqoopOnceCodeExecutor(override val id: Long,
       LinkisSqoopClient.run(finalParams)
     }{
       case e: Exception =>
-        error(s"Run Error Message: ${e.getMessage}", e)
+        logger.error(s"Run Error Message: ${e.getMessage}", e)
         -1
     }
 
@@ -85,7 +83,7 @@ class SqoopOnceCodeExecutor(override val id: Long,
     if (!isCompleted) daemonThread = Utils.defaultScheduler.scheduleAtFixedRate(new Runnable {
       override def run(): Unit = {
         if (!(future.isDone || future.isCancelled)) {
-          info("The Sqoop Process In Running")
+          logger.info("The Sqoop Process In Running")
         }
       }
     }, SqoopEnvConfiguration.SQOOP_STATUS_FETCH_INTERVAL.getValue.toLong,
@@ -125,7 +123,7 @@ class SqoopOnceCodeExecutor(override val id: Long,
 
   override def getProgressInfo: Array[JobProgressInfo] = {
     val progressInfo = LinkisSqoopClient.getProgressInfo
-    info(s"Progress Info, id: ${progressInfo.id}, total: ${progressInfo.totalTasks}, running: ${progressInfo.runningTasks}," +
+    logger.info(s"Progress Info, id: ${progressInfo.id}, total: ${progressInfo.totalTasks}, running: ${progressInfo.runningTasks}," +
       s" succeed: ${progressInfo.succeedTasks}, fail: ${progressInfo.failedTasks}")
     Array(progressInfo)
   }

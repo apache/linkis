@@ -40,7 +40,7 @@ class RsOutputStream extends OutputStream with Logging{
         line.clear()
       } else line += b.toByte
     }else{
-       warn("writer is null")
+      logger.warn("writer is null")
     }
   }
 

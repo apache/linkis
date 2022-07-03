@@ -75,9 +75,9 @@ class PythonSession extends Logging {
 
   private def initGateway = {
     val userDefinePythonVersion = Some(pythonDefaultVersion).getOrElse("python")
-    info(s"System userDefinePythonVersion => ${userDefinePythonVersion}")
+    logger.info(s"System userDefinePythonVersion => ${userDefinePythonVersion}")
     val pythonExec = if ("python3".equalsIgnoreCase(userDefinePythonVersion)) PythonEngineConfiguration.PYTHON_VERSION.getValue else "python"
-    info(s"pythonExec => ${pythonExec}")
+    logger.info(s"pythonExec => ${pythonExec}")
     val port = {
       val socket = new ServerSocket(0)
       val port = socket.getLocalPort
@@ -86,10 +86,10 @@ class PythonSession extends Logging {
     }
     gatewayServer = new GatewayServer(this, port)
     gatewayServer.start()
-    info("Python executor file path is: " + getClass.getClassLoader.getResource("python/python.py").toURI)
+    logger.info("Python executor file path is: " + getClass.getClassLoader.getResource("python/python.py").toURI)
     val pythonClasspath = new StringBuilder(PythonSession.pythonPath)
     val pyFiles = PythonEngineConfiguration.PYTHON_PATH.getValue(EngineConnServer.getEngineCreationContext.getOptions)
-    info(s"pyFiles => ${pyFiles}")
+    logger.info(s"pyFiles => ${pyFiles}")
     if (StringUtils.isNotEmpty(pyFiles)) {
       pythonClasspath ++= File.pathSeparator ++= pyFiles.split(",").mkString(File.pathSeparator)
     }
@@ -105,7 +105,7 @@ class PythonSession extends Logging {
     env.put("PYTHONPATH", pythonClasspath.toString())
     env.put("PYTHONUNBUFFERED", "YES")
     env.put("PYTHON_GATEWAY_PORT", "" + port)
-    info(builder.command().asScala.mkString(" "))
+    logger.info(builder.command().asScala.mkString(" "))
     builder.redirectErrorStream(true)
     builder.redirectInput(ProcessBuilder.Redirect.PIPE)
     process = builder.start()
@@ -116,7 +116,7 @@ class PythonSession extends Logging {
 
     Future {
       val exitCode = process.waitFor()
-      info("PythonExecutor has stopped with exit code " + exitCode)
+      logger.info("PythonExecutor has stopped with exit code " + exitCode)
       Utils.tryFinally({
         if (promise != null && !promise.isCompleted) {
           promise.failure(new ExecuteException(60003, "Pyspark process  has stopped, query failed!"))
@@ -162,7 +162,7 @@ class PythonSession extends Logging {
       if (StringUtils.isNotBlank(outStr)) {
         val output = Utils.tryQuietly(ResultSetWriter.getRecordByRes(outStr, PythonEngineConfiguration.PYTHON_CONSOLE_OUTPUT_LINE_LIMIT.getValue))
         val res = if (output != null) output.toString else ""
-        info(s"result is {$res} ")
+        logger.info(s"result is {$res} ")
         if (StringUtils.isNotBlank(res)) engineExecutionContext.appendStdout(res)
       }
     }
@@ -171,7 +171,7 @@ class PythonSession extends Logging {
   def onPythonScriptInitialized(pid: Int): Unit = {
     this.pid = Some(pid.toString)
     pythonScriptInitialized = true
-    info(s"Python executor has been initialized with pid($pid).")
+    logger.info(s"Python executor has been initialized with pid($pid).")
   }
 
   def getStatements: PythonInterpretRequest = {
@@ -184,13 +184,13 @@ class PythonSession extends Logging {
   }
 
   def setStatementsFinished(out: String, error: Boolean): Promise[String] = {
-    info(s"A python code finished, has some errors happened? $error.")
+    logger.info(s"A python code finished, has some errors happened? $error.")
     Utils.tryAndError(Thread.sleep(10))
     if (!error) {
       promise.success(outputStream.toString)
     } else {
       if (promise.isCompleted) {
-        info("promise is completed and should start another python gateway")
+        logger.info("promise is completed and should start another python gateway")
         close
         null
       } else {
@@ -201,7 +201,7 @@ class PythonSession extends Logging {
 
   def appendOutput(message: String): Unit = {
     if (!pythonScriptInitialized) {
-      info(message)
+      logger.info(message)
     } else {
       outputStream.write(message.getBytes("utf-8"))
     }
@@ -209,9 +209,9 @@ class PythonSession extends Logging {
 
   def appendErrorOutput(message: String): Unit = {
     if (!pythonScriptInitialized) {
-      info(message)
+      logger.info(message)
     } else {
-      error(message)
+      logger.error(message)
       engineExecutionContext.appendStdout(s"errorMessage is $message")
     }
   }
@@ -287,7 +287,7 @@ class PythonSession extends Logging {
     val metaData = new LineMetaData(null)
     writer.addMetaData(metaData)
     writer.addRecord(new LineRecord(htmlContent.toString))
-    warn(s"Time taken: ${System.currentTimeMillis() - startTime}, done with html")
+    logger.warn(s"Time taken: ${System.currentTimeMillis() - startTime}, done with html")
     engineExecutionContext.sendResultSet(writer)
   }
 }
@@ -315,15 +315,15 @@ object PythonSession extends Logging {
   }
 
   private[PythonSession] def pythonPath = {
-    info("this is pythonPath")
+    logger.info("this is pythonPath")
     val pythonPath = new ArrayBuffer[String]
     //借用spark的py4j
     val pythonHomePath = new File(PythonEngineConfiguration.PY4J_HOME.getValue).getPath
-    info(s"pythonHomePath => $pythonHomePath")
+    logger.info(s"pythonHomePath => $pythonHomePath")
     val pythonParentPath = new File(pythonHomePath)
-    info(s"pythonParentPath => $pythonParentPath")
+    logger.info(s"pythonParentPath => $pythonParentPath")
     pythonPath += pythonHomePath
-    info(s"pythonPath => $pythonPath")
+    logger.info(s"pythonPath => $pythonPath")
     pythonParentPath.listFiles(new FileFilter {
       override def accept(pathname: File): Boolean = pathname.getName.endsWith(".zip")
     }).foreach(f => pythonPath += f.getPath)

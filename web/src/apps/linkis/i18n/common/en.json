@@ -279,23 +279,23 @@
       "datasource": {
         "pleaseInput": "Please input",
         "datasourceSrc": "Datasource",
-        "connectTest": "Test connection",
-        "sourceName": "Data source name",
-        "sourceDec": "Data source description",
-        "sourceType": "Data source type",
+        "connectTest": "Test Connection",
+        "sourceName": "DataSource name",
+        "sourceDec": "DataSource description",
+        "sourceType": "DataSource type",
         "creator": "Creator",
-        "create": "add source",
-        "exports": "export sources",
-        "imports": "importing sources",
+        "create": "Add Source",
+        "exports": "Export Sources",
+        "imports": "Importing Sources",
         "overdue": "Expire",
         "versionList": "Version list",
-        "dataSourceName": "Data source name",
-        "dataSourceType": "Data source type",
-        "createSystem": "Create system",
+        "dataSourceName": "DataSource name",
+        "dataSourceType": "DataSource type",
+        "createSystem": "Create System",
         "dataSourceEnv": "Available Space",
         "status": "Status",
         "permissions": "Permissions",
-        "label": "label",
+        "label": "Label",
         "version": "Version",
         "desc": "Description",
         "action": "Action",
@@ -312,7 +312,7 @@
         "cannotPublish": "Cannot publish",
         "used": "Available",
         "commentValue": "Roll back from version {text}",
-        "undefinedVersion": "Cannot find the version of data source"
+        "undefinedVersion": "Cannot find the version of DataSource"
       }
     }
   }

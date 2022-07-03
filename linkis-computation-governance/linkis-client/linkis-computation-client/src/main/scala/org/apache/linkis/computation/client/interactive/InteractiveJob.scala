@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.computation.client.interactive
 
 import org.apache.linkis.computation.client.{LinkisJobBuilder, ResultSetIterable}
@@ -23,6 +23,7 @@ import org.apache.linkis.ujes.client.UJESClient
 import org.apache.linkis.ujes.client.request.JobSubmitAction
 import org.apache.linkis.ujes.client.response.{JobInfoResult, JobLogResult, JobProgressResult}
 
+import java.util
 import scala.collection.mutable.ArrayBuffer
 
 
@@ -31,8 +32,8 @@ trait InteractiveJob extends StorableLinkisJob {
   private var resultSetList: Array[String] = _
   private val logListeners: ArrayBuffer[LogListener] = new ArrayBuffer[LogListener]()
   private val progressListeners: ArrayBuffer[ProgressListener] = new ArrayBuffer[ProgressListener]()
-  private var lastJobLogResult: JobLogResult = _
-  private var lastProgress: JobProgressResult = _
+  protected var lastJobLogResult: JobLogResult = _
+  protected var lastProgress: JobProgressResult = _
 
   def existResultSets: Boolean = wrapperId {
     resultSetList = getJobInfoResult.getResultSetList(ujesClient)
@@ -40,7 +41,7 @@ trait InteractiveJob extends StorableLinkisJob {
   }
 
   def getResultSetIterables: Array[ResultSetIterable] = {
-    if(!existResultSets) return Array.empty
+    if (!existResultSets) return Array.empty
     resultSetList.map(new ResultSetIterable(ujesClient, getJobSubmitResult.getUser, _, getJobMetrics))
   }
 
@@ -55,20 +56,78 @@ trait InteractiveJob extends StorableLinkisJob {
   }
 
   override protected def getJobInfoResult: JobInfoResult = {
-    lastJobLogResult = if(lastJobLogResult == null) ujesClient.log(getJobSubmitResult, 0, 1) else ujesClient.log(getJobSubmitResult, lastJobLogResult)
+    lastJobLogResult = if (lastJobLogResult == null) ujesClient.log(getJobSubmitResult, 0, 1) else ujesClient.log(getJobSubmitResult, lastJobLogResult)
     logListeners.foreach(_.onLogUpdate(lastJobLogResult.getLog))
     val progress = ujesClient.progress(getJobSubmitResult)
-    if(lastProgress == null || progress.getProgress > lastProgress.getProgress) {
+    if (lastProgress == null || progress.getProgress > lastProgress.getProgress) {
       lastProgress = progress
       progressListeners.foreach(_.onProgressUpdate(lastProgress.getProgress, lastProgress.getProgressInfo))
     }
     super.getJobInfoResult
   }
+
+  def getLogListeners: ArrayBuffer[LogListener] = logListeners
+
+  def getProgressListener: ArrayBuffer[ProgressListener] = progressListeners
+
+
 }
 
 class SubmittableInteractiveJob(ujesClient: UJESClient,
                                 jobSubmitAction: JobSubmitAction)
-  extends StorableSubmittableLinkisJob(ujesClient, jobSubmitAction) with InteractiveJob
+  extends StorableSubmittableLinkisJob(ujesClient, jobSubmitAction) with InteractiveJob {
+
+  private var maxRetry = 0
+  private var retryNumber = 0
+
+  private var finishedJobInfoResult: JobInfoResult = _
+
+
+  override protected def getJobInfoResult: JobInfoResult = {
+    lastJobLogResult = if (lastJobLogResult == null) ujesClient.log(getJobSubmitResult, 0, 1) else ujesClient.log(getJobSubmitResult, lastJobLogResult)
+    getLogListeners.foreach(_.onLogUpdate(lastJobLogResult.getLog))
+    val progress = ujesClient.progress(getJobSubmitResult)
+    if (lastProgress == null || progress.getProgress > lastProgress.getProgress) {
+      lastProgress = progress
+      getProgressListener.foreach(_.onProgressUpdate(lastProgress.getProgress, lastProgress.getProgressInfo))
+    }
+    if (finishedJobInfoResult != null) return finishedJobInfoResult
+    val startTime = System.currentTimeMillis
+    val oldJobSubmitResult = getJobSubmitResult
+    val jobInfoResult = wrapperId(ujesClient.getJobInfo(getJobSubmitResult))
+    getJobMetrics.addClientGetJobInfoTime(System.currentTimeMillis - startTime)
+    if (jobInfoResult.isCompleted) {
+      if (jobInfoResult.isFailed && jobInfoResult.canRetry && getRetryNumber < getMaxRetry) {
+        val retryMsg = s"Task ${oldJobSubmitResult.taskID} failed to run, retrying automatically, retry number: ${getRetryNumber}"
+        logger.info(retryMsg)
+        this.submit()
+        addRetryNumber
+        val logs = new util.ArrayList[String]()
+        val retrySucceedMsg = s"The task has been retried, and the new task id is: ${getJobSubmitResult.taskID}"
+        logs.add(retryMsg)
+        logs.add(retrySucceedMsg)
+        getLogListeners.foreach(_.onLogUpdate(logs))
+        logger.info(retrySucceedMsg)
+        return getJobInfoResult
+      }
+      getJobMetrics.setClientFinishedTime(System.currentTimeMillis)
+      finishedJobInfoResult = jobInfoResult
+      info(s"Job-$getId is completed with status " + finishedJobInfoResult.getJobStatus)
+      getJobListeners.foreach(_.onJobFinished(this))
+    } else if (jobInfoResult.isRunning) getJobListeners.foreach(_.onJobRunning(this))
+    jobInfoResult
+  }
+
+
+  def getMaxRetry: Int = maxRetry
+
+  def setMaxRetry(maxRetry: Int): Unit = this.maxRetry = maxRetry
+
+  def addRetryNumber: Unit = retryNumber = retryNumber + 1
+
+  def getRetryNumber: Int = retryNumber
+
+}
 
 class ExistingInteractiveJob(ujesClient: UJESClient,
                              execId: String,
@@ -80,19 +139,21 @@ object InteractiveJob {
   def builder(): InteractiveJobBuilder = new InteractiveJobBuilder
 
   /**
-    * When use this method to create a InteractiveJob, ProgressListener and LogListener cannot be used, because execID is not exists.
-    * @param taskId the id of InteractiveJob
-    * @param user the execute user of InteractiveJob
-    * @return
-    */
+   * When use this method to create a InteractiveJob, ProgressListener and LogListener cannot be used, because execID is not exists.
+   *
+   * @param taskId the id of InteractiveJob
+   * @param user   the execute user of InteractiveJob
+   * @return
+   */
   def build(taskId: String, user: String): InteractiveJob = new ExistingInteractiveJob(LinkisJobBuilder.getDefaultUJESClient, null, taskId, user)
 
   /**
-    * Use this method to create a InteractiveJob, it is equivalent with [[builder]].
-    * @param execId the execId of InteractiveJob
-    * @param taskId the taskId of InteractiveJob
-    * @param user the execute user of InteractiveJob
-    * @return
-    */
+   * Use this method to create a InteractiveJob, it is equivalent with [[builder]].
+   *
+   * @param execId the execId of InteractiveJob
+   * @param taskId the taskId of InteractiveJob
+   * @param user   the execute user of InteractiveJob
+   * @return
+   */
   def build(execId: String, taskId: String, user: String): InteractiveJob = new ExistingInteractiveJob(LinkisJobBuilder.getDefaultUJESClient, null, taskId, user)
 }

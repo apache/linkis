@@ -42,7 +42,7 @@ public class CSCommonUtils {
             CommonVars.apply("wds.linkis.dev.contextID.env", "BDP_DEV").getValue();
 
     public static final String CONTEXT_ENV_PROD =
-            CommonVars.apply("wds.linkis.production.contextID.env", "BDP_PRODUCTION").getValue();
+            CommonVars.apply("wds.linkis.production.contextID.env", "BDAP_PROD").getValue();
 
     public static final String CS_TMP_TABLE_PREFIX = "cs_tmp_";
 

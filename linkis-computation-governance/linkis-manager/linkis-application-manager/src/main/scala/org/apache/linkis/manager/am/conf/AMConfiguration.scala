@@ -55,7 +55,7 @@ object AMConfiguration {
 
   val ENGINECONN_DEBUG_ENABLED = CommonVars("wds.linkis.engineconn.debug.mode.enable", false)
 
-  val MULTI_USER_ENGINE_TYPES = CommonVars("wds.linkis.multi.user.engine.types", "jdbc,es,presto,io_file,appconn,openlookeng")
+  val MULTI_USER_ENGINE_TYPES = CommonVars("wds.linkis.multi.user.engine.types", "jdbc,es,presto,io_file,appconn,openlookeng,trino")
 
   val MULTI_USER_ENGINE_USER = CommonVars("wds.linkis.multi.user.engine.user", getDefaultMultiEngineUser)
 
@@ -77,7 +77,7 @@ object AMConfiguration {
 
   private def getDefaultMultiEngineUser(): String = {
     val jvmUser = Utils.getJvmUser
-    s""" {jdbc:"$jvmUser", es: "$jvmUser", presto:"$jvmUser", appconn:"$jvmUser", openlookeng:"$jvmUser", io_file:"root"}"""
+    s""" {jdbc:"$jvmUser", es: "$jvmUser", presto:"$jvmUser", appconn:"$jvmUser", openlookeng:"$jvmUser", trino:"$jvmUser", io_file:"root"}"""
   }
 
   def isAdmin(userName: String): Boolean = {

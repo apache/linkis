@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.List;
 
 public class QueryTaskVO {
+
     private Long taskID;
     private String instance;
     private String execId;
@@ -51,6 +52,8 @@ public class QueryTaskVO {
     private Date engineStartTime;
 
     private List<String> labels;
+
+    private boolean canRetry;
 
     public List<SubJobDetail> getSubJobs() {
         return subJobs;
@@ -260,5 +263,13 @@ public class QueryTaskVO {
 
     public void setLabels(List<String> labels) {
         this.labels = labels;
+    }
+
+    public boolean isCanRetry() {
+        return canRetry;
+    }
+
+    public void setCanRetry(boolean canRetry) {
+        this.canRetry = canRetry;
     }
 }

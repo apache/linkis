@@ -251,8 +251,8 @@
         "comingSoon": "Planning in progress, please stay tuned!"
       },
       "login": {
-        "loginTitle": "Welcome to Linkis Studio！",
-        "userName": "Please enter your phone",
+        "loginTitle": "Welcome to Linkis Console!",
+        "userName": "Please enter your username",
         "remenber": "Remember me",
         "login": "Login",
         "passwordHint": "Please enter your password",

@@ -23,7 +23,7 @@ import org.apache.linkis.common.conf.CommonVars
 object CodeAndRunTypeUtils {
   private val CONF_LOCK = new Object()
 
-  val CODE_TYPE_AND_RUN_TYPE_RELATION = CommonVars("wds.linkis.codeType.runType.relation", "sql=>sql|hql|jdbc|hive|psql|fql,python=>python|py|pyspark,java=>java,scala=>scala,shell=>sh|shell")
+  val CODE_TYPE_AND_RUN_TYPE_RELATION = CommonVars("wds.linkis.codeType.runType.relation", "sql=>sql|hql|jdbc|hive|psql|fql|tsql,python=>python|py|pyspark,java=>java,scala=>scala,shell=>sh|shell")
 
   val RUN_TYPE_SQL = "sql"
   val RUN_TYPE_PYTHON = "python"

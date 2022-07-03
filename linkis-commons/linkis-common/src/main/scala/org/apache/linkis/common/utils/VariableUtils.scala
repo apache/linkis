@@ -217,7 +217,7 @@ object VariableUtils extends Logging {
         val rightValue = ma.group(3)
 
         if (name == null || name.trim.isEmpty) {
-           throw new LinkisCommonErrorException(20041, s"[$str] replaced var is null")
+          throw new LinkisCommonErrorException(20041, s"[$str] replaced var is null")
         } else {
           var expression = name.trim
           val varType = nameAndType.get(name.trim).orNull
@@ -228,7 +228,7 @@ object VariableUtils extends Logging {
             var res: String = varType.getValue
             if (signal != null && !signal.trim.isEmpty) {
               if (rightValue == null || rightValue.trim.isEmpty) {
-                 throw new LinkisCommonErrorException(20042, s"[$str] expression is not right, please check")
+                throw new LinkisCommonErrorException(20042, s"[$str] expression is not right, please check")
               } else {
                 expression = expression + "_" + signal.trim + "_" + rightValue.trim
                 val rightToken = rightValue.trim
@@ -255,7 +255,6 @@ object VariableUtils extends Logging {
     //val parsedCode = deleteUselessSemicolon(parseCode)
     StringUtils.strip(parseCode.toString())
   }
-
 
 
   /**
@@ -309,6 +308,4 @@ object VariableUtils extends Logging {
     }
     nameAndValue
   }
-
-
 }

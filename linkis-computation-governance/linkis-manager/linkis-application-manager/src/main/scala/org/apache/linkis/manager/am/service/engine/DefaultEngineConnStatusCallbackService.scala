@@ -14,8 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.manager.am.service.engine
+
+import java.util
 
 import org.apache.commons.lang.StringUtils
 import org.apache.linkis.common.utils.Logging
@@ -30,8 +32,6 @@ import org.apache.linkis.server.BDPJettyServerHelper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
-import java.util
-
 @Service
 class DefaultEngineConnStatusCallbackService extends EngineConnStatusCallbackService with Logging {
 
@@ -43,6 +43,9 @@ class DefaultEngineConnStatusCallbackService extends EngineConnStatusCallbackSer
 
   private val canRetryLogs = AMConfiguration.AM_CAN_RETRY_LOGS.getValue.split(";")
 
+  //The heartBeatMsg field is of type text, mysql text max byte num is 65535
+  private val initErrorMsgMaxByteNum = 60000
+
   @Receiver
   override def dealEngineConnStatusCallback(engineConnStatusCallbackToAM: EngineConnStatusCallbackToAM): Unit = {
 
@@ -52,7 +55,13 @@ class DefaultEngineConnStatusCallbackService extends EngineConnStatusCallbackSer
     logger.info(s"Start to deal engineConnStatusCallbackToAM $engineConnStatusCallbackToAM")
     val nodeMetrics = new AMNodeMetrics
     val heartBeatMsg: java.util.Map[String, Any] = new util.HashMap[String, Any]()
-    heartBeatMsg.put(AMConstant.START_REASON, engineConnStatusCallbackToAM.initErrorMsg)
+
+    var initErrorMsg = engineConnStatusCallbackToAM.initErrorMsg
+    if (StringUtils.isNotBlank(initErrorMsg) && initErrorMsg.getBytes("utf-8").length >= initErrorMsgMaxByteNum) {
+      initErrorMsg = initErrorMsg.substring(0, initErrorMsgMaxByteNum)
+    }
+    heartBeatMsg.put(AMConstant.START_REASON, initErrorMsg)
+
     if (engineConnStatusCallbackToAM.canRetry) {
       heartBeatMsg.put(AMConstant.EC_CAN_RETRY, engineConnStatusCallbackToAM.canRetry)
     } else if (matchRetryLog(engineConnStatusCallbackToAM.initErrorMsg)) {
@@ -76,7 +85,7 @@ class DefaultEngineConnStatusCallbackService extends EngineConnStatusCallbackSer
     if (StringUtils.isNotBlank(errorMsg)) {
       val errorMsgLowCase = errorMsg.toLowerCase
       canRetryLogs.foreach(canRetry =>
-        if (  errorMsgLowCase.contains(canRetry) ) {
+        if (errorMsgLowCase.contains(canRetry)) {
           logger.error(s"match engineConn log fatal logs,is $canRetry")
           flag = true
         }

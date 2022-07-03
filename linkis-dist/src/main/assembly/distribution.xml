@@ -78,7 +78,7 @@
         <!--spark-->
         <fileSet>
             <directory>
-                ../linkis-engineconn-plugins/engineconn-plugins/spark/target/out/
+                ../linkis-engineconn-plugins/spark/target/out/
             </directory>
             <outputDirectory>linkis-package/lib/linkis-engineconn-plugins/</outputDirectory>
             <includes>
@@ -89,7 +89,7 @@
         <!--hive-->
         <fileSet>
             <directory>
-                ../linkis-engineconn-plugins/engineconn-plugins/hive/target/out/
+                ../linkis-engineconn-plugins/hive/target/out/
             </directory>
             <outputDirectory>linkis-package/lib/linkis-engineconn-plugins/</outputDirectory>
             <includes>
@@ -100,7 +100,7 @@
         <!--python-->
         <fileSet>
             <directory>
-                ../linkis-engineconn-plugins/engineconn-plugins/python/target/out/
+                ../linkis-engineconn-plugins/python/target/out/
             </directory>
             <outputDirectory>linkis-package/lib/linkis-engineconn-plugins/</outputDirectory>
             <includes>
@@ -111,7 +111,7 @@
         <!--shell-->
         <fileSet>
             <directory>
-                ../linkis-engineconn-plugins/engineconn-plugins/shell/target/out/
+                ../linkis-engineconn-plugins/shell/target/out/
             </directory>
             <outputDirectory>linkis-package/lib/linkis-engineconn-plugins/</outputDirectory>
             <includes>
@@ -148,15 +148,6 @@
             </includes>
         </fileSet>
 
-        <fileSet>
-            <directory>
-                ../linkis-spring-cloud-services/linkis-service-discovery/linkis-eureka/target/out/conf
-            </directory>
-            <includes>
-                <include>*</include>
-            </includes>
-        </fileSet>
-
         <!--lib-->
         <!--linkis-commons-->
         <!--public-module-->
@@ -185,19 +176,10 @@
             </includes>
         </fileSet>
 
-        <fileSet>
-            <directory>
-                ../linkis-computation-governance/linkis-engineconn-manager/linkis-engineconn-manager-server/target/out/conf
-            </directory>
-            <includes>
-                <include>*</include>
-            </includes>
-        </fileSet>
-
         <!--engineConnPlugin-->
         <fileSet>
             <directory>
-                ../linkis-engineconn-plugins/linkis-engineconn-plugin-framework/linkis-engineconn-plugin-server/target/out/lib/
+                ../linkis-computation-governance/linkis-engineconn/linkis-engineconn-plugin-server/target/out/lib/
             </directory>
             <outputDirectory>
                 linkis-package/lib/linkis-computation-governance/linkis-cg-engineplugin
@@ -206,8 +188,6 @@
                 <include>*.jar</include>
             </includes>
         </fileSet>
-
-
 
         <!--application-manager-->
         <fileSet>
@@ -248,7 +228,6 @@
                 <include>*</include>
             </includes>
         </fileSet>
-
 
         <!--lib-->
         <!--linkis-public-enhancements-->

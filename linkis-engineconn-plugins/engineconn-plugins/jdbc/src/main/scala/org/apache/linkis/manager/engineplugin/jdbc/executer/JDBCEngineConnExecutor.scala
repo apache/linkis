@@ -180,6 +180,7 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int) ex
         while (count < outputPrintLimit && resultSet.next()) {
           val r: Array[Any] = columns.indices.map { i =>
             val data = resultSet.getObject(i + 1) match {
+              case value: Array[Byte] => new String(resultSet.getObject(i + 1).asInstanceOf[Array[Byte]])
               case value: Any => resultSet.getString(i + 1)
               case _ => null
             }

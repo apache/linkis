@@ -21,10 +21,9 @@ ENV TZ=Asia/Shanghai LANG=zh_CN.utf8 LC_ALL=zh_CN.UTF-8
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo '$TZ' > /etc/timezone
 RUN localedef -c -f UTF-8 -i zh_CN zh_CN.utf8
 
-RUN yum install -y vim unzip curl sudo krb5-workstation sssd crontabs python-pip && yum clean all
+RUN yum install -y vim java-1.8.0-openjdk.x86_64 java-1.8.0-openjdk-devel.x86_64 unzip curl sudo krb5-workstation sssd crontabs python-pip && yum clean all
 
-COPY jdk /usr/local/jdk
-COPY javazi-1.8 /usr/share/javazi-1.8
+
 COPY hadoop /usr/local/hadoop
 #COPY python /tmp/python
 
@@ -40,7 +39,7 @@ export PYSPARK_ALLOW_INSECURE_GATEWAY=1  \n\
 export SPARK_HOME=/usr/local/spark  \n\
 export HIVE_HOME=/usr/local/hive  \n\
 export HADOOP_HOME=/usr/local/hadoop \n\
-export JAVA_HOME=/usr/local/jdk \n\
+export JAVA_HOME=/usr/lib/jvm/java-1.8.0 \n\
 export HADOOP_CONF_DIR=$HADOOP_HOME/etc/hadoop \n\
 export HIVE_CONF_DIR=$HIVE_HOME/conf \n\
 export SPARK_CONF_DIR=$SPARK_HOME/conf \n\
@@ -55,6 +54,6 @@ ENV HADOOP_HOME=/usr/local/hadoop
 ENV HADOOP_CONF_DIR=$HADOOP_HOME/etc/hadoop
 ENV HIVE_CONF_DIR=$HIVE_HOME/conf
 ENV SPARK_CONF_DIR=$SPARK_HOME/conf
-ENV JAVA_HOME /usr/local/jdk
+ENV JAVA_HOME /usr/lib/jvm/java-1.8.0
 ENV CLASSPATH $JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
 ENV PATH ${JAVA_HOME}/bin/:${SPARK_HOME}/bin:${HIVE_HOME}/bin:${HADOOP_HOME}/sbin:${HADOOP_HOME}/bin:$PATH

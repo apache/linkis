@@ -257,7 +257,10 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long) exten
     sparkILoop.settings = settings
     sparkILoop.createInterpreter()
 
-    val in0 = getField(sparkILoop, "scala$tools$nsc$interpreter$ILoop$$in0").asInstanceOf[Option[BufferedReader]]
+    val in0 = SparkConfiguration.SPARK_SCALA_VERSION.getValue match {
+      case "2.11" => getField(sparkILoop, "scala$tools$nsc$interpreter$ILoop$$in0").asInstanceOf[Option[BufferedReader]]
+      case "2.12" => getDeclareField(sparkILoop, "in0").asInstanceOf[Option[BufferedReader]]
+    }
     val reader = in0.fold(sparkILoop.chooseReader(settings))(r => SimpleReader(r,
       jOut, interactive = true))
 
@@ -268,6 +271,11 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long) exten
 
   protected def getField(obj: Object, name: String): Object = {
     val field = obj.getClass.getField(name)
+    field.setAccessible(true)
+    field.get(obj)
+  }
+  private def getDeclareField(obj: Object, name: String): Object = {
+    val field = obj.getClass.getDeclaredField(name)
     field.setAccessible(true)
     field.get(obj)
   }

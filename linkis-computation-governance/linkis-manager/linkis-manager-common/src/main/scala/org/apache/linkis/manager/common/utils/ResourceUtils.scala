@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.manager.common.utils
 
 import org.apache.linkis.manager.common.entity.persistence.PersistenceResource
@@ -81,27 +81,27 @@ object ResourceUtils {
   }
 
   def getResourceTypeByResource(resource: Resource): ResourceType = resource match {
-    case cpuResource: CPUResource => ResourceType.CPU
-    case loadResource: LoadResource => ResourceType.Load
-    case instanceResource: InstanceResource => ResourceType.Instance
-    case loadInstanceResource: LoadInstanceResource => ResourceType.LoadInstance
-    case yarnResource: YarnResource => ResourceType.Yarn
-    case driverAndYarnResource: DriverAndYarnResource => ResourceType.DriverAndYarn
-    case specialResource: SpecialResource => ResourceType.Special
+    case _: LoadResource => ResourceType.Load
+    case _: InstanceResource => ResourceType.Instance
+    case _: CPUResource => ResourceType.CPU
+    case _: LoadInstanceResource => ResourceType.LoadInstance
+    case _: YarnResource => ResourceType.Yarn
+    case _: DriverAndYarnResource => ResourceType.DriverAndYarn
+    case _: SpecialResource => ResourceType.Special
     case _ => ResourceType.LoadInstance
   }
 
-  def convertTo(nodeResource: NodeResource, resourceType: ResourceType) : NodeResource = {
-    if(nodeResource.getResourceType.equals(resourceType)) return nodeResource
-    if(resourceType.equals(ResourceType.LoadInstance)){
-      if(nodeResource.getResourceType.equals(ResourceType.DriverAndYarn)){
+  def convertTo(nodeResource: NodeResource, resourceType: ResourceType): NodeResource = {
+    if (nodeResource.getResourceType.equals(resourceType)) return nodeResource
+    if (resourceType.equals(ResourceType.LoadInstance)) {
+      if (nodeResource.getResourceType.equals(ResourceType.DriverAndYarn)) {
         nodeResource.setResourceType(resourceType)
-        if(nodeResource.getMaxResource != null) nodeResource.setMaxResource(nodeResource.getMaxResource.asInstanceOf[DriverAndYarnResource].loadInstanceResource)
-        if(nodeResource.getMinResource != null) nodeResource.setMinResource(nodeResource.getMinResource.asInstanceOf[DriverAndYarnResource].loadInstanceResource)
-        if(nodeResource.getUsedResource != null) nodeResource.setUsedResource(nodeResource.getUsedResource.asInstanceOf[DriverAndYarnResource].loadInstanceResource)
-        if(nodeResource.getLockedResource != null) nodeResource.setLockedResource(nodeResource.getLockedResource.asInstanceOf[DriverAndYarnResource].loadInstanceResource)
-        if(nodeResource.getExpectedResource != null) nodeResource.setExpectedResource(nodeResource.getExpectedResource.asInstanceOf[DriverAndYarnResource].loadInstanceResource)
-        if(nodeResource.getLeftResource != null && nodeResource.getLeftResource.isInstanceOf[DriverAndYarnResource]){
+        if (nodeResource.getMaxResource != null) nodeResource.setMaxResource(nodeResource.getMaxResource.asInstanceOf[DriverAndYarnResource].loadInstanceResource)
+        if (nodeResource.getMinResource != null) nodeResource.setMinResource(nodeResource.getMinResource.asInstanceOf[DriverAndYarnResource].loadInstanceResource)
+        if (nodeResource.getUsedResource != null) nodeResource.setUsedResource(nodeResource.getUsedResource.asInstanceOf[DriverAndYarnResource].loadInstanceResource)
+        if (nodeResource.getLockedResource != null) nodeResource.setLockedResource(nodeResource.getLockedResource.asInstanceOf[DriverAndYarnResource].loadInstanceResource)
+        if (nodeResource.getExpectedResource != null) nodeResource.setExpectedResource(nodeResource.getExpectedResource.asInstanceOf[DriverAndYarnResource].loadInstanceResource)
+        if (nodeResource.getLeftResource != null && nodeResource.getLeftResource.isInstanceOf[DriverAndYarnResource]) {
           nodeResource.setLeftResource(nodeResource.getLeftResource.asInstanceOf[DriverAndYarnResource].loadInstanceResource)
         }
         return nodeResource
@@ -112,6 +112,7 @@ object ResourceUtils {
 
   /**
    * Get the proportion of left resources, and return the smallest CPU, memory, and instance
+   *
    * @param leftResource
    * @param maxResource
    * @return
@@ -123,7 +124,7 @@ object ResourceUtils {
       case leftLoadInstanceResource: LoadInstanceResource =>
         maxResource match {
           case maxLoadInstanceResource: LoadInstanceResource =>
-            val cpuRate = if (maxLoadInstanceResource.cores >  0) (leftLoadInstanceResource.cores * 1.0F) / maxLoadInstanceResource.cores else 1F
+            val cpuRate = if (maxLoadInstanceResource.cores > 0) (leftLoadInstanceResource.cores * 1.0F) / maxLoadInstanceResource.cores else 1F
             val memoryRate = if (maxLoadInstanceResource.memory > 0) (leftLoadInstanceResource.memory * 1.0F) / maxLoadInstanceResource.memory else 1F
             val instanceRate = if (maxLoadInstanceResource.instances > 0) (leftLoadInstanceResource.instances * 1.0F) / maxLoadInstanceResource.instances else 1F
             Math.min(Math.min(cpuRate, memoryRate), instanceRate)

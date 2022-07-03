@@ -22,19 +22,21 @@ import org.apache.linkis.common.conf.CommonVars
 
 object ProtocolUtils {
 
-  val SERVICE_SUFFIX = CommonVars("wds.linkis.service.suffix","engineManager,entrance,engine")
+  val SERVICE_SUFFIX = CommonVars("wds.linkis.service.suffix", "engineManager,entrance,engine")
   val suffixs = SERVICE_SUFFIX.getValue.split(",")
 
   /**
     * Pass in moduleName to return the corresponding appName
     * 传入moduleName返回对应的appName
-    * @param moduleName
-    * @return
+    * @param moduleName module's name
+    * @return application's name
     */
-  def getAppName(moduleName:String):Option[String] = {
+  def getAppName(moduleName: String): Option[String] = {
     val moduleNameLower = moduleName.toLowerCase()
-    for(suffix <- suffixs ){
-      if(moduleNameLower.contains(suffix.toLowerCase())) return Some(moduleNameLower.replace(suffix.toLowerCase(),""))
+    for (suffix <- suffixs) {
+      if (moduleNameLower.contains(suffix.toLowerCase())) {
+        return Some(moduleNameLower.replace(suffix.toLowerCase(), ""))
+      }
     }
     None
   }

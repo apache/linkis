@@ -87,10 +87,22 @@ sys.stdout = linkisOutput
 sys.stderr = errorOutput
 intp = gateway.entry_point
 
-def show_matplotlib(p, fmt="png", width="auto", height="auto",
+def show_matplotlib(p=None,fmt="png", width="auto", height="auto",
                     **kwargs):
   """Matplotlib show function
   """
+
+  if p==None:
+    try:
+      import matplotlib
+      matplotlib.use('Agg')
+      import matplotlib.pyplot
+      p=matplotlib.pyplot
+    except Exception as e:
+      print("Failed to import matplotlib")
+      print(e)
+      return
+
   if fmt == "png":
     img = BytesIO()
     p.savefig(img, format=fmt)
@@ -177,6 +189,20 @@ class PythonContext(object):
       matplotlib.use('Agg')
     except ImportError:
       return
+
+def setup_plt_show():
+    """Override plt.show to show_matplotlib method
+    """
+    try:
+      import matplotlib
+      matplotlib.use('Agg')
+      import matplotlib.pyplot
+      matplotlib.pyplot.show=show_matplotlib
+    except Exception as e:
+      print(e)
+      return
+
+setup_plt_show()
 
 show = __show__ = PythonContext(intp)
 __show__._setup_matplotlib()

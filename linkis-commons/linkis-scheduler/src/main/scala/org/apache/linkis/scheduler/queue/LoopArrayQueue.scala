@@ -33,7 +33,7 @@ class LoopArrayQueue(var group: Group) extends ConsumeQueue with Logging {
 
   protected[this] var realSize = 0
 
-  private def filledSize = if(tail >= flag) tail - flag else tail + maxCapacity - flag
+  private def filledSize: Int = if (tail >= flag) tail - flag else tail + maxCapacity - flag
 
   override def remove(event: SchedulerEvent): Unit = {
    get(event).foreach(x => x.cancel())
@@ -47,7 +47,7 @@ class LoopArrayQueue(var group: Group) extends ConsumeQueue with Logging {
 
   override def size: Int = filledSize
 
-  override def isEmpty: Boolean =  size == 0
+  override def isEmpty: Boolean = size == 0
 
   override def isFull: Boolean = filledSize == maxCapacity - 1 && takeIndex == realSize
 
@@ -60,19 +60,19 @@ class LoopArrayQueue(var group: Group) extends ConsumeQueue with Logging {
 
   override def get(event: SchedulerEvent): Option[SchedulerEvent] = {
     eventQueue synchronized {
-      val eventSeq =toIndexedSeq.filter(x => x.getId.equals(event.getId)).seq
+      val eventSeq = toIndexedSeq.filter(x => x.getId.equals(event.getId)).seq
       if(eventSeq.size >0) Some(eventSeq(0)) else None
     }
   }
 
   override def get(index: Int): Option[SchedulerEvent] = {
-    var event:SchedulerEvent =null
+    var event: SchedulerEvent = null
     eventQueue synchronized {
       val _max = max
       if (index < realSize) throw new IllegalArgumentException("The index " + index + " has already been deleted, now index must be better than " + realSize)
-      else if(index > _max) throw new IllegalArgumentException("The index " + index + " must be less than " + _max)
+      else if (index > _max) throw new IllegalArgumentException("The index " + index + " must be less than " + _max)
       val _index = (flag + (index - realSize)) % maxCapacity
-      event =eventQueue(_index).asInstanceOf[SchedulerEvent]
+      event = eventQueue(_index).asInstanceOf[SchedulerEvent]
     }
     Option(event)
   }
@@ -80,12 +80,13 @@ class LoopArrayQueue(var group: Group) extends ConsumeQueue with Logging {
   override def getGroup: Group = group
 
   override def setGroup(group: Group): Unit = {
-    this.group=group
+    this.group = group
   }
 
-  def toIndexedSeq: IndexedSeq[SchedulerEvent] = if(filledSize == 0) IndexedSeq.empty[SchedulerEvent] else eventQueue synchronized {(min to max).map(x =>get(x).get).filter(x => x != None)}
+  def toIndexedSeq: IndexedSeq[SchedulerEvent] = if (filledSize == 0) IndexedSeq.empty[SchedulerEvent]
+  else eventQueue synchronized {(min to max).map(x => get(x).get).filter(x => x != None) }
 
-  def add(event:SchedulerEvent):Int={
+  def add(event: SchedulerEvent): Int = {
     eventQueue synchronized {
       val index = (tail + 1) % maxCapacity
       if (index == flag) {
@@ -98,22 +99,20 @@ class LoopArrayQueue(var group: Group) extends ConsumeQueue with Logging {
     max
   }
 
-  def waitingSize: Int = if(takeIndex <= realSize) size else {
+  def waitingSize: Int = if (takeIndex <= realSize) size else {
     val length = size - takeIndex + realSize
     if(length < 0) 0 else length
   }
 
-  def min = realSize
+  def min: Int = realSize
 
-  def max = {
+  def max: Int = {
     var _size = filledSize
     if(_size == 0) {
       _size = 1
     }
     realSize + _size - 1
   }
-
-
 
   /**
     * Add one, if the queue is full, it will block until the queue is available（添加一个，如果队列满了，将会一直阻塞，直到队列可用）
@@ -123,7 +122,7 @@ class LoopArrayQueue(var group: Group) extends ConsumeQueue with Logging {
   override def put(event: SchedulerEvent): Int = {
     var index = -1
     writeLock synchronized {
-      while(isFull) writeLock.wait(1000)
+      while (isFull) writeLock.wait(1000)
       index = add(event)
     }
     readLock synchronized { readLock.notify() }
@@ -136,17 +135,17 @@ class LoopArrayQueue(var group: Group) extends ConsumeQueue with Logging {
     *
     * @return
     */
-override def offer(event: SchedulerEvent): Option[Int] = {
-  var index = -1
-  writeLock synchronized {
-    if(isFull) return None
-    else{
-      index = add(event)
+  override def offer(event: SchedulerEvent): Option[Int] = {
+    var index = -1
+    writeLock synchronized {
+      if (isFull) return None
+      else {
+        index = add(event)
+      }
     }
+    readLock synchronized { readLock.notify() }
+    Some(index)
   }
-  readLock synchronized { readLock.notify() }
-  Some(index)
-}
 
   /**
     * Get the latest SchedulerEvent of a group, if it does not exist, it will block [<br>（获取某个group最新的SchedulerEvent，如果不存在，就一直阻塞<br>）
@@ -156,10 +155,10 @@ override def offer(event: SchedulerEvent): Option[Int] = {
     */
   override def take(): SchedulerEvent = {
     val t = readLock synchronized {
-      while(waitingSize == 0 || takeIndex > max) {
+      while (waitingSize == 0 || takeIndex > max) {
         readLock.wait(1000)
       }
-      if(takeIndex < min) takeIndex = min
+      if (takeIndex < min) takeIndex = min
       val t = get(takeIndex)
       takeIndex += 1
       t
@@ -176,9 +175,9 @@ override def offer(event: SchedulerEvent): Option[Int] = {
     */
   override def take(mills: Long): Option[SchedulerEvent] = {
     val t = readLock synchronized {
-      if(waitingSize == 0 || takeIndex > max) readLock.wait(mills)
-      if(waitingSize == 0 || takeIndex > max) return None
-      if(takeIndex < min) takeIndex = min
+      if (waitingSize == 0 || takeIndex > max) readLock.wait(mills)
+      if (waitingSize == 0 || takeIndex > max) return None
+      if (takeIndex < min) takeIndex = min
       val t = get(takeIndex)
       takeIndex += 1
       t
@@ -198,12 +197,12 @@ override def offer(event: SchedulerEvent): Option[Int] = {
       val _min = min
       val _max = max
       if(takeIndex < _min) takeIndex = _min
-      else if(takeIndex > _max) {
+      else if (takeIndex > _max) {
         logger.info(s"none, notice...max: ${_max}, takeIndex: $takeIndex, realSize: $realSize.")
         return None
       }
       val t = get(takeIndex)
-      if(t == null) {
+      if (t == null) {
         logger.info("null, notice...")
       }
       takeIndex += 1
@@ -220,8 +219,8 @@ override def offer(event: SchedulerEvent): Option[Int] = {
     * @return
     */
   override def peek(): Option[SchedulerEvent] = readLock synchronized {
-    if(waitingSize == 0 || takeIndex > max) None
-    else if(takeIndex < min) get(min)
+    if (waitingSize == 0 || takeIndex > max) None
+    else if (takeIndex < min) get(min)
     else get(takeIndex)
   }
 
@@ -232,8 +231,8 @@ override def offer(event: SchedulerEvent): Option[Int] = {
     * @return
     */
   override def peek(op: (SchedulerEvent) => Boolean): Option[SchedulerEvent] = {
-    if(waitingSize == 0 || takeIndex > max) None
-    else if(takeIndex < min) {
+    if (waitingSize == 0 || takeIndex > max) None
+    else if (takeIndex < min) {
       val event = get(min)
       if(op(event.get)) event else None
     }

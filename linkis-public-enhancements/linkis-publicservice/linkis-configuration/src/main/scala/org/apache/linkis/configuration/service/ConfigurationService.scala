@@ -25,8 +25,7 @@ import org.apache.linkis.configuration.entity._
 import org.apache.linkis.configuration.exception.ConfigurationException
 import org.apache.linkis.configuration.util.{LabelEntityParser, LabelParameterParser}
 import org.apache.linkis.configuration.validate.ValidatorManager
-import org.apache.linkis.governance.common.protocol.conf.ResponseQueryConfig
-import org.apache.linkis.manager.common.protocol.conf.RemoveCacheConfRequest
+import org.apache.linkis.governance.common.protocol.conf.{RemoveCacheConfRequest, ResponseQueryConfig}
 import org.apache.linkis.manager.label.builder.CombinedLabelBuilder
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import org.apache.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
@@ -132,17 +131,19 @@ class ConfigurationService extends Logging {
 
   def clearAMCacheConf(username: String, creator: String, engine: String, version: String): Unit = {
     val sender = Sender.getSender(Configuration.MANAGER_SPRING_NAME.getValue)
-    if(StringUtils.isNotEmpty(username)) {
+    if(StringUtils.isNotBlank(username)) {
       val userCreatorLabel = LabelBuilderFactoryContext.getLabelBuilderFactory.createLabel(classOf[UserCreatorLabel])
       userCreatorLabel.setUser(username)
       userCreatorLabel.setCreator(creator)
-      val request = new RemoveCacheConfRequest
-      request.setUserCreatorLabel(userCreatorLabel)
-      if(StringUtils.isNotEmpty(engine) && StringUtils.isNotEmpty(version)) {
-        val engineTypeLabel = EngineTypeLabelCreator.createEngineTypeLabel(engine)
-        engineTypeLabel.setVersion(version)
-        request.setEngineTypeLabel(engineTypeLabel)
+      val engineTypeLabel: EngineTypeLabel = if (StringUtils.isNotBlank(engine) && StringUtils.isNotBlank(version)) {
+        val label = EngineTypeLabelCreator.createEngineTypeLabel(engine)
+        label.setVersion(version)
+        label
+      } else {
+        null
       }
+      val request = RemoveCacheConfRequest(userCreatorLabel, engineTypeLabel)
+      logger.info(s"Broadcast cleanup message to manager $request")
       sender.ask(request)
     }
   }

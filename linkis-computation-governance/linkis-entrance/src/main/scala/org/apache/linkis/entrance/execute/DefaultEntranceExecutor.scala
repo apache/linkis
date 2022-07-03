@@ -23,6 +23,7 @@ import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.entrance.exception.{EntranceErrorCode, EntranceErrorException}
 import org.apache.linkis.entrance.job.EntranceExecuteRequest
 import org.apache.linkis.entrance.orchestrator.EntranceOrchestrationFactory
+import org.apache.linkis.entrance.utils.JobHistoryHelper
 import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
 import org.apache.linkis.governance.common.entity.job.SubJobInfo
 import org.apache.linkis.governance.common.protocol.task.ResponseTaskStatus
@@ -104,36 +105,7 @@ class DefaultEntranceExecutor(id: Long, mark: MarkReq, entranceExecutorManager: 
           entranceJob.getProgressListener.foreach(_.onProgressUpdate(entranceJob, progressInfoEvent.progress,
             entranceJob.getProgressInfo))
         }
-        // update resource
-        if (entranceJob.getJobRequest.getMetrics == null) {
-          entranceJob.getJobRequest.setMetrics(new util.HashMap[String, Object]())
-        }
-        val metricsMap = entranceJob.getJobRequest.getMetrics
-        val resourceMap = metricsMap.get(TaskConstant.ENTRANCEJOB_YARNRESOURCE)
-        val ecResourceMap = if (progressInfoEvent.resourceMap == null) new util.HashMap[String, ResourceWithStatus] else progressInfoEvent.resourceMap
-        if(resourceMap != null) {
-          resourceMap.asInstanceOf[util.HashMap[String, ResourceWithStatus]].putAll(ecResourceMap)
-        } else {
-          metricsMap.put(TaskConstant.ENTRANCEJOB_YARNRESOURCE, ecResourceMap)
-        }
-        // update engine info
-        // todo
-        var engineInstanceMap: util.HashMap[String, Object] = null
-        if (metricsMap.containsKey(TaskConstant.ENTRANCEJOB_ENGINECONN_MAP)) {
-          engineInstanceMap = metricsMap.get(TaskConstant.ENTRANCEJOB_ENGINECONN_MAP).asInstanceOf[util.HashMap[String, Object]]
-        } else {
-          engineInstanceMap = new util.HashMap[String, Object]()
-          metricsMap.put(TaskConstant.ENTRANCEJOB_ENGINECONN_MAP, engineInstanceMap)
-        }
-        val infoMap = progressInfoEvent.infoMap
-        if (null != infoMap && infoMap.containsKey(TaskConstant.ENGINE_INSTANCE)) {
-          val instance = infoMap.get(TaskConstant.ENGINE_INSTANCE).asInstanceOf[String]
-          val engineExtraInfoMap = engineInstanceMap.getOrDefault(instance, new util.HashMap[String, Object]).asInstanceOf[util.HashMap[String, Object]]
-          engineInstanceMap.put(instance, engineExtraInfoMap)
-          engineExtraInfoMap.putAll(infoMap)
-        } else {
-          logger.warn("Engine extra info map must contains engineInstance")
-        }
+       JobHistoryHelper.updateJobRequestMetrics(entranceJob.getJobRequest, progressInfoEvent.resourceMap, progressInfoEvent.infoMap)
       }
     })
     progressProcessor

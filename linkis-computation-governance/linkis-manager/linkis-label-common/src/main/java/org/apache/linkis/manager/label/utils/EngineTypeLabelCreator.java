@@ -86,6 +86,9 @@ public class EngineTypeLabelCreator {
                     defaultVersion.put(
                             EngineType.OPENLOOKENG().toString(),
                             LabelCommonConfig.OPENLOOKENG_ENGINE_VERSION.getValue());
+                    defaultVersion.put(
+                            EngineType.TRINO().toString(),
+                            LabelCommonConfig.TRINO_ENGINE_CONN_VERSION.getValue());
                     defaultVersion.put("*", "*");
                 }
             }

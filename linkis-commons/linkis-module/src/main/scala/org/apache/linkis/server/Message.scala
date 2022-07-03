@@ -18,11 +18,11 @@
 package org.apache.linkis.server
 
 import java.util
-
 import javax.servlet.http.HttpServletRequest
-import org.apache.commons.lang.StringUtils
-import org.apache.commons.lang.exception.ExceptionUtils
-import org.slf4j.LoggerFactory
+import org.apache.commons.lang3.StringUtils
+import org.apache.commons.lang3.exception.ExceptionUtils
+import org.apache.linkis.common.utils.Logging
+
 import org.springframework.web.context.request.{RequestContextHolder, ServletRequestAttributes}
 
 
@@ -47,40 +47,39 @@ class Message(private var method: String,
     this.method = method
     this
   }
-  def setMessage(message: String) = {
+  def setMessage(message: String): Message = {
     this.message = message
     this
   }
-  def getMessage = message
+  def getMessage: String = message
   def setMethod(method: String): Unit = this.method = method
-  def getMethod = method
+  def getMethod: String = method
   def setStatus(status: Int): Unit = this.status = status
-  def getStatus = status
+  def getStatus: Int = status
   def setData(data: util.HashMap[String, Object]): Unit = this.data = data
-  def getData = data
+  def getData: util.HashMap[String, Object] = data
 
   //  def isSuccess = status == 0
   //  def isError = status != 0
 
-  override def toString = s"Message($getMethod, $getStatus, $getData)"
+  override def toString: String = s"Message($getMethod, $getStatus, $getData)"
 }
 
-object Message {
-  private val logger = LoggerFactory.getLogger(getClass)
+object Message extends Logging {
 
   def apply(method: String = null, status: Int = 0, message: String = null,
             data: util.HashMap[String, Object] = new util.HashMap[String, Object]): Message = {
     if (StringUtils.isEmpty(method)) {
       Thread.currentThread().getStackTrace.find(_.getClassName.toLowerCase.endsWith("restfulapi")).foreach {
         stack => {
-            val httpRequest:HttpServletRequest=getCurrentHttpRequest
-            if(httpRequest!=null){
-              val pathInfo=httpRequest.getPathInfo;
-              if(pathInfo!=null) {
-                  val method = if (pathInfo.startsWith("/")) "/api"+ pathInfo else "/api" + "/" + pathInfo
+            val httpRequest: HttpServletRequest = getCurrentHttpRequest
+            if (httpRequest!=null) {
+              val pathInfo = httpRequest.getPathInfo;
+              if (pathInfo!=null) {
+                  val method = if (pathInfo.startsWith("/")) "/api" + pathInfo else "/api/" + pathInfo
                   return new Message(method, status, message, data)
-              }else{
-                logger.warn("get HttpServletRequest pathInfo is null,please check it!")
+              } else {
+                warn("get HttpServletRequest pathInfo is null,please check it!")
               }
             }
           }
@@ -95,13 +94,13 @@ object Message {
   }
   def error(msg: String): Message = error(msg, null)
   implicit def error(t: Throwable): Message = {
-    Message(status =  1).setMessage(ExceptionUtils.getRootCauseMessage(t)) << ("stack", ExceptionUtils.getFullStackTrace(t))
+    Message(status = 1).setMessage(ExceptionUtils.getRootCauseMessage(t)) << ("stack", ExceptionUtils.getStackTrace(t))
   }
   implicit def error(e: (String, Throwable)): Message = error(e._1, e._2)
   implicit def error(msg: String, t: Throwable): Message = {
-    val message = Message(status =  1)
+    val message = Message(status = 1)
     message.setMessage(msg)
-    if(t != null) message << ("stack", ExceptionUtils.getFullStackTrace(t))
+    if(t != null) message << ("stack", ExceptionUtils.getStackTrace(t))
     message
   }
   implicit def warn(msg: String): Message = {
@@ -124,7 +123,7 @@ object Message {
   def noLogin(msg: String, t: Throwable): Message = {
     val message = Message(status = -1)
     message.setMessage(msg)
-    if(t != null) message << ("stack", ExceptionUtils.getFullStackTrace(t))
+    if(t != null) message << ("stack", ExceptionUtils.getStackTrace(t))
     message
   }
   def noLogin(msg: String): Message = noLogin(msg, null)

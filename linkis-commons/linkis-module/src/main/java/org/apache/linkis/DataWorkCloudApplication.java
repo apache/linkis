@@ -103,6 +103,7 @@ public class DataWorkCloudApplication extends SpringBootServletInitializer {
                 });
         application.addListeners(
                 new ApplicationListener<RefreshScopeRefreshedEvent>() {
+                    @Override
                     public void onApplicationEvent(RefreshScopeRefreshedEvent applicationEvent) {
                         logger.info("refresh config from config server...");
                         updateRemoteConfig();

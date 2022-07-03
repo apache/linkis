@@ -29,9 +29,9 @@ object RefreshUtils {
   def registerFileRefresh(period: Long, file: String, deal: java.util.List[String] => Unit): Unit = {
     Utils.defaultScheduler.scheduleAtFixedRate(new Runnable {
       val f = new File(file)
-      var fileModifiedTime = if(f.exists()) f.lastModified() else 0
+      var fileModifiedTime = if (f.exists()) f.lastModified() else 0
       override def run(): Unit = {
-        if(!f.exists()) return
+        if (!f.exists()) return
         if(f.lastModified() > fileModifiedTime) {
           deal(FileUtils.readLines(f, Configuration.BDP_ENCODING.getValue))
           fileModifiedTime = f.lastModified()

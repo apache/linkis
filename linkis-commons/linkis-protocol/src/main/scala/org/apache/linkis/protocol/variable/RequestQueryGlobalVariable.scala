@@ -22,6 +22,6 @@ import org.apache.linkis.protocol.{CacheableProtocol, RetryableProtocol}
 
 trait VariableProtocol
 
-case class RequestQueryGlobalVariable (userName:String) extends CacheableProtocol with RetryableProtocol with VariableProtocol
+case class RequestQueryGlobalVariable (userName: String) extends CacheableProtocol with RetryableProtocol with VariableProtocol
 
-case class RequestQueryAppVariable(userName:String,creator:String,appName:String) extends CacheableProtocol with RetryableProtocol with VariableProtocol
+case class RequestQueryAppVariable(userName: String, creator: String, appName: String) extends CacheableProtocol with RetryableProtocol with VariableProtocol

@@ -22,7 +22,7 @@ import java.util.Map;
 
 public class WorkspaceExceptionManager {
 
-    private static Map<String, String> desc =
+    private static final Map<String, String> desc =
             new HashMap<String, String>(32) {
                 {
                     put(
@@ -66,6 +66,7 @@ public class WorkspaceExceptionManager {
                     put("80024", "非table类型的结果集不能下载为excel");
                     put("80028", "the path exist special char");
                     put("80029", "empty dir!");
+                    put("80030", "Failed to create user path");
                 }
             };
 

@@ -34,14 +34,6 @@ trait HttpAction extends Action {
 
   def getCookies: Array[Cookie] = cookies.toArray(new Array[Cookie](cookies.size()))
 
-  /*def addCookie(cookie: javax.servlet.http.Cookie): Unit = {
-    val newCookie: BasicClientCookie = new BasicClientCookie(cookie.getName, cookie.getValue)
-    newCookie.setDomain(cookie.getDomain)
-    newCookie.setPath(cookie.getPath)
-    newCookie.setSecure(true)
-    cookies.add(newCookie)
-  }*/
-
   def addCookie(cookie: Cookie): Unit = cookies.add(cookie)
 
   def getURL: String

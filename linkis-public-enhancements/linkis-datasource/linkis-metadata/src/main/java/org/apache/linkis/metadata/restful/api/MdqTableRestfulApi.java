@@ -17,6 +17,11 @@
 
 package org.apache.linkis.metadata.restful.api;
 
+import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.apache.linkis.metadata.ddl.ImportDDLCreator;
 import org.apache.linkis.metadata.ddl.ScalaDDLCreator;
 import org.apache.linkis.metadata.domain.mdq.bo.MdqTableBO;
@@ -50,6 +55,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Api(tags = "Mdq表接口")
 @RestController
 @RequestMapping(path = "/datasource")
 public class MdqTableRestfulApi {
@@ -61,6 +67,11 @@ public class MdqTableRestfulApi {
     @Autowired private MdqService mdqService;
     ObjectMapper mapper = new ObjectMapper();
 
+    @ApiOperation(value="获取表信息",notes="获取表信息",response = Message.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="database",dataType="String",value="数据源"),
+            @ApiImplicitParam(name="tableName",dataType="String",value="表名称")
+    })
     @RequestMapping(path = "getTableBaseInfo", method = RequestMethod.GET)
     public Message getTableBaseInfo(
             @RequestParam(value = "database", required = false) String database,
@@ -76,6 +87,11 @@ public class MdqTableRestfulApi {
         return Message.ok().data("tableBaseInfo", tableBaseInfo);
     }
 
+    @ApiOperation(value="获取表格字段信息",notes="获取表格字段信息",response = Message.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="database",dataType="String",value="数据源"),
+            @ApiImplicitParam(name="tableName",dataType="String",value="表名称")
+    })
     @RequestMapping(path = "getTableFieldsInfo", method = RequestMethod.GET)
     public Message getTableFieldsInfo(
             @RequestParam(value = "database", required = false) String database,
@@ -90,7 +106,14 @@ public class MdqTableRestfulApi {
         }
         return Message.ok().data("tableFieldsInfo", tableFieldsInfo);
     }
-
+    @ApiOperation(value="获取表统计信息",notes="获取表统计信息",response = Message.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="database",dataType="String",value="数据源"),
+            @ApiImplicitParam(name="tableName",dataType="String",value="表名称"),
+            @ApiImplicitParam(name="pageNow",dataType="String",value="页码"),
+            @ApiImplicitParam(name="pageSize",dataType="String",value="页面大小"),
+            @ApiImplicitParam(name="partitionSort",dataType="String",value="分区排序")
+    })
     @RequestMapping(path = "getTableStatisticInfo", method = RequestMethod.GET)
     public Message getTableStatisticInfo(
             @RequestParam(value = "database", required = false) String database,
@@ -150,6 +173,12 @@ public class MdqTableRestfulApi {
         return data;
     }
 
+    @ApiOperation(value="获取分区统计信息",notes="获取分区统计信息",response = Message.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="database",dataType="String",value="数据源"),
+            @ApiImplicitParam(name="tableName",dataType="String",value="表名称"),
+            @ApiImplicitParam(name="partitionSort",dataType="String",value="分区排序")
+    })
     @RequestMapping(path = "getPartitionStatisticInfo", method = RequestMethod.GET)
     public Message getPartitionStatisticInfo(
             @RequestParam(value = "database", required = false) String database,
@@ -164,6 +193,10 @@ public class MdqTableRestfulApi {
         return Message.ok().data("partitionStatisticInfo", partition);
     }
 
+    @ApiOperation(value="激活表操作",notes="激活表操作",response = Message.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="tableId",dataType="String",value="表ID")
+    })
     @RequestMapping(path = "active", method = RequestMethod.GET)
     public Message active(
             @RequestParam(value = "tableId", required = false) Long tableId,
@@ -172,6 +205,11 @@ public class MdqTableRestfulApi {
         return Message.ok();
     }
 
+    @ApiOperation(value="激活的标识",notes="激活的标识",response = Message.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="table",dataType="String",value="表")
+    })
+    @ApiOperationSupport(ignoreParameters = {"json"})
     @RequestMapping(path = "persistTable", method = RequestMethod.POST)
     public Message persistTable(HttpServletRequest req, @RequestBody JsonNode json)
             throws IOException {
@@ -181,6 +219,11 @@ public class MdqTableRestfulApi {
         return Message.ok();
     }
 
+    @ApiOperation(value="生成新建库表的DDL语句",notes="生成新建库表的DDL语句",response = Message.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="table",dataType="String",value="表")
+    })
+    @ApiOperationSupport(ignoreParameters = {"json"})
     @RequestMapping(path = "displaysql", method = RequestMethod.POST)
     public Message displaySql(HttpServletRequest request, @RequestBody JsonNode json) {
         String userName = ModuleUserUtils.getOperationUser(request, "displaysql ");

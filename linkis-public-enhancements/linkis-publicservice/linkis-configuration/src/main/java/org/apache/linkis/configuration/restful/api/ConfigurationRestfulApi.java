@@ -17,6 +17,13 @@
 
 package org.apache.linkis.configuration.restful.api;
 
+import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
+import com.github.xiaoymin.knife4j.annotations.DynamicParameter;
+import com.github.xiaoymin.knife4j.annotations.DynamicResponseParameters;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.configuration.entity.*;
 import org.apache.linkis.configuration.exception.ConfigurationException;
@@ -50,6 +57,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+
+
+@Api(tags = "参数配置")
 @RestController
 @RequestMapping(path = "/configuration")
 public class ConfigurationRestfulApi {
@@ -66,6 +76,7 @@ public class ConfigurationRestfulApi {
 
     private static final String NULL = "null";
 
+    @ApiOperation(value="添加KeyForEngine",notes="添加KeyForEngine",response = Message.class)
     @RequestMapping(path = "/addKeyForEngine", method = RequestMethod.GET)
     public Message addKeyForEngine(
             HttpServletRequest req,
@@ -88,7 +99,12 @@ public class ConfigurationRestfulApi {
         // TODO: 2019/12/30  configKey参数校验
         return Message.ok();
     }
-
+    @ApiOperation(value="队列资源",notes="参数配置中的队列资源模块返回队列资源的列及值",response = Message.class)
+   /* @ApiOperationSupport(
+            responses = @DynamicResponseParameters(properties = {
+                    @DynamicParameter(value = "结果集",name = "data",dataTypeClass = Message.class)
+            })
+    )*/
     @RequestMapping(path = "/getFullTreesByAppName", method = RequestMethod.GET)
     public Message getFullTreesByAppName(
             HttpServletRequest req,
@@ -110,12 +126,21 @@ public class ConfigurationRestfulApi {
         return Message.ok().data("fullTree", configTrees);
     }
 
+
+    @ApiOperation(value="应用类型",notes="参数配置中应用类型标签",response = Message.class)
     @RequestMapping(path = "/getCategory", method = RequestMethod.GET)
     public Message getCategory(HttpServletRequest req) {
         List<CategoryLabelVo> categoryLabelList = categoryService.getAllCategory();
         return Message.ok().data("Category", categoryLabelList);
     }
 
+
+    @ApiOperation(value="新增应用类型",notes="新增应用类型标签" ,response = Message.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="categoryName",dataType="String",required=true,value="引用类型标签名称"),
+            @ApiImplicitParam(name="description",dataType="STring",required=true,value="描述")
+    })
+    @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "/createFirstCategory", method = RequestMethod.POST)
     public Message createFirstCategory(HttpServletRequest request, @RequestBody JsonNode jsonNode)
             throws ConfigurationException {
@@ -133,6 +158,12 @@ public class ConfigurationRestfulApi {
         return Message.ok();
     }
 
+
+    @ApiOperation(value="删除配置",notes="删除参数配置", response = Message.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="categoryId",dataType="String",required=true,value="参数配置Id")
+    })
+    @ApiOperationSupport(ignoreParameters = "jsonNode")
     @RequestMapping(path = "/deleteCategory", method = RequestMethod.POST)
     public Message deleteCategory(HttpServletRequest request, @RequestBody JsonNode jsonNode)
             throws ConfigurationException {
@@ -142,7 +173,14 @@ public class ConfigurationRestfulApi {
         categoryService.deleteCategory(categoryId);
         return Message.ok();
     }
-
+    @ApiOperation(value="新增参数配置",notes="添加参数配置",response = Message.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="categoryId",dataType="String",required=true,value="参数配置Id"),
+            @ApiImplicitParam(name="engineType",dataType="String",required=true,value="引擎类型"),
+            @ApiImplicitParam(name="version",dataType="String",required=true,value="版本号"),
+            @ApiImplicitParam(name="description",dataType="String",required=true,value="描述"),
+    })
+    @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "/createSecondCategory", method = RequestMethod.POST)
     public Message createSecondCategory(HttpServletRequest request, @RequestBody JsonNode jsonNode)
             throws ConfigurationException {
@@ -164,7 +202,16 @@ public class ConfigurationRestfulApi {
         categoryService.createSecondCategory(categoryId, engineType, version, description);
         return Message.ok();
     }
-
+    @ApiOperation(value="保存队列资源",notes="保存队列资源",response = Message.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="creator",dataType="String",required=true,value="应用类型名称"),
+            @ApiImplicitParam(name="engineType",dataType="String",required=true,value="引擎类型"),
+            @ApiImplicitParam(name="fullTree",dataType="List",required=true,value="应用类型下的详细信息"),
+            @ApiImplicitParam(name="name",dataType="String",required=true,value="队列资源名称,属于fullTree中的内容"),
+            @ApiImplicitParam(name="description",dataType="String",required=true,value="描述，属于fullTree中的内容"),
+            @ApiImplicitParam(name="settings",dataType="List",required=true,value="队列资源中的详细内容，属于fullTree中的内容")
+    })
+    @ApiOperationSupport(ignoreParameters = {"json"})
     @RequestMapping(path = "/saveFullTree", method = RequestMethod.POST)
     public Message saveFullTree(HttpServletRequest req, @RequestBody JsonNode json)
             throws IOException, ConfigurationException {
@@ -203,13 +250,19 @@ public class ConfigurationRestfulApi {
         Message message = Message.ok();
         return message;
     }
-
+    @ApiOperation(value="引擎类型列表",notes="获取引擎类型列表",response = Message.class)
     @RequestMapping(path = "/engineType", method = RequestMethod.GET)
     public Message listAllEngineType(HttpServletRequest request) {
         String[] engineType = configurationService.listAllEngineType();
         return Message.ok().data("engineType", engineType);
     }
 
+    @ApiOperation(value="更新类别信息",notes="更新类别信息",response = Message.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="description",dataType="String",required=true,value="description"),
+            @ApiImplicitParam(name="categoryId",dataType="String",required=true,value="categoryId")
+    })
+    @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "/updateCategoryInfo", method = RequestMethod.POST)
     public Message updateCategoryInfo(HttpServletRequest request, @RequestBody JsonNode jsonNode)
             throws ConfigurationException {
@@ -228,7 +281,7 @@ public class ConfigurationRestfulApi {
         }
         return Message.ok();
     }
-
+    @ApiOperation(value="rpc测试",notes="rpc测试",response = Message.class)
     @RequestMapping(path = "/rpcTest", method = RequestMethod.GET)
     public Message rpcTest(
             @RequestParam(value = "username", required = false) String username,
@@ -253,7 +306,7 @@ public class ConfigurationRestfulApi {
             throw new ConfigurationException("only admin can modify category(只有管理员才能修改目录)");
         }
     }
-
+    @ApiOperation(value="获取键值",notes="获取键值",response = Message.class)
     @RequestMapping(path = "/keyvalue", method = RequestMethod.GET)
     public Message getKeyValue(
             HttpServletRequest req,
@@ -281,7 +334,15 @@ public class ConfigurationRestfulApi {
         }
         return message;
     }
-
+    @ApiOperation(value="保存键值",notes="保存键值",response = Message.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="engineType",dataType="String",required=true,value="engineType"),
+            @ApiImplicitParam(name="version",dataType="String",required=true,value="version"),
+            @ApiImplicitParam(name="creator",dataType="String",required=true,value="creator"),
+            @ApiImplicitParam(name="configKey",dataType="String",required=true,value="configKey"),
+            @ApiImplicitParam(name="configValue",dataType="String",required=true,value="configValue")
+    })
+    @ApiOperationSupport(ignoreParameters = {"json"})
     @RequestMapping(path = "/keyvalue", method = RequestMethod.POST)
     public Message saveKeyValue(HttpServletRequest req, @RequestBody Map<String, Object> json)
             throws ConfigurationException {
@@ -307,10 +368,16 @@ public class ConfigurationRestfulApi {
         configKeyValue.setConfigValue(value);
 
         ConfigValue configValue = configKeyService.saveConfigValue(configKeyValue, labelList);
-        configurationService.clearAMCacheConf(username, creator, engineType, version);
         return Message.ok().data("configValue", configValue);
     }
-
+    @ApiOperation(value="删除键值",notes="删除键值",response = Message.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="engineType",dataType="String",required=true,value="engineType"),
+            @ApiImplicitParam(name="version",dataType="String",required=true,value="version"),
+            @ApiImplicitParam(name="creator",dataType="String",required=true,value="creator"),
+            @ApiImplicitParam(name="configKey",dataType="String",required=true,value="configKey")
+    })
+    @ApiOperationSupport(ignoreParameters = {"json"})
     @RequestMapping(path = "/keyvalue", method = RequestMethod.DELETE)
     public Message deleteKeyValue(HttpServletRequest req, @RequestBody Map<String, Object> json)
             throws ConfigurationException {

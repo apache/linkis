@@ -16,7 +16,10 @@
  */
 
 package org.apache.linkis.manager.am.restful;
-
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.governance.common.constant.job.JobRequestConstants;
 import org.apache.linkis.manager.am.exception.AMErrorException;
@@ -41,7 +44,7 @@ import com.github.pagehelper.PageInfo;
 
 import java.util.*;
 import java.util.stream.Collectors;
-
+@Api(tags = "EC资源信息管理")
 @RequestMapping(
         path = "/linkisManager/ecinfo",
         produces = {"application/json"})
@@ -49,6 +52,10 @@ import java.util.stream.Collectors;
 public class ECResourceInfoRestfulApi {
     @Autowired private ECResourceInfoService ecResourceInfoService;
 
+    @ApiOperation(value="获取EC信息",notes="获取EC信息",response = Message.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "ticketid", required = true, dataType = "String", value = "ticketid")
+    })
     @RequestMapping(path = "/get", method = RequestMethod.GET)
     public Message getECInfo(
             HttpServletRequest req, @RequestParam(value = "ticketid") String ticketid)
@@ -64,7 +71,10 @@ public class ECResourceInfoRestfulApi {
             return Message.error("tickedId not exist:" + ticketid);
         }
     }
-
+    @ApiOperation(value="删除EC信息",notes="删除EC信息",response = Message.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "ticketid", required = true, dataType = "String", value = "ticketid")
+    })
     @RequestMapping(path = "/delete/{ticketid}}", method = RequestMethod.DELETE)
     public Message deleteECInfo(HttpServletRequest req, @PathVariable("ticketid") String ticketid)
             throws AMErrorException {

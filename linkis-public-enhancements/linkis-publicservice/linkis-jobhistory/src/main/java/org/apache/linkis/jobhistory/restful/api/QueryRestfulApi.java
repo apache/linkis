@@ -17,6 +17,11 @@
 
 package org.apache.linkis.jobhistory.restful.api;
 
+import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
+import com.github.xiaoymin.knife4j.annotations.DynamicParameter;
+import com.github.xiaoymin.knife4j.annotations.DynamicResponseParameters;
+import io.swagger.annotations.*;
+import io.swagger.models.Swagger;
 import org.apache.linkis.governance.common.constant.job.JobRequestConstants;
 import org.apache.linkis.governance.common.entity.job.QueryException;
 import org.apache.linkis.jobhistory.cache.impl.DefaultQueryCacheManager;
@@ -45,6 +50,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.*;
 
+@Api(tags = "管理台首页功能接口")
 @RestController
 @RequestMapping(path = "/jobhistory")
 public class QueryRestfulApi {
@@ -56,6 +62,7 @@ public class QueryRestfulApi {
 
     @Autowired private DefaultQueryCacheManager queryCacheManager;
 
+    @ApiOperation(value="管理员验证", notes="用来验证是否为管理员，如果是则返回true不是则false")
     @RequestMapping(path = "/governanceStationAdmin", method = RequestMethod.GET)
     public Message governanceStationAdmin(HttpServletRequest req) {
         String username = ModuleUserUtils.getOperationUser(req, "governanceStationAdmin");
@@ -63,7 +70,11 @@ public class QueryRestfulApi {
         boolean match = Arrays.stream(split).anyMatch(username::equalsIgnoreCase);
         return Message.ok().data("admin", match);
     }
+    @ApiOperation(value="job任务详细信息", notes="job任务详细信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="id",value="历史记录Id",paramType="query",dataType="Long")
 
+    })
     @RequestMapping(path = "/{id}/get", method = RequestMethod.GET)
     public Message getTaskByID(HttpServletRequest req, @PathVariable("id") Long jobId) {
         String username = SecurityFilter.getLoginUsername(req);
@@ -99,7 +110,20 @@ public class QueryRestfulApi {
         //        }
         return Message.ok().data(TaskConstant.TASK, taskVO);
     }
+    @ApiOperation(value="全局历史", notes="根据条件获取全局历史数据列表默认获取全部")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="taskID", required = false,value="ID",paramType="query",dataType="Long"),
+            @ApiImplicitParam(name="tpageNow", required = false,value="页码",paramType="query",dataType="Integer"),
+            @ApiImplicitParam(name="pageSize", required = false,value="页面数量",paramType="query",dataType="Integer"),
+            @ApiImplicitParam(name="isAdminView", required = false,value="是否为管理员模式或者普通模式",paramType="query",dataType="Boolean"),
+            @ApiImplicitParam(name="startDate", required = false,value="开始时间",paramType="query",dataType="Long"),
+            @ApiImplicitParam(name="endDate", required = false,value="结束时间",paramType="query",dataType="Long"),
+            @ApiImplicitParam(name="status", required = false,value="结束时间",paramType="query",dataType="String"),
+            @ApiImplicitParam(name="executeApplicationName", required = false,value="操作人",paramType="query",dataType="String"),
+            @ApiImplicitParam(name="creator", required = false,value="创建者",paramType="query",dataType="String"),
+            @ApiImplicitParam(name="proxyUser", required = false,value="代理用户",paramType="query",dataType="String"),
 
+    })
     /** Method list should not contain subjob, which may cause performance problems. */
     @RequestMapping(path = "/list", method = RequestMethod.GET)
     public Message list(
@@ -205,7 +229,18 @@ public class QueryRestfulApi {
                 .data(TaskConstant.TASKS, vos)
                 .data(JobRequestConstants.TOTAL_PAGE(), total);
     }
+    @ApiOperation(value="获取未完成任务列表", notes="获取未完成任务列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="startDate", required = false,value="开始时间",dataType="Long "),
+            @ApiImplicitParam(name="endDate", required = false,value="结束时间",dataType="Long"),
+            @ApiImplicitParam(name="status", required = false,value="status",dataType="String"),
+            @ApiImplicitParam(name="pageNow", required = false,value="pageNow",dataType="Integer"),
+            @ApiImplicitParam(name="pageSize", required = false,value="pageSize",dataType="Integer"),
+            @ApiImplicitParam(name="startTaskID", required = false,value="startTaskID",dataType="Long"),
+            @ApiImplicitParam(name="engineType", required = false,value="engineType",dataType="String"),
+            @ApiImplicitParam(name="creator", required = false,value="creator",dataType="String")
 
+    })
     /** Method list should not contain subjob, which may cause performance problems. */
     @RequestMapping(path = "/listundone", method = RequestMethod.GET)
     public Message listundone(

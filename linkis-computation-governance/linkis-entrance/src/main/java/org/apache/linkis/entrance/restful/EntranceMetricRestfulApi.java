@@ -17,6 +17,10 @@
 
 package org.apache.linkis.entrance.restful;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.entrance.EntranceServer;
 import org.apache.linkis.entrance.annotation.EntranceServerBeanAnnotation;
@@ -35,8 +39,9 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Api(tags = "任务管理")
 @RestController
-@RequestMapping(path = "/entrance/operation/metrics")
+@RequestMapping(path = "/entrance/api/metrics")
 public class EntranceMetricRestfulApi {
 
     private EntranceServer entranceServer;
@@ -48,6 +53,12 @@ public class EntranceMetricRestfulApi {
         this.entranceServer = entranceServer;
     }
 
+    @ApiOperation(value="任务信息",notes="任务信息",response = Message.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "user", required = false, dataType = "String", value = "user"),
+            @ApiImplicitParam(name = "creator", required = false, dataType = "String", value = "创建者"),
+            @ApiImplicitParam(name = "engineTypeLabel", required = false, dataType = "String", value = "引擎类型标签")
+    })
     @RequestMapping(path = "/taskinfo", method = RequestMethod.GET)
     public Message taskinfo(
             HttpServletRequest req,
@@ -102,6 +113,7 @@ public class EntranceMetricRestfulApi {
                 .data("queuedNumber", queuedNumber);
     }
 
+    @ApiOperation(value="启动任务",notes="启动任务",response = Message.class)
     @RequestMapping(path = "/runningtask", method = RequestMethod.GET)
     public Message status(HttpServletRequest req) {
 

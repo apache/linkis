@@ -17,6 +17,10 @@
 
 package org.apache.linkis.cs.server.restful;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.cs.common.entity.source.ContextID;
 import org.apache.linkis.cs.common.exception.CSErrorException;
@@ -50,7 +54,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 import static org.apache.linkis.cs.common.utils.CSCommonUtils.localDatetimeToDate;
-
+@Api(tags = "上下文记录服务")
 @RestController
 @RequestMapping(path = "/contextservice")
 public class ContextIDRestfulApi implements CsRestfulParent {
@@ -59,6 +63,10 @@ public class ContextIDRestfulApi implements CsRestfulParent {
 
     @Autowired private CsScheduler csScheduler;
 
+    @ApiOperation(value="创建文本记录",notes="创建文本记录",response = Message.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="contextID",dataType="String",value="上下文Id")
+    })
     @RequestMapping(path = "createContextID", method = RequestMethod.POST)
     public Message createContextID(HttpServletRequest req, @RequestBody JsonNode jsonNode)
             throws InterruptedException, ClassNotFoundException, IOException, CSErrorException {
@@ -66,7 +74,10 @@ public class ContextIDRestfulApi implements CsRestfulParent {
         HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.CREATE, contextID);
         return generateResponse(answerJob, "contextId");
     }
-
+    @ApiOperation(value="获取文本ID",notes="获取文本ID",response = Message.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="contextId",dataType="String",value="上下文Id")
+    })
     @RequestMapping(path = "getContextID", method = RequestMethod.GET)
     public Message getContextID(
             HttpServletRequest req, @RequestParam(value = "contextId", required = false) String id)
@@ -79,6 +90,10 @@ public class ContextIDRestfulApi implements CsRestfulParent {
         return message;
     }
 
+    @ApiOperation(value="修改文本ID",notes="修改文本ID",response = Message.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="contextId",dataType="String",value="上下文Id")
+    })
     @RequestMapping(path = "updateContextID", method = RequestMethod.POST)
     public Message updateContextID(HttpServletRequest req, @RequestBody JsonNode jsonNode)
             throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
@@ -90,6 +105,10 @@ public class ContextIDRestfulApi implements CsRestfulParent {
         return generateResponse(answerJob, "");
     }
 
+    @ApiOperation(value="重置文本ID",notes="重置文本ID",response = Message.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="contextId",dataType="String",value="上下文Id")
+    })
     @RequestMapping(path = "resetContextID", method = RequestMethod.POST)
     public Message resetContextID(HttpServletRequest req, @RequestBody JsonNode jsonNode)
             throws InterruptedException, CSErrorException {
@@ -102,6 +121,10 @@ public class ContextIDRestfulApi implements CsRestfulParent {
         return generateResponse(answerJob, "");
     }
 
+    @ApiOperation(value="删除文本ID",notes="删除文本ID",response = Message.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="contextId",dataType="String",value="上下文Id")
+    })
     @RequestMapping(path = "removeContextID", method = RequestMethod.POST)
     public Message removeContextID(HttpServletRequest req, @RequestBody JsonNode jsonNode)
             throws InterruptedException, CSErrorException {
@@ -113,6 +136,17 @@ public class ContextIDRestfulApi implements CsRestfulParent {
         return generateResponse(answerJob, "");
     }
 
+    @ApiOperation(value="搜索文本Id执行时间",notes="搜索文本Id执行时间",response = Message.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="createTimeStart",dataType="String",value="创建时间"),
+            @ApiImplicitParam(name="createTimeEnd",dataType="String",value="创建结束时间"),
+            @ApiImplicitParam(name="updateTimeStart",dataType="String",value="更新时间"),
+            @ApiImplicitParam(name="updateTimeEnd",dataType="String",value="更新结束时间"),
+            @ApiImplicitParam(name="accessTimeStart",dataType="String",value="访问开始时间"),
+            @ApiImplicitParam(name="accessTimeEnd",dataType="String",value="访问结束时间"),
+            @ApiImplicitParam(name="pageNow",dataType="String",value="页码"),
+            @ApiImplicitParam(name="pageSize",dataType="String",value="页面大小")
+    })
     @RequestMapping(path = "searchContextIDByTime", method = RequestMethod.GET)
     public Message searchContextIDByTime(
             HttpServletRequest req,

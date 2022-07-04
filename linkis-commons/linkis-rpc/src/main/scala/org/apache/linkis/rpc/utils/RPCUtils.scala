@@ -58,7 +58,7 @@ object RPCUtils {
     val services = SpringCloudFeignConfigurationCache.getDiscoveryClient
       .getServices.filter(_.toLowerCase.contains(parsedServiceId.toLowerCase)).toList
     if(services.length == 1) Some(services.head)
-    else if(services.length > 1) tooManyDeal(services)
+    else if (services.length > 1) tooManyDeal(services)
     else None
   }
 

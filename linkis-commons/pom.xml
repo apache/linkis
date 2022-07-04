@@ -38,6 +38,7 @@
         <module>linkis-mybatis</module>
         <module>linkis-rpc</module>
         <module>linkis-storage</module>
+        <module>linkis-knife4j</module>
     </modules>
 
 </project>

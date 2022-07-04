@@ -36,7 +36,7 @@ import com.netflix.discovery.DiscoveryManager;
 @RequestMapping(path = "/")
 public class CommonRestfulApi {
     @Autowired private DiscoveryClient client;
-    @ApiOperation(value="离线",notes="离线",response = Message.class)
+    @ApiOperation(value="下线某服务",notes="下线某服务",response = Message.class)
     @RequestMapping(path = "/offline", method = RequestMethod.GET)
     public Message offline(HttpServletRequest req) {
         DiscoveryManager.getInstance().shutdownComponent();

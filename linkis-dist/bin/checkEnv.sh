@@ -139,7 +139,7 @@ check_service_port
 SERVER_PORT=$DATASOURCE_MANAGER_PORT
 check_service_port
 
-SERVER_PORT=$METADATA_MANAGER_PORT
+SERVER_PORT=$METADATA_QUERY_PORT
 check_service_port
 
 if [ "$portIsOccupy" = true ];then

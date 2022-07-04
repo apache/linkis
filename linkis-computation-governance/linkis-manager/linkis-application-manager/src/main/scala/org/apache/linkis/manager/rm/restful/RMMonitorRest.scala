@@ -112,7 +112,7 @@ private class RMMonitorRest extends Logging {
   def getApplicationList(request: HttpServletRequest, @RequestBody param: util.Map[String, AnyRef]): Message = {
     val message = Message.ok("")
     val userName = ModuleUserUtils.getOperationUser(request, "applicationlist")
-    val userCreator = param.get("userCreator").asInstanceOf[String]
+    val userCreator =if (param.get("userCreator") == null) null else param.get("userCreator").asInstanceOf[String]
     val engineType = if (param.get("engineType") == null) null else param.get("engineType").asInstanceOf[String]
     val nodes = getEngineNodes(userName, true)
     val creatorToApplicationList = new mutable.HashMap[String, mutable.HashMap[String, Any]]

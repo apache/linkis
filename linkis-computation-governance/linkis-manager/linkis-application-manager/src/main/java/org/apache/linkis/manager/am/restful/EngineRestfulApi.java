@@ -177,8 +177,8 @@ public class EngineRestfulApi {
 
     @ApiOperation(value="kill引擎",notes="关闭引擎，可关闭一个也可关闭多个",response = Message.class)
     @ApiImplicitParams({
-            @ApiImplicitParam(name="engineInstance",required = true, dataType="String",value="引擎实例名称，最外层是个数组和applicationName参数是一个级别"),
-            @ApiImplicitParam(name="applicationName",required = true,dataType="String",value="应用名称，最外层是个数组和engineInstance参数是一个级别")
+            @ApiImplicitParam(name="engineInstance",required = false, dataType="String",value="引擎实例名称，最外层是个数组和applicationName参数是一个级别"),
+            @ApiImplicitParam(name="applicationName",required = false,dataType="String",value="应用名称，最外层是个数组和engineInstance参数是一个级别")
     })
     @ApiOperationSupport(ignoreParameters = {"param"})
     @RequestMapping(path = "/rm/enginekill", method = RequestMethod.POST)

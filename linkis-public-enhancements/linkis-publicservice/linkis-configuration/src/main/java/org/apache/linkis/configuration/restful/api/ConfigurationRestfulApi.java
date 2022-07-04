@@ -137,8 +137,8 @@ public class ConfigurationRestfulApi {
 
     @ApiOperation(value="新增应用类型",notes="新增应用类型标签" ,response = Message.class)
     @ApiImplicitParams({
-            @ApiImplicitParam(name="categoryName",dataType="String",required=true,value="引用类型标签名称"),
-            @ApiImplicitParam(name="description",dataType="STring",required=true,value="描述")
+            @ApiImplicitParam(name="categoryName",dataType="String",required=false,value="引用类型标签名称"),
+            @ApiImplicitParam(name="description",dataType="STring",required=false,value="描述")
     })
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "/createFirstCategory", method = RequestMethod.POST)

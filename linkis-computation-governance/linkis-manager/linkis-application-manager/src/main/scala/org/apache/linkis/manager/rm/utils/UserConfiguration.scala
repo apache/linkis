@@ -74,7 +74,7 @@ object UserConfiguration extends Logging {
   def getUserConfiguredResource(resourceType: ResourceType, userCreatorLabel: UserCreatorLabel, engineTypeLabel: EngineTypeLabel): Resource = {
     Utils.tryAndWarn{
       val userCreatorAvailableResource = generateResource(resourceType, engineMapCache.getCacheMap(userCreatorLabel, engineTypeLabel))
-      info(s"${userCreatorLabel.getUser} on creator ${userCreatorLabel.getCreator} available engine ${engineTypeLabel.getEngineType} resource:$userCreatorAvailableResource")
+      logger.info(s"${userCreatorLabel.getUser} on creator ${userCreatorLabel.getCreator} available engine ${engineTypeLabel.getEngineType} resource:$userCreatorAvailableResource")
       userCreatorAvailableResource
     }
   }
@@ -82,7 +82,7 @@ object UserConfiguration extends Logging {
   def getUserConfiguredResource(resourceType: ResourceType, engineType: String, user: String, creator: String): Resource = {
     Utils.tryAndWarn{
       val userCreatorAvailableResource = generateResource(resourceType, engineMapCache.getCacheMap(buildRequestLabel(user, creator, engineType = engineType)))
-      info(s"$user on creator available resource:$userCreatorAvailableResource")
+      logger.info(s"$user on creator available resource:$userCreatorAvailableResource")
       userCreatorAvailableResource
     }
   }

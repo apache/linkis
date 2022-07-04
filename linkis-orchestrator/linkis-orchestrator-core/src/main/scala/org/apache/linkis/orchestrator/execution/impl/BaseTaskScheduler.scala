@@ -52,7 +52,7 @@ class BaseTaskScheduler(executeService: ExecutorService) extends TaskScheduler w
             finishedTask += taskAndFuture.getKey
           }
         }
-        info(s"Clear finished task from  taskFutureCache size ${finishedTask.size}")
+        logger.info(s"Clear finished task from  taskFutureCache size ${finishedTask.size}")
         finishedTask.foreach(taskFutureCache.remove(_))
       }
     }, 60000, OrchestratorConfiguration.TASK_SCHEDULER_CLEAR_TIME.getValue.toLong, TimeUnit.MILLISECONDS)
@@ -62,7 +62,7 @@ class BaseTaskScheduler(executeService: ExecutorService) extends TaskScheduler w
     // TODO Should support to add task to ready queue, since a complex scheduler is needed,
     //  such as: fair, priority... we should schedule them by using some algorithms.
     // TODO Here, we should also remove the futures which is completed normally in taskFutureCache and taskIdTaskCache.
-    debug(s"launch task Runner ${task.task.getIDInfo()}")
+    logger.debug(s"launch task Runner ${task.task.getIDInfo()}")
     val future = executeService.submit(task)
     if (! future.isDone) {
       taskFutureCache.put(task.task.getId, future)
@@ -73,10 +73,10 @@ class BaseTaskScheduler(executeService: ExecutorService) extends TaskScheduler w
   //TODO We should use this method to remove the futures in taskFutureCache,
   // when a event is sent to mark this task failed!
   override def cancelTask(task: ExecTaskRunner, interrupted: Boolean): Unit = {
-    info(s"cancel task Runner ${task.task.getIDInfo}")
+    logger.info(s"cancel task Runner ${task.task.getIDInfo}")
     task.interrupt()
     if (taskFutureCache.containsKey(task.task.getId)) {
-      info(s"from taskFutureCache to kill task Runner ${task.task.getIDInfo}")
+      logger.info(s"from taskFutureCache to kill task Runner ${task.task.getIDInfo}")
       val future = taskFutureCache.get(task.task.getId)
       if ( null != future && ! future.isDone) {
         future.cancel(interrupted)

@@ -59,7 +59,7 @@ class ComputationExecutorManagerImpl extends LabelExecutorManagerImpl with Compu
       if (null == defaultExecutor || defaultExecutor.isClosed) {
         if (null == EngineConnManager.getEngineConnManager.getEngineConn) {
           Utils.waitUntil(() => null != EngineConnManager.getEngineConnManager.getEngineConn, Duration.apply(EngineConnConf.ENGINE_CONN_CREATION_WAIT_TIME.getValue.toLong, TimeUnit.MILLISECONDS))
-          error(s"Create default executor failed, engineConn not ready after ${EngineConnConf.ENGINE_CONN_CREATION_WAIT_TIME.getValue.toString}.")
+          logger.error(s"Create default executor failed, engineConn not ready after ${EngineConnConf.ENGINE_CONN_CREATION_WAIT_TIME.getValue.toString}.")
           return null
         }
         val retryHandler = new RetryHandler {}
@@ -83,7 +83,7 @@ class ComputationExecutorManagerImpl extends LabelExecutorManagerImpl with Compu
         return label.getCodeType
       case _ =>
     }
-    error("Cannot get label key. labels : " + GSON.toJson(labels))
+    logger.error("Cannot get label key. labels : " + GSON.toJson(labels))
     null
   }
 }

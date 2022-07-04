@@ -46,17 +46,17 @@ class ParallelConsumerManager(maxParallelismUsers: Int, schedulerName: String) e
     * Clean up idle consumers regularly
     */
   if (SchedulerConfiguration.FIFO_CONSUMER_AUTO_CLEAR_ENABLED.getValue) {
-    info(s"The feature that auto clean up idle consumers for $schedulerName is enabled.")
+    logger.info(s"The feature that auto clean up idle consumers for $schedulerName is enabled.")
     Utils.defaultScheduler.scheduleAtFixedRate(new Runnable {
       override def run(): Unit = CONSUMER_LOCK.synchronized {
-        info("Start to Clean up idle consumers ")
+        logger.info("Start to Clean up idle consumers ")
         val nowTime = System.currentTimeMillis()
         Utils.tryAndWarn {
           consumerGroupMap.values.filter(_.isIdle)
             .filter(consumer => nowTime - consumer.getLastTime > SchedulerConfiguration.FIFO_CONSUMER_MAX_IDLE_TIME)
             .foreach(consumer => destroyConsumer(consumer.getGroup.getGroupName))
         }
-        info(s"Finished to clean up idle consumers for $schedulerName, cost ${System.currentTimeMillis() - nowTime} ms.")
+        logger.info(s"Finished to clean up idle consumers for $schedulerName, cost ${System.currentTimeMillis() - nowTime} ms.")
       }
     },
       SchedulerConfiguration.FIFO_CONSUMER_IDLE_SCAN_INIT_TIME.getValue.toLong,
@@ -103,7 +103,7 @@ class ParallelConsumerManager(maxParallelismUsers: Int, schedulerName: String) e
       tmpConsumer.shutdown()
       consumerGroupMap.remove(groupName)
       consumerListener.foreach(_.onConsumerDestroyed(tmpConsumer))
-      warn(s"Consumer of group ($groupName) in $schedulerName is destroyed.")
+      logger.warn(s"Consumer of group ($groupName) in $schedulerName is destroyed.")
     }
 
   override def shutdown(): Unit = {

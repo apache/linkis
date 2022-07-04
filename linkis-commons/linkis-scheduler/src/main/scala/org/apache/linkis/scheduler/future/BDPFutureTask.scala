@@ -26,13 +26,13 @@ class BDPFutureTask(future: Future[_]) extends BDPFuture with Logging {
   override def cancel(): Unit = Utils.tryAndErrorMsg {
     future match {
       case futureTask: FutureTask[_] =>
-        info("Start to interrupt BDPFutureTask")
+        logger.info("Start to interrupt BDPFutureTask")
         val futureType = futureTask.getClass
         val field = futureType.getDeclaredField("runner")
         field.setAccessible(true)
         val runner = field.get(futureTask).asInstanceOf[Thread]
         runner.interrupt()
-        info(s"Finished to interrupt BDPFutureTask of ${runner.getName}")
+        logger.info(s"Finished to interrupt BDPFutureTask of ${runner.getName}")
     }
   }("Failed to interrupt BDPFutureTask")
 }

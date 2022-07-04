@@ -16,13 +16,14 @@
  */
  
 package org.apache.linkis.engineconn.once.executor
-import java.util
-
+import org.apache.commons.io.IOUtils
+import org.apache.commons.lang.StringUtils
 import org.apache.linkis.bml.client.BmlClientFactory
 import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.engineconn.acessible.executor.entity.AccessibleExecutor
 import org.apache.linkis.engineconn.common.creation.EngineCreationContext
+import org.apache.linkis.engineconn.core.hook.ShutdownHook
 import org.apache.linkis.engineconn.core.util.EngineConnUtils
 import org.apache.linkis.engineconn.executor.entity.{ExecutableExecutor, LabelExecutor, ResourceExecutor}
 import org.apache.linkis.engineconn.once.executor.exception.OnceEngineConnErrorException
@@ -32,10 +33,8 @@ import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import org.apache.linkis.manager.label.entity.{JobLabel, Label}
 import org.apache.linkis.scheduler.executer.{AsynReturnExecuteResponse, ErrorExecuteResponse, ExecuteResponse, SuccessExecuteResponse}
-import org.apache.commons.io.IOUtils
-import org.apache.commons.lang.StringUtils
-import org.apache.linkis.engineconn.core.hook.ShutdownHook
 
+import java.util
 import scala.collection.convert.wrapAsScala._
 import scala.collection.mutable.ArrayBuffer
 
@@ -76,7 +75,7 @@ trait OnceExecutor extends ExecutableExecutor[ExecuteResponse] with LabelExecuto
     val properties = onceExecutorExecutionContext.getOnceExecutorContent.getRuntimeMap
     if (properties.containsKey(RequestTask.RESULT_SET_STORE_PATH)) {
       onceExecutorExecutionContext.setStorePath(properties.get(RequestTask.RESULT_SET_STORE_PATH).toString)
-      info(s"ResultSet storePath: ${onceExecutorExecutionContext.getStorePath}.")
+      logger.info(s"ResultSet storePath: ${onceExecutorExecutionContext.getStorePath}.")
     }
     if(onceExecutorExecutionContext.getOnceExecutorContent.getExtraLabels != null) {
       val extraLabelsList = LabelBuilderFactoryContext.getLabelBuilderFactory
@@ -88,7 +87,7 @@ trait OnceExecutor extends ExecutableExecutor[ExecuteResponse] with LabelExecuto
     onceExecutorExecutionContext.getLabels.foreach {
       case jobLabel: JobLabel =>
         onceExecutorExecutionContext.setJobId(jobLabel.getJobId)
-        info(s"JobId: ${onceExecutorExecutionContext.getJobId}.")
+        logger.info(s"JobId: ${onceExecutorExecutionContext.getJobId}.")
       case _ =>
     }
   }
@@ -143,7 +142,7 @@ trait ManageableOnceExecutor extends AccessibleExecutor with OnceExecutor with R
 
   def tryFailed(): Boolean = {
     if(isClosed) return true
-    error(s"$getId has failed with old status $getStatus, now stop it.")
+    logger.error(s"$getId has failed with old status $getStatus, now stop it.")
     Utils.tryFinally {
       this.ensureAvailable(transition(NodeStatus.Failed))
       close()
@@ -152,8 +151,8 @@ trait ManageableOnceExecutor extends AccessibleExecutor with OnceExecutor with R
   }
 
   def trySucceed(): Boolean = {
-    if(isClosed)  return true
-    warn(s"$getId has succeed with old status $getStatus, now stop it.")
+    if (isClosed) return true
+    logger.warn(s"$getId has succeed with old status $getStatus, now stop it.")
     Utils.tryFinally {
       this.ensureAvailable(transition(NodeStatus.Success))
       close()

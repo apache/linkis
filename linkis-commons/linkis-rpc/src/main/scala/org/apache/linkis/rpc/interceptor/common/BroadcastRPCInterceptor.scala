@@ -59,7 +59,7 @@ class BroadcastRPCInterceptor extends RPCInterceptor with Logging {
             case b: BaseRPCSender => b.getApplicationName
             case _ => sender
           }
-          warn(s"broadcast to $serviceInstance failed!", t)
+          logger.warn(s"broadcast to $serviceInstance failed!", t)
         }
       }.map{ _ =>
         completedSize.incrementAndGet

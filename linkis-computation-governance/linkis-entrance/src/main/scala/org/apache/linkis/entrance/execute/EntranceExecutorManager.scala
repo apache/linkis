@@ -24,13 +24,10 @@ import org.apache.linkis.entrance.exception.EntranceErrorException
 import org.apache.linkis.entrance.job.EntranceExecutionJob
 import org.apache.linkis.governance.common.entity.job.JobRequest
 import org.apache.linkis.manager.label.utils.LabelUtils
-import org.apache.linkis.orchestrator.Orchestration
 import org.apache.linkis.scheduler.executer.{Executor, ExecutorManager}
 import org.apache.linkis.scheduler.queue.{GroupFactory, Job, SchedulerEvent}
 
-import java.util
 import java.util.Date
-import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicLong
 import scala.concurrent.duration.Duration
 
@@ -86,7 +83,7 @@ abstract class EntranceExecutorManager(groupFactory: GroupFactory) extends Execu
       while (System.currentTimeMillis - startTime < wait.toMillis && executor.isEmpty)
         Utils.tryCatch(executor = askExecutor(job)) {
           case warn: WarnException =>
-            this.warn("request engine failed!", warn)
+            logger.warn("request engine failed!", warn)
             warnException = warn
             None
           case t: Throwable => throw t

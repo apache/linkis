@@ -101,12 +101,12 @@ class TaskExecutionServiceImpl extends TaskExecutionService with Logging with Re
         sender.send(msg)
       } else {
         // todo
-        debug("SendtoEntrance error, cannot find entrance instance.")
+        logger.debug("SendtoEntrance error, cannot find entrance instance.")
       }
     } {
       t =>
         val errorMsg = s"SendToEntrance error. $msg" + t.getCause
-        error(errorMsg, t)
+        logger.error(errorMsg, t)
         throw new EngineConnExecutorErrorException(EngineConnExecutorErrorCode.SEND_TO_ENTRANCE_ERROR, errorMsg)
     }
   }
@@ -115,13 +115,13 @@ class TaskExecutionServiceImpl extends TaskExecutionService with Logging with Re
   override def execute(requestTask: RequestTask, sender: Sender): ExecuteResponse = {
 
     // check lock
-    info("Received a new task, task content is " + requestTask)
+    logger.info("Received a new task, task content is " + requestTask)
     if (StringUtils.isBlank(requestTask.getLock)) {
-      error(s"Invalid lock : ${requestTask.getLock} , requestTask : " + requestTask)
+      logger.error(s"Invalid lock : ${requestTask.getLock} , requestTask : " + requestTask)
       return ErrorExecuteResponse(s"Invalid lock : ${requestTask.getLock}.", new EngineConnExecutorErrorException(EngineConnExecutorErrorCode.INVALID_PARAMS, "Invalid lock or code(请获取到锁后再提交任务.)"))
     }
     if (!lockService.isLockExist(requestTask.getLock)) {
-      error(s"Lock ${requestTask.getLock} not exist, cannot execute.")
+      logger.error(s"Lock ${requestTask.getLock} not exist, cannot execute.")
       return ErrorExecuteResponse("Lock not exixt", new EngineConnExecutorErrorException(EngineConnExecutorErrorCode.INVALID_LOCK, "Lock : " + requestTask.getLock + " not exist(您的锁无效，请重新获取后再提交)."))
     }
 
@@ -183,7 +183,7 @@ class TaskExecutionServiceImpl extends TaskExecutionService with Logging with Re
       case o =>
         val labelsStr = if (labels != null) labels.filter(_ != null).map(_.getStringValue).mkString(",") else ""
         val msg = "Invalid computationExecutor : " + o.getClass.getName + ", labels : " + labelsStr + ", requestTask : " + task.getTaskId
-        error(msg)
+        logger.error(msg)
         ErrorExecuteResponse("Invalid computationExecutor(生成无效的计算引擎，请联系管理员).", new EngineConnExecutorErrorException(EngineConnExecutorErrorCode.INVALID_ENGINE_TYPE, msg))
     }
   }
@@ -200,7 +200,7 @@ class TaskExecutionServiceImpl extends TaskExecutionService with Logging with Re
   //  }
 
   private def submitTask(task: CommonEngineConnTask, computationExecutor: ComputationExecutor): ExecuteResponse = {
-    info(s"Task ${task.getTaskId} was submited.")
+    logger.info(s"Task ${task.getTaskId} was submited.")
     computationExecutor match {
       case executor: AsyncConcurrentComputationExecutor =>
         submitASyncTask(task, executor)
@@ -216,7 +216,7 @@ class TaskExecutionServiceImpl extends TaskExecutionService with Logging with Re
     Utils.tryCatch {
       computationExecutor.execute(task)
     } { t =>
-      error(s"Failed to submit task${task.getTaskId} ", t)
+      logger.error(s"Failed to submit task${task.getTaskId} ", t)
       response = ErrorExecuteResponse("Failed to submit task", t)
       null
     }
@@ -299,7 +299,7 @@ class TaskExecutionServiceImpl extends TaskExecutionService with Logging with Re
     response match {
       case ErrorExecuteResponse(message, throwable) =>
         sendToEntrance(task, ResponseTaskError(task.getTaskId, message))
-        error(message, throwable)
+        logger.error(message, throwable)
         LogHelper.pushAllRemainLogs()
         executor.transformTaskStatus(task, ExecutionNodeStatus.Failed)
       case _ => logger.warn(s"task get response is $response")
@@ -378,7 +378,7 @@ class TaskExecutionServiceImpl extends TaskExecutionService with Logging with Re
         response = ResponseTaskProgress(taskID, -1, null)
       }
     } else {
-      error(s"Executor of taskId : $taskID is not cached.")
+      logger.error(s"Executor of taskId : $taskID is not cached.")
     }
     response
   }
@@ -398,7 +398,7 @@ class TaskExecutionServiceImpl extends TaskExecutionService with Logging with Re
     if (null != executor) {
       executor.killTask(taskID)
     } else {
-      error(s"Executor of taskId : $taskID is not cached.")
+      logger.error(s"Executor of taskId : $taskID is not cached.")
     }
     Utils.tryAndWarn(Thread.sleep(50))
     if (null != lastTask && lastTask.getTaskId.equalsIgnoreCase(taskID)) {
@@ -423,31 +423,31 @@ class TaskExecutionServiceImpl extends TaskExecutionService with Logging with Re
       ResponseTaskStatus(task.getTaskId, task.getStatus)
     } else {
       val msg = "Task null! requestTaskStatus: " + ComputationEngineUtils.GSON.toJson(requestTaskStatus)
-      error(msg)
+      logger.error(msg)
       ResponseTaskStatus(requestTaskStatus.execId, ExecutionNodeStatus.Cancelled)
     }
   }
 
   @Receiver
   override def dealRequestTaskPause(requestTaskPause: RequestTaskPause): Unit = {
-    info(s"Pause is Not supported for task : " + requestTaskPause.execId)
+    logger.info(s"Pause is Not supported for task : " + requestTaskPause.execId)
   }
 
   @Receiver
   override def dealRequestTaskKill(requestTaskKill: RequestTaskKill): Unit = {
-    warn(s"Requested to kill task : ${requestTaskKill.execId}")
+    logger.warn(s"Requested to kill task : ${requestTaskKill.execId}")
     val executor = taskIdCache.getIfPresent(requestTaskKill.execId)
     if (null != executor) {
       executor.killTask(requestTaskKill.execId)
-      info(s"TaskId : ${requestTaskKill.execId} was killed by user.")
+      logger.info(s"TaskId : ${requestTaskKill.execId} was killed by user.")
     } else {
-      error(s"Kill failed, got invalid executor : null for taskId : ${requestTaskKill.execId}")
+      logger.error(s"Kill failed, got invalid executor : null for taskId : ${requestTaskKill.execId}")
     }
   }
 
   @Receiver
   override def dealRequestTaskResume(requestTaskResume: RequestTaskResume): Unit = {
-    info(s"Resume is Not support for task : " + requestTaskResume.execId)
+    logger.info(s"Resume is Not support for task : " + requestTaskResume.execId)
   }
 
   override def onEvent(event: EngineConnSyncEvent): Unit = event match {
@@ -457,9 +457,9 @@ class TaskExecutionServiceImpl extends TaskExecutionService with Logging with Re
     case taskResultCreateEvent: TaskResultCreateEvent => onResultSetCreated(taskResultCreateEvent)
     case taskResultSizeCreatedEvent: TaskResultSizeCreatedEvent => onResultSizeCreated(taskResultSizeCreatedEvent)
     case taskResponseErrorEvent: TaskResponseErrorEvent => onTaskResponseErrorEvent(taskResponseErrorEvent)
-    case taskStatusChangedEvent2: TaskStatusChangedForUpstreamMonitorEvent => info("ignored TaskStatusChangedEvent2 for entrance monitoring, task: " + taskStatusChangedEvent2.taskId)
+    case taskStatusChangedEvent2: TaskStatusChangedForUpstreamMonitorEvent => logger.info("ignored TaskStatusChangedEvent2 for entrance monitoring, task: " + taskStatusChangedEvent2.taskId)
     case _ =>
-      warn("Unknown event : " + BDPJettyServerHelper.gson.toJson(event))
+      logger.warn("Unknown event : " + BDPJettyServerHelper.gson.toJson(event))
   }
 
   override def onLogUpdate(logUpdateEvent: TaskLogUpdateEvent): Unit = {
@@ -469,7 +469,7 @@ class TaskExecutionServiceImpl extends TaskExecutionService with Logging with Re
         if (null != task) {
           sendToEntrance(task, ResponseTaskLog(logUpdateEvent.taskId, logUpdateEvent.log))
         } else {
-          error("Task cannot null! logupdateEvent: " + logUpdateEvent.taskId)
+          logger.error("Task cannot null! logupdateEvent: " + logUpdateEvent.taskId)
         }
       } else if (null != lastTask) {
         val executor = executorManager.getReportExecutor
@@ -479,10 +479,10 @@ class TaskExecutionServiceImpl extends TaskExecutionService with Logging with Re
               sendToEntrance(lastTask, ResponseTaskLog(lastTask.getTaskId, logUpdateEvent.log))
             }
           case _ =>
-            error("OnLogUpdate error. Invalid ComputationExecutor : " + ComputationEngineUtils.GSON.toJson(executor))
+            logger.error("OnLogUpdate error. Invalid ComputationExecutor : " + ComputationEngineUtils.GSON.toJson(executor))
         }
       } else {
-        info(s"Task not ready, log will be dropped : ${logUpdateEvent.taskId}")
+        logger.info(s"Task not ready, log will be dropped : ${logUpdateEvent.taskId}")
       }
 
     }
@@ -503,7 +503,7 @@ class TaskExecutionServiceImpl extends TaskExecutionService with Logging with Re
         logger.info(s"task ${task.getTaskId} status $toStatus will not be send to entrance")
       }
     } else {
-      error("Task cannot null! taskStatusChangedEvent: " + ComputationEngineUtils.GSON.toJson(taskStatusChangedEvent))
+      logger.error("Task cannot null! taskStatusChangedEvent: " + ComputationEngineUtils.GSON.toJson(taskStatusChangedEvent))
     }
   }
 
@@ -513,13 +513,13 @@ class TaskExecutionServiceImpl extends TaskExecutionService with Logging with Re
       if (null != task) {
         sendToEntrance(task, ResponseTaskProgress(taskProgressUpdateEvent.taskId, taskProgressUpdateEvent.progress, taskProgressUpdateEvent.progressInfo))
       } else {
-        error("Task cannot null! taskProgressUpdateEvent : " + ComputationEngineUtils.GSON.toJson(taskProgressUpdateEvent))
+        logger.error("Task cannot null! taskProgressUpdateEvent : " + ComputationEngineUtils.GSON.toJson(taskProgressUpdateEvent))
       }
     }
   }
 
   override def onResultSetCreated(taskResultCreateEvent: TaskResultCreateEvent): Unit = {
-    info(s"start to deal result event ${taskResultCreateEvent.taskId}")
+    logger.info(s"start to deal result event ${taskResultCreateEvent.taskId}")
     val task = getTaskByTaskId(taskResultCreateEvent.taskId)
     if (null != task) {
       sendToEntrance(task, ResponseTaskResultSet(
@@ -528,9 +528,9 @@ class TaskExecutionServiceImpl extends TaskExecutionService with Logging with Re
         taskResultCreateEvent.alias
       ))
     } else {
-      error(s"Task cannot null! taskResultCreateEvent: ${taskResultCreateEvent.taskId}")
+      logger.error(s"Task cannot null! taskResultCreateEvent: ${taskResultCreateEvent.taskId}")
     }
-    info(s"Finished  to deal result event ${taskResultCreateEvent.taskId}")
+    logger.info(s"Finished  to deal result event ${taskResultCreateEvent.taskId}")
   }
 
   private def getTaskByTaskId(taskId: String): EngineConnTask = {
@@ -539,7 +539,7 @@ class TaskExecutionServiceImpl extends TaskExecutionService with Logging with Re
     if (null != executor) {
       executor.getTaskById(taskId)
     } else {
-      error(s"Executor of taskId : $taskId is not cached.")
+      logger.error(s"Executor of taskId : $taskId is not cached.")
       null
     }
   }
@@ -552,7 +552,7 @@ class TaskExecutionServiceImpl extends TaskExecutionService with Logging with Re
         taskResultSizeCreatedEvent.resultSize
       ))
     } else {
-      error("Task cannot null! taskResultSizeCreatedEvent: " + ComputationEngineUtils.GSON.toJson(taskResultSizeCreatedEvent))
+      logger.error("Task cannot null! taskResultSizeCreatedEvent: " + ComputationEngineUtils.GSON.toJson(taskResultSizeCreatedEvent))
     }
   }
 

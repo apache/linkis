@@ -443,7 +443,7 @@ class RMMonitorRest extends Logging {
         }
       }
     }{case exception: Exception =>
-        error(s"queresource search failed!", exception)
+      logger.error(s"queresource search failed!", exception)
       case _ =>
     }
 

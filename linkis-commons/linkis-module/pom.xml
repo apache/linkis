@@ -37,11 +37,16 @@
             <version>${linkis.version}</version>
         </dependency>
 
-        <!--add knif2 dependency-->
         <dependency>
-            <groupId>com.github.xiaoymin</groupId>
-            <artifactId>knife4j-spring-boot-starter</artifactId>
-            <version>${knife4j.version}</version>
+            <groupId>org.apache.linkis</groupId>
+            <artifactId>linkis-knife4j</artifactId>
+            <version>${linkis.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-webmvc</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>

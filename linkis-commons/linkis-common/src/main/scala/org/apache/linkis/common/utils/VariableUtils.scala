@@ -18,6 +18,7 @@
 package org.apache.linkis.common.utils
 
 import org.apache.commons.lang3.StringUtils
+import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.exception.LinkisCommonErrorException
 import org.apache.linkis.common.variable
 import org.apache.linkis.common.variable.DateTypeUtils.{getCurHour, getMonthDay, getToday, getYesterday}
@@ -124,8 +125,12 @@ object VariableUtils extends Logging {
   }
 
   private def parserDate(code: String, run_date: CustomDateType) : String = {
-    val zonedDateTime: ZonedDateTime = VariableOperationUtils.toZonedDateTime(run_date.getDate)
-    VariableOperationUtils.replaces(zonedDateTime, code)
+    if (Configuration.VARIABLE_OPERATION) {
+      val zonedDateTime: ZonedDateTime = VariableOperationUtils.toZonedDateTime(run_date.getDate)
+      VariableOperationUtils.replaces(zonedDateTime, code)
+    } else {
+      code
+    }
   }
 
 

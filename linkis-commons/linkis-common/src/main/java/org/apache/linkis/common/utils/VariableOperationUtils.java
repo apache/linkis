@@ -32,10 +32,8 @@ import java.util.Map;
 
 /**
  *
- * 支持任意时间格式化和加减运算
- * 例如:${yyyyMMdd%-1d}/${yyyy-MM-01%-2M}等等
- *
- * Description: 占位符操作
+ * support variable operation
+ * ${yyyyMMdd%-1d}/${yyyy-MM-01%-2M}
  * Date: 2021/5/7 11:10
  */
 public class VariableOperationUtils {
@@ -53,7 +51,7 @@ public class VariableOperationUtils {
     private static final String[] CYCLES  = new String[]{CYCLE_YEAR, CYCLE_MONTH, CYCLE_DAY, CYCLE_HOUR, CYCLE_MINUTE, CYCLE_SECOND};
 
     /**
-     * 处理时间 yyyy-MM-dd HH:mm:ss
+     * yyyy-MM-dd HH:mm:ss
      * @param date
      * @return
      */
@@ -65,7 +63,7 @@ public class VariableOperationUtils {
     }
 
     /**
-     * json中时间占位符的替换
+     * json support variable operation
      * @param dateTime
      * @param str
      * @return
@@ -76,7 +74,7 @@ public class VariableOperationUtils {
 
 
     /**
-     * json中时间占位符的替换
+     * json support variable operation
      * @param dateTime
      * @param str
      * @param format
@@ -94,7 +92,7 @@ public class VariableOperationUtils {
     }
 
     /**
-     * 具体的替换方法
+     *
      * @param dateTime
      * @param str
      * @return
@@ -136,7 +134,7 @@ public class VariableOperationUtils {
     }
 
     /**
-     * 替换参数
+     *
      * @param dateTime
      * @param str
      * @return
@@ -171,7 +169,7 @@ public class VariableOperationUtils {
     }
 
     /**
-     * 替换参数
+     *
      * @param keyValue
      * @param str
      * @return
@@ -208,7 +206,7 @@ public class VariableOperationUtils {
     }
 
     /**
-     * 替换resource目录下的json文件中的占位符
+     * json support variable operation
      * @param dateTime
      * @param object
      */
@@ -244,7 +242,7 @@ public class VariableOperationUtils {
     }
 
     /**
-     * 使用环境变量替换值
+     *
      * @param template
      * @param map
      * @return
@@ -254,14 +252,13 @@ public class VariableOperationUtils {
     }
 
     /**
-     * 格式化文本，使用 {varName} 占位<br>
      * map = {a: "aValue", b: "bValue"} format("{a} and {b}", map) ---=》 aValue and bValue
      *
-     * @param template   文本模板，被替换的部分用 {key} 表示
-     * @param map        参数值对
-     * @param leftStr 左边占位符
-     * @param rightStr 右边占位符
-     * @param ignoreNull 是否忽略 {@code null} 值，忽略则 {@code null} 值对应的变量不被替换，否则替换为""
+     * @param template
+     * @param map
+     * @param leftStr
+     * @param rightStr
+     * @param ignoreNull
      * @return
      */
     public static String format(CharSequence template, Map<?, ?> map, CharSequence leftStr, CharSequence rightStr, boolean ignoreNull) {

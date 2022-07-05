@@ -77,6 +77,10 @@
                     <artifactId>reactor-core</artifactId>
                     <groupId>io.projectreactor</groupId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-web</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>

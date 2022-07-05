@@ -41,6 +41,7 @@
             <groupId>org.apache.linkis</groupId>
             <artifactId>linkis-knife4j</artifactId>
             <version>${linkis.version}</version>
+            <scope>compile</scope>
             <exclusions>
                 <exclusion>
                     <groupId>org.springframework</groupId>

@@ -23,6 +23,7 @@ import org.apache.linkis.common.variable
 import org.apache.linkis.common.variable.DateTypeUtils.{getCurHour, getMonthDay, getToday, getYesterday}
 import org.apache.linkis.common.variable._
 
+import java.time.ZonedDateTime
 import java.util
 import scala.collection.JavaConverters.mapAsScalaMapConverter
 import scala.collection.convert.WrapAsScala._
@@ -62,8 +63,10 @@ object VariableUtils extends Logging {
       run_date = new CustomDateType(getYesterday(false), false)
       nameAndType(RUN_DATE) = variable.DateType(new CustomDateType(run_date.toString, false))
     }
+
     initAllDateVars(run_date, nameAndType)
-    parserVar(replaceStr, nameAndType)
+    val codeOperation = parserDate(replaceStr, run_date)
+    parserVar(codeOperation, nameAndType)
   }
 
   def replace(code: String, runtType: String, variables: util.Map[String, String]): String = {
@@ -116,8 +119,15 @@ object VariableUtils extends Logging {
     }
 
     initAllDateVars(run_date, nameAndType)
-    parserVar(code, nameAndType)
+    val codeOperation = parserDate(code, run_date)
+    parserVar(codeOperation, nameAndType)
   }
+
+  private def parserDate(code: String, run_date: CustomDateType) : String = {
+    val zonedDateTime: ZonedDateTime = VariableOperationUtils.toZonedDateTime(run_date.getDate)
+    VariableOperationUtils.replaces(zonedDateTime, code)
+  }
+
 
   private def initAllDateVars(run_date: CustomDateType, nameAndType: mutable.Map[String, variable.VariableType]): Unit = {
     val run_date_str = run_date.toString

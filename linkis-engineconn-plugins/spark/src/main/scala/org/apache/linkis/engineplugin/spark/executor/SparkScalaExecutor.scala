@@ -18,8 +18,8 @@
 package org.apache.linkis.engineplugin.spark.executor
 
 import org.apache.commons.io.IOUtils
-import org.apache.commons.lang.StringUtils
-import org.apache.commons.lang.exception.ExceptionUtils
+import org.apache.commons.lang3.StringUtils
+import org.apache.commons.lang3.exception.ExceptionUtils
 import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
 import org.apache.linkis.engineconn.computation.executor.rs.RsOutputStream
@@ -40,6 +40,7 @@ import org.apache.spark.{SparkConf, SparkContext}
 import java.io.{BufferedReader, File}
 import _root_.scala.tools.nsc.GenericRunnerSettings
 import scala.tools.nsc.interpreter.{IMain, JPrintWriter, NamedParam, Results, SimpleReader, StdReplTags, isReplPower, replProps}
+import scala.util.Properties.versionNumberString
 
 
 class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long) extends SparkEngineConnExecutor(sparkEngineSession.sparkContext, id) {
@@ -256,10 +257,14 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long) exten
     sparkILoop.settings = settings
     sparkILoop.createInterpreter()
 
-    val in0 = SparkConfiguration.SPARK_SCALA_VERSION.getValue match {
-      case "2.11" => getField(sparkILoop, "scala$tools$nsc$interpreter$ILoop$$in0").asInstanceOf[Option[BufferedReader]]
-      case "2.12" => getDeclareField(sparkILoop, "in0").asInstanceOf[Option[BufferedReader]]
+    val isScala211 = versionNumberString.startsWith("2.11");
+    val in0 = if (isScala211) {
+      getField(sparkILoop, "scala$tools$nsc$interpreter$ILoop$$in0").asInstanceOf[Option[BufferedReader]]
+    } else {
+      // TODO: have problem with scala2.13 or higher
+      getDeclareField(sparkILoop, "in0").asInstanceOf[Option[BufferedReader]]
     }
+
     val reader = in0.fold(sparkILoop.chooseReader(settings))(r => SimpleReader(r,
       jOut, interactive = true))
 

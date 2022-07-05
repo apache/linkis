@@ -345,7 +345,7 @@ export default {
           // 如果起始时间选的是同一天，则endDate要加到第二天的零点
           url += `endDate=${moment(new Date(e.shortcut[1]).getTime() + 24 * 60 * 60 * 1000).format('YYYY-MM-DD HH:mm:ss')}&`
         } else {
-          url += `startDate=${moment(new Date(e.shortcut[1])).format('YYYY-MM-DD HH:mm:ss')}&`
+          url += `endDate=${moment(new Date(e.shortcut[1])).format('YYYY-MM-DD HH:mm:ss')}&`
         }
       }
       if (e.engineType) url += `engineType=${e.engineType}&`

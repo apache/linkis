@@ -17,17 +17,13 @@
 
 package org.apache.linkis.server
 
-
-
-
-
 import io.swagger.annotations.{ApiModel, ApiModelProperty}
 
 import java.util
 import javax.servlet.http.HttpServletRequest
-import org.apache.commons.lang.StringUtils
-import org.apache.commons.lang.exception.ExceptionUtils
-import org.slf4j.LoggerFactory
+import org.apache.commons.lang3.StringUtils
+import org.apache.commons.lang3.exception.ExceptionUtils
+import org.apache.linkis.common.utils.Logging
 import org.springframework.web.context.request.{RequestContextHolder, ServletRequestAttributes}
 
 import scala.annotation.meta.field

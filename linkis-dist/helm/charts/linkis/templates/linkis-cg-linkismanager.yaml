@@ -1,0 +1,145 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "linkis.fullname" . }}-cg-linkismanager
+  labels:
+    app: {{ include "linkis.fullname" . }}-cg-linkismanager
+    {{- include "linkis.cgLinkisManager.labels" . | nindent 4 }}
+  annotations:
+    prometheus.io/path: {{ .Values.cgLinkisManager.prometheus.metricsPath }}
+    prometheus.io/port: '{{ .Values.cgLinkisManager.port }}'
+    prometheus.io/scrape: 'true'
+spec:
+  ports:
+    - name: "http"
+      protocol: TCP
+      port: {{ .Values.cgLinkisManager.port }}
+  selector:
+    {{- include "linkis.cgLinkisManager.selectorLabels" . | nindent 4 }}
+    app: {{ include "linkis.fullname" . }}-cg-linkismanager
+  type: LoadBalancer
+  externalTrafficPolicy: Cluster
+  publishNotReadyAddresses: true
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "linkis.fullname" . }}-cg-linkismanager-headless
+  labels:
+    app: {{ include "linkis.fullname" . }}-cg-linkismanager
+    {{- include "linkis.cgLinkisManager.labels" . | nindent 4 }}
+  annotations:
+    prometheus.io/path: {{ .Values.cgLinkisManager.prometheus.metricsPath }}
+    prometheus.io/port: '{{ .Values.cgLinkisManager.port }}'
+    prometheus.io/scrape: 'true'
+spec:
+  ports:
+    - name: "http"
+      protocol: TCP
+      port: {{ .Values.cgLinkisManager.port }}
+  selector:
+    {{- include "linkis.cgLinkisManager.selectorLabels" . | nindent 4 }}
+    app: {{ include "linkis.fullname" . }}-cg-linkismanager
+  clusterIP: None
+  type: ClusterIP
+  publishNotReadyAddresses: true
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "linkis.fullname" . }}-cg-linkismanager
+  labels:
+    app: {{ include "linkis.fullname" . }}-cg-linkismanager
+    version: {{ .Chart.AppVersion }}
+    {{- include "linkis.cgLinkisManager.labels" . | nindent 4 }}
+  {{- if .Values.cgLinkisManager.annotations }}
+  annotations:
+    {{- toYaml .Values.cgLinkisManager.annotations | nindent 4 }}
+  {{- end }}
+spec:
+  replicas: {{ .Values.cgLinkisManager.replicas }}
+  selector:
+    matchLabels:
+      {{- include "linkis.cgLinkisManager.selectorLabels" . | nindent 6 }}
+      app: {{ include "linkis.fullname" . }}-cg-linkismanager
+  template:
+    metadata:
+      {{- with .Values.cgLinkisManager.annotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        app: {{ include "linkis.fullname" . }}-cg-linkismanager
+        version: {{ .Chart.AppVersion }}
+        {{- include "linkis.cgLinkisManager.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
+        - name: conf
+          configMap:
+            name: {{ include "linkis.fullname" . }}-linkis-config
+        - name: log
+          emptyDir: {}
+      serviceAccountName: {{ include "linkis.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.cgLinkisManager.podSecurityContext | nindent 8 }}
+      containers:
+        - name: "linkismanager"
+          securityContext:
+            {{- toYaml .Values.cgLinkisManager.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command:
+            - /bin/bash
+            - -ecx
+            - >-
+              RUN_IN_FOREGROUND=true {{ .Values.locations.homeDir }}/sbin/linkis-daemon.sh start cg-linkismanager
+          ports:
+            - name: "http"
+              containerPort: {{ .Values.cgLinkisManager.port }}
+              protocol: TCP
+          # TODO: replace with httpGet when spring-boot readiness probe is implemented.
+          readinessProbe:
+            initialDelaySeconds: 15
+            periodSeconds: 5
+            timeoutSeconds: 20
+            failureThreshold: 10
+            tcpSocket:
+              port: {{ .Values.cgLinkisManager.port }}
+          env:
+            - name: SERVER_HEAP_SIZE
+              value: {{ .Values.cgLinkisManager.jvmHeapSize }}
+            - name: EUREKA_URL
+              value: {{- include "linkis.registration.url" . | quote | indent 1 }}
+            - name: EUREKA_PORT
+              value: "{{ .Values.mgEureka.port }}"
+            {{- if .Values.cgLinkisManager.envs.extras }}
+{{ toYaml .Values.cgLinkisManager.envs.extras | indent 12 }}
+            {{- end }}
+          {{- if .Values.cgLinkisManager.envs.froms }}
+          envFrom:
+{{ toYaml .Values.cgLinkisManager.envs.froms | indent 12 }}
+          {{- end }}
+          volumeMounts:
+            - name: conf
+              mountPath: {{ .Values.locations.confDir }}
+            - name: log
+              mountPath: {{ .Values.locations.logDir }}
+          resources:
+            {{- toYaml .Values.cgLinkisManager.resources | nindent 12 }}
+      {{- with .Values.cgLinkisManager.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.cgLinkisManager.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.cgLinkisManager.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

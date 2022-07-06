@@ -77,7 +77,10 @@ Please go to the [Linkis Releases Page](https://github.com/apache/incubator-link
 ## compile backend
 ### Mac OS/Linux
 ./mvnw -N install
+# - option 1: make the distribution package
 ./mvnw  clean install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
+# - option 2: make the distribution package with docker image
+./mvnw  clean install -Pdocker -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
 
 ### Windows
 mvnw.cmd -N install

@@ -1,0 +1,36 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "linkis.fullname" . }}-linkis-web-config
+data:
+  default.conf: |
+      server {
+        listen       {{ .Values.Web.port }};
+        server_name  localhost;
+        access_log  /var/log/nginx/host.access.log  main;
+        error_log  /var/log/nginx/host.error.log;
+        location /ws {
+        proxy_pass http://linkis-mg-gateway:9001;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection upgrade;
+        }
+
+        location ^~/api/ {
+        #rewrite ^/api/(.*)$ /$1 break;
+        proxy_pass http://linkis-mg-gateway.preprod:9001;
+        }
+
+        location / {
+        root   /usr/share/nginx/html; # 静态文件目录
+        index  index.html index.html;
+        }
+        #error_page  404              /404.html;
+        # redirect server error pages to the static page /50x.html
+        #
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+        root   /usr/share/nginx/html;
+        }
+      }

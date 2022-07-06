@@ -205,4 +205,62 @@
         </plugins>
     </build>
 
+    <profiles>
+        <profile>
+            <id>docker</id>
+            <properties>
+                <image.base>centos:7</image.base>
+                <image.build.type>dev</image.build.type>
+                <jdk.version>1.8.0-openjdk</jdk.version>
+                <jdk.build.revision>1.8.0.332.b09-1.el7_9</jdk.build.revision>
+                <linkis.uid>6011</linkis.uid>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>build</id>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <exec executable="docker" >
+                                            <arg value="build" />
+                                            <arg value="-f" />
+                                            <arg value="${project.basedir}/docker/Dockerfile" />
+                                            <arg value="-t" />
+                                            <arg value="${project.parent.artifactId}:${project.version}" />
+                                            <arg value="--target" />
+                                            <arg value="linkis" />
+                                            <arg value="--build-arg" />
+                                            <arg value="BASE_IMAGE=${image.base}" />
+                                            <arg value="--build-arg" />
+                                            <arg value="JDK_VERSION=${jdk.version}" />
+                                            <arg value="--build-arg" />
+                                            <arg value="JDK_BUILD_REVISION=${jdk.build.revision}" />
+                                            <arg value="--build-arg" />
+                                            <arg value="LINKIS_VERSION=${project.version}" />
+                                            <arg value="--build-arg" />
+                                            <arg value="MYSQL_JDBC_VERSION=${mysql.connector.version}" />
+                                            <arg value="--build-arg" />
+                                            <arg value="BUILD_TYPE=${image.build.type}" />
+                                            <arg value="--build-arg" />
+                                            <arg value="LINKIS_UID=${linkis.uid}" />
+                                            <arg value="${project.build.directory}" />
+                                        </exec>
+                                    </target>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
 </project>

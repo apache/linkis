@@ -1,0 +1,148 @@
+{{- if .Values.psMetadataQuery.enabled }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "linkis.fullname" . }}-ps-metadataquery
+  labels:
+    app: {{ include "linkis.fullname" . }}-ps-metadataquery
+    {{- include "linkis.psMetadataQuery.labels" . | nindent 4 }}
+  annotations:
+    prometheus.io/path: {{ .Values.psMetadataQuery.prometheus.metricsPath }}
+    prometheus.io/port: '{{ .Values.psMetadataQuery.port }}'
+    prometheus.io/scrape: 'true'
+spec:
+  ports:
+    - name: "http"
+      protocol: TCP
+      port: {{ .Values.psMetadataQuery.port }}
+  selector:
+    {{- include "linkis.psMetadataQuery.selectorLabels" . | nindent 4 }}
+    app: {{ include "linkis.fullname" . }}-ps-metadataquery
+  type: LoadBalancer
+  externalTrafficPolicy: Cluster
+  publishNotReadyAddresses: true
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "linkis.fullname" . }}-ps-metadataquery-headless
+  labels:
+    app: {{ include "linkis.fullname" . }}-ps-metadataquery
+    {{- include "linkis.psMetadataQuery.labels" . | nindent 4 }}
+  annotations:
+    prometheus.io/path: {{ .Values.psMetadataQuery.prometheus.metricsPath }}
+    prometheus.io/port: '{{ .Values.psMetadataQuery.port }}'
+    prometheus.io/scrape: 'true'
+spec:
+  ports:
+    - name: "http"
+      protocol: TCP
+      port: {{ .Values.psMetadataQuery.port }}
+  selector:
+    {{- include "linkis.psMetadataQuery.selectorLabels" . | nindent 4 }}
+    app: {{ include "linkis.fullname" . }}-ps-metadataquery
+  clusterIP: None
+  type: ClusterIP
+  publishNotReadyAddresses: true
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "linkis.fullname" . }}-ps-metadataquery
+  labels:
+    app: {{ include "linkis.fullname" . }}-ps-metadataquery
+    version: {{ .Chart.AppVersion }}
+    {{- include "linkis.psMetadataQuery.labels" . | nindent 4 }}
+  {{- if .Values.psMetadataQuery.annotations }}
+  annotations:
+    {{- toYaml .Values.psMetadataQuery.annotations | nindent 4 }}
+  {{- end }}
+spec:
+  replicas: {{ .Values.psMetadataQuery.replicas }}
+  selector:
+    matchLabels:
+      {{- include "linkis.psMetadataQuery.selectorLabels" . | nindent 6 }}
+      app: {{ include "linkis.fullname" . }}-ps-metadataquery
+  template:
+    metadata:
+      {{- with .Values.psMetadataQuery.annotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        app: {{ include "linkis.fullname" . }}-ps-metadataquery
+        version: {{ .Chart.AppVersion }}
+        {{- include "linkis.psMetadataQuery.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
+        - name: conf
+          configMap:
+            name: {{ include "linkis.fullname" . }}-linkis-config
+        - name: log
+          emptyDir: {}
+      serviceAccountName: {{ include "linkis.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.psMetadataQuery.podSecurityContext | nindent 8 }}
+      containers:
+        - name: "metadataquery"
+          securityContext:
+            {{- toYaml .Values.psMetadataQuery.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command:
+            - /bin/bash
+            - -ecx
+            - >-
+              RUN_IN_FOREGROUND=true {{ .Values.locations.homeDir }}/sbin/linkis-daemon.sh start ps-metadataquery
+          ports:
+            - name: "http"
+              containerPort: {{ .Values.psMetadataQuery.port }}
+              protocol: TCP
+          # TODO: replace with httpGet when spring-boot readiness probe is implemented.
+          readinessProbe:
+            initialDelaySeconds: 15
+            periodSeconds: 5
+            timeoutSeconds: 20
+            failureThreshold: 10
+            tcpSocket:
+              port: {{ .Values.psMetadataQuery.port }}
+          env:
+            - name: SERVER_HEAP_SIZE
+              value: {{ .Values.psMetadataQuery.jvmHeapSize }}
+            - name: EUREKA_URL
+              value: {{- include "linkis.registration.url" . | quote | indent 1 }}
+            - name: EUREKA_PORT
+              value: "{{ .Values.mgEureka.port }}"
+            {{- if .Values.psMetadataQuery.envs.extras }}
+{{ toYaml .Values.psMetadataQuery.envs.extras | indent 12 }}
+            {{- end }}
+          {{- if .Values.psMetadataQuery.envs.froms }}
+          envFrom:
+{{ toYaml .Values.psMetadataQuery.envs.froms | indent 12 }}
+          {{- end }}
+          volumeMounts:
+            - name: conf
+              mountPath: {{ .Values.locations.confDir }}
+            - name: log
+              mountPath: {{ .Values.locations.logDir }}
+          resources:
+            {{- toYaml .Values.psMetadataQuery.resources | nindent 12 }}
+      {{- with .Values.psMetadataQuery.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.psMetadataQuery.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.psMetadataQuery.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+
+{{- end }}

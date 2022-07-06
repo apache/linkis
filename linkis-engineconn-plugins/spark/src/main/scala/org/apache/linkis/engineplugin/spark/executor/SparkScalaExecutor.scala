@@ -20,6 +20,7 @@ package org.apache.linkis.engineplugin.spark.executor
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.exception.ExceptionUtils
+import org.apache.commons.lang3.reflect.FieldUtils
 import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
 import org.apache.linkis.engineconn.computation.executor.rs.RsOutputStream
@@ -209,7 +210,7 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long) exten
     if (StringUtils.isNotBlank(errorMsg)) {
       val errorMsgLowCase = errorMsg.toLowerCase
       fatalLogs.foreach(fatalLog =>
-        if (  errorMsgLowCase.contains(fatalLog) ) {
+        if (errorMsgLowCase.contains(fatalLog)) {
           logger.error(s"match engineConn log fatal logs,is $fatalLog")
           flag = true
         }
@@ -262,7 +263,8 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long) exten
       getField(sparkILoop, "scala$tools$nsc$interpreter$ILoop$$in0").asInstanceOf[Option[BufferedReader]]
     } else {
       // TODO: have problem with scala2.13 or higher
-      getDeclareField(sparkILoop, "in0").asInstanceOf[Option[BufferedReader]]
+      FieldUtils.readDeclaredField(sparkILoop, "in0", true)
+        .asInstanceOf[Option[BufferedReader]]
     }
 
     val reader = in0.fold(sparkILoop.chooseReader(settings))(r => SimpleReader(r,
@@ -278,13 +280,8 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long) exten
     field.setAccessible(true)
     field.get(obj)
   }
-  private def getDeclareField(obj: Object, name: String): Object = {
-    val field = obj.getClass.getDeclaredField(name)
-    field.setAccessible(true)
-    field.get(obj)
-  }
 
-  def bindSparkSession = {
+  def bindSparkSession: Unit = {
     require(sparkContext != null)
     require(sparkSession != null)
     require(_sqlContext != null)
@@ -339,7 +336,7 @@ class EngineExecutionContextFactory {
 
   def setEngineExecutionContext(engineExecutionContext: EngineExecutionContext): Unit = this.engineExecutionContext = engineExecutionContext
 
-  def getEngineExecutionContext = this.engineExecutionContext
+  def getEngineExecutionContext: EngineExecutionContext = this.engineExecutionContext
 }
 
 object SparkScalaExecutor {

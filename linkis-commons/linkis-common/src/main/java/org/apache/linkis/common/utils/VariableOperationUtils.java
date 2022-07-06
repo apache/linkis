@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.linkis.common.exception.LinkisCommonErrorException;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -122,10 +123,7 @@ public class VariableOperationUtils {
                     startIndex = buffer.indexOf(PLACEHOLDER_LEFT, startIndex + newContent.length());
                 }catch (IllegalArgumentException e1){
                     startIndex = buffer.indexOf(PLACEHOLDER_LEFT, endIndex);
-
-                } catch (Exception e2){
-                    throw new RuntimeException(e2);
-                }
+                } catch (Exception e2){}
             } else{
                 startIndex = -1; //leave while
             }

@@ -54,13 +54,26 @@
                     <groupId>io.netty </groupId>
                     <artifactId>netty-all</artifactId>
                 </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>${httpclient.version}</version>
+        </dependency>
+
+        <!--linkis-label-common -->
+        <dependency>
+            <groupId>org.apache.linkis</groupId>
+            <artifactId>linkis-label-common</artifactId>
+            <exclusions>
                 <exclusion>
                     <artifactId>linkis-knife4j</artifactId>
                     <groupId>org.apache.linkis</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>jackson-databind</artifactId>
-                    <groupId>com.fasterxml.jackson.core</groupId>
                 </exclusion>
                 <exclusion>
                     <artifactId>knife4j-annotations</artifactId>
@@ -91,6 +104,10 @@
                     <groupId>org.apache.linkis</groupId>
                 </exclusion>
                 <exclusion>
+                    <artifactId>springfox-spring-webmvc</artifactId>
+                    <groupId>io.springfox</groupId>
+                </exclusion>
+                <exclusion>
                     <artifactId>springfox-swagger-common</artifactId>
                     <groupId>io.springfox</groupId>
                 </exclusion>
@@ -107,21 +124,6 @@
                     <groupId>io.swagger</groupId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>${httpclient.version}</version>
-        </dependency>
-
-        <!--linkis-label-common -->
-        <dependency>
-            <groupId>org.apache.linkis</groupId>
-            <artifactId>linkis-label-common</artifactId>
             <version>${linkis.version}</version>
         </dependency>
 

@@ -91,14 +91,6 @@
                     <groupId>org.apache.linkis</groupId>
                 </exclusion>
                 <exclusion>
-                    <artifactId>springfox-spring-web</artifactId>
-                    <groupId>io.springfox</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>springfox-spring-webmvc</artifactId>
-                    <groupId>io.springfox</groupId>
-                </exclusion>
-                <exclusion>
                     <artifactId>springfox-swagger-common</artifactId>
                     <groupId>io.springfox</groupId>
                 </exclusion>

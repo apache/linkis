@@ -16,11 +16,11 @@
  */
 package org.apache.linkis.common.utils;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.linkis.common.exception.LinkisCommonErrorException;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -31,12 +31,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 
-/**
- *
- * support variable operation
- * ${yyyyMMdd%-1d}/${yyyy-MM-01%-2M}
- * Date: 2021/5/7 11:10
- */
+/** support variable operation ${yyyyMMdd%-1d}/${yyyy-MM-01%-2M} Date: 2021/5/7 11:10 */
 public class VariableOperationUtils {
 
     private static final String DOLLAR = "$";
@@ -49,10 +44,14 @@ public class VariableOperationUtils {
     private static final String CYCLE_HOUR = "H";
     private static final String CYCLE_MINUTE = "m";
     private static final String CYCLE_SECOND = "s";
-    private static final String[] CYCLES  = new String[]{CYCLE_YEAR, CYCLE_MONTH, CYCLE_DAY, CYCLE_HOUR, CYCLE_MINUTE, CYCLE_SECOND};
+    private static final String[] CYCLES =
+            new String[] {
+                CYCLE_YEAR, CYCLE_MONTH, CYCLE_DAY, CYCLE_HOUR, CYCLE_MINUTE, CYCLE_SECOND
+            };
 
     /**
      * yyyy-MM-dd HH:mm:ss
+     *
      * @param date
      * @return
      */
@@ -60,45 +59,46 @@ public class VariableOperationUtils {
         Instant instant = date.toInstant();
         ZoneId zoneId = ZoneId.systemDefault();
         LocalDateTime localDateTime = instant.atZone(zoneId).toLocalDateTime();
-        return ZonedDateTime.of(localDateTime,zoneId);
+        return ZonedDateTime.of(localDateTime, zoneId);
     }
 
     /**
      * json support variable operation
-     * @param dateTime
-     * @param str
-     * @return
-     */
-    public static String replaces(ZonedDateTime dateTime,String str){
-        return replaces(dateTime,str,true);
-    }
-
-
-    /**
-     * json support variable operation
-     * @param dateTime
-     * @param str
-     * @param format
-     * @return
-     */
-    public static String replaces(ZonedDateTime dateTime,String str,boolean format){
-        try {
-            JsonNode rootNode = JsonUtils.jackson().readTree(str);
-            if (rootNode.isArray() || rootNode.isObject()){
-                replaceJson(dateTime,rootNode);
-                return rootNode.toString();
-            }
-        }catch (Exception e){}
-        return replace(dateTime,str);
-    }
-
-    /**
      *
      * @param dateTime
      * @param str
      * @return
      */
-    private static String replace(ZonedDateTime dateTime, String str){
+    public static String replaces(ZonedDateTime dateTime, String str) {
+        return replaces(dateTime, str, true);
+    }
+
+    /**
+     * json support variable operation
+     *
+     * @param dateTime
+     * @param str
+     * @param format
+     * @return
+     */
+    public static String replaces(ZonedDateTime dateTime, String str, boolean format) {
+        try {
+            JsonNode rootNode = JsonUtils.jackson().readTree(str);
+            if (rootNode.isArray() || rootNode.isObject()) {
+                replaceJson(dateTime, rootNode);
+                return rootNode.toString();
+            }
+        } catch (Exception e) {
+        }
+        return replace(dateTime, str);
+    }
+
+    /**
+     * @param dateTime
+     * @param str
+     * @return
+     */
+    private static String replace(ZonedDateTime dateTime, String str) {
         StringBuilder buffer = new StringBuilder(str);
         int startIndex = str.indexOf(PLACEHOLDER_LEFT);
 
@@ -106,39 +106,43 @@ public class VariableOperationUtils {
             int endIndex = buffer.indexOf(PLACEHOLDER_RIGHT, startIndex);
             if (endIndex != -1) {
                 String placeHolder = buffer.substring(startIndex, endIndex + 1);
-                String content = placeHolder.replace(PLACEHOLDER_LEFT, "").replace(PLACEHOLDER_RIGHT, "").trim();
+                String content =
+                        placeHolder
+                                .replace(PLACEHOLDER_LEFT, "")
+                                .replace(PLACEHOLDER_RIGHT, "")
+                                .trim();
                 String[] parts = content.split(PLACEHOLDER_SPLIT);
-                try{
+                try {
                     ZonedDateTime ndt = dateTime;
-                    for(int i = 1;i< parts.length;i++){
-                        ndt = changeDateTime(ndt,parts[i]);
+                    for (int i = 1; i < parts.length; i++) {
+                        ndt = changeDateTime(ndt, parts[i]);
                     }
 
                     String newContent = ndt.format(DateTimeFormatter.ofPattern(parts[0]));
-                    if (buffer.substring(startIndex -1 ,endIndex + 1).contains(DOLLAR)){
+                    if (buffer.substring(startIndex - 1, endIndex + 1).contains(DOLLAR)) {
                         buffer.replace(startIndex - 1, endIndex + 1, newContent);
-                    }else {
+                    } else {
                         buffer.replace(startIndex, endIndex + 1, newContent);
                     }
                     startIndex = buffer.indexOf(PLACEHOLDER_LEFT, startIndex + newContent.length());
-                }catch (IllegalArgumentException e1){
+                } catch (IllegalArgumentException e1) {
                     startIndex = buffer.indexOf(PLACEHOLDER_LEFT, endIndex);
-                } catch (Exception e2){}
-            } else{
-                startIndex = -1; //leave while
+                } catch (Exception e2) {
+                }
+            } else {
+                startIndex = -1; // leave while
             }
         }
         return buffer.toString();
     }
 
     /**
-     *
      * @param dateTime
      * @param str
      * @return
      */
-    private static ZonedDateTime changeDateTime(ZonedDateTime dateTime ,String str){
-        if(str == null || str.isEmpty()){
+    private static ZonedDateTime changeDateTime(ZonedDateTime dateTime, String str) {
+        if (str == null || str.isEmpty()) {
             return dateTime;
         }
 
@@ -150,11 +154,13 @@ public class VariableOperationUtils {
                     case CYCLE_HOUR:
                         return dateTime.plusHours(Integer.parseInt(str.replace(CYCLE_HOUR, "")));
                     case CYCLE_MINUTE:
-                        return dateTime.plusMinutes(Integer.parseInt(str.replace(CYCLE_MINUTE, "")));
+                        return dateTime.plusMinutes(
+                                Integer.parseInt(str.replace(CYCLE_MINUTE, "")));
                     case CYCLE_MONTH:
                         return dateTime.plusMonths(Integer.parseInt(str.replace(CYCLE_MONTH, "")));
                     case CYCLE_SECOND:
-                        return dateTime.plusSeconds(Integer.parseInt(str.replace(CYCLE_SECOND, "")));
+                        return dateTime.plusSeconds(
+                                Integer.parseInt(str.replace(CYCLE_SECOND, "")));
                     case CYCLE_YEAR:
                         return dateTime.plusYears(Integer.parseInt(str.replace(CYCLE_YEAR, "")));
                     default:
@@ -167,12 +173,11 @@ public class VariableOperationUtils {
     }
 
     /**
-     *
      * @param keyValue
      * @param str
      * @return
      */
-    private static String replace(Map<String,String> keyValue, String str){
+    private static String replace(Map<String, String> keyValue, String str) {
         StringBuilder buffer = new StringBuilder(str);
         int startIndex = str.indexOf(PLACEHOLDER_LEFT);
 
@@ -180,24 +185,29 @@ public class VariableOperationUtils {
             int endIndex = buffer.indexOf(PLACEHOLDER_RIGHT, startIndex);
             if (endIndex != -1) {
                 String placeHolder = buffer.substring(startIndex, endIndex + 1);
-                String content = placeHolder.replace(PLACEHOLDER_LEFT, "").replace(PLACEHOLDER_RIGHT, "").trim();
-                try{
+                String content =
+                        placeHolder
+                                .replace(PLACEHOLDER_LEFT, "")
+                                .replace(PLACEHOLDER_RIGHT, "")
+                                .trim();
+                try {
                     String newContent = keyValue.get(content);
-                    if(newContent != null){
-                        if (buffer.substring(startIndex -1 ,endIndex + 1).contains(DOLLAR)){
+                    if (newContent != null) {
+                        if (buffer.substring(startIndex - 1, endIndex + 1).contains(DOLLAR)) {
                             buffer.replace(startIndex - 1, endIndex + 1, newContent);
-                        }else {
+                        } else {
                             buffer.replace(startIndex, endIndex + 1, newContent);
                         }
-                        startIndex = buffer.indexOf(PLACEHOLDER_LEFT, startIndex + newContent.length());
-                    }else{
+                        startIndex =
+                                buffer.indexOf(PLACEHOLDER_LEFT, startIndex + newContent.length());
+                    } else {
                         startIndex = buffer.indexOf(PLACEHOLDER_LEFT, endIndex);
                     }
-                }catch (Exception e2){
+                } catch (Exception e2) {
                     throw new RuntimeException(e2);
                 }
-            } else{
-                startIndex = -1; //leave while
+            } else {
+                startIndex = -1; // leave while
             }
         }
         return buffer.toString();
@@ -205,34 +215,35 @@ public class VariableOperationUtils {
 
     /**
      * json support variable operation
+     *
      * @param dateTime
      * @param object
      */
     @SuppressWarnings("DuplicatedCode")
-    private static void replaceJson(ZonedDateTime dateTime, JsonNode object){
-        if(object.isArray()){
-            ArrayNode arrayNode = (ArrayNode)object;
+    private static void replaceJson(ZonedDateTime dateTime, JsonNode object) {
+        if (object.isArray()) {
+            ArrayNode arrayNode = (ArrayNode) object;
             for (int i = 0; i < arrayNode.size(); i++) {
                 final JsonNode temp = arrayNode.get(i);
-                if(temp.isArray()){
-                    replaceJson(dateTime,temp);
-                }else if(temp.isObject()){
-                    replaceJson(dateTime,temp);
-                }else{
-                    arrayNode.insert(i,replace(dateTime,temp.toString()));
+                if (temp.isArray()) {
+                    replaceJson(dateTime, temp);
+                } else if (temp.isObject()) {
+                    replaceJson(dateTime, temp);
+                } else {
+                    arrayNode.insert(i, replace(dateTime, temp.toString()));
                 }
             }
-        }else if(object.isObject()) {
+        } else if (object.isObject()) {
             ObjectNode objectNode = (ObjectNode) object;
             final Iterator<Map.Entry<String, JsonNode>> fields = object.fields();
             while (fields.hasNext()) {
                 final Map.Entry<String, JsonNode> field = fields.next();
                 final JsonNode temp = field.getValue();
-                if(temp.isArray()){
-                    replaceJson(dateTime,temp);
-                }else if(temp.isObject()){
-                    replaceJson(dateTime,temp);
-                }else {
+                if (temp.isArray()) {
+                    replaceJson(dateTime, temp);
+                } else if (temp.isObject()) {
+                    replaceJson(dateTime, temp);
+                } else {
                     objectNode.put(field.getKey(), replace(dateTime, temp.toString()));
                 }
             }
@@ -240,13 +251,12 @@ public class VariableOperationUtils {
     }
 
     /**
-     *
      * @param template
      * @param map
      * @return
      */
     public static String format(CharSequence template, Map<?, ?> map) {
-        return VariableOperationUtils.format(template,map,"${","}",true);
+        return VariableOperationUtils.format(template, map, "${", "}", true);
     }
 
     /**
@@ -259,7 +269,12 @@ public class VariableOperationUtils {
      * @param ignoreNull
      * @return
      */
-    public static String format(CharSequence template, Map<?, ?> map, CharSequence leftStr, CharSequence rightStr, boolean ignoreNull) {
+    public static String format(
+            CharSequence template,
+            Map<?, ?> map,
+            CharSequence leftStr,
+            CharSequence rightStr,
+            boolean ignoreNull) {
         if (null == template) {
             return null;
         }
@@ -282,9 +297,10 @@ public class VariableOperationUtils {
             if (null == value && ignoreNull) {
                 continue;
             }
-            template2 = StringUtils.replace(template2, leftStr.toString() + entry.getKey() + rightStr, value);
+            template2 =
+                    StringUtils.replace(
+                            template2, leftStr.toString() + entry.getKey() + rightStr, value);
         }
         return template2;
     }
 }
-

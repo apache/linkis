@@ -17,6 +17,7 @@
 package org.apache.linkis.common.variable;
 
 import org.apache.linkis.common.utils.VariableOperationUtils;
+
 import org.junit.jupiter.api.Test;
 
 import java.time.ZonedDateTime;
@@ -31,10 +32,13 @@ public class VariableOperationTest {
 
     @Test
     public void testJsonFormat() {
-        String jsonOld = "{\"name\":\"${yyyyMMdd%-1d}\",\"address\":{\"street\":\"${yyyyMMdd%-1y}\"},\"links\":[{\"name\":\"${yyyyMMdd%-1M}\"}]}";
+        String jsonOld =
+                "{\"name\":\"${yyyyMMdd%-1d}\",\"address\":{\"street\":\"${yyyyMMdd%-1y}\"},\"links\":[{\"name\":\"${yyyyMMdd%-1M}\"}]}";
         String jsonNew = VariableOperationUtils.replaces(zonedDateTime, jsonOld);
         System.out.println(jsonOld + "\n" + jsonNew);
-        assertEquals(jsonNew,"{\"name\":\"\\\"20220401\\\"\",\"address\":{\"street\":\"\\\"20210402\\\"\"},\"links\":[{\"name\":\"\\\"20220302\\\"\"}]}");
+        assertEquals(
+                jsonNew,
+                "{\"name\":\"\\\"20220401\\\"\",\"address\":{\"street\":\"\\\"20210402\\\"\"},\"links\":[{\"name\":\"\\\"20220302\\\"\"}]}");
     }
 
     @Test
@@ -42,6 +46,6 @@ public class VariableOperationTest {
         String strOld = "abc${yyyyMMdd%-1d}def";
         String strNew = VariableOperationUtils.replaces(zonedDateTime, strOld);
         System.out.println(strOld + "\n" + strNew);
-        assertEquals(strNew,"abc20220401def");
+        assertEquals(strNew, "abc20220401def");
     }
 }

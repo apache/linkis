@@ -91,34 +91,6 @@
                     <groupId>org.apache.linkis</groupId>
                 </exclusion>
                 <exclusion>
-                    <artifactId>mapstruct</artifactId>
-                    <groupId>org.mapstruct</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>spring-plugin-core</artifactId>
-                    <groupId>org.springframework.plugin</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>spring-plugin-metadata</artifactId>
-                    <groupId>org.springframework.plugin</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>springfox-bean-validators</artifactId>
-                    <groupId>io.springfox</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>springfox-core</artifactId>
-                    <groupId>io.springfox</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>springfox-schema</artifactId>
-                    <groupId>io.springfox</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>springfox-spi</artifactId>
-                    <groupId>io.springfox</groupId>
-                </exclusion>
-                <exclusion>
                     <artifactId>springfox-spring-web</artifactId>
                     <groupId>io.springfox</groupId>
                 </exclusion>

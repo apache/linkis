@@ -64,7 +64,7 @@ object Configuration extends Logging {
     } else {
       url
     }
-    info(s"gatewayUrl is $gatewayUr")
+    logger.info(s"gatewayUrl is $gatewayUr")
     gatewayUr
   }
 
@@ -75,7 +75,7 @@ object Configuration extends Logging {
     } else {
       home
     }
-    info(s"linkisHome is $linkisHome")
+    logger.info(s"linkisHome is $linkisHome")
     linkisHome
   }
 

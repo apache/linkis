@@ -49,7 +49,7 @@ class GatewayWebSocketSessionConnection(val webSocketSession: ReactorNettyWebSoc
     }
     proxySession match {
       case reactorSession: ReactorNettyWebSocketSession =>
-        info(s"create a new ${serviceInstance.getApplicationName}-ProxySession(${proxySession.getId}) for the webSocket connection ${webSocketSession.getId} of user $user.")
+        logger.info(s"create a new ${serviceInstance.getApplicationName}-ProxySession(${proxySession.getId}) for the webSocket connection ${webSocketSession.getId} of user $user.")
         proxySessions += ProxyGatewayWebSocketSession(reactorSession, serviceInstance, System.currentTimeMillis)
     }
   }
@@ -69,7 +69,7 @@ class GatewayWebSocketSessionConnection(val webSocketSession: ReactorNettyWebSoc
   def heartbeat(): Unit = proxySessions.filter(_.isAlive).foreach(_.heartbeat())
 
   def removeDeadProxySessions(): Unit = proxySessions synchronized proxySessions.filterNot(_.isAlive).foreach{ proxySession =>
-    info(s"remove a dead ${proxySession.serviceInstance.getApplicationName}-ProxySession(${proxySession.webSocketSession.getId}) for webSocket connection ${webSocketSession.getId}.")
+    logger.info(s"remove a dead ${proxySession.serviceInstance.getApplicationName}-ProxySession(${proxySession.webSocketSession.getId}) for webSocket connection ${webSocketSession.getId}.")
     proxySessions -= proxySession
   }
 

@@ -63,7 +63,7 @@ class BaseExecutionTask(maxParallelism: Int, rootExecTask: ExecTask) extends Exe
   override def transientStatus(status: ExecutionNodeStatus): Unit = {
     if(status.ordinal() < this.status.ordinal() && status != ExecutionNodeStatus.WaitForRetry)
       throw new OrchestratorErrorException(OrchestratorErrorCodeSummary.EXECUTION_FOR_EXECUTION_ERROR_CODE, s"Task status flip error! Cause: Failed to flip from ${this.status} to $status.")//抛异常
-    info(s"$getId change status ${this.status} => $status.")
+    logger.info(s"$getId change status ${this.status} => $status.")
     beforeStatusChanged(this.status, status)
     val oldStatus = this.status
     this.status = status
@@ -110,6 +110,6 @@ class BaseExecutionTask(maxParallelism: Int, rootExecTask: ExecTask) extends Exe
       case succeedTaskResponse: SucceedTaskResponse =>
         transientStatus(ExecutionNodeStatus.Succeed)
     }
-    info(s"Finished to ExecutionTask(${getId}) with status $getStatus")
+    logger.info(s"Finished to ExecutionTask(${getId}) with status $getStatus")
   }
 }

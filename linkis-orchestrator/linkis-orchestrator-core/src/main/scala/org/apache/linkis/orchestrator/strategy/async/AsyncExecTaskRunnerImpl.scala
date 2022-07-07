@@ -58,7 +58,7 @@ class AsyncExecTaskRunnerImpl(override val task: ExecTask) extends AsyncExecTask
   override def isSucceed: Boolean = ExecutionNodeStatus.isScheduled(status)
 
   override def run(): Unit = try {
-    info(s"ExecTaskRunner Submit execTask(${task.getIDInfo}) to running")
+    logger.info(s"ExecTaskRunner Submit execTask(${task.getIDInfo}) to running")
     val response = task.execute()
     this.taskResponse = response
     response match {
@@ -163,13 +163,13 @@ class AsyncExecTaskRunnerImpl(override val task: ExecTask) extends AsyncExecTask
   }
 
   override def setResultSize(resultSize: Int): Unit = {
-    info(s"BaseExecTaskRunner ${task.getIDInfo()} get result size is $resultSize")
+    logger.info(s"BaseExecTaskRunner ${task.getIDInfo()} get result size is $resultSize")
     if (this.resultSize == -1) this.resultSize = resultSize
     resultSets.notify()
   }
 
   override def addResultSet(resultSet: ResultSet): Unit = {
-    info(s"BaseExecTaskRunner ${task.getIDInfo()} get result, now size is ${resultSets.size}")
+    logger.info(s"BaseExecTaskRunner ${task.getIDInfo()} get result, now size is ${resultSets.size}")
     resultSets += resultSet
     resultSets.notify()
   }

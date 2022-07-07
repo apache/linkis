@@ -70,7 +70,7 @@ class OnceEngineConnExecution extends AbstractEngineConnExecution {
 
   @throws[LinkisException]
   private def dealException(msg: String, t: Throwable, throwsException: Boolean): Unit = {
-    error(msg, t)
+    logger.error(msg, t)
     onceExecutor.tryFailed()
     if(throwsException) {
       t match {

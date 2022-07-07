@@ -80,14 +80,14 @@ class LabelExecutorManagerImpl extends LabelExecutorManager with Logging {
       (engineConnFactory.getExecutorFactories, engineConnFactory.getDefaultExecutorFactory)
     case engineConnFactory =>
       val errorMsg = "Not supported ExecutorFactory " + engineConnFactory.getClass.getSimpleName
-      error(errorMsg)
+      logger.error(errorMsg)
       throw new EngineConnPluginErrorException(20011, errorMsg)
   }
 
   protected def tryCreateExecutor(engineCreationContext: EngineCreationContext,
                                   labels: Array[Label[_]]): LabelExecutor = {
     val labelStr = if(labels != null) labels.toList else "()"
-    info(s"Try to create a executor with labels $labelStr.")
+    logger.info(s"Try to create a executor with labels $labelStr.")
     val labelExecutor = if (null == labels || labels.isEmpty) {
       defaultFactory.createExecutor(engineCreationContext, engineConn).asInstanceOf[LabelExecutor]
     } else factories.find {
@@ -95,18 +95,18 @@ class LabelExecutorManagerImpl extends LabelExecutorManager with Logging {
       case _ => false
     }.map {
       case labelExecutorFactory: LabelExecutorFactory =>
-        info(s"Use ${labelExecutorFactory.getClass.getSimpleName} to create executor.")
+        logger.info(s"Use ${labelExecutorFactory.getClass.getSimpleName} to create executor.")
         labelExecutorFactory.createExecutor(engineCreationContext, engineConn, labels)
     }.getOrElse{
-      info("No LabelExecutorFactory matched, use DefaultExecutorFactory to create executor.")
+      logger.info("No LabelExecutorFactory matched, use DefaultExecutorFactory to create executor.")
       defaultFactory.createExecutor(engineCreationContext, engineConn).asInstanceOf[LabelExecutor]
     }
     val codeType = LabelUtil.getCodeType(labelExecutor.getExecutorLabels())
-    info(s"Finished to create ${labelExecutor.getClass.getSimpleName}(${labelExecutor.getId}) with labels $labelStr.")
+    logger.info(s"Finished to create ${labelExecutor.getClass.getSimpleName}(${labelExecutor.getId}) with labels $labelStr.")
     ExecutorHook.getAllExecutorHooks().filter(_.isAccepted(codeType)).foreach(_.beforeExecutorInit(labelExecutor))
     labelExecutor.init()
     ExecutorHook.getAllExecutorHooks().filter(_.isAccepted(codeType)).foreach(_.afterExecutorInit(labelExecutor))
-    info(s"Finished to init ${labelExecutor.getClass.getSimpleName}(${labelExecutor.getId}).")
+    logger.info(s"Finished to init ${labelExecutor.getClass.getSimpleName}(${labelExecutor.getId}).")
     labelExecutor
   }
 
@@ -206,7 +206,7 @@ object ExecutorManager extends Logging {
 
   private def init(): Unit = {
     val executorManagerClass = EngineConnExecutorConfiguration.EXECUTOR_MANAGER_CLASS.acquireNew
-    info(s"Try to use $executorManagerClass to instance a ExecutorManager.")
+    logger.info(s"Try to use $executorManagerClass to instance a ExecutorManager.")
     executorManager = Utils.getClassInstance[LabelExecutorManager](executorManagerClass)
   }
 

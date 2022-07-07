@@ -54,7 +54,7 @@ object EngineConnMonitor extends Logging {
           }
         }))
         if (null != unActivityEngines && !unActivityEngines.isEmpty) {
-          info(s"There are ${unActivityEngines.size} unActivity engines.")
+          logger.info(s"There are ${unActivityEngines.size} unActivity engines.")
           val engineList = new util.ArrayList[ServiceInstance]()
           unActivityEngines.asScala.foreach(engine => {
             engineList.add(engine.getServiceInstance)
@@ -70,12 +70,12 @@ object EngineConnMonitor extends Logging {
         }
         val endTime = System.currentTimeMillis()
         if (endTime - startTime >= ComputationOrchestratorConf.ENGINECONN_ACTIVITY_MONITOR_INTERVAL.getValue.toLong) {
-          warn("Query engines status costs longer time than query task interval, you should increase interval.")
+          logger.warn("Query engines status costs longer time than query task interval, you should increase interval.")
         }
       }
     }
     Utils.defaultScheduler.scheduleWithFixedDelay(task, 10000, ComputationOrchestratorConf.ENGINECONN_ACTIVITY_MONITOR_INTERVAL.getValue.toLong, TimeUnit.MILLISECONDS)
-    info("Entrance engineStatusMonitor inited.")
+    logger.info("Entrance engineStatusMonitor inited.")
   }
 
   private def queryEngineStatusAndHandle(engineConnExecutorCache: mutable.HashMap[ServiceInstance, Array[CodeExecTaskExecutor]],
@@ -86,10 +86,10 @@ object EngineConnMonitor extends Logging {
       Sender.getSender(GovernanceCommonConf.MANAGER_SPRING_NAME.getValue).ask(requestEngineStatus) match {
         case response: ResponseEngineStatusBatch =>
           if (null != response.msg) {
-            info(s"ResponseEngineStatusBatch msg : ${response.msg}")
+            logger.info(s"ResponseEngineStatusBatch msg : ${response.msg}")
           }
           if (response.engineStatus.size() != requestEngineStatus.engineList.size()) {
-            error(s"ResponseEngineStatusBatch engines size : ${response.engineStatus.size()} is not euqal requet : ${requestEngineStatus.engineList.size()}.")
+            logger.error(s"ResponseEngineStatusBatch engines size : ${response.engineStatus.size()} is not euqal requet : ${requestEngineStatus.engineList.size()}.")
             val unKnownEngines = new ArrayBuffer[ServiceInstance]()
             requestEngineStatus.engineList.asScala.foreach(instance => {
               if (!response.engineStatus.containsKey(instance)) {
@@ -98,11 +98,11 @@ object EngineConnMonitor extends Logging {
               }
             })
             val instances = unKnownEngines.map(_.getInstance).mkString(",")
-            warn(s"These engine instances cannot be found in manager : ${instances}")
+            logger.warn(s"These engine instances cannot be found in manager : ${instances}")
           }
           response.engineStatus.asScala.foreach(status => dealWithEngineStatus(status, engineConnExecutorCache, endJobByEngineInstance))
         case _ =>
-          error(s"Invalid response. request : ${BDPJettyServerHelper.gson.toJson(requestEngineStatus)}")
+          logger.error(s"Invalid response. request : ${BDPJettyServerHelper.gson.toJson(requestEngineStatus)}")
       }
     }
   }
@@ -111,7 +111,7 @@ object EngineConnMonitor extends Logging {
                                    endJobByEngineInstance: ServiceInstance => Unit): Unit = {
       status._2 match {
         case NodeExistStatus.UnExist =>
-          warn(s"Engine ${status._1} is Failed, now go to clear its task.")
+          logger.warn(s"Engine ${status._1} is Failed, now go to clear its task.")
           endJobByEngineInstance(status._1)
         case NodeExistStatus.Exist | NodeExistStatus.Unknown =>
           val engineConnExecutor = engineConnExecutorCache.getOrDefault(status._1, null)
@@ -125,21 +125,21 @@ object EngineConnMonitor extends Logging {
                     endJobByEngineInstance(status._1)
                   } else {
                     if (logger.isDebugEnabled()) {
-                      debug(s"Will update engineConnExecutor(${status._1}) lastupdated time")
+                      logger.debug(s"Will update engineConnExecutor(${status._1}) lastupdated time")
                     }
                     updateExecutorActivityTime(status._1, engineConnExecutorCache)
                   }
                 case o: Any =>
-                  Utils.tryAndWarn(warn(s"Unknown response : ${BDPJettyServerHelper.gson.toJson(o)} for request : ${BDPJettyServerHelper.gson.toJson(requestNodeStatus)}"))
+                  Utils.tryAndWarn(logger.warn(s"Unknown response : ${BDPJettyServerHelper.gson.toJson(o)} for request : ${BDPJettyServerHelper.gson.toJson(requestNodeStatus)}"))
               }
             } {
               case t: Throwable =>
-                error(s"Failed to get status of engineConn : ${status._1}, now end the job. ", t)
+                logger.error(s"Failed to get status of engineConn : ${status._1}, now end the job. ", t)
                 endJobByEngineInstance(status._1)
             }
           }
         case o: Any =>
-          error(s"Status of engine ${status._1.toString} is ${status._2}")
+          logger.error(s"Status of engine ${status._1.toString} is ${status._2}")
     }
   }
 
@@ -153,10 +153,10 @@ object EngineConnMonitor extends Logging {
             executors.head.getEngineConnExecutor.updateLastUpdateTime()
           }
         } else {
-          warn(s"EngineConnExecutor ${serviceInstance.toString} cannot be found in engineConnExecutorCache")
+          logger.warn(s"EngineConnExecutor ${serviceInstance.toString} cannot be found in engineConnExecutorCache")
         }
       } else {
-        warn(s"EngineConnExecutor ${serviceInstance.toString} cannot be found in engineConnExecutorCache")
+        logger.warn(s"EngineConnExecutor ${serviceInstance.toString} cannot be found in engineConnExecutorCache")
       }
     }
   }

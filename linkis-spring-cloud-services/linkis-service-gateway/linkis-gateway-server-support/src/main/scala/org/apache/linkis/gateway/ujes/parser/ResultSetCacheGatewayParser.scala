@@ -94,7 +94,7 @@ class ResultSetCacheGatewayConfiguration extends Logging {
   @ConditionalOnMissingBean
   @Autowired
   def createHttpMessageConvertersObjectFactory(converters: HttpMessageConverters): ObjectFactory[HttpMessageConverters] = {
-    warn("Notice: no ObjectFactory<HttpMessageConverters> find, ResultSetCache will provide one.")
+    logger.warn("Notice: no ObjectFactory<HttpMessageConverters> find, ResultSetCache will provide one.")
     new ObjectFactory[HttpMessageConverters] {
       override def getObject: HttpMessageConverters = converters
     }
@@ -103,7 +103,7 @@ class ResultSetCacheGatewayConfiguration extends Logging {
   @Bean
   @ConditionalOnMissingBean
   def createHttpMessageConverters(): HttpMessageConverters = {
-    warn("Notice: no HttpMessageConverters find, ResultSetCache will provide one.")
+    logger.warn("Notice: no HttpMessageConverters find, ResultSetCache will provide one.")
     new HttpMessageConverters(new MappingJackson2HttpMessageConverter)
   }
 

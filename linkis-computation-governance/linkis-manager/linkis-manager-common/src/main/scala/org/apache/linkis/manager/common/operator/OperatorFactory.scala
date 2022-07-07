@@ -45,7 +45,7 @@ class OperatorFactoryImpl extends OperatorFactory with Logging {
     val operator = clazz.newInstance()
     operator.getNames.map(name => name -> operator)
   }.toMap
-  info("Launched operators list => " + operators)
+  logger.info("Launched operators list => " + operators)
 
   override def getOperatorName(parameters: Map[String, Any]): String =
     OperateRequest.getOperationName(parameters)

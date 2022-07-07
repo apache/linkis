@@ -65,7 +65,7 @@ private[rpc] class SpringMVCRPCSender private[rpc](private[rpc] val serviceInsta
                   for (lb <- getRPCLoadBalancers if serviceInstance.isEmpty)
                     serviceInstance = lb.choose(protocol, SpringMVCRPCSender.this.serviceInstance, getLoadBalancer)
                   serviceInstance.foreach(f =>
-                    info("origin serviceInstance: " + SpringMVCRPCSender.this.serviceInstance + ", chose serviceInstance: " + f)) //TODO just for test
+                    logger.info("origin serviceInstance: " + SpringMVCRPCSender.this.serviceInstance + ", chose serviceInstance: " + f)) //TODO just for test
                   serviceInstance
                 case _ => None
               }

@@ -153,19 +153,6 @@
             <version>1.9.4</version>
         </dependency>
 
-        <!--add knif4j-->
-        <dependency>
-            <groupId>org.apache.linkis</groupId>
-            <artifactId>linkis-knife4j</artifactId>
-            <version>${linkis.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-webmvc</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
     </dependencies>
 
     <build>

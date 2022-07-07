@@ -242,6 +242,3 @@ public class ECResourceInfoRecordVo {
                 + '}';
     }
 }
-
-
-

@@ -143,11 +143,13 @@ public class ECResourceInfoRestfulApi {
                         ecrHistroryListVo.setEngineType(
                                 info.getLabelValue().split(",")[1].split("-")[0]);
                         ecrHistroryListVo.setUsedResource(
-                                ECResourceInfoUtils.getStringToMap(info.getUsedResource(),info));
+                                ECResourceInfoUtils.getStringToMap(info.getUsedResource(), info));
                         ecrHistroryListVo.setReleasedResource(
-                                ECResourceInfoUtils.getStringToMap(info.getReleasedResource(),info));
+                                ECResourceInfoUtils.getStringToMap(
+                                        info.getReleasedResource(), info));
                         ecrHistroryListVo.setRequestResource(
-                                ECResourceInfoUtils.getStringToMap(info.getRequestResource(),info));
+                                ECResourceInfoUtils.getStringToMap(
+                                        info.getRequestResource(), info));
                         list.add(ecrHistroryListVo);
                     });
         } finally {

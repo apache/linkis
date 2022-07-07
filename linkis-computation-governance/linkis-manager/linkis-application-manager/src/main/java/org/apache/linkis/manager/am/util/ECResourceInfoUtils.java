@@ -16,19 +16,17 @@
  */
 package org.apache.linkis.manager.am.util;
 
+import org.apache.linkis.manager.am.vo.ResourceVo;
+import org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord;
+
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.google.gson.Gson;
-import org.apache.linkis.manager.am.restful.EMRestfulApi;
-import org.apache.linkis.manager.am.vo.ResourceVo;
-import org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
-import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -52,7 +50,8 @@ public class ECResourceInfoUtils {
         Map<String, Object> map = new Gson().fromJson(str, new HashMap<>().getClass());
         if (MapUtils.isNotEmpty(map)) {
             resourceVo = new ResourceVo();
-            if (info.getLabelValue().contains("spark") || (info.getLabelValue().contains("flink"))) {
+            if (info.getLabelValue().contains("spark")
+                    || (info.getLabelValue().contains("flink"))) {
                 if (null != map.get("driver")) {
                     Map<String, Object> divermap = MapUtils.getMap(map, "driver");
                     resourceVo.setInstance(((Double) divermap.get("instance")).intValue());
@@ -60,12 +59,14 @@ public class ECResourceInfoUtils {
                     resourceVo.setMemory(memorySizeChange(divermap.get("memory").toString()));
                     return resourceVo;
                 } else {
-                    return null;//兼容老数据
+                    logger.warn("Compatible with old data ,{},{}", info.getLabelValue(), info);
+                    return null; // Compatible with old data
                 }
             }
             resourceVo.setInstance(((Double) map.get("instance")).intValue());
             resourceVo.setMemory(memorySizeChange(map.get("memory").toString()));
-            Double core = null == map.get("cpu") ? (Double) map.get("cores") :(Double) map.get("cpu");
+            Double core =
+                    null == map.get("cpu") ? (Double) map.get("cores") : (Double) map.get("cpu");
             resourceVo.setCores(core.intValue());
         }
         return resourceVo;
@@ -75,21 +76,21 @@ public class ECResourceInfoUtils {
         if (memory.contains("GB")) {
             String strip = StringUtils.strip(memory, " GB");
             BigDecimal bigDecimal = new BigDecimal(strip);
-            BigDecimal gb = new BigDecimal("1073741824");//1024^3
+            BigDecimal gb = new BigDecimal("1073741824"); // 1024^3
             BigDecimal multiply = bigDecimal.multiply(gb);
             return multiply.longValue();
         }
         if (memory.contains("MB")) {
             String strip = StringUtils.strip(memory, " MB");
             BigDecimal bigDecimal = new BigDecimal(strip);
-            BigDecimal gb = new BigDecimal("1048576");//1024^2
+            BigDecimal gb = new BigDecimal("1048576"); // 1024^2
             BigDecimal multiply = bigDecimal.multiply(gb);
             return multiply.longValue();
         }
         if (memory.contains("KB")) {
             String strip = StringUtils.strip(memory, " KB");
             BigDecimal bigDecimal = new BigDecimal(strip);
-            BigDecimal gb = new BigDecimal("1024");//1024^1
+            BigDecimal gb = new BigDecimal("1024"); // 1024^1
             BigDecimal multiply = bigDecimal.multiply(gb);
             return multiply.longValue();
         }

@@ -18,11 +18,9 @@ package org.apache.linkis.manager.am.vo;
 
 public class ResourceVo {
 
-
     private int cores;
     private int instance;
     private long memory;
-
 
     public int getCores() {
         return cores;

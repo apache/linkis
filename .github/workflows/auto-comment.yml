@@ -1,0 +1,34 @@
+name: Create Comment
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  create-comment:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create comment
+        uses: actions-cool/issues-helper@v3
+        with:
+          actions: 'create-comment'
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.issue.number }}
+          body: |
+            :blush:  Welcome to the Apache Linkis (incubating) community!!
+            We are glad that you are contributing by opening this issue.
+            
+            Please make sure to include all the relevant context.
+            We will be here shortly.
+            
+            If you are interested in contributing to our website project, please let us know!
+            You can check out our contributing guide on 
+             :point_right:  [How to Participate in Project Contribution](https://linkis.apache.org/community/how-to-contribute).
+             
+            WeChat  Group:
+            
+            ![image](https://user-images.githubusercontent.com/7869972/176336986-d6b9be8f-d1d3-45f1-aa45-8e6adf5dd244.png)
+            Mailing Lists:
+            |name|description|Subscribe|Unsubscribe|archive|
+            |:-----|:--------|:------|:-------|:-----|
+            | [dev@linkis.apache.org](mailto:dev@linkis.apache.org) | community activity information | [subscribe](mailto:dev-subscribe@linkis.apache.org) | [unsubscribe](mailto:dev-unsubscribe@linkis.apache.org) | [archive](http://mail-archives.apache.org/mod_mbox/linkis-dev) |

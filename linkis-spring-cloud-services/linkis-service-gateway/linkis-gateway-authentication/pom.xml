@@ -52,6 +52,20 @@
             <artifactId>linkis-module</artifactId>
             <scope>provided</scope>
             <version>${linkis.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>*</artifactId>
+                    <groupId>com.github.xiaoymin</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>*</artifactId>
+                    <groupId>io.springfox</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>*</artifactId>
+                    <groupId>io.swagger</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
     </dependencies>

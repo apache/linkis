@@ -16,7 +16,7 @@
   -->
 
 <template>
-  <div style="position:relative">
+  <div class="log" style="position:relative">
     <Tabs @on-click="onClickTabs" :value="tabName">
       <TabPane name="stdout" label="stdout"></TabPane>
       <TabPane name="stderr" label="stderr"></TabPane>
@@ -124,6 +124,9 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.log {
+  height: 100%;
+}
  .backButton {
   position: absolute;
   top: -2px;

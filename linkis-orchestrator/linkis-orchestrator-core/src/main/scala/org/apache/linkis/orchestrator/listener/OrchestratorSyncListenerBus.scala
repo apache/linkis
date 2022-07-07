@@ -31,9 +31,9 @@ class OrchestratorSyncListenerBus extends ListenerBus[OrchestratorSyncListener, 
     * thread for all listeners.
     */
   override protected def doPostEvent(listener: OrchestratorSyncListener, event: OrchestratorSyncEvent): Unit = {
-    debug(s"$listener start to deal event $event")
+    logger.debug(s"$listener start to deal event $event")
     listener.onSyncEvent(event)
-    debug(s"$listener Finished  to deal event $event")
+    logger.debug(s"$listener Finished  to deal event $event")
   }
 }
 

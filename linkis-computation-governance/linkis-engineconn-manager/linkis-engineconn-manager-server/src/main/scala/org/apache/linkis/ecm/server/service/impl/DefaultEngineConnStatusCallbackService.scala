@@ -35,7 +35,7 @@ class DefaultEngineConnStatusCallbackService extends EngineConnStatusCallbackSer
 
   @Receiver
   override def dealEngineConnStatusCallback(protocol: EngineConnStatusCallback): Unit = {
-    info(s"Start to deal EngineConnStatusCallback $protocol")
+    logger.info(s"Start to deal EngineConnStatusCallback $protocol")
 
     if (NodeStatus.isAvailable(protocol.status)) {
 
@@ -47,6 +47,6 @@ class DefaultEngineConnStatusCallbackService extends EngineConnStatusCallbackSer
       LinkisECMApplication.getContext.getECMSyncListenerBus.postToAll(EngineConnStatusChangeEvent(protocol.ticketId, Failed))
     }
 
-    info(s"Finished to deal EngineConnStatusCallback $protocol")
+    logger.info(s"Finished to deal EngineConnStatusCallback $protocol")
   }
 }

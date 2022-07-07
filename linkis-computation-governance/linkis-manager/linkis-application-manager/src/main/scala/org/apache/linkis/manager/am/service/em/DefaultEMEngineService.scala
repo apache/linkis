@@ -64,9 +64,9 @@ class DefaultEMEngineService extends EMEngineService with Logging {
 
   override def createEngine(engineBuildRequest: EngineConnBuildRequest, emNode: EMNode): EngineNode = {
 
-    info(s"EM ${emNode.getServiceInstance} start to create Engine ${engineBuildRequest}")
+    logger.info(s"EM ${emNode.getServiceInstance} start to create Engine ${engineBuildRequest}")
     val engineNode = emNodeManager.createEngine(engineBuildRequest, emNode)
-    info(s"EM ${emNode.getServiceInstance} Finished to create Engine ${engineBuildRequest.ticketId}")
+    logger.info(s"EM ${emNode.getServiceInstance} Finished to create Engine ${engineBuildRequest.ticketId}")
     engineNode.setLabels(emNode.getLabels.filter(_.isInstanceOf[EngineNodeLabel]))
     engineNode.setEMNode(emNode)
     engineNode
@@ -99,7 +99,7 @@ class DefaultEMEngineService extends EMEngineService with Logging {
     val emInstanceLabelOption = labels.find(_.isInstanceOf[EMInstanceLabel])
     val filterInstanceAndLabel = if (emInstanceLabelOption.isDefined) {
       val emInstanceLabel = emInstanceLabelOption.get.asInstanceOf[EMInstanceLabel]
-      info(s"use emInstanceLabel , will be route to ${emInstanceLabel.getServiceInstance}")
+      logger.info(s"use emInstanceLabel , will be route to ${emInstanceLabel.getServiceInstance}")
       if (! instanceAndLabels.exists(_._1.equals(emInstanceLabel.getServiceInstance))) {
         throw new AMErrorException(AMConstant.EM_ERROR_CODE, s"You specified em ${emInstanceLabel.getServiceInstance}, but the corresponding EM does not exist in the Manager")
       }

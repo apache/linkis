@@ -17,9 +17,6 @@
  
 package org.apache.linkis.orchestrator.ecm
 
-import java.util
-import java.util.Random
-
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.manager.label.constant.LabelKeyConstant
@@ -30,8 +27,9 @@ import org.apache.linkis.orchestrator.ecm.entity._
 import org.apache.linkis.orchestrator.ecm.exception.ECMPluginErrorException
 import org.apache.linkis.orchestrator.ecm.service.EngineConnExecutor
 import org.apache.linkis.server.BDPJettyServerHelper
-import org.apache.commons.collections.CollectionUtils
 
+import java.util
+import java.util.Random
 import scala.collection.JavaConversions._
 import scala.collection.mutable.ArrayBuffer
 
@@ -57,7 +55,7 @@ class LoadBalanceLabelEngineConnManager extends ComputationEngineConnManager wit
         ECMPluginConf.DEFAULT_LOADBALANCE_CAPACITY.getValue
       }
     } else {
-      error(s"There must be LoadBalanceLabel in markReq : ${BDPJettyServerHelper.gson.toJson(markReq)}")
+      logger.error(s"There must be LoadBalanceLabel in markReq : ${BDPJettyServerHelper.gson.toJson(markReq)}")
       ECMPluginConf.DEFAULT_LOADBALANCE_CAPACITY.getValue
     }
   }
@@ -106,20 +104,20 @@ class LoadBalanceLabelEngineConnManager extends ComputationEngineConnManager wit
         val insList = getMarkCache().get(chooseMark)
         if (null == insList || insList.size() != 1) {
           val msg = s"Engine instance releated to chooseMark : ${BDPJettyServerHelper.gson.toJson(chooseMark)} with bindEngineLabel : ${bindEngineLabel.getStringValue} cannot be null"
-          error(msg)
+          logger.error(msg)
           throw new ECMPluginErrorException(ECMPluginConf.ECM_MARK_CACHE_ERROR_CODE, msg)
         }
       } else {
         val msg = s"Cannot find mark${chooseMark.getMarkId()} related to bindEngineLabel : ${bindEngineLabel.getStringValue}"
-        error(msg)
+        logger.error(msg)
         throw new ECMPluginErrorException(ECMPluginConf.ECM_MARK_CACHE_ERROR_CODE, msg)
       }
       if (bindEngineLabel.getIsJobGroupEnd) {
         if (getIdToMarkCache().containsKey(bindEngineLabel.getJobGroupId)) {
-          info(s"Start to remove mark${chooseMark.getMarkId()} Cache ${bindEngineLabel.getStringValue}")
+          logger.info(s"Start to remove mark${chooseMark.getMarkId()} Cache ${bindEngineLabel.getStringValue}")
           getIdToMarkCache().remove(bindEngineLabel.getJobGroupId)
         } else {
-          error(s"Cannot find mark${chooseMark.getMarkId()} related to bindEngineLabel : ${bindEngineLabel.getStringValue}, cannot remove it.")
+          logger.error(s"Cannot find mark${chooseMark.getMarkId()} related to bindEngineLabel : ${bindEngineLabel.getStringValue}, cannot remove it.")
         }
       }
     } else {
@@ -164,11 +162,11 @@ class LoadBalanceLabelEngineConnManager extends ComputationEngineConnManager wit
     if (null != mark && getMarkCache().containsKey(mark)) {
       tryReuseEngineConnExecutor(mark) match {
         case Some(engineConnExecutor) =>
-          info(s"mark ${mark.getMarkId()} ReuseEngineConnExecutor $engineConnExecutor")
+          logger.info(s"mark ${mark.getMarkId()} ReuseEngineConnExecutor $engineConnExecutor")
           return engineConnExecutor
         case None =>
     }
-      info(s"mark ${mark.getMarkId()} start to askEngineConnExecutor")
+      logger.info(s"mark ${mark.getMarkId()} start to askEngineConnExecutor")
       val engineConnAskReq = mark.getMarkReq.createEngineConnAskReq()
       val existInstances = getAllInstances()
       if (null != existInstances && existInstances.nonEmpty) {
@@ -178,7 +176,7 @@ class LoadBalanceLabelEngineConnManager extends ComputationEngineConnManager wit
       }
       val engineConnExecutor = askEngineConnExecutor(engineConnAskReq, mark)
       saveToMarkCache(mark, engineConnExecutor)
-      debug(s"mark ${mark.getMarkId()} Finished to  getAvailableEngineConnExecutor by create")
+      logger.debug(s"mark ${mark.getMarkId()} Finished to  getAvailableEngineConnExecutor by create")
       engineConnExecutor
     } else {
       throw new ECMPluginErrorException(ECMPluginConf.ECM_ERROR_CODE, s"mark cannot be null")
@@ -187,16 +185,16 @@ class LoadBalanceLabelEngineConnManager extends ComputationEngineConnManager wit
 
   override def releaseEngineConnExecutor(engineConnExecutor: EngineConnExecutor, mark: Mark): Unit = {
     if (null != engineConnExecutor && null != mark && getMarkCache().containsKey(mark)) {
-      info(s"Start to release EngineConnExecutor mark id ${mark.getMarkId()} engineConnExecutor ${engineConnExecutor.getServiceInstance}")
+      logger.info(s"Start to release EngineConnExecutor mark id ${mark.getMarkId()} engineConnExecutor ${engineConnExecutor.getServiceInstance}")
       getEngineConnExecutorCache().remove(engineConnExecutor.getServiceInstance)
       engineConnExecutor.close()
-      info(s" Start to release all mark relation to serviceInstance ${engineConnExecutor.getServiceInstance}")
+      logger.info(s" Start to release all mark relation to serviceInstance ${engineConnExecutor.getServiceInstance}")
       getMarksByInstance(engineConnExecutor.getServiceInstance).foreach(releaseMarkAndServiceInstance(_, engineConnExecutor.getServiceInstance))
     }
   }
 
   private def releaseMarkAndServiceInstance(mark: Mark, serviceInstance: ServiceInstance): Unit = {
-    info(s" Start to release mark${mark.getMarkId()} relation to serviceInstance $serviceInstance")
+    logger.info(s" Start to release mark${mark.getMarkId()} relation to serviceInstance $serviceInstance")
     val instances = getInstances(mark)
     if (null != instances) {
       instances.remove(serviceInstance)

@@ -92,7 +92,7 @@ abstract class Job extends Runnable with SchedulerEvent with Closeable with Logg
   }
 
   def onFailure(errorMsg: String, t: Throwable): Unit = if(!SchedulerEventState.isCompleted(getState)) {
-    info(s"job $toString is onFailure on state $getState with errorMsg: $errorMsg.")
+    logger.info(s"job $toString is onFailure on state $getState with errorMsg: $errorMsg.")
     Utils.tryAndWarn {
       logListener.foreach(_.onLogUpdate(this, LogUtils.generateERROR(errorMsg)))
       if(t != null) {
@@ -113,12 +113,12 @@ abstract class Job extends Runnable with SchedulerEvent with Closeable with Logg
       future.cancel(true)
     }
     if (consumerFuture != null && executor == null){
-      warn(s"This executor of job($toString) in starting status,When kill job need to interrupter consumer Future")
+      logger.warn(s"This executor of job($toString) in starting status,When kill job need to interrupter consumer Future")
       this.consumerFuture.cancel()
       this.consumerFuture = null
     }
     if(super.isWaiting || super.isScheduled) transitionCompleted(errorExecuteResponse)
-    info(s"$toString execute failed. Reason: $errorMsg.", t)
+    logger.info(s"$toString execute failed. Reason: $errorMsg.", t)
   }
 
   /**
@@ -203,11 +203,11 @@ abstract class Job extends Runnable with SchedulerEvent with Closeable with Logg
     val state = getState
     executeCompleted match {
       case _: SuccessExecuteResponse =>
-        if(!interrupt) Utils.tryAndWarnMsg(transition(Succeed))(s"update Job $toString from $state to Succeed failed.")
+        if (!interrupt) Utils.tryAndWarnMsg(transition(Succeed))(s"update Job $toString from $state to Succeed failed.")
         else transitionCompleted(errorExecuteResponse)
       case e: ErrorExecuteResponse =>
         val canRetry = Utils.tryCatch(isJobShouldRetry(e)) {t =>
-          error(s"Job $toString failed to get the retry information!", t)
+          logger.error(s"Job $toString failed to get the retry information!", t)
           Utils.tryAndWarn(logListener.foreach(_.onLogUpdate(this, LogUtils.generateERROR("failed to get the retry information! " + ExceptionUtils.getFullStackTrace(t)))))
           if(e.t == null) errorExecuteResponse = ErrorExecuteResponse(e.message, t)
           false
@@ -230,7 +230,7 @@ abstract class Job extends Runnable with SchedulerEvent with Closeable with Logg
   protected def isJobShouldRetry(errorExecuteResponse: ErrorExecuteResponse): Boolean =
     isJobSupportRetry && errorExecuteResponse != null && (errorExecuteResponse.t match {
       case t: LinkisRetryException =>
-        warn(s"Job $toString is desired to retry.", t)
+        logger.warn(s"Job $toString is desired to retry.", t)
         t.getErrCode == LinkisJobRetryException.JOB_RETRY_ERROR_CODE
       case _ => false
     })
@@ -265,10 +265,10 @@ abstract class Job extends Runnable with SchedulerEvent with Closeable with Logg
     }
     val rs = Utils.tryCatch(executor.execute(jobToExecuteRequest)){
       case t: InterruptedException =>
-        warn(s"job $toString is interrupted by user!", t)
+        logger.warn(s"job $toString is interrupted by user!", t)
         ErrorExecuteResponse("job is interrupted by user!", t)
       case t =>
-        warn(s"execute job $toString failed!", t)
+        logger.warn(s"execute job $toString failed!", t)
         ErrorExecuteResponse("execute job failed!", t)
     }
     rs match {

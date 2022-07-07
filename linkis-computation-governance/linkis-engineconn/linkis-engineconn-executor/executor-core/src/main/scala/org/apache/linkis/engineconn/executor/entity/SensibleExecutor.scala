@@ -55,7 +55,7 @@ trait SensibleExecutor extends Executor {
         logger.info(s"Finished wait lock release, to change status $status=>$toStatus.")
       }
     }
-    info(s"$toString changed status $status => $toStatus.")
+    logger.info(s"$toString changed status $status => $toStatus.")
     val oldState = status
     this.status = toStatus
     onStatusChanged(oldState, toStatus)

@@ -32,7 +32,7 @@ class ValidatorManagerImpl extends ValidatorManager with Logging{
   }
 
   override def getOrCreateValidator(kind: String): Validator = {
-    info(s"find a validator $kind")
+    logger.info(s"find a validator $kind")
     validators.find(_.kind.equalsIgnoreCase(kind)).get
     // TODO:  If it is custom, create a validator class with reflection(如果是自定义的，就用反射创建一个validator类)
   }

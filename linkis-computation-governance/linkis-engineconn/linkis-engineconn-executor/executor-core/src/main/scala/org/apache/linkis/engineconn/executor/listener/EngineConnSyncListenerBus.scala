@@ -28,9 +28,9 @@ class EngineConnSyncListenerBus extends ListenerBus[EngineConnSyncListener, Engi
     * thread for all listeners.
     */
   override protected def doPostEvent(listener: EngineConnSyncListener, event: EngineConnSyncEvent): Unit = {
-    debug(s"$listener start to deal event $event")
+    logger.debug(s"$listener start to deal event $event")
     listener.onEvent(event)
-    debug(s"$listener Finished  to deal event $event")
+    logger.debug(s"$listener Finished  to deal event $event")
   }
 }
 

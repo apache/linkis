@@ -68,7 +68,7 @@ class StorageResultSetReader[K <: MetaData, V <: Record](resultSet: ResultSet[K,
     var rowLen = 0
     try rowLen = Dolphin.readInt(inputStream)
     catch {
-      case t:StorageWarnException => info(s"Read finished(读取完毕)") ; return null
+      case t:StorageWarnException => logger.info(s"Read finished(读取完毕)") ; return null
       case t: Throwable => throw t
     }
 

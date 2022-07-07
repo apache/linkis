@@ -32,12 +32,12 @@ class DefaultOperateService extends OperateService with Logging {
   override def executeOperation(engineOperateRequest: EngineOperateRequest): EngineOperateResponse = {
     val parameters = engineOperateRequest.parameters.asScala.toMap
     val operator = Utils.tryCatch(OperatorFactory().getOperatorRequest(parameters)) { t =>
-      error(s"Get operator failed, parameters is ${engineOperateRequest.parameters}.", t)
+      logger.error(s"Get operator failed, parameters is ${engineOperateRequest.parameters}.", t)
       return EngineOperateResponse(Map.empty, true, ExceptionUtils.getRootCauseMessage(t))
     }
-    info(s"Try to execute operator ${operator.getClass.getSimpleName} with parameters ${engineOperateRequest.parameters}.")
+    logger.info(s"Try to execute operator ${operator.getClass.getSimpleName} with parameters ${engineOperateRequest.parameters}.")
     val result = Utils.tryCatch(operator(parameters)) {t =>
-      error(s"Execute ${operator.getClass.getSimpleName} failed.", t)
+      logger.error(s"Execute ${operator.getClass.getSimpleName} failed.", t)
       return EngineOperateResponse(Map.empty, true, ExceptionUtils.getRootCauseMessage(t))
     }
     EngineOperateResponse(result)

@@ -41,9 +41,9 @@ abstract class Consumer(schedulerContext: SchedulerContext,
   def start(): Unit
 
   def shutdown(): Unit = {
-    info(s"$toString is ready to stop!")
+    logger.info(s"$toString is ready to stop!")
     terminate = true
-    info(s"$toString stopped!")
+    logger.info(s"$toString stopped!")
   }
 
   override def toString: String = getGroup.getGroupName + "Consumer"

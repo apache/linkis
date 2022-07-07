@@ -17,23 +17,22 @@
  
 package org.apache.linkis.entrance.orchestrator.plugin
 
-import java.util
-import java.util.concurrent.TimeUnit
-
 import com.google.common.cache.{CacheBuilder, CacheLoader, LoadingCache}
+import org.apache.commons.lang.StringUtils
 import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.entrance.conf.EntranceConfiguration
-import org.apache.linkis.governance.common.protocol.conf.{RequestQueryEngineConfig, RequestQueryEngineConfigWithGlobalConfig, ResponseQueryConfig}
+import org.apache.linkis.governance.common.protocol.conf.{RequestQueryEngineConfigWithGlobalConfig, ResponseQueryConfig}
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import org.apache.linkis.manager.label.constant.LabelKeyConstant
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
 import org.apache.linkis.orchestrator.plugin.UserParallelOrchestratorPlugin
 import org.apache.linkis.rpc.Sender
-import org.apache.commons.lang.StringUtils
 import org.apache.linkis.server.BDPJettyServerHelper
 
+import java.util
+import java.util.concurrent.TimeUnit
 import scala.collection.JavaConverters._
 
 class EntranceUserParallelOrchestratorPlugin extends UserParallelOrchestratorPlugin with Logging {
@@ -56,7 +55,7 @@ class EntranceUserParallelOrchestratorPlugin extends UserParallelOrchestratorPlu
           sender.ask(RequestQueryEngineConfigWithGlobalConfig(userCreatorLabel, engineTypeLabel)).asInstanceOf[ResponseQueryConfig].getKeyAndValue
         }("Get user configurations from configuration server failed! Next use the default value to continue.")
         if(null == keyAndValue || !keyAndValue.containsKey(EntranceConfiguration.WDS_LINKIS_INSTANCE.key)){
-          error(s"cannot found user configuration key:${EntranceConfiguration.WDS_LINKIS_INSTANCE.key}," +
+          logger.error(s"cannot found user configuration key:${EntranceConfiguration.WDS_LINKIS_INSTANCE.key}," +
             s"will use default value ${EntranceConfiguration.WDS_LINKIS_INSTANCE.getValue}。All config map: ${BDPJettyServerHelper.gson.toJson(keyAndValue)}")
         }
         val maxRunningJobs = EntranceConfiguration.WDS_LINKIS_INSTANCE.getValue(keyAndValue)

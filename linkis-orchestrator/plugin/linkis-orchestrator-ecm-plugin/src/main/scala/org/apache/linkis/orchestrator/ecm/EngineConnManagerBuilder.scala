@@ -110,7 +110,7 @@ object EngineConnManagerBuilder extends Logging {
             engineConnManagerClazzCache.put(manager.getPolicy().name(), clazz)
           }
         } { t: Throwable =>
-          warn(s"Failed to Instantiation: ${clazz.getName}, reason ${t.getMessage}")
+          logger.warn(s"Failed to Instantiation: ${clazz.getName}, reason ${t.getMessage}")
           null
         }
       }

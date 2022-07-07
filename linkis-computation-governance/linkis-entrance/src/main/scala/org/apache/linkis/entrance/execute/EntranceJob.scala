@@ -17,29 +17,25 @@
 
 package org.apache.linkis.entrance.execute
 
-import java.util
-import java.util.Date
-import java.util.concurrent.atomic.{AtomicInteger, AtomicLong}
-
+import org.apache.commons.lang.StringUtils
 import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.entrance.EntranceContext
 import org.apache.linkis.entrance.conf.EntranceConfiguration
 import org.apache.linkis.entrance.event._
 import org.apache.linkis.entrance.exception.EntranceErrorException
-import org.apache.linkis.entrance.persistence.HaPersistenceTask
 import org.apache.linkis.governance.common.entity.job.{JobRequest, SubJobInfo}
-import org.apache.linkis.governance.common.entity.task.RequestPersistTask
 import org.apache.linkis.governance.common.paser.CodeParser
 import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.protocol.engine.JobProgressInfo
-import org.apache.linkis.protocol.task.Task
 import org.apache.linkis.rpc.utils.RPCUtils
-import org.apache.linkis.scheduler.executer.{CompletedExecuteResponse, ErrorExecuteResponse, SuccessExecuteResponse}
+import org.apache.linkis.scheduler.executer.{CompletedExecuteResponse, ErrorExecuteResponse}
 import org.apache.linkis.scheduler.queue.SchedulerEventState._
 import org.apache.linkis.scheduler.queue.{Job, SchedulerEventState}
-import org.apache.commons.lang.StringUtils
 
+import java.util
+import java.util.Date
+import java.util.concurrent.atomic.{AtomicInteger, AtomicLong}
 import scala.beans.BeanProperty
 
 
@@ -107,7 +103,7 @@ abstract class EntranceJob extends Job {
   }
 
   def addAndGetResultSize(resultSize: Int): Int = {
-    info(s"Job ${getJobRequest.getId} resultsize from ${persistedResultSets.get()} add ${resultSize}")
+    logger.info(s"Job ${getJobRequest.getId} resultsize from ${persistedResultSets.get()} add ${resultSize}")
     if (resultSize > 0) {
       persistedResultSets.addAndGet(resultSize)
     } else {
@@ -209,7 +205,7 @@ abstract class EntranceJob extends Job {
   }
 
   def transitionCompleted(executeCompleted: CompletedExecuteResponse, reason: String): Unit = {
-    debug("Job directly completed with reason: " + reason)
+    logger.debug("Job directly completed with reason: " + reason)
     transitionCompleted(executeCompleted)
   }
 
@@ -250,21 +246,21 @@ abstract class EntranceJob extends Job {
       Utils.tryCatch{
         val tmpStatus = SchedulerEventState.withName(newStatus)
         if (SchedulerEventState.isCompleted(oriStatus) && !SchedulerEventState.Cancelled.equals(tmpStatus)) {
-          warn(s"Job ${getJobRequest.getId} status : ${getJobRequest.getStatus} is completed, will not change to : $newStatus")
+          logger.warn(s"Job ${getJobRequest.getId} status : ${getJobRequest.getStatus} is completed, will not change to : $newStatus")
           return
         }
         if (tmpStatus.id > oriStatus.id) {
           getJobRequest.setStatus(tmpStatus.toString)
         } else {
-          warn(s"Job ${getJobRequest.getId} 's index of status : ${oriStatus.toString} is not smaller then new status : ${newStatus}, will not change status.")
+          logger.warn(s"Job ${getJobRequest.getId} 's index of status : ${oriStatus.toString} is not smaller then new status : ${newStatus}, will not change status.")
         }
       } {
         case e: Exception =>
-          error(s"Invalid job status : ${newStatus}, ${e.getMessage}")
+          logger.error(s"Invalid job status : ${newStatus}, ${e.getMessage}")
           return
       }
     } else {
-      error("Invalid job status : null")
+      logger.error("Invalid job status : null")
     }
   }
 }

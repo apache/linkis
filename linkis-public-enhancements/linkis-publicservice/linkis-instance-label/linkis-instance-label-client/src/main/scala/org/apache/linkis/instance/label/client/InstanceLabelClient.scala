@@ -61,7 +61,7 @@ class InstanceLabelClient extends Logging {
           resp.getLabelList.asScala.foreach(pair => labelList.add(labelBuilderFactory.createLabel[Label[_]](pair.getKey, pair.getValue)))
           labelList
         case o =>
-          error(s"Invalid response ${BDPJettyServerHelper.gson.toJson(o)} from request : ${BDPJettyServerHelper.gson.toJson(request)}")
+          logger.error(s"Invalid response ${BDPJettyServerHelper.gson.toJson(o)} from request : ${BDPJettyServerHelper.gson.toJson(request)}")
           new util.ArrayList[Label[_]]
       }
     }
@@ -75,11 +75,11 @@ class InstanceLabelClient extends Logging {
       Sender.getSender(PUBLIC_SERVICE_APPLICATION_NAME.getValue).ask(request) match {
         case resp: LabelInsQueryResponse =>
           if (resp.getInsList.size() != 1) {
-            warn(s"Instance num ${resp.getInsList.size()} with labels ${BDPJettyServerHelper.gson.toJson(labelMap)} is not single one.")
+            logger.warn(s"Instance num ${resp.getInsList.size()} with labels ${BDPJettyServerHelper.gson.toJson(labelMap)} is not single one.")
           }
           resp.getInsList
         case o =>
-          error(s"Invalid resp : ${BDPJettyServerHelper.gson.toJson(o)} from request : ${BDPJettyServerHelper.gson.toJson(request)}")
+          logger.error(s"Invalid resp : ${BDPJettyServerHelper.gson.toJson(o)} from request : ${BDPJettyServerHelper.gson.toJson(request)}")
           new util.ArrayList[ServiceInstance]()
       }
     }

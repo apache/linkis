@@ -60,8 +60,8 @@ function getPort(){
     "ps-data-source-manager")
       export SERVER_PORT=$DATASOURCE_MANAGER_PORT
       ;;
-    "ps-metadatamanager")
-      export SERVER_PORT=$METADATA_MANAGER_PORT
+    "ps-metadataquery")
+      export SERVER_PORT=$METADATA_QUERY_PORT
       ;;
   esac
 }

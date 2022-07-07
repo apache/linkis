@@ -50,7 +50,7 @@ class RPCSpringConfiguration extends Logging {
     else
       DataWorkCloudApplication.setProperty(ServerConfiguration.BDP_SERVER_RESTFUL_REGISTER_CLASSES.key, restfulClasses +
         "," + rpcRestfulName)
-    info("DataWorkCloud RPC need register RPCReceiveRestful, now add it to configuration.")
+    logger.info("DataWorkCloud RPC need register RPCReceiveRestful, now add it to configuration.")
   }
 
 }

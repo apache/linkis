@@ -52,7 +52,7 @@ abstract class AbstractPhysicalTransform extends PhysicalTransform with Logging{
           val newExecTask = doTransform()(task)
           val parent = Option(newExecTask.getParents).getOrElse(Array[ExecTask]())
           if(parent.length <= 0){
-            debug(s"pad parents for execute task ${newExecTask.getId}")
+            logger.debug(s"pad parents for execute task ${newExecTask.getId}")
             newExecTask.withNewParents(parentPrev)
           }
           newExecTask
@@ -120,7 +120,7 @@ abstract class AbstractPhysicalTransform extends PhysicalTransform with Logging{
         recurse = true
         val execTask = Option(transform(parentExecTasks, nodeTask)).getOrElse(new UnknownExecTak)
         branches.put(nodeTask.getId, execTask)
-        warn(s"meet up branch node[id:${nodeTask.getId}, name:${nodeTask.getName}] of logical node while building physical tree")
+        logger.warn(s"meet up branch node[id:${nodeTask.getId}, name:${nodeTask.getName}] of logical node while building physical tree")
         execTask
       })
     }else{
@@ -140,7 +140,7 @@ abstract class AbstractPhysicalTransform extends PhysicalTransform with Logging{
         nodeExecTask.withNewChildren((childrenExecTask ++ Option(nodeExecTask.getChildren).getOrElse(Array[ExecTask]())).toArray)
       }
     }else{
-      debug(s"stop to recurse, because of branch node[id:${nodeExecTask.getId}, name:${nodeExecTask.getName}] of physical node")
+      logger.debug(s"stop to recurse, because of branch node[id:${nodeExecTask.getId}, name:${nodeExecTask.getName}] of physical node")
       val parents = Option(nodeExecTask.getParents).getOrElse(Array[ExecTask]()).toBuffer
       parents ++= parentExecTasks
       nodeExecTask.withNewParents(parents.toArray)

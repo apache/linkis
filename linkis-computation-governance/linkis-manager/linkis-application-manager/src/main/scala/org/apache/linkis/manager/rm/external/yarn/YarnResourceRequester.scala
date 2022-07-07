@@ -59,7 +59,7 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
     val rmWebHaAddress = provider.getConfigMap.get("rmWebAddress").asInstanceOf[String]
     this.provider = provider
     val rmWebAddress = getAndUpdateActiveRmWebAddress(rmWebHaAddress)
-    info(s"rmWebAddress: $rmWebAddress")
+    logger.info(s"rmWebAddress: $rmWebAddress")
     val queueName = identifier.asInstanceOf[YarnResourceIdentifier].getQueueName
 
     def getYarnResource(jValue: Option[JValue]) = jValue.map(r => new YarnResource((r \ "memory").asInstanceOf[JInt].values.toLong * 1024l * 1024l, (r \ "vCores").asInstanceOf[JInt].values.toInt, 0, queueName))
@@ -113,7 +113,7 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
       val queues = resp \ "childQueues" \ "queue"
 
       if(queues != null && queues != JNull && queues != JNothing && null != queues.children && queues.children.nonEmpty) {
-        info(s"queues:$queues")
+        logger.info(s"queues:$queues")
         queues
       } else resp  \ "childQueues"
     }
@@ -149,7 +149,7 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
         val childQueues = getChildQueuesOfCapacity(resp \ "scheduler" \ "schedulerInfo")
         val queue = getQueueOfCapacity(childQueues)
         if (queue.isEmpty) {
-          debug(s"cannot find any information about queue $queueName, response: " + resp)
+          logger.debug(s"cannot find any information about queue $queueName, response: " + resp)
           throw new RMWarnException(11006, s"queue $queueName is not exists in YARN.")
         }
         (maxEffectiveHandle(queue).get, getYarnResource(queue.map(_ \ "resourcesUsed")).get)
@@ -157,13 +157,13 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
         val childQueues = getChildQueues(resp \ "scheduler" \ "schedulerInfo" \ "rootQueue")
         val queue = getQueue(childQueues)
         if (queue.isEmpty) {
-          debug(s"cannot find any information about queue $queueName, response: " + resp)
+          logger.debug(s"cannot find any information about queue $queueName, response: " + resp)
           throw new RMWarnException(11006, s"queue $queueName is not exists in YARN.")
         }
         (getYarnResource(queue.map(_ \ "maxResources")).get,
           getYarnResource(queue.map(_ \ "usedResources")).get)
       } else {
-        debug(s"only support fairScheduler or capacityScheduler, schedulerType: $schedulerType , response: " + resp)
+        logger.debug(s"only support fairScheduler or capacityScheduler, schedulerType: $schedulerType , response: " + resp)
         throw new RMWarnException(11006, s"only support fairScheduler or capacityScheduler, schedulerType: $schedulerType")
       }
     }
@@ -316,7 +316,7 @@ object YarnResourceRequester extends Logging {
   }
 
   def addShutdownHook(): Unit = {
-    info("Register shutdown hook to release httpclient connection")
+    logger.info("Register shutdown hook to release httpclient connection")
     Utils.addShutdownHook(httpClient.close())
   }
 }

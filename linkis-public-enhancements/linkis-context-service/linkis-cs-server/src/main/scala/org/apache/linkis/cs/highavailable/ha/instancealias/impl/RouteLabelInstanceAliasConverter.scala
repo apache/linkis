@@ -74,13 +74,13 @@ class RouteLabelInstanceAliasConverter extends InstanceAliasConverter with Loggi
       } {
         case e: Exception =>
           val msg = s"GetLabelFromInstance for instance : ${instance} failed, ${e.getMessage}"
-          error(msg, e)
+          logger.error(msg, e)
           throw new CSErrorException(CSErrorCode.CS_RPC_ERROR, msg, e)
       }
       if (null != labels && labels.size() > 0) {
         val routeLabels = labels.asScala.filter(_ != null).filter(l => LabelKeyConstant.ROUTE_KEY.equals(l.getLabelKey) && l.getStringValue.startsWith(ContextHighAvailableConf.CONTEXTSERVICE_PREFIX.getValue))
         if (routeLabels.size != 1) {
-          warn(s"Instance ${instance} has no or more than one route label : ${routeLabels.map(_.getStringValue)}")
+          logger.warn(s"Instance ${instance} has no or more than one route label : ${routeLabels.map(_.getStringValue)}")
         }
         if (routeLabels.size >= 1) {
           val alias = routeLabels.head.getStringValue
@@ -88,12 +88,12 @@ class RouteLabelInstanceAliasConverter extends InstanceAliasConverter with Loggi
           routeLabels.head.getStringValue
         } else {
           val msg = s"No routeLabel got for instance : ${instance}"
-          error(msg)
+          logger.error(msg)
           throw new CSErrorException(CSErrorCode.INVALID_INSTANCE_ALIAS, msg)
         }
       } else {
         val msg = s"Null routeLabel got for instance : ${instance}"
-        error(msg)
+        logger.error(msg)
         throw new CSErrorException(CSErrorCode.INVALID_INSTANCE_ALIAS, msg)
       }
     } else {
@@ -116,25 +116,25 @@ class RouteLabelInstanceAliasConverter extends InstanceAliasConverter with Loggi
       } {
         case e: Exception =>
           val msg = s"GetInsFromLabel rpc failed : ${e.getMessage}"
-          error(msg, e)
+          logger.error(msg, e)
           throw new CSErrorException(CSErrorCode.CS_RPC_ERROR, msg, e)
       }
       if (null != insList) {
         if (insList.size() >= 1) {
           if (insList.size() > 1) {
-            warn(s"Got ${insList.size()} instances more than 1 from alias ${alias}.")
+            logger.warn(s"Got ${insList.size()} instances more than 1 from alias ${alias}.")
           }
           val ins = insList.get(0).getInstance
           aliasInsCache.put(alias, ins)
           ins
         } else {
           val msg = s"Got no instances form alias ${alias}."
-          error(msg)
+          logger.error(msg)
           throw new CSErrorException(CSErrorCode.INVALID_INSTANCE, msg)
         }
       } else {
         val msg = s"Got no instances form alias ${alias}."
-        error(msg)
+        logger.error(msg)
         throw new CSErrorException(CSErrorCode.INVALID_INSTANCE, msg)
       }
     } else {

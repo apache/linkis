@@ -47,7 +47,7 @@ class OverLoadNodeSelectRule extends NodeSelectRule with Logging {
       case node: AMNode if nodeB.isInstanceOf[AMNode] =>
         Utils.tryCatch(getOverload(node.getNodeOverLoadInfo) < getOverload(nodeB.asInstanceOf[AMNode].getNodeOverLoadInfo)) {
           t: Throwable =>
-            warn("Failed to Compare resource ", t)
+            logger.warn("Failed to Compare resource ", t)
             true
         }
 

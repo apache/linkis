@@ -47,44 +47,44 @@ object EngineConnServer extends Logging {
 
 
   def main(args: Array[String]): Unit = {
-    info("<<---------------------EngineConnServer Start --------------------->>")
+    logger.info("<<---------------------EngineConnServer Start --------------------->>")
 
     try {
       // 1. build EngineCreationContext
       init(args)
       val isTestMode = Configuration.IS_TEST_MODE.getValue(engineCreationContext.getOptions)
       if (isTestMode) {
-        info(s"Step into test mode, pause 30s if debug is required. If you want to disable test mode, please set ${Configuration.IS_TEST_MODE.key} = false.")
+        logger.info(s"Step into test mode, pause 30s if debug is required. If you want to disable test mode, please set ${Configuration.IS_TEST_MODE.key} = false.")
         Utils.sleepQuietly(30000)
       }
-      info("Finished to create EngineCreationContext, EngineCreationContext content: " + EngineConnUtils.GSON.toJson(engineCreationContext))
+      logger.info("Finished to create EngineCreationContext, EngineCreationContext content: " + EngineConnUtils.GSON.toJson(engineCreationContext))
       EngineConnHook.getEngineConnHooks.foreach(_.beforeCreateEngineConn(getEngineCreationContext))
-      info("Finished to execute hook of beforeCreateEngineConn.")
+      logger.info("Finished to execute hook of beforeCreateEngineConn.")
       //2. cresate EngineConn
       val engineConn = getEngineConnManager.createEngineConn(getEngineCreationContext)
-      info(s"Finished to create ${engineConn.getEngineConnType}EngineConn.")
+      logger.info(s"Finished to create ${engineConn.getEngineConnType}EngineConn.")
       EngineConnHook.getEngineConnHooks.foreach(_.beforeExecutionExecute(getEngineCreationContext, engineConn))
-      info("Finished to execute all hooks of beforeExecutionExecute.")
+      logger.info("Finished to execute all hooks of beforeExecutionExecute.")
       //3. register executions
       Utils.tryThrow(executeEngineConn(engineConn)) { t =>
-        error(s"Init executors error. Reason: ${ExceptionUtils.getRootCauseMessage(t)}", t)
+        logger.error(s"Init executors error. Reason: ${ExceptionUtils.getRootCauseMessage(t)}", t)
         throw new EngineConnExecutorErrorException(EngineConnExecutorErrorCode.INIT_EXECUTOR_FAILED, "Init executors failed. ", t)
       }
       EngineConnObject.setReady()
-      info("Finished to execute executions.")
+      logger.info("Finished to execute executions.")
       EngineConnHook.getEngineConnHooks.foreach(_.afterExecutionExecute(getEngineCreationContext, engineConn))
-      info("Finished to execute hook of afterExecutionExecute")
+      logger.info("Finished to execute hook of afterExecutionExecute")
       EngineConnHook.getEngineConnHooks.foreach(_.afterEngineServerStartSuccess(getEngineCreationContext, engineConn))
     } catch {
        case t: Throwable =>
-         error("EngineConnServer Start Failed.", t)
+         logger.error("EngineConnServer Start Failed.", t)
          EngineConnHook.getEngineConnHooks.foreach(_.afterEngineServerStartFailed(getEngineCreationContext, t))
          System.exit(1)
     }
 
     //4. wait Executions execute
     ShutdownHook.getShutdownHook.waitForStopOrError()
-    info("<<---------------------EngineConnServer Exit --------------------->>")
+    logger.info("<<---------------------EngineConnServer Exit --------------------->>")
     System.exit(ShutdownHook.getShutdownHook.getExitCode())
   }
 
@@ -110,17 +110,17 @@ object EngineConnServer extends Logging {
     this.engineCreationContext.setOptions(jMap)
     this.engineCreationContext.setArgs(args)
     EngineConnObject.setEngineCreationContext(this.engineCreationContext)
-    info("Finished to init engineCreationContext: " + EngineConnUtils.GSON.toJson(engineCreationContext))
+    logger.info("Finished to init engineCreationContext: " + EngineConnUtils.GSON.toJson(engineCreationContext))
   }
 
   private def executeEngineConn(engineConn: EngineConn): Unit = {
     EngineConnExecution.getEngineConnExecutions.foreach {
       case execution: AbstractEngineConnExecution =>
-        info(s"Ready to execute ${execution.getClass.getSimpleName}.")
+        logger.info(s"Ready to execute ${execution.getClass.getSimpleName}.")
         execution.execute(getEngineCreationContext, engineConn)
         if (execution.returnAfterMeExecuted(getEngineCreationContext, engineConn)) return
       case execution =>
-        info(s"Ready to execute ${execution.getClass.getSimpleName}.")
+        logger.info(s"Ready to execute ${execution.getClass.getSimpleName}.")
         execution.execute(getEngineCreationContext, engineConn)
     }
   }

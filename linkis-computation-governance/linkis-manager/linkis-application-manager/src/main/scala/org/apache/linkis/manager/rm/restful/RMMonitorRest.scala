@@ -138,6 +138,7 @@ class RMMonitorRest extends Logging {
           engineInstance.put("engineType", engineTypeLabel.getEngineType)
           engineInstance.put("instance", node.getServiceInstance.getInstance)
           engineInstance.put("label", engineTypeLabel.getStringValue)
+          node.setNodeResource(ResourceUtils.convertTo(node.getNodeResource, ResourceType.LoadInstance))
           engineInstance.put("resource", node.getNodeResource)
           if (node.getNodeStatus == null) {
             engineInstance.put("status", "Busy")

@@ -16,15 +16,26 @@
  */
 package org.apache.linkis.manager.am.util;
 
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.google.gson.Gson;
+import org.apache.linkis.manager.am.restful.EMRestfulApi;
+import org.apache.linkis.manager.am.vo.ResourceVo;
+import org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
 public class ECResourceInfoUtils {
+
+    private static Logger logger = LoggerFactory.getLogger(ECResourceInfoUtils.class);
 
     public static String NAME_REGEX = "^[a-zA-Z\\d_\\.]+$";
 
@@ -36,10 +47,53 @@ public class ECResourceInfoUtils {
         return StringUtils.isBlank(str) ? def : str;
     }
 
-    public static Map<String, Object> getStringToMap(String str) {
-        Gson gson = new Gson();
-        Map<String, Object> map = new HashMap<>();
-        map = gson.fromJson(str, map.getClass());
-        return map;
+    public static ResourceVo getStringToMap(String str, ECResourceInfoRecord info) {
+        ResourceVo resourceVo = null;
+        Map<String, Object> map = new Gson().fromJson(str, new HashMap<>().getClass());
+        if (MapUtils.isNotEmpty(map)) {
+            resourceVo = new ResourceVo();
+            if (info.getLabelValue().contains("spark") || (info.getLabelValue().contains("flink"))) {
+                if (null != map.get("driver")) {
+                    Map<String, Object> divermap = MapUtils.getMap(map, "driver");
+                    resourceVo.setInstance(((Double) divermap.get("instance")).intValue());
+                    resourceVo.setCores(((Double) divermap.get("cpu")).intValue());
+                    resourceVo.setMemory(memorySizeChange(divermap.get("memory").toString()));
+                    return resourceVo;
+                } else {
+                    return null;//兼容老数据
+                }
+            }
+            resourceVo.setInstance(((Double) map.get("instance")).intValue());
+            resourceVo.setMemory(memorySizeChange(map.get("memory").toString()));
+            Double core = null == map.get("cpu") ? (Double) map.get("cores") :(Double) map.get("cpu");
+            resourceVo.setCores(core.intValue());
+        }
+        return resourceVo;
+    }
+
+    public static long memorySizeChange(String memory) {
+        if (memory.contains("GB")) {
+            String strip = StringUtils.strip(memory, " GB");
+            BigDecimal bigDecimal = new BigDecimal(strip);
+            BigDecimal gb = new BigDecimal("1073741824");//1024^3
+            BigDecimal multiply = bigDecimal.multiply(gb);
+            return multiply.longValue();
+        }
+        if (memory.contains("MB")) {
+            String strip = StringUtils.strip(memory, " MB");
+            BigDecimal bigDecimal = new BigDecimal(strip);
+            BigDecimal gb = new BigDecimal("1048576");//1024^2
+            BigDecimal multiply = bigDecimal.multiply(gb);
+            return multiply.longValue();
+        }
+        if (memory.contains("KB")) {
+            String strip = StringUtils.strip(memory, " KB");
+            BigDecimal bigDecimal = new BigDecimal(strip);
+            BigDecimal gb = new BigDecimal("1024");//1024^1
+            BigDecimal multiply = bigDecimal.multiply(gb);
+            return multiply.longValue();
+        }
+        BigDecimal gb = new BigDecimal(memory);
+        return gb.longValue();
     }
 }

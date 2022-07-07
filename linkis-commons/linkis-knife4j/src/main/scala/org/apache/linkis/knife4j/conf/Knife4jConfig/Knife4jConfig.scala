@@ -1,5 +1,3 @@
-package org.apache.linkis.knife4j.conf.Knife4jConfig
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -16,6 +14,8 @@ package org.apache.linkis.knife4j.conf.Knife4jConfig
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package org.apache.linkis.knife4j.conf.Knife4jConfig
 
 import org.springframework.context.annotation.Bean
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer

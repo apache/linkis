@@ -37,6 +37,6 @@ trait SchedulerContext {
 }
 
 object SchedulerContext {
-  val schedulerContext:SchedulerContext = new FIFOSchedulerContextImpl( 100)
-  def getSchedulerContext:SchedulerContext = schedulerContext
+  val schedulerContext: SchedulerContext = new FIFOSchedulerContextImpl(100)
+  def getSchedulerContext: SchedulerContext = schedulerContext
 }

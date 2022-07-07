@@ -70,7 +70,7 @@ class FIFOConsumerManager(groupName: String) extends ConsumerManager {
   }
 
   override def shutdown(): Unit = {
-    if(consumerListener != null) consumerListener.onConsumerDestroyed(consumer)
+    if (consumerListener != null) consumerListener.onConsumerDestroyed(consumer)
     consumer.shutdown()
     executorService.shutdownNow()
   }

@@ -19,10 +19,10 @@ package org.apache.linkis.common.listener
 
 import java.util.concurrent.atomic.{AtomicBoolean, AtomicLong}
 import java.util.concurrent.{ArrayBlockingQueue, CopyOnWriteArrayList, Future, TimeoutException}
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.commons.lang3.time.DateFormatUtils
 
-import org.apache.linkis.common.utils.{ByteTimeUtils, Logging, Utils}
-import org.apache.commons.lang.time.DateFormatUtils
-
+import java.time.Duration
 import scala.util.control.NonFatal
 
 
@@ -77,11 +77,8 @@ trait ListenerBus[L <: EventListener, E <: Event] extends Logging {
 }
 abstract class ListenerEventBus[L <: EventListener, E <: Event]
       (val eventQueueCapacity: Int, name: String)
-      (listenerConsumerThreadSize: Int = 5, listenerThreadMaxFreeTime: Long = ByteTimeUtils.timeStringAsMs("2m"))
+      (listenerConsumerThreadSize: Int = 5, listenerThreadMaxFreeTime: Long = Duration.ofMinutes(2).toMillis)
   extends ListenerBus[L, E] with Logging {
-
-//  protected val listenerConsumerThreadSize: Int = 5
-//  protected val listenerThreadMaxFreeTime: Long = ByteTimeUtils.timeStringAsMs("2m")
 
   private lazy val eventQueue = new ArrayBlockingQueue[E](eventQueueCapacity)
   protected val executorService = Utils.newCachedThreadPool(listenerConsumerThreadSize + 2, name + "-Consumer-ThreadPool", true)
@@ -104,8 +101,8 @@ abstract class ListenerEventBus[L <: EventListener, E <: Event]
       listenerThread = executorService.submit(new Runnable {
         override def run(): Unit =
           while (!stopped.get) {
-            val event = Utils.tryCatch(eventQueue.take()){
-              case t: InterruptedException => logger.info(s"stopped $name thread.")
+            val event = Utils.tryCatch(eventQueue.take()) {
+              case t: InterruptedException => logger.info(s"stopped $name thread.", t)
                 return
             }
             while(!eventDealThreads.exists(_.putEvent(event)) && !stopped.get) Utils.tryAndError(Thread.sleep(1))
@@ -121,7 +118,7 @@ abstract class ListenerEventBus[L <: EventListener, E <: Event]
   def post(event: E): Unit = {
     if (stopped.get || executorService.isTerminated || (listenerThread.isDone && started.get())) {
       dropEvent.onBusStopped(event)
-    } else if(!eventQueue.offer(event)) {
+    } else if (!eventQueue.offer(event)) {
       dropEvent.onDropEvent(event)
     }
   }
@@ -194,7 +191,7 @@ abstract class ListenerEventBus[L <: EventListener, E <: Event]
     private val logDroppedEvent = new AtomicBoolean(false)
     private val logStoppedEvent = new AtomicBoolean(false)
     executorService.submit(new Runnable {
-      override def run(): Unit = while(true) {
+      override def run(): Unit = while (true) {
         val droppedEvents = droppedEventsCounter.get
         if (droppedEvents > 0) {
           // Don't log too frequently
@@ -241,24 +238,26 @@ abstract class ListenerEventBus[L <: EventListener, E <: Event]
     private var future: Option[Future[_]] = None
     private var continue = true
     private var event: Option[E] = None
-    private var lastEventDealData = 0l
+    private var lastEventDealTime = 0L
 
-    def releaseFreeThread(): Unit = if(listenerThreadMaxFreeTime > 0 && future.isDefined && event.isEmpty && lastEventDealData > 0 &&
-      System.currentTimeMillis() - lastEventDealData >= listenerThreadMaxFreeTime) synchronized {
-      if(lastEventDealData == 0 && future.isEmpty) return
-      lastEventDealData = 0l
-      continue = false
-      future.foreach(_.cancel(true))
-      future = None
+    def releaseFreeThread(): Unit = if (listenerThreadMaxFreeTime > 0 && future.isDefined && event.isEmpty && lastEventDealTime > 0 &&
+      System.currentTimeMillis() - lastEventDealTime >= listenerThreadMaxFreeTime) {
+      synchronized {
+        if (lastEventDealTime == 0 && future.isEmpty) return
+        lastEventDealTime = 0L
+        continue = false
+        future.foreach(_.cancel(true))
+        future = None
+      }
     }
     def isRunning: Boolean = event.isDefined
 
-    def putEvent(event: E): Boolean = if(this.event.isDefined) false else synchronized {
-      if(this.event.isDefined) false
+    def putEvent(event: E): Boolean = if (this.event.isDefined) false else synchronized {
+      if (this.event.isDefined) false
       else {
-        lastEventDealData = System.currentTimeMillis()
+        lastEventDealTime = System.currentTimeMillis()
         this.event = Some(event)
-        if(future.isEmpty) future = Some(executorService.submit(this))
+        if (future.isEmpty) future = Some(executorService.submit(this))
         else notify()
         true
       }
@@ -274,12 +273,13 @@ abstract class ListenerEventBus[L <: EventListener, E <: Event]
       }
       while(continue) {
         synchronized {
-          while(event.isEmpty) Utils.tryQuietly(wait(), _ => {
+          while (event.isEmpty) Utils.tryQuietly(wait(), _ => {
             threadRelease()
-            return})
+            return
+          })
         }
         Utils.tryFinally(event.foreach(postToAll)) (synchronized {
-          lastEventDealData = System.currentTimeMillis()
+          lastEventDealTime = System.currentTimeMillis()
           event = None
         })
       }

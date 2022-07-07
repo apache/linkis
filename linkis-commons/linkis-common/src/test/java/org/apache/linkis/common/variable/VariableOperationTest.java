@@ -16,7 +16,7 @@
  */
 package org.apache.linkis.common.variable;
 
-import org.apache.linkis.common.exception.LinkisCommonErrorException;
+import org.apache.linkis.common.exception.VariableOperationFailedException;
 import org.apache.linkis.common.utils.VariableOperationUtils;
 
 import org.junit.jupiter.api.Test;
@@ -32,7 +32,7 @@ public class VariableOperationTest {
     private static final ZonedDateTime zonedDateTime = VariableOperationUtils.toZonedDateTime(date);
 
     @Test
-    public void testJsonFormat() throws LinkisCommonErrorException {
+    public void testJsonFormat() throws VariableOperationFailedException {
         String jsonOld =
                 "{\"name\":\"${yyyyMMdd%-1d}\",\"address\":{\"street\":\"${yyyyMMdd%-1y}\"},\"links\":[{\"name\":\"${yyyyMMdd%-1M}\"}]}";
         String jsonNew = VariableOperationUtils.replaces(zonedDateTime, jsonOld);
@@ -43,7 +43,7 @@ public class VariableOperationTest {
     }
 
     @Test
-    public void testTextFormat() throws LinkisCommonErrorException {
+    public void testTextFormat() throws VariableOperationFailedException {
         String strOld = "abc${yyyyMMdd%-1d}def";
         String strNew = VariableOperationUtils.replaces(zonedDateTime, strOld);
         System.out.println(strOld + "\n" + strNew);

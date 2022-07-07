@@ -16,7 +16,7 @@
  */
 package org.apache.linkis.common.utils;
 
-import org.apache.linkis.common.exception.LinkisCommonErrorException;
+import org.apache.linkis.common.exception.VariableOperationFailedException;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -72,7 +72,7 @@ public class VariableOperationUtils {
      * @return
      */
     public static String replaces(ZonedDateTime dateTime, String str)
-            throws LinkisCommonErrorException {
+            throws VariableOperationFailedException {
         return replaces(dateTime, str, true);
     }
 
@@ -85,7 +85,7 @@ public class VariableOperationUtils {
      * @return
      */
     public static String replaces(ZonedDateTime dateTime, String str, boolean format)
-            throws LinkisCommonErrorException {
+            throws VariableOperationFailedException {
         try {
             JsonNode rootNode = JsonUtils.jackson().readTree(str);
             if (rootNode.isArray() || rootNode.isObject()) {
@@ -104,7 +104,7 @@ public class VariableOperationUtils {
      * @return
      */
     private static String replace(ZonedDateTime dateTime, String str)
-            throws LinkisCommonErrorException {
+            throws VariableOperationFailedException {
         StringBuilder buffer = new StringBuilder(str);
         int startIndex = str.indexOf(PLACEHOLDER_LEFT);
 
@@ -134,8 +134,8 @@ public class VariableOperationUtils {
                 } catch (IllegalArgumentException e1) {
                     startIndex = buffer.indexOf(PLACEHOLDER_LEFT, endIndex);
                 } catch (Exception e2) {
-                    throw new LinkisCommonErrorException(
-                            20050, "variable operation expression" + e2.getMessage());
+                    throw new VariableOperationFailedException(
+                            20050, "variable operation expression" + e2.getMessage(), e2);
                 }
             } else {
                 startIndex = -1; // leave while
@@ -186,7 +186,7 @@ public class VariableOperationUtils {
      * @return
      */
     private static String replace(Map<String, String> keyValue, String str)
-            throws LinkisCommonErrorException {
+            throws VariableOperationFailedException {
         StringBuilder buffer = new StringBuilder(str);
         int startIndex = str.indexOf(PLACEHOLDER_LEFT);
 
@@ -213,8 +213,8 @@ public class VariableOperationUtils {
                         startIndex = buffer.indexOf(PLACEHOLDER_LEFT, endIndex);
                     }
                 } catch (Exception e2) {
-                    throw new LinkisCommonErrorException(
-                            20050, "variable operation expression" + e2.getMessage());
+                    throw new VariableOperationFailedException(
+                            20050, "variable operation expression" + e2.getMessage(), e2);
                 }
             } else {
                 startIndex = -1; // leave while
@@ -231,7 +231,7 @@ public class VariableOperationUtils {
      */
     @SuppressWarnings("DuplicatedCode")
     private static void replaceJson(ZonedDateTime dateTime, JsonNode object)
-            throws LinkisCommonErrorException {
+            throws VariableOperationFailedException {
         if (object.isArray()) {
             ArrayNode arrayNode = (ArrayNode) object;
             for (int i = 0; i < arrayNode.size(); i++) {

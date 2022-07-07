@@ -39,22 +39,6 @@
             <useStrictFiltering>false</useStrictFiltering>
             <useTransitiveFiltering>true</useTransitiveFiltering>
 
-            <exclusions>
-                <exclusion>
-                    <artifactId>*</artifactId>
-                    <groupId>com.github.xiaoymin</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>*</artifactId>
-                    <groupId>io.springfox</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>*</artifactId>
-                    <groupId>io.swagger</groupId>
-                </exclusion>
-            </exclusions>
-
-
             <excludes>
                 <exclude>com.github.xiaoymin:*:jar</exclude>
                 <exclude>io.springfox:*:jar</exclude>

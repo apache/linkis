@@ -49,7 +49,7 @@ class GenericRoueLabelParser extends RouteLabelParser with Logging {
           BDPJettyServerHelper.gson.fromJson(body, classOf[java.util.Map[String, Object]])
         } {
           case e: Exception =>
-            warn("Parse error. " + e.getMessage)
+            logger.warn("Parse error. " + e.getMessage)
             new util.HashMap[String, Object]()
         }
         val labels: util.List[Label[_]] = json.get(TaskConstant.LABELS) match {

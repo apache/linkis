@@ -109,7 +109,7 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
         tryLogin(action, getRequestUrl(action), true)
         logger.info("The user is not logged in, please log in first, you can set a retry")
         val msg = Utils.tryCatch(EntityUtils.toString(response.getEntity)) {
-          t => warn("failed to parse entity", t)
+          t => logger.warn("failed to parse entity", t)
           ""
         }
         throw new HttpClientRetryException("The user is not logged in, please log in first, you can set a retry, message: " + msg)

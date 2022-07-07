@@ -118,13 +118,13 @@ class DefaultEngineConnListService extends EngineConnListService with ECMEventLi
   def updateEngineConnStatus(tickedId: String, updateStatus: NodeStatus): Unit = {
     updateEngineConn(x => x.setStatus(updateStatus), tickedId)
     if (NodeStatus.isCompleted(updateStatus)) {
-      info(s" from engineConnMap to remove engineconn ticketId ${tickedId}")
+      logger.info(s" from engineConnMap to remove engineconn ticketId ${tickedId}")
       killEngineConn(tickedId)
     }
   }
 
   override def onEvent(event: ECMEvent): Unit = {
-    info(s"Deal event $event")
+    logger.info(s"Deal event $event")
     event match {
       case event: ECMClosedEvent => shutdownEngineConns(event)
       case event: YarnAppIdCallbackEvent => updateYarnAppId(event)
@@ -145,15 +145,15 @@ class DefaultEngineConnListService extends EngineConnListService with ECMEventLi
   }
 
   private def shutdownEngineConns(event: ECMClosedEvent): Unit = {
-    info("start to kill all engines belonging the ecm")
+    logger.info("start to kill all engines belonging the ecm")
     engineConnMap.values().foreach(engineconn => {
       killECByEngineConnKillService(engineconn)
     })
-    info("Done! success to kill all engines belonging the ecm")
+    logger.info("Done! success to kill all engines belonging the ecm")
   }
 
   private def killECByEngineConnKillService(engineconn: EngineConn): Unit = {
-    info(s"start to kill ec by engineConnKillService ${engineconn.getServiceInstance}")
+    logger.info(s"start to kill ec by engineConnKillService ${engineconn.getServiceInstance}")
     val engineStopRequest = new EngineStopRequest()
     engineStopRequest.setServiceInstance(engineconn.getServiceInstance)
     getEngineConnKillService.dealEngineConnStop(engineStopRequest)

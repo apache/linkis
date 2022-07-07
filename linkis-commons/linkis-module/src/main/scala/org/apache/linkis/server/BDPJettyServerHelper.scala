@@ -127,11 +127,11 @@ private[linkis] object BDPJettyServerHelper extends Logging {
       webApp.setExtractWAR(true)
       val warTempDirectory = new File(BDP_SERVER_WAR_TEMPDIR.getValue)
       if(warTempDirectory.exists) {
-        warn(s"delete ${warTempDirectory.getPath}, since it is exists.")
+        logger.warn(s"delete ${warTempDirectory.getPath}, since it is exists.")
         FileUtils.deleteDirectory(warTempDirectory)
       }
       warTempDirectory.mkdir
-      info(s"BDPJettyServer Webapps path: ${warTempDirectory.getPath}.")
+      logger.info(s"BDPJettyServer Webapps path: ${warTempDirectory.getPath}.")
       webApp.setTempDirectory(warTempDirectory)
     }
     // Explicit bind to root

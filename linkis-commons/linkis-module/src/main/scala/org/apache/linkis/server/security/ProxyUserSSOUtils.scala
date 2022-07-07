@@ -59,7 +59,7 @@ object ProxyUserSSOUtils extends Logging {
   }
 
   def setProxyUserCookie(addCookie: Cookie => Unit, username: String, trustCode: String): Unit = {
-    info(s"add login userTicketCookie for user $username.")
+    logger.info(s"add login userTicketCookie for user $username.")
     val userTicketIdKv = getProxyUserTicketKV(username, trustCode)
     val cookie = new Cookie(userTicketIdKv._1, userTicketIdKv._2)
     cookie.setMaxAge(-1)

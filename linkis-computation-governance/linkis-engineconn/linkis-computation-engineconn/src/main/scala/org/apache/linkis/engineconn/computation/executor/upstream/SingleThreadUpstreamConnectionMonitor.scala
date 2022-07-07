@@ -17,18 +17,17 @@
 
 package org.apache.linkis.engineconn.computation.executor.upstream
 
-import java.util
-import java.util.Collections
-import java.util.concurrent.{ConcurrentHashMap, ScheduledThreadPoolExecutor, TimeUnit}
-
+import org.apache.commons.lang3.concurrent.BasicThreadFactory
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.engineconn.common.exception.EngineConnException
-import org.apache.linkis.engineconn.computation.executor.conf.ComputationExecutorConf
 import org.apache.linkis.engineconn.computation.executor.upstream.access.{ConnectionInfoAccess, ConnectionInfoAccessRequest}
 import org.apache.linkis.engineconn.computation.executor.upstream.handler.{MonitorHandler, MonitorHandlerRequest}
 import org.apache.linkis.engineconn.computation.executor.upstream.wrapper.ConnectionInfoWrapper
 import org.apache.linkis.engineconn.computation.executor.utlis.ComputationErrorCode
-import org.apache.commons.lang3.concurrent.BasicThreadFactory
+
+import java.util
+import java.util.Collections
+import java.util.concurrent.{ConcurrentHashMap, ScheduledThreadPoolExecutor, TimeUnit}
 
 abstract class SingleThreadUpstreamConnectionMonitor(name: String, infoAccess: ConnectionInfoAccess, handler: MonitorHandler) extends UpstreamConnectionMonitor with Logging {
 
@@ -50,15 +49,15 @@ abstract class SingleThreadUpstreamConnectionMonitor(name: String, infoAccess: C
     if (!started) {
       panicIfNull(infoAccess, "infoAccess should not be null")
       panicIfNull(handler, "handler should not be null")
-      info("started upstream monitor")
+      logger.info("started upstream monitor")
       monitorDaemon.scheduleAtFixedRate(new Runnable {
         override def run(): Unit = Utils.tryCatch(scanOneIteration) {
-          t => error("ClientHeartbeatMonitor failed to scan for one iteration", t)
+          t => logger.error("ClientHeartbeatMonitor failed to scan for one iteration", t)
         }
       }, 0, 5, TimeUnit.SECONDS)
       monitorDaemon.scheduleAtFixedRate(new Runnable {
         override def run(): Unit = Utils.tryCatch(clearOneIteration) {
-          t => error("clearWrapperMap has failed for one iteration", t)
+          t => logger.error("clearWrapperMap has failed for one iteration", t)
         }
       }, 0, 1, TimeUnit.HOURS)
       Utils.addShutdownHook(() -> this.shutdown())
@@ -76,15 +75,15 @@ abstract class SingleThreadUpstreamConnectionMonitor(name: String, infoAccess: C
     toBeRequested.addAll(wrapperMap.values())
 
     if (toBeRequested.size() == 0) {
-      debug("nothing to monitor")
+      logger.debug("nothing to monitor")
       return
     }
-    info("requesting connection info: " + util.Arrays.toString(Collections.list(wrapperMap.keys).toArray()))
+    logger.info("requesting connection info: " + util.Arrays.toString(Collections.list(wrapperMap.keys).toArray()))
     val infoAccessRequest = generateInfoAccessRequest(toBeRequested)
     val connectionInfoList = infoAccess.getUpstreamInfo(infoAccessRequest)
-    info("connection-info result: " + connectionInfoList(0).getUpstreamServiceInstanceName() + " : " + connectionInfoList(0).isAlive())
+    logger.info("connection-info result: " + connectionInfoList(0).getUpstreamServiceInstanceName() + " : " + connectionInfoList(0).isAlive())
     if (connectionInfoList == null || connectionInfoList.size == 0) {
-      info("Found none upstream-info")
+      logger.info("Found none upstream-info")
       return
     }
 
@@ -99,7 +98,7 @@ abstract class SingleThreadUpstreamConnectionMonitor(name: String, infoAccess: C
         value.updateConnectionInfo(connectionInfoMap.get(key).get)
       }
       if (!value.getUpstreamConnection().isAlive()) {
-        info("Found upstream connection problem: " + entry.getValue.toString)
+        logger.info("Found upstream connection problem: " + entry.getValue.toString)
         toBeHandled.add(value)
       }
     }
@@ -112,7 +111,7 @@ abstract class SingleThreadUpstreamConnectionMonitor(name: String, infoAccess: C
     if (toBeHandled.size > 0) {
       val handlerRequest = generateHandlerRequest(toBeHandled)
       Utils.tryCatch(handler.handle(handlerRequest)) {
-        t => error("failed to handle upstream connection-loss", t)
+        t => logger.error("failed to handle upstream connection-loss", t)
       }
     }
   }
@@ -135,7 +134,7 @@ abstract class SingleThreadUpstreamConnectionMonitor(name: String, infoAccess: C
 
   def shutdown(): Unit = this.synchronized {
     if (started) {
-      info("stopping upstream monitor")
+      logger.info("stopping upstream monitor")
       monitorDaemon.shutdownNow
     }
   }

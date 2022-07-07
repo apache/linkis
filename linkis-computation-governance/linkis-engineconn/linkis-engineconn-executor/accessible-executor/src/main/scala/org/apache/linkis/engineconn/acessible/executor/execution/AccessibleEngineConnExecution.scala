@@ -17,7 +17,6 @@
  
 package org.apache.linkis.engineconn.acessible.executor.execution
 
-import java.util.concurrent.TimeUnit
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.engineconn.acessible.executor.conf.AccessibleExecutorConfiguration
 import org.apache.linkis.engineconn.acessible.executor.entity.AccessibleExecutor
@@ -33,9 +32,10 @@ import org.apache.linkis.engineconn.executor.service.ManagerService
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.common.protocol.engine.{ECCanKillRequest, EngineConnReleaseRequest}
 import org.apache.linkis.manager.common.protocol.resource.ResourceUsedProtocol
-import org.apache.linkis.rpc.Sender
-import org.apache.commons.lang.exception.ExceptionUtils
 import org.apache.linkis.manager.label.utils.LabelUtil
+import org.apache.linkis.rpc.Sender
+
+import java.util.concurrent.TimeUnit
 
 
 class AccessibleEngineConnExecution extends EngineConnExecution with Logging {
@@ -55,7 +55,7 @@ class AccessibleEngineConnExecution extends EngineConnExecution with Logging {
   override def execute(engineCreationContext: EngineCreationContext, engineConn: EngineConn): Unit = {
     init(engineCreationContext)
     val executor = findReportExecutor(engineCreationContext, engineConn)
-    info(s"Created a report executor ${executor.getClass.getSimpleName}(${executor.getId}).")
+    logger.info(s"Created a report executor ${executor.getClass.getSimpleName}(${executor.getId}).")
     beforeReportToLinkisManager(executor, engineCreationContext, engineConn)
     reportUsedResource(executor, engineCreationContext)
     reportLabel(executor)
@@ -84,7 +84,7 @@ class AccessibleEngineConnExecution extends EngineConnExecution with Logging {
             return
         }
         if (NodeStatus.isCompleted(accessibleExecutor.getStatus)) {
-          error(s"${accessibleExecutor.getId} has completed with status ${accessibleExecutor.getStatus}, now stop it.")
+          logger.error(s"${accessibleExecutor.getId} has completed with status ${accessibleExecutor.getStatus}, now stop it.")
           requestManagerReleaseExecutor("Completed release")
           ShutdownHook.getShutdownHook.notifyStop()
         } else if (accessibleExecutor.getStatus == NodeStatus.ShuttingDown) {
@@ -148,17 +148,17 @@ class AccessibleEngineConnExecution extends EngineConnExecution with Logging {
       ManagerService.getManagerService
         .reportUsedResource(ResourceUsedProtocol(Sender.getThisServiceInstance,
           resourceExecutor.getCurrentNodeResource(), engineCreationContext.getTicketId))
-      info("In the first time, report usedResources to LinkisManager succeed.")
+      logger.info("In the first time, report usedResources to LinkisManager succeed.")
     case _ =>
-      info("Do not need to report usedResources.")
+      logger.info("Do not need to report usedResources.")
   }
 
   protected def reportLabel(executor: Executor): Unit = executor match {
     case labelExecutor: LabelExecutor =>
       ManagerService.getManagerService.labelReport(labelExecutor.getExecutorLabels())
-      info("In the first time, report all labels to LinkisManager succeed.")
+      logger.info("In the first time, report all labels to LinkisManager succeed.")
     case _ =>
-      info("Do not need to report labels.")
+      logger.info("Do not need to report labels.")
   }
 
   /**

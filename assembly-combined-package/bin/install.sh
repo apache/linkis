@@ -308,8 +308,8 @@ sed -i ${txt}  "s#\#spark.config.dir.*#spark.config.dir=$SPARK_CONF_DIR#g" $comm
 
 if [ "true" == "$HADOOP_KERBEROS_ENABLE" ]
 then
-  sed -i ${txt} '$a \wds.linkis.keytab.enable=true' $LINKIS_HOME/conf/linkis.properties
-  sed -i ${txt} '$a \wds.linkis.keytab.file=$HADOOP_KEYTAB_PATH' $LINKIS_HOME/conf/linkis.properties
+  sed -i ${txt}  "s#\#wds.linkis.keytab.enable.*#wds.linkis.keytab.enable=true#g" $common_conf
+  sed -i ${txt}  "s#\#wds.linkis.keytab.file.*#wds.linkis.keytab.file=$HADOOP_KEYTAB_PATH#g" $common_conf
 fi
 
 

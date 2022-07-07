@@ -16,6 +16,8 @@
  */
 package org.apache.linkis.common.utils;
 
+import org.apache.linkis.common.exception.LinkisCommonErrorException;
+
 import org.apache.commons.lang3.StringUtils;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -69,7 +71,8 @@ public class VariableOperationUtils {
      * @param str
      * @return
      */
-    public static String replaces(ZonedDateTime dateTime, String str) {
+    public static String replaces(ZonedDateTime dateTime, String str)
+            throws LinkisCommonErrorException {
         return replaces(dateTime, str, true);
     }
 
@@ -81,7 +84,8 @@ public class VariableOperationUtils {
      * @param format
      * @return
      */
-    public static String replaces(ZonedDateTime dateTime, String str, boolean format) {
+    public static String replaces(ZonedDateTime dateTime, String str, boolean format)
+            throws LinkisCommonErrorException {
         try {
             JsonNode rootNode = JsonUtils.jackson().readTree(str);
             if (rootNode.isArray() || rootNode.isObject()) {
@@ -89,6 +93,7 @@ public class VariableOperationUtils {
                 return rootNode.toString();
             }
         } catch (Exception e) {
+            return replace(dateTime, str);
         }
         return replace(dateTime, str);
     }
@@ -98,7 +103,8 @@ public class VariableOperationUtils {
      * @param str
      * @return
      */
-    private static String replace(ZonedDateTime dateTime, String str) {
+    private static String replace(ZonedDateTime dateTime, String str)
+            throws LinkisCommonErrorException {
         StringBuilder buffer = new StringBuilder(str);
         int startIndex = str.indexOf(PLACEHOLDER_LEFT);
 
@@ -128,6 +134,8 @@ public class VariableOperationUtils {
                 } catch (IllegalArgumentException e1) {
                     startIndex = buffer.indexOf(PLACEHOLDER_LEFT, endIndex);
                 } catch (Exception e2) {
+                    throw new LinkisCommonErrorException(
+                            20050, "variable operation expression" + e2.getMessage());
                 }
             } else {
                 startIndex = -1; // leave while
@@ -177,7 +185,8 @@ public class VariableOperationUtils {
      * @param str
      * @return
      */
-    private static String replace(Map<String, String> keyValue, String str) {
+    private static String replace(Map<String, String> keyValue, String str)
+            throws LinkisCommonErrorException {
         StringBuilder buffer = new StringBuilder(str);
         int startIndex = str.indexOf(PLACEHOLDER_LEFT);
 
@@ -204,7 +213,8 @@ public class VariableOperationUtils {
                         startIndex = buffer.indexOf(PLACEHOLDER_LEFT, endIndex);
                     }
                 } catch (Exception e2) {
-                    throw new RuntimeException(e2);
+                    throw new LinkisCommonErrorException(
+                            20050, "variable operation expression" + e2.getMessage());
                 }
             } else {
                 startIndex = -1; // leave while
@@ -220,7 +230,8 @@ public class VariableOperationUtils {
      * @param object
      */
     @SuppressWarnings("DuplicatedCode")
-    private static void replaceJson(ZonedDateTime dateTime, JsonNode object) {
+    private static void replaceJson(ZonedDateTime dateTime, JsonNode object)
+            throws LinkisCommonErrorException {
         if (object.isArray()) {
             ArrayNode arrayNode = (ArrayNode) object;
             for (int i = 0; i < arrayNode.size(); i++) {

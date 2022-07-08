@@ -105,8 +105,8 @@ class SpringCloudGatewayConfiguration {
 
     override def choose(serviceId: String, hint: Any): client.ServiceInstance = if (isMergeModuleInstance(serviceId)) {
       val serviceInstance = getServiceInstance(serviceId)
-      logger.info("redirect to " + serviceInstance)
       val lb = this.getLoadBalancer(serviceInstance.getApplicationName)
+      logger.info("redirect to " + serviceInstance + ", services: " + lb.getAllServers.map(_.getHostPort).toList)
       val server = lb.getAllServers.find(_.getHostPort == serviceInstance.getInstance).get
       new RibbonLoadBalancerClient.RibbonServer(serviceId, server, isSecure(server, serviceId), serverIntrospectorFun(serviceId).getMetadata(server))
     } else super.choose(serviceId, hint)

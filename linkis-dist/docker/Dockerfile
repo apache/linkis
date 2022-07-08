@@ -19,19 +19,27 @@
 # linkis image
 ######################################################################
 
-ARG BASE_IMAGE=centos:7
+ARG IMAGE_BASE=centos:7
+ARG IMAGE_BASE_WEB=nginx:1.19.6
 
-FROM ${BASE_IMAGE} as linkis
+FROM ${IMAGE_BASE} as linkis
+
+ARG BUILD_TYPE=dev
 
 ARG JDK_VERSION=1.8.0-openjdk
 ARG JDK_BUILD_REVISION=1.8.0.332.b09-1.el7_9
-ARG LINKIS_VERSION=1.1.3
+
 ARG MYSQL_JDBC_VERSION=5.1.49
-ARG BUILD_TYPE=dev
+
+ARG LINKIS_VERSION=0.0.0
 ARG LINKIS_SYSTEM_USER="hadoop"
 ARG LINKIS_SYSTEM_UID="9001"
 
-WORKDIR /opt/linkis
+ARG LINKIS_HOME=/opt/linkis
+ARG LINKIS_CONF_DIR=/etc/linkis-conf
+ARG LINKIS_LOG_DIR=/var/logs/linkis
+
+WORKDIR ${LINKIS_HOME}
 
 RUN useradd -r -s /bin/bash -u ${LINKIS_SYSTEM_UID} -g root -G wheel ${LINKIS_SYSTEM_USER}
 
@@ -43,13 +51,16 @@ RUN yum install -y \
        mysql \
     && yum clean all
 
+RUN sed -i "s#^%wheel.*#%wheel        ALL=(ALL)       NOPASSWD: ALL#g" /etc/sudoers
+
 RUN mkdir -p /opt/tmp \
-    && mkdir -p /etc/linkis-conf \
-    && mkdir -p /var/logs/linkis
+    && mkdir -p ${LINKIS_CONF_DIR} \
+    && mkdir -p ${LINKIS_LOG_DIR}
 
 ENV JAVA_HOME /etc/alternatives/jre
-ENV LINKIS_CONF_DIR /etc/linkis-conf
-ENV LINKIS_HOME /opt/linkis
+ENV LINKIS_CONF_DIR ${LINKIS_CONF_DIR}
+ENV LINKIS_CLIENT_CONF_DIR ${LINKIS_CONF_DIR}
+ENV LINKIS_HOME ${LINKIS_HOME}
 
 ADD apache-linkis-${LINKIS_VERSION}-incubating-bin.tar.gz /opt/tmp/
 
@@ -59,14 +70,14 @@ RUN if [ "$BUILD_TYPE" = "dev" ] ; then \
         https://repo1.maven.org/maven2/mysql/mysql-connector-java/${MYSQL_JDBC_VERSION}/mysql-connector-java-${MYSQL_JDBC_VERSION}.jar; \
     fi
 
-RUN mv /opt/tmp/linkis-package/* /opt/linkis/ \
-    && cp /opt/tmp/mysql-connector-java-${MYSQL_JDBC_VERSION}.jar /opt/linkis/lib/linkis-commons/public-module/ \
-    && cp /opt/tmp/mysql-connector-java-${MYSQL_JDBC_VERSION}.jar /opt/linkis/lib/linkis-spring-cloud-services/linkis-mg-gateway/ \
-    && chmod g+w -R /opt/linkis && chown ${LINKIS_SYSTEM_USER}:${LINKIS_SYSTEM_GROUP} -R /opt/linkis \
-    && chmod g+w -R /etc/linkis-conf && chown ${LINKIS_SYSTEM_USER}:${LINKIS_SYSTEM_GROUP} -R /etc/linkis-conf  \
-    && chmod g+w -R /var/logs/linkis && chown ${LINKIS_SYSTEM_USER}:${LINKIS_SYSTEM_GROUP} -R /var/logs/linkis \
-    && chmod a+x /opt/linkis/bin/* \
-    && chmod a+x /opt/linkis/sbin/* \
+RUN mv /opt/tmp/linkis-package/* ${LINKIS_HOME}/ \
+    && cp /opt/tmp/mysql-connector-java-${MYSQL_JDBC_VERSION}.jar ${LINKIS_HOME}/lib/linkis-commons/public-module/ \
+    && cp /opt/tmp/mysql-connector-java-${MYSQL_JDBC_VERSION}.jar ${LINKIS_HOME}/lib/linkis-spring-cloud-services/linkis-mg-gateway/ \
+    && chmod g+w -R ${LINKIS_HOME} && chown ${LINKIS_SYSTEM_USER}:${LINKIS_SYSTEM_GROUP} -R ${LINKIS_HOME} \
+    && chmod g+w -R ${LINKIS_CONF_DIR} && chown ${LINKIS_SYSTEM_USER}:${LINKIS_SYSTEM_GROUP} -R ${LINKIS_CONF_DIR}  \
+    && chmod g+w -R ${LINKIS_LOG_DIR} && chown ${LINKIS_SYSTEM_USER}:${LINKIS_SYSTEM_GROUP} -R ${LINKIS_LOG_DIR} \
+    && chmod a+x ${LINKIS_HOME}/bin/* \
+    && chmod a+x ${LINKIS_HOME}/sbin/* \
     && rm -rf /opt/tmp
 
 USER ${LINKIS_SYSTEM_USER}
@@ -76,7 +87,13 @@ ENTRYPOINT ["/bin/bash"]
 
 ######################################################################
 # linkis web image
-# TODO: refactor
 ######################################################################
-FROM nginx:1.19.6 as linkis-web
-COPY web/dist/dist /usr/share/nginx/html
+FROM ${IMAGE_BASE_WEB} as linkis-web
+
+ARG LINKIS_VERSION=0.0.0
+ARG LINKIS_HOME=/opt/linkis
+
+ENV LINKIS_WEB_ROOT ${LINKIS_HOME}-web
+
+RUN mkdir -p ${LINKIS_HOME}-web
+COPY apache-linkis-web-${LINKIS_VERSION}-dist/dist ${LINKIS_HOME}-web

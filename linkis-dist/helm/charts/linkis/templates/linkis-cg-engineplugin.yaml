@@ -74,6 +74,7 @@ spec:
         version: {{ .Chart.AppVersion }}
         {{- include "linkis.cgEnginePlugin.selectorLabels" . | nindent 8 }}
     spec:
+      subdomain: {{ include "linkis.fullname" . }}-cg-engineplugin-headless
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
@@ -84,6 +85,14 @@ spec:
             name: {{ include "linkis.fullname" . }}-linkis-config
         - name: log
           emptyDir: {}
+        - name: runtime
+          {{- if .Values.linkis.featureGates.localMode }}
+          hostPath:
+            path: {{ .Values.linkis.locations.hostPath }}
+            type: DirectoryOrCreate
+          {{- else }}
+          emptyDir: {}
+          {{- end }}
       serviceAccountName: {{ include "linkis.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.cgEnginePlugin.podSecurityContext | nindent 8 }}
@@ -97,11 +106,16 @@ spec:
             - /bin/bash
             - -ecx
             - >-
-              RUN_IN_FOREGROUND=true {{ .Values.locations.homeDir }}/sbin/linkis-daemon.sh start cg-engineplugin
+              RUN_IN_FOREGROUND=true {{ .Values.linkis.locations.homeDir }}/sbin/linkis-daemon.sh start cg-engineplugin
           ports:
             - name: "http"
               containerPort: {{ .Values.cgEnginePlugin.port }}
               protocol: TCP
+            {{- if .Values.linkis.featureGates.enableRemoteDebug }}
+            - name: "debug"
+              containerPort: 5005
+              protocol: TCP
+            {{- end }}
           # TODO: replace with httpGet when spring-boot readiness probe is implemented.
           readinessProbe:
             initialDelaySeconds: 15
@@ -111,10 +125,16 @@ spec:
             tcpSocket:
               port: {{ .Values.cgEnginePlugin.port }}
           env:
+            {{- if .Values.linkis.featureGates.enableRemoteDebug }}
+            - name: DEBUG_PORT
+              value: "5005"
+            {{- end }}
             - name: SERVER_HEAP_SIZE
               value: {{ .Values.cgEnginePlugin.jvmHeapSize }}
             - name: EUREKA_URL
               value: {{- include "linkis.registration.url" . | quote | indent 1 }}
+            - name: EUREKA_PREFER_IP
+              value: "true"
             - name: EUREKA_PORT
               value: "{{ .Values.mgEureka.port }}"
             {{- if .Values.cgEnginePlugin.envs.extras }}
@@ -126,9 +146,11 @@ spec:
           {{- end }}
           volumeMounts:
             - name: conf
-              mountPath: {{ .Values.locations.confDir }}
+              mountPath: {{ .Values.linkis.locations.confDir }}
             - name: log
-              mountPath: {{ .Values.locations.logDir }}
+              mountPath: {{ .Values.linkis.locations.logDir }}
+            - name: runtime
+              mountPath: {{ .Values.linkis.locations.runtimeDir }}
           resources:
             {{- toYaml .Values.cgEnginePlugin.resources | nindent 12 }}
       {{- with .Values.cgEnginePlugin.nodeSelector }}

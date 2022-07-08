@@ -18,11 +18,12 @@
 WORK_DIR=`cd $(dirname $0); pwd -P`
 PROJECT_ROOT=${WORK_DIR}/../..
 RESOURCE_DIR=${WORK_DIR}/resources
+TMP_DIR=`mktemp -d -t kind-XXXXX`
 
 set -e
 
-KIND_CLUSTER_NAME=test-helm
-MYSQL_VERSION=5.7
+KIND_CLUSTER_NAME=${KIND_CLUSTER_NAME:-test-helm}
+MYSQL_VERSION=${MYSQL_VERSION:-5.7}
 
 # evaluate project version
 PROJECT_VERSION=`cd ${PROJECT_ROOT} \
@@ -32,11 +33,22 @@ echo "# Project version: ${PROJECT_VERSION}"
 
 # create kind cluster
 echo "# Creating KinD cluster ..."
-kind create cluster --name ${KIND_CLUSTER_NAME}
+# create data dir for KinD cluster
+KIND_CLUSTER_HOST_PATH=${TMP_DIR}/data
+mkdir -p ${KIND_CLUSTER_HOST_PATH}
+# create kind cluster conf
+KIND_CLUSTER_CONF_TPL=${RESOURCE_DIR}/kind-cluster.yaml
+KIND_CLUSTER_CONF_FILE=${TMP_DIR}/kind-cluster.yaml
+KIND_CLUSTER_HOST_PATH=${KIND_CLUSTER_HOST_PATH} envsubst < ${KIND_CLUSTER_CONF_TPL} > ${KIND_CLUSTER_CONF_FILE}
+
+echo "- kind cluster config: ${KIND_CLUSTER_CONF_FILE}"
+cat ${KIND_CLUSTER_CONF_FILE}
+kind create cluster --name ${KIND_CLUSTER_NAME} --config ${KIND_CLUSTER_CONF_FILE}
 
 # load images
 echo "# Loading images into KinD cluster ..."
 kind load docker-image linkis:${PROJECT_VERSION} --name ${KIND_CLUSTER_NAME}
+kind load docker-image linkis-web:${PROJECT_VERSION} --name ${KIND_CLUSTER_NAME}
 kind load docker-image mysql:${MYSQL_VERSION} --name ${KIND_CLUSTER_NAME}
 
 # deploy mysql

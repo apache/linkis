@@ -37,8 +37,8 @@ data:
   linkis-env.sh: |
     export LINKIS_VERSION={{ .Chart.AppVersion }}
     export LINKIS_PUBLIC_MODULE=lib/linkis-commons/public-module
-    export LINKIS_COMMONS_LIB={{ .Values.locations.homeDir }}/lib/linkis-commons/public-module
-    export LINKIS_LOG_DIR={{ .Values.locations.logDir }}
+    export LINKIS_COMMONS_LIB={{ .Values.linkis.locations.homeDir }}/lib/linkis-commons/public-module
+    export LINKIS_LOG_DIR={{ .Values.linkis.locations.logDir }}
 
   token.properties: |
     ## http API token authentication
@@ -52,7 +52,7 @@ data:
     QUALITIS-AUTH=*
 
   application-linkis.yml: |
-    debug: {{ .Values.linkis.testMode }}
+    debug: {{ .Values.linkis.featureGates.testMode }}
     eureka:
       instance:
         prefer-ip-address: true
@@ -106,9 +106,19 @@ data:
       server:
         response-cache-update-interval-ms: 2000
 
+  linkis-cli.properties: |
+    #wds.linkis.client.common.creator=LINKISCLI
+    wds.linkis.client.common.gatewayUrl={{- include "linkis.gateway.url" . }}
+    wds.linkis.client.common.authStrategy=token
+    wds.linkis.client.common.tokenKey=Validation-Code
+    wds.linkis.client.common.tokenValue=BML-AUTH
+    #wds.linkis.client.noncustomizable.enable.user.specification=true
+    #wds.linkis.client.noncustomizable.enable.proxy.user=true
+
   linkis.properties: |
     ##enable wds.linkis.test.mode where use knife4j
-    wds.linkis.test.mode={{ .Values.linkis.testMode }}
+    wds.linkis.test.mode={{ .Values.linkis.featureGates.testMode }}
+    wds.linkis.test.user=hadoop
     wds.linkis.server.version=v1
     ##spring conf
     wds.linkis.gateway.url={{- include "linkis.gateway.url" . }}
@@ -123,19 +133,29 @@ data:
     hadoop.config.dir=/etc/hadoop-conf
     hive.config.dir=/etc/hive-conf
     spark.config.dir=/etc/spark-conf
+
+    {{- if .Values.linkis.featureGates.localMode }}
     ##file path
-    wds.linkis.filesystem.root.path=file:///tmp/linkis/
-    wds.linkis.filesystem.hdfs.root.path=hdfs:///tmp/linkis/
+    wds.linkis.filesystem.root.path=file://{{ .Values.linkis.locations.runtimeDir }}
+    wds.linkis.filesystem.hdfs.root.path=file://{{ .Values.linkis.locations.runtimeDir }}
+    ##bml path: use local
+    wds.linkis.bml.is.hdfs=false
+    wds.linkis.bml.local.prefix={{ .Values.linkis.locations.runtimeDir }}
+    {{- else }}
+    ##file path
+    wds.linkis.filesystem.root.path=file://{{ .Values.linkis.locations.runtimeDir }}
+    wds.linkis.filesystem.hdfs.root.path=hdfs://{{ .Values.linkis.locations.runtimeDir }}
     ##bml path:default use hdfs
     wds.linkis.bml.is.hdfs=true
-    wds.linkis.bml.hdfs.prefix=/apps-data
-    #wds.linkis.bml.local.prefix=/data/dss/bml
+    wds.linkis.bml.local.prefix=/apps-data
+    {{- end }}
+
     ##engine Version
     #wds.linkis.spark.engine.version=
     #wds.linkis.hive.engine.version=
     #wds.linkis.python.engine.version=
     #LinkisHome
-    wds.linkis.home={{ .Values.locations.homeDir }}
+    wds.linkis.home={{ .Values.linkis.locations.homeDir }}
     #Linkis governance station administrators
     wds.linkis.governance.station.admin=hadoop
     wds.linkis.gateway.conf.publicservice.list=query,jobhistory,application,configuration,filesystem,udf,variable,microservice,errorcode,bml,datasource
@@ -146,7 +166,7 @@ data:
 
   linkis-mg-gateway.properties: |
     #wds.linkis.server.restful.uri=/
-    wds.linkis.test.mode={{ .Values.linkis.testMode }}
+    wds.linkis.test.mode={{ .Values.linkis.featureGates.testMode }}
     wds.linkis.test.user=hadoop
     wds.linkis.server.web.session.timeout=1h
     wds.linkis.gateway.conf.enable.proxy.user=false
@@ -181,7 +201,7 @@ data:
   linkis-cg-engineconnmanager.properties: |
     ##restful
     wds.linkis.server.restful.scan.packages=org.apache.linkis.em.restful
-    wds.linkis.engineconn.root.dir=/appcom/tmp
+    wds.linkis.engineconn.root.dir={{ .Values.linkis.locations.runtimeDir }}/appcom
 
     ##Spring
     spring.server.port={{ .Values.cgEngineConnManager.port }}
@@ -191,8 +211,8 @@ data:
 
 
   linkis-cg-engineplugin.properties: |
-    wds.linkis.test.mode={{ .Values.linkis.testMode }}
-    wds.linkis.engineconn.debug.enable={{ .Values.linkis.testMode }}
+    wds.linkis.test.mode={{ .Values.linkis.featureGates.testMode }}
+    wds.linkis.engineconn.debug.enable={{ .Values.linkis.featureGates.enableEngineConnDebug }}
 
     ##mybatis
     wds.linkis.server.mybatis.mapperLocations=classpath:org/apache/linkis/engineplugin/server/dao/impl/*.xml
@@ -211,7 +231,13 @@ data:
     wds.linkis.server.restful.scan.packages=org.apache.linkis.entrance.restful
     wds.linkis.server.socket.mode=false
     #wds.linkis.entrance.config.log.path=hdfs:///tmp/linkis/
-    wds.linkis.resultSet.store.path=hdfs:///tmp/linkis
+
+    {{- if .Values.linkis.featureGates.localMode }}
+    wds.linkis.resultSet.store.path=file://{{ .Values.linkis.locations.runtimeDir }}
+    {{- else }}
+    wds.linkis.resultSet.store.path=hdfs://{{ .Values.linkis.locations.runtimeDir }}
+    {{- end }}
+
     ##Spring
     spring.server.port={{ .Values.cgEntrance.port }}
 

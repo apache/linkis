@@ -1,0 +1,15 @@
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+nodes:
+  - role: control-plane
+    extraMounts:
+      - hostPath: ${KIND_CLUSTER_HOST_PATH}
+        containerPath: /data
+  - role: worker
+    extraMounts:
+      - hostPath: ${KIND_CLUSTER_HOST_PATH}
+        containerPath: /data
+  - role: worker
+    extraMounts:
+      - hostPath: ${KIND_CLUSTER_HOST_PATH}
+        containerPath: /data

@@ -101,10 +101,15 @@ spec:
             - /bin/bash
             - -ecx
             - >-
-              RUN_IN_FOREGROUND=true {{ .Values.locations.homeDir }}/sbin/linkis-daemon.sh start mg-eureka
+              RUN_IN_FOREGROUND=true {{ .Values.linkis.locations.homeDir }}/sbin/linkis-daemon.sh start mg-eureka
           ports:
             - name: "http"
               containerPort: {{ .Values.mgEureka.port }}
+            {{- if .Values.linkis.featureGates.enableRemoteDebug }}
+            - name: "debug"
+              containerPort: 5005
+              protocol: TCP
+           {{- end }}
           readinessProbe:
             initialDelaySeconds: 15
             periodSeconds: 5
@@ -118,10 +123,16 @@ spec:
 {{ toYaml .Values.mgEureka.resources | indent 12 }}
           {{- end}}
           env:
+            {{- if .Values.linkis.featureGates.enableRemoteDebug }}
+            - name: DEBUG_PORT
+              value: "5005"
+            {{- end }}
             - name: SERVER_HEAP_SIZE
               value: {{ .Values.mgEureka.jvmHeapSize }}
             - name: EUREKA_URL
               value: "http://127.0.0.1:{{ .Values.mgEureka.port }}/eureka/"
+            - name: EUREKA_PREFER_IP
+              value: "true"
             - name: EUREKA_PORT
               value: "{{ .Values.mgEureka.port }}"
             {{- if .Values.mgEureka.envs.extras }}
@@ -133,6 +144,6 @@ spec:
           {{- end }}
           volumeMounts:
             - name: conf
-              mountPath: {{ .Values.locations.confDir }}
+              mountPath: {{ .Values.linkis.locations.confDir }}
             - name: log
-              mountPath: {{ .Values.locations.logDir }}
+              mountPath: {{ .Values.linkis.locations.logDir }}

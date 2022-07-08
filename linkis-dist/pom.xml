@@ -222,11 +222,16 @@
         <profile>
             <id>docker</id>
             <properties>
-                <image.base>centos:7</image.base>
                 <image.build.type>dev</image.build.type>
+                <image.base>centos:7</image.base>
+                <image.base.web>nginx:1.19.6</image.base.web>
                 <jdk.version>1.8.0-openjdk</jdk.version>
                 <jdk.build.revision>1.8.0.332.b09-1.el7_9</jdk.build.revision>
-                <linkis.uid>6011</linkis.uid>
+                <linkis.system.user>hadoop</linkis.system.user>
+                <linkis.system.uid>9001</linkis.system.uid>
+                <linkis.home>/opt/linkis</linkis.home>
+                <linkis.conf.dir>/etc/linkis-conf</linkis.conf.dir>
+                <linkis.log.dir>/var/logs/linkis</linkis.log.dir>
             </properties>
             <build>
                 <plugins>
@@ -235,35 +240,55 @@
                         <artifactId>maven-antrun-plugin</artifactId>
                         <executions>
                             <execution>
-                                <id>build</id>
+                                <id>build-linkis-image</id>
                                 <phase>install</phase>
                                 <goals>
                                     <goal>run</goal>
                                 </goals>
                                 <configuration>
-                                    <target>
-                                        <exec executable="docker" >
+                                    <target name="linkis-image">
+                                        <exec executable="docker" failonerror="true" >
                                             <arg value="build" />
-                                            <arg value="-f" />
-                                            <arg value="${project.basedir}/docker/Dockerfile" />
-                                            <arg value="-t" />
-                                            <arg value="${project.parent.artifactId}:${project.version}" />
-                                            <arg value="--target" />
-                                            <arg value="linkis" />
-                                            <arg value="--build-arg" />
-                                            <arg value="BASE_IMAGE=${image.base}" />
-                                            <arg value="--build-arg" />
-                                            <arg value="JDK_VERSION=${jdk.version}" />
-                                            <arg value="--build-arg" />
-                                            <arg value="JDK_BUILD_REVISION=${jdk.build.revision}" />
-                                            <arg value="--build-arg" />
-                                            <arg value="LINKIS_VERSION=${project.version}" />
-                                            <arg value="--build-arg" />
-                                            <arg value="MYSQL_JDBC_VERSION=${mysql.connector.version}" />
-                                            <arg value="--build-arg" />
-                                            <arg value="BUILD_TYPE=${image.build.type}" />
-                                            <arg value="--build-arg" />
-                                            <arg value="LINKIS_UID=${linkis.uid}" />
+                                            <arg value="-f"          /> <arg value="${project.basedir}/docker/Dockerfile" />
+                                            <arg value="-t"          /> <arg value="${project.parent.artifactId}:${project.version}" />
+                                            <arg value="--target"    /> <arg value="linkis" />
+                                            <arg value="--build-arg" /> <arg value="IMAGE_BASE=${image.base}" />
+                                            <arg value="--build-arg" /> <arg value="JDK_VERSION=${jdk.version}" />
+                                            <arg value="--build-arg" /> <arg value="JDK_BUILD_REVISION=${jdk.build.revision}" />
+                                            <arg value="--build-arg" /> <arg value="LINKIS_VERSION=${project.version}" />
+                                            <arg value="--build-arg" /> <arg value="MYSQL_JDBC_VERSION=${mysql.connector.version}" />
+                                            <arg value="--build-arg" /> <arg value="BUILD_TYPE=${image.build.type}" />
+                                            <arg value="--build-arg" /> <arg value="LINKIS_SYSTEM_USER=${linkis.system.user}" />
+                                            <arg value="--build-arg" /> <arg value="LINKIS_SYSTEM_UID=${linkis.system.uid}" />
+                                            <arg value="--build-arg" /> <arg value="LINKIS_HOME=${linkis.home}" />
+                                            <arg value="--build-arg" /> <arg value="LINKIS_CONF_DIR=${linkis.conf.dir}" />
+                                            <arg value="--build-arg" /> <arg value="LINKIS_LOG_DIR=${linkis.log.dir}" />
+                                            <arg value="${project.build.directory}" />
+                                        </exec>
+                                    </target>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>build-linkis-web-image</id>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target name="linkis-web-image" if="linkis.build.web">
+                                        <echo message="Building linkis web image ..." />
+                                        <mkdir dir="${basedir}/target/apache-linkis-web-${project.version}-dist" />
+                                        <copy todir="${basedir}/target/apache-linkis-web-${project.version}-dist">
+                                            <fileset dir="${basedir}/../web/dist" includes="**" />
+                                        </copy>
+                                        <exec executable="docker" failonerror="true" >
+                                            <arg value="build" />
+                                            <arg value="-f"          /> <arg value="${project.basedir}/docker/Dockerfile" />
+                                            <arg value="-t"          /> <arg value="${project.parent.artifactId}-web:${project.version}" />
+                                            <arg value="--target"    /> <arg value="linkis-web" />
+                                            <arg value="--build-arg" /> <arg value="IMAGE_BASE_WEB=${image.base.web}" />
+                                            <arg value="--build-arg" /> <arg value="LINKIS_VERSION=${project.version}" />
+                                            <arg value="--build-arg" /> <arg value="LINKIS_HOME=${linkis.home}" />
                                             <arg value="${project.build.directory}" />
                                         </exec>
                                     </target>

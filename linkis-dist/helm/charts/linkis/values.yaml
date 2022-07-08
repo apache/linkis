@@ -17,11 +17,12 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+#############################################################################
+# Kubernetes Related Variables
+#############################################################################
 schedulerName: default-scheduler
-
 podSecurityContext: {}
 #  fsGroup: 2000
-
 securityContext: {}
 #  capabilities:
 #    drop:
@@ -29,28 +30,36 @@ securityContext: {}
 #  readOnlyRootFilesystem: true
 #  runAsNonRoot: true
 #  runAsUser: 1000
-
 image:
   repository: linkis
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
-
 imagePullSecrets: []
-
 serviceAccount:
   create: true
   annotations: {}
   name: "linkis"
   automountToken: true
 
-locations:
-  homeDir: /opt/linkis
-  confDir: /etc/linkis-conf
-  logDir: /var/logs/linkis
-
 linkis:
-  testMode: true
+  featureGates:
+    testMode: true
+    localMode: true
+    enableRemoteDebug: true
+    enableEngineConnDebug: true
+    metadataQuery: true
+  locations:
+    homeDir: /opt/linkis
+    confDir: /etc/linkis-conf
+    logDir: /var/logs/linkis
+    runtimeDir: /opt/linkis-runtime
+    # hostPath is a directory on the host machine.
+    # In KinD cluster, it is actual a directory in KinD's
+    # node container, which is specialized in KinD cluster
+    # configuration: 'extraMounts'.
+    # Note that, `hostPath` is only used in LOCAL mode.
+    hostPath: /data
   datasource:
     # Variable `initSchema` is used to determine the way to initialize
     # the database, the optional values are:
@@ -267,7 +276,6 @@ psDataSourceManager:
     froms: []
 
 psMetadataQuery:
-  enabled: false
   replicas: 1
   port: 9110
   jvmHeapSize: "512M"

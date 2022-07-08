@@ -96,6 +96,7 @@
         <module>linkis-computation-governance</module>
         <module>linkis-engineconn-plugins</module>
         <module>linkis-extensions</module>
+        <module>web</module>
         <module>linkis-dist</module>
     </modules>
     <properties>
@@ -920,6 +921,13 @@
             <properties>
                 <rat.skip>false</rat.skip>
             </properties>
+        </profile>
+        <!-- build web dist: mvn install -Pweb  -->
+        <profile>
+            <id>web</id>
+            <modules>
+                <module>web</module>
+            </modules>
         </profile>
         <profile>
             <id>release</id>

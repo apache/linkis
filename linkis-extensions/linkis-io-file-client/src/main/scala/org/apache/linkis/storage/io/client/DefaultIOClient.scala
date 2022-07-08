@@ -87,7 +87,7 @@ class DefaultIOClient extends IOClient with Logging {
       response
     } else {
       val future = orchestration.asyncExecute()
-      future.waitForCompleted(IOFileClientConf.IO__JOB_WAIT_S * 10)
+      future.waitForCompleted(IOFileClientConf.IO__JOB_WAIT_S * 1000)
       future.getResponse
     }
     val result: String = response match {

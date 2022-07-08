@@ -143,7 +143,7 @@ abstract class AbstractOrchestration(override val orchestratorSession: Orchestra
       })
       if(isCompleted) return
       waitLock synchronized {
-        while (!isCompleted) waitLock.wait(waitMills)
+        waitLock.wait(waitMills)
       }
       if (!isCompleted) {
         cancel("execute time out kill task")

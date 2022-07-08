@@ -133,10 +133,10 @@ class RMMonitorRest extends Logging {
             creatorToApplicationList.put(userCreatorLabel.getCreator, applicationList)
           }
           val applicationList = creatorToApplicationList(userCreatorLabel.getCreator)
-          applicationList.put("usedResource",if (applicationList.get("usedResource") == null ) ResourceType.LoadInstance else applicationList("usedResource").asInstanceOf[Resource] + node.getNodeResource.getUsedResource)
-          applicationList.put("maxResource",if (applicationList.get("maxResource") == null ) ResourceType.LoadInstance else applicationList("maxResource").asInstanceOf[Resource] + node.getNodeResource.getMaxResource)
-          applicationList.put("minResource",if (applicationList.get("minResource") == null ) ResourceType.LoadInstance else   applicationList("minResource").asInstanceOf[Resource] + node.getNodeResource.getMinResource)
-          applicationList.put("lockedResource", if (applicationList.get("lockedResource") == null ) ResourceType.LoadInstance else applicationList("lockedResource").asInstanceOf[Resource] + node.getNodeResource.getLockedResource)
+          applicationList.put("usedResource", if (applicationList.get("usedResource") == null ) ResourceType.LoadInstance + node.getNodeResource.getUsedResource else applicationList("usedResource").asInstanceOf[Resource]  + node.getNodeResource.getUsedResource)
+          applicationList.put("maxResource",if (applicationList.get("maxResource") == null ) ResourceType.LoadInstance + node.getNodeResource.getMaxResource  else applicationList("maxResource").asInstanceOf[Resource] + node.getNodeResource.getMaxResource)
+          applicationList.put("minResource",if (applicationList.get("minResource") == null ) ResourceType.LoadInstance  + node.getNodeResource.getMinResource else   applicationList("minResource").asInstanceOf[Resource] + node.getNodeResource.getMinResource)
+          applicationList.put("lockedResource", if (applicationList.get("lockedResource") == null ) ResourceType.LoadInstance + node.getNodeResource.getLockedResource) else applicationList("lockedResource").asInstanceOf[Resource] + node.getNodeResource.getLockedResource)
           val engineInstance = new mutable.HashMap[String, Any]
           engineInstance.put("creator", userCreatorLabel.getCreator)
           engineInstance.put("engineType", engineTypeLabel.getEngineType)

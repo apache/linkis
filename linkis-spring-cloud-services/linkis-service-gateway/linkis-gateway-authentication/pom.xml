@@ -51,62 +51,21 @@
             <groupId>org.apache.linkis</groupId>
             <artifactId>linkis-module</artifactId>
             <scope>provided</scope>
+            <version>${linkis.version}</version>
             <exclusions>
                 <exclusion>
-                    <artifactId>linkis-knife4j</artifactId>
-                    <groupId>org.apache.linkis</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>knife4j-annotations</artifactId>
+                    <artifactId>*</artifactId>
                     <groupId>com.github.xiaoymin</groupId>
                 </exclusion>
                 <exclusion>
-                    <artifactId>knife4j-core</artifactId>
-                    <groupId>com.github.xiaoymin</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>knife4j-spring</artifactId>
-                    <groupId>com.github.xiaoymin</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>knife4j-spring-boot-autoconfigure</artifactId>
-                    <groupId>com.github.xiaoymin</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>knife4j-spring-boot-starter</artifactId>
-                    <groupId>com.github.xiaoymin</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>knife4j-spring-ui</artifactId>
-                    <groupId>com.github.xiaoymin</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>linkis-knife4j</artifactId>
-                    <groupId>org.apache.linkis</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>springfox-spring-webmvc</artifactId>
+                    <artifactId>*</artifactId>
                     <groupId>io.springfox</groupId>
                 </exclusion>
                 <exclusion>
-                    <artifactId>springfox-swagger-common</artifactId>
-                    <groupId>io.springfox</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>springfox-swagger2</artifactId>
-                    <groupId>io.springfox</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>swagger-annotations</artifactId>
-                    <groupId>io.swagger</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>swagger-models</artifactId>
+                    <artifactId>*</artifactId>
                     <groupId>io.swagger</groupId>
                 </exclusion>
             </exclusions>
-            <version>${linkis.version}</version>
-
         </dependency>
 
     </dependencies>

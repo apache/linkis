@@ -67,8 +67,12 @@ private class RMMonitorRest extends Logging {
 
   implicit val formats = DefaultFormats + ResourceSerializer + NodeResourceSerializer
   val mapper = new ObjectMapper()
-  val dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy")
-  dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"))
+
+  private val dateFormatLocal = new ThreadLocal[SimpleDateFormat]() {
+    override protected def initialValue = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy")
+  }
+
+  dateFormatLocal.get().setTimeZone(TimeZone.getTimeZone("GMT"))
   val labelFactory = LabelBuilderFactoryContext.getLabelBuilderFactory
   val combinedLabelBuilder = new CombinedLabelBuilder
   val gson = BDPJettyServerHelper.gson
@@ -145,7 +149,7 @@ private class RMMonitorRest extends Logging {
           } else {
             engineInstance.put("status", node.getNodeStatus.toString)
           }
-          engineInstance.put("startTime", dateFormat.format(node.getStartTime))
+          engineInstance.put("startTime", dateFormatLocal.get().format(node.getStartTime))
           engineInstance.put("owner", node.getOwner)
           applicationList("engineInstances").asInstanceOf[mutable.ArrayBuffer[Any]].append(engineInstance)
         }

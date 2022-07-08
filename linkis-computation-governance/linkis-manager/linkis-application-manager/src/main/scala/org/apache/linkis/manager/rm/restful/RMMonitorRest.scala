@@ -114,7 +114,7 @@ class RMMonitorRest extends Logging {
   def getApplicationList(request: HttpServletRequest, @RequestBody param: util.Map[String, AnyRef]): Message = {
     val message = Message.ok("")
     val userName = ModuleUserUtils.getOperationUser(request, "applicationlist")
-    val userCreator = param.get("userCreator").asInstanceOf[String]
+    val userCreator = if (param.get("userCreator") == null) null else param.get("userCreator").asInstanceOf[String]
     val engineType = if (param.get("engineType") == null) null else param.get("engineType").asInstanceOf[String]
     val nodes = getEngineNodes(userName, true)
     val creatorToApplicationList = new mutable.HashMap[String, mutable.HashMap[String, Any]]
@@ -133,10 +133,18 @@ class RMMonitorRest extends Logging {
             creatorToApplicationList.put(userCreatorLabel.getCreator, applicationList)
           }
           val applicationList = creatorToApplicationList(userCreatorLabel.getCreator)
-          applicationList.put("usedResource", applicationList("usedResource").asInstanceOf[Resource] + node.getNodeResource.getUsedResource)
-          applicationList.put("maxResource", applicationList("maxResource").asInstanceOf[Resource] + node.getNodeResource.getMaxResource)
-          applicationList.put("minResource", applicationList("minResource").asInstanceOf[Resource] + node.getNodeResource.getMinResource)
-          applicationList.put("lockedResource", applicationList("lockedResource").asInstanceOf[Resource] + node.getNodeResource.getLockedResource)
+          if(applicationList.contains("usedResource")){
+              applicationList.put("usedResource",if (applicationList.get("usedResource") == null) null else applicationList("usedResource").asInstanceOf[Resource] + node.getNodeResource.getUsedResource)
+          }
+          if(applicationList.contains("maxResource")){
+              applicationList.put("maxResource",if (applicationList.get("maxResource") == null) null else applicationList("maxResource").asInstanceOf[Resource] + node.getNodeResource.getMaxResource)
+          }
+          if(applicationList.contains("minResource")){
+              applicationList.put("minResource",if (applicationList.get("minResource") == null) null else   applicationList("minResource").asInstanceOf[Resource] + node.getNodeResource.getMinResource)
+          }
+          if(applicationList.contains("lockedResource")){
+              applicationList.put("lockedResource", if (applicationList.get("lockedResource") == null) null else applicationList("lockedResource").asInstanceOf[Resource] + node.getNodeResource.getLockedResource)
+          }
           val engineInstance = new mutable.HashMap[String, Any]
           engineInstance.put("creator", userCreatorLabel.getCreator)
           engineInstance.put("engineType", engineTypeLabel.getEngineType)
@@ -150,7 +158,11 @@ class RMMonitorRest extends Logging {
           }
           engineInstance.put("startTime", dateFormatLocal.get().format(node.getStartTime))
           engineInstance.put("owner", node.getOwner)
-          applicationList("engineInstances").asInstanceOf[mutable.ArrayBuffer[Any]].append(engineInstance)
+          if(applicationList.contains("engineInstances")){
+            if(applicationList.get("engineInstances") != null){
+              applicationList("engineInstances").asInstanceOf[mutable.ArrayBuffer[Any]].append(engineInstance)
+            }
+          }
         }
       }
     }

@@ -17,6 +17,9 @@
 
 package org.apache.linkis.entrance.restful;
 
+import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.linkis.instance.label.client.InstanceLabelClient;
 import org.apache.linkis.manager.label.constant.LabelKeyConstant;
 import org.apache.linkis.protocol.label.InsLabelRefreshRequest;
@@ -34,12 +37,14 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.Map;
 
+@Api(tags = "标签管理")
 @RestController
 @RequestMapping(path = "/entrance/operation/label")
 public class EntranceLabelRestfulApi {
 
     private static final Logger logger = LoggerFactory.getLogger(EntranceLabelRestfulApi.class);
-
+    @ApiOperation(value="updateRouteLabel",notes="updateRouteLabel",response = Message.class)
+    @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "/update", method = RequestMethod.POST)
     public Message updateRouteLabel(HttpServletRequest req, @RequestBody JsonNode jsonNode) {
         String routeLabel = jsonNode.get("routeLabel").textValue();
@@ -53,7 +58,8 @@ public class EntranceLabelRestfulApi {
         logger.info("Finished to update entrance label {}", routeLabel);
         return Message.ok();
     }
-
+    @ApiOperation(value="标记脱机",notes="标记脱机",response = Message.class)
+    @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "/markoffline", method = RequestMethod.GET)
     public Message updateRouteLabel(HttpServletRequest req) {
         Map<String, Object> labels = new HashMap<String, Object>();

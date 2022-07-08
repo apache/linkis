@@ -17,6 +17,8 @@
  
 package org.apache.linkis.rpc
 
+import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport
+import io.swagger.annotations.{Api, ApiImplicitParams, ApiOperation}
 import org.apache.commons.lang.StringUtils
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.protocol.BroadcastProtocol
@@ -31,8 +33,7 @@ import java.util.concurrent.TimeUnit
 import javax.annotation.PostConstruct
 import scala.concurrent.duration.Duration
 import scala.runtime.BoxedUnit
-
-
+@Api(tags = Array("RPC"))
 @RestController
 private[rpc] class RPCReceiveRestful extends RPCReceiveRemote with Logging {
 
@@ -113,7 +114,8 @@ private[rpc] class RPCReceiveRestful extends RPCReceiveRemote with Logging {
     case _ =>
       RPCProduct.getRPCProduct.toMessage(obj)
   }
-
+  @ApiOperation(value="接收",notes="rpc接收")
+  @ApiOperationSupport(ignoreParameters = Array("message"))
   @RequestMapping(path = Array("/rpc/receive"),method = Array(RequestMethod.POST))
   override def receive(@RequestBody message: Message): Message = catchIt {
     val obj = RPCConsumer.getRPCConsumer.toObject(message)
@@ -127,10 +129,13 @@ private[rpc] class RPCReceiveRestful extends RPCReceiveRemote with Logging {
     val event = RPCMessageEvent(obj, serviceInstance)
     event.map(opEvent(_, obj, event)).getOrElse(RPCProduct.getRPCProduct.notFound())
   }
-
+  @ApiOperation(value="接收和回复",notes="rpc接收和回复")
+  @ApiOperationSupport(ignoreParameters = Array("message"))
   @RequestMapping(path = Array("/rpc/receiveAndReply"),method = Array(RequestMethod.POST))
   override def receiveAndReply(@RequestBody message: Message): Message = receiveAndReply(message, _.receiveAndReply(_, _))
 
+  @ApiOperation(value="回复",notes="rpc回复")
+  @ApiOperationSupport(ignoreParameters = Array("message"))
   @RequestMapping(path = Array("/rpc/replyInMills"),method = Array(RequestMethod.POST))
   override def receiveAndReplyInMills(@RequestBody message: Message): Message = catchIt {
     val duration = message.getData.get("duration")

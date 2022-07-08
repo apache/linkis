@@ -17,6 +17,11 @@
 
 package org.apache.linkis.manager.am.restful;
 
+import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.apache.linkis.common.ServiceInstance;
 import org.apache.linkis.common.utils.JsonUtils;
 import org.apache.linkis.manager.am.conf.AMConfiguration;
@@ -69,6 +74,8 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 import java.util.stream.Collectors;
 
+
+@Api(tags = "ECM资源管理")
 @RequestMapping(
         path = "/linkisManager",
         produces = {"application/json"})
@@ -98,6 +105,12 @@ public class EMRestfulApi {
         }
     }
 
+    @ApiOperation(value="ECM资源清单",notes="获取所有ECM资源详细清单列表可根据条件查询，默认查询所有",response = Message.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="instance",required = false,dataType="String",value="实例名称"),
+            @ApiImplicitParam(name="nodeHealthy",required = false,dataType="String",value="状态，状态有以下枚举类型 ‘Healthy‘, ‘UnHealthy‘, ‘WARN‘, ’StockAvailable’, ‘StockUnavailable’"),
+            @ApiImplicitParam(name="owner",required = false,dataType="String",value="创建者")
+                    })
     // todo add healthInfo
     @RequestMapping(path = "/listAllEMs", method = RequestMethod.GET)
     public Message listAllEMs(
@@ -149,7 +162,10 @@ public class EMRestfulApi {
         }
         return Message.ok().data("EMs", allEMVoFilter3);
     }
-
+    @ApiOperation(value="ECM管理中状态列表",notes="获取状态列表清单",response = Message.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="onlyEditable",required = false,dataType="Boolean",value="是否仅可编辑")
+    })
     @RequestMapping(path = "/listAllECMHealthyStatus", method = RequestMethod.GET)
     public Message listAllNodeHealthyStatus(
             HttpServletRequest req,
@@ -167,7 +183,16 @@ public class EMRestfulApi {
         }
         return Message.ok().data("nodeHealthy", nodeHealthy);
     }
-
+    @ApiOperation(value="编辑EMC实例",notes="编辑或修改下编辑EMC管理下的实例",response = Message.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="applicationName",dataType="String",value="引擎标签"),
+            @ApiImplicitParam(name="emStatus",dataType="String",value="实例状态,状态有以下枚举类型 ‘Healthy‘, ‘UnHealthy‘, ‘WARN‘, ’StockAvailable’, ‘StockUnavailable’"),
+            @ApiImplicitParam(name="instance",dataType="String",value="引擎实例名称"),
+            @ApiImplicitParam(name="labels",dataType="List",value="引擎实例更新参数内容，集合存放的是map类型的"),
+            @ApiImplicitParam(name="labelKey",dataType="String",value="添加内容里面的标签，属于labels集合 内 map里的key"),
+            @ApiImplicitParam(name="stringValue",dataType="String",value="添加内容里面的标签对于的值，属于labels集合 内 map里的value")
+    })
+    @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "/modifyEMInfo", method = RequestMethod.PUT)
     @Transactional(rollbackFor = Exception.class)
     public Message modifyEMInfo(HttpServletRequest req, @RequestBody JsonNode jsonNode)
@@ -228,7 +253,8 @@ public class EMRestfulApi {
         }
         return Message.ok("success");
     }
-
+    @ApiOperation(value="执行ECM操作开始",notes="" ,response = Message.class)
+    @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "/executeECMOperationByEC", method = RequestMethod.POST)
     public Message executeECMOperationByEC(HttpServletRequest req, @RequestBody JsonNode jsonNode)
             throws AMErrorException {
@@ -265,7 +291,8 @@ public class EMRestfulApi {
         return executeECMOperation(
                 engineNode.getEMNode(), new ECMOperateRequest(userName, parameters));
     }
-
+    @ApiOperation(value="执行ECM操作",notes="" ,response = Message.class)
+    @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "/executeECMOperation", method = RequestMethod.POST)
     public Message executeECMOperation(HttpServletRequest req, @RequestBody JsonNode jsonNode)
             throws AMErrorException {
@@ -291,7 +318,17 @@ public class EMRestfulApi {
         }
         return executeECMOperation(ecmNode, new ECMOperateRequest(userName, parameters));
     }
-
+    @ApiOperation(value="打开引擎日志",notes="打开引擎日志，默认打开stdout类型的引擎日志",response = Message.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="applicationName",dataType="String",value="引擎标签"),
+            @ApiImplicitParam(name="emInstance",dataType="String",value="实例名称"),
+            @ApiImplicitParam(name="instance",dataType="String",value="引擎实例名称"),
+            @ApiImplicitParam(name="parameters",dataType="Map",value="分页信息"),
+            @ApiImplicitParam(name="logType",dataType="String",value="日志类型，默认stdout类型，属于parameters"),
+            @ApiImplicitParam(name="fromLine",dataType="String",value="来自线路"),
+            @ApiImplicitParam(name="pageSize",dataType="String",value="页面大小"),
+    })
+    @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "/openEngineLog", method = RequestMethod.POST)
     public Message openEngineLog(HttpServletRequest req, @RequestBody JsonNode jsonNode)
             throws AMErrorException {

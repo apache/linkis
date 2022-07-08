@@ -133,18 +133,10 @@ class RMMonitorRest extends Logging {
             creatorToApplicationList.put(userCreatorLabel.getCreator, applicationList)
           }
           val applicationList = creatorToApplicationList(userCreatorLabel.getCreator)
-          if(applicationList.contains("usedResource")){
-              applicationList.put("usedResource",if (applicationList.get("usedResource") == null) null else applicationList("usedResource").asInstanceOf[Resource] + node.getNodeResource.getUsedResource)
-          }
-          if(applicationList.contains("maxResource")){
-              applicationList.put("maxResource",if (applicationList.get("maxResource") == null) null else applicationList("maxResource").asInstanceOf[Resource] + node.getNodeResource.getMaxResource)
-          }
-          if(applicationList.contains("minResource")){
-              applicationList.put("minResource",if (applicationList.get("minResource") == null) null else   applicationList("minResource").asInstanceOf[Resource] + node.getNodeResource.getMinResource)
-          }
-          if(applicationList.contains("lockedResource")){
-              applicationList.put("lockedResource", if (applicationList.get("lockedResource") == null) null else applicationList("lockedResource").asInstanceOf[Resource] + node.getNodeResource.getLockedResource)
-          }
+          applicationList.put("usedResource",if (applicationList.get("usedResource") == null ) ResourceType.LoadInstance else applicationList("usedResource").asInstanceOf[Resource] + node.getNodeResource.getUsedResource)
+          applicationList.put("maxResource",if (applicationList.get("maxResource") == null ) ResourceType.LoadInstance else applicationList("maxResource").asInstanceOf[Resource] + node.getNodeResource.getMaxResource)
+          applicationList.put("minResource",if (applicationList.get("minResource") == null ) ResourceType.LoadInstance else   applicationList("minResource").asInstanceOf[Resource] + node.getNodeResource.getMinResource)
+          applicationList.put("lockedResource", if (applicationList.get("lockedResource") == null ) ResourceType.LoadInstance else applicationList("lockedResource").asInstanceOf[Resource] + node.getNodeResource.getLockedResource)
           val engineInstance = new mutable.HashMap[String, Any]
           engineInstance.put("creator", userCreatorLabel.getCreator)
           engineInstance.put("engineType", engineTypeLabel.getEngineType)
@@ -158,11 +150,7 @@ class RMMonitorRest extends Logging {
           }
           engineInstance.put("startTime", dateFormatLocal.get().format(node.getStartTime))
           engineInstance.put("owner", node.getOwner)
-          if(applicationList.contains("engineInstances")){
-            if(applicationList.get("engineInstances") != null){
-              applicationList("engineInstances").asInstanceOf[mutable.ArrayBuffer[Any]].append(engineInstance)
-            }
-          }
+          applicationList("engineInstances").asInstanceOf[mutable.ArrayBuffer[Any]].append(engineInstance)
         }
       }
     }

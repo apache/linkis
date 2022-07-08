@@ -105,7 +105,7 @@ spec:
           ports:
             - name: "http"
               containerPort: {{ .Values.mgEureka.port }}
-            {{- if .Values.linkis.featureGates.enableRemoteDebug }}
+            {{- if .Values.linkis.featureGates.enableJvmRemoteDebug }}
             - name: "debug"
               containerPort: 5005
               protocol: TCP
@@ -123,7 +123,7 @@ spec:
 {{ toYaml .Values.mgEureka.resources | indent 12 }}
           {{- end}}
           env:
-            {{- if .Values.linkis.featureGates.enableRemoteDebug }}
+            {{- if .Values.linkis.featureGates.enableJvmRemoteDebug }}
             - name: DEBUG_PORT
               value: "5005"
             {{- end }}

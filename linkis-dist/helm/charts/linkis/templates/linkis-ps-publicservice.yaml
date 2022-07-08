@@ -111,7 +111,7 @@ spec:
             - name: "http"
               containerPort: {{ .Values.psPublicService.port }}
               protocol: TCP
-            {{- if .Values.linkis.featureGates.enableRemoteDebug }}
+            {{- if .Values.linkis.featureGates.enableJvmRemoteDebug }}
             - name: "debug"
               containerPort: 5005
               protocol: TCP
@@ -125,7 +125,7 @@ spec:
             tcpSocket:
               port: {{ .Values.psPublicService.port }}
           env:
-            {{- if .Values.linkis.featureGates.enableRemoteDebug }}
+            {{- if .Values.linkis.featureGates.enableJvmRemoteDebug }}
             - name: DEBUG_PORT
               value: "5005"
             {{- end }}

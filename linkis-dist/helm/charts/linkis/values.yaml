@@ -46,9 +46,9 @@ linkis:
   featureGates:
     testMode: true
     localMode: true
-    enableRemoteDebug: true
+    enableJvmRemoteDebug: true
     enableEngineConnDebug: true
-    metadataQuery: true
+    enableMetadataQuery: true
   locations:
     homeDir: /opt/linkis
     confDir: /etc/linkis-conf

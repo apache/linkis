@@ -76,11 +76,15 @@ Please go to the [Linkis Releases Page](https://github.com/apache/incubator-link
 
 ## compile backend
 ### Mac OS/Linux
+# 1. When compiling for the first time, execute the following command first
 ./mvnw -N install
-# - option 1: make the distribution package
-./mvnw  clean install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
-# - option 2: make the distribution package with docker image
-./mvnw  clean install -Pdocker -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
+# 2. make the linkis distribution package
+# - Option 1: make the linkis distribution package only
+./mvnw clean install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
+# - Option 2: make the linkis distribution package and docker image
+./mvnw clean install -Pdocker -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
+# - Option 3: linkis distribution package and docker image (included web)
+./mvnw clean install -Pdocker -Dmaven.javadoc.skip=true -Dmaven.test.skip=true -Dlinkis.build.web=true
 
 ### Windows
 mvnw.cmd -N install

@@ -17,12 +17,6 @@
 
 package org.apache.linkis.bml.restful;
 
-import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
-import org.apache.linkis.server.Message;
 import org.apache.linkis.bml.Entity.DownloadModel;
 import org.apache.linkis.bml.Entity.Resource;
 import org.apache.linkis.bml.Entity.ResourceTask;
@@ -59,6 +53,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,11 +88,19 @@ public class BmlRestfulApi {
 
     public static final String URL_PREFIX = "/bml/";
 
-    @ApiOperation(value="获取版本信息",notes="获取bml版本信息",response = Message.class)
+    @ApiOperation(value = "获取版本信息", notes = "获取bml版本信息", response = Message.class)
     @ApiImplicitParams({
-            @ApiImplicitParam(name="resourceId",dataType="String", required = false,value="资源ID"),
-            @ApiImplicitParam(name="currentPage",dataType="String", required = false,value="页码"),
-            @ApiImplicitParam(name="pageSize",dataType="String", required = false,value="页面大小")
+        @ApiImplicitParam(
+                name = "resourceId",
+                dataType = "String",
+                required = false,
+                value = "资源ID"),
+        @ApiImplicitParam(
+                name = "currentPage",
+                dataType = "String",
+                required = false,
+                value = "页码"),
+        @ApiImplicitParam(name = "pageSize", dataType = "String", required = false, value = "页面大小")
     })
     @RequestMapping(path = "getVersions", method = RequestMethod.GET)
     public Message getVersions(
@@ -180,11 +187,15 @@ public class BmlRestfulApi {
         return message;
     }
 
-    @ApiOperation(value="获取资源信息",notes="获取资源信息",response = Message.class)
+    @ApiOperation(value = "获取资源信息", notes = "获取资源信息", response = Message.class)
     @ApiImplicitParams({
-            @ApiImplicitParam(name="system", required = false,dataType="String",value="系统"),
-            @ApiImplicitParam(name="currentPage", required = false,dataType="String",value="页码"),
-            @ApiImplicitParam(name="pageSize", required = false,dataType="String",value="页面大小")
+        @ApiImplicitParam(name = "system", required = false, dataType = "String", value = "系统"),
+        @ApiImplicitParam(
+                name = "currentPage",
+                required = false,
+                dataType = "String",
+                value = "页码"),
+        @ApiImplicitParam(name = "pageSize", required = false, dataType = "String", value = "页面大小")
     })
     @RequestMapping(path = "getResources", method = RequestMethod.GET)
     public Message getResources(
@@ -276,10 +287,14 @@ public class BmlRestfulApi {
         return message;
     }
 
-    @ApiOperation(value="删除版本",notes="删除版本",response = Message.class)
+    @ApiOperation(value = "删除版本", notes = "删除版本", response = Message.class)
     @ApiImplicitParams({
-            @ApiImplicitParam(name="resourceId", required = true,dataType="String",value="资源Id"),
-            @ApiImplicitParam(name="version", required = true,dataType="String",value="版本")
+        @ApiImplicitParam(
+                name = "resourceId",
+                required = true,
+                dataType = "String",
+                value = "资源Id"),
+        @ApiImplicitParam(name = "version", required = true, dataType = "String", value = "版本")
     })
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "deleteVersion", method = RequestMethod.POST)
@@ -361,9 +376,10 @@ public class BmlRestfulApi {
         }
         return message;
     }
-    @ApiOperation(value="删除资源",notes="删除版本",response = Message.class)
+
+    @ApiOperation(value = "删除资源", notes = "删除版本", response = Message.class)
     @ApiImplicitParams({
-            @ApiImplicitParam(name="resourceId",required = true,dataType="String",value="资源Id")
+        @ApiImplicitParam(name = "resourceId", required = true, dataType = "String", value = "资源Id")
     })
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "deleteResource", method = RequestMethod.POST)
@@ -441,9 +457,13 @@ public class BmlRestfulApi {
         return message;
     }
 
-    @ApiOperation(value="删除多个资源",notes="删除多个资源",response = Message.class)
+    @ApiOperation(value = "删除多个资源", notes = "删除多个资源", response = Message.class)
     @ApiImplicitParams({
-            @ApiImplicitParam(name="resourceIds",required = true,dataType="List",value="资源Id集合，删除多个资源")
+        @ApiImplicitParam(
+                name = "resourceIds",
+                required = true,
+                dataType = "List",
+                value = "资源Id集合，删除多个资源")
     })
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "deleteResources", method = RequestMethod.POST)
@@ -533,10 +553,21 @@ public class BmlRestfulApi {
      * @throws IOException
      * @throws ErrorException
      */
-    @ApiOperation(value="下载资源",notes="通过resourceId 和 version两个参数获取下载对应的资源",response = Message.class)
+    @ApiOperation(
+            value = "下载资源",
+            notes = "通过resourceId 和 version两个参数获取下载对应的资源",
+            response = Message.class)
     @ApiImplicitParams({
-            @ApiImplicitParam(name="resourceId",dataType="String", required = false,value="资源Id"),
-            @ApiImplicitParam(name="version",dataType="String", required = false,value="资源版本，如果不指定，默认为最新")
+        @ApiImplicitParam(
+                name = "resourceId",
+                dataType = "String",
+                required = false,
+                value = "资源Id"),
+        @ApiImplicitParam(
+                name = "version",
+                dataType = "String",
+                required = false,
+                value = "资源版本，如果不指定，默认为最新")
     })
     @RequestMapping(path = "download", method = RequestMethod.GET)
     public void download(
@@ -653,7 +684,7 @@ public class BmlRestfulApi {
                 resourceId);
     }
 
-    @ApiOperation(value="上传资源",notes="上传资源",response = Message.class)
+    @ApiOperation(value = "上传资源", notes = "上传资源", response = Message.class)
     @RequestMapping(path = "upload", method = RequestMethod.POST)
     public Message uploadResource(
             HttpServletRequest req,
@@ -712,10 +743,18 @@ public class BmlRestfulApi {
      * @param file file文件
      * @return resourceId 以及 新的版本号
      */
-    @ApiOperation(value="更新资源",notes="用户通过http的方式更新资源文件",response = Message.class)
+    @ApiOperation(value = "更新资源", notes = "用户通过http的方式更新资源文件", response = Message.class)
     @ApiImplicitParams({
-            @ApiImplicitParam(name="resourceId",required = true,dataType="String", value="用户希望更新资源的resourceId"),
-            @ApiImplicitParam(name="file",required = true,dataType="MultipartFile", value="file文件")
+        @ApiImplicitParam(
+                name = "resourceId",
+                required = true,
+                dataType = "String",
+                value = "用户希望更新资源的resourceId"),
+        @ApiImplicitParam(
+                name = "file",
+                required = true,
+                dataType = "MultipartFile",
+                value = "file文件")
     })
     @RequestMapping(path = "updateVersion", method = RequestMethod.POST)
     public Message updateVersion(
@@ -780,11 +819,9 @@ public class BmlRestfulApi {
         return message;
     }
 
-
-
-    @ApiOperation(value="获取Basic",notes="获取Basic",response = Message.class)
+    @ApiOperation(value = "获取Basic", notes = "获取Basic", response = Message.class)
     @ApiImplicitParams({
-            @ApiImplicitParam(name="resourceId",required = true,dataType="String",  value="资源Id")
+        @ApiImplicitParam(name = "resourceId", required = true, dataType = "String", value = "资源Id")
     })
     @RequestMapping(path = "getBasic", method = RequestMethod.GET)
     public Message getBasic(
@@ -854,9 +891,14 @@ public class BmlRestfulApi {
 
         return message;
     }
-    @ApiOperation(value="获取资源信息",notes="获取资源信息",response = Message.class)
+
+    @ApiOperation(value = "获取资源信息", notes = "获取资源信息", response = Message.class)
     @ApiImplicitParams({
-            @ApiImplicitParam(name="resourceId",dataType="String", required = false, value="资源Id")
+        @ApiImplicitParam(
+                name = "resourceId",
+                dataType = "String",
+                required = false,
+                value = "资源Id")
     })
     @RequestMapping(path = "getResourceInfo", method = RequestMethod.GET)
     public Message getResourceInfo(
@@ -865,11 +907,11 @@ public class BmlRestfulApi {
         return Message.ok("Obtained information successfully(获取信息成功)");
     }
 
-    @ApiOperation(value="更新owner",notes="更新owner",response = Message.class)
+    @ApiOperation(value = "更新owner", notes = "更新owner", response = Message.class)
     @ApiImplicitParams({
-            @ApiImplicitParam(name="resourceId",dataType="String", value="资源Id"),
-            @ApiImplicitParam(name="oldOwner",dataType="String",  value="新Owner"),
-            @ApiImplicitParam(name="newOwner",dataType="String",  value="旧Owner")
+        @ApiImplicitParam(name = "resourceId", dataType = "String", value = "资源Id"),
+        @ApiImplicitParam(name = "oldOwner", dataType = "String", value = "新Owner"),
+        @ApiImplicitParam(name = "newOwner", dataType = "String", value = "旧Owner")
     })
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "changeOwner", method = RequestMethod.POST)
@@ -882,10 +924,10 @@ public class BmlRestfulApi {
         return Message.ok("更新owner成功！");
     }
 
-    @ApiOperation(value="复制资源到其他用户",notes="复制资源到指定用户",response = Message.class)
+    @ApiOperation(value = "复制资源到其他用户", notes = "复制资源到指定用户", response = Message.class)
     @ApiImplicitParams({
-            @ApiImplicitParam(name="resourceId",dataType="String", value="资源Id"),
-            @ApiImplicitParam(name="anotherUser",dataType="String",  value="指定用户")
+        @ApiImplicitParam(name = "resourceId", dataType = "String", value = "资源Id"),
+        @ApiImplicitParam(name = "anotherUser", dataType = "String", value = "指定用户")
     })
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "copyResourceToAnotherUser", method = RequestMethod.POST)
@@ -917,10 +959,10 @@ public class BmlRestfulApi {
         return message;
     }
 
-    @ApiOperation(value="回滚版本",notes="回滚版本",response = Message.class)
+    @ApiOperation(value = "回滚版本", notes = "回滚版本", response = Message.class)
     @ApiImplicitParams({
-            @ApiImplicitParam(name="resourceId",dataType="String", value="资源Id"),
-            @ApiImplicitParam(name="version",dataType="String",  value="回滚版本")
+        @ApiImplicitParam(name = "resourceId", dataType = "String", value = "资源Id"),
+        @ApiImplicitParam(name = "version", dataType = "String", value = "回滚版本")
     })
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "rollbackVersion", method = RequestMethod.POST)

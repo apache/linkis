@@ -17,8 +17,6 @@
 
 package org.apache.linkis.restful;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import org.apache.linkis.server.Message;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,13 +28,16 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 
 import com.netflix.discovery.DiscoveryManager;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 @Api(tags = "通用")
 @RestController
 @RequestMapping(path = "/")
 public class CommonRestfulApi {
     @Autowired private DiscoveryClient client;
-    @ApiOperation(value="下线某服务",notes="下线某服务",response = Message.class)
+
+    @ApiOperation(value = "下线某服务", notes = "下线某服务", response = Message.class)
     @RequestMapping(path = "/offline", method = RequestMethod.GET)
     public Message offline(HttpServletRequest req) {
         DiscoveryManager.getInstance().shutdownComponent();

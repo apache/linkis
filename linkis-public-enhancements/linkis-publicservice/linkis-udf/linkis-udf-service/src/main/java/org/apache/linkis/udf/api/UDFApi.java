@@ -16,11 +16,7 @@
  */
 
 package org.apache.linkis.udf.api;
-import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
 import org.apache.linkis.udf.entity.UDFInfo;
@@ -49,8 +45,13 @@ import javax.ws.rs.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.pagehelper.PageInfo;
+import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,7 +60,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.apache.linkis.udf.utils.ConstantVar.*;
-
 
 @Api(tags = "UDF管理")
 @RestController
@@ -75,10 +75,8 @@ public class UDFApi {
 
     ObjectMapper mapper = new ObjectMapper();
 
-    @ApiOperation(value="udf树形菜单",notes="获取udf树形菜单详细信息",response = Message.class)
-    @ApiImplicitParams({
-            @ApiImplicitParam(name="path",dataType="String",value="请求路径")
-    })
+    @ApiOperation(value = "udf树形菜单", notes = "获取udf树形菜单详细信息", response = Message.class)
+    @ApiImplicitParams({@ApiImplicitParam(name = "path", dataType = "String", value = "请求路径")})
     @RequestMapping(path = "all", method = RequestMethod.POST)
     public Message allUDF(HttpServletRequest req, String jsonString) {
         Message message = null;
@@ -145,12 +143,11 @@ public class UDFApi {
         }
     }
 
-    @ApiOperation(value="函数列表",notes="获取函数列表",response = Message.class)
+    @ApiOperation(value = "函数列表", notes = "获取函数列表", response = Message.class)
     @ApiImplicitParams({
-            @ApiImplicitParam(name="category",dataType="String",value="类别"),
-            @ApiImplicitParam(name="treeId",dataType="String",value="树形菜单Id"),
-            @ApiImplicitParam(name="type",dataType="String",value="函数类型，比如expire,self,share等类型")
-
+        @ApiImplicitParam(name = "category", dataType = "String", value = "类别"),
+        @ApiImplicitParam(name = "treeId", dataType = "String", value = "树形菜单Id"),
+        @ApiImplicitParam(name = "type", dataType = "String", value = "函数类型，比如expire,self,share等类型")
     })
     @ApiOperationSupport(ignoreParameters = {"json"})
     @RequestMapping(path = "list", method = RequestMethod.POST)
@@ -171,25 +168,69 @@ public class UDFApi {
 
         return message;
     }
-    @ApiOperation(value="新增",notes="新增",response = Message.class)
-    @ApiImplicitParams({
-            @ApiImplicitParam(name="createUser",required = false,dataType="String",value="创建者"),
-            @ApiImplicitParam(name="udfName",required = false,dataType="String",value="udfName"),
-            @ApiImplicitParam(name="udfType",required = false,dataType="Integer",value="udfType"),
-            @ApiImplicitParam(name="isExpire",required = false,dataType="Boolean",value="是否失效"),
-            @ApiImplicitParam(name="isShared",required = false,dataType="Boolean",value="是否共享"),
-            @ApiImplicitParam(name="treeId",required = false,dataType="Long",value="treeId"),
-            @ApiImplicitParam(name="sys",required = false,dataType="String",value="sys"),
-            @ApiImplicitParam(name="clusterName",required = false,dataType="String",value="clusterName"),
-            @ApiImplicitParam(name="createTime",required = false,dataType="Date",value="创建时间"),
-            @ApiImplicitParam(name="updateTime",required = false,dataType="Date",value="更新时间"),
-            @ApiImplicitParam(name="path",required = false,dataType="String",value="仅存储用户上一次上传的路径 作提示用"),
-            @ApiImplicitParam(name="registerFormat",required = false,dataType="String",value="注册执行地址"),
-            @ApiImplicitParam(name="useFormat",required = false,dataType="String",value="使用格式"),
-            @ApiImplicitParam(name="description",required = false,dataType="String",value="描述"),
-            @ApiImplicitParam(name="directory",required = false,dataType="String",value="分类，个人函数一级目录"),
-            @ApiImplicitParam(name="isLoad",required = false,dataType="Boolean",value="是否负载")
 
+    @ApiOperation(value = "新增", notes = "新增", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(
+                name = "createUser",
+                required = false,
+                dataType = "String",
+                value = "创建者"),
+        @ApiImplicitParam(
+                name = "udfName",
+                required = false,
+                dataType = "String",
+                value = "udfName"),
+        @ApiImplicitParam(
+                name = "udfType",
+                required = false,
+                dataType = "Integer",
+                value = "udfType"),
+        @ApiImplicitParam(
+                name = "isExpire",
+                required = false,
+                dataType = "Boolean",
+                value = "是否失效"),
+        @ApiImplicitParam(
+                name = "isShared",
+                required = false,
+                dataType = "Boolean",
+                value = "是否共享"),
+        @ApiImplicitParam(name = "treeId", required = false, dataType = "Long", value = "treeId"),
+        @ApiImplicitParam(name = "sys", required = false, dataType = "String", value = "sys"),
+        @ApiImplicitParam(
+                name = "clusterName",
+                required = false,
+                dataType = "String",
+                value = "clusterName"),
+        @ApiImplicitParam(name = "createTime", required = false, dataType = "Date", value = "创建时间"),
+        @ApiImplicitParam(name = "updateTime", required = false, dataType = "Date", value = "更新时间"),
+        @ApiImplicitParam(
+                name = "path",
+                required = false,
+                dataType = "String",
+                value = "仅存储用户上一次上传的路径 作提示用"),
+        @ApiImplicitParam(
+                name = "registerFormat",
+                required = false,
+                dataType = "String",
+                value = "注册执行地址"),
+        @ApiImplicitParam(
+                name = "useFormat",
+                required = false,
+                dataType = "String",
+                value = "使用格式"),
+        @ApiImplicitParam(
+                name = "description",
+                required = false,
+                dataType = "String",
+                value = "描述"),
+        @ApiImplicitParam(
+                name = "directory",
+                required = false,
+                dataType = "String",
+                value = "分类，个人函数一级目录"),
+        @ApiImplicitParam(name = "isLoad", required = false, dataType = "Boolean", value = "是否负载")
     })
     @ApiOperationSupport(ignoreParameters = {"json"})
     @RequestMapping(path = "add", method = RequestMethod.POST)
@@ -210,17 +251,41 @@ public class UDFApi {
         }
         return message;
     }
-    @ApiOperation(value="更新",notes="更新",response = Message.class)
-    @ApiImplicitParams({
-            @ApiImplicitParam(name="id",required = false,dataType="Long",value="id"),
-            @ApiImplicitParam(name="udfName",required = false,dataType="String",value="udfName"),
-            @ApiImplicitParam(name="udfType",required = false,dataType="Integer",value="udfType"),
-            @ApiImplicitParam(name="path",required = false,dataType="String",value="仅存储用户上一次上传的路径 作提示用"),
-            @ApiImplicitParam(name="registerFormat",required = false,dataType="String",value="注册执行地址"),
-            @ApiImplicitParam(name="useFormat",required = false,dataType="String",value="使用格式"),
-            @ApiImplicitParam(name="description",required = false,dataType="String",value="描述"),
-            @ApiImplicitParam(name="isLoad",required = false,dataType="Boolean",value="是否负载")
 
+    @ApiOperation(value = "更新", notes = "更新", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "id", required = false, dataType = "Long", value = "id"),
+        @ApiImplicitParam(
+                name = "udfName",
+                required = false,
+                dataType = "String",
+                value = "udfName"),
+        @ApiImplicitParam(
+                name = "udfType",
+                required = false,
+                dataType = "Integer",
+                value = "udfType"),
+        @ApiImplicitParam(
+                name = "path",
+                required = false,
+                dataType = "String",
+                value = "仅存储用户上一次上传的路径 作提示用"),
+        @ApiImplicitParam(
+                name = "registerFormat",
+                required = false,
+                dataType = "String",
+                value = "注册执行地址"),
+        @ApiImplicitParam(
+                name = "useFormat",
+                required = false,
+                dataType = "String",
+                value = "使用格式"),
+        @ApiImplicitParam(
+                name = "description",
+                required = false,
+                dataType = "String",
+                value = "描述"),
+        @ApiImplicitParam(name = "isLoad", required = false, dataType = "Boolean", value = "是否负载")
     })
     @ApiOperationSupport(ignoreParameters = {"json"})
     @RequestMapping(path = "update", method = RequestMethod.POST)
@@ -240,10 +305,8 @@ public class UDFApi {
         return message;
     }
 
-    @ApiOperation(value="删除",notes="删除",response = Message.class)
-    @ApiImplicitParams({
-            @ApiImplicitParam(name="id",dataType="Long",value="id")
-    })
+    @ApiOperation(value = "删除", notes = "删除", response = Message.class)
+    @ApiImplicitParams({@ApiImplicitParam(name = "id", dataType = "Long", value = "id")})
     @RequestMapping(path = "delete/{id}", method = RequestMethod.POST)
     public Message deleteUDF(HttpServletRequest req, @PathVariable("id") Long id) {
         String userName = ModuleUserUtils.getOperationUser(req, "delete udf " + id);
@@ -258,10 +321,11 @@ public class UDFApi {
         }
         return message;
     }
-    @ApiOperation(value="是否负载",notes="是否负载",response = Message.class)
+
+    @ApiOperation(value = "是否负载", notes = "是否负载", response = Message.class)
     @ApiImplicitParams({
-            @ApiImplicitParam(name="udfId",required = false,dataType="Long",value="udfId"),
-            @ApiImplicitParam(name="isLoad",required = false,dataType="Boolean",value="是否负载")
+        @ApiImplicitParam(name = "udfId", required = false, dataType = "Long", value = "udfId"),
+        @ApiImplicitParam(name = "isLoad", required = false, dataType = "Boolean", value = "是否负载")
     })
     @RequestMapping(path = "isload", method = RequestMethod.GET)
     public Message isLoad(
@@ -283,19 +347,52 @@ public class UDFApi {
         }
         return message;
     }
-    @ApiOperation(value="tree新增",notes="tree新增",response = Message.class)
+
+    @ApiOperation(value = "tree新增", notes = "tree新增", response = Message.class)
     @ApiImplicitParams({
-            @ApiImplicitParam(name="id",required = false,dataType="Long",value="id"),
-            @ApiImplicitParam(name="parent",required = false,dataType="Long",value="parent"),
-            @ApiImplicitParam(name="name",required = false,dataType="String",value="name"),
-            @ApiImplicitParam(name="userName",required = false,dataType="String",value="userName"),
-            @ApiImplicitParam(name="description",required = false,dataType="String",value="description"),
-            @ApiImplicitParam(name="createTime",required = false,dataType="Date",value="createTime"),
-            @ApiImplicitParam(name="updateTime",required = false,dataType="Date",value="updateTime"),
-            @ApiImplicitParam(name="clusterName",required = false,dataType="String",value="clusterName"),
-            @ApiImplicitParam(name="category",required = false,dataType="String",value="category"),
-            @ApiImplicitParam(name="udfInfos",required = false,dataType="List<UDFInfoVo>",value="udfInfos"),
-            @ApiImplicitParam(name="childrens",required = false,dataType="List<UDFTree>",value="childrens")
+        @ApiImplicitParam(name = "id", required = false, dataType = "Long", value = "id"),
+        @ApiImplicitParam(name = "parent", required = false, dataType = "Long", value = "parent"),
+        @ApiImplicitParam(name = "name", required = false, dataType = "String", value = "name"),
+        @ApiImplicitParam(
+                name = "userName",
+                required = false,
+                dataType = "String",
+                value = "userName"),
+        @ApiImplicitParam(
+                name = "description",
+                required = false,
+                dataType = "String",
+                value = "description"),
+        @ApiImplicitParam(
+                name = "createTime",
+                required = false,
+                dataType = "Date",
+                value = "createTime"),
+        @ApiImplicitParam(
+                name = "updateTime",
+                required = false,
+                dataType = "Date",
+                value = "updateTime"),
+        @ApiImplicitParam(
+                name = "clusterName",
+                required = false,
+                dataType = "String",
+                value = "clusterName"),
+        @ApiImplicitParam(
+                name = "category",
+                required = false,
+                dataType = "String",
+                value = "category"),
+        @ApiImplicitParam(
+                name = "udfInfos",
+                required = false,
+                dataType = "List<UDFInfoVo>",
+                value = "udfInfos"),
+        @ApiImplicitParam(
+                name = "childrens",
+                required = false,
+                dataType = "List<UDFTree>",
+                value = "childrens")
     })
     @ApiOperationSupport(ignoreParameters = {"udfTree"})
     @RequestMapping(path = "/tree/add", method = RequestMethod.POST)
@@ -317,19 +414,52 @@ public class UDFApi {
 
         return message;
     }
-    @ApiOperation(value="tree更新",notes="tree更新",response = Message.class)
+
+    @ApiOperation(value = "tree更新", notes = "tree更新", response = Message.class)
     @ApiImplicitParams({
-            @ApiImplicitParam(name="id",required = false,dataType="Long",value="id"),
-            @ApiImplicitParam(name="parent",required = false,dataType="Long",value="parent"),
-            @ApiImplicitParam(name="name",required = false,dataType="String",value="name"),
-            @ApiImplicitParam(name="userName",required = false,dataType="String",value="userName"),
-            @ApiImplicitParam(name="description",required = false,dataType="String",value="description"),
-            @ApiImplicitParam(name="createTime",required = false,dataType="Date",value="createTime"),
-            @ApiImplicitParam(name="updateTime",required = false,dataType="Date",value="updateTime"),
-            @ApiImplicitParam(name="clusterName",required = false,dataType="String",value="clusterName"),
-            @ApiImplicitParam(name="category",required = false,dataType="String",value="category"),
-            @ApiImplicitParam(name="udfInfos",required = false,dataType="List<UDFInfoVo>",value="udfInfos"),
-            @ApiImplicitParam(name="childrens",required = false,dataType="List<UDFTree>",value="childrens")
+        @ApiImplicitParam(name = "id", required = false, dataType = "Long", value = "id"),
+        @ApiImplicitParam(name = "parent", required = false, dataType = "Long", value = "parent"),
+        @ApiImplicitParam(name = "name", required = false, dataType = "String", value = "name"),
+        @ApiImplicitParam(
+                name = "userName",
+                required = false,
+                dataType = "String",
+                value = "userName"),
+        @ApiImplicitParam(
+                name = "description",
+                required = false,
+                dataType = "String",
+                value = "description"),
+        @ApiImplicitParam(
+                name = "createTime",
+                required = false,
+                dataType = "Date",
+                value = "createTime"),
+        @ApiImplicitParam(
+                name = "updateTime",
+                required = false,
+                dataType = "Date",
+                value = "updateTime"),
+        @ApiImplicitParam(
+                name = "clusterName",
+                required = false,
+                dataType = "String",
+                value = "clusterName"),
+        @ApiImplicitParam(
+                name = "category",
+                required = false,
+                dataType = "String",
+                value = "category"),
+        @ApiImplicitParam(
+                name = "udfInfos",
+                required = false,
+                dataType = "List<UDFInfoVo>",
+                value = "udfInfos"),
+        @ApiImplicitParam(
+                name = "childrens",
+                required = false,
+                dataType = "List<UDFTree>",
+                value = "childrens")
     })
     @ApiOperationSupport(ignoreParameters = {"udfTree"})
     @RequestMapping(path = "/tree/update", method = RequestMethod.POST)
@@ -350,10 +480,9 @@ public class UDFApi {
 
         return message;
     }
-    @ApiOperation(value="tree删除",notes="tree删除",response = Message.class)
-    @ApiImplicitParams({
-            @ApiImplicitParam(name="id",dataType="Long",value="id")
-    })
+
+    @ApiOperation(value = "tree删除", notes = "tree删除", response = Message.class)
+    @ApiImplicitParams({@ApiImplicitParam(name = "id", dataType = "Long", value = "id")})
     @RequestMapping(path = "/tree/delete/{id}", method = RequestMethod.GET)
     public Message deleteTree(HttpServletRequest req, @PathVariable("id") Long id) {
         String userName = ModuleUserUtils.getOperationUser(req, "delete udf tree " + id);
@@ -367,7 +496,8 @@ public class UDFApi {
         }
         return message;
     }
-    @ApiOperation(value="证实",notes="证明…是真实的",response = Message.class)
+
+    @ApiOperation(value = "证实", notes = "证明…是真实的", response = Message.class)
     @RequestMapping(path = "/authenticate", method = RequestMethod.POST)
     public Message Authenticate(HttpServletRequest req) {
         Message message = null;
@@ -385,10 +515,9 @@ public class UDFApi {
         }
         return message;
     }
-    @ApiOperation(value="设置过期",notes="设置过期",response = Message.class)
-    @ApiImplicitParams({
-            @ApiImplicitParam(name="udfId",dataType="Long",value="udfId")
-    })
+
+    @ApiOperation(value = "设置过期", notes = "设置过期", response = Message.class)
+    @ApiImplicitParams({@ApiImplicitParam(name = "udfId", dataType = "Long", value = "udfId")})
     @ApiOperationSupport(ignoreParameters = {"json"})
     @RequestMapping(path = "/setExpire", method = RequestMethod.POST)
     @Transactional(
@@ -416,10 +545,11 @@ public class UDFApi {
         }
         return message;
     }
-    @ApiOperation(value="共有UDF",notes="共有UDF",response = Message.class)
+
+    @ApiOperation(value = "共有UDF", notes = "共有UDF", response = Message.class)
     @ApiImplicitParams({
-            @ApiImplicitParam(name="udfInfo",dataType="UDFInfo",value="udfInfo"),
-            @ApiImplicitParam(name="sharedUsers",dataType="List",value="sharedUsers")
+        @ApiImplicitParam(name = "udfInfo", dataType = "UDFInfo", value = "udfInfo"),
+        @ApiImplicitParam(name = "sharedUsers", dataType = "List", value = "sharedUsers")
     })
     @ApiOperationSupport(ignoreParameters = {"json"})
     @RequestMapping(path = "/shareUDF", method = RequestMethod.POST)
@@ -471,10 +601,8 @@ public class UDFApi {
         return message;
     }
 
-    @ApiOperation(value="获取SharedUsers",notes="获取SharedUsers",response = Message.class)
-    @ApiImplicitParams({
-            @ApiImplicitParam(name="udfId",dataType="long",value="udfId")
-    })
+    @ApiOperation(value = "获取SharedUsers", notes = "获取SharedUsers", response = Message.class)
+    @ApiImplicitParams({@ApiImplicitParam(name = "udfId", dataType = "long", value = "udfId")})
     @ApiOperationSupport(ignoreParameters = {"json"})
     @RequestMapping(path = "/getSharedUsers", method = RequestMethod.POST)
     @Transactional(
@@ -506,10 +634,10 @@ public class UDFApi {
      * @param json
      * @return
      */
-    @ApiOperation(value="获取SharedUsers",notes="获取SharedUsers",response = Message.class)
+    @ApiOperation(value = "获取SharedUsers", notes = "获取SharedUsers", response = Message.class)
     @ApiImplicitParams({
-            @ApiImplicitParam(name="udfId",dataType="long",value="udfId"),
-            @ApiImplicitParam(name="handoverUser",dataType="String",value="切换用户")
+        @ApiImplicitParam(name = "udfId", dataType = "long", value = "udfId"),
+        @ApiImplicitParam(name = "handoverUser", dataType = "String", value = "切换用户")
     })
     @ApiOperationSupport(ignoreParameters = {"json"})
     @RequestMapping(path = "/handover", method = RequestMethod.POST)
@@ -560,10 +688,11 @@ public class UDFApi {
         }
         return udfInfo;
     }
-    @ApiOperation(value="出版",notes="出版",response = Message.class)
+
+    @ApiOperation(value = "出版", notes = "出版", response = Message.class)
     @ApiImplicitParams({
-            @ApiImplicitParam(name="udfId",dataType="long",value="udfId"),
-            @ApiImplicitParam(name="version",dataType="String",value="version")
+        @ApiImplicitParam(name = "udfId", dataType = "long", value = "udfId"),
+        @ApiImplicitParam(name = "version", dataType = "String", value = "version")
     })
     @ApiOperationSupport(ignoreParameters = {"json"})
     @RequestMapping(path = "/publish", method = RequestMethod.POST)
@@ -588,10 +717,11 @@ public class UDFApi {
         }
         return message;
     }
-    @ApiOperation(value="回退版本",notes="回退版本",response = Message.class)
+
+    @ApiOperation(value = "回退版本", notes = "回退版本", response = Message.class)
     @ApiImplicitParams({
-            @ApiImplicitParam(name="udfId",dataType="long",value="udfId"),
-            @ApiImplicitParam(name="version",dataType="String",value="version")
+        @ApiImplicitParam(name = "udfId", dataType = "long", value = "udfId"),
+        @ApiImplicitParam(name = "version", dataType = "String", value = "version")
     })
     @ApiOperationSupport(ignoreParameters = {"json"})
     @RequestMapping(path = "/rollback", method = RequestMethod.POST)
@@ -613,10 +743,9 @@ public class UDFApi {
         }
         return message;
     }
-    @ApiOperation(value="版本列表",notes="版本列表",response = Message.class)
-    @ApiImplicitParams({
-            @ApiImplicitParam(name="udfId",dataType="long",value="udfId")
-    })
+
+    @ApiOperation(value = "版本列表", notes = "版本列表", response = Message.class)
+    @ApiImplicitParams({@ApiImplicitParam(name = "udfId", dataType = "long", value = "udfId")})
     @RequestMapping(path = "/versionList", method = RequestMethod.GET)
     public Message versionList(HttpServletRequest req, @RequestParam("udfId") long udfId) {
         Message message = null;
@@ -642,12 +771,16 @@ public class UDFApi {
      * @param jsonNode
      * @return
      */
-    @ApiOperation(value="UDF列表",notes="获取UDF列表",response = Message.class)
+    @ApiOperation(value = "UDF列表", notes = "获取UDF列表", response = Message.class)
     @ApiImplicitParams({
-            @ApiImplicitParam(name="udfName",required = false,dataType="String",value="udf名称"),
-            @ApiImplicitParam(name="curPage",required = false,dataType="Integer",value="页码"),
-            @ApiImplicitParam(name="pageSize",required = false,dataType="Integer",value="页面大小"),
-            @ApiImplicitParam(name="udfType",required = false,dataType="String",value="udf类型")
+        @ApiImplicitParam(name = "udfName", required = false, dataType = "String", value = "udf名称"),
+        @ApiImplicitParam(name = "curPage", required = false, dataType = "Integer", value = "页码"),
+        @ApiImplicitParam(
+                name = "pageSize",
+                required = false,
+                dataType = "Integer",
+                value = "页面大小"),
+        @ApiImplicitParam(name = "udfType", required = false, dataType = "String", value = "udf类型")
     })
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "/managerPages", method = RequestMethod.POST)
@@ -686,10 +819,15 @@ public class UDFApi {
         }
         return message;
     }
-    @ApiOperation(value="下载UDF",notes="根据版本参数下载UDF",response = Message.class)
+
+    @ApiOperation(value = "下载UDF", notes = "根据版本参数下载UDF", response = Message.class)
     @ApiImplicitParams({
-            @ApiImplicitParam(name="udfId",required = false,dataType="long",value="udfId"),
-            @ApiImplicitParam(name="version",required = false,dataType="String",value="version")
+        @ApiImplicitParam(name = "udfId", required = false, dataType = "long", value = "udfId"),
+        @ApiImplicitParam(
+                name = "version",
+                required = false,
+                dataType = "String",
+                value = "version")
     })
     @ApiOperationSupport(ignoreParameters = {"json"})
     @RequestMapping(path = "/downloadUdf", method = RequestMethod.POST)
@@ -712,10 +850,15 @@ public class UDFApi {
         }
         return message;
     }
-    @ApiOperation(value="下载到本地",notes="根据版本参数下载UDF到本地",response = Message.class)
+
+    @ApiOperation(value = "下载到本地", notes = "根据版本参数下载UDF到本地", response = Message.class)
     @ApiImplicitParams({
-            @ApiImplicitParam(name="udfId",required = false,dataType="long",value="udfId"),
-            @ApiImplicitParam(name="version",required = false,dataType="String",value="version")
+        @ApiImplicitParam(name = "udfId", required = false, dataType = "long", value = "udfId"),
+        @ApiImplicitParam(
+                name = "version",
+                required = false,
+                dataType = "String",
+                value = "version")
     })
     @ApiOperationSupport(ignoreParameters = {"json"})
     @RequestMapping(path = "/downloadToLocal", method = RequestMethod.POST)
@@ -771,7 +914,8 @@ public class UDFApi {
             IOUtils.closeQuietly(writer);
         }
     }
-    @ApiOperation(value="所有UdfUsers",notes="所有UdfUsers",response = Message.class)
+
+    @ApiOperation(value = "所有UdfUsers", notes = "所有UdfUsers", response = Message.class)
     @RequestMapping(path = "/allUdfUsers", method = RequestMethod.GET)
     public Message allUdfUsers(HttpServletRequest req, @RequestBody JsonNode json) {
         Message message = null;
@@ -790,10 +934,12 @@ public class UDFApi {
         return message;
     }
 
-
-    @ApiOperation(value="获取用户目录",notes="获取用户目录",response = Message.class)
+    @ApiOperation(value = "获取用户目录", notes = "获取用户目录", response = Message.class)
     @ApiImplicitParams({
-            @ApiImplicitParam(name="category",dataType="String",value="获取指定集合类型用户目录，如类型为UDF即获取该类型下的用户目录")
+        @ApiImplicitParam(
+                name = "category",
+                dataType = "String",
+                value = "获取指定集合类型用户目录，如类型为UDF即获取该类型下的用户目录")
     })
     @Deprecated
     @RequestMapping(path = "/userDirectory", method = RequestMethod.GET)

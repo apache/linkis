@@ -17,10 +17,6 @@
 
 package org.apache.linkis.metadata.restful.api;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
 import org.apache.linkis.metadata.restful.remote.DataSourceRestfulRemote;
 import org.apache.linkis.metadata.service.DataSourceService;
 import org.apache.linkis.metadata.service.HiveMetaWithPermissionService;
@@ -39,6 +35,10 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,7 +69,10 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
         }
     }
 
-    @ApiOperation(value="get all db and tables",notes="get all db and tables",response = Message.class)
+    @ApiOperation(
+            value = "get all db and tables",
+            notes = "get all db and tables",
+            response = Message.class)
     @Override
     @RequestMapping(path = "all", method = RequestMethod.GET)
     public Message queryDbsWithTables(HttpServletRequest req) {
@@ -82,9 +85,10 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
             return Message.error("Failed to queryDbsWithTables", e);
         }
     }
-    @ApiOperation(value="获取数据库表",notes="根据数据库名获取该数据库表",response = Message.class)
+
+    @ApiOperation(value = "获取数据库表", notes = "根据数据库名获取该数据库表", response = Message.class)
     @ApiImplicitParams({
-            @ApiImplicitParam(name="database",required = false,dataType="String",value="数据库名称")
+        @ApiImplicitParam(name = "database", required = false, dataType = "String", value = "数据库名称")
     })
     @Override
     @RequestMapping(path = "tables", method = RequestMethod.GET)
@@ -100,10 +104,18 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
             return Message.error("Failed to queryTables", e);
         }
     }
-    @ApiOperation(value="get columns of table",notes="get columns of table",response = Message.class)
+
+    @ApiOperation(
+            value = "get columns of table",
+            notes = "get columns of table",
+            response = Message.class)
     @ApiImplicitParams({
-            @ApiImplicitParam(name="database", required = false,dataType="String",value="数据库名称"),
-            @ApiImplicitParam(name="table", required = false,dataType="String",value="表名称")
+        @ApiImplicitParam(
+                name = "database",
+                required = false,
+                dataType = "String",
+                value = "数据库名称"),
+        @ApiImplicitParam(name = "table", required = false, dataType = "String", value = "表名称")
     })
     @Override
     @RequestMapping(path = "columns", method = RequestMethod.GET)
@@ -125,7 +137,8 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
             return Message.error("Failed to get data table structure(获取数据表结构失败)", e);
         }
     }
-    @ApiOperation(value="get size ",notes="get size ",response = Message.class)
+
+    @ApiOperation(value = "get size ", notes = "get size ", response = Message.class)
     @Override
     @RequestMapping(path = "size", method = RequestMethod.GET)
     public Message sizeOf(
@@ -147,7 +160,11 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
             return Message.error("Failed to get table partition size(获取表分区大小失败)", e);
         }
     }
-    @ApiOperation(value="get partitions of  ",notes="get partitions of  ",response = Message.class)
+
+    @ApiOperation(
+            value = "get partitions of  ",
+            notes = "get partitions of  ",
+            response = Message.class)
     @Override
     @RequestMapping(path = "partitions", method = RequestMethod.GET)
     public Message partitions(

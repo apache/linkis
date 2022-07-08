@@ -28,7 +28,7 @@ abstract class LabelResourceService {
 
   def getLabelResource(label: Label[_]): NodeResource
 
-  def setLabelResource(label: Label[_], nodeResource: NodeResource, source: String) : Unit
+  def setLabelResource(label: Label[_], nodeResource: NodeResource, source: String): Unit
 
   /**
    * this function is the same to setLabelResource

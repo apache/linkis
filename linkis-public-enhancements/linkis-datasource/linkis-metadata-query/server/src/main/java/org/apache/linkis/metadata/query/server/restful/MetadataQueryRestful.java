@@ -17,8 +17,6 @@
 
 package org.apache.linkis.metadata.query.server.restful;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import org.apache.linkis.common.exception.ErrorException;
 import org.apache.linkis.datasourcemanager.common.util.json.Json;
 import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
@@ -35,6 +33,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,7 +50,7 @@ public class MetadataQueryRestful {
 
     @Autowired private MetadataQueryService metadataQueryService;
 
-    @ApiOperation(value="数据库列表",notes="获取数据库列表",response = Message.class)
+    @ApiOperation(value = "数据库列表", notes = "获取数据库列表", response = Message.class)
     @RequestMapping(value = "/getDatabases", method = RequestMethod.GET)
     public Message getDatabases(
             @RequestParam("dataSourceName") String dataSourceName,
@@ -75,7 +75,8 @@ public class MetadataQueryRestful {
                     e);
         }
     }
-    @ApiOperation(value="数据库表",notes="获取数据库表",response = Message.class)
+
+    @ApiOperation(value = "数据库表", notes = "获取数据库表", response = Message.class)
     @RequestMapping(value = "/getTables", method = RequestMethod.GET)
     public Message getTables(
             @RequestParam("dataSourceName") String dataSourceName,
@@ -106,7 +107,8 @@ public class MetadataQueryRestful {
                     e);
         }
     }
-    @ApiOperation(value="getTableProps",notes="getTableProps",response = Message.class)
+
+    @ApiOperation(value = "getTableProps", notes = "getTableProps", response = Message.class)
     @RequestMapping(value = "/getTableProps", method = RequestMethod.GET)
     public Message getTableProps(
             @RequestParam("dataSourceName") String dataSourceName,
@@ -179,7 +181,11 @@ public class MetadataQueryRestful {
                     e);
         }
     }
-    @ApiOperation(value="getPartitionProps",notes="getPartitionProps",response = Message.class)
+
+    @ApiOperation(
+            value = "getPartitionProps",
+            notes = "getPartitionProps",
+            response = Message.class)
     @RequestMapping(value = "getPartitionProps", method = RequestMethod.GET)
     public Message getPartitionProps(
             @RequestParam("dataSourceName") String dataSourceName,

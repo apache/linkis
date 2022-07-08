@@ -16,10 +16,7 @@
  */
 
 package org.apache.linkis.manager.am.restful;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+
 import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.governance.common.constant.job.JobRequestConstants;
 import org.apache.linkis.manager.am.exception.AMErrorException;
@@ -41,9 +38,14 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
 @Api(tags = "EC资源信息管理")
 @RequestMapping(
         path = "/linkisManager/ecinfo",
@@ -52,9 +54,13 @@ import java.util.stream.Collectors;
 public class ECResourceInfoRestfulApi {
     @Autowired private ECResourceInfoService ecResourceInfoService;
 
-    @ApiOperation(value="获取EC信息",notes="获取EC信息",response = Message.class)
+    @ApiOperation(value = "获取EC信息", notes = "获取EC信息", response = Message.class)
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "ticketid", required = true, dataType = "String", value = "ticketid")
+        @ApiImplicitParam(
+                name = "ticketid",
+                required = true,
+                dataType = "String",
+                value = "ticketid")
     })
     @RequestMapping(path = "/get", method = RequestMethod.GET)
     public Message getECInfo(
@@ -71,9 +77,14 @@ public class ECResourceInfoRestfulApi {
             return Message.error("tickedId not exist:" + ticketid);
         }
     }
-    @ApiOperation(value="删除EC信息",notes="删除EC信息",response = Message.class)
+
+    @ApiOperation(value = "删除EC信息", notes = "删除EC信息", response = Message.class)
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "ticketid", required = true, dataType = "String", value = "ticketid")
+        @ApiImplicitParam(
+                name = "ticketid",
+                required = true,
+                dataType = "String",
+                value = "ticketid")
     })
     @RequestMapping(path = "/delete/{ticketid}}", method = RequestMethod.DELETE)
     public Message deleteECInfo(HttpServletRequest req, @PathVariable("ticketid") String ticketid)
@@ -90,10 +101,19 @@ public class ECResourceInfoRestfulApi {
             return Message.error("tickedId not exist:" + ticketid);
         }
     }
-    @ApiOperation(value="ecr历史列表",notes="ecr历史列表",response = Message.class)
+
+    @ApiOperation(value = "ecr历史列表", notes = "ecr历史列表", response = Message.class)
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "instance", required = false, dataType = "String", value = "instance"),
-            @ApiImplicitParam(name = "creator", required = false, dataType = "String", value = "creator")
+        @ApiImplicitParam(
+                name = "instance",
+                required = false,
+                dataType = "String",
+                value = "instance"),
+        @ApiImplicitParam(
+                name = "creator",
+                required = false,
+                dataType = "String",
+                value = "creator")
     })
     @RequestMapping(path = "/ecrHistoryList", method = RequestMethod.GET)
     public Message queryEcrHistory(

@@ -249,13 +249,11 @@ export default {
         this.allEngines = [ ...enginesList ];
         this.tableData = [ ...enginesList ];
         this.ownerList = [];
-        this.engineTypes = []
+        let data = await api.fetch('/configuration/engineType', 'get')
+        this.engineTypes = data && data.engineType ? data.engineType : []
         enginesList.forEach(item => {
           if (this.ownerList.indexOf(item.createUser) === -1) {
             this.ownerList.push(item.createUser)
-          }
-          if (this.engineTypes.indexOf(item.engineType) === -1) {
-            this.engineTypes.push(item.engineType)
           }
         })
         this.loading = false;

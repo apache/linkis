@@ -16,7 +16,7 @@
   -->
 
 <template>
-  <Form :model="searchBar" :rules="ruleInline" inline>
+  <Form :model="searchBar" :rules="ruleInline" inline @submit.native.prevent>
     <FormItem prop="instance" :label="`${$t('message.linkis.instanceName')}`">
       <Input :maxlength="50" v-model="searchBar.instance" :placeholder="$t('message.linkis.instanceName')"/>
     </FormItem>

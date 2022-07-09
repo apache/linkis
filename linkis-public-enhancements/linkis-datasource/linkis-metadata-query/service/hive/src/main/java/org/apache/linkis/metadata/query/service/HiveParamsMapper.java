@@ -15,21 +15,21 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.metadata.query.common.cache;
+package org.apache.linkis.metadata.query.service;
 
 import org.apache.linkis.common.conf.CommonVars;
 
-public class CacheConfiguration {
+public class HiveParamsMapper {
 
-    public static CommonVars<Long> CACHE_MAX_SIZE =
-            CommonVars.apply("wds.linkis.server.mdm.service.cache.max-size", 1000L);
+    public static final CommonVars<String> PARAM_HIVE_PRINCIPLE =
+            CommonVars.apply("wds.linkis.server.mdm.service.hive.principle", "principle");
 
-    public static CommonVars<Long> CACHE_EXPIRE_TIME =
-            CommonVars.apply("wds.linkis.server.mdm.service.cache.expire", 600L);
+    public static final CommonVars<String> PARAM_HIVE_URIS =
+            CommonVars.apply("wds.linkis.server.mdm.service.hive.uris", "uris");
 
-    /** Make a pool for each cache element */
-    public static final CommonVars<Integer> CACHE_IN_POOL_SIZE =
-            CommonVars.apply("wds.linkis.server.mdm.service.cache.in-pool.size", 5);
+    public static final CommonVars<String> PARAM_HIVE_KEYTAB =
+            CommonVars.apply("wds.linkis.server.mdm.service.hive.keytab", "keytab");
 
-    public static final CommonVars<String> MYSQL_RELATIONSHIP_LIST =  CommonVars.apply("wds.linkis.server.mdm.mysql.relationship", "oracle,kingbase,postgresql,sqlserver,db2,greenplum,dm,mysql");
+    public static final CommonVars<String> PARAM_HADOOP_CONF =
+            CommonVars.apply("wds.linkis.server.mdm.service.hadoop.conf", "hadoopConf");
 }

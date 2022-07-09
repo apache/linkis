@@ -15,21 +15,18 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.metadata.query.common.cache;
+package org.apache.linkis.metadata.query.service;
 
 import org.apache.linkis.common.conf.CommonVars;
 
-public class CacheConfiguration {
+/** Configuration */
+public class ElasticParamsMapper {
+    public static final CommonVars<String> PARAM_ES_URLS =
+            CommonVars.apply("wds.linkis.server.mdm.service.es.urls", "elasticUrls");
 
-    public static CommonVars<Long> CACHE_MAX_SIZE =
-            CommonVars.apply("wds.linkis.server.mdm.service.cache.max-size", 1000L);
+    public static final CommonVars<String> PARAM_ES_USERNAME =
+            CommonVars.apply("wds.linkis.server.mdm.service.es.username", "username");
 
-    public static CommonVars<Long> CACHE_EXPIRE_TIME =
-            CommonVars.apply("wds.linkis.server.mdm.service.cache.expire", 600L);
-
-    /** Make a pool for each cache element */
-    public static final CommonVars<Integer> CACHE_IN_POOL_SIZE =
-            CommonVars.apply("wds.linkis.server.mdm.service.cache.in-pool.size", 5);
-
-    public static final CommonVars<String> MYSQL_RELATIONSHIP_LIST =  CommonVars.apply("wds.linkis.server.mdm.mysql.relationship", "oracle,kingbase,postgresql,sqlserver,db2,greenplum,dm,mysql");
+    public static final CommonVars<String> PARAM_ES_PASSWORD =
+            CommonVars.apply("wds.linkis.server.mdm.service.es.password", "password");
 }

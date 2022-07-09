@@ -17,9 +17,11 @@
 
 package org.apache.linkis.metadata.query.server.loader;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.linkis.common.conf.CommonVars;
 import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.common.exception.ErrorException;
+import org.apache.linkis.metadata.query.common.cache.CacheConfiguration;
 import org.apache.linkis.metadata.query.common.exception.MetaRuntimeException;
 import org.apache.linkis.metadata.query.common.service.AbstractMetaService;
 import org.apache.linkis.metadata.query.common.service.MetadataService;
@@ -60,10 +62,16 @@ public class MetaClassLoaderManager {
     private static final String META_CLASS_NAME =
             "org.apache.linkis.metadata.query.service.%sMetaService";
 
+    private static final String MYSQL_BASE_DIR = "mysql";
+
     private static final Logger LOG = LoggerFactory.getLogger(MetaClassLoaderManager.class);
 
     public BiFunction<String, Object[], Object> getInvoker(String dsType) throws ErrorException {
         boolean needToLoad = true;
+        boolean isContains = CacheConfiguration.MYSQL_RELATIONSHIP_LIST.getValue().contains(dsType);
+        String baseType = dsType;
+        if(isContains) baseType = MYSQL_BASE_DIR;
+
         MetaServiceInstance serviceInstance = metaServiceInstances.get(dsType);
         if (Objects.nonNull(serviceInstance)) {
             Integer expireTimeInSec = INSTANCE_EXPIRE_TIME.getValue();
@@ -78,6 +86,7 @@ public class MetaClassLoaderManager {
         }
         if (needToLoad) {
             MetaServiceInstance finalServiceInstance1 = serviceInstance;
+            String finalBaseType = baseType;
             serviceInstance =
                     metaServiceInstances.compute(
                             dsType,
@@ -88,7 +97,7 @@ public class MetaClassLoaderManager {
                                 }
                                 String lib = LIB_DIR.getValue();
                                 String stdLib = lib.endsWith("/") ? lib.replaceAll(".$", "") : lib;
-                                String componentLib = stdLib + "/" + dsType;
+                                String componentLib = stdLib + "/" + finalBaseType;
                                 LOG.info(
                                         "Start to load/reload meta instance of data source type: ["
                                                 + dsType
@@ -128,7 +137,7 @@ public class MetaClassLoaderManager {
                                     String prefix =
                                             dsType.substring(0, 1).toUpperCase()
                                                     + dsType.substring(1);
-                                    expectClassName = String.format(META_CLASS_NAME, prefix);
+                                    expectClassName = String.format(META_CLASS_NAME ,prefix);
                                 }
                                 Class<? extends MetadataService> metaServiceClass =
                                         searchForLoadMetaServiceClass(

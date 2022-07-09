@@ -17,8 +17,9 @@
  
 package org.apache.linkis.scheduler.future
 
-import java.util.concurrent.{Future, FutureTask}
+import org.apache.commons.lang3.reflect.FieldUtils
 
+import java.util.concurrent.{Future, FutureTask}
 import org.apache.linkis.common.utils.{Logging, Utils}
 
 
@@ -27,10 +28,9 @@ class BDPFutureTask(future: Future[_]) extends BDPFuture with Logging {
     future match {
       case futureTask: FutureTask[_] =>
         logger.info("Start to interrupt BDPFutureTask")
-        val futureType = futureTask.getClass
-        val field = futureType.getDeclaredField("runner")
-        field.setAccessible(true)
-        val runner = field.get(futureTask).asInstanceOf[Thread]
+        val runner = FieldUtils
+          .readDeclaredField(futureTask, "runner", true)
+          .asInstanceOf[Thread]
         runner.interrupt()
         logger.info(s"Finished to interrupt BDPFutureTask of ${runner.getName}")
     }

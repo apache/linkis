@@ -27,29 +27,29 @@ trait SchedulerEvent extends Logging {
   private[queue] var id: String = _
   private var state: SchedulerEventState = Inited
   val createTime = System.currentTimeMillis
-  protected var scheduledTime: Long = 0l
-  protected var startTime: Long = 0l
-  protected var endTime: Long = 0l
+  protected var scheduledTime: Long = 0L
+  protected var startTime: Long = 0L
+  protected var endTime: Long = 0L
 
-  def getEndTime = endTime
-  def getStartTime = startTime
+  def getEndTime: Long = endTime
+  def getStartTime: Long = startTime
 
   /*
    * To be compatible with old versions.
    * It's not recommonded to use scheduledTime, which was only several mills at most time.
    */
   @Deprecated
-  def getScheduledTime = scheduledTime
+  def getScheduledTime: Long = scheduledTime
 
-  def getId = id
+  def getId: String = id
 
-  def setId(id: String)={
+  def setId(id: String): Unit = {
     this.id = id
     this synchronized notify()
   }
 
-  def turnToScheduled(): Boolean = if(!isWaiting) false else this synchronized {
-    if(!isWaiting) false else {
+  def turnToScheduled(): Boolean = if (!isWaiting) false else this synchronized {
+    if (!isWaiting) false else {
       scheduledTime = System.currentTimeMillis
       while(id == null) wait(100)
       transition(Scheduled)
@@ -60,21 +60,21 @@ trait SchedulerEvent extends Logging {
   def pause(): Unit
   def resume(): Unit
 
-  def cancel() = transition(Cancelled)
+  def cancel(): Unit = transition(Cancelled)
 
-  def isWaiting = state == Inited
+  def isWaiting: Boolean = state == Inited
 
-  def isScheduled = state == Scheduled
+  def isScheduled: Boolean = state == Scheduled
 
-  def isRunning = state == Running
+  def isRunning: Boolean = state == Running
 
-  def isCompleted = SchedulerEventState.isCompleted(state)
+  def isCompleted: Boolean = SchedulerEventState.isCompleted(state)
 
   def isSucceed: Boolean = SchedulerEventState.isSucceed(state)
 
   def isWaitForRetry: Boolean = state == WaitForRetry
 
-  def getState = state
+  def getState: SchedulerEventState = state
 
   def afterStateChanged(fromState: SchedulerEventState, toState: SchedulerEventState): Unit
 

@@ -73,15 +73,25 @@ fi
 export SERVER_CLASS_PATH=$SERVER_CONF_PATH:$LINKIS_COMMONS_LIB/*:$SERVER_LIB/*
 
 echo  "=====Java Start Command====="
-echo  "nohup java $SERVER_JAVA_OPTS -cp $SERVER_CLASS_PATH $SERVER_CLASS $SPRING_ARGS 2>&1 > $LINKIS_LOG_DIR/${SERVER_NAME}.out &"
-nohup java $SERVER_JAVA_OPTS -cp $SERVER_CLASS_PATH $SERVER_CLASS $SPRING_ARGS 2>&1 > $LINKIS_LOG_DIR/${SERVER_NAME}.out &
 
-pid=$!
-sleep 2
-if [[ -z "${pid}" ]]; then
-    echo "server $SERVER_NAME start failed!"
-    exit 1
+if [ "X${RUN_IN_FOREGROUND}" == "Xtrue" ]; then
+
+  echo  "java $SERVER_JAVA_OPTS -cp $SERVER_CLASS_PATH $SERVER_CLASS $SPRING_ARGS 2>&1"
+  java $SERVER_JAVA_OPTS -cp $SERVER_CLASS_PATH $SERVER_CLASS $SPRING_ARGS 2>&1
+
 else
-    echo "server $SERVER_NAME start succeeded!"
-    echo $pid > $SERVER_PID
+
+  echo  "nohup java $SERVER_JAVA_OPTS -cp $SERVER_CLASS_PATH $SERVER_CLASS $SPRING_ARGS 2>&1 > $LINKIS_LOG_DIR/${SERVER_NAME}.out &"
+  nohup java $SERVER_JAVA_OPTS -cp $SERVER_CLASS_PATH $SERVER_CLASS $SPRING_ARGS 2>&1 > $LINKIS_LOG_DIR/${SERVER_NAME}.out &
+
+  pid=$!
+  sleep 2
+  if [[ -z "${pid}" ]]; then
+      echo "server $SERVER_NAME start failed!"
+      exit 1
+  else
+      echo "server $SERVER_NAME start succeeded!"
+      echo $pid > $SERVER_PID
+  fi
+
 fi

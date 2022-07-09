@@ -96,6 +96,7 @@
         <module>linkis-computation-governance</module>
         <module>linkis-engineconn-plugins</module>
         <module>linkis-extensions</module>
+        <module>web</module>
         <module>linkis-dist</module>
     </modules>
     <properties>

@@ -1,0 +1,15 @@
+---
+Welcome to Apache Linkis (v{{ .Chart.AppVersion }})!
+
+.___    .___ .______  .____/\ .___ .________
+|   |   : __|:      \ :   /  \: __||    ___/
+|   |   | : ||       ||.  ___/| : ||___    \
+|   |/\ |   ||   |   ||     \ |   ||       /
+|   /  \|   ||___|   ||      \|   ||__:___/
+|______/|___|    |___||___\  /|___|   : v{{ .Chart.AppVersion }}
+                           \/
+
+Linkis builds a layer of computation middleware between upper applications and underlying engines.
+Please visit https://linkis.apache.org/ for details.
+
+Enjoy!

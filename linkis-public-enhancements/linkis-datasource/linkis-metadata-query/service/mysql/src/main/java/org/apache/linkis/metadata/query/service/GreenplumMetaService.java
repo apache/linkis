@@ -1,11 +1,12 @@
 package org.apache.linkis.metadata.query.service;
 
 import org.apache.linkis.datasourcemanager.common.util.json.Json;
-import org.apache.linkis.metadata.query.service.conf.SqlParamsMapper;
 import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
 import org.apache.linkis.metadata.query.common.service.AbstractMetaService;
 import org.apache.linkis.metadata.query.common.service.MetadataConnection;
+import org.apache.linkis.metadata.query.service.conf.SqlParamsMapper;
 import org.apache.linkis.metadata.query.service.greenplum.SqlConnection;
+
 import org.apache.logging.log4j.util.Strings;
 
 import java.sql.SQLException;
@@ -15,30 +16,47 @@ import java.util.Map;
 
 public class GreenplumMetaService extends AbstractMetaService<SqlConnection> {
     @Override
-    public MetadataConnection<SqlConnection> getConnection(String operator, Map<String, Object> params) throws Exception {
-        String host = String.valueOf(params.getOrDefault(SqlParamsMapper.PARAM_SQL_HOST.getValue(), ""));
-        //After deserialize, Integer will be Double, Why?
-        Integer port = (Double.valueOf(String.valueOf(params.getOrDefault(SqlParamsMapper.PARAM_SQL_PORT.getValue(), 0)))).intValue();
-        String username = String.valueOf(params.getOrDefault(SqlParamsMapper.PARAM_SQL_USERNAME.getValue(), ""));
-        String password = String.valueOf(params.getOrDefault(SqlParamsMapper.PARAM_SQL_PASSWORD.getValue(), ""));
+    public MetadataConnection<SqlConnection> getConnection(
+            String operator, Map<String, Object> params) throws Exception {
+        String host =
+                String.valueOf(params.getOrDefault(SqlParamsMapper.PARAM_SQL_HOST.getValue(), ""));
+        // After deserialize, Integer will be Double, Why?
+        Integer port =
+                (Double.valueOf(
+                                String.valueOf(
+                                        params.getOrDefault(
+                                                SqlParamsMapper.PARAM_SQL_PORT.getValue(), 0))))
+                        .intValue();
+        String username =
+                String.valueOf(
+                        params.getOrDefault(SqlParamsMapper.PARAM_SQL_USERNAME.getValue(), ""));
+        String password =
+                String.valueOf(
+                        params.getOrDefault(SqlParamsMapper.PARAM_SQL_PASSWORD.getValue(), ""));
         // 在 greenplum 中同实例下的每个数据库是完全独立的，表存放在同库名的 catalog 下，
         // \c（\connect） dbname 命令背后是关闭当前连接，再创建一个新的连接来实现数据库切换的
-        // 无法在当前数据库连接下直接切换到另外一个数据库，也没有像 MySQL 一样能 show tables from xxxx、select * from database.table ....
-        String database = String.valueOf(params.getOrDefault(SqlParamsMapper.PARAM_SQL_DATABASE.getValue(), ""));
+        // 无法在当前数据库连接下直接切换到另外一个数据库，也没有像 MySQL 一样能 show tables from xxxx、select * from database.table
+        // ....
+        String database =
+                String.valueOf(
+                        params.getOrDefault(SqlParamsMapper.PARAM_SQL_DATABASE.getValue(), ""));
         Map<String, Object> extraParams = new HashMap<>();
-        Object sqlParamObj =  params.get(SqlParamsMapper.PARAM_SQL_EXTRA_PARAMS.getValue());
-        if(null != sqlParamObj){
-            if(!(sqlParamObj instanceof Map)){
-                extraParams = Json.fromJson(String.valueOf(sqlParamObj), Map.class, String.class, Object.class);
-            }else{
-                extraParams = (Map<String, Object>)sqlParamObj;
+        Object sqlParamObj = params.get(SqlParamsMapper.PARAM_SQL_EXTRA_PARAMS.getValue());
+        if (null != sqlParamObj) {
+            if (!(sqlParamObj instanceof Map)) {
+                extraParams =
+                        Json.fromJson(
+                                String.valueOf(sqlParamObj), Map.class, String.class, Object.class);
+            } else {
+                extraParams = (Map<String, Object>) sqlParamObj;
             }
         }
         assert extraParams != null;
         if (Strings.isBlank(database)) {
             database = "";
         }
-        return new MetadataConnection<>(new SqlConnection(host, port, username, password, database, extraParams));
+        return new MetadataConnection<>(
+                new SqlConnection(host, port, username, password, database, extraParams));
     }
 
     @Override
@@ -60,7 +78,8 @@ public class GreenplumMetaService extends AbstractMetaService<SqlConnection> {
     }
 
     @Override
-    public List<MetaColumnInfo> queryColumns(SqlConnection connection, String schema, String table) {
+    public List<MetaColumnInfo> queryColumns(
+            SqlConnection connection, String schema, String table) {
         try {
             return connection.getColumns(schema, table);
         } catch (SQLException | ClassNotFoundException e) {

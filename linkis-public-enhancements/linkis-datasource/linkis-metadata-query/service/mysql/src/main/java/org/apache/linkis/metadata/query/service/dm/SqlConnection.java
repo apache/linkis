@@ -1,9 +1,10 @@
 package org.apache.linkis.metadata.query.service.dm;
 
-
-import org.apache.commons.lang.StringUtils;
 import org.apache.linkis.common.conf.CommonVars;
 import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
+
+import org.apache.commons.lang.StringUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +19,8 @@ public class SqlConnection implements Closeable {
     private static final Logger LOG = LoggerFactory.getLogger(SqlConnection.class);
 
     private static final CommonVars<String> SQL_DRIVER_CLASS =
-            CommonVars.apply("wds.linkis.server.mdm.service.dameng.driver", "dm.jdbc.driver.DmDriver");
+            CommonVars.apply(
+                    "wds.linkis.server.mdm.service.dameng.driver", "dm.jdbc.driver.DmDriver");
 
     private static final CommonVars<String> SQL_CONNECT_URL =
             CommonVars.apply("wds.linkis.server.mdm.service.dameng.url", "jdbc:dm://%s:%s/%s");
@@ -27,13 +29,17 @@ public class SqlConnection implements Closeable {
 
     private ConnectMessage connectMessage;
 
-    public SqlConnection(String host, Integer port,
-                         String username, String password,
-                         String database,
-                         Map<String, Object> extraParams) throws ClassNotFoundException, SQLException {
+    public SqlConnection(
+            String host,
+            Integer port,
+            String username,
+            String password,
+            String database,
+            Map<String, Object> extraParams)
+            throws ClassNotFoundException, SQLException {
         connectMessage = new ConnectMessage(host, port, username, password, extraParams);
         conn = getDBConnection(connectMessage, database);
-        //Try to create statement
+        // Try to create statement
         Statement statement = conn.createStatement();
         statement.close();
     }
@@ -44,7 +50,9 @@ public class SqlConnection implements Closeable {
         ResultSet rs = null;
         try {
             stmt = conn.createStatement();
-            rs = stmt.executeQuery("select distinct object_name TABLE_SCHEMA from all_objects where object_type = 'SCH'");
+            rs =
+                    stmt.executeQuery(
+                            "select distinct object_name TABLE_SCHEMA from all_objects where object_type = 'SCH'");
             while (rs.next()) {
                 dataBaseName.add(rs.getString(1));
             }
@@ -54,14 +62,15 @@ public class SqlConnection implements Closeable {
         return dataBaseName;
     }
 
-
     public List<String> getAllTables(String schema) throws SQLException {
         List<String> tableNames = new ArrayList<>();
         Statement stmt = null;
         ResultSet rs = null;
         try {
             stmt = conn.createStatement();
-            rs = stmt.executeQuery("select TABLE_NAME from dba_tables where owner='" + schema + "'");
+            rs =
+                    stmt.executeQuery(
+                            "select TABLE_NAME from dba_tables where owner='" + schema + "'");
             while (rs.next()) {
                 tableNames.add(rs.getString(1));
             }
@@ -71,15 +80,16 @@ public class SqlConnection implements Closeable {
         }
     }
 
-    public List<MetaColumnInfo> getColumns(String database, String table) throws SQLException, ClassNotFoundException {
+    public List<MetaColumnInfo> getColumns(String database, String table)
+            throws SQLException, ClassNotFoundException {
         List<MetaColumnInfo> columns = new ArrayList<>();
         String columnSql = "SELECT * FROM " + database + "." + table + " WHERE 1 = 2";
         PreparedStatement ps = null;
         ResultSet rs = null;
         ResultSetMetaData meta = null;
         try {
-            List<String> primaryKeys = getPrimaryKeys(database,table);
-            Map<String, String> columnCommentMap = getColumnComment(database,table);
+            List<String> primaryKeys = getPrimaryKeys(database, table);
+            Map<String, String> columnCommentMap = getColumnComment(database, table);
             ps = conn.prepareStatement(columnSql);
             rs = ps.executeQuery();
             meta = rs.getMetaData();
@@ -94,9 +104,9 @@ public class SqlConnection implements Closeable {
                     info.setPrimaryKey(true);
                 }
                 String colComment = columnCommentMap.get(meta.getColumnName(i));
-                if (StringUtils.isNotBlank(colComment)){
+                if (StringUtils.isNotBlank(colComment)) {
                     info.setColComment(colComment);
-                }else {
+                } else {
                     info.setColComment(StringUtils.EMPTY);
                 }
                 columns.add(info);
@@ -107,10 +117,11 @@ public class SqlConnection implements Closeable {
         return columns;
     }
 
-    private List<String> getPrimaryKeys(/*Connection connection, */String schema,String table) throws SQLException {
+    private List<String> getPrimaryKeys(
+            /*Connection connection, */ String schema, String table) throws SQLException {
         ResultSet rs = null;
         List<String> primaryKeys = new ArrayList<>();
-//        try {
+        //        try {
         DatabaseMetaData dbMeta = conn.getMetaData();
         rs = dbMeta.getPrimaryKeys(null, schema, table);
         while (rs.next()) {
@@ -125,19 +136,20 @@ public class SqlConnection implements Closeable {
     }
     /**
      * Get Column Comment
+     *
      * @param table table name
      * @return
      * @throws SQLException
      */
-    private Map<String,String> getColumnComment(String schema,String table) throws SQLException {
+    private Map<String, String> getColumnComment(String schema, String table) throws SQLException {
         ResultSet rs = null;
-        Map<String,String> columnComment = new HashMap();
+        Map<String, String> columnComment = new HashMap();
 
         DatabaseMetaData dbMeta = conn.getMetaData();
-        rs = dbMeta.getColumns(null,schema, table, "%");
-        while(rs.next()){
+        rs = dbMeta.getColumns(null, schema, table, "%");
+        while (rs.next()) {
             System.out.println(rs.getString("REMARKS"));
-            columnComment.put(rs.getString("COlUMN_NAME"),rs.getString("REMARKS"));
+            columnComment.put(rs.getString("COlUMN_NAME"), rs.getString("REMARKS"));
         }
         return columnComment;
     }
@@ -146,8 +158,8 @@ public class SqlConnection implements Closeable {
      * close database resource
      *
      * @param connection connection
-     * @param statement  statement
-     * @param resultSet  result set
+     * @param statement statement
+     * @param resultSet result set
      */
     private void closeResource(Connection connection, Statement statement, ResultSet resultSet) {
         try {
@@ -176,31 +188,37 @@ public class SqlConnection implements Closeable {
      * @return
      * @throws ClassNotFoundException
      */
-    private Connection getDBConnection(ConnectMessage connectMessage, String database) throws ClassNotFoundException, SQLException {
-        String extraParamString = connectMessage.extraParams.entrySet()
-                .stream().map(e -> String.join("=", e.getKey(), String.valueOf(e.getValue())))
-                .collect(Collectors.joining("&"));
+    private Connection getDBConnection(ConnectMessage connectMessage, String database)
+            throws ClassNotFoundException, SQLException {
+        String extraParamString =
+                connectMessage.extraParams.entrySet().stream()
+                        .map(e -> String.join("=", e.getKey(), String.valueOf(e.getValue())))
+                        .collect(Collectors.joining("&"));
         Class.forName(SQL_DRIVER_CLASS.getValue());
-        String url = String.format(SQL_CONNECT_URL.getValue(), connectMessage.host, connectMessage.port, database);
+        String url =
+                String.format(
+                        SQL_CONNECT_URL.getValue(),
+                        connectMessage.host,
+                        connectMessage.port,
+                        database);
         if (!connectMessage.extraParams.isEmpty()) {
             url += "?" + extraParamString;
         }
         try {
-//            return DriverManager.getConnection(url, connectMessage.username, connectMessage.password);
+            //            return DriverManager.getConnection(url, connectMessage.username,
+            // connectMessage.password);
             Properties prop = new Properties();
-            prop.put("user",connectMessage.username);
-            prop.put("password",connectMessage.password);
-            prop.put("remarksReporting","true");
-            return DriverManager.getConnection(url,prop);
+            prop.put("user", connectMessage.username);
+            prop.put("password", connectMessage.password);
+            prop.put("remarksReporting", "true");
+            return DriverManager.getConnection(url, prop);
         } catch (Exception e) {
             e.printStackTrace();
             throw e;
         }
     }
 
-    /**
-     * Connect message
-     */
+    /** Connect message */
     private static class ConnectMessage {
         private String host;
 
@@ -212,9 +230,12 @@ public class SqlConnection implements Closeable {
 
         private Map<String, Object> extraParams;
 
-        public ConnectMessage(String host, Integer port,
-                              String username, String password,
-                              Map<String, Object> extraParams) {
+        public ConnectMessage(
+                String host,
+                Integer port,
+                String username,
+                String password,
+                Map<String, Object> extraParams) {
             this.host = host;
             this.port = port;
             this.username = username;
@@ -222,5 +243,4 @@ public class SqlConnection implements Closeable {
             this.extraParams = extraParams;
         }
     }
-
 }

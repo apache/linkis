@@ -17,7 +17,6 @@
 
 package org.apache.linkis.metadata.query.server.loader;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.linkis.common.conf.CommonVars;
 import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.common.exception.ErrorException;
@@ -70,7 +69,7 @@ public class MetaClassLoaderManager {
         boolean needToLoad = true;
         boolean isContains = CacheConfiguration.MYSQL_RELATIONSHIP_LIST.getValue().contains(dsType);
         String baseType = dsType;
-        if(isContains) baseType = MYSQL_BASE_DIR;
+        if (isContains) baseType = MYSQL_BASE_DIR;
 
         MetaServiceInstance serviceInstance = metaServiceInstances.get(dsType);
         if (Objects.nonNull(serviceInstance)) {
@@ -137,7 +136,7 @@ public class MetaClassLoaderManager {
                                     String prefix =
                                             dsType.substring(0, 1).toUpperCase()
                                                     + dsType.substring(1);
-                                    expectClassName = String.format(META_CLASS_NAME ,prefix);
+                                    expectClassName = String.format(META_CLASS_NAME, prefix);
                                 }
                                 Class<? extends MetadataService> metaServiceClass =
                                         searchForLoadMetaServiceClass(

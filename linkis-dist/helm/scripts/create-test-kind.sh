@@ -55,6 +55,3 @@ kind load docker-image mysql:${MYSQL_VERSION} --name ${KIND_CLUSTER_NAME}
 echo "# Deploying MySQL ..."
 kubectl create ns mysql
 kubectl apply -n mysql -f ${RESOURCE_DIR}/mysql.yaml
-
-
-

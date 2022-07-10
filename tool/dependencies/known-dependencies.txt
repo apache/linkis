@@ -489,7 +489,7 @@ spring-jdbc-5.2.15.RELEASE.jar
 spring-security-crypto-5.3.9.RELEASE.jar
 spring-security-rsa-1.0.9.RELEASE.jar
 spring-tx-5.2.15.RELEASE.jar
-spring-web-5.2.15.RELEASE.jar
+spring-web-5.2.16.RELEASE.jar
 spring-webflux-5.2.15.RELEASE.jar
 spring-webmvc-5.2.15.RELEASE.jar
 sqoop-1.4.6-hadoop200.jar

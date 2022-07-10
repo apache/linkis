@@ -4,7 +4,7 @@ Helm charts for Linkis
 [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
 
 # Pre-requisites
-* [Kubernetes](https://kubernetes.io/docs/setup/), minimum version v2.21.0+
+* [Kubernetes](https://kubernetes.io/docs/setup/), minimum version v1.21.0+
 * [Helm](https://helm.sh/docs/intro/install/), minimum version v3.0.0+.
 
 # Installation

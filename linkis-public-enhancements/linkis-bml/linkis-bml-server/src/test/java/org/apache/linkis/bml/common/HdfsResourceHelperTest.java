@@ -20,30 +20,15 @@ package org.apache.linkis.bml.common;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
-import java.util.HashMap;
-
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ResourceHelperTest {
+public class HdfsResourceHelperTest {
     @Test
     @DisplayName("testCheckBmlResourceStoragePrefixPathIfChanged")
     public void testCheckBmlResourceStoragePrefixPathIfChanged() {
         String path = "hdfs:///data/linkis/linkis/20220609/b4fd8f59-9492-4a0f-a074-9ac573a69b60";
         ResourceHelper hdfsResourceHelper = new HdfsResourceHelper();
         boolean hasChanged = hdfsResourceHelper.checkBmlResourceStoragePrefixPathIfChanged(path);
-        String newPath =
-                hdfsResourceHelper.generatePath(
-                        "linkis",
-                        path.substring(path.lastIndexOf(File.separator) + 1),
-                        new HashMap<>());
-        assertEquals(
-                newPath,
-                "hdfs:///apps-data/linkis/bml/20220710/b4fd8f59-9492-4a0f-a074-9ac573a69b60");
         assertTrue(hasChanged);
-        path = "file:///data/dss/bml/linkis/linkis/20220609/b4fd8f59-9492-4a0f-a074-9ac573a69b60";
-        LocalResourceHelper localResourceHelper = new LocalResourceHelper();
-        hasChanged = localResourceHelper.checkBmlResourceStoragePrefixPathIfChanged(path);
-        assertFalse(hasChanged);
     }
 }

@@ -40,4 +40,12 @@ public interface ResourceHelper {
     public String getSchema();
 
     boolean checkIfExists(String path, String user) throws IOException;
+
+    /**
+     * check wds.linkis.bml.hdfs.prefix or wds.linkis.bml.local.prefix has changed or not
+     *
+     * @param path resource path
+     * @return result
+     */
+    boolean checkBmlResourceStoragePrefixPathIfChanged(String path);
 }

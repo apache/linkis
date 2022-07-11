@@ -21,9 +21,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class VersionServiceImplTest {
 
@@ -31,6 +33,8 @@ public class VersionServiceImplTest {
     @DisplayName("testCheckBmlResourceStoragePrefixPathIfChanged")
     public void testUpdateVersion() {
         String path = "hdfs:///data/linkis/linkis/20220609/b4fd8f59-9492-4a0f-a074-9ac573a69b60";
+        SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
+        String dateStr = format.format(new Date());
         ResourceHelper hdfsResourceHelper = new HdfsResourceHelper();
         String newPath =
                 hdfsResourceHelper.generatePath(
@@ -39,6 +43,8 @@ public class VersionServiceImplTest {
                         new HashMap<>());
         assertEquals(
                 newPath,
-                "hdfs:///apps-data/linkis/bml/20220710/b4fd8f59-9492-4a0f-a074-9ac573a69b60");
+                "hdfs:///apps-data/linkis/bml/"
+                        + dateStr
+                        + "/b4fd8f59-9492-4a0f-a074-9ac573a69b60");
     }
 }

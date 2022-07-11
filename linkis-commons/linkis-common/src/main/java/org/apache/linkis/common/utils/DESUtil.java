@@ -25,9 +25,7 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
 
 import java.security.SecureRandom;
-
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
+import java.util.Base64;
 
 public class DESUtil {
     private static final String DES = "DES";
@@ -50,8 +48,7 @@ public class DESUtil {
             }
         }
         byte[] bt = encrypt(data.getBytes(), key.getBytes());
-        String strs = new BASE64Encoder().encode(bt);
-        return strs;
+        return Base64.getMimeEncoder().encodeToString(bt);
     }
 
     /**
@@ -73,8 +70,8 @@ public class DESUtil {
                 i++;
             }
         }
-        BASE64Decoder decoder = new BASE64Decoder();
-        byte[] buf = decoder.decodeBuffer(data);
+        Base64.Decoder decoder = Base64.getMimeDecoder();
+        byte[] buf = decoder.decode(data);
         byte[] bt = decrypt(buf, key.getBytes());
         return new String(bt);
     }

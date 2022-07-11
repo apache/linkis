@@ -91,7 +91,13 @@ public class VersionServiceImpl implements VersionService {
         String fileName = new String(file.getOriginalFilename().getBytes("ISO8859-1"), "UTF-8");
         // 获取资源的path
         String newVersion = params.get("newVersion").toString();
-        String path = versionDao.getResourcePath(resourceId) + "_" + newVersion;
+        String path = versionDao.getResourcePath(resourceId);
+        // if the bml resource storage prefix has changed，then regenerate the path.
+        if (resourceHelper.checkBmlResourceStoragePrefixPathIfChanged(path)) {
+            path =
+                    resourceHelper.generatePath(
+                            user, path.substring(path.lastIndexOf("/") + 1), new HashMap<>());
+        }
         // 上传资源前，需要对resourceId这个字符串的intern进行加锁，这样所有需要更新该资源的用户都会同步
         // synchronized (resourceIdLock.intern()){
         // 资源上传到hdfs

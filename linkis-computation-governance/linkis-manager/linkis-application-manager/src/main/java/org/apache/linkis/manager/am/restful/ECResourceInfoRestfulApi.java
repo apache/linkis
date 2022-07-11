@@ -102,10 +102,10 @@ public class ECResourceInfoRestfulApi {
         String username = SecurityFilter.getLoginUsername(req);
         // Parameter judgment
         instance = ECResourceInfoUtils.strCheckAndDef(instance, null);
-        creator = ECResourceInfoUtils.strCheckAndDef(creator, null);
+        String creatorUser = ECResourceInfoUtils.strCheckAndDef(creator, null);
         engineType = ECResourceInfoUtils.strCheckAndDef(engineType, null);
-        if (null != creator && !ECResourceInfoUtils.checkNameValid(creator)) {
-            return Message.error("Invalid creator : " + creator);
+        if (null != creatorUser && !ECResourceInfoUtils.checkNameValid(creatorUser)) {
+            return Message.error("Invalid creator : " + creatorUser);
         }
         if (null == startDate) {
             Calendar calendar = Calendar.getInstance();
@@ -116,8 +116,8 @@ public class ECResourceInfoRestfulApi {
         }
         if (Configuration.isAdmin(username)) {
             username = null;
-            if (StringUtils.isNotBlank(creator)) {
-                username = creator;
+            if (StringUtils.isNotBlank(creatorUser)) {
+                username = creatorUser;
             }
         }
         List<ECResourceInfoRecordVo> list = new ArrayList<>();

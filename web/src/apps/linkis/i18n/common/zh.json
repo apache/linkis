@@ -18,6 +18,7 @@
             "addTags": "添加标签",
             "find": "查询",
             "initiator": "创建者",
+            "inputOwnerHint": "请输入创建者",
             "jumpPage": "请在跳转页面查看……",
             "editedSuccess": "修改成功",
             "errorCode": "错误码",

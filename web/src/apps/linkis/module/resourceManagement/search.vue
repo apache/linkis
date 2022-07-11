@@ -21,13 +21,7 @@
       <Input :maxlength="50" v-model="searchBar.instance" :placeholder="$t('message.linkis.instanceName')"/>
     </FormItem>
     <FormItem prop="owner" :label="$t('message.linkis.initiator')" >
-      <Select  v-model="searchBar.owner" style="width:100px" clearable>
-        <Option
-          v-for="(item) in ownerList"
-          :label="item"
-          :value="item"
-          :key="item"/>
-      </Select>
+      <Input :maxlength="50" v-model="searchBar.owner" style="width:100px" clearable :placeholder="$t('message.linkis.inputOwnerHint')"/>
     </FormItem>
     <FormItem prop="shortcut" :label="$t('message.linkis.formItems.date.label')">
       <DatePicker
@@ -53,7 +47,7 @@
       </Select>
     </FormItem>
     <FormItem>
-      <Button type="primary" @click="search">
+      <Button type="primary" @click="search(false)">
         {{ $t('message.linkis.search') }}
       </Button>
     </FormItem>
@@ -70,16 +64,15 @@ export default {
       type: Array,
       default: () => []
     },
-    ownerList: {
-      type: Array,
-      default: () => []
-    },
     engineTypes: {
       type: Array,
       default: () => []
     },
     stopbtn: {
       type: Boolean
+    },
+    page: {
+      type: Object
     }
   },
   data() {
@@ -136,7 +129,8 @@ export default {
   activated() {
   },
   methods: {
-    search() {
+    search(isChangingPage) {
+      if (!isChangingPage) this.page.pageNow = 1
       this.$emit("search", this.searchBar)
     },
     stop() {

@@ -18,7 +18,7 @@
 <template>
   <div :style="{height: '100%'}">
     <div v-show="!showviewlog" class="ecmEngine">
-      <Search ref="search" :statusList="statusList" :ownerList="ownerList" :engineTypes="engineTypes" @search="search" :stopbtn="true" />
+      <Search ref="search" :statusList="statusList" :engineTypes="engineTypes" @search="search" :stopbtn="true" :page="page" />
       <Spin
         v-if="loading"
         size="large"
@@ -89,7 +89,6 @@ export default {
       showviewlog: false,
       loading: false,
       healthyStatusList: [],
-      ownerList: [],
       engineTypes: [],
       keyList: [],
       statusList: [],
@@ -248,14 +247,8 @@ export default {
         this.page.totalSize = engines.totalPage ? engines.totalPage : enginesList.length;
         this.allEngines = [ ...enginesList ];
         this.tableData = [ ...enginesList ];
-        this.ownerList = [];
         let data = await api.fetch('/configuration/engineType', 'get')
         this.engineTypes = data && data.engineType ? data.engineType : []
-        enginesList.forEach(item => {
-          if (this.ownerList.indexOf(item.createUser) === -1) {
-            this.ownerList.push(item.createUser)
-          }
-        })
         this.loading = false;
       } catch (err) {
         console.log(err)
@@ -324,13 +317,13 @@ export default {
     // 切换分页
     change(val) {
       this.page.pageNow = val;
-      this.$refs.search.search();
+      this.$refs.search.search(true);
     },
     // 页容量变化
     changeSize(val) {
       this.page.pageSize = val;
       this.page.pageNow = 1;
-      this.$refs.search.search();
+      this.$refs.search.search(true);
     },
     // 搜索
     search(e) {

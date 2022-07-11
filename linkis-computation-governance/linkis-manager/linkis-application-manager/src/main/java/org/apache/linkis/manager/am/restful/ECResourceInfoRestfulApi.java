@@ -41,7 +41,6 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @RequestMapping(
         path = "/linkisManager/ecinfo",
@@ -128,14 +127,7 @@ public class ECResourceInfoRestfulApi {
         try {
             queryTasks =
                     ecResourceInfoService.getECResourceInfoRecordList(
-                            instance, endDate, startDate, username);
-            if (StringUtils.isNotBlank(engineType)) {
-                String finalEngineType = engineType;
-                queryTasks =
-                        queryTasks.stream()
-                                .filter(info -> info.getLabelValue().contains(finalEngineType))
-                                .collect(Collectors.toList());
-            }
+                            instance, endDate, startDate, username, engineType);
             queryTasks.forEach(
                     info -> {
                         ECResourceInfoRecordVo ecrHistroryListVo = new ECResourceInfoRecordVo();

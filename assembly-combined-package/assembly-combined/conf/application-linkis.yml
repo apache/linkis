@@ -14,6 +14,9 @@
 #
 
 eureka:
+  instance:
+    metadata-map:
+      prometheus.path: ${prometheus.path:${prometheus.endpoint}}
   client:
     serviceUrl:
       defaultZone: http://127.0.0.1:20303/eureka/
@@ -21,7 +24,8 @@ management:
   endpoints:
     web:
       exposure:
-        include: refresh,info
+        include: refresh,info,health,metrics
+
 logging:
   config: classpath:log4j2.xml
 

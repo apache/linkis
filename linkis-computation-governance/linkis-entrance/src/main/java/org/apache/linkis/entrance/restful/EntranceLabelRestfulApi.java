@@ -37,7 +37,8 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.Map;
 
-@Api(tags = "标签管理")
+/*@Api(tags = "标签管理")*/
+@Api(tags = "Tag_Management")
 @RestController
 @RequestMapping(path = "/entrance/operation/label")
 public class EntranceLabelRestfulApi {
@@ -60,8 +61,8 @@ public class EntranceLabelRestfulApi {
         return Message.ok();
     }
 
-    @ApiOperation(value = "标记脱机", notes = "标记脱机", response = Message.class)
-    @ApiOperationSupport(ignoreParameters = {"jsonNode"})
+    /*@ApiOperation(value = "标记下线", notes = "标记下线", response = Message.class)*/
+    @ApiOperation(value = "Markoffline", notes = "Mark_Offline", response = Message.class)
     @RequestMapping(path = "/markoffline", method = RequestMethod.GET)
     public Message updateRouteLabel(HttpServletRequest req) {
         Map<String, Object> labels = new HashMap<String, Object>();

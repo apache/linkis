@@ -75,9 +75,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Api(tags = "ECM资源管理")
-@RequestMapping(
-        path = "/linkisManager",
-        produces = {"application/json"})
+@RequestMapping(path = "/linkisManager", produces = {"application/json"})
 @RestController
 public class EMRestfulApi {
 
@@ -104,19 +102,17 @@ public class EMRestfulApi {
         }
     }
 
-    @ApiOperation(
-            value = "ECM资源清单",
-            notes = "获取所有ECM资源详细清单列表可根据条件查询，默认查询所有",
-            response = Message.class)
+    /*@ApiOperation(value = "ECM资源清单", notes = "获取所有ECM资源详细清单列表可根据条件查询，默认查询所有", response = Message.class)
     @ApiImplicitParams({
         @ApiImplicitParam(name = "instance", required = false, dataType = "String", value = "实例名称"),
-        @ApiImplicitParam(
-                name = "nodeHealthy",
-                required = false,
-                dataType = "String",
-                value =
-                        "状态，状态有以下枚举类型 ‘Healthy‘, ‘UnHealthy‘, ‘WARN‘, ’StockAvailable’, ‘StockUnavailable’"),
+        @ApiImplicitParam(name = "nodeHealthy", required = false, dataType = "String", value = "状态，状态有以下枚举类型 ‘Healthy‘, ‘UnHealthy‘, ‘WARN‘, ’StockAvailable’, ‘StockUnavailable’"),
         @ApiImplicitParam(name = "owner", required = false, dataType = "String", value = "创建者")
+    })*/
+    @ApiOperation(value = "ListAllEMs", notes = "List_All_EMs", response = Message.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "instance", dataType = "String", value = "Instance"),
+            @ApiImplicitParam(name = "nodeHealthy", dataType = "String", value = "Node_Healthy", example = "Healthy, UnHealthy, WARN, StockAvailable, StockUnavailable"),
+            @ApiImplicitParam(name = "owner", dataType = "String", value = "Owner")
     })
     // todo add healthInfo
     @RequestMapping(path = "/listAllEMs", method = RequestMethod.GET)
@@ -170,13 +166,13 @@ public class EMRestfulApi {
         return Message.ok().data("EMs", allEMVoFilter3);
     }
 
-    @ApiOperation(value = "ECM管理中状态列表", notes = "获取状态列表清单", response = Message.class)
+    /*@ApiOperation(value = "ECM管理中状态列表", notes = "获取状态列表清单", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(
-                name = "onlyEditable",
-                required = false,
-                dataType = "Boolean",
-                value = "是否仅可编辑")
+        @ApiImplicitParam(name = "onlyEditable", required = false, dataType = "Boolean", value = "是否仅可编辑")
+    })*/
+    @ApiOperation(value = "ListAllNodeHealthyStatus", notes = "List_All_Node_Healthy_Status", response = Message.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "onlyEditable", dataType = "Boolean", value = "Only_Editable")
     })
     @RequestMapping(path = "/listAllECMHealthyStatus", method = RequestMethod.GET)
     public Message listAllNodeHealthyStatus(

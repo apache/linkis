@@ -39,7 +39,8 @@ import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Api(tags = "任务管理")
+/*@Api(tags = "任务管理")*/
+@Api(tags = "Task_Management")
 @RestController
 @RequestMapping(path = "/entrance/operation/metrics")
 public class EntranceMetricRestfulApi {
@@ -53,15 +54,17 @@ public class EntranceMetricRestfulApi {
         this.entranceServer = entranceServer;
     }
 
-    @ApiOperation(value = "任务信息", notes = "任务信息", response = Message.class)
+    /*@ApiOperation(value = "任务信息", notes = "任务信息", response = Message.class)
     @ApiImplicitParams({
         @ApiImplicitParam(name = "user", required = false, dataType = "String", value = "user"),
         @ApiImplicitParam(name = "creator", required = false, dataType = "String", value = "创建者"),
-        @ApiImplicitParam(
-                name = "engineTypeLabel",
-                required = false,
-                dataType = "String",
-                value = "引擎类型标签")
+        @ApiImplicitParam(name = "engineTypeLabel", required = false, dataType = "String", value = "引擎类型标签")
+    })*/
+    @ApiOperation(value = "Taskinfo", notes = "Task_Info", response = Message.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "user", dataType = "String", value = "User"),
+            @ApiImplicitParam(name = "creator", dataType = "String", value = "Creator"),
+            @ApiImplicitParam(name = "engineTypeLabel", dataType = "String", value = "Engine_Type_Label")
     })
     @RequestMapping(path = "/taskinfo", method = RequestMethod.GET)
     public Message taskinfo(
@@ -117,7 +120,8 @@ public class EntranceMetricRestfulApi {
                 .data("queuedNumber", queuedNumber);
     }
 
-    @ApiOperation(value = "启动任务", notes = "启动任务", response = Message.class)
+/*    @ApiOperation(value = "启动任务", notes = "启动任务", response = Message.class)*/
+    @ApiOperation(value = "Status", notes = "Running_Task", response = Message.class)
     @RequestMapping(path = "/runningtask", method = RequestMethod.GET)
     public Message status(HttpServletRequest req) {
 

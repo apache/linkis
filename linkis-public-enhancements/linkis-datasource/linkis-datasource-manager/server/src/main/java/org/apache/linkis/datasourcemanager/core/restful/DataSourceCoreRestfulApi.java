@@ -183,7 +183,7 @@ public class DataSourceCoreRestfulApi {
     @RequestMapping(value = "/parameter/{dataSourceId}/json", method = RequestMethod.POST)
     public Message insertJsonParameter(
             @PathVariable("dataSourceId") Long dataSourceId,
-            @RequestBody Map<String, Object> params,
+            @RequestBody() Map<String, Object> params,
             HttpServletRequest req) {
         return RestfulApiHelper.doAndResponse(
                 () -> {

@@ -31,13 +31,15 @@ import com.netflix.discovery.DiscoveryManager;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
-@Api(tags = "通用")
+/*@Api(tags = "通用")*/
+@Api(tags = "Universal")
 @RestController
 @RequestMapping(path = "/")
 public class CommonRestfulApi {
     @Autowired private DiscoveryClient client;
 
-    @ApiOperation(value = "下线某服务", notes = "下线某服务", response = Message.class)
+    /*@ApiOperation(value = "下线某服务", notes = "下线某服务", response = Message.class)*/
+    @ApiOperation(value = "Offline", notes = "Offline_A_Service", response = Message.class)
     @RequestMapping(path = "/offline", method = RequestMethod.GET)
     public Message offline(HttpServletRequest req) {
         DiscoveryManager.getInstance().shutdownComponent();

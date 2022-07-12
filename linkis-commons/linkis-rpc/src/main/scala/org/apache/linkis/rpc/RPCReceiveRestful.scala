@@ -114,7 +114,8 @@ private[rpc] class RPCReceiveRestful extends RPCReceiveRemote with Logging {
     case _ =>
       RPCProduct.getRPCProduct.toMessage(obj)
   }
-  @ApiOperation(value="接收",notes="rpc接收")
+  /*@ApiOperation(value="接收",notes="rpc接收")*/
+  @ApiOperation(value="Receive",notes="Take_Over")
   @ApiOperationSupport(ignoreParameters = Array("message"))
   @RequestMapping(path = Array("/rpc/receive"),method = Array(RequestMethod.POST))
   override def receive(@RequestBody message: Message): Message = catchIt {
@@ -129,12 +130,14 @@ private[rpc] class RPCReceiveRestful extends RPCReceiveRemote with Logging {
     val event = RPCMessageEvent(obj, serviceInstance)
     event.map(opEvent(_, obj, event)).getOrElse(RPCProduct.getRPCProduct.notFound())
   }
-  @ApiOperation(value="接收和回复",notes="rpc接收和回复")
+  /*@ApiOperation(value="接收和回复",notes="rpc接收和回复")*/
+  @ApiOperation(value="ReceiveAndReply",notes="Receive_And_Reply")
   @ApiOperationSupport(ignoreParameters = Array("message"))
   @RequestMapping(path = Array("/rpc/receiveAndReply"),method = Array(RequestMethod.POST))
   override def receiveAndReply(@RequestBody message: Message): Message = receiveAndReply(message, _.receiveAndReply(_, _))
 
-  @ApiOperation(value="回复",notes="rpc回复")
+  /*@ApiOperation(value="回复",notes="rpc回复")*/
+  @ApiOperation(value="ReceiveAndReplyInMills",notes="Receive_And_Reply_In_Mills")
   @ApiOperationSupport(ignoreParameters = Array("message"))
   @RequestMapping(path = Array("/rpc/replyInMills"),method = Array(RequestMethod.POST))
   override def receiveAndReplyInMills(@RequestBody message: Message): Message = catchIt {

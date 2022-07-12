@@ -21,6 +21,12 @@ export local_host="`hostname --fqdn`"
 
 ipaddr=$(ip addr | awk '/^[0-9]+: / {}; /inet.*global/ {print gensub(/(.*)\/(.*)/, "\\1", "g", $2)}')
 
+## color
+RED='\033[0;31m'
+NC='\033[0m' # No Color
+GREEN='\033[0;32m'
+#used as: echo -e "Apache ${RED}Linkis ${NC} Test \n"
+
 function isLocal(){
     if [ "$1" == "127.0.0.1" ];then
         return 0
@@ -65,9 +71,11 @@ function copyFile(){
 
 function isSuccess(){
 if [ $? -ne 0 ]; then
-    echo "Failed to " + $1
+    echo -e "${RED}Failed${NC} to $1"
+    echo ""
     exit 1
 else
-    echo "Succeed to" + $1
+    echo -e "${GREEN}Succeed${NC} to $1"
+    echo ""
 fi
 }

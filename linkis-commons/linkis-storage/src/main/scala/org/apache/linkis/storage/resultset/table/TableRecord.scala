@@ -22,15 +22,15 @@ import org.apache.linkis.storage.resultset.ResultRecord
 import org.apache.linkis.storage.utils.StorageUtils
 
 
-class TableRecord(val row:Array[Any]) extends ResultRecord{
+class TableRecord(val row: Array[Any]) extends ResultRecord{
 
   override def cloneRecord(): Record = {
     new TableRecord(row)
   }
 
-  def tableRecordToString(nullValue:String = "NULL"):Array[String] = {
+  def tableRecordToString(nullValue: String = "NULL"): Array[String] = {
     row.map{ col =>
-      StorageUtils.colToString(col,nullValue)
+      StorageUtils.colToString(col, nullValue)
     }
   }
 

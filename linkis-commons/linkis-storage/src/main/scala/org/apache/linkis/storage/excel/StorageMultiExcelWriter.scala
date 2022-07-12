@@ -27,7 +27,7 @@ class StorageMultiExcelWriter(override val outputStream: OutputStream, override 
   private var sheetIndex = 0
 
 
-  override def init = {
+  override def init: Unit = {
     if (workBook == null) workBook = new SXSSFWorkbook()
     //1.让表自适应列宽
     if (sheet != null) {

@@ -97,7 +97,7 @@ class CodeLogicalUnitExecTask (parents: Array[ExecTask], children: Array[ExecTas
           getPhysicalContext.pushProgress(event)
           getPhysicalContext.pushLog(TaskLogEvent(this, LogUtils.generateInfo(s"Task submit to ec: ${codeExecutor.getEngineConnExecutor.getServiceInstance} get engineConnExecId is: ${engineConnExecId}")))
           new AsyncTaskResponse {
-            override def notifyMe(listener: NotifyListener): Unit = null
+            override def notifyMe(listener: NotifyListener): Unit = {}
 
             override def waitForCompleted(): TaskResponse = throw new OrchestratorErrorException(OrchestratorErrorCodeSummary.METHOD_NUT_SUPPORT_CODE, "waitForCompleted method not support")
           }

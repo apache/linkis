@@ -483,7 +483,7 @@ spring-cloud-starter-openfeign-2.2.9.RELEASE.jar
 spring-context-5.2.22.RELEASE.jar
 spring-context-support-5.2.22.RELEASE.jar
 spring-core-5.2.22.RELEASE.jar
-spring-expression-5.2.12.RELEASE.jar
+spring-expression-5.2.22.RELEASE.jar
 spring-jcl-5.2.22.RELEASE.jar
 spring-jdbc-5.2.22.RELEASE.jar
 spring-security-crypto-5.3.9.RELEASE.jar

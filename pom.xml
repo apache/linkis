@@ -156,7 +156,7 @@
         <maven-surefire-plugin.version>2.22.1</maven-surefire-plugin.version>
         <jacoco.version>0.8.7</jacoco.version>
         <jacoco.skip>false</jacoco.skip>
-        <spring.version>5.2.15.RELEASE</spring.version>
+        <spring.version>5.2.22.RELEASE</spring.version>
         <knife4j.version>2.0.9</knife4j.version>
     </properties>
 
@@ -804,7 +804,13 @@
                     </exclusion>
                 </exclusions>
             </dependency>
-
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-framework-bom</artifactId>
+                <version>${spring.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-parent</artifactId>

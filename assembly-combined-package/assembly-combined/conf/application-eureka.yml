@@ -25,6 +25,8 @@ server:
   response-cache-update-interval-ms: 2000
 eureka:
   instance:
+    metadata-map:
+      prometheus.path: ${prometheus.path:/actuator/prometheus}
     hostname:
 #    preferIpAddress: true
   client:
@@ -32,3 +34,9 @@ eureka:
 #    fetch-registry: false
     serviceUrl:
       defaultZone: http://127.0.0.1:20303/eureka/
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh,info,health,metrics

@@ -80,10 +80,11 @@ if [  -d $LINKIS_HOME ] && [ "$LINKIS_HOME" != "$workDir" ];then
 
    ## Every time, backup the old linkis home with timestamp and not clean them.
    ## If you want to clean them, please delete them manually.
-   curTs=`date +'%s'`
-   echo "mv  $LINKIS_HOME  $LINKIS_HOME-$curTs"
-   mv  $LINKIS_HOME  $LINKIS_HOME-$curTs
-   isSuccess "back up old LINKIS_HOME:$LINKIS_HOME to $LINKIS_HOME-$curTs"
+   backDir=$LINKIS_HOME-back-`date +'%s'`
+
+   echo "mv  $LINKIS_HOME  $backDir"
+   mv  $LINKIS_HOME  $backDir
+   isSuccess "back up old LINKIS_HOME:$LINKIS_HOME to $backDir"
 fi
 echo "try to create dir LINKIS_HOME: $LINKIS_HOME"
 sudo mkdir -p $LINKIS_HOME;sudo chown -R $deployUser:$deployUser $LINKIS_HOME
@@ -428,10 +429,8 @@ if [ "true" == "$PROMETHEUS_ENABLE" ]
 then
   echo "prometheus is enabled"
   sed -i ${txt}  "s#\#wds.linkis.prometheus.enable.*#wds.linkis.prometheus.enable=true#g" $common_conf
-  sed -i ${txt}  '/eureka:/a \\  instance:\n    metadata-map:\n      prometheus.path: ${prometheus.path:${prometheus.endpoint}}' $LINKIS_HOME/conf/application-linkis.yml
-  sed -i ${txt}  's#include: refresh,info#include: refresh,info,health,metrics,prometheus#g' $LINKIS_HOME/conf/application-linkis.yml
-  sed -i ${txt} '/instance:/a \    metadata-map:\n      prometheus.path: ${prometheus.path:/actuator/prometheus}' $LINKIS_HOME/conf/application-eureka.yml
-  sed -i ${txt} '$a \\nmanagement:\n  endpoints:\n    web:\n      exposure:\n        include: refresh,info,health,metrics,prometheus' $LINKIS_HOME/conf/application-eureka.yml
+  sed -i ${txt}  's#include: refresh,info.*#include: refresh,info,health,metrics,prometheus#g' $LINKIS_HOME/conf/application-linkis.yml
+  sed -i ${txt}  's#include: refresh,info.*#include: refresh,info,health,metrics,prometheus#g' $LINKIS_HOME/conf/application-eureka.yml
 fi
 
 echo "preveliges linkis command shells"

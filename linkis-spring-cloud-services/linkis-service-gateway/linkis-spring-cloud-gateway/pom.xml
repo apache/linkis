@@ -51,10 +51,6 @@
                     <groupId>org.springframework.cloud</groupId>
                     <artifactId>spring-cloud-starter-gateway</artifactId>
                 </exclusion>
-                <exclusion>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-web</artifactId>
-                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -86,11 +82,6 @@
                     <artifactId>spring-web</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
-            <version>${spring.web.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

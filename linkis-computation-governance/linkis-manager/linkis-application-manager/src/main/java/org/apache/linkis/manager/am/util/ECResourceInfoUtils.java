@@ -19,16 +19,14 @@ package org.apache.linkis.manager.am.util;
 import org.apache.linkis.common.utils.ByteTimeUtils;
 import org.apache.linkis.manager.am.vo.ResourceVo;
 import org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord;
+import org.apache.linkis.server.BDPJettyServerHelper;
 
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 
-import com.google.gson.Gson;
-import org.apache.linkis.server.BDPJettyServerHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -49,7 +47,8 @@ public class ECResourceInfoUtils {
 
     public static ResourceVo getStringToMap(String str, ECResourceInfoRecord info) {
         ResourceVo resourceVo = null;
-        Map<String, Object> map = BDPJettyServerHelper.gson().fromJson(str, new HashMap<>().getClass());
+        Map<String, Object> map =
+                BDPJettyServerHelper.gson().fromJson(str, new HashMap<>().getClass());
         if (MapUtils.isNotEmpty(map)) {
             resourceVo = new ResourceVo();
             if (info.getLabelValue().contains("spark")
@@ -58,7 +57,8 @@ public class ECResourceInfoUtils {
                     Map<String, Object> divermap = MapUtils.getMap(map, "driver");
                     resourceVo.setInstance(((Double) divermap.get("instance")).intValue());
                     resourceVo.setCores(((Double) divermap.get("cpu")).intValue());
-                    resourceVo.setMemory(ByteTimeUtils.byteStringAsBytes(divermap.get("memory").toString()));
+                    resourceVo.setMemory(
+                            ByteTimeUtils.byteStringAsBytes(divermap.get("memory").toString()));
                     return resourceVo;
                 } else {
                     logger.warn("Compatible with old data ,{},{}", info.getLabelValue(), info);

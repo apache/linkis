@@ -3,6 +3,7 @@ Linkis
 
 [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
 [![codecov](https://codecov.io/gh/apache/incubator-linkis/branch/master/graph/badge.svg)](https://codecov.io/gh/apache/incubator-linkis/branch/master)
+[![Page Views Count](https://badges.toozhao.com/badges/01G7TRNN1PH9PMSCYWDF3EK4QT/green.svg)](https://badges.toozhao.com/stats/01G7TRNN1PH9PMSCYWDF3EK4QT "Get your own page views count badge on badges.toozhao.com")
 
 [English](README.md) | [中文](README_CN.md)
 

@@ -384,12 +384,14 @@
         <dependency>
             <artifactId>janino</artifactId>
             <groupId>org.codehaus.janino</groupId>
-            <version>3.0.9</version>
+            <version>3.1.4</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.linkis</groupId>
             <artifactId>linkis-engineplugin-hive</artifactId>
             <version>1.1.3</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

@@ -30,3 +30,5 @@ target/
 
 # log folder
 logs/
+
+nohup.out

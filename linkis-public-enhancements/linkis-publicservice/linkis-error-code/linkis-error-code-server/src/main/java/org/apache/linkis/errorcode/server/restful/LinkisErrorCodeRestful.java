@@ -34,14 +34,16 @@ import io.swagger.annotations.ApiOperation;
 
 import java.util.List;
 
-@Api(tags = "Linkis错误代码")
+/*@Api(tags = "Linkis错误代码")*/
+@Api(tags = "Linkis_Error_Codes")
 @RestController
 @RequestMapping(path = "/errorcode")
 public class LinkisErrorCodeRestful {
 
     @Autowired private LinkisErrorCodeService linkisErrorCodeService;
 
-    @ApiOperation(value = "获取Linkis错误代码", notes = "获取Linkis错误代码列表", response = Message.class)
+/*    @ApiOperation(value = "获取Linkis错误代码", notes = "获取Linkis错误代码列表", response = Message.class)*/
+    @ApiOperation(value = "GetErrorCodes", notes = "Get_Error_Codes", response = Message.class)
     @RequestMapping(path = CommonConf.GET_ERRORCODE_URL, method = RequestMethod.GET)
     public Message getErrorCodes(HttpServletRequest request) {
         List<LinkisErrorCode> errorCodes = linkisErrorCodeService.getAllErrorCodes();

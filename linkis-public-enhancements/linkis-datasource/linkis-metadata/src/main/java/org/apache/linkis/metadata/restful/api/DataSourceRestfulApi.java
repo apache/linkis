@@ -45,7 +45,8 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.Map;
 
-@Api(tags = "数据源管理Api")
+/*@Api(tags = "数据源管理Api")*/
+@Api(tags = "Data_Source_Management APIs")
 @RestController
 @RequestMapping(path = "/datasource")
 public class DataSourceRestfulApi implements DataSourceRestfulRemote {
@@ -69,10 +70,8 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
         }
     }
 
-    @ApiOperation(
-            value = "get all db and tables",
-            notes = "get all db and tables",
-            response = Message.class)
+/*    @ApiOperation(value = "get all db and tables", notes = "get all db and tables", response = Message.class)*/
+    @ApiOperation(value = "QueryDbsWithTables", notes = "Query_Dbs_With_Tables", response = Message.class)
     @Override
     @RequestMapping(path = "all", method = RequestMethod.GET)
     public Message queryDbsWithTables(HttpServletRequest req) {
@@ -86,9 +85,13 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
         }
     }
 
-    @ApiOperation(value = "获取数据库表", notes = "根据数据库名获取该数据库表", response = Message.class)
+    /*@ApiOperation(value = "获取数据库表", notes = "根据数据库名获取该数据库表", response = Message.class)
     @ApiImplicitParams({
         @ApiImplicitParam(name = "database", required = false, dataType = "String", value = "数据库名称")
+    })*/
+    @ApiOperation(value = "QueryTables", notes = "Query_Tables", response = Message.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "database", dataType = "String", value = "Database")
     })
     @Override
     @RequestMapping(path = "tables", method = RequestMethod.GET)
@@ -105,17 +108,15 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
         }
     }
 
-    @ApiOperation(
-            value = "get columns of table",
-            notes = "get columns of table",
-            response = Message.class)
+    /*@ApiOperation(value = "get columns of table", notes = "get columns of table", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(
-                name = "database",
-                required = false,
-                dataType = "String",
-                value = "数据库名称"),
+        @ApiImplicitParam(name = "database", required = false, dataType = "String", value = "数据库名称"),
         @ApiImplicitParam(name = "table", required = false, dataType = "String", value = "表名称")
+    })*/
+    @ApiOperation(value = "QueryTableMeta", notes = "Query_Table_Meta", response = Message.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "database", dataType = "String", value = "Database"),
+            @ApiImplicitParam(name = "table", dataType = "String", value = "Table")
     })
     @Override
     @RequestMapping(path = "columns", method = RequestMethod.GET)
@@ -138,7 +139,12 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
         }
     }
 
-    @ApiOperation(value = "get size ", notes = "get size ", response = Message.class)
+    @ApiOperation(value = "SizeOf", notes = "Size_Of", response = Message.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "database", dataType = "String", value = "Database"),
+            @ApiImplicitParam(name = "table", dataType = "String", value = "Table"),
+            @ApiImplicitParam(name = "partition", dataType = "String", value = "Partition")
+    })
     @Override
     @RequestMapping(path = "size", method = RequestMethod.GET)
     public Message sizeOf(
@@ -161,10 +167,11 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
         }
     }
 
-    @ApiOperation(
-            value = "get partitions of  ",
-            notes = "get partitions of  ",
-            response = Message.class)
+    @ApiOperation(value = "Partitions", notes = "Partitions", response = Message.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "database", dataType = "String", value = "Database"),
+            @ApiImplicitParam(name = "table", dataType = "String", value = "Table")
+    })
     @Override
     @RequestMapping(path = "partitions", method = RequestMethod.GET)
     public Message partitions(

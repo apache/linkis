@@ -49,14 +49,15 @@ import java.io.InputStream;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Api(tags = "BMLFS管理")
+/*@Api(tags = "BMLFS管理")*/
+@Api(tags = "BMLFS_Management")
 @RestController
 @RequestMapping(path = "/filesystem")
 public class BMLFsRestfulApi {
 
     @Autowired BMLHelper bmlHelper;
 
-    @ApiOperation(value = "打开ScriptFromBML", notes = "openScriptFromBML", response = Message.class)
+    /*@ApiOperation(value = "打开ScriptFromBML", notes = "openScriptFromBML", response = Message.class)
     @ApiImplicitParams({
         @ApiImplicitParam(
                 name = "resourceId",
@@ -71,6 +72,14 @@ public class BMLFsRestfulApi {
                 dataType = "String",
                 value = "项目名称"),
         @ApiImplicitParam(name = "fileName", required = true, dataType = "String", value = "文件名称")
+    })*/
+    @ApiOperation(value = "OpenScriptFromBML", notes = "Open_Script_From_BML", response = Message.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "resourceId", required = false, dataType = "String", value = "Resource_Id"),
+            @ApiImplicitParam(name = "version", required = false, dataType = "String", value = "Version"),
+            @ApiImplicitParam(name = "creator", required = false, dataType = "String", value = "Creator"),
+            @ApiImplicitParam(name = "projectName", required = false, dataType = "String", value = "Project_Name"),
+            @ApiImplicitParam(name = "fileName", required = true, dataType = "String", value = "File_Name")
     })
     @RequestMapping(path = "/openScriptFromBML", method = RequestMethod.GET)
     public Message openScriptFromBML(
@@ -105,19 +114,13 @@ public class BMLFsRestfulApi {
         }
     }
 
-    @ApiOperation(
-            value = "/product/openScriptFromBML",
-            notes = "/product/openScriptFromBML",
-            response = Message.class)
+
+    @ApiOperation(value = "OpenScriptFromProductBML", notes = "Open_Script_From_Product_BML", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(
-                name = "resourceId",
-                required = false,
-                dataType = "String",
-                value = "资源Id"),
-        @ApiImplicitParam(name = "version", required = false, dataType = "String", value = "版本"),
-        @ApiImplicitParam(name = "creator", required = false, dataType = "String", value = "创建者"),
-        @ApiImplicitParam(name = "fileName", required = true, dataType = "String", value = "文件名称")
+            @ApiImplicitParam(name = "resourceId", required = false, dataType = "String", value = "Resource_Id"),
+            @ApiImplicitParam(name = "version", required = false, dataType = "String", value = "Version"),
+            @ApiImplicitParam(name = "creator", required = false, dataType = "String", value = "Creator"),
+            @ApiImplicitParam(name = "fileName", required = true, dataType = "String", value = "File_Name")
     })
     @RequestMapping(path = "/product/openScriptFromBML", method = RequestMethod.GET)
     public Message openScriptFromProductBML(
@@ -156,27 +159,24 @@ public class BMLFsRestfulApi {
         }
     }
 
-    @ApiOperation(value = "保存来自BML的script", notes = "保存来自BML的script", response = Message.class)
-    @ApiImplicitParams({
-        @ApiImplicitParam(
-                name = "scriptContent",
-                required = true,
-                dataType = "String",
-                value = "内容"),
-        @ApiImplicitParam(
-                name = "resourceId",
-                required = false,
-                dataType = "String",
-                value = "资源ID"),
-        @ApiImplicitParam(name = "creator", required = false, dataType = "String", value = "创建者"),
-        @ApiImplicitParam(name = "fileName", required = false, dataType = "String", value = "文件名称"),
-        @ApiImplicitParam(
-                name = "projectName",
-                required = false,
-                dataType = "String",
-                value = "项目名称"),
-        @ApiImplicitParam(name = "metadata", required = false, dataType = "String", value = "元数据")
-    })
+   /* @ApiOperation(value = "保存来自BML的script", notes = "保存来自BML的script", response = Message.class)
+     @ApiImplicitParams({
+           @ApiImplicitParam(name = "scriptContent", required = true, dataType = "String", value = "内容"),
+           @ApiImplicitParam(name = "resourceId", required = false, dataType = "String", value = "资源ID"),
+           @ApiImplicitParam(name = "creator", required = false, dataType = "String", value = "创建者"),
+           @ApiImplicitParam(name = "fileName", required = false, dataType = "String", value = "文件名称"),
+           @ApiImplicitParam(name = "projectName", required = false, dataType = "String", value = "项目名称"),
+           @ApiImplicitParam(name = "metadata", required = false, dataType = "String", value = "元数据")
+   })*/
+   @ApiOperation(value = "saveScriptToBML", notes = "Save_Script_To_BML", response = Message.class)
+   @ApiImplicitParams({
+           @ApiImplicitParam(name = "scriptContent", required = true, dataType = "String", value = "Script_Content"),
+           @ApiImplicitParam(name = "resourceId", required = false, dataType = "String", value = "Resource_Id"),
+           @ApiImplicitParam(name = "creator", required = false, dataType = "String", value = "Creator"),
+           @ApiImplicitParam(name = "fileName", required = false, dataType = "String", value = "FileName"),
+           @ApiImplicitParam(name = "projectName", required = false, dataType = "String", value = "Rroject_Name"),
+           @ApiImplicitParam(name = "metadata", required = false, dataType = "String", value = "Metadata")
+   })
     @ApiOperationSupport(ignoreParameters = {"json"})
     @RequestMapping(path = "/saveScriptToBML", method = RequestMethod.POST)
     public Message saveScriptToBML(HttpServletRequest req, @RequestBody Map<String, Object> json)

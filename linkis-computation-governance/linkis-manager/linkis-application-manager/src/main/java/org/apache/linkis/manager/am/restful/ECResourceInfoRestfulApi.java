@@ -46,7 +46,8 @@ import io.swagger.annotations.ApiOperation;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Api(tags = "EC资源信息管理")
+/*@Api(tags = "EC资源信息管理")*/
+@Api(tags = "EC_Resource_Information_Management")
 @RequestMapping(path = "/linkisManager/ecinfo", produces = {"application/json"})
 @RestController
 public class ECResourceInfoRestfulApi {

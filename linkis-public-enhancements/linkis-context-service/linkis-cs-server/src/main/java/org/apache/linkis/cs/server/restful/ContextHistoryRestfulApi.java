@@ -45,7 +45,8 @@ import io.swagger.annotations.ApiOperation;
 
 import java.io.IOException;
 
-@Api(tags = "上下文历史记录服务")
+/*@Api(tags = "上下文历史记录服务")*/
+@Api(tags = "Context_History_Service")
 @RestController
 @RequestMapping(path = "/contextservice")
 public class ContextHistoryRestfulApi implements CsRestfulParent {
@@ -54,10 +55,15 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    @ApiOperation(value = "创建历史记录", notes = "创建历史记录", response = Message.class)
+    /*@ApiOperation(value = "创建历史记录", notes = "创建历史记录", response = Message.class)
     @ApiImplicitParams({
         @ApiImplicitParam(name = "contextHistory", dataType = "String", value = "历史上下文"),
         @ApiImplicitParam(name = "contextID", dataType = "String", value = "上下文id")
+    })*/
+    @ApiOperation(value = "CreateHistory", notes = "Create_History", response = Message.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "contextHistory", dataType = "String", value = "Context_History"),
+            @ApiImplicitParam(name = "contextID", dataType = "String", value = "Context_Id")
     })
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "createHistory", method = RequestMethod.POST)
@@ -76,10 +82,15 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
         return generateResponse(answerJob, "");
     }
 
-    @ApiOperation(value = "删除历史记录", notes = "删除历史记录", response = Message.class)
+    /*@ApiOperation(value = "删除历史记录", notes = "删除历史记录", response = Message.class)
     @ApiImplicitParams({
         @ApiImplicitParam(name = "contextHistory", dataType = "String", value = "历史上下文"),
         @ApiImplicitParam(name = "contextID", dataType = "String", value = "上下文id")
+    })*/
+    @ApiOperation(value = "removeHistory", notes = "Remove_History", response = Message.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "contextHistory", dataType = "String", value = "Context_History"),
+            @ApiImplicitParam(name = "contextID", dataType = "String", value = "Context_Id")
     })
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "removeHistory", method = RequestMethod.POST)
@@ -98,9 +109,13 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
         return generateResponse(answerJob, "");
     }
 
-    @ApiOperation(value = "获取多个历史记录", notes = "获取多个历史记录", response = Message.class)
+    /*@ApiOperation(value = "GetHistories", notes = "Get_Histories", response = Message.class)
     @ApiImplicitParams({
         @ApiImplicitParam(name = "contextID", dataType = "String", value = "上下文id")
+    })*/
+    @ApiOperation(value = "GetHistories", notes = "Get_Multiple_Histories", response = Message.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "contextID", dataType = "String", value = "Context_Id")
     })
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "getHistories", method = RequestMethod.POST)
@@ -115,10 +130,15 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
         return message;
     }
 
-    @ApiOperation(value = "获取历史记录", notes = "获取历史记录", response = Message.class)
+    /*@ApiOperation(value = "获取历史记录", notes = "获取历史记录", response = Message.class)
     @ApiImplicitParams({
         @ApiImplicitParam(name = "contextID", dataType = "String", value = "上下文Id"),
         @ApiImplicitParam(name = "source", dataType = "String", value = "上下文源")
+    })*/
+    @ApiOperation(value = "GetHistory", notes = "Get_History", response = Message.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "contextID", dataType = "String", value = "Context_Id"),
+            @ApiImplicitParam(name = "source", dataType = "String", value = "Source")
     })
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "getHistory", method = RequestMethod.POST)
@@ -139,10 +159,15 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
         return message;
     }
 
-    @ApiOperation(value = "搜索历史记录", notes = "搜索历史记录", response = Message.class)
+    /*@ApiOperation(value = "搜索历史记录", notes = "搜索历史记录", response = Message.class)
     @ApiImplicitParams({
         @ApiImplicitParam(name = "contextID", dataType = "String", value = "上下文Id"),
         @ApiImplicitParam(name = "keywords", dataType = "String", value = "关键词")
+    })*/
+    @ApiOperation(value = "SearchHistory", notes = "Search_History", response = Message.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "contextID", dataType = "String", value = "Context_Id"),
+            @ApiImplicitParam(name = "keywords", dataType = "String", value = "Key_Words")
     })
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "searchHistory", method = RequestMethod.POST)

@@ -64,21 +64,21 @@ ENV LINKIS_HOME ${LINKIS_HOME}
 
 ADD apache-linkis-${LINKIS_VERSION}-incubating-bin.tar.gz /opt/tmp/
 
+RUN mv /opt/tmp/linkis-package/* ${LINKIS_HOME}/ \
+    && rm -rf /opt/tmp
+
 # Put mysql-connector-java-*.jar package into the image only in development mode
 RUN if [ "$BUILD_TYPE" = "dev" ] ; then \
-      curl -L -o /opt/tmp/mysql-connector-java-${MYSQL_JDBC_VERSION}.jar \
-        https://repo1.maven.org/maven2/mysql/mysql-connector-java/${MYSQL_JDBC_VERSION}/mysql-connector-java-${MYSQL_JDBC_VERSION}.jar; \
+      curl -L -o ${LINKIS_HOME}/lib/linkis-commons/public-module/mysql-connector-java-${MYSQL_JDBC_VERSION}.jar \
+        https://repo1.maven.org/maven2/mysql/mysql-connector-java/${MYSQL_JDBC_VERSION}/mysql-connector-java-${MYSQL_JDBC_VERSION}.jar \
+      && cp ${LINKIS_HOME}/lib/linkis-commons/public-module/mysql-connector-java-${MYSQL_JDBC_VERSION}.jar ${LINKIS_HOME}/lib/linkis-spring-cloud-services/linkis-mg-gateway/ ;\
     fi
 
-RUN mv /opt/tmp/linkis-package/* ${LINKIS_HOME}/ \
-    && cp /opt/tmp/mysql-connector-java-${MYSQL_JDBC_VERSION}.jar ${LINKIS_HOME}/lib/linkis-commons/public-module/ \
-    && cp /opt/tmp/mysql-connector-java-${MYSQL_JDBC_VERSION}.jar ${LINKIS_HOME}/lib/linkis-spring-cloud-services/linkis-mg-gateway/ \
-    && chmod g+w -R ${LINKIS_HOME} && chown ${LINKIS_SYSTEM_USER}:${LINKIS_SYSTEM_GROUP} -R ${LINKIS_HOME} \
+RUN chmod g+w -R ${LINKIS_HOME} && chown ${LINKIS_SYSTEM_USER}:${LINKIS_SYSTEM_GROUP} -R ${LINKIS_HOME} \
     && chmod g+w -R ${LINKIS_CONF_DIR} && chown ${LINKIS_SYSTEM_USER}:${LINKIS_SYSTEM_GROUP} -R ${LINKIS_CONF_DIR}  \
     && chmod g+w -R ${LINKIS_LOG_DIR} && chown ${LINKIS_SYSTEM_USER}:${LINKIS_SYSTEM_GROUP} -R ${LINKIS_LOG_DIR} \
     && chmod a+x ${LINKIS_HOME}/bin/* \
-    && chmod a+x ${LINKIS_HOME}/sbin/* \
-    && rm -rf /opt/tmp
+    && chmod a+x ${LINKIS_HOME}/sbin/*
 
 USER ${LINKIS_SYSTEM_USER}
 

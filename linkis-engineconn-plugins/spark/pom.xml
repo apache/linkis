@@ -384,7 +384,7 @@
         <dependency>
             <artifactId>janino</artifactId>
             <groupId>org.codehaus.janino</groupId>
-            <version>3.1.4</version>
+            <version>3.0.9</version>
             <scope>test</scope>
         </dependency>
         <dependency>

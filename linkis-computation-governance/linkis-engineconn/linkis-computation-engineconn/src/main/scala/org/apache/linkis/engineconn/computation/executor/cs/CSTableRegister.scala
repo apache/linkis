@@ -43,7 +43,7 @@ object CSTableRegister extends Logging{
     val nodeNameStr = ContextServiceUtils.getNodeNameStrByMap(engineExecutionContext.getProperties)
 
     if (StringUtils.isNotBlank(contextIDValueStr) && StringUtils.isNotBlank(nodeNameStr)) {
-      info(s"Start to register TempTable nodeName:$nodeNameStr")
+      logger.info(s"Start to register TempTable nodeName:$nodeNameStr")
       writer.flush()
       val tableName = if (StringUtils.isNotBlank(alias)) s"${CSCommonUtils.CS_TMP_TABLE_PREFIX}${nodeNameStr}_${alias}" else {
         var i = 1;
@@ -87,7 +87,7 @@ object CSTableRegister extends Logging{
       contextKey.setContextType(ContextType.METADATA)
       contextKey.setKey(CSCommonUtils.getTableKey(nodeNameStr, tableName))
       CSTableService.getInstance().putCSTable(contextIDValueStr, SerializeHelper.serializeContextKey(contextKey), csTable)
-      info(s"Finished to register TempTable nodeName:$nodeNameStr")
+      logger.info(s"Finished to register TempTable nodeName:$nodeNameStr")
     }
   }
 }

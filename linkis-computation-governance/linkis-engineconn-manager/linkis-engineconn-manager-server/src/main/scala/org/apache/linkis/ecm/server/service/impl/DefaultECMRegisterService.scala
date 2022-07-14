@@ -83,25 +83,25 @@ class DefaultECMRegisterService extends ECMRegisterService with ECMEventListener
   }
 
   override def registerECM(request: RegisterEMRequest): Unit = Utils.tryCatch{
-    info("start register ecm")
+    logger.info("start register ecm")
     val response = Sender.getSender(MANAGER_SPRING_NAME).ask(request)
     response match {
       case RegisterEMResponse(isSuccess, msg) =>
         if (!isSuccess) {
-          error(s"Failed to register info to linkis manager, reason: $msg")
+          logger.error(s"Failed to register info to linkis manager, reason: $msg")
           System.exit(1)
         }
       case  _ =>
-        error(s"Failed to register info to linkis manager, get response is $response")
+        logger.error(s"Failed to register info to linkis manager, get response is $response")
         System.exit(1)
     }
   }{ t =>
-    error(s"Failed to register info to linkis manager: ", t)
+    logger.error(s"Failed to register info to linkis manager: ", t)
     System.exit(1)
   }
 
   override def unRegisterECM(request: StopEMRequest): Unit = {
-    info("start unRegister ecm")
+    logger.info("start unRegister ecm")
     Sender.getSender(MANAGER_SPRING_NAME).send(request)
   }
 

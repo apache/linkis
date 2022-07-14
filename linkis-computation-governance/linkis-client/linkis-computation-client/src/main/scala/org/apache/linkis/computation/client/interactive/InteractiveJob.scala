@@ -112,7 +112,7 @@ class SubmittableInteractiveJob(ujesClient: UJESClient,
       }
       getJobMetrics.setClientFinishedTime(System.currentTimeMillis)
       finishedJobInfoResult = jobInfoResult
-      info(s"Job-$getId is completed with status " + finishedJobInfoResult.getJobStatus)
+      logger.info(s"Job-$getId is completed with status " + finishedJobInfoResult.getJobStatus)
       getJobListeners.foreach(_.onJobFinished(this))
     } else if (jobInfoResult.isRunning) getJobListeners.foreach(_.onJobRunning(this))
     jobInfoResult

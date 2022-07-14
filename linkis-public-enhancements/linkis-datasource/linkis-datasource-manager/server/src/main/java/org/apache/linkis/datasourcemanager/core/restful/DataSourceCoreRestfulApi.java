@@ -92,11 +92,13 @@ public class DataSourceCoreRestfulApi {
     }
 
     @RequestMapping(value = "/key-define/type/{typeId}", method = RequestMethod.GET)
-    public Message getKeyDefinitionsByType(@PathVariable("typeId") Long dataSourceTypeId) {
+    public Message getKeyDefinitionsByType(
+            @PathVariable("typeId") Long dataSourceTypeId, HttpServletRequest req) {
         return RestfulApiHelper.doAndResponse(
                 () -> {
                     List<DataSourceParamKeyDefinition> keyDefinitions =
-                            dataSourceRelateService.getKeyDefinitionsByType(dataSourceTypeId);
+                            dataSourceRelateService.getKeyDefinitionsByType(
+                                    dataSourceTypeId, req.getHeader("Content-Language"));
                     return Message.ok().data("keyDefine", keyDefinitions);
                 },
                 "Fail to get key definitions of data source type[查询数据源参数键值对失败]");

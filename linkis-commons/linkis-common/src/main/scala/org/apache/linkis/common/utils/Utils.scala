@@ -39,15 +39,15 @@ object Utils extends Logging {
     try tryOp catch {
       case t: ControlThrowable => throw t
       case fatal: FatalException =>
-        error("Fatal error, system exit...", fatal)
+        logger.error("Fatal error, system exit...", fatal)
         System.exit(fatal.getErrCode)
         null.asInstanceOf[T]
       case e: VirtualMachineError =>
-        error("Fatal error, system exit...", e)
+        logger.error("Fatal error, system exit...", e)
         System.exit(-1)
         throw e
       case er: Error =>
-        error("Throw error", er)
+        logger.error("Throw error", er)
         throw er
       case t => catchOp(t)
     }
@@ -267,7 +267,7 @@ object Utils extends Logging {
   def getClassInstance[T](className: String): T = {
     Utils.tryThrow(
       Thread.currentThread.getContextClassLoader.loadClass(className).asInstanceOf[Class[T]].newInstance())(t => {
-      error(s"Failed to instance: $className ", t)
+      logger.error(s"Failed to instance: $className ", t)
       throw t
     })
   }

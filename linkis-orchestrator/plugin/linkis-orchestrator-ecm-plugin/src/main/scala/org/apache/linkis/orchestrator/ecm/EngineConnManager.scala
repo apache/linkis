@@ -17,17 +17,16 @@
  
 package org.apache.linkis.orchestrator.ecm
 
-import java.util
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.manager.common.protocol.engine.EngineAskRequest
 import org.apache.linkis.manager.label.constant.LabelKeyConstant
-import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.orchestrator.ecm.conf.ECMPluginConf
 import org.apache.linkis.orchestrator.ecm.entity.{Mark, MarkReq, Policy}
 import org.apache.linkis.orchestrator.ecm.exception.ECMPluginErrorException
 import org.apache.linkis.orchestrator.ecm.service.EngineConnExecutor
 
+import java.util
 import scala.collection.JavaConversions._
 
 /**
@@ -123,7 +122,7 @@ abstract class AbstractEngineConnManager extends EngineConnManager with Logging 
   override def getMarkCache(): util.Map[Mark, util.List[ServiceInstance]] = markCache
 
   override def getAvailableEngineConnExecutor(mark: Mark): EngineConnExecutor = {
-    info(s"mark ${mark.getMarkId()} start to  getAvailableEngineConnExecutor")
+    logger.info(s"mark ${mark.getMarkId()} start to  getAvailableEngineConnExecutor")
     if (null != mark) {
       tryReuseEngineConnExecutor(mark) match {
         case Some(engineConnExecutor) => return engineConnExecutor
@@ -132,7 +131,7 @@ abstract class AbstractEngineConnManager extends EngineConnManager with Logging 
       val engineConnExecutor = askEngineConnExecutor(mark.getMarkReq.createEngineConnAskReq(), mark)
       engineConnExecutor.useEngineConn
       saveToMarkCache(mark, engineConnExecutor)
-      debug(s"mark ${mark.getMarkId()} Finished to  getAvailableEngineConnExecutor by create")
+      logger.debug(s"mark ${mark.getMarkId()} Finished to  getAvailableEngineConnExecutor by create")
       engineConnExecutor
     } else {
       throw new ECMPluginErrorException(ECMPluginConf.ECM_ERROR_CODE, s" mark ${mark.getMarkId()} cannot null")
@@ -160,7 +159,7 @@ abstract class AbstractEngineConnManager extends EngineConnManager with Logging 
         for (executor <- executors) {
           // todo check
           if (executor.useEngineConn) {
-            info(s"mark ${mark.getMarkId()} Finished to   getAvailableEngineConnExecutor by reuse")
+            logger.info(s"mark ${mark.getMarkId()} Finished to   getAvailableEngineConnExecutor by reuse")
             return Some(executor)
           }
         }
@@ -205,7 +204,7 @@ abstract class AbstractEngineConnManager extends EngineConnManager with Logging 
 
   override def releaseEngineConnExecutor(engineConnExecutor: EngineConnExecutor, mark: Mark): Unit = {
     if (null != engineConnExecutor && null != mark && getMarkCache().containsKey(mark)) {
-      info(s"Start to release EngineConnExecutor mark id ${mark.getMarkId()} engineConnExecutor ${engineConnExecutor.getServiceInstance}")
+      logger.info(s"Start to release EngineConnExecutor mark id ${mark.getMarkId()} engineConnExecutor ${engineConnExecutor.getServiceInstance}")
       getEngineConnExecutorCache().remove(engineConnExecutor.getServiceInstance)
       engineConnExecutor.close()
       val instances = getInstances(mark)
@@ -220,14 +219,14 @@ abstract class AbstractEngineConnManager extends EngineConnManager with Logging 
 
   override def releaseMark(mark: Mark): Unit = {
     if (null != mark && getMarkCache().containsKey(mark)) {
-      debug(s"Start to release mark ${mark.getMarkId()}")
+      logger.debug(s"Start to release mark ${mark.getMarkId()}")
       val executors = getMarkCache().get(mark).map(getEngineConnExecutorCache().get(_))
       Utils.tryAndError(executors.foreach { executor =>
         getEngineConnExecutorCache().remove(executor.getServiceInstance)
         executor.close()
       })
       removeMark(mark)
-      info(s"Finished to release mark ${mark.getMarkId()}")
+      logger.info(s"Finished to release mark ${mark.getMarkId()}")
     }
   }
 

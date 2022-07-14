@@ -71,7 +71,7 @@ class ECTaskEntranceInfoAccess extends ConnectionInfoAccess with Logging {
         while (elements.hasNext) {
           val wrapper = elements.next
           if (wrapper == null) {
-            warn("wrapper should not be null")
+            logger.warn("wrapper should not be null")
           } else {
             wrapper match {
               case ecWrapper: ECTaskEntranceConnectionWrapper => {
@@ -83,7 +83,7 @@ class ECTaskEntranceInfoAccess extends ConnectionInfoAccess with Logging {
                 }
                 ret.add(eCTaskEntranceConnection)
               }
-              case _ => warn("invalid data-type: " + wrapper.getClass.getCanonicalName + " for data in ECTaskEntranceInfoAccessRequest")
+              case _ => logger.warn("invalid data-type: " + wrapper.getClass.getCanonicalName + " for data in ECTaskEntranceInfoAccessRequest")
             }
           }
         }

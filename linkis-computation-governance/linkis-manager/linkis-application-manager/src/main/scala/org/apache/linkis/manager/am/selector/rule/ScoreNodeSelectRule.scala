@@ -46,7 +46,7 @@ class ScoreNodeSelectRule extends NodeSelectRule with Logging {
       case instance: ScoreServiceInstance if nodeB.isInstanceOf[ScoreServiceInstance] =>
         Utils.tryCatch(instance.getScore > nodeB.asInstanceOf[ScoreServiceInstance].getScore) {
           t: Throwable =>
-            warn("Failed to Compare resource ", t)
+            logger.warn("Failed to Compare resource ", t)
             true
         }
 

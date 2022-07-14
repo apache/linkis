@@ -28,11 +28,12 @@ import scala.concurrent.duration.Duration
 
 
 abstract class Sender {
+
   /**
     *Ask is a synchronous method that requests the target microservice in real time and requires the target microservice to return a non-null return value.
     * ask是一个同步方法，该方法实时请求目标微服务，且要求目标微服务必须返回一个非空的返回值
     * @param message Requested parameter(请求的参数)
-    * @return
+    * @return the response message
     */
   def ask(message: Any): Any
 
@@ -43,7 +44,7 @@ abstract class Sender {
     * 请注意：该超时时间，是指目标微服务处理本次请求的最大处理时间
     * @param message Requested parameter(请求的参数)
     * @param timeout Maximum processing time(最大处理时间)
-    * @return
+    * @return the response message
     */
   def ask(message: Any, timeout: Duration): Any
 

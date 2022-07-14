@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one or more
+  ~ contributor license agreements.  See the NOTICE file distributed with
+  ~ this work for additional information regarding copyright ownership.
+  ~ The ASF licenses this file to You under the Apache License, Version 2.0
+  ~ (the "License"); you may not use this file except in compliance with
+  ~ the License.  You may obtain a copy of the License at
+  ~
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<assembly>
+    <id>dist</id>
+    <formats>
+        <format>tar.gz</format>
+        <format>dir</format>
+    </formats>
+    <includeBaseDirectory>false</includeBaseDirectory>
+
+    <fileSets>
+
+        <fileSet>
+            <directory>bin/</directory>
+            <outputDirectory>bin</outputDirectory>
+            <includes>
+                <include>**/*</include>
+            </includes>
+            <fileMode>0755</fileMode>
+            <lineEnding>unix</lineEnding>
+        </fileSet>
+
+        <fileSet>
+            <directory>deploy-config/</directory>
+            <outputDirectory>deploy-config</outputDirectory>
+            <includes>
+                <include>**/*</include>
+            </includes>
+            <fileMode>0755</fileMode>
+            <lineEnding>unix</lineEnding>
+        </fileSet>
+
+        <fileSet>
+            <directory>package/</directory>
+            <outputDirectory>linkis-package</outputDirectory>
+            <includes>
+                <include>**/*</include>
+            </includes>
+            <fileMode>0777</fileMode>
+            <lineEnding>unix</lineEnding>
+        </fileSet>
+
+        <fileSet>
+            <directory>release-docs/</directory>
+            <outputDirectory></outputDirectory>
+            <includes>
+                <include>**/*</include>
+            </includes>
+            <fileMode>0777</fileMode>
+            <lineEnding>unix</lineEnding>
+        </fileSet>
+
+        <fileSet>
+            <directory>../</directory>
+            <outputDirectory></outputDirectory>
+            <includes>
+                <include>README*</include>
+                <include>DISCLAIMER*</include>
+            </includes>
+        </fileSet>
+
+        <!--spark-->
+        <fileSet>
+            <directory>
+                ../linkis-engineconn-plugins/spark/target/out/
+            </directory>
+            <outputDirectory>linkis-package/lib/linkis-engineconn-plugins/</outputDirectory>
+            <includes>
+                <include>**/*</include>
+            </includes>
+        </fileSet>
+
+        <!--hive-->
+        <fileSet>
+            <directory>
+                ../linkis-engineconn-plugins/hive/target/out/
+            </directory>
+            <outputDirectory>linkis-package/lib/linkis-engineconn-plugins/</outputDirectory>
+            <includes>
+                <include>**/*</include>
+            </includes>
+        </fileSet>
+
+        <!--python-->
+        <fileSet>
+            <directory>
+                ../linkis-engineconn-plugins/python/target/out/
+            </directory>
+            <outputDirectory>linkis-package/lib/linkis-engineconn-plugins/</outputDirectory>
+            <includes>
+                <include>**/*</include>
+            </includes>
+        </fileSet>
+
+        <!--shell-->
+        <fileSet>
+            <directory>
+                ../linkis-engineconn-plugins/shell/target/out/
+            </directory>
+            <outputDirectory>linkis-package/lib/linkis-engineconn-plugins/</outputDirectory>
+            <includes>
+                <include>**/*</include>
+            </includes>
+        </fileSet>
+
+
+        <!--lib-->
+        <!--linkis-spring-cloud-services-->
+        <!--linkis-gateway-->
+        <fileSet>
+            <directory>
+                ../linkis-spring-cloud-services/linkis-service-gateway/linkis-gateway-server-support/target/out/lib
+            </directory>
+            <outputDirectory>
+                linkis-package/lib/linkis-spring-cloud-services/linkis-mg-gateway
+            </outputDirectory>
+            <includes>
+                <include>*.jar</include>
+            </includes>
+        </fileSet>
+
+        <!--linkis-eureka-->
+        <fileSet>
+            <directory>
+                ../linkis-spring-cloud-services/linkis-service-discovery/linkis-eureka/target/out/lib
+            </directory>
+            <outputDirectory>
+                linkis-package/lib/linkis-spring-cloud-services/linkis-mg-eureka
+            </outputDirectory>
+            <includes>
+                <include>*.jar</include>
+            </includes>
+        </fileSet>
+
+        <!--lib-->
+        <!--linkis-commons-->
+        <!--public-module-->
+        <fileSet>
+            <directory>
+                public-module-combined/target/out/lib
+            </directory>
+            <outputDirectory>linkis-package/lib/linkis-commons/public-module/</outputDirectory>
+            <includes>
+                <include>*.jar</include>
+            </includes>
+        </fileSet>
+
+        <!--lib-->
+        <!--linkis-computation-governance-->
+        <!--linkis-gc-manager-->
+        <fileSet>
+            <directory>
+                ../linkis-computation-governance/linkis-engineconn-manager/linkis-engineconn-manager-server/target/out/lib
+            </directory>
+            <outputDirectory>
+                linkis-package/lib/linkis-computation-governance/linkis-cg-engineconnmanager
+            </outputDirectory>
+            <includes>
+                <include>*.jar</include>
+            </includes>
+        </fileSet>
+
+        <!--engineConnPlugin-->
+        <fileSet>
+            <directory>
+                ../linkis-computation-governance/linkis-engineconn/linkis-engineconn-plugin-server/target/out/lib/
+            </directory>
+            <outputDirectory>
+                linkis-package/lib/linkis-computation-governance/linkis-cg-engineplugin
+            </outputDirectory>
+            <includes>
+                <include>*.jar</include>
+            </includes>
+        </fileSet>
+
+        <!--application-manager-->
+        <fileSet>
+            <directory>
+                ../linkis-computation-governance/linkis-manager/linkis-application-manager/target/out/lib
+            </directory>
+            <outputDirectory>
+                linkis-package/lib/linkis-computation-governance/linkis-cg-linkismanager
+            </outputDirectory>
+            <includes>
+                <include>*.jar</include>
+            </includes>
+        </fileSet>
+
+
+        <!--entrance-->
+        <fileSet>
+            <directory>
+                ../linkis-computation-governance/linkis-entrance/target/out/lib
+            </directory>
+            <outputDirectory>
+                linkis-package/lib/linkis-computation-governance/linkis-cg-entrance
+            </outputDirectory>
+            <includes>
+                <include>*.jar</include>
+            </includes>
+        </fileSet>
+
+        <!--linkis-cli-->
+        <fileSet>
+            <directory>
+                ../linkis-computation-governance/linkis-client/linkis-cli/linkis-cli-application/target/out/lib
+            </directory>
+            <outputDirectory>
+                linkis-package/lib/linkis-computation-governance/linkis-client/linkis-cli
+            </outputDirectory>
+            <includes>
+                <include>*</include>
+            </includes>
+        </fileSet>
+
+        <!--lib-->
+        <!--linkis-public-enhancements-->
+        <!--bml-->
+        <fileSet>
+            <directory>
+                ../linkis-public-enhancements/target/out/lib
+            </directory>
+            <outputDirectory>
+                linkis-package/lib/linkis-public-enhancements/linkis-ps-publicservice
+            </outputDirectory>
+            <includes>
+                <include>*.jar</include>
+            </includes>
+        </fileSet>
+
+        <!--linkis-contextservice-->
+        <fileSet>
+            <directory>
+                ../linkis-public-enhancements/linkis-context-service/linkis-cs-server/target/out/lib
+            </directory>
+            <outputDirectory>
+                linkis-package/lib/linkis-public-enhancements/linkis-ps-cs
+            </outputDirectory>
+            <includes>
+                <include>*.jar</include>
+            </includes>
+        </fileSet>
+
+        <!-- datasource manager -->
+        <fileSet>
+            <directory>
+                ../linkis-public-enhancements/linkis-datasource/linkis-datasource-manager/server/target/out/lib/
+            </directory>
+            <outputDirectory>
+                linkis-package/lib/linkis-public-enhancements/linkis-ps-data-source-manager
+            </outputDirectory>
+            <includes>
+                <include>*.jar</include>
+            </includes>
+        </fileSet>
+        <!-- metadata query -->
+        <fileSet>
+            <directory>
+                ../linkis-public-enhancements/linkis-datasource/linkis-metadata-query/server/target/out/lib/
+            </directory>
+            <outputDirectory>
+                linkis-package/lib/linkis-public-enhancements/linkis-ps-metadataquery
+            </outputDirectory>
+            <includes>
+                <include>**/*</include>
+            </includes>
+        </fileSet>
+
+    </fileSets>
+
+    <dependencySets>
+        <dependencySet>
+            <outputDirectory>linkis-package/lib/linkis-commons/public-module/</outputDirectory>
+            <useProjectArtifact>true</useProjectArtifact>
+            <useTransitiveDependencies>true</useTransitiveDependencies>
+            <unpack>false</unpack>
+            <useStrictFiltering>false</useStrictFiltering>
+            <useTransitiveFiltering>true</useTransitiveFiltering>
+            <excludes>
+            </excludes>
+        </dependencySet>
+    </dependencySets>
+
+</assembly>

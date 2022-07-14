@@ -66,8 +66,12 @@ class RMMonitorRest extends Logging {
 
   implicit val formats = DefaultFormats + ResourceSerializer + NodeResourceSerializer
   val mapper = new ObjectMapper()
-  val dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy")
-  dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"))
+
+  private val dateFormatLocal = new ThreadLocal[SimpleDateFormat]() {
+    override protected def initialValue = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy")
+  }
+
+  dateFormatLocal.get().setTimeZone(TimeZone.getTimeZone("GMT"))
   val labelFactory = LabelBuilderFactoryContext.getLabelBuilderFactory
   val combinedLabelBuilder = new CombinedLabelBuilder
   val gson = BDPJettyServerHelper.gson
@@ -110,7 +114,7 @@ class RMMonitorRest extends Logging {
   def getApplicationList(request: HttpServletRequest, @RequestBody param: util.Map[String, AnyRef]): Message = {
     val message = Message.ok("")
     val userName = ModuleUserUtils.getOperationUser(request, "applicationlist")
-    val userCreator = param.get("userCreator").asInstanceOf[String]
+    val userCreator = if (param.get("userCreator") == null) null else param.get("userCreator").asInstanceOf[String]
     val engineType = if (param.get("engineType") == null) null else param.get("engineType").asInstanceOf[String]
     val nodes = getEngineNodes(userName, true)
     val creatorToApplicationList = new mutable.HashMap[String, mutable.HashMap[String, Any]]
@@ -129,10 +133,10 @@ class RMMonitorRest extends Logging {
             creatorToApplicationList.put(userCreatorLabel.getCreator, applicationList)
           }
           val applicationList = creatorToApplicationList(userCreatorLabel.getCreator)
-          applicationList.put("usedResource", applicationList("usedResource").asInstanceOf[Resource] + node.getNodeResource.getUsedResource)
-          applicationList.put("maxResource", applicationList("maxResource").asInstanceOf[Resource] + node.getNodeResource.getMaxResource)
-          applicationList.put("minResource", applicationList("minResource").asInstanceOf[Resource] + node.getNodeResource.getMinResource)
-          applicationList.put("lockedResource", applicationList("lockedResource").asInstanceOf[Resource] + node.getNodeResource.getLockedResource)
+          applicationList.put("usedResource", (if (applicationList("usedResource") == null  ) Resource.initResource(ResourceType.LoadInstance)  else  applicationList("usedResource").asInstanceOf[Resource] ) + node.getNodeResource.getUsedResource)
+          applicationList.put("maxResource", (if (applicationList("maxResource") == null ) Resource.initResource(ResourceType.LoadInstance)    else  applicationList("maxResource").asInstanceOf[Resource] )  + node.getNodeResource.getMaxResource)
+          applicationList.put("minResource", (if (applicationList("minResource") == null ) Resource.initResource(ResourceType.LoadInstance)    else  applicationList("minResource").asInstanceOf[Resource] ) + node.getNodeResource.getMinResource)
+          applicationList.put("lockedResource",  (if (applicationList("lockedResource") == null ) Resource.initResource(ResourceType.LoadInstance)   else   applicationList("lockedResource").asInstanceOf[Resource] ) + node.getNodeResource.getLockedResource)
           val engineInstance = new mutable.HashMap[String, Any]
           engineInstance.put("creator", userCreatorLabel.getCreator)
           engineInstance.put("engineType", engineTypeLabel.getEngineType)
@@ -144,7 +148,7 @@ class RMMonitorRest extends Logging {
           } else {
             engineInstance.put("status", node.getNodeStatus.toString)
           }
-          engineInstance.put("startTime", dateFormat.format(node.getStartTime))
+          engineInstance.put("startTime", dateFormatLocal.get().format(node.getStartTime))
           engineInstance.put("owner", node.getOwner)
           applicationList("engineInstances").asInstanceOf[mutable.ArrayBuffer[Any]].append(engineInstance)
         }
@@ -443,7 +447,7 @@ class RMMonitorRest extends Logging {
         }
       }
     }{case exception: Exception =>
-        error(s"queresource search failed!", exception)
+      logger.error(s"queresource search failed!", exception)
       case _ =>
     }
 

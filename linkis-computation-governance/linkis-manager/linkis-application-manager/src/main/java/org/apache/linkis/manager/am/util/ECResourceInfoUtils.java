@@ -18,6 +18,10 @@ package org.apache.linkis.manager.am.util;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.google.gson.Gson;
+
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 public class ECResourceInfoUtils {
@@ -30,5 +34,12 @@ public class ECResourceInfoUtils {
 
     public static String strCheckAndDef(String str, String def) {
         return StringUtils.isBlank(str) ? def : str;
+    }
+
+    public static Map<String, Object> getStringToMap(String str) {
+        Gson gson = new Gson();
+        Map<String, Object> map = new HashMap<>();
+        map = gson.fromJson(str, map.getClass());
+        return map;
     }
 }

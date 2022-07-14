@@ -46,7 +46,7 @@ object SSOUtils extends Logging {
      userTicketIdToLastAccessTime.asScala.filter(System.currentTimeMillis - _._2 > sessionTimeout).foreach {
         case (k, v) => if (userTicketIdToLastAccessTime.containsKey(k)) {
           if (userTicketIdToLastAccessTime.containsKey(k) && System.currentTimeMillis - userTicketIdToLastAccessTime.get(k) > sessionTimeout) {
-            info(s"remove timeout userTicket $k, since the last access time is ${DateFormatUtils.format(v, "yyyy-MM-dd HH:mm:ss")}.")
+            logger.info(s"remove timeout userTicket $k, since the last access time is ${DateFormatUtils.format(v, "yyyy-MM-dd HH:mm:ss")}.")
             userTicketIdToLastAccessTime.remove(k)
           }
         }
@@ -73,7 +73,7 @@ object SSOUtils extends Logging {
   }
 
   def setLoginUser(addCookie: Cookie => Unit, username: String): Unit = {
-    info(s"add login userTicketCookie for user $username.")
+    logger.info(s"add login userTicketCookie for user $username.")
     val userTicketId = getUserTicketId(username)
     userTicketIdToLastAccessTime.put(userTicketId, System.currentTimeMillis())
     val cookie = new Cookie(USER_TICKET_ID_STRING, userTicketId)
@@ -84,7 +84,7 @@ object SSOUtils extends Logging {
   }
 
   def setLoginUser(addUserTicketKV: (String, String) => Unit, username: String): Unit = {
-    info(s"add login userTicket for user $username.")
+    logger.info(s"add login userTicket for user $username.")
     val userTicketId = getUserTicketKV(username)
     userTicketIdToLastAccessTime.put(userTicketId._2, System.currentTimeMillis())
     addUserTicketKV(userTicketId._1, userTicketId._2)

@@ -34,7 +34,7 @@ class IOMethodInterceptorCreatorImpl extends IOMethodInterceptorCreator with Log
 
   @PostConstruct
   def init(): Unit = {
-    info("IOMethodInterceptorCreatorImpl finished init")
+    logger.info("IOMethodInterceptorCreatorImpl finished init")
     IOMethodInterceptorCreator.register(this)
   }
 

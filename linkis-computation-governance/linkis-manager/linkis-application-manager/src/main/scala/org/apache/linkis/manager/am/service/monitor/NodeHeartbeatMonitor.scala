@@ -87,7 +87,7 @@ class NodeHeartbeatMonitor extends ManagerMonitor with Logging {
    * 5. Update Metrics if normal
    */
   override def run(): Unit = Utils.tryAndWarn {
-    info("Start to check the health of the node")
+    logger.info("Start to check the health of the node")
     // 1.get nodes
     val nodes = nodeManagerPersistence.getAllNodes
     val metricList = nodeMetricManagerPersistence.getNodeMetrics(nodes)
@@ -117,7 +117,7 @@ class NodeHeartbeatMonitor extends ManagerMonitor with Logging {
      dealStockAvailableList(stockAvailableList)
      val stockUnAvailableList = filterStockUnAvailableList(engineMetricList)
      dealStockUnAvailableList(stockUnAvailableList)*/
-    info("Finished to check the health of the node")
+    logger.info("Finished to check the health of the node")
   }
 
 
@@ -133,7 +133,7 @@ class NodeHeartbeatMonitor extends ManagerMonitor with Logging {
     val existingEngineInstances = Sender.getInstances(ecName)
     engineNodes.foreach { engineNode =>
       if (NodeStatus.isCompleted(engineNode.getNodeStatus)) {
-        info(s"${engineNode.getServiceInstance} is completed ${engineNode.getNodeStatus}, will be remove")
+        logger.info(s"${engineNode.getServiceInstance} is completed ${engineNode.getNodeStatus}, will be remove")
         Utils.tryAndWarnMsg(clearEngineNode(engineNode.getServiceInstance))("clear engine node failed")
       } else {
         val engineIsStarted = (System.currentTimeMillis() - engineNode.getStartTime.getTime) > maxCreateInterval
@@ -214,7 +214,7 @@ class NodeHeartbeatMonitor extends ManagerMonitor with Logging {
             dealMetricUpdateTimeOut(nodeMetric, e)
 
           case exception: Exception =>
-            warn(s"heartbeat RPC request failed, but it is not caused by timeout, " +
+            logger.warn(s"heartbeat RPC request failed, but it is not caused by timeout, " +
               s"the engine will not be forcibly stopped, engine instance: ${nodeMetric.getServiceInstance}", exception)
 
         }
@@ -350,7 +350,7 @@ class NodeHeartbeatMonitor extends ManagerMonitor with Logging {
   }
 
   private def clearEngineNode(instance: ServiceInstance): Unit = Utils.tryAndError {
-    warn(s"Manager Monitor prepare to kill engine $instance")
+    logger.warn(s"Manager Monitor prepare to kill engine $instance")
     val stopEngineRequest = new EngineStopRequest(instance, ManagerUtils.getAdminUser)
     val sender = Sender.getSender(Sender.getThisServiceInstance)
     Utils.tryCatch {
@@ -363,14 +363,14 @@ class NodeHeartbeatMonitor extends ManagerMonitor with Logging {
   }
 
   private def triggerEMToStopEngine(instance: ServiceInstance): Unit = Utils.tryAndError {
-    warn(s"Manager Monitor prepare to kill engine $instance by em")
+    logger.warn(s"Manager Monitor prepare to kill engine $instance by em")
     val stopEngineRequest = new EngineStopRequest(instance, ManagerUtils.getAdminUser)
     val sender = Sender.getSender(Sender.getThisServiceInstance)
     engineStopService.stopEngine(stopEngineRequest, sender)
   }
 
   private def triggerEngineSuicide(instance: ServiceInstance): Unit = Utils.tryAndError {
-    warn(s"Manager Monitor prepare to triggerEngineSuicide engine $instance")
+    logger.warn(s"Manager Monitor prepare to triggerEngineSuicide engine $instance")
     //val engineSuicide = new EngineSuicideRequest(instance, ManagerUtils.getAdminUser)
     //messagePublisher.publish(engineSuicide)
   }
@@ -386,7 +386,7 @@ class NodeHeartbeatMonitor extends ManagerMonitor with Logging {
 
 
   private def updateMetricHealthy(nodeMetrics: NodeMetrics, nodeHealthy: NodeHealthy, reason: String): Unit = {
-    warn(s"update instance ${nodeMetrics.getServiceInstance} from ${nodeMetrics.getHealthy} to ${nodeHealthy}")
+    logger.warn(s"update instance ${nodeMetrics.getServiceInstance} from ${nodeMetrics.getHealthy} to ${nodeHealthy}")
     val nodeHealthyInfo = new NodeHealthyInfo
     nodeHealthyInfo.setMsg(s"Manager-Monitor considers the node to be in UnHealthy state, reason: $reason")
     nodeHealthyInfo.setNodeHealthy(nodeHealthy)
@@ -405,7 +405,7 @@ class NodeHeartbeatMonitor extends ManagerMonitor with Logging {
     val maxInterval = ManagerMonitorConf.NODE_HEARTBEAT_MAX_UPDATE_TIME.getValue.toLong
     val timeout = System.currentTimeMillis() - nodeMetric.getUpdateTime.getTime > maxInterval
     if (timeout) {
-      warn(s"The engine failed to send the RPC request, and the engine instance could not be found: ${nodeMetric.getServiceInstance}, " +
+      logger.warn(s"The engine failed to send the RPC request, and the engine instance could not be found: ${nodeMetric.getServiceInstance}, " +
         s"start sending the request to stop the engine!", e)
       triggerEMToStopEngine(nodeMetric.getServiceInstance)
     }

@@ -26,12 +26,12 @@ class ParallelScheduler(val schedulerContext: SchedulerContext) extends Abstract
   private var consumerManager: ConsumerManager = _
   private var groupFactory: GroupFactory = _
 
-  override def init() = {
+  override def init(): Unit = {
     consumerManager = schedulerContext.getOrCreateConsumerManager
     groupFactory = schedulerContext.getOrCreateGroupFactory
   }
 
-  override def getName = "ParallelScheduler"
+  override def getName: String = "ParallelScheduler"
 
-  override def getSchedulerContext = schedulerContext
+  override def getSchedulerContext: SchedulerContext = schedulerContext
 }

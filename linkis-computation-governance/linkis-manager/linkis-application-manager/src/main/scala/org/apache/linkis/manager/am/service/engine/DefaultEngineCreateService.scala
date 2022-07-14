@@ -209,12 +209,12 @@ class DefaultEngineCreateService extends AbstractEngineService with EngineCreate
         throw t
     }
 
-    info(s"Task: $taskId finished to create  engineConn $engineNode. ticketId is $resourceTicketId")
+    logger.info(s"Task: $taskId finished to create  engineConn $engineNode. ticketId is $resourceTicketId")
     engineNode.setTicketId(resourceTicketId)
     //7. 更新持久化信息：包括插入engine/metrics
 
     Utils.tryCatch(getEngineNodeManager.updateEngineNode(oldServiceInstance, engineNode)) { t =>
-      warn(s"Failed to update engineNode $engineNode", t)
+      logger.warn(s"Failed to update engineNode $engineNode", t)
       throw new LinkisRetryException(AMConstant.EM_ERROR_CODE, s"Failed to update engineNode: ${t.getMessage}")
     }
 
@@ -224,7 +224,7 @@ class DefaultEngineCreateService extends AbstractEngineService with EngineCreate
     labelList.add(engineConnAliasLabel)
     nodeLabelService.addLabelsToNode(engineNode.getServiceInstance, labelFilter.choseEngineLabel(LabelUtils.distinctLabel(labelList, fromEMGetEngineLabels(emNode.getLabels))))
     if(System.currentTimeMillis - startTime >= timeout && engineCreateRequest.isIgnoreTimeout) {
-      info(s"Return a EngineConn $engineNode for request: $engineCreateRequest since the creator set ignoreTimeout=true and maxStartTime is reached.")
+      logger.info(s"Return a EngineConn $engineNode for request: $engineCreateRequest since the creator set ignoreTimeout=true and maxStartTime is reached.")
       return engineNode
     }
     val leftWaitTime = timeout - (System.currentTimeMillis - startTime)
@@ -262,7 +262,7 @@ class DefaultEngineCreateService extends AbstractEngineService with EngineCreate
       case AvailableResource(ticketId) =>
         (ticketId, resource)
       case NotEnoughResource(reason) =>
-        warn(s"not engough resource: $reason")
+        logger.warn(s"not engough resource: $reason")
         throw new LinkisRetryException(AMConstant.EM_ERROR_CODE, s"not engough resource: : $reason")
     }
   }
@@ -313,7 +313,7 @@ class DefaultEngineCreateService extends AbstractEngineService with EngineCreate
    */
   def ensureECAvailable(engineNode: EngineNode, resourceTicketId: String, timeout: Long): EngineNode = {
     Utils.tryCatch {
-      info(s"Start to wait engineConn($engineNode) to be available, but only ${ByteTimeUtils.msDurationToString(timeout)} left.")
+      logger.info(s"Start to wait engineConn($engineNode) to be available, but only ${ByteTimeUtils.msDurationToString(timeout)} left.")
       // 获取启动的引擎信息，并等待引擎的状态变为IDLE，如果等待超时则返回给用户，并抛出异常
       Utils.waitUntil(() => ensuresIdle(engineNode, resourceTicketId), Duration(timeout, TimeUnit.MILLISECONDS))
     } {

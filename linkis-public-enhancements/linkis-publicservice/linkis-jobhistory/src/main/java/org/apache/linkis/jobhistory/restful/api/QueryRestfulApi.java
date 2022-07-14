@@ -31,6 +31,8 @@ import org.apache.linkis.server.Message;
 import org.apache.linkis.server.security.SecurityFilter;
 import org.apache.linkis.server.utils.ModuleUserUtils;
 
+import org.apache.commons.lang.time.DateUtils;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -240,6 +242,9 @@ public class QueryRestfulApi {
         }
         Date sDate = new Date(startDate);
         Date eDate = new Date(endDate);
+        if (startDate == 0L) {
+            sDate = DateUtils.addDays(eDate, -1);
+        }
         if (sDate.getTime() == eDate.getTime()) {
             Calendar instance = Calendar.getInstance();
             instance.setTimeInMillis(endDate);

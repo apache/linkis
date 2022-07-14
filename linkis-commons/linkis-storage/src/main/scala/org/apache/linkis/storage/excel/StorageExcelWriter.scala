@@ -169,15 +169,9 @@ class StorageExcelWriter(val charset: String, val sheetName: String, val dateFor
         case _ =>
           val value = DataType.valueToString(elem)
           cell.setCellValue(value)
-          if (null != dataType) {
-            logger.warn(s"Cannot find matched type for dataType : ${dataType.toString}, string value:${value}, value className : ${elem.getClass.getName}, will treat it as string.")
-          } else {
-            logger.warn(s"Invalid null dataType. Will treat value string : ${value}, value className : ${elem.getClass.getName} as string.")
-          }
       }
     } {
       case e: Exception =>
-        logger.error("Set value error, because " + e.getMessage)
         cell.setCellValue(valueToString(elem))
     }
   }

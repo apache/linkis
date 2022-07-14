@@ -30,7 +30,9 @@ public class ExcelStorageReader {
 
         List<List<String>> res;
         if (".xls".equalsIgnoreCase(suffix)) {
-            if (in == null) in = new FileInputStream(file);
+            if (in == null) {
+                in = new FileInputStream(file);
+            }
             res = XlsUtils.getBasicInfo(in);
         } else {
             res = XlsxUtils.getBasicInfo(in, file);
@@ -38,14 +40,14 @@ public class ExcelStorageReader {
         if (res == null && res.size() < 2) {
             throw new Exception("There is a problem with the file format(文件格式有问题)");
         }
-        List<String> headerType = new ArrayList<String>();
+        List<String> headerType = new ArrayList<>();
         List<String> header = res.get(1);
         if (hasHeader) {
             for (int i = 0; i < header.size(); i++) {
                 headerType.add("string");
             }
         } else {
-            List<String> headerNew = new ArrayList<String>();
+            List<String> headerNew = new ArrayList<>();
             for (int i = 0; i < header.size(); i++) {
                 headerNew.add("col_" + (i + 1));
                 headerType.add("string");

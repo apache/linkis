@@ -131,7 +131,7 @@ class EngineConnLogOperator extends Operator with Logging {
     if (!logPath.exists() || !logPath.isFile) {
       throw new ECMErrorException(ECMErrorCode.EC_FETCH_LOG_FAILED, s"LogFile $logPath is not exists or is not a file.")
     }
-    info(s"Try to fetch EngineConn(id: $ticketId, instance: $engineConnInstance) logs from ${logPath.getPath}.")
+    logger.info(s"Try to fetch EngineConn(id: $ticketId, instance: $engineConnInstance) logs from ${logPath.getPath}.")
     logPath
   }
 

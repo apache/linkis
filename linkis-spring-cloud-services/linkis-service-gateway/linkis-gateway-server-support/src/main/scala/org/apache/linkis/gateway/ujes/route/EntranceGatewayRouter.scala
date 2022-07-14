@@ -34,7 +34,7 @@ class EntranceGatewayRouter extends AbstractGatewayRouter {
     else if(services.isEmpty) None
     else {
       val errorMsg = new TooManyServiceException(s"Cannot find a correct serviceId for parsedServiceId $parsedServiceId, service list is: " + services)
-      warn("", errorMsg)
+      logger.warn("", errorMsg)
       throw errorMsg
     }
   })
@@ -50,7 +50,7 @@ class EntranceGatewayRouter extends AbstractGatewayRouter {
         val serviceId = if(StringUtils.isBlank(creator) || creator == "IDE")
           findEntranceService(applicationName)
         else findEntranceService(creator).orElse {
-          warn(s"Cannot find a service which named $creator, now redirect to $applicationName entrance.")
+          logger.warn(s"Cannot find a service which named $creator, now redirect to $applicationName entrance.")
           findEntranceService(applicationName)
         }
         serviceId.map(ServiceInstance(_, gatewayContext.getGatewayRoute.getServiceInstance.getInstance)).orNull

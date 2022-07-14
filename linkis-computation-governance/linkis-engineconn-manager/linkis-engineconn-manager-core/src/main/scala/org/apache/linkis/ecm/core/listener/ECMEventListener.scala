@@ -26,6 +26,6 @@ trait ECMEventListener extends EventListener with Logging {
   def onEvent(event: ECMEvent)
 
   override def onEventError(event: Event, t: Throwable): Unit = {
-    error(s"async message invoke failed ${event.toString}", t)
+    logger.error(s"async message invoke failed ${event.toString}", t)
   }
 }

@@ -72,7 +72,7 @@ class StorageResultSetWriter[K <: MetaData, V <: Record](resultSet: ResultSet[K,
       fs.init(null)
       FileSystemUtils.createNewFile(storePath, proxyUser, true)
       outputStream = fs.write(storePath, true)
-      info(s"Succeed to create a new file:$storePath")
+      logger.info(s"Succeed to create a new file:$storePath")
     }
   }
 

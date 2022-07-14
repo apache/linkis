@@ -68,14 +68,14 @@ class ExecutionImpl(override val taskScheduler: TaskScheduler,
 
   override def onKillRootExecTaskEvent(killRootExecTaskEvent: KillRootExecTaskEvent): Unit = {
     val execTask = killRootExecTaskEvent.execTask
-    info(s"receive killRootExecTaskEvent ${execTask.getIDInfo}")
+    logger.info(s"receive killRootExecTaskEvent ${execTask.getIDInfo}")
     val runners = taskManager.getRunningTask(execTask)
     if (null != runners && runners.nonEmpty) {
       runners.foreach {
         taskScheduler.cancelTask(_, true)
       }
     } else {
-      info(s"${execTask.getIDInfo()} running task is null, now to mark ExecutionTask Failed ")
+      logger.info(s"${execTask.getIDInfo()} running task is null, now to mark ExecutionTask Failed ")
       execTask.getPhysicalContext.markFailed("Execution Task is cancelled", null)
     }
   }

@@ -50,7 +50,9 @@ object QueryUtils extends Logging {
   private val NAME_REGEX = "^[a-zA-Z\\d_\\.]+$"
   private val nameRegexPattern = Pattern.compile(NAME_REGEX)
 
-  private val dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS")
+  private val dateFormatLocal = new ThreadLocal[SimpleDateFormat]() {
+    override protected def initialValue = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS")
+  }
 
   def storeExecutionCode(jobRequest: JobRequest): Unit = {
       storeExecutionCode(jobRequest.getExecuteUser, jobRequest.getExecutionCode, path => jobRequest.setExecutionCode(path))
@@ -139,7 +141,7 @@ object QueryUtils extends Logging {
   }
 
   def dateToString(date: Date): String = {
-    dateFormat.format(date)
+    dateFormatLocal.get().format(date)
   }
 
   def checkNameValid(param: String): Boolean = {

@@ -24,19 +24,20 @@ import org.apache.linkis.common.conf.{CommonVars, DWCArgumentsParser}
 import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.engineconn.common.creation.DefaultEngineCreationContext
 import org.apache.linkis.engineconn.core.util.EngineConnUtils
-import org.apache.linkis.engineconn.launch.EngineConnServer.info
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.governance.common.utils.EngineConnArgumentsParser
 import org.apache.linkis.manager.engineplugin.common.launch.process.Environment
 import org.apache.linkis.manager.label.builder.factory.{LabelBuilderFactory, LabelBuilderFactoryContext}
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.server.conf.ServerConfiguration
-import java.util
+import org.slf4j.{Logger, LoggerFactory}
 
-import scala.collection.mutable.ArrayBuffer
+import java.util
 
 
 object ECTaskEntranceInfoAccessHelper {
+  val logger: Logger = LoggerFactory.getLogger(ECTaskEntranceInfoAccessHelper.getClass)
+
   val engineCreationContext = new DefaultEngineCreationContext
   val labelBuilderFactory: LabelBuilderFactory = LabelBuilderFactoryContext.getLabelBuilderFactory
 
@@ -61,10 +62,10 @@ object ECTaskEntranceInfoAccessHelper {
     engineCreationContext.setOptions(jMap)
     engineCreationContext.setArgs(args)
     //    EngineConnObject.setEngineCreationContext(engineCreationContext)
-    info("Finished to init engineCreationContext: " + EngineConnUtils.GSON.toJson(engineCreationContext))
+    logger.info("Finished to init engineCreationContext: " + EngineConnUtils.GSON.toJson(engineCreationContext))
 
-    info("Spring is enabled, now try to start SpringBoot.")
-    info("<--------------------Start SpringBoot App-------------------->")
+    logger.info("Spring is enabled, now try to start SpringBoot.")
+    logger.info("<--------------------Start SpringBoot App-------------------->")
     val parser = DWCArgumentsParser.parse(engineCreationContext.getArgs)
     DWCArgumentsParser.setDWCOptionMap(parser.getDWCConfMap)
     val existsExcludePackages = ServerConfiguration.BDP_SERVER_EXCLUDE_PACKAGES.getValue
@@ -74,8 +75,7 @@ object ECTaskEntranceInfoAccessHelper {
     // 加载spring类
     DataWorkCloudApplication.main(DWCArgumentsParser.formatSpringOptions(parser.getSpringConfMap))
 
-    info("<--------------------SpringBoot App init succeed-------------------->")
+    logger.info("<--------------------SpringBoot App init succeed-------------------->")
   }
-
 
 }

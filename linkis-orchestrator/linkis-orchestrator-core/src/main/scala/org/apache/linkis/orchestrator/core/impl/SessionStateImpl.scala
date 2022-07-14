@@ -100,7 +100,7 @@ class SessionStateImpl(orchestratorSession: OrchestratorSession,
     if (null == execution) synchronized {
       if (null == execution) {
         execution = ExecutionFactory.getOrCreateExecutionFactory().createExecution(this)
-        info(s"Finished to create execution $execution")
+        logger.info(s"Finished to create execution $execution")
       }
     }
     execution

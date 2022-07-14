@@ -49,7 +49,7 @@ class JobInfoResult extends DWSResult with UserAction with Status {
     Utils.tryCatch{
       BeanUtils.populate(requestPersistTask, task.asInstanceOf[util.Map[String, _]])
     }{
-      case e:Exception => error("copy failed", e)
+      case e:Exception => logger.error("copy failed", e)
     }
     requestPersistTask.setStatus(task.get("status").asInstanceOf[String])
     requestPersistTask.setCreatedTime(new Date(createdTime))

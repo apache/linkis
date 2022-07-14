@@ -176,4 +176,10 @@ public class HdfsResourceHelper implements ResourceHelper {
             fileSystem.close();
         }
     }
+
+    @Override
+    public boolean checkBmlResourceStoragePrefixPathIfChanged(String path) {
+        String prefixPath = getSchema() + BmlServerConfiguration.BML_HDFS_PREFIX().getValue();
+        return !path.startsWith(prefixPath);
+    }
 }

@@ -16,15 +16,24 @@
  */
 package org.apache.linkis.manager.am.util;
 
+import org.apache.linkis.common.utils.ByteTimeUtils;
+import org.apache.linkis.manager.am.vo.ResourceVo;
+import org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord;
+import org.apache.linkis.server.BDPJettyServerHelper;
+
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 
-import com.google.gson.Gson;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
 public class ECResourceInfoUtils {
+
+    private static Logger logger = LoggerFactory.getLogger(ECResourceInfoUtils.class);
 
     public static String NAME_REGEX = "^[a-zA-Z\\d_\\.]+$";
 
@@ -36,10 +45,32 @@ public class ECResourceInfoUtils {
         return StringUtils.isBlank(str) ? def : str;
     }
 
-    public static Map<String, Object> getStringToMap(String str) {
-        Gson gson = new Gson();
-        Map<String, Object> map = new HashMap<>();
-        map = gson.fromJson(str, map.getClass());
-        return map;
+    public static ResourceVo getStringToMap(String str, ECResourceInfoRecord info) {
+        ResourceVo resourceVo = null;
+        Map<String, Object> map =
+                BDPJettyServerHelper.gson().fromJson(str, new HashMap<>().getClass());
+        if (MapUtils.isNotEmpty(map)) {
+            resourceVo = new ResourceVo();
+            if (info.getLabelValue().contains("spark")
+                    || (info.getLabelValue().contains("flink"))) {
+                if (null != map.get("driver")) {
+                    Map<String, Object> divermap = MapUtils.getMap(map, "driver");
+                    resourceVo.setInstance(((Double) divermap.get("instance")).intValue());
+                    resourceVo.setCores(((Double) divermap.get("cpu")).intValue());
+                    resourceVo.setMemory(
+                            ByteTimeUtils.byteStringAsBytes(divermap.get("memory").toString()));
+                    return resourceVo;
+                } else {
+                    logger.warn("Compatible with old data ,{},{}", info.getLabelValue(), info);
+                    return null; // Compatible with old data
+                }
+            }
+            resourceVo.setInstance(((Double) map.get("instance")).intValue());
+            resourceVo.setMemory(ByteTimeUtils.byteStringAsBytes((map.get("memory").toString())));
+            Double core =
+                    null == map.get("cpu") ? (Double) map.get("cores") : (Double) map.get("cpu");
+            resourceVo.setCores(core.intValue());
+        }
+        return resourceVo;
     }
 }

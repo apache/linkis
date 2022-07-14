@@ -17,8 +17,8 @@
 
 package org.apache.linkis.bml.restful;
 
-import org.apache.linkis.bml.Entity.DownloadModel;
-import org.apache.linkis.bml.Entity.ResourceTask;
+import org.apache.linkis.bml.entity.DownloadModel;
+import org.apache.linkis.bml.entity.ResourceTask;
 import org.apache.linkis.bml.common.BmlProjectNoEditException;
 import org.apache.linkis.bml.common.BmlQueryFailException;
 import org.apache.linkis.bml.common.BmlServerParaErrorException;

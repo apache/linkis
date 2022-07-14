@@ -17,8 +17,8 @@
 
 package org.apache.linkis.bml.service.impl;
 
-import org.apache.linkis.bml.Entity.ResourceVersion;
-import org.apache.linkis.bml.Entity.Version;
+import org.apache.linkis.bml.entity.ResourceVersion;
+import org.apache.linkis.bml.entity.Version;
 import org.apache.linkis.bml.common.Constant;
 import org.apache.linkis.bml.common.ResourceHelper;
 import org.apache.linkis.bml.common.ResourceHelperFactory;

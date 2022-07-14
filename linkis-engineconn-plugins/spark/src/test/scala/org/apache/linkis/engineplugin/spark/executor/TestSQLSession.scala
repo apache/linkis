@@ -40,6 +40,7 @@ class TestSQLSession {
     DataWorkCloudApplication.main(DWCArgumentsParser.formatSpringOptions(map.toMap))
     val engineFactory = new SparkEngineConnFactory
     val sparkConf: SparkConf = new SparkConf(true)
+    System.setProperty("HADOOP_CONF_DIR", "./")
     System.setProperty("java.io.tmpdir", "./")
     val sparkSession = SparkSession.builder()
       .master("local[*]")

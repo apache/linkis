@@ -14,25 +14,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.linkis.manager.am.vo;
 
-package org.apache.linkis.manager.am.service;
+public class ResourceVo {
 
-import org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord;
+    private int cores;
+    private int instance;
+    private long memory;
 
-import java.util.Date;
-import java.util.List;
+    public int getCores() {
+        return cores;
+    }
 
-public interface ECResourceInfoService {
+    public void setCores(int cores) {
+        this.cores = cores;
+    }
 
-    ECResourceInfoRecord getECResourceInfoRecord(String ticketId);
+    public int getInstance() {
+        return instance;
+    }
 
-    void deleteECResourceInfoRecordByTicketId(String ticketId);
+    public void setInstance(int instance) {
+        this.instance = instance;
+    }
 
-    void deleteECResourceInfoRecord(Integer id);
+    public long getMemory() {
+        return memory;
+    }
 
-    List<ECResourceInfoRecord> getECResourceInfoRecordList(
-            String instance, Date endDate, Date startDate, String username, String engineType);
-
-    // TODO add search method
-
+    public void setMemory(long memory) {
+        this.memory = memory;
+    }
 }

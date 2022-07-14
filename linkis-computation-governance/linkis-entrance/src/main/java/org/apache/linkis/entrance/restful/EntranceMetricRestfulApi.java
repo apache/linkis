@@ -62,9 +62,12 @@ public class EntranceMetricRestfulApi {
     })*/
     @ApiOperation(value = "Taskinfo", notes = "Task_Info", response = Message.class)
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "user", dataType = "String", value = "User"),
-            @ApiImplicitParam(name = "creator", dataType = "String", value = "Creator"),
-            @ApiImplicitParam(name = "engineTypeLabel", dataType = "String", value = "Engine_Type_Label")
+        @ApiImplicitParam(name = "user", dataType = "String", value = "User"),
+        @ApiImplicitParam(name = "creator", dataType = "String", value = "Creator"),
+        @ApiImplicitParam(
+                name = "engineTypeLabel",
+                dataType = "String",
+                value = "Engine_Type_Label")
     })
     @RequestMapping(path = "/taskinfo", method = RequestMethod.GET)
     public Message taskinfo(
@@ -120,7 +123,7 @@ public class EntranceMetricRestfulApi {
                 .data("queuedNumber", queuedNumber);
     }
 
-/*    @ApiOperation(value = "启动任务", notes = "启动任务", response = Message.class)*/
+    /*    @ApiOperation(value = "启动任务", notes = "启动任务", response = Message.class)*/
     @ApiOperation(value = "Status", notes = "Running_Task", response = Message.class)
     @RequestMapping(path = "/runningtask", method = RequestMethod.GET)
     public Message status(HttpServletRequest req) {

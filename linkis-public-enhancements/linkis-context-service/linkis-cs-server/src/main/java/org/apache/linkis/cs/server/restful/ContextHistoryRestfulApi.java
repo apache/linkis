@@ -62,8 +62,8 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
     })*/
     @ApiOperation(value = "CreateHistory", notes = "Create_History", response = Message.class)
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "contextHistory", dataType = "String", value = "Context_History"),
-            @ApiImplicitParam(name = "contextID", dataType = "String", value = "Context_Id")
+        @ApiImplicitParam(name = "contextHistory", dataType = "String", value = "Context_History"),
+        @ApiImplicitParam(name = "contextID", dataType = "String", value = "Context_Id")
     })
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "createHistory", method = RequestMethod.POST)
@@ -89,8 +89,8 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
     })*/
     @ApiOperation(value = "removeHistory", notes = "Remove_History", response = Message.class)
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "contextHistory", dataType = "String", value = "Context_History"),
-            @ApiImplicitParam(name = "contextID", dataType = "String", value = "Context_Id")
+        @ApiImplicitParam(name = "contextHistory", dataType = "String", value = "Context_History"),
+        @ApiImplicitParam(name = "contextID", dataType = "String", value = "Context_Id")
     })
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "removeHistory", method = RequestMethod.POST)
@@ -113,9 +113,12 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
     @ApiImplicitParams({
         @ApiImplicitParam(name = "contextID", dataType = "String", value = "上下文id")
     })*/
-    @ApiOperation(value = "GetHistories", notes = "Get_Multiple_Histories", response = Message.class)
+    @ApiOperation(
+            value = "GetHistories",
+            notes = "Get_Multiple_Histories",
+            response = Message.class)
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "contextID", dataType = "String", value = "Context_Id")
+        @ApiImplicitParam(name = "contextID", dataType = "String", value = "Context_Id")
     })
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "getHistories", method = RequestMethod.POST)
@@ -137,8 +140,8 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
     })*/
     @ApiOperation(value = "GetHistory", notes = "Get_History", response = Message.class)
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "contextID", dataType = "String", value = "Context_Id"),
-            @ApiImplicitParam(name = "source", dataType = "String", value = "Source")
+        @ApiImplicitParam(name = "contextID", dataType = "String", value = "Context_Id"),
+        @ApiImplicitParam(name = "source", dataType = "String", value = "Source")
     })
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "getHistory", method = RequestMethod.POST)
@@ -166,8 +169,8 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
     })*/
     @ApiOperation(value = "SearchHistory", notes = "Search_History", response = Message.class)
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "contextID", dataType = "String", value = "Context_Id"),
-            @ApiImplicitParam(name = "keywords", dataType = "String", value = "Key_Words")
+        @ApiImplicitParam(name = "contextID", dataType = "String", value = "Context_Id"),
+        @ApiImplicitParam(name = "keywords", dataType = "String", value = "Key_Words")
     })
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "searchHistory", method = RequestMethod.POST)

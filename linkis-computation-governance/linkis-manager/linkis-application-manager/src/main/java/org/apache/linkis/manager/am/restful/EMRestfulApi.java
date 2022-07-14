@@ -76,7 +76,9 @@ import java.util.stream.Collectors;
 
 /*@Api(tags = "ECM资源管理")*/
 @Api(tags = "ECM_Resource_Management")
-@RequestMapping(path = "/linkisManager", produces = {"application/json"})
+@RequestMapping(
+        path = "/linkisManager",
+        produces = {"application/json"})
 @RestController
 public class EMRestfulApi {
 
@@ -111,9 +113,13 @@ public class EMRestfulApi {
     })*/
     @ApiOperation(value = "ListAllEMs", notes = "List_All_EMs", response = Message.class)
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "instance", dataType = "String", value = "Instance"),
-            @ApiImplicitParam(name = "nodeHealthy", dataType = "String", value = "Node_Healthy", example = "Healthy, UnHealthy, WARN, StockAvailable, StockUnavailable"),
-            @ApiImplicitParam(name = "owner", dataType = "String", value = "Owner")
+        @ApiImplicitParam(name = "instance", dataType = "String", value = "Instance"),
+        @ApiImplicitParam(
+                name = "nodeHealthy",
+                dataType = "String",
+                value = "Node_Healthy",
+                example = "Healthy, UnHealthy, WARN, StockAvailable, StockUnavailable"),
+        @ApiImplicitParam(name = "owner", dataType = "String", value = "Owner")
     })
     // todo add healthInfo
     @RequestMapping(path = "/listAllEMs", method = RequestMethod.GET)
@@ -171,9 +177,12 @@ public class EMRestfulApi {
     @ApiImplicitParams({
         @ApiImplicitParam(name = "onlyEditable", required = false, dataType = "Boolean", value = "是否仅可编辑")
     })*/
-    @ApiOperation(value = "ListAllNodeHealthyStatus", notes = "List_All_Node_Healthy_Status", response = Message.class)
+    @ApiOperation(
+            value = "ListAllNodeHealthyStatus",
+            notes = "List_All_Node_Healthy_Status",
+            response = Message.class)
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "onlyEditable", dataType = "Boolean", value = "Only_Editable")
+        @ApiImplicitParam(name = "onlyEditable", dataType = "Boolean", value = "Only_Editable")
     })
     @RequestMapping(path = "/listAllECMHealthyStatus", method = RequestMethod.GET)
     public Message listAllNodeHealthyStatus(
@@ -204,12 +213,19 @@ public class EMRestfulApi {
     })*/
     @ApiOperation(value = "ModifyEMInfo", notes = "Modify_EM_Info", response = Message.class)
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "applicationName", dataType = "String", value = "Application_Name"),
-            @ApiImplicitParam(name = "emStatus", dataType = "String", value = "Em_Status", example = "Healthy, UnHealthy, WARN, StockAvailable, StockUnavailable"),
-            @ApiImplicitParam(name = "instance", dataType = "String", value = "Instance"),
-            @ApiImplicitParam(name = "labels", dataType = "List", value = "Labels"),
-            @ApiImplicitParam(name = "labelKey", dataType = "String", value = "Label_Key"),
-            @ApiImplicitParam(name = "stringValue", dataType = "String", value = "String_Value")
+        @ApiImplicitParam(
+                name = "applicationName",
+                dataType = "String",
+                value = "Application_Name"),
+        @ApiImplicitParam(
+                name = "emStatus",
+                dataType = "String",
+                value = "Em_Status",
+                example = "Healthy, UnHealthy, WARN, StockAvailable, StockUnavailable"),
+        @ApiImplicitParam(name = "instance", dataType = "String", value = "Instance"),
+        @ApiImplicitParam(name = "labels", dataType = "List", value = "Labels"),
+        @ApiImplicitParam(name = "labelKey", dataType = "String", value = "Label_Key"),
+        @ApiImplicitParam(name = "stringValue", dataType = "String", value = "String_Value")
     })
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "/modifyEMInfo", method = RequestMethod.PUT)
@@ -274,7 +290,10 @@ public class EMRestfulApi {
     }
 
     /*@ApiOperation(value = "执行ECM操作开始", notes = "", response = Message.class)*/
-    @ApiOperation(value = "ExecuteECMOperationByEC", notes = "Execute_ECM_Operation_By_EC", response = Message.class)
+    @ApiOperation(
+            value = "ExecuteECMOperationByEC",
+            notes = "Execute_ECM_Operation_By_EC",
+            response = Message.class)
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "/executeECMOperationByEC", method = RequestMethod.POST)
     public Message executeECMOperationByEC(HttpServletRequest req, @RequestBody JsonNode jsonNode)
@@ -314,7 +333,10 @@ public class EMRestfulApi {
     }
 
     /*@ApiOperation(value = "执行ECM操作", notes = "", response = Message.class)*/
-    @ApiOperation(value = "ExecuteECMOperation", notes = "Execute_ECM_Operation", response = Message.class)
+    @ApiOperation(
+            value = "ExecuteECMOperation",
+            notes = "Execute_ECM_Operation",
+            response = Message.class)
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "/executeECMOperation", method = RequestMethod.POST)
     public Message executeECMOperation(HttpServletRequest req, @RequestBody JsonNode jsonNode)
@@ -342,7 +364,7 @@ public class EMRestfulApi {
         return executeECMOperation(ecmNode, new ECMOperateRequest(userName, parameters));
     }
 
-   /* @ApiOperation(value = "打开引擎日志", notes = "打开引擎日志，默认打开stdout类型的引擎日志", response = Message.class)
+    /* @ApiOperation(value = "打开引擎日志", notes = "打开引擎日志，默认打开stdout类型的引擎日志", response = Message.class)
     @ApiImplicitParams({
         @ApiImplicitParam(name = "applicationName", dataType = "String", value = "引擎标签"),
         @ApiImplicitParam(name = "emInstance", dataType = "String", value = "实例名称"),
@@ -352,16 +374,23 @@ public class EMRestfulApi {
         @ApiImplicitParam(name = "fromLine", dataType = "String", value = "来自线路"),
         @ApiImplicitParam(name = "pageSize", dataType = "String", value = "页面大小"),
     })*/
-   @ApiOperation(value = "OpenEngineLog", notes = "Open_Engine_Log", response = Message.class)
-   @ApiImplicitParams({
-           @ApiImplicitParam(name = "applicationName", dataType = "String", value = "Application_Name"),
-           @ApiImplicitParam(name = "emInstance", dataType = "String", value = "Em_Instance"),
-           @ApiImplicitParam(name = "instance", dataType = "String", value = "Instance"),
-           @ApiImplicitParam(name = "parameters", dataType = "Map", value = "Parameters"),
-           @ApiImplicitParam(name = "logType", dataType = "String", value = "Log_Type", example = "stdout"),
-           @ApiImplicitParam(name = "fromLine", dataType = "String", value = "From_Line"),
-           @ApiImplicitParam(name = "pageSize", dataType = "String", value = "Page_Size"),
-   })
+    @ApiOperation(value = "OpenEngineLog", notes = "Open_Engine_Log", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(
+                name = "applicationName",
+                dataType = "String",
+                value = "Application_Name"),
+        @ApiImplicitParam(name = "emInstance", dataType = "String", value = "Em_Instance"),
+        @ApiImplicitParam(name = "instance", dataType = "String", value = "Instance"),
+        @ApiImplicitParam(name = "parameters", dataType = "Map", value = "Parameters"),
+        @ApiImplicitParam(
+                name = "logType",
+                dataType = "String",
+                value = "Log_Type",
+                example = "stdout"),
+        @ApiImplicitParam(name = "fromLine", dataType = "String", value = "From_Line"),
+        @ApiImplicitParam(name = "pageSize", dataType = "String", value = "Page_Size"),
+    })
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "/openEngineLog", method = RequestMethod.POST)
     public Message openEngineLog(HttpServletRequest req, @RequestBody JsonNode jsonNode)

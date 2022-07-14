@@ -42,7 +42,7 @@ public class LinkisErrorCodeRestful {
 
     @Autowired private LinkisErrorCodeService linkisErrorCodeService;
 
-/*    @ApiOperation(value = "获取Linkis错误代码", notes = "获取Linkis错误代码列表", response = Message.class)*/
+    /*    @ApiOperation(value = "获取Linkis错误代码", notes = "获取Linkis错误代码列表", response = Message.class)*/
     @ApiOperation(value = "GetErrorCodes", notes = "Get_Error_Codes", response = Message.class)
     @RequestMapping(path = CommonConf.GET_ERRORCODE_URL, method = RequestMethod.GET)
     public Message getErrorCodes(HttpServletRequest request) {

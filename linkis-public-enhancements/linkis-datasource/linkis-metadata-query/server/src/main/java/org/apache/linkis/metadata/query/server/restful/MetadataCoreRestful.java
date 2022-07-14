@@ -103,7 +103,9 @@ public class MetadataCoreRestful {
         }
     }
 
-    @RequestMapping(value = "/props/{dataSourceId}/db/{database}/table/{table}", method = RequestMethod.GET)
+    @RequestMapping(
+            value = "/props/{dataSourceId}/db/{database}/table/{table}",
+            method = RequestMethod.GET)
     public Message getTableProps(
             @PathVariable("dataSourceId") String dataSourceId,
             @PathVariable("database") String database,

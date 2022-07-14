@@ -17,10 +17,6 @@
 
 package org.apache.linkis.jobhistory.restful.api;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
 import org.apache.linkis.governance.common.constant.job.JobRequestConstants;
 import org.apache.linkis.governance.common.entity.job.QueryException;
 import org.apache.linkis.jobhistory.cache.impl.DefaultQueryCacheManager;
@@ -43,11 +39,16 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.*;
+
 @Api(tags = "Query_Api")
 @RestController
 @RequestMapping(path = "/jobhistory")
@@ -59,7 +60,11 @@ public class QueryRestfulApi {
     @Autowired private JobDetailMapper jobDetailMapper;
 
     @Autowired private DefaultQueryCacheManager queryCacheManager;
-    @ApiOperation(value = "GovernanceStationAdmin", notes = "Governance_Station_Admin", response = Message.class)
+
+    @ApiOperation(
+            value = "GovernanceStationAdmin",
+            notes = "Governance_Station_Admin",
+            response = Message.class)
     @RequestMapping(path = "/governanceStationAdmin", method = RequestMethod.GET)
     public Message governanceStationAdmin(HttpServletRequest req) {
         String username = ModuleUserUtils.getOperationUser(req, "governanceStationAdmin");
@@ -70,7 +75,7 @@ public class QueryRestfulApi {
 
     @ApiOperation(value = "GetTaskByID", notes = "Get_Task_By_ID", response = Message.class)
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "jobId", dataType = "long", required = true, value = "Job_Id")
+        @ApiImplicitParam(name = "jobId", dataType = "long", required = true, value = "Job_Id")
     })
     @RequestMapping(path = "/{id}/get", method = RequestMethod.GET)
     public Message getTaskByID(HttpServletRequest req, @PathVariable("id") Long jobId) {
@@ -111,17 +116,19 @@ public class QueryRestfulApi {
     /** Method list should not contain subjob, which may cause performance problems. */
     @ApiOperation(value = "List", notes = "List", response = Message.class)
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "startDate", dataType = "long", value = "Start_Date"),
-            @ApiImplicitParam(name = "endDate", dataType = "long", value = "End_Date"),
-            @ApiImplicitParam(name = "status", dataType = "long", value = "Status"),
-            @ApiImplicitParam(name = "pageNow", dataType = "long", value = "Page_Now"),
-            @ApiImplicitParam(name = "pageSize", dataType = "long", value = "Page_Size"),
-            @ApiImplicitParam(name = "taskID", dataType = "long", value = "Task_ID"),
-            @ApiImplicitParam(name = "executeApplicationName", dataType = "long", value = "Execute_Application_Name"),
-            @ApiImplicitParam(name = "creator", dataType = "long", value = "Creator"),
-            @ApiImplicitParam(name = "jobId", dataType = "long", value = "Proxy_User"),
-            @ApiImplicitParam(name = "isAdminView", dataType = "long", value = "Is_Admin_View"),
-
+        @ApiImplicitParam(name = "startDate", dataType = "long", value = "Start_Date"),
+        @ApiImplicitParam(name = "endDate", dataType = "long", value = "End_Date"),
+        @ApiImplicitParam(name = "status", dataType = "long", value = "Status"),
+        @ApiImplicitParam(name = "pageNow", dataType = "long", value = "Page_Now"),
+        @ApiImplicitParam(name = "pageSize", dataType = "long", value = "Page_Size"),
+        @ApiImplicitParam(name = "taskID", dataType = "long", value = "Task_ID"),
+        @ApiImplicitParam(
+                name = "executeApplicationName",
+                dataType = "long",
+                value = "Execute_Application_Name"),
+        @ApiImplicitParam(name = "creator", dataType = "long", value = "Creator"),
+        @ApiImplicitParam(name = "jobId", dataType = "long", value = "Proxy_User"),
+        @ApiImplicitParam(name = "isAdminView", dataType = "long", value = "Is_Admin_View"),
     })
     @RequestMapping(path = "/list", method = RequestMethod.GET)
     public Message list(
@@ -231,15 +238,14 @@ public class QueryRestfulApi {
     /** Method list should not contain subjob, which may cause performance problems. */
     @ApiOperation(value = "Listundone", notes = "list_Undone", response = Message.class)
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "startDate", dataType = "long", value = "Start_Date"),
-            @ApiImplicitParam(name = "endDate", dataType = "long", value = "End_Date"),
-            @ApiImplicitParam(name = "status", dataType = "long", value = "Status"),
-            @ApiImplicitParam(name = "pageNow", dataType = "long", value = "Page_Now"),
-            @ApiImplicitParam(name = "pageSize", dataType = "long", value = "Page_Size"),
-            @ApiImplicitParam(name = "creator", dataType = "long", value = "Creator"),
-            @ApiImplicitParam(name = "engineType", dataType = "long", value = "Engine_Type"),
-            @ApiImplicitParam(name = "startTaskID", dataType = "long", value = "Start_Task_Id"),
-
+        @ApiImplicitParam(name = "startDate", dataType = "long", value = "Start_Date"),
+        @ApiImplicitParam(name = "endDate", dataType = "long", value = "End_Date"),
+        @ApiImplicitParam(name = "status", dataType = "long", value = "Status"),
+        @ApiImplicitParam(name = "pageNow", dataType = "long", value = "Page_Now"),
+        @ApiImplicitParam(name = "pageSize", dataType = "long", value = "Page_Size"),
+        @ApiImplicitParam(name = "creator", dataType = "long", value = "Creator"),
+        @ApiImplicitParam(name = "engineType", dataType = "long", value = "Engine_Type"),
+        @ApiImplicitParam(name = "startTaskID", dataType = "long", value = "Start_Task_Id"),
     })
     @RequestMapping(path = "/listundone", method = RequestMethod.GET)
     public Message listundone(

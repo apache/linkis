@@ -17,7 +17,6 @@
 
 package org.apache.linkis.cs.server.restful;
 
-import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.cs.common.entity.source.ContextID;
 import org.apache.linkis.cs.common.exception.CSErrorException;
@@ -42,6 +41,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -66,13 +66,13 @@ public class ContextIDRestfulApi implements CsRestfulParent {
 
     @Autowired private CsScheduler csScheduler;
 
-   /* @ApiOperation(value = "创建文本记录", notes = "创建文本记录", response = Message.class)
+    /* @ApiOperation(value = "创建文本记录", notes = "创建文本记录", response = Message.class)
     @ApiImplicitParams({
         @ApiImplicitParam(name = "contextID", dataType = "String", value = "上下文Id")
     })*/
     @ApiOperation(value = "CreateContextID", notes = "Create_Context_Id", response = Message.class)
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "contextID", dataType = "String", value = "Context_Id")
+        @ApiImplicitParam(name = "contextID", dataType = "String", value = "Context_Id")
     })
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "createContextID", method = RequestMethod.POST)
@@ -89,7 +89,7 @@ public class ContextIDRestfulApi implements CsRestfulParent {
     })*/
     @ApiOperation(value = "GetContextID", notes = "Get_Context_Id", response = Message.class)
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "contextId", dataType = "String", value = "Context_Id")
+        @ApiImplicitParam(name = "contextId", dataType = "String", value = "Context_Id")
     })
     @RequestMapping(path = "getContextID", method = RequestMethod.GET)
     public Message getContextID(
@@ -109,7 +109,7 @@ public class ContextIDRestfulApi implements CsRestfulParent {
     })*/
     @ApiOperation(value = "UpdateContextID", notes = "Update_Context_Id", response = Message.class)
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "contextId", dataType = "String", value = "Context_Id")
+        @ApiImplicitParam(name = "contextId", dataType = "String", value = "Context_Id")
     })
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "updateContextID", method = RequestMethod.POST)
@@ -129,7 +129,7 @@ public class ContextIDRestfulApi implements CsRestfulParent {
     })*/
     @ApiOperation(value = "ResetContextID", notes = "Reset_Context_Id", response = Message.class)
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "contextId", dataType = "String", value = "Context_Id")
+        @ApiImplicitParam(name = "contextId", dataType = "String", value = "Context_Id")
     })
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "resetContextID", method = RequestMethod.POST)
@@ -150,7 +150,7 @@ public class ContextIDRestfulApi implements CsRestfulParent {
     })*/
     @ApiOperation(value = "RemoveContextID", notes = "Remove_Context_Id", response = Message.class)
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "contextId", dataType = "String", value = "Context_Id")
+        @ApiImplicitParam(name = "contextId", dataType = "String", value = "Context_Id")
     })
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "removeContextID", method = RequestMethod.POST)
@@ -175,16 +175,28 @@ public class ContextIDRestfulApi implements CsRestfulParent {
         @ApiImplicitParam(name = "pageNow", dataType = "String", value = "页码"),
         @ApiImplicitParam(name = "pageSize", dataType = "String", value = "页面大小")
     })*/
-    @ApiOperation(value = "SearchContextIDByTime", notes = "Search_Context_Id_By_Time", response = Message.class)
+    @ApiOperation(
+            value = "SearchContextIDByTime",
+            notes = "Search_Context_Id_By_Time",
+            response = Message.class)
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "createTimeStart", dataType = "String", value = "Create_Time_Start"),
-            @ApiImplicitParam(name = "createTimeEnd", dataType = "String", value = "Create_Time_End"),
-            @ApiImplicitParam(name = "updateTimeStart", dataType = "String", value = "Update_Time_Start"),
-            @ApiImplicitParam(name = "updateTimeEnd", dataType = "String", value = "Update_Time_End"),
-            @ApiImplicitParam(name = "accessTimeStart", dataType = "String", value = "Access_Time_Start"),
-            @ApiImplicitParam(name = "accessTimeEnd", dataType = "String", value = "Access_Time_End"),
-            @ApiImplicitParam(name = "pageNow", dataType = "String", value = "Page_Now"),
-            @ApiImplicitParam(name = "pageSize", dataType = "String", value = "Page_Size")
+        @ApiImplicitParam(
+                name = "createTimeStart",
+                dataType = "String",
+                value = "Create_Time_Start"),
+        @ApiImplicitParam(name = "createTimeEnd", dataType = "String", value = "Create_Time_End"),
+        @ApiImplicitParam(
+                name = "updateTimeStart",
+                dataType = "String",
+                value = "Update_Time_Start"),
+        @ApiImplicitParam(name = "updateTimeEnd", dataType = "String", value = "Update_Time_End"),
+        @ApiImplicitParam(
+                name = "accessTimeStart",
+                dataType = "String",
+                value = "Access_Time_Start"),
+        @ApiImplicitParam(name = "accessTimeEnd", dataType = "String", value = "Access_Time_End"),
+        @ApiImplicitParam(name = "pageNow", dataType = "String", value = "Page_Now"),
+        @ApiImplicitParam(name = "pageSize", dataType = "String", value = "Page_Size")
     })
     @RequestMapping(path = "searchContextIDByTime", method = RequestMethod.GET)
     public Message searchContextIDByTime(

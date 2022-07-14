@@ -73,10 +73,13 @@ public class MdqTableRestfulApi {
         @ApiImplicitParam(name = "database", dataType = "String", value = "数据源"),
         @ApiImplicitParam(name = "tableName", dataType = "String", value = "表名称")
     })*/
-    @ApiOperation(value = "GetTableBaseInfo", notes = "Get_Table_Base_Info", response = Message.class)
+    @ApiOperation(
+            value = "GetTableBaseInfo",
+            notes = "Get_Table_Base_Info",
+            response = Message.class)
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "database", dataType = "String", value = "Database"),
-            @ApiImplicitParam(name = "tableName", dataType = "String", value = "Table_Name")
+        @ApiImplicitParam(name = "database", dataType = "String", value = "Database"),
+        @ApiImplicitParam(name = "tableName", dataType = "String", value = "Table_Name")
     })
     @RequestMapping(path = "getTableBaseInfo", method = RequestMethod.GET)
     public Message getTableBaseInfo(
@@ -98,10 +101,13 @@ public class MdqTableRestfulApi {
         @ApiImplicitParam(name = "database", dataType = "String", value = "数据源"),
         @ApiImplicitParam(name = "tableName", dataType = "String", value = "表名称")
     })*/
-    @ApiOperation(value = "GetTableFieldsInfo", notes = "Get_Table_Fields_Info", response = Message.class)
+    @ApiOperation(
+            value = "GetTableFieldsInfo",
+            notes = "Get_Table_Fields_Info",
+            response = Message.class)
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "database", dataType = "String", value = "Database"),
-            @ApiImplicitParam(name = "tableName", dataType = "String", value = "Table_Name")
+        @ApiImplicitParam(name = "database", dataType = "String", value = "Database"),
+        @ApiImplicitParam(name = "tableName", dataType = "String", value = "Table_Name")
     })
     @RequestMapping(path = "getTableFieldsInfo", method = RequestMethod.GET)
     public Message getTableFieldsInfo(
@@ -126,13 +132,16 @@ public class MdqTableRestfulApi {
         @ApiImplicitParam(name = "pageSize", dataType = "String", value = "页面大小"),
         @ApiImplicitParam(name = "partitionSort", dataType = "String", value = "分区排序")
     })*/
-    @ApiOperation(value = "GetTableStatisticInfo", notes = "Get_Table_Statistic_Info", response = Message.class)
+    @ApiOperation(
+            value = "GetTableStatisticInfo",
+            notes = "Get_Table_Statistic_Info",
+            response = Message.class)
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "database", dataType = "String", value = "Database"),
-            @ApiImplicitParam(name = "tableName", dataType = "String", value = "Table_Name"),
-            @ApiImplicitParam(name = "pageNow", dataType = "String", value = "Page_Now"),
-            @ApiImplicitParam(name = "pageSize", dataType = "String", value = "Page_Size"),
-            @ApiImplicitParam(name = "partitionSort", dataType = "String", value = "Partition_Sort")
+        @ApiImplicitParam(name = "database", dataType = "String", value = "Database"),
+        @ApiImplicitParam(name = "tableName", dataType = "String", value = "Table_Name"),
+        @ApiImplicitParam(name = "pageNow", dataType = "String", value = "Page_Now"),
+        @ApiImplicitParam(name = "pageSize", dataType = "String", value = "Page_Size"),
+        @ApiImplicitParam(name = "partitionSort", dataType = "String", value = "Partition_Sort")
     })
     @RequestMapping(path = "getTableStatisticInfo", method = RequestMethod.GET)
     public Message getTableStatisticInfo(
@@ -199,11 +208,14 @@ public class MdqTableRestfulApi {
         @ApiImplicitParam(name = "tableName", dataType = "String", value = "表名称"),
         @ApiImplicitParam(name = "partitionSort", dataType = "String", value = "分区排序")
     })*/
-    @ApiOperation(value = "GetPartitionStatisticInfo", notes = "Get_Partition_Statistic_Info", response = Message.class)
+    @ApiOperation(
+            value = "GetPartitionStatisticInfo",
+            notes = "Get_Partition_Statistic_Info",
+            response = Message.class)
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "database", dataType = "String", value = "Database"),
-            @ApiImplicitParam(name = "tableName", dataType = "String", value = "Table_Name"),
-            @ApiImplicitParam(name = "partitionSort", dataType = "String", value = "Partition_Sort")
+        @ApiImplicitParam(name = "database", dataType = "String", value = "Database"),
+        @ApiImplicitParam(name = "tableName", dataType = "String", value = "Table_Name"),
+        @ApiImplicitParam(name = "partitionSort", dataType = "String", value = "Partition_Sort")
     })
     @RequestMapping(path = "getPartitionStatisticInfo", method = RequestMethod.GET)
     public Message getPartitionStatisticInfo(
@@ -222,7 +234,9 @@ public class MdqTableRestfulApi {
     /*@ApiOperation(value = "激活表操作", notes = "激活表操作", response = Message.class)
     @ApiImplicitParams({@ApiImplicitParam(name = "tableId", dataType = "String", value = "表ID")})*/
     @ApiOperation(value = "Active", notes = "Active", response = Message.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "tableId", dataType = "String", value = "Table_Id")})
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "tableId", dataType = "String", value = "Table_Id")
+    })
     @RequestMapping(path = "active", method = RequestMethod.GET)
     public Message active(
             @RequestParam(value = "tableId", required = false) Long tableId,

@@ -48,7 +48,9 @@ import java.util.stream.Collectors;
 
 /*@Api(tags = "EC资源信息管理")*/
 @Api(tags = "EC_Resource_Information_Management")
-@RequestMapping(path = "/linkisManager/ecinfo", produces = {"application/json"})
+@RequestMapping(
+        path = "/linkisManager/ecinfo",
+        produces = {"application/json"})
 @RestController
 public class ECResourceInfoRestfulApi {
     @Autowired private ECResourceInfoService ecResourceInfoService;
@@ -59,7 +61,11 @@ public class ECResourceInfoRestfulApi {
     })*/
     @ApiOperation(value = "GetECInfo", notes = "Get_Ec_Info", response = Message.class)
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "ticketid", required = true, dataType = "String", value = "Ticket_Id")
+        @ApiImplicitParam(
+                name = "ticketid",
+                required = true,
+                dataType = "String",
+                value = "Ticket_Id")
     })
     @RequestMapping(path = "/get", method = RequestMethod.GET)
     public Message getECInfo(
@@ -83,7 +89,11 @@ public class ECResourceInfoRestfulApi {
     })*/
     @ApiOperation(value = "DeleteECInfo", notes = "Delete_Ec_Info", response = Message.class)
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "ticketid", required = true, dataType = "String", value = "Ticket_Id")
+        @ApiImplicitParam(
+                name = "ticketid",
+                required = true,
+                dataType = "String",
+                value = "Ticket_Id")
     })
     @RequestMapping(path = "/delete/{ticketid}}", method = RequestMethod.DELETE)
     public Message deleteECInfo(HttpServletRequest req, @PathVariable("ticketid") String ticketid)
@@ -108,8 +118,8 @@ public class ECResourceInfoRestfulApi {
     })*/
     @ApiOperation(value = "QueryEcrHistory", notes = "Query_Ecr_History", response = Message.class)
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "instance", dataType = "String", value = "Instance"),
-            @ApiImplicitParam(name = "creator", dataType = "String", value = "Creator")
+        @ApiImplicitParam(name = "instance", dataType = "String", value = "Instance"),
+        @ApiImplicitParam(name = "creator", dataType = "String", value = "Creator")
     })
     @RequestMapping(path = "/ecrHistoryList", method = RequestMethod.GET)
     public Message queryEcrHistory(

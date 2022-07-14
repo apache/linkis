@@ -71,7 +71,9 @@ import java.util.stream.Collectors;
 
 /*@Api(tags = "引擎管理")*/
 @Api(tags = "Engine_Management")
-@RequestMapping(path = "/linkisManager", produces = {"application/json"})
+@RequestMapping(
+        path = "/linkisManager",
+        produces = {"application/json"})
 @RestController
 public class EngineRestfulApi {
 

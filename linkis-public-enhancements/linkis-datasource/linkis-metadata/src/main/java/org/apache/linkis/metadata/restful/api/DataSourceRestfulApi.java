@@ -70,8 +70,11 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
         }
     }
 
-/*    @ApiOperation(value = "get all db and tables", notes = "get all db and tables", response = Message.class)*/
-    @ApiOperation(value = "QueryDbsWithTables", notes = "Query_Dbs_With_Tables", response = Message.class)
+    /*    @ApiOperation(value = "get all db and tables", notes = "get all db and tables", response = Message.class)*/
+    @ApiOperation(
+            value = "QueryDbsWithTables",
+            notes = "Query_Dbs_With_Tables",
+            response = Message.class)
     @Override
     @RequestMapping(path = "all", method = RequestMethod.GET)
     public Message queryDbsWithTables(HttpServletRequest req) {
@@ -91,7 +94,7 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
     })*/
     @ApiOperation(value = "QueryTables", notes = "Query_Tables", response = Message.class)
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "database", dataType = "String", value = "Database")
+        @ApiImplicitParam(name = "database", dataType = "String", value = "Database")
     })
     @Override
     @RequestMapping(path = "tables", method = RequestMethod.GET)
@@ -115,8 +118,8 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
     })*/
     @ApiOperation(value = "QueryTableMeta", notes = "Query_Table_Meta", response = Message.class)
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "database", dataType = "String", value = "Database"),
-            @ApiImplicitParam(name = "table", dataType = "String", value = "Table")
+        @ApiImplicitParam(name = "database", dataType = "String", value = "Database"),
+        @ApiImplicitParam(name = "table", dataType = "String", value = "Table")
     })
     @Override
     @RequestMapping(path = "columns", method = RequestMethod.GET)
@@ -141,9 +144,9 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
 
     @ApiOperation(value = "SizeOf", notes = "Size_Of", response = Message.class)
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "database", dataType = "String", value = "Database"),
-            @ApiImplicitParam(name = "table", dataType = "String", value = "Table"),
-            @ApiImplicitParam(name = "partition", dataType = "String", value = "Partition")
+        @ApiImplicitParam(name = "database", dataType = "String", value = "Database"),
+        @ApiImplicitParam(name = "table", dataType = "String", value = "Table"),
+        @ApiImplicitParam(name = "partition", dataType = "String", value = "Partition")
     })
     @Override
     @RequestMapping(path = "size", method = RequestMethod.GET)
@@ -169,8 +172,8 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
 
     @ApiOperation(value = "Partitions", notes = "Partitions", response = Message.class)
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "database", dataType = "String", value = "Database"),
-            @ApiImplicitParam(name = "table", dataType = "String", value = "Table")
+        @ApiImplicitParam(name = "database", dataType = "String", value = "Database"),
+        @ApiImplicitParam(name = "table", dataType = "String", value = "Table")
     })
     @Override
     @RequestMapping(path = "partitions", method = RequestMethod.GET)

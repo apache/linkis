@@ -93,7 +93,7 @@ private[linkis] object RPCProduct extends Logging {
     this.formats = (serializer :+ JavaCollectionSerializer :+ JavaMapSerializer).foldLeft(DefaultFormats.asInstanceOf[Formats])(_ + _)
     serializerClasses = formats.customSerializers.map(s => getActualTypeClass(s.getClass.getGenericSuperclass))
       .filter(_ != null) ++: List(classOf[util.List[_]], classOf[util.Map[_, _]])
-    info("RPC Serializers: " + this.formats.customSerializers.map(_.getClass.getSimpleName) + ", serializerClasses: " +
+    logger.info("RPC Serializers: " + this.formats.customSerializers.map(_.getClass.getSimpleName) + ", serializerClasses: " +
       "" + serializerClasses)
   }
 

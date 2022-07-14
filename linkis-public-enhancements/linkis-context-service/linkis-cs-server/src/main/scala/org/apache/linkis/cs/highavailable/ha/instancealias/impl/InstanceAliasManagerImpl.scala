@@ -45,7 +45,7 @@ class InstanceAliasManagerImpl extends InstanceAliasManager with Logging {
     }
     val instances = serverLoader.getServiceInstances(serviceID)
     if (null == instances || instances.isEmpty) {
-      error(s"None serviec instances for Context Service ID : " + serviceID)
+      logger.error(s"None serviec instances for Context Service ID : " + serviceID)
       return null
     }
     val targetInstance = instanceAliasConverter.aliasToInstance(alias)

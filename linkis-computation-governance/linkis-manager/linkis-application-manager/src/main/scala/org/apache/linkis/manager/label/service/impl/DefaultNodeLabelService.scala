@@ -296,7 +296,7 @@ class DefaultNodeLabelService extends NodeLabelService with Logging {
 
       // Remove nodes with mismatched labels
       if (removeNodes.nonEmpty && removeNodes.size == outNodeDegree.size())
-        info(s"The entered labels${necessaryLabels} do not match the labels of the node itself")
+        logger.info(s"The entered labels${necessaryLabels} do not match the labels of the node itself")
       removeNodes.foreach(outNodeDegree.remove(_))
       return nodeLabelScorer.calculate( inNodeDegree, outNodeDegree, labels).asInstanceOf[util.Map[ScoreServiceInstance, util.List[Label[_]]]]
     }
@@ -309,7 +309,7 @@ class DefaultNodeLabelService extends NodeLabelService with Logging {
       if (null == label) {
         persistenceLabel.setLabelValueSize(persistenceLabel.getValue.size())
         Utils.tryCatch(labelManagerPersistence.addLabel(persistenceLabel)) { t: Throwable =>
-          warn(s"Failed to add label ${t.getClass}")
+          logger.warn(s"Failed to add label ${t.getClass}")
         }
       } else {
         persistenceLabel.setId(label.getId)

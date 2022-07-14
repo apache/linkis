@@ -46,12 +46,12 @@ class DefaultManagerService extends ManagerService with Logging{
 
   override def labelReport(labels: util.List[Label[_]]): Unit = {
     if (null == labels || labels.isEmpty) {
-      info("labels is empty, Not reported")
+      logger.info("labels is empty, Not reported")
       return
     }
     val reportLabel = labels.asScala.filter(_.isInstanceOf[EngineTypeLabel])
     if (reportLabel.isEmpty) {
-      info("engineType labels is empty, Not reported")
+      logger.info("engineType labels is empty, Not reported")
       return
     }
     val labelReportRequest = LabelReportRequest(reportLabel.asJava, Sender.getThisServiceInstance)
@@ -71,7 +71,7 @@ class DefaultManagerService extends ManagerService with Logging{
 
   override def heartbeatReport(nodeHeartbeatMsg: NodeHeartbeatMsg): Unit = {
     getManagerSender.send(nodeHeartbeatMsg)
-    info(s"success to send engine heartbeat report to ${Sender.getInstances(GovernanceCommonConf.MANAGER_SPRING_NAME.getValue).map(_.getInstance).mkString(",")},status:${nodeHeartbeatMsg.getStatus},msg:${nodeHeartbeatMsg.getHeartBeatMsg}")
+    logger.info(s"success to send engine heartbeat report to ${Sender.getInstances(GovernanceCommonConf.MANAGER_SPRING_NAME.getValue).map(_.getInstance).mkString(",")},status:${nodeHeartbeatMsg.getStatus},msg:${nodeHeartbeatMsg.getHeartBeatMsg}")
   }
 
   override def reportUsedResource(resourceUsedProtocol: ResourceUsedProtocol): Unit = {

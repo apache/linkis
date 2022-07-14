@@ -38,17 +38,17 @@ class DefaultNodeLabelAddService extends NodeLabelAddService with Logging {
 
   @Receiver
   override def addNodeLabels(nodeLabelAddRequest: NodeLabelAddRequest): Unit = {
-    info(s"Start to add labels for node ${nodeLabelAddRequest.getServiceInstance}")
+    logger.info(s"Start to add labels for node ${nodeLabelAddRequest.getServiceInstance}")
     val labelList: util.List[Label[_]] = LabelBuilderFactoryContext.getLabelBuilderFactory.getLabels(nodeLabelAddRequest.getLabels)
     nodeLabelService.addLabelsToNode(nodeLabelAddRequest.getServiceInstance, labelList)
-    info(s"Finished to add labels for node ${nodeLabelAddRequest.getServiceInstance}")
+    logger.info(s"Finished to add labels for node ${nodeLabelAddRequest.getServiceInstance}")
   }
 
   @Receiver
   override def dealNodeLabelReport(labelReportRequest: LabelReportRequest): Unit = {
-    info(s"Start to deal labels for node ${labelReportRequest.serviceInstance}")
+    logger.info(s"Start to deal labels for node ${labelReportRequest.serviceInstance}")
     val labelList = labelReportRequest.labels
     nodeLabelService.addLabelsToNode(labelReportRequest.serviceInstance, labelList)
-    info(s"Finished to deal labels for node ${labelReportRequest.serviceInstance}")
+    logger.info(s"Finished to deal labels for node ${labelReportRequest.serviceInstance}")
   }
 }

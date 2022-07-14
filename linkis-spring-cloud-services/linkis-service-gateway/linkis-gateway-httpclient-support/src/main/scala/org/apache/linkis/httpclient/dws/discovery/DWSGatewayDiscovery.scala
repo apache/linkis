@@ -29,7 +29,7 @@ class DWSGatewayDiscovery extends AbstractDiscovery {
   override protected def discovery(): Array[String] = {
     val serverUrl = if(getServerInstances.isEmpty) getServerUrl
       else Random.shuffle(getServerInstances.toList).head
-    info("discovery to gateway " + serverUrl)
+    logger.info("discovery to gateway " + serverUrl)
     getClient.execute(getHeartbeatAction(serverUrl)) match {
       case dws: DWSHeartbeatResult => dws.getGatewayList
     }

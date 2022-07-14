@@ -91,12 +91,12 @@ object SecurityFilter extends Logging {
           case dwc: LinkisException => dwc.getMessage
           case _ => "login failed! reason: " + ExceptionUtils.getRootCauseMessage(t)
         }
-        GatewaySSOUtils.error("login failed! Reason: " + message, t)
+        logger.error("login failed! Reason: " + message, t)
         filterResponse(gatewayContext, Message.error(message).<<(gatewayContext.getRequest.getRequestURI))
       }
       false
     } else if(isPassAuthRequest && !GatewayConfiguration.ENABLE_SSO_LOGIN.getValue) {
-      GatewaySSOUtils.info("No login needed for proxy uri: " + gatewayContext.getRequest.getRequestURI)
+      logger.info("No login needed for proxy uri: " + gatewayContext.getRequest.getRequestURI)
       true
     } else if(TokenAuthentication.isTokenRequest(gatewayContext)) {
       TokenAuthentication.tokenAuth(gatewayContext)
@@ -108,13 +108,13 @@ object SecurityFilter extends Logging {
             return false
           }
         case t: Throwable =>
-          GatewaySSOUtils.warn("", t)
+          logger.warn("", t)
           throw t
       }
       if(userName.isDefined) {
         true
       } else if(Configuration.IS_TEST_MODE.getValue) {
-        GatewaySSOUtils.info("test mode! login for uri: " + gatewayContext.getRequest.getRequestURI)
+        logger.info("test mode! login for uri: " + gatewayContext.getRequest.getRequestURI)
         GatewaySSOUtils.setLoginUser(gatewayContext, testUser)
         true
       } else if(GatewayConfiguration.ENABLE_SSO_LOGIN.getValue) {
@@ -132,7 +132,7 @@ object SecurityFilter extends Logging {
           false
         }
       } else if (gatewayContext.getRequest.getRequestURI.matches(GatewayConfiguration.GATEWAY_NO_AUTH_URL_REGEX.getValue)){
-        GatewaySSOUtils.info("Not logged in, still let it pass (GATEWAY_NO_AUTH_URL): " + gatewayContext.getRequest.getRequestURI)
+        logger.info("Not logged in, still let it pass (GATEWAY_NO_AUTH_URL): " + gatewayContext.getRequest.getRequestURI)
         true
       } else {
         filterResponse(gatewayContext, Message.noLogin("You are not logged in, please login first(您尚未登录，请先登录)!") << gatewayContext.getRequest.getRequestURI)

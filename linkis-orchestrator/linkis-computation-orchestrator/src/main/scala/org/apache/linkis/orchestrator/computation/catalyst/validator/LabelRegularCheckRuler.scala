@@ -44,9 +44,9 @@ trait LabelRegularCheckRuler extends ValidatorCheckRuler with Logging{
       case stage: Stage =>
         val stageId = stage.getId
         val jobId = stage.getJob.getId
-        debug(s"${getName}:start to check labels,jobId:${jobId}---stageId:${stageId} ")
+        logger.debug(s"${getName}:start to check labels,jobId:${jobId}---stageId:${stageId} ")
       case jobId: Job =>
-        debug(s"${getName}:start to check labels,jobId:${jobId}")
+        logger.debug(s"${getName}:start to check labels,jobId:${jobId}")
       case _ =>
     }
     val queryLabels = context.getLabels
@@ -55,7 +55,7 @@ trait LabelRegularCheckRuler extends ValidatorCheckRuler with Logging{
     val userDefinedLabel = defaultLabel ++ customLabel
     userDefinedLabel.foreach(needLabel => {
       if(!queryLabels.asScala.exists(_.getClass == needLabel.getClass)){
-        warn(s"label:${needLabel.getClass.getName} is needed, but there is no definition in the requested labels!" +
+        logger.warn(s"label:${needLabel.getClass.getName} is needed, but there is no definition in the requested labels!" +
           s"(请求的标签列表中缺少标签:${needLabel.getLabelKey})！")
         missingLabel += needLabel
         checkResult = false

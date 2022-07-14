@@ -29,7 +29,7 @@ class FIFOGroupFactory extends GroupFactory {
 
   //Obtained from the database(从数据库获取)
   private var defaultMaxRunningJobs: Int = 1
-  private var defaultMaxAskExecutorTimes: Long = 30000l
+  private var defaultMaxAskExecutorTimes: Long = 30000L
   private var defaultInitCapacity: Int = 1000
   private var defaultMaxCapacity: Int = 5000
 

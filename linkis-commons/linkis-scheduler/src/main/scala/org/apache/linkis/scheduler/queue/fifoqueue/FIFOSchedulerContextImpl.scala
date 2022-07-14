@@ -33,7 +33,7 @@ class FIFOSchedulerContextImpl(val maxParallelismUsers: Int) extends SchedulerCo
   private val lock = new Object()
 
   override def getOrCreateGroupFactory: GroupFactory = {
-    if(groupFactory != null) return groupFactory
+    if (groupFactory != null) return groupFactory
     lock.synchronized {
       if (groupFactory == null) {
         groupFactory = createGroupFactory()

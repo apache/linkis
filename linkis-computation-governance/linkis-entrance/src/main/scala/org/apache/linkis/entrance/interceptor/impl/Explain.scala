@@ -162,7 +162,7 @@ object SQLExplain extends Explain {
     if(StringUtils.isEmpty(requestPersistTask.getExecutionCode)){
       throw new EntranceIllegalParamException(EntranceErrorCode.EXECUTION_CODE_ISNULL.getErrCode,EntranceErrorCode.EXECUTION_CODE_ISNULL.getDesc)
     }
-    debug(s"after sql limit code is ${requestPersistTask.getExecutionCode}")
+    logger.debug(s"after sql limit code is ${requestPersistTask.getExecutionCode}")
   }
 
   private def findRealSemicolonIndex(tempCode: String):Array[Int] = {

@@ -122,6 +122,7 @@ public class ExcelXlsReader implements HSSFListener {
      * HSSFListener listener method, processing Record
      * HSSFListener 监听方法，处理 Record
      */
+    @Override
     @SuppressWarnings("unchecked")
     public void processRecord(Record record) {
         int thisRow = -1;
@@ -267,10 +268,12 @@ public class ExcelXlsReader implements HSSFListener {
 
     public void close() {
         try {
-            if (fs != null)
+            if (fs != null) {
                 fs.close();
-            if (inputStream != null)
+            }
+            if (inputStream != null) {
                 inputStream.close();
+            }
         } catch (Exception e) {
 
         }
@@ -324,6 +327,7 @@ class FirstRowDeal implements IExcelRowDeal {
         this.row = row;
     }
 
+    @Override
     public void dealRow(BoundSheetRecord[] orderedBSRs, int sheetIndex, int curRow, List<String> rowlist) {
         for (BoundSheetRecord record : orderedBSRs) {
             sheetNames.add(record.getSheetname());
@@ -347,21 +351,23 @@ class RowToCsvDeal implements IExcelRowDeal {
         this.outputStream = outputStream;
     }
 
+    @Override
     public void dealRow(BoundSheetRecord[] orderedBSRs, int sheetIndex, int curRow, List<String> rowlist) {
         String sheetName = orderedBSRs[sheetIndex].getSheetname();
         if (sheetNames == null || sheetNames.isEmpty() || sheetNames.contains(sheetName)) {
             if (! (curRow == 0 && hasHeader)) {
                 try {
-                    if(fisrtRow){
+                    if (fisrtRow) {
                         fisrtRow = false;
-                    } else{
+                    } else {
                         outputStream.write("\n".getBytes());
                     }
                     int len = rowlist.size();
                     for (int i =  0; i < len; i ++) {
                         outputStream.write(rowlist.get(i).replaceAll("\n|\t", " ").getBytes("utf-8"));
-                        if(i < len -1)
+                        if (i < len -1) {
                             outputStream.write("\t".getBytes());
+                        }
                     }
                 } catch (IOException e) {
                     throw new RuntimeException(e);

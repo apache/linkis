@@ -37,9 +37,9 @@ class DefaultLabelService extends LabelService with Logging {
   /*override def labelUpdate(labelUpdateRequest: LabelUpdateRequest): Unit = ???*/
 
   override def labelReport(labels: util.List[Label[_]], executor: Executor): Unit = {
-    info(s"executor ${executor.getId} prepare to report Labels ")
+    logger.info(s"executor ${executor.getId} prepare to report Labels ")
     ManagerService.getManagerService.labelReport(labels)
-    info(s"executor ${executor.getId} end to report Labels ")
+    logger.info(s"executor ${executor.getId} end to report Labels ")
   }
 
 

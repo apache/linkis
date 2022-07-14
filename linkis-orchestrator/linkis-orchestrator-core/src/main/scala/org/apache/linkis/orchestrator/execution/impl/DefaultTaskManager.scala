@@ -150,7 +150,7 @@ class DefaultTaskManager extends AbstractTaskManager with Logging {
       logger.warn(s"The current running has exceeded the maximum, now: $nowRunningNumber ")
       Array.empty[ExecTaskRunner]
     } else if (execTaskRunners.isEmpty) {
-      debug("There are no tasks to run now")
+      logger.debug("There are no tasks to run now")
       Array.empty[ExecTaskRunner]
     } else {
       //3. create priorityQueue Scoring rules: End type tasks are 100 points, userMax-runningNumber (remaining ratio) is additional points
@@ -196,7 +196,7 @@ class DefaultTaskManager extends AbstractTaskManager with Logging {
    */
   override def getRunnableTasks: Array[ExecTaskRunner] = {
     val startTime = System.currentTimeMillis()
-    debug(s"Start to getRunnableTasks startTime: $startTime")
+    logger.debug(s"Start to getRunnableTasks startTime: $startTime")
     val execTaskRunners = ArrayBuffer[ExecTaskRunner]()
     val runningExecutionTasks = getSuitableExecutionTasks
     //1. Get all runnable TaskRunner
@@ -208,7 +208,7 @@ class DefaultTaskManager extends AbstractTaskManager with Logging {
       execTaskRunners ++= subExecTaskRunners
     }
     val finishTime = System.currentTimeMillis()
-    debug(s"Finished to getRunnableTasks finishTime: $finishTime, taken: ${finishTime - startTime}")
+    logger.debug(s"Finished to getRunnableTasks finishTime: $finishTime, taken: ${finishTime - startTime}")
     taskRunnableTasks(execTaskRunners.toArray)
   }
 
@@ -374,7 +374,7 @@ class DefaultTaskManager extends AbstractTaskManager with Logging {
 
 
   override protected def markExecutionTaskCompleted(executionTask: ExecutionTask, taskResponse: CompletedTaskResponse): Unit = {
-    debug(s"Start to mark executionTask(${executionTask.getId}) rootExecTask ${executionTask.getRootExecTask.getIDInfo()} to  Completed.")
+    logger.debug(s"Start to mark executionTask(${executionTask.getId}) rootExecTask ${executionTask.getRootExecTask.getIDInfo()} to  Completed.")
     clearExecutionTask(executionTask)
     executionTask.getRootExecTask.getPhysicalContext.broadcastSyncEvent(ExecutionTaskCompletedEvent(executionTask.getId, taskResponse))
     logger.info(s"Finished to mark executionTask(${executionTask.getId}) rootExecTask ${executionTask.getRootExecTask.getIDInfo()} to  Completed.")

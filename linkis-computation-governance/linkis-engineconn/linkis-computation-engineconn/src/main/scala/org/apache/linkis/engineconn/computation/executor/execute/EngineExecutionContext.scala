@@ -18,7 +18,7 @@
 package org.apache.linkis.engineconn.computation.executor.execute
 
 import org.apache.commons.io.IOUtils
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.io.resultset.{ResultSet, ResultSetWriter}
 import org.apache.linkis.common.io.{FsPath, MetaData, Record}
 import org.apache.linkis.common.utils.{Logging, Utils}
@@ -70,7 +70,7 @@ class EngineExecutionContext(executor: ComputationExecutor, executorUser: String
   }
 
   def sendResultSet(resultSetWriter: ResultSetWriter[_ <: MetaData, _ <: Record]): Unit = {
-    info("Start to send res to entrance")
+    logger.info("Start to send res to entrance")
     val fileName = new File(resultSetWriter.toFSPath.getPath).getName
     val index = if (fileName.indexOf(".") < 0) fileName.length else fileName.indexOf(".")
     val alias = if (fileName.startsWith("_")) fileName.substring(1, index) else fileName.substring(0, fileName.indexOf("_"))
@@ -140,7 +140,7 @@ class EngineExecutionContext(executor: ComputationExecutor, executorUser: String
   }
 
   def appendStdout(log: String): Unit = if (executor.isInternalExecute) {
-    executor.info(log)
+    logger.info(log)
   } else {
     val listenerBus = getEngineSyncListenerBus
     // jobId.foreach(jId => listenerBus.post(TaskLogUpdateEvent(jId, log)))

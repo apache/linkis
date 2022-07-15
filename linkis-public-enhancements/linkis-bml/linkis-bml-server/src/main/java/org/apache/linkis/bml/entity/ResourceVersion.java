@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.bml.Entity;
+package org.apache.linkis.bml.entity;
 
 import java.util.Date;
 

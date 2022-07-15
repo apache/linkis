@@ -17,13 +17,13 @@
 
 package org.apache.linkis.bml.service.impl;
 
-import org.apache.linkis.bml.Entity.Resource;
-import org.apache.linkis.bml.Entity.ResourceVersion;
 import org.apache.linkis.bml.common.Constant;
 import org.apache.linkis.bml.common.ResourceHelper;
 import org.apache.linkis.bml.common.ResourceHelperFactory;
 import org.apache.linkis.bml.dao.ResourceDao;
 import org.apache.linkis.bml.dao.VersionDao;
+import org.apache.linkis.bml.entity.Resource;
+import org.apache.linkis.bml.entity.ResourceVersion;
 import org.apache.linkis.bml.service.ResourceService;
 
 import org.apache.commons.lang.StringUtils;

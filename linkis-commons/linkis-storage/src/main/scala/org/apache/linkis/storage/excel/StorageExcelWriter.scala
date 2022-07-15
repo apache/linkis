@@ -172,7 +172,7 @@ class StorageExcelWriter(val charset: String, val sheetName: String, val dateFor
       }
     } {
       case e: Exception =>
-        cell.setCellValue(valueToString(elem))
+        cell.setCellValue(DataType.valueToString(elem))
     }
   }
 

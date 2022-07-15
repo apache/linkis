@@ -15,27 +15,26 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.metadata.service;
+package org.apache.linkis.scheduler.queue
 
-import org.apache.linkis.metadata.hive.dto.MetadataQueryParam;
+import org.assertj.core.api.Assertions.{assertThat, assertThatThrownBy}
+import org.assertj.core.api.ThrowableAssert
+import org.junit.jupiter.api.Test
 
-import com.fasterxml.jackson.databind.JsonNode;
 
-public interface DataSourceService {
+class SchedulerEventStateTest {
 
-    JsonNode getDbs(String userName) throws Exception;
+  @Test def isCompletedByStr(): Unit = {
+    val initedStateStr = "Inited"
+    val succeedStr = "Succeed"
+    val errStr = "errStr"
+    assertThat(SchedulerEventState.isCompletedByStr(initedStateStr)).isFalse
+    assertThat(SchedulerEventState.isCompletedByStr(succeedStr)).isTrue
+    assertThatThrownBy(new ThrowableAssert.ThrowingCallable {
+      override def call(): Unit = {
+        SchedulerEventState.isCompletedByStr(errStr)
+      }
+    }).isInstanceOf(classOf[NoSuchElementException])
+  }
 
-    JsonNode getDbsWithTables(String userName) throws Exception;
-
-    JsonNode queryTables(MetadataQueryParam queryParam);
-
-    JsonNode queryTableMeta(MetadataQueryParam queryParam);
-
-    JsonNode queryTableMetaBySDID(MetadataQueryParam queryParam);
-
-    JsonNode getTableSize(MetadataQueryParam queryParam);
-
-    JsonNode getPartitionSize(MetadataQueryParam queryParam);
-
-    JsonNode getPartitions(MetadataQueryParam queryParam);
 }

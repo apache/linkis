@@ -73,7 +73,9 @@ public class XlsUtils {
             LOG.error("Failed to excel to csv", e);
             throw e;
         } finally {
-            if (out != null) out.close();
+            if (out != null) {
+                out.close();
+            }
             xlsReader.close();
         }
         return hdfsPath;

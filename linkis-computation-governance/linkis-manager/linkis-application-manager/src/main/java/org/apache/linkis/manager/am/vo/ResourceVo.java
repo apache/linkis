@@ -14,28 +14,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.linkis.manager.am.vo;
 
-package org.apache.linkis.metadata.service;
+public class ResourceVo {
 
-import org.apache.linkis.metadata.hive.dto.MetadataQueryParam;
+    private int cores;
+    private int instance;
+    private long memory;
 
-import com.fasterxml.jackson.databind.JsonNode;
+    public int getCores() {
+        return cores;
+    }
 
-public interface DataSourceService {
+    public void setCores(int cores) {
+        this.cores = cores;
+    }
 
-    JsonNode getDbs(String userName) throws Exception;
+    public int getInstance() {
+        return instance;
+    }
 
-    JsonNode getDbsWithTables(String userName) throws Exception;
+    public void setInstance(int instance) {
+        this.instance = instance;
+    }
 
-    JsonNode queryTables(MetadataQueryParam queryParam);
+    public long getMemory() {
+        return memory;
+    }
 
-    JsonNode queryTableMeta(MetadataQueryParam queryParam);
-
-    JsonNode queryTableMetaBySDID(MetadataQueryParam queryParam);
-
-    JsonNode getTableSize(MetadataQueryParam queryParam);
-
-    JsonNode getPartitionSize(MetadataQueryParam queryParam);
-
-    JsonNode getPartitions(MetadataQueryParam queryParam);
+    public void setMemory(long memory) {
+        this.memory = memory;
+    }
 }

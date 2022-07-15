@@ -15,27 +15,21 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.metadata.service;
+package org.apache.linkis.bml.common;
 
-import org.apache.linkis.metadata.hive.dto.MetadataQueryParam;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import static org.junit.jupiter.api.Assertions.*;
 
-public interface DataSourceService {
-
-    JsonNode getDbs(String userName) throws Exception;
-
-    JsonNode getDbsWithTables(String userName) throws Exception;
-
-    JsonNode queryTables(MetadataQueryParam queryParam);
-
-    JsonNode queryTableMeta(MetadataQueryParam queryParam);
-
-    JsonNode queryTableMetaBySDID(MetadataQueryParam queryParam);
-
-    JsonNode getTableSize(MetadataQueryParam queryParam);
-
-    JsonNode getPartitionSize(MetadataQueryParam queryParam);
-
-    JsonNode getPartitions(MetadataQueryParam queryParam);
+public class LocalResourceHelperTest {
+    @Test
+    @DisplayName("testCheckBmlResourceStoragePrefixPathIfChanged")
+    public void testCheckBmlResourceStoragePrefixPathIfChanged() {
+        String path =
+                "file:///data/dss/bml/linkis/linkis/20220609/b4fd8f59-9492-4a0f-a074-9ac573a69b60";
+        LocalResourceHelper localResourceHelper = new LocalResourceHelper();
+        boolean hasChanged = localResourceHelper.checkBmlResourceStoragePrefixPathIfChanged(path);
+        assertFalse(hasChanged);
+    }
 }

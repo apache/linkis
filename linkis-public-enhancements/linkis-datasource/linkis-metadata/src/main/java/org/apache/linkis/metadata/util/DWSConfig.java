@@ -36,7 +36,7 @@ public class DWSConfig {
 
     // wds.linkis.metadata.hive.encode.enable配置HIVE BASE64加解密
     public static final CommonVars<Boolean> HIVE_PASS_ENCODE_ENABLED =
-            CommonVars.apply("wds.linkis.metadata.hive.encode.enabled", new Boolean(false));
+            CommonVars.apply("wds.linkis.metadata.hive.encode.enabled", false);
 
     public static CommonVars<Boolean> HIVE_PERMISSION_WITH_lOGIN_USER_ENABLED =
             CommonVars$.MODULE$.apply(

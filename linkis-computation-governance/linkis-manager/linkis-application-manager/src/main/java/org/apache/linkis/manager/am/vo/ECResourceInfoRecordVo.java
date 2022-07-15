@@ -17,7 +17,6 @@
 package org.apache.linkis.manager.am.vo;
 
 import java.util.Date;
-import java.util.Map;
 
 public class ECResourceInfoRecordVo {
 
@@ -31,11 +30,11 @@ public class ECResourceInfoRecordVo {
 
     private String serviceInstance;
 
-    private Map usedResource;
+    private ResourceVo usedResource;
 
-    private Map requestResource;
+    private ResourceVo requestResource;
 
-    private Map releasedResource;
+    private ResourceVo releasedResource;
 
     private String ecmInstance;
 
@@ -97,27 +96,27 @@ public class ECResourceInfoRecordVo {
         this.serviceInstance = serviceInstance;
     }
 
-    public Map getUsedResource() {
+    public ResourceVo getUsedResource() {
         return usedResource;
     }
 
-    public void setUsedResource(Map usedResource) {
+    public void setUsedResource(ResourceVo usedResource) {
         this.usedResource = usedResource;
     }
 
-    public Map getRequestResource() {
+    public ResourceVo getRequestResource() {
         return requestResource;
     }
 
-    public void setRequestResource(Map requestResource) {
+    public void setRequestResource(ResourceVo requestResource) {
         this.requestResource = requestResource;
     }
 
-    public Map getReleasedResource() {
+    public ResourceVo getReleasedResource() {
         return releasedResource;
     }
 
-    public void setReleasedResource(Map releasedResource) {
+    public void setReleasedResource(ResourceVo releasedResource) {
         this.releasedResource = releasedResource;
     }
 

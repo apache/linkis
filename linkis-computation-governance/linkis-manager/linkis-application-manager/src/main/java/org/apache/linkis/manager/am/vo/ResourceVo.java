@@ -14,28 +14,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.linkis.manager.am.vo;
 
-package org.apache.linkis.bml.Entity;
+public class ResourceVo {
 
-public class Version {
+    private int cores;
+    private int instance;
+    private long memory;
 
-    private String version;
-
-    private String resource;
-
-    public String getVersion() {
-        return version;
+    public int getCores() {
+        return cores;
     }
 
-    public void setVersion(String version) {
-        this.version = version;
+    public void setCores(int cores) {
+        this.cores = cores;
     }
 
-    public String getResource() {
-        return resource;
+    public int getInstance() {
+        return instance;
     }
 
-    public void setResource(String resource) {
-        this.resource = resource;
+    public void setInstance(int instance) {
+        this.instance = instance;
+    }
+
+    public long getMemory() {
+        return memory;
+    }
+
+    public void setMemory(long memory) {
+        this.memory = memory;
     }
 }

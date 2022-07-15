@@ -26,6 +26,7 @@ import org.apache.linkis.metadata.domain.mdq.vo.MdqTableFieldsInfoVO;
 import org.apache.linkis.metadata.domain.mdq.vo.MdqTablePartitionStatisticInfoVO;
 import org.apache.linkis.metadata.domain.mdq.vo.MdqTableStatisticInfoVO;
 import org.apache.linkis.metadata.exception.MdqIllegalParamException;
+import org.apache.linkis.metadata.hive.dto.MetadataQueryParam;
 import org.apache.linkis.metadata.service.MdqService;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
@@ -67,11 +68,13 @@ public class MdqTableRestfulApi {
             @RequestParam(value = "tableName", required = false) String tableName,
             HttpServletRequest req) {
         String userName = ModuleUserUtils.getOperationUser(req, "getTableBaseInfo " + tableName);
+        MetadataQueryParam queryParam =
+                MetadataQueryParam.of(userName).withDbName(database).withTableName(tableName);
         MdqTableBaseInfoVO tableBaseInfo;
         if (mdqService.isExistInMdq(database, tableName, userName)) {
             tableBaseInfo = mdqService.getTableBaseInfoFromMdq(database, tableName, userName);
         } else {
-            tableBaseInfo = mdqService.getTableBaseInfoFromHive(database, tableName, userName);
+            tableBaseInfo = mdqService.getTableBaseInfoFromHive(queryParam);
         }
         return Message.ok().data("tableBaseInfo", tableBaseInfo);
     }
@@ -82,11 +85,13 @@ public class MdqTableRestfulApi {
             @RequestParam(value = "tableName", required = false) String tableName,
             HttpServletRequest req) {
         String userName = ModuleUserUtils.getOperationUser(req, "getTableFieldsInfo " + tableName);
+        MetadataQueryParam queryParam =
+                MetadataQueryParam.of(userName).withDbName(database).withTableName(tableName);
         List<MdqTableFieldsInfoVO> tableFieldsInfo;
         if (mdqService.isExistInMdq(database, tableName, userName)) {
             tableFieldsInfo = mdqService.getTableFieldsInfoFromMdq(database, tableName, userName);
         } else {
-            tableFieldsInfo = mdqService.getTableFieldsInfoFromHive(database, tableName, userName);
+            tableFieldsInfo = mdqService.getTableFieldsInfoFromHive(queryParam);
         }
         return Message.ok().data("tableFieldsInfo", tableFieldsInfo);
     }
@@ -102,8 +107,10 @@ public class MdqTableRestfulApi {
             throws IOException {
         String userName =
                 ModuleUserUtils.getOperationUser(req, "getTableStatisticInfo " + tableName);
+        MetadataQueryParam queryParam =
+                MetadataQueryParam.of(userName).withDbName(database).withTableName(tableName);
         MdqTableStatisticInfoVO tableStatisticInfo =
-                mdqService.getTableStatisticInfo(database, tableName, userName, partitionSort);
+                mdqService.getTableStatisticInfo(queryParam, partitionSort);
         int totalSize = 0;
         List<MdqTablePartitionStatisticInfoVO> partitionPage;
         List<MdqTablePartitionStatisticInfoVO> partitions = tableStatisticInfo.getPartitions();
@@ -159,8 +166,10 @@ public class MdqTableRestfulApi {
             throws IOException, MdqIllegalParamException {
         String userName =
                 ModuleUserUtils.getOperationUser(req, "getPartitionStatisticInfo " + tableName);
+        MetadataQueryParam queryParam =
+                MetadataQueryParam.of(userName).withDbName(database).withTableName(tableName);
         MdqTablePartitionStatisticInfoVO partition =
-                mdqService.getPartitionStatisticInfo(database, tableName, userName, partitionName);
+                mdqService.getPartitionStatisticInfo(queryParam, partitionName);
         return Message.ok().data("partitionStatisticInfo", partition);
     }
 

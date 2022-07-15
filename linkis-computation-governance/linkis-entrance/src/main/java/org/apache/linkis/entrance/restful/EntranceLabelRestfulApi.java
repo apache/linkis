@@ -17,11 +17,13 @@
 
 package org.apache.linkis.entrance.restful;
 
+import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.instance.label.client.InstanceLabelClient;
 import org.apache.linkis.manager.label.constant.LabelKeyConstant;
 import org.apache.linkis.protocol.label.InsLabelRefreshRequest;
 import org.apache.linkis.rpc.Sender;
 import org.apache.linkis.server.Message;
+import org.apache.linkis.server.utils.ModuleUserUtils;
 
 import org.springframework.web.bind.annotation.*;
 
@@ -42,6 +44,10 @@ public class EntranceLabelRestfulApi {
 
     @RequestMapping(path = "/update", method = RequestMethod.POST)
     public Message updateRouteLabel(HttpServletRequest req, @RequestBody JsonNode jsonNode) {
+        String userName = ModuleUserUtils.getOperationUser(req, "updateRouteLabel");
+        if (!Configuration.isAdmin(userName)) {
+            return Message.error("Non-administrators cannot update Route Label");
+        }
         String routeLabel = jsonNode.get("routeLabel").textValue();
         Map<String, Object> labels = new HashMap<String, Object>();
         logger.info("Prepare to update entrance label {}", routeLabel);

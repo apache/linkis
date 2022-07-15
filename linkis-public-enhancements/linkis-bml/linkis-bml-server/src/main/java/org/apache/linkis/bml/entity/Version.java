@@ -15,27 +15,27 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.metadata.service;
+package org.apache.linkis.bml.entity;
 
-import org.apache.linkis.metadata.hive.dto.MetadataQueryParam;
+public class Version {
 
-import com.fasterxml.jackson.databind.JsonNode;
+    private String version;
 
-public interface DataSourceService {
+    private String resource;
 
-    JsonNode getDbs(String userName) throws Exception;
+    public String getVersion() {
+        return version;
+    }
 
-    JsonNode getDbsWithTables(String userName) throws Exception;
+    public void setVersion(String version) {
+        this.version = version;
+    }
 
-    JsonNode queryTables(MetadataQueryParam queryParam);
+    public String getResource() {
+        return resource;
+    }
 
-    JsonNode queryTableMeta(MetadataQueryParam queryParam);
-
-    JsonNode queryTableMetaBySDID(MetadataQueryParam queryParam);
-
-    JsonNode getTableSize(MetadataQueryParam queryParam);
-
-    JsonNode getPartitionSize(MetadataQueryParam queryParam);
-
-    JsonNode getPartitions(MetadataQueryParam queryParam);
+    public void setResource(String resource) {
+        this.resource = resource;
+    }
 }

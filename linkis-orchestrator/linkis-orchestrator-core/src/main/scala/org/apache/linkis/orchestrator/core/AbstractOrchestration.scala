@@ -17,12 +17,14 @@
  
 package org.apache.linkis.orchestrator.core
 
+import org.apache.commons.io.IOUtils
 import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.io.{Fs, FsPath}
 import org.apache.linkis.common.utils.Utils
+import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
 import org.apache.linkis.orchestrator.core.OrchestrationFuture.NotifyListener
 import org.apache.linkis.orchestrator.exception.OrchestratorErrorCodeSummary._
-import org.apache.linkis.orchestrator.exception.OrchestratorErrorException
+import org.apache.linkis.orchestrator.exception.{OrchestratorErrorCodeSummary, OrchestratorErrorException, OrchestratorRetryException}
 import org.apache.linkis.orchestrator.execution.{AsyncTaskResponse, CompletedTaskResponse, FailedTaskResponse, TaskResponse}
 import org.apache.linkis.orchestrator.extensions.operation.Operation
 import org.apache.linkis.orchestrator.planner.command.ExplainCommandDesc
@@ -30,7 +32,7 @@ import org.apache.linkis.orchestrator.plans.ast.ASTOrchestration
 import org.apache.linkis.orchestrator.plans.logical.{CommandTask, Task}
 import org.apache.linkis.orchestrator.plans.physical.ExecTask
 import org.apache.linkis.orchestrator.{Orchestration, OrchestratorSession}
-import org.apache.commons.io.IOUtils
+import org.slf4j.LoggerFactory
 
 /**
   *
@@ -112,6 +114,8 @@ abstract class AbstractOrchestration(override val orchestratorSession: Orchestra
 
   class OrchestrationFutureImpl(asyncTaskResponse: AsyncTaskResponse) extends OrchestrationFuture {
 
+    private val waitLock = new Array[Byte](0)
+
     override def cancel(errorMsg: String, cause: Throwable): Unit = operate(Operation.CANCEL)
 
     override def getResponse: OrchestrationResponse = orchestrationResponse
@@ -131,6 +135,20 @@ abstract class AbstractOrchestration(override val orchestratorSession: Orchestra
     override def waitForCompleted(): Unit = {
       val taskResponse = asyncTaskResponse.waitForCompleted()
       orchestrationResponse = getOrchestrationResponse(taskResponse)
+    }
+
+    override def waitForCompleted(waitMills: Long): Unit = {
+      notifyMe(resp => {
+        waitLock synchronized waitLock.notify()
+      })
+      if(isCompleted) return
+      waitLock synchronized {
+        waitLock.wait(waitMills)
+      }
+      if (!isCompleted) {
+        cancel("execute time out kill task")
+        throw new OrchestratorRetryException(OrchestratorErrorCodeSummary.EXECUTION_TIME_OUT, s"wait more than $waitMills")
+      }
     }
   }
 

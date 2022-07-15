@@ -45,8 +45,7 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.Map;
 
-/*@Api(tags = "数据源管理Api")*/
-@Api(tags = "Data_Source_Management")
+@Api(tags = "数据源管理Api")
 @RestController
 @RequestMapping(path = "/datasource")
 public class DataSourceRestfulApi implements DataSourceRestfulRemote {

@@ -337,6 +337,7 @@ class HttpBmlClient(clientConfig: DWSClientConfig,
 
   override def deleteResource(user: String, resourceId: String): BmlDeleteResponse = {
     val deleteAction = BmlDeleteAction(resourceId)
+    deleteAction.setUser(user)
     deleteAction.getParameters.put("resourceId", resourceId)
     val result = dwsClient.execute(deleteAction)
     result match {

@@ -61,6 +61,7 @@ import java.util.concurrent._
 import java.util.concurrent.atomic.AtomicInteger
 import javax.annotation.PostConstruct
 import scala.collection.JavaConverters._
+import scala.concurrent.ExecutionContextExecutorService
 
 
 @Component
@@ -86,6 +87,8 @@ class TaskExecutionServiceImpl extends TaskExecutionService with Logging with Re
     "ConcurrentEngineConnThreadPool")
 
   private val CONCURRENT_TASK_LOCKER = new Object
+
+  private val taskAsyncSubmitExecutor: ExecutionContextExecutorService = Utils.newCachedExecutionContext(ComputationExecutorConf.TASK_ASYNC_MAX_THREAD_SIZE, "TaskExecution-Thread-")
 
   @PostConstruct
   def init(): Unit = {
@@ -137,7 +140,7 @@ class TaskExecutionServiceImpl extends TaskExecutionService with Logging with Re
     }
     val jobId = JobUtils.getJobIdFromMap(requestTask.getProperties)
     if (StringUtils.isNotBlank(jobId)) {
-      System.getProperties().put(ComputationExecutorConf.JOB_ID_TO_ENV_KEY, jobId)
+      System.getProperties.put(ComputationExecutorConf.JOB_ID_TO_ENV_KEY, jobId)
       logger.info(s"Received job with id ${jobId}.")
     }
     val task = new CommonEngineConnTask(String.valueOf(taskId), retryAble)
@@ -149,32 +152,29 @@ class TaskExecutionServiceImpl extends TaskExecutionService with Logging with Re
     task.setLabels(labels)
     val entranceServerInstance = RPCUtils.getServiceInstanceFromSender(sender)
     task.setCallbackServiceInstance(entranceServerInstance)
-    if (executorManager.containExecutor(labels)) {
-      submitTaskToExecutor(task, labels)
-    } else {
-      logger.info(s"task $taskId need to create executor")
-      val runnable = new Runnable {
-        override def run(): Unit = Utils.tryCatch {
-          submitTaskToExecutor(task, labels) match {
-            case ErrorExecuteResponse(message, throwable) =>
-              sendToEntrance(task, ResponseTaskError(task.getTaskId, message))
-              logger.error(message, throwable)
-              sendToEntrance(task, ResponseTaskStatus(task.getTaskId, ExecutionNodeStatus.Failed))
-            case _ =>
-          }
-        } { t =>
-          logger.warn("Failed to submit task ", t)
-          sendToEntrance(task, ResponseTaskError(task.getTaskId, ExceptionUtils.getRootCauseMessage(t)))
-          sendToEntrance(task, ResponseTaskStatus(task.getTaskId, ExecutionNodeStatus.Failed))
+    logger.info(s"task $taskId submit executor to execute")
+    val runnable = new Runnable {
+      override def run(): Unit = Utils.tryCatch {
+        // Waiting to run, preventing task messages from being sent to submit services before SubmitResponse, such as entry
+        Thread.sleep(ComputationExecutorConf.TASK_SUBMIT_WAIT_TIME_MS)
+        submitTaskToExecutor(task, labels) match {
+          case ErrorExecuteResponse(message, throwable) =>
+            sendToEntrance(task, ResponseTaskError(task.getTaskId, message))
+            logger.error(message, throwable)
+            sendToEntrance(task, ResponseTaskStatus(task.getTaskId, ExecutionNodeStatus.Failed))
+          case _ =>
         }
+      } { t =>
+        logger.warn("Failed to submit task ", t)
+        sendToEntrance(task, ResponseTaskError(task.getTaskId, ExceptionUtils.getRootCauseMessage(t)))
+        sendToEntrance(task, ResponseTaskStatus(task.getTaskId, ExecutionNodeStatus.Failed))
       }
-      val submitTaskToExecutorFuture = Utils.defaultScheduler.submit(runnable)
-      SubmitResponse(task.getTaskId)
     }
+    val submitTaskToExecutorFuture = taskAsyncSubmitExecutor.submit(runnable)
+    SubmitResponse(task.getTaskId)
   }
 
   private def submitTaskToExecutor(task: CommonEngineConnTask, labels: Array[Label[_]]): ExecuteResponse = {
-    val newLabels = restExecutorLabels(labels)
     val executor = executorManager.getExecutorByLabels(labels)
     executor match {
       case computationExecutor: ComputationExecutor =>

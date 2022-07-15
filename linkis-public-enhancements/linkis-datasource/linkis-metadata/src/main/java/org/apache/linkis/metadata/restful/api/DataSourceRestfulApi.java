@@ -46,7 +46,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /*@Api(tags = "数据源管理Api")*/
-@Api(tags = "Data_Source_Management APIs")
+@Api(tags = "Data_Source_Management")
 @RestController
 @RequestMapping(path = "/datasource")
 public class DataSourceRestfulApi implements DataSourceRestfulRemote {

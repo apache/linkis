@@ -17,19 +17,27 @@
 
 package org.apache.linkis.server
 
+import io.swagger.annotations.{ApiModel, ApiModelProperty}
+
 import java.util
 import javax.servlet.http.HttpServletRequest
 import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.apache.linkis.common.utils.Logging
-
 import org.springframework.web.context.request.{RequestContextHolder, ServletRequestAttributes}
 
+import scala.annotation.meta.field
 
-class Message(private var method: String,
-              private var status: Int = 0,          //-1 no login, 0 success, 1 error, 2 validate failed, 3 auth failed, 4 warning
-              private var message: String,
-              private var data: util.HashMap[String, Object] = new util.HashMap[String, Object]) {
+@ApiModel()
+class Message(
+               @(ApiModelProperty @field)("请求url")
+               private var method: String,
+               @(ApiModelProperty @field)("状态")
+               private var status: Int = 0,
+               @(ApiModelProperty @field)("描述")//-1 no login, 0 success, 1 error, 2 validate failed, 3 auth failed, 4 warning
+               private var message: String,
+               @(ApiModelProperty @field)("数据集")
+               private var data: util.HashMap[String, Object] = new util.HashMap[String, Object]) {
   def this() = this(null, 0, null)
   def << (key: String, value: Any): Message = {
     data.put(key, value.asInstanceOf[AnyRef])

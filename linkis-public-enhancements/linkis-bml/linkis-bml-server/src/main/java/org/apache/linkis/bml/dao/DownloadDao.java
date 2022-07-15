@@ -17,7 +17,7 @@
 
 package org.apache.linkis.bml.dao;
 
-import org.apache.linkis.bml.Entity.DownloadModel;
+import org.apache.linkis.bml.entity.DownloadModel;
 
 import org.apache.ibatis.annotations.Param;
 

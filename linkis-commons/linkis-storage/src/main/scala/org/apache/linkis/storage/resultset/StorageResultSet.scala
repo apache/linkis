@@ -29,13 +29,12 @@ abstract class StorageResultSet[K <: MetaData, V <: Record] extends ResultSet[K,
   val resultHeaderBytes = Dolphin.MAGIC_BYTES ++ Dolphin.getIntBytes(resultSetType().toInt)
   override val charset: String = StorageConfiguration.STORAGE_RS_FILE_TYPE.getValue
 
-
-
   override def getResultSetPath(parentDir: FsPath, fileName: String): FsPath = {
-    val path = if(parentDir.getPath.endsWith("/"))
+    val path = if (parentDir.getPath.endsWith("/")) {
       parentDir.toPath + fileName + Dolphin.DOLPHIN_FILE_SUFFIX
-    else
+    } else {
       parentDir.toPath + "/" + fileName  + Dolphin.DOLPHIN_FILE_SUFFIX
+    }
     new FsPath(path)
   }
 
@@ -43,7 +42,7 @@ abstract class StorageResultSet[K <: MetaData, V <: Record] extends ResultSet[K,
 
   override def belongToPath(path: String): Boolean = path.endsWith(Dolphin.DOLPHIN_FILE_SUFFIX)
 
-  override def belongToResultSet(content: String): Boolean = Utils.tryCatch(Dolphin.getType(content) == resultSetType()){ t =>
+  override def belongToResultSet(content: String): Boolean = Utils.tryCatch(Dolphin.getType(content) == resultSetType()) { t =>
     logger.info("Wrong result Set: ", t)
     false
   }

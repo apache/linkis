@@ -24,7 +24,6 @@ import org.apache.linkis.storage.FSFactory
 import org.apache.linkis.storage.exception.StorageErrorException
 import org.apache.linkis.storage.resultset.table.{TableMetaData, TableRecord, TableResultSet}
 
-
 object ResultSetReader {
 
   def getResultSetReader[K <: MetaData, V <: Record](resultSet: ResultSet[K, V], inputStream: InputStream): ResultSetReader[K, V] = {
@@ -35,7 +34,7 @@ object ResultSetReader {
     new StorageResultSetReader[K, V](resultSet, value)
   }
 
-  def getResultSetReader(res: String):ResultSetReader[_ <: MetaData, _ <: Record]= {
+  def getResultSetReader(res: String): ResultSetReader[_ <: MetaData, _ <: Record] = {
     val rsFactory = ResultSetFactory.getInstance
     if (rsFactory.isResultSet(res)) {
       val resultSet = rsFactory.getResultSet(res)
@@ -54,7 +53,7 @@ object ResultSetReader {
     }
   }
 
-  def getTableResultReader(res: String):ResultSetReader[TableMetaData,TableRecord] = {
+  def getTableResultReader(res: String): ResultSetReader[TableMetaData, TableRecord] = {
     val rsFactory = ResultSetFactory.getInstance
     if (rsFactory.isResultSet(res)) {
       val resultSet = rsFactory.getResultSet(res)
@@ -62,7 +61,7 @@ object ResultSetReader {
         throw new StorageErrorException(52002, "Result sets that are not tables are not supported(不支持不是表格的结果集)")
       }
       ResultSetReader.getResultSetReader(resultSet.asInstanceOf[TableResultSet], res)
-    }else {
+    } else {
       val resPath = new FsPath(res)
       val resultSet = rsFactory.getResultSetByPath(resPath)
       if (ResultSetFactory.TABLE_TYPE != resultSet.resultSetType()) {

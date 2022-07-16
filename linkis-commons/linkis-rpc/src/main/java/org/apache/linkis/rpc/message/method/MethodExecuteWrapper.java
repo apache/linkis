@@ -29,7 +29,7 @@ public class MethodExecuteWrapper {
 
     private final ServiceMethod serviceMethod;
 
-    public boolean shouldSkip;
+    private boolean shouldSkip;
 
     public boolean isShouldSkip() {
         return shouldSkip;

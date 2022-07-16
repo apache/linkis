@@ -54,12 +54,12 @@ object DataType extends Logging{
     case "string" => StringType
     case "boolean" => BooleanType
     case SHORT_REGEX() => ShortIntType
-    case LONG_REGEX()  => LongType
+    case LONG_REGEX() => LongType
     case BIGINT_REGEX() => BigIntType
     case INT_REGEX() | "integer" | "smallint" => IntType
     case FLOAT_REGEX() => FloatType
     case DOUBLE_REGEX() => DoubleType
-    case VARCHAR_REGEX() =>VarcharType
+    case VARCHAR_REGEX() => VarcharType
     case CHAR_REGEX() => CharType
     case "date" => DateType
     case "timestamp" => TimestampType
@@ -75,18 +75,18 @@ object DataType extends Logging{
   def toValue(dataType: DataType, value: String): Any = Utils.tryCatch(dataType match {
     case NullType => null
     case StringType | CharType | VarcharType | StructType | ListType | ArrayType | MapType => value
-    case BooleanType =>  if(isNumberNull(value)) null else value.toBoolean
-    case ShortIntType => if(isNumberNull(value)) null else value.toShort
-    case IntType =>if(isNumberNull(value)) null else value.toInt
-    case LongType | BigIntType => if(isNumberNull(value)) null else value.toLong
-    case FloatType => if(isNumberNull(value)) null else value.toFloat
-    case DoubleType  => if(isNumberNull(value)) null else value.toDouble
-    case DecimalType => if(isNumberNull(value)) null else new JavaBigDecimal(value)
-    case DateType => if(isNumberNull(value)) null else Date.valueOf(value)
-    case TimestampType => if(isNumberNull(value)) null else Timestamp.valueOf(value).toString.stripSuffix(".0")
-    case BinaryType => if(isNull(value)) null else value.getBytes()
+    case BooleanType => if (isNumberNull(value)) null else value.toBoolean
+    case ShortIntType => if (isNumberNull(value)) null else value.toShort
+    case IntType => if (isNumberNull(value)) null else value.toInt
+    case LongType | BigIntType => if (isNumberNull(value)) null else value.toLong
+    case FloatType => if (isNumberNull(value)) null else value.toFloat
+    case DoubleType => if (isNumberNull(value)) null else value.toDouble
+    case DecimalType => if (isNumberNull(value)) null else new JavaBigDecimal(value)
+    case DateType => if (isNumberNull(value)) null else Date.valueOf(value)
+    case TimestampType => if (isNumberNull(value)) null else Timestamp.valueOf(value).toString.stripSuffix(".0")
+    case BinaryType => if (isNull(value)) null else value.getBytes()
     case _ => value
-  }){
+  }) {
     t =>
       logger.debug(s"Failed to  $value switch  to dataType:", t)
       value
@@ -111,10 +111,10 @@ object DataType extends Logging{
 
 }
 
-abstract class DataType(val typeName:String,
-                        val javaSQLType: Int){
+abstract class DataType(val typeName: String, val javaSQLType: Int) {
   override def toString: String = typeName
 }
+
 case object NullType extends DataType("void", 0)
 case object StringType extends DataType("string", 12)
 case object BooleanType extends DataType("boolean", 16)
@@ -137,9 +137,9 @@ case object ListType extends DataType("list", 2001)
 case object StructType extends DataType("struct", 2002)
 case object BigDecimalType extends DataType("bigdecimal", 3)
 
-case class Column(columnName: String, dataType: DataType, comment: String){
+case class Column(columnName: String, dataType: DataType, comment: String) {
 
-  def toArray:Array[Any] ={
+  def toArray: Array[Any] = {
     Array[Any](columnName, dataType, comment)
   }
 

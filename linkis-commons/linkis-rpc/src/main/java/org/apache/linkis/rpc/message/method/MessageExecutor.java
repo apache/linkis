@@ -72,7 +72,7 @@ public class MessageExecutor {
         if (methodExecuteWrappers.size() == 1) {
             MethodExecuteWrapper methodWrapper = methodExecuteWrappers.get(0);
             try {
-                if (!methodWrapper.shouldSkip) {
+                if (!methodWrapper.isShouldSkip()) {
                     Method method = methodWrapper.getMethod();
                     Object service = methodWrapper.getService();
                     if (methodWrapper.isHasSender()) {

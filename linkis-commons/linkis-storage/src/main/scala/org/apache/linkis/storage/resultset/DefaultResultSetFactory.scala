@@ -38,12 +38,12 @@ class DefaultResultSetFactory extends ResultSetFactory with Logging{
   val resultTypes = ResultSetFactory.resultSetType.keys.toArray
 
   override def getResultSetByType(resultSetType: String): ResultSet[_ <: MetaData, _ <: Record] = {
-    if(! resultClasses.contains(resultSetType)) throw new StorageErrorException(50000, s"Unsupported result type(不支持的结果类型)：$resultSetType" )
+    if (!resultClasses.contains(resultSetType)) throw new StorageErrorException(50000, s"Unsupported result type(不支持的结果类型)：$resultSetType" )
     resultClasses(resultSetType).newInstance()
   }
 
   override def getResultSetByPath(fsPath: FsPath): ResultSet[_ <: MetaData, _ <: Record] = {
-    getResultSetByPath(fsPath,StorageUtils.getJvmUser)
+    getResultSetByPath(fsPath, StorageUtils.getJvmUser)
   }
 
   override def getResultSetByContent(content: String): ResultSet[_ <: MetaData, _ <: Record] = {
@@ -56,14 +56,14 @@ class DefaultResultSetFactory extends ResultSetFactory with Logging{
     path.endsWith(Dolphin.DOLPHIN_FILE_SUFFIX)
   }
 
-  override def isResultSet(content: String): Boolean =  Utils.tryCatch(resultClasses.contains(Dolphin.getType(content))){ t =>
+  override def isResultSet(content: String): Boolean = Utils.tryCatch(resultClasses.contains(Dolphin.getType(content))) { t =>
     logger.info("Wrong result Set: " + t.getMessage)
     false
   }
 
-  override def getResultSet(output: String): ResultSet[_ <: MetaData, _ <: Record] = getResultSet(output,StorageUtils.getJvmUser)
+  override def getResultSet(output: String): ResultSet[_ <: MetaData, _ <: Record] = getResultSet(output, StorageUtils.getJvmUser)
 
-  override def getResultSetType:Array[String] = resultTypes
+  override def getResultSetType: Array[String] = resultTypes
 
   override def getResultSetByPath(fsPath: FsPath, fs: Fs): ResultSet[_ <: MetaData, _ <: Record] = {
     val inputStream = fs.read(fsPath)
@@ -75,20 +75,20 @@ class DefaultResultSetFactory extends ResultSetFactory with Logging{
   }
 
   override def getResultSetByPath(fsPath: FsPath, proxyUser: String): ResultSet[_ <: MetaData, _ <: Record] = {
-    if (fsPath == null ) return null
+    if (fsPath == null) return null
     logger.info("Get Result Set By Path:" + fsPath.getPath)
-    val fs = FSFactory.getFsByProxyUser(fsPath,proxyUser)
-    fs.init(new util.HashMap[String,String]())
+    val fs = FSFactory.getFsByProxyUser(fsPath, proxyUser)
+    fs.init(new util.HashMap[String, String]())
     val inputStream = fs.read(fsPath)
     val resultSetType = Dolphin.getType(inputStream)
-    if(StringUtils.isEmpty(resultSetType)) throw new StorageWarnException(51000, s"The file (${fsPath.getPath}) is empty(文件(${fsPath.getPath}) 为空)")
+    if (StringUtils.isEmpty(resultSetType)) throw new StorageWarnException(51000, s"The file (${fsPath.getPath}) is empty(文件(${fsPath.getPath}) 为空)")
     Utils.tryQuietly(inputStream.close())
     Utils.tryQuietly(fs.close())
     getResultSetByType(resultSetType)
   }
 
   override def getResultSet(output: String, proxyUser: String): ResultSet[_ <: MetaData, _ <: Record] = {
-    if(isResultSetPath(output)) {
+    if (isResultSetPath(output)) {
       getResultSetByPath(new FsPath(output), proxyUser)
     } else if (isResultSet(output)) {
       getResultSetByContent(output)

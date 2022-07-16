@@ -28,8 +28,6 @@ import org.apache.linkis.storage.utils.StorageUtils
 
 import scala.collection.mutable.ArrayBuffer
 
-
-
 class StorageResultSetReader[K <: MetaData, V <: Record](resultSet: ResultSet[K, V], inputStream: InputStream) extends ResultSetReader[K, V](resultSet, inputStream) with Logging{
 
   private val deserializer = resultSet.createResultSetDeserializer
@@ -54,21 +52,21 @@ class StorageResultSetReader[K <: MetaData, V <: Record](resultSet: ResultSet[K,
   }
 
   /**
-    * Read a row of data
-   Read the line length first
-  * Get the entire row of data by the length of the line, first obtain the column length in the entire row of data,
-    * and then divide into column length to split the data
-    * 读取一行数据
-    * 先读取行长度
-    * 通过行长度获取整行数据，在整行数据中先获取列长度，进而分割成列长度从而分割数据
-    * @return
-    */
+   * Read a row of data
+   * Read the line length first
+   * Get the entire row of data by the length of the line, first obtain the column length in the entire row of data,
+   * and then divide into column length to split the data
+   * 读取一行数据
+   * 先读取行长度
+   * 通过行长度获取整行数据，在整行数据中先获取列长度，进而分割成列长度从而分割数据
+   * @return
+   */
   def readLine(): Array[Byte] = {
 
     var rowLen = 0
     try rowLen = Dolphin.readInt(inputStream)
     catch {
-      case t:StorageWarnException => logger.info(s"Read finished(读取完毕)") ; return null
+      case t: StorageWarnException => logger.info(s"Read finished(读取完毕)", t); return null
       case t: Throwable => throw t
     }
 
@@ -77,10 +75,11 @@ class StorageResultSetReader[K <: MetaData, V <: Record](resultSet: ResultSet[K,
 
     //Read the entire line, except for the data of the line length(读取整行，除了行长的数据)
     while (rowLen > 0 && len >= 0) {
-      if (rowLen > READ_CACHE)
-        len = StorageUtils.readBytes(inputStream,bytes, READ_CACHE)
-      else
-        len = StorageUtils.readBytes(inputStream,bytes, rowLen)
+      if (rowLen > READ_CACHE) {
+        len = StorageUtils.readBytes(inputStream, bytes, READ_CACHE)
+      } else {
+        len = StorageUtils.readBytes(inputStream, bytes, rowLen)
+      }
 
       if (len > 0) {
         rowLen -= len
@@ -103,16 +102,16 @@ class StorageResultSetReader[K <: MetaData, V <: Record](resultSet: ResultSet[K,
 
   @scala.throws[IOException]
   override def getMetaData: MetaData = {
-    if(metaData == null) init()
+    if (metaData == null) init()
     metaData = deserializer.createMetaData(readLine())
     metaData
   }
 
   @scala.throws[IOException]
   override def skip(recordNum: Int): Int = {
-    if(recordNum < 0 ) return -1
+    if (recordNum < 0) return -1
 
-    if(metaData == null) getMetaData
+    if (metaData == null) getMetaData
     for(i <- recordNum until (0, -1)) {
       try inputStream.skip(Dolphin.readInt(inputStream))
       catch {

@@ -36,7 +36,7 @@ class IOResultSerializer extends ResultSerializer{
   }
 
   def lineToBytes(value: String): Array[Byte] = {
-    val bytes = if(value == null) Dolphin.NULL_BYTES else Dolphin.getBytes(value)
+    val bytes = if (value == null) Dolphin.NULL_BYTES else Dolphin.getBytes(value)
     Dolphin.getIntBytes(bytes.length) ++ bytes
   }
 }

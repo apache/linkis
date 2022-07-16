@@ -17,20 +17,18 @@
  
 package org.apache.linkis.storage.excel
 
-import java.io._
-import java.util
-import org.apache.linkis.common.io.{MetaData, Record}
-import org.apache.linkis.storage.domain.{BigIntType, DataType, IntType, LongType, ShortIntType, TinyIntType}
-import org.apache.linkis.storage.resultset.table.{TableMetaData, TableRecord}
 import org.apache.commons.io.IOUtils
+import org.apache.linkis.common.io.{MetaData, Record}
 import org.apache.linkis.common.utils.{Logging, Utils}
-import org.apache.linkis.storage.domain.DataType.valueToString
+import org.apache.linkis.storage.domain._
+import org.apache.linkis.storage.resultset.table.{TableMetaData, TableRecord}
 import org.apache.poi.ss.usermodel._
 import org.apache.poi.xssf.streaming.{SXSSFCell, SXSSFSheet, SXSSFWorkbook}
 
-import scala.collection.mutable.ArrayBuffer
-import org.apache.linkis.storage.domain._
+import java.io._
+import java.util
 import java.util.Date
+import scala.collection.mutable.ArrayBuffer
 
 
 class StorageExcelWriter(val charset: String, val sheetName: String, val dateFormat: String, val outputStream: OutputStream, val autoFormat: Boolean) extends ExcelFsWriter with Logging {
@@ -47,7 +45,7 @@ class StorageExcelWriter(val charset: String, val sheetName: String, val dateFor
   protected val os = new ByteArrayOutputStream()
   protected var is: ByteArrayInputStream = _
 
-  def init = {
+  def init: Unit = {
     workBook = new SXSSFWorkbook()
     sheet = workBook.createSheet(sheetName)
   }

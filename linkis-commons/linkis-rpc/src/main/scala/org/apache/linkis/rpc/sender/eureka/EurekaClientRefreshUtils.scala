@@ -30,10 +30,10 @@ class EurekaClientRefreshUtils {
 
   @Autowired
   private var eurekaClient: EurekaClient = _
-  private var eurekaClientLastRefreshTime = 0l
+  private var eurekaClientLastRefreshTime = 0L
 
   val serviceRefreshInterval = RPCConfiguration.BDP_RPC_EUREKA_SERVICE_REFRESH_INTERVAL.getValue.toLong
-  private[eureka] def refreshEurekaClient(): Unit = if(System.currentTimeMillis - eurekaClientLastRefreshTime > serviceRefreshInterval) synchronized {
+  private[eureka] def refreshEurekaClient(): Unit = if (System.currentTimeMillis - eurekaClientLastRefreshTime > serviceRefreshInterval) synchronized {
     if (System.currentTimeMillis - eurekaClientLastRefreshTime < serviceRefreshInterval) return
     eurekaClientLastRefreshTime = System.currentTimeMillis
     eurekaClient match {

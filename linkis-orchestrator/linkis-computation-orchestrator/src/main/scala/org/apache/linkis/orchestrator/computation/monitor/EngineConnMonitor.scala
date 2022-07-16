@@ -138,8 +138,6 @@ object EngineConnMonitor extends Logging {
                 endJobByEngineInstance(status._1)
             }
           }
-        case o: Any =>
-          logger.error(s"Status of engine ${status._1.toString} is ${status._2}")
     }
   }
 

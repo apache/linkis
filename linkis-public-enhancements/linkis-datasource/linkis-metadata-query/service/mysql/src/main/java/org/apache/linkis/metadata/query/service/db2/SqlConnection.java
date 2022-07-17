@@ -68,7 +68,7 @@ public class SqlConnection implements Closeable {
 
     public List<String> getAllDatabases() throws SQLException {
         // db2 "select schemaname from syscat.schemata"
-        List<java.lang.String> dataBaseName = new ArrayList<>();
+        List<String> dataBaseName = new ArrayList<>();
         Statement stmt = null;
         ResultSet rs = null;
         try {
@@ -77,8 +77,6 @@ public class SqlConnection implements Closeable {
             // rs = stmt.executeQuery("SELECT * FROM SYSIBMADM.APPLICATIONS WITH UR");
             // rs = stmt.executeQuery("select * from syscat.tables");
             while (rs.next()) {
-                String db_name = rs.getString("DB_NAME");
-                System.out.println(db_name);
                 dataBaseName.add(rs.getString(1));
             }
         } finally {

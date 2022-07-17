@@ -171,7 +171,6 @@ public class SqlConnection implements Closeable {
         DatabaseMetaData dbMeta = conn.getMetaData();
         rs = dbMeta.getColumns(null, schema, table, "%");
         while (rs.next()) {
-            System.out.println(rs.getString("REMARKS"));
             columnComment.put(rs.getString("COlUMN_NAME"), rs.getString("REMARKS"));
         }
         return columnComment;

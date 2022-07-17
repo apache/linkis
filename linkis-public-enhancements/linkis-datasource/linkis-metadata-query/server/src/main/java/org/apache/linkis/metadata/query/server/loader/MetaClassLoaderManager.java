@@ -67,9 +67,6 @@ public class MetaClassLoaderManager {
 
     public BiFunction<String, Object[], Object> getInvoker(String dsType) throws ErrorException {
         boolean needToLoad = true;
-        boolean isContains = CacheConfiguration.MYSQL_RELATIONSHIP_LIST.getValue().contains(dsType);
-        String baseType = dsType;
-        if (isContains) baseType = MYSQL_BASE_DIR;
 
         MetaServiceInstance serviceInstance = metaServiceInstances.get(dsType);
         if (Objects.nonNull(serviceInstance)) {
@@ -85,7 +82,9 @@ public class MetaClassLoaderManager {
         }
         if (needToLoad) {
             MetaServiceInstance finalServiceInstance1 = serviceInstance;
-            String finalBaseType = baseType;
+            boolean isContains =
+                    CacheConfiguration.MYSQL_RELATIONSHIP_LIST.getValue().contains(dsType);
+            String finalBaseType = isContains ? MYSQL_BASE_DIR : dsType;
             serviceInstance =
                     metaServiceInstances.compute(
                             dsType,

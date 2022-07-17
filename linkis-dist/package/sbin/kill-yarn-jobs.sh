@@ -52,13 +52,13 @@ function check_status() {
 			# case 2: false appid, which should not happen
 			echo "`date '+%Y-%m-%d %H:%M:%S'` Cannot find yarn application id=${yarn_id}. It's probably finished and went to history server."
 			return $NOTFOUND
-		else
+		else 
 			echo "`date '+%Y-%m-%d %H:%M:%S'` [ERROR] Could not get yarn job status, id=${yarn_id}"
 			return $ERR
 		fi
 	else
 		status=`echo "${result}" | grep -i "state" |grep -v -i "final" | awk -F ":" '{print $2}' | sed 's/^\s*//;s/\s*$//' | tr '[a-z]' '[A-Z]'`
-        if [ -z "$status" ]; then
+        if [ -z "$status" ]; then 
         	echo $STATUS_ERR
         	return $ERR
         else

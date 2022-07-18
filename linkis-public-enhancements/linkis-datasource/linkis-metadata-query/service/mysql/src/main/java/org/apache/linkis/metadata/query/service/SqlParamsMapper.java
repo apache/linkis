@@ -15,18 +15,24 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.metadat.query.service;
+package org.apache.linkis.metadata.query.service;
 
 import org.apache.linkis.common.conf.CommonVars;
 
-/** Configuration */
-public class ElasticParamsMapper {
-    public static final CommonVars<String> PARAM_ES_URLS =
-            CommonVars.apply("wds.linkis.server.mdm.service.es.urls", "elasticUrls");
+public class SqlParamsMapper {
 
-    public static final CommonVars<String> PARAM_ES_USERNAME =
-            CommonVars.apply("wds.linkis.server.mdm.service.es.username", "username");
+    public static final CommonVars<String> PARAM_SQL_HOST =
+            CommonVars.apply("wds.linkis.server.mdm.service.sql.host", "host");
 
-    public static final CommonVars<String> PARAM_ES_PASSWORD =
-            CommonVars.apply("wds.linkis.server.mdm.service.es.password", "password");
+    public static final CommonVars<String> PARAM_SQL_PORT =
+            CommonVars.apply("wds.linkis.server.mdm.service.sql.port", "port");
+
+    public static final CommonVars<String> PARAM_SQL_USERNAME =
+            CommonVars.apply("wds.linkis.server.mdm.service.sql.username", "username");
+
+    public static final CommonVars<String> PARAM_SQL_PASSWORD =
+            CommonVars.apply("wds.linkis.server.mdm.service.sql.password", "password");
+
+    public static final CommonVars<String> PARAM_SQL_EXTRA_PARAMS =
+            CommonVars.apply("wds.linkis.server.mdm.service.sql.params", "params");
 }

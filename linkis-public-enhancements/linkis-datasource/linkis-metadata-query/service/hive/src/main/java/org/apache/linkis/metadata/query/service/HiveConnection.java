@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.metadat.query.service;
+package org.apache.linkis.metadata.query.service;
 
 import org.apache.linkis.common.conf.CommonVars;
 

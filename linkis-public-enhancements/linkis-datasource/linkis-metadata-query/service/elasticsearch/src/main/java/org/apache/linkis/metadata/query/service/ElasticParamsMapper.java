@@ -15,17 +15,18 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.metadat.query.service;
+package org.apache.linkis.metadata.query.service;
 
 import org.apache.linkis.common.conf.CommonVars;
 
-public class KafkaParamsMapper {
-    public static final CommonVars<String> PARAM_KAFKA_PRINCIPLE =
-            CommonVars.apply("wds.linkis.server.mdm.service.kafka.principle", "principle");
+/** Configuration */
+public class ElasticParamsMapper {
+    public static final CommonVars<String> PARAM_ES_URLS =
+            CommonVars.apply("wds.linkis.server.mdm.service.es.urls", "elasticUrls");
 
-    public static final CommonVars<String> PARAM_KAFKA_KEYTAB =
-            CommonVars.apply("wds.linkis.server.mdm.service.kafka.keytab", "keytab");
+    public static final CommonVars<String> PARAM_ES_USERNAME =
+            CommonVars.apply("wds.linkis.server.mdm.service.es.username", "username");
 
-    public static final CommonVars<String> PARAM_KAFKA_BROKERS =
-            CommonVars.apply("wds.linkis.server.mdm.service.kafka.brokers", "brokers");
+    public static final CommonVars<String> PARAM_ES_PASSWORD =
+            CommonVars.apply("wds.linkis.server.mdm.service.es.password", "password");
 }

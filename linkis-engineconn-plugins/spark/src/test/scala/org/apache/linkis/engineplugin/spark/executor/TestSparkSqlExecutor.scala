@@ -51,13 +51,12 @@ class TestSparkSqlExecutor{
     sparkSqlExecutor.init()
     Assertions.assertTrue(sparkSqlExecutor.isEngineInitialized)
     val engineExecutionContext = new EngineExecutionContext(sparkSqlExecutor, Utils.getJvmUser)
-    val code = " val spark = SparkSession.builder().appName(\"Test extract\")\n      " +
-      ".config(\"spark.some.config.option\", \"some-value\").master(\"local[*]\").getOrCreate()\n    " +
-      "val dataFrame = spark.createDataFrame(Seq(\n      " +
+    val code = "val dataFrame = spark.createDataFrame(Seq(\n      " +
       "(\"ming\", 20, 15552211521L),\n      " +
       "(\"hong\", 19, 13287994007L),\n      " +
-      "(\"zhi\", 21, 15552211523L)\n    )).toDF(\"name\", \"age\", \"phone\") \n" +
-      "dataFrame.show()\n"
+      "(\"zhi\", 21, 15552211523L)\n    )).toDF(\"name\", \"age\", \"phone\").createOrReplaceTempView(\"a\") \n" +
+      "val df = spark.sql(\"select * from a\") \n" +
+      "df.show() \n"
     val response = sparkSqlExecutor.executeLine(engineExecutionContext, code)
     Assertions.assertNotNull(response)
   }

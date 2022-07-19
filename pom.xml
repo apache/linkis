@@ -118,7 +118,7 @@
         <jline.version>2.14.6</jline.version>
         <!-- hadoop 2.7 use curator 2.7.1, hadoop3.3 use curator 4.2.0-->
         <curator.version>2.7.1</curator.version>
-        <jetty.version>9.4.44.v20210927</jetty.version>
+        <jetty.version>9.4.48.v20220622</jetty.version>
         <httpclient.version>4.5.13</httpclient.version>
         <httpmime.version>4.5.4</httpmime.version>
         <slf4j.version>1.7.30</slf4j.version>

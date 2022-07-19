@@ -70,8 +70,7 @@ public class WorkspaceExceptionManager {
                 }
             };
 
-    public static WorkSpaceException createException(int errorCode, Object... format)
-            throws WorkSpaceException {
+    public static WorkSpaceException createException(int errorCode, Object... format) {
         return new WorkSpaceException(
                 errorCode, String.format(desc.get(String.valueOf(errorCode)), format));
     }

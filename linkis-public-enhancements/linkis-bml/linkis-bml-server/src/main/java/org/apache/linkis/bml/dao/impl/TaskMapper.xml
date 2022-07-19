@@ -20,7 +20,7 @@
 
 <mapper namespace="org.apache.linkis.bml.dao.TaskDao">
 
-    <resultMap id="ResourceTask" type="org.apache.linkis.bml.Entity.ResourceTask">
+    <resultMap id="ResourceTask" type="org.apache.linkis.bml.entity.ResourceTask">
         <id property="id" column="id"/>
         <result property="resourceId" column="resource_id"/>
         <result property="version" column="version"/>
@@ -42,7 +42,7 @@
     </sql>
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="id" keyColumn="id"
-            parameterType="org.apache.linkis.bml.Entity.ResourceTask">
+            parameterType="org.apache.linkis.bml.entity.ResourceTask">
         INSERT INTO linkis_ps_bml_resources_task(<include refid="resource_task_columns"/>)
         VALUES (#{resourceId}, #{version}, #{operation}, #{state}, #{submitUser}, #{system}, #{instance},
         #{clientIp}, #{errMsg}, #{startTime}, #{endTime}, #{lastUpdateTime}, #{extraParams})

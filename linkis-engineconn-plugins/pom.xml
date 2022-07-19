@@ -30,19 +30,16 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>linkis-engineconn-plugin-framework/linkis-engineconn-plugin-core</module>
-        <module>linkis-engineconn-plugin-framework/linkis-engineconn-plugin-server</module>
-
-        <module>engineconn-plugins/hive</module>
-        <module>engineconn-plugins/spark</module>
-        <module>engineconn-plugins/python</module>
-        <module>engineconn-plugins/openlookeng</module>
-        <module>engineconn-plugins/io_file</module>
-        <module>engineconn-plugins/shell</module>
-        <module>engineconn-plugins/pipeline</module>
-        <module>engineconn-plugins/jdbc</module>
-        <module>engineconn-plugins/flink</module>
-        <module>engineconn-plugins/sqoop</module>
+        <module>hive</module>
+        <module>spark</module>
+        <module>python</module>
+        <module>openlookeng</module>
+        <module>io_file</module>
+        <module>shell</module>
+        <module>pipeline</module>
+        <module>jdbc</module>
+        <module>flink</module>
+        <module>sqoop</module>
     </modules>
 
 </project>

@@ -36,8 +36,8 @@ import org.json4s.jackson.Serialization.write
 case class MethodEntity(id: Long,
                         fsType: String,
                         creatorUser: String,
-                        proxyUser:String,
-                        clientIp:String,
+                        proxyUser: String,
+                        clientIp: String,
                         methodName: String,
                         params: Array[AnyRef]){
   override def toString: String = {s"id:$id, methodName:$methodName, fsType:$fsType, " +
@@ -58,7 +58,7 @@ object MethodEntitySerializer{
     * @param code
     * @return
     */
-  def deserializer(code: String):MethodEntity = parse(code).extract[MethodEntity]
+  def deserializer(code: String): MethodEntity = parse(code).extract[MethodEntity]
 
   /**
     * Serialize MethodEntity to code
@@ -85,12 +85,12 @@ object MethodEntitySerializer{
     * @tparam T
     * @return
     */
-  def deserializerToJavaObject[T](json:String,classType: Class[T]): T ={
+  def deserializerToJavaObject[T](json: String, classType: Class[T]): T = {
     gson.fromJson(json, classType)
   }
 
-  def deserializerToJavaObject[T](json:String,oType: Type): T ={
-    gson.fromJson(json,oType)
+  def deserializerToJavaObject[T](json: String, oType: Type): T = {
+    gson.fromJson(json, oType)
   }
 
 }

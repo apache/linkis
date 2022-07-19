@@ -23,10 +23,14 @@ import org.apache.linkis.jobhistory.dao.JobHistoryMapper;
 import org.apache.linkis.jobhistory.entity.JobHistory;
 import org.apache.linkis.jobhistory.util.QueryConfig;
 
+import org.apache.commons.lang.time.DateUtils;
+
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -38,6 +42,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -57,6 +62,15 @@ public class DefaultQueryCacheManager implements QueryCacheManager, Initializing
     private Long undoneTaskMinId =
             Long.valueOf(
                     String.valueOf(JobhistoryConfiguration.UNDONE_JOB_MINIMUM_ID().getValue()));
+
+    @PostConstruct
+    private void init() {
+        try {
+            refreshUndoneTask();
+        } catch (Exception e) {
+            logger.info("Failed to init refresh undone task", e);
+        }
+    }
 
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -172,13 +186,16 @@ public class DefaultQueryCacheManager implements QueryCacheManager, Initializing
         PageHelper.startPage(1, 10);
         List<JobHistory> queryTasks = null;
         try {
+
+            Date eDate = new Date(System.currentTimeMillis());
+            Date sDate = DateUtils.addDays(eDate, -1);
             queryTasks =
                     jobHistoryMapper.searchWithIdOrderAsc(
                             undoneTaskMinId,
                             null,
                             Arrays.asList("Running", "Inited", "Scheduled"),
-                            null,
-                            null,
+                            sDate,
+                            eDate,
                             null);
         } finally {
             PageHelper.clearPage();

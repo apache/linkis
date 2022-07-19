@@ -75,7 +75,7 @@ function checkSpark(){
 
 portIsOccupy=false
 function check_service_port() {
-    pid=`lsof -i :$SERVER_PORT | grep -v "PID"`
+    pid=`lsof -i TCP:$SERVER_PORT | fgrep LISTEN`
     if [ "$pid" != "" ];then
       echo "$SERVER_PORT already used"
       portIsOccupy=true
@@ -139,7 +139,7 @@ check_service_port
 SERVER_PORT=$DATASOURCE_MANAGER_PORT
 check_service_port
 
-SERVER_PORT=$METADATA_MANAGER_PORT
+SERVER_PORT=$METADATA_QUERY_PORT
 check_service_port
 
 if [ "$portIsOccupy" = true ];then

@@ -29,4 +29,5 @@ out/
 target/
 
 # log folder
+*.log
 logs/

@@ -86,7 +86,7 @@ class ConfigurationService extends Logging {
 
   def insertCreator(creator: String): Unit = {
     val creatorID: Long = configMapper.selectAppIDByAppName(creator)
-    if(creatorID > 0) configMapper.insertCreator(creator) else warn(s"creator${creator} exists")
+    if(creatorID > 0) configMapper.insertCreator(creator) else logger.warn(s"creator${creator} exists")
   }
 
   def checkAndCreateUserLabel(settings: util.List[ConfigKeyValue], username: String, creator: String): Integer = {
@@ -280,7 +280,7 @@ class ConfigurationService extends Logging {
         defaultEngineConfigs = configMapper.getConfigKeyValueByLabelId(defaultEngineLabel.getId)
       }
       if(CollectionUtils.isEmpty(defaultEngineConfigs)) {
-        warn(s"The default configuration is empty. Please check the default configuration information in the database table(默认配置为空,请检查数据库表中关于标签${defaultEngineCombinedLabel.getStringValue}的默认配置信息是否完整)")
+        logger.warn(s"The default configuration is empty. Please check the default configuration information in the database table(默认配置为空,请检查数据库表中关于标签${defaultEngineCombinedLabel.getStringValue}的默认配置信息是否完整)")
       }
       val userCreatorLabel = labelList.asScala.find(_.isInstanceOf[UserCreatorLabel]).get.asInstanceOf[UserCreatorLabel]
       if(Configuration.USE_CREATOR_DEFAULE_VALUE && userCreatorLabel.getCreator != "*") {
@@ -335,19 +335,19 @@ class ConfigurationService extends Logging {
 
   @Transactional
   def persisteUservalue(configs: util.List[ConfigKeyValue], defaultConfigs: util.List[ConfigKeyValue], combinedLabel: CombinedLabel, existsLabel: ConfigLabel): Unit = {
-    info(s"Start checking the integrity of user configuration data(开始检查用户配置数据的完整性): label标签为：${combinedLabel.getStringValue}")
+    logger.info(s"Start checking the integrity of user configuration data(开始检查用户配置数据的完整性): label标签为：${combinedLabel.getStringValue}")
     val userConfigList = configs.asScala
     val userConfigKeyIdList = userConfigList.map(config => config.getId)
     val defaultConfigsList = defaultConfigs.asScala
     val parsedLabel = LabelEntityParser.parseToConfigLabel(combinedLabel)
     if (existsLabel == null) {
-      info("start to create label for user(开始为用户创建label)：" + "labelKey:" + parsedLabel.getLabelKey + " , " + "labelValue:" + parsedLabel.getStringValue)
+      logger.info("start to create label for user(开始为用户创建label)：" + "labelKey:" + parsedLabel.getLabelKey + " , " + "labelValue:" + parsedLabel.getStringValue)
       labelMapper.insertLabel(parsedLabel)
-      info("Creation completed(创建完成！)：" + parsedLabel)
+      logger.info("Creation completed(创建完成！)：" + parsedLabel)
     }
     defaultConfigsList.foreach(defaultConfig => {
       if (!userConfigKeyIdList.contains(defaultConfig.getId)) {
-        info(s"Initialize database configuration information for users(为用户初始化数据库配置信息)："+s"configKey: ${defaultConfig.getKey}")
+        logger.info(s"Initialize database configuration information for users(为用户初始化数据库配置信息)："+s"configKey: ${defaultConfig.getKey}")
         val configValue = new ConfigValue
         configValue.setConfigKeyId(defaultConfig.getId)
         if (existsLabel == null) {
@@ -357,10 +357,10 @@ class ConfigurationService extends Logging {
         }
         configValue.setConfigValue("")
         configMapper.insertValue(configValue)
-        info(s"Initialization of user database configuration information completed(初始化用户数据库配置信息完成)：configKey: ${defaultConfig.getKey}")
+        logger.info(s"Initialization of user database configuration information completed(初始化用户数据库配置信息完成)：configKey: ${defaultConfig.getKey}")
       }
     })
-    info(s"User configuration data integrity check completed!(用户配置数据完整性检查完毕！): label标签为：${combinedLabel.getStringValue}")
+    logger.info(s"User configuration data integrity check completed!(用户配置数据完整性检查完毕！): label标签为：${combinedLabel.getStringValue}")
   }
 
   def queryConfigByLabel(labelList: java.util.List[Label[_]], isMerge: Boolean = true, filter: String = null): ResponseQueryConfig = {

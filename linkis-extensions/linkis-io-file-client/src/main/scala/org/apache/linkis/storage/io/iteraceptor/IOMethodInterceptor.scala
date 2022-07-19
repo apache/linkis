@@ -85,7 +85,7 @@ class IOMethodInterceptor(fsType: String) extends MethodInterceptor with Logging
       MethodEntity(id, fsType, getCreatorUser, getProxyUser, getLocalIP, methodName, params), bindEngineLabel)) {
       t: Throwable =>
         if (t.isInstanceOf[FSNotInitException]) {
-          error(s"The Fs of user:$getProxyUser need re-init:")
+          logger.error(s"The Fs of user:$getProxyUser need re-init:")
           initFS()
           executeMethod(methodName, params)
         } else throw t
@@ -100,7 +100,7 @@ class IOMethodInterceptor(fsType: String) extends MethodInterceptor with Logging
     bindEngineLabel.setIsJobGroupEnd("false")
     val res = ioClient.executeWithRetry(getProxyUser, MethodEntity(id, fsType, getCreatorUser, getProxyUser, getLocalIP, methodName, Array(properties.toMap)), bindEngineLabel)
     id = Utils.tryCatch(StorageUtils.deserializerResultToString(res).toLong) { t: Throwable =>
-      error(s"Failed to init fs,init return:(${res}")
+      logger.error(s"Failed to init fs,init return:(${res}")
       throw t
     }
     if (id != -1) {
@@ -116,7 +116,7 @@ class IOMethodInterceptor(fsType: String) extends MethodInterceptor with Logging
     if (System.currentTimeMillis() - lastAccessTime >= iOEngineExecutorMaxFreeTime) synchronized {
       if (System.currentTimeMillis() - lastAccessTime >= iOEngineExecutorMaxFreeTime) {
         initFS()
-        info(s"since the $fsType storage($id) engine($bindEngineLabel) is free for too long time, re-inited it in beforeOperation")
+        logger.info(s"since the $fsType storage($id) engine($bindEngineLabel) is free for too long time, re-inited it in beforeOperation")
       }
     }
     lastAccessTime = System.currentTimeMillis()
@@ -131,7 +131,7 @@ class IOMethodInterceptor(fsType: String) extends MethodInterceptor with Logging
         case "setUser" => properties += StorageConfiguration.PROXY_USER.key -> args(0).asInstanceOf[String]; return Unit
         case _ => if (inited) {
           initFS()
-          info(s"since the $fsType storage($id) is free for too long time, re-inited it.")
+          logger.info(s"since the $fsType storage($id) is free for too long time, re-inited it.")
         }
       }
     }
@@ -144,7 +144,7 @@ class IOMethodInterceptor(fsType: String) extends MethodInterceptor with Logging
         }
         if (StringUtils.isNotEmpty(user)) properties += StorageConfiguration.PROXY_USER.key -> user
         initFS()
-        warn(s"For user($user)inited a $fsType storage($id) .")
+        logger.warn(s"For user($user)inited a $fsType storage($id) .")
         Unit
       case "fsName" => fsType
       case "setUser" => properties += StorageConfiguration.PROXY_USER.key -> args(0).asInstanceOf[String]; Unit
@@ -172,7 +172,7 @@ class IOMethodInterceptor(fsType: String) extends MethodInterceptor with Logging
       case "toString" =>
         this.toString
       case "finalize" =>
-        info("no support method")
+        logger.info("no support method")
         Unit
       case _ =>
         if (!inited) throw new IllegalAccessException("storage has not been inited.")

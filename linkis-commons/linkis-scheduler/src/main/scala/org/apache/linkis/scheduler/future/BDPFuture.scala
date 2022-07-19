@@ -19,5 +19,5 @@ package org.apache.linkis.scheduler.future
 
 
 trait BDPFuture {
-    def cancel():Unit
+    def cancel(): Unit
 }

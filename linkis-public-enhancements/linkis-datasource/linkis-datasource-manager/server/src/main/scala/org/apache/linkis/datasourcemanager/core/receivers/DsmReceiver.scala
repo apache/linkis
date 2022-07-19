@@ -46,10 +46,10 @@ class DsmReceiver extends Receiver with Logging{
         Utils.tryCatch {
           var dataSource: DataSource = null
           if (Option(name).isDefined) {
-            info("Try to get dataSource by dataSourceName:" + name)
+            logger.info("Try to get dataSource by dataSourceName:" + name)
             dataSource = dataSourceInfoService.getDataSourceInfoForConnect(name)
           } else if (id.toLong > 0) {
-            info("Try to get dataSource by dataSourceId:" + id)
+            logger.info("Try to get dataSource by dataSourceId:" + id)
             dataSource = dataSourceInfoService.getDataSourceInfoForConnect(id.toLong)
           }
           if (null != dataSource) {
@@ -58,7 +58,7 @@ class DsmReceiver extends Receiver with Logging{
             DsInfoResponse(status = true, dataSource.getDataSourceType.getName,
               dataSource.getConnectParams, dataSource.getCreateUser)
           } else {
-            warn("Can not get any dataSource")
+            logger.warn("Can not get any dataSource")
             DsInfoResponse(status = true, "", new util.HashMap[String, Object](), "")
           }
         }{

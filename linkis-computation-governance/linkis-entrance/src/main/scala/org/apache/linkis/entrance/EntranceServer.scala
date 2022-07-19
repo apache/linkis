@@ -17,21 +17,21 @@
  
 package org.apache.linkis.entrance
 
+import org.apache.commons.lang.exception.ExceptionUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.exception.{ErrorException, LinkisException, LinkisRuntimeException}
 import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.entrance.cs.CSEntranceHelper
 import org.apache.linkis.entrance.exception.{EntranceErrorException, SubmitFailedException}
-import org.apache.linkis.entrance.execute.{EntranceExecutorManager, EntranceJob}
+import org.apache.linkis.entrance.execute.EntranceJob
 import org.apache.linkis.entrance.log.LogReader
 import org.apache.linkis.entrance.timeout.JobTimeoutManager
+import org.apache.linkis.entrance.utils.JobHistoryHelper
 import org.apache.linkis.governance.common.entity.job.JobRequest
+import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.scheduler.queue.{Job, SchedulerEventState}
 import org.apache.linkis.server.conf.ServerConfiguration
-import org.apache.commons.lang.exception.ExceptionUtils
-import org.apache.commons.lang3.StringUtils
-import org.apache.linkis.entrance.cs.CSEntranceHelper
-import org.apache.linkis.entrance.utils.JobHistoryHelper
-import org.apache.linkis.protocol.constants.TaskConstant
 
 import java.util
 
@@ -55,7 +55,7 @@ abstract class EntranceServer extends Logging {
     * @return
     */
   def execute(params: java.util.Map[String, Any]): String = {
-    if (!params.containsKey(EntranceServer.DO_NOT_PRINT_PARAMS_LOG)) debug("received a request: " + params)
+    if (!params.containsKey(EntranceServer.DO_NOT_PRINT_PARAMS_LOG)) logger.debug("received a request: " + params)
     else params.remove(EntranceServer.DO_NOT_PRINT_PARAMS_LOG)
     var jobRequest = getEntranceContext.getOrCreateEntranceParser().parseToTask(params)
     // tod multi entrance instances
@@ -67,7 +67,7 @@ abstract class EntranceServer extends Logging {
     if (null == jobRequest.getId || jobRequest.getId <= 0) {
       throw new EntranceErrorException(20052, "Persist jobRequest error, please submit again later(存储Job异常，请稍后重新提交任务)")
     }
-    info(s"received a request,convert $jobRequest ")
+    logger.info(s"received a request,convert $jobRequest ")
 
     val logAppender = new java.lang.StringBuilder()
     Utils.tryThrow(getEntranceContext.getOrCreateEntranceInterceptors().foreach(int => jobRequest = int.apply(jobRequest, logAppender))) { t =>

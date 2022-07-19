@@ -57,7 +57,7 @@ class ResourceNodeSelectRule extends NodeSelectRule with Logging {
           }
         } {
           t: Throwable =>
-            warn(s"Failed to Compare resource ${t.getMessage}")
+            logger.warn(s"Failed to Compare resource ${t.getMessage}")
             true
         }
       case _ => false
@@ -83,7 +83,7 @@ class ResourceNodeSelectRule extends NodeSelectRule with Logging {
           }
         } {
           t: Throwable =>
-            warn(s"Failed to Compare resource ${t.getMessage}")
+            logger.warn(s"Failed to Compare resource ${t.getMessage}")
             true
         }
       case _ => false

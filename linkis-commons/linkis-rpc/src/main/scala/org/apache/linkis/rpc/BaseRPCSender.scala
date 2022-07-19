@@ -99,7 +99,7 @@ private[rpc] class BaseRPCSender extends Sender with Logging {
     val msg = RPCProduct.getRPCProduct.toMessage(message)
     BaseRPCSender.addInstanceInfo(msg.getData)
     RPCConsumer.getRPCConsumer.toObject(op(msg)) match {
-      case w: WarnException => warn("RPC requests an alarm!(RPC请求出现告警！)", w)
+      case w: WarnException => logger.warn("RPC requests an alarm!(RPC请求出现告警！)", w)
       case _: BoxedUnit =>
     }
   }
@@ -137,7 +137,7 @@ private[rpc] object BaseRPCSender extends Logging {
     override def onEvent(event: RPCMessageEvent): Unit = Sender.getSender(event.serviceInstance).send(event.message)
 
     override def onMessageEventError(event: RPCMessageEvent, t: Throwable): Unit =
-      warn(s"${event.serviceInstance} deliver RPC message failed! Message: " + event.message, t)
+      logger.warn(s"${event.serviceInstance} deliver RPC message failed! Message: " + event.message, t)
   })
   def addInstanceInfo[T](map: util.Map[String, T]): Unit ={
     map.put("name", DataWorkCloudApplication.getApplicationName.asInstanceOf[T])

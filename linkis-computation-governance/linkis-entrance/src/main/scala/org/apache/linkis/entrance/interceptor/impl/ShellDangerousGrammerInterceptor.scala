@@ -34,10 +34,10 @@ class ShellDangerousGrammerInterceptor extends EntranceInterceptor with Logging 
   private val shellDangerCode = EntranceConfiguration.SHELL_DANGER_USAGE.getValue.split(",")
   private val shellWhiteCodes = EntranceConfiguration.SHELL_WHITE_USAGE.getValue
 
-  info(s"shellDangerousGrammerCheckSwitch : ${shellDangerousGrammerCheckSwitch}")
+  logger.info(s"shellDangerousGrammerCheckSwitch : ${shellDangerousGrammerCheckSwitch}")
   if (shellDangerousGrammerCheckSwitch) {
-    info(s"SHELL DANGER USAGE ${shellDangerCode}")
-    info(s"SHELL White USAGE ${shellWhiteCodes}")
+    logger.info(s"SHELL DANGER USAGE ${shellDangerCode}")
+    logger.info(s"SHELL White USAGE ${shellWhiteCodes}")
   }
 
 
@@ -96,7 +96,7 @@ class ShellDangerousGrammerInterceptor extends EntranceInterceptor with Logging 
     val codeType = LabelUtil.getCodeType(jobRequest.getLabels)
     val engineType = LabelUtil.getEngineType(jobRequest.getLabels)
     if (CodeType.Shell.equals(CodeType.getType(codeType)) || EngineType.SHELL.equals(EngineType.mapStringToEngineType(engineType))) {
-      info(s"GET REQUEST CODE_TYPE ${codeType} and ENGINE_TYPE ${EngineType}")
+      logger.info(s"GET REQUEST CODE_TYPE ${codeType} and ENGINE_TYPE ${EngineType}")
       if (shellContainDangerUsage(jobRequest.getExecutionCode)) {
         throw  DangerousGramsCheckException("Shell code contains blacklisted code(shell中包含黑名单代码)")
       } /*else if (!shellWhiteUsage(jobRequest.getExecutionCode)) {

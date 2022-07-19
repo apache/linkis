@@ -26,7 +26,7 @@ import org.apache.commons.lang.StringUtils
 import org.apache.linkis.engineconn.common.conf.EngineConnConf
 
 class YarnAppIdExtractor extends Thread with Logging{
-  val MAX_BUFFER: Int = 32*1024*1024 //32MB
+  val MAX_BUFFER: Int = 32 * 1024 * 1024 //32MB
 
   val buff : StringBuilder = new StringBuilder
 
@@ -114,9 +114,9 @@ class YarnAppIdExtractor extends Thread with Logging{
   }
 
   def addYarnAppIds(yarnAppIds: Array[String]): Unit = {
-    if (yarnAppIds != null && yarnAppIds.length != 0) {
+    if (yarnAppIds != null && !yarnAppIds.isEmpty) {
       appIdList.synchronized {
-        yarnAppIds.foreach(id => if (!appIdList.contains()) {
+        yarnAppIds.foreach(id => if (!appIdList.contains(id)) {
           appIdList.add(id)
           // input application id to logs/stderr
           logger.info(s"Submitted application $id")

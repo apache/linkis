@@ -36,7 +36,7 @@ STATUS_ERR="ERROR"
 YARN_APP_STATUS_KILLED="KILLED"
 
 source $LINKIS_CONF_DIR/linkis-env.sh
-YARN_EXE_PATH="/appcom/Install/hadoop/bin/yarn"
+YARN_EXE_PATH="yarn"
 if [[ -d "$HADOOP_HOME" && -d $HADOOP_HOME ]]; then
     YARN_EXE_PATH="$HADOOP_HOME/bin/yarn"
 fi

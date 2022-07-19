@@ -56,8 +56,6 @@ object EngineConnConf {
 
   val HIVE_ENGINE_CONN_YARN_APP_ID_PARSE_REGEX = CommonVars("wds.linkis.hive.engine.yarn.app.id.parse.regex", "(application_\\d{13}_\\d+)")
 
-  val ENGINE_CONN_YARN_APP_KILL_SCRIPTS_PATH = CommonVars("wds.linkis.engine.yarn.app.kill.scripts.path", Configuration.getLinkisHome + "/sbin/kill-yarn-jobs.sh")
-
   def getWorkHome: String = System.getenv(ENGINE_CONN_LOCAL_PATH_PWD_KEY.getValue)
 
   def getLogDir: String = {

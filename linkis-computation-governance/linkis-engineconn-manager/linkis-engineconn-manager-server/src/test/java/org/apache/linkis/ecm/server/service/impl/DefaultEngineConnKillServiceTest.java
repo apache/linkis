@@ -70,8 +70,7 @@ public class DefaultEngineConnKillServiceTest {
         assertEquals(appIds.size(), 2);
         assertEquals(appIds.get(0), "application_1609166102854_970911");
         assertEquals(appIds.get(1), "application_1609166102854_970912");
-        String yarnAppKillScriptPath =
-                EngineConnConf.ENGINE_CONN_YARN_APP_KILL_SCRIPTS_PATH().getValue();
+        String yarnAppKillScriptPath = "/tmp/sbin/kill-yarn-jobs.sh";
         String[] cmdArr = new String[appIds.size() + 2];
         cmdArr[0] = "sh";
         cmdArr[1] = yarnAppKillScriptPath;

@@ -18,7 +18,6 @@
 package org.apache.linkis.ecm.server.service.impl;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.hadoop.util.Shell;
 import org.apache.linkis.common.ServiceInstance;
 import org.apache.linkis.common.utils.Utils;
 import org.apache.linkis.ecm.core.engineconn.EngineConn;
@@ -46,6 +45,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -58,6 +58,8 @@ public class DefaultEngineConnKillService implements EngineConnKillService {
     public void setEngineConnListService(EngineConnListService engineConnListService) {
         this.engineConnListService = engineConnListService;
     }
+
+    private static final ThreadPoolExecutor ecYarnAppKillService = Utils.newCachedThreadPool(10, "ECM-Kill-EC-Yarn-App", true);
 
     @Override
     @Receiver
@@ -98,7 +100,7 @@ public class DefaultEngineConnKillService implements EngineConnKillService {
         String engineLogDir = engineConn.getEngineConnManagerEnv().engineConnLogDirs();
         final String errEngineLogPath = engineLogDir.concat(File.separator).concat("stderr");
         logger.info("try to parse the yarn app id from the engine err log file path: {}", errEngineLogPath);
-        Thread t = new Thread(() -> {
+        ecYarnAppKillService.execute(() -> {
             BufferedReader in = null;
             try {
                 in = new BufferedReader(new FileReader(errEngineLogPath));
@@ -120,20 +122,8 @@ public class DefaultEngineConnKillService implements EngineConnKillService {
                         }
                     }
                 }
-                if (!appIds.isEmpty()) {
-                    String yarnAppKillScriptPath = EngineConnConf.ENGINE_CONN_YARN_APP_KILL_SCRIPTS_PATH().getValue();
-                    String[] cmdArr = new String[appIds.size() + 2];
-                    cmdArr[0] = "sh";
-                    cmdArr[1] = yarnAppKillScriptPath;
-                    for (int i = 0; i < appIds.size(); i++) {
-                        cmdArr[i + 2] = appIds.get(i);
-                    }
-                    logger.info("Starting to kill yarn applications " + engineConnInstance + ". Kill Command: " + StringUtils.join(cmdArr, " "));
-                    Shell.ShellCommandExecutor exec =
-                            new Shell.ShellCommandExecutor(cmdArr, null, null, 600 * 1000L);
-                    exec.execute();
-                    logger.info("Kill Success! id:" + engineConnInstance + ". msg:" + exec.getOutput());
-                }
+                GovernanceUtils.killYarnJobApp(appIds);
+                logger.info("finished kill yarn app ids in the engine of ({})." , engineConnInstance);
             } catch (IOException ioEx) {
                 if (ioEx instanceof FileNotFoundException) {
                     logger.error("the engine log file {} not found.", errEngineLogPath);
@@ -143,9 +133,7 @@ public class DefaultEngineConnKillService implements EngineConnKillService {
             } finally {
                 IOUtils.closeQuietly(in);
             }
-        }, "EngineConnKillYarnAppThread");
-        t.setDaemon(true);
-        t.start();
+        });
     }
 
     private String getYarnAppRegexByEngineType(EngineConn engineConn) {

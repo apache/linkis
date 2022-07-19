@@ -243,7 +243,7 @@ class SQLCodeParser extends SingleCodeParser with Logging  {
       else code = code.substring(5).trim
       val limitNum = code.toInt
       if (limitNum > defaultLimit) // throw new IllegalArgumentException("We at most allowed to limit " + defaultLimit + ", but your SQL has been over the max rows.")
-        warn(s"Limit num ${limitNum} is over then max rows : ${defaultLimit}")
+        logger.warn(s"Limit num ${limitNum} is over then max rows : ${defaultLimit}")
     }
     !hasLimit
   }

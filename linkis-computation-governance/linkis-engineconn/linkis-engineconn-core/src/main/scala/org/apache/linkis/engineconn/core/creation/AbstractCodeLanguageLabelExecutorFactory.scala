@@ -34,12 +34,12 @@ trait AbstractCodeLanguageLabelExecutorFactory extends CodeLanguageLabelExecutor
   override def canCreate(labels: Array[Label[_]]): Boolean  = {
     val codeLanguageLabel = getDefaultCodeLanguageLabel
     if (null == codeLanguageLabel) {
-      error("DefaultEngineRunTypeLabel must not be null!")
+      logger.error("DefaultEngineRunTypeLabel must not be null!")
       throw new EngineConnPluginErrorException(EngineConnPluginErrorCode.INVALID_RUNTYPE, "DefaultEngineRunTypeLabel cannot be null.")
     }
     labels.exists {
       case label: CodeLanguageLabel =>
-        info(s"Executor runType is ${codeLanguageLabel.getCodeType}, the task runType is ${label.getCodeType}.")
+        logger.info(s"Executor runType is ${codeLanguageLabel.getCodeType}, the task runType is ${label.getCodeType}.")
         getSupportRunTypes.exists(_.equalsIgnoreCase(label.getCodeType))
       case _ => false
     }

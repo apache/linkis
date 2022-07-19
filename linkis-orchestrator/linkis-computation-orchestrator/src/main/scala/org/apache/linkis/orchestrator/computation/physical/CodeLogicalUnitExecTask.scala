@@ -17,12 +17,12 @@
  
 package org.apache.linkis.orchestrator.computation.physical
 
-import java.util.concurrent.TimeUnit
-import org.apache.linkis.common.exception.{ErrorException, LinkisRetryException, WarnException}
+import org.apache.commons.lang.StringUtils
+import org.apache.linkis.common.exception.{ErrorException, LinkisRetryException}
 import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.governance.common.protocol.task.{RequestTask, RequestTaskExecute}
-import org.apache.linkis.governance.common.utils.GovernanceConstant
+import org.apache.linkis.manager.common.protocol.resource.ResourceWithStatus
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.orchestrator.computation.conf.ComputationOrchestratorConf
 import org.apache.linkis.orchestrator.computation.execute.{CodeExecTaskExecutor, CodeExecTaskExecutorManager}
@@ -31,21 +31,20 @@ import org.apache.linkis.orchestrator.exception.{OrchestratorErrorCodeSummary, O
 import org.apache.linkis.orchestrator.execution.AsyncTaskResponse.NotifyListener
 import org.apache.linkis.orchestrator.execution.impl.DefaultFailedTaskResponse
 import org.apache.linkis.orchestrator.execution.{AsyncTaskResponse, TaskResponse}
+import org.apache.linkis.orchestrator.listener.task.{TaskLogEvent, TaskRunningInfoEvent}
 import org.apache.linkis.orchestrator.plans.ast.QueryParams
-import org.apache.linkis.orchestrator.plans.physical.{AbstractExecTask, ExecTask, PhysicalContext, ReheatableExecTask, RetryExecTask}
+import org.apache.linkis.orchestrator.plans.physical.{AbstractExecTask, ExecTask, PhysicalContext}
 import org.apache.linkis.orchestrator.plans.unit.CodeLogicalUnit
 import org.apache.linkis.orchestrator.strategy.async.AsyncExecTask
 import org.apache.linkis.orchestrator.strategy.{ResultSetExecTask, StatusInfoExecTask}
 import org.apache.linkis.orchestrator.utils.OrchestratorIDCreator
-import org.apache.linkis.scheduler.executer.{ErrorExecuteResponse, SubmitResponse}
-import org.apache.commons.lang.StringUtils
-import org.apache.linkis.manager.common.protocol.resource.ResourceWithStatus
-import org.apache.linkis.orchestrator.listener.task.{TaskLogEvent, TaskRunningInfoEvent}
 import org.apache.linkis.protocol.constants.TaskConstant
+import org.apache.linkis.scheduler.executer.{ErrorExecuteResponse, SubmitResponse}
 
 import java.util
-import scala.concurrent.duration.Duration
+import java.util.concurrent.TimeUnit
 import scala.collection.convert.decorateAsScala._
+import scala.concurrent.duration.Duration
 /**
   *
   *
@@ -98,12 +97,12 @@ class CodeLogicalUnitExecTask (parents: Array[ExecTask], children: Array[ExecTas
           getPhysicalContext.pushProgress(event)
           getPhysicalContext.pushLog(TaskLogEvent(this, LogUtils.generateInfo(s"Task submit to ec: ${codeExecutor.getEngineConnExecutor.getServiceInstance} get engineConnExecId is: ${engineConnExecId}")))
           new AsyncTaskResponse {
-            override def notifyMe(listener: NotifyListener): Unit = null
+            override def notifyMe(listener: NotifyListener): Unit = {}
 
             override def waitForCompleted(): TaskResponse = throw new OrchestratorErrorException(OrchestratorErrorCodeSummary.METHOD_NUT_SUPPORT_CODE, "waitForCompleted method not support")
           }
         case ErrorExecuteResponse(message, t) =>
-          info(s"failed to submit task to engineConn,reason: $message")
+          logger.info(s"failed to submit task to engineConn,reason: $message")
           throw new OrchestratorRetryException(OrchestratorErrorCodeSummary.EXECUTION_FOR_EXECUTION_ERROR_CODE, "failed to submit task to engineConn", t)
       }
     } else if (null != retryException) {
@@ -192,7 +191,7 @@ class CodeLogicalUnitExecTask (parents: Array[ExecTask], children: Array[ExecTas
   override def kill(): Unit = {
     codeExecTaskExecutorManager.getByExecTaskId(this.getId).foreach { codeEngineConnExecutor =>
       if (StringUtils.isNotBlank(codeEngineConnExecutor.getEngineConnTaskId)) {
-        info(s"execTask($getId) be killed, engineConn execId is${codeEngineConnExecutor.getEngineConnTaskId}")
+        logger.info(s"execTask($getId) be killed, engineConn execId is${codeEngineConnExecutor.getEngineConnTaskId}")
         Utils.tryAndWarn(codeEngineConnExecutor.getEngineConnExecutor.killTask(codeEngineConnExecutor.getEngineConnTaskId))
         //Utils.tryAndWarn(codeExecTaskExecutorManager.unLockEngineConn(this, codeEngineConnExecutor))
       }

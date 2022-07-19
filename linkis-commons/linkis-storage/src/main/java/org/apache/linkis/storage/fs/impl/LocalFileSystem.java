@@ -185,7 +185,7 @@ public class LocalFileSystem extends FileSystem {
 
     public boolean canMkdir(FsPath destParentDir) throws IOException {
         if (!StorageUtils.isIOProxy()) {
-            LOG.debug("io not proxy, not check ownerer, just check if hava write permission ");
+            LOG.debug("io not proxy, not check owner, just check if have write permission ");
             return this.canWrite(destParentDir);
         } else {
             LOG.info("io proxy, check owner ");

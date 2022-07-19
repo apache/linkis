@@ -19,16 +19,18 @@ package org.apache.linkis.server.security
 
 import java.text.DateFormat
 import java.util.{Date, Locale}
-
 import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.utils.{Logging, RSAUtils, Utils}
 import org.apache.linkis.server.conf.ServerConfiguration
 import org.apache.linkis.server.exception.{IllegalUserTicketException, LoginExpireException, NonLoginException}
 import org.apache.linkis.server.security.SSOUtils.sslEnable
 import org.apache.linkis.server.{Message, _}
+
 import javax.servlet._
 import javax.servlet.http.{Cookie, HttpServletRequest, HttpServletResponse}
 import org.apache.commons.lang3.StringUtils
+import org.apache.linkis.server.security.SecurityFilter.logger
+import org.slf4j.{Logger, LoggerFactory}
 
 
 class SecurityFilter extends Filter {
@@ -36,7 +38,6 @@ class SecurityFilter extends Filter {
   private val refererValidate = ServerConfiguration.BDP_SERVER_SECURITY_REFERER_VALIDATE.getValue
   private val localAddress = ServerConfiguration.BDP_SERVER_ADDRESS.getValue
   protected val testUser = ServerConfiguration.BDP_TEST_USER.getValue
-
 
   override def init(filterConfig: FilterConfig): Unit = {}
 
@@ -72,7 +73,7 @@ class SecurityFilter extends Filter {
     } else if(request.getRequestURI == ServerConfiguration.BDP_SERVER_RESTFUL_LOGIN_URI.getValue) {
       true
     } else if( ServerConfiguration.BDP_SERVER_RESTFUL_PASS_AUTH_REQUEST_URI.exists(r => !r.equals("") && request.getRequestURI.startsWith(r))) {
-      SecurityFilter.info("pass auth uri: " + request.getRequestURI)
+      logger.info("pass auth uri: " + request.getRequestURI)
       true
     }else {
       val userName = Utils.tryCatch(SecurityFilter.getLoginUser(request)){
@@ -82,13 +83,13 @@ class SecurityFilter extends Filter {
             return false
           }
         case t: Throwable =>
-          SecurityFilter.warn("", t)
+          logger.warn("", t)
           throw t
       }
       if(userName.isDefined) {
         true
       } else if(Configuration.IS_TEST_MODE.getValue) {
-        SecurityFilter.info("test mode! login for uri: " + request.getRequestURI)
+        logger.info("test mode! login for uri: " + request.getRequestURI)
         SecurityFilter.setLoginUser(response, testUser)
         true
       } else {
@@ -117,7 +118,8 @@ class SecurityFilter extends Filter {
   override def destroy(): Unit = {}
 }
 
-object SecurityFilter extends Logging {
+object SecurityFilter {
+  private val logger: Logger = LoggerFactory.getLogger(classOf[SecurityFilter])
   private[linkis] val OTHER_SYSTEM_IGNORE_UM_USER = "dataworkcloud_rpc_user"
   private[linkis] val ALLOW_ACCESS_WITHOUT_TIMEOUT = "dataworkcloud_inner_request"
 

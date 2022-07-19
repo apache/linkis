@@ -26,7 +26,7 @@ import org.apache.linkis.storage.{LineMetaData, LineRecord}
 class TextResultSerializer extends ResultSerializer{
 
   override def metaDataToBytes(metaData: MetaData): Array[Byte] = {
-    if(metaData == null){
+    if (metaData == null) {
       lineToBytes(null)
     } else {
       val textMetaData = metaData.asInstanceOf[LineMetaData]
@@ -40,7 +40,7 @@ class TextResultSerializer extends ResultSerializer{
   }
 
   def lineToBytes(value: String): Array[Byte] = {
-    val bytes = if(value == null) Dolphin.NULL_BYTES else Dolphin.getBytes(value)
+    val bytes = if (value == null) Dolphin.NULL_BYTES else Dolphin.getBytes(value)
     Dolphin.getIntBytes(bytes.length) ++ bytes
   }
 }

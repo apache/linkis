@@ -47,7 +47,7 @@ class DefaultInsLabelRpcService extends InsLabelRpcService with Logging {
 
   @PostConstruct
   def init(): Unit = {
-    info("Use the default implement of rpc service: DefaultInsLabelRpcService")
+    logger.info("Use the default implement of rpc service: DefaultInsLabelRpcService")
   }
 
   @Receiver
@@ -57,9 +57,9 @@ class DefaultInsLabelRpcService extends InsLabelRpcService with Logging {
       throw new ErrorException(-1, "field 'serviceInstance' in attachRequest cannot be blank")
     )
     val labels = getLabels(labelMap).filter(_ != null)
-    info(s"Start to attach labels[$labels] to instance[$instance]")
+    logger.info(s"Start to attach labels[$labels] to instance[$instance]")
     insLabelService.attachLabelsToInstance(labels, instance)
-    info(s"Success to attach labels[$labels] to instance[$instance]")
+    logger.info(s"Success to attach labels[$labels] to instance[$instance]")
   }
 
   @Receiver
@@ -69,9 +69,9 @@ class DefaultInsLabelRpcService extends InsLabelRpcService with Logging {
       throw new ErrorException(-1, "field 'serviceInstance' in refreshRequest cannot be blank")
     )
     val labels = getLabels(labelMap)
-    info(s"Start to refresh labels[$labels] to instance[$instance]")
+    logger.info(s"Start to refresh labels[$labels] to instance[$instance]")
     insLabelService.refreshLabelsToInstance(labels, instance)
-    info(s"Success to refresh labels[$labels] to instance[$instance]")
+    logger.info(s"Success to refresh labels[$labels] to instance[$instance]")
   }
 
   private def getLabels(labelMap: Option[util.Map[String, Object]]): util.List[Label[_]] = {
@@ -87,11 +87,11 @@ class DefaultInsLabelRpcService extends InsLabelRpcService with Logging {
     val instance = Option(insLabelRemoveRequest.getServiceInstance).getOrElse(
       throw new ErrorException(-1, "field 'serviceInstance' in removeRequest cannot be blank")
     )
-    info(s"Start to remove labels from instance[$instance]")
+    logger.info(s"Start to remove labels from instance[$instance]")
     insLabelService.removeLabelsFromInstance(instance)
     insLabelService.removeInstance(instance)
-    info(s"Success to remove labels from instance[$instance]")
-    info(s"Success to remove instance[$instance]")
+    logger.info(s"Success to remove labels from instance[$instance]")
+    logger.info(s"Success to remove instance[$instance]")
   }
 
   @Receiver

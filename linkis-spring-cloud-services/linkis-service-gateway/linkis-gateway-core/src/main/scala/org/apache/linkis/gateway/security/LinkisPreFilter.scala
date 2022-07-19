@@ -32,7 +32,7 @@ object LinkisPreFilter extends Logging {
   private  val preFilters : java.util.List[LinkisPreFilter] = new java.util.ArrayList[LinkisPreFilter]()
 
   def addFilter(linkisPreFilter: LinkisPreFilter): Unit = {
-    info(s"Add a filter with the following name: ${linkisPreFilter.name}")
+    logger.info(s"Add a filter with the following name: ${linkisPreFilter.name}")
     preFilters.add(linkisPreFilter)
   }
 

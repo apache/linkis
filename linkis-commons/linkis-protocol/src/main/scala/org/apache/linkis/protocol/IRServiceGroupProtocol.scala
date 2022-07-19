@@ -21,7 +21,7 @@ package org.apache.linkis.protocol
 trait IRServiceGroupProtocol extends IRProtocol with InstanceProtocol {
   val userWithCreator: UserWithCreator
 
-  def user = userWithCreator.user
-  def creator = userWithCreator.creator
+  def user: String = userWithCreator.user
+  def creator: String = userWithCreator.creator
 }
 case class UserWithCreator(user: String, creator: String)

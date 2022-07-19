@@ -34,6 +34,14 @@ public interface DataSourceParamKeyDao {
     List<DataSourceParamKeyDefinition> listByDataSourceType(Long dataSourceTypeId);
 
     /**
+     * List by data source type id
+     *
+     * @param dataSourceTypeId type id
+     * @return
+     */
+    List<DataSourceParamKeyDefinition> listByDataSourceTypeEn(Long dataSourceTypeId);
+
+    /**
      * List by data source type id and scope
      *
      * @param dataSourceTypeId type id

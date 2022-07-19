@@ -35,7 +35,7 @@ object ErrorCodeMatcher extends Logging{
       })
       None
     }{
-      t:Throwable => error("failed to match error code", t)
+      t:Throwable => logger.error("failed to match error code", t)
         None
     }
 

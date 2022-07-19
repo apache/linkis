@@ -27,7 +27,6 @@ import org.apache.linkis.entrance.utils.JobHistoryHelper
 import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
 import org.apache.linkis.governance.common.entity.job.SubJobInfo
 import org.apache.linkis.governance.common.protocol.task.ResponseTaskStatus
-import org.apache.linkis.manager.common.protocol.resource.ResourceWithStatus
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.CodeLanguageLabel
 import org.apache.linkis.manager.label.utils.LabelUtil
@@ -35,7 +34,6 @@ import org.apache.linkis.orchestrator.Orchestration
 import org.apache.linkis.orchestrator.computation.entity.ComputationJobReq
 import org.apache.linkis.orchestrator.computation.operation.log.{LogOperation, LogProcessor}
 import org.apache.linkis.orchestrator.computation.operation.progress.{DefaultProgressOperation, ProgressProcessor}
-import org.apache.linkis.orchestrator.computation.operation.resource.{ResourceReportOperation, ResourceReportProcessor}
 import org.apache.linkis.orchestrator.core.{OrchestrationFuture, OrchestrationResponse}
 import org.apache.linkis.orchestrator.domain.JobReq
 import org.apache.linkis.orchestrator.execution.impl.DefaultFailedTaskResponse
@@ -98,7 +96,7 @@ class DefaultEntranceExecutor(id: Long, mark: MarkReq, entranceExecutorManager: 
               entranceJob.getProgressListener.foreach(_.onProgressUpdate(entranceJob, totalProgress.toFloat,
                 entranceJob.getProgressInfo))
             } else {
-              error("Invalid runningIndex.")
+              logger.error("Invalid runningIndex.")
             }
           }
         } else {
@@ -125,14 +123,14 @@ class DefaultEntranceExecutor(id: Long, mark: MarkReq, entranceExecutorManager: 
       case succeedResponose: SucceedTaskResponse =>
         succeedResponose match {
           case resultSetResp: ResultSetTaskResponse =>
-            info(s"SubJob : ${entranceExecuteRequest.getSubJobInfo.getSubJobDetail.getId} succeed to execute task, and get result.")
+            logger.info(s"SubJob : ${entranceExecuteRequest.getSubJobInfo.getSubJobDetail.getId} succeed to execute task, and get result.")
             // todo check null alias
             entranceExecuteRequest.getJob.asInstanceOf[EntranceJob].addAndGetResultSize(0)
             entranceExecuteRequest.getJob.getEntranceContext.getOrCreatePersistenceManager()
               .onResultSetCreated(entranceExecuteRequest.getJob, AliasOutputExecuteResponse(null, resultSetResp.getResultSet))
           //
           case arrayResultSetPathResp: ArrayResultSetTaskResponse =>
-            info(s"SubJob : ${entranceExecuteRequest.getSubJobInfo.getSubJobDetail.getId} succeed to execute task, and get result array.")
+            logger.info(s"SubJob : ${entranceExecuteRequest.getSubJobInfo.getSubJobDetail.getId} succeed to execute task, and get result array.")
             if (null != arrayResultSetPathResp.getResultSets && arrayResultSetPathResp.getResultSets.length > 0) {
               val resultsetSize = arrayResultSetPathResp.getResultSets.length
               entranceExecuteRequest.getSubJobInfo.getSubJobDetail.setResultSize(resultsetSize)
@@ -148,7 +146,7 @@ class DefaultEntranceExecutor(id: Long, mark: MarkReq, entranceExecutorManager: 
               } {
                 case e: Exception => {
                   val msg = s"Persist resultSet error. ${e.getMessage}"
-                  error(msg)
+                  logger.error(msg)
                   val errorExecuteResponse = new DefaultFailedTaskResponse(msg, EntranceErrorCode.RESULT_NOT_PERSISTED_ERROR.getErrCode, e)
                   dealResponse(errorExecuteResponse, entranceExecuteRequest, orchestration)
                   return
@@ -156,7 +154,7 @@ class DefaultEntranceExecutor(id: Long, mark: MarkReq, entranceExecutorManager: 
               }
             }
           case _ =>
-            info(s"SubJob : ${entranceExecuteRequest.getSubJobInfo.getSubJobDetail.getId} succeed to execute task,no result.")
+            logger.info(s"SubJob : ${entranceExecuteRequest.getSubJobInfo.getSubJobDetail.getId} succeed to execute task,no result.")
         }
         entranceExecuteRequest.getSubJobInfo.setStatus(SchedulerEventState.Succeed.toString)
         entranceExecuteRequest.getJob.getEntranceContext.getOrCreatePersistenceManager().createPersistenceEngine().updateIfNeeded(entranceExecuteRequest.getSubJobInfo)
@@ -179,7 +177,7 @@ class DefaultEntranceExecutor(id: Long, mark: MarkReq, entranceExecutorManager: 
         }
       case o =>
         val msg = s"Job : ${entranceExecuteRequest.getJob.getId} , subJob : ${entranceExecuteRequest.getSubJobInfo.getSubJobDetail.getId} returnd unknown response : ${BDPJettyServerHelper.gson.toJson(o)}"
-        error(msg)
+        logger.error(msg)
         entranceExecuteRequest.getJob.getLogListener.foreach(_.onLogUpdate(entranceExecuteRequest.getJob, LogUtils.generateERROR(msg)))
       // todo
     }
@@ -264,11 +262,11 @@ class DefaultEntranceExecutor(id: Long, mark: MarkReq, entranceExecutorManager: 
       val orchestration = EntranceOrchestrationFactory.getOrchestrationSession().orchestrate(compJobReq)
       val orchestratorFuture = orchestration.asyncExecute()
       val msg = s"Job with jobGroupId : ${entranceExecuteRequest.getJob.getJobRequest.getId} and subJobId : ${entranceExecuteRequest.getSubJobInfo.getSubJobDetail.getId} was submitted to Orchestrator."
-      info(msg)
+      logger.info(msg)
       entranceExecuteRequest.getJob.getLogListener.foreach(_.onLogUpdate(entranceExecuteRequest.getJob, LogUtils.generateInfo(msg)))
 
       if (entranceExecuteRequest.getJob.getJobRequest.getMetrics == null) {
-        warn("Job Metrics has not been initialized")
+        logger.warn("Job Metrics has not been initialized")
       } else {
         if (!entranceExecuteRequest.getJob.getJobRequest.getMetrics.containsKey(TaskConstant.ENTRANCEJOB_TO_ORCHESTRATOR)) {
           entranceExecuteRequest.getJob.getJobRequest.getMetrics.put(TaskConstant.ENTRANCEJOB_TO_ORCHESTRATOR, new Date(System.currentTimeMillis()))

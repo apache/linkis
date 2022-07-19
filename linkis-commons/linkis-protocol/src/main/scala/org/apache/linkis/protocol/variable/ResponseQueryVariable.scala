@@ -22,6 +22,6 @@ import java.util
 
 class ResponseQueryVariable extends VariableProtocol {
   private var keyAndValue: util.Map[String, String] = _
-  def getKeyAndValue :util.Map[String, String] = keyAndValue
-  def setKeyAndValue(keyAndValue :util.Map[String, String]) :Unit = this.keyAndValue =keyAndValue
+  def getKeyAndValue: util.Map[String, String] = keyAndValue
+  def setKeyAndValue(keyAndValue: util.Map[String, String]): Unit = this.keyAndValue = keyAndValue
 }

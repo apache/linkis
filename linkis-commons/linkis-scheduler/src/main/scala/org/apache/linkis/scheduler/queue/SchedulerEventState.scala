@@ -19,38 +19,21 @@ package org.apache.linkis.scheduler.queue
 
 
 object SchedulerEventState extends Enumeration {
+
   type SchedulerEventState = Value
 
-  val Inited = Value("Inited")
-  val WaitForRetry = Value("WaitForRetry")
-  val Scheduled = Value("Scheduled")
-  val Running = Value("Running")
-  val Succeed = Value("Succeed")
-  val Failed = Value("Failed")
-  val Cancelled = Value("Cancelled")
-  val Timeout = Value("Timeout")
+  val Inited, WaitForRetry, Scheduled, Running, Succeed, Failed, Cancelled, Timeout = Value
 
+  def isRunning(jobState: SchedulerEventState): Boolean = jobState == Running
 
-  def isRunning(jobState: SchedulerEventState) = jobState == Running
+  def isScheduled(jobState: SchedulerEventState): Boolean = jobState != Inited
 
-  def isScheduled(jobState: SchedulerEventState) = jobState != Inited
-
-  def isCompleted(jobState: SchedulerEventState) = jobState match {
+  def isCompleted(jobState: SchedulerEventState): Boolean = jobState match {
     case Inited | Scheduled | Running | WaitForRetry => false
     case _ => true
   }
 
-  def isSucceed(jobState: SchedulerEventState) = jobState == Succeed
+  def isSucceed(jobState: SchedulerEventState): Boolean = jobState == Succeed
 
-  def isCompletedByStr(jobState: String): Boolean = jobState match {
-      case "Inited" => false
-      case "WaitForRetry" => false
-      case "Scheduled" => false
-      case "Running" => false
-      case "Succeed" => true
-      case "Failed" => true
-      case "Cancelled" => true
-      case "Timeout" => true
-      case _ => true
-  }
+  def isCompletedByStr(jobState: String): Boolean = isCompleted(SchedulerEventState.withName(jobState))
 }

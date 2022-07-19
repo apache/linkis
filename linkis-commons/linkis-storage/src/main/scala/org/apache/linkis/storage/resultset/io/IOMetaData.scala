@@ -21,6 +21,6 @@ import org.apache.linkis.common.io.MetaData
 import org.apache.linkis.storage.resultset.ResultMetaData
 
 
-class IOMetaData(val off:Int, val len:Int)  extends ResultMetaData {
+class IOMetaData(val off: Int, val len: Int) extends ResultMetaData {
   override def cloneMeta(): MetaData = new IOMetaData(off, len)
 }

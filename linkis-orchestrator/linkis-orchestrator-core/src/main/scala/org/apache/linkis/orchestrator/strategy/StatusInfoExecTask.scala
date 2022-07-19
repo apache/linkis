@@ -71,7 +71,7 @@ trait  StatusInfoExecTask extends ExecTask with Logging{
           }
           errorMsg
         }.mkString(";")
-        error(s"There are Tasks execution failure of stage ${getIDInfo()}, now mark ExecutionTask as failed")
+       logger.error(s"There are Tasks execution failure of stage ${getIDInfo()}, now mark ExecutionTask as failed")
         return  errorReason
       }
     "error info is null"

@@ -49,7 +49,7 @@ object ComputationExecutorHook extends Logging {
       })
     } {
       t: Throwable =>
-        error(t.getMessage)
+        logger.error(t.getMessage)
     }
     hooks.sortWith((a, b) => a.getOrder() <= b.getOrder()).toArray
   }

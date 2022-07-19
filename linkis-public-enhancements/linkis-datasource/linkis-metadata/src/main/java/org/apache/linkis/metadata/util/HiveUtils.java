@@ -25,8 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-
-import sun.misc.BASE64Decoder;
+import java.util.Base64;
 
 public class HiveUtils {
 
@@ -45,10 +44,10 @@ public class HiveUtils {
     }
 
     public static String decode(String str) {
-        BASE64Decoder decoder = new BASE64Decoder();
+        Base64.Decoder decoder = Base64.getMimeDecoder();
         String res = str;
         try {
-            res = new String(decoder.decodeBuffer(str));
+            res = new String(decoder.decode(str));
         } catch (Throwable e) {
             logger.error(str + " decode failed", e);
         }

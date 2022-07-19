@@ -148,7 +148,7 @@ class HttpBmlClient(clientConfig: DWSClientConfig,
           case r: CloseableHttpResponse =>
             Utils.tryAndWarn(r.close())
           case _ =>
-            info(s"Download response : ${downloadAction.getResponse} cannot close.")
+            logger.info(s"Download response : ${downloadAction.getResponse} cannot close.")
         }
       } catch {
         case e: IOException => logger.error("failed to copy inputStream and outputStream (inputStream和outputStream流copy失败)", e)
@@ -337,6 +337,7 @@ class HttpBmlClient(clientConfig: DWSClientConfig,
 
   override def deleteResource(user: String, resourceId: String): BmlDeleteResponse = {
     val deleteAction = BmlDeleteAction(resourceId)
+    deleteAction.setUser(user)
     deleteAction.getParameters.put("resourceId", resourceId)
     val result = dwsClient.execute(deleteAction)
     result match {

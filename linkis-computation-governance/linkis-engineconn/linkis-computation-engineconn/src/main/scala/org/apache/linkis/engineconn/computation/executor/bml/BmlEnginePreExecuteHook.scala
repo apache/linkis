@@ -79,7 +79,7 @@ class BmlEnginePreExecuteHook extends ComputationExecutorHook with Logging{
             case _ => logger.warn("job resource cannot download")
           }
         case o =>
-          info(s"Invalid resources : ${EngineConnUtils.GSON.toJson(o)}")
+          logger.info(s"Invalid resources : ${EngineConnUtils.GSON.toJson(o)}")
       }
     }
     code

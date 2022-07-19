@@ -30,6 +30,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <mysql.version>8.0.28</mysql.version>
+        <postgresql.version>42.3.1</postgresql.version>
     </properties>
 
     <dependencies>
@@ -55,11 +56,7 @@
             </exclusions>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>${mysql.version}</version>
-        </dependency>
+
     </dependencies>
 
     <build>

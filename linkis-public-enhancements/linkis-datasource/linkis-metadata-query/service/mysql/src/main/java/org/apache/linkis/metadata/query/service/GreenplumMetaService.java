@@ -22,14 +22,16 @@ import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
 import org.apache.linkis.metadata.query.common.service.AbstractMetaService;
 import org.apache.linkis.metadata.query.common.service.MetadataConnection;
 import org.apache.linkis.metadata.query.service.conf.SqlParamsMapper;
-import org.apache.linkis.metadata.query.service.mysql.SqlConnection;
+import org.apache.linkis.metadata.query.service.greenplum.SqlConnection;
+
+import org.apache.logging.log4j.util.Strings;
 
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MysqlMetaService extends AbstractMetaService<SqlConnection> {
+public class GreenplumMetaService extends AbstractMetaService<SqlConnection> {
     @Override
     public MetadataConnection<SqlConnection> getConnection(
             String operator, Map<String, Object> params) throws Exception {
@@ -48,6 +50,15 @@ public class MysqlMetaService extends AbstractMetaService<SqlConnection> {
         String password =
                 String.valueOf(
                         params.getOrDefault(SqlParamsMapper.PARAM_SQL_PASSWORD.getValue(), ""));
+        // In greenplum, each database under the same instance is completely independent, and the
+        // table is stored under the catalog with the same library name.
+        // \c (\connect) Behind the dbname command is to close the current connection and create a
+        // new connection to achieve database switching
+        // Cannot directly switch to another database under the current database connection, and
+        // cannot show tables from xxxx, select * from database.table like MySQL
+        String database =
+                String.valueOf(
+                        params.getOrDefault(SqlParamsMapper.PARAM_SQL_DATABASE.getValue(), ""));
         Map<String, Object> extraParams = new HashMap<>();
         Object sqlParamObj = params.get(SqlParamsMapper.PARAM_SQL_EXTRA_PARAMS.getValue());
         if (null != sqlParamObj) {
@@ -60,8 +71,20 @@ public class MysqlMetaService extends AbstractMetaService<SqlConnection> {
             }
         }
         assert extraParams != null;
+        if (Strings.isBlank(database)) {
+            database = "";
+        }
         return new MetadataConnection<>(
-                new SqlConnection(host, port, username, password, extraParams));
+                new SqlConnection(host, port, username, password, database, extraParams));
+    }
+
+    @Override
+    public List<String> queryTables(SqlConnection connection, String schemaname) {
+        try {
+            return connection.getAllTables(schemaname);
+        } catch (SQLException e) {
+            throw new RuntimeException("Fail to get Sql tables(获取表列表失败)", e);
+        }
     }
 
     @Override
@@ -74,19 +97,10 @@ public class MysqlMetaService extends AbstractMetaService<SqlConnection> {
     }
 
     @Override
-    public List<String> queryTables(SqlConnection connection, String database) {
-        try {
-            return connection.getAllTables(database);
-        } catch (SQLException e) {
-            throw new RuntimeException("Fail to get Sql tables(获取表列表失败)", e);
-        }
-    }
-
-    @Override
     public List<MetaColumnInfo> queryColumns(
-            SqlConnection connection, String database, String table) {
+            SqlConnection connection, String schema, String table) {
         try {
-            return connection.getColumns(database, table);
+            return connection.getColumns(schema, table);
         } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException("Fail to get Sql columns(获取字段列表失败)", e);
         }

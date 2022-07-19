@@ -16,30 +16,29 @@
   -->
 
 <template>
-  <Form :model="searchBar" :rules="ruleInline" inline @submit.native.prevent>
+  <Form :model="searchBar" :rules="ruleInline" inline>
     <FormItem prop="instance" :label="`${$t('message.linkis.instanceName')}`">
       <Input :maxlength="50" v-model="searchBar.instance" :placeholder="$t('message.linkis.instanceName')"/>
     </FormItem>
-    <FormItem prop="nodeHealthy" :label="$t('message.linkis.formItems.status.label')">
-      <Select v-model="searchBar.nodeHealthy" style="width:200px" clearable>
-        <Option
-          v-for="(item) in statusList"
-          :label="item"
-          :value="item"
-          :key="item"/>
-      </Select>
-    </FormItem>
     <FormItem prop="owner" :label="$t('message.linkis.initiator')" >
-      <Select  v-model="searchBar.owner" style="width:200px" clearable>
-        <Option
-          v-for="(item) in ownerList"
-          :label="item"
-          :value="item"
-          :key="item"/>
-      </Select>
+      <Input :maxlength="50" v-model="searchBar.owner" style="width:100px" clearable :placeholder="$t('message.linkis.inputOwnerHint')"/>
     </FormItem>
-    <FormItem v-if="engineTypes.length" prop="engineType" :label="$t('message.linkis.tableColumns.engineType')" >
-      <Select  v-model="searchBar.engineType" style="width:200px" clearable>
+    <FormItem prop="shortcut" :label="$t('message.linkis.formItems.date.label')">
+      <DatePicker
+        :transfer="true"
+        class="datepicker"
+        :options="shortcutOpt"
+        v-model="searchBar.shortcut"
+        type="daterange"
+        placement="bottom-start"
+        format="yyyy-MM-dd"
+        :placeholder="$t('message.linkis.formItems.date.placeholder')"
+        style="width: 190px"
+        :editable="false"
+      />
+    </FormItem>
+    <FormItem prop="engineType" :label="$t('message.linkis.tableColumns.engineType')" >
+      <Select  v-model="searchBar.engineType" style="width:80px" clearable>
         <Option
           v-for="(item) in engineTypes"
           :label="item"
@@ -48,11 +47,8 @@
       </Select>
     </FormItem>
     <FormItem>
-      <Button type="primary" @click="search">
+      <Button type="primary" @click="search(false)">
         {{ $t('message.linkis.search') }}
-      </Button>
-      <Button v-if="stopbtn" type="error" @click="stop"  style="margin-left:20px">
-        {{ $t('message.linkis.stop') }}
       </Button>
     </FormItem>
   </Form>
@@ -68,25 +64,57 @@ export default {
       type: Array,
       default: () => []
     },
-    ownerList: {
-      type: Array,
-      default: () => []
-    },
     engineTypes: {
       type: Array,
       default: () => []
     },
     stopbtn: {
       type: Boolean
+    },
+    page: {
+      type: Object
     }
   },
   data() {
+    const today = new Date(new Date().toLocaleDateString())
     return {
       ruleInline: {},
       searchBar: {
         instance: "",
-        nodeHealthy: "",
+        engineType: "",
         owner: "",
+        shortcut: [today, today]
+      },
+      shortcutOpt: {
+        shortcuts: [
+          {
+            text: this.$t('message.linkis.shortcuts.week'),
+            value() {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+              return [start, end]
+            }
+          },
+          {
+            text: this.$t('message.linkis.shortcuts.month'),
+            value() {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+              return [start, end]
+            }
+          },
+          {
+            text: this.$t('message.linkis.shortcuts.threeMonths'),
+            value() {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+              return [start, end]
+            }
+          }
+        ]
       },
     };
   },
@@ -101,7 +129,8 @@ export default {
   activated() {
   },
   methods: {
-    search() {
+    search(isChangingPage) {
+      if (!isChangingPage) this.page.pageNow = 1
       this.$emit("search", this.searchBar)
     },
     stop() {

@@ -91,7 +91,7 @@
     }
 }
 .workbench-log-view {
-    height: 100%;
+    height: calc(100% - 76px) !important;
     .log-tools {
         height: 36px;
         line-height: 36px;

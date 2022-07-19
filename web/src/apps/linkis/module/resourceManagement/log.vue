@@ -89,7 +89,9 @@ export default {
           parameters: {
             pageSize: 1000,
             fromLine,
-            logType: this.tabName
+            logType: this.tabName,
+            logDirSuffix: this.param.logDirSuffix,
+            ticketId: this.param.ticketId
           }
         }
         let res = await api.fetch('/linkisManager/openEngineLog', params, 'post') || {};

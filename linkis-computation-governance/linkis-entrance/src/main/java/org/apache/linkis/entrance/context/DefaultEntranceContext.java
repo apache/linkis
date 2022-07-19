@@ -29,6 +29,7 @@ import org.apache.linkis.entrance.persistence.PersistenceManager;
 import org.apache.linkis.scheduler.Scheduler;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -48,7 +49,9 @@ public class DefaultEntranceContext extends EntranceContext {
 
     @Autowired private Scheduler scheduler;
 
-    @Autowired private EntranceInterceptor[] interceptors;
+    @Autowired
+    @Qualifier(ServiceNameConsts.ENTRANCE_INTERCEPTOR)
+    private EntranceInterceptor[] entranceInterceptors;
 
     @Autowired private EntranceEventListenerBus<EntranceEventListener, EntranceEvent> listenerBus;
 
@@ -57,13 +60,13 @@ public class DefaultEntranceContext extends EntranceContext {
             PersistenceManager persistenceManager,
             LogManager logManager,
             Scheduler scheduler,
-            EntranceInterceptor[] interceptors,
+            EntranceInterceptor[] entranceInterceptors,
             EntranceEventListenerBus<EntranceEventListener, EntranceEvent> listenerBus) {
         this.entranceParser = entranceParser;
         this.persistenceManager = persistenceManager;
         this.logManager = logManager;
         this.scheduler = scheduler;
-        this.interceptors = interceptors;
+        this.entranceInterceptors = entranceInterceptors;
         this.listenerBus = listenerBus;
     }
 
@@ -89,7 +92,7 @@ public class DefaultEntranceContext extends EntranceContext {
 
     @Override
     public EntranceInterceptor[] getOrCreateEntranceInterceptors() {
-        return interceptors;
+        return entranceInterceptors;
     }
 
     @Override

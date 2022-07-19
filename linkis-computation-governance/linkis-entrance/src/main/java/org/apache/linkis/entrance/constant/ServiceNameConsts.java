@@ -7,4 +7,6 @@ public final class ServiceNameConsts {
     public static final String ENTRANCE_CONTEXT = "entranceContext";
 
     public static final String ENTRANCE_SERVER = "entranceServer";
+
+    public static final String ENTRANCE_INTERCEPTOR = "entranceInterceptors";
 }

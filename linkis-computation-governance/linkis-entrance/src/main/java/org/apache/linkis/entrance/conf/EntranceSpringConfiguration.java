@@ -20,6 +20,7 @@ package org.apache.linkis.entrance.conf;
 import org.apache.linkis.entrance.EntranceParser;
 import org.apache.linkis.entrance.cli.heartbeat.CliHeartbeatMonitor;
 import org.apache.linkis.entrance.cli.heartbeat.KillHandler;
+import org.apache.linkis.entrance.constant.ServiceNameConsts;
 import org.apache.linkis.entrance.event.EntranceEvent;
 import org.apache.linkis.entrance.event.EntranceEventListener;
 import org.apache.linkis.entrance.event.EntranceEventListenerBus;
@@ -132,7 +133,7 @@ public class EntranceSpringConfiguration {
     public EntranceEventListenerBus<EntranceEventListener, EntranceEvent>
             entranceEventListenerBus() {
         EntranceEventListenerBus<EntranceEventListener, EntranceEvent> entranceEventListenerBus =
-                new EntranceEventListenerBus<EntranceEventListener, EntranceEvent>();
+                new EntranceEventListenerBus<>();
         entranceEventListenerBus.start();
         return entranceEventListenerBus;
     }
@@ -143,7 +144,7 @@ public class EntranceSpringConfiguration {
      * @return
      */
     @Bean
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(name = {ServiceNameConsts.ENTRANCE_INTERCEPTOR})
     public EntranceInterceptor[] entranceInterceptors() {
         return new EntranceInterceptor[] {
             new OnceJobInterceptor(),

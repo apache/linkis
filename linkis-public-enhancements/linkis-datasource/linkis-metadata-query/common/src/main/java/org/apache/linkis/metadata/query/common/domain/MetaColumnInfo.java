@@ -30,6 +30,24 @@ public class MetaColumnInfo implements Serializable {
     private boolean primaryKey;
     private String name;
     private String type;
+    private int length;
+    private String colComment;
+
+    public String getColComment() {
+        return colComment;
+    }
+
+    public void setColComment(String colComment) {
+        this.colComment = colComment;
+    }
+
+    public int getLength() {
+        return length;
+    }
+
+    public void setLength(int length) {
+        this.length = length;
+    }
 
     public int getIndex() {
         return index;

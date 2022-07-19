@@ -328,7 +328,7 @@ See licenses-binary/ for text of these licenses.
     (Apache License, Version 2.0) Hive Llap Client (org.apache.hive:hive-llap-client:2.3.3 - http://hive.apache.org/hive-llap-client)
     (Apache License, Version 2.0) Hive Llap Common (org.apache.hive:hive-llap-common:2.3.3 - http://hive.apache.org/hive-llap-common)
     (Apache License, Version 2.0) Hive Llap Tez (org.apache.hive:hive-llap-tez:2.3.3 - http://hive.apache.org/hive-llap-tez)
-    (Apache License, Version 2.0) Hive Query Language (org.apache.hive:hive-exec:2.3.3 - http://hive.apache.org/hive-exec)
+    (Apache License, Version 2.0) Hive Query Language (org.apache.hive:hive-exec:2.3.9 - http://hive.apache.org/hive-exec)
     (Apache License, Version 2.0) Hive Storage API (org.apache.hive:hive-storage-api:2.4.0 - https://www.apache.org/hive-storage-api/)
     (Apache License, Version 2.0) Hive Vector-Code-Gen Utilities (org.apache.hive:hive-vector-code-gen:2.3.3 - http://hive.apache.org/hive-vector-code-gen)
     (Apache License, Version 2.0) HttpClient (commons-httpclient:commons-httpclient:3.1 - http://jakarta.apache.org/httpcomponents/httpclient-3.x/)

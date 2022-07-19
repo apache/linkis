@@ -39,23 +39,23 @@ Since the first release of Linkis in 2019, it has accumulated more than **700** 
 
 # Supported Engine Types
 
-| **Engine Name** | **Suppor Component Version<br/>(Default Dependent Version)** | **Linkis Version Requirements** | **Included in Release Package<br/> By Default** | **Description** |
-|:---- |:---- |:---- |:---- |:---- |
-|Spark|Apache 2.0.0~2.4.7, <br/>CDH >= 5.4.0, <br/>(default Apache Spark 2.4.3)|\>=1.0.3|Yes|Spark EngineConn, supports SQL , Scala, Pyspark and R code|
-|Hive|Apache >= 1.0.0, <br/>CDH >= 5.4.0, <br/>(default Apache Hive 2.3.3)|\>=1.0.3|Yes |Hive EngineConn, supports HiveQL code|
-|Python|Python >= 2.6, <br/>(default Python2*)|\>=1.0.3|Yes |Python EngineConn, supports python code|
-|Shell|Bash >= 2.0|\>=1.0.3|Yes|Shell EngineConn, supports Bash shell code|
-|JDBC|MySQL >= 5.0, Hive >=1.2.1, <br/>(default Hive-jdbc 2.3.4)|\>=1.0.3|No|JDBC EngineConn, already supports MySQL and HiveQL, can be extended quickly Support other engines with JDBC Driver package, such as Oracle|
-|Flink |Flink >= 1.12.2, <br/>(default Apache Flink 1.12.2)|\>=1.0.3|No |Flink EngineConn, supports FlinkSQL code, also supports starting a new Yarn in the form of Flink Jar Application |
-|Pipeline|-|\>=1.0.3|No|Pipeline EngineConn, supports file import and export|
-|openLooKeng|openLooKeng >= 1.5.0, <br/>(default openLookEng 1.5.0)|\>=1.1.1|No|openLooKeng EngineConn, supports querying data virtualization engine with Sql openLooKeng|
-|Sqoop| Sqoop >= 1.4.6, <br/>(default Apache Sqoop 1.4.6)|\>=1.1.2|No|Sqoop EngineConn, support data migration tool Sqoop engine|
-|Impala|Impala >= 3.2.0, CDH >=6.3.0|ongoing|-|Impala EngineConn, supports Impala SQL code|
-|Presto|Presto >= 0.180|ongoing|-|Presto EngineConn, supports Presto SQL code|
-|ElasticSearch|ElasticSearch >=6.0|ongoing|-|ElasticSearch EngineConn, supports SQL and DSL code|
-|MLSQL| MLSQL >=1.1.0|ongoing|-|MLSQL EngineConn, supports MLSQL code.|
-|Hadoop|Apache >=2.6.0, <br/>CDH >=5.4.0|ongoing|-|Hadoop EngineConn, supports Hadoop MR/YARN application|
-|TiSpark|1.1|ongoing|-|TiSpark EngineConn, supports querying TiDB with SparkSQL|
+| **Engine Name** | **Suppor Component Version<br/>(Default Dependent Version)**             | **Linkis Version Requirements** | **Included in Release Package<br/> By Default** | **Description** |
+|:---- |:-------------------------------------------------------------------------|:---- |:---- |:---- |
+|Spark| Apache 2.0.0~2.4.7, <br/>CDH >= 5.4.0, <br/>(default Apache Spark 2.4.3) |\>=1.0.3|Yes|Spark EngineConn, supports SQL , Scala, Pyspark and R code|
+|Hive| Apache >= 1.0.0, <br/>CDH >= 5.4.0, <br/>(default Apache Hive 2.3.3)     |\>=1.0.3|Yes |Hive EngineConn, supports HiveQL code|
+|Python| Python >= 2.6, <br/>(default Python2*)                                   |\>=1.0.3|Yes |Python EngineConn, supports python code|
+|Shell| Bash >= 2.0                                                              |\>=1.0.3|Yes|Shell EngineConn, supports Bash shell code|
+|JDBC| MySQL >= 5.0, Hive >=1.2.1, <br/>(default Hive-jdbc 2.3.9)               |\>=1.0.3|No|JDBC EngineConn, already supports MySQL and HiveQL, can be extended quickly Support other engines with JDBC Driver package, such as Oracle|
+|Flink | Flink >= 1.12.2, <br/>(default Apache Flink 1.12.2)                      |\>=1.0.3|No |Flink EngineConn, supports FlinkSQL code, also supports starting a new Yarn in the form of Flink Jar Application |
+|Pipeline| -                                                                        |\>=1.0.3|No|Pipeline EngineConn, supports file import and export|
+|openLooKeng| openLooKeng >= 1.5.0, <br/>(default openLookEng 1.5.0)                   |\>=1.1.1|No|openLooKeng EngineConn, supports querying data virtualization engine with Sql openLooKeng|
+|Sqoop| Sqoop >= 1.4.6, <br/>(default Apache Sqoop 1.4.6)                        |\>=1.1.2|No|Sqoop EngineConn, support data migration tool Sqoop engine|
+|Impala| Impala >= 3.2.0, CDH >=6.3.0                                             |ongoing|-|Impala EngineConn, supports Impala SQL code|
+|Presto| Presto >= 0.180                                                          |ongoing|-|Presto EngineConn, supports Presto SQL code|
+|ElasticSearch| ElasticSearch >=6.0                                                      |ongoing|-|ElasticSearch EngineConn, supports SQL and DSL code|
+|MLSQL| MLSQL >=1.1.0                                                            |ongoing|-|MLSQL EngineConn, supports MLSQL code.|
+|Hadoop| Apache >=2.6.0, <br/>CDH >=5.4.0                                         |ongoing|-|Hadoop EngineConn, supports Hadoop MR/YARN application|
+|TiSpark| 1.1                                                                      |ongoing|-|TiSpark EngineConn, supports querying TiDB with SparkSQL|
 
 
 # Ecosystem

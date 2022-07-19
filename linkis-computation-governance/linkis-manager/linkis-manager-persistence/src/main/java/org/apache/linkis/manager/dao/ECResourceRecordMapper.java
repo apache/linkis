@@ -42,5 +42,6 @@ public interface ECResourceRecordMapper {
             @Param("username") String username,
             @Param("instance") String instance,
             @Param("endDate") Date endDate,
-            @Param("startDate") Date startDate);
+            @Param("startDate") Date startDate,
+            @Param("engineType") String engineType);
 }

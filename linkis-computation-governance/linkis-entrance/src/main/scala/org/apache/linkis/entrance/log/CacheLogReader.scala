@@ -75,7 +75,7 @@ class CacheLogReader(logPath: String, charset: String, sharedCache: Cache, user:
   override def close(): Unit = {
     if (fileSystem != null) {
       Utils.tryQuietly(fileSystem.close(), t => {
-        warn("Error encounters when closing fileSystem.", t)
+        logger.warn("Error encounters when closing fileSystem.", t)
       })
       fileSystem = null
     }

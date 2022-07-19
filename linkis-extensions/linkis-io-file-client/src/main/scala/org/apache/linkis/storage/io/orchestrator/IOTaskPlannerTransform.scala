@@ -34,7 +34,7 @@ class IOTaskPlannerTransform extends PlannerTransform with Logging{
         val jobTaskTmp = new JobTask(Array(), Array(buildCodeLogicTaskTree(job.getCodeLogicalUnit, job)))
         jobTaskTmp.setTaskDesc(taskDesc)
         rebuildTreeNode(jobTaskTmp)
-      case _ => error(s"unknown job type:${in.getClass} ")
+      case _ => logger.error(s"unknown job type:${in.getClass} ")
         null
     }
   }

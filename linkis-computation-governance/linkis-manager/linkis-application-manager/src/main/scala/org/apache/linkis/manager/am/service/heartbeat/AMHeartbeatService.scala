@@ -53,7 +53,7 @@ class AMHeartbeatService extends HeartbeatService with Logging {
   @PostConstruct
   def init(): Unit = {
     if (null != managerMonitor && ManagerMonitorConf.MONITOR_SWITCH_ON.getValue) {
-      info("start init AMHeartbeatService monitor")
+      logger.info("start init AMHeartbeatService monitor")
       Utils.defaultScheduler.scheduleAtFixedRate(managerMonitor, 1000, RMConfiguration.RM_ENGINE_SCAN_INTERVAL.getValue.toLong, TimeUnit.MILLISECONDS)
 
     }
@@ -63,7 +63,7 @@ class AMHeartbeatService extends HeartbeatService with Logging {
   @Receiver
   override def heartbeatEventDeal(nodeHeartbeatMsg: NodeHeartbeatMsg): Unit = {
     val nodeMetrics = new AMNodeMetrics
-    info(s"Am deal nodeHeartbeatMsg $nodeHeartbeatMsg")
+    logger.info(s"Am deal nodeHeartbeatMsg $nodeHeartbeatMsg")
     nodeMetrics.setHealthy(metricsConverter.convertHealthyInfo(nodeHeartbeatMsg.getHealthyInfo))
     nodeMetrics.setHeartBeatMsg(nodeHeartbeatMsg.getHeartBeatMsg)
     nodeMetrics.setOverLoad(metricsConverter.convertOverLoadInfo(nodeHeartbeatMsg.getOverLoadInfo))

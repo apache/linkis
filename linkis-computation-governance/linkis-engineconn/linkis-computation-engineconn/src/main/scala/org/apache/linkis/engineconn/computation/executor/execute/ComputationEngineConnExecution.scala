@@ -37,7 +37,7 @@ class ComputationEngineConnExecution extends AbstractEngineConnExecution {
   override protected def doExecution(executor: Executor,
                                      engineCreationContext: EngineCreationContext,
                                      engineConn: EngineConn): Unit = {
-    info(s"Executor(${executor.getId}) is started. Now wait to be ready.")
+    logger.info(s"Executor(${executor.getId}) is started. Now wait to be ready.")
   }
 
   /**

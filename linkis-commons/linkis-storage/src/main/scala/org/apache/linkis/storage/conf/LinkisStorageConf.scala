@@ -17,8 +17,8 @@
 
 package org.apache.linkis.storage.conf
 
-import org.apache.commons.lang.StringUtils
-import org.apache.linkis.common.conf.{ByteType, CommonVars}
+import org.apache.commons.lang3.StringUtils
+import org.apache.linkis.common.conf.CommonVars
 import org.apache.linkis.common.utils.ByteTimeUtils
 
 object LinkisStorageConf {

@@ -17,13 +17,13 @@
 
 package org.apache.linkis.bml.restful;
 
-import org.apache.linkis.bml.Entity.DownloadModel;
-import org.apache.linkis.bml.Entity.Resource;
-import org.apache.linkis.bml.Entity.ResourceTask;
-import org.apache.linkis.bml.Entity.ResourceVersion;
-import org.apache.linkis.bml.Entity.Version;
 import org.apache.linkis.bml.common.*;
 import org.apache.linkis.bml.common.Constant;
+import org.apache.linkis.bml.entity.DownloadModel;
+import org.apache.linkis.bml.entity.Resource;
+import org.apache.linkis.bml.entity.ResourceTask;
+import org.apache.linkis.bml.entity.ResourceVersion;
+import org.apache.linkis.bml.entity.Version;
 import org.apache.linkis.bml.service.BmlService;
 import org.apache.linkis.bml.service.DownloadService;
 import org.apache.linkis.bml.service.ResourceService;

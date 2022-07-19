@@ -44,7 +44,7 @@ abstract class UseDatabaseEngineHook extends EngineConnHook with Logging {
       Utils.getJvmUser
     }
     if (! USE_DEFAULT_DB_ENABLE.getValue(engineCreationContext.getOptions)) {
-      info(s"$user engineConn skip execute use default db")
+      logger.info(s"$user engineConn skip execute use default db")
       return
     }
     val database = if (StringUtils.isNotEmpty(user)) {
@@ -53,7 +53,7 @@ abstract class UseDatabaseEngineHook extends EngineConnHook with Logging {
       "default"
     }
     val useDataBaseSql = "use " + database
-    info(s"$user begin to run init_code $useDataBaseSql")
+    logger.info(s"$user begin to run init_code $useDataBaseSql")
     val codeLanguageLabel = new CodeLanguageLabel
     codeLanguageLabel.setCodeType(getRunType)
     val labels = Array[Label[_]](codeLanguageLabel)

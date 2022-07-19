@@ -56,69 +56,7 @@
             </exclusions>
             <scope>provided</scope>
         </dependency>
-        <!--mysql-->
-<!--        <dependency>-->
-<!--            <groupId>mysql</groupId>-->
-<!--            <artifactId>mysql-connector-java</artifactId>-->
-<!--            <version>${mysql.version}</version>-->
-<!--        </dependency>-->
 
-<!--        <dependency>-->
-<!--            <groupId>com.oracle</groupId>-->
-<!--            <artifactId>ojdbc6</artifactId>-->
-<!--            <version>11.2.0.3</version>-->
-<!--            <scope>system</scope>-->
-<!--            <systemPath>${basedir}/src/main/lib/ojdbc6-11.2.0.3.jar</systemPath>-->
-<!--        </dependency>-->
-
-<!--        <dependency>-->
-<!--            <groupId>com.ibm.db2.jcc</groupId>-->
-<!--            <artifactId>db2jcc</artifactId>-->
-<!--            <version>db2jcc4</version>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>com.dameng</groupId>-->
-<!--            <artifactId>Dm7JdbcDriver16</artifactId>-->
-<!--            <version>7.6.0.165</version>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>com.pivotal</groupId>-->
-<!--            <artifactId>greenplum-jdbc</artifactId>-->
-<!--            <version>5.1.4</version>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>com.kingbase</groupId>-->
-<!--            <artifactId>kingbase8</artifactId>-->
-<!--            <version>8</version>-->
-<!--        </dependency>-->
-        <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <version>${postgresql.version}</version>
-        </dependency>
-
-
-<!--        <dependency>-->
-<!--            <groupId>com.microsoft.jdbc.sqlserver</groupId>-->
-<!--            <artifactId>msbase</artifactId>-->
-<!--            <version>1.0</version>-->
-<!--            <scope>system</scope>-->
-<!--            <systemPath>${basedir}/src/main/lib/msbase-1.0.jar</systemPath>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>com.microsoft.jdbc.sqlserver</groupId>-->
-<!--            <artifactId>msutil</artifactId>-->
-<!--            <version>1.0</version>-->
-<!--            <scope>system</scope>-->
-<!--            <systemPath>${basedir}/src/main/lib/msutil-1.0.jar</systemPath>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>com.microsoft.jdbc.sqlserver</groupId>-->
-<!--            <artifactId>mssqlserver</artifactId>-->
-<!--            <version>1.0</version>-->
-<!--            <scope>system</scope>-->
-<!--            <systemPath>${basedir}/src/main/lib/mssqlserver-1.0.jar</systemPath>-->
-<!--        </dependency>-->
     </dependencies>
 
     <build>

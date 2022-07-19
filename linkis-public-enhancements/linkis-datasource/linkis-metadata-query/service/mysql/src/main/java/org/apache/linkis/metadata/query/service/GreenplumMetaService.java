@@ -50,10 +50,12 @@ public class GreenplumMetaService extends AbstractMetaService<SqlConnection> {
         String password =
                 String.valueOf(
                         params.getOrDefault(SqlParamsMapper.PARAM_SQL_PASSWORD.getValue(), ""));
-        // 在 greenplum 中同实例下的每个数据库是完全独立的，表存放在同库名的 catalog 下，
-        // \c（\connect） dbname 命令背后是关闭当前连接，再创建一个新的连接来实现数据库切换的
-        // 无法在当前数据库连接下直接切换到另外一个数据库，也没有像 MySQL 一样能 show tables from xxxx、select * from database.table
-        // ....
+        // In greenplum, each database under the same instance is completely independent, and the
+        // table is stored under the catalog with the same library name.
+        // \c (\connect) Behind the dbname command is to close the current connection and create a
+        // new connection to achieve database switching
+        // Cannot directly switch to another database under the current database connection, and
+        // cannot show tables from xxxx, select * from database.table like MySQL
         String database =
                 String.valueOf(
                         params.getOrDefault(SqlParamsMapper.PARAM_SQL_DATABASE.getValue(), ""));

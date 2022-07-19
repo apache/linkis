@@ -53,8 +53,7 @@ public class OracleMetaService extends AbstractMetaService<SqlConnection> {
         String password =
                 String.valueOf(
                         params.getOrDefault(SqlParamsMapper.PARAM_SQL_PASSWORD.getValue(), ""));
-        // 无法在当前数据库连接下直接切换到另外一个数据库，也没有像 MySQL 一样能 show tables from xxxx、select * from database.table
-        // ....
+
         String database =
                 String.valueOf(
                         params.getOrDefault(SqlParamsMapper.PARAM_SQL_DATABASE.getValue(), ""));

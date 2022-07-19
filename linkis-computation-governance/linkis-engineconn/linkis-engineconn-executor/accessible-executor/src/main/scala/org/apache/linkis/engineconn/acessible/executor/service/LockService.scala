@@ -52,7 +52,7 @@ trait LockService extends ExecutorLockListener with Logging {
         // Engine is busy
         response = ResponseEngineLock(false, null, "Engine is busy.")
     }
-    info ("RequestLock : " + BDPJettyServerHelper.gson.toJson(requestEngineLock) + "\nResponseLock : " + BDPJettyServerHelper.gson.toJson(response))
+    logger.info ("RequestLock : " + BDPJettyServerHelper.gson.toJson(requestEngineLock) + "\nResponseLock : " + BDPJettyServerHelper.gson.toJson(response))
     response
   }
 

@@ -41,7 +41,7 @@ class LinuxProcessEngineConnLaunch extends ProcessEngineConnLaunch {
         None
       }
     } { t =>
-      info("Failed to acquire pid for shell process", t)
+      logger.info("Failed to acquire pid for shell process", t)
       None
     }
   }

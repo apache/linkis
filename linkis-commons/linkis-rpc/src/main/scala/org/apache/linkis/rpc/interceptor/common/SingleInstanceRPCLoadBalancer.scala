@@ -37,7 +37,7 @@ class SingleInstanceRPCLoadBalancer extends RPCLoadBalancer with Logging {
           val servers = lb.getAllServers
           val server = servers.get((math.random * servers.size()).toInt)
           originService.setInstance(server.getHostPort)
-          warn(originService.getApplicationName + " choose " + server.getHostPort + " to build a single instance connection.")
+          logger.warn(originService.getApplicationName + " choose " + server.getHostPort + " to build a single instance connection.")
         }
       }
       Some(originService)

@@ -42,7 +42,7 @@ import org.apache.linkis.scheduler.queue.{Job, SchedulerEventState}
 import org.apache.linkis.server._
 import org.apache.linkis.server.conf.ServerConfiguration
 import org.apache.linkis.server.socket.controller.{ServerEvent, ServerEventService, SocketServerEvent}
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 
 
 class EntranceWebSocketService extends ServerEventService with EntranceEventListener with EntranceLogListener {
@@ -86,7 +86,7 @@ class EntranceWebSocketService extends ServerEventService with EntranceEventList
               val entranceJob = job.asInstanceOf[EntranceJob]
               val engineTypeLabel = entranceJob.getJobRequest.getLabels.filter(l => l.getLabelKey.equalsIgnoreCase(LabelKeyConstant.ENGINE_TYPE_KEY)).headOption.getOrElse(null)
               if (null == engineTypeLabel) {
-                error("Invalid engineTpyeLabel")
+                logger.error("Invalid engineTpyeLabel")
                 return
               }
               val realID = ZuulEntranceUtils.generateExecID(entranceJob.getJobRequest.getReqId, engineTypeLabel.asInstanceOf[EngineTypeLabel].getEngineType,
@@ -110,7 +110,7 @@ class EntranceWebSocketService extends ServerEventService with EntranceEventList
     case progressUrlPattern(id) => dealProgress(event, id)
     case killUrlPattern(id) => dealKill(event, id)
     case pauseUrlPattern(id) => dealPause(event, id)
-    case _ => warn("Unresolvable webSocket request, URI is(无法解析的webSocket请求，URI为)：" + event.getMethod)
+    case _ => logger.warn("Unresolvable webSocket request, URI is(无法解析的webSocket请求，URI为)：" + event.getMethod)
       Message.error("Unresolvable webSocket request, URI is(无法解析的webSocket请求，URI为：" + event.getMethod)
   }
 
@@ -164,7 +164,7 @@ class EntranceWebSocketService extends ServerEventService with EntranceEventList
     val realID = ZuulEntranceUtils.parseExecID(id)(3)
     entranceServer.getJob(realID) foreach {
       case entranceExecutionJob: EntranceExecutionJob => {
-        info(s"begin to get job $realID log via websocket")
+        logger.info(s"begin to get job $realID log via websocket")
         val logsArr: Array[String] = new Array[String](4)
         entranceExecutionJob.getWebSocketLogReader.foreach(logReader => logReader.readArray(logsArr, 0, 100))
         val logList: util.List[String] = new util.ArrayList[String]()
@@ -173,7 +173,7 @@ class EntranceWebSocketService extends ServerEventService with EntranceEventList
         retMessage.data("execID", id).data("log", logList).data("websocketTag", websocketTagJobID.get(realID))
         retMessage.setStatus(0)
         retMessage.setMethod(restfulURI + "entrance/" + id + "/log")
-        info(s"end to get job $realID log via websocket")
+        logger.info(s"end to get job $realID log via websocket")
         return retMessage
       }
       case _ =>
@@ -448,17 +448,17 @@ class EntranceWebSocketService extends ServerEventService with EntranceEventList
   override def onEventError(event: Event, t: Throwable): Unit = event match {
     case e: EntranceEvent => onEventError(e, t)
     case e: SocketServerEvent => super.onEventError(e, t)
-    case _ => warn(s"cannot recognize the event type $event.", t)
+    case _ => logger.warn(s"cannot recognize the event type $event.", t)
   }
 
   override def onEventError(event: EntranceEvent, t: Throwable): Unit = event match {
-    case EntranceJobEvent(jobId) => info(s"WebSocket send the new status of Job $jobId to webClient failed!", t)
+    case EntranceJobEvent(jobId) => logger.info(s"WebSocket send the new status of Job $jobId to webClient failed!", t)
     case EntranceProgressEvent(job, progress, _) =>
-      info(s"Job $job send progress $progress by webSocket to webClient failed!", t)
-    case _ => info(s"WebSocket send event $event to webClient failed!", t)
+      logger.info(s"Job $job send progress $progress by webSocket to webClient failed!", t)
+    case _ => logger.info(s"WebSocket send event $event to webClient failed!", t)
   }
 
   override def onEventError(event: EntranceLogEvent, t: Throwable): Unit = event match {
-    case EntrancePushLogEvent(job, _) => info(s"WebSocket send the new log of Job $job to webClient failed!", t)
+    case EntrancePushLogEvent(job, _) => logger.info(s"WebSocket send the new log of Job $job to webClient failed!", t)
   }
 }

@@ -38,7 +38,7 @@ trait GatewayParser {
 abstract class AbstractGatewayParser extends GatewayParser with Logging {
 
   protected def sendResponseWhenNotMatchVersion(gatewayContext: GatewayContext, version: String): Boolean = if (version != ServerConfiguration.BDP_SERVER_VERSION) {
-    warn(s"Version not match. The gateway(${ServerConfiguration.BDP_SERVER_VERSION}) not support requestUri ${gatewayContext.getRequest.getRequestURI} from remoteAddress ${gatewayContext.getRequest.getRemoteAddress.getAddress.getHostAddress}.")
+    logger.warn(s"Version not match. The gateway(${ServerConfiguration.BDP_SERVER_VERSION}) not support requestUri ${gatewayContext.getRequest.getRequestURI} from remoteAddress ${gatewayContext.getRequest.getRemoteAddress.getAddress.getHostAddress}.")
     sendErrorResponse(s"The gateway${ServerConfiguration.BDP_SERVER_VERSION} not support version $version.", gatewayContext)
     true
   } else false
@@ -49,7 +49,7 @@ abstract class AbstractGatewayParser extends GatewayParser with Logging {
     gatewayContext.setGatewayRoute(new GatewayRoute)
     gatewayContext.getGatewayRoute.setRequestURI(gatewayContext.getRequest.getRequestURI)
     dataMsg << gatewayContext.getRequest.getRequestURI
-    if (dataMsg.getStatus != 0) warn(dataMsg.getMessage)
+    if (dataMsg.getStatus != 0) logger.warn(dataMsg.getMessage)
     if (gatewayContext.isWebSocketRequest) gatewayContext.getResponse.writeWebSocket(dataMsg)
     else gatewayContext.getResponse.write(dataMsg)
     gatewayContext.getResponse.sendResponse()
@@ -90,7 +90,7 @@ class DefaultGatewayParser(gatewayParsers: Array[GatewayParser]) extends Abstrac
     if (gatewayContext.getGatewayRoute.getServiceInstance == null) path match {
       case CLIENT_HEARTBEAT_REGEX(version) =>
         if (sendResponseWhenNotMatchVersion(gatewayContext, version)) return
-        info(gatewayContext.getRequest.getRemoteAddress + " try to heartbeat.")
+        logger.info(gatewayContext.getRequest.getRemoteAddress + " try to heartbeat.")
         responseHeartbeat(gatewayContext)
       case COMMON_REGEX(version, serviceId) =>
         if (sendResponseWhenNotMatchVersion(gatewayContext, version)) return

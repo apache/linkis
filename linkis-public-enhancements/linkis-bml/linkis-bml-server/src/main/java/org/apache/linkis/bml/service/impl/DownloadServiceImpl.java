@@ -17,8 +17,8 @@
 
 package org.apache.linkis.bml.service.impl;
 
-import org.apache.linkis.bml.Entity.DownloadModel;
 import org.apache.linkis.bml.dao.DownloadDao;
+import org.apache.linkis.bml.entity.DownloadModel;
 import org.apache.linkis.bml.service.DownloadService;
 
 import org.springframework.beans.factory.annotation.Autowired;

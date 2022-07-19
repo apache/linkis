@@ -130,7 +130,7 @@ object StorageUtils extends Logging{
     val reader = ResultSetReader.getResultSetReader(resultSet, result)
     reader.getMetaData
     val sb = new StringBuilder
-    while (reader.hasNext){
+    while (reader.hasNext) {
       val record = reader.getRecord.asInstanceOf[LineRecord]
       sb.append(record.getLine)
     }
@@ -141,36 +141,36 @@ object StorageUtils extends Logging{
 
 
 
-  def close(outputStream: OutputStream): Unit ={
-    close(outputStream,null,null)
+  def close(outputStream: OutputStream): Unit = {
+    close(outputStream, null, null)
   }
 
-  def close(inputStream:InputStream): Unit ={
-    close(null,inputStream,null)
+  def close(inputStream: InputStream): Unit = {
+    close(null, inputStream, null)
   }
 
-  def close(fs:Fs): Unit ={
-    close(null,null,fs)
+  def close(fs: Fs): Unit = {
+    close(null, null, fs)
   }
 
-  def close(outputStream: OutputStream,inputStream:InputStream,fs:Fs) ={
-    Utils.tryFinally(if(outputStream != null) outputStream.close())()
-    Utils.tryFinally(if(inputStream != null) inputStream.close())()
-    Utils.tryFinally(if(fs != null) fs.close())()
+  def close(outputStream: OutputStream, inputStream: InputStream, fs: Fs): Unit = {
+    Utils.tryFinally(if (outputStream != null) outputStream.close())()
+    Utils.tryFinally(if (inputStream != null) inputStream.close())()
+    Utils.tryFinally(if (fs != null) fs.close())()
   }
 
-  def close(closeable: Closeable) ={
-    Utils.tryFinally(if(closeable != null) closeable.close())()
+  def close(closeable: Closeable): Unit = {
+    Utils.tryFinally(if (closeable != null) closeable.close())()
   }
 
-  def getJvmUser:String = System.getProperty("user.name")
+  def getJvmUser: String = System.getProperty("user.name")
 
-  def isHDFSNode:Boolean = {
+  def isHDFSNode: Boolean = {
     val confPath = new File(HadoopConf.hadoopConfDir)
     //TODO IO-client mode need return false
-    if(!confPath.exists() || confPath.isFile)
+    if (!confPath.exists() || confPath.isFile) {
       throw new StorageFatalException(50001, "HDFS configuration was not read, please configure hadoop.config.dir or add env:HADOOP_CONF_DIR")
-    else true
+    } else true
   }
 
   /**
@@ -179,16 +179,16 @@ object StorageUtils extends Logging{
     * @param path
     * @return
     */
-  def getFsPath(path: String):FsPath ={
-    if(path.startsWith(FILE_SCHEMA) || path.startsWith(HDFS_SCHEMA)) new FsPath(path)
-    else
+  def getFsPath(path: String): FsPath = {
+    if (path.startsWith(FILE_SCHEMA) || path.startsWith(HDFS_SCHEMA)) new FsPath(path)
+    else {
       new FsPath(FILE_SCHEMA + path)
-
+    }
   }
 
-  def readBytes(inputStream: InputStream,bytes:Array[Byte],len:Int):Int = {
+  def readBytes(inputStream: InputStream, bytes: Array[Byte], len: Int): Int = {
     var count = 0
-    while ( count < len ){
+    while (count < len) {
       val value = inputStream.read()
       if(value == -1 && inputStream.available() < 1) return count
       bytes(count) = value.toByte
@@ -197,11 +197,11 @@ object StorageUtils extends Logging{
     count
   }
 
-  def colToString(col:Any,nullValue:String = "NULL"):String ={
-    if(null == col) nullValue
+  def colToString(col: Any, nullValue: String = "NULL"): String = {
+    if (null == col) nullValue
     else {
       col match {
-        case value:Double => doubleToString(value)
+        case value: Double => doubleToString(value)
         case "NULL" | "" => nullValue
         case _ => col.toString
       }

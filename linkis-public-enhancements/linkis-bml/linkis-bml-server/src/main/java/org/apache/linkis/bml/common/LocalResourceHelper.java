@@ -170,4 +170,10 @@ public class LocalResourceHelper implements ResourceHelper {
             fileSystem.close();
         }
     }
+
+    @Override
+    public boolean checkBmlResourceStoragePrefixPathIfChanged(String path) {
+        String prefixPath = getSchema() + BmlServerConfiguration.BML_LOCAL_PREFIX().getValue();
+        return !path.startsWith(prefixPath);
+    }
 }

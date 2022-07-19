@@ -23,10 +23,10 @@ import org.apache.linkis.hadoop.common.utils.HDFSUtils;
 import org.apache.linkis.metadata.hive.config.DSEnum;
 import org.apache.linkis.metadata.hive.config.DataSource;
 import org.apache.linkis.metadata.hive.dao.HiveMetaDao;
+import org.apache.linkis.metadata.hive.dto.MetadataQueryParam;
 import org.apache.linkis.metadata.service.DataSourceService;
 import org.apache.linkis.metadata.service.HiveMetaWithPermissionService;
 import org.apache.linkis.metadata.util.DWSConfig;
-import org.apache.linkis.metadata.utils.MdqConstants;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
@@ -43,7 +43,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,17 +83,19 @@ public class DataSourceServiceImpl implements DataSourceService {
 
     @DataSource(name = DSEnum.FIRST_DATA_SOURCE)
     @Override
-    public JsonNode getDbsWithTables(String userName) throws Exception {
+    public JsonNode getDbsWithTables(String userName) {
         ArrayNode dbNodes = jsonMapper.createArrayNode();
         List<String> dbs = hiveMetaWithPermissionService.getDbsOptionalUserName(userName);
+        MetadataQueryParam queryParam = MetadataQueryParam.of(userName);
         for (String db : dbs) {
             if (StringUtils.isBlank(db) || db.contains(dbKeyword)) {
                 logger.info("db  will be filter: " + db);
                 continue;
             }
+            queryParam.setDbName(db);
             ObjectNode dbNode = jsonMapper.createObjectNode();
             dbNode.put("databaseName", db);
-            dbNode.put("tables", queryTables(db, userName));
+            dbNode.put("tables", queryTables(queryParam));
             dbNodes.add(dbNode);
         }
         return dbNodes;
@@ -102,13 +103,11 @@ public class DataSourceServiceImpl implements DataSourceService {
 
     @DataSource(name = DSEnum.FIRST_DATA_SOURCE)
     @Override
-    public JsonNode queryTables(String database, String userName) {
-        List<Map<String, Object>> listTables = Lists.newArrayList();
+    public JsonNode queryTables(MetadataQueryParam queryParam) {
+        List<Map<String, Object>> listTables;
         try {
-            Map<String, String> map = Maps.newHashMap();
-            map.put("dbName", database);
-            map.put("userName", userName);
-            listTables = hiveMetaWithPermissionService.getTablesByDbNameAndOptionalUserName(map);
+            listTables =
+                    hiveMetaWithPermissionService.getTablesByDbNameAndOptionalUserName(queryParam);
         } catch (Throwable e) {
             logger.error("Failed to list Tables:", e);
             throw new RuntimeException(e);
@@ -119,7 +118,7 @@ public class DataSourceServiceImpl implements DataSourceService {
             ObjectNode tableNode = jsonMapper.createObjectNode();
             tableNode.put("tableName", (String) table.get("NAME"));
             tableNode.put("isView", table.get("TYPE").equals("VIRTUAL_VIEW"));
-            tableNode.put("databaseName", database);
+            tableNode.put("databaseName", queryParam.getDbName());
             tableNode.put("createdBy", (String) table.get("OWNER"));
             tableNode.put("createdAt", (Integer) table.get("CREATE_TIME"));
             tableNode.put("lastAccessAt", (Integer) table.get("LAST_ACCESS_TIME"));
@@ -130,13 +129,10 @@ public class DataSourceServiceImpl implements DataSourceService {
 
     @DataSource(name = DSEnum.FIRST_DATA_SOURCE)
     @Override
-    public JsonNode queryTableMeta(String dbName, String tableName, String userName) {
-        logger.info("getTable:" + userName);
-        Map<String, String> param = Maps.newHashMap();
-        param.put("dbName", dbName);
-        param.put("tableName", tableName);
-        List<Map<String, Object>> columns = hiveMetaDao.getColumns(param);
-        List<Map<String, Object>> partitionKeys = hiveMetaDao.getPartitionKeys(param);
+    public JsonNode queryTableMeta(MetadataQueryParam queryParam) {
+        logger.info("getTable:" + queryParam.getTableName());
+        List<Map<String, Object>> columns = hiveMetaDao.getColumns(queryParam);
+        List<Map<String, Object>> partitionKeys = hiveMetaDao.getPartitionKeys(queryParam);
         return getJsonNodesFromColumnMap(columns, partitionKeys);
     }
 
@@ -164,34 +160,28 @@ public class DataSourceServiceImpl implements DataSourceService {
 
     @DataSource(name = DSEnum.FIRST_DATA_SOURCE)
     @Override
-    public JsonNode queryTableMetaBySDID(String dbName, String tableName, String sdid) {
-        logger.info("getTableMetabysdid : sdid = {}", sdid);
-        Map<String, String> param = Maps.newHashMap();
-        param.put(MdqConstants.DB_NAME_KEY(), dbName);
-        param.put(MdqConstants.TABLE_NAME_KEY(), tableName);
-        param.put(MdqConstants.SDID_KEY(), sdid);
-        List<Map<String, Object>> columns = hiveMetaDao.getColumnsByStorageDescriptionID(param);
-        List<Map<String, Object>> partitionKeys = hiveMetaDao.getPartitionKeys(param);
+    public JsonNode queryTableMetaBySDID(MetadataQueryParam queryParam) {
+        logger.info("getTableMetabysdid : sdid = {}", queryParam.getSdId());
+        List<Map<String, Object>> columns =
+                hiveMetaDao.getColumnsByStorageDescriptionID(queryParam);
+        List<Map<String, Object>> partitionKeys = hiveMetaDao.getPartitionKeys(queryParam);
         return getJsonNodesFromColumnMap(columns, partitionKeys);
     }
 
     @DataSource(name = DSEnum.FIRST_DATA_SOURCE)
-    public String getTableLocation(String database, String tableName) {
-        Map<String, String> param = Maps.newHashMap();
-        param.put("dbName", database);
-        param.put("tableName", tableName);
-        String tableLocation = hiveMetaDao.getLocationByDbAndTable(param);
+    public String getTableLocation(MetadataQueryParam queryParam) {
+        String tableLocation = hiveMetaDao.getLocationByDbAndTable(queryParam);
         logger.info("tableLocation:" + tableLocation);
         return tableLocation;
     }
 
     @Override
-    public JsonNode getTableSize(String dbName, String tableName, String userName) {
-        logger.info("getTable:" + userName);
+    public JsonNode getTableSize(MetadataQueryParam queryParam) {
+        logger.info("getTable:" + queryParam.getTableName());
 
         String tableSize = "";
         try {
-            FileStatus tableFile = getFileStatus(this.getTableLocation(dbName, tableName));
+            FileStatus tableFile = getFileStatus(this.getTableLocation(queryParam));
             if (tableFile.isDirectory()) {
                 tableSize =
                         ByteTimeUtils.bytesToString(
@@ -205,42 +195,34 @@ public class DataSourceServiceImpl implements DataSourceService {
 
         ObjectNode sizeJson = jsonMapper.createObjectNode();
         sizeJson.put("size", tableSize);
-        sizeJson.put("tableName", dbName + "." + tableName);
+        sizeJson.put("tableName", queryParam.getDbName() + "." + queryParam.getTableName());
         return sizeJson;
     }
 
     @DataSource(name = DSEnum.FIRST_DATA_SOURCE)
     @Override
-    public JsonNode getPartitionSize(
-            String dbName, String tableName, String partitionName, String userName) {
-        Map<String, String> map = Maps.newHashMap();
-        map.put("dbName", dbName);
-        map.put("tableName", tableName);
-        map.put("partitionName", partitionName);
-        map.put("userName", userName);
-        Long partitionSize = hiveMetaDao.getPartitionSize(map);
+    public JsonNode getPartitionSize(MetadataQueryParam queryParam) {
+
+        Long partitionSize = hiveMetaDao.getPartitionSize(queryParam);
         if (partitionSize == null) {
             partitionSize = 0L;
         }
         ObjectNode sizeJson = jsonMapper.createObjectNode();
         sizeJson.put("size", ByteTimeUtils.bytesToString(partitionSize));
-        sizeJson.put("tableName", dbName + "." + tableName);
-        sizeJson.put("partitionName", partitionName);
+        sizeJson.put("tableName", queryParam.getDbName() + "." + queryParam.getTableName());
+        sizeJson.put("partitionName", queryParam.getPartitionName());
         return sizeJson;
     }
 
     @DataSource(name = DSEnum.FIRST_DATA_SOURCE)
     @Override
-    public JsonNode getPartitions(String dbName, String tableName, String userName) {
-        Map<String, String> map = Maps.newHashMap();
-        map.put("dbName", dbName);
-        map.put("tableName", tableName);
-        List<String> partitions = hiveMetaDao.getPartitions(map);
+    public JsonNode getPartitions(MetadataQueryParam queryParam) {
+        List<String> partitions = hiveMetaDao.getPartitions(queryParam);
         Collections.sort(partitions);
         Collections.reverse(partitions);
 
         ObjectNode partitionJson = jsonMapper.createObjectNode();
-        partitionJson.put("tableName", dbName + "." + tableName);
+        partitionJson.put("tableName", queryParam.getDbName() + "." + queryParam.getTableName());
         if (CollectionUtils.isEmpty(partitions)) {
             partitionJson.put("isPartition", false);
         } else {

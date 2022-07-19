@@ -83,7 +83,7 @@ class DefaultExecutorHeartbeatService extends ExecutorHeartbeatService with Node
 
 
   override def onNodeHealthyUpdate(nodeHealthyUpdateEvent: NodeHealthyUpdateEvent): Unit = {
-    warn(s"node healthy update, tiger heartbeatReport")
+    logger.warn(s"node healthy update, tiger heartbeatReport")
     //val executor = ExecutorManager.getInstance.getReportExecutor
     reportHeartBeatMsg()
   }

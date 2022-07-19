@@ -31,7 +31,7 @@ trait ClientMetrics {
 }
 
 abstract class AbstractJobMetrics extends ClientMetrics with Logging {
-  override def printIt(): Unit = info(getMetricString)
+  override def printIt(): Unit = logger.info(getMetricString)
 }
 
 import scala.collection.convert.WrapAsScala._

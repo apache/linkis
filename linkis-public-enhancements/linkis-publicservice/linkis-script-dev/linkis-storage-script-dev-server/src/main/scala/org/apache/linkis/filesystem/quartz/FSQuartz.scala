@@ -29,7 +29,7 @@ import scala.collection.mutable.ArrayBuffer
 
 class FSQuartz extends QuartzJobBean with Logging{
   override def executeInternal(jobExecutionContext: JobExecutionContext): Unit = {
-    info("closing fs...")
+    logger.info("closing fs...")
     val clearFS = new ArrayBuffer[FSInfo]
     FsCache.fsInfo.asScala.filter(_._2.exists(_.timeout)).foreach {
       case (_, list) => list synchronized list.filter(_.timeout).foreach{
@@ -40,12 +40,12 @@ class FSQuartz extends QuartzJobBean with Logging{
       }
     }
     clearFS.par.foreach{ fsInfo =>
-      info(s"${fsInfo.id} --> ${fsInfo.fs.fsName()} time out ${System.currentTimeMillis() - fsInfo.lastAccessTime}")
+      logger.info(s"${fsInfo.id} --> ${fsInfo.fs.fsName()} time out ${System.currentTimeMillis() - fsInfo.lastAccessTime}")
       Utils.tryCatch{
         fsInfo.fs.close()
       }{
         case e: Exception =>
-          info("Requesting IO-Engine call close failed! But still have to continue to clean up the expired fs!", e)
+          logger.info("Requesting IO-Engine call close failed! But still have to continue to clean up the expired fs!", e)
       }
     }
   }

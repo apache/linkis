@@ -103,10 +103,10 @@ class HaContextGatewayRouter extends AbstractGatewayRouter{
         if (null != contextID) {
           tmpId = contextID.getContextId
         } else {
-          error(s"Deserializate contextID null. contextIDStr : " + contextIdStr)
+          logger.error(s"Deserializate contextID null. contextIDStr : " + contextIdStr)
         }
       } else {
-        error(s"ContxtIDStr cannot be deserialized. contextIDStr : " + contextIdStr)
+        logger.error(s"ContxtIDStr cannot be deserialized. contextIDStr : " + contextIdStr)
       }
       if (null == tmpId) {
         contextIdStr

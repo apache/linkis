@@ -40,7 +40,7 @@ class ShutdownHook extends Logging {
     try {
       setExitCode(1)
       error = e
-      error("process exit reason: ", e)
+      logger.error("process exit reason: ", e)
       condition.signalAll()
     } finally {
       lock.unlock()

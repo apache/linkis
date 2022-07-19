@@ -96,23 +96,23 @@ class SubmittableSimpleOnceJob(protected override val linkisManagerClient: Linki
   def getECMServiceInstance: ServiceInstance = ecmServiceInstance
 
   override protected def doSubmit(): Unit = {
-    info(s"Ready to create a engineConn: ${createEngineConnAction.getRequestPayload}.")
+    logger.info(s"Ready to create a engineConn: ${createEngineConnAction.getRequestPayload}.")
     val nodeInfo = linkisManagerClient.createEngineConn(createEngineConnAction)
     lastNodeInfo = nodeInfo.getNodeInfo
     serviceInstance = getServiceInstance(lastNodeInfo)
     ticketId = getTicketId(lastNodeInfo)
     ecmServiceInstance = getECMServiceInstance(lastNodeInfo)
     lastEngineConnState = getStatus(lastNodeInfo)
-    info(s"EngineConn created with status $lastEngineConnState, the nodeInfo is $lastNodeInfo.")
+    logger.info(s"EngineConn created with status $lastEngineConnState, the nodeInfo is $lastNodeInfo.")
     initOnceOperatorActions()
     if(!isCompleted(lastEngineConnState) && !isRunning) {
-      info(s"Wait for EngineConn $serviceInstance to be running or completed.")
+      logger.info(s"Wait for EngineConn $serviceInstance to be running or completed.")
       Utils.waitUntil(() => isCompleted || isRunning, Duration.Inf)
       serviceInstance = getServiceInstance(lastNodeInfo)
-      info(s"EngineConn of $serviceInstance is in $lastEngineConnState.")
+      logger.info(s"EngineConn of $serviceInstance is in $lastEngineConnState.")
       transformToId()
     } else {
-      info(s"EngineConn $serviceInstance is aleady running, transform to id")
+      logger.info(s"EngineConn $serviceInstance is aleady running, transform to id")
       transformToId()
     }
   }

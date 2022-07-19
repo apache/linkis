@@ -17,12 +17,12 @@
 
 package org.apache.linkis.bml.restful;
 
-import org.apache.linkis.bml.Entity.DownloadModel;
-import org.apache.linkis.bml.Entity.ResourceTask;
 import org.apache.linkis.bml.common.BmlProjectNoEditException;
 import org.apache.linkis.bml.common.BmlQueryFailException;
 import org.apache.linkis.bml.common.BmlServerParaErrorException;
 import org.apache.linkis.bml.conf.BmlServerConfiguration;
+import org.apache.linkis.bml.entity.DownloadModel;
+import org.apache.linkis.bml.entity.ResourceTask;
 import org.apache.linkis.bml.service.*;
 import org.apache.linkis.bml.util.HttpRequestHelper;
 import org.apache.linkis.common.exception.ErrorException;

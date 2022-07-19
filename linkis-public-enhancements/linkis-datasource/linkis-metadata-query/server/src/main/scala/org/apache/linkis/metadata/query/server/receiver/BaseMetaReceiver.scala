@@ -53,14 +53,14 @@ class BaseMetaReceiver extends Receiver with Logging {
     MetadataResponse(status = true, BDPJettyServerHelper.gson.toJson(data))
   } {
     case e: WarnException => val errorMsg = e.getMessage
-      trace(s"Fail to invoke meta service: [$errorMsg]")
+      logger.trace(s"Fail to invoke meta service: [$errorMsg]")
       MetadataResponse(status = false, errorMsg)
     case t: Exception =>
       t match {
         case exception: MetaMethodInvokeException =>
           MetadataResponse(status = false, exception.getCause.getMessage)
         case _ =>
-          error(s"Fail to invoke meta service", t)
+          logger.error(s"Fail to invoke meta service", t)
           MetadataResponse(status = false, t.getMessage)
       }
   }

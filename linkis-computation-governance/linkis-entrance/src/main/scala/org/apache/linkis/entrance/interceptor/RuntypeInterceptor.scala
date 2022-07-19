@@ -43,7 +43,7 @@ class RuntypeInterceptor extends EntranceInterceptor with Logging {
         task.setExecutionCode("%scala\n" + code)
         task
       case _ =>
-        error(s"Invalid codeType $codeType")
+        logger.error(s"Invalid codeType $codeType")
         task
     }
   }

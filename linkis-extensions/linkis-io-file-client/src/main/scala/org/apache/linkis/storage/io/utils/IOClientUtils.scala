@@ -34,7 +34,7 @@ import org.apache.linkis.storage.domain.{MethodEntity, MethodEntitySerializer}
 import org.apache.linkis.storage.io.conf.IOFileClientConf
 import org.apache.linkis.storage.utils.StorageConfiguration.IO_USER
 import org.apache.linkis.storage.utils.{StorageConfiguration, StorageUtils}
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import scala.collection.JavaConverters._
 
 object IOClientUtils {

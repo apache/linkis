@@ -22,7 +22,7 @@ import org.apache.linkis.manager.engineplugin.jdbc.constant.JDBCEngineConnConsta
 import org.apache.linkis.manager.engineplugin.jdbc.exception.JDBCParamsIllegalException;
 
 import org.apache.commons.dbcp.BasicDataSource;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.security.UserGroupInformation;
 
 import javax.sql.DataSource;

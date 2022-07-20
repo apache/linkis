@@ -17,7 +17,7 @@
  
 package org.apache.linkis.jobhistory.service.impl
 
-import org.apache.commons.lang.exception.ExceptionUtils
+import org.apache.commons.lang3.exception.ExceptionUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.governance.common.constant.job.JobRequestConstants
 import org.apache.linkis.governance.common.entity.job.QueryException
@@ -219,19 +219,6 @@ class JobHistoryDetailQueryServiceImpl extends JobHistoryDetailQueryService with
   }*/
 
   private def shouldUpdate(oldStatus: String, newStatus: String): Boolean = TaskStatus.valueOf(oldStatus).ordinal <= TaskStatus.valueOf(newStatus).ordinal
-
-  /* override def searchOne(execId: String, sDate: Date, eDate: Date): QueryJobDetail = {
-    Iterables.getFirst(
-      jobDetailMapper.search(0l, null, null, sDate, eDate, execId),
-      {
-        val queryJobDetail = new QueryJobDetail
-        queryJobDetail.setJobReqId(execId)
-        queryJobDetail.setStatus(TaskStatus.Inited.toString)
-        queryJobDetail.setSubmitUser("EMPTY")
-        queryJobDetail
-        })
-  }
-     */
 
 }
 

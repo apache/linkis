@@ -18,7 +18,7 @@
 package org.apache.linkis.gateway.security
 
 import com.google.gson.Gson
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.commons.net.util.Base64
 import org.apache.linkis.common.utils.{Logging, RSAUtils, Utils}
 import org.apache.linkis.gateway.config.GatewayConfiguration

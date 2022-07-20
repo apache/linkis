@@ -30,8 +30,7 @@ import org.apache.linkis.manager.common.protocol.engine.EngineLockType
 import org.apache.linkis.manager.common.protocol.{RequestEngineLock, RequestEngineUnlock, ResponseEngineLock, ResponseEngineUnlock}
 import org.apache.linkis.rpc.message.annotation.Receiver
 import org.apache.linkis.server.BDPJettyServerHelper
-import org.apache.commons.lang.StringUtils
-
+import org.apache.commons.lang3.StringUtils
 
 class EngineConnTimedLockService extends LockService with Logging {
 

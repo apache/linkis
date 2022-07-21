@@ -22,7 +22,7 @@ import org.apache.linkis.cs.common.entity.source.HAContextID;
 import org.apache.linkis.cs.common.exception.CSErrorException;
 import org.apache.linkis.cs.common.exception.ErrorCode;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.google.gson.Gson;
 import org.slf4j.Logger;

@@ -32,7 +32,7 @@ import org.apache.linkis.manager.engineplugin.common.launch.process.Environment.
 import org.apache.linkis.manager.engineplugin.common.launch.process.LaunchConstants._
 import org.apache.linkis.manager.engineplugin.common.launch.process.{Environment, ProcessEngineConnLaunchRequest}
 import org.apache.commons.io.{FileUtils, IOUtils}
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.ecm.core.utils.PortUtils
 import org.apache.linkis.server.conf.ServerConfiguration
 

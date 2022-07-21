@@ -47,7 +47,7 @@ import org.apache.linkis.storage.resultset.table.TableMetaData;
 import org.apache.linkis.storage.resultset.table.TableRecord;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import okhttp3.OkHttpClient;
 import com.google.common.cache.Cache;
@@ -361,7 +361,7 @@ public class OpenLooKengEngineConnExecutor extends ConcurrentComputationExecutor
                     cause = error.getFailureInfo().toException();
                 }
                 engineExecutorContext.appendStdout(
-                        LogUtils.generateERROR(ExceptionUtils.getFullStackTrace(cause)));
+                        LogUtils.generateERROR(ExceptionUtils.getStackTrace(cause)));
                 return new ErrorExecuteResponse(ExceptionUtils.getMessage(cause), cause);
             }
         } else if (statement.isClientAborted()) {

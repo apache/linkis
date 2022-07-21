@@ -21,7 +21,7 @@ import java.io.{IOException, InputStream, OutputStream}
 import java.net.ServerSocket
 import java.util.HashMap
 
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.conf.CommonVars
 import org.apache.linkis.common.io.FsPath
 import org.apache.linkis.common.utils.Utils

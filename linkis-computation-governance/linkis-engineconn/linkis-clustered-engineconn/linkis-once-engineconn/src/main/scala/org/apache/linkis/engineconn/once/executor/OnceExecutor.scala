@@ -17,7 +17,7 @@
  
 package org.apache.linkis.engineconn.once.executor
 import org.apache.commons.io.IOUtils
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.bml.client.BmlClientFactory
 import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.utils.{Logging, Utils}

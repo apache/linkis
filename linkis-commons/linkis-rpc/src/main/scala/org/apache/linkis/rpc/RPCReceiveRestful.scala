@@ -17,7 +17,7 @@
  
 package org.apache.linkis.rpc
 
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.protocol.BroadcastProtocol
 import org.apache.linkis.rpc.conf.RPCConfiguration.{BDP_RPC_RECEIVER_ASYN_CONSUMER_THREAD_FREE_TIME_MAX, BDP_RPC_RECEIVER_ASYN_CONSUMER_THREAD_MAX, BDP_RPC_RECEIVER_ASYN_QUEUE_CAPACITY}

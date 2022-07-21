@@ -19,7 +19,7 @@ package org.apache.linkis.manager.label.entity;
 
 import org.apache.linkis.manager.label.utils.LabelUtils;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.slf4j.Logger;

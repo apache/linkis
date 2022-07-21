@@ -18,7 +18,7 @@
 package org.apache.linkis.entrance.orchestrator.plugin
 
 import com.google.common.cache.{CacheBuilder, CacheLoader, LoadingCache}
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.entrance.conf.EntranceConfiguration

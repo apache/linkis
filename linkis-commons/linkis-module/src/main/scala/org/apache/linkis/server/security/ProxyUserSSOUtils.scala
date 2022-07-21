@@ -17,7 +17,7 @@
 
 package org.apache.linkis.server.security
 
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.conf.CommonVars
 import org.apache.linkis.common.utils.{DESUtil, Logging}
 import org.apache.linkis.server.conf.ServerConfiguration

@@ -23,7 +23,7 @@ import org.apache.linkis.jobhistory.dao.JobHistoryMapper;
 import org.apache.linkis.jobhistory.entity.JobHistory;
 import org.apache.linkis.jobhistory.util.QueryConfig;
 
-import org.apache.commons.lang.time.DateUtils;
+import org.apache.commons.lang3.time.DateUtils;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;

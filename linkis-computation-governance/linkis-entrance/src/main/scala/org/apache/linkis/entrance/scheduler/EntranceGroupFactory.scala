@@ -18,7 +18,7 @@
 package org.apache.linkis.entrance.scheduler
 
 import com.google.common.cache.{Cache, CacheBuilder}
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.conf.{CommonVars, Configuration}
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.entrance.conf.EntranceConfiguration

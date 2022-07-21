@@ -23,7 +23,7 @@ import org.apache.linkis.engineconn.computation.executor.execute.EngineExecution
 import org.apache.linkis.engineplugin.spark.extension.SparkPostExecutionHook
 import org.apache.linkis.scheduler.executer.ExecuteResponse
 import javax.annotation.PostConstruct
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.springframework.stereotype.Component
 
 @Component

@@ -40,7 +40,7 @@ import org.apache.linkis.server.security.SecurityFilter;
 import org.apache.linkis.server.utils.ModuleUserUtils;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import org.springframework.web.bind.annotation.*;
 

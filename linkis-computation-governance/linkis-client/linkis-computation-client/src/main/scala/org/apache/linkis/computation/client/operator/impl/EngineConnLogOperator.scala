@@ -28,7 +28,7 @@ import org.apache.linkis.computation.client.once.simple.SubmittableSimpleOnceJob
 import org.apache.linkis.computation.client.operator.OnceJobOperator
 import org.apache.linkis.computation.client.utils.LabelKeyUtils
 import org.apache.linkis.ujes.client.exception.UJESJobException
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 
 
 class EngineConnLogOperator extends OnceJobOperator[EngineConnLogs]  {

@@ -26,7 +26,7 @@ import org.apache.linkis.engineconn.computation.executor.execute.{ComputationExe
 import org.apache.linkis.engineconn.core.executor.ExecutorManager
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.{CodeLanguageLabel, RunType}
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 
 abstract class UseDatabaseEngineHook extends EngineConnHook with Logging {
 

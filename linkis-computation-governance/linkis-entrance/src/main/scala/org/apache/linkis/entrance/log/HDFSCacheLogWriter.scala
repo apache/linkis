@@ -17,7 +17,7 @@
 
 package org.apache.linkis.entrance.log
 
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.hadoop.hdfs.client.HdfsDataOutputStream
 import org.apache.hadoop.io.IOUtils
 import org.apache.linkis.common.io.FsPath

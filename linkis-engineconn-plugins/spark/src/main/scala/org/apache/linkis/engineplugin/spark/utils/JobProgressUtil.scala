@@ -21,7 +21,7 @@ import java.text.NumberFormat
 
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.protocol.engine.JobProgressInfo
-import org.apache.commons.lang.time.DateFormatUtils
+import org.apache.commons.lang3.time.DateFormatUtils
 import org.apache.spark.{JobExecutionStatus, SparkContext, SparkJobInfo}
 
 /**

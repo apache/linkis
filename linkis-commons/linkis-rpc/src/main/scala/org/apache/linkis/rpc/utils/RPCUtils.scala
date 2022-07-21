@@ -25,7 +25,7 @@ import org.apache.linkis.rpc.exception.NoInstanceExistsException
 import org.apache.linkis.rpc.sender.{SpringCloudFeignConfigurationCache, SpringMVCRPCSender}
 import org.apache.linkis.rpc.{BaseRPCSender, Sender}
 import feign.RetryableException
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.rpc.conf.RPCConfiguration
 
 import scala.collection.JavaConversions._

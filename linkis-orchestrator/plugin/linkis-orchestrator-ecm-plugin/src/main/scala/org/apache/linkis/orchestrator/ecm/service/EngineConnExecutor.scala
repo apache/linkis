@@ -17,7 +17,7 @@
  
 package org.apache.linkis.orchestrator.ecm.service
 
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 
 import java.io.Closeable
 import java.util

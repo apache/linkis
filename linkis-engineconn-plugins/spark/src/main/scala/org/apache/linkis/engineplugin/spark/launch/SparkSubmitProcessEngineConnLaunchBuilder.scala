@@ -32,7 +32,7 @@ import org.apache.linkis.manager.engineplugin.common.launch.process.JavaProcessE
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel
 import org.apache.linkis.protocol.UserWithCreator
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 
 import scala.collection.JavaConverters._
 import scala.collection.mutable.ArrayBuffer

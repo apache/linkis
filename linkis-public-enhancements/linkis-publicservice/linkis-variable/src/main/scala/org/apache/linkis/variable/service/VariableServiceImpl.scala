@@ -26,7 +26,7 @@ import org.apache.linkis.server.BDPJettyServerHelper
 import org.apache.linkis.variable.dao.VarMapper
 import org.apache.linkis.variable.entity.{VarKey, VarKeyUser, VarKeyValueVO}
 import org.apache.linkis.variable.exception.VariableException
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional

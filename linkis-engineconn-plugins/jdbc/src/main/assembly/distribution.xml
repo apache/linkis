@@ -32,7 +32,7 @@
         <dependencySet>
             <!-- Enable access to all projects in the current multimodule build! <useAllReactorProjects>true</useAllReactorProjects> -->
             <!-- Now, select which projects to include in this module-set. -->
-            <outputDirectory>dist/v${jdbc.version}/lib</outputDirectory>
+            <outputDirectory>/dist/v${jdbc.version}/lib</outputDirectory>
             <useProjectArtifact>true</useProjectArtifact>
             <useTransitiveDependencies>true</useTransitiveDependencies>
             <unpack>false</unpack>
@@ -50,7 +50,7 @@
                 <include>log4j2.xml</include>
             </includes>
             <fileMode>0777</fileMode>
-            <outputDirectory>dist/v${jdbc.version}/conf</outputDirectory>
+            <outputDirectory>/dist/v${jdbc.version}/conf</outputDirectory>
             <lineEnding>unix</lineEnding>
         </fileSet>
 
@@ -63,7 +63,7 @@
                 <exclude>*doc.jar</exclude>
             </excludes>
             <fileMode>0777</fileMode>
-            <outputDirectory>plugin/${jdbc.version}</outputDirectory>
+            <outputDirectory>/plugin/${jdbc.version}</outputDirectory>
         </fileSet>
 
     </fileSets>

@@ -17,7 +17,7 @@
 
 package org.apache.linkis.entrance.constant;
 
-/** 服务名统一定义 */
+/** unify bean's spring config name */
 public final class ServiceNameConsts {
     private ServiceNameConsts() {}
 

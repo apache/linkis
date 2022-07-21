@@ -23,7 +23,7 @@ import org.apache.linkis.gateway.config.GatewayConfiguration._
 import org.apache.linkis.gateway.http.GatewayContext
 import org.apache.linkis.gateway.security.{GatewaySSOUtils, SecurityFilter}
 import org.apache.linkis.server.Message
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 
 object TokenAuthentication extends Logging {
 

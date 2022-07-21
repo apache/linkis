@@ -36,7 +36,7 @@ import org.apache.linkis.manager.rm.external.service.ExternalResourceService;
 import org.apache.linkis.manager.rm.external.yarn.YarnResourceRequester;
 import org.apache.linkis.manager.rm.utils.RMUtils;
 
-import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;

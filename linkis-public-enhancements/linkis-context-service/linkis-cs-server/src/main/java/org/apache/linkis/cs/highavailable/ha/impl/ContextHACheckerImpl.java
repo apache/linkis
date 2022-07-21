@@ -27,7 +27,7 @@ import org.apache.linkis.cs.highavailable.exception.CSErrorCode;
 import org.apache.linkis.cs.highavailable.ha.ContextHAChecker;
 import org.apache.linkis.cs.highavailable.ha.instancealias.impl.InstanceAliasManagerImpl;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

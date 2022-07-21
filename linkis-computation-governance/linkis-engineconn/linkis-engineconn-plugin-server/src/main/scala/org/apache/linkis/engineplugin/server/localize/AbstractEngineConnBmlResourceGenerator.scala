@@ -25,7 +25,7 @@ import org.apache.linkis.engineplugin.server.localize.EngineConnBmlResourceGener
 import org.apache.linkis.manager.engineplugin.common.exception.EngineConnPluginErrorException
 import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel
 import org.apache.linkis.server.conf.ServerConfiguration
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 
 
 abstract class AbstractEngineConnBmlResourceGenerator extends EngineConnBmlResourceGenerator {

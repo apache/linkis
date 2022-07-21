@@ -36,7 +36,7 @@ import org.apache.linkis.storage.resultset.{ResultSetFactory, ResultSetWriter}
 import org.apache.linkis.storage.{LineMetaData, LineRecord}
 import org.apache.commons.exec.CommandLine
 import org.apache.commons.io.IOUtils
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import py4j.GatewayServer
 
 import scala.collection.JavaConverters._

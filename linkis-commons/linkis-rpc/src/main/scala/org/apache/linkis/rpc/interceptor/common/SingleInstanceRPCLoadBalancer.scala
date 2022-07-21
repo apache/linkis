@@ -22,7 +22,7 @@ import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.protocol.{Protocol, SingleInstanceProtocol}
 import org.apache.linkis.rpc.interceptor.RPCLoadBalancer
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.springframework.stereotype.Component
 
 

@@ -17,7 +17,7 @@
  
 package org.apache.linkis.entrance
 
-import org.apache.commons.lang.exception.ExceptionUtils
+import org.apache.commons.lang3.exception.ExceptionUtils
 import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.exception.{ErrorException, LinkisException, LinkisRuntimeException}
 import org.apache.linkis.common.utils.{Logging, Utils}

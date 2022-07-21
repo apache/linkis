@@ -23,7 +23,7 @@ import org.apache.linkis.metadata.util.DWSConfig;
 import org.apache.linkis.metadata.util.HiveUtils;
 import org.apache.linkis.mybatis.DataSourceUtils;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;

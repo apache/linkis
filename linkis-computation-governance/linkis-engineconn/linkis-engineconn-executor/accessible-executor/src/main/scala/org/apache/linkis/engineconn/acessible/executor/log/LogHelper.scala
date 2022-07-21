@@ -29,12 +29,15 @@ import scala.collection.JavaConversions._
 
 object LogHelper extends Logging {
 
+  val SEND_LOG_INTERVAL = 10 * 1000
 
   val logCache = new MountLogCache(AccessibleExecutorConfiguration.ENGINECONN_LOG_CACHE_NUM.getValue)
 
   private var logListener: LogListener = _
 
   private val CACHE_SIZE = AccessibleExecutorConfiguration.ENGINECONN_LOG_SEND_SIZE.getValue
+
+  private var timecount = 0
 
   def setLogListener(logListener: LogListener): Unit = this.logListener = logListener
 
@@ -46,6 +49,7 @@ object LogHelper extends Logging {
       logger.warn("logListener is null, can not push remain logs")
       //return
     } else {
+
       var logs: util.List[String] = null
       logCache.synchronized {
         logs = logCache.getRemain
@@ -77,7 +81,22 @@ object LogHelper extends Logging {
         logger.debug("logCache or logListener is null")
         return
       } else {
-        if (logCache.size > CACHE_SIZE) {
+        val reachRegularInterval = {
+          if (SEND_LOG_INTERVAL <= AccessibleExecutorConfiguration.ENGINECONN_LOG_SEND_TIME_INTERVAL.getValue) {
+            logger.warn(s"EngineConn send log interval : ${AccessibleExecutorConfiguration.ENGINECONN_LOG_SEND_TIME_INTERVAL.getValue}ms is longer than regular interval : ${SEND_LOG_INTERVAL}ms")
+            false
+          } else {
+            if (timecount >= SEND_LOG_INTERVAL) {
+              timecount = 0
+              true
+            } else {
+              timecount = timecount + AccessibleExecutorConfiguration.ENGINECONN_LOG_SEND_TIME_INTERVAL.getValue
+              false
+            }
+          }
+        }
+        if (reachRegularInterval || logCache.size > CACHE_SIZE) {
+
           val logs = logCache.getRemain
           val sb = new StringBuilder
 

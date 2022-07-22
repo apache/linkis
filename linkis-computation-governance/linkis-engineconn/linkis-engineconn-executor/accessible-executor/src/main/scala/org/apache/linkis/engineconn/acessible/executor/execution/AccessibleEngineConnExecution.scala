@@ -98,6 +98,7 @@ class AccessibleEngineConnExecution extends EngineConnExecution with Logging {
             accessibleExecutor.updateLastActivityTime()
           } else {
             logger.warn(s"${accessibleExecutor.getId} has not been used for $maxFreeTimeStr, now try to shutdown it.")
+            accessibleExecutor.tryShutdown()
             requestManagerReleaseExecutor(" idle release")
             ShutdownHook.getShutdownHook.notifyStop()
           }

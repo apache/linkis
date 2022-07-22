@@ -56,7 +56,7 @@ import java.io.IOException;
 import java.util.*;
 
 // @Api(tags = "BM项目操作管理")
-@Api(tags = "BM_Project_Operations_Management")
+@Api(tags = "bml(bigdata material library) project opreation")
 @RequestMapping(path = "/bml")
 @RestController
 public class BmlProjectRestful {
@@ -79,32 +79,27 @@ public class BmlProjectRestful {
 
     @Autowired private DownloadService downloadService;
 
-    /*@ApiOperation(value = "创建Bml项目", notes = "创建Bml项目", response = Message.class)
-    @ApiImplicitParams({
-        @ApiImplicitParam(name = "projectName", dataType = "String", value = "项目名称"),
-        @ApiImplicitParam(name = "editUsers", dataType = "String", value = "编辑用户"),
-        @ApiImplicitParam(name = "accessUsers", dataType = "String", value = "访问用户")
-    })*/
+
     @ApiOperation(
-            value = "CreateBmlProject",
-            notes = "Create_Bml_Project",
+            value = "createBmlProject",
+            notes = "create Bml project",
             response = Message.class)
     @ApiImplicitParams({
         @ApiImplicitParam(
                 name = "projectName",
                 required = true,
                 dataType = "String",
-                value = "Project_Name"),
+                value = "project name"),
         @ApiImplicitParam(
                 name = "editUsers",
                 required = true,
                 dataType = "String",
-                value = "Edit_Users"),
+                value = "edit users"),
         @ApiImplicitParam(
                 name = "accessUsers",
                 required = true,
                 dataType = "String",
-                value = "Access_Users")
+                value = "access users")
     })
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "createBmlProject", method = RequestMethod.POST)
@@ -145,26 +140,26 @@ public class BmlProjectRestful {
         @ApiImplicitParam(name = "file", dataType = "List<MultipartFile>", value = "文件集合")
     })*/
     @ApiOperation(
-            value = "UploadShareResource",
-            notes = "Upload_Share_Resource",
+            value = "uploadShareResource",
+            notes = "upload share resource",
             response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "system", dataType = "String", value = "System"),
-        @ApiImplicitParam(name = "resourceHeader", dataType = "String", value = "Resource_Header"),
-        @ApiImplicitParam(name = "isExpire", dataType = "String", value = "Is_Expire"),
-        @ApiImplicitParam(name = "expireType", dataType = "String", value = "Expire_Type"),
-        @ApiImplicitParam(name = "expireTime", dataType = "String", value = "Expire_Time"),
-        @ApiImplicitParam(name = "maxVersion", dataType = "Integer", value = "Max_Version"),
+        @ApiImplicitParam(name = "system", dataType = "String", value = "system"),
+        @ApiImplicitParam(name = "resourceHeader", dataType = "String", value = "resource header"),
+        @ApiImplicitParam(name = "isExpire", dataType = "String", value = "is expire"),
+        @ApiImplicitParam(name = "expireType", dataType = "String", value = "expire type"),
+        @ApiImplicitParam(name = "expireTime", dataType = "String", value = "expire time"),
+        @ApiImplicitParam(name = "maxVersion", dataType = "Integer", value = "max version"),
         @ApiImplicitParam(
                 name = "projectName",
                 required = true,
                 dataType = "String",
-                value = "Project_Name"),
+                value = "project name"),
         @ApiImplicitParam(
                 name = "file",
                 required = true,
                 dataType = "List<MultipartFile>",
-                value = "File_List")
+                value = "flie list")
     })
     @RequestMapping(path = "uploadShareResource", method = RequestMethod.POST)
     public Message uploadShareResource(
@@ -243,20 +238,20 @@ public class BmlProjectRestful {
         @ApiImplicitParam(name = "file", dataType = "MultipartFile", value = "文件")
     })*/
     @ApiOperation(
-            value = "UpdateShareResource",
-            notes = "Update_Share_Resource",
+            value = "updateShareResource",
+            notes = "update share resource",
             response = Message.class)
     @ApiImplicitParams({
         @ApiImplicitParam(
                 name = "resourceId",
                 required = true,
                 dataType = "String",
-                value = "Resource_Id"),
+                value = "resource Id"),
         @ApiImplicitParam(
                 name = "file",
                 required = true,
                 dataType = "MultipartFile",
-                value = "File")
+                value = "file")
     })
     @RequestMapping(path = "updateShareResource", method = RequestMethod.POST)
     public Message updateShareResource(
@@ -352,18 +347,13 @@ public class BmlProjectRestful {
         return message;
     }
 
-    /*@ApiOperation(value = "下载共享资源", notes = "下载共享资源", response = Message.class)
-    @ApiImplicitParams({
-        @ApiImplicitParam(name = "resourceId", dataType = "String", value = "资源ID"),
-        @ApiImplicitParam(name = "version", dataType = "String", value = "版本")
-    })*/
     @ApiOperation(
-            value = "DownloadShareResource",
-            notes = "Download_Share_Resource",
+            value = "downloadShareResource",
+            notes = "download share resource",
             response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "resourceId", dataType = "String", value = "Resource_Id"),
-        @ApiImplicitParam(name = "version", dataType = "String", value = "Version")
+        @ApiImplicitParam(name = "resourceId", dataType = "String", value = "resource id"),
+        @ApiImplicitParam(name = "version", dataType = "String", value = "version")
     })
     @RequestMapping(path = "downloadShareResource", method = RequestMethod.GET)
     public void downloadShareResource(
@@ -477,7 +467,7 @@ public class BmlProjectRestful {
     @ApiImplicitParams({
         @ApiImplicitParam(name = "projectName", dataType = "String", value = "项目名称")
     })*/
-    @ApiOperation(value = "GetProjectInfo", notes = "Get_Project_Info", response = Message.class)
+    @ApiOperation(value = "getProjectInfo", notes = "Get_Project_Info", response = Message.class)
     @ApiImplicitParams({
         @ApiImplicitParam(name = "projectName", dataType = "String", value = "Project_Name")
     })
@@ -488,18 +478,13 @@ public class BmlProjectRestful {
         return Message.ok("Obtain project information successfully (获取工程信息成功)");
     }
 
-    /*@ApiOperation(value = "附件资源项目", notes = "附件资源项目", response = Message.class)
-    @ApiImplicitParams({
-        @ApiImplicitParam(name = "projectName", dataType = "String", value = "项目名称"),
-        @ApiImplicitParam(name = "resourceId", dataType = "String", value = "资源名称")
-    })*/
     @ApiOperation(
-            value = "AttachResourceAndProject",
-            notes = "Attach_Resource_And_Project",
+            value = "attachResourceAndProject",
+            notes = "attach Resource and project",
             response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "projectName", dataType = "String", value = "Project_Name"),
-        @ApiImplicitParam(name = "resourceId", dataType = "String", value = "Resource_Id")
+        @ApiImplicitParam(name = "projectName", dataType = "String", value = "project name"),
+        @ApiImplicitParam(name = "resourceId", dataType = "String", value = "resource id")
     })
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "attachResourceAndProject", method = RequestMethod.POST)
@@ -513,20 +498,15 @@ public class BmlProjectRestful {
         return Message.ok("attach resource and project ok");
     }
 
-    /*@ApiOperation(value = "更新项目用户", notes = "更新项目用户", response = Message.class)
-    @ApiImplicitParams({
-        @ApiImplicitParam(name = "projectName", dataType = "String", value = "项目名称"),
-        @ApiImplicitParam(name = "editUsers", dataType = "String", value = "编辑用户"),
-        @ApiImplicitParam(name = "accessUsers", dataType = "String", value = "访问用户")
-    })*/
+
     @ApiOperation(
-            value = "UpdateProjectUsers",
-            notes = "Update_Project_Users",
+            value = "updateProjectUsers",
+            notes = "update project users info",
             response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "projectName", dataType = "String", value = "Project_Name"),
-        @ApiImplicitParam(name = "editUsers", dataType = "String", value = "Edit_Users"),
-        @ApiImplicitParam(name = "accessUsers", dataType = "String", value = "Access_Users")
+        @ApiImplicitParam(name = "projectName", dataType = "String", value = "project name"),
+        @ApiImplicitParam(name = "editUsers", dataType = "String", value = "edit users"),
+        @ApiImplicitParam(name = "accessUsers", dataType = "String", value = "access users")
     })
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "updateProjectUsers", method = RequestMethod.POST)

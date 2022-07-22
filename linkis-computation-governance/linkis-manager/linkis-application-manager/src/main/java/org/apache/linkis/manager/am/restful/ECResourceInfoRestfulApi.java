@@ -46,8 +46,7 @@ import io.swagger.annotations.ApiOperation;
 
 import java.util.*;
 
-/*@Api(tags = "EC资源信息管理")*/
-@Api(tags = "EC_Resource_Information_Management")
+@Api(tags = "enginneconn resource info operation")
 @RequestMapping(
         path = "/linkisManager/ecinfo",
         produces = {"application/json"})
@@ -59,13 +58,14 @@ public class ECResourceInfoRestfulApi {
     @ApiImplicitParams({
         @ApiImplicitParam(name = "ticketid", required = true, dataType = "String", value = "ticketid")
     })*/
-    @ApiOperation(value = "GetECInfo", notes = "Get_Ec_Info", response = Message.class)
+
+    @ApiOperation(value = "get", notes = "get engineconn info ", response = Message.class)
     @ApiImplicitParams({
         @ApiImplicitParam(
                 name = "ticketid",
                 required = true,
                 dataType = "String",
-                value = "Ticket_Id")
+                value = "ticket id")
     })
     @RequestMapping(path = "/get", method = RequestMethod.GET)
     public Message getECInfo(
@@ -83,17 +83,14 @@ public class ECResourceInfoRestfulApi {
         }
     }
 
-    /*@ApiOperation(value = "删除EC信息", notes = "删除EC信息", response = Message.class)
-    @ApiImplicitParams({
-        @ApiImplicitParam(name = "ticketid", required = true, dataType = "String", value = "Ticket_Id")
-    })*/
-    @ApiOperation(value = "DeleteECInfo", notes = "Delete_Ec_Info", response = Message.class)
+
+    @ApiOperation(value = "delete", notes = "delete engineconn info", response = Message.class)
     @ApiImplicitParams({
         @ApiImplicitParam(
                 name = "ticketid",
                 required = true,
                 dataType = "String",
-                value = "Ticket_Id")
+                value = "ticket id")
     })
     @RequestMapping(path = "/delete/{ticketid}}", method = RequestMethod.DELETE)
     public Message deleteECInfo(HttpServletRequest req, @PathVariable("ticketid") String ticketid)
@@ -116,7 +113,8 @@ public class ECResourceInfoRestfulApi {
         @ApiImplicitParam(name = "instance", required = false, dataType = "String", value = "instance"),
         @ApiImplicitParam(name = "creator", required = false, dataType = "String", value = "creator")
     })*/
-    @ApiOperation(value = "QueryEcrHistory", notes = "Query_Ecr_History", response = Message.class)
+
+    @ApiOperation(value = "ecrHistoryList", notes = "query engineconn resource history info list", response = Message.class)
     @ApiImplicitParams({
         @ApiImplicitParam(name = "instance", dataType = "String", value = "Instance"),
         @ApiImplicitParam(name = "creator", dataType = "String", value = "Creator")

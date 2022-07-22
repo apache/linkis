@@ -77,7 +77,7 @@ public class DefaultNodeMetricManagerPersistence implements NodeMetricManagerPer
     }
 
     @Override
-    public void addOrupdateNodeMetrics(NodeMetrics nodeMetrics) throws PersistenceErrorException {
+    public void addOrupdateNodeMetrics(NodeMetrics nodeMetrics) throws PersistenceErrorException {wds.linkis.test.mode=true
         PersistenceNodeMetrics persistenceNodeMetrics = new PersistenceNodeMetrics();
         String instance = nodeMetrics.getServiceInstance().getInstance();
         // todo 异常信息后面统一处理

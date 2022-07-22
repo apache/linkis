@@ -43,7 +43,8 @@ import io.swagger.annotations.Api;
 
 import java.io.IOException;
 
-@Api(tags = "Context_Listener_Service")
+
+@Api(tags = "cs(contextservice) listener operation")
 @RestController
 @RequestMapping(path = "/contextservice")
 public class ContextListenerRestfulApi implements CsRestfulParent {

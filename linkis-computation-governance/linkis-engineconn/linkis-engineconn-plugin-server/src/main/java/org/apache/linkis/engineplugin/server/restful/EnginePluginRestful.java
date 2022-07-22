@@ -36,8 +36,8 @@ import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/*@Api(tags = "引擎插件API")*/
-@Api(tags = "Engine_Plugin_API")
+
+@Api(tags = "ECP(engineconn plugin) operation")
 @RestController
 @RequestMapping(path = "/engineplugin")
 public class EnginePluginRestful {
@@ -46,8 +46,7 @@ public class EnginePluginRestful {
 
     @Autowired private EngineConnResourceService engineConnResourceService;
 
-    /*@ApiOperation(value = "刷新", notes = "刷新所有", response = Message.class)*/
-    @ApiOperation(value = "RefreshAll", notes = "Refresh_All", response = Message.class)
+    @ApiOperation(value = "refreshAll", notes = "refresh all engineconn resource", response = Message.class)
     @RequestMapping(path = "/refreshAll", method = RequestMethod.GET)
     public Message refreshAll(HttpServletRequest req) {
         String username = ModuleUserUtils.getOperationUser(req, "refreshAll");
@@ -61,8 +60,7 @@ public class EnginePluginRestful {
         }
     }
 
-    /*@ApiOperation(value = "刷新单个", notes = "刷新单个ec resource", response = Message.class)*/
-    @ApiOperation(value = "refresh", notes = "Refresh_Ec_Resource", response = Message.class)
+    @ApiOperation(value = "refreshAll", notes = "refresh one engineconn resource", response = Message.class)
     @RequestMapping(path = "/refresh", method = RequestMethod.GET)
     public Message refreshOne(
             HttpServletRequest req,

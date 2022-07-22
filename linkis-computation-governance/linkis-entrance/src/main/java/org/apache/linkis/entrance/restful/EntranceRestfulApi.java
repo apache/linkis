@@ -60,8 +60,7 @@ import java.util.*;
 import scala.Option;
 
 /** Description: an implementation class of EntranceRestfulRemote */
-/*@Api(tags = "任务操作")*/
-@Api(tags = "Task_Operation")
+@Api(tags = "task operation")
 @RestController
 @RequestMapping(path = "/entrance")
 public class EntranceRestfulApi implements EntranceRestfulRemote {
@@ -80,8 +79,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
      * execution ID is returned to the user. execute函数处理的是用户提交执行任务的请求，返回给用户的是执行ID json Incoming
      * key-value pair(传入的键值对) Repsonse
      */
-    /*    @ApiOperation(value = "处理任务请求", notes = "execute函数处理的是用户提交执行任务的请求", response = Message.class)*/
-    @ApiOperation(value = "Execute", notes = "Handling_Task_Requests", response = Message.class)
+    @ApiOperation(value = "execute", notes = "execute the submitted task", response = Message.class)
     @ApiOperationSupport(ignoreParameters = {"json"})
     @Override
     @RequestMapping(path = "/execute", method = RequestMethod.POST)
@@ -136,8 +134,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
         return message;
     }
 
-    /*    @ApiOperation(value = "提交execute函数", notes = "提交execute函数", response = Message.class)*/
-    @ApiOperation(value = "Submit", notes = "Submit_Execute_Function", response = Message.class)
+    @ApiOperation(value = "submit", notes = "submit execute job", response = Message.class)
     @ApiOperationSupport(ignoreParameters = {"json"})
     @Override
     @RequestMapping(path = "/submit", method = RequestMethod.POST)
@@ -195,15 +192,10 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
         entranceServer.getEntranceContext().getOrCreateLogManager().onLogUpdate(job, log);
     }
 
-    /*@ApiOperation(value = "任务状态", notes = "任务状态", response = Message.class)
+    @ApiOperation(value = "status", notes = "get task stats", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "taskID", dataType = "String", required = false, value = "任务ID"),
-        @ApiImplicitParam(name = "id", dataType = "String", value = "ID")
-    })*/
-    @ApiOperation(value = "Status", notes = "Task_Status", response = Message.class)
-    @ApiImplicitParams({
-        @ApiImplicitParam(name = "taskID", dataType = "String", value = "Task_Id"),
-        @ApiImplicitParam(name = "id", dataType = "String", required = true, value = "Id")
+        @ApiImplicitParam(name = "taskID", dataType = "String", value = " task id"),
+        @ApiImplicitParam(name = "id", dataType = "String", required = true, value = "execute id ")
     })
     @Override
     @RequestMapping(path = "/{id}/status", method = RequestMethod.GET)
@@ -239,11 +231,9 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
         return message;
     }
 
-    /*    @ApiOperation(value = "任务进展", notes = "任务进展", response = Message.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "id", dataType = "String", value = "任务ID")})*/
-    @ApiOperation(value = "progress", notes = "Task_Progress", response = Message.class)
+    @ApiOperation(value = "progress", notes = "get task progress info", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "id", dataType = "String", required = true, value = "Task_Id")
+        @ApiImplicitParam(name = "id", dataType = "String", required = true, value = "exectue id")
     })
     @Override
     @RequestMapping(path = "/{id}/progress", method = RequestMethod.GET)
@@ -286,13 +276,11 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
         return message;
     }
 
-    /*@ApiOperation(value = "资源进展", notes = "资源进展", response = Message.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "id", dataType = "String", value = "ID")})*/
     @ApiOperation(
-            value = "ProgressWithResource",
-            notes = "Progress_With_Resource",
+            value = "progressWithResource",
+            notes = "get progress  and resource info",
             response = Message.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "id", dataType = "String", value = "Id")})
+    @ApiImplicitParams({@ApiImplicitParam(name = "id", dataType = "String", value = "execute id")})
     @Override
     @RequestMapping(path = "/{id}/progressWithResource", method = RequestMethod.GET)
     public Message progressWithResource(@PathVariable("id") String id) {
@@ -399,10 +387,8 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
         list.add(map);
     }
 
-    /*    @ApiOperation(value = "任务日志", notes = "获取任务日志", response = Message.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "id", dataType = "String", value = "任务ID")})*/
-    @ApiOperation(value = "log", notes = "Task_log", response = Message.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "id", dataType = "String", value = "Id")})
+    @ApiOperation(value = "log", notes = "get task log", response = Message.class)
+    @ApiImplicitParams({@ApiImplicitParam(name = "id", dataType = "String", value = "execute id")})
     @Override
     @RequestMapping(path = "/{id}/log", method = RequestMethod.GET)
     public Message log(HttpServletRequest req, @PathVariable("id") String id) {
@@ -506,13 +492,9 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
         return message;
     }
 
-    /*@ApiOperation(value = "结束Jobs", notes = "结束Jobs", response = Message.class)
+    @ApiOperation(value = "killJobs", notes = "kill jobs", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "strongExecId", dataType = "String", value = "任务ID")
-    })*/
-    @ApiOperation(value = "KillJobs", notes = "Kill_Jobs", response = Message.class)
-    @ApiImplicitParams({
-        @ApiImplicitParam(name = "strongExecId", dataType = "String", value = "Strong_Exec_Id")
+        @ApiImplicitParam(name = "strongExecId", dataType = "String", value = "strong execte id")
     })
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @Override
@@ -608,15 +590,11 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
         return Message.ok("success").data("messages", messages);
     }
 
-    /*@ApiOperation(value = "结束任务", notes = "kill任务", response = Message.class)
+
+    @ApiOperation(value = "kill", notes = "kill", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "id", dataType = "String", value = "ID"),
-        @ApiImplicitParam(name = "taskID", required = false, dataType = "String", value = "任务ID")
-    })*/
-    @ApiOperation(value = "Kill", notes = "Kill", response = Message.class)
-    @ApiImplicitParams({
-        @ApiImplicitParam(name = "id", dataType = "String", value = "Id"),
-        @ApiImplicitParam(name = "taskID", dataType = "String", value = "Task_ID")
+        @ApiImplicitParam(name = "id", dataType = "String", value = "excute id"),
+        @ApiImplicitParam(name = "taskID", dataType = "String", value = "task id")
     })
     @Override
     @RequestMapping(path = "/{id}/kill", method = RequestMethod.GET)
@@ -677,10 +655,9 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
         return message;
     }
 
-    /*    @ApiOperation(value = "暂停任务", notes = "暂停任务", response = Message.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "id", dataType = "String", value = "任务ID")})*/
-    @ApiOperation(value = "Pause", notes = "Pause", response = Message.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "id", dataType = "String", value = "Task_Id")})
+
+    @ApiOperation(value = "pause ", notes = "puase a task job", response = Message.class)
+    @ApiImplicitParams({@ApiImplicitParam(name = "id", dataType = "String", value = "excete id")})
     @Override
     @RequestMapping(path = "/{id}/pause", method = RequestMethod.GET)
     public Message pause(@PathVariable("id") String id) {

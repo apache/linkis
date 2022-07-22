@@ -69,8 +69,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-/*@Api(tags = "引擎管理")*/
-@Api(tags = "Engine_Management")
+@Api(tags = "EC(engineconn) operation")
 @RequestMapping(
         path = "/linkisManager",
         produces = {"application/json"})
@@ -94,7 +93,7 @@ public class EngineRestfulApi {
 
     private static final Logger logger = LoggerFactory.getLogger(EngineRestfulApi.class);
 
-    @ApiOperation(value = "创建引擎连接", notes = "创建引擎连接", response = Message.class)
+    @ApiOperation(value = "createEngineConn", notes = "create an engineconn", response = Message.class)
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "/createEngineConn", method = RequestMethod.POST)
     public Message createEngineConn(HttpServletRequest req, @RequestBody JsonNode jsonNode)
@@ -140,7 +139,7 @@ public class EngineRestfulApi {
         return Message.ok("create engineConn succeed.").data("engine", retEngineNode);
     }
 
-    @ApiOperation(value = "获取引擎连接", notes = "获取引擎连接", response = Message.class)
+    @ApiOperation(value = "getEngineConn", notes = "get engineconn", response = Message.class)
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "/getEngineConn", method = RequestMethod.POST)
     public Message getEngineConn(HttpServletRequest req, @RequestBody JsonNode jsonNode)
@@ -154,7 +153,7 @@ public class EngineRestfulApi {
         return Message.ok().data("engine", engineNode);
     }
 
-    @ApiOperation(value = "kill引擎连接", notes = "kill引擎连接", response = Message.class)
+    @ApiOperation(value = "kill egineconn", notes = "kill engineconn", response = Message.class)
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "/killEngineConn", method = RequestMethod.POST)
     public Message killEngineConn(HttpServletRequest req, @RequestBody JsonNode jsonNode)
@@ -175,18 +174,18 @@ public class EngineRestfulApi {
         return Message.ok("Kill engineConn succeed.");
     }
 
-    @ApiOperation(value = "kill引擎", notes = "关闭引擎，可关闭一个也可关闭多个", response = Message.class)
+    @ApiOperation(value = "kill eginecon", notes = "kill one engineconn or more ", response = Message.class)
     @ApiImplicitParams({
         @ApiImplicitParam(
                 name = "engineInstance",
                 required = false,
                 dataType = "String",
-                value = "引擎实例名称，最外层是个数组和applicationName参数是一个级别"),
+                value = "engine instance"),
         @ApiImplicitParam(
                 name = "applicationName",
                 required = false,
                 dataType = "String",
-                value = "应用名称，最外层是个数组和engineInstance参数是一个级别")
+                value = "application name")
     })
     @ApiOperationSupport(ignoreParameters = {"param"})
     @RequestMapping(path = "/rm/enginekill", method = RequestMethod.POST)
@@ -206,7 +205,7 @@ public class EngineRestfulApi {
         return Message.ok("Kill engineConn succeed.");
     }
 
-    @ApiOperation(value = "引擎用户集合", notes = "引擎用户集合", response = Message.class)
+    @ApiOperation(value = "listUserEngines", notes = "get user's engineconn list", response = Message.class)
     @RequestMapping(path = "/listUserEngines", method = RequestMethod.GET)
     public Message listUserEngines(HttpServletRequest req) {
         String userName = ModuleUserUtils.getOperationUser(req, "listUserEngines");
@@ -214,46 +213,40 @@ public class EngineRestfulApi {
         return Message.ok().data("engines", engineNodes);
     }
 
-    @ApiOperation(value = "列表引擎", notes = "列表引擎", response = Message.class)
-    /*@ApiOperationSupport(
-            responses = @DynamicResponseParameters(properties = {
-                    @DynamicParameter(value = "结果集",name = "data",dataTypeClass = Message.class)
-            })
-    )*/
+    @ApiOperation(value = "listEMEngines", notes = "get the list of engineconn under an ECM", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "em", required = false, dataType = "Map", value = "入参最外层"),
+        @ApiImplicitParam(name = "em", required = false, dataType = "Map", value = "ecm object"),
         @ApiImplicitParam(
                 name = "serviceInstance",
                 required = false,
                 dataType = "Map",
-                value = "入参属于‘’em"),
+                value = "service instance"),
         @ApiImplicitParam(
                 name = "applicationName",
                 required = false,
                 dataType = "String",
-                value = "引擎标签名称，属于serviceInstance中的值"),
-        @ApiImplicitParam(name = "instance", required = false, dataType = "String", value = "实例名称"),
+                value = "application name"),
+        @ApiImplicitParam(name = "instance", required = false, dataType = "String", value = "instance"),
         @ApiImplicitParam(
                 name = "emInstance",
                 required = false,
                 dataType = "String",
-                value = "引擎实例名称跟‘em’一个级别属于最外层"),
+                value = "ecm instance"),
         @ApiImplicitParam(
                 name = "engineType",
                 required = false,
                 dataType = "String",
-                value = "引擎类型跟‘em’一个级别属于最外层"),
+                value = "engine type"),
         @ApiImplicitParam(
                 name = "nodeStatus",
                 required = false,
                 dataType = "String",
-                value =
-                        "状态跟‘em’一个级别属于最外层,状态有以下枚举类型 ‘Healthy‘, ‘UnHealthy‘, ‘WARN‘, ’StockAvailable’, ‘StockUnavailable’"),
+                value ="node status"),
         @ApiImplicitParam(
                 name = "owner",
                 required = false,
                 dataType = "String",
-                value = "创建者跟‘em’一个级别属于最外层"),
+                value = "owner"),
     })
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "/listEMEngines", method = RequestMethod.POST)
@@ -333,40 +326,40 @@ public class EngineRestfulApi {
         return Message.ok().data("engines", allEMVoFilter4);
     }
 
-    @ApiOperation(value = "编辑引擎实例", notes = "编辑引擎实例内容", response = Message.class)
+    @ApiOperation(value = "modifyEngineInfo", notes = "modify engineconn info", response = Message.class)
     @ApiImplicitParams({
         @ApiImplicitParam(
                 name = "applicationName",
                 required = false,
                 dataType = "String",
-                value = "引擎标签"),
+                value = "application name"),
         @ApiImplicitParam(
                 name = "emStatus",
                 dataType = "String",
                 required = false,
-                value = "运行状态",
+                value = "ecm status",
                 example =
-                        "‘Starting’,‘Unlock’,'Locked','Idle','Busy','Running','ShuttingDown','Failed','Success' "),
+                        "Starting,Unlock,Locked,Idle,Busy,Running,ShuttingDown,Failed,Success"),
         @ApiImplicitParam(
                 name = "instance",
                 dataType = "String",
                 required = false,
-                value = "引擎实例名称"),
+                value = "instance"),
         @ApiImplicitParam(
                 name = "labels",
                 dataType = "List",
                 required = false,
-                value = "引擎实例更新参数内容，集合存放的是map类型的"),
+                value = "labels"),
         @ApiImplicitParam(
                 name = "labelKey",
                 dataType = "String",
                 required = false,
-                value = "添加内容里面的标签，属于labels集合 内 map里的key"),
+                value = "label key"),
         @ApiImplicitParam(
                 name = "stringValue",
                 dataType = "String",
                 required = false,
-                value = "添加内容里面的标签对于的值，属于labels集合 内 map里的value")
+                value = "stringValue")
     })
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "/modifyEngineInfo", method = RequestMethod.PUT)
@@ -405,7 +398,7 @@ public class EngineRestfulApi {
         return Message.ok("success to update engine information(更新引擎信息成功)");
     }
 
-    @ApiOperation(value = "所有节点状态", notes = "所有节点状态", response = Message.class)
+    @ApiOperation(value = "listAllNodeHealthyStatus", notes = "get all node healthy staus list", response = Message.class)
     @RequestMapping(path = "/listAllNodeHealthyStatus", method = RequestMethod.GET)
     public Message listAllNodeHealthyStatus(
             HttpServletRequest req,
@@ -414,7 +407,7 @@ public class EngineRestfulApi {
         return Message.ok().data("nodeStatus", nodeStatus);
     }
 
-    @ApiOperation(value = "执行引擎连接操作", notes = "执行引擎连接操作", response = Message.class)
+    @ApiOperation(value = "executeEngineConnOperation", notes = "execute engine conn operation", response = Message.class)
     @RequestMapping(path = "/executeEngineConnOperation", method = RequestMethod.POST)
     public Message executeEngineConnOperation(
             HttpServletRequest req, @RequestBody JsonNode jsonNode) throws Exception {

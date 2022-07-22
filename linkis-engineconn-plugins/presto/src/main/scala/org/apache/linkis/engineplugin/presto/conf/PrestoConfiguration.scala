@@ -28,7 +28,7 @@ object PrestoConfiguration {
   val ENTRANCE_PROTECTED_JOB_INSTANCE = CommonVars[Int]("wds.linkis.entrance.protected.job.instance", 0)
   val ENTRANCE_RESULTS_MAX_CACHE = CommonVars("wds.linkis.presto.resultSet.cache.max", new ByteType("512k"))
 
-  val PRESTO_HTTP_CONNECT_TIME_OUT = CommonVars[java.lang.Long]("wds.linkis.presto.http.connectTimeout", new lang.Long(60))
+  val PRESTO_HTTP_CONNECT_TIME_OUT = CommonVars[java.lang.Long]("wds.linkis.presto.http.connectTimeout", new lang.Long(60)) // unit in seconds
   val PRESTO_HTTP_READ_TIME_OUT = CommonVars[java.lang.Long]("wds.linkis.presto.http.readTimeout", new lang.Long(60))
 
 

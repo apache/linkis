@@ -17,34 +17,29 @@
  
 package org.apache.linkis.jobhistory.service.impl
 
-import java.lang
-import java.sql.Timestamp
 import com.google.common.collect.Iterables
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
+import org.apache.commons.lang3.exception.ExceptionUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.governance.common.constant.job.JobRequestConstants
 import org.apache.linkis.governance.common.entity.job.{JobRequest, JobRequestWithDetail, QueryException, SubJobDetail}
 import org.apache.linkis.governance.common.protocol.job._
 import org.apache.linkis.jobhistory.conversions.TaskConversions._
 import org.apache.linkis.jobhistory.dao.{JobDetailMapper, JobHistoryMapper}
-import org.apache.linkis.jobhistory.entity.JobHistory
-import org.apache.linkis.jobhistory.util.QueryUtils
-import org.apache.linkis.rpc.message.annotation.Receiver
-import org.apache.commons.lang.exception.ExceptionUtils
-import org.apache.linkis.jobhistory.conversions.TaskConversions
-
-import scala.collection.JavaConverters.asScalaBufferConverter
-import java.util
-import java.util.Date
-import org.apache.linkis.jobhistory.entity.QueryJobHistory
+import org.apache.linkis.jobhistory.entity.{JobHistory, QueryJobHistory}
 import org.apache.linkis.jobhistory.service.JobHistoryQueryService
 import org.apache.linkis.jobhistory.transitional.TaskStatus
+import org.apache.linkis.jobhistory.util.QueryUtils
 import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel
-import org.apache.linkis.manager.label.utils.LabelUtil
+import org.apache.linkis.rpc.message.annotation.Receiver
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
+import java.sql.Timestamp
+import java.{lang, util}
+import java.util.Date
 import scala.collection.JavaConversions._
+import scala.collection.JavaConverters.asScalaBufferConverter
 
 
 @Service

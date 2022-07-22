@@ -143,25 +143,25 @@
     <template v-if="isAdminModel">
       <Table class="table-content" border :width="tableWidth" :columns="admincolumns" :data="adminTableData">
         <template slot-scope="{row}" slot="usedResource">
-          <span>{{`${calcCompanyAdmin(row, 'usedResource', 'cores')},${calcCompanyAdmin(row, 'usedResource', 'memory')},${calcCompanyAdmin(row, 'usedResource', 'instances')}`}}</span>
+          <span>{{`${calcCompanyAdmin(row, 'usedResource', 'cores')},${calcCompanyAdmin(row, 'usedResource', 'memory')},${calcCompanyAdmin(row, 'usedResource', 'instance')}`}}</span>
         </template>
         <template slot-scope="{row}" slot="lockedResource">
-          <span>{{`${calcCompanyAdmin(row, 'lockedResource', 'cores')},${calcCompanyAdmin(row, 'lockedResource', 'memory')},${calcCompanyAdmin(row, 'lockedResource', 'instances')}`}}</span>
+          <span>{{`${calcCompanyAdmin(row, 'lockedResource', 'cores')},${calcCompanyAdmin(row, 'lockedResource', 'memory')},${calcCompanyAdmin(row, 'lockedResource', 'instance')}`}}</span>
         </template>
         <template slot-scope="{row}" slot="maxResource">
-          <span>{{`${calcCompanyAdmin(row, 'maxResource', 'cores')},${calcCompanyAdmin(row, 'maxResource', 'memory')},${calcCompanyAdmin(row, 'maxResource', 'instances')}`}}</span>
+          <span>{{`${calcCompanyAdmin(row, 'maxResource', 'cores')},${calcCompanyAdmin(row, 'maxResource', 'memory')},${calcCompanyAdmin(row, 'maxResource', 'instance')}`}}</span>
         </template>
         <template slot-scope="{row}" slot="leftResource">
-          <span :class="'label-'+row.loadResourceStatus">{{`${calcCompanyAdmin(row, 'leftResource', 'cores')},${calcCompanyAdmin(row, 'leftResource', 'memory')},${calcCompanyAdmin(row, 'leftResource', 'instances')}`}}</span>
+          <span :class="'label-'+row.loadResourceStatus">{{`${calcCompanyAdmin(row, 'leftResource', 'cores')},${calcCompanyAdmin(row, 'leftResource', 'memory')},${calcCompanyAdmin(row, 'leftResource', 'instance')}`}}</span>
         </template>
         <template slot-scope="{row}" slot="yarnUsedResource">
-          <span>{{`${calcCompanyAdmin(row, 'usedResource', 'cores', true)},${calcCompanyAdmin(row, 'usedResource', 'memory', true)},${calcCompanyAdmin(row, 'usedResource', 'instances', true)}`}}</span>
+          <span>{{`${calcCompanyAdmin(row, 'usedResource', 'cores', true)},${calcCompanyAdmin(row, 'usedResource', 'memory', true)},${calcCompanyAdmin(row, 'usedResource', 'instance', true)}`}}</span>
         </template>
         <template slot-scope="{row}" slot="yarnMaxResource">
-          <span>{{`${calcCompanyAdmin(row, 'maxResource', 'cores', true)},${calcCompanyAdmin(row, 'maxResource', 'memory', true)},${calcCompanyAdmin(row, 'maxResource', 'instances', true)}`}}</span>
+          <span>{{`${calcCompanyAdmin(row, 'maxResource', 'cores', true)},${calcCompanyAdmin(row, 'maxResource', 'memory', true)},${calcCompanyAdmin(row, 'maxResource', 'instance', true)}`}}</span>
         </template>
         <template slot-scope="{row}" slot="yarnLeftResource">
-          <span :class="'label-'+row.queueResourceStatus">{{`${calcCompanyAdmin(row, 'leftResource', 'cores', true)},${calcCompanyAdmin(row, 'leftResource', 'memory', true)},${calcCompanyAdmin(row, 'leftResource', 'instances', true)}`}}</span>
+          <span :class="'label-'+row.queueResourceStatus">{{`${calcCompanyAdmin(row, 'leftResource', 'cores', true)},${calcCompanyAdmin(row, 'leftResource', 'memory', true)},${calcCompanyAdmin(row, 'leftResource', 'instance', true)}`}}</span>
         </template>
       </Table>
       <div class="page-bar">
@@ -538,15 +538,14 @@ export default {
         }
         return data;
       }
-      console.log(resource);
-      return  resource && (resource.cores !== undefined || resource.memonry !== undefined || resource.instance !== undefined) ? `${calcCompanyToData(resource.cores)}cores,${calcCompanyToData(resource.memory, true)}G,${calcCompanyToData(resource.instance)}apps` : ''
+      return resource && (resource.cores !== undefined || resource.memory !== undefined || resource.instance !== undefined) ? `${calcCompanyToData(resource.cores)}cores,${calcCompanyToData(resource.memory, true)}G,${calcCompanyToData(resource.instance)}apps` : ''
     },
     calcCompanyAdmin(row, field, type, yarn) {
       let data = ' -- '
       if (row.resourceType === 'LoadInstance') {
         if (!yarn) {
           data = row[field][type]
-          if (type === 'instances' && data === undefined) {
+          if (type === 'instance' && data === undefined) {
             data = row[field]['instance']
           }
         }
@@ -564,7 +563,7 @@ export default {
       if (data !== ' -- ') {
         if (type === 'memory') {
           data = data + 'G'
-        } else if (type === 'instances') {
+        } else if (type === 'instance') {
           data = data + 'apps'
         } else {
           data = data + 'cores'

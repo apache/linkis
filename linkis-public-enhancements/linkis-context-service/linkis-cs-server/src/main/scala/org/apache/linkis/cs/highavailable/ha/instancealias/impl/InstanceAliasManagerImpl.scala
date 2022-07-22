@@ -24,7 +24,7 @@ import org.apache.linkis.rpc.conf.RPCConfiguration
 import org.apache.linkis.cs.highavailable.ha.instancealias.{InstanceAliasConverter, InstanceAliasManager}
 import org.apache.linkis.rpc.sender.eureka.EurekaRPCServerLoader
 import org.apache.linkis.rpc.utils.RPCUtils
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 

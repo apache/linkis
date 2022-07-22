@@ -17,7 +17,7 @@
 
 package org.apache.linkis.governance.common.utils
 
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.utils.{Logging, Utils}
 

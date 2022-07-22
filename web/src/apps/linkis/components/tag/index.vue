@@ -35,7 +35,7 @@
         :color="item.modifiable ? 'primary' : 'default'"
         @on-close="handleClose2"
         @on-change="handleTagChange"
-      >{{ item.key }}-{{ item.value }}
+      >{{ item.key }}{{ item.key ? '-' : '' }}{{ item.value }}
       </Tag>
       <!-- 编辑标签 -->
       <div class="addAndCancel" v-else>

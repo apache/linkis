@@ -139,7 +139,7 @@ public class DefaultLabelManagerPersistence implements LabelManagerPersistence {
 
     @Override
     public PersistenceLabel getLabel(int id) {
-        PersistenceLabel persistenceLabel =  labelManagerMapper.getLabel(id);
+        PersistenceLabel persistenceLabel = labelManagerMapper.getLabel(id);
         PersistenceUtils.setValue(persistenceLabel);
         return labelManagerMapper.getLabel(id);
     }

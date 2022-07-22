@@ -209,8 +209,8 @@ public class QueryRestfulApi {
     }
 
     /** Method list should not contain subjob, which may cause performance problems. */
-    @RequestMapping(path = "/listundone", method = RequestMethod.GET)
-    public Message listundone(
+    @RequestMapping(path = "/listundonetasks", method = RequestMethod.GET)
+    public Message listundonetasks(
             HttpServletRequest req,
             @RequestParam(value = "startDate", required = false) Long startDate,
             @RequestParam(value = "endDate", required = false) Long endDate,
@@ -280,5 +280,50 @@ public class QueryRestfulApi {
         return Message.ok()
                 .data(TaskConstant.TASKS, vos)
                 .data(JobRequestConstants.TOTAL_PAGE(), total);
+    }
+
+    /** Method list should not contain subjob, which may cause performance problems. */
+    @RequestMapping(path = "/listundone", method = RequestMethod.GET)
+    public Message listundone(
+            HttpServletRequest req,
+            @RequestParam(value = "startDate", required = false) Long startDate,
+            @RequestParam(value = "endDate", required = false) Long endDate,
+            @RequestParam(value = "pageNow", required = false) Integer pageNow,
+            @RequestParam(value = "pageSize", required = false) Integer pageSize,
+            @RequestParam(value = "startTaskID", required = false) Long taskID,
+            @RequestParam(value = "engineType", required = false) String engineType,
+            @RequestParam(value = "creator", required = false) String creator)
+            throws IOException, QueryException {
+        String username = SecurityFilter.getLoginUsername(req);
+        if (endDate == null) {
+            endDate = System.currentTimeMillis();
+        }
+        if (startDate == null) {
+            startDate = 0L;
+        }
+        if (StringUtils.isEmpty(creator)) {
+            creator = null;
+        }
+        Date sDate = new Date(startDate);
+        Date eDate = new Date(endDate);
+        if (startDate == 0L) {
+            sDate = DateUtils.addDays(eDate, -1);
+        }
+        if (sDate.getTime() == eDate.getTime()) {
+            Calendar instance = Calendar.getInstance();
+            instance.setTimeInMillis(endDate);
+            instance.add(Calendar.DAY_OF_MONTH, 1);
+            eDate = new Date(instance.getTime().getTime());
+        }
+        Integer total =
+                jobHistoryQueryService.countUndoneTasks(
+                        username,
+                        creator,
+                        sDate,
+                        eDate,
+                        engineType,
+                        queryCacheManager.getUndoneTaskMinId());
+
+        return Message.ok().data(JobRequestConstants.TOTAL_PAGE(), total);
     }
 }

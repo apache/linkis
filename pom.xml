@@ -1116,15 +1116,15 @@
                             <exclude>**/*.iml</exclude>
                             <exclude>**/*.txt</exclude>
                             <exclude>**/*.json</exclude>
-                            <exclude>web/.editorconfig</exclude>
-                            <exclude>web/.env</exclude>
-                            <exclude>web/.eslintignore</exclude>
-                            <exclude>web/.jshintrc</exclude>
 
-                            <exclude>web/public/favicon.ico</exclude>
-                            <exclude>web/dist/**</exclude>
-                            <exclude>web/node_modules/**</exclude>
-                            <exclude>web/apache-linkis-*-web-bin.tar.gz</exclude>
+                            <exclude>.editorconfig</exclude>
+                            <exclude>.env</exclude>
+                            <exclude>.eslintignore</exclude>
+                            <exclude>.jshintrc</exclude>
+                            <exclude>public/favicon.ico</exclude>
+                            <exclude>dist/**</exclude>
+                            <exclude>node_modules/**</exclude>
+                            <exclude>apache-linkis-*-web-bin.tar.gz</exclude>
 
                             <exclude>**/*.md</exclude>
                             <exclude>.git/</exclude>

@@ -35,9 +35,15 @@ STATUS_NOT_FOUND="NOT_FOUND"
 STATUS_ERR="ERROR"
 YARN_APP_STATUS_KILLED="KILLED"
 
+source $LINKIS_CONF_DIR/linkis-env.sh
+YARN_EXE_PATH="yarn"
+if [[ -d "$HADOOP_HOME" && -d $HADOOP_HOME ]]; then
+    YARN_EXE_PATH="$HADOOP_HOME/bin/yarn"
+fi
+
 function check_status() {
 	yarn_id=$1
-	result=`/appcom/Install/hadoop/bin/yarn application -status ${yarn_id} 2>/dev/null`
+	result=`$YARN_EXE_PATH application -status ${yarn_id} 2>/dev/null`
 	exitcode=$?
 	if [ ${exitcode} != "0" ];then
 		indicator=`echo "${result}" | grep -i -E "doesn't exist in RM" | wc -l`
@@ -85,7 +91,7 @@ function try_kill() {
 function do_kill(){
 	yarn_id=$1
 	echo "`date '+%Y-%m-%d %H:%M:%S'` Starting to kill yarn application id=${yarn_id}"
-	result=`/appcom/Install/hadoop/bin/yarn application -kill ${yarn_id} 2>/dev/null`
+	result=`$YARN_EXE_PATH application -kill ${yarn_id} 2>/dev/null`
 	exitcode=$?
 	if (( ${exitcode} != 0  )) ; then
 		indicator0=`echo "${result}" | grep -i -E "has already been killed|has already succeeded|has already failed|has already finished" | wc -l`

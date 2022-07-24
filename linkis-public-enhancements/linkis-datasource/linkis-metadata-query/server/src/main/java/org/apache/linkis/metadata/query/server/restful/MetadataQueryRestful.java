@@ -43,8 +43,7 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.Map;
 
-/*@Api(tags = "元数据Query")*/
-@Api(tags = "Metadata_Query")
+@Api(tags = "metadata query")
 @RestController
 @RequestMapping(value = "/metadataQuery")
 public class MetadataQueryRestful {
@@ -53,15 +52,14 @@ public class MetadataQueryRestful {
 
     @Autowired private MetadataQueryService metadataQueryService;
 
-    /*@ApiOperation(value = "数据库列表", notes = "获取数据库列表", response = Message.class)*/
-    @ApiOperation(value = "GetDatabases", notes = "Get_Databases", response = Message.class)
+    @ApiOperation(value = "getDatabases", notes = "get databases", response = Message.class)
     @ApiImplicitParams({
         @ApiImplicitParam(
                 name = "dataSourceName",
                 required = true,
                 dataType = "String",
-                value = "Data_Source_Name"),
-        @ApiImplicitParam(name = "system", required = true, dataType = "String", value = "System")
+                value = "data source name"),
+        @ApiImplicitParam(name = "system", required = true, dataType = "String", value = "system")
     })
     @RequestMapping(value = "/getDatabases", method = RequestMethod.GET)
     public Message getDatabases(
@@ -88,20 +86,19 @@ public class MetadataQueryRestful {
         }
     }
 
-    /*@ApiOperation(value = "数据库表", notes = "获取数据库表", response = Message.class)*/
-    @ApiOperation(value = "GetTables", notes = "Get_Tables", response = Message.class)
+    @ApiOperation(value = "getTables", notes = "get tables", response = Message.class)
     @ApiImplicitParams({
         @ApiImplicitParam(
                 name = "dataSourceName",
                 required = true,
                 dataType = "String",
-                value = "Data_Source_Name"),
-        @ApiImplicitParam(name = "system", required = true, dataType = "String", value = "System"),
+                value = "data source name"),
+        @ApiImplicitParam(name = "system", required = true, dataType = "String", value = "system"),
         @ApiImplicitParam(
                 name = "database",
                 required = true,
                 dataType = "String",
-                value = "Database")
+                value = "database")
     })
     @RequestMapping(value = "/getTables", method = RequestMethod.GET)
     public Message getTables(
@@ -134,21 +131,20 @@ public class MetadataQueryRestful {
         }
     }
 
-    /* @ApiOperation(value = "getTableProps", notes = "getTableProps", response = Message.class)*/
-    @ApiOperation(value = "GetTableProps", notes = "Get_Table_Props", response = Message.class)
+    @ApiOperation(value = "getTableProps", notes = "get table props", response = Message.class)
     @ApiImplicitParams({
         @ApiImplicitParam(
                 name = "dataSourceName",
                 required = true,
                 dataType = "String",
-                value = "Data_Source_Name"),
-        @ApiImplicitParam(name = "system", required = true, dataType = "String", value = "System"),
+                value = "data source name"),
+        @ApiImplicitParam(name = "system", required = true, dataType = "String", value = "system"),
         @ApiImplicitParam(
                 name = "database",
                 required = true,
                 dataType = "String",
-                value = "Database"),
-        @ApiImplicitParam(name = "table", required = true, dataType = "String", value = "Table")
+                value = "database"),
+        @ApiImplicitParam(name = "table", required = true, dataType = "String", value = "table")
     })
     @RequestMapping(value = "/getTableProps", method = RequestMethod.GET)
     public Message getTableProps(
@@ -185,20 +181,20 @@ public class MetadataQueryRestful {
         }
     }
 
-    @ApiOperation(value = "GetPartitions", notes = "Get_Partitions", response = Message.class)
+    @ApiOperation(value = "getPartitions", notes = "get partitions", response = Message.class)
     @ApiImplicitParams({
         @ApiImplicitParam(
                 name = "dataSourceName",
                 required = true,
                 dataType = "String",
-                value = "Data_Source_Name"),
-        @ApiImplicitParam(name = "system", required = true, dataType = "String", value = "System"),
+                value = "data source name"),
+        @ApiImplicitParam(name = "system", required = true, dataType = "String", value = "system"),
         @ApiImplicitParam(
                 name = "database",
                 required = true,
                 dataType = "String",
-                value = "Database"),
-        @ApiImplicitParam(name = "table", required = true, dataType = "String", value = "Table")
+                value = "database"),
+        @ApiImplicitParam(name = "table", required = true, dataType = "String", value = "table")
     })
     @RequestMapping(value = "/getPartitions", method = RequestMethod.GET)
     public Message getPartitions(
@@ -239,27 +235,27 @@ public class MetadataQueryRestful {
     }
 
     @ApiOperation(
-            value = "GetPartitionProps",
-            notes = "Get_Partition_Props",
+            value = "getPartitionProps",
+            notes = "get partition pProps",
             response = Message.class)
     @ApiImplicitParams({
         @ApiImplicitParam(
                 name = "dataSourceName",
                 required = true,
                 dataType = "String",
-                value = "Data_Source_Name"),
+                value = "data source name"),
         @ApiImplicitParam(name = "system", required = true, dataType = "String", value = "System"),
         @ApiImplicitParam(
                 name = "database",
                 required = true,
                 dataType = "String",
-                value = "Database"),
+                value = "database"),
         @ApiImplicitParam(name = "table", required = true, dataType = "String", value = "Table"),
         @ApiImplicitParam(
                 name = "partition",
                 required = true,
                 dataType = "String",
-                value = "Partition")
+                value = "partition")
     })
     @RequestMapping(value = "getPartitionProps", method = RequestMethod.GET)
     public Message getPartitionProps(
@@ -300,20 +296,20 @@ public class MetadataQueryRestful {
         }
     }
 
-    @ApiOperation(value = "GetColumns", notes = "Get_Columns", response = Message.class)
+    @ApiOperation(value = "getColumns", notes = "get columns", response = Message.class)
     @ApiImplicitParams({
         @ApiImplicitParam(
                 name = "dataSourceName",
                 required = true,
                 dataType = "String",
-                value = "Data_Source_Name"),
-        @ApiImplicitParam(name = "system", required = true, dataType = "String", value = "System"),
+                value = "data source name"),
+        @ApiImplicitParam(name = "system", required = true, dataType = "String", value = "system"),
         @ApiImplicitParam(
                 name = "database",
                 required = true,
                 dataType = "String",
-                value = "Database"),
-        @ApiImplicitParam(name = "table", required = true, dataType = "String", value = "Table")
+                value = "database"),
+        @ApiImplicitParam(name = "table", required = true, dataType = "String", value = "table")
     })
     @RequestMapping(value = "/getColumns", method = RequestMethod.GET)
     public Message getColumns(

@@ -55,8 +55,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-/*@Api(tags = "参数配置")*/
-@Api(tags = "Parameter_Configuration")
+@Api(tags = "parameter configuration")
 @RestController
 @RequestMapping(path = "/configuration")
 public class ConfigurationRestfulApi {
@@ -73,13 +72,24 @@ public class ConfigurationRestfulApi {
 
     private static final String NULL = "null";
 
-    /*    @ApiOperation(value = "添加KeyForEngine", notes = "添加KeyForEngine", response = Message.class)*/
-    @ApiOperation(value = "AddKeyForEngine", notes = "Add_Key_For_Engine", response = Message.class)
+    @ApiOperation(value = "addKeyForEngine", notes = "add key for engine", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "engineType", dataType = "String", value = "Engine_Type"),
-        @ApiImplicitParam(name = "version", dataType = "String", value = "Version"),
-        @ApiImplicitParam(name = "token", dataType = "String", value = "Token"),
-        @ApiImplicitParam(name = "keyJson", dataType = "String", value = "Key_Json")
+        @ApiImplicitParam(
+                name = "engineType",
+                required = false,
+                dataType = "String",
+                value = "engine type"),
+        @ApiImplicitParam(
+                name = "version",
+                required = false,
+                dataType = "String",
+                value = "version"),
+        @ApiImplicitParam(name = "token, required = false", dataType = "String", value = "token"),
+        @ApiImplicitParam(
+                name = "keyJson",
+                required = false,
+                dataType = "String",
+                value = "key json")
     })
     @RequestMapping(path = "/addKeyForEngine", method = RequestMethod.GET)
     public Message addKeyForEngine(
@@ -104,15 +114,26 @@ public class ConfigurationRestfulApi {
         return Message.ok();
     }
 
-    /*    @ApiOperation(value = "队列资源", notes = "参数配置中的队列资源模块返回队列资源的列及值", response = Message.class)*/
     @ApiOperation(
-            value = "GetFullTreesByAppName",
-            notes = "Get_Full_Trees_By_App_Name",
+            value = "getFullTreesByAppName",
+            notes = "get full trees by app name",
             response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "engineType", dataType = "String", value = "Engine_Type"),
-        @ApiImplicitParam(name = "version", dataType = "String", value = "Version"),
-        @ApiImplicitParam(name = "creator", dataType = "String", value = "Creator")
+        @ApiImplicitParam(
+                name = "engineType",
+                required = false,
+                dataType = "String",
+                value = "engine type"),
+        @ApiImplicitParam(
+                name = "version",
+                required = false,
+                dataType = "String",
+                value = "version"),
+        @ApiImplicitParam(
+                name = "creator",
+                required = false,
+                dataType = "String",
+                value = "creator")
     })
     @RequestMapping(path = "/getFullTreesByAppName", method = RequestMethod.GET)
     public Message getFullTreesByAppName(
@@ -135,34 +156,30 @@ public class ConfigurationRestfulApi {
         return Message.ok().data("fullTree", configTrees);
     }
 
-    /*@ApiOperation(value = "应用类型", notes = "参数配置中应用类型标签", response = Message.class)*/
-    @ApiOperation(value = "GetCategory", notes = "Get_Category", response = Message.class)
+    @ApiOperation(value = "getCategory", notes = "get category", response = Message.class)
     @RequestMapping(path = "/getCategory", method = RequestMethod.GET)
     public Message getCategory(HttpServletRequest req) {
         List<CategoryLabelVo> categoryLabelList = categoryService.getAllCategory();
         return Message.ok().data("Category", categoryLabelList);
     }
 
-    /*@ApiOperation(value = "新增应用类型", notes = "新增应用类型标签", response = Message.class)
-    @ApiImplicitParams({
-        @ApiImplicitParam(name = "categoryName", dataType = "String", required = true, value = "引用类型标签名称"),
-        @ApiImplicitParam(name = "description", dataType = "STring", required = true, value = "描述")
-    })*/
     @ApiOperation(
-            value = "CreateFirstCategory",
-            notes = "Create_First_Category",
+            value = "createFirstCategory",
+            notes = "create first category",
             response = Message.class)
     @ApiImplicitParams({
         @ApiImplicitParam(
                 name = "categoryName",
                 dataType = "String",
                 required = true,
-                value = "Category_Name"),
+                value = "category name",
+                example = "name"),
         @ApiImplicitParam(
                 name = "description",
                 dataType = "STring",
                 required = true,
-                value = "Description")
+                value = "description",
+                example = "description"),
     })
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "/createFirstCategory", method = RequestMethod.POST)
@@ -182,17 +199,14 @@ public class ConfigurationRestfulApi {
         return Message.ok();
     }
 
-    /*@ApiOperation(value = "删除配置", notes = "删除参数配置", response = Message.class)
-    @ApiImplicitParams({
-        @ApiImplicitParam(name = "categoryId", dataType = "String", required = true, value = "参数配置Id")
-    })*/
-    @ApiOperation(value = "DeleteCategory", notes = "Delete_Category", response = Message.class)
+    @ApiOperation(value = "deleteCategory", notes = "delete category", response = Message.class)
     @ApiImplicitParams({
         @ApiImplicitParam(
                 name = "categoryId",
                 dataType = "String",
                 required = true,
-                value = "Category_Id")
+                value = "category id",
+                example = "54")
     })
     @ApiOperationSupport(ignoreParameters = "jsonNode")
     @RequestMapping(path = "/deleteCategory", method = RequestMethod.POST)
@@ -205,38 +219,34 @@ public class ConfigurationRestfulApi {
         return Message.ok();
     }
 
-    /*@ApiOperation(value = "新增参数配置", notes = "添加参数配置", response = Message.class)
-    @ApiImplicitParams({
-        @ApiImplicitParam(name = "categoryId", dataType = "String", required = true, value = "参数配置Id"),
-        @ApiImplicitParam(name = "engineType", dataType = "String", required = true, value = "引擎类型"),
-        @ApiImplicitParam(name = "version", dataType = "String", required = true, value = "版本号"),
-        @ApiImplicitParam(name = "description", dataType = "String", required = true, value = "描述"),
-    })*/
     @ApiOperation(
-            value = "CreateSecondCategory",
-            notes = "Create_Second_Category",
+            value = "createSecondCategory",
+            notes = "create second category",
             response = Message.class)
     @ApiImplicitParams({
         @ApiImplicitParam(
                 name = "categoryId",
                 dataType = "String",
                 required = true,
-                value = "Category_Id"),
+                value = "category id",
+                example = "39"),
         @ApiImplicitParam(
                 name = "engineType",
                 dataType = "String",
                 required = true,
-                value = "Engine_Type"),
+                value = "engine type",
+                example = "hive"),
         @ApiImplicitParam(
                 name = "version",
                 dataType = "String",
                 required = true,
-                value = "Version"),
+                value = "Version",
+                example = "1.2.0"),
         @ApiImplicitParam(
                 name = "description",
                 dataType = "String",
                 required = true,
-                value = "Description"),
+                value = "description"),
     })
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "/createSecondCategory", method = RequestMethod.POST)
@@ -261,39 +271,32 @@ public class ConfigurationRestfulApi {
         return Message.ok();
     }
 
-    /*@ApiOperation(value = "保存队列资源", notes = "保存队列资源", response = Message.class)
-    @ApiImplicitParams({
-        @ApiImplicitParam(name = "creator", dataType = "String", required = true, value = "应用类型名称"),
-        @ApiImplicitParam(name = "engineType", dataType = "String", required = true, value = "引擎类型"),
-        @ApiImplicitParam(name = "fullTree", dataType = "List", required = true, value = "应用类型下的详细信息"),
-        @ApiImplicitParam(name = "name", dataType = "String", required = true, value = "队列资源名称,属于fullTree中的内容"),
-        @ApiImplicitParam(name = "description", dataType = "String", required = true, value = "描述，属于fullTree中的内容"),
-        @ApiImplicitParam(name = "settings", dataType = "List", required = true, value = "队列资源中的详细内容，属于fullTree中的内容")
-    })*/
-    @ApiOperation(value = "SaveFullTree", notes = "Save_Full_Tree", response = Message.class)
+    @ApiOperation(value = "saveFullTree", notes = "save full tree", response = Message.class)
     @ApiImplicitParams({
         @ApiImplicitParam(
                 name = "creator",
                 dataType = "String",
                 required = true,
-                value = "Creator"),
+                value = "creator",
+                example = "xwzTest"),
         @ApiImplicitParam(
                 name = "engineType",
                 dataType = "String",
                 required = true,
-                value = "Engine_Type"),
+                value = "engine type",
+                example = "python-ss"),
         @ApiImplicitParam(
                 name = "fullTree",
                 dataType = "List",
                 required = true,
-                value = "Full_Tree"),
-        @ApiImplicitParam(name = "name", dataType = "String", required = true, value = "Name"),
+                value = "full tree"),
+        @ApiImplicitParam(name = "name", dataType = "String", required = true, value = "name"),
         @ApiImplicitParam(
                 name = "description",
                 dataType = "String",
                 required = true,
-                value = "Description"),
-        @ApiImplicitParam(name = "settings", dataType = "List", required = true, value = "Settings")
+                value = "description"),
+        @ApiImplicitParam(name = "settings", dataType = "List", required = true, value = "settings")
     })
     @ApiOperationSupport(ignoreParameters = {"json"})
     @RequestMapping(path = "/saveFullTree", method = RequestMethod.POST)
@@ -335,10 +338,9 @@ public class ConfigurationRestfulApi {
         return message;
     }
 
-    /*@ApiOperation(value = "引擎类型列表", notes = "获取引擎类型列表", response = Message.class)*/
     @ApiOperation(
-            value = "ListAllEngineType",
-            notes = "List_All_Engine_Type",
+            value = "listAllEngineType",
+            notes = "list all engine type",
             response = Message.class)
     @RequestMapping(path = "/engineType", method = RequestMethod.GET)
     public Message listAllEngineType(HttpServletRequest request) {
@@ -346,26 +348,21 @@ public class ConfigurationRestfulApi {
         return Message.ok().data("engineType", engineType);
     }
 
-    /*@ApiOperation(value = "更新类别信息", notes = "更新类别信息", response = Message.class)
-    @ApiImplicitParams({
-        @ApiImplicitParam(name = "description", dataType = "String", required = true, value = "description"),
-        @ApiImplicitParam(name = "categoryId", dataType = "String", required = true, value = "categoryId")
-    })*/
     @ApiOperation(
-            value = "UpdateCategoryInfo",
-            notes = "Update_Category_Info",
+            value = "updateCategoryInfo",
+            notes = "update category info",
             response = Message.class)
     @ApiImplicitParams({
         @ApiImplicitParam(
                 name = "description",
                 dataType = "String",
                 required = true,
-                value = "Description"),
+                value = "description"),
         @ApiImplicitParam(
                 name = "categoryId",
                 dataType = "String",
                 required = true,
-                value = "Category_Id")
+                value = "category id")
     })
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "/updateCategoryInfo", method = RequestMethod.POST)
@@ -387,26 +384,29 @@ public class ConfigurationRestfulApi {
         return Message.ok();
     }
 
-    /*@ApiOperation(value = "rpc测试", notes = "rpc测试", response = Message.class)*/
+    @ApiOperation(value = "rpcTest", notes = "rpc test", response = Message.class)
     @ApiImplicitParams({
         @ApiImplicitParam(
                 name = "creator",
                 dataType = "String",
-                required = true,
-                value = "Creator"),
+                required = false,
+                value = "creator"),
         @ApiImplicitParam(
                 name = "engineType",
                 dataType = "String",
-                required = true,
-                value = "Engine_Type"),
+                required = false,
+                value = "engine type"),
         @ApiImplicitParam(
                 name = "username",
                 dataType = "String",
-                required = true,
-                value = "User_Name"),
-        @ApiImplicitParam(name = "version", dataType = "String", required = true, value = "Version")
+                required = false,
+                value = "user name"),
+        @ApiImplicitParam(
+                name = "version",
+                dataType = "String",
+                required = false,
+                value = "version")
     })
-    @ApiOperation(value = "RpcTest", notes = "Rpc_Test", response = Message.class)
     @RequestMapping(path = "/rpcTest", method = RequestMethod.GET)
     public Message rpcTest(
             @RequestParam(value = "username", required = false) String username,
@@ -432,24 +432,28 @@ public class ConfigurationRestfulApi {
         }
     }
 
-    /*@ApiOperation(value = "GetKeyValue", notes = "Get_Key_Value", response = Message.class)*/
+    @ApiOperation(value = "getKeyValue", notes = "get key value", response = Message.class)
     @ApiImplicitParams({
         @ApiImplicitParam(
                 name = "creator",
                 dataType = "String",
-                required = true,
-                value = "Creator"),
+                required = false,
+                value = "creator"),
         @ApiImplicitParam(
                 name = "engineType",
                 dataType = "String",
-                required = true,
-                value = "Engine_Type"),
+                required = false,
+                value = "engine type"),
         @ApiImplicitParam(
                 name = "configKey",
                 dataType = "String",
-                required = true,
-                value = "Config_Key"),
-        @ApiImplicitParam(name = "version", dataType = "String", required = true, value = "Version")
+                required = false,
+                value = "config key"),
+        @ApiImplicitParam(
+                name = "version",
+                dataType = "String",
+                required = false,
+                value = "version")
     })
     @RequestMapping(path = "/keyvalue", method = RequestMethod.GET)
     public Message getKeyValue(
@@ -479,41 +483,33 @@ public class ConfigurationRestfulApi {
         return message;
     }
 
-    /*@ApiOperation(value = "保存键值", notes = "保存键值", response = Message.class)
-    @ApiImplicitParams({
-        @ApiImplicitParam(name = "engineType", dataType = "String", required = true, value = "engineType"),
-        @ApiImplicitParam(name = "version", dataType = "String", required = true, value = "version"),
-        @ApiImplicitParam(name = "creator", dataType = "String", required = true, value = "creator"),
-        @ApiImplicitParam(name = "configKey", dataType = "String", required = true, value = "configKey"),
-        @ApiImplicitParam(name = "configValue", dataType = "String", required = true, value = "configValue")
-    })*/
-    @ApiOperation(value = "SaveKeyValue", notes = "Save_Key_Value", response = Message.class)
+    @ApiOperation(value = "saveKeyValue", notes = "save key value", response = Message.class)
     @ApiImplicitParams({
         @ApiImplicitParam(
                 name = "engineType",
                 dataType = "String",
                 required = true,
-                value = "Engine_Type"),
+                value = "engine type"),
         @ApiImplicitParam(
                 name = "version",
                 dataType = "String",
                 required = true,
-                value = "Version"),
+                value = "version"),
         @ApiImplicitParam(
                 name = "creator",
                 dataType = "String",
                 required = true,
-                value = "Creator"),
+                value = "creator"),
         @ApiImplicitParam(
                 name = "configKey",
                 dataType = "String",
                 required = true,
-                value = "Config_Key"),
+                value = "config key"),
         @ApiImplicitParam(
                 name = "configValue",
                 dataType = "String",
                 required = true,
-                value = "Config_Value")
+                value = "config value")
     })
     @ApiOperationSupport(ignoreParameters = {"json"})
     @RequestMapping(path = "/keyvalue", method = RequestMethod.POST)
@@ -545,35 +541,28 @@ public class ConfigurationRestfulApi {
         return Message.ok().data("configValue", configValue);
     }
 
-    /*@ApiOperation(value = "删除键值", notes = "删除键值", response = Message.class)
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "engineType", dataType = "String", required = true, value = "Engine_Type"),
-            @ApiImplicitParam(name = "version", dataType = "String", required = true, value = "Version"),
-            @ApiImplicitParam(name = "creator", dataType = "String", required = true, value = "Creator"),
-            @ApiImplicitParam(name = "configKey", dataType = "String", required = true, value = "Config_Key")
-    })*/
-    @ApiOperation(value = "DeleteKeyValue", notes = "Delete_Key_Value", response = Message.class)
+    @ApiOperation(value = "deleteKeyValue", notes = "delete key value", response = Message.class)
     @ApiImplicitParams({
         @ApiImplicitParam(
                 name = "engineType",
                 dataType = "String",
                 required = true,
-                value = "Engine_Type"),
+                value = "engine type"),
         @ApiImplicitParam(
                 name = "version",
                 dataType = "String",
                 required = true,
-                value = "Version"),
+                value = "version"),
         @ApiImplicitParam(
                 name = "creator",
                 dataType = "String",
                 required = true,
-                value = "Creator"),
+                value = "creator"),
         @ApiImplicitParam(
                 name = "configKey",
                 dataType = "String",
                 required = true,
-                value = "Config_Key")
+                value = "config key")
     })
     @ApiOperationSupport(ignoreParameters = {"json"})
     @RequestMapping(path = "/keyvalue", method = RequestMethod.DELETE)

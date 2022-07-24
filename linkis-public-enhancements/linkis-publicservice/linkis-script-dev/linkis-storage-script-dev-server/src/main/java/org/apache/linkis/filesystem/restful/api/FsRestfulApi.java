@@ -71,8 +71,7 @@ import java.util.*;
 import static org.apache.linkis.filesystem.conf.WorkSpaceConfiguration.*;
 import static org.apache.linkis.filesystem.constant.WorkSpaceConstants.*;
 
-/*@Api(tags = "文件系统")*/
-@Api(tags = "File_System")
+@Api(tags = "file system")
 @RestController
 @RequestMapping(path = "/filesystem")
 public class FsRestfulApi {
@@ -114,17 +113,13 @@ public class FsRestfulApi {
         return (requestPath.contains(workspacePath)) || (requestPath.contains(enginconnPath));
     }
 
-    /*@ApiOperation(value = "根路径", notes = "获取根路径", response = Message.class)
-    @ApiImplicitParams({
-        @ApiImplicitParam(name = "pathType", required = false, dataType = "String", value = "文件类型")
-    })*/
-    @ApiOperation(value = "GetUserRootPath", notes = "Get_User_Root_Path", response = Message.class)
+    @ApiOperation(value = "getUserRootPath", notes = "get user root path", response = Message.class)
     @ApiImplicitParams({
         @ApiImplicitParam(
                 name = "pathType",
                 required = false,
                 dataType = "String",
-                value = "Path_Type")
+                value = "path type")
     })
     @RequestMapping(path = "/getUserRootPath", method = RequestMethod.GET)
     public Message getUserRootPath(
@@ -163,8 +158,7 @@ public class FsRestfulApi {
         return Message.ok().data(String.format("user%sRootPath", returnType), path);
     }
 
-    /*@ApiOperation(value = "创建新的Dir", notes = "创建新的Dir", response = Message.class)*/
-    @ApiOperation(value = "CreateNewDir", notes = "Create_New_Dir", response = Message.class)
+    @ApiOperation(value = "createNewDir", notes = "create new dir", response = Message.class)
     @ApiOperationSupport(ignoreParameters = {"json"})
     @ApiImplicitParams({
         @ApiImplicitParam(name = "path", required = true, dataType = "String", value = "Path")
@@ -191,11 +185,7 @@ public class FsRestfulApi {
         return Message.ok();
     }
 
-    /*@ApiOperation(value = "创建新的文件", notes = "创建新的文件", response = Message.class)
-    @ApiImplicitParams({
-        @ApiImplicitParam(name = "path", required = true, dataType = "String", value = "路径")
-    })*/
-    @ApiOperation(value = "CreateNewFile", notes = "Create_New_File", response = Message.class)
+    @ApiOperation(value = "createNewFile", notes = "create new file", response = Message.class)
     @ApiImplicitParams({
         @ApiImplicitParam(name = "path", required = true, dataType = "String", value = "Path")
     })
@@ -221,15 +211,18 @@ public class FsRestfulApi {
         return Message.ok();
     }
 
-    /*@ApiOperation(value = "重新命名", notes = "重新给文件命名", response = Message.class)
+    @ApiOperation(value = "rename", notes = "rename", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "oldDest", required = false, dataType = "String", value = "旧名称"),
-        @ApiImplicitParam(name = "newDest", required = false, dataType = "String", value = "新名称")
-    })*/
-    @ApiOperation(value = "Rename", notes = "Rename", response = Message.class)
-    @ApiImplicitParams({
-        @ApiImplicitParam(name = "oldDest", dataType = "String", value = "Old_Dest"),
-        @ApiImplicitParam(name = "newDest", dataType = "String", value = "New_Dest")
+        @ApiImplicitParam(
+                name = "oldDest",
+                required = true,
+                dataType = "String",
+                value = "old dest"),
+        @ApiImplicitParam(
+                name = "newDest",
+                required = true,
+                dataType = "String",
+                value = "new dest")
     })
     @ApiOperationSupport(ignoreParameters = {"json"})
     @RequestMapping(path = "/rename", method = RequestMethod.POST)
@@ -267,7 +260,19 @@ public class FsRestfulApi {
         return Message.ok();
     }
 
-    @ApiOperation(value = "Move", notes = "Move", response = Message.class)
+    @ApiOperation(value = "move", notes = "move", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(
+                name = "filePath",
+                required = true,
+                dataType = "String",
+                value = "file path"),
+        @ApiImplicitParam(
+                name = "newDest",
+                required = true,
+                dataType = "String",
+                value = "new dest")
+    })
     @ApiOperationSupport(ignoreParameters = {"json"})
     @RequestMapping(path = "/move", method = RequestMethod.POST)
     public Message move(HttpServletRequest req, @RequestBody JsonNode json)
@@ -308,23 +313,14 @@ public class FsRestfulApi {
         return Message.ok();
     }
 
-    /*@ApiOperation(value = "上传", notes = "上传文件，可传多个文件", response = Message.class)
+    @ApiOperation(value = "upload", notes = "upload", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "path", required = false, dataType = "String", value = "地址"),
+        @ApiImplicitParam(name = "path", required = true, dataType = "String", value = "path"),
         @ApiImplicitParam(
                 name = "file",
-                required = false,
+                required = true,
                 dataType = "List<MultipartFile> ",
-                value = "文件")
-    })*/
-    @ApiOperation(value = "Upload", notes = "Upload", response = Message.class)
-    @ApiImplicitParams({
-        @ApiImplicitParam(name = "path", required = false, dataType = "String", value = "Path"),
-        @ApiImplicitParam(
-                name = "file",
-                required = false,
-                dataType = "List<MultipartFile> ",
-                value = "File")
+                value = "file")
     })
     @ApiOperationSupport(ignoreParameters = {"json"})
     @RequestMapping(path = "/upload", method = RequestMethod.POST)
@@ -357,13 +353,9 @@ public class FsRestfulApi {
         return Message.ok();
     }
 
-    /*@ApiOperation(value = "删除dir文件或者文件", notes = "删除dir文件或者文件", response = Message.class)
+    @ApiOperation(value = "deleteDirOrFile", notes = "delete dir or file", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "path", required = true, dataType = "String", value = "地址")
-    })*/
-    @ApiOperation(value = "DeleteDirOrFile", notes = "Delete_Dir_Or_File", response = Message.class)
-    @ApiImplicitParams({
-        @ApiImplicitParam(name = "path", required = true, dataType = "String", value = "Path")
+        @ApiImplicitParam(name = "path", required = true, dataType = "String", value = "path")
     })
     @ApiOperationSupport(ignoreParameters = {"json"})
     @RequestMapping(path = "/deleteDirOrFile", method = RequestMethod.POST)
@@ -391,13 +383,9 @@ public class FsRestfulApi {
         return Message.ok();
     }
 
-    /*@ApiOperation(value = "函数列表", notes = "获取udf函数列表", response = Message.class)
+    @ApiOperation(value = "getDirFileTrees", notes = "get dir file trees", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "path", required = true, dataType = "String", value = "请求路径")
-    })*/
-    @ApiOperation(value = "GetDirFileTrees", notes = "Get_Dir_File_Trees", response = Message.class)
-    @ApiImplicitParams({
-        @ApiImplicitParam(name = "path", required = true, dataType = "String", value = "Path")
+        @ApiImplicitParam(name = "path", required = false, dataType = "String", value = "path")
     })
     @ApiOperationSupport(ignoreParameters = {"json"})
     @RequestMapping(path = "/getDirFileTrees", method = RequestMethod.GET)
@@ -449,16 +437,12 @@ public class FsRestfulApi {
         return Message.ok().data("dirFileTrees", dirFileTree);
     }
 
-    /*@ApiOperation(value = "下载", notes = "下载", response = Message.class)
+    @ApiOperation(value = "download", notes = "download", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "path", required = true, dataType = "String", value = "地址"),
-        @ApiImplicitParam(name = "charset", required = true, dataType = "String", value = "字符集")
-    })*/
-    @ApiOperation(value = "Download", notes = "Download", response = Message.class)
-    @ApiImplicitParams({
-        @ApiImplicitParam(name = "path", required = true, dataType = "String", value = "Path"),
-        @ApiImplicitParam(name = "charset", required = true, dataType = "String", value = "Charset")
+        @ApiImplicitParam(name = "path", required = true, dataType = "String", value = "path"),
+        @ApiImplicitParam(name = "charset", required = true, dataType = "String", value = "charset")
     })
+    @ApiOperationSupport(ignoreParameters = {"json"})
     @RequestMapping(path = "/download", method = RequestMethod.POST)
     public void download(
             HttpServletRequest req,
@@ -518,13 +502,9 @@ public class FsRestfulApi {
         }
     }
 
-    /*@ApiOperation(value = "是否存在", notes = "是否存在", response = Message.class)
+    @ApiOperation(value = "isExist", notes = "is exist", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "path", required = true, dataType = "String", value = "地址")
-    })*/
-    @ApiOperation(value = "IsExist", notes = "Is_Exist", response = Message.class)
-    @ApiImplicitParams({
-        @ApiImplicitParam(name = "path", required = true, dataType = "String", value = "Path")
+        @ApiImplicitParam(name = "path", required = false, dataType = "String", value = "path")
     })
     @RequestMapping(path = "/isExist", method = RequestMethod.GET)
     public Message isExist(
@@ -542,19 +522,15 @@ public class FsRestfulApi {
         return Message.ok().data("isExist", fileSystem.exists(fsPath));
     }
 
-    /*@ApiOperation(value = "文件信息", notes = "文件信息", response = Message.class)
-    @ApiImplicitParams({
-        @ApiImplicitParam(name = "path", required = true, dataType = "String", value = "地址"),
-        @ApiImplicitParam(name = "pageSize", required = false, dataType = "Integer", value = "页面大小")
-    })*/
     @ApiOperation(value = "FileInfo", notes = "File_Info", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "path", required = true, dataType = "String", value = "Path"),
+        @ApiImplicitParam(name = "path", required = false, dataType = "String", value = "Path"),
         @ApiImplicitParam(
                 name = "pageSize",
-                required = false,
+                required = true,
                 dataType = "Integer",
-                value = "Page_Size")
+                defaultValue = "5000",
+                value = "page size")
     })
     @RequestMapping(path = "/fileInfo", method = RequestMethod.GET)
     public Message fileInfo(
@@ -593,27 +569,27 @@ public class FsRestfulApi {
         }
     }
 
-    /*@ApiOperation(value = "打开文件", notes = "打开文件", response = Message.class)
+    @ApiOperation(value = "openFile", notes = "open file", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "path", required = true, dataType = "String", value = "地址"),
-        @ApiImplicitParam(name = "page", required = false, dataType = "Integer", value = "页码"),
+        @ApiImplicitParam(name = "path", required = false, dataType = "String", value = "Path"),
         @ApiImplicitParam(
-                name = "pageSize",
-                required = false,
+                name = "page",
+                required = true,
+                defaultValue = "1",
                 dataType = "Integer",
-                value = "页面大小"),
-        @ApiImplicitParam(name = "charset", required = false, dataType = "String", value = "字符集")
-    })*/
-    @ApiOperation(value = "OpenFile", notes = "Open_File", response = Message.class)
-    @ApiImplicitParams({
-        @ApiImplicitParam(name = "path", dataType = "String", value = "Path"),
-        @ApiImplicitParam(name = "page", required = true, dataType = "Integer", value = "Page"),
+                value = "page"),
         @ApiImplicitParam(
                 name = "pageSize",
                 required = true,
                 dataType = "Integer",
-                value = "Page_Size"),
-        @ApiImplicitParam(name = "charset", required = true, dataType = "String", value = "Charset")
+                defaultValue = "5000",
+                value = "page size"),
+        @ApiImplicitParam(
+                name = "charset",
+                required = true,
+                defaultValue = "utf-8",
+                dataType = "String",
+                value = "charset")
     })
     @RequestMapping(path = "/openFile", method = RequestMethod.GET)
     public Message openFile(
@@ -661,31 +637,20 @@ public class FsRestfulApi {
      * @return
      * @throws IOException
      */
-    /*@ApiOperation(value = "保存脚本", notes = "保存脚本", response = Message.class)
+    @ApiOperation(value = "saveScript", notes = "save script", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "path", required = true, dataType = "String", value = "地址"),
+        @ApiImplicitParam(name = "path", required = true, dataType = "String", value = "path"),
         @ApiImplicitParam(
                 name = "scriptContent",
                 required = false,
                 dataType = "String",
-        value = "页码"),
-        @ApiImplicitParam(name = "params", required = false, dataType = "Object", value = "页面大小"),
-        @ApiImplicitParam(name = "charset", required = false, dataType = "String", value = "字符集")
-    })*/
-    @ApiOperation(value = "SaveScript", notes = "Save_Script", response = Message.class)
-    @ApiImplicitParams({
-        @ApiImplicitParam(name = "path", required = false, dataType = "String", value = "Path"),
-        @ApiImplicitParam(
-                name = "scriptContent",
-                required = false,
-                dataType = "String",
-                value = "Script_Content"),
-        @ApiImplicitParam(name = "params", required = false, dataType = "Object", value = "Params"),
+                value = "script content"),
+        @ApiImplicitParam(name = "params", required = false, dataType = "Object", value = "params"),
         @ApiImplicitParam(
                 name = "charset",
                 required = false,
                 dataType = "String",
-                value = "Charset")
+                value = "charset")
     })
     @ApiOperationSupport(ignoreParameters = {"json"})
     @RequestMapping(path = "/saveScript", method = RequestMethod.POST)
@@ -731,51 +696,63 @@ public class FsRestfulApi {
     }
 
     @ApiOperation(
-            value = "ResultsetToExcel",
-            notes = "Resultset_To_Excel",
+            value = "resultsetToExcel",
+            notes = "resultset to excel",
             response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "path", dataType = "String", value = "Path"),
+        @ApiImplicitParam(name = "path", required = false, dataType = "String", value = "path"),
         @ApiImplicitParam(
                 name = "charset",
                 required = true,
                 dataType = "String",
-                value = "Charset"),
+                defaultValue = "utf-8",
+                value = "charset"),
         @ApiImplicitParam(
                 name = "outputFileType",
                 required = true,
                 dataType = "String",
-                value = "Output_File_Type"),
+                defaultValue = "csv",
+                value = "output file type"),
         @ApiImplicitParam(
                 name = "csvSeperator",
                 required = true,
                 dataType = "String",
-                value = "Csv_Seperator"),
+                defaultValue = ",",
+                value = "csv seperator"),
         @ApiImplicitParam(
                 name = "quoteRetouchEnable",
                 dataType = "boolean",
-                value = "Quote_Retouch_Enable"),
+                required = false,
+                value = "quote retouch enable"),
         @ApiImplicitParam(
                 name = "outputFileName",
                 required = true,
                 dataType = "String",
-                value = "Output_File_Name"),
+                defaultValue = "downloadResultset",
+                value = "output file name"),
         @ApiImplicitParam(
                 name = "sheetName",
                 required = true,
                 dataType = "String",
-                value = "Sheet_Name"),
+                defaultValue = "result",
+                value = "sheet name"),
         @ApiImplicitParam(
                 name = "nullValue",
                 required = true,
                 dataType = "String",
-                value = "Null_Value"),
-        @ApiImplicitParam(name = "limit", required = true, dataType = "Integer", value = "Limit"),
+                defaultValue = "NULL",
+                value = "null value"),
+        @ApiImplicitParam(
+                name = "limit",
+                required = true,
+                dataType = "Integer",
+                value = "limit",
+                defaultValue = "0"),
         @ApiImplicitParam(
                 name = "autoFormat",
-                required = true,
+                required = false,
                 dataType = "Boolean",
-                value = "Auto_Format")
+                value = "auto format")
     })
     @RequestMapping(path = "resultsetToExcel", method = RequestMethod.GET)
     public void resultsetToExcel(
@@ -885,6 +862,36 @@ public class FsRestfulApi {
         }
     }
 
+    @ApiOperation(
+            value = "resultsetToExcel",
+            notes = "resultset to excel",
+            response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "path", required = false, dataType = "String", value = "path"),
+        @ApiImplicitParam(
+                name = "outputFileName",
+                required = true,
+                dataType = "String",
+                defaultValue = "downloadResultset",
+                value = "output file name"),
+        @ApiImplicitParam(
+                name = "nullValue",
+                required = true,
+                dataType = "String",
+                defaultValue = "NULL",
+                value = "null value"),
+        @ApiImplicitParam(
+                name = "limit",
+                required = true,
+                dataType = "Integer",
+                value = "limit",
+                defaultValue = "0"),
+        @ApiImplicitParam(
+                name = "autoFormat",
+                required = false,
+                dataType = "Boolean",
+                value = "auto format")
+    })
     @RequestMapping(path = "resultsetsToExcel", method = RequestMethod.GET)
     public void resultsetsToExcel(
             HttpServletRequest req,
@@ -963,26 +970,39 @@ public class FsRestfulApi {
         }
     }
 
-    @ApiOperation(value = "Formate", notes = "Formate", response = Message.class)
+    @ApiOperation(value = "formate", notes = "formate", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "path", dataType = "String", value = "Path"),
+        @ApiImplicitParam(name = "path", required = false, dataType = "String", value = "Path"),
         @ApiImplicitParam(
                 name = "encoding",
                 required = true,
                 dataType = "String",
-                value = "Encoding"),
+                defaultValue = "utf-8",
+                value = "encoding"),
         @ApiImplicitParam(
                 name = "fieldDelimiter",
                 required = true,
                 dataType = "String",
-                value = "Field_Delimiter"),
+                defaultValue = ",",
+                value = "field delimiter"),
         @ApiImplicitParam(
                 name = "hasHeader",
                 required = true,
+                defaultValue = "false",
                 dataType = "Boolean",
-                value = "Has_Header"),
-        @ApiImplicitParam(name = "quote", required = true, dataType = "String", value = "Quote"),
-        @ApiImplicitParam(name = "escapeQuotes", dataType = "Boolean", value = "Escape_Quotes")
+                value = "has header"),
+        @ApiImplicitParam(
+                name = "quote",
+                required = true,
+                defaultValue = "\"",
+                dataType = "String",
+                value = "quote"),
+        @ApiImplicitParam(
+                name = "escapeQuotes",
+                required = true,
+                defaultValue = "false",
+                dataType = "Boolean",
+                value = "escape quotes")
     })
     @RequestMapping(path = "formate", method = RequestMethod.GET)
     public Message formate(
@@ -1047,10 +1067,14 @@ public class FsRestfulApi {
         }
     }
 
-    @ApiOperation(value = "OpenLog", notes = "Open_Log", response = Message.class)
+    @ApiOperation(value = "openLog", notes = "open log", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "path", dataType = "String", value = "Path"),
-        @ApiImplicitParam(name = "proxyUser", dataType = "String", value = "Proxy_User")
+        @ApiImplicitParam(name = "path", required = false, dataType = "String", value = "path"),
+        @ApiImplicitParam(
+                name = "proxyUser",
+                required = false,
+                dataType = "String",
+                value = "proxy user")
     })
     @RequestMapping(path = "/openLog", method = RequestMethod.GET)
     public Message openLog(

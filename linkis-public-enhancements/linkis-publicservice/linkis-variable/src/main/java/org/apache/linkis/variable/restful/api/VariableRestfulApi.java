@@ -44,8 +44,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.List;
 
-/*@Api(tags = "全局变量")*/
-@Api(tags = "Global_Variable")
+@Api(tags = "global variable")
 @RestController
 @RequestMapping(path = "/variable")
 public class VariableRestfulApi {
@@ -74,16 +73,10 @@ public class VariableRestfulApi {
         variableService.removeGlobalVariable(keyID);
         return Message.ok();
     }*/
-    /*@ApiOperation(value = "全局变量列表", notes = "获取全局变量清单", response = Message.class)*/
     @ApiOperation(
-            value = "ListGlobalVariable",
-            notes = "List_Global_Variable",
+            value = "listGlobalVariable",
+            notes = "list global variable",
             response = Message.class)
-    /* @ApiOperationSupport(
-            responses = @DynamicResponseParameters(properties = {
-                    @DynamicParameter(value = "结果集",name = "data",dataTypeClass = Message.class)
-            })
-    )*/
     @RequestMapping(path = "listGlobalVariable", method = RequestMethod.GET)
     public Message listGlobalVariable(HttpServletRequest req) {
         String userName = ModuleUserUtils.getOperationUser(req, "listGlobalVariable ");
@@ -91,24 +84,40 @@ public class VariableRestfulApi {
         return Message.ok().data("globalVariables", kvs);
     }
 
-    /* @ApiOperation(value = "saveGlobalVariable", notes = "saveGlobalVariable", response = Message.class)
-    @ApiImplicitParams({
-        @ApiImplicitParam(name = "globalVariables", dataType = "Map", required = true, value = "新增参数数据一对多key:globalVariables,value:List"),
-        @ApiImplicitParam(name = "key", dataType = "String", required = true, value = "参数名称，属于globalVariables"),
-        @ApiImplicitParam(name = "value", dataType = "List", required = true, value = "变量值，跟key属于键值对 属于被globalVariables包含")
-    })*/
     @ApiOperation(
-            value = "SaveGlobalVariable",
-            notes = "Save_Global_Variable",
+            value = "saveGlobalVariable",
+            notes = "save global variable",
             response = Message.class)
     @ApiImplicitParams({
         @ApiImplicitParam(
                 name = "globalVariables",
                 dataType = "Map",
                 required = true,
-                value = "Global_Variables"),
-        @ApiImplicitParam(name = "key", dataType = "String", required = true, value = "Key"),
-        @ApiImplicitParam(name = "value", dataType = "List", required = true, value = "Value")
+                value = "global variables"),
+        @ApiImplicitParam(
+                name = "key",
+                dataType = "String",
+                required = true,
+                value = "key",
+                example = "key"),
+        @ApiImplicitParam(
+                name = "value",
+                dataType = "List",
+                required = true,
+                value = "Value",
+                example = "value"),
+        @ApiImplicitParam(
+                name = "keyID",
+                dataType = "String",
+                required = true,
+                value = "key id",
+                example = "2"),
+        @ApiImplicitParam(
+                name = "valueID",
+                dataType = "List",
+                required = true,
+                value = "value id",
+                example = "2")
     })
     @ApiOperationSupport(ignoreParameters = {"json"})
     @RequestMapping(path = "saveGlobalVariable", method = RequestMethod.POST)

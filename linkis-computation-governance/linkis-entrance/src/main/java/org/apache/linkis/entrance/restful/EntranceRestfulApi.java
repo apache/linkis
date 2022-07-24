@@ -194,7 +194,11 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
 
     @ApiOperation(value = "status", notes = "get task stats", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "taskID", dataType = "String", value = " task id"),
+        @ApiImplicitParam(
+                name = "taskID",
+                required = false,
+                dataType = "String",
+                value = " task id"),
         @ApiImplicitParam(name = "id", dataType = "String", required = true, value = "execute id ")
     })
     @Override
@@ -280,7 +284,9 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
             value = "progressWithResource",
             notes = "get progress  and resource info",
             response = Message.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "id", dataType = "String", value = "execute id")})
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "id", required = true, dataType = "String", value = "execute id")
+    })
     @Override
     @RequestMapping(path = "/{id}/progressWithResource", method = RequestMethod.GET)
     public Message progressWithResource(@PathVariable("id") String id) {
@@ -388,7 +394,9 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
     }
 
     @ApiOperation(value = "log", notes = "get task log", response = Message.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "id", dataType = "String", value = "execute id")})
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "id", required = true, dataType = "String", value = "execute id")
+    })
     @Override
     @RequestMapping(path = "/{id}/log", method = RequestMethod.GET)
     public Message log(HttpServletRequest req, @PathVariable("id") String id) {
@@ -494,7 +502,11 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
 
     @ApiOperation(value = "killJobs", notes = "kill jobs", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "strongExecId", dataType = "String", value = "strong execte id")
+        @ApiImplicitParam(
+                name = "strongExecId",
+                required = true,
+                dataType = "String",
+                value = "strong execte id")
     })
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @Override
@@ -590,11 +602,10 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
         return Message.ok("success").data("messages", messages);
     }
 
-
     @ApiOperation(value = "kill", notes = "kill", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "id", dataType = "String", value = "excute id"),
-        @ApiImplicitParam(name = "taskID", dataType = "String", value = "task id")
+        @ApiImplicitParam(name = "id", required = true, dataType = "String", value = "excute id"),
+        @ApiImplicitParam(name = "taskID", required = false, dataType = "String", value = "task id")
     })
     @Override
     @RequestMapping(path = "/{id}/kill", method = RequestMethod.GET)
@@ -655,9 +666,10 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
         return message;
     }
 
-
     @ApiOperation(value = "pause ", notes = "puase a task job", response = Message.class)
-    @ApiImplicitParams({@ApiImplicitParam(name = "id", dataType = "String", value = "excete id")})
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "id", required = true, dataType = "String", value = "excete id")
+    })
     @Override
     @RequestMapping(path = "/{id}/pause", method = RequestMethod.GET)
     public Message pause(@PathVariable("id") String id) {

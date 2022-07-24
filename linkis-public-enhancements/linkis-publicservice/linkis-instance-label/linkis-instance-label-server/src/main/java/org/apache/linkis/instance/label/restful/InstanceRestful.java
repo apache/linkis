@@ -53,7 +53,7 @@ import io.swagger.annotations.ApiOperation;
 
 import java.util.*;
 
-@Api(tags = "实例管理")
+@Api(tags = "instance restful")
 @RestController
 @RequestMapping(path = "/microservice")
 public class InstanceRestful {
@@ -65,7 +65,10 @@ public class InstanceRestful {
 
     @Autowired private DefaultInsLabelService insLabelService;
 
-    @ApiOperation(value = "微服务实例列表", notes = "获取微服务管理模块实例列表可获取单个或多个默认全部", response = Message.class)
+    @ApiOperation(
+            value = "listAllInstanceWithLabel",
+            notes = "list all instance with label",
+            response = Message.class)
     @RequestMapping(path = "/allInstance", method = RequestMethod.GET)
     public Message listAllInstanceWithLabel(HttpServletRequest req) throws Exception {
         String userName = ModuleUserUtils.getOperationUser(req);
@@ -84,24 +87,24 @@ public class InstanceRestful {
         return Message.ok().data("instances", instanceVos);
     }
 
-    @ApiOperation(value = "编辑微服务实例", notes = "编辑或修改下微服务管理中的实例", response = Message.class)
-    /*  @ApiOperationSupport(
-            responses = @DynamicResponseParameters(properties = {
-                    @DynamicParameter(value = "结果集",name = "data",dataTypeClass = Message.class)
-            })
-    )*/
+    @ApiOperation(
+            value = "upDateInstanceLabel",
+            notes = "up date instance label",
+            response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "applicationName", dataType = "String", value = "引擎标签"),
-        @ApiImplicitParam(name = "instance", dataType = "String", value = "引擎实例名称"),
-        @ApiImplicitParam(name = "labels", dataType = "List", value = "引擎实例更新参数内容，集合存放的是map类型的"),
         @ApiImplicitParam(
-                name = "labelKey",
+                name = "applicationName",
+                required = false,
                 dataType = "String",
-                value = "添加内容里面的标签，属于labels集合 内 map里的key"),
+                value = "application name"),
         @ApiImplicitParam(
-                name = "stringValue",
+                name = "instance",
+                required = false,
                 dataType = "String",
-                value = "添加内容里面的标签对于的值，属于labels集合 内 map里的value")
+                value = "instance"),
+        @ApiImplicitParam(name = "labels", required = false, dataType = "List", value = "labels"),
+        @ApiImplicitParam(name = "labelKey", dataType = "String", value = "label key"),
+        @ApiImplicitParam(name = "stringValue", dataType = "String", value = "string value")
     })
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "/instanceLabel", method = RequestMethod.PUT)
@@ -154,8 +157,8 @@ public class InstanceRestful {
     }
 
     @ApiOperation(
-            value = "可以修改的label 类型",
-            notes = "获取可以修改的label类型列表，列表数据如‘userCreator，route’",
+            value = "listAllModifiableLabelKey",
+            notes = "list all modifiable label key",
             response = Message.class)
     @RequestMapping(path = "/modifiableLabelKey", method = RequestMethod.GET)
     public Message listAllModifiableLabelKey(HttpServletRequest req) {
@@ -163,12 +166,7 @@ public class InstanceRestful {
         return Message.ok().data("keyList", keyList);
     }
 
-    @ApiOperation(value = "获取eurekaURL", notes = "返回eurekaURL", response = Message.class)
-    /*@ApiOperationSupport(
-            responses = @DynamicResponseParameters(properties = {
-                    @DynamicParameter(value = "结果集",name = "data",dataTypeClass = Message.class)
-            })
-    )*/
+    @ApiOperation(value = "getEurekaURL", notes = "get eureka URL", response = Message.class)
     @RequestMapping(path = "/eurekaURL", method = RequestMethod.GET)
     public Message getEurekaURL(HttpServletRequest request) throws Exception {
         String eurekaURL = insLabelService.getEurekaURL();

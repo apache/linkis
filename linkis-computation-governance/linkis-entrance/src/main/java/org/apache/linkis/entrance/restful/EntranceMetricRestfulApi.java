@@ -53,14 +53,18 @@ public class EntranceMetricRestfulApi {
         this.entranceServer = entranceServer;
     }
 
-
     @ApiOperation(value = "taskinfo", notes = "get task info", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "user", dataType = "String", value = "User"),
-        @ApiImplicitParam(name = "creator", dataType = "String", value = "Creator"),
+        @ApiImplicitParam(name = "user", required = false, dataType = "String", value = "User"),
+        @ApiImplicitParam(
+                name = "creator",
+                required = false,
+                dataType = "String",
+                value = "Creator"),
         @ApiImplicitParam(
                 name = "engineTypeLabel",
                 dataType = "String",
+                required = false,
                 value = "engine type lable")
     })
     @RequestMapping(path = "/taskinfo", method = RequestMethod.GET)
@@ -116,7 +120,7 @@ public class EntranceMetricRestfulApi {
                 .data("runningNumber", runningNumber)
                 .data("queuedNumber", queuedNumber);
     }
-    
+
     @ApiOperation(value = "Status", notes = "get running task number ", response = Message.class)
     @RequestMapping(path = "/runningtask", method = RequestMethod.GET)
     public Message status(HttpServletRequest req) {

@@ -63,7 +63,6 @@ import java.util.Map;
 
 import static org.apache.linkis.cs.common.utils.CSCommonUtils.localDatetimeToDate;
 
-
 @Api(tags = "cs(contextservice) operation")
 @RestController
 @RequestMapping(path = "/contextservice")
@@ -83,7 +82,11 @@ public class ContextRestfulApi implements CsRestfulParent {
     @ApiOperation(value = "getContextValue", notes = "get context value", response = Message.class)
     @ApiImplicitParams({
         @ApiImplicitParam(name = "contextKey", dataType = "String", value = "context key"),
-        @ApiImplicitParam(name = "contextID", dataType = "String", value = "context Id")
+        @ApiImplicitParam(
+                name = "contextID",
+                required = true,
+                dataType = "String",
+                value = "context id")
     })
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "getContextValue", method = RequestMethod.POST)

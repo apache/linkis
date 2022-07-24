@@ -56,7 +56,6 @@ import java.util.Date;
 
 import static org.apache.linkis.cs.common.utils.CSCommonUtils.localDatetimeToDate;
 
-
 @Api(tags = "cs(contextservice) recording operation")
 @RestController
 @RequestMapping(path = "/contextservice")
@@ -66,10 +65,13 @@ public class ContextIDRestfulApi implements CsRestfulParent {
 
     @Autowired private CsScheduler csScheduler;
 
-
     @ApiOperation(value = "createContextID", notes = "create context Id", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "contextID", dataType = "String", value = "context Id")
+        @ApiImplicitParam(
+                name = "contextID",
+                required = false,
+                dataType = "String",
+                value = "context id")
     })
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "createContextID", method = RequestMethod.POST)
@@ -80,10 +82,13 @@ public class ContextIDRestfulApi implements CsRestfulParent {
         return generateResponse(answerJob, "contextId");
     }
 
-
     @ApiOperation(value = "GetContextID", notes = "Get_Context_Id", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "contextId", dataType = "String", value = "context Id")
+        @ApiImplicitParam(
+                name = "contextId",
+                required = false,
+                dataType = "String",
+                value = "context id")
     })
     @RequestMapping(path = "getContextID", method = RequestMethod.GET)
     public Message getContextID(
@@ -97,10 +102,13 @@ public class ContextIDRestfulApi implements CsRestfulParent {
         return message;
     }
 
-
     @ApiOperation(value = "updateContextID", notes = "update content id", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "contextId", dataType = "String", value = "context Id")
+        @ApiImplicitParam(
+                name = "contextId",
+                required = false,
+                dataType = "String",
+                value = "context id")
     })
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "updateContextID", method = RequestMethod.POST)
@@ -116,7 +124,11 @@ public class ContextIDRestfulApi implements CsRestfulParent {
 
     @ApiOperation(value = "resetContextID", notes = "reset context Id", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "contextId", dataType = "String", value = "context Id")
+        @ApiImplicitParam(
+                name = "contextId",
+                required = false,
+                dataType = "String",
+                value = "context id")
     })
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "resetContextID", method = RequestMethod.POST)
@@ -133,7 +145,11 @@ public class ContextIDRestfulApi implements CsRestfulParent {
 
     @ApiOperation(value = "removeContextID", notes = "remove context ID", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "contextId", dataType = "String", value = "context Id")
+        @ApiImplicitParam(
+                name = "contextId",
+                required = false,
+                dataType = "String",
+                value = "context id")
     })
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "removeContextID", method = RequestMethod.POST)
@@ -147,17 +163,6 @@ public class ContextIDRestfulApi implements CsRestfulParent {
         return generateResponse(answerJob, "");
     }
 
-    /*@ApiOperation(value = "搜索文本Id执行时间", notes = "搜索文本Id执行时间", response = Message.class)
-    @ApiImplicitParams({
-        @ApiImplicitParam(name = "createTimeStart", dataType = "String", value = "创建时间"),
-        @ApiImplicitParam(name = "createTimeEnd", dataType = "String", value = "创建结束时间"),
-        @ApiImplicitParam(name = "updateTimeStart", dataType = "String", value = "更新时间"),
-        @ApiImplicitParam(name = "updateTimeEnd", dataType = "String", value = "更新结束时间"),
-        @ApiImplicitParam(name = "accessTimeStart", dataType = "String", value = "访问开始时间"),
-        @ApiImplicitParam(name = "accessTimeEnd", dataType = "String", value = "访问结束时间"),
-        @ApiImplicitParam(name = "pageNow", dataType = "String", value = "页码"),
-        @ApiImplicitParam(name = "pageSize", dataType = "String", value = "页面大小")
-    })*/
     @ApiOperation(
             value = "searchContextIDByTime",
             notes = "search contextId by time",
@@ -166,20 +171,39 @@ public class ContextIDRestfulApi implements CsRestfulParent {
         @ApiImplicitParam(
                 name = "createTimeStart",
                 dataType = "String",
-                value = "Create_Time_Start"),
+                required = false,
+                value = "create time start"),
         @ApiImplicitParam(name = "createTimeEnd", dataType = "String", value = "Create_Time_End"),
         @ApiImplicitParam(
                 name = "updateTimeStart",
                 dataType = "String",
-                value = "Update_Time_Start"),
-        @ApiImplicitParam(name = "updateTimeEnd", dataType = "String", value = "Update_Time_End"),
+                required = false,
+                value = "update time start"),
+        @ApiImplicitParam(
+                name = "updateTimeEnd",
+                required = false,
+                dataType = "String",
+                value = "update time end"),
         @ApiImplicitParam(
                 name = "accessTimeStart",
                 dataType = "String",
-                value = "Access_Time_Start"),
-        @ApiImplicitParam(name = "accessTimeEnd", dataType = "String", value = "Access_Time_End"),
-        @ApiImplicitParam(name = "pageNow", dataType = "String", value = "Page_Now"),
-        @ApiImplicitParam(name = "pageSize", dataType = "String", value = "Page_Size")
+                required = false,
+                value = "access time start"),
+        @ApiImplicitParam(
+                name = "accessTimeEnd",
+                required = false,
+                dataType = "String",
+                value = "access time end"),
+        @ApiImplicitParam(
+                name = "pageNow",
+                required = false,
+                dataType = "String",
+                value = "page now"),
+        @ApiImplicitParam(
+                name = "pageSize",
+                required = false,
+                dataType = "String",
+                value = "page size")
     })
     @RequestMapping(path = "searchContextIDByTime", method = RequestMethod.GET)
     public Message searchContextIDByTime(

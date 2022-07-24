@@ -54,11 +54,6 @@ import java.util.*;
 public class ECResourceInfoRestfulApi {
     @Autowired private ECResourceInfoService ecResourceInfoService;
 
-    /*@ApiOperation(value = "获取EC信息", notes = "获取EC信息", response = Message.class)
-    @ApiImplicitParams({
-        @ApiImplicitParam(name = "ticketid", required = true, dataType = "String", value = "ticketid")
-    })*/
-
     @ApiOperation(value = "get", notes = "get engineconn info ", response = Message.class)
     @ApiImplicitParams({
         @ApiImplicitParam(
@@ -82,7 +77,6 @@ public class ECResourceInfoRestfulApi {
             return Message.error("tickedId not exist:" + ticketid);
         }
     }
-
 
     @ApiOperation(value = "delete", notes = "delete engineconn info", response = Message.class)
     @ApiImplicitParams({
@@ -108,16 +102,46 @@ public class ECResourceInfoRestfulApi {
         }
     }
 
-    /*@ApiOperation(value = "ecr历史列表", notes = "ecr历史列表", response = Message.class)
+    @ApiOperation(
+            value = "ecrHistoryList",
+            notes = "query engineconn resource history info list",
+            response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "instance", required = false, dataType = "String", value = "instance"),
-        @ApiImplicitParam(name = "creator", required = false, dataType = "String", value = "creator")
-    })*/
-
-    @ApiOperation(value = "ecrHistoryList", notes = "query engineconn resource history info list", response = Message.class)
-    @ApiImplicitParams({
-        @ApiImplicitParam(name = "instance", dataType = "String", value = "Instance"),
-        @ApiImplicitParam(name = "creator", dataType = "String", value = "Creator")
+        @ApiImplicitParam(
+                name = "instance",
+                required = false,
+                dataType = "String",
+                value = "instance"),
+        @ApiImplicitParam(
+                name = "creator",
+                required = false,
+                dataType = "String",
+                value = "creator"),
+        @ApiImplicitParam(
+                name = "startDate",
+                required = false,
+                dataType = "String",
+                value = "start date"),
+        @ApiImplicitParam(
+                name = "endDate",
+                required = false,
+                dataType = "String",
+                value = "end date"),
+        @ApiImplicitParam(
+                name = "engineType",
+                required = false,
+                dataType = "String",
+                value = "engine type"),
+        @ApiImplicitParam(
+                name = "pageNow",
+                required = false,
+                dataType = "String",
+                value = "page now"),
+        @ApiImplicitParam(
+                name = "pageSize",
+                required = false,
+                dataType = "String",
+                value = "page size")
     })
     @RequestMapping(path = "/ecrHistoryList", method = RequestMethod.GET)
     public Message queryEcrHistory(

@@ -62,8 +62,7 @@ import scala.collection.mutable.ArrayBuffer
 
 
 @RestController
-/*@Api(tags = Array("资源管理"))*/
-@Api(tags = Array("Resource_Management"))
+@Api(tags = Array("resource management"))
 @RequestMapping(path = Array("/linkisManager/rm"))
 class RMMonitorRest extends Logging {
 
@@ -112,8 +111,7 @@ class RMMonitorRest extends Logging {
   var COMBINED_USERCREATOR_ENGINETYPE: String = _
 
   def appendMessageData(message: Message, key: String, value: AnyRef): Message = message.data(key, mapper.readTree(write(value)))
-  /*@ApiOperation(value="应用列表",notes="获取资源管理中的应用引擎列表清单")*/
-  @ApiOperation(value="GetApplicationList",notes="Get_ApplicationList")
+  @ApiOperation(value="getApplicationList",notes="get applicationList")
   @RequestMapping(path = Array("applicationlist"), method = Array(RequestMethod.POST))
   def getApplicationList(request: HttpServletRequest, @RequestBody param: util.Map[String, AnyRef]): Message = {
     val message = Message.ok("")
@@ -168,8 +166,8 @@ class RMMonitorRest extends Logging {
     appendMessageData(message, "applications", applications)
     message
   }
-  /*@ApiOperation(value="重置资源",notes="重置资源")*/
-  @ApiOperation(value="ResetUserResource",notes="reset_User_Resource")
+
+  @ApiOperation(value="resetUserResource",notes="reset user resource")
   @RequestMapping(path = Array("resetResource"), method = Array(RequestMethod.DELETE))
   def resetUserResource(request: HttpServletRequest, @RequestParam(value = "resourceId", required = false) resourceId: Integer): Message = {
     val queryUser = SecurityFilter.getLoginUser(request)
@@ -185,8 +183,7 @@ class RMMonitorRest extends Logging {
     Message.ok("success")
   }
 
-  /*@ApiOperation(value="引擎类型",notes="引擎类型")*/
-  @ApiOperation(value="ListAllEngineType",notes="List_All_Engine_Type")
+  @ApiOperation(value="listAllEngineType",notes="list all engineType")
   @RequestMapping(path = Array("engineType"), method = Array(RequestMethod.GET))
   def listAllEngineType(request: HttpServletRequest): Message = {
     val engineTypeString = RMUtils.ENGINE_TYPE.getValue
@@ -194,8 +191,7 @@ class RMMonitorRest extends Logging {
    Message.ok.data("engineType", engineTypeList)
   }
 
-  /*@ApiOperation(value="所有用户资源",notes="所有用户资源")*/
-  @ApiOperation(value="GetAllUserResource",notes="Get_All_User_Resource")
+  @ApiOperation(value="getAllUserResource",notes="get all user resource")
   @RequestMapping(path = Array("allUserResource"), method = Array(RequestMethod.GET))
   def getAllUserResource(request: HttpServletRequest, @RequestParam(value = "username", required = false) username: String,
                          @RequestParam(value = "creator", required = false) creator: String, @RequestParam(value = "engineType", required = false) engineType: String,
@@ -240,8 +236,7 @@ class RMMonitorRest extends Logging {
     Message.ok().data("resources", userResources).data("total", resultPage.getTotal)
   }
 
-/*  @ApiOperation(value="资源信息",notes="查询资源列表清单及资源详细数据如使用百分比")*/
-  @ApiOperation(value="GetUserResource", notes="Get_User_Resource")
+  @ApiOperation(value="getUserResource", notes="get user resource")
   @RequestMapping(path = Array("userresources"), method = Array(RequestMethod.POST))
   def getUserResource(request: HttpServletRequest, @RequestBody(required = false) param: util.Map[String, AnyRef]): Message = {
     val message = Message.ok("")
@@ -349,8 +344,7 @@ class RMMonitorRest extends Logging {
   }
 
 
-  /*@ApiOperation(value="引擎管理器",notes="引擎管理器")*/
-  @ApiOperation(value="GetEngines",notes="Get_Engines")
+  @ApiOperation(value="getEngines",notes="get engines")
   @RequestMapping(path = Array("engines"), method = Array(RequestMethod.POST))
   def getEngines(request: HttpServletRequest, @RequestBody(required = false) param: util.Map[String, AnyRef]): Message = {
     val message = Message.ok("")
@@ -384,8 +378,7 @@ class RMMonitorRest extends Logging {
     appendMessageData(message, "engines", engines)
   }
 
-  /*@ApiOperation(value="队列管理器",notes="队列管理器")*/
-  @ApiOperation(value="GetQueueResource",notes="Get_Queue_Resource")
+  @ApiOperation(value="getQueueResource",notes="get queue resource")
   @RequestMapping(path = Array("queueresources"), method = Array(RequestMethod.POST))
   def getQueueResource(request: HttpServletRequest, @RequestBody param: util.Map[String, AnyRef]): Message = {
     val message = Message.ok("")
@@ -470,8 +463,8 @@ class RMMonitorRest extends Logging {
     })
     appendMessageData(message, "userResources", userResourceRecords)
   }
-  /*@ApiOperation(value="队列",notes="队列")*/
-  @ApiOperation(value="GetQueues",notes="Get_Queues")
+
+  @ApiOperation(value="getQueues",notes="get queues")
   @RequestMapping(path = Array("queues"), method = Array(RequestMethod.POST))
   def getQueues(request: HttpServletRequest, @RequestBody(required = false) param: util.Map[String, AnyRef]): Message = {
     val message = Message.ok()

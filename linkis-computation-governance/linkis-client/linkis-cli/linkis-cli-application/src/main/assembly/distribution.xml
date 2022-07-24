@@ -99,7 +99,7 @@
             <directory>
                 ${basedir}/src/main/resources/conf/
             </directory>
-            <outputDirectory>/conf</outputDirectory>
+            <outputDirectory>conf</outputDirectory>
             <includes>
                 <include>**/*</include>
             </includes>
@@ -111,7 +111,7 @@
             <directory>
                 ${basedir}/src/main/resources/bin/
             </directory>
-            <outputDirectory>/bin</outputDirectory>
+            <outputDirectory>bin</outputDirectory>
             <includes>
                 <include>**/*</include>
             </includes>

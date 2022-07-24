@@ -55,7 +55,7 @@ fi
 
 executeCMD $SERVER_IP "$SERVER_START_CMD"
 
-isSuccess "End to start $SERVER_NAME"
+isSuccess "start $SERVER_NAME"
 echo "<-------------------------------->"
 sleep 3
 }

@@ -503,7 +503,7 @@ export default {
       })
     },
     openVersionList(row) {
-      this.currentSourceData = row
+      this.currentSourceData = JSON.parse(JSON.stringify(row))
       this.getVersionListBySourceId()
       this.showVersionList = true
     },

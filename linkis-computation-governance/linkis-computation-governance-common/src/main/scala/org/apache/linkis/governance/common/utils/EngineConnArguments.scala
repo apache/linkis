@@ -17,7 +17,7 @@
  
 package org.apache.linkis.governance.common.utils
 
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer

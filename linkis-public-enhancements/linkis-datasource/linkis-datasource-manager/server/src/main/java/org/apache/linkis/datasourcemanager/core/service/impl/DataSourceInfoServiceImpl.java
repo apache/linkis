@@ -32,7 +32,7 @@ import org.apache.linkis.datasourcemanager.core.service.hooks.DataSourceParamsHo
 import org.apache.linkis.datasourcemanager.core.vo.DataSourceEnvVo;
 import org.apache.linkis.datasourcemanager.core.vo.DataSourceVo;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

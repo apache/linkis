@@ -18,8 +18,8 @@
 package org.apache.linkis.engineconn.common.conf
 
 import java.io.File
-import org.apache.linkis.common.conf.{CommonVars, Configuration, TimeType}
-import org.apache.commons.lang.StringUtils
+import org.apache.linkis.common.conf.{CommonVars, TimeType}
+import org.apache.commons.lang3.StringUtils
 
 
 

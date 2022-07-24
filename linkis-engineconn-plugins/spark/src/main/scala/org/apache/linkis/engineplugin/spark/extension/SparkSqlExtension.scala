@@ -21,7 +21,7 @@ import java.util.concurrent._
 
 import org.apache.linkis.common.conf.CommonVars
 import org.apache.linkis.common.utils.{Logging, Utils}
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.spark.sql.{DataFrame, SQLContext}
 
 import scala.concurrent.duration.Duration

@@ -54,10 +54,10 @@ private[conf] object BDPConfiguration extends Logging {
     val serverConf = sysProps.getOrElse("wds.linkis.server.conf", DEFAULT_SERVER_CONF_FILE_NAME)
     val serverConfFileURL = getClass.getClassLoader.getResource(serverConf)
     if (serverConfFileURL != null && new File(serverConfFileURL.getPath).exists) {
-      logger.warn(s"******************************** Notice: The Linkis serverConf file is $propertyFile ! ***************************")
+      logger.warn(s"******************************** Notice: The Linkis serverConf file is $serverConf ! ***************************")
       initConfig(config, serverConfFileURL.getPath)
     }
-    else logger.warn(s"******************************** Notice: The Linkis serverConf file $serverConfFileURL is not exists! ***************************")
+    else logger.warn(s"******************************** Notice: The Linkis serverConf file $serverConf is not exists! ***************************")
 
     // load  server confs
     val propertyFileOptions = sysProps.get("wds.linkis.server.confs")

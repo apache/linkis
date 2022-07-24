@@ -21,7 +21,7 @@ import org.apache.linkis.common.conf.CommonVars;
 import org.apache.linkis.datasourcemanager.common.domain.DataSource;
 import org.apache.linkis.server.security.SecurityFilter;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 

@@ -22,7 +22,7 @@ import java.util
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.regex.Pattern
 import org.apache.linkis.common.utils.{Logging, Utils}
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.engineconn.common.conf.EngineConnConf
 
 class YarnAppIdExtractor extends Thread with Logging{

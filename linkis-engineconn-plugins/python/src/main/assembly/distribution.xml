@@ -53,7 +53,7 @@
                 <exclude>python</exclude>
             </excludes>
             <fileMode>0777</fileMode>
-            <outputDirectory>/dist/v${python.version}/conf</outputDirectory>
+            <outputDirectory>dist/v${python.version}/conf</outputDirectory>
             <lineEnding>unix</lineEnding>
         </fileSet>
 
@@ -63,7 +63,7 @@
                 <include>*</include>
             </includes>
             <fileMode>0777</fileMode>
-            <outputDirectory>/dist/v${python.version}/conf</outputDirectory>
+            <outputDirectory>dist/v${python.version}/conf</outputDirectory>
         </fileSet>
 
         <fileSet>
@@ -75,7 +75,7 @@
                 <exclude>*doc.jar</exclude>
             </excludes>
             <fileMode>0777</fileMode>
-            <outputDirectory>/plugin/${python.version}</outputDirectory>
+            <outputDirectory>plugin/${python.version}</outputDirectory>
         </fileSet>
     </fileSets>
 

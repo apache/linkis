@@ -27,6 +27,11 @@
             <DefaultRolloverStrategy max="10"/>
         </RollingFile>
 
+        <File name="YarnAppIdOutputFile" append="true" fileName="${env:LOG_DIRS}/stderr">
+            <RegexFilter regex=".* application .*" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] [%-40t] %c{1.} (%L) [%M] - %msg%xEx%n"/>
+        </File>
+
         <Send name="Send" >
             <Filters>
                 <ThresholdFilter level="WARN" onMatch="ACCEPT" onMismatch="DENY" />
@@ -66,11 +71,11 @@
         <logger name="org.reflections.Reflections" level="ERROR" additivity="true">
             <appender-ref ref="Send"/>
         </logger>
-
         <logger name="org.apache.hadoop.ipc.Client" level="ERROR" additivity="true">
             <appender-ref ref="Send"/>
         </logger>
-
-
+        <logger name="org.apache.linkis.manager.engineplugin.shell.executor.YarnAppIdExtractor" level="INFO" additivity="true">
+            <appender-ref ref="YarnAppIdOutputFile"/>
+        </logger>
     </loggers>
 </configuration>

@@ -45,7 +45,7 @@ object Dolphin extends Logging{
 
   val FILE_EMPTY = 31
 
-  def getBytes(value: Any): Array[Byte] ={
+  def getBytes(value: Any): Array[Byte] = {
     value.toString.getBytes(CHAR_SET)
   }
 
@@ -57,7 +57,7 @@ object Dolphin extends Logging{
     * @param len
     * @return
     */
-  def getString(bytes: Array[Byte], start:Int, len: Int)= new String(bytes, start, len, Dolphin.CHAR_SET)
+  def getString(bytes: Array[Byte], start: Int, len: Int): String = new String(bytes, start, len, Dolphin.CHAR_SET)
 
   /**
     * Read an integer value that converts the array to a byte of length 10 bytes
@@ -66,11 +66,12 @@ object Dolphin extends Logging{
     * @return
     */
   def readInt(inputStream: InputStream): Int = {
-    val bytes =  new Array[Byte](INT_LEN + 1)
-    if(StorageUtils.readBytes(inputStream, bytes, INT_LEN) != INT_LEN) throw new StorageWarnException(51000, "failed to read integer(读取整数失败)")
+    val bytes = new Array[Byte](INT_LEN + 1)
+    if (StorageUtils.readBytes(inputStream, bytes, INT_LEN) != INT_LEN) {
+      throw new StorageWarnException(51000, "failed to read integer(读取整数失败)")
+    }
     getString(bytes, 0, INT_LEN).toInt
   }
-
 
   /**
     * Print integers at a fixed length(将整数按固定长度打印)
@@ -83,17 +84,16 @@ object Dolphin extends Logging{
     Dolphin.getBytes(res)
   }
 
-
-  def getType(inputStream:InputStream):String = {
+  def getType(inputStream: InputStream): String = {
     val bytes = new Array[Byte](100)
-    val len = StorageUtils.readBytes(inputStream,bytes, Dolphin.MAGIC_LEN + INT_LEN)
+    val len = StorageUtils.readBytes(inputStream, bytes, Dolphin.MAGIC_LEN + INT_LEN)
     if(len == -1) return null
     getType(Dolphin.getString(bytes, 0, len))
   }
 
   def getType(content: String): String = {
-    if(content.length < MAGIC.length || content.substring(0, MAGIC.length) != MAGIC) throw new IOException(s"File header type must be dolphin,content:$content is not")
-    content.substring(MAGIC.length, MAGIC.length + INT_LEN ).toInt.toString
+    if (content.length < MAGIC.length || content.substring(0, MAGIC.length) != MAGIC) throw new IOException(s"File header type must be dolphin,content:$content is not")
+    content.substring(MAGIC.length, MAGIC.length + INT_LEN).toInt.toString
   }
 
 }

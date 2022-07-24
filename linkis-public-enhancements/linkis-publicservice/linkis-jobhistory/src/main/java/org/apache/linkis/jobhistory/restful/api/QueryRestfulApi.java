@@ -31,6 +31,8 @@ import org.apache.linkis.server.Message;
 import org.apache.linkis.server.security.SecurityFilter;
 import org.apache.linkis.server.utils.ModuleUserUtils;
 
+import org.apache.commons.lang3.time.DateUtils;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -39,17 +41,12 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.*;
 
-@Api(tags = "query api")
 @RestController
 @RequestMapping(path = "/jobhistory")
 public class QueryRestfulApi {
@@ -61,10 +58,6 @@ public class QueryRestfulApi {
 
     @Autowired private DefaultQueryCacheManager queryCacheManager;
 
-    @ApiOperation(
-            value = "governanceStationAdmin",
-            notes = "governance stationAdmin",
-            response = Message.class)
     @RequestMapping(path = "/governanceStationAdmin", method = RequestMethod.GET)
     public Message governanceStationAdmin(HttpServletRequest req) {
         String username = ModuleUserUtils.getOperationUser(req, "governanceStationAdmin");
@@ -73,10 +66,6 @@ public class QueryRestfulApi {
         return Message.ok().data("admin", match);
     }
 
-    @ApiOperation(value = "getTaskByID", notes = "get task by id", response = Message.class)
-    @ApiImplicitParams({
-        @ApiImplicitParam(name = "jobId", dataType = "long", required = true, value = "job id")
-    })
     @RequestMapping(path = "/{id}/get", method = RequestMethod.GET)
     public Message getTaskByID(HttpServletRequest req, @PathVariable("id") Long jobId) {
         String username = SecurityFilter.getLoginUsername(req);
@@ -114,47 +103,6 @@ public class QueryRestfulApi {
     }
 
     /** Method list should not contain subjob, which may cause performance problems. */
-    @ApiOperation(value = "list", notes = "list", response = Message.class)
-    @ApiImplicitParams({
-        @ApiImplicitParam(
-                name = "startDate",
-                required = false,
-                dataType = "long",
-                value = "start date"),
-        @ApiImplicitParam(
-                name = "endDate",
-                required = false,
-                dataType = "long",
-                value = "end date"),
-        @ApiImplicitParam(name = "status", required = false, dataType = "String", value = "status"),
-        @ApiImplicitParam(
-                name = "pageNow",
-                required = false,
-                dataType = "Integer",
-                value = "page now"),
-        @ApiImplicitParam(
-                name = "pageSize",
-                required = false,
-                dataType = "Integer",
-                value = "page size"),
-        @ApiImplicitParam(name = "taskID", required = false, dataType = "long", value = "task id"),
-        @ApiImplicitParam(
-                name = "executeApplicationName",
-                dataType = "String",
-                required = false,
-                value = "execute application name"),
-        @ApiImplicitParam(
-                name = "creator",
-                required = false,
-                dataType = "String",
-                value = "creator"),
-        @ApiImplicitParam(name = "jobId", required = false, dataType = "String", value = "job id"),
-        @ApiImplicitParam(
-                name = "isAdminView",
-                required = false,
-                dataType = "Boolean",
-                value = "is admin view"),
-    })
     @RequestMapping(path = "/list", method = RequestMethod.GET)
     public Message list(
             HttpServletRequest req,
@@ -261,47 +209,8 @@ public class QueryRestfulApi {
     }
 
     /** Method list should not contain subjob, which may cause performance problems. */
-    @ApiOperation(value = "listundone", notes = "list undone", response = Message.class)
-    @ApiImplicitParams({
-        @ApiImplicitParam(
-                name = "startDate",
-                required = false,
-                dataType = "long",
-                value = "start date"),
-        @ApiImplicitParam(
-                name = "endDate",
-                required = false,
-                dataType = "long",
-                value = "end date"),
-        @ApiImplicitParam(name = "status", required = false, dataType = "String", value = "status"),
-        @ApiImplicitParam(
-                name = "pageNow",
-                required = false,
-                dataType = "Integer",
-                value = "page now"),
-        @ApiImplicitParam(
-                name = "pageSize",
-                required = false,
-                dataType = "Integer",
-                value = "page size"),
-        @ApiImplicitParam(
-                name = "creator",
-                required = false,
-                dataType = "String",
-                value = "creator"),
-        @ApiImplicitParam(
-                name = "engineType",
-                required = false,
-                dataType = "String",
-                value = "engine type"),
-        @ApiImplicitParam(
-                name = "startTaskID",
-                required = false,
-                dataType = "long",
-                value = "start taskID"),
-    })
-    @RequestMapping(path = "/listundone", method = RequestMethod.GET)
-    public Message listundone(
+    @RequestMapping(path = "/listundonetasks", method = RequestMethod.GET)
+    public Message listundonetasks(
             HttpServletRequest req,
             @RequestParam(value = "startDate", required = false) Long startDate,
             @RequestParam(value = "endDate", required = false) Long endDate,
@@ -333,6 +242,9 @@ public class QueryRestfulApi {
         }
         Date sDate = new Date(startDate);
         Date eDate = new Date(endDate);
+        if (startDate == 0L) {
+            sDate = DateUtils.addDays(eDate, -1);
+        }
         if (sDate.getTime() == eDate.getTime()) {
             Calendar instance = Calendar.getInstance();
             instance.setTimeInMillis(endDate);
@@ -368,5 +280,50 @@ public class QueryRestfulApi {
         return Message.ok()
                 .data(TaskConstant.TASKS, vos)
                 .data(JobRequestConstants.TOTAL_PAGE(), total);
+    }
+
+    /** Method list should not contain subjob, which may cause performance problems. */
+    @RequestMapping(path = "/listundone", method = RequestMethod.GET)
+    public Message listundone(
+            HttpServletRequest req,
+            @RequestParam(value = "startDate", required = false) Long startDate,
+            @RequestParam(value = "endDate", required = false) Long endDate,
+            @RequestParam(value = "pageNow", required = false) Integer pageNow,
+            @RequestParam(value = "pageSize", required = false) Integer pageSize,
+            @RequestParam(value = "startTaskID", required = false) Long taskID,
+            @RequestParam(value = "engineType", required = false) String engineType,
+            @RequestParam(value = "creator", required = false) String creator)
+            throws IOException, QueryException {
+        String username = SecurityFilter.getLoginUsername(req);
+        if (endDate == null) {
+            endDate = System.currentTimeMillis();
+        }
+        if (startDate == null) {
+            startDate = 0L;
+        }
+        if (StringUtils.isEmpty(creator)) {
+            creator = null;
+        }
+        Date sDate = new Date(startDate);
+        Date eDate = new Date(endDate);
+        if (startDate == 0L) {
+            sDate = DateUtils.addDays(eDate, -1);
+        }
+        if (sDate.getTime() == eDate.getTime()) {
+            Calendar instance = Calendar.getInstance();
+            instance.setTimeInMillis(endDate);
+            instance.add(Calendar.DAY_OF_MONTH, 1);
+            eDate = new Date(instance.getTime().getTime());
+        }
+        Integer total =
+                jobHistoryQueryService.countUndoneTasks(
+                        username,
+                        creator,
+                        sDate,
+                        eDate,
+                        engineType,
+                        queryCacheManager.getUndoneTaskMinId());
+
+        return Message.ok().data(JobRequestConstants.TOTAL_PAGE(), total);
     }
 }

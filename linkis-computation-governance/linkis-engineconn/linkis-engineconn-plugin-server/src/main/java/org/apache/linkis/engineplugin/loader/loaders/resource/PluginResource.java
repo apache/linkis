@@ -17,7 +17,7 @@
 
 package org.apache.linkis.engineplugin.loader.loaders.resource;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.net.URL;
 

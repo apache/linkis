@@ -33,6 +33,11 @@
         <File name="stderr" fileName="${env:PWD}/logs/stderr" append="true">
             <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level %class{36} %L %M - %msg%xEx%n"/>
         </File>
+
+        <File name="YarnAppIdOutputFile" append="true" fileName="${env:LOG_DIRS}/stderr">
+            <RegexFilter regex=".* application .*" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] [%-40t] %c{1.} (%L) [%M] - %msg%xEx%n"/>
+        </File>
     </appenders>
     <loggers>
         <root level="INFO">
@@ -40,7 +45,7 @@
             <appender-ref ref="Console"/>
             <appender-ref ref="Send"/>
         </root>
-        <logger name="org.springframework.boot.diagnostics.LoggingFailureAnalysisReporter " level="error" additivity="true">
+        <logger name="org.springframework.boot.diagnostics.LoggingFailureAnalysisReporter" level="error" additivity="true">
             <appender-ref ref="stderr"/>
         </logger>
         <logger name="com.netflix.discovery" level="warn" additivity="true">
@@ -73,10 +78,11 @@
         <logger name="org.reflections.Reflections" level="ERROR" additivity="true">
             <appender-ref ref="Send"/>
         </logger>
-
         <logger name="org.apache.hadoop.ipc.Client" level="ERROR" additivity="true">
             <appender-ref ref="Send"/>
         </logger>
-
+        <logger name="org.apache.hadoop.mapreduce.Job" level="INFO" additivity="true">
+            <appender-ref ref="YarnAppIdOutputFile"/>
+        </logger>
     </loggers>
 </configuration>

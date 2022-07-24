@@ -25,9 +25,9 @@ import org.apache.linkis.storage.resultset.{ResultSetFactory, ResultSetReader}
 object StorageHelper {
 
   def main(args: Array[String]): Unit = {
-    if(args.length < 2) println("Usage method params eg:getTableResLines path")
+    if (args.length < 2) println("Usage method params eg:getTableResLines path")
     val method = args(0)
-    val params = args.slice(1,args.length)
+    val params = args.slice(1, args.length)
     Thread.sleep(10000L)
 
     method match {
@@ -43,18 +43,18 @@ object StorageHelper {
     *
     * @param args
     */
-  def  getTableResLines(args: Array[String]) = {
+  def  getTableResLines(args: Array[String]): Unit = {
     val resPath = StorageUtils.getFsPath(args(0))
     val resultSetFactory = ResultSetFactory.getInstance
     val resultSet = resultSetFactory.getResultSetByType(ResultSetFactory.TABLE_TYPE)
     val fs = FSFactory.getFs(resPath)
     fs.init(null)
-    val reader = ResultSetReader.getResultSetReader(resultSet,fs.read(resPath))
+    val reader = ResultSetReader.getResultSetReader(resultSet, fs.read(resPath))
     val rmetaData = reader.getMetaData
     rmetaData.asInstanceOf[TableMetaData].columns.foreach(println)
     var num = 0
     Thread.sleep(10000L)
-    while (reader.hasNext){
+    while (reader.hasNext) {
       reader.getRecord
       num = num + 1
     }
@@ -62,7 +62,7 @@ object StorageHelper {
     reader.close()
   }
 
-  def getTableRes(args: Array[String]): Unit ={
+  def getTableRes(args: Array[String]): Unit = {
     val len = Integer.parseInt(args(1))
     val max = len + 10
     val resPath = StorageUtils.getFsPath(args(0))
@@ -70,15 +70,15 @@ object StorageHelper {
     val resultSet = resultSetFactory.getResultSetByType(ResultSetFactory.TABLE_TYPE)
     val fs = FSFactory.getFs(resPath)
     fs.init(null)
-    val reader = ResultSetReader.getResultSetReader(resultSet,fs.read(resPath))
+    val reader = ResultSetReader.getResultSetReader(resultSet, fs.read(resPath))
     val rmetaData = reader.getMetaData
     rmetaData.asInstanceOf[TableMetaData].columns.foreach(println)
     rmetaData.asInstanceOf[TableMetaData].columns.map(_.columnName + ",").foreach(print)
     var num = 0
-    while (reader.hasNext){
+    while (reader.hasNext) {
       num = num + 1
       if(num > max) return
-      if(num > len){
+      if(num > len) {
         val record = reader.getRecord
         record.asInstanceOf[TableRecord].row.foreach{ value =>
           print(value.toString)
@@ -89,10 +89,10 @@ object StorageHelper {
     }
   }
 
-  def createNewFile(args: Array[String]): Unit ={
+  def createNewFile(args: Array[String]): Unit = {
     val resPath = StorageUtils.getFsPath(args(0))
     val proxyUser = StorageUtils.getJvmUser
-    FileSystemUtils.createNewFile(resPath, proxyUser,true)
+    FileSystemUtils.createNewFile(resPath, proxyUser, true)
     println("success")
   }
 

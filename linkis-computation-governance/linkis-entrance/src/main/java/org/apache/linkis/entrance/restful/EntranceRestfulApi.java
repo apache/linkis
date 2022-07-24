@@ -19,7 +19,6 @@ package org.apache.linkis.entrance.restful;
 
 import org.apache.linkis.common.log.LogUtils;
 import org.apache.linkis.entrance.EntranceServer;
-import org.apache.linkis.entrance.annotation.EntranceServerBeanAnnotation;
 import org.apache.linkis.entrance.conf.EntranceConfiguration;
 import org.apache.linkis.entrance.execute.EntranceJob;
 import org.apache.linkis.entrance.log.LogReader;
@@ -40,9 +39,15 @@ import org.apache.linkis.server.security.SecurityFilter;
 import org.apache.linkis.server.utils.ModuleUserUtils;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
-import org.springframework.web.bind.annotation.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -55,7 +60,12 @@ import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import scala.Option;
 
@@ -69,7 +79,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
 
     private static final Logger logger = LoggerFactory.getLogger(EntranceRestfulApi.class);
 
-    @EntranceServerBeanAnnotation.EntranceServerAutowiredAnnotation
+    @Autowired
     public void setEntranceServer(EntranceServer entranceServer) {
         this.entranceServer = entranceServer;
     }

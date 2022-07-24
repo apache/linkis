@@ -20,7 +20,7 @@ package org.apache.linkis.manager.label.entity;
 import org.apache.linkis.manager.label.constant.LabelKeyConstant;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collections;
 import java.util.Comparator;

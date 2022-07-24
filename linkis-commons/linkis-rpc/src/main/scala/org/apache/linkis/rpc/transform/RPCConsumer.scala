@@ -50,14 +50,7 @@ private[linkis] object RPCConsumer {
               exception
             case t: Throwable => t
           }
-//          if (null != data.get(IS_REQUEST_PROTOCOL_CLASS) && data.get(IS_REQUEST_PROTOCOL_CLASS).toString.toBoolean) {
-            ProtostuffSerializeUtil.deserialize(objectStr, clazz)
-          /*} else if (data.get(IS_SCALA_CLASS).toString.toBoolean) {
-            val realClass = getSerializableScalaClass(clazz)
-            Serialization.read(objectStr)(formats, ManifestFactory.classType(realClass))
-          } else {
-            BDPJettyServerHelper.gson.fromJson(objectStr, clazz)
-          }*/
+          ProtostuffSerializeUtil.deserialize(objectStr, clazz)
         case 4 =>
           val errorMsg = message.getData.get(EXCEPTION_MSG).asInstanceOf[JMap[String, Object]]
           ExceptionManager.generateException(errorMsg)

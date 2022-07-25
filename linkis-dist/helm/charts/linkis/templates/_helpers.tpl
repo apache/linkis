@@ -369,3 +369,25 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/*
+Create the name of the role to use
+*/}}
+{{- define "linkis.roleName" -}}
+{{- if .Values.role.create }}
+{{- default (include "linkis.fullname" .) .Values.role.name }}
+{{- else }}
+{{- default "default" .Values.role.name }}
+{{- end }}
+{{- end }}
+
+{{/*
+Create the name of the role to use
+*/}}
+{{- define "linkis.roleBindingName" -}}
+{{- if .Values.roleBinding.create }}
+{{- default (include "linkis.fullname" .) .Values.roleBinding.name }}
+{{- else }}
+{{- default "default" .Values.roleBinding.name }}
+{{- end }}
+{{- end }}

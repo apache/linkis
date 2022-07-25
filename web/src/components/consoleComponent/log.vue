@@ -199,6 +199,9 @@ export default {
 @import '@/common/style/variables.scss';
   .workbench-log-view {
     height: 100%;
+    .we-editor {
+      height: calc(100% - 36px) !important;
+    }
     .log-tools {
       height: 36px;
       line-height: 36px;

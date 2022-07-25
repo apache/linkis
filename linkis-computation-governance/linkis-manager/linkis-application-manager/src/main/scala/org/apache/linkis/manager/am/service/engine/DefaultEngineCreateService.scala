@@ -18,7 +18,7 @@
 package org.apache.linkis.manager.am.service.engine
 
 
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.exception.LinkisRetryException
 import org.apache.linkis.common.utils.{ByteTimeUtils, Logging, Utils}
@@ -215,6 +215,16 @@ class DefaultEngineCreateService extends AbstractEngineService with EngineCreate
 
     Utils.tryCatch(getEngineNodeManager.updateEngineNode(oldServiceInstance, engineNode)) { t =>
       logger.warn(s"Failed to update engineNode $engineNode", t)
+      val stopEngineRequest = new EngineStopRequest(engineNode.getServiceInstance, ManagerUtils.getAdminUser)
+      engineStopService.asyncStopEngine(stopEngineRequest)
+      val failedEcNode = getEngineNodeManager.getEngineNode(oldServiceInstance)
+      if (null == failedEcNode) {
+        logger.info(s" engineConn is not exists in db: $oldServiceInstance ")
+      } else {
+        failedEcNode.setLabels(nodeLabelService.getNodeLabels(oldServiceInstance))
+        failedEcNode.getLabels.addAll(LabelUtils.distinctLabel(labelFilter.choseEngineLabel(labelList), emNode.getLabels))
+        engineStopService.engineConnInfoClear(failedEcNode)
+      }
       throw new LinkisRetryException(AMConstant.EM_ERROR_CODE, s"Failed to update engineNode: ${t.getMessage}")
     }
 

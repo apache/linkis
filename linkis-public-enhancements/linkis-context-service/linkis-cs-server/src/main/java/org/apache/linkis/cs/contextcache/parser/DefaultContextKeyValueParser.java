@@ -21,7 +21,7 @@ import org.apache.linkis.cs.common.entity.source.ContextKeyValue;
 import org.apache.linkis.cs.contextcache.conf.ContextCacheConf;
 import org.apache.linkis.server.BDPJettyServerHelper;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import org.springframework.stereotype.Component;
 

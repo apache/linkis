@@ -26,7 +26,7 @@ import org.apache.linkis.manager.common.protocol.engine.{EngineAsyncResponse, En
 import org.apache.linkis.orchestrator.ecm.conf.ECMPluginConf
 import org.apache.linkis.orchestrator.ecm.exception.ECMPluginCacheException
 import org.apache.linkis.rpc.Sender
-import org.apache.commons.lang.exception.ExceptionUtils
+import org.apache.commons.lang3.exception.ExceptionUtils
 
 import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.duration.Duration

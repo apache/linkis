@@ -27,7 +27,7 @@ import org.apache.linkis.cs.contextcache.cache.ContextCache;
 import org.apache.linkis.cs.contextcache.cache.csid.ContextIDValue;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

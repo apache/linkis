@@ -17,7 +17,7 @@
  
 package org.apache.linkis.orchestrator.computation.physical
 
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.exception.{ErrorException, LinkisRetryException}
 import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
@@ -91,7 +91,7 @@ class CodeLogicalUnitExecTask (parents: Array[ExecTask], children: Array[ExecTas
           codeExecutor.setEngineConnTaskId(engineConnExecId)
           codeExecTaskExecutorManager.addEngineConnTaskID(codeExecutor)
           val infoMap = new  util.HashMap[String, Object]
-          infoMap.put(TaskConstant.ENGINE_INSTANCE, codeExecutor.getEngineConnExecutor.getServiceInstance)
+          infoMap.put(TaskConstant.ENGINE_INSTANCE, codeExecutor.getEngineConnExecutor.getServiceInstance.getInstance)
           val event = TaskRunningInfoEvent(this, 0f,
             Array.empty, new util.HashMap[String, ResourceWithStatus], infoMap)
           getPhysicalContext.pushProgress(event)

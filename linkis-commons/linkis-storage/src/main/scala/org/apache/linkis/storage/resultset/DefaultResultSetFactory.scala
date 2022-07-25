@@ -26,7 +26,7 @@ import org.apache.linkis.storage.FSFactory
 import org.apache.linkis.storage.domain.Dolphin
 import org.apache.linkis.storage.exception.{StorageErrorException, StorageWarnException}
 import org.apache.linkis.storage.utils.{StorageConfiguration, StorageUtils}
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 
 
 class DefaultResultSetFactory extends ResultSetFactory with Logging{

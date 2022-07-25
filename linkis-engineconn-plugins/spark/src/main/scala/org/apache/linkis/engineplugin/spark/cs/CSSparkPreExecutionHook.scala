@@ -20,7 +20,9 @@ package org.apache.linkis.engineplugin.spark.cs
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.cs.client.utils.ContextServiceUtils
 import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
+import org.apache.linkis.engineconn.core.exception.{EngineConnErrorCode, ExecutorHookFatalException}
 import org.apache.linkis.engineplugin.spark.extension.SparkPreExecutionHook
+
 import javax.annotation.PostConstruct
 import org.springframework.stereotype.Component
 
@@ -47,8 +49,13 @@ class CSSparkPreExecutionHook extends SparkPreExecutionHook with Logging{
       CSTableParser.parse(engineExecutionContext, parsedCode, contextIDValueStr, nodeNameStr)
     } catch {
       case t: Throwable =>
-        logger.info("Failed to parser cs table", t)
-        parsedCode
+        val msg = if (null != t) {
+          t.getMessage
+        } else {
+          "null message"
+        }
+        logger.info("Failed to parser cs table because : ", msg)
+        throw new ExecutorHookFatalException(EngineConnErrorCode.ENGINE_CONN_EXECUTOR_INIT_ERROR, s"Cannot parse cs table for node : ${nodeNameStr}.")
     }
     logger.info(s"Finished to call CSSparkPreExecutionHook,contextID is $contextIDValueStr, nodeNameStr is $nodeNameStr")
     parsedCode

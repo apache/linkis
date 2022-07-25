@@ -22,3 +22,5 @@ import org.apache.linkis.common.exception.FatalException
 class EngineConnFatalException(errorCode: Int, msg: String) extends FatalException(errorCode, msg){
 
 }
+
+case class ExecutorHookFatalException(errorCode: Int, msg: String) extends EngineConnFatalException(errorCode, msg)

@@ -36,7 +36,6 @@ import org.apache.linkis.engineconn.core.EngineConnObject
 import org.apache.linkis.engineplugin.presto.conf.PrestoConfiguration._
 import org.apache.linkis.engineplugin.presto.conf.PrestoEngineConf
 import org.apache.linkis.engineplugin.presto.exception.{PrestoClientException, PrestoStateInvalidException}
-import org.apache.linkis.engineplugin.presto.utils.SqlCodeParser
 import org.apache.linkis.governance.common.paser.SQLCodeParser
 import org.apache.linkis.manager.common.entity.resource.{CommonNodeResource, LoadResource, NodeResource}
 import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf
@@ -80,7 +79,7 @@ class PrestoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int) 
   }
 
   override def executeLine(engineExecutorContext: EngineExecutionContext, code: String): ExecuteResponse = {
-    val realCode = SqlCodeParser.parse(code.trim)
+    val realCode = code.trim
     logger.info(s"presto client begins to run psql code:\n $realCode")
 
     val taskId = engineExecutorContext.getJobId.get

@@ -24,7 +24,7 @@ import org.apache.linkis.gateway.http.GatewayContext
 import org.apache.linkis.gateway.route.AbstractGatewayRouter
 import org.apache.linkis.gateway.ujes.parser.EntranceExecutionGatewayParser
 import org.apache.linkis.protocol.constants.TaskConstant
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 
 class EntranceGatewayRouter extends AbstractGatewayRouter {
 

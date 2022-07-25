@@ -22,7 +22,7 @@ import java.util
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.manager.common.entity.resource.{LoadInstanceResource, Resource}
 import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 
 class GenericEngineResourceFactory extends AbstractEngineResourceFactory with Logging {
 

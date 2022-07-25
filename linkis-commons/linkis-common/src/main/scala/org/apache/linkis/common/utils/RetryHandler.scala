@@ -18,7 +18,7 @@
 package org.apache.linkis.common.utils
 
 import org.apache.linkis.common.exception.FatalException
-import org.apache.commons.lang.{ClassUtils => CommonClassUtils}
+import org.apache.commons.lang3.{ClassUtils => CommonClassUtils}
 
 import scala.collection.mutable.ArrayBuffer
 
@@ -26,8 +26,8 @@ import scala.collection.mutable.ArrayBuffer
 trait RetryHandler extends Logging {
 
   private var retryNum = 2
-  private var period = 100l
-  private var maxPeriod = 1000l
+  private var period = 100L
+  private var maxPeriod = 1000L
   private val retryExceptions = ArrayBuffer[Class[_  <: Throwable]]()
 
   def setRetryNum(retryNum: Int): Unit = this.retryNum = retryNum

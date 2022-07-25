@@ -20,7 +20,7 @@ package org.apache.linkis.cs.server.parser;
 import org.apache.linkis.cs.common.annotation.KeywordMethod;
 import org.apache.linkis.cs.server.conf.ContextServerConf;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import org.springframework.stereotype.Component;
 

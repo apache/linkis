@@ -17,7 +17,7 @@
  
 package org.apache.linkis.orchestrator.computation
 
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.orchestrator.computation.catalyst.converter.CodeConverterTransform
 import org.apache.linkis.orchestrator.computation.catalyst.converter.ruler._

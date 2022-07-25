@@ -17,25 +17,37 @@
  
 package org.apache.linkis.ecm.server.service.impl;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.linkis.common.ServiceInstance;
 import org.apache.linkis.common.utils.Utils;
 import org.apache.linkis.ecm.core.engineconn.EngineConn;
 import org.apache.linkis.ecm.server.conf.ECMConfiguration;
 import org.apache.linkis.ecm.server.service.EngineConnKillService;
 import org.apache.linkis.ecm.server.service.EngineConnListService;
+import org.apache.linkis.engineconn.common.conf.EngineConnConf;
 import org.apache.linkis.governance.common.utils.GovernanceUtils;
 import org.apache.linkis.manager.common.protocol.engine.EngineStopRequest;
 import org.apache.linkis.manager.common.protocol.engine.EngineStopResponse;
 import org.apache.linkis.manager.common.protocol.engine.EngineSuicideRequest;
+import org.apache.linkis.manager.label.entity.Label;
+import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel;
 import org.apache.linkis.rpc.message.annotation.Receiver;
 import org.apache.linkis.rpc.Sender;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.Optional;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class DefaultEngineConnKillService implements EngineConnKillService {
 
@@ -46,6 +58,8 @@ public class DefaultEngineConnKillService implements EngineConnKillService {
     public void setEngineConnListService(EngineConnListService engineConnListService) {
         this.engineConnListService = engineConnListService;
     }
+
+    private static final ThreadPoolExecutor ecYarnAppKillService = Utils.newCachedThreadPool(10, "ECM-Kill-EC-Yarn-App", true);
 
     @Override
     @Receiver
@@ -61,6 +75,7 @@ public class DefaultEngineConnKillService implements EngineConnKillService {
                 response.setStopStatus(true);
                 response.setMsg("Kill engine " + engineConn.getServiceInstance().toString() + " succeed.");
             }
+            killYarnAppIdOfOneEc(engineConn);
         } else {
             logger.warn("Cannot find engineconn : " + engineStopRequest.getServiceInstance().toString() + " in this engineConnManager engineConn list, cannot kill.");
             response.setStopStatus(true);
@@ -77,6 +92,80 @@ public class DefaultEngineConnKillService implements EngineConnKillService {
             }
         }
         return response;
+    }
+
+    private synchronized void killYarnAppIdOfOneEc(EngineConn engineConn) {
+        String engineConnInstance = engineConn.getServiceInstance().toString();
+        logger.info("try to kill yarn app ids in the engine of ({}).", engineConnInstance);
+        String engineLogDir = engineConn.getEngineConnManagerEnv().engineConnLogDirs();
+        final String errEngineLogPath = engineLogDir.concat(File.separator).concat("stderr");
+        logger.info("try to parse the yarn app id from the engine err log file path: {}", errEngineLogPath);
+        ecYarnAppKillService.execute(() -> {
+            BufferedReader in = null;
+            try {
+                in = new BufferedReader(new FileReader(errEngineLogPath));
+                String line;
+                String regex = getYarnAppRegexByEngineType(engineConn);
+                if (StringUtils.isBlank(regex)) {
+                    return;
+                }
+                Pattern pattern = Pattern.compile(regex);
+                List<String> appIds = new ArrayList<>();
+                while ((line = in.readLine()) != null) {
+                    if (StringUtils.isNotBlank(line)) {
+                        Matcher mApp = pattern.matcher(line);
+                        if (mApp.find()) {
+                            String candidate1 = mApp.group(mApp.groupCount());
+                            if (!appIds.contains(candidate1)) {
+                                appIds.add(candidate1);
+                            }
+                        }
+                    }
+                }
+                GovernanceUtils.killYarnJobApp(appIds);
+                logger.info("finished kill yarn app ids in the engine of ({})." , engineConnInstance);
+            } catch (IOException ioEx) {
+                if (ioEx instanceof FileNotFoundException) {
+                    logger.error("the engine log file {} not found.", errEngineLogPath);
+                } else {
+                    logger.error("the engine log file parse failed. the reason is {}", ioEx.getMessage());
+                }
+            } finally {
+                IOUtils.closeQuietly(in);
+            }
+        });
+    }
+
+    private String getYarnAppRegexByEngineType(EngineConn engineConn) {
+        List<Label<?>> labels = engineConn.getLabels();
+        String engineType = "";
+        if (labels != null && !labels.isEmpty()) {
+            Optional<EngineTypeLabel> labelOptional = labels.stream().filter(label -> label instanceof EngineTypeLabel)
+                    .map(label -> (EngineTypeLabel) label).findFirst();
+            if (labelOptional.isPresent()) {
+                EngineTypeLabel engineTypeLabel = labelOptional.get();
+                engineType = engineTypeLabel.getEngineType();
+            }
+        }
+        if (StringUtils.isBlank(engineType)) {
+            return "";
+        }
+        String regex;
+        switch (engineType) {
+        case "spark":
+        case "shell":
+            regex = EngineConnConf.SPARK_ENGINE_CONN_YARN_APP_ID_PARSE_REGEX().getValue();
+            break;
+        case "sqoop":
+            regex = EngineConnConf.SQOOP_ENGINE_CONN_YARN_APP_ID_PARSE_REGEX().getValue();
+            break;
+        case "hive":
+            regex = EngineConnConf.HIVE_ENGINE_CONN_YARN_APP_ID_PARSE_REGEX().getValue();
+            break;
+        default:
+            regex = "";
+        }
+        return regex;
     }
 
     private EngineConn getEngineConnByServiceInstance(ServiceInstance serviceInstance) {

@@ -65,8 +65,16 @@ export default [
         title: 'resource',
         publicPage: true,
       },
-    },
-    {
+    }, {
+      name: 'resourceEngineConnList',
+      path: 'resourceEngineConnList',
+      component: () =>
+        import('./module/resourceManagement/engineConn.vue'),
+      meta: {
+        title: '历史引擎信息',
+        publicPage: true,
+      },
+    }, {
       name: 'setting',
       path: 'setting',
       component: () =>

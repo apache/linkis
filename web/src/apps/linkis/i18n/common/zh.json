@@ -18,6 +18,7 @@
             "addTags": "添加标签",
             "find": "查询",
             "initiator": "创建者",
+            "inputOwnerHint": "请输入创建者",
             "jumpPage": "请在跳转页面查看……",
             "editedSuccess": "修改成功",
             "errorCode": "错误码",
@@ -144,6 +145,7 @@
                     "children": {
                         "globalHistory": "全局历史",
                         "resource": "资源管理",
+                        "resourceEngineConnList": "历史引擎信息",
                         "setting": "参数配置",
                         "dateReport": "全局变量",
                         "globalValiable": "常见问题",

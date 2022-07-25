@@ -41,6 +41,17 @@ serviceAccount:
   annotations: {}
   name: "linkis"
   automountToken: true
+role:
+  create: true
+  annotations: {}
+  name: "linkis-role"
+  automountToken: true
+roleBinding:
+  create: true
+  annotations: {}
+  name: "linkis-role-binding"
+  automountToken: true
+
 
 linkis:
   featureGates:

@@ -50,7 +50,7 @@
                 <include>log4j2.xml</include>
             </includes>
             <fileMode>0777</fileMode>
-            <outputDirectory>/dist/v${io_file.version}/conf</outputDirectory>
+            <outputDirectory>dist/v${io_file.version}/conf</outputDirectory>
             <lineEnding>unix</lineEnding>
         </fileSet>
 
@@ -63,7 +63,7 @@
                 <exclude>*doc.jar</exclude>
             </excludes>
             <fileMode>0777</fileMode>
-            <outputDirectory>/plugin/${io_file.version}</outputDirectory>
+            <outputDirectory>plugin/${io_file.version}</outputDirectory>
         </fileSet>
 
     </fileSets>

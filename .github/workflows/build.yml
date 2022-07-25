@@ -60,6 +60,6 @@ jobs:
 #        token: ${{ secrets.CODECOV_TOKEN }}
     - name: Build frontend by node.js
       run: |
-          cd web
+          cd linkis-web
           npm install
           npm run build

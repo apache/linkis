@@ -36,7 +36,6 @@ import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 @Api(tags = "ECP(engineconn plugin) operation")
 @RestController
 @RequestMapping(path = "/engineplugin")
@@ -46,7 +45,10 @@ public class EnginePluginRestful {
 
     @Autowired private EngineConnResourceService engineConnResourceService;
 
-    @ApiOperation(value = "refreshAll", notes = "refresh all engineconn resource", response = Message.class)
+    @ApiOperation(
+            value = "refreshAll",
+            notes = "refresh all engineconn resource",
+            response = Message.class)
     @RequestMapping(path = "/refreshAll", method = RequestMethod.GET)
     public Message refreshAll(HttpServletRequest req) {
         String username = ModuleUserUtils.getOperationUser(req, "refreshAll");
@@ -60,7 +62,10 @@ public class EnginePluginRestful {
         }
     }
 
-    @ApiOperation(value = "refreshAll", notes = "refresh one engineconn resource", response = Message.class)
+    @ApiOperation(
+            value = "refreshAll",
+            notes = "refresh one engineconn resource",
+            response = Message.class)
     @RequestMapping(path = "/refresh", method = RequestMethod.GET)
     public Message refreshOne(
             HttpServletRequest req,

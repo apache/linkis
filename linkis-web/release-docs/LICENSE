@@ -213,7 +213,7 @@
 ============================================================================
 
 Third party of Linkis Web project
-See licenses-binary-ui/ for text of these licenses.
+See licenses/ for text of these licenses.
     (The Apache-2.0 License) dexie@2.0.4 (https://github.com/dfahlander/Dexie.js)
     (The BSD-3-Clause License) highlight.js@10.7.3 (https://github.com/highlightjs/highlight.js)
     (The BSD-3-Clause License) license-checker@25.0.1 (https://github.com/davglass/license-checker)

@@ -29,8 +29,7 @@ import org.apache.linkis.protocol.utils.TaskUtils
 import org.apache.linkis.ujes.client.exception.{UJESClientBuilderException, UJESJobException}
 import org.apache.linkis.ujes.client.{UJESClient, UJESClientImpl}
 import org.apache.linkis.ujes.client.request.JobSubmitAction
-import org.apache.commons.lang.StringUtils
-
+import org.apache.commons.lang3.StringUtils
 
 trait LinkisJobBuilder[Job <: LinkisJob] {
 

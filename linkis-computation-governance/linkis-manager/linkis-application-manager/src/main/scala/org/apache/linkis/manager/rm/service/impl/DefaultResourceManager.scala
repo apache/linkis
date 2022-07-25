@@ -19,6 +19,7 @@ package org.apache.linkis.manager.rm.service.impl
 
 import com.google.common.collect.Lists
 import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.common.exception.LinkisRetryException
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.manager.common.conf.RMConfiguration
@@ -587,10 +588,10 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
   private def tryLock(labelContainer: RMLabelContainer, timeOut: Long = -1): Unit = {
     labelContainer.getResourceLabels.foreach {
       case label: Label[_] =>
-        labelContainer.setCurrentLabel(label.asInstanceOf[Label[_]])
+        labelContainer.setCurrentLabel(label)
         val locked = resourceLockService.tryLock(labelContainer, timeOut)
         if (!locked) {
-          throw new RMWarnException(110022, s"try to lock resource label ${labelContainer.getCurrentLabel} over $timeOut ms, please wait a moment and try again!")
+          throw new LinkisRetryException(110022, s"try to lock resource label ${labelContainer.getCurrentLabel} over $timeOut ms, please wait a moment and try again!")
         }
       case _ =>
     }

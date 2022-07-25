@@ -31,8 +31,7 @@ import org.apache.linkis.cs.common.utils.CSCommonUtils
 import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
 import org.apache.linkis.storage.domain.Column
 import org.apache.linkis.storage.utils.StorageUtils
-import org.apache.commons.lang.StringUtils
-
+import org.apache.commons.lang3.StringUtils
 
 object CSTableRegister extends Logging{
 

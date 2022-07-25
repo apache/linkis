@@ -17,24 +17,21 @@
  
 package org.apache.linkis.jobhistory.util
 
-import java.io.{InputStream, OutputStream}
-import java.text.SimpleDateFormat
-import java.util.Date
-
+import org.apache.commons.io.IOUtils
+import org.apache.commons.lang3.time.DateFormatUtils
 import org.apache.linkis.common.conf.CommonVars
 import org.apache.linkis.common.io.FsPath
 import org.apache.linkis.common.utils.{Logging, Utils}
-import org.apache.linkis.governance.common.entity.job.{JobRequest, SubJobDetail, SubJobInfo}
-import org.apache.linkis.governance.common.entity.task.RequestInsertTask
-import org.apache.linkis.governance.common.protocol.job.JobReqInsert
+import org.apache.linkis.governance.common.entity.job.{JobRequest, SubJobDetail}
 import org.apache.linkis.jobhistory.conf.JobhistoryConfiguration
-import org.apache.linkis.jobhistory.entity.{JobHistory, QueryTask}
+import org.apache.linkis.jobhistory.entity.JobHistory
 import org.apache.linkis.storage.FSFactory
 import org.apache.linkis.storage.fs.FileSystem
 import org.apache.linkis.storage.utils.{FileSystemUtils, StorageUtils}
-import org.apache.commons.io.IOUtils
-import org.apache.commons.lang.time.DateFormatUtils
 
+import java.io.{InputStream, OutputStream}
+import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.regex.Pattern
 
 object QueryUtils extends Logging {

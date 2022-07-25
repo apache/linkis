@@ -20,6 +20,7 @@
       "fold": "Fold",
       "jumpPage": "Please check in the jump page...",
       "initiator": "Created From",
+      "inputOwnerHint": "Please input owner",
       "find": "Find",
       "errorCode": "Error code",
       "errorDescription": "Error description",
@@ -142,6 +143,7 @@
           "children": {
             "globalHistory": "Global History",
             "resource": "Resource Manager",
+            "resourceEngineConnList": "History Engine List",
             "setting": "Settings",
             "dateReport": "Global Variables",
             "globalValiable": "Frequently Asked",

@@ -17,7 +17,7 @@
  
 package org.apache.linkis.manager.engineplugin.python.utils
 
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 
 
 trait Kind

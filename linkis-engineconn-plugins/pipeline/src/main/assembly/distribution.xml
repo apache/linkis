@@ -51,7 +51,7 @@
                 <include>log4j2.xml</include>
             </includes>
             <fileMode>0777</fileMode>
-            <outputDirectory>/dist/v${pipeline.version}/conf</outputDirectory>
+            <outputDirectory>dist/v${pipeline.version}/conf</outputDirectory>
             <lineEnding>unix</lineEnding>
         </fileSet>
 
@@ -64,7 +64,7 @@
                 <exclude>*doc.jar</exclude>
             </excludes>
             <fileMode>0777</fileMode>
-            <outputDirectory>/plugin/${pipeline.version}</outputDirectory>
+            <outputDirectory>plugin/${pipeline.version}</outputDirectory>
         </fileSet>
 
     </fileSets>

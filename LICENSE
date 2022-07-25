@@ -216,7 +216,7 @@ BSD licenses
 ========================================================================
 
 The following components are provided under the BSD License.
-    linkis-engineconn-plugins/engineconn-plugins/python/src/main/py4j/py4j-*-src.zip
+    linkis-engineconn-plugins/python/src/main/py4j/py4j-*-src.zip
     (See licenses/LICENSE-py4j-*-src.txt for text of this license)
 
 ========================================================================

@@ -8,7 +8,7 @@ import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class DownloadDaoTest {
+class DownloadDaoTest extends BaseDaoTest {
 
     @Autowired
     DownloadDao downloadDao;

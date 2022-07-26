@@ -3,14 +3,14 @@ package org.apache.linkis.bml.dao;
 import org.apache.linkis.bml.entity.BmlProject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-
-class BmlProjectDaoTest {
+class BmlProjectDaoTest extends  BaseDaoTest {
 
 
     @Autowired BmlProjectDao bmlProjectDao;
@@ -43,7 +43,6 @@ class BmlProjectDaoTest {
         int priv=2;
         String creator="testc";
         bmlProjectDao.setProjectPriv(projectId,usernamesList,priv,creator,new Date());
-
     }
 
     @Test
@@ -56,7 +55,7 @@ class BmlProjectDaoTest {
 
     @Test
     void addProjectResource() {
-         Integer id=1;
+        Integer id=1;
         String resourceId="321456";
         bmlProjectDao.addProjectResource(id,resourceId);
 
@@ -87,7 +86,6 @@ class BmlProjectDaoTest {
         Integer projectId =3;
         String resourceId ="321";
         bmlProjectDao.checkIfExists(projectId,resourceId);
-        System.out.println("as");
     }
 
     @Test

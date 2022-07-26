@@ -13,7 +13,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class ResourceDaoTest {
+class ResourceDaoTest extends BaseDaoTest {
 
 
     @Autowired
@@ -23,7 +23,11 @@ class ResourceDaoTest {
 
     @Test
     void getResources() {
-        Map<String,String> map=new HashMap<>();
+
+        Map<String,Object> map=new HashMap<>();
+        map.put("owner","testowner");
+        map.put("resource_id","1");
+        map.put("sys","testsys");
         resourceDao.getResources(map);
     }
 

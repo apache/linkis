@@ -20,7 +20,6 @@ package org.apache.linkis.bml.common;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -38,9 +37,7 @@ public class VersionServiceImplTest {
         ResourceHelper hdfsResourceHelper = new HdfsResourceHelper();
         String newPath =
                 hdfsResourceHelper.generatePath(
-                        "linkis",
-                        path.substring(path.lastIndexOf(File.separator) + 1),
-                        new HashMap<>());
+                        "linkis", path.substring(path.lastIndexOf("/") + 1), new HashMap<>());
         assertEquals(
                 newPath,
                 "hdfs:///apps-data/linkis/bml/"

@@ -589,6 +589,7 @@ See licenses/ for text of these licenses.
     (Apache License, version 2.0) presto-client (com.facebook.presto:presto-client:0.234 - https://github.com/prestodb/presto/presto-client)
     (Apache License, version 2.0) presto-resource-group-managers (com.facebook.presto:presto-resource-group-managers:0.234 - https://github.com/prestodb/presto/presto-resource-group-managers)
     (Apache License, version 2.0) presto-spi (com.facebook.presto:presto-spi:0.234 - https://github.com/prestodb/presto/presto-spi)
+    (Apache License, version 2.0) stats (com.facebook.airlift:stats:0.191 - https://github.com/airlift/airlift/tree/master/stats)
 
 ========================================================================
 Third party CDDL licenses

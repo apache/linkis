@@ -577,6 +577,18 @@ See licenses/ for text of these licenses.
     (Apache License, version 2.0) Apache twill (org.apache.twill:* - https://twill.apache.org/)
     (Apache License, version 2.0) Apache tephra (co.cask.tephra:* - https://tephra.apache.org/)
     (Apache License, version 2.0) Apache Sqoop - Server (org.apache.sqoop:sqoop:1.4.6 - https://github.com/apache/sqoop/)
+    (Apache License, version 2.0) bootstrap (com.facebook.airlift:bootstrap:0.191 - https://github.com/prestodb/airlift/bootstrap)
+    (Apache License, version 2.0) Apache BVal :: bval-jsr (org.apache.bval:bval-jsr:2.0.0 - http://bval.apache.org/bval-jsr/)
+    (Apache License, version 2.0) cglib-nodep (cglib:cglib-nodep:3.2.5 - https://github.com/cglib/cglib/cglib-nodep)
+    (Apache License, version 2.0) concurrent (com.facebook.airlift:concurrent:0.191 - https://github.com/prestodb/airlift/concurrent)
+    (Apache License, version 2.0) configuration (com.facebook.airlift:configuration:0.191 - https://github.com/prestodb/airlift/configuration)
+    (Apache License, Version 2.0) ExpiringMap (net.jodah:expiringmap:0.5.6 - http://github.com/jhalterman/expiringmap/)
+    (Apache License, version 2.0) jdbi3 Core (org.jdbi:jdbi3-core:3.4.0 - http://jdbi.org/)
+    (Apache License, version 2.0) jdbi3 SqlObject (org.jdbi:jdbi3-sqlobject:3.4.0 - http://jdbi.org/)
+    (Apache License, version 2.0) jmxutils (org.weakref:jmxutils:1.19 - https://github.com/martint/jmxutils)
+    (Apache License, version 2.0) presto-client (com.facebook.presto:presto-client:0.234 - https://github.com/prestodb/presto/presto-client)
+    (Apache License, version 2.0) presto-resource-group-managers (com.facebook.presto:presto-resource-group-managers:0.234 - https://github.com/prestodb/presto/presto-resource-group-managers)
+    (Apache License, version 2.0) presto-spi (com.facebook.presto:presto-spi:0.234 - https://github.com/prestodb/presto/presto-spi)
 
 ========================================================================
 Third party CDDL licenses

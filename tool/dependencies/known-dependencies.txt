@@ -36,8 +36,6 @@ bcpkix-jdk15on-1.64.jar
 bcprov-jdk15on-1.64.jar
 bonecp-0.8.0.RELEASE.jar
 bootstrap-0.191.jar
-bootstrap-0.191.jar
-bval-jsr-2.0.0.jar
 bval-jsr-2.0.0.jar
 byte-buddy-1.10.22.jar
 caffeine-2.8.4.jar
@@ -45,7 +43,6 @@ caffeine-2.8.8.jar
 calcite-core-1.10.0.jar
 calcite-druid-1.10.0.jar
 calcite-linq4j-1.10.0.jar
-cglib-nodep-3.2.5.jar
 cglib-nodep-3.2.5.jar
 checker-qual-3.4.0.jar
 checker-qual-3.5.0.jar
@@ -81,9 +78,7 @@ commons-net-3.1.jar
 commons-pool-1.6.jar
 commons-text-1.9.jar
 concurrent-0.191.jar
-concurrent-0.191.jar
 config-1.3.3.jar
-configuration-0.191.jar
 configuration-0.191.jar
 curator-client-2.7.1.jar
 curator-framework-2.7.1.jar
@@ -104,7 +99,6 @@ eureka-client-1.10.14.jar
 eureka-core-1.10.14.jar
 evictor-1.0.0.jar
 excel-streaming-reader-4.0.1.jar
-expiringmap-0.5.6.jar
 expiringmap-0.5.6.jar
 failureaccess-1.0.1.jar
 fastutil-6.5.6.jar
@@ -263,8 +257,6 @@ jboss-logging-3.4.2.Final.jar
 jcodings-1.0.8.jar
 jcommander-1.30.jar
 jdbi3-core-3.4.0.jar
-jdbi3-core-3.4.0.jar
-jdbi3-sqlobject-3.4.0.jar
 jdbi3-sqlobject-3.4.0.jar
 jdo-api-3.0.1.jar
 jersey-apache-client4-1.19.4.jar
@@ -298,7 +290,6 @@ jetty-util-ajax-9.4.46.v20220331.jar
 jetty-webapp-9.4.46.v20220331.jar
 jetty-xml-9.4.46.v20220331.jar
 jline-2.14.6.jar
-jmxutils-1.19.jar
 jmxutils-1.19.jar
 jna-5.12.1.jar
 jna-platform-5.12.1.jar
@@ -421,11 +412,8 @@ poi-ooxml-5.2.2.jar
 poi-ooxml-lite-5.2.2.jar
 poi-shared-strings-2.5.3.jar
 presto-client-0.234.jar
-presto-client-0.234.jar
 presto-client-1.5.0.jar
 presto-resource-group-managers-0.234.jar
-presto-resource-group-managers-0.234.jar
-presto-spi-0.234.jar
 presto-spi-0.234.jar
 protobuf-java-3.14.0.jar
 protobuf-java-3.15.8.jar

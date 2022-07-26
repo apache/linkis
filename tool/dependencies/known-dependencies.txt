@@ -98,7 +98,7 @@ disruptor-3.3.0.jar
 dropwizard-metrics-hadoop-metrics2-reporter-0.1.2.jar
 druid-1.1.22.jar
 eigenbase-properties-1.1.5.jar
-elasticsearch-rest-client-6.7.1.jar
+elasticsearch-rest-client-6.8.15.jar
 error_prone_annotations-2.3.4.jar
 error_prone_annotations-2.4.0.jar
 eureka-client-1.10.14.jar

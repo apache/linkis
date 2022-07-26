@@ -14,17 +14,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-name: Bug report
+name: 🐛 Bug Report
 title: "[Bug] "
-description: Problems and issues with code of Linkis
-labels: [bug, triage]
+description: Submit a bug report to help us improve
+labels: [bug, 'status: needs triage']
 body:
   - type: markdown
     attributes:
       value: |
         Thank you for reporting the problem!
-        Please make sure what you are reporting is a bug with reproducible steps. To ask questions
-        or share ideas, pleae post on our [Discussion page](https://github.com/apache/incubator-linkis/discussions) instead.
+        Please make sure what you are reporting is a bug with reproducible steps.
+        To ask questions or share ideas, pleae post on our [Discussion page](https://github.com/apache/incubator-linkis/discussions) instead.
 
   - type: checkboxes
     attributes:
@@ -34,8 +34,7 @@ body:
         whether the same issue was reported already.
       options:
         - label: >
-            I searched the [issues](https://github.com/apache/incubator-linkis/issues) and found no similar
-            issues.
+            I searched the [issues](https://github.com/apache/incubator-linkis/issues) and found no similar issues.
           required: true
 
   - type: dropdown
@@ -47,56 +46,45 @@ body:
       multiple: true
       options:
         - "linkis-commons"
-        - "linkis-cg-entrance"
-        - "linkis-cg-manager"
-        - "linkis-cg-engineConnplugin"
-        - "linkis-cg-engineConnManager"
-        - "linkis-cg-client"
+        - "linkis-computation-governance"
+        - "linkis-dist"
+        - "linkis-engineconnn-plugin"
         - "linkis-extensions"
         - "linkis-orchestrator"
         - "linkis-public-enhancements"
-        - "linkis-service-gateway"
-        - "linkis-service-discovery"
-        - "web"
+        - "linkis-spring-cloud-services"
+        - "linkis-web"
     validations:
       required: true
 
   - type: textarea
     attributes:
-      label: What happened + What you expected to happen
-      description: Describe 1. the bug 2. expected behavior 3. useful information (e.g., logs)
-      placeholder: >
-        Please provide the context in which the problem occurred and explain what happened. Further,
-        To Reproduce Steps to reproduce the behavior: 1. Go to '...' 2. Click on '....' 3. Scroll down to '.... 4. See error
-        please also explain why you think the behaviour is erroneous. It is extremely helpful if you can
-        copy and paste the fragment of logs showing the exact error messages or wrong behaviour here.
-
-        **NOTE**: Expected behavior A clear and concise description of what you expected to happen.Screenshots If applicable, add screenshots to help explain your problem.
+      label: Steps to reproduce
+      description: Write down the steps to reproduce the bug. You should start with a fresh installation, or your git repository linked above.
+      placeholder: |
+        1. Step 1...
+        2. Step 2...
+        3. Step 3...
     validations:
       required: true
 
   - type: textarea
     attributes:
-      label: Relevent platform
-      description: The platform where you occurred this issue
-      placeholder: >
-        Please specify Desktop or Smartphone, Version / Dependencies / OS / Browser
+      label: Expected behavior
+      description: |
+        How did you expect your project to behave? It’s fine if you’re not sure your understanding is correct. Write down what you thought would happen.
+      placeholder: Write what you thought would happen.
     validations:
       required: true
 
+
   - type: textarea
     attributes:
-      label: Reproduction script
-      description: >
-        Please provide a reproducible script. Providing a narrow reproduction (minimal / no external dependencies) will
-        help us triage and address issues in the timely manner!
-      placeholder: >
-        Please provide a short code snippet (less than 50 lines if possible) that can be copy-pasted to
-        reproduce the issue. The snippet should have **no external library dependencies**
-        (i.e., use fake or mock data / environments).
-
-        **NOTE**: If the code snippet cannot be run by itself, the issue will be marked as "needs-repro-script"
-        until the repro instruction is updated.
+      label: Your environment
+      description: Include as many relevant details about the environment you experienced the bug in.
+      value: |
+        - Linkis version used: e.g. 1.1.2
+        - Environment name and version: e.g. cdh-5.14.2, hdp-3.1.5, hive-2.1.1, spark-3.2.1...
     validations:
       required: true
 

@@ -57,6 +57,8 @@ class EntranceGroupFactory extends GroupFactory with Logging {
     null
   }
 
+
+
   override def getOrCreateGroup(event: SchedulerEvent): Group = {
     val (labels, params) = event match {
       case job: EntranceJob =>
@@ -84,7 +86,7 @@ class EntranceGroupFactory extends GroupFactory with Logging {
       val keyAndValue = Utils.tryAndWarnMsg {
         sender.ask(RequestQueryEngineConfigWithGlobalConfig(userCreatorLabel, engineTypeLabel)).asInstanceOf[ResponseQueryConfig].getKeyAndValue
       }("Get user configurations from configuration server failed! Next use the default value to continue.")
-      val maxRunningJobs = EntranceConfiguration.WDS_LINKIS_INSTANCE.getValue(keyAndValue)
+      val maxRunningJobs = getUserMaxRunningJobs(keyAndValue)
       val initCapacity = GROUP_INIT_CAPACITY.getValue(keyAndValue)
       val maxCapacity = if (null != specifiedUsernameRegexPattern) {
         if (specifiedUsernameRegexPattern.matcher(userCreatorLabel.getUser).find()) {
@@ -113,7 +115,11 @@ class EntranceGroupFactory extends GroupFactory with Logging {
     group
   }
 
-
+  private def getUserMaxRunningJobs(keyAndValue: util.Map[String, String]): Int = {
+    var userDefinedRunningJobs = EntranceConfiguration.WDS_LINKIS_INSTANCE.getValue(keyAndValue)
+    val entranceNum = Sender.getInstances(Sender.getThisServiceInstance.getApplicationName).length
+    Math.max(EntranceConfiguration.ENTRANCE_INSTANCE_MIN.getValue, userDefinedRunningJobs / entranceNum);
+  }
 
 }
 

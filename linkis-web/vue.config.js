@@ -157,10 +157,10 @@ module.exports = {
             copy: [
               { source: './config.sh', destination: `./dist/config.sh`,toType: 'file'},
               { source: './install.sh', destination: `./dist/install.sh`,toType: 'file' },
-              { source: '../NOTICE-binary-ui', destination: `./dist/NOTICE`,toType: 'file'},
-              { source: '../LICENSE-binary-ui', destination: `./dist/LICENSE`,toType: 'file'},
-              { source: '../DISCLAIMER', destination: `./dist/DISCLAIMER`,toType: 'file'},
-              { source: '../licenses-binary-ui', destination: `./dist/licenses` }
+              { source: './release-docs/LICENSE', destination: `./dist/NOTICE`,toType: 'file'},
+              { source: './release-docs/NOTICE', destination: `./dist/NOTICE`,toType: 'file'},
+              { source: './release-docs/licenses', destination: `./dist/licenses`},
+              { source: '../DISCLAIMER', destination: `./dist/DISCLAIMER`,toType: 'file'}
             ],
             // 先删除根目录下的zip包
             delete: [`./apache-linkis-${getVersion()}-incubating-web-bin.tar.gz`],

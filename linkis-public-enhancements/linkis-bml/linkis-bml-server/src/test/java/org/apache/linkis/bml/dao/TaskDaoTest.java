@@ -16,7 +16,7 @@ class TaskDaoTest extends BaseDaoTest {
     @Test
     void insert() {
         ResourceTask resourceTask = new ResourceTask();
-        resourceTask.setResourceId("12");
+        resourceTask.setResourceId("123");
         resourceTask.setClientIp("192.168.142");
         resourceTask.setEndTime(new Date());
         resourceTask.setId(32);
@@ -35,22 +35,19 @@ class TaskDaoTest extends BaseDaoTest {
 
     @Test
     void updateState() {
-        long taskId = 123;
-        String state = "1";
-        taskDao.updateState(taskId, state, new Date());
+        insert();
+        taskDao.updateState(32, "1", new Date());
     }
 
     @Test
     void updateState2Failed() {
-        long taskId = 123;
-        String state = "1";
-        String errMsg = "testErr";
-        taskDao.updateState2Failed(taskId, state, new Date(), errMsg);
+        insert();
+        taskDao.updateState2Failed(32, "1", new Date(), "errMsg");
     }
 
     @Test
     void getNewestVersion() {
-        String resourceId = "123";
-        taskDao.getNewestVersion(resourceId);
+        insert();
+        taskDao.getNewestVersion("123");
     }
 }

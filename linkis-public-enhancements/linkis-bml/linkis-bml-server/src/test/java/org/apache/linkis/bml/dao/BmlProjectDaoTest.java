@@ -17,76 +17,69 @@ class BmlProjectDaoTest extends BaseDaoTest {
     @Test
     void createNewProject() {
         BmlProject bmlProject = new BmlProject();
-        bmlProject.setName("test");
+        bmlProject.setName("testName");
         bmlProject.setSystem("testSy");
         bmlProject.setSource("test");
         bmlProject.setDescription("descTest");
-        bmlProject.setCreator("creTest");
+        bmlProject.setCreator("creCreatorUser");
         bmlProject.setEnabled(1);
         bmlProject.setCreateTime(new Date());
+        bmlProject.setId(1);
         bmlProjectDao.createNewProject(bmlProject);
     }
 
     @Test
     void getBmlProject() {
-        String projectName = "testName";
-        bmlProjectDao.getBmlProject(projectName);
+        createNewProject();
+        bmlProjectDao.getBmlProject("testName");
     }
 
     @Test
     void setProjectPriv() {
-        Integer projectId = 1;
         List<String> usernamesList = new ArrayList<>();
-        usernamesList.add("test1");
-        usernamesList.add("test2");
+        usernamesList.add("creCreatorUser");
+        usernamesList.add("creCreatorUser1");
         int priv = 2;
-        String creator = "testc";
-        bmlProjectDao.setProjectPriv(projectId, usernamesList, priv, creator, new Date());
+        bmlProjectDao.setProjectPriv(1, usernamesList, priv, "creCreatorUser", new Date());
     }
 
     @Test
     void getPrivInProject() {
-        String projectName = "testpro";
-        String username = "testname";
-        bmlProjectDao.getPrivInProject(projectName, username);
+        setProjectPriv();
+        createNewProject();
+        bmlProjectDao.getPrivInProject("testName", "creCreatorUser");
     }
 
     @Test
     void addProjectResource() {
-        Integer id = 1;
-        String resourceId = "321456";
-        bmlProjectDao.addProjectResource(id, resourceId);
+        bmlProjectDao.addProjectResource(1, "123");
     }
 
     @Test
     void getProjectNameByResourceId() {
-        String resourceId = "321";
-        bmlProjectDao.getProjectNameByResourceId(resourceId);
+        bmlProjectDao.getProjectNameByResourceId("123");
     }
 
     @Test
     void getProjectIdByName() {
-        String projectName = "test";
-        bmlProjectDao.getProjectIdByName(projectName);
+        createNewProject();
+        bmlProjectDao.getProjectIdByName("testName");
     }
 
     @Test
     void attachResourceAndProject() {
-        Integer projectId = 32;
-        String resourceId = "123";
-        bmlProjectDao.attachResourceAndProject(projectId, resourceId);
+        createNewProject();
+        bmlProjectDao.attachResourceAndProject(1, "123");
     }
 
     @Test
     void checkIfExists() {
-        Integer projectId = 3;
-        String resourceId = "321";
-        bmlProjectDao.checkIfExists(projectId, resourceId);
+        bmlProjectDao.checkIfExists(1, "123");
     }
 
     @Test
     void deleteAllPriv() {
-        Integer projectId = 12;
-        bmlProjectDao.deleteAllPriv(projectId);
+        setProjectPriv();
+        bmlProjectDao.deleteAllPriv(1);
     }
 }

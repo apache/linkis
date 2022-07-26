@@ -16,24 +16,25 @@ class ResourceDaoTest extends BaseDaoTest {
 
     @Test
     void getResources() {
-
+        uploadResource();
         Map<String, Object> map = new HashMap<>();
         map.put("owner", "testowner");
-        map.put("resource_id", "1");
+        map.put("resource_id", "123");
         map.put("sys", "testsys");
         resourceDao.getResources(map);
     }
 
     @Test
     void deleteResource() {
-        String resourceId = "123";
-        resourceDao.deleteResource(resourceId);
+        uploadResource();
+        resourceDao.deleteResource("123");
     }
 
     @Test
     void batchDeleteResources() {
+        uploadResource();
         List<String> list = new ArrayList<>();
-        list.add("1");
+        list.add("123");
         list.add("2");
         list.add("3");
         resourceDao.batchDeleteResources(list);
@@ -42,7 +43,7 @@ class ResourceDaoTest extends BaseDaoTest {
     @Test
     void uploadResource() {
         Resource resource = new Resource();
-        resource.setResourceId("1104");
+        resource.setResourceId("123");
         resource.setResourceHeader("2");
         resource.setDownloadedFileName("testFileName");
         resource.setSystem("testSystem");
@@ -58,27 +59,26 @@ class ResourceDaoTest extends BaseDaoTest {
 
     @Test
     void checkExists() {
-        String resourceId = "123";
-        resourceDao.checkExists(resourceId);
+        uploadResource();
+        resourceDao.checkExists("123");
     }
 
     @Test
     void getResource() {
-        String resourceId = "123";
-        resourceDao.getResource(resourceId);
+        uploadResource();
+        resourceDao.getResource("123");
     }
 
     @Test
     void getUserByResourceId() {
-        String resourceId = "123";
-        resourceDao.getUserByResourceId(resourceId);
+        uploadResource();
+        resourceDao.getUserByResourceId("123");
     }
 
     @Test
     void changeOwner() {
-        String resourceId = "123";
         String oldOwner = "oldtest";
         String newOwner = "newtest";
-        resourceDao.changeOwner(resourceId, oldOwner, newOwner);
+        resourceDao.changeOwner("123", oldOwner, newOwner);
     }
 }

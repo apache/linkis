@@ -14,24 +14,27 @@ class VersionDaoTest extends BaseDaoTest {
 
     @Autowired VersionDao versionDao;
 
+    private final String resourceId = "123";
+    private final String version = "1.2";
+
     @Test
     void getVersion() {
-        String resourceId = "123";
-        String version = "1.2";
+        insertNewVersion();
         versionDao.getVersion(resourceId, version);
     }
 
     @Test
     void getVersions() {
-        String resourceId = "123";
+        insertNewVersion();
         versionDao.getVersions(resourceId);
     }
 
     @Test
     void getResourcesVersions() {
+        insertNewVersion();
         Map<String, Object> map = new HashMap<>();
         map.put("system", "testSys");
-        map.put("user", "testUser");
+        map.put("user", "binbin");
         List<String> list = new ArrayList<>();
         list.add("123");
         list.add("321");
@@ -41,24 +44,24 @@ class VersionDaoTest extends BaseDaoTest {
 
     @Test
     void deleteVersion() {
-        String resourceId = "123";
-        String version = "1.2";
+        insertNewVersion();
         versionDao.deleteVersion(resourceId, version);
     }
 
     @Test
     void deleteVersions() {
-        String resourceId = "123";
+        insertNewVersion();
         versionDao.deleteVersions(resourceId);
     }
 
     @Test
     void bathDeleteVersions() {
+        insertNewVersion();
         List<String> resourceIdlist = new ArrayList<>();
-        resourceIdlist.add("12");
+        resourceIdlist.add(resourceId);
         resourceIdlist.add("21");
         List<String> versionlist = new ArrayList<>();
-        versionlist.add("1.2");
+        versionlist.add(version);
         versionlist.add("2.1");
         versionDao.bathDeleteVersions(resourceIdlist, versionlist);
     }
@@ -66,9 +69,11 @@ class VersionDaoTest extends BaseDaoTest {
     @Test
     void insertNewVersion() {
         ResourceVersion resourceVersion = new ResourceVersion();
-        resourceVersion.setResourceId("12");
-        resourceVersion.setFileMd5("binbin");
-        resourceVersion.setVersion("1.2");
+        resourceVersion.setResourceId(resourceId);
+        resourceVersion.setUser("binbin");
+        resourceVersion.setSystem("testSys");
+        resourceVersion.setFileMd5("binbinmd5");
+        resourceVersion.setVersion(version);
         resourceVersion.setSize(25);
         resourceVersion.setStartByte(35);
         resourceVersion.setEndByte(36);
@@ -84,98 +89,90 @@ class VersionDaoTest extends BaseDaoTest {
 
     @Test
     void getResourcePath() {
-        String resourceId = "123";
+        insertNewVersion();
         versionDao.getResourcePath(resourceId);
     }
 
     @Test
     void getNewestVersion() {
-        String resourceId = "123";
+        insertNewVersion();
         versionDao.getNewestVersion(resourceId);
     }
 
     @Test
     void getStartByteForResource() {
-        String resourceId = "123";
-        String version = "1.2";
+        insertNewVersion();
         versionDao.getStartByteForResource(resourceId, version);
     }
 
     @Test
     void getEndByte() {
-        String resourceId = "123";
-        String version = "1.2";
+        insertNewVersion();
         versionDao.getEndByte(resourceId, version);
     }
 
     @Test
     void findResourceVersion() {
-        String resourceId = "123";
-        String version = "1.2";
+        insertNewVersion();
         versionDao.findResourceVersion(resourceId, version);
     }
 
     @Test
     void getAllResourcesViaSystem() {
-        String resourceId = "123";
-        String version = "1.2";
+        insertNewVersion();
         versionDao.getAllResourcesViaSystem(resourceId, version);
     }
 
     @Test
     void selectResourcesViaSystemByPage() {
-        String resourceId = "123";
-        String version = "1.2";
+        insertNewVersion();
         versionDao.selectResourcesViaSystemByPage(resourceId, version);
     }
 
     @Test
     void checkVersion() {
-        String resourceId = "123";
-        String version = "1.2";
+        insertNewVersion();
         versionDao.checkVersion(resourceId, version);
     }
 
     @Test
     void selectResourceVersionEnbleFlag() {
-        String resourceId = "123";
-        String version = "1.2";
+        insertNewVersion();
         versionDao.selectResourceVersionEnbleFlag(resourceId, version);
     }
 
     @Test
     void deleteResource() {
-        String resourceId = "123";
+        insertNewVersion();
         versionDao.deleteResource(resourceId);
     }
 
     @Test
     void batchDeleteResources() {
+        insertNewVersion();
         List<String> resourceIdlist = new ArrayList<>();
-        resourceIdlist.add("12");
+        resourceIdlist.add(resourceId);
         resourceIdlist.add("21");
         List<String> versionlist = new ArrayList<>();
-        versionlist.add("1.2");
+        versionlist.add(version);
         versionlist.add("2.1");
         versionDao.bathDeleteVersions(resourceIdlist, versionlist);
     }
 
     @Test
     void getResourceVersion() {
-        String resourceId = "123";
-        String version = "1.2";
         versionDao.getResourceVersion(resourceId, version);
     }
 
     @Test
     void selectVersionByPage() {
-        String resourceId = "123";
+        insertNewVersion();
         versionDao.selectVersionByPage(resourceId);
     }
 
     @Test
     void getResourceVersionsByResourceId() {
-        String resourceId = "123";
+        insertNewVersion();
         versionDao.getResourceVersionsByResourceId(resourceId);
     }
 }

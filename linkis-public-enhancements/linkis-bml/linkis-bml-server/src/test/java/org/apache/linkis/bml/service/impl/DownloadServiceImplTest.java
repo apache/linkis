@@ -1,4 +1,3 @@
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -16,38 +15,31 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.bml.service.impl; 
- 
+package org.apache.linkis.bml.service.impl;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
-/** 
- * DownloadServiceImpl Tester
-*/ 
-public class DownloadServiceImplTest { 
- 
-    @Autowired
-    private DownloadServiceImpl downloadServiceImpl;
- 
+/** DownloadServiceImpl Tester */
+public class DownloadServiceImplTest {
+
+    @Autowired private DownloadServiceImpl downloadServiceImpl;
+
     @BeforeEach
     @DisplayName("Each unit test method is executed once before execution")
-    public void before() throws Exception {
-    }
- 
+    public void before() throws Exception {}
+
     @AfterEach
     @DisplayName("Each unit test method is executed once before execution")
-    public void after() throws Exception {
-    }
- 
- 
+    public void after() throws Exception {}
+
     @Test
     @DisplayName("Method description: ...")
-    public void testAddDownloadRecord() throws Exception { 
-        //TODO: Test goes here... 
-    } 
- 
- 
-} 
+    public void testAddDownloadRecord() throws Exception {
+        // TODO: Test goes here...
+    }
+}

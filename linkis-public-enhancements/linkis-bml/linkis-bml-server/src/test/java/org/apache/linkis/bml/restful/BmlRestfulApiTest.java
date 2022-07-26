@@ -1,4 +1,3 @@
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -16,122 +15,103 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.bml.restful; 
- 
+package org.apache.linkis.bml.restful;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
-/** 
- * BmlRestfulApi Tester
-*/ 
-public class BmlRestfulApiTest { 
- 
-    @Autowired
-    private BmlRestfulApi bmlRestfulApi;
- 
+/** BmlRestfulApi Tester */
+public class BmlRestfulApiTest {
+
+    @Autowired private BmlRestfulApi bmlRestfulApi;
+
     @BeforeEach
     @DisplayName("Each unit test method is executed once before execution")
-    public void before() throws Exception {
-    }
- 
+    public void before() throws Exception {}
+
     @AfterEach
     @DisplayName("Each unit test method is executed once before execution")
-    public void after() throws Exception {
+    public void after() throws Exception {}
+
+    @Test
+    @DisplayName("Method description: ...")
+    public void testGetVersions() throws Exception {
+        // TODO: Test goes here...
     }
- 
- 
+
     @Test
     @DisplayName("Method description: ...")
-    public void testGetVersions() throws Exception { 
-        //TODO: Test goes here... 
-    } 
- 
- 
+    public void testGetResources() throws Exception {
+        // TODO: Test goes here...
+    }
+
     @Test
     @DisplayName("Method description: ...")
-    public void testGetResources() throws Exception { 
-        //TODO: Test goes here... 
-    } 
- 
- 
+    public void testDeleteVersion() throws Exception {
+        // TODO: Test goes here...
+    }
+
     @Test
     @DisplayName("Method description: ...")
-    public void testDeleteVersion() throws Exception { 
-        //TODO: Test goes here... 
-    } 
- 
- 
+    public void testDeleteResource() throws Exception {
+        // TODO: Test goes here...
+    }
+
     @Test
     @DisplayName("Method description: ...")
-    public void testDeleteResource() throws Exception { 
-        //TODO: Test goes here... 
-    } 
- 
- 
+    public void testDeleteResources() throws Exception {
+        // TODO: Test goes here...
+    }
+
     @Test
     @DisplayName("Method description: ...")
-    public void testDeleteResources() throws Exception { 
-        //TODO: Test goes here... 
-    } 
- 
- 
+    public void testDownload() throws Exception {
+        // TODO: Test goes here...
+    }
+
     @Test
     @DisplayName("Method description: ...")
-    public void testDownload() throws Exception { 
-        //TODO: Test goes here... 
-    } 
- 
- 
+    public void testUploadResource() throws Exception {
+        // TODO: Test goes here...
+    }
+
     @Test
     @DisplayName("Method description: ...")
-    public void testUploadResource() throws Exception { 
-        //TODO: Test goes here... 
-    } 
- 
- 
+    public void testUpdateVersion() throws Exception {
+        // TODO: Test goes here...
+    }
+
     @Test
     @DisplayName("Method description: ...")
-    public void testUpdateVersion() throws Exception { 
-        //TODO: Test goes here... 
-    } 
- 
- 
+    public void testGetBasic() throws Exception {
+        // TODO: Test goes here...
+    }
+
     @Test
     @DisplayName("Method description: ...")
-    public void testGetBasic() throws Exception { 
-        //TODO: Test goes here... 
-    } 
- 
- 
+    public void testGetResourceInfo() throws Exception {
+        // TODO: Test goes here...
+    }
+
     @Test
     @DisplayName("Method description: ...")
-    public void testGetResourceInfo() throws Exception { 
-        //TODO: Test goes here... 
-    } 
- 
- 
+    public void testChangeOwnerByResourceId() throws Exception {
+        // TODO: Test goes here...
+    }
+
     @Test
     @DisplayName("Method description: ...")
-    public void testChangeOwnerByResourceId() throws Exception { 
-        //TODO: Test goes here... 
-    } 
- 
- 
+    public void testCopyResourceToAnotherUser() throws Exception {
+        // TODO: Test goes here...
+    }
+
     @Test
     @DisplayName("Method description: ...")
-    public void testCopyResourceToAnotherUser() throws Exception { 
-        //TODO: Test goes here... 
-    } 
- 
- 
-    @Test
-    @DisplayName("Method description: ...")
-    public void testRollbackVersion() throws Exception { 
-        //TODO: Test goes here... 
-    } 
- 
- 
-} 
+    public void testRollbackVersion() throws Exception {
+        // TODO: Test goes here...
+    }
+}

@@ -1,4 +1,3 @@
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -16,47 +15,36 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.bml.restful; 
- 
-import com.fasterxml.jackson.databind.JsonNode;
+package org.apache.linkis.bml.restful;
+
 import org.apache.linkis.bml.service.BmlProjectService;
-import org.apache.linkis.server.Message;
-import org.apache.linkis.server.utils.ModuleUserUtils;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
-import java.util.List;
+/** BmlProjectRestful Tester */
+public class BmlProjectRestfulTest {
 
-/** 
- * BmlProjectRestful Tester
-*/ 
-public class BmlProjectRestfulTest { 
- 
-    @Autowired
-    private BmlProjectRestful bmlProjectRestful;
+    @Autowired private BmlProjectRestful bmlProjectRestful;
 
-    @Autowired
-    private BmlProjectService bmlProjectService;
- 
+    @Autowired private BmlProjectService bmlProjectService;
+
     @BeforeEach
     @DisplayName("Each unit test method is executed once before execution")
-    public void before() throws Exception {
-    }
- 
+    public void before() throws Exception {}
+
     @AfterEach
     @DisplayName("Each unit test method is executed once before execution")
-    public void after() throws Exception {
-    }
- 
- 
+    public void after() throws Exception {}
+
     @Test
     @DisplayName("Method description: ...")
-    public void testCreateBmlProject() throws Exception { 
-        //TODO: Test goes here...
+    public void testCreateBmlProject() throws Exception {
+        // TODO: Test goes here...
         /*String projectName = "test";
         String username = "admin";
         JsonNode editUserNode = jsonNode.get(EDIT_USERS_STR);
@@ -77,50 +65,41 @@ public class BmlProjectRestfulTest {
 
          Message.ok("success to create project(创建工程ok)");*/
 
+    }
 
-    } 
- 
- 
     @Test
     @DisplayName("Method description: ...")
-    public void testUploadShareResource() throws Exception { 
-        //TODO: Test goes here... 
-    } 
- 
- 
+    public void testUploadShareResource() throws Exception {
+        // TODO: Test goes here...
+    }
+
     @Test
     @DisplayName("Method description: ...")
-    public void testUpdateShareResource() throws Exception { 
-        //TODO: Test goes here... 
-    } 
- 
- 
+    public void testUpdateShareResource() throws Exception {
+        // TODO: Test goes here...
+    }
+
     @Test
     @DisplayName("Method description: ...")
-    public void testDownloadShareResource() throws Exception { 
-        //TODO: Test goes here... 
-    } 
- 
- 
+    public void testDownloadShareResource() throws Exception {
+        // TODO: Test goes here...
+    }
+
     @Test
     @DisplayName("Method description: ...")
-    public void testGetProjectInfo() throws Exception { 
-        //TODO: Test goes here... 
-    } 
- 
- 
+    public void testGetProjectInfo() throws Exception {
+        // TODO: Test goes here...
+    }
+
     @Test
     @DisplayName("Method description: ...")
-    public void testAttachResourceAndProject() throws Exception { 
-        //TODO: Test goes here... 
-    } 
- 
- 
+    public void testAttachResourceAndProject() throws Exception {
+        // TODO: Test goes here...
+    }
+
     @Test
     @DisplayName("Method description: ...")
-    public void testUpdateProjectUsers() throws Exception { 
-        //TODO: Test goes here... 
-    } 
- 
- 
-} 
+    public void testUpdateProjectUsers() throws Exception {
+        // TODO: Test goes here...
+    }
+}

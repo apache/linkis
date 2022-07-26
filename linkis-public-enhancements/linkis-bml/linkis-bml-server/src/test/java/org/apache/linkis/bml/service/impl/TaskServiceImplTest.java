@@ -1,4 +1,3 @@
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -16,135 +15,117 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.bml.service.impl; 
- 
+package org.apache.linkis.bml.service.impl;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
-/** 
- * TaskServiceImpl Tester
-*/ 
-public class TaskServiceImplTest { 
- 
-    @Autowired
-    private TaskServiceImpl taskServiceImpl;
- 
+/** TaskServiceImpl Tester */
+public class TaskServiceImplTest {
+
+    @Autowired private TaskServiceImpl taskServiceImpl;
+
     @BeforeEach
     @DisplayName("Each unit test method is executed once before execution")
-    public void before() throws Exception {
-    }
- 
+    public void before() throws Exception {}
+
     @AfterEach
     @DisplayName("Each unit test method is executed once before execution")
-    public void after() throws Exception {
+    public void after() throws Exception {}
+
+    @Test
+    @DisplayName("Method description: ...")
+    public void testCreateUploadTask() throws Exception {
+        // TODO: Test goes here...
     }
- 
- 
-    @Test
-    @DisplayName("Method description: ...")
-    public void testCreateUploadTask() throws Exception { 
-        //TODO: Test goes here... 
-    } 
- 
- 
-    @Test
-    @DisplayName("Method description: ...")
-    public void testCreateUpdateTask() throws Exception { 
-        //TODO: Test goes here... 
-    } 
- 
- 
-    @Test
-    @DisplayName("Method description: ...")
-    public void testCreateDownloadTask() throws Exception { 
-        //TODO: Test goes here... 
-    } 
- 
- 
-    @Test
-    @DisplayName("Method description: ...")
-    public void testUpdateState() throws Exception { 
-        //TODO: Test goes here... 
-    } 
- 
- 
-    @Test
-    @DisplayName("Method description: ...")
-    public void testUpdateState2Failed() throws Exception { 
-        //TODO: Test goes here... 
-    } 
- 
- 
-    @Test
-    @DisplayName("Method description: ...")
-    public void testCreateDeleteVersionTask() throws Exception { 
-        //TODO: Test goes here... 
-    } 
- 
- 
-    @Test
-    @DisplayName("Method description: ...")
-    public void testCreateDeleteResourceTask() throws Exception { 
-        //TODO: Test goes here... 
-    } 
- 
- 
-    @Test
-    @DisplayName("Method description: ...")
-    public void testCreateDeleteResourcesTask() throws Exception { 
-        //TODO: Test goes here... 
-    } 
- 
- 
-    @Test
-    @DisplayName("Method description: ...")
-    public void testCreateRollbackVersionTask() throws Exception { 
-        //TODO: Test goes here... 
-    } 
- 
- 
-    @Test
-    @DisplayName("Method description: ...")
-    public void testCreateCopyResourceTask() throws Exception { 
-        //TODO: Test goes here... 
-    } 
- 
- 
 
     @Test
     @DisplayName("Method description: ...")
-    public void testGetResourceLastVersion() throws Exception { 
-        //TODO: Test goes here... 
-        /* 
-        try { 
-           Method method = TaskServiceImpl.getClass().getMethod("getResourceLastVersion", String.class); 
-           method.setAccessible(true); 
-           method.invoke(<Object>, <Parameters>); 
-        } catch(NoSuchMethodException e) { 
-        } catch(IllegalAccessException e) { 
-        } catch(InvocationTargetException e) { 
-        } 
-        */ 
-        } 
- 
+    public void testCreateUpdateTask() throws Exception {
+        // TODO: Test goes here...
+    }
 
     @Test
     @DisplayName("Method description: ...")
-    public void testGenerateNewVersion() throws Exception { 
-        //TODO: Test goes here... 
-        /* 
-        try { 
-           Method method = TaskServiceImpl.getClass().getMethod("generateNewVersion", String.class); 
-           method.setAccessible(true); 
-           method.invoke(<Object>, <Parameters>); 
-        } catch(NoSuchMethodException e) { 
-        } catch(IllegalAccessException e) { 
-        } catch(InvocationTargetException e) { 
-        } 
-        */ 
-        } 
- 
-} 
+    public void testCreateDownloadTask() throws Exception {
+        // TODO: Test goes here...
+    }
+
+    @Test
+    @DisplayName("Method description: ...")
+    public void testUpdateState() throws Exception {
+        // TODO: Test goes here...
+    }
+
+    @Test
+    @DisplayName("Method description: ...")
+    public void testUpdateState2Failed() throws Exception {
+        // TODO: Test goes here...
+    }
+
+    @Test
+    @DisplayName("Method description: ...")
+    public void testCreateDeleteVersionTask() throws Exception {
+        // TODO: Test goes here...
+    }
+
+    @Test
+    @DisplayName("Method description: ...")
+    public void testCreateDeleteResourceTask() throws Exception {
+        // TODO: Test goes here...
+    }
+
+    @Test
+    @DisplayName("Method description: ...")
+    public void testCreateDeleteResourcesTask() throws Exception {
+        // TODO: Test goes here...
+    }
+
+    @Test
+    @DisplayName("Method description: ...")
+    public void testCreateRollbackVersionTask() throws Exception {
+        // TODO: Test goes here...
+    }
+
+    @Test
+    @DisplayName("Method description: ...")
+    public void testCreateCopyResourceTask() throws Exception {
+        // TODO: Test goes here...
+    }
+
+    @Test
+    @DisplayName("Method description: ...")
+    public void testGetResourceLastVersion() throws Exception {
+        // TODO: Test goes here...
+        /*
+        try {
+           Method method = TaskServiceImpl.getClass().getMethod("getResourceLastVersion", String.class);
+           method.setAccessible(true);
+           method.invoke(<Object>, <Parameters>);
+        } catch(NoSuchMethodException e) {
+        } catch(IllegalAccessException e) {
+        } catch(InvocationTargetException e) {
+        }
+        */
+    }
+
+    @Test
+    @DisplayName("Method description: ...")
+    public void testGenerateNewVersion() throws Exception {
+        // TODO: Test goes here...
+        /*
+        try {
+           Method method = TaskServiceImpl.getClass().getMethod("generateNewVersion", String.class);
+           method.setAccessible(true);
+           method.invoke(<Object>, <Parameters>);
+        } catch(NoSuchMethodException e) {
+        } catch(IllegalAccessException e) {
+        } catch(InvocationTargetException e) {
+        }
+        */
+    }
+}

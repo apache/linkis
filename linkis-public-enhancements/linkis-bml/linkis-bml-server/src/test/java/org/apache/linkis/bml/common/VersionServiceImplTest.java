@@ -39,7 +39,7 @@ public class VersionServiceImplTest {
         String newPath =
                 hdfsResourceHelper.generatePath(
                         "linkis",
-                        path.substring(path.lastIndexOf(File.separator) + 1),
+                        path.substring(path.lastIndexOf("/") + 1),
                         new HashMap<>());
         assertEquals(
                 newPath,

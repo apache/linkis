@@ -71,6 +71,24 @@
             <groupId>com.facebook.presto</groupId>
             <artifactId>presto-client</artifactId>
             <version>${presto.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>guice</artifactId>
+                    <groupId>com.google.inject</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>json</artifactId>
+                    <groupId>com.facebook.airlift</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>security</artifactId>
+                    <groupId>com.facebook.airlift</groupId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.facebook.airlift</groupId>
+                    <artifactId>security</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.facebook.presto</groupId>
@@ -79,6 +97,22 @@
             <exclusions>
                 <exclusion>
                     <artifactId>log-manager</artifactId>
+                    <groupId>com.facebook.airlift</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>HdrHistogram</artifactId>
+                    <groupId>org.hdrhistogram</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>guice</artifactId>
+                    <groupId>com.google.inject</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>json</artifactId>
+                    <groupId>com.facebook.airlift</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>log</artifactId>
                     <groupId>com.facebook.airlift</groupId>
                 </exclusion>
             </exclusions>

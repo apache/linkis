@@ -57,6 +57,7 @@ class BmlProjectDaoTest extends BaseDaoTest {
 
     @Test
     void getProjectNameByResourceId() {
+        setProjectPriv();
         bmlProjectDao.getProjectNameByResourceId("123");
     }
 
@@ -74,6 +75,7 @@ class BmlProjectDaoTest extends BaseDaoTest {
 
     @Test
     void checkIfExists() {
+        setProjectPriv();
         bmlProjectDao.checkIfExists(1, "123");
     }
 

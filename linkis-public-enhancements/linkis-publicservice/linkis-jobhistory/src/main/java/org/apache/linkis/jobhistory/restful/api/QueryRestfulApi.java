@@ -63,10 +63,7 @@ public class QueryRestfulApi {
 
     @Autowired private DefaultQueryCacheManager queryCacheManager;
 
-    @ApiOperation(
-            value = "governanceStationAdmin",
-            notes = "governance stationAdmin",
-            response = Message.class)
+    @ApiOperation(value = "governanceStationAdmin", notes = "get admin user name", response = Message.class)
     @RequestMapping(path = "/governanceStationAdmin", method = RequestMethod.GET)
     public Message governanceStationAdmin(HttpServletRequest req) {
         String username = ModuleUserUtils.getOperationUser(req, "governanceStationAdmin");
@@ -77,7 +74,7 @@ public class QueryRestfulApi {
 
     @ApiOperation(value = "getTaskByID", notes = "get task by id", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "jobId", dataType = "long", required = true, value = "job id")
+        @ApiImplicitParam(name = "jobId", dataType = "long", required = true, value = "job id",example ="12345")
     })
     @RequestMapping(path = "/{id}/get", method = RequestMethod.GET)
     public Message getTaskByID(HttpServletRequest req, @PathVariable("id") Long jobId) {
@@ -118,30 +115,13 @@ public class QueryRestfulApi {
     /** Method list should not contain subjob, which may cause performance problems. */
     @ApiOperation(value = "list", notes = "list", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(
-                name = "startDate",
-                required = false,
-                dataType = "long",
-                value = "start date"),
-        @ApiImplicitParam(
-                name = "endDate",
-                required = false,
-                dataType = "long",
-                value = "end date"),
-        @ApiImplicitParam(name = "status", required = false, dataType = "String", value = "status"),
-        @ApiImplicitParam(
-                name = "pageNow",
-                required = false,
-                dataType = "Integer",
-                value = "page now"),
-        @ApiImplicitParam(
-                name = "pageSize",
-                required = false,
-                dataType = "Integer",
-                value = "page size"),
+        @ApiImplicitParam(name = "startDate", required = false, dataType = "long", value = "start date",example ="1656229039794"),
+        @ApiImplicitParam(name = "endDate", required = false, dataType = "long", value = "end date",example ="1658821039794" ),
+        @ApiImplicitParam(name = "status", required = false, dataType = "String", value = "status",example =""),
+        @ApiImplicitParam(name = "pageNow", required = false, dataType = "Integer", value = "page now"),
+        @ApiImplicitParam(name = "pageSize", required = false, dataType = "Integer", value = "page size"),
         @ApiImplicitParam(name = "taskID", required = false, dataType = "long", value = "task id"),
-        @ApiImplicitParam(
-                name = "executeApplicationName",
+        @ApiImplicitParam(name = "executeApplicationName",
                 dataType = "String",
                 required = false,
                 value = "execute application name"),

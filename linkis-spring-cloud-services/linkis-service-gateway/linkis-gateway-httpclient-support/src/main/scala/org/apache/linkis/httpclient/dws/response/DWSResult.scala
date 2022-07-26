@@ -24,7 +24,7 @@ import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.httpclient.dws.DWSHttpClient
 import org.apache.linkis.httpclient.exception.HttpClientResultException
 import org.apache.linkis.httpclient.response.HttpResult
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.httpclient.dws.response.DWSResult.LOGGEDIN_STR
 
 trait DWSResult extends Logging with HttpResult {

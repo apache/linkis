@@ -26,7 +26,7 @@ import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.ujes.client.UJESClient
 import org.apache.linkis.ujes.client.request.JobExecuteAction.EngineType
 import org.apache.linkis.ujes.jdbc.UJESSQLDriverMain._
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 
 import scala.collection.{JavaConversions, mutable}
 

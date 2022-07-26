@@ -17,7 +17,7 @@
  
 package org.apache.linkis.configuration.service
 
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.configuration.conf.Configuration
 import org.apache.linkis.configuration.dao.{ConfigMapper, LabelMapper}

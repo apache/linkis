@@ -19,7 +19,7 @@ package org.apache.linkis.httpclient.dws.response
 
 import org.apache.linkis.httpclient.dws.annotation.DWSHttpMessageResult
 import org.apache.linkis.httpclient.response.Result
-import org.apache.commons.lang.ClassUtils
+import org.apache.commons.lang3.ClassUtils
 
 import scala.collection.JavaConversions._
 

@@ -54,7 +54,7 @@
             </excludes>
             <fileMode>0777</fileMode>
             <directoryMode>0755</directoryMode>
-            <outputDirectory>/dist/v${spark.version}/conf</outputDirectory>
+            <outputDirectory>dist/v${spark.version}/conf</outputDirectory>
             <lineEnding>unix</lineEnding>
         </fileSet>
 
@@ -67,7 +67,7 @@
                 <exclude>*doc.jar</exclude>
             </excludes>
             <fileMode>0777</fileMode>
-            <outputDirectory>/plugin/${spark.version}</outputDirectory>
+            <outputDirectory>plugin/${spark.version}</outputDirectory>
         </fileSet>
 
     </fileSets>

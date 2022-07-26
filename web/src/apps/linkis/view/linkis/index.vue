@@ -59,7 +59,7 @@
       <div
         class="content-body-side-right">
         <div class="content-body-side-right-title">
-          <Breadcrumb>
+          <Breadcrumb v-if="$route.name !== 'resource' && $route.name !== 'resourceEngineConnList'">
             <BreadcrumbItem :to="skipPath"><Icon v-if="skipPath" type="ios-arrow-back" size="16" color="#338cf0"></Icon>{{ breadcrumbSecondName }}</BreadcrumbItem>
             <BreadcrumbItem v-if="$route.name === 'viewHistory'">{{ $route.query.taskID }}</BreadcrumbItem>
             <template v-if="$route.name === 'EngineConnList'">
@@ -67,6 +67,10 @@
               <BreadcrumbItem>EngineConnList</BreadcrumbItem>
             </template>
           </Breadcrumb>
+          <Tabs v-if="$route.name === 'resource' || $route.name === 'resourceEngineConnList'" value="resource" @on-click="clickResourceTab" class="resource-tab">
+            <Tab-pane name="resource" :label="$t('message.linkis.sideNavList.function.children.resource')" href="/resource"></Tab-pane>
+            <Tab-pane name="resourceEngineConnList" :label="$t('message.linkis.sideNavList.function.children.resourceEngineConnList')" href="/ecm"></Tab-pane>
+          </Tabs>
         </div>
         <div
           class="content-body-side-right-content">
@@ -169,7 +173,10 @@ export default {
           workspaceId: this.$route.query.workspaceId
         },
       });
-    }
+    },
+    clickResourceTab(value) {
+      this.$router.push(`/console/${value}`)
+    },
   },
   beforeRouteEnter(to, from, next) {
     if (to.name === 'FAQ' && from.name === 'Home') {
@@ -203,4 +210,11 @@ export default {
     color: #338cf0;
   }
 </style>
-
+<style lang="scss">
+.resource-tab {
+  top: -6px;
+  .ivu-tabs-bar {
+    border-bottom: 0;
+  }
+}
+</style>

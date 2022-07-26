@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.gateway.config.GatewayConfiguration._
 import org.apache.commons.io.{FileUtils, IOUtils}
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 
 object ProxyUserUtils extends Logging {
 

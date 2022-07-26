@@ -20,14 +20,12 @@ package org.apache.linkis.governance.common.paser
 import org.apache.linkis.common.utils.{CodeAndRunTypeUtils, Logging}
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.governance.common.paser.CodeType.CodeType
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.slf4j.{Logger, LoggerFactory}
 
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 import java.util
-import java.util.regex.Pattern
-
 
 trait CodeParser {
 
@@ -51,7 +49,7 @@ object  CodeParserFactory {
     if (GovernanceCommonConf.PYTHON_CODE_PARSER_SWITCH.getValue) {
       defaultCodeParsers.put(CodeType.Python, new PythonCodeParser)
     }
-    if (GovernanceCommonConf.SCALA_CODE_PARSER_SWITCH.getValue){
+    if (GovernanceCommonConf.SCALA_CODE_PARSER_SWITCH.getValue) {
       defaultCodeParsers.put(CodeType.Scala, new ScalaCodeParser)
     }
 //    defaultCodeParsers.put(CodeType.Other, new EmptyCodeParser)
@@ -86,7 +84,6 @@ class ScalaCodeParser extends SingleCodeParser with Logging {
   override val codeType: CodeType = CodeType.Scala
 
   override def parse(code: String): Array[String] = {
-    //val realCode = StringUtils.substringAfter(code, "\n")
     val codeBuffer = new ArrayBuffer[String]()
     val statementBuffer = new ArrayBuffer[String]()
     code.split("\n").foreach {
@@ -99,7 +96,6 @@ class ScalaCodeParser extends SingleCodeParser with Logging {
         } else {
           if (statementBuffer.nonEmpty) codeBuffer.append(statementBuffer.mkString("\n"))
           statementBuffer.clear()
-          //statementBuffer.append("%scala")
           statementBuffer.append(l)
         }
       case _ =>
@@ -112,12 +108,11 @@ class ScalaCodeParser extends SingleCodeParser with Logging {
 class PythonCodeParser extends SingleCodeParser {
 
   override val codeType: CodeType = CodeType.Python
-  val openBrackets = Array("{", "(", "[")
-  val closeBrackets = Array("}", ")", "]")
+  val openBrackets: Array[String] = Array("{", "(", "[")
+  val closeBrackets: Array[String] = Array("}", ")", "]")
   val LOG: Logger = LoggerFactory.getLogger(getClass)
 
   override def parse(code: String): Array[String] = {
-    //val realCode = StringUtils.substringAfter(code, "\n")
     val bracketStack = new mutable.Stack[String]
     val codeBuffer = new ArrayBuffer[String]()
     val statementBuffer = new ArrayBuffer[String]()
@@ -166,16 +161,16 @@ class PythonCodeParser extends SingleCodeParser {
 
   def recordBrackets(bracketStack: mutable.Stack[String], l: String): Unit = {
     val real = l.replace("\"\"\"", "").replace("'''", "").trim
-    if (StringUtils.endsWithAny(real, openBrackets)) {
-      for (i <- (0 to real.length - 1).reverse) {
+    if (StringUtils.endsWithAny(real, openBrackets: _*)) {
+      for (i <- (0 until real.length).reverse) {
         val token = real.substring(i, i + 1)
         if (openBrackets.contains(token)) {
           bracketStack.push(token)
         }
       }
     }
-    if (StringUtils.startsWithAny(real, closeBrackets)) {
-      for (i <- 0 to real.length - 1) {
+    if (StringUtils.startsWithAny(real, closeBrackets: _*)) {
+      for (i <- 0 until real.length) {
         val token = real.substring(i, i + 1)
         if (closeBrackets.contains(token)) {
           bracketStack.pop()
@@ -205,8 +200,9 @@ class SQLCodeParser extends SingleCodeParser with Logging  {
     val array = new ArrayBuffer[Int]()
     val uglyIndices = re.findAllMatchIn(realTempCode).map(m => (m.start, m.end)).toList
     for (i <- 0 until realTempCode.length) {
-      if (';' == realTempCode.charAt(i) && uglyIndices.forall(se => i < se._1 || i >= se._2))
+      if (';' == realTempCode.charAt(i) && uglyIndices.forall(se => i < se._1 || i >= se._2)) {
         array += i
+      }
     }
     array.toArray
   }
@@ -242,8 +238,10 @@ class SQLCodeParser extends SingleCodeParser with Logging  {
       if (code.indexOf(";") > 0) code = code.substring(5, code.length - 1).trim
       else code = code.substring(5).trim
       val limitNum = code.toInt
-      if (limitNum > defaultLimit) // throw new IllegalArgumentException("We at most allowed to limit " + defaultLimit + ", but your SQL has been over the max rows.")
+      if (limitNum > defaultLimit) {
+        // throw new IllegalArgumentException("We at most allowed to limit " + defaultLimit + ", but your SQL has been over the max rows.")
         logger.warn(s"Limit num ${limitNum} is over then max rows : ${defaultLimit}")
+      }
     }
     !hasLimit
   }

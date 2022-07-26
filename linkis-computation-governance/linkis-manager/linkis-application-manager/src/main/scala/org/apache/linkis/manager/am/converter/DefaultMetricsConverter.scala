@@ -23,7 +23,7 @@ import org.apache.linkis.manager.common.entity.metrics.{NodeHealthyInfo, NodeMet
 import org.apache.linkis.manager.common.entity.node.AMNode
 import org.apache.linkis.manager.service.common.metrics.MetricsConverter
 import org.apache.linkis.server.BDPJettyServerHelper
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.springframework.stereotype.Component
 
 

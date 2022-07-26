@@ -27,7 +27,7 @@ import org.apache.linkis.manager.engineplugin.io.executor.IoEngineConnExecutor
 import org.apache.linkis.manager.label.entity.engine.EngineType.EngineType
 import org.apache.linkis.manager.label.entity.engine.RunType.RunType
 import org.apache.linkis.manager.label.entity.engine.{EngineType, EngineTypeLabel, RunType}
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 
 class IoEngineConnFactory extends ComputationSingleExecutorEngineConnFactory with Logging {
 

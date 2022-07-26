@@ -36,7 +36,7 @@ import org.apache.linkis.httpclient.dws.authentication.TokenAuthenticationStrate
 import org.apache.linkis.httpclient.dws.config.DWSClientConfig
 import org.apache.linkis.storage.FSFactory
 import org.apache.commons.io.IOUtils
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.http.client.methods.CloseableHttpResponse
 
 

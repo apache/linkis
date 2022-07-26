@@ -17,7 +17,7 @@
 
 package org.apache.linkis.entrance.execute
 
-import org.apache.commons.lang.exception.ExceptionUtils
+import org.apache.commons.lang3.exception.ExceptionUtils
 import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.entrance.exception.{EntranceErrorCode, EntranceErrorException}
@@ -295,7 +295,7 @@ class DefaultEntranceExecutor(id: Long, mark: MarkReq, entranceExecutorManager: 
 
       if (getEngineExecuteAsyncReturn.isEmpty) {
         val msg = s"task(${entranceExecuteRequest.getSubJobInfo.getSubJobDetail.getId}) submit failed, reason, ${ExceptionUtils.getMessage(t)}"
-        entranceExecuteRequest.getJob.getLogListener.foreach(_.onLogUpdate(entranceExecuteRequest.getJob, LogUtils.generateERROR(ExceptionUtils.getFullStackTrace(t))))
+        entranceExecuteRequest.getJob.getLogListener.foreach(_.onLogUpdate(entranceExecuteRequest.getJob, LogUtils.generateERROR(ExceptionUtils.getStackTrace(t))))
         ErrorExecuteResponse(msg, t)
       } else {
         val msg = s"task(${entranceExecuteRequest.getSubJobInfo.getSubJobDetail.getId}) submit failed, reason, ${ExceptionUtils.getMessage(t)}"

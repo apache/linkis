@@ -17,7 +17,7 @@
 
 package org.apache.linkis.jobhistory.conversions
 
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.governance.common.entity.job.{JobRequest, SubJobDetail}
 import org.apache.linkis.governance.common.entity.task.RequestQueryTask

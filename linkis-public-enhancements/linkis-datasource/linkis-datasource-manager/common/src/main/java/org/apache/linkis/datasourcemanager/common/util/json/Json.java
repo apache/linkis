@@ -19,7 +19,7 @@ package org.apache.linkis.datasourcemanager.common.util.json;
 
 import org.apache.linkis.datasourcemanager.common.exception.JsonErrorException;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;

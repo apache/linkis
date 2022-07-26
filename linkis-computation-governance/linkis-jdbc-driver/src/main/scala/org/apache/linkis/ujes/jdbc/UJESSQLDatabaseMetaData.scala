@@ -22,7 +22,7 @@ import java.util
 import org.apache.linkis.ujes.client.request.{GetColumnsAction, GetDBSAction, GetTablesAction}
 import org.apache.linkis.ujes.jdbc.entity.JdbcColumn
 import org.apache.linkis.ujes.jdbc.utils.JDBCUtils
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.utils.Logging
 
 import scala.collection.JavaConversions._

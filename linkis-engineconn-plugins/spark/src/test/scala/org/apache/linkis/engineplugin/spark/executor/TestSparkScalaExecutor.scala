@@ -32,6 +32,7 @@ class TestSparkScalaExecutor {
     val engineFactory = new SparkEngineConnFactory
     val sparkConf: SparkConf = new SparkConf(true)
      System.setProperty("java.io.tmpdir", "./")
+    System.setProperty("wds.linkis.filesystem.hdfs.root.path", "./")
     val sparkSession = SparkSession.builder()
         .master("local[*]")
         .appName("test").getOrCreate()

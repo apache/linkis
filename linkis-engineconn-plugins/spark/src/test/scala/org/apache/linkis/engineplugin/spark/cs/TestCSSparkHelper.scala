@@ -14,47 +14,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.linkis.engineplugin.spark.executor
+package org.apache.linkis.engineplugin.spark.cs
 
-import org.apache.linkis.DataWorkCloudApplication
-import org.apache.linkis.common.conf.DWCArgumentsParser
 import org.apache.linkis.common.utils.Utils
+import org.apache.linkis.cs.common.utils.CSCommonUtils
 import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
 import org.apache.linkis.engineplugin.spark.entity.SparkEngineSession
+import org.apache.linkis.engineplugin.spark.executor.SparkScalaExecutor
 import org.apache.linkis.engineplugin.spark.factory.SparkEngineConnFactory
 import org.apache.spark.SparkConf
 import org.apache.spark.sql.SparkSession
-import org.junit.jupiter.api.{Test}
+import org.junit.jupiter.api.{Assertions, Test}
 
-import scala.collection.mutable
-
-class TestSQLSession {
+class TestCSSparkHelper {
   @Test
-  def testShowDF: Unit = {
-    System.setProperty("wds.linkis.server.version", "v1")
-    val map = new mutable.HashMap[String, String]()
-    map.put("spring.mvc.servlet.path", "/api/rest_j/v1")
-    map.put("server.port", "26375")
-    map.put("spring.application.name", "TestSQLSession")
-    map.put("eureka.client.register-with-eureka", "false")
-    map.put("eureka.client.fetch-registry", "false")
-    DataWorkCloudApplication.main(DWCArgumentsParser.formatSpringOptions(map.toMap))
+  def testCreateContext: Unit = {
     val engineFactory = new SparkEngineConnFactory
     val sparkConf: SparkConf = new SparkConf(true)
-    System.setProperty("HADOOP_CONF_DIR", "./")
-    System.setProperty("java.io.tmpdir", "./")
     val sparkSession = SparkSession.builder()
       .master("local[*]")
-      .appName("testShowDF").getOrCreate()
+      .appName("test").getOrCreate()
     val outputDir = engineFactory.createOutputDir(sparkConf)
     val sparkEngineSession = SparkEngineSession(sparkSession.sparkContext, sparkSession.sqlContext, sparkSession, outputDir)
     val sparkScalaExecutor = new SparkScalaExecutor(sparkEngineSession, 1L)
+    Assertions.assertFalse(sparkScalaExecutor.isEngineInitialized)
+    sparkScalaExecutor.init()
+    Assertions.assertTrue(sparkScalaExecutor.isEngineInitialized)
     val engineExecutionContext = new EngineExecutionContext(sparkScalaExecutor, Utils.getJvmUser)
-    val dataFrame = sparkSession.createDataFrame(Seq(
-      ("ming", 20, 15552211521L),
-      ("hong", 19, 13287994007L),
-      ("zhi", 21, 15552211523L)
-    )).toDF("name", "age", "phone")
-    SQLSession.showDF(sparkSession.sparkContext, "test", dataFrame, "", 10, engineExecutionContext)
+    CSSparkHelper.setContextIDInfoToSparkConf(engineExecutionContext, sparkSession.sparkContext)
+//    Assertions.assertNotNull(sparkSession.sparkContext.getLocalProperty(CSCommonUtils.CONTEXT_ID_STR))
   }
 }

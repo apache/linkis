@@ -37,6 +37,7 @@ class TestSparkSqlExecutor{
     map.put("server.port", "26378")
     map.put("spring.application.name", "SparkSqlExecutor")
     map.put("eureka.client.register-with-eureka", "false")
+    map.put("eureka.client.fetch-registry", "false")
     DataWorkCloudApplication.main(DWCArgumentsParser.formatSpringOptions(map.toMap))
     val engineFactory = new SparkEngineConnFactory
     val sparkConf = new SparkConf(true)
@@ -51,12 +52,7 @@ class TestSparkSqlExecutor{
     sparkSqlExecutor.init()
     Assertions.assertTrue(sparkSqlExecutor.isEngineInitialized)
     val engineExecutionContext = new EngineExecutionContext(sparkSqlExecutor, Utils.getJvmUser)
-    val code = "val dataFrame = spark.createDataFrame(Seq(\n      " +
-      "(\"ming\", 20, 15552211521L),\n      " +
-      "(\"hong\", 19, 13287994007L),\n      " +
-      "(\"zhi\", 21, 15552211523L)\n    )).toDF(\"name\", \"age\", \"phone\").createOrReplaceTempView(\"a\") \n" +
-      "val df = spark.sql(\"select * from a\") \n" +
-      "df.show() \n"
+    val code = "select * from temp"
     val response = sparkSqlExecutor.executeLine(engineExecutionContext, code)
     Assertions.assertNotNull(response)
   }

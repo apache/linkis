@@ -24,11 +24,23 @@ import org.apache.linkis.engineplugin.spark.entity.SparkEngineSession
 import org.apache.linkis.engineplugin.spark.factory.SparkEngineConnFactory
 import org.apache.spark.SparkConf
 import org.apache.spark.sql.SparkSession
-import org.junit.jupiter.api.{Test}
+import org.junit.jupiter.api.{BeforeEach, Test}
 
 import scala.collection.mutable
 
 class TestSQLSession {
+  @BeforeEach
+  def before(): Unit = {
+    System.setProperty("wds.linkis.server.version", "v1")
+    System.setProperty("wds.linkis.engineconn.plugin.default.class", "org.apache.linkis.engineplugin.spark.SparkEngineConnPlugin")
+    val map = new mutable.HashMap[String, String]()
+    map.put("spring.mvc.servlet.path", "/api/rest_j/v1")
+    map.put("server.port", "26375")
+    map.put("spring.application.name", "TestSQLSession")
+    map.put("eureka.client.register-with-eureka", "false")
+    map.put("eureka.client.fetchRegistry", "false")
+    DataWorkCloudApplication.main(DWCArgumentsParser.formatSpringOptions(map.toMap))
+  }
   @Test
   def testShowDF: Unit = {
     val engineFactory = new SparkEngineConnFactory

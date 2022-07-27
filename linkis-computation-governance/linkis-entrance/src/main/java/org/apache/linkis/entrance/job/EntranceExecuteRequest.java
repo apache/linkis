@@ -20,11 +20,9 @@ package org.apache.linkis.entrance.job;
 import org.apache.linkis.entrance.execute.LabelExecuteRequest;
 import org.apache.linkis.entrance.execute.RuntimePropertiesExecuteRequest;
 import org.apache.linkis.entrance.execute.UserExecuteRequest;
-import org.apache.linkis.governance.common.entity.job.SubJobInfo;
 import org.apache.linkis.manager.label.entity.Label;
 import org.apache.linkis.scheduler.executer.ExecuteRequest;
 import org.apache.linkis.scheduler.executer.JobExecuteRequest;
-import org.apache.linkis.server.BDPJettyServerHelper;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,16 +44,7 @@ public class EntranceExecuteRequest
         setJob(job);
     }
 
-    private SubJobInfo subJobInfo;
     private List<Label<?>> labels;
-
-    public SubJobInfo getSubJobInfo() {
-        return subJobInfo;
-    }
-
-    public void setSubJobInfo(SubJobInfo subJobInfo) {
-        this.subJobInfo = subJobInfo;
-    }
 
     public List<Label<?>> getLabels() {
         return labels;
@@ -75,22 +64,10 @@ public class EntranceExecuteRequest
 
     private EntranceExecutionJob job;
 
-    public void setExecutionCode(int index) {
-        SubJobInfo[] jobGroupInfo = job.getJobGroups();
-        if (null != jobGroupInfo && index >= 0 && index < jobGroupInfo.length) {
-            subJobInfo = jobGroupInfo[index];
-        } else {
-            logger.warn(
-                    "Invalid index : {} in jobRequest : {}. ",
-                    index,
-                    BDPJettyServerHelper.gson().toJson(jobGroupInfo));
-        }
-    }
-
     @Override
     public String code() {
-        if (null != subJobInfo) {
-            return subJobInfo.getCode();
+        if (null != job && null != job.getJobRequest()) {
+            return job.getJobRequest().getExecutionCode();
         } else {
             logger.error("SubJobInfo is null!");
             return null;
@@ -99,10 +76,10 @@ public class EntranceExecuteRequest
 
     @Override
     public String jobId() {
-        if (null != subJobInfo && null != subJobInfo.getSubJobDetail()) {
-            return String.valueOf(subJobInfo.getSubJobDetail().getId());
+        if (null != job && null != job.getJobRequest()) {
+            return String.valueOf(job.getJobRequest().getId());
         } else {
-            logger.error("JobDetail is null!");
+            logger.error("job request  is null!");
             return null;
         }
     }

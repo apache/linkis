@@ -49,8 +49,6 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
 
   @Autowired
   private var jobHistoryMapper: JobHistoryMapper = _
-  @Autowired
-  private var jobDetailMapper: JobDetailMapper = _
 
   private val unDoneTaskCache: Cache[String, Integer] = CacheBuilder.newBuilder().concurrencyLevel(5)
     .expireAfterWrite(1, TimeUnit.MINUTES)
@@ -184,7 +182,9 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
       val tasksWithDetails = new util.ArrayList[JobRequestWithDetail]
       task.asScala.foreach(job => {
         val subJobDetails = new util.ArrayList[SubJobDetail]()
-        jobDetailMapper.selectJobDetailByJobHistoryId(job.getId).asScala.foreach(job => subJobDetails.add(jobdetail2SubjobDetail(job)))
+        val subJobDetail = new SubJobDetail
+        subJobDetail.setResultLocation(job.getResultLocation)
+        subJobDetails.add(subJobDetail)
         tasksWithDetails.add(new JobRequestWithDetail(jobHistory2JobRequest(job)).setSubJobDetailList(subJobDetails))
       })
       val map = new util.HashMap[String, Object]()

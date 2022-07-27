@@ -18,20 +18,15 @@
 package org.apache.linkis.entrance.persistence;
 
 import org.apache.linkis.common.exception.ErrorException;
-import org.apache.linkis.common.io.FsPath;
 import org.apache.linkis.entrance.EntranceContext;
 import org.apache.linkis.entrance.cli.heartbeat.CliHeartbeatMonitor;
 import org.apache.linkis.entrance.cs.CSEntranceHelper;
 import org.apache.linkis.entrance.execute.EntranceJob;
 import org.apache.linkis.entrance.log.FlexibleErrorCodeManager;
 import org.apache.linkis.governance.common.entity.job.JobRequest;
-import org.apache.linkis.governance.common.entity.job.SubJobInfo;
 import org.apache.linkis.protocol.engine.JobProgressInfo;
 import org.apache.linkis.scheduler.executer.OutputExecuteResponse;
 import org.apache.linkis.scheduler.queue.Job;
-import org.apache.linkis.server.BDPJettyServerHelper;
-
-import org.apache.commons.lang3.StringUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,47 +89,7 @@ public class QueryPersistenceManager extends PersistenceManager {
     }
 
     @Override
-    public void onResultSetCreated(Job job, OutputExecuteResponse response) {
-        String path;
-        try {
-            path = createResultSetEngine().persistResultSet(job, response);
-        } catch (Exception e) {
-            String msg =
-                    "Persist resultSet failed for subJob : "
-                            + job.getId()
-                            + ", response : "
-                            + BDPJettyServerHelper.gson().toJson(response);
-            logger.error(msg);
-            if (null != job) {
-                job.onFailure("persist resultSet failed!", e);
-            } else {
-                logger.error("Cannot find job : {} in cache of ExecutorManager.", job.getId(), e);
-            }
-            return;
-        }
-        if (StringUtils.isNotBlank(path) && job instanceof EntranceJob) {
-            EntranceJob entranceJob = (EntranceJob) job;
-            SubJobInfo subJobInfo = entranceJob.getRunningSubJob();
-            String resultLocation =
-                    entranceJob.getRunningSubJob().getSubJobDetail().getResultLocation();
-            if (StringUtils.isEmpty(resultLocation)) {
-                synchronized (subJobInfo.getSubJobDetail()) {
-                    // todo check
-                    if (StringUtils.isNotEmpty(subJobInfo.getSubJobDetail().getResultLocation())) {
-                        return;
-                    }
-                    try {
-                        subJobInfo
-                                .getSubJobDetail()
-                                .setResultLocation(new FsPath(path).getSchemaPath());
-                        createPersistenceEngine().updateIfNeeded(subJobInfo);
-                    } catch (Exception e) {
-                        entranceContext.getOrCreateLogManager().onLogUpdate(job, e.toString());
-                    }
-                }
-            }
-        }
-    }
+    public void onResultSetCreated(Job job, OutputExecuteResponse response) {}
 
     @Override
     public void onProgressUpdate(Job job, float progress, JobProgressInfo[] progressInfo) {

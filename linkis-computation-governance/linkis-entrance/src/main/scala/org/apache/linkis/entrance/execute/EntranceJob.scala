@@ -43,21 +43,23 @@ abstract class EntranceJob extends Job {
 
   @BeanProperty
   var creator: String = _
+
   @BeanProperty
   var user: String = _
+
   @BeanProperty
   var params: util.Map[String, Any] = new util.HashMap[String, Any](1)
+
   @BeanProperty
   var jobRequest: JobRequest = _
-  @BeanProperty
-  var jobGroups: Array[SubJobInfo] = new Array[SubJobInfo](0)
+
   @BeanProperty
   var codeParser: CodeParser = _
 
   private var entranceListenerBus: Option[EntranceEventListenerBus[EntranceEventListener, EntranceEvent]] = None
   private var progressInfo: Array[JobProgressInfo] = Array.empty
   private val persistedResultSets = new AtomicInteger(0)
-  //  private var resultSize = -1
+
   private var entranceContext: EntranceContext = _
 
   /**
@@ -65,7 +67,7 @@ abstract class EntranceJob extends Job {
     * Can be used to monitor client status.
     * e.g. server can detect if linkis-cli process has abnormally ended then kill the job
     * */
-  private val newestAccessByClientTimestamp: AtomicLong = new AtomicLong(-1l) //volatile
+  private val newestAccessByClientTimestamp: AtomicLong = new AtomicLong(-1L)
 
   def setEntranceListenerBus(entranceListenerBus: EntranceEventListenerBus[EntranceEventListener, EntranceEvent]): Unit =
     this.entranceListenerBus = Option(entranceListenerBus)
@@ -85,18 +87,7 @@ abstract class EntranceJob extends Job {
     newestAccessByClientTimestamp.set(newTime)
   }
 
-  def getRunningSubJobIndex: Int
-
-  def getRunningSubJob: SubJobInfo = {
-    if (null != jobGroups && jobGroups.size > 0) {
-      jobGroups(0)
-    } else {
-      null
-    }
-  }
-
   def setResultSize(resultSize: Int): Unit = {
-    //    this.resultSize = resultSize
     if (resultSize >= 0) {
       persistedResultSets.set(resultSize)
     }
@@ -121,34 +112,19 @@ abstract class EntranceJob extends Job {
 
 
   override def beforeStateChanged(fromState: SchedulerEventState, toState: SchedulerEventState): Unit = {
-    //    if (SchedulerEventState.isCompleted(toState) && (resultSize < 0 || persistedResultSets.get() < resultSize)) {
-    /*val startWaitForPersistedTime = System.currentTimeMillis
-    persistedResultSets synchronized {
-      while ((resultSize < 0 || persistedResultSets.get() < resultSize) && getErrorResponse == null && !isWaitForPersistedTimeout(startWaitForPersistedTime))
-        persistedResultSets.wait(3000)
-    }
-    if (isWaitForPersistedTimeout(startWaitForPersistedTime)) onFailure("persist resultSets timeout!", new EntranceErrorException(20305, "persist resultSets timeout!"))
-    if (isSucceed && getErrorResponse != null) {
-      val _toState = if (getErrorResponse.t == null) Cancelled else Failed
-      transition(_toState)
-      return
-    }*/
-    //    }
     super.beforeStateChanged(fromState, toState)
   }
 
   override def afterStateChanged(fromState: SchedulerEventState, toState: SchedulerEventState): Unit = {
-    //updateJobRequestStatus(toState.toString)
     super.afterStateChanged(fromState, toState)
     toState match {
       case Scheduled =>
-        //Entrance指标：任务排队结束时间
-        if(getJobRequest.getMetrics == null){
+        if (getJobRequest.getMetrics == null) {
           getLogListener.foreach(_.onLogUpdate(this, LogUtils.generateWarn("Job Metrics has not been initialized.")))
-        }else{
-          if(getJobRequest.getMetrics.containsKey(TaskConstant.ENTRANCEJOB_SCHEDULE_TIME)){
+        } else {
+          if (getJobRequest.getMetrics.containsKey(TaskConstant.ENTRANCEJOB_SCHEDULE_TIME)) {
             getLogListener.foreach(_.onLogUpdate(this, LogUtils.generateWarn("Your job has already been scheduled before.")))
-          }else{
+          } else {
             getJobRequest.getMetrics.put(TaskConstant.ENTRANCEJOB_SCHEDULE_TIME, new Date(System.currentTimeMillis))
           }
         }
@@ -157,24 +133,26 @@ abstract class EntranceJob extends Job {
         getLogListener.foreach(_.onLogUpdate(this, LogUtils.generateInfo("Your job is turn to retry. Please wait it to schedule.")))
       case Running =>
         getLogListener.foreach(_.onLogUpdate(this, LogUtils.generateInfo("Your job is Running now. Please wait it to complete.")))
-      //TODO job start event
+
       case _ if SchedulerEventState.isCompleted(toState) =>
         endTime = System.currentTimeMillis()
-        //Entrance指标，任务完成时间
+
         getJobRequest.getMetrics.put(TaskConstant.ENTRANCEJOB_COMPLETE_TIME, new Date(System.currentTimeMillis()))
         if (getJobInfo != null) getLogListener.foreach(_.onLogUpdate(this, LogUtils.generateInfo(getJobInfo.getMetric)))
-        if (isSucceed)
+        if (isSucceed) {
           getLogListener.foreach(_.onLogUpdate(this,
             LogUtils.generateInfo("Congratulations. Your job completed with status Success.")))
-        else getLogListener.foreach(_.onLogUpdate(this,
-          LogUtils.generateInfo(s"Sorry. Your job completed with a status $toState. You can view logs for the reason.")))
+        } else {
+          getLogListener.foreach(_.onLogUpdate(this,
+            LogUtils.generateInfo(s"Sorry. Your job completed with a status $toState. You can view logs for the reason.")))
+        }
         this.setProgress(EntranceJob.JOB_COMPLETED_PROGRESS)
         entranceListenerBus.foreach(_.post(EntranceProgressEvent(this, EntranceJob.JOB_COMPLETED_PROGRESS, this.getProgressInfo)))
         this.getProgressListener.foreach(listener => listener.onProgressUpdate(this, EntranceJob.JOB_COMPLETED_PROGRESS, Array[JobProgressInfo]()))
         getEntranceContext.getOrCreatePersistenceManager().createPersistenceEngine().updateIfNeeded(getJobRequest)
       case _ =>
     }
-    entranceListenerBus.foreach(_.post(EntranceJobEvent(this.getId)))
+    entranceListenerBus.foreach(_.post(EntranceJobEvent(this.getId())))
   }
 
   override def onFailure(errorMsg: String, t: Throwable): Unit = {
@@ -213,18 +191,17 @@ abstract class EntranceJob extends Job {
     (if (RPCUtils.isReceiverNotExists(errorExecuteResponse.t)) {
       getExecutor match {
         case e: EntranceExecutor =>
-          //          val instance = e.getInstance.getInstance
           getLogListener.foreach(_.onLogUpdate(this, LogUtils.generateSystemWarn(s"Since the submitted engine rejects the connection, the system will automatically retry and exclude the engine.(由于提交的引擎拒绝连接，系统将自动进行重试，并排除引擎.)")))
         case _ =>
       }
       true
     } else super.isJobShouldRetry(errorExecuteResponse))
 
-  def operation[T](operate: EntranceExecutor => T ): T = {
+  def operation[T](operate: EntranceExecutor => T): T = {
     this.getExecutor match {
       case entranceExecutor: EntranceExecutor =>
         operate(entranceExecutor)
-      case _ => throw new EntranceErrorException(10000, "Unsupported operation (不支持的操作)")
+      case _ => throw new EntranceErrorException(10000, "Unsupported operation")
     }
 
   }

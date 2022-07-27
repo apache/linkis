@@ -31,22 +31,15 @@ import scala.collection.mutable
 class TestSQLSession {
   @Test
   def testShowDF: Unit = {
-    System.setProperty("wds.linkis.server.version", "v1")
-    val map = new mutable.HashMap[String, String]()
-    map.put("spring.mvc.servlet.path", "/api/rest_j/v1")
-    map.put("server.port", "26375")
-    map.put("spring.application.name", "TestSQLSession")
-    map.put("eureka.client.register-with-eureka", "false")
-    map.put("eureka.client.fetch-registry", "false")
-    DataWorkCloudApplication.main(DWCArgumentsParser.formatSpringOptions(map.toMap))
     val engineFactory = new SparkEngineConnFactory
     val sparkConf: SparkConf = new SparkConf(true)
     System.setProperty("HADOOP_CONF_DIR", "./")
+    System.setProperty("wds.linkis.filesystem.hdfs.root.path", "./")
     System.setProperty("java.io.tmpdir", "./")
+    val outputDir = engineFactory.createOutputDir(sparkConf)
     val sparkSession = SparkSession.builder()
       .master("local[*]")
       .appName("testShowDF").getOrCreate()
-    val outputDir = engineFactory.createOutputDir(sparkConf)
     val sparkEngineSession = SparkEngineSession(sparkSession.sparkContext, sparkSession.sqlContext, sparkSession, outputDir)
     val sparkScalaExecutor = new SparkScalaExecutor(sparkEngineSession, 1L)
     val engineExecutionContext = new EngineExecutionContext(sparkScalaExecutor, Utils.getJvmUser)

@@ -19,7 +19,6 @@ package org.apache.linkis.server
 
 import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.exception.ExceptionUtils
-import org.apache.linkis.common.utils.Logging
 import org.springframework.web.context.request.{RequestContextHolder, ServletRequestAttributes}
 
 import java.util
@@ -59,13 +58,10 @@ class Message(private var method: String,
   def setData(data: util.HashMap[String, Object]): Unit = this.data = data
   def getData: util.HashMap[String, Object] = data
 
-  //  def isSuccess = status == 0
-  //  def isError = status != 0
-
   override def toString: String = s"Message($getMethod, $getStatus, $getData)"
 }
 
-object Message extends Logging {
+object Message {
 
   def apply(method: String = null, status: Int = 0, message: String = null,
             data: util.HashMap[String, Object] = new util.HashMap[String, Object]): Message = {
@@ -108,7 +104,7 @@ object Message extends Logging {
     message
   }
   implicit def warn(msg: String): Message = {
-    val message = Message(status = 4)
+    val message = Message(status = MessageStatus.WARNING)
     message.setMessage(msg)
     message
   }

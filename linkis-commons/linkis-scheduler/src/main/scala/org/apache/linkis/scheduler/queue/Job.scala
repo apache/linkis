@@ -162,7 +162,7 @@ abstract class Job extends Runnable with SchedulerEvent with Closeable with Logg
 
   def getJobInfo: JobInfo
 
-  def getErrorResponse = errorExecuteResponse
+  def getErrorResponse: ErrorExecuteResponse = errorExecuteResponse
 
   protected def existsJobDaemon: Boolean = false
 

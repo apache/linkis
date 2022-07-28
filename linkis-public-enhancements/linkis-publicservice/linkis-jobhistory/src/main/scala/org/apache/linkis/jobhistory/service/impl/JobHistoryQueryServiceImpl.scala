@@ -40,8 +40,7 @@ import java.sql.Timestamp
 import java.{lang, util}
 import java.util.Date
 import java.util.concurrent.{Callable, TimeUnit}
-import scala.collection.JavaConversions._
-import scala.collection.JavaConverters.asScalaBufferConverter
+import scala.collection.JavaConverters._
 
 
 @Service
@@ -102,7 +101,7 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
         }
       }
       val jobUpdate = jobRequest2JobHistory(jobReq)
-      if(jobUpdate.getUpdatedTime == null) {
+      if (jobUpdate.getUpdatedTime == null) {
         throw new QueryException(120001,s"jobId:${jobReq.getId}，更新job相关信息失败，请指定该请求的更新时间!")
       }
       logger.info(s"Update data to the database(往数据库中更新数据)：task ${jobReq.getId} + status ${jobReq.getStatus}, updateTime: ${jobUpdate.getUpdateTimeMills}, progress : ${jobUpdate.getProgress}")
@@ -128,8 +127,8 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
     override def batchChange(jobReqUpdate: JobReqBatchUpdate): util.ArrayList[JobRespProtocol] = {
       val jobReqList = jobReqUpdate.jobReq
       val jobRespList = new util.ArrayList[JobRespProtocol]()
-      if(jobReqList != null){
-        jobReqList.foreach(jobReq =>{
+      if (jobReqList != null) {
+        jobReqList.asScala.foreach(jobReq => {
           jobReq.setExecutionCode(null)
           logger.info("Update data to the database(往数据库中更新数据)：status:" + jobReq.getStatus )
           val jobResp = new JobRespProtocol
@@ -218,7 +217,7 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
 
   override def search(jobId: java.lang.Long, username: String, status: String, creator: String, sDate: Date, eDate: Date, engineType: String, startJobId: java.lang.Long): util.List[JobHistory] = {
 
-    val split: util.List[String] = if (status != null) status.split(",").toList else null
+    val split: util.List[String] = if (status != null) status.split(",").toList.asJava else null
     val result = if (StringUtils.isBlank(creator)) {
       jobHistoryMapper.search(jobId, username, split, sDate, eDate, engineType, startJobId)
     } else if (StringUtils.isBlank(username)) {

@@ -32,9 +32,10 @@ import org.apache.linkis.manager.rm.utils.RequestKerberosUrlUtils
 import org.json4s.JValue
 import org.json4s.JsonAST._
 import org.json4s.jackson.JsonMethods.parse
+
 import java.util
 import java.util.Base64
-import java.util.concurrent.{ConcurrentHashMap, TimeUnit}
+import java.util.concurrent.ConcurrentHashMap
 import scala.collection.JavaConversions._
 import scala.collection.mutable.ArrayBuffer
 
@@ -306,10 +307,11 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
     true
   }
 }
+
 object YarnResourceRequester extends Logging {
 
   private val httpClient = HttpClients.createDefault()
-  def init() = {
+  def init(): Unit = {
     addShutdownHook()
   }
 

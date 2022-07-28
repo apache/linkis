@@ -18,6 +18,7 @@
 package org.apache.linkis.entrance.execute
 
 import org.apache.commons.io.IOUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
@@ -181,7 +182,8 @@ class EngineExecuteAsyncReturn(val request: ExecuteRequest,
           case entranceExecuteRequest: EntranceExecuteRequest =>
             r match {
               case ErrorExecuteResponse(errorMsg, error) =>
-                val msg = s"Job with execId-$id + subJobId : $subJobId  execute failed,$errorMsg \n ${ExceptionUtils.getStackTrace(error)}"
+                val errorStackTrace = if (error != null) ExceptionUtils.getStackTrace(error) else StringUtils.EMPTY
+                val msg = s"Job with execId-$id + subJobId : $subJobId  execute failed,$errorMsg \n $errorStackTrace"
                 entranceExecuteRequest.getJob.getLogListener.foreach(_.onLogUpdate(entranceExecuteRequest.getJob, LogUtils.generateERROR(msg)))
               case _ =>
             }

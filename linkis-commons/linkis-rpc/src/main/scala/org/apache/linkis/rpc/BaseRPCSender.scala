@@ -67,7 +67,7 @@ private[rpc] class BaseRPCSender extends Sender with Logging {
   protected def newRPC: RPCReceiveRemote = {
     val builder = Feign.builder.logger(new Slf4jLogger()).logLevel(feign.Logger.Level.FULL)
     doBuilder(builder)
-    var url = if(name.startsWith("http://")) name else "http://" + name
+    var url = if (name.startsWith("http://")) name else "http://" + name
     if(url.endsWith("/")) url = url.substring(0, url.length - 1)
     url += ServerConfiguration.BDP_SERVER_RESTFUL_URI.getValue
     builder.target(classOf[RPCReceiveRemote], url)
@@ -80,14 +80,14 @@ private[rpc] class BaseRPCSender extends Sender with Logging {
     case _ => op
   }
 
-  override def ask(message: Any): Any = execute(message){
+  override def ask(message: Any): Any = execute(message) {
     val msg = RPCProduct.getRPCProduct.toMessage(message)
     BaseRPCSender.addInstanceInfo(msg.getData)
     val response = getRPC.receiveAndReply(msg)
     RPCConsumer.getRPCConsumer.toObject(response)
   }
 
-  override def ask(message: Any, timeout: Duration): Any = execute(message){
+  override def ask(message: Any, timeout: Duration): Any = execute(message) {
     val msg = RPCProduct.getRPCProduct.toMessage(message)
     msg.data("duration", timeout.toMillis)
     BaseRPCSender.addInstanceInfo(msg.getData)
@@ -95,7 +95,7 @@ private[rpc] class BaseRPCSender extends Sender with Logging {
     RPCConsumer.getRPCConsumer.toObject(response)
   }
 
-  private def sendIt(message: Any, op: Message => Message): Unit = execute(message){
+  private def sendIt(message: Any, op: Message => Message): Unit = execute(message) {
     val msg = RPCProduct.getRPCProduct.toMessage(message)
     BaseRPCSender.addInstanceInfo(msg.getData)
     RPCConsumer.getRPCConsumer.toObject(op(msg)) match {
@@ -118,13 +118,13 @@ private[rpc] class BaseRPCSender extends Sender with Logging {
 
   protected def getRPCSenderListenerBus = BaseRPCSender.rpcSenderListenerBus
 
-  override def equals(obj: scala.Any): Boolean = if(obj == null) false
+  override def equals(obj: scala.Any): Boolean = if (obj == null) false
     else obj match {
       case sender: BaseRPCSender => name == sender.name
       case _ => false
     }
 
-  override def hashCode(): Int = if(name == null) 0 else name.hashCode
+  override def hashCode(): Int = if (name == null) 0 else name.hashCode
 
   override def toString: String = s"RPCSender($name)"
 }
@@ -139,7 +139,7 @@ private[rpc] object BaseRPCSender extends Logging {
     override def onMessageEventError(event: RPCMessageEvent, t: Throwable): Unit =
       logger.warn(s"${event.serviceInstance} deliver RPC message failed! Message: " + event.message, t)
   })
-  def addInstanceInfo[T](map: util.Map[String, T]): Unit ={
+  def addInstanceInfo[T](map: util.Map[String, T]): Unit = {
     map.put("name", DataWorkCloudApplication.getApplicationName.asInstanceOf[T])
     map.put("instance", DataWorkCloudApplication.getInstance.asInstanceOf[T])
   }

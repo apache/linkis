@@ -96,10 +96,7 @@ public class DataSourceAdminRestfulApi {
                 "Fail to insert data source environment[新增数据源环境失败]");
     }
 
-    @ApiOperation(
-            value = "getAllEnvListByDataSourceType",
-            notes = "get all env list by data source type",
-            response = Message.class)
+    @ApiOperation(value = "getAllEnvListByDataSourceType", notes = "get all env list by data source type", response = Message.class)
     @ApiImplicitParams({
         @ApiImplicitParam(name = "typeId", required = true, dataType = "Long", value = "type id")
     })
@@ -114,10 +111,7 @@ public class DataSourceAdminRestfulApi {
                 "Fail to get data source environment list[获取数据源环境清单失败]");
     }
 
-    @ApiOperation(
-            value = "getEnvEntityById",
-            notes = "get env entity by id",
-            response = Message.class)
+    @ApiOperation(value = "getEnvEntityById", notes = "get env entity by id", response = Message.class)
     @ApiImplicitParams({
         @ApiImplicitParam(name = "envId", required = true, dataType = "Long", value = "env id")
     })
@@ -197,23 +191,12 @@ public class DataSourceAdminRestfulApi {
                 "Fail to update data source environment[更新数据源环境失败]");
     }
 
-    @ApiOperation(
-            value = "queryDataSourceEnv",
-            notes = "query data source env",
-            response = Message.class)
+    @ApiOperation(value = "queryDataSourceEnv", notes = "query data source env", response = Message.class)
     @ApiImplicitParams({
         @ApiImplicitParam(name = "name", required = true, dataType = "Long", value = "name"),
         @ApiImplicitParam(name = "typeId", required = true, dataType = "Long", value = "type id"),
-        @ApiImplicitParam(
-                name = "currentPage",
-                required = true,
-                dataType = "Long",
-                value = "current page"),
-        @ApiImplicitParam(
-                name = "pageSize",
-                required = true,
-                dataType = "Long",
-                value = "page size")
+        @ApiImplicitParam(name = "currentPage", required = true, dataType = "Long", value = "current page"),
+        @ApiImplicitParam(name = "pageSize", required = true, dataType = "Long", value = "page size")
     })
     @RequestMapping(value = "/env", method = RequestMethod.GET)
     public Message queryDataSourceEnv(

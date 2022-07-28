@@ -54,10 +54,7 @@ public class ContextListenerRestfulApi implements CsRestfulParent {
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    @ApiOperation(
-            value = "onBindIDListener",
-            notes = "on bind id listener",
-            response = Message.class)
+    @ApiOperation(value = "onBindIDListener", notes = "on bind id listener", response = Message.class)
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "onBindIDListener", method = RequestMethod.POST)
     public Message onBindIDListener(HttpServletRequest req, @RequestBody JsonNode jsonNode)
@@ -70,10 +67,7 @@ public class ContextListenerRestfulApi implements CsRestfulParent {
         return generateResponse(answerJob, "");
     }
 
-    @ApiOperation(
-            value = "onBindKeyListener",
-            notes = "on bind key listener",
-            response = Message.class)
+    @ApiOperation(value = "onBindKeyListener", notes = "on bind key listener", response = Message.class)
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "onBindKeyListener", method = RequestMethod.POST)
     public Message onBindKeyListener(HttpServletRequest req, @RequestBody JsonNode jsonNode)

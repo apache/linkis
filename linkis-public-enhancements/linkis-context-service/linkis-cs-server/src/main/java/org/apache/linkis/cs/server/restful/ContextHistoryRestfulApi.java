@@ -54,21 +54,10 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    @ApiOperation(
-            value = "createHistory",
-            notes = "create context history",
-            response = Message.class)
+    @ApiOperation(value = "createHistory", notes = "create context history", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(
-                name = "contextHistory",
-                required = true,
-                dataType = "String",
-                value = "context history"),
-        @ApiImplicitParam(
-                name = "contextID",
-                required = true,
-                dataType = "String",
-                value = "context Id")
+        @ApiImplicitParam(name = "contextHistory", required = true, dataType = "String", value = "context history"),
+        @ApiImplicitParam(name = "contextID", required = true, dataType = "String", value = "context Id")
     })
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "createHistory", method = RequestMethod.POST)
@@ -87,21 +76,10 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
         return generateResponse(answerJob, "");
     }
 
-    @ApiOperation(
-            value = "removeHistory",
-            notes = "remove context history",
-            response = Message.class)
+    @ApiOperation(value = "removeHistory", notes = "remove context history", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(
-                name = "contextHistory",
-                required = false,
-                dataType = "String",
-                value = "context history"),
-        @ApiImplicitParam(
-                name = "contextID",
-                required = false,
-                dataType = "String",
-                value = "context Id")
+        @ApiImplicitParam(name = "contextHistory", required = false, dataType = "String", value = "context history"),
+        @ApiImplicitParam(name = "contextID", required = false, dataType = "String", value = "context Id")
     })
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "removeHistory", method = RequestMethod.POST)
@@ -120,16 +98,9 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
         return generateResponse(answerJob, "");
     }
 
-    @ApiOperation(
-            value = "getHistories",
-            notes = "get content history list",
-            response = Message.class)
+    @ApiOperation(value = "getHistories", notes = "get content history list", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(
-                name = "contextID",
-                required = false,
-                dataType = "String",
-                value = "context id")
+        @ApiImplicitParam(name = "contextID", required = false, dataType = "String", value = "context id")
     })
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "getHistories", method = RequestMethod.POST)
@@ -146,8 +117,8 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
 
     @ApiOperation(value = "GetHistory", notes = "get context history", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "contextID", dataType = "String", value = "context id"),
-        @ApiImplicitParam(name = "source", dataType = "String", value = "source")
+        @ApiImplicitParam(name = "contextID", required = true, dataType = "String", value = "context id"),
+        @ApiImplicitParam(name = "source",  required = false,dataType = "String", value = "source")
     })
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "getHistory", method = RequestMethod.POST)
@@ -170,8 +141,8 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
 
     @ApiOperation(value = "searchHistory", notes = "search history", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "contextID", dataType = "String", value = "context id"),
-        @ApiImplicitParam(name = "keywords", dataType = "String", value = "key words")
+        @ApiImplicitParam(name = "contextID",  required = true, dataType = "String", value = "context id"),
+        @ApiImplicitParam(name = "keywords", required = false, dataType = "String", value = "key words")
     })
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "searchHistory", method = RequestMethod.POST)

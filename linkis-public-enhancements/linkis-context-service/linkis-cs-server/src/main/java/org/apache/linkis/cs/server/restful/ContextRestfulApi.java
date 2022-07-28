@@ -74,19 +74,11 @@ public class ContextRestfulApi implements CsRestfulParent {
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    /*@ApiOperation(value = "获取上下文内容", notes = "获取上下文内容", response = Message.class)
-    @ApiImplicitParams({
-        @ApiImplicitParam(name = "contextKey", dataType = "String", value = "contextKey"),
-        @ApiImplicitParam(name = "contextID", dataType = "String", value = "上下文id")
-    })*/
+
     @ApiOperation(value = "getContextValue", notes = "get context value", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "contextKey", dataType = "String", value = "context key"),
-        @ApiImplicitParam(
-                name = "contextID",
-                required = true,
-                dataType = "String",
-                value = "context id")
+        @ApiImplicitParam(name = "contextKey", required = true, dataType = "String", value = "context key"),
+        @ApiImplicitParam(name = "contextID", required = true, dataType = "String", value = "context id")
     })
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "getContextValue", method = RequestMethod.POST)
@@ -99,18 +91,11 @@ public class ContextRestfulApi implements CsRestfulParent {
         return message;
     }
 
-    /*@ApiOperation(value = "搜索上下文内容", notes = "搜索上下文内容", response = Message.class)
+
+    @ApiOperation(value = "searchContextValue", notes = "search context value", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "condition", dataType = "String", value = "condition"),
-        @ApiImplicitParam(name = "contextID", dataType = "String", value = "上下文id")
-    })*/
-    @ApiOperation(
-            value = "SearchContextValue",
-            notes = "Search_Context_Value",
-            response = Message.class)
-    @ApiImplicitParams({
-        @ApiImplicitParam(name = "condition", dataType = "String", value = "Condition"),
-        @ApiImplicitParam(name = "contextID", dataType = "String", value = "context Id")
+        @ApiImplicitParam(name = "condition", required = true, dataType = "String", value = "condition"),
+        @ApiImplicitParam(name = "contextID", required = true, dataType = "String", value = "context id")
     })
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "searchContextValue", method = RequestMethod.POST)
@@ -125,22 +110,11 @@ public class ContextRestfulApi implements CsRestfulParent {
         return message;
     }
 
-    /*
-    @RequestMapping(path = "searchContextValueByCondition",method = RequestMethod.GET)
-    public Message searchContextValueByCondition(HttpServletRequest req, JsonNode jsonNode) throws InterruptedException {
-        Condition condition = null;
-        HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.SEARCH, condition);
-        return generateResponse(answerJob,"");
-    }*/
-    /*@ApiOperation(value = "设置key", notes = "给value设置key", response = Message.class)
+
+    @ApiOperation(value = "setValueByKey", notes = "set value by key", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "contextKey", dataType = "String", value = "contextKey"),
-        @ApiImplicitParam(name = "contextID", dataType = "String", value = "上下文id")
-    })*/
-    @ApiOperation(value = "SetValueByKey", notes = "Set_Value_By_Key", response = Message.class)
-    @ApiImplicitParams({
-        @ApiImplicitParam(name = "contextKey", dataType = "String", value = "context key"),
-        @ApiImplicitParam(name = "contextID", dataType = "String", value = "context Id")
+        @ApiImplicitParam(name = "contextKey", required = true, dataType = "String", value = "context key"),
+        @ApiImplicitParam(name = "contextID", required = true, dataType = "String", value = "context id")
     })
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "setValueByKey", method = RequestMethod.POST)
@@ -154,18 +128,11 @@ public class ContextRestfulApi implements CsRestfulParent {
         return generateResponse(answerJob, "");
     }
 
-    /*@ApiOperation(value = "设置value", notes = "设置value", response = Message.class)
+
+    @ApiOperation(value = "setValue", notes = "set value", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "contextKeyValue", dataType = "String", value = "contextKeyValue"),
-        @ApiImplicitParam(name = "contextID", dataType = "String", value = "上下文id")
-    })*/
-    @ApiOperation(value = "SetValue", notes = "Set_Value", response = Message.class)
-    @ApiImplicitParams({
-        @ApiImplicitParam(
-                name = "contextKeyValue",
-                dataType = "String",
-                value = "Context_Key_Value"),
-        @ApiImplicitParam(name = "contextID", dataType = "String", value = "context Id")
+        @ApiImplicitParam(name = "contextKeyValue", required = true, dataType = "String", value = "context key value"),
+        @ApiImplicitParam(name = "contextID", required = true, dataType = "String", value = "context id")
     })
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "setValue", method = RequestMethod.POST)
@@ -177,15 +144,11 @@ public class ContextRestfulApi implements CsRestfulParent {
         return generateResponse(answerJob, "");
     }
 
-    /*@ApiOperation(value = "重置value", notes = "重置value", response = Message.class)
+
+    @ApiOperation(value = "resetValue", notes = "reset value", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "contextKey", dataType = "String", value = "contextKey"),
-        @ApiImplicitParam(name = "contextID", dataType = "String", value = "上下文id")
-    })*/
-    @ApiOperation(value = "ResetValue", notes = "Reset_Value", response = Message.class)
-    @ApiImplicitParams({
-        @ApiImplicitParam(name = "contextKey", dataType = "String", value = "context key"),
-        @ApiImplicitParam(name = "contextID", dataType = "String", value = "context Id")
+        @ApiImplicitParam(name = "contextKey", required = true, dataType = "String", value = "context key"),
+        @ApiImplicitParam(name = "contextID", required = true, dataType = "String", value = "context id")
     })
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "resetValue", method = RequestMethod.POST)
@@ -197,15 +160,11 @@ public class ContextRestfulApi implements CsRestfulParent {
         return generateResponse(answerJob, "");
     }
 
-    /*@ApiOperation(value = "删除value", notes = "删除value", response = Message.class)
+
+    @ApiOperation(value = "removeValue", notes = "remove value", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "contextKey", dataType = "String", value = "contextKey"),
-        @ApiImplicitParam(name = "contextID", dataType = "String", value = "上下文id")
-    })*/
-    @ApiOperation(value = "RemoveValue", notes = "Remove_Value", response = Message.class)
-    @ApiImplicitParams({
-        @ApiImplicitParam(name = "contextKey", dataType = "String", value = "context key"),
-        @ApiImplicitParam(name = "contextID", dataType = "String", value = "context Id")
+        @ApiImplicitParam(name = "contextKey",  required = true, dataType = "String", value = "context key"),
+        @ApiImplicitParam(name = "contextID",  required = true, dataType = "String", value = "context id")
     })
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "removeValue", method = RequestMethod.POST)
@@ -217,15 +176,11 @@ public class ContextRestfulApi implements CsRestfulParent {
         return generateResponse(answerJob, "");
     }
 
-    /*@ApiOperation(value = "删除所有value", notes = "删除所有value", response = Message.class)
+
+    @ApiOperation(value = "removeAllValue", notes = "remove all value", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "contextKey", dataType = "String", value = "contextKey"),
-        @ApiImplicitParam(name = "contextID", dataType = "String", value = "上下文id")
-    })*/
-    @ApiOperation(value = "RemoveAllValue", notes = "Remove_All_Value", response = Message.class)
-    @ApiImplicitParams({
-        @ApiImplicitParam(name = "contextKey", dataType = "String", value = "context key"),
-        @ApiImplicitParam(name = "contextID", dataType = "String", value = "context Id")
+        @ApiImplicitParam(name = "contextKey",required = true, dataType = "String", value = "context key"),
+        @ApiImplicitParam(name = "contextID",required = true, dataType = "String", value = "context id")
     })
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "removeAllValue", method = RequestMethod.POST)
@@ -236,18 +191,11 @@ public class ContextRestfulApi implements CsRestfulParent {
         return generateResponse(answerJob, "");
     }
 
-    /*@ApiOperation(value = "通过key前缀和上下文类型删除所有值", notes = "通过前缀和上下文类型删除所有值", response = Message.class)
+
+    @ApiOperation(value = "removeAllValueByKeyPrefixAndContextType", notes = "remove all value by key prefix and context type", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "contextKeyType", dataType = "String", value = "contextKeyType"),
-        @ApiImplicitParam(name = "keyPrefix", dataType = "String", value = "keyPrefix")
-    })*/
-    @ApiOperation(
-            value = "RemoveAllValueByKeyPrefixAndContextType",
-            notes = "Remove_All_Value_By_Key_Prefix_And_Context_Type",
-            response = Message.class)
-    @ApiImplicitParams({
-        @ApiImplicitParam(name = "contextKeyType", dataType = "String", value = "context key type"),
-        @ApiImplicitParam(name = "keyPrefix", dataType = "String", value = "Key_Prefix")
+             @ApiImplicitParam(name = "contextKeyType",required = true, dataType = "String", value = "context key type"),
+             @ApiImplicitParam(name = "keyPrefix",required = true, dataType = "String", value = "key prefix")
     })
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "removeAllValueByKeyPrefixAndContextType", method = RequestMethod.POST)
@@ -267,10 +215,10 @@ public class ContextRestfulApi implements CsRestfulParent {
         return generateResponse(answerJob, "");
     }
 
-    @ApiOperation(value = "通过value前缀删除所有值", notes = "通过前缀和上下文类型删除所有值", response = Message.class)
+    @ApiOperation(value = "removeAllValueByKeyPrefix", notes = "remove all value by key prefix", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "contextID", dataType = "String", value = "contextID"),
-        @ApiImplicitParam(name = "keyPrefix", dataType = "String", value = "keyPrefix")
+        @ApiImplicitParam(name = "contextID", required = false, dataType = "String", value = "context iD"),
+        @ApiImplicitParam(name = "keyPrefix", required = false, dataType = "String", value = "key prefix")
     })
     @RequestMapping(path = "removeAllValueByKeyPrefix", method = RequestMethod.POST)
     public Message removeAllValueByKeyPrefix(HttpServletRequest req, @RequestBody JsonNode jsonNode)
@@ -281,9 +229,9 @@ public class ContextRestfulApi implements CsRestfulParent {
         return generateResponse(answerJob, "");
     }
 
-    @ApiOperation(value = "通过ID清除所以上下文", notes = "通过ID清除所以上下文", response = Message.class)
+    @ApiOperation(value = "clearAllContextByID", notes = "clear all context by id", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "idList", dataType = "String", value = "上下文id集合"),
+        @ApiImplicitParam(name = "idList", required = true,dataType = "String", value = "id list"),
     })
     @RequestMapping(path = "clearAllContextByID", method = RequestMethod.POST)
     public Message clearAllContextByID(HttpServletRequest req, @RequestBody JsonNode jsonNode)
@@ -307,14 +255,14 @@ public class ContextRestfulApi implements CsRestfulParent {
         return resp;
     }
 
-    @ApiOperation(value = "通过时间清除所以上下文", notes = "通过时间清除所以上下文", response = Message.class)
+    @ApiOperation(value = "clearAllContextByID(time)", notes = "clear all context by id(time)", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "createTimeStart", dataType = "String", value = "创建时间"),
-        @ApiImplicitParam(name = "createTimeEnd", dataType = "String", value = "创建时间结束"),
-        @ApiImplicitParam(name = "updateTimeStart", dataType = "String", value = "更新开始时间"),
-        @ApiImplicitParam(name = "createTimeEnd", dataType = "String", value = "更新结束时间"),
-        @ApiImplicitParam(name = "accessTimeStart", dataType = "String", value = "访问时间开始"),
-        @ApiImplicitParam(name = "accessTimeEnd", dataType = "String", value = "访问时间结束")
+        @ApiImplicitParam(name = "createTimeStart", required = true,dataType = "String", value = "create time start"),
+        @ApiImplicitParam(name = "createTimeEnd", required = true,dataType = "String", value = "create time end"),
+        @ApiImplicitParam(name = "updateTimeStart",required = true, dataType = "String", value = "update time start"),
+        @ApiImplicitParam(name = "createTimeEnd",required = true, dataType = "String", value = "update time end"),
+        @ApiImplicitParam(name = "accessTimeStart",required = true, dataType = "String", value = "access time start"),
+        @ApiImplicitParam(name = "accessTimeEnd", required = true,dataType = "String", value = "access time end")
     })
     @RequestMapping(path = "clearAllContextByTime", method = RequestMethod.POST)
     public Message clearAllContextByID(

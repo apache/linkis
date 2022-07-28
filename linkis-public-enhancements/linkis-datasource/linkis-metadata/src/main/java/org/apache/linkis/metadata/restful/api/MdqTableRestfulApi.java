@@ -68,21 +68,10 @@ public class MdqTableRestfulApi {
     @Autowired private MdqService mdqService;
     ObjectMapper mapper = new ObjectMapper();
 
-    @ApiOperation(
-            value = "getTableBaseInfo",
-            notes = "get table base info",
-            response = Message.class)
+    @ApiOperation(value = "getTableBaseInfo", notes = "get table base info", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(
-                name = "database",
-                required = false,
-                dataType = "String",
-                value = "database"),
-        @ApiImplicitParam(
-                name = "tableName",
-                required = false,
-                dataType = "String",
-                value = "table name")
+        @ApiImplicitParam(name = "database", required = false, dataType = "String", value = "database"),
+        @ApiImplicitParam(name = "tableName", required = false, dataType = "String", value = "table name")
     })
     @RequestMapping(path = "getTableBaseInfo", method = RequestMethod.GET)
     public Message getTableBaseInfo(
@@ -101,21 +90,10 @@ public class MdqTableRestfulApi {
         return Message.ok().data("tableBaseInfo", tableBaseInfo);
     }
 
-    @ApiOperation(
-            value = "getTableFieldsInfo",
-            notes = "get table fields info",
-            response = Message.class)
+    @ApiOperation(value = "getTableFieldsInfo", notes = "get table fields info", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(
-                name = "database",
-                required = false,
-                dataType = "String",
-                value = "database"),
-        @ApiImplicitParam(
-                name = "tableName",
-                required = false,
-                dataType = "String",
-                value = "table name")
+        @ApiImplicitParam(name = "database", required = false, dataType = "String", value = "database"),
+        @ApiImplicitParam(name = "tableName", required = false, dataType = "String", value = "table name")
     })
     @RequestMapping(path = "getTableFieldsInfo", method = RequestMethod.GET)
     public Message getTableFieldsInfo(
@@ -134,36 +112,13 @@ public class MdqTableRestfulApi {
         return Message.ok().data("tableFieldsInfo", tableFieldsInfo);
     }
 
-    @ApiOperation(
-            value = "getTableStatisticInfo",
-            notes = "get table statistic info",
-            response = Message.class)
+    @ApiOperation(value = "getTableStatisticInfo", notes = "get table statistic info", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(
-                name = "database",
-                required = false,
-                dataType = "String",
-                value = "database"),
-        @ApiImplicitParam(
-                name = "tableName",
-                required = false,
-                dataType = "String",
-                value = "table name"),
-        @ApiImplicitParam(
-                name = "pageNow",
-                required = true,
-                dataType = "String",
-                value = "page now"),
-        @ApiImplicitParam(
-                name = "pageSize",
-                required = true,
-                dataType = "String",
-                value = "page size"),
-        @ApiImplicitParam(
-                name = "partitionSort",
-                required = true,
-                dataType = "String",
-                value = "partition sort")
+        @ApiImplicitParam(name = "database", required = false, dataType = "String", value = "database"),
+        @ApiImplicitParam(name = "tableName", required = false, dataType = "String", value = "table name"),
+        @ApiImplicitParam(name = "pageNow", required = true, dataType = "String", value = "page now"),
+        @ApiImplicitParam(name = "pageSize", required = true, dataType = "String", value = "page size"),
+        @ApiImplicitParam(name = "partitionSort", required = true, dataType = "String", value = "partition sort")
     })
     @RequestMapping(path = "getTableStatisticInfo", method = RequestMethod.GET)
     public Message getTableStatisticInfo(
@@ -226,26 +181,11 @@ public class MdqTableRestfulApi {
         return data;
     }
 
-    @ApiOperation(
-            value = "getPartitionStatisticInfo",
-            notes = "get partition statistic info",
-            response = Message.class)
+    @ApiOperation(value = "getPartitionStatisticInfo", notes = "get partition statistic info", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(
-                name = "database",
-                required = false,
-                dataType = "String",
-                value = "database"),
-        @ApiImplicitParam(
-                name = "tableName",
-                required = false,
-                dataType = "String",
-                value = "table name"),
-        @ApiImplicitParam(
-                name = "partitionSort",
-                required = false,
-                dataType = "String",
-                value = "partition sort")
+        @ApiImplicitParam(name = "database", required = false, dataType = "String", value = "database"),
+        @ApiImplicitParam(name = "tableName", required = false, dataType = "String", value = "table name"),
+        @ApiImplicitParam(name = "partitionSort", required = false, dataType = "String", value = "partition sort")
     })
     @RequestMapping(path = "getPartitionStatisticInfo", method = RequestMethod.GET)
     public Message getPartitionStatisticInfo(
@@ -265,11 +205,7 @@ public class MdqTableRestfulApi {
 
     @ApiOperation(value = "active", notes = "active", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(
-                name = "tableId",
-                required = false,
-                dataType = "String",
-                value = "table id")
+        @ApiImplicitParam(name = "tableId", required = false, dataType = "String", value = "table id")
     })
     @RequestMapping(path = "active", method = RequestMethod.GET)
     public Message active(

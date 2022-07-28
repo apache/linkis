@@ -56,36 +56,13 @@ public class BMLFsRestfulApi {
 
     @Autowired BMLHelper bmlHelper;
 
-    @ApiOperation(
-            value = "openScriptFromBML",
-            notes = "open script from BML",
-            response = Message.class)
+    @ApiOperation(value = "openScriptFromBML", notes = "open script from BML", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(
-                name = "resourceId",
-                required = false,
-                dataType = "String",
-                value = "resource id"),
-        @ApiImplicitParam(
-                name = "version",
-                required = false,
-                dataType = "String",
-                value = "version"),
-        @ApiImplicitParam(
-                name = "creator",
-                required = false,
-                dataType = "String",
-                value = "creator"),
-        @ApiImplicitParam(
-                name = "projectName",
-                required = false,
-                dataType = "String",
-                value = "project name"),
-        @ApiImplicitParam(
-                name = "fileName",
-                required = true,
-                dataType = "String",
-                value = "file name")
+        @ApiImplicitParam(name = "resourceId", required = false, dataType = "String", value = "resource id"),
+        @ApiImplicitParam(name = "version", required = false, dataType = "String", value = "version"),
+        @ApiImplicitParam(name = "creator", required = false, dataType = "String", value = "creator"),
+        @ApiImplicitParam(name = "projectName", required = false, dataType = "String", value = "project name"),
+        @ApiImplicitParam(name = "fileName", required = true, dataType = "String", value = "file name")
     })
     @RequestMapping(path = "/openScriptFromBML", method = RequestMethod.GET)
     public Message openScriptFromBML(
@@ -120,31 +97,12 @@ public class BMLFsRestfulApi {
         }
     }
 
-    @ApiOperation(
-            value = "openScriptFromProductBML",
-            notes = "open script from product BML",
-            response = Message.class)
+    @ApiOperation(value = "openScriptFromProductBML", notes = "open script from product BML", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(
-                name = "resourceId",
-                required = false,
-                dataType = "String",
-                value = "resource id"),
-        @ApiImplicitParam(
-                name = "version",
-                required = false,
-                dataType = "String",
-                value = "version"),
-        @ApiImplicitParam(
-                name = "creator",
-                required = false,
-                dataType = "String",
-                value = "creator"),
-        @ApiImplicitParam(
-                name = "fileName",
-                required = true,
-                dataType = "String",
-                value = "file name")
+        @ApiImplicitParam(name = "resourceId", required = false, dataType = "String", value = "resource id"),
+        @ApiImplicitParam(name = "version", required = false, dataType = "String", value = "version"),
+        @ApiImplicitParam(name = "creator", required = false, dataType = "String", value = "creator"),
+        @ApiImplicitParam(name = "fileName", required = true, dataType = "String", value = "file name")
     })
     @RequestMapping(path = "/product/openScriptFromBML", method = RequestMethod.GET)
     public Message openScriptFromProductBML(
@@ -185,36 +143,12 @@ public class BMLFsRestfulApi {
 
     @ApiOperation(value = "saveScriptToBML", notes = "save script to BML", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(
-                name = "scriptContent",
-                required = true,
-                dataType = "String",
-                value = "script content"),
-        @ApiImplicitParam(
-                name = "resourceId",
-                required = false,
-                dataType = "String",
-                value = "resource id"),
-        @ApiImplicitParam(
-                name = "creator",
-                required = false,
-                dataType = "String",
-                value = "creator"),
-        @ApiImplicitParam(
-                name = "fileName",
-                required = false,
-                dataType = "String",
-                value = "fileName"),
-        @ApiImplicitParam(
-                name = "projectName",
-                required = false,
-                dataType = "String",
-                value = "project name"),
-        @ApiImplicitParam(
-                name = "metadata",
-                required = false,
-                dataType = "String",
-                value = "metadata")
+        @ApiImplicitParam(name = "scriptContent", required = true, dataType = "String", value = "script content"),
+        @ApiImplicitParam(name = "resourceId", required = false, dataType = "String", value = "resource id"),
+        @ApiImplicitParam(name = "creator", required = false, dataType = "String", value = "creator"),
+        @ApiImplicitParam(name = "fileName", required = false, dataType = "String", value = "fileName"),
+        @ApiImplicitParam(name = "projectName", required = false, dataType = "String", value = "project name"),
+        @ApiImplicitParam(name = "metadata", required = false, dataType = "String", value = "metadata")
     })
     @ApiOperationSupport(ignoreParameters = {"json"})
     @RequestMapping(path = "/saveScriptToBML", method = RequestMethod.POST)

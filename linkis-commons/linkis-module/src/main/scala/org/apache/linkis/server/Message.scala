@@ -17,13 +17,13 @@
 
 package org.apache.linkis.server
 
-import java.util
-import javax.servlet.http.HttpServletRequest
 import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.apache.linkis.common.utils.Logging
-
 import org.springframework.web.context.request.{RequestContextHolder, ServletRequestAttributes}
+
+import java.util
+import javax.servlet.http.HttpServletRequest
 
 
 class Message(private var method: String,
@@ -99,7 +99,10 @@ object Message extends Logging {
 
   implicit def error(e: (String, Throwable)): Message = error(e._1, e._2)
   implicit def error(msg: String, t: Throwable): Message = {
-    val message = Message(status = 1)
+    error(msg, t, MessageStatus.ERROR)
+  }
+  implicit def error(msg: String, t: Throwable, status: Int): Message = {
+    val message = Message(status = status)
     message.setMessage(msg)
     if(t != null) message << ("stack", ExceptionUtils.getStackTrace(t))
     message
@@ -122,7 +125,7 @@ object Message extends Logging {
   }
 
   def noLogin(msg: String, t: Throwable): Message = {
-    error(msg, t)
+    error(msg, t, MessageStatus.NO_LOGIN)
   }
   def noLogin(msg: String): Message = noLogin(msg, null)
 

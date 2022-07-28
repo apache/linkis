@@ -51,7 +51,6 @@ kind load docker-image linkis:${PROJECT_VERSION} --name ${KIND_CLUSTER_NAME}
 kind load docker-image linkis-web:${PROJECT_VERSION} --name ${KIND_CLUSTER_NAME}
 kind load docker-image mysql:${MYSQL_VERSION} --name ${KIND_CLUSTER_NAME}
 
-# deploy mysql
-echo "# Deploying MySQL ..."
-kubectl create ns mysql
-kubectl apply -n mysql -f ${RESOURCE_DIR}/mysql.yaml
+if [ "X${WITH_LDH}" == "Xtrue" ]; then
+  kind load docker-image linkis-ldh:${PROJECT_VERSION} --name ${KIND_CLUSTER_NAME}
+fi

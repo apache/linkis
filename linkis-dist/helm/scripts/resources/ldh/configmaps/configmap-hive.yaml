@@ -1,0 +1,65 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hive-conf
+data:
+  hive-env.sh: |
+    # Hive Client memory usage can be an issue if a large number of clients
+    # are running at the same time. The flags below have been useful in
+    # reducing memory usage:
+    #
+    # if [ "$SERVICE" = "cli" ]; then
+    #   if [ -z "$DEBUG" ]; then
+    #     export HADOOP_OPTS="$HADOOP_OPTS -XX:NewRatio=12 -Xms10m -XX:MaxHeapFreeRatio=40 -XX:MinHeapFreeRatio=15 -XX:+UseParNewGC -XX:-UseGCOverheadLimit"
+    #   else
+    #     export HADOOP_OPTS="$HADOOP_OPTS -XX:NewRatio=12 -Xms10m -XX:MaxHeapFreeRatio=40 -XX:MinHeapFreeRatio=15 -XX:-UseGCOverheadLimit"
+    #   fi
+    # fi
+
+    # The heap size of the jvm stared by hive shell script can be controlled via:
+    #
+    # export HADOOP_HEAPSIZE=1024
+    #
+    # Larger heap size may be required when running queries over large number of files or partitions.
+    # By default hive shell scripts use a heap size of 256 (MB).  Larger heap size would also be
+    # appropriate for hive server.
+
+
+    # Set HADOOP_HOME to point to a specific hadoop install directory
+    HADOOP_HOME=/opt/ldh/current/hadoop
+
+    # Hive Configuration Directory can be controlled by:
+    export HIVE_CONF_DIR=/etc/ldh/hive
+
+    # Folder containing extra libraries required for hive compilation/execution can be controlled by:
+    # export HIVE_AUX_JARS_PATH=
+
+  hive-site.xml: |
+    <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+    <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+    <configuration>
+      <property>
+          <name>javax.jdo.option.ConnectionURL</name>
+          <value>jdbc:mysql://mysql.mysql.svc.cluster.local:3306/hive_metadata?&amp;createDatabaseIfNotExist=true&amp;characterEncoding=UTF-8&amp;useSSL=false</value>
+      </property>
+      <property>
+          <name>javax.jdo.option.ConnectionUserName</name>
+          <value>root</value>
+      </property>
+      <property>
+          <name>javax.jdo.option.ConnectionPassword</name>
+          <value>123456</value>
+      </property>
+      <property>
+          <name>javax.jdo.option.ConnectionDriverName</name>
+          <value>com.mysql.jdbc.Driver</value>
+      </property>
+      <property>
+          <name>datanucleus.schema.autoCreateAll</name>
+          <value>true</value>
+      </property>
+      <property>
+          <name>hive.metastore.schema.verification</name>
+          <value>false</value>
+       </property>
+    </configuration>

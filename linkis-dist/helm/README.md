@@ -45,7 +45,8 @@ Once after you have installed KinD, you can run the following command to setup a
 # It will deploy a MySQL instance in the KinD cluster,
 # then deploy an Apache Linkis cluster, which will use 
 # the MySQL instances above 
-$> sh ./scripts/create-test-kind.sh \
+$> sh ./scripts/create-kind-cluster.sh \
+   && sh ./scripts/install-mysql.sh \
    && sh ./scripts/install-charts.sh
    
 Creating cluster "test-helm" ...
@@ -165,3 +166,84 @@ $> helm delete --namespace linkis linkis-demo
 # the helm release first
 $> kind delete cluster --name test-helm
 ```
+
+## Test with LDH 
+We introduced a new image, called LDH (Linkis's hadoop all-in-one image), which provides a pseudo-distributed hadoop cluster for testing quickly. This image contains the following hadoop components, the default mode for engines is on-yarn.
+* hadoop 2.7.0 , including hdfs and yarn
+* hive 2.3.9
+* spark 3.3.0
+* flink 1.14.5
+
+> INFO: The hive in LDH image depends on external mysql, please deploy mysql first before deploying LDH.
+
+To make a LDH image, please run the maven command on the root of the project as below
+
+```shell
+$> ./mvnw clean install -Pdocker -Dmaven.javadoc.skip=true -Dmaven.test.skip=true -Dlinkis.build.web=true -Dlinkis.build.ldh=true
+```
+
+By default, we download the tarball packages for each hadoop component from the official apache mirror site, which can be very slow for members in some regions. To solve this problem, members in these regions can download these tarballs by themselves and put them in the directory: ${HOME}/.linkis-build-cache .
+
+Run the following command to setup a local kubernetes cluster with LDH on it.
+
+```shell
+# create and deploy
+$> export WITH_LDH=true
+$> sh . /scripts/create-kind-cluster.sh \
+   && sh . /scripts/install-mysql.sh \
+   && sh ./scripts/install-ldh.sh \
+   && sh ./scripts/install-charts.sh
+   
+...
+
+# take a try
+$> kubectl exec -it -n ldh $(kubectl get pod -n ldh -o jsonpath='{.items[0].metadata.name}') -- bash
+
+[root@ldh-55dd4c7c5d-t7ssx /]# hdfs dfs -ls /
+Found 3 items
+drwxrwxrwx   - root supergroup          0 2022-07-28 04:58 /completed-jobs
+drwxrwxrwx   - root supergroup          0 2022-07-28 04:58 /spark2-history
+drwxrwxrwx   - root supergroup          0 2022-07-28 04:58 /tmp
+
+[root@ldh-55dd4c7c5d-t7ssx /]# beeline -u jdbc:hive2://ldh.ldh.svc.cluster.local:10000/ -n hadoop
+SLF4J: Class path contains multiple SLF4J bindings.
+SLF4J: Found binding in [jar:file:/opt/ldh/1.1.3/apache-hive-2.3.9-bin/lib/log4j-slf4j-impl-2.6.2.jar!/org/slf4j/impl/StaticLoggerBinder.class]
+SLF4J: Found binding in [jar:file:/opt/ldh/1.1.3/hadoop-2.7.0/share/hadoop/common/lib/slf4j-log4j12-1.7.10.jar!/org/slf4j/impl/StaticLoggerBinder.class]
+SLF4J: See http://www.slf4j.org/codes.html#multiple_bindings for an explanation.
+SLF4J: Actual binding is of type [org.apache.logging.slf4j.Log4jLoggerFactory]
+Connecting to jdbc:hive2://ldh.ldh.svc.cluster.local:10000/
+Connected to: Apache Hive (version 2.3.9)
+Driver: Hive JDBC (version 2.3.9)
+Transaction isolation: TRANSACTION_REPEATABLE_READ
+Beeline version 2.3.9 by Apache Hive
+0: jdbc:hive2://ldh.ldh.svc.cluster.local:100> show databases;
++----------------+
+| database_name  |
++----------------+
+| default        |
++----------------+
+1 row selected (1.551 seconds)
+0: jdbc:hive2://ldh.ldh.svc.cluster.local:100> !q
+Closing: 0: jdbc:hive2://ldh.ldh.svc.cluster.local:10000/
+
+[root@ldh-55dd4c7c5d-t7ssx /]# spark-sql 
+Setting default log level to "WARN".
+To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
+22/07/28 05:20:40 WARN Client: Neither spark.yarn.jars nor spark.yarn.archive is set, falling back to uploading libraries under SPARK_HOME.
+Loading class `com.mysql.jdbc.Driver'. This is deprecated. The new driver class is `com.mysql.cj.jdbc.Driver'. The driver is automatically registered via the SPI and manual loading of the driver class is generally unnecessary.
+Spark master: yarn, Application Id: application_1658984291196_0001
+spark-sql> show databases;
+default
+Time taken: 3.409 seconds, Fetched 1 row(s)
+spark-sql> exit;
+22/07/28 05:22:14 WARN HiveConf: HiveConf of name hive.stats.jdbc.timeout does not exist
+22/07/28 05:22:14 WARN HiveConf: HiveConf of name hive.stats.retries.wait does not exist
+
+[root@ldh-55dd4c7c5d-t7ssx /]# flink run /opt/ldh/current/flink/examples/streaming/TopSpeedWindowing.jar
+Executing TopSpeedWindowing example with default input data set.
+Use --input to specify file input.
+Printing result to stdout. Use --output to specify output path.
+
+```
+
+Finally, you can access the web ui by port-forward.

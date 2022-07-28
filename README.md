@@ -85,6 +85,8 @@ Please go to the [Linkis Releases Page](https://github.com/apache/incubator-link
 ./mvnw clean install -Pdocker -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
 # - Option 3: linkis distribution package and docker image (included web)
 ./mvnw clean install -Pdocker -Dmaven.javadoc.skip=true -Dmaven.test.skip=true -Dlinkis.build.web=true
+# - Option 4: linkis distribution package and docker image (included web and ldh (hadoop all in one for test))
+./mvnw clean install -Pdocker -Dmaven.javadoc.skip=true -Dmaven.test.skip=true -Dlinkis.build.web=true -Dlinkis.build.ldh=true
 
 ### Windows
 mvnw.cmd -N install

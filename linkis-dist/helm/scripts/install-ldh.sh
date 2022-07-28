@@ -16,17 +16,21 @@
 #
 
 WORK_DIR=`cd $(dirname $0); pwd -P`
+PROJECT_ROOT=${WORK_DIR}/../..
+RESOURCE_DIR=${WORK_DIR}/resources
 
-COMPONENT_NAME=$1
+set -e
 
-LINKIS_KUBE_NAMESPACE=linkis
-LINKIS_INSTANCE_NAME=linkis-demo
+PROJECT_VERSION=`cd ${PROJECT_ROOT} \
+   && MAVEN_OPTS="-Dorg.slf4j.simpleLogger.defaultLogLevel=WARN -Dorg.slf4j.simpleLogger.log.org.apache.maven.plugins.help=INFO" \
+   mvn help:evaluate -o -Dexpression=project.version | tail -1`
 
-login() {
-  component_name=$1
-  echo "- login [${component_name}]'s bash ..."
-  POD_NAME=`kubectl get pods -n ${LINKIS_KUBE_NAMESPACE} -l app.kubernetes.io/instance=${LINKIS_INSTANCE_NAME}-${component_name} -o jsonpath='{.items[0].metadata.name}'`
-  kubectl exec -it -n ${LINKIS_KUBE_NAMESPACE} ${POD_NAME} -- bash
-}
+LDH_VERSION=${LDH_VERSION-${PROJECT_VERSION}}
+echo "# LDH version: ${LDH_VERSION}"
 
-login ${COMPONENT_NAME}
+# deploy LDH
+echo "# Deploying LDH ..."
+kubectl create ns ldh
+kubectl apply -n ldh -f ${RESOURCE_DIR}/ldh/configmaps
+
+LDH_VERSION=${LDH_VERSION} envsubst < ${RESOURCE_DIR}/ldh/ldh.yaml | kubectl apply -n ldh -f -

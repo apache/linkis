@@ -16,17 +16,12 @@
 #
 
 WORK_DIR=`cd $(dirname $0); pwd -P`
+PROJECT_ROOT=${WORK_DIR}/../..
+RESOURCE_DIR=${WORK_DIR}/resources
 
-COMPONENT_NAME=$1
+set -e
 
-LINKIS_KUBE_NAMESPACE=linkis
-LINKIS_INSTANCE_NAME=linkis-demo
-
-login() {
-  component_name=$1
-  echo "- login [${component_name}]'s bash ..."
-  POD_NAME=`kubectl get pods -n ${LINKIS_KUBE_NAMESPACE} -l app.kubernetes.io/instance=${LINKIS_INSTANCE_NAME}-${component_name} -o jsonpath='{.items[0].metadata.name}'`
-  kubectl exec -it -n ${LINKIS_KUBE_NAMESPACE} ${POD_NAME} -- bash
-}
-
-login ${COMPONENT_NAME}
+# deploy mysql
+echo "# Deploying MySQL ..."
+kubectl create ns mysql
+kubectl apply -n mysql -f ${RESOURCE_DIR}/mysql.yaml

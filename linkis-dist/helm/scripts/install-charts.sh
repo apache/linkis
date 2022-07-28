@@ -26,6 +26,10 @@ if [ "X${HELM_DEBUG}" == "Xtrue" ]; then
   # template helm charts
   helm template --namespace ${KUBE_NAMESPACE} -f ${LINKIS_CHART_DIR}/values.yaml ${HELM_RELEASE_NAME} ${LINKIS_CHART_DIR}
 else
+  # create hadoop configs
+  if [ "X${WITH_LDH}" == "Xtrue" ]; then
+    kubectl apply -n ${KUBE_NAMESPACE} -f ${RESOURCE_DIR}/ldh/configmaps
+  fi
   # install helm charts
   helm install --create-namespace --namespace ${KUBE_NAMESPACE} -f ${LINKIS_CHART_DIR}/values.yaml ${HELM_RELEASE_NAME} ${LINKIS_CHART_DIR}
 fi

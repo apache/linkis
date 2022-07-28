@@ -168,7 +168,7 @@ $> kind delete cluster --name test-helm
 ```
 
 ## Test with LDH 
-We introduced a new image, called LDH (Linkis's hadoop all-in-one image), which provides a pseudo-distributed hadoop cluster for testing quickly. This image contains the following hadoop components, the default mode for engines is on-yarn.
+We introduced a new image, called LDH (Linkis's hadoop all-in-one image), which provides a pseudo-distributed hadoop cluster for testing quickly. This image contains the following hadoop components, the default mode for engines in LDH is on-yarn.
 * hadoop 2.7.0 , including hdfs and yarn
 * hive 2.3.9
 * spark 3.3.0
@@ -176,10 +176,14 @@ We introduced a new image, called LDH (Linkis's hadoop all-in-one image), which 
 
 > INFO: The hive in LDH image depends on external mysql, please deploy mysql first before deploying LDH.
 
-To make a LDH image, please run the maven command on the root of the project as below
+To make an LDH image, please run the maven command on the root of the project as below
 
 ```shell
-$> ./mvnw clean install -Pdocker -Dmaven.javadoc.skip=true -Dmaven.test.skip=true -Dlinkis.build.web=true -Dlinkis.build.ldh=true
+$> ./mvnw clean install -Pdocker \
+   -Dmaven.javadoc.skip=true \
+   -Dmaven.test.skip=true \
+   -Dlinkis.build.web=true \
+   -Dlinkis.build.ldh=true
 ```
 
 By default, we download the tarball packages for each hadoop component from the official apache mirror site, which can be very slow for members in some regions. To solve this problem, members in these regions can download these tarballs by themselves and put them in the directory: ${HOME}/.linkis-build-cache .
@@ -189,7 +193,7 @@ Run the following command to setup a local kubernetes cluster with LDH on it.
 ```shell
 # create and deploy
 $> export WITH_LDH=true
-$> sh . /scripts/create-kind-cluster.sh \
+$> sh ./scripts/create-kind-cluster.sh \
    && sh . /scripts/install-mysql.sh \
    && sh ./scripts/install-ldh.sh \
    && sh ./scripts/install-charts.sh
@@ -243,7 +247,18 @@ spark-sql> exit;
 Executing TopSpeedWindowing example with default input data set.
 Use --input to specify file input.
 Printing result to stdout. Use --output to specify output path.
-
+...
 ```
 
-Finally, you can access the web ui by port-forward.
+You can access service of LDH in the kubernetes cluster with the endpoint `ldh.ldh.svc.cluster.local`, for example, access hdfs from your pod:
+
+```shell
+[root@sample-pod /]# hdfs dfs -ls hdfs://ldh.ldh.svc.cluster.local:9000/
+Found 4 items
+drwxrwxrwx   - root supergroup          0 2022-07-28 04:58 hdfs://ldh.ldh.svc.cluster.local:9000/completed-jobs
+drwxrwxrwx   - root supergroup          0 2022-07-28 05:22 hdfs://ldh.ldh.svc.cluster.local:9000/spark2-history
+drwxrwxrwx   - root supergroup          0 2022-07-28 04:58 hdfs://ldh.ldh.svc.cluster.local:9000/tmp
+drwxr-xr-x   - root supergroup          0 2022-07-28 05:20 hdfs://ldh.ldh.svc.cluster.local:9000/user
+```
+
+Finally, you can access the web ui with `kubectl port-forward` .

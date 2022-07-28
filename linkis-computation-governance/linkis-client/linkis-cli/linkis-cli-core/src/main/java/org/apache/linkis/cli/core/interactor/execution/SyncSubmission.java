@@ -37,10 +37,10 @@ import org.apache.linkis.cli.core.utils.LogUtils;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Map;
 
 /**
  * Execute job synchronously. i.e. Client submit job, and wait til job finish, and get result, no
@@ -133,7 +133,8 @@ public class SyncSubmission implements Execution {
                             "Failed to kill job: jobId="
                                     + jobId
                                     + ". "
-                                    + ExceptionUtils.getStackTrace(e), e);
+                                    + ExceptionUtils.getStackTrace(e),
+                            e);
                 }
                 if (!job.getJobData().getJobStatus().isJobCancelled()
                         || !job.getJobData().getJobStatus().isJobFailure()) {

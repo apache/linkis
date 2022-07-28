@@ -55,7 +55,7 @@ private[rpc] class SpringMVCRPCSender private[rpc](private[rpc] val serviceInsta
         new FeignLoadBalancer(getClientFactory.getLoadBalancer(clientName), getClientFactory.getClientConfig(clientName), serverIntrospector) {
           override def customizeLoadBalancerCommandBuilder(request: FeignLoadBalancer.RibbonRequest, config: IClientConfig,
                                                            builder: LoadBalancerCommand.Builder[FeignLoadBalancer.RibbonResponse]): Unit = {
-            val instance = if(getRPCLoadBalancers.isEmpty) None else {
+            val instance = if (getRPCLoadBalancers.isEmpty) None else {
               val requestBody = SpringMVCRPCSender.getRequest(request).body()
               val requestStr = new String(requestBody, DWCConfiguration.BDP_ENCODING.getValue)
               val obj = RPCConsumer.getRPCConsumer.toObject(BDPJettyServerHelper.gson.fromJson(requestStr, classOf[Message]))
@@ -97,7 +97,7 @@ private[rpc] class SpringMVCRPCSender private[rpc](private[rpc] val serviceInsta
     */
   override def deliver(message: Any): Unit = getRPCSenderListenerBus.post(RPCMessageEvent(message, serviceInstance))
 
-  override def equals(obj: Any): Boolean = if(obj == null) false
+  override def equals(obj: Any): Boolean = if (obj == null) false
     else obj match {
       case sender: SpringMVCRPCSender => sender.serviceInstance == serviceInstance
       case _ => false
@@ -105,14 +105,14 @@ private[rpc] class SpringMVCRPCSender private[rpc](private[rpc] val serviceInsta
 
   override def hashCode(): Int = serviceInstance.hashCode()
 
-  override val toString: String = if(StringUtils.isBlank(serviceInstance.getInstance)) s"RPCSender(${serviceInstance.getApplicationName})"
+  override val toString: String = if (StringUtils.isBlank(serviceInstance.getInstance)) s"RPCSender(${serviceInstance.getApplicationName})"
     else s"RPCSender($getApplicationName, ${serviceInstance.getInstance})"
 }
 private object SpringMVCRPCSender {
   private var requestField: Field = _
   def getRequest(req: ClientRequest): Request = {
-    if(requestField == null) synchronized {
-      if(requestField == null) {
+    if (requestField == null) synchronized {
+      if (requestField == null) {
         requestField = req.getClass.getDeclaredField("request")
         requestField.setAccessible(true)
       }

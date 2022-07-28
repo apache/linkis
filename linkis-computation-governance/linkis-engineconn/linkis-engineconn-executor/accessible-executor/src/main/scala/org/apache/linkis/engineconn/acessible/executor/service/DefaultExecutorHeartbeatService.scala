@@ -58,7 +58,7 @@ class DefaultExecutorHeartbeatService extends ExecutorHeartbeatService with Node
     val heartbeatTime = AccessibleExecutorConfiguration.ENGINECONN_HEARTBEAT_TIME.getValue.toLong
     Utils.defaultScheduler.scheduleAtFixedRate(new Runnable {
       override def run(): Unit = Utils.tryAndWarn {
-        if (EngineConnObject.isReady){
+        if (EngineConnObject.isReady) {
           val executor = ExecutorManager.getInstance.getReportExecutor
           reportHeartBeatMsg(executor)
         }

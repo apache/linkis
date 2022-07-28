@@ -17,20 +17,18 @@
  
 package org.apache.linkis.manager.am.utils
 
-import java.{lang, util}
-
-import com.google.gson.{Gson, JsonObject}
+import com.google.gson.JsonObject
 import org.apache.linkis.manager.am.vo.{AMEngineNodeVo, EMNodeVo}
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.common.entity.node.{EMNode, EngineNode}
-import org.apache.linkis.manager.common.entity.resource.{DriverAndYarnResource, LoadInstanceResource, Resource, ResourceSerializer, ResourceType}
+import org.apache.linkis.manager.common.entity.resource.{DriverAndYarnResource, Resource, ResourceSerializer, ResourceType}
 import org.apache.linkis.manager.common.serializer.NodeResourceSerializer
-import org.apache.linkis.manager.common.utils.ResourceUtils
 import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel
 import org.apache.linkis.server.BDPJettyServerHelper
 import org.json4s.DefaultFormats
 import org.json4s.jackson.Serialization.write
 
+import java.util
 import scala.collection.JavaConverters._
 
 object AMUtils {
@@ -40,7 +38,7 @@ object AMUtils {
   implicit val formats = DefaultFormats + ResourceSerializer + NodeResourceSerializer
   val mapper = BDPJettyServerHelper.jacksonJson
 
-  def copyToEMVo(EMNodes: Array[EMNode]): util.ArrayList[EMNodeVo]= {
+  def copyToEMVo(EMNodes: Array[EMNode]): util.ArrayList[EMNodeVo] = {
     val EMNodeVos = new util.ArrayList[EMNodeVo]()
     EMNodes.foreach(node => {
       val EMNodeVo = new EMNodeVo
@@ -129,9 +127,9 @@ object AMUtils {
           if(node.getNodeTaskInfo.getSucceedTasks != null) AMEngineNodeVo.setSucceedTasks(node.getNodeTaskInfo.getSucceedTasks)
           if(node.getNodeTaskInfo.getFailedTasks != null) AMEngineNodeVo.setFailedTasks(node.getNodeTaskInfo.getFailedTasks)
         }
-        if(node.getNodeOverLoadInfo != null){
-          if(node.getNodeOverLoadInfo.getMaxMemory != null) AMEngineNodeVo.setMaxMemory(node.getNodeOverLoadInfo.getMaxMemory)
-          if(node.getNodeOverLoadInfo.getUsedMemory != null) AMEngineNodeVo.setUsedMemory(node.getNodeOverLoadInfo.getUsedMemory)
+        if (node.getNodeOverLoadInfo != null){
+          if (node.getNodeOverLoadInfo.getMaxMemory != null) AMEngineNodeVo.setMaxMemory(node.getNodeOverLoadInfo.getMaxMemory)
+          if (node.getNodeOverLoadInfo.getUsedMemory != null) AMEngineNodeVo.setUsedMemory(node.getNodeOverLoadInfo.getUsedMemory)
           if(node.getNodeOverLoadInfo.getSystemCPUUsed != null) AMEngineNodeVo.setSystemCPUUsed(node.getNodeOverLoadInfo.getSystemCPUUsed)
           if(node.getNodeOverLoadInfo.getSystemLeftMemory != null) AMEngineNodeVo.setSystemLeftMemory(node.getNodeOverLoadInfo.getSystemLeftMemory)
         }
@@ -145,14 +143,14 @@ object AMUtils {
     AMEngineNodeVos
   }
 
-  def createUnlimitedResource(): util.Map[String, Long] ={
+  def createUnlimitedResource(): util.Map[String, Long] = {
     val map = new util.HashMap[String,Long]()
     map.put("core", 128)
     map.put("memory", 512*1024*1024*1024)
     map.put("instance", 512)
     map
   }
-  def createZeroResource(): util.Map[String, Long] ={
+  def createZeroResource(): util.Map[String, Long] = {
     val map = new util.HashMap[String,Long]()
     map.put("core", 1)
     map.put("memory", 512*1024*1024)
@@ -161,10 +159,10 @@ object AMUtils {
   }
 
   def isJson(str: String): Boolean = {
-    try{
+    try {
       GSON.fromJson(str, classOf[JsonObject])
       true
-    }catch {
+    } catch {
       case _ => false
     }
   }

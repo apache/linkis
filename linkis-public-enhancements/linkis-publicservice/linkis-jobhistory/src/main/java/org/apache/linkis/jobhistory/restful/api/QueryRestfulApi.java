@@ -115,7 +115,7 @@ public class QueryRestfulApi {
     /** Method list should not contain subjob, which may cause performance problems. */
     @ApiOperation(value = "list", notes = "list", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "startDate", required = false, dataType = "long", value = "start date", example = "1658937600000"),
+        @ApiImplicitParam(name = "startDate", required = false, dataType = "long", value = "start date", example = "1658937600001"),
         @ApiImplicitParam(name = "endDate", required = false, dataType = "long", value = "end date", example = "1658937600000"),
         @ApiImplicitParam(name = "status", required = false, dataType = "String", value = "status", example = ""),
         @ApiImplicitParam(name = "pageNow", required = false, dataType = "Integer", value = "page now"),

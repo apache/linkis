@@ -91,5 +91,5 @@ object InstanceLabelClient {
 
   private val instanceLabelClient = new InstanceLabelClient
 
-  def getInstance = instanceLabelClient
+  def getInstance: InstanceLabelClient = instanceLabelClient
 }

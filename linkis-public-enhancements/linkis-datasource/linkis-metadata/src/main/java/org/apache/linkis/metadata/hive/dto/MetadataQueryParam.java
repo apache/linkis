@@ -19,7 +19,7 @@ package org.apache.linkis.metadata.hive.dto;
 
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MetadataQueryParam {
@@ -47,12 +47,12 @@ public class MetadataQueryParam {
     }
 
     public MetadataQueryParam() {
-        this.roles = Collections.emptyList();
+        this.roles = new ArrayList<>();
     }
 
     public MetadataQueryParam(String username) {
         this.userName = username;
-        this.roles = Collections.emptyList();
+        this.roles = new ArrayList<>();
     }
 
     public String getUserName() {

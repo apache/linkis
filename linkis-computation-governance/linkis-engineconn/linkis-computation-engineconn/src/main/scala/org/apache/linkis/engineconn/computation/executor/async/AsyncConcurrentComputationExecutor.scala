@@ -99,7 +99,10 @@ abstract class AsyncConcurrentComputationExecutor(override val outputPrintLimit:
     response match {
       case e: ErrorExecuteResponse =>
         logger.error("execute code failed!", e.t)
-        engineExecutionContext.appendStdout(LogUtils.generateERROR(s"execute code failed!: ${ExceptionUtils.getStackTrace(e.t)}"))
+        val errorStr = if (e.t != null) {
+          ExceptionUtils.getStackTrace(e.t)
+        } else StringUtils.EMPTY
+        engineExecutionContext.appendStdout(LogUtils.generateERROR(s"execute code failed!: $errorStr"))
       case SuccessExecuteResponse() =>
         logger.info(s"task{${engineConnTask.getTaskId} execute success")
       case e: OutputExecuteResponse =>

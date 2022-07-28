@@ -259,21 +259,21 @@ public class LinkisSubmitJob extends LinkisJob
         terminateToken.setTerminate();
         // kill job if job is submitted
         if (StringUtils.isNotBlank(data.getJobID())) {
-            logger.trace("\nKilling job: " + data.getJobID());
+            System.out.println("\nKilling job: " + data.getJobID());
             try {
                 manageJob.doKill();
                 if (data.getJobStatus().isJobCancelled()) {
-                    logger.info("Successfully killed job: " + data.getJobID() + " on exit");
+                    System.out.println("Successfully killed job: " + data.getJobID() + " on exit");
                 } else {
-                    logger.info(
+                    System.out.println(
                             "Failed to kill job: "
                                     + data.getJobID()
                                     + " on exit. Current job status: "
                                     + data.getJobStatus());
                 }
             } catch (Exception e) {
-                logger.error("Failed to kill job: " + data.getJobID() + " on exit");
-                logger.error(ExceptionUtils.getStackTrace(e), e);
+                System.out.println("Failed to kill job: " + data.getJobID() + " on exit");
+                System.out.println(ExceptionUtils.getStackTrace(e));
             }
         }
     }

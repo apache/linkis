@@ -25,11 +25,7 @@ import org.apache.linkis.cli.common.exception.error.ErrorLevel;
 import org.apache.linkis.cli.core.constants.CommonConstants;
 import org.apache.linkis.cli.core.exception.LinkisClientExecutionException;
 import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
-import org.apache.linkis.cli.core.interactor.job.AsyncBackendJob;
-import org.apache.linkis.cli.core.interactor.job.LogAccessibleJob;
-import org.apache.linkis.cli.core.interactor.job.ResultAccessibleJob;
-import org.apache.linkis.cli.core.interactor.job.SyncBackendJob;
-import org.apache.linkis.cli.core.interactor.job.TerminatableJob;
+import org.apache.linkis.cli.core.interactor.job.*;
 import org.apache.linkis.cli.core.interactor.result.ExecutionResultImpl;
 import org.apache.linkis.cli.core.interactor.result.ExecutionStatusEnum;
 import org.apache.linkis.cli.core.utils.CommonUtils;
@@ -129,30 +125,29 @@ public class SyncSubmission implements Execution {
                 try {
                     ((TerminatableJob) job).terminate();
                 } catch (Exception e) {
-                    logger.error(
+                    System.out.println(
                             "Failed to kill job: jobId="
                                     + jobId
                                     + ". "
-                                    + ExceptionUtils.getStackTrace(e),
-                            e);
+                                    + ExceptionUtils.getStackTrace(e));
                 }
                 if (!job.getJobData().getJobStatus().isJobCancelled()
                         || !job.getJobData().getJobStatus().isJobFailure()) {
                     ok = false;
-                    logger.error(
+                    System.out.println(
                             "Failed to kill job: jobId="
                                     + jobId
                                     + ", current status: "
                                     + job.getJobData().getJobStatus().toString());
                 } else {
-                    logger.info(
+                    System.out.println(
                             "Successfully killed job: jobId="
                                     + jobId
                                     + ", current status: "
                                     + job.getJobData().getJobStatus().toString());
                 }
             } else {
-                logger.info("Job \"" + jobId + "\"" + "is not terminatable");
+                System.out.println("Job \"" + jobId + "\"" + "is not terminatable");
             }
         }
         return ok;

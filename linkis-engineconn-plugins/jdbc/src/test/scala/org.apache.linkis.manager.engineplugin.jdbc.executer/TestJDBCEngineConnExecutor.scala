@@ -27,11 +27,14 @@ import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
 import org.apache.linkis.governance.common.utils.EngineConnArgumentsParser
 import org.apache.linkis.manager.engineplugin.common.launch.process.Environment
 import org.apache.linkis.manager.engineplugin.jdbc.factory.JDBCEngineConnFactory
+import org.apache.linkis.manager.engineplugin.jdbc.monitor.ProgressMonitor
 import org.apache.linkis.manager.label.builder.factory.{LabelBuilderFactory, LabelBuilderFactoryContext}
 import org.apache.linkis.manager.label.entity.Label
+import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.h2.tools.Server
 import org.junit.jupiter.api.{Assertions, BeforeEach, Test}
 
+import java.sql.Statement
 import java.util
 import scala.collection.JavaConversions._
 import scala.collection.mutable.ArrayBuffer
@@ -97,6 +100,32 @@ class TestJDBCEngineConnExecutor {
         engineExecutionContext.addProperty(key, value)
     })
     Assertions.assertNotNull(jdbcExecutor.getProgressInfo(taskId))
+
+    class TestMonitor extends ProgressMonitor[Any] {
+      override def accept(t: Any): Unit = {
+      }
+
+      override def attach(statement: Statement): Unit = {
+      }
+
+      override def callback(callback: Runnable): Unit = {
+      }
+
+      override def getSqlProgress: Float = 0.0f
+
+      override def getSucceedTasks: Int = 0
+
+      override def getTotalTasks: Int = 0
+
+      override def getRunningTasks: Int = 0
+
+      override def getFailedTasks: Int = 0
+
+      override def jobProgressInfo(id: String): JobProgressInfo = null
+    }
+    ProgressMonitor.register("com.mysql.cj.jdbc.JdbcStatement",
+      "org.apache.linkis.manager.engineplugin.jdbc.executer.TestJDBCEngineConnExecutor.TestMonitor")
+
     val response = jdbcExecutor.executeLine(engineExecutionContext, cmd)
     Assertions.assertNotNull(response)
   }

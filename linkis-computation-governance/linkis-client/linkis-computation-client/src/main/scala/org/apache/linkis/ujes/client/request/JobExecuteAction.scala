@@ -220,5 +220,13 @@ object JobExecuteAction {
       }
       override def getDefaultRunType: RunType = PSQL
     }
+
+    val TRINO = new EngineType {
+      override val toString: String = "trino"
+      val TSQL = new RunType {
+        override val toString: String = "tsql"
+      }
+      override def getDefaultRunType: RunType = TSQL
+    }
   }
 }

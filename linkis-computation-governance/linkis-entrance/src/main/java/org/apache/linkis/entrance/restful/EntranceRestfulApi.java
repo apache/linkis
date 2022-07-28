@@ -286,10 +286,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
         return message;
     }
 
-    @ApiOperation(
-            value = "progressWithResource",
-            notes = "get progress  and resource info",
-            response = Message.class)
+    @ApiOperation(value = "progressWithResource", notes = "get progress  and resource info", response = Message.class)
     @ApiImplicitParams({
         @ApiImplicitParam(name = "id", required = true, dataType = "String", value = "execute id")
     })

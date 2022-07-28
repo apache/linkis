@@ -46,8 +46,7 @@ public class LinkisBaseServerApp {
                 (String[])
                         ArrayUtils.addAll(args, LinkisMainHelper.getExtraSpringOptions("linkis"));
         String argsString = StringUtils.join(allArgs, "\n");
-        String startLog =
-                String.format("Ready to start %s with args: %s.", serviceName, argsString);
+        String startLog = String.format("Ready to start %s with args: %s.", serviceName, argsString);
         logger.info(startLog);
         DataWorkCloudApplication.main(allArgs);
     }

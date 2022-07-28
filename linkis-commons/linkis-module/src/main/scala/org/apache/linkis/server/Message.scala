@@ -94,8 +94,9 @@ object Message extends Logging {
   }
   def error(msg: String): Message = error(msg, null)
   implicit def error(t: Throwable): Message = {
-    Message(status = 1).setMessage(ExceptionUtils.getRootCauseMessage(t)) << ("stack", ExceptionUtils.getStackTrace(t))
+    error(ExceptionUtils.getRootCauseMessage(t), t)
   }
+
   implicit def error(e: (String, Throwable)): Message = error(e._1, e._2)
   implicit def error(msg: String, t: Throwable): Message = {
     val message = Message(status = 1)
@@ -121,10 +122,7 @@ object Message extends Logging {
   }
 
   def noLogin(msg: String, t: Throwable): Message = {
-    val message = Message(status = -1)
-    message.setMessage(msg)
-    if(t != null) message << ("stack", ExceptionUtils.getStackTrace(t))
-    message
+    error(msg, t)
   }
   def noLogin(msg: String): Message = noLogin(msg, null)
 

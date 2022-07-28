@@ -25,7 +25,11 @@ import org.apache.linkis.cli.common.exception.error.ErrorLevel;
 import org.apache.linkis.cli.core.constants.CommonConstants;
 import org.apache.linkis.cli.core.exception.LinkisClientExecutionException;
 import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
-import org.apache.linkis.cli.core.interactor.job.*;
+import org.apache.linkis.cli.core.interactor.job.AsyncBackendJob;
+import org.apache.linkis.cli.core.interactor.job.LogAccessibleJob;
+import org.apache.linkis.cli.core.interactor.job.ResultAccessibleJob;
+import org.apache.linkis.cli.core.interactor.job.SyncBackendJob;
+import org.apache.linkis.cli.core.interactor.job.TerminatableJob;
 import org.apache.linkis.cli.core.interactor.result.ExecutionResultImpl;
 import org.apache.linkis.cli.core.interactor.result.ExecutionStatusEnum;
 import org.apache.linkis.cli.core.utils.CommonUtils;
@@ -33,10 +37,10 @@ import org.apache.linkis.cli.core.utils.LogUtils;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Map;
 
 /**
  * Execute job synchronously. i.e. Client submit job, and wait til job finish, and get result, no
@@ -125,29 +129,29 @@ public class SyncSubmission implements Execution {
                 try {
                     ((TerminatableJob) job).terminate();
                 } catch (Exception e) {
-                    System.out.println(
+                    logger.error(
                             "Failed to kill job: jobId="
                                     + jobId
                                     + ". "
-                                    + ExceptionUtils.getStackTrace(e));
+                                    + ExceptionUtils.getStackTrace(e), e);
                 }
                 if (!job.getJobData().getJobStatus().isJobCancelled()
                         || !job.getJobData().getJobStatus().isJobFailure()) {
                     ok = false;
-                    System.out.println(
+                    logger.error(
                             "Failed to kill job: jobId="
                                     + jobId
                                     + ", current status: "
                                     + job.getJobData().getJobStatus().toString());
                 } else {
-                    System.out.println(
+                    logger.info(
                             "Successfully killed job: jobId="
                                     + jobId
                                     + ", current status: "
                                     + job.getJobData().getJobStatus().toString());
                 }
             } else {
-                System.out.println("Job \"" + jobId + "\"" + "is not terminatable");
+                logger.info("Job \"" + jobId + "\"" + "is not terminatable");
             }
         }
         return ok;

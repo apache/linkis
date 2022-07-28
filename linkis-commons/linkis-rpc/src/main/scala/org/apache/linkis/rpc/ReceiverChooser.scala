@@ -29,10 +29,10 @@ trait ReceiverChooser {
 }
 
 class CommonReceiverChooser extends ReceiverChooser {
-  override def chooseReceiver(event: RPCMessageEvent): Option[Receiver] = if(getReceivers.size() == 1) Some(getReceivers.values.iterator.next)
+  override def chooseReceiver(event: RPCMessageEvent): Option[Receiver] = if (getReceivers.size() == 1) Some(getReceivers.values.iterator.next)
   else {
     var receiver = getReceivers.get(event.serviceInstance.getApplicationName)
-    if(receiver == null) receiver = getReceivers.get("receiver")
+    if (receiver == null) receiver = getReceivers.get("receiver")
     Option(receiver)
   }
 }

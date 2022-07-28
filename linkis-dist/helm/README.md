@@ -186,7 +186,8 @@ $> ./mvnw clean install -Pdocker \
    -Dlinkis.build.ldh=true
 ```
 
-By default, we download the tarball packages for each hadoop component from the official apache mirror site, which can be very slow for members in some regions. To solve this problem, members in these regions can download these tarballs by themselves and put them in the directory: ${HOME}/.linkis-build-cache .
+By default, we download the packages for each hadoop component from the official apache mirror site, which can be very slow for members in some regions. 
+To solve this problem, please download these tarballs by yourself into the directory `${HOME}/.linkis-build-cache` if it is slow from the official site.
 
 Run the following command to setup a local kubernetes cluster with LDH on it.
 
@@ -194,7 +195,7 @@ Run the following command to setup a local kubernetes cluster with LDH on it.
 # create and deploy
 $> export WITH_LDH=true
 $> sh ./scripts/create-kind-cluster.sh \
-   && sh . /scripts/install-mysql.sh \
+   && sh ./scripts/install-mysql.sh \
    && sh ./scripts/install-ldh.sh \
    && sh ./scripts/install-charts.sh
    
@@ -250,7 +251,7 @@ Printing result to stdout. Use --output to specify output path.
 ...
 ```
 
-You can access service of LDH in the kubernetes cluster with the endpoint `ldh.ldh.svc.cluster.local`, for example, access hdfs from your pod:
+You can access services of LDH in the kubernetes cluster with the endpoint `ldh.ldh.svc.cluster.local`, for example, access hdfs from your pod:
 
 ```shell
 [root@sample-pod /]# hdfs dfs -ls hdfs://ldh.ldh.svc.cluster.local:9000/

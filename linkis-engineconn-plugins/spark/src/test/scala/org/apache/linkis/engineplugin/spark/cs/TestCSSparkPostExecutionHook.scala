@@ -35,7 +35,7 @@ class TestCSSparkPostExecutionHook {
     System.setProperty("java.io.tmpdir", "./")
     System.setProperty("wds.linkis.filesystem.hdfs.root.path", "./")
     val sparkSession = SparkSession.builder()
-      .master("local[*]")
+      .master("local[1]")
       .appName("test").getOrCreate()
     val outputDir = engineFactory.createOutputDir(sparkConf)
     val sparkEngineSession = SparkEngineSession(sparkSession.sparkContext, sparkSession.sqlContext, sparkSession, outputDir)

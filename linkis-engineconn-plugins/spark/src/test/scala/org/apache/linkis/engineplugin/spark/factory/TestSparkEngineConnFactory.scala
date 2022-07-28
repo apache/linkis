@@ -28,7 +28,7 @@ class TestSparkEngineConnFactory {
   @Test
   def testCreateContext: Unit = {
     val sparkConf: SparkConf = new SparkConf(true)
-    sparkConf.setAppName("test").setMaster("local[*]")
+    sparkConf.setAppName("test").setMaster("local[1]")
     val outputDir = engineFactory.createOutputDir(sparkConf)
     Assertions.assertNotNull(outputDir)
     val sparkSession = engineFactory.createSparkSession(outputDir, sparkConf)

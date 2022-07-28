@@ -14,21 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.linkis.engineplugin.spark.launch
+package org.apache.linkis.engineplugin.spark.extension
 
-import org.apache.linkis.engineplugin.spark.launch.SparkSubmitProcessEngineConnLaunchBuilder.RelativePath
+import org.apache.linkis.engineplugin.spark.cs.{CSSparkPostExecutionHook, CSSparkPreExecutionHook}
 import org.junit.jupiter.api.{Assertions, Test}
 
-
-class TestSparkSubmitProcessEngineConnLaunchBuilder {
+class TestExecutionHooks {
   @Test
-  def testCreateContext: Unit = {
-    val ddd = SparkSubmitProcessEngineConnLaunchBuilder.newBuilder()
-          .master("local[1]")
-          .deployMode("client")
-          .className("org.apache.linkis.engineplugin.spark.launch")
-      .driverClassPath("")
-      .archive(RelativePath(""))
-    Assertions.assertNotNull(ddd)
+  def testPreHooks: Unit = {
+    val hookPre = new  CSSparkPreExecutionHook
+    SparkPreExecutionHook.register(hookPre)
+    Assertions.assertNotNull(SparkPreExecutionHook.getSparkPreExecutionHooks())
+  }
+  @Test
+  def testPostHooks: Unit = {
+    val hookPre = new  CSSparkPostExecutionHook
+    SparkPostExecutionHook.register(hookPre)
+    Assertions.assertNotNull(SparkPostExecutionHook.getSparkPostExecutionHooks())
   }
 }

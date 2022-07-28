@@ -215,7 +215,7 @@ jackson-annotations-2.13.2.jar
 jackson-core-2.13.2.jar
 jackson-core-asl-1.9.13.jar
 jackson-core-asl-1.9.2.jar
-jackson-databind-2.13.2.1.jar
+jackson-databind-2.13.2.2.jar
 jackson-dataformat-xml-2.13.2.jar
 jackson-datatype-guava-2.13.2.jar
 jackson-datatype-jdk8-2.13.2.jar

@@ -87,8 +87,8 @@ public class VersionServiceImpl implements VersionService {
             throws Exception {
         ResourceHelper resourceHelper = ResourceHelperFactory.getResourceHelper();
         InputStream inputStream = file.getInputStream();
-        final String resourceIdLock = resourceId.intern();
-        String fileName = new String(file.getOriginalFilename().getBytes("ISO8859-1"), "UTF-8");
+        // final String resourceIdLock = resourceId.intern();
+        // String fileName = file.getOriginalFilename();
         // 获取资源的path
         String newVersion = params.get("newVersion").toString();
         String path = versionDao.getResourcePath(resourceId);
@@ -98,6 +98,9 @@ public class VersionServiceImpl implements VersionService {
                     resourceHelper.generatePath(
                             user, path.substring(path.lastIndexOf("/") + 1), new HashMap<>());
         }
+        // resource path with version such as
+        // hdfs:///apps-data/hadoop/bml/20210608/1c8b78e1-ea12-4fa5-9637-ddc9e9a25bae_v000003
+        path = path + "_" + newVersion;
         // 上传资源前，需要对resourceId这个字符串的intern进行加锁，这样所有需要更新该资源的用户都会同步
         // synchronized (resourceIdLock.intern()){
         // 资源上传到hdfs

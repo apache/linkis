@@ -162,11 +162,11 @@ public class LocalFileSystem extends FileSystem {
         Stack<File> dirsToMake = new Stack<File>();
         dirsToMake.push(file);
         File parent = file.getParentFile();
-        while (!parent.exists()) {
+        while (null != parent && !parent.exists()) {
             dirsToMake.push(parent);
             parent = parent.getParentFile();
         }
-        if (!canMkdir(new FsPath(parent.getPath()))) {
+        if (null != parent && !canMkdir(new FsPath(parent.getPath()))) {
             throw new IOException("no permission to  mkdir path " + path);
         }
         while (!dirsToMake.empty()) {

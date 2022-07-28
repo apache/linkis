@@ -88,11 +88,11 @@ object FileSystemUtils extends Logging{
     var parentPath = dest.getParent
     val dirsToMake = new util.Stack[FsPath]()
     dirsToMake.push(dest)
-    while (!fileSystem.exists(parentPath)) {
+    while (null!= parentPath && !fileSystem.exists(parentPath)) {
       dirsToMake.push(parentPath)
       parentPath = parentPath.getParent
     }
-    if (!fileSystem.canExecute(parentPath)) {
+    if (null != parentPath && !fileSystem.canExecute(parentPath)) {
       throw new IOException("You have not permission to access path " + dest.getPath)
     }
     while (!dirsToMake.empty()) {

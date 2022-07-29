@@ -83,10 +83,18 @@ body:
       label: Your environment
       description: Include as many relevant details about the environment you experienced the bug in.
       value: |
-        - Linkis version used: e.g. 1.1.2
-        - Environment name and version: e.g. cdh-5.14.2, hdp-3.1.5, hive-2.1.1, spark-3.2.1...
-    validations:
-      required: true
+        <!-- Please describe the linkis version you are using and basic environment information -->
+        <!-- 请描述您使用的linkis版本和基本环境信息 -->
+        - Linkis version used: 1.1.2
+        - Environment name and version:
+            - cdh-5.14.2
+            - hdp-3.1.5
+            - hive-2.1.1
+            - spark-3.2.1
+            - scala-2.12.2
+            - jdk 1.8.0_121
+            - ....
+
 
   - type: textarea
     attributes:

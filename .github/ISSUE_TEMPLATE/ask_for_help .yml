@@ -1,0 +1,114 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+name: ❓ Ask Questions
+title: "[Question] "
+description:  Need help, or to ask questions
+labels: [Question]
+body:
+
+  - type: checkboxes
+    attributes:
+      label: Search before asking
+      description: >
+        Please make sure to search in the [issues](https://github.com/apache/incubator-linkis/issues)/[discussions](https://github.com/apache/incubator-linkis/discussions/categories/q-a) first to see
+        whether the same questions was asked already.
+      options:
+        - label: >
+            I searched the [issues](https://github.com/apache/incubator-linkis/issues) and found no similar issues
+            (我在[issues](https://github.com/apache/incubator-linkis/issues)搜索了，并没有发现类似问题).
+          required: true
+        - label: >
+            I searched the [discussions](https://github.com/apache/incubator-linkis/discussions/categories/q-a) and found no similar discussions
+            (我在[discussions](https://github.com/apache/incubator-linkis/issues)搜索了，并没有发现类似问题).
+          required: true
+        - label: >
+            I follow the [Troubleshooting guide](https://linkis.apache.org/zh-CN/docs/latest/deployment/quick-deploy#8-%E5%B8%B8%E8%A7%81%E5%BC%82%E5%B8%B8%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5%E6%8C%87%E5%BC%95) document guidelines were checked, didn't solve the problem
+            (我按[Troubleshooting guide](https://linkis.apache.org/zh-CN/docs/latest/deployment/quick-deploy#8-%E5%B8%B8%E8%A7%81%E5%BC%82%E5%B8%B8%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5%E6%8C%87%E5%BC%95)排查指引进行了排查，并没有解决问题).
+          required: true
+
+  - type: textarea
+    attributes:
+      label: Your environment
+      description: Include as many relevant details about the environment you used.
+      value: |
+          <!-- Please describe the linkis version you are using and basic environment information -->
+          <!-- 请描述您使用的linkis版本和基本环境信息 -->
+          - Linkis version used: 1.1.2
+          - Environment name and version:
+              - cdh-5.14.2
+              - hdp-3.1.5
+              - hive-2.1.1
+              - spark-3.2.1
+              - scala-2.12.2
+              - jdk 1.8.0_121
+              - ....
+    validations:
+      required: true
+
+
+  - type: textarea
+    attributes:
+      label: Describe your questions
+      description: Write down the detail info of you question
+      value: |
+        <!-- Please describe your questions -->
+        <!-- 请描述您的问题 -->
+        Q1.  ...
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Some logs info or acctch file
+      description: Some logs infomation
+      value: |
+        <!-- Please add the log in the following format, the key error log must be pasted in the code style, and the text as much as possible, the detailed log or other files can be dragged and uploaded as an attachment -->
+        <!-- 请按如下格式 添加日志，关键错误日志请务必贴到代码栏中，尽可能贴文字，详细日志或则其它文件，可以拖拽上传作为附件 -->
+
+        linkis-xxx.log:
+        ````shell
+        .....
+        o.a.l.e.s.s.DefaultEngineConnResourceService (41) [info] - Ready to upload a new bmlResource for hiveEngineConn-v3.1.2. path: conf.zip
+        2022-07-28 10:18:21.955 [ERROR] [Linkis-Default-Scheduler-Thread-1       ] o.a.l.e.s.s.DefaultEngineConnResourceService (91) [$anonfun$run$4] - Failed to upload engine conn to bml, now exit! java.net.SocketException: Connection reset
+        	at java.net.SocketInputStream.read(SocketInputStream.java:210) ~[?:1.8.0_202]
+        	at java.net.SocketInputStream.read(SocketInputStream.java:141) ~[?:1.8.0_202]
+        .....
+
+        ````
+        log file:
+        [linkis-xxx.log](https://github.com/apache/incubator-linkis/files/9219529/yarn-error.log)
+
+    validations:
+      required: true
+
+
+  - type: markdown
+    attributes:
+      value: | 
+              Note ❤️
+              English:
+              - Please ask questions in a standardized format, so that the community students can answer them. After asking questions, please continue to pay attention to your questions.
+              - If the problem already exists, we will choose to close and clean
+              - Please pay special attention that in addition to the screenshots, you also need to paste the log text. Only the questions of the picture log will not be given priority to answer.
+              - It is recommended to ask questions in English; if there is an unclear description, you can use a mixture of Chinese and English; translate Chinese into English, and then fill in both Chinese and English into the issue
+
+              中文:
+              - 请按格式规范提问，方便社区同学解答，提问后请后续持续关注你的问题
+              - 如果问题已经存在，请到已有的问题下，继续讨论， 重复的我们会选择关闭并清理
+              - 请特别注意除了截图，还需要把日志文字贴入，只有图片日志的问题，不会优先安排回答
+              - 建议使用英文提问；如果存在描述不清晰，可以使用中英文混合；把中文翻译为英文，然后中文和英文一同填入到issue中
+              

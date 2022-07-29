@@ -28,10 +28,8 @@ import org.springframework.stereotype.Component
 class ScoreNodeSelectRule extends NodeSelectRule with Logging {
 
   override def ruleFiltering(nodes: Array[Node]): Array[Node] = {
-    if (null != nodes)
-      nodes.sortWith(sortByScore)
-    else
-      nodes
+    if (null != nodes) nodes.sortWith(sortByScore)
+    else nodes
   }
 
   /**

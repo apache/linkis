@@ -69,7 +69,7 @@ public class EntranceExecuteRequest
         if (null != job && null != job.getJobRequest()) {
             return job.getJobRequest().getExecutionCode();
         } else {
-            logger.error("SubJobInfo is null!");
+            logger.error("JobRequest code is null!");
             return null;
         }
     }

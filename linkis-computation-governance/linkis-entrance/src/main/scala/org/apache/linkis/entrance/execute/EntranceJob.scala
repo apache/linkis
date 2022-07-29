@@ -24,7 +24,7 @@ import org.apache.linkis.entrance.EntranceContext
 import org.apache.linkis.entrance.conf.EntranceConfiguration
 import org.apache.linkis.entrance.event._
 import org.apache.linkis.entrance.exception.EntranceErrorException
-import org.apache.linkis.governance.common.entity.job.{JobRequest, SubJobInfo}
+import org.apache.linkis.governance.common.entity.job.JobRequest
 import org.apache.linkis.governance.common.paser.CodeParser
 import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.protocol.engine.JobProgressInfo

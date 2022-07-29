@@ -25,19 +25,19 @@ import org.apache.linkis.entrance.exception.EntranceRPCException;
 import org.apache.linkis.entrance.exception.QueryFailedException;
 import org.apache.linkis.governance.common.constant.job.JobRequestConstants;
 import org.apache.linkis.governance.common.entity.job.JobRequest;
-import org.apache.linkis.governance.common.entity.job.SubJobDetail;
-import org.apache.linkis.governance.common.entity.job.SubJobInfo;
-import org.apache.linkis.governance.common.entity.task.*;
-import org.apache.linkis.governance.common.protocol.job.*;
+import org.apache.linkis.governance.common.entity.task.RequestPersistTask;
+import org.apache.linkis.governance.common.entity.task.RequestReadAllTask;
+import org.apache.linkis.governance.common.entity.task.ResponsePersist;
+import org.apache.linkis.governance.common.protocol.job.JobReqInsert;
+import org.apache.linkis.governance.common.protocol.job.JobReqUpdate;
+import org.apache.linkis.governance.common.protocol.job.JobRespProtocol;
 import org.apache.linkis.protocol.constants.TaskConstant;
 import org.apache.linkis.protocol.message.RequestProtocol;
 import org.apache.linkis.protocol.task.Task;
 import org.apache.linkis.rpc.Sender;
-
-import org.springframework.beans.BeanUtils;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -66,29 +66,6 @@ public class QueryPersistenceEngine extends AbstractPersistenceEngine {
                                 .getValue());
     }
 
-    @Override
-    public void persist(SubJobInfo subJobInfo)
-            throws QueryFailedException, EntranceIllegalParamException {
-        if (null == subJobInfo || null == subJobInfo.getSubJobDetail()) {
-            throw new EntranceIllegalParamException(
-                    20004, "JobDetail can not be null, unable to do persist operation");
-        }
-        JobDetailReqInsert jobReqInsert = new JobDetailReqInsert(subJobInfo);
-        JobRespProtocol jobRespProtocol =
-                sendToJobHistoryAndRetry(
-                        jobReqInsert, "subJobInfo of job" + subJobInfo.getJobReq().getId());
-        if (jobRespProtocol != null) {
-            Map<String, Object> data = jobRespProtocol.getData();
-            Object object = data.get(JobRequestConstants.JOB_ID());
-            if (object == null) {
-                throw new QueryFailedException(
-                        20011, "Insert jobDetail failed, reason: " + jobRespProtocol.getMsg());
-            }
-            String jobIdStr = object.toString();
-            Long jobId = Long.parseLong(jobIdStr);
-            subJobInfo.getSubJobDetail().setId(jobId);
-        }
-    }
 
     private JobRespProtocol sendToJobHistoryAndRetry(RequestProtocol jobReq, String msg)
             throws QueryFailedException {
@@ -158,32 +135,6 @@ public class QueryPersistenceEngine extends AbstractPersistenceEngine {
                         jobReqUpdate, "job:" + jobReq.getReqId() + "status:" + jobReq.getStatus());
     }
 
-    @Override
-    public SubJobDetail retrieveJobDetailReq(Long jobDetailId)
-            throws EntranceIllegalParamException, EntranceRPCException {
-
-        if (jobDetailId == null || jobDetailId < 0) {
-            throw new EntranceIllegalParamException(20003, "taskID can't be null or less than 0");
-        }
-        SubJobDetail subJobDetail = new SubJobDetail();
-        subJobDetail.setId(jobDetailId);
-        JobDetailReqQuery jobDetailReqQuery = new JobDetailReqQuery(subJobDetail);
-        ResponseOneJobDetail responseOneJobDetail = null;
-        try {
-            responseOneJobDetail = (ResponseOneJobDetail) sender.ask(jobDetailReqQuery);
-            if (null != responseOneJobDetail) {
-                return responseOneJobDetail.jobDetail();
-            }
-        } catch (Exception e) {
-            logger.error(
-                    "Requesting the corresponding jobDetail failed with jobDetailId: {}(通过jobDetailId: {} 请求相应的task失败)",
-                    jobDetailId,
-                    jobDetailId,
-                    e);
-            throw new EntranceRPCException(20020, "sender rpc failed", e);
-        }
-        return null;
-    }
 
     @Override
     public void persist(JobRequest jobReq) throws ErrorException {
@@ -206,26 +157,7 @@ public class QueryPersistenceEngine extends AbstractPersistenceEngine {
         }
     }
 
-    @Override
-    public void updateIfNeeded(SubJobInfo subJobInfo)
-            throws QueryFailedException, EntranceIllegalParamException {
-        if (null == subJobInfo || null == subJobInfo.getSubJobDetail()) {
-            throw new EntranceIllegalParamException(
-                    20004, "task can not be null, unable to do update operation");
-        }
-        JobDetailReqUpdate jobDetailReqUpdate = new JobDetailReqUpdate(subJobInfo);
-        jobDetailReqUpdate
-                .jobInfo()
-                .getSubJobDetail()
-                .setUpdatedTime(new Date(System.currentTimeMillis()));
-        JobRespProtocol jobRespProtocol =
-                sendToJobHistoryAndRetry(
-                        jobDetailReqUpdate,
-                        "jobDetail:"
-                                + subJobInfo.getSubJobDetail().getId()
-                                + "status:"
-                                + subJobInfo.getStatus());
-    }
+
 
     @Override
     public Task[] readAll(String instance)

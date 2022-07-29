@@ -1234,6 +1234,12 @@
                                 <order>org.apache.linkis,org.apache,org.springframework,javax,java,scala,\#</order>
                             </importOrder>
 
+                            <excludes>
+                                <exclude>**/restful/**/*RestfulApi.java</exclude>
+                                <exclude>**/restful/**/*Restful.java</exclude>
+                                <exclude>**/UDFRestfulApi.java</exclude>
+                            </excludes>
+
                             <removeUnusedImports />
                         </java>
                     </configuration>

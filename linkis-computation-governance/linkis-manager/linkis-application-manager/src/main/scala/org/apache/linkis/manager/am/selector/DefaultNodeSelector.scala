@@ -25,7 +25,7 @@ import org.apache.linkis.manager.common.entity.node.Node
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 
 @Service
@@ -33,8 +33,7 @@ class DefaultNodeSelector extends NodeSelector with Logging {
 
   @Autowired
   private var ruleList: util.List[NodeSelectRule] = _
-
-
+  
   /**
     * Select the most suitable node from a series of nodes through selection rules
     * 1. Rule processing logic, defaults to the last priority
@@ -43,14 +42,14 @@ class DefaultNodeSelector extends NodeSelector with Logging {
     * @return
     */
   override def choseNode(nodes: Array[Node]): Option[Node] = {
-    if (null == nodes || nodes.isEmpty){
+    if (null == nodes || nodes.isEmpty) {
       None
-    } else if (null == ruleList ) {
+    } else if (null == ruleList) {
       Some(nodes(0))
     } else {
       var resultNodes = nodes
       Utils.tryAndWarnMsg {
-        ruleList.foreach { rule =>
+        ruleList.asScala.foreach { rule =>
           resultNodes = rule.ruleFiltering(resultNodes)
         }
       }("Failed to execute select rule")
@@ -63,7 +62,7 @@ class DefaultNodeSelector extends NodeSelector with Logging {
   }
 
   override def getNodeSelectRules(): Array[NodeSelectRule] = {
-    if (null != ruleList) ruleList.toList.toArray
+    if (null != ruleList) ruleList.asScala.toArray
     else Array.empty[NodeSelectRule]
   }
 

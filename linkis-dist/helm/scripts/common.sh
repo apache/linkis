@@ -16,42 +16,18 @@
 #
 
 WORK_DIR=`cd $(dirname $0); pwd -P`
+
 PROJECT_ROOT=${WORK_DIR}/../..
 RESOURCE_DIR=${WORK_DIR}/resources
-TMP_DIR=`mktemp -d -t kind-XXXXX`
+CHARTS_DIR_ROOT=${WORK_DIR}/../charts
+LINKIS_CHART_DIR=${CHARTS_DIR_ROOT}/linkis
 
-set -e
-
+KIND_LOAD_IMAGE=${KIND_LOAD_IMAGE:-true}
 KIND_CLUSTER_NAME=${KIND_CLUSTER_NAME:-test-helm}
-MYSQL_VERSION=${MYSQL_VERSION:-5.7}
 
 # evaluate project version
 PROJECT_VERSION=`cd ${PROJECT_ROOT} \
    && MAVEN_OPTS="-Dorg.slf4j.simpleLogger.defaultLogLevel=WARN -Dorg.slf4j.simpleLogger.log.org.apache.maven.plugins.help=INFO" \
    mvn help:evaluate -o -Dexpression=project.version | tail -1`
+
 echo "# Project version: ${PROJECT_VERSION}"
-
-# create kind cluster
-echo "# Creating KinD cluster ..."
-# create data dir for KinD cluster
-KIND_CLUSTER_HOST_PATH=${TMP_DIR}/data
-mkdir -p ${KIND_CLUSTER_HOST_PATH}
-# create kind cluster conf
-KIND_CLUSTER_CONF_TPL=${RESOURCE_DIR}/kind-cluster.yaml
-KIND_CLUSTER_CONF_FILE=${TMP_DIR}/kind-cluster.yaml
-KIND_CLUSTER_HOST_PATH=${KIND_CLUSTER_HOST_PATH} envsubst < ${KIND_CLUSTER_CONF_TPL} > ${KIND_CLUSTER_CONF_FILE}
-
-echo "- kind cluster config: ${KIND_CLUSTER_CONF_FILE}"
-cat ${KIND_CLUSTER_CONF_FILE}
-kind create cluster --name ${KIND_CLUSTER_NAME} --config ${KIND_CLUSTER_CONF_FILE}
-
-# load images
-echo "# Loading images into KinD cluster ..."
-kind load docker-image linkis:${PROJECT_VERSION} --name ${KIND_CLUSTER_NAME}
-kind load docker-image linkis-web:${PROJECT_VERSION} --name ${KIND_CLUSTER_NAME}
-kind load docker-image mysql:${MYSQL_VERSION} --name ${KIND_CLUSTER_NAME}
-
-# deploy mysql
-echo "# Deploying MySQL ..."
-kubectl create ns mysql
-kubectl apply -n mysql -f ${RESOURCE_DIR}/mysql.yaml

@@ -16,16 +16,28 @@
 #
 
 WORK_DIR=`cd $(dirname $0); pwd -P`
-CHARTS_DIR_ROOT=${WORK_DIR}/../charts
-LINKIS_CHART_DIR=${CHARTS_DIR_ROOT}/linkis
+
+. ${WORK_DIR}/common.sh
 
 KUBE_NAMESPACE=${1:-linkis}
 HELM_RELEASE_NAME=${2:-linkis-demo}
+
+. ${WORK_DIR}/common.sh
 
 if [ "X${HELM_DEBUG}" == "Xtrue" ]; then
   # template helm charts
   helm template --namespace ${KUBE_NAMESPACE} -f ${LINKIS_CHART_DIR}/values.yaml ${HELM_RELEASE_NAME} ${LINKIS_CHART_DIR}
 else
+  # create hadoop configs
+  if [ "X${WITH_LDH}" == "Xtrue" ]; then
+    kubectl apply -n ${KUBE_NAMESPACE} -f ${RESOURCE_DIR}/ldh/configmaps
+  fi
+  # load image
+  if [ "X${KIND_LOAD_IMAGE}" == "Xtrue" ]; then
+    echo "# Loading Linkis image ..."
+    kind load docker-image linkis:${PROJECT_VERSION} --name ${KIND_CLUSTER_NAME}
+    kind load docker-image linkis-web:${PROJECT_VERSION} --name ${KIND_CLUSTER_NAME}
+  fi
   # install helm charts
   helm install --create-namespace --namespace ${KUBE_NAMESPACE} -f ${LINKIS_CHART_DIR}/values.yaml ${HELM_RELEASE_NAME} ${LINKIS_CHART_DIR}
 fi

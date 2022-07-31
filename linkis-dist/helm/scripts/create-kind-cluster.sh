@@ -16,20 +16,12 @@
 #
 
 WORK_DIR=`cd $(dirname $0); pwd -P`
-PROJECT_ROOT=${WORK_DIR}/../..
-RESOURCE_DIR=${WORK_DIR}/resources
+
+. ${WORK_DIR}/common.sh
+
 TMP_DIR=`mktemp -d -t kind-XXXXX`
 
 set -e
-
-KIND_CLUSTER_NAME=${KIND_CLUSTER_NAME:-test-helm}
-MYSQL_VERSION=${MYSQL_VERSION:-5.7}
-
-# evaluate project version
-PROJECT_VERSION=`cd ${PROJECT_ROOT} \
-   && MAVEN_OPTS="-Dorg.slf4j.simpleLogger.defaultLogLevel=WARN -Dorg.slf4j.simpleLogger.log.org.apache.maven.plugins.help=INFO" \
-   mvn help:evaluate -o -Dexpression=project.version | tail -1`
-echo "# Project version: ${PROJECT_VERSION}"
 
 # create kind cluster
 echo "# Creating KinD cluster ..."
@@ -44,13 +36,3 @@ KIND_CLUSTER_HOST_PATH=${KIND_CLUSTER_HOST_PATH} envsubst < ${KIND_CLUSTER_CONF_
 echo "- kind cluster config: ${KIND_CLUSTER_CONF_FILE}"
 cat ${KIND_CLUSTER_CONF_FILE}
 kind create cluster --name ${KIND_CLUSTER_NAME} --config ${KIND_CLUSTER_CONF_FILE}
-
-# load images
-echo "# Loading images into KinD cluster ..."
-kind load docker-image linkis:${PROJECT_VERSION} --name ${KIND_CLUSTER_NAME}
-kind load docker-image linkis-web:${PROJECT_VERSION} --name ${KIND_CLUSTER_NAME}
-kind load docker-image mysql:${MYSQL_VERSION} --name ${KIND_CLUSTER_NAME}
-
-if [ "X${WITH_LDH}" == "Xtrue" ]; then
-  kind load docker-image linkis-ldh:${PROJECT_VERSION} --name ${KIND_CLUSTER_NAME}
-fi

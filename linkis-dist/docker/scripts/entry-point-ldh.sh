@@ -28,6 +28,8 @@ hdfs namenode -format
 # - init dirs on hdfs
 hdfs dfs -mkdir -p /tmp
 hdfs dfs -chmod -R 777 /tmp
+hdfs dfs -mkdir -p /user
+hdfs dfs -chmod -R 777 /user
 hdfs dfs -mkdir -p /spark2-history
 hdfs dfs -chmod -R 777 /spark2-history
 hdfs dfs -mkdir -p /completed-jobs
@@ -35,8 +37,8 @@ hdfs dfs -chmod -R 777 /completed-jobs
 
 # - hive
 /opt/ldh/current/hive/bin/schematool -initSchema -dbType mysql
-nohup /opt/ldh/current/hive/bin/hive --service metastore &
-nohup /opt/ldh/current/hive/bin/hive --service hiveserver2 &
+/opt/ldh/current/hive/bin/hive --service metastore > /var/log/hive/metastore.out 2>&1 &
+/opt/ldh/current/hive/bin/hive --service hiveserver2 > /var/log/hive/hiveserver2.out 2>&1 &
 
 # spark
 /opt/ldh/current/spark/sbin/start-history-server.sh
@@ -44,5 +46,8 @@ nohup /opt/ldh/current/hive/bin/hive --service hiveserver2 &
 # flink
 /opt/ldh/current/flink/bin/yarn-session.sh --detached
 
+# zookeeper
+/opt/ldh/current/zookeeper/bin/zkServer.sh start
+
 # hold on
-sleep 3600000
+while true; do sleep 3600; done

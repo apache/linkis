@@ -73,6 +73,8 @@ data:
     # - SPARK_IDENT_STRING  A string representing this instance of spark. (Default: $USER)
     # - SPARK_NICENESS      The scheduling priority for daemons. (Default: 0)
     # - SPARK_NO_DAEMONIZE  Run the proposed command in the foreground. It will not output a PID file.
+    SPARK_LOG_DIR=/var/log/spark
+
     # Options for native BLAS, like Intel MKL, OpenBLAS, and so on.
     # You might get better performance to enable these options if using native BLAS (see SPARK-21305).
     # - MKL_NUM_THREADS=1        Disable multi-threading of Intel MKL
@@ -116,3 +118,91 @@ data:
     spark.yarn.dist.files
     spark.yarn.historyServer.address ldh.ldh.svc.cluster.local:18081
     spark.yarn.queue default
+
+  log4j2.properties: |
+    # Set everything to be logged to the console
+    rootLogger.level = info
+    rootLogger.appenderRef.stdout.ref = console
+
+    # In the pattern layout configuration below, we specify an explicit `%ex` conversion
+    # pattern for logging Throwables. If this was omitted, then (by default) Log4J would
+    # implicitly add an `%xEx` conversion pattern which logs stacktraces with additional
+    # class packaging information. That extra information can sometimes add a substantial
+    # performance overhead, so we disable it in our default logging config.
+    # For more information, see SPARK-39361.
+    appender.console.type = Console
+    appender.console.name = console
+    appender.console.target = SYSTEM_ERR
+    appender.console.layout.type = PatternLayout
+    appender.console.layout.pattern = %d{yy/MM/dd HH:mm:ss} %p %c{1}: %m%n%ex
+
+    # Set the default spark-shell/spark-sql log level to WARN. When running the
+    # spark-shell/spark-sql, the log level for these classes is used to overwrite
+    # the root logger's log level, so that the user can have different defaults
+    # for the shell and regular Spark apps.
+    logger.repl.name = org.apache.spark.repl.Main
+    logger.repl.level = warn
+
+    logger.thriftserver.name = org.apache.spark.sql.hive.thriftserver.SparkSQLCLIDriver
+    logger.thriftserver.level = warn
+
+    # Settings to quiet third party logs that are too verbose
+    logger.jetty1.name = org.sparkproject.jetty
+    logger.jetty1.level = warn
+    logger.jetty2.name = org.sparkproject.jetty.util.component.AbstractLifeCycle
+    logger.jetty2.level = error
+    logger.replexprTyper.name = org.apache.spark.repl.SparkIMain$exprTyper
+    logger.replexprTyper.level = info
+    logger.replSparkILoopInterpreter.name = org.apache.spark.repl.SparkILoop$SparkILoopInterpreter
+    logger.replSparkILoopInterpreter.level = info
+    logger.parquet1.name = org.apache.parquet
+    logger.parquet1.level = error
+    logger.parquet2.name = parquet
+    logger.parquet2.level = error
+
+    # SPARK-9183: Settings to avoid annoying messages when looking up nonexistent UDFs in SparkSQL with Hive support
+    logger.RetryingHMSHandler.name = org.apache.hadoop.hive.metastore.RetryingHMSHandler
+    logger.RetryingHMSHandler.level = fatal
+    logger.FunctionRegistry.name = org.apache.hadoop.hive.ql.exec.FunctionRegistry
+    logger.FunctionRegistry.level = error
+
+    # For deploying Spark ThriftServer
+    # SPARK-34128: Suppress undesirable TTransportException warnings involved in THRIFT-4805
+    appender.console.filter.1.type = RegexFilter
+    appender.console.filter.1.regex = .*Thrift error occurred during processing of message.*
+    appender.console.filter.1.onMatch = deny
+    appender.console.filter.1.onMismatch = neutral
+
+  hive-site.xml: |
+    <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+    <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+    <configuration>
+      <property>
+          <name>javax.jdo.option.ConnectionURL</name>
+          <value>jdbc:mysql://mysql.mysql.svc.cluster.local:3306/hive_metadata?&amp;createDatabaseIfNotExist=true&amp;characterEncoding=UTF-8&amp;useSSL=false</value>
+      </property>
+      <property>
+          <name>javax.jdo.option.ConnectionUserName</name>
+          <value>root</value>
+      </property>
+      <property>
+          <name>javax.jdo.option.ConnectionPassword</name>
+          <value>123456</value>
+      </property>
+      <property>
+          <name>javax.jdo.option.ConnectionDriverName</name>
+          <value>com.mysql.jdbc.Driver</value>
+      </property>
+      <property>
+          <name>datanucleus.schema.autoCreateAll</name>
+          <value>true</value>
+      </property>
+      <property>
+          <name>hive.metastore.schema.verification</name>
+          <value>false</value>
+      </property>
+      <property>
+        <name>hive.metastore.uris</name>
+        <value>thrift://ldh.ldh.svc.cluster.local:9083</value>
+      </property>
+    </configuration>

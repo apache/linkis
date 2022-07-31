@@ -169,10 +169,11 @@ $> kind delete cluster --name test-helm
 
 ## Test with LDH 
 We introduced a new image, called LDH (Linkis's hadoop all-in-one image), which provides a pseudo-distributed hadoop cluster for testing quickly. This image contains the following hadoop components, the default mode for engines in LDH is on-yarn.
-* hadoop 2.7.0 , including hdfs and yarn
-* hive 2.3.9
-* spark 3.3.0
-* flink 1.14.5
+* Hadoop 2.7.2 , including HDFS and YARN
+* Hive 2.3.3
+* Spark 2.4.3
+* Flink 1.12.2
+* ZooKeeper 3.5.9
 
 > INFO: The hive in LDH image depends on external mysql, please deploy mysql first before deploying LDH.
 
@@ -186,14 +187,13 @@ $> ./mvnw clean install -Pdocker \
    -Dlinkis.build.ldh=true
 ```
 
-By default, we download the packages for each hadoop component from the official apache mirror site, which can be very slow for members in some regions. 
-To solve this problem, please download these tarballs by yourself into the directory `${HOME}/.linkis-build-cache` if it is slow from the official site.
+By default, we download the pre-built binary distributions for each hadoop component from the official site of [Apache Archives](https://archive.apache.org/dist/), which can be very slow for members in some regions.
+Downloading the distributions from a faster mirror site manually and moving it into this directory `${HOME}/.linkis-build-cache` can solve this problem.
 
 Run the following command to setup a local kubernetes cluster with LDH on it.
 
 ```shell
 # create and deploy
-$> export WITH_LDH=true
 $> sh ./scripts/create-kind-cluster.sh \
    && sh ./scripts/install-mysql.sh \
    && sh ./scripts/install-ldh.sh \
@@ -204,47 +204,87 @@ $> sh ./scripts/create-kind-cluster.sh \
 # take a try
 $> kubectl exec -it -n ldh $(kubectl get pod -n ldh -o jsonpath='{.items[0].metadata.name}') -- bash
 
-[root@ldh-55dd4c7c5d-t7ssx /]# hdfs dfs -ls /
-Found 3 items
-drwxrwxrwx   - root supergroup          0 2022-07-28 04:58 /completed-jobs
-drwxrwxrwx   - root supergroup          0 2022-07-28 04:58 /spark2-history
-drwxrwxrwx   - root supergroup          0 2022-07-28 04:58 /tmp
+[root@ldh-96bdc757c-dnkbs /]# hdfs dfs -ls /
+Found 4 items
+drwxrwxrwx   - root supergroup          0 2022-07-31 02:48 /completed-jobs
+drwxrwxrwx   - root supergroup          0 2022-07-31 02:48 /spark2-history
+drwxrwxrwx   - root supergroup          0 2022-07-31 02:49 /tmp
+drwxrwxrwx   - root supergroup          0 2022-07-31 02:48 /user
 
-[root@ldh-55dd4c7c5d-t7ssx /]# beeline -u jdbc:hive2://ldh.ldh.svc.cluster.local:10000/ -n hadoop
-SLF4J: Class path contains multiple SLF4J bindings.
-SLF4J: Found binding in [jar:file:/opt/ldh/1.1.3/apache-hive-2.3.9-bin/lib/log4j-slf4j-impl-2.6.2.jar!/org/slf4j/impl/StaticLoggerBinder.class]
-SLF4J: Found binding in [jar:file:/opt/ldh/1.1.3/hadoop-2.7.0/share/hadoop/common/lib/slf4j-log4j12-1.7.10.jar!/org/slf4j/impl/StaticLoggerBinder.class]
-SLF4J: See http://www.slf4j.org/codes.html#multiple_bindings for an explanation.
-SLF4J: Actual binding is of type [org.apache.logging.slf4j.Log4jLoggerFactory]
+[root@ldh-96bdc757c-dnkbs /]# beeline -u jdbc:hive2://ldh.ldh.svc.cluster.local:10000/ -n hadoop
 Connecting to jdbc:hive2://ldh.ldh.svc.cluster.local:10000/
-Connected to: Apache Hive (version 2.3.9)
-Driver: Hive JDBC (version 2.3.9)
+Connected to: Apache Hive (version 2.3.3)
+Driver: Hive JDBC (version 2.3.3)
 Transaction isolation: TRANSACTION_REPEATABLE_READ
-Beeline version 2.3.9 by Apache Hive
-0: jdbc:hive2://ldh.ldh.svc.cluster.local:100> show databases;
-+----------------+
-| database_name  |
-+----------------+
-| default        |
-+----------------+
-1 row selected (1.551 seconds)
+Beeline version 2.3.3 by Apache Hive
+0: jdbc:hive2://ldh.ldh.svc.cluster.local:100> create database demo;
+No rows affected (1.306 seconds)
+0: jdbc:hive2://ldh.ldh.svc.cluster.local:100> use demo;
+No rows affected (0.046 seconds)
+0: jdbc:hive2://ldh.ldh.svc.cluster.local:100> create table t1 (id int, data string);
+No rows affected (0.709 seconds)
+0: jdbc:hive2://ldh.ldh.svc.cluster.local:100> insert into t1 values(1, 'linikis demo');
+WARNING: Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.
+No rows affected (5.491 seconds)
+0: jdbc:hive2://ldh.ldh.svc.cluster.local:100> select * from t1;
++--------+---------------+
+| t1.id  |    t1.data    |
++--------+---------------+
+| 1      | linikis demo  |
++--------+---------------+
+1 row selected (0.39 seconds)
 0: jdbc:hive2://ldh.ldh.svc.cluster.local:100> !q
-Closing: 0: jdbc:hive2://ldh.ldh.svc.cluster.local:10000/
 
-[root@ldh-55dd4c7c5d-t7ssx /]# spark-sql 
-Setting default log level to "WARN".
-To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
-22/07/28 05:20:40 WARN Client: Neither spark.yarn.jars nor spark.yarn.archive is set, falling back to uploading libraries under SPARK_HOME.
-Loading class `com.mysql.jdbc.Driver'. This is deprecated. The new driver class is `com.mysql.cj.jdbc.Driver'. The driver is automatically registered via the SPI and manual loading of the driver class is generally unnecessary.
-Spark master: yarn, Application Id: application_1658984291196_0001
-spark-sql> show databases;
-default
-Time taken: 3.409 seconds, Fetched 1 row(s)
-spark-sql> exit;
-22/07/28 05:22:14 WARN HiveConf: HiveConf of name hive.stats.jdbc.timeout does not exist
-22/07/28 05:22:14 WARN HiveConf: HiveConf of name hive.stats.retries.wait does not exist
+[root@ldh-96bdc757c-dnkbs /]# spark-sql
+22/07/31 02:53:18 INFO hive.metastore: Trying to connect to metastore with URI thrift://ldh.ldh.svc.cluster.local:9083
+22/07/31 02:53:18 INFO hive.metastore: Connected to metastore.
+...
+22/07/31 02:53:19 INFO spark.SparkContext: Running Spark version 2.4.3
+22/07/31 02:53:19 INFO spark.SparkContext: Submitted application: SparkSQL::10.244.0.6
+...
+22/07/31 02:53:27 INFO yarn.Client: Submitting application application_1659235712576_0001 to ResourceManager
+22/07/31 02:53:27 INFO impl.YarnClientImpl: Submitted application application_1659235712576_0001
+22/07/31 02:53:27 INFO cluster.SchedulerExtensionServices: Starting Yarn extension services with app application_1659235712576_0001 and attemptId None
+22/07/31 02:53:28 INFO yarn.Client: Application report for application_1659235712576_0001 (state: ACCEPTED)
+...
+22/07/31 02:53:36 INFO yarn.Client: Application report for application_1659235712576_0001 (state: RUNNING)
+...
+Spark master: yarn, Application Id: application_1659235712576_0001
+22/07/31 02:53:46 INFO thriftserver.SparkSQLCLIDriver: Spark master: yarn, Application Id: application_1659235712576_0001
+spark-sql> use demo;
+Time taken: 0.074 seconds
+22/07/31 02:58:02 INFO thriftserver.SparkSQLCLIDriver: Time taken: 0.074 seconds
+spark-sql> select * from t1;
+...
+1       linikis demo
+2       linkis demo spark sql
+Time taken: 3.352 seconds, Fetched 2 row(s)
+spark-sql> quit;
 
-[root@ldh-55dd4c7c5d-t7ssx /]# flink run /opt/ldh/current/flink/examples/streaming/TopSpeedWindowing.jar
+[root@ldh-96bdc757c-dnkbs /]# zkCli.sh
+Connecting to localhost:2181
+Welcome to ZooKeeper!
+JLine support is enabled
+WATCHER::
+
+WatchedEvent state:SyncConnected type:None path:null
+
+[zk: localhost:2181(CONNECTED) 0] get -s /zookeeper/quota
+
+cZxid = 0x0
+ctime = Thu Jan 01 00:00:00 UTC 1970
+mZxid = 0x0
+mtime = Thu Jan 01 00:00:00 UTC 1970
+pZxid = 0x0
+cversion = 0
+dataVersion = 0
+aclVersion = 0
+ephemeralOwner = 0x0
+dataLength = 0
+numChildren = 0
+[zk: localhost:2181(CONNECTED) 1] quit
+
+[root@ldh-96bdc757c-dnkbs /]# flink run /opt/ldh/current/flink/examples/streaming/TopSpeedWindowing.jar
 Executing TopSpeedWindowing example with default input data set.
 Use --input to specify file input.
 Printing result to stdout. Use --output to specify output path.

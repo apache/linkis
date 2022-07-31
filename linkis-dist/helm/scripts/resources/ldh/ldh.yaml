@@ -59,6 +59,9 @@ spec:
     # flink
     - name: flink-yarn-jm
       port: 8090
+    # zookeeper
+    - name: zk-client
+      port: 2181
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -94,6 +97,8 @@ spec:
                 path: yarn-site.xml
               - key: capacity-scheduler.xml
                 path: capacity-scheduler.xml
+              - key: log4j.properties
+                path: log4j.properties
         - name: hive-conf
           configMap:
             name: hive-conf
@@ -102,20 +107,52 @@ spec:
                 path: hive-env.sh
               - key: hive-site.xml
                 path: hive-site.xml
+              - key: hive-log4j2.properties
+                path: hive-log4j2.properties
+              - key: beeline-log4j2.properties
+                path: beeline-log4j2.properties
+              - key: hive-exec-log4j2.properties
+                path: hive-exec-log4j2.properties
         - name: spark-conf
           configMap:
             name: spark-conf
             items:
               - key: spark-env.sh
                 path: spark-env.sh
+              - key: hive-site.xml
+                path: hive-site.xml
               - key: spark-defaults.conf
                 path: spark-defaults.conf
+              - key: log4j2.properties
+                path: log4j2.properties
         - name: flink-conf
           configMap:
             name: flink-conf
             items:
               - key: flink-conf.yaml
                 path: flink-conf.yaml
+              - key: log4j-cli.properties
+                path: log4j-cli.properties
+              - key: log4j-console.properties
+                path: log4j-console.properties
+              - key: log4j-session.properties
+                path: log4j-session.properties
+              - key: log4j.properties
+                path: log4j.properties
+              - key: logback-console.xml
+                path: logback-console.xml
+              - key: logback-session.xml
+                path: logback-session.xml
+              - key: logback.xml
+                path: logback.xml
+        - name: zookeeper-conf
+          configMap:
+            name: zookeeper-conf
+            items:
+              - key: zoo.cfg
+                path: zoo.cfg
+              - key: log4j.properties
+                path: log4j.properties
       containers:
         - name: ldh
           image: linkis-ldh:${LDH_VERSION}
@@ -161,6 +198,9 @@ spec:
             # flink
             - name: flink-yarn-jm
               containerPort: 8090
+            # zookeeper
+            - name: zk-client
+              containerPort: 2181
           volumeMounts:
             - name: data-dir
               mountPath: /data
@@ -172,3 +212,5 @@ spec:
               mountPath: /etc/ldh/spark
             - name: flink-conf
               mountPath: /etc/ldh/flink
+            - name: zookeeper-conf
+              mountPath: /etc/ldh/zookeeper

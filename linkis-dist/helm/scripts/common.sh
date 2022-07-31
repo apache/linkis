@@ -17,19 +17,17 @@
 
 WORK_DIR=`cd $(dirname $0); pwd -P`
 
-. ${WORK_DIR}/common.sh
+PROJECT_ROOT=${WORK_DIR}/../..
+RESOURCE_DIR=${WORK_DIR}/resources
+CHARTS_DIR_ROOT=${WORK_DIR}/../charts
+LINKIS_CHART_DIR=${CHARTS_DIR_ROOT}/linkis
 
-MYSQL_VERSION=${MYSQL_VERSION:-5.7}
+KIND_LOAD_IMAGE=${KIND_LOAD_IMAGE:-true}
+KIND_CLUSTER_NAME=${KIND_CLUSTER_NAME:-test-helm}
 
-set -e
+# evaluate project version
+PROJECT_VERSION=`cd ${PROJECT_ROOT} \
+   && MAVEN_OPTS="-Dorg.slf4j.simpleLogger.defaultLogLevel=WARN -Dorg.slf4j.simpleLogger.log.org.apache.maven.plugins.help=INFO" \
+   mvn help:evaluate -o -Dexpression=project.version | tail -1`
 
-# load image
-if [ "X${KIND_LOAD_IMAGE}" == "Xtrue" ]; then
-  echo "# Loading MySQL image ..."
-  kind load docker-image mysql:${MYSQL_VERSION} --name ${KIND_CLUSTER_NAME}
-fi
-
-# deploy mysql
-echo "# Deploying MySQL ..."
-kubectl create ns mysql
-kubectl apply -n mysql -f ${RESOURCE_DIR}/mysql.yaml
+echo "# Project version: ${PROJECT_VERSION}"

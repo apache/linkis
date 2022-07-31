@@ -232,10 +232,12 @@
                 <linkis.home>/opt/linkis</linkis.home>
                 <linkis.conf.dir>/etc/linkis-conf</linkis.conf.dir>
                 <linkis.log.dir>/var/logs/linkis</linkis.log.dir>
-                <ldh.hadoop.version>2.7.0</ldh.hadoop.version>
-                <ldh.hive.version>2.3.9</ldh.hive.version>
-                <ldh.spark.version>3.3.0</ldh.spark.version>
-                <ldh.flink.version>1.14.5</ldh.flink.version>
+                <ldh.hadoop.version>2.7.2</ldh.hadoop.version>
+                <ldh.hive.version>2.3.3</ldh.hive.version>
+                <ldh.spark.version>2.4.3</ldh.spark.version>
+                <ldh.spark.hadoop.version>2.7</ldh.spark.hadoop.version>
+                <ldh.flink.version>1.12.2</ldh.flink.version>
+                <ldh.zookeeper.version>3.5.9</ldh.zookeeper.version>
             </properties>
             <build>
                 <plugins>
@@ -329,6 +331,8 @@
                                             <arg value="--build-arg" /> <arg value="HADOOP_VERSION=${ldh.hadoop.version}" />
                                             <arg value="--build-arg" /> <arg value="HIVE_VERSION=${ldh.hive.version}" />
                                             <arg value="--build-arg" /> <arg value="SPARK_VERSION=${ldh.spark.version}" />
+                                            <arg value="--build-arg" /> <arg value="SPARK_HADOOP_VERSION=${ldh.spark.hadoop.version}" />
+                                            <arg value="--build-arg" /> <arg value="ZOOKEEPER_VERSION=${ldh.zookeeper.version}" />
                                             <arg value="--build-arg" /> <arg value="FLINK_VERSION=${ldh.flink.version}" />
                                             <arg value="${project.build.directory}" />
                                         </exec>

@@ -17,16 +17,19 @@
 
 WORK_DIR=`cd $(dirname $0); pwd -P`
 
-COMPONENT_NAME=$1
+. ${WORK_DIR}/common.sh
 
-LINKIS_KUBE_NAMESPACE=linkis
-LINKIS_INSTANCE_NAME=linkis-demo
+MYSQL_VERSION=${MYSQL_VERSION:-5.7}
 
-login() {
-  component_name=$1
-  echo "- login [${component_name}]'s bash ..."
-  POD_NAME=`kubectl get pods -n ${LINKIS_KUBE_NAMESPACE} -l app.kubernetes.io/instance=${LINKIS_INSTANCE_NAME}-${component_name} -o jsonpath='{.items[0].metadata.name}'`
-  kubectl exec -it -n ${LINKIS_KUBE_NAMESPACE} ${POD_NAME} -- bash
-}
+set -e
 
-login ${COMPONENT_NAME}
+# load image
+if [ "X${KIND_LOAD_IMAGE}" == "Xtrue" ]; then
+  echo "# Loading MySQL image ..."
+  kind load docker-image mysql:${MYSQL_VERSION} --name ${KIND_CLUSTER_NAME}
+fi
+
+# deploy mysql
+echo "# Deploying MySQL ..."
+kubectl create ns mysql
+kubectl apply -n mysql -f ${RESOURCE_DIR}/mysql.yaml

@@ -35,9 +35,10 @@ import org.apache.linkis.protocol.constants.TaskConstant;
 import org.apache.linkis.protocol.message.RequestProtocol;
 import org.apache.linkis.protocol.task.Task;
 import org.apache.linkis.rpc.Sender;
+import org.springframework.beans.BeanUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -65,7 +66,6 @@ public class QueryPersistenceEngine extends AbstractPersistenceEngine {
                                 .QUERY_PERSISTENCE_SPRING_APPLICATION_NAME()
                                 .getValue());
     }
-
 
     private JobRespProtocol sendToJobHistoryAndRetry(RequestProtocol jobReq, String msg)
             throws QueryFailedException {
@@ -135,7 +135,6 @@ public class QueryPersistenceEngine extends AbstractPersistenceEngine {
                         jobReqUpdate, "job:" + jobReq.getReqId() + "status:" + jobReq.getStatus());
     }
 
-
     @Override
     public void persist(JobRequest jobReq) throws ErrorException {
         if (null == jobReq) {
@@ -156,8 +155,6 @@ public class QueryPersistenceEngine extends AbstractPersistenceEngine {
             jobReq.setId(jobId);
         }
     }
-
-
 
     @Override
     public Task[] readAll(String instance)

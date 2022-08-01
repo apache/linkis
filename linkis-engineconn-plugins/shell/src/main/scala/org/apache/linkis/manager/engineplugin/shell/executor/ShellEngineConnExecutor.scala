@@ -152,6 +152,19 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
         extractor.appendLineToExtractor(line)
       }
 
+      /*
+      Read stdout
+      */
+      var errorline: String = null
+      while ( {
+        errorline = errorsReader.readLine(); errorline != null
+      }) {
+        logger.debug(s"$getId() >>> $errorline")
+        LogHelper.logCache.cacheLog(errorline)
+        engineExecutionContext.appendTextResultSet(errorline)
+        extractor.appendLineToExtractor(errorline)
+      }
+
       val exitCode = process.waitFor()
       joinThread(errReaderThread)
       completed.set(true)

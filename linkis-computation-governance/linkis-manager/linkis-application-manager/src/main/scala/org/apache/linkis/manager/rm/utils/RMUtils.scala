@@ -147,7 +147,7 @@ object RMUtils extends Logging {
     val reqMsg = if (null == requestResource) "null" else requestResource.toString
     val availMsg = if (null == availableResource) "null" else availableResource.toString
     val maxMsg = if (null == maxResource) "null" else maxResource.toString
-    s" user ${resourceType} maxResource : ${maxResource}${unitType}, availableResource : ${availableResource}${unitType}, requestResource : ${requestResource}${unitType}."
+    s" user ${resourceType}, requestResource : ${requestResource}${unitType} > availableResource : ${availableResource}${unitType},  maxResource : ${maxResource}${unitType}."
   }
 
 }

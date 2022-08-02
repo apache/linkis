@@ -17,6 +17,7 @@
 
 package org.apache.linkis.manager.rm.service.impl
 
+import org.apache.linkis.manager.common.constant.RMConstant
 import org.apache.linkis.manager.common.entity.resource.ResourceType.DriverAndYarn
 import org.apache.linkis.manager.common.entity.resource._
 import org.apache.linkis.manager.common.exception.RMWarnException
@@ -25,6 +26,7 @@ import org.apache.linkis.manager.rm.exception.RMErrorCode
 import org.apache.linkis.manager.rm.external.service.ExternalResourceService
 import org.apache.linkis.manager.rm.external.yarn.YarnResourceIdentifier
 import org.apache.linkis.manager.rm.service.{LabelResourceService, RequestResourceService}
+import org.apache.linkis.manager.rm.utils.RMUtils
 import org.json4s.DefaultFormats
 
 class DriverAndYarnReqResourceService(labelResourceService: LabelResourceService, externalResourceService: ExternalResourceService) extends RequestResourceService(labelResourceService) {
@@ -47,24 +49,28 @@ class DriverAndYarnReqResourceService(labelResourceService: LabelResourceService
     logger.info(s"queue: ${requestedYarnResource.queueName} left $queueLeftResource, this request requires: $requestedYarnResource")
     if (queueLeftResource < requestedYarnResource) {
       logger.info(s"user: ${labelContainer.getUserCreatorLabel.getUser} request queue resource $requestedYarnResource > left resource $queueLeftResource")
-      val notEnoughMessage = generateQueueNotEnoughMessage(requestedYarnResource, queueLeftResource)
+      val notEnoughMessage = generateQueueNotEnoughMessage(requestedYarnResource, queueLeftResource, maxCapacity)
       throw new RMWarnException(notEnoughMessage._1, notEnoughMessage._2)
     } else true
   }
 
-  def generateQueueNotEnoughMessage(requestResource: Resource, availableResource: Resource) : (Int, String) = {
+  def generateQueueNotEnoughMessage(requestResource: Resource, availableResource: Resource, maxResource: Resource) : (Int, String) = {
     requestResource match {
       case yarn: YarnResource =>
         val yarnAvailable = availableResource.asInstanceOf[YarnResource]
+        val maxYarn = maxResource.asInstanceOf[YarnResource]
         if(yarn.queueCores > yarnAvailable.queueCores) {
-          (RMErrorCode.CLUSTER_QUEUE_CPU_INSUFFICIENT.getCode, RMErrorCode.CLUSTER_QUEUE_CPU_INSUFFICIENT.getMessage)
+          (RMErrorCode.CLUSTER_QUEUE_CPU_INSUFFICIENT.getCode, RMErrorCode.CLUSTER_QUEUE_CPU_INSUFFICIENT.getMessage +
+            RMUtils.getResourceInfoMsg(RMConstant.CPU, RMConstant.CPU_UNIT, yarn.queueCores, yarnAvailable.queueCores, maxYarn.queueCores))
         } else if (yarn.queueMemory > yarnAvailable.queueMemory) {
-          (RMErrorCode.CLUSTER_QUEUE_MEMORY_INSUFFICIENT.getCode, RMErrorCode.CLUSTER_QUEUE_MEMORY_INSUFFICIENT.getMessage)
+          (RMErrorCode.CLUSTER_QUEUE_MEMORY_INSUFFICIENT.getCode, RMErrorCode.CLUSTER_QUEUE_MEMORY_INSUFFICIENT.getMessage +
+            RMUtils.getResourceInfoMsg(RMConstant.MEMORY, RMConstant.MEMORY_UNIT, yarn.queueMemory, yarnAvailable.queueMemory, maxYarn.queueMemory))
         } else {
-          (RMErrorCode.CLUSTER_QUEUE_INSTANCES_INSUFFICIENT.getCode, RMErrorCode.CLUSTER_QUEUE_INSTANCES_INSUFFICIENT.getMessage)
+          (RMErrorCode.CLUSTER_QUEUE_INSTANCES_INSUFFICIENT.getCode, RMErrorCode.CLUSTER_QUEUE_INSTANCES_INSUFFICIENT.getMessage +
+            RMUtils.getResourceInfoMsg(RMConstant.APP_INSTANCE, RMConstant.INSTANCE_UNIT, yarn.queueInstances, yarnAvailable.queueInstances, maxYarn.queueInstances))
         }
       case _ =>
-        (RMErrorCode.CLUSTER_QUEUE_MEMORY_INSUFFICIENT.getCode, RMErrorCode.CLUSTER_QUEUE_MEMORY_INSUFFICIENT.getMessage)
+        (RMErrorCode.CLUSTER_QUEUE_MEMORY_INSUFFICIENT.getCode, RMErrorCode.CLUSTER_QUEUE_MEMORY_INSUFFICIENT.getMessage + " Unusual insufficient queue memory.")
     }
   }
 

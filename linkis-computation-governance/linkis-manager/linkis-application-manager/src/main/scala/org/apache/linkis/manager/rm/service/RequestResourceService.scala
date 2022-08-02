@@ -18,6 +18,7 @@
 package org.apache.linkis.manager.rm.service
 
 import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.manager.common.constant.RMConstant
 import org.apache.linkis.manager.common.entity.resource._
 import org.apache.linkis.manager.common.exception.RMWarnException
 import org.apache.linkis.manager.label.entity.em.EMInstanceLabel
@@ -62,10 +63,11 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
     logger.debug(s"Label [${labelContainer.getCurrentLabel}] has resource + [${labelResource }]")
     if (labelResource != null) {
       val labelAvailableResource = labelResource.getLeftResource
+      val labelMaxResource = labelResource.getMaxResource
       if(labelAvailableResource < requestResource && enableRequest) {
         logger.info(s"Failed check: ${labelContainer.getUserCreatorLabel.getUser} want to use label [${labelContainer.getCurrentLabel}] resource[${requestResource}] > label available resource[${labelAvailableResource}]")
         // TODO sendAlert(moduleInstance, user, creator, requestResource, moduleAvailableResource.resource, moduleLeftResource)
-        val notEnoughMessage = generateNotEnoughMessage(requestResource, labelAvailableResource)
+        val notEnoughMessage = generateNotEnoughMessage(requestResource, labelAvailableResource, labelMaxResource)
         throw new RMWarnException(notEnoughMessage._1, notEnoughMessage._2)
       }
       logger.debug(s"Passed check: ${labelContainer.getUserCreatorLabel.getUser} want to use label [${labelContainer.getCurrentLabel}] resource[${requestResource}] <= label available resource[${labelAvailableResource}]")
@@ -85,7 +87,7 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
       if(labelAvailableResource < requestResource && enableRequest) {
         logger.info(s"user want to use resource[${requestResource}] > em ${emInstanceLabel.getInstance()} available resource[${labelAvailableResource}]")
         // TODO sendAlert(moduleInstance, user, creator, requestResource, moduleAvailableResource.resource, moduleLeftResource)
-        val notEnoughMessage = generateECMNotEnoughMessage(requestResource, labelAvailableResource)
+        val notEnoughMessage = generateECMNotEnoughMessage(requestResource, labelAvailableResource, labelResource.getMaxResource)
         throw new RMWarnException(notEnoughMessage._1, notEnoughMessage._2)
       }
       logger.debug(s"Passed check: resource[${requestResource}] want to use em ${emInstanceLabel.getInstance()}  available resource[${labelAvailableResource}]")
@@ -96,7 +98,7 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
     }
   }
 
-  def generateECMNotEnoughMessage(requestResource: Resource, availableResource: Resource) : (Int, String) = {
+  def generateECMNotEnoughMessage(requestResource: Resource, availableResource: Resource, maxResource: Resource) : (Int, String) = {
     val loadRequestResource = requestResource match {
       case li: LoadInstanceResource => li
       case driverAndYarnResource: DriverAndYarnResource => driverAndYarnResource.loadInstanceResource
@@ -105,61 +107,89 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
     loadRequestResource match {
       case li: LoadInstanceResource =>
         val loadInstanceAvailable = availableResource.asInstanceOf[LoadInstanceResource]
+        val loadInstanceMax = maxResource.asInstanceOf[LoadInstanceResource]
         if(li.cores > loadInstanceAvailable.cores) {
-          (RMErrorCode.ECM_CPU_INSUFFICIENT.getCode, RMErrorCode.ECM_CPU_INSUFFICIENT.getMessage)
+          (RMErrorCode.ECM_CPU_INSUFFICIENT.getCode, RMErrorCode.ECM_CPU_INSUFFICIENT.getMessage +
+            RMUtils.getResourceInfoMsg(RMConstant.CPU, RMConstant.CPU_UNIT, li.cores, loadInstanceAvailable.cores, loadInstanceMax.cores))
         } else if (li.memory > loadInstanceAvailable.memory) {
-          (RMErrorCode.ECM_MEMORY_INSUFFICIENT.getCode, RMErrorCode.ECM_MEMORY_INSUFFICIENT.getMessage)
+          (RMErrorCode.ECM_MEMORY_INSUFFICIENT.getCode, RMErrorCode.ECM_MEMORY_INSUFFICIENT.getMessage +
+          RMUtils.getResourceInfoMsg(RMConstant.MEMORY, RMConstant.MEMORY_UNIT, li.memory, loadInstanceAvailable.memory, loadInstanceMax.memory))
         } else {
-          (RMErrorCode.ECM_INSTANCES_INSUFFICIENT.getCode, RMErrorCode.ECM_INSTANCES_INSUFFICIENT.getMessage)
+          (RMErrorCode.ECM_INSTANCES_INSUFFICIENT.getCode, RMErrorCode.ECM_INSTANCES_INSUFFICIENT.getMessage +
+          RMUtils.getResourceInfoMsg(RMConstant.APP_INSTANCE, RMConstant.INSTANCE_UNIT, li.instances, loadInstanceAvailable.instances, loadInstanceMax.instances))
         }
       case _ =>
-        (RMErrorCode.ECM_RESOURCE_INSUFFICIENT.getCode, RMErrorCode.ECM_RESOURCE_INSUFFICIENT.getMessage)
+        (RMErrorCode.ECM_RESOURCE_INSUFFICIENT.getCode, RMErrorCode.ECM_RESOURCE_INSUFFICIENT.getMessage + " Unusual insufficient queue memory.")
     }
   }
 
 
-  def generateNotEnoughMessage(requestResource: Resource, availableResource: Resource) : (Int, String) = {
+  def generateNotEnoughMessage(requestResource: Resource, availableResource: Resource, maxResource: Resource) : (Int, String) = {
     requestResource match {
       case m: MemoryResource =>
-        (RMErrorCode.DRIVER_MEMORY_INSUFFICIENT.getCode, RMErrorCode.DRIVER_MEMORY_INSUFFICIENT.getMessage)
+        val avail = availableResource.asInstanceOf[MemoryResource]
+        val max = maxResource.asInstanceOf[MemoryResource]
+        (RMErrorCode.DRIVER_MEMORY_INSUFFICIENT.getCode, RMErrorCode.DRIVER_MEMORY_INSUFFICIENT.getMessage +
+        RMUtils.getResourceInfoMsg(RMConstant.MEMORY, RMConstant.MEMORY_UNIT, m.memory, avail.memory, max.memory))
       case i: InstanceResource =>
-        (RMErrorCode.INSTANCES_INSUFFICIENT.getCode, RMErrorCode.INSTANCES_INSUFFICIENT.getMessage)
+        val avail = availableResource.asInstanceOf[InstanceResource]
+        val max = maxResource.asInstanceOf[InstanceResource]
+        (RMErrorCode.INSTANCES_INSUFFICIENT.getCode, RMErrorCode.INSTANCES_INSUFFICIENT.getMessage +
+        RMUtils.getResourceInfoMsg(RMConstant.APP_INSTANCE, RMConstant.INSTANCE_UNIT, i.instances, avail.instances, max.instances))
       case c: CPUResource =>
-        (RMErrorCode.DRIVER_CPU_INSUFFICIENT.getCode, RMErrorCode.DRIVER_CPU_INSUFFICIENT.getMessage)
+        val avail = availableResource.asInstanceOf[CPUResource]
+        val max = maxResource.asInstanceOf[CPUResource]
+        (RMErrorCode.DRIVER_CPU_INSUFFICIENT.getCode, RMErrorCode.DRIVER_CPU_INSUFFICIENT.getMessage +
+        RMUtils.getResourceInfoMsg(RMConstant.CPU, RMConstant.CPU_UNIT, c.cores, avail.cores, max.cores))
       case l: LoadResource =>
         val loadAvailable = availableResource.asInstanceOf[LoadResource]
+        val avail = availableResource.asInstanceOf[LoadResource]
+        val max = maxResource.asInstanceOf[LoadResource]
         if(l.cores > loadAvailable.cores) {
-          (RMErrorCode.DRIVER_CPU_INSUFFICIENT.getCode, RMErrorCode.DRIVER_CPU_INSUFFICIENT.getMessage)
+          (RMErrorCode.DRIVER_CPU_INSUFFICIENT.getCode, RMErrorCode.DRIVER_CPU_INSUFFICIENT.getMessage +
+            RMUtils.getResourceInfoMsg(RMConstant.CPU, RMConstant.CPU_UNIT, l.cores, avail.cores, max.cores))
         } else {
-          (RMErrorCode.DRIVER_MEMORY_INSUFFICIENT.getCode, RMErrorCode.DRIVER_MEMORY_INSUFFICIENT.getMessage)
+          (RMErrorCode.DRIVER_MEMORY_INSUFFICIENT.getCode, RMErrorCode.DRIVER_MEMORY_INSUFFICIENT.getMessage +
+          RMUtils.getResourceInfoMsg(RMConstant.MEMORY, RMConstant.MEMORY_UNIT, l.memory, avail.memory, max.memory))
         }
       case li: LoadInstanceResource =>
         val loadInstanceAvailable = availableResource.asInstanceOf[LoadInstanceResource]
+        val avail = availableResource.asInstanceOf[LoadInstanceResource]
+        val max = maxResource.asInstanceOf[LoadInstanceResource]
         if(li.cores > loadInstanceAvailable.cores) {
-          (RMErrorCode.DRIVER_CPU_INSUFFICIENT.getCode, RMErrorCode.DRIVER_CPU_INSUFFICIENT.getMessage)
+          (RMErrorCode.DRIVER_CPU_INSUFFICIENT.getCode, RMErrorCode.DRIVER_CPU_INSUFFICIENT.getMessage +
+            RMUtils.getResourceInfoMsg(RMConstant.CPU, RMConstant.CPU_UNIT, li.cores, avail.cores, max.cores))
         } else if (li.memory > loadInstanceAvailable.memory) {
-          (RMErrorCode.DRIVER_MEMORY_INSUFFICIENT.getCode, RMErrorCode.DRIVER_MEMORY_INSUFFICIENT.getMessage)
+          (RMErrorCode.DRIVER_MEMORY_INSUFFICIENT.getCode, RMErrorCode.DRIVER_MEMORY_INSUFFICIENT.getMessage +
+            RMUtils.getResourceInfoMsg(RMConstant.MEMORY, RMConstant.MEMORY_UNIT, li.memory, avail.memory, max.memory))
         } else {
-          (RMErrorCode.INSTANCES_INSUFFICIENT.getCode, RMErrorCode.INSTANCES_INSUFFICIENT.getMessage)
+          (RMErrorCode.INSTANCES_INSUFFICIENT.getCode, RMErrorCode.INSTANCES_INSUFFICIENT.getMessage +
+           RMUtils.getResourceInfoMsg(RMConstant.APP_INSTANCE, RMConstant.INSTANCE_UNIT, li.instances, avail.instances, max.instances))
         }
       case yarn: YarnResource =>
         val yarnAvailable = availableResource.asInstanceOf[YarnResource]
+        val avail = availableResource.asInstanceOf[YarnResource]
+        val max = maxResource.asInstanceOf[YarnResource]
         if(yarn.queueCores > yarnAvailable.queueCores) {
-          (RMErrorCode.QUEUE_CPU_INSUFFICIENT.getCode, RMErrorCode.QUEUE_CPU_INSUFFICIENT.getMessage)
+          (RMErrorCode.QUEUE_CPU_INSUFFICIENT.getCode, RMErrorCode.QUEUE_CPU_INSUFFICIENT.getMessage +
+            RMUtils.getResourceInfoMsg(RMConstant.CPU, RMConstant.CPU_UNIT, yarn.queueCores, avail.queueCores, max.queueCores))
         } else if (yarn.queueMemory > yarnAvailable.queueMemory) {
-          (RMErrorCode.QUEUE_MEMORY_INSUFFICIENT.getCode, RMErrorCode.QUEUE_MEMORY_INSUFFICIENT.getMessage)
+          (RMErrorCode.QUEUE_MEMORY_INSUFFICIENT.getCode, RMErrorCode.QUEUE_MEMORY_INSUFFICIENT.getMessage +
+            RMUtils.getResourceInfoMsg(RMConstant.MEMORY, RMConstant.MEMORY_UNIT, yarn.queueMemory, avail.queueMemory, max.queueMemory))
         } else {
-          (RMErrorCode.QUEUE_INSTANCES_INSUFFICIENT.getCode, RMErrorCode.QUEUE_INSTANCES_INSUFFICIENT.getMessage)
+          (RMErrorCode.QUEUE_INSTANCES_INSUFFICIENT.getCode, RMErrorCode.QUEUE_INSTANCES_INSUFFICIENT.getMessage +
+            RMUtils.getResourceInfoMsg(RMConstant.APP_INSTANCE, RMConstant.INSTANCE_UNIT, yarn.queueInstances, avail.queueInstances, max.queueInstances))
         }
       case dy: DriverAndYarnResource =>
         val dyAvailable = availableResource.asInstanceOf[DriverAndYarnResource]
+        val dyMax = maxResource.asInstanceOf[DriverAndYarnResource]
         if(dy.loadInstanceResource.memory > dyAvailable.loadInstanceResource.memory ||
           dy.loadInstanceResource.cores > dyAvailable.loadInstanceResource.cores ||
           dy.loadInstanceResource.instances > dyAvailable.loadInstanceResource.instances) {
-          val detail = generateNotEnoughMessage(dy.loadInstanceResource, dyAvailable.loadInstanceResource)
+          val detail = generateNotEnoughMessage(dy.loadInstanceResource, dyAvailable.loadInstanceResource, dyMax.loadInstanceResource)
           (detail._1, {detail._2})
         } else {
-          val detail = generateNotEnoughMessage(dy.yarnResource, dyAvailable.yarnResource)
+          val detail = generateNotEnoughMessage(dy.yarnResource, dyAvailable.yarnResource, dyMax.yarnResource)
           (detail._1, {detail._2})
         }
       case s: SpecialResource => throw new RMWarnException(11003, " not supported resource type " + s.getClass)

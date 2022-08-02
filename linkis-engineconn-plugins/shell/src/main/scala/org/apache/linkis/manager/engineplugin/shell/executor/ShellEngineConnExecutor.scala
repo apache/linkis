@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.manager.engineplugin.shell.executor
 
 import org.apache.commons.io.IOUtils
@@ -124,49 +124,51 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
         processBuilder.directory(new File(workingDirectory))
       }
 
-      processBuilder.redirectErrorStream(false)
+      processBuilder.redirectErrorStream(true)
       process = processBuilder.start()
-      bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream))
-      errorsReader = new BufferedReader(new InputStreamReader(process.getErrorStream))
+      //bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream))
+      var inpustr = process.getInputStream
+      //errorsReader = new BufferedReader(new InputStreamReader(process.getErrorStream))
       /*
         Prepare to extract yarn application id
        */
       extractor = new YarnAppIdExtractor
       extractor.startExtraction()
-      /*
-        Read stderr with another thread
-       */
-      errReaderThread = new ErrorStreamReaderThread(engineExecutionContext, errorsReader, extractor)
-      errReaderThread.start()
+//      /*
+//        Read stderr with another thread
+//       */
+//      errReaderThread = new ErrorStreamReaderThread(engineExecutionContext, errorsReader, extractor)
+//      errReaderThread.start()
 
-      /*
-      Read stdout
-       */
-      var line: String = null
-      while ( {
-        line = bufferedReader.readLine(); line != null
-      }) {
-        logger.debug(s"$getId() >>> $line")
-        LogHelper.logCache.cacheLog(line)
-        engineExecutionContext.appendTextResultSet(line)
-        extractor.appendLineToExtractor(line)
+//      /*
+//      Read stdout
+//       */
+//      var line: String = null
+//      while ( {
+//        line = bufferedReader.readLine(); bufferedReader.readLine() != null
+//      })  {
+//        logger.debug(s"$getId() >>> $line")
+//        LogHelper.logCache.cacheLog(line)
+//        engineExecutionContext.appendTextResultSet(line)
+//        extractor.appendLineToExtractor(line)
+//      }
+      val re = new Array[Byte](1024)
+      var result = ""
+      while (inpustr.read(re) != -1) {
+        result = result + new String(re).trim
+      }
+      if (StringUtils.isNotBlank(result)) {
+        logger.debug(s"$getId() >>> $result")
+        LogHelper.logCache.cacheLog(result)
+        engineExecutionContext.appendTextResultSet(result)
+        extractor.appendLineToExtractor(result)
       }
 
-      /*
-      Read stdout
-      */
-      var errorline: String = null
-      while ( {
-        errorline = errorsReader.readLine(); errorline != null
-      }) {
-        logger.debug(s"$getId() >>> $errorline")
-        LogHelper.logCache.cacheLog(errorline)
-        engineExecutionContext.appendTextResultSet(errorline)
-        extractor.appendLineToExtractor(errorline)
-      }
+
+
 
       val exitCode = process.waitFor()
-      joinThread(errReaderThread)
+//      joinThread(errReaderThread)
       completed.set(true)
 
       if (exitCode != 0) {

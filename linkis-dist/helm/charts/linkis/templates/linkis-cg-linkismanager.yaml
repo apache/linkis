@@ -152,6 +152,10 @@ spec:
               value: "true"
             - name: EUREKA_PORT
               value: "{{ .Values.mgEureka.port }}"
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
             {{- if .Values.cgLinkisManager.envs.extras }}
 {{ toYaml .Values.cgLinkisManager.envs.extras | indent 12 }}
             {{- end }}

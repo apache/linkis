@@ -127,8 +127,6 @@ public class VariableOperationUtils {
                     String newContent = ndt.format(DateTimeFormatter.ofPattern(parts[0]));
                     if (buffer.substring(startIndex - 1, endIndex + 1).contains(DOLLAR)) {
                         buffer.replace(startIndex - 1, endIndex + 1, newContent);
-                    } else {
-                        buffer.replace(startIndex, endIndex + 1, newContent);
                     }
                     startIndex = buffer.indexOf(PLACEHOLDER_LEFT, startIndex + newContent.length());
                 } catch (IllegalArgumentException e1) {
@@ -204,8 +202,6 @@ public class VariableOperationUtils {
                     if (newContent != null) {
                         if (buffer.substring(startIndex - 1, endIndex + 1).contains(DOLLAR)) {
                             buffer.replace(startIndex - 1, endIndex + 1, newContent);
-                        } else {
-                            buffer.replace(startIndex, endIndex + 1, newContent);
                         }
                         startIndex =
                                 buffer.indexOf(PLACEHOLDER_LEFT, startIndex + newContent.length());

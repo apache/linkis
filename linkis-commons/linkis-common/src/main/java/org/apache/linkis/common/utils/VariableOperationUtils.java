@@ -33,10 +33,10 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 
-/** support variable operation ${yyyyMMdd%-1d}/${yyyy-MM-01%-2M} Date: 2021/5/7 11:10 */
+/** support variable operation #{yyyyMMdd%-1d}/#{yyyy-MM-01%-2M} Date: 2021/5/7 11:10 */
 public class VariableOperationUtils {
 
-    private static final String DOLLAR = "$";
+    private static final String DOLLAR = "#";
     private static final String PLACEHOLDER_SPLIT = "%";
     private static final String PLACEHOLDER_LEFT = "{";
     private static final String PLACEHOLDER_RIGHT = "}";
@@ -127,8 +127,6 @@ public class VariableOperationUtils {
                     String newContent = ndt.format(DateTimeFormatter.ofPattern(parts[0]));
                     if (buffer.substring(startIndex - 1, endIndex + 1).contains(DOLLAR)) {
                         buffer.replace(startIndex - 1, endIndex + 1, newContent);
-                    } else {
-                        buffer.replace(startIndex, endIndex + 1, newContent);
                     }
                     startIndex = buffer.indexOf(PLACEHOLDER_LEFT, startIndex + newContent.length());
                 } catch (IllegalArgumentException e1) {
@@ -204,8 +202,6 @@ public class VariableOperationUtils {
                     if (newContent != null) {
                         if (buffer.substring(startIndex - 1, endIndex + 1).contains(DOLLAR)) {
                             buffer.replace(startIndex - 1, endIndex + 1, newContent);
-                        } else {
-                            buffer.replace(startIndex, endIndex + 1, newContent);
                         }
                         startIndex =
                                 buffer.indexOf(PLACEHOLDER_LEFT, startIndex + newContent.length());

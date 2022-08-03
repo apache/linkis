@@ -34,7 +34,7 @@ public class VariableOperationTest {
     @Test
     public void testJsonFormat() throws VariableOperationFailedException {
         String jsonOld =
-                "{\"name\":\"${yyyyMMdd%-1d}\",\"address\":{\"street\":\"${yyyyMMdd%-1y}\"},\"links\":[{\"name\":\"${yyyyMMdd%-1M}\"}]}";
+                "{\"name\":\"#{yyyyMMdd%-1d}\",\"address\":{\"street\":\"#{yyyyMMdd%-1y}\"},\"links\":[{\"name\":\"#{yyyyMMdd%-1M}\"}]}";
         String jsonNew = VariableOperationUtils.replaces(zonedDateTime, jsonOld);
         System.out.println(jsonOld + "\n" + jsonNew);
         assertEquals(
@@ -44,9 +44,23 @@ public class VariableOperationTest {
 
     @Test
     public void testTextFormat() throws VariableOperationFailedException {
-        String strOld = "abc${yyyyMMdd%-1d}def";
+        String strOld = "abc#{yyyyMMdd%-1d}def";
         String strNew = VariableOperationUtils.replaces(zonedDateTime, strOld);
         System.out.println(strOld + "\n" + strNew);
         assertEquals(strNew, "abc20220401def");
+    }
+
+    @Test
+    public void testText2Format() throws VariableOperationFailedException {
+        String str = "dss_autotest.demo_data{ds=20220516}";
+        String strNew = VariableOperationUtils.replaces(zonedDateTime, str);
+        assertEquals(strNew, str);
+    }
+
+    @Test
+    public void testText3Format() throws VariableOperationFailedException {
+        String str = "dss_autotest.demo_data${a1}";
+        String strNew = VariableOperationUtils.replaces(zonedDateTime, str);
+        assertEquals(strNew, str);
     }
 }

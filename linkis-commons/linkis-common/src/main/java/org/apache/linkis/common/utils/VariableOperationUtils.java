@@ -33,10 +33,10 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 
-/** support variable operation ${yyyyMMdd%-1d}/${yyyy-MM-01%-2M} Date: 2021/5/7 11:10 */
+/** support variable operation #{yyyyMMdd%-1d}/#{yyyy-MM-01%-2M} Date: 2021/5/7 11:10 */
 public class VariableOperationUtils {
 
-    private static final String DOLLAR = "$";
+    private static final String DOLLAR = "#";
     private static final String PLACEHOLDER_SPLIT = "%";
     private static final String PLACEHOLDER_LEFT = "{";
     private static final String PLACEHOLDER_RIGHT = "}";

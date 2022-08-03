@@ -23,7 +23,7 @@ import org.apache.linkis.cs.common.exception.CSErrorException;
 import org.apache.linkis.cs.highavailable.AbstractContextHAManager;
 import org.apache.linkis.cs.highavailable.exception.CSErrorCode;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import org.springframework.cglib.proxy.MethodInterceptor;
 import org.springframework.cglib.proxy.MethodProxy;

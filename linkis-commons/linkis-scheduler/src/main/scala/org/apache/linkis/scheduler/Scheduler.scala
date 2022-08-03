@@ -35,14 +35,13 @@ abstract class Scheduler {
 }
 
 object Scheduler extends Logging{
-  def createScheduler(scheduleType: String, schedulerContext: SchedulerContext): Option[Scheduler]={
+  def createScheduler(scheduleType: String, schedulerContext: SchedulerContext): Option[Scheduler] = {
     scheduleType match {
       case "FIFO" => Some(new FIFOScheduler(schedulerContext))
       case "PARA" => Some(new ParallelScheduler(schedulerContext))
-      case _ => {
+      case _ =>
         logger.error("Please enter the correct scheduling type!(请输入正确的调度类型!)")
         None
-      }
     }
   }
 }

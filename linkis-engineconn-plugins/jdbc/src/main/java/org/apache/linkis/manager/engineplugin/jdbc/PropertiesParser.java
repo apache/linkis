@@ -17,7 +17,7 @@
 
 package org.apache.linkis.manager.engineplugin.jdbc;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Map;
 

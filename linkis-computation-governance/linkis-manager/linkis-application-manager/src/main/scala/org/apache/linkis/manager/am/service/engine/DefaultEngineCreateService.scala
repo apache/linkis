@@ -18,7 +18,7 @@
 package org.apache.linkis.manager.am.service.engine
 
 
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.exception.LinkisRetryException
 import org.apache.linkis.common.utils.{ByteTimeUtils, Logging, Utils}
@@ -55,8 +55,9 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 import java.util
-import java.util.concurrent.{TimeUnit, TimeoutException}
-import scala.collection.JavaConversions._
+import java.util.concurrent.{TimeoutException, TimeUnit}
+
+import scala.collection.JavaConverters._
 import scala.concurrent.duration.Duration
 
 
@@ -117,8 +118,9 @@ class DefaultEngineCreateService extends AbstractEngineService with EngineCreate
       return engineNode
     }
     val labels = resourceManagerPersistence.getLabelsByTicketId(serviceInstance.getInstance)
-    labels.foreach { label =>
-      LabelBuilderFactoryContext.getLabelBuilderFactory.createLabel[Label[_]](label.getLabelKey, label.getStringValue) match {
+    labels.asScala.foreach { label =>
+      LabelBuilderFactoryContext.getLabelBuilderFactory
+        .createLabel[Label[_]](label.getLabelKey, label.getStringValue) match {
         case engineInstanceLabel: EngineInstanceLabel =>
           val serviceInstance = ServiceInstance(engineInstanceLabel.getServiceName, engineInstanceLabel.getInstance)
           val engineNode = getEngineNodeManager.getEngineNode(serviceInstance)
@@ -151,13 +153,12 @@ class DefaultEngineCreateService extends AbstractEngineService with EngineCreate
 
     //label chooser
     if (null != engineReuseLabelChoosers) {
-      engineReuseLabelChoosers.foreach { chooser =>
+      engineReuseLabelChoosers.asScala.foreach { chooser =>
         labelList = chooser.chooseLabels(labelList)
       }
     }
 
-
-    for (labelChecker <- labelCheckerList) {
+    for (labelChecker <- labelCheckerList.asScala) {
       if (!labelChecker.checkEngineLabel(labelList)) {
         throw new AMErrorException(AMConstant.EM_ERROR_CODE, "Need to specify engineType and userCreator label")
       }
@@ -167,8 +168,10 @@ class DefaultEngineCreateService extends AbstractEngineService with EngineCreate
     val emInstanceLabel = labelBuilderFactory.createLabel(classOf[AliasServiceInstanceLabel])
     emInstanceLabel.setAlias(ENGINE_CONN_MANAGER_SPRING_NAME.getValue)
     emLabelList.add(emInstanceLabel)
-    //2. NodeLabelService getNodesByLabel  获取EMNodeList
-    val emScoreNodeList = getEMService().getEMNodes(emLabelList.filter(!_.isInstanceOf[EngineTypeLabel]))
+
+    // 2. NodeLabelService getNodesByLabel  获取EMNodeList
+    val emScoreNodeList =
+      getEMService().getEMNodes(emLabelList.asScala.filter(!_.isInstanceOf[EngineTypeLabel]).asJava)
 
     //3. 执行Select  比如负载过高，返回没有负载低的EM，每个规则如果返回为空就抛出异常
     val choseNode = if (null == emScoreNodeList || emScoreNodeList.isEmpty) null else {
@@ -176,7 +179,10 @@ class DefaultEngineCreateService extends AbstractEngineService with EngineCreate
       nodeSelector.choseNode(emScoreNodeList.toArray)
     }
     if (null == choseNode || choseNode.isEmpty) {
-      throw new LinkisRetryException(AMConstant.EM_ERROR_CODE, s" The em of labels${engineCreateRequest.getLabels} not found")
+      throw new LinkisRetryException(
+        AMConstant.EM_ERROR_CODE,
+        s" The em of labels ${engineCreateRequest.getLabels} not found"
+      )
     }
     val emNode = choseNode.get.asInstanceOf[EMNode]
     //4. 请求资源
@@ -215,6 +221,16 @@ class DefaultEngineCreateService extends AbstractEngineService with EngineCreate
 
     Utils.tryCatch(getEngineNodeManager.updateEngineNode(oldServiceInstance, engineNode)) { t =>
       logger.warn(s"Failed to update engineNode $engineNode", t)
+      val stopEngineRequest = new EngineStopRequest(engineNode.getServiceInstance, ManagerUtils.getAdminUser)
+      engineStopService.asyncStopEngine(stopEngineRequest)
+      val failedEcNode = getEngineNodeManager.getEngineNode(oldServiceInstance)
+      if (null == failedEcNode) {
+        logger.info(s" engineConn is not exists in db: $oldServiceInstance ")
+      } else {
+        failedEcNode.setLabels(nodeLabelService.getNodeLabels(oldServiceInstance))
+        failedEcNode.getLabels.addAll(LabelUtils.distinctLabel(labelFilter.choseEngineLabel(labelList), emNode.getLabels))
+        engineStopService.engineConnInfoClear(failedEcNode)
+      }
       throw new LinkisRetryException(AMConstant.EM_ERROR_CODE, s"Failed to update engineNode: ${t.getMessage}")
     }
 
@@ -247,9 +263,9 @@ class DefaultEngineCreateService extends AbstractEngineService with EngineCreate
     }
     val configProp = engineConnConfigurationService.getConsoleConfiguration(labelList)
     val props = engineCreateRequest.getProperties
-    if (null != configProp && configProp.nonEmpty) {
-      configProp.foreach(keyValue => {
-        if (! props.containsKey(keyValue._1)) {
+    if (null != configProp && configProp.asScala.nonEmpty) {
+      configProp.asScala.foreach(keyValue => {
+        if (!props.containsKey(keyValue._1)) {
           props.put(keyValue._1, keyValue._2)
         }
       })
@@ -268,9 +284,9 @@ class DefaultEngineCreateService extends AbstractEngineService with EngineCreate
   }
 
   private def fromEMGetEngineLabels(emLabels: util.List[Label[_]]): util.List[Label[_]] = {
-    emLabels.filter { label =>
+    emLabels.asScala.filter { label =>
       label.isInstanceOf[EngineNodeLabel] && !label.isInstanceOf[EngineTypeLabel]
-    }
+    }.asJava
   }
 
   private def ensuresIdle(engineNode: EngineNode, resourceTicketId: String): Boolean = {

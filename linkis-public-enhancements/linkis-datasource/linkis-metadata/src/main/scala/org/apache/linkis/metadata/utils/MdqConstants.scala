@@ -20,12 +20,6 @@ package org.apache.linkis.metadata.utils
 
 object MdqConstants {
 
-  val DB_NAME_KEY = "dbName"
-
-  val TABLE_NAME_KEY = "tableName"
-
-  val USERNAME_KEY = "userName"
-
   val SDID_KEY = "SD_ID"
 
 }

@@ -17,7 +17,7 @@
 
 package org.apache.linkis.datasource.client.impl
 
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.datasource.client.config.DatasourceClientConfig._
 import org.apache.linkis.datasource.client.exception.DataSourceClientBuilderException

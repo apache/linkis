@@ -1,10 +1,6 @@
-# Contributing
+# How To Contribute
 
-| **Version Management Information Form** | |
-| ----------- | --------------------------------- |
-| Current version | Version 1.2|
-| Current version release date | December 17, 2021 |
-| Revision information | 1. Due to the transfer of the git repository to apache and the migration of Linkis-Doc documents to the linkis official website, corresponding links were modified |
+> For more information, see the official website [How to contribute to the project](https://linkis.apache.org/community/how-to-contribute)
 
 Thank you very much for contributing to the Linkis project! Before participating in the contribution, please read the following guidelines carefully.
 
@@ -29,88 +25,108 @@ You can find linkis documentations at [linkis-Website](https://linkis.apache.org
 ### 1.5 Other
 Including participating in and helping to organize community exchanges, community operation activities, etc., and other activities that can help the Linkis project and the community.
 
----
-
 ## 2. How to Contribution
 
 ### 2.1 Branch structure
 
-There are many branches,including temporary branches,in Linkis repository,but only three of them matter:
+The Linkis source code may have some temporary branches, but only the following three branches are really meaningful:
+- master: The source code of the latest stable release, and occasionally several hotfix submissions;
+- release-*: stable release version;
+- dev-*: main development branch;
 
-- master: The source code of the last stable release, and occasionally hotfix submissions;
-- release-*: stable release version;*
-- *dev-*: main development branch;
-- feature-*: Development branches for some larger new features that need to be jointly developed by the community
+#### 2.1.1 Concept
 
-Please note: The dev branch of major features will be named with corresponding naming instructions in addition to the version number, such as: dev-0.10.0-flink, which refers to the flink feature development branch of 0.10.0.
+- Upstream repository: https://github.com/apache/incubator-linkis The apache repository of linkis is called Upstream repository in the text
+- Fork repository: From https://github.com/apache/incubator-linkis fork to your own personal repository called Fork repository
+
+#### 2.1.2   Synchronize Upstream Repository
+> Synchronize the latest code of the Upstream repository branch to your own Fork repository
+
+- Step1 Enter the user project page and select the branch to be updated
+- Step2 Click Fetch upstream under the code download button, select Fetch and merge (if the branch of your own Fork repository is accidentally polluted, you can delete the branch and synchronize the new branch of the Upstream repository to your own Fork repository, see the guide [Synchronize Upstream] The latest code of the warehouse branch to its own Fork warehouse] (#213-synchronize the new branch of the Upstream warehouse to its own Fork warehouse))
+![update-code](https://user-images.githubusercontent.com/7869972/176622158-52da5a80-6d6a-4f06-a099-ff65887d002c.png)
+
+#### 2.1.3  Synchronize New Branch
+>Synchronize the new branch of the Upstream repository to your own Fork repository
+
+Scenario: There is a new branch in the Upstream warehouse, but the forked library does not have this branch (you can choose to delete and re-fork, but the changes that have not been merged to the original warehouse will be lost)
+
+Operate in your own clone's local project
+
+- Step1 Add the apacheUpstream repository image to the local
+
+```shell script
+git remote add apache git@github.com:apache/incubator-linkis.git
+```
+- Step2 Pull the apache image information to the local
+
+```shell script
+git fetch apache
+```
+- Step3 Create a local branch based on the new branch that needs to be synced
+
+```shell script
+git checkout -b dev-1.1.4 apache/dev-1.1.4
+```
+- Step4 Push the local branch to your own warehouse. If your own warehouse does not have the dev-1.1.4 branch, the dev-1.1.4 branch will be created
+```shell script
+git push origin dev-1.1.4:dev-1.1.4
+```
+- Step5 Delete the upstream branch
+```shell script
+git remote remove apache
+```
+- Step6 Update the branch
+```shell script
+git pull
+```
+
+#### 2.1.4 The process of a pr
+
+- Step1 Confirm the base branch of the current development (usually the current version in progress, such as the version 1.1.0 currently under development by the community, then the branch is dev-1.1.0, if you are not sure, you can ask in the community group or at @relevant classmates in the issue)
+
+- Step2 Synchronize the latest code of the Upstream warehouse branch to your own Fork warehouse branch, see the guide [2.1.2 Synchronize Upstream Repository] 
+
+- Step3 Based on the development branch, pull the new fix/feature branch (do not modify it directly on the original branch, if the subsequent PR is merged in the squash method, the submitted commit records will be merged into one)
+```shell script
+git checkout -b dev-1.1.4-fix dev-1.1.4
+git push origin dev-1.1.4-fix:dev-1.1.4-fix
+```
+- Step4 Develop
+- Step5 Submit pr (if it is in progress and the development has not been completely completed, please add the WIP logo to the pr title, such as `[WIP] Dev 1.1.1 Add junit test code for [linkis-common] `; associate the corresponding issue, etc.)
+- Step6 Waiting to be merged
+- Step7 Delete the fix/future branch (you can do this on the github page)
+```shell script
+git branch -d dev-1.1.4-fix
+git push
+```
+
+
+Please note: For the dev branch of major features, in addition to the version number, the corresponding naming description will be added, such as: dev-0.10.0-flink, which refers to the flink feature development branch of 0.10.0.
 
 ### 2.2 Development Guidelines
 
-Linkis front-end and back-end code share the same code base, but they are separated in development. Before starting the development, please fork the Linkis project to your Github Repositories. When developing, please develop based on the Linkis code base in your Github Repositories.
+Linkis front-end and back-end code share the same code base, but are separated in development. Before starting development, please fork a copy of the Linkis project to your Github Repositories, and develop based on the Linkis code base in your Github Repositories.
 
-We recommend cloning the dev-* branch for development, so that the possibility of merge conflicts when submitting a PR to the main Linkis project will be much smaller
+We recommend to clone the dev branch and name it dev-fix for development. At the same time, create a new dev-fix branch in your own warehouse and modify it directly on the original branch. If the subsequent PR is merged in the squash method, the submitted commit records will be merged into one
 
-```bash
-git clone https://github.com/yourname/incubator-linkis.git --branch dev-*
+```shell script
+#pull the branch
+git clone https://github.com/{githubid}/incubator-linkis.git --branch dev
+
+#Generate local dev-fix branch according to dev
+git checkout -b dev-fix dev
+
+#Push the local dev-fix branch to your own repository
+git push origin dev-fix dev-fix
 ```
-
-#### 2.2.1 Backend
-
-The user configuration is in the project root directory /config/, the project startup script and the upgrade patch script are in the project root directory /bin/, the back-end code and core configuration are in the server/ directory, and the log is in the project root directory /log/. Note: The project root directory referred to here refers to the directory configured by the environment variable LINKIS_HOME, and environment variables need to be configured during IDE development. For example, Idea's priority regarding environment variable loading: Configured in `Run/Debug Configurations` `Environment variables` —> System environment variables cached by IDE.
-
-##### 2.2.1.1 Directory structure
-
-1. Script
-
-```
-├── bin              # script directory
-  ├── install.sh     # One-click deployment script
-  ├── start-all.sh   # One-click start script
-  └── stop-all.sh    # One-click stop script
-```
-
-2. Configuration
-
-```
-├── config            # User configuration directory
-  ├── config.sh       # One-click deployment configuration file
-  ├── db.sh           # One-click deployment database configuration
-```
-
-3. Code directory structure
-   
-   For details, see [Linkis Code Directory Structure](https://linkis.apache.org/docs/latest/deployment/sourcecode_hierarchical_structure)
-
-4. Log directory
-
-```
-├── logs # log root directory
-```
-
-##### 2.2.1.2 Environment Variables
-
-     Configure system environment variable or IDE environment variable LINKIS_HOME, it is recommended to use IDE environment variable first.
-
-##### 2.2.1.3 Database
-
-1. Create the Linkis system database by yourself;
-2. Modify the corresponding information of the database in conf/db.sh and execute bin/install.sh or directly import db/linkis_*.sql on the database client.
-
-##### 2.2.1.4 Configuration file
-
-   Modify the `application.yml` file in the resources/ directory of each microservice to configure related properties.
-
-##### 2.2.1.5 Packaging
-
-1. To obtain a complete release package, you need to modify the relevant version information in /assembly/src/main/assembly/assembly.xml in the root directory, and then execute: `mvn clean package` in the root directory;
-2. To obtain the package of each module, simple execute `mvn clean package` in the module directory.
 
 ### 2.3 Issue submission guidelines
 - If you still don’t know how to initiate a PR to an open source project, please refer to [About issues](https://docs.github.com/en/github/managing-your-work-on-github/about-issues)
 - Issue name, which should briefly describe your problem or suggestion in one sentence; for the international promotion of the project, please write the issue in English or both Chinese and English.
 - For each Issue, please bring at least two labels, component and type, such as component=Computation Governance/EngineConn, type=Improvement. Reference: [issue #590](https://github.com/apache/incubator-linkis/issues/590)
 
-### 2.3 Pull Request(PR) Submission Guidelines
+### 2.4 Pull Request(PR) Submission Guidelines
 
 - If you still don’t know how to initiate a PR to an open source project, please refer to [About pull requests](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/about-pull-requests)
   Whether it is a bug fix or a new feature development, please submit a PR to the dev-* branch.
@@ -119,11 +135,11 @@ The user configuration is in the project root directory /config/, the project st
 - If this PR is not ready to merge, please add [WIP] prefix to the head of the name (WIP = work-in-progress).
 - All submissions to dev-* branches need to go through at least one review before they can be merged
 
-### 2.4 Review Standard
+### 2.5 Review Standard
 
 Before contributing code, you can find out what kind of submissions are popular in Review. Simply put, if a submission can bring as many gains as possible and as few side effects or risks as possible, the higher the probability of it being merged, the faster the review will be. Submissions with high risk and low value are almost impossible to merge, and may be rejected Review.
 
-#### 2.4.1 Gain
+#### 2.5.1 Gain
 
 - Fix the main cause of the bug
 - Add or fix a function or problem that a large number of users urgently need
@@ -132,7 +148,7 @@ Before contributing code, you can find out what kind of submissions are popular 
 - Reduce complexity and amount of code
 - Issues that have been discussed by the community and identified for improvement
 
-#### 2.4.2 Side effects and risks
+#### 2.5.2 Side effects and risks
 
 - Only fix the surface phenomenon of the bug
 - Introduce new features with high complexity
@@ -143,7 +159,7 @@ Before contributing code, you can find out what kind of submissions are popular 
 - Change the dependency version at will
 - Submit a large number of codes or changes at once
 
-#### 2.4.3 Reviewer notes
+#### 2.5.3 Reviewer notes
 
 - Please use a constructive tone to write comments
 - If you need to make changes by the submitter, please clearly state all the content that needs to be modified to complete the Pull Request
@@ -151,7 +167,7 @@ Before contributing code, you can find out what kind of submissions are popular 
 
 ---
 
-##3, Outstanding Contributor
+## 3. Outstanding Contributor
 
 ### 3.1 About Committers (Collaborators)
 

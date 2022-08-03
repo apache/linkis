@@ -48,7 +48,6 @@ abstract class AbstractLabelGatewayRouter extends AbstractGatewayRouter with Log
 
 
   override def route(gatewayContext: GatewayContext): ServiceInstance = {
-    val routeLabels: util.List[RouteLabel] = parseToRouteLabels(gatewayContext)
     val serviceInstance: ServiceInstance = gatewayContext.getGatewayRoute.getServiceInstance
     if (StringUtils.isNotBlank(serviceInstance.getApplicationName) && StringUtils.isNotBlank(serviceInstance.getInstance)) {
       return serviceInstance
@@ -59,6 +58,7 @@ abstract class AbstractLabelGatewayRouter extends AbstractGatewayRouter with Log
       return null
     }
 
+    val routeLabels: util.List[RouteLabel] = parseToRouteLabels(gatewayContext)
 
     val canSelectInstances = if (null == routeLabels || routeLabels.isEmpty) {
       getDefaultInstances(applicationName)

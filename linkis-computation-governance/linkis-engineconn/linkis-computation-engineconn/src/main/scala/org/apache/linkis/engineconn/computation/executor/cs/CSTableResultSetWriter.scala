@@ -17,7 +17,7 @@
 
 package org.apache.linkis.engineconn.computation.executor.cs
 
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.io.FsPath
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.cs.client.service.CSTableService

@@ -197,7 +197,7 @@
             </includes>
             <fileMode>0777</fileMode>
             <directoryMode>0755</directoryMode>
-            <outputDirectory>./dist/v${flink.version}/conf</outputDirectory>
+            <outputDirectory>dist/v${flink.version}/conf</outputDirectory>
             <lineEnding>unix</lineEnding>
         </fileSet>
 
@@ -210,7 +210,7 @@
                 <exclude>*doc.jar</exclude>
             </excludes>
             <fileMode>0777</fileMode>
-            <outputDirectory>./plugin/${flink.version}</outputDirectory>
+            <outputDirectory>plugin/${flink.version}</outputDirectory>
         </fileSet>
 
     </fileSets>

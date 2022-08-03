@@ -21,6 +21,6 @@ import org.apache.linkis.common.io.Record
 import org.apache.linkis.storage.resultset.ResultRecord
 
 
-class IORecord(val value:Array[Byte]) extends ResultRecord{
+class IORecord(val value: Array[Byte]) extends ResultRecord{
   override def cloneRecord(): Record = new IORecord(value)
 }

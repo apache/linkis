@@ -37,9 +37,15 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 
 import java.io.IOException;
 
+@Api(tags = "cs(contextservice) history operation")
 @RestController
 @RequestMapping(path = "/contextservice")
 public class ContextHistoryRestfulApi implements CsRestfulParent {
@@ -48,6 +54,12 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
+    @ApiOperation(value = "createHistory", notes = "create context history", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "contextHistory", required = true, dataType = "String", value = "context history"),
+        @ApiImplicitParam(name = "contextID", required = true, dataType = "String", value = "context Id")
+    })
+    @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "createHistory", method = RequestMethod.POST)
     public Message createHistory(HttpServletRequest req, @RequestBody JsonNode jsonNode)
             throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
@@ -64,6 +76,12 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
         return generateResponse(answerJob, "");
     }
 
+    @ApiOperation(value = "removeHistory", notes = "remove context history", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "contextHistory", required = false, dataType = "String", value = "context history"),
+        @ApiImplicitParam(name = "contextID", required = false, dataType = "String", value = "context Id")
+    })
+    @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "removeHistory", method = RequestMethod.POST)
     public Message removeHistory(HttpServletRequest req, @RequestBody JsonNode jsonNode)
             throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
@@ -80,6 +98,11 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
         return generateResponse(answerJob, "");
     }
 
+    @ApiOperation(value = "getHistories", notes = "get content history list", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "contextID", required = false, dataType = "String", value = "context id")
+    })
+    @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "getHistories", method = RequestMethod.POST)
     public Message getHistories(HttpServletRequest req, @RequestBody JsonNode jsonNode)
             throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
@@ -92,6 +115,12 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
         return message;
     }
 
+    @ApiOperation(value = "GetHistory", notes = "get context history", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "contextID", required = true, dataType = "String", value = "context id"),
+        @ApiImplicitParam(name = "source",  required = false,dataType = "String", value = "source")
+    })
+    @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "getHistory", method = RequestMethod.POST)
     public Message getHistory(HttpServletRequest req, @RequestBody JsonNode jsonNode)
             throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
@@ -110,6 +139,12 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
         return message;
     }
 
+    @ApiOperation(value = "searchHistory", notes = "search history", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "contextID",  required = true, dataType = "String", value = "context id"),
+        @ApiImplicitParam(name = "keywords", required = false, dataType = "String", value = "key words")
+    })
+    @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "searchHistory", method = RequestMethod.POST)
     public Message searchHistory(HttpServletRequest req, @RequestBody JsonNode jsonNode)
             throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {

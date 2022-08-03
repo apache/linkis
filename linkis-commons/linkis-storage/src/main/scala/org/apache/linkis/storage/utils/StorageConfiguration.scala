@@ -36,7 +36,7 @@ object StorageConfiguration {
 
   val STORAGE_RS_FILE_SUFFIX = CommonVars("wds.linkis.storage.rs.file.suffix", ".dolphin")
 
-  val ResultTypes = List( "%TEXT","%TABLE", "%HTML", "%IMG", "%ANGULAR", "%SVG")
+  val ResultTypes = List("%TEXT", "%TABLE", "%HTML", "%IMG", "%ANGULAR", "%SVG")
 
   val STORAGE_RESULT_SET_PACKAGE = CommonVars("wds.linkis.storage.result.set.package", "org.apache.linkis.storage.resultset")
   val STORAGE_RESULT_SET_CLASSES = CommonVars("wds.linkis.storage.result.set.classes", "txt.TextResultSet,table.TableResultSet,io.IOResultSet,html.HtmlResultSet,picture.PictureResultSet")
@@ -44,7 +44,6 @@ object StorageConfiguration {
   val STORAGE_BUILD_FS_CLASSES = CommonVars("wds.linkis.storage.build.fs.classes", "org.apache.linkis.storage.factory.impl.BuildHDFSFileSystem,org.apache.linkis.storage.factory.impl.BuildLocalFileSystem")
 
   val IS_SHARE_NODE = CommonVars("wds.linkis.storage.is.share.node", true)
-
 
   val ENABLE_IO_PROXY = CommonVars("wds.linkis.storage.enable.io.proxy", false)
 

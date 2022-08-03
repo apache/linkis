@@ -29,6 +29,6 @@ out/
 target/
 
 # log folder
+*.log
 logs/
-
 nohup.out

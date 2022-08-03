@@ -20,6 +20,6 @@ package org.apache.linkis.scheduler.exception
 import org.apache.linkis.common.exception.ErrorException
 
 
-class SchedulerErrorException(errCode: Int, desc: String) extends ErrorException(errCode,desc){
+class SchedulerErrorException(errCode: Int, desc: String) extends ErrorException(errCode, desc) {
 
 }

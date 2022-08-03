@@ -215,29 +215,29 @@ Third party Apache 2.0 licenses
 ========================================================================
 
 The following components are provided under the Apache 2.0 License.
-See licenses-binary/ for text of these licenses.
+See licenses/ for text of these licenses.
     (Apache License, Version 2.0) (Eclipse Distribution License - v 1.0) fastinfoset (com.sun.xml.fastinfoset:FastInfoset:1.2.16 - https://projects.eclipse.org/projects/ee4j.jaxb-impl/FastInfoset)
     (Apache License, Version 2.0) (Eclipse Public License - Version 1.0) Jetty :: Aggregate :: All core Jetty (org.eclipse.jetty.aggregate:jetty-all:7.6.0.v20120127 - http://www.eclipse.org/jetty/jetty-aggregate-project/jetty-all)
-    (Apache License, Version 2.0) (Eclipse Public License - Version 1.0) Jetty :: Asynchronous HTTP Client (org.eclipse.jetty:jetty-client:9.4.44.v20210927 - http://www.eclipse.org/jetty)
-    (Apache License, Version 2.0) (Eclipse Public License - Version 1.0) Jetty :: Continuation (org.eclipse.jetty:jetty-continuation:9.4.44.v20210927 - http://www.eclipse.org/jetty)
-    (Apache License, Version 2.0) (Eclipse Public License - Version 1.0) Jetty :: Http Utility (org.eclipse.jetty:jetty-http:9.4.44.v20210927 - http://www.eclipse.org/jetty)
-    (Apache License, Version 2.0) (Eclipse Public License - Version 1.0) Jetty :: IO Utility (org.eclipse.jetty:jetty-io:9.4.44.v20210927 - http://www.eclipse.org/jetty)
-    (Apache License, Version 2.0) (Eclipse Public License - Version 1.0) Jetty :: Plus (org.eclipse.jetty:jetty-plus:9.4.44.v20210927 - http://www.eclipse.org/jetty)
-    (Apache License, Version 2.0) (Eclipse Public License - Version 1.0) Jetty :: Security (org.eclipse.jetty:jetty-security:9.4.44.v20210927 - http://www.eclipse.org/jetty)
-    (Apache License, Version 2.0) (Eclipse Public License - Version 1.0) Jetty :: Server Core (org.eclipse.jetty:jetty-server:9.4.44.v20210927 - http://www.eclipse.org/jetty)
-    (Apache License, Version 2.0) (Eclipse Public License - Version 1.0) Jetty :: Servlet Annotations (org.eclipse.jetty:jetty-annotations:9.4.44.v20210927 - http://www.eclipse.org/jetty)
-    (Apache License, Version 2.0) (Eclipse Public License - Version 1.0) Jetty :: Servlet Handling (org.eclipse.jetty:jetty-servlet:9.4.44.v20210927 - http://www.eclipse.org/jetty)
-    (Apache License, Version 2.0) (Eclipse Public License - Version 1.0) Jetty :: Utilities (org.eclipse.jetty:jetty-util:9.4.44.v20210927 - http://www.eclipse.org/jetty)
-    (Apache License, Version 2.0) (Eclipse Public License - Version 1.0) Jetty :: Utility Servlets and Filters (org.eclipse.jetty:jetty-servlets:9.4.44.v20210927 - http://www.eclipse.org/jetty)
-    (Apache License, Version 2.0) (Eclipse Public License - Version 1.0) Jetty :: Webapp Application Support (org.eclipse.jetty:jetty-webapp:9.4.44.v20210927 - http://www.eclipse.org/jetty)
-    (Apache License, Version 2.0) (Eclipse Public License - Version 1.0) Jetty :: Websocket :: API (org.eclipse.jetty.websocket:websocket-api:9.4.44.v20210927 - http://www.eclipse.org/jetty/websocket-api)
-    (Apache License, Version 2.0) (Eclipse Public License - Version 1.0) Jetty :: Websocket :: Client (org.eclipse.jetty.websocket:websocket-client:9.4.44.v20210927 - http://www.eclipse.org/jetty/websocket-client)
-    (Apache License, Version 2.0) (Eclipse Public License - Version 1.0) Jetty :: Websocket :: Common (org.eclipse.jetty.websocket:websocket-common:9.4.44.v20210927 - http://www.eclipse.org/jetty/websocket-common)
-    (Apache License, Version 2.0) (Eclipse Public License - Version 1.0) Jetty :: Websocket :: Server (org.eclipse.jetty.websocket:websocket-server:9.4.44.v20210927 - http://www.eclipse.org/jetty/websocket-server)
-    (Apache License, Version 2.0) (Eclipse Public License - Version 1.0) Jetty :: Websocket :: Servlet Interface (org.eclipse.jetty.websocket:websocket-servlet:9.4.44.v20210927 - http://www.eclipse.org/jetty/websocket-servlet)
-    (Apache License, Version 2.0) (Eclipse Public License - Version 1.0) Jetty :: Websocket :: javax.websocket :: Client Implementation (org.eclipse.jetty.websocket:javax-websocket-client-impl:9.4.44.v20210927 - http://www.eclipse.org/jetty/javax-websocket-client-impl)
-    (Apache License, Version 2.0) (Eclipse Public License - Version 1.0) Jetty :: Websocket :: javax.websocket.server :: Server Implementation (org.eclipse.jetty.websocket:javax-websocket-server-impl:9.4.44.v20210927 - http://www.eclipse.org/jetty/javax-websocket-server-impl)
-    (Apache License, Version 2.0) (Eclipse Public License - Version 1.0) Jetty :: XML utilities (org.eclipse.jetty:jetty-xml:9.4.44.v20210927 - http://www.eclipse.org/jetty)
+    (Apache License, Version 2.0) (Eclipse Public License - Version 1.0) Jetty :: Asynchronous HTTP Client (org.eclipse.jetty:jetty-client:9.4.48.v20220622 - http://www.eclipse.org/jetty)
+    (Apache License, Version 2.0) (Eclipse Public License - Version 1.0) Jetty :: Continuation (org.eclipse.jetty:jetty-continuation:9.4.48.v20220622 - http://www.eclipse.org/jetty)
+    (Apache License, Version 2.0) (Eclipse Public License - Version 1.0) Jetty :: Http Utility (org.eclipse.jetty:jetty-http:9.4.48.v20220622 - http://www.eclipse.org/jetty)
+    (Apache License, Version 2.0) (Eclipse Public License - Version 1.0) Jetty :: IO Utility (org.eclipse.jetty:jetty-io:9.4.48.v20220622 - http://www.eclipse.org/jetty)
+    (Apache License, Version 2.0) (Eclipse Public License - Version 1.0) Jetty :: Plus (org.eclipse.jetty:jetty-plus:9.4.48.v20220622 - http://www.eclipse.org/jetty)
+    (Apache License, Version 2.0) (Eclipse Public License - Version 1.0) Jetty :: Security (org.eclipse.jetty:jetty-security:9.4.48.v20220622 - http://www.eclipse.org/jetty)
+    (Apache License, Version 2.0) (Eclipse Public License - Version 1.0) Jetty :: Server Core (org.eclipse.jetty:jetty-server:9.4.48.v20220622 - http://www.eclipse.org/jetty)
+    (Apache License, Version 2.0) (Eclipse Public License - Version 1.0) Jetty :: Servlet Annotations (org.eclipse.jetty:jetty-annotations:9.4.48.v20220622 - http://www.eclipse.org/jetty)
+    (Apache License, Version 2.0) (Eclipse Public License - Version 1.0) Jetty :: Servlet Handling (org.eclipse.jetty:jetty-servlet:9.4.48.v20220622 - http://www.eclipse.org/jetty)
+    (Apache License, Version 2.0) (Eclipse Public License - Version 1.0) Jetty :: Utilities (org.eclipse.jetty:jetty-util:9.4.48.v20220622 - http://www.eclipse.org/jetty)
+    (Apache License, Version 2.0) (Eclipse Public License - Version 1.0) Jetty :: Utility Servlets and Filters (org.eclipse.jetty:jetty-servlets:9.4.48.v20220622 - http://www.eclipse.org/jetty)
+    (Apache License, Version 2.0) (Eclipse Public License - Version 1.0) Jetty :: Webapp Application Support (org.eclipse.jetty:jetty-webapp:9.4.48.v20220622 - http://www.eclipse.org/jetty)
+    (Apache License, Version 2.0) (Eclipse Public License - Version 1.0) Jetty :: Websocket :: API (org.eclipse.jetty.websocket:websocket-api:9.4.48.v20220622 - http://www.eclipse.org/jetty/websocket-api)
+    (Apache License, Version 2.0) (Eclipse Public License - Version 1.0) Jetty :: Websocket :: Client (org.eclipse.jetty.websocket:websocket-client:9.4.48.v20220622 - http://www.eclipse.org/jetty/websocket-client)
+    (Apache License, Version 2.0) (Eclipse Public License - Version 1.0) Jetty :: Websocket :: Common (org.eclipse.jetty.websocket:websocket-common:9.4.48.v20220622 - http://www.eclipse.org/jetty/websocket-common)
+    (Apache License, Version 2.0) (Eclipse Public License - Version 1.0) Jetty :: Websocket :: Server (org.eclipse.jetty.websocket:websocket-server:9.4.48.v20220622 - http://www.eclipse.org/jetty/websocket-server)
+    (Apache License, Version 2.0) (Eclipse Public License - Version 1.0) Jetty :: Websocket :: Servlet Interface (org.eclipse.jetty.websocket:websocket-servlet:9.4.48.v20220622 - http://www.eclipse.org/jetty/websocket-servlet)
+    (Apache License, Version 2.0) (Eclipse Public License - Version 1.0) Jetty :: Websocket :: javax.websocket :: Client Implementation (org.eclipse.jetty.websocket:javax-websocket-client-impl:9.4.48.v20220622 - http://www.eclipse.org/jetty/javax-websocket-client-impl)
+    (Apache License, Version 2.0) (Eclipse Public License - Version 1.0) Jetty :: Websocket :: javax.websocket.server :: Server Implementation (org.eclipse.jetty.websocket:javax-websocket-server-impl:9.4.48.v20220622 - http://www.eclipse.org/jetty/javax-websocket-server-impl)
+    (Apache License, Version 2.0) (Eclipse Public License - Version 1.0) Jetty :: XML utilities (org.eclipse.jetty:jetty-xml:9.4.48.v20220622 - http://www.eclipse.org/jetty)
     (Apache License, Version 2.0) (GNU Lesser General Public License (LGPL), Version 2.1) JAX-RS provider for JSON content type (org.codehaus.jackson:jackson-jaxrs:1.9.13 - http://jackson.codehaus.org)
     (Apache License, Version 2.0) (GNU Lesser General Public License (LGPL), Version 2.1) Xml Compatibility extensions for Jackson (org.codehaus.jackson:jackson-xc:1.9.13 - http://jackson.codehaus.org)
     (Apache License, Version 2.0) (GNU Library or Lesser General Public License (LGPL) V2.1) JSQLParser library (com.github.jsqlparser:jsqlparser:1.0 - https://github.com/JSQLParser/JSqlParser)
@@ -577,13 +577,26 @@ See licenses-binary/ for text of these licenses.
     (Apache License, version 2.0) Apache twill (org.apache.twill:* - https://twill.apache.org/)
     (Apache License, version 2.0) Apache tephra (co.cask.tephra:* - https://tephra.apache.org/)
     (Apache License, version 2.0) Apache Sqoop - Server (org.apache.sqoop:sqoop:1.4.6 - https://github.com/apache/sqoop/)
+    (Apache License, version 2.0) bootstrap (com.facebook.airlift:bootstrap:0.191 - https://github.com/prestodb/airlift/bootstrap)
+    (Apache License, version 2.0) Apache BVal :: bval-jsr (org.apache.bval:bval-jsr:2.0.0 - http://bval.apache.org/bval-jsr/)
+    (Apache License, version 2.0) cglib-nodep (cglib:cglib-nodep:3.2.5 - https://github.com/cglib/cglib/cglib-nodep)
+    (Apache License, version 2.0) concurrent (com.facebook.airlift:concurrent:0.191 - https://github.com/prestodb/airlift/concurrent)
+    (Apache License, version 2.0) configuration (com.facebook.airlift:configuration:0.191 - https://github.com/prestodb/airlift/configuration)
+    (Apache License, Version 2.0) ExpiringMap (net.jodah:expiringmap:0.5.6 - http://github.com/jhalterman/expiringmap/)
+    (Apache License, version 2.0) jdbi3 Core (org.jdbi:jdbi3-core:3.4.0 - http://jdbi.org/)
+    (Apache License, version 2.0) jdbi3 SqlObject (org.jdbi:jdbi3-sqlobject:3.4.0 - http://jdbi.org/)
+    (Apache License, version 2.0) jmxutils (org.weakref:jmxutils:1.19 - https://github.com/martint/jmxutils)
+    (Apache License, version 2.0) presto-client (com.facebook.presto:presto-client:0.234 - https://github.com/prestodb/presto/presto-client)
+    (Apache License, version 2.0) presto-resource-group-managers (com.facebook.presto:presto-resource-group-managers:0.234 - https://github.com/prestodb/presto/presto-resource-group-managers)
+    (Apache License, version 2.0) presto-spi (com.facebook.presto:presto-spi:0.234 - https://github.com/prestodb/presto/presto-spi)
+    (Apache License, version 2.0) stats (com.facebook.airlift:stats:0.191 - https://github.com/airlift/airlift/tree/master/stats)
 
 ========================================================================
 Third party CDDL licenses
 ========================================================================
 
 The following components are provided under the CDDL License.
-See licenses-binary/ for text of these licenses.
+See licenses/ for text of these licenses.
     (CDDL + GPLv2 with classpath exception) HK2 API module (org.glassfish.hk2:hk2-api:2.4.0-b34 - https://hk2.java.net/hk2-api)
     (CDDL + GPLv2 with classpath exception) HK2 Implementation Utilities (org.glassfish.hk2:hk2-utils:2.4.0-b34 - https://hk2.java.net/hk2-utils)
     (CDDL + GPLv2 with classpath exception) Java Servlet API (javax.servlet:javax.servlet-api:3.1.0 - http://servlet-spec.java.net)
@@ -618,7 +631,7 @@ Third party BSD licenses
 ========================================================================
 
 The following components are provided under the BSD License.
-See licenses-binary/ for text of these licenses.
+See licenses/ for text of these licenses.
     (The 2-Clause BSD License) (Public Domain, per Creative Commons CC0) HdrHistogram (org.hdrhistogram:HdrHistogram:2.1.11 - http://hdrhistogram.github.io/HdrHistogram/)
     (The 2-Clause BSD License) ANTLR 3 Runtime (org.antlr:antlr-runtime:3.5.2 - http://www.antlr.org)
     (The 2-Clause BSD License) ANTLR ST4 4.0.4 (org.antlr:ST4:4.0.4 - http://www.stringtemplate.org)
@@ -654,7 +667,7 @@ Third party MIT licenses
 ========================================================================
 
 The following components are provided under the MIT License.
-See licenses-binary/ for text of these licenses.
+See licenses/ for text of these licenses.
     (MIT License) Checker Qual (org.checkerframework:checker-qual:3.4.0 - https://checkerframework.org)
     (MIT License) JUL to SLF4J bridge (org.slf4j:jul-to-slf4j:1.7.16 - http://www.slf4j.org)
     (MIT License) SLF4J API Module (org.slf4j:slf4j-api:1.7.30 - http://www.slf4j.org)
@@ -669,7 +682,7 @@ Third party EPL licenses
 ========================================================================
 
 The following components are provided under the EPL License.
-See licenses-binary/ for text of these licenses.
+See licenses/ for text of these licenses.
     (Eclipse Public License, Version 1.0) (GNU Lesser General Public License, Version 2.1) c3p0 (com.mchange:c3p0:0.9.5.4 - https://github.com/swaldman/c3p0)
     (Eclipse Public License, Version 1.0) (GNU Lesser General Public License, Version 2.1) mchange-commons-java (com.mchange:mchange-commons-java:0.2.15 - https://github.com/swaldman/mchange-commons-java)
     (Eclipse Public License, Version 1.0) AspectJ weaver (org.aspectj:aspectjweaver:1.9.5 - http://www.aspectj.org)
@@ -686,7 +699,7 @@ Third party EDL licenses
 ========================================================================
 
 The following components are provided under the EDL License.
-See licenses-binary/ for text of these licenses.
+See licenses/ for text of these licenses.
     (Eclipse Distribution License - v 1.0) Extended StAX API (org.jvnet.staxex:stax-ex:1.8.1 - https://projects.eclipse.org/projects/ee4j/stax-ex)
     (Eclipse Distribution License - v 1.0) JAXB Runtime (org.glassfish.jaxb:jaxb-runtime:2.3.2 - https://javaee.github.io/jaxb-v2/jaxb-runtime-parent/jaxb-runtime/)
     (Eclipse Distribution License - v 1.0) JavaBeans Activation Framework API jar (jakarta.activation:jakarta.activation-api:1.2.1 - https://github.com/eclipse-ee4j/jaf/jakarta.activation-api)
@@ -699,7 +712,7 @@ Third party Public Domain licenses
 ========================================================================
 
 The following components are provided under the Public Domain License.
-See licenses-binary/ for text of these licenses.
+See licenses/ for text of these licenses.
     (Public Domain) XML Pull Parsing API (xmlpull:xmlpull:1.1.3.1 - http://www.xmlpull.org)
     (Public Domain) XZ for Java (org.tukaani:xz:1.0 - http://tukaani.org/xz/java.html)
     (Public Domain, per Creative Commons CC0) LatencyUtils (org.latencyutils:LatencyUtils:2.0.3 - http://latencyutils.github.io/LatencyUtils/)
@@ -710,7 +723,7 @@ Third party CPL licenses
 ========================================================================
 
 The following components are provided under the CPL License.
-See licenses-binary/ for text of these licenses.
+See licenses/ for text of these licenses.
     (Common Public License Version 1.0) JUnit (junit:junit:3.8.1 - http://junit.org)
 
 ========================================================================
@@ -718,7 +731,7 @@ Third party CPL licenses
 ========================================================================
 
 The following components are provided under the CPL License.
-See licenses-binary/ for text of these licenses.
+See licenses/ for text of these licenses.
     (Common Public License Version 1.0) JUnit (junit:junit:3.8.1 - http://junit.org)
 
 ========================================================================
@@ -726,7 +739,7 @@ Third party ICU licenses
 ========================================================================
 
 The following components are provided under the ICU License.
-See licenses-binary/ for text of these licenses.
+See licenses/ for text of these licenses.
     (ICU License) ICU4J (com.ibm.icu:icu4j:4.6 - http://icu-project.org/)
 
 ========================================================================
@@ -734,7 +747,7 @@ Third party CC0 licenses
 ========================================================================
 
 The following components are provided under the CC0 License.
-See licenses-binary/ for text of these licenses.
+See licenses/ for text of these licenses.
     (CC0) reactive-streams (org.reactivestreams:reactive-streams:1.0.3 - http://www.reactive-streams.org/)
 
 ========================================================================
@@ -742,5 +755,5 @@ Third party Go licenses
 ========================================================================
 
 The following components are provided under the CC0 License.
-See licenses-binary/ for text of these licenses.
+See licenses/ for text of these licenses.
     (Go) RE2/J:Linear time regular expressions for Java (com.google.re2j:re2j:1.1 - http://github.com/google/re2j)

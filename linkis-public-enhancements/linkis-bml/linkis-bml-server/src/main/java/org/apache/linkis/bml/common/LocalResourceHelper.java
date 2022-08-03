@@ -26,7 +26,7 @@ import org.apache.linkis.storage.utils.FileSystemUtils;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -169,5 +169,11 @@ public class LocalResourceHelper implements ResourceHelper {
         } finally {
             fileSystem.close();
         }
+    }
+
+    @Override
+    public boolean checkBmlResourceStoragePrefixPathIfChanged(String path) {
+        String prefixPath = getSchema() + BmlServerConfiguration.BML_LOCAL_PREFIX().getValue();
+        return !path.startsWith(prefixPath);
     }
 }

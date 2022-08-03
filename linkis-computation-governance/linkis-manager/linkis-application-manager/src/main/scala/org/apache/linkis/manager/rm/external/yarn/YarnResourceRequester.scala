@@ -32,9 +32,9 @@ import org.apache.linkis.manager.rm.utils.RequestKerberosUrlUtils
 import org.json4s.JValue
 import org.json4s.JsonAST._
 import org.json4s.jackson.JsonMethods.parse
-import sun.misc.BASE64Encoder
 
 import java.util
+import java.util.Base64
 import java.util.concurrent.ConcurrentHashMap
 import scala.collection.JavaConversions._
 import scala.collection.mutable.ArrayBuffer
@@ -51,8 +51,7 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
     val user = this.provider.getConfigMap.getOrDefault("user", "").asInstanceOf[String]
     val pwd = this.provider.getConfigMap.getOrDefault("pwd", "").asInstanceOf[String]
     val authKey = user + ":" + pwd
-    val base64Encoder = new BASE64Encoder()
-    base64Encoder.encode(authKey.getBytes)
+    Base64.getMimeEncoder.encodeToString(authKey.getBytes)
   }
 
   override def requestResourceInfo(identifier: ExternalResourceIdentifier, provider: ExternalResourceProvider): NodeResource = {
@@ -308,10 +307,11 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
     true
   }
 }
+
 object YarnResourceRequester extends Logging {
 
   private val httpClient = HttpClients.createDefault()
-  def init() = {
+  def init(): Unit = {
     addShutdownHook()
   }
 

@@ -17,9 +17,9 @@
  
 package org.apache.linkis.scheduler.executer
 
-import java.io.Closeable
-
 import org.apache.linkis.protocol.engine.EngineState
+
+import java.io.Closeable
 
 
 trait Executor extends Closeable {
@@ -43,7 +43,7 @@ object ExecutorState {
 
   def apply(x: Int): ExecutorState = EngineState.values()(x)
 
-  def isCompleted(state: ExecutorState) = EngineState.isCompleted(state.asInstanceOf[EngineState])
+  def isCompleted(state: ExecutorState): Boolean = EngineState.isCompleted(state)
 
-  def isAvailable(state: ExecutorState) = EngineState.isAvailable(state.asInstanceOf[EngineState])
+  def isAvailable(state: ExecutorState): Boolean = EngineState.isAvailable(state)
 }

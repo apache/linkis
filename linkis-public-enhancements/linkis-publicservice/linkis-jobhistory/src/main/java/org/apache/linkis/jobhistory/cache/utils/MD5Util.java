@@ -19,8 +19,7 @@ package org.apache.linkis.jobhistory.cache.utils;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-
-import sun.misc.BASE64Encoder;
+import java.util.Base64;
 
 public class MD5Util {
 
@@ -41,9 +40,9 @@ public class MD5Util {
             // 创建加密对象
             MessageDigest md = MessageDigest.getInstance("md5");
             if (bit == SIXTY_FOUR) {
-                BASE64Encoder bw = new BASE64Encoder();
-                String bsB64 = bw.encode(md.digest(src.getBytes(StandardCharsets.UTF_8)));
-                md5 = bsB64;
+                md5 =
+                        Base64.getMimeEncoder()
+                                .encodeToString(md.digest(src.getBytes(StandardCharsets.UTF_8)));
             } else {
                 // 计算MD5函数
                 md.update(src.getBytes(StandardCharsets.UTF_8));

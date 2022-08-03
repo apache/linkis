@@ -17,7 +17,7 @@
  
 package org.apache.linkis.orchestrator.computation.execute
 
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.exception.LinkisRetryException
 import org.apache.linkis.common.log.LogUtils

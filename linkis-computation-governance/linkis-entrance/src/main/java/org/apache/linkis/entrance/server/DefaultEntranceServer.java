@@ -19,14 +19,15 @@ package org.apache.linkis.entrance.server;
 
 import org.apache.linkis.entrance.EntranceContext;
 import org.apache.linkis.entrance.EntranceServer;
-import org.apache.linkis.entrance.annotation.EntranceContextBeanAnnotation;
-import org.apache.linkis.entrance.annotation.EntranceServerBeanAnnotation;
+import org.apache.linkis.entrance.constant.ServiceNameConsts;
 import org.apache.linkis.entrance.execute.EntranceJob;
 import org.apache.linkis.entrance.log.LogReader;
 import org.apache.linkis.rpc.Sender;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 
@@ -34,13 +35,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /** Description: */
-@EntranceServerBeanAnnotation
+@Component(ServiceNameConsts.ENTRANCE_SERVER)
 public class DefaultEntranceServer extends EntranceServer {
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultEntranceServer.class);
 
-    @EntranceContextBeanAnnotation.EntranceContextAutowiredAnnotation
-    private EntranceContext entranceContext;
+    @Autowired private EntranceContext entranceContext;
 
     private Boolean shutdownFlag = false;
 

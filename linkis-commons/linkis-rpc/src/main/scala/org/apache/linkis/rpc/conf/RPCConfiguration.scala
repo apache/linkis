@@ -24,39 +24,39 @@ import org.reflections.scanners.{MethodAnnotationsScanner, SubTypesScanner, Type
 
 object RPCConfiguration {
 
-  val BDP_RPC_BROADCAST_THREAD_SIZE = CommonVars("wds.linkis.rpc.broadcast.thread.num", new Integer(25))
+  val BDP_RPC_BROADCAST_THREAD_SIZE: CommonVars[Integer] = CommonVars("wds.linkis.rpc.broadcast.thread.num", new Integer(25))
 
-  val BDP_RPC_EUREKA_SERVICE_REFRESH_INTERVAL = CommonVars("wds.linkis.rpc.eureka.client.refresh.interval", new TimeType("1s"))
-  val BDP_RPC_EUREKA_SERVICE_REFRESH_MAX_WAIT_TIME = CommonVars("wds.linkis.rpc.eureka.client.refresh.wait.time.max", new TimeType("30s"))
-  val BDP_RPC_RECEIVER_ASYN_CONSUMER_THREAD_MAX = CommonVars("wds.linkis.rpc.receiver.asyn.consumer.thread.max", 400)
-  val BDP_RPC_RECEIVER_ASYN_CONSUMER_THREAD_FREE_TIME_MAX = CommonVars("wds.linkis.rpc.receiver.asyn.consumer.freeTime.max", new TimeType("2m"))
-  val BDP_RPC_RECEIVER_ASYN_QUEUE_CAPACITY = CommonVars("wds.linkis.rpc.receiver.asyn.queue.size.max", 5000)
+  val BDP_RPC_EUREKA_SERVICE_REFRESH_INTERVAL: CommonVars[TimeType] = CommonVars("wds.linkis.rpc.eureka.client.refresh.interval", new TimeType("1s"))
+  val BDP_RPC_EUREKA_SERVICE_REFRESH_MAX_WAIT_TIME: CommonVars[TimeType] = CommonVars("wds.linkis.rpc.eureka.client.refresh.wait.time.max", new TimeType("30s"))
+  val BDP_RPC_RECEIVER_ASYN_CONSUMER_THREAD_MAX: CommonVars[Int] = CommonVars("wds.linkis.rpc.receiver.asyn.consumer.thread.max", 400)
+  val BDP_RPC_RECEIVER_ASYN_CONSUMER_THREAD_FREE_TIME_MAX: CommonVars[TimeType] = CommonVars("wds.linkis.rpc.receiver.asyn.consumer.freeTime.max", new TimeType("2m"))
+  val BDP_RPC_RECEIVER_ASYN_QUEUE_CAPACITY: CommonVars[Int] = CommonVars("wds.linkis.rpc.receiver.asyn.queue.size.max", 5000)
 
-  val BDP_RPC_SENDER_ASYN_CONSUMER_THREAD_MAX = CommonVars("wds.linkis.rpc.sender.asyn.consumer.thread.max", 100)
-  val BDP_RPC_SENDER_ASYN_CONSUMER_THREAD_FREE_TIME_MAX = CommonVars("wds.linkis.rpc.sender.asyn.consumer.freeTime.max", new TimeType("2m"))
-  val BDP_RPC_SENDER_ASYN_QUEUE_CAPACITY = CommonVars("wds.linkis.rpc.sender.asyn.queue.size.max", 2000)
+  val BDP_RPC_SENDER_ASYN_CONSUMER_THREAD_MAX: CommonVars[Int] = CommonVars("wds.linkis.rpc.sender.asyn.consumer.thread.max", 100)
+  val BDP_RPC_SENDER_ASYN_CONSUMER_THREAD_FREE_TIME_MAX: CommonVars[TimeType] = CommonVars("wds.linkis.rpc.sender.asyn.consumer.freeTime.max", new TimeType("2m"))
+  val BDP_RPC_SENDER_ASYN_QUEUE_CAPACITY: CommonVars[Int] = CommonVars("wds.linkis.rpc.sender.asyn.queue.size.max", 2000)
 
 
-  val ENABLE_PUBLIC_SERVICE = CommonVars("wds.linkis.gateway.conf.enable.publicservice", true)
-  val PUBLIC_SERVICE_APPLICATION_NAME = CommonVars("wds.linkis.gateway.conf.publicservice.name", "linkis-ps-publicservice")
-  val PUBLIC_SERVICE_LIST = CommonVars("wds.linkis.gateway.conf.publicservice.list", "query,jobhistory,application,configuration,filesystem,udf,variable,microservice,errorcode,bml,datasource").getValue.split(",")
+  val ENABLE_PUBLIC_SERVICE: CommonVars[Boolean] = CommonVars("wds.linkis.gateway.conf.enable.publicservice", true)
+  val PUBLIC_SERVICE_APPLICATION_NAME: CommonVars[String] = CommonVars("wds.linkis.gateway.conf.publicservice.name", "linkis-ps-publicservice")
+  val PUBLIC_SERVICE_LIST: Array[String] = CommonVars("wds.linkis.gateway.conf.publicservice.list", "query,jobhistory,application,configuration,filesystem,udf,variable,microservice,errorcode,bml,datasource").getValue.split(",")
 
-  val METADATAQUERY_SERVICE_APPLICATION_NAME = CommonVars("wds.linkis.gateway.conf.publicservice.name", "linkis-ps-metadataquery")
-  val METADATAQUERY_SERVICE_LIST = CommonVars("wds.linkis.gateway.conf.metadataquery.list", "metadatamanager,metadataquery").getValue.split(",")
+  val METADATAQUERY_SERVICE_APPLICATION_NAME: CommonVars[String] = CommonVars("wds.linkis.gateway.conf.publicservice.name", "linkis-ps-metadataquery")
+  val METADATAQUERY_SERVICE_LIST: Array[String] = CommonVars("wds.linkis.gateway.conf.metadataquery.list", "metadatamanager,metadataquery").getValue.split(",")
 
-  val PUBLIC_SERVICE_APP_PREFIX = CommonVars("wds.linkis.gateway.conf.publicservice.name", "linkis-ps-").getValue
-  val BDP_RPC_INSTANCE_ALIAS_SERVICE_REFRESH_INTERVAL = CommonVars("wds.linkis.rpc.instancealias.refresh.interval", new TimeType("3s"))
+  val PUBLIC_SERVICE_APP_PREFIX: String = CommonVars("wds.linkis.gateway.conf.publicservice.name", "linkis-ps-").getValue
+  val BDP_RPC_INSTANCE_ALIAS_SERVICE_REFRESH_INTERVAL: CommonVars[TimeType] = CommonVars("wds.linkis.rpc.instancealias.refresh.interval", new TimeType("3s"))
 
-  val CONTEXT_SERVICE_APPLICATION_NAME = CommonVars("wds.linkis.gateway.conf.contextservice.name", "linkis-ps-cs")
+  val CONTEXT_SERVICE_APPLICATION_NAME: CommonVars[String] = CommonVars("wds.linkis.gateway.conf.contextservice.name", "linkis-ps-cs")
 
-  val ENABLE_LOCAL_MESSAGE = CommonVars("wds.linkis.rpc.conf.enable.local.message", false)
-  val LOCAL_APP_LIST = CommonVars("wds.linkis.rpc.conf.local.app.list", "").getValue.split(",")
+  val ENABLE_LOCAL_MESSAGE: CommonVars[Boolean] = CommonVars("wds.linkis.rpc.conf.enable.local.message", false)
+  val LOCAL_APP_LIST: Array[String] = CommonVars("wds.linkis.rpc.conf.local.app.list", "").getValue.split(",")
 
-  val SERVICE_SCAN_PACKAGE = CommonVars("wds.linkis.ms.service.scan.package", "org.apache.linkis").getValue
+  val SERVICE_SCAN_PACKAGE: String = CommonVars("wds.linkis.ms.service.scan.package", "org.apache.linkis").getValue
 
-  val ENABLE_SPRING_PARAMS = CommonVars("wds.linkis.rpc.spring.params.enable", false).getValue
+  val ENABLE_SPRING_PARAMS: Boolean = CommonVars("wds.linkis.rpc.spring.params.enable", false).getValue
 
   val REFLECTIONS = new Reflections(SERVICE_SCAN_PACKAGE, new MethodAnnotationsScanner(), new TypeAnnotationsScanner(), new SubTypesScanner())
 
-  val BDP_RPC_CACHE_CONF_EXPIRE_TIME = CommonVars("wds.linkis.rpc.cache.expire.time", 120000L)
+  val BDP_RPC_CACHE_CONF_EXPIRE_TIME: CommonVars[Long] = CommonVars("wds.linkis.rpc.cache.expire.time", 120000L)
 }

@@ -173,4 +173,44 @@
         WHERE
         id = #{jobId} FOR UPDATE
     </select>
+
+    <select id="countUndoneTaskNoCreator" useCache="true" resultType="java.lang.Integer" >
+        /*slave*/ SELECT COUNT(1) FROM linkis_ps_job_history_group_history
+        <where>
+            <if test="startId != null"> id >= #{startId}</if>
+            <if test="umUser != null">and submit_user = #{umUser}</if>
+            <if test="engineType != null">and engine_type = #{engineType}</if>
+            <if test="startDate != null">and created_time >= #{startDate} AND created_time <![CDATA[<=]]> #{endDate}</if>
+            <if test="status != null">and <foreach collection="status" item="element" close=")" separator="," open="status in (">#{element}</foreach></if>
+        </where>
+    </select>
+
+    <select id="countUndoneTaskWithUserCreator" useCache="true" resultType="java.lang.Integer" >
+        /*slave*/ SELECT COUNT(1) FROM linkis_ps_job_history_group_history
+        <where>
+            <if test="startId != null"> id >= #{startId}</if>
+            <if test="umUser != null">and submit_user = #{umUser}</if>
+            <if test="engineType != null">and engine_type = #{engineType}</if>
+            <if test="startDate != null">and created_time >= #{startDate} AND created_time <![CDATA[<=]]> #{endDate}</if>
+            <if test="status != null">and <foreach collection="status" item="element" close=")" separator="," open="status in (">#{element}</foreach></if>
+            <if test="userCreatorKey != null and userCreatorValue != null">
+                and  LOCATE('"${userCreatorKey}":"${userCreatorValue}', labels) > 0
+            </if>
+        </where>
+    </select>
+
+    <select id="countUndoneTaskWithCreatorOnly" useCache="true" resultType="java.lang.Integer" >
+        /*slave*/ SELECT COUNT(1) FROM linkis_ps_job_history_group_history
+        <where>
+            <if test="startId != null"> id >= #{startId}</if>
+            <if test="umUser != null">and submit_user = #{umUser}</if>
+            <if test="engineType != null">and engine_type = #{engineType}</if>
+            <if test="startDate != null">and created_time >= #{startDate} AND created_time <![CDATA[<=]]> #{endDate}</if>
+            <if test="status != null">and <foreach collection="status" item="element" close=")" separator="," open="status in (">#{element}</foreach></if>
+            <if test="userCreatorKey != null and creator != null">
+                and labels like '%"${userCreatorKey}":"%-${creator}%'
+            </if>
+        </where>
+    </select>
+
 </mapper>

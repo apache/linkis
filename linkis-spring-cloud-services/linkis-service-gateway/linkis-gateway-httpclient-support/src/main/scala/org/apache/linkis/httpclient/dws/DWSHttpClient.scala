@@ -31,7 +31,7 @@ import org.apache.linkis.httpclient.request.HttpAction
 import org.apache.linkis.httpclient.response.impl.DefaultHttpResult
 import org.apache.linkis.httpclient.response.{HttpResult, ListResult, Result}
 import org.apache.commons.beanutils.BeanUtils
-import org.apache.commons.lang.{ClassUtils, StringUtils}
+import org.apache.commons.lang3.{ClassUtils, StringUtils}
 import org.apache.http.{HttpException, HttpResponse}
 
 import scala.collection.JavaConversions

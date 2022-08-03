@@ -29,7 +29,7 @@ import org.apache.linkis.scheduler.executer.{ExecuteResponse, SuccessExecuteResp
 import org.apache.linkis.storage.utils.StorageUtils
 
 import javax.annotation.PostConstruct
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.springframework.stereotype.Component
 
 

@@ -20,8 +20,8 @@ package org.apache.linkis.datasourcemanager.common.util;
 import org.apache.linkis.datasourcemanager.common.exception.JsonErrorException;
 import org.apache.linkis.datasourcemanager.common.util.json.Json;
 
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 
 import java.util.Map;
 import java.util.regex.Matcher;

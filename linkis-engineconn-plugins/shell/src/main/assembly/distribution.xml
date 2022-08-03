@@ -50,7 +50,7 @@
                 <include>*</include>
             </includes>
             <fileMode>0777</fileMode>
-            <outputDirectory>/dist/v${shell.version}/bin</outputDirectory>
+            <outputDirectory>dist/v${shell.version}/bin</outputDirectory>
             <lineEnding>unix</lineEnding>
         </fileSet>
 
@@ -60,7 +60,7 @@
                 <include>*</include>
             </includes>
             <fileMode>0777</fileMode>
-            <outputDirectory>/dist/v${shell.version}/conf</outputDirectory>
+            <outputDirectory>dist/v${shell.version}/conf</outputDirectory>
             <lineEnding>unix</lineEnding>
         </fileSet>
 
@@ -73,7 +73,7 @@
                 <exclude>*doc.jar</exclude>
             </excludes>
             <fileMode>0777</fileMode>
-            <outputDirectory>/plugin/${shell.version}</outputDirectory>
+            <outputDirectory>plugin/${shell.version}</outputDirectory>
         </fileSet>
     </fileSets>
 

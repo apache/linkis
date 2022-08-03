@@ -16,7 +16,7 @@
  */
 
 package org.apache.linkis.engineplugin.spark.args
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
 import org.apache.linkis.engineplugin.spark.common.SparkEnginePluginConst

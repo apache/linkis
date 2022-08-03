@@ -25,9 +25,10 @@ import org.apache.linkis.manager.am.util.ECResourceInfoUtils;
 import org.apache.linkis.manager.am.vo.ECResourceInfoRecordVo;
 import org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord;
 import org.apache.linkis.server.Message;
+import org.apache.linkis.server.security.SecurityFilter;
 import org.apache.linkis.server.utils.ModuleUserUtils;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,10 +39,14 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
+@Api(tags = "enginneconn resource info operation")
 @RequestMapping(
         path = "/linkisManager/ecinfo",
         produces = {"application/json"})
@@ -49,6 +54,10 @@ import java.util.stream.Collectors;
 public class ECResourceInfoRestfulApi {
     @Autowired private ECResourceInfoService ecResourceInfoService;
 
+    @ApiOperation(value = "get", notes = "get engineconn info ", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "ticketid", required = true, dataType = "String", value = "ticket id")
+    })
     @RequestMapping(path = "/get", method = RequestMethod.GET)
     public Message getECInfo(
             HttpServletRequest req, @RequestParam(value = "ticketid") String ticketid)
@@ -65,6 +74,10 @@ public class ECResourceInfoRestfulApi {
         }
     }
 
+    @ApiOperation(value = "delete", notes = "delete engineconn info", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "ticketid", required = true, dataType = "String", value = "ticket id")
+    })
     @RequestMapping(path = "/delete/{ticketid}}", method = RequestMethod.DELETE)
     public Message deleteECInfo(HttpServletRequest req, @PathVariable("ticketid") String ticketid)
             throws AMErrorException {
@@ -81,6 +94,16 @@ public class ECResourceInfoRestfulApi {
         }
     }
 
+    @ApiOperation(value = "ecrHistoryList", notes = "query engineconn resource history info list", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "instance", required = false, dataType = "String", value = "instance"),
+        @ApiImplicitParam(name = "creator", required = false, dataType = "String", value = "creator"),
+        @ApiImplicitParam(name = "startDate", required = false, dataType = "String", value = "start date"),
+        @ApiImplicitParam(name = "endDate", required = false, dataType = "String", value = "end date"),
+        @ApiImplicitParam(name = "engineType", required = false, dataType = "String", value = "engine type"),
+        @ApiImplicitParam(name = "pageNow", required = false, dataType = "String", value = "page now"),
+        @ApiImplicitParam(name = "pageSize", required = false, dataType = "String", value = "page size")
+    })
     @RequestMapping(path = "/ecrHistoryList", method = RequestMethod.GET)
     public Message queryEcrHistory(
             HttpServletRequest req,
@@ -99,14 +122,13 @@ public class ECResourceInfoRestfulApi {
             @RequestParam(value = "pageNow", required = false, defaultValue = "1") Integer pageNow,
             @RequestParam(value = "pageSize", required = false, defaultValue = "20")
                     Integer pageSize) {
-        //        String username = SecurityFilter.getLoginUsername(req);
-        String username = "hadoop";
+        String username = SecurityFilter.getLoginUsername(req);
         // Parameter judgment
         instance = ECResourceInfoUtils.strCheckAndDef(instance, null);
-        creator = ECResourceInfoUtils.strCheckAndDef(creator, null);
+        String creatorUser = ECResourceInfoUtils.strCheckAndDef(creator, null);
         engineType = ECResourceInfoUtils.strCheckAndDef(engineType, null);
-        if (null != creator && !ECResourceInfoUtils.checkNameValid(creator)) {
-            return Message.error("Invalid creator : " + creator);
+        if (null != creatorUser && !ECResourceInfoUtils.checkNameValid(creatorUser)) {
+            return Message.error("Invalid creator : " + creatorUser);
         }
         if (null == startDate) {
             Calendar calendar = Calendar.getInstance();
@@ -117,8 +139,8 @@ public class ECResourceInfoRestfulApi {
         }
         if (Configuration.isAdmin(username)) {
             username = null;
-            if (StringUtils.isNotBlank(creator)) {
-                username = creator;
+            if (StringUtils.isNotBlank(creatorUser)) {
+                username = creatorUser;
             }
         }
         List<ECResourceInfoRecordVo> list = new ArrayList<>();
@@ -128,14 +150,7 @@ public class ECResourceInfoRestfulApi {
         try {
             queryTasks =
                     ecResourceInfoService.getECResourceInfoRecordList(
-                            instance, endDate, startDate, username);
-            if (StringUtils.isNotBlank(engineType)) {
-                String finalEngineType = engineType;
-                queryTasks =
-                        queryTasks.stream()
-                                .filter(info -> info.getLabelValue().contains(finalEngineType))
-                                .collect(Collectors.toList());
-            }
+                            instance, endDate, startDate, username, engineType);
             queryTasks.forEach(
                     info -> {
                         ECResourceInfoRecordVo ecrHistroryListVo = new ECResourceInfoRecordVo();
@@ -143,11 +158,13 @@ public class ECResourceInfoRestfulApi {
                         ecrHistroryListVo.setEngineType(
                                 info.getLabelValue().split(",")[1].split("-")[0]);
                         ecrHistroryListVo.setUsedResource(
-                                ECResourceInfoUtils.getStringToMap(info.getUsedResource()));
+                                ECResourceInfoUtils.getStringToMap(info.getUsedResource(), info));
                         ecrHistroryListVo.setReleasedResource(
-                                ECResourceInfoUtils.getStringToMap(info.getReleasedResource()));
+                                ECResourceInfoUtils.getStringToMap(
+                                        info.getReleasedResource(), info));
                         ecrHistroryListVo.setRequestResource(
-                                ECResourceInfoUtils.getStringToMap(info.getRequestResource()));
+                                ECResourceInfoUtils.getStringToMap(
+                                        info.getRequestResource(), info));
                         list.add(ecrHistroryListVo);
                     });
         } finally {

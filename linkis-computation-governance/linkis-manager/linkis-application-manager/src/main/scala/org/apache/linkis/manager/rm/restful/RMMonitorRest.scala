@@ -20,6 +20,7 @@ package org.apache.linkis.manager.rm.restful
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.pagehelper.page.PageMethod
 import com.google.common.collect.Lists
+import io.swagger.annotations.{Api, ApiImplicitParams, ApiModel, ApiOperation}
 import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.manager.common.conf.RMConfiguration
@@ -61,6 +62,7 @@ import scala.collection.mutable.ArrayBuffer
 
 
 @RestController
+@Api(tags = Array("resource management"))
 @RequestMapping(path = Array("/linkisManager/rm"))
 class RMMonitorRest extends Logging {
 
@@ -109,12 +111,12 @@ class RMMonitorRest extends Logging {
   var COMBINED_USERCREATOR_ENGINETYPE: String = _
 
   def appendMessageData(message: Message, key: String, value: AnyRef): Message = message.data(key, mapper.readTree(write(value)))
-
+  @ApiOperation(value="getApplicationList",notes="get applicationList")
   @RequestMapping(path = Array("applicationlist"), method = Array(RequestMethod.POST))
   def getApplicationList(request: HttpServletRequest, @RequestBody param: util.Map[String, AnyRef]): Message = {
     val message = Message.ok("")
     val userName = ModuleUserUtils.getOperationUser(request, "applicationlist")
-    val userCreator = param.get("userCreator").asInstanceOf[String]
+    val userCreator = if (param.get("userCreator") == null) null else param.get("userCreator").asInstanceOf[String]
     val engineType = if (param.get("engineType") == null) null else param.get("engineType").asInstanceOf[String]
     val nodes = getEngineNodes(userName, true)
     val creatorToApplicationList = new mutable.HashMap[String, mutable.HashMap[String, Any]]
@@ -133,15 +135,16 @@ class RMMonitorRest extends Logging {
             creatorToApplicationList.put(userCreatorLabel.getCreator, applicationList)
           }
           val applicationList = creatorToApplicationList(userCreatorLabel.getCreator)
-          applicationList.put("usedResource", applicationList("usedResource").asInstanceOf[Resource] + node.getNodeResource.getUsedResource)
-          applicationList.put("maxResource", applicationList("maxResource").asInstanceOf[Resource] + node.getNodeResource.getMaxResource)
-          applicationList.put("minResource", applicationList("minResource").asInstanceOf[Resource] + node.getNodeResource.getMinResource)
-          applicationList.put("lockedResource", applicationList("lockedResource").asInstanceOf[Resource] + node.getNodeResource.getLockedResource)
+          applicationList.put("usedResource", (if (applicationList("usedResource") == null  ) Resource.initResource(ResourceType.LoadInstance)  else  applicationList("usedResource").asInstanceOf[Resource] ) + node.getNodeResource.getUsedResource)
+          applicationList.put("maxResource", (if (applicationList("maxResource") == null ) Resource.initResource(ResourceType.LoadInstance)    else  applicationList("maxResource").asInstanceOf[Resource] )  + node.getNodeResource.getMaxResource)
+          applicationList.put("minResource", (if (applicationList("minResource") == null ) Resource.initResource(ResourceType.LoadInstance)    else  applicationList("minResource").asInstanceOf[Resource] ) + node.getNodeResource.getMinResource)
+          applicationList.put("lockedResource",  (if (applicationList("lockedResource") == null ) Resource.initResource(ResourceType.LoadInstance)   else   applicationList("lockedResource").asInstanceOf[Resource] ) + node.getNodeResource.getLockedResource)
           val engineInstance = new mutable.HashMap[String, Any]
           engineInstance.put("creator", userCreatorLabel.getCreator)
           engineInstance.put("engineType", engineTypeLabel.getEngineType)
           engineInstance.put("instance", node.getServiceInstance.getInstance)
           engineInstance.put("label", engineTypeLabel.getStringValue)
+          node.setNodeResource(ResourceUtils.convertTo(node.getNodeResource, ResourceType.LoadInstance))
           engineInstance.put("resource", node.getNodeResource)
           if (node.getNodeStatus == null) {
             engineInstance.put("status", "Busy")
@@ -164,6 +167,7 @@ class RMMonitorRest extends Logging {
     message
   }
 
+  @ApiOperation(value="resetUserResource",notes="reset user resource")
   @RequestMapping(path = Array("resetResource"), method = Array(RequestMethod.DELETE))
   def resetUserResource(request: HttpServletRequest, @RequestParam(value = "resourceId", required = false) resourceId: Integer): Message = {
     val queryUser = SecurityFilter.getLoginUser(request)
@@ -179,6 +183,7 @@ class RMMonitorRest extends Logging {
     Message.ok("success")
   }
 
+  @ApiOperation(value="listAllEngineType",notes="list all engineType")
   @RequestMapping(path = Array("engineType"), method = Array(RequestMethod.GET))
   def listAllEngineType(request: HttpServletRequest): Message = {
     val engineTypeString = RMUtils.ENGINE_TYPE.getValue
@@ -186,6 +191,7 @@ class RMMonitorRest extends Logging {
    Message.ok.data("engineType", engineTypeList)
   }
 
+  @ApiOperation(value="getAllUserResource",notes="get all user resource")
   @RequestMapping(path = Array("allUserResource"), method = Array(RequestMethod.GET))
   def getAllUserResource(request: HttpServletRequest, @RequestParam(value = "username", required = false) username: String,
                          @RequestParam(value = "creator", required = false) creator: String, @RequestParam(value = "engineType", required = false) engineType: String,
@@ -230,6 +236,7 @@ class RMMonitorRest extends Logging {
     Message.ok().data("resources", userResources).data("total", resultPage.getTotal)
   }
 
+  @ApiOperation(value="getUserResource", notes="get user resource")
   @RequestMapping(path = Array("userresources"), method = Array(RequestMethod.POST))
   def getUserResource(request: HttpServletRequest, @RequestBody(required = false) param: util.Map[String, AnyRef]): Message = {
     val message = Message.ok("")
@@ -337,7 +344,7 @@ class RMMonitorRest extends Logging {
   }
 
 
-
+  @ApiOperation(value="getEngines",notes="get engines")
   @RequestMapping(path = Array("engines"), method = Array(RequestMethod.POST))
   def getEngines(request: HttpServletRequest, @RequestBody(required = false) param: util.Map[String, AnyRef]): Message = {
     val message = Message.ok("")
@@ -371,7 +378,7 @@ class RMMonitorRest extends Logging {
     appendMessageData(message, "engines", engines)
   }
 
-
+  @ApiOperation(value="getQueueResource",notes="get queue resource")
   @RequestMapping(path = Array("queueresources"), method = Array(RequestMethod.POST))
   def getQueueResource(request: HttpServletRequest, @RequestBody param: util.Map[String, AnyRef]): Message = {
     val message = Message.ok("")
@@ -457,6 +464,7 @@ class RMMonitorRest extends Logging {
     appendMessageData(message, "userResources", userResourceRecords)
   }
 
+  @ApiOperation(value="getQueues",notes="get queues")
   @RequestMapping(path = Array("queues"), method = Array(RequestMethod.POST))
   def getQueues(request: HttpServletRequest, @RequestBody(required = false) param: util.Map[String, AnyRef]): Message = {
     val message = Message.ok()

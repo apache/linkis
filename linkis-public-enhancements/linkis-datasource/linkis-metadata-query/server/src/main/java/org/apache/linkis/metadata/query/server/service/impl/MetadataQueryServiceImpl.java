@@ -31,7 +31,7 @@ import org.apache.linkis.metadata.query.server.loader.MetaClassLoaderManager;
 import org.apache.linkis.metadata.query.server.service.MetadataQueryService;
 import org.apache.linkis.rpc.Sender;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import org.springframework.stereotype.Service;
 

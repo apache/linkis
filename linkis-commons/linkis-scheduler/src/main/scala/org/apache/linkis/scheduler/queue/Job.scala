@@ -31,10 +31,8 @@ import org.apache.linkis.scheduler.executer._
 import org.apache.linkis.scheduler.future.BDPFuture
 import org.apache.linkis.scheduler.listener._
 import org.apache.commons.io.IOUtils
-import org.apache.commons.lang.StringUtils
-import org.apache.commons.lang.exception.ExceptionUtils
-
-
+import org.apache.commons.lang3.StringUtils
+import org.apache.commons.lang3.exception.ExceptionUtils
 
 abstract class Job extends Runnable with SchedulerEvent with Closeable with Logging {
 
@@ -56,14 +54,15 @@ abstract class Job extends Runnable with SchedulerEvent with Closeable with Logg
   private var retryNum = 0
   private[linkis] var errorExecuteResponse: ErrorExecuteResponse = _
 
-  override def isWaiting = super.isWaiting && !interrupt
-  override def isCompleted = super.isCompleted || interrupt
+  override def isWaiting: Boolean = super.isWaiting && !interrupt
+
+  override def isCompleted: Boolean = super.isCompleted || interrupt
 
   def kill(): Unit = onFailure("Job is killed by user!", null)
 
-  private[queue] def getJobDaemon = if(!existsJobDaemon) None else {
-    if(jobDaemon.isEmpty) synchronized {
-      if(jobDaemon.isEmpty) jobDaemon = Some(createJobDaemon)
+  private[queue] def getJobDaemon = if (!existsJobDaemon) None else {
+    if (jobDaemon.isEmpty) synchronized {
+      if (jobDaemon.isEmpty) jobDaemon = Some(createJobDaemon)
     }
     jobDaemon
   }
@@ -72,39 +71,39 @@ abstract class Job extends Runnable with SchedulerEvent with Closeable with Logg
 
   override def getId(): String = super.getId
 
-  override def pause(): Unit = if(executor != null) executor match {
+  override def pause(): Unit = if (executor != null) executor match {
     case s: SingleTaskOperateSupport => s.pause()
     case c: ConcurrentTaskOperateSupport => c.pause(getId)
     case _ =>
   }
 
 
-  override def resume(): Unit = if(executor != null) executor match {
+  override def resume(): Unit = if (executor != null) executor match {
     case s: SingleTaskOperateSupport => s.resume()
     case c: ConcurrentTaskOperateSupport => c.resume(getId)
     case _ =>
   }
 
-  private def killByExecutor(): Unit = if(executor != null) executor match {
+  private def killByExecutor(): Unit = if (executor != null) executor match {
     case s: SingleTaskOperateSupport => s.kill()
     case c: ConcurrentTaskOperateSupport => c.kill(getId)
     case _ =>
   }
 
-  def onFailure(errorMsg: String, t: Throwable): Unit = if(!SchedulerEventState.isCompleted(getState)) {
+  def onFailure(errorMsg: String, t: Throwable): Unit = if (!SchedulerEventState.isCompleted(getState)) {
     logger.info(s"job $toString is onFailure on state $getState with errorMsg: $errorMsg.")
     Utils.tryAndWarn {
       logListener.foreach(_.onLogUpdate(this, LogUtils.generateERROR(errorMsg)))
       if(t != null) {
-        logListener.foreach(_.onLogUpdate(this, LogUtils.generateERROR(ExceptionUtils.getFullStackTrace(t))))
+        logListener.foreach(_.onLogUpdate(this, LogUtils.generateERROR(ExceptionUtils.getStackTrace(t))))
       }
     }
     errorExecuteResponse = ErrorExecuteResponse(errorMsg, t)
     jobDaemon.foreach(_.kill())
     interrupt = true
-    if(future != null && !SchedulerEventState.isCompleted(getState)) {
-      Utils.tryCatch(killByExecutor()){
-        t:Throwable => logger.error(s"kill job $getName failed", t)
+    if (future != null && !SchedulerEventState.isCompleted(getState)) {
+      Utils.tryCatch(killByExecutor()) {
+        t: Throwable => logger.error(s"kill job $getName failed", t)
           val s = new ErrorException(23333, s"kill job $getName failed")
           s.initCause(t)
           forceCancel(s)
@@ -112,7 +111,7 @@ abstract class Job extends Runnable with SchedulerEvent with Closeable with Logg
       //Utils.tryAndWarnMsg(killByExecutor())(s"kill job $toString failed!")
       future.cancel(true)
     }
-    if (consumerFuture != null && executor == null){
+    if (consumerFuture != null && executor == null) {
       logger.warn(s"This executor of job($toString) in starting status,When kill job need to interrupter consumer Future")
       this.consumerFuture.cancel()
       this.consumerFuture = null
@@ -131,27 +130,27 @@ abstract class Job extends Runnable with SchedulerEvent with Closeable with Logg
   }
 
 
-  def setListenerEventBus(eventListenerBus: ListenerEventBus[_<: SchedulerListener, _<: ScheduleEvent]) = this.eventListenerBus = eventListenerBus
+  def setListenerEventBus(eventListenerBus: ListenerEventBus[_ <: SchedulerListener, _ <: ScheduleEvent]): Unit = this.eventListenerBus = eventListenerBus
 
-  def setExecutor(executor: Executor) = this.executor = executor
+  def setExecutor(executor: Executor): Unit = this.executor = executor
   protected def getExecutor = executor
 
-  def setJobListener(jobListener: JobListener) = this.jobListener = Some(jobListener)
+  def setJobListener(jobListener: JobListener): Unit = this.jobListener = Some(jobListener)
 
-  def getJobListener = jobListener
+  def getJobListener: Option[JobListener] = jobListener
 
-  def setLogListener(logListener: LogListener) = this.logListener = Some(logListener)
+  def setLogListener(logListener: LogListener): Unit = this.logListener = Some(logListener)
 
-  def getLogListener = logListener
+  def getLogListener: Option[LogListener] = logListener
 
 
-  def setProgressListener(progressListener: ProgressListener) = this.progressListener = Some(progressListener)
+  def setProgressListener(progressListener: ProgressListener): Unit = this.progressListener = Some(progressListener)
 
-  def getProgressListener = progressListener
+  def getProgressListener: Option[ProgressListener] = progressListener
 
-  def getProgress = progress
+  def getProgress: Float = progress
 
-  def setProgress(progress: Float) = this.progress = progress
+  def setProgress(progress: Float): Unit = this.progress = progress
 
   @throws[Exception]
   def init(): Unit
@@ -163,13 +162,13 @@ abstract class Job extends Runnable with SchedulerEvent with Closeable with Logg
 
   def getJobInfo: JobInfo
 
-  def getErrorResponse = errorExecuteResponse
+  def getErrorResponse: ErrorExecuteResponse = errorExecuteResponse
 
   protected def existsJobDaemon: Boolean = false
 
   protected def createJobDaemon: JobDaemon = new JobDaemon(this, jobDaemonUpdateInterval, executor)
 
-  protected def jobDaemonUpdateInterval: Long = 1000l
+  protected def jobDaemonUpdateInterval: Long = 1000L
 
   override def beforeStateChanged(fromState: SchedulerEventState, toState: SchedulerEventState): Unit = toState match {
     case Succeed | Failed | Cancelled | Timeout =>
@@ -187,7 +186,7 @@ abstract class Job extends Runnable with SchedulerEvent with Closeable with Logg
     //TODO Add event（加事件）
     case Running =>
       jobListener.foreach(_.onJobRunning(this))
-      logListener.foreach(_.onLogUpdate(this, LogUtils.generateInfo( "job is running.")))
+      logListener.foreach(_.onLogUpdate(this, LogUtils.generateInfo("job is running.")))
       //TODO job start event
     case WaitForRetry =>
       jobListener.foreach(_.onJobWaitForRetry(this))
@@ -195,7 +194,7 @@ abstract class Job extends Runnable with SchedulerEvent with Closeable with Logg
       jobDaemon.foreach(_.kill())
       jobListener.foreach(_.onJobCompleted(this))
 //      if(getJobInfo != null) logListener.foreach(_.onLogUpdate(this, getJobInfo.getMetric))
-      logListener.foreach(_.onLogUpdate(this,  LogUtils.generateInfo( "job is completed.")))
+      logListener.foreach(_.onLogUpdate(this, LogUtils.generateInfo("job is completed.")))
     //TODO job end event
   }
 
@@ -208,7 +207,7 @@ abstract class Job extends Runnable with SchedulerEvent with Closeable with Logg
       case e: ErrorExecuteResponse =>
         val canRetry = Utils.tryCatch(isJobShouldRetry(e)) {t =>
           logger.error(s"Job $toString failed to get the retry information!", t)
-          Utils.tryAndWarn(logListener.foreach(_.onLogUpdate(this, LogUtils.generateERROR("failed to get the retry information! " + ExceptionUtils.getFullStackTrace(t)))))
+          Utils.tryAndWarn(logListener.foreach(_.onLogUpdate(this, LogUtils.generateERROR("failed to get the retry information! " + ExceptionUtils.getStackTrace(t)))))
           if(e.t == null) errorExecuteResponse = ErrorExecuteResponse(e.message, t)
           false
         }
@@ -218,14 +217,14 @@ abstract class Job extends Runnable with SchedulerEvent with Closeable with Logg
           return
         } else {
           errorExecuteResponse = e
-          Utils.tryAndWarnMsg(transition(if(interrupt && errorExecuteResponse.t == null) Cancelled else Failed))(s"update Job $toString from $state to Failed failed.")
+          Utils.tryAndWarnMsg(transition(if (interrupt && errorExecuteResponse.t == null) Cancelled else Failed))(s"update Job $toString from $state to Failed failed.")
         }
     }
     endTime = System.currentTimeMillis
     IOUtils.closeQuietly(this)
   }
   def isJobSupportRetry: Boolean = true
-  def getRetryNum = retryNum
+  def getRetryNum: Int = retryNum
   protected def getMaxRetryNum: Int = 2
   protected def isJobShouldRetry(errorExecuteResponse: ErrorExecuteResponse): Boolean =
     isJobSupportRetry && errorExecuteResponse != null && (errorExecuteResponse.t match {
@@ -234,16 +233,16 @@ abstract class Job extends Runnable with SchedulerEvent with Closeable with Logg
         t.getErrCode == LinkisJobRetryException.JOB_RETRY_ERROR_CODE
       case _ => false
     })
-  final def isJobCanRetry: Boolean = if(!isJobSupportRetry || getState != WaitForRetry) false else synchronized {
-    if(getState == WaitForRetry && (getMaxRetryNum < 1 || retryNum < getMaxRetryNum)) true
-    else if(WaitForRetry == getState && getMaxRetryNum > 0 && retryNum >= getMaxRetryNum) {
-      logListener.foreach(_.onLogUpdate(this,  LogUtils.generateInfo( s"Job cancelled since reached maxRetryNum $getMaxRetryNum.")))
+  final def isJobCanRetry: Boolean = if (!isJobSupportRetry || getState != WaitForRetry) false else synchronized {
+    if (getState == WaitForRetry && (getMaxRetryNum < 1 || retryNum < getMaxRetryNum)) true
+    else if (WaitForRetry == getState && getMaxRetryNum > 0 && retryNum >= getMaxRetryNum) {
+      logListener.foreach(_.onLogUpdate(this, LogUtils.generateInfo(s"Job cancelled since reached maxRetryNum $getMaxRetryNum.")))
       transition(Failed)
       false
     } else false
   }
-  final def turnToRetry(): Boolean = if(!isJobSupportRetry || getState != WaitForRetry) false else synchronized (Utils.tryThrow {
-    if(isJobCanRetry) {
+  final def turnToRetry(): Boolean = if (!isJobSupportRetry || getState != WaitForRetry) false else synchronized (Utils.tryThrow {
+    if (isJobCanRetry) {
       transition(Scheduled)
       retryNum += 1
       true
@@ -254,7 +253,7 @@ abstract class Job extends Runnable with SchedulerEvent with Closeable with Logg
   })
 
   override def run(): Unit = {
-    if(!isScheduled || interrupt) return
+    if (!isScheduled || interrupt) return
     startTime = System.currentTimeMillis
     Utils.tryAndWarn(transition(Running))
     if(interrupt) {
@@ -263,7 +262,7 @@ abstract class Job extends Runnable with SchedulerEvent with Closeable with Logg
       close()
       return
     }
-    val rs = Utils.tryCatch(executor.execute(jobToExecuteRequest)){
+    val rs = Utils.tryCatch(executor.execute(jobToExecuteRequest)) {
       case t: InterruptedException =>
         logger.warn(s"job $toString is interrupted by user!", t)
         ErrorExecuteResponse("job is interrupted by user!", t)
@@ -275,12 +274,12 @@ abstract class Job extends Runnable with SchedulerEvent with Closeable with Logg
       case r: CompletedExecuteResponse =>
         transitionCompleted(r)
       case r: IncompleteExecuteResponse =>
-        transitionCompleted(ErrorExecuteResponse(if(StringUtils.isNotEmpty(r.message)) r.message else "incomplete code.", null))
+        transitionCompleted(ErrorExecuteResponse(if (StringUtils.isNotEmpty(r.message)) r.message else "incomplete code.", null))
       case r: AsynReturnExecuteResponse =>
         r.notify(r1 => {
-          val realRS = if(interrupt) errorExecuteResponse else r1 match {
+          val realRS = if (interrupt) errorExecuteResponse else r1 match {
             case r: IncompleteExecuteResponse =>
-              ErrorExecuteResponse(if(StringUtils.isNotEmpty(r.message)) r.message else "incomplete code.", null)
+              ErrorExecuteResponse(if (StringUtils.isNotEmpty(r.message)) r.message else "incomplete code.", null)
             case r: CompletedExecuteResponse => r
           }
           transitionCompleted(realRS)
@@ -288,7 +287,7 @@ abstract class Job extends Runnable with SchedulerEvent with Closeable with Logg
     }
   }
 
-  override def toString: String = if(StringUtils.isNotBlank(getName)) getName else getId
+  override def toString: String = if (StringUtils.isNotBlank(getName)) getName else getId
 }
 
 /**
@@ -315,7 +314,7 @@ class JobDaemon(job: Job, listenerUpdateIntervalMs: Long, executor: Executor) ex
     case _ => ""
   }
   override def run(): Unit = {
-    if(listenerUpdateIntervalMs < 10) return
+    if (listenerUpdateIntervalMs < 10) return
     executor match {
       case _: SingleTaskInfoSupport =>
       case _: ConcurrentTaskInfoSupport =>
@@ -336,8 +335,8 @@ class JobDaemon(job: Job, listenerUpdateIntervalMs: Long, executor: Executor) ex
     }
   }
 
-  def kill() = {
+  def kill(): AnyVal = {
     terminate = true
-    if(future != null && !future.isDone) future.cancel(true)
+    if (future != null && !future.isDone) future.cancel(true)
   }
 }

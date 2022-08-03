@@ -30,8 +30,7 @@ import org.apache.linkis.manager.common.protocol.engine.EngineLockType
 import org.apache.linkis.manager.common.protocol.{RequestEngineLock, RequestEngineUnlock, ResponseEngineLock, ResponseEngineUnlock}
 import org.apache.linkis.rpc.message.annotation.Receiver
 import org.apache.linkis.server.BDPJettyServerHelper
-import org.apache.commons.lang.StringUtils
-
+import org.apache.commons.lang3.StringUtils
 
 class EngineConnTimedLockService extends LockService with Logging {
 
@@ -90,8 +89,14 @@ class EngineConnTimedLockService extends LockService with Logging {
     // Lock is binded to engineconn, so choose default executor
     ExecutorManager.getInstance.getReportExecutor match {
       case accessibleExecutor: AccessibleExecutor =>
-        logger.debug("try to lock for executor state is " + accessibleExecutor.getStatus)
-        logger.debug("try to lock for executor id is " + accessibleExecutor.getId)
+        if (logger.isDebugEnabled) {
+          logger.debug("try to lock for executor state is " + accessibleExecutor.getStatus)
+          logger.debug("try to lock for executor id is " + accessibleExecutor.getId)
+        }
+        if (NodeStatus.isCompleted(accessibleExecutor.getStatus)) {
+          logger.error(s"Cannot to lock completed ${accessibleExecutor.getStatus} stats executor")
+          return None
+        }
         if (null == engineConnLock) {
           engineConnLock = new EngineConnTimedLock(timeout)
           ExecutorListenerBusContext.getExecutorListenerBusContext().getEngineConnAsyncListenerBus.addListener(engineConnLock)

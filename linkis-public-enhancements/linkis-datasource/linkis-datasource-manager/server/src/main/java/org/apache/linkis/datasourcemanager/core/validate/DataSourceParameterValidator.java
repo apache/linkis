@@ -21,7 +21,7 @@ import org.apache.linkis.datasourcemanager.common.domain.DataSourceParamKeyDefin
 import org.apache.linkis.datasourcemanager.core.validate.strategy.RegExpParameterValidateStrategy;
 import org.apache.linkis.datasourcemanager.core.validate.strategy.TypeParameterValidateStrategy;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import org.springframework.stereotype.Component;
 

@@ -46,11 +46,16 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 import javax.validation.groups.Default;
 
+import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+@Api(tags = "data source operate restful api")
 @RestController
 @RequestMapping(
         value = "/data-source-manager/op/",
@@ -76,6 +81,8 @@ public class DataSourceOperateRestfulApi {
         this.formDataTransformer = FormDataTransformerFactory.buildCustom();
     }
 
+    @ApiOperation(value = "connect", notes = "connect", response = Message.class)
+    @ApiOperationSupport(ignoreParameters = {"dataSource"})
     @RequestMapping(value = "/connect/json", method = RequestMethod.POST)
     public Message connect(@RequestBody DataSource dataSource, HttpServletRequest request) {
         return RestfulApiHelper.doAndResponse(

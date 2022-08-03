@@ -17,7 +17,7 @@
 
 package org.apache.linkis.entrance.interceptor.impl
 
-import org.apache.commons.lang.time.DateFormatUtils
+import org.apache.commons.lang3.time.DateFormatUtils
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.entrance.exception.{EntranceErrorCode, EntranceErrorException}
 import org.apache.linkis.entrance.interceptor.EntranceInterceptor

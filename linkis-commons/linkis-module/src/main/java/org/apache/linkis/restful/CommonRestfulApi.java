@@ -28,12 +28,16 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 
 import com.netflix.discovery.DiscoveryManager;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
+@Api(tags = "common api for all service")
 @RestController
 @RequestMapping(path = "/")
 public class CommonRestfulApi {
     @Autowired private DiscoveryClient client;
 
+    @ApiOperation(value = "Offline", notes = "offline this service", response = Message.class)
     @RequestMapping(path = "/offline", method = RequestMethod.GET)
     public Message offline(HttpServletRequest req) {
         DiscoveryManager.getInstance().shutdownComponent();

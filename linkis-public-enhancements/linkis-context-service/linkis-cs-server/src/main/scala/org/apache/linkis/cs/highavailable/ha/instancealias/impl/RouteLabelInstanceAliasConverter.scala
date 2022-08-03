@@ -30,7 +30,7 @@ import org.apache.linkis.manager.label.constant.LabelKeyConstant
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.route.RouteLabel
 import org.apache.linkis.rpc.Sender
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.springframework.stereotype.Component
 
 import java.util

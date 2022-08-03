@@ -28,8 +28,8 @@ import org.apache.linkis.rpc.interceptor.ServiceInstanceUtils
 import org.apache.linkis.rpc.sender.SpringCloudFeignConfigurationCache
 import org.apache.linkis.server.Message
 import org.apache.linkis.server.exception.NoApplicationExistsException
-import org.apache.commons.lang.StringUtils
-import org.apache.commons.lang.exception.ExceptionUtils
+import org.apache.commons.lang3.StringUtils
+import org.apache.commons.lang3.exception.ExceptionUtils
 
 trait GatewayRouter {
 

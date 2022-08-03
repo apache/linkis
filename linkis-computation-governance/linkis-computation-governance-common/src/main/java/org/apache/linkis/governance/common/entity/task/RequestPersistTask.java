@@ -20,8 +20,8 @@ package org.apache.linkis.governance.common.entity.task;
 import org.apache.linkis.manager.label.entity.Label;
 import org.apache.linkis.protocol.task.Task;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.Date;
 import java.util.List;

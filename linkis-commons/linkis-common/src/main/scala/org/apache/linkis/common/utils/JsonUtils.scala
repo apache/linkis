@@ -24,8 +24,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 
 object JsonUtils {
 
-  //TODO add gson
-
   implicit val jackson = new ObjectMapper().setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ"))
 
 }

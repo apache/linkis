@@ -17,6 +17,8 @@
 
 package org.apache.linkis.metadata.hive.dao;
 
+import org.apache.linkis.metadata.hive.dto.MetadataQueryParam;
+
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -24,28 +26,54 @@ import java.util.Map;
 
 public interface HiveMetaDao {
 
-    String getLocationByDbAndTable(Map<String, String> map);
+    String getLocationByDbAndTable(MetadataQueryParam queryParam);
 
-    List<String> getDbsByUser(String userName);
+    /**
+     * get user's roles by username
+     *
+     * @param userName user's username
+     * @return the role name list
+     */
+    List<String> getRolesByUser(String userName);
 
-    /** @return get all list of DBS NAME without filtering by userName */
+    /**
+     * get dbs by user's username and user's roles
+     *
+     * @param userName user's username
+     * @param roles user's roles
+     * @return the db name list
+     */
+    List<String> getDbsByUserAndRoles(
+            @Param("userName") String userName, @Param("roles") List<String> roles);
+
+    /**
+     * get all list of DBS NAME
+     *
+     * @return the db name list
+     */
     List<String> getAllDbs();
 
-    List<Map<String, Object>> getTablesByDbNameAndUser(Map<String, String> map);
+    List<Map<String, Object>> getTablesByDbNameAndUserAndRoles(MetadataQueryParam queryParam);
 
-    List<Map<String, Object>> getTablesByDbName(Map<String, String> map);
+    List<Map<String, Object>> getTablesByDbName(MetadataQueryParam queryParam);
 
-    Long getPartitionSize(Map<String, String> map);
+    /**
+     * get the table partition's size
+     *
+     * @param queryParam the database search properties
+     * @return the size
+     */
+    Long getPartitionSize(MetadataQueryParam queryParam);
 
-    List<String> getPartitions(Map<String, String> map);
+    List<String> getPartitions(MetadataQueryParam queryParam);
 
-    List<Map<String, Object>> getColumns(Map<String, String> map);
+    List<Map<String, Object>> getColumns(MetadataQueryParam queryParam);
 
-    Map<String, Object> getStorageDescriptionIDByDbTableNameAndUser(Map<String, String> map);
+    Map<String, Object> getStorageDescriptionIDByDbTableNameAndUser(MetadataQueryParam queryParam);
 
-    List<Map<String, Object>> getColumnsByStorageDescriptionID(Map<String, String> map);
+    List<Map<String, Object>> getColumnsByStorageDescriptionID(MetadataQueryParam queryParam);
 
-    List<Map<String, Object>> getPartitionKeys(Map<String, String> map);
+    List<Map<String, Object>> getPartitionKeys(MetadataQueryParam queryParam);
 
     String getTableComment(@Param("DbName") String DbName, @Param("tableName") String tableName);
 }

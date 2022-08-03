@@ -18,33 +18,37 @@ package org.apache.linkis.engineplugin.presto
 
 import java.util
 
+import org.apache.linkis.engineplugin.presto.builder.PrestoProcessEngineConnLaunchBuilder
+import org.apache.linkis.engineplugin.presto.factory.PrestoEngineConnFactory
 import org.apache.linkis.manager.engineplugin.common.EngineConnPlugin
 import org.apache.linkis.manager.engineplugin.common.creation.EngineConnFactory
 import org.apache.linkis.manager.engineplugin.common.launch.EngineConnLaunchBuilder
 import org.apache.linkis.manager.engineplugin.common.resource.{EngineResourceFactory, GenericEngineResourceFactory}
 import org.apache.linkis.manager.label.entity.Label
-import org.apache.linkis.engineplugin.presto.builder.PrestoProcessEngineConnLaunchBuilder
-import org.apache.linkis.engineplugin.presto.factory.PrestoEngineConnFactory
 
 class PrestoEngineConnPlugin extends EngineConnPlugin {
 
+  private val resourceLocker = new Object()
+
+  private val engineLaunchBuilderLocker = new Object()
+
+  private val engineFactoryLocker = new Object()
+
   private var engineResourceFactory: EngineResourceFactory = _
+
+  private var engineLaunchBuilder: EngineConnLaunchBuilder = _
 
   private var engineFactory: EngineConnFactory = _
 
   private val defaultLabels: util.List[Label[_]] = new util.ArrayList[Label[_]]()
-
-  private val resourceLocker = new Array[Byte](0)
-
-  private val engineFactoryLocker = new Array[Byte](0)
 
   override def init(params: util.Map[String, Any]): Unit = {
 
   }
 
   override def getEngineResourceFactory: EngineResourceFactory = {
-    if (null == engineResourceFactory) resourceLocker.synchronized {
-      if (null == engineResourceFactory) engineResourceFactory = new GenericEngineResourceFactory
+    if (null == engineResourceFactory) resourceLocker synchronized {
+      engineResourceFactory = new GenericEngineResourceFactory
     }
     engineResourceFactory
   }
@@ -54,8 +58,8 @@ class PrestoEngineConnPlugin extends EngineConnPlugin {
   }
 
   override def getEngineConnFactory: EngineConnFactory = {
-    if (null == engineFactory) engineFactoryLocker.synchronized {
-      if (null == engineFactory) engineFactory = new PrestoEngineConnFactory
+    if (null == engineFactory) engineFactoryLocker synchronized {
+      engineFactory = new PrestoEngineConnFactory
     }
     engineFactory
   }

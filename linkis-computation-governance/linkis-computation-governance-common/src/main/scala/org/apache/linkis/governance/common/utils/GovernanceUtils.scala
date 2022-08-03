@@ -17,10 +17,12 @@
 
 package org.apache.linkis.governance.common.utils
 
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 
+import java.util
 import java.io.File
 
 object GovernanceUtils extends Logging{
@@ -44,6 +46,24 @@ object GovernanceUtils extends Logging{
       } { t =>
         logger.error(s"Kill error! desc: $desc.", t)
       }
+    }
+  }
+
+  def killYarnJobApp(appIds: util.List[String]): Unit = {
+    if (appIds == null || appIds.isEmpty) return
+    val cmdArr = new Array[String](appIds.size + 2)
+    cmdArr(0) = "sh"
+    cmdArr(1) = GovernanceCommonConf.ENGINE_CONN_YARN_APP_KILL_SCRIPTS_PATH.getValue
+    for (i <- 0 until appIds.size) {
+      cmdArr(i + 2) = appIds.get(i)
+    }
+
+    logger.info("Starting to kill yarn applications." + " Kill Command: " + cmdArr.mkString(" "))
+    Utils.tryCatch {
+      val output = Utils.exec(cmdArr, 600 * 1000L)
+      logger.error(s"Kill yarn applications successfully! msg: $output.")
+    } {
+      t => logger.error(s"Kill yarn applications failed!", t)
     }
   }
 

@@ -31,7 +31,7 @@ import org.apache.linkis.manager.label.entity.engine.{CodeLanguageLabel, EngineT
 import org.apache.linkis.udf.UDFClient
 import org.apache.linkis.udf.utils.ConstantVar
 import org.apache.commons.io.{FileUtils, IOUtils}
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.engineconn.core.engineconn.EngineConnManager
 import org.apache.linkis.engineconn.executor.entity.Executor

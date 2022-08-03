@@ -17,7 +17,7 @@
 
 package org.apache.linkis.bml.service;
 
-import org.apache.linkis.bml.Entity.DownloadModel;
+import org.apache.linkis.bml.entity.DownloadModel;
 
 public interface DownloadService {
     public void addDownloadRecord(DownloadModel downloadModel);

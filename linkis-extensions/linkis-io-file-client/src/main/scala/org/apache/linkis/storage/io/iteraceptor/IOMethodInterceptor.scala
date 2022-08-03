@@ -18,7 +18,7 @@
 package org.apache.linkis.storage.io.iteraceptor
 
 import com.google.gson.reflect.TypeToken
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.io.FsPath
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.manager.label.constant.LabelKeyConstant

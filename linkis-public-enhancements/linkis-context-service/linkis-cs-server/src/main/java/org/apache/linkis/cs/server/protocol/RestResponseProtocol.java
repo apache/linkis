@@ -19,7 +19,7 @@ package org.apache.linkis.cs.server.protocol;
 
 import org.apache.linkis.server.Message;
 
-import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import org.springframework.util.StringUtils;
 
@@ -97,7 +97,7 @@ public class RestResponseProtocol implements HttpResponseProtocol<Message> {
         }
         message.setMessage(msg);
         if (t != null) {
-            message.$less$less("stack", ExceptionUtils.getFullStackTrace(t));
+            message.$less$less("stack", ExceptionUtils.getStackTrace(t));
         }
     }
 }

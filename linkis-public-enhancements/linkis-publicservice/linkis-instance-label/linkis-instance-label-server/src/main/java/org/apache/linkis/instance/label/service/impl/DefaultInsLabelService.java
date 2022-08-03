@@ -37,7 +37,7 @@ import org.apache.linkis.manager.label.entity.Label;
 import org.apache.linkis.manager.label.utils.LabelUtils;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,7 +58,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import static org.apache.commons.lang.math.NumberUtils.isNumber;
+import static org.apache.commons.lang3.math.NumberUtils.isCreatable;
 
 @AdapterMode
 @EnableAspectJAutoProxy(proxyTargetClass = true, exposeProxy = true)
@@ -323,10 +323,10 @@ public class DefaultInsLabelService implements InsLabelAccessService {
     private boolean isIPAddress(String tmpURL) {
         String[] urlArray = tmpURL.split(".");
         if (urlArray.length == 4) {
-            if (isNumber(urlArray[0])
-                    && isNumber(urlArray[1])
-                    && isNumber(urlArray[2])
-                    && isNumber(urlArray[3])) {
+            if (isCreatable(urlArray[0])
+                    && isCreatable(urlArray[1])
+                    && isCreatable(urlArray[2])
+                    && isCreatable(urlArray[3])) {
                 return true;
             }
         }

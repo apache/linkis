@@ -17,7 +17,7 @@
  
 package org.apache.linkis.manager.engineplugin.common.launch.process
 
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 
 
 object Environment extends Enumeration {

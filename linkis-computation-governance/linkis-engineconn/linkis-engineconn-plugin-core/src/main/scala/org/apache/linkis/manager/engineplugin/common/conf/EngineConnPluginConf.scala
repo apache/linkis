@@ -24,7 +24,7 @@ object EngineConnPluginConf {
 
   val JAVA_ENGINE_REQUEST_MEMORY = CommonVars[ByteType]("wds.linkis.engineconn.java.driver.memory", new ByteType("1g"))
 
-  val JAVA_ENGINE_REQUEST_CORES = CommonVars[Int]("wds.linkis.engineconn.java.driver.cores", 2)
+  val JAVA_ENGINE_REQUEST_CORES = CommonVars[Int]("wds.linkis.engineconn.java.driver.cores", 1)
 
   val JAVA_ENGINE_REQUEST_INSTANCE = 1
 

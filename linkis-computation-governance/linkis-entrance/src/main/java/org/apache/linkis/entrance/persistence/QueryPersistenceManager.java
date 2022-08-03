@@ -31,7 +31,7 @@ import org.apache.linkis.scheduler.executer.OutputExecuteResponse;
 import org.apache.linkis.scheduler.queue.Job;
 import org.apache.linkis.server.BDPJettyServerHelper;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,13 +40,11 @@ import scala.Option;
 import scala.Tuple2;
 
 public class QueryPersistenceManager extends PersistenceManager {
+    private static final Logger logger = LoggerFactory.getLogger(QueryPersistenceManager.class);
 
     private EntranceContext entranceContext;
     private PersistenceEngine persistenceEngine;
     private ResultSetEngine resultSetEngine;
-    private static final Logger logger = LoggerFactory.getLogger(QueryPersistenceManager.class);
-    //  private EntranceWebSocketService entranceWebSocketService; //TODO The latter version, to be
-    // removed, webSocket unified walk ListenerBus(后面的版本，要去掉，webSocket统一走ListenerBus)
 
     private CliHeartbeatMonitor cliHeartbeatMonitor;
 
@@ -65,13 +63,6 @@ public class QueryPersistenceManager extends PersistenceManager {
     public void setResultSetEngine(ResultSetEngine resultSetEngine) {
         this.resultSetEngine = resultSetEngine;
     }
-
-    // TODO The latter version, to be removed, webSocket unified walk
-    // ListenerBus(后面的版本，要去掉，webSocket统一走ListenerBus)
-    //    public void setEntranceWebSocketService(EntranceWebSocketService entranceWebSocketService)
-    // {
-    //        this.entranceWebSocketService = entranceWebSocketService;
-    //    }
 
     @Override
     public EntranceContext getEntranceContext() {

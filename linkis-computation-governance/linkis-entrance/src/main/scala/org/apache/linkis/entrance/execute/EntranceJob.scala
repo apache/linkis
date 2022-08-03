@@ -17,7 +17,7 @@
 
 package org.apache.linkis.entrance.execute
 
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.entrance.EntranceContext

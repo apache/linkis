@@ -35,7 +35,8 @@ import org.apache.linkis.manager.common.protocol.engine.EngineConnStatusCallback
 import org.apache.linkis.manager.engineplugin.common.launch.entity.EngineConnLaunchRequest
 import org.apache.linkis.rpc.Sender
 import org.apache.commons.io.IOUtils
-import org.apache.commons.lang.exception.ExceptionUtils
+import org.apache.commons.lang3.exception.ExceptionUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.ecm.server.service.LocalDirsHandleService
 import org.apache.linkis.manager.label.utils.LabelUtil
 
@@ -64,6 +65,9 @@ abstract class ProcessEngineConnLaunchService extends AbstractEngineConnLaunchSe
           val canRetry = e match {
             case ecmError: ECMErrorException =>
               if (ECMErrorCode.EC_START_TIME_OUT == ecmError.getErrCode) {
+                true
+              } else if (StringUtils.isBlank(ecmError.getDesc)) {
+                logger.info("exception desc is null, can be retry")
                 true
               } else {
                 false

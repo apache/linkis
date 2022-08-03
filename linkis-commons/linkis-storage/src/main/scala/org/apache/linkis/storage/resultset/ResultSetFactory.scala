@@ -22,30 +22,28 @@ import org.apache.linkis.common.io.{Fs, FsPath, MetaData, Record}
 
 import scala.collection.mutable
 
-
-
 trait ResultSetFactory extends scala.AnyRef {
-  def getResultSetByType(resultSetType : scala.Predef.String) :ResultSet[_ <: MetaData, _ <: Record]
+  def getResultSetByType(resultSetType: scala.Predef.String): ResultSet[_ <: MetaData, _ <: Record]
   def getResultSetByPath(fsPath : FsPath) : ResultSet[_ <: MetaData, _ <: Record]
   def getResultSetByPath(fsPath: FsPath, fs: Fs) : ResultSet[_ <: MetaData, _ <: Record]
   def getResultSetByContent(content : scala.Predef.String) : ResultSet[_ <: MetaData, _ <: Record]
   def exists(resultSetType : scala.Predef.String) : scala.Boolean
   def isResultSetPath(path : scala.Predef.String) : scala.Boolean
   def isResultSet(content : scala.Predef.String) : scala.Boolean
-  def getResultSet(output:String):ResultSet[_ <: MetaData, _ <: Record]
+  def getResultSet(output: String): ResultSet[_ <: MetaData, _ <: Record]
 
-  def getResultSetByPath(fsPath : FsPath, proxyUser:String) : ResultSet[_ <: MetaData, _ <: Record]
+  def getResultSetByPath(fsPath : FsPath, proxyUser: String) : ResultSet[_ <: MetaData, _ <: Record]
 
-  def getResultSet(output:String, proxyUser:String):ResultSet[_ <: MetaData, _ <: Record]
+  def getResultSet(output: String, proxyUser: String): ResultSet[_ <: MetaData, _ <: Record]
+
   /**
     * The first must-time text(第一个必须时text)
     * @return
     */
-  def getResultSetType:Array[String]
+  def getResultSetType: Array[String]
 }
 
 object ResultSetFactory {
-
 
   val TEXT_TYPE = "1"
   val TABLE_TYPE = "2"

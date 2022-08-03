@@ -43,7 +43,7 @@ object DateTypeUtils {
   }
 
   val dateFormatHourStdLocal = new ThreadLocal[SimpleDateFormat]() {
-    override protected def initialValue = new SimpleDateFormat("yyyy-MM-dd-HH")
+    override protected def initialValue = new SimpleDateFormat("yyyy-MM-dd HH")
   }
 
   /**

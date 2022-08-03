@@ -71,7 +71,6 @@ object FileSystemUtils extends Logging{
         case l: LocalFileSystem => fileSystem.setOwner(filePath, user)
         case _ => logger.info(s"doesn't need to call setOwner")
       }
-      /*fileSystem.setOwner(filePath,user,StorageConfiguration.STORAGE_HDFS_GROUP.getValue)*/
     }
   }
 
@@ -102,7 +101,6 @@ object FileSystemUtils extends Logging{
         case l: LocalFileSystem => fileSystem.setOwner(path, user)
         case _ => logger.info(s"doesn't need to call setOwner")
       }
-      //fileSystem.setOwner(path,user,StorageConfiguration.STORAGE_HDFS_GROUP.getValue)
     }
     true
   }

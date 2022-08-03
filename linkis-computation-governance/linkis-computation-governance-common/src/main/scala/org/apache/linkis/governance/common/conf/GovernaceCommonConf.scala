@@ -17,7 +17,7 @@
  
 package org.apache.linkis.governance.common.conf
 
-import org.apache.linkis.common.conf.CommonVars
+import org.apache.linkis.common.conf.{CommonVars, Configuration}
 
 object GovernanceCommonConf {
 
@@ -48,6 +48,8 @@ object GovernanceCommonConf {
   val ENGINE_DEFAULT_LIMIT = CommonVars("wds.linkis.engine.default.limit", 5000)
 
   val RESULT_SET_STORE_PATH = CommonVars("wds.linkis.resultSet.store.path", CommonVars[String]("wds.linkis.filesystem.hdfs.root.path", "hdfs:///tmp/linkis/").getValue)
+
+  val ENGINE_CONN_YARN_APP_KILL_SCRIPTS_PATH = CommonVars("wds.linkis.engine.yarn.app.kill.scripts.path", Configuration.getLinkisHome + "/sbin/kill-yarn-jobs.sh")
 
   val ENGINECONN_ENVKEYS = CommonVars("wds.linkis.engineconn.env.keys", "").getValue
 

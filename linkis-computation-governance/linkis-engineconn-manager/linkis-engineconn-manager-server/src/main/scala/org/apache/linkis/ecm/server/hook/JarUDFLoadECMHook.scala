@@ -16,7 +16,7 @@
  */
  
 package org.apache.linkis.ecm.server.hook
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.io.FsPath
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.ecm.core.engineconn.EngineConn

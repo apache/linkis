@@ -33,16 +33,16 @@ class TableResultSerializer  extends ResultSerializer{
   }
 
   override def recordToBytes(record: Record): Array[Byte] = {
-    val tableRecord  = record.asInstanceOf[TableRecord]
+    val tableRecord = record.asInstanceOf[TableRecord]
     lineToBytes(tableRecord.row)
   }
 
   /**
     * Convert a row of data to an array of Bytes
-  * Convert the data to byte and get the corresponding total byte length to write to the file
-  * Data write format: line length (fixed length) column length (fixed length) field index comma segmentation real data
-  * For example: 000000004900000000116,10,3,4,5,peace1johnnwang1101true11.51
-  * The length of the line does not include its own length
+    * Convert the data to byte and get the corresponding total byte length to write to the file
+    * Data write format: line length (fixed length) column length (fixed length) field index comma segmentation real data
+    * For example: 000000004900000000116,10,3,4,5,peace1johnnwang1101true11.51
+    * The length of the line does not include its own length
     * 将一行数据转换为Bytes的数组
     * 对数据转换为byte，并获取相应的总byte长度写入文件
     * 数据写入格式：行长(固定长度) 列长(固定长度) 字段索引逗号分割 真实数据
@@ -58,7 +58,7 @@ class TableResultSerializer  extends ResultSerializer{
     var colByteLen = 0
     var length = 0
     line.foreach { data =>
-      val bytes = if(data == null ) Dolphin.NULL_BYTES else Dolphin.getBytes(data)
+      val bytes = if (data == null) Dolphin.NULL_BYTES else Dolphin.getBytes(data)
       dataBytes += bytes
       val colBytes = Dolphin.getBytes(bytes.length)
       colIndex += colBytes += Dolphin.COL_SPLIT_BYTES
@@ -85,8 +85,4 @@ class TableResultSerializer  extends ResultSerializer{
     colIndex.foreach(row.appendAll(_))
     row.toArray
   }
-
-
-
-
 }

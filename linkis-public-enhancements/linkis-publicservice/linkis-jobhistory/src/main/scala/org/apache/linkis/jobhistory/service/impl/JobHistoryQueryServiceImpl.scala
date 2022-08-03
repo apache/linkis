@@ -17,34 +17,30 @@
  
 package org.apache.linkis.jobhistory.service.impl
 
-import java.lang
-import java.sql.Timestamp
+import com.google.common.cache.{Cache, CacheBuilder}
 import com.google.common.collect.Iterables
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
+import org.apache.commons.lang3.exception.ExceptionUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.governance.common.constant.job.JobRequestConstants
 import org.apache.linkis.governance.common.entity.job.{JobRequest, JobRequestWithDetail, QueryException, SubJobDetail}
 import org.apache.linkis.governance.common.protocol.job._
 import org.apache.linkis.jobhistory.conversions.TaskConversions._
 import org.apache.linkis.jobhistory.dao.{JobDetailMapper, JobHistoryMapper}
-import org.apache.linkis.jobhistory.entity.JobHistory
-import org.apache.linkis.jobhistory.util.QueryUtils
-import org.apache.linkis.rpc.message.annotation.Receiver
-import org.apache.commons.lang.exception.ExceptionUtils
-import org.apache.linkis.jobhistory.conversions.TaskConversions
-
-import scala.collection.JavaConverters.asScalaBufferConverter
-import java.util
-import java.util.Date
-import org.apache.linkis.jobhistory.entity.QueryJobHistory
+import org.apache.linkis.jobhistory.entity.{JobHistory, QueryJobHistory}
 import org.apache.linkis.jobhistory.service.JobHistoryQueryService
 import org.apache.linkis.jobhistory.transitional.TaskStatus
+import org.apache.linkis.jobhistory.util.QueryUtils
 import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel
-import org.apache.linkis.manager.label.utils.LabelUtil
+import org.apache.linkis.rpc.message.annotation.Receiver
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
-import scala.collection.JavaConversions._
+import java.sql.Timestamp
+import java.{lang, util}
+import java.util.Date
+import java.util.concurrent.{Callable, TimeUnit}
+import scala.collection.JavaConverters._
 
 
 @Service
@@ -54,8 +50,13 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
   private var jobHistoryMapper: JobHistoryMapper = _
   @Autowired
   private var jobDetailMapper: JobDetailMapper = _
-//  @Autowired
-//  private var queryCacheService: QueryCacheService = _
+
+  private val unDoneTaskCache: Cache[String, Integer] = CacheBuilder.newBuilder().concurrencyLevel(5)
+    .expireAfterWrite(1, TimeUnit.MINUTES)
+    .initialCapacity(20)
+    .maximumSize(1000)
+    .recordStats()
+    .build()
 
   @Receiver
   override def add(jobReqInsert: JobReqInsert): JobRespProtocol = {
@@ -100,7 +101,7 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
         }
       }
       val jobUpdate = jobRequest2JobHistory(jobReq)
-      if(jobUpdate.getUpdatedTime == null) {
+      if (jobUpdate.getUpdatedTime == null) {
         throw new QueryException(120001,s"jobId:${jobReq.getId}，更新job相关信息失败，请指定该请求的更新时间!")
       }
       logger.info(s"Update data to the database(往数据库中更新数据)：task ${jobReq.getId} + status ${jobReq.getStatus}, updateTime: ${jobUpdate.getUpdateTimeMills}, progress : ${jobUpdate.getProgress}")
@@ -126,8 +127,8 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
     override def batchChange(jobReqUpdate: JobReqBatchUpdate): util.ArrayList[JobRespProtocol] = {
       val jobReqList = jobReqUpdate.jobReq
       val jobRespList = new util.ArrayList[JobRespProtocol]()
-      if(jobReqList != null){
-        jobReqList.foreach(jobReq =>{
+      if (jobReqList != null) {
+        jobReqList.asScala.foreach(jobReq => {
           jobReq.setExecutionCode(null)
           logger.info("Update data to the database(往数据库中更新数据)：status:" + jobReq.getStatus )
           val jobResp = new JobRespProtocol
@@ -215,11 +216,11 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
   }
 
   override def search(jobId: java.lang.Long, username: String, status: String, creator: String, sDate: Date, eDate: Date, engineType: String, startJobId: java.lang.Long): util.List[JobHistory] = {
-    import scala.collection.JavaConversions._
-    val split: util.List[String] = if (status != null) status.split(",").toList else null
+
+    val split: util.List[String] = if (status != null) status.split(",").toList.asJava else null
     val result = if (StringUtils.isBlank(creator)) {
       jobHistoryMapper.search(jobId, username, split, sDate, eDate, engineType, startJobId)
-    } else if(StringUtils.isBlank(username)) {
+    } else if (StringUtils.isBlank(username)) {
       val fakeLabel = new UserCreatorLabel
       jobHistoryMapper.searchWithCreatorOnly(jobId, username, fakeLabel.getLabelKey, creator, split, sDate, eDate, engineType, startJobId)
     } else {
@@ -228,7 +229,7 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
       fakeLabel.setCreator(creator)
       val userCreator = fakeLabel.getStringValue
       Utils.tryCatch(fakeLabel.valueCheck(userCreator)) {
-        t => logger.info("input user or creator is not correct", t)
+        t => info("input user or creator is not correct", t)
           throw t
       }
       jobHistoryMapper.searchWithUserCreator(jobId, username, fakeLabel.getLabelKey, userCreator, split, sDate, eDate, engineType, startJobId)
@@ -236,14 +237,16 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
     result
   }
 
+
+
   override def getQueryVOList(list: java.util.List[JobHistory]): java.util.List[JobRequest] = {
     jobHistory2JobRequest(list)
   }
 
-  private def shouldUpdate(oldStatus: String, newStatus: String): Boolean =  {
-    if(TaskStatus.valueOf(oldStatus) == TaskStatus.valueOf(newStatus)){
+  private def shouldUpdate(oldStatus: String, newStatus: String): Boolean = {
+    if (TaskStatus.valueOf(oldStatus) == TaskStatus.valueOf(newStatus)) {
       true
-    }else{
+    } else {
       TaskStatus.valueOf(oldStatus).ordinal <= TaskStatus.valueOf(newStatus).ordinal && !TaskStatus.isComplete(TaskStatus.valueOf(oldStatus))
     }
   }
@@ -261,5 +264,44 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
       })
   }
 
+  override def countUndoneTasks(username: String, creator: String, sDate: Date, eDate: Date, engineType: String, startJobId: lang.Long): Integer = {
+    val cacheKey = if (StringUtils.isNoneBlank(username, creator, engineType)) "" else {
+      s"${username}_${creator}_${engineType}"
+    }
+    if (StringUtils.isBlank(cacheKey)) {
+      getCountUndoneTasks(username, creator, sDate, eDate, engineType, startJobId)
+    } else {
+      unDoneTaskCache.get(cacheKey, new Callable[Integer]{
+        override def call(): Integer = {
+          getCountUndoneTasks(username, creator, sDate, eDate, engineType, startJobId)
+        }
+      })
+    }
+  }
+
+  private  def getCountUndoneTasks(username: String, creator: String, sDate: Date, eDate: Date, engineType: String, startJobId: lang.Long): Integer = {
+    val statusList: util.List[String] = new util.ArrayList[String]()
+    statusList.add(TaskStatus.Running.toString)
+    statusList.add(TaskStatus.Inited.toString)
+    statusList.add(TaskStatus.Scheduled.toString)
+
+    val count = if (StringUtils.isBlank(creator)) {
+      jobHistoryMapper.countUndoneTaskNoCreator(username, statusList, sDate, eDate, engineType, startJobId)
+    } else if (StringUtils.isBlank(username)) {
+      val fakeLabel = new UserCreatorLabel
+      jobHistoryMapper.countUndoneTaskWithCreatorOnly(username, fakeLabel.getLabelKey, creator, statusList, sDate, eDate, engineType, startJobId)
+    } else {
+      val fakeLabel = new UserCreatorLabel
+      fakeLabel.setUser(username)
+      fakeLabel.setCreator(creator)
+      val userCreator = fakeLabel.getStringValue
+      Utils.tryCatch(fakeLabel.valueCheck(userCreator)) {
+        t => logger.info("input user or creator is not correct", t)
+          throw t
+      }
+      jobHistoryMapper.countUndoneTaskWithUserCreator(username, fakeLabel.getLabelKey, userCreator, statusList, sDate, eDate, engineType, startJobId)
+    }
+    count
+  }
 }
 

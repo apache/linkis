@@ -38,8 +38,8 @@ import org.apache.linkis.scheduler.executer._
 import org.apache.linkis.scheduler.listener.JobListener
 import org.apache.linkis.scheduler.queue.SchedulerEventState._
 import org.apache.linkis.scheduler.queue.{Job, SchedulerEventState}
-import org.apache.commons.lang.StringUtils
-import org.apache.commons.lang.exception.ExceptionUtils
+import org.apache.commons.lang3.StringUtils
+import org.apache.commons.lang3.exception.ExceptionUtils
 
 abstract class AsyncConcurrentComputationExecutor(override val outputPrintLimit: Int = 1000) extends ComputationExecutor(outputPrintLimit) with ConcurrentExecutor with JobListener {
 
@@ -81,7 +81,7 @@ abstract class AsyncConcurrentComputationExecutor(override val outputPrintLimit:
     }{
       e =>
         logger.info("failed to do with hook", e)
-        engineExecutionContext.appendStdout(LogUtils.generateWarn(s"failed execute hook: ${ExceptionUtils.getFullStackTrace(e)}"))
+        engineExecutionContext.appendStdout(LogUtils.generateWarn(s"failed execute hook: ${ExceptionUtils.getStackTrace(e)}"))
     }
     if (hookedCode.length > 100) {
       logger.info(s"hooked after code: ${hookedCode.substring(0, 100)} ....")
@@ -99,7 +99,10 @@ abstract class AsyncConcurrentComputationExecutor(override val outputPrintLimit:
     response match {
       case e: ErrorExecuteResponse =>
         logger.error("execute code failed!", e.t)
-        engineExecutionContext.appendStdout(LogUtils.generateERROR(s"execute code failed!: ${ExceptionUtils.getFullStackTrace(e.t)}"))
+        val errorStr = if (e.t != null) {
+          ExceptionUtils.getStackTrace(e.t)
+        } else StringUtils.EMPTY
+        engineExecutionContext.appendStdout(LogUtils.generateERROR(s"execute code failed!: $errorStr"))
       case SuccessExecuteResponse() =>
         logger.info(s"task{${engineConnTask.getTaskId} execute success")
       case e: OutputExecuteResponse =>

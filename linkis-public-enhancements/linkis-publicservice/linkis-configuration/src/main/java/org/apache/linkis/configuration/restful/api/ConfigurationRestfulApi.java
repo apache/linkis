@@ -33,7 +33,7 @@ import org.apache.linkis.server.BDPJettyServerHelper;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -42,6 +42,11 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,6 +55,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@Api(tags = "parameter configuration")
 @RestController
 @RequestMapping(path = "/configuration")
 public class ConfigurationRestfulApi {
@@ -66,6 +72,13 @@ public class ConfigurationRestfulApi {
 
     private static final String NULL = "null";
 
+    @ApiOperation(value = "addKeyForEngine", notes = "add key for engine", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "engineType", required = false, dataType = "String", value = "engine type"),
+        @ApiImplicitParam(name = "version", required = false, dataType = "String", value = "version"),
+        @ApiImplicitParam(name = "token, required = false", dataType = "String", value = "token"),
+        @ApiImplicitParam(name = "keyJson", required = false, dataType = "String", value = "key json")
+    })
     @RequestMapping(path = "/addKeyForEngine", method = RequestMethod.GET)
     public Message addKeyForEngine(
             HttpServletRequest req,
@@ -89,6 +102,12 @@ public class ConfigurationRestfulApi {
         return Message.ok();
     }
 
+    @ApiOperation(value = "getFullTreesByAppName", notes = "get full trees by app name", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "engineType", required = false, dataType = "String", value = "engine type"),
+        @ApiImplicitParam(name = "version", required = false, dataType = "String", value = "version"),
+        @ApiImplicitParam(name = "creator", required = false, dataType = "String", value = "creator")
+    })
     @RequestMapping(path = "/getFullTreesByAppName", method = RequestMethod.GET)
     public Message getFullTreesByAppName(
             HttpServletRequest req,
@@ -110,12 +129,19 @@ public class ConfigurationRestfulApi {
         return Message.ok().data("fullTree", configTrees);
     }
 
+    @ApiOperation(value = "getCategory", notes = "get category", response = Message.class)
     @RequestMapping(path = "/getCategory", method = RequestMethod.GET)
     public Message getCategory(HttpServletRequest req) {
         List<CategoryLabelVo> categoryLabelList = categoryService.getAllCategory();
         return Message.ok().data("Category", categoryLabelList);
     }
 
+    @ApiOperation(value = "createFirstCategory", notes = "create first category", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "categoryName",  required = true,dataType = "String", value = "category name", example = "name"),
+        @ApiImplicitParam(name = "description", required = true, dataType = "STring", value = "description", example = "description"),
+    })
+    @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "/createFirstCategory", method = RequestMethod.POST)
     public Message createFirstCategory(HttpServletRequest request, @RequestBody JsonNode jsonNode)
             throws ConfigurationException {
@@ -133,6 +159,11 @@ public class ConfigurationRestfulApi {
         return Message.ok();
     }
 
+    @ApiOperation(value = "deleteCategory", notes = "delete category", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "categoryId",  required = true,dataType = "String", value = "category id", example = "54")
+    })
+    @ApiOperationSupport(ignoreParameters = "jsonNode")
     @RequestMapping(path = "/deleteCategory", method = RequestMethod.POST)
     public Message deleteCategory(HttpServletRequest request, @RequestBody JsonNode jsonNode)
             throws ConfigurationException {
@@ -143,6 +174,14 @@ public class ConfigurationRestfulApi {
         return Message.ok();
     }
 
+    @ApiOperation(value = "createSecondCategory", notes = "create second category", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "categoryId",  required = true,dataType = "String", value = "category id", example = "39"),
+        @ApiImplicitParam(name = "engineType",required = true,  dataType = "String", value = "engine type", example = "hive"),
+        @ApiImplicitParam(name = "version", required = true,dataType = "String",  value = "Version", example = "1.2.0"),
+        @ApiImplicitParam(name = "description", required = true,dataType = "String",  value = "description"),
+    })
+    @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "/createSecondCategory", method = RequestMethod.POST)
     public Message createSecondCategory(HttpServletRequest request, @RequestBody JsonNode jsonNode)
             throws ConfigurationException {
@@ -165,6 +204,16 @@ public class ConfigurationRestfulApi {
         return Message.ok();
     }
 
+    @ApiOperation(value = "saveFullTree", notes = "save full tree", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "creator", required = true,dataType = "String",  value = "creator", example = "xwzTest"),
+        @ApiImplicitParam(name = "engineType",required = true, dataType = "String", value = "engine type", example = "python-ss"),
+        @ApiImplicitParam(name = "fullTree", required = true,dataType = "List", value = "full tree"),
+        @ApiImplicitParam(name = "name", required = true,dataType = "String",  value = "name"),
+        @ApiImplicitParam(name = "description",required = true, dataType = "String",  value = "description"),
+        @ApiImplicitParam(name = "settings", required = true,dataType = "List",  value = "settings")
+    })
+    @ApiOperationSupport(ignoreParameters = {"json"})
     @RequestMapping(path = "/saveFullTree", method = RequestMethod.POST)
     public Message saveFullTree(HttpServletRequest req, @RequestBody JsonNode json)
             throws IOException, ConfigurationException {
@@ -204,12 +253,19 @@ public class ConfigurationRestfulApi {
         return message;
     }
 
+    @ApiOperation(value = "listAllEngineType", notes = "list all engine type", response = Message.class)
     @RequestMapping(path = "/engineType", method = RequestMethod.GET)
     public Message listAllEngineType(HttpServletRequest request) {
         String[] engineType = configurationService.listAllEngineType();
         return Message.ok().data("engineType", engineType);
     }
 
+    @ApiOperation(value = "updateCategoryInfo", notes = "update category info", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "description",required = true, dataType = "String",  value = "description"),
+        @ApiImplicitParam(name = "categoryId", required = true,dataType = "String",  value = "category id")
+    })
+    @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "/updateCategoryInfo", method = RequestMethod.POST)
     public Message updateCategoryInfo(HttpServletRequest request, @RequestBody JsonNode jsonNode)
             throws ConfigurationException {
@@ -229,6 +285,13 @@ public class ConfigurationRestfulApi {
         return Message.ok();
     }
 
+    @ApiOperation(value = "rpcTest", notes = "rpc test", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "creator",required = false, dataType = "String",  value = "creator"),
+        @ApiImplicitParam(name = "engineType", required = false,dataType = "String",  value = "engine type"),
+        @ApiImplicitParam(name = "username", required = false,dataType = "String",  value = "user name"),
+        @ApiImplicitParam(name = "version", required = false,dataType = "String",  value = "version")
+    })
     @RequestMapping(path = "/rpcTest", method = RequestMethod.GET)
     public Message rpcTest(
             @RequestParam(value = "username", required = false) String username,
@@ -254,6 +317,13 @@ public class ConfigurationRestfulApi {
         }
     }
 
+    @ApiOperation(value = "getKeyValue", notes = "get key value", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "creator",  required = false,dataType = "String", value = "creator"),
+        @ApiImplicitParam(name = "engineType",  required = false,dataType = "String",  value = "engine type"),
+        @ApiImplicitParam(name = "configKey", required = false, dataType = "String",  value = "config key"),
+        @ApiImplicitParam(name = "version",  required = false,dataType = "String",  value = "version")
+    })
     @RequestMapping(path = "/keyvalue", method = RequestMethod.GET)
     public Message getKeyValue(
             HttpServletRequest req,
@@ -282,6 +352,15 @@ public class ConfigurationRestfulApi {
         return message;
     }
 
+    @ApiOperation(value = "saveKeyValue", notes = "save key value", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "engineType", required = true, dataType = "String", value = "engine type"),
+        @ApiImplicitParam(name = "version",  required = true,dataType = "String",  value = "version"),
+        @ApiImplicitParam(name = "creator",  required = true,dataType = "String",  value = "creator"),
+        @ApiImplicitParam(name = "configKey", required = true, dataType = "String",  value = "config key"),
+        @ApiImplicitParam(name = "configValue",  required = true,dataType = "String",  value = "config value")
+    })
+    @ApiOperationSupport(ignoreParameters = {"json"})
     @RequestMapping(path = "/keyvalue", method = RequestMethod.POST)
     public Message saveKeyValue(HttpServletRequest req, @RequestBody Map<String, Object> json)
             throws ConfigurationException {
@@ -311,6 +390,14 @@ public class ConfigurationRestfulApi {
         return Message.ok().data("configValue", configValue);
     }
 
+    @ApiOperation(value = "deleteKeyValue", notes = "delete key value", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "engineType",  required = true,dataType = "String", value = "engine type"),
+        @ApiImplicitParam(name = "version", required = true, dataType = "String",  value = "version"),
+        @ApiImplicitParam(name = "creator", required = true, dataType = "String",  value = "creator"),
+        @ApiImplicitParam(name = "configKey", required = true, dataType = "String",  value = "config key")
+    })
+    @ApiOperationSupport(ignoreParameters = {"json"})
     @RequestMapping(path = "/keyvalue", method = RequestMethod.DELETE)
     public Message deleteKeyValue(HttpServletRequest req, @RequestBody Map<String, Object> json)
             throws ConfigurationException {

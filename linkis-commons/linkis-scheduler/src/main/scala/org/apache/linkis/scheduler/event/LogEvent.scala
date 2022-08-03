@@ -21,15 +21,13 @@ import org.apache.linkis.common.listener.Event
 import org.apache.linkis.scheduler.queue.Job
 
 
-class LogEvent(source:Job,
-               t:Int) extends Event{
-  def getT:Int = t
+class LogEvent(source: Job, t: Int) extends Event {
+  def getT: Int = t
 }
 
 object LogEvent{
-  val read:Int = 1
-  val write:Int = 2
+  val read: Int = 1
+  val write: Int = 2
 
-  def apply(source: Job,
-            t: Int): LogEvent = new LogEvent(source, t)
+  def apply(source: Job, t: Int): LogEvent = new LogEvent(source, t)
 }

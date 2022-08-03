@@ -34,8 +34,6 @@ object SparkConfiguration extends Logging {
   val SPARK_LOOP_INIT_TIME = CommonVars[TimeType]("wds.linkis.engine.spark.spark-loop.init.time", new TimeType("120s"))
   val SPARK_LANGUAGE_REPL_INIT_TIME = CommonVars[TimeType]("wds.linkis.engine.spark.language-repl.init.time", new TimeType("30s"))
   val SPARK_REPL_CLASSDIR = CommonVars[String]("spark.repl.classdir", "", "默认master")
-  val SPARK_SCALA_VERSION = CommonVars("linkis.spark.scala.version", "2.11")
-
 
   val PROXY_USER = CommonVars[String]("spark.proxy.user", "${UM}")
 

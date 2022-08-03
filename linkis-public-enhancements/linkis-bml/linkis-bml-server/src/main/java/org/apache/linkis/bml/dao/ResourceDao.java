@@ -17,7 +17,7 @@
 
 package org.apache.linkis.bml.dao;
 
-import org.apache.linkis.bml.Entity.Resource;
+import org.apache.linkis.bml.entity.Resource;
 
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;

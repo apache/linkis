@@ -22,7 +22,7 @@ import org.apache.linkis.orchestrator.domain.JobReq
 import org.apache.linkis.orchestrator.exception.{OrchestratorErrorCodeSummary, OrchestratorErrorException}
 import org.apache.linkis.orchestrator.extensions.catalyst.ConverterCheckRuler
 import org.apache.linkis.orchestrator.plans.ast.ASTContext
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 /**
  *
  *

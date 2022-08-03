@@ -31,7 +31,7 @@ public interface ECResourceInfoService {
     void deleteECResourceInfoRecord(Integer id);
 
     List<ECResourceInfoRecord> getECResourceInfoRecordList(
-            String instance, Date endDate, Date startDate, String username);
+            String instance, Date endDate, Date startDate, String username, String engineType);
 
     // TODO add search method
 

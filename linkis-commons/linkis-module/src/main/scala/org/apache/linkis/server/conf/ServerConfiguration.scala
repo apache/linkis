@@ -21,11 +21,9 @@ import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.conf.{CommonVars, Configuration, TimeType}
 import org.apache.linkis.common.utils.{DESUtil, Logging, Utils}
 import org.apache.linkis.server.exception.BDPInitServerException
-import sun.misc.BASE64Encoder
-
 import java.io.File
+import java.util.Base64
 import java.lang
-
 
 object ServerConfiguration extends Logging{
   val BDP_SERVER_EXCLUDE_PACKAGES = CommonVars("wds.linkis.server.component.exclude.packages", "")
@@ -38,7 +36,7 @@ object ServerConfiguration extends Logging{
     throw new BDPInitServerException(10010, "DataWorkCloud service must set the version, please add property [[wds.linkis.server.version]] to properties file.")
   }
 
-  val cryptKey = new BASE64Encoder().encode(CommonVars("wds.linkis.crypt.key", "bdp-for-server").getValue.getBytes)
+  val cryptKey = Base64.getMimeEncoder.encodeToString(CommonVars("wds.linkis.crypt.key", "bdp-for-server").getValue.getBytes)
 
   private val ticketHeader = CommonVars("wds.linkis.ticket.header", "bfs_").getValue
 

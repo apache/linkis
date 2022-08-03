@@ -17,7 +17,7 @@
 
 package org.apache.linkis.manager.rm.service
 
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.manager.common.entity.persistence.PersistenceLock
 import org.apache.linkis.manager.label.entity.ResourceLabel

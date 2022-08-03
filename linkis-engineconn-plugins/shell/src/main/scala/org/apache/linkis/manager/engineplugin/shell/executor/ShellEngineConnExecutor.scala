@@ -18,11 +18,12 @@
 package org.apache.linkis.manager.engineplugin.shell.executor
 
 import org.apache.commons.io.IOUtils
-import org.apache.commons.lang.StringUtils
+
+import org.apache.commons.lang3.StringUtils
 import org.apache.hadoop.util.Shell
+
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.engineconn.acessible.executor.log.LogHelper
-import org.apache.linkis.engineconn.common.conf.EngineConnConf
 import org.apache.linkis.engineconn.computation.executor.execute.{ComputationExecutor, EngineExecutionContext}
 import org.apache.linkis.engineconn.core.EngineConnObject
 import org.apache.linkis.governance.common.utils.GovernanceUtils
@@ -34,7 +35,7 @@ import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.scheduler.executer.{ErrorExecuteResponse, ExecuteResponse, SuccessExecuteResponse}
-
+import scala.collection.JavaConverters._
 import java.io.{BufferedReader, File, InputStreamReader}
 import java.util
 import java.util.concurrent.atomic.AtomicBoolean
@@ -272,20 +273,8 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
       Kill yarn-applications
      */
     val yarnAppIds = extractor.getExtractedYarnAppIds()
-    if(yarnAppIds != null && yarnAppIds.size != 0) {
-      val yarnAppKillScriptPath = EngineConnConf.getWorkHome + "/bin/kill-yarn-jobs.sh"
-      val cmd = Array("sh", yarnAppKillScriptPath) ++ yarnAppIds
-      logger.info("Starting to kill yarn applications" + getId() + ". Kill Command: " + cmd.mkString(" "))
-
-      val exec = new Shell.ShellCommandExecutor(cmd, null, null, 600 * 1000l)
-      Utils.tryCatch {
-        exec.execute()
-        logger.info("Kill Success! id:" + getId() + ". msg:" + exec.getOutput)
-      } { t =>
-        logger.error("Kill Success! id:" + getId() + ". msg:" + exec.getOutput, t)
-      }
-    }
-
+    GovernanceUtils.killYarnJobApp(yarnAppIds.toList.asJava)
+    logger.info(s"Finished kill yarn app ids in the engine of (${getId()}). The yarn app ids are ${yarnAppIds.mkString(",")}")
     super.killTask(taskID)
 
   }

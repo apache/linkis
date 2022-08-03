@@ -19,7 +19,7 @@ package org.apache.linkis.server.socket.controller
 
 import org.apache.linkis.common.listener.ListenerEventBus
 import org.apache.linkis.server.exception.BDPServerErrorException
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 
 
 class ServerListenerEventBus(eventQueueCapacity: Int, name: String,

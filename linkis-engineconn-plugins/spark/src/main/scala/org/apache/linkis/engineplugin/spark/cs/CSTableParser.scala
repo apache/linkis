@@ -25,7 +25,7 @@ import org.apache.linkis.cs.common.entity.metadata.CSTable
 import org.apache.linkis.cs.common.utils.CSCommonUtils
 import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
 import org.apache.linkis.engineplugin.spark.exception.ExecuteError
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.execution.datasources.csv.DolphinToSpark
 

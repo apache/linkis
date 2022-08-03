@@ -17,7 +17,7 @@
 
 package org.apache.linkis.bml.dao;
 
-import org.apache.linkis.bml.Entity.BmlProject;
+import org.apache.linkis.bml.entity.BmlProject;
 
 import org.apache.ibatis.annotations.*;
 

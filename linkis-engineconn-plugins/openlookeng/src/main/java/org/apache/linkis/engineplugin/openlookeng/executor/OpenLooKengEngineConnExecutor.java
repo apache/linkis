@@ -47,19 +47,35 @@ import org.apache.linkis.storage.resultset.table.TableMetaData;
 import org.apache.linkis.storage.resultset.table.TableRecord;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import okhttp3.OkHttpClient;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import io.prestosql.client.ClientSelectedRole;
+import io.prestosql.client.ClientSession;
+import io.prestosql.client.QueryError;
+import io.prestosql.client.QueryStatusInfo;
+import io.prestosql.client.SocketChannelSocketFactory;
+import io.prestosql.client.StatementClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import io.prestosql.client.*;
+import io.prestosql.client.StatementClientFactory;
 
 import java.io.IOException;
 import java.net.URI;
 import java.time.ZoneId;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 import static org.apache.linkis.engineplugin.openlookeng.conf.OpenLooKengConfiguration.OPENLOOKENG_HTTP_CONNECT_TIME_OUT;
@@ -360,8 +376,11 @@ public class OpenLooKengEngineConnExecutor extends ConcurrentComputationExecutor
                 if (error.getFailureInfo() != null) {
                     cause = error.getFailureInfo().toException();
                 }
-                engineExecutorContext.appendStdout(
-                        LogUtils.generateERROR(ExceptionUtils.getFullStackTrace(cause)));
+                String errorString = "";
+                if (cause == null) {
+                    errorString = ExceptionUtils.getStackTrace(cause);
+                }
+                engineExecutorContext.appendStdout(LogUtils.generateERROR(errorString));
                 return new ErrorExecuteResponse(ExceptionUtils.getMessage(cause), cause);
             }
         } else if (statement.isClientAborted()) {

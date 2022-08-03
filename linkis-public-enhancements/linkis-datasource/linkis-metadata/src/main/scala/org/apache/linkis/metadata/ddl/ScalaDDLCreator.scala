@@ -22,7 +22,7 @@ import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.metadata.conf.MdqConfiguration
 import org.apache.linkis.metadata.domain.mdq.bo.{MdqTableBO, MdqTableFieldsInfoBO}
 import org.apache.linkis.metadata.exception.MdqIllegalParamException
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 
 import scala.collection.JavaConversions._
 import scala.collection.mutable.ArrayBuffer

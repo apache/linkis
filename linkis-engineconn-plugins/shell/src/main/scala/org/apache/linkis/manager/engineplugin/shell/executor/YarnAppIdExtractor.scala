@@ -21,12 +21,12 @@ import java.io._
 import java.util
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.regex.Pattern
-
 import org.apache.linkis.common.utils.{Logging, Utils}
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
+import org.apache.linkis.engineconn.common.conf.EngineConnConf
 
 class YarnAppIdExtractor extends Thread with Logging{
-  val MAX_BUFFER: Int = 32*1024*1024 //32MB
+  val MAX_BUFFER: Int = 32 * 1024 * 1024 //32MB
 
   val buff : StringBuilder = new StringBuilder
 
@@ -62,7 +62,7 @@ class YarnAppIdExtractor extends Thread with Logging{
     if (StringUtils.isBlank(content)) return new Array[String](0)
     // spark: Starting|Submitted|Activating.{1,100}(application_\d{13}_\d+)
     // sqoop, importtsv: Submitted application application_1609166102854_970911
-    val regex = "(Starting|Started|Submitting|Submitted|Activating|Activated).{1,200}(application_\\d{13}_\\d+)"
+    val regex = EngineConnConf.SPARK_ENGINE_CONN_YARN_APP_ID_PARSE_REGEX.getValue
     val pattern = Pattern.compile(regex)
 
     val stringReader = new StringReader(content)
@@ -103,7 +103,7 @@ class YarnAppIdExtractor extends Thread with Logging{
         }
         logger.debug(s"Yarn-appid-extractor is running")
       }
-      Utils.sleepQuietly(200l)
+      Utils.sleepQuietly(200L)
     }
   }
 
@@ -114,9 +114,13 @@ class YarnAppIdExtractor extends Thread with Logging{
   }
 
   def addYarnAppIds(yarnAppIds: Array[String]): Unit = {
-    if (yarnAppIds != null && yarnAppIds.length != 0) {
+    if (yarnAppIds != null && !yarnAppIds.isEmpty) {
       appIdList.synchronized {
-        yarnAppIds.foreach(id => if(!appIdList.contains()) appIdList.add(id))
+        yarnAppIds.foreach(id => if (!appIdList.contains(id)) {
+          appIdList.add(id)
+          // input application id to logs/stderr
+          logger.info(s"Submitted application $id")
+        })
       }
     }
   }

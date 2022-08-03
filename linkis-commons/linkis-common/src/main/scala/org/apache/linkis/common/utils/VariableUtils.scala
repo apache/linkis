@@ -66,8 +66,8 @@ object VariableUtils extends Logging {
     }
 
     initAllDateVars(run_date, nameAndType)
-    val codeOperation = parserVar(codeOperation, nameAndType)
-    parserDate(replaceStr, run_date)
+    val codeOperation = parserVar(replaceStr, nameAndType)
+    parserDate(codeOperation, run_date)
   }
 
   def replace(code: String, runtType: String, variables: util.Map[String, String]): String = {

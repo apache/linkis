@@ -23,7 +23,7 @@ import org.apache.linkis.engineconnplugin.sqoop.context.SqoopEnvConfiguration;
 import org.apache.linkis.engineconnplugin.sqoop.context.SqoopParamsConfiguration;
 import org.apache.linkis.protocol.engine.JobProgressInfo;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;

@@ -20,12 +20,12 @@
 
 <mapper namespace="org.apache.linkis.bml.dao.VersionDao">
 
-    <resultMap id="Version" type="org.apache.linkis.bml.Entity.Version">
+    <resultMap id="Version" type="org.apache.linkis.bml.entity.Version">
         <result property="version" column="version"/>
         <result property="resource" column="resource"/>
     </resultMap>
 
-    <resultMap id="ResourceVersion" type="org.apache.linkis.bml.Entity.ResourceVersion">
+    <resultMap id="ResourceVersion" type="org.apache.linkis.bml.entity.ResourceVersion">
         <id property="id" column="id"/>
         <result property="resourceId" column="resource_id"/>
         <result property="user" column="owner"/>
@@ -106,7 +106,7 @@
 
 
     <insert id="insertNewVersion" useGeneratedKeys="true" keyProperty="id" keyColumn="id"
-            parameterType="org.apache.linkis.bml.Entity.ResourceVersion">
+            parameterType="org.apache.linkis.bml.entity.ResourceVersion">
         INSERT INTO linkis_ps_bml_resources_version(<include refid="resource_version_columns"/>)
         VALUES (#{resourceId}, #{fileMd5}, #{version}, #{size}, #{startByte}, #{endByte}, #{resource}, #{description},
         #{startTime}, #{endTime}, #{clientIp}, #{updator}, #{enableFlag})

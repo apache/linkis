@@ -52,11 +52,12 @@ class SpringCloudGatewayHttpResponse(response: ServerHttpResponse) extends Gatew
 
   override def write(message: String): Unit = cachedHTTPResponseMsg.append(message)
 
-  override def sendResponse(): Unit = if(responseMono == null) synchronized {
-    if(responseMono != null) return
-    if(cachedRedirectUrlMsg.nonEmpty) {
-      if(response.getStatusCode == null || (response.getStatusCode != null && !response.getStatusCode.is3xxRedirection()))
+  override def sendResponse(): Unit = if (responseMono == null) synchronized {
+    if (responseMono != null) return
+    if (cachedRedirectUrlMsg.nonEmpty) {
+      if (response.getStatusCode == null || (response.getStatusCode != null && !response.getStatusCode.is3xxRedirection())) {
         response.setStatusCode(HttpStatus.TEMPORARY_REDIRECT)
+      }
       response.getHeaders.set("Location", cachedRedirectUrlMsg.toString)
       responseMono = response.setComplete()
       return
@@ -66,7 +67,7 @@ class SpringCloudGatewayHttpResponse(response: ServerHttpResponse) extends Gatew
       val dataBuffer = response.bufferFactory().wrap(cachedHTTPResponseMsg.toString.getBytes(Configuration.BDP_ENCODING.getValue))
       val messageFlux = Flux.just(Array(dataBuffer): _*)
       responseMono = response.writeWith(messageFlux)
-    } else if(cachedWebSocketResponseMsg.nonEmpty) {
+    } else if (cachedWebSocketResponseMsg.nonEmpty) {
       response match {
         case abstractResponse: AbstractServerHttpResponse =>
           val nativeResponse = abstractResponse.getNativeResponse.asInstanceOf[HttpServerResponse]

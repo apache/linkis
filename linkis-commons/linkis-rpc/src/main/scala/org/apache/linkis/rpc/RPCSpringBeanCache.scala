@@ -37,29 +37,32 @@ private[rpc] object RPCSpringBeanCache extends Logging {
   private var rpcReceiveRestful: RPCReceiveRestful = _
 
   def registerReceiver(receiverName: String, receiver: Receiver): Unit = {
-    if(beanNameToReceivers == null) beanNameToReceivers = getApplicationContext.getBeansOfType(classOf[Receiver])
+    if (beanNameToReceivers == null) beanNameToReceivers = getApplicationContext.getBeansOfType(classOf[Receiver])
     logger.info(s"register a new receiver with name $receiverName, receiver is " + receiver)
     beanNameToReceivers synchronized beanNameToReceivers.put(receiverName, receiver)
   }
   def registerReceiverChooser(receiverChooser: ReceiverChooser): Unit = {
-    if(rpcReceiveRestful == null)
+    if (rpcReceiveRestful == null) {
       rpcReceiveRestful = getApplicationContext.getBean(classOf[RPCReceiveRestful])
+    }
     rpcReceiveRestful.registerReceiverChooser(receiverChooser)
   }
   def registerBroadcastListener(broadcastListener: BroadcastListener): Unit = {
-    if(rpcReceiveRestful == null)
+    if (rpcReceiveRestful == null) {
       rpcReceiveRestful = getApplicationContext.getBean(classOf[RPCReceiveRestful])
+    }
     rpcReceiveRestful.registerBroadcastListener(broadcastListener)
   }
 
   def getRPCReceiveRestful: RPCReceiveRestful = {
-    if(rpcReceiveRestful == null)
+    if (rpcReceiveRestful == null) {
       rpcReceiveRestful = getApplicationContext.getBean(classOf[RPCReceiveRestful])
+    }
     rpcReceiveRestful
   }
 
   private[rpc] def getReceivers: util.Map[String, Receiver] = {
-    if(beanNameToReceivers == null) beanNameToReceivers = getApplicationContext.getBeansOfType(classOf[Receiver])
+    if (beanNameToReceivers == null) beanNameToReceivers = getApplicationContext.getBeansOfType(classOf[Receiver])
     beanNameToReceivers
   }
 

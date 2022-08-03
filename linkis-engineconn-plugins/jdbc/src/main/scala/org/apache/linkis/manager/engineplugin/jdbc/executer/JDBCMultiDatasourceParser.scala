@@ -18,7 +18,7 @@
 package org.apache.linkis.manager.engineplugin.jdbc.executer
 
 import java.util
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.utils.{JsonUtils, Logging, Utils}
 import org.apache.linkis.datasource.client.impl.LinkisDataSourceRemoteClient
 import org.apache.linkis.datasource.client.request.GetInfoByDataSourceNameAction

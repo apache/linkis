@@ -70,7 +70,7 @@ CREATE TABLE linkis_cg_rm_resource_action_record (
   `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `label_value_ticket_id` (`label_value`, `ticket_id`)
-)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for linkis_mg_gateway_auth_token

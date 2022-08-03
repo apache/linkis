@@ -37,7 +37,7 @@ import org.apache.linkis.protocol.utils.TaskUtils;
 import org.apache.linkis.scheduler.queue.Job;
 import org.apache.linkis.server.BDPJettyServerHelper;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

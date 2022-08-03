@@ -48,4 +48,6 @@ object OrchestratorErrorCodeSummary {
 
   val EXECUTION_FATAL_CODE = 21000
 
+  val EXECUTION_TIME_OUT = 21010
+
 }

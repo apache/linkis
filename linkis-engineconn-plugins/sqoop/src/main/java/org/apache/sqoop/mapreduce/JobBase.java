@@ -194,7 +194,7 @@ public class JobBase {
         StringBuilder sb = new StringBuilder();
 
         // If we didn't put anything in our set, then there's nothing to cache.
-        if (localUrls.isEmpty() && (org.apache.commons.lang.StringUtils.isEmpty(tmpjars))) {
+        if (localUrls.isEmpty() && (org.apache.commons.lang3.StringUtils.isEmpty(tmpjars))) {
             return;
         }
 

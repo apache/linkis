@@ -56,10 +56,7 @@ class CsvRelation(@transient private val source: Map[String, Any]) extends Seria
   val quote = LoadData.getMapValue[String](source, "quote", "\"")
   val escape = LoadData.getMapValue[String](source, "escape", "\\")
   val escapeQuotes = LoadData.getMapValue[Boolean](source, "escapeQuotes", false)
-
-  private val timestampFormatLocal = new ThreadLocal[SimpleDateFormat]() {
-    override protected def initialValue = new SimpleDateFormat(LoadData.getMapValue[String](source, "timestampFormat", "yyyy-mm-dd hh:mm:ss"), Locale.US)
-  }
+  val timestampFormat = new SimpleDateFormat(LoadData.getMapValue[String](source, "timestampFormat", "yyyy-mm-dd hh:mm:ss"), Locale.US)
   
   def transfer(sc: SparkContext, path: String, encoding: String): RDD[String] = {
     sc.hadoopFile(path, classOf[TextInputFormat], classOf[LongWritable], classOf[Text], 1)
@@ -137,7 +134,7 @@ class CsvRelation(@transient private val source: Map[String, Any]) extends Seria
       case _: BooleanType => value.toBoolean
       case dt: DecimalType => val dataum = new BigDecimal(value.replaceAll(",", ""))
         Decimal(dataum, dt.precision, dt.scale)
-      case _: TimestampType => new Timestamp(Try(timestampFormatLocal.get().parse(value).getTime).getOrElse(stringToTime(value).getTime * 1000L))
+      case _: TimestampType => new Timestamp(Try(timestampFormat.parse(value).getTime).getOrElse(stringToTime(value).getTime * 1000L))
       case _: DateType => new Date(Try(dateFormatP.parse(value).getTime).getOrElse(stringToTime(value).getTime))
       case _: StringType => value.replaceAll("\n|\t", " ")
       case t => throw new RuntimeException(s"Unsupported cast from $value to $t")

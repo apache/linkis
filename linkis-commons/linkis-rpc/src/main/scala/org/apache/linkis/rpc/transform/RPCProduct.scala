@@ -19,7 +19,6 @@ package org.apache.linkis.rpc.transform
 
 import java.lang.reflect.{ParameterizedType, Type}
 import java.util
-
 import org.apache.linkis.DataWorkCloudApplication
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.protocol.message.RequestProtocol
@@ -27,10 +26,10 @@ import org.apache.linkis.rpc.errorcode.RPCErrorConstants
 import org.apache.linkis.rpc.exception.DWCURIException
 import org.apache.linkis.rpc.serializer.ProtostuffSerializeUtil
 import org.apache.linkis.server.{EXCEPTION_MSG, Message}
-import org.apache.commons.lang.ClassUtils
+import org.apache.commons.lang3.ClassUtils
 import org.json4s.{DefaultFormats, Formats, Serializer}
 
-import scala.collection.JavaConversions
+import scala.collection.JavaConverters.mapAsScalaMapConverter
 
 
 private[linkis] trait RPCProduct {
@@ -42,6 +41,7 @@ private[linkis] trait RPCProduct {
   def ok(): Message
 
 }
+
 private[linkis] object RPCProduct extends Logging {
 
   private[rpc] val IS_REQUEST_PROTOCOL_CLASS = "rpc_is_request_protocol"
@@ -53,7 +53,7 @@ private[linkis] object RPCProduct extends Logging {
   private val rpcProduct: RPCProduct = new RPCProduct {
     private val rpcFormats = DataWorkCloudApplication.getApplicationContext.getBeansOfType(classOf[RPCFormats])
     if (rpcFormats != null && !rpcFormats.isEmpty) {
-      val serializers = JavaConversions.mapAsScalaMap(rpcFormats).map(_._2.getSerializers).toArray.flatMap(_.iterator)
+      val serializers = rpcFormats.asScala.map(_._2.getSerializers).toArray.flatMap(_.iterator)
       setFormats(serializers)
     }
     override def toMessage(t: Any): Message = {
@@ -64,14 +64,7 @@ private[linkis] object RPCProduct extends Logging {
       } else {
         message.data(IS_REQUEST_PROTOCOL_CLASS, "false")
       }
-        message.data(OBJECT_VALUE, ProtostuffSerializeUtil.serialize(t))
-      /*} else if (isScalaClass(t)) {
-        message.data(IS_SCALA_CLASS, "true")
-        message.data(OBJECT_VALUE, Serialization.write(t.asInstanceOf[AnyRef]))
-      } else {
-        message.data(IS_SCALA_CLASS, "false")
-        message.data(OBJECT_VALUE, BDPJettyServerHelper.gson.toJson(t))
-      }*/
+      message.data(OBJECT_VALUE, ProtostuffSerializeUtil.serialize(t))
       message.setMethod("/rpc/message")
       message.data(CLASS_VALUE, t.getClass.getName)
     }
@@ -89,7 +82,8 @@ private[linkis] object RPCProduct extends Logging {
       message
     }
   }
-  private[rpc] def setFormats(serializer: Array[Serializer[_]]): Unit ={
+
+  private[rpc] def setFormats(serializer: Array[Serializer[_]]): Unit = {
     this.formats = (serializer :+ JavaCollectionSerializer :+ JavaMapSerializer).foldLeft(DefaultFormats.asInstanceOf[Formats])(_ + _)
     serializerClasses = formats.customSerializers.map(s => getActualTypeClass(s.getClass.getGenericSuperclass))
       .filter(_ != null) ++: List(classOf[util.List[_]], classOf[util.Map[_, _]])

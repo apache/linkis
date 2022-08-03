@@ -49,4 +49,11 @@ public class VariableOperationTest {
         System.out.println(strOld + "\n" + strNew);
         assertEquals(strNew, "abc20220401def");
     }
+
+    @Test
+    public void testText2Format() throws VariableOperationFailedException {
+        String str = "dss_autotest.demo_data{ds=20220516}";
+        String strNew = VariableOperationUtils.replaces(zonedDateTime, str);
+        assertEquals(strNew, str);
+    }
 }

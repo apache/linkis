@@ -42,10 +42,10 @@
           v-model="searchBar.shortcut"
           type="daterange"
           placement="bottom-start"
-          format="yyyy-MM-dd"
+          format="yyyy-MM-dd HH:mm:ss"
           :placeholder="$t('message.linkis.formItems.date.placeholder')"
-          style="width: 160px"
-          :editable="false"
+          style="width: 280px"
+          :editable="true"
         />
       </FormItem>
       <FormItem prop="creator" :label="$t('message.linkis.formItems.creator.label')">

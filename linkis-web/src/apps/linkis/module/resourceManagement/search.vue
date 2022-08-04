@@ -31,14 +31,14 @@
         v-model="searchBar.shortcut"
         type="daterange"
         placement="bottom-start"
-        format="yyyy-MM-dd"
+        format="yyyy-MM-dd HH:mm:ss"
         :placeholder="$t('message.linkis.formItems.date.placeholder')"
-        style="width: 190px"
-        :editable="false"
+        style="width: 280px"
+        :editable="true"
       />
     </FormItem>
     <FormItem prop="engineType" :label="$t('message.linkis.tableColumns.engineType')" >
-      <Select  v-model="searchBar.engineType" style="width:80px" clearable>
+      <Select  v-model="searchBar.engineType" style="width:100px" clearable>
         <Option
           v-for="(item) in engineTypes"
           :label="item"

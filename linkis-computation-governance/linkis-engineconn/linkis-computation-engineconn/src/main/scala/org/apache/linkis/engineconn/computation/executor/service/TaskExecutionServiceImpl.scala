@@ -397,14 +397,17 @@ class TaskExecutionServiceImpl extends TaskExecutionService with Logging with Re
     val executor = taskIdCache.getIfPresent(taskID)
     if (null != executor) {
       executor.killTask(taskID)
+      logger.info(s"TaskId : ${taskID} was killed by user.")
     } else {
-      logger.error(s"Executor of taskId : $taskID is not cached.")
+      logger.error(s"Kill failed, got invalid executor : null for taskId : ${taskID}")
     }
     Utils.tryAndWarn(Thread.sleep(50))
     if (null != lastTask && lastTask.getTaskId.equalsIgnoreCase(taskID)) {
       if (null != lastTaskFuture && !lastTaskFuture.isDone) {
         Utils.tryAndWarn {
           lastTaskFuture.cancel(true)
+        }
+        Utils.tryAndWarn {
           //Close the daemon also
           lastTaskDaemonFuture.cancel(true)
         }
@@ -436,13 +439,7 @@ class TaskExecutionServiceImpl extends TaskExecutionService with Logging with Re
   @Receiver
   override def dealRequestTaskKill(requestTaskKill: RequestTaskKill): Unit = {
     logger.warn(s"Requested to kill task : ${requestTaskKill.execId}")
-    val executor = taskIdCache.getIfPresent(requestTaskKill.execId)
-    if (null != executor) {
-      executor.killTask(requestTaskKill.execId)
-      logger.info(s"TaskId : ${requestTaskKill.execId} was killed by user.")
-    } else {
-      logger.error(s"Kill failed, got invalid executor : null for taskId : ${requestTaskKill.execId}")
-    }
+    killTask(requestTaskKill.execId)
   }
 
   @Receiver

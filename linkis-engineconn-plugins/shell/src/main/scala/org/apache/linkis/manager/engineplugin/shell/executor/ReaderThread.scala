@@ -66,7 +66,7 @@ class ReaderThread extends Thread with Logging {
       val logArray: util.List[String] = new util.ArrayList[String]
       while ({line = inputReader.readLine(); line != null}) {
         logger.info("read logger line :{}", line)
-        logArray.add(" " + line + " ")
+        logArray.add(line)
         if (logArray.size > logListCount.getValue) { //可配置
           val linelist = StringUtils.join(logArray, "\n")
           extractor.appendLineToExtractor(linelist)

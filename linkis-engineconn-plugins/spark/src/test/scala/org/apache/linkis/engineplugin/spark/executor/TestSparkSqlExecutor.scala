@@ -24,18 +24,16 @@ import org.apache.linkis.engineplugin.spark.entity.SparkEngineSession
 import org.apache.linkis.engineplugin.spark.factory.SparkEngineConnFactory
 import org.apache.spark.SparkConf
 import org.apache.spark.sql.SparkSession
-import org.junit.jupiter.api.{Assertions, BeforeAll, Test}
-
+import org.junit.jupiter.api.{Assertions, Test}
 import scala.collection.mutable
 
 class TestSparkSqlExecutor{
-  @BeforeAll
-  def initService: Unit = {
+  def initService(port: String) : Unit = {
     System.setProperty("wds.linkis.server.version", "v1")
     System.setProperty("wds.linkis.engineconn.plugin.default.class", "org.apache.linkis.engineplugin.spark.SparkEngineConnPlugin")
     val map = new mutable.HashMap[String, String]()
     map.put("spring.mvc.servlet.path", "/api/rest_j/v1")
-    map.put("server.port", "26378")
+    map.put("server.port", port)
     map.put("spring.application.name", "SparkSqlExecutor")
     map.put("eureka.client.register-with-eureka", "false")
     map.put("eureka.client.fetch-registry", "false")
@@ -43,6 +41,7 @@ class TestSparkSqlExecutor{
   }
   @Test
   def testCreateContext: Unit = {
+    initService("26378")
     val engineFactory = new SparkEngineConnFactory
     val sparkConf = new SparkConf(true)
     System.setProperty("java.io.tmpdir", "./")
@@ -63,23 +62,27 @@ class TestSparkSqlExecutor{
 
   @Test
   def testShowDF: Unit = {
-    val engineFactory = new SparkEngineConnFactory
-    val sparkConf: SparkConf = new SparkConf(true)
-    System.setProperty("HADOOP_CONF_DIR", "./")
-    System.setProperty("wds.linkis.filesystem.hdfs.root.path", "./")
-    System.setProperty("java.io.tmpdir", "./")
-    val sparkSession = SparkSession.builder()
-      .master("local[*]")
-      .appName("testShowDF").getOrCreate()
-    val outputDir = engineFactory.createOutputDir(sparkConf)
-    val sparkEngineSession = SparkEngineSession(sparkSession.sparkContext, sparkSession.sqlContext, sparkSession, outputDir)
-    val sparkScalaExecutor = new SparkScalaExecutor(sparkEngineSession, 1L)
-    val engineExecutionContext = new EngineExecutionContext(sparkScalaExecutor, Utils.getJvmUser)
-    val dataFrame = sparkSession.createDataFrame(Seq(
-      ("ming", 20, 15552211521L),
-      ("hong", 19, 13287994007L),
-      ("zhi", 21, 15552211523L)
-    )).toDF("name", "age", "phone")
-    SQLSession.showDF(sparkSession.sparkContext, "test", dataFrame, "", 10, engineExecutionContext)
+    val isWindows = System.getProperty("os.name").startsWith("Windows")
+    if(!isWindows) {
+      initService("26379")
+      val engineFactory = new SparkEngineConnFactory
+      val sparkConf: SparkConf = new SparkConf(true)
+      System.setProperty("HADOOP_CONF_DIR", "./")
+      System.setProperty("wds.linkis.filesystem.hdfs.root.path", "./")
+      System.setProperty("java.io.tmpdir", "./")
+      val sparkSession = SparkSession.builder()
+        .master("local[*]")
+        .appName("testShowDF").getOrCreate()
+      val outputDir = engineFactory.createOutputDir(sparkConf)
+      val sparkEngineSession = SparkEngineSession(sparkSession.sparkContext, sparkSession.sqlContext, sparkSession, outputDir)
+      val sparkScalaExecutor = new SparkScalaExecutor(sparkEngineSession, 1L)
+      val engineExecutionContext = new EngineExecutionContext(sparkScalaExecutor, Utils.getJvmUser)
+      val dataFrame = sparkSession.createDataFrame(Seq(
+        ("ming", 20, 15552211521L),
+        ("hong", 19, 13287994007L),
+        ("zhi", 21, 15552211523L)
+      )).toDF("name", "age", "phone")
+      SQLSession.showDF(sparkSession.sparkContext, "test", dataFrame, "", 10, engineExecutionContext)
+    }
   }
 }

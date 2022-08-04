@@ -110,7 +110,7 @@
         <plugin.scala.version>2.15.2</plugin.scala.version>
         <scala.binary.version>2.11</scala.binary.version>
         <netty.version>4.1.78.Final</netty.version>
-        <jackson-bom.version>2.13.2.1</jackson-bom.version>
+        <jackson-bom.version>2.12.7</jackson-bom.version>
         <!-- spark2.4 use 3.5.3, spark3.2 use 3.7.0-M11 -->
         <json4s.version>3.5.3</json4s.version>
         <jersey.version>1.19.4</jersey.version>

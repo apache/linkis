@@ -100,11 +100,11 @@
       <!-- 应用列表标签 -->
       <div class="appListTag">
         <div class="tagName">
-          <span>{{$t('message.linkis.tableColumns.label')}}</span>
+          <span class="span-white-space">{{$t('message.linkis.tableColumns.label')}}:</span>
           <Tag v-for="(item, index) in tagTitle" :key="index" color="primary">{{item}}</Tag>
         </div>
         <div class="resourceList">
-          <span>{{$t('message.linkis.resources')}}</span>
+          <span class="span-white-space">{{$t('message.linkis.resources')}}:</span>
           <span v-if="applicationList.usedResource">
             <Tag color="success">{{`${calcCompany(applicationList.usedResource)}`}}(used)</Tag>
             <Tag color="error">{{`${calcCompany(applicationList.maxResource)}`}}(max)</Tag>
@@ -112,7 +112,7 @@
           </span>
         </div>
         <div class="instanceNum" >
-          <span>{{$t('message.linkis.instanceNum')}}</span>
+          <span class="span-white-space">{{$t('message.linkis.instanceNum')}}:</span>
           <span v-if="applicationList.usedResource">{{applicationList.usedResource.instance}} / {{applicationList.maxResource.instance}}</span>
         </div>
       </div>

@@ -27,7 +27,7 @@ object EngineType extends Enumeration with Logging {
 
   val SPARK = Value("spark")
 
-  val HIVE  = Value("hive")
+  val HIVE = Value("hive")
 
   val PYTHON = Value("python")
 
@@ -92,6 +92,9 @@ object EngineType extends Enumeration with Logging {
     case _ if APPCONN.toString.equals(str) => APPCONN
     case _ if SQOOP.toString.equalsIgnoreCase(str) => SQOOP
     case _ if DATAX.toString.equalsIgnoreCase(str) => DATAX
+    case _ if OPENLOOKENG.toString.equalsIgnoreCase(str) => OPENLOOKENG
+    case _ if TRINO.toString.equalsIgnoreCase(str) => TRINO
+    case _ if ELASTICSEARCH.toString.equalsIgnoreCase(str) => ELASTICSEARCH
     case _ => null
 
   }

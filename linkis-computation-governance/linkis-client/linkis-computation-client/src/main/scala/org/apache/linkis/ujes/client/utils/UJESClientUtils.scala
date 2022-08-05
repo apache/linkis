@@ -43,7 +43,7 @@ object UJESClientUtils {
     case "hql" => EngineType.HIVE.HQL
     case "shell" => EngineType.SHELL.SH
     case "python" => EngineType.PYTHON.PY
-    case "tql" => EngineType.TRINO.TSQL
+    case "tsql" => EngineType.TRINO.TSQL
     case _ => EngineType.SPARK.SQL
   }
 

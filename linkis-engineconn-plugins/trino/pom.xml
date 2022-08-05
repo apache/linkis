@@ -70,22 +70,6 @@
             <artifactId>trino-client</artifactId>
             <version>${trino.version}</version>
         </dependency>
-        <dependency>
-            <groupId>io.trino</groupId>
-            <artifactId>trino-spi</artifactId>
-            <version>${trino.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.trino</groupId>
-            <artifactId>trino-resource-group-managers</artifactId>
-            <version>${trino.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>log-manager</artifactId>
-                    <groupId>io.airlift</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
     </dependencies>
     <build>
         <plugins>

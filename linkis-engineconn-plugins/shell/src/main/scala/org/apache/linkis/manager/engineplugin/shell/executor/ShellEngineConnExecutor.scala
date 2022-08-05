@@ -137,6 +137,7 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
 
       val exitCode = process.waitFor()
       joinThread(errReaderThread)
+      joinThread(inputReaderThread)
 
       completed.set(true)
 

@@ -151,6 +151,11 @@ guava-30.0-jre.jar
 guava-retrying-2.0.0.jar
 guice-3.0.jar
 guice-4.1.0.jar
+guice-4.2.2.jar
+json-0.191.jar
+log-0.191.jar
+security-0.191.jar
+HdrHistogram-2.1.9.jar
 guice-assistedinject-3.0.jar
 guice-servlet-3.0.jar
 hadoop-annotations-2.7.2.jar

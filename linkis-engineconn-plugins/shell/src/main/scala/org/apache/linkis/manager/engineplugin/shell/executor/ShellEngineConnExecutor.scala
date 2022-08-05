@@ -136,8 +136,8 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
       errReaderThread.start()
 
       val exitCode = process.waitFor()
-      joinThread(errReaderThread)
       joinThread(inputReaderThread)
+      joinThread(errReaderThread)
 
       completed.set(true)
 
@@ -157,10 +157,10 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
       }
 
       extractor.onDestroy()
+      inputReaderThread.onDestroy()
       errReaderThread.onDestroy()
 
       IOUtils.closeQuietly(bufferedReader)
-
       IOUtils.closeQuietly(errorsReader)
     }
   }

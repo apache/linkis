@@ -16,7 +16,7 @@
 #
 
 
-name: 💅 Feature request
+name: 💅 Feature Request
 description: Submit a detailed feature request
 title: "[Feature][Module Name] Feature title "
 labels: [feature, 'status: needs triage']

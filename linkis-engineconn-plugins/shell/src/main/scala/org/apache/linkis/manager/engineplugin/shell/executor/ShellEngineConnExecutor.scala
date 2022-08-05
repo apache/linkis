@@ -14,16 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.manager.engineplugin.shell.executor
 
 import org.apache.commons.io.IOUtils
-
 import org.apache.commons.lang3.StringUtils
-import org.apache.hadoop.util.Shell
-
 import org.apache.linkis.common.utils.{Logging, Utils}
-import org.apache.linkis.engineconn.acessible.executor.log.LogHelper
 import org.apache.linkis.engineconn.computation.executor.execute.{ComputationExecutor, EngineExecutionContext}
 import org.apache.linkis.engineconn.core.EngineConnObject
 import org.apache.linkis.governance.common.utils.GovernanceUtils
@@ -36,7 +32,7 @@ import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.scheduler.executer.{ErrorExecuteResponse, ExecuteResponse, SuccessExecuteResponse}
 import scala.collection.JavaConverters._
-import java.io.{BufferedReader, File, InputStreamReader}
+import java.io.{BufferedReader, File, FileReader, IOException, InputStreamReader}
 import java.util
 import java.util.concurrent.atomic.AtomicBoolean
 import scala.collection.mutable.ArrayBuffer
@@ -73,7 +69,8 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
     var errorsReader: BufferedReader = null
 
     val completed = new AtomicBoolean(false)
-    var errReaderThread: ErrorStreamReaderThread = null
+    var errReaderThread: ReaderThread = null
+    var inputReaderThread: ReaderThread = null
 
     try {
       engineExecutionContext.appendStdout(s"$getId >> ${code.trim}")
@@ -81,11 +78,11 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
       val argsArr = if (engineExecutionContext.getTotalParagraph == 1 &&
         engineExecutionContext.getProperties != null &&
         engineExecutionContext.getProperties.containsKey(ShellEngineConnPluginConst.RUNTIME_ARGS_KEY)) {
-        Utils.tryCatch{
+        Utils.tryCatch {
           val argsList = engineExecutionContext.getProperties.get(ShellEngineConnPluginConst.RUNTIME_ARGS_KEY).asInstanceOf[util.ArrayList[String]]
           logger.info("Will execute shell task with user-specified arguments: \'" + argsList.toArray(new Array[String](argsList.size())).mkString("\' \'") + "\'")
           argsList.toArray(new Array[String](argsList.size()))
-        }{ t =>
+        } { t =>
           logger.warn("Cannot read user-input shell arguments. Will execute shell task without them.", t)
           null
         }
@@ -125,35 +122,23 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
       }
 
       processBuilder.redirectErrorStream(false)
-      process = processBuilder.start()
-      bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream))
-      errorsReader = new BufferedReader(new InputStreamReader(process.getErrorStream))
-      /*
-        Prepare to extract yarn application id
-       */
       extractor = new YarnAppIdExtractor
       extractor.startExtraction()
-      /*
-        Read stderr with another thread
-       */
-      errReaderThread = new ErrorStreamReaderThread(engineExecutionContext, errorsReader, extractor)
+      process = processBuilder.start()
+
+      bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream))
+      errorsReader = new BufferedReader(new InputStreamReader(process.getErrorStream))
+
+      inputReaderThread = new ReaderThread(engineExecutionContext, bufferedReader, extractor, true)
+      errReaderThread = new ReaderThread(engineExecutionContext, bufferedReader, extractor, false)
+
+      inputReaderThread.start()
       errReaderThread.start()
 
-      /*
-      Read stdout
-       */
-      var line: String = null
-      while ( {
-        line = bufferedReader.readLine(); line != null
-      }) {
-        logger.debug(s"$getId() >>> $line")
-        LogHelper.logCache.cacheLog(line)
-        engineExecutionContext.appendTextResultSet(line)
-        extractor.appendLineToExtractor(line)
-      }
-
       val exitCode = process.waitFor()
+      joinThread(inputReaderThread)
       joinThread(errReaderThread)
+
       completed.set(true)
 
       if (exitCode != 0) {
@@ -172,10 +157,10 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
       }
 
       extractor.onDestroy()
+      inputReaderThread.onDestroy()
       errReaderThread.onDestroy()
 
       IOUtils.closeQuietly(bufferedReader)
-
       IOUtils.closeQuietly(errorsReader)
     }
   }
@@ -194,7 +179,7 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
   }
 
   private def joinThread(thread: Thread) = {
-    while ( {
+    while ({
       thread.isAlive
     }) {
       Utils.tryCatch{

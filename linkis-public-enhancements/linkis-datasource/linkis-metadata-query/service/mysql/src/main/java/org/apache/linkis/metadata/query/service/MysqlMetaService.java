@@ -19,7 +19,7 @@ package org.apache.linkis.metadata.query.service;
 
 import org.apache.linkis.datasourcemanager.common.util.json.Json;
 import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
-import org.apache.linkis.metadata.query.common.service.AbstractMetaService;
+import org.apache.linkis.metadata.query.common.service.AbstractDbMetaService;
 import org.apache.linkis.metadata.query.common.service.MetadataConnection;
 import org.apache.linkis.metadata.query.service.conf.SqlParamsMapper;
 import org.apache.linkis.metadata.query.service.mysql.SqlConnection;
@@ -31,7 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MysqlMetaService extends AbstractMetaService<SqlConnection> {
+public class MysqlMetaService extends AbstractDbMetaService<SqlConnection> {
     @Override
     public MetadataConnection<SqlConnection> getConnection(
             String operator, Map<String, Object> params) throws Exception {

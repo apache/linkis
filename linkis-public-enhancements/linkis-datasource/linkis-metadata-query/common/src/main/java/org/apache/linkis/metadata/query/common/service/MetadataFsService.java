@@ -14,33 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.linkis.metadata.query.common.service;
 
-import java.io.Closeable;
-import java.util.Collections;
 import java.util.Map;
 
-public interface BaseMetadataService {
+/**
+ * Metadata Fs service
+ */
+public interface MetadataFsService extends BaseMetadataService{
 
     /**
-     * Get connection
-     *
-     * @param params connect params
-     * @return
+     * Get the File System schema
+     * @return schema name
      */
-    MetadataConnection<? extends Closeable> getConnection(
-            String operator, Map<String, Object> params) throws Exception;
-
-    /**
-     * Get connection information (default empty)
-     * @param operator operator
-     * @param params connect params
-     * @param queryParams query params
-     * @return information
-     */
-    default Map<String, String> getConnectionInfo(
-            String operator, Map<String, Object> params, Map<String, String> queryParams){
-        return Collections.emptyMap();
+    default String getSchema(String operator, Map<String, Object> params) {
+        return "file";
     }
+
 }

@@ -22,8 +22,8 @@ import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.common.exception.ErrorException;
 import org.apache.linkis.metadata.query.common.cache.CacheConfiguration;
 import org.apache.linkis.metadata.query.common.exception.MetaRuntimeException;
-import org.apache.linkis.metadata.query.common.service.AbstractMetaService;
-import org.apache.linkis.metadata.query.common.service.MetadataService;
+import org.apache.linkis.metadata.query.common.service.AbstractCacheMetaService;
+import org.apache.linkis.metadata.query.common.service.BaseMetadataService;
 import org.apache.linkis.metadata.query.server.utils.MetadataUtils;
 
 import org.apache.commons.lang3.StringUtils;
@@ -137,7 +137,7 @@ public class MetaClassLoaderManager {
                                                     + dsType.substring(1);
                                     expectClassName = String.format(META_CLASS_NAME, prefix);
                                 }
-                                Class<? extends MetadataService> metaServiceClass =
+                                Class<? extends BaseMetadataService> metaServiceClass =
                                         searchForLoadMetaServiceClass(
                                                 metaClassLoader, expectClassName, true);
                                 if (Objects.isNull(metaServiceClass)) {
@@ -147,15 +147,15 @@ public class MetaClassLoaderManager {
                                                     + "]",
                                             null);
                                 }
-                                MetadataService metadataService =
+                                BaseMetadataService metadataService =
                                         MetadataUtils.loadMetaService(
                                                 metaServiceClass, metaClassLoader);
-                                if (metadataService instanceof AbstractMetaService) {
+                                if (metadataService instanceof AbstractCacheMetaService) {
                                     LOG.info(
                                             "Invoke the init() method in meta service for type: ["
                                                     + dsType
                                                     + "]");
-                                    ((AbstractMetaService<?>) metadataService).init();
+                                    ((AbstractCacheMetaService<?>) metadataService).init();
                                 }
                                 return new MetaServiceInstance(metadataService, metaClassLoader);
                             });
@@ -166,12 +166,21 @@ public class MetaClassLoaderManager {
             ClassLoader currentClassLoader = Thread.currentThread().getContextClassLoader();
             try {
                 Thread.currentThread().setContextClassLoader(finalServiceInstance.metaClassLoader);
-                Method method =
+                List<Method> methodsMatched =
                         Arrays.stream(childMethods)
                                 .filter(eachMethod -> eachMethod.getName().equals(m))
-                                .collect(Collectors.toList())
-                                .get(0);
-                return method.invoke(finalServiceInstance.serviceInstance, args);
+                                .collect(Collectors.toList());
+                if (methodsMatched.isEmpty()){
+                    String message = "Unknown method: [" + m + "] for meta service instance: ["
+                            + finalServiceInstance.getServiceInstance().toString() + "]";
+                    LOG.warn(message);
+                    throw new MetaRuntimeException(message, null);
+                } else if (methodsMatched.size() > 1){
+                    LOG.warn("Find multiple matched methods with name: [" + m + "] such as: \n" +
+                            methodsMatched.stream().map(Method::toString).collect(Collectors.joining("\n")) +
+                            "\n in meta service instance: [" + finalServiceInstance.getServiceInstance().toString() + "], will choose the first one");
+                }
+                return methodsMatched.get(0).invoke(finalServiceInstance.serviceInstance, args);
             } catch (Exception e) {
                 Throwable t = e;
                 // UnWrap the Invocation target exception
@@ -192,12 +201,12 @@ public class MetaClassLoaderManager {
         };
     }
 
-    private Class<? extends MetadataService> searchForLoadMetaServiceClass(
+    private Class<? extends BaseMetadataService> searchForLoadMetaServiceClass(
             ClassLoader classLoader, String expectClassName, boolean initialize) {
         ClassLoader currentClassLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(classLoader);
         try {
-            Class<? extends MetadataService> metaClass = null;
+            Class<? extends BaseMetadataService> metaClass = null;
             if (StringUtils.isNotBlank(expectClassName)) {
                 metaClass =
                         MetadataUtils.loadMetaServiceClass(
@@ -249,7 +258,7 @@ public class MetaClassLoaderManager {
 
     /** ServiceInstance Holder */
     public static class MetaServiceInstance {
-        private MetadataService serviceInstance;
+        private BaseMetadataService serviceInstance;
 
         private Method[] methods;
 
@@ -257,14 +266,14 @@ public class MetaClassLoaderManager {
 
         private long initTimeStamp = 0L;
 
-        public MetaServiceInstance(MetadataService serviceInstance, ClassLoader metaClassLoader) {
+        public MetaServiceInstance(BaseMetadataService serviceInstance, ClassLoader metaClassLoader) {
             this.serviceInstance = serviceInstance;
             this.metaClassLoader = metaClassLoader;
             this.methods = serviceInstance.getClass().getMethods();
             this.initTimeStamp = System.currentTimeMillis();
         }
 
-        public MetadataService getServiceInstance() {
+        public BaseMetadataService getServiceInstance() {
             return serviceInstance;
         }
     }

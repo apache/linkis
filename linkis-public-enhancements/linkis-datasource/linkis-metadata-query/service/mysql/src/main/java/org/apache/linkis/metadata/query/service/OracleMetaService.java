@@ -19,7 +19,7 @@ package org.apache.linkis.metadata.query.service;
 
 import org.apache.linkis.datasourcemanager.common.util.json.Json;
 import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
-import org.apache.linkis.metadata.query.common.service.AbstractMetaService;
+import org.apache.linkis.metadata.query.common.service.AbstractDbMetaService;
 import org.apache.linkis.metadata.query.common.service.MetadataConnection;
 import org.apache.linkis.metadata.query.service.conf.SqlParamsMapper;
 import org.apache.linkis.metadata.query.service.oracle.SqlConnection;
@@ -32,7 +32,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class OracleMetaService extends AbstractMetaService<SqlConnection> {
+public class OracleMetaService extends AbstractDbMetaService<SqlConnection> {
     private static final Logger LOG = LoggerFactory.getLogger(OracleMetaService.class);
 
     @Override

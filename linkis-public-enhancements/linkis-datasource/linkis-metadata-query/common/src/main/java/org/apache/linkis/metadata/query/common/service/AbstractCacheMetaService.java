@@ -65,18 +65,27 @@ public abstract class AbstractCacheMetaService<C extends Closeable> implements B
      * @param cacheManager cache manage
      */
     protected void initCache(CacheManager cacheManager) {
-        String prefix = this.getClass().getSimpleName();
-        reqCache =
-                cacheManager.buildCache(
-                        prefix + CONN_CACHE_REQ,
-                        notification -> {
-                            assert notification.getValue() != null;
-                            close(notification.getValue().getConnection());
-                        });
-        // Clean up the req cache
-        reqCache.cleanUp();
+        if (useCache()){
+            String prefix = this.getClass().getSimpleName();
+            reqCache =
+                    cacheManager.buildCache(
+                            prefix + CONN_CACHE_REQ,
+                            notification -> {
+                                assert notification.getValue() != null;
+                                close(notification.getValue().getConnection());
+                            });
+            // Clean up the req cache
+            reqCache.cleanUp();
+        }
     }
 
+    /**
+     * If use the cache
+     * @return boolean
+     */
+    protected boolean useCache() {
+        return true;
+    }
     @Override
     public abstract MetadataConnection<C> getConnection(String operator, Map<String, Object> params)
             throws Exception;
@@ -84,7 +93,7 @@ public abstract class AbstractCacheMetaService<C extends Closeable> implements B
     @Override
     public Map<String, String> getConnectionInfo(String operator, Map<String, Object> params, Map<String, String> queryParams) {
         return this.getConnAndRun(operator, params, connection ->
-                    this.getConnectionInfo(connection, queryParams));
+                    this.queryConnectionInfo(connection, queryParams));
     }
 
 
@@ -103,7 +112,7 @@ public abstract class AbstractCacheMetaService<C extends Closeable> implements B
      * @param queryParams query params
      * @return map
      */
-    public Map<String, String> getConnectionInfo(C connection, Map<String, String> queryParams){
+    public Map<String, String> queryConnectionInfo(C connection, Map<String, String> queryParams){
         return Collections.emptyMap();
     }
     protected <R> R getConnAndRun(

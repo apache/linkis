@@ -47,6 +47,27 @@ public class MetadataUtils {
 
     private static final Logger LOG = LoggerFactory.getLogger(MetadataUtils.class);
 
+    /**
+     * Get the primitive class
+     * @param clazz class
+     * @return return
+     */
+    public static Class<?> getPrimitive(Class<?> clazz){
+        try {
+            Class<?> primitive = null;
+            if (clazz.isPrimitive()) {
+                primitive = clazz;
+            } else {
+                Class<?> innerType = ((Class<?>) clazz.getField("TYPE").get(null));
+                if (innerType.isPrimitive()){
+                    primitive = innerType;
+                }
+            }
+            return primitive;
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            return null;
+        }
+    }
     public static BaseMetadataService loadMetaService(
             Class<? extends BaseMetadataService> metaServiceClass, ClassLoader metaServiceClassLoader) {
         ClassLoader storeClassLoader = Thread.currentThread().getContextClassLoader();
@@ -116,7 +137,8 @@ public class MetadataUtils {
             return Class.forName(className, initialize, classLoader)
                     .asSubclass(BaseMetadataService.class);
         } catch (ClassNotFoundException ne) {
-            LOG.warn(notFoundMessage, ne);
+//            LOG.warn(notFoundMessage, ne);
+            LOG.warn(notFoundMessage);
         }
         return null;
     }

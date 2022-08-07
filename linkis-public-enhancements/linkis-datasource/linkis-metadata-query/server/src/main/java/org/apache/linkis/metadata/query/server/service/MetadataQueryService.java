@@ -116,6 +116,16 @@ public interface MetadataQueryService {
             throws ErrorException;
 
     /**
+     * Get connection information
+     * @param dataSourceName data source name
+     * @param queryParams query params
+     * @param system system
+     * @param userName user
+     * @return
+     */
+    Map<String, String> getConnectionInfoByDsName(String dataSourceName, Map<String, String> queryParams,
+                                           String system, String userName) throws ErrorException;
+    /**
      * @param dataSourceName data source name
      * @param system system
      * @return

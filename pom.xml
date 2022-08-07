@@ -159,6 +159,7 @@
         <jacoco.skip>false</jacoco.skip>
         <spring.version>5.2.22.RELEASE</spring.version>
         <knife4j.version>2.0.9</knife4j.version>
+        <maven-assembly-plugin.version>3.2.0</maven-assembly-plugin.version>
     </properties>
 
     <dependencyManagement>
@@ -1261,6 +1262,12 @@
                     <configuration>
                         <forkCount>3</forkCount>
                     </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>${maven-assembly-plugin.version}</version>
                 </plugin>
             </plugins>
         </pluginManagement>

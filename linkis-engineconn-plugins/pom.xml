@@ -41,6 +41,7 @@
         <module>flink</module>
         <module>sqoop</module>
         <module>presto</module>
+        <module>elasticsearch</module>
     </modules>
 
 </project>

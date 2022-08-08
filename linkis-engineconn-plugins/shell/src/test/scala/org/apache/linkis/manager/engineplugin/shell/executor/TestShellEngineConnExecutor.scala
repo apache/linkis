@@ -32,7 +32,7 @@ class TestShellEngineConnExecutor {
     val map = new mutable.HashMap[String, String]()
     map.put("spring.mvc.servlet.path", "/api/rest_j/v1")
     map.put("server.port", "26380")
-    map.put("spring.application.name", "SparkSqlExecutor")
+    map.put("spring.application.name", "shellEngineExecutor")
     map.put("eureka.client.register-with-eureka", "false")
     map.put("eureka.client.fetch-registry", "false")
     DataWorkCloudApplication.main(DWCArgumentsParser.formatSpringOptions(map.toMap))

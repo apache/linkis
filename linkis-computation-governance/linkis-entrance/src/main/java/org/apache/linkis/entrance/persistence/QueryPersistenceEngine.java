@@ -23,6 +23,7 @@ import org.apache.linkis.entrance.conf.EntranceConfiguration$;
 import org.apache.linkis.entrance.exception.EntranceIllegalParamException;
 import org.apache.linkis.entrance.exception.EntranceRPCException;
 import org.apache.linkis.entrance.exception.QueryFailedException;
+import org.apache.linkis.governance.common.conf.GovernanceCommonConf;
 import org.apache.linkis.governance.common.constant.job.JobRequestConstants;
 import org.apache.linkis.governance.common.entity.job.JobRequest;
 import org.apache.linkis.governance.common.entity.task.RequestPersistTask;
@@ -51,7 +52,7 @@ public class QueryPersistenceEngine extends AbstractPersistenceEngine {
     private Sender sender;
 
     private static final Logger logger = LoggerFactory.getLogger(QueryPersistenceEngine.class);
-    private static final int MAX_DESC_LEN = 320;
+    private static final int MAX_DESC_LEN = GovernanceCommonConf.ERROR_CODE_DESC_LEN();
 
     private static final int RETRY_NUMBER =
             EntranceConfiguration.JOBINFO_UPDATE_RETRY_MAX_TIME().getValue();

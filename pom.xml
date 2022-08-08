@@ -30,7 +30,7 @@
 
     <groupId>org.apache.linkis</groupId>
     <artifactId>linkis</artifactId>
-    <version>1.1.3</version>
+    <version>1.2.0</version>
     <packaging>pom</packaging>
     <name>Linkis Project Parent POM</name>
     <description>Linkis helps easily connect to various back-end computation/storage engines</description>
@@ -99,7 +99,6 @@
         <module>linkis-dist</module>
     </modules>
     <properties>
-        <linkis.version>1.1.3</linkis.version>
         <hadoop.version>2.7.2</hadoop.version>
         <zookeeper.version>3.5.9</zookeeper.version>
         <spring.boot.version>2.3.12.RELEASE</spring.boot.version>
@@ -177,19 +176,19 @@
                         <groupId>org.hibernate.validator</groupId>
                     </exclusion>
                 </exclusions>
-                <version>${linkis.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.apache.linkis</groupId>
                 <artifactId>linkis-common</artifactId>
-                <version>${linkis.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.apache.linkis</groupId>
                 <artifactId>linkis-mybatis</artifactId>
-                <version>${linkis.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.google.code.gson</groupId>

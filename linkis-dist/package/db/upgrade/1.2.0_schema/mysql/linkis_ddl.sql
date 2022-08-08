@@ -16,27 +16,8 @@
 */
 
 -- ----------------------------
--- Table structure for linkis_ps_dm_datasource_type_key
+-- add corresponding table fields for linkis_ps_dm_datasource_type_key
 -- ----------------------------
-DROP TABLE IF EXISTS `linkis_ps_dm_datasource_type_key`;
-CREATE TABLE `linkis_ps_dm_datasource_type_key`
-(
-    `id`                  int(11)                       NOT NULL AUTO_INCREMENT,
-    `data_source_type_id` int(11)                       NOT NULL,
-    `key`                 varchar(32) COLLATE utf8_bin  NOT NULL,
-    `name`                varchar(32) COLLATE utf8_bin  NOT NULL,
-    `name_en`             varchar(32) COLLATE utf8_bin  NOT NULL,
-    `default_value`       varchar(50) COLLATE utf8_bin  NULL     DEFAULT NULL,
-    `value_type`          varchar(50) COLLATE utf8_bin  NOT NULL,
-    `scope`               varchar(50) COLLATE utf8_bin  NULL     DEFAULT NULL,
-    `require`             tinyint(1)                    NULL     DEFAULT 0,
-    `description`         varchar(200) COLLATE utf8_bin NULL     DEFAULT NULL,
-    `description_en`      varchar(200) COLLATE utf8_bin NULL     DEFAULT NULL,
-    `value_regex`         varchar(200) COLLATE utf8_bin NULL     DEFAULT NULL,
-    `ref_id`              bigint(20)                    NULL     DEFAULT NULL,
-    `ref_value`           varchar(50) COLLATE utf8_bin  NULL     DEFAULT NULL,
-    `data_source`         varchar(200) COLLATE utf8_bin NULL     DEFAULT NULL,
-    `update_time`         datetime                      NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `create_time`         datetime                      NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+ALTER TABLE `linkis_ps_dm_datasource_type_key` ADD COLUMN `name_en` varchar(32) COLLATE utf8_bin  NOT NULL;
+ALTER TABLE `linkis_ps_dm_datasource_type_key` ADD COLUMN `description_en` varchar(200) COLLATE utf8_bin NULL     DEFAULT NULL;

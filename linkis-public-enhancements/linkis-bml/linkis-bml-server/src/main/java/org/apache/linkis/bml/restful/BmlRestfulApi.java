@@ -88,11 +88,26 @@ public class BmlRestfulApi {
 
     public static final String URL_PREFIX = "/bml/";
 
-    @ApiOperation(value = "getVersions", notes = "get resource versions info list", response = Message.class)
+    @ApiOperation(
+            value = "getVersions",
+            notes = "get resource versions info list",
+            response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "resourceId", required = false, dataType = "String", value = "resource Id"),
-        @ApiImplicitParam(name = "currentPage", required = false, dataType = "String", value = "current page"),
-        @ApiImplicitParam(name = "pageSize", required = false, dataType = "String", value = "page size")
+        @ApiImplicitParam(
+                name = "resourceId",
+                required = false,
+                dataType = "String",
+                value = "resource Id"),
+        @ApiImplicitParam(
+                name = "currentPage",
+                required = false,
+                dataType = "String",
+                value = "current page"),
+        @ApiImplicitParam(
+                name = "pageSize",
+                required = false,
+                dataType = "String",
+                value = "page size")
     })
     @RequestMapping(path = "getVersions", method = RequestMethod.GET)
     public Message getVersions(
@@ -179,11 +194,22 @@ public class BmlRestfulApi {
         return message;
     }
 
-    @ApiOperation(value = "getResources", notes = "get resources info list", response = Message.class)
+    @ApiOperation(
+            value = "getResources",
+            notes = "get resources info list",
+            response = Message.class)
     @ApiImplicitParams({
         @ApiImplicitParam(name = "system", required = false, dataType = "String", value = "system"),
-        @ApiImplicitParam(name = "currentPage", required = false, dataType = "String", value = "current page"),
-        @ApiImplicitParam(name = "pageSize", required = false, dataType = "String", value = "page size")
+        @ApiImplicitParam(
+                name = "currentPage",
+                required = false,
+                dataType = "String",
+                value = "current page"),
+        @ApiImplicitParam(
+                name = "pageSize",
+                required = false,
+                dataType = "String",
+                value = "page size")
     })
     @RequestMapping(path = "getResources", method = RequestMethod.GET)
     public Message getResources(
@@ -277,7 +303,11 @@ public class BmlRestfulApi {
 
     @ApiOperation(value = "deleteVersion", notes = "delete version", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "resourceId", required = true, dataType = "String", value = "resource id"),
+        @ApiImplicitParam(
+                name = "resourceId",
+                required = true,
+                dataType = "String",
+                value = "resource id"),
         @ApiImplicitParam(name = "version", required = true, dataType = "String", value = "version")
     })
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
@@ -363,7 +393,11 @@ public class BmlRestfulApi {
 
     @ApiOperation(value = "deleteResource", notes = "delete Resource", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "resourceId", required = true, dataType = "String", value = "resource id")
+        @ApiImplicitParam(
+                name = "resourceId",
+                required = true,
+                dataType = "String",
+                value = "resource id")
     })
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "deleteResource", method = RequestMethod.POST)
@@ -441,9 +475,16 @@ public class BmlRestfulApi {
         return message;
     }
 
-    @ApiOperation(value = "deleteResources", notes = "batch delete resource", response = Message.class)
+    @ApiOperation(
+            value = "deleteResources",
+            notes = "batch delete resource",
+            response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "resourceIds", required = true, dataType = "List", value = "collection of resource id")
+        @ApiImplicitParam(
+                name = "resourceIds",
+                required = true,
+                dataType = "List",
+                value = "collection of resource id")
     })
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "deleteResources", method = RequestMethod.POST)
@@ -535,8 +576,16 @@ public class BmlRestfulApi {
      */
     @ApiOperation(value = "download", notes = "download resource", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "resourceId", required = false, dataType = "String", value = "resource Id"),
-        @ApiImplicitParam(name = "version", required = false, dataType = "String", value = "resource version")
+        @ApiImplicitParam(
+                name = "resourceId",
+                required = false,
+                dataType = "String",
+                value = "resource Id"),
+        @ApiImplicitParam(
+                name = "version",
+                required = false,
+                dataType = "String",
+                value = "resource version")
     })
     @RequestMapping(path = "download", method = RequestMethod.GET)
     public void download(
@@ -656,12 +705,36 @@ public class BmlRestfulApi {
     @ApiOperation(value = "upload", notes = "upload resource", response = Message.class)
     @ApiImplicitParams({
         @ApiImplicitParam(name = "system", required = false, dataType = "String", value = "system"),
-        @ApiImplicitParam(name = "resourceHeader", required = false, dataType = "String", value = "resource header"),
-        @ApiImplicitParam(name = "isExpire", required = false, dataType = "String", value = "is expire"),
-        @ApiImplicitParam(name = "expireType", required = false, dataType = "String", value = "expire type"),
-        @ApiImplicitParam(name = "expireTime", required = false, dataType = "String", value = "expire time"),
-        @ApiImplicitParam(name = "maxVersion", required = false, dataType = "String", value = "max version"),
-        @ApiImplicitParam(name = "file", required = true, dataType = "List<MultipartFile>", value = "file")
+        @ApiImplicitParam(
+                name = "resourceHeader",
+                required = false,
+                dataType = "String",
+                value = "resource header"),
+        @ApiImplicitParam(
+                name = "isExpire",
+                required = false,
+                dataType = "String",
+                value = "is expire"),
+        @ApiImplicitParam(
+                name = "expireType",
+                required = false,
+                dataType = "String",
+                value = "expire type"),
+        @ApiImplicitParam(
+                name = "expireTime",
+                required = false,
+                dataType = "String",
+                value = "expire time"),
+        @ApiImplicitParam(
+                name = "maxVersion",
+                required = false,
+                dataType = "String",
+                value = "max version"),
+        @ApiImplicitParam(
+                name = "file",
+                required = true,
+                dataType = "List<MultipartFile>",
+                value = "file")
     })
     @RequestMapping(path = "upload", method = RequestMethod.POST)
     public Message uploadResource(
@@ -721,10 +794,21 @@ public class BmlRestfulApi {
      * @param file file文件
      * @return resourceId 以及 新的版本号
      */
-    @ApiOperation(value = "updateVersion", notes = "update resource version", response = Message.class)
+    @ApiOperation(
+            value = "updateVersion",
+            notes = "update resource version",
+            response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "resourceId",required = true, dataType = "String", value = "resource Id"),
-        @ApiImplicitParam(name = "file", required = true, dataType = "MultipartFile", value = "file")
+        @ApiImplicitParam(
+                name = "resourceId",
+                required = true,
+                dataType = "String",
+                value = "resource Id"),
+        @ApiImplicitParam(
+                name = "file",
+                required = true,
+                dataType = "MultipartFile",
+                value = "file")
     })
     @RequestMapping(path = "updateVersion", method = RequestMethod.POST)
     public Message updateVersion(
@@ -791,7 +875,11 @@ public class BmlRestfulApi {
 
     @ApiOperation(value = "getBasic", notes = "get resource basic info", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "resourceId", required = true, dataType = "String", value = "resource Id")
+        @ApiImplicitParam(
+                name = "resourceId",
+                required = true,
+                dataType = "String",
+                value = "resource Id")
     })
     @RequestMapping(path = "getBasic", method = RequestMethod.GET)
     public Message getBasic(
@@ -864,7 +952,11 @@ public class BmlRestfulApi {
 
     @ApiOperation(value = "getResourceInfo", notes = "get resource info", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "resourceId", required = true, dataType = "String", value = "resource Id")
+        @ApiImplicitParam(
+                name = "resourceId",
+                required = true,
+                dataType = "String",
+                value = "resource Id")
     })
     @RequestMapping(path = "getResourceInfo", method = RequestMethod.GET)
     public Message getResourceInfo(
@@ -875,9 +967,21 @@ public class BmlRestfulApi {
 
     @ApiOperation(value = "changeOwner", notes = "change resource owner", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "resourceId", required = true, dataType = "String", value = "resourceId"),
-        @ApiImplicitParam(name = "oldOwner", required = true, dataType = "String", value = "old Owner"),
-        @ApiImplicitParam(name = "newOwner", required = true, dataType = "String", value = "new Owner")
+        @ApiImplicitParam(
+                name = "resourceId",
+                required = true,
+                dataType = "String",
+                value = "resourceId"),
+        @ApiImplicitParam(
+                name = "oldOwner",
+                required = true,
+                dataType = "String",
+                value = "old Owner"),
+        @ApiImplicitParam(
+                name = "newOwner",
+                required = true,
+                dataType = "String",
+                value = "new Owner")
     })
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "changeOwner", method = RequestMethod.POST)
@@ -890,10 +994,21 @@ public class BmlRestfulApi {
         return Message.ok("更新owner成功！");
     }
 
-    @ApiOperation(value = "copyResourceToAnotherUser", notes = "copy resource to another user", response = Message.class)
+    @ApiOperation(
+            value = "copyResourceToAnotherUser",
+            notes = "copy resource to another user",
+            response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "resourceId", required = true, dataType = "String", value = "resourceId"),
-        @ApiImplicitParam(name = "anotherUser", required = true, dataType = "String", value = "another user")
+        @ApiImplicitParam(
+                name = "resourceId",
+                required = true,
+                dataType = "String",
+                value = "resourceId"),
+        @ApiImplicitParam(
+                name = "anotherUser",
+                required = true,
+                dataType = "String",
+                value = "another user")
     })
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "copyResourceToAnotherUser", method = RequestMethod.POST)
@@ -925,9 +1040,16 @@ public class BmlRestfulApi {
         return message;
     }
 
-    @ApiOperation(value = "RollbackVersion", notes = "rollback resource version", response = Message.class)
+    @ApiOperation(
+            value = "RollbackVersion",
+            notes = "rollback resource version",
+            response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "resourceId", required = true, dataType = "String", value = "resource id"),
+        @ApiImplicitParam(
+                name = "resourceId",
+                required = true,
+                dataType = "String",
+                value = "resource id"),
         @ApiImplicitParam(name = "version", required = true, dataType = "String", value = "version")
     })
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})

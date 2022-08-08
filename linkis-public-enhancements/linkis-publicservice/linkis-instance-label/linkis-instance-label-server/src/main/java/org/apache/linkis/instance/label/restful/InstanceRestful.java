@@ -65,7 +65,10 @@ public class InstanceRestful {
 
     @Autowired private DefaultInsLabelService insLabelService;
 
-    @ApiOperation(value = "listAllInstanceWithLabel", notes = "list all instance with label", response = Message.class)
+    @ApiOperation(
+            value = "listAllInstanceWithLabel",
+            notes = "list all instance with label",
+            response = Message.class)
     @RequestMapping(path = "/allInstance", method = RequestMethod.GET)
     public Message listAllInstanceWithLabel(HttpServletRequest req) throws Exception {
         String userName = ModuleUserUtils.getOperationUser(req);
@@ -84,13 +87,32 @@ public class InstanceRestful {
         return Message.ok().data("instances", instanceVos);
     }
 
-    @ApiOperation(value = "upDateInstanceLabel", notes = "up date instance label", response = Message.class)
+    @ApiOperation(
+            value = "upDateInstanceLabel",
+            notes = "up date instance label",
+            response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "applicationName", required = false, dataType = "String", value = "application name"),
-        @ApiImplicitParam(name = "instance", required = false, dataType = "String", value = "instance"),
+        @ApiImplicitParam(
+                name = "applicationName",
+                required = false,
+                dataType = "String",
+                value = "application name"),
+        @ApiImplicitParam(
+                name = "instance",
+                required = false,
+                dataType = "String",
+                value = "instance"),
         @ApiImplicitParam(name = "labels", required = false, dataType = "List", value = "labels"),
-        @ApiImplicitParam(name = "labelKey",required = false, dataType = "String", value = "label key"),
-        @ApiImplicitParam(name = "stringValue",required = false, dataType = "String", value = "string value")
+        @ApiImplicitParam(
+                name = "labelKey",
+                required = false,
+                dataType = "String",
+                value = "label key"),
+        @ApiImplicitParam(
+                name = "stringValue",
+                required = false,
+                dataType = "String",
+                value = "string value")
     })
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "/instanceLabel", method = RequestMethod.PUT)
@@ -142,7 +164,10 @@ public class InstanceRestful {
         return Message.ok("success").data("labels", labels);
     }
 
-    @ApiOperation(value = "listAllModifiableLabelKey", notes = "list all modifiable label key", response = Message.class)
+    @ApiOperation(
+            value = "listAllModifiableLabelKey",
+            notes = "list all modifiable label key",
+            response = Message.class)
     @RequestMapping(path = "/modifiableLabelKey", method = RequestMethod.GET)
     public Message listAllModifiableLabelKey(HttpServletRequest req) {
         Set<String> keyList = LabelUtils.listAllUserModifiableLabel();

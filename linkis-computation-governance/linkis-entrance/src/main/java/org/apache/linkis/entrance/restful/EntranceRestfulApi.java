@@ -204,8 +204,12 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
 
     @ApiOperation(value = "status", notes = "get task stats", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "taskID", required = false, dataType = "String", value = " task id"),
-        @ApiImplicitParam(name = "id",required = true, dataType = "String",  value = "execute id ")
+        @ApiImplicitParam(
+                name = "taskID",
+                required = false,
+                dataType = "String",
+                value = " task id"),
+        @ApiImplicitParam(name = "id", required = true, dataType = "String", value = "execute id ")
     })
     @Override
     @RequestMapping(path = "/{id}/status", method = RequestMethod.GET)
@@ -243,7 +247,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
 
     @ApiOperation(value = "progress", notes = "get task progress info", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "id",required = true, dataType = "String",  value = "exectue id")
+        @ApiImplicitParam(name = "id", required = true, dataType = "String", value = "exectue id")
     })
     @Override
     @RequestMapping(path = "/{id}/progress", method = RequestMethod.GET)
@@ -286,7 +290,10 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
         return message;
     }
 
-    @ApiOperation(value = "progressWithResource", notes = "get progress  and resource info", response = Message.class)
+    @ApiOperation(
+            value = "progressWithResource",
+            notes = "get progress  and resource info",
+            response = Message.class)
     @ApiImplicitParams({
         @ApiImplicitParam(name = "id", required = true, dataType = "String", value = "execute id")
     })
@@ -505,7 +512,11 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
 
     @ApiOperation(value = "killJobs", notes = "kill jobs", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "strongExecId", required = true, dataType = "String", value = "strong execte id")
+        @ApiImplicitParam(
+                name = "strongExecId",
+                required = true,
+                dataType = "String",
+                value = "strong execte id")
     })
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @Override

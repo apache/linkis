@@ -59,8 +59,16 @@ public class EntranceMetricRestfulApi {
     @ApiOperation(value = "taskinfo", notes = "get task info", response = Message.class)
     @ApiImplicitParams({
         @ApiImplicitParam(name = "user", required = false, dataType = "String", value = "User"),
-        @ApiImplicitParam(name = "creator", required = false, dataType = "String", value = "Creator"),
-        @ApiImplicitParam(name = "engineTypeLabel",required = false, dataType = "String",  value = "engine type lable")
+        @ApiImplicitParam(
+                name = "creator",
+                required = false,
+                dataType = "String",
+                value = "Creator"),
+        @ApiImplicitParam(
+                name = "engineTypeLabel",
+                required = false,
+                dataType = "String",
+                value = "engine type lable")
     })
     @RequestMapping(path = "/taskinfo", method = RequestMethod.GET)
     public Message taskinfo(

@@ -104,11 +104,23 @@ public class EMRestfulApi {
         }
     }
 
-    @ApiOperation(value = "listAllEMs", notes = "get all ECM service list", response = Message.class)
+    @ApiOperation(
+            value = "listAllEMs",
+            notes = "get all ECM service list",
+            response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "instance", required = false, dataType = "String", value = "Instance"),
-        @ApiImplicitParam(name = "nodeHealthy", dataType = "String", required = false, value = "node  healthy status", example = "Healthy, UnHealthy, WARN, StockAvailable, StockUnavailable"),
-        @ApiImplicitParam(name = "owner",required = false, dataType = "String", value = "Owner")
+        @ApiImplicitParam(
+                name = "instance",
+                required = false,
+                dataType = "String",
+                value = "Instance"),
+        @ApiImplicitParam(
+                name = "nodeHealthy",
+                dataType = "String",
+                required = false,
+                value = "node  healthy status",
+                example = "Healthy, UnHealthy, WARN, StockAvailable, StockUnavailable"),
+        @ApiImplicitParam(name = "owner", required = false, dataType = "String", value = "Owner")
     })
     // todo add healthInfo
     @RequestMapping(path = "/listAllEMs", method = RequestMethod.GET)
@@ -162,9 +174,16 @@ public class EMRestfulApi {
         return Message.ok().data("EMs", allEMVoFilter3);
     }
 
-    @ApiOperation(value = "listAllECMHealthyStatus", notes = "get all ECM healthy status", response = Message.class)
+    @ApiOperation(
+            value = "listAllECMHealthyStatus",
+            notes = "get all ECM healthy status",
+            response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "onlyEditable", required = false, dataType = "Boolean", value = "only editable")
+        @ApiImplicitParam(
+                name = "onlyEditable",
+                required = false,
+                dataType = "Boolean",
+                value = "only editable")
     })
     @RequestMapping(path = "/listAllECMHealthyStatus", method = RequestMethod.GET)
     public Message listAllNodeHealthyStatus(
@@ -186,12 +205,37 @@ public class EMRestfulApi {
 
     @ApiOperation(value = "modifyEMInfo", notes = "modify ECM info", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "applicationName",required = false, dataType = "String", value = "application name",example = "linkis-cg-engineconnmanager"),
-        @ApiImplicitParam(name = "emStatus", required = false, dataType = "String", value = "ecm", example = "Healthy, UnHealthy, WARN, StockAvailable, StockUnavailable"),
-        @ApiImplicitParam(name = "instance", required = false, dataType = "String", value = "Instance", example = "bdpujes110003:9102"),
-        @ApiImplicitParam(name = "labels",required = false, dataType = "List", value = "Labels"),
-        @ApiImplicitParam(name = "labelKey", required = false, dataType = "String", value = "Label_Key", example = "emInstance"),
-        @ApiImplicitParam(name = "stringValue", required = false, dataType = "String", value = "String_Value", example = "linkis-cg-engineconnmanager-bdpujes110003:9102")
+        @ApiImplicitParam(
+                name = "applicationName",
+                required = false,
+                dataType = "String",
+                value = "application name",
+                example = "linkis-cg-engineconnmanager"),
+        @ApiImplicitParam(
+                name = "emStatus",
+                required = false,
+                dataType = "String",
+                value = "ecm",
+                example = "Healthy, UnHealthy, WARN, StockAvailable, StockUnavailable"),
+        @ApiImplicitParam(
+                name = "instance",
+                required = false,
+                dataType = "String",
+                value = "Instance",
+                example = "bdpujes110003:9102"),
+        @ApiImplicitParam(name = "labels", required = false, dataType = "List", value = "Labels"),
+        @ApiImplicitParam(
+                name = "labelKey",
+                required = false,
+                dataType = "String",
+                value = "Label_Key",
+                example = "emInstance"),
+        @ApiImplicitParam(
+                name = "stringValue",
+                required = false,
+                dataType = "String",
+                value = "String_Value",
+                example = "linkis-cg-engineconnmanager-bdpujes110003:9102")
     })
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "/modifyEMInfo", method = RequestMethod.PUT)
@@ -255,7 +299,10 @@ public class EMRestfulApi {
         return Message.ok("success");
     }
 
-    @ApiOperation(value = "executeECMOperationByEC", notes = "EC execute ECM operation", response = Message.class)
+    @ApiOperation(
+            value = "executeECMOperationByEC",
+            notes = "EC execute ECM operation",
+            response = Message.class)
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "/executeECMOperationByEC", method = RequestMethod.POST)
     public Message executeECMOperationByEC(HttpServletRequest req, @RequestBody JsonNode jsonNode)
@@ -294,7 +341,10 @@ public class EMRestfulApi {
                 engineNode.getEMNode(), new ECMOperateRequest(userName, parameters));
     }
 
-    @ApiOperation(value = "executeECMOperation", notes = "execute ECM operation", response = Message.class)
+    @ApiOperation(
+            value = "executeECMOperation",
+            notes = "execute ECM operation",
+            response = Message.class)
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "/executeECMOperation", method = RequestMethod.POST)
     public Message executeECMOperation(HttpServletRequest req, @RequestBody JsonNode jsonNode)
@@ -324,13 +374,47 @@ public class EMRestfulApi {
 
     @ApiOperation(value = "openEngineLog", notes = "open Engine log", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "applicationName",required = false, dataType = "String", example = "linkis-cg-engineconn", value = "application name"),
-        @ApiImplicitParam(name = "emInstance", required = false, dataType = "String", value = "ecm instance", example = "bdpujes110003:910"),
-        @ApiImplicitParam(name = "instance", required = false, dataType = "String", value = "Instance", example = "bdpujes110003:21976"),
-        @ApiImplicitParam(name = "parameters", required = false, dataType = "Map", value = "Parameters"),
-        @ApiImplicitParam(name = "logType", required = false, dataType = "String", value = "log type", example = "stdout"),
-        @ApiImplicitParam(name = "fromLine", required = false, dataType = "String", value = "from line num", example = "0"),
-        @ApiImplicitParam(name = "pageSize", required = false, dataType = "String", value = "page size", defaultValue = "1000"),
+        @ApiImplicitParam(
+                name = "applicationName",
+                required = false,
+                dataType = "String",
+                example = "linkis-cg-engineconn",
+                value = "application name"),
+        @ApiImplicitParam(
+                name = "emInstance",
+                required = false,
+                dataType = "String",
+                value = "ecm instance",
+                example = "bdpujes110003:910"),
+        @ApiImplicitParam(
+                name = "instance",
+                required = false,
+                dataType = "String",
+                value = "Instance",
+                example = "bdpujes110003:21976"),
+        @ApiImplicitParam(
+                name = "parameters",
+                required = false,
+                dataType = "Map",
+                value = "Parameters"),
+        @ApiImplicitParam(
+                name = "logType",
+                required = false,
+                dataType = "String",
+                value = "log type",
+                example = "stdout"),
+        @ApiImplicitParam(
+                name = "fromLine",
+                required = false,
+                dataType = "String",
+                value = "from line num",
+                example = "0"),
+        @ApiImplicitParam(
+                name = "pageSize",
+                required = false,
+                dataType = "String",
+                value = "page size",
+                defaultValue = "1000"),
     })
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "/openEngineLog", method = RequestMethod.POST)

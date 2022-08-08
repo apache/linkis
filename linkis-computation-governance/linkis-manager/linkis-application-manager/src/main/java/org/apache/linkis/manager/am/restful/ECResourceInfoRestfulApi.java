@@ -56,7 +56,11 @@ public class ECResourceInfoRestfulApi {
 
     @ApiOperation(value = "get", notes = "get engineconn info ", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "ticketid", required = true, dataType = "String", value = "ticket id")
+        @ApiImplicitParam(
+                name = "ticketid",
+                required = true,
+                dataType = "String",
+                value = "ticket id")
     })
     @RequestMapping(path = "/get", method = RequestMethod.GET)
     public Message getECInfo(
@@ -76,7 +80,11 @@ public class ECResourceInfoRestfulApi {
 
     @ApiOperation(value = "delete", notes = "delete engineconn info", response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "ticketid", required = true, dataType = "String", value = "ticket id")
+        @ApiImplicitParam(
+                name = "ticketid",
+                required = true,
+                dataType = "String",
+                value = "ticket id")
     })
     @RequestMapping(path = "/delete/{ticketid}}", method = RequestMethod.DELETE)
     public Message deleteECInfo(HttpServletRequest req, @PathVariable("ticketid") String ticketid)
@@ -94,15 +102,46 @@ public class ECResourceInfoRestfulApi {
         }
     }
 
-    @ApiOperation(value = "ecrHistoryList", notes = "query engineconn resource history info list", response = Message.class)
+    @ApiOperation(
+            value = "ecrHistoryList",
+            notes = "query engineconn resource history info list",
+            response = Message.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "instance", required = false, dataType = "String", value = "instance"),
-        @ApiImplicitParam(name = "creator", required = false, dataType = "String", value = "creator"),
-        @ApiImplicitParam(name = "startDate", required = false, dataType = "String", value = "start date"),
-        @ApiImplicitParam(name = "endDate", required = false, dataType = "String", value = "end date"),
-        @ApiImplicitParam(name = "engineType", required = false, dataType = "String", value = "engine type"),
-        @ApiImplicitParam(name = "pageNow", required = false, dataType = "String", value = "page now"),
-        @ApiImplicitParam(name = "pageSize", required = false, dataType = "String", value = "page size")
+        @ApiImplicitParam(
+                name = "instance",
+                required = false,
+                dataType = "String",
+                value = "instance"),
+        @ApiImplicitParam(
+                name = "creator",
+                required = false,
+                dataType = "String",
+                value = "creator"),
+        @ApiImplicitParam(
+                name = "startDate",
+                required = false,
+                dataType = "String",
+                value = "start date"),
+        @ApiImplicitParam(
+                name = "endDate",
+                required = false,
+                dataType = "String",
+                value = "end date"),
+        @ApiImplicitParam(
+                name = "engineType",
+                required = false,
+                dataType = "String",
+                value = "engine type"),
+        @ApiImplicitParam(
+                name = "pageNow",
+                required = false,
+                dataType = "String",
+                value = "page now"),
+        @ApiImplicitParam(
+                name = "pageSize",
+                required = false,
+                dataType = "String",
+                value = "page size")
     })
     @RequestMapping(path = "/ecrHistoryList", method = RequestMethod.GET)
     public Message queryEcrHistory(

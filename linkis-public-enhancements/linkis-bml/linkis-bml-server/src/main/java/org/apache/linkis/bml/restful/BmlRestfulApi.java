@@ -931,7 +931,7 @@ public class BmlRestfulApi {
         @ApiImplicitParam(name = "version", required = true, dataType = "String", value = "version")
     })
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
-    @RequestMapping(path = "RollbackVersion", method = RequestMethod.POST)
+    @RequestMapping(path = "rollbackVersion", method = RequestMethod.POST)
     public Message rollbackVersion(HttpServletRequest request, @RequestBody JsonNode jsonNode) {
         String username = ModuleUserUtils.getOperationUser(request, "rollbackVersion");
         String resourceId = jsonNode.get("resourceId").textValue();

@@ -121,7 +121,6 @@ public class VariableOperationUtils {
                     }
 
                     String newContent = ndt.format(DateTimeFormatter.ofPattern(parts[0]));
-                    System.out.println(buffer.substring(startIndex, endIndex + 1));
                     if (buffer.substring(startIndex, endIndex + 1).contains(DOLLAR)) {
                         buffer.replace(startIndex, endIndex + 1, newContent);
                     }

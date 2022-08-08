@@ -94,46 +94,50 @@ public class DefaultEngineConnKillService implements EngineConnKillService {
         return response;
     }
 
-    private synchronized void killYarnAppIdOfOneEc(EngineConn engineConn) {
+    private  void killYarnAppIdOfOneEc(EngineConn engineConn) {
         String engineConnInstance = engineConn.getServiceInstance().toString();
         logger.info("try to kill yarn app ids in the engine of ({}).", engineConnInstance);
         String engineLogDir = engineConn.getEngineConnManagerEnv().engineConnLogDirs();
-        final String errEngineLogPath = engineLogDir.concat(File.separator).concat("stderr");
+        final String errEngineLogPath = engineLogDir.concat(File.separator).concat("yarnApp.log");
         logger.info("try to parse the yarn app id from the engine err log file path: {}", errEngineLogPath);
-        ecYarnAppKillService.execute(() -> {
-            BufferedReader in = null;
-            try {
-                in = new BufferedReader(new FileReader(errEngineLogPath));
-                String line;
-                String regex = getYarnAppRegexByEngineType(engineConn);
-                if (StringUtils.isBlank(regex)) {
-                    return;
-                }
-                Pattern pattern = Pattern.compile(regex);
-                List<String> appIds = new ArrayList<>();
-                while ((line = in.readLine()) != null) {
-                    if (StringUtils.isNotBlank(line)) {
-                        Matcher mApp = pattern.matcher(line);
-                        if (mApp.find()) {
-                            String candidate1 = mApp.group(mApp.groupCount());
-                            if (!appIds.contains(candidate1)) {
-                                appIds.add(candidate1);
+        File file = new File(errEngineLogPath);
+        if (file.exists())
+        {
+            ecYarnAppKillService.execute(() -> {
+                BufferedReader in = null;
+                try {
+                    in = new BufferedReader(new FileReader(errEngineLogPath));
+                    String line;
+                    String regex = getYarnAppRegexByEngineType(engineConn);
+                    if (StringUtils.isBlank(regex)) {
+                        return;
+                    }
+                    Pattern pattern = Pattern.compile(regex);
+                    List<String> appIds = new ArrayList<>();
+                    while ((line = in.readLine()) != null) {
+                        if (StringUtils.isNotBlank(line)) {
+                            Matcher mApp = pattern.matcher(line);
+                            if (mApp.find()) {
+                                String candidate1 = mApp.group(mApp.groupCount());
+                                if (!appIds.contains(candidate1)) {
+                                    appIds.add(candidate1);
+                                }
                             }
                         }
                     }
+                    GovernanceUtils.killYarnJobApp(appIds);
+                    logger.info("finished kill yarn app ids in the engine of ({}).", engineConnInstance);
+                } catch (IOException ioEx) {
+                    if (ioEx instanceof FileNotFoundException) {
+                        logger.error("the engine log file {} not found.", errEngineLogPath);
+                    } else {
+                        logger.error("the engine log file parse failed. the reason is {}", ioEx.getMessage());
+                    }
+                } finally {
+                    IOUtils.closeQuietly(in);
                 }
-                GovernanceUtils.killYarnJobApp(appIds);
-                logger.info("finished kill yarn app ids in the engine of ({})." , engineConnInstance);
-            } catch (IOException ioEx) {
-                if (ioEx instanceof FileNotFoundException) {
-                    logger.error("the engine log file {} not found.", errEngineLogPath);
-                } else {
-                    logger.error("the engine log file parse failed. the reason is {}", ioEx.getMessage());
-                }
-            } finally {
-                IOUtils.closeQuietly(in);
-            }
-        });
+            });
+    }
     }
 
     private String getYarnAppRegexByEngineType(EngineConn engineConn) {

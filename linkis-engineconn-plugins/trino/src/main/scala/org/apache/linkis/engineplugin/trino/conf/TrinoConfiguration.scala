@@ -29,20 +29,18 @@ object TrinoConfiguration {
   val ENTRANCE_PROTECTED_JOB_INSTANCE = CommonVars[Int]("wds.linkis.entrance.protected.job.instance", 0)
   val ENTRANCE_RESULTS_MAX_CACHE = CommonVars("wds.linkis.trino.resultSet.cache.max", new ByteType("512k"))
 
+  val DEFAULT_LIMIT = CommonVars[Int]("wds.linkis.trino.default.limit", 5000)
+
   val TRINO_HTTP_CONNECT_TIME_OUT = CommonVars[java.lang.Long]("wds.linkis.trino.http.connectTimeout", new lang.Long(60)) //seconds
   val TRINO_HTTP_READ_TIME_OUT = CommonVars[java.lang.Long]("wds.linkis.trino.http.readTimeout", new lang.Long(60))
 
-
-  val DEFAULT_LIMIT = CommonVars[Int]("wds.linkis.trino.default.limit", 5000)
   val TRINO_URL = CommonVars[String]("wds.linkis.trino.url", "http://127.0.0.1:8080")
-  val TRINO_RESOURCE_CONFIG_PATH = CommonVars[String]("wds.linkis.trino.resource.config", "");
   val TRINO_USER = CommonVars[String]("wds.linkis.trino.user", null)
   val TRINO_PASSWORD = CommonVars[String]("wds.linkis.trino.password", null)
   val TRINO_PASSWORD_CMD = CommonVars[String]("wds.linkis.trino.passwordCmd", null)
   val TRINO_CATALOG = CommonVars[String]("wds.linkis.trino.catalog", "system")
   val TRINO_SCHEMA = CommonVars[String]("wds.linkis.trino.schema", "")
   val TRINO_SOURCE = CommonVars[String]("wds.linkis.trino.source", "global")
-  val TRINO_REQUEST_MEMORY = CommonVars[String]("wds.linkis.trino.session.query_max_total_memory", "8GB")
 
   val TRINO_SSL_INSECURED = CommonVars[Boolean]("wds.linkis.trino.ssl.insecured", false)
   val TRINO_SSL_KEYSTORE = CommonVars[String]("wds.linkis.trino.ssl.keystore", null)

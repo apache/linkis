@@ -2,7 +2,7 @@ on:
   pull_request
   
  
- jobs:
+jobs:
   CheckDeadLinks:
     runs-on: ubuntu-latest
     timeout-minutes: 30

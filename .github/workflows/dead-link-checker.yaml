@@ -1,0 +1,16 @@
+on:
+  pull_request
+  
+ 
+ jobs:
+  CheckDeadLinks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    if: (github.repository == 'apache/incubator-linkis')
+    steps:
+      - uses: actions/checkout@v3
+      - uses: gaurav-nelson/github-action-markdown-link-check@v1
+        with:
+          use-quiet-mode: 'no'
+          use-verbose-mode: 'yes'
+          folder-path: '/'

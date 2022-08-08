@@ -45,7 +45,7 @@ public class MessageUtils {
                 t = applicationContext.getBean(tClass);
             } catch (NoSuchBeanDefinitionException e) {
                 LOGGER.warn(
-                        String.format("can not get bean from spring ioc:%s", tClass.getName()), e);
+                        String.format("can not get bean from spring ioc:%s", tClass.getName()));
             }
         }
         return t;

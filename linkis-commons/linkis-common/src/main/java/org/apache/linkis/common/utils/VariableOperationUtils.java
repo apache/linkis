@@ -18,8 +18,6 @@ package org.apache.linkis.common.utils;
 
 import org.apache.linkis.common.exception.VariableOperationFailedException;
 
-import org.apache.commons.lang3.StringUtils;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -36,9 +34,10 @@ import java.util.Map;
 /** support variable operation #{yyyyMMdd%-1d}/#{yyyy-MM-01%-2M} Date: 2021/5/7 11:10 */
 public class VariableOperationUtils {
 
-    private static final String DOLLAR = "#";
+    private static final String DOLLAR = "&";
     private static final String PLACEHOLDER_SPLIT = "%";
     private static final String PLACEHOLDER_LEFT = "{";
+    private static final String LEFT = DOLLAR + PLACEHOLDER_LEFT;
     private static final String PLACEHOLDER_RIGHT = "}";
     private static final String CYCLE_YEAR = "y";
     private static final String CYCLE_MONTH = "M";
@@ -106,17 +105,14 @@ public class VariableOperationUtils {
     private static String replace(ZonedDateTime dateTime, String str)
             throws VariableOperationFailedException {
         StringBuilder buffer = new StringBuilder(str);
-        int startIndex = str.indexOf(PLACEHOLDER_LEFT);
+        int startIndex = str.indexOf(LEFT);
 
         while (startIndex != -1) {
             int endIndex = buffer.indexOf(PLACEHOLDER_RIGHT, startIndex);
             if (endIndex != -1) {
                 String placeHolder = buffer.substring(startIndex, endIndex + 1);
                 String content =
-                        placeHolder
-                                .replace(PLACEHOLDER_LEFT, "")
-                                .replace(PLACEHOLDER_RIGHT, "")
-                                .trim();
+                        placeHolder.replace(LEFT, "").replace(PLACEHOLDER_RIGHT, "").trim();
                 String[] parts = content.split(PLACEHOLDER_SPLIT);
                 try {
                     ZonedDateTime ndt = dateTime;
@@ -125,8 +121,8 @@ public class VariableOperationUtils {
                     }
 
                     String newContent = ndt.format(DateTimeFormatter.ofPattern(parts[0]));
-                    if (buffer.substring(startIndex - 1, endIndex + 1).contains(DOLLAR)) {
-                        buffer.replace(startIndex - 1, endIndex + 1, newContent);
+                    if (buffer.substring(startIndex, endIndex + 1).contains(DOLLAR)) {
+                        buffer.replace(startIndex, endIndex + 1, newContent);
                     }
                     startIndex = buffer.indexOf(PLACEHOLDER_LEFT, startIndex + newContent.length());
                 } catch (IllegalArgumentException e1) {
@@ -179,47 +175,6 @@ public class VariableOperationUtils {
     }
 
     /**
-     * @param keyValue
-     * @param str
-     * @return
-     */
-    private static String replace(Map<String, String> keyValue, String str)
-            throws VariableOperationFailedException {
-        StringBuilder buffer = new StringBuilder(str);
-        int startIndex = str.indexOf(PLACEHOLDER_LEFT);
-
-        while (startIndex != -1) {
-            int endIndex = buffer.indexOf(PLACEHOLDER_RIGHT, startIndex);
-            if (endIndex != -1) {
-                String placeHolder = buffer.substring(startIndex, endIndex + 1);
-                String content =
-                        placeHolder
-                                .replace(PLACEHOLDER_LEFT, "")
-                                .replace(PLACEHOLDER_RIGHT, "")
-                                .trim();
-                try {
-                    String newContent = keyValue.get(content);
-                    if (newContent != null) {
-                        if (buffer.substring(startIndex - 1, endIndex + 1).contains(DOLLAR)) {
-                            buffer.replace(startIndex - 1, endIndex + 1, newContent);
-                        }
-                        startIndex =
-                                buffer.indexOf(PLACEHOLDER_LEFT, startIndex + newContent.length());
-                    } else {
-                        startIndex = buffer.indexOf(PLACEHOLDER_LEFT, endIndex);
-                    }
-                } catch (Exception e2) {
-                    throw new VariableOperationFailedException(
-                            20050, "variable operation expression" + e2.getMessage(), e2);
-                }
-            } else {
-                startIndex = -1; // leave while
-            }
-        }
-        return buffer.toString();
-    }
-
-    /**
      * json support variable operation
      *
      * @param dateTime
@@ -255,59 +210,5 @@ public class VariableOperationUtils {
                 }
             }
         }
-    }
-
-    /**
-     * @param template
-     * @param map
-     * @return
-     */
-    public static String format(CharSequence template, Map<?, ?> map) {
-        return VariableOperationUtils.format(template, map, "${", "}", true);
-    }
-
-    /**
-     * map = {a: "aValue", b: "bValue"} format("{a} and {b}", map) ---=》 aValue and bValue
-     *
-     * @param template
-     * @param map
-     * @param leftStr
-     * @param rightStr
-     * @param ignoreNull
-     * @return
-     */
-    public static String format(
-            CharSequence template,
-            Map<?, ?> map,
-            CharSequence leftStr,
-            CharSequence rightStr,
-            boolean ignoreNull) {
-        if (null == template) {
-            return null;
-        }
-        if (null == map || map.isEmpty()) {
-            return template.toString();
-        }
-
-        if (StringUtils.isBlank(leftStr)) {
-            leftStr = "";
-        }
-
-        if (StringUtils.isBlank(rightStr)) {
-            rightStr = "";
-        }
-
-        String template2 = template.toString();
-        String value;
-        for (Map.Entry<?, ?> entry : map.entrySet()) {
-            value = entry.getValue().toString();
-            if (null == value && ignoreNull) {
-                continue;
-            }
-            template2 =
-                    StringUtils.replace(
-                            template2, leftStr.toString() + entry.getKey() + rightStr, value);
-        }
-        return template2;
     }
 }

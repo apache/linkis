@@ -35,9 +35,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Api(tags = "entrance metrice manager")
 @RestController
 @RequestMapping(path = "/entrance/operation/metrics")
 public class EntranceMetricRestfulApi {
@@ -51,6 +56,12 @@ public class EntranceMetricRestfulApi {
         this.entranceServer = entranceServer;
     }
 
+    @ApiOperation(value = "taskinfo", notes = "get task info", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "user", required = false, dataType = "String", value = "User"),
+        @ApiImplicitParam(name = "creator", required = false, dataType = "String", value = "Creator"),
+        @ApiImplicitParam(name = "engineTypeLabel",required = false, dataType = "String",  value = "engine type lable")
+    })
     @RequestMapping(path = "/taskinfo", method = RequestMethod.GET)
     public Message taskinfo(
             HttpServletRequest req,
@@ -105,6 +116,7 @@ public class EntranceMetricRestfulApi {
                 .data("queuedNumber", queuedNumber);
     }
 
+    @ApiOperation(value = "Status", notes = "get running task number ", response = Message.class)
     @RequestMapping(path = "/runningtask", method = RequestMethod.GET)
     public Message status(HttpServletRequest req) {
 

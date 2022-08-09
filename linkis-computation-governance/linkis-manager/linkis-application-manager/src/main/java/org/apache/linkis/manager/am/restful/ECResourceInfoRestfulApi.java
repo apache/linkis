@@ -39,9 +39,14 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 
 import java.util.*;
 
+@Api(tags = "enginneconn resource info operation")
 @RequestMapping(
         path = "/linkisManager/ecinfo",
         produces = {"application/json"})
@@ -49,6 +54,10 @@ import java.util.*;
 public class ECResourceInfoRestfulApi {
     @Autowired private ECResourceInfoService ecResourceInfoService;
 
+    @ApiOperation(value = "get", notes = "get engineconn info ", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "ticketid", required = true, dataType = "String", value = "ticket id")
+    })
     @RequestMapping(path = "/get", method = RequestMethod.GET)
     public Message getECInfo(
             HttpServletRequest req, @RequestParam(value = "ticketid") String ticketid)
@@ -65,6 +74,10 @@ public class ECResourceInfoRestfulApi {
         }
     }
 
+    @ApiOperation(value = "delete", notes = "delete engineconn info", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "ticketid", required = true, dataType = "String", value = "ticket id")
+    })
     @RequestMapping(path = "/delete/{ticketid}}", method = RequestMethod.DELETE)
     public Message deleteECInfo(HttpServletRequest req, @PathVariable("ticketid") String ticketid)
             throws AMErrorException {
@@ -81,6 +94,16 @@ public class ECResourceInfoRestfulApi {
         }
     }
 
+    @ApiOperation(value = "ecrHistoryList", notes = "query engineconn resource history info list", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "instance", required = false, dataType = "String", value = "instance"),
+        @ApiImplicitParam(name = "creator", required = false, dataType = "String", value = "creator"),
+        @ApiImplicitParam(name = "startDate", required = false, dataType = "String", value = "start date"),
+        @ApiImplicitParam(name = "endDate", required = false, dataType = "String", value = "end date"),
+        @ApiImplicitParam(name = "engineType", required = false, dataType = "String", value = "engine type"),
+        @ApiImplicitParam(name = "pageNow", required = false, dataType = "String", value = "page now"),
+        @ApiImplicitParam(name = "pageSize", required = false, dataType = "String", value = "page size")
+    })
     @RequestMapping(path = "/ecrHistoryList", method = RequestMethod.GET)
     public Message queryEcrHistory(
             HttpServletRequest req,

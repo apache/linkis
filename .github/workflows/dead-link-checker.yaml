@@ -14,3 +14,4 @@ jobs:
           use-quiet-mode: 'no'
           use-verbose-mode: 'yes'
           folder-path: '../'
+          config-file: '.github/workflows/dlc.json'

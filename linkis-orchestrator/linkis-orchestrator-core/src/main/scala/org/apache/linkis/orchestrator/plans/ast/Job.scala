@@ -17,7 +17,7 @@
  
 package org.apache.linkis.orchestrator.plans.ast
 
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.governance.common.utils.JobUtils
 import org.apache.linkis.orchestrator.utils.OrchestratorIDCreator
 

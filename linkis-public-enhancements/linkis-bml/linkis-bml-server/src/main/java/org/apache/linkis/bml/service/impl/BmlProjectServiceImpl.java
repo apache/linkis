@@ -17,8 +17,8 @@
 
 package org.apache.linkis.bml.service.impl;
 
-import org.apache.linkis.bml.Entity.BmlProject;
 import org.apache.linkis.bml.dao.BmlProjectDao;
+import org.apache.linkis.bml.entity.BmlProject;
 import org.apache.linkis.bml.service.BmlProjectService;
 
 import org.springframework.beans.factory.annotation.Autowired;

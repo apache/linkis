@@ -26,6 +26,7 @@ import org.apache.linkis.metadata.domain.mdq.vo.MdqTableFieldsInfoVO;
 import org.apache.linkis.metadata.domain.mdq.vo.MdqTablePartitionStatisticInfoVO;
 import org.apache.linkis.metadata.domain.mdq.vo.MdqTableStatisticInfoVO;
 import org.apache.linkis.metadata.exception.MdqIllegalParamException;
+import org.apache.linkis.metadata.hive.dto.MetadataQueryParam;
 import org.apache.linkis.metadata.service.MdqService;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
@@ -41,6 +42,11 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,6 +56,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Api(tags = "mdq table api")
 @RestController
 @RequestMapping(path = "/datasource")
 public class MdqTableRestfulApi {
@@ -61,36 +68,58 @@ public class MdqTableRestfulApi {
     @Autowired private MdqService mdqService;
     ObjectMapper mapper = new ObjectMapper();
 
+    @ApiOperation(value = "getTableBaseInfo", notes = "get table base info", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "database", required = false, dataType = "String", value = "database"),
+        @ApiImplicitParam(name = "tableName", required = false, dataType = "String", value = "table name")
+    })
     @RequestMapping(path = "getTableBaseInfo", method = RequestMethod.GET)
     public Message getTableBaseInfo(
             @RequestParam(value = "database", required = false) String database,
             @RequestParam(value = "tableName", required = false) String tableName,
             HttpServletRequest req) {
         String userName = ModuleUserUtils.getOperationUser(req, "getTableBaseInfo " + tableName);
+        MetadataQueryParam queryParam =
+                MetadataQueryParam.of(userName).withDbName(database).withTableName(tableName);
         MdqTableBaseInfoVO tableBaseInfo;
         if (mdqService.isExistInMdq(database, tableName, userName)) {
             tableBaseInfo = mdqService.getTableBaseInfoFromMdq(database, tableName, userName);
         } else {
-            tableBaseInfo = mdqService.getTableBaseInfoFromHive(database, tableName, userName);
+            tableBaseInfo = mdqService.getTableBaseInfoFromHive(queryParam);
         }
         return Message.ok().data("tableBaseInfo", tableBaseInfo);
     }
 
+    @ApiOperation(value = "getTableFieldsInfo", notes = "get table fields info", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "database", required = false, dataType = "String", value = "database"),
+        @ApiImplicitParam(name = "tableName", required = false, dataType = "String", value = "table name")
+    })
     @RequestMapping(path = "getTableFieldsInfo", method = RequestMethod.GET)
     public Message getTableFieldsInfo(
             @RequestParam(value = "database", required = false) String database,
             @RequestParam(value = "tableName", required = false) String tableName,
             HttpServletRequest req) {
         String userName = ModuleUserUtils.getOperationUser(req, "getTableFieldsInfo " + tableName);
+        MetadataQueryParam queryParam =
+                MetadataQueryParam.of(userName).withDbName(database).withTableName(tableName);
         List<MdqTableFieldsInfoVO> tableFieldsInfo;
         if (mdqService.isExistInMdq(database, tableName, userName)) {
             tableFieldsInfo = mdqService.getTableFieldsInfoFromMdq(database, tableName, userName);
         } else {
-            tableFieldsInfo = mdqService.getTableFieldsInfoFromHive(database, tableName, userName);
+            tableFieldsInfo = mdqService.getTableFieldsInfoFromHive(queryParam);
         }
         return Message.ok().data("tableFieldsInfo", tableFieldsInfo);
     }
 
+    @ApiOperation(value = "getTableStatisticInfo", notes = "get table statistic info", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "database", required = false, dataType = "String", value = "database"),
+        @ApiImplicitParam(name = "tableName", required = false, dataType = "String", value = "table name"),
+        @ApiImplicitParam(name = "pageNow", required = true, dataType = "String", value = "page now"),
+        @ApiImplicitParam(name = "pageSize", required = true, dataType = "String", value = "page size"),
+        @ApiImplicitParam(name = "partitionSort", required = true, dataType = "String", value = "partition sort")
+    })
     @RequestMapping(path = "getTableStatisticInfo", method = RequestMethod.GET)
     public Message getTableStatisticInfo(
             @RequestParam(value = "database", required = false) String database,
@@ -102,8 +131,10 @@ public class MdqTableRestfulApi {
             throws IOException {
         String userName =
                 ModuleUserUtils.getOperationUser(req, "getTableStatisticInfo " + tableName);
+        MetadataQueryParam queryParam =
+                MetadataQueryParam.of(userName).withDbName(database).withTableName(tableName);
         MdqTableStatisticInfoVO tableStatisticInfo =
-                mdqService.getTableStatisticInfo(database, tableName, userName, partitionSort);
+                mdqService.getTableStatisticInfo(queryParam, partitionSort);
         int totalSize = 0;
         List<MdqTablePartitionStatisticInfoVO> partitionPage;
         List<MdqTablePartitionStatisticInfoVO> partitions = tableStatisticInfo.getPartitions();
@@ -150,6 +181,12 @@ public class MdqTableRestfulApi {
         return data;
     }
 
+    @ApiOperation(value = "getPartitionStatisticInfo", notes = "get partition statistic info", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "database", required = false, dataType = "String", value = "database"),
+        @ApiImplicitParam(name = "tableName", required = false, dataType = "String", value = "table name"),
+        @ApiImplicitParam(name = "partitionSort", required = false, dataType = "String", value = "partition sort")
+    })
     @RequestMapping(path = "getPartitionStatisticInfo", method = RequestMethod.GET)
     public Message getPartitionStatisticInfo(
             @RequestParam(value = "database", required = false) String database,
@@ -159,11 +196,17 @@ public class MdqTableRestfulApi {
             throws IOException, MdqIllegalParamException {
         String userName =
                 ModuleUserUtils.getOperationUser(req, "getPartitionStatisticInfo " + tableName);
+        MetadataQueryParam queryParam =
+                MetadataQueryParam.of(userName).withDbName(database).withTableName(tableName);
         MdqTablePartitionStatisticInfoVO partition =
-                mdqService.getPartitionStatisticInfo(database, tableName, userName, partitionName);
+                mdqService.getPartitionStatisticInfo(queryParam, partitionName);
         return Message.ok().data("partitionStatisticInfo", partition);
     }
 
+    @ApiOperation(value = "active", notes = "active", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "tableId", required = false, dataType = "String", value = "table id")
+    })
     @RequestMapping(path = "active", method = RequestMethod.GET)
     public Message active(
             @RequestParam(value = "tableId", required = false) Long tableId,
@@ -172,6 +215,8 @@ public class MdqTableRestfulApi {
         return Message.ok();
     }
 
+    @ApiOperation(value = "persistTable", notes = "persist table", response = Message.class)
+    @ApiOperationSupport(ignoreParameters = {"json"})
     @RequestMapping(path = "persistTable", method = RequestMethod.POST)
     public Message persistTable(HttpServletRequest req, @RequestBody JsonNode json)
             throws IOException {
@@ -181,6 +226,8 @@ public class MdqTableRestfulApi {
         return Message.ok();
     }
 
+    @ApiOperation(value = "displaySql", notes = "display sql", response = Message.class)
+    @ApiOperationSupport(ignoreParameters = {"json"})
     @RequestMapping(path = "displaysql", method = RequestMethod.POST)
     public Message displaySql(HttpServletRequest request, @RequestBody JsonNode json) {
         String userName = ModuleUserUtils.getOperationUser(request, "displaysql ");

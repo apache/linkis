@@ -47,7 +47,7 @@ class TaskInfoNodeSelectRule extends NodeSelectRule with Logging {
       case node: AMNode if nodeB.isInstanceOf[AMNode] =>
         Utils.tryCatch(getTasks(node.getNodeTaskInfo) < getTasks(nodeB.asInstanceOf[AMNode].getNodeTaskInfo)) {
           t: Throwable =>
-            warn("Failed to Compare resource ", t)
+            logger.warn("Failed to Compare resource ", t)
             true
         }
       case _ => false

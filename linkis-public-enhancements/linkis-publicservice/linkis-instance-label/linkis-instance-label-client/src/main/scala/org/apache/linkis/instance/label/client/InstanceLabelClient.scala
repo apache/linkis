@@ -23,7 +23,7 @@ import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.utils.LabelUtils
-import org.apache.linkis.protocol.label.{InsLabelAttachRequest, InsLabelQueryRequest, InsLabelQueryResponse, InsLabelRemoveRequest, LabelInsQueryRequest, LabelInsQueryResponse}
+import org.apache.linkis.protocol.label.{InsLabelAttachRequest, InsLabelQueryRequest, InsLabelQueryResponse, InsLabelRefreshRequest, InsLabelRemoveRequest, LabelInsQueryRequest, LabelInsQueryResponse}
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.rpc.conf.RPCConfiguration.PUBLIC_SERVICE_APPLICATION_NAME
 import org.apache.linkis.server.BDPJettyServerHelper
@@ -36,12 +36,16 @@ class InstanceLabelClient extends Logging {
 
   val labelBuilderFactory = LabelBuilderFactoryContext.getLabelBuilderFactory
 
-  def attachLabelsToInstance(insLabelAttachRequest: InsLabelAttachRequest): Unit = {
-    getSender().send(insLabelAttachRequest)
+  def refreshLabelsToInstance(insLabelRefreshRequest: InsLabelRefreshRequest): Unit = {
+    getSender().send(insLabelRefreshRequest)
   }
 
   def removeLabelsFromInstance(insLabelRemoveRequest: InsLabelRemoveRequest): Unit = {
     getSender().send(insLabelRemoveRequest)
+  }
+
+  def attachLabelsToInstance(insLabelAttachRequest: InsLabelAttachRequest): Unit = {
+    getSender().send(insLabelAttachRequest)
   }
 
   def getSender(): Sender = {
@@ -57,7 +61,7 @@ class InstanceLabelClient extends Logging {
           resp.getLabelList.asScala.foreach(pair => labelList.add(labelBuilderFactory.createLabel[Label[_]](pair.getKey, pair.getValue)))
           labelList
         case o =>
-          error(s"Invalid response ${BDPJettyServerHelper.gson.toJson(o)} from request : ${BDPJettyServerHelper.gson.toJson(request)}")
+          logger.error(s"Invalid response ${BDPJettyServerHelper.gson.toJson(o)} from request : ${BDPJettyServerHelper.gson.toJson(request)}")
           new util.ArrayList[Label[_]]
       }
     }
@@ -71,11 +75,11 @@ class InstanceLabelClient extends Logging {
       Sender.getSender(PUBLIC_SERVICE_APPLICATION_NAME.getValue).ask(request) match {
         case resp: LabelInsQueryResponse =>
           if (resp.getInsList.size() != 1) {
-            warn(s"Instance num ${resp.getInsList.size()} with labels ${BDPJettyServerHelper.gson.toJson(labelMap)} is not single one.")
+            logger.warn(s"Instance num ${resp.getInsList.size()} with labels ${BDPJettyServerHelper.gson.toJson(labelMap)} is not single one.")
           }
           resp.getInsList
         case o =>
-          error(s"Invalid resp : ${BDPJettyServerHelper.gson.toJson(o)} from request : ${BDPJettyServerHelper.gson.toJson(request)}")
+          logger.error(s"Invalid resp : ${BDPJettyServerHelper.gson.toJson(o)} from request : ${BDPJettyServerHelper.gson.toJson(request)}")
           new util.ArrayList[ServiceInstance]()
       }
     }
@@ -87,5 +91,5 @@ object InstanceLabelClient {
 
   private val instanceLabelClient = new InstanceLabelClient
 
-  def getInstance = instanceLabelClient
+  def getInstance: InstanceLabelClient = instanceLabelClient
 }

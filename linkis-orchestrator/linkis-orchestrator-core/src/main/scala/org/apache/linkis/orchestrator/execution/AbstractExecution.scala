@@ -41,7 +41,7 @@ abstract class AbstractExecution extends Execution with Logging{
   def getExecutionTask(execTask: ExecTask): ExecutionTask = execTaskToExecutionTasks.get(execTask)
 
   def start(): Unit = {
-    info("execution start")
+    logger.info("execution start")
     taskScheduler.start()
     taskConsumer.init(this)
     taskConsumer.start()
@@ -75,7 +75,7 @@ abstract class AbstractExecution extends Execution with Logging{
   class ExecutionClearListener(rootExecTask: ExecTask) extends NotifyListener {
     override def apply(taskResponse: TaskResponse): Unit = taskResponse match {
       case t: CompletedTaskResponse => {
-        info(s"${rootExecTask.getIDInfo()} completed, Now to remove from execTaskToExecutionTasks")
+        logger.info(s"${rootExecTask.getIDInfo()} completed, Now to remove from execTaskToExecutionTasks")
         execTaskToExecutionTasks.remove(rootExecTask)
       }
       case _ =>

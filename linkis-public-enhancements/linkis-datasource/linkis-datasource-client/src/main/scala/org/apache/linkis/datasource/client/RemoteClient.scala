@@ -17,10 +17,10 @@
 
 package org.apache.linkis.datasource.client
 
+import java.io.Closeable
+
 import org.apache.linkis.httpclient.request.Action
 import org.apache.linkis.httpclient.response.Result
-
-import java.io.Closeable
 
 trait RemoteClient extends Closeable {
   protected def execute(action: Action): Result

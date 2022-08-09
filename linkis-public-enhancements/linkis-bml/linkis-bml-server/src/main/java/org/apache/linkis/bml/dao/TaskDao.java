@@ -17,7 +17,7 @@
 
 package org.apache.linkis.bml.dao;
 
-import org.apache.linkis.bml.Entity.ResourceTask;
+import org.apache.linkis.bml.entity.ResourceTask;
 
 import org.apache.ibatis.annotations.Param;
 

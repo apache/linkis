@@ -27,10 +27,10 @@ class ReadCacheConsumerManager(maxParallelismUsers: Int, persistenceManager: Per
   override protected def createConsumer(groupName: String): FIFOUserConsumer = {
     val group = getSchedulerContext.getOrCreateGroupFactory.getGroup(groupName)
     if(groupName.endsWith(EntranceGroupFactory.CACHE)){
-      info("Create cache consumer with group: " + groupName)
+      logger.info("Create cache consumer with group: " + groupName)
       new ReadCacheConsumer(getSchedulerContext, getOrCreateExecutorService, group, persistenceManager)
     } else {
-      info("Create normal consumer with group: " + groupName)
+      logger.info("Create normal consumer with group: " + groupName)
       new FIFOUserConsumer(getSchedulerContext, getOrCreateExecutorService, group)
     }
   }

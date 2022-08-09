@@ -19,7 +19,7 @@ package org.apache.linkis.manager.am.rpc
 
 import org.apache.linkis.manager.common.entity.resource.ResourceSerializer
 import org.apache.linkis.manager.common.serializer.NodeResourceSerializer
-import org.apache.linkis.resourcemanager.ResultResourceSerializer
+import org.apache.linkis.manager.rm.ResultResourceSerializer
 import org.apache.linkis.rpc.transform.RPCFormats
 import org.json4s.Serializer
 import org.springframework.stereotype.Component

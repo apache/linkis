@@ -46,7 +46,7 @@ class ECTaskEntranceMonitorService extends TaskStatusChangedForUpstreamMonitorLi
 
   override def onEvent(event: EngineConnSyncEvent): Unit = event match {
     case taskStatusChangedForUpstreamMonitorEvent: TaskStatusChangedForUpstreamMonitorEvent => onTaskStatusChanged(taskStatusChangedForUpstreamMonitorEvent)
-    case _ => info("ignored EngineConnSyncEvent " + event.getClass.getCanonicalName)
+    case _ => logger.info("ignored EngineConnSyncEvent " + event.getClass.getCanonicalName)
   }
 
   override def onTaskStatusChanged(event: TaskStatusChangedForUpstreamMonitorEvent): Unit = {
@@ -54,11 +54,11 @@ class ECTaskEntranceMonitorService extends TaskStatusChangedForUpstreamMonitorLi
     val toStatus = event.toStatus
     if ((fromStatus == ExecutionNodeStatus.Inited || fromStatus == ExecutionNodeStatus.Scheduled) &&
       (toStatus == ExecutionNodeStatus.Running)) {
-      info("registering new task: " + event.taskId)
+      logger.info("registering new task: " + event.taskId)
       eCTaskEntranceMonitor.register(event.task, event.executor)
     } else if (fromStatus == ExecutionNodeStatus.Running &&
       (toStatus == ExecutionNodeStatus.Succeed || toStatus == ExecutionNodeStatus.Failed || toStatus == ExecutionNodeStatus.Cancelled || toStatus == ExecutionNodeStatus.Timeout)) {
-      info("unRegistering task: " + event.taskId)
+      logger.info("unRegistering task: " + event.taskId)
       eCTaskEntranceMonitor.unregister(event.task.getTaskId)
     }
   }

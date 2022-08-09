@@ -28,7 +28,7 @@ object EngineConnExecution extends Logging {
 
   private val engineExecutions = initEngineExecutions
 
-  info("The list of EngineConnExecution: " + engineExecutions.toList)
+  logger.info("The list of EngineConnExecution: " + engineExecutions.toList)
 
   private def initEngineExecutions: Array[EngineConnExecution] = {
     Utils.tryThrow {

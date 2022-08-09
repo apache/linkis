@@ -14,30 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.jobhistory.conversions
 
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.governance.common.entity.job.{JobRequest, SubJobDetail}
-import org.apache.linkis.governance.common.entity.task.{RequestPersistTask, RequestQueryTask}
+import org.apache.linkis.governance.common.entity.task.RequestQueryTask
 import org.apache.linkis.jobhistory.conf.JobhistoryConfiguration
 import org.apache.linkis.jobhistory.entity.{JobDetail, JobHistory, QueryTask, QueryTaskVO}
 import org.apache.linkis.jobhistory.transitional.TaskStatus
 import org.apache.linkis.jobhistory.util.QueryUtils
-import org.apache.linkis.manager.label.builder.factory.{LabelBuilderFactory, LabelBuilderFactoryContext}
+import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.utils.LabelUtil
+import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.protocol.utils.ZuulEntranceUtils
 import org.apache.linkis.server.{BDPJettyServerHelper, toScalaBuffer, toScalaMap}
-import org.apache.commons.lang.StringUtils
 import org.springframework.beans.BeanUtils
+
+import java.text.SimpleDateFormat
 import java.util
 import java.util.Date
-import java.text.SimpleDateFormat
-
-import org.apache.linkis.protocol.constants.TaskConstant
-
-import scala.collection.JavaConverters.{asJavaIterableConverter, asScalaBufferConverter, mapAsScalaMapConverter}
+import scala.collection.JavaConverters.{asScalaBufferConverter, mapAsScalaMapConverter}
 
 
 object TaskConversions extends Logging {
@@ -282,7 +281,7 @@ object TaskConversions extends Logging {
         } else {
           taskVO.setCostTime(System.currentTimeMillis() - createTime.getTime)
         }
-      } else{
+      } else {
         taskVO.setCostTime(System.currentTimeMillis() - createTime.getTime)
       }
     }
@@ -291,8 +290,8 @@ object TaskConversions extends Logging {
       if (null != engineMap && !engineMap.isEmpty) {
         taskVO.setEngineInstance(engineMap.map(_._1).toList.mkString(","))
       }
-    } else {
-      taskVO.setEngineInstance("EngineInstance not ready in metrics.")
+    } else if (TaskStatus.Failed.toString.equals(job.getStatus)) {
+      taskVO.setCanRetry(true)
     }
 
     val entranceName = JobhistoryConfiguration.ENTRANCE_SPRING_NAME.getValue
@@ -303,14 +302,14 @@ object TaskConversions extends Logging {
       taskVO.setExecutionCode(job.getExecutionCode)
     }
     // Do not attach subjobs for performance
-//    taskVO.setSubJobs(subjobs)
+    //    taskVO.setSubJobs(subjobs)
     taskVO.setSourceJson(job.getSource)
     if (StringUtils.isNotBlank(job.getSource)) {
       Utils.tryCatch {
         val source = BDPJettyServerHelper.gson.fromJson(job.getSource, classOf[util.Map[String, String]])
         taskVO.setSourceTailor(source.map(_._2).foldLeft("")(_ + _ + "-").stripSuffix("-"))
       } {
-        case _ => warn("sourceJson deserialization failed, this task may be the old data.")
+        case _ => logger.warn("sourceJson deserialization failed, this task may be the old data.")
       }
     }
     taskVO
@@ -325,13 +324,14 @@ object TaskConversions extends Logging {
     labels
   }
 
-  def dealString2Date(strDate : String) : Date = {
+  def dealString2Date(strDate: String): Date = {
     val df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
-    Utils.tryCatch{
+    Utils.tryCatch {
       val date = df.parse(strDate)
       date
     } {
-      _ => warn("String to Date deserialization failed.")
+      _ =>
+        logger.warn("String to Date deserialization failed.")
         null
     }
   }

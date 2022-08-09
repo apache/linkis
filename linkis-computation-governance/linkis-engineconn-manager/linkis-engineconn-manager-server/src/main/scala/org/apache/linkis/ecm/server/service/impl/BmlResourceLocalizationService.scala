@@ -17,10 +17,7 @@
  
 package org.apache.linkis.ecm.server.service.impl
 
-import java.io.File
-import java.nio.file.Paths
 import org.apache.linkis.DataWorkCloudApplication
-import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.io.FsPath
 import org.apache.linkis.common.utils.{Logging, Utils, ZipUtils}
 import org.apache.linkis.ecm.core.conf.ECMErrorCode
@@ -38,6 +35,8 @@ import org.apache.linkis.storage.FSFactory
 import org.apache.linkis.storage.fs.FileSystem
 import org.apache.linkis.storage.utils.{FileSystemUtils, StorageUtils}
 
+import java.io.File
+import java.nio.file.Paths
 import scala.collection.JavaConversions._
 import scala.collection.mutable
 
@@ -140,7 +139,7 @@ class BmlResourceLocalizationService extends ResourceLocalizationService with Lo
             linkDirs.put(path.getPath, workDir + seperator + name)
         }
       case BmlResource.BmlResourceVisibility.Private =>
-        info(s"Try to download private BmlResource(resourceId: $resourceId, version: $version, fileName: ${resource.getFileName}) to path $workDir.")
+        logger.info(s"Try to download private BmlResource(resourceId: $resourceId, version: $version, fileName: ${resource.getFileName}) to path $workDir.")
         val fsPath = new FsPath(schema + workDir)
         if (!fs.exists(fsPath)) {
           FileSystemUtils.mkdirs(fs, fsPath, Utils.getJvmUser)
@@ -148,13 +147,13 @@ class BmlResourceLocalizationService extends ResourceLocalizationService with Lo
         ECMUtils.downLoadBmlResourceToLocal(resource, user, fsPath.getPath)
         val filePath = schema + workDir + File.separator + resource.getFileName
         if(resource.getFileName != null && resource.getFileName.endsWith(".zip")) {
-          info(s"Try to unzip $filePath, since the private BMLResource is a zip file.")
+          logger.info(s"Try to unzip $filePath, since the private BMLResource is a zip file.")
           ZipUtils.unzip(filePath, fsPath.getSchemaPath)
           fs.delete(new FsPath(filePath))
         }
-        info(s"Finished to download private BmlResource(resourceId: $resourceId, version: $version, fileName: ${resource.getFileName}) to path $filePath.")
+        logger.info(s"Finished to download private BmlResource(resourceId: $resourceId, version: $version, fileName: ${resource.getFileName}) to path $filePath.")
       case BmlResource.BmlResourceVisibility.Label =>
-        error(s"Not supported BmlResource visibility type: label. BmlResource: resourceId: $resourceId, version: $version, fileName: ${resource.getFileName}.")
+        logger.error(s"Not supported BmlResource visibility type: label. BmlResource: resourceId: $resourceId, version: $version, fileName: ${resource.getFileName}.")
         throw new ECMErrorException(ECMErrorCode.EC_START_FAILED, s"Not supported BmlResource visibility type: label(不支持的 BmlResource visibility 类型：label).")
     }
   }

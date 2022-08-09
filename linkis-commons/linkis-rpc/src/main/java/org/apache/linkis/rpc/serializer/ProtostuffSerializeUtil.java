@@ -41,8 +41,7 @@ public class ProtostuffSerializeUtil {
         idStrategy.registerDelegate(TIMESTAMP_DELEGATE);
     }
 
-    private static Map<Class<?>, Schema<?>> schemaCache =
-            new ConcurrentHashMap<Class<?>, Schema<?>>();
+    private static Map<Class<?>, Schema<?>> schemaCache = new ConcurrentHashMap<>();
 
     public static <T> String serialize(T obj) {
 

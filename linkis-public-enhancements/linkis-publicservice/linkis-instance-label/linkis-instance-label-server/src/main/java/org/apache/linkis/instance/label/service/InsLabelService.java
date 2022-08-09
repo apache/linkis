@@ -35,12 +35,12 @@ public interface InsLabelService {
      * @param serviceInstance service instance
      */
     @CacheEvict(
-            cacheNames = {"label"},
+            cacheNames = {"instance", "appInstance", "label"},
             allEntries = true)
     void attachLabelToInstance(Label<?> label, ServiceInstance serviceInstance);
 
     @CacheEvict(
-            cacheNames = {"label"},
+            cacheNames = {"instance", "appInstance", "label"},
             allEntries = true)
     void attachLabelsToInstance(List<? extends Label<?>> labels, ServiceInstance serviceInstance);
 
@@ -51,7 +51,7 @@ public interface InsLabelService {
      * @param serviceInstance
      */
     @CacheEvict(
-            cacheNames = {"instance"},
+            cacheNames = {"instance", "appInstance", "label"},
             allEntries = true)
     void refreshLabelsToInstance(List<? extends Label<?>> labels, ServiceInstance serviceInstance);
 
@@ -61,7 +61,7 @@ public interface InsLabelService {
      * @param serviceInstance service instance
      */
     @CacheEvict(
-            cacheNames = {"instance"},
+            cacheNames = {"instance", "appInstance", "label"},
             allEntries = true)
     void removeLabelsFromInstance(ServiceInstance serviceInstance);
 
@@ -93,8 +93,11 @@ public interface InsLabelService {
 
     void removeInstance(ServiceInstance serviceInstance);
 
+    @Cacheable({"appInstance"})
+    List<ServiceInstance> getInstancesByNames(String appName);
+
     @CacheEvict(
-            cacheNames = {"instance", "label"},
+            cacheNames = {"instance", "label", "appInstance"},
             allEntries = true)
     void evictCache();
 }

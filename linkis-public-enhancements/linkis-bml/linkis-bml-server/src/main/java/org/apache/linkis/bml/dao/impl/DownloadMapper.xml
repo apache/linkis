@@ -20,13 +20,13 @@
 
 <mapper namespace="org.apache.linkis.bml.dao.DownloadDao">
 
-    <resultMap id="DownloadModel" type="org.apache.linkis.bml.Entity.DownloadModel">
+    <resultMap id="DownloadModel" type="org.apache.linkis.bml.entity.DownloadModel">
 
     </resultMap>
 
 
     <insert id="insertDownloadModel" useGeneratedKeys="true" keyColumn="id" keyProperty="id"
-            parameterType="org.apache.linkis.bml.Entity.DownloadModel">
+            parameterType="org.apache.linkis.bml.entity.DownloadModel">
         insert into `linkis_ps_resources_download_history` ( `start_time`,`end_time`,`client_ip`,`state`,`resource_id`,`version`,`downloader`)
         values(#{downloadModel.startTime}, #{downloadModel.endTime}, #{downloadModel.clientIp}, #{downloadModel.state}, #{downloadModel.resourceId}, #{downloadModel.version}, #{downloadModel.downloader})
     </insert>

@@ -27,7 +27,7 @@ object EngineConnObject extends Logging {
   private val engineConnPlugin: EngineConnPlugin = Utils.tryCatch {
     Utils.getClassInstance[EngineConnPlugin](EngineConnConf.ENGINE_CONN_PLUGIN_CLAZZ.getValue)
   } { t =>
-    error("Failed to create engineConnPlugin: " + EngineConnConf.ENGINE_CONN_PLUGIN_CLAZZ.getValue, t)
+    logger.error("Failed to create engineConnPlugin: " + EngineConnConf.ENGINE_CONN_PLUGIN_CLAZZ.getValue, t)
     System.exit(1)
     null
   }

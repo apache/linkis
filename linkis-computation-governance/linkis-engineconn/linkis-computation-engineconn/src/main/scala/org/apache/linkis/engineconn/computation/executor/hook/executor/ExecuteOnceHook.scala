@@ -42,7 +42,7 @@ class ExecuteOnceHook extends ComputationExecutorHook with ExecutorLockListener 
     if (executeOnce && !isRegister) {
       isRegister = true
       asyncListenerBusContext.addListener(this)
-      warn("execute once become effective, register lock listener")
+      logger.warn("execute once become effective, register lock listener")
     }
     codeBeforeHook
   }
@@ -51,7 +51,7 @@ class ExecuteOnceHook extends ComputationExecutorHook with ExecutorLockListener 
 
   override def onReleaseLock(releaseLockEvent: ExecutorUnLockEvent): Unit = {
     if (executeOnce) {
-      warn("engine unlock trigger execute once label to shutdown engineConn")
+      logger.warn("engine unlock trigger execute once label to shutdown engineConn")
       ExecutorManager.getInstance.getReportExecutor.tryShutdown()
     }
   }

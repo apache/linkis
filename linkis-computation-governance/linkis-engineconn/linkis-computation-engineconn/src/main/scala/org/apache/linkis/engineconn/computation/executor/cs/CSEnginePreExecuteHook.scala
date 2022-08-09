@@ -37,15 +37,15 @@ class CSEnginePreExecuteHook extends ComputationExecutorHook with Logging {
   override def beforeExecutorExecute(engineExecutionContext: EngineExecutionContext, engineCreationContext: EngineCreationContext, code: String): String = {
     val props = engineExecutionContext.getProperties
     if (null != props && props.containsKey(CSCommonUtils.CONTEXT_ID_STR)) {
-        var parsedCode = code
-        val contextIDValueStr = ContextServiceUtils.getContextIDStrByMap (props)
-        val nodeNameStr = ContextServiceUtils.getNodeNameStrByMap (props)
-        engineExecutionContext.addProperty (CSCommonUtils.CONTEXT_ID_STR, contextIDValueStr)
-        engineExecutionContext.addProperty (CSCommonUtils.NODE_NAME_STR, nodeNameStr)
-        info (s"Start to call cs engine pre hook,contextID is $contextIDValueStr, nodeNameStr is $nodeNameStr")
-        parsedCode = csResourceParser.parse (props, parsedCode, contextIDValueStr, nodeNameStr)
-        info (s"Finished to call cs engine pre hook,contextID is $contextIDValueStr, nodeNameStr is $nodeNameStr")
-        parsedCode
+      var parsedCode = code
+      val contextIDValueStr = ContextServiceUtils.getContextIDStrByMap (props)
+      val nodeNameStr = ContextServiceUtils.getNodeNameStrByMap (props)
+      engineExecutionContext.addProperty (CSCommonUtils.CONTEXT_ID_STR, contextIDValueStr)
+      engineExecutionContext.addProperty (CSCommonUtils.NODE_NAME_STR, nodeNameStr)
+      logger.info (s"Start to call cs engine pre hook,contextID is $contextIDValueStr, nodeNameStr is $nodeNameStr")
+      parsedCode = csResourceParser.parse (props, parsedCode, contextIDValueStr, nodeNameStr)
+      logger.info (s"Finished to call cs engine pre hook,contextID is $contextIDValueStr, nodeNameStr is $nodeNameStr")
+      parsedCode
     } else {
       code
     }

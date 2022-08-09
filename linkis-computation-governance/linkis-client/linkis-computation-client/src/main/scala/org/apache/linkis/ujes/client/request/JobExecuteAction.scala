@@ -24,7 +24,7 @@ import org.apache.linkis.httpclient.request.POSTAction
 import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.protocol.utils.TaskUtils
 import org.apache.linkis.ujes.client.exception.UJESClientBuilderException
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 
 class JobExecuteAction private() extends POSTAction with UJESJobAction {
   override def suffixURLs: Array[String] = Array("entrance", "execute")

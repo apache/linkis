@@ -18,9 +18,9 @@
 package org.apache.linkis.rpc
 
 import org.apache.linkis.common.ServiceInstance
-import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.rpc.conf.RPCConfiguration
 import org.apache.linkis.rpc.sender.{LocalMessageSender, SpringMVCRPCSender}
+import org.slf4j.LoggerFactory
 
 trait SenderFactory {
 
@@ -37,12 +37,12 @@ object SenderFactory {
   }
 }
 
-class DefaultSenderFactory extends SenderFactory with Logging {
+class DefaultSenderFactory extends SenderFactory {
 
-
+  private val logger = LoggerFactory.getLogger(classOf[DefaultSenderFactory])
   override def createSender(serviceInstance: ServiceInstance): Sender = {
     if (RPCConfiguration.ENABLE_LOCAL_MESSAGE.getValue && RPCConfiguration.LOCAL_APP_LIST.contains(serviceInstance.getApplicationName)) {
-      info(s"Start to create local message sender of $serviceInstance")
+      logger.info(s"Start to create local message sender of $serviceInstance")
       new LocalMessageSender(serviceInstance)
     } else {
       new SpringMVCRPCSender(serviceInstance)
@@ -51,3 +51,4 @@ class DefaultSenderFactory extends SenderFactory with Logging {
   }
 
 }
+

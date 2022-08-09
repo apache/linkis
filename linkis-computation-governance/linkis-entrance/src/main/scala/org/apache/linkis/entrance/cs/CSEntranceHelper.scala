@@ -35,7 +35,7 @@ import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.protocol.utils.TaskUtils
 import org.apache.linkis.scheduler.queue.Job
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 
 import scala.collection.JavaConversions._
 
@@ -79,7 +79,7 @@ object CSEntranceHelper extends Logging {
     job match {
       case entranceJob: EntranceJob => {
         val (contextIDValueStr, nodeNameStr) = getContextInfo(entranceJob.getParams)
-        info(s"registerCSRSData: nodeName:$nodeNameStr")
+        logger.info(s"registerCSRSData: nodeName:$nodeNameStr")
         if (StringUtils.isBlank(contextIDValueStr) || StringUtils.isBlank(nodeNameStr)) return null
 
         val contextKey = new CommonContextKey
@@ -91,10 +91,10 @@ object CSEntranceHelper extends Logging {
             val data = new LinkisJobData
             data.setJobID(jobRequest.getId)
             LinkisJobDataServiceImpl.getInstance().putLinkisJobData(contextIDValueStr, SerializeHelper.serializeContextKey(contextKey), data)
-            info(s"(${contextKey.getKey} put ${jobRequest.getId} of jobId to cs)")
+            logger.info(s"(${contextKey.getKey} put ${jobRequest.getId} of jobId to cs)")
           case _ =>
         }
-        info(s"registerCSRSData end: nodeName:$nodeNameStr")
+        logger.info(s"registerCSRSData end: nodeName:$nodeNameStr")
       }
       case _ =>
     }
@@ -111,7 +111,7 @@ object CSEntranceHelper extends Logging {
     val (contextIDValueStr, nodeNameStr) = getContextInfo(requestPersistTask.getParams.asInstanceOf[util.Map[String, Any]])
 
     if (StringUtils.isNotBlank(contextIDValueStr) && StringUtils.isNotBlank(nodeNameStr)) {
-      info(s"init node($nodeNameStr) cs info")
+      logger.info(s"init node($nodeNameStr) cs info")
       CSNodeServiceImpl.getInstance().initNodeCSInfo(contextIDValueStr, nodeNameStr)
     }
   }
@@ -136,10 +136,10 @@ object CSEntranceHelper extends Logging {
       SerializeHelper.deserializeContextID(contextIDValueStr) match {
         case contextID: LinkisWorkflowContextID =>
           if (CSCommonUtils.CONTEXT_ENV_PROD.equalsIgnoreCase(contextID.getEnv)) {
-            info(s"reset creator from ${userCreatorLabel.getCreator} to " + EntranceConfiguration.SCHEDULER_CREATOR.getValue)
+            logger.info(s"reset creator from ${userCreatorLabel.getCreator} to " + EntranceConfiguration.SCHEDULER_CREATOR.getValue)
             userCreatorLabel.setCreator(EntranceConfiguration.SCHEDULER_CREATOR.getValue)
           } else {
-            info(s"reset creator from ${userCreatorLabel.getCreator} to " + EntranceConfiguration.FLOW_EXECUTION_CREATOR.getValue)
+            logger.info(s"reset creator from ${userCreatorLabel.getCreator} to " + EntranceConfiguration.FLOW_EXECUTION_CREATOR.getValue)
             userCreatorLabel.setCreator(EntranceConfiguration.FLOW_EXECUTION_CREATOR.getValue)
           }
         case _ =>
@@ -161,7 +161,7 @@ object CSEntranceHelper extends Logging {
     val (contextIDValueStr, nodeNameStr) = getContextInfo(requestPersistTask.getParams.asInstanceOf[util.Map[String, Any]])
 
     if (StringUtils.isNotBlank(contextIDValueStr)) {
-      info(s"parse variable nodeName:$nodeNameStr")
+      logger.info(s"parse variable nodeName:$nodeNameStr")
       val linkisVariableList: util.List[LinkisVariable] = CSVariableService.getInstance().getUpstreamVariables(contextIDValueStr, nodeNameStr);
       if (null != linkisVariableList) {
         linkisVariableList.foreach { linkisVariable =>
@@ -179,7 +179,7 @@ object CSEntranceHelper extends Logging {
         TaskUtils.addVariableMap(requestPersistTask.getParams.asInstanceOf[util.Map[String, Any]], varMap)
       }
 
-      info(s"parse variable end nodeName:$nodeNameStr")
+      logger.info(s"parse variable end nodeName:$nodeNameStr")
     }
   }
 }

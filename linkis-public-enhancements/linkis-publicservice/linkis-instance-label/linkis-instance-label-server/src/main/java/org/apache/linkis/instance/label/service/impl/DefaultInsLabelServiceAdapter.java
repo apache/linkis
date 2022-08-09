@@ -18,6 +18,7 @@
 package org.apache.linkis.instance.label.service.impl;
 
 import org.apache.linkis.common.ServiceInstance;
+import org.apache.linkis.instance.label.exception.InstanceErrorException;
 import org.apache.linkis.instance.label.service.InsLabelAccessService;
 import org.apache.linkis.instance.label.service.InsLabelServiceAdapter;
 import org.apache.linkis.manager.label.entity.Label;
@@ -67,7 +68,11 @@ public class DefaultInsLabelServiceAdapter implements InsLabelServiceAdapter {
         execOnServiceChain(
                 "attachLabelToInstance",
                 insLabelAccessService -> {
-                    insLabelAccessService.attachLabelToInstance(label, serviceInstance);
+                    try {
+                        insLabelAccessService.attachLabelToInstance(label, serviceInstance);
+                    } catch (InstanceErrorException e) {
+                        LOG.error("Failed to attachLabelToInstance", e);
+                    }
                     return true;
                 },
                 true,
@@ -80,7 +85,11 @@ public class DefaultInsLabelServiceAdapter implements InsLabelServiceAdapter {
         execOnServiceChain(
                 "attachLabelsToInstance",
                 insLabelAccessService -> {
-                    insLabelAccessService.attachLabelsToInstance(labels, serviceInstance);
+                    try {
+                        insLabelAccessService.attachLabelsToInstance(labels, serviceInstance);
+                    } catch (InstanceErrorException e) {
+                        LOG.error("Failed to attachLabelToInstance", e);
+                    }
                     return true;
                 },
                 true,
@@ -93,7 +102,11 @@ public class DefaultInsLabelServiceAdapter implements InsLabelServiceAdapter {
         execOnServiceChain(
                 "refreshLabelsToInstance",
                 insLabelAccessService -> {
-                    insLabelAccessService.refreshLabelsToInstance(labels, serviceInstance);
+                    try {
+                        insLabelAccessService.refreshLabelsToInstance(labels, serviceInstance);
+                    } catch (InstanceErrorException e) {
+                        LOG.error("Failed to attachLabelToInstance", e);
+                    }
                     return true;
                 },
                 true,
@@ -153,6 +166,15 @@ public class DefaultInsLabelServiceAdapter implements InsLabelServiceAdapter {
                 },
                 true,
                 true);
+    }
+
+    @Override
+    public List<ServiceInstance> getInstancesByNames(String appName) {
+        return execOnServiceChain(
+                "getInstancesByNames",
+                insLabelAccessService -> insLabelAccessService.getInstancesByNames(appName),
+                false,
+                false);
     }
 
     @Override

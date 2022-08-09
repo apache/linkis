@@ -32,13 +32,23 @@
         <result property="refValue" column="ref_value"/>
         <result property="dataSource" column="data_source" />
     </resultMap>
+
     <sql id="param_key_query">
         `id`, `key`, `description`, `name`, `require`, `scope`,
+        `default_value`, `value_type`, `value_regex`, `ref_id`, `ref_value`, `data_source`
+    </sql>
+    <sql id="param_key_query_en">
+        `id`, `key`, `description_en` as `description`, `name_en` as `name`, `require`, `scope`,
         `default_value`, `value_type`, `value_regex`, `ref_id`, `ref_value`, `data_source`
     </sql>
     <select id="listByDataSourceType" resultMap="paramKeyMap" parameterType="Long">
         SELECT
         <include refid="param_key_query"/>
+        FROM `linkis_ps_dm_datasource_type_key` WHERE `data_source_type_id` = #{dataSourceTypeId};
+    </select>
+    <select id="listByDataSourceTypeEn" resultMap="paramKeyMap" parameterType="Long">
+        SELECT
+        <include refid="param_key_query_en"/>
         FROM `linkis_ps_dm_datasource_type_key` WHERE `data_source_type_id` = #{dataSourceTypeId};
     </select>
     <select id="listByDataSourceTypeAndScope" resultMap="paramKeyMap">

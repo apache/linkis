@@ -114,7 +114,7 @@ public abstract class LinkisException extends Exception {
     }
 
     public Map<String, Object> toMap() {
-        Map<String, Object> retMap = new HashMap<String, Object>();
+        Map<String, Object> retMap = new HashMap<>();
         retMap.put("level", getLevel().getLevel());
         retMap.put("errCode", getErrCode());
         retMap.put("desc", getDesc());
@@ -133,15 +133,15 @@ public abstract class LinkisException extends Exception {
                 + errCode
                 + ", desc='"
                 + desc
-                + '\''
+                + "'"
                 + ", ip='"
                 + ip
-                + '\''
+                + "'"
                 + ", port="
                 + port
                 + ", serviceKind='"
                 + serviceKind
-                + '\''
+                + "'"
                 + '}';
     }
 }

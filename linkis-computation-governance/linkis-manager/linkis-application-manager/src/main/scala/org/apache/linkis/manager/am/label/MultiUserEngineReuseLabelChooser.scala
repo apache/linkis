@@ -25,7 +25,7 @@ import org.apache.linkis.manager.am.exception.{AMErrorCode, AMErrorException}
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
 import org.apache.linkis.server.BDPJettyServerHelper
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.springframework.stereotype.Component
 
 import scala.collection.JavaConverters._
@@ -65,7 +65,7 @@ class MultiUserEngineReuseLabelChooser extends EngineReuseLabelChooser with Logg
       if (maybeString.isDefined && userCreatorLabelOption.isDefined) {
         val userAdmin = userMap.get(engineTypeLabel.getEngineType)
         val userCreatorLabel = userCreatorLabelOption.get.asInstanceOf[UserCreatorLabel]
-        info(s"For multi user engine to reset userCreatorLabel user ${userCreatorLabel.getUser} to Admin $userAdmin ")
+        logger.info(s"For multi user engine to reset userCreatorLabel user ${userCreatorLabel.getUser} to Admin $userAdmin ")
         userCreatorLabel.setUser(userAdmin)
         return labels.asJava
       }

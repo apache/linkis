@@ -17,7 +17,7 @@
 
 package org.apache.linkis.bml.service;
 
-import org.apache.linkis.bml.Entity.ResourceTask;
+import org.apache.linkis.bml.entity.ResourceTask;
 
 import org.springframework.web.multipart.MultipartFile;
 

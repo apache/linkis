@@ -25,11 +25,11 @@ trait JobExecuteRequest {
   val jobId: String
 }
 trait RunTypeExecuteRequest{
-  val runType:String
+  val runType: String
 }
 trait PythonExecuteRequest{
-  val sparkPythonVersion:String
-  val sparkPythonExtraPackage:String
-  val pythonVersion:String
-  val pythonExtraPackage:String
+  val sparkPythonVersion: String
+  val sparkPythonExtraPackage: String
+  val pythonVersion: String
+  val pythonExtraPackage: String
 }

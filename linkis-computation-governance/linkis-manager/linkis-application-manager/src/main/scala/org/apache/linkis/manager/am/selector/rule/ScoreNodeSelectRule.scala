@@ -28,10 +28,8 @@ import org.springframework.stereotype.Component
 class ScoreNodeSelectRule extends NodeSelectRule with Logging {
 
   override def ruleFiltering(nodes: Array[Node]): Array[Node] = {
-    if (null != nodes)
-      nodes.sortWith(sortByScore)
-    else
-      nodes
+    if (null != nodes) nodes.sortWith(sortByScore)
+    else nodes
   }
 
   /**
@@ -46,7 +44,7 @@ class ScoreNodeSelectRule extends NodeSelectRule with Logging {
       case instance: ScoreServiceInstance if nodeB.isInstanceOf[ScoreServiceInstance] =>
         Utils.tryCatch(instance.getScore > nodeB.asInstanceOf[ScoreServiceInstance].getScore) {
           t: Throwable =>
-            warn("Failed to Compare resource ", t)
+            logger.warn("Failed to Compare resource ", t)
             true
         }
 

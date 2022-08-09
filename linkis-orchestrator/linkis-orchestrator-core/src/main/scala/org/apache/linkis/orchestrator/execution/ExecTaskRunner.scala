@@ -22,7 +22,7 @@ import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
 import org.apache.linkis.orchestrator.conf.OrchestratorConfiguration
 import org.apache.linkis.orchestrator.plans.physical.ExecTask
 import org.apache.linkis.orchestrator.strategy.DefaultExecTaskRunnerFactory
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 
 /**
   *
@@ -59,7 +59,7 @@ object ExecTaskRunner extends Logging {
         val factory = if(StringUtils.isNotBlank(OrchestratorConfiguration.EXEC_RUNNER_FACTORY_CLASS.getValue))
           ClassUtils.getClassInstance[ExecTaskRunnerFactory](OrchestratorConfiguration.EXEC_RUNNER_FACTORY_CLASS.getValue)
         else new DefaultExecTaskRunnerFactory
-        info("Use " + factory.getClass.getName + " to instance a new execTaskRunnerFactory.")
+        logger.info("Use " + factory.getClass.getName + " to instance a new execTaskRunnerFactory.")
         execTaskRunnerFactory = factory
       }
     }

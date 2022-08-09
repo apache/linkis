@@ -22,7 +22,7 @@ import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.protocol.{Protocol, SingleInstanceProtocol}
 import org.apache.linkis.rpc.interceptor.RPCLoadBalancer
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.springframework.stereotype.Component
 
 
@@ -37,7 +37,7 @@ class SingleInstanceRPCLoadBalancer extends RPCLoadBalancer with Logging {
           val servers = lb.getAllServers
           val server = servers.get((math.random * servers.size()).toInt)
           originService.setInstance(server.getHostPort)
-          warn(originService.getApplicationName + " choose " + server.getHostPort + " to build a single instance connection.")
+          logger.warn(originService.getApplicationName + " choose " + server.getHostPort + " to build a single instance connection.")
         }
       }
       Some(originService)

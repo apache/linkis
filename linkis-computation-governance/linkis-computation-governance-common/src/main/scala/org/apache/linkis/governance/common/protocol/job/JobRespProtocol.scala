@@ -17,11 +17,10 @@
  
 package org.apache.linkis.governance.common.protocol.job
 
-import org.apache.commons.lang.builder.{EqualsBuilder, HashCodeBuilder}
+import org.apache.commons.lang3.builder.{EqualsBuilder, HashCodeBuilder}
 
 import java.util
 import scala.beans.BeanProperty
-
 
 class JobRespProtocol {
 

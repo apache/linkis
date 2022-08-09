@@ -71,13 +71,13 @@ private[linkis] object SpringCloudFeignConfigurationCache {
   private[rpc] def getDecoder = decoder
   private[rpc] def getContract = contract
   private[rpc] def getClient = {
-    if(client == null) DataWorkCloudApplication.getApplicationContext.getBean(classOf[SpringCloudFeignConfigurationCache])
+    if (client == null) DataWorkCloudApplication.getApplicationContext.getBean(classOf[SpringCloudFeignConfigurationCache])
     client
   }
   private[rpc] def getClientFactory = clientFactory
   private[rpc] def getLoadBalancedRetryFactory = loadBalancedRetryFactory
   private[linkis] def getDiscoveryClient = {
-    if(discoveryClient == null) DataWorkCloudApplication.getApplicationContext.getBean(classOf[SpringCloudFeignConfigurationCache])
+    if (discoveryClient == null) DataWorkCloudApplication.getApplicationContext.getBean(classOf[SpringCloudFeignConfigurationCache])
     discoveryClient
   }
   private[rpc] def getRPCTicketIdRequestInterceptor = rpcTicketIdRequestInterceptor

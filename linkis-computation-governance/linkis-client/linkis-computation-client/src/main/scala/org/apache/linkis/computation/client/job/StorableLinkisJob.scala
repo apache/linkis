@@ -35,22 +35,21 @@ trait StorableLinkisJob extends AbstractLinkisJob {
 
   protected def getJobSubmitResult: JobSubmitResult
 
-  override protected def wrapperObj[T](obj: Object, errorMsg: String)(op: => T): T = wrapperId {
+  override protected def wrapperObj[T](obj: Object, errorMsg: String)(op: => T): T = {
     super.wrapperObj(obj, errorMsg)(op)
   }
 
   protected def getJobInfoResult: JobInfoResult = {
-    if(completedJobInfoResult != null) return completedJobInfoResult
+    if (completedJobInfoResult != null) return completedJobInfoResult
     val startTime = System.currentTimeMillis
     val jobInfoResult = wrapperId(ujesClient.getJobInfo(getJobSubmitResult))
     getJobMetrics.addClientGetJobInfoTime(System.currentTimeMillis - startTime)
     if(jobInfoResult.isCompleted) {
       getJobMetrics.setClientFinishedTime(System.currentTimeMillis)
-      info(s"Job-$getId is completed with status " + completedJobInfoResult.getJobStatus)
       completedJobInfoResult = jobInfoResult
+      logger.info(s"Job-$getId is completed with status " + completedJobInfoResult.getJobStatus)
       getJobListeners.foreach(_.onJobFinished(this))
-    } else if(jobInfoResult.isRunning)
-      getJobListeners.foreach(_.onJobRunning(this))
+    } else if (jobInfoResult.isRunning) getJobListeners.foreach(_.onJobRunning(this))
     jobInfoResult
   }
 
@@ -84,14 +83,14 @@ abstract class StorableSubmittableLinkisJob(override protected val ujesClient: U
   protected override def wrapperId[T](op: => T): T = super.wrapperObj(taskId, "Please submit job first.")(op)
 
   override protected def doSubmit(): Unit = {
-    info("Ready to submit job: " + jobSubmitAction.getRequestPayload)
+    logger.info("Ready to submit job: " + jobSubmitAction.getRequestPayload)
     jobSubmitResult = ujesClient.submit(jobSubmitAction)
     taskId = jobSubmitResult.taskID
     addOperatorAction {
       case operator: StorableOperator[_] => operator.setJobSubmitResult(jobSubmitResult).setUJESClient(ujesClient)
       case operator => operator
     }
-    info("Job submitted with taskId: " + taskId)
+    logger.info("Job submitted with taskId: " + taskId)
   }
 
 }

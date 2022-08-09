@@ -51,6 +51,8 @@ object Configuration extends Logging {
 
   val GOVERNANCE_STATION_ADMIN = CommonVars("wds.linkis.governance.station.admin", "hadoop")
 
+  val VARIABLE_OPERATION: Boolean = CommonVars("wds.linkis.variable.operation", true).getValue
+
   private val adminUsers = GOVERNANCE_STATION_ADMIN.getValue.split(",")
 
   def isAdmin(username: String): Boolean = {
@@ -64,7 +66,7 @@ object Configuration extends Logging {
     } else {
       url
     }
-    info(s"gatewayUrl is $gatewayUr")
+    logger.info(s"gatewayUrl is $gatewayUr")
     gatewayUr
   }
 
@@ -75,7 +77,7 @@ object Configuration extends Logging {
     } else {
       home
     }
-    info(s"linkisHome is $linkisHome")
+    logger.info(s"linkisHome is $linkisHome")
     linkisHome
   }
 

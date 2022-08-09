@@ -25,7 +25,7 @@ import java.util.Calendar
 import java.{sql, util}
 import org.apache.linkis.ujes.client.request.ResultSetAction
 import org.apache.linkis.ujes.client.response.ResultSetResult
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.utils.Logging
 import org.joda.time.DateTimeZone
 import org.joda.time.format.{DateTimeFormat, DateTimeFormatterBuilder, DateTimeParser, ISODateTimeFormat}

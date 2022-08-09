@@ -27,7 +27,7 @@ import org.apache.linkis.gateway.http.GatewayContext
 import org.apache.linkis.gateway.route.AbstractGatewayRouter
 import org.apache.linkis.gateway.springcloud.SpringCloudGatewayConfiguration.{API_URL_PREFIX, normalPath}
 import org.apache.linkis.rpc.interceptor.ServiceInstanceUtils
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
@@ -103,10 +103,10 @@ class HaContextGatewayRouter extends AbstractGatewayRouter{
         if (null != contextID) {
           tmpId = contextID.getContextId
         } else {
-          error(s"Deserializate contextID null. contextIDStr : " + contextIdStr)
+          logger.error(s"Deserializate contextID null. contextIDStr : " + contextIdStr)
         }
       } else {
-        error(s"ContxtIDStr cannot be deserialized. contextIDStr : " + contextIdStr)
+        logger.error(s"ContxtIDStr cannot be deserialized. contextIDStr : " + contextIdStr)
       }
       if (null == tmpId) {
         contextIdStr

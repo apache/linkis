@@ -54,8 +54,9 @@ abstract class Job extends Runnable with SchedulerEvent with Closeable with Logg
   private var retryNum = 0
   private[linkis] var errorExecuteResponse: ErrorExecuteResponse = _
 
-  override def isWaiting = super.isWaiting && !interrupt
-  override def isCompleted = super.isCompleted || interrupt
+  override def isWaiting: Boolean = super.isWaiting && !interrupt
+
+  override def isCompleted: Boolean = super.isCompleted || interrupt
 
   def kill(): Unit = onFailure("Job is killed by user!", null)
 
@@ -129,27 +130,27 @@ abstract class Job extends Runnable with SchedulerEvent with Closeable with Logg
   }
 
 
-  def setListenerEventBus(eventListenerBus: ListenerEventBus[_<: SchedulerListener, _<: ScheduleEvent]) = this.eventListenerBus = eventListenerBus
+  def setListenerEventBus(eventListenerBus: ListenerEventBus[_ <: SchedulerListener, _ <: ScheduleEvent]): Unit = this.eventListenerBus = eventListenerBus
 
-  def setExecutor(executor: Executor) = this.executor = executor
+  def setExecutor(executor: Executor): Unit = this.executor = executor
   protected def getExecutor = executor
 
-  def setJobListener(jobListener: JobListener) = this.jobListener = Some(jobListener)
+  def setJobListener(jobListener: JobListener): Unit = this.jobListener = Some(jobListener)
 
-  def getJobListener = jobListener
+  def getJobListener: Option[JobListener] = jobListener
 
-  def setLogListener(logListener: LogListener) = this.logListener = Some(logListener)
+  def setLogListener(logListener: LogListener): Unit = this.logListener = Some(logListener)
 
-  def getLogListener = logListener
+  def getLogListener: Option[LogListener] = logListener
 
 
-  def setProgressListener(progressListener: ProgressListener) = this.progressListener = Some(progressListener)
+  def setProgressListener(progressListener: ProgressListener): Unit = this.progressListener = Some(progressListener)
 
-  def getProgressListener = progressListener
+  def getProgressListener: Option[ProgressListener] = progressListener
 
-  def getProgress = progress
+  def getProgress: Float = progress
 
-  def setProgress(progress: Float) = this.progress = progress
+  def setProgress(progress: Float): Unit = this.progress = progress
 
   @throws[Exception]
   def init(): Unit
@@ -161,7 +162,7 @@ abstract class Job extends Runnable with SchedulerEvent with Closeable with Logg
 
   def getJobInfo: JobInfo
 
-  def getErrorResponse = errorExecuteResponse
+  def getErrorResponse: ErrorExecuteResponse = errorExecuteResponse
 
   protected def existsJobDaemon: Boolean = false
 
@@ -223,7 +224,7 @@ abstract class Job extends Runnable with SchedulerEvent with Closeable with Logg
     IOUtils.closeQuietly(this)
   }
   def isJobSupportRetry: Boolean = true
-  def getRetryNum = retryNum
+  def getRetryNum: Int = retryNum
   protected def getMaxRetryNum: Int = 2
   protected def isJobShouldRetry(errorExecuteResponse: ErrorExecuteResponse): Boolean =
     isJobSupportRetry && errorExecuteResponse != null && (errorExecuteResponse.t match {
@@ -261,7 +262,7 @@ abstract class Job extends Runnable with SchedulerEvent with Closeable with Logg
       close()
       return
     }
-    val rs = Utils.tryCatch(executor.execute(jobToExecuteRequest)){
+    val rs = Utils.tryCatch(executor.execute(jobToExecuteRequest)) {
       case t: InterruptedException =>
         logger.warn(s"job $toString is interrupted by user!", t)
         ErrorExecuteResponse("job is interrupted by user!", t)

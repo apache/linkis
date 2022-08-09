@@ -145,7 +145,7 @@
                     "children": {
                         "globalHistory": "全局历史",
                         "resource": "资源管理",
-                        "resourceEngineConnList": "历史引擎信息",
+                        "resourceEngineConnList": "历史引擎",
                         "setting": "参数配置",
                         "dateReport": "全局变量",
                         "globalValiable": "常见问题",

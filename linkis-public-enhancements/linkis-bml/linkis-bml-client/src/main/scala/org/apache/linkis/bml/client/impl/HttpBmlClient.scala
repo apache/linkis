@@ -36,7 +36,7 @@ import org.apache.linkis.httpclient.dws.authentication.TokenAuthenticationStrate
 import org.apache.linkis.httpclient.dws.config.DWSClientConfig
 import org.apache.linkis.storage.FSFactory
 import org.apache.commons.io.IOUtils
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.http.client.methods.CloseableHttpResponse
 
 
@@ -148,7 +148,7 @@ class HttpBmlClient(clientConfig: DWSClientConfig,
           case r: CloseableHttpResponse =>
             Utils.tryAndWarn(r.close())
           case _ =>
-            info(s"Download response : ${downloadAction.getResponse} cannot close.")
+            logger.info(s"Download response : ${downloadAction.getResponse} cannot close.")
         }
       } catch {
         case e: IOException => logger.error("failed to copy inputStream and outputStream (inputStream和outputStream流copy失败)", e)
@@ -337,6 +337,7 @@ class HttpBmlClient(clientConfig: DWSClientConfig,
 
   override def deleteResource(user: String, resourceId: String): BmlDeleteResponse = {
     val deleteAction = BmlDeleteAction(resourceId)
+    deleteAction.setUser(user)
     deleteAction.getParameters.put("resourceId", resourceId)
     val result = dwsClient.execute(deleteAction)
     result match {

@@ -21,7 +21,7 @@ import java.util.concurrent.ConcurrentHashMap
 import org.apache.linkis.httpclient.Client
 import org.apache.linkis.httpclient.config.ClientConfig
 import org.apache.linkis.httpclient.request.{Action, UserAction}
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.http.HttpResponse
 import org.apache.linkis.common.utils.Logging
 
@@ -41,8 +41,7 @@ abstract class AbstractAuthenticationStrategy extends AuthenticationStrategy wit
   protected def getUser(requestAction: Action): String = requestAction match {
     case _: AuthenticationAction => null
     case authAction: UserAction => authAction.getUser
-    case _ if StringUtils.isNotBlank(clientConfig.getAuthTokenKey) => clientConfig.getAuthTokenKey
-    case _ => null
+    case _ => if (StringUtils.isNotBlank(clientConfig.getAuthTokenKey)) clientConfig.getAuthTokenKey else null
   }
 
   protected def getKey(requestAction: Action, serverUrl: String): String = {

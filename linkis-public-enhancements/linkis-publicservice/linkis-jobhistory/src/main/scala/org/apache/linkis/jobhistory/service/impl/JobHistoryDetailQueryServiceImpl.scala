@@ -17,28 +17,23 @@
  
 package org.apache.linkis.jobhistory.service.impl
 
-import java.sql.Timestamp
-
+import org.apache.commons.lang3.exception.ExceptionUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.governance.common.constant.job.JobRequestConstants
+import org.apache.linkis.governance.common.entity.job.QueryException
+import org.apache.linkis.governance.common.protocol.job._
+import org.apache.linkis.jobhistory.conversions.TaskConversions._
 import org.apache.linkis.jobhistory.dao.{JobDetailMapper, JobHistoryMapper}
 import org.apache.linkis.jobhistory.entity.JobDetail
 import org.apache.linkis.jobhistory.service.JobHistoryDetailQueryService
-import org.apache.linkis.rpc.message.annotation.Receiver
-import java.util
-
-import org.apache.commons.lang.exception.ExceptionUtils
-import org.apache.linkis.common.errorcode.LinkisPublicEnhancementErrorCodeSummary
-import org.apache.linkis.common.exception.LinkisRetryException
-import org.apache.linkis.governance.common.constant.job.JobRequestConstants
-import org.apache.linkis.governance.common.entity.job.QueryException
-import org.apache.linkis.governance.common.protocol.job.{JobDetailReqBatchUpdate, JobDetailReqInsert, JobDetailReqQuery, JobDetailReqUpdate, JobRespProtocol}
-import org.apache.linkis.jobhistory.conversions.TaskConversions._
 import org.apache.linkis.jobhistory.transitional.TaskStatus
 import org.apache.linkis.jobhistory.util.QueryUtils
+import org.apache.linkis.rpc.message.annotation.Receiver
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
+import java.util
 import scala.collection.JavaConversions._
 import scala.collection.JavaConverters.asScalaBufferConverter
 
@@ -82,7 +77,7 @@ class JobHistoryDetailQueryServiceImpl extends JobHistoryDetailQueryService with
     val subJobInfo = jobReqUpdate.jobInfo
     val jobDetail = subJobInfo.getSubJobDetail()
     if (null != jobDetail && null != jobDetail.getId) {
-      info("Update data to the database(往数据库中更新数据)：" + jobDetail.getId.toString)
+      logger.info("Update data to the database(往数据库中更新数据)：" + jobDetail.getId.toString)
     }
     val jobResp = new JobRespProtocol
     Utils.tryCatch {
@@ -132,7 +127,7 @@ class JobHistoryDetailQueryServiceImpl extends JobHistoryDetailQueryService with
         subJobInfoList.foreach(subJobInfo => {
           val jobDetail = subJobInfo.getSubJobDetail()
           if (null != jobDetail && null != jobDetail.getId) {
-            info("Update data to the database(往数据库中更新数据)：" + jobDetail.getId.toString)
+            logger.info("Update data to the database(往数据库中更新数据)：" + jobDetail.getId.toString)
           }
           val jobResp = new JobRespProtocol
           Utils.tryCatch {
@@ -173,7 +168,7 @@ class JobHistoryDetailQueryServiceImpl extends JobHistoryDetailQueryService with
 
   @Receiver
   override def query(jobReqQuery: JobDetailReqQuery): JobRespProtocol = {
-    info("查询历史task：" + jobReqQuery.toString)
+    logger.info("查询历史task：" + jobReqQuery.toString)
     val jobResp = new JobRespProtocol
     Utils.tryCatch {
       val subjobDetail = subjobDetail2JobDetail(jobReqQuery.jobReq)
@@ -224,19 +219,6 @@ class JobHistoryDetailQueryServiceImpl extends JobHistoryDetailQueryService with
   }*/
 
   private def shouldUpdate(oldStatus: String, newStatus: String): Boolean = TaskStatus.valueOf(oldStatus).ordinal <= TaskStatus.valueOf(newStatus).ordinal
-
-  /* override def searchOne(execId: String, sDate: Date, eDate: Date): QueryJobDetail = {
-    Iterables.getFirst(
-      jobDetailMapper.search(0l, null, null, sDate, eDate, execId),
-      {
-        val queryJobDetail = new QueryJobDetail
-        queryJobDetail.setJobReqId(execId)
-        queryJobDetail.setStatus(TaskStatus.Inited.toString)
-        queryJobDetail.setSubmitUser("EMPTY")
-        queryJobDetail
-        })
-  }
-     */
 
 }
 

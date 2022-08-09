@@ -17,9 +17,9 @@
  
 package org.apache.linkis.manager.am.selector.rule
 
-import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.manager.common.entity.enumeration.{NodeHealthy, NodeStatus}
 import org.apache.linkis.manager.common.entity.node.{AMNode, Node}
+import org.slf4j.{Logger, LoggerFactory}
 import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Component
 
@@ -28,7 +28,9 @@ import org.springframework.stereotype.Component
   */
 @Component
 @Order(2)
-class AvailableNodeSelectRule extends NodeSelectRule with Logging{
+class AvailableNodeSelectRule extends NodeSelectRule {
+
+  val logger: Logger = LoggerFactory.getLogger(classOf[AvailableNodeSelectRule])
 
   override def ruleFiltering(nodes: Array[Node]): Array[Node] = {
     if (null != nodes) {
@@ -37,7 +39,7 @@ class AvailableNodeSelectRule extends NodeSelectRule with Logging{
           if (! NodeStatus.isLocked(amNode.getNodeStatus) && NodeStatus.isAvailable(amNode.getNodeStatus)) {
             null != amNode.getNodeHealthyInfo && null != amNode.getNodeHealthyInfo.getNodeHealthy && NodeHealthy.isAvailable(amNode.getNodeHealthyInfo.getNodeHealthy)
           } else {
-            info(s"engineConn ${amNode.getServiceInstance} cannot be reuse status: ${amNode.getNodeStatus}")
+            logger.info(s"engineConn ${amNode.getServiceInstance} cannot be reuse status: ${amNode.getNodeStatus}")
             false
           }
         case node: Node => NodeStatus.isAvailable(node.getNodeStatus)
@@ -46,6 +48,4 @@ class AvailableNodeSelectRule extends NodeSelectRule with Logging{
       nodes
     }
   }
-
-
 }

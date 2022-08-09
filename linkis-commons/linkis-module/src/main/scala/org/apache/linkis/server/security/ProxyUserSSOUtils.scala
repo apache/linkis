@@ -17,7 +17,7 @@
 
 package org.apache.linkis.server.security
 
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.conf.CommonVars
 import org.apache.linkis.common.utils.{DESUtil, Logging}
 import org.apache.linkis.server.conf.ServerConfiguration
@@ -59,7 +59,7 @@ object ProxyUserSSOUtils extends Logging {
   }
 
   def setProxyUserCookie(addCookie: Cookie => Unit, username: String, trustCode: String): Unit = {
-    info(s"add login userTicketCookie for user $username.")
+    logger.info(s"add login userTicketCookie for user $username.")
     val userTicketIdKv = getProxyUserTicketKV(username, trustCode)
     val cookie = new Cookie(userTicketIdKv._1, userTicketIdKv._2)
     cookie.setMaxAge(-1)

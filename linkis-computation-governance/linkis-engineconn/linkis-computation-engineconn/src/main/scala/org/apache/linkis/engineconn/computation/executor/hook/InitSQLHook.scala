@@ -32,7 +32,7 @@ import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.{CodeLanguageLabel, RunType}
 import org.apache.commons.io.FileUtils
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 
 
 abstract class InitSQLHook  extends EngineConnHook with Logging {
@@ -53,16 +53,16 @@ abstract class InitSQLHook  extends EngineConnHook with Logging {
       Utils.getJvmUser
     }
     if (! INIT_SQL_ENABLE.getValue(engineCreationContext.getOptions)) {
-      info(s"$user engineConn skip execute init_sql")
+      logger.info(s"$user engineConn skip execute init_sql")
       return
     }
 
     val initSql = readFile(INIT_SQL_DIR + user + "_hive.sql")
     if (StringUtils.isBlank(initSql)) {
-      info(s"$user init_sql is empty")
+      logger.info(s"$user init_sql is empty")
       return
     }
-    info(s"$user engineConn begin to run init_sql")
+    logger.info(s"$user engineConn begin to run init_sql")
     val codeLanguageLabel = new CodeLanguageLabel
     codeLanguageLabel.setCodeType(getRunType())
     val labels = Array[Label[_]](codeLanguageLabel)
@@ -76,16 +76,16 @@ abstract class InitSQLHook  extends EngineConnHook with Logging {
         executor.toExecuteTask(engineConnTask, internalExecute = true)
       case _ =>
     }
-    info(s"$user engineConn finished to run init_sql")
+    logger.info(s"$user engineConn finished to run init_sql")
   }
 
   protected def readFile(path: String): String = {
-    info("read file: " + path)
+    logger.info("read file: " + path)
     val file = new File(path)
     if (file.exists()) {
       FileUtils.readFileToString(file)
     } else {
-      info("file: [" + path + "] doesn't exist, ignore it.")
+      logger.info("file: [" + path + "] doesn't exist, ignore it.")
       ""
     }
   }

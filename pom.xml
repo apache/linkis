@@ -30,7 +30,7 @@
 
     <groupId>org.apache.linkis</groupId>
     <artifactId>linkis</artifactId>
-    <version>1.1.3</version>
+    <version>1.2.0</version>
     <packaging>pom</packaging>
     <name>Linkis Project Parent POM</name>
     <description>Linkis helps easily connect to various back-end computation/storage engines</description>
@@ -96,10 +96,9 @@
         <module>linkis-computation-governance</module>
         <module>linkis-engineconn-plugins</module>
         <module>linkis-extensions</module>
-        <module>assembly-combined-package</module>
+        <module>linkis-dist</module>
     </modules>
     <properties>
-        <linkis.version>1.1.3</linkis.version>
         <hadoop.version>2.7.2</hadoop.version>
         <zookeeper.version>3.5.9</zookeeper.version>
         <spring.boot.version>2.3.12.RELEASE</spring.boot.version>
@@ -109,7 +108,7 @@
         <jdk.compile.version>1.8</jdk.compile.version>
         <plugin.scala.version>2.15.2</plugin.scala.version>
         <scala.binary.version>2.11</scala.binary.version>
-        <netty.version>4.1.68.Final</netty.version>
+        <netty.version>4.1.78.Final</netty.version>
         <jackson-bom.version>2.13.2.1</jackson-bom.version>
         <!-- spark2.4 use 3.5.3, spark3.2 use 3.7.0-M11 -->
         <json4s.version>3.5.3</json4s.version>
@@ -120,7 +119,7 @@
         <curator.version>2.7.1</curator.version>
         <jetty.version>9.4.48.v20220622</jetty.version>
         <httpclient.version>4.5.13</httpclient.version>
-        <httpmime.version>4.5.4</httpmime.version>
+        <httpmime.version>${httpclient.version}</httpmime.version>
         <slf4j.version>1.7.30</slf4j.version>
         <knife4j.version>2.0.9</knife4j.version>
         <maven.version>3.3.3</maven.version>
@@ -129,12 +128,16 @@
         <mybatis-plus.boot.starter.version>3.4.1</mybatis-plus.boot.starter.version>
         <mysql.connector.version>8.0.28</mysql.connector.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <javassist.version>3.19.0-GA</javassist.version>
+        <javassist.version>3.27.0-GA</javassist.version>
+        <ant.version>1.10.12</ant.version>
         <commons-collections.version>3.2.2</commons-collections.version>
         <commons-lang.version>2.6</commons-lang.version>
-        <commons-lang3.version>3.9</commons-lang3.version>
+        <commons-lang3.version>3.12.0</commons-lang3.version>
+        <commons-text.version>1.9</commons-text.version>
         <commons-io.version>2.11.0</commons-io.version>
         <commons-beanutils.version>1.9.4</commons-beanutils.version>
+        <commons-compress.version>1.21</commons-compress.version>
+        <commons-configuration.version>1.10</commons-configuration.version>
         <druid.version>1.1.22</druid.version>
         <protobuf.version>3.15.8</protobuf.version>
         <cglib.version>3.3.0</cglib.version>
@@ -145,7 +148,7 @@
         <mockito.version>3.9.0</mockito.version>
         <assertj.version>3.17.2</assertj.version>
         <h2.version>1.4.200</h2.version>
-
+        <dbcp2.version>2.0.1</dbcp2.version>
         <apache-rat-plugin.version>0.13</apache-rat-plugin.version>
         <assembly.package.rootpath>${basedir}</assembly.package.rootpath>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -153,6 +156,9 @@
         <maven-surefire-plugin.version>2.22.1</maven-surefire-plugin.version>
         <jacoco.version>0.8.7</jacoco.version>
         <jacoco.skip>false</jacoco.skip>
+        <spring.version>5.2.22.RELEASE</spring.version>
+        <knife4j.version>2.0.9</knife4j.version>
+        <maven-assembly-plugin.version>3.2.0</maven-assembly-plugin.version>
     </properties>
 
     <dependencyManagement>
@@ -170,19 +176,19 @@
                         <groupId>org.hibernate.validator</groupId>
                     </exclusion>
                 </exclusions>
-                <version>${linkis.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.apache.linkis</groupId>
                 <artifactId>linkis-common</artifactId>
-                <version>${linkis.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.apache.linkis</groupId>
                 <artifactId>linkis-mybatis</artifactId>
-                <version>${linkis.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.google.code.gson</groupId>
@@ -217,11 +223,6 @@
                 <version>${scala.version}</version>
             </dependency>
             <dependency>
-                <groupId>commons-lang</groupId>
-                <artifactId>commons-lang</artifactId>
-                <version>${commons-lang.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>${guava.version}</version>
@@ -244,18 +245,61 @@
                 <version>${slf4j.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.javassist</groupId>
+                <artifactId>javassist</artifactId>
+                <version>${javassist.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.ant</groupId>
+                <artifactId>ant</artifactId>
+                <version>${ant.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.ant</groupId>
+                <artifactId>ant-launcher</artifactId>
+                <version>${ant.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>commons-collections</groupId>
                 <artifactId>commons-collections</artifactId>
                 <version>${commons-collections.version}</version>
             </dependency>
-
+            <dependency>
+                <groupId>commons-lang</groupId>
+                <artifactId>commons-lang</artifactId>
+                <version>${commons-lang.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${commons-lang3.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-text</artifactId>
+                <version>${commons-text.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${commons-io.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-compress</artifactId>
+                <version>${commons-compress.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-configuration</groupId>
+                <artifactId>commons-configuration</artifactId>
+                <version>${commons-configuration.version}</version>
+            </dependency>
             <dependency>
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
                 <version>${mysql.connector.version}</version>
                 <scope>test</scope>
             </dependency>
-
             <dependency>
                 <groupId>org.junit</groupId>
                 <artifactId>junit-bom</artifactId>
@@ -263,7 +307,13 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-bom</artifactId>
+                <version>${netty.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson</groupId>
                 <artifactId>jackson-bom</artifactId>
@@ -333,6 +383,13 @@
                 <version>${jersey.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-bom</artifactId>
+                <version>${jetty.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
                 <groupId>org.glassfish.jersey</groupId>
                 <artifactId>jersey-bom</artifactId>
                 <version>${jersey.servlet.version}</version>
@@ -373,26 +430,6 @@
                         <artifactId>slf4j-log4j12</artifactId>
                     </exclusion>
                     <exclusion>
-                        <groupId>org.mortbay.jetty</groupId>
-                        <artifactId>jetty</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.mortbay.jetty</groupId>
-                        <artifactId>jetty-util</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.sun.jersey</groupId>
-                        <artifactId>jersey-core</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.sun.jersey</groupId>
-                        <artifactId>jersey-server</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.sun.jersey</groupId>
-                        <artifactId>jersey-json</artifactId>
-                    </exclusion>
-                    <exclusion>
                         <artifactId>jsr311-api</artifactId>
                         <groupId>javax.ws.rs</groupId>
                     </exclusion>
@@ -413,10 +450,6 @@
                         <artifactId>xmlenc</artifactId>
                     </exclusion>
                     <exclusion>
-                        <groupId>net.java.dev.jets3t</groupId>
-                        <artifactId>jets3t</artifactId>
-                    </exclusion>
-                    <exclusion>
                         <groupId>org.apache.avro</groupId>
                         <artifactId>avro</artifactId>
                     </exclusion>
@@ -425,36 +458,29 @@
                         <artifactId>hadoop-auth</artifactId>
                     </exclusion>
                     <exclusion>
-                        <groupId>com.jcraft</groupId>
-                        <artifactId>jsch</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.google.code.findbugs</groupId>
-                        <artifactId>jsr305</artifactId>
-                    </exclusion>
-                    <exclusion>
                         <artifactId>servlet-api</artifactId>
                         <groupId>javax.servlet</groupId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.mortbay.jetty</groupId>
+                        <artifactId>*</artifactId>
                     </exclusion>
                     <exclusion>
                         <groupId>com.sun.jersey</groupId>
                         <artifactId>*</artifactId>
                     </exclusion>
                     <exclusion>
-                        <groupId>org.codehaus.jackson</groupId>
-                        <artifactId>*</artifactId>
-                    </exclusion>
-
-                    <exclusion>
                         <groupId>org.eclipse.jetty</groupId>
                         <artifactId>*</artifactId>
                     </exclusion>
-
+                    <exclusion>
+                        <groupId>org.codehaus.jackson</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
                     <exclusion>
                         <groupId>com.google.protobuf</groupId>
                         <artifactId>protobuf-java</artifactId>
                     </exclusion>
-
                     <exclusion>
                         <groupId>org.apache.commons</groupId>
                         <artifactId>commons-compress</artifactId>
@@ -493,7 +519,7 @@
                     </exclusion>
                     <exclusion>
                         <groupId>org.codehaus.jackson</groupId>
-                        <artifactId>jackson-mapper-asl</artifactId>
+                        <artifactId>*</artifactId>
                     </exclusion>
                     <exclusion>
                         <groupId>org.ow2.asm</groupId>
@@ -522,7 +548,7 @@
                     </exclusion>
                     <exclusion>
                         <groupId>org.mortbay.jetty</groupId>
-                        <artifactId>servlet-api-2.5</artifactId>
+                        <artifactId>*</artifactId>
                     </exclusion>
                     <exclusion>
                         <groupId>javax.servlet</groupId>
@@ -598,11 +624,7 @@
                     </exclusion>
                     <exclusion>
                         <groupId>org.mortbay.jetty</groupId>
-                        <artifactId>jetty</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.mortbay.jetty</groupId>
-                        <artifactId>jetty-util</artifactId>
+                        <artifactId>*</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -724,6 +746,10 @@
                         <groupId>com.sun.jersey.contribs</groupId>
                         <artifactId>*</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>org.mortbay.jetty</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
@@ -744,8 +770,8 @@
                         <artifactId>*</artifactId>
                     </exclusion>
                     <exclusion>
-                        <artifactId>jetty-util</artifactId>
                         <groupId>org.mortbay.jetty</groupId>
+                        <artifactId>*</artifactId>
                     </exclusion>
                     <exclusion>
                         <artifactId>log4j</artifactId>
@@ -784,7 +810,13 @@
                     </exclusion>
                 </exclusions>
             </dependency>
-
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-framework-bom</artifactId>
+                <version>${spring.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-parent</artifactId>
@@ -1095,15 +1127,15 @@
                             <exclude>**/*.iml</exclude>
                             <exclude>**/*.txt</exclude>
                             <exclude>**/*.json</exclude>
-                            <exclude>web/.editorconfig</exclude>
-                            <exclude>web/.env</exclude>
-                            <exclude>web/.eslintignore</exclude>
-                            <exclude>web/.jshintrc</exclude>
+                            <exclude>linkis-web/.editorconfig</exclude>
+                            <exclude>linkis-web/.env</exclude>
+                            <exclude>linkis-web/.eslintignore</exclude>
+                            <exclude>linkis-web/.jshintrc</exclude>
 
-                            <exclude>web/public/favicon.ico</exclude>
-                            <exclude>web/dist/**</exclude>
-                            <exclude>web/node_modules/**</exclude>
-                            <exclude>web/apache-linkis-*-web-bin.tar.gz</exclude>
+                            <exclude>linkis-web/public/favicon.ico</exclude>
+                            <exclude>linkis-web/dist/**</exclude>
+                            <exclude>linkis-web/node_modules/**</exclude>
+                            <exclude>linkis-web/apache-linkis-*-web-bin.tar.gz</exclude>
 
                             <exclude>**/*.md</exclude>
                             <exclude>.git/</exclude>
@@ -1202,6 +1234,12 @@
                                 <order>org.apache.linkis,org.apache,org.springframework,javax,java,scala,\#</order>
                             </importOrder>
 
+                            <excludes>
+                                <exclude>**/restful/**/*RestfulApi.java</exclude>
+                                <exclude>**/restful/**/*Restful.java</exclude>
+                                <exclude>**/UDFRestfulApi.java</exclude>
+                            </excludes>
+
                             <removeUnusedImports />
                         </java>
                     </configuration>
@@ -1223,6 +1261,12 @@
                     <configuration>
                         <forkCount>3</forkCount>
                     </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>${maven-assembly-plugin.version}</version>
                 </plugin>
             </plugins>
         </pluginManagement>

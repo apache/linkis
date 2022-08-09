@@ -25,7 +25,7 @@ import org.apache.linkis.rpc.exception.NoInstanceExistsException
 import org.apache.linkis.rpc.sender.{SpringCloudFeignConfigurationCache, SpringMVCRPCSender}
 import org.apache.linkis.rpc.{BaseRPCSender, Sender}
 import feign.RetryableException
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.rpc.conf.RPCConfiguration
 
 import scala.collection.JavaConversions._
@@ -58,7 +58,7 @@ object RPCUtils {
     val services = SpringCloudFeignConfigurationCache.getDiscoveryClient
       .getServices.filter(_.toLowerCase.contains(parsedServiceId.toLowerCase)).toList
     if(services.length == 1) Some(services.head)
-    else if(services.length > 1) tooManyDeal(services)
+    else if (services.length > 1) tooManyDeal(services)
     else None
   }
 

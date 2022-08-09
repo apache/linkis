@@ -29,8 +29,7 @@ import org.apache.linkis.protocol.utils.TaskUtils
 import org.apache.linkis.ujes.client.exception.{UJESClientBuilderException, UJESJobException}
 import org.apache.linkis.ujes.client.{UJESClient, UJESClientImpl}
 import org.apache.linkis.ujes.client.request.JobSubmitAction
-import org.apache.commons.lang.StringUtils
-
+import org.apache.commons.lang3.StringUtils
 
 trait LinkisJobBuilder[Job <: LinkisJob] {
 
@@ -161,7 +160,7 @@ object LinkisJobBuilder {
   private var ujesClient: UJESClient = _
   private var threadPool: ScheduledThreadPoolExecutor = Utils.defaultScheduler
   private var serverUrl: String = _
-  private var authTokenValue: String = "BML-AUTH" // This is the default authToken, we usually suggest set different ones for users.
+  private var authTokenValue: String = "LINKIS_CLI_TEST" // This is the default authToken, we usually suggest set different ones for users.
 
   def setDefaultClientConfig(clientConfig: DWSClientConfig): Unit = this.clientConfig = clientConfig
 

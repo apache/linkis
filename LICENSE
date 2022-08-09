@@ -216,7 +216,7 @@ BSD licenses
 ========================================================================
 
 The following components are provided under the BSD License.
-    linkis-engineconn-plugins/engineconn-plugins/python/src/main/py4j/py4j-*-src.zip
+    linkis-engineconn-plugins/python/src/main/py4j/py4j-*-src.zip
     (See licenses/LICENSE-py4j-*-src.txt for text of this license)
 
 ========================================================================
@@ -224,24 +224,24 @@ Apache 2.0 licenses
 ========================================================================
 
 The following file are provided under the Apache 2.0 License.
-    web/.editorconfig
-    web/.env
-    web/.eslintignore
-    web/.jshintrc
-    web/.prettierrc.json
-    web/package.json
-    web/src/apps/linkis/i18n/common/en.json
-    web/src/common/i18n/en.json
-    web/src/common/i18n/zh.json
-    web/src/config.json
-    web/public/favicon.ico
+    linkis-web/.editorconfig
+    linkis-web/.env
+    linkis-web/.eslintignore
+    linkis-web/.jshintrc
+    linkis-web/.prettierrc.json
+    linkis-web/package.json
+    linkis-web/src/apps/linkis/i18n/common/en.json
+    linkis-web/src/common/i18n/en.json
+    linkis-web/src/common/i18n/zh.json
+    linkis-web/src/config.json
+    linkis-web/public/favicon.ico
 
 
 The files:
-.mvn/wrapper/MavenWrapperDownloader.java
-.mvn/wrapper/maven-wrapper.properties
-mvnw
-mvnw.cmd
+    .mvn/wrapper/MavenWrapperDownloader.java
+    .mvn/wrapper/maven-wrapper.properties
+    mvnw
+    mvnw.cmd
 Are provided from the Github Project: https://github.com/takari/maven-wrapper
 which is distributed under the Apache 2.0 license.
 

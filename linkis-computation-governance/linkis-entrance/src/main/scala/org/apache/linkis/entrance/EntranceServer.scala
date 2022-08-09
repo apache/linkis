@@ -17,17 +17,23 @@
  
 package org.apache.linkis.entrance
 
+import org.apache.commons.lang3.exception.ExceptionUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.exception.{ErrorException, LinkisException, LinkisRuntimeException}
 import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.entrance.cs.CSEntranceHelper
 import org.apache.linkis.entrance.exception.{EntranceErrorException, SubmitFailedException}
-import org.apache.linkis.entrance.execute.{EntranceExecutorManager, EntranceJob}
+import org.apache.linkis.entrance.execute.EntranceJob
 import org.apache.linkis.entrance.log.LogReader
 import org.apache.linkis.entrance.timeout.JobTimeoutManager
+import org.apache.linkis.entrance.utils.JobHistoryHelper
 import org.apache.linkis.governance.common.entity.job.JobRequest
+import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.scheduler.queue.{Job, SchedulerEventState}
 import org.apache.linkis.server.conf.ServerConfiguration
-import org.apache.commons.lang.exception.ExceptionUtils
+
+import java.util
 
 
 abstract class EntranceServer extends Logging {
@@ -49,19 +55,19 @@ abstract class EntranceServer extends Logging {
     * @return
     */
   def execute(params: java.util.Map[String, Any]): String = {
-    if (!params.containsKey(EntranceServer.DO_NOT_PRINT_PARAMS_LOG)) debug("received a request: " + params)
+    if (!params.containsKey(EntranceServer.DO_NOT_PRINT_PARAMS_LOG)) logger.debug("received a request: " + params)
     else params.remove(EntranceServer.DO_NOT_PRINT_PARAMS_LOG)
     var jobRequest = getEntranceContext.getOrCreateEntranceParser().parseToTask(params)
-    // tod multi entrance instances
+    //todo: multi entrance instances
     jobRequest.setInstances(Sender.getThisInstance)
-
+    Utils.tryAndWarn(CSEntranceHelper.resetCreator(jobRequest))
     //After parse the map into a jobRequest, we need to store it in the database, and the jobRequest can get a unique taskID.
     //将map parse 成 jobRequest 之后，我们需要将它存储到数据库中，task可以获得唯一的taskID
     getEntranceContext.getOrCreatePersistenceManager().createPersistenceEngine().persist(jobRequest)
     if (null == jobRequest.getId || jobRequest.getId <= 0) {
       throw new EntranceErrorException(20052, "Persist jobRequest error, please submit again later(存储Job异常，请稍后重新提交任务)")
     }
-    info(s"received a request,convert $jobRequest ")
+    logger.info(s"received a request,convert $jobRequest")
 
     val logAppender = new java.lang.StringBuilder()
     Utils.tryThrow(getEntranceContext.getOrCreateEntranceInterceptors().foreach(int => jobRequest = int.apply(jobRequest, logAppender))) { t =>
@@ -78,6 +84,10 @@ abstract class EntranceServer extends Logging {
           t.setErrorDesc(error.getDesc)
           t.setStatus(SchedulerEventState.Failed.toString)
           t.setProgress(EntranceJob.JOB_COMPLETED_PROGRESS.toString)
+          val infoMap = new  util.HashMap[String, Object]
+          infoMap.put(TaskConstant.ENGINE_INSTANCE, "NULL")
+          infoMap.put("message", "Task interception failed and cannot be retried")
+          JobHistoryHelper.updateJobRequestMetrics(jobRequest, null, infoMap)
         case _ =>
       }
       getEntranceContext.getOrCreatePersistenceManager().createPersistenceEngine().updateIfNeeded(jobRequest)
@@ -85,7 +95,7 @@ abstract class EntranceServer extends Logging {
     }
 
     val job = getEntranceContext.getOrCreateEntranceParser().parseToJob(jobRequest)
-    Utils.tryThrow{
+    Utils.tryThrow {
       job.init()
       job.setLogListener(getEntranceContext.getOrCreateLogManager())
       job.setProgressListener(getEntranceContext.getOrCreatePersistenceManager())
@@ -120,7 +130,8 @@ abstract class EntranceServer extends Logging {
       }
 
       job.getId()
-    }{t =>
+    } {
+      t =>
       job.onFailure("Submitting the query failed!(提交查询失败！)", t)
       val _jobRequest: JobRequest = getEntranceContext.getOrCreateEntranceParser().parseToJobRequest(job)
       getEntranceContext.getOrCreatePersistenceManager().createPersistenceEngine().updateIfNeeded(_jobRequest)
@@ -131,22 +142,7 @@ abstract class EntranceServer extends Logging {
           new SubmitFailedException(30009, "Submitting the query failed!(提交查询失败！)" + ExceptionUtils.getRootCauseMessage(t), t)
       }
     }
-
-
   }
-
-//  def killJobFromJobHistory(jobId: String): String = {
-//    val rpcSender = Sender.getSender(EntranceConfiguration.QUERY_PERSISTENCE_SPRING_APPLICATION_NAME.getValue)
-//    val jobQueryRequest = new JobRequest
-//    jobQueryRequest.setId(java.lang.Long.parseLong(jobId))
-//    jobQueryRequest.setStatus(SchedulerEventState.Cancelled.toString)
-//    val response = rpcSender.ask(JobReqUpdate(jobQueryRequest)).asInstanceOf[JobRespProtocol]
-//    response.getStatus match {
-//      case 0 => "success"
-//      case _ => response.getMsg
-//    }
-//  }
-
 
   def logReader(execId: String): LogReader
 
@@ -162,6 +158,18 @@ abstract class EntranceServer extends Logging {
     }
     entranceWebSocketService
   } else None
+
+  def getAllUndoneTask(filterWords: String): Array[EntranceJob] = {
+    val consumers = getEntranceContext.getOrCreateScheduler().getSchedulerContext.getOrCreateConsumerManager.listConsumers().toSet
+    val filterConsumer = if (StringUtils.isNotBlank(filterWords)) {
+      consumers.filter(_.getGroup.getGroupName.contains(filterWords))
+    } else {
+      consumers
+    }
+    filterConsumer.flatMap { consumer =>
+      consumer.getRunningEvents ++ consumer.getConsumeQueue.getWaitingEvents
+    }.filter(job => job != null && job.isInstanceOf[EntranceJob]).map(_.asInstanceOf[EntranceJob]).toArray
+  }
 
 }
 object EntranceServer {

@@ -50,6 +50,12 @@ public class DefaultServiceParser implements ServiceParser {
     }
 
     private ServiceMethod getServiceMethod(Method method, Object service) {
+        Parameter[] parameters = method.getParameters();
+        if (parameters.length == 0) {
+            return null;
+        }
+        Parameter protocolParameter = parameters[0];
+
         ServiceMethod serviceMethod = new ServiceMethod();
         serviceMethod.setMethod(method);
         serviceMethod.setService(service);
@@ -63,24 +69,20 @@ public class DefaultServiceParser implements ServiceParser {
         if (chain != null) {
             serviceMethod.setChainName(chain.value());
         }
-        Parameter[] parameters = method.getParameters();
+
         if (parameters.length == 2) {
             serviceMethod.setHasSender(true);
-            if (Sender.class.isAssignableFrom(parameters[0].getType()))
+            if (Sender.class.isAssignableFrom(parameters[0].getType())) {
                 serviceMethod.setSenderOnLeft(true);
+                protocolParameter = parameters[1];
+            }
         }
         logger.info(
                 method
                         + " parameter:"
                         + Arrays.toString(
                                 Arrays.stream(parameters).map(Parameter::getName).toArray()));
-        @SuppressWarnings("all")
-        Parameter parameter =
-                Arrays.stream(parameters)
-                        .filter(p -> !Sender.class.isAssignableFrom(p.getType()))
-                        .findFirst()
-                        .get();
-        serviceMethod.setProtocolName(parameter.getType().getName());
+        serviceMethod.setProtocolName(protocolParameter.getType().getName());
         return serviceMethod;
     }
 

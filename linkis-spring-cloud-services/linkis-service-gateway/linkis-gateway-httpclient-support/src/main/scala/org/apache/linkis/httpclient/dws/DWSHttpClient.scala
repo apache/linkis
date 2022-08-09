@@ -31,7 +31,7 @@ import org.apache.linkis.httpclient.request.HttpAction
 import org.apache.linkis.httpclient.response.impl.DefaultHttpResult
 import org.apache.linkis.httpclient.response.{HttpResult, ListResult, Result}
 import org.apache.commons.beanutils.BeanUtils
-import org.apache.commons.lang.{ClassUtils, StringUtils}
+import org.apache.commons.lang3.{ClassUtils, StringUtils}
 import org.apache.http.{HttpException, HttpResponse}
 
 import scala.collection.JavaConversions
@@ -59,7 +59,7 @@ class DWSHttpClient(clientConfig: DWSClientConfig, clientName: String)
     val url: String = requestAction.getURL
 
     if (null == entity.getContentType && statusCode == 200) {
-      info("response is null, return success Result")
+      logger.info("response is null, return success Result")
       return Some(Result())
     }
     val contentType: String = entity.getContentType.getValue

@@ -21,7 +21,7 @@ import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
 import org.apache.linkis.governance.common.protocol.task._
-import org.apache.linkis.manager.common.protocol.resource.{ResponseTaskRunningInfo, ResponseTaskYarnResource}
+import org.apache.linkis.manager.common.protocol.resource.ResponseTaskRunningInfo
 import org.apache.linkis.orchestrator.computation.execute.CodeExecTaskExecutorManager
 import org.apache.linkis.orchestrator.computation.monitor.EngineConnMonitor
 import org.apache.linkis.orchestrator.core.ResultSet
@@ -59,7 +59,7 @@ class ComputationTaskExecutionReceiver extends TaskExecutionReceiver with Loggin
             case (taskId, executor) =>
               val execTask = executor.getExecTask
               Utils.tryAndError {
-                warn(s"Will kill task ${execTask.getIDInfo()} because the engine ${executor.getEngineConnExecutor.getServiceInstance.toString} quited unexpectedly.")
+                logger.warn(s"Will kill task ${execTask.getIDInfo()} because the engine ${executor.getEngineConnExecutor.getServiceInstance.toString} quited unexpectedly.")
                 val errLog = LogUtils.generateERROR(s"Your job : ${execTask.getIDInfo()} was failed because the engine quitted unexpectedly(任务${execTask.getIDInfo()}失败，" +
                   s"原因是引擎意外退出,可能是复杂任务导致引擎退出，如OOM).")
                 val logEvent = TaskLogEvent(execTask, errLog)

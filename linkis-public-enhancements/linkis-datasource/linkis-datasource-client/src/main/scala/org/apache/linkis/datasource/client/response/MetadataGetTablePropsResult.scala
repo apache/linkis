@@ -23,7 +23,7 @@ import org.apache.linkis.httpclient.dws.response.DWSResult
 import java.util
 import scala.beans.BeanProperty
 
-@DWSHttpMessageResult("/api/rest_j/v\\d+/metadatamanager/props/(\\S+)/db/(\\S+)/table/(\\S+)")
+@DWSHttpMessageResult("/api/rest_j/v\\d+/metadataQuery/getTableProp")
 class MetadataGetTablePropsResult extends DWSResult{
   @BeanProperty var props: util.Map[String, String] = _
 }

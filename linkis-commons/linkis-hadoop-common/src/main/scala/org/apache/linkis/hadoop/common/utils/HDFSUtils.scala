@@ -17,21 +17,20 @@
  
 package org.apache.linkis.hadoop.common.utils
 
-import java.io.File
-import java.nio.file.Paths
-import java.security.PrivilegedExceptionAction
-import java.util.concurrent.{ConcurrentHashMap, TimeUnit}
-
-import org.apache.linkis.common.utils.{Logging, Utils}
-import org.apache.linkis.hadoop.common.conf.HadoopConf
-import org.apache.linkis.hadoop.common.conf.HadoopConf.{hadoopConfDir, _}
-import org.apache.linkis.hadoop.common.entity.HDFSFileSystemContainer
 import org.apache.commons.io.IOUtils
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.{FileSystem, Path}
 import org.apache.hadoop.security.UserGroupInformation
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.hadoop.common.conf.HadoopConf
+import org.apache.linkis.hadoop.common.conf.HadoopConf._
+import org.apache.linkis.hadoop.common.entity.HDFSFileSystemContainer
 
+import java.io.File
+import java.nio.file.Paths
+import java.security.PrivilegedExceptionAction
+import java.util.concurrent.TimeUnit
 import scala.collection.JavaConverters._
 
 object HDFSUtils extends Logging {
@@ -41,7 +40,7 @@ object HDFSUtils extends Logging {
   private val LOCKER_SUFFIX = "_HDFS"
 
   if (HadoopConf.HDFS_ENABLE_CACHE) {
-    info("HDFS Cache enabled ")
+    logger.info("HDFS Cache enabled ")
     Utils.defaultScheduler.scheduleAtFixedRate(new Runnable {
       override def run(): Unit = Utils.tryAndWarn {
         fileSystemCache.values().asScala.filter { hdfsFileSystemContainer =>
@@ -52,7 +51,7 @@ object HDFSUtils extends Logging {
             if (hdfsFileSystemContainer.canRemove()) {
               fileSystemCache.remove(hdfsFileSystemContainer.getUser)
               IOUtils.closeQuietly(hdfsFileSystemContainer.getFileSystem)
-              info(s"user${hdfsFileSystemContainer.getUser} to remove hdfsFileSystemContainer,because hdfsFileSystemContainer can remove")
+              logger.info(s"user${hdfsFileSystemContainer.getUser} to remove hdfsFileSystemContainer,because hdfsFileSystemContainer can remove")
             }
           }
         }
@@ -119,7 +118,9 @@ object HDFSUtils extends Logging {
   def createFileSystem(userName: String, conf: org.apache.hadoop.conf.Configuration): FileSystem =
     getUserGroupInformation(userName)
       .doAs(new PrivilegedExceptionAction[FileSystem] {
-        def run = FileSystem.get(conf)
+        // scalastyle:off FileSystemGet
+        def run: FileSystem = FileSystem.get(conf)
+        // scalastyle:on FileSystemGet
       })
 
   def closeHDFSFIleSystem(fileSystem: FileSystem, userName: String): Unit = if (null != fileSystem && StringUtils.isNotBlank(userName)) {
@@ -134,7 +135,7 @@ object HDFSUtils extends Logging {
         if (isForce) {
           locker synchronized fileSystemCache.remove(hdfsFileSystemContainer.getUser)
           IOUtils.closeQuietly(hdfsFileSystemContainer.getFileSystem)
-          info(s"user${hdfsFileSystemContainer.getUser} to Force remove hdfsFileSystemContainer")
+          logger.info(s"user${hdfsFileSystemContainer.getUser} to Force remove hdfsFileSystemContainer")
         } else {
           locker synchronized hdfsFileSystemContainer.minusAccessCount()
         }

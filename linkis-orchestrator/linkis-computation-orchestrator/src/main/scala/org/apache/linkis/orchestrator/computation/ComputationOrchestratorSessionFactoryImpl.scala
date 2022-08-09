@@ -17,14 +17,13 @@
  
 package org.apache.linkis.orchestrator.computation
 
-import java.util
-
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.orchestrator.computation.catalyst.converter.CodeConverterTransform
 import org.apache.linkis.orchestrator.computation.catalyst.converter.ruler._
 import org.apache.linkis.orchestrator.computation.catalyst.optimizer.CacheTaskOptimizer
 import org.apache.linkis.orchestrator.computation.catalyst.parser._
-import org.apache.linkis.orchestrator.computation.catalyst.physical.{CacheExecTaskTransform, CodeExecTaskTransform, ComputePhysicalTransform, JobExecTaskTransform, StageExecTaskTransform}
+import org.apache.linkis.orchestrator.computation.catalyst.physical.{CacheExecTaskTransform, CodeExecTaskTransform, JobExecTaskTransform, StageExecTaskTransform}
 import org.apache.linkis.orchestrator.computation.catalyst.planner.TaskPlannerTransform
 import org.apache.linkis.orchestrator.computation.catalyst.reheater.PruneTaskRetryTransform
 import org.apache.linkis.orchestrator.computation.catalyst.validator.DefaultLabelRegularCheckRuler
@@ -40,7 +39,8 @@ import org.apache.linkis.orchestrator.extensions.catalyst._
 import org.apache.linkis.orchestrator.extensions.operation.CancelOperationBuilder
 import org.apache.linkis.orchestrator.extensions.{CatalystExtensions, CheckRulerExtensions, OperationExtensions}
 import org.apache.linkis.orchestrator.{Orchestrator, OrchestratorSession}
-import org.apache.commons.lang.StringUtils
+
+import java.util
 /**
  *
  *
@@ -160,7 +160,7 @@ class ComputationOrchestratorSessionFactoryImpl extends ComputationOrchestratorS
       if (extraOperationBuilderClass.nonEmpty) {
         extraOperationBuilderClass.foreach{ clazz =>
           if (StringUtils.isNotBlank(clazz)) {
-            info(s"inject operation $clazz")
+            logger.info(s"inject operation $clazz")
             v1.injectOperation(Utils.getClassInstance(clazz))
           }
         }

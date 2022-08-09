@@ -22,13 +22,15 @@ import org.apache.linkis.computation.client.utils.LabelKeyUtils
 import org.apache.linkis.manager.label.entity.engine.RunType.RunType
 import org.apache.linkis.ujes.client.UJESClient
 import org.apache.linkis.ujes.client.request.JobSubmitAction
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 
 
 class InteractiveJobBuilder private[interactive]()
   extends AbstractLinkisJobBuilder[SubmittableInteractiveJob] {
 
   private var creator: String = _
+
+  private var maxRetry = 0
 
   override def addExecuteUser(executeUser: String): this.type = super.addExecuteUser(executeUser)
 
@@ -45,6 +47,11 @@ class InteractiveJobBuilder private[interactive]()
 
   def setRunTypeStr(runType: String): this.type = addJobContent("runType", runType)
 
+  def setMaxRetry(maxRetry: Int): this.type = {
+    this.maxRetry = maxRetry
+    this
+  }
+
   override protected def validate(): Unit = {
     if (labels != null && !labels.containsKey(LabelKeyUtils.USER_CREATOR_LABEL_KEY)
       && StringUtils.isNotBlank(creator)) {
@@ -54,6 +61,10 @@ class InteractiveJobBuilder private[interactive]()
   }
 
   override protected def createLinkisJob(ujesClient: UJESClient,
-                                         jobSubmitAction: JobSubmitAction): SubmittableInteractiveJob = new SubmittableInteractiveJob(ujesClient, jobSubmitAction)
+                                         jobSubmitAction: JobSubmitAction): SubmittableInteractiveJob = {
+    val job = new SubmittableInteractiveJob(ujesClient, jobSubmitAction)
+    job.setMaxRetry(this.maxRetry)
+    job
+  }
 
 }

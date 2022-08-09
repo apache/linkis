@@ -21,8 +21,8 @@ import org.apache.linkis.common.exception.ErrorException;
 import org.apache.linkis.common.exception.WarnException;
 import org.apache.linkis.datasourcemanager.core.formdata.FormStreamContent;
 import org.apache.linkis.datasourcemanager.core.service.impl.MetadataOperateServiceImpl;
-import org.apache.linkis.metadatamanager.common.protocol.MetadataConnect;
-import org.apache.linkis.metadatamanager.common.protocol.MetadataResponse;
+import org.apache.linkis.metadata.query.common.protocol.MetadataConnect;
+import org.apache.linkis.metadata.query.common.protocol.MetadataResponse;
 import org.apache.linkis.rpc.BaseRPCSender;
 import org.apache.linkis.rpc.Sender;
 

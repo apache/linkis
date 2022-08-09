@@ -20,6 +20,7 @@ package org.apache.linkis.instance.label.restful;
 import org.apache.linkis.common.ServiceInstance;
 import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.instance.label.entity.InstanceInfo;
+import org.apache.linkis.instance.label.exception.InstanceErrorException;
 import org.apache.linkis.instance.label.service.impl.DefaultInsLabelService;
 import org.apache.linkis.instance.label.utils.EntityParser;
 import org.apache.linkis.instance.label.vo.InstanceInfoVo;
@@ -31,7 +32,7 @@ import org.apache.linkis.manager.label.utils.LabelUtils;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -44,9 +45,15 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 
 import java.util.*;
 
+@Api(tags = "instance restful")
 @RestController
 @RequestMapping(path = "/microservice")
 public class InstanceRestful {
@@ -58,11 +65,12 @@ public class InstanceRestful {
 
     @Autowired private DefaultInsLabelService insLabelService;
 
+    @ApiOperation(value = "listAllInstanceWithLabel", notes = "list all instance with label", response = Message.class)
     @RequestMapping(path = "/allInstance", method = RequestMethod.GET)
     public Message listAllInstanceWithLabel(HttpServletRequest req) throws Exception {
         String userName = ModuleUserUtils.getOperationUser(req);
         if (!Configuration.isAdmin(userName)) {
-            throw new Exception(
+            throw new InstanceErrorException(
                     String.format(
                             "Only admin can view all instances(只有管理员才能查看所有实例). The user [%s] is not admin.",
                             userName));
@@ -76,12 +84,21 @@ public class InstanceRestful {
         return Message.ok().data("instances", instanceVos);
     }
 
+    @ApiOperation(value = "upDateInstanceLabel", notes = "up date instance label", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "applicationName", required = false, dataType = "String", value = "application name"),
+        @ApiImplicitParam(name = "instance", required = false, dataType = "String", value = "instance"),
+        @ApiImplicitParam(name = "labels", required = false, dataType = "List", value = "labels"),
+        @ApiImplicitParam(name = "labelKey",required = false, dataType = "String", value = "label key"),
+        @ApiImplicitParam(name = "stringValue",required = false, dataType = "String", value = "string value")
+    })
+    @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "/instanceLabel", method = RequestMethod.PUT)
     public Message upDateInstanceLabel(HttpServletRequest req, @RequestBody JsonNode jsonNode)
             throws Exception {
         String userName = ModuleUserUtils.getOperationUser(req);
         if (!Configuration.isAdmin(userName)) {
-            throw new Exception(
+            throw new InstanceErrorException(
                     String.format(
                             "Only admin can modify instance label(只有管理员才能修改标签). The user [%s] is not admin",
                             userName));
@@ -115,7 +132,7 @@ public class InstanceRestful {
             }
         }
         if (labelKeySet.size() != labels.size()) {
-            throw new Exception(
+            throw new InstanceErrorException(
                     "Failed to update label, include repeat label(更新label失败，包含重复label)");
         }
         insLabelService.refreshLabelsToInstance(labels, instance);
@@ -125,12 +142,14 @@ public class InstanceRestful {
         return Message.ok("success").data("labels", labels);
     }
 
+    @ApiOperation(value = "listAllModifiableLabelKey", notes = "list all modifiable label key", response = Message.class)
     @RequestMapping(path = "/modifiableLabelKey", method = RequestMethod.GET)
     public Message listAllModifiableLabelKey(HttpServletRequest req) {
         Set<String> keyList = LabelUtils.listAllUserModifiableLabel();
         return Message.ok().data("keyList", keyList);
     }
 
+    @ApiOperation(value = "getEurekaURL", notes = "get eureka URL", response = Message.class)
     @RequestMapping(path = "/eurekaURL", method = RequestMethod.GET)
     public Message getEurekaURL(HttpServletRequest request) throws Exception {
         String eurekaURL = insLabelService.getEurekaURL();

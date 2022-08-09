@@ -17,7 +17,7 @@
 
 package org.apache.linkis.bml.vo;
 
-import org.apache.linkis.bml.Entity.Version;
+import org.apache.linkis.bml.entity.Version;
 
 import java.util.List;
 

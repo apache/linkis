@@ -41,6 +41,11 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,6 +56,7 @@ import java.util.Date;
 
 import static org.apache.linkis.cs.common.utils.CSCommonUtils.localDatetimeToDate;
 
+@Api(tags = "cs(contextservice) recording operation")
 @RestController
 @RequestMapping(path = "/contextservice")
 public class ContextIDRestfulApi implements CsRestfulParent {
@@ -59,6 +65,11 @@ public class ContextIDRestfulApi implements CsRestfulParent {
 
     @Autowired private CsScheduler csScheduler;
 
+    @ApiOperation(value = "createContextID", notes = "create context Id", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "contextID", required = false, dataType = "String", value = "context id")
+    })
+    @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "createContextID", method = RequestMethod.POST)
     public Message createContextID(HttpServletRequest req, @RequestBody JsonNode jsonNode)
             throws InterruptedException, ClassNotFoundException, IOException, CSErrorException {
@@ -67,6 +78,10 @@ public class ContextIDRestfulApi implements CsRestfulParent {
         return generateResponse(answerJob, "contextId");
     }
 
+    @ApiOperation(value = "GetContextID", notes = "Get_Context_Id", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "contextId", required = false, dataType = "String", value = "context id")
+    })
     @RequestMapping(path = "getContextID", method = RequestMethod.GET)
     public Message getContextID(
             HttpServletRequest req, @RequestParam(value = "contextId", required = false) String id)
@@ -79,6 +94,11 @@ public class ContextIDRestfulApi implements CsRestfulParent {
         return message;
     }
 
+    @ApiOperation(value = "updateContextID", notes = "update content id", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "contextId", required = false, dataType = "String", value = "context id")
+    })
+    @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "updateContextID", method = RequestMethod.POST)
     public Message updateContextID(HttpServletRequest req, @RequestBody JsonNode jsonNode)
             throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
@@ -90,6 +110,11 @@ public class ContextIDRestfulApi implements CsRestfulParent {
         return generateResponse(answerJob, "");
     }
 
+    @ApiOperation(value = "resetContextID", notes = "reset context Id", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "contextId", required = false, dataType = "String", value = "context id")
+    })
+    @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "resetContextID", method = RequestMethod.POST)
     public Message resetContextID(HttpServletRequest req, @RequestBody JsonNode jsonNode)
             throws InterruptedException, CSErrorException {
@@ -102,6 +127,11 @@ public class ContextIDRestfulApi implements CsRestfulParent {
         return generateResponse(answerJob, "");
     }
 
+    @ApiOperation(value = "removeContextID", notes = "remove context ID", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "contextId", required = false, dataType = "String", value = "context id")
+    })
+    @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "removeContextID", method = RequestMethod.POST)
     public Message removeContextID(HttpServletRequest req, @RequestBody JsonNode jsonNode)
             throws InterruptedException, CSErrorException {
@@ -113,6 +143,17 @@ public class ContextIDRestfulApi implements CsRestfulParent {
         return generateResponse(answerJob, "");
     }
 
+    @ApiOperation(value = "searchContextIDByTime", notes = "search contextId by time", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "createTimeStart",required = false, dataType = "String", value = "create time start"),
+        @ApiImplicitParam(name = "createTimeEnd",required = false, dataType = "String", value = "create time end"),
+        @ApiImplicitParam(name = "updateTimeStart",required = false, dataType = "String",value = "update time start"),
+        @ApiImplicitParam(name = "updateTimeEnd", required = false, dataType = "String", value = "update time end"),
+        @ApiImplicitParam(name = "accessTimeStart", required = false, dataType = "String", value = "access time start"),
+        @ApiImplicitParam(name = "accessTimeEnd", required = false, dataType = "String", value = "access time end"),
+        @ApiImplicitParam(name = "pageNow", required = false, dataType = "String", value = "page now"),
+        @ApiImplicitParam(name = "pageSize", required = false, dataType = "String", value = "page size")
+    })
     @RequestMapping(path = "searchContextIDByTime", method = RequestMethod.GET)
     public Message searchContextIDByTime(
             HttpServletRequest req,

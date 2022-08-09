@@ -29,14 +29,19 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
 import java.util.List;
 
+@Api(tags = "linkis error code restful")
 @RestController
 @RequestMapping(path = "/errorcode")
 public class LinkisErrorCodeRestful {
 
     @Autowired private LinkisErrorCodeService linkisErrorCodeService;
 
+    @ApiOperation(value = "getErrorCodes", notes = "get error codes", response = Message.class)
     @RequestMapping(path = CommonConf.GET_ERRORCODE_URL, method = RequestMethod.GET)
     public Message getErrorCodes(HttpServletRequest request) {
         List<LinkisErrorCode> errorCodes = linkisErrorCodeService.getAllErrorCodes();

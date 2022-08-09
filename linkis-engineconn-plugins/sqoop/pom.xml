@@ -22,7 +22,7 @@
     <parent>
         <artifactId>linkis</artifactId>
         <groupId>org.apache.linkis</groupId>
-        <version>1.1.3</version>
+        <version>1.2.0</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -90,7 +90,7 @@
         <dependency>
             <groupId>org.apache.linkis</groupId>
             <artifactId>linkis-once-engineconn</artifactId>
-            <version>${linkis.version}</version>
+            <version>${project.version}</version>
             <exclusions>
                 <exclusion>
                     <artifactId>commons-logging</artifactId>
@@ -101,7 +101,7 @@
         <dependency>
             <groupId>org.apache.linkis</groupId>
             <artifactId>linkis-computation-engineconn</artifactId>
-            <version>${linkis.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.hadoop</groupId>
@@ -189,27 +189,27 @@
         <dependency>
             <groupId>org.apache.linkis</groupId>
             <artifactId>linkis-engineconn-plugin-core</artifactId>
-            <version>${linkis.version}</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.linkis</groupId>
             <artifactId>linkis-rpc</artifactId>
-            <version>${linkis.version}</version>
+            <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.apache.linkis</groupId>
             <artifactId>linkis-storage</artifactId>
-            <version>${linkis.version}</version>
+            <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.apache.linkis</groupId>
             <artifactId>linkis-common</artifactId>
-            <version>${linkis.version}</version>
+            <version>${project.version}</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
@@ -240,7 +240,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <version>2.3</version>
                 <inherited>false</inherited>
                 <executions>
                     <execution>

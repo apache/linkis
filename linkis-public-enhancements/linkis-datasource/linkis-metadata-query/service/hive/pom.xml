@@ -28,7 +28,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <hive.version>2.3.3</hive.version>
+        <hive.version>2.3.4</hive.version>
         <hadoop.version>2.7.2</hadoop.version>
         <datanucleus-api-jdo.version>4.2.4</datanucleus-api-jdo.version>
     </properties>

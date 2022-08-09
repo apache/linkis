@@ -27,9 +27,9 @@ import org.apache.linkis.server.Message
 import org.apache.linkis.server.conf.ServerConfiguration._
 import org.apache.linkis.server.exception.BDPServerErrorException
 import org.apache.linkis.server.socket.controller.{ServerListenerEventBus, SocketServerEvent}
-import org.apache.commons.lang.StringUtils
-import org.apache.commons.lang.exception.ExceptionUtils
-import org.apache.commons.lang.time.DateFormatUtils
+import org.apache.commons.lang3.StringUtils
+import org.apache.commons.lang3.exception.ExceptionUtils
+import org.apache.commons.lang3.time.DateFormatUtils
 import org.eclipse.jetty.websocket.servlet._
 
 import scala.collection.JavaConversions._
@@ -65,9 +65,9 @@ private[server] class ControllerServer(serverListenerEventBus: ServerListenerEve
   override def onClose(socket: ServerSocket, code: Int, message: String): Unit = {
     val date = DateFormatUtils.format(socket.createTime, DEFAULT_DATE_PATTERN.getValue)
     if(!socketList.containsKey(socket.id))
-      warn(s"$socket created at $date has expired, ignore the close function!")
+      logger.warn(s"$socket created at $date has expired, ignore the close function!")
     else {
-      info(s"$socket closed at $date with code $code and message: " + message)
+      logger.info(s"$socket closed at $date with code $code and message: " + message)
       socketList synchronized {
         if(socketList.containsKey(socket.id)) socketList.remove(socket.id)
       }
@@ -78,7 +78,7 @@ private[server] class ControllerServer(serverListenerEventBus: ServerListenerEve
     val index = idGenerator.getAndIncrement()
     socket.id = index
     socketList.put(index, socket)
-    info(s"open a new $socket with id $index for user ${socket.user.orNull}!")
+    logger.info(s"open a new $socket with id $index for user ${socket.user.orNull}!")
   }
 
   override def onMessage(socket: ServerSocket, message: String): Unit = {
@@ -87,7 +87,7 @@ private[server] class ControllerServer(serverListenerEventBus: ServerListenerEve
       return
     }
     val socketServerEvent = Utils.tryCatch(new SocketServerEvent(socket, message)){ t =>
-      warn("parse message failed!", t)
+      logger.warn("parse message failed!", t)
       socket.sendMessage(Message.error(ExceptionUtils.getRootCauseMessage(t), t))
       return
     }

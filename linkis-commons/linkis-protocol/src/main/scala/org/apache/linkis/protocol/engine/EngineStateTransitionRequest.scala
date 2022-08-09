@@ -18,7 +18,7 @@
 package org.apache.linkis.protocol.engine
 
 
-case class EngineStateTransitionRequest(engineInstance:String, state:String)
+case class EngineStateTransitionRequest(engineInstance: String, state: String)
 
-case class EngineStateTransitionResponse(engineInstance:String, state:String, result:Boolean, message:String)
+case class EngineStateTransitionResponse(engineInstance: String, state: String, result: Boolean, message: String)
 

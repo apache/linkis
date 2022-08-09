@@ -17,7 +17,7 @@
 
 package org.apache.linkis.engineconn.computation.executor.cs
 
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.io.FsPath
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.cs.client.service.CSTableService
@@ -36,7 +36,7 @@ class CSTableResultSetWriter(tableResult: TableResultSet, maxCacheSize: Long,
       registerToCS
     } catch {
       case t: Throwable =>
-        info("Failed to register tmp table", t)
+        logger.info("Failed to register tmp table", t)
     }
     super.toString
   }
@@ -44,7 +44,7 @@ class CSTableResultSetWriter(tableResult: TableResultSet, maxCacheSize: Long,
   private def registerToCS: Unit = {
 
     if (StringUtils.isNotBlank(contextIDStr) && StringUtils.isNotBlank(nodeName) && !isEmpty) {
-      info("Start to register resultSet to cs")
+      logger.info("Start to register resultSet to cs")
       flush()
       val csTable = new CSTable
       csTable.setAlias(alias)
@@ -66,7 +66,7 @@ class CSTableResultSetWriter(tableResult: TableResultSet, maxCacheSize: Long,
       }
       csTable.setColumns(csColumns)
       CSTableService.getInstance().registerCSTable(contextIDStr, nodeName, alias, csTable)
-      info("Finished to register resultSet to cs")
+      logger.info("Finished to register resultSet to cs")
     }
   }
 }

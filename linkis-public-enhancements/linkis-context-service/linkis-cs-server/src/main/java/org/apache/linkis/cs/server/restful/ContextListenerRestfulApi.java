@@ -39,9 +39,13 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 import java.io.IOException;
 
+@Api(tags = "cs(contextservice) listener operation")
 @RestController
 @RequestMapping(path = "/contextservice")
 public class ContextListenerRestfulApi implements CsRestfulParent {
@@ -50,6 +54,8 @@ public class ContextListenerRestfulApi implements CsRestfulParent {
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
+    @ApiOperation(value = "onBindIDListener", notes = "on bind id listener", response = Message.class)
+    @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "onBindIDListener", method = RequestMethod.POST)
     public Message onBindIDListener(HttpServletRequest req, @RequestBody JsonNode jsonNode)
             throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
@@ -61,6 +67,8 @@ public class ContextListenerRestfulApi implements CsRestfulParent {
         return generateResponse(answerJob, "");
     }
 
+    @ApiOperation(value = "onBindKeyListener", notes = "on bind key listener", response = Message.class)
+    @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "onBindKeyListener", method = RequestMethod.POST)
     public Message onBindKeyListener(HttpServletRequest req, @RequestBody JsonNode jsonNode)
             throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
@@ -74,6 +82,8 @@ public class ContextListenerRestfulApi implements CsRestfulParent {
         return generateResponse(answerJob, "");
     }
 
+    @ApiOperation(value = "heartbeat", notes = "heart beat", response = Message.class)
+    @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "heartbeat", method = RequestMethod.POST)
     public Message heartbeat(HttpServletRequest req, @RequestBody JsonNode jsonNode)
             throws InterruptedException, IOException, CSErrorException {

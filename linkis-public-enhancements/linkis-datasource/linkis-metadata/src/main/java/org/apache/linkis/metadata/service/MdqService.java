@@ -23,6 +23,7 @@ import org.apache.linkis.metadata.domain.mdq.vo.MdqTableFieldsInfoVO;
 import org.apache.linkis.metadata.domain.mdq.vo.MdqTablePartitionStatisticInfoVO;
 import org.apache.linkis.metadata.domain.mdq.vo.MdqTableStatisticInfoVO;
 import org.apache.linkis.metadata.exception.MdqIllegalParamException;
+import org.apache.linkis.metadata.hive.dto.MetadataQueryParam;
 
 import java.io.IOException;
 import java.util.List;
@@ -46,8 +47,7 @@ public interface MdqService {
     Long persistTable(MdqTableBO mdqTableBO, String userName);
 
     MdqTableStatisticInfoVO getTableStatisticInfo(
-            String database, String tableName, String user, String partitionSort)
-            throws IOException;
+            MetadataQueryParam queryParam, String partitionSort) throws IOException;
 
     /**
      * 产生sql给前台，和sparkEngine
@@ -61,19 +61,17 @@ public interface MdqService {
 
     MdqTableBaseInfoVO getTableBaseInfoFromMdq(String database, String tableName, String user);
 
-    MdqTableBaseInfoVO getTableBaseInfoFromHive(String database, String tableName, String user);
+    MdqTableBaseInfoVO getTableBaseInfoFromHive(MetadataQueryParam queryParam);
 
     List<MdqTableFieldsInfoVO> getTableFieldsInfoFromMdq(
             String database, String tableName, String user);
 
-    List<MdqTableFieldsInfoVO> getTableFieldsInfoFromHive(
-            String database, String tableName, String user);
+    List<MdqTableFieldsInfoVO> getTableFieldsInfoFromHive(MetadataQueryParam queryParam);
 
     MdqTableStatisticInfoVO getTableStatisticInfoFromHive(
-            String database, String tableName, String user, String partitionSort)
-            throws IOException;
+            MetadataQueryParam queryParam, String partitionSort) throws IOException;
 
     MdqTablePartitionStatisticInfoVO getPartitionStatisticInfo(
-            String database, String tableName, String userName, String partitionName)
+            MetadataQueryParam queryParam, String partitionName)
             throws IOException, MdqIllegalParamException;
 }

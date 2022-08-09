@@ -51,20 +51,20 @@ trait AbstractLinkisJob extends LinkisJob with Logging {
     initJobDaemon()
   }
 
-  protected def initJobDaemon(): Unit = if(future == null) jobListeners synchronized {
-    if(future == null) future = LinkisJobBuilder.getThreadPoolExecutor.scheduleAtFixedRate(new Runnable {
+  protected def initJobDaemon(): Unit = if (future == null) jobListeners synchronized {
+    if (future == null) future = LinkisJobBuilder.getThreadPoolExecutor.scheduleAtFixedRate(new Runnable {
       private var failedNum = 0
       override def run(): Unit = {
         var exception: Throwable = null
-        val isJobCompleted = Utils.tryCatch(isCompleted){t =>
+        val isJobCompleted = Utils.tryCatch(isCompleted) {t =>
           exception = t
           failedNum += 1
           if(failedNum >= maxFailedNum) {
-            error(s"Get Job-$getId status failed for $failedNum tries, now mark this job failed.", t)
+            logger.error(s"Get Job-$getId status failed for $failedNum tries, now mark this job failed.", t)
             Utils.tryAndWarn(jobListeners.foreach(_.onJobUnknownError(AbstractLinkisJob.this, t)))
             true
           } else {
-            warn(s"Get Job-$getId status failed, wait for the $failedNum+ retries.", t)
+            logger.warn(s"Get Job-$getId status failed, wait for the $failedNum+ retries.", t)
             false
           }
         }
@@ -86,7 +86,7 @@ trait AbstractLinkisJob extends LinkisJob with Logging {
     operatorActions += operatorAction
 
   override def kill(): Unit = {
-    info(s"User try to kill Job-$getId.")
+    logger.info(s"User try to kill Job-$getId.")
     doKill()
     if(future != null) future.cancel(true)
     killed = true
@@ -98,8 +98,8 @@ trait AbstractLinkisJob extends LinkisJob with Logging {
   @throws(classOf[TimeoutException])
   @throws(classOf[InterruptedException])
   override def waitFor(mills: Long): Unit = {
-    val duration = if(mills > 0) Duration(mills, TimeUnit.MILLISECONDS) else Duration.Inf
-    Utils.waitUntil(() => killed || isCompleted,  duration, 500, 5000)
+    val duration = if (mills > 0) Duration(mills, TimeUnit.MILLISECONDS) else Duration.Inf
+    Utils.waitUntil(() => killed || isCompleted, duration, 500, 5000)
     if(killed) throw new UJESJobException(s"$getId is killed!")
   }
 

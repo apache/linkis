@@ -24,7 +24,7 @@ import org.json4s.{CustomSerializer, JArray, JObject}
 
 //TODO is now only the simplest implementation, and there is a need to optimize it later.(TODO 现在只做最简单的实现，后续有需要再优化)
 
-object JavaCollectionSerializer extends CustomSerializer[java.util.List[_]](implicit formats => ( {
+object JavaCollectionSerializer extends CustomSerializer[java.util.List[_]](implicit formats => ({
   case j: JArray => BDPJettyServerHelper.gson.fromJson(write(j), classOf[java.util.List[_]])
 }, {
   case list: java.util.List[_] => parse(BDPJettyServerHelper.gson.toJson(list))
@@ -32,7 +32,7 @@ object JavaCollectionSerializer extends CustomSerializer[java.util.List[_]](impl
 )
 )
 
-object JavaMapSerializer extends CustomSerializer[java.util.Map[_, _]](implicit formats => ( {
+object JavaMapSerializer extends CustomSerializer[java.util.Map[_, _]](implicit formats => ({
   case j: JObject => BDPJettyServerHelper.gson.fromJson(write(j), classOf[java.util.Map[_, _]])
 }, {
   case map: java.util.Map[_, _] => parse(BDPJettyServerHelper.gson.toJson(map))

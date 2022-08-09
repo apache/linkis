@@ -41,9 +41,9 @@ class EngineConnYarnLogOperator extends EngineConnLogOperator {
           val logFile = new File(path)
           if (logFile.exists() && logFile.getName.startsWith(".")){
             // If is a temporary file, drop it
-            info(s"Delete the temporary yarn log file: [$path]")
+            logger.info(s"Delete the temporary yarn log file: [$path]")
             if (!logFile.delete()){
-              warn(s"Fail to delete the temporary yarn log file: [$path]")
+              logger.warn(s"Fail to delete the temporary yarn log file: [$path]")
             }
           }
         }
@@ -64,16 +64,16 @@ class EngineConnYarnLogOperator extends EngineConnLogOperator {
       val tempLogFile = s".yarn_${applicationId}_${System.currentTimeMillis()}_${Thread.currentThread().getId}"
       Utils.tryCatch {
         var command = s"yarn logs -applicationId $applicationId >> $rootLogDir/$tempLogFile"
-        info(s"Fetch yarn logs to temporary file: [$command]")
+        logger.info(s"Fetch yarn logs to temporary file: [$command]")
         val processBuilder = new ProcessBuilder(sudoCommands(creator, command): _*)
         processBuilder.environment.putAll(sys.env.asJava)
         processBuilder.redirectErrorStream(false)
         val process = processBuilder.start()
         val waitFor = process.waitFor(5, TimeUnit.SECONDS)
-        trace(s"waitFor: ${waitFor}, result: ${process.exitValue()}")
+        logger.trace(s"waitFor: ${waitFor}, result: ${process.exitValue()}")
         if (waitFor && process.waitFor() == 0) {
           command = s"mv $rootLogDir/$tempLogFile $rootLogDir/yarn_$applicationId"
-          info(s"Move and save yarn logs: [$command]")
+          logger.info(s"Move and save yarn logs: [$command]")
           Utils.exec(sudoCommands(creator, command))
         } else {
           logPath = new File(engineConnLogDir, tempLogFile)
@@ -88,7 +88,7 @@ class EngineConnYarnLogOperator extends EngineConnLogOperator {
     if (!logPath.exists() || !logPath.isFile){
       throw new ECMErrorException(ECMErrorCode.EC_FETCH_LOG_FAILED, s"LogFile $logPath is not exists or is not a file.")
     }
-    info(s"Try to fetch EngineConn(id: $ticketId, instance: $engineConnInstance) yarn logs from ${logPath.getPath} in application id: $applicationId")
+    logger.info(s"Try to fetch EngineConn(id: $ticketId, instance: $engineConnInstance) yarn logs from ${logPath.getPath} in application id: $applicationId")
     logPath
   }
 

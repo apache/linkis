@@ -30,8 +30,7 @@ import org.apache.linkis.manager.common.protocol.engine.EngineLockType
 import org.apache.linkis.manager.common.protocol.{RequestEngineLock, RequestEngineUnlock, ResponseEngineLock, ResponseEngineUnlock}
 import org.apache.linkis.rpc.message.annotation.Receiver
 import org.apache.linkis.server.BDPJettyServerHelper
-import org.apache.commons.lang.StringUtils
-
+import org.apache.commons.lang3.StringUtils
 
 class EngineConnTimedLockService extends LockService with Logging {
 
@@ -79,7 +78,7 @@ class EngineConnTimedLockService extends LockService with Logging {
       case EngineLockType.Timed =>
         timedLock(requestEngineLock.timeout)
       case o: Any =>
-        error("Invalid lockType : " + BDPJettyServerHelper.gson.toJson(o))
+        logger.error("Invalid lockType : " + BDPJettyServerHelper.gson.toJson(o))
         return Some(null)
     }
 
@@ -90,15 +89,21 @@ class EngineConnTimedLockService extends LockService with Logging {
     // Lock is binded to engineconn, so choose default executor
     ExecutorManager.getInstance.getReportExecutor match {
       case accessibleExecutor: AccessibleExecutor =>
-        debug("try to lock for executor state is " + accessibleExecutor.getStatus)
-        debug("try to lock for executor id is " + accessibleExecutor.getId)
+        if (logger.isDebugEnabled) {
+          logger.debug("try to lock for executor state is " + accessibleExecutor.getStatus)
+          logger.debug("try to lock for executor id is " + accessibleExecutor.getId)
+        }
+        if (NodeStatus.isCompleted(accessibleExecutor.getStatus)) {
+          logger.error(s"Cannot to lock completed ${accessibleExecutor.getStatus} stats executor")
+          return None
+        }
         if (null == engineConnLock) {
           engineConnLock = new EngineConnTimedLock(timeout)
           ExecutorListenerBusContext.getExecutorListenerBusContext().getEngineConnAsyncListenerBus.addListener(engineConnLock)
-          debug("try to lock for executor get new lock " + engineConnLock)
+          logger.debug("try to lock for executor get new lock " + engineConnLock)
         }
         if (engineConnLock.tryAcquire(accessibleExecutor)) {
-          debug("try to lock for tryAcquire is true ")
+          logger.debug("try to lock for tryAcquire is true ")
           this.lockString = engineConnLock.lock.toString
           val executors = ExecutorManager.getInstance.getExecutors.filter(executor => null != executor && !executor.isClosed)
           if (null != executors && !executors.isEmpty) {
@@ -108,7 +113,7 @@ class EngineConnTimedLockService extends LockService with Logging {
               case _ =>
             })
           } else {
-            error("No valid executors while adding lock.")
+            logger.error("No valid executors while adding lock.")
             accessibleExecutor.transition(NodeStatus.Idle)
           }
           ExecutorListenerBusContext.getExecutorListenerBusContext().getEngineConnAsyncListenerBus.post(ExecutorLockEvent(accessibleExecutor, lockString))
@@ -116,7 +121,7 @@ class EngineConnTimedLockService extends LockService with Logging {
         } else None
       case _ =>
         val msg = s"Invalid executor or not instance of SensibleEngine."
-        error(msg)
+        logger.error(msg)
         throw new EngineConnExecutorErrorException(EngineConnExecutorErrorCode.INVALID_ENGINE_TYPE, msg)
     }
   }
@@ -127,9 +132,9 @@ class EngineConnTimedLockService extends LockService with Logging {
     * @param lock
     */
   override def unlock(lock: String): Boolean = synchronized {
-    info("try to unlock for lockEntity is " + engineConnLock.toString + ",and lock is " + lock + ",acquired is " + engineConnLock.isAcquired().toString)
+    logger.info("try to unlock for lockEntity is " + engineConnLock.toString + ",and lock is " + lock + ",acquired is " + engineConnLock.isAcquired().toString)
     if (isLockExist(lock)) {
-      info(s"try to unlock lockEntity : lockString=$lockString,lockedBy=${engineConnLock.lockedBy.getId}")
+      logger.info(s"try to unlock lockEntity : lockString=$lockString,lockedBy=${engineConnLock.lockedBy.getId}")
       engineConnLock.release()
       this.lockString = null
       true
@@ -141,7 +146,7 @@ class EngineConnTimedLockService extends LockService with Logging {
   @Receiver
   override def requestUnLock(requestEngineUnlock: RequestEngineUnlock): ResponseEngineUnlock = {
     if (StringUtils.isBlank(requestEngineUnlock.lock)) {
-      error("Invalid requestEngineUnlock: ")
+      logger.error("Invalid requestEngineUnlock: ")
       ResponseEngineUnlock(false)
     } else {
       ResponseEngineUnlock(unlock(requestEngineUnlock.lock))

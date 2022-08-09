@@ -18,26 +18,22 @@
 package org.apache.linkis.manager.am.service.engine
 
 
-import java.util
-
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.governance.common.entity.NodeExistStatus
 import org.apache.linkis.governance.common.protocol.engineconn.{RequestEngineStatusBatch, ResponseEngineStatusBatch}
 import org.apache.linkis.governance.common.utils.GovernanceConstant
 import org.apache.linkis.manager.am.manager.{EMNodeManager, EngineNodeManager}
-import org.apache.linkis.manager.am.vo.AMEngineNodeVo
 import org.apache.linkis.manager.common.entity.node.{EMNode, EngineNode}
+import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import org.apache.linkis.manager.label.service.NodeLabelService
+import org.apache.linkis.manager.rm.service.ResourceManager
 import org.apache.linkis.rpc.message.annotation.Receiver
-import org.apache.linkis.resourcemanager.service.ResourceManager
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
+import java.util
 import scala.collection.JavaConversions._
-import org.apache.linkis.manager.label.builder.factory.{LabelBuilderFactoryContext, StdLabelBuilderFactory}
-import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel
-
 import scala.collection.JavaConverters._
 
 
@@ -123,7 +119,7 @@ class DefaultEngineInfoService extends AbstractEngineService with EngineInfoServ
     labelKeyValue.asScala.foreach(keyValue => {
       val label = labelBuilderFactory.createLabel(keyValue._1, keyValue._2)
       labelService.updateLabelToNode(instance, label)
-      info(s"instance:${instance} success to update label, labelKey:${keyValue._1} labelValue:${keyValue._2}")
+      logger.info(s"instance:${instance} success to update label, labelKey:${keyValue._1} labelValue:${keyValue._2}")
     })
   }
 

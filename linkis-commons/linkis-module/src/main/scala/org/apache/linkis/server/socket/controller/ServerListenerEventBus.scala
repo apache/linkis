@@ -19,7 +19,7 @@ package org.apache.linkis.server.socket.controller
 
 import org.apache.linkis.common.listener.ListenerEventBus
 import org.apache.linkis.server.exception.BDPServerErrorException
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 
 
 class ServerListenerEventBus(eventQueueCapacity: Int, name: String,
@@ -33,7 +33,7 @@ class ServerListenerEventBus(eventQueueCapacity: Int, name: String,
     */
   override protected def doPostEvent(listener: ServerEventService, event: SocketServerEvent): Unit = {
     val serverEvent = event.serverEvent
-    if(StringUtils.isEmpty(serverEvent.getMethod)) info("ignore empty method with " + serverEvent.getData)
+    if(StringUtils.isEmpty(serverEvent.getMethod)) logger.info("ignore empty method with " + serverEvent.getData)
     else if(serverEvent.getMethod.startsWith(listener.serviceName)) {
       val response = listener.onEvent(serverEvent)
       if(response != null) {

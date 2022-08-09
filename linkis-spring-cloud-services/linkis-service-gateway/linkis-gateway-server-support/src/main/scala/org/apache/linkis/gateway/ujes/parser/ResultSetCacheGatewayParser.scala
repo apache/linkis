@@ -26,7 +26,7 @@ import org.apache.linkis.gateway.parser.AbstractGatewayParser
 import org.apache.linkis.gateway.springcloud.SpringCloudGatewayConfiguration.{API_URL_PREFIX, normalPath}
 import org.apache.linkis.gateway.ujes.parser.ResultSetCacheGatewayParser._
 import org.apache.linkis.server.BDPJettyServerHelper
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.springframework.beans.factory.ObjectFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
@@ -94,7 +94,7 @@ class ResultSetCacheGatewayConfiguration extends Logging {
   @ConditionalOnMissingBean
   @Autowired
   def createHttpMessageConvertersObjectFactory(converters: HttpMessageConverters): ObjectFactory[HttpMessageConverters] = {
-    warn("Notice: no ObjectFactory<HttpMessageConverters> find, ResultSetCache will provide one.")
+    logger.warn("Notice: no ObjectFactory<HttpMessageConverters> find, ResultSetCache will provide one.")
     new ObjectFactory[HttpMessageConverters] {
       override def getObject: HttpMessageConverters = converters
     }
@@ -103,7 +103,7 @@ class ResultSetCacheGatewayConfiguration extends Logging {
   @Bean
   @ConditionalOnMissingBean
   def createHttpMessageConverters(): HttpMessageConverters = {
-    warn("Notice: no HttpMessageConverters find, ResultSetCache will provide one.")
+    logger.warn("Notice: no HttpMessageConverters find, ResultSetCache will provide one.")
     new HttpMessageConverters(new MappingJackson2HttpMessageConverter)
   }
 

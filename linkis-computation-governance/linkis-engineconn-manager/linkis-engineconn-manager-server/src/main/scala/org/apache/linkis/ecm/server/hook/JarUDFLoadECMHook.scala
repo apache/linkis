@@ -16,21 +16,21 @@
  */
  
 package org.apache.linkis.ecm.server.hook
+import org.apache.commons.lang3.StringUtils
+import org.apache.linkis.common.io.FsPath
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.ecm.core.engineconn.EngineConn
-import org.apache.linkis.manager.engineplugin.common.launch.entity.EngineConnLaunchRequest
-import org.apache.linkis.manager.engineplugin.common.launch.process.{Environment, LaunchConstants, ProcessEngineConnLaunchRequest}
-import org.apache.linkis.udf.UDFClient
-import org.apache.commons.lang.StringUtils
-import org.apache.linkis.common.io.FsPath
 import org.apache.linkis.ecm.server.service.LocalDirsHandleService
 import org.apache.linkis.ecm.server.service.impl.DefaultLocalDirsHandleService
 import org.apache.linkis.ecm.server.util.ECMUtils
 import org.apache.linkis.manager.common.protocol.bml.BmlResource
+import org.apache.linkis.manager.engineplugin.common.launch.entity.EngineConnLaunchRequest
+import org.apache.linkis.manager.engineplugin.common.launch.process.{Environment, ProcessEngineConnLaunchRequest}
 import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.storage.FSFactory
 import org.apache.linkis.storage.fs.FileSystem
 import org.apache.linkis.storage.utils.{FileSystemUtils, StorageUtils}
+import org.apache.linkis.udf.UDFClient
 
 import java.io.File
 import java.nio.file.Paths
@@ -47,7 +47,7 @@ class JarUDFLoadECMHook extends ECMHook with Logging {
   override def beforeLaunch(request: EngineConnLaunchRequest, conn: EngineConn): Unit = {
     request match {
       case pel: ProcessEngineConnLaunchRequest =>
-        info("start loading UDFs")
+        logger.info("start loading UDFs")
         val user = pel.user
         val ticketId = pel.ticketId
         val engineType = LabelUtil.getEngineType(pel.labels)
@@ -82,7 +82,7 @@ class JarUDFLoadECMHook extends ECMHook with Logging {
             if (!fs.exists(fsPath)) resourceId.intern().synchronized {
               if (!fs.exists(fsPath)) {
                 ECMUtils.downLoadBmlResourceToLocal(bmlResource, if (udfInfo.getCreateUser.equals("bdp")) "hadoop" else udfInfo.getCreateUser, fsPath.getPath)(fs)
-                info(s"Finished to download bml resource ${fsPath.getPath}")
+                logger.info(s"Finished to download bml resource ${fsPath.getPath}")
               }
             }
             conn.getEngineConnLaunchRunner.getEngineConnLaunch.getEngineConnManagerEnv().linkDirs.

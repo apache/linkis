@@ -39,7 +39,7 @@ import org.apache.linkis.server.BDPJettyServerHelper
 import org.apache.linkis.storage.FSFactory
 import org.apache.linkis.storage.fs.FileSystem
 import org.apache.commons.io.FilenameUtils
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 
 import scala.collection.JavaConversions._
 
@@ -56,7 +56,7 @@ class ReadCacheConsumer(schedulerContext: SchedulerContext,
               val engineTpyeLabel = jobRequest.getLabels.filter(l => l.getLabelKey.equalsIgnoreCase(LabelKeyConstant.ENGINE_TYPE_KEY)).headOption.getOrElse(null)
               val labelStrList = jobRequest.getLabels.map { case l => l.getStringValue}.toList
               if (null == engineTpyeLabel) {
-                error("Invalid engineType null, cannot process. jobReq : " + BDPJettyServerHelper.gson.toJson(jobRequest))
+                logger.error("Invalid engineType null, cannot process. jobReq : " + BDPJettyServerHelper.gson.toJson(jobRequest))
                 throw CacheNotReadyException(20052, "Invalid engineType null, cannot use cache.")
               }
               val readCacheBefore = TaskUtils.getRuntimeMap(job.getParams).getOrDefault(TaskConstant.READ_CACHE_BEFORE, 300L).asInstanceOf[Long]
@@ -78,11 +78,11 @@ class ReadCacheConsumer(schedulerContext: SchedulerContext,
                 TaskUtils.addRuntimeMap(job.getParams, runtime)
                 job.transitionCompleted(SuccessExecuteResponse(), "Result found in cache")
               } else {
-                info("Cache not found, submit to normal consumer.")
+                logger.info("Cache not found, submit to normal consumer.")
                 submitToExecute(job)
               }
             }{ t =>
-                warn("Read cache failed, submit to normal consumer: ", t)
+              logger.warn("Read cache failed, submit to normal consumer: ", t)
                 submitToExecute(job)
             }
           case _ =>

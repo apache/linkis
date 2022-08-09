@@ -33,14 +33,14 @@ class ECTaskEntranceMonitor extends SingleThreadUpstreamConnectionMonitor(name =
     panicIfNull(executor, "executor should not be null")
     val taskID = task.getTaskId
     if (wrapperMap.containsKey(taskID)) {
-      error("registered duplicate EngineConnTask!! task-id: " + taskID)
+      logger.error("registered duplicate EngineConnTask!! task-id: " + taskID)
     }
     wrapperMap.putIfAbsent(taskID, new ECTaskEntranceConnectionWrapper(taskID, task, executor))
   }
 
   def unregister(taskID: String): Unit = {
     if (!wrapperMap.containsKey(taskID)) {
-      error("attempted to unregister non-existing EngineConnTask!! task-id: " + taskID)
+      logger.error("attempted to unregister non-existing EngineConnTask!! task-id: " + taskID)
     }
     wrapperMap.remove(taskID)
   }

@@ -31,7 +31,7 @@ import org.apache.linkis.manager.label.entity.engine.{CodeLanguageLabel, EngineT
 import org.apache.linkis.udf.UDFClient
 import org.apache.linkis.udf.utils.ConstantVar
 import org.apache.commons.io.{FileUtils, IOUtils}
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.engineconn.core.engineconn.EngineConnManager
 import org.apache.linkis.engineconn.executor.entity.Executor
@@ -82,26 +82,26 @@ abstract class UDFLoad extends Logging {
 
 
   protected def getLoadUdfCode(user: String): String = {
-    info("start loading UDFs")
+    logger.info("start loading UDFs")
     val udfInfos = UDFClient.getUdfInfosByUdfType(user, category, udfType)
-    info("all udfs: ")
-    udfInfos.foreach { l => info("udfName:" + l.getUdfName + " bml_resource_id:" + l.getBmlResourceId + "\n") }
+    logger.info("all udfs: ")
+    udfInfos.foreach { l => logger.info("udfName:" + l.getUdfName + " bml_resource_id:" + l.getBmlResourceId + "\n") }
     udfInfos.filter { info => StringUtils.isNotEmpty(info.getBmlResourceId) }.map(constructCode).mkString("\n")
   }
 
   protected def readFile(path: String): String = {
-    info("read file: " + path)
+    logger.info("read file: " + path)
     val file = new File(path)
     if (file.exists()) {
       FileUtils.readFileToString(file)
     } else {
-      info("udf file: [" + path + "] doesn't exist, ignore it.")
+      logger.info("udf file: [" + path + "] doesn't exist, ignore it.")
       ""
     }
   }
 
   protected def readFile(user: String, resourceId: String, resourceVersion: String): String = {
-    info("begin to download udf from bml.")
+    logger.info("begin to download udf from bml.")
     val downloadResponse = bmlClient.downloadResource(if (user == null) Utils.getJvmUser else user, resourceId, resourceVersion)
     if (downloadResponse.isSuccess) {
       Utils.tryFinally {
@@ -110,7 +110,7 @@ abstract class UDFLoad extends Logging {
         IOUtils.closeQuietly(downloadResponse.inputStream)
       }
     } else {
-      info("failed to download udf from bml.")
+      logger.info("failed to download udf from bml.")
       ""
     }
   }
@@ -189,7 +189,7 @@ abstract class UDFLoadEngineConnHook extends UDFLoad with EngineConnHook with Lo
         codeLanguageLabel.setCodeType(getRealRunType(engineTypeLabel.asInstanceOf[EngineTypeLabel].getEngineType).toString)
       case None =>
         codeLanguageLabel.setCodeType(runType.toString)
-        warn("no EngineTypeLabel found, use default runType")
+        logger.warn("no EngineTypeLabel found, use default runType")
     }
     val labels = Array[Label[_]](codeLanguageLabel)
     loadUDF(labels)

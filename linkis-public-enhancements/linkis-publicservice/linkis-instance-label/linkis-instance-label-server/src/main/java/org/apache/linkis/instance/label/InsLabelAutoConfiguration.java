@@ -33,7 +33,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.annotation.AnnotationUtils;
 
-import com.netflix.discovery.EurekaClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,8 +73,8 @@ public class InsLabelAutoConfiguration {
     }
 
     /** Configuration in eureka environment */
-    @Configuration
-    @ConditionalOnClass({EurekaClient.class})
+    /* @Configuration
+    @ConditionalOnClass({EurekaClient.class})*/
     public static class EurekaClientConfiguration {
         @ConditionalOnMissingBean({EurekaInsLabelService.class})
         @Bean

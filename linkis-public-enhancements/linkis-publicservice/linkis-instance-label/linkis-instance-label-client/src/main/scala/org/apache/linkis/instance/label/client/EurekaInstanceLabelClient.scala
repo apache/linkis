@@ -17,14 +17,18 @@
  
 package org.apache.linkis.instance.label.client
 
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.utils.Logging
-import org.apache.linkis.protocol.label.{InsLabelAttachRequest, InsLabelRemoveRequest}
+import org.apache.linkis.manager.label.constant.LabelKeyConstant
+import org.apache.linkis.protocol.label.{InsLabelRefreshRequest, InsLabelRemoveRequest}
 import org.apache.linkis.rpc.Sender
-import javax.annotation.PostConstruct
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cloud.client.serviceregistry.Registration
 import org.springframework.context.event.{ContextClosedEvent, EventListener}
 import org.springframework.stereotype.Component
+
+import java.util
+import javax.annotation.PostConstruct
 
 
 @Component
@@ -35,26 +39,29 @@ class EurekaInstanceLabelClient extends Logging {
   private var registration: Registration = _
 
 
+
   @PostConstruct
   def init(): Unit = {
-    info("EurekaInstanceLabelClient init")
+    logger.info("EurekaInstanceLabelClient init")
     val metadata = registration.getMetadata
-    if (null != metadata) {
-      info(s"Start to register label for instance $metadata")
-      val insLabelAttachRequest = new InsLabelAttachRequest
-      insLabelAttachRequest.setLabels(metadata.asInstanceOf[java.util.Map[String, Object]])
-      insLabelAttachRequest.setServiceInstance(Sender.getThisServiceInstance)
-      InstanceLabelClient.getInstance.attachLabelsToInstance(insLabelAttachRequest)
+    if (null != metadata && metadata.containsKey(LabelKeyConstant.ROUTE_KEY) && StringUtils.isNoneBlank(metadata.get(LabelKeyConstant.ROUTE_KEY))) {
+      logger.info(s"Start to register label for instance $metadata")
+      val labels = new util.HashMap[String, Object]()
+      labels.put(LabelKeyConstant.ROUTE_KEY, metadata.get(LabelKeyConstant.ROUTE_KEY))
+      val insLabelRefreshRequest = new InsLabelRefreshRequest
+      insLabelRefreshRequest.setLabels(labels)
+      insLabelRefreshRequest.setServiceInstance(Sender.getThisServiceInstance)
+      InstanceLabelClient.getInstance.refreshLabelsToInstance(insLabelRefreshRequest)
     }
   }
 
   @EventListener(classes = Array(classOf[ContextClosedEvent]))
   def shutdown(contextClosedEvent: ContextClosedEvent): Unit = {
-    info("To remove labels for instance")
+    logger.info("To remove labels for instance")
     val insLabelRemoveRequest = new InsLabelRemoveRequest
     insLabelRemoveRequest.setServiceInstance(Sender.getThisServiceInstance)
     InstanceLabelClient.getInstance.removeLabelsFromInstance(insLabelRemoveRequest)
-    info("success to send clear label rpc request")
+    logger.info("success to send clear label rpc request")
   }
 
 

@@ -19,7 +19,7 @@ package org.apache.linkis.mybatis;
 
 import org.apache.linkis.mybatis.conf.MybatisConfiguration;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.sql.DataSource;
 

@@ -18,5 +18,6 @@
 package org.apache.linkis.datasource.client.request
 
 import org.apache.linkis.httpclient.dws.request.DWSHttpAction
+import org.apache.linkis.httpclient.request.UserAction
 
-trait DataSourceAction extends DWSHttpAction with org.apache.linkis.httpclient.request.UserAction
+trait DataSourceAction extends DWSHttpAction with UserAction

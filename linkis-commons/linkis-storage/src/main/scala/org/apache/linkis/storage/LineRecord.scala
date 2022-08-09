@@ -23,8 +23,8 @@ import org.apache.linkis.storage.resultset.ResultRecord
 
 class LineRecord(private var  line: String) extends ResultRecord{
 
-  def getLine = line
-  def setLine(line:String): Unit = {
+  def getLine: String = line
+  def setLine(line: String): Unit = {
     this.line = line
   }
 

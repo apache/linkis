@@ -25,7 +25,7 @@ import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.entrance.conf.EntranceConfiguration
 import org.apache.linkis.entrance.interceptor.exception.{PythonCodeCheckException, ScalaCodeCheckException}
 import org.apache.linkis.governance.common.entity.job.JobRequest
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.entrance.exception.{EntranceErrorCode, EntranceIllegalParamException}
 import org.slf4j.{Logger, LoggerFactory}
 
@@ -162,7 +162,7 @@ object SQLExplain extends Explain {
     if(StringUtils.isEmpty(requestPersistTask.getExecutionCode)){
       throw new EntranceIllegalParamException(EntranceErrorCode.EXECUTION_CODE_ISNULL.getErrCode,EntranceErrorCode.EXECUTION_CODE_ISNULL.getDesc)
     }
-    debug(s"after sql limit code is ${requestPersistTask.getExecutionCode}")
+    logger.debug(s"after sql limit code is ${requestPersistTask.getExecutionCode}")
   }
 
   private def findRealSemicolonIndex(tempCode: String):Array[Int] = {

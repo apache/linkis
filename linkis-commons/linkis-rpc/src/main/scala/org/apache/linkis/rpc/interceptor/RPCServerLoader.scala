@@ -61,7 +61,7 @@ abstract class AbstractRPCServerLoader extends RPCServerLoader with Logging {
       refresh
       val isRefreshed = refreshed
       if(!isRefreshed)
-        info(s"Need a $serviceInstance, but cannot find in DiscoveryClient refresh list.")
+        logger.info(s"Need a $serviceInstance, but cannot find in DiscoveryClient refresh list.")
       isRefreshed
     }, refreshMaxWaitTime, 500, 2000)) { t =>
       instanceNotExists.initCause(t)

@@ -26,7 +26,7 @@ import org.apache.linkis.manager.common.protocol.engine.{EngineAsyncResponse, En
 import org.apache.linkis.orchestrator.ecm.conf.ECMPluginConf
 import org.apache.linkis.orchestrator.ecm.exception.ECMPluginCacheException
 import org.apache.linkis.rpc.Sender
-import org.apache.commons.lang.exception.ExceptionUtils
+import org.apache.commons.lang3.exception.ExceptionUtils
 
 import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.duration.Duration
@@ -102,7 +102,7 @@ class EngineAsyncResponseCacheMap extends EngineAsyncResponseCache with Logging 
   }
 
   def init(): Unit = {
-    info(s"Start cache map clear defaultScheduler")
+    logger.info(s"Start cache map clear defaultScheduler")
     Utils.defaultScheduler.scheduleAtFixedRate(new Runnable {
       override def run(): Unit = try {
 
@@ -116,18 +116,18 @@ class EngineAsyncResponseCacheMap extends EngineAsyncResponseCache with Logging 
           }
         }
         expireBuffer.foreach { key =>
-          info(s" to clear engineAsyncResponseEntity key $key")
+          logger.info(s" to clear engineAsyncResponseEntity key $key")
           val engineAsyncResponseEntity =  cacheMap.remove(key)
           if (null != engineAsyncResponseEntity && engineAsyncResponseEntity.engineAsyncResponse.isInstanceOf[EngineCreateSuccess]) {
             val engineCreateSuccess = engineAsyncResponseEntity.engineAsyncResponse.asInstanceOf[EngineCreateSuccess]
-            info(s"clear engineCreateSuccess, to unlock $engineCreateSuccess")
+            logger.info(s"clear engineCreateSuccess, to unlock $engineCreateSuccess")
             val requestManagerUnlock = RequestManagerUnlock(engineCreateSuccess.engineNode.getServiceInstance, engineCreateSuccess.engineNode.getLock, Sender.getThisServiceInstance)
             getManagerSender.send(requestManagerUnlock)
           }
         }
       } catch {
         case throwable: Throwable =>
-          error("Failed to clear EngineAsyncResponseCacheMap", throwable)
+          logger.error("Failed to clear EngineAsyncResponseCacheMap", throwable)
       }
     }, 60000, expireTime, TimeUnit.MILLISECONDS)
   }

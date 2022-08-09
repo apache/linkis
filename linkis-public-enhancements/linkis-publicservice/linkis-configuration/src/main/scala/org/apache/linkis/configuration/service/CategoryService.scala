@@ -17,7 +17,7 @@
  
 package org.apache.linkis.configuration.service
 
-import java.util
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.configuration.conf.Configuration
 import org.apache.linkis.configuration.dao.{ConfigMapper, LabelMapper}
@@ -27,15 +27,13 @@ import org.apache.linkis.configuration.util.LabelEntityParser
 import org.apache.linkis.manager.label.builder.CombinedLabelBuilder
 import org.apache.linkis.manager.label.entity.CombinedLabel
 import org.apache.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
-import org.apache.linkis.manager.label.utils.LabelUtils
-import org.apache.commons.lang.StringUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.DuplicateKeyException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
+import java.util
 import scala.collection.JavaConverters._
-import scala.collection.mutable.ArrayBuffer
 
 
 @Service
@@ -127,7 +125,7 @@ class CategoryService extends Logging{
     if(parsedLabel.getId != null){
       val categoryLabel = generateCategoryLabel(parsedLabel.getId, description, 1)
       configMapper.insertCategory(categoryLabel)
-      info(s"success to create category: ${categoryName} --category id: ${categoryLabel.getCategoryId} " +
+      logger.info(s"success to create category: ${categoryName} --category id: ${categoryLabel.getCategoryId} " +
         s"--category level: 1")
     }
   }
@@ -175,7 +173,7 @@ class CategoryService extends Logging{
     if(parsedLabel.getId != null){
       val categoryLabel = generateCategoryLabel(parsedLabel.getId, description, 2)
       configMapper.insertCategory(categoryLabel)
-      info(s"success to create category: ${combinedLabel.getStringValue} --category id: ${categoryLabel.getCategoryId} " +
+      logger.info(s"success to create category: ${combinedLabel.getStringValue} --category id: ${categoryLabel.getCategoryId} " +
         s"--category level: 2")
       //1.Here, the engine and the corresponding engine default configuration are associated and initialized, and the relevant configuration of the corresponding version of the engine needs to be entered in the database in advance
       //2.Now all the default configurations obtained are the default configuration of the engine level, and there is no default configuration of the application level for the time being.
@@ -215,7 +213,7 @@ class CategoryService extends Logging{
       idList.add(categoryLabelVo.getLabelId)
       childCategoryList.foreach(child => idList.add(child.getLabelId))
       labelMapper.deleteLabel(idList)
-      info(s"success to delete category:${categoryLabelVo.getCategoryName}, " +
+      logger.info(s"success to delete category:${categoryLabelVo.getCategoryName}, " +
         s"with child category:${childCategoryList.map(_.getCategoryName).toArray}")
     }
   }
@@ -236,7 +234,7 @@ class CategoryService extends Logging{
       idList.clear()
       idList.add(categoryLabel.getId)
       labelMapper.deleteLabel(idList)
-      info(s"success to delete category:${categoryLabel.getStringValue}")
+      logger.info(s"success to delete category:${categoryLabel.getStringValue}")
     }
   }
 }

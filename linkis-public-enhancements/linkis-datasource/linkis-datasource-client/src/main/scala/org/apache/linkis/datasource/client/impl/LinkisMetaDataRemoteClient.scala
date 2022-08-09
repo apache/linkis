@@ -24,6 +24,7 @@ import org.apache.linkis.httpclient.dws.DWSHttpClient
 import org.apache.linkis.httpclient.dws.config.DWSClientConfig
 
 class LinkisMetaDataRemoteClient(clientConfig: DWSClientConfig) extends AbstractRemoteClient with MetaDataRemoteClient {
+
   protected override val dwsHttpClient = new DWSHttpClient(clientConfig, "MetaData-Client")
 
   override def getDatabases(action: MetadataGetDatabasesAction): MetadataGetDatabasesResult = execute(action).asInstanceOf[MetadataGetDatabasesResult]

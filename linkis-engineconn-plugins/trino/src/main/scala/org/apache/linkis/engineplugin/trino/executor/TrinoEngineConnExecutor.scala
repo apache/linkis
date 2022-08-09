@@ -30,12 +30,12 @@ import org.apache.linkis.engineconn.computation.executor.entity.EngineConnTask
 import org.apache.linkis.engineconn.computation.executor.execute.{ConcurrentComputationExecutor, EngineExecutionContext}
 import org.apache.linkis.engineconn.core.EngineConnObject
 import org.apache.linkis.engineplugin.trino.conf.TrinoConfiguration._
-import org.apache.linkis.engineplugin.trino.conf.TrinoEngineConfig
+import org.apache.linkis.engineplugin.trino.conf.{TrinoConfiguration, TrinoEngineConfig}
 import org.apache.linkis.engineplugin.trino.exception.{TrinoClientException, TrinoGrantmaException, TrinoModifySchemaException, TrinoStateInvalidException}
 import org.apache.linkis.engineplugin.trino.interceptor.PasswordInterceptor
 import org.apache.linkis.engineplugin.trino.password.{CommandPasswordCallback, StaticPasswordCallback}
 import org.apache.linkis.engineplugin.trino.socket.SocketChannelSocketFactory
-import org.apache.linkis.engineplugin.trino.utils.SqlCodeParser
+import org.apache.linkis.engineplugin.trino.utils.{SqlCodeParser, TrinoCode}
 import org.apache.linkis.governance.common.paser.SQLCodeParser
 import org.apache.linkis.manager.common.entity.resource.{CommonNodeResource, LoadResource, NodeResource}
 import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf
@@ -126,13 +126,12 @@ class TrinoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int) e
   }
 
   override def executeLine(engineExecutorContext: EngineExecutionContext, code: String): ExecuteResponse = {
-    val realCode = SqlCodeParser.parse(code.trim)
-    if (SqlCodeParser.checkModifySchema(realCode)) {
-      throw TrinoModifySchemaException("CREATE, ALTER, DROP SCHEMA is not allowed")
-    }
-    if (SqlCodeParser.checkGrant(realCode)) {
-      throw TrinoGrantmaException("Grant schema or table is not allowed")
-    }
+    val trimmedCode = code.trim
+    val realCode = getCodeParser
+      .map{ parser => parser.parse(trimmedCode).head}
+      .getOrElse(trimmedCode)
+
+    TrinoCode.checkCode(realCode)
     logger.info(s"trino client begins to run psql code:\n $realCode")
 
     val trinoUser = Optional.ofNullable(TRINO_USER.getValue)

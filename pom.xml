@@ -30,7 +30,7 @@
 
     <groupId>org.apache.linkis</groupId>
     <artifactId>linkis</artifactId>
-    <version>1.1.3</version>
+    <version>1.2.0</version>
     <packaging>pom</packaging>
     <name>Linkis Project Parent POM</name>
     <description>Linkis helps easily connect to various back-end computation/storage engines</description>
@@ -99,7 +99,6 @@
         <module>linkis-dist</module>
     </modules>
     <properties>
-        <linkis.version>1.1.3</linkis.version>
         <hadoop.version>2.7.2</hadoop.version>
         <zookeeper.version>3.5.9</zookeeper.version>
         <spring.boot.version>2.3.12.RELEASE</spring.boot.version>
@@ -110,7 +109,7 @@
         <plugin.scala.version>2.15.2</plugin.scala.version>
         <scala.binary.version>2.11</scala.binary.version>
         <netty.version>4.1.78.Final</netty.version>
-        <jackson-bom.version>2.13.2.1</jackson-bom.version>
+        <jackson-bom.version>2.12.7</jackson-bom.version>
         <!-- spark2.4 use 3.5.3, spark3.2 use 3.7.0-M11 -->
         <json4s.version>3.5.3</json4s.version>
         <jersey.version>1.19.4</jersey.version>
@@ -160,6 +159,7 @@
         <spring.version>5.2.22.RELEASE</spring.version>
         <knife4j.version>2.0.9</knife4j.version>
         <trino.version>371</trino.version>
+        <maven-assembly-plugin.version>3.2.0</maven-assembly-plugin.version>
     </properties>
 
     <dependencyManagement>
@@ -177,19 +177,19 @@
                         <groupId>org.hibernate.validator</groupId>
                     </exclusion>
                 </exclusions>
-                <version>${linkis.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.apache.linkis</groupId>
                 <artifactId>linkis-common</artifactId>
-                <version>${linkis.version}</version>
+                <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.apache.linkis</groupId>
                 <artifactId>linkis-mybatis</artifactId>
-                <version>${linkis.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.google.code.gson</groupId>
@@ -1235,6 +1235,12 @@
                                 <order>org.apache.linkis,org.apache,org.springframework,javax,java,scala,\#</order>
                             </importOrder>
 
+                            <excludes>
+                                <exclude>**/restful/**/*RestfulApi.java</exclude>
+                                <exclude>**/restful/**/*Restful.java</exclude>
+                                <exclude>**/UDFRestfulApi.java</exclude>
+                            </excludes>
+
                             <removeUnusedImports />
                         </java>
                     </configuration>
@@ -1256,6 +1262,12 @@
                     <configuration>
                         <forkCount>3</forkCount>
                     </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>${maven-assembly-plugin.version}</version>
                 </plugin>
             </plugins>
         </pluginManagement>

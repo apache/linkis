@@ -66,8 +66,8 @@ object VariableUtils extends Logging {
     }
 
     initAllDateVars(run_date, nameAndType)
-    val codeOperation = parserDate(replaceStr, run_date)
-    parserVar(codeOperation, nameAndType)
+    val codeOperation = parserVar(replaceStr, nameAndType)
+    parserDate(codeOperation, run_date)
   }
 
   def replace(code: String, runtType: String, variables: util.Map[String, String]): String = {
@@ -120,8 +120,8 @@ object VariableUtils extends Logging {
     }
 
     initAllDateVars(run_date, nameAndType)
-    val codeOperation = parserDate(code, run_date)
-    parserVar(codeOperation, nameAndType)
+    val codeOperation = parserVar(code, nameAndType)
+    parserDate(codeOperation, run_date)
   }
 
   private def parserDate(code: String, run_date: CustomDateType) : String = {

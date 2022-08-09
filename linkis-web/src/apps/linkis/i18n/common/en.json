@@ -93,8 +93,8 @@
       "tableColumns": {
         "instanceName": "Instance Name",
         "initiator": "Initiator",
-        "engineInstance": "Engine instance",
-        "engineType": "Engine type",
+        "engineInstance": "Engine Instance",
+        "engineType": "Engine Type",
         "serveType": "Serve Type",
         "appType": "App Type",
         "taskID": "JobID",
@@ -108,7 +108,7 @@
         "usedResources": "Used resources",
         "maximumAvailableResources": "Maximum available resources",
         "minimumAvailableResources": "Minimum available resources",
-        "startTime": "Start time",
+        "startTime": "Start Time",
         "costTime": "Time Elapsed",
         "executeApplicationName": "Execution Engine",
         "requestApplicationName": "Created From",
@@ -143,7 +143,7 @@
           "children": {
             "globalHistory": "Global History",
             "resource": "Resource Manager",
-            "resourceEngineConnList": "History Engine List",
+            "resourceEngineConnList": "History Engine",
             "setting": "Settings",
             "dateReport": "Global Variables",
             "globalValiable": "Frequently Asked",

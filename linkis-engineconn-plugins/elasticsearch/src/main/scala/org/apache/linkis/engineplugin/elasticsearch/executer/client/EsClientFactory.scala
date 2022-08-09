@@ -139,7 +139,7 @@ object EsClientFactory {
     clusterStr.split(",")
       .map(value => {
         val arr = value.split(":")
-        (arr(0), arr(1).toInt)
+        (arr(0).trim, arr(1).trim.toInt)
       })
   } else Array()
 

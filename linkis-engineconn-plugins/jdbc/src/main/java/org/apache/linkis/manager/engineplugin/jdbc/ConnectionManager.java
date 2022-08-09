@@ -113,8 +113,8 @@ public class ConnectionManager {
                 JDBCPropertiesParser.getString(properties, JDBCEngineConnConstant.JDBC_DRIVER, "");
 
         if (StringUtils.isBlank(driverClassName)) {
-            LOG.error("The driver class name is not empty.");
-            throw new JDBCParamsIllegalException("The driver class name is not empty.");
+            LOG.error("The driver class name is required.");
+            throw new JDBCParamsIllegalException("The driver class name is required.");
         }
 
         String username =

@@ -93,6 +93,8 @@ dropwizard-metrics-hadoop-metrics2-reporter-0.1.2.jar
 druid-1.1.22.jar
 eigenbase-properties-1.1.5.jar
 elasticsearch-rest-client-6.7.1.jar
+elasticsearch-rest-client-7.6.2.jar
+elasticsearch-rest-client-sniffer-7.6.2.jar
 error_prone_annotations-2.3.4.jar
 error_prone_annotations-2.4.0.jar
 eureka-client-1.10.14.jar
@@ -151,6 +153,11 @@ guava-30.0-jre.jar
 guava-retrying-2.0.0.jar
 guice-3.0.jar
 guice-4.1.0.jar
+guice-4.2.2.jar
+json-0.191.jar
+log-0.191.jar
+security-0.191.jar
+HdrHistogram-2.1.9.jar
 guice-assistedinject-3.0.jar
 guice-servlet-3.0.jar
 hadoop-annotations-2.7.2.jar
@@ -216,7 +223,11 @@ jackson-core-2.13.2.jar
 jackson-core-asl-1.9.13.jar
 jackson-core-asl-1.9.2.jar
 jackson-databind-2.13.2.1.jar
+jackson-dataformat-cbor-2.13.2.jar
+jackson-dataformat-csv-2.13.2.jar
+jackson-dataformat-smile-2.13.2.jar
 jackson-dataformat-xml-2.13.2.jar
+jackson-dataformat-yaml-2.13.2.jar
 jackson-datatype-guava-2.13.2.jar
 jackson-datatype-jdk8-2.13.2.jar
 jackson-datatype-joda-2.13.2.jar

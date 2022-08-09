@@ -35,9 +35,14 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Api(tags = "data source restful api")
 @RestController
 @RequestMapping(path = "/datasource")
 public class DataSourceRestfulApi implements DataSourceRestfulRemote {
@@ -48,6 +53,7 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
 
     @Autowired HiveMetaWithPermissionService hiveMetaWithPermissionService;
 
+    @ApiOperation(value = "queryDatabaseInfo", notes = "query database info", response = Message.class)
     @Override
     @RequestMapping(path = "dbs", method = RequestMethod.GET)
     public Message queryDatabaseInfo(HttpServletRequest req) {
@@ -61,6 +67,7 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
         }
     }
 
+    @ApiOperation(value = "queryDbsWithTables", notes = "query dbs with tables", response = Message.class)
     @Override
     @RequestMapping(path = "all", method = RequestMethod.GET)
     public Message queryDbsWithTables(HttpServletRequest req) {
@@ -74,6 +81,10 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
         }
     }
 
+    @ApiOperation(value = "queryTables", notes = "query tables", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "database", required = false, dataType = "String", value = "database")
+    })
     @Override
     @RequestMapping(path = "tables", method = RequestMethod.GET)
     public Message queryTables(
@@ -90,6 +101,11 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
         }
     }
 
+    @ApiOperation(value = "queryTableMeta", notes = "query table meta", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "database", required = false, dataType = "String", value = "database"),
+        @ApiImplicitParam(name = "table", required = false, dataType = "String", value = "table")
+    })
     @Override
     @RequestMapping(path = "columns", method = RequestMethod.GET)
     public Message queryTableMeta(
@@ -110,6 +126,12 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
         }
     }
 
+    @ApiOperation(value = "sizeOf", notes = "size Of", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "database", required = false, dataType = "String", value = "database"),
+        @ApiImplicitParam(name = "table", required = false, dataType = "String", value = "table"),
+        @ApiImplicitParam(name = "partition", required = false, dataType = "String", value = "partition")
+    })
     @Override
     @RequestMapping(path = "size", method = RequestMethod.GET)
     public Message sizeOf(
@@ -137,6 +159,11 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
         }
     }
 
+    @ApiOperation(value = "partitions", notes = "partitions", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "database", required = false, dataType = "String", value = "database"),
+        @ApiImplicitParam(name = "table", required = false, dataType = "String", value = "table")
+    })
     @Override
     @RequestMapping(path = "partitions", method = RequestMethod.GET)
     public Message partitions(

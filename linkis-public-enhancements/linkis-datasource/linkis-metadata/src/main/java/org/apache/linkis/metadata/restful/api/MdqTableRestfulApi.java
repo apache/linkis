@@ -42,6 +42,11 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,6 +56,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Api(tags = "mdq table api")
 @RestController
 @RequestMapping(path = "/datasource")
 public class MdqTableRestfulApi {
@@ -62,6 +68,11 @@ public class MdqTableRestfulApi {
     @Autowired private MdqService mdqService;
     ObjectMapper mapper = new ObjectMapper();
 
+    @ApiOperation(value = "getTableBaseInfo", notes = "get table base info", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "database", required = false, dataType = "String", value = "database"),
+        @ApiImplicitParam(name = "tableName", required = false, dataType = "String", value = "table name")
+    })
     @RequestMapping(path = "getTableBaseInfo", method = RequestMethod.GET)
     public Message getTableBaseInfo(
             @RequestParam(value = "database", required = false) String database,
@@ -79,6 +90,11 @@ public class MdqTableRestfulApi {
         return Message.ok().data("tableBaseInfo", tableBaseInfo);
     }
 
+    @ApiOperation(value = "getTableFieldsInfo", notes = "get table fields info", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "database", required = false, dataType = "String", value = "database"),
+        @ApiImplicitParam(name = "tableName", required = false, dataType = "String", value = "table name")
+    })
     @RequestMapping(path = "getTableFieldsInfo", method = RequestMethod.GET)
     public Message getTableFieldsInfo(
             @RequestParam(value = "database", required = false) String database,
@@ -96,6 +112,14 @@ public class MdqTableRestfulApi {
         return Message.ok().data("tableFieldsInfo", tableFieldsInfo);
     }
 
+    @ApiOperation(value = "getTableStatisticInfo", notes = "get table statistic info", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "database", required = false, dataType = "String", value = "database"),
+        @ApiImplicitParam(name = "tableName", required = false, dataType = "String", value = "table name"),
+        @ApiImplicitParam(name = "pageNow", required = true, dataType = "String", value = "page now"),
+        @ApiImplicitParam(name = "pageSize", required = true, dataType = "String", value = "page size"),
+        @ApiImplicitParam(name = "partitionSort", required = true, dataType = "String", value = "partition sort")
+    })
     @RequestMapping(path = "getTableStatisticInfo", method = RequestMethod.GET)
     public Message getTableStatisticInfo(
             @RequestParam(value = "database", required = false) String database,
@@ -157,6 +181,12 @@ public class MdqTableRestfulApi {
         return data;
     }
 
+    @ApiOperation(value = "getPartitionStatisticInfo", notes = "get partition statistic info", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "database", required = false, dataType = "String", value = "database"),
+        @ApiImplicitParam(name = "tableName", required = false, dataType = "String", value = "table name"),
+        @ApiImplicitParam(name = "partitionSort", required = false, dataType = "String", value = "partition sort")
+    })
     @RequestMapping(path = "getPartitionStatisticInfo", method = RequestMethod.GET)
     public Message getPartitionStatisticInfo(
             @RequestParam(value = "database", required = false) String database,
@@ -173,6 +203,10 @@ public class MdqTableRestfulApi {
         return Message.ok().data("partitionStatisticInfo", partition);
     }
 
+    @ApiOperation(value = "active", notes = "active", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "tableId", required = false, dataType = "String", value = "table id")
+    })
     @RequestMapping(path = "active", method = RequestMethod.GET)
     public Message active(
             @RequestParam(value = "tableId", required = false) Long tableId,
@@ -181,6 +215,8 @@ public class MdqTableRestfulApi {
         return Message.ok();
     }
 
+    @ApiOperation(value = "persistTable", notes = "persist table", response = Message.class)
+    @ApiOperationSupport(ignoreParameters = {"json"})
     @RequestMapping(path = "persistTable", method = RequestMethod.POST)
     public Message persistTable(HttpServletRequest req, @RequestBody JsonNode json)
             throws IOException {
@@ -190,6 +226,8 @@ public class MdqTableRestfulApi {
         return Message.ok();
     }
 
+    @ApiOperation(value = "displaySql", notes = "display sql", response = Message.class)
+    @ApiOperationSupport(ignoreParameters = {"json"})
     @RequestMapping(path = "displaysql", method = RequestMethod.POST)
     public Message displaySql(HttpServletRequest request, @RequestBody JsonNode json) {
         String userName = ModuleUserUtils.getOperationUser(request, "displaysql ");

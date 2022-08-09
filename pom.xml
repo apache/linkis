@@ -158,6 +158,7 @@
         <jacoco.skip>false</jacoco.skip>
         <spring.version>5.2.22.RELEASE</spring.version>
         <knife4j.version>2.0.9</knife4j.version>
+        <trino.version>371</trino.version>
         <maven-assembly-plugin.version>3.2.0</maven-assembly-plugin.version>
     </properties>
 

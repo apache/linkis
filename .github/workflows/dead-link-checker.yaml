@@ -13,4 +13,4 @@ jobs:
         with:
           use-quiet-mode: 'no'
           use-verbose-mode: 'yes'
-          folder-path: '/'
+          folder-path: '../'

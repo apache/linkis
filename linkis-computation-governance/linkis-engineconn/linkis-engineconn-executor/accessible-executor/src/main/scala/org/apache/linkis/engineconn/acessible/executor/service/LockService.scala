@@ -21,7 +21,7 @@ import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.engineconn.acessible.executor.listener.ExecutorLockListener
 import org.apache.linkis.manager.common.protocol.{RequestEngineLock, RequestEngineUnlock, ResponseEngineLock, ResponseEngineUnlock}
 import org.apache.linkis.server.BDPJettyServerHelper
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 
 trait LockService extends ExecutorLockListener with Logging {
 
@@ -52,7 +52,7 @@ trait LockService extends ExecutorLockListener with Logging {
         // Engine is busy
         response = ResponseEngineLock(false, null, "Engine is busy.")
     }
-    info ("RequestLock : " + BDPJettyServerHelper.gson.toJson(requestEngineLock) + "\nResponseLock : " + BDPJettyServerHelper.gson.toJson(response))
+    logger.info ("RequestLock : " + BDPJettyServerHelper.gson.toJson(requestEngineLock) + "\nResponseLock : " + BDPJettyServerHelper.gson.toJson(response))
     response
   }
 

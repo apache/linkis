@@ -32,6 +32,8 @@ trait OrchestrationFuture {
 
   def waitForCompleted(): Unit
 
+  def waitForCompleted(waitMills: Long): Unit
+
   def getResponse: OrchestrationResponse
 
   def operate[T](operationName: String): T

@@ -70,7 +70,13 @@ public class DefaultLockManagerPersistence implements LockManagerPersistence {
 
     @Override
     public void unlock(PersistenceLock persistenceLock) {
-        lockManagerMapper.unlock(persistenceLock.getLockObject());
+        List<PersistenceLock> lockers =
+                lockManagerMapper.getLockersByLockObject(persistenceLock.getLockObject());
+        if (lockers != null && !lockers.isEmpty()) {
+            for (PersistenceLock lock : lockers) {
+                lockManagerMapper.unlock(lock.getId());
+            }
+        }
     }
 
     @Override

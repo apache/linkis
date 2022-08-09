@@ -17,8 +17,8 @@
 
 package org.apache.linkis.storage.conf
 
-import org.apache.commons.lang.StringUtils
-import org.apache.linkis.common.conf.{ByteType, CommonVars}
+import org.apache.commons.lang3.StringUtils
+import org.apache.linkis.common.conf.CommonVars
 import org.apache.linkis.common.utils.ByteTimeUtils
 
 object LinkisStorageConf {
@@ -34,7 +34,7 @@ object LinkisStorageConf {
 
   val ROW_BYTE_MAX_LEN = ByteTimeUtils.byteStringAsBytes(ROW_BYTE_MAX_LEN_STR)
 
-  val FILE_TYPE = CommonVars("wds.linkis.storage.file.type", "dolphin,sql,scala,py,hql,python,out,log,text,sh,jdbc,ngql,psql,fql").getValue
+  val FILE_TYPE = CommonVars("wds.linkis.storage.file.type", "dolphin,sql,scala,py,hql,python,out,log,text,sh,jdbc,ngql,psql,fql,tsql").getValue
 
   private var fileTypeArr: Array[String] = null
 

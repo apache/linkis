@@ -17,7 +17,7 @@
 
 package org.apache.linkis.httpclient.config
 
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.utils.RetryHandler
 import org.apache.linkis.httpclient.authentication.{AbstractAuthenticationStrategy, AuthenticationStrategy}
 import org.apache.linkis.httpclient.loadbalancer.LoadBalancerStrategy
@@ -69,7 +69,7 @@ class ClientConfig private() {
     }
   }
 
-  def getServerUrl = serverUrl
+  def getServerUrl: String = serverUrl
 
   def getDefaultServerUrl: String = {
     if (StringUtils.isNotBlank(serverUrl) && serverUrl.contains(HttpClientConstant.URL_SPLIT_TOKEN)) {
@@ -79,30 +79,30 @@ class ClientConfig private() {
     }
   }
 
-  def isDiscoveryEnabled = discoveryEnabled
+  def isDiscoveryEnabled: Boolean = discoveryEnabled
 
-  def getDiscoveryPeriod = discoveryPeriod
+  def getDiscoveryPeriod: Long = discoveryPeriod
 
-  def getDiscoveryTimeUnit = discoveryTimeUnit
+  def getDiscoveryTimeUnit: TimeUnit = discoveryTimeUnit
 
-  def isLoadbalancerEnabled = loadbalancerEnabled
+  def isLoadbalancerEnabled: Boolean = loadbalancerEnabled
 
-  def getLoadbalancerStrategy = loadbalancerStrategy
+  def getLoadbalancerStrategy: LoadBalancerStrategy = loadbalancerStrategy
 
-  def getAuthenticationStrategy = authenticationStrategy
+  def getAuthenticationStrategy: AuthenticationStrategy = authenticationStrategy
 
   def getAuthTokenKey: String = authTokenKey
 
   def getAuthTokenValue: String = authTokenValue
 
-  def getConnectTimeout = connectTimeout
+  def getConnectTimeout: Long = connectTimeout
 
-  def getReadTimeout = readTimeout
+  def getReadTimeout: Long = readTimeout
 
-  def getMaxConnection = maxConnection
+  def getMaxConnection: Int = maxConnection
 
-  def isRetryEnabled = retryEnabled
+  def isRetryEnabled: Boolean = retryEnabled
 
-  def getRetryHandler = retryHandler
+  def getRetryHandler: RetryHandler = retryHandler
 
 }

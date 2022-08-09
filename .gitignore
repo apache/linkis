@@ -27,3 +27,7 @@ node_modules/
 dist/
 out/
 target/
+
+# log folder
+*.log
+logs/

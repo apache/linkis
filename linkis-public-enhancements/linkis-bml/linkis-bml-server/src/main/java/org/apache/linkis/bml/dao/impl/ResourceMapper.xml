@@ -20,7 +20,7 @@
 
 <mapper namespace="org.apache.linkis.bml.dao.ResourceDao">
 
-    <resultMap id="Resource" type="org.apache.linkis.bml.Entity.Resource">
+    <resultMap id="Resource" type="org.apache.linkis.bml.entity.Resource">
         <result property="resourceId" column="resource_id"/>
         <result property="user" column="owner"/>
         <result property="resourceHeader" column="resource_header"/>
@@ -85,7 +85,7 @@
         </where>
     </update>
 
-    <insert id="uploadResource" useGeneratedKeys="true" keyProperty="id" keyColumn="id" parameterType="org.apache.linkis.bml.Entity.Resource">
+    <insert id="uploadResource" useGeneratedKeys="true" keyProperty="id" keyColumn="id" parameterType="org.apache.linkis.bml.entity.Resource">
       INSERT INTO linkis_ps_bml_resources(<include refid="resource_columns"/>)
           VALUES (#{resourceId},#{isPrivate},#{resourceHeader},#{downloadedFileName},#{system},
                     #{createTime},#{user},#{isExpire},#{expireTime},#{maxVersion},#{updateTime},

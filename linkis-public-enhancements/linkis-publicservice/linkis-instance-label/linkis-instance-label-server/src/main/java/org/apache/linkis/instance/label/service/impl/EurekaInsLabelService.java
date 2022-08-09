@@ -76,6 +76,11 @@ public class EurekaInsLabelService implements InsLabelAccessService {
     }
 
     @Override
+    public List<ServiceInstance> getInstancesByNames(String appName) {
+        return null;
+    }
+
+    @Override
     public void removeInstance(ServiceInstance serviceInstance) {}
 
     @Override

@@ -17,7 +17,7 @@
  
 package org.apache.linkis.rpc
 
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.protocol.BroadcastProtocol
 import org.apache.linkis.rpc.conf.RPCConfiguration.{BDP_RPC_RECEIVER_ASYN_CONSUMER_THREAD_FREE_TIME_MAX, BDP_RPC_RECEIVER_ASYN_CONSUMER_THREAD_MAX, BDP_RPC_RECEIVER_ASYN_QUEUE_CAPACITY}
@@ -55,7 +55,7 @@ private[rpc] class RPCReceiveRestful extends RPCReceiveRemote with Logging {
   private implicit def getSender(event: RPCMessageEvent): Sender = getFirst[ReceiverSenderBuilder, Sender](receiverSenderBuilders, _.build(event)).get
 
   def registerReceiverChooser(receiverChooser: ReceiverChooser): Unit = {
-    info("register a new ReceiverChooser " + receiverChooser)
+    logger.info("register a new ReceiverChooser " + receiverChooser)
     receiverChoosers = receiverChooser +: receiverChoosers
   }
   def registerBroadcastListener(broadcastListener: BroadcastListener): Unit = {
@@ -64,37 +64,40 @@ private[rpc] class RPCReceiveRestful extends RPCReceiveRemote with Logging {
   }
 
   @PostConstruct
-  def initListenerBus(): Unit =  {
-    if(!receiverChoosers.exists(_.isInstanceOf[CommonReceiverChooser]))
+  def initListenerBus(): Unit = {
+    if (!receiverChoosers.exists(_.isInstanceOf[CommonReceiverChooser])) {
       receiverChoosers = receiverChoosers :+ new CommonReceiverChooser
-    if(!receiverChoosers.exists(_.isInstanceOf[MessageReceiverChooser]))
+    }
+    if (!receiverChoosers.exists(_.isInstanceOf[MessageReceiverChooser])) {
       receiverChoosers = receiverChoosers :+ new MessageReceiverChooser
-    info("init all receiverChoosers in spring beans, list => " + receiverChoosers.toList)
-    if(!receiverSenderBuilders.exists(_.isInstanceOf[CommonReceiverSenderBuilder]))
+    }
+    logger.info("init all receiverChoosers in spring beans, list => " + receiverChoosers.toList)
+    if (!receiverSenderBuilders.exists(_.isInstanceOf[CommonReceiverSenderBuilder])) {
       receiverSenderBuilders = receiverSenderBuilders :+ new CommonReceiverSenderBuilder
+    }
     receiverSenderBuilders = receiverSenderBuilders.sortBy(_.order)
-    info("init all receiverSenderBuilders in spring beans, list => " + receiverSenderBuilders.toList)
+    logger.info("init all receiverSenderBuilders in spring beans, list => " + receiverSenderBuilders.toList)
     val queueSize = BDP_RPC_RECEIVER_ASYN_QUEUE_CAPACITY.acquireNew
     val threadSize = BDP_RPC_RECEIVER_ASYN_CONSUMER_THREAD_MAX.acquireNew
     rpcReceiverListenerBus = new AsynRPCMessageBus(queueSize,
       "RPC-Receiver-Asyn-Thread")(threadSize,
       BDP_RPC_RECEIVER_ASYN_CONSUMER_THREAD_FREE_TIME_MAX.getValue.toLong)
-    info(s"init RPCReceiverListenerBus with queueSize $queueSize and consumeThreadSize $threadSize.")
+    logger.info(s"init RPCReceiverListenerBus with queueSize $queueSize and consumeThreadSize $threadSize.")
     rpcReceiverListenerBus.addListener(new RPCMessageEventListener {
       override def onEvent(event: RPCMessageEvent): Unit = event.message match {
         case _: BroadcastProtocol =>
         case _ =>
-          event.fold(warn(s"cannot find a receiver to deal $event."))(_.receive(event.message, event))
+          event.fold(logger.warn(s"cannot find a receiver to deal $event."))(_.receive(event.message, event))
       }
       override def onMessageEventError(event: RPCMessageEvent, t: Throwable): Unit =
-        warn(s"deal RPC message failed! Message: " + event.message, t)
+        logger.warn(s"deal RPC message failed! Message: " + event.message, t)
     })
     broadcastListeners.foreach(addBroadcastListener)
     rpcReceiverListenerBus.start()
   }
 
-  private def addBroadcastListener(broadcastListener: BroadcastListener): Unit = if(rpcReceiverListenerBus != null) {
-    info("add a new RPCBroadcastListener => " + broadcastListener.getClass)
+  private def addBroadcastListener(broadcastListener: BroadcastListener): Unit = if (rpcReceiverListenerBus != null) {
+    logger.info("add a new RPCBroadcastListener => " + broadcastListener.getClass)
     rpcReceiverListenerBus.addListener(new RPCMessageEventListener {
       val listenerName = broadcastListener.getClass.getSimpleName
       override def onEvent(event: RPCMessageEvent): Unit = event.message match {
@@ -102,7 +105,7 @@ private[rpc] class RPCReceiveRestful extends RPCReceiveRemote with Logging {
         case _ =>
       }
       override def onMessageEventError(event: RPCMessageEvent, t: Throwable): Unit =
-        warn(s"$listenerName consume broadcast message failed! Message: " + event.message, t)
+        logger.warn(s"$listenerName consume broadcast message failed! Message: " + event.message, t)
     })
   }
 
@@ -114,7 +117,7 @@ private[rpc] class RPCReceiveRestful extends RPCReceiveRemote with Logging {
       RPCProduct.getRPCProduct.toMessage(obj)
   }
 
-  @RequestMapping(path = Array("/rpc/receive"),method = Array(RequestMethod.POST))
+  @RequestMapping(path = Array("/rpc/receive"), method = Array(RequestMethod.POST))
   override def receive(@RequestBody message: Message): Message = catchIt {
     val obj = RPCConsumer.getRPCConsumer.toObject(message)
     val event = RPCMessageEvent(obj, BaseRPCSender.getInstanceInfo(message.getData))
@@ -128,13 +131,13 @@ private[rpc] class RPCReceiveRestful extends RPCReceiveRemote with Logging {
     event.map(opEvent(_, obj, event)).getOrElse(RPCProduct.getRPCProduct.notFound())
   }
 
-  @RequestMapping(path = Array("/rpc/receiveAndReply"),method = Array(RequestMethod.POST))
+  @RequestMapping(path = Array("/rpc/receiveAndReply"), method = Array(RequestMethod.POST))
   override def receiveAndReply(@RequestBody message: Message): Message = receiveAndReply(message, _.receiveAndReply(_, _))
 
-  @RequestMapping(path = Array("/rpc/replyInMills"),method = Array(RequestMethod.POST))
+  @RequestMapping(path = Array("/rpc/replyInMills"), method = Array(RequestMethod.POST))
   override def receiveAndReplyInMills(@RequestBody message: Message): Message = catchIt {
     val duration = message.getData.get("duration")
-    if(duration == null || StringUtils.isEmpty(duration.toString)) throw new DWCURIException(10002, "The timeout period is not set!(超时时间未设置！)")
+    if (duration == null || StringUtils.isEmpty(duration.toString)) throw new DWCURIException(10002, "The timeout period is not set!(超时时间未设置！)")
     val timeout = Duration(duration.toString.toLong, TimeUnit.MILLISECONDS)
     receiveAndReply(message, _.receiveAndReply(_, timeout, _))
   }

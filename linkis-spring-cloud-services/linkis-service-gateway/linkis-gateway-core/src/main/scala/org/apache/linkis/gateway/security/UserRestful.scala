@@ -17,22 +17,21 @@
  
 package org.apache.linkis.gateway.security
 
-import java.nio.charset.StandardCharsets
-import java.util.Random
-
 import com.google.gson.Gson
+import org.apache.commons.lang3.StringUtils
+import org.apache.commons.net.util.Base64
 import org.apache.linkis.common.utils.{Logging, RSAUtils, Utils}
 import org.apache.linkis.gateway.config.GatewayConfiguration
-import org.apache.linkis.gateway.exception.GatewayErrorException
 import org.apache.linkis.gateway.http.GatewayContext
 import org.apache.linkis.gateway.security.sso.SSOInterceptor
-import org.apache.linkis.protocol.usercontrol.{RequestLogin, RequestRegister, RequestUserListFromWorkspace, RequestUserWorkspace, ResponseLogin, ResponseRegister, ResponseUserWorkspace, ResponseWorkspaceUserList}
+import org.apache.linkis.protocol.usercontrol.{RequestLogin, RequestRegister, ResponseLogin, ResponseRegister}
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.server.conf.ServerConfiguration
 import org.apache.linkis.server.security.SSOUtils
 import org.apache.linkis.server.{Message, _}
-import org.apache.commons.lang.StringUtils
-import org.apache.commons.net.util.Base64
+
+import java.nio.charset.StandardCharsets
+import java.util.Random
 
 
 trait UserRestful {
@@ -118,10 +117,10 @@ abstract class AbstractUserRestful extends UserRestful with Logging {
   def publicKey(gatewayContext: GatewayContext): Message = {
     val message = Message.ok("Gain success(获取成功)！").data("enableSSL", SSOUtils.sslEnable)
     if (GatewayConfiguration.LOGIN_ENCRYPT_ENABLE.getValue) {
-      info(s"DEBUG: privateKey : " + RSAUtils.getDefaultPrivateKey())
+      logger.info(s"DEBUG: privateKey : " + RSAUtils.getDefaultPrivateKey())
       //      info(s"DEBUG: publicKey: " + RSAUtils.getDefaultPublicKey())
       val timeStamp = System.currentTimeMillis()
-      info(s"DEBUG: time " + timeStamp)
+      logger.info(s"DEBUG: time " + timeStamp)
       message.data("debugTime", timeStamp)
       message.data("publicKey", RSAUtils.getDefaultPublicKey())
     }
@@ -176,9 +175,9 @@ abstract class UserPwdAbstractUserRestful extends AbstractUserRestful with Loggi
     }
 
     val password: String = if (GatewayConfiguration.LOGIN_ENCRYPT_ENABLE.getValue) {
-      info(s"passwordEncrypt or : $passwordEncrypt username $userName")
+      logger.info(s"passwordEncrypt or : $passwordEncrypt username $userName")
       Utils.tryAndError({
-        info("\npasswdEncrypt : " + passwordEncrypt + "\npublicKeyStr : " + RSAUtils.getDefaultPublicKey()
+        logger.info("\npasswdEncrypt : " + passwordEncrypt + "\npublicKeyStr : " + RSAUtils.getDefaultPublicKey()
           + "\nprivateKeyStr : " + RSAUtils.getDefaultPrivateKey())
         val passwdOriObj = RSAUtils.decrypt(Base64.decodeBase64(passwordEncrypt.asInstanceOf[String].getBytes(StandardCharsets.UTF_8)))
         new String(passwdOriObj, StandardCharsets.UTF_8)
@@ -251,7 +250,7 @@ abstract class UserPwdAbstractUserRestful extends AbstractUserRestful with Loggi
     val userList = GatewayConfiguration.PROXY_USER_LIST
     val size = userList.size
     if (size <= 0) {
-      warn(s"Invalid Gateway proxy user list")
+      logger.warn(s"Invalid Gateway proxy user list")
     } else {
       val rand = new Random()
       name = userList(rand.nextInt(size))
@@ -288,7 +287,7 @@ abstract class UserPwdAbstractUserRestful extends AbstractUserRestful with Loggi
         }
     }) {
       t => {
-        warn(s"Login rpc request error, err message ", t)
+        logger.warn(s"Login rpc request error, err message ", t)
         message.setStatus(1)
         message.setMessage("System error, please try again later(系统异常，请稍后再试)")
         message.data("errmsg", t.getMessage)
@@ -328,11 +327,11 @@ abstract class UserPwdAbstractUserRestful extends AbstractUserRestful with Loggi
           var map = r.getData
           message.setData(map)
           message.setMethod(r.getMethod)
-          info(s"Register rpc success. requestRegister=" + gson.toJson(requestRegister) + ", response=" + gson.toJson(r))
+          logger.info(s"Register rpc success. requestRegister=" + gson.toJson(requestRegister) + ", response=" + gson.toJson(r))
       }
     }) {
       e =>
-        warn(s"Register rpc request error. err message ", e)
+        logger.warn(s"Register rpc request error. err message ", e)
         message.setStatus(1)
         message.setMessage("System, please try again later(系统异常，请稍后再试)")
     }

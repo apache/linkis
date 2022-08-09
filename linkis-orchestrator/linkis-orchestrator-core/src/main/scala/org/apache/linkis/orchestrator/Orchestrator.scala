@@ -23,7 +23,7 @@ import org.apache.linkis.common.utils.{ClassUtils, Logging}
 import org.apache.linkis.orchestrator.conf.OrchestratorConfiguration.ORCHESTRATOR_BUILDER_CLASS
 import org.apache.linkis.orchestrator.core.OrchestratorSessionBuilder
 import org.apache.linkis.orchestrator.core.impl.OrchestratorImpl
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 
 /**
   *
@@ -60,7 +60,7 @@ object Orchestrator extends Logging {
         val orchestratorBuilder = if(StringUtils.isNotBlank(ORCHESTRATOR_BUILDER_CLASS.getValue))
           ClassUtils.getClassInstance(ORCHESTRATOR_BUILDER_CLASS.getValue)
           else () => new OrchestratorImpl
-        info("Use " + orchestratorBuilder.getClass.getName + " to instance a new orchestrator.")
+        logger.info("Use " + orchestratorBuilder.getClass.getName + " to instance a new orchestrator.")
         orchestrator = orchestratorBuilder()
       }
     }

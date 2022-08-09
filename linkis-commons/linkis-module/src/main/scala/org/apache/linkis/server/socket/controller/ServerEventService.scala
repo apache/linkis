@@ -35,14 +35,14 @@ abstract class ServerEventService extends EventListener with Logging {
 
   val serviceName: String
 
-  info("add a socket ServerEventService: " + getClass.getName)
+  logger.info("add a socket ServerEventService: " + getClass.getName)
   BDPJettyServerHelper.addServerEventService(this)
 
   def onEvent(event: ServerEvent): Message
 
   def onEventError(event: Event, t: Throwable): Unit = event match {
     case e: SocketServerEvent => onEventError(e, t)
-    case _ => error(s"cannot recognize the event type $event.", t)
+    case _ => logger.error(s"cannot recognize the event type $event.", t)
   }
 
   def onEventError(event: SocketServerEvent, t: Throwable): Unit = {

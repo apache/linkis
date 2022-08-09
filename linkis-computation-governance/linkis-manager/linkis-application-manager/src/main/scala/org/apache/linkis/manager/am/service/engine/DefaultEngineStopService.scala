@@ -25,11 +25,11 @@ import org.apache.linkis.manager.common.exception.RMErrorException
 import org.apache.linkis.manager.common.protocol.engine.{EngineConnReleaseRequest, EngineStopRequest, EngineSuicideRequest}
 import org.apache.linkis.manager.label.service.NodeLabelService
 import org.apache.linkis.manager.label.service.impl.DefaultNodeLabelRemoveService
-import org.apache.linkis.rpc.message.annotation.Receiver
+import org.apache.linkis.manager.rm.exception.RMErrorCode
+import org.apache.linkis.manager.rm.service.impl.DefaultResourceManager
 import org.apache.linkis.protocol.label.NodeLabelRemoveRequest
-import org.apache.linkis.resourcemanager.exception.RMErrorCode
-import org.apache.linkis.resourcemanager.service.impl.DefaultResourceManager
 import org.apache.linkis.rpc.Sender
+import org.apache.linkis.rpc.message.annotation.Receiver
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
@@ -107,9 +107,9 @@ class DefaultEngineStopService extends AbstractEngineService with EngineStopServ
 
   @Receiver
   override def dealEngineRelease(engineConnReleaseRequest: EngineConnReleaseRequest, sender: Sender): Unit = {
-    info(s"Start to kill engine , with msg : ${engineConnReleaseRequest.getMsg}, ${engineConnReleaseRequest.getServiceInstance.toString}")
+    logger.info(s"Start to kill engine , with msg : ${engineConnReleaseRequest.getMsg}, ${engineConnReleaseRequest.getServiceInstance.toString}")
     if (null == engineConnReleaseRequest.getServiceInstance) {
-      warn(s"Invalid empty serviceInstance, will not kill engine.")
+      logger.warn(s"Invalid empty serviceInstance, will not kill engine.")
       return
     }
     val engineNode = getEngineNodeManager.getEngineNode(engineConnReleaseRequest.getServiceInstance)
@@ -118,13 +118,13 @@ class DefaultEngineStopService extends AbstractEngineService with EngineStopServ
       engineNode.setLabels(nodeLabelService.getNodeLabels(engineNode.getServiceInstance))
       engineConnInfoClear(engineNode)
     } else {
-      warn(s"Cannot find valid engineNode from serviceInstance : ${engineConnReleaseRequest.getServiceInstance.toString}")
+      logger.warn(s"Cannot find valid engineNode from serviceInstance : ${engineConnReleaseRequest.getServiceInstance.toString}")
     }
   }
 
   override def asyncStopEngine(engineStopRequest: EngineStopRequest): Unit = {
     Future {
-      info(s"Start to async stop engineFailed $engineStopRequest")
+      logger.info(s"Start to async stop engineFailed $engineStopRequest")
       Utils.tryAndErrorMsg(stopEngine(engineStopRequest, Sender.getSender(Sender.getThisServiceInstance)))(s"async stop engineFailed $engineStopRequest")
     }
   }

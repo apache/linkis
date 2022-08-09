@@ -19,45 +19,56 @@ package org.apache.linkis.common.utils
 
 import org.slf4j.LoggerFactory
 
-
+/**
+ * use the class's method will miss the real info line number, so deprecated all the method
+ * and this trait will be deprecated too
+ */
 trait Logging {
 
   protected lazy implicit val logger = LoggerFactory.getLogger(getClass)
 
-  def trace(message: => String) = {
+  @deprecated
+  def trace(message: => String): Unit = {
     if (logger.isTraceEnabled) {
       logger.trace(message)
     }
   }
 
+  @deprecated
   def debug(message: => String): Unit = {
     if (logger.isDebugEnabled) {
       logger.debug(message)
     }
   }
 
+  @deprecated
   def info(message: => String): Unit = {
     if (logger.isInfoEnabled) {
       logger.info(message)
     }
   }
 
+  @deprecated
   def info(message: => String, t: Throwable): Unit = {
     logger.info(message, t)
   }
 
+  @deprecated
   def warn(message: => String): Unit = {
     logger.warn(message)
   }
 
+  @deprecated
   def warn(message: => String, t: Throwable): Unit = {
     logger.warn(message, t)
   }
 
+  @deprecated
   def error(message: => String, t: Throwable): Unit = {
     logger.error(message, t)
   }
 
+  @deprecated
   def error(message: => String): Unit = {
     logger.error(message)
   }

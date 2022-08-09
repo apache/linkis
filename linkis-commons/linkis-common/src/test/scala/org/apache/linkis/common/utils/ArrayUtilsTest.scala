@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Assertions._
 import org.junit.jupiter.api.Test
 
 class ArrayUtilsTest {
+
   @Test private[utils] def testCopyArray() = {
     val array = ArrayUtils.newArray[scala.Int](2, Array.emptyIntArray.getClass)
     array(0) = 123

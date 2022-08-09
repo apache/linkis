@@ -42,6 +42,16 @@ public interface DataSourceRelateService {
     List<DataSourceParamKeyDefinition> getKeyDefinitionsByType(Long dataSourceTypeId);
 
     /**
+     * Get key definitions by data source type and languageType
+     *
+     * @param dataSourceTypeId data source type id
+     * @param languageType language type zh or en
+     * @return
+     */
+    List<DataSourceParamKeyDefinition> getKeyDefinitionsByType(
+            Long dataSourceTypeId, String languageType);
+
+    /**
      * Get all data source types
      *
      * @return

@@ -37,11 +37,7 @@ import reactor.core.publisher.{Flux, Mono}
 
 import scala.collection.JavaConversions._
 
-object SpringCloudGatewayWebsocketUtils extends Logging {//(websocketRoutingFilter: WebsocketRoutingFilter,
-//                                        webSocketClient: WebSocketClient,
-//                                        webSocketService: WebSocketService,
-//                                        loadBalancer: LoadBalancerClient,
-//                                        parser: GatewayParser, router: GatewayRouter) extends GlobalFilter with Ordered{
+object SpringCloudGatewayWebsocketUtils extends Logging {
 
   val SPRING_CLOUD_GATEWAY_WEBSOCKET_HEARTBEAT = CommonVars("wds.linkis.gateway.websocket.heartbeat", new TimeType("5s")).getValue.toLong
 
@@ -59,7 +55,7 @@ object SpringCloudGatewayWebsocketUtils extends Logging {//(websocketRoutingFilt
         session.removeDeadProxySessions()
         session.canRelease
       }.foreach{ case (key, session) =>
-        info(s"remove a dead webSocket connection $key from DWC-UI for user ${session.user}.")
+        logger.info(s"remove a dead webSocket connection $key from DWC-UI for user ${session.user}.")
         session.release()
         cachedWebSocketSessions.remove(key)
       }
@@ -93,8 +89,8 @@ object SpringCloudGatewayWebsocketUtils extends Logging {//(websocketRoutingFilt
   def getGatewayWebSocketSessionConnection(user: String, webSocketSession: WebSocketSession): GatewayWebSocketSessionConnection = {
     val key = getWebSocketSessionKey(webSocketSession)
     if(!cachedWebSocketSessions.containsKey(key)) cachedWebSocketSessions synchronized {
-      if(!cachedWebSocketSessions.containsKey(key)) {
-        info(s"receive a new webSocket connection $key from DWC-UI for user $user.")
+      if (!cachedWebSocketSessions.containsKey(key)) {
+        logger.info(s"receive a new webSocket connection $key from DWC-UI for user $user.")
         cachedWebSocketSessions.put(key, new GatewayWebSocketSessionConnection(webSocketSession, user))
       }
     }
@@ -137,6 +133,6 @@ object SpringCloudGatewayWebsocketUtils extends Logging {//(websocketRoutingFilt
 
   def sendMsg(exchange: ServerWebExchange, webSocketSession: WebSocketSession,
               webSocketMessage: WebSocketMessage): Mono[Void] =
-    webSocketSession.send(Flux.just(Array(webSocketMessage.retain()):_*))
+    webSocketSession.send(Flux.just(Array(webSocketMessage.retain()): _*))
 
 }

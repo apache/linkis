@@ -21,7 +21,7 @@ import org.apache.linkis.configuration.service.CategoryService
 object rpcTest {
   def main(args: Array[String]): Unit = {
     val categoryService = new CategoryService
-    categoryService.createFirstCategory("easyide","null")
+    categoryService.createFirstCategory("easyide", "null")
   }
 
 }

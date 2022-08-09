@@ -28,10 +28,10 @@ import org.apache.linkis.manager.common.protocol.node.NodeHealthyRequest
 import org.apache.linkis.manager.label.entity.node.AliasServiceInstanceLabel
 import org.apache.linkis.manager.label.service.NodeLabelService
 import org.apache.linkis.manager.persistence.NodeMetricManagerPersistence
+import org.apache.linkis.manager.rm.service.ResourceManager
 import org.apache.linkis.manager.service.common.metrics.MetricsConverter
 import org.apache.linkis.manager.service.common.pointer.NodePointerBuilder
 import org.apache.linkis.rpc.message.annotation.Receiver
-import org.apache.linkis.resourcemanager.service.ResourceManager
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 

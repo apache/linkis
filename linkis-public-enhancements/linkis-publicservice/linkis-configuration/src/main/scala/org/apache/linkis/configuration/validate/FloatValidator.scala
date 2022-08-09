@@ -30,7 +30,7 @@ class FloatValidator extends Validator with Logging{
       }
       value.toDouble >= rangArray.sorted.apply(0) && value.toDouble <= rangArray.sorted.apply(1)
     } catch {
-      case e: NumberFormatException => info(s"${value}不能转换为double，校验失败"); return false
+      case e: NumberFormatException => logger.info(s"${value}不能转换为double，校验失败"); return false
       case e: Exception => throw e
     }
   }

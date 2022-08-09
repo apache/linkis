@@ -33,7 +33,7 @@ abstract class AbstractPlanner extends Planner
 
   override def plan(astPlan: ASTOrchestration[_]): Task = astPlan match {
     case job: Job =>
-      debug(s"start to plan AstTree(${astPlan.getId}) to LogicalTree.")
+      logger.debug(s"start to plan AstTree(${astPlan.getId}) to LogicalTree.")
       var task = apply(job, astPlan.getASTContext, new mutable.HashMap[Job, Task](), plannerTransforms.map{
         transform: Transform[Job, Task, ASTContext] => transform
       })
@@ -43,7 +43,7 @@ abstract class AbstractPlanner extends Planner
       task = apply(task, context, analyzeTransforms.map{
         transform: Transform[Task, Task, LogicalContext] => transform
       })
-      debug(s"Finished to plan AstTree(${astPlan.getId}) to LogicalTree.")
+      logger.debug(s"Finished to plan AstTree(${astPlan.getId}) to LogicalTree.")
       task
   }
 

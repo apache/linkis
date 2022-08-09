@@ -17,11 +17,7 @@
  
 package org.apache.linkis.orchestrator.ecm
 
-import java.net.{ConnectException, SocketException, SocketTimeoutException}
-import java.util
-import java.util.concurrent.TimeUnit
-import java.util.concurrent.atomic.AtomicInteger
-
+import org.apache.commons.lang3.exception.ExceptionUtils
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.exception.LinkisRetryException
 import org.apache.linkis.common.utils.{Logging, Utils}
@@ -37,9 +33,11 @@ import org.apache.linkis.orchestrator.ecm.exception.ECMPluginErrorException
 import org.apache.linkis.orchestrator.ecm.service.EngineConnExecutor
 import org.apache.linkis.orchestrator.ecm.service.impl.{ComputationConcurrentEngineConnExecutor, ComputationEngineConnExecutor}
 import org.apache.linkis.rpc.Sender
-import org.apache.linkis.rpc.exception.DWCRPCRetryException
-import org.apache.commons.lang.exception.ExceptionUtils
 
+import java.net.{ConnectException, SocketException, SocketTimeoutException}
+import java.util
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicInteger
 import scala.collection.JavaConversions._
 import scala.concurrent.duration.Duration
 
@@ -69,7 +67,7 @@ class ComputationEngineConnManager extends AbstractEngineConnManager with Loggin
           markReq.getLabels.get(LabelKeyConstant.BIND_ENGINE_KEY))
         if (!bindEngineLabel.getIsJobGroupHead) {
           val msg = s"Cannot find mark related to bindEngineLabel : ${bindEngineLabel.getStringValue}"
-          error(msg)
+          logger.error(msg)
           throw new ECMPluginErrorException(ECMPluginConf.ECM_MARK_CACHE_ERROR_CODE, msg)
         }
       }
@@ -114,11 +112,11 @@ class ComputationEngineConnManager extends AbstractEngineConnManager with Loggin
       } catch {
         case t: LinkisRetryException =>
           val taken = System.currentTimeMillis() - start
-          warn(s"${mark.getMarkId()} Failed to askEngineAskRequest time taken ($taken), ${t.getMessage}")
+          logger.warn(s"${mark.getMarkId()} Failed to askEngineAskRequest time taken ($taken), ${t.getMessage}")
           retryException = t
         case t: Throwable =>
           val taken = System.currentTimeMillis() - start
-          warn(s"${mark.getMarkId()} Failed to askEngineAskRequest time taken ($taken)")
+          logger.warn(s"${mark.getMarkId()} Failed to askEngineAskRequest time taken ($taken)")
           throw t
       }
     }
@@ -149,16 +147,16 @@ class ComputationEngineConnManager extends AbstractEngineConnManager with Loggin
     }
     response match {
       case engineNode: EngineNode =>
-        debug(s"Succeed to get engineNode $engineNode mark ${mark.getMarkId()}")
+        logger.debug(s"Succeed to get engineNode $engineNode mark ${mark.getMarkId()}")
         engineNode
       case EngineAskAsyncResponse(id, serviceInstance) =>
-        info(s"${mark.getMarkId()} received EngineAskAsyncResponse id: ${id} serviceInstance: $serviceInstance ")
+        logger.info(s"${mark.getMarkId()} received EngineAskAsyncResponse id: ${id} serviceInstance: $serviceInstance ")
         cacheMap.getAndRemove(id, Duration(engineAskRequest.getTimeOut + 100000, TimeUnit.MILLISECONDS)) match {
           case EngineCreateSuccess(id, engineNode) =>
-            info(s"${mark.getMarkId()} async id:$id success to async get EngineNode $engineNode")
+            logger.info(s"${mark.getMarkId()} async id:$id success to async get EngineNode $engineNode")
             engineNode
           case EngineCreateError(id, exception, retry) =>
-            debug(s"${mark.getMarkId()} async id:$id Failed  to async get EngineNode, $exception")
+            logger.debug(s"${mark.getMarkId()} async id:$id Failed  to async get EngineNode, $exception")
             if(retry) {
               throw new LinkisRetryException(ECMPluginConf.ECM_ENGNE_CREATION_ERROR_CODE, id + " Failed  to async get EngineNode " + exception)
             }else{
@@ -166,7 +164,7 @@ class ComputationEngineConnManager extends AbstractEngineConnManager with Loggin
             }
         }
       case _ =>
-        info(s"${mark.getMarkId()} Failed to ask engineAskRequest $engineAskRequest, response is not engineNode")
+        logger.info(s"${mark.getMarkId()} Failed to ask engineAskRequest $engineAskRequest, response is not engineNode")
         null
     }
   }

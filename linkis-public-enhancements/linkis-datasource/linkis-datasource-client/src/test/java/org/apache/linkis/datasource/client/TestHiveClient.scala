@@ -69,8 +69,9 @@ object TestHiveClient {
   def testCreateDataSourceMysql: Unit = {
     val user = "hadoop"
     val system = "Linkis"
+    val dataSourceName = "for-mysql-test"
     val dataSource = new DataSource();
-    dataSource.setDataSourceName("for-hive-test")
+    dataSource.setDataSourceName(dataSourceName)
     dataSource.setDataSourceDesc("this is for hive test")
     dataSource.setCreateSystem(system)
     dataSource.setDataSourceTypeId(4L)
@@ -110,14 +111,14 @@ object TestHiveClient {
     //example of use
     val metadataGetDatabasesAction: MetadataGetDatabasesAction = MetadataGetDatabasesAction.builder()
       .setUser(user)
-      .setDataSourceId(dataSourceId)
+      .setDataSourceName(dataSourceName)
       .setSystem(system)
       .build()
     val metadataGetDatabasesResult: MetadataGetDatabasesResult = metaDataClient.getDatabases(metadataGetDatabasesAction)
 
     val metadataGetTablesAction: MetadataGetTablesAction = MetadataGetTablesAction.builder()
       .setUser(user)
-      .setDataSourceId(dataSourceId)
+      .setDataSourceName(dataSourceName)
       .setDatabase("linkis_test_ind")
       .setSystem(system)
       .build()
@@ -127,7 +128,7 @@ object TestHiveClient {
 
     val metadataGetColumnsAction = MetadataGetColumnsAction.builder()
       .setUser(user)
-      .setDataSourceId(dataSourceId)
+      .setDataSourceName(dataSourceName)
       .setDatabase("linkis_test_ind")
       .setSystem(system)
       .setTable("test")

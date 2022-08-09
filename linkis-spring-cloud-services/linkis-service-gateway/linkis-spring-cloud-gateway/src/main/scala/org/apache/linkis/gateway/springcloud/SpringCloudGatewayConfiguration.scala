@@ -19,7 +19,6 @@ package org.apache.linkis.gateway.springcloud
 
 import com.netflix.loadbalancer.Server
 import org.apache.linkis.common.ServiceInstance
-import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.gateway.config.GatewaySpringConfiguration
 import org.apache.linkis.gateway.parser.{DefaultGatewayParser, GatewayParser}
 import org.apache.linkis.gateway.route.{DefaultGatewayRouter, GatewayRouter}
@@ -27,6 +26,7 @@ import org.apache.linkis.gateway.springcloud.http.{GatewayAuthorizationFilter, L
 import org.apache.linkis.gateway.springcloud.websocket.SpringCloudGatewayWebsocketFilter
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.server.conf.ServerConfiguration
+import org.slf4j.{Logger, LoggerFactory}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.AutoConfigureAfter
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
@@ -86,7 +86,7 @@ class SpringCloudGatewayConfiguration {
   def createLoadBalancerClient(springClientFactory: SpringClientFactory): RibbonLoadBalancerClient = new RibbonLoadBalancerClient(springClientFactory) {
     override def getServer(serviceId: String): Server = if (isMergeModuleInstance(serviceId)) {
       val serviceInstance = getServiceInstance(serviceId)
-      info("redirect to " + serviceInstance)
+      logger.info("redirect to " + serviceInstance)
       val lb = this.getLoadBalancer(serviceInstance.getApplicationName)
       lb.getAllServers.find(_.getHostPort == serviceInstance.getInstance).get
     } else super.getServer(serviceId)
@@ -105,7 +105,7 @@ class SpringCloudGatewayConfiguration {
 
     override def choose(serviceId: String, hint: Any): client.ServiceInstance = if (isMergeModuleInstance(serviceId)) {
       val serviceInstance = getServiceInstance(serviceId)
-      info("redirect to " + serviceInstance)
+      logger.info("redirect to " + serviceInstance)
       val lb = this.getLoadBalancer(serviceInstance.getApplicationName)
       val server = lb.getAllServers.find(_.getHostPort == serviceInstance.getInstance).get
       new RibbonLoadBalancerClient.RibbonServer(serviceId, server, isSecure(server, serviceId), serverIntrospectorFun(serviceId).getMetadata(server))
@@ -119,7 +119,10 @@ class SpringCloudGatewayConfiguration {
   }
 
 }
-object SpringCloudGatewayConfiguration extends Logging {
+object SpringCloudGatewayConfiguration {
+
+  private val logger: Logger = LoggerFactory.getLogger(classOf[SpringCloudGatewayConfiguration])
+
   private val MERGE_MODULE_INSTANCE_HEADER = "merge-gw-"
   val ROUTE_URI_FOR_HTTP_HEADER = "lb://"
   val ROUTE_URI_FOR_WEB_SOCKET_HEADER = "lb:ws://"
@@ -128,7 +131,7 @@ object SpringCloudGatewayConfiguration extends Logging {
   val PROXY_ID = "proxyId"
 
   val WEBSOCKET_URI = normalPath(ServerConfiguration.BDP_SERVER_SOCKET_URI.getValue)
-  def normalPath(path: String): String = if(path.endsWith("/")) path else path + "/"
+  def normalPath(path: String): String = if (path.endsWith("/")) path else path + "/"
 
   def isMergeModuleInstance(serviceId: String): Boolean = serviceId.startsWith(MERGE_MODULE_INSTANCE_HEADER)
 

@@ -66,7 +66,7 @@ class StorageResultSetReader[K <: MetaData, V <: Record](resultSet: ResultSet[K,
     var rowLen = 0
     try rowLen = Dolphin.readInt(inputStream)
     catch {
-      case t: StorageWarnException => logger.info(s"Read finished(读取完毕)", t); return null
+      case _: StorageWarnException => logger.info(s"Read finished(读取完毕)"); return null
       case t: Throwable => throw t
     }
 
@@ -97,8 +97,8 @@ class StorageResultSetReader[K <: MetaData, V <: Record](resultSet: ResultSet[K,
     row
   }
 
-  def setFs(fs:Fs):Unit = this.fs = fs
-  def getFs:Fs = this.fs
+  def setFs(fs:Fs): Unit = this.fs = fs
+  def getFs: Fs = this.fs
 
   @scala.throws[IOException]
   override def getMetaData: MetaData = {
@@ -127,7 +127,7 @@ class StorageResultSetReader[K <: MetaData, V <: Record](resultSet: ResultSet[K,
 
   @scala.throws[IOException]
   override def hasNext: Boolean = {
-    if(metaData == null) getMetaData
+    if (metaData == null) getMetaData
     val line = readLine()
     if(line == null) return  false
     row = deserializer.createRecord(line)

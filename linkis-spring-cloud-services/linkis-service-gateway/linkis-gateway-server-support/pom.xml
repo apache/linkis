@@ -24,7 +24,7 @@
     <parent>
         <artifactId>linkis</artifactId>
         <groupId>org.apache.linkis</groupId>
-        <version>1.1.3</version>
+        <version>1.2.0</version>
         <relativePath>../../../pom.xml</relativePath>
     </parent>
 
@@ -34,7 +34,7 @@
         <dependency>
             <groupId>org.apache.linkis</groupId>
             <artifactId>linkis-spring-cloud-gateway</artifactId>
-            <version>${linkis.version}</version>
+            <version>${project.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.eclipse.jetty</groupId>
@@ -88,14 +88,14 @@
         <dependency>
             <groupId>org.apache.linkis</groupId>
             <artifactId>linkis-cs-common</artifactId>
-            <version>${linkis.version}</version>
+            <version>${project.version}</version>
         </dependency>
 
         <!-- instance label -->
         <dependency>
             <groupId>org.apache.linkis</groupId>
             <artifactId>linkis-instance-label-server</artifactId>
-            <version>${linkis.version}</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
@@ -123,7 +123,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <version>3.2.0</version>
                 <inherited>false</inherited>
                 <executions>
                     <execution>

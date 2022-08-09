@@ -149,7 +149,7 @@
         select t2.TBL_NAME as NAME, t2.TBL_TYPE as TYPE, t2.CREATE_TIME as CREATE_TIME, t2.LAST_ACCESS_TIME as LAST_ACCESS_TIME, t2.OWNER as OWNER, t2.SD_ID as SD_ID
         from DB_PRIVS t1
             inner join TBLS t2 on t1.DB_ID = t2.DB_ID and t1.DB_PRIV in ('SELECT','ALL') and t2.TBL_NAME = #{tableName,jdbcType=VARCHAR}
-            inner join DBS t3 on t1.DB_ID = t3.DB_ID and and t3.NAME = #{dbName,jdbcType=VARCHAR}
+            inner join DBS t3 on t1.DB_ID = t3.DB_ID and t3.NAME = #{dbName,jdbcType=VARCHAR}
         where  (t1.PRINCIPAL_TYPE = 'USER' and t1.PRINCIPAL_NAME = #{userName,jdbcType=VARCHAR})
         <if test="roles != null and roles.size() > 0">
             OR (t1.PRINCIPAL_TYPE = 'ROLE' AND t1.PRINCIPAL_NAME IN

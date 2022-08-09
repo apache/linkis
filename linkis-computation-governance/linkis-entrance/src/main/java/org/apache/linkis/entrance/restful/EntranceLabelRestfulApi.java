@@ -30,18 +30,24 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@Api(tags = "entrance lable manager")
 @RestController
 @RequestMapping(path = "/entrance/operation/label")
 public class EntranceLabelRestfulApi {
 
     private static final Logger logger = LoggerFactory.getLogger(EntranceLabelRestfulApi.class);
 
+    @ApiOperation(value = "update", notes = "update route label", response = Message.class)
+    @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "/update", method = RequestMethod.POST)
     public Message updateRouteLabel(HttpServletRequest req, @RequestBody JsonNode jsonNode) {
         String userName = ModuleUserUtils.getOperationUser(req, "updateRouteLabel");
@@ -60,6 +66,7 @@ public class EntranceLabelRestfulApi {
         return Message.ok();
     }
 
+    @ApiOperation(value = "markoffline", notes = "add offline label", response = Message.class)
     @RequestMapping(path = "/markoffline", method = RequestMethod.GET)
     public Message updateRouteLabel(HttpServletRequest req) {
         Map<String, Object> labels = new HashMap<String, Object>();

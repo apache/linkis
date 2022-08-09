@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.gateway.config.GatewayConfiguration._
 import org.apache.commons.io.{FileUtils, IOUtils}
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 
 object ProxyUserUtils extends Logging {
 
@@ -42,7 +42,7 @@ object ProxyUserUtils extends Logging {
 
   private def init(): Unit = if(file.lastModified() > lastModified) {
     lastModified = file.lastModified()
-    info(s"loading proxy authentication file $file.")
+    logger.info(s"loading proxy authentication file $file.")
     val newProps = new Properties
     val input = FileUtils.openInputStream(file)
     Utils.tryFinally(newProps.load(input))(IOUtils.closeQuietly(input))
@@ -52,7 +52,7 @@ object ProxyUserUtils extends Logging {
   def getProxyUser(umUser: String): String = if(ENABLE_PROXY_USER.getValue) {
     val proxyUser = props.getProperty(umUser)
     if(StringUtils.isBlank(proxyUser)) umUser else {
-      info(s"switched to proxy user $proxyUser for umUser $umUser.")
+      logger.info(s"switched to proxy user $proxyUser for umUser $umUser.")
       proxyUser
     }
   } else umUser

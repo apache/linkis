@@ -19,7 +19,6 @@ package org.apache.linkis.gateway.springcloud.http;
 
 import org.apache.linkis.common.ServiceInstance;
 import org.apache.linkis.common.conf.CommonVars;
-import org.apache.linkis.common.utils.JavaLog;
 import org.apache.linkis.gateway.exception.GatewayWarnException;
 import org.apache.linkis.gateway.http.BaseGatewayContext;
 import org.apache.linkis.gateway.parser.GatewayParser;
@@ -30,7 +29,7 @@ import org.apache.linkis.gateway.security.SecurityFilter;
 import org.apache.linkis.gateway.springcloud.SpringCloudGatewayConfiguration;
 import org.apache.linkis.server.Message;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import org.springframework.cloud.gateway.config.GatewayProperties;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -52,11 +51,14 @@ import org.springframework.web.server.ServerWebExchange;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-public class GatewayAuthorizationFilter extends JavaLog implements GlobalFilter, Ordered {
+public class GatewayAuthorizationFilter implements GlobalFilter, Ordered {
+    private static final Logger logger = LoggerFactory.getLogger(GatewayAuthorizationFilter.class);
 
     private GatewayParser parser;
     private GatewayRouter router;
@@ -134,30 +136,6 @@ public class GatewayAuthorizationFilter extends JavaLog implements GlobalFilter,
                 .asyncPredicate(route.getPredicate())
                 .build();
     }
-    //    @Override
-    //    public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-    //        AbstractServerHttpRequest request = (AbstractServerHttpRequest) exchange.getRequest();
-    //        ServerHttpResponse response = exchange.getResponse();
-    //        Route route = exchange.getAttribute(ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR);
-    //        BaseGatewayContext gatewayContext = getBaseGatewayContext(exchange, route);
-    //
-    //        DataBufferFactory bufferFactory = response.bufferFactory();
-    //
-    // if(((SpringCloudGatewayHttpRequest)gatewayContext.getRequest()).isRequestBodyAutowired()) {
-    //            ServerHttpRequestDecorator decorator = new ServerHttpRequestDecorator(request) {
-    //                @Override
-    //                public Flux<DataBuffer> getBody() {
-    //                    if(StringUtils.isBlank(gatewayContext.getRequest().getRequestBody()))
-    // return Flux.empty();
-    //                    return
-    // Flux.just(bufferFactory.wrap(gatewayContext.getRequest().getRequestBody().getBytes(StandardCharsets.UTF_8)));
-    //                }
-    //            };
-    //            return chain.filter(exchange.mutate().request(decorator).build());
-    //        } else {
-    //            return chain.filter(exchange);
-    //        }
-    //    }
 
     private Mono<Void> gatewayDeal(
             ServerWebExchange exchange,
@@ -186,7 +164,7 @@ public class GatewayAuthorizationFilter extends JavaLog implements GlobalFilter,
             }
             serviceInstance = router.route(gatewayContext);
         } catch (Throwable t) {
-            warn("", t);
+            logger.warn("", t);
             Message message =
                     Message.error(t).$less$less(gatewayContext.getRequest().getRequestURI());
             if (!gatewayContext.isWebSocketRequest()) {
@@ -220,7 +198,7 @@ public class GatewayAuthorizationFilter extends JavaLog implements GlobalFilter,
                                         exchange.getRequest().getPath().value(),
                                         "/" + realRd.getId() + "/",
                                         "");
-                info("Proxy to " + uri);
+                logger.info("Proxy to " + uri);
                 Route realRoute =
                         Route.async()
                                 .id(route.getId())

@@ -17,8 +17,8 @@
 
 package org.apache.linkis.manager.am.service.em
 
-import org.apache.commons.lang.StringUtils
-import org.apache.commons.lang.exception.ExceptionUtils
+import org.apache.commons.lang3.StringUtils
+import org.apache.commons.lang3.exception.ExceptionUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.manager.am.conf.AMConfiguration
 import org.apache.linkis.manager.am.manager.EMNodeManager
@@ -28,10 +28,10 @@ import org.apache.linkis.manager.common.protocol.em.{EMResourceRegisterRequest, 
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import org.apache.linkis.manager.label.entity.em.EMInstanceLabel
 import org.apache.linkis.manager.label.service.NodeLabelAddService
-import org.apache.linkis.rpc.message.annotation.Receiver
+import org.apache.linkis.manager.rm.message.RMMessageService
 import org.apache.linkis.protocol.label.NodeLabelAddRequest
-import org.apache.linkis.resourcemanager.message.RMMessageService
 import org.apache.linkis.rpc.Sender
+import org.apache.linkis.rpc.message.annotation.Receiver
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
@@ -70,9 +70,9 @@ class DefaultEMRegisterService extends EMRegisterService with Logging {
     */
   @Receiver
   override def addEMNodeInstance(emRegister: RegisterEMRequest, sender: Sender): RegisterEMResponse = Utils.tryCatch{
-    info(s"Start to save em{${emRegister.getServiceInstance}}  in persistence")
+    logger.info(s"Start to save em{${emRegister.getServiceInstance}}  in persistence")
     emNodeManager.addEMNodeInstance(registerEMRequest2EMNode(emRegister))
-    info(s"Finished to save em{${emRegister.getServiceInstance}}  in persistence")
+    logger.info(s"Finished to save em{${emRegister.getServiceInstance}}  in persistence")
     val eMInstanceLabel = LabelBuilderFactoryContext.getLabelBuilderFactory.createLabel(classOf[EMInstanceLabel])
     eMInstanceLabel.setServiceName(emRegister.getServiceInstance.getApplicationName)
     eMInstanceLabel.setInstance(emRegister.getServiceInstance.getInstance)
@@ -81,14 +81,14 @@ class DefaultEMRegisterService extends EMRegisterService with Logging {
     }
     emRegister.getLabels.put(eMInstanceLabel.getLabelKey, eMInstanceLabel.getStringValue)
     val instanceLabelAddRequest = new NodeLabelAddRequest(emRegister.getServiceInstance, emRegister.getLabels)
-    info(s"Start to publish em{${emRegister.getServiceInstance}} label request to Label ")
+    logger.info(s"Start to publish em{${emRegister.getServiceInstance}} label request to Label ")
     nodeLabelAddService.addNodeLabels(instanceLabelAddRequest)
-    info(s"Finished to deal em{${emRegister.getServiceInstance}} label ")
+    logger.info(s"Finished to deal em{${emRegister.getServiceInstance}} label ")
     addEMNodeMetrics(emRegister)
     rmMessageService.dealWithRegisterEMRequest(emRegister)
     RegisterEMResponse(isSuccess = true)
   }{ t =>
-    error(s"Failed to register ecm ${emRegister.getServiceInstance}", t)
+    logger.error(s"Failed to register ecm ${emRegister.getServiceInstance}", t)
     RegisterEMResponse(isSuccess = false, ExceptionUtils.getRootCauseMessage(t))
   }
 
@@ -104,9 +104,9 @@ class DefaultEMRegisterService extends EMRegisterService with Logging {
   }
 
    def addEMNodeMetrics(emRegister: RegisterEMRequest): Unit = {
-    info(s"Start to init em{${emRegister.getServiceInstance}}  metrics")
+     logger.info(s"Start to init em{${emRegister.getServiceInstance}}  metrics")
     emNodeManager.initEMNodeMetrics(registerEMRequest2EMNode(emRegister))
-    info(s"Finished to init em{${emRegister.getServiceInstance}}  metrics")
+     logger.info(s"Finished to init em{${emRegister.getServiceInstance}}  metrics")
   }
 
 }

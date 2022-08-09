@@ -21,10 +21,10 @@ package org.apache.linkis.common
 class ServiceInstance {
   private var applicationName: String = _
   private var instance: String = _
-  def setApplicationName(applicationName: String) = this.applicationName = applicationName
-  def getApplicationName = applicationName
-  def setInstance(instance: String) = this.instance = instance
-  def getInstance = instance
+  def setApplicationName(applicationName: String): Unit = this.applicationName = applicationName
+  def getApplicationName: String = applicationName
+  def setInstance(instance: String): Unit = this.instance = instance
+  def getInstance: String = instance
 
 
   def canEqual(other: Any): Boolean = other.isInstanceOf[ServiceInstance]
@@ -46,7 +46,7 @@ class ServiceInstance {
   }
 
 
-  override def toString = s"ServiceInstance($applicationName, $instance)"
+  override def toString: String = s"ServiceInstance($applicationName, $instance)"
 }
 object ServiceInstance {
   def apply(applicationName: String, instance: String): ServiceInstance = {
@@ -56,6 +56,7 @@ object ServiceInstance {
     serviceInstance
   }
 
-  def unapply(serviceInstance: ServiceInstance): Option[(String, String)] = if(serviceInstance != null)
-    Some(serviceInstance.applicationName, serviceInstance.instance) else None
+  def unapply(serviceInstance: ServiceInstance): Option[(String, String)] = if (serviceInstance != null) {
+    Some(serviceInstance.applicationName, serviceInstance.instance)
+  } else None
 }

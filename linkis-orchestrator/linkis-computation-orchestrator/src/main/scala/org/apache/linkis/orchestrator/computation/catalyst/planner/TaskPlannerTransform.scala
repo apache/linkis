@@ -18,7 +18,7 @@
 package org.apache.linkis.orchestrator.computation.catalyst.planner
 
 import org.apache.linkis.common.utils.Logging
-import org.apache.linkis.orchestrator.code.plans.ast.{CodeJob, CodeStage}
+import org.apache.linkis.orchestrator.code.plans.ast.CodeJob
 import org.apache.linkis.orchestrator.code.plans.logical.{CodeLogicalUnitTask, CodeLogicalUnitTaskDesc}
 import org.apache.linkis.orchestrator.extensions.catalyst.PlannerTransform
 import org.apache.linkis.orchestrator.plans.ast.{ASTContext, Job, Stage}
@@ -55,7 +55,7 @@ class TaskPlannerTransform extends PlannerTransform with Logging {
         val (task, newStartJobTask) = buildCodeLogicTaskTree(taskDesc.stage.getJob match{
           case codeJob: CodeJob => codeJob.getCodeLogicalUnit
           case job: Job => {
-            error(s"jobId:${job.getId}-----jobType:${job.getName}, job type mismatch, only support CodeJob")
+            logger.error(s"jobId:${job.getId}-----jobType:${job.getName}, job type mismatch, only support CodeJob")
             null
           }
         }, taskDesc.stage, startJobTask)
@@ -130,7 +130,7 @@ class TaskPlannerTransform extends PlannerTransform with Logging {
         // TODO Second, AnalyzeTransforms are needed: one for adding a computationTask by stage for no computation strategy,
         //  one to transform Job to JobTaskStart, one to transform Job to StageTaskStart.
         buildJobTaskTree(EndJobTaskDesc(job))
-      case _ => error(s"unknown job type:${in.getClass} ")
+      case _ => logger.error(s"unknown job type:${in.getClass} ")
         null
     }
   }

@@ -26,24 +26,29 @@ trait ConfigProtocol
 
 case class RequestQueryGlobalConfig(username: String) extends CacheableProtocol with RetryableProtocol with ConfigProtocol with RequestProtocol {
   override def toString: String = {
-    RequestQueryGlobalConfig.getClass.getName + "," + username
+    s"RequestQueryGlobalConfig_${username}"
   }
 }
 
 case class RequestQueryEngineConfig(userCreatorLabel: UserCreatorLabel, engineTypeLabel: EngineTypeLabel, filter: String = null) extends CacheableProtocol with RetryableProtocol with ConfigProtocol{
   override def toString: String = {
-    RequestQueryEngineConfig.getClass.getName + "," + userCreatorLabel.getStringValue + "," + engineTypeLabel.getStringValue
+   s"RequestQueryEngineConfig_${userCreatorLabel.getStringValue}_${engineTypeLabel.getStringValue}"
   }
 }
 
 case class RequestQueryEngineConfigWithGlobalConfig(userCreatorLabel: UserCreatorLabel, engineTypeLabel: EngineTypeLabel, filter: String = null) extends CacheableProtocol with RetryableProtocol with ConfigProtocol{
   override def toString: String = {
-    RequestQueryEngineConfigWithGlobalConfig.getClass.getName + "," + userCreatorLabel.getStringValue + "," + engineTypeLabel.getStringValue
+    s"RequestQueryEngineConfigWithGlobalConfig_${userCreatorLabel.getStringValue}_${engineTypeLabel.getStringValue}"
   }
 }
 
 
-case class RequestQueryEngineTypeDefault(engineTypeLabel: EngineTypeLabel) extends CacheableProtocol with RetryableProtocol with ConfigProtocol
+case class RequestQueryEngineTypeDefault(engineTypeLabel: EngineTypeLabel) extends CacheableProtocol with RetryableProtocol with ConfigProtocol {
+  override def toString: String = {
+   s"RequestQueryEngineTypeDefault_${engineTypeLabel.getStringValue}"
+  }
+
+}
 
 case class RequestConfigByLabel(labels: java.util.List[Label[_]], isMerge: Boolean = true) extends CacheableProtocol with RetryableProtocol with ConfigProtocol
 

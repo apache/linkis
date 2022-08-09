@@ -46,7 +46,7 @@ class GatherStrategyJobExecTask(parents: Array[ExecTask],
     case _: EndJobTaskDesc =>
       if (getPhysicalContext.isCompleted) {
         val msg = s"PhysicalContext is completed, Job${getIDInfo()} will be mark Failed "
-        info(msg)
+        logger.info(msg)
         new DefaultFailedTaskResponse(msg, OrchestratorErrorCodeSummary.EXECUTION_FOR_EXECUTION_ERROR_CODE, null) {}
       } else {
 
@@ -68,7 +68,7 @@ class GatherStrategyJobExecTask(parents: Array[ExecTask],
         } else {
           new SucceedTaskResponse() {}
         }
-        debug(s"Job${getIDInfo()} end execute finished, now to mark executionTask succeed")
+        logger.debug(s"Job${getIDInfo()} end execute finished, now to mark executionTask succeed")
         getPhysicalContext.markSucceed(response)
         response
       }

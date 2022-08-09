@@ -33,11 +33,11 @@ class TableResultDeserializer extends ResultDeserializer[TableMetaData, TableRec
   override def createMetaData(bytes: Array[Byte]): TableMetaData = {
     val colByteLen = Dolphin.getString(bytes, 0, Dolphin.INT_LEN).toInt
     val colString = Dolphin.getString(bytes, Dolphin.INT_LEN, colByteLen)
-    val colArray = if(colString.endsWith(Dolphin.COL_SPLIT)) colString.substring(0, colString.length -1).split(Dolphin.COL_SPLIT) else colString.split(Dolphin.COL_SPLIT)
+    val colArray = if (colString.endsWith(Dolphin.COL_SPLIT)) colString.substring(0, colString.length -1).split(Dolphin.COL_SPLIT) else colString.split(Dolphin.COL_SPLIT)
     var index = Dolphin.INT_LEN + colByteLen
-    if(colArray.length % 3 != 0) throw new StorageErrorException(52001,"Parsing metadata failed(解析元数据失败)")
+    if (colArray.length % 3 != 0) throw new StorageErrorException(52001,"Parsing metadata failed(解析元数据失败)")
     val columns = new  ArrayBuffer[Column]()
-    for(i <-  0 until (colArray.length, 3)){
+    for (i <- 0 until (colArray.length, 3)) {
       var len = colArray(i).toInt
       val colName = Dolphin.getString(bytes, index, len)
       index += len
@@ -64,15 +64,16 @@ class TableResultDeserializer extends ResultDeserializer[TableMetaData, TableRec
   override def createRecord(bytes: Array[Byte]): TableRecord = {
     val colByteLen = Dolphin.getString(bytes, 0, Dolphin.INT_LEN).toInt
     val colString = Dolphin.getString(bytes, Dolphin.INT_LEN, colByteLen)
-    val colArray = if(colString.endsWith(Dolphin.COL_SPLIT)) colString.substring(0, colString.length -1).split(Dolphin.COL_SPLIT) else colString.split(Dolphin.COL_SPLIT)
+    val colArray = if (colString.endsWith(Dolphin.COL_SPLIT)) colString.substring(0, colString.length -1).split(Dolphin.COL_SPLIT) else colString.split(Dolphin.COL_SPLIT)
     var index = Dolphin.INT_LEN + colByteLen
     val data = colArray.indices.map { i =>
       val len = colArray(i).toInt
       val res = Dolphin.getString(bytes, index, len)
       index += len
-      if(i >= metaData.columns.length) res
-      else
-        toValue(metaData.columns(i).dataType,res)
+      if (i >= metaData.columns.length) res
+      else {
+        toValue(metaData.columns(i).dataType, res)
+      }
     }.toArray
     new TableRecord(data)
   }

@@ -38,7 +38,7 @@ trait Executor extends Logging {
     * EngineConn kill 在AccessibleService
     */
   def close(): Unit = {
-    warn(s"Executor($getId) exit by close.")
+    logger.warn(s"Executor($getId) exit by close.")
   }
 
   def isClosed: Boolean

@@ -21,14 +21,15 @@ import java.util
 
 
 abstract class POSTAction extends GetAction {
+
   private val formParams: util.Map[String, String] = new util.HashMap[String, String]
   private val payload: util.Map[String, Any] = new util.HashMap[String, Any]
 
-  def setFormParam(key: String, value: Any): Unit = if(value != null) this.formParams.put(key, value.toString)
+  def setFormParam(key: String, value: Any): Unit = if (value != null) this.formParams.put(key, value.toString)
   def getFormParams: util.Map[String, String] = formParams
 
-  def addRequestPayload(key: String, value: Any): Unit = if(value != null) this.payload.put(key, value)
-  def getRequestPayloads = payload
+  def addRequestPayload(key: String, value: Any): Unit = if (value != null) this.payload.put(key, value)
+  def getRequestPayloads: util.Map[String, Any] = payload
 
   def getRequestPayload: String
 

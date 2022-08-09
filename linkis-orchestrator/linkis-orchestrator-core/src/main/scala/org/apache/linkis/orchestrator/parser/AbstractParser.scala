@@ -29,17 +29,17 @@ abstract class AbstractParser extends Parser with AnalyzeFactory[Job, ASTContext
   override def parse(astPlan: ASTOrchestration[_]): ASTOrchestration[_] = {
     //parse
     Option(parserTransforms).map { transforms =>
-      debug(s"Start to parse AstJob(${astPlan.getId}) to AstTree.")
+      logger.debug(s"Start to parse AstJob(${astPlan.getId}) to AstTree.")
       val newAstPlan = astPlan match {
         case job: Job =>
           apply(job, astPlan.getASTContext, transforms.map{
             transform: Transform[Job, Job, ASTContext] => transform
           })
       }
-      debug(s"Finished to parse AstJob(${astPlan.getId}) to AstTree.")
+      logger.debug(s"Finished to parse AstJob(${astPlan.getId}) to AstTree.")
       newAstPlan
     }.getOrElse{
-      info(s"AstJob(${astPlan.getId}) do not need to parse, ignore it.")
+      logger.info(s"AstJob(${astPlan.getId}) do not need to parse, ignore it.")
       astPlan
     }
   }

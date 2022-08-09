@@ -26,7 +26,7 @@ import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContex
 import org.apache.linkis.manager.label.constant.LabelKeyConstant
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.protocol.label.LabelInsQueryRequest
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.springframework.stereotype.Component
 
 import java.util
@@ -51,13 +51,13 @@ class ContextIdParserImpl extends ContextIDParser with Logging {
       if (null != mainInstance) {
         instances.add(mainInstance.getInstance)
       } else {
-        error(s"parse HAID instance invalid. haIDKey : " + contextId)
+        logger.error(s"parse HAID instance invalid. haIDKey : " + contextId)
       }
       val backupInstance = getInstanceByAlias(haContextID.getInstance())
       if (null != backupInstance) {
         instances.add(backupInstance.getInstance)
       } else {
-        error("parse HAID backupInstance invalid. haIDKey : " + contextId)
+        logger.error("parse HAID backupInstance invalid. haIDKey : " + contextId)
       }
       instances
     } else {

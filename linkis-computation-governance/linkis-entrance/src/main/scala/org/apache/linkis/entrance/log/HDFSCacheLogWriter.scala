@@ -17,7 +17,7 @@
 
 package org.apache.linkis.entrance.log
 
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.hadoop.hdfs.client.HdfsDataOutputStream
 import org.apache.hadoop.io.IOUtils
 import org.apache.linkis.common.io.FsPath
@@ -63,8 +63,9 @@ class HDFSCacheLogWriter(logPath: String,
   def getOutputStream: OutputStream = {
     if (null == outputStream) OUT_LOCKER.synchronized {
       if (null == outputStream) {
+        if(fileSystem != null) outputStream = fileSystem.write(new FsPath(logPath), false)
+        else logger.warn("fileSystem is null")
 
-        outputStream = fileSystem.write(new FsPath(logPath), false)
       }
     }
     outputStream

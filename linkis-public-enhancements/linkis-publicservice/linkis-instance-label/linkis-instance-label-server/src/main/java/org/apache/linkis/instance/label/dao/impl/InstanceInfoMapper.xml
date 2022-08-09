@@ -29,7 +29,7 @@
     </resultMap>
 
     <insert id="insertOne" parameterType="InstanceInfo">
-        <![CDATA[INSERT INTO `linkis_ps_instance_info`(`instance`, `name`)
+        <![CDATA[REPLACE INTO `linkis_ps_instance_info`(`instance`, `name`)
         VALUES(#{instance}, #{applicationName})]]>
     </insert>
 

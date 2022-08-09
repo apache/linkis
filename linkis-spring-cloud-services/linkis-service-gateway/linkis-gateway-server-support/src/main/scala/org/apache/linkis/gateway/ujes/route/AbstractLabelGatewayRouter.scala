@@ -17,16 +17,22 @@
  
 package org.apache.linkis.gateway.ujes.route
 
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.gateway.http.GatewayContext
 import org.apache.linkis.gateway.route.AbstractGatewayRouter
 import org.apache.linkis.instance.label.service.InsLabelService
 import org.apache.linkis.manager.label.entity.route.RouteLabel
-
 import java.util
+
 import javax.annotation.Resource
+import org.apache.linkis.gateway.config.GatewayConfiguration
+import org.apache.linkis.gateway.exception.GatewayErrorException
+import org.apache.linkis.manager.label.utils.LabelUtils
+import org.apache.linkis.rpc.interceptor.ServiceInstanceUtils
+
+import scala.collection.JavaConverters._
 
 abstract class AbstractLabelGatewayRouter extends AbstractGatewayRouter with Logging {
 
@@ -42,25 +48,43 @@ abstract class AbstractLabelGatewayRouter extends AbstractGatewayRouter with Log
 
 
   override def route(gatewayContext: GatewayContext): ServiceInstance = {
-    val routeLabels: util.List[RouteLabel] = parseToRouteLabels(gatewayContext)
     val serviceInstance: ServiceInstance = gatewayContext.getGatewayRoute.getServiceInstance
     if (StringUtils.isNotBlank(serviceInstance.getApplicationName) && StringUtils.isNotBlank(serviceInstance.getInstance)) {
       return serviceInstance
     }
-    // TODO: It's probably better to throw exception here
-    if (null == routeLabels || routeLabels.isEmpty) {
+    val applicationName = serviceInstance.getApplicationName
+    if (! GatewayConfiguration.ROUTER_SERVER_LIST.getValue.contains(applicationName)) {
+      // Ignore the router using application name
       return null
     }
 
-    val candidateServices = insLabelService.searchInstancesByLabels(routeLabels)
-    val canSelectInstances = if (null == candidateServices || candidateServices.isEmpty) {
-      val labelRelatedInstances = Option(insLabelService.searchLabelRelatedInstances(serviceInstance))
-      removeAllFromRegistry(serviceInstance.getApplicationName,
-        labelRelatedInstances.getOrElse(new util.ArrayList[ServiceInstance]()))
+    val routeLabels: util.List[RouteLabel] = parseToRouteLabels(gatewayContext)
+
+    val canSelectInstances = if (null == routeLabels || routeLabels.isEmpty) {
+      getDefaultInstances(applicationName)
     } else {
-      candidateServices
+      val candidateServices = insLabelService.searchInstancesByLabels(routeLabels)
+      if (null == candidateServices || candidateServices.isEmpty) {
+        throw new GatewayErrorException(11011, s"Cannot route to the corresponding service, URL: ${gatewayContext.getRequest.getRequestURI} RouteLabel: ${LabelUtils.Jackson.toJson(routeLabels, null)}")
+      } else {
+        candidateServices
+      }
     }
-    selectInstance(gatewayContext, canSelectInstances)
+
+    val instance = selectInstance(gatewayContext, canSelectInstances)
+    if (null == instance || StringUtils.isBlank(instance.getInstance)) {
+      throw new GatewayErrorException(11011, s"There are no services available in the registry URL: ${gatewayContext.getRequest.getRequestURI}")
+    }
+    instance
+  }
+
+  protected def getDefaultInstances(applicationName: String): util.List[ServiceInstance] = {
+    val instances = ServiceInstanceUtils.getRPCServerLoader.getServiceInstances(applicationName)
+    val allInstances = new util.ArrayList[ServiceInstance]()
+    if (null != instances && instances.nonEmpty) allInstances.addAll(instances.toList.asJava)
+    val labelInstances = insLabelService.getInstancesByNames(applicationName)
+    allInstances.removeAll(labelInstances)
+    allInstances
   }
 
   /**

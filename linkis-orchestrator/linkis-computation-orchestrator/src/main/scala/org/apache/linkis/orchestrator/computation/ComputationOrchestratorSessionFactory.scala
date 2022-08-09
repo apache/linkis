@@ -21,12 +21,8 @@ import org.apache.linkis.common.utils.ClassUtils
 import org.apache.linkis.orchestrator.computation.conf.ComputationOrchestratorConf
 import org.apache.linkis.orchestrator.core.OrchestratorSessionBuilder
 import org.apache.linkis.orchestrator.{Orchestrator, OrchestratorSession}
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 
-/**
-  *
-  *
-  */
 trait ComputationOrchestratorSessionFactory {
 
   def getOrCreateSession(id: String): OrchestratorSession

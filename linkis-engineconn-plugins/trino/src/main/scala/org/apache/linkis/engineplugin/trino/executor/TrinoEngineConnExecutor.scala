@@ -35,7 +35,7 @@ import org.apache.linkis.engineplugin.trino.exception.{TrinoClientException, Tri
 import org.apache.linkis.engineplugin.trino.interceptor.PasswordInterceptor
 import org.apache.linkis.engineplugin.trino.password.{CommandPasswordCallback, StaticPasswordCallback}
 import org.apache.linkis.engineplugin.trino.socket.SocketChannelSocketFactory
-import org.apache.linkis.engineplugin.trino.utils.{SqlCodeParser, TrinoCode}
+import org.apache.linkis.engineplugin.trino.utils.TrinoCode
 import org.apache.linkis.governance.common.paser.SQLCodeParser
 import org.apache.linkis.manager.common.entity.resource.{CommonNodeResource, LoadResource, NodeResource}
 import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf

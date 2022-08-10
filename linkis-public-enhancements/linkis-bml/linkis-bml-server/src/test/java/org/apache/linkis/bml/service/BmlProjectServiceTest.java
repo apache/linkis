@@ -109,7 +109,7 @@ public class BmlProjectServiceTest {
         // TODO: Test goes here...
         String projectName = "testProjectName";
         String username = "testUsername";
-        Mockito.when(bmlProjectDao.getPrivInProject(projectName, username)).thenReturn(6);
+        Mockito.when(bmlProjectDao.getPrivInProject(projectName, username)).thenReturn(4);
         boolean fa = bmlProjectService.checkAccessPriv(projectName, username);
         assertTrue(fa == false);
     }

@@ -54,6 +54,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,6 +71,7 @@ import java.util.*;
 import static org.apache.linkis.filesystem.conf.WorkSpaceConfiguration.*;
 import static org.apache.linkis.filesystem.constant.WorkSpaceConstants.*;
 
+@Api(tags = "file system")
 @RestController
 @RequestMapping(path = "/filesystem")
 public class FsRestfulApi {
@@ -107,6 +113,10 @@ public class FsRestfulApi {
         return (requestPath.contains(workspacePath)) || (requestPath.contains(enginconnPath));
     }
 
+    @ApiOperation(value = "getUserRootPath", notes = "get user root path", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "pathType", required = false, dataType = "String", value = "path type")
+    })
     @RequestMapping(path = "/getUserRootPath", method = RequestMethod.GET)
     public Message getUserRootPath(
             HttpServletRequest req,
@@ -144,6 +154,11 @@ public class FsRestfulApi {
         return Message.ok().data(String.format("user%sRootPath", returnType), path);
     }
 
+    @ApiOperation(value = "createNewDir", notes = "create new dir", response = Message.class)
+    @ApiOperationSupport(ignoreParameters = {"json"})
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "path", required = true, dataType = "String", value = "Path")
+    })
     @RequestMapping(path = "/createNewDir", method = RequestMethod.POST)
     public Message createNewDir(HttpServletRequest req, @RequestBody JsonNode json)
             throws IOException, WorkSpaceException {
@@ -166,6 +181,11 @@ public class FsRestfulApi {
         return Message.ok();
     }
 
+    @ApiOperation(value = "createNewFile", notes = "create new file", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "path", required = true, dataType = "String", value = "Path")
+    })
+    @ApiOperationSupport(ignoreParameters = {"json"})
     @RequestMapping(path = "/createNewFile", method = RequestMethod.POST)
     public Message createNewFile(HttpServletRequest req, @RequestBody JsonNode json)
             throws IOException, WorkSpaceException {
@@ -187,6 +207,12 @@ public class FsRestfulApi {
         return Message.ok();
     }
 
+    @ApiOperation(value = "rename", notes = "rename", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "oldDest", required = true, dataType = "String", value = "old dest"),
+        @ApiImplicitParam(name = "newDest", required = true, dataType = "String", value = "new dest")
+    })
+    @ApiOperationSupport(ignoreParameters = {"json"})
     @RequestMapping(path = "/rename", method = RequestMethod.POST)
     public Message rename(HttpServletRequest req, @RequestBody JsonNode json)
             throws IOException, WorkSpaceException {
@@ -222,6 +248,12 @@ public class FsRestfulApi {
         return Message.ok();
     }
 
+    @ApiOperation(value = "move", notes = "move", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "filePath", required = true, dataType = "String", value = "file path"),
+        @ApiImplicitParam(name = "newDest", required = true, dataType = "String", value = "new dest")
+    })
+    @ApiOperationSupport(ignoreParameters = {"json"})
     @RequestMapping(path = "/move", method = RequestMethod.POST)
     public Message move(HttpServletRequest req, @RequestBody JsonNode json)
             throws IOException, WorkSpaceException {
@@ -261,6 +293,12 @@ public class FsRestfulApi {
         return Message.ok();
     }
 
+    @ApiOperation(value = "upload", notes = "upload", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "path", required = true, dataType = "String", value = "path"),
+        @ApiImplicitParam(name = "file", required = true, dataType = "List<MultipartFile> ", value = "file")
+    })
+    @ApiOperationSupport(ignoreParameters = {"json"})
     @RequestMapping(path = "/upload", method = RequestMethod.POST)
     public Message upload(
             HttpServletRequest req,
@@ -290,6 +328,11 @@ public class FsRestfulApi {
         return Message.ok();
     }
 
+    @ApiOperation(value = "deleteDirOrFile", notes = "delete dir or file", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "path", required = true, dataType = "String", value = "path")
+    })
+    @ApiOperationSupport(ignoreParameters = {"json"})
     @RequestMapping(path = "/deleteDirOrFile", method = RequestMethod.POST)
     public Message deleteDirOrFile(HttpServletRequest req, @RequestBody JsonNode json)
             throws IOException, WorkSpaceException {
@@ -315,6 +358,11 @@ public class FsRestfulApi {
         return Message.ok();
     }
 
+    @ApiOperation(value = "getDirFileTrees", notes = "get dir file trees", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "path", required = false, dataType = "String", value = "path")
+    })
+    @ApiOperationSupport(ignoreParameters = {"json"})
     @RequestMapping(path = "/getDirFileTrees", method = RequestMethod.GET)
     public Message getDirFileTrees(
             HttpServletRequest req, @RequestParam(value = "path", required = false) String path)
@@ -364,6 +412,12 @@ public class FsRestfulApi {
         return Message.ok().data("dirFileTrees", dirFileTree);
     }
 
+    @ApiOperation(value = "download", notes = "download", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "path", required = true, dataType = "String", value = "path"),
+        @ApiImplicitParam(name = "charset", required = true, dataType = "String", value = "charset")
+    })
+    @ApiOperationSupport(ignoreParameters = {"json"})
     @RequestMapping(path = "/download", method = RequestMethod.POST)
     public void download(
             HttpServletRequest req,
@@ -423,6 +477,10 @@ public class FsRestfulApi {
         }
     }
 
+    @ApiOperation(value = "isExist", notes = "is exist", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "path", required = false, dataType = "String", value = "path")
+    })
     @RequestMapping(path = "/isExist", method = RequestMethod.GET)
     public Message isExist(
             HttpServletRequest req, @RequestParam(value = "path", required = false) String path)
@@ -439,6 +497,11 @@ public class FsRestfulApi {
         return Message.ok().data("isExist", fileSystem.exists(fsPath));
     }
 
+    @ApiOperation(value = "FileInfo", notes = "File_Info", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "path", required = false, dataType = "String", value = "Path"),
+        @ApiImplicitParam(name = "pageSize", required = true, dataType = "Integer", value = "page size", defaultValue = "5000")
+    })
     @RequestMapping(path = "/fileInfo", method = RequestMethod.GET)
     public Message fileInfo(
             HttpServletRequest req,
@@ -476,6 +539,13 @@ public class FsRestfulApi {
         }
     }
 
+    @ApiOperation(value = "openFile", notes = "open file", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "path", required = false, dataType = "String", value = "Path"),
+        @ApiImplicitParam(name = "page", required = true, dataType = "Integer", value = "page", defaultValue = "1"),
+        @ApiImplicitParam(name = "pageSize", required = true, dataType = "Integer", value = "page size", defaultValue = "5000"),
+        @ApiImplicitParam(name = "charset", required = true, dataType = "String", value = "charset", defaultValue = "utf-8")
+    })
     @RequestMapping(path = "/openFile", method = RequestMethod.GET)
     public Message openFile(
             HttpServletRequest req,
@@ -522,6 +592,14 @@ public class FsRestfulApi {
      * @return
      * @throws IOException
      */
+    @ApiOperation(value = "saveScript", notes = "save script", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "path", required = true, dataType = "String", value = "path"),
+        @ApiImplicitParam(name = "scriptContent", required = false, dataType = "String", value = "script content"),
+        @ApiImplicitParam(name = "params", required = false, dataType = "Object", value = "params"),
+        @ApiImplicitParam(name = "charset", required = false, dataType = "String", value = "charset")
+    })
+    @ApiOperationSupport(ignoreParameters = {"json"})
     @RequestMapping(path = "/saveScript", method = RequestMethod.POST)
     public Message saveScript(HttpServletRequest req, @RequestBody Map<String, Object> json)
             throws IOException, WorkSpaceException {
@@ -564,6 +642,19 @@ public class FsRestfulApi {
         }
     }
 
+    @ApiOperation(value = "resultsetToExcel", notes = "resultset to excel", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "path", required = false, dataType = "String", value = "path"),
+        @ApiImplicitParam(name = "charset", required = true, dataType = "String", value = "charset", defaultValue = "utf-8"),
+        @ApiImplicitParam(name = "outputFileType", required = true, dataType = "String", value = "output file type", defaultValue = "csv"),
+        @ApiImplicitParam(name = "csvSeperator", required = true, dataType = "String", value = "csv seperator", defaultValue = ","),
+        @ApiImplicitParam(name = "quoteRetouchEnable", dataType = "boolean", required = false, value = "quote retouch enable"),
+        @ApiImplicitParam(name = "outputFileName", required = true, dataType = "String", value = "output file name", defaultValue = "downloadResultset"),
+        @ApiImplicitParam(name = "sheetName", required = true, dataType = "String", value = "sheet name", defaultValue = "result"),
+        @ApiImplicitParam(name = "nullValue", required = true, dataType = "String", value = "null value", defaultValue = "NULL"),
+        @ApiImplicitParam(name = "limit", required = true, dataType = "Integer", value = "limit", defaultValue = "0"),
+        @ApiImplicitParam(name = "autoFormat", required = false, dataType = "Boolean", value = "auto format")
+    })
     @RequestMapping(path = "resultsetToExcel", method = RequestMethod.GET)
     public void resultsetToExcel(
             HttpServletRequest req,
@@ -672,6 +763,14 @@ public class FsRestfulApi {
         }
     }
 
+    @ApiOperation(value = "resultsetToExcel", notes = "resultset to excel", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "path", required = false, dataType = "String", value = "path"),
+        @ApiImplicitParam(name = "outputFileName", required = true, dataType = "String", value = "output file name", defaultValue = "downloadResultset"),
+        @ApiImplicitParam(name = "nullValue", required = true, dataType = "String", value = "null value", defaultValue = "NULL"),
+        @ApiImplicitParam(name = "limit", required = true, dataType = "Integer", value = "limit", defaultValue = "0"),
+        @ApiImplicitParam(name = "autoFormat", required = false, dataType = "Boolean", value = "auto format")
+    })
     @RequestMapping(path = "resultsetsToExcel", method = RequestMethod.GET)
     public void resultsetsToExcel(
             HttpServletRequest req,
@@ -750,6 +849,15 @@ public class FsRestfulApi {
         }
     }
 
+    @ApiOperation(value = "formate", notes = "formate", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "path", required = false, dataType = "String", value = "Path"),
+        @ApiImplicitParam(name = "encoding", required = true, dataType = "String", value = "encoding", defaultValue = "utf-8"),
+        @ApiImplicitParam(name = "fieldDelimiter", required = true, dataType = "String", value = "field delimiter", defaultValue = ","),
+        @ApiImplicitParam(name = "hasHeader", required = true, defaultValue = "false", value = "has header", dataType = "Boolean"),
+        @ApiImplicitParam(name = "quote", required = true, dataType = "String", value = "quote", defaultValue = "\""),
+        @ApiImplicitParam(name = "escapeQuotes", required = true, dataType = "Boolean", value = "escape quotes", defaultValue = "false")
+    })
     @RequestMapping(path = "formate", method = RequestMethod.GET)
     public Message formate(
             HttpServletRequest req,
@@ -813,6 +921,11 @@ public class FsRestfulApi {
         }
     }
 
+    @ApiOperation(value = "openLog", notes = "open log", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "path", required = false, dataType = "String", value = "path"),
+        @ApiImplicitParam(name = "proxyUser", required = false, dataType = "String", value = "proxy user")
+    })
     @RequestMapping(path = "/openLog", method = RequestMethod.GET)
     public Message openLog(
             HttpServletRequest req,

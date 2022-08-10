@@ -68,17 +68,17 @@ object Message {
     if (StringUtils.isEmpty(method)) {
       Thread.currentThread().getStackTrace.find(_.getClassName.toLowerCase.endsWith("restfulapi")).foreach {
         stack => {
-            val httpRequest: HttpServletRequest = getCurrentHttpRequest
-            if (httpRequest!=null) {
-              val pathInfo = httpRequest.getPathInfo;
-              if (pathInfo!=null) {
-                  val method = if (pathInfo.startsWith("/")) "/api" + pathInfo else "/api/" + pathInfo
-                  return new Message(method, status, message, data)
-              } else {
-                warn("get HttpServletRequest pathInfo is null,please check it!")
-              }
+          val httpRequest: HttpServletRequest = getCurrentHttpRequest
+          if (httpRequest!=null) {
+            val pathInfo = httpRequest.getPathInfo;
+            if (pathInfo!=null) {
+              val method = if (pathInfo.startsWith("/")) "/api" + pathInfo else "/api/" + pathInfo
+              return new Message(method, status, message, data)
+            } else {
+              warn("get HttpServletRequest pathInfo is null,please check it!")
             }
           }
+        }
       }
     }
     new Message(method, status, message, data)

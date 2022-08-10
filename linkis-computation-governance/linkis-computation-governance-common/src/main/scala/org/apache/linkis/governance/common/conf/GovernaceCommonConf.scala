@@ -53,6 +53,8 @@ object GovernanceCommonConf {
 
   val ENGINECONN_ENVKEYS = CommonVars("wds.linkis.engineconn.env.keys", "").getValue
 
+  val ERROR_CODE_DESC_LEN = CommonVars("linkis.error.code.desc.len", 512, "Error code description maximum length").getValue
+
   def getEngineEnvValue(envKey: String): String = {
     CommonVars(envKey, "").getValue
   }

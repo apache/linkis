@@ -145,10 +145,6 @@ class EntranceWebSocketService extends ServerEventService with EntranceEventList
       LogUtils.generateInfo(s"Your job's execution code is (after variable substitution and code check) "))
     entranceServer.getEntranceContext.getOrCreateLogManager().onLogUpdate(job,
       "************************************SCRIPT CODE************************************")
-    val jobGroups = job.asInstanceOf[EntranceJob].getJobGroups
-    jobGroups.foreach(subJobInfo => {
-      entranceServer.getEntranceContext.getOrCreateLogManager().onLogUpdate(job, subJobInfo.getCode)
-    })
     entranceServer.getEntranceContext.getOrCreateLogManager().onLogUpdate(job,
       "************************************SCRIPT CODE************************************")
     entranceServer.getEntranceContext.getOrCreateLogManager().onLogUpdate(job,

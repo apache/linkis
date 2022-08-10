@@ -50,6 +50,6 @@ object TrinoConfiguration {
   val TRINO_SSL_TRUSTSTORE_TYPE = CommonVars[String]("wds.linkis.trino.ssl.truststore.type", null)
   val TRINO_SSL_TRUSTSTORE_PASSWORD = CommonVars[String]("wds.linkis.trino.ssl.truststore.password", null)
 
-  val TRINO_FORBID_GRANT = CommonVars[Boolean]("wds.linkis.trino.forbid.grant", false)
-  val TRINO_FORBID_MODIFY_SCHEMA = CommonVars[Boolean]("wds.linkis.trino.forbid.modifySchema", false)
+  val TRINO_FORBID_GRANT = CommonVars[Boolean]("wds.linkis.trino.forbid.grant", true)
+  val TRINO_FORBID_MODIFY_SCHEMA = CommonVars[Boolean]("wds.linkis.trino.forbid.modifySchema", true)
 }

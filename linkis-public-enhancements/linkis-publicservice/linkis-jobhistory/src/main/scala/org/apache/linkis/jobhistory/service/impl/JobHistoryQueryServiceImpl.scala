@@ -22,9 +22,11 @@ import com.google.common.collect.Iterables
 import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.governance.common.constant.job.JobRequestConstants
 import org.apache.linkis.governance.common.entity.job.{JobRequest, JobRequestWithDetail, QueryException, SubJobDetail}
 import org.apache.linkis.governance.common.protocol.job._
+import org.apache.linkis.jobhistory.conf.JobhistoryConfiguration
 import org.apache.linkis.jobhistory.conversions.TaskConversions._
 import org.apache.linkis.jobhistory.dao.{JobDetailMapper, JobHistoryMapper}
 import org.apache.linkis.jobhistory.entity.{JobHistory, QueryJobHistory}
@@ -48,8 +50,6 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
 
   @Autowired
   private var jobHistoryMapper: JobHistoryMapper = _
-  @Autowired
-  private var jobDetailMapper: JobDetailMapper = _
 
   private val unDoneTaskCache: Cache[String, Integer] = CacheBuilder.newBuilder().concurrencyLevel(5)
     .expireAfterWrite(1, TimeUnit.MINUTES)
@@ -88,9 +88,9 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
     val jobResp = new JobRespProtocol
     Utils.tryCatch {
       if (jobReq.getErrorDesc != null) {
-        if (jobReq.getErrorDesc.length > 256) {
+        if (jobReq.getErrorDesc.length > GovernanceCommonConf.ERROR_CODE_DESC_LEN) {
           logger.info(s"errorDesc is too long,we will cut some message")
-          jobReq.setErrorDesc(jobReq.getErrorDesc.substring(0, 256))
+          jobReq.setErrorDesc(jobReq.getErrorDesc.substring(0, GovernanceCommonConf.ERROR_CODE_DESC_LEN))
           logger.info(s"${jobReq.getErrorDesc}")
         }
       }
@@ -134,9 +134,9 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
           val jobResp = new JobRespProtocol
           Utils.tryCatch {
             if (jobReq.getErrorDesc != null) {
-              if (jobReq.getErrorDesc.length > 256) {
+              if (jobReq.getErrorDesc.length > GovernanceCommonConf.ERROR_CODE_DESC_LEN) {
                 logger.info(s"errorDesc is too long,we will cut some message")
-                jobReq.setErrorDesc(jobReq.getErrorDesc.substring(0, 256))
+                jobReq.setErrorDesc(jobReq.getErrorDesc.substring(0, GovernanceCommonConf.ERROR_CODE_DESC_LEN))
                 logger.info(s"${jobReq.getErrorDesc}")
               }
             }
@@ -183,7 +183,9 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
       val tasksWithDetails = new util.ArrayList[JobRequestWithDetail]
       task.asScala.foreach(job => {
         val subJobDetails = new util.ArrayList[SubJobDetail]()
-        jobDetailMapper.selectJobDetailByJobHistoryId(job.getId).asScala.foreach(job => subJobDetails.add(jobdetail2SubjobDetail(job)))
+        val subJobDetail = new SubJobDetail
+        subJobDetail.setResultLocation(job.getResultLocation)
+        subJobDetails.add(subJobDetail)
         tasksWithDetails.add(new JobRequestWithDetail(jobHistory2JobRequest(job)).setSubJobDetailList(subJobDetails))
       })
       val map = new util.HashMap[String, Object]()

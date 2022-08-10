@@ -19,7 +19,6 @@ package org.apache.linkis.entrance.job;
 
 import org.apache.linkis.common.log.LogUtils;
 import org.apache.linkis.common.utils.ByteTimeUtils;
-import org.apache.linkis.entrance.exception.EntranceErrorCode;
 import org.apache.linkis.entrance.exception.EntranceErrorException;
 import org.apache.linkis.entrance.execute.EntranceJob;
 import org.apache.linkis.entrance.log.LogHandler;
@@ -30,19 +29,13 @@ import org.apache.linkis.entrance.log.WebSocketLogWriter;
 import org.apache.linkis.entrance.persistence.PersistenceManager;
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf;
 import org.apache.linkis.governance.common.constant.job.JobRequestConstants;
-import org.apache.linkis.governance.common.entity.job.SubJobDetail;
-import org.apache.linkis.governance.common.entity.job.SubJobInfo;
 import org.apache.linkis.governance.common.protocol.task.RequestTask$;
-import org.apache.linkis.governance.common.utils.GovernanceConstant;
 import org.apache.linkis.manager.label.entity.Label;
-import org.apache.linkis.manager.label.entity.entrance.BindEngineLabel;
 import org.apache.linkis.orchestrator.plans.ast.QueryParams$;
 import org.apache.linkis.protocol.constants.TaskConstant;
-import org.apache.linkis.protocol.engine.JobProgressInfo;
 import org.apache.linkis.protocol.utils.TaskUtils;
 import org.apache.linkis.scheduler.executer.ExecuteRequest;
 import org.apache.linkis.scheduler.queue.JobInfo;
-import org.apache.linkis.scheduler.queue.SchedulerEventState;
 
 import org.apache.commons.io.IOUtils;
 
@@ -52,7 +45,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -69,7 +61,6 @@ public class EntranceExecutionJob extends EntranceJob implements LogHandler {
     private WebSocketLogWriter webSocketLogWriter;
     private static final Logger logger = LoggerFactory.getLogger(EntranceExecutionJob.class);
     private PersistenceManager persistenceManager;
-    private int runningIndex = 0;
 
     public EntranceExecutionJob(PersistenceManager persistenceManager) {
         this.persistenceManager = persistenceManager;
@@ -121,57 +112,7 @@ public class EntranceExecutionJob extends EntranceJob implements LogHandler {
 
     @Override
     public void init() throws EntranceErrorException {
-        List<EntranceErrorException> errList = new ArrayList<>();
-        SubJobInfo[] subJobInfos =
-                Arrays.stream(getCodeParser().parse(getJobRequest().getExecutionCode()))
-                        .map(
-                                code -> {
-                                    SubJobInfo subJobInfo = new SubJobInfo();
-                                    // todo don't need whole jobRequest, but need executeUser
-                                    subJobInfo.setJobReq(getJobRequest());
-                                    subJobInfo.setStatus(SchedulerEventState.Inited().toString());
-                                    subJobInfo.setCode(code);
-                                    // persist and update jobDetail
-                                    SubJobDetail subJobDetail = createNewJobDetail();
-                                    subJobInfo.setSubJobDetail(subJobDetail);
-                                    subJobInfo.setProgress(0.0f);
-                                    subJobDetail.setExecutionContent(code);
-                                    subJobDetail.setJobGroupId(getJobRequest().getId());
-                                    subJobDetail.setStatus(SchedulerEventState.Inited().toString());
-                                    subJobDetail.setCreatedTime(
-                                            new Date(System.currentTimeMillis()));
-                                    subJobDetail.setUpdatedTime(
-                                            new Date(System.currentTimeMillis()));
-                                    try {
-                                        persistenceManager
-                                                .createPersistenceEngine()
-                                                .persist(subJobInfo);
-                                    } catch (Exception e1) {
-                                        errList.add(
-                                                new EntranceErrorException(
-                                                        EntranceErrorCode.INIT_JOB_ERROR
-                                                                .getErrCode(),
-                                                        "Init subjob error, please submit it again(任务初始化失败，请稍后重试). "
-                                                                + e1.getMessage()));
-                                    }
-                                    return subJobInfo;
-                                })
-                        .toArray(SubJobInfo[]::new);
-        if (errList.size() > 0) {
-            logger.error(errList.get(0).getDesc());
-            throw errList.get(0);
-        }
-        setJobGroups(subJobInfos);
         updateNewestAccessByClientTimestamp();
-    }
-
-    @Override
-    public SubJobInfo getRunningSubJob() {
-        if (runningIndex < getJobGroups().length) {
-            return getJobGroups()[runningIndex];
-        } else {
-            return null;
-        }
     }
 
     @Override
@@ -212,71 +153,9 @@ public class EntranceExecutionJob extends EntranceJob implements LogHandler {
         runtimeMapOri.put(QueryParams$.MODULE$.JOB_KEY(), jobMap);
 
         EntranceExecuteRequest executeRequest = new EntranceExecuteRequest(this);
-        boolean isCompleted = true;
-        boolean isHead = false;
-        boolean isTail = false;
-        if (null != jobGroups() && jobGroups().length > 0) {
-            for (int i = 0; i < jobGroups().length; i++) {
-                if (null != jobGroups()[i].getSubJobDetail()) {
-                    SubJobDetail subJobDetail = jobGroups()[i].getSubJobDetail();
-                    if (SchedulerEventState.isCompletedByStr(subJobDetail.getStatus())) {
-                        continue;
-                    } else {
-                        isCompleted = false;
-                        executeRequest.setExecutionCode(i);
-                        runningIndex = i;
-                        subJobDetail.setPriority(i);
-                        break;
-                    }
-                } else {
-                    throw new EntranceErrorException(
-                            EntranceErrorCode.EXECUTE_REQUEST_INVALID.getErrCode(),
-                            "Subjob was not inited, please submit again.");
-                }
-            }
-            if (0 == runningIndex) {
-                isHead = true;
-            } else {
-                isHead = false;
-            }
-            if (runningIndex >= jobGroups().length - 1) {
-                isTail = true;
-            } else {
-                isTail = false;
-            }
-        } else {
-            isHead = true;
-            isTail = true;
-        }
-        BindEngineLabel bindEngineLabel =
-                new BindEngineLabel()
-                        .setJobGroupId(getJobRequest().getId().toString())
-                        .setIsJobGroupHead(String.valueOf(isHead))
-                        .setIsJobGroupEnd(String.valueOf(isTail));
-        if (isHead) {
-            jobMap.put(GovernanceConstant.RESULTSET_INDEX(), 0);
-            setResultSize(0);
-        } else {
-            jobMap.put(GovernanceConstant.RESULTSET_INDEX(), addAndGetResultSize(0));
-        }
-        List<Label<?>> labels = new ArrayList<Label<?>>();
-        labels.addAll(getJobRequest().getLabels());
-        labels.add(bindEngineLabel);
+        List<Label<?>> labels = new ArrayList<Label<?>>(getJobRequest().getLabels());
         executeRequest.setLabels(labels);
-        if (isCompleted) {
-            return null;
-        } else {
-            return executeRequest;
-        }
-    }
-
-    private SubJobDetail createNewJobDetail() {
-        SubJobDetail subJobDetail = new SubJobDetail();
-        subJobDetail.setUpdatedTime(subJobDetail.getCreatedTime());
-        subJobDetail.setJobGroupId(getJobRequest().getId());
-        subJobDetail.setStatus(SchedulerEventState.Scheduled().toString());
-        subJobDetail.setJobGroupInfo("");
-        return subJobDetail;
+        return executeRequest;
     }
 
     @Override
@@ -369,44 +248,5 @@ public class EntranceExecutionJob extends EntranceJob implements LogHandler {
         } catch (Exception e) {
             logger.warn("Close logWriter and logReader failed. {}", e.getMessage(), e);
         }
-    }
-
-    @Override
-    public float getProgress() {
-        float progress = super.getProgress();
-        SubJobInfo[] subJobInfoArray;
-        if (progress < 1.0 && (subJobInfoArray = getJobGroups()).length > 0) {
-            int groupCount = subJobInfoArray.length;
-            float progressValueSum = 0.0f;
-            for (SubJobInfo subJobInfo : subJobInfoArray) {
-                progressValueSum += subJobInfo.getProgress();
-            }
-            return progressValueSum / (float) groupCount;
-        }
-        return progress;
-    }
-
-    /**
-     * // The front end needs to obtain data //if (EntranceJob.JOB_COMPLETED_PROGRESS() ==
-     * getProgress()) { // return new JobProgressInfo[0]; //}
-     *
-     * @return
-     */
-    @Override
-    public JobProgressInfo[] getProgressInfo() {
-        SubJobInfo[] subJobInfoArray = getJobGroups();
-        if (subJobInfoArray.length > 0) {
-            List<JobProgressInfo> progressInfoList = new ArrayList<>();
-            for (SubJobInfo subJobInfo : subJobInfoArray) {
-                progressInfoList.addAll(subJobInfo.getProgressInfoMap().values());
-            }
-            return progressInfoList.toArray(new JobProgressInfo[] {});
-        }
-        return super.getProgressInfo();
-    }
-
-    @Override
-    public int getRunningSubJobIndex() {
-        return runningIndex;
     }
 }

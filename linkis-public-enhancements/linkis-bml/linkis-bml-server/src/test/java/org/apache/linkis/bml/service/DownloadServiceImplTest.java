@@ -1,4 +1,3 @@
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -17,43 +16,31 @@
  */
 
 package org.apache.linkis.bml.service;
- 
-import org.apache.linkis.bml.Scan;
+
 import org.apache.linkis.bml.dao.DownloadDao;
 import org.apache.linkis.bml.entity.DownloadModel;
 import org.apache.linkis.bml.service.impl.DownloadServiceImpl;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 
-/** 
- * DownloadServiceImpl Tester
-*/
+/** DownloadServiceImpl Tester */
 @ExtendWith(MockitoExtension.class)
 public class DownloadServiceImplTest {
 
-    @InjectMocks
-    private DownloadServiceImpl downloadServiceImpl;
+    @InjectMocks private DownloadServiceImpl downloadServiceImpl;
 
-    @Mock
-    private DownloadDao downloadDao;
+    @Mock private DownloadDao downloadDao;
 
     @Test
-    public void testAddDownloadRecord() throws Exception { 
-        //TODO: Test goes here...
+    public void testAddDownloadRecord() throws Exception {
+        // TODO: Test goes here...
         DownloadModel downloadModel = new DownloadModel();
         downloadModel.setDownloader("test");
         downloadModel.setClientIp("192.143.253");
@@ -65,7 +52,5 @@ public class DownloadServiceImplTest {
         downloadModel.setResourceId("32");
         Mockito.doNothing().when(downloadDao).insertDownloadModel(downloadModel);
         downloadServiceImpl.addDownloadRecord(downloadModel);
-    } 
- 
- 
-} 
+    }
+}

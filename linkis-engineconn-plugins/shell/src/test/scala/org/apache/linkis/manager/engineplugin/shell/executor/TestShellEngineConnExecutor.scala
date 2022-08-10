@@ -28,6 +28,7 @@ class TestShellEngineConnExecutor {
     val isWindows = System.getProperty("os.name").startsWith("Windows")
 
     System.setProperty("wds.linkis.server.version", "v1")
+    System.setProperty("HADOOP_CONF_DIR", "./")
     System.setProperty("wds.linkis.engineconn.plugin.default.class", "org.apache.linkis.manager.engineplugin.shell.ShellEngineConnPlugin")
     val map = new mutable.HashMap[String, String]()
     map.put("spring.mvc.servlet.path", "/api/rest_j/v1")

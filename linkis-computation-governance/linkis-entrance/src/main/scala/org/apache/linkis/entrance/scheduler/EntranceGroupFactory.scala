@@ -118,6 +118,9 @@ class EntranceGroupFactory extends GroupFactory with Logging {
   private def getUserMaxRunningJobs(keyAndValue: util.Map[String, String]): Int = {
     var userDefinedRunningJobs = EntranceConfiguration.WDS_LINKIS_INSTANCE.getValue(keyAndValue)
     var entranceNum = Sender.getInstances(Sender.getThisServiceInstance.getApplicationName).length
+    /*
+    Sender.getInstances may get 0 instances due to cache in Sender. So this instance is the one instance.
+     */
     if (0 == entranceNum) {
       entranceNum = 1
       logger.error(s"Got 0 ${Sender.getThisServiceInstance.getApplicationName} instances.")

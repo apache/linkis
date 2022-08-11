@@ -64,7 +64,7 @@ class DriverAndYarnReqResourceService(labelResourceService: LabelResourceService
             RMUtils.getResourceInfoMsg(RMConstant.CPU, RMConstant.CPU_UNIT, yarn.queueCores, yarnAvailable.queueCores, maxYarn.queueCores))
         } else if (yarn.queueMemory > yarnAvailable.queueMemory) {
           (RMErrorCode.CLUSTER_QUEUE_MEMORY_INSUFFICIENT.getCode, RMErrorCode.CLUSTER_QUEUE_MEMORY_INSUFFICIENT.getMessage +
-            RMUtils.getResourceInfoMsg(RMConstant.MEMORY, RMConstant.MEMORY_UNIT, yarn.queueMemory, yarnAvailable.queueMemory, maxYarn.queueMemory))
+            RMUtils.getResourceInfoMsg(RMConstant.MEMORY, RMConstant.MEMORY_UNIT_BYTE, yarn.queueMemory, yarnAvailable.queueMemory, maxYarn.queueMemory))
         } else {
           (RMErrorCode.CLUSTER_QUEUE_INSTANCES_INSUFFICIENT.getCode, RMErrorCode.CLUSTER_QUEUE_INSTANCES_INSUFFICIENT.getMessage +
             RMUtils.getResourceInfoMsg(RMConstant.APP_INSTANCE, RMConstant.INSTANCE_UNIT, yarn.queueInstances, yarnAvailable.queueInstances, maxYarn.queueInstances))

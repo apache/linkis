@@ -27,7 +27,7 @@ public class RMConstant {
 
     public static final String CPU_UNIT = "cores";
 
-    public static final String MEMORY_UNIT = "bytes";
+    public static final String MEMORY_UNIT_BYTE = "bytes";
 
     public static final String INSTANCE_UNIT = "";
 }

@@ -18,7 +18,8 @@
 package org.apache.linkis.manager.rm.utils
 
 import org.apache.linkis.common.conf.{CommonVars, Configuration, TimeType}
-import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.common.utils.{ByteTimeUtils, Logging, Utils}
+import org.apache.linkis.manager.common.constant.RMConstant
 import org.apache.linkis.manager.common.entity.persistence.PersistenceResource
 import org.apache.linkis.manager.common.entity.resource._
 import org.apache.linkis.manager.common.serializer.NodeResourceSerializer
@@ -144,10 +145,25 @@ object RMUtils extends Logging {
   }
 
   def getResourceInfoMsg(resourceType: String, unitType: String, requestResource: Any, availableResource: Any, maxResource: Any): String = {
-    val reqMsg = if (null == requestResource) "null" else requestResource.toString
-    val availMsg = if (null == availableResource) "null" else availableResource.toString
-    val maxMsg = if (null == maxResource) "null" else maxResource.toString
-    s" user ${resourceType}, requestResource : ${requestResource}${unitType} > availableResource : ${availableResource}${unitType},  maxResource : ${maxResource}${unitType}."
+
+    def dealMemory(resourceType: String, unitType: String, resource: Any): String = {
+      if (RMConstant.MEMORY.equals(resourceType) && RMConstant.MEMORY_UNIT_BYTE.equals(unitType)) {
+        Utils.tryCatch {
+          ByteTimeUtils.byteStringAsGb(resource.toString).toString + "GB"
+        } {
+          case e: Exception =>
+            logger.error(s"Cannot convert ${resource} to Gb, " + e.getMessage)
+            resource.toString + unitType
+        }
+      } else {
+        resource.toString + unitType
+      }
+    }
+
+    val reqMsg = if (null == requestResource) "null" + unitType else dealMemory(resourceType, unitType, requestResource)
+    val availMsg = if (null == availableResource) "null" + unitType else dealMemory(resourceType, unitType, availableResource.toString)
+    val maxMsg = if (null == maxResource) "null" + unitType else dealMemory(resourceType, unitType, maxResource.toString)
+    s" user ${resourceType}, requestResource : ${requestResource} > availableResource : ${availableResource},  maxResource : ${maxResource}."
   }
 
 }

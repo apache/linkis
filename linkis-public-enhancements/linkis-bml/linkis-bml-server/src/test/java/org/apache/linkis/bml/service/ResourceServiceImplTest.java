@@ -179,5 +179,4 @@ public class ResourceServiceImplTest {
         String otherUser = "otherUser";
         resourceServiceImpl.copyResourceToOtherUser(resourceId, otherUser);
     }
-
 }

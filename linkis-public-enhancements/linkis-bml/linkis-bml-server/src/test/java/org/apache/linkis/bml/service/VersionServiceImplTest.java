@@ -135,16 +135,10 @@ public class VersionServiceImplTest {
     }
 
     @Test
-    @DisplayName("Method description: ...")
-    public void testGetVersions() throws Exception {
-        // TODO: Test goes here...
-    }
+    public void testGetVersions() throws Exception {}
 
     @Test
-    @DisplayName("Method description: ...")
-    public void testSelectVersionByPage() throws Exception {
-        // TODO: Test goes here...
-    }
+    public void testSelectVersionByPage() throws Exception {}
 
     @Test
     public void testGetAllResourcesViaSystem() throws Exception {

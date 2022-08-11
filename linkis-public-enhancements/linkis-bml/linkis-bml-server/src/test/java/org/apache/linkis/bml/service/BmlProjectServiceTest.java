@@ -46,13 +46,6 @@ public class BmlProjectServiceTest {
 
     @Mock private BmlProjectDao bmlProjectDao;
 
-    @BeforeEach
-    @DisplayName("Each unit test method is executed once before execution")
-    public void before() throws Exception {}
-
-    @AfterEach
-    @DisplayName("Each unit test method is executed once before execution")
-    public void after() throws Exception {}
 
     public BmlProject addBmlProject() {
         BmlProject bmlProject = new BmlProject();
@@ -68,10 +61,7 @@ public class BmlProjectServiceTest {
     }
 
     @Test
-    @DisplayName("Method description: ...")
     public void testCreateBmlProject() throws Exception {
-        // TODO: Test goes here...
-
         /*String projectName = "testName1";
         String creator = "creCreatorUser1";
         List<String> editUsers = new ArrayList<>();
@@ -93,9 +83,7 @@ public class BmlProjectServiceTest {
     }
 
     @Test
-    @DisplayName("Method description: ...")
     public void testCheckEditPriv() throws Exception {
-        // TODO: Test goes here...
         String projectName = "testProjectName";
         String username = "testUsername";
         Mockito.when(bmlProjectDao.getPrivInProject(projectName, username)).thenReturn(6);
@@ -104,9 +92,7 @@ public class BmlProjectServiceTest {
     }
 
     @Test
-    @DisplayName("Method description: ...")
     public void testCheckAccessPriv() throws Exception {
-        // TODO: Test goes here...
         String projectName = "testProjectName";
         String username = "testUsername";
         Mockito.when(bmlProjectDao.getPrivInProject(projectName, username)).thenReturn(4);
@@ -115,9 +101,8 @@ public class BmlProjectServiceTest {
     }
 
     @Test
-    @DisplayName("Method description: ...")
+
     public void testSetProjectEditPriv() throws Exception {
-        // TODO: Test goes here...
         String projectName = "testName";
         List<String> editUsers = new ArrayList<>();
         BmlProject bmlProject = addBmlProject();
@@ -126,21 +111,18 @@ public class BmlProjectServiceTest {
     }
 
     @Test
-    @DisplayName("Method description: ...")
     public void testAddProjectEditPriv() throws Exception {
-        // TODO: Test goes here...
+
     }
 
     @Test
-    @DisplayName("Method description: ...")
+
     public void testDeleteProjectEditPriv() throws Exception {
-        // TODO: Test goes here...
+
     }
 
     @Test
-    @DisplayName("Method description: ...")
     public void testSetProjectAccessPriv() throws Exception {
-        // TODO: Test goes here...
         String projectName = "testName";
         List<String> editUsers = new ArrayList<>();
         BmlProject bmlProject = addBmlProject();
@@ -149,21 +131,17 @@ public class BmlProjectServiceTest {
     }
 
     @Test
-    @DisplayName("Method description: ...")
     public void testAddProjectAccessPriv() throws Exception {
-        // TODO: Test goes here...
+
     }
 
     @Test
-    @DisplayName("Method description: ...")
     public void testDeleteProjectAccessPriv() throws Exception {
-        // TODO: Test goes here...
+
     }
 
     @Test
-    @DisplayName("Method description: ...")
     public void testGetProjectNameByResourceId() throws Exception {
-        // TODO: Test goes here...
         String resourceId = "123";
         Mockito.when(bmlProjectDao.getProjectNameByResourceId(resourceId)).thenReturn("testName");
         String projectName = bmlProjectService.getProjectNameByResourceId(resourceId);
@@ -171,9 +149,7 @@ public class BmlProjectServiceTest {
     }
 
     @Test
-    @DisplayName("Method description: ...")
     public void testAddProjectResource() throws Exception {
-        // TODO: Test goes here...
         String resourceId = "123";
         String projectName = "testName";
         BmlProject bmlProject = addBmlProject();
@@ -182,9 +158,7 @@ public class BmlProjectServiceTest {
     }
 
     @Test
-    @DisplayName("Method description: ...")
     public void testAttach() throws Exception {
-        // TODO: Test goes here...
         String projectName = "testName";
         String resourceId = "123";
         Mockito.when(bmlProjectDao.getProjectIdByName(projectName)).thenReturn(1);
@@ -193,9 +167,7 @@ public class BmlProjectServiceTest {
     }
 
     @Test
-    @DisplayName("Method description: ...")
     public void testUpdateProjectUsers() throws Exception {
-        // TODO: Test goes here...
         String username = "testUsername";
         String projectName = "testName";
         List<String> editUsers = new ArrayList<>();

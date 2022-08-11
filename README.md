@@ -78,8 +78,7 @@ Please go to the [Linkis Releases Page](https://linkis.apache.org/download/main)
 # Compile and Deploy
 
 > For more detailed guidance see:
->[[Backend Compile]](https://linkis.apache.org/zh-CN/docs/latest/development/linkis_compile_and_package)
->[[Management Console Build]](https://linkis.apache.org/zh-CN/docs/latest/development/web_build)
+>[[Compile]](https://linkis.apache.org/docs/latest/development/linkis-compile-and-package)
 
 ```shell
 
@@ -108,7 +107,7 @@ npm install
 npm run build
 ```
  
-Please refer to [Quick Deployment](https://linkis.apache.org/docs/latest/deployment/quick_deploy) to do the deployment.
+Please refer to [Quick Deployment](https://linkis.apache.org/docs/latest/deployment/quick-deploy) to do the deployment.
 
 # Examples and Guidance
 - [User Manual](https://linkis.apache.org/docs/latest/user_guide/overview)

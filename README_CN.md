@@ -70,8 +70,8 @@ Linkis 自2019年开源发布以来，已累计积累了700多家试验企业和
 # 编译和安装部署
 
 > 更详细的步骤参见:
->[后端编译打包](https://linkis.apache.org/zh-CN/docs/latest/development/linkis_compile_and_package)
->[管理台编译](https://linkis.apache.org/zh-CN/docs/latest/development/web_build)
+>[后端编译打包](https://linkis.apache.org/zh-CN/docs/latest/development/linkis-compile-and-package)
+>[管理台编译](https://linkis.apache.org/zh-CN/docs/latest/development/web-build)
 
 ```shell script
 ## 后端编译
@@ -90,7 +90,7 @@ npm install
 npm run build
 ```
 
-请参考[快速安装部署](https://linkis.apache.org/zh-CN/docs/latest/deployment/quick_deploy) 来部署Linkis
+请参考[快速安装部署](https://linkis.apache.org/zh-CN/docs/latest/deployment/quick-deploy) 来部署Linkis
 
 # 示例和使用指引
 

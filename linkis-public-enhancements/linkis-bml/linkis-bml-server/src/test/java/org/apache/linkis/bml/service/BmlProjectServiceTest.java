@@ -21,9 +21,6 @@ import org.apache.linkis.bml.dao.BmlProjectDao;
 import org.apache.linkis.bml.entity.BmlProject;
 import org.apache.linkis.bml.service.impl.BmlProjectServiceImpl;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -45,7 +42,6 @@ public class BmlProjectServiceTest {
     @InjectMocks private BmlProjectServiceImpl bmlProjectService;
 
     @Mock private BmlProjectDao bmlProjectDao;
-
 
     public BmlProject addBmlProject() {
         BmlProject bmlProject = new BmlProject();
@@ -101,7 +97,6 @@ public class BmlProjectServiceTest {
     }
 
     @Test
-
     public void testSetProjectEditPriv() throws Exception {
         String projectName = "testName";
         List<String> editUsers = new ArrayList<>();
@@ -111,15 +106,10 @@ public class BmlProjectServiceTest {
     }
 
     @Test
-    public void testAddProjectEditPriv() throws Exception {
-
-    }
+    public void testAddProjectEditPriv() throws Exception {}
 
     @Test
-
-    public void testDeleteProjectEditPriv() throws Exception {
-
-    }
+    public void testDeleteProjectEditPriv() throws Exception {}
 
     @Test
     public void testSetProjectAccessPriv() throws Exception {
@@ -131,14 +121,10 @@ public class BmlProjectServiceTest {
     }
 
     @Test
-    public void testAddProjectAccessPriv() throws Exception {
-
-    }
+    public void testAddProjectAccessPriv() throws Exception {}
 
     @Test
-    public void testDeleteProjectAccessPriv() throws Exception {
-
-    }
+    public void testDeleteProjectAccessPriv() throws Exception {}
 
     @Test
     public void testGetProjectNameByResourceId() throws Exception {

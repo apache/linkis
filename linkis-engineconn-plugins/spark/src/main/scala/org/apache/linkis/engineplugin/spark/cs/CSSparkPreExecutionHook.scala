@@ -17,7 +17,7 @@
  
 package org.apache.linkis.engineplugin.spark.cs
 
-import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.cs.client.utils.ContextServiceUtils
 import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
 import org.apache.linkis.engineconn.core.exception.{EngineConnErrorCode, ExecutorHookFatalException}
@@ -45,9 +45,9 @@ class CSSparkPreExecutionHook extends SparkPreExecutionHook with Logging{
     val contextIDValueStr = ContextServiceUtils.getContextIDStrByMap(engineExecutionContext.getProperties)
     val nodeNameStr = ContextServiceUtils.getNodeNameStrByMap(engineExecutionContext.getProperties)
     logger.info(s"Start to call CSSparkPreExecutionHook,contextID is $contextIDValueStr, nodeNameStr is $nodeNameStr")
-    parsedCode = try {
+    parsedCode = Utils.tryCatch {
       CSTableParser.parse(engineExecutionContext, parsedCode, contextIDValueStr, nodeNameStr)
-    } catch {
+    } {
       case t: Throwable =>
         val msg = if (null != t) {
           t.getMessage

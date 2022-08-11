@@ -80,13 +80,6 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long) extends C
     engineExecutorContext.appendStdout(LogUtils.generateInfo(s"yarn application id: ${sc.applicationId}"))
     //Pre-execution hook
     var executionHook: SparkPreExecutionHook = null
-    def getHookName(executeHook: SparkPreExecutionHook): String = {
-      if (null == executionHook) {
-        "empty hook"
-      } else {
-        executionHook.getClass.getName
-      }
-    }
     Utils.tryCatch {
       SparkPreExecutionHook.getSparkPreExecutionHooks().foreach(hook => {
         executionHook = hook
@@ -125,6 +118,14 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long) extends C
     response
   } {
     this.engineExecutionContext = null
+  }
+
+  private def getHookName(executeHook: SparkPreExecutionHook): String = {
+    if (null == executeHook) {
+      "empty hook"
+    } else {
+      executeHook.getClass.getName
+    }
   }
 
   override def executeCompletely(engineExecutorContext: EngineExecutionContext, code: String, completedLine: String): ExecuteResponse = {

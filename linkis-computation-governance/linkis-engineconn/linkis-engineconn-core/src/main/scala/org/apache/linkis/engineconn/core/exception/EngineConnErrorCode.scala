@@ -21,4 +21,5 @@ object EngineConnErrorCode {
 
   val ENGINE_CONN_UN_INIT_CODE = 12100
 
+  val ENGINE_CONN_EXECUTOR_INIT_ERROR = 12101
 }

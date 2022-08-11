@@ -29,7 +29,7 @@ import scala.collection.JavaConversions._
 
 object LogHelper extends Logging {
 
-  val SEND_LOG_INTERVAL = 10 * 1000
+  val SEND_LOG_INTERVAL_MILLS = 10 * 1000
 
   val logCache = new MountLogCache(AccessibleExecutorConfiguration.ENGINECONN_LOG_CACHE_NUM.getValue)
 
@@ -37,7 +37,7 @@ object LogHelper extends Logging {
 
   private val CACHE_SIZE = AccessibleExecutorConfiguration.ENGINECONN_LOG_SEND_SIZE.getValue
 
-  private var timecount = 0
+  private var lastUpdateTimeMills = System.currentTimeMillis()
 
   def setLogListener(logListener: LogListener): Unit = this.logListener = logListener
 
@@ -82,15 +82,14 @@ object LogHelper extends Logging {
         return
       } else {
         val reachRegularInterval = {
-          if (SEND_LOG_INTERVAL <= AccessibleExecutorConfiguration.ENGINECONN_LOG_SEND_TIME_INTERVAL.getValue) {
-            logger.warn(s"EngineConn send log interval : ${AccessibleExecutorConfiguration.ENGINECONN_LOG_SEND_TIME_INTERVAL.getValue}ms is longer than regular interval : ${SEND_LOG_INTERVAL}ms")
+          if (SEND_LOG_INTERVAL_MILLS <= AccessibleExecutorConfiguration.ENGINECONN_LOG_SEND_TIME_INTERVAL.getValue) {
+            logger.warn(s"EngineConn send log interval : ${AccessibleExecutorConfiguration.ENGINECONN_LOG_SEND_TIME_INTERVAL.getValue}ms is longer than regular interval : ${SEND_LOG_INTERVAL_MILLS}ms")
             false
           } else {
-            if (timecount >= SEND_LOG_INTERVAL) {
-              timecount = 0
+            if (System.currentTimeMillis() - lastUpdateTimeMills >= SEND_LOG_INTERVAL_MILLS) {
+              lastUpdateTimeMills = System.currentTimeMillis()
               true
             } else {
-              timecount = timecount + AccessibleExecutorConfiguration.ENGINECONN_LOG_SEND_TIME_INTERVAL.getValue
               false
             }
           }

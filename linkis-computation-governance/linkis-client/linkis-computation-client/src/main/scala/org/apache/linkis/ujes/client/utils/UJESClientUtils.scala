@@ -25,6 +25,7 @@ object UJESClientUtils {
     case "hive" => EngineType.HIVE
     case "shell" => EngineType.SHELL
     case "python" => EngineType.PYTHON
+    case "trino" => EngineType.TRINO
     case _ => EngineType.SPARK
   }
 
@@ -42,6 +43,7 @@ object UJESClientUtils {
     case "hql" => EngineType.HIVE.HQL
     case "shell" => EngineType.SHELL.SH
     case "python" => EngineType.PYTHON.PY
+    case "tsql" => EngineType.TRINO.TSQL
     case _ => EngineType.SPARK.SQL
   }
 

@@ -401,7 +401,6 @@ class TaskExecutionServiceImpl extends TaskExecutionService with Logging with Re
     } else {
       logger.error(s"Kill failed, got invalid executor : null for taskId : ${taskID}")
     }
-    Utils.tryAndWarn(Thread.sleep(50))
     if (null != lastTask && lastTask.getTaskId.equalsIgnoreCase(taskID)) {
       if (null != lastTaskFuture && !lastTaskFuture.isDone) {
         Utils.tryAndWarn {

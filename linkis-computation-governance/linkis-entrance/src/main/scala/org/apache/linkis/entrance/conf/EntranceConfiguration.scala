@@ -85,6 +85,8 @@ object EntranceConfiguration {
     */
   val WDS_LINKIS_INSTANCE = CommonVars("wds.linkis.rm.instance", 10)
 
+  val ENTRANCE_INSTANCE_MIN = CommonVars("wds.linkis.entrance.runningjob.min", 5)
+
   val LOG_EXCLUDE_ALL = CommonVars("wds.linkis.log.exclude.all", "com.netflix")
 
   val MAX_ASK_EXECUTOR_TIME = CommonVars("wds.linkis.max.ask.executor.time", new TimeType("5m"))

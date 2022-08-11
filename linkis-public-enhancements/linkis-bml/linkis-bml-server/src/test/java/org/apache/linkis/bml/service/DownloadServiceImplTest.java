@@ -40,7 +40,6 @@ public class DownloadServiceImplTest {
 
     @Test
     public void testAddDownloadRecord() throws Exception {
-        // TODO: Test goes here...
         DownloadModel downloadModel = new DownloadModel();
         downloadModel.setDownloader("test");
         downloadModel.setClientIp("192.143.253");

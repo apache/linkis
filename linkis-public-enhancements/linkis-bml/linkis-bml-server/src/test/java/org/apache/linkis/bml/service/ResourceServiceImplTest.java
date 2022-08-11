@@ -23,9 +23,6 @@ import org.apache.linkis.bml.entity.Resource;
 import org.apache.linkis.bml.entity.ResourceVersion;
 import org.apache.linkis.bml.service.impl.ResourceServiceImpl;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -47,15 +44,7 @@ public class ResourceServiceImplTest {
 
     @Mock private VersionDao versionDao;
 
-    @BeforeEach
-    @DisplayName("Each unit test method is executed once before execution")
-    public void before() throws Exception {}
-
-    @AfterEach
-    @DisplayName("Each unit test method is executed once before execution")
-    public void after() throws Exception {}
-
-    Resource addResource() {
+    Resource buildResource() {
         Resource resource = new Resource();
         resource.setResourceId("123");
         resource.setResourceHeader("2");
@@ -73,13 +62,12 @@ public class ResourceServiceImplTest {
 
     @Test
     public void testGetResources() throws Exception {
-        // TODO: Test goes here...
         Map paramMap = new HashMap();
         paramMap.put("resource_id", "1");
         paramMap.put("owner", "owner");
         paramMap.put("sys", "sys");
         List<Resource> list = new ArrayList<>();
-        list.add(addResource());
+        list.add(buildResource());
         Mockito.when(resourceDao.getResources(paramMap)).thenReturn(list);
         List<Resource> resourceList = resourceServiceImpl.getResources(paramMap);
         assertTrue(resourceList.size() > 0);
@@ -87,14 +75,12 @@ public class ResourceServiceImplTest {
 
     @Test
     public void testDeleteResource() throws Exception {
-        // TODO: Test goes here...
         String resourceId = "123";
         resourceServiceImpl.deleteResource(resourceId);
     }
 
     @Test
     public void testBatchDeleteResources() throws Exception {
-        // TODO: Test goes here...
         List<String> list = new ArrayList<>();
         list.add("123");
         list.add("234");
@@ -103,7 +89,6 @@ public class ResourceServiceImplTest {
 
     @Test
     public void testUpload() throws Exception {
-        // TODO: Test goes here...
         /*List< MultipartFile > files =new ArrayList<>();
         String user="testuser";
         Map<String, Object> properties =new HashMap<>();
@@ -111,23 +96,20 @@ public class ResourceServiceImplTest {
         ResourceHelper resourceHelper = ResourceHelperFactory.getResourceHelper();
         Mockito.when(ResourceHelperFactory.getResourceHelper()).thenReturn(resourceHelper);
         Mockito.when(resourceHelper.generatePath(user,"123",properties)).thenReturn("testpath");*/
-
     }
 
     @Test
     public void testCheckResourceId() throws Exception {
-        // TODO: Test goes here...
         String resourceId = "123";
         Mockito.when(resourceDao.checkExists(resourceId)).thenReturn(1);
-        boolean boo = resourceServiceImpl.checkResourceId(resourceId);
-        assertTrue(boo == true);
+        boolean whether = resourceServiceImpl.checkResourceId(resourceId);
+        assertTrue(whether == true);
     }
 
     @Test
     public void testGetResource() throws Exception {
-        // TODO: Test goes here...
         String resourceId = "123";
-        Resource resource = addResource();
+        Resource resource = buildResource();
         Mockito.when(resourceDao.getResource(resourceId)).thenReturn(resource);
         Resource rs = resourceServiceImpl.getResource(resourceId);
         assertTrue(rs != null);
@@ -135,37 +117,33 @@ public class ResourceServiceImplTest {
 
     @Test
     public void testCheckAuthority() throws Exception {
-        // TODO: Test goes here...
         String resourceId = "123";
         String user = "testuser";
         Mockito.when(resourceDao.getUserByResourceId(resourceId)).thenReturn("testuser");
-        boolean boo = resourceServiceImpl.checkAuthority(user, resourceId);
-        assertTrue(boo == true);
+        boolean whether = resourceServiceImpl.checkAuthority(user, resourceId);
+        assertTrue(whether == true);
     }
 
     @Test
     public void testCheckExpire() throws Exception {
-        // TODO: Test goes here...
         String resourceId = "123";
         String version = "321";
-        Resource resource = addResource();
+        Resource resource = buildResource();
         ResourceVersion resourceVersion = new ResourceVersion();
         resourceVersion.setEnableFlag(true);
         Mockito.when(resourceDao.getResource(resourceId)).thenReturn(resource);
         Mockito.when(versionDao.getResourceVersion(resourceId, version))
                 .thenReturn(resourceVersion);
-        boolean boo = resourceServiceImpl.checkExpire(resourceId, version);
-        assertTrue(boo == true);
+        boolean whether = resourceServiceImpl.checkExpire(resourceId, version);
+        assertTrue(whether == true);
     }
 
     @Test
-    public void testCleanExpiredResources() throws Exception {
-        // TODO: Test goes here...
-    }
+    public void testCleanExpiredResources() throws Exception {}
 
     @Test
     public void testChangeOwnerByResourceId() throws Exception {
-        // TODO: Test goes here...
+
         String resourceId = "123";
         String oldOwner = "oldOwnertest";
         String newOwner = "newOwnertest";
@@ -174,7 +152,7 @@ public class ResourceServiceImplTest {
 
     @Test
     public void testCopyResourceToOtherUser() throws Exception {
-        // TODO: Test goes here...
+
         String resourceId = "123";
         String otherUser = "otherUser";
         resourceServiceImpl.copyResourceToOtherUser(resourceId, otherUser);

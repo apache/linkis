@@ -20,38 +20,29 @@ package org.apache.linkis.variable.restful.api;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.MessageStatus;
 import org.apache.linkis.server.security.SecurityFilter;
-import org.apache.linkis.server.utils.ModuleUserUtils;
 import org.apache.linkis.variable.Scan;
 import org.apache.linkis.variable.WebApplicationServer;
-import org.apache.linkis.variable.entity.VarKeyValueVO;
 import org.apache.linkis.variable.restful.MvcUtils;
 import org.apache.linkis.variable.service.VariableService;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.util.MultiValueMap;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
-
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.util.MultiValueMap;
-
-import javax.servlet.http.HttpServletRequest;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.isA;
 
 /** VariableRestfulApi Tester */
 @ExtendWith({SpringExtension.class})
@@ -62,9 +53,7 @@ public class VariableRestfulApiTest {
 
     @Autowired protected MockMvc mockMvc;
 
-
-    @Mock
-    VariableService variableService;
+    @Mock VariableService variableService;
 
     private static MockedStatic<SecurityFilter> securityFilter;
 
@@ -77,7 +66,6 @@ public class VariableRestfulApiTest {
     private static void close() {
         securityFilter.close();
     }
-
 
     @Test
     public void testListGlobalVariable() throws Exception {
@@ -98,10 +86,7 @@ public class VariableRestfulApiTest {
     }
 
     @Test
-    public void testSaveGlobalVariable() throws Exception {
-
-    }
-
+    public void testSaveGlobalVariable() throws Exception {}
 
     public void sendUrl(
             String url, MultiValueMap<String, String> paramsMap, String type, String msg)

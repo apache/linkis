@@ -528,6 +528,9 @@ export default {
     },
     // 时间格式转换
     timeFormat(row) {
+      if (row.startTime.indexOf('CST') > 0) {
+        return moment(new Date(row.startTime)).utc().subtract(6, 'hour').format('YYYY-MM-DD HH:mm:ss')
+      }
       return moment(new Date(row.startTime)).format('YYYY-MM-DD HH:mm:ss')
     },
     calcCompany(resource) {

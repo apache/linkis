@@ -103,7 +103,7 @@ public class ResourceServiceImplTest {
         String resourceId = "123";
         Mockito.when(resourceDao.checkExists(resourceId)).thenReturn(1);
         boolean whether = resourceServiceImpl.checkResourceId(resourceId);
-        assertTrue(whether == true);
+        assertTrue(whether);
     }
 
     @Test
@@ -121,7 +121,7 @@ public class ResourceServiceImplTest {
         String user = "testuser";
         Mockito.when(resourceDao.getUserByResourceId(resourceId)).thenReturn("testuser");
         boolean whether = resourceServiceImpl.checkAuthority(user, resourceId);
-        assertTrue(whether == true);
+        assertTrue(whether);
     }
 
     @Test
@@ -135,7 +135,7 @@ public class ResourceServiceImplTest {
         Mockito.when(versionDao.getResourceVersion(resourceId, version))
                 .thenReturn(resourceVersion);
         boolean whether = resourceServiceImpl.checkExpire(resourceId, version);
-        assertTrue(whether == true);
+        assertTrue(whether);
     }
 
     @Test

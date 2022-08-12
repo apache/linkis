@@ -19,34 +19,34 @@ package org.apache.linkis.cs.common.entity.source;
 
 public class CommonContextKeyValue implements ContextKeyValue {
 
-    private ContextKey contextKey;
+  private ContextKey contextKey;
 
-    private ContextValue contextValue;
+  private ContextValue contextValue;
 
-    public CommonContextKeyValue() {}
+  public CommonContextKeyValue() {}
 
-    public CommonContextKeyValue(ContextKey contextKey, ContextValue contextValue) {
-        this.contextKey = contextKey;
-        this.contextValue = contextValue;
-    }
+  public CommonContextKeyValue(ContextKey contextKey, ContextValue contextValue) {
+    this.contextKey = contextKey;
+    this.contextValue = contextValue;
+  }
 
-    @Override
-    public ContextKey getContextKey() {
-        return this.contextKey;
-    }
+  @Override
+  public ContextKey getContextKey() {
+    return this.contextKey;
+  }
 
-    @Override
-    public void setContextKey(ContextKey contextKey) {
-        this.contextKey = contextKey;
-    }
+  @Override
+  public void setContextKey(ContextKey contextKey) {
+    this.contextKey = contextKey;
+  }
 
-    @Override
-    public ContextValue getContextValue() {
-        return this.contextValue;
-    }
+  @Override
+  public ContextValue getContextValue() {
+    return this.contextValue;
+  }
 
-    @Override
-    public void setContextValue(ContextValue contextValue) {
-        this.contextValue = contextValue;
-    }
+  @Override
+  public void setContextValue(ContextValue contextValue) {
+    this.contextValue = contextValue;
+  }
 }

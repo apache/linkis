@@ -27,17 +27,17 @@ import org.apache.linkis.cli.core.utils.LogUtils;
 import org.slf4j.Logger;
 
 public class StdOutWriter implements DisplayOperator {
-    @Override
-    public void doOutput(DisplayData data) {
-        if (!(data instanceof StdoutDisplayData)) {
-            throw new PresenterException(
-                    "PST0008",
-                    ErrorLevel.ERROR,
-                    CommonErrMsg.PresentDriverErr,
-                    "input data is not instance of StdoutDisplayData");
-        }
-        String content = ((StdoutDisplayData) data).getContent();
-        Logger logger = LogUtils.getPlaintTextLogger();
-        logger.info(content);
+  @Override
+  public void doOutput(DisplayData data) {
+    if (!(data instanceof StdoutDisplayData)) {
+      throw new PresenterException(
+          "PST0008",
+          ErrorLevel.ERROR,
+          CommonErrMsg.PresentDriverErr,
+          "input data is not instance of StdoutDisplayData");
     }
+    String content = ((StdoutDisplayData) data).getContent();
+    Logger logger = LogUtils.getPlaintTextLogger();
+    logger.info(content);
+  }
 }

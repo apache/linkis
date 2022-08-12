@@ -37,24 +37,24 @@ import static org.apache.linkis.cs.listener.event.enumeration.OperateType.DELETE
 @Component
 public class ContextIDRemoveListener implements RemovalListener<String, ContextIDValue> {
 
-    private static final Logger logger = LoggerFactory.getLogger(ContextIDRemoveListener.class);
+  private static final Logger logger = LoggerFactory.getLogger(ContextIDRemoveListener.class);
 
-    ContextAsyncListenerBus listenerBus =
-            DefaultContextListenerManager.getInstance().getContextAsyncListenerBus();
+  ContextAsyncListenerBus listenerBus =
+      DefaultContextListenerManager.getInstance().getContextAsyncListenerBus();
 
-    @Override
-    public void onRemoval(RemovalNotification<String, ContextIDValue> removalNotification) {
-        ContextIDValue value = removalNotification.getValue();
-        String contextIDStr = removalNotification.getKey();
-        if (StringUtils.isBlank(contextIDStr) || null == value || null == value.getContextID()) {
-            return;
-        }
-        listenerBus.removeListener((ContextIDValueImpl) value);
-        logger.info("Start to remove ContextID({}) from cache", contextIDStr);
-        DefaultContextIDEvent defaultContextIDEvent = new DefaultContextIDEvent();
-        defaultContextIDEvent.setContextID(value.getContextKeyValueContext().getContextID());
-        defaultContextIDEvent.setOperateType(DELETE);
-        listenerBus.post(defaultContextIDEvent);
-        logger.info("Finished to remove ContextID({}) from cache", contextIDStr);
+  @Override
+  public void onRemoval(RemovalNotification<String, ContextIDValue> removalNotification) {
+    ContextIDValue value = removalNotification.getValue();
+    String contextIDStr = removalNotification.getKey();
+    if (StringUtils.isBlank(contextIDStr) || null == value || null == value.getContextID()) {
+      return;
     }
+    listenerBus.removeListener((ContextIDValueImpl) value);
+    logger.info("Start to remove ContextID({}) from cache", contextIDStr);
+    DefaultContextIDEvent defaultContextIDEvent = new DefaultContextIDEvent();
+    defaultContextIDEvent.setContextID(value.getContextKeyValueContext().getContextID());
+    defaultContextIDEvent.setOperateType(DELETE);
+    listenerBus.post(defaultContextIDEvent);
+    logger.info("Finished to remove ContextID({}) from cache", contextIDStr);
+  }
 }

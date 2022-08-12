@@ -26,13 +26,13 @@ import java.util.List;
 
 public interface ContextKeyListenerMapper {
 
-    void createKeyListener(@Param("listener") PersistenceContextKeyListener listener);
+  void createKeyListener(@Param("listener") PersistenceContextKeyListener listener);
 
-    void remove(
-            @Param("listener") ContextKeyListenerDomain contextKeyListenerDomain,
-            @Param("keyId") Integer keyId);
+  void remove(
+      @Param("listener") ContextKeyListenerDomain contextKeyListenerDomain,
+      @Param("keyId") Integer keyId);
 
-    void removeAll(@Param("keyIds") List<Integer> keyIds);
+  void removeAll(@Param("keyIds") List<Integer> keyIds);
 
-    List<PersistenceContextKeyListener> getAll(@Param("keyIds") List<Integer> keyIds);
+  List<PersistenceContextKeyListener> getAll(@Param("keyIds") List<Integer> keyIds);
 }

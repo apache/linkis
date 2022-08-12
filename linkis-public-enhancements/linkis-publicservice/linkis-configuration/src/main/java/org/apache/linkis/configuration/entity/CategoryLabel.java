@@ -19,43 +19,43 @@ package org.apache.linkis.configuration.entity;
 
 public class CategoryLabel extends ConfigLabel {
 
-    private Integer categoryId;
+  private Integer categoryId;
 
-    private Integer level;
+  private Integer level;
 
-    private String description;
+  private String description;
 
-    private String tag;
+  private String tag;
 
-    public Integer getCategoryId() {
-        return categoryId;
-    }
+  public Integer getCategoryId() {
+    return categoryId;
+  }
 
-    public void setCategoryId(Integer categoryId) {
-        this.categoryId = categoryId;
-    }
+  public void setCategoryId(Integer categoryId) {
+    this.categoryId = categoryId;
+  }
 
-    public Integer getLevel() {
-        return level;
-    }
+  public Integer getLevel() {
+    return level;
+  }
 
-    public void setLevel(Integer level) {
-        this.level = level;
-    }
+  public void setLevel(Integer level) {
+    this.level = level;
+  }
 
-    public String getDescription() {
-        return description;
-    }
+  public String getDescription() {
+    return description;
+  }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+  public void setDescription(String description) {
+    this.description = description;
+  }
 
-    public String getTag() {
-        return tag;
-    }
+  public String getTag() {
+    return tag;
+  }
 
-    public void setTag(String tag) {
-        this.tag = tag;
-    }
+  public void setTag(String tag) {
+    this.tag = tag;
+  }
 }

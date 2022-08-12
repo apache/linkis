@@ -19,7 +19,7 @@ package org.apache.linkis.cs.common.entity.env;
 
 public interface SoftwareLibEnv extends Env {
 
-    String getLib();
+  String getLib();
 
-    void setLib(String lib);
+  void setLib(String lib);
 }

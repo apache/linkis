@@ -25,5 +25,5 @@ import org.apache.linkis.cli.common.exception.LinkisClientRuntimeException;
  * call, then implement this interface.
  */
 public interface SyncBackendJob extends Job {
-    void submitAndGetResult() throws LinkisClientRuntimeException;
+  void submitAndGetResult() throws LinkisClientRuntimeException;
 }

@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,12 +17,13 @@
 
 package org.apache.linkis.datasource.client.request
 
-
 import org.apache.linkis.datasource.client.config.DatasourceClientConfig.DATA_SOURCE_SERVICE_MODULE
 import org.apache.linkis.httpclient.request.GetAction
 
 class GetAllDataSourceTypesAction extends GetAction with DataSourceAction {
-  override def suffixURLs: Array[String] = Array(DATA_SOURCE_SERVICE_MODULE.getValue, "type", "all")
+
+  override def suffixURLs: Array[String] =
+    Array(DATA_SOURCE_SERVICE_MODULE.getValue, "type", "all")
 
   private var user: String = _
 
@@ -34,7 +35,7 @@ class GetAllDataSourceTypesAction extends GetAction with DataSourceAction {
 object GetAllDataSourceTypesAction {
   def builder(): Builder = new Builder
 
-  class Builder private[GetAllDataSourceTypesAction]() {
+  class Builder private[GetAllDataSourceTypesAction] () {
     private var user: String = _
 
     def setUser(user: String): Builder = {
@@ -48,5 +49,7 @@ object GetAllDataSourceTypesAction {
 
       action
     }
+
   }
+
 }

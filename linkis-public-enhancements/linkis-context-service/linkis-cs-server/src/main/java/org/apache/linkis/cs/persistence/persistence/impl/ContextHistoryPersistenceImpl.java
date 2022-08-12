@@ -32,71 +32,70 @@ import org.apache.commons.math3.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Component
 public class ContextHistoryPersistenceImpl implements ContextHistoryPersistence {
 
-    @Autowired private ContextHistoryMapper contextHistoryMapper;
+  @Autowired private ContextHistoryMapper contextHistoryMapper;
 
-    private ObjectMapper json = BDPJettyServerHelper.jacksonJson();
+  private ObjectMapper json = BDPJettyServerHelper.jacksonJson();
 
-    private Class<PersistenceContextHistory> pClass = PersistenceContextHistory.class;
+  private Class<PersistenceContextHistory> pClass = PersistenceContextHistory.class;
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Override
-    public void createHistory(ContextID contextID, ContextHistory contextHistory)
-            throws CSErrorException {
-        Pair<PersistenceContextHistory, ExtraFieldClass> pHistroy =
-                PersistenceUtils.transfer(contextHistory, pClass);
-        pHistroy.getFirst().setHistoryJson(PersistenceUtils.serialize(contextHistory));
-        pHistroy.getFirst().setContextId(contextID.getContextId());
-        contextHistoryMapper.createHistory(pHistroy.getFirst());
-    }
+  @Override
+  public void createHistory(ContextID contextID, ContextHistory contextHistory)
+      throws CSErrorException {
+    Pair<PersistenceContextHistory, ExtraFieldClass> pHistroy =
+        PersistenceUtils.transfer(contextHistory, pClass);
+    pHistroy.getFirst().setHistoryJson(PersistenceUtils.serialize(contextHistory));
+    pHistroy.getFirst().setContextId(contextID.getContextId());
+    contextHistoryMapper.createHistory(pHistroy.getFirst());
+  }
 
-    @Override
-    public List<ContextHistory> getHistories(ContextID contextID) throws CSErrorException {
-        List<PersistenceContextHistory> pHistories =
-                contextHistoryMapper.getHistoriesByContextID(contextID);
-        return pHistories.stream()
-                .map(PersistenceUtils.map(this::transfer))
-                .collect(Collectors.toList());
-    }
+  @Override
+  public List<ContextHistory> getHistories(ContextID contextID) throws CSErrorException {
+    List<PersistenceContextHistory> pHistories =
+        contextHistoryMapper.getHistoriesByContextID(contextID);
+    return pHistories.stream()
+        .map(PersistenceUtils.map(this::transfer))
+        .collect(Collectors.toList());
+  }
 
-    public ContextHistory transfer(PersistenceContextHistory pHistory) throws CSErrorException {
-        ContextHistory history = PersistenceUtils.deserialize(pHistory.getHistoryJson());
-        return history;
-    }
+  public ContextHistory transfer(PersistenceContextHistory pHistory) throws CSErrorException {
+    ContextHistory history = PersistenceUtils.deserialize(pHistory.getHistoryJson());
+    return history;
+  }
 
-    @Override
-    public ContextHistory getHistory(ContextID contextID, Long id) throws CSErrorException {
-        PersistenceContextHistory pHistory = contextHistoryMapper.getHistory(contextID, id);
-        return pHistory == null ? null : transfer(pHistory);
-    }
+  @Override
+  public ContextHistory getHistory(ContextID contextID, Long id) throws CSErrorException {
+    PersistenceContextHistory pHistory = contextHistoryMapper.getHistory(contextID, id);
+    return pHistory == null ? null : transfer(pHistory);
+  }
 
-    @Override
-    public ContextHistory getHistory(ContextID contextID, String source) throws CSErrorException {
-        PersistenceContextHistory pHistory =
-                contextHistoryMapper.getHistoryBySource(contextID, source);
-        return pHistory == null ? null : transfer(pHistory);
-    }
+  @Override
+  public ContextHistory getHistory(ContextID contextID, String source) throws CSErrorException {
+    PersistenceContextHistory pHistory = contextHistoryMapper.getHistoryBySource(contextID, source);
+    return pHistory == null ? null : transfer(pHistory);
+  }
 
-    @Override
-    public void removeHistory(ContextID contextID, String source) throws CSErrorException {
-        contextHistoryMapper.removeHistory(contextID, source);
-    }
+  @Override
+  public void removeHistory(ContextID contextID, String source) throws CSErrorException {
+    contextHistoryMapper.removeHistory(contextID, source);
+  }
 
-    @Override
-    public void updateHistory(ContextID contextID, ContextHistory contextHistory)
-            throws CSErrorException {
-        Pair<PersistenceContextHistory, ExtraFieldClass> pHistroy =
-                PersistenceUtils.transfer(contextHistory, pClass);
-        contextHistoryMapper.updateHistory(contextID, pHistroy.getFirst());
-    }
+  @Override
+  public void updateHistory(ContextID contextID, ContextHistory contextHistory)
+      throws CSErrorException {
+    Pair<PersistenceContextHistory, ExtraFieldClass> pHistroy =
+        PersistenceUtils.transfer(contextHistory, pClass);
+    contextHistoryMapper.updateHistory(contextID, pHistroy.getFirst());
+  }
 }

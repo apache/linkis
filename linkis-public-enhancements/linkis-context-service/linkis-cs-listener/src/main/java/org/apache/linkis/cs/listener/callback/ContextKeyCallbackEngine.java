@@ -20,5 +20,5 @@ package org.apache.linkis.cs.listener.callback;
 import org.apache.linkis.cs.common.entity.listener.ListenerDomain;
 
 public interface ContextKeyCallbackEngine extends CallbackEngine {
-    void registerClient(ListenerDomain listenerDomain);
+  void registerClient(ListenerDomain listenerDomain);
 }

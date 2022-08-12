@@ -18,26 +18,26 @@
 package org.apache.linkis.jobhistory.transitional;
 
 public enum TaskStatus {
-    /*
-    This should be up-to-date with status in entrance job
-     */
-    Inited,
-    WaitForRetry,
-    Scheduled,
-    Running,
-    Succeed,
-    Failed,
-    Cancelled,
-    Timeout;
+  /*
+  This should be up-to-date with status in entrance job
+   */
+  Inited,
+  WaitForRetry,
+  Scheduled,
+  Running,
+  Succeed,
+  Failed,
+  Cancelled,
+  Timeout;
 
-    public static boolean isComplete(TaskStatus taskStatus) {
-        if (taskStatus == Succeed
-                || taskStatus == Failed
-                || taskStatus == Cancelled
-                || taskStatus == Timeout) {
-            return true;
-        } else {
-            return false;
-        }
+  public static boolean isComplete(TaskStatus taskStatus) {
+    if (taskStatus == Succeed
+        || taskStatus == Failed
+        || taskStatus == Cancelled
+        || taskStatus == Timeout) {
+      return true;
+    } else {
+      return false;
     }
+  }
 }

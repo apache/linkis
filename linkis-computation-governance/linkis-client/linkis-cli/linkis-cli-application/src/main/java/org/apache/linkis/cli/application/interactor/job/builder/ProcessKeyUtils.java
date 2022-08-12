@@ -26,55 +26,55 @@ import java.util.Map;
 
 public class ProcessKeyUtils {
 
-    public static Map<String, Object> removePrefixForKeysInMap(Map<String, Object> map) {
-        final String[] PREFIX =
-                new String[] {
-                    AppKeys.JOB_PARAM_CONF,
-                    AppKeys.JOB_PARAM_RUNTIME,
-                    AppKeys.JOB_PARAM_VAR,
-                    AppKeys.JOB_EXEC,
-                    AppKeys.JOB_SOURCE,
-                    AppKeys.JOB_LABEL,
-                    AppKeys.JOB_CONTENT
-                };
-        for (String prefix : PREFIX) {
-            map = removePrefixForKeysInMap(map, prefix);
-        }
-        return map;
+  public static Map<String, Object> removePrefixForKeysInMap(Map<String, Object> map) {
+    final String[] PREFIX =
+        new String[] {
+          AppKeys.JOB_PARAM_CONF,
+          AppKeys.JOB_PARAM_RUNTIME,
+          AppKeys.JOB_PARAM_VAR,
+          AppKeys.JOB_EXEC,
+          AppKeys.JOB_SOURCE,
+          AppKeys.JOB_LABEL,
+          AppKeys.JOB_CONTENT
+        };
+    for (String prefix : PREFIX) {
+      map = removePrefixForKeysInMap(map, prefix);
     }
+    return map;
+  }
 
-    public static void removePrefixAndPutValToMap(
-            Map<String, Object> map, String key, Object value, String prefix) {
-        String realKey = getRealKey(key, prefix);
-        if (StringUtils.isNotBlank(realKey) && !(value instanceof Map)) {
-            map.put(realKey, value);
-        }
+  public static void removePrefixAndPutValToMap(
+      Map<String, Object> map, String key, Object value, String prefix) {
+    String realKey = getRealKey(key, prefix);
+    if (StringUtils.isNotBlank(realKey) && !(value instanceof Map)) {
+      map.put(realKey, value);
     }
+  }
 
-    private static Map<String, Object> removePrefixForKeysInMap(
-            Map<String, Object> map, String prefix) {
-        if (map == null) {
-            return null;
-        }
-        Map<String, Object> newMap = new HashMap<>();
-        for (String key : map.keySet()) {
-            String realKey = getRealKey(key, prefix);
-            if (StringUtils.isNotBlank(realKey)) {
-                if (StringUtils.startsWith(key, prefix)) {
-                    newMap.put(realKey, map.get(key));
-                } else {
-                    newMap.put(key, map.get(key));
-                }
-            }
-        }
-        return newMap;
+  private static Map<String, Object> removePrefixForKeysInMap(
+      Map<String, Object> map, String prefix) {
+    if (map == null) {
+      return null;
     }
-
-    private static String getRealKey(String key, String prefix) {
-        String realKey = key;
+    Map<String, Object> newMap = new HashMap<>();
+    for (String key : map.keySet()) {
+      String realKey = getRealKey(key, prefix);
+      if (StringUtils.isNotBlank(realKey)) {
         if (StringUtils.startsWith(key, prefix)) {
-            realKey = StringUtils.substring(key, prefix.length() + 1);
+          newMap.put(realKey, map.get(key));
+        } else {
+          newMap.put(key, map.get(key));
         }
-        return realKey;
+      }
     }
+    return newMap;
+  }
+
+  private static String getRealKey(String key, String prefix) {
+    String realKey = key;
+    if (StringUtils.startsWith(key, prefix)) {
+      realKey = StringUtils.substring(key, prefix.length() + 1);
+    }
+    return realKey;
+  }
 }

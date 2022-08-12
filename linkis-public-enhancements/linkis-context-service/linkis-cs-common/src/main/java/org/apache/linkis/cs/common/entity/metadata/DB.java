@@ -21,23 +21,23 @@ import org.apache.linkis.cs.common.entity.enumeration.DBType;
 
 public interface DB {
 
-    String getName();
+  String getName();
 
-    void setName(String name);
+  void setName(String name);
 
-    DBType getDbType();
+  DBType getDbType();
 
-    void setDbType(DBType dbType);
+  void setDbType(DBType dbType);
 
-    String getOwners();
+  String getOwners();
 
-    void setOwners(String owners);
+  void setOwners(String owners);
 
-    String getComment();
+  String getComment();
 
-    void setComment(String comment);
+  void setComment(String comment);
 
-    String[] getLables();
+  String[] getLables();
 
-    void setLables(String[] lables);
+  void setLables(String[] lables);
 }

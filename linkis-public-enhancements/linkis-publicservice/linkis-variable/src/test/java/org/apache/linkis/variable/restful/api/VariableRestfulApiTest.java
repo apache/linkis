@@ -27,23 +27,23 @@ import org.junit.jupiter.api.Test;
 /** VariableRestfulApi Tester */
 public class VariableRestfulApiTest {
 
-    @Autowired private VariableRestfulApi variableRestfulApi;
+  @Autowired private VariableRestfulApi variableRestfulApi;
 
-    @BeforeEach
-    @DisplayName("Each unit test method is executed once before execution")
-    public void before() throws Exception {}
+  @BeforeEach
+  @DisplayName("Each unit test method is executed once before execution")
+  public void before() throws Exception {}
 
-    @AfterEach
-    @DisplayName("Each unit test method is executed once after execution")
-    public void after() throws Exception {}
+  @AfterEach
+  @DisplayName("Each unit test method is executed once after execution")
+  public void after() throws Exception {}
 
-    @Test
-    public void testListGlobalVariable() throws Exception {
-        // TODO: Test goes here...
-    }
+  @Test
+  public void testListGlobalVariable() throws Exception {
+    // TODO: Test goes here...
+  }
 
-    @Test
-    public void testSaveGlobalVariable() throws Exception {
-        // TODO: Test goes here...
-    }
+  @Test
+  public void testSaveGlobalVariable() throws Exception {
+    // TODO: Test goes here...
+  }
 }

@@ -28,9 +28,9 @@ import javax.sql.DataSource;
 @ConfigurationProperties
 public class DataSourceConfig {
 
-    @Bean(name = "dataSource", destroyMethod = "close")
-    @ConditionalOnMissingBean
-    public DataSource dataSource() {
-        return DataSourceUtils.buildDataSource(null, null, null);
-    }
+  @Bean(name = "dataSource", destroyMethod = "close")
+  @ConditionalOnMissingBean
+  public DataSource dataSource() {
+    return DataSourceUtils.buildDataSource(null, null, null);
+  }
 }

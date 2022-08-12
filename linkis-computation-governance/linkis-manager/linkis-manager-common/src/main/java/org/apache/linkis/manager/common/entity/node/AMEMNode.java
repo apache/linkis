@@ -30,164 +30,164 @@ import java.util.List;
 
 public class AMEMNode implements EMNode, ScoreServiceInstance {
 
-    private List<Label> labels;
+  private List<Label> labels;
 
-    private double score;
+  private double score;
 
-    private ServiceInstance serviceInstance;
+  private ServiceInstance serviceInstance;
 
-    private NodeStatus nodeStatus;
+  private NodeStatus nodeStatus;
 
-    private NodeResource nodeResource;
+  private NodeResource nodeResource;
 
-    private String owner;
+  private String owner;
 
-    private String mark;
+  private String mark;
 
-    private NodeTaskInfo nodeTaskInfo;
+  private NodeTaskInfo nodeTaskInfo;
 
-    private NodeOverLoadInfo nodeOverLoadInfo;
+  private NodeOverLoadInfo nodeOverLoadInfo;
 
-    private NodeHealthyInfo nodeHealthyInfo;
+  private NodeHealthyInfo nodeHealthyInfo;
 
-    private Date startTime;
+  private Date startTime;
 
-    private Date updateTime;
+  private Date updateTime;
 
-    @Override
-    public Date getUpdateTime() {
-        return updateTime;
-    }
+  @Override
+  public Date getUpdateTime() {
+    return updateTime;
+  }
 
-    @Override
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
-    }
+  @Override
+  public void setUpdateTime(Date updateTime) {
+    this.updateTime = updateTime;
+  }
 
-    @Override
-    public Date getStartTime() {
-        return startTime;
-    }
+  @Override
+  public Date getStartTime() {
+    return startTime;
+  }
 
-    @Override
-    public void setStartTime(Date startTime) {
-        this.startTime = startTime;
-    }
+  @Override
+  public void setStartTime(Date startTime) {
+    this.startTime = startTime;
+  }
 
-    public AMEMNode() {}
+  public AMEMNode() {}
 
-    public AMEMNode(double score, ServiceInstance serviceInstance) {
-        this.score = score;
-        this.serviceInstance = serviceInstance;
-    }
+  public AMEMNode(double score, ServiceInstance serviceInstance) {
+    this.score = score;
+    this.serviceInstance = serviceInstance;
+  }
 
-    @Override
-    public List<Label> getLabels() {
-        return this.labels;
-    }
+  @Override
+  public List<Label> getLabels() {
+    return this.labels;
+  }
 
-    @Override
-    public void setLabels(List<Label> labels) {
-        this.labels = labels;
-    }
+  @Override
+  public void setLabels(List<Label> labels) {
+    this.labels = labels;
+  }
 
-    @Override
-    public double getScore() {
-        return this.score;
-    }
+  @Override
+  public double getScore() {
+    return this.score;
+  }
 
-    @Override
-    public void setScore(double score) {
-        this.score = score;
-    }
+  @Override
+  public void setScore(double score) {
+    this.score = score;
+  }
 
-    @Override
-    public ServiceInstance getServiceInstance() {
-        return this.serviceInstance;
-    }
+  @Override
+  public ServiceInstance getServiceInstance() {
+    return this.serviceInstance;
+  }
 
-    @Override
-    public void setServiceInstance(ServiceInstance serviceInstance) {
-        this.serviceInstance = serviceInstance;
-    }
+  @Override
+  public void setServiceInstance(ServiceInstance serviceInstance) {
+    this.serviceInstance = serviceInstance;
+  }
 
-    @Override
-    public NodeStatus getNodeStatus() {
-        return this.nodeStatus;
-    }
+  @Override
+  public NodeStatus getNodeStatus() {
+    return this.nodeStatus;
+  }
 
-    @Override
-    public void setNodeStatus(NodeStatus status) {
-        this.nodeStatus = status;
-    }
+  @Override
+  public void setNodeStatus(NodeStatus status) {
+    this.nodeStatus = status;
+  }
 
-    @Override
-    public String getOwner() {
-        return owner;
-    }
+  @Override
+  public String getOwner() {
+    return owner;
+  }
 
-    public void setOwner(String owner) {
-        this.owner = owner;
-    }
+  public void setOwner(String owner) {
+    this.owner = owner;
+  }
 
-    @Override
-    public String getMark() {
-        return mark;
-    }
+  @Override
+  public String getMark() {
+    return mark;
+  }
 
-    public void setMark(String mark) {
-        this.mark = mark;
-    }
+  public void setMark(String mark) {
+    this.mark = mark;
+  }
 
-    @Override
-    public NodeResource getNodeResource() {
-        return nodeResource;
-    }
+  @Override
+  public NodeResource getNodeResource() {
+    return nodeResource;
+  }
 
-    @Override
-    public void setNodeResource(NodeResource nodeResource) {
-        this.nodeResource = nodeResource;
-    }
+  @Override
+  public void setNodeResource(NodeResource nodeResource) {
+    this.nodeResource = nodeResource;
+  }
 
-    @Override
-    public NodeTaskInfo getNodeTaskInfo() {
-        return nodeTaskInfo;
-    }
+  @Override
+  public NodeTaskInfo getNodeTaskInfo() {
+    return nodeTaskInfo;
+  }
 
-    @Override
-    public void setNodeTaskInfo(NodeTaskInfo nodeTaskInfo) {
-        this.nodeTaskInfo = nodeTaskInfo;
-    }
+  @Override
+  public void setNodeTaskInfo(NodeTaskInfo nodeTaskInfo) {
+    this.nodeTaskInfo = nodeTaskInfo;
+  }
 
-    @Override
-    public void setNodeOverLoadInfo(NodeOverLoadInfo nodeOverLoadInfo) {
-        this.nodeOverLoadInfo = nodeOverLoadInfo;
-    }
+  @Override
+  public void setNodeOverLoadInfo(NodeOverLoadInfo nodeOverLoadInfo) {
+    this.nodeOverLoadInfo = nodeOverLoadInfo;
+  }
 
-    @Override
-    public NodeOverLoadInfo getNodeOverLoadInfo() {
-        return nodeOverLoadInfo;
-    }
+  @Override
+  public NodeOverLoadInfo getNodeOverLoadInfo() {
+    return nodeOverLoadInfo;
+  }
 
-    @Override
-    public NodeHealthyInfo getNodeHealthyInfo() {
-        return nodeHealthyInfo;
-    }
+  @Override
+  public NodeHealthyInfo getNodeHealthyInfo() {
+    return nodeHealthyInfo;
+  }
 
-    @Override
-    public void setNodeHealthyInfo(NodeHealthyInfo nodeHealthyInfo) {
-        this.nodeHealthyInfo = nodeHealthyInfo;
-    }
+  @Override
+  public void setNodeHealthyInfo(NodeHealthyInfo nodeHealthyInfo) {
+    this.nodeHealthyInfo = nodeHealthyInfo;
+  }
 
-    @Override
-    public String toString() {
-        return "AMEMNode{"
-                + "labels="
-                + labels
-                + ", serviceInstance="
-                + serviceInstance
-                + ", nodeStatus="
-                + nodeStatus
-                + '}';
-    }
+  @Override
+  public String toString() {
+    return "AMEMNode{"
+        + "labels="
+        + labels
+        + ", serviceInstance="
+        + serviceInstance
+        + ", nodeStatus="
+        + nodeStatus
+        + '}';
+  }
 }

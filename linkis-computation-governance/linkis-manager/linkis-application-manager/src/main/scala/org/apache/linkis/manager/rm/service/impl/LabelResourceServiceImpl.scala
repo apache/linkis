@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -27,12 +27,13 @@ import org.apache.linkis.manager.label.service.ResourceLabelService
 import org.apache.linkis.manager.persistence.{LabelManagerPersistence, ResourceManagerPersistence}
 import org.apache.linkis.manager.rm.domain.RMLabelContainer
 import org.apache.linkis.manager.rm.service.LabelResourceService
+
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
 import java.util
-import scala.collection.JavaConversions._
 
+import scala.collection.JavaConversions._
 
 @Component
 class LabelResourceServiceImpl extends LabelResourceService with Logging {
@@ -52,31 +53,46 @@ class LabelResourceServiceImpl extends LabelResourceService with Logging {
     resourceLabelService.getResourceByLabel(label)
   }
 
-  override def setLabelResource(label: Label[_], nodeResource: NodeResource, source: String): Unit = {
+  override def setLabelResource(
+      label: Label[_],
+      nodeResource: NodeResource,
+      source: String
+  ): Unit = {
     resourceLabelService.setResourceToLabel(label, nodeResource, source)
   }
 
   override def getResourcesByUser(user: String): Array[NodeResource] = {
-    resourceManagerPersistence.getResourceByUser(user).map(ResourceUtils.fromPersistenceResource).toArray
+    resourceManagerPersistence
+      .getResourceByUser(user)
+      .map(ResourceUtils.fromPersistenceResource)
+      .toArray
   }
 
   override def enrichLabels(labels: util.List[Label[_]]): RMLabelContainer = {
-     new RMLabelContainer(labels)
+    new RMLabelContainer(labels)
   }
 
   override def removeResourceByLabel(label: Label[_]): Unit = {
     resourceLabelService.removeResourceByLabel(label)
   }
 
-  override def setEngineConnLabelResource(label: Label[_], nodeResource: NodeResource, source: String): Unit = resourceLabelService.setEngineConnResourceToLabel(label, nodeResource, source)
+  override def setEngineConnLabelResource(
+      label: Label[_],
+      nodeResource: NodeResource,
+      source: String
+  ): Unit = resourceLabelService.setEngineConnResourceToLabel(label, nodeResource, source)
 
   override def getLabelsByResource(resource: PersistenceResource): Array[Label[_]] = {
-    labelManagerPersistence.getLabelByResource(resource).map{ label =>
-      labelFactory.createLabel(label.getLabelKey, label.getValue)
-    }.toArray
+    labelManagerPersistence
+      .getLabelByResource(resource)
+      .map { label =>
+        labelFactory.createLabel(label.getLabelKey, label.getValue)
+      }
+      .toArray
   }
 
   override def getPersistenceResource(label: Label[_]): PersistenceResource = {
     resourceLabelService.getPersistenceResourceByLabel(label)
   }
+
 }

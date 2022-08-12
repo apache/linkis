@@ -25,109 +25,109 @@ import java.util.Date;
 
 public class AContextID implements UserContextID, HAContextID {
 
-    private String contextId;
+  private String contextId;
 
-    private String user = "hadoop";
+  private String user = "hadoop";
 
-    private String instance = "instance";
+  private String instance = "instance";
 
-    private String backupInstance = "backup";
+  private String backupInstance = "backup";
 
-    private String application = "spark";
+  private String application = "spark";
 
-    private ExpireType expireType = ExpireType.NEVER;
+  private ExpireType expireType = ExpireType.NEVER;
 
-    private Date expireTime = new Date();
+  private Date expireTime = new Date();
 
-    private String project = "project1";
+  private String project = "project1";
 
-    private String flow = "flow1";
+  private String flow = "flow1";
 
-    public String getProject() {
-        return project;
-    }
+  public String getProject() {
+    return project;
+  }
 
-    public void setProject(String project) {
-        this.project = project;
-    }
+  public void setProject(String project) {
+    this.project = project;
+  }
 
-    public String getFlow() {
-        return flow;
-    }
+  public String getFlow() {
+    return flow;
+  }
 
-    public void setFlow(String flow) {
-        this.flow = flow;
-    }
+  public void setFlow(String flow) {
+    this.flow = flow;
+  }
 
-    @Override
-    public String getContextId() {
-        return this.contextId;
-    }
+  @Override
+  public String getContextId() {
+    return this.contextId;
+  }
 
-    @Override
-    public void setContextId(String contextId) {
-        this.contextId = contextId;
-    }
+  @Override
+  public void setContextId(String contextId) {
+    this.contextId = contextId;
+  }
 
-    @Override
-    public void setUser(String user) {
-        this.user = user;
-    }
+  @Override
+  public void setUser(String user) {
+    this.user = user;
+  }
 
-    @Override
-    public String getUser() {
-        return this.user;
-    }
+  @Override
+  public String getUser() {
+    return this.user;
+  }
 
-    @Override
-    public String getInstance() {
-        return this.instance;
-    }
+  @Override
+  public String getInstance() {
+    return this.instance;
+  }
 
-    @Override
-    public void setInstance(String instance) {
-        this.instance = instance;
-    }
+  @Override
+  public void setInstance(String instance) {
+    this.instance = instance;
+  }
 
-    @Override
-    public String getBackupInstance() {
-        return this.backupInstance;
-    }
+  @Override
+  public String getBackupInstance() {
+    return this.backupInstance;
+  }
 
-    @Override
-    public void setBackupInstance(String backupInstance) {
-        this.backupInstance = backupInstance;
-    }
+  @Override
+  public void setBackupInstance(String backupInstance) {
+    this.backupInstance = backupInstance;
+  }
 
-    public String getApplication() {
-        return application;
-    }
+  public String getApplication() {
+    return application;
+  }
 
-    public void setApplication(String application) {
-        this.application = application;
-    }
+  public void setApplication(String application) {
+    this.application = application;
+  }
 
-    public ExpireType getExpireType() {
-        return expireType;
-    }
+  public ExpireType getExpireType() {
+    return expireType;
+  }
 
-    public void setExpireType(ExpireType expireType) {
-        this.expireType = expireType;
-    }
+  public void setExpireType(ExpireType expireType) {
+    this.expireType = expireType;
+  }
 
-    public Date getExpireTime() {
-        return expireTime;
-    }
+  public Date getExpireTime() {
+    return expireTime;
+  }
 
-    public void setExpireTime(Date expireTime) {
-        this.expireTime = expireTime;
-    }
+  public void setExpireTime(Date expireTime) {
+    this.expireTime = expireTime;
+  }
 
-    @Override
-    public int getContextIDType() {
-        return 0;
-    }
+  @Override
+  public int getContextIDType() {
+    return 0;
+  }
 
-    @Override
-    public void setContextIDType(int contextIDType) {}
+  @Override
+  public void setContextIDType(int contextIDType) {}
 }

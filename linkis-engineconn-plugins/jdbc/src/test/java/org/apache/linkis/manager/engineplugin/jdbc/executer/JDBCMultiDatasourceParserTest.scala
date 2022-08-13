@@ -114,4 +114,31 @@ class JDBCMultiDatasourceParserTest {
     assertTrue(globalConfig.size() == 4)
     assertTrue(globalConfig.get(JDBCEngineConnConstant.JDBC_AUTH_TYPE).equals(JdbcAuthType.USERNAME.getAuthType))
   }
+
+  @Test
+  @DisplayName("getJDBCRuntimeParams")
+  def getJDBCRuntimeParams(): Unit = {
+    // jdbc executor runtime params
+    val executorProperties = new util.HashMap[String, String]()
+    executorProperties.put(JDBCEngineConnConstant.JDBC_URL, "jdbc:mysql://localhost:3306/dbName?useSSL=false")
+    executorProperties.put(JDBCEngineConnConstant.JDBC_USERNAME, "leo1")
+    executorProperties.put(JDBCEngineConnConstant.JDBC_PASSWORD, "pwd2")
+    executorProperties.put(JDBCEngineConnConstant.JDBC_DRIVER, "com.mysql.jdbc.Driver")
+    // engine console global config
+    val globalConfig: util.Map[String, String] = new util.HashMap[String, String]()
+    globalConfig.put(JDBCEngineConnConstant.JDBC_URL, "jdbc:mysql://127.0.0.1:3306/dbName?useSSL=false")
+    globalConfig.put("wds.linkis.jdbc.connect.max", "10")
+    // datasource info params
+    val dataSourceInfo: util.Map[String, String] = new util.HashMap[String, String]()
+    dataSourceInfo.put(JDBCEngineConnConstant.JDBC_AUTH_TYPE, JdbcAuthType.USERNAME.getAuthType)
+    dataSourceInfo.put(JDBCEngineConnConstant.JDBC_USERNAME, "leo")
+    dataSourceInfo.put(JDBCEngineConnConstant.JDBC_PASSWORD, "pwd")
+    // runtime jdbc params > jdbc datasource info > jdbc engine global config
+    globalConfig.putAll(dataSourceInfo)
+    globalConfig.putAll(executorProperties)
+
+    assertTrue("jdbc:mysql://localhost:3306/dbName?useSSL=false".equals(globalConfig.get(JDBCEngineConnConstant.JDBC_URL)))
+    assertTrue("10".equals(globalConfig.get("wds.linkis.jdbc.connect.max")))
+    assertTrue(JdbcAuthType.USERNAME.getAuthType.equals(globalConfig.get(JDBCEngineConnConstant.JDBC_AUTH_TYPE)))
+  }
 }

@@ -121,16 +121,16 @@ git push origin dev-fix dev-fix
 ### 2.3 Issue 提交指引
 
 - 如果您还不知道怎样向开源项目发起 PR，请参考[About issues](https://docs.github.com/en/github/managing-your-work-on-github/about-issues)
-- Issue 名称，应一句话简单描述您的问题或建议；为了项目的国际化推广，请用英文，或中英文双语书写 issue.
+- Issue 名称，应一句话简单描述您的问题或建议；为了项目的国际化推广，请用英文，或中英文双语书写 issue
 - 每个Issue，请至少带上component 和type 两个label，如component=Computation Governance/EngineConn，type=Improvement.参考:[issue #590](https://github.com/apache/incubator-linkis/issues/590)
 
 ### 2.4 Pull Request(PR) 提交指引
 
 - 如果您还不知道怎样向开源项目发起 PR，请参考[About pull requests](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/about-pull-requests)
-- 无论是 Bug 修复，还是新功能开发，请将 PR 提交到 dev-* 分支。
-- PR 和提交名称遵循 `<type>(<scope>): <subject>` 原则，详情可以参考阮一峰的 [Commit message 和 Change log 编写指南](http://www.ruanyifeng.com/blog/2016/01/commit_message_change_log.html) 这篇文章。
-- 如果 PR 中包含新功能，理应将文档更新包含在本次 PR 中。
-- 如果本次 PR 尚未准备好合并，请在名称头部加上 [WIP] 前缀（WIP = work-in-progress）。
+- 无论是 Bug 修复，还是新功能开发，请将 PR 提交到 dev-* 分支
+- PR 和提交名称遵循 `<type>(<scope>): <subject>` 原则，详情可以参考[Commit message 和 Change log 编写指南](https://linkis.apache.org/zh-CN/community/development-specification/commit-message) 
+- 如果 PR 中包含新功能，理应将文档更新包含在本次 PR 中
+- 如果本次 PR 尚未准备好合并，请在名称头部加上 [WIP] 前缀（WIP = work-in-progress）
 - 所有提交到 dev-* 分支的提交至少需要经过一次 Review 才可以被合并
 
 ### 2.5 Review 标准

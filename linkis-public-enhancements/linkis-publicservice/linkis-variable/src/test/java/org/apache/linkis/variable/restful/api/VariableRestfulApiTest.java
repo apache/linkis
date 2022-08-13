@@ -41,7 +41,7 @@ public class VariableRestfulApiTest {
     public void testListGlobalVariable() throws Exception {
         // TODO: Test goes here...
     }
-
+A
     @Test
     public void testSaveGlobalVariable() throws Exception {
         // TODO: Test goes here...

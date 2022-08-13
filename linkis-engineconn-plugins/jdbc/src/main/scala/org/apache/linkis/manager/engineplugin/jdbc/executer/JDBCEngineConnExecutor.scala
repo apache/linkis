@@ -64,44 +64,12 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int) ex
   }
 
   override def executeLine(engineExecutorContext: EngineExecutionContext, code: String): ExecuteResponse = {
-    val execSqlUser = getExecSqlUser(engineExecutorContext)
     val realCode = code.trim()
     val taskId = engineExecutorContext.getJobId.get
-    val properties = engineExecutorContext.getProperties.asInstanceOf[util.Map[String, String]]
-    var dataSourceName = properties.getOrDefault(JDBCEngineConnConstant.JDBC_ENGINE_RUN_TIME_DS, "")
-    var dataSourceMaxVersionId: Int = 0
-    val dataSourceQuerySystemParam = properties.getOrDefault(JDBCEngineConnConstant.JDBC_ENGINE_RUN_TIME_DS_SYSTEM_QUERY_PARAM, "")
-
-    if (properties.get(JDBCEngineConnConstant.JDBC_URL) == null) {
-      logger.info(s"The jdbc url is empty, adding now...")
-      val globalConfig: util.Map[String, String] = Utils.tryAndWarn(JDBCEngineConfig.getCacheMap(engineExecutorContext.getLabels))
-      if (StringUtils.isNotBlank(dataSourceName)) {
-        logger.info("Start getting data source connection parameters from the data source hub.")
-        Utils.tryCatch {
-          val dataSourceInfo = JDBCMultiDatasourceParser.queryDatasourceInfoByName(dataSourceName, execSqlUser, dataSourceQuerySystemParam)
-          if (dataSourceInfo != null && !dataSourceInfo.isEmpty) {
-            dataSourceMaxVersionId = dataSourceInfo.get(JDBCEngineConnConstant.JDBC_ENGINE_RUN_TIME_DS_MAX_VERSION_ID).toInt
-            globalConfig.putAll(dataSourceInfo)
-          }
-        } {
-          e: Throwable => return ErrorExecuteResponse(s"Failed to get datasource info about [$dataSourceName] from datasource server.", e)
-        }
-      }
-      properties.put(JDBCEngineConnConstant.JDBC_URL, globalConfig.get(JDBCEngineConnConstant.JDBC_URL))
-      properties.put(JDBCEngineConnConstant.JDBC_DRIVER, globalConfig.get(JDBCEngineConnConstant.JDBC_DRIVER))
-      properties.put(JDBCEngineConnConstant.JDBC_USERNAME, globalConfig.get(JDBCEngineConnConstant.JDBC_USERNAME))
-      properties.put(JDBCEngineConnConstant.JDBC_PASSWORD, globalConfig.get(JDBCEngineConnConstant.JDBC_PASSWORD))
-      properties.put(JDBCEngineConnConstant.JDBC_POOL_VALIDATION_QUERY, globalConfig.getOrDefault(JDBCEngineConnConstant.JDBC_POOL_VALIDATION_QUERY, JDBCEngineConnConstant.JDBC_POOL_DEFAULT_VALIDATION_QUERY))
-      properties.put(JDBCEngineConnConstant.JDBC_AUTH_TYPE, globalConfig.get(JDBCEngineConnConstant.JDBC_AUTH_TYPE))
-      properties.put(JDBCEngineConnConstant.JDBC_KERBEROS_AUTH_TYPE_PRINCIPAL, globalConfig.get(JDBCEngineConnConstant.JDBC_KERBEROS_AUTH_TYPE_PRINCIPAL))
-      properties.put(JDBCEngineConnConstant.JDBC_KERBEROS_AUTH_TYPE_KEYTAB_LOCATION, globalConfig.get(JDBCEngineConnConstant.JDBC_KERBEROS_AUTH_TYPE_KEYTAB_LOCATION))
-      properties.put(JDBCEngineConnConstant.JDBC_PROXY_USER_PROPERTY, globalConfig.getOrDefault(JDBCEngineConnConstant.JDBC_PROXY_USER_PROPERTY, ""))
-      properties.put(JDBCEngineConnConstant.JDBC_PROXY_USER, globalConfig.getOrDefault(JDBCEngineConnConstant.JDBC_PROXY_USER, execSqlUser))
-      properties.put(JDBCEngineConnConstant.JDBC_SCRIPTS_EXEC_USER, execSqlUser)
-    }
-    if (StringUtils.isBlank(dataSourceName)) {
-      dataSourceName = JDBCEngineConnConstant.JDBC_DEFAULT_DATASOURCE_TAG;
-    }
+    val properties: util.Map[String, String] = getJDBCRuntimeParams(engineExecutorContext)
+    logger.info(s"The jdbc properties is: $properties")
+    val dataSourceName = properties.get(JDBCEngineConnConstant.JDBC_ENGINE_RUN_TIME_DS)
+    val dataSourceMaxVersionId = properties.get(JDBCEngineConnConstant.JDBC_ENGINE_RUN_TIME_DS_MAX_VERSION_ID)
     logger.info(s"The data source name is [$dataSourceName], and the jdbc client begins to run jdbc code:\n ${realCode.trim}")
     var connection: Connection = null
     var statement: Statement = null
@@ -161,6 +129,48 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int) ex
       connectionManager.removeStatement(taskId)
     }
     SuccessExecuteResponse()
+  }
+
+  private def getJDBCRuntimeParams(engineExecutorContext: EngineExecutionContext): util.Map[String, String] = {
+    // todo Improve the more detailed configuration of jdbc parameters, such as: connection pool parameters, etc.
+    val execSqlUser = getExecSqlUser(engineExecutorContext)
+    // jdbc parameters specified at runtime
+    var executorProperties = engineExecutorContext.getProperties.asInstanceOf[util.Map[String, String]]
+    if (executorProperties == null) {
+      executorProperties = new util.HashMap[String, String]()
+    }
+
+    // global jdbc engine params by console
+    val globalConfig: util.Map[String, String] = Utils.tryAndWarn(JDBCEngineConfig.getCacheMap(engineExecutorContext.getLabels))
+
+    // jdbc params by datasource info
+    var dataSourceInfo: util.Map[String, String] = new util.HashMap[String, String]()
+    var dataSourceName = executorProperties.getOrDefault(JDBCEngineConnConstant.JDBC_ENGINE_RUN_TIME_DS, "")
+    val dataSourceQuerySystemParam = executorProperties.getOrDefault(JDBCEngineConnConstant.JDBC_ENGINE_RUN_TIME_DS_SYSTEM_QUERY_PARAM, "")
+
+    if (StringUtils.isNotBlank(dataSourceName)) {
+      logger.info("Start getting data source connection parameters from the data source hub.")
+      Utils.tryCatch {
+        dataSourceInfo = JDBCMultiDatasourceParser.queryDatasourceInfoByName(dataSourceName, execSqlUser, dataSourceQuerySystemParam)
+      } {
+        e: Throwable => logger.error(s"Failed to get datasource info about [$dataSourceName] from datasource server.", e)
+      }
+    }
+    if (StringUtils.isBlank(dataSourceName)) {
+      dataSourceName = JDBCEngineConnConstant.JDBC_DEFAULT_DATASOURCE_TAG
+    }
+    // runtime jdbc params > jdbc datasource info > jdbc engine global config
+    if (dataSourceInfo != null && !dataSourceInfo.isEmpty) {
+      globalConfig.putAll(dataSourceInfo)
+    }
+
+    if (!executorProperties.isEmpty) {
+      globalConfig.putAll(executorProperties)
+    }
+    globalConfig.put(JDBCEngineConnConstant.JDBC_ENGINE_RUN_TIME_DS, dataSourceName)
+    globalConfig.put(JDBCEngineConnConstant.JDBC_SCRIPTS_EXEC_USER, execSqlUser)
+    globalConfig.put(JDBCEngineConnConstant.JDBC_PROXY_USER, globalConfig.getOrDefault(JDBCEngineConnConstant.JDBC_PROXY_USER, execSqlUser))
+    globalConfig
   }
 
   private def getExecResultSetOutput(engineExecutorContext: EngineExecutionContext, statement: Statement, resultSet: ResultSet): ExecuteResponse = {

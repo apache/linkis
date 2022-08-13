@@ -18,6 +18,8 @@
 package org.apache.linkis.storage.resultset
 
 import java.io.{IOException, OutputStream}
+
+import org.apache.hadoop.hdfs.client.HdfsDataOutputStream
 import org.apache.linkis.common.io.resultset.{ResultSerializer, ResultSet, ResultSetWriter}
 import org.apache.linkis.common.io.{Fs, FsPath, MetaData, Record}
 import org.apache.linkis.common.utils.{Logging, Utils}
@@ -155,7 +157,14 @@ class StorageResultSetWriter[K <: MetaData, V <: Record](resultSet: ResultSet[K,
         outputStream.write(buffer.toArray)
         buffer.clear()
       }
-      outputStream.flush()
+      Utils.tryAndWarnMsg[Unit] {
+        outputStream match {
+          case hdfs: HdfsDataOutputStream =>
+            hdfs.hflush()
+          case _ =>
+            outputStream.flush()
+        }
+      }(s"$toString Error encounters when flush result set ")
     }
   }
 }

@@ -1,10 +1,59 @@
-Linkis
-==========
+<h2 align="center">
+  Apache Linkis
+</h2>
 
-[![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
-[![codecov](https://codecov.io/gh/apache/incubator-linkis/branch/master/graph/badge.svg)](https://codecov.io/gh/apache/incubator-linkis/branch/master)
-[![Page Views Count](https://badges.toozhao.com/badges/01G7TRNN1PH9PMSCYWDF3EK4QT/green.svg)](https://badges.toozhao.com/stats/01G7TRNN1PH9PMSCYWDF3EK4QT "Get your own page views count badge on badges.toozhao.com")
+<p align="center">
+  <strong>Linkis builds a computation middleware layer to decouple the upper applications and the underlying data engines, 
+  provides standardized interfaces (REST, JDBC, WebSocket etc.) to easily connect to various underlying engines (Spark, Presto, Flink, etc.), 
+  while enables cross engine context sharing, unified job& engine governance and orchestration.</strong>
+</p>
+<p align="center">
+  <a href="https://linkis.apache.org/">https://linkis.apache.org/</a>
+</p>
 
+<p align="center">
+  <a href="https://linkis.apache.org/docs/latest/introduction/" >
+    <img src="https://img.shields.io/badge/document-English-blue.svg" alt="EN docs" />
+  </a>
+  <a href="https://linkis.apache.org/zh-CN/docs/latest/introduction/">
+    <img src="https://img.shields.io/badge/文档-简体中文-blue.svg" alt="简体中文文档" />
+  </a>
+</p>
+
+<p align="center">
+    <a target="_blank" href="https://search.maven.org/search?q=g:org.apache.linkis%20AND%20a:linkis">
+        <img src="https://img.shields.io/maven-central/v/org.apache.linkis/linkis.svg?label=maven%20central" />
+    </a>
+    <a target="_blank" href="https://github.com/apache/incubator-linkis/blob/master/LICENSE">
+        <img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg?label=license" />
+    </a>
+    <a target="_blank" href="https://www.oracle.com/technetwork/java/javase/downloads/index.html">
+        <img src="https://img.shields.io/badge/JDK-8+-green.svg" />
+    </a>
+    <a target="_blank" href="https://github.com/apache/incubator-linkis/actions">
+        <img src="https://github.com/apache/incubator-linkis/actions/workflows/build.yml/badge.svg" />
+    </a>
+    
+   <a target="_blank" href='https://github.com/apache/incubator-linkis'>
+        <img src="https://img.shields.io/github/forks/apache/incubator-linkis.svg" alt="github forks"/>
+   </a>
+   <a target="_blank" href='https://github.com/apache/incubator-linkis'>
+        <img src="https://img.shields.io/github/stars/apache/incubator-linkis.svg" alt="github stars"/>
+   </a>
+   <a target="_blank" href='https://github.com/apache/incubator-linkis'>
+        <img src="https://img.shields.io/github/contributors/apache/incubator-linkis.svg" alt="github contributors"/>
+   </a>
+   <a target="_blank" href="https://codecov.io/gh/apache/incubator-linkis">
+        <img src="https://codecov.io/gh/apache/incubator-linkis/branch/master/graph/badge.svg" />
+   </a>
+  <a target="_blank" href="https://badges.toozhao.com/stats/01G7TRNN1PH9PMSCYWDF3EK4QT">
+       <img src="https://badges.toozhao.com/badges/01G7TRNN1PH9PMSCYWDF3EK4QT/green.svg" />
+  </a>
+  
+</p>
+<br/>
+
+---
 [English](README.md) | [中文](README_CN.md)
 
 # Introduction

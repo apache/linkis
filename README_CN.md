@@ -23,7 +23,7 @@
     <a target="_blank" href="https://search.maven.org/search?q=g:org.apache.linkis%20AND%20a:linkis">
         <img src="https://img.shields.io/maven-central/v/org.apache.linkis/linkis.svg?label=maven%20central" />
     </a>
-    <a target="_blank" href="https://github.com/apache/linkis/blob/master/LICENSE">
+    <a target="_blank" href="https://github.com/apache/incubator-linkis/blob/master/LICENSE">
         <img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg?label=license" />
     </a>
     <a target="_blank" href="https://www.oracle.com/technetwork/java/javase/downloads/index.html">

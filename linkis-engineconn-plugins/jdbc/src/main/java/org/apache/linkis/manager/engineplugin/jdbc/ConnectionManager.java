@@ -217,68 +217,68 @@ public class ConnectionManager {
     }
 
     private Connection getConnectionFromDataSource(
-            String dataSourceName, String url, Map<String, String> prop)
+            String dataSourceIdentifier, String url, Map<String, String> prop)
             throws SQLException, JDBCParamsIllegalException {
-        DataSource dataSource = dataSourceFactories.get(dataSourceName);
+        DataSource dataSource = dataSourceFactories.get(dataSourceIdentifier);
         if (dataSource == null) {
             synchronized (dataSourceFactories) {
                 if (dataSource == null) {
                     dataSource = buildDataSource(url, prop);
-                    dataSourceFactories.put(dataSourceName, dataSource);
+                    dataSourceFactories.put(dataSourceIdentifier, dataSource);
                 }
             }
         }
         return dataSource.getConnection();
     }
 
-    public Connection getConnection(String dataSourceName, Map<String, String> propperties)
+    public Connection getConnection(String dataSourceIdentifier, Map<String, String> properties)
             throws SQLException, JDBCParamsIllegalException {
         String execUser =
                 JDBCPropertiesParser.getString(
-                        propperties, JDBCEngineConnConstant.JDBC_SCRIPTS_EXEC_USER, "");
+                        properties, JDBCEngineConnConstant.JDBC_SCRIPTS_EXEC_USER, "");
         if (StringUtils.isBlank(execUser)) {
             LOG.warn("No such execUser: {}", execUser);
             throw new JDBCParamsIllegalException("No execUser");
         }
         Connection connection = null;
-        final String jdbcUrl = getJdbcUrl(propperties);
-        JdbcAuthType jdbcAuthType = getJdbcAuthType(propperties);
+        final String jdbcUrl = getJdbcUrl(properties);
+        JdbcAuthType jdbcAuthType = getJdbcAuthType(properties);
         switch (jdbcAuthType) {
             case SIMPLE:
             case USERNAME:
-                connection = getConnectionFromDataSource(dataSourceName, jdbcUrl, propperties);
+                connection = getConnectionFromDataSource(dataSourceIdentifier, jdbcUrl, properties);
                 break;
             case KERBEROS:
                 LOG.debug(
                         "Calling createKerberosSecureConfiguration(); this will do loginUserFromKeytab() if required");
                 final String keytab =
                         JDBCPropertiesParser.getString(
-                                propperties,
+                                properties,
                                 JDBCEngineConnConstant.JDBC_KERBEROS_AUTH_TYPE_KEYTAB_LOCATION,
                                 "");
                 final String principal =
                         JDBCPropertiesParser.getString(
-                                propperties,
+                                properties,
                                 JDBCEngineConnConstant.JDBC_KERBEROS_AUTH_TYPE_PRINCIPAL,
                                 "");
                 KerberosUtils.createKerberosSecureConfiguration(keytab, principal);
                 LOG.debug("createKerberosSecureConfiguration() returned");
                 boolean isProxyEnabled =
                         JDBCPropertiesParser.getBool(
-                                propperties,
+                                properties,
                                 JDBCEngineConnConstant.JDBC_KERBEROS_AUTH_PROXY_ENABLE,
                                 true);
 
                 if (isProxyEnabled) {
                     final String jdbcUrlWithProxyUser =
-                            appendProxyUserToJDBCUrl(jdbcUrl, execUser, propperties);
+                            appendProxyUserToJDBCUrl(jdbcUrl, execUser, properties);
                     LOG.info(
                             String.format(
                                     "Try to Create a new %s JDBC with url(%s), kerberos, proxyUser(%s).",
-                                    dataSourceName, jdbcUrlWithProxyUser, execUser));
+                                    dataSourceIdentifier, jdbcUrlWithProxyUser, execUser));
                     connection =
                             getConnectionFromDataSource(
-                                    dataSourceName, jdbcUrlWithProxyUser, propperties);
+                                    dataSourceIdentifier, jdbcUrlWithProxyUser, properties);
                 } else {
                     UserGroupInformation ugi;
                     try {
@@ -296,9 +296,9 @@ public class ConnectionManager {
                                         (PrivilegedExceptionAction<Connection>)
                                                 () ->
                                                         getConnectionFromDataSource(
-                                                                dataSourceName,
+                                                                dataSourceIdentifier,
                                                                 jdbcUrl,
-                                                                propperties));
+                                                                properties));
                     } catch (Exception e) {
                         throw new JDBCParamsIllegalException(
                                 "Error in doAs to get one connection.");

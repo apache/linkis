@@ -51,7 +51,7 @@ public class ConnectionManagerTest {
         properties.put(JDBCEngineConnConstant.JDBC_PROXY_USER, "");
         properties.put(JDBCEngineConnConstant.JDBC_SCRIPTS_EXEC_USER, "leo_jie");
         ConnectionManager connectionManager = ConnectionManager.getInstance();
-        Connection conn = connectionManager.getConnection("jdbc", properties);
+        Connection conn = connectionManager.getConnection("jdbc-1", properties);
         Statement statement = conn.createStatement();
         ResultSet rs = statement.executeQuery("show databases;");
         while (rs.next()) {

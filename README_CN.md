@@ -30,7 +30,7 @@
         <img src="https://img.shields.io/badge/JDK-8+-green.svg" />
     </a>
     <a target="_blank" href="https://github.com/apache/incubator-linkis/actions">
-        <img src="https://github.com/apache/linkis/workflows/ci/badge.svg" />
+        <img src="https://github.com/apache/incubator-linkis/workflows/ci/badge.svg" />
     </a>
    <a target="_blank" href='https://github.com/apache/incubator-linkis'>
         <img src="https://img.shields.io/github/forks/apache/incubator-linkis.svg" alt="github forks"/>

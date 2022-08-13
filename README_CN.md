@@ -147,8 +147,8 @@ npm run build
 
 # 示例和使用指引
 
-- [用户手册 ](https://linkis.apache.org/zh-CN/docs/latest/user_guide/overview),
-- [各引擎使用指引 ](https://linkis.apache.org/zh-CN/docs/latest/engine_usage/overview) 
+- [用户手册 ](https://linkis.apache.org/zh-CN/docs/latest/user-guide/overview),
+- [各引擎使用指引 ](https://linkis.apache.org/zh-CN/docs/latest/engine-usage/overview) 
 - [API 文档 ](https://linkis.apache.org/zh-CN/docs/latest/api/overview)
 
 # 文档&视频

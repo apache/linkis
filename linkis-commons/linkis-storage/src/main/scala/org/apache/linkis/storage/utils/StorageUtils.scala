@@ -187,7 +187,14 @@ object StorageUtils extends Logging{
   }
 
   def readBytes(inputStream: InputStream, bytes: Array[Byte], len: Int): Int = {
-    inputStream.read(bytes, 0 , len)
+    var count = 0
+    var readLen = 0
+    while (readLen < len) {
+      count = inputStream.read(bytes, readLen, len - readLen)
+      if (count == -1 && inputStream.available() < 1) return readLen
+      readLen += count
+    }
+    readLen
   }
 
   def colToString(col: Any, nullValue: String = "NULL"): String = {

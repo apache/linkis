@@ -69,6 +69,7 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int) ex
     val taskId = engineExecutorContext.getJobId.get
     val properties = engineExecutorContext.getProperties.asInstanceOf[util.Map[String, String]]
     var dataSourceName = properties.getOrDefault(JDBCEngineConnConstant.JDBC_ENGINE_RUN_TIME_DS, "")
+    var dataSourceMaxVersionId: Int = 0
     val dataSourceQuerySystemParam = properties.getOrDefault(JDBCEngineConnConstant.JDBC_ENGINE_RUN_TIME_DS_SYSTEM_QUERY_PARAM, "")
 
     if (properties.get(JDBCEngineConnConstant.JDBC_URL) == null) {
@@ -79,6 +80,7 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int) ex
         Utils.tryCatch {
           val dataSourceInfo = JDBCMultiDatasourceParser.queryDatasourceInfoByName(dataSourceName, execSqlUser, dataSourceQuerySystemParam)
           if (dataSourceInfo != null && !dataSourceInfo.isEmpty) {
+            dataSourceMaxVersionId = dataSourceInfo.get(JDBCEngineConnConstant.JDBC_ENGINE_RUN_TIME_DS_MAX_VERSION_ID).toInt
             globalConfig.putAll(dataSourceInfo)
           }
         } {
@@ -106,7 +108,8 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int) ex
     var resultSet: ResultSet = null
     logger.info(s"The data source properties is $properties")
     Utils.tryCatch({
-      connection = connectionManager.getConnection(dataSourceName, properties)
+      val dataSourceIdentifier = s"$dataSourceName-$dataSourceMaxVersionId"
+      connection = connectionManager.getConnection(dataSourceIdentifier, properties)
       logger.info("The jdbc connection has created successfully!")
     }) {
       e: Throwable =>

@@ -52,6 +52,7 @@ class JDBCMultiDatasourceParserTest {
     datasource.setDataSourceType(dataSourceType)
     datasource.setConnectParams(dbConnParams)
     datasource.setPublishedVersionId(1L)
+    datasource.setVersionId(1L)
     datasource.setExpire(false)
   }
 

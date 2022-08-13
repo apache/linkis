@@ -36,6 +36,8 @@ public class JDBCEngineConnConstant {
     public static final String JDBC_PROXY_USER = "wds.linkis.jdbc.proxy.user";
     public static final String JDBC_SCRIPTS_EXEC_USER = "execUser";
     public static final String JDBC_ENGINE_RUN_TIME_DS = "wds.linkis.engine.runtime.datasource";
+    public static final String JDBC_ENGINE_RUN_TIME_DS_MAX_VERSION_ID =
+            "wds.linkis.engine.runtime.datasource.maxVersionId";
     public static final String JDBC_ENGINE_RUN_TIME_DS_SYSTEM_QUERY_PARAM =
             "wds.linkis.engine.runtime.datasource.systemQueryParam";
 

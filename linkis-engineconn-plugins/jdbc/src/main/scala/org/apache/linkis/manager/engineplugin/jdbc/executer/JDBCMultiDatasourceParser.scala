@@ -57,6 +57,12 @@ object JDBCMultiDatasourceParser extends Logging {
       throw JDBCParamsIllegalException(s"Data source [$datasourceName] not yet published!")
     }
 
+    var maxVersionId = "0"
+    if (dataSource.getVersionId != null) {
+      maxVersionId = dataSource.getVersionId.toString
+    }
+    dsConnInfo.put(JDBCEngineConnConstant.JDBC_ENGINE_RUN_TIME_DS_MAX_VERSION_ID, maxVersionId)
+
     if (dataSource.isExpire) {
       throw JDBCParamsIllegalException(s"Data source [$datasourceName] is expired!")
     }

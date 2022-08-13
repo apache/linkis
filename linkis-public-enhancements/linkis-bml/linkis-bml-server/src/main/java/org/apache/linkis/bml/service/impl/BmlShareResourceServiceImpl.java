@@ -25,19 +25,19 @@ import java.io.OutputStream;
 import java.util.Map;
 
 public class BmlShareResourceServiceImpl implements BmlShareResourceService {
-    @Override
-    public void uploadShareResource(
-            MultipartFile multipartFile, String user, Map<String, Object> properties) {}
+  @Override
+  public void uploadShareResource(
+      MultipartFile multipartFile, String user, Map<String, Object> properties) {}
 
-    @Override
-    public void updateShareResource(
-            MultipartFile multipartFile, String user, Map<String, Object> properties) {}
+  @Override
+  public void updateShareResource(
+      MultipartFile multipartFile, String user, Map<String, Object> properties) {}
 
-    @Override
-    public void downloadShareResource(
-            String user,
-            String resourceId,
-            String version,
-            OutputStream outputStream,
-            Map<String, Object> properties) {}
+  @Override
+  public void downloadShareResource(
+      String user,
+      String resourceId,
+      String version,
+      OutputStream outputStream,
+      Map<String, Object> properties) {}
 }

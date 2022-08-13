@@ -21,28 +21,28 @@ import org.apache.linkis.cs.common.annotation.KeywordMethod;
 
 public class CommonProperty implements CSProperty {
 
-    private String key;
+  private String key;
 
-    private String value;
+  private String value;
 
-    @Override
-    @KeywordMethod
-    public String getKey() {
-        return this.key;
-    }
+  @Override
+  @KeywordMethod
+  public String getKey() {
+    return this.key;
+  }
 
-    @Override
-    public void setKey(String key) {
-        this.key = key;
-    }
+  @Override
+  public void setKey(String key) {
+    this.key = key;
+  }
 
-    @Override
-    public String getValue() {
-        return this.value;
-    }
+  @Override
+  public String getValue() {
+    return this.value;
+  }
 
-    @Override
-    public void setValue(String value) {
-        this.value = value;
-    }
+  @Override
+  public void setValue(String value) {
+    this.value = value;
+  }
 }

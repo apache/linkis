@@ -30,117 +30,117 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class LinkisWorkFlowContext extends LinkisContext {
 
-    private ContextID contextID;
+  private ContextID contextID;
 
-    private ContextClient contextClient;
+  private ContextClient contextClient;
 
-    private String user;
+  private String user;
 
-    private Map<ContextKey, ContextValue> keyValues = new ConcurrentHashMap<>();
+  private Map<ContextKey, ContextValue> keyValues = new ConcurrentHashMap<>();
 
-    @Override
-    public ContextID getContextID() {
-        return this.contextID;
+  @Override
+  public ContextID getContextID() {
+    return this.contextID;
+  }
+
+  @Override
+  public void setContextID(ContextID contextID) {
+    this.contextID = contextID;
+  }
+
+  public String getUser() {
+    return user;
+  }
+
+  public void setUser(String user) {
+    this.user = user;
+  }
+
+  @Override
+  public ContextValue getContextValue(ContextKey contextKey) throws ErrorException {
+    if (keyValues.containsKey(contextKey)) {
+      return keyValues.get(contextKey);
+    } else {
+      return this.contextClient.getContextValue(this.contextID, contextKey);
     }
+  }
 
-    @Override
-    public void setContextID(ContextID contextID) {
-        this.contextID = contextID;
-    }
+  @Override
+  public void setContextKeyAndValue(ContextKeyValue contextKeyValue) throws ErrorException {
+    // todo 这个地方是为了进行一次缓存 不过有待商榷
+    // this.setLocal(contextKeyValue);
+    this.contextClient.setContextKeyValue(this.contextID, contextKeyValue);
+  }
 
-    public String getUser() {
-        return user;
-    }
+  @Override
+  public void set(ContextKey contextKey, ContextValue contextValue) throws ErrorException {
+    setLocal(contextKey, contextValue);
+    ContextKeyValue contextKeyValue = new CommonContextKeyValue();
+    contextKeyValue.setContextKey(contextKey);
+    contextKeyValue.setContextValue(contextValue);
+    this.setContextKeyAndValue(contextKeyValue);
+  }
 
-    public void setUser(String user) {
-        this.user = user;
-    }
+  @Override
+  public void setLocal(ContextKey contextKey, ContextValue contextValue) {
+    this.keyValues.put(contextKey, contextValue);
+  }
 
-    @Override
-    public ContextValue getContextValue(ContextKey contextKey) throws ErrorException {
-        if (keyValues.containsKey(contextKey)) {
-            return keyValues.get(contextKey);
-        } else {
-            return this.contextClient.getContextValue(this.contextID, contextKey);
-        }
-    }
+  @Override
+  public void setLocal(ContextKeyValue contextKeyValue) {
+    this.keyValues.put(contextKeyValue.getContextKey(), contextKeyValue.getContextValue());
+  }
 
-    @Override
-    public void setContextKeyAndValue(ContextKeyValue contextKeyValue) throws ErrorException {
-        // todo 这个地方是为了进行一次缓存 不过有待商榷
-        // this.setLocal(contextKeyValue);
-        this.contextClient.setContextKeyValue(this.contextID, contextKeyValue);
-    }
+  @Override
+  public List<ContextKeyValue> searchContext(
+      List<ContextType> contextTypes,
+      List<ContextScope> contextScopes,
+      List<String> contains,
+      List<String> regex)
+      throws ErrorException {
+    return this.contextClient.search(contextID, contextTypes, contextScopes, contains, regex);
+  }
 
-    @Override
-    public void set(ContextKey contextKey, ContextValue contextValue) throws ErrorException {
-        setLocal(contextKey, contextValue);
-        ContextKeyValue contextKeyValue = new CommonContextKeyValue();
-        contextKeyValue.setContextKey(contextKey);
-        contextKeyValue.setContextValue(contextValue);
-        this.setContextKeyAndValue(contextKeyValue);
-    }
+  @Override
+  public void reset(ContextKey contextKey) throws ErrorException {
+    this.contextClient.reset(contextID, contextKey);
+  }
 
-    @Override
-    public void setLocal(ContextKey contextKey, ContextValue contextValue) {
-        this.keyValues.put(contextKey, contextValue);
-    }
+  @Override
+  public void reset() throws ErrorException {
+    this.contextClient.reset(this.contextID);
+  }
 
-    @Override
-    public void setLocal(ContextKeyValue contextKeyValue) {
-        this.keyValues.put(contextKeyValue.getContextKey(), contextKeyValue.getContextValue());
-    }
+  @Override
+  public void remove(ContextKey contextKey) throws ErrorException {
+    this.contextClient.remove(contextID, contextKey);
+  }
 
-    @Override
-    public List<ContextKeyValue> searchContext(
-            List<ContextType> contextTypes,
-            List<ContextScope> contextScopes,
-            List<String> contains,
-            List<String> regex)
-            throws ErrorException {
-        return this.contextClient.search(contextID, contextTypes, contextScopes, contains, regex);
-    }
+  @Override
+  public void removeAll() throws ErrorException {
+    this.contextClient.remove(contextID, null);
+  }
 
-    @Override
-    public void reset(ContextKey contextKey) throws ErrorException {
-        this.contextClient.reset(contextID, contextKey);
-    }
+  @Override
+  public void onBind(ContextIDListener contextIDListener) throws ErrorException {
+    contextIDListener.setContextID(this.contextID);
+    contextIDListener.setContext(this);
+    this.contextClient.bindContextIDListener(contextIDListener);
+  }
 
-    @Override
-    public void reset() throws ErrorException {
-        this.contextClient.reset(this.contextID);
-    }
+  @Override
+  public void onBind(ContextKey contextKey, ContextKeyListener contextKeyListener)
+      throws ErrorException {
+    contextKeyListener.setContextKey(contextKey);
+    contextKeyListener.setContext(this);
+    this.contextClient.bindContextKeyListener(contextKeyListener);
+  }
 
-    @Override
-    public void remove(ContextKey contextKey) throws ErrorException {
-        this.contextClient.remove(contextID, contextKey);
-    }
+  public ContextClient getContextClient() {
+    return contextClient;
+  }
 
-    @Override
-    public void removeAll() throws ErrorException {
-        this.contextClient.remove(contextID, null);
-    }
-
-    @Override
-    public void onBind(ContextIDListener contextIDListener) throws ErrorException {
-        contextIDListener.setContextID(this.contextID);
-        contextIDListener.setContext(this);
-        this.contextClient.bindContextIDListener(contextIDListener);
-    }
-
-    @Override
-    public void onBind(ContextKey contextKey, ContextKeyListener contextKeyListener)
-            throws ErrorException {
-        contextKeyListener.setContextKey(contextKey);
-        contextKeyListener.setContext(this);
-        this.contextClient.bindContextKeyListener(contextKeyListener);
-    }
-
-    public ContextClient getContextClient() {
-        return contextClient;
-    }
-
-    public void setContextClient(ContextClient contextClient) {
-        this.contextClient = contextClient;
-    }
+  public void setContextClient(ContextClient contextClient) {
+    this.contextClient = contextClient;
+  }
 }

@@ -19,35 +19,34 @@ package org.apache.linkis.cs.persistence;
 
 import org.apache.linkis.cs.persistence.entity.ExtraFieldClass;
 
+import java.util.List;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
-import java.util.List;
-
 public class ExtraFieldClassTest {
 
-    public void test01() {
-        /*String json = "{\n" +
-        "  \"z\": 100.0,\n" +
-        "  \"x\": 200,\n" +
-        "  \"c\": 300,\n" +
-        "  \"v\":\"中文\",\n" +
-        "  \"b\":true\n" +
-        "}";*/
-        Gson gson =
-                new GsonBuilder()
-                        .registerTypeAdapter(
-                                new TypeToken<List<Object>>() {}.getType(), new MapTypeAdapter())
-                        .create();
-        /*        Map<String, Object> map = gson.fromJson(json, new TypeToken<List<Object>>() {
-        }.getType());
-        map.forEach((k,v) -> System.out.println(v.getClass().getName()));*/
-        ExtraFieldClass extraFieldClass = new ExtraFieldClass();
-        extraFieldClass.addFieldValue(666);
-        String json = gson.toJson(extraFieldClass);
-        System.out.println(json);
-        ExtraFieldClass extraFieldClass1 = gson.fromJson(json, ExtraFieldClass.class);
-        extraFieldClass1.getFieldValues().forEach(f -> System.out.println(f.getClass().getName()));
-    }
+  public void test01() {
+    /*String json = "{\n" +
+    "  \"z\": 100.0,\n" +
+    "  \"x\": 200,\n" +
+    "  \"c\": 300,\n" +
+    "  \"v\":\"中文\",\n" +
+    "  \"b\":true\n" +
+    "}";*/
+    Gson gson =
+        new GsonBuilder()
+            .registerTypeAdapter(new TypeToken<List<Object>>() {}.getType(), new MapTypeAdapter())
+            .create();
+    /*        Map<String, Object> map = gson.fromJson(json, new TypeToken<List<Object>>() {
+    }.getType());
+    map.forEach((k,v) -> System.out.println(v.getClass().getName()));*/
+    ExtraFieldClass extraFieldClass = new ExtraFieldClass();
+    extraFieldClass.addFieldValue(666);
+    String json = gson.toJson(extraFieldClass);
+    System.out.println(json);
+    ExtraFieldClass extraFieldClass1 = gson.fromJson(json, ExtraFieldClass.class);
+    extraFieldClass1.getFieldValues().forEach(f -> System.out.println(f.getClass().getName()));
+  }
 }

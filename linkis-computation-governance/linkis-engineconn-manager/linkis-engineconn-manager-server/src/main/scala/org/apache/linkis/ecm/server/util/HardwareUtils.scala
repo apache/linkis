@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,7 +20,6 @@ package org.apache.linkis.ecm.server.util
 import oshi.SystemInfo
 
 object HardwareUtils {
-
 
   def getAvailableMemory(): Long = {
     val systemInfo = new SystemInfo
@@ -37,8 +36,7 @@ object HardwareUtils {
   }
 
   /**
-   * 1 total
-   * 2 available
+   * 1 total 2 available
    * @return
    */
   def getTotalAndAvailableMemory(): (Long, Long) = {

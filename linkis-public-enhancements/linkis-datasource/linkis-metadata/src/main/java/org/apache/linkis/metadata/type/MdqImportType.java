@@ -18,7 +18,7 @@
 package org.apache.linkis.metadata.type;
 
 public enum MdqImportType {
-    Hive,
-    Csv,
-    Excel
+  Hive,
+  Csv,
+  Excel
 }

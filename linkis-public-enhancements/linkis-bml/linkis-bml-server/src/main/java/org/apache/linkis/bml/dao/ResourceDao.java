@@ -28,27 +28,27 @@ import java.util.Map;
 
 public interface ResourceDao {
 
-    List<Resource> getResources(Map paramMap);
+  List<Resource> getResources(Map paramMap);
 
-    void deleteResource(@Param("resourceId") String resourceId);
+  void deleteResource(@Param("resourceId") String resourceId);
 
-    void batchDeleteResources(@Param("resourceIds") List<String> resourceIds);
+  void batchDeleteResources(@Param("resourceIds") List<String> resourceIds);
 
-    long uploadResource(Resource resource);
+  long uploadResource(Resource resource);
 
-    @Select(
-            "select exists(select * from `linkis_ps_bml_resources` where resource_id = #{resourceId}  and enable_flag = 1 )")
-    int checkExists(@Param("resourceId") String resourceId);
+  @Select(
+      "select exists(select * from `linkis_ps_bml_resources` where resource_id = #{resourceId}  and enable_flag = 1 )")
+  int checkExists(@Param("resourceId") String resourceId);
 
-    Resource getResource(@Param("resourceId") String resourceId);
+  Resource getResource(@Param("resourceId") String resourceId);
 
-    @Select("select owner from `linkis_ps_bml_resources` where resource_id = #{resourceId} ")
-    String getUserByResourceId(@Param("resourceId") String resourceId);
+  @Select("select owner from `linkis_ps_bml_resources` where resource_id = #{resourceId} ")
+  String getUserByResourceId(@Param("resourceId") String resourceId);
 
-    @Update(
-            "update `linkis_ps_bml_resources` set owner = #{newOwner} where resource_id = #{resourceId} and owner=#{oldOwner}")
-    void changeOwner(
-            @Param("resourceId") String resourceId,
-            @Param("oldOwner") String oldOwner,
-            @Param("newOwner") String newOwner);
+  @Update(
+      "update `linkis_ps_bml_resources` set owner = #{newOwner} where resource_id = #{resourceId} and owner=#{oldOwner}")
+  void changeOwner(
+      @Param("resourceId") String resourceId,
+      @Param("oldOwner") String oldOwner,
+      @Param("newOwner") String newOwner);
 }

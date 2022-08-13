@@ -31,54 +31,53 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 
+import java.util.Date;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Date;
 
 @Component
 public class DefaultContextAddListener implements CSIDListener {
 
-    private static final Logger logger = LoggerFactory.getLogger(DefaultContextAddListener.class);
+  private static final Logger logger = LoggerFactory.getLogger(DefaultContextAddListener.class);
 
-    private ContextAsyncListenerBus listenerBus =
-            DefaultContextListenerManager.getInstance().getContextAsyncListenerBus();
+  private ContextAsyncListenerBus listenerBus =
+      DefaultContextListenerManager.getInstance().getContextAsyncListenerBus();
 
-    @Autowired private ContextIDPersistence contextIDPersistence;
+  @Autowired private ContextIDPersistence contextIDPersistence;
 
-    @Autowired private ContextMapPersistence contextMapPersistence;
+  @Autowired private ContextMapPersistence contextMapPersistence;
 
-    @PostConstruct
-    private void init() {
-        listenerBus.addListener(this);
+  @PostConstruct
+  private void init() {
+    listenerBus.addListener(this);
+  }
+
+  @Override
+  public void onEventError(Event event, Throwable t) {}
+
+  @Override
+  public void onCSIDAccess(ContextIDEvent contextIDEvent) {}
+
+  @Override
+  public void onCSIDADD(ContextIDEvent contextIDEvent) {
+    try {
+      PersistenceContextID pContextID = new PersistenceContextID();
+      pContextID.setContextId(contextIDEvent.getContextID().getContextId());
+      pContextID.setAccessTime(new Date());
+      contextIDPersistence.updateContextID(pContextID);
+      if (logger.isDebugEnabled()) {
+        logger.debug(
+            "Updated accesstime for contextID : {}", contextIDEvent.getContextID().getContextId());
+      }
+    } catch (Exception e) {
+      logger.error("Update context accessTime failed, {}", e.getMessage(), e);
     }
+  }
 
-    @Override
-    public void onEventError(Event event, Throwable t) {}
+  @Override
+  public void onCSIDRemoved(ContextIDEvent contextIDEvent) {}
 
-    @Override
-    public void onCSIDAccess(ContextIDEvent contextIDEvent) {}
-
-    @Override
-    public void onCSIDADD(ContextIDEvent contextIDEvent) {
-        try {
-            PersistenceContextID pContextID = new PersistenceContextID();
-            pContextID.setContextId(contextIDEvent.getContextID().getContextId());
-            pContextID.setAccessTime(new Date());
-            contextIDPersistence.updateContextID(pContextID);
-            if (logger.isDebugEnabled()) {
-                logger.debug(
-                        "Updated accesstime for contextID : {}",
-                        contextIDEvent.getContextID().getContextId());
-            }
-        } catch (Exception e) {
-            logger.error("Update context accessTime failed, {}", e.getMessage(), e);
-        }
-    }
-
-    @Override
-    public void onCSIDRemoved(ContextIDEvent contextIDEvent) {}
-
-    @Override
-    public void onEvent(Event event) {}
+  @Override
+  public void onEvent(Event event) {}
 }

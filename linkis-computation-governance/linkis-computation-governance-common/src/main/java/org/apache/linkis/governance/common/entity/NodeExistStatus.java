@@ -18,7 +18,7 @@
 package org.apache.linkis.governance.common.entity;
 
 public enum NodeExistStatus {
-    Exist,
-    UnExist,
-    Unknown // only used in internal
+  Exist,
+  UnExist,
+  Unknown // only used in internal
 }

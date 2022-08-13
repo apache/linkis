@@ -18,50 +18,50 @@
 package org.apache.linkis.variable.entity;
 
 public class VarKeyUser {
-    private Long id;
-    private Long applicationID;
-    private Long keyID;
-    private String userName;
+  private Long id;
+  private Long applicationID;
+  private Long keyID;
+  private String userName;
 
-    public Long getId() {
-        return id;
-    }
+  public Long getId() {
+    return id;
+  }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+  public void setId(Long id) {
+    this.id = id;
+  }
 
-    public Long getApplicationID() {
-        return applicationID;
-    }
+  public Long getApplicationID() {
+    return applicationID;
+  }
 
-    public void setApplicationID(Long applicationID) {
-        this.applicationID = applicationID;
-    }
+  public void setApplicationID(Long applicationID) {
+    this.applicationID = applicationID;
+  }
 
-    public Long getKeyID() {
-        return keyID;
-    }
+  public Long getKeyID() {
+    return keyID;
+  }
 
-    public void setKeyID(Long keyID) {
-        this.keyID = keyID;
-    }
+  public void setKeyID(Long keyID) {
+    this.keyID = keyID;
+  }
 
-    public String getUserName() {
-        return userName;
-    }
+  public String getUserName() {
+    return userName;
+  }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
+  public void setUserName(String userName) {
+    this.userName = userName;
+  }
 
-    public String getValue() {
-        return value;
-    }
+  public String getValue() {
+    return value;
+  }
 
-    public void setValue(String value) {
-        this.value = value;
-    }
+  public void setValue(String value) {
+    this.value = value;
+  }
 
-    private String value;
+  private String value;
 }

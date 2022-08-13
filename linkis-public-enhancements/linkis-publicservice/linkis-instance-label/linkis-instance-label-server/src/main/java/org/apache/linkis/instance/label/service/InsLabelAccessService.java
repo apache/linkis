@@ -26,83 +26,83 @@ import java.util.List;
 
 public interface InsLabelAccessService {
 
-    /**
-     * Add label to instance
-     *
-     * @param label label entity
-     * @param serviceInstance service instance
-     */
-    void attachLabelToInstance(Label<?> label, ServiceInstance serviceInstance)
-            throws InstanceErrorException;
+  /**
+   * Add label to instance
+   *
+   * @param label label entity
+   * @param serviceInstance service instance
+   */
+  void attachLabelToInstance(Label<?> label, ServiceInstance serviceInstance)
+      throws InstanceErrorException;
 
-    void attachLabelsToInstance(List<? extends Label<?>> labels, ServiceInstance serviceInstance)
-            throws InstanceErrorException;
+  void attachLabelsToInstance(List<? extends Label<?>> labels, ServiceInstance serviceInstance)
+      throws InstanceErrorException;
 
-    /**
-     * Refresh all the labels of instance (to init the relationship of instance and labels)
-     *
-     * @param labels
-     * @param serviceInstance
-     */
-    void refreshLabelsToInstance(List<? extends Label<?>> labels, ServiceInstance serviceInstance)
-            throws InstanceErrorException;
-    /**
-     * Remove all relationship between label and instance
-     *
-     * @param serviceInstance service instance
-     */
-    void removeLabelsFromInstance(ServiceInstance serviceInstance);
+  /**
+   * Refresh all the labels of instance (to init the relationship of instance and labels)
+   *
+   * @param labels
+   * @param serviceInstance
+   */
+  void refreshLabelsToInstance(List<? extends Label<?>> labels, ServiceInstance serviceInstance)
+      throws InstanceErrorException;
+  /**
+   * Remove all relationship between label and instance
+   *
+   * @param serviceInstance service instance
+   */
+  void removeLabelsFromInstance(ServiceInstance serviceInstance);
 
-    /**
-     * Search instances from labels
-     *
-     * @param labels label list
-     */
-    List<ServiceInstance> searchInstancesByLabels(List<? extends Label<?>> labels);
+  /**
+   * Search instances from labels
+   *
+   * @param labels label list
+   */
+  List<ServiceInstance> searchInstancesByLabels(List<? extends Label<?>> labels);
 
-    /**
-     * Search instances from labels
-     *
-     * @param labels label list
-     * @param relation relation type
-     */
-    List<ServiceInstance> searchInstancesByLabels(
-            List<? extends Label<?>> labels, Label.ValueRelation relation);
+  /**
+   * Search instances from labels
+   *
+   * @param labels label list
+   * @param relation relation type
+   */
+  List<ServiceInstance> searchInstancesByLabels(
+      List<? extends Label<?>> labels, Label.ValueRelation relation);
 
-    /**
-     * Search instances that are not related with other labels
-     *
-     * @param serviceInstance instance info for searching
-     * @return
-     */
-    List<ServiceInstance> searchUnRelateInstances(ServiceInstance serviceInstance);
+  /**
+   * Search instances that are not related with other labels
+   *
+   * @param serviceInstance instance info for searching
+   * @return
+   */
+  List<ServiceInstance> searchUnRelateInstances(ServiceInstance serviceInstance);
 
-    /**
-     * Search instances that are related with other labels
-     *
-     * @param serviceInstance instance info for searching
-     * @return
-     */
-    List<ServiceInstance> searchLabelRelatedInstances(ServiceInstance serviceInstance);
-    /**
-     * Remove labels
-     *
-     * @param labels
-     */
-    void removeLabelsIfNotRelation(List<? extends Label<?>> labels);
+  /**
+   * Search instances that are related with other labels
+   *
+   * @param serviceInstance instance info for searching
+   * @return
+   */
+  List<ServiceInstance> searchLabelRelatedInstances(ServiceInstance serviceInstance);
+  /**
+   * Remove labels
+   *
+   * @param labels
+   */
+  void removeLabelsIfNotRelation(List<? extends Label<?>> labels);
 
-    /**
-     * Search instances that are related with other labels
-     *
-     * @return
-     */
-    List<InstanceInfo> listAllInstanceWithLabel();
+  /**
+   * Search instances that are related with other labels
+   *
+   * @return
+   */
+  List<InstanceInfo> listAllInstanceWithLabel();
 
-    List<ServiceInstance> getInstancesByNames(String appName);
+  List<ServiceInstance> getInstancesByNames(String appName);
 
-    void removeInstance(ServiceInstance serviceInstance);
+  void removeInstance(ServiceInstance serviceInstance);
 
-    void updateInstance(InstanceInfo instanceInfo);
+  void updateInstance(InstanceInfo instanceInfo);
 
-    InstanceInfo getInstanceInfoByServiceInstance(ServiceInstance serviceInstance);
+  InstanceInfo getInstanceInfoByServiceInstance(ServiceInstance serviceInstance);
 }

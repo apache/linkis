@@ -26,22 +26,22 @@ import java.util.HashMap;
 
 public class ConcurrentEngineConnLabel extends GenericLabel implements EngineNodeLabel {
 
-    public ConcurrentEngineConnLabel() {
-        setLabelKey(LabelKeyConstant.CONCURRENT_ENGINE_KEY);
-    }
+  public ConcurrentEngineConnLabel() {
+    setLabelKey(LabelKeyConstant.CONCURRENT_ENGINE_KEY);
+  }
 
-    @ValueSerialNum(0)
-    public void setParallelism(String parallelism) {
-        if (null == getValue()) {
-            setValue(new HashMap<>());
-        }
-        getValue().put("parallelism", parallelism);
+  @ValueSerialNum(0)
+  public void setParallelism(String parallelism) {
+    if (null == getValue()) {
+      setValue(new HashMap<>());
     }
+    getValue().put("parallelism", parallelism);
+  }
 
-    public String getParallelism() {
-        if (null == getValue()) {
-            return null;
-        }
-        return getValue().get("parallelism");
+  public String getParallelism() {
+    if (null == getValue()) {
+      return null;
     }
+    return getValue().get("parallelism");
+  }
 }

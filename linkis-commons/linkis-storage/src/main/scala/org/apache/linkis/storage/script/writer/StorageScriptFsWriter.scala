@@ -25,9 +25,11 @@ import org.apache.linkis.storage.LineRecord
 import org.apache.linkis.storage.script.{Compaction, ScriptFsWriter, ScriptMetaData}
 import org.apache.linkis.storage.utils.{StorageConfiguration, StorageUtils}
 import org.apache.commons.io.IOUtils
+import org.apache.hadoop.hdfs.client.HdfsDataOutputStream
+import org.apache.linkis.common.utils.{Logging, Utils}
 
 
-class StorageScriptFsWriter(val path: FsPath, val charset: String, outputStream: OutputStream = null) extends ScriptFsWriter {
+class StorageScriptFsWriter(val path: FsPath, val charset: String, outputStream: OutputStream = null) extends ScriptFsWriter with Logging{
 
   private val stringBuilder = new StringBuilder
 
@@ -61,7 +63,16 @@ class StorageScriptFsWriter(val path: FsPath, val charset: String, outputStream:
     IOUtils.closeQuietly(outputStream)
   }
 
-  override def flush(): Unit = if (outputStream != null) outputStream.flush()
+  override def flush(): Unit = if (outputStream != null) {
+    Utils.tryAndWarnMsg[Unit] {
+      outputStream match {
+        case hdfs: HdfsDataOutputStream =>
+          hdfs.hflush()
+        case _ =>
+          outputStream.flush()
+      }
+    }(s"$toString Error encounters when flush script ")
+  }
 
   def getInputStream(): InputStream = {
     new ByteArrayInputStream(stringBuilder.toString().getBytes(StorageConfiguration.STORAGE_RS_FILE_TYPE.getValue))

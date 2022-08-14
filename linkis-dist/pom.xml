@@ -257,6 +257,11 @@
                                             <arg value="--build-arg" /> <arg value="LINKIS_LOG_DIR=${linkis.log.dir}" />
                                             <arg value="${project.build.directory}" />
                                         </exec>
+                                        <exec executable="docker" failonerror="true" >
+                                            <arg value="tag"/>
+                                            <arg value="${project.parent.artifactId}:${project.version}" />
+                                            <arg value="${project.parent.artifactId}:dev" />
+                                        </exec>
                                     </target>
                                 </configuration>
                             </execution>
@@ -282,6 +287,11 @@
                                             <arg value="--build-arg" /> <arg value="LINKIS_VERSION=${project.version}" />
                                             <arg value="--build-arg" /> <arg value="LINKIS_HOME=${linkis.home}" />
                                             <arg value="${project.build.directory}" />
+                                        </exec>
+                                        <exec executable="docker" failonerror="true" >
+                                            <arg value="tag"/>
+                                            <arg value="${project.parent.artifactId}-web:${project.version}" />
+                                            <arg value="${project.parent.artifactId}-web:dev" />
                                         </exec>
                                     </target>
                                 </configuration>
@@ -321,6 +331,11 @@
                                             <arg value="--build-arg" /> <arg value="ZOOKEEPER_VERSION=${ldh.zookeeper.version}" />
                                             <arg value="--build-arg" /> <arg value="FLINK_VERSION=${ldh.flink.version}" />
                                             <arg value="${project.build.directory}" />
+                                        </exec>
+                                        <exec executable="docker" failonerror="true" >
+                                            <arg value="tag"/>
+                                            <arg value="${project.parent.artifactId}-ldh:${project.version}" />
+                                            <arg value="${project.parent.artifactId}-ldh:dev" />
                                         </exec>
                                     </target>
                                 </configuration>

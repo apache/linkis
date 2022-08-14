@@ -41,7 +41,7 @@
 
             <excludes>
                 <exclude>com.github.xiaoymin:*:jar</exclude>
-                <exclude>io.springfox:*:jar</exclude>
+<!--                <exclude>io.springfox:*:jar</exclude>-->
                 <exclude>io.swagger:*:jar</exclude>
             </excludes>
         </dependencySet>

@@ -34,9 +34,7 @@ spec:
   selector:
     {{- include "linkis.psMetadataQuery.selectorLabels" . | nindent 4 }}
     app: {{ include "linkis.fullname" . }}-ps-metadataquery
-  type: LoadBalancer
-  externalTrafficPolicy: Cluster
-  publishNotReadyAddresses: true
+  {{- toYaml .Values.svc | nindent 2 }}
 ---
 apiVersion: v1
 kind: Service

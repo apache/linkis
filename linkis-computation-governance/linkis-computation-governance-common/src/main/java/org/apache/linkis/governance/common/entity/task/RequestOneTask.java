@@ -22,22 +22,22 @@ import org.apache.linkis.protocol.query.QueryProtocol;
 import java.util.Date;
 
 public class RequestOneTask extends RequestPersistTask implements QueryProtocol {
-    private Date startTime;
-    private Date endTime;
+  private Date startTime;
+  private Date endTime;
 
-    public Date getStartTime() {
-        return startTime;
-    }
+  public Date getStartTime() {
+    return startTime;
+  }
 
-    public void setStartTime(Date startTime) {
-        this.startTime = startTime;
-    }
+  public void setStartTime(Date startTime) {
+    this.startTime = startTime;
+  }
 
-    public Date getEndTime() {
-        return endTime;
-    }
+  public Date getEndTime() {
+    return endTime;
+  }
 
-    public void setEndTime(Date endTime) {
-        this.endTime = endTime;
-    }
+  public void setEndTime(Date endTime) {
+    this.endTime = endTime;
+  }
 }

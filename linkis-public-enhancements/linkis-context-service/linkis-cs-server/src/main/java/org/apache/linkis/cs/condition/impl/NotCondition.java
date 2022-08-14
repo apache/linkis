@@ -22,12 +22,12 @@ import org.apache.linkis.cs.condition.ConditionType;
 import org.apache.linkis.cs.condition.UnaryLogicCondition;
 
 public class NotCondition extends UnaryLogicCondition {
-    public NotCondition(Condition origin) {
-        super(origin);
-    }
+  public NotCondition(Condition origin) {
+    super(origin);
+  }
 
-    @Override
-    public ConditionType getConditionType() {
-        return ConditionType.Logic;
-    }
+  @Override
+  public ConditionType getConditionType() {
+    return ConditionType.Logic;
+  }
 }

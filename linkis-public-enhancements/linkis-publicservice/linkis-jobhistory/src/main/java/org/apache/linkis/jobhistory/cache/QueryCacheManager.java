@@ -21,11 +21,11 @@ import org.apache.linkis.jobhistory.cache.impl.UserTaskResultCache;
 
 public interface QueryCacheManager {
 
-    UserTaskResultCache getCache(String user, String engineType);
+  UserTaskResultCache getCache(String user, String engineType);
 
-    void cleanAll();
+  void cleanAll();
 
-    void refreshAll();
+  void refreshAll();
 
-    void refreshUndoneTask();
+  void refreshUndoneTask();
 }

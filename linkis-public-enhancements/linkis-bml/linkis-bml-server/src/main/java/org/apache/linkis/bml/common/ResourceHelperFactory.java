@@ -24,22 +24,21 @@ import org.slf4j.LoggerFactory;
 
 public class ResourceHelperFactory {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ResourceHelperFactory.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(ResourceHelperFactory.class);
 
-    private static final boolean IS_HDFS =
-            (Boolean) BmlServerConfiguration.BML_IS_HDFS().getValue();
+  private static final boolean IS_HDFS = (Boolean) BmlServerConfiguration.BML_IS_HDFS().getValue();
 
-    private static final ResourceHelper HDFS_RESOURCE_HELPER = new HdfsResourceHelper();
+  private static final ResourceHelper HDFS_RESOURCE_HELPER = new HdfsResourceHelper();
 
-    private static final ResourceHelper LOCAL_RESOURCE_HELPER = new LocalResourceHelper();
+  private static final ResourceHelper LOCAL_RESOURCE_HELPER = new LocalResourceHelper();
 
-    public static ResourceHelper getResourceHelper() {
-        if (IS_HDFS) {
-            LOGGER.info("will store resource in hdfs");
-            return HDFS_RESOURCE_HELPER;
-        } else {
-            LOGGER.info("will store resource in local");
-            return LOCAL_RESOURCE_HELPER;
-        }
+  public static ResourceHelper getResourceHelper() {
+    if (IS_HDFS) {
+      LOGGER.info("will store resource in hdfs");
+      return HDFS_RESOURCE_HELPER;
+    } else {
+      LOGGER.info("will store resource in local");
+      return LOCAL_RESOURCE_HELPER;
     }
+  }
 }

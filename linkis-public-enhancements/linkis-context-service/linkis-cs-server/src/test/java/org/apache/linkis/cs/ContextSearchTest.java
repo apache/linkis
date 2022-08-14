@@ -30,63 +30,62 @@ import org.apache.linkis.cs.exception.ContextSearchFailedException;
 import org.apache.linkis.cs.keyword.TestContextKey;
 import org.apache.linkis.cs.keyword.TestContextKeyValue;
 
+import java.util.List;
+
 import com.google.common.collect.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ContextSearchTest {
 
-    List<ContextKeyValue> contextKeyValues = Lists.newArrayList();
+  List<ContextKeyValue> contextKeyValues = Lists.newArrayList();
 
-    @BeforeEach
-    public void setUp() throws Exception {
+  @BeforeEach
+  public void setUp() throws Exception {
 
-        ContextID contextID = new TestContextID();
-        contextID.setContextId("id");
-        ContextKey contextKey1 = new TestContextKey();
-        contextKey1.setKey("key1");
-        contextKey1.setContextType(ContextType.DATA);
-        contextKey1.setContextScope(ContextScope.PRIVATE);
-        contextKey1.setKeywords("keyword1,keyword2,keyword3");
-        ContextKeyValue contextKeyValue1 = new TestContextKeyValue();
-        contextKeyValue1.setContextKey(contextKey1);
-        contextKeyValue1.setContextValue(null);
-        contextKeyValues.add(contextKeyValue1);
+    ContextID contextID = new TestContextID();
+    contextID.setContextId("id");
+    ContextKey contextKey1 = new TestContextKey();
+    contextKey1.setKey("key1");
+    contextKey1.setContextType(ContextType.DATA);
+    contextKey1.setContextScope(ContextScope.PRIVATE);
+    contextKey1.setKeywords("keyword1,keyword2,keyword3");
+    ContextKeyValue contextKeyValue1 = new TestContextKeyValue();
+    contextKeyValue1.setContextKey(contextKey1);
+    contextKeyValue1.setContextValue(null);
+    contextKeyValues.add(contextKeyValue1);
 
-        ContextID contextID2 = new TestContextID();
-        contextID2.setContextId("id");
-        ContextKey contextKey2 = new TestContextKey();
-        contextKey2.setKey("key2");
-        contextKey2.setContextType(ContextType.METADATA);
-        contextKey2.setContextScope(ContextScope.PROTECTED);
-        contextKey2.setKeywords("keyword1,keyword2,keyword3");
-        ContextKeyValue contextKeyValue2 = new TestContextKeyValue();
-        contextKeyValue2.setContextKey(contextKey2);
-        contextKeyValue2.setContextValue(null);
-        contextKeyValues.add(contextKeyValue2);
-    }
+    ContextID contextID2 = new TestContextID();
+    contextID2.setContextId("id");
+    ContextKey contextKey2 = new TestContextKey();
+    contextKey2.setKey("key2");
+    contextKey2.setContextType(ContextType.METADATA);
+    contextKey2.setContextScope(ContextScope.PROTECTED);
+    contextKey2.setKeywords("keyword1,keyword2,keyword3");
+    ContextKeyValue contextKeyValue2 = new TestContextKeyValue();
+    contextKeyValue2.setContextKey(contextKey2);
+    contextKeyValue2.setContextValue(null);
+    contextKeyValues.add(contextKeyValue2);
+  }
 
-    @Test
-    public void testSearch() throws ContextSearchFailedException {
+  @Test
+  public void testSearch() throws ContextSearchFailedException {
 
-        ContextSearch contextSearch = new DefaultContextSearch();
-        ContextCacheService contextCacheService = Mockito.mock(ContextCacheService.class);
-        Mockito.when(contextCacheService.getAll(Mockito.any(ContextID.class)))
-                .thenReturn(contextKeyValues);
+    ContextSearch contextSearch = new DefaultContextSearch();
+    ContextCacheService contextCacheService = Mockito.mock(ContextCacheService.class);
+    Mockito.when(contextCacheService.getAll(Mockito.any(ContextID.class)))
+        .thenReturn(contextKeyValues);
 
-        ConditionBuilder conditionBuilder = ConditionBuilder.newBuilder();
-        conditionBuilder.contextScopes(Lists.newArrayList(ContextScope.PRIVATE)).contains("key");
-        Condition condition = conditionBuilder.build();
+    ConditionBuilder conditionBuilder = ConditionBuilder.newBuilder();
+    conditionBuilder.contextScopes(Lists.newArrayList(ContextScope.PRIVATE)).contains("key");
+    Condition condition = conditionBuilder.build();
 
-        ContextID contextID = new TestContextID();
-        contextID.setContextId("id");
-        List<ContextKeyValue> list =
-                contextSearch.search(contextCacheService, contextID, condition);
-        assertEquals(1, list.size());
-    }
+    ContextID contextID = new TestContextID();
+    contextID.setContextId("id");
+    List<ContextKeyValue> list = contextSearch.search(contextCacheService, contextID, condition);
+    assertEquals(1, list.size());
+  }
 }

@@ -19,13 +19,13 @@ package org.apache.linkis.protocol.query.cache;
 
 public class CacheTaskResult implements ResponseReadCache {
 
-    private String resultLocation;
+  private String resultLocation;
 
-    public CacheTaskResult(String resultLocation) {
-        this.resultLocation = resultLocation;
-    }
+  public CacheTaskResult(String resultLocation) {
+    this.resultLocation = resultLocation;
+  }
 
-    public String getResultLocation() {
-        return resultLocation;
-    }
+  public String getResultLocation() {
+    return resultLocation;
+  }
 }

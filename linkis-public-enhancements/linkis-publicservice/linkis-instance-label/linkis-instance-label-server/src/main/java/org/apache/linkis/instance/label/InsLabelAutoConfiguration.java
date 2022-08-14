@@ -33,66 +33,64 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.annotation.AnnotationUtils;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-
 @Configuration
 public class InsLabelAutoConfiguration {
-    private static final Logger LOG = LoggerFactory.getLogger(InsLabelAutoConfiguration.class);
+  private static final Logger LOG = LoggerFactory.getLogger(InsLabelAutoConfiguration.class);
 
-    @ConditionalOnClass({DataSourceConfig.class})
-    @ConditionalOnMissingBean({DefaultInsLabelService.class})
+  @ConditionalOnClass({DataSourceConfig.class})
+  @ConditionalOnMissingBean({DefaultInsLabelService.class})
+  @Bean
+  @Scope("prototype")
+  public InsLabelAccessService defaultInsLabelService() {
+    return new DefaultInsLabelService();
+  }
+
+  @ConditionalOnMissingBean({InsLabelServiceAdapter.class})
+  @Bean(initMethod = "init")
+  public InsLabelServiceAdapter insLabelServiceAdapter(List<InsLabelAccessService> accessServices) {
+    LOG.info("Discover instance label accessServices: [" + accessServices.size() + "]");
+    InsLabelServiceAdapter insLabelServiceAdapter = new DefaultInsLabelServiceAdapter();
+    accessServices.forEach(
+        accessService -> {
+          AdapterMode adapterMode =
+              AnnotationUtils.findAnnotation(accessService.getClass(), AdapterMode.class);
+          if (null != adapterMode) {
+            LOG.info(
+                "Register instance label access service: "
+                    + accessService.getClass().getSimpleName()
+                    + " to service adapter");
+            insLabelServiceAdapter.registerServices(accessService, adapterMode.order());
+          }
+        });
+    return insLabelServiceAdapter;
+  }
+
+  /** Configuration in eureka environment */
+  /* @Configuration
+  @ConditionalOnClass({EurekaClient.class})*/
+  public static class EurekaClientConfiguration {
+    @ConditionalOnMissingBean({EurekaInsLabelService.class})
     @Bean
     @Scope("prototype")
-    public InsLabelAccessService defaultInsLabelService() {
-        return new DefaultInsLabelService();
+    public EurekaInsLabelService eurekaInsLabelService(EurekaDiscoveryClient discoveryClient) {
+      return new EurekaInsLabelService(discoveryClient);
     }
+  }
 
-    @ConditionalOnMissingBean({InsLabelServiceAdapter.class})
-    @Bean(initMethod = "init")
-    public InsLabelServiceAdapter insLabelServiceAdapter(
-            List<InsLabelAccessService> accessServices) {
-        LOG.info("Discover instance label accessServices: [" + accessServices.size() + "]");
-        InsLabelServiceAdapter insLabelServiceAdapter = new DefaultInsLabelServiceAdapter();
-        accessServices.forEach(
-                accessService -> {
-                    AdapterMode adapterMode =
-                            AnnotationUtils.findAnnotation(
-                                    accessService.getClass(), AdapterMode.class);
-                    if (null != adapterMode) {
-                        LOG.info(
-                                "Register instance label access service: "
-                                        + accessService.getClass().getSimpleName()
-                                        + " to service adapter");
-                        insLabelServiceAdapter.registerServices(accessService, adapterMode.order());
-                    }
-                });
-        return insLabelServiceAdapter;
-    }
-
-    /** Configuration in eureka environment */
-    /* @Configuration
-    @ConditionalOnClass({EurekaClient.class})*/
-    public static class EurekaClientConfiguration {
-        @ConditionalOnMissingBean({EurekaInsLabelService.class})
-        @Bean
-        @Scope("prototype")
-        public EurekaInsLabelService eurekaInsLabelService(EurekaDiscoveryClient discoveryClient) {
-            return new EurekaInsLabelService(discoveryClient);
-        }
-    }
-
-    /**
-     * Enable the rpc service
-     *
-     * @return
-     */
-    /*//@ConditionalOnExpression("${wds.linkis.is.gateway:false}==false")
-    @ConditionalOnMissingBean({InsLabelRpcService.class})
-    public InsLabelRpcService insLabelRpcService(){
-        LOG.info("Use the default implement of rpc service: [" + DefaultInsLabelRpcService.class + "]");
-        return new DefaultInsLabelRpcService();
-    }*/
+  /**
+   * Enable the rpc service
+   *
+   * @return
+   */
+  /*//@ConditionalOnExpression("${wds.linkis.is.gateway:false}==false")
+  @ConditionalOnMissingBean({InsLabelRpcService.class})
+  public InsLabelRpcService insLabelRpcService(){
+      LOG.info("Use the default implement of rpc service: [" + DefaultInsLabelRpcService.class + "]");
+      return new DefaultInsLabelRpcService();
+  }*/
 }

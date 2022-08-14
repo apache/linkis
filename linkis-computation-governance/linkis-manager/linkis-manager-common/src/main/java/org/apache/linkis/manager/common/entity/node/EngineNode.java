@@ -19,15 +19,15 @@ package org.apache.linkis.manager.common.entity.node;
 
 public interface EngineNode extends AMNode, RMNode, LabelNode {
 
-    EMNode getEMNode();
+  EMNode getEMNode();
 
-    void setEMNode(EMNode emNode);
+  void setEMNode(EMNode emNode);
 
-    String getLock();
+  String getLock();
 
-    void setLock(String lock);
+  void setLock(String lock);
 
-    String getTicketId();
+  String getTicketId();
 
-    void setTicketId(String ticketId);
+  void setTicketId(String ticketId);
 }

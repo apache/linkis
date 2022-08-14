@@ -21,7 +21,7 @@ import org.apache.linkis.LinkisBaseServerApp;
 
 public class LinkisGatewayApplication {
 
-    public static void main(String[] args) throws ReflectiveOperationException {
-        LinkisBaseServerApp.main(args);
-    }
+  public static void main(String[] args) throws ReflectiveOperationException {
+    LinkisBaseServerApp.main(args);
+  }
 }

@@ -25,48 +25,48 @@ import java.lang.reflect.Type;
 
 /** Extend label builder interface */
 public interface ExtensibleLabelBuilder {
-    /**
-     * If accept the key and type of label
-     *
-     * @param labelKey label key
-     * @param labelClass class of label
-     * @return boolean
-     */
-    boolean canBuild(String labelKey, Class<?> labelClass);
+  /**
+   * If accept the key and type of label
+   *
+   * @param labelKey label key
+   * @param labelClass class of label
+   * @return boolean
+   */
+  boolean canBuild(String labelKey, Class<?> labelClass);
 
-    /**
-     * Build label by value object(not stream)
-     *
-     * @param labelKey label key
-     * @param valueObj value object
-     * @param labelClass class of label </em>interface or entity class</em>
-     * @param valueTypes value types
-     * @param <T> extends Label
-     * @return label
-     */
-    <T extends Label<?>> T build(
-            String labelKey, Object valueObj, Class<?> labelClass, Type... valueTypes)
-            throws LabelErrorException;
+  /**
+   * Build label by value object(not stream)
+   *
+   * @param labelKey label key
+   * @param valueObj value object
+   * @param labelClass class of label </em>interface or entity class</em>
+   * @param valueTypes value types
+   * @param <T> extends Label
+   * @return label
+   */
+  <T extends Label<?>> T build(
+      String labelKey, Object valueObj, Class<?> labelClass, Type... valueTypes)
+      throws LabelErrorException;
 
-    <T extends Label<?>> T build(String labelKey, Object valueObj, Class<T> labelType)
-            throws LabelErrorException;
+  <T extends Label<?>> T build(String labelKey, Object valueObj, Class<T> labelType)
+      throws LabelErrorException;
 
-    /**
-     * Build label by value stream
-     *
-     * @param labelKey label key
-     * @param valueInput value input
-     * @param labelClass type of label <em>interface or entity class</em>
-     * @param valueTypes value types
-     * @param <T> extends Label
-     * @return label
-     */
-    <T extends Label<?>> T build(
-            String labelKey, InputStream valueInput, Class<?> labelClass, Type... valueTypes)
-            throws LabelErrorException;
+  /**
+   * Build label by value stream
+   *
+   * @param labelKey label key
+   * @param valueInput value input
+   * @param labelClass type of label <em>interface or entity class</em>
+   * @param valueTypes value types
+   * @param <T> extends Label
+   * @return label
+   */
+  <T extends Label<?>> T build(
+      String labelKey, InputStream valueInput, Class<?> labelClass, Type... valueTypes)
+      throws LabelErrorException;
 
-    <T extends Label<?>> T build(String labelKey, InputStream valueInput, Class<T> labelClass)
-            throws LabelErrorException;
+  <T extends Label<?>> T build(String labelKey, InputStream valueInput, Class<T> labelClass)
+      throws LabelErrorException;
 
-    int getOrder();
+  int getOrder();
 }

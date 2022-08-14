@@ -24,21 +24,21 @@ import org.apache.linkis.errorcode.server.service.LinkisErrorCodeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
 
 @Component
 public class LinkisErrorCodeServiceImpl implements LinkisErrorCodeService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(LinkisErrorCodeServiceImpl.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(LinkisErrorCodeServiceImpl.class);
 
-    @Autowired ErrorCodeMapper errorCodeMapper;
+  @Autowired ErrorCodeMapper errorCodeMapper;
 
-    @Override
-    public List<LinkisErrorCode> getAllErrorCodes() {
-        LOGGER.info("Begin to get all ErrorCodes in server");
-        return errorCodeMapper.getAllErrorCodes();
-    }
+  @Override
+  public List<LinkisErrorCode> getAllErrorCodes() {
+    LOGGER.info("Begin to get all ErrorCodes in server");
+    return errorCodeMapper.getAllErrorCodes();
+  }
 }

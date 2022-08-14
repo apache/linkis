@@ -22,17 +22,16 @@ import org.apache.linkis.common.conf.TimeType;
 
 public class ContextCacheConf {
 
-    public static final String KEYWORD_SCAN_PACKAGE =
-            CommonVars.apply("wds.linkis.cs.keyword.scan.package", "org.apache.linkis.cs")
-                    .getValue();
-    public static final String KEYWORD_SPLIT =
-            CommonVars.apply("wds.linkis.cs.keyword.split", ",").getValue();
+  public static final String KEYWORD_SCAN_PACKAGE =
+      CommonVars.apply("wds.linkis.cs.keyword.scan.package", "org.apache.linkis.cs").getValue();
+  public static final String KEYWORD_SPLIT =
+      CommonVars.apply("wds.linkis.cs.keyword.split", ",").getValue();
 
-    public static final int MAX_CACHE_SIZE =
-            CommonVars.apply("wds.linkis.cs.cache.size", 3000).getValue();
+  public static final int MAX_CACHE_SIZE =
+      CommonVars.apply("wds.linkis.cs.cache.size", 3000).getValue();
 
-    public static final long MAX_CACHE_READ_EXPIRE_MILLS =
-            CommonVars.apply("wds.linkis.cs.cache.read.expire.mills", new TimeType("3h"))
-                    .getValue()
-                    .toLong();
+  public static final long MAX_CACHE_READ_EXPIRE_MILLS =
+      CommonVars.apply("wds.linkis.cs.cache.read.expire.mills", new TimeType("3h"))
+          .getValue()
+          .toLong();
 }

@@ -25,14 +25,14 @@ import java.util.Map;
 
 public interface MetaDataService {
 
-    /**
-     * 通过ContextID和NodeName，获取上游的所有Metadata数据
-     *
-     * @param contextIDStr
-     * @param nodeName
-     * @return
-     * @throws CSErrorException
-     */
-    Map<ContextKey, MetaData> getAllUpstreamMetaData(String contextIDStr, String nodeName)
-            throws CSErrorException;
+  /**
+   * 通过ContextID和NodeName，获取上游的所有Metadata数据
+   *
+   * @param contextIDStr
+   * @param nodeName
+   * @return
+   * @throws CSErrorException
+   */
+  Map<ContextKey, MetaData> getAllUpstreamMetaData(String contextIDStr, String nodeName)
+      throws CSErrorException;
 }

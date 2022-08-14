@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,7 +23,6 @@ import org.apache.linkis.protocol.task.Task
 
 import java.io.{Closeable, Flushable}
 
-
 trait PersistenceEngine extends Closeable with Flushable {
 
   /**
@@ -34,8 +33,6 @@ trait PersistenceEngine extends Closeable with Flushable {
   @throws[ErrorException]
   def persist(jobReq: JobRequest): Unit
 
-
-
   /**
    * If a task's progress, status, logs, and result set are updated, this method is updated <br>
    * 如果一个任务的进度、状态、日志和结果集发生更新，由此方法进行更新<br>
@@ -43,7 +40,6 @@ trait PersistenceEngine extends Closeable with Flushable {
    */
   @throws[ErrorException]
   def updateIfNeeded(jobReq: JobRequest): Unit
-
 
   /**
    * Used to hang up a unified import task through this method, and continue to do the processing.
@@ -55,8 +51,8 @@ trait PersistenceEngine extends Closeable with Flushable {
   def readAll(instance: String): Array[Task]
 
   /**
-   * Return a task information in the database through a taskID, such as query log storage address, etc.
-   * 通过一个taskID，返回数据库中的一条task信息，这种情况包括如 查询日志存放地址等
+   * Return a task information in the database through a taskID, such as query log storage
+   * address, etc. 通过一个taskID，返回数据库中的一条task信息，这种情况包括如 查询日志存放地址等
    * @param taskID
    * @return
    */

@@ -32,17 +32,17 @@ import java.util.List;
 
 /** Operation for SHOW MODULES command. */
 public class ShowModulesOperation implements NonJobOperation {
-    private final ExecutionContext context;
+  private final ExecutionContext context;
 
-    public ShowModulesOperation(FlinkEngineConnContext context) {
-        this.context = context.getExecutionContext();
-    }
+  public ShowModulesOperation(FlinkEngineConnContext context) {
+    this.context = context.getExecutionContext();
+  }
 
-    @Override
-    public ResultSet execute() throws SqlExecutionException {
-        final TableEnvironment tableEnv = context.getTableEnvironment();
-        final List<String> modules =
-                context.wrapClassLoader(() -> Arrays.asList(tableEnv.listModules()));
-        return OperationUtil.stringListToResultSet(modules, ConstantNames.SHOW_MODULES_RESULT);
-    }
+  @Override
+  public ResultSet execute() throws SqlExecutionException {
+    final TableEnvironment tableEnv = context.getTableEnvironment();
+    final List<String> modules =
+        context.wrapClassLoader(() -> Arrays.asList(tableEnv.listModules()));
+    return OperationUtil.stringListToResultSet(modules, ConstantNames.SHOW_MODULES_RESULT);
+  }
 }

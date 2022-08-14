@@ -19,5 +19,5 @@ package org.apache.linkis.cs.persistence.exception;
 
 @FunctionalInterface
 public interface ThrowingFunction<T, R, E extends Exception> {
-    R accept(T t) throws E;
+  R accept(T t) throws E;
 }

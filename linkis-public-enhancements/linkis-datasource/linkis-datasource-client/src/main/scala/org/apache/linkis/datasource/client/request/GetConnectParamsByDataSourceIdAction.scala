@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,11 +21,11 @@ import org.apache.linkis.datasource.client.config.DatasourceClientConfig.DATA_SO
 import org.apache.linkis.datasource.client.exception.DataSourceClientBuilderException
 import org.apache.linkis.httpclient.request.GetAction
 
-
 class GetConnectParamsByDataSourceIdAction extends GetAction with DataSourceAction {
   private var dataSourceId: Long = _
 
-  override def suffixURLs: Array[String] = Array(DATA_SOURCE_SERVICE_MODULE.getValue, dataSourceId.toString, "connect-params")
+  override def suffixURLs: Array[String] =
+    Array(DATA_SOURCE_SERVICE_MODULE.getValue, dataSourceId.toString, "connect-params")
 
   private var user: String = _
 
@@ -34,11 +34,10 @@ class GetConnectParamsByDataSourceIdAction extends GetAction with DataSourceActi
   override def getUser: String = this.user
 }
 
-
 object GetConnectParamsByDataSourceIdAction {
   def builder(): Builder = new Builder
 
-  class Builder private[GetConnectParamsByDataSourceIdAction]() {
+  class Builder private[GetConnectParamsByDataSourceIdAction] () {
     private var dataSourceId: Long = _
     private var system: String = _
     private var user: String = _
@@ -59,20 +58,21 @@ object GetConnectParamsByDataSourceIdAction {
     }
 
     def build(): GetConnectParamsByDataSourceIdAction = {
-      if (dataSourceId == null) throw new DataSourceClientBuilderException("dataSourceId is needed!")
-      if(user == null) throw new DataSourceClientBuilderException("user is needed!")
+      if (dataSourceId == null)
+        throw new DataSourceClientBuilderException("dataSourceId is needed!")
+      if (user == null) throw new DataSourceClientBuilderException("user is needed!")
 
       val getConnectParamsByDataSourceIdAction = new GetConnectParamsByDataSourceIdAction
       getConnectParamsByDataSourceIdAction.dataSourceId = this.dataSourceId
 
-      if(system != null){
+      if (system != null) {
         getConnectParamsByDataSourceIdAction.setParameter("system", system)
       }
 
       getConnectParamsByDataSourceIdAction.setUser(user)
       getConnectParamsByDataSourceIdAction
     }
+
   }
 
 }
-

@@ -17,17 +17,14 @@
 
 package org.apache.linkis.governance.common.paser
 
-import org.apache.linkis.common.utils.{CodeAndRunTypeUtils, Logging}
+import org.apache.linkis.common.utils.{CodeAndRunTypeUtils, Logging, Utils}
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.governance.common.paser.CodeType.CodeType
-
 import org.apache.commons.lang3.StringUtils
-
 import java.util
 
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
-
 import org.slf4j.{Logger, LoggerFactory}
 
 trait CodeParser {
@@ -113,7 +110,7 @@ class ScalaCodeParser extends SingleCodeParser with Logging {
 
 }
 
-class PythonCodeParser extends SingleCodeParser {
+class PythonCodeParser extends SingleCodeParser with Logging {
 
   override val codeType: CodeType = CodeType.Python
   val openBrackets: Array[String] = Array("{", "(", "[")
@@ -121,11 +118,18 @@ class PythonCodeParser extends SingleCodeParser {
   val LOG: Logger = LoggerFactory.getLogger(getClass)
 
   override def parse(code: String): Array[String] = {
+    Utils.tryCatch(parsePythonCode(code)) { e =>
+      logger.info(s"Your code will be submitted in overall mode. ${e.getMessage} ")
+      Array(code)
+    }
+  }
+
+  def parsePythonCode(code: String): Array[String] = {
     val bracketStack = new mutable.Stack[String]
     val codeBuffer = new ArrayBuffer[String]()
     val statementBuffer = new ArrayBuffer[String]()
     var notDoc = true
-    // quotationMarks is used to optimize the three quotes problem（quotationMarks用来优化三引号问题）
+    // quotationMarks is used to optimize the three quotes problem
     var quotationMarks: Boolean = false
     code.split("\n").foreach {
       case "" =>
@@ -134,11 +138,11 @@ class PythonCodeParser extends SingleCodeParser {
         statementBuffer.append(l)
         recordBrackets(bracketStack, l)
       case l if quotationMarks => statementBuffer.append(l)
-      // 用于修复python的引号问题
+      //quotationMarks is used to optimize the three quotes problem（quotationMarks用来优化三引号问题）
       // recordBrackets(bracketStack, l)
       case l if notDoc && l.startsWith("#") =>
       case l
-          if StringUtils
+          if statementBuffer.nonEmpty && StringUtils
             .isNotBlank(statementBuffer.last) && statementBuffer.last.endsWith("""\""") =>
         statementBuffer.append(l)
       case l if notDoc && l.startsWith(" ") =>

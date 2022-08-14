@@ -23,74 +23,74 @@ import java.util.Date;
 
 /** like: PersistenceLabel in label-manager-common */
 public class InsPersistenceLabel extends GenericLabel {
-    private Integer id;
-    private int labelValueSize = -1;
-    private String stringValue;
-    private Boolean modifiable = false;
+  private Integer id;
+  private int labelValueSize = -1;
+  private String stringValue;
+  private Boolean modifiable = false;
 
-    private Date updateTime;
-    private Date createTime;
+  private Date updateTime;
+  private Date createTime;
 
-    public Boolean getModifiable() {
-        return modifiable;
+  public Boolean getModifiable() {
+    return modifiable;
+  }
+
+  public void setModifiable(Boolean modifiable) {
+    this.modifiable = modifiable;
+  }
+
+  public Integer getId() {
+    return id;
+  }
+
+  public void setId(Integer id) {
+    this.id = id;
+  }
+
+  public int getLabelValueSize() {
+    return labelValueSize;
+  }
+
+  public void setLabelValueSize(int labelValueSize) {
+    this.labelValueSize = labelValueSize;
+  }
+
+  @Override
+  public String getStringValue() {
+    return stringValue;
+  }
+
+  @Override
+  public void setStringValue(String stringValue) {
+    this.stringValue = stringValue;
+  }
+
+  public Date getUpdateTime() {
+    return updateTime;
+  }
+
+  public void setUpdateTime(Date updateTime) {
+    this.updateTime = updateTime;
+  }
+
+  public Date getCreateTime() {
+    return createTime;
+  }
+
+  public void setCreateTime(Date createTime) {
+    this.createTime = createTime;
+  }
+
+  @Override
+  public boolean equals(Object other) {
+    if (null != this.getLabelKey() && other instanceof InsPersistenceLabel) {
+      InsPersistenceLabel otherInsLabel = (InsPersistenceLabel) other;
+      if (this.getLabelKey().equals(otherInsLabel.getLabelKey())) {
+        return (null == this.getStringValue() && null == otherInsLabel.getStringValue())
+            || (null != this.getStringValue()
+                && this.getStringValue().equals(otherInsLabel.getStringValue()));
+      }
     }
-
-    public void setModifiable(Boolean modifiable) {
-        this.modifiable = modifiable;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public int getLabelValueSize() {
-        return labelValueSize;
-    }
-
-    public void setLabelValueSize(int labelValueSize) {
-        this.labelValueSize = labelValueSize;
-    }
-
-    @Override
-    public String getStringValue() {
-        return stringValue;
-    }
-
-    @Override
-    public void setStringValue(String stringValue) {
-        this.stringValue = stringValue;
-    }
-
-    public Date getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
-    }
-
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    @Override
-    public boolean equals(Object other) {
-        if (null != this.getLabelKey() && other instanceof InsPersistenceLabel) {
-            InsPersistenceLabel otherInsLabel = (InsPersistenceLabel) other;
-            if (this.getLabelKey().equals(otherInsLabel.getLabelKey())) {
-                return (null == this.getStringValue() && null == otherInsLabel.getStringValue())
-                        || (null != this.getStringValue()
-                                && this.getStringValue().equals(otherInsLabel.getStringValue()));
-            }
-        }
-        return false;
-    }
+    return false;
+  }
 }

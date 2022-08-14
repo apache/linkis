@@ -32,137 +32,136 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Component
 public class ContextHACheckerImpl implements ContextHAChecker {
 
-    private static final Logger logger = LoggerFactory.getLogger(ContextHACheckerImpl.class);
+  private static final Logger logger = LoggerFactory.getLogger(ContextHACheckerImpl.class);
 
-    @Autowired private InstanceAliasManagerImpl instanceAliasManager;
-    /**
-     * ${第一个instance长度}${第二个instance长度}{instance别名1}{instance别名2}{实际ID}
-     *
-     * @param haIDKey
-     * @return
-     */
-    @Override
-    public boolean isHAIDValid(String haIDKey) {
-        if (CSHighAvailableUtils.checkHAIDBasicFormat(haIDKey)) {
-            try {
-                return checkHAIDInstance(CSHighAvailableUtils.decodeHAID(haIDKey));
-            } catch (CSErrorException e) {
-                return false;
-            }
-        } else {
-            return false;
-        }
+  @Autowired private InstanceAliasManagerImpl instanceAliasManager;
+  /**
+   * ${第一个instance长度}${第二个instance长度}{instance别名1}{instance别名2}{实际ID}
+   *
+   * @param haIDKey
+   * @return
+   */
+  @Override
+  public boolean isHAIDValid(String haIDKey) {
+    if (CSHighAvailableUtils.checkHAIDBasicFormat(haIDKey)) {
+      try {
+        return checkHAIDInstance(CSHighAvailableUtils.decodeHAID(haIDKey));
+      } catch (CSErrorException e) {
+        return false;
+      }
+    } else {
+      return false;
     }
+  }
 
-    /**
-     * 主备实例同时有效，且id为有效的HAID或数字时才有效
-     *
-     * @param haContextID
-     * @return
-     * @throws CSErrorException
-     */
-    @Override
-    public boolean isHAContextIDValid(HAContextID haContextID) throws CSErrorException {
-        boolean valid = false;
-        if (null != haContextID
-                && StringUtils.isNotBlank(haContextID.getInstance())
-                && StringUtils.isNotBlank(haContextID.getBackupInstance())) {
-            if (StringUtils.isNotBlank(haContextID.getContextId())) {
-                if (StringUtils.isNumeric(haContextID.getContextId())) {
-                    valid = checkHAIDInstance(haContextID);
-                } else {
-                    valid = isHAIDValid(haContextID.getContextId());
-                }
-            } else {
-                valid = false;
-            }
-        } else {
-            valid = false;
-        }
-        return valid;
-    }
-
-    @Override
-    public String convertHAIDToHAKey(HAContextID haContextID) throws CSErrorException {
-        if (null == haContextID
-                || StringUtils.isBlank(haContextID.getInstance())
-                || StringUtils.isBlank(haContextID.getBackupInstance())
-                || StringUtils.isBlank(haContextID.getContextId())) {
-            throw new CSErrorException(
-                    CSErrorCode.INVALID_HAID,
-                    "Incomplete HAID Object cannot be encoded. mainInstance : "
-                            + haContextID.getInstance()
-                            + ", backupInstance : "
-                            + haContextID.getBackupInstance()
-                            + ", contextID : "
-                            + haContextID.getContextId());
-        }
+  /**
+   * 主备实例同时有效，且id为有效的HAID或数字时才有效
+   *
+   * @param haContextID
+   * @return
+   * @throws CSErrorException
+   */
+  @Override
+  public boolean isHAContextIDValid(HAContextID haContextID) throws CSErrorException {
+    boolean valid = false;
+    if (null != haContextID
+        && StringUtils.isNotBlank(haContextID.getInstance())
+        && StringUtils.isNotBlank(haContextID.getBackupInstance())) {
+      if (StringUtils.isNotBlank(haContextID.getContextId())) {
         if (StringUtils.isNumeric(haContextID.getContextId())) {
-            return encode(haContextID);
-        } else if (isHAIDValid(haContextID.getContextId())) {
-            return haContextID.getContextId();
+          valid = checkHAIDInstance(haContextID);
         } else {
-            logger.error("ConvertHAIDToHAKey error, invald HAID : " + haContextID.getContextId());
-            throw new CSErrorException(
-                    CSErrorCode.INVALID_HAID,
-                    "ConvertHAIDToHAKey error, invald HAID : " + haContextID.getContextId());
+          valid = isHAIDValid(haContextID.getContextId());
         }
+      } else {
+        valid = false;
+      }
+    } else {
+      valid = false;
     }
+    return valid;
+  }
 
-    /**
-     * Encode HAContextID to HAKey String.
-     * ${第一个instance长度}${第二个instance长度}{instance别名0}{instance别名2}{实际ID}
-     *
-     * @return
-     */
-    private String encode(HAContextID haContextID) throws CSErrorException {
-        List<String> backupInstanceList = new ArrayList<>();
-        if (StringUtils.isNotBlank(haContextID.getBackupInstance())) {
-            backupInstanceList.add(haContextID.getBackupInstance());
-        } else {
-            backupInstanceList.add(haContextID.getInstance());
-        }
-        return CSHighAvailableUtils.encodeHAIDKey(
-                haContextID.getContextId(), haContextID.getInstance(), backupInstanceList);
+  @Override
+  public String convertHAIDToHAKey(HAContextID haContextID) throws CSErrorException {
+    if (null == haContextID
+        || StringUtils.isBlank(haContextID.getInstance())
+        || StringUtils.isBlank(haContextID.getBackupInstance())
+        || StringUtils.isBlank(haContextID.getContextId())) {
+      throw new CSErrorException(
+          CSErrorCode.INVALID_HAID,
+          "Incomplete HAID Object cannot be encoded. mainInstance : "
+              + haContextID.getInstance()
+              + ", backupInstance : "
+              + haContextID.getBackupInstance()
+              + ", contextID : "
+              + haContextID.getContextId());
     }
+    if (StringUtils.isNumeric(haContextID.getContextId())) {
+      return encode(haContextID);
+    } else if (isHAIDValid(haContextID.getContextId())) {
+      return haContextID.getContextId();
+    } else {
+      logger.error("ConvertHAIDToHAKey error, invald HAID : " + haContextID.getContextId());
+      throw new CSErrorException(
+          CSErrorCode.INVALID_HAID,
+          "ConvertHAIDToHAKey error, invald HAID : " + haContextID.getContextId());
+    }
+  }
 
-    private boolean checkHAIDInstance(HAContextID haContextID) {
-        if (!ContextHighAvailableConf.ENABLE_STRICT_HAID_CHECK.getValue()) {
-            return true;
-        }
-        ServiceInstance serverMainInstance = DataWorkCloudApplication.getServiceInstance();
-        String mainInstanceAlias = haContextID.getInstance();
-        String backupInstanceAlias = haContextID.getBackupInstance();
-        if (!instanceAliasManager.isInstanceAliasValid(mainInstanceAlias)
-                && !instanceAliasManager.isInstanceAliasValid(backupInstanceAlias)) {
-            return false;
-        }
-        ServiceInstance mainInstance = instanceAliasManager.getInstanceByAlias(mainInstanceAlias);
-        ServiceInstance backupInstance =
-                instanceAliasManager.getInstanceByAlias(backupInstanceAlias);
-        if (serverMainInstance.equals(mainInstance) || serverMainInstance.equals(backupInstance)) {
-            return true;
-        } else {
-            return false;
-        }
+  /**
+   * Encode HAContextID to HAKey String.
+   * ${第一个instance长度}${第二个instance长度}{instance别名0}{instance别名2}{实际ID}
+   *
+   * @return
+   */
+  private String encode(HAContextID haContextID) throws CSErrorException {
+    List<String> backupInstanceList = new ArrayList<>();
+    if (StringUtils.isNotBlank(haContextID.getBackupInstance())) {
+      backupInstanceList.add(haContextID.getBackupInstance());
+    } else {
+      backupInstanceList.add(haContextID.getInstance());
     }
+    return CSHighAvailableUtils.encodeHAIDKey(
+        haContextID.getContextId(), haContextID.getInstance(), backupInstanceList);
+  }
 
-    @Override
-    public HAContextID parseHAIDFromKey(String haIDKey) throws CSErrorException {
-        HAContextID haContextID = null;
-        if (StringUtils.isBlank(haIDKey) || !CSHighAvailableUtils.checkHAIDBasicFormat(haIDKey)) {
-            logger.error("Invalid haIDKey : " + haIDKey);
-            throw new CSErrorException(CSErrorCode.INVALID_HAID, "Invalid haIDKey : " + haIDKey);
-        }
-        return CSHighAvailableUtils.decodeHAID(haIDKey);
+  private boolean checkHAIDInstance(HAContextID haContextID) {
+    if (!ContextHighAvailableConf.ENABLE_STRICT_HAID_CHECK.getValue()) {
+      return true;
     }
+    ServiceInstance serverMainInstance = DataWorkCloudApplication.getServiceInstance();
+    String mainInstanceAlias = haContextID.getInstance();
+    String backupInstanceAlias = haContextID.getBackupInstance();
+    if (!instanceAliasManager.isInstanceAliasValid(mainInstanceAlias)
+        && !instanceAliasManager.isInstanceAliasValid(backupInstanceAlias)) {
+      return false;
+    }
+    ServiceInstance mainInstance = instanceAliasManager.getInstanceByAlias(mainInstanceAlias);
+    ServiceInstance backupInstance = instanceAliasManager.getInstanceByAlias(backupInstanceAlias);
+    if (serverMainInstance.equals(mainInstance) || serverMainInstance.equals(backupInstance)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  @Override
+  public HAContextID parseHAIDFromKey(String haIDKey) throws CSErrorException {
+    HAContextID haContextID = null;
+    if (StringUtils.isBlank(haIDKey) || !CSHighAvailableUtils.checkHAIDBasicFormat(haIDKey)) {
+      logger.error("Invalid haIDKey : " + haIDKey);
+      throw new CSErrorException(CSErrorCode.INVALID_HAID, "Invalid haIDKey : " + haIDKey);
+    }
+    return CSHighAvailableUtils.decodeHAID(haIDKey);
+  }
 }

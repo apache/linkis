@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,18 +17,24 @@
 
 package org.apache.linkis.engineconnplugin.sqoop.params
 
+import org.apache.linkis.engineconn.common.creation.EngineCreationContext
+
 import java.util
 
-import org.apache.linkis.engineconn.common.creation.EngineCreationContext
 /**
-  * Resolve the engine job params
+ * Resolve the engine job params
  */
 trait SqoopParamsResolver {
 
   /**
    * main method
-   * @param params input
+   * @param params
+   *   input
    * @return
    */
-  def resolve(params: util.Map[String, String], context: EngineCreationContext): util.Map[String, String]
+  def resolve(
+      params: util.Map[String, String],
+      context: EngineCreationContext
+  ): util.Map[String, String]
+
 }

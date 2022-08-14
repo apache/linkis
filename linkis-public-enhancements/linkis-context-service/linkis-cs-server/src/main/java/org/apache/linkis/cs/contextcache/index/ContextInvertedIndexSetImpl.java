@@ -20,63 +20,63 @@ package org.apache.linkis.cs.contextcache.index;
 import org.apache.linkis.cs.common.entity.enumeration.ContextType;
 import org.apache.linkis.cs.common.entity.source.ContextKey;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class ContextInvertedIndexSetImpl implements ContextInvertedIndexSet {
 
-    private static final Logger logger = LoggerFactory.getLogger(ContextInvertedIndexSetImpl.class);
+  private static final Logger logger = LoggerFactory.getLogger(ContextInvertedIndexSetImpl.class);
 
-    private Map<String, ContextInvertedIndex> invertedIndexMap = new ConcurrentHashMap<>();
+  private Map<String, ContextInvertedIndex> invertedIndexMap = new ConcurrentHashMap<>();
 
-    @Override
-    public ContextInvertedIndex getContextInvertedIndex(ContextType contextType) {
-        String csType = contextType.name();
+  @Override
+  public ContextInvertedIndex getContextInvertedIndex(ContextType contextType) {
+    String csType = contextType.name();
+    if (!invertedIndexMap.containsKey(csType)) {
+      synchronized (csType.intern()) {
         if (!invertedIndexMap.containsKey(csType)) {
-            synchronized (csType.intern()) {
-                if (!invertedIndexMap.containsKey(csType)) {
-                    logger.info("For ContextType({}) init invertedIndex", csType);
-                    invertedIndexMap.put(csType, new DefaultContextInvertedIndex());
-                }
-            }
+          logger.info("For ContextType({}) init invertedIndex", csType);
+          invertedIndexMap.put(csType, new DefaultContextInvertedIndex());
         }
-        return invertedIndexMap.get(csType);
+      }
     }
+    return invertedIndexMap.get(csType);
+  }
 
-    @Override
-    public boolean addValue(String keyword, ContextKey contextKey) {
-        return addValue(keyword, contextKey.getKey(), contextKey.getContextType());
-    }
+  @Override
+  public boolean addValue(String keyword, ContextKey contextKey) {
+    return addValue(keyword, contextKey.getKey(), contextKey.getContextType());
+  }
 
-    @Override
-    public boolean addValue(String keyword, String contextKey, ContextType contextType) {
-        return getContextInvertedIndex(contextType).addValue(keyword, contextKey);
-    }
+  @Override
+  public boolean addValue(String keyword, String contextKey, ContextType contextType) {
+    return getContextInvertedIndex(contextType).addValue(keyword, contextKey);
+  }
 
-    @Override
-    public boolean addKeywords(Set<String> keywords, String contextKey, ContextType contextType) {
-        Iterator<String> iterator = keywords.iterator();
-        while (iterator.hasNext()) {
-            addValue(iterator.next(), contextKey, contextType);
-        }
-        return true;
+  @Override
+  public boolean addKeywords(Set<String> keywords, String contextKey, ContextType contextType) {
+    Iterator<String> iterator = keywords.iterator();
+    while (iterator.hasNext()) {
+      addValue(iterator.next(), contextKey, contextType);
     }
+    return true;
+  }
 
-    @Override
-    public List<String> getContextKeys(String keyword, ContextType contextType) {
-        return getContextInvertedIndex(contextType).getContextKeys(keyword);
-    }
+  @Override
+  public List<String> getContextKeys(String keyword, ContextType contextType) {
+    return getContextInvertedIndex(contextType).getContextKeys(keyword);
+  }
 
-    @Override
-    public boolean remove(String keyword, String contextKey, ContextType contextType) {
-        return getContextInvertedIndex(contextType).remove(keyword, contextKey);
-    }
+  @Override
+  public boolean remove(String keyword, String contextKey, ContextType contextType) {
+    return getContextInvertedIndex(contextType).remove(keyword, contextKey);
+  }
 
-    @Override
-    public ContextInvertedIndex removeAll(ContextType contextType) {
-        return invertedIndexMap.remove(contextType.name());
-    }
+  @Override
+  public ContextInvertedIndex removeAll(ContextType contextType) {
+    return invertedIndexMap.remove(contextType.name());
+  }
 }

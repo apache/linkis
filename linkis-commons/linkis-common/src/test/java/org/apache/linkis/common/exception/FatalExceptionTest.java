@@ -23,23 +23,23 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class FatalExceptionTest {
 
-    @Test
-    void testFatalException() {
-        FatalException fatalException1 = new FatalException(1, "test");
-        assertEquals(ExceptionLevel.FATAL, fatalException1.getLevel());
-        assertEquals("test", fatalException1.getDesc());
-        FatalException fatalException2 =
-                new FatalException(3, "test", "127.0.0.1", 1234, "serviceKind");
-        assertEquals(ExceptionLevel.FATAL, fatalException2.getLevel());
-        assertEquals("test", fatalException2.getDesc());
-        assertEquals("127.0.0.1", fatalException2.getIp());
-        assertEquals(1234, fatalException2.getPort());
-        assertEquals("serviceKind", fatalException2.getServiceKind());
-    }
+  @Test
+  void testFatalException() {
+    FatalException fatalException1 = new FatalException(1, "test");
+    assertEquals(ExceptionLevel.FATAL, fatalException1.getLevel());
+    assertEquals("test", fatalException1.getDesc());
+    FatalException fatalException2 =
+        new FatalException(3, "test", "127.0.0.1", 1234, "serviceKind");
+    assertEquals(ExceptionLevel.FATAL, fatalException2.getLevel());
+    assertEquals("test", fatalException2.getDesc());
+    assertEquals("127.0.0.1", fatalException2.getIp());
+    assertEquals(1234, fatalException2.getPort());
+    assertEquals("serviceKind", fatalException2.getServiceKind());
+  }
 
-    @Test
-    void getLevel() {
-        FatalException fatalException = new FatalException(1, "test");
-        assertEquals(ExceptionLevel.FATAL, fatalException.getLevel());
-    }
+  @Test
+  void getLevel() {
+    FatalException fatalException = new FatalException(1, "test");
+    assertEquals(ExceptionLevel.FATAL, fatalException.getLevel());
+  }
 }

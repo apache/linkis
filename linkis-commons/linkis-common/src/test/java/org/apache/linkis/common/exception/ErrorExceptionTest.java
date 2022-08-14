@@ -23,23 +23,23 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ErrorExceptionTest {
 
-    @Test
-    void testErrorException() {
-        ErrorException errorException1 = new ErrorException(1, "test");
-        assertEquals(ExceptionLevel.ERROR, errorException1.getLevel());
-        assertEquals("test", errorException1.getDesc());
-        ErrorException errorException2 =
-                new ErrorException(3, "test", "127.0.0.1", 1234, "serviceKind");
-        assertEquals(ExceptionLevel.ERROR, errorException2.getLevel());
-        assertEquals("test", errorException2.getDesc());
-        assertEquals("127.0.0.1", errorException2.getIp());
-        assertEquals(1234, errorException2.getPort());
-        assertEquals("serviceKind", errorException2.getServiceKind());
-    }
+  @Test
+  void testErrorException() {
+    ErrorException errorException1 = new ErrorException(1, "test");
+    assertEquals(ExceptionLevel.ERROR, errorException1.getLevel());
+    assertEquals("test", errorException1.getDesc());
+    ErrorException errorException2 =
+        new ErrorException(3, "test", "127.0.0.1", 1234, "serviceKind");
+    assertEquals(ExceptionLevel.ERROR, errorException2.getLevel());
+    assertEquals("test", errorException2.getDesc());
+    assertEquals("127.0.0.1", errorException2.getIp());
+    assertEquals(1234, errorException2.getPort());
+    assertEquals("serviceKind", errorException2.getServiceKind());
+  }
 
-    @Test
-    void testGetLevel() {
-        ErrorException errorException = new ErrorException(2, "test");
-        assertEquals(ExceptionLevel.ERROR, errorException.getLevel());
-    }
+  @Test
+  void testGetLevel() {
+    ErrorException errorException = new ErrorException(2, "test");
+    assertEquals(ExceptionLevel.ERROR, errorException.getLevel());
+  }
 }

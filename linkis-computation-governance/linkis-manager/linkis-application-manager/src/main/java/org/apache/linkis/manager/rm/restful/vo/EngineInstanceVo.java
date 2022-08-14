@@ -23,67 +23,67 @@ import java.util.Date;
 
 public class EngineInstanceVo {
 
-    String instance;
-    String engineType;
-    String status;
-    String label;
-    NodeResource resource;
-    String creator;
-    Date startTime;
+  String instance;
+  String engineType;
+  String status;
+  String label;
+  NodeResource resource;
+  String creator;
+  Date startTime;
 
-    public String getInstance() {
-        return instance;
-    }
+  public String getInstance() {
+    return instance;
+  }
 
-    public void setInstance(String instance) {
-        this.instance = instance;
-    }
+  public void setInstance(String instance) {
+    this.instance = instance;
+  }
 
-    public String getEngineType() {
-        return engineType;
-    }
+  public String getEngineType() {
+    return engineType;
+  }
 
-    public void setEngineType(String engineType) {
-        this.engineType = engineType;
-    }
+  public void setEngineType(String engineType) {
+    this.engineType = engineType;
+  }
 
-    public String getStatus() {
-        return status;
-    }
+  public String getStatus() {
+    return status;
+  }
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
+  public void setStatus(String status) {
+    this.status = status;
+  }
 
-    public String getLabel() {
-        return label;
-    }
+  public String getLabel() {
+    return label;
+  }
 
-    public void setLabel(String label) {
-        this.label = label;
-    }
+  public void setLabel(String label) {
+    this.label = label;
+  }
 
-    public NodeResource getResource() {
-        return resource;
-    }
+  public NodeResource getResource() {
+    return resource;
+  }
 
-    public void setResource(NodeResource resource) {
-        this.resource = resource;
-    }
+  public void setResource(NodeResource resource) {
+    this.resource = resource;
+  }
 
-    public String getCreator() {
-        return creator;
-    }
+  public String getCreator() {
+    return creator;
+  }
 
-    public void setCreator(String creator) {
-        this.creator = creator;
-    }
+  public void setCreator(String creator) {
+    this.creator = creator;
+  }
 
-    public Date getStartTime() {
-        return startTime;
-    }
+  public Date getStartTime() {
+    return startTime;
+  }
 
-    public void setStartTime(Date startTime) {
-        this.startTime = startTime;
-    }
+  public void setStartTime(Date startTime) {
+    this.startTime = startTime;
+  }
 }

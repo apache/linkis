@@ -28,42 +28,41 @@ import org.apache.linkis.cs.execution.fetcher.ContextTypeContextSearchFetcher;
 
 public abstract class BinaryLogicConditionExecution extends AbstractConditionExecution {
 
-    ContextCacheFetcher fastFetcher;
+  ContextCacheFetcher fastFetcher;
 
-    public BinaryLogicConditionExecution(
-            BinaryLogicCondition condition,
-            ContextCacheService contextCacheService,
-            ContextID contextID) {
-        super(condition, contextCacheService, contextID);
-        ContextTypeCondition contextTypeCondition =
-                findFastCondition(condition.getLeft(), condition);
-        if (contextTypeCondition != null) {
-            fastFetcher =
-                    new ContextTypeContextSearchFetcher(
-                            contextCacheService, contextTypeCondition.getContextType());
-        }
+  public BinaryLogicConditionExecution(
+      BinaryLogicCondition condition,
+      ContextCacheService contextCacheService,
+      ContextID contextID) {
+    super(condition, contextCacheService, contextID);
+    ContextTypeCondition contextTypeCondition = findFastCondition(condition.getLeft(), condition);
+    if (contextTypeCondition != null) {
+      fastFetcher =
+          new ContextTypeContextSearchFetcher(
+              contextCacheService, contextTypeCondition.getContextType());
     }
+  }
 
-    protected ContextTypeCondition findFastCondition(
-            Condition condition, BinaryLogicCondition parent) {
-        if (condition instanceof BinaryLogicCondition) {
-            BinaryLogicCondition binaryLogicCondition = (BinaryLogicCondition) condition;
-            return findFastCondition(binaryLogicCondition.getLeft(), binaryLogicCondition);
-        } else if (condition instanceof ContextTypeCondition) {
-            parent.setLeft(null);
-            return (ContextTypeCondition) condition;
-        } else {
-            return null;
-        }
+  protected ContextTypeCondition findFastCondition(
+      Condition condition, BinaryLogicCondition parent) {
+    if (condition instanceof BinaryLogicCondition) {
+      BinaryLogicCondition binaryLogicCondition = (BinaryLogicCondition) condition;
+      return findFastCondition(binaryLogicCondition.getLeft(), binaryLogicCondition);
+    } else if (condition instanceof ContextTypeCondition) {
+      parent.setLeft(null);
+      return (ContextTypeCondition) condition;
+    } else {
+      return null;
     }
+  }
 
-    @Override
-    protected ContextCacheFetcher getFastFetcher() {
-        return fastFetcher;
-    }
+  @Override
+  protected ContextCacheFetcher getFastFetcher() {
+    return fastFetcher;
+  }
 
-    @Override
-    protected boolean needOptimization() {
-        return true;
-    }
+  @Override
+  protected boolean needOptimization() {
+    return true;
+  }
 }

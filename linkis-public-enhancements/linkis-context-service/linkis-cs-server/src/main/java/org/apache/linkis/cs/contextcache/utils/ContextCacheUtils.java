@@ -24,14 +24,14 @@ import java.util.regex.Pattern;
 
 public class ContextCacheUtils {
 
-    public static Set<String> getString(String s, String regex) {
+  public static Set<String> getString(String s, String regex) {
 
-        Set<String> keywords = new HashSet<>();
-        Pattern p = Pattern.compile(regex);
-        Matcher m = p.matcher(s);
-        while (m.find()) {
-            keywords.add(m.group());
-        }
-        return keywords;
+    Set<String> keywords = new HashSet<>();
+    Pattern p = Pattern.compile(regex);
+    Matcher m = p.matcher(s);
+    while (m.find()) {
+      keywords.add(m.group());
     }
+    return keywords;
+  }
 }

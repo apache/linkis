@@ -34,67 +34,65 @@ import org.apache.linkis.cs.server.service.ContextListenerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Component
 public class ContextListenerServiceImpl extends ContextListenerService {
 
-    @Autowired private ContextPersistenceManager persistenceManager;
+  @Autowired private ContextPersistenceManager persistenceManager;
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private ContextIDListenerPersistence getIDListenerPersistence() throws CSErrorException {
-        return persistenceManager.getContextIDListenerPersistence();
+  private ContextIDListenerPersistence getIDListenerPersistence() throws CSErrorException {
+    return persistenceManager.getContextIDListenerPersistence();
+  }
+
+  private ContextKeyListenerPersistence getKeyListenerPersistence() throws CSErrorException {
+    return persistenceManager.getContextKeyListenerPersistence();
+  }
+
+  @Override
+  public String getName() {
+    return ServiceType.CONTEXT_LISTENER.name();
+  }
+
+  @Override
+  public void onBind(ContextID contextID, ContextIDListenerDomain domain) throws CSErrorException {
+    logger.info(String.format("onBind,csId:%s", contextID.getContextId()));
+    domain.setContextID(contextID);
+    getIDListenerPersistence().create(contextID, domain);
+    DefaultContextListenerManager instance = DefaultContextListenerManager.getInstance();
+    instance.getContextIDCallbackEngine().registerClient(domain);
+  }
+
+  @Override
+  public void onBind(ContextID contextID, ContextKey contextKey, ContextKeyListenerDomain domain)
+      throws CSErrorException {
+    logger.info(
+        String.format("onBind,csId:%s,key:%s", contextID.getContextId(), contextKey.getKey()));
+    domain.setContextKey(contextKey);
+    // TODO: 2020/2/28
+    if (domain instanceof CommonContextKeyListenerDomain) {
+      ((CommonContextKeyListenerDomain) domain).setContextID(contextID);
     }
+    getKeyListenerPersistence().create(contextID, domain);
+    DefaultContextListenerManager instance = DefaultContextListenerManager.getInstance();
+    instance.getContextKeyCallbackEngine().registerClient(domain);
+  }
 
-    private ContextKeyListenerPersistence getKeyListenerPersistence() throws CSErrorException {
-        return persistenceManager.getContextKeyListenerPersistence();
-    }
-
-    @Override
-    public String getName() {
-        return ServiceType.CONTEXT_LISTENER.name();
-    }
-
-    @Override
-    public void onBind(ContextID contextID, ContextIDListenerDomain domain)
-            throws CSErrorException {
-        logger.info(String.format("onBind,csId:%s", contextID.getContextId()));
-        domain.setContextID(contextID);
-        getIDListenerPersistence().create(contextID, domain);
-        DefaultContextListenerManager instance = DefaultContextListenerManager.getInstance();
-        instance.getContextIDCallbackEngine().registerClient(domain);
-    }
-
-    @Override
-    public void onBind(ContextID contextID, ContextKey contextKey, ContextKeyListenerDomain domain)
-            throws CSErrorException {
-        logger.info(
-                String.format(
-                        "onBind,csId:%s,key:%s", contextID.getContextId(), contextKey.getKey()));
-        domain.setContextKey(contextKey);
-        // TODO: 2020/2/28
-        if (domain instanceof CommonContextKeyListenerDomain) {
-            ((CommonContextKeyListenerDomain) domain).setContextID(contextID);
-        }
-        getKeyListenerPersistence().create(contextID, domain);
-        DefaultContextListenerManager instance = DefaultContextListenerManager.getInstance();
-        instance.getContextKeyCallbackEngine().registerClient(domain);
-    }
-
-    @Override
-    public List<ContextKeyValueBean> heartbeat(String clientSource) {
-        logger.info(String.format("heartbeat,clientSource:%s", clientSource));
-        DefaultContextListenerManager instance = DefaultContextListenerManager.getInstance();
-        ArrayList<ContextKeyValueBean> idCallback =
-                instance.getContextIDCallbackEngine().getListenerCallback(clientSource);
-        ArrayList<ContextKeyValueBean> keyCallback =
-                instance.getContextKeyCallbackEngine().getListenerCallback(clientSource);
-        idCallback.addAll(keyCallback);
-        return idCallback;
-    }
+  @Override
+  public List<ContextKeyValueBean> heartbeat(String clientSource) {
+    logger.info(String.format("heartbeat,clientSource:%s", clientSource));
+    DefaultContextListenerManager instance = DefaultContextListenerManager.getInstance();
+    ArrayList<ContextKeyValueBean> idCallback =
+        instance.getContextIDCallbackEngine().getListenerCallback(clientSource);
+    ArrayList<ContextKeyValueBean> keyCallback =
+        instance.getContextKeyCallbackEngine().getListenerCallback(clientSource);
+    idCallback.addAll(keyCallback);
+    return idCallback;
+  }
 }

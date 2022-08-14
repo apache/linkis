@@ -21,12 +21,12 @@ import org.apache.linkis.common.exception.ErrorException;
 
 /** Define Exception */
 public class LabelErrorException extends ErrorException {
-    public LabelErrorException(int errCode, String desc) {
-        super(errCode, desc);
-    }
+  public LabelErrorException(int errCode, String desc) {
+    super(errCode, desc);
+  }
 
-    public LabelErrorException(int errCode, String desc, Throwable t) {
-        super(errCode, desc);
-        this.initCause(t);
-    }
+  public LabelErrorException(int errCode, String desc, Throwable t) {
+    super(errCode, desc);
+    this.initCause(t);
+  }
 }

@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -27,6 +27,7 @@ import org.apache.linkis.manager.label.entity.em.EMInstanceLabel
 import org.apache.linkis.manager.label.entity.engine.EngineInstanceLabel
 import org.apache.linkis.manager.rm.domain.RMLabelContainer
 import org.apache.linkis.manager.rm.utils.RMUtils
+
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
@@ -36,12 +37,16 @@ import java.util.Date
 @Component
 class ResourceLogService extends Logging {
 
-
   @Autowired
   private var ecResourceRecordMapper: ECResourceRecordMapper = _
 
-
-  private def printLog(changeType: String, resource: Resource, status: String, engineLabel: EngineInstanceLabel = null, ecmLabel: EMInstanceLabel = null): String = {
+  private def printLog(
+      changeType: String,
+      resource: Resource,
+      status: String,
+      engineLabel: EngineInstanceLabel = null,
+      ecmLabel: EMInstanceLabel = null
+  ): String = {
     val logString = new StringBuilder(changeType + " ")
     logString ++= (status + ", ")
     if (engineLabel != null && resource != null) {
@@ -57,7 +62,13 @@ class ResourceLogService extends Logging {
     logString.toString()
   }
 
-  def failed(changeType: String, resource: Resource, engineLabel: EngineInstanceLabel = null, ecmLabel: EMInstanceLabel = null, exception: Exception = null): Unit = Utils.tryAndWarn {
+  def failed(
+      changeType: String,
+      resource: Resource,
+      engineLabel: EngineInstanceLabel = null,
+      ecmLabel: EMInstanceLabel = null,
+      exception: Exception = null
+  ): Unit = Utils.tryAndWarn {
     if (changeType != null) {
       val log: String = changeType match {
         case ChangeType.ENGINE_INIT => {
@@ -88,7 +99,12 @@ class ResourceLogService extends Logging {
     }
   }
 
-  def success(changeType: String, resource: Resource, engineLabel: EngineInstanceLabel = null, ecmLabel: EMInstanceLabel = null): Unit = Utils.tryAndWarn {
+  def success(
+      changeType: String,
+      resource: Resource,
+      engineLabel: EngineInstanceLabel = null,
+      ecmLabel: EMInstanceLabel = null
+  ): Unit = Utils.tryAndWarn {
     if (changeType != null) {
       val log: String = changeType match {
         case ChangeType.ENGINE_INIT => {
@@ -128,16 +144,30 @@ class ResourceLogService extends Logging {
     logger.info(log)
   }
 
-  def recordUserResourceAction(labelContainer: RMLabelContainer, ticketId: String, changeType: String, resource: Resource): Unit = if (RMUtils.RM_RESOURCE_ACTION_RECORD.getValue) Utils.tryAndWarn {
-    val userCreatorEngineType: CombinedLabel = labelContainer.getCombinedUserCreatorEngineTypeLabel
+  def recordUserResourceAction(
+      labelContainer: RMLabelContainer,
+      ticketId: String,
+      changeType: String,
+      resource: Resource
+  ): Unit = if (RMUtils.RM_RESOURCE_ACTION_RECORD.getValue) Utils.tryAndWarn {
+    val userCreatorEngineType: CombinedLabel =
+      labelContainer.getCombinedUserCreatorEngineTypeLabel
     val engineInstanceLabel: EngineInstanceLabel = labelContainer.getEngineInstanceLabel
     val eMInstanceLabel = labelContainer.getEMInstanceLabel
     if (null == userCreatorEngineType) return
     var ecResourceInfoRecord = ecResourceRecordMapper.getECResourceInfoRecord(ticketId)
     if (ecResourceInfoRecord == null) {
       val logDirSuffix = getECLogDirSuffix(labelContainer, ticketId)
-      val user = if (null != labelContainer.getUserCreatorLabel) labelContainer.getUserCreatorLabel.getUser else ""
-      ecResourceInfoRecord = new ECResourceInfoRecord(userCreatorEngineType.getStringValue, user, ticketId, resource, logDirSuffix)
+      val user =
+        if (null != labelContainer.getUserCreatorLabel) labelContainer.getUserCreatorLabel.getUser
+        else ""
+      ecResourceInfoRecord = new ECResourceInfoRecord(
+        userCreatorEngineType.getStringValue,
+        user,
+        ticketId,
+        resource,
+        logDirSuffix
+      )
       ecResourceRecordMapper.insertECResourceInfoRecord(ecResourceInfoRecord)
     }
     if (null != engineInstanceLabel) {
@@ -174,7 +204,11 @@ class ResourceLogService extends Logging {
     if (null == engineTypeLabel || null == userCreatorLabel) {
       return ""
     }
-    val suffix = ECPathUtils.getECWOrkDirPathSuffix(userCreatorLabel.getUser, ticketId, engineTypeLabel.getEngineType)
+    val suffix = ECPathUtils.getECWOrkDirPathSuffix(
+      userCreatorLabel.getUser,
+      ticketId,
+      engineTypeLabel.getEngineType
+    )
     suffix + File.separator + "logs"
   }
 

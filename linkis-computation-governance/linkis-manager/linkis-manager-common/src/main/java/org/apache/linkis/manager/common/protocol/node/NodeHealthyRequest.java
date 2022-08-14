@@ -21,13 +21,13 @@ import org.apache.linkis.manager.common.entity.enumeration.NodeHealthy;
 
 public class NodeHealthyRequest implements HeartbeatProtocol {
 
-    private NodeHealthy nodeHealthy;
+  private NodeHealthy nodeHealthy;
 
-    public NodeHealthy getNodeHealthy() {
-        return nodeHealthy;
-    }
+  public NodeHealthy getNodeHealthy() {
+    return nodeHealthy;
+  }
 
-    public void setNodeHealthy(NodeHealthy nodeHealthy) {
-        this.nodeHealthy = nodeHealthy;
-    }
+  public void setNodeHealthy(NodeHealthy nodeHealthy) {
+    this.nodeHealthy = nodeHealthy;
+  }
 }

@@ -22,5 +22,5 @@ import org.apache.linkis.cs.common.exception.CSErrorException;
 
 public interface ContextIDValueGenerator {
 
-    ContextIDValue createContextIDValue(ContextID contextID) throws CSErrorException;
+  ContextIDValue createContextIDValue(ContextID contextID) throws CSErrorException;
 }

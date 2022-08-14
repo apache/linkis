@@ -22,18 +22,18 @@ import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel;
 
 public interface EngineConnPluginsLoader {
 
-    /**
-     * Get plugin( will get from the cache first )
-     *
-     * @param engineTypeLabel engine type label
-     * @return enginePlugin and classloader (you must not to hold the instance, avoid OOM)
-     */
-    EngineConnPluginInstance getEngineConnPlugin(EngineTypeLabel engineTypeLabel) throws Exception;
-    /**
-     * Load plugin without caching ( will force to update the cache )
-     *
-     * @param engineTypeLabel engine type label
-     * @return enginePlugin and classloader (you must not to hold the instance, avoid OOM)
-     */
-    EngineConnPluginInstance loadEngineConnPlugin(EngineTypeLabel engineTypeLabel) throws Exception;
+  /**
+   * Get plugin( will get from the cache first )
+   *
+   * @param engineTypeLabel engine type label
+   * @return enginePlugin and classloader (you must not to hold the instance, avoid OOM)
+   */
+  EngineConnPluginInstance getEngineConnPlugin(EngineTypeLabel engineTypeLabel) throws Exception;
+  /**
+   * Load plugin without caching ( will force to update the cache )
+   *
+   * @param engineTypeLabel engine type label
+   * @return enginePlugin and classloader (you must not to hold the instance, avoid OOM)
+   */
+  EngineConnPluginInstance loadEngineConnPlugin(EngineTypeLabel engineTypeLabel) throws Exception;
 }

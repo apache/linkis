@@ -18,58 +18,57 @@
 package org.apache.linkis.common.errorcode;
 
 public enum LinkisExtensionErrorCodeSummary {
-    ;
-    private int errorCode;
+  ;
+  private int errorCode;
 
-    private String errorDesc;
+  private String errorDesc;
 
-    private String comment;
+  private String comment;
 
-    private String module;
+  private String module;
 
-    LinkisExtensionErrorCodeSummary(
-            int errorCode, String errorDesc, String comment, String module) {
-        ErrorCodeUtils.validateErrorCode(errorCode, 26000, 26999);
-        this.errorCode = errorCode;
-        this.errorDesc = errorDesc;
-        this.comment = comment;
-        this.module = module;
-    }
+  LinkisExtensionErrorCodeSummary(int errorCode, String errorDesc, String comment, String module) {
+    ErrorCodeUtils.validateErrorCode(errorCode, 26000, 26999);
+    this.errorCode = errorCode;
+    this.errorDesc = errorDesc;
+    this.comment = comment;
+    this.module = module;
+  }
 
-    public int getErrorCode() {
-        return errorCode;
-    }
+  public int getErrorCode() {
+    return errorCode;
+  }
 
-    public void setErrorCode(int errorCode) {
-        this.errorCode = errorCode;
-    }
+  public void setErrorCode(int errorCode) {
+    this.errorCode = errorCode;
+  }
 
-    public String getErrorDesc() {
-        return errorDesc;
-    }
+  public String getErrorDesc() {
+    return errorDesc;
+  }
 
-    public void setErrorDesc(String errorDesc) {
-        this.errorDesc = errorDesc;
-    }
+  public void setErrorDesc(String errorDesc) {
+    this.errorDesc = errorDesc;
+  }
 
-    public String getComment() {
-        return comment;
-    }
+  public String getComment() {
+    return comment;
+  }
 
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
+  public void setComment(String comment) {
+    this.comment = comment;
+  }
 
-    public String getModule() {
-        return module;
-    }
+  public String getModule() {
+    return module;
+  }
 
-    public void setModule(String module) {
-        this.module = module;
-    }
+  public void setModule(String module) {
+    this.module = module;
+  }
 
-    @Override
-    public String toString() {
-        return "errorCode: " + this.errorCode + ", errorDesc:" + this.errorDesc;
-    }
+  @Override
+  public String toString() {
+    return "errorCode: " + this.errorCode + ", errorDesc:" + this.errorDesc;
+  }
 }

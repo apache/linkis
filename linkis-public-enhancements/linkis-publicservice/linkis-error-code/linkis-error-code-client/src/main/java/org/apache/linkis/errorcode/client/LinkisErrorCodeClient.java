@@ -23,44 +23,43 @@ import org.apache.linkis.errorcode.common.LinkisErrorCode;
 import org.apache.linkis.httpclient.dws.DWSHttpClient;
 import org.apache.linkis.httpclient.response.Result;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class LinkisErrorCodeClient {
 
-    private DWSHttpClient dwsHttpClient;
+  private DWSHttpClient dwsHttpClient;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(LinkisErrorCodeClient.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(LinkisErrorCodeClient.class);
 
-    public LinkisErrorCodeClient() {}
+  public LinkisErrorCodeClient() {}
 
-    public LinkisErrorCodeClient(DWSHttpClient dwsHttpClient) {
-        this();
-        this.dwsHttpClient = dwsHttpClient;
+  public LinkisErrorCodeClient(DWSHttpClient dwsHttpClient) {
+    this();
+    this.dwsHttpClient = dwsHttpClient;
+  }
+
+  public List<LinkisErrorCode> getErrorCodesFromServer() {
+    ErrorCodeGetAllAction errorCodeGetAllAction = new ErrorCodeGetAllAction();
+    Result result = null;
+    List<LinkisErrorCode> errorCodes = new ArrayList<>();
+    try {
+      result = dwsHttpClient.execute(errorCodeGetAllAction);
+    } catch (Exception e) {
+      LOGGER.error("Failed to get ErrorCodes from server", e);
     }
-
-    public List<LinkisErrorCode> getErrorCodesFromServer() {
-        ErrorCodeGetAllAction errorCodeGetAllAction = new ErrorCodeGetAllAction();
-        Result result = null;
-        List<LinkisErrorCode> errorCodes = new ArrayList<>();
-        try {
-            result = dwsHttpClient.execute(errorCodeGetAllAction);
-        } catch (Exception e) {
-            LOGGER.error("Failed to get ErrorCodes from server", e);
-        }
-        if (result instanceof ErrorCodeGetAllResult) {
-            ErrorCodeGetAllResult errorCodeGetAllResult = (ErrorCodeGetAllResult) result;
-            errorCodes = errorCodeGetAllResult.getErrorCodes();
-        } else if (result != null) {
-            LOGGER.error(
-                    "result is not type of ErrorCodeGetAllResult it is {}",
-                    result.getClass().getName());
-        } else {
-            LOGGER.error("failde to get errorcodes from server and result is null");
-        }
-        return errorCodes;
+    if (result instanceof ErrorCodeGetAllResult) {
+      ErrorCodeGetAllResult errorCodeGetAllResult = (ErrorCodeGetAllResult) result;
+      errorCodes = errorCodeGetAllResult.getErrorCodes();
+    } else if (result != null) {
+      LOGGER.error(
+          "result is not type of ErrorCodeGetAllResult it is {}", result.getClass().getName());
+    } else {
+      LOGGER.error("failde to get errorcodes from server and result is null");
     }
+    return errorCodes;
+  }
 }

@@ -20,5 +20,5 @@ package org.apache.linkis.cs.server.parser;
 import java.util.Set;
 
 public interface KeywordParser {
-    Set<String> parse(Object obj);
+  Set<String> parse(Object obj);
 }

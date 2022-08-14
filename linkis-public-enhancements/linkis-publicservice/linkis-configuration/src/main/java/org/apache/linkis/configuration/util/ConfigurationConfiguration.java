@@ -26,15 +26,13 @@ import java.util.ArrayList;
 
 public class ConfigurationConfiguration {
 
-    public static final ArrayList<Label> PERMIT_LABEL_TYPE = new ArrayList<>();
+  public static final ArrayList<Label> PERMIT_LABEL_TYPE = new ArrayList<>();
 
-    public static final String COPYKEYTOKEN =
-            CommonVars$.MODULE$
-                    .apply("wds.linkis.configuration.copykey.token", "e8724-e")
-                    .getValue();
+  public static final String COPYKEYTOKEN =
+      CommonVars$.MODULE$.apply("wds.linkis.configuration.copykey.token", "e8724-e").getValue();
 
-    static {
-        PERMIT_LABEL_TYPE.add(new UserCreatorLabel());
-        PERMIT_LABEL_TYPE.add(new EngineTypeLabel());
-    }
+  static {
+    PERMIT_LABEL_TYPE.add(new UserCreatorLabel());
+    PERMIT_LABEL_TYPE.add(new EngineTypeLabel());
+  }
 }

@@ -23,21 +23,21 @@ import org.apache.linkis.cs.common.serialize.AbstractSerializer;
 import org.apache.linkis.cs.common.utils.CSCommonUtils;
 
 public class LinkisBMLResourceSerializer extends AbstractSerializer<LinkisBMLResource> {
-    @Override
-    public String getType() {
-        return "linkisBMLResource";
-    }
+  @Override
+  public String getType() {
+    return "linkisBMLResource";
+  }
 
-    @Override
-    public LinkisBMLResource fromJson(String json) throws CSErrorException {
-        return CSCommonUtils.gson.fromJson(json, LinkisBMLResource.class);
-    }
+  @Override
+  public LinkisBMLResource fromJson(String json) throws CSErrorException {
+    return CSCommonUtils.gson.fromJson(json, LinkisBMLResource.class);
+  }
 
-    @Override
-    public boolean accepts(Object obj) {
-        if (null != obj && obj instanceof LinkisBMLResource) {
-            return true;
-        }
-        return false;
+  @Override
+  public boolean accepts(Object obj) {
+    if (null != obj && obj instanceof LinkisBMLResource) {
+      return true;
     }
+    return false;
+  }
 }

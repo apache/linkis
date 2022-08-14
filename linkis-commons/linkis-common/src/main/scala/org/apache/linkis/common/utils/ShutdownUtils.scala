@@ -5,22 +5,21 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
-package org.apache.linkis.common.utils
 
-import sun.misc.{Signal, SignalHandler}
+package org.apache.linkis.common.utils
 
 import scala.collection.mutable.ArrayBuffer
 
+import sun.misc.{Signal, SignalHandler}
 
 object ShutdownUtils {
 
@@ -38,10 +37,15 @@ object ShutdownUtils {
 
   def addShutdownHook(shutdownRunner: ShutdownRunner): Unit =
     shutdownRunners synchronized shutdownRunners += shutdownRunner
-   private val signals = Array("TERM", "HUP", "INT").map(signal => Utils.tryQuietly(new Signal(signal))).filter(_ != null)
+
+  private val signals = Array("TERM", "HUP", "INT")
+    .map(signal => Utils.tryQuietly(new Signal(signal)))
+    .filter(_ != null)
+
   private val signalHandler = new SignalHandler {
+
     override def handle(signal: Signal): Unit = {
-      val hooks = shutdownRunners.sortBy(_.order).toArray.map{
+      val hooks = shutdownRunners.sortBy(_.order).toArray.map {
         case m: DefaultShutdownRunner =>
           Utils.defaultScheduler.execute(m)
           m
@@ -52,27 +56,32 @@ object ShutdownUtils {
       }
       val startTime = System.currentTimeMillis
       ShutdownUtils synchronized {
-        while(System.currentTimeMillis - startTime < 30000 && hooks.exists(!_.isCompleted))
+        while (System.currentTimeMillis - startTime < 30000 && hooks.exists(!_.isCompleted))
           ShutdownUtils.wait(3000)
       }
       System.exit(0)
     }
+
   }
+
   signals.foreach(Signal.handle(_, signalHandler))
 }
+
 trait ShutdownRunner extends Runnable {
   val order: Int
 }
-class DefaultShutdownRunner(override val order: Int,
-                            runnable: Runnable) extends ShutdownRunner {
+
+class DefaultShutdownRunner(override val order: Int, runnable: Runnable) extends ShutdownRunner {
   private var completed = false
-  override def run(): Unit = Utils.tryFinally(runnable.run()){
+
+  override def run(): Unit = Utils.tryFinally(runnable.run()) {
     completed = true
     ShutdownUtils synchronized ShutdownUtils.notify()
   }
+
   def isCompleted = completed
 }
-class FunctionShutdownRunner(override val order: Int,
-                             hook: => Unit) extends ShutdownRunner {
+
+class FunctionShutdownRunner(override val order: Int, hook: => Unit) extends ShutdownRunner {
   override def run(): Unit = hook
 }

@@ -25,30 +25,30 @@ import java.util.List;
 
 public interface DataSourceParamKeyDao {
 
-    /**
-     * List by data source type id
-     *
-     * @param dataSourceTypeId type id
-     * @return
-     */
-    List<DataSourceParamKeyDefinition> listByDataSourceType(Long dataSourceTypeId);
+  /**
+   * List by data source type id
+   *
+   * @param dataSourceTypeId type id
+   * @return
+   */
+  List<DataSourceParamKeyDefinition> listByDataSourceType(Long dataSourceTypeId);
 
-    /**
-     * List by data source type id
-     *
-     * @param dataSourceTypeId type id
-     * @return
-     */
-    List<DataSourceParamKeyDefinition> listByDataSourceTypeEn(Long dataSourceTypeId);
+  /**
+   * List by data source type id
+   *
+   * @param dataSourceTypeId type id
+   * @return
+   */
+  List<DataSourceParamKeyDefinition> listByDataSourceTypeEn(Long dataSourceTypeId);
 
-    /**
-     * List by data source type id and scope
-     *
-     * @param dataSourceTypeId type id
-     * @param scope scope
-     * @return
-     */
-    List<DataSourceParamKeyDefinition> listByDataSourceTypeAndScope(
-            @Param("dataSourceTypeId") Long dataSourceTypeId,
-            @Param("scope") DataSourceParamKeyDefinition.Scope scope);
+  /**
+   * List by data source type id and scope
+   *
+   * @param dataSourceTypeId type id
+   * @param scope scope
+   * @return
+   */
+  List<DataSourceParamKeyDefinition> listByDataSourceTypeAndScope(
+      @Param("dataSourceTypeId") Long dataSourceTypeId,
+      @Param("scope") DataSourceParamKeyDefinition.Scope scope);
 }

@@ -30,48 +30,48 @@ import java.util.List;
 
 public interface MdqService {
 
-    /**
-     * 激活表操作，sparkEngine执行成功后使用rpc请求调用，参数是数据库主键id
-     *
-     * @param tableId
-     */
-    @Deprecated
-    void activateTable(Long tableId);
+  /**
+   * 激活表操作，sparkEngine执行成功后使用rpc请求调用，参数是数据库主键id
+   *
+   * @param tableId
+   */
+  @Deprecated
+  void activateTable(Long tableId);
 
-    /**
-     * 传入MdqTableBO 由sparkEnginerpc请求jsonStrig序列化得到，执行插入数据库的记录，返回数据库主键id，用来做激活的标识
-     *
-     * @param mdqTableBO
-     * @return
-     */
-    Long persistTable(MdqTableBO mdqTableBO, String userName);
+  /**
+   * 传入MdqTableBO 由sparkEnginerpc请求jsonStrig序列化得到，执行插入数据库的记录，返回数据库主键id，用来做激活的标识
+   *
+   * @param mdqTableBO
+   * @return
+   */
+  Long persistTable(MdqTableBO mdqTableBO, String userName);
 
-    MdqTableStatisticInfoVO getTableStatisticInfo(
-            MetadataQueryParam queryParam, String partitionSort) throws IOException;
+  MdqTableStatisticInfoVO getTableStatisticInfo(MetadataQueryParam queryParam, String partitionSort)
+      throws IOException;
 
-    /**
-     * 产生sql给前台，和sparkEngine
-     *
-     * @param mdqTableBO
-     * @return
-     */
-    String displaysql(MdqTableBO mdqTableBO);
+  /**
+   * 产生sql给前台，和sparkEngine
+   *
+   * @param mdqTableBO
+   * @return
+   */
+  String displaysql(MdqTableBO mdqTableBO);
 
-    boolean isExistInMdq(String database, String tableName, String user);
+  boolean isExistInMdq(String database, String tableName, String user);
 
-    MdqTableBaseInfoVO getTableBaseInfoFromMdq(String database, String tableName, String user);
+  MdqTableBaseInfoVO getTableBaseInfoFromMdq(String database, String tableName, String user);
 
-    MdqTableBaseInfoVO getTableBaseInfoFromHive(MetadataQueryParam queryParam);
+  MdqTableBaseInfoVO getTableBaseInfoFromHive(MetadataQueryParam queryParam);
 
-    List<MdqTableFieldsInfoVO> getTableFieldsInfoFromMdq(
-            String database, String tableName, String user);
+  List<MdqTableFieldsInfoVO> getTableFieldsInfoFromMdq(
+      String database, String tableName, String user);
 
-    List<MdqTableFieldsInfoVO> getTableFieldsInfoFromHive(MetadataQueryParam queryParam);
+  List<MdqTableFieldsInfoVO> getTableFieldsInfoFromHive(MetadataQueryParam queryParam);
 
-    MdqTableStatisticInfoVO getTableStatisticInfoFromHive(
-            MetadataQueryParam queryParam, String partitionSort) throws IOException;
+  MdqTableStatisticInfoVO getTableStatisticInfoFromHive(
+      MetadataQueryParam queryParam, String partitionSort) throws IOException;
 
-    MdqTablePartitionStatisticInfoVO getPartitionStatisticInfo(
-            MetadataQueryParam queryParam, String partitionName)
-            throws IOException, MdqIllegalParamException;
+  MdqTablePartitionStatisticInfoVO getPartitionStatisticInfo(
+      MetadataQueryParam queryParam, String partitionName)
+      throws IOException, MdqIllegalParamException;
 }

@@ -27,96 +27,93 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class SingleTplFitterTest {
-    Fitter fitter;
-    CmdTemplate template;
-    String[] cmdStr, cmdStr2;
+  Fitter fitter;
+  CmdTemplate template;
+  String[] cmdStr, cmdStr2;
 
-    @BeforeEach
-    public void before() throws Exception {
-        cmdStr =
-                new String[] {
-                    "-u",
-                    "hadoop",
-                    "-pwd",
-                    "1234",
-                    "-c",
-                    "/path/to/user/config",
-                    "--cmd",
-                    "show tables",
-                    "--split",
-                    "\',\'",
-                    "--queue",
-                    "q05",
-                    "--name",
-                    "testApp",
-                    //      "--hiveconf", "/path/...",
-                    "--num-executors",
-                    "4",
-                    "--executor-cores",
-                    "4",
-                    "--executor-memory",
-                    "4G",
-                    "--shuffle-partitions",
-                    "200",
-                    "--other",
-                    "--other-spark-config=none",
-                };
-        cmdStr2 =
-                new String[] {
-                    "-u",
-                    "hadoop",
-                    "-pwd",
-                    "1234",
-                    "-c",
-                    "/path/to/user/config",
-                    "--cmd",
-                    "show tables",
-                    "--split",
-                    "\',\'",
-                    "--queue",
-                    "q05",
-                    "--name",
-                    "testApp",
-                    //      "--hiveconf", "/path/...",
-                    "--num-executors",
-                    "4",
-                    "--executor-cores",
-                    "4",
-                    "--executor-memory",
-                    "4G",
-                    "--shuffle-partitions",
-                    "200",
-                    "--other",
-                    "--other-spark-config=none",
-                    "-P",
-                    "key1=value1, key2=value2,  key5=\"key3=value3,key4=value4\" "
-                };
-        template = new TestSparkCmdTemplate();
-        fitter = new SingleTplFitter();
-    }
+  @BeforeEach
+  public void before() throws Exception {
+    cmdStr =
+        new String[] {
+          "-u",
+          "hadoop",
+          "-pwd",
+          "1234",
+          "-c",
+          "/path/to/user/config",
+          "--cmd",
+          "show tables",
+          "--split",
+          "\',\'",
+          "--queue",
+          "q05",
+          "--name",
+          "testApp",
+          //      "--hiveconf", "/path/...",
+          "--num-executors",
+          "4",
+          "--executor-cores",
+          "4",
+          "--executor-memory",
+          "4G",
+          "--shuffle-partitions",
+          "200",
+          "--other",
+          "--other-spark-config=none",
+        };
+    cmdStr2 =
+        new String[] {
+          "-u",
+          "hadoop",
+          "-pwd",
+          "1234",
+          "-c",
+          "/path/to/user/config",
+          "--cmd",
+          "show tables",
+          "--split",
+          "\',\'",
+          "--queue",
+          "q05",
+          "--name",
+          "testApp",
+          //      "--hiveconf", "/path/...",
+          "--num-executors",
+          "4",
+          "--executor-cores",
+          "4",
+          "--executor-memory",
+          "4G",
+          "--shuffle-partitions",
+          "200",
+          "--other",
+          "--other-spark-config=none",
+          "-P",
+          "key1=value1, key2=value2,  key5=\"key3=value3,key4=value4\" "
+        };
+    template = new TestSparkCmdTemplate();
+    fitter = new SingleTplFitter();
+  }
 
-    @AfterEach
-    public void after() throws Exception {}
+  @AfterEach
+  public void after() throws Exception {}
 
-    /** Method: fit(TemplateFitterInput[] inputs) */
-    @Test
-    public void testParseAndFit() throws Exception {
-        FitterResult[] results = new FitterResult[2];
-        results[0] = fitter.fit(cmdStr, template);
-        results[1] = fitter.fit(cmdStr2, new TestSparkCmdTemplate());
+  /** Method: fit(TemplateFitterInput[] inputs) */
+  @Test
+  public void testParseAndFit() throws Exception {
+    FitterResult[] results = new FitterResult[2];
+    results[0] = fitter.fit(cmdStr, template);
+    results[1] = fitter.fit(cmdStr2, new TestSparkCmdTemplate());
 
-        assertTrue(results[0].getParsedTemplate() instanceof TestSparkCmdTemplate);
-        assertEquals(
-                results[0].getParsedTemplate().getOptionsMap().get("--cmd").getValue(),
-                "show tables");
-        assertNotEquals(results[0].getParsedTemplate(), template.getCopy());
-        assertNotEquals(
-                results[0].getParsedTemplate().getOptions(), template.getCopy().getOptions());
-        assertNotEquals(
-                results[0].getParsedTemplate().getOptions().get(1),
-                template.getCopy().getOptions().get(1));
-        assertEquals(
-                results[0].getParsedTemplate().getOptions().get(1).getValue(),
-                template.getCopy().getOptions().get(1).getValue());
-    }
+    assertTrue(results[0].getParsedTemplate() instanceof TestSparkCmdTemplate);
+    assertEquals(
+        results[0].getParsedTemplate().getOptionsMap().get("--cmd").getValue(), "show tables");
+    assertNotEquals(results[0].getParsedTemplate(), template.getCopy());
+    assertNotEquals(results[0].getParsedTemplate().getOptions(), template.getCopy().getOptions());
+    assertNotEquals(
+        results[0].getParsedTemplate().getOptions().get(1), template.getCopy().getOptions().get(1));
+    assertEquals(
+        results[0].getParsedTemplate().getOptions().get(1).getValue(),
+        template.getCopy().getOptions().get(1).getValue());
+  }
 }

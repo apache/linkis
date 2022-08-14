@@ -5,16 +5,16 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.engineconn.computation.executor.hook.executor
 
 import org.apache.linkis.common.utils.{Logging, Utils}
@@ -24,12 +24,15 @@ import org.apache.linkis.engineconn.computation.executor.hook.ComputationExecuto
 import org.apache.linkis.governance.common.utils.GovernanceConstant
 import org.apache.linkis.server.BDPJettyServerHelper
 
-
 class EngineResultsetPrefixExecutorHook extends ComputationExecutorHook with Logging {
 
   override def getHookName(): String = "EngineResultsetPrefixExecutorHook"
 
-  override def beforeExecutorExecute(engineExecutionContext: EngineExecutionContext, engineCreationContext: EngineCreationContext, codeBeforeHook: String): String = {
+  override def beforeExecutorExecute(
+      engineExecutionContext: EngineExecutionContext,
+      engineCreationContext: EngineCreationContext,
+      codeBeforeHook: String
+  ): String = {
     val propMap = engineExecutionContext.getProperties
     Utils.tryAndError {
       val resultsetIndex: Int = {
@@ -43,9 +46,12 @@ class EngineResultsetPrefixExecutorHook extends ComputationExecutorHook with Log
         engineExecutionContext.setResultSetNum(resultsetIndex)
         logger.info(s"Set resultset aliasNum to ${resultsetIndex}")
       } else {
-        logger.warn(s"No resultsetIndex found in props : ${BDPJettyServerHelper.gson.toJson(propMap)} \nDefault resultIndex is 0.")
+        logger.warn(
+          s"No resultsetIndex found in props : ${BDPJettyServerHelper.gson.toJson(propMap)} \nDefault resultIndex is 0."
+        )
       }
     }
     codeBeforeHook
   }
+
 }

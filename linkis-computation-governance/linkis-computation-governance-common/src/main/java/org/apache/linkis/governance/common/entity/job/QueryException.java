@@ -21,11 +21,11 @@ import org.apache.linkis.common.exception.ErrorException;
 
 public class QueryException extends ErrorException {
 
-    public QueryException(int errCode, String desc) {
-        super(errCode, desc);
-    }
+  public QueryException(int errCode, String desc) {
+    super(errCode, desc);
+  }
 
-    public QueryException(int errCode, String desc, String ip, int port, String serviceKind) {
-        super(errCode, desc, ip, port, serviceKind);
-    }
+  public QueryException(int errCode, String desc, String ip, int port, String serviceKind) {
+    super(errCode, desc, ip, port, serviceKind);
+  }
 }

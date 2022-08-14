@@ -18,53 +18,53 @@
 package org.apache.linkis.cli.application.operator;
 
 public class OperatorUtils {
-    public static int getNumOfLines(String str) {
-        if (str == null || str.length() == 0) {
-            return 0;
+  public static int getNumOfLines(String str) {
+    if (str == null || str.length() == 0) {
+      return 0;
+    }
+    int lines = 1;
+    int len = str.length();
+    for (int pos = 0; pos < len; pos++) {
+      char c = str.charAt(pos);
+      if (c == '\r') {
+        lines++;
+        if (pos + 1 < len && str.charAt(pos + 1) == '\n') {
+          pos++;
         }
-        int lines = 1;
-        int len = str.length();
-        for (int pos = 0; pos < len; pos++) {
-            char c = str.charAt(pos);
-            if (c == '\r') {
-                lines++;
-                if (pos + 1 < len && str.charAt(pos + 1) == '\n') {
-                    pos++;
-                }
-            } else if (c == '\n') {
-                lines++;
-            }
-        }
-        return lines;
+      } else if (c == '\n') {
+        lines++;
+      }
+    }
+    return lines;
+  }
+
+  public static int getFirstIndexSkippingLines(String str, Integer lines) {
+    if (str == null || str.length() == 0 || lines < 0) {
+      return -1;
+    }
+    if (lines == 0) {
+      return 0;
     }
 
-    public static int getFirstIndexSkippingLines(String str, Integer lines) {
-        if (str == null || str.length() == 0 || lines < 0) {
-            return -1;
+    int curLineIdx = 0;
+    int len = str.length();
+    for (int pos = 0; pos < len; pos++) {
+      char c = str.charAt(pos);
+      if (c == '\r') {
+        curLineIdx++;
+        if (pos + 1 < len && str.charAt(pos + 1) == '\n') {
+          pos++;
         }
-        if (lines == 0) {
-            return 0;
-        }
+      } else if (c == '\n') {
+        curLineIdx++;
+      } else {
+        continue;
+      }
 
-        int curLineIdx = 0;
-        int len = str.length();
-        for (int pos = 0; pos < len; pos++) {
-            char c = str.charAt(pos);
-            if (c == '\r') {
-                curLineIdx++;
-                if (pos + 1 < len && str.charAt(pos + 1) == '\n') {
-                    pos++;
-                }
-            } else if (c == '\n') {
-                curLineIdx++;
-            } else {
-                continue;
-            }
-
-            if (curLineIdx >= lines) {
-                return pos + 1;
-            }
-        }
-        return -1;
+      if (curLineIdx >= lines) {
+        return pos + 1;
+      }
     }
+    return -1;
+  }
 }

@@ -26,5 +26,5 @@ import org.apache.linkis.cli.core.interactor.command.parser.result.ParseResult;
  * further validation, and commandParam for submitting to backend
  */
 public interface Parser {
-    ParseResult parse(String[] input);
+  ParseResult parse(String[] input);
 }

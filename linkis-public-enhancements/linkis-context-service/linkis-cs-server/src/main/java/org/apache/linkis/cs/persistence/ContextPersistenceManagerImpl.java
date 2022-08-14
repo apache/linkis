@@ -22,101 +22,101 @@ import org.apache.linkis.cs.persistence.persistence.*;
 
 public class ContextPersistenceManagerImpl implements ContextPersistenceManager {
 
-    private ContextIDPersistence contextIDPersistence;
+  private ContextIDPersistence contextIDPersistence;
 
-    private ContextMapPersistence contextMapPersistence;
+  private ContextMapPersistence contextMapPersistence;
 
-    private ContextHistoryPersistence contextHistoryPersistence;
+  private ContextHistoryPersistence contextHistoryPersistence;
 
-    private KeywordContextHistoryPersistence keywordContextHistoryPersistence;
+  private KeywordContextHistoryPersistence keywordContextHistoryPersistence;
 
-    private ContextMetricsPersistence contextMetricsPersistence;
+  private ContextMetricsPersistence contextMetricsPersistence;
 
-    private ContextIDListenerPersistence contextIDListenerPersistence;
+  private ContextIDListenerPersistence contextIDListenerPersistence;
 
-    private ContextKeyListenerPersistence contextKeyListenerPersistence;
+  private ContextKeyListenerPersistence contextKeyListenerPersistence;
 
-    private TransactionManager transactionManager;
+  private TransactionManager transactionManager;
 
-    @Override
-    @Tuning
-    public ContextIDPersistence getContextIDPersistence() {
-        return this.contextIDPersistence;
-    }
+  @Override
+  @Tuning
+  public ContextIDPersistence getContextIDPersistence() {
+    return this.contextIDPersistence;
+  }
 
-    @Override
-    @Tuning
-    public ContextMapPersistence getContextMapPersistence() {
-        return this.contextMapPersistence;
-    }
+  @Override
+  @Tuning
+  public ContextMapPersistence getContextMapPersistence() {
+    return this.contextMapPersistence;
+  }
 
-    @Override
-    @Tuning
-    public ContextHistoryPersistence getContextHistoryPersistence() {
-        return this.contextHistoryPersistence;
-    }
+  @Override
+  @Tuning
+  public ContextHistoryPersistence getContextHistoryPersistence() {
+    return this.contextHistoryPersistence;
+  }
 
-    @Override
-    @Tuning
-    public KeywordContextHistoryPersistence getKeywordContextHistoryPersistence() {
-        return this.keywordContextHistoryPersistence;
-    }
+  @Override
+  @Tuning
+  public KeywordContextHistoryPersistence getKeywordContextHistoryPersistence() {
+    return this.keywordContextHistoryPersistence;
+  }
 
-    @Override
-    @Tuning
-    public ContextMetricsPersistence getContextMetricsPersistence() {
-        return this.contextMetricsPersistence;
-    }
+  @Override
+  @Tuning
+  public ContextMetricsPersistence getContextMetricsPersistence() {
+    return this.contextMetricsPersistence;
+  }
 
-    @Override
-    @Tuning
-    public ContextIDListenerPersistence getContextIDListenerPersistence() {
-        return this.contextIDListenerPersistence;
-    }
+  @Override
+  @Tuning
+  public ContextIDListenerPersistence getContextIDListenerPersistence() {
+    return this.contextIDListenerPersistence;
+  }
 
-    @Override
-    @Tuning
-    public ContextKeyListenerPersistence getContextKeyListenerPersistence() {
-        return this.contextKeyListenerPersistence;
-    }
+  @Override
+  @Tuning
+  public ContextKeyListenerPersistence getContextKeyListenerPersistence() {
+    return this.contextKeyListenerPersistence;
+  }
 
-    @Override
-    public TransactionManager getTransactionManager() {
-        return this.transactionManager;
-    }
+  @Override
+  public TransactionManager getTransactionManager() {
+    return this.transactionManager;
+  }
 
-    public void setContextIDPersistence(ContextIDPersistence contextIDPersistence) {
-        this.contextIDPersistence = contextIDPersistence;
-    }
+  public void setContextIDPersistence(ContextIDPersistence contextIDPersistence) {
+    this.contextIDPersistence = contextIDPersistence;
+  }
 
-    public void setContextMapPersistence(ContextMapPersistence contextMapPersistence) {
-        this.contextMapPersistence = contextMapPersistence;
-    }
+  public void setContextMapPersistence(ContextMapPersistence contextMapPersistence) {
+    this.contextMapPersistence = contextMapPersistence;
+  }
 
-    public void setContextHistoryPersistence(ContextHistoryPersistence contextHistoryPersistence) {
-        this.contextHistoryPersistence = contextHistoryPersistence;
-    }
+  public void setContextHistoryPersistence(ContextHistoryPersistence contextHistoryPersistence) {
+    this.contextHistoryPersistence = contextHistoryPersistence;
+  }
 
-    public void setContextMetricsPersistence(ContextMetricsPersistence contextMetricsPersistence) {
-        this.contextMetricsPersistence = contextMetricsPersistence;
-    }
+  public void setContextMetricsPersistence(ContextMetricsPersistence contextMetricsPersistence) {
+    this.contextMetricsPersistence = contextMetricsPersistence;
+  }
 
-    public void setContextIDListenerPersistence(
-            ContextIDListenerPersistence contextIDListenerPersistence) {
-        this.contextIDListenerPersistence = contextIDListenerPersistence;
-    }
+  public void setContextIDListenerPersistence(
+      ContextIDListenerPersistence contextIDListenerPersistence) {
+    this.contextIDListenerPersistence = contextIDListenerPersistence;
+  }
 
-    public void setContextKeyListenerPersistence(
-            ContextKeyListenerPersistence contextKeyListenerPersistence) {
-        this.contextKeyListenerPersistence = contextKeyListenerPersistence;
-    }
+  public void setContextKeyListenerPersistence(
+      ContextKeyListenerPersistence contextKeyListenerPersistence) {
+    this.contextKeyListenerPersistence = contextKeyListenerPersistence;
+  }
 
-    public void setTransactionManager(TransactionManager transactionManager) {
-        this.transactionManager = transactionManager;
-    }
+  public void setTransactionManager(TransactionManager transactionManager) {
+    this.transactionManager = transactionManager;
+  }
 
-    public void setKeywordContextHistoryPersistence(
-            KeywordContextHistoryPersistence keywordContextHistoryPersistence) {
-        this.keywordContextHistoryPersistence = keywordContextHistoryPersistence;
-    }
+  public void setKeywordContextHistoryPersistence(
+      KeywordContextHistoryPersistence keywordContextHistoryPersistence) {
+    this.keywordContextHistoryPersistence = keywordContextHistoryPersistence;
+  }
 }

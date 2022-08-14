@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,9 +19,8 @@ package org.apache.linkis.ujes.client.request
 
 import org.apache.linkis.httpclient.request.GetAction
 import org.apache.linkis.ujes.client.exception.UJESClientBuilderException
+
 import org.apache.commons.lang3.StringUtils
-
-
 
 class GetTableStatisticInfoAction extends GetAction with UJESJobAction {
   override def suffixURLs: Array[String] = Array("datasource", "getTableStatisticInfo")
@@ -29,7 +28,8 @@ class GetTableStatisticInfoAction extends GetAction with UJESJobAction {
 
 object GetTableStatisticInfoAction {
   def builder(): Builder = new Builder
-  class Builder private[GetTableStatisticInfoAction]() {
+
+  class Builder private[GetTableStatisticInfoAction] () {
     private var user: String = _
     private var database: String = _
     private var tableName: String = _
@@ -71,7 +71,8 @@ object GetTableStatisticInfoAction {
 
     def builder(): GetTableStatisticInfoAction = {
       if (StringUtils.isBlank(user)) throw new UJESClientBuilderException("user is needed!")
-      if (StringUtils.isBlank(database)) throw new UJESClientBuilderException("database is needed!")
+      if (StringUtils.isBlank(database))
+        throw new UJESClientBuilderException("database is needed!")
       if (StringUtils.isBlank(tableName)) throw new UJESClientBuilderException("table is needed!")
       val getTableStatisticInfoAction = new GetTableStatisticInfoAction
       getTableStatisticInfoAction.setUser(user)

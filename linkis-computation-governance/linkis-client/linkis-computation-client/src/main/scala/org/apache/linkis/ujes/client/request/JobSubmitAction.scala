@@ -5,19 +5,17 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
-package org.apache.linkis.ujes.client.request
 
-import java.util
+package org.apache.linkis.ujes.client.request
 
 import org.apache.linkis.httpclient.dws.DWSHttpClient
 import org.apache.linkis.httpclient.request.POSTAction
@@ -25,19 +23,23 @@ import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.protocol.utils.TaskUtils
 import org.apache.linkis.ujes.client.exception.UJESClientBuilderException
 
-class JobSubmitAction private() extends POSTAction with UJESJobAction {
+import java.util
+
+class JobSubmitAction private () extends POSTAction with UJESJobAction {
   override def suffixURLs: Array[String] = Array("entrance", "submit")
 
-  override def getRequestPayload: String = DWSHttpClient.jacksonJson.writeValueAsString(getRequestPayloads)
+  override def getRequestPayload: String =
+    DWSHttpClient.jacksonJson.writeValueAsString(getRequestPayloads)
+
 }
 
 object JobSubmitAction {
   def builder(): Builder = new Builder
 
-  class Builder private[JobSubmitAction]() {
+  class Builder private[JobSubmitAction] () {
     private var user: String = _
 
-    //TODO: remove executeUser in the future
+    // TODO: remove executeUser in the future
     private var executeUser: String = _
 
     private var executionContent: util.Map[String, Any] = _
@@ -51,13 +53,13 @@ object JobSubmitAction {
     private var source: util.Map[String, Any] = _
 
     def addExecuteCode(executeCode: String): Builder = {
-      if ( null == executionContent ) executionContent = new util.HashMap[String, Any]()
+      if (null == executionContent) executionContent = new util.HashMap[String, Any]()
       executionContent.put("code", executeCode)
       this
     }
 
     def setRunTypeStr(runTypeStr: String): Builder = {
-      if ( null == executionContent ) executionContent = new util.HashMap[String, Any]()
+      if (null == executionContent) executionContent = new util.HashMap[String, Any]()
       executionContent.put("runType", runTypeStr)
       this
     }
@@ -129,7 +131,6 @@ object JobSubmitAction {
       this
     }
 
-
     def build(): JobSubmitAction = {
       val submitAction = new JobSubmitAction
       submitAction.setUser(user)
@@ -147,7 +148,7 @@ object JobSubmitAction {
       submitAction.addRequestPayload(TaskConstant.LABELS, this.labels)
       submitAction
     }
+
   }
 
 }
-

@@ -17,29 +17,40 @@
 
 package org.apache.linkis.computation.client.operator.impl
 
-import java.util
-
 import org.apache.linkis.computation.client.once.result.EngineConnOperateResult
 import org.apache.linkis.computation.client.operator.OnceJobOperator
 import org.apache.linkis.protocol.engine.JobProgressInfo
 
-import scala.collection.JavaConverters._
+import java.util
 
+import scala.collection.JavaConverters._
 
 class EngineConnProgressOperator extends OnceJobOperator[EngineConnProgressInfo] {
 
   override def getName: String = EngineConnProgressOperator.OPERATOR_NAME
 
-  override protected def resultToObject(result: EngineConnOperateResult): EngineConnProgressInfo = {
+  override protected def resultToObject(
+      result: EngineConnOperateResult
+  ): EngineConnProgressInfo = {
     val progressInfoList: util.ArrayList[util.Map[String, Object]] = result.getAs("progressInfo")
-    val progressInfo = progressInfoList.asScala.map(map => JobProgressInfo(map.get("id").asInstanceOf[String], map.get("totalTasks").asInstanceOf[Int],
-      map.get("runningTasks").asInstanceOf[Int], map.get("failedTasks").asInstanceOf[Int],
-      map.get("succeedTasks").asInstanceOf[Int])).toArray
+    val progressInfo = progressInfoList.asScala
+      .map(map =>
+        JobProgressInfo(
+          map.get("id").asInstanceOf[String],
+          map.get("totalTasks").asInstanceOf[Int],
+          map.get("runningTasks").asInstanceOf[Int],
+          map.get("failedTasks").asInstanceOf[Int],
+          map.get("succeedTasks").asInstanceOf[Int]
+        )
+      )
+      .toArray
     EngineConnProgressInfo(result.getAs[Double]("progress").toFloat, progressInfo)
   }
 
 }
+
 object EngineConnProgressOperator {
   val OPERATOR_NAME = "engineConnProgress"
 }
+
 case class EngineConnProgressInfo(progress: Float, progressInfo: Array[JobProgressInfo])

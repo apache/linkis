@@ -33,26 +33,26 @@ import java.lang.annotation.Target;
 @Bean(value = EntranceExecutorManagerBeanAnnotation.BEAN_NAME)
 @Component(value = EntranceExecutorManagerBeanAnnotation.BEAN_NAME)
 public @interface EntranceExecutorManagerBeanAnnotation {
-    String BEAN_NAME = "executorManager";
+  String BEAN_NAME = "executorManager";
 
-    @AliasFor(annotation = Component.class)
+  @AliasFor(annotation = Component.class)
+  String value() default BEAN_NAME;
+
+  @Target({
+    ElementType.CONSTRUCTOR,
+    ElementType.FIELD,
+    ElementType.METHOD,
+    ElementType.TYPE,
+    ElementType.PARAMETER
+  })
+  @Retention(RetentionPolicy.RUNTIME)
+  @Qualifier(BEAN_NAME)
+  @Autowired
+  @interface EntranceExecutorManagerAutowiredAnnotation {
+    @AliasFor(annotation = Qualifier.class)
     String value() default BEAN_NAME;
 
-    @Target({
-        ElementType.CONSTRUCTOR,
-        ElementType.FIELD,
-        ElementType.METHOD,
-        ElementType.TYPE,
-        ElementType.PARAMETER
-    })
-    @Retention(RetentionPolicy.RUNTIME)
-    @Qualifier(BEAN_NAME)
-    @Autowired
-    @interface EntranceExecutorManagerAutowiredAnnotation {
-        @AliasFor(annotation = Qualifier.class)
-        String value() default BEAN_NAME;
-
-        @AliasFor(annotation = Autowired.class)
-        boolean required() default true;
-    }
+    @AliasFor(annotation = Autowired.class)
+    boolean required() default true;
+  }
 }

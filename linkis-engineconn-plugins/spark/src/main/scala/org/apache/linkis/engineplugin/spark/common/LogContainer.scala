@@ -5,16 +5,16 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.engineplugin.spark.common
 
 import scala.collection.Iterable
@@ -22,8 +22,7 @@ import scala.collection.JavaConversions._
 import scala.collection.mutable.ArrayBuffer
 
 /**
-  *
-  */
+ */
 class LogContainer(val logSize: Int) {
 
   private final val logs = new Array[String](logSize)
@@ -32,7 +31,7 @@ class LogContainer(val logSize: Int) {
   def putLog(log: String): Unit = {
     logs.synchronized {
       val index = (tail + 1) % logSize
-      if(index == flag) {
+      if (index == flag) {
         flag = (flag + 1) % logSize
       }
       logs(tail) = log
@@ -51,11 +50,11 @@ class LogContainer(val logSize: Int) {
 
   def getLogs: List[String] = {
     logs.synchronized {
-      if(flag == tail) {
+      if (flag == tail) {
         return List.empty[String]
       }
       val _logs = ArrayBuffer[String]()
-      val _tail = if(flag > tail) tail + logSize else tail
+      val _tail = if (flag > tail) tail + logSize else tail
       for (index <- flag until _tail) {
         val _index = index % logSize
         _logs += logs(_index)
@@ -66,8 +65,8 @@ class LogContainer(val logSize: Int) {
   }
 
   def size = {
-    if(flag == tail) 0
-    else if(flag > tail) tail + logSize - flag
+    if (flag == tail) 0
+    else if (flag > tail) tail + logSize - flag
     else tail - flag
   }
 

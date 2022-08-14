@@ -27,24 +27,24 @@ import java.util.List;
 
 public class EntityParser {
 
-    public static InstanceInfoVo parseToInstanceVo(InstanceInfo instanceInfo) {
-        InstanceInfoVo instanceInfoVo = new InstanceInfoVo();
-        if (instanceInfo != null) {
-            BeanUtils.copyProperties(instanceInfo, instanceInfoVo);
-        }
-        return instanceInfoVo;
+  public static InstanceInfoVo parseToInstanceVo(InstanceInfo instanceInfo) {
+    InstanceInfoVo instanceInfoVo = new InstanceInfoVo();
+    if (instanceInfo != null) {
+      BeanUtils.copyProperties(instanceInfo, instanceInfoVo);
     }
+    return instanceInfoVo;
+  }
 
-    public static List<InstanceInfoVo> parseToInstanceVo(List<InstanceInfo> instanceInfos) {
-        ArrayList<InstanceInfoVo> instanceInfoVos = new ArrayList<>();
-        if (!instanceInfos.isEmpty()) {
-            instanceInfos.stream()
-                    .forEach(
-                            instanceInfo -> {
-                                InstanceInfoVo instanceInfoVo = parseToInstanceVo(instanceInfo);
-                                instanceInfoVos.add(instanceInfoVo);
-                            });
-        }
-        return instanceInfoVos;
+  public static List<InstanceInfoVo> parseToInstanceVo(List<InstanceInfo> instanceInfos) {
+    ArrayList<InstanceInfoVo> instanceInfoVos = new ArrayList<>();
+    if (!instanceInfos.isEmpty()) {
+      instanceInfos.stream()
+          .forEach(
+              instanceInfo -> {
+                InstanceInfoVo instanceInfoVo = parseToInstanceVo(instanceInfo);
+                instanceInfoVos.add(instanceInfoVo);
+              });
     }
+    return instanceInfoVos;
+  }
 }

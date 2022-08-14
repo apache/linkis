@@ -24,113 +24,113 @@ import java.util.Map;
 
 public class LinkisOnceDesc implements JobDescription {
 
-    private VarAccess stdVarAccess;
-    private VarAccess sysVarAccess;
+  private VarAccess stdVarAccess;
+  private VarAccess sysVarAccess;
 
-    private String submitUser;
-    private String proxyUser;
-    private String creator;
-    private Map<String, Object> executionMap;
-    private Map<String, Object> paramConfMap;
-    private Map<String, Object> paramRunTimeMap;
-    private Map<String, Object> paramVarsMap;
-    private Map<String, Object> labelMap;
-    private Map<String, Object> sourceMap;
-    private Map<String, Object> jobContentMap;
+  private String submitUser;
+  private String proxyUser;
+  private String creator;
+  private Map<String, Object> executionMap;
+  private Map<String, Object> paramConfMap;
+  private Map<String, Object> paramRunTimeMap;
+  private Map<String, Object> paramVarsMap;
+  private Map<String, Object> labelMap;
+  private Map<String, Object> sourceMap;
+  private Map<String, Object> jobContentMap;
 
-    public VarAccess getStdVarAccess() {
-        return stdVarAccess;
-    }
+  public VarAccess getStdVarAccess() {
+    return stdVarAccess;
+  }
 
-    public void setStdVarAccess(VarAccess stdVarAccess) {
-        this.stdVarAccess = stdVarAccess;
-    }
+  public void setStdVarAccess(VarAccess stdVarAccess) {
+    this.stdVarAccess = stdVarAccess;
+  }
 
-    public VarAccess getSysVarAccess() {
-        return sysVarAccess;
-    }
+  public VarAccess getSysVarAccess() {
+    return sysVarAccess;
+  }
 
-    public void setSysVarAccess(VarAccess sysVarAccess) {
-        this.sysVarAccess = sysVarAccess;
-    }
+  public void setSysVarAccess(VarAccess sysVarAccess) {
+    this.sysVarAccess = sysVarAccess;
+  }
 
-    public String getSubmitUser() {
-        return submitUser;
-    }
+  public String getSubmitUser() {
+    return submitUser;
+  }
 
-    public void setSubmitUser(String submitUser) {
-        this.submitUser = submitUser;
-    }
+  public void setSubmitUser(String submitUser) {
+    this.submitUser = submitUser;
+  }
 
-    public String getProxyUser() {
-        return proxyUser;
-    }
+  public String getProxyUser() {
+    return proxyUser;
+  }
 
-    public void setProxyUser(String proxyUser) {
-        this.proxyUser = proxyUser;
-    }
+  public void setProxyUser(String proxyUser) {
+    this.proxyUser = proxyUser;
+  }
 
-    public String getCreator() {
-        return creator;
-    }
+  public String getCreator() {
+    return creator;
+  }
 
-    public void setCreator(String creator) {
-        this.creator = creator;
-    }
+  public void setCreator(String creator) {
+    this.creator = creator;
+  }
 
-    public Map<String, Object> getParamConfMap() {
-        return paramConfMap;
-    }
+  public Map<String, Object> getParamConfMap() {
+    return paramConfMap;
+  }
 
-    public void setParamConfMap(Map<String, Object> paramConfMap) {
-        this.paramConfMap = paramConfMap;
-    }
+  public void setParamConfMap(Map<String, Object> paramConfMap) {
+    this.paramConfMap = paramConfMap;
+  }
 
-    public Map<String, Object> getParamRunTimeMap() {
-        return paramRunTimeMap;
-    }
+  public Map<String, Object> getParamRunTimeMap() {
+    return paramRunTimeMap;
+  }
 
-    public void setParamRunTimeMap(Map<String, Object> paramRunTimeMap) {
-        this.paramRunTimeMap = paramRunTimeMap;
-    }
+  public void setParamRunTimeMap(Map<String, Object> paramRunTimeMap) {
+    this.paramRunTimeMap = paramRunTimeMap;
+  }
 
-    public Map<String, Object> getExecutionMap() {
-        return executionMap;
-    }
+  public Map<String, Object> getExecutionMap() {
+    return executionMap;
+  }
 
-    public void setExecutionMap(Map<String, Object> executionMap) {
-        this.executionMap = executionMap;
-    }
+  public void setExecutionMap(Map<String, Object> executionMap) {
+    this.executionMap = executionMap;
+  }
 
-    public Map<String, Object> getParamVarsMap() {
-        return paramVarsMap;
-    }
+  public Map<String, Object> getParamVarsMap() {
+    return paramVarsMap;
+  }
 
-    public void setParamVarsMap(Map<String, Object> paramVarsMap) {
-        this.paramVarsMap = paramVarsMap;
-    }
+  public void setParamVarsMap(Map<String, Object> paramVarsMap) {
+    this.paramVarsMap = paramVarsMap;
+  }
 
-    public Map<String, Object> getSourceMap() {
-        return sourceMap;
-    }
+  public Map<String, Object> getSourceMap() {
+    return sourceMap;
+  }
 
-    public void setSourceMap(Map<String, Object> sourceMap) {
-        this.sourceMap = sourceMap;
-    }
+  public void setSourceMap(Map<String, Object> sourceMap) {
+    this.sourceMap = sourceMap;
+  }
 
-    public Map<String, Object> getLabelMap() {
-        return labelMap;
-    }
+  public Map<String, Object> getLabelMap() {
+    return labelMap;
+  }
 
-    public void setLabelMap(Map<String, Object> labelMap) {
-        this.labelMap = labelMap;
-    }
+  public void setLabelMap(Map<String, Object> labelMap) {
+    this.labelMap = labelMap;
+  }
 
-    public Map<String, Object> getJobContentMap() {
-        return jobContentMap;
-    }
+  public Map<String, Object> getJobContentMap() {
+    return jobContentMap;
+  }
 
-    public void setJobContentMap(Map<String, Object> jobContentMap) {
-        this.jobContentMap = jobContentMap;
-    }
+  public void setJobContentMap(Map<String, Object> jobContentMap) {
+    this.jobContentMap = jobContentMap;
+  }
 }

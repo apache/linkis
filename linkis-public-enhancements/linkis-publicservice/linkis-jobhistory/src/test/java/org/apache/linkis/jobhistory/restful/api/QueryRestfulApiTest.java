@@ -40,6 +40,8 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+import java.util.Date;
+
 import com.google.common.collect.Lists;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -50,8 +52,6 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -67,115 +67,115 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 public class QueryRestfulApiTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(QueryRestfulApiTest.class);
+  private static final Logger logger = LoggerFactory.getLogger(QueryRestfulApiTest.class);
 
-    @Autowired protected MockMvc mockMvc;
+  @Autowired protected MockMvc mockMvc;
 
-    @MockBean(name = "jobHistoryQueryService")
-    private JobHistoryQueryService jobHistoryQueryService;
+  @MockBean(name = "jobHistoryQueryService")
+  private JobHistoryQueryService jobHistoryQueryService;
 
-    @MockBean(name = "jobDetailMapper")
-    private JobDetailMapper jobDetailMapper;
+  @MockBean(name = "jobDetailMapper")
+  private JobDetailMapper jobDetailMapper;
 
-    @BeforeAll
-    @DisplayName("Each unit test method is executed once before execution")
-    protected static void beforeAll() throws Exception {
-        //        System.getProperties().setProperty(LinkisMainHelper.SERVER_NAME_KEY(),
-        // "linkis-ps-publicservice");
-        //        LinkisBaseServerApp.main(new String[]{});
-        // new SpringApplicationBuilder(QueryRestfulApiTest.class).run("--server.port=2222");
-        // logger.info("start linkis-ps-publicservice servive");
-    }
+  @BeforeAll
+  @DisplayName("Each unit test method is executed once before execution")
+  protected static void beforeAll() throws Exception {
+    //        System.getProperties().setProperty(LinkisMainHelper.SERVER_NAME_KEY(),
+    // "linkis-ps-publicservice");
+    //        LinkisBaseServerApp.main(new String[]{});
+    // new SpringApplicationBuilder(QueryRestfulApiTest.class).run("--server.port=2222");
+    // logger.info("start linkis-ps-publicservice servive");
+  }
 
-    @AfterAll
-    @DisplayName("Each unit test method is executed once before execution")
-    protected static void afterAll() {}
+  @AfterAll
+  @DisplayName("Each unit test method is executed once before execution")
+  protected static void afterAll() {}
 
-    @Test
-    @DisplayName("")
-    public void testGovernanceStationAdmin() throws Exception {
+  @Test
+  @DisplayName("")
+  public void testGovernanceStationAdmin() throws Exception {
 
-        MvcResult mvcResult =
-                mockMvc.perform(get("/jobhistory/governanceStationAdmin"))
-                        .andExpect(status().isOk())
-                        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                        .andReturn();
+    MvcResult mvcResult =
+        mockMvc
+            .perform(get("/jobhistory/governanceStationAdmin"))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andReturn();
 
-        Message res =
-                JsonUtils.jackson()
-                        .readValue(mvcResult.getResponse().getContentAsString(), Message.class);
-        assertEquals(MessageStatus.SUCCESS(), res.getStatus());
+    Message res =
+        JsonUtils.jackson().readValue(mvcResult.getResponse().getContentAsString(), Message.class);
+    assertEquals(MessageStatus.SUCCESS(), res.getStatus());
 
-        logger.info(mvcResult.getResponse().getContentAsString());
-    }
+    logger.info(mvcResult.getResponse().getContentAsString());
+  }
 
-    @Test
-    public void testGetTaskByID() throws Exception {
+  @Test
+  public void testGetTaskByID() throws Exception {
 
-        long jobId = 123;
-        MvcResult mvcResult =
-                mockMvc.perform(get("/jobhistory/{id}/get", jobId))
-                        .andExpect(status().isOk())
-                        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                        .andReturn();
+    long jobId = 123;
+    MvcResult mvcResult =
+        mockMvc
+            .perform(get("/jobhistory/{id}/get", jobId))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andReturn();
 
-        QueryTaskVO queryTaskVO = new QueryTaskVO();
-        queryTaskVO.setSubJobs(Lists.newArrayList());
-        queryTaskVO.setEngineStartTime(new Date());
-        queryTaskVO.setSourceTailor("test");
-        queryTaskVO.setSourceJson("test");
-        queryTaskVO.setTaskID(0L);
+    QueryTaskVO queryTaskVO = new QueryTaskVO();
+    queryTaskVO.setSubJobs(Lists.newArrayList());
+    queryTaskVO.setEngineStartTime(new Date());
+    queryTaskVO.setSourceTailor("test");
+    queryTaskVO.setSourceJson("test");
+    queryTaskVO.setTaskID(0L);
 
-        // any matcher scene with uncertain parameters todo:mock does not take effect
-        MockedStatic<TaskConversions> taskConversionsMockedStatic =
-                Mockito.mockStatic(TaskConversions.class);
-        when(TaskConversions.jobHistory2TaskVO(any(JobHistory.class), anyObject()))
-                .thenReturn(queryTaskVO);
-        when(jobDetailMapper.insertJobDetail(new JobDetail())).thenReturn(1);
-        Message res =
-                JsonUtils.jackson()
-                        .readValue(mvcResult.getResponse().getContentAsString(), Message.class);
-        assertEquals(MessageStatus.ERROR(), res.getStatus());
-        logger.info(mvcResult.getResponse().getContentAsString());
-    }
+    // any matcher scene with uncertain parameters todo:mock does not take effect
+    MockedStatic<TaskConversions> taskConversionsMockedStatic =
+        Mockito.mockStatic(TaskConversions.class);
+    when(TaskConversions.jobHistory2TaskVO(any(JobHistory.class), anyObject()))
+        .thenReturn(queryTaskVO);
+    when(jobDetailMapper.insertJobDetail(new JobDetail())).thenReturn(1);
+    Message res =
+        JsonUtils.jackson().readValue(mvcResult.getResponse().getContentAsString(), Message.class);
+    assertEquals(MessageStatus.ERROR(), res.getStatus());
+    logger.info(mvcResult.getResponse().getContentAsString());
+  }
 
-    @Test
-    public void testList() throws Exception {
-        // with optional parameters
-        MultiValueMap<String, String> paramsMap = new LinkedMultiValueMap<>();
-        paramsMap.add("startDate", String.valueOf(System.currentTimeMillis()));
-        paramsMap.add("endDate", String.valueOf(System.currentTimeMillis()));
-        paramsMap.add("status", "1");
-        paramsMap.add("pageNow", "1");
-        paramsMap.add("pageSize", "15");
-        paramsMap.add("taskID", "123");
-        paramsMap.add("executeApplicationName", "test_name");
-        paramsMap.add("proxyUser", null);
+  @Test
+  public void testList() throws Exception {
+    // with optional parameters
+    MultiValueMap<String, String> paramsMap = new LinkedMultiValueMap<>();
+    paramsMap.add("startDate", String.valueOf(System.currentTimeMillis()));
+    paramsMap.add("endDate", String.valueOf(System.currentTimeMillis()));
+    paramsMap.add("status", "1");
+    paramsMap.add("pageNow", "1");
+    paramsMap.add("pageSize", "15");
+    paramsMap.add("taskID", "123");
+    paramsMap.add("executeApplicationName", "test_name");
+    paramsMap.add("proxyUser", null);
 
-        MvcResult mvcResult =
-                mockMvc.perform(get("/jobhistory/list").params(paramsMap))
-                        .andExpect(status().isOk())
-                        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                        .andReturn();
+    MvcResult mvcResult =
+        mockMvc
+            .perform(get("/jobhistory/list").params(paramsMap))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andReturn();
 
-        Message res =
-                JsonUtils.jackson()
-                        .readValue(mvcResult.getResponse().getContentAsString(), Message.class);
-        assertEquals(MessageStatus.SUCCESS(), res.getStatus());
-        logger.info(mvcResult.getResponse().getContentAsString());
+    Message res =
+        JsonUtils.jackson().readValue(mvcResult.getResponse().getContentAsString(), Message.class);
+    assertEquals(MessageStatus.SUCCESS(), res.getStatus());
+    logger.info(mvcResult.getResponse().getContentAsString());
 
-        // without optional parameters
-        mvcResult =
-                mockMvc.perform(get("/jobhistory/list"))
-                        .andExpect(status().isOk())
-                        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                        .andReturn();
+    // without optional parameters
+    mvcResult =
+        mockMvc
+            .perform(get("/jobhistory/list"))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andReturn();
 
-        res =
-                JsonUtils.jackson()
-                        .readValue(mvcResult.getResponse().getContentAsString(), Message.class);
-        assertEquals(MessageStatus.SUCCESS(), res.getStatus());
+    res =
+        JsonUtils.jackson().readValue(mvcResult.getResponse().getContentAsString(), Message.class);
+    assertEquals(MessageStatus.SUCCESS(), res.getStatus());
 
-        logger.info(mvcResult.getResponse().getContentAsString());
-    }
+    logger.info(mvcResult.getResponse().getContentAsString());
+  }
 }

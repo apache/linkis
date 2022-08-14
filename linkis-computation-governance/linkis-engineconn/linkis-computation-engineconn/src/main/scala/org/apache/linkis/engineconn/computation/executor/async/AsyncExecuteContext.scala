@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,9 +18,12 @@
 package org.apache.linkis.engineconn.computation.executor.async
 
 import org.apache.linkis.engineconn.computation.executor.conf.ComputationExecutorConf
-import org.apache.linkis.scheduler.queue.fifoqueue.FIFOGroupFactory
-import org.apache.linkis.scheduler.queue.parallelqueue.{ParallelScheduler, ParallelSchedulerContextImpl}
 import org.apache.linkis.scheduler.{Scheduler, SchedulerContext}
+import org.apache.linkis.scheduler.queue.fifoqueue.FIFOGroupFactory
+import org.apache.linkis.scheduler.queue.parallelqueue.{
+  ParallelScheduler,
+  ParallelSchedulerContextImpl
+}
 
 trait AsyncExecuteContext {
 
@@ -33,7 +36,7 @@ class AsyncExecuteContextImpl extends AsyncExecuteContext {
   private var scheduler: Scheduler = _
 
   override def getOrCreateScheduler(executor: AsyncConcurrentComputationExecutor): Scheduler = {
-    if (null == scheduler) synchronized  {
+    if (null == scheduler) synchronized {
       if (null == scheduler) {
         scheduler = new ParallelScheduler(createSchedulerContext(executor))
         scheduler.init()
@@ -42,12 +45,18 @@ class AsyncExecuteContextImpl extends AsyncExecuteContext {
     scheduler
   }
 
-  private def createSchedulerContext(executor: AsyncConcurrentComputationExecutor): SchedulerContext = {
-     val parallelSchedulerContext = new ParallelSchedulerContextImpl(ComputationExecutorConf.ASYNC_EXECUTE_MAX_PARALLELISM.getValue)
-     parallelSchedulerContext.setExecutorManager(new AsyncExecutorManager(executor))
+  private def createSchedulerContext(
+      executor: AsyncConcurrentComputationExecutor
+  ): SchedulerContext = {
+    val parallelSchedulerContext = new ParallelSchedulerContextImpl(
+      ComputationExecutorConf.ASYNC_EXECUTE_MAX_PARALLELISM.getValue
+    )
+    parallelSchedulerContext.setExecutorManager(new AsyncExecutorManager(executor))
     parallelSchedulerContext.getOrCreateGroupFactory match {
       case groupFactory: FIFOGroupFactory =>
-        groupFactory.setDefaultMaxRunningJobs(ComputationExecutorConf.ASYNC_SCHEDULER_MAX_RUNNING_JOBS)
+        groupFactory.setDefaultMaxRunningJobs(
+          ComputationExecutorConf.ASYNC_SCHEDULER_MAX_RUNNING_JOBS
+        )
       case _ =>
     }
     parallelSchedulerContext

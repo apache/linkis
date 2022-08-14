@@ -25,5 +25,5 @@ import java.util.List;
 
 public interface ExternalResourceProviderDao {
 
-    List<ExternalResourceProvider> selectByResourceType(@Param("resourceType") String resourceType);
+  List<ExternalResourceProvider> selectByResourceType(@Param("resourceType") String resourceType);
 }

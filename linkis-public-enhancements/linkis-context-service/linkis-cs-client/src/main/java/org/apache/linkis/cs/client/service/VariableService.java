@@ -24,9 +24,9 @@ import java.util.List;
 
 public interface VariableService {
 
-    List<LinkisVariable> getUpstreamVariables(String contextIDStr, String nodeName)
-            throws CSErrorException;
+  List<LinkisVariable> getUpstreamVariables(String contextIDStr, String nodeName)
+      throws CSErrorException;
 
-    void putVariable(String contextIDStr, String contextKey, LinkisVariable linkisVariable)
-            throws CSErrorException;
+  void putVariable(String contextIDStr, String contextKey, LinkisVariable linkisVariable)
+      throws CSErrorException;
 }

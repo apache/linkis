@@ -18,56 +18,56 @@
 package org.apache.linkis.variable.entity;
 
 public class VarKeyValueVO {
-    private Long keyID;
-    private String key;
-    private Long valueID;
-    private String value;
+  private Long keyID;
+  private String key;
+  private Long valueID;
+  private String value;
 
-    public Long getKeyID() {
-        return keyID;
-    }
+  public Long getKeyID() {
+    return keyID;
+  }
 
-    public void setKeyID(Long keyID) {
-        this.keyID = keyID;
-    }
+  public void setKeyID(Long keyID) {
+    this.keyID = keyID;
+  }
 
-    public String getKey() {
-        return key;
-    }
+  public String getKey() {
+    return key;
+  }
 
-    public void setKey(String key) {
-        this.key = key;
-    }
+  public void setKey(String key) {
+    this.key = key;
+  }
 
-    public Long getValueID() {
-        return valueID;
-    }
+  public Long getValueID() {
+    return valueID;
+  }
 
-    public void setValueID(Long valueID) {
-        this.valueID = valueID;
-    }
+  public void setValueID(Long valueID) {
+    this.valueID = valueID;
+  }
 
-    public String getValue() {
-        return value;
-    }
+  public String getValue() {
+    return value;
+  }
 
-    public void setValue(String value) {
-        this.value = value;
-    }
+  public void setValue(String value) {
+    this.value = value;
+  }
 
-    @Override
-    public String toString() {
-        return "VarKeyValueVO{"
-                + "keyID="
-                + keyID
-                + ", key='"
-                + key
-                + '\''
-                + ", valueID="
-                + valueID
-                + ", value='"
-                + value
-                + '\''
-                + '}';
-    }
+  @Override
+  public String toString() {
+    return "VarKeyValueVO{"
+        + "keyID="
+        + keyID
+        + ", key='"
+        + key
+        + '\''
+        + ", valueID="
+        + valueID
+        + ", value='"
+        + value
+        + '\''
+        + '}';
+  }
 }

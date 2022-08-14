@@ -21,11 +21,11 @@ import java.util.List;
 
 public interface ContextInvertedIndex {
 
-    List<String> getContextKeys(String keyword);
+  List<String> getContextKeys(String keyword);
 
-    boolean addValue(String keyword, String contextKey);
+  boolean addValue(String keyword, String contextKey);
 
-    List<String> getContextKeys(List<String> keywords);
+  List<String> getContextKeys(List<String> keywords);
 
-    boolean remove(String keyword, String contextKey);
+  boolean remove(String keyword, String contextKey);
 }

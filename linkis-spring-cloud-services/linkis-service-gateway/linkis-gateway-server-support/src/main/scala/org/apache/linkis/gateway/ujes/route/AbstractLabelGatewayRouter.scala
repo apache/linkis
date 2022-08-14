@@ -5,32 +5,34 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.gateway.ujes.route
 
-import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.gateway.config.GatewayConfiguration
+import org.apache.linkis.gateway.exception.GatewayErrorException
 import org.apache.linkis.gateway.http.GatewayContext
 import org.apache.linkis.gateway.route.AbstractGatewayRouter
 import org.apache.linkis.instance.label.service.InsLabelService
 import org.apache.linkis.manager.label.entity.route.RouteLabel
-import java.util
-
-import javax.annotation.Resource
-import org.apache.linkis.gateway.config.GatewayConfiguration
-import org.apache.linkis.gateway.exception.GatewayErrorException
 import org.apache.linkis.manager.label.utils.LabelUtils
 import org.apache.linkis.rpc.interceptor.ServiceInstanceUtils
+
+import org.apache.commons.lang3.StringUtils
+
+import javax.annotation.Resource
+
+import java.util
 
 import scala.collection.JavaConverters._
 
@@ -40,20 +42,23 @@ abstract class AbstractLabelGatewayRouter extends AbstractGatewayRouter with Log
   private var insLabelService: InsLabelService = _
 
   /**
-    * Add to the last of router chain
-    *
-    * @return
+   * Add to the last of router chain
+   *
+   * @return
    */
   override def order(): Int = Int.MaxValue
 
-
   override def route(gatewayContext: GatewayContext): ServiceInstance = {
     val serviceInstance: ServiceInstance = gatewayContext.getGatewayRoute.getServiceInstance
-    if (StringUtils.isNotBlank(serviceInstance.getApplicationName) && StringUtils.isNotBlank(serviceInstance.getInstance)) {
+    if (
+        StringUtils.isNotBlank(serviceInstance.getApplicationName) && StringUtils.isNotBlank(
+          serviceInstance.getInstance
+        )
+    ) {
       return serviceInstance
     }
     val applicationName = serviceInstance.getApplicationName
-    if (! GatewayConfiguration.ROUTER_SERVER_LIST.getValue.contains(applicationName)) {
+    if (!GatewayConfiguration.ROUTER_SERVER_LIST.getValue.contains(applicationName)) {
       // Ignore the router using application name
       return null
     }
@@ -65,7 +70,11 @@ abstract class AbstractLabelGatewayRouter extends AbstractGatewayRouter with Log
     } else {
       val candidateServices = insLabelService.searchInstancesByLabels(routeLabels)
       if (null == candidateServices || candidateServices.isEmpty) {
-        throw new GatewayErrorException(11011, s"Cannot route to the corresponding service, URL: ${gatewayContext.getRequest.getRequestURI} RouteLabel: ${LabelUtils.Jackson.toJson(routeLabels, null)}")
+        throw new GatewayErrorException(
+          11011,
+          s"Cannot route to the corresponding service, URL: ${gatewayContext.getRequest.getRequestURI} RouteLabel: ${LabelUtils.Jackson
+            .toJson(routeLabels, null)}"
+        )
       } else {
         candidateServices
       }
@@ -73,7 +82,10 @@ abstract class AbstractLabelGatewayRouter extends AbstractGatewayRouter with Log
 
     val instance = selectInstance(gatewayContext, canSelectInstances)
     if (null == instance || StringUtils.isBlank(instance.getInstance)) {
-      throw new GatewayErrorException(11011, s"There are no services available in the registry URL: ${gatewayContext.getRequest.getRequestURI}")
+      throw new GatewayErrorException(
+        11011,
+        s"There are no services available in the registry URL: ${gatewayContext.getRequest.getRequestURI}"
+      )
     }
     instance
   }
@@ -89,16 +101,23 @@ abstract class AbstractLabelGatewayRouter extends AbstractGatewayRouter with Log
 
   /**
    * Parse to route labels
-   * @param gatewayContext context
+   * @param gatewayContext
+   *   context
    * @return
    */
   protected def parseToRouteLabels(gatewayContext: GatewayContext): util.List[RouteLabel]
 
   /**
    * Select instance
-   * @param gatewayContext context
-   * @param candidates candidate instances
+   * @param gatewayContext
+   *   context
+   * @param candidates
+   *   candidate instances
    * @return
    */
-  protected def selectInstance(gatewayContext: GatewayContext, candidates: util.List[ServiceInstance]): ServiceInstance
+  protected def selectInstance(
+      gatewayContext: GatewayContext,
+      candidates: util.List[ServiceInstance]
+  ): ServiceInstance
+
 }

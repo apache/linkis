@@ -23,97 +23,97 @@ import org.apache.linkis.cli.common.exception.error.ErrorMsg;
 import java.text.MessageFormat;
 
 public class LinkisClientRuntimeException extends RuntimeException {
-    private static final long serialVersionUID = 342134234324357L;
+  private static final long serialVersionUID = 342134234324357L;
 
-    /** 异常错误码 */
-    private String code;
+  /** 异常错误码 */
+  private String code;
 
-    /** 异常描述 */
-    private String msg;
-    /** 扩展异常描述（包括msg） */
-    private String extMsg;
+  /** 异常描述 */
+  private String msg;
+  /** 扩展异常描述（包括msg） */
+  private String extMsg;
 
-    private ErrorLevel level;
+  private ErrorLevel level;
 
-    private ErrorMsg errMsg;
+  private ErrorMsg errMsg;
 
-    public LinkisClientRuntimeException(
-            String code, ErrorLevel level, ErrorMsg errMsg, String param[], String... extMsg) {
-        super(null == code ? "" : code);
-        init(code, level, errMsg, param, extMsg);
+  public LinkisClientRuntimeException(
+      String code, ErrorLevel level, ErrorMsg errMsg, String param[], String... extMsg) {
+    super(null == code ? "" : code);
+    init(code, level, errMsg, param, extMsg);
+  }
+
+  public LinkisClientRuntimeException(
+      String code, ErrorLevel level, ErrorMsg errMsg, Object... paramsList) {
+    super(null == code ? "" : code);
+    this.code = code;
+    Object[] params;
+    if ((paramsList != null)
+        && (paramsList.length > 0)
+        && ((paramsList[(paramsList.length - 1)] instanceof Throwable))) {
+      Object[] newParam = new Object[paramsList.length - 1];
+      System.arraycopy(paramsList, 0, newParam, 0, newParam.length);
+      params = newParam;
+      super.initCause((Throwable) paramsList[(paramsList.length - 1)]);
+    } else {
+      params = paramsList;
+      super.initCause(null);
     }
+    this.code = null == code ? null : code;
+    this.level = null == level ? ErrorLevel.ERROR : level;
+    this.msg = null == errMsg ? "" : MessageFormat.format(errMsg.getMsgTemplate(), params);
+    this.extMsg = this.msg;
+  }
 
-    public LinkisClientRuntimeException(
-            String code, ErrorLevel level, ErrorMsg errMsg, Object... paramsList) {
-        super(null == code ? "" : code);
-        this.code = code;
-        Object[] params;
-        if ((paramsList != null)
-                && (paramsList.length > 0)
-                && ((paramsList[(paramsList.length - 1)] instanceof Throwable))) {
-            Object[] newParam = new Object[paramsList.length - 1];
-            System.arraycopy(paramsList, 0, newParam, 0, newParam.length);
-            params = newParam;
-            super.initCause((Throwable) paramsList[(paramsList.length - 1)]);
-        } else {
-            params = paramsList;
-            super.initCause(null);
-        }
-        this.code = null == code ? null : code;
-        this.level = null == level ? ErrorLevel.ERROR : level;
-        this.msg = null == errMsg ? "" : MessageFormat.format(errMsg.getMsgTemplate(), params);
-        this.extMsg = this.msg;
-    }
+  public LinkisClientRuntimeException(
+      String code,
+      ErrorLevel level,
+      ErrorMsg errMsg,
+      Throwable e,
+      String param[],
+      String... extMsg) {
+    super(null == code ? "" : code, e);
+    init(code, level, errMsg, param, extMsg);
+  }
 
-    public LinkisClientRuntimeException(
-            String code,
-            ErrorLevel level,
-            ErrorMsg errMsg,
-            Throwable e,
-            String param[],
-            String... extMsg) {
-        super(null == code ? "" : code, e);
-        init(code, level, errMsg, param, extMsg);
+  private void init(
+      String code, ErrorLevel level, ErrorMsg errMsg, Object param[], String... extMsg) {
+    this.errMsg = errMsg;
+    this.code = null == code ? null : code;
+    this.level = null == level ? ErrorLevel.ERROR : level;
+    this.msg = null == errMsg ? "" : MessageFormat.format(errMsg.getMsgTemplate(), param);
+    StringBuilder builder = new StringBuilder(100);
+    builder.append(this.msg);
+    if (null != extMsg) {
+      for (String ext : extMsg) {
+        builder.append("[").append(ext).append("]");
+      }
     }
+    this.extMsg = builder.toString();
+  }
 
-    private void init(
-            String code, ErrorLevel level, ErrorMsg errMsg, Object param[], String... extMsg) {
-        this.errMsg = errMsg;
-        this.code = null == code ? null : code;
-        this.level = null == level ? ErrorLevel.ERROR : level;
-        this.msg = null == errMsg ? "" : MessageFormat.format(errMsg.getMsgTemplate(), param);
-        StringBuilder builder = new StringBuilder(100);
-        builder.append(this.msg);
-        if (null != extMsg) {
-            for (String ext : extMsg) {
-                builder.append("[").append(ext).append("]");
-            }
-        }
-        this.extMsg = builder.toString();
-    }
+  public String getCode() {
+    return code;
+  }
 
-    public String getCode() {
-        return code;
-    }
+  public String getMsg() {
+    return msg;
+  }
 
-    public String getMsg() {
-        return msg;
-    }
+  public String getExtMsg() {
+    return extMsg;
+  }
 
-    public String getExtMsg() {
-        return extMsg;
-    }
+  public ErrorLevel getLevel() {
+    return level;
+  }
 
-    public ErrorLevel getLevel() {
-        return level;
-    }
+  public ErrorMsg getErrMsg() {
+    return errMsg;
+  }
 
-    public ErrorMsg getErrMsg() {
-        return errMsg;
-    }
-
-    @Override
-    public String getMessage() {
-        return super.getMessage() + "," + this.extMsg;
-    }
+  @Override
+  public String getMessage() {
+    return super.getMessage() + "," + this.extMsg;
+  }
 }

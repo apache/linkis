@@ -23,15 +23,15 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class DataSourceRelateServiceTest {
 
-    @Test
-    void getKeyDefinitionsByType() {}
+  @Test
+  void getKeyDefinitionsByType() {}
 
-    @Test
-    void testGetKeyDefinitionsByType() {}
+  @Test
+  void testGetKeyDefinitionsByType() {}
 
-    @Test
-    void getAllDataSourceTypes() {}
+  @Test
+  void getAllDataSourceTypes() {}
 
-    @Test
-    void getDataSourceType() {}
+  @Test
+  void getDataSourceType() {}
 }

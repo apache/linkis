@@ -5,31 +5,32 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
-package org.apache.linkis.orchestrator.execution.impl
 
-import java.util
+package org.apache.linkis.orchestrator.execution.impl
 
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
+
+import java.util
+
 import scala.collection.JavaConverters._
 
 class UserRunningNumber {
 
-  private val runningNumber:  java.util.Map[String, Int] = new java.util.HashMap[String, Int]()
+  private val runningNumber: java.util.Map[String, Int] = new java.util.HashMap[String, Int]()
 
   private val SPLIT = ","
 
-  def this(sourceRunningNumber:  java.util.Map[String, Int]) = {
+  def this(sourceRunningNumber: java.util.Map[String, Int]) = {
     this()
     this.runningNumber.putAll(sourceRunningNumber)
   }
@@ -41,17 +42,18 @@ class UserRunningNumber {
     oldNumber
   }
 
-  def minusNumber(user: String, labels: util.List[Label[_]], number: Int = 1): Int = synchronized {
-    val key = getKey(labels, user)
-    val oldNumber = runningNumber.getOrDefault(key, 0)
-    val running = oldNumber - number
-    if (running > 0) {
-      runningNumber.put(key, running)
-    } else {
-      runningNumber.remove(key)
+  def minusNumber(user: String, labels: util.List[Label[_]], number: Int = 1): Int =
+    synchronized {
+      val key = getKey(labels, user)
+      val oldNumber = runningNumber.getOrDefault(key, 0)
+      val running = oldNumber - number
+      if (running > 0) {
+        runningNumber.put(key, running)
+      } else {
+        runningNumber.remove(key)
+      }
+      oldNumber
     }
-    oldNumber
-  }
 
   def getRunningNumber(user: String, labels: util.List[Label[_]]): Int = {
     val key = getKey(labels, user)
@@ -86,4 +88,5 @@ class UserRunningNumber {
       user
     }
   }
+
 }

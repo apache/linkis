@@ -21,7 +21,7 @@ import org.apache.linkis.cs.common.entity.object.CSProperty;
 
 public interface GlobalPropertyContextHistory extends ContextHistory {
 
-    CSProperty getGlobalProperty();
+  CSProperty getGlobalProperty();
 
-    void setGlobalProperty(CSProperty globalProperty);
+  void setGlobalProperty(CSProperty globalProperty);
 }

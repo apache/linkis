@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,42 +17,58 @@
 
 package org.apache.linkis.manager.engineplugin.jdbc.executer
 
-import java.sql.{Connection, ResultSet, SQLException, Statement}
-import java.util
+import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.utils.{OverloadUtils, Utils}
-import org.apache.linkis.engineconn.computation.executor.execute.{ConcurrentComputationExecutor, EngineExecutionContext}
+import org.apache.linkis.engineconn.computation.executor.execute.{
+  ConcurrentComputationExecutor,
+  EngineExecutionContext
+}
 import org.apache.linkis.engineconn.core.EngineConnObject
-import org.apache.linkis.manager.common.entity.resource.{CommonNodeResource, LoadResource, NodeResource}
+import org.apache.linkis.governance.common.paser.SQLCodeParser
+import org.apache.linkis.governance.common.protocol.conf.{
+  RequestQueryEngineConfig,
+  ResponseQueryConfig
+}
+import org.apache.linkis.manager.common.entity.resource.{
+  CommonNodeResource,
+  LoadResource,
+  NodeResource
+}
 import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf
 import org.apache.linkis.manager.engineplugin.jdbc.ConnectionManager
 import org.apache.linkis.manager.engineplugin.jdbc.conf.JDBCConfiguration
+import org.apache.linkis.manager.engineplugin.jdbc.constant.JDBCEngineConnConstant
 import org.apache.linkis.manager.label.entity.Label
+import org.apache.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
+import org.apache.linkis.protocol.CacheableProtocol
 import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.apache.linkis.rpc.{RPCMapCache, Sender}
-import org.apache.linkis.scheduler.executer.{AliasOutputExecuteResponse, ErrorExecuteResponse, ExecuteResponse, SuccessExecuteResponse}
+import org.apache.linkis.scheduler.executer.{
+  AliasOutputExecuteResponse,
+  ErrorExecuteResponse,
+  ExecuteResponse,
+  SuccessExecuteResponse
+}
 import org.apache.linkis.storage.domain.{Column, DataType}
 import org.apache.linkis.storage.resultset.ResultSetFactory
 import org.apache.linkis.storage.resultset.table.{TableMetaData, TableRecord}
+
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang3.StringUtils
-import org.apache.linkis.common.conf.Configuration
-import org.apache.linkis.governance.common.protocol.conf.{RequestQueryEngineConfig, ResponseQueryConfig}
-import org.apache.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
-import org.apache.linkis.protocol.CacheableProtocol
+
 import org.springframework.util.CollectionUtils
-import org.apache.linkis.governance.common.paser.SQLCodeParser
-import org.apache.linkis.manager.engineplugin.jdbc.constant.JDBCEngineConnConstant
+
+import java.sql.{Connection, ResultSet, SQLException, Statement}
+import java.util
 
 import scala.collection.JavaConversions._
-
 import scala.collection.mutable.ArrayBuffer
 
-class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int) extends ConcurrentComputationExecutor(outputPrintLimit) {
-
+class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
+    extends ConcurrentComputationExecutor(outputPrintLimit) {
 
   private val connectionManager = ConnectionManager.getInstance()
   private val executorLabels: util.List[Label[_]] = new util.ArrayList[Label[_]](2)
-
 
   override def init(): Unit = {
     logger.info("jdbc executor start init.")
@@ -63,14 +79,20 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int) ex
     }
   }
 
-  override def executeLine(engineExecutorContext: EngineExecutionContext, code: String): ExecuteResponse = {
+  override def executeLine(
+      engineExecutorContext: EngineExecutionContext,
+      code: String
+  ): ExecuteResponse = {
     val realCode = code.trim()
     val taskId = engineExecutorContext.getJobId.get
     val properties: util.Map[String, String] = getJDBCRuntimeParams(engineExecutorContext)
     logger.info(s"The jdbc properties is: $properties")
     val dataSourceName = properties.get(JDBCEngineConnConstant.JDBC_ENGINE_RUN_TIME_DS)
-    val dataSourceMaxVersionId = properties.get(JDBCEngineConnConstant.JDBC_ENGINE_RUN_TIME_DS_MAX_VERSION_ID)
-    logger.info(s"The data source name is [$dataSourceName], and the jdbc client begins to run jdbc code:\n ${realCode.trim}")
+    val dataSourceMaxVersionId =
+      properties.get(JDBCEngineConnConstant.JDBC_ENGINE_RUN_TIME_DS_MAX_VERSION_ID)
+    logger.info(
+      s"The data source name is [$dataSourceName], and the jdbc client begins to run jdbc code:\n ${realCode.trim}"
+    )
     var connection: Connection = null
     var statement: Statement = null
     var resultSet: ResultSet = null
@@ -79,10 +101,9 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int) ex
       val dataSourceIdentifier = s"$dataSourceName-$dataSourceMaxVersionId"
       connection = connectionManager.getConnection(dataSourceIdentifier, properties)
       logger.info("The jdbc connection has created successfully!")
-    }) {
-      e: Throwable =>
-        logger.error(s"created data source connection error! $e")
-        return ErrorExecuteResponse("created data source connection error!", e)
+    }) { e: Throwable =>
+      logger.error(s"created data source connection error! $e")
+      return ErrorExecuteResponse("created data source connection error!", e)
     }
 
     try {
@@ -107,10 +128,14 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int) ex
         }
       } finally {
         if (resultSet != null) {
-          Utils.tryCatch({ resultSet.close() }) { case e: SQLException => logger.warn(e.getMessage) }
+          Utils.tryCatch({ resultSet.close() }) { case e: SQLException =>
+            logger.warn(e.getMessage)
+          }
         }
         if (statement != null) {
-          Utils.tryCatch({ statement.close() }) { case e: SQLException => logger.warn(e.getMessage) }
+          Utils.tryCatch({ statement.close() }) { case e: SQLException =>
+            logger.warn(e.getMessage)
+          }
         }
       }
     } catch {
@@ -131,29 +156,44 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int) ex
     SuccessExecuteResponse()
   }
 
-  private def getJDBCRuntimeParams(engineExecutorContext: EngineExecutionContext): util.Map[String, String] = {
+  private def getJDBCRuntimeParams(
+      engineExecutorContext: EngineExecutionContext
+  ): util.Map[String, String] = {
     // todo Improve the more detailed configuration of jdbc parameters, such as: connection pool parameters, etc.
     val execSqlUser = getExecSqlUser(engineExecutorContext)
     // jdbc parameters specified at runtime
-    var executorProperties = engineExecutorContext.getProperties.asInstanceOf[util.Map[String, String]]
+    var executorProperties =
+      engineExecutorContext.getProperties.asInstanceOf[util.Map[String, String]]
     if (executorProperties == null) {
       executorProperties = new util.HashMap[String, String]()
     }
 
     // global jdbc engine params by console
-    val globalConfig: util.Map[String, String] = Utils.tryAndWarn(JDBCEngineConfig.getCacheMap(engineExecutorContext.getLabels))
+    val globalConfig: util.Map[String, String] =
+      Utils.tryAndWarn(JDBCEngineConfig.getCacheMap(engineExecutorContext.getLabels))
 
     // jdbc params by datasource info
     var dataSourceInfo: util.Map[String, String] = new util.HashMap[String, String]()
-    var dataSourceName = executorProperties.getOrDefault(JDBCEngineConnConstant.JDBC_ENGINE_RUN_TIME_DS, "")
-    val dataSourceQuerySystemParam = executorProperties.getOrDefault(JDBCEngineConnConstant.JDBC_ENGINE_RUN_TIME_DS_SYSTEM_QUERY_PARAM, "")
+    var dataSourceName =
+      executorProperties.getOrDefault(JDBCEngineConnConstant.JDBC_ENGINE_RUN_TIME_DS, "")
+    val dataSourceQuerySystemParam = executorProperties.getOrDefault(
+      JDBCEngineConnConstant.JDBC_ENGINE_RUN_TIME_DS_SYSTEM_QUERY_PARAM,
+      ""
+    )
 
     if (StringUtils.isNotBlank(dataSourceName)) {
       logger.info("Start getting data source connection parameters from the data source hub.")
       Utils.tryCatch {
-        dataSourceInfo = JDBCMultiDatasourceParser.queryDatasourceInfoByName(dataSourceName, execSqlUser, dataSourceQuerySystemParam)
-      } {
-        e: Throwable => logger.error(s"Failed to get datasource info about [$dataSourceName] from datasource server.", e)
+        dataSourceInfo = JDBCMultiDatasourceParser.queryDatasourceInfoByName(
+          dataSourceName,
+          execSqlUser,
+          dataSourceQuerySystemParam
+        )
+      } { e: Throwable =>
+        logger.error(
+          s"Failed to get datasource info about [$dataSourceName] from datasource server.",
+          e
+        )
       }
     }
     if (StringUtils.isBlank(dataSourceName)) {
@@ -169,11 +209,18 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int) ex
     }
     globalConfig.put(JDBCEngineConnConstant.JDBC_ENGINE_RUN_TIME_DS, dataSourceName)
     globalConfig.put(JDBCEngineConnConstant.JDBC_SCRIPTS_EXEC_USER, execSqlUser)
-    globalConfig.put(JDBCEngineConnConstant.JDBC_PROXY_USER, globalConfig.getOrDefault(JDBCEngineConnConstant.JDBC_PROXY_USER, execSqlUser))
+    globalConfig.put(
+      JDBCEngineConnConstant.JDBC_PROXY_USER,
+      globalConfig.getOrDefault(JDBCEngineConnConstant.JDBC_PROXY_USER, execSqlUser)
+    )
     globalConfig
   }
 
-  private def getExecResultSetOutput(engineExecutorContext: EngineExecutionContext, statement: Statement, resultSet: ResultSet): ExecuteResponse = {
+  private def getExecResultSetOutput(
+      engineExecutorContext: EngineExecutionContext,
+      statement: Statement,
+      resultSet: ResultSet
+  ): ExecuteResponse = {
     if (isDDLCommand(statement.getUpdateCount, resultSet.getMetaData.getColumnCount)) {
       logger.info(s"current result is a ResultSet Object , but there are no more results!")
       engineExecutorContext.appendStdout("Query executed successfully.")
@@ -182,18 +229,23 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int) ex
       val md = resultSet.getMetaData
       val metaArrayBuffer = new ArrayBuffer[(String, String)]()
       for (i <- 1 to md.getColumnCount) {
-        metaArrayBuffer.add(Tuple2(md.getColumnName(i), JDBCHelper.getTypeStr(md.getColumnType(i))))
+        metaArrayBuffer.add(
+          Tuple2(md.getColumnName(i), JDBCHelper.getTypeStr(md.getColumnType(i)))
+        )
       }
-      val columns = metaArrayBuffer.map { c => Column(c._1, DataType.toDataType(c._2), "") }.toArray[Column]
+      val columns =
+        metaArrayBuffer.map { c => Column(c._1, DataType.toDataType(c._2), "") }.toArray[Column]
       val metaData = new TableMetaData(columns)
-      val resultSetWriter = engineExecutorContext.createResultSetWriter(ResultSetFactory.TABLE_TYPE)
+      val resultSetWriter =
+        engineExecutorContext.createResultSetWriter(ResultSetFactory.TABLE_TYPE)
       resultSetWriter.addMetaData(metaData)
       var count = 0
       Utils.tryCatch({
         while (count < outputPrintLimit && resultSet.next()) {
           val r: Array[Any] = columns.indices.map { i =>
             val data = resultSet.getObject(i + 1) match {
-              case value: Array[Byte] => new String(resultSet.getObject(i + 1).asInstanceOf[Array[Byte]])
+              case value: Array[Byte] =>
+                new String(resultSet.getObject(i + 1).asInstanceOf[Array[Byte]])
               case value: Any => resultSet.getString(i + 1)
               case _ => null
             }
@@ -202,8 +254,8 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int) ex
           resultSetWriter.addRecord(new TableRecord(r))
           count += 1
         }
-      }) {
-        case e: Exception => return ErrorExecuteResponse("query jdbc failed", e)
+      }) { case e: Exception =>
+        return ErrorExecuteResponse("query jdbc failed", e)
       }
       val output = if (resultSetWriter != null) resultSetWriter.toString else null
       Utils.tryQuietly {
@@ -215,7 +267,10 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int) ex
   }
 
   private def getExecSqlUser(engineExecutionContext: EngineExecutionContext): String = {
-    val userCreatorLabel = engineExecutionContext.getLabels.find(_.isInstanceOf[UserCreatorLabel]).get.asInstanceOf[UserCreatorLabel]
+    val userCreatorLabel = engineExecutionContext.getLabels
+      .find(_.isInstanceOf[UserCreatorLabel])
+      .get
+      .asInstanceOf[UserCreatorLabel]
     userCreatorLabel.getUser
   }
 
@@ -223,7 +278,8 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int) ex
     updatedCount < 0 && columnCount <= 0
   }
 
-  override def getProgressInfo(taskID: String): Array[JobProgressInfo] = Array.empty[JobProgressInfo]
+  override def getProgressInfo(taskID: String): Array[JobProgressInfo] =
+    Array.empty[JobProgressInfo]
 
   override protected def callback(): Unit = {}
 
@@ -238,7 +294,11 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int) ex
     logger.info("The jdbc engine has closed successfully.")
   }
 
-  override def executeCompletely(engineExecutorContext: EngineExecutionContext, code: String, completedLine: String): ExecuteResponse = null
+  override def executeCompletely(
+      engineExecutorContext: EngineExecutionContext,
+      code: String,
+      completedLine: String
+  ): ExecuteResponse = null
 
   override def getExecutorLabels(): util.List[Label[_]] = executorLabels
 
@@ -254,9 +314,17 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int) ex
   override def getCurrentNodeResource(): NodeResource = {
     val properties = EngineConnObject.getEngineCreationContext.getOptions
     if (properties.containsKey(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key)) {
-      val settingClientMemory = properties.get(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key)
-      if (!settingClientMemory.toLowerCase().endsWith(JDBCEngineConnConstant.JDBC_ENGINE_MEMORY_UNIT)) {
-        properties.put(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key, settingClientMemory + JDBCEngineConnConstant.JDBC_ENGINE_MEMORY_UNIT)
+      val settingClientMemory =
+        properties.get(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key)
+      if (
+          !settingClientMemory
+            .toLowerCase()
+            .endsWith(JDBCEngineConnConstant.JDBC_ENGINE_MEMORY_UNIT)
+      ) {
+        properties.put(
+          EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key,
+          settingClientMemory + JDBCEngineConnConstant.JDBC_ENGINE_MEMORY_UNIT
+        )
       }
     }
     val resource = new CommonNodeResource
@@ -283,18 +351,24 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int) ex
     super.killTask(taskId)
     logger.info(s"The query task $taskId has killed successfully.")
   }
+
 }
 
-
-object JDBCEngineConfig extends RPCMapCache[Array[Label[_]], String, String](Configuration.CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME.getValue) {
+object JDBCEngineConfig
+    extends RPCMapCache[Array[Label[_]], String, String](
+      Configuration.CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME.getValue
+    ) {
 
   override protected def createRequest(labels: Array[Label[_]]): CacheableProtocol = {
-    val userCreatorLabel = labels.find(_.isInstanceOf[UserCreatorLabel]).get.asInstanceOf[UserCreatorLabel]
-    val engineTypeLabel = labels.find(_.isInstanceOf[EngineTypeLabel]).get.asInstanceOf[EngineTypeLabel]
+    val userCreatorLabel =
+      labels.find(_.isInstanceOf[UserCreatorLabel]).get.asInstanceOf[UserCreatorLabel]
+    val engineTypeLabel =
+      labels.find(_.isInstanceOf[EngineTypeLabel]).get.asInstanceOf[EngineTypeLabel]
     RequestQueryEngineConfig(userCreatorLabel, engineTypeLabel)
   }
 
   override protected def createMap(any: Any): util.Map[String, String] = any match {
     case response: ResponseQueryConfig => response.getKeyAndValue
   }
+
 }

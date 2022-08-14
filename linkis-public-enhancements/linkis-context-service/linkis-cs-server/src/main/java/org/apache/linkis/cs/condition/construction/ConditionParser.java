@@ -19,35 +19,35 @@ package org.apache.linkis.cs.condition.construction;
 
 import org.apache.linkis.cs.condition.Condition;
 
-import com.google.common.collect.Lists;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.Lists;
+
 public interface ConditionParser {
 
-    public static Map<String, ConditionParser> parserMap =
-            new HashMap<String, ConditionParser>() {
-                {
-                    List<ConditionParser> conditionParsers =
-                            Lists.newArrayList(
-                                    new RegexConditionParser(),
-                                    new ContainsConditionParser(),
-                                    new ContextTypeConditionParser(),
-                                    new ContextScopeConditionParser(),
-                                    new AndConditionParser(),
-                                    new OrConditionParser(),
-                                    new NotConditionParser(),
-                                    new NearestConditionParser(),
-                                    new ContextValueTypeConditionParser());
-                    for (ConditionParser conditionParser : conditionParsers) {
-                        put(conditionParser.getName(), conditionParser);
-                    }
-                }
-            };
+  public static Map<String, ConditionParser> parserMap =
+      new HashMap<String, ConditionParser>() {
+        {
+          List<ConditionParser> conditionParsers =
+              Lists.newArrayList(
+                  new RegexConditionParser(),
+                  new ContainsConditionParser(),
+                  new ContextTypeConditionParser(),
+                  new ContextScopeConditionParser(),
+                  new AndConditionParser(),
+                  new OrConditionParser(),
+                  new NotConditionParser(),
+                  new NearestConditionParser(),
+                  new ContextValueTypeConditionParser());
+          for (ConditionParser conditionParser : conditionParsers) {
+            put(conditionParser.getName(), conditionParser);
+          }
+        }
+      };
 
-    Condition parse(Map<Object, Object> conditionMap);
+  Condition parse(Map<Object, Object> conditionMap);
 
-    String getName();
+  String getName();
 }

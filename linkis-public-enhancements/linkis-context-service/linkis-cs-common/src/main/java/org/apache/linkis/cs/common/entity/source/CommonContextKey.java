@@ -22,59 +22,59 @@ import org.apache.linkis.cs.common.entity.enumeration.ContextType;
 
 public class CommonContextKey implements ContextKey {
 
-    private String key;
+  private String key;
 
-    private ContextType contextType;
+  private ContextType contextType;
 
-    private ContextScope contextScope;
+  private ContextScope contextScope;
 
-    private String keywords;
+  private String keywords;
 
-    @Override
-    public String getKey() {
-        return this.key;
-    }
+  @Override
+  public String getKey() {
+    return this.key;
+  }
 
-    @Override
-    public void setKey(String key) {
-        this.key = key;
-    }
+  @Override
+  public void setKey(String key) {
+    this.key = key;
+  }
 
-    @Override
-    public int getType() {
-        return 0;
-    }
+  @Override
+  public int getType() {
+    return 0;
+  }
 
-    @Override
-    public void setType(int type) {}
+  @Override
+  public void setType(int type) {}
 
-    @Override
-    public ContextType getContextType() {
-        return this.contextType;
-    }
+  @Override
+  public ContextType getContextType() {
+    return this.contextType;
+  }
 
-    @Override
-    public void setContextType(ContextType contextType) {
-        this.contextType = contextType;
-    }
+  @Override
+  public void setContextType(ContextType contextType) {
+    this.contextType = contextType;
+  }
 
-    @Override
-    public ContextScope getContextScope() {
-        return this.contextScope;
-    }
+  @Override
+  public ContextScope getContextScope() {
+    return this.contextScope;
+  }
 
-    @Override
-    public void setContextScope(ContextScope contextScope) {
-        this.contextScope = contextScope;
-    }
+  @Override
+  public void setContextScope(ContextScope contextScope) {
+    this.contextScope = contextScope;
+  }
 
-    @Override
-    public String getKeywords() {
-        return this.keywords;
-    }
+  @Override
+  public String getKeywords() {
+    return this.keywords;
+  }
 
-    @Override
-    public void setKeywords(String keywords) {
-        this.keywords = keywords;
-    }
+  @Override
+  public void setKeywords(String keywords) {
+    this.keywords = keywords;
+  }
 }

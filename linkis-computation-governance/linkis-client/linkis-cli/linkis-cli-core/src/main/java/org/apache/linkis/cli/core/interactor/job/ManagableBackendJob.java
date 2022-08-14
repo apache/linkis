@@ -27,16 +27,16 @@ import org.apache.linkis.cli.common.exception.LinkisClientRuntimeException;
  * interface.
  */
 public interface ManagableBackendJob extends Job {
-    /**
-     * since job management can diverge, we decide to assign it to lower-level implementation.
-     * implementation should use {@link JobSubType} to decide which action to take, hence {@link
-     * JobSubType} should not be null
-     */
-    void doManage() throws LinkisClientRuntimeException;
+  /**
+   * since job management can diverge, we decide to assign it to lower-level implementation.
+   * implementation should use {@link JobSubType} to decide which action to take, hence {@link
+   * JobSubType} should not be null
+   */
+  void doManage() throws LinkisClientRuntimeException;
 
-    /**
-     * if execution is success. This can be different from {@link JobStatus} e.g. query job status,
-     * job may be FAIL but execution is a asuccess
-     */
-    boolean isSuccess();
+  /**
+   * if execution is success. This can be different from {@link JobStatus} e.g. query job status,
+   * job may be FAIL but execution is a asuccess
+   */
+  boolean isSuccess();
 }

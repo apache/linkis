@@ -24,11 +24,11 @@ import org.apache.linkis.protocol.query.cache.RequestReadCache;
 
 public interface QueryCacheService {
 
-    Boolean needCache(JobRequest jobRequest);
+  Boolean needCache(JobRequest jobRequest);
 
-    void writeCache(JobRequest jobRequest);
+  void writeCache(JobRequest jobRequest);
 
-    TaskResult readCache(RequestReadCache requestReadCache);
+  TaskResult readCache(RequestReadCache requestReadCache);
 
-    void deleteCache(RequestDeleteCache requestDeleteCache);
+  void deleteCache(RequestDeleteCache requestDeleteCache);
 }

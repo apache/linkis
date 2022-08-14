@@ -27,87 +27,87 @@ import java.util.Date;
 @Ignore
 public class PersistenceContextKeyValue implements ContextKeyValue {
 
-    private Integer id;
+  private Integer id;
 
-    private String contextId;
+  private String contextId;
 
-    private ContextKey contextKey;
+  private ContextKey contextKey;
 
-    private ContextValue contextValue;
+  private ContextValue contextValue;
 
-    private String props;
+  private String props;
 
-    private Date createTime;
+  private Date createTime;
 
-    private Date updateTime;
+  private Date updateTime;
 
-    private Date accessTime;
+  private Date accessTime;
 
-    public Date getCreateTime() {
-        return createTime;
-    }
+  public Date getCreateTime() {
+    return createTime;
+  }
 
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
+  public void setCreateTime(Date createTime) {
+    this.createTime = createTime;
+  }
 
-    public Date getUpdateTime() {
-        return updateTime;
-    }
+  public Date getUpdateTime() {
+    return updateTime;
+  }
 
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
-    }
+  public void setUpdateTime(Date updateTime) {
+    this.updateTime = updateTime;
+  }
 
-    public String getProps() {
-        return props;
-    }
+  public String getProps() {
+    return props;
+  }
 
-    public void setProps(String props) {
-        this.props = props;
-    }
+  public void setProps(String props) {
+    this.props = props;
+  }
 
-    public Integer getId() {
-        return id;
-    }
+  public Integer getId() {
+    return id;
+  }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+  public void setId(Integer id) {
+    this.id = id;
+  }
 
-    @Override
-    public void setContextKey(ContextKey contextKey) {
-        this.contextKey = contextKey;
-    }
+  @Override
+  public void setContextKey(ContextKey contextKey) {
+    this.contextKey = contextKey;
+  }
 
-    @Override
-    public ContextKey getContextKey() {
-        return this.contextKey;
-    }
+  @Override
+  public ContextKey getContextKey() {
+    return this.contextKey;
+  }
 
-    @Override
-    public ContextValue getContextValue() {
-        return this.contextValue;
-    }
+  @Override
+  public ContextValue getContextValue() {
+    return this.contextValue;
+  }
 
-    @Override
-    public void setContextValue(ContextValue contextValue) {
-        this.contextValue = contextValue;
-    }
+  @Override
+  public void setContextValue(ContextValue contextValue) {
+    this.contextValue = contextValue;
+  }
 
-    public String getContextId() {
-        return contextId;
-    }
+  public String getContextId() {
+    return contextId;
+  }
 
-    public void setContextId(String contextId) {
-        this.contextId = contextId;
-    }
+  public void setContextId(String contextId) {
+    this.contextId = contextId;
+  }
 
-    public Date getAccessTime() {
-        return accessTime;
-    }
+  public Date getAccessTime() {
+    return accessTime;
+  }
 
-    public void setAccessTime(Date accessTime) {
-        this.accessTime = accessTime;
-    }
+  public void setAccessTime(Date accessTime) {
+    this.accessTime = accessTime;
+  }
 }

@@ -22,13 +22,13 @@ import org.apache.linkis.cli.common.entity.properties.ClientProperties;
 import java.util.Map;
 
 public class PreparedData {
-    Map<String, ClientProperties> propertiesMap;
+  Map<String, ClientProperties> propertiesMap;
 
-    public PreparedData(Map<String, ClientProperties> propertiesMap) {
-        this.propertiesMap = propertiesMap;
-    }
+  public PreparedData(Map<String, ClientProperties> propertiesMap) {
+    this.propertiesMap = propertiesMap;
+  }
 
-    public Map<String, ClientProperties> getPropertiesMap() {
-        return propertiesMap;
-    }
+  public Map<String, ClientProperties> getPropertiesMap() {
+    return propertiesMap;
+  }
 }

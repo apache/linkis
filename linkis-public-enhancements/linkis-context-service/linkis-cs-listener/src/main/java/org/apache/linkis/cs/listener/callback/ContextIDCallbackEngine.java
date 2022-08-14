@@ -21,5 +21,5 @@ import org.apache.linkis.cs.common.entity.listener.ListenerDomain;
 
 /** ContextIDCallbackEngine 只监听ContextID ，对csKeys无感，可为空 */
 public interface ContextIDCallbackEngine extends CallbackEngine {
-    void registerClient(ListenerDomain listenerDomain);
+  void registerClient(ListenerDomain listenerDomain);
 }

@@ -5,20 +5,17 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
-package org.apache.linkis.ecm.server.service.impl
 
-import java.util
-import java.util.Collections
+package org.apache.linkis.ecm.server.service.impl
 
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.ecm.core.listener.{ECMEvent, ECMEventListener}
@@ -26,10 +23,16 @@ import org.apache.linkis.ecm.server.conf.ECMConfiguration._
 import org.apache.linkis.ecm.server.listener.{ECMClosedEvent, ECMReadyEvent}
 import org.apache.linkis.ecm.server.service.ECMRegisterService
 import org.apache.linkis.manager.common.entity.resource._
-import org.apache.linkis.manager.common.protocol.em.{RegisterEMRequest, RegisterEMResponse, StopEMRequest}
+import org.apache.linkis.manager.common.protocol.em.{
+  RegisterEMRequest,
+  RegisterEMResponse,
+  StopEMRequest
+}
 import org.apache.linkis.manager.label.constant.LabelKeyConstant
 import org.apache.linkis.rpc.Sender
 
+import java.util
+import java.util.Collections
 
 class DefaultECMRegisterService extends ECMRegisterService with ECMEventListener with Logging {
 
@@ -49,14 +52,22 @@ class DefaultECMRegisterService extends ECMRegisterService with ECMEventListener
     val labelRegex = """label\.(.+)\.(.+)=(.+)""".r
     val labels = new util.HashMap[String, AnyRef]()
     // TODO: magic
-    labels += LabelKeyConstant.SERVER_ALIAS_KEY -> Collections.singletonMap("alias", ENGINE_CONN_MANAGER_SPRING_NAME)
+    labels += LabelKeyConstant.SERVER_ALIAS_KEY -> Collections.singletonMap(
+      "alias",
+      ENGINE_CONN_MANAGER_SPRING_NAME
+    )
     // TODO: group  by key
     labels
   }
 
   private def getEMRegiterResourceFromConfiguration: NodeResource = {
-    val maxResource = new LoadInstanceResource(ECM_MAX_MEMORY_AVAILABLE, ECM_MAX_CORES_AVAILABLE, ECM_MAX_CREATE_INSTANCES)
-    val minResource = new LoadInstanceResource(ECM_PROTECTED_MEMORY, ECM_PROTECTED_CORES, ECM_PROTECTED_INSTANCES)
+    val maxResource = new LoadInstanceResource(
+      ECM_MAX_MEMORY_AVAILABLE,
+      ECM_MAX_CORES_AVAILABLE,
+      ECM_MAX_CREATE_INSTANCES
+    )
+    val minResource =
+      new LoadInstanceResource(ECM_PROTECTED_MEMORY, ECM_PROTECTED_CORES, ECM_PROTECTED_INSTANCES)
     val nodeResource = new CommonNodeResource
     nodeResource.setResourceType(ResourceType.LoadInstance)
     nodeResource.setExpectedResource(Resource.getZeroResource(maxResource))
@@ -82,7 +93,7 @@ class DefaultECMRegisterService extends ECMRegisterService with ECMEventListener
     request
   }
 
-  override def registerECM(request: RegisterEMRequest): Unit = Utils.tryCatch{
+  override def registerECM(request: RegisterEMRequest): Unit = Utils.tryCatch {
     logger.info("start register ecm")
     val response = Sender.getSender(MANAGER_SPRING_NAME).ask(request)
     response match {
@@ -91,11 +102,11 @@ class DefaultECMRegisterService extends ECMRegisterService with ECMEventListener
           logger.error(s"Failed to register info to linkis manager, reason: $msg")
           System.exit(1)
         }
-      case  _ =>
+      case _ =>
         logger.error(s"Failed to register info to linkis manager, get response is $response")
         System.exit(1)
     }
-  }{ t =>
+  } { t =>
     logger.error(s"Failed to register info to linkis manager: ", t)
     System.exit(1)
   }
@@ -106,4 +117,3 @@ class DefaultECMRegisterService extends ECMRegisterService with ECMEventListener
   }
 
 }
-

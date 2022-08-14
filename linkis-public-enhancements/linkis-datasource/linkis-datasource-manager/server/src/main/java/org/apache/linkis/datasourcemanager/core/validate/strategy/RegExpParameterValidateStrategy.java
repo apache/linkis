@@ -29,52 +29,48 @@ import java.util.regex.Pattern;
 /** RegExpression validate strategy */
 public class RegExpParameterValidateStrategy implements ParameterValidateStrategy {
 
-    @Override
-    public boolean accept(DataSourceParamKeyDefinition.ValueType valueType) {
-        return valueType == DataSourceParamKeyDefinition.ValueType.EMAIL
-                || valueType == DataSourceParamKeyDefinition.ValueType.TEXT
-                || valueType == DataSourceParamKeyDefinition.ValueType.LIST
-                || valueType == DataSourceParamKeyDefinition.ValueType.TEXTAREA;
-    }
+  @Override
+  public boolean accept(DataSourceParamKeyDefinition.ValueType valueType) {
+    return valueType == DataSourceParamKeyDefinition.ValueType.EMAIL
+        || valueType == DataSourceParamKeyDefinition.ValueType.TEXT
+        || valueType == DataSourceParamKeyDefinition.ValueType.LIST
+        || valueType == DataSourceParamKeyDefinition.ValueType.TEXTAREA;
+  }
 
-    @Override
-    public Object validate(DataSourceParamKeyDefinition keyDefinition, Object actualValue)
-            throws ParameterValidateException {
-        String valueRegex = keyDefinition.getValueRegex();
-        if (StringUtils.isNotBlank(valueRegex)) {
-            if (actualValue instanceof List) {
-                List valueList = ((List) actualValue);
-                for (Object value : valueList) {
-                    match(
-                            keyDefinition.getKey(),
-                            keyDefinition.getName(),
-                            String.valueOf(value),
-                            valueRegex);
-                }
-            } else {
-                match(
-                        keyDefinition.getKey(),
-                        keyDefinition.getName(),
-                        String.valueOf(actualValue),
-                        valueRegex);
-            }
+  @Override
+  public Object validate(DataSourceParamKeyDefinition keyDefinition, Object actualValue)
+      throws ParameterValidateException {
+    String valueRegex = keyDefinition.getValueRegex();
+    if (StringUtils.isNotBlank(valueRegex)) {
+      if (actualValue instanceof List) {
+        List valueList = ((List) actualValue);
+        for (Object value : valueList) {
+          match(keyDefinition.getKey(), keyDefinition.getName(), String.valueOf(value), valueRegex);
         }
-        return actualValue;
+      } else {
+        match(
+            keyDefinition.getKey(),
+            keyDefinition.getName(),
+            String.valueOf(actualValue),
+            valueRegex);
+      }
     }
+    return actualValue;
+  }
 
-    private void match(String key, String name, String value, String valueRegex)
-            throws ParameterValidateException {
-        //        boolean match = String.valueOf(value).matches(valueRegex);
-        boolean match = Pattern.matches(valueRegex, value);
-        if (!match) {
-            throw new ParameterValidateException(
-                    "Param Validate Failed[参数校验出错], [the value: '"
-                            + String.valueOf(value)
-                            + "' to key: '"
-                            + key
-                            + "("
-                            + name
-                            + ")' doesn't match]");
-        }
+  private void match(String key, String name, String value, String valueRegex)
+      throws ParameterValidateException {
+    //        boolean match = String.valueOf(value).matches(valueRegex);
+    boolean match = Pattern.matches(valueRegex, value);
+    if (!match) {
+      throw new ParameterValidateException(
+          "Param Validate Failed[参数校验出错], [the value: '"
+              + String.valueOf(value)
+              + "' to key: '"
+              + key
+              + "("
+              + name
+              + ")' doesn't match]");
     }
+  }
 }

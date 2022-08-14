@@ -21,94 +21,94 @@ import java.util.Date;
 
 public class EngineConnBmlResource {
 
-    private Long id;
-    private String engineConnType;
-    private String version;
-    private String fileName;
-    private Long lastModified;
-    private Long fileSize;
-    private String bmlResourceId;
-    private String bmlResourceVersion;
-    private Date createTime;
-    private Date lastUpdateTime;
+  private Long id;
+  private String engineConnType;
+  private String version;
+  private String fileName;
+  private Long lastModified;
+  private Long fileSize;
+  private String bmlResourceId;
+  private String bmlResourceVersion;
+  private Date createTime;
+  private Date lastUpdateTime;
 
-    public Long getId() {
-        return id;
-    }
+  public Long getId() {
+    return id;
+  }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+  public void setId(Long id) {
+    this.id = id;
+  }
 
-    public String getEngineConnType() {
-        return engineConnType;
-    }
+  public String getEngineConnType() {
+    return engineConnType;
+  }
 
-    public void setEngineConnType(String engineConnType) {
-        this.engineConnType = engineConnType;
-    }
+  public void setEngineConnType(String engineConnType) {
+    this.engineConnType = engineConnType;
+  }
 
-    public String getVersion() {
-        return version;
-    }
+  public String getVersion() {
+    return version;
+  }
 
-    public void setVersion(String version) {
-        this.version = version;
-    }
+  public void setVersion(String version) {
+    this.version = version;
+  }
 
-    public String getFileName() {
-        return fileName;
-    }
+  public String getFileName() {
+    return fileName;
+  }
 
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
+  public void setFileName(String fileName) {
+    this.fileName = fileName;
+  }
 
-    public Long getLastModified() {
-        return lastModified;
-    }
+  public Long getLastModified() {
+    return lastModified;
+  }
 
-    public void setLastModified(Long lastModified) {
-        this.lastModified = lastModified;
-    }
+  public void setLastModified(Long lastModified) {
+    this.lastModified = lastModified;
+  }
 
-    public Long getFileSize() {
-        return fileSize;
-    }
+  public Long getFileSize() {
+    return fileSize;
+  }
 
-    public void setFileSize(Long fileSize) {
-        this.fileSize = fileSize;
-    }
+  public void setFileSize(Long fileSize) {
+    this.fileSize = fileSize;
+  }
 
-    public String getBmlResourceId() {
-        return bmlResourceId;
-    }
+  public String getBmlResourceId() {
+    return bmlResourceId;
+  }
 
-    public void setBmlResourceId(String bmlResourceId) {
-        this.bmlResourceId = bmlResourceId;
-    }
+  public void setBmlResourceId(String bmlResourceId) {
+    this.bmlResourceId = bmlResourceId;
+  }
 
-    public String getBmlResourceVersion() {
-        return bmlResourceVersion;
-    }
+  public String getBmlResourceVersion() {
+    return bmlResourceVersion;
+  }
 
-    public void setBmlResourceVersion(String bmlResourceVersion) {
-        this.bmlResourceVersion = bmlResourceVersion;
-    }
+  public void setBmlResourceVersion(String bmlResourceVersion) {
+    this.bmlResourceVersion = bmlResourceVersion;
+  }
 
-    public Date getCreateTime() {
-        return createTime;
-    }
+  public Date getCreateTime() {
+    return createTime;
+  }
 
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
+  public void setCreateTime(Date createTime) {
+    this.createTime = createTime;
+  }
 
-    public Date getLastUpdateTime() {
-        return lastUpdateTime;
-    }
+  public Date getLastUpdateTime() {
+    return lastUpdateTime;
+  }
 
-    public void setLastUpdateTime(Date lastUpdateTime) {
-        this.lastUpdateTime = lastUpdateTime;
-    }
+  public void setLastUpdateTime(Date lastUpdateTime) {
+    this.lastUpdateTime = lastUpdateTime;
+  }
 }

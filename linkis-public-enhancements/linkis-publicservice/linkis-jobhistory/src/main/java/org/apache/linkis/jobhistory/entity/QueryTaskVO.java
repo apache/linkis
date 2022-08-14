@@ -24,252 +24,252 @@ import java.util.List;
 
 public class QueryTaskVO {
 
-    private Long taskID;
-    private String instance;
-    private String execId;
-    private String umUser;
-    private String engineInstance;
-    private String executionCode;
-    private String progress;
-    private String logPath;
-    private String resultLocation;
-    private String status;
-    private Date createdTime;
-    private Date updatedTime;
-    private String engineType;
-    private Integer errCode;
-    private String errDesc;
-    private String executeApplicationName;
-    private String requestApplicationName;
-    private String runType;
-    private String paramsJson;
-    private Long costTime;
-    private String strongerExecId;
-    private String sourceJson;
-    /** source字段:用来将sourceJson的value取出来进行拼接返回给前台展示 */
-    private String sourceTailor;
+  private Long taskID;
+  private String instance;
+  private String execId;
+  private String umUser;
+  private String engineInstance;
+  private String executionCode;
+  private String progress;
+  private String logPath;
+  private String resultLocation;
+  private String status;
+  private Date createdTime;
+  private Date updatedTime;
+  private String engineType;
+  private Integer errCode;
+  private String errDesc;
+  private String executeApplicationName;
+  private String requestApplicationName;
+  private String runType;
+  private String paramsJson;
+  private Long costTime;
+  private String strongerExecId;
+  private String sourceJson;
+  /** source字段:用来将sourceJson的value取出来进行拼接返回给前台展示 */
+  private String sourceTailor;
 
-    private Date engineStartTime;
+  private Date engineStartTime;
 
-    private List<String> labels;
+  private List<String> labels;
 
-    private boolean canRetry;
+  private boolean canRetry;
 
-    public List<SubJobDetail> getSubJobs() {
-        return subJobs;
-    }
+  public List<SubJobDetail> getSubJobs() {
+    return subJobs;
+  }
 
-    public void setSubJobs(List<SubJobDetail> subJobs) {
-        this.subJobs = subJobs;
-    }
+  public void setSubJobs(List<SubJobDetail> subJobs) {
+    this.subJobs = subJobs;
+  }
 
-    private List<SubJobDetail> subJobs;
+  private List<SubJobDetail> subJobs;
 
-    public Date getEngineStartTime() {
-        return engineStartTime;
-    }
+  public Date getEngineStartTime() {
+    return engineStartTime;
+  }
 
-    public void setEngineStartTime(Date engineStartTime) {
-        this.engineStartTime = engineStartTime;
-    }
+  public void setEngineStartTime(Date engineStartTime) {
+    this.engineStartTime = engineStartTime;
+  }
 
-    public String getSourceTailor() {
-        return sourceTailor;
-    }
+  public String getSourceTailor() {
+    return sourceTailor;
+  }
 
-    public void setSourceTailor(String sourceTailor) {
-        this.sourceTailor = sourceTailor;
-    }
+  public void setSourceTailor(String sourceTailor) {
+    this.sourceTailor = sourceTailor;
+  }
 
-    public String getSourceJson() {
-        return sourceJson;
-    }
+  public String getSourceJson() {
+    return sourceJson;
+  }
 
-    public void setSourceJson(String sourceJson) {
-        this.sourceJson = sourceJson;
-    }
+  public void setSourceJson(String sourceJson) {
+    this.sourceJson = sourceJson;
+  }
 
-    public Long getTaskID() {
-        return taskID;
-    }
+  public Long getTaskID() {
+    return taskID;
+  }
 
-    public void setTaskID(Long taskID) {
-        this.taskID = taskID;
-    }
+  public void setTaskID(Long taskID) {
+    this.taskID = taskID;
+  }
 
-    public String getInstance() {
-        return instance;
-    }
+  public String getInstance() {
+    return instance;
+  }
 
-    public void setInstance(String instance) {
-        this.instance = instance;
-    }
+  public void setInstance(String instance) {
+    this.instance = instance;
+  }
 
-    public String getExecId() {
-        return execId;
-    }
+  public String getExecId() {
+    return execId;
+  }
 
-    public void setExecId(String execId) {
-        this.execId = execId;
-    }
+  public void setExecId(String execId) {
+    this.execId = execId;
+  }
 
-    public String getUmUser() {
-        return umUser;
-    }
+  public String getUmUser() {
+    return umUser;
+  }
 
-    public void setUmUser(String umUser) {
-        this.umUser = umUser;
-    }
+  public void setUmUser(String umUser) {
+    this.umUser = umUser;
+  }
 
-    public String getEngineInstance() {
-        return engineInstance;
-    }
+  public String getEngineInstance() {
+    return engineInstance;
+  }
 
-    public void setEngineInstance(String engineInstance) {
-        this.engineInstance = engineInstance;
-    }
+  public void setEngineInstance(String engineInstance) {
+    this.engineInstance = engineInstance;
+  }
 
-    public String getExecutionCode() {
-        return executionCode;
-    }
+  public String getExecutionCode() {
+    return executionCode;
+  }
 
-    public void setExecutionCode(String executionCode) {
-        this.executionCode = executionCode;
-    }
+  public void setExecutionCode(String executionCode) {
+    this.executionCode = executionCode;
+  }
 
-    public String getProgress() {
-        return progress;
-    }
+  public String getProgress() {
+    return progress;
+  }
 
-    public void setProgress(String progress) {
-        this.progress = progress;
-    }
+  public void setProgress(String progress) {
+    this.progress = progress;
+  }
 
-    public String getLogPath() {
-        return logPath;
-    }
+  public String getLogPath() {
+    return logPath;
+  }
 
-    public void setLogPath(String logPath) {
-        this.logPath = logPath;
-    }
+  public void setLogPath(String logPath) {
+    this.logPath = logPath;
+  }
 
-    public String getResultLocation() {
-        return resultLocation;
-    }
+  public String getResultLocation() {
+    return resultLocation;
+  }
 
-    public void setResultLocation(String resultLocation) {
-        this.resultLocation = resultLocation;
-    }
+  public void setResultLocation(String resultLocation) {
+    this.resultLocation = resultLocation;
+  }
 
-    public String getStatus() {
-        return status;
-    }
+  public String getStatus() {
+    return status;
+  }
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
+  public void setStatus(String status) {
+    this.status = status;
+  }
 
-    public Date getCreatedTime() {
-        return createdTime;
-    }
+  public Date getCreatedTime() {
+    return createdTime;
+  }
 
-    public void setCreatedTime(Date createdTime) {
-        this.createdTime = createdTime;
-    }
+  public void setCreatedTime(Date createdTime) {
+    this.createdTime = createdTime;
+  }
 
-    public Date getUpdatedTime() {
-        return updatedTime;
-    }
+  public Date getUpdatedTime() {
+    return updatedTime;
+  }
 
-    public void setUpdatedTime(Date updatedTime) {
-        this.updatedTime = updatedTime;
-    }
+  public void setUpdatedTime(Date updatedTime) {
+    this.updatedTime = updatedTime;
+  }
 
-    public String getEngineType() {
-        return engineType;
-    }
+  public String getEngineType() {
+    return engineType;
+  }
 
-    public void setEngineType(String engineType) {
-        this.engineType = engineType;
-    }
+  public void setEngineType(String engineType) {
+    this.engineType = engineType;
+  }
 
-    public Integer getErrCode() {
-        return errCode;
-    }
+  public Integer getErrCode() {
+    return errCode;
+  }
 
-    public void setErrCode(Integer errCode) {
-        this.errCode = errCode;
-    }
+  public void setErrCode(Integer errCode) {
+    this.errCode = errCode;
+  }
 
-    public String getErrDesc() {
-        return errDesc;
-    }
+  public String getErrDesc() {
+    return errDesc;
+  }
 
-    public void setErrDesc(String errDesc) {
-        this.errDesc = errDesc;
-    }
+  public void setErrDesc(String errDesc) {
+    this.errDesc = errDesc;
+  }
 
-    public String getExecuteApplicationName() {
-        return executeApplicationName;
-    }
+  public String getExecuteApplicationName() {
+    return executeApplicationName;
+  }
 
-    public void setExecuteApplicationName(String executeApplicationName) {
-        this.executeApplicationName = executeApplicationName;
-    }
+  public void setExecuteApplicationName(String executeApplicationName) {
+    this.executeApplicationName = executeApplicationName;
+  }
 
-    public String getRequestApplicationName() {
-        return requestApplicationName;
-    }
+  public String getRequestApplicationName() {
+    return requestApplicationName;
+  }
 
-    public void setRequestApplicationName(String requestApplicationName) {
-        this.requestApplicationName = requestApplicationName;
-    }
+  public void setRequestApplicationName(String requestApplicationName) {
+    this.requestApplicationName = requestApplicationName;
+  }
 
-    public String getRunType() {
-        return runType;
-    }
+  public String getRunType() {
+    return runType;
+  }
 
-    public void setRunType(String runType) {
-        this.runType = runType;
-    }
+  public void setRunType(String runType) {
+    this.runType = runType;
+  }
 
-    public String getParamsJson() {
-        return paramsJson;
-    }
+  public String getParamsJson() {
+    return paramsJson;
+  }
 
-    public void setParamsJson(String paramsJson) {
-        this.paramsJson = paramsJson;
-    }
+  public void setParamsJson(String paramsJson) {
+    this.paramsJson = paramsJson;
+  }
 
-    public Long getCostTime() {
-        return costTime;
-    }
+  public Long getCostTime() {
+    return costTime;
+  }
 
-    public void setCostTime(Long costTime) {
-        this.costTime = costTime;
-    }
+  public void setCostTime(Long costTime) {
+    this.costTime = costTime;
+  }
 
-    public String getStrongerExecId() {
-        return strongerExecId;
-    }
+  public String getStrongerExecId() {
+    return strongerExecId;
+  }
 
-    public void setStrongerExecId(String strongerExecId) {
-        this.strongerExecId = strongerExecId;
-    }
+  public void setStrongerExecId(String strongerExecId) {
+    this.strongerExecId = strongerExecId;
+  }
 
-    public List<String> getLabels() {
-        return labels;
-    }
+  public List<String> getLabels() {
+    return labels;
+  }
 
-    public void setLabels(List<String> labels) {
-        this.labels = labels;
-    }
+  public void setLabels(List<String> labels) {
+    this.labels = labels;
+  }
 
-    public boolean isCanRetry() {
-        return canRetry;
-    }
+  public boolean isCanRetry() {
+    return canRetry;
+  }
 
-    public void setCanRetry(boolean canRetry) {
-        this.canRetry = canRetry;
-    }
+  public void setCanRetry(boolean canRetry) {
+    this.canRetry = canRetry;
+  }
 }

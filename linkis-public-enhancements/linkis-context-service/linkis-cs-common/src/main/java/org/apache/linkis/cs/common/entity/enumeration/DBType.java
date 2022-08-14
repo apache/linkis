@@ -18,10 +18,10 @@
 package org.apache.linkis.cs.common.entity.enumeration;
 
 public enum DBType {
-    /** */
-    CS,
-    HIVE,
-    MIDE,
-    ES,
-    HABSE
+  /** */
+  CS,
+  HIVE,
+  MIDE,
+  ES,
+  HABSE
 }

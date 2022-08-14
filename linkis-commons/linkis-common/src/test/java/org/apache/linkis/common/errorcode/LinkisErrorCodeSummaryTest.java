@@ -24,68 +24,68 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class LinkisErrorCodeSummaryTest {
 
-    @Test
-    void testGetErrorCode() {
-        assertEquals(321, EngineManagerErrorException.getErrorCode());
-    }
+  @Test
+  void testGetErrorCode() {
+    assertEquals(321, EngineManagerErrorException.getErrorCode());
+  }
 
-    @Test
-    void testSetErrorCode() {
-        EngineManagerErrorException.setErrorCode(1);
-        assertEquals(1, EngineManagerErrorException.getErrorCode());
-        EngineManagerErrorException.setErrorCode(321);
-        assertEquals(321, EngineManagerErrorException.getErrorCode());
-    }
+  @Test
+  void testSetErrorCode() {
+    EngineManagerErrorException.setErrorCode(1);
+    assertEquals(1, EngineManagerErrorException.getErrorCode());
+    EngineManagerErrorException.setErrorCode(321);
+    assertEquals(321, EngineManagerErrorException.getErrorCode());
+  }
 
-    @Test
-    void testGetErrorDesc() {
-        assertEquals("引擎启动失败", EngineManagerErrorException.getErrorDesc());
-    }
+  @Test
+  void testGetErrorDesc() {
+    assertEquals("引擎启动失败", EngineManagerErrorException.getErrorDesc());
+  }
 
-    @Test
-    void testSetErrorDesc() {
-        EngineManagerErrorException.setErrorDesc("test");
-        assertEquals("test", EngineManagerErrorException.getErrorDesc());
-        EngineManagerErrorException.setErrorDesc("引擎启动失败");
-        assertEquals("引擎启动失败", EngineManagerErrorException.getErrorDesc());
-    }
+  @Test
+  void testSetErrorDesc() {
+    EngineManagerErrorException.setErrorDesc("test");
+    assertEquals("test", EngineManagerErrorException.getErrorDesc());
+    EngineManagerErrorException.setErrorDesc("引擎启动失败");
+    assertEquals("引擎启动失败", EngineManagerErrorException.getErrorDesc());
+  }
 
-    @Test
-    void testGetComment() {
-        assertEquals("在某种情况下启动失败", EngineManagerErrorException.getComment());
-    }
+  @Test
+  void testGetComment() {
+    assertEquals("在某种情况下启动失败", EngineManagerErrorException.getComment());
+  }
 
-    @Test
-    void testSetComment() {
-        EngineManagerErrorException.setComment("test");
-        assertEquals("test", EngineManagerErrorException.getComment());
-        EngineManagerErrorException.setComment("在某种情况下启动失败");
-        assertEquals("在某种情况下启动失败", EngineManagerErrorException.getComment());
-    }
+  @Test
+  void testSetComment() {
+    EngineManagerErrorException.setComment("test");
+    assertEquals("test", EngineManagerErrorException.getComment());
+    EngineManagerErrorException.setComment("在某种情况下启动失败");
+    assertEquals("在某种情况下启动失败", EngineManagerErrorException.getComment());
+  }
 
-    @Test
-    void testGetCreator() {
-        assertEquals("hadoop", EngineManagerErrorException.getCreator());
-    }
+  @Test
+  void testGetCreator() {
+    assertEquals("hadoop", EngineManagerErrorException.getCreator());
+  }
 
-    @Test
-    void testSetCreator() {
-        EngineManagerErrorException.setCreator("test");
-        assertEquals("test", EngineManagerErrorException.getCreator());
-        EngineManagerErrorException.setCreator("hadoop");
-        assertEquals("hadoop", EngineManagerErrorException.getCreator());
-    }
+  @Test
+  void testSetCreator() {
+    EngineManagerErrorException.setCreator("test");
+    assertEquals("test", EngineManagerErrorException.getCreator());
+    EngineManagerErrorException.setCreator("hadoop");
+    assertEquals("hadoop", EngineManagerErrorException.getCreator());
+  }
 
-    @Test
-    void testGetModule() {
-        assertEquals("EngineConnManager", EngineManagerErrorException.getModule());
-    }
+  @Test
+  void testGetModule() {
+    assertEquals("EngineConnManager", EngineManagerErrorException.getModule());
+  }
 
-    @Test
-    void testSetModule() {
-        EngineManagerErrorException.setModule("test");
-        assertEquals("test", EngineManagerErrorException.getModule());
-        EngineManagerErrorException.setModule("EngineConnManager");
-        assertEquals("EngineConnManager", EngineManagerErrorException.getModule());
-    }
+  @Test
+  void testSetModule() {
+    EngineManagerErrorException.setModule("test");
+    assertEquals("test", EngineManagerErrorException.getModule());
+    EngineManagerErrorException.setModule("EngineConnManager");
+    assertEquals("EngineConnManager", EngineManagerErrorException.getModule());
+  }
 }

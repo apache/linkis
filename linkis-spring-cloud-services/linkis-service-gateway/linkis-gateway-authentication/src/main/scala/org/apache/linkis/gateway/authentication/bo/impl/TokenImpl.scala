@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,13 +17,14 @@
 
 package org.apache.linkis.gateway.authentication.bo.impl
 
-import java.util.Date
-import org.apache.linkis.gateway.authentication.bo.Token
-import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.gateway.authentication.bo.{Token, User}
+import org.apache.linkis.gateway.authentication.bo.Token
 import org.apache.linkis.gateway.authentication.conf.TokenConfiguration
 import org.apache.linkis.gateway.authentication.entity.TokenEntity
 
+import org.apache.commons.lang3.StringUtils
+
+import java.util.Date
 
 class TokenImpl extends Token {
 
@@ -76,8 +77,8 @@ class TokenImpl extends Token {
   }
 
   /**
-    * 1 token corresponds to multiple users
-    */
+   * 1 token corresponds to multiple users
+   */
   override def getLegalUsers(): Set[User] = {
     legalUsersName.map(u => new UserImpl(u))
   }
@@ -91,8 +92,8 @@ class TokenImpl extends Token {
   }
 
   /**
-    * 1 token corresponds to multiple Hosts
-    */
+   * 1 token corresponds to multiple Hosts
+   */
   override def getLegalHosts(): Set[String] = {
     legalHosts
   }
@@ -122,8 +123,8 @@ class TokenImpl extends Token {
   }
 
   /**
-    * Unit: second
-    */
+   * Unit: second
+   */
   override def setElapseDay(elapseDay: Long) = {
     this.elapseDay = elapseDay
   }
@@ -133,8 +134,8 @@ class TokenImpl extends Token {
   }
 
   /**
-    * 1 token corresponds to 1 business owner
-    */
+   * 1 token corresponds to 1 business owner
+   */
   override def setBusinessOwner(businessOwner: String): Unit = {
     this.businessOwner = businessOwner
   }
@@ -148,11 +149,11 @@ class TokenImpl extends Token {
   }
 
   /**
-    * decided by createdTime and elapseTime,
-    * if elapseTime = -1 then will not stale forever
-    */
+   * decided by createdTime and elapseTime, if elapseTime = -1 then will not stale forever
+   */
   override def isStale(): Boolean = {
-    elapseDay != -1 && System.currentTimeMillis() > (createTime.getTime + elapseDay * 24 * 3600 * 1000)
+    elapseDay != -1 && System
+      .currentTimeMillis() > (createTime.getTime + elapseDay * 24 * 3600 * 1000)
   }
 
 }

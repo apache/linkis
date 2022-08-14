@@ -24,22 +24,22 @@ import java.io.IOException;
 import java.util.List;
 
 public class Test {
-    public static void main(String[] args) throws IOException {
-        try {
-            Class.forName("org.apache.linkis.errorcode.client.handler.LinkisErrorCodeHandler");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        LinkisErrorCodeHandler linkisErrorCodeHandler = LinkisErrorCodeHandler.getInstance();
-        List<ErrorCode> ret =
-                linkisErrorCodeHandler.handle(
-                        "queue root is not exists in YARN \n queue root is not exists in YARN");
-        System.out.println(ret);
-        linkisErrorCodeHandler.close();
+  public static void main(String[] args) throws IOException {
+    try {
+      Class.forName("org.apache.linkis.errorcode.client.handler.LinkisErrorCodeHandler");
+    } catch (ClassNotFoundException e) {
+      e.printStackTrace();
     }
+    try {
+      Thread.sleep(5000);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+    LinkisErrorCodeHandler linkisErrorCodeHandler = LinkisErrorCodeHandler.getInstance();
+    List<ErrorCode> ret =
+        linkisErrorCodeHandler.handle(
+            "queue root is not exists in YARN \n queue root is not exists in YARN");
+    System.out.println(ret);
+    linkisErrorCodeHandler.close();
+  }
 }

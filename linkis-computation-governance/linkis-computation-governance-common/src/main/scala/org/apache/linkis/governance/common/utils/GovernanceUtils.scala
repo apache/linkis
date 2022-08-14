@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,20 +17,23 @@
 
 package org.apache.linkis.governance.common.utils
 
-import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 
-import java.util
+import org.apache.commons.lang3.StringUtils
+
 import java.io.File
+import java.util
 
-object GovernanceUtils extends Logging{
-
+object GovernanceUtils extends Logging {
 
   def killProcess(pid: String, desc: String, isSudo: Boolean): Unit = {
     val subProcessKillScriptPath = Configuration.getLinkisHome() + "/sbin/kill-process-by-pid.sh"
-    if (StringUtils.isBlank(subProcessKillScriptPath) || !new File(subProcessKillScriptPath).exists()) {
+    if (
+        StringUtils.isBlank(subProcessKillScriptPath) || !new File(subProcessKillScriptPath)
+          .exists()
+    ) {
       logger.error(s"Failed to locate kill-script, $subProcessKillScriptPath not exist")
     } else if (StringUtils.isNotBlank(pid)) {
       val cmd = if (isSudo) {
@@ -38,7 +41,9 @@ object GovernanceUtils extends Logging{
       } else {
         Array("sh", subProcessKillScriptPath, String.valueOf(pid))
       }
-      logger.info(s"Starting to kill sub-processes. desc: $desc  Kill Command: " + cmd.mkString(" "))
+      logger.info(
+        s"Starting to kill sub-processes. desc: $desc  Kill Command: " + cmd.mkString(" ")
+      )
 
       Utils.tryCatch {
         val output = Utils.exec(cmd, 600 * 1000L)
@@ -62,8 +67,8 @@ object GovernanceUtils extends Logging{
     Utils.tryCatch {
       val output = Utils.exec(cmdArr, 600 * 1000L)
       logger.error(s"Kill yarn applications successfully! msg: $output.")
-    } {
-      t => logger.error(s"Kill yarn applications failed!", t)
+    } { t =>
+      logger.error(s"Kill yarn applications failed!", t)
     }
   }
 

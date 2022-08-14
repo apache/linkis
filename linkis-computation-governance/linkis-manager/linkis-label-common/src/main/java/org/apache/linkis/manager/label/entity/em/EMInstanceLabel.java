@@ -30,55 +30,55 @@ import org.apache.linkis.manager.label.entity.node.NodeInstanceLabel;
 import java.util.HashMap;
 
 public class EMInstanceLabel extends GenericLabel
-        implements NodeInstanceLabel, EMNodeLabel, EngineNodeLabel, ResourceLabel {
+    implements NodeInstanceLabel, EMNodeLabel, EngineNodeLabel, ResourceLabel {
 
-    public EMInstanceLabel() {
-        setLabelKey(LabelKeyConstant.EM_INSTANCE_KEY);
-    }
+  public EMInstanceLabel() {
+    setLabelKey(LabelKeyConstant.EM_INSTANCE_KEY);
+  }
 
-    public void setInstance(String instance) {
-        if (null == getValue()) {
-            setValue(new HashMap<>());
-        }
-        getValue().put("instance", instance);
+  public void setInstance(String instance) {
+    if (null == getValue()) {
+      setValue(new HashMap<>());
     }
+    getValue().put("instance", instance);
+  }
 
-    @ValueSerialNum(1)
-    public void setServiceName(String serviceName) {
-        if (null == getValue()) {
-            setValue(new HashMap<>());
-        }
-        getValue().put("serviceName", serviceName);
+  @ValueSerialNum(1)
+  public void setServiceName(String serviceName) {
+    if (null == getValue()) {
+      setValue(new HashMap<>());
     }
+    getValue().put("serviceName", serviceName);
+  }
 
-    @ValueSerialNum(2)
-    @Override
-    public String getInstance() {
-        if (null != getValue().get("instance")) {
-            return getValue().get("instance");
-        }
-        return null;
+  @ValueSerialNum(2)
+  @Override
+  public String getInstance() {
+    if (null != getValue().get("instance")) {
+      return getValue().get("instance");
     }
+    return null;
+  }
 
-    @Override
-    public String getServiceName() {
-        if (null != getValue().get("serviceName")) {
-            return getValue().get("serviceName");
-        }
-        return null;
+  @Override
+  public String getServiceName() {
+    if (null != getValue().get("serviceName")) {
+      return getValue().get("serviceName");
     }
+    return null;
+  }
 
-    public ServiceInstance getServiceInstance() {
-        return ServiceInstance.apply(getServiceName(), getInstance());
-    }
+  public ServiceInstance getServiceInstance() {
+    return ServiceInstance.apply(getServiceName(), getInstance());
+  }
 
-    @Override
-    protected void setStringValue(String stringValue) {
-        String instance =
-                stringValue.replaceFirst(
-                        LabelCommonConfig.ENGINE_CONN_MANAGER_SPRING_NAME.getValue() + "-", "");
-        String serviceName = LabelCommonConfig.ENGINE_CONN_MANAGER_SPRING_NAME.getValue();
-        setInstance(instance);
-        setServiceName(serviceName);
-    }
+  @Override
+  protected void setStringValue(String stringValue) {
+    String instance =
+        stringValue.replaceFirst(
+            LabelCommonConfig.ENGINE_CONN_MANAGER_SPRING_NAME.getValue() + "-", "");
+    String serviceName = LabelCommonConfig.ENGINE_CONN_MANAGER_SPRING_NAME.getValue();
+    setInstance(instance);
+    setServiceName(serviceName);
+  }
 }

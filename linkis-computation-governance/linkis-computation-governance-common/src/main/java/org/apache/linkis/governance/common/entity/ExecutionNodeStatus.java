@@ -18,36 +18,36 @@
 package org.apache.linkis.governance.common.entity;
 
 public enum ExecutionNodeStatus {
-    Inited,
-    WaitForRetry,
-    Scheduled,
-    Running,
-    Succeed,
-    Failed,
-    Cancelled,
-    Timeout;
+  Inited,
+  WaitForRetry,
+  Scheduled,
+  Running,
+  Succeed,
+  Failed,
+  Cancelled,
+  Timeout;
 
-    public static boolean isRunning(ExecutionNodeStatus eventStatus) {
-        return eventStatus == Running;
-    }
+  public static boolean isRunning(ExecutionNodeStatus eventStatus) {
+    return eventStatus == Running;
+  }
 
-    public static boolean isScheduled(ExecutionNodeStatus eventStatus) {
-        return eventStatus != Inited;
-    }
+  public static boolean isScheduled(ExecutionNodeStatus eventStatus) {
+    return eventStatus != Inited;
+  }
 
-    public static boolean isCompleted(ExecutionNodeStatus eventStatus) {
-        switch (eventStatus) {
-            case Inited:
-            case Scheduled:
-            case Running:
-            case WaitForRetry:
-                return false;
-            default:
-                return true;
-        }
+  public static boolean isCompleted(ExecutionNodeStatus eventStatus) {
+    switch (eventStatus) {
+      case Inited:
+      case Scheduled:
+      case Running:
+      case WaitForRetry:
+        return false;
+      default:
+        return true;
     }
+  }
 
-    public static boolean isSucceed(ExecutionNodeStatus eventStatus) {
-        return Succeed == eventStatus;
-    }
+  public static boolean isSucceed(ExecutionNodeStatus eventStatus) {
+    return Succeed == eventStatus;
+  }
 }

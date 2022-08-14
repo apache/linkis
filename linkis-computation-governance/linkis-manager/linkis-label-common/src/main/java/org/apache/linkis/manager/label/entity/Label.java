@@ -23,48 +23,48 @@ import org.apache.linkis.protocol.message.RequestProtocol;
 import java.io.Serializable;
 
 public interface Label<T> extends Serializable, RequestProtocol {
-    /** Label value relations */
-    enum ValueRelation {
-        /** Relation */
-        OR,
-        AND,
-        ALL
-    }
+  /** Label value relations */
+  enum ValueRelation {
+    /** Relation */
+    OR,
+    AND,
+    ALL
+  }
 
-    /**
-     * Label key
-     *
-     * @return string
-     */
-    @KeyMethod
-    String getLabelKey();
-    /**
-     * Label value
-     *
-     * @return T
-     */
-    T getValue();
+  /**
+   * Label key
+   *
+   * @return string
+   */
+  @KeyMethod
+  String getLabelKey();
+  /**
+   * Label value
+   *
+   * @return T
+   */
+  T getValue();
 
-    /**
-     * Value.asString()
-     *
-     * @return string
-     */
-    String getStringValue();
+  /**
+   * Value.asString()
+   *
+   * @return string
+   */
+  String getStringValue();
 
-    /**
-     * Label feature
-     *
-     * @return feature enum
-     */
-    default Feature getFeature() {
-        return Feature.OPTIONAL;
-    }
+  /**
+   * Label feature
+   *
+   * @return feature enum
+   */
+  default Feature getFeature() {
+    return Feature.OPTIONAL;
+  }
 
-    /**
-     * Label value isEmpty
-     *
-     * @return
-     */
-    Boolean isEmpty();
+  /**
+   * Label value isEmpty
+   *
+   * @return
+   */
+  Boolean isEmpty();
 }

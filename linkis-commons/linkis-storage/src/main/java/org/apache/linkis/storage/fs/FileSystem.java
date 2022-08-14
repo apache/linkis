@@ -26,79 +26,79 @@ import java.io.IOException;
 
 public abstract class FileSystem implements Fs {
 
-    protected String user;
-    private String defaultFilePerm = "rwxr-----"; // 740
-    private String defaultFolderPerm = "rwxr-x---"; // 750
+  protected String user;
+  private String defaultFilePerm = "rwxr-----"; // 740
+  private String defaultFolderPerm = "rwxr-x---"; // 750
 
-    public String getDefaultFilePerm() {
-        return defaultFilePerm;
+  public String getDefaultFilePerm() {
+    return defaultFilePerm;
+  }
+
+  public String getDefaultFolderPerm() {
+    return defaultFolderPerm;
+  }
+
+  public abstract String listRoot() throws IOException;
+
+  public abstract long getTotalSpace(FsPath dest) throws IOException;
+
+  public abstract long getFreeSpace(FsPath dest) throws IOException;
+
+  public abstract long getUsableSpace(FsPath dest) throws IOException;
+
+  public abstract boolean canExecute(FsPath dest) throws IOException;
+
+  public abstract boolean setOwner(FsPath dest, String user, String group) throws IOException;
+
+  public abstract boolean setOwner(FsPath dest, String user) throws IOException;
+
+  public abstract boolean setGroup(FsPath dest, String group) throws IOException;
+
+  public abstract boolean copy(String origin, String dest) throws IOException;
+
+  public FsPathListWithError listPathWithError(FsPath path) throws IOException {
+    return null;
+  }
+
+  public boolean createNewFile(FsPath dest) throws IOException {
+    return create(dest.getPath());
+  }
+
+  public boolean copyFile(FsPath origin, FsPath dest) throws IOException {
+    return copy(origin.getPath(), dest.getPath());
+  }
+
+  /**
+   * Set permissions for a path(设置某个路径的权限)
+   *
+   * @param dest path(路径)
+   * @param permission Permissions, such as rwxr-x---etc.(权限，如rwxr-x---等)
+   * @throws IOException Setting a failure throws an exception, or throws an exception if the user
+   *     is not owner(设置失败抛出异常，或者如果该用户不是owner，也会抛出异常)
+   * @return
+   */
+  public abstract boolean setPermission(FsPath dest, String permission) throws IOException;
+
+  public String getUser() {
+    return user;
+  }
+
+  public void setUser(String user) {
+    this.user = user;
+  }
+
+  protected FsPath getParentPath(String path) {
+    String parentPath = "";
+    if (File.separatorChar == '/') {
+      parentPath = new File(path).getParent();
+    } else {
+      parentPath = path.substring(0, path.lastIndexOf("/"));
     }
+    return new FsPath(parentPath);
+  }
 
-    public String getDefaultFolderPerm() {
-        return defaultFolderPerm;
-    }
-
-    public abstract String listRoot() throws IOException;
-
-    public abstract long getTotalSpace(FsPath dest) throws IOException;
-
-    public abstract long getFreeSpace(FsPath dest) throws IOException;
-
-    public abstract long getUsableSpace(FsPath dest) throws IOException;
-
-    public abstract boolean canExecute(FsPath dest) throws IOException;
-
-    public abstract boolean setOwner(FsPath dest, String user, String group) throws IOException;
-
-    public abstract boolean setOwner(FsPath dest, String user) throws IOException;
-
-    public abstract boolean setGroup(FsPath dest, String group) throws IOException;
-
-    public abstract boolean copy(String origin, String dest) throws IOException;
-
-    public FsPathListWithError listPathWithError(FsPath path) throws IOException {
-        return null;
-    }
-
-    public boolean createNewFile(FsPath dest) throws IOException {
-        return create(dest.getPath());
-    }
-
-    public boolean copyFile(FsPath origin, FsPath dest) throws IOException {
-        return copy(origin.getPath(), dest.getPath());
-    }
-
-    /**
-     * Set permissions for a path(设置某个路径的权限)
-     *
-     * @param dest path(路径)
-     * @param permission Permissions, such as rwxr-x---etc.(权限，如rwxr-x---等)
-     * @throws IOException Setting a failure throws an exception, or throws an exception if the user
-     *     is not owner(设置失败抛出异常，或者如果该用户不是owner，也会抛出异常)
-     * @return
-     */
-    public abstract boolean setPermission(FsPath dest, String permission) throws IOException;
-
-    public String getUser() {
-        return user;
-    }
-
-    public void setUser(String user) {
-        this.user = user;
-    }
-
-    protected FsPath getParentPath(String path) {
-        String parentPath = "";
-        if (File.separatorChar == '/') {
-            parentPath = new File(path).getParent();
-        } else {
-            parentPath = path.substring(0, path.lastIndexOf("/"));
-        }
-        return new FsPath(parentPath);
-    }
-
-    public boolean isOwner(String dest) throws IOException {
-        FsPath fsPath = get(dest);
-        return user.equals(fsPath.getOwner()) || user.equals(rootUserName());
-    }
+  public boolean isOwner(String dest) throws IOException {
+    FsPath fsPath = get(dest);
+    return user.equals(fsPath.getOwner()) || user.equals(rootUserName());
+  }
 }

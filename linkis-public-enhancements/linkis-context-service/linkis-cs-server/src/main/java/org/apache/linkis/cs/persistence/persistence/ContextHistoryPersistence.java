@@ -25,15 +25,15 @@ import java.util.List;
 
 public interface ContextHistoryPersistence {
 
-    void createHistory(ContextID contextID, ContextHistory contextHistory) throws CSErrorException;
+  void createHistory(ContextID contextID, ContextHistory contextHistory) throws CSErrorException;
 
-    List<ContextHistory> getHistories(ContextID contextID) throws CSErrorException;
+  List<ContextHistory> getHistories(ContextID contextID) throws CSErrorException;
 
-    ContextHistory getHistory(ContextID contextID, Long id) throws CSErrorException;
+  ContextHistory getHistory(ContextID contextID, Long id) throws CSErrorException;
 
-    ContextHistory getHistory(ContextID contextID, String source) throws CSErrorException;
+  ContextHistory getHistory(ContextID contextID, String source) throws CSErrorException;
 
-    void removeHistory(ContextID contextID, String source) throws CSErrorException;
+  void removeHistory(ContextID contextID, String source) throws CSErrorException;
 
-    void updateHistory(ContextID contextID, ContextHistory contextHistory) throws CSErrorException;
+  void updateHistory(ContextID contextID, ContextHistory contextHistory) throws CSErrorException;
 }

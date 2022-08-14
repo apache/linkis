@@ -23,13 +23,13 @@ import org.apache.linkis.cli.common.entity.result.ExecutionResult;
 import java.util.Map;
 
 public interface Execution {
-    /*
-     start execution
-    */
-    ExecutionResult execute(Map<String, Job> jobs);
+  /*
+   start execution
+  */
+  ExecutionResult execute(Map<String, Job> jobs);
 
-    /*
-     terminate execution(often used in shutdown hook)
-    */
-    boolean terminate(Map<String, Job> jobs);
+  /*
+   terminate execution(often used in shutdown hook)
+  */
+  boolean terminate(Map<String, Job> jobs);
 }

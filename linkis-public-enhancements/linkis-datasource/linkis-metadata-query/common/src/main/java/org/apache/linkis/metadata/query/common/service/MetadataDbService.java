@@ -25,71 +25,63 @@ import java.util.Map;
 
 public interface MetadataDbService extends BaseMetadataService {
 
-    /**
-     * Get all databases
-     *
-     * @param params connect params
-     * @return
-     */
-    List<String> getDatabases(String operator, Map<String, Object> params);
+  /**
+   * Get all databases
+   *
+   * @param params connect params
+   * @return
+   */
+  List<String> getDatabases(String operator, Map<String, Object> params);
 
-    /**
-     * Get all tables from database specified
-     *
-     * @param params params
-     * @param database database name
-     * @return
-     */
-    List<String> getTables(String operator, Map<String, Object> params, String database);
+  /**
+   * Get all tables from database specified
+   *
+   * @param params params
+   * @param database database name
+   * @return
+   */
+  List<String> getTables(String operator, Map<String, Object> params, String database);
 
-    /**
-     * Get table properties from database specified
-     *
-     * @param params params
-     * @param database database name
-     * @return
-     */
-    Map<String, String> getTableProps(
-            String operator, Map<String, Object> params, String database, String table);
-    /**
-     * Get all partitions from table specified
-     *
-     * @param params params
-     * @param database
-     * @param table
-     * @param traverse if traverse to get all values, default: false
-     * @return
-     */
-    MetaPartitionInfo getPartitions(
-            String operator,
-            Map<String, Object> params,
-            String database,
-            String table,
-            boolean traverse);
+  /**
+   * Get table properties from database specified
+   *
+   * @param params params
+   * @param database database name
+   * @return
+   */
+  Map<String, String> getTableProps(
+      String operator, Map<String, Object> params, String database, String table);
+  /**
+   * Get all partitions from table specified
+   *
+   * @param params params
+   * @param database
+   * @param table
+   * @param traverse if traverse to get all values, default: false
+   * @return
+   */
+  MetaPartitionInfo getPartitions(
+      String operator, Map<String, Object> params, String database, String table, boolean traverse);
 
-    /**
-     * Get partition properties
-     *
-     * @param operator operator
-     * @param params params
-     * @param database database
-     * @param partition partition
-     * @return
-     */
-    Map<String, String> getPartitionProps(
-            String operator,
-            Map<String, Object> params,
-            String database,
-            String table,
-            String partition);
-    /**
-     * Get all field information from table specified
-     *
-     * @param params
-     * @param database
-     * @param table
-     * @return
-     */
-    List<MetaColumnInfo> getColumns(
-            String operator, Map<String, Object> params, String database, String table);
+  /**
+   * Get partition properties
+   *
+   * @param operator operator
+   * @param params params
+   * @param database database
+   * @param partition partition
+   * @return
+   */
+  Map<String, String> getPartitionProps(
+      String operator, Map<String, Object> params, String database, String table, String partition);
+  /**
+   * Get all field information from table specified
+   *
+   * @param params
+   * @param database
+   * @param table
+   * @return
+   */
+  List<MetaColumnInfo> getColumns(
+      String operator, Map<String, Object> params, String database, String table);
 }

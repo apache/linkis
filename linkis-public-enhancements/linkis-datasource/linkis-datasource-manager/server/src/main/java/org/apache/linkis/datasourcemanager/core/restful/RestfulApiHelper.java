@@ -33,111 +33,105 @@ import java.util.Map;
 
 /** Helper of restful api entrance */
 public class RestfulApiHelper {
-    /**
-     * If is administrator
-     *
-     * @param userName user name
-     * @return
-     */
-    public static boolean isAdminUser(String userName) {
-        List<String> userList = Arrays.asList(AuthContext.AUTH_ADMINISTRATOR.getValue().split(","));
-        return userList.contains(userName);
+  /**
+   * If is administrator
+   *
+   * @param userName user name
+   * @return
+   */
+  public static boolean isAdminUser(String userName) {
+    List<String> userList = Arrays.asList(AuthContext.AUTH_ADMINISTRATOR.getValue().split(","));
+    return userList.contains(userName);
+  }
+
+  /**
+   * Encrypt key of password type
+   *
+   * @param keyDefinitionList definition list
+   * @param connectParams connection parameters
+   */
+  public static void encryptPasswordKey(
+      List<DataSourceParamKeyDefinition> keyDefinitionList, Map<String, Object> connectParams) {
+    keyDefinitionList.forEach(
+        keyDefinition -> {
+          if (keyDefinition.getValueType() == DataSourceParamKeyDefinition.ValueType.PASSWORD) {
+            Object password = connectParams.get(keyDefinition.getKey());
+            if (null != password) {
+              connectParams.put(
+                  keyDefinition.getKey(), CryptoUtils.object2String(String.valueOf(password)));
+            }
+          }
+        });
+  }
+
+  /**
+   * Encrypt key of password type
+   *
+   * @param keyDefinitionList definition list
+   * @param connectParams connection parameters
+   */
+  public static void decryptPasswordKey(
+      List<DataSourceParamKeyDefinition> keyDefinitionList, Map<String, Object> connectParams) {
+    keyDefinitionList.forEach(
+        keyDefinition -> {
+          if (keyDefinition.getValueType() == DataSourceParamKeyDefinition.ValueType.PASSWORD) {
+            Object password = connectParams.get(keyDefinition.getKey());
+            if (null != password) {
+              connectParams.put(
+                  keyDefinition.getKey(), CryptoUtils.string2Object(String.valueOf(password)));
+            }
+          }
+        });
+  }
+
+  /**
+   * @param tryOperation operate function
+   * @param failMessage message
+   */
+  public static Message doAndResponse(TryOperation tryOperation, String failMessage) {
+    try {
+      Message message = tryOperation.operateAndGetMessage();
+      return message;
+    } catch (ParameterValidateException e) {
+      return Message.error(e.getMessage());
+    } catch (ConstraintViolationException e) {
+      return new BeanValidationExceptionMapper().toResponse(e);
+    } catch (WarnException e) {
+      return Message.warn(e.getMessage());
+    } catch (Exception e) {
+      return Message.error(failMessage, e);
     }
+  }
 
-    /**
-     * Encrypt key of password type
-     *
-     * @param keyDefinitionList definition list
-     * @param connectParams connection parameters
-     */
-    public static void encryptPasswordKey(
-            List<DataSourceParamKeyDefinition> keyDefinitionList,
-            Map<String, Object> connectParams) {
-        keyDefinitionList.forEach(
-                keyDefinition -> {
-                    if (keyDefinition.getValueType()
-                            == DataSourceParamKeyDefinition.ValueType.PASSWORD) {
-                        Object password = connectParams.get(keyDefinition.getKey());
-                        if (null != password) {
-                            connectParams.put(
-                                    keyDefinition.getKey(),
-                                    CryptoUtils.object2String(String.valueOf(password)));
-                        }
-                    }
-                });
-    }
+  //    /**
+  //     * @param tryOperation operate function
+  //     * @param failMessage message
+  //     */
+  //    public static Message doAndResponse(
+  //            TryOperation tryOperation, String method, String failMessage) {
+  //        try {
+  //            Message message = tryOperation.operateAndGetMessage();
+  //            return setMethod(message, method);
+  //        } catch (ParameterValidateException e) {
+  //            return setMethod(Message.error(e.getMessage()), method);
+  //        } catch (ConstraintViolationException e) {
+  //            return new BeanValidationExceptionMapper().toResponse(e);
+  //        } catch (WarnException e) {
+  //            return setMethod(Message.warn(e.getMessage()), method);
+  //        } catch (Exception e) {
+  //            return setMethod(Message.error(failMessage, e), method);
+  //        }
+  //    }
 
-    /**
-     * Encrypt key of password type
-     *
-     * @param keyDefinitionList definition list
-     * @param connectParams connection parameters
-     */
-    public static void decryptPasswordKey(
-            List<DataSourceParamKeyDefinition> keyDefinitionList,
-            Map<String, Object> connectParams) {
-        keyDefinitionList.forEach(
-                keyDefinition -> {
-                    if (keyDefinition.getValueType()
-                            == DataSourceParamKeyDefinition.ValueType.PASSWORD) {
-                        Object password = connectParams.get(keyDefinition.getKey());
-                        if (null != password) {
-                            connectParams.put(
-                                    keyDefinition.getKey(),
-                                    CryptoUtils.string2Object(String.valueOf(password)));
-                        }
-                    }
-                });
-    }
+  private static Message setMethod(Message message, String method) {
+    message.setMethod(method);
+    return message;
+  }
 
-    /**
-     * @param tryOperation operate function
-     * @param failMessage message
-     */
-    public static Message doAndResponse(TryOperation tryOperation, String failMessage) {
-        try {
-            Message message = tryOperation.operateAndGetMessage();
-            return message;
-        } catch (ParameterValidateException e) {
-            return Message.error(e.getMessage());
-        } catch (ConstraintViolationException e) {
-            return new BeanValidationExceptionMapper().toResponse(e);
-        } catch (WarnException e) {
-            return Message.warn(e.getMessage());
-        } catch (Exception e) {
-            return Message.error(failMessage, e);
-        }
-    }
+  @FunctionalInterface
+  public interface TryOperation {
 
-    //    /**
-    //     * @param tryOperation operate function
-    //     * @param failMessage message
-    //     */
-    //    public static Message doAndResponse(
-    //            TryOperation tryOperation, String method, String failMessage) {
-    //        try {
-    //            Message message = tryOperation.operateAndGetMessage();
-    //            return setMethod(message, method);
-    //        } catch (ParameterValidateException e) {
-    //            return setMethod(Message.error(e.getMessage()), method);
-    //        } catch (ConstraintViolationException e) {
-    //            return new BeanValidationExceptionMapper().toResponse(e);
-    //        } catch (WarnException e) {
-    //            return setMethod(Message.warn(e.getMessage()), method);
-    //        } catch (Exception e) {
-    //            return setMethod(Message.error(failMessage, e), method);
-    //        }
-    //    }
-
-    private static Message setMethod(Message message, String method) {
-        message.setMethod(method);
-        return message;
-    }
-
-    @FunctionalInterface
-    public interface TryOperation {
-
-        /** Operate method */
-        Message operateAndGetMessage() throws Exception;
-    }
+    /** Operate method */
+    Message operateAndGetMessage() throws Exception;
+  }
 }

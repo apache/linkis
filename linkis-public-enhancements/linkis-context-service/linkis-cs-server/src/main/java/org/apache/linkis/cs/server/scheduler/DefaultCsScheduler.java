@@ -27,59 +27,57 @@ import org.apache.linkis.scheduler.queue.Job;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @Component
 public class DefaultCsScheduler implements CsScheduler {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Autowired private Scheduler scheduler;
+  @Autowired private Scheduler scheduler;
 
-    @Autowired private List<Service> services;
+  @Autowired private List<Service> services;
 
-    @Override
-    public void addService(Service service) {
-        services.add(service);
+  @Override
+  public void addService(Service service) {
+    services.add(service);
+  }
+
+  @Override
+  public Service[] getServices() {
+    return this.services.toArray(new Service[] {});
+  }
+
+  @Override
+  public void submit(HttpJob job) throws InterruptedException {
+    // create csJob
+    Job csJob = buildJob(job);
+    // 注册listener
+    csJob.setJobListener(new CsJobListener());
+    scheduler.submit(csJob);
+    if (job instanceof HttpAnswerJob) {
+      HttpAnswerJob answerJob = (HttpAnswerJob) job;
+      answerJob.getResponseProtocol().waitTimeEnd(ContextServerConf.CS_SCHEDULER_JOB_WAIT_MILLS);
     }
+  }
 
-    @Override
-    public Service[] getServices() {
-        return this.services.toArray(new Service[] {});
+  private Job buildJob(HttpJob job) {
+    CsSchedulerJob csJob = new CsSchedulerJob();
+    // 暂时将groupName给jobid
+    csJob.setId(job.getRequestProtocol().getUsername());
+    csJob.set(job);
+    // 从多个serveice中找出一个合适执行的service
+    Optional<Service> service =
+        Arrays.stream(getServices()).filter(s -> s.ifAccept(job)).findFirst();
+    if (service.isPresent()) {
+      logger.info(String.format("find %s service to execute job", service.get().getName()));
+      csJob.setConsuemr(service.get()::accept);
     }
-
-    @Override
-    public void submit(HttpJob job) throws InterruptedException {
-        // create csJob
-        Job csJob = buildJob(job);
-        // 注册listener
-        csJob.setJobListener(new CsJobListener());
-        scheduler.submit(csJob);
-        if (job instanceof HttpAnswerJob) {
-            HttpAnswerJob answerJob = (HttpAnswerJob) job;
-            answerJob
-                    .getResponseProtocol()
-                    .waitTimeEnd(ContextServerConf.CS_SCHEDULER_JOB_WAIT_MILLS);
-        }
-    }
-
-    private Job buildJob(HttpJob job) {
-        CsSchedulerJob csJob = new CsSchedulerJob();
-        // 暂时将groupName给jobid
-        csJob.setId(job.getRequestProtocol().getUsername());
-        csJob.set(job);
-        // 从多个serveice中找出一个合适执行的service
-        Optional<Service> service =
-                Arrays.stream(getServices()).filter(s -> s.ifAccept(job)).findFirst();
-        if (service.isPresent()) {
-            logger.info(String.format("find %s service to execute job", service.get().getName()));
-            csJob.setConsuemr(service.get()::accept);
-        }
-        return csJob;
-    }
+    return csJob;
+  }
 }

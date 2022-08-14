@@ -22,64 +22,64 @@ import org.apache.commons.lang3.StringUtils;
 import java.net.URL;
 
 public class PluginResource {
-    private String id;
+  private String id;
 
-    private String version;
+  private String version;
 
-    private long updateTime;
+  private long updateTime;
 
-    private URL[] urls = new URL[0];
+  private URL[] urls = new URL[0];
 
-    PluginResource() {}
+  PluginResource() {}
 
-    PluginResource(String id, String version, long updateTime, URL[] urls) {
-        this.id = id;
-        this.version = version;
-        this.updateTime = updateTime;
-        this.urls = urls;
+  PluginResource(String id, String version, long updateTime, URL[] urls) {
+    this.id = id;
+    this.version = version;
+    this.updateTime = updateTime;
+    this.urls = urls;
+  }
+
+  public void merge(PluginResource pluginResource) {
+    if (StringUtils.isNotBlank(pluginResource.id)) {
+      this.id = pluginResource.id;
     }
-
-    public void merge(PluginResource pluginResource) {
-        if (StringUtils.isNotBlank(pluginResource.id)) {
-            this.id = pluginResource.id;
-        }
-        if (StringUtils.isNotBlank(pluginResource.version)) {
-            this.version = pluginResource.version;
-        }
-        if (pluginResource.updateTime > 0) {
-            this.updateTime = pluginResource.updateTime;
-        }
+    if (StringUtils.isNotBlank(pluginResource.version)) {
+      this.version = pluginResource.version;
     }
-
-    public String getId() {
-        return id;
+    if (pluginResource.updateTime > 0) {
+      this.updateTime = pluginResource.updateTime;
     }
+  }
 
-    public void setId(String id) {
-        this.id = id;
-    }
+  public String getId() {
+    return id;
+  }
 
-    public String getVersion() {
-        return version;
-    }
+  public void setId(String id) {
+    this.id = id;
+  }
 
-    public void setVersion(String version) {
-        this.version = version;
-    }
+  public String getVersion() {
+    return version;
+  }
 
-    public long getUpdateTime() {
-        return updateTime;
-    }
+  public void setVersion(String version) {
+    this.version = version;
+  }
 
-    public void setUpdateTime(long updateTime) {
-        this.updateTime = updateTime;
-    }
+  public long getUpdateTime() {
+    return updateTime;
+  }
 
-    public URL[] getUrls() {
-        return urls;
-    }
+  public void setUpdateTime(long updateTime) {
+    this.updateTime = updateTime;
+  }
 
-    public void setUrls(URL[] urls) {
-        this.urls = urls;
-    }
+  public URL[] getUrls() {
+    return urls;
+  }
+
+  public void setUrls(URL[] urls) {
+    this.urls = urls;
+  }
 }

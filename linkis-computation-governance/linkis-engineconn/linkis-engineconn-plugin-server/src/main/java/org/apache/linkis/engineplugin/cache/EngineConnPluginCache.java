@@ -21,40 +21,40 @@ import org.apache.linkis.manager.engineplugin.common.loader.entity.EngineConnPlu
 import org.apache.linkis.manager.engineplugin.common.loader.entity.EngineConnPluginInstance;
 
 public interface EngineConnPluginCache {
-    /**
-     * Put into cache
-     *
-     * @param pluginInfo hold the label and resource version
-     * @param pluginInstance plugin instance
-     */
-    void put(EngineConnPluginInfo pluginInfo, EngineConnPluginInstance pluginInstance)
-            throws Exception;
+  /**
+   * Put into cache
+   *
+   * @param pluginInfo hold the label and resource version
+   * @param pluginInstance plugin instance
+   */
+  void put(EngineConnPluginInfo pluginInfo, EngineConnPluginInstance pluginInstance)
+      throws Exception;
 
-    /**
-     * Get from the cache, if not exist invoke the getter
-     *
-     * @param pluginInfo hold the label and resource version
-     * @param getter getter
-     */
-    EngineConnPluginInstance get(EngineConnPluginInfo pluginInfo, PluginGetter getter)
-            throws Exception;
+  /**
+   * Get from the cache, if not exist invoke the getter
+   *
+   * @param pluginInfo hold the label and resource version
+   * @param getter getter
+   */
+  EngineConnPluginInstance get(EngineConnPluginInfo pluginInfo, PluginGetter getter)
+      throws Exception;
 
-    /**
-     * Remove from the cache
-     *
-     * @param pluginInfo info
-     * @return the previous plugin instance
-     */
-    EngineConnPluginInstance remove(EngineConnPluginInfo pluginInfo) throws Exception;
+  /**
+   * Remove from the cache
+   *
+   * @param pluginInfo info
+   * @return the previous plugin instance
+   */
+  EngineConnPluginInstance remove(EngineConnPluginInfo pluginInfo) throws Exception;
 
-    @FunctionalInterface
-    interface PluginGetter {
-        /**
-         * Call method
-         *
-         * @param pluginInfo plugin info
-         * @return instance
-         */
-        EngineConnPluginInstance call(EngineConnPluginInfo pluginInfo) throws Exception;
-    }
+  @FunctionalInterface
+  interface PluginGetter {
+    /**
+     * Call method
+     *
+     * @param pluginInfo plugin info
+     * @return instance
+     */
+    EngineConnPluginInstance call(EngineConnPluginInfo pluginInfo) throws Exception;
+  }
 }

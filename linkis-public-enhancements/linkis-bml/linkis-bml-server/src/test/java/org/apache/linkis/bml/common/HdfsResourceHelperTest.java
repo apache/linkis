@@ -23,12 +23,12 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class HdfsResourceHelperTest {
-    @Test
-    @DisplayName("testCheckBmlResourceStoragePrefixPathIfChanged")
-    public void testCheckBmlResourceStoragePrefixPathIfChanged() {
-        String path = "hdfs:///data/linkis/linkis/20220609/b4fd8f59-9492-4a0f-a074-9ac573a69b60";
-        ResourceHelper hdfsResourceHelper = new HdfsResourceHelper();
-        boolean hasChanged = hdfsResourceHelper.checkBmlResourceStoragePrefixPathIfChanged(path);
-        assertTrue(hasChanged);
-    }
+  @Test
+  @DisplayName("testCheckBmlResourceStoragePrefixPathIfChanged")
+  public void testCheckBmlResourceStoragePrefixPathIfChanged() {
+    String path = "hdfs:///data/linkis/linkis/20220609/b4fd8f59-9492-4a0f-a074-9ac573a69b60";
+    ResourceHelper hdfsResourceHelper = new HdfsResourceHelper();
+    boolean hasChanged = hdfsResourceHelper.checkBmlResourceStoragePrefixPathIfChanged(path);
+    assertTrue(hasChanged);
+  }
 }

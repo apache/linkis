@@ -37,33 +37,31 @@ import java.util.Map;
 /** Operation for SHOW VIEWS command. */
 public class ShowViewsOperation implements NonJobOperation {
 
-    private final ExecutionContext context;
+  private final ExecutionContext context;
 
-    public ShowViewsOperation(FlinkEngineConnContext context) {
-        this.context = context.getExecutionContext();
+  public ShowViewsOperation(FlinkEngineConnContext context) {
+    this.context = context.getExecutionContext();
+  }
+
+  @Override
+  public ResultSet execute() {
+    List<Row> rows = new ArrayList<>();
+    int maxNameLength = 1;
+
+    for (Map.Entry<String, TableEntry> entry : context.getEnvironment().getTables().entrySet()) {
+      if (entry.getValue() instanceof ViewEntry) {
+        String name = entry.getKey();
+        rows.add(Row.of(name));
+        maxNameLength = Math.max(maxNameLength, name.length());
+      }
     }
 
-    @Override
-    public ResultSet execute() {
-        List<Row> rows = new ArrayList<>();
-        int maxNameLength = 1;
-
-        for (Map.Entry<String, TableEntry> entry :
-                context.getEnvironment().getTables().entrySet()) {
-            if (entry.getValue() instanceof ViewEntry) {
-                String name = entry.getKey();
-                rows.add(Row.of(name));
-                maxNameLength = Math.max(maxNameLength, name.length());
-            }
-        }
-
-        return ResultSet.builder()
-                .resultKind(ResultKind.SUCCESS_WITH_CONTENT)
-                .columns(
-                        ColumnInfo.create(
-                                ConstantNames.SHOW_VIEWS_RESULT,
-                                new VarCharType(false, maxNameLength)))
-                .data(rows)
-                .build();
-    }
+    return ResultSet.builder()
+        .resultKind(ResultKind.SUCCESS_WITH_CONTENT)
+        .columns(
+            ColumnInfo.create(
+                ConstantNames.SHOW_VIEWS_RESULT, new VarCharType(false, maxNameLength)))
+        .data(rows)
+        .build();
+  }
 }

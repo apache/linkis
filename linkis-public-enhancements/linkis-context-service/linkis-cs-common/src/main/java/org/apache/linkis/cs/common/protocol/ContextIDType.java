@@ -18,41 +18,41 @@
 package org.apache.linkis.cs.common.protocol;
 
 public enum ContextIDType {
-    /** index表示contextValueType的int typeName 表示全路径类名 */
-    COMMON_CONTEXT_ID_TYPE(0, "org.apache.linkis.cs.common.entity.source.CommonContextID"),
-    LINKIS_WORKFLOW_CONTEXT_ID_TYPE(
-            1, "org.apache.linkis.cs.common.entity.source.LinkisWorkflowContextID");
+  /** index表示contextValueType的int typeName 表示全路径类名 */
+  COMMON_CONTEXT_ID_TYPE(0, "org.apache.linkis.cs.common.entity.source.CommonContextID"),
+  LINKIS_WORKFLOW_CONTEXT_ID_TYPE(
+      1, "org.apache.linkis.cs.common.entity.source.LinkisWorkflowContextID");
 
-    private int index;
-    private String typeName;
+  private int index;
+  private String typeName;
 
-    private ContextIDType(int index, String typeName) {
-        this.index = index;
-        this.typeName = typeName;
+  private ContextIDType(int index, String typeName) {
+    this.index = index;
+    this.typeName = typeName;
+  }
+
+  public int getIndex() {
+    return index;
+  }
+
+  public void setIndex(int index) {
+    this.index = index;
+  }
+
+  public String getTypeName() {
+    return typeName;
+  }
+
+  public void setTypeName(String typeName) {
+    this.typeName = typeName;
+  }
+
+  public static String getTypeName(int index) {
+    for (ContextIDType type : ContextIDType.values()) {
+      if (type.index == index) {
+        return type.typeName;
+      }
     }
-
-    public int getIndex() {
-        return index;
-    }
-
-    public void setIndex(int index) {
-        this.index = index;
-    }
-
-    public String getTypeName() {
-        return typeName;
-    }
-
-    public void setTypeName(String typeName) {
-        this.typeName = typeName;
-    }
-
-    public static String getTypeName(int index) {
-        for (ContextIDType type : ContextIDType.values()) {
-            if (type.index == index) {
-                return type.typeName;
-            }
-        }
-        return LINKIS_WORKFLOW_CONTEXT_ID_TYPE.typeName;
-    }
+    return LINKIS_WORKFLOW_CONTEXT_ID_TYPE.typeName;
+  }
 }

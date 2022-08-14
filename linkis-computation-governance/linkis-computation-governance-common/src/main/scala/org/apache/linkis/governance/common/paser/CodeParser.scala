@@ -17,7 +17,7 @@
  
 package org.apache.linkis.governance.common.paser
 
-import org.apache.linkis.common.utils.{CodeAndRunTypeUtils, Logging}
+import org.apache.linkis.common.utils.{CodeAndRunTypeUtils, Logging, Utils}
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.governance.common.paser.CodeType.CodeType
 import org.apache.commons.lang3.StringUtils
@@ -105,7 +105,7 @@ class ScalaCodeParser extends SingleCodeParser with Logging {
   }
 }
 
-class PythonCodeParser extends SingleCodeParser {
+class PythonCodeParser extends SingleCodeParser with Logging {
 
   override val codeType: CodeType = CodeType.Python
   val openBrackets: Array[String] = Array("{", "(", "[")
@@ -113,6 +113,13 @@ class PythonCodeParser extends SingleCodeParser {
   val LOG: Logger = LoggerFactory.getLogger(getClass)
 
   override def parse(code: String): Array[String] = {
+    Utils.tryCatch(parsePythonCode(code)) { e =>
+      logger.info(s"Your code will be submitted in overall mode. ${e.getMessage} ")
+      Array(code)
+    }
+  }
+
+  def parsePythonCode(code: String): Array[String] = {
     val bracketStack = new mutable.Stack[String]
     val codeBuffer = new ArrayBuffer[String]()
     val statementBuffer = new ArrayBuffer[String]()
@@ -128,7 +135,7 @@ class PythonCodeParser extends SingleCodeParser {
       //用于修复python的引号问题
       //recordBrackets(bracketStack, l)
       case l if notDoc && l.startsWith("#") =>
-      case l if StringUtils.isNotBlank(statementBuffer.last) && statementBuffer.last.endsWith("""\""") =>
+      case l if statementBuffer.nonEmpty && StringUtils.isNotBlank(statementBuffer.last) && statementBuffer.last.endsWith("""\""") =>
         statementBuffer.append(l)
       case l if notDoc && l.startsWith(" ") =>
         statementBuffer.append(l)

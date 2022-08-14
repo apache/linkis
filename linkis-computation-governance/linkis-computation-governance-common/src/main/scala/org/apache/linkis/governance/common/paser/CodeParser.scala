@@ -20,11 +20,14 @@ package org.apache.linkis.governance.common.paser
 import org.apache.linkis.common.utils.{CodeAndRunTypeUtils, Logging, Utils}
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.governance.common.paser.CodeType.CodeType
+
 import org.apache.commons.lang3.StringUtils
+
 import java.util
 
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
+
 import org.slf4j.{Logger, LoggerFactory}
 
 trait CodeParser {

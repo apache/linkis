@@ -135,13 +135,7 @@ This file is divided into 3 sections:
   <!-- ??? usually shouldn't be checked into the code base. -->
   <check level="error" class="org.scalastyle.scalariform.NotImplementedErrorUsage" enabled="true"></check>
 
-  <!-- As of SPARK-7558, all tests in Spark should extend o.a.s.SparkFunSuite instead of FunSuite directly -->
-  <check customId="funsuite" level="error" class="org.scalastyle.scalariform.TokenChecker" enabled="true">
-    <parameters><parameter name="regex">^FunSuite[A-Za-z]*$</parameter></parameters>
-    <customMessage>Tests must extend org.apache.spark.SparkFunSuite instead.</customMessage>
-  </check>
-
-  <!-- As of SPARK-7977 all printlns need to be wrapped in '// scalastyle:off/on println' -->
+  <!-- all printlns need to be wrapped in '// scalastyle:off/on println' -->
   <check customId="println" level="error" class="org.scalastyle.scalariform.TokenChecker" enabled="true">
     <parameters><parameter name="regex">^println$</parameter></parameters>
     <customMessage><![CDATA[Are you sure you want to println? If yes, wrap the code block with
@@ -166,7 +160,7 @@ This file is divided into 3 sections:
   <check customId="visiblefortesting" level="error" class="org.scalastyle.file.RegexChecker" enabled="true">
     <parameters><parameter name="regex">@VisibleForTesting</parameter></parameters>
     <customMessage><![CDATA[
-      @VisibleForTesting causes classpath issues. Please note this in the java doc instead (SPARK-11615).
+      @VisibleForTesting causes classpath issues. Please note this in the java doc instead.
     ]]></customMessage>
   </check>
 
@@ -251,7 +245,7 @@ This file is divided into 3 sections:
     ]]></customMessage>
   </check>
 
-  <!-- As of SPARK-9613 JavaConversions should be replaced with JavaConverters -->
+  <!-- JavaConversions should be replaced with JavaConverters -->
   <check customId="javaconversions" level="error" class="org.scalastyle.scalariform.TokenChecker" enabled="true">
     <parameters><parameter name="regex">JavaConversions</parameter></parameters>
     <customMessage>Instead of importing implicits in scala.collection.JavaConversions._, import
@@ -267,7 +261,7 @@ This file is divided into 3 sections:
   <check customId="executioncontextglobal" level="error" class="org.scalastyle.file.RegexChecker" enabled="true">
     <parameters><parameter name="regex">scala\.concurrent\.ExecutionContext\.Implicits\.global</parameter></parameters>
     <customMessage> User queries can use global thread pool, causing starvation and eventual OOM.
-      Thus, Spark-internal APIs should not use this thread pool</customMessage>
+      Thus, APIs should not use this thread pool</customMessage>
   </check>
 
   <check customId="FileSystemGet" level="error" class="org.scalastyle.file.RegexChecker" enabled="true">
@@ -309,7 +303,7 @@ This file is divided into 3 sections:
     </parameters>
   </check>
 
-  <!-- SPARK-3854: Single Space between ')' and '{' -->
+  <!-- Single Space between ')' and '{' -->
   <check customId="SingleSpaceBetweenRParenAndLCurlyBrace" level="error" class="org.scalastyle.file.RegexChecker" enabled="true">
     <parameters><parameter name="regex">\)\{</parameter></parameters>
     <customMessage><![CDATA[
@@ -332,7 +326,7 @@ This file is divided into 3 sections:
     <customMessage>Use static factory 'valueOf' or 'parseXXX' instead of the deprecated constructors.</customMessage>
   </check>
 
-  <!-- SPARK-16877: Avoid Java annotations -->
+  <!-- Avoid Java annotations -->
   <check level="error" class="org.scalastyle.scalariform.OverrideJavaChecker" enabled="true"></check>
 
   <check level="error" class="org.scalastyle.scalariform.DeprecatedJavaChecker" enabled="true"></check>

@@ -138,7 +138,7 @@ class PythonCodeParser extends SingleCodeParser with Logging {
         statementBuffer.append(l)
         recordBrackets(bracketStack, l)
       case l if quotationMarks => statementBuffer.append(l)
-      //quotationMarks is used to optimize the three quotes problem（quotationMarks用来优化三引号问题）
+      // quotationMarks is used to optimize the three quotes problem（quotationMarks用来优化三引号问题）
       // recordBrackets(bracketStack, l)
       case l if notDoc && l.startsWith("#") =>
       case l

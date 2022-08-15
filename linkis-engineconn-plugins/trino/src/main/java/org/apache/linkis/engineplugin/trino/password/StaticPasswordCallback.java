@@ -21,7 +21,6 @@ import javax.security.auth.callback.PasswordCallback;
 
 public class StaticPasswordCallback extends PasswordCallback {
 
-
   private final char[] password;
 
   public StaticPasswordCallback(String prompt, boolean echoOn) {

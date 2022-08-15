@@ -18,58 +18,58 @@
 package org.apache.linkis.metadata.domain;
 
 public class Column extends AbstractAuditable {
-    private Integer id;
-    private String name;
-    private String originalName;
-    private String columnType;
-    private String columnFormat;
-    private Integer viewId;
+  private Integer id;
+  private String name;
+  private String originalName;
+  private String columnType;
+  private String columnFormat;
+  private Integer viewId;
 
-    public Integer getId() {
-        return id;
-    }
+  public Integer getId() {
+    return id;
+  }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+  public void setId(Integer id) {
+    this.id = id;
+  }
 
-    public String getName() {
-        return name;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    public String getOriginalName() {
-        return originalName;
-    }
+  public String getOriginalName() {
+    return originalName;
+  }
 
-    public void setOriginalName(String originalName) {
-        this.originalName = originalName;
-    }
+  public void setOriginalName(String originalName) {
+    this.originalName = originalName;
+  }
 
-    public String getColumnType() {
-        return columnType;
-    }
+  public String getColumnType() {
+    return columnType;
+  }
 
-    public void setColumnType(String columnType) {
-        this.columnType = columnType;
-    }
+  public void setColumnType(String columnType) {
+    this.columnType = columnType;
+  }
 
-    public String getColumnFormat() {
-        return columnFormat;
-    }
+  public String getColumnFormat() {
+    return columnFormat;
+  }
 
-    public void setColumnFormat(String columnFormat) {
-        this.columnFormat = columnFormat;
-    }
+  public void setColumnFormat(String columnFormat) {
+    this.columnFormat = columnFormat;
+  }
 
-    public Integer getViewId() {
-        return viewId;
-    }
+  public Integer getViewId() {
+    return viewId;
+  }
 
-    public void setViewId(Integer viewId) {
-        this.viewId = viewId;
-    }
+  public void setViewId(Integer viewId) {
+    this.viewId = viewId;
+  }
 }

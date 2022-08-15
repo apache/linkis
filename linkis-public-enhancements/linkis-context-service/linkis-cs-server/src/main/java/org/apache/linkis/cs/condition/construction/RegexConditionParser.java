@@ -23,13 +23,13 @@ import org.apache.linkis.cs.condition.impl.RegexCondition;
 import java.util.Map;
 
 public class RegexConditionParser implements ConditionParser {
-    @Override
-    public Condition parse(Map<Object, Object> conditionMap) {
-        return new RegexCondition((String) conditionMap.get("regex"));
-    }
+  @Override
+  public Condition parse(Map<Object, Object> conditionMap) {
+    return new RegexCondition((String) conditionMap.get("regex"));
+  }
 
-    @Override
-    public String getName() {
-        return "Regex";
-    }
+  @Override
+  public String getName() {
+    return "Regex";
+  }
 }

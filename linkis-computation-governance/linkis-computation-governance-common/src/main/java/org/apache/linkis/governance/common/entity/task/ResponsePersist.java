@@ -29,67 +29,67 @@ import java.util.Map;
  * Description: ResponsePersist 是query模块向entrance返回的内容类型
  */
 public class ResponsePersist implements QueryProtocol {
-    private Integer status;
-    private String msg;
-    private Map<String, Object> data;
+  private Integer status;
+  private String msg;
+  private Map<String, Object> data;
 
-    public Integer getStatus() {
-        return status;
+  public Integer getStatus() {
+    return status;
+  }
+
+  public void setStatus(Integer status) {
+    this.status = status;
+  }
+
+  public String getMsg() {
+    return msg;
+  }
+
+  public void setMsg(String msg) {
+    this.msg = msg;
+  }
+
+  public Map<String, Object> getData() {
+    return data;
+  }
+
+  public void setData(Map<String, Object> data) {
+    this.data = data;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
     }
 
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
+    ResponsePersist that = (ResponsePersist) o;
 
-    public String getMsg() {
-        return msg;
-    }
+    return new EqualsBuilder()
+        .append(status, that.status)
+        .append(msg, that.msg)
+        .append(data, that.data)
+        .isEquals();
+  }
 
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
+  @Override
+  public int hashCode() {
+    return new HashCodeBuilder(17, 37).append(status).append(msg).append(data).toHashCode();
+  }
 
-    public Map<String, Object> getData() {
-        return data;
-    }
-
-    public void setData(Map<String, Object> data) {
-        this.data = data;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        ResponsePersist that = (ResponsePersist) o;
-
-        return new EqualsBuilder()
-                .append(status, that.status)
-                .append(msg, that.msg)
-                .append(data, that.data)
-                .isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder(17, 37).append(status).append(msg).append(data).toHashCode();
-    }
-
-    @Override
-    public String toString() {
-        return "ResponsePersist{"
-                + "status="
-                + status
-                + ", msg='"
-                + msg
-                + '\''
-                + ", data="
-                + data
-                + '}';
-    }
+  @Override
+  public String toString() {
+    return "ResponsePersist{"
+        + "status="
+        + status
+        + ", msg='"
+        + msg
+        + '\''
+        + ", data="
+        + data
+        + '}';
+  }
 }

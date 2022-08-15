@@ -21,11 +21,11 @@ import org.apache.linkis.common.exception.FatalException;
 
 public class RMFatalException extends FatalException {
 
-    public RMFatalException(int errCode, String desc) {
-        super(errCode, desc);
-    }
+  public RMFatalException(int errCode, String desc) {
+    super(errCode, desc);
+  }
 
-    public RMFatalException(int errCode, String desc, String ip, int port, String serviceKind) {
-        super(errCode, desc, ip, port, serviceKind);
-    }
+  public RMFatalException(int errCode, String desc, String ip, int port, String serviceKind) {
+    super(errCode, desc, ip, port, serviceKind);
+  }
 }

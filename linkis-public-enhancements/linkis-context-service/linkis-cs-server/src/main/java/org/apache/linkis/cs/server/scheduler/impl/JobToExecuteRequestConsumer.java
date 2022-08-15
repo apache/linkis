@@ -21,11 +21,11 @@ import java.util.function.Consumer;
 
 public interface JobToExecuteRequestConsumer<T> {
 
-    T get();
+  T get();
 
-    void set(T t);
+  void set(T t);
 
-    Consumer<T> getConsumer();
+  Consumer<T> getConsumer();
 
-    void setConsuemr(Consumer<T> tConsumer);
+  void setConsuemr(Consumer<T> tConsumer);
 }

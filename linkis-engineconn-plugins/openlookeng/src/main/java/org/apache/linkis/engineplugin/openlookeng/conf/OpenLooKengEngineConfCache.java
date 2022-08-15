@@ -28,19 +28,17 @@ import java.util.Map;
 
 public class OpenLooKengEngineConfCache {
 
-    public static Map<String, String> getConfMap(
-            UserCreatorLabel userCreatorLabel, EngineTypeLabel engineTypeLabel) {
-        Sender sender =
-                Sender.getSender(
-                        Configuration.CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME()
-                                .getValue());
-        Object any =
-                sender.ask(
-                        new RequestQueryEngineConfigWithGlobalConfig(
-                                userCreatorLabel, engineTypeLabel, null));
-        if (any instanceof ResponseQueryConfig) {
-            return ((ResponseQueryConfig) any).getKeyAndValue();
-        }
-        return null;
+  public static Map<String, String> getConfMap(
+      UserCreatorLabel userCreatorLabel, EngineTypeLabel engineTypeLabel) {
+    Sender sender =
+        Sender.getSender(
+            Configuration.CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME().getValue());
+    Object any =
+        sender.ask(
+            new RequestQueryEngineConfigWithGlobalConfig(userCreatorLabel, engineTypeLabel, null));
+    if (any instanceof ResponseQueryConfig) {
+      return ((ResponseQueryConfig) any).getKeyAndValue();
     }
+    return null;
+  }
 }

@@ -26,23 +26,23 @@ import java.util.List;
 
 public interface ContextIDPersistence {
 
-    ContextID createContextID(ContextID contextID) throws CSErrorException;
+  ContextID createContextID(ContextID contextID) throws CSErrorException;
 
-    void deleteContextID(String contextId) throws CSErrorException;
+  void deleteContextID(String contextId) throws CSErrorException;
 
-    void updateContextID(ContextID contextID) throws CSErrorException;
+  void updateContextID(ContextID contextID) throws CSErrorException;
 
-    ContextID getContextID(String contextId) throws CSErrorException;
+  ContextID getContextID(String contextId) throws CSErrorException;
 
-    List<PersistenceContextID> searchContextID(PersistenceContextID contextID)
-            throws CSErrorException;
+  List<PersistenceContextID> searchContextID(PersistenceContextID contextID)
+      throws CSErrorException;
 
-    List<PersistenceContextID> searchCSIDByTime(
-            Date createTimeStart,
-            Date createTimeEnd,
-            Date updateTimeStart,
-            Date updateTimeEnd,
-            Date accessTimeStart,
-            Date accessTimeEnd)
-            throws CSErrorException;
+  List<PersistenceContextID> searchCSIDByTime(
+      Date createTimeStart,
+      Date createTimeEnd,
+      Date updateTimeStart,
+      Date updateTimeEnd,
+      Date accessTimeStart,
+      Date accessTimeEnd)
+      throws CSErrorException;
 }

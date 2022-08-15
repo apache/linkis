@@ -17,203 +17,203 @@
 
 package org.apache.linkis.datasourcemanager.common.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
 import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 /** Parameter key definition for data source type */
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_EMPTY)
 @JsonIgnoreProperties(
-        value = {"hibernateLazyInitializer", "handler"},
-        ignoreUnknown = true)
+    value = {"hibernateLazyInitializer", "handler"},
+    ignoreUnknown = true)
 public class DataSourceParamKeyDefinition {
-    /** Key-value type */
-    public enum ValueType {
-        /** Email format */
-        EMAIL(String.class),
-        /** String */
-        TEXT(String.class),
-        /** String */
-        TEXTAREA(String.class),
-        /** Long */
-        NUMBER(Long.class),
-        /** SELECT */
-        SELECT(String.class),
-        /** List */
-        LIST(List.class),
-        /** Map */
-        MAP(Map.class),
-        /** RADIO */
-        RADIO(String.class),
-        /** Password */
-        PASSWORD(String.class),
-        /** DateTime */
-        DATE(Date.class),
-        /** File */
-        FILE(InputStream.class);
-        Class<?> type;
+  /** Key-value type */
+  public enum ValueType {
+    /** Email format */
+    EMAIL(String.class),
+    /** String */
+    TEXT(String.class),
+    /** String */
+    TEXTAREA(String.class),
+    /** Long */
+    NUMBER(Long.class),
+    /** SELECT */
+    SELECT(String.class),
+    /** List */
+    LIST(List.class),
+    /** Map */
+    MAP(Map.class),
+    /** RADIO */
+    RADIO(String.class),
+    /** Password */
+    PASSWORD(String.class),
+    /** DateTime */
+    DATE(Date.class),
+    /** File */
+    FILE(InputStream.class);
+    Class<?> type;
 
-        ValueType(Class<?> type) {
-            this.type = type;
-        }
-
-        public Class<?> getJavaType() {
-            return this.type;
-        }
+    ValueType(Class<?> type) {
+      this.type = type;
     }
 
-    public enum Scope {
-        /** Env SCOPE */
-        ENV,
+    public Class<?> getJavaType() {
+      return this.type;
     }
-    /** Definition id */
-    private Long id;
+  }
 
-    /** Key name */
-    private String key;
+  public enum Scope {
+    /** Env SCOPE */
+    ENV,
+  }
+  /** Definition id */
+  private Long id;
 
-    /** Definition description */
-    private String description;
+  /** Key name */
+  private String key;
 
-    /** Option name */
-    private String name;
+  /** Definition description */
+  private String description;
 
-    /** Default value */
-    private String defaultValue;
+  /** Option name */
+  private String name;
 
-    /** Value type */
-    private ValueType valueType;
-    /** Scope */
-    private Scope scope;
-    /** If the definition is required */
-    private boolean require;
-    /** Value regex */
-    private String valueRegex;
+  /** Default value */
+  private String defaultValue;
 
-    /** Reference id */
-    private Long refId;
+  /** Value type */
+  private ValueType valueType;
+  /** Scope */
+  private Scope scope;
+  /** If the definition is required */
+  private boolean require;
+  /** Value regex */
+  private String valueRegex;
 
-    /** Reference value */
-    private String refValue;
+  /** Reference id */
+  private Long refId;
 
-    /** Form fill content */
-    private String dataSource;
+  /** Reference value */
+  private String refValue;
 
-    public String getDataSource() {
-        return dataSource;
+  /** Form fill content */
+  private String dataSource;
+
+  public String getDataSource() {
+    return dataSource;
+  }
+
+  public void setDataSource(String dataSource) {
+    this.dataSource = dataSource;
+  }
+
+  public Long getId() {
+    return id;
+  }
+
+  public void setId(Long id) {
+    this.id = id;
+  }
+
+  public String getKey() {
+    return key;
+  }
+
+  public void setKey(String key) {
+    this.key = key;
+  }
+
+  public String getDescription() {
+    return description;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public String getDefaultValue() {
+    return defaultValue;
+  }
+
+  public void setDefaultValue(String defaultValue) {
+    this.defaultValue = defaultValue;
+  }
+
+  public ValueType getValueType() {
+    return valueType;
+  }
+
+  public void setValueType(ValueType valueType) {
+    this.valueType = valueType;
+  }
+
+  public String getValueRegex() {
+    return valueRegex;
+  }
+
+  public void setValueRegex(String valueRegex) {
+    this.valueRegex = valueRegex;
+  }
+
+  public boolean isRequire() {
+    return require;
+  }
+
+  public void setRequire(boolean require) {
+    this.require = require;
+  }
+
+  public Scope getScope() {
+    return scope;
+  }
+
+  public void setScope(Scope scope) {
+    this.scope = scope;
+  }
+
+  public Long getRefId() {
+    return refId;
+  }
+
+  public void setRefId(Long refId) {
+    this.refId = refId;
+  }
+
+  public String getRefValue() {
+    return refValue;
+  }
+
+  public void setRefValue(String refValue) {
+    this.refValue = refValue;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
     }
-
-    public void setDataSource(String dataSource) {
-        this.dataSource = dataSource;
+    if (o == null || getClass() != o.getClass()) {
+      return false;
     }
+    DataSourceParamKeyDefinition that = (DataSourceParamKeyDefinition) o;
+    return Objects.equals(id, that.id);
+  }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getKey() {
-        return key;
-    }
-
-    public void setKey(String key) {
-        this.key = key;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDefaultValue() {
-        return defaultValue;
-    }
-
-    public void setDefaultValue(String defaultValue) {
-        this.defaultValue = defaultValue;
-    }
-
-    public ValueType getValueType() {
-        return valueType;
-    }
-
-    public void setValueType(ValueType valueType) {
-        this.valueType = valueType;
-    }
-
-    public String getValueRegex() {
-        return valueRegex;
-    }
-
-    public void setValueRegex(String valueRegex) {
-        this.valueRegex = valueRegex;
-    }
-
-    public boolean isRequire() {
-        return require;
-    }
-
-    public void setRequire(boolean require) {
-        this.require = require;
-    }
-
-    public Scope getScope() {
-        return scope;
-    }
-
-    public void setScope(Scope scope) {
-        this.scope = scope;
-    }
-
-    public Long getRefId() {
-        return refId;
-    }
-
-    public void setRefId(Long refId) {
-        this.refId = refId;
-    }
-
-    public String getRefValue() {
-        return refValue;
-    }
-
-    public void setRefValue(String refValue) {
-        this.refValue = refValue;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        DataSourceParamKeyDefinition that = (DataSourceParamKeyDefinition) o;
-        return Objects.equals(id, that.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
+  @Override
+  public int hashCode() {
+    return Objects.hash(id);
+  }
 }

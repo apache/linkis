@@ -26,27 +26,27 @@ import org.slf4j.LoggerFactory;
 
 public class Utils {
 
-    public static final Gson GSON =
-            new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
-    private static final Logger logger = LoggerFactory.getLogger(Utils.class);
+  public static final Gson GSON =
+      new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
+  private static final Logger logger = LoggerFactory.getLogger(Utils.class);
 
-    public static boolean isValidExecId(String execId) {
-        boolean ret = false;
-        if (StringUtils.isNotBlank(execId)) {
-            ret = true;
-        }
-        return ret;
+  public static boolean isValidExecId(String execId) {
+    boolean ret = false;
+    if (StringUtils.isNotBlank(execId)) {
+      ret = true;
     }
+    return ret;
+  }
 
-    public static String progressInPercentage(float progress) {
-        return String.valueOf(progress * 100) + "%";
-    }
+  public static String progressInPercentage(float progress) {
+    return String.valueOf(progress * 100) + "%";
+  }
 
-    public static void doSleepQuietly(Long sleepMills) {
-        try {
-            Thread.sleep(sleepMills);
-        } catch (Exception ignore) {
-            // ignored
-        }
+  public static void doSleepQuietly(Long sleepMills) {
+    try {
+      Thread.sleep(sleepMills);
+    } catch (Exception ignore) {
+      // ignored
     }
+  }
 }

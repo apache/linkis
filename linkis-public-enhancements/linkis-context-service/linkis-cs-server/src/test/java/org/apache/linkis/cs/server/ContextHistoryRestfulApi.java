@@ -41,97 +41,96 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping(path = "/contextservice")
 public class ContextHistoryRestfulApi implements CsRestfulParent {
 
-    @Autowired private CsScheduler csScheduler;
+  @Autowired private CsScheduler csScheduler;
 
-    @RequestMapping(path = "createHistory", method = RequestMethod.POST)
-    public Message createHistory(HttpServletRequest req)
-            throws InterruptedException, CSErrorException {
-        ContextHistory history = new PersistenceContextHistory();
-        history.setSource("server1:prot1");
-        history.setContextType(ContextType.METADATA);
-        ContextID contextID = new PersistenceContextID();
+  @RequestMapping(path = "createHistory", method = RequestMethod.POST)
+  public Message createHistory(HttpServletRequest req)
+      throws InterruptedException, CSErrorException {
+    ContextHistory history = new PersistenceContextHistory();
+    history.setSource("server1:prot1");
+    history.setContextType(ContextType.METADATA);
+    ContextID contextID = new PersistenceContextID();
 
-        contextID.setContextId("84716");
-        // source and contextid cannot be empty
-        if (StringUtils.isEmpty(history.getSource())) {
-            throw new CSErrorException(97000, "history source cannot be empty");
-        }
-        if (StringUtils.isEmpty(contextID.getContextId())) {
-            throw new CSErrorException(97000, "contxtId cannot be empty");
-        }
-        HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.CREATE, contextID, history);
-        return generateResponse(answerJob, "");
+    contextID.setContextId("84716");
+    // source and contextid cannot be empty
+    if (StringUtils.isEmpty(history.getSource())) {
+      throw new CSErrorException(97000, "history source cannot be empty");
     }
-
-    @RequestMapping(path = "removeHistory", method = RequestMethod.POST)
-    public Message removeHistory(HttpServletRequest req)
-            throws InterruptedException, CSErrorException {
-        ContextHistory history = new PersistenceContextHistory();
-        history.setSource("server1:prot1");
-        ContextID contextID = new PersistenceContextID();
-        contextID.setContextId("84716");
-        // source and contextid cannot be empty
-        if (StringUtils.isEmpty(history.getSource())) {
-            throw new CSErrorException(97000, "history source cannot be empty");
-        }
-        if (StringUtils.isEmpty(contextID.getContextId())) {
-            throw new CSErrorException(97000, "contxtId cannot be empty");
-        }
-        HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.REMOVE, contextID, history);
-        return generateResponse(answerJob, "");
+    if (StringUtils.isEmpty(contextID.getContextId())) {
+      throw new CSErrorException(97000, "contxtId cannot be empty");
     }
+    HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.CREATE, contextID, history);
+    return generateResponse(answerJob, "");
+  }
 
-    @RequestMapping(path = "getHistories", method = RequestMethod.GET)
-    public Message getHistories(HttpServletRequest req)
-            throws InterruptedException, CSErrorException {
-        ContextID contextID = new PersistenceContextID();
-        contextID.setContextId("84716");
-        if (StringUtils.isEmpty(contextID.getContextId())) {
-            throw new CSErrorException(97000, "contxtId cannot be empty");
-        }
-        HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.GET, contextID);
-        return generateResponse(answerJob, "");
+  @RequestMapping(path = "removeHistory", method = RequestMethod.POST)
+  public Message removeHistory(HttpServletRequest req)
+      throws InterruptedException, CSErrorException {
+    ContextHistory history = new PersistenceContextHistory();
+    history.setSource("server1:prot1");
+    ContextID contextID = new PersistenceContextID();
+    contextID.setContextId("84716");
+    // source and contextid cannot be empty
+    if (StringUtils.isEmpty(history.getSource())) {
+      throw new CSErrorException(97000, "history source cannot be empty");
     }
+    if (StringUtils.isEmpty(contextID.getContextId())) {
+      throw new CSErrorException(97000, "contxtId cannot be empty");
+    }
+    HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.REMOVE, contextID, history);
+    return generateResponse(answerJob, "");
+  }
 
-    @RequestMapping(path = "getHistory", method = RequestMethod.GET)
-    public Message getHistory(HttpServletRequest req)
-            throws InterruptedException, CSErrorException {
-        // ContextID contextID, String source
-        String source = "server1:prot1";
-        ContextID contextID = new PersistenceContextID();
-        contextID.setContextId("84716");
-        // source and contextid cannot be empty
-        if (StringUtils.isEmpty(source)) {
-            throw new CSErrorException(97000, "history source cannot be empty");
-        }
-        if (StringUtils.isEmpty(contextID.getContextId())) {
-            throw new CSErrorException(97000, "contxtId cannot be empty");
-        }
-        HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.GET, contextID, source);
-        return generateResponse(answerJob, "");
+  @RequestMapping(path = "getHistories", method = RequestMethod.GET)
+  public Message getHistories(HttpServletRequest req)
+      throws InterruptedException, CSErrorException {
+    ContextID contextID = new PersistenceContextID();
+    contextID.setContextId("84716");
+    if (StringUtils.isEmpty(contextID.getContextId())) {
+      throw new CSErrorException(97000, "contxtId cannot be empty");
     }
+    HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.GET, contextID);
+    return generateResponse(answerJob, "");
+  }
 
-    @RequestMapping(path = "searchHistory", method = RequestMethod.GET)
-    public Message searchHistory(HttpServletRequest req)
-            throws InterruptedException, CSErrorException {
-        // ContextID contextID, String[] keywords
-        ContextID contextID = new PersistenceContextID();
-        contextID.setContextId("84716");
-        String[] keywords = new String[] {"keyword1", "keyword2"};
-        if (StringUtils.isEmpty(contextID.getContextId())) {
-            throw new CSErrorException(97000, "contxtId cannot be empty");
-        }
-        HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.SEARCH, contextID, keywords);
-        return generateResponse(answerJob, "");
+  @RequestMapping(path = "getHistory", method = RequestMethod.GET)
+  public Message getHistory(HttpServletRequest req) throws InterruptedException, CSErrorException {
+    // ContextID contextID, String source
+    String source = "server1:prot1";
+    ContextID contextID = new PersistenceContextID();
+    contextID.setContextId("84716");
+    // source and contextid cannot be empty
+    if (StringUtils.isEmpty(source)) {
+      throw new CSErrorException(97000, "history source cannot be empty");
     }
+    if (StringUtils.isEmpty(contextID.getContextId())) {
+      throw new CSErrorException(97000, "contxtId cannot be empty");
+    }
+    HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.GET, contextID, source);
+    return generateResponse(answerJob, "");
+  }
 
-    @Override
-    public ServiceType getServiceType() {
-        return ServiceType.CONTEXT_HISTORY;
+  @RequestMapping(path = "searchHistory", method = RequestMethod.GET)
+  public Message searchHistory(HttpServletRequest req)
+      throws InterruptedException, CSErrorException {
+    // ContextID contextID, String[] keywords
+    ContextID contextID = new PersistenceContextID();
+    contextID.setContextId("84716");
+    String[] keywords = new String[] {"keyword1", "keyword2"};
+    if (StringUtils.isEmpty(contextID.getContextId())) {
+      throw new CSErrorException(97000, "contxtId cannot be empty");
     }
+    HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.SEARCH, contextID, keywords);
+    return generateResponse(answerJob, "");
+  }
 
-    @Override
-    public CsScheduler getScheduler() {
-        return this.csScheduler;
-    }
+  @Override
+  public ServiceType getServiceType() {
+    return ServiceType.CONTEXT_HISTORY;
+  }
+
+  @Override
+  public CsScheduler getScheduler() {
+    return this.csScheduler;
+  }
 }

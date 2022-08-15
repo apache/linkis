@@ -21,10 +21,10 @@ import org.apache.linkis.cs.server.protocol.RestResponseProtocol;
 
 public class RestJobBuilder extends HttpAnswerJobBuilder {
 
-    @Override
-    protected final HttpJob buildResponseProtocol(HttpJob job) {
-        RestResponseProtocol protocol = new RestResponseProtocol();
-        ((HttpAnswerJob) job).setResponseProtocol(protocol);
-        return job;
-    }
+  @Override
+  protected final HttpJob buildResponseProtocol(HttpJob job) {
+    RestResponseProtocol protocol = new RestResponseProtocol();
+    ((HttpAnswerJob) job).setResponseProtocol(protocol);
+    return job;
+  }
 }

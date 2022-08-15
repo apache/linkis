@@ -28,56 +28,56 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class DefaultExceptionHandler implements ExceptionHandler {
-    private static Logger logger = LoggerFactory.getLogger(DefaultExceptionHandler.class);
+  private static Logger logger = LoggerFactory.getLogger(DefaultExceptionHandler.class);
 
-    @Override
-    public void handle(Exception exception) {
-        if (exception instanceof LinkisClientRuntimeException) {
-            LinkisClientRuntimeException e = (LinkisClientRuntimeException) exception;
-            switch (e.getLevel()) {
-                case INFO:
-                    logger.info(e.getMessage(), e);
-                    LogUtils.getInformationLogger().info(e.getMessage());
-                    break;
-                case WARN:
-                    logger.warn(e.getMessage(), e);
-                    LogUtils.getInformationLogger().warn(getErrInfoWithoutStacktrace(e));
-                    break;
-                case ERROR:
-                    logger.error(e.getMessage(), e);
-                    LogUtils.getInformationLogger().error(getErrInfoWithoutStacktrace(e));
-                    break;
-                case FATAL:
-                    String msg = StringUtils.substringAfter(e.getMessage(), "[ERROR]");
-                    logger.error(msg, e);
-                    LogUtils.getInformationLogger().error("[FATAL]" + msg, e);
-                    System.exit(-1);
-                    break;
-            }
+  @Override
+  public void handle(Exception exception) {
+    if (exception instanceof LinkisClientRuntimeException) {
+      LinkisClientRuntimeException e = (LinkisClientRuntimeException) exception;
+      switch (e.getLevel()) {
+        case INFO:
+          logger.info(e.getMessage(), e);
+          LogUtils.getInformationLogger().info(e.getMessage());
+          break;
+        case WARN:
+          logger.warn(e.getMessage(), e);
+          LogUtils.getInformationLogger().warn(getErrInfoWithoutStacktrace(e));
+          break;
+        case ERROR:
+          logger.error(e.getMessage(), e);
+          LogUtils.getInformationLogger().error(getErrInfoWithoutStacktrace(e));
+          break;
+        case FATAL:
+          String msg = StringUtils.substringAfter(e.getMessage(), "[ERROR]");
+          logger.error(msg, e);
+          LogUtils.getInformationLogger().error("[FATAL]" + msg, e);
+          System.exit(-1);
+          break;
+      }
 
-        } else {
-            logger.error(exception.getMessage(), exception);
-            LogUtils.getInformationLogger().error(exception.getMessage(), exception);
-        }
+    } else {
+      logger.error(exception.getMessage(), exception);
+      LogUtils.getInformationLogger().error(exception.getMessage(), exception);
     }
+  }
 
-    private String getErrInfoWithoutStacktrace(Exception e) {
-        if (e == null) {
-            return "";
-        }
-        StringBuilder sb = new StringBuilder();
-        if (e instanceof NullPointerException) {
-            sb.append(ExceptionUtils.getStackTrace(e));
-        } else {
-            sb.append(e.getMessage());
-        }
-        if (e.getCause() != null) {
-            sb.append(System.lineSeparator())
-                    .append("Caused by: ")
-                    .append((e.getCause().getClass().getCanonicalName()))
-                    .append(": ")
-                    .append(e.getCause().getMessage());
-        }
-        return sb.toString();
+  private String getErrInfoWithoutStacktrace(Exception e) {
+    if (e == null) {
+      return "";
     }
+    StringBuilder sb = new StringBuilder();
+    if (e instanceof NullPointerException) {
+      sb.append(ExceptionUtils.getStackTrace(e));
+    } else {
+      sb.append(e.getMessage());
+    }
+    if (e.getCause() != null) {
+      sb.append(System.lineSeparator())
+          .append("Caused by: ")
+          .append((e.getCause().getClass().getCanonicalName()))
+          .append(": ")
+          .append(e.getCause().getMessage());
+    }
+    return sb.toString();
+  }
 }

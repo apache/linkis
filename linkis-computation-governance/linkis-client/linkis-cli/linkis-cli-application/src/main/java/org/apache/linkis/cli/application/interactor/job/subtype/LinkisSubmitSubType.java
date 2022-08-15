@@ -20,16 +20,16 @@ package org.apache.linkis.cli.application.interactor.job.subtype;
 import org.apache.linkis.cli.common.entity.job.JobSubType;
 
 public enum LinkisSubmitSubType implements JobSubType {
-    SUBMIT("submit");
+  SUBMIT("submit");
 
-    private String name;
+  private String name;
 
-    LinkisSubmitSubType(String name) {
-        this.name = name;
-    }
+  LinkisSubmitSubType(String name) {
+    this.name = name;
+  }
 
-    @Override
-    public String getName() {
-        return name;
-    }
+  @Override
+  public String getName() {
+    return name;
+  }
 }

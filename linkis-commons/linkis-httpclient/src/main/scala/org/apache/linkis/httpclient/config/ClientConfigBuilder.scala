@@ -5,16 +5,16 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.httpclient.config
 
 import org.apache.linkis.common.utils.RetryHandler
@@ -23,8 +23,7 @@ import org.apache.linkis.httpclient.loadbalancer.LoadBalancerStrategy
 
 import scala.concurrent.duration.TimeUnit
 
-
-class ClientConfigBuilder protected() {
+class ClientConfigBuilder protected () {
 
   protected var serverUrl: String = _
   protected var discoveryEnabled: Boolean = false
@@ -107,12 +106,25 @@ class ClientConfigBuilder protected() {
     this
   }
 
-
-  def build(): ClientConfig = new ClientConfig(serverUrl, discoveryEnabled, discoveryPeriod, discoveryTimeUnit,
-    loadbalancerEnabled, loadbalancerStrategy, authenticationStrategy,
-    connectTimeout, readTimeout, maxConnection, retryEnabled, retryHandler, authTokenKey, authTokenValue)
+  def build(): ClientConfig = new ClientConfig(
+    serverUrl,
+    discoveryEnabled,
+    discoveryPeriod,
+    discoveryTimeUnit,
+    loadbalancerEnabled,
+    loadbalancerStrategy,
+    authenticationStrategy,
+    connectTimeout,
+    readTimeout,
+    maxConnection,
+    retryEnabled,
+    retryHandler,
+    authTokenKey,
+    authTokenValue
+  )
 
 }
+
 object ClientConfigBuilder {
   def newBuilder(): ClientConfigBuilder = new ClientConfigBuilder
 }

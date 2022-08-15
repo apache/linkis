@@ -19,7 +19,7 @@ package org.apache.linkis.cs.common.entity.data;
 
 public interface JobData {
 
-    long getJobID();
+  long getJobID();
 
-    void setJobID(long jobID);
+  void setJobID(long jobID);
 }

@@ -21,19 +21,19 @@ import org.apache.linkis.common.ServiceInstance;
 
 public class InsLabelRemoveRequest implements LabelRequest {
 
-    private ServiceInstance serviceInstance;
+  private ServiceInstance serviceInstance;
 
-    public InsLabelRemoveRequest() {}
+  public InsLabelRemoveRequest() {}
 
-    public InsLabelRemoveRequest(ServiceInstance serviceInstance) {
-        this.serviceInstance = serviceInstance;
-    }
+  public InsLabelRemoveRequest(ServiceInstance serviceInstance) {
+    this.serviceInstance = serviceInstance;
+  }
 
-    public ServiceInstance getServiceInstance() {
-        return serviceInstance;
-    }
+  public ServiceInstance getServiceInstance() {
+    return serviceInstance;
+  }
 
-    public void setServiceInstance(ServiceInstance serviceInstance) {
-        this.serviceInstance = serviceInstance;
-    }
+  public void setServiceInstance(ServiceInstance serviceInstance) {
+    this.serviceInstance = serviceInstance;
+  }
 }

@@ -18,18 +18,18 @@
 package org.apache.linkis.common.exception;
 
 public class ErrorException extends LinkisException {
-    private ExceptionLevel level = ExceptionLevel.ERROR;
+  private ExceptionLevel level = ExceptionLevel.ERROR;
 
-    public ErrorException(int errCode, String desc) {
-        super(errCode, desc);
-    }
+  public ErrorException(int errCode, String desc) {
+    super(errCode, desc);
+  }
 
-    public ErrorException(int errCode, String desc, String ip, int port, String serviceKind) {
-        super(errCode, desc, ip, port, serviceKind);
-    }
+  public ErrorException(int errCode, String desc, String ip, int port, String serviceKind) {
+    super(errCode, desc, ip, port, serviceKind);
+  }
 
-    @Override
-    public ExceptionLevel getLevel() {
-        return this.level;
-    }
+  @Override
+  public ExceptionLevel getLevel() {
+    return this.level;
+  }
 }

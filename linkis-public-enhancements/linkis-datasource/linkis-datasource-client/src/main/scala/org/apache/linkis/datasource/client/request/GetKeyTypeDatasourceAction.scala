@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,11 +21,11 @@ import org.apache.linkis.datasource.client.config.DatasourceClientConfig.DATA_SO
 import org.apache.linkis.datasource.client.exception.DataSourceClientBuilderException
 import org.apache.linkis.httpclient.request.GetAction
 
-
-class GetKeyTypeDatasourceAction extends GetAction with DataSourceAction{
+class GetKeyTypeDatasourceAction extends GetAction with DataSourceAction {
   private var dataSourceTypeId: Long = _
 
-  override def suffixURLs: Array[String] = Array(DATA_SOURCE_SERVICE_MODULE.getValue, "key-define", "type", dataSourceTypeId.toString)
+  override def suffixURLs: Array[String] =
+    Array(DATA_SOURCE_SERVICE_MODULE.getValue, "key-define", "type", dataSourceTypeId.toString)
 
   private var user: String = _
 
@@ -33,10 +33,11 @@ class GetKeyTypeDatasourceAction extends GetAction with DataSourceAction{
 
   override def getUser: String = this.user
 }
-object GetKeyTypeDatasourceAction{
+
+object GetKeyTypeDatasourceAction {
   def builder(): Builder = new Builder
 
-  class Builder private[GetKeyTypeDatasourceAction]() {
+  class Builder private[GetKeyTypeDatasourceAction] () {
     private var dataSourceTypeId: Long = _
     private var user: String = _
 
@@ -58,6 +59,7 @@ object GetKeyTypeDatasourceAction{
       getKeyTypeDatasourceAction.setUser(user)
       getKeyTypeDatasourceAction
     }
-  }
-}
 
+  }
+
+}

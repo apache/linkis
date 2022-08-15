@@ -23,37 +23,37 @@ import org.apache.linkis.cs.persistence.annotation.Ignore;
 @Ignore
 public class PersistenceContextValue implements ContextValue {
 
-    private String keywords;
-    /** 序列化后的value */
-    private Object value;
+  private String keywords;
+  /** 序列化后的value */
+  private Object value;
 
-    private String valueStr;
+  private String valueStr;
 
-    public String getValueStr() {
-        return valueStr;
-    }
+  public String getValueStr() {
+    return valueStr;
+  }
 
-    public void setValueStr(String valueStr) {
-        this.valueStr = valueStr;
-    }
+  public void setValueStr(String valueStr) {
+    this.valueStr = valueStr;
+  }
 
-    @Override
-    public String getKeywords() {
-        return this.keywords;
-    }
+  @Override
+  public String getKeywords() {
+    return this.keywords;
+  }
 
-    @Override
-    public void setKeywords(String keywords) {
-        this.keywords = keywords;
-    }
+  @Override
+  public void setKeywords(String keywords) {
+    this.keywords = keywords;
+  }
 
-    @Override
-    public Object getValue() {
-        return this.value;
-    }
+  @Override
+  public Object getValue() {
+    return this.value;
+  }
 
-    @Override
-    public void setValue(Object value) {
-        this.value = value;
-    }
+  @Override
+  public void setValue(Object value) {
+    this.value = value;
+  }
 }

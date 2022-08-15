@@ -27,10 +27,10 @@ import java.util.Map;
 
 @Component
 public class DefaultDataSourceParamsHook implements DataSourceParamsHook {
-    @Override
-    public void beforePersist(
-            Map<String, Object> connectParams, List<DataSourceParamKeyDefinition> keyDefinitionList)
-            throws ErrorException {
-        // Do nothing
-    }
+  @Override
+  public void beforePersist(
+      Map<String, Object> connectParams, List<DataSourceParamKeyDefinition> keyDefinitionList)
+      throws ErrorException {
+    // Do nothing
+  }
 }

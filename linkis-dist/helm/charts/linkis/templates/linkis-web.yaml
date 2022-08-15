@@ -1,0 +1,124 @@
+---
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "linkis.fullname" . }}-web
+  labels:
+    app: {{ include "linkis.fullname" . }}-web
+    {{- include "linkis.Web.labels" . | nindent 4 }}
+  annotations:
+    prometheus.io/path: {{ .Values.Web.prometheus.metricsPath }}
+    prometheus.io/port: '{{ .Values.Web.port }}'
+    prometheus.io/scrape: 'true'
+spec:
+  ports:
+    - name: "http"
+      protocol: TCP
+      port: {{ .Values.Web.port }}
+  selector:
+    {{- include "linkis.Web.selectorLabels" . | nindent 4 }}
+    app: {{ include "linkis.fullname" . }}-web
+  {{- toYaml .Values.svc | nindent 2 }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "linkis.fullname" . }}-web
+  labels:
+    app: {{ include "linkis.fullname" . }}-web
+    version: {{ .Chart.AppVersion }}
+    {{- include "linkis.Web.labels" . | nindent 4 }}
+  {{- if .Values.Web.annotations }}
+  annotations:
+    {{- toYaml .Values.Web.annotations | nindent 4 }}
+  {{- end }}
+spec:
+  replicas: {{ .Values.Web.replicas }}
+  selector:
+    matchLabels:
+      {{- include "linkis.Web.selectorLabels" . | nindent 6 }}
+      app: {{ include "linkis.fullname" . }}-web
+  template:
+    metadata:
+      {{- with .Values.Web.annotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        app: {{ include "linkis.fullname" . }}-web
+        version: {{ .Chart.AppVersion }}
+        {{- include "linkis.Web.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
+        - name: conf
+          configMap:
+            name: {{ include "linkis.fullname" . }}-linkis-web-config
+      serviceAccountName: {{ include "linkis.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.Web.podSecurityContext | nindent 8 }}
+      containers:
+        - name: "web"
+          securityContext:
+            {{- toYaml .Values.Web.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}-web:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: "http"
+              containerPort: {{ .Values.Web.port }}
+              protocol: TCP
+          # TODO: replace with httpGet when spring-boot readiness probe is implemented.
+          readinessProbe:
+            initialDelaySeconds: 15
+            periodSeconds: 5
+            timeoutSeconds: 20
+            failureThreshold: 10
+            tcpSocket:
+              port: {{ .Values.Web.port }}
+          env:
+            - name: EUREKA_URL
+              value: {{- include "linkis.registration.url" . | quote | indent 1 }}
+            - name: EUREKA_PORT
+              value: "{{ .Values.mgEureka.port }}"
+            {{- if .Values.Web.envs.extras }}
+{{ toYaml .Values.Web.envs.extras | indent 12 }}
+            {{- end }}
+          {{- if .Values.Web.envs.froms }}
+          envFrom:
+{{ toYaml .Values.Web.envs.froms | indent 12 }}
+          {{- end }}
+          volumeMounts:
+            - name: conf
+              mountPath: /etc/nginx/conf.d/
+          resources:
+            {{- toYaml .Values.Web.resources | nindent 12 }}
+      {{- with .Values.Web.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.Web.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.Web.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

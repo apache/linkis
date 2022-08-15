@@ -49,65 +49,64 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @AutoConfigureMockMvc
 @SpringBootTest(classes = {WebApplicationServer.class, Scan.class})
 public class VariableRestfulApiTest {
-    private Logger logger = LoggerFactory.getLogger(VariableRestfulApiTest.class);
+  private Logger logger = LoggerFactory.getLogger(VariableRestfulApiTest.class);
 
-    @Autowired protected MockMvc mockMvc;
+  @Autowired protected MockMvc mockMvc;
 
-    @Mock VariableService variableService;
+  @Mock VariableService variableService;
 
-    private static MockedStatic<SecurityFilter> securityFilter;
+  private static MockedStatic<SecurityFilter> securityFilter;
 
-    @BeforeAll
-    private static void init() {
-        securityFilter = Mockito.mockStatic(SecurityFilter.class);
+  @BeforeAll
+  private static void init() {
+    securityFilter = Mockito.mockStatic(SecurityFilter.class);
+  }
+
+  @AfterAll
+  private static void close() {
+    securityFilter.close();
+  }
+
+  @Test
+  public void testListGlobalVariable() throws Exception {
+    // h2数据库执行生成的sql语句报错
+    /*String url = "/variable/listGlobalVariable";
+    securityFilter
+            .when(() -> SecurityFilter.getLoginUsername(isA(HttpServletRequest.class)))
+            .thenReturn("hadoop");
+    List<VarKeyValueVO> list=new ArrayList<>();
+    VarKeyValueVO varKeyValueVO=new VarKeyValueVO();
+    varKeyValueVO.setValue("testV");
+    varKeyValueVO.setKey("testK");
+    varKeyValueVO.setKeyID(1l);
+    varKeyValueVO.setValueID(2l);
+    list.add(varKeyValueVO);
+    Mockito.when(variableService.listGlobalVariable("hadoop")).thenReturn(list);
+    sendUrl(url, null, "get", null);*/
+  }
+
+  @Test
+  public void testSaveGlobalVariable() throws Exception {}
+
+  public void sendUrl(String url, MultiValueMap<String, String> paramsMap, String type, String msg)
+      throws Exception {
+    MvcUtils mvcUtils = new MvcUtils(mockMvc);
+    Message mvcResult = null;
+    if (type.equals("get")) {
+      if (paramsMap != null) {
+        mvcResult = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, paramsMap));
+      } else {
+        mvcResult = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url));
+      }
     }
-
-    @AfterAll
-    private static void close() {
-        securityFilter.close();
+    if (type.equals("post")) {
+      if (msg != null) {
+        mvcResult = mvcUtils.getMessage(mvcUtils.buildMvcResultPost(url, msg));
+      } else {
+        mvcResult = mvcUtils.getMessage(mvcUtils.buildMvcResultPost(url));
+      }
     }
-
-    @Test
-    public void testListGlobalVariable() throws Exception {
-        // h2数据库执行生成的sql语句报错
-        /*String url = "/variable/listGlobalVariable";
-        securityFilter
-                .when(() -> SecurityFilter.getLoginUsername(isA(HttpServletRequest.class)))
-                .thenReturn("hadoop");
-        List<VarKeyValueVO> list=new ArrayList<>();
-        VarKeyValueVO varKeyValueVO=new VarKeyValueVO();
-        varKeyValueVO.setValue("testV");
-        varKeyValueVO.setKey("testK");
-        varKeyValueVO.setKeyID(1l);
-        varKeyValueVO.setValueID(2l);
-        list.add(varKeyValueVO);
-        Mockito.when(variableService.listGlobalVariable("hadoop")).thenReturn(list);
-        sendUrl(url, null, "get", null);*/
-    }
-
-    @Test
-    public void testSaveGlobalVariable() throws Exception {}
-
-    public void sendUrl(
-            String url, MultiValueMap<String, String> paramsMap, String type, String msg)
-            throws Exception {
-        MvcUtils mvcUtils = new MvcUtils(mockMvc);
-        Message mvcResult = null;
-        if (type.equals("get")) {
-            if (paramsMap != null) {
-                mvcResult = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, paramsMap));
-            } else {
-                mvcResult = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url));
-            }
-        }
-        if (type.equals("post")) {
-            if (msg != null) {
-                mvcResult = mvcUtils.getMessage(mvcUtils.buildMvcResultPost(url, msg));
-            } else {
-                mvcResult = mvcUtils.getMessage(mvcUtils.buildMvcResultPost(url));
-            }
-        }
-        assertEquals(MessageStatus.SUCCESS(), mvcResult.getStatus());
-        logger.info(String.valueOf(mvcResult));
-    }
+    assertEquals(MessageStatus.SUCCESS(), mvcResult.getStatus());
+    logger.info(String.valueOf(mvcResult));
+  }
 }

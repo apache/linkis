@@ -29,6 +29,7 @@
 
   <properties>
     <jdbc.version>4</jdbc.version>
+    <trino.version>371</trino.version>
   </properties>
 
   <dependencies>
@@ -125,19 +126,18 @@
       </exclusions>
     </dependency>
 
-        <dependency>
-            <groupId>io.trino</groupId>
-            <artifactId>trino-jdbc</artifactId>
-            <version>${trino.version}</version>
-            <scope>provided</scope>
-        </dependency>
+    <dependency>
+      <groupId>io.trino</groupId>
+      <artifactId>trino-jdbc</artifactId>
+      <version>${trino.version}</version>
+      <scope>provided</scope>
+    </dependency>
 
-
-        <dependency>
-            <groupId>org.apache.linkis</groupId>
-            <artifactId>linkis-scheduler</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+    <dependency>
+      <groupId>org.apache.linkis</groupId>
+      <artifactId>linkis-scheduler</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
     <dependency>
       <groupId>org.apache.thrift</groupId>

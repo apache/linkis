@@ -15,7 +15,7 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-  
+
 <configuration status="error" monitorInterval="30">
     <appenders>
         <Console name="Console" target="SYSTEM_OUT">

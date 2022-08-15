@@ -26,7 +26,6 @@ import okhttp3.Interceptor;
 import okhttp3.Response;
 
 import static com.google.common.net.HttpHeaders.AUTHORIZATION;
-
 public class PasswordInterceptor implements Interceptor {
   private final String user;
   private final PasswordCallback callback;

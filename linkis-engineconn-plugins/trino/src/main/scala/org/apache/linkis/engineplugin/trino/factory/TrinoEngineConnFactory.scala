@@ -28,7 +28,6 @@ import org.apache.linkis.manager.label.entity.engine.EngineType.EngineType
 import org.apache.linkis.manager.label.entity.engine.RunType.RunType
 
 class TrinoEngineConnFactory extends ComputationSingleExecutorEngineConnFactory {
-
   override def newExecutor(
       id: Int,
       engineCreationContext: EngineCreationContext,

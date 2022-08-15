@@ -25,7 +25,6 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketException;
 import java.nio.channels.SocketChannel;
-
 public class SocketChannelSocketFactory extends SocketFactory {
 
   @Override

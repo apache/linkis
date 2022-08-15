@@ -20,19 +20,19 @@ package org.apache.linkis.cli.application.operator.ujes.result;
 import org.apache.linkis.ujes.client.response.OpenLogResult;
 
 public class OpenLogResult2 implements UJESResult {
-    private OpenLogResult result;
-    private Integer fromLine = 0;
+  private OpenLogResult result;
+  private Integer fromLine = 0;
 
-    public OpenLogResult2(OpenLogResult result, Integer fromLine) {
-        this.result = result;
-        this.fromLine = fromLine;
-    }
+  public OpenLogResult2(OpenLogResult result, Integer fromLine) {
+    this.result = result;
+    this.fromLine = fromLine;
+  }
 
-    public OpenLogResult getResult() {
-        return result;
-    }
+  public OpenLogResult getResult() {
+    return result;
+  }
 
-    public Integer getFromLine() {
-        return fromLine;
-    }
+  public Integer getFromLine() {
+    return fromLine;
+  }
 }

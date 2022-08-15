@@ -25,11 +25,11 @@ import org.apache.linkis.cs.highavailable.ha.ContextHAIDGenerator;
 
 public abstract class AbstractContextHAManager implements ContextHAManager {
 
-    public abstract ContextHAIDGenerator getContextHAIDGenerator();
+  public abstract ContextHAIDGenerator getContextHAIDGenerator();
 
-    public abstract ContextHAChecker getContextHAChecker();
+  public abstract ContextHAChecker getContextHAChecker();
 
-    public abstract BackupInstanceGenerator getBackupInstanceGenerator();
+  public abstract BackupInstanceGenerator getBackupInstanceGenerator();
 
-    public abstract HAContextID convertProxyHAID(HAContextID contextID) throws CSErrorException;
+  public abstract HAContextID convertProxyHAID(HAContextID contextID) throws CSErrorException;
 }

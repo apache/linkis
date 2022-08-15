@@ -21,16 +21,16 @@ import org.apache.linkis.common.exception.ErrorException;
 
 public class FlinkInitFailedException extends ErrorException {
 
-    public static final int ERROR_CODE = 16020;
+  public static final int ERROR_CODE = 16020;
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    public FlinkInitFailedException(String msg) {
-        super(ERROR_CODE, msg);
-    }
+  public FlinkInitFailedException(String msg) {
+    super(ERROR_CODE, msg);
+  }
 
-    public FlinkInitFailedException(String msg, Throwable cause) {
-        super(ERROR_CODE, msg);
-        initCause(cause);
-    }
+  public FlinkInitFailedException(String msg, Throwable cause) {
+    super(ERROR_CODE, msg);
+    initCause(cause);
+  }
 }

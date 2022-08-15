@@ -21,31 +21,31 @@ import org.apache.linkis.cli.application.observer.listener.LinkisClientListener;
 
 public interface LinkisLogData extends LinkisJobData, Cloneable {
 
-    void notifyLogListener();
+  void notifyLogListener();
 
-    void registerincLogListener(LinkisClientListener observer);
+  void registerincLogListener(LinkisClientListener observer);
 
-    String getLogPath();
+  String getLogPath();
 
-    Integer getNextLogLineIdx();
+  Integer getNextLogLineIdx();
 
-    void setHasNextLogLine(Boolean hasNextLog);
+  void setHasNextLogLine(Boolean hasNextLog);
 
-    Boolean hasNextLogLine();
+  Boolean hasNextLogLine();
 
-    String consumeLog();
+  String consumeLog();
 
-    boolean isIncLogMode();
+  boolean isIncLogMode();
 
-    /*
-    incLogMode = true: for sync-submission, wait for job complete while get incremental log
-    incLogMode = false: for async-submission, output all log we have currently
-    */
-    void setIncLogMode(boolean incLogMode);
+  /*
+  incLogMode = true: for sync-submission, wait for job complete while get incremental log
+  incLogMode = false: for async-submission, output all log we have currently
+  */
+  void setIncLogMode(boolean incLogMode);
 
-    void sendLogFin();
+  void sendLogFin();
 
-    boolean logFinReceived();
+  boolean logFinReceived();
 
-    LinkisLogData clone() throws CloneNotSupportedException;
+  LinkisLogData clone() throws CloneNotSupportedException;
 }

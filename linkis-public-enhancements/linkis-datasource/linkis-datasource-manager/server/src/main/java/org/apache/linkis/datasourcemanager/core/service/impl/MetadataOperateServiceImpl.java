@@ -29,13 +29,13 @@ import org.apache.linkis.rpc.Sender;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.linkis.datasourcemanager.common.ServiceErrorCode.BML_SERVICE_ERROR;
 import static org.apache.linkis.datasourcemanager.common.ServiceErrorCode.REMOTE_METADATA_SERVICE_ERROR;
@@ -43,94 +43,88 @@ import static org.apache.linkis.datasourcemanager.common.ServiceErrorCode.REMOTE
 @Service
 public class MetadataOperateServiceImpl implements MetadataOperateService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(MetadataOperateService.class);
-    @Autowired private BmlAppService bmlAppService;
+  private static final Logger LOG = LoggerFactory.getLogger(MetadataOperateService.class);
+  @Autowired private BmlAppService bmlAppService;
 
-    @Override
-    public void doRemoteConnect(
-            String mdRemoteServiceName,
-            String dataSourceType,
-            String operator,
-            Map<String, Object> connectParams)
-            throws WarnException {
-        List<String> uploadedResources = new ArrayList<>();
-        try {
-            connectParams
-                    .entrySet()
-                    .removeIf(
-                            entry -> {
-                                Object paramValue = entry.getValue();
-                                // Upload stream resource in connection parameters
-                                if (paramValue instanceof FormStreamContent) {
-                                    FormStreamContent streamContent =
-                                            (FormStreamContent) paramValue;
-                                    String fileName = streamContent.getFileName();
-                                    InputStream inputStream = streamContent.getStream();
-                                    if (null != inputStream) {
-                                        try {
-                                            String resourceId =
-                                                    bmlAppService.clientUploadResource(
-                                                            operator, fileName, inputStream);
-                                            if (null == resourceId) {
-                                                return true;
-                                            }
-                                            uploadedResources.add(resourceId);
-                                            entry.setValue(resourceId);
-                                        } catch (ErrorException e) {
-                                            // TODO redefined a exception extends warnException
-                                            throw new WarnException(
-                                                    BML_SERVICE_ERROR.getValue(),
-                                                    "Fail to operate file in request[上传文件处理失败]");
-                                        }
-                                    }
-                                }
-                                return false;
-                            });
-            LOG.info(
-                    "Send request to metadata service:["
-                            + mdRemoteServiceName
-                            + "] for building a connection");
-            // Get a sender
-            Sender sender = Sender.getSender(mdRemoteServiceName);
-            try {
-                Object object =
-                        sender.ask(
-                                new MetadataConnect(dataSourceType, operator, connectParams, ""));
-                if (object instanceof MetadataResponse) {
-                    MetadataResponse response = (MetadataResponse) object;
-                    if (!response.status()) {
-                        throw new WarnException(
-                                REMOTE_METADATA_SERVICE_ERROR.getValue(),
-                                "Connection Failed[连接失败], Msg[" + response.data() + "]");
+  @Override
+  public void doRemoteConnect(
+      String mdRemoteServiceName,
+      String dataSourceType,
+      String operator,
+      Map<String, Object> connectParams)
+      throws WarnException {
+    List<String> uploadedResources = new ArrayList<>();
+    try {
+      connectParams
+          .entrySet()
+          .removeIf(
+              entry -> {
+                Object paramValue = entry.getValue();
+                // Upload stream resource in connection parameters
+                if (paramValue instanceof FormStreamContent) {
+                  FormStreamContent streamContent = (FormStreamContent) paramValue;
+                  String fileName = streamContent.getFileName();
+                  InputStream inputStream = streamContent.getStream();
+                  if (null != inputStream) {
+                    try {
+                      String resourceId =
+                          bmlAppService.clientUploadResource(operator, fileName, inputStream);
+                      if (null == resourceId) {
+                        return true;
+                      }
+                      uploadedResources.add(resourceId);
+                      entry.setValue(resourceId);
+                    } catch (ErrorException e) {
+                      // TODO redefined a exception extends warnException
+                      throw new WarnException(
+                          BML_SERVICE_ERROR.getValue(),
+                          "Fail to operate file in request[上传文件处理失败]");
                     }
-                } else {
-                    throw new WarnException(
-                            REMOTE_METADATA_SERVICE_ERROR.getValue(),
-                            "Remote Service Error[远端服务出错, 联系运维处理]");
+                  }
                 }
-            } catch (Exception t) {
-                if (!(t instanceof WarnException)) {
-                    throw new WarnException(
-                            REMOTE_METADATA_SERVICE_ERROR.getValue(),
-                            "Remote Service Error[远端服务出错, 联系运维处理], message:["
-                                    + t.getMessage()
-                                    + "]");
-                }
-                throw t;
-            }
-        } finally {
-            if (!uploadedResources.isEmpty()) {
-                uploadedResources.forEach(
-                        resourceId -> {
-                            try {
-                                // Proxy to delete resource
-                                bmlAppService.clientRemoveResource(operator, resourceId);
-                            } catch (Exception e) {
-                                // ignore
-                                // TODO add strategy to fix the failure of deleting
-                            }
-                        });
-            }
+                return false;
+              });
+      LOG.info(
+          "Send request to metadata service:["
+              + mdRemoteServiceName
+              + "] for building a connection");
+      // Get a sender
+      Sender sender = Sender.getSender(mdRemoteServiceName);
+      try {
+        Object object =
+            sender.ask(new MetadataConnect(dataSourceType, operator, connectParams, ""));
+        if (object instanceof MetadataResponse) {
+          MetadataResponse response = (MetadataResponse) object;
+          if (!response.status()) {
+            throw new WarnException(
+                REMOTE_METADATA_SERVICE_ERROR.getValue(),
+                "Connection Failed[连接失败], Msg[" + response.data() + "]");
+          }
+        } else {
+          throw new WarnException(
+              REMOTE_METADATA_SERVICE_ERROR.getValue(), "Remote Service Error[远端服务出错, 联系运维处理]");
         }
+      } catch (Exception t) {
+        if (!(t instanceof WarnException)) {
+          throw new WarnException(
+              REMOTE_METADATA_SERVICE_ERROR.getValue(),
+              "Remote Service Error[远端服务出错, 联系运维处理], message:[" + t.getMessage() + "]");
+        }
+        throw t;
+      }
+    } finally {
+      if (!uploadedResources.isEmpty()) {
+        uploadedResources.forEach(
+            resourceId -> {
+              try {
+                // Proxy to delete resource
+                bmlAppService.clientRemoveResource(operator, resourceId);
+              } catch (Exception e) {
+                // ignore
+                // TODO add strategy to fix the failure of deleting
+              }
+            });
+      }
     }
+  }
 }

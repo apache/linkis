@@ -10,7 +10,6 @@ akka-actor_2.11-2.5.21.jar
 akka-protobuf_2.11-2.5.21.jar
 akka-slf4j_2.11-2.5.21.jar
 akka-stream_2.11-2.5.21.jar
-annotations-2.0.1.jar
 ant-1.10.12.jar
 ant-launcher-1.10.12.jar
 antlr-2.7.7.jar
@@ -94,7 +93,6 @@ dropwizard-metrics-hadoop-metrics2-reporter-0.1.2.jar
 druid-1.1.22.jar
 eigenbase-properties-1.1.5.jar
 elasticsearch-rest-client-6.8.15.jar
-elasticsearch-rest-client-6.7.1.jar
 elasticsearch-rest-client-7.6.2.jar
 elasticsearch-rest-client-sniffer-7.6.2.jar
 error_prone_annotations-2.3.4.jar
@@ -441,7 +439,7 @@ reactor-core-3.3.17.RELEASE.jar
 reactor-extra-3.3.6.RELEASE.jar
 reactor-netty-0.9.20.RELEASE.jar
 reactor-netty-0.9.7.RELEASE.jar
-reflections-0.9.10.jar
+reflections-0.9.12.jar
 ribbon-2.3.0.jar
 ribbon-core-2.3.0.jar
 ribbon-eureka-2.3.0.jar

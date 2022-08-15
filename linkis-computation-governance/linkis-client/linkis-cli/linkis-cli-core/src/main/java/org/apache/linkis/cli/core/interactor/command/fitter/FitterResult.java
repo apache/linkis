@@ -20,29 +20,29 @@ package org.apache.linkis.cli.core.interactor.command.fitter;
 import org.apache.linkis.cli.common.entity.command.CmdTemplate;
 
 public class FitterResult {
-    String[] remains;
-    CmdTemplate parsedTemplate;
+  String[] remains;
+  CmdTemplate parsedTemplate;
 
-    public FitterResult() {}
+  public FitterResult() {}
 
-    public FitterResult(String[] remains, CmdTemplate parsedTemplate) {
-        this.remains = remains;
-        this.parsedTemplate = parsedTemplate;
-    }
+  public FitterResult(String[] remains, CmdTemplate parsedTemplate) {
+    this.remains = remains;
+    this.parsedTemplate = parsedTemplate;
+  }
 
-    public String[] getRemains() {
-        return remains;
-    }
+  public String[] getRemains() {
+    return remains;
+  }
 
-    public void setRemains(String[] remains) {
-        this.remains = remains;
-    }
+  public void setRemains(String[] remains) {
+    this.remains = remains;
+  }
 
-    public CmdTemplate getParsedTemplate() {
-        return parsedTemplate;
-    }
+  public CmdTemplate getParsedTemplate() {
+    return parsedTemplate;
+  }
 
-    public void setParsedTemplate(CmdTemplate template) {
-        this.parsedTemplate = template;
-    }
+  public void setParsedTemplate(CmdTemplate template) {
+    this.parsedTemplate = template;
+  }
 }

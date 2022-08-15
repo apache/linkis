@@ -29,68 +29,65 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @Component
 public class BackupInstanceGeneratorImpl implements BackupInstanceGenerator {
-    private static final Logger logger = LoggerFactory.getLogger(BackupInstanceGeneratorImpl.class);
+  private static final Logger logger = LoggerFactory.getLogger(BackupInstanceGeneratorImpl.class);
 
-    @Autowired private InstanceAliasManager instanceAliasManager;
+  @Autowired private InstanceAliasManager instanceAliasManager;
 
-    @Autowired private ContextHAChecker contextHAChecker;
+  @Autowired private ContextHAChecker contextHAChecker;
 
-    @Override
-    public String getBackupInstance(String haIDKey) throws CSErrorException {
+  @Override
+  public String getBackupInstance(String haIDKey) throws CSErrorException {
 
-        String alias = null;
-        if (StringUtils.isNotBlank(haIDKey) && contextHAChecker.isHAIDValid(haIDKey)) {
-            alias = contextHAChecker.parseHAIDFromKey(haIDKey).getBackupInstance();
-        } else {
-            throw new CSErrorException(CSErrorCode.INVALID_HAID, "Invalid HAID :" + haIDKey);
-        }
-        return alias;
+    String alias = null;
+    if (StringUtils.isNotBlank(haIDKey) && contextHAChecker.isHAIDValid(haIDKey)) {
+      alias = contextHAChecker.parseHAIDFromKey(haIDKey).getBackupInstance();
+    } else {
+      throw new CSErrorException(CSErrorCode.INVALID_HAID, "Invalid HAID :" + haIDKey);
     }
+    return alias;
+  }
 
-    @Override
-    public String chooseBackupInstance(String mainInstanceAlias) throws CSErrorException {
-        ServiceInstance mainInstance = null;
-        try {
-            mainInstance = instanceAliasManager.getInstanceByAlias(mainInstanceAlias);
-        } catch (Exception e) {
-            logger.error(
-                    "Get Instance error, alias : {}, message : {}",
-                    mainInstanceAlias,
-                    e.getMessage());
-            throw new CSErrorException(
-                    CSErrorCode.INVALID_INSTANCE_ALIAS,
-                    e.getMessage() + ", alias : " + mainInstanceAlias);
-        }
-        List<ServiceInstance> allInstanceList = instanceAliasManager.getAllInstanceList();
-        List<ServiceInstance> remainInstanceList = new ArrayList<>();
-        for (ServiceInstance instance : allInstanceList) {
-            if (instance.equals(mainInstance)) {
-                continue;
-            }
-            remainInstanceList.add(instance);
-        }
-        if (remainInstanceList.size() > 0) {
-            int index = getBackupInstanceIndex(remainInstanceList);
-            return instanceAliasManager.getAliasByServiceInstance(remainInstanceList.get(index));
-        } else {
-            // only one service instance
-            logger.error("Only one instance, no remains.");
-            return instanceAliasManager.getAliasByServiceInstance(mainInstance);
-        }
+  @Override
+  public String chooseBackupInstance(String mainInstanceAlias) throws CSErrorException {
+    ServiceInstance mainInstance = null;
+    try {
+      mainInstance = instanceAliasManager.getInstanceByAlias(mainInstanceAlias);
+    } catch (Exception e) {
+      logger.error(
+          "Get Instance error, alias : {}, message : {}", mainInstanceAlias, e.getMessage());
+      throw new CSErrorException(
+          CSErrorCode.INVALID_INSTANCE_ALIAS, e.getMessage() + ", alias : " + mainInstanceAlias);
     }
-
-    private int getBackupInstanceIndex(List<ServiceInstance> instanceList) {
-
-        // todo refactor according to load-balance
-        return new Random().nextInt(instanceList.size());
+    List<ServiceInstance> allInstanceList = instanceAliasManager.getAllInstanceList();
+    List<ServiceInstance> remainInstanceList = new ArrayList<>();
+    for (ServiceInstance instance : allInstanceList) {
+      if (instance.equals(mainInstance)) {
+        continue;
+      }
+      remainInstanceList.add(instance);
     }
+    if (remainInstanceList.size() > 0) {
+      int index = getBackupInstanceIndex(remainInstanceList);
+      return instanceAliasManager.getAliasByServiceInstance(remainInstanceList.get(index));
+    } else {
+      // only one service instance
+      logger.error("Only one instance, no remains.");
+      return instanceAliasManager.getAliasByServiceInstance(mainInstance);
+    }
+  }
+
+  private int getBackupInstanceIndex(List<ServiceInstance> instanceList) {
+
+    // todo refactor according to load-balance
+    return new Random().nextInt(instanceList.size());
+  }
 }

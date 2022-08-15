@@ -23,102 +23,102 @@ import java.util.List;
 
 public class CSPartition implements Partition {
 
-    private String name;
-    private String alias;
-    private String type;
-    private String comment;
-    private String express;
-    private String rule;
-    private Boolean isPrimary;
-    private Integer length;
-    private List<String> value;
+  private String name;
+  private String alias;
+  private String type;
+  private String comment;
+  private String express;
+  private String rule;
+  private Boolean isPrimary;
+  private Integer length;
+  private List<String> value;
 
-    @Override
-    public Integer getLength() {
-        return length;
-    }
+  @Override
+  public Integer getLength() {
+    return length;
+  }
 
-    @Override
-    public void setLength(Integer length) {
-        this.length = length;
-    }
+  @Override
+  public void setLength(Integer length) {
+    this.length = length;
+  }
 
-    @Override
-    @KeywordMethod
-    public String getName() {
-        return name;
-    }
+  @Override
+  @KeywordMethod
+  public String getName() {
+    return name;
+  }
 
-    @Override
-    public void setName(String name) {
-        this.name = name;
-    }
+  @Override
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    @Override
-    public String getAlias() {
-        return alias;
-    }
+  @Override
+  public String getAlias() {
+    return alias;
+  }
 
-    @Override
-    public void setAlias(String alias) {
-        this.alias = alias;
-    }
+  @Override
+  public void setAlias(String alias) {
+    this.alias = alias;
+  }
 
-    @Override
-    public String getType() {
-        return type;
-    }
+  @Override
+  public String getType() {
+    return type;
+  }
 
-    @Override
-    public void setType(String type) {
-        this.type = type;
-    }
+  @Override
+  public void setType(String type) {
+    this.type = type;
+  }
 
-    @Override
-    public String getComment() {
-        return comment;
-    }
+  @Override
+  public String getComment() {
+    return comment;
+  }
 
-    @Override
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
+  @Override
+  public void setComment(String comment) {
+    this.comment = comment;
+  }
 
-    @Override
-    public String getExpress() {
-        return express;
-    }
+  @Override
+  public String getExpress() {
+    return express;
+  }
 
-    @Override
-    public void setExpress(String express) {
-        this.express = express;
-    }
+  @Override
+  public void setExpress(String express) {
+    this.express = express;
+  }
 
-    @Override
-    public String getRule() {
-        return rule;
-    }
+  @Override
+  public String getRule() {
+    return rule;
+  }
 
-    @Override
-    public void setRule(String rule) {
-        this.rule = rule;
-    }
+  @Override
+  public void setRule(String rule) {
+    this.rule = rule;
+  }
 
-    @Override
-    public Boolean getPrimary() {
-        return isPrimary;
-    }
+  @Override
+  public Boolean getPrimary() {
+    return isPrimary;
+  }
 
-    @Override
-    public void setPrimary(Boolean primary) {
-        isPrimary = primary;
-    }
+  @Override
+  public void setPrimary(Boolean primary) {
+    isPrimary = primary;
+  }
 
-    public List<String> getValue() {
-        return value;
-    }
+  public List<String> getValue() {
+    return value;
+  }
 
-    public void setValue(List<String> value) {
-        this.value = value;
-    }
+  public void setValue(List<String> value) {
+    this.value = value;
+  }
 }

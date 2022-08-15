@@ -27,21 +27,21 @@ import java.util.List;
 
 public interface Result<C, R> {
 
-    /**
-     * Sets the cluster information of the cluster this result comes from. This method should only
-     * be called once.
-     */
-    void setClusterInformation(C clusterId, String webInterfaceUrl);
+  /**
+   * Sets the cluster information of the cluster this result comes from. This method should only be
+   * called once.
+   */
+  void setClusterInformation(C clusterId, String webInterfaceUrl);
 
-    /** Starts the table program using the given deployer and monitors it's execution. */
-    void startRetrieval(JobClient jobClient);
+  /** Starts the table program using the given deployer and monitors it's execution. */
+  void startRetrieval(JobClient jobClient);
 
-    /** Retrieves the available result records. */
-    TypedResult<List<R>> retrieveChanges() throws JobExecutionException, SqlExecutionException;
+  /** Retrieves the available result records. */
+  TypedResult<List<R>> retrieveChanges() throws JobExecutionException, SqlExecutionException;
 
-    /** Returns the table sink required by this result type. */
-    TableSink<?> getTableSink();
+  /** Returns the table sink required by this result type. */
+  TableSink<?> getTableSink();
 
-    /** Closes the retrieval and all involved threads. */
-    void close();
+  /** Closes the retrieval and all involved threads. */
+  void close();
 }

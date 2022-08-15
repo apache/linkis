@@ -25,48 +25,48 @@ import java.util.function.Function;
 
 public class TaskTreeUtil {
 
-    public static <T> List<T> getAllTask(List<Object> list, Class<T> classT)
-            throws IllegalArgumentException {
-        List<T> rsList = new ArrayList<T>();
-        if (null == classT) {
-            throw new IllegalArgumentException("classT cannot be null.");
-        }
-
-        for (Object o : list) {
-            if (classT.isInstance(o)) {
-                rsList.add((T) o);
-            }
-        }
-        return rsList;
+  public static <T> List<T> getAllTask(List<Object> list, Class<T> classT)
+      throws IllegalArgumentException {
+    List<T> rsList = new ArrayList<T>();
+    if (null == classT) {
+      throw new IllegalArgumentException("classT cannot be null.");
     }
 
-    public static <T> List<T> getAllTaskRecursive(ExecTask root, Class<T> classT)
-            throws IllegalArgumentException {
-        if (null == root || null == classT) {
-            throw new IllegalArgumentException("classT cannot be null.");
-        }
+    for (Object o : list) {
+      if (classT.isInstance(o)) {
+        rsList.add((T) o);
+      }
+    }
+    return rsList;
+  }
 
-        List<T> rsList = new ArrayList<>();
-        Function<Object, Integer> visitFunc =
-                (o) -> {
-                    if (classT.isInstance(o)) {
-                        rsList.add(classT.cast(o));
-                    }
-                    return 0;
-                };
-
-        traverseTask(root, visitFunc);
-        return rsList;
+  public static <T> List<T> getAllTaskRecursive(ExecTask root, Class<T> classT)
+      throws IllegalArgumentException {
+    if (null == root || null == classT) {
+      throw new IllegalArgumentException("classT cannot be null.");
     }
 
-    private static void traverseTask(ExecTask root, Function<Object, Integer> visitFunc) {
-        if (null != root) {
-            visitFunc.apply(root);
-            if (null != root.getChildren()) {
-                for (ExecTask node : root.getChildren()) {
-                    traverseTask(node, visitFunc);
-                }
-            }
+    List<T> rsList = new ArrayList<>();
+    Function<Object, Integer> visitFunc =
+        (o) -> {
+          if (classT.isInstance(o)) {
+            rsList.add(classT.cast(o));
+          }
+          return 0;
+        };
+
+    traverseTask(root, visitFunc);
+    return rsList;
+  }
+
+  private static void traverseTask(ExecTask root, Function<Object, Integer> visitFunc) {
+    if (null != root) {
+      visitFunc.apply(root);
+      if (null != root.getChildren()) {
+        for (ExecTask node : root.getChildren()) {
+          traverseTask(node, visitFunc);
         }
+      }
     }
+  }
 }

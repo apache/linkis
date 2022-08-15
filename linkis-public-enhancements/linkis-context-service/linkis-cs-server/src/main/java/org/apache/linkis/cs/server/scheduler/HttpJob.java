@@ -21,7 +21,7 @@ import org.apache.linkis.cs.server.protocol.HttpRequestProtocol;
 
 public interface HttpJob {
 
-    HttpRequestProtocol getRequestProtocol();
+  HttpRequestProtocol getRequestProtocol();
 
-    void setRequestProtocol(HttpRequestProtocol protocol);
+  void setRequestProtocol(HttpRequestProtocol protocol);
 }

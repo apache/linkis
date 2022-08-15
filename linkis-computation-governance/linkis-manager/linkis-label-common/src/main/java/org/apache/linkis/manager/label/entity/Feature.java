@@ -19,32 +19,32 @@ package org.apache.linkis.manager.label.entity;
 
 /** Identify the characters of label */
 public enum Feature {
-    /** Key Feature */
-    CORE(2.0f, true),
-    /** Suitable Feature */
-    SUITABLE(1.0f, true),
-    /** Priority Feature */
-    PRIORITIZED(0.8f, false),
-    /** Option Feature/Addition Feature */
-    OPTIONAL(0.5f, false),
-    /** UNKNOWN */
-    UNKNOWN(0.3f, false);
-    /** Boost value, used in scoring function */
-    private float boost;
+  /** Key Feature */
+  CORE(2.0f, true),
+  /** Suitable Feature */
+  SUITABLE(1.0f, true),
+  /** Priority Feature */
+  PRIORITIZED(0.8f, false),
+  /** Option Feature/Addition Feature */
+  OPTIONAL(0.5f, false),
+  /** UNKNOWN */
+  UNKNOWN(0.3f, false);
+  /** Boost value, used in scoring function */
+  private float boost;
 
-    /** If the feature is necessary when scoring */
-    private boolean necessary;
+  /** If the feature is necessary when scoring */
+  private boolean necessary;
 
-    Feature(float boost, boolean necessary) {
-        this.boost = boost;
-        this.necessary = necessary;
-    }
+  Feature(float boost, boolean necessary) {
+    this.boost = boost;
+    this.necessary = necessary;
+  }
 
-    public float getBoost() {
-        return boost;
-    }
+  public float getBoost() {
+    return boost;
+  }
 
-    public boolean isNecessary() {
-        return necessary;
-    }
+  public boolean isNecessary() {
+    return necessary;
+  }
 }

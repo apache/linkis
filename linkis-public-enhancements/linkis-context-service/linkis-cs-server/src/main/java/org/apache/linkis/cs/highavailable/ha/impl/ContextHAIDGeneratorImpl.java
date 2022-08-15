@@ -40,37 +40,35 @@ import org.slf4j.LoggerFactory;
 @Component
 public class ContextHAIDGeneratorImpl implements ContextHAIDGenerator {
 
-    private static final Logger logger = LoggerFactory.getLogger(ContextHAIDGeneratorImpl.class);
+  private static final Logger logger = LoggerFactory.getLogger(ContextHAIDGeneratorImpl.class);
 
-    @Autowired private BackupInstanceGenerator backupInstanceGenerator;
+  @Autowired private BackupInstanceGenerator backupInstanceGenerator;
 
-    @Autowired private InstanceAliasConverter instanceAliasConverter;
+  @Autowired private InstanceAliasConverter instanceAliasConverter;
 
-    @Override
-    public HAContextID generateHAContextID(ContextID contextID) throws CSErrorException {
-        String contextIDKey = null;
-        if (null != contextID && StringUtils.isNotBlank(contextID.getContextId())) {
-            contextIDKey = contextID.getContextId();
-        }
-
-        ServiceInstance mainInstance = DataWorkCloudApplication.getServiceInstance();
-        String mainInstanceAlias =
-                instanceAliasConverter.instanceToAlias(mainInstance.getInstance());
-        if (StringUtils.isBlank(mainInstanceAlias)) {
-            logger.error("MainInstance cannot be null.");
-            throw new CSErrorException(
-                    CSErrorCode.INVALID_INSTANCE, "MainInstance alias cannot be null.");
-        }
-        String backupInstance = backupInstanceGenerator.chooseBackupInstance(mainInstanceAlias);
-        if (StringUtils.isBlank(backupInstance)) {
-            logger.error("Generate backupInstance cannot be null.");
-            throw new CSErrorException(
-                    CSErrorCode.GENERATE_BACKUP_INSTANCE_ERROR,
-                    "Generate backupInstance cannot be null.");
-        }
-        HAContextID haContextID =
-                new CommonHAContextID(mainInstanceAlias, backupInstance, contextIDKey);
-        logger.info("Generate a haContextID : {}" + new Gson().toJson(haContextID));
-        return haContextID;
+  @Override
+  public HAContextID generateHAContextID(ContextID contextID) throws CSErrorException {
+    String contextIDKey = null;
+    if (null != contextID && StringUtils.isNotBlank(contextID.getContextId())) {
+      contextIDKey = contextID.getContextId();
     }
+
+    ServiceInstance mainInstance = DataWorkCloudApplication.getServiceInstance();
+    String mainInstanceAlias = instanceAliasConverter.instanceToAlias(mainInstance.getInstance());
+    if (StringUtils.isBlank(mainInstanceAlias)) {
+      logger.error("MainInstance cannot be null.");
+      throw new CSErrorException(
+          CSErrorCode.INVALID_INSTANCE, "MainInstance alias cannot be null.");
+    }
+    String backupInstance = backupInstanceGenerator.chooseBackupInstance(mainInstanceAlias);
+    if (StringUtils.isBlank(backupInstance)) {
+      logger.error("Generate backupInstance cannot be null.");
+      throw new CSErrorException(
+          CSErrorCode.GENERATE_BACKUP_INSTANCE_ERROR, "Generate backupInstance cannot be null.");
+    }
+    HAContextID haContextID =
+        new CommonHAContextID(mainInstanceAlias, backupInstance, contextIDKey);
+    logger.info("Generate a haContextID : {}" + new Gson().toJson(haContextID));
+    return haContextID;
+  }
 }

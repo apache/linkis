@@ -23,17 +23,17 @@ import java.util.Date;
 
 public interface NodeMetrics {
 
-    ServiceInstance getServiceInstance();
+  ServiceInstance getServiceInstance();
 
-    Integer getStatus();
+  Integer getStatus();
 
-    String getOverLoad();
+  String getOverLoad();
 
-    String getHeartBeatMsg();
+  String getHeartBeatMsg();
 
-    String getHealthy();
+  String getHealthy();
 
-    void setHealthy(String healthy);
+  void setHealthy(String healthy);
 
-    Date getUpdateTime();
+  Date getUpdateTime();
 }

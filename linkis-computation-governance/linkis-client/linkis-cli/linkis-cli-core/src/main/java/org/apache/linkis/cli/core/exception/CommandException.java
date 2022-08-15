@@ -23,40 +23,40 @@ import org.apache.linkis.cli.common.exception.error.ErrorLevel;
 import org.apache.linkis.cli.common.exception.error.ErrorMsg;
 
 public class CommandException extends LinkisClientRuntimeException {
-    private static final long serialVersionUID = 745261661L;
-    private CmdType cmdType = null;
+  private static final long serialVersionUID = 745261661L;
+  private CmdType cmdType = null;
 
-    public CommandException(
-            String code, ErrorLevel level, ErrorMsg errMsg, String param[], String... extMsg) {
-        super(code, level, errMsg, param, extMsg);
-    }
+  public CommandException(
+      String code, ErrorLevel level, ErrorMsg errMsg, String param[], String... extMsg) {
+    super(code, level, errMsg, param, extMsg);
+  }
 
-    public CommandException(String code, ErrorLevel level, ErrorMsg errMsg, Object... paramsList) {
-        super(code, level, errMsg, paramsList);
-    }
+  public CommandException(String code, ErrorLevel level, ErrorMsg errMsg, Object... paramsList) {
+    super(code, level, errMsg, paramsList);
+  }
 
-    public CommandException(
-            String code,
-            ErrorLevel level,
-            ErrorMsg errMsg,
-            CmdType cmdType,
-            String param[],
-            String... extMsg) {
-        super(code, level, errMsg, param, extMsg);
-        this.cmdType = cmdType;
-    }
+  public CommandException(
+      String code,
+      ErrorLevel level,
+      ErrorMsg errMsg,
+      CmdType cmdType,
+      String param[],
+      String... extMsg) {
+    super(code, level, errMsg, param, extMsg);
+    this.cmdType = cmdType;
+  }
 
-    public CommandException(
-            String code, ErrorLevel level, ErrorMsg errMsg, CmdType cmdType, Object... paramsList) {
-        super(code, level, errMsg, paramsList);
-        this.cmdType = cmdType;
-    }
+  public CommandException(
+      String code, ErrorLevel level, ErrorMsg errMsg, CmdType cmdType, Object... paramsList) {
+    super(code, level, errMsg, paramsList);
+    this.cmdType = cmdType;
+  }
 
-    public CmdType getCmdType() {
-        return cmdType;
-    }
+  public CmdType getCmdType() {
+    return cmdType;
+  }
 
-    public boolean requireHelp() {
-        return !(cmdType == null);
-    }
+  public boolean requireHelp() {
+    return !(cmdType == null);
+  }
 }

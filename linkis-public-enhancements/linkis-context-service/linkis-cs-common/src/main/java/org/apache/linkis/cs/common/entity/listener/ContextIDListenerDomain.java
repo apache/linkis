@@ -21,7 +21,7 @@ import org.apache.linkis.cs.common.entity.source.ContextID;
 
 public interface ContextIDListenerDomain extends ListenerDomain {
 
-    ContextID getContextID();
+  ContextID getContextID();
 
-    void setContextID(ContextID contextID);
+  void setContextID(ContextID contextID);
 }

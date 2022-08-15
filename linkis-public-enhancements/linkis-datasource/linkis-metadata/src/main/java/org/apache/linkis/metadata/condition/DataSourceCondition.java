@@ -25,9 +25,9 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
 
 public class DataSourceCondition implements Condition {
 
-    @Override
-    public boolean matches(
-            ConditionContext conditionContext, AnnotatedTypeMetadata annotatedTypeMetadata) {
-        return CommonVars.apply("linkis.metatdata.datasource.use.self", true).getValue();
-    }
+  @Override
+  public boolean matches(
+      ConditionContext conditionContext, AnnotatedTypeMetadata annotatedTypeMetadata) {
+    return CommonVars.apply("linkis.metatdata.datasource.use.self", true).getValue();
+  }
 }

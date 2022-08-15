@@ -5,16 +5,16 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.orchestrator.execution.impl
 
 import org.apache.linkis.orchestrator.Orchestrator
@@ -34,7 +34,6 @@ trait UserTaskRunnerQueue {
 
   def takeTaskRunnerAll(): Array[UserTaskRunner]
 
-
 }
 
 class UserTaskRunnerPriorityQueue extends UserTaskRunnerQueue {
@@ -43,11 +42,13 @@ class UserTaskRunnerPriorityQueue extends UserTaskRunnerQueue {
 
   private val priorityQueue = new mutable.PriorityQueue[UserTaskRunner]()
 
-  private val DEFAULT_MAX_RUNNING = OrchestratorConfiguration.ORCHESTRATOR_USER_MAX_RUNNING.getValue
+  private val DEFAULT_MAX_RUNNING =
+    OrchestratorConfiguration.ORCHESTRATOR_USER_MAX_RUNNING.getValue
 
-  private val userParallelOrchestratorPlugin = Orchestrator.getOrchestrator.getOrchestratorContext.getOrchestratorPlugins
-    .find(_.isInstanceOf[UserParallelOrchestratorPlugin]).map(_.asInstanceOf[UserParallelOrchestratorPlugin])
-
+  private val userParallelOrchestratorPlugin =
+    Orchestrator.getOrchestrator.getOrchestratorContext.getOrchestratorPlugins
+      .find(_.isInstanceOf[UserParallelOrchestratorPlugin])
+      .map(_.asInstanceOf[UserParallelOrchestratorPlugin])
 
   override def takeTaskRunner(max: Int): Array[UserTaskRunner] = {
     val arr = priorityQueue.dequeueAll.toArray
@@ -66,23 +67,40 @@ class UserTaskRunnerPriorityQueue extends UserTaskRunnerQueue {
     val astContext = taskRunner.task.getTaskDesc.getOrigin.getASTOrchestration.getASTContext
     val user = astContext.getExecuteUser
     val labels = astContext.getLabels
-    val maxRunningNumber = if (userParallelOrchestratorPlugin.isDefined) userParallelOrchestratorPlugin.get.getUserMaxRunningJobs(user, labels) else {
-      DEFAULT_MAX_RUNNING
-    }
+    val maxRunningNumber =
+      if (userParallelOrchestratorPlugin.isDefined)
+        userParallelOrchestratorPlugin.get.getUserMaxRunningJobs(user, labels)
+      else {
+        DEFAULT_MAX_RUNNING
+      }
     val runningNumber = userRunningNumber.getRunningNumber(user, labels)
     priorityQueue += UserTaskRunner(user, maxRunningNumber, runningNumber, taskRunner)
   }
 
-  override def addAll(taskRunners: Array[ExecTaskRunner], userRunningNumber: UserRunningNumber): Unit = {
-    val runners = taskRunners.map { taskRunner =>
-      val astContext = taskRunner.task.getTaskDesc.getOrigin.getASTOrchestration.getASTContext
-      val user = astContext.getExecuteUser
-      val labels = astContext.getLabels
-      val maxRunningNumber = if (userParallelOrchestratorPlugin.isDefined) userParallelOrchestratorPlugin.get.getUserMaxRunningJobs(user, labels) else {
-        DEFAULT_MAX_RUNNING
+  override def addAll(
+      taskRunners: Array[ExecTaskRunner],
+      userRunningNumber: UserRunningNumber
+  ): Unit = {
+    val runners = taskRunners
+      .map { taskRunner =>
+        val astContext = taskRunner.task.getTaskDesc.getOrigin.getASTOrchestration.getASTContext
+        val user = astContext.getExecuteUser
+        val labels = astContext.getLabels
+        val maxRunningNumber =
+          if (userParallelOrchestratorPlugin.isDefined)
+            userParallelOrchestratorPlugin.get.getUserMaxRunningJobs(user, labels)
+          else {
+            DEFAULT_MAX_RUNNING
+          }
+        UserTaskRunner(
+          user,
+          maxRunningNumber,
+          userRunningNumber.addNumber(user, labels),
+          taskRunner
+        )
       }
-      UserTaskRunner(user, maxRunningNumber, userRunningNumber.addNumber(user, labels), taskRunner)
-    }.filter(userTaskRunner => userTaskRunner.maxRunningNumber > userTaskRunner.runningNumber)
+      .filter(userTaskRunner => userTaskRunner.maxRunningNumber > userTaskRunner.runningNumber)
     priorityQueue ++= runners
   }
+
 }

@@ -26,49 +26,49 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 
 public class CommandPasswordCallback extends PasswordCallback {
-    private static final Charset CHARSET = Charset.defaultCharset();
+  private static final Charset CHARSET = Charset.defaultCharset();
 
-    public CommandPasswordCallback(String prompt) {
-        this(prompt, false);
-    }
+  public CommandPasswordCallback(String prompt) {
+    this(prompt, false);
+  }
 
-    public CommandPasswordCallback(String prompt, boolean echoOn) {
-        super(prompt, echoOn);
-    }
+  public CommandPasswordCallback(String prompt, boolean echoOn) {
+    super(prompt, echoOn);
+  }
 
-    private static String string(InputStream inputStream) throws IOException {
-        try {
-            return IOUtils.toString(inputStream, CHARSET);
-        } finally {
-            inputStream.close();
-        }
+  private static String string(InputStream inputStream) throws IOException {
+    try {
+      return IOUtils.toString(inputStream, CHARSET);
+    } finally {
+      inputStream.close();
     }
+  }
 
-    private static char[] array(InputStream inputStream) throws IOException {
-        try {
-            return IOUtils.toCharArray(inputStream, CHARSET);
-        } finally {
-            inputStream.close();
-        }
+  private static char[] array(InputStream inputStream) throws IOException {
+    try {
+      return IOUtils.toCharArray(inputStream, CHARSET);
+    } finally {
+      inputStream.close();
     }
+  }
 
-    @Override
-    public char[] getPassword() {
-        Process process = null;
-        String prompt = getPrompt();
-        try {
-            process = new ProcessBuilder().command(prompt).start();
-            int ret = process.waitFor();
-            if (ret != 0) throw new RuntimeException(string(process.getErrorStream()));
-            return array(process.getInputStream());
-        } catch (RuntimeException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to authenticate with command: " + prompt, e);
-        } finally {
-            if (process != null) {
-                process.destroy();
-            }
-        }
+  @Override
+  public char[] getPassword() {
+    Process process = null;
+    String prompt = getPrompt();
+    try {
+      process = new ProcessBuilder().command(prompt).start();
+      int ret = process.waitFor();
+      if (ret != 0) throw new RuntimeException(string(process.getErrorStream()));
+      return array(process.getInputStream());
+    } catch (RuntimeException e) {
+      throw e;
+    } catch (Exception e) {
+      throw new RuntimeException("Failed to authenticate with command: " + prompt, e);
+    } finally {
+      if (process != null) {
+        process.destroy();
+      }
     }
+  }
 }

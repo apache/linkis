@@ -19,13 +19,13 @@ package org.apache.linkis.protocol.query.cache;
 
 public class FailedToWriteCache implements ResponseWriteCache {
 
-    private String errorMessage;
+  private String errorMessage;
 
-    public FailedToWriteCache(String errorMessage) {
-        this.errorMessage = errorMessage;
-    }
+  public FailedToWriteCache(String errorMessage) {
+    this.errorMessage = errorMessage;
+  }
 
-    public String getErrorMessage() {
-        return errorMessage;
-    }
+  public String getErrorMessage() {
+    return errorMessage;
+  }
 }

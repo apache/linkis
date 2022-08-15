@@ -22,21 +22,21 @@ import org.slf4j.LoggerFactory;
 
 public class SizeEstimator {
 
-    private static final Logger logger = LoggerFactory.getLogger(SizeEstimator.class);
+  private static final Logger logger = LoggerFactory.getLogger(SizeEstimator.class);
 
-    private static ClassIntrospector classIntrospector = new ClassIntrospector();
+  private static ClassIntrospector classIntrospector = new ClassIntrospector();
 
-    @Deprecated
-    public static Long estimate(Object obj) {
-        /* try {
-            if (obj == null) {
-                return 0L;
-            }
-            ObjectInfo info = classIntrospector.introspect(obj);
-            return info.getDeepSize();
-        } catch (Throwable e) {
-            logger.info("estimate size failed", e);
-        }*/
-        return 0L;
-    }
+  @Deprecated
+  public static Long estimate(Object obj) {
+    /* try {
+        if (obj == null) {
+            return 0L;
+        }
+        ObjectInfo info = classIntrospector.introspect(obj);
+        return info.getDeepSize();
+    } catch (Throwable e) {
+        logger.info("estimate size failed", e);
+    }*/
+    return 0L;
+  }
 }

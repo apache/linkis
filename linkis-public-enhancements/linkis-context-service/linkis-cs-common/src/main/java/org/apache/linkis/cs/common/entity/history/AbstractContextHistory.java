@@ -18,27 +18,27 @@
 package org.apache.linkis.cs.common.entity.history;
 
 public abstract class AbstractContextHistory implements ContextHistory {
-    private Integer id;
+  private Integer id;
 
-    private String source;
+  private String source;
 
-    @Override
-    public Integer getId() {
-        return this.id;
-    }
+  @Override
+  public Integer getId() {
+    return this.id;
+  }
 
-    @Override
-    public void setId(Integer id) {
-        this.id = id;
-    }
+  @Override
+  public void setId(Integer id) {
+    this.id = id;
+  }
 
-    @Override
-    public String getSource() {
-        return this.source;
-    }
+  @Override
+  public String getSource() {
+    return this.source;
+  }
 
-    @Override
-    public void setSource(String source) {
-        this.source = source;
-    }
+  @Override
+  public void setSource(String source) {
+    this.source = source;
+  }
 }

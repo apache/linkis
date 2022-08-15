@@ -23,18 +23,18 @@ import org.apache.linkis.cs.condition.impl.OrCondition;
 
 public abstract class AbstractCommonCondition implements Condition {
 
-    @Override
-    public Condition and(Condition right) {
-        return new AndCondition(this, right);
-    }
+  @Override
+  public Condition and(Condition right) {
+    return new AndCondition(this, right);
+  }
 
-    @Override
-    public Condition or(Condition right) {
-        return new OrCondition(this, right);
-    }
+  @Override
+  public Condition or(Condition right) {
+    return new OrCondition(this, right);
+  }
 
-    @Override
-    public Condition not() {
-        return new NotCondition(this);
-    }
+  @Override
+  public Condition not() {
+    return new NotCondition(this);
+  }
 }

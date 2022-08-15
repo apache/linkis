@@ -5,20 +5,17 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
-package org.apache.linkis.variable.service
 
-import java.lang.Long
-import java.util
+package org.apache.linkis.variable.service
 
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.protocol.variable.ResponseQueryVariable
@@ -26,10 +23,15 @@ import org.apache.linkis.server.BDPJettyServerHelper
 import org.apache.linkis.variable.dao.VarMapper
 import org.apache.linkis.variable.entity.{VarKey, VarKeyUser, VarKeyValueVO}
 import org.apache.linkis.variable.exception.VariableException
+
 import org.apache.commons.lang3.StringUtils
+
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+
+import java.lang.Long
+import java.util
 
 @Service
 class VariableServiceImpl extends VariableService with Logging {
@@ -47,7 +49,11 @@ class VariableServiceImpl extends VariableService with Logging {
     response
   }
 
-  override def queryAppVariable(userName: String, creator: String, appName: String): ResponseQueryVariable = {
+  override def queryAppVariable(
+      userName: String,
+      creator: String,
+      appName: String
+  ): ResponseQueryVariable = {
     val globals = listGlobalVariable(userName)
     val response = new ResponseQueryVariable
     val map = new util.HashMap[String, String]()
@@ -60,7 +66,6 @@ class VariableServiceImpl extends VariableService with Logging {
   override def listGlobalVariable(userName: String): util.List[VarKeyValueVO] = {
     varMapper.listGlobalVariable(userName)
   }
-
 
   private def removeGlobalVariable(keyID: Long): Unit = {
     val value = varMapper.getValueByKeyID(keyID)
@@ -86,7 +91,6 @@ class VariableServiceImpl extends VariableService with Logging {
       }
     }*/
 
-
   private def insertGlobalVariable(saveVariable: VarKeyValueVO, userName: String): Unit = {
     val newKey = new VarKey
     newKey.setApplicationID(-1L)
@@ -105,38 +109,45 @@ class VariableServiceImpl extends VariableService with Logging {
   }
 
   @Transactional
-  override def saveGlobalVaraibles(globalVariables: util.List[_], userVariables: util.List[VarKeyValueVO], userName: String): Unit = {
+  override def saveGlobalVaraibles(
+      globalVariables: util.List[_],
+      userVariables: util.List[VarKeyValueVO],
+      userName: String
+  ): Unit = {
     import scala.collection.JavaConversions._
     import scala.util.control.Breaks._
-    val saves = globalVariables.map(f => BDPJettyServerHelper.gson.fromJson(BDPJettyServerHelper.gson.toJson(f), classOf[VarKeyValueVO]))
-    saves.foreach {
-      f =>
-        if (StringUtils.isBlank(f.getKey) || StringUtils.isBlank(f.getValue)) throw new VariableException("key或value不能为空")
-        var flag = true
-        breakable {
-          for (ele <- userVariables) {
-            if (f.getKey.equals(ele.getKey)) {
-              flag = false
-              updateGlobalVariable(f, ele.getValueID)
-              break()
-            }
+    val saves = globalVariables.map(f =>
+      BDPJettyServerHelper.gson
+        .fromJson(BDPJettyServerHelper.gson.toJson(f), classOf[VarKeyValueVO])
+    )
+    saves.foreach { f =>
+      if (StringUtils.isBlank(f.getKey) || StringUtils.isBlank(f.getValue))
+        throw new VariableException("key或value不能为空")
+      var flag = true
+      breakable {
+        for (ele <- userVariables) {
+          if (f.getKey.equals(ele.getKey)) {
+            flag = false
+            updateGlobalVariable(f, ele.getValueID)
+            break()
           }
         }
-        if (flag) insertGlobalVariable(f, userName)
+      }
+      if (flag) insertGlobalVariable(f, userName)
     }
-    userVariables.foreach {
-      f =>
-        var flag = true
-        breakable {
-          for (ele <- saves) {
-            if (ele.getKey.equals(f.getKey)) {
-              flag = false
-              break()
-            }
+    userVariables.foreach { f =>
+      var flag = true
+      breakable {
+        for (ele <- saves) {
+          if (ele.getKey.equals(f.getKey)) {
+            flag = false
+            break()
           }
-          if (flag) removeGlobalVariable(f.getKeyID)
         }
+        if (flag) removeGlobalVariable(f.getKeyID)
+      }
     }
 
   }
+
 }

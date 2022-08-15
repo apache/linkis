@@ -18,37 +18,37 @@
 package org.apache.linkis.bml.common;
 
 public enum OperationEnum {
-    /** 任务操作类型 */
-    UPLOAD("upload", 0),
-    UPDATE("update", 1),
-    DOWNLOAD("download", 2),
-    DELETE_VERSION("deleteVersion", 3),
-    DELETE_RESOURCE("deleteResource", 4),
-    DELETE_RESOURCES("deleteResources", 5),
-    ROLLBACK_VERSION("rollbackVersion", 6),
-    COPY_RESOURCE("copyResource", 7);
+  /** 任务操作类型 */
+  UPLOAD("upload", 0),
+  UPDATE("update", 1),
+  DOWNLOAD("download", 2),
+  DELETE_VERSION("deleteVersion", 3),
+  DELETE_RESOURCE("deleteResource", 4),
+  DELETE_RESOURCES("deleteResources", 5),
+  ROLLBACK_VERSION("rollbackVersion", 6),
+  COPY_RESOURCE("copyResource", 7);
 
-    private String value;
-    private int id;
+  private String value;
+  private int id;
 
-    private OperationEnum(String value, int id) {
-        this.value = value;
-        this.id = id;
-    }
+  private OperationEnum(String value, int id) {
+    this.value = value;
+    this.id = id;
+  }
 
-    public String getValue() {
-        return value;
-    }
+  public String getValue() {
+    return value;
+  }
 
-    public void setValue(String value) {
-        this.value = value;
-    }
+  public void setValue(String value) {
+    this.value = value;
+  }
 
-    public int getId() {
-        return id;
-    }
+  public int getId() {
+    return id;
+  }
 
-    public void setId(int id) {
-        this.id = id;
-    }
+  public void setId(int id) {
+    this.id = id;
+  }
 }

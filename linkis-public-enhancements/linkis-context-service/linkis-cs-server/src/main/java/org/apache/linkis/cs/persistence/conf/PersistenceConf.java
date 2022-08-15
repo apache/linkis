@@ -21,23 +21,21 @@ import org.apache.linkis.common.conf.CommonVars;
 
 public class PersistenceConf {
 
-    public static final CommonVars<String> TUNING_CLASS =
-            CommonVars.apply(
-                    "wds.linkis.cs.ha.class",
-                    "org.apache.linkis.cs.highavailable.DefaultContextHAManager");
-    // public static final CommonVars<String> TUNING_CLASS =
-    // CommonVars.apply("wds.linkis.cs.ha.class","org.apache.linkis.cs.persistence.ProxyMethodA");
+  public static final CommonVars<String> TUNING_CLASS =
+      CommonVars.apply(
+          "wds.linkis.cs.ha.class", "org.apache.linkis.cs.highavailable.DefaultContextHAManager");
+  // public static final CommonVars<String> TUNING_CLASS =
+  // CommonVars.apply("wds.linkis.cs.ha.class","org.apache.linkis.cs.persistence.ProxyMethodA");
 
-    public static final CommonVars<String> TUNING_METHOD =
-            CommonVars.apply("wds.linkis.cs.ha.proxymethod", "getContextHAProxy");
+  public static final CommonVars<String> TUNING_METHOD =
+      CommonVars.apply("wds.linkis.cs.ha.proxymethod", "getContextHAProxy");
 
-    public static final CommonVars<Boolean> ENABLE_CS_DESERIALIZE_REPLACE_PACKAGE_HEADER =
-            CommonVars.apply("wds.linkis.cs.deserialize.replace_package_header.enable", true);
+  public static final CommonVars<Boolean> ENABLE_CS_DESERIALIZE_REPLACE_PACKAGE_HEADER =
+      CommonVars.apply("wds.linkis.cs.deserialize.replace_package_header.enable", true);
 
-    public static final CommonVars<String> CS_DESERIALIZE_REPLACE_PACKAGE_HEADER =
-            CommonVars.apply(
-                    "wds.linkis.cs.deserialize.replace_package.header",
-                    "com.webank.wedatasphere.linkis");
+  public static final CommonVars<String> CS_DESERIALIZE_REPLACE_PACKAGE_HEADER =
+      CommonVars.apply(
+          "wds.linkis.cs.deserialize.replace_package.header", "com.webank.wedatasphere.linkis");
 
-    public static final String CSID_PACKAGE_HEADER = "org.apache.linkis";
+  public static final String CSID_PACKAGE_HEADER = "org.apache.linkis";
 }

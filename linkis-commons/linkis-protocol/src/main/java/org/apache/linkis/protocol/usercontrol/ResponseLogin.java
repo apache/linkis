@@ -21,40 +21,40 @@ import java.util.Date;
 
 public class ResponseLogin implements UserControlLoginProtocol {
 
-    private String userName;
-    private Date lastLoginDate;
-    private Integer status;
-    private String errMsg;
+  private String userName;
+  private Date lastLoginDate;
+  private Integer status;
+  private String errMsg;
 
-    public String getUserName() {
-        return userName;
-    }
+  public String getUserName() {
+    return userName;
+  }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
+  public void setUserName(String userName) {
+    this.userName = userName;
+  }
 
-    public Date getLastLoginDate() {
-        return lastLoginDate;
-    }
+  public Date getLastLoginDate() {
+    return lastLoginDate;
+  }
 
-    public void setLastLoginDate(Date lastLoginDate) {
-        this.lastLoginDate = lastLoginDate;
-    }
+  public void setLastLoginDate(Date lastLoginDate) {
+    this.lastLoginDate = lastLoginDate;
+  }
 
-    public Integer getStatus() {
-        return status;
-    }
+  public Integer getStatus() {
+    return status;
+  }
 
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
+  public void setStatus(Integer status) {
+    this.status = status;
+  }
 
-    public String getErrMsg() {
-        return errMsg;
-    }
+  public String getErrMsg() {
+    return errMsg;
+  }
 
-    public void setErrMsg(String errMsg) {
-        this.errMsg = errMsg;
-    }
+  public void setErrMsg(String errMsg) {
+    this.errMsg = errMsg;
+  }
 }

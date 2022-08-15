@@ -36,89 +36,89 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
 import java.util.Date;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 @RestController
 @RequestMapping(path = "/contextservice")
 public class ContextIDRestfulApi implements CsRestfulParent {
 
-    @Autowired private CsScheduler csScheduler;
+  @Autowired private CsScheduler csScheduler;
 
-    @RequestMapping(path = "createContextID", method = RequestMethod.POST)
-    public Message createContextID(HttpServletRequest req) throws InterruptedException {
-        // contextID是client传过来的序列化的id
-        PersistenceContextID contextID = new PersistenceContextID();
-        contextID.setUser("hadoop");
-        contextID.setExpireType(ExpireType.TODAY);
-        contextID.setExpireTime(new Date());
-        contextID.setInstance("cs-server1");
-        contextID.setBackupInstance("cs-server2,cs-server3");
-        contextID.setApplication("spark");
-        HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.CREATE, contextID);
-        return generateResponse(answerJob, "contextId");
-    }
+  @RequestMapping(path = "createContextID", method = RequestMethod.POST)
+  public Message createContextID(HttpServletRequest req) throws InterruptedException {
+    // contextID是client传过来的序列化的id
+    PersistenceContextID contextID = new PersistenceContextID();
+    contextID.setUser("hadoop");
+    contextID.setExpireType(ExpireType.TODAY);
+    contextID.setExpireTime(new Date());
+    contextID.setInstance("cs-server1");
+    contextID.setBackupInstance("cs-server2,cs-server3");
+    contextID.setApplication("spark");
+    HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.CREATE, contextID);
+    return generateResponse(answerJob, "contextId");
+  }
 
-    @RequestMapping(path = "getContextID", method = RequestMethod.GET)
-    public Message getContextID(
-            HttpServletRequest req, @RequestParam(value = "contextId", required = false) String id)
-            throws InterruptedException, CSErrorException {
-        if (StringUtils.isEmpty(id)) {
-            throw new CSErrorException(97000, "contxtId cannot be empty");
-        }
-        HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.GET, id);
-        return generateResponse(answerJob, "");
+  @RequestMapping(path = "getContextID", method = RequestMethod.GET)
+  public Message getContextID(
+      HttpServletRequest req, @RequestParam(value = "contextId", required = false) String id)
+      throws InterruptedException, CSErrorException {
+    if (StringUtils.isEmpty(id)) {
+      throw new CSErrorException(97000, "contxtId cannot be empty");
     }
+    HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.GET, id);
+    return generateResponse(answerJob, "");
+  }
 
-    @RequestMapping(path = "updateContextID", method = RequestMethod.POST)
-    public Message updateContextID(HttpServletRequest req)
-            throws InterruptedException, CSErrorException {
-        PersistenceContextID contextID = new PersistenceContextID();
-        contextID.setUser("hadoop");
-        contextID.setExpireType(ExpireType.NEVER);
-        contextID.setExpireTime(new Date());
-        contextID.setInstance("cs-server2");
-        contextID.setBackupInstance("cs-server1,cs-server3");
-        contextID.setApplication("hive");
-        // TODO: 2020/2/25 这里要填响应的contextId
-        contextID.setContextId("84714");
-        if (StringUtils.isEmpty(contextID.getContextId())) {
-            throw new CSErrorException(97000, "contxtId cannot be empty");
-        }
-        HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.UPDATE, contextID);
-        return generateResponse(answerJob, "");
+  @RequestMapping(path = "updateContextID", method = RequestMethod.POST)
+  public Message updateContextID(HttpServletRequest req)
+      throws InterruptedException, CSErrorException {
+    PersistenceContextID contextID = new PersistenceContextID();
+    contextID.setUser("hadoop");
+    contextID.setExpireType(ExpireType.NEVER);
+    contextID.setExpireTime(new Date());
+    contextID.setInstance("cs-server2");
+    contextID.setBackupInstance("cs-server1,cs-server3");
+    contextID.setApplication("hive");
+    // TODO: 2020/2/25 这里要填响应的contextId
+    contextID.setContextId("84714");
+    if (StringUtils.isEmpty(contextID.getContextId())) {
+      throw new CSErrorException(97000, "contxtId cannot be empty");
     }
+    HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.UPDATE, contextID);
+    return generateResponse(answerJob, "");
+  }
 
-    @RequestMapping(path = "resetContextID", method = RequestMethod.POST)
-    public Message resetContextID(HttpServletRequest req)
-            throws InterruptedException, CSErrorException {
-        String id = null;
-        if (StringUtils.isEmpty(id)) {
-            throw new CSErrorException(97000, "contxtId cannot be empty");
-        }
-        HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.RESET, id);
-        return generateResponse(answerJob, "");
+  @RequestMapping(path = "resetContextID", method = RequestMethod.POST)
+  public Message resetContextID(HttpServletRequest req)
+      throws InterruptedException, CSErrorException {
+    String id = null;
+    if (StringUtils.isEmpty(id)) {
+      throw new CSErrorException(97000, "contxtId cannot be empty");
     }
+    HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.RESET, id);
+    return generateResponse(answerJob, "");
+  }
 
-    @RequestMapping(path = "removeContextID", method = RequestMethod.POST)
-    public Message removeContextID(HttpServletRequest req, @RequestBody JsonNode json)
-            throws InterruptedException, CSErrorException {
-        String id = json.get("contextId").textValue();
-        if (StringUtils.isEmpty(id)) {
-            throw new CSErrorException(97000, "contxtId cannot be empty");
-        }
-        HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.REMOVE, id);
-        return generateResponse(answerJob, "");
+  @RequestMapping(path = "removeContextID", method = RequestMethod.POST)
+  public Message removeContextID(HttpServletRequest req, @RequestBody JsonNode json)
+      throws InterruptedException, CSErrorException {
+    String id = json.get("contextId").textValue();
+    if (StringUtils.isEmpty(id)) {
+      throw new CSErrorException(97000, "contxtId cannot be empty");
     }
+    HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.REMOVE, id);
+    return generateResponse(answerJob, "");
+  }
 
-    @Override
-    public ServiceType getServiceType() {
-        return ServiceType.CONTEXT_ID;
-    }
+  @Override
+  public ServiceType getServiceType() {
+    return ServiceType.CONTEXT_ID;
+  }
 
-    @Override
-    public CsScheduler getScheduler() {
-        return this.csScheduler;
-    }
+  @Override
+  public CsScheduler getScheduler() {
+    return this.csScheduler;
+  }
 }

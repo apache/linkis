@@ -32,121 +32,121 @@ import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.table.types.logical.VarCharType;
 import org.apache.flink.types.Row;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.List;
 import java.util.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /** A default implementation of JobOperation. */
 public abstract class AbstractJobOperation extends FlinkListenerGroupImpl implements JobOperation {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractJobOperation.class);
+  private static final Logger LOG = LoggerFactory.getLogger(AbstractJobOperation.class);
 
-    protected final FlinkEngineConnContext context;
-    // clusterDescriptorAdapter is not null only after job is submitted
-    private YarnSessionClusterDescriptorAdapter clusterDescriptorAdapter;
-    private volatile JobID jobId;
-    protected boolean noMoreResult;
+  protected final FlinkEngineConnContext context;
+  // clusterDescriptorAdapter is not null only after job is submitted
+  private YarnSessionClusterDescriptorAdapter clusterDescriptorAdapter;
+  private volatile JobID jobId;
+  protected boolean noMoreResult;
 
-    private volatile boolean isJobCanceled;
+  private volatile boolean isJobCanceled;
 
-    protected final Object lock = new Object();
+  protected final Object lock = new Object();
 
-    public AbstractJobOperation(FlinkEngineConnContext context) {
-        this.context = context;
-        this.isJobCanceled = false;
-        this.noMoreResult = false;
+  public AbstractJobOperation(FlinkEngineConnContext context) {
+    this.context = context;
+    this.isJobCanceled = false;
+    this.noMoreResult = false;
+  }
+
+  @Override
+  public void setClusterDescriptorAdapter(YarnSessionClusterDescriptorAdapter clusterDescriptor) {
+    this.clusterDescriptorAdapter = clusterDescriptor;
+  }
+
+  @Override
+  public ResultSet execute() throws SqlExecutionException {
+    jobId = submitJob();
+    clusterDescriptorAdapter.setJobId(jobId);
+    String strJobId = jobId.toString();
+    return ResultSet.builder()
+        .resultKind(ResultKind.SUCCESS_WITH_CONTENT)
+        .columns(ColumnInfo.create("jobId", new VarCharType(false, strJobId.length())))
+        .data(Row.of(strJobId))
+        .build();
+  }
+
+  public JobID transformToJobInfo(ResultSet resultSet) throws SqlExecutionException {
+    if (resultSet.getColumns().size() != 1) {
+      throw new SqlExecutionException("Not support to transform this resultSet to JobId.");
     }
+    Row row = resultSet.getData().get(0);
+    return JobID.fromHexString(row.getField(0).toString());
+  }
 
-    @Override
-    public void setClusterDescriptorAdapter(YarnSessionClusterDescriptorAdapter clusterDescriptor) {
-        this.clusterDescriptorAdapter = clusterDescriptor;
+  @Override
+  public JobStatus getJobStatus() throws JobExecutionException {
+    synchronized (lock) {
+      return clusterDescriptorAdapter.getJobStatus();
     }
+  }
 
-    @Override
-    public ResultSet execute() throws SqlExecutionException {
-        jobId = submitJob();
-        clusterDescriptorAdapter.setJobId(jobId);
-        String strJobId = jobId.toString();
-        return ResultSet.builder()
+  @Override
+  public void cancelJob() throws JobExecutionException {
+    if (isJobCanceled) {
+      // just for fast failure
+      return;
+    }
+    synchronized (lock) {
+      if (jobId == null) {
+        LOG.error("No job has been submitted. This is a bug.");
+        throw new IllegalStateException("No job has been submitted. This is a bug.");
+      }
+      if (isJobCanceled) {
+        return;
+      }
+
+      cancelJobInternal();
+      isJobCanceled = true;
+    }
+  }
+
+  protected abstract JobID submitJob() throws SqlExecutionException;
+
+  protected void cancelJobInternal() throws JobExecutionException {
+    LOG.info("Start to cancel job {} and result retrieval.", getJobId());
+    // ignore if there is no more result
+    // the job might has finished earlier. it's hard to say whether it need to be canceled,
+    // so the clients should be care for the exceptions ???
+    if (noMoreResult) {
+      return;
+    }
+    clusterDescriptorAdapter.cancelJob();
+  }
+
+  @Override
+  public JobID getJobId() {
+    if (jobId == null) {
+      throw new IllegalStateException("No job has been submitted. This is a bug.");
+    }
+    return jobId;
+  }
+
+  @Override
+  public synchronized Optional<ResultSet> getJobResult() throws SqlExecutionException {
+    Optional<Tuple2<List<Row>, List<Boolean>>> newResults = fetchJobResults();
+    return newResults.map(
+        r ->
+            ResultSet.builder()
                 .resultKind(ResultKind.SUCCESS_WITH_CONTENT)
-                .columns(ColumnInfo.create("jobId", new VarCharType(false, strJobId.length())))
-                .data(Row.of(strJobId))
-                .build();
-    }
+                .columns(getColumnInfos())
+                .data(r.f0)
+                .changeFlags(newResults.get().f1)
+                .build());
+  }
 
-    public JobID transformToJobInfo(ResultSet resultSet) throws SqlExecutionException {
-        if (resultSet.getColumns().size() != 1) {
-            throw new SqlExecutionException("Not support to transform this resultSet to JobId.");
-        }
-        Row row = resultSet.getData().get(0);
-        return JobID.fromHexString(row.getField(0).toString());
-    }
+  protected abstract Optional<Tuple2<List<Row>, List<Boolean>>> fetchJobResults()
+      throws SqlExecutionException;
 
-    @Override
-    public JobStatus getJobStatus() throws JobExecutionException {
-        synchronized (lock) {
-            return clusterDescriptorAdapter.getJobStatus();
-        }
-    }
-
-    @Override
-    public void cancelJob() throws JobExecutionException {
-        if (isJobCanceled) {
-            // just for fast failure
-            return;
-        }
-        synchronized (lock) {
-            if (jobId == null) {
-                LOG.error("No job has been submitted. This is a bug.");
-                throw new IllegalStateException("No job has been submitted. This is a bug.");
-            }
-            if (isJobCanceled) {
-                return;
-            }
-
-            cancelJobInternal();
-            isJobCanceled = true;
-        }
-    }
-
-    protected abstract JobID submitJob() throws SqlExecutionException;
-
-    protected void cancelJobInternal() throws JobExecutionException {
-        LOG.info("Start to cancel job {} and result retrieval.", getJobId());
-        // ignore if there is no more result
-        // the job might has finished earlier. it's hard to say whether it need to be canceled,
-        // so the clients should be care for the exceptions ???
-        if (noMoreResult) {
-            return;
-        }
-        clusterDescriptorAdapter.cancelJob();
-    }
-
-    @Override
-    public JobID getJobId() {
-        if (jobId == null) {
-            throw new IllegalStateException("No job has been submitted. This is a bug.");
-        }
-        return jobId;
-    }
-
-    @Override
-    public synchronized Optional<ResultSet> getJobResult() throws SqlExecutionException {
-        Optional<Tuple2<List<Row>, List<Boolean>>> newResults = fetchJobResults();
-        return newResults.map(
-                r ->
-                        ResultSet.builder()
-                                .resultKind(ResultKind.SUCCESS_WITH_CONTENT)
-                                .columns(getColumnInfos())
-                                .data(r.f0)
-                                .changeFlags(newResults.get().f1)
-                                .build());
-    }
-
-    protected abstract Optional<Tuple2<List<Row>, List<Boolean>>> fetchJobResults()
-            throws SqlExecutionException;
-
-    protected abstract List<ColumnInfo> getColumnInfos();
+  protected abstract List<ColumnInfo> getColumnInfos();
 }

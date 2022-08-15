@@ -25,59 +25,59 @@ import org.apache.linkis.cs.listener.event.impl.DefaultContextIDEvent;
 /** Description: 这个listener是用来监听contextID的，用户可以进行实现 */
 public abstract class ContextIDListener implements ContextClientListener {
 
-    private ContextID contextID;
+  private ContextID contextID;
 
-    private Context context;
+  private Context context;
 
-    public ContextIDListener() {}
+  public ContextIDListener() {}
 
-    public ContextIDListener(ContextID contextID) {
-        this.contextID = contextID;
-    }
+  public ContextIDListener(ContextID contextID) {
+    this.contextID = contextID;
+  }
 
-    public ContextID getContextID() {
-        return contextID;
-    }
+  public ContextID getContextID() {
+    return contextID;
+  }
 
-    public void setContextID(ContextID contextID) {
-        this.contextID = contextID;
-    }
+  public void setContextID(ContextID contextID) {
+    this.contextID = contextID;
+  }
 
-    public Context getContext() {
-        return context;
-    }
+  public Context getContext() {
+    return context;
+  }
 
-    public void setContext(Context context) {
-        this.context = context;
-    }
+  public void setContext(Context context) {
+    this.context = context;
+  }
 
-    @Override
-    public void onContextCreated(Event event) {}
+  @Override
+  public void onContextCreated(Event event) {}
 
-    @Override
-    public void onContextUpdated(Event event) {}
+  @Override
+  public void onContextUpdated(Event event) {}
 
-    public abstract void onContextRemoved(Event event);
+  public abstract void onContextRemoved(Event event);
 
-    @Override
-    public void onEvent(Event event) {
-        if (event instanceof DefaultContextIDEvent) {
-            DefaultContextIDEvent defaultContextKeyEvent = (DefaultContextIDEvent) event;
-            if (defaultContextKeyEvent.getContextID().equals(contextID)) {
-                switch (defaultContextKeyEvent.getOperateType()) {
-                    case UPDATE:
-                        onContextUpdated(defaultContextKeyEvent);
-                        break;
-                    case CREATE:
-                        onContextCreated(defaultContextKeyEvent);
-                        break;
-                    case REMOVE:
-                        onContextRemoved(defaultContextKeyEvent);
-                        break;
-                    default:
-                        break;
-                }
-            }
+  @Override
+  public void onEvent(Event event) {
+    if (event instanceof DefaultContextIDEvent) {
+      DefaultContextIDEvent defaultContextKeyEvent = (DefaultContextIDEvent) event;
+      if (defaultContextKeyEvent.getContextID().equals(contextID)) {
+        switch (defaultContextKeyEvent.getOperateType()) {
+          case UPDATE:
+            onContextUpdated(defaultContextKeyEvent);
+            break;
+          case CREATE:
+            onContextCreated(defaultContextKeyEvent);
+            break;
+          case REMOVE:
+            onContextRemoved(defaultContextKeyEvent);
+            break;
+          default:
+            break;
         }
+      }
     }
+  }
 }

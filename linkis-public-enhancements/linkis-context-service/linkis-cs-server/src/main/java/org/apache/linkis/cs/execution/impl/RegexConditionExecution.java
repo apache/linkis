@@ -28,24 +28,22 @@ import org.apache.linkis.cs.execution.ruler.CommonListContextSearchRuler;
 
 public class RegexConditionExecution extends AbstractConditionExecution {
 
-    public RegexConditionExecution(
-            RegexCondition condition,
-            ContextCacheService contextCacheService,
-            ContextID contextID) {
-        super(condition, contextCacheService, contextID);
-        this.contextSearchMatcher = new RegexContextSearchMatcher(condition);
-        this.contextSearchRuler = new CommonListContextSearchRuler(contextSearchMatcher);
-        this.contextCacheFetcher =
-                new IterateContextCacheFetcher(contextCacheService, contextSearchRuler);
-    }
+  public RegexConditionExecution(
+      RegexCondition condition, ContextCacheService contextCacheService, ContextID contextID) {
+    super(condition, contextCacheService, contextID);
+    this.contextSearchMatcher = new RegexContextSearchMatcher(condition);
+    this.contextSearchRuler = new CommonListContextSearchRuler(contextSearchMatcher);
+    this.contextCacheFetcher =
+        new IterateContextCacheFetcher(contextCacheService, contextSearchRuler);
+  }
 
-    @Override
-    protected boolean needOptimization() {
-        return false;
-    }
+  @Override
+  protected boolean needOptimization() {
+    return false;
+  }
 
-    @Override
-    protected ContextCacheFetcher getFastFetcher() {
-        return null;
-    }
+  @Override
+  protected ContextCacheFetcher getFastFetcher() {
+    return null;
+  }
 }

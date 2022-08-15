@@ -21,16 +21,16 @@ import org.apache.linkis.common.exception.ErrorException;
 
 public class InstanceErrorException extends ErrorException {
 
-    public InstanceErrorException(int errCode, String desc) {
-        super(errCode, desc);
-    }
+  public InstanceErrorException(int errCode, String desc) {
+    super(errCode, desc);
+  }
 
-    public InstanceErrorException(String desc, Throwable t) {
-        this(desc);
-        this.initCause(t);
-    }
+  public InstanceErrorException(String desc, Throwable t) {
+    this(desc);
+    this.initCause(t);
+  }
 
-    public InstanceErrorException(String desc) {
-        super(14100, desc);
-    }
+  public InstanceErrorException(String desc) {
+    super(14100, desc);
+  }
 }

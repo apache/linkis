@@ -23,62 +23,62 @@ import java.util.Map;
 
 /** Stream content */
 public class FormStreamContent {
-    private InputStream stream;
-    private String fileName;
+  private InputStream stream;
+  private String fileName;
 
-    private long size;
+  private long size;
 
-    private Date createDate;
+  private Date createDate;
 
-    private Date modifyDate;
+  private Date modifyDate;
 
-    private Map<String, String> parameters;
+  private Map<String, String> parameters;
 
-    public InputStream getStream() {
-        return stream;
-    }
+  public InputStream getStream() {
+    return stream;
+  }
 
-    public void setStream(InputStream stream) {
-        this.stream = stream;
-    }
+  public void setStream(InputStream stream) {
+    this.stream = stream;
+  }
 
-    public String getFileName() {
-        return fileName;
-    }
+  public String getFileName() {
+    return fileName;
+  }
 
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
+  public void setFileName(String fileName) {
+    this.fileName = fileName;
+  }
 
-    public long getSize() {
-        return size;
-    }
+  public long getSize() {
+    return size;
+  }
 
-    public void setSize(long size) {
-        this.size = size;
-    }
+  public void setSize(long size) {
+    this.size = size;
+  }
 
-    public Date getCreateDate() {
-        return createDate;
-    }
+  public Date getCreateDate() {
+    return createDate;
+  }
 
-    public void setCreateDate(Date createDate) {
-        this.createDate = createDate;
-    }
+  public void setCreateDate(Date createDate) {
+    this.createDate = createDate;
+  }
 
-    public Date getModifyDate() {
-        return modifyDate;
-    }
+  public Date getModifyDate() {
+    return modifyDate;
+  }
 
-    public void setModifyDate(Date modifyDate) {
-        this.modifyDate = modifyDate;
-    }
+  public void setModifyDate(Date modifyDate) {
+    this.modifyDate = modifyDate;
+  }
 
-    public Map<String, String> getParameters() {
-        return parameters;
-    }
+  public Map<String, String> getParameters() {
+    return parameters;
+  }
 
-    public void setParameters(Map<String, String> parameters) {
-        this.parameters = parameters;
-    }
+  public void setParameters(Map<String, String> parameters) {
+    this.parameters = parameters;
+  }
 }

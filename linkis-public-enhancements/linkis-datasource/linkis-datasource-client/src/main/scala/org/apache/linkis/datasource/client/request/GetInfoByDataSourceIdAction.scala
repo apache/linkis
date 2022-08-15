@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,11 +21,11 @@ import org.apache.linkis.datasource.client.config.DatasourceClientConfig.DATA_SO
 import org.apache.linkis.datasource.client.exception.DataSourceClientBuilderException
 import org.apache.linkis.httpclient.request.GetAction
 
-
 class GetInfoByDataSourceIdAction extends GetAction with DataSourceAction {
   private var dataSourceId: Long = _
 
-  override def suffixURLs: Array[String] = Array(DATA_SOURCE_SERVICE_MODULE.getValue, "info", dataSourceId.toString)
+  override def suffixURLs: Array[String] =
+    Array(DATA_SOURCE_SERVICE_MODULE.getValue, "info", dataSourceId.toString)
 
   private var user: String = _
 
@@ -37,7 +37,7 @@ class GetInfoByDataSourceIdAction extends GetAction with DataSourceAction {
 object GetInfoByDataSourceIdAction {
   def builder(): Builder = new Builder
 
-  class Builder private[GetInfoByDataSourceIdAction]() {
+  class Builder private[GetInfoByDataSourceIdAction] () {
     private var dataSourceId: Long = _
     private var system: String = _
     private var user: String = _
@@ -58,9 +58,10 @@ object GetInfoByDataSourceIdAction {
     }
 
     def build(): GetInfoByDataSourceIdAction = {
-      if (dataSourceId == null) throw new DataSourceClientBuilderException("dataSourceId is needed!")
-      if(system == null) throw new DataSourceClientBuilderException("system is needed!")
-      if(user == null) throw new DataSourceClientBuilderException("user is needed!")
+      if (dataSourceId == null)
+        throw new DataSourceClientBuilderException("dataSourceId is needed!")
+      if (system == null) throw new DataSourceClientBuilderException("system is needed!")
+      if (user == null) throw new DataSourceClientBuilderException("user is needed!")
 
       val getInfoByDataSourceIdAction = new GetInfoByDataSourceIdAction
       getInfoByDataSourceIdAction.dataSourceId = this.dataSourceId
@@ -68,6 +69,7 @@ object GetInfoByDataSourceIdAction {
       getInfoByDataSourceIdAction.setUser(user)
       getInfoByDataSourceIdAction
     }
+
   }
 
 }

@@ -25,12 +25,12 @@ import java.util.List;
 
 public interface LabelMapper {
 
-    ConfigLabel getLabelByKeyValue(
-            @Param("labelKey") String labelKey, @Param("stringValue") String stringValue);
+  ConfigLabel getLabelByKeyValue(
+      @Param("labelKey") String labelKey, @Param("stringValue") String stringValue);
 
-    void insertLabel(ConfigLabel label);
+  void insertLabel(ConfigLabel label);
 
-    void deleteLabel(@Param("ids") List<Integer> ids);
+  void deleteLabel(@Param("ids") List<Integer> ids);
 
-    ConfigLabel getLabelById(@Param("id") Integer id);
+  ConfigLabel getLabelById(@Param("id") Integer id);
 }

@@ -22,12 +22,12 @@ import org.apache.linkis.cs.condition.Condition;
 
 public class SkipContextSearchMather extends AbstractContextSearchMatcher {
 
-    public SkipContextSearchMather(Condition condition) {
-        super(condition);
-    }
+  public SkipContextSearchMather(Condition condition) {
+    super(condition);
+  }
 
-    @Override
-    public Boolean match(ContextKeyValue contextKeyValue) {
-        return true;
-    }
+  @Override
+  public Boolean match(ContextKeyValue contextKeyValue) {
+    return true;
+  }
 }

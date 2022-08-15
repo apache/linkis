@@ -22,12 +22,12 @@ import java.util.Map;
 
 public interface BaseMetadataService {
 
-    /**
-     * Get connection
-     *
-     * @param params connect params
-     * @return
-     */
-    MetadataConnection<? extends Closeable> getConnection(
-            String operator, Map<String, Object> params) throws Exception;
+  /**
+   * Get connection
+   *
+   * @param params connect params
+   * @return
+   */
+  MetadataConnection<? extends Closeable> getConnection(String operator, Map<String, Object> params)
+      throws Exception;
 }

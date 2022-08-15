@@ -32,49 +32,49 @@ import java.util.concurrent.TimeUnit;
 
 public class YarnApplicationClusterDescriptorAdapter extends ClusterDescriptorAdapter {
 
-    YarnApplicationClusterDescriptorAdapter(ExecutionContext executionContext) {
-        super(executionContext);
-    }
+  YarnApplicationClusterDescriptorAdapter(ExecutionContext executionContext) {
+    super(executionContext);
+  }
 
-    public void deployCluster(String[] programArguments, String applicationClassName)
-            throws JobExecutionException {
-        ApplicationConfiguration applicationConfiguration =
-                new ApplicationConfiguration(programArguments, applicationClassName);
-        ClusterSpecification clusterSpecification =
-                this.executionContext
-                        .getClusterClientFactory()
-                        .getClusterSpecification(this.executionContext.getFlinkConfig());
-        YarnClusterDescriptor clusterDescriptor = this.executionContext.createClusterDescriptor();
-        try {
-            ClusterClientProvider<ApplicationId> clusterClientProvider =
-                    clusterDescriptor.deployApplicationCluster(
-                            clusterSpecification, applicationConfiguration);
-            clusterClient = clusterClientProvider.getClusterClient();
-            super.clusterID = clusterClient.getClusterId();
-            super.webInterfaceUrl = clusterClient.getWebInterfaceURL();
-        } catch (Exception e) {
-            throw new JobExecutionException(ExceptionUtils.getRootCauseMessage(e), e);
-        }
-        bindApplicationId();
+  public void deployCluster(String[] programArguments, String applicationClassName)
+      throws JobExecutionException {
+    ApplicationConfiguration applicationConfiguration =
+        new ApplicationConfiguration(programArguments, applicationClassName);
+    ClusterSpecification clusterSpecification =
+        this.executionContext
+            .getClusterClientFactory()
+            .getClusterSpecification(this.executionContext.getFlinkConfig());
+    YarnClusterDescriptor clusterDescriptor = this.executionContext.createClusterDescriptor();
+    try {
+      ClusterClientProvider<ApplicationId> clusterClientProvider =
+          clusterDescriptor.deployApplicationCluster(
+              clusterSpecification, applicationConfiguration);
+      clusterClient = clusterClientProvider.getClusterClient();
+      super.clusterID = clusterClient.getClusterId();
+      super.webInterfaceUrl = clusterClient.getWebInterfaceURL();
+    } catch (Exception e) {
+      throw new JobExecutionException(ExceptionUtils.getRootCauseMessage(e), e);
     }
+    bindApplicationId();
+  }
 
-    public boolean initJobId() throws Exception {
-        clusterClient
-                .listJobs()
-                .thenAccept(
-                        list ->
-                                list.forEach(
-                                        jobStatusMessage -> {
-                                            if (Objects.nonNull(jobStatusMessage.getJobId())) {
-                                                this.setJobId(jobStatusMessage.getJobId());
-                                            }
-                                        }))
-                .get(CLIENT_REQUEST_TIMEOUT, TimeUnit.MILLISECONDS);
-        return null != this.getJobId();
-    }
+  public boolean initJobId() throws Exception {
+    clusterClient
+        .listJobs()
+        .thenAccept(
+            list ->
+                list.forEach(
+                    jobStatusMessage -> {
+                      if (Objects.nonNull(jobStatusMessage.getJobId())) {
+                        this.setJobId(jobStatusMessage.getJobId());
+                      }
+                    }))
+        .get(CLIENT_REQUEST_TIMEOUT, TimeUnit.MILLISECONDS);
+    return null != this.getJobId();
+  }
 
-    @Override
-    public boolean isGloballyTerminalState() {
-        return false;
-    }
+  @Override
+  public boolean isGloballyTerminalState() {
+    return false;
+  }
 }

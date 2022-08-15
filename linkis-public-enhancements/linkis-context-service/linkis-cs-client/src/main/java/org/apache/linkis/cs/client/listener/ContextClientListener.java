@@ -21,9 +21,9 @@ import org.apache.linkis.common.listener.Event;
 import org.apache.linkis.common.listener.EventListener;
 
 public interface ContextClientListener extends EventListener {
-    void onContextCreated(Event event);
+  void onContextCreated(Event event);
 
-    void onContextUpdated(Event event);
+  void onContextUpdated(Event event);
 
-    void onEvent(Event event);
+  void onEvent(Event event);
 }

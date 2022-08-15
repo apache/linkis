@@ -152,9 +152,32 @@ $> sh ./scripts/login-pod.sh mg-gateway
 ```shell
 # in the mg-gateway container
 bash-4.2$ ./bin/./linkis-cli -engineType shell-1 -codeType shell -code "echo \"hello\" "  -submitUser hadoop -proxyUser hadoop
+
 =====Java Start Command=====
-exec /etc/alternatives/jre/bin/java -server -Xms32m -Xmx2048m -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/opt/linkis/logs/linkis-cli -XX:ErrorFile=/opt/linkis/logs/linkis-cli/ps_err_pid%p.log -XX:+UseConcMarkSweepGC -XX:CMSInitiatingOccupancyFraction=80 -XX:+DisableExplicitGC    -classpath /opt/linkis/conf/linkis-cli:/opt/linkis/lib/linkis-computation-governance/linkis-client/linkis-cli/*:/opt/linkis/lib/linkis-commons/public-module/*: -Dconf.root=/etc/linkis-conf -Dconf.file=linkis-cli.properties -Dlog.path=/opt/linkis/logs/linkis-cli -Dlog.file=linkis-client..log.20220713120445464374700  org.apache.linkis.cli.application.LinkisClientApplication '-engineType shell-1 -codeType shell -code echo "hello"  -submitUser hadoop -proxyUser hadoop'
-...
+exec /etc/alternatives/jre/bin/java -server -Xms32m -Xmx2048m -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/opt/linkis/logs/linkis-cli -XX:ErrorFile=/opt/linkis/logs/linkis-cli/ps_err_pid%p.log -XX:+UseConcMarkSweepGC -XX:CMSInitiatingOccupancyFraction=80 -XX:+DisableExplicitGC    -classpath /opt/linkis/conf/linkis-cli:/opt/linkis/lib/linkis-computation-governance/linkis-client/linkis-cli/*:/opt/linkis/lib/linkis-commons/public-module/*: -Dconf.root=/etc/linkis-conf -Dconf.file=linkis-cli.properties -Dlog.path=/opt/linkis/logs/linkis-cli -Dlog.file=linkis-client..log.20220814162421217892600  org.apache.linkis.cli.application.LinkisClientApplication '-engineType shell-1 -codeType shell -code echo "hello"  -submitUser hadoop -proxyUser hadoop'
+OpenJDK 64-Bit Server VM warning: If the number of processors is expected to increase from one, then you should configure the number of parallel GC threads appropriately using -XX:ParallelGCThreads=N
+[INFO] LogFile path: /opt/linkis/logs/linkis-cli/linkis-client..log.20220814162421217892600
+[INFO] User does not provide usr-configuration file. Will use default config
+[INFO] connecting to linkis gateway:http://linkis-demo-mg-gateway.linkis.svc.cluster.local:9001
+JobId:1
+TaskId:1
+ExecId:exec_id018016linkis-cg-entrance10.244.0.13:9104LINKISCLI_hadoop_shell_0
+[INFO] Job is successfully submitted!
+
+2022-07-31 16:24:24.024 INFO Program is substituting variables for you
+2022-07-31 16:24:24.024 INFO Variables substitution ended successfully
+2022-07-31 16:24:24.024 WARN The code you submit will not be limited by the limit
+Job with jobId : 1 and execID : LINKISCLI_hadoop_shell_0 submitted 
+2022-07-31 16:24:25.024 INFO You have submitted a new job, script code (after variable substitution) is
+************************************SCRIPT CODE************************************
+echo "hello"
+************************************SCRIPT CODE************************************
+2022-07-31 16:24:25.024 INFO Your job is accepted,  jobID is LINKISCLI_hadoop_shell_0 and jobReqId is 1 in ServiceInstance(linkis-cg-entrance, 10.244.0.13:9104). Please wait it to be scheduled
+job is scheduled.
+2022-07-31 16:24:25.024 INFO Your job is Scheduled. Please wait it to run.
+Your job is being scheduled by orchestrator.
+2022-07-31 16:24:25.024 INFO job is running.
+2022-07-31 16:24:25.024 INFO Your job is Running now. Please wait it to complete.
 ```
 
 ## Destroy the local cluster

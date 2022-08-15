@@ -18,13 +18,13 @@
 package org.apache.linkis.protocol.query.cache;
 
 public class FailedToDeleteCache implements ResponseDeleteCache {
-    private String errorMessage;
+  private String errorMessage;
 
-    public FailedToDeleteCache(String errorMessage) {
-        this.errorMessage = errorMessage;
-    }
+  public FailedToDeleteCache(String errorMessage) {
+    this.errorMessage = errorMessage;
+  }
 
-    public String getErrorMessage() {
-        return errorMessage;
-    }
+  public String getErrorMessage() {
+    return errorMessage;
+  }
 }

@@ -18,5 +18,5 @@
 package org.apache.linkis.cli.core.present;
 
 public interface PresentMode {
-    String getName();
+  String getName();
 }

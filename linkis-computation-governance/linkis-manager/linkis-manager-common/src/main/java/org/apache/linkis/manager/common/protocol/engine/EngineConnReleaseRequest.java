@@ -21,54 +21,54 @@ import org.apache.linkis.common.ServiceInstance;
 
 public class EngineConnReleaseRequest implements EngineRequest {
 
-    private ServiceInstance serviceInstance;
+  private ServiceInstance serviceInstance;
 
-    private String user;
+  private String user;
 
-    private String msg;
+  private String msg;
 
-    public String getTicketId() {
-        return ticketId;
-    }
+  public String getTicketId() {
+    return ticketId;
+  }
 
-    public void setTicketId(String ticketId) {
-        this.ticketId = ticketId;
-    }
+  public void setTicketId(String ticketId) {
+    this.ticketId = ticketId;
+  }
 
-    private String ticketId;
+  private String ticketId;
 
-    public EngineConnReleaseRequest() {}
+  public EngineConnReleaseRequest() {}
 
-    public EngineConnReleaseRequest(
-            ServiceInstance serviceInstance, String user, String msg, String ticketId) {
-        this.serviceInstance = serviceInstance;
-        this.user = user;
-        this.msg = msg;
-        this.ticketId = ticketId;
-    }
+  public EngineConnReleaseRequest(
+      ServiceInstance serviceInstance, String user, String msg, String ticketId) {
+    this.serviceInstance = serviceInstance;
+    this.user = user;
+    this.msg = msg;
+    this.ticketId = ticketId;
+  }
 
-    @Override
-    public String getUser() {
-        return this.user;
-    }
+  @Override
+  public String getUser() {
+    return this.user;
+  }
 
-    public ServiceInstance getServiceInstance() {
-        return serviceInstance;
-    }
+  public ServiceInstance getServiceInstance() {
+    return serviceInstance;
+  }
 
-    public void setServiceInstance(ServiceInstance serviceInstance) {
-        this.serviceInstance = serviceInstance;
-    }
+  public void setServiceInstance(ServiceInstance serviceInstance) {
+    this.serviceInstance = serviceInstance;
+  }
 
-    public void setUser(String user) {
-        this.user = user;
-    }
+  public void setUser(String user) {
+    this.user = user;
+  }
 
-    public String getMsg() {
-        return msg;
-    }
+  public String getMsg() {
+    return msg;
+  }
 
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
+  public void setMsg(String msg) {
+    this.msg = msg;
+  }
 }

@@ -22,42 +22,42 @@ import org.apache.linkis.protocol.query.QueryProtocol;
 import java.util.List;
 
 public class RequestWriteCache implements QueryProtocol {
-    private String executionContent;
-    private String user;
-    private Long cacheExpireAfter;
-    private List<String> labelsStr;
-    private String resultSet;
+  private String executionContent;
+  private String user;
+  private Long cacheExpireAfter;
+  private List<String> labelsStr;
+  private String resultSet;
 
-    public RequestWriteCache(
-            String executionContent,
-            String user,
-            Long cacheExpireAfter,
-            List<String> labelsStr,
-            String resultSet) {
-        this.executionContent = executionContent;
-        this.user = user;
-        this.cacheExpireAfter = cacheExpireAfter;
-        this.labelsStr = labelsStr;
-        this.resultSet = resultSet;
-    }
+  public RequestWriteCache(
+      String executionContent,
+      String user,
+      Long cacheExpireAfter,
+      List<String> labelsStr,
+      String resultSet) {
+    this.executionContent = executionContent;
+    this.user = user;
+    this.cacheExpireAfter = cacheExpireAfter;
+    this.labelsStr = labelsStr;
+    this.resultSet = resultSet;
+  }
 
-    public String getExecutionContent() {
-        return executionContent;
-    }
+  public String getExecutionContent() {
+    return executionContent;
+  }
 
-    public String getUser() {
-        return user;
-    }
+  public String getUser() {
+    return user;
+  }
 
-    public Long getCacheExpireAfter() {
-        return cacheExpireAfter;
-    }
+  public Long getCacheExpireAfter() {
+    return cacheExpireAfter;
+  }
 
-    public List<String> getLabelsStr() {
-        return labelsStr;
-    }
+  public List<String> getLabelsStr() {
+    return labelsStr;
+  }
 
-    public String getResultSet() {
-        return resultSet;
-    }
+  public String getResultSet() {
+    return resultSet;
+  }
 }

@@ -21,9 +21,9 @@ import org.apache.linkis.cs.execution.matcher.ContextSearchMatcher;
 
 public abstract class AbstractContextSearchRuler implements ContextSearchRuler {
 
-    ContextSearchMatcher matcher;
+  ContextSearchMatcher matcher;
 
-    public AbstractContextSearchRuler(ContextSearchMatcher matcher) {
-        this.matcher = matcher;
-    }
+  public AbstractContextSearchRuler(ContextSearchMatcher matcher) {
+    this.matcher = matcher;
+  }
 }

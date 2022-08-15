@@ -20,5 +20,5 @@ package org.apache.linkis.cli.core.present.display;
 import org.apache.linkis.cli.core.present.display.data.DisplayData;
 
 public interface DisplayOperator {
-    void doOutput(DisplayData data);
+  void doOutput(DisplayData data);
 }

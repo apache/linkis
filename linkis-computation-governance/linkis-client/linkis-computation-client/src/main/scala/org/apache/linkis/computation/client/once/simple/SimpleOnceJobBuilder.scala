@@ -5,20 +5,17 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
-package org.apache.linkis.computation.client.once.simple
 
-import java.io.ByteArrayInputStream
-import java.util
+package org.apache.linkis.computation.client.once.simple
 
 import org.apache.linkis.bml.client.{BmlClient, BmlClientFactory}
 import org.apache.linkis.common.utils.Utils
@@ -35,12 +32,13 @@ import org.apache.linkis.manager.label.constant.LabelKeyConstant
 import org.apache.linkis.protocol.utils.TaskUtils
 import org.apache.linkis.ujes.client.exception.UJESJobException
 
+import java.io.ByteArrayInputStream
+import java.util
+
 import scala.collection.convert.WrapAsJava._
 import scala.collection.convert.WrapAsScala._
 
-
-class SimpleOnceJobBuilder private[simple]()
-  extends LinkisJobBuilder[SubmittableSimpleOnceJob] {
+class SimpleOnceJobBuilder private[simple] () extends LinkisJobBuilder[SubmittableSimpleOnceJob] {
 
   private var createService: String = _
   private var maxSubmitTime: Long = _
@@ -62,16 +60,19 @@ class SimpleOnceJobBuilder private[simple]()
   }
 
   protected def getOnceExecutorContent: String = {
-    implicit def toMap(map: util.Map[String, Any]): util.Map[String, Object] = map.map { case (k, v) => k -> v.asInstanceOf[Object]}
+    implicit def toMap(map: util.Map[String, Any]): util.Map[String, Object] = map.map {
+      case (k, v) => k -> v.asInstanceOf[Object]
+    }
     val onceExecutorContent = new OnceExecutorContent
-    onceExecutorContent.setSourceMap(source.map { case (k, v) => k -> v.asInstanceOf[Object]})
+    onceExecutorContent.setSourceMap(source.map { case (k, v) => k -> v.asInstanceOf[Object] })
     onceExecutorContent.setVariableMap(TaskUtils.getVariableMap(params))
     onceExecutorContent.setRuntimeMap(TaskUtils.getRuntimeMap(params))
     onceExecutorContent.setJobContent(jobContent)
-    onceExecutorContent.setExtraLabels(new util.HashMap[String, Object]) //TODO Set it if needed
+    onceExecutorContent.setExtraLabels(new util.HashMap[String, Object]) // TODO Set it if needed
     val contentMap = OnceExecutorContentUtils.contentToMap(onceExecutorContent)
     val bytes = DWSHttpClient.jacksonJson.writeValueAsBytes(contentMap)
-    val response = getBmlClient.uploadResource(executeUser, getFilePath, new ByteArrayInputStream(bytes))
+    val response =
+      getBmlClient.uploadResource(executeUser, getFilePath, new ByteArrayInputStream(bytes))
     OnceExecutorContentUtils.resourceToValue(BmlResource(response.resourceId, response.version))
   }
 
@@ -91,9 +92,16 @@ class SimpleOnceJobBuilder private[simple]()
     val properties = new util.HashMap[String, String]
     properties.put(OnceExecutorContentUtils.ONCE_EXECUTOR_CONTENT_KEY, getOnceExecutorContent)
     properties.putAll(TaskUtils.getStartupMap(params))
-    val createEngineConnAction = CreateEngineConnAction.newBuilder().setCreateService(createService)
-      .setLabels(labels.map { case (k, v) => k -> v.asInstanceOf[String]}).setIgnoreTimeout(true)
-      .setProperties(properties).setUser(executeUser).setMaxSubmitTime(maxSubmitTime).setDescription(description).build()
+    val createEngineConnAction = CreateEngineConnAction
+      .newBuilder()
+      .setCreateService(createService)
+      .setLabels(labels.map { case (k, v) => k -> v.asInstanceOf[String] })
+      .setIgnoreTimeout(true)
+      .setProperties(properties)
+      .setUser(executeUser)
+      .setMaxSubmitTime(maxSubmitTime)
+      .setDescription(description)
+      .build()
     new SubmittableSimpleOnceJob(getLinkisManagerClient, createEngineConnAction)
   }
 
@@ -103,17 +111,26 @@ class SimpleOnceJobBuilder private[simple]()
     case (k, _) => k -> null
   }
 
-  protected def getEngineConnType: String = labels.getOrDefault(LabelKeyUtils.ENGINE_TYPE_LABEL_KEY,
-    () => throw new UJESJobException(s"The ${LabelKeyUtils.ENGINE_TYPE_LABEL_KEY} label is necessary.")).asInstanceOf[String]
+  protected def getEngineConnType: String = labels
+    .getOrDefault(
+      LabelKeyUtils.ENGINE_TYPE_LABEL_KEY,
+      () =>
+        throw new UJESJobException(
+          s"The ${LabelKeyUtils.ENGINE_TYPE_LABEL_KEY} label is necessary."
+        )
+    )
+    .asInstanceOf[String]
 
   protected def getFilePath: String = s"/tmp/$executeUser/$getEngineConnType"
 
 }
+
 object SimpleOnceJobBuilder {
   val ONCE_ENGINE_CONN_MODE_LABEL_KEY = "engineConnMode"
   val ONCE_ENGINE_CONN_MODE_LABEL_VALUE = "once"
   private var bmlClient: BmlClient = _
   private var linkisManagerClient: LinkisManagerClient = _
+
   def getBmlClient: BmlClient = {
     if (bmlClient == null) synchronized {
       if (bmlClient == null) {
@@ -123,6 +140,7 @@ object SimpleOnceJobBuilder {
     }
     bmlClient
   }
+
   def getLinkisManagerClient: LinkisManagerClient = {
     if (linkisManagerClient == null) synchronized {
       if (linkisManagerClient == null) {
@@ -132,4 +150,5 @@ object SimpleOnceJobBuilder {
     }
     linkisManagerClient
   }
+
 }

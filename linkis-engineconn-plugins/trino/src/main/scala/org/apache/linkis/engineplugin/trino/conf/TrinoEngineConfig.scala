@@ -27,7 +27,6 @@ import org.apache.linkis.protocol.CacheableProtocol
 import org.apache.linkis.rpc.RPCMapCache
 
 import java.util
-
 object TrinoEngineConfig
     extends RPCMapCache[(UserCreatorLabel, EngineTypeLabel), String, String](
       Configuration.CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME.getValue

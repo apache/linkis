@@ -31,7 +31,6 @@ import org.apache.linkis.manager.label.entity.Label
 import java.util
 
 class TrinoEngineConnPlugin extends EngineConnPlugin {
-
   private val resourceLocker = new Object()
 
   private val engineFactoryLocker = new Object()

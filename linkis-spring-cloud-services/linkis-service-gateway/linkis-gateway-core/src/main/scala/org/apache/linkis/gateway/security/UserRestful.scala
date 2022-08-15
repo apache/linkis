@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.gateway.security
 
 import com.google.gson.Gson
@@ -29,9 +29,11 @@ import org.apache.linkis.rpc.Sender
 import org.apache.linkis.server.conf.ServerConfiguration
 import org.apache.linkis.server.security.SSOUtils
 import org.apache.linkis.server.{Message, _}
-
 import java.nio.charset.StandardCharsets
 import java.util.Random
+
+
+import scala.collection.JavaConversions._
 
 
 trait UserRestful {
@@ -188,6 +190,28 @@ abstract class UserPwdAbstractUserRestful extends AbstractUserRestful with Loggi
     (userName.toString, password)
   }
 
+  def clearExpireCookie(gatewayContext: GatewayContext): Unit = {
+    val cookies = gatewayContext.getRequest.getCookies.values().flatMap(cookie => cookie).toArray
+    val expireCookies = cookies.filter(cookie => cookie.getName.equals(ServerConfiguration.LINKIS_SERVER_SESSION_TICKETID_KEY.getValue))
+    val host = gatewayContext.getRequest.getHeaders.get("Host")
+    if(host != null && host.nonEmpty) {
+      val maxDomainLevel = host.head.split("\\.").length
+      for(level <- 1 to maxDomainLevel) {
+        expireCookies.clone().foreach(cookie => {
+          cookie.setValue(null)
+          cookie.setPath("/")
+          cookie.setMaxAge(0)
+          val domain = GatewaySSOUtils.getCookieDomain(host.head, level)
+          cookie.setDomain(domain)
+          gatewayContext.getResponse.addCookie(cookie)
+          logger.info(s"success clear user cookie: ${getUserNameAndPWD(gatewayContext)._1}" +
+            s"--${ServerConfiguration.LINKIS_SERVER_SESSION_TICKETID_KEY.getValue}" +
+            s"--${domain}")
+        })
+      }
+    }
+  }
+
   override protected def tryLogin(gatewayContext: GatewayContext): Message = {
     val (userName, password) = getUserNameAndPWD(gatewayContext)
     if (StringUtils.isBlank(userName)) {
@@ -207,6 +231,7 @@ abstract class UserPwdAbstractUserRestful extends AbstractUserRestful with Loggi
         // standard login
         val lowerCaseUserName = userName.toLowerCase
         message = login(lowerCaseUserName, password)
+        clearExpireCookie(gatewayContext)
         if (message.getStatus == 0) {
           GatewaySSOUtils.setLoginUser(gatewayContext, lowerCaseUserName)
         }
@@ -222,26 +247,26 @@ abstract class UserPwdAbstractUserRestful extends AbstractUserRestful with Loggi
 
 
 
-//  private def getWorkspaceIdFromDSS(userName: String): util.List[Integer] = {
-//    val sender: Sender = Sender.getSender(GatewayConfiguration.DSS_QUERY_WORKSPACE_SERVICE_NAME.getValue)
-//    val requestUserWorkspace: RequestUserWorkspace = new RequestUserWorkspace(userName)
-//    var resp: Any = null
-//    var workspaceId: util.List[Integer] = null
-//    Utils.tryCatch {
-//      resp = sender.ask(requestUserWorkspace)
-//    } {
-//      case e: Exception =>
-//        error(s"Call dss workspace rpc failed, ${e.getMessage}", e)
-//        throw new GatewayErrorException(40010, s"向DSS工程服务请求工作空间ID失败, ${e.getMessage}")
-//    }
-//    resp match {
-//      case s: ResponseUserWorkspace => workspaceId = s.getUserWorkspaceIds
-//      case _ =>
-//        throw new GatewayErrorException(40012, s"向DSS工程服务请求工作空间ID返回值失败,")
-//    }
-//    logger.info("Get userWorkspaceIds  is " + workspaceId + ",and user is " + userName)
-//    workspaceId
-//  }
+  //  private def getWorkspaceIdFromDSS(userName: String): util.List[Integer] = {
+  //    val sender: Sender = Sender.getSender(GatewayConfiguration.DSS_QUERY_WORKSPACE_SERVICE_NAME.getValue)
+  //    val requestUserWorkspace: RequestUserWorkspace = new RequestUserWorkspace(userName)
+  //    var resp: Any = null
+  //    var workspaceId: util.List[Integer] = null
+  //    Utils.tryCatch {
+  //      resp = sender.ask(requestUserWorkspace)
+  //    } {
+  //      case e: Exception =>
+  //        error(s"Call dss workspace rpc failed, ${e.getMessage}", e)
+  //        throw new GatewayErrorException(40010, s"向DSS工程服务请求工作空间ID失败, ${e.getMessage}")
+  //    }
+  //    resp match {
+  //      case s: ResponseUserWorkspace => workspaceId = s.getUserWorkspaceIds
+  //      case _ =>
+  //        throw new GatewayErrorException(40012, s"向DSS工程服务请求工作空间ID返回值失败,")
+  //    }
+  //    logger.info("Get userWorkspaceIds  is " + workspaceId + ",and user is " + userName)
+  //    workspaceId
+  //  }
 
   protected def login(userName: String, password: String): Message
 

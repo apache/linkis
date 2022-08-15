@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.gateway.security
 
 import org.apache.linkis.common.utils.{Logging, Utils}
@@ -31,18 +31,16 @@ object GatewaySSOUtils extends Logging {
   private def getCookies(gatewayContext: GatewayContext): Array[Cookie] = gatewayContext.getRequest.getCookies.flatMap(_._2).toArray
   private val DOMAIN_REGEX = "[a-zA-Z][a-zA-Z0-9\\.]+".r
   private val IP_REGEX = "([^:]+):.+".r
-
-  private val level = GatewayConfiguration.GATEWAY_DOMAIN_LEVEL.getValue
   private val cookieDomainSetupSwitch = GatewayConfiguration.GATEWAY_COOKIE_DOMAIN_SETUP_SWITCH.getValue
 
   /**
-    * "dss.com" -> "dss.com"
-    * "127.0.0.1" -> "127.0.0.1"
-    * "127.0.0.1:8080" -> "127.0.0.1"
-    * @param host the Host in HttpRequest Headers
-    * @return
-    */
-  def getCookieDomain(host: String): String = host match {
+   * "dss.com" -> "dss.com"
+   * "127.0.0.1" -> "127.0.0.1"
+   * "127.0.0.1:8080" -> "127.0.0.1"
+   * @param host the Host in HttpRequest Headers
+   * @return
+   */
+  def getCookieDomain(host: String, level: Int): String = host match {
     case DOMAIN_REGEX() =>
       val domains = host.split("\\.")
       val index = if (domains.length > level) level else if (domains.length == level) level -1 else domains.length
@@ -72,7 +70,7 @@ object GatewaySSOUtils extends Logging {
     SSOUtils.setLoginUser(c => {
       if (cookieDomainSetupSwitch) {
         val host = gatewayContext.getRequest.getHeaders.get("Host")
-        if(host != null && host.nonEmpty) c.setDomain(getCookieDomain(host.head))
+        if(host != null && host.nonEmpty) c.setDomain(getCookieDomain(host.head, GatewayConfiguration.GATEWAY_DOMAIN_LEVEL.getValue))
       }
       gatewayContext.getResponse.addCookie(c)
     }, proxyUser)

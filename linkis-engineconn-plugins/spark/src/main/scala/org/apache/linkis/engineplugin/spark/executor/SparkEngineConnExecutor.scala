@@ -22,6 +22,7 @@ import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{ByteTimeUtils, Logging, Utils}
 import org.apache.linkis.engineconn.computation.executor.execute.{ComputationExecutor, EngineExecutionContext}
 import org.apache.linkis.engineconn.computation.executor.utlis.ProgressUtils
+import org.apache.linkis.engineconn.core.exception.ExecutorHookFatalException
 import org.apache.linkis.engineconn.executor.entity.ResourceFetchExecutor
 import org.apache.linkis.engineplugin.spark.common.Kind
 import org.apache.linkis.engineplugin.spark.cs.CSSparkHelper
@@ -78,7 +79,21 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long) extends C
     var preCode = code
     engineExecutorContext.appendStdout(LogUtils.generateInfo(s"yarn application id: ${sc.applicationId}"))
     //Pre-execution hook
-    Utils.tryQuietly(SparkPreExecutionHook.getSparkPreExecutionHooks().foreach(hook => preCode = hook.callPreExecutionHook(engineExecutorContext, preCode)))
+    var executionHook: SparkPreExecutionHook = null
+    Utils.tryCatch {
+      SparkPreExecutionHook.getSparkPreExecutionHooks().foreach(hook => {
+        executionHook = hook
+        preCode = hook.callPreExecutionHook(engineExecutorContext, preCode)
+      })
+    } {
+      case fatalException: ExecutorHookFatalException =>
+        val hookName = getHookName(executionHook)
+        logger.error(s"execute preExecution hook : ${hookName} failed.")
+        throw fatalException
+      case e: Exception =>
+        val hookName = getHookName(executionHook)
+        logger.error(s"execute preExecution hook : ${hookName} failed.")
+    }
     Utils.tryAndWarn(CSSparkHelper.setContextIDInfoToSparkConf(engineExecutorContext, sc))
     val _code = Kind.getRealCode(preCode)
     logger.info(s"Ready to run code with kind $kind.")
@@ -103,6 +118,14 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long) extends C
     response
   } {
     this.engineExecutionContext = null
+  }
+
+  private def getHookName(executeHook: SparkPreExecutionHook): String = {
+    if (null == executeHook) {
+      "empty hook"
+    } else {
+      executeHook.getClass.getName
+    }
   }
 
   override def executeCompletely(engineExecutorContext: EngineExecutionContext, code: String, completedLine: String): ExecuteResponse = {

@@ -21,13 +21,13 @@ WORK_DIR=`cd $(dirname $0); pwd -P`
 
 set -e
 
-LDH_VERSION=${LDH_VERSION-${PROJECT_VERSION}}
-echo "# LDH version: ${LDH_VERSION}"
+LDH_VERSION=${LDH_VERSION-${LINKIS_IMAGE_TAG}}
+echo "# LDH version: ${LINKIS_IMAGE_TAG}"
 
 # load image
 if [ "X${KIND_LOAD_IMAGE}" == "Xtrue" ]; then
   echo "# Loading LDH image ..."
-  kind load docker-image linkis-ldh:${PROJECT_VERSION} --name ${KIND_CLUSTER_NAME}
+  kind load docker-image linkis-ldh:${LINKIS_IMAGE_TAG} --name ${KIND_CLUSTER_NAME}
 fi
 
 # deploy LDH

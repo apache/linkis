@@ -266,6 +266,11 @@
                       <arg value="LINKIS_LOG_DIR=${linkis.log.dir}"></arg>
                       <arg value="${project.build.directory}"></arg>
                     </exec>
+                    <exec executable="docker" failonerror="true">
+                      <arg value="tag"></arg>
+                      <arg value="${project.parent.artifactId}:${project.version}"></arg>
+                      <arg value="${project.parent.artifactId}:dev"></arg>
+                    </exec>
                   </target>
                 </configuration>
               </execution>
@@ -297,6 +302,11 @@
                       <arg value="--build-arg"></arg>
                       <arg value="LINKIS_HOME=${linkis.home}"></arg>
                       <arg value="${project.build.directory}"></arg>
+                    </exec>
+                    <exec executable="docker" failonerror="true">
+                      <arg value="tag"></arg>
+                      <arg value="${project.parent.artifactId}-web:${project.version}"></arg>
+                      <arg value="${project.parent.artifactId}-web:dev"></arg>
                     </exec>
                   </target>
                 </configuration>
@@ -356,6 +366,11 @@
                       <arg value="--build-arg"></arg>
                       <arg value="FLINK_VERSION=${ldh.flink.version}"></arg>
                       <arg value="${project.build.directory}"></arg>
+                    </exec>
+                    <exec executable="docker" failonerror="true">
+                      <arg value="tag"></arg>
+                      <arg value="${project.parent.artifactId}-ldh:${project.version}"></arg>
+                      <arg value="${project.parent.artifactId}-ldh:dev"></arg>
                     </exec>
                   </target>
                 </configuration>

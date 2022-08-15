@@ -33,9 +33,7 @@ spec:
   selector:
     {{- include "linkis.cgEngineConnManager.selectorLabels" . | nindent 4 }}
     app: {{ include "linkis.fullname" . }}-cg-engineconnmanager
-  type: LoadBalancer
-  externalTrafficPolicy: Cluster
-  publishNotReadyAddresses: true
+  {{- toYaml .Values.svc | nindent 2 }}
 ---
 apiVersion: v1
 kind: Service

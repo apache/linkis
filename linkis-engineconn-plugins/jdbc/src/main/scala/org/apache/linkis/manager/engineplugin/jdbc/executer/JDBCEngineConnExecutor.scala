@@ -38,6 +38,7 @@ import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf
 import org.apache.linkis.manager.engineplugin.jdbc.ConnectionManager
 import org.apache.linkis.manager.engineplugin.jdbc.conf.JDBCConfiguration
 import org.apache.linkis.manager.engineplugin.jdbc.constant.JDBCEngineConnConstant
+import org.apache.linkis.manager.engineplugin.jdbc.monitor.ProgressMonitor
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
 import org.apache.linkis.protocol.CacheableProtocol
@@ -60,11 +61,8 @@ import org.springframework.util.CollectionUtils
 
 import java.sql.{Connection, ResultSet, SQLException, Statement}
 import java.util
-import org.apache.linkis.governance.common.paser.SQLCodeParser
-import org.apache.linkis.manager.engineplugin.jdbc.constant.JDBCEngineConnConstant
-import org.apache.linkis.manager.engineplugin.jdbc.monitor.ProgressMonitor
-
 import java.util.concurrent.ConcurrentHashMap
+
 import scala.collection.JavaConversions._
 import scala.collection.mutable.ArrayBuffer
 
@@ -73,7 +71,9 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
 
   private val connectionManager = ConnectionManager.getInstance()
   private val executorLabels: util.List[Label[_]] = new util.ArrayList[Label[_]](2)
-  private val progressMonitors: util.Map[String, ProgressMonitor[_]] = new ConcurrentHashMap[String, ProgressMonitor[_]]()
+
+  private val progressMonitors: util.Map[String, ProgressMonitor[_]] =
+    new ConcurrentHashMap[String, ProgressMonitor[_]]()
 
   override def init(): Unit = {
     logger.info("jdbc executor start init.")

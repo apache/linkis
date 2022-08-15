@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,13 +17,14 @@
 
 package org.apache.linkis.manager.engineplugin.shell.executor
 
-import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.conf.CommonVars
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
+
+import org.apache.commons.lang3.StringUtils
+
 import java.io.BufferedReader
 import java.util
-
 
 class ReaderThread extends Thread with Logging {
   private var engineExecutionContext: EngineExecutionContext = _
@@ -32,7 +33,12 @@ class ReaderThread extends Thread with Logging {
   private var isStdout: Boolean = false
   private val logListCount = CommonVars[Int]("wds.linkis.engineconn.log.list.count", 50)
 
-  def this(engineExecutionContext: EngineExecutionContext, inputReader: BufferedReader, extractor: YarnAppIdExtractor, isStdout: Boolean) {
+  def this(
+      engineExecutionContext: EngineExecutionContext,
+      inputReader: BufferedReader,
+      extractor: YarnAppIdExtractor,
+      isStdout: Boolean
+  ) {
     this()
     this.inputReader = inputReader
     this.engineExecutionContext = engineExecutionContext
@@ -48,13 +54,14 @@ class ReaderThread extends Thread with Logging {
     }
   }
 
-
   def startReaderThread(): Unit = {
     Utils.tryCatch {
       this.start()
     } { t =>
       if (t.isInstanceOf[OutOfMemoryError]) {
-        logger.warn("Caught " + t + ". One possible reason is that ulimit" + " setting of 'max user processes' is too low. If so, do" + " 'ulimit -u <largerNum>' and try again.")
+        logger.warn(
+          "Caught " + t + ". One possible reason is that ulimit" + " setting of 'max user processes' is too low. If so, do" + " 'ulimit -u <largerNum>' and try again."
+        )
       }
       logger.warn("Cannot start thread to read from inputReader stream", t)
     }
@@ -64,7 +71,7 @@ class ReaderThread extends Thread with Logging {
     Utils.tryCatch {
       var line: String = null
       val logArray: util.List[String] = new util.ArrayList[String]
-      while ({line = inputReader.readLine(); line != null}) {
+      while ({ line = inputReader.readLine(); line != null }) {
         logger.info("read logger line :{}", line)
         logArray.add(line)
         if (logArray.size > logListCount.getValue) {
@@ -86,4 +93,5 @@ class ReaderThread extends Thread with Logging {
       logger.warn("inputReader reading the input stream", t)
     }
   }
+
 }

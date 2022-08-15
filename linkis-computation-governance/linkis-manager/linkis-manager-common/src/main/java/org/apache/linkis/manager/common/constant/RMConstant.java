@@ -19,15 +19,15 @@ package org.apache.linkis.manager.common.constant;
 
 public class RMConstant {
 
-    public static final String CPU = "CPU";
+  public static final String CPU = "CPU";
 
-    public static final String MEMORY = "Memory";
+  public static final String MEMORY = "Memory";
 
-    public static final String APP_INSTANCE = "Instance";
+  public static final String APP_INSTANCE = "Instance";
 
-    public static final String CPU_UNIT = "cores";
+  public static final String CPU_UNIT = "cores";
 
-    public static final String MEMORY_UNIT_BYTE = "bytes";
+  public static final String MEMORY_UNIT_BYTE = "bytes";
 
-    public static final String INSTANCE_UNIT = "";
+  public static final String INSTANCE_UNIT = "";
 }

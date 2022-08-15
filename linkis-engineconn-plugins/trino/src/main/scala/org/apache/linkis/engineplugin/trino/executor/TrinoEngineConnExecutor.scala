@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,59 +17,89 @@
 
 package org.apache.linkis.engineplugin.trino.executor
 
-import com.google.common.cache.{Cache, CacheBuilder}
-import io.trino.client._
-import okhttp3.OkHttpClient
-import org.apache.commons.io.IOUtils
-import org.apache.commons.lang.exception.ExceptionUtils
-import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{OverloadUtils, Utils}
 import org.apache.linkis.engineconn.common.conf.{EngineConnConf, EngineConnConstant}
 import org.apache.linkis.engineconn.computation.executor.entity.EngineConnTask
-import org.apache.linkis.engineconn.computation.executor.execute.{ConcurrentComputationExecutor, EngineExecutionContext}
+import org.apache.linkis.engineconn.computation.executor.execute.{
+  ConcurrentComputationExecutor,
+  EngineExecutionContext
+}
 import org.apache.linkis.engineconn.core.EngineConnObject
-import org.apache.linkis.engineplugin.trino.conf.TrinoConfiguration._
 import org.apache.linkis.engineplugin.trino.conf.{TrinoConfiguration, TrinoEngineConfig}
-import org.apache.linkis.engineplugin.trino.exception.{TrinoClientException, TrinoGrantmaException, TrinoModifySchemaException, TrinoStateInvalidException}
+import org.apache.linkis.engineplugin.trino.conf.TrinoConfiguration._
+import org.apache.linkis.engineplugin.trino.exception.{
+  TrinoClientException,
+  TrinoGrantmaException,
+  TrinoModifySchemaException,
+  TrinoStateInvalidException
+}
 import org.apache.linkis.engineplugin.trino.interceptor.PasswordInterceptor
-import org.apache.linkis.engineplugin.trino.password.{CommandPasswordCallback, StaticPasswordCallback}
+import org.apache.linkis.engineplugin.trino.password.{
+  CommandPasswordCallback,
+  StaticPasswordCallback
+}
 import org.apache.linkis.engineplugin.trino.socket.SocketChannelSocketFactory
 import org.apache.linkis.engineplugin.trino.utils.TrinoCode
 import org.apache.linkis.governance.common.paser.SQLCodeParser
-import org.apache.linkis.manager.common.entity.resource.{CommonNodeResource, LoadResource, NodeResource}
+import org.apache.linkis.manager.common.entity.resource.{
+  CommonNodeResource,
+  LoadResource,
+  NodeResource
+}
 import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
 import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.apache.linkis.rpc.Sender
-import org.apache.linkis.scheduler.executer.{ErrorExecuteResponse, ExecuteResponse, SuccessExecuteResponse}
+import org.apache.linkis.scheduler.executer.{
+  ErrorExecuteResponse,
+  ExecuteResponse,
+  SuccessExecuteResponse
+}
 import org.apache.linkis.storage.domain.Column
 import org.apache.linkis.storage.resultset.ResultSetFactory
 import org.apache.linkis.storage.resultset.table.{TableMetaData, TableRecord}
+
+import org.apache.commons.io.IOUtils
+import org.apache.commons.lang.exception.ExceptionUtils
+import org.apache.commons.lang3.StringUtils
+
 import org.springframework.util.CollectionUtils
+
+import javax.security.auth.callback.PasswordCallback
 
 import java.net.URI
 import java.util
-import java.util.concurrent.{ConcurrentHashMap, TimeUnit}
 import java.util._
+import java.util.concurrent.{ConcurrentHashMap, TimeUnit}
 import java.util.function.Supplier
-import javax.security.auth.callback.PasswordCallback
+
 import scala.collection.JavaConverters._
 
-class TrinoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int) extends ConcurrentComputationExecutor(outputPrintLimit) {
+import com.google.common.cache.{Cache, CacheBuilder}
+import io.trino.client._
+import okhttp3.OkHttpClient
+
+class TrinoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
+    extends ConcurrentComputationExecutor(outputPrintLimit) {
 
   private val executorLabels: util.List[Label[_]] = new util.ArrayList[Label[_]](2)
 
-  private val okHttpClientCache: util.Map[String, OkHttpClient] = new ConcurrentHashMap[String, OkHttpClient]()
+  private val okHttpClientCache: util.Map[String, OkHttpClient] =
+    new ConcurrentHashMap[String, OkHttpClient]()
 
-  private val statementClientCache: util.Map[String, StatementClient] = new ConcurrentHashMap[String, StatementClient]()
+  private val statementClientCache: util.Map[String, StatementClient] =
+    new ConcurrentHashMap[String, StatementClient]()
 
-  private val clientSessionCache: Cache[String, ClientSession] = CacheBuilder.newBuilder()
+  private val clientSessionCache: Cache[String, ClientSession] = CacheBuilder
+    .newBuilder()
     .expireAfterAccess(EngineConnConf.ENGINE_TASK_EXPIRE_TIME.getValue, TimeUnit.MILLISECONDS)
-    .maximumSize(EngineConnConstant.MAX_TASK_NUM).build()
+    .maximumSize(EngineConnConstant.MAX_TASK_NUM)
+    .build()
 
   private val buildOkHttpClient = new util.function.Function[String, OkHttpClient] {
+
     override def apply(user: String): OkHttpClient = {
       val builder = new OkHttpClient.Builder()
         .socketFactory(new SocketChannelSocketFactory)
@@ -96,16 +126,19 @@ class TrinoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int) e
       if (TRINO_SSL_INSECURED.getValue) {
         OkHttpUtil.setupInsecureSsl(builder)
       } else {
-        OkHttpUtil.setupSsl(builder,
+        OkHttpUtil.setupSsl(
+          builder,
           Optional.ofNullable(TRINO_SSL_KEYSTORE.getValue),
           Optional.ofNullable(TRINO_SSL_KEYSTORE_PASSWORD.getValue),
           Optional.ofNullable(TRINO_SSL_KEYSTORE_TYPE.getValue),
           Optional.ofNullable(TRINO_SSL_TRUSTSTORE.getValue),
           Optional.ofNullable(TRINO_SSL_TRUSTSTORE_PASSWORD.getValue),
-          Optional.ofNullable(TRINO_SSL_TRUSTSTORE_TYPE.getValue))
+          Optional.ofNullable(TRINO_SSL_TRUSTSTORE_TYPE.getValue)
+        )
       }
       builder.build()
     }
+
   }
 
   override def init: Unit = {
@@ -119,33 +152,52 @@ class TrinoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int) e
     val engineTypeLabel = engineConnTask.getLables.find(_.isInstanceOf[EngineTypeLabel]).get
     var configMap: util.Map[String, String] = null
     if (userCreatorLabel != null && engineTypeLabel != null) {
-      configMap = TrinoEngineConfig.getCacheMap((userCreatorLabel.asInstanceOf[UserCreatorLabel], engineTypeLabel.asInstanceOf[EngineTypeLabel]))
+      configMap = TrinoEngineConfig.getCacheMap(
+        (
+          userCreatorLabel.asInstanceOf[UserCreatorLabel],
+          engineTypeLabel.asInstanceOf[EngineTypeLabel]
+        )
+      )
     }
-    clientSessionCache.put(engineConnTask.getTaskId, getClientSession(user, engineConnTask.getProperties, configMap))
+    clientSessionCache.put(
+      engineConnTask.getTaskId,
+      getClientSession(user, engineConnTask.getProperties, configMap)
+    )
     super.execute(engineConnTask)
   }
 
-  override def executeLine(engineExecutorContext: EngineExecutionContext, code: String): ExecuteResponse = {
+  override def executeLine(
+      engineExecutorContext: EngineExecutionContext,
+      code: String
+  ): ExecuteResponse = {
     val trimmedCode = code.trim
     val realCode = getCodeParser
-      .map{ parser => parser.parse(trimmedCode).head}
+      .map { parser => parser.parse(trimmedCode).head }
       .getOrElse(trimmedCode)
 
     TrinoCode.checkCode(realCode)
     logger.info(s"trino client begins to run psql code:\n $realCode")
 
-    val trinoUser = Optional.ofNullable(TRINO_USER.getValue)
+    val trinoUser = Optional
+      .ofNullable(TRINO_USER.getValue)
       .orElseGet(new Supplier[String] {
         override def get(): String = getCurrentUser(engineExecutorContext.getLabels)
       })
     val taskId = engineExecutorContext.getJobId.get
     val clientSession = clientSessionCache.getIfPresent(taskId)
     val statement = StatementClientFactory.newStatementClient(
-      okHttpClientCache.computeIfAbsent(trinoUser, buildOkHttpClient), clientSession, realCode)
+      okHttpClientCache.computeIfAbsent(trinoUser, buildOkHttpClient),
+      clientSession,
+      realCode
+    )
     statementClientCache.put(taskId, statement)
     Utils.tryFinally {
       initialStatusUpdates(taskId, engineExecutorContext, statement)
-      if (statement.isRunning || (statement.isFinished && statement.finalStatusInfo().getError == null)) {
+      if (
+          statement.isRunning || (statement.isFinished && statement
+            .finalStatusInfo()
+            .getError == null)
+      ) {
         queryOutput(taskId, engineExecutorContext, statement)
       }
       val errorResponse = verifyServerError(taskId, engineExecutorContext, statement)
@@ -162,7 +214,11 @@ class TrinoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int) e
 
   }
 
-  override def executeCompletely(engineExecutorContext: EngineExecutionContext, code: String, completedLine: String): ExecuteResponse = null
+  override def executeCompletely(
+      engineExecutorContext: EngineExecutionContext,
+      code: String,
+      completedLine: String
+  ): ExecuteResponse = null
 
   override def progress(taskID: String): Float = {
     val statement = statementClientCache.get(taskID)
@@ -185,7 +241,15 @@ class TrinoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int) e
       if (results != null) {
         val stats = results.getStats
         if (results != null) {
-          return Array(JobProgressInfo(taskID, stats.getTotalSplits, stats.getRunningSplits, 0, stats.getCompletedSplits))
+          return Array(
+            JobProgressInfo(
+              taskID,
+              stats.getTotalSplits,
+              stats.getRunningSplits,
+              0,
+              stats.getCompletedSplits
+            )
+          )
         }
       }
     }
@@ -218,9 +282,13 @@ class TrinoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int) e
   override def getCurrentNodeResource(): NodeResource = {
     val properties = EngineConnObject.getEngineCreationContext.getOptions
     if (properties.containsKey(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key)) {
-      val settingClientMemory = properties.get(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key)
+      val settingClientMemory =
+        properties.get(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key)
       if (!settingClientMemory.toLowerCase().endsWith("g")) {
-        properties.put(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key, settingClientMemory + "g")
+        properties.put(
+          EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key,
+          settingClientMemory + "g"
+        )
       }
     }
     val resource = new CommonNodeResource
@@ -233,12 +301,17 @@ class TrinoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int) e
 
   override def getConcurrentLimit: Int = ENGINE_CONCURRENT_LIMIT.getValue
 
-  private def getClientSession(user: String, taskParams: util.Map[String, Object], cacheMap: util.Map[String, String]): ClientSession = {
+  private def getClientSession(
+      user: String,
+      taskParams: util.Map[String, Object],
+      cacheMap: util.Map[String, String]
+  ): ClientSession = {
     val configMap = new util.HashMap[String, String]()
     // override configMap with taskParams
     if (!CollectionUtils.isEmpty(cacheMap)) configMap.putAll(cacheMap)
     taskParams.asScala.foreach {
-      case (key: String, value: Object) if value != null => configMap.put(key, String.valueOf(value))
+      case (key: String, value: Object) if value != null =>
+        configMap.put(key, String.valueOf(value))
       case _ =>
     }
     val httpUri: URI = URI.create(TRINO_URL.getValue(configMap))
@@ -264,27 +337,61 @@ class TrinoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int) e
     val extraCredentials: util.Map[String, String] = Collections.emptyMap()
     val compressionDisabled: Boolean = true
 
-    val clientRequestTimeout: io.airlift.units.Duration = new io.airlift.units.Duration(0, TimeUnit.MILLISECONDS)
+    val clientRequestTimeout: io.airlift.units.Duration =
+      new io.airlift.units.Duration(0, TimeUnit.MILLISECONDS)
 
-    new ClientSession(httpUri, user, Optional.of(user), source, traceToken, clientTags, clientInfo, catalog, schema, path, timeZonId, locale,
-      resourceEstimates, properties, preparedStatements, roles, extraCredentials, transactionId, clientRequestTimeout, compressionDisabled)
+    new ClientSession(
+      httpUri,
+      user,
+      Optional.of(user),
+      source,
+      traceToken,
+      clientTags,
+      clientInfo,
+      catalog,
+      schema,
+      path,
+      timeZonId,
+      locale,
+      resourceEstimates,
+      properties,
+      preparedStatements,
+      roles,
+      extraCredentials,
+      transactionId,
+      clientRequestTimeout,
+      compressionDisabled
+    )
   }
 
   private def getCurrentUser(labels: Array[Label[_]]): String = {
-    labels.find(l => l.isInstanceOf[UserCreatorLabel])
+    labels
+      .find(l => l.isInstanceOf[UserCreatorLabel])
       .map(label => label.asInstanceOf[UserCreatorLabel].getUser)
       .getOrElse(TRINO_USER.getValue)
   }
 
-  private def initialStatusUpdates(taskId: String, engineExecutorContext: EngineExecutionContext, statement: StatementClient): Unit = {
-    while (statement.isRunning
-      && (statement.currentData().getData == null || statement.currentStatusInfo().getUpdateType != null)) {
+  private def initialStatusUpdates(
+      taskId: String,
+      engineExecutorContext: EngineExecutionContext,
+      statement: StatementClient
+  ): Unit = {
+    while (
+        statement.isRunning
+        && (statement.currentData().getData == null || statement
+          .currentStatusInfo()
+          .getUpdateType != null)
+    ) {
       engineExecutorContext.pushProgress(progress(taskId), getProgressInfo(taskId))
       statement.advance()
     }
   }
 
-  private def queryOutput(taskId: String, engineExecutorContext: EngineExecutionContext, statement: StatementClient): Unit = {
+  private def queryOutput(
+      taskId: String,
+      engineExecutorContext: EngineExecutionContext,
+      statement: StatementClient
+  ): Unit = {
     var columnCount = 0
     var rows = 0
     val resultSetWriter = engineExecutorContext.createResultSetWriter(ResultSetFactory.TABLE_TYPE)
@@ -299,7 +406,8 @@ class TrinoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int) e
         throw new RuntimeException("trino columns is null.")
       }
       val columns = results.getColumns.asScala
-        .map(column => Column(column.getName, column.getType, "")).toArray[Column]
+        .map(column => Column(column.getName, column.getType, ""))
+        .toArray[Column]
       columnCount = columns.length
       resultSetWriter.addMetaData(new TableMetaData(columns))
       while (statement.isRunning) {
@@ -315,13 +423,19 @@ class TrinoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int) e
     })(IOUtils.closeQuietly(resultSetWriter))
 
     logger.info(s"Fetched $columnCount col(s) : $rows row(s) in trino")
-    engineExecutorContext.appendStdout(LogUtils.generateInfo(s"Fetched $columnCount col(s) : $rows row(s) in trino"));
+    engineExecutorContext.appendStdout(
+      LogUtils.generateInfo(s"Fetched $columnCount col(s) : $rows row(s) in trino")
+    );
     engineExecutorContext.sendResultSet(resultSetWriter)
     IOUtils.closeQuietly(resultSetWriter)
   }
 
   // check trino error
-  private def verifyServerError(taskId: String, engineExecutorContext: EngineExecutionContext, statement: StatementClient): ErrorExecuteResponse = {
+  private def verifyServerError(
+      taskId: String,
+      engineExecutorContext: EngineExecutionContext,
+      statement: StatementClient
+  ): ErrorExecuteResponse = {
     engineExecutorContext.pushProgress(progress(taskId), getProgressInfo(taskId))
     if (statement.isFinished) {
       val info: QueryStatusInfo = statement.finalStatusInfo()
@@ -331,7 +445,9 @@ class TrinoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int) e
         if (error.getFailureInfo != null) {
           cause = error.getFailureInfo.toException
         }
-        engineExecutorContext.appendStdout(LogUtils.generateERROR(ExceptionUtils.getFullStackTrace(cause)))
+        engineExecutorContext.appendStdout(
+          LogUtils.generateERROR(ExceptionUtils.getFullStackTrace(cause))
+        )
         ErrorExecuteResponse(ExceptionUtils.getMessage(cause), cause)
       } else null
     } else if (statement.isClientAborted) {
@@ -344,11 +460,15 @@ class TrinoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int) e
     }
   }
 
-  private def updateSession(clientSession: ClientSession, statement: StatementClient): ClientSession = {
+  private def updateSession(
+      clientSession: ClientSession,
+      statement: StatementClient
+  ): ClientSession = {
     var newSession = clientSession
     // update catalog and schema if present
     if (statement.getSetCatalog.isPresent || statement.getSetSchema.isPresent) {
-      newSession = ClientSession.builder(newSession)
+      newSession = ClientSession
+        .builder(newSession)
         .withCatalog(statement.getSetCatalog.orElse(newSession.getCatalog))
         .withSchema(statement.getSetSchema.orElse(newSession.getSchema))
         .build
@@ -359,11 +479,15 @@ class TrinoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int) e
 
     var builder: ClientSession.Builder = ClientSession.builder(newSession)
 
-    if (statement.getStartedTransactionId != null) builder = builder.withTransactionId(statement.getStartedTransactionId)
+    if (statement.getStartedTransactionId != null)
+      builder = builder.withTransactionId(statement.getStartedTransactionId)
 
     // update session properties if present
-    if (!statement.getSetSessionProperties.isEmpty || !statement.getResetSessionProperties.isEmpty) {
-      val sessionProperties: util.Map[String, String] = new util.HashMap[String, String](newSession.getProperties)
+    if (
+        !statement.getSetSessionProperties.isEmpty || !statement.getResetSessionProperties.isEmpty
+    ) {
+      val sessionProperties: util.Map[String, String] =
+        new util.HashMap[String, String](newSession.getProperties)
       sessionProperties.putAll(statement.getSetSessionProperties)
       sessionProperties.keySet.removeAll(statement.getResetSessionProperties)
       builder = builder.withProperties(sessionProperties)
@@ -371,14 +495,18 @@ class TrinoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int) e
 
     // update session roles
     if (!statement.getSetRoles.isEmpty) {
-      val roles: util.Map[String, ClientSelectedRole] = new util.HashMap[String, ClientSelectedRole](newSession.getRoles)
+      val roles: util.Map[String, ClientSelectedRole] =
+        new util.HashMap[String, ClientSelectedRole](newSession.getRoles)
       roles.putAll(statement.getSetRoles)
       builder = builder.withRoles(roles)
     }
 
     // update prepared statements if present
-    if (!statement.getAddedPreparedStatements.isEmpty || !statement.getDeallocatedPreparedStatements.isEmpty) {
-      val preparedStatements: util.Map[String, String] = new util.HashMap[String, String](newSession.getPreparedStatements)
+    if (
+        !statement.getAddedPreparedStatements.isEmpty || !statement.getDeallocatedPreparedStatements.isEmpty
+    ) {
+      val preparedStatements: util.Map[String, String] =
+        new util.HashMap[String, String](newSession.getPreparedStatements)
       preparedStatements.putAll(statement.getAddedPreparedStatements)
       preparedStatements.keySet.removeAll(statement.getDeallocatedPreparedStatements)
       builder = builder.withPreparedStatements(preparedStatements)

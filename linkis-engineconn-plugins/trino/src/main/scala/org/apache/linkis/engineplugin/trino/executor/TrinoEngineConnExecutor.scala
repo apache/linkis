@@ -78,6 +78,7 @@ import scala.collection.JavaConverters._
 import com.google.common.cache.{Cache, CacheBuilder}
 import io.trino.client._
 import okhttp3.OkHttpClient
+
 class TrinoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
     extends ConcurrentComputationExecutor(outputPrintLimit) {
 

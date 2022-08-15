@@ -18,6 +18,7 @@
 package org.apache.linkis.engineplugin.trino.exception
 
 import org.apache.linkis.common.exception.ErrorException
+
 case class TrinoStateInvalidException(message: String)
     extends ErrorException(60011, message: String)
 

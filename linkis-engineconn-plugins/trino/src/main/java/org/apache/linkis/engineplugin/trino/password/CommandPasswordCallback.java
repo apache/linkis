@@ -26,6 +26,7 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 
 public class CommandPasswordCallback extends PasswordCallback {
+
   private static final Charset CHARSET = Charset.defaultCharset();
 
   public CommandPasswordCallback(String prompt) {

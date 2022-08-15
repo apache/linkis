@@ -26,6 +26,7 @@ import org.apache.commons.lang3.StringUtils
 class TrinoProcessEngineConnLaunchBuilder extends JavaProcessEngineConnLaunchBuilder {
 
   override def getEngineStartUser(label: UserCreatorLabel): String = {
+
     /* using user label if user is blank */
     StringUtils.defaultIfBlank(TrinoConfiguration.TRINO_USER.getValue, label.getUser)
   }

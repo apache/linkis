@@ -40,7 +40,9 @@ object TrinoEngineConfig
   }
 
   override protected def createMap(any: Any): util.Map[String, String] = any match {
-    case response: ResponseQueryConfig => response.getKeyAndValue
+    case response: ResponseQueryConfig =>
+      response.getKeyAndValue
+    case _ => null
   }
 
 }

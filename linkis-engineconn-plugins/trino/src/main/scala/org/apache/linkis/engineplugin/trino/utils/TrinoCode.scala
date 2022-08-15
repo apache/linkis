@@ -24,6 +24,7 @@ import org.apache.linkis.engineplugin.trino.exception.{
 }
 
 object TrinoCode {
+
   private val SPACE = " "
 
   private def willGrant(code: String): Boolean = {

@@ -26,12 +26,10 @@ import org.apache.linkis.engineconn.computation.executor.execute.{
   EngineExecutionContext
 }
 import org.apache.linkis.engineconn.core.EngineConnObject
-import org.apache.linkis.engineplugin.trino.conf.{TrinoConfiguration, TrinoEngineConfig}
 import org.apache.linkis.engineplugin.trino.conf.TrinoConfiguration._
+import org.apache.linkis.engineplugin.trino.conf.TrinoEngineConfig
 import org.apache.linkis.engineplugin.trino.exception.{
   TrinoClientException,
-  TrinoGrantmaException,
-  TrinoModifySchemaException,
   TrinoStateInvalidException
 }
 import org.apache.linkis.engineplugin.trino.interceptor.PasswordInterceptor

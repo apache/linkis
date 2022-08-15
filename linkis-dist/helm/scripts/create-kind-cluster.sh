@@ -35,4 +35,9 @@ KIND_CLUSTER_HOST_PATH=${KIND_CLUSTER_HOST_PATH} envsubst < ${KIND_CLUSTER_CONF_
 
 echo "- kind cluster config: ${KIND_CLUSTER_CONF_FILE}"
 cat ${KIND_CLUSTER_CONF_FILE}
+if [ "X${KIND_IMAGE_VERSION}" == "X" ]; then
 kind create cluster --name ${KIND_CLUSTER_NAME} --config ${KIND_CLUSTER_CONF_FILE}
+else
+echo "- -- use node image: ${KIND_IMAGE_VERSION}"
+kind create cluster --name ${KIND_CLUSTER_NAME} --config ${KIND_CLUSTER_CONF_FILE} --image=kindest/node:${KIND_IMAGE_VERSION}
+fi

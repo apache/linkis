@@ -114,6 +114,7 @@
     <httpclient.version>4.5.13</httpclient.version>
     <httpmime.version>${httpclient.version}</httpmime.version>
     <knife4j.version>2.0.9</knife4j.version>
+    <springfox.version>2.10.5</springfox.version>
     <xstream.core.version>1.4.19</xstream.core.version>
     <reflections.version>0.9.12</reflections.version>
     <mybatis-plus.boot.starter.version>3.4.1</mybatis-plus.boot.starter.version>

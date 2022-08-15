@@ -20,5 +20,5 @@ package org.apache.linkis.manager.common.protocol.engine;
 import org.apache.linkis.protocol.message.RequestProtocol;
 
 public interface EngineRequest extends RequestProtocol {
-    String getUser();
+  String getUser();
 }

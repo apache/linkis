@@ -19,48 +19,48 @@ package org.apache.linkis.manager.common.protocol.engine;
 
 public class ECCanKillResponse implements EngineRequest {
 
-    private String user;
+  private String user;
 
-    private Boolean flag = true;
+  private Boolean flag = true;
 
-    private String reason;
+  private String reason;
 
-    @Override
-    public String getUser() {
-        return user;
-    }
+  @Override
+  public String getUser() {
+    return user;
+  }
 
-    public void setUser(String user) {
-        this.user = user;
-    }
+  public void setUser(String user) {
+    this.user = user;
+  }
 
-    public Boolean getFlag() {
-        return flag;
-    }
+  public Boolean getFlag() {
+    return flag;
+  }
 
-    public void setFlag(Boolean flag) {
-        this.flag = flag;
-    }
+  public void setFlag(Boolean flag) {
+    this.flag = flag;
+  }
 
-    public String getReason() {
-        return reason;
-    }
+  public String getReason() {
+    return reason;
+  }
 
-    public void setReason(String reason) {
-        this.reason = reason;
-    }
+  public void setReason(String reason) {
+    this.reason = reason;
+  }
 
-    @Override
-    public String toString() {
-        return "ECCanKillResponse{"
-                + "user='"
-                + user
-                + '\''
-                + ", flag="
-                + flag
-                + ", reason='"
-                + reason
-                + '\''
-                + '}';
-    }
+  @Override
+  public String toString() {
+    return "ECCanKillResponse{"
+        + "user='"
+        + user
+        + '\''
+        + ", flag="
+        + flag
+        + ", reason='"
+        + reason
+        + '\''
+        + '}';
+  }
 }

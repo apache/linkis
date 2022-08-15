@@ -20,12 +20,12 @@ package org.apache.linkis.metadata.query.service;
 import org.apache.linkis.common.conf.CommonVars;
 
 public class KafkaParamsMapper {
-    public static final CommonVars<String> PARAM_KAFKA_PRINCIPLE =
-            CommonVars.apply("wds.linkis.server.mdm.service.kafka.principle", "principle");
+  public static final CommonVars<String> PARAM_KAFKA_PRINCIPLE =
+      CommonVars.apply("wds.linkis.server.mdm.service.kafka.principle", "principle");
 
-    public static final CommonVars<String> PARAM_KAFKA_KEYTAB =
-            CommonVars.apply("wds.linkis.server.mdm.service.kafka.keytab", "keytab");
+  public static final CommonVars<String> PARAM_KAFKA_KEYTAB =
+      CommonVars.apply("wds.linkis.server.mdm.service.kafka.keytab", "keytab");
 
-    public static final CommonVars<String> PARAM_KAFKA_BROKERS =
-            CommonVars.apply("wds.linkis.server.mdm.service.kafka.brokers", "brokers");
+  public static final CommonVars<String> PARAM_KAFKA_BROKERS =
+      CommonVars.apply("wds.linkis.server.mdm.service.kafka.brokers", "brokers");
 }

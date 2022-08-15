@@ -23,22 +23,22 @@ import org.apache.linkis.cs.condition.ConditionType;
 
 public class ContextTypeCondition extends AtomicCondition {
 
-    ContextType contextType;
+  ContextType contextType;
 
-    public ContextTypeCondition(ContextType contextType) {
-        this.contextType = contextType;
-    }
+  public ContextTypeCondition(ContextType contextType) {
+    this.contextType = contextType;
+  }
 
-    public ContextType getContextType() {
-        return contextType;
-    }
+  public ContextType getContextType() {
+    return contextType;
+  }
 
-    public void setContextType(ContextType contextType) {
-        this.contextType = contextType;
-    }
+  public void setContextType(ContextType contextType) {
+    this.contextType = contextType;
+  }
 
-    @Override
-    public ConditionType getConditionType() {
-        return ConditionType.Equals;
-    }
+  @Override
+  public ConditionType getConditionType() {
+    return ConditionType.Equals;
+  }
 }

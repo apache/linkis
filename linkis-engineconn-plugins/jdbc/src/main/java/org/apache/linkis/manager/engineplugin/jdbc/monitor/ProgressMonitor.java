@@ -21,66 +21,66 @@ import org.apache.linkis.protocol.engine.JobProgressInfo;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.alibaba.druid.pool.DruidPooledStatement;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.sql.Statement;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
+import com.alibaba.druid.pool.DruidPooledStatement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public abstract class ProgressMonitor<T> implements Consumer<T> {
-    private static final Logger LOG = LoggerFactory.getLogger(ProgressMonitor.class);
-    private static final Map<String, String> MONITORS = new ConcurrentHashMap<>();
+  private static final Logger LOG = LoggerFactory.getLogger(ProgressMonitor.class);
+  private static final Map<String, String> MONITORS = new ConcurrentHashMap<>();
 
-    static {
-        register(
-                "io.trino.jdbc.TrinoStatement",
-                "org.apache.linkis.manager.engineplugin.jdbc.monitor.impl.TrinoProgressMonitor");
+  static {
+    register(
+        "io.trino.jdbc.TrinoStatement",
+        "org.apache.linkis.manager.engineplugin.jdbc.monitor.impl.TrinoProgressMonitor");
+  }
+
+  public static void register(String statementClassName, String monitorClassName) {
+    MONITORS.put(statementClassName, monitorClassName);
+  }
+
+  public static ProgressMonitor<?> attachMonitor(Statement statement) {
+    ProgressMonitor<?> progressMonitor = null;
+    /* unwrap the druid statement */
+    if (statement instanceof DruidPooledStatement) {
+      statement = ((DruidPooledStatement) statement).getStatement();
     }
-
-    public static void register(String statementClassName, String monitorClassName) {
-        MONITORS.put(statementClassName, monitorClassName);
+    try {
+      String monitorName = MONITORS.get(statement.getClass().getName());
+      if (StringUtils.isNotBlank(monitorName)) {
+        progressMonitor = (ProgressMonitor<?>) Class.forName(monitorName).newInstance();
+      }
+      if (progressMonitor != null) {
+        progressMonitor.attach(statement);
+      }
+    } catch (Exception e) {
+      LOG.warn(
+          "Failed to create monitor for statement: {}, exception: {} - {}",
+          statement,
+          e.getClass().getName(),
+          e.getMessage());
     }
+    return progressMonitor;
+  }
 
-    public static ProgressMonitor<?> attachMonitor(Statement statement) {
-        ProgressMonitor<?> progressMonitor = null;
-        /* unwrap the druid statement */
-        if (statement instanceof DruidPooledStatement) {
-            statement = ((DruidPooledStatement) statement).getStatement();
-        }
-        try {
-            String monitorName = MONITORS.get(statement.getClass().getName());
-            if (StringUtils.isNotBlank(monitorName)) {
-                progressMonitor = (ProgressMonitor<?>) Class.forName(monitorName).newInstance();
-            }
-            if (progressMonitor != null) {
-                progressMonitor.attach(statement);
-            }
-        } catch (Exception e) {
-            LOG.warn(
-                    "Failed to create monitor for statement: {}, exception: {} - {}",
-                    statement,
-                    e.getClass().getName(),
-                    e.getMessage());
-        }
-        return progressMonitor;
-    }
+  public abstract void attach(Statement statement);
 
-    public abstract void attach(Statement statement);
+  public abstract void callback(Runnable callback);
 
-    public abstract void callback(Runnable callback);
+  public abstract float getSqlProgress();
 
-    public abstract float getSqlProgress();
+  public abstract int getSucceedTasks();
 
-    public abstract int getSucceedTasks();
+  public abstract int getTotalTasks();
 
-    public abstract int getTotalTasks();
+  public abstract int getRunningTasks();
 
-    public abstract int getRunningTasks();
+  public abstract int getFailedTasks();
 
-    public abstract int getFailedTasks();
-
-    public abstract JobProgressInfo jobProgressInfo(String id);
+  public abstract JobProgressInfo jobProgressInfo(String id);
 }

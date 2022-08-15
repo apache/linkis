@@ -29,69 +29,67 @@ import java.util.stream.Collectors;
 
 public class CombinedLabelImpl implements CombinedLabel {
 
-    private List<Label<?>> value;
+  private List<Label<?>> value;
 
-    private Feature feature;
+  private Feature feature;
 
-    public CombinedLabelImpl() {}
+  public CombinedLabelImpl() {}
 
-    public CombinedLabelImpl(List<Label<?>> value) {
-        value.sort(Comparator.comparing(Label::getLabelKey));
-        Collections.reverse(value);
-        this.value = value;
+  public CombinedLabelImpl(List<Label<?>> value) {
+    value.sort(Comparator.comparing(Label::getLabelKey));
+    Collections.reverse(value);
+    this.value = value;
+  }
+
+  @Override
+  public String getLabelKey() {
+    if (isEmpty()) {
+      return LabelKeyConstant.COMBINED_LABEL_KEY_PREFIX;
     }
+    List<String> keyList = getValue().stream().map(Label::getLabelKey).collect(Collectors.toList());
 
-    @Override
-    public String getLabelKey() {
-        if (isEmpty()) {
-            return LabelKeyConstant.COMBINED_LABEL_KEY_PREFIX;
-        }
-        List<String> keyList =
-                getValue().stream().map(Label::getLabelKey).collect(Collectors.toList());
+    String labelKey = LabelKeyConstant.COMBINED_LABEL_KEY_PREFIX + StringUtils.join(keyList, "_");
+    return labelKey;
+  }
 
-        String labelKey =
-                LabelKeyConstant.COMBINED_LABEL_KEY_PREFIX + StringUtils.join(keyList, "_");
-        return labelKey;
+  @Override
+  public List<Label<?>> getValue() {
+    return this.value;
+  }
+
+  @Override
+  public String getStringValue() {
+    if (isEmpty()) {
+      return null;
     }
+    return getValue().stream().map(Label::getStringValue).collect(Collectors.joining(","));
+  }
 
-    @Override
-    public List<Label<?>> getValue() {
-        return this.value;
-    }
+  @Override
+  public Feature getFeature() {
+    return feature;
+  }
 
-    @Override
-    public String getStringValue() {
-        if (isEmpty()) {
-            return null;
-        }
-        return getValue().stream().map(Label::getStringValue).collect(Collectors.joining(","));
-    }
+  public void setFeature(Feature feature) {
+    this.feature = feature;
+  }
 
-    @Override
-    public Feature getFeature() {
-        return feature;
-    }
+  @Override
+  public Boolean isEmpty() {
+    return CollectionUtils.isEmpty(getValue());
+  }
 
-    public void setFeature(Feature feature) {
-        this.feature = feature;
+  @Override
+  public boolean equals(Object obj) {
+    if (obj != null && obj instanceof CombinedLabel) {
+      return getStringValue().equals(((Label) obj).getStringValue());
+    } else {
+      return false;
     }
+  }
 
-    @Override
-    public Boolean isEmpty() {
-        return CollectionUtils.isEmpty(getValue());
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj != null && obj instanceof CombinedLabel) {
-            return getStringValue().equals(((Label) obj).getStringValue());
-        } else {
-            return false;
-        }
-    }
-
-    @Override
-    public String toString() {
-        return "CombinedLabelImpl{" + "key=" + getLabelKey() + "value=" + getStringValue() + '}';
-    }
+  @Override
+  public String toString() {
+    return "CombinedLabelImpl{" + "key=" + getLabelKey() + "value=" + getStringValue() + '}';
+  }
 }

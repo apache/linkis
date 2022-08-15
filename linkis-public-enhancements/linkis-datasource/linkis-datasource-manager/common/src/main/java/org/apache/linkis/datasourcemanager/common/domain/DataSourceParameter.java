@@ -17,37 +17,37 @@
 
 package org.apache.linkis.datasourcemanager.common.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 /** Store the data source information */
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_EMPTY)
 @JsonIgnoreProperties(
-        value = {"hibernateLazyInitializer", "handler"},
-        ignoreUnknown = true)
+    value = {"hibernateLazyInitializer", "handler"},
+    ignoreUnknown = true)
 public class DataSourceParameter {
 
-    /** Connection parameters */
-    private Map<String, Object> connectParams = new HashMap<>();
-    /** comment */
-    private String comment;
+  /** Connection parameters */
+  private Map<String, Object> connectParams = new HashMap<>();
+  /** comment */
+  private String comment;
 
-    public Map<String, Object> getConnectParams() {
-        return connectParams;
-    }
+  public Map<String, Object> getConnectParams() {
+    return connectParams;
+  }
 
-    public void setConnectParams(Map<String, Object> connectParams) {
-        this.connectParams = connectParams;
-    }
+  public void setConnectParams(Map<String, Object> connectParams) {
+    this.connectParams = connectParams;
+  }
 
-    public String getComment() {
-        return comment;
-    }
+  public String getComment() {
+    return comment;
+  }
 
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
+  public void setComment(String comment) {
+    this.comment = comment;
+  }
 }

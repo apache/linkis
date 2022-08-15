@@ -35,57 +35,55 @@ import java.util.stream.Collectors;
 @Component
 public class ContextIDListenerPersistenceImpl implements ContextIDListenerPersistence {
 
-    @Autowired private ContextIDListenerMapper contextIDListenerMapper;
+  @Autowired private ContextIDListenerMapper contextIDListenerMapper;
 
-    @Autowired private ContextIDPersistence contextIDPersistence;
+  @Autowired private ContextIDPersistence contextIDPersistence;
 
-    @Override
-    public void create(ContextID contextID, ContextIDListenerDomain contextIDListenerDomain)
-            throws CSErrorException {
-        PersistenceContextIDListener listener = new PersistenceContextIDListener();
-        listener.setContextId(contextID.getContextId());
-        listener.setSource(contextIDListenerDomain.getSource());
-        contextIDListenerMapper.createIDListener(listener);
-    }
+  @Override
+  public void create(ContextID contextID, ContextIDListenerDomain contextIDListenerDomain)
+      throws CSErrorException {
+    PersistenceContextIDListener listener = new PersistenceContextIDListener();
+    listener.setContextId(contextID.getContextId());
+    listener.setSource(contextIDListenerDomain.getSource());
+    contextIDListenerMapper.createIDListener(listener);
+  }
 
-    @Override
-    public void remove(ContextIDListenerDomain contextIDListenerDomain) throws CSErrorException {
-        // TODO: 2020/2/17
-        PersistenceContextIDListener listener = new PersistenceContextIDListener();
-        listener.setContextId(contextIDListenerDomain.getContextID().getContextId());
-        listener.setSource(contextIDListenerDomain.getSource());
-        contextIDListenerMapper.remove(listener);
-    }
+  @Override
+  public void remove(ContextIDListenerDomain contextIDListenerDomain) throws CSErrorException {
+    // TODO: 2020/2/17
+    PersistenceContextIDListener listener = new PersistenceContextIDListener();
+    listener.setContextId(contextIDListenerDomain.getContextID().getContextId());
+    listener.setSource(contextIDListenerDomain.getSource());
+    contextIDListenerMapper.remove(listener);
+  }
 
-    @Override
-    public void removeAll(ContextID contextID) throws CSErrorException {
-        contextIDListenerMapper.removeAll(contextID);
-    }
+  @Override
+  public void removeAll(ContextID contextID) throws CSErrorException {
+    contextIDListenerMapper.removeAll(contextID);
+  }
 
-    @Override
-    public List<ContextIDListenerDomain> getAll(ContextID contextID) throws CSErrorException {
-        // 根据id返回一堆的domain
-        ContextID complete = contextIDPersistence.getContextID(contextID.getContextId());
-        List<PersistenceContextIDListener> listeners = contextIDListenerMapper.getAll(contextID);
-        List<ContextIDListenerDomain> domains =
-                listeners.stream()
-                        .map(l -> pDomainToCommon(l, complete))
-                        .collect(Collectors.toList());
-        return domains;
-    }
+  @Override
+  public List<ContextIDListenerDomain> getAll(ContextID contextID) throws CSErrorException {
+    // 根据id返回一堆的domain
+    ContextID complete = contextIDPersistence.getContextID(contextID.getContextId());
+    List<PersistenceContextIDListener> listeners = contextIDListenerMapper.getAll(contextID);
+    List<ContextIDListenerDomain> domains =
+        listeners.stream().map(l -> pDomainToCommon(l, complete)).collect(Collectors.toList());
+    return domains;
+  }
 
-    public ContextIDListenerDomain pDomainToCommon(
-            PersistenceContextIDListener listener, ContextID contextID) {
-        CommonContextIDListenerDomain domain = new CommonContextIDListenerDomain();
-        domain.setContextID(contextID);
-        domain.setSource(listener.getSource());
-        return domain;
-    }
+  public ContextIDListenerDomain pDomainToCommon(
+      PersistenceContextIDListener listener, ContextID contextID) {
+    CommonContextIDListenerDomain domain = new CommonContextIDListenerDomain();
+    domain.setContextID(contextID);
+    domain.setSource(listener.getSource());
+    return domain;
+  }
 
-    @Override
-    public ContextIDListenerDomain getBy(ContextIDListenerDomain contextIDListenerDomain)
-            throws CSErrorException {
-        // 根据id 和source 返回响应的ContextIDListenerDomain
-        return contextIDListenerDomain;
-    }
+  @Override
+  public ContextIDListenerDomain getBy(ContextIDListenerDomain contextIDListenerDomain)
+      throws CSErrorException {
+    // 根据id 和source 返回响应的ContextIDListenerDomain
+    return contextIDListenerDomain;
+  }
 }

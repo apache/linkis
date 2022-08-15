@@ -26,13 +26,13 @@ import org.apache.linkis.manager.rm.external.domain.ExternalResourceProvider;
 import java.util.List;
 
 public interface ExternalResourceRequester {
-    NodeResource requestResourceInfo(
-            ExternalResourceIdentifier identifier, ExternalResourceProvider provider);
+  NodeResource requestResourceInfo(
+      ExternalResourceIdentifier identifier, ExternalResourceProvider provider);
 
-    List<ExternalAppInfo> requestAppInfo(
-            ExternalResourceIdentifier identifier, ExternalResourceProvider provider);
+  List<ExternalAppInfo> requestAppInfo(
+      ExternalResourceIdentifier identifier, ExternalResourceProvider provider);
 
-    ResourceType getResourceType();
+  ResourceType getResourceType();
 
-    Boolean reloadExternalResourceAddress(ExternalResourceProvider provider);
+  Boolean reloadExternalResourceAddress(ExternalResourceProvider provider);
 }

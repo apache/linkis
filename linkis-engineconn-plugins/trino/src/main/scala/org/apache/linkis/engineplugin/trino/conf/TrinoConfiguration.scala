@@ -44,6 +44,7 @@ object TrinoConfiguration {
     CommonVars[java.lang.Long]("wds.linkis.trino.http.readTimeout", new lang.Long(60))
 
   val TRINO_URL = CommonVars[String]("wds.linkis.trino.url", "http://127.0.0.1:8080")
+
   val TRINO_USER = CommonVars[String]("wds.linkis.trino.user", null)
   val TRINO_PASSWORD = CommonVars[String]("wds.linkis.trino.password", null)
   val TRINO_PASSWORD_CMD = CommonVars[String]("wds.linkis.trino.passwordCmd", null)

@@ -23,6 +23,7 @@
     <version>1.2.0</version>
     <relativePath>../../pom.xml</relativePath>
   </parent>
+
   <artifactId>linkis-engineplugin-trino</artifactId>
   <properties>
     <trino.version>371</trino.version>
@@ -68,8 +69,8 @@
       <version>${trino.version}</version>
     </dependency>
   </dependencies>
+
   <build>
-    <finalName>${project.artifactId}-${project.version}</finalName>
     <resources>
       <resource>
         <directory>${basedir}/src/main/resources</directory>
@@ -97,7 +98,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-assembly-plugin</artifactId>
-        <version>3.2.0</version>
         <inherited>false</inherited>
         <configuration>
           <skipAssembly>false</skipAssembly>

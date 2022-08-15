@@ -950,3 +950,9 @@ CREATE TABLE `linkis_mg_gateway_auth_token` (
 PRIMARY KEY (`id`),
 UNIQUE KEY `token_name` (`token_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+ALTER TABLE `linkis_ps_instance_label_value_relation` ADD  UNIQUE KEY `label_instance` (`label_id`,`service_instance`);
+
+ALTER TABLE `linkis_ps_dm_datasource_type_key` ADD `name_en` VARCHAR(32) COLLATE utf8_bin  NOT NULL;
+ALTER TABLE `linkis_ps_dm_datasource_type_key` ADD `description_en` VARCHAR(200) COLLATE utf8_bin NULL  DEFAULT NULL;
+

@@ -23,24 +23,24 @@ import java.util.List;
 
 public class EngineRecyclingRequest implements EngineRequest {
 
-  private String user;
+    private String user;
 
-  private List<RecyclingRule> recyclingRuleList;
+    private List<RecyclingRule> recyclingRuleList;
 
-  @Override
-  public String getUser() {
-    return this.user;
-  }
+    @Override
+    public String getUser() {
+        return this.user;
+    }
 
-  public void setUser(String user) {
-    this.user = user;
-  }
+    public void setUser(String user) {
+        this.user = user;
+    }
 
-  public List<RecyclingRule> getRecyclingRuleList() {
-    return recyclingRuleList;
-  }
+    public List<RecyclingRule> getRecyclingRuleList() {
+        return recyclingRuleList;
+    }
 
-  public void setRecyclingRuleList(List<RecyclingRule> recyclingRuleList) {
-    this.recyclingRuleList = recyclingRuleList;
-  }
+    public void setRecyclingRuleList(List<RecyclingRule> recyclingRuleList) {
+        this.recyclingRuleList = recyclingRuleList;
+    }
 }

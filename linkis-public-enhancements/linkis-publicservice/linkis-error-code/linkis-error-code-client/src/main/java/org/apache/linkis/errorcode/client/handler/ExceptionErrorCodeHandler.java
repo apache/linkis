@@ -20,5 +20,5 @@ package org.apache.linkis.errorcode.client.handler;
 import org.apache.linkis.errorcode.common.ErrorCode;
 
 public interface ExceptionErrorCodeHandler extends ErrorCodeHandler {
-  public ErrorCode handle(Throwable t);
+    public ErrorCode handle(Throwable t);
 }

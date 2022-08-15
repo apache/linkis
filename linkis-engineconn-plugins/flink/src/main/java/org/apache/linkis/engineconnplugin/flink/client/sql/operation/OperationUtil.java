@@ -30,50 +30,50 @@ import java.util.List;
 
 public class OperationUtil {
 
-  public static final ResultSet OK =
-      ResultSet.builder()
-          .resultKind(ResultKind.SUCCESS)
-          .columns(ColumnInfo.create(ConstantNames.RESULT, new VarCharType(2)))
-          .data(Row.of(ConstantNames.OK))
-          .build();
+    public static final ResultSet OK =
+            ResultSet.builder()
+                    .resultKind(ResultKind.SUCCESS)
+                    .columns(ColumnInfo.create(ConstantNames.RESULT, new VarCharType(2)))
+                    .data(Row.of(ConstantNames.OK))
+                    .build();
 
-  public static ResultSet singleStringToResultSet(String str, String columnName) {
-    boolean isNullable;
-    int length;
+    public static ResultSet singleStringToResultSet(String str, String columnName) {
+        boolean isNullable;
+        int length;
 
-    if (str == null) {
-      isNullable = true;
-      length = VarCharType.DEFAULT_LENGTH;
-    } else {
-      isNullable = false;
-      length = str.length();
+        if (str == null) {
+            isNullable = true;
+            length = VarCharType.DEFAULT_LENGTH;
+        } else {
+            isNullable = false;
+            length = str.length();
+        }
+
+        return ResultSet.builder()
+                .resultKind(ResultKind.SUCCESS_WITH_CONTENT)
+                .columns(ColumnInfo.create(columnName, new VarCharType(isNullable, length)))
+                .data(Row.of(str))
+                .build();
     }
 
-    return ResultSet.builder()
-        .resultKind(ResultKind.SUCCESS_WITH_CONTENT)
-        .columns(ColumnInfo.create(columnName, new VarCharType(isNullable, length)))
-        .data(Row.of(str))
-        .build();
-  }
+    public static ResultSet stringListToResultSet(List<String> strings, String columnName) {
+        List<Row> data = new ArrayList<>();
+        boolean isNullable = false;
+        int maxLength = VarCharType.DEFAULT_LENGTH;
 
-  public static ResultSet stringListToResultSet(List<String> strings, String columnName) {
-    List<Row> data = new ArrayList<>();
-    boolean isNullable = false;
-    int maxLength = VarCharType.DEFAULT_LENGTH;
+        for (String str : strings) {
+            if (str == null) {
+                isNullable = true;
+            } else {
+                maxLength = Math.max(str.length(), maxLength);
+                data.add(Row.of(str));
+            }
+        }
 
-    for (String str : strings) {
-      if (str == null) {
-        isNullable = true;
-      } else {
-        maxLength = Math.max(str.length(), maxLength);
-        data.add(Row.of(str));
-      }
+        return ResultSet.builder()
+                .resultKind(ResultKind.SUCCESS_WITH_CONTENT)
+                .columns(ColumnInfo.create(columnName, new VarCharType(isNullable, maxLength)))
+                .data(data)
+                .build();
     }
-
-    return ResultSet.builder()
-        .resultKind(ResultKind.SUCCESS_WITH_CONTENT)
-        .columns(ColumnInfo.create(columnName, new VarCharType(isNullable, maxLength)))
-        .data(data)
-        .build();
-  }
 }

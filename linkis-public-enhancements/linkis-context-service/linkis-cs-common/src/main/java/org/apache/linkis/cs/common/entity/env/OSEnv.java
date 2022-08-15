@@ -19,7 +19,7 @@ package org.apache.linkis.cs.common.entity.env;
 
 public interface OSEnv extends Env {
 
-  String getOs();
+    String getOs();
 
-  void setOs(String os);
+    void setOs(String os);
 }

@@ -28,76 +28,76 @@ import java.util.List;
 
 @CacheConfig
 public interface InsLabelService {
-  /**
-   * Add label to instance
-   *
-   * @param label label entity
-   * @param serviceInstance service instance
-   */
-  @CacheEvict(
-      cacheNames = {"instance", "appInstance", "label"},
-      allEntries = true)
-  void attachLabelToInstance(Label<?> label, ServiceInstance serviceInstance);
+    /**
+     * Add label to instance
+     *
+     * @param label label entity
+     * @param serviceInstance service instance
+     */
+    @CacheEvict(
+            cacheNames = {"instance", "appInstance", "label"},
+            allEntries = true)
+    void attachLabelToInstance(Label<?> label, ServiceInstance serviceInstance);
 
-  @CacheEvict(
-      cacheNames = {"instance", "appInstance", "label"},
-      allEntries = true)
-  void attachLabelsToInstance(List<? extends Label<?>> labels, ServiceInstance serviceInstance);
+    @CacheEvict(
+            cacheNames = {"instance", "appInstance", "label"},
+            allEntries = true)
+    void attachLabelsToInstance(List<? extends Label<?>> labels, ServiceInstance serviceInstance);
 
-  /**
-   * Refresh all the labels of instance (to init the relationship of instance and labels)
-   *
-   * @param labels
-   * @param serviceInstance
-   */
-  @CacheEvict(
-      cacheNames = {"instance", "appInstance", "label"},
-      allEntries = true)
-  void refreshLabelsToInstance(List<? extends Label<?>> labels, ServiceInstance serviceInstance);
+    /**
+     * Refresh all the labels of instance (to init the relationship of instance and labels)
+     *
+     * @param labels
+     * @param serviceInstance
+     */
+    @CacheEvict(
+            cacheNames = {"instance", "appInstance", "label"},
+            allEntries = true)
+    void refreshLabelsToInstance(List<? extends Label<?>> labels, ServiceInstance serviceInstance);
 
-  /**
-   * Remove all relationship between label and instance
-   *
-   * @param serviceInstance service instance
-   */
-  @CacheEvict(
-      cacheNames = {"instance", "appInstance", "label"},
-      allEntries = true)
-  void removeLabelsFromInstance(ServiceInstance serviceInstance);
+    /**
+     * Remove all relationship between label and instance
+     *
+     * @param serviceInstance service instance
+     */
+    @CacheEvict(
+            cacheNames = {"instance", "appInstance", "label"},
+            allEntries = true)
+    void removeLabelsFromInstance(ServiceInstance serviceInstance);
 
-  /**
-   * Search instances from labels
-   *
-   * @param labels label list
-   */
-  @Cacheable({"instance"})
-  List<ServiceInstance> searchInstancesByLabels(List<? extends Label<?>> labels);
+    /**
+     * Search instances from labels
+     *
+     * @param labels label list
+     */
+    @Cacheable({"instance"})
+    List<ServiceInstance> searchInstancesByLabels(List<? extends Label<?>> labels);
 
-  /**
-   * Search instances that are not related with other labels
-   *
-   * @param serviceInstance
-   * @return
-   */
-  @Cacheable({"instance"})
-  List<ServiceInstance> searchUnRelateInstances(ServiceInstance serviceInstance);
+    /**
+     * Search instances that are not related with other labels
+     *
+     * @param serviceInstance
+     * @return
+     */
+    @Cacheable({"instance"})
+    List<ServiceInstance> searchUnRelateInstances(ServiceInstance serviceInstance);
 
-  /**
-   * Search instances that are related with other labels
-   *
-   * @param serviceInstance instance info for searching
-   * @return
-   */
-  @Cacheable({"instance"})
-  List<ServiceInstance> searchLabelRelatedInstances(ServiceInstance serviceInstance);
+    /**
+     * Search instances that are related with other labels
+     *
+     * @param serviceInstance instance info for searching
+     * @return
+     */
+    @Cacheable({"instance"})
+    List<ServiceInstance> searchLabelRelatedInstances(ServiceInstance serviceInstance);
 
-  void removeInstance(ServiceInstance serviceInstance);
+    void removeInstance(ServiceInstance serviceInstance);
 
-  @Cacheable({"appInstance"})
-  List<ServiceInstance> getInstancesByNames(String appName);
+    @Cacheable({"appInstance"})
+    List<ServiceInstance> getInstancesByNames(String appName);
 
-  @CacheEvict(
-      cacheNames = {"instance", "label", "appInstance"},
-      allEntries = true)
-  void evictCache();
+    @CacheEvict(
+            cacheNames = {"instance", "label", "appInstance"},
+            allEntries = true)
+    void evictCache();
 }

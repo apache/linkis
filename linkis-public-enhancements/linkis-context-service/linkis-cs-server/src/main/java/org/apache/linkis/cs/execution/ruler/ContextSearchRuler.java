@@ -23,5 +23,5 @@ import java.util.List;
 
 public interface ContextSearchRuler {
 
-  List<ContextKeyValue> rule(List<ContextKeyValue> contextKeyValues);
+    List<ContextKeyValue> rule(List<ContextKeyValue> contextKeyValues);
 }

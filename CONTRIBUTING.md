@@ -123,16 +123,16 @@ git push origin dev-fix dev-fix
 
 ### 2.3 Issue submission guidelines
 - If you still don’t know how to initiate a PR to an open source project, please refer to [About issues](https://docs.github.com/en/github/managing-your-work-on-github/about-issues)
-- Issue name, which should briefly describe your problem or suggestion in one sentence; for the international promotion of the project, please write the issue in English or both Chinese and English
+- Issue name, which should briefly describe your problem or suggestion in one sentence; for the international promotion of the project, please write the issue in English or both Chinese and English.
 - For each Issue, please bring at least two labels, component and type, such as component=Computation Governance/EngineConn, type=Improvement. Reference: [issue #590](https://github.com/apache/incubator-linkis/issues/590)
 
 ### 2.4 Pull Request(PR) Submission Guidelines
 
 - If you still don’t know how to initiate a PR to an open source project, please refer to [About pull requests](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/about-pull-requests)
-  Whether it is a bug fix or a new feature development, please submit a PR to the dev-* branch
-- PR and submission name follow the principle of `<type>(<scope>): <subject>`, for details, please refer to [Commit message and Change log writing guide](https://linkis.apache.org/community/development-specification/commit-message)
-- If the PR contains new features, the document update should be included in this PR
-- If this PR is not ready to merge, please add [WIP] prefix to the head of the name (WIP = work-in-progress)
+  Whether it is a bug fix or a new feature development, please submit a PR to the dev-* branch.
+- PR and submission name follow the principle of `<type>(<scope>): <subject>`, for details, please refer to Ruan Yifeng's [Commit message and Change log writing guide](http://www.ruanyifeng.com/blog/2016/01/commit_message_change_log.html) this article.
+- If the PR contains new features, the document update should be included in this PR.
+- If this PR is not ready to merge, please add [WIP] prefix to the head of the name (WIP = work-in-progress).
 - All submissions to dev-* branches need to go through at least one review before they can be merged
 
 ### 2.5 Review Standard

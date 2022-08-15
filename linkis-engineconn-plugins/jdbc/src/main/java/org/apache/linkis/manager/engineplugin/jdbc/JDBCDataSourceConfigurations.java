@@ -17,47 +17,47 @@
 
 package org.apache.linkis.manager.engineplugin.jdbc;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class JDBCDataSourceConfigurations {
-  private static final Logger LOG = LoggerFactory.getLogger(JDBCDataSourceConfigurations.class);
-  private final Map<String, Statement> taskIdStatementMap;
+    private static final Logger LOG = LoggerFactory.getLogger(JDBCDataSourceConfigurations.class);
+    private final Map<String, Statement> taskIdStatementMap;
 
-  public JDBCDataSourceConfigurations() {
-    taskIdStatementMap = new ConcurrentHashMap<>();
-  }
-
-  public void initTaskIdStatementMap() throws SQLException {
-    for (Statement statement : taskIdStatementMap.values()) {
-      if (statement != null && !statement.isClosed()) {
-        statement.close();
-      }
+    public JDBCDataSourceConfigurations() {
+        taskIdStatementMap = new ConcurrentHashMap<>();
     }
-    taskIdStatementMap.clear();
-    LOG.info("The jdbc task statement map has be cleared successfully!");
-  }
 
-  public void saveStatement(String taskId, Statement statement) {
-    taskIdStatementMap.put(taskId, statement);
-  }
-
-  public void cancelStatement(String taskId) throws SQLException {
-    LOG.info("Starting to cancel the statement of task {} ...", taskId);
-    Statement statement = taskIdStatementMap.get(taskId);
-    if (statement != null) {
-      statement.cancel();
+    public void initTaskIdStatementMap() throws SQLException {
+        for (Statement statement : taskIdStatementMap.values()) {
+            if (statement != null && !statement.isClosed()) {
+                statement.close();
+            }
+        }
+        taskIdStatementMap.clear();
+        LOG.info("The jdbc task statement map has be cleared successfully!");
     }
-    LOG.info("Finished cancel the statement of task {}.", taskId);
-  }
 
-  public void removeStatement(String taskId) {
-    taskIdStatementMap.remove(taskId);
-    LOG.info("Finished remove the statement of task {}", taskId);
-  }
+    public void saveStatement(String taskId, Statement statement) {
+        taskIdStatementMap.put(taskId, statement);
+    }
+
+    public void cancelStatement(String taskId) throws SQLException {
+        LOG.info("Starting to cancel the statement of task {} ...", taskId);
+        Statement statement = taskIdStatementMap.get(taskId);
+        if (statement != null) {
+            statement.cancel();
+        }
+        LOG.info("Finished cancel the statement of task {}.", taskId);
+    }
+
+    public void removeStatement(String taskId) {
+        taskIdStatementMap.remove(taskId);
+        LOG.info("Finished remove the statement of task {}", taskId);
+    }
 }

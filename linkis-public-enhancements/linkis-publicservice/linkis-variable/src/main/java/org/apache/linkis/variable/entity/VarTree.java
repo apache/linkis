@@ -21,58 +21,58 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class VarTree {
-  private Long id;
-  private Long parentID;
-  private String name;
-  private String description;
-  private Long appID;
-  private List<VarTree> childrens = new ArrayList<>();
+    private Long id;
+    private Long parentID;
+    private String name;
+    private String description;
+    private Long appID;
+    private List<VarTree> childrens = new ArrayList<>();
 
-  public Long getId() {
-    return id;
-  }
+    public Long getId() {
+        return id;
+    }
 
-  public void setId(Long id) {
-    this.id = id;
-  }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-  public Long getParentID() {
-    return parentID;
-  }
+    public Long getParentID() {
+        return parentID;
+    }
 
-  public void setParentID(Long parentID) {
-    this.parentID = parentID;
-  }
+    public void setParentID(Long parentID) {
+        this.parentID = parentID;
+    }
 
-  public String getName() {
-    return name;
-  }
+    public String getName() {
+        return name;
+    }
 
-  public void setName(String name) {
-    this.name = name;
-  }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-  public String getDescription() {
-    return description;
-  }
+    public String getDescription() {
+        return description;
+    }
 
-  public void setDescription(String description) {
-    this.description = description;
-  }
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-  public Long getAppID() {
-    return appID;
-  }
+    public Long getAppID() {
+        return appID;
+    }
 
-  public void setAppID(Long appID) {
-    this.appID = appID;
-  }
+    public void setAppID(Long appID) {
+        this.appID = appID;
+    }
 
-  public List<VarTree> getChildrens() {
-    return childrens;
-  }
+    public List<VarTree> getChildrens() {
+        return childrens;
+    }
 
-  public void setChildrens(List<VarTree> childrens) {
-    this.childrens = childrens;
-  }
+    public void setChildrens(List<VarTree> childrens) {
+        this.childrens = childrens;
+    }
 }

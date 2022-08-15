@@ -18,5 +18,5 @@
 package org.apache.linkis.errorcode.common;
 
 public interface CommonConf {
-  String GET_ERRORCODE_URL = "getAllErrorCodes";
+    String GET_ERRORCODE_URL = "getAllErrorCodes";
 }

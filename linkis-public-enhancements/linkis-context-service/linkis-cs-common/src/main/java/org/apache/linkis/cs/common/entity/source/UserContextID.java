@@ -19,7 +19,7 @@ package org.apache.linkis.cs.common.entity.source;
 
 public interface UserContextID extends ContextID {
 
-  void setUser(String user);
+    void setUser(String user);
 
-  String getUser();
+    String getUser();
 }

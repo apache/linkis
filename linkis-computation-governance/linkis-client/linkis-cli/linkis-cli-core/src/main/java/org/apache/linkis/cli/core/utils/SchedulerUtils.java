@@ -21,73 +21,73 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class SchedulerUtils {
-  private static ExecutorService fixedThreadPool;
-  private static ThreadPoolExecutor cachedThreadPool;
-  private static int THREAD_NUM = 5;
-  private static String THREAD_NAME = "LinkisCli-Scheduler";
-  private static Boolean IS_DEAMON = false;
+    private static ExecutorService fixedThreadPool;
+    private static ThreadPoolExecutor cachedThreadPool;
+    private static int THREAD_NUM = 5;
+    private static String THREAD_NAME = "LinkisCli-Scheduler";
+    private static Boolean IS_DEAMON = false;
 
-  public static ThreadFactory threadFactory(String threadName, Boolean isDaemon) {
-    return new ThreadFactory() {
-      AtomicInteger num = new AtomicInteger(0);
+    public static ThreadFactory threadFactory(String threadName, Boolean isDaemon) {
+        return new ThreadFactory() {
+            AtomicInteger num = new AtomicInteger(0);
 
-      @Override
-      public Thread newThread(Runnable r) {
-        Thread t = new Thread(r);
-        t.setDaemon(isDaemon);
-        t.setName(threadName + num.incrementAndGet());
-        return t;
-      }
-    };
-  }
+            @Override
+            public Thread newThread(Runnable r) {
+                Thread t = new Thread(r);
+                t.setDaemon(isDaemon);
+                t.setName(threadName + num.incrementAndGet());
+                return t;
+            }
+        };
+    }
 
-  public static ThreadPoolExecutor newCachedThreadPool(
-      int threadNum, String threadName, Boolean isDaemon) {
-    ThreadPoolExecutor threadPool =
-        new ThreadPoolExecutor(
-            threadNum,
-            threadNum,
-            120L,
-            TimeUnit.SECONDS,
-            new LinkedBlockingQueue<Runnable>(10 * threadNum),
-            threadFactory(threadName, isDaemon));
-    threadPool.allowCoreThreadTimeOut(true);
-    return threadPool;
-  }
+    public static ThreadPoolExecutor newCachedThreadPool(
+            int threadNum, String threadName, Boolean isDaemon) {
+        ThreadPoolExecutor threadPool =
+                new ThreadPoolExecutor(
+                        threadNum,
+                        threadNum,
+                        120L,
+                        TimeUnit.SECONDS,
+                        new LinkedBlockingQueue<Runnable>(10 * threadNum),
+                        threadFactory(threadName, isDaemon));
+        threadPool.allowCoreThreadTimeOut(true);
+        return threadPool;
+    }
 
-  public static ExecutorService newFixedThreadPool(
-      int threadNum, String threadName, Boolean isDaemon) {
-    return Executors.newFixedThreadPool(threadNum, threadFactory(threadName, isDaemon));
-  }
+    public static ExecutorService newFixedThreadPool(
+            int threadNum, String threadName, Boolean isDaemon) {
+        return Executors.newFixedThreadPool(threadNum, threadFactory(threadName, isDaemon));
+    }
 
-  public static ThreadPoolExecutor getCachedThreadPoolExecutor() {
-    if (cachedThreadPool == null) {
-      synchronized (SchedulerUtils.class) {
+    public static ThreadPoolExecutor getCachedThreadPoolExecutor() {
         if (cachedThreadPool == null) {
-          cachedThreadPool = newCachedThreadPool(THREAD_NUM, THREAD_NAME, IS_DEAMON);
+            synchronized (SchedulerUtils.class) {
+                if (cachedThreadPool == null) {
+                    cachedThreadPool = newCachedThreadPool(THREAD_NUM, THREAD_NAME, IS_DEAMON);
+                }
+            }
         }
-      }
+        return cachedThreadPool;
     }
-    return cachedThreadPool;
-  }
 
-  public static ExecutorService getFixedThreadPool() {
-    if (fixedThreadPool == null) {
-      synchronized (SchedulerUtils.class) {
+    public static ExecutorService getFixedThreadPool() {
         if (fixedThreadPool == null) {
-          fixedThreadPool = newFixedThreadPool(THREAD_NUM, THREAD_NAME, IS_DEAMON);
+            synchronized (SchedulerUtils.class) {
+                if (fixedThreadPool == null) {
+                    fixedThreadPool = newFixedThreadPool(THREAD_NUM, THREAD_NAME, IS_DEAMON);
+                }
+            }
         }
-      }
+        return fixedThreadPool;
     }
-    return fixedThreadPool;
-  }
 
-  public static void shutDown() {
-    if (fixedThreadPool != null) {
-      fixedThreadPool.shutdownNow();
+    public static void shutDown() {
+        if (fixedThreadPool != null) {
+            fixedThreadPool.shutdownNow();
+        }
+        if (cachedThreadPool != null) {
+            cachedThreadPool.shutdownNow();
+        }
     }
-    if (cachedThreadPool != null) {
-      cachedThreadPool.shutdownNow();
-    }
-  }
 }

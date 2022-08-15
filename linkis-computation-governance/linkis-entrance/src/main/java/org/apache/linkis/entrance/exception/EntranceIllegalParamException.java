@@ -21,11 +21,11 @@ import org.apache.linkis.common.exception.ErrorException;
 
 public class EntranceIllegalParamException extends ErrorException {
 
-  public EntranceIllegalParamException(int errCode, String message) {
-    super(errCode, message);
-  }
+    public EntranceIllegalParamException(int errCode, String message) {
+        super(errCode, message);
+    }
 
-  public EntranceIllegalParamException(EntranceErrorCode entranceErrorCode) {
-    super(entranceErrorCode.getErrCode(), entranceErrorCode.getDesc());
-  }
+    public EntranceIllegalParamException(EntranceErrorCode entranceErrorCode) {
+        super(entranceErrorCode.getErrCode(), entranceErrorCode.getDesc());
+    }
 }

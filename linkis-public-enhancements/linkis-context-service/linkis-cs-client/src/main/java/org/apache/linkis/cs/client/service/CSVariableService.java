@@ -31,81 +31,82 @@ import org.apache.linkis.cs.common.exception.ErrorCode;
 
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CSVariableService implements VariableService {
 
-  private static final Logger logger = LoggerFactory.getLogger(CSVariableService.class);
+    private static final Logger logger = LoggerFactory.getLogger(CSVariableService.class);
 
-  private SearchService searchService = DefaultSearchService.getInstance();
+    private SearchService searchService = DefaultSearchService.getInstance();
 
-  private static CSVariableService csVariableService;
+    private static CSVariableService csVariableService;
 
-  private CSVariableService() {}
+    private CSVariableService() {}
 
-  @Override
-  public List<LinkisVariable> getUpstreamVariables(String contextIDStr, String nodeName)
-      throws CSErrorException {
-    List<LinkisVariable> rsList = new ArrayList<>();
-    if (StringUtils.isBlank(contextIDStr) || StringUtils.isBlank(nodeName)) {
-      logger.warn("contextIDStr or nodeName cannot null");
-      return rsList;
-    }
-    try {
-      ContextID contextID = SerializeHelper.deserializeContextID(contextIDStr);
-      if (null != contextID) {
-        rsList =
-            searchService.searchUpstreamContext(
-                contextID, nodeName, Integer.MAX_VALUE, LinkisVariable.class);
-        if (null != rsList)
-          logger.info(
-              "contextID: {} and nodeName: {} succeed to getUpstreamVariables size {}",
-              contextID.getContextId(),
-              nodeName,
-              rsList.size());
-      }
-      return rsList;
-    } catch (Throwable e) {
-      logger.error("Failed to get variable : " + contextIDStr, e);
-      // throw new CSErrorException(ErrorCode.DESERIALIZE_ERROR, "Failed to get variable : " +
-      // contextIDStr + "e : " + e.getMessage());
-    }
-    return rsList;
-  }
-
-  @Override
-  public void putVariable(String contextIDStr, String contextKeyStr, LinkisVariable linkisVariable)
-      throws CSErrorException {
-    ContextClient contextClient = ContextClientFactory.getOrCreateContextClient();
-    try {
-      ContextID contextID = SerializeHelper.deserializeContextID(contextIDStr);
-      ContextKey contextKey = SerializeHelper.deserializeContextKey(contextKeyStr);
-      ContextValue contextValue = new CommonContextValue();
-      contextValue.setValue(linkisVariable);
-      contextClient.update(contextID, contextKey, contextValue);
-      logger.info(
-          "contextID: {} and contextKeyStr: {} succeed to putVariable {}",
-          contextID.getContextId(),
-          contextKeyStr,
-          linkisVariable.getValue());
-    } catch (ErrorException e) {
-      logger.error("Deserialize error. e ");
-      throw new CSErrorException(ErrorCode.DESERIALIZE_ERROR, "Deserialize error. e : ", e);
-    }
-  }
-
-  public static CSVariableService getInstance() {
-    if (null == csVariableService) {
-      synchronized (CSVariableService.class) {
-        if (null == csVariableService) {
-          csVariableService = new CSVariableService();
+    @Override
+    public List<LinkisVariable> getUpstreamVariables(String contextIDStr, String nodeName)
+            throws CSErrorException {
+        List<LinkisVariable> rsList = new ArrayList<>();
+        if (StringUtils.isBlank(contextIDStr) || StringUtils.isBlank(nodeName)) {
+            logger.warn("contextIDStr or nodeName cannot null");
+            return rsList;
         }
-      }
+        try {
+            ContextID contextID = SerializeHelper.deserializeContextID(contextIDStr);
+            if (null != contextID) {
+                rsList =
+                        searchService.searchUpstreamContext(
+                                contextID, nodeName, Integer.MAX_VALUE, LinkisVariable.class);
+                if (null != rsList)
+                    logger.info(
+                            "contextID: {} and nodeName: {} succeed to getUpstreamVariables size {}",
+                            contextID.getContextId(),
+                            nodeName,
+                            rsList.size());
+            }
+            return rsList;
+        } catch (Throwable e) {
+            logger.error("Failed to get variable : " + contextIDStr, e);
+            // throw new CSErrorException(ErrorCode.DESERIALIZE_ERROR, "Failed to get variable : " +
+            // contextIDStr + "e : " + e.getMessage());
+        }
+        return rsList;
     }
-    return csVariableService;
-  }
+
+    @Override
+    public void putVariable(
+            String contextIDStr, String contextKeyStr, LinkisVariable linkisVariable)
+            throws CSErrorException {
+        ContextClient contextClient = ContextClientFactory.getOrCreateContextClient();
+        try {
+            ContextID contextID = SerializeHelper.deserializeContextID(contextIDStr);
+            ContextKey contextKey = SerializeHelper.deserializeContextKey(contextKeyStr);
+            ContextValue contextValue = new CommonContextValue();
+            contextValue.setValue(linkisVariable);
+            contextClient.update(contextID, contextKey, contextValue);
+            logger.info(
+                    "contextID: {} and contextKeyStr: {} succeed to putVariable {}",
+                    contextID.getContextId(),
+                    contextKeyStr,
+                    linkisVariable.getValue());
+        } catch (ErrorException e) {
+            logger.error("Deserialize error. e ");
+            throw new CSErrorException(ErrorCode.DESERIALIZE_ERROR, "Deserialize error. e : ", e);
+        }
+    }
+
+    public static CSVariableService getInstance() {
+        if (null == csVariableService) {
+            synchronized (CSVariableService.class) {
+                if (null == csVariableService) {
+                    csVariableService = new CSVariableService();
+                }
+            }
+        }
+        return csVariableService;
+    }
 }

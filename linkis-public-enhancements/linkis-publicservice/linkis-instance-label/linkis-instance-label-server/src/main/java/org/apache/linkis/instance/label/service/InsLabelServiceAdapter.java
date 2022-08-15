@@ -19,12 +19,12 @@ package org.apache.linkis.instance.label.service;
 
 public interface InsLabelServiceAdapter extends InsLabelService {
 
-  /**
-   * Register service
-   *
-   * @param insLabelAccessService service implement <em>InsLabelAccessService</em>
-   */
-  void registerServices(InsLabelAccessService insLabelAccessService);
+    /**
+     * Register service
+     *
+     * @param insLabelAccessService service implement <em>InsLabelAccessService</em>
+     */
+    void registerServices(InsLabelAccessService insLabelAccessService);
 
-  void registerServices(InsLabelAccessService insLabelAccessService, int order);
+    void registerServices(InsLabelAccessService insLabelAccessService, int order);
 }

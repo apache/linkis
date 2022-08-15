@@ -38,55 +38,56 @@ import org.slf4j.LoggerFactory;
 @Component(ServiceNameConsts.ENTRANCE_SERVER)
 public class DefaultEntranceServer extends EntranceServer {
 
-  private static final Logger logger = LoggerFactory.getLogger(DefaultEntranceServer.class);
+    private static final Logger logger = LoggerFactory.getLogger(DefaultEntranceServer.class);
 
-  @Autowired private EntranceContext entranceContext;
+    @Autowired private EntranceContext entranceContext;
 
-  private Boolean shutdownFlag = false;
+    private Boolean shutdownFlag = false;
 
-  public DefaultEntranceServer() {}
+    public DefaultEntranceServer() {}
 
-  public DefaultEntranceServer(EntranceContext entranceContext) {
-    this.entranceContext = entranceContext;
-  }
-
-  @Override
-  @PostConstruct
-  public void init() {
-    getEntranceWebSocketService();
-    addRunningJobEngineStatusMonitor();
-  }
-
-  @Override
-  public String getName() {
-    return Sender.getThisInstance();
-  }
-
-  @Override
-  public EntranceContext getEntranceContext() {
-    return entranceContext;
-  }
-
-  @Override
-  public LogReader logReader(String execId) {
-    return getEntranceContext().getOrCreateLogManager().getLogReader(execId);
-  }
-
-  private void addRunningJobEngineStatusMonitor() {}
-
-  @EventListener
-  private void shutdownEntrance(ContextClosedEvent event) {
-    if (shutdownFlag) {
-      logger.warn("event has been handled");
-    } else {
-      logger.warn("Entrance exit to stop all job");
-      EntranceJob[] allUndoneTask = getAllUndoneTask(null);
-      if (null != allUndoneTask) {
-        for (EntranceJob job : allUndoneTask) {
-          job.onFailure(
-              "Entrance exits the automatic cleanup task and can be rerun(服务退出自动清理任务，可以重跑)", null);
-        }
-      }
+    public DefaultEntranceServer(EntranceContext entranceContext) {
+        this.entranceContext = entranceContext;
     }
-  }
+
+    @Override
+    @PostConstruct
+    public void init() {
+        getEntranceWebSocketService();
+        addRunningJobEngineStatusMonitor();
+    }
+
+    @Override
+    public String getName() {
+        return Sender.getThisInstance();
+    }
+
+    @Override
+    public EntranceContext getEntranceContext() {
+        return entranceContext;
+    }
+
+    @Override
+    public LogReader logReader(String execId) {
+        return getEntranceContext().getOrCreateLogManager().getLogReader(execId);
+    }
+
+    private void addRunningJobEngineStatusMonitor() {}
+
+    @EventListener
+    private void shutdownEntrance(ContextClosedEvent event) {
+        if (shutdownFlag) {
+            logger.warn("event has been handled");
+        } else {
+            logger.warn("Entrance exit to stop all job");
+            EntranceJob[] allUndoneTask = getAllUndoneTask(null);
+            if (null != allUndoneTask) {
+                for (EntranceJob job : allUndoneTask) {
+                    job.onFailure(
+                            "Entrance exits the automatic cleanup task and can be rerun(服务退出自动清理任务，可以重跑)",
+                            null);
+                }
+            }
+        }
+    }
 }

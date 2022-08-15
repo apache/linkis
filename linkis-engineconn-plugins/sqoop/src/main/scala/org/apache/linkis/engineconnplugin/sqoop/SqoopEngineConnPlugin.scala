@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,18 +17,16 @@
 
 package org.apache.linkis.engineconnplugin.sqoop
 
-import org.apache.linkis.engineconnplugin.sqoop.factory.SqoopEngineConnFactory
-import org.apache.linkis.engineconnplugin.sqoop.launch.SqoopEngineConnLaunchBuilder
 import org.apache.linkis.manager.engineplugin.common.EngineConnPlugin
 import org.apache.linkis.manager.engineplugin.common.creation.EngineConnFactory
 import org.apache.linkis.manager.engineplugin.common.launch.EngineConnLaunchBuilder
-import org.apache.linkis.manager.engineplugin.common.resource.{
-  EngineResourceFactory,
-  GenericEngineResourceFactory
-}
+import org.apache.linkis.manager.engineplugin.common.resource.{EngineResourceFactory, GenericEngineResourceFactory}
 import org.apache.linkis.manager.label.entity.Label
+import org.apache.linkis.engineconnplugin.sqoop.factory.SqoopEngineConnFactory
+import org.apache.linkis.engineconnplugin.sqoop.launch.SqoopEngineConnLaunchBuilder
 
-class SqoopEngineConnPlugin extends EngineConnPlugin {
+
+class SqoopEngineConnPlugin extends EngineConnPlugin{
   private val EP_CONTEXT_CONSTRUCTOR_LOCK = new Object()
   private var engineResourceFactory: EngineResourceFactory = _
   private var engineConnLaunchBuilder: EngineConnLaunchBuilder = _
@@ -37,8 +35,8 @@ class SqoopEngineConnPlugin extends EngineConnPlugin {
 
   override def getEngineResourceFactory: EngineResourceFactory = {
 
-    EP_CONTEXT_CONSTRUCTOR_LOCK.synchronized {
-      if (null == engineResourceFactory) {
+    EP_CONTEXT_CONSTRUCTOR_LOCK.synchronized{
+      if(null == engineResourceFactory){
         engineResourceFactory = new GenericEngineResourceFactory
       }
       engineResourceFactory
@@ -53,6 +51,7 @@ class SqoopEngineConnPlugin extends EngineConnPlugin {
       engineConnLaunchBuilder
     }
   }
+
 
   override def getEngineConnFactory: EngineConnFactory = {
     EP_CONTEXT_CONSTRUCTOR_LOCK.synchronized {

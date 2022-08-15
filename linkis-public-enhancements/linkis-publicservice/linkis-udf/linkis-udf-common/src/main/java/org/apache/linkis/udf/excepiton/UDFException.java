@@ -19,11 +19,11 @@ package org.apache.linkis.udf.excepiton;
 
 public class UDFException extends Exception {
 
-  public UDFException() {
-    super();
-  }
+    public UDFException() {
+        super();
+    }
 
-  public UDFException(String message) {
-    super(message);
-  }
+    public UDFException(String message) {
+        super(message);
+    }
 }

@@ -18,44 +18,44 @@
 package org.apache.linkis.bml.threading;
 
 public enum TaskState {
-  /** 任务的状态的内容 */
-  INITED("inited", 0),
-  SCHEDULED("scheduled", 1),
-  RUNNING("running", 2),
-  SUCCESS("success", 3),
-  FAILED("failed", 4),
-  CANCELLED("cancelled", 5);
-  private String value;
-  private int id;
+    /** 任务的状态的内容 */
+    INITED("inited", 0),
+    SCHEDULED("scheduled", 1),
+    RUNNING("running", 2),
+    SUCCESS("success", 3),
+    FAILED("failed", 4),
+    CANCELLED("cancelled", 5);
+    private String value;
+    private int id;
 
-  private TaskState(String value, int id) {
-    this.value = value;
-    this.id = id;
-  }
+    private TaskState(String value, int id) {
+        this.value = value;
+        this.id = id;
+    }
 
-  public String getValue() {
-    return value;
-  }
+    public String getValue() {
+        return value;
+    }
 
-  public void setValue(String value) {
-    this.value = value;
-  }
+    public void setValue(String value) {
+        this.value = value;
+    }
 
-  public int getId() {
-    return id;
-  }
+    public int getId() {
+        return id;
+    }
 
-  public void setId(int id) {
-    this.id = id;
-  }
+    public void setId(int id) {
+        this.id = id;
+    }
 
-  public static boolean isCompleted(TaskState state) {
-    return state.equals(SUCCESS) || state.equals(FAILED) || state.equals(CANCELLED);
-  }
+    public static boolean isCompleted(TaskState state) {
+        return state.equals(SUCCESS) || state.equals(FAILED) || state.equals(CANCELLED);
+    }
 
-  public static boolean isCompleted(String state) {
-    return SUCCESS.getValue().equals(state)
-        || FAILED.getValue().equals(state)
-        || CANCELLED.getValue().equals(state);
-  }
+    public static boolean isCompleted(String state) {
+        return SUCCESS.getValue().equals(state)
+                || FAILED.getValue().equals(state)
+                || CANCELLED.getValue().equals(state);
+    }
 }

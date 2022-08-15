@@ -25,77 +25,79 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /** LinkisCommonsErrorCodeSummary Tester */
 class LinkisCommonsErrorCodeSummaryTest {
 
-  @ParameterizedTest
-  @EnumSource(LinkisCommonsErrorCodeSummary.class)
-  void testGetErrorCode(LinkisCommonsErrorCodeSummary linkisCommonsErrorCodeSummary) {
-    assertEquals(11000, linkisCommonsErrorCodeSummary.getErrorCode());
-  }
+    @ParameterizedTest
+    @EnumSource(LinkisCommonsErrorCodeSummary.class)
+    void testGetErrorCode(LinkisCommonsErrorCodeSummary linkisCommonsErrorCodeSummary) {
+        assertEquals(11000, linkisCommonsErrorCodeSummary.getErrorCode());
+    }
 
-  @ParameterizedTest
-  @EnumSource(LinkisCommonsErrorCodeSummary.class)
-  void testSetErrorCode(LinkisCommonsErrorCodeSummary linkisCommonsErrorCodeSummary) {
-    assertEquals(11000, linkisCommonsErrorCodeSummary.getErrorCode());
-    linkisCommonsErrorCodeSummary.setErrorCode(1);
-    assertEquals(1, linkisCommonsErrorCodeSummary.getErrorCode());
-    linkisCommonsErrorCodeSummary.setErrorCode(2147483647);
-    assertEquals(2147483647, linkisCommonsErrorCodeSummary.getErrorCode());
-    linkisCommonsErrorCodeSummary.setErrorCode(11000);
-  }
+    @ParameterizedTest
+    @EnumSource(LinkisCommonsErrorCodeSummary.class)
+    void testSetErrorCode(LinkisCommonsErrorCodeSummary linkisCommonsErrorCodeSummary) {
+        assertEquals(11000, linkisCommonsErrorCodeSummary.getErrorCode());
+        linkisCommonsErrorCodeSummary.setErrorCode(1);
+        assertEquals(1, linkisCommonsErrorCodeSummary.getErrorCode());
+        linkisCommonsErrorCodeSummary.setErrorCode(2147483647);
+        assertEquals(2147483647, linkisCommonsErrorCodeSummary.getErrorCode());
+        linkisCommonsErrorCodeSummary.setErrorCode(11000);
+    }
 
-  @ParameterizedTest
-  @EnumSource(LinkisCommonsErrorCodeSummary.class)
-  void testGetErrorDesc(LinkisCommonsErrorCodeSummary linkisCommonsErrorCodeSummary) {
-    assertEquals("引擎启动失败", linkisCommonsErrorCodeSummary.getErrorDesc());
-  }
+    @ParameterizedTest
+    @EnumSource(LinkisCommonsErrorCodeSummary.class)
+    void testGetErrorDesc(LinkisCommonsErrorCodeSummary linkisCommonsErrorCodeSummary) {
+        assertEquals("引擎启动失败", linkisCommonsErrorCodeSummary.getErrorDesc());
+    }
 
-  @ParameterizedTest
-  @EnumSource(LinkisCommonsErrorCodeSummary.class)
-  void testSetErrorDesc(LinkisCommonsErrorCodeSummary linkisCommonsErrorCodeSummary) {
-    assertEquals("引擎启动失败", linkisCommonsErrorCodeSummary.getErrorDesc());
-    linkisCommonsErrorCodeSummary.setErrorDesc("testSetErrorDesc");
-    assertEquals("testSetErrorDesc", linkisCommonsErrorCodeSummary.getErrorDesc());
-    linkisCommonsErrorCodeSummary.setErrorDesc("引擎启动失败");
-  }
+    @ParameterizedTest
+    @EnumSource(LinkisCommonsErrorCodeSummary.class)
+    void testSetErrorDesc(LinkisCommonsErrorCodeSummary linkisCommonsErrorCodeSummary) {
+        assertEquals("引擎启动失败", linkisCommonsErrorCodeSummary.getErrorDesc());
+        linkisCommonsErrorCodeSummary.setErrorDesc("testSetErrorDesc");
+        assertEquals("testSetErrorDesc", linkisCommonsErrorCodeSummary.getErrorDesc());
+        linkisCommonsErrorCodeSummary.setErrorDesc("引擎启动失败");
+    }
 
-  @ParameterizedTest
-  @EnumSource(LinkisCommonsErrorCodeSummary.class)
-  void testGetComment(LinkisCommonsErrorCodeSummary linkisCommonsErrorCodeSummary) {
-    assertEquals("引擎启动失败", linkisCommonsErrorCodeSummary.getComment());
-  }
+    @ParameterizedTest
+    @EnumSource(LinkisCommonsErrorCodeSummary.class)
+    void testGetComment(LinkisCommonsErrorCodeSummary linkisCommonsErrorCodeSummary) {
+        assertEquals("引擎启动失败", linkisCommonsErrorCodeSummary.getComment());
+    }
 
-  @ParameterizedTest
-  @EnumSource(LinkisCommonsErrorCodeSummary.class)
-  void testSetComment(LinkisCommonsErrorCodeSummary linkisCommonsErrorCodeSummary) {
-    assertEquals("引擎启动失败", linkisCommonsErrorCodeSummary.getComment());
-    linkisCommonsErrorCodeSummary.setComment("testSetComment");
-    assertEquals("testSetComment", linkisCommonsErrorCodeSummary.getComment());
-    linkisCommonsErrorCodeSummary.setComment("引擎启动失败");
-  }
+    @ParameterizedTest
+    @EnumSource(LinkisCommonsErrorCodeSummary.class)
+    void testSetComment(LinkisCommonsErrorCodeSummary linkisCommonsErrorCodeSummary) {
+        assertEquals("引擎启动失败", linkisCommonsErrorCodeSummary.getComment());
+        linkisCommonsErrorCodeSummary.setComment("testSetComment");
+        assertEquals("testSetComment", linkisCommonsErrorCodeSummary.getComment());
+        linkisCommonsErrorCodeSummary.setComment("引擎启动失败");
+    }
 
-  @ParameterizedTest
-  @EnumSource(LinkisCommonsErrorCodeSummary.class)
-  void testGetModule(LinkisCommonsErrorCodeSummary linkisCommonsErrorCodeSummary) {
-    assertEquals("hiveEngineConn", linkisCommonsErrorCodeSummary.getModule());
-  }
+    @ParameterizedTest
+    @EnumSource(LinkisCommonsErrorCodeSummary.class)
+    void testGetModule(LinkisCommonsErrorCodeSummary linkisCommonsErrorCodeSummary) {
+        assertEquals("hiveEngineConn", linkisCommonsErrorCodeSummary.getModule());
+    }
 
-  @ParameterizedTest
-  @EnumSource(LinkisCommonsErrorCodeSummary.class)
-  void testSetModule(LinkisCommonsErrorCodeSummary linkisCommonsErrorCodeSummary) {
-    assertEquals("hiveEngineConn", linkisCommonsErrorCodeSummary.getModule());
-    linkisCommonsErrorCodeSummary.setModule("testSetModule");
-    assertEquals("testSetModule", linkisCommonsErrorCodeSummary.getModule());
-    linkisCommonsErrorCodeSummary.setModule("hiveEngineConn");
-  }
+    @ParameterizedTest
+    @EnumSource(LinkisCommonsErrorCodeSummary.class)
+    void testSetModule(LinkisCommonsErrorCodeSummary linkisCommonsErrorCodeSummary) {
+        assertEquals("hiveEngineConn", linkisCommonsErrorCodeSummary.getModule());
+        linkisCommonsErrorCodeSummary.setModule("testSetModule");
+        assertEquals("testSetModule", linkisCommonsErrorCodeSummary.getModule());
+        linkisCommonsErrorCodeSummary.setModule("hiveEngineConn");
+    }
 
-  @ParameterizedTest
-  @EnumSource(LinkisCommonsErrorCodeSummary.class)
-  void testToString(LinkisCommonsErrorCodeSummary linkisCommonsErrorCodeSummary) {
-    linkisCommonsErrorCodeSummary.setErrorCode(0);
-    linkisCommonsErrorCodeSummary.setErrorDesc("testSetErrorDesc");
-    assertEquals(
-        "errorCode: 0, errorDesc:testSetErrorDesc", linkisCommonsErrorCodeSummary.toString());
-    linkisCommonsErrorCodeSummary.setErrorCode(11000);
-    linkisCommonsErrorCodeSummary.setErrorDesc("引擎启动失败");
-    assertEquals("errorCode: 11000, errorDesc:引擎启动失败", linkisCommonsErrorCodeSummary.toString());
-  }
+    @ParameterizedTest
+    @EnumSource(LinkisCommonsErrorCodeSummary.class)
+    void testToString(LinkisCommonsErrorCodeSummary linkisCommonsErrorCodeSummary) {
+        linkisCommonsErrorCodeSummary.setErrorCode(0);
+        linkisCommonsErrorCodeSummary.setErrorDesc("testSetErrorDesc");
+        assertEquals(
+                "errorCode: 0, errorDesc:testSetErrorDesc",
+                linkisCommonsErrorCodeSummary.toString());
+        linkisCommonsErrorCodeSummary.setErrorCode(11000);
+        linkisCommonsErrorCodeSummary.setErrorDesc("引擎启动失败");
+        assertEquals(
+                "errorCode: 11000, errorDesc:引擎启动失败", linkisCommonsErrorCodeSummary.toString());
+    }
 }

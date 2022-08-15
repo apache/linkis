@@ -19,6 +19,11 @@ package org.apache.linkis.manager.engineplugin.jdbc;
 
 import org.apache.linkis.manager.engineplugin.jdbc.monitor.ProgressMonitor;
 
+import io.trino.jdbc.QueryStats;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -26,49 +31,44 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import io.trino.jdbc.QueryStats;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-
 public class ProgressMonitorTest {
-  @Test
-  @DisplayName("testProgressMonitor")
-  public void testProgressMonitor() throws SQLException {
-    ProgressMonitor<?> monitor = ProgressMonitor.attachMonitor(null);
-    Assertions.assertNull(monitor);
+    @Test
+    @DisplayName("testProgressMonitor")
+    public void testProgressMonitor() throws SQLException {
+        ProgressMonitor<?> monitor = ProgressMonitor.attachMonitor(null);
+        Assertions.assertNull(monitor);
 
-    String url = "jdbc:trino://127.0.0.1:8080/hive/test";
-    Properties properties = new Properties();
-    properties.setProperty("user", "test");
-    Connection connection = DriverManager.getConnection(url, properties);
-    monitor = ProgressMonitor.attachMonitor(connection.createStatement());
-    Assertions.assertNotNull(monitor);
+        String url = "jdbc:trino://127.0.0.1:8080/hive/test";
+        Properties properties = new Properties();
+        properties.setProperty("user", "test");
+        Connection connection = DriverManager.getConnection(url, properties);
+        monitor = ProgressMonitor.attachMonitor(connection.createStatement());
+        Assertions.assertNotNull(monitor);
 
-    AtomicBoolean callbackFlag = new AtomicBoolean(false);
-    monitor.callback(() -> callbackFlag.set(true));
-    Assertions.assertFalse(callbackFlag.get());
+        AtomicBoolean callbackFlag = new AtomicBoolean(false);
+        monitor.callback(() -> callbackFlag.set(true));
+        Assertions.assertFalse(callbackFlag.get());
 
-    ProgressMonitor<QueryStats> trinoMonitor = (ProgressMonitor<QueryStats>) monitor;
-    trinoMonitor.accept(
-        new QueryStats(
-            "testId",
-            "testState",
-            false,
-            false,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            Optional.empty()));
-    Assertions.assertTrue(callbackFlag.get());
-  }
+        ProgressMonitor<QueryStats> trinoMonitor = (ProgressMonitor<QueryStats>) monitor;
+        trinoMonitor.accept(
+                new QueryStats(
+                        "testId",
+                        "testState",
+                        false,
+                        false,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        Optional.empty()));
+        Assertions.assertTrue(callbackFlag.get());
+    }
 }

@@ -19,41 +19,41 @@ package org.apache.linkis.instance.label.entity;
 
 public class InsPersistenceLabelValue {
 
-  private Integer labelId;
+    private Integer labelId;
 
-  private String valueKey;
+    private String valueKey;
 
-  private String valueContent;
+    private String valueContent;
 
-  public InsPersistenceLabelValue() {}
+    public InsPersistenceLabelValue() {}
 
-  public InsPersistenceLabelValue(Integer labelId, String key, String content) {
-    this.labelId = labelId;
-    this.valueKey = key;
-    this.valueContent = content;
-  }
+    public InsPersistenceLabelValue(Integer labelId, String key, String content) {
+        this.labelId = labelId;
+        this.valueKey = key;
+        this.valueContent = content;
+    }
 
-  public String getValueKey() {
-    return valueKey;
-  }
+    public String getValueKey() {
+        return valueKey;
+    }
 
-  public void setValueKey(String valueKey) {
-    this.valueKey = valueKey;
-  }
+    public void setValueKey(String valueKey) {
+        this.valueKey = valueKey;
+    }
 
-  public String getValueContent() {
-    return valueContent;
-  }
+    public String getValueContent() {
+        return valueContent;
+    }
 
-  public void setValueContent(String valueContent) {
-    this.valueContent = valueContent;
-  }
+    public void setValueContent(String valueContent) {
+        this.valueContent = valueContent;
+    }
 
-  public Integer getLabelId() {
-    return labelId;
-  }
+    public Integer getLabelId() {
+        return labelId;
+    }
 
-  public void setLabelId(Integer labelId) {
-    this.labelId = labelId;
-  }
+    public void setLabelId(Integer labelId) {
+        this.labelId = labelId;
+    }
 }

@@ -24,158 +24,158 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class LinkisClientApplicationTest {
-  private static final Logger logger = LoggerFactory.getLogger(LinkisClientApplicationTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(LinkisClientApplicationTest.class);
 
-  String[] cmdStr;
-  String[] cmdStr2;
+    String[] cmdStr;
+    String[] cmdStr2;
 
-  @BeforeEach
-  public void before() {
-    System.setProperty("conf.root", "src/test/resources/conf/");
-    System.setProperty("user.name", "hadoop");
-    cmdStr2 =
-        new String[] {
-          //      "--gatewayUrl", "http://127.0.0.1:8090",
-          //        "--authStg", "token",
-          //        "--authKey", "Validation-Code",
-          //        "--authVal", "BML-AUTH",
-          //                "job",
-          //                "kill",
-          //                "-j", "1121",
-          //                "-submitUser", "user",
-          //                "-proxyUser", "user",
+    @BeforeEach
+    public void before() {
+        System.setProperty("conf.root", "src/test/resources/conf/");
+        System.setProperty("user.name", "hadoop");
+        cmdStr2 =
+                new String[] {
+                    //      "--gatewayUrl", "http://127.0.0.1:8090",
+                    //        "--authStg", "token",
+                    //        "--authKey", "Validation-Code",
+                    //        "--authVal", "BML-AUTH",
+                    //                "job",
+                    //                "kill",
+                    //                "-j", "1121",
+                    //                "-submitUser", "user",
+                    //                "-proxyUser", "user",
 
-          //        "-varMap", "name=\"tables\"",
-          //        "-varMap", "name=\"databases\""
+                    //        "-varMap", "name=\"tables\"",
+                    //        "-varMap", "name=\"databases\""
 
-        };
-    cmdStr =
-        new String[] {
-          "--gatewayUrl",
-          "http://127.0.0.1:9001",
-          "--authStg",
-          "token",
-          "--authKey",
-          "Validation-Code",
-          "--authVal",
-          "BML-AUTH",
-          //                "--help",
-          //                "--kill", "8249",
-          //                "--status", "379",
+                };
+        cmdStr =
+                new String[] {
+                    "--gatewayUrl",
+                    "http://127.0.0.1:9001",
+                    "--authStg",
+                    "token",
+                    "--authKey",
+                    "Validation-Code",
+                    "--authVal",
+                    "BML-AUTH",
+                    //                "--help",
+                    //                "--kill", "8249",
+                    //                "--status", "379",
 
-          //                "--userConf", "src/test/resources/linkis-cli.properties",
+                    //                "--userConf", "src/test/resources/linkis-cli.properties",
 
-          "-creator",
-          "LINKISCLI",
-          //                "-code", "show \${test};",
-          //                "-codePath", "src/test/resources/test",
-          //                "--kill", "6795",
-          "-submitUser",
-          "hadoop",
-          "-proxyUser",
-          "hadoop",
-          //                "-sourceMap", "scriptPath=1234",
-          //                "-outPath", "./data/bdp-job/test/",
-          //                "-labelMap", "codeType=sql",
-          //                "-confMap", "wds.linkis.yarnqueue=q02",
-          //                "-confMap", "wds.linkis.yarnqueue=q02",
-          //                "-confMap", "spark.num.executor=3",
-          //                "-varMap", "wds.linkis.yarnqueue=q02",
-          //                "-varMap", "name=\"databases\"",
+                    "-creator",
+                    "LINKISCLI",
+                    //                "-code", "show \${test};",
+                    //                "-codePath", "src/test/resources/test",
+                    //                "--kill", "6795",
+                    "-submitUser",
+                    "hadoop",
+                    "-proxyUser",
+                    "hadoop",
+                    //                "-sourceMap", "scriptPath=1234",
+                    //                "-outPath", "./data/bdp-job/test/",
+                    //                "-labelMap", "codeType=sql",
+                    //                "-confMap", "wds.linkis.yarnqueue=q02",
+                    //                "-confMap", "wds.linkis.yarnqueue=q02",
+                    //                "-confMap", "spark.num.executor=3",
+                    //                "-varMap", "wds.linkis.yarnqueue=q02",
+                    //                "-varMap", "name=\"databases\"",
 
-          /* Test different task type */
+                    /* Test different task type */
 
-          //                "-engineType", "spark-2.4.3",
-          //                "-codeType", "sql",
-          //                "-code", "show tables;show tables;show tables",
+                    //                "-engineType", "spark-2.4.3",
+                    //                "-codeType", "sql",
+                    //                "-code", "show tables;show tables;show tables",
 
-          //
-          //        "-engineType", "hive-1.2.1",
-          //        "-codeType", "sql",
-          //        "-code", "show tables;",
+                    //
+                    //        "-engineType", "hive-1.2.1",
+                    //        "-codeType", "sql",
+                    //        "-code", "show tables;",
 
-          "-engineType",
-          "shell-1",
-          "-codeType",
-          "shell",
-          "-code",
-          "whoami",
+                    "-engineType",
+                    "shell-1",
+                    "-codeType",
+                    "shell",
+                    "-code",
+                    "whoami",
 
-          //        "-engineType", "spark-2.4.3",
-          //        "-codeType", "py",
-          //        "-code", "print ('hello')",
+                    //        "-engineType", "spark-2.4.3",
+                    //        "-codeType", "py",
+                    //        "-code", "print ('hello')",
 
-          //        "-engineType", "spark-2.4.3",
-          //        "-codeType", "scala",
-          //        "-codePath", "src/test/resources/testScala.scala",
+                    //        "-engineType", "spark-2.4.3",
+                    //        "-codeType", "scala",
+                    //        "-codePath", "src/test/resources/testScala.scala",
 
-          /* Failed */
-          //        "-engineType", "jdbc-1",
-          //        "-codeType", "jdbc",
-          //        "-code", "show tables",
+                    /* Failed */
+                    //        "-engineType", "jdbc-1",
+                    //        "-codeType", "jdbc",
+                    //        "-code", "show tables",
 
-          //        "-engineType", "python-python2",
-          //        "-codeType", "python",
-          ////        "-code", "print(\'hello\')\nprint(\'hello\')\nprint(\'hello\') ",
+                    //        "-engineType", "python-python2",
+                    //        "-codeType", "python",
+                    ////        "-code", "print(\'hello\')\nprint(\'hello\')\nprint(\'hello\') ",
 
-        };
-  }
-
-  @AfterEach
-  public void after() {}
-
-  /** Method: main(String[] args) */
-  @Test
-  public void testMain() {
-    // TODO: Test goes here...
-  }
-
-  /** Method: prepare() */
-  @Test
-  public void testPrepare() {
-    // TODO: Test goes here...
-    /*
-    try {
-       Method method = LinkisClientApplication.getClass().getMethod("prepare");
-       method.setAccessible(true);
-       method.invoke(<Object>, <Parameters>);
-    } catch(NoSuchMethodException e) {
-    } catch(IllegalAccessException e) {
-    } catch(InvocationTargetException e) {
+                };
     }
-    */
-  }
 
-  /** Method: processInput(String[] args, PreparedData preparedData) */
-  @Test
-  public void testProcessInput() {
-    // TODO: Test goes here...
-    /*
-    try {
-       Method method = LinkisClientApplication.getClass().getMethod("processInput", String[].class, PreparedData.class);
-       method.setAccessible(true);
-       method.invoke(<Object>, <Parameters>); c
-    } catch(NoSuchMethodException e) {
-    } catch(IllegalAccessException e) {
-    } catch(InvocationTargetException e) {
-    }
-    */
-  }
+    @AfterEach
+    public void after() {}
 
-  /** Method: exec(ProcessedData data) */
-  @Test
-  public void testExec() {
-    //                LinkisClientApplication.main(cmdStr);
-    //    LinkisClientApplication.main(cmdStr2);
-    /*
-    try {
-       Method method = LinkisClientApplication.getClass().getMethod("exec", ProcessedData.class);
-       method.setAccessible(true);
-       method.invoke(<Object>, <Parameters>);
-    } catch(NoSuchMethodException e) {
-    } catch(IllegalAccessException e) {
-    } catch(InvocationTargetException e) {
+    /** Method: main(String[] args) */
+    @Test
+    public void testMain() {
+        // TODO: Test goes here...
     }
-    */
-  }
+
+    /** Method: prepare() */
+    @Test
+    public void testPrepare() {
+        // TODO: Test goes here...
+        /*
+        try {
+           Method method = LinkisClientApplication.getClass().getMethod("prepare");
+           method.setAccessible(true);
+           method.invoke(<Object>, <Parameters>);
+        } catch(NoSuchMethodException e) {
+        } catch(IllegalAccessException e) {
+        } catch(InvocationTargetException e) {
+        }
+        */
+    }
+
+    /** Method: processInput(String[] args, PreparedData preparedData) */
+    @Test
+    public void testProcessInput() {
+        // TODO: Test goes here...
+        /*
+        try {
+           Method method = LinkisClientApplication.getClass().getMethod("processInput", String[].class, PreparedData.class);
+           method.setAccessible(true);
+           method.invoke(<Object>, <Parameters>); c
+        } catch(NoSuchMethodException e) {
+        } catch(IllegalAccessException e) {
+        } catch(InvocationTargetException e) {
+        }
+        */
+    }
+
+    /** Method: exec(ProcessedData data) */
+    @Test
+    public void testExec() {
+        //                LinkisClientApplication.main(cmdStr);
+        //    LinkisClientApplication.main(cmdStr2);
+        /*
+        try {
+           Method method = LinkisClientApplication.getClass().getMethod("exec", ProcessedData.class);
+           method.setAccessible(true);
+           method.invoke(<Object>, <Parameters>);
+        } catch(NoSuchMethodException e) {
+        } catch(IllegalAccessException e) {
+        } catch(InvocationTargetException e) {
+        }
+        */
+    }
 }

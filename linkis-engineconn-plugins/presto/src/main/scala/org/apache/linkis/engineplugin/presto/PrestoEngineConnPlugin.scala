@@ -14,21 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.linkis.engineplugin.presto
+
+import java.util
 
 import org.apache.linkis.engineplugin.presto.builder.PrestoProcessEngineConnLaunchBuilder
 import org.apache.linkis.engineplugin.presto.factory.PrestoEngineConnFactory
 import org.apache.linkis.manager.engineplugin.common.EngineConnPlugin
 import org.apache.linkis.manager.engineplugin.common.creation.EngineConnFactory
 import org.apache.linkis.manager.engineplugin.common.launch.EngineConnLaunchBuilder
-import org.apache.linkis.manager.engineplugin.common.resource.{
-  EngineResourceFactory,
-  GenericEngineResourceFactory
-}
+import org.apache.linkis.manager.engineplugin.common.resource.{EngineResourceFactory, GenericEngineResourceFactory}
 import org.apache.linkis.manager.label.entity.Label
-
-import java.util
 
 class PrestoEngineConnPlugin extends EngineConnPlugin {
 
@@ -46,7 +42,9 @@ class PrestoEngineConnPlugin extends EngineConnPlugin {
 
   private val defaultLabels: util.List[Label[_]] = new util.ArrayList[Label[_]]()
 
-  override def init(params: util.Map[String, Any]): Unit = {}
+  override def init(params: util.Map[String, Any]): Unit = {
+
+  }
 
   override def getEngineResourceFactory: EngineResourceFactory = {
     if (null == engineResourceFactory) resourceLocker synchronized {

@@ -25,16 +25,16 @@ import java.util.List;
 
 public interface ContextKeyListenerPersistence {
 
-  void create(ContextID contextID, ContextKeyListenerDomain contextKeyListenerDomain)
-      throws CSErrorException;
+    void create(ContextID contextID, ContextKeyListenerDomain contextKeyListenerDomain)
+            throws CSErrorException;
 
-  void remove(ContextID contextID, ContextKeyListenerDomain contextKeyListenerDomain)
-      throws CSErrorException;
+    void remove(ContextID contextID, ContextKeyListenerDomain contextKeyListenerDomain)
+            throws CSErrorException;
 
-  void removeAll(ContextID contextID) throws CSErrorException;
+    void removeAll(ContextID contextID) throws CSErrorException;
 
-  List<ContextKeyListenerDomain> getAll(ContextID contextID) throws CSErrorException;
+    List<ContextKeyListenerDomain> getAll(ContextID contextID) throws CSErrorException;
 
-  ContextKeyListenerDomain getBy(ContextKeyListenerDomain contextKeyListenerDomain)
-      throws CSErrorException;
+    ContextKeyListenerDomain getBy(ContextKeyListenerDomain contextKeyListenerDomain)
+            throws CSErrorException;
 }

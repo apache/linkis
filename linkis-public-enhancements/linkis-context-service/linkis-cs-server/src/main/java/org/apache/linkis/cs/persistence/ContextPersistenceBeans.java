@@ -26,26 +26,26 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ContextPersistenceBeans {
 
-  @Bean
-  @ConditionalOnMissingBean(ContextPersistenceManager.class)
-  public ContextPersistenceManager getContextPersistenceManager(
-      ContextIDPersistence contextIDPersistence,
-      ContextMapPersistence contextMapPersistence,
-      ContextHistoryPersistence contextHistoryPersistence,
-      ContextMetricsPersistence contextMetricsPersistence,
-      ContextIDListenerPersistence contextIDListenerPersistence,
-      ContextKeyListenerPersistence contextKeyListenerPersistence,
-      TransactionManager transactionManager,
-      KeywordContextHistoryPersistence keywordContextHistoryPersistence) {
-    ContextPersistenceManagerImpl manager = new ContextPersistenceManagerImpl();
-    manager.setContextIDPersistence(contextIDPersistence);
-    manager.setContextMapPersistence(contextMapPersistence);
-    manager.setContextHistoryPersistence(contextHistoryPersistence);
-    manager.setContextMetricsPersistence(contextMetricsPersistence);
-    manager.setContextKeyListenerPersistence(contextKeyListenerPersistence);
-    manager.setContextIDListenerPersistence(contextIDListenerPersistence);
-    manager.setTransactionManager(transactionManager);
-    manager.setKeywordContextHistoryPersistence(keywordContextHistoryPersistence);
-    return manager;
-  }
+    @Bean
+    @ConditionalOnMissingBean(ContextPersistenceManager.class)
+    public ContextPersistenceManager getContextPersistenceManager(
+            ContextIDPersistence contextIDPersistence,
+            ContextMapPersistence contextMapPersistence,
+            ContextHistoryPersistence contextHistoryPersistence,
+            ContextMetricsPersistence contextMetricsPersistence,
+            ContextIDListenerPersistence contextIDListenerPersistence,
+            ContextKeyListenerPersistence contextKeyListenerPersistence,
+            TransactionManager transactionManager,
+            KeywordContextHistoryPersistence keywordContextHistoryPersistence) {
+        ContextPersistenceManagerImpl manager = new ContextPersistenceManagerImpl();
+        manager.setContextIDPersistence(contextIDPersistence);
+        manager.setContextMapPersistence(contextMapPersistence);
+        manager.setContextHistoryPersistence(contextHistoryPersistence);
+        manager.setContextMetricsPersistence(contextMetricsPersistence);
+        manager.setContextKeyListenerPersistence(contextKeyListenerPersistence);
+        manager.setContextIDListenerPersistence(contextIDListenerPersistence);
+        manager.setTransactionManager(transactionManager);
+        manager.setKeywordContextHistoryPersistence(keywordContextHistoryPersistence);
+        return manager;
+    }
 }

@@ -31,39 +31,39 @@ import org.apache.flink.table.client.config.entries.ViewEntry;
 
 /** Operation for CREATE VIEW command. */
 public class CreateViewOperation implements NonJobOperation {
-  private final ExecutionContext context;
-  private final String viewName;
-  private final String query;
+    private final ExecutionContext context;
+    private final String viewName;
+    private final String query;
 
-  public CreateViewOperation(FlinkEngineConnContext context, String viewName, String query) {
-    this.context = context.getExecutionContext();
-    this.viewName = viewName;
-    this.query = query;
-  }
-
-  @Override
-  public ResultSet execute() throws SqlExecutionException {
-    Environment env = context.getEnvironment();
-    TableEntry tableEntry = env.getTables().get(viewName);
-    if (tableEntry instanceof ViewEntry) {
-      throw new SqlExecutionException(
-          "'" + viewName + "' has already been defined in the current session.");
+    public CreateViewOperation(FlinkEngineConnContext context, String viewName, String query) {
+        this.context = context.getExecutionContext();
+        this.viewName = viewName;
+        this.query = query;
     }
 
-    // TODO check the logic
-    TableEnvironment tableEnv = context.getTableEnvironment();
-    try {
-      context.wrapClassLoader(
-          () -> {
-            tableEnv.createTemporaryView(viewName, tableEnv.sqlQuery(query));
-            return null;
-          });
-    } catch (Throwable t) {
-      // catch everything such that the query does not crash the executor
-      throw new SqlExecutionException("Invalid SQL statement.", t);
+    @Override
+    public ResultSet execute() throws SqlExecutionException {
+        Environment env = context.getEnvironment();
+        TableEntry tableEntry = env.getTables().get(viewName);
+        if (tableEntry instanceof ViewEntry) {
+            throw new SqlExecutionException(
+                    "'" + viewName + "' has already been defined in the current session.");
+        }
+
+        // TODO check the logic
+        TableEnvironment tableEnv = context.getTableEnvironment();
+        try {
+            context.wrapClassLoader(
+                    () -> {
+                        tableEnv.createTemporaryView(viewName, tableEnv.sqlQuery(query));
+                        return null;
+                    });
+        } catch (Throwable t) {
+            // catch everything such that the query does not crash the executor
+            throw new SqlExecutionException("Invalid SQL statement.", t);
+        }
+        // Also attach the view to ExecutionContext#environment.
+        env.getTables().put(viewName, ViewEntry.create(viewName, query));
+        return OperationUtil.OK;
     }
-    // Also attach the view to ExecutionContext#environment.
-    env.getTables().put(viewName, ViewEntry.create(viewName, query));
-    return OperationUtil.OK;
-  }
 }

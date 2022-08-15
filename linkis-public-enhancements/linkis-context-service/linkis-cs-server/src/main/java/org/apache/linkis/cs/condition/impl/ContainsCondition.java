@@ -21,22 +21,22 @@ import org.apache.linkis.cs.condition.AtomicCondition;
 import org.apache.linkis.cs.condition.ConditionType;
 
 public class ContainsCondition extends AtomicCondition {
-  String value;
+    String value;
 
-  public ContainsCondition(String value) {
-    this.value = value;
-  }
+    public ContainsCondition(String value) {
+        this.value = value;
+    }
 
-  public String getValue() {
-    return value;
-  }
+    public String getValue() {
+        return value;
+    }
 
-  public void setValue(String value) {
-    this.value = value;
-  }
+    public void setValue(String value) {
+        this.value = value;
+    }
 
-  @Override
-  public ConditionType getConditionType() {
-    return ConditionType.Contains;
-  }
+    @Override
+    public ConditionType getConditionType() {
+        return ConditionType.Contains;
+    }
 }

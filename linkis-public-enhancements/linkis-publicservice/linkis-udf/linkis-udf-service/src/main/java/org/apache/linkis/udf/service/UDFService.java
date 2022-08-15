@@ -22,95 +22,99 @@ import org.apache.linkis.udf.entity.UDFInfo;
 import org.apache.linkis.udf.excepiton.UDFException;
 import org.apache.linkis.udf.vo.*;
 
-import java.util.*;
-
 import com.github.pagehelper.PageInfo;
+
+import java.util.*;
 
 public interface UDFService {
 
-  void addUDF(UDFAddVo udfInfo, String userName) throws Exception;
+    void addUDF(UDFAddVo udfInfo, String userName) throws Exception;
 
-  void updateUDF(UDFUpdateVo udfUpdateVo, String userName) throws Exception;
+    void updateUDF(UDFUpdateVo udfUpdateVo, String userName) throws Exception;
 
-  Boolean deleteUDF(Long id, String userName) throws UDFException;
+    Boolean deleteUDF(Long id, String userName) throws UDFException;
 
-  UDFInfo getUDFById(Long id, String userName) throws UDFException;
+    UDFInfo getUDFById(Long id, String userName) throws UDFException;
 
-  Boolean deleteLoadInfo(Long id, String userName) throws UDFException;
+    Boolean deleteLoadInfo(Long id, String userName) throws UDFException;
 
-  Boolean addLoadInfo(Long id, String userName) throws UDFException;
+    Boolean addLoadInfo(Long id, String userName) throws UDFException;
 
-  List<UDFInfo> getUDFSByUserName(String userName) throws UDFException;
+    List<UDFInfo> getUDFSByUserName(String userName) throws UDFException;
 
-  List<UDFInfoVo> getUDFSByTreeIdAndUser(Long treeId, String userName, String category)
-      throws UDFException;
+    List<UDFInfoVo> getUDFSByTreeIdAndUser(Long treeId, String userName, String category)
+            throws UDFException;
 
-  /* List<UDFInfo> getSysUDF();
+    /* List<UDFInfo> getSysUDF();
 
-  List<UDFInfo> getSysUDFByTreeId(Integer treeId);*/
+    List<UDFInfo> getSysUDFByTreeId(Integer treeId);*/
 
-  List<UDFInfoVo> getUDFInfoByTreeId(Long treeId, String userName, String category)
-      throws UDFException;
+    List<UDFInfoVo> getUDFInfoByTreeId(Long treeId, String userName, String category)
+            throws UDFException;
 
-  Map<String, List<String>> generateInitSql(String userName) throws UDFException;
+    Map<String, List<String>> generateInitSql(String userName) throws UDFException;
 
-  Iterator<String> getAllLoadJars(String userName) throws UDFException;
+    Iterator<String> getAllLoadJars(String userName) throws UDFException;
 
-  List<UDFInfo> getSharedUDFByUserName(String userName) throws UDFException;
+    List<UDFInfo> getSharedUDFByUserName(String userName) throws UDFException;
 
-  List<UDFInfo> getSharedUDFByTreeId(Integer treeId, String userName) throws UDFException;
+    List<UDFInfo> getSharedUDFByTreeId(Integer treeId, String userName) throws UDFException;
 
-  List<UDFInfo> getSharedUDFInfos(Long id, String userName, String category);
+    List<UDFInfo> getSharedUDFInfos(Long id, String userName, String category);
 
-  List<UDFInfoVo> getSharedUDFs(String userName, String category);
+    List<UDFInfoVo> getSharedUDFs(String userName, String category);
 
-  List<UDFInfoVo> getExpiredUDFs(String userName, String category);
+    List<UDFInfoVo> getExpiredUDFs(String userName, String category);
 
-  Boolean isUDFManager(String userName);
+    Boolean isUDFManager(String userName);
 
-  void checkSharedUsers(Set<String> sharedUsers, String userName, String udfname)
-      throws UDFException;
+    void checkSharedUsers(Set<String> sharedUsers, String userName, String udfname)
+            throws UDFException;
 
-  UDFInfo addSharedUDFInfo(UDFInfo sharedUDFInfo) throws UDFException;
+    UDFInfo addSharedUDFInfo(UDFInfo sharedUDFInfo) throws UDFException;
 
-  void setUDFSharedInfo(boolean iShared, Long id);
+    void setUDFSharedInfo(boolean iShared, Long id);
 
-  Long getAllShareUDFInfoIdByUDFId(String userName, String udfName);
+    Long getAllShareUDFInfoIdByUDFId(String userName, String udfName);
 
-  void setUdfExpire(Long shareUDFId, String userName) throws UDFException;
+    void setUdfExpire(Long shareUDFId, String userName) throws UDFException;
 
-  List<String> getAllSharedUsersByUdfId(String userName, long udfId);
+    List<String> getAllSharedUsersByUdfId(String userName, long udfId);
 
-  void addSharedUser(Set<String> sharedUsers, Long udfId);
+    void addSharedUser(Set<String> sharedUsers, Long udfId);
 
-  void removeSharedUser(Collection<String> oldsharedUsers, Long udfId);
+    void removeSharedUser(Collection<String> oldsharedUsers, Long udfId);
 
-  //    FsPath copySharedUdfFile(String userName, UDFInfo udfInfo) throws IOException;
+    //    FsPath copySharedUdfFile(String userName, UDFInfo udfInfo) throws IOException;
 
-  UDFInfo createSharedUdfInfo(UDFInfo udfInfo, Long shareParentId, FsPath sharedPath)
-      throws Exception;
+    UDFInfo createSharedUdfInfo(UDFInfo udfInfo, Long shareParentId, FsPath sharedPath)
+            throws Exception;
 
-  void handoverUdf(Long udfId, String handoverUser) throws UDFException;
+    void handoverUdf(Long udfId, String handoverUser) throws UDFException;
 
-  void publishUdf(Long udfId, String version) throws UDFException;
+    void publishUdf(Long udfId, String version) throws UDFException;
 
-  void publishLatestUdf(Long udfId) throws UDFException;
+    void publishLatestUdf(Long udfId) throws UDFException;
 
-  void rollbackUDF(Long udfId, String version, String userName) throws UDFException;
+    void rollbackUDF(Long udfId, String version, String userName) throws UDFException;
 
-  List<UDFVersionVo> getUdfVersionList(long udfId);
+    List<UDFVersionVo> getUdfVersionList(long udfId);
 
-  PageInfo<UDFAddVo> getManagerPages(
-      String udfName, Collection<Integer> udfType, String createUser, int curPage, int pageSize)
-      throws Exception;
+    PageInfo<UDFAddVo> getManagerPages(
+            String udfName,
+            Collection<Integer> udfType,
+            String createUser,
+            int curPage,
+            int pageSize)
+            throws Exception;
 
-  String downLoadUDF(long udfId, String version, String user) throws Exception;
+    String downLoadUDF(long udfId, String version, String user) throws Exception;
 
-  DownloadVo downloadToLocal(long udfId, String version, String user) throws Exception;
+    DownloadVo downloadToLocal(long udfId, String version, String user) throws Exception;
 
-  List<String> allUdfUsers();
+    List<String> allUdfUsers();
 
-  List<String> getUserDirectory(String user, String category);
+    List<String> getUserDirectory(String user, String category);
 
-  List<UDFInfoVo> getAllUDFSByUserName(String userName) throws UDFException;
+    List<UDFInfoVo> getAllUDFSByUserName(String userName) throws UDFException;
 }

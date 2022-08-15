@@ -21,21 +21,21 @@ import java.util.List;
 
 /** Description: Cache with time as storage unit（以时间作为存储单位的缓存方式） */
 public class TimeLogCache extends AbstractLogCache {
-  @Override
-  public void cacheLog(String log) {}
+    @Override
+    public void cacheLog(String log) {}
 
-  @Override
-  public List<String> getLog(int num) {
-    return null;
-  }
+    @Override
+    public List<String> getLog(int num) {
+        return null;
+    }
 
-  @Override
-  public List<String> getRemain() {
-    return null;
-  }
+    @Override
+    public List<String> getRemain() {
+        return null;
+    }
 
-  @Override
-  public int size() {
-    return 0;
-  }
+    @Override
+    public int size() {
+        return 0;
+    }
 }

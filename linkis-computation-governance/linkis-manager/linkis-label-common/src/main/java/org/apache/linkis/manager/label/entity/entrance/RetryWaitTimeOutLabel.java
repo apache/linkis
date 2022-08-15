@@ -25,22 +25,22 @@ import java.util.HashMap;
 
 public class RetryWaitTimeOutLabel extends GenericLabel implements JobStrategyLabel {
 
-  public RetryWaitTimeOutLabel() {
-    setLabelKey(LabelKeyConstant.RETRY_TIMEOUT_KEY);
-  }
-
-  public Long getJobRetryTimeout() {
-    if (null == getValue()) {
-      return -1L;
+    public RetryWaitTimeOutLabel() {
+        setLabelKey(LabelKeyConstant.RETRY_TIMEOUT_KEY);
     }
-    return Long.parseLong(getValue().getOrDefault(LabelKeyConstant.RETRY_TIMEOUT_KEY, "-1"));
-  }
 
-  @ValueSerialNum(0)
-  public void setJobRetryTimeout(String timeout) {
-    if (null == getValue()) {
-      setValue(new HashMap<>());
+    public Long getJobRetryTimeout() {
+        if (null == getValue()) {
+            return -1L;
+        }
+        return Long.parseLong(getValue().getOrDefault(LabelKeyConstant.RETRY_TIMEOUT_KEY, "-1"));
     }
-    getValue().put(LabelKeyConstant.RETRY_TIMEOUT_KEY, timeout);
-  }
+
+    @ValueSerialNum(0)
+    public void setJobRetryTimeout(String timeout) {
+        if (null == getValue()) {
+            setValue(new HashMap<>());
+        }
+        getValue().put(LabelKeyConstant.RETRY_TIMEOUT_KEY, timeout);
+    }
 }

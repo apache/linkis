@@ -5,30 +5,28 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+ 
 package org.apache.linkis.ujes.client.request
 
 import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.httpclient.request.GetAction
 import org.apache.linkis.ujes.client.exception.UJESClientBuilderException
 
-class ResultSetAction private () extends GetAction with UJESJobAction {
+class ResultSetAction private() extends GetAction with UJESJobAction {
   override def suffixURLs: Array[String] = Array("filesystem", "openFile")
 }
-
 object ResultSetAction {
   def builder(): Builder = new Builder
-
-  class Builder private[ResultSetAction] () {
+  class Builder private[ResultSetAction]() {
     private var user: String = _
     private var path: String = _
     private var page: Int = _
@@ -61,17 +59,16 @@ object ResultSetAction {
     }
 
     def build(): ResultSetAction = {
-      if (user == null) throw new UJESClientBuilderException("user is needed!")
-      if (path == null) throw new UJESClientBuilderException("path is needed!")
+      if(user == null) throw new UJESClientBuilderException("user is needed!")
+      if(path == null) throw new UJESClientBuilderException("path is needed!")
       val resultSetAction = new ResultSetAction
       resultSetAction.setParameter("path", path)
-      if (page > 0) resultSetAction.setParameter("page", page)
-      if (pageSize > 0) resultSetAction.setParameter("pageSize", pageSize)
+      if(page > 0) resultSetAction.setParameter("page", page)
+      if(pageSize > 0) resultSetAction.setParameter("pageSize", pageSize)
       resultSetAction.setParameter("charset", charset)
       resultSetAction.setUser(user)
       resultSetAction
     }
 
   }
-
 }

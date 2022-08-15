@@ -18,11 +18,11 @@
 package org.apache.linkis.cs.optimize.dfs;
 
 public interface BinaryTree {
-  BinaryTree getLeft();
+    BinaryTree getLeft();
 
-  BinaryTree getRight();
+    BinaryTree getRight();
 
-  Node getRootNode();
+    Node getRootNode();
 
-  Double getCost();
+    Double getCost();
 }

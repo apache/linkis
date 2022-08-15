@@ -22,6 +22,7 @@ import org.apache.linkis.engineconn.core.executor.ExecutorManager
 import org.apache.linkis.engineconn.executor.entity.YarnExecutor
 import org.apache.linkis.manager.common.operator.Operator
 
+
 class EngineConnApplicationInfoOperator extends Operator {
 
   override def getNames: Array[String] = Array(EngineConnApplicationInfoOperator.OPERATOR_NAME)
@@ -29,22 +30,13 @@ class EngineConnApplicationInfoOperator extends Operator {
   override def apply(implicit parameters: Map[String, Any]): Map[String, Any] = {
     ExecutorManager.getInstance.getReportExecutor match {
       case yarnExecutor: YarnExecutor =>
-        Map(
-          "applicationId" -> yarnExecutor.getApplicationId,
-          "applicationUrl" -> yarnExecutor.getApplicationURL,
-          "queue" -> yarnExecutor.getQueue,
-          "yarnMode" -> yarnExecutor.getYarnMode
-        )
-      case _ =>
-        throw EngineConnException(
-          20301,
-          "EngineConn is not a yarn application, cannot fetch applicaiton info."
-        )
+        Map("applicationId" -> yarnExecutor.getApplicationId, "applicationUrl" -> yarnExecutor.getApplicationURL,
+          "queue" -> yarnExecutor.getQueue, "yarnMode" -> yarnExecutor.getYarnMode)
+      case _ => throw EngineConnException(20301, "EngineConn is not a yarn application, cannot fetch applicaiton info.")
     }
   }
 
 }
-
 object EngineConnApplicationInfoOperator {
   val OPERATOR_NAME = "engineConnYarnApplication"
 }

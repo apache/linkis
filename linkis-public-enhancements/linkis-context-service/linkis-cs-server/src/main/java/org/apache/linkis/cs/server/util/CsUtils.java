@@ -23,15 +23,15 @@ import org.apache.linkis.cs.common.serialize.helper.SerializationHelper;
 
 public class CsUtils {
 
-  public static final SerializationHelper SERIALIZE = ContextSerializationHelper.getInstance();
+    public static final SerializationHelper SERIALIZE = ContextSerializationHelper.getInstance();
 
-  public static String serialize(Object o) throws CSErrorException {
-    if (o instanceof String) {
-      return (String) o;
+    public static String serialize(Object o) throws CSErrorException {
+        if (o instanceof String) {
+            return (String) o;
+        }
+        if (o instanceof Integer) {
+            return String.valueOf((int) o);
+        }
+        return SERIALIZE.serialize(o);
     }
-    if (o instanceof Integer) {
-      return String.valueOf((int) o);
-    }
-    return SERIALIZE.serialize(o);
-  }
 }

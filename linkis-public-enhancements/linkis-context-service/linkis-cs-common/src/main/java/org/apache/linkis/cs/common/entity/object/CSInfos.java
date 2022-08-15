@@ -21,7 +21,7 @@ import java.util.Map;
 
 public interface CSInfos {
 
-  Map<String, Object> getInfos();
+    Map<String, Object> getInfos();
 
-  void setInfos(Map<String, Object> infos);
+    void setInfos(Map<String, Object> infos);
 }

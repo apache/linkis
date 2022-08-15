@@ -19,16 +19,16 @@ package org.apache.linkis.protocol.usercontrol;
 
 public class RequestRegister implements UserControlRegtisterProtocol {
 
-  // json string
-  private String params;
+    // json string
+    private String params;
 
-  public RequestRegister() {};
+    public RequestRegister() {};
 
-  public String getParams() {
-    return params;
-  }
+    public String getParams() {
+        return params;
+    }
 
-  public void setParams(String params) {
-    this.params = params;
-  }
+    public void setParams(String params) {
+        this.params = params;
+    }
 }

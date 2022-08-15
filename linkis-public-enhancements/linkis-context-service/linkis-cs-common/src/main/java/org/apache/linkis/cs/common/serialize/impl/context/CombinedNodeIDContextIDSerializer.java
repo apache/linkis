@@ -24,22 +24,22 @@ import org.apache.linkis.cs.common.utils.CSCommonUtils;
 
 public class CombinedNodeIDContextIDSerializer extends AbstractSerializer<CombinedNodeIDContextID> {
 
-  @Override
-  public String getType() {
-    return "CombinedNodeIDContextID";
-  }
-
-  @Override
-  public CombinedNodeIDContextID fromJson(String json) throws CSErrorException {
-    return CSCommonUtils.gson.fromJson(json, CombinedNodeIDContextID.class);
-  }
-
-  @Override
-  public boolean accepts(Object obj) {
-
-    if (null != obj && obj instanceof CombinedNodeIDContextID) {
-      return true;
+    @Override
+    public String getType() {
+        return "CombinedNodeIDContextID";
     }
-    return false;
-  }
+
+    @Override
+    public CombinedNodeIDContextID fromJson(String json) throws CSErrorException {
+        return CSCommonUtils.gson.fromJson(json, CombinedNodeIDContextID.class);
+    }
+
+    @Override
+    public boolean accepts(Object obj) {
+
+        if (null != obj && obj instanceof CombinedNodeIDContextID) {
+            return true;
+        }
+        return false;
+    }
 }

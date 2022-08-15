@@ -32,28 +32,28 @@ import org.apache.linkis.cli.core.present.model.HelpInfoModel;
 import java.util.Map;
 
 public class Help implements Execution {
-  @Override
-  public ExecutionResult execute(Map<String, Job> jobs) {
+    @Override
+    public ExecutionResult execute(Map<String, Job> jobs) {
 
-    if (jobs.size() > 1) {
-      throw new LinkisClientExecutionException(
-          "EXE0001",
-          ErrorLevel.ERROR,
-          CommonErrMsg.ExecutionInitErr,
-          "Multiple Jobs is not Supported by current execution");
+        if (jobs.size() > 1) {
+            throw new LinkisClientExecutionException(
+                    "EXE0001",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.ExecutionInitErr,
+                    "Multiple Jobs is not Supported by current execution");
+        }
+
+        HelpInfoModel model = new HelpInfoModel();
+        Job job = jobs.values().toArray(new Job[jobs.size()])[0];
+
+        model.buildModel(CmdTemplateFactory.getTemplateOri(job.getCmdType()));
+
+        new HelpInfoPresenter().present(model, null);
+        return new ExecutionResultImpl(null, ExecutionStatusEnum.SUCCEED, null);
     }
 
-    HelpInfoModel model = new HelpInfoModel();
-    Job job = jobs.values().toArray(new Job[jobs.size()])[0];
-
-    model.buildModel(CmdTemplateFactory.getTemplateOri(job.getCmdType()));
-
-    new HelpInfoPresenter().present(model, null);
-    return new ExecutionResultImpl(null, ExecutionStatusEnum.SUCCEED, null);
-  }
-
-  @Override
-  public boolean terminate(Map<String, Job> jobs) {
-    return true;
-  }
+    @Override
+    public boolean terminate(Map<String, Job> jobs) {
+        return true;
+    }
 }

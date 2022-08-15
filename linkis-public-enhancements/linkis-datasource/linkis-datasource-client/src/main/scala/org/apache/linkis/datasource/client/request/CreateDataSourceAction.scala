@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,18 +17,16 @@
 
 package org.apache.linkis.datasource.client.request
 
+
 import org.apache.linkis.datasource.client.config.DatasourceClientConfig.DATA_SOURCE_SERVICE_MODULE
 import org.apache.linkis.httpclient.dws.DWSHttpClient
 import org.apache.linkis.httpclient.request.POSTAction
 
 import java.util
-
 import scala.collection.JavaConverters._
 
-class CreateDataSourceAction extends POSTAction with DataSourceAction {
-
-  override def getRequestPayload: String =
-    DWSHttpClient.jacksonJson.writeValueAsString(getRequestPayloads)
+class CreateDataSourceAction extends POSTAction with DataSourceAction{
+  override def getRequestPayload: String = DWSHttpClient.jacksonJson.writeValueAsString(getRequestPayloads)
 
   private var user: String = _
 
@@ -36,15 +34,12 @@ class CreateDataSourceAction extends POSTAction with DataSourceAction {
 
   override def getUser: String = this.user
 
-  override def suffixURLs: Array[String] =
-    Array(DATA_SOURCE_SERVICE_MODULE.getValue, "info", "json")
-
+  override def suffixURLs: Array[String] = Array(DATA_SOURCE_SERVICE_MODULE.getValue, "info", "json")
 }
-
 object CreateDataSourceAction {
   def builder(): Builder = new Builder
 
-  class Builder private[CreateDataSourceAction] () {
+  class Builder private[CreateDataSourceAction]() {
     private var user: String = _
     private var payload: util.Map[String, Any] = new util.HashMap[String, Any]()
 
@@ -71,7 +66,5 @@ object CreateDataSourceAction {
       })
       action
     }
-
   }
-
 }

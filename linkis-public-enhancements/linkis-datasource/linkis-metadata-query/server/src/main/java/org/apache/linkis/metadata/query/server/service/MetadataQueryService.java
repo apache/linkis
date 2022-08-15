@@ -26,164 +26,166 @@ import java.util.Map;
 
 public interface MetadataQueryService {
 
-  /**
-   * Get connection
-   *
-   * @param params connect params
-   * @return
-   */
-  void getConnection(String dataSourceType, String operator, Map<String, Object> params)
-      throws Exception;
+    /**
+     * Get connection
+     *
+     * @param params connect params
+     * @return
+     */
+    void getConnection(String dataSourceType, String operator, Map<String, Object> params)
+            throws Exception;
 
-  /**
-   * @param dataSourceId data source id
-   * @param system system
-   * @return
-   */
-  @Deprecated
-  List<String> getDatabasesByDsId(String dataSourceId, String system, String userName)
-      throws ErrorException;
+    /**
+     * @param dataSourceId data source id
+     * @param system system
+     * @return
+     */
+    @Deprecated
+    List<String> getDatabasesByDsId(String dataSourceId, String system, String userName)
+            throws ErrorException;
 
-  /**
-   * @param dataSourceId data source id
-   * @param system system
-   * @param database database
-   * @return
-   */
-  @Deprecated
-  List<String> getTablesByDsId(String dataSourceId, String database, String system, String userName)
-      throws ErrorException;
+    /**
+     * @param dataSourceId data source id
+     * @param system system
+     * @param database database
+     * @return
+     */
+    @Deprecated
+    List<String> getTablesByDsId(
+            String dataSourceId, String database, String system, String userName)
+            throws ErrorException;
 
-  /**
-   * @param dataSourceId data source id
-   * @param database database
-   * @param table table
-   * @param system system
-   * @return
-   */
-  @Deprecated
-  Map<String, String> getTablePropsByDsId(
-      String dataSourceId, String database, String table, String system, String userName)
-      throws ErrorException;
-  /**
-   * @param dataSourceId data source i
-   * @param database database
-   * @param table table
-   * @param system system
-   * @return
-   */
-  @Deprecated
-  MetaPartitionInfo getPartitionsByDsId(
-      String dataSourceId,
-      String database,
-      String table,
-      String system,
-      Boolean traverse,
-      String userName)
-      throws ErrorException;
+    /**
+     * @param dataSourceId data source id
+     * @param database database
+     * @param table table
+     * @param system system
+     * @return
+     */
+    @Deprecated
+    Map<String, String> getTablePropsByDsId(
+            String dataSourceId, String database, String table, String system, String userName)
+            throws ErrorException;
+    /**
+     * @param dataSourceId data source i
+     * @param database database
+     * @param table table
+     * @param system system
+     * @return
+     */
+    @Deprecated
+    MetaPartitionInfo getPartitionsByDsId(
+            String dataSourceId,
+            String database,
+            String table,
+            String system,
+            Boolean traverse,
+            String userName)
+            throws ErrorException;
 
-  /**
-   * @param dataSourceId data source id
-   * @param database database
-   * @param table table
-   * @param partition partition
-   * @param system system
-   * @param userName userName
-   * @return
-   * @throws ErrorException
-   */
-  @Deprecated
-  Map<String, String> getPartitionPropsByDsId(
-      String dataSourceId,
-      String database,
-      String table,
-      String partition,
-      String system,
-      String userName)
-      throws ErrorException;
+    /**
+     * @param dataSourceId data source id
+     * @param database database
+     * @param table table
+     * @param partition partition
+     * @param system system
+     * @param userName userName
+     * @return
+     * @throws ErrorException
+     */
+    @Deprecated
+    Map<String, String> getPartitionPropsByDsId(
+            String dataSourceId,
+            String database,
+            String table,
+            String partition,
+            String system,
+            String userName)
+            throws ErrorException;
 
-  /**
-   * @param dataSourceId data source id
-   * @param database database
-   * @param table table
-   * @param system system
-   * @return
-   */
-  @Deprecated
-  List<MetaColumnInfo> getColumnsByDsId(
-      String dataSourceId, String database, String table, String system, String userName)
-      throws ErrorException;
+    /**
+     * @param dataSourceId data source id
+     * @param database database
+     * @param table table
+     * @param system system
+     * @return
+     */
+    @Deprecated
+    List<MetaColumnInfo> getColumnsByDsId(
+            String dataSourceId, String database, String table, String system, String userName)
+            throws ErrorException;
 
-  /**
-   * @param dataSourceName data source name
-   * @param system system
-   * @return
-   */
-  List<String> getDatabasesByDsName(String dataSourceName, String system, String userName)
-      throws ErrorException;
+    /**
+     * @param dataSourceName data source name
+     * @param system system
+     * @return
+     */
+    List<String> getDatabasesByDsName(String dataSourceName, String system, String userName)
+            throws ErrorException;
 
-  /**
-   * @param dataSourceName data source name
-   * @param system system
-   * @param database database
-   * @return
-   */
-  List<String> getTablesByDsName(
-      String dataSourceName, String database, String system, String userName) throws ErrorException;
+    /**
+     * @param dataSourceName data source name
+     * @param system system
+     * @param database database
+     * @return
+     */
+    List<String> getTablesByDsName(
+            String dataSourceName, String database, String system, String userName)
+            throws ErrorException;
 
-  /**
-   * @param dataSourceName data source name
-   * @param database database
-   * @param table table
-   * @param system system
-   * @return
-   */
-  Map<String, String> getTablePropsByDsName(
-      String dataSourceName, String database, String table, String system, String userName)
-      throws ErrorException;
-  /**
-   * @param dataSourceName data source name
-   * @param database database
-   * @param table table
-   * @param system system
-   * @return
-   */
-  MetaPartitionInfo getPartitionsByDsName(
-      String dataSourceName,
-      String database,
-      String table,
-      String system,
-      Boolean traverse,
-      String userName)
-      throws ErrorException;
+    /**
+     * @param dataSourceName data source name
+     * @param database database
+     * @param table table
+     * @param system system
+     * @return
+     */
+    Map<String, String> getTablePropsByDsName(
+            String dataSourceName, String database, String table, String system, String userName)
+            throws ErrorException;
+    /**
+     * @param dataSourceName data source name
+     * @param database database
+     * @param table table
+     * @param system system
+     * @return
+     */
+    MetaPartitionInfo getPartitionsByDsName(
+            String dataSourceName,
+            String database,
+            String table,
+            String system,
+            Boolean traverse,
+            String userName)
+            throws ErrorException;
 
-  /**
-   * @param dataSourceName data source name
-   * @param database database
-   * @param table table
-   * @param partition partition
-   * @param system system
-   * @param userName userName
-   * @return
-   * @throws ErrorException
-   */
-  Map<String, String> getPartitionPropsByDsName(
-      String dataSourceName,
-      String database,
-      String table,
-      String partition,
-      String system,
-      String userName)
-      throws ErrorException;
+    /**
+     * @param dataSourceName data source name
+     * @param database database
+     * @param table table
+     * @param partition partition
+     * @param system system
+     * @param userName userName
+     * @return
+     * @throws ErrorException
+     */
+    Map<String, String> getPartitionPropsByDsName(
+            String dataSourceName,
+            String database,
+            String table,
+            String partition,
+            String system,
+            String userName)
+            throws ErrorException;
 
-  /**
-   * @param dataSourceName data source id
-   * @param database database
-   * @param table table
-   * @param system system
-   * @return
-   */
-  List<MetaColumnInfo> getColumnsByDsName(
-      String dataSourceName, String database, String table, String system, String userName)
-      throws ErrorException;
+    /**
+     * @param dataSourceName data source id
+     * @param database database
+     * @param table table
+     * @param system system
+     * @return
+     */
+    List<MetaColumnInfo> getColumnsByDsName(
+            String dataSourceName, String database, String table, String system, String userName)
+            throws ErrorException;
 }

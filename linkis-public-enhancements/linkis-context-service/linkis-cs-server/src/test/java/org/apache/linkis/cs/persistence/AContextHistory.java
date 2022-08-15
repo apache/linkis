@@ -22,79 +22,79 @@ import org.apache.linkis.cs.common.entity.history.ContextHistory;
 
 public class AContextHistory implements ContextHistory {
 
-  private Integer id;
+    private Integer id;
 
-  private Integer contextId;
+    private Integer contextId;
 
-  private String source;
+    private String source;
 
-  private ContextType contextType;
+    private ContextType contextType;
 
-  private String historyJson;
+    private String historyJson;
 
-  private String keyword;
+    private String keyword;
 
-  private String version = "v0001";
+    private String version = "v0001";
 
-  public String getVersion() {
-    return version;
-  }
+    public String getVersion() {
+        return version;
+    }
 
-  public void setVersion(String version) {
-    this.version = version;
-  }
+    public void setVersion(String version) {
+        this.version = version;
+    }
 
-  public Integer getContextId() {
-    return contextId;
-  }
+    public Integer getContextId() {
+        return contextId;
+    }
 
-  public void setContextId(Integer contextId) {
-    this.contextId = contextId;
-  }
+    public void setContextId(Integer contextId) {
+        this.contextId = contextId;
+    }
 
-  public String getHistoryJson() {
-    return historyJson;
-  }
+    public String getHistoryJson() {
+        return historyJson;
+    }
 
-  public void setHistoryJson(String historyJson) {
-    this.historyJson = historyJson;
-  }
+    public void setHistoryJson(String historyJson) {
+        this.historyJson = historyJson;
+    }
 
-  public String getKeyword() {
-    return keyword;
-  }
+    public String getKeyword() {
+        return keyword;
+    }
 
-  public void setKeyword(String keyword) {
-    this.keyword = keyword;
-  }
+    public void setKeyword(String keyword) {
+        this.keyword = keyword;
+    }
 
-  @Override
-  public Integer getId() {
-    return this.id;
-  }
+    @Override
+    public Integer getId() {
+        return this.id;
+    }
 
-  @Override
-  public void setId(Integer id) {
-    this.id = id;
-  }
+    @Override
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-  @Override
-  public ContextType getContextType() {
-    return this.contextType;
-  }
+    @Override
+    public ContextType getContextType() {
+        return this.contextType;
+    }
 
-  @Override
-  public void setContextType(ContextType contextType) {
-    this.contextType = contextType;
-  }
+    @Override
+    public void setContextType(ContextType contextType) {
+        this.contextType = contextType;
+    }
 
-  @Override
-  public String getSource() {
-    return this.source;
-  }
+    @Override
+    public String getSource() {
+        return this.source;
+    }
 
-  @Override
-  public void setSource(String source) {
-    this.source = source;
-  }
+    @Override
+    public void setSource(String source) {
+        this.source = source;
+    }
 }

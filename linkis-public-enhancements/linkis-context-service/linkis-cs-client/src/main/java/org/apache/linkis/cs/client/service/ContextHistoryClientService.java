@@ -22,5 +22,5 @@ import org.apache.linkis.cs.common.exception.CSErrorException;
 
 public interface ContextHistoryClientService {
 
-  void createHistory(String contextIDStr, ContextHistory history) throws CSErrorException;
+    void createHistory(String contextIDStr, ContextHistory history) throws CSErrorException;
 }

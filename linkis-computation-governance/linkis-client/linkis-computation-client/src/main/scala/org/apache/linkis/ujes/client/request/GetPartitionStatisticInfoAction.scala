@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,17 +19,16 @@ package org.apache.linkis.ujes.client.request
 
 import org.apache.linkis.httpclient.request.GetAction
 import org.apache.linkis.ujes.client.exception.UJESClientBuilderException
-
 import org.apache.commons.lang3.StringUtils
 
+
 class GetPartitionStatisticInfoAction extends GetAction with UJESJobAction {
-  override def suffixURLs: Array[String] = Array("datasource", "getPartitionStatisticInfo")
+  override def suffixURLs: Array[String] = Array("datasource",  "getPartitionStatisticInfo")
 }
 
 object GetPartitionStatisticInfoAction {
   def builder(): Builder = new Builder
-
-  class Builder private[GetPartitionStatisticInfoAction] () {
+  class Builder private[GetPartitionStatisticInfoAction]() {
     private var user: String = _
     private var database: String = _
     private var tableName: String = _
@@ -59,11 +58,9 @@ object GetPartitionStatisticInfoAction {
 
     def builder(): GetPartitionStatisticInfoAction = {
       if (StringUtils.isBlank(user)) throw new UJESClientBuilderException("user is needed!")
-      if (StringUtils.isBlank(database))
-        throw new UJESClientBuilderException("database is needed!")
+      if (StringUtils.isBlank(database)) throw new UJESClientBuilderException("database is needed!")
       if (StringUtils.isBlank(tableName)) throw new UJESClientBuilderException("table is needed!")
-      if (StringUtils.isBlank(partitionPath))
-        throw new UJESClientBuilderException("partitionPath is needed!")
+      if (StringUtils.isBlank(partitionPath)) throw new UJESClientBuilderException("partitionPath is needed!")
       val getPartitionStatisticInfoAction = new GetPartitionStatisticInfoAction
       getPartitionStatisticInfoAction.setUser(user)
       getPartitionStatisticInfoAction.setParameter("database", database)

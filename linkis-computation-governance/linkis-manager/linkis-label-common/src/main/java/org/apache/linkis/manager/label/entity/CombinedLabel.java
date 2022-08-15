@@ -21,10 +21,10 @@ import java.util.List;
 
 public interface CombinedLabel extends Label<List<Label<?>>>, ResourceLabel {
 
-  default List<Label<?>> getLabels() {
-    return getValue();
-  }
+    default List<Label<?>> getLabels() {
+        return getValue();
+    }
 
-  @Override
-  boolean equals(Object obj);
+    @Override
+    boolean equals(Object obj);
 }

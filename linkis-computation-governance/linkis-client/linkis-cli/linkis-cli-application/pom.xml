@@ -15,74 +15,79 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+  
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>org.apache.linkis</groupId>
-    <artifactId>linkis-cli</artifactId>
-    <version>1.2.0</version>
-    <relativePath>../pom.xml</relativePath>
-  </parent>
-  <artifactId>linkis-cli-application</artifactId>
-  <packaging>jar</packaging>
+    <parent>
+        <groupId>org.apache.linkis</groupId>
+        <artifactId>linkis-cli</artifactId>
+        <version>1.2.0</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <artifactId>linkis-cli-application</artifactId>
+    <packaging>jar</packaging>
 
-  <dependencies>
-    <dependency>
-      <groupId>org.apache.linkis</groupId>
-      <artifactId>linkis-cli-common</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.linkis</groupId>
-      <artifactId>linkis-cli-core</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.linkis</groupId>
-      <artifactId>linkis-computation-client</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.linkis</groupId>
-      <artifactId>linkis-gateway-httpclient-support</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-  </dependencies>
 
-  <build>
-    <finalName>${project.artifactId}-${project.version}</finalName>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <inherited>false</inherited>
-        <configuration>
-          <skipAssembly>false</skipAssembly>
-          <finalName>out</finalName>
-          <appendAssemblyId>false</appendAssemblyId>
-          <attach>false</attach>
-          <descriptors>
-            <descriptor>/src/main/assembly/distribution.xml</descriptor>
-          </descriptors>
-        </configuration>
-        <executions>
-          <execution>
-            <id>make-assembly</id>
-            <goals>
-              <goal>single</goal>
-            </goals>
-            <phase>package</phase>
-            <configuration>
-              <descriptors>
-                <descriptor>/src/main/assembly/distribution.xml</descriptor>
-              </descriptors>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.linkis</groupId>
+            <artifactId>linkis-cli-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.linkis</groupId>
+            <artifactId>linkis-cli-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.linkis</groupId>
+            <artifactId>linkis-computation-client</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.linkis</groupId>
+            <artifactId>linkis-gateway-httpclient-support</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
 
-  </build>
+
+    <build>
+        <finalName>${project.artifactId}-${project.version}</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <inherited>false</inherited>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>/src/main/assembly/distribution.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </execution>
+                </executions>
+                <configuration>
+                    <skipAssembly>false</skipAssembly>
+                    <finalName>out</finalName>
+                    <appendAssemblyId>false</appendAssemblyId>
+                    <attach>false</attach>
+                    <descriptors>
+                        <descriptor>/src/main/assembly/distribution.xml</descriptor>
+                    </descriptors>
+                </configuration>
+            </plugin>
+        </plugins>
+
+    </build>
 
 </project>

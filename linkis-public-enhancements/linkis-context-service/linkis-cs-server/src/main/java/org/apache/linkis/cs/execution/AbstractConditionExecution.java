@@ -33,69 +33,69 @@ import java.util.List;
 
 public abstract class AbstractConditionExecution implements ConditionExecution {
 
-  protected ContextSearchMatcher contextSearchMatcher;
-  protected ContextSearchRuler contextSearchRuler;
-  protected ContextCacheFetcher contextCacheFetcher;
-  protected ContextCacheService contextCacheService;
-  protected Condition condition;
-  protected ContextID contextID;
+    protected ContextSearchMatcher contextSearchMatcher;
+    protected ContextSearchRuler contextSearchRuler;
+    protected ContextCacheFetcher contextCacheFetcher;
+    protected ContextCacheService contextCacheService;
+    protected Condition condition;
+    protected ContextID contextID;
 
-  public AbstractConditionExecution(
-      Condition condition, ContextCacheService contextCacheService, ContextID contextID) {
-    this.condition = condition;
-    this.contextCacheService = contextCacheService;
-    this.contextID = contextID;
-  }
-
-  @Override
-  public List<ContextKeyValue> execute() {
-    if (needOptimization()) {
-      OptimizedCondition optimizedCondition = getConditionOptimizer().optimize(condition);
+    public AbstractConditionExecution(
+            Condition condition, ContextCacheService contextCacheService, ContextID contextID) {
+        this.condition = condition;
+        this.contextCacheService = contextCacheService;
+        this.contextID = contextID;
     }
-    ContextCacheFetcher fastFetcher = getFastFetcher();
-    if (fastFetcher != null) {
-      return getContextSearchRuler().rule(fastFetcher.fetch(contextID));
-    } else {
-      return getContextCacheFetcher().fetch(contextID);
+
+    @Override
+    public List<ContextKeyValue> execute() {
+        if (needOptimization()) {
+            OptimizedCondition optimizedCondition = getConditionOptimizer().optimize(condition);
+        }
+        ContextCacheFetcher fastFetcher = getFastFetcher();
+        if (fastFetcher != null) {
+            return getContextSearchRuler().rule(fastFetcher.fetch(contextID));
+        } else {
+            return getContextCacheFetcher().fetch(contextID);
+        }
     }
-  }
 
-  protected abstract boolean needOptimization();
+    protected abstract boolean needOptimization();
 
-  protected abstract ContextCacheFetcher getFastFetcher();
+    protected abstract ContextCacheFetcher getFastFetcher();
 
-  @Override
-  public ContextSearchMatcher getContextSearchMatcher() {
-    return this.contextSearchMatcher;
-  }
+    @Override
+    public ContextSearchMatcher getContextSearchMatcher() {
+        return this.contextSearchMatcher;
+    }
 
-  @Override
-  public ContextSearchRuler getContextSearchRuler() {
-    return this.contextSearchRuler;
-  }
+    @Override
+    public ContextSearchRuler getContextSearchRuler() {
+        return this.contextSearchRuler;
+    }
 
-  @Override
-  public ContextCacheFetcher getContextCacheFetcher() {
-    return this.contextCacheFetcher;
-  }
+    @Override
+    public ContextCacheFetcher getContextCacheFetcher() {
+        return this.contextCacheFetcher;
+    }
 
-  public ContextCacheService getContextCacheService() {
-    return contextCacheService;
-  }
+    public ContextCacheService getContextCacheService() {
+        return contextCacheService;
+    }
 
-  public void setContextCacheService(ContextCacheService contextCacheService) {
-    this.contextCacheService = contextCacheService;
-  }
+    public void setContextCacheService(ContextCacheService contextCacheService) {
+        this.contextCacheService = contextCacheService;
+    }
 
-  public Condition getCondition() {
-    return condition;
-  }
+    public Condition getCondition() {
+        return condition;
+    }
 
-  public ConditionOptimizer getConditionOptimizer() {
-    return new CostBasedConditionOptimizer(getConditionCostCalculator());
-  }
+    public ConditionOptimizer getConditionOptimizer() {
+        return new CostBasedConditionOptimizer(getConditionCostCalculator());
+    }
 
-  public ConditionCostCalculator getConditionCostCalculator() {
-    return new ConditionCostCalculator();
-  }
+    public ConditionCostCalculator getConditionCostCalculator() {
+        return new ConditionCostCalculator();
+    }
 }

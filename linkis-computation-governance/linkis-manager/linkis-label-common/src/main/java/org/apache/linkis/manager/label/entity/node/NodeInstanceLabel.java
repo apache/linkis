@@ -21,7 +21,7 @@ import org.apache.linkis.manager.label.entity.NodeLabel;
 
 public interface NodeInstanceLabel extends NodeLabel {
 
-  String getServiceName();
+    String getServiceName();
 
-  String getInstance();
+    String getInstance();
 }

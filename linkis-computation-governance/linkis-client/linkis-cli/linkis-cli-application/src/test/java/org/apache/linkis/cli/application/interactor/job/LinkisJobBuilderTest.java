@@ -27,80 +27,81 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class LinkisJobBuilderTest {
-  JobBuilder builder;
+    JobBuilder builder;
 
-  @BeforeEach
-  public void before() {
-    String[] cmdStr =
-        new String[] {
-          "-u",
-          "hadoop",
-          "-pwd",
-          "1234",
-          "-c",
-          "src/test/resources/conf/user.properties",
-          "--cmd",
-          "show tables",
-          "--split",
-          "\',\'",
-          "--queue",
-          "q05",
-          "--name",
-          "testApp",
-          //      "--hiveconf", "/path/...",
-          //      "--num-executors", "4",
-          "--executor-cores",
-          "4",
-          "--executor-memory",
-          "4G",
-          "--shuffle-partitions",
-          "200",
-          "-confMap",
-          "kk=vv,kkk=vvv,spark.executor.instances=8"
-        };
-    ProcessedData data = ProcessInputUtil.generateProcessedData(cmdStr, new TestSparkCmdTemplate());
-    //  builder = new LinkisJobBuilder()
-    //      .setIdentifier(data.getIdentifier())
-    //      .setCmdType(data.getCmdType())
-    //      .setExecutionType(data.getExecutionType())
-    //      .setSubExecutionType(data.getSubExecutionType())
-    //      .setStdVarAccess(data.getStdVarAccess())
-    //      .setSysVarAccess(data.getSysVarAccess());
-  }
+    @BeforeEach
+    public void before() {
+        String[] cmdStr =
+                new String[] {
+                    "-u",
+                    "hadoop",
+                    "-pwd",
+                    "1234",
+                    "-c",
+                    "src/test/resources/conf/user.properties",
+                    "--cmd",
+                    "show tables",
+                    "--split",
+                    "\',\'",
+                    "--queue",
+                    "q05",
+                    "--name",
+                    "testApp",
+                    //      "--hiveconf", "/path/...",
+                    //      "--num-executors", "4",
+                    "--executor-cores",
+                    "4",
+                    "--executor-memory",
+                    "4G",
+                    "--shuffle-partitions",
+                    "200",
+                    "-confMap",
+                    "kk=vv,kkk=vvv,spark.executor.instances=8"
+                };
+        ProcessedData data =
+                ProcessInputUtil.generateProcessedData(cmdStr, new TestSparkCmdTemplate());
+        //  builder = new LinkisJobBuilder()
+        //      .setIdentifier(data.getIdentifier())
+        //      .setCmdType(data.getCmdType())
+        //      .setExecutionType(data.getExecutionType())
+        //      .setSubExecutionType(data.getSubExecutionType())
+        //      .setStdVarAccess(data.getStdVarAccess())
+        //      .setSysVarAccess(data.getSysVarAccess());
+    }
 
-  @AfterEach
-  public void after() {}
+    @AfterEach
+    public void after() {}
 
-  /** Method: setIdentifier(String identifier) */
-  @Test
-  public void testSetIdentifier() {
-    // TODO: Test goes here...
-  }
+    /** Method: setIdentifier(String identifier) */
+    @Test
+    public void testSetIdentifier() {
+        // TODO: Test goes here...
+    }
 
-  /** Method: build() */
-  @Test
-  public void testBuild() {
-    // TODO: Test goes here...
-    //  LinkisJob job = builder.build();
-    //  System.out.println(CommonUtils.GSON.toJson(job));
-    //  assertEquals(job.getParamConfMap().get("spark.executor.instances"), "8");
-  }
+    /** Method: build() */
+    @Test
+    public void testBuild() {
+        // TODO: Test goes here...
+        //  LinkisJob job = builder.build();
+        //  System.out.println(CommonUtils.GSON.toJson(job));
+        //  assertEquals(job.getParamConfMap().get("spark.executor.instances"), "8");
+    }
 
-  /** Method: setStdVarAccess(VarAccess varAccess) */
-  @Test
-  public void testSetStdVarAccess() {
-    // TODO: Test goes here...
-  }
+    /** Method: setStdVarAccess(VarAccess varAccess) */
+    @Test
+    public void testSetStdVarAccess() {
+        // TODO: Test goes here...
+    }
 
-  /** Method: setSysVarAccess(VarAccess varAccess) */
-  @Test
-  public void testSetSysVarAccess() {
-    // TODO: Test goes here...
-  }
+    /** Method: setSysVarAccess(VarAccess varAccess) */
+    @Test
+    public void testSetSysVarAccess() {
+        // TODO: Test goes here...
+    }
 
-  /** Method: getTargetNewInstance() */
-  @Test
-  public void testGetTargetNewInstance() {
-    // TODO: Test goes here...
-  }
+    /** Method: getTargetNewInstance() */
+    @Test
+    public void testGetTargetNewInstance() {
+        // TODO: Test goes here...
+    }
 }

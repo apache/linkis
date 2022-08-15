@@ -25,14 +25,15 @@ import org.apache.linkis.manager.label.exception.LabelErrorException;
 
 public class TestLabelBuilder {
 
-  public static void main(String[] args) throws LabelErrorException {
-    LabelBuilderFactory labelBuilderFactory = LabelBuilderFactoryContext.getLabelBuilderFactory();
-    Label<?> engineType = labelBuilderFactory.createLabel("engineType", "hive-1.2.1");
-    System.out.println(engineType.getFeature());
+    public static void main(String[] args) throws LabelErrorException {
+        LabelBuilderFactory labelBuilderFactory =
+                LabelBuilderFactoryContext.getLabelBuilderFactory();
+        Label<?> engineType = labelBuilderFactory.createLabel("engineType", "hive-1.2.1");
+        System.out.println(engineType.getFeature());
 
-    AliasServiceInstanceLabel emInstanceLabel =
-        labelBuilderFactory.createLabel(AliasServiceInstanceLabel.class);
-    emInstanceLabel.setAlias("hello");
-    System.out.println(emInstanceLabel.getStringValue());
-  }
+        AliasServiceInstanceLabel emInstanceLabel =
+                labelBuilderFactory.createLabel(AliasServiceInstanceLabel.class);
+        emInstanceLabel.setAlias("hello");
+        System.out.println(emInstanceLabel.getStringValue());
+    }
 }

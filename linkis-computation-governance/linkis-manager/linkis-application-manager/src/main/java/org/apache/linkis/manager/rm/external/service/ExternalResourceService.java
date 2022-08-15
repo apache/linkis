@@ -30,26 +30,30 @@ import java.util.Map;
 
 public interface ExternalResourceService {
 
-  NodeResource getResource(
-      ResourceType resourceType, RMLabelContainer labelContainer, Map<String, Object> identifierMap)
-      throws RMErrorException;
+    NodeResource getResource(
+            ResourceType resourceType,
+            RMLabelContainer labelContainer,
+            Map<String, Object> identifierMap)
+            throws RMErrorException;
 
-  NodeResource getResource(
-      ResourceType resourceType,
-      RMLabelContainer labelContainer,
-      ExternalResourceIdentifier identifier)
-      throws RMErrorException;
+    NodeResource getResource(
+            ResourceType resourceType,
+            RMLabelContainer labelContainer,
+            ExternalResourceIdentifier identifier)
+            throws RMErrorException;
 
-  List<ExternalAppInfo> getAppInfo(
-      ResourceType resourceType, RMLabelContainer labelContainer, Map<String, Object> identifierMap)
-      throws RMErrorException;
+    List<ExternalAppInfo> getAppInfo(
+            ResourceType resourceType,
+            RMLabelContainer labelContainer,
+            Map<String, Object> identifierMap)
+            throws RMErrorException;
 
-  List<ExternalAppInfo> getAppInfo(
-      ResourceType resourceType,
-      RMLabelContainer labelContainer,
-      ExternalResourceIdentifier identifier)
-      throws RMErrorException;
+    List<ExternalAppInfo> getAppInfo(
+            ResourceType resourceType,
+            RMLabelContainer labelContainer,
+            ExternalResourceIdentifier identifier)
+            throws RMErrorException;
 
-  ExternalResourceProvider chooseProvider(
-      ResourceType resourceType, RMLabelContainer labelContainer) throws RMErrorException;
+    ExternalResourceProvider chooseProvider(
+            ResourceType resourceType, RMLabelContainer labelContainer) throws RMErrorException;
 }

@@ -22,30 +22,33 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.Map;
 
 public abstract class PropertiesParser {
-  interface TypeConversion<T> {
-    /**
-     * String type data is converted to T type
-     *
-     * @param oriV origin type
-     * @return T which is target type
-     */
-    T convertTo(String oriV);
-  }
-
-  public static String getString(Map<String, String> prop, String key, String defaultValue) {
-    return prop.getOrDefault(key, defaultValue);
-  }
-
-  public static <T> T getValue(
-      Map<String, String> prop, String key, T defaultValue, TypeConversion<T> typeConversion) {
-    String valueStr = getString(prop, key, "");
-    if (StringUtils.isBlank(valueStr)) {
-      return defaultValue;
+    interface TypeConversion<T> {
+        /**
+         * String type data is converted to T type
+         *
+         * @param oriV origin type
+         * @return T which is target type
+         */
+        T convertTo(String oriV);
     }
-    try {
-      return typeConversion.convertTo(valueStr);
-    } catch (Exception e) {
-      return defaultValue;
+
+    public static String getString(Map<String, String> prop, String key, String defaultValue) {
+        return prop.getOrDefault(key, defaultValue);
     }
-  }
+
+    public static <T> T getValue(
+            Map<String, String> prop,
+            String key,
+            T defaultValue,
+            TypeConversion<T> typeConversion) {
+        String valueStr = getString(prop, key, "");
+        if (StringUtils.isBlank(valueStr)) {
+            return defaultValue;
+        }
+        try {
+            return typeConversion.convertTo(valueStr);
+        } catch (Exception e) {
+            return defaultValue;
+        }
+    }
 }

@@ -25,23 +25,23 @@ import java.util.Date;
 
 public interface Node extends RequestProtocol {
 
-  ServiceInstance getServiceInstance();
+    ServiceInstance getServiceInstance();
 
-  void setServiceInstance(ServiceInstance serviceInstance);
+    void setServiceInstance(ServiceInstance serviceInstance);
 
-  NodeStatus getNodeStatus();
+    NodeStatus getNodeStatus();
 
-  void setNodeStatus(NodeStatus status);
+    void setNodeStatus(NodeStatus status);
 
-  String getOwner();
+    String getOwner();
 
-  String getMark();
+    String getMark();
 
-  Date getUpdateTime();
+    Date getUpdateTime();
 
-  void setUpdateTime(Date updateTime);
+    void setUpdateTime(Date updateTime);
 
-  Date getStartTime();
+    Date getStartTime();
 
-  void setStartTime(Date startTime);
+    void setStartTime(Date startTime);
 }

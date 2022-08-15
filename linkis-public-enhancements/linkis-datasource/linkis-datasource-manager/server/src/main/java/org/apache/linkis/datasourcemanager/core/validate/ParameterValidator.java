@@ -23,27 +23,27 @@ import java.util.List;
 import java.util.Map;
 
 public interface ParameterValidator {
-  /**
-   * Register validate strategy
-   *
-   * @param strategy strategy
-   */
-  void registerStrategy(ParameterValidateStrategy strategy);
+    /**
+     * Register validate strategy
+     *
+     * @param strategy strategy
+     */
+    void registerStrategy(ParameterValidateStrategy strategy);
 
-  /**
-   * Validate parameter dictionary
-   *
-   * @param paramKeyDefinitions definitions
-   * @param parameters parameters
-   */
-  void validate(
-      List<DataSourceParamKeyDefinition> paramKeyDefinitions, Map<String, Object> parameters)
-      throws ParameterValidateException;
+    /**
+     * Validate parameter dictionary
+     *
+     * @param paramKeyDefinitions definitions
+     * @param parameters parameters
+     */
+    void validate(
+            List<DataSourceParamKeyDefinition> paramKeyDefinitions, Map<String, Object> parameters)
+            throws ParameterValidateException;
 
-  /**
-   * Get all strategies
-   *
-   * @return
-   */
-  List<ParameterValidateStrategy> getStrategies();
+    /**
+     * Get all strategies
+     *
+     * @return
+     */
+    List<ParameterValidateStrategy> getStrategies();
 }

@@ -18,13 +18,13 @@
 package org.apache.linkis.cli.application.operator.once;
 
 public enum LinkisNodeStatus {
-  Starting,
-  Unlock,
-  Locked,
-  Idle,
-  Busy,
-  Running,
-  ShuttingDown,
-  Failed,
-  Success;
+    Starting,
+    Unlock,
+    Locked,
+    Idle,
+    Busy,
+    Running,
+    ShuttingDown,
+    Failed,
+    Success;
 }

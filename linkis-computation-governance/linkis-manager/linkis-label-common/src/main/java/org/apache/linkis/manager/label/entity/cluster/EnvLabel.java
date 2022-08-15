@@ -28,33 +28,34 @@ import static org.apache.linkis.manager.label.constant.LabelKeyConstant.ENV_TYPE
 
 public class EnvLabel extends GenericLabel {
 
-  public static final String DEV = "dev";
-  public static final String TEST = "test";
-  public static final String PROD = "prod";
+    public static final String DEV = "dev";
+    public static final String TEST = "test";
+    public static final String PROD = "prod";
 
-  public EnvLabel() {
-    setLabelKey(ENV_TYPE_KEY);
-  }
-
-  @Override
-  public Feature getFeature() {
-    return Feature.CORE;
-  }
-
-  public void setEnvType(String envType) {
-    if (!envType.equals(DEV) && !envType.equals(TEST) && !envType.equals(PROD)) {
-      throw new LabelRuntimeException(LABEL_BUILDER_ERROR_CODE, "Not support envType: " + envType);
+    public EnvLabel() {
+        setLabelKey(ENV_TYPE_KEY);
     }
-    if (null == getValue()) {
-      setValue(new HashMap<>());
-    }
-    getValue().put(ENV_TYPE_KEY, envType);
-  }
 
-  public String getEnvType() {
-    if (getValue() != null && null != getValue().get(ENV_TYPE_KEY)) {
-      return getValue().get(ENV_TYPE_KEY);
+    @Override
+    public Feature getFeature() {
+        return Feature.CORE;
     }
-    return null;
-  }
+
+    public void setEnvType(String envType) {
+        if (!envType.equals(DEV) && !envType.equals(TEST) && !envType.equals(PROD)) {
+            throw new LabelRuntimeException(
+                    LABEL_BUILDER_ERROR_CODE, "Not support envType: " + envType);
+        }
+        if (null == getValue()) {
+            setValue(new HashMap<>());
+        }
+        getValue().put(ENV_TYPE_KEY, envType);
+    }
+
+    public String getEnvType() {
+        if (getValue() != null && null != getValue().get(ENV_TYPE_KEY)) {
+            return getValue().get(ENV_TYPE_KEY);
+        }
+        return null;
+    }
 }

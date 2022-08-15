@@ -26,13 +26,13 @@ import org.junit.jupiter.api.DisplayName;
 /** ConfigurationConfiguration Tester */
 public class ConfigurationConfigurationTest {
 
-  @Autowired private ConfigurationConfiguration configurationConfiguration;
+    @Autowired private ConfigurationConfiguration configurationConfiguration;
 
-  @BeforeEach
-  @DisplayName("Each unit test method is executed once before execution")
-  public void before() throws Exception {}
+    @BeforeEach
+    @DisplayName("Each unit test method is executed once before execution")
+    public void before() throws Exception {}
 
-  @AfterEach
-  @DisplayName("Each unit test method is executed once after execution")
-  public void after() throws Exception {}
+    @AfterEach
+    @DisplayName("Each unit test method is executed once after execution")
+    public void after() throws Exception {}
 }

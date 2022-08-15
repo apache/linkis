@@ -18,40 +18,40 @@
 package org.apache.linkis.metadata.domain.mdq.vo;
 
 public class ModelVO {
-  private Integer lifecycle;
-  private Integer modelLevel;
-  private Integer useWay;
-  private Boolean isExternalUse;
+    private Integer lifecycle;
+    private Integer modelLevel;
+    private Integer useWay;
+    private Boolean isExternalUse;
 
-  public Integer getLifecycle() {
-    return lifecycle;
-  }
+    public Integer getLifecycle() {
+        return lifecycle;
+    }
 
-  public void setLifecycle(Integer lifecycle) {
-    this.lifecycle = lifecycle;
-  }
+    public void setLifecycle(Integer lifecycle) {
+        this.lifecycle = lifecycle;
+    }
 
-  public Integer getModelLevel() {
-    return modelLevel;
-  }
+    public Integer getModelLevel() {
+        return modelLevel;
+    }
 
-  public void setModelLevel(Integer modelLevel) {
-    this.modelLevel = modelLevel;
-  }
+    public void setModelLevel(Integer modelLevel) {
+        this.modelLevel = modelLevel;
+    }
 
-  public Integer getUseWay() {
-    return useWay;
-  }
+    public Integer getUseWay() {
+        return useWay;
+    }
 
-  public void setUseWay(Integer useWay) {
-    this.useWay = useWay;
-  }
+    public void setUseWay(Integer useWay) {
+        this.useWay = useWay;
+    }
 
-  public Boolean getExternalUse() {
-    return isExternalUse;
-  }
+    public Boolean getExternalUse() {
+        return isExternalUse;
+    }
 
-  public void setExternalUse(Boolean externalUse) {
-    isExternalUse = externalUse;
-  }
+    public void setExternalUse(Boolean externalUse) {
+        isExternalUse = externalUse;
+    }
 }

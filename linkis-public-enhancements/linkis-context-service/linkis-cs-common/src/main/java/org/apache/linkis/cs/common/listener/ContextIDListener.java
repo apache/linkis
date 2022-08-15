@@ -21,9 +21,9 @@ import org.apache.linkis.cs.common.entity.source.ContextID;
 
 public interface ContextIDListener {
 
-  void onRemoved(ContextID contextID);
+    void onRemoved(ContextID contextID);
 
-  void onReset(ContextID contextID);
+    void onReset(ContextID contextID);
 
-  void onUPdated(ContextID contextID);
+    void onUPdated(ContextID contextID);
 }

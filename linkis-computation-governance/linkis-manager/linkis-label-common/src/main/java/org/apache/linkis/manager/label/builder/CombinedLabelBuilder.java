@@ -32,41 +32,42 @@ import java.util.List;
 
 public class CombinedLabelBuilder implements LabelBuilder {
 
-  private static LabelBuilderFactory labelFactory =
-      LabelBuilderFactoryContext.getLabelBuilderFactory();
+    private static LabelBuilderFactory labelFactory =
+            LabelBuilderFactoryContext.getLabelBuilderFactory();
 
-  @Override
-  public boolean canBuild(String labelKey) {
-    if (labelKey.startsWith(LabelKeyConstant.COMBINED_LABEL_KEY_PREFIX)) {
-      return true;
+    @Override
+    public boolean canBuild(String labelKey) {
+        if (labelKey.startsWith(LabelKeyConstant.COMBINED_LABEL_KEY_PREFIX)) {
+            return true;
+        }
+        return false;
     }
-    return false;
-  }
 
-  @Override
-  public Label<?> build(String labelKey, @Nullable Object valueObj) throws LabelErrorException {
-    if (null != valueObj || valueObj instanceof List) {
-      try {
-        List<Label<?>> labels = (List<Label<?>>) valueObj;
-        return new CombinedLabelImpl(labels);
-      } catch (Throwable e) {
-        throw new LabelErrorException(
-            LabelConstant.LABEL_BUILDER_ERROR_CODE, "Failed to build combinedLabel", e);
-      }
+    @Override
+    public Label<?> build(String labelKey, @Nullable Object valueObj) throws LabelErrorException {
+        if (null != valueObj || valueObj instanceof List) {
+            try {
+                List<Label<?>> labels = (List<Label<?>>) valueObj;
+                return new CombinedLabelImpl(labels);
+            } catch (Throwable e) {
+                throw new LabelErrorException(
+                        LabelConstant.LABEL_BUILDER_ERROR_CODE, "Failed to build combinedLabel", e);
+            }
+        }
+        return null;
     }
-    return null;
-  }
 
-  public Label<?> buildFromStringValue(String labelKey, String stringValue)
-      throws LabelErrorException {
-    String[] keyList = labelKey.replace(LabelKeyConstant.COMBINED_LABEL_KEY_PREFIX, "").split("_");
-    String[] valueList = stringValue.split(",");
-    ArrayList<Label> labels = new ArrayList<>();
-    for (int i = 0; i < keyList.length; i++) {
-      Label label = labelFactory.createLabel(keyList[i], valueList[i]);
-      labels.add(label);
+    public Label<?> buildFromStringValue(String labelKey, String stringValue)
+            throws LabelErrorException {
+        String[] keyList =
+                labelKey.replace(LabelKeyConstant.COMBINED_LABEL_KEY_PREFIX, "").split("_");
+        String[] valueList = stringValue.split(",");
+        ArrayList<Label> labels = new ArrayList<>();
+        for (int i = 0; i < keyList.length; i++) {
+            Label label = labelFactory.createLabel(keyList[i], valueList[i]);
+            labels.add(label);
+        }
+        Label newLabel = build(labelKey, labels);
+        return newLabel;
     }
-    Label newLabel = build(labelKey, labels);
-    return newLabel;
-  }
 }

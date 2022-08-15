@@ -25,17 +25,17 @@ import java.util.Collection;
 
 public interface ConditionBuilder {
 
-  public static ConditionBuilder newBuilder() {
-    return new ConditionBuilderImpl();
-  }
+    public static ConditionBuilder newBuilder() {
+        return new ConditionBuilderImpl();
+    }
 
-  ConditionBuilder contextTypes(Collection<ContextType> contextTypes);
+    ConditionBuilder contextTypes(Collection<ContextType> contextTypes);
 
-  ConditionBuilder contextScopes(Collection<ContextScope> contextScopes);
+    ConditionBuilder contextScopes(Collection<ContextScope> contextScopes);
 
-  ConditionBuilder regex(String regex);
+    ConditionBuilder regex(String regex);
 
-  ConditionBuilder contains(String value);
+    ConditionBuilder contains(String value);
 
-  Condition build();
+    Condition build();
 }

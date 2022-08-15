@@ -19,63 +19,63 @@ package org.apache.linkis.manager.common.entity.resource;
 
 public class UserResource extends CommonNodeResource {
 
-  private String username;
+    private String username;
 
-  private String creator;
+    private String creator;
 
-  private String engineType;
+    private String engineType;
 
-  private String version;
+    private String version;
 
-  private String loadResourceStatus;
+    private String loadResourceStatus;
 
-  private String queueResourceStatus;
+    private String queueResourceStatus;
 
-  public String getLoadResourceStatus() {
-    return loadResourceStatus;
-  }
+    public String getLoadResourceStatus() {
+        return loadResourceStatus;
+    }
 
-  public void setLoadResourceStatus(String loadResourceStatus) {
-    this.loadResourceStatus = loadResourceStatus;
-  }
+    public void setLoadResourceStatus(String loadResourceStatus) {
+        this.loadResourceStatus = loadResourceStatus;
+    }
 
-  public String getQueueResourceStatus() {
-    return queueResourceStatus;
-  }
+    public String getQueueResourceStatus() {
+        return queueResourceStatus;
+    }
 
-  public void setQueueResourceStatus(String queueResourceStatus) {
-    this.queueResourceStatus = queueResourceStatus;
-  }
+    public void setQueueResourceStatus(String queueResourceStatus) {
+        this.queueResourceStatus = queueResourceStatus;
+    }
 
-  public String getVersion() {
-    return version;
-  }
+    public String getVersion() {
+        return version;
+    }
 
-  public void setVersion(String version) {
-    this.version = version;
-  }
+    public void setVersion(String version) {
+        this.version = version;
+    }
 
-  public String getUsername() {
-    return username;
-  }
+    public String getUsername() {
+        return username;
+    }
 
-  public void setUsername(String username) {
-    this.username = username;
-  }
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
-  public String getCreator() {
-    return creator;
-  }
+    public String getCreator() {
+        return creator;
+    }
 
-  public void setCreator(String creator) {
-    this.creator = creator;
-  }
+    public void setCreator(String creator) {
+        this.creator = creator;
+    }
 
-  public String getEngineType() {
-    return engineType;
-  }
+    public String getEngineType() {
+        return engineType;
+    }
 
-  public void setEngineType(String engineType) {
-    this.engineType = engineType;
-  }
+    public void setEngineType(String engineType) {
+        this.engineType = engineType;
+    }
 }

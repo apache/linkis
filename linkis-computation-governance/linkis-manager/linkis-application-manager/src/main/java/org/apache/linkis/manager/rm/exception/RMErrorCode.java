@@ -19,72 +19,73 @@ package org.apache.linkis.manager.rm.exception;
 
 public enum RMErrorCode {
 
-  /** */
-  LABEL_RESOURCE_NOT_FOUND(110021, "label resource not found, please check!"),
+    /** */
+    LABEL_RESOURCE_NOT_FOUND(110021, "label resource not found, please check!"),
 
-  LOCK_LABEL_FAILED(110022, "lock label failed!"),
+    LOCK_LABEL_FAILED(110022, "lock label failed!"),
 
-  LABEL_DUPLICATED(110019, "label has exist"),
+    LABEL_DUPLICATED(110019, "label has exist"),
 
-  DRIVER_MEMORY_INSUFFICIENT(
-      12004,
-      "Drive memory resources are insufficient, to reduce the drive memory(内存资源不足，建议调小驱动内存)"),
+    DRIVER_MEMORY_INSUFFICIENT(
+            12004,
+            "Drive memory resources are insufficient, to reduce the drive memory(内存资源不足，建议调小驱动内存)"),
 
-  DRIVER_CPU_INSUFFICIENT(
-      12005,
-      "Drive core resources are insufficient, to reduce the number of driver cores(CPU资源不足，建议调小驱动核数)"),
+    DRIVER_CPU_INSUFFICIENT(
+            12005,
+            "Drive core resources are insufficient, to reduce the number of driver cores(CPU资源不足，建议调小驱动核数)"),
 
-  INSTANCES_INSUFFICIENT(
-      12006, "Insufficient number of instances, idle engines can be killed(实例数不足，可以kill空闲的引擎)"),
+    INSTANCES_INSUFFICIENT(
+            12006,
+            "Insufficient number of instances, idle engines can be killed(实例数不足，可以kill空闲的引擎)"),
 
-  QUEUE_MEMORY_INSUFFICIENT(
-      12002, "Insufficient queue memory resources, reduce the executor memory"),
+    QUEUE_MEMORY_INSUFFICIENT(
+            12002, "Insufficient queue memory resources, reduce the executor memory"),
 
-  QUEUE_CPU_INSUFFICIENT(
-      12001,
-      "Queue CPU resources are insufficient, reduce the number of executors.(队列CPU资源不足，建议调小执行器个数)"),
+    QUEUE_CPU_INSUFFICIENT(
+            12001,
+            "Queue CPU resources are insufficient, reduce the number of executors.(队列CPU资源不足，建议调小执行器个数)"),
 
-  QUEUE_INSTANCES_INSUFFICIENT(
-      12003,
-      "Insufficient number of queue instances, idle engines can be killed(队列实例数不足，可以kill空闲的引擎)"),
+    QUEUE_INSTANCES_INSUFFICIENT(
+            12003,
+            "Insufficient number of queue instances, idle engines can be killed(队列实例数不足，可以kill空闲的引擎)"),
 
-  CLUSTER_QUEUE_MEMORY_INSUFFICIENT(12010, "Insufficient cluster queue memory"),
+    CLUSTER_QUEUE_MEMORY_INSUFFICIENT(12010, "Insufficient cluster queue memory"),
 
-  CLUSTER_QUEUE_CPU_INSUFFICIENT(12011, "Insufficient cluster queue cpu"),
+    CLUSTER_QUEUE_CPU_INSUFFICIENT(12011, "Insufficient cluster queue cpu"),
 
-  CLUSTER_QUEUE_INSTANCES_INSUFFICIENT(12012, "Insufficient cluster queue instance"),
+    CLUSTER_QUEUE_INSTANCES_INSUFFICIENT(12012, "Insufficient cluster queue instance"),
 
-  ECM_RESOURCE_INSUFFICIENT(11000, "ECM resources are insufficient(ECM 资源不足)"),
+    ECM_RESOURCE_INSUFFICIENT(11000, "ECM resources are insufficient(ECM 资源不足)"),
 
-  ECM_MEMORY_INSUFFICIENT(11001, "ECM memory resources are insufficient(ECM 内存资源不足)"),
+    ECM_MEMORY_INSUFFICIENT(11001, "ECM memory resources are insufficient(ECM 内存资源不足)"),
 
-  ECM_CPU_INSUFFICIENT(11002, "ECM CPU resources are insufficient(ECM CPU资源不足)"),
+    ECM_CPU_INSUFFICIENT(11002, "ECM CPU resources are insufficient(ECM CPU资源不足)"),
 
-  ECM_INSTANCES_INSUFFICIENT(11003, "ECM Insufficient number of instances(ECM实例数不足)"),
-  ;
+    ECM_INSTANCES_INSUFFICIENT(11003, "ECM Insufficient number of instances(ECM实例数不足)"),
+    ;
 
-  RMErrorCode(int errorCode, String message) {
-    this.code = errorCode;
-    this.message = message;
-  }
+    RMErrorCode(int errorCode, String message) {
+        this.code = errorCode;
+        this.message = message;
+    }
 
-  private int code;
+    private int code;
 
-  private String message;
+    private String message;
 
-  public int getCode() {
-    return code;
-  }
+    public int getCode() {
+        return code;
+    }
 
-  public void setCode(int code) {
-    this.code = code;
-  }
+    public void setCode(int code) {
+        this.code = code;
+    }
 
-  public String getMessage() {
-    return message;
-  }
+    public String getMessage() {
+        return message;
+    }
 
-  public void setMessage(String message) {
-    this.message = message;
-  }
+    public void setMessage(String message) {
+        this.message = message;
+    }
 }

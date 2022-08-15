@@ -21,15 +21,15 @@ import java.util.Map;
 
 public class CSFlowInfos implements CSInfos {
 
-  private Map<String, Object> infos;
+    private Map<String, Object> infos;
 
-  @Override
-  public Map<String, Object> getInfos() {
-    return this.infos;
-  }
+    @Override
+    public Map<String, Object> getInfos() {
+        return this.infos;
+    }
 
-  @Override
-  public void setInfos(Map<String, Object> infos) {
-    this.infos = infos;
-  }
+    @Override
+    public void setInfos(Map<String, Object> infos) {
+        this.infos = infos;
+    }
 }

@@ -20,13 +20,16 @@ package org.apache.linkis.cs.listener.conf;
 import org.apache.linkis.common.conf.CommonVars;
 
 public class ContextListenerConf {
-  public static final Integer WDS_CS_LISTENER_ASYN_CONSUMER_THREAD_MAX =
-      Integer.parseInt(
-          CommonVars.apply("wds.linkis.cs.listener.asyn.consumer.thread.max", "5").getValue());
-  public static final Long WDS_CS_LISTENER_ASYN_CONSUMER_THREAD_FREE_TIME_MAX =
-      Long.parseLong(
-          CommonVars.apply("wds.linkis.cs.listener.asyn.consumer.freeTime.max", "5000").getValue());
-  public static final Integer WDS_CS_LISTENER_ASYN_QUEUE_CAPACITY =
-      Integer.parseInt(
-          CommonVars.apply("wds.linkis.cs.listener.asyn.queue.size.max", "300").getValue());
+    public static final Integer WDS_CS_LISTENER_ASYN_CONSUMER_THREAD_MAX =
+            Integer.parseInt(
+                    CommonVars.apply("wds.linkis.cs.listener.asyn.consumer.thread.max", "5")
+                            .getValue());
+    public static final Long WDS_CS_LISTENER_ASYN_CONSUMER_THREAD_FREE_TIME_MAX =
+            Long.parseLong(
+                    CommonVars.apply("wds.linkis.cs.listener.asyn.consumer.freeTime.max", "5000")
+                            .getValue());
+    public static final Integer WDS_CS_LISTENER_ASYN_QUEUE_CAPACITY =
+            Integer.parseInt(
+                    CommonVars.apply("wds.linkis.cs.listener.asyn.queue.size.max", "300")
+                            .getValue());
 }

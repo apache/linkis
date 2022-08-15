@@ -25,51 +25,51 @@ import java.util.List;
 
 /** Extends ServiceInstance, store the relationship of label */
 public class InstanceInfo extends ServiceInstance {
-  /** Automatic increment */
-  private Integer id;
+    /** Automatic increment */
+    private Integer id;
 
-  private Date updateTime;
+    private Date updateTime;
 
-  private Date createTime;
-  /** Labels related */
-  private List<InsPersistenceLabel> labels = new ArrayList<>();
+    private Date createTime;
+    /** Labels related */
+    private List<InsPersistenceLabel> labels = new ArrayList<>();
 
-  public InstanceInfo() {}
+    public InstanceInfo() {}
 
-  public InstanceInfo(ServiceInstance serviceInstance) {
-    super.setInstance(serviceInstance.getInstance());
-    super.setApplicationName(serviceInstance.getApplicationName());
-  }
+    public InstanceInfo(ServiceInstance serviceInstance) {
+        super.setInstance(serviceInstance.getInstance());
+        super.setApplicationName(serviceInstance.getApplicationName());
+    }
 
-  public List<InsPersistenceLabel> getLabels() {
-    return labels;
-  }
+    public List<InsPersistenceLabel> getLabels() {
+        return labels;
+    }
 
-  public void setLabels(List<InsPersistenceLabel> labels) {
-    this.labels = labels;
-  }
+    public void setLabels(List<InsPersistenceLabel> labels) {
+        this.labels = labels;
+    }
 
-  public Integer getId() {
-    return id;
-  }
+    public Integer getId() {
+        return id;
+    }
 
-  public void setId(Integer id) {
-    this.id = id;
-  }
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-  public Date getUpdateTime() {
-    return updateTime;
-  }
+    public Date getUpdateTime() {
+        return updateTime;
+    }
 
-  public void setUpdateTime(Date updateTime) {
-    this.updateTime = updateTime;
-  }
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
+    }
 
-  public Date getCreateTime() {
-    return createTime;
-  }
+    public Date getCreateTime() {
+        return createTime;
+    }
 
-  public void setCreateTime(Date createTime) {
-    this.createTime = createTime;
-  }
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
 }

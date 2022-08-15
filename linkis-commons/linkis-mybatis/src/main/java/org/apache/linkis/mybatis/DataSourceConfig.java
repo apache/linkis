@@ -18,17 +18,19 @@
 package org.apache.linkis.mybatis;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.sql.DataSource;
 
 @Configuration
+@ConfigurationProperties
 public class DataSourceConfig {
 
-  @Bean(name = "dataSource", destroyMethod = "close")
-  @ConditionalOnMissingBean
-  public DataSource dataSource() {
-    return DataSourceUtils.buildDataSource(null, null, null);
-  }
+    @Bean(name = "dataSource", destroyMethod = "close")
+    @ConditionalOnMissingBean
+    public DataSource dataSource() {
+        return DataSourceUtils.buildDataSource(null, null, null);
+    }
 }

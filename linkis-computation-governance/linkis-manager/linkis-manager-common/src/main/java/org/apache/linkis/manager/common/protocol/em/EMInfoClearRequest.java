@@ -21,24 +21,24 @@ import org.apache.linkis.manager.common.entity.node.EMNode;
 
 public class EMInfoClearRequest implements EMRequest {
 
-  private String user;
+    private String user;
 
-  private EMNode em;
+    private EMNode em;
 
-  @Override
-  public String getUser() {
-    return this.user;
-  }
+    @Override
+    public String getUser() {
+        return this.user;
+    }
 
-  public void setUser(String user) {
-    this.user = user;
-  }
+    public void setUser(String user) {
+        this.user = user;
+    }
 
-  public EMNode getEm() {
-    return em;
-  }
+    public EMNode getEm() {
+        return em;
+    }
 
-  public void setEm(EMNode em) {
-    this.em = em;
-  }
+    public void setEm(EMNode em) {
+        this.em = em;
+    }
 }

@@ -1,12 +1,13 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,16 +17,14 @@
  */
 
 package org.apache.linkis.ecm.server.operator
-
 import org.apache.linkis.common.exception.LinkisCommonErrorException
 import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.ecm.core.conf.ECMErrorCode
 import org.apache.linkis.ecm.server.exception.ECMErrorException
 
+import scala.collection.JavaConverters._
 import java.io.File
 import java.util.concurrent.TimeUnit
-
-import scala.collection.JavaConverters._
 
 class EngineConnYarnLogOperator extends EngineConnLogOperator {
 
@@ -33,17 +32,17 @@ class EngineConnYarnLogOperator extends EngineConnLogOperator {
 
   override def apply(implicit parameters: Map[String, Any]): Map[String, Any] = {
     var result: Map[String, Any] = Map()
-    Utils.tryFinally {
+    Utils.tryFinally{
       result = super.apply(parameters)
       result
-    } {
+    }{
       result.get("logPath") match {
         case Some(path: String) => {
           val logFile = new File(path)
-          if (logFile.exists() && logFile.getName.startsWith(".")) {
+          if (logFile.exists() && logFile.getName.startsWith(".")){
             // If is a temporary file, drop it
             logger.info(s"Delete the temporary yarn log file: [$path]")
-            if (!logFile.delete()) {
+            if (!logFile.delete()){
               logger.warn(s"Fail to delete the temporary yarn log file: [$path]")
             }
           }
@@ -56,17 +55,13 @@ class EngineConnYarnLogOperator extends EngineConnLogOperator {
     val (ticketId, engineConnInstance, engineConnLogDir) = getEngineConnInfo(parameters)
     val rootLogDir = new File(engineConnLogDir)
     if (!rootLogDir.exists() || !rootLogDir.isDirectory) {
-      throw new ECMErrorException(
-        ECMErrorCode.EC_FETCH_LOG_FAILED,
-        s"Log directory $rootLogDir is not exists."
-      )
+      throw new ECMErrorException(ECMErrorCode.EC_FETCH_LOG_FAILED, s"Log directory $rootLogDir is not exists.")
     }
     val creator = getAsThrow[String]("creator")
     val applicationId = getAsThrow[String]("yarnApplicationId")
     var logPath = new File(engineConnLogDir, "yarn_" + applicationId)
     if (!logPath.exists()) {
-      val tempLogFile =
-        s".yarn_${applicationId}_${System.currentTimeMillis()}_${Thread.currentThread().getId}"
+      val tempLogFile = s".yarn_${applicationId}_${System.currentTimeMillis()}_${Thread.currentThread().getId}"
       Utils.tryCatch {
         var command = s"yarn logs -applicationId $applicationId >> $rootLogDir/$tempLogFile"
         logger.info(s"Fetch yarn logs to temporary file: [$command]")
@@ -83,41 +78,26 @@ class EngineConnYarnLogOperator extends EngineConnLogOperator {
         } else {
           logPath = new File(engineConnLogDir, tempLogFile)
           if (!logPath.exists()) {
-            throw new LinkisCommonErrorException(
-              -1,
-              s"Fetch yarn logs timeout, log aggregation has not completed or is not enabled"
-            )
+            throw new LinkisCommonErrorException(-1, s"Fetch yarn logs timeout, log aggregation has not completed or is not enabled")
           }
         }
-      } { case e: Exception =>
-        throw new LinkisCommonErrorException(
-          -1,
-          s"Fail to fetch yarn logs application: $applicationId, message: ${e.getMessage}"
-        )
+      } {
+        case e: Exception => throw new LinkisCommonErrorException(-1, s"Fail to fetch yarn logs application: $applicationId, message: ${e.getMessage}")
       }
     }
-    if (!logPath.exists() || !logPath.isFile) {
-      throw new ECMErrorException(
-        ECMErrorCode.EC_FETCH_LOG_FAILED,
-        s"LogFile $logPath is not exists or is not a file."
-      )
+    if (!logPath.exists() || !logPath.isFile){
+      throw new ECMErrorException(ECMErrorCode.EC_FETCH_LOG_FAILED, s"LogFile $logPath is not exists or is not a file.")
     }
-    logger.info(
-      s"Try to fetch EngineConn(id: $ticketId, instance: $engineConnInstance) yarn logs from ${logPath.getPath} in application id: $applicationId"
-    )
+    logger.info(s"Try to fetch EngineConn(id: $ticketId, instance: $engineConnInstance) yarn logs from ${logPath.getPath} in application id: $applicationId")
     logPath
   }
 
   private def sudoCommands(creator: String, command: String): Array[String] = {
-    Array(
-      "/bin/bash",
-      "-c",
-      "sudo su " + creator + " -c \"source ~/.bashrc 2>/dev/null; " + command + "\""
-    )
+    Array("/bin/bash", "-c", "sudo su " + creator + " -c \"source ~/.bashrc 2>/dev/null; " + command + "\"")
   }
 
 }
 
-object EngineConnYarnLogOperator {
+object EngineConnYarnLogOperator{
   val OPERATOR_NAME = "engineConnYarnLog"
 }

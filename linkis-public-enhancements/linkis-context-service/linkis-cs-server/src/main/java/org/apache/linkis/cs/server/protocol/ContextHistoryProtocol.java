@@ -21,8 +21,8 @@ import org.apache.linkis.cs.server.enumeration.ServiceType;
 
 public class ContextHistoryProtocol extends AbstractHttpRequestProtocol {
 
-  @Override
-  public String getServiceName() {
-    return ServiceType.CONTEXT_HISTORY.name();
-  }
+    @Override
+    public String getServiceName() {
+        return ServiceType.CONTEXT_HISTORY.name();
+    }
 }

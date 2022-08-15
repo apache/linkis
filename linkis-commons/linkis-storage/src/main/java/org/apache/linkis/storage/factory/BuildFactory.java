@@ -21,9 +21,9 @@ import org.apache.linkis.common.io.Fs;
 
 public interface BuildFactory {
 
-  Fs getFs(String user, String proxyUser);
+    Fs getFs(String user, String proxyUser);
 
-  Fs getFs(String user, String proxyUser, String label);
+    Fs getFs(String user, String proxyUser, String label);
 
-  String fsName();
+    String fsName();
 }

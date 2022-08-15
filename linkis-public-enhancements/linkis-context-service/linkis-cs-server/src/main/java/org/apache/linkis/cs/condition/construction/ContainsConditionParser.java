@@ -23,13 +23,13 @@ import org.apache.linkis.cs.condition.impl.ContainsCondition;
 import java.util.Map;
 
 public class ContainsConditionParser implements ConditionParser {
-  @Override
-  public Condition parse(Map<Object, Object> conditionMap) {
-    return new ContainsCondition((String) conditionMap.get("value"));
-  }
+    @Override
+    public Condition parse(Map<Object, Object> conditionMap) {
+        return new ContainsCondition((String) conditionMap.get("value"));
+    }
 
-  @Override
-  public String getName() {
-    return "Contains";
-  }
+    @Override
+    public String getName() {
+        return "Contains";
+    }
 }

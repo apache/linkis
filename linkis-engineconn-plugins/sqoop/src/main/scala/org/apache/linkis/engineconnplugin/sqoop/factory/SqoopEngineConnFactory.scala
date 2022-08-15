@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,31 +21,25 @@ import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.engineconn.common.creation.EngineCreationContext
 import org.apache.linkis.engineconnplugin.sqoop.context.SqoopEngineConnContext
 import org.apache.linkis.engineconnplugin.sqoop.util.ClassUtil
-import org.apache.linkis.manager.engineplugin.common.creation.{
-  ExecutorFactory,
-  MultiExecutorEngineConnFactory
-}
+import org.apache.linkis.manager.engineplugin.common.creation.{ExecutorFactory, MultiExecutorEngineConnFactory}
 import org.apache.linkis.manager.label.entity.engine.EngineType
 import org.apache.linkis.manager.label.entity.engine.EngineType.EngineType
+import org.apache.linkis.engineconnplugin.sqoop.context.SqoopEngineConnContext
+import org.apache.linkis.engineconnplugin.sqoop.util.ClassUtil
 
-class SqoopEngineConnFactory extends MultiExecutorEngineConnFactory with Logging {
+class SqoopEngineConnFactory extends MultiExecutorEngineConnFactory with Logging{
   override def getExecutorFactories: Array[ExecutorFactory] = executorFactoryArray
 
-  override protected def getDefaultExecutorFactoryClass: Class[_ <: ExecutorFactory] =
-    classOf[SqoopExecutorFactory]
+  override protected def getDefaultExecutorFactoryClass: Class[_ <: ExecutorFactory] = classOf[SqoopExecutorFactory]
 
   override protected def getEngineConnType: EngineType = EngineType.SQOOP
 
-  override protected def createEngineConnSession(
-      engineCreationContext: EngineCreationContext
-  ): Any = {
-    // val environmentContext = createEnvironmentContext(engineCreationContext)
+  override protected def createEngineConnSession(engineCreationContext: EngineCreationContext): Any = {
+    //val environmentContext = createEnvironmentContext(engineCreationContext)
     val sqoopEngineConnContext = new SqoopEngineConnContext()
     sqoopEngineConnContext
   }
 
-  private val executorFactoryArray = Array[ExecutorFactory](
-    ClassUtil.getInstance(classOf[SqoopExecutorFactory], new SqoopExecutorFactory)
-  )
 
+  private val executorFactoryArray = Array[ExecutorFactory](ClassUtil.getInstance(classOf[SqoopExecutorFactory], new SqoopExecutorFactory))
 }

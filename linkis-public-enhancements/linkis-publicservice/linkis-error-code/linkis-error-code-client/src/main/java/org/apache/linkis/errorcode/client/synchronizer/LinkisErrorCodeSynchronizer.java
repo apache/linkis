@@ -23,77 +23,79 @@ import org.apache.linkis.errorcode.client.ErrorCodeClientBuilder;
 import org.apache.linkis.errorcode.client.LinkisErrorCodeClient;
 import org.apache.linkis.errorcode.common.LinkisErrorCode;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class LinkisErrorCodeSynchronizer {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(LinkisErrorCodeSynchronizer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LinkisErrorCodeSynchronizer.class);
 
-  private LinkisErrorCode errorCode =
-      new LinkisErrorCode(
-          "60001", "会话创建失败，%s队列不存在，请检查队列设置是否正确", "queue (\\S+) is not exists in YARN", 0);
+    private LinkisErrorCode errorCode =
+            new LinkisErrorCode(
+                    "60001", "会话创建失败，%s队列不存在，请检查队列设置是否正确", "queue (\\S+) is not exists in YARN", 0);
 
-  private List<LinkisErrorCode> linkisErrorCodeList = Arrays.asList(errorCode);
+    private List<LinkisErrorCode> linkisErrorCodeList = Arrays.asList(errorCode);
 
-  private final Object lock = new Object();
+    private final Object lock = new Object();
 
-  private static final long PERIOD =
-      CommonVars.apply("wds.linkis.errorcode.period.time", 1L).getValue();
+    private static final long PERIOD =
+            CommonVars.apply("wds.linkis.errorcode.period.time", 1L).getValue();
 
-  private static LinkisErrorCodeSynchronizer linkisErrorCodeSynchronizer;
+    private static LinkisErrorCodeSynchronizer linkisErrorCodeSynchronizer;
 
-  /** 一个同步器用一个client就行,不用进行关闭 */
-  private final LinkisErrorCodeClient errorCodeClient =
-      new ErrorCodeClientBuilder().setVersion("v1").build();
+    /** 一个同步器用一个client就行,不用进行关闭 */
+    private final LinkisErrorCodeClient errorCodeClient =
+            new ErrorCodeClientBuilder().setVersion("v1").build();
 
-  private LinkisErrorCodeSynchronizer() {
-    init();
-  }
-
-  private void init() {
-    LOGGER.info("start to get errorcodes from linkis server");
-    Utils.defaultScheduler()
-        .scheduleAtFixedRate(
-            () -> {
-              LOGGER.info("start to get errorcodes from linkis server");
-              synchronized (lock) {
-                List<LinkisErrorCode> copyErrorCodes = new ArrayList<>(linkisErrorCodeList);
-                try {
-                  List<LinkisErrorCode> tmpList = errorCodeClient.getErrorCodesFromServer();
-                  if (null != tmpList && !tmpList.isEmpty()) {
-                    linkisErrorCodeList = tmpList;
-                  } else {
-                    LOGGER.warn("Got empty errorCodeList.");
-                  }
-                } catch (Throwable t) {
-                  LOGGER.error("Failed to get ErrorCodes from linkis server", t);
-                  linkisErrorCodeList = copyErrorCodes;
-                }
-              }
-            },
-            0L,
-            1,
-            TimeUnit.HOURS);
-  }
-
-  public static LinkisErrorCodeSynchronizer getInstance() {
-    if (linkisErrorCodeSynchronizer == null) {
-      synchronized (LinkisErrorCodeSynchronizer.class) {
-        if (linkisErrorCodeSynchronizer == null) {
-          linkisErrorCodeSynchronizer = new LinkisErrorCodeSynchronizer();
-        }
-      }
+    private LinkisErrorCodeSynchronizer() {
+        init();
     }
-    return linkisErrorCodeSynchronizer;
-  }
 
-  public List<LinkisErrorCode> synchronizeErrorCodes() {
-    return this.linkisErrorCodeList;
-  }
+    private void init() {
+        LOGGER.info("start to get errorcodes from linkis server");
+        Utils.defaultScheduler()
+                .scheduleAtFixedRate(
+                        () -> {
+                            LOGGER.info("start to get errorcodes from linkis server");
+                            synchronized (lock) {
+                                List<LinkisErrorCode> copyErrorCodes =
+                                        new ArrayList<>(linkisErrorCodeList);
+                                try {
+                                    List<LinkisErrorCode> tmpList =
+                                            errorCodeClient.getErrorCodesFromServer();
+                                    if (null != tmpList && !tmpList.isEmpty()) {
+                                        linkisErrorCodeList = tmpList;
+                                    } else {
+                                        LOGGER.warn("Got empty errorCodeList.");
+                                    }
+                                } catch (Throwable t) {
+                                    LOGGER.error("Failed to get ErrorCodes from linkis server", t);
+                                    linkisErrorCodeList = copyErrorCodes;
+                                }
+                            }
+                        },
+                        0L,
+                        1,
+                        TimeUnit.HOURS);
+    }
+
+    public static LinkisErrorCodeSynchronizer getInstance() {
+        if (linkisErrorCodeSynchronizer == null) {
+            synchronized (LinkisErrorCodeSynchronizer.class) {
+                if (linkisErrorCodeSynchronizer == null) {
+                    linkisErrorCodeSynchronizer = new LinkisErrorCodeSynchronizer();
+                }
+            }
+        }
+        return linkisErrorCodeSynchronizer;
+    }
+
+    public List<LinkisErrorCode> synchronizeErrorCodes() {
+        return this.linkisErrorCodeList;
+    }
 }

@@ -22,11 +22,11 @@ import org.apache.linkis.cs.common.entity.history.AbstractContextHistory;
 
 public abstract class MetadataContextHistory extends AbstractContextHistory {
 
-  @Override
-  public ContextType getContextType() {
-    return ContextType.METADATA;
-  }
+    @Override
+    public ContextType getContextType() {
+        return ContextType.METADATA;
+    }
 
-  @Override
-  public void setContextType(ContextType contextType) {}
+    @Override
+    public void setContextType(ContextType contextType) {}
 }

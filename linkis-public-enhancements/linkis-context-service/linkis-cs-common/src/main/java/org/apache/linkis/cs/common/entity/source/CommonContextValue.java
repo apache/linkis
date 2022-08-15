@@ -19,27 +19,27 @@ package org.apache.linkis.cs.common.entity.source;
 
 public class CommonContextValue implements ContextValue {
 
-  private Object value;
+    private Object value;
 
-  private String keywords;
+    private String keywords;
 
-  @Override
-  public String getKeywords() {
-    return this.keywords;
-  }
+    @Override
+    public String getKeywords() {
+        return this.keywords;
+    }
 
-  @Override
-  public void setKeywords(String keywords) {
-    this.keywords = keywords;
-  }
+    @Override
+    public void setKeywords(String keywords) {
+        this.keywords = keywords;
+    }
 
-  @Override
-  public Object getValue() {
-    return this.value;
-  }
+    @Override
+    public Object getValue() {
+        return this.value;
+    }
 
-  @Override
-  public void setValue(Object value) {
-    this.value = value;
-  }
+    @Override
+    public void setValue(Object value) {
+        this.value = value;
+    }
 }

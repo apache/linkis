@@ -19,11 +19,11 @@ package org.apache.linkis.errorcode.client.handler;
 
 public class LinkisErrorCodeFactory {
 
-  private static final LinkisErrorCodeHandler DEFAULT_ERRORCODE_HANDLER =
-      LinkisErrorCodeHandler.getInstance();
+    private static final LinkisErrorCodeHandler DEFAULT_ERRORCODE_HANDLER =
+            LinkisErrorCodeHandler.getInstance();
 
-  @Deprecated
-  public static LinkisErrorCodeHandler getDefaultErrorcodeHandler() {
-    return DEFAULT_ERRORCODE_HANDLER;
-  }
+    @Deprecated
+    public static LinkisErrorCodeHandler getDefaultErrorcodeHandler() {
+        return DEFAULT_ERRORCODE_HANDLER;
+    }
 }

@@ -18,5 +18,5 @@
 package org.apache.linkis.manager.common.protocol.node;
 
 public class NodeHeartbeatRequest implements HeartbeatProtocol {
-  private String name = "NodeHeartbeatRequest";
+    private String name = "NodeHeartbeatRequest";
 }

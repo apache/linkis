@@ -21,16 +21,16 @@ import org.apache.linkis.common.exception.ErrorException;
 
 /** Exception in closing/destroying the job */
 public class JobClosableException extends ErrorException {
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  public static final int ERROR_CODE = 16025;
+    public static final int ERROR_CODE = 16025;
 
-  public JobClosableException(String message) {
-    super(ERROR_CODE, message);
-  }
+    public JobClosableException(String message) {
+        super(ERROR_CODE, message);
+    }
 
-  public JobClosableException(String message, Throwable e) {
-    super(ERROR_CODE, message);
-    this.initCause(e);
-  }
+    public JobClosableException(String message, Throwable e) {
+        super(ERROR_CODE, message);
+        this.initCause(e);
+    }
 }

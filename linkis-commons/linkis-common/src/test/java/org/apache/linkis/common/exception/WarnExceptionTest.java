@@ -23,22 +23,23 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class WarnExceptionTest {
 
-  @Test
-  void testWarnException() {
-    WarnException warnException1 = new WarnException(1, "test");
-    assertEquals(ExceptionLevel.WARN, warnException1.getLevel());
-    assertEquals("test", warnException1.getDesc());
-    WarnException warnException2 = new WarnException(3, "test", "127.0.0.1", 1234, "serviceKind");
-    assertEquals(ExceptionLevel.WARN, warnException2.getLevel());
-    assertEquals("test", warnException2.getDesc());
-    assertEquals("127.0.0.1", warnException2.getIp());
-    assertEquals(1234, warnException2.getPort());
-    assertEquals("serviceKind", warnException2.getServiceKind());
-  }
+    @Test
+    void testWarnException() {
+        WarnException warnException1 = new WarnException(1, "test");
+        assertEquals(ExceptionLevel.WARN, warnException1.getLevel());
+        assertEquals("test", warnException1.getDesc());
+        WarnException warnException2 =
+                new WarnException(3, "test", "127.0.0.1", 1234, "serviceKind");
+        assertEquals(ExceptionLevel.WARN, warnException2.getLevel());
+        assertEquals("test", warnException2.getDesc());
+        assertEquals("127.0.0.1", warnException2.getIp());
+        assertEquals(1234, warnException2.getPort());
+        assertEquals("serviceKind", warnException2.getServiceKind());
+    }
 
-  @Test
-  void testGetLevel() {
-    WarnException warnException = new WarnException(2, "test");
-    assertEquals(ExceptionLevel.WARN, warnException.getLevel());
-  }
+    @Test
+    void testGetLevel() {
+        WarnException warnException = new WarnException(2, "test");
+        assertEquals(ExceptionLevel.WARN, warnException.getLevel());
+    }
 }

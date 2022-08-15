@@ -21,11 +21,11 @@ import org.apache.linkis.common.exception.WarnException;
 
 public class FSNotInitException extends WarnException {
 
-  public FSNotInitException() {
-    super(52000, "FSNotInitException");
-  }
+    public FSNotInitException() {
+        super(52000, "FSNotInitException");
+    }
 
-  public FSNotInitException(int errCode, String desc) {
-    super(errCode, desc);
-  }
+    public FSNotInitException(int errCode, String desc) {
+        super(errCode, desc);
+    }
 }

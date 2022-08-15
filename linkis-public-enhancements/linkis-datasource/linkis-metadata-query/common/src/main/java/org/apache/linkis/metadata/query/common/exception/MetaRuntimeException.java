@@ -20,14 +20,14 @@ package org.apache.linkis.metadata.query.common.exception;
 import org.apache.linkis.common.exception.WarnException;
 
 public class MetaRuntimeException extends WarnException {
-  private static final int ERROR_CODE = 99900;
+    private static final int ERROR_CODE = 99900;
 
-  public MetaRuntimeException(String desc, Throwable t) {
-    super(ERROR_CODE, desc);
-    super.initCause(t);
-  }
+    public MetaRuntimeException(String desc, Throwable t) {
+        super(ERROR_CODE, desc);
+        super.initCause(t);
+    }
 
-  public MetaRuntimeException(String desc, String ip, int port, String serviceKind) {
-    super(ERROR_CODE, desc, ip, port, serviceKind);
-  }
+    public MetaRuntimeException(String desc, String ip, int port, String serviceKind) {
+        super(ERROR_CODE, desc, ip, port, serviceKind);
+    }
 }

@@ -25,60 +25,60 @@ import org.apache.linkis.cli.core.exception.TransformerException;
 import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
 
 public class LinkisResultInfoModel implements Model {
-  private String jobID;
-  private String execID;
-  private String user;
-  private JobStatus jobStatus;
-  private String message;
-  private Integer errCode;
-  private String errDesc;
+    private String jobID;
+    private String execID;
+    private String user;
+    private JobStatus jobStatus;
+    private String message;
+    private Integer errCode;
+    private String errDesc;
 
-  @Override
-  public void buildModel(Object data) {
-    if (!(data instanceof LinkisResultData)) {
-      throw new TransformerException(
-          "TFM0010",
-          ErrorLevel.ERROR,
-          CommonErrMsg.TransformerException,
-          "Failed to init LinkisResultInfoModel: "
-              + data.getClass().getCanonicalName()
-              + "is not instance of \"LinkisResultData\"");
+    @Override
+    public void buildModel(Object data) {
+        if (!(data instanceof LinkisResultData)) {
+            throw new TransformerException(
+                    "TFM0010",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.TransformerException,
+                    "Failed to init LinkisResultInfoModel: "
+                            + data.getClass().getCanonicalName()
+                            + "is not instance of \"LinkisResultData\"");
+        }
+        LinkisResultData jobData = (LinkisResultData) data;
+        jobID = jobData.getJobID();
+        execID = jobData.getExecID();
+        user = jobData.getUser();
+        jobStatus = jobData.getJobStatus();
+        message = jobData.getMessage();
+        errCode = jobData.getErrCode();
+        errDesc = jobData.getErrDesc();
     }
-    LinkisResultData jobData = (LinkisResultData) data;
-    jobID = jobData.getJobID();
-    execID = jobData.getExecID();
-    user = jobData.getUser();
-    jobStatus = jobData.getJobStatus();
-    message = jobData.getMessage();
-    errCode = jobData.getErrCode();
-    errDesc = jobData.getErrDesc();
-  }
 
-  public String getJobID() {
-    return jobID;
-  }
+    public String getJobID() {
+        return jobID;
+    }
 
-  public String getExecID() {
-    return execID;
-  }
+    public String getExecID() {
+        return execID;
+    }
 
-  public String getUser() {
-    return user;
-  }
+    public String getUser() {
+        return user;
+    }
 
-  public JobStatus getJobStatus() {
-    return jobStatus;
-  }
+    public JobStatus getJobStatus() {
+        return jobStatus;
+    }
 
-  public String getMessage() {
-    return message;
-  }
+    public String getMessage() {
+        return message;
+    }
 
-  public Integer getErrCode() {
-    return errCode;
-  }
+    public Integer getErrCode() {
+        return errCode;
+    }
 
-  public String getErrDesc() {
-    return errDesc;
-  }
+    public String getErrDesc() {
+        return errDesc;
+    }
 }

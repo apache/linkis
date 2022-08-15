@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,6 +20,7 @@ package org.apache.linkis.datasource.client.request
 import org.apache.linkis.datasource.client.config.DatasourceClientConfig.METADATA_SERVICE_MODULE
 import org.apache.linkis.datasource.client.exception.DataSourceClientBuilderException
 import org.apache.linkis.httpclient.request.GetAction
+
 
 class MetadataGetDatabasesAction extends GetAction with DataSourceAction {
 
@@ -37,7 +38,7 @@ class MetadataGetDatabasesAction extends GetAction with DataSourceAction {
 object MetadataGetDatabasesAction {
   def builder(): Builder = new Builder
 
-  class Builder private[MetadataGetDatabasesAction] () {
+  class Builder private[MetadataGetDatabasesAction]() {
     private var dataSourceName: String = _
     private var system: String = _
     private var user: String = _
@@ -58,10 +59,9 @@ object MetadataGetDatabasesAction {
     }
 
     def build(): MetadataGetDatabasesAction = {
-      if (dataSourceName == null)
-        throw new DataSourceClientBuilderException("dataSourceName is needed!")
-      if (system == null) throw new DataSourceClientBuilderException("system is needed!")
-      if (user == null) throw new DataSourceClientBuilderException("user is needed!")
+      if (dataSourceName == null) throw new DataSourceClientBuilderException("dataSourceName is needed!")
+      if(system == null) throw new DataSourceClientBuilderException("system is needed!")
+      if(user == null) throw new DataSourceClientBuilderException("user is needed!")
 
       val metadataGetDatabasesAction = new MetadataGetDatabasesAction
       metadataGetDatabasesAction.dataSourceName = this.dataSourceName
@@ -69,7 +69,6 @@ object MetadataGetDatabasesAction {
       metadataGetDatabasesAction.setUser(user)
       metadataGetDatabasesAction
     }
-
   }
 
 }

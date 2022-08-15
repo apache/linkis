@@ -29,41 +29,41 @@ import org.springframework.cglib.proxy.Enhancer;
 
 public class BuildLocalFileSystem implements BuildFactory {
 
-  @Override
-  public Fs getFs(String user, String proxyUser) {
-    FileSystem fs = null;
-    if (StorageUtils.isIOProxy()) {
-      if (user.equals(proxyUser)) {
-        if ((Boolean) StorageConfiguration.IS_SHARE_NODE().getValue()) {
-          fs = new LocalFileSystem();
+    @Override
+    public Fs getFs(String user, String proxyUser) {
+        FileSystem fs = null;
+        if (StorageUtils.isIOProxy()) {
+            if (user.equals(proxyUser)) {
+                if ((Boolean) StorageConfiguration.IS_SHARE_NODE().getValue()) {
+                    fs = new LocalFileSystem();
+                } else {
+                    fs = getProxyFs();
+                }
+            } else {
+                fs = getProxyFs();
+            }
+            fs.setUser(proxyUser);
         } else {
-          fs = getProxyFs();
+            fs = new LocalFileSystem();
+            fs.setUser(user);
         }
-      } else {
-        fs = getProxyFs();
-      }
-      fs.setUser(proxyUser);
-    } else {
-      fs = new LocalFileSystem();
-      fs.setUser(user);
+        return fs;
     }
-    return fs;
-  }
 
-  @Override
-  public Fs getFs(String user, String proxyUser, String label) {
-    return getFs(user, proxyUser);
-  }
+    @Override
+    public Fs getFs(String user, String proxyUser, String label) {
+        return getFs(user, proxyUser);
+    }
 
-  private FileSystem getProxyFs() {
-    Enhancer enhancer = new Enhancer();
-    enhancer.setSuperclass(LocalFileSystem.class.getSuperclass());
-    enhancer.setCallback(IOMethodInterceptorCreator$.MODULE$.getIOMethodInterceptor(fsName()));
-    return (FileSystem) enhancer.create();
-  }
+    private FileSystem getProxyFs() {
+        Enhancer enhancer = new Enhancer();
+        enhancer.setSuperclass(LocalFileSystem.class.getSuperclass());
+        enhancer.setCallback(IOMethodInterceptorCreator$.MODULE$.getIOMethodInterceptor(fsName()));
+        return (FileSystem) enhancer.create();
+    }
 
-  @Override
-  public String fsName() {
-    return "file";
-  }
+    @Override
+    public String fsName() {
+        return "file";
+    }
 }

@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 
 public interface PluginCacheRefresher {
 
-  long interval();
+    long interval();
 
-  TimeUnit timeUnit();
+    TimeUnit timeUnit();
 }

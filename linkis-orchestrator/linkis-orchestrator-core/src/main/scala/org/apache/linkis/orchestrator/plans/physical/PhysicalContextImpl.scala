@@ -5,43 +5,32 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+ 
 package org.apache.linkis.orchestrator.plans.physical
-
+import java.util
 import org.apache.linkis.common.listener.Event
 import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
 import org.apache.linkis.orchestrator.exception.OrchestratorErrorCodeSummary
-import org.apache.linkis.orchestrator.execution.{
-  CompletedTaskResponse,
-  SucceedTaskResponse,
-  TaskResponse
-}
 import org.apache.linkis.orchestrator.execution.impl.DefaultFailedTaskResponse
+import org.apache.linkis.orchestrator.execution.{CompletedTaskResponse, SucceedTaskResponse, TaskResponse}
 import org.apache.linkis.orchestrator.listener._
-import org.apache.linkis.orchestrator.listener.task.{
-  RootTaskResponseEvent,
-  TaskLogEvent,
-  TaskRunningInfoEvent,
-  TaskYarnResourceEvent
-}
-
-import java.util
+import org.apache.linkis.orchestrator.listener.task.{RootTaskResponseEvent, TaskLogEvent, TaskRunningInfoEvent, TaskYarnResourceEvent}
 
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 
-class PhysicalContextImpl(private var rootTask: ExecTask, private var leafTasks: Array[ExecTask])
-    extends PhysicalContext {
+
+class PhysicalContextImpl(private var rootTask: ExecTask, private var leafTasks: Array[ExecTask]) extends PhysicalContext {
 
   private var syncListenerBus: OrchestratorSyncListenerBus = _
 
@@ -51,8 +40,7 @@ class PhysicalContextImpl(private var rootTask: ExecTask, private var leafTasks:
 
   private var response: TaskResponse = _
 
-  private val context: java.util.Map[String, Any] =
-    new util.concurrent.ConcurrentHashMap[String, Any]()
+  private val context: java.util.Map[String, Any] = new util.concurrent.ConcurrentHashMap[String, Any]()
 
   private var rootPhysicalContext: PhysicalContext = _
 
@@ -65,11 +53,7 @@ class PhysicalContextImpl(private var rootTask: ExecTask, private var leafTasks:
 
   override def markFailed(errorMsg: String, cause: Throwable): Unit = {
     this.executionNodeStatus = ExecutionNodeStatus.Failed
-    val failedResponse = new DefaultFailedTaskResponse(
-      errorMsg,
-      OrchestratorErrorCodeSummary.EXECUTION_ERROR_CODE,
-      cause
-    )
+    val failedResponse = new DefaultFailedTaskResponse(errorMsg, OrchestratorErrorCodeSummary.EXECUTION_ERROR_CODE, cause)
     this.response = failedResponse
     syncListenerBus.postToAll(RootTaskResponseEvent(getRootTask, failedResponse))
   }
@@ -87,7 +71,7 @@ class PhysicalContextImpl(private var rootTask: ExecTask, private var leafTasks:
 
   override def broadcastAsyncEvent(event: Event): Unit = event match {
     case orchestratorAsyncEvent: OrchestratorAsyncEvent =>
-      asyncListenerBus.post(orchestratorAsyncEvent)
+    asyncListenerBus.post(orchestratorAsyncEvent)
     case _ =>
   }
 
@@ -105,8 +89,7 @@ class PhysicalContextImpl(private var rootTask: ExecTask, private var leafTasks:
 
   /**
    * Check if the executive task belongs to the physical tree
-   * @param execTask
-   *   executive task
+   * @param execTask executive task
    * @return
    */
   override def belongsTo(execTask: ExecTask): Boolean = {
@@ -116,18 +99,17 @@ class PhysicalContextImpl(private var rootTask: ExecTask, private var leafTasks:
         val branches = ListBuffer[String]()
         val traversableQueue = new mutable.Queue[ExecTask]()
         traversableQueue.enqueue(task)
-        while (traversableQueue.nonEmpty) {
+        while(traversableQueue.nonEmpty) {
           val nodeTask = traversableQueue.dequeue()
-          if (nodeTask.theSame(execTask)) {
+          if(nodeTask.theSame(execTask)) {
             return true
           }
           val parent = Option(nodeTask.getParents).getOrElse(Array[ExecTask]())
           val branch = !branches.contains(nodeTask.getId)
           if (parent.length < 1 || (parent.length > 1 && branch)) {
-            Option(nodeTask.getChildren)
-              .getOrElse(Array[ExecTask]())
+            Option(nodeTask.getChildren).getOrElse(Array[ExecTask]())
               .foreach(traversableQueue.enqueue(_))
-            if (branch) { branches += nodeTask.getId }
+            if(branch) {branches += nodeTask.getId}
           }
 
         }

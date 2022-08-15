@@ -21,30 +21,30 @@ import org.apache.linkis.gateway.authentication.entity.TokenEntity;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class TokenDaoTest extends BaseDaoTest {
 
-  private static final Logger logger = LoggerFactory.getLogger(BaseDaoTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(BaseDaoTest.class);
 
-  private static String TokenName = "BML-AUTH";
-  @Autowired TokenDao tokenDao;
+    private static String TokenName = "BML-AUTH";
+    @Autowired TokenDao tokenDao;
 
-  @Test
-  void testSelectTokenByName() {
-    TokenEntity result = tokenDao.selectTokenByName(TokenName);
-    assertEquals(result.getTokenName(), TokenName);
-  }
+    @Test
+    void testSelectTokenByName() {
+        TokenEntity result = tokenDao.selectTokenByName(TokenName);
+        assertEquals(result.getTokenName(), TokenName);
+    }
 
-  @Test
-  void testGetAllTokens() {
-    List<TokenEntity> result = tokenDao.getAllTokens();
-    assertNotEquals(result.size(), 0);
-  }
+    @Test
+    void testGetAllTokens() {
+        List<TokenEntity> result = tokenDao.getAllTokens();
+        assertNotEquals(result.size(), 0);
+    }
 }

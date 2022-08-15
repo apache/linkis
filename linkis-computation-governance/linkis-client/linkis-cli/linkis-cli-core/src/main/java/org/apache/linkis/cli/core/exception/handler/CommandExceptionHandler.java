@@ -25,22 +25,22 @@ import org.apache.linkis.cli.core.present.HelpInfoPresenter;
 import org.apache.linkis.cli.core.present.model.HelpInfoModel;
 
 public class CommandExceptionHandler implements ExceptionHandler {
-  @Override
-  public void handle(Exception e) {
-    if (e instanceof CommandException) {
-      if (((CommandException) e).requireHelp()) {
+    @Override
+    public void handle(Exception e) {
+        if (e instanceof CommandException) {
+            if (((CommandException) e).requireHelp()) {
 
-        CmdTemplate template =
-            CmdTemplateFactory.getTemplateOri(((CommandException) e).getCmdType());
+                CmdTemplate template =
+                        CmdTemplateFactory.getTemplateOri(((CommandException) e).getCmdType());
 
-        if (template != null) {
-          HelpInfoModel model = new HelpInfoModel();
-          model.buildModel(template);
+                if (template != null) {
+                    HelpInfoModel model = new HelpInfoModel();
+                    model.buildModel(template);
 
-          new HelpInfoPresenter().present(model, null);
+                    new HelpInfoPresenter().present(model, null);
+                }
+            }
         }
-      }
+        new DefaultExceptionHandler().handle(e);
     }
-    new DefaultExceptionHandler().handle(e);
-  }
 }

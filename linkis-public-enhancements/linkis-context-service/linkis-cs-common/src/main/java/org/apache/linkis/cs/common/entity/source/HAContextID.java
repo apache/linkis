@@ -19,12 +19,12 @@ package org.apache.linkis.cs.common.entity.source;
 
 public interface HAContextID extends ContextID {
 
-  String getInstance();
+    String getInstance();
 
-  void setInstance(String instance);
+    void setInstance(String instance);
 
-  // todo remain to return list
-  String getBackupInstance();
+    // todo remain to return list
+    String getBackupInstance();
 
-  void setBackupInstance(String backupInstance);
+    void setBackupInstance(String backupInstance);
 }

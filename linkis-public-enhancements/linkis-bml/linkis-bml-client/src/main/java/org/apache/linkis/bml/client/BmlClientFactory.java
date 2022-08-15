@@ -24,19 +24,19 @@ import java.util.Map;
 
 public class BmlClientFactory {
 
-  public static BmlClient createBmlClient() {
-    return new HttpBmlClient();
-  }
+    public static BmlClient createBmlClient() {
+        return new HttpBmlClient();
+    }
 
-  public static BmlClient createBmlClient(String serverUrl) {
-    return new HttpBmlClient(serverUrl);
-  }
+    public static BmlClient createBmlClient(String serverUrl) {
+        return new HttpBmlClient(serverUrl);
+    }
 
-  public static BmlClient createBmlClient(DWSClientConfig clientConfig) {
-    return new HttpBmlClient(clientConfig);
-  }
+    public static BmlClient createBmlClient(DWSClientConfig clientConfig) {
+        return new HttpBmlClient(clientConfig);
+    }
 
-  public static BmlClient createBmlClient(String serverUrl, Map<String, Object> properties) {
-    return new HttpBmlClient(serverUrl, properties);
-  }
+    public static BmlClient createBmlClient(String serverUrl, Map<String, Object> properties) {
+        return new HttpBmlClient(serverUrl, properties);
+    }
 }

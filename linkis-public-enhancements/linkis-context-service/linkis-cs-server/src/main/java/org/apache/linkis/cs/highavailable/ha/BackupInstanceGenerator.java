@@ -21,7 +21,7 @@ import org.apache.linkis.cs.common.exception.CSErrorException;
 
 public interface BackupInstanceGenerator {
 
-  String getBackupInstance(String haID) throws CSErrorException;
+    String getBackupInstance(String haID) throws CSErrorException;
 
-  String chooseBackupInstance(String mainInstance) throws CSErrorException;
+    String chooseBackupInstance(String mainInstance) throws CSErrorException;
 }

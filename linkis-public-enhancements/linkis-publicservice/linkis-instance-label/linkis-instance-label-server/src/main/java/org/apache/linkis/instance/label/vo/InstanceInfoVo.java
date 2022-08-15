@@ -25,63 +25,63 @@ import java.util.List;
 
 public class InstanceInfoVo implements Serializable {
 
-  private Integer id;
+    private Integer id;
 
-  private Date updateTime;
+    private Date updateTime;
 
-  private Date createTime;
+    private Date createTime;
 
-  private String applicationName;
+    private String applicationName;
 
-  private String instance;
+    private String instance;
 
-  private List<Label> labels;
+    private List<Label> labels;
 
-  public List<Label> getLabels() {
-    return labels;
-  }
+    public List<Label> getLabels() {
+        return labels;
+    }
 
-  public void setLabels(List<Label> labels) {
-    this.labels = labels;
-  }
+    public void setLabels(List<Label> labels) {
+        this.labels = labels;
+    }
 
-  public Integer getId() {
-    return id;
-  }
+    public Integer getId() {
+        return id;
+    }
 
-  public void setId(Integer id) {
-    this.id = id;
-  }
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-  public Date getUpdateTime() {
-    return updateTime;
-  }
+    public Date getUpdateTime() {
+        return updateTime;
+    }
 
-  public void setUpdateTime(Date updateTime) {
-    this.updateTime = updateTime;
-  }
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
+    }
 
-  public Date getCreateTime() {
-    return createTime;
-  }
+    public Date getCreateTime() {
+        return createTime;
+    }
 
-  public void setCreateTime(Date createTime) {
-    this.createTime = createTime;
-  }
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
 
-  public String getApplicationName() {
-    return applicationName;
-  }
+    public String getApplicationName() {
+        return applicationName;
+    }
 
-  public void setApplicationName(String applicationName) {
-    this.applicationName = applicationName;
-  }
+    public void setApplicationName(String applicationName) {
+        this.applicationName = applicationName;
+    }
 
-  public String getInstance() {
-    return instance;
-  }
+    public String getInstance() {
+        return instance;
+    }
 
-  public void setInstance(String instance) {
-    this.instance = instance;
-  }
+    public void setInstance(String instance) {
+        this.instance = instance;
+    }
 }

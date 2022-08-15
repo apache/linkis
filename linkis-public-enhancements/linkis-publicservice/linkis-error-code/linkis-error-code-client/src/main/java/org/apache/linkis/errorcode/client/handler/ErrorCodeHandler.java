@@ -20,8 +20,8 @@ package org.apache.linkis.errorcode.client.handler;
 import java.io.Closeable;
 
 public interface ErrorCodeHandler extends Closeable {
-  String ERROR_CODE_PRE = "正在根据您任务的错误信息为您诊断并生成错误码,大约需要几秒钟,请您稍等...";
-  String ERROR_CODE_OK = "您好,成功为您诊断出任务的错误信息,请您查看";
-  String ERROR_CODE_FAILED = "您好,很抱歉,未能为您诊断出错误信息,我们会完善我们的错误码库";
-  String NEW_LINE = System.lineSeparator();
+    String ERROR_CODE_PRE = "正在根据您任务的错误信息为您诊断并生成错误码,大约需要几秒钟,请您稍等...";
+    String ERROR_CODE_OK = "您好,成功为您诊断出任务的错误信息,请您查看";
+    String ERROR_CODE_FAILED = "您好,很抱歉,未能为您诊断出错误信息,我们会完善我们的错误码库";
+    String NEW_LINE = System.lineSeparator();
 }

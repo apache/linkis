@@ -22,16 +22,17 @@ import org.apache.linkis.cli.common.entity.job.Job;
 import java.util.Map;
 
 public interface ExecutionResult {
-  Map<String, Job> getJobs();
+    Map<String, Job> getJobs();
 
-  ExecutionStatus getExecutionStatus();
+    ExecutionStatus getExecutionStatus();
 
-  void setExecutionStatus(ExecutionStatus executionStatus);
+    void setExecutionStatus(ExecutionStatus executionStatus);
 
-  Exception getException(); // TODO: put exception during execution in here and do not interrupt
-  // execution
+    Exception getException(); // TODO: put exception during execution in here and do not interrupt
+    // execution
 
-  void setException(
-      Exception exception); // TODO: put exception during execution in here and do not interrupt
-  // execution
+    void setException(
+            Exception
+                    exception); // TODO: put exception during execution in here and do not interrupt
+    // execution
 }

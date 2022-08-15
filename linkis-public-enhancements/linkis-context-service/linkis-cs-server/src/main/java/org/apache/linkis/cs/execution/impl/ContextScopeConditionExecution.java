@@ -28,24 +28,24 @@ import org.apache.linkis.cs.execution.ruler.CommonListContextSearchRuler;
 
 public class ContextScopeConditionExecution extends AbstractConditionExecution {
 
-  public ContextScopeConditionExecution(
-      ContextScopeCondition condition,
-      ContextCacheService contextCacheService,
-      ContextID contextID) {
-    super(condition, contextCacheService, contextID);
-    this.contextSearchMatcher = new ContextScopeContextSearchMatcher(condition);
-    this.contextSearchRuler = new CommonListContextSearchRuler(contextSearchMatcher);
-    this.contextCacheFetcher =
-        new IterateContextCacheFetcher(contextCacheService, contextSearchRuler);
-  }
+    public ContextScopeConditionExecution(
+            ContextScopeCondition condition,
+            ContextCacheService contextCacheService,
+            ContextID contextID) {
+        super(condition, contextCacheService, contextID);
+        this.contextSearchMatcher = new ContextScopeContextSearchMatcher(condition);
+        this.contextSearchRuler = new CommonListContextSearchRuler(contextSearchMatcher);
+        this.contextCacheFetcher =
+                new IterateContextCacheFetcher(contextCacheService, contextSearchRuler);
+    }
 
-  @Override
-  protected boolean needOptimization() {
-    return false;
-  }
+    @Override
+    protected boolean needOptimization() {
+        return false;
+    }
 
-  @Override
-  protected ContextCacheFetcher getFastFetcher() {
-    return null;
-  }
+    @Override
+    protected ContextCacheFetcher getFastFetcher() {
+        return null;
+    }
 }

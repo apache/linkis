@@ -19,11 +19,11 @@ package org.apache.linkis.entrance.constant;
 
 /** unify bean's spring config name */
 public final class ServiceNameConsts {
-  private ServiceNameConsts() {}
+    private ServiceNameConsts() {}
 
-  public static final String ENTRANCE_CONTEXT = "entranceContext";
+    public static final String ENTRANCE_CONTEXT = "entranceContext";
 
-  public static final String ENTRANCE_SERVER = "entranceServer";
+    public static final String ENTRANCE_SERVER = "entranceServer";
 
-  public static final String ENTRANCE_INTERCEPTOR = "entranceInterceptors";
+    public static final String ENTRANCE_INTERCEPTOR = "entranceInterceptors";
 }

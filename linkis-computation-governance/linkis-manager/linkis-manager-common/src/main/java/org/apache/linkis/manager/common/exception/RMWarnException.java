@@ -21,11 +21,11 @@ import org.apache.linkis.common.exception.WarnException;
 
 public class RMWarnException extends WarnException {
 
-  public RMWarnException(int errCode, String desc) {
-    super(errCode, desc);
-  }
+    public RMWarnException(int errCode, String desc) {
+        super(errCode, desc);
+    }
 
-  public RMWarnException(int errCode, String desc, String ip, int port, String serviceKind) {
-    super(errCode, desc, ip, port, serviceKind);
-  }
+    public RMWarnException(int errCode, String desc, String ip, int port, String serviceKind) {
+        super(errCode, desc, ip, port, serviceKind);
+    }
 }

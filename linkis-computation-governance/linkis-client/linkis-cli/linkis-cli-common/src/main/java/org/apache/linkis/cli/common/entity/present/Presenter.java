@@ -18,5 +18,5 @@
 package org.apache.linkis.cli.common.entity.present;
 
 public interface Presenter {
-  void present(Model model, PresentWay presentWay);
+    void present(Model model, PresentWay presentWay);
 }

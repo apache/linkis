@@ -22,62 +22,62 @@ import org.apache.linkis.storage.utils.StorageUtils;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class XlsUtils {
-  private static final Logger LOG = LoggerFactory.getLogger(XlsUtils.class);
+    private static final Logger LOG = LoggerFactory.getLogger(XlsUtils.class);
 
-  public static List<List<String>> getBasicInfo(InputStream inputStream) {
-    List<List<String>> res = new ArrayList<>();
-    FirstRowDeal firstRowDeal = new FirstRowDeal();
-    ExcelXlsReader xlsReader = new ExcelXlsReader();
-    try {
-      xlsReader.init(firstRowDeal, inputStream);
-      xlsReader.process();
-    } catch (ExcelAnalysisException e) {
+    public static List<List<String>> getBasicInfo(InputStream inputStream) {
+        List<List<String>> res = new ArrayList<>();
+        FirstRowDeal firstRowDeal = new FirstRowDeal();
+        ExcelXlsReader xlsReader = new ExcelXlsReader();
+        try {
+            xlsReader.init(firstRowDeal, inputStream);
+            xlsReader.process();
+        } catch (ExcelAnalysisException e) {
 
-      res.add(firstRowDeal.getSheetNames());
-      res.add(firstRowDeal.getRow());
+            res.add(firstRowDeal.getSheetNames());
+            res.add(firstRowDeal.getRow());
 
-      LOG.info("Finshed to get xls Info");
+            LOG.info("Finshed to get xls Info");
 
-    } catch (Exception e) {
-      LOG.error("Failed to parse xls: ", e);
-    } finally {
-      xlsReader.close();
+        } catch (Exception e) {
+            LOG.error("Failed to parse xls: ", e);
+        } finally {
+            xlsReader.close();
+        }
+        return res;
     }
-    return res;
-  }
 
-  public static String excelToCsv(
-      InputStream inputStream, FileSystem fs, Boolean hasHeader, List<String> sheetNames)
-      throws Exception {
-    String hdfsPath =
-        "/tmp/" + StorageUtils.getJvmUser() + "/" + System.currentTimeMillis() + ".csv";
-    ExcelXlsReader xlsReader = new ExcelXlsReader();
-    RowToCsvDeal rowToCsvDeal = new RowToCsvDeal();
-    OutputStream out = null;
-    try {
-      out = fs.create(new Path(hdfsPath));
-      rowToCsvDeal.init(hasHeader, sheetNames, out);
-      xlsReader.init(rowToCsvDeal, inputStream);
-      xlsReader.process();
-    } catch (IOException e) {
-      LOG.error("Failed to excel to csv", e);
-      throw e;
-    } finally {
-      if (out != null) {
-        out.close();
-      }
-      xlsReader.close();
+    public static String excelToCsv(
+            InputStream inputStream, FileSystem fs, Boolean hasHeader, List<String> sheetNames)
+            throws Exception {
+        String hdfsPath =
+                "/tmp/" + StorageUtils.getJvmUser() + "/" + System.currentTimeMillis() + ".csv";
+        ExcelXlsReader xlsReader = new ExcelXlsReader();
+        RowToCsvDeal rowToCsvDeal = new RowToCsvDeal();
+        OutputStream out = null;
+        try {
+            out = fs.create(new Path(hdfsPath));
+            rowToCsvDeal.init(hasHeader, sheetNames, out);
+            xlsReader.init(rowToCsvDeal, inputStream);
+            xlsReader.process();
+        } catch (IOException e) {
+            LOG.error("Failed to excel to csv", e);
+            throw e;
+        } finally {
+            if (out != null) {
+                out.close();
+            }
+            xlsReader.close();
+        }
+        return hdfsPath;
     }
-    return hdfsPath;
-  }
 }

@@ -5,24 +5,23 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+ 
 package org.apache.linkis.ecm.core.launch
 
-import org.apache.linkis.ecm.core.conf.ECPCoreConf
-import org.apache.linkis.manager.engineplugin.common.launch.process.LaunchConstants
-
-import org.apache.commons.io.IOUtils
-
 import java.io.OutputStream
+import org.apache.linkis.manager.engineplugin.common.launch.process.LaunchConstants
+import org.apache.commons.io.IOUtils
+import org.apache.linkis.ecm.core.conf.ECPCoreConf
+
 
 trait ProcessEngineCommandBuilder {
 
@@ -58,10 +57,8 @@ abstract class ShellProcessEngineCommandBuilder extends ProcessEngineCommandBuil
     IOUtils.write(sb, output)
   }
 
-  override def replaceExpansionMarker(value: String): String = value
-    .replaceAll(LaunchConstants.EXPANSION_MARKER_LEFT, "\\${")
+  override def replaceExpansionMarker(value: String): String = value.replaceAll(LaunchConstants.EXPANSION_MARKER_LEFT, "\\${")
     .replaceAll(LaunchConstants.EXPANSION_MARKER_RIGHT, "}")
-
 }
 
 class UnixProcessEngineCommandBuilder extends ShellProcessEngineCommandBuilder {
@@ -86,9 +83,7 @@ class UnixProcessEngineCommandBuilder extends ShellProcessEngineCommandBuilder {
     addErrorCheck()
   }
 
-  override def setEnv(key: String, value: String): Unit = newLine(
-    Array("export ", key, "=\"", value, "\"")
-  )
+  override def setEnv(key: String, value: String): Unit = newLine(Array("export ", key, "=\"", value, "\""))
 
   override def link(fromPath: String, toPath: String): Unit = {
     newLine(Array("ln -sf \"", fromPath, "\" \"", toPath, "\""))
@@ -99,5 +94,4 @@ class UnixProcessEngineCommandBuilder extends ShellProcessEngineCommandBuilder {
     newLine(Array("mkdir -p ", dir))
     addErrorCheck()
   }
-
 }

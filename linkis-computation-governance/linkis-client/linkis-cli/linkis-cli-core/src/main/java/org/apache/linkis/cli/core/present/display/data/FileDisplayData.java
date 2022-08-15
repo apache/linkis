@@ -18,30 +18,31 @@
 package org.apache.linkis.cli.core.present.display.data;
 
 public class FileDisplayData extends StdoutDisplayData implements DisplayData {
-  private String pathName;
-  private String fileName;
-  private Boolean createNewFile;
+    private String pathName;
+    private String fileName;
+    private Boolean createNewFile;
 
-  public FileDisplayData(String pathName, String fileName, String content, Boolean createNewFile) {
-    super(content);
-    this.pathName = pathName;
-    this.fileName = fileName;
-    this.createNewFile = createNewFile;
-  }
+    public FileDisplayData(
+            String pathName, String fileName, String content, Boolean createNewFile) {
+        super(content);
+        this.pathName = pathName;
+        this.fileName = fileName;
+        this.createNewFile = createNewFile;
+    }
 
-  public String getPathName() {
-    return pathName;
-  }
+    public String getPathName() {
+        return pathName;
+    }
 
-  public String getContent() {
-    return super.getContent();
-  }
+    public String getContent() {
+        return super.getContent();
+    }
 
-  public boolean getCreateNewFile() {
-    return createNewFile;
-  }
+    public boolean getCreateNewFile() {
+        return createNewFile;
+    }
 
-  public String getFileName() {
-    return fileName;
-  }
+    public String getFileName() {
+        return fileName;
+    }
 }

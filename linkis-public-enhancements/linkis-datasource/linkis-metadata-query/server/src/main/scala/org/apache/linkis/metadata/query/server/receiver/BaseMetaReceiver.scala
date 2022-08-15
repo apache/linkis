@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,7 +24,6 @@ import org.apache.linkis.metadata.query.common.protocol.{MetadataConnect, Metada
 import org.apache.linkis.metadata.query.server.service.MetadataQueryService
 import org.apache.linkis.rpc.{Receiver, Sender}
 import org.apache.linkis.server.BDPJettyServerHelper
-
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
@@ -32,17 +31,16 @@ import scala.concurrent.duration.Duration
 
 @Component
 class BaseMetaReceiver extends Receiver with Logging {
-
   @Autowired
   private var metadataQueryService: MetadataQueryService = _
 
+
   override def receive(message: Any, sender: Sender): Unit = {}
 
-  override def receiveAndReply(message: Any, sender: Sender): Any =
-    invoke(metadataQueryService, message)
+  override def receiveAndReply(message: Any, sender: Sender): Any = invoke(metadataQueryService, message)
 
-  override def receiveAndReply(message: Any, duration: Duration, sender: Sender): Any =
-    invoke(metadataQueryService, message)
+  override def receiveAndReply(message: Any, duration: Duration, sender: Sender): Any = invoke(metadataQueryService, message)
+
 
   def invoke(service: MetadataQueryService, message: Any): Any = Utils.tryCatch {
     val data = message match {
@@ -54,8 +52,7 @@ class BaseMetaReceiver extends Receiver with Logging {
     }
     MetadataResponse(status = true, BDPJettyServerHelper.gson.toJson(data))
   } {
-    case e: WarnException =>
-      val errorMsg = e.getMessage
+    case e: WarnException => val errorMsg = e.getMessage
       logger.trace(s"Fail to invoke meta service: [$errorMsg]")
       MetadataResponse(status = false, errorMsg)
     case t: Exception =>
@@ -67,5 +64,5 @@ class BaseMetaReceiver extends Receiver with Logging {
           MetadataResponse(status = false, t.getMessage)
       }
   }
-
 }
+

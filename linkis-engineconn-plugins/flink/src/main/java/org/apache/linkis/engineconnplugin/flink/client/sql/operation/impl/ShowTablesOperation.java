@@ -36,30 +36,31 @@ import java.util.List;
 
 /** Operation for SHOW TABLES command. */
 public class ShowTablesOperation implements NonJobOperation {
-  private final ExecutionContext context;
+    private final ExecutionContext context;
 
-  public ShowTablesOperation(FlinkEngineConnContext context) {
-    this.context = context.getExecutionContext();
-  }
-
-  @Override
-  public ResultSet execute() throws SqlExecutionException {
-    List<Row> rows = new ArrayList<>();
-    int maxNameLength = 1;
-
-    final TableEnvironment tableEnv = context.getTableEnvironment();
-    // listTables will return all tables and views
-    for (String table : context.wrapClassLoader(() -> Arrays.asList(tableEnv.listTables()))) {
-      rows.add(Row.of(table));
-      maxNameLength = Math.max(maxNameLength, table.length());
+    public ShowTablesOperation(FlinkEngineConnContext context) {
+        this.context = context.getExecutionContext();
     }
 
-    return ResultSet.builder()
-        .resultKind(ResultKind.SUCCESS_WITH_CONTENT)
-        .columns(
-            ColumnInfo.create(
-                ConstantNames.SHOW_TABLES_RESULT, new VarCharType(false, maxNameLength)))
-        .data(rows)
-        .build();
-  }
+    @Override
+    public ResultSet execute() throws SqlExecutionException {
+        List<Row> rows = new ArrayList<>();
+        int maxNameLength = 1;
+
+        final TableEnvironment tableEnv = context.getTableEnvironment();
+        // listTables will return all tables and views
+        for (String table : context.wrapClassLoader(() -> Arrays.asList(tableEnv.listTables()))) {
+            rows.add(Row.of(table));
+            maxNameLength = Math.max(maxNameLength, table.length());
+        }
+
+        return ResultSet.builder()
+                .resultKind(ResultKind.SUCCESS_WITH_CONTENT)
+                .columns(
+                        ColumnInfo.create(
+                                ConstantNames.SHOW_TABLES_RESULT,
+                                new VarCharType(false, maxNameLength)))
+                .data(rows)
+                .build();
+    }
 }

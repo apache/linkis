@@ -23,14 +23,14 @@ import org.apache.linkis.manager.label.entity.Label;
 /** Act as a input parameter of searching/query */
 public class SearchableLabel extends GenericLabel {
 
-  /** For searching/query */
-  private Label.ValueRelation valueRelation = ValueRelation.ALL;
+    /** For searching/query */
+    private Label.ValueRelation valueRelation = ValueRelation.ALL;
 
-  public ValueRelation getValueRelation() {
-    return valueRelation;
-  }
+    public ValueRelation getValueRelation() {
+        return valueRelation;
+    }
 
-  public void setValueRelation(ValueRelation valueRelation) {
-    this.valueRelation = valueRelation;
-  }
+    public void setValueRelation(ValueRelation valueRelation) {
+        this.valueRelation = valueRelation;
+    }
 }

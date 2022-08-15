@@ -30,14 +30,14 @@ import org.springframework.web.reactive.socket.server.upgrade.ReactorNettyReques
 @Configuration
 public class WebSocketServiceConfiguration {
 
-  public static final CommonVars<Integer> MAX_FRAME_LENGTH =
-      CommonVars$.MODULE$.apply("wds.linkis.gateway.conf.max.frame.length", 655350);
+    public static final CommonVars<Integer> MAX_FRAME_LENGTH =
+            CommonVars$.MODULE$.apply("wds.linkis.gateway.conf.max.frame.length", 655350);
 
-  @Bean(name = "customWebSocketService")
-  @Primary
-  public WebSocketService webSocketService() {
-    ReactorNettyRequestUpgradeStrategy strategy = new ReactorNettyRequestUpgradeStrategy();
-    strategy.setMaxFramePayloadLength(MAX_FRAME_LENGTH.getValue());
-    return new HandshakeWebSocketService(strategy);
-  }
+    @Bean(name = "customWebSocketService")
+    @Primary
+    public WebSocketService webSocketService() {
+        ReactorNettyRequestUpgradeStrategy strategy = new ReactorNettyRequestUpgradeStrategy();
+        strategy.setMaxFramePayloadLength(MAX_FRAME_LENGTH.getValue());
+        return new HandshakeWebSocketService(strategy);
+    }
 }

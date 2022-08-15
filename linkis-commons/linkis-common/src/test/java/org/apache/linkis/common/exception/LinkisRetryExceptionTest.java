@@ -23,9 +23,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class LinkisRetryExceptionTest {
 
-  @Test
-  void testGetLevel() {
-    LinkisRetryException linkisRetryException = new LinkisRetryException(1, "test");
-    assertEquals(ExceptionLevel.RETRY, linkisRetryException.getLevel());
-  }
+    @Test
+    void testGetLevel() {
+        LinkisRetryException linkisRetryException = new LinkisRetryException(1, "test");
+        assertEquals(ExceptionLevel.RETRY, linkisRetryException.getLevel());
+    }
 }

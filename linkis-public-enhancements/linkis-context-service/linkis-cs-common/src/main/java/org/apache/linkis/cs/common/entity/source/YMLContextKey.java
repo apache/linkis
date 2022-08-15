@@ -19,9 +19,9 @@ package org.apache.linkis.cs.common.entity.source;
 
 public interface YMLContextKey extends ContextKey {
 
-  void setKey(String[] key);
+    void setKey(String[] key);
 
-  void setSuffix(String suffix);
+    void setSuffix(String suffix);
 
-  void setPrefix(String[] prefix);
+    void setPrefix(String[] prefix);
 }

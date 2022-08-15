@@ -22,37 +22,37 @@ import org.apache.linkis.cs.common.entity.source.ContextKey;
 
 public class CommonContextKeyListenerDomain implements ContextKeyListenerDomain {
 
-  private String source;
+    private String source;
 
-  private ContextKey contextKey;
+    private ContextKey contextKey;
 
-  private ContextID contextID;
+    private ContextID contextID;
 
-  public ContextID getContextID() {
-    return contextID;
-  }
+    public ContextID getContextID() {
+        return contextID;
+    }
 
-  public void setContextID(ContextID contextID) {
-    this.contextID = contextID;
-  }
+    public void setContextID(ContextID contextID) {
+        this.contextID = contextID;
+    }
 
-  @Override
-  public String getSource() {
-    return this.source;
-  }
+    @Override
+    public String getSource() {
+        return this.source;
+    }
 
-  @Override
-  public void setSource(String source) {
-    this.source = source;
-  }
+    @Override
+    public void setSource(String source) {
+        this.source = source;
+    }
 
-  @Override
-  public ContextKey getContextKey() {
-    return this.contextKey;
-  }
+    @Override
+    public ContextKey getContextKey() {
+        return this.contextKey;
+    }
 
-  @Override
-  public void setContextKey(ContextKey contextKey) {
-    this.contextKey = contextKey;
-  }
+    @Override
+    public void setContextKey(ContextKey contextKey) {
+        this.contextKey = contextKey;
+    }
 }

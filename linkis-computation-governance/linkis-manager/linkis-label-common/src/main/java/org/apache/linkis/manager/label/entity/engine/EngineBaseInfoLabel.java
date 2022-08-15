@@ -25,49 +25,49 @@ import java.util.HashMap;
 
 public class EngineBaseInfoLabel extends GenericLabel implements EngineNodeLabel {
 
-  public EngineBaseInfoLabel() {
-    setLabelKey(LabelKeyConstant.ENGINE_BASE_INFO_KEY);
-  }
-
-  public void setLockAble() {
-    if (null == getValue()) {
-      setValue(new HashMap<>());
+    public EngineBaseInfoLabel() {
+        setLabelKey(LabelKeyConstant.ENGINE_BASE_INFO_KEY);
     }
-    getValue().put("lockable", "true");
-  }
 
-  public boolean isLockAble() {
-    if (null == getValue()) {
-      return false;
+    public void setLockAble() {
+        if (null == getValue()) {
+            setValue(new HashMap<>());
+        }
+        getValue().put("lockable", "true");
     }
-    return "true".equalsIgnoreCase(getValue().get("lockable"));
-  }
 
-  public void setResourceReportAble() {
-    if (null == getValue()) {
-      setValue(new HashMap<>());
+    public boolean isLockAble() {
+        if (null == getValue()) {
+            return false;
+        }
+        return "true".equalsIgnoreCase(getValue().get("lockable"));
     }
-    getValue().put("resourceReportAble", "true");
-  }
 
-  public boolean isResourceReportAble() {
-    if (null == getValue()) {
-      return false;
+    public void setResourceReportAble() {
+        if (null == getValue()) {
+            setValue(new HashMap<>());
+        }
+        getValue().put("resourceReportAble", "true");
     }
-    return "true".equalsIgnoreCase(getValue().get("resourceReportAble"));
-  }
 
-  public void setHeartBeatReportAble() {
-    if (null == getValue()) {
-      setValue(new HashMap<>());
+    public boolean isResourceReportAble() {
+        if (null == getValue()) {
+            return false;
+        }
+        return "true".equalsIgnoreCase(getValue().get("resourceReportAble"));
     }
-    getValue().put("heartBeatReportAble", "true");
-  }
 
-  public boolean isHeartBeatReportAble() {
-    if (null == getValue()) {
-      return false;
+    public void setHeartBeatReportAble() {
+        if (null == getValue()) {
+            setValue(new HashMap<>());
+        }
+        getValue().put("heartBeatReportAble", "true");
     }
-    return "true".equalsIgnoreCase(getValue().get("heartBeatReportAble"));
-  }
+
+    public boolean isHeartBeatReportAble() {
+        if (null == getValue()) {
+            return false;
+        }
+        return "true".equalsIgnoreCase(getValue().get("heartBeatReportAble"));
+    }
 }

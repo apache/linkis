@@ -21,36 +21,36 @@ import org.apache.linkis.cli.common.entity.command.CmdType;
 import org.apache.linkis.cli.core.constants.CommonConstants;
 
 public enum LinkisCmdType implements CmdType {
-  UNIVERSAL(CommonConstants.UNIVERSAL_SUBCMD, 1, CommonConstants.UNIVERSAL_SUBCMD_DESC);
+    UNIVERSAL(CommonConstants.UNIVERSAL_SUBCMD, 1, CommonConstants.UNIVERSAL_SUBCMD_DESC);
 
-  private int id;
-  private String name;
-  private String desc;
+    private int id;
+    private String name;
+    private String desc;
 
-  LinkisCmdType(String name, int id) {
-    this.id = id;
-    this.name = name;
-    this.desc = null;
-  }
+    LinkisCmdType(String name, int id) {
+        this.id = id;
+        this.name = name;
+        this.desc = null;
+    }
 
-  LinkisCmdType(String name, int id, String desc) {
-    this.id = id;
-    this.name = name;
-    this.desc = desc;
-  }
+    LinkisCmdType(String name, int id, String desc) {
+        this.id = id;
+        this.name = name;
+        this.desc = desc;
+    }
 
-  @Override
-  public int getId() {
-    return this.id;
-  }
+    @Override
+    public int getId() {
+        return this.id;
+    }
 
-  @Override
-  public String getName() {
-    return this.name;
-  }
+    @Override
+    public String getName() {
+        return this.name;
+    }
 
-  @Override
-  public String getDesc() {
-    return this.desc;
-  }
+    @Override
+    public String getDesc() {
+        return this.desc;
+    }
 }

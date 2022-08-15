@@ -18,40 +18,40 @@
 package org.apache.linkis.metadata.domain.mdq.po;
 
 public class MdqImport {
-  private Long id;
-  private Long tableId;
-  private Integer importType;
-  private String args;
+    private Long id;
+    private Long tableId;
+    private Integer importType;
+    private String args;
 
-  public Long getId() {
-    return id;
-  }
+    public Long getId() {
+        return id;
+    }
 
-  public void setId(Long id) {
-    this.id = id;
-  }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-  public Long getTableId() {
-    return tableId;
-  }
+    public Long getTableId() {
+        return tableId;
+    }
 
-  public void setTableId(Long tableId) {
-    this.tableId = tableId;
-  }
+    public void setTableId(Long tableId) {
+        this.tableId = tableId;
+    }
 
-  public Integer getImportType() {
-    return importType;
-  }
+    public Integer getImportType() {
+        return importType;
+    }
 
-  public void setImportType(Integer importType) {
-    this.importType = importType;
-  }
+    public void setImportType(Integer importType) {
+        this.importType = importType;
+    }
 
-  public String getArgs() {
-    return args;
-  }
+    public String getArgs() {
+        return args;
+    }
 
-  public void setArgs(String args) {
-    this.args = args;
-  }
+    public void setArgs(String args) {
+        this.args = args;
+    }
 }

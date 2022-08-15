@@ -19,7 +19,7 @@ package org.apache.linkis.cs.common.entity.env;
 
 public interface SoftWareEnv {
 
-  String getSoftware();
+    String getSoftware();
 
-  void setSoftware(String software);
+    void setSoftware(String software);
 }

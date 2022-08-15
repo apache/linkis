@@ -19,25 +19,25 @@ package org.apache.linkis.cs.common.protocol;
 
 public interface ContextHTTPConstant {
 
-  String CONTEXT_KEY_STR = "contextKey";
+    String CONTEXT_KEY_STR = "contextKey";
 
-  String CONTEXT_VALUE_STR = "contextValue";
+    String CONTEXT_VALUE_STR = "contextValue";
 
-  String CONTEXT_ID_STR = "contextID";
+    String CONTEXT_ID_STR = "contextID";
 
-  String CONTEXT_KEY_TYPE_STR = "contextKeyType";
+    String CONTEXT_KEY_TYPE_STR = "contextKeyType";
 
-  String CONTEXT_VALUE_CLASS_NAME = "__CLASS_NAME__";
+    String CONTEXT_VALUE_CLASS_NAME = "__CLASS_NAME__";
 
-  String VALUE_STR = "value";
+    String VALUE_STR = "value";
 
-  String PROJECT_NAME_STR = "projectName";
+    String PROJECT_NAME_STR = "projectName";
 
-  String FLOW_NAME_STR = "flowName";
+    String FLOW_NAME_STR = "flowName";
 
-  String VALUE_BEAN_STR = "valueBean";
+    String VALUE_BEAN_STR = "valueBean";
 
-  String CONTEXT_HISTORY_KEY = "contextHistory";
+    String CONTEXT_HISTORY_KEY = "contextHistory";
 
-  String CONTEXT_KEY_PREFIX_STR = "keyPrefix";
+    String CONTEXT_KEY_PREFIX_STR = "keyPrefix";
 }

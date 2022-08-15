@@ -25,21 +25,22 @@ import java.util.regex.Pattern;
 
 public class RegexContextSearchMatcher extends AbstractContextSearchMatcher {
 
-  Pattern pattern;
+    Pattern pattern;
 
-  public RegexContextSearchMatcher(RegexCondition condition) {
-    super(condition);
-    pattern = Pattern.compile(condition.getRegex());
-  }
-
-  @Override
-  public Boolean match(ContextKeyValue contextKeyValue) {
-    Matcher keyMatcher = pattern.matcher(contextKeyValue.getContextKey().getKey());
-    if (contextKeyValue.getContextKey().getKeywords() == null) {
-      return keyMatcher.find();
-    } else {
-      Matcher keywordsMatcher = pattern.matcher(contextKeyValue.getContextKey().getKeywords());
-      return keyMatcher.find() || keywordsMatcher.find();
+    public RegexContextSearchMatcher(RegexCondition condition) {
+        super(condition);
+        pattern = Pattern.compile(condition.getRegex());
     }
-  }
+
+    @Override
+    public Boolean match(ContextKeyValue contextKeyValue) {
+        Matcher keyMatcher = pattern.matcher(contextKeyValue.getContextKey().getKey());
+        if (contextKeyValue.getContextKey().getKeywords() == null) {
+            return keyMatcher.find();
+        } else {
+            Matcher keywordsMatcher =
+                    pattern.matcher(contextKeyValue.getContextKey().getKeywords());
+            return keyMatcher.find() || keywordsMatcher.find();
+        }
+    }
 }

@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,25 +19,22 @@ package org.apache.linkis.datasource.client.response
 
 import org.apache.linkis.datasourcemanager.common.domain.DataSourceParamKeyDefinition
 import org.apache.linkis.httpclient.dws.DWSHttpClient
-import org.apache.linkis.httpclient.dws.annotation.DWSHttpMessageResult
 import org.apache.linkis.httpclient.dws.response.DWSResult
-
 import java.util
+
+import org.apache.linkis.httpclient.dws.annotation.DWSHttpMessageResult
 
 import scala.beans.BeanProperty
 
 @DWSHttpMessageResult("/api/rest_j/v\\d+/data-source-manager/key-define/type/(\\S+)")
-class GetKeyTypeDatasourceResult extends DWSResult {
+class GetKeyTypeDatasourceResult extends DWSResult{
   @BeanProperty var keyDefine: util.List[java.util.Map[String, Any]] = _
 
   def getDataSourceParamKeyDefinitions: util.List[DataSourceParamKeyDefinition] = {
     import scala.collection.JavaConverters._
-    keyDefine.asScala
-      .map(x => {
-        val str = DWSHttpClient.jacksonJson.writeValueAsString(x)
-        DWSHttpClient.jacksonJson.readValue(str, classOf[DataSourceParamKeyDefinition])
-      })
-      .asJava
+    keyDefine.asScala.map(x => {
+      val str = DWSHttpClient.jacksonJson.writeValueAsString(x)
+      DWSHttpClient.jacksonJson.readValue(str, classOf[DataSourceParamKeyDefinition])
+    }).asJava
   }
-
 }

@@ -34,37 +34,37 @@ import org.slf4j.LoggerFactory;
 
 public class ContextHistoryClientServiceImpl implements ContextHistoryClientService {
 
-  private static final Logger logger =
-      LoggerFactory.getLogger(ContextHistoryClientServiceImpl.class);
+    private static final Logger logger =
+            LoggerFactory.getLogger(ContextHistoryClientServiceImpl.class);
 
-  private ContextClient contextClient = ContextClientFactory.getOrCreateContextClient();
+    private ContextClient contextClient = ContextClientFactory.getOrCreateContextClient();
 
-  private static ContextHistoryClientService contextHistoryClientService;
+    private static ContextHistoryClientService contextHistoryClientService;
 
-  private ContextHistoryClientServiceImpl() {}
+    private ContextHistoryClientServiceImpl() {}
 
-  public static ContextHistoryClientService getInstance() {
-    if (null == contextHistoryClientService) {
-      synchronized (ContextHistoryClientServiceImpl.class) {
+    public static ContextHistoryClientService getInstance() {
         if (null == contextHistoryClientService) {
-          contextHistoryClientService = new ContextHistoryClientServiceImpl();
+            synchronized (ContextHistoryClientServiceImpl.class) {
+                if (null == contextHistoryClientService) {
+                    contextHistoryClientService = new ContextHistoryClientServiceImpl();
+                }
+            }
         }
-      }
+        return contextHistoryClientService;
     }
-    return contextHistoryClientService;
-  }
 
-  @Override
-  public void createHistory(String contextIDStr, ContextHistory history) throws CSErrorException {
-    try {
-      ContextID contextID = SerializeHelper.deserializeContextID(contextIDStr);
-      ContextValue contextValue = new CommonContextValue();
-      if (contextID instanceof CombinedNodeIDContextID) {
-        contextID = ((CombinedNodeIDContextID) contextID).getLinkisHaWorkFlowContextID();
-      }
-      contextClient.createHistory(contextID, history);
-    } catch (ErrorException e) {
-      throw new CSErrorException(ErrorCode.DESERIALIZE_ERROR, "createHistory error ", e);
+    @Override
+    public void createHistory(String contextIDStr, ContextHistory history) throws CSErrorException {
+        try {
+            ContextID contextID = SerializeHelper.deserializeContextID(contextIDStr);
+            ContextValue contextValue = new CommonContextValue();
+            if (contextID instanceof CombinedNodeIDContextID) {
+                contextID = ((CombinedNodeIDContextID) contextID).getLinkisHaWorkFlowContextID();
+            }
+            contextClient.createHistory(contextID, history);
+        } catch (ErrorException e) {
+            throw new CSErrorException(ErrorCode.DESERIALIZE_ERROR, "createHistory error ", e);
+        }
     }
-  }
 }

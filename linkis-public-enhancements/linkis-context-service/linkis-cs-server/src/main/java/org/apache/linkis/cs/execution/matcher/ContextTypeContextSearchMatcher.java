@@ -23,15 +23,15 @@ import org.apache.linkis.cs.condition.impl.ContextTypeCondition;
 
 public class ContextTypeContextSearchMatcher extends AbstractContextSearchMatcher {
 
-  ContextType contextType;
+    ContextType contextType;
 
-  public ContextTypeContextSearchMatcher(ContextTypeCondition condition) {
-    super(condition);
-    contextType = condition.getContextType();
-  }
+    public ContextTypeContextSearchMatcher(ContextTypeCondition condition) {
+        super(condition);
+        contextType = condition.getContextType();
+    }
 
-  @Override
-  public Boolean match(ContextKeyValue contextKeyValue) {
-    return contextType.equals(contextKeyValue.getContextKey().getContextType());
-  }
+    @Override
+    public Boolean match(ContextKeyValue contextKeyValue) {
+        return contextType.equals(contextKeyValue.getContextKey().getContextType());
+    }
 }

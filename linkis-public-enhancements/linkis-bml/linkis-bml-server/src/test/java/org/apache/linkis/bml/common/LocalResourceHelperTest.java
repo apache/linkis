@@ -23,13 +23,13 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class LocalResourceHelperTest {
-  @Test
-  @DisplayName("testCheckBmlResourceStoragePrefixPathIfChanged")
-  public void testCheckBmlResourceStoragePrefixPathIfChanged() {
-    String path =
-        "file:///data/dss/bml/linkis/linkis/20220609/b4fd8f59-9492-4a0f-a074-9ac573a69b60";
-    LocalResourceHelper localResourceHelper = new LocalResourceHelper();
-    boolean hasChanged = localResourceHelper.checkBmlResourceStoragePrefixPathIfChanged(path);
-    assertFalse(hasChanged);
-  }
+    @Test
+    @DisplayName("testCheckBmlResourceStoragePrefixPathIfChanged")
+    public void testCheckBmlResourceStoragePrefixPathIfChanged() {
+        String path =
+                "file:///data/dss/bml/linkis/linkis/20220609/b4fd8f59-9492-4a0f-a074-9ac573a69b60";
+        LocalResourceHelper localResourceHelper = new LocalResourceHelper();
+        boolean hasChanged = localResourceHelper.checkBmlResourceStoragePrefixPathIfChanged(path);
+        assertFalse(hasChanged);
+    }
 }

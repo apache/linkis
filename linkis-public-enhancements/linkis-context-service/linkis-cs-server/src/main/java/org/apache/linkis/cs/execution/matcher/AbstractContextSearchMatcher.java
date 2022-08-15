@@ -21,9 +21,9 @@ import org.apache.linkis.cs.condition.Condition;
 
 public abstract class AbstractContextSearchMatcher implements ContextSearchMatcher {
 
-  Condition condition;
+    Condition condition;
 
-  public AbstractContextSearchMatcher(Condition condition) {
-    this.condition = condition;
-  }
+    public AbstractContextSearchMatcher(Condition condition) {
+        this.condition = condition;
+    }
 }

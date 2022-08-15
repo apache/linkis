@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,23 +16,18 @@
  */
 
 package org.apache.linkis.entrance.cli.heartbeat
-
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.entrance.execute.EntranceJob
 
-class KillHandler extends HeartbeatLossHandler with Logging {
-
+class KillHandler extends HeartbeatLossHandler with Logging{
   override def handle(jobs: List[EntranceJob]): Unit = {
     for (job <- jobs) {
       if (job != null) {
         logger.info("Killing job: " + job.getJobInfo.getId)
-        Utils.tryCatch(
-          job.onFailure("Job is killed because of client-server connection lost", null)
-        ) { t =>
-          logger.error("failed to kill job: " + job.getJobInfo.getId, t)
+        Utils.tryCatch(job.onFailure("Job is killed because of client-server connection lost", null)) {
+          t => logger.error("failed to kill job: " + job.getJobInfo.getId, t)
         }
       }
     }
   }
-
 }

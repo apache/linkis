@@ -27,69 +27,75 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class EsMetaService extends AbstractMetaService<ElasticConnection> {
-  @Override
-  public MetadataConnection<ElasticConnection> getConnection(
-      String operator, Map<String, Object> params) throws Exception {
-    String[] endPoints = new String[] {};
-    Object urls = params.get(ElasticParamsMapper.PARAM_ES_URLS.getValue());
-    if (!(urls instanceof List)) {
-      List<String> urlList = Json.fromJson(String.valueOf(urls), List.class, String.class);
-      assert urlList != null;
-      endPoints = urlList.toArray(endPoints);
-    } else {
-      endPoints = ((List<String>) urls).toArray(endPoints);
+    @Override
+    public MetadataConnection<ElasticConnection> getConnection(
+            String operator, Map<String, Object> params) throws Exception {
+        String[] endPoints = new String[] {};
+        Object urls = params.get(ElasticParamsMapper.PARAM_ES_URLS.getValue());
+        if (!(urls instanceof List)) {
+            List<String> urlList = Json.fromJson(String.valueOf(urls), List.class, String.class);
+            assert urlList != null;
+            endPoints = urlList.toArray(endPoints);
+        } else {
+            endPoints = ((List<String>) urls).toArray(endPoints);
+        }
+        ElasticConnection conn =
+                new ElasticConnection(
+                        endPoints,
+                        String.valueOf(
+                                params.getOrDefault(
+                                        ElasticParamsMapper.PARAM_ES_USERNAME.getValue(), "")),
+                        String.valueOf(
+                                params.getOrDefault(
+                                        ElasticParamsMapper.PARAM_ES_PASSWORD.getValue(), "")));
+        return new MetadataConnection<>(conn, false);
     }
-    ElasticConnection conn =
-        new ElasticConnection(
-            endPoints,
-            String.valueOf(
-                params.getOrDefault(ElasticParamsMapper.PARAM_ES_USERNAME.getValue(), "")),
-            String.valueOf(
-                params.getOrDefault(ElasticParamsMapper.PARAM_ES_PASSWORD.getValue(), "")));
-    return new MetadataConnection<>(conn, false);
-  }
 
-  @Override
-  public List<String> queryDatabases(ElasticConnection connection) {
-    // Get indices
-    try {
-      return connection.getAllIndices();
-    } catch (Exception e) {
-      throw new RuntimeException("Fail to get ElasticSearch indices(获取索引列表失败)", e);
+    @Override
+    public List<String> queryDatabases(ElasticConnection connection) {
+        // Get indices
+        try {
+            return connection.getAllIndices();
+        } catch (Exception e) {
+            throw new RuntimeException("Fail to get ElasticSearch indices(获取索引列表失败)", e);
+        }
     }
-  }
 
-  @Override
-  public List<String> queryTables(ElasticConnection connection, String database) {
-    // Get types
-    try {
-      return connection.getTypes(database);
-    } catch (Exception e) {
-      throw new RuntimeException("Fail to get ElasticSearch types(获取索引类型失败)", e);
+    @Override
+    public List<String> queryTables(ElasticConnection connection, String database) {
+        // Get types
+        try {
+            return connection.getTypes(database);
+        } catch (Exception e) {
+            throw new RuntimeException("Fail to get ElasticSearch types(获取索引类型失败)", e);
+        }
     }
-  }
 
-  @Override
-  public List<MetaColumnInfo> queryColumns(
-      ElasticConnection connection, String database, String table) {
-    try {
-      Map<Object, Object> props = connection.getProps(database, table);
-      return props.entrySet().stream()
-          .map(
-              entry -> {
-                MetaColumnInfo info = new MetaColumnInfo();
-                info.setName(String.valueOf(entry.getKey()));
-                Object value = entry.getValue();
-                if (value instanceof Map) {
-                  info.setType(
-                      String.valueOf(
-                          ((Map) value).getOrDefault(ElasticConnection.DEFAULT_TYPE_NAME, "")));
-                }
-                return info;
-              })
-          .collect(Collectors.toList());
-    } catch (Exception e) {
-      throw new RuntimeException("Fail to get ElasticSearch columns(获取索引字段失败)", e);
+    @Override
+    public List<MetaColumnInfo> queryColumns(
+            ElasticConnection connection, String database, String table) {
+        try {
+            Map<Object, Object> props = connection.getProps(database, table);
+            return props.entrySet().stream()
+                    .map(
+                            entry -> {
+                                MetaColumnInfo info = new MetaColumnInfo();
+                                info.setName(String.valueOf(entry.getKey()));
+                                Object value = entry.getValue();
+                                if (value instanceof Map) {
+                                    info.setType(
+                                            String.valueOf(
+                                                    ((Map) value)
+                                                            .getOrDefault(
+                                                                    ElasticConnection
+                                                                            .DEFAULT_TYPE_NAME,
+                                                                    "")));
+                                }
+                                return info;
+                            })
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            throw new RuntimeException("Fail to get ElasticSearch columns(获取索引字段失败)", e);
+        }
     }
-  }
 }

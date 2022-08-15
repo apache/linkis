@@ -24,7 +24,7 @@ import java.util.Map;
 
 public interface ExternalResourceIdentifierParser {
 
-  ExternalResourceIdentifier parse(Map<String, Object> identifierMap);
+    ExternalResourceIdentifier parse(Map<String, Object> identifierMap);
 
-  ResourceType getResourceType();
+    ResourceType getResourceType();
 }

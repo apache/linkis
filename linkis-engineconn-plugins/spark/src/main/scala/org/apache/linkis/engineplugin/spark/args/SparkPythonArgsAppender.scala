@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -25,10 +25,7 @@ class SparkPythonArgsAppender {
   def appendArgvs(code: String, args: Array[String]): String = {
     val extraCodeBuilder = new StringBuilder()
     extraCodeBuilder.append(EXTRA_CODE_BEGIN).append(System.lineSeparator())
-    args.foreach(argv =>
-      extraCodeBuilder.append(EXTRA_CODE_ARGV.format(argv)).append(System.lineSeparator())
-    )
+    args.foreach(argv => extraCodeBuilder.append(EXTRA_CODE_ARGV.format(argv)).append(System.lineSeparator()))
     extraCodeBuilder.append(code).toString()
   }
-
 }

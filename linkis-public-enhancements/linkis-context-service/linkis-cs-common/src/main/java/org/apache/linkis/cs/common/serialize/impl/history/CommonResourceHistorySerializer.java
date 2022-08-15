@@ -27,32 +27,34 @@ import org.apache.linkis.cs.common.utils.CSCommonUtils;
 import java.util.Map;
 
 public class CommonResourceHistorySerializer extends AbstractSerializer<CommonResourceHistory>
-    implements CommonHistorySerializer {
-  @Override
-  public String getType() {
-    return "commonResourceHistory";
-  }
+        implements CommonHistorySerializer {
+    @Override
+    public String getType() {
+        return "commonResourceHistory";
+    }
 
-  @Override
-  public boolean accepts(Object obj) {
-    return obj != null && obj instanceof CommonResourceHistory;
-  }
+    @Override
+    public boolean accepts(Object obj) {
+        return obj != null && obj instanceof CommonResourceHistory;
+    }
 
-  @Override
-  public CommonResourceHistory fromJson(String json) throws CSErrorException {
-    Map<String, String> map = getMapValue(json);
-    CommonResourceHistory history = get(map, new CommonResourceHistory());
-    history.setResource(
-        (Resource) ContextSerializationHelper.getInstance().deserialize(map.get("resource")));
-    return history;
-  }
+    @Override
+    public CommonResourceHistory fromJson(String json) throws CSErrorException {
+        Map<String, String> map = getMapValue(json);
+        CommonResourceHistory history = get(map, new CommonResourceHistory());
+        history.setResource(
+                (Resource)
+                        ContextSerializationHelper.getInstance().deserialize(map.get("resource")));
+        return history;
+    }
 
-  @Override
-  public String getJsonValue(CommonResourceHistory commonResourceHistory) throws CSErrorException {
-    Resource resource = commonResourceHistory.getResource();
-    String resourceStr = ContextSerializationHelper.getInstance().serialize(resource);
-    Map<String, String> mapValue = getMapValue(commonResourceHistory);
-    mapValue.put("resource", resourceStr);
-    return CSCommonUtils.gson.toJson(mapValue);
-  }
+    @Override
+    public String getJsonValue(CommonResourceHistory commonResourceHistory)
+            throws CSErrorException {
+        Resource resource = commonResourceHistory.getResource();
+        String resourceStr = ContextSerializationHelper.getInstance().serialize(resource);
+        Map<String, String> mapValue = getMapValue(commonResourceHistory);
+        mapValue.put("resource", resourceStr);
+        return CSCommonUtils.gson.toJson(mapValue);
+    }
 }

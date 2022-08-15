@@ -21,13 +21,13 @@ import org.apache.linkis.manager.common.entity.enumeration.NodeStatus;
 
 public class ResponseNodeStatus implements NodeStatusProtocol {
 
-  private NodeStatus nodeStatus;
+    private NodeStatus nodeStatus;
 
-  public NodeStatus getNodeStatus() {
-    return nodeStatus;
-  }
+    public NodeStatus getNodeStatus() {
+        return nodeStatus;
+    }
 
-  public void setNodeStatus(NodeStatus nodeStatus) {
-    this.nodeStatus = nodeStatus;
-  }
+    public void setNodeStatus(NodeStatus nodeStatus) {
+        this.nodeStatus = nodeStatus;
+    }
 }

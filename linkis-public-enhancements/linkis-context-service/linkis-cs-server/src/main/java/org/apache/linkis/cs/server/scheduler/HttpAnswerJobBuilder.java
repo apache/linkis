@@ -23,41 +23,41 @@ import org.apache.linkis.cs.server.protocol.HttpResponseProtocol;
 
 public abstract class HttpAnswerJobBuilder extends HttpJobBuilder {
 
-  @Override
-  public final HttpJob build(ServiceType serviceType) {
-    return buildResponseProtocol(super.build(serviceType));
-  }
-
-  @Override
-  protected final HttpJob createHttpJob() {
-    return new DefaultHttpAnswerJob();
-  }
-
-  protected abstract HttpJob buildResponseProtocol(HttpJob job);
-
-  private static class DefaultHttpAnswerJob implements HttpAnswerJob {
-    private HttpRequestProtocol httpRequestProtocol;
-
-    private HttpResponseProtocol httpResponseProtocol;
-
     @Override
-    public HttpRequestProtocol getRequestProtocol() {
-      return this.httpRequestProtocol;
+    public final HttpJob build(ServiceType serviceType) {
+        return buildResponseProtocol(super.build(serviceType));
     }
 
     @Override
-    public void setRequestProtocol(HttpRequestProtocol protocol) {
-      this.httpRequestProtocol = protocol;
+    protected final HttpJob createHttpJob() {
+        return new DefaultHttpAnswerJob();
     }
 
-    @Override
-    public HttpResponseProtocol getResponseProtocol() {
-      return this.httpResponseProtocol;
-    }
+    protected abstract HttpJob buildResponseProtocol(HttpJob job);
 
-    @Override
-    public void setResponseProtocol(HttpResponseProtocol protocol) {
-      this.httpResponseProtocol = protocol;
+    private static class DefaultHttpAnswerJob implements HttpAnswerJob {
+        private HttpRequestProtocol httpRequestProtocol;
+
+        private HttpResponseProtocol httpResponseProtocol;
+
+        @Override
+        public HttpRequestProtocol getRequestProtocol() {
+            return this.httpRequestProtocol;
+        }
+
+        @Override
+        public void setRequestProtocol(HttpRequestProtocol protocol) {
+            this.httpRequestProtocol = protocol;
+        }
+
+        @Override
+        public HttpResponseProtocol getResponseProtocol() {
+            return this.httpResponseProtocol;
+        }
+
+        @Override
+        public void setResponseProtocol(HttpResponseProtocol protocol) {
+            this.httpResponseProtocol = protocol;
+        }
     }
-  }
 }

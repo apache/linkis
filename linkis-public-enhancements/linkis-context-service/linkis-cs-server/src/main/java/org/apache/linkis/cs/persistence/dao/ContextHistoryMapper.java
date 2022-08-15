@@ -27,25 +27,26 @@ import java.util.List;
 
 public interface ContextHistoryMapper {
 
-  void createHistory(PersistenceContextHistory pHistory);
+    void createHistory(PersistenceContextHistory pHistory);
 
-  PersistenceContextHistory getHistory(
-      @Param("contextID") ContextID contextID, @Param("id") Long id);
+    PersistenceContextHistory getHistory(
+            @Param("contextID") ContextID contextID, @Param("id") Long id);
 
-  PersistenceContextHistory getHistoryBySource(
-      @Param("contextID") ContextID contextID, @Param("source") String source);
+    PersistenceContextHistory getHistoryBySource(
+            @Param("contextID") ContextID contextID, @Param("source") String source);
 
-  List<PersistenceContextHistory> getHistoriesByContextID(@Param("contextID") ContextID contextID);
+    List<PersistenceContextHistory> getHistoriesByContextID(
+            @Param("contextID") ContextID contextID);
 
-  void removeHistory(@Param("contextID") ContextID contextID, @Param("source") String source);
+    void removeHistory(@Param("contextID") ContextID contextID, @Param("source") String source);
 
-  void updateHistory(
-      @Param("contextID") ContextID contextID,
-      @Param("pHistory") PersistenceContextHistory pHistory);
+    void updateHistory(
+            @Param("contextID") ContextID contextID,
+            @Param("pHistory") PersistenceContextHistory pHistory);
 
-  List<PersistenceContextHistory> searchByKeywords(
-      @Param("contextID") ContextID contextID, @Param("keywords") String[] keywords);
+    List<PersistenceContextHistory> searchByKeywords(
+            @Param("contextID") ContextID contextID, @Param("keywords") String[] keywords);
 
-  List<PersistenceContextHistory> searchByKeywordsAndType(
-      @Param("contextType") ContextType contextType, @Param("keywords") String[] keywords);
+    List<PersistenceContextHistory> searchByKeywordsAndType(
+            @Param("contextType") ContextType contextType, @Param("keywords") String[] keywords);
 }

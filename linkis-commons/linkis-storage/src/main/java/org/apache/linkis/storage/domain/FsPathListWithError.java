@@ -22,29 +22,29 @@ import org.apache.linkis.common.io.FsPath;
 import java.util.List;
 
 public class FsPathListWithError {
-  private List<FsPath> fsPaths;
-  private String error;
+    private List<FsPath> fsPaths;
+    private String error;
 
-  public FsPathListWithError() {}
+    public FsPathListWithError() {}
 
-  public FsPathListWithError(List<FsPath> fsPaths, String error) {
-    this.fsPaths = fsPaths;
-    this.error = error;
-  }
+    public FsPathListWithError(List<FsPath> fsPaths, String error) {
+        this.fsPaths = fsPaths;
+        this.error = error;
+    }
 
-  public List<FsPath> getFsPaths() {
-    return fsPaths;
-  }
+    public List<FsPath> getFsPaths() {
+        return fsPaths;
+    }
 
-  public void setFsPaths(List<FsPath> fsPaths) {
-    this.fsPaths = fsPaths;
-  }
+    public void setFsPaths(List<FsPath> fsPaths) {
+        this.fsPaths = fsPaths;
+    }
 
-  public String getError() {
-    return error;
-  }
+    public String getError() {
+        return error;
+    }
 
-  public void setError(String error) {
-    this.error = error;
-  }
+    public void setError(String error) {
+        this.error = error;
+    }
 }

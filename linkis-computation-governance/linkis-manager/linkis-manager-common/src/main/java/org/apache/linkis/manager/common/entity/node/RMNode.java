@@ -21,7 +21,7 @@ import org.apache.linkis.manager.common.entity.resource.NodeResource;
 
 public interface RMNode extends Node {
 
-  NodeResource getNodeResource();
+    NodeResource getNodeResource();
 
-  void setNodeResource(NodeResource nodeResource);
+    void setNodeResource(NodeResource nodeResource);
 }

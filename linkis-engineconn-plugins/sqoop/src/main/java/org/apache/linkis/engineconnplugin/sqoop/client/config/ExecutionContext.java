@@ -20,9 +20,9 @@ package org.apache.linkis.engineconnplugin.sqoop.client.config;
 import org.apache.linkis.engineconn.common.creation.EngineCreationContext;
 
 public class ExecutionContext {
-  private final EngineCreationContext environmentContext;
+    private final EngineCreationContext environmentContext;
 
-  public ExecutionContext(EngineCreationContext environmentContext) {
-    this.environmentContext = environmentContext;
-  }
+    public ExecutionContext(EngineCreationContext environmentContext) {
+        this.environmentContext = environmentContext;
+    }
 }

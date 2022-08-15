@@ -19,7 +19,7 @@ package org.apache.linkis.cs.common.entity.source;
 
 public interface VersionContextKey extends ContextKey {
 
-  String getVersion();
+    String getVersion();
 
-  void setVersion(String version);
+    void setVersion(String version);
 }

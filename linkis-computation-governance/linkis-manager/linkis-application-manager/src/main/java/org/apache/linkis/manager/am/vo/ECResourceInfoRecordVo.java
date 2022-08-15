@@ -20,225 +20,225 @@ import java.util.Date;
 
 public class ECResourceInfoRecordVo {
 
-  private Integer id;
+    private Integer id;
 
-  private String createUser;
+    private String createUser;
 
-  private String labelValue;
+    private String labelValue;
 
-  private String ticketId;
+    private String ticketId;
 
-  private String serviceInstance;
+    private String serviceInstance;
 
-  private ResourceVo usedResource;
+    private ResourceVo usedResource;
 
-  private ResourceVo requestResource;
+    private ResourceVo requestResource;
 
-  private ResourceVo releasedResource;
+    private ResourceVo releasedResource;
 
-  private String ecmInstance;
+    private String ecmInstance;
 
-  private int requestTimes;
+    private int requestTimes;
 
-  private int usedTimes;
+    private int usedTimes;
 
-  private int releaseTimes;
+    private int releaseTimes;
 
-  private Date usedTime;
+    private Date usedTime;
 
-  private Date createTime;
+    private Date createTime;
 
-  private Date releaseTime;
+    private Date releaseTime;
 
-  private String logDirSuffix;
+    private String logDirSuffix;
 
-  private String engineType;
+    private String engineType;
 
-  public ECResourceInfoRecordVo() {}
+    public ECResourceInfoRecordVo() {}
 
-  public Integer getId() {
-    return id;
-  }
+    public Integer getId() {
+        return id;
+    }
 
-  public void setId(Integer id) {
-    this.id = id;
-  }
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-  public String getCreateUser() {
-    return createUser;
-  }
+    public String getCreateUser() {
+        return createUser;
+    }
 
-  public void setCreateUser(String createUser) {
-    this.createUser = createUser;
-  }
+    public void setCreateUser(String createUser) {
+        this.createUser = createUser;
+    }
 
-  public String getLabelValue() {
-    return labelValue;
-  }
+    public String getLabelValue() {
+        return labelValue;
+    }
 
-  public void setLabelValue(String labelValue) {
-    this.labelValue = labelValue;
-  }
+    public void setLabelValue(String labelValue) {
+        this.labelValue = labelValue;
+    }
 
-  public String getTicketId() {
-    return ticketId;
-  }
+    public String getTicketId() {
+        return ticketId;
+    }
 
-  public void setTicketId(String ticketId) {
-    this.ticketId = ticketId;
-  }
+    public void setTicketId(String ticketId) {
+        this.ticketId = ticketId;
+    }
 
-  public String getServiceInstance() {
-    return serviceInstance;
-  }
+    public String getServiceInstance() {
+        return serviceInstance;
+    }
 
-  public void setServiceInstance(String serviceInstance) {
-    this.serviceInstance = serviceInstance;
-  }
+    public void setServiceInstance(String serviceInstance) {
+        this.serviceInstance = serviceInstance;
+    }
 
-  public ResourceVo getUsedResource() {
-    return usedResource;
-  }
+    public ResourceVo getUsedResource() {
+        return usedResource;
+    }
 
-  public void setUsedResource(ResourceVo usedResource) {
-    this.usedResource = usedResource;
-  }
+    public void setUsedResource(ResourceVo usedResource) {
+        this.usedResource = usedResource;
+    }
 
-  public ResourceVo getRequestResource() {
-    return requestResource;
-  }
+    public ResourceVo getRequestResource() {
+        return requestResource;
+    }
 
-  public void setRequestResource(ResourceVo requestResource) {
-    this.requestResource = requestResource;
-  }
+    public void setRequestResource(ResourceVo requestResource) {
+        this.requestResource = requestResource;
+    }
 
-  public ResourceVo getReleasedResource() {
-    return releasedResource;
-  }
+    public ResourceVo getReleasedResource() {
+        return releasedResource;
+    }
 
-  public void setReleasedResource(ResourceVo releasedResource) {
-    this.releasedResource = releasedResource;
-  }
+    public void setReleasedResource(ResourceVo releasedResource) {
+        this.releasedResource = releasedResource;
+    }
 
-  public String getEcmInstance() {
-    return ecmInstance;
-  }
+    public String getEcmInstance() {
+        return ecmInstance;
+    }
 
-  public void setEcmInstance(String ecmInstance) {
-    this.ecmInstance = ecmInstance;
-  }
+    public void setEcmInstance(String ecmInstance) {
+        this.ecmInstance = ecmInstance;
+    }
 
-  public int getRequestTimes() {
-    return requestTimes;
-  }
+    public int getRequestTimes() {
+        return requestTimes;
+    }
 
-  public void setRequestTimes(int requestTimes) {
-    this.requestTimes = requestTimes;
-  }
+    public void setRequestTimes(int requestTimes) {
+        this.requestTimes = requestTimes;
+    }
 
-  public int getUsedTimes() {
-    return usedTimes;
-  }
+    public int getUsedTimes() {
+        return usedTimes;
+    }
 
-  public void setUsedTimes(int usedTimes) {
-    this.usedTimes = usedTimes;
-  }
+    public void setUsedTimes(int usedTimes) {
+        this.usedTimes = usedTimes;
+    }
 
-  public int getReleaseTimes() {
-    return releaseTimes;
-  }
+    public int getReleaseTimes() {
+        return releaseTimes;
+    }
 
-  public void setReleaseTimes(int releaseTimes) {
-    this.releaseTimes = releaseTimes;
-  }
+    public void setReleaseTimes(int releaseTimes) {
+        this.releaseTimes = releaseTimes;
+    }
 
-  public Date getUsedTime() {
-    return usedTime;
-  }
+    public Date getUsedTime() {
+        return usedTime;
+    }
 
-  public void setUsedTime(Date usedTime) {
-    this.usedTime = usedTime;
-  }
+    public void setUsedTime(Date usedTime) {
+        this.usedTime = usedTime;
+    }
 
-  public Date getCreateTime() {
-    return createTime;
-  }
+    public Date getCreateTime() {
+        return createTime;
+    }
 
-  public void setCreateTime(Date createTime) {
-    this.createTime = createTime;
-  }
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
 
-  public Date getReleaseTime() {
-    return releaseTime;
-  }
+    public Date getReleaseTime() {
+        return releaseTime;
+    }
 
-  public void setReleaseTime(Date releaseTime) {
-    this.releaseTime = releaseTime;
-  }
+    public void setReleaseTime(Date releaseTime) {
+        this.releaseTime = releaseTime;
+    }
 
-  public String getLogDirSuffix() {
-    return logDirSuffix;
-  }
+    public String getLogDirSuffix() {
+        return logDirSuffix;
+    }
 
-  public void setLogDirSuffix(String logDirSuffix) {
-    this.logDirSuffix = logDirSuffix;
-  }
+    public void setLogDirSuffix(String logDirSuffix) {
+        this.logDirSuffix = logDirSuffix;
+    }
 
-  public String getEngineType() {
-    return engineType;
-  }
+    public String getEngineType() {
+        return engineType;
+    }
 
-  public void setEngineType(String engineType) {
-    this.engineType = engineType;
-  }
+    public void setEngineType(String engineType) {
+        this.engineType = engineType;
+    }
 
-  @Override
-  public String toString() {
-    return "ECRHistroryListVo{"
-        + "id="
-        + id
-        + ", createUser='"
-        + createUser
-        + '\''
-        + ", labelValue='"
-        + labelValue
-        + '\''
-        + ", ticketId='"
-        + ticketId
-        + '\''
-        + ", serviceInstance='"
-        + serviceInstance
-        + '\''
-        + ", usedResource='"
-        + usedResource
-        + '\''
-        + ", requestResource='"
-        + requestResource
-        + '\''
-        + ", releasedResource='"
-        + releasedResource
-        + '\''
-        + ", ecmInstance='"
-        + ecmInstance
-        + '\''
-        + ", requestTimes="
-        + requestTimes
-        + ", usedTimes="
-        + usedTimes
-        + ", releaseTimes="
-        + releaseTimes
-        + ", usedTime="
-        + usedTime
-        + ", createTime="
-        + createTime
-        + ", releaseTime="
-        + releaseTime
-        + ", logDirSuffix='"
-        + logDirSuffix
-        + '\''
-        + ", engineType='"
-        + engineType
-        + '\''
-        + '}';
-  }
+    @Override
+    public String toString() {
+        return "ECRHistroryListVo{"
+                + "id="
+                + id
+                + ", createUser='"
+                + createUser
+                + '\''
+                + ", labelValue='"
+                + labelValue
+                + '\''
+                + ", ticketId='"
+                + ticketId
+                + '\''
+                + ", serviceInstance='"
+                + serviceInstance
+                + '\''
+                + ", usedResource='"
+                + usedResource
+                + '\''
+                + ", requestResource='"
+                + requestResource
+                + '\''
+                + ", releasedResource='"
+                + releasedResource
+                + '\''
+                + ", ecmInstance='"
+                + ecmInstance
+                + '\''
+                + ", requestTimes="
+                + requestTimes
+                + ", usedTimes="
+                + usedTimes
+                + ", releaseTimes="
+                + releaseTimes
+                + ", usedTime="
+                + usedTime
+                + ", createTime="
+                + createTime
+                + ", releaseTime="
+                + releaseTime
+                + ", logDirSuffix='"
+                + logDirSuffix
+                + '\''
+                + ", engineType='"
+                + engineType
+                + '\''
+                + '}';
+    }
 }

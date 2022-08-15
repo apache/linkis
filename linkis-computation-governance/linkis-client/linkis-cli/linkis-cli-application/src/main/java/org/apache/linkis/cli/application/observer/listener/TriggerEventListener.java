@@ -22,14 +22,14 @@ import org.apache.linkis.cli.application.observer.event.LinkisClientEvent;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class TriggerEventListener implements LinkisClientListener {
-  AtomicBoolean atomicFlag = new AtomicBoolean(false);
+    AtomicBoolean atomicFlag = new AtomicBoolean(false);
 
-  @Override
-  public void update(LinkisClientEvent event, Object msg) {
-    atomicFlag.compareAndSet(false, true);
-  }
+    @Override
+    public void update(LinkisClientEvent event, Object msg) {
+        atomicFlag.compareAndSet(false, true);
+    }
 
-  public Boolean isTriggered() {
-    return atomicFlag.get();
-  }
+    public Boolean isTriggered() {
+        return atomicFlag.get();
+    }
 }

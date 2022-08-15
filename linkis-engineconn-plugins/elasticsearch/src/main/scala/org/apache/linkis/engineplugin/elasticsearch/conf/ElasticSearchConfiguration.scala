@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.linkis.engineplugin.elasticsearch.conf
 
 import org.apache.linkis.common.conf.{ByteType, CommonVars}

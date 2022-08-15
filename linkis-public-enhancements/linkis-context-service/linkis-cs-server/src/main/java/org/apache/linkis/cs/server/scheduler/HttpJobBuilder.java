@@ -21,14 +21,14 @@ import org.apache.linkis.cs.server.enumeration.ServiceType;
 
 public abstract class HttpJobBuilder {
 
-  public HttpJob build(ServiceType serviceType) {
-    return buildRequestProtocol(createHttpJob(), serviceType);
-  }
+    public HttpJob build(ServiceType serviceType) {
+        return buildRequestProtocol(createHttpJob(), serviceType);
+    }
 
-  private HttpJob buildRequestProtocol(HttpJob job, ServiceType serviceType) {
-    job.setRequestProtocol(serviceType.getRequestProtocol());
-    return job;
-  }
+    private HttpJob buildRequestProtocol(HttpJob job, ServiceType serviceType) {
+        job.setRequestProtocol(serviceType.getRequestProtocol());
+        return job;
+    }
 
-  protected abstract HttpJob createHttpJob();
+    protected abstract HttpJob createHttpJob();
 }

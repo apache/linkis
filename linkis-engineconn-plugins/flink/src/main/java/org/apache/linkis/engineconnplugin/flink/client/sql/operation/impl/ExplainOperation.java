@@ -33,45 +33,47 @@ import org.apache.flink.types.Row;
 
 /** Operation for EXPLAIN command. */
 public class ExplainOperation implements NonJobOperation {
-  private final ExecutionContext context;
-  private final String statement;
+    private final ExecutionContext context;
+    private final String statement;
 
-  public ExplainOperation(FlinkEngineConnContext context, String statement) {
-    this.context = context.getExecutionContext();
-    this.statement = statement;
-  }
-
-  @Override
-  public ResultSet execute() throws SqlExecutionException {
-    final TableEnvironment tableEnv = context.getTableEnvironment();
-    // translate
-    try {
-      final Table table = createTable(context, tableEnv, statement);
-      String explanation = context.wrapClassLoader(() -> tableEnv.explain(table));
-      return ResultSet.builder()
-          .resultKind(ResultKind.SUCCESS_WITH_CONTENT)
-          .columns(
-              ColumnInfo.create(
-                  ConstantNames.EXPLAIN_RESULT, new VarCharType(false, explanation.length())))
-          .data(Row.of(explanation))
-          .build();
-    } catch (SqlExecutionException t) {
-      throw t;
-    } catch (Exception t) {
-      // catch everything such that the query does not crash the executor
-      throw new SqlExecutionException("Invalid SQL statement.", t);
+    public ExplainOperation(FlinkEngineConnContext context, String statement) {
+        this.context = context.getExecutionContext();
+        this.statement = statement;
     }
-  }
 
-  /** Creates a table using the given query in the given table environment. */
-  private Table createTable(ExecutionContext context, TableEnvironment tableEnv, String selectQuery)
-      throws SqlExecutionException {
-    // parse and validate query
-    try {
-      return context.wrapClassLoader(() -> tableEnv.sqlQuery(selectQuery));
-    } catch (Exception t) {
-      // catch everything such that the query does not crash the executor
-      throw new SqlExecutionException("Invalid SQL statement.", t);
+    @Override
+    public ResultSet execute() throws SqlExecutionException {
+        final TableEnvironment tableEnv = context.getTableEnvironment();
+        // translate
+        try {
+            final Table table = createTable(context, tableEnv, statement);
+            String explanation = context.wrapClassLoader(() -> tableEnv.explain(table));
+            return ResultSet.builder()
+                    .resultKind(ResultKind.SUCCESS_WITH_CONTENT)
+                    .columns(
+                            ColumnInfo.create(
+                                    ConstantNames.EXPLAIN_RESULT,
+                                    new VarCharType(false, explanation.length())))
+                    .data(Row.of(explanation))
+                    .build();
+        } catch (SqlExecutionException t) {
+            throw t;
+        } catch (Exception t) {
+            // catch everything such that the query does not crash the executor
+            throw new SqlExecutionException("Invalid SQL statement.", t);
+        }
     }
-  }
+
+    /** Creates a table using the given query in the given table environment. */
+    private Table createTable(
+            ExecutionContext context, TableEnvironment tableEnv, String selectQuery)
+            throws SqlExecutionException {
+        // parse and validate query
+        try {
+            return context.wrapClassLoader(() -> tableEnv.sqlQuery(selectQuery));
+        } catch (Exception t) {
+            // catch everything such that the query does not crash the executor
+            throw new SqlExecutionException("Invalid SQL statement.", t);
+        }
+    }
 }

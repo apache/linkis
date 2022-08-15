@@ -21,11 +21,11 @@ import org.apache.linkis.common.exception.ErrorException;
 
 public class WorkSpaceException extends ErrorException {
 
-  public WorkSpaceException(int errCode, String desc) {
-    super(errCode, desc);
-  }
+    public WorkSpaceException(int errCode, String desc) {
+        super(errCode, desc);
+    }
 
-  public WorkSpaceException(int errCode, String desc, String ip, int port, String serviceKind) {
-    super(errCode, desc, ip, port, serviceKind);
-  }
+    public WorkSpaceException(int errCode, String desc, String ip, int port, String serviceKind) {
+        super(errCode, desc, ip, port, serviceKind);
+    }
 }

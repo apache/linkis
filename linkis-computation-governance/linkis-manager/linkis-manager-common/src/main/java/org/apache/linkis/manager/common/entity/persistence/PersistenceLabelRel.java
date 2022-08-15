@@ -19,13 +19,13 @@ package org.apache.linkis.manager.common.entity.persistence;
 
 public class PersistenceLabelRel extends PersistenceLabel {
 
-  private Integer resourceId;
+    private Integer resourceId;
 
-  public Integer getResourceId() {
-    return resourceId;
-  }
+    public Integer getResourceId() {
+        return resourceId;
+    }
 
-  public void setResourceId(Integer resourceId) {
-    this.resourceId = resourceId;
-  }
+    public void setResourceId(Integer resourceId) {
+        this.resourceId = resourceId;
+    }
 }

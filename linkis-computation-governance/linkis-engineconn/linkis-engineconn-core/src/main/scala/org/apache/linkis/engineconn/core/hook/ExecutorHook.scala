@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -52,13 +52,12 @@ object ExecutorHook extends Logging {
     Utils.tryCatch {
       val reflections = ClassUtils.reflections
       val allSubClass = reflections.getSubTypesOf(classOf[ExecutorHook])
-      allSubClass.asScala
-        .filter(!ClassUtils.isInterfaceOrAbstract(_))
-        .foreach(l => {
-          hooks += l.newInstance()
-        })
-    } { t: Throwable =>
-      logger.error(t.getMessage)
+      allSubClass.asScala.filter(!ClassUtils.isInterfaceOrAbstract(_)).foreach(l => {
+        hooks += l.newInstance()
+      })
+    } {
+      t: Throwable =>
+        logger.error(t.getMessage)
     }
     hooks.sortWith((a, b) => a.getOrder() <= b.getOrder()).toArray
   }

@@ -20,10 +20,10 @@ package org.apache.linkis.cs.client.utils;
 import org.apache.linkis.common.exception.ErrorException;
 
 public class ExceptionHelper {
-  public static void throwErrorException(int errCode, String errMsg, Throwable t)
-      throws ErrorException {
-    ErrorException errorException = new ErrorException(errCode, errMsg);
-    errorException.initCause(t);
-    throw errorException;
-  }
+    public static void throwErrorException(int errCode, String errMsg, Throwable t)
+            throws ErrorException {
+        ErrorException errorException = new ErrorException(errCode, errMsg);
+        errorException.initCause(t);
+        throw errorException;
+    }
 }

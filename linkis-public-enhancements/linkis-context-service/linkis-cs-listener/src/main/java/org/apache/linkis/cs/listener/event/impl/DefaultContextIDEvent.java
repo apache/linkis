@@ -23,25 +23,25 @@ import org.apache.linkis.cs.listener.event.enumeration.OperateType;
 
 public class DefaultContextIDEvent implements ContextIDEvent {
 
-  private ContextID contextID;
+    private ContextID contextID;
 
-  public OperateType getOperateType() {
-    return operateType;
-  }
+    public OperateType getOperateType() {
+        return operateType;
+    }
 
-  public void setOperateType(OperateType operateType) {
-    this.operateType = operateType;
-  }
+    public void setOperateType(OperateType operateType) {
+        this.operateType = operateType;
+    }
 
-  // TODO
-  private OperateType operateType;
+    // TODO
+    private OperateType operateType;
 
-  @Override
-  public ContextID getContextID() {
-    return contextID;
-  }
+    @Override
+    public ContextID getContextID() {
+        return contextID;
+    }
 
-  public void setContextID(ContextID contextID) {
-    this.contextID = contextID;
-  }
+    public void setContextID(ContextID contextID) {
+        this.contextID = contextID;
+    }
 }

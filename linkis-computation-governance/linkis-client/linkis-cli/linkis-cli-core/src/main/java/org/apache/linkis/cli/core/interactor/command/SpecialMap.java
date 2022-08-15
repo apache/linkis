@@ -21,9 +21,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class SpecialMap<K, V> extends HashMap<K, V> {
-  public SpecialMap() {}
+    public SpecialMap() {}
 
-  public SpecialMap(Map<? extends K, ? extends V> m) {
-    super(m);
-  }
+    public SpecialMap(Map<? extends K, ? extends V> m) {
+        super(m);
+    }
 }

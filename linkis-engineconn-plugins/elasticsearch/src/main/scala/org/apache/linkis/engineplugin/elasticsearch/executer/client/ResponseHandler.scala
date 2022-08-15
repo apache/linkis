@@ -14,19 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.linkis.engineplugin.elasticsearch.executer.client
 
-import org.apache.linkis.common.utils.Logging
-import org.apache.linkis.engineplugin.elasticsearch.executer.client.impl.ResponseHandlerImpl
-import org.apache.linkis.storage.domain._
-
-import com.fasterxml.jackson.databind.{JsonNode, ObjectMapper}
 import com.fasterxml.jackson.databind.node.JsonNodeType
+import com.fasterxml.jackson.databind.{JsonNode, ObjectMapper}
 import com.fasterxml.jackson.dataformat.cbor.CBORFactory
 import com.fasterxml.jackson.dataformat.csv.CsvMapper
 import com.fasterxml.jackson.dataformat.smile.SmileFactory
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.storage.domain._
+import org.apache.linkis.engineplugin.elasticsearch.executer.client.impl.ResponseHandlerImpl
 import org.elasticsearch.client.Response
 
 trait ResponseHandler extends Logging {
@@ -34,6 +32,7 @@ trait ResponseHandler extends Logging {
   def handle(response: Response): ElasticSearchResponse
 
 }
+
 
 object ResponseHandler {
 
@@ -62,9 +61,7 @@ object ResponseHandler {
   }
 
   def getNodeTypeByEsType(estype: String): DataType = estype.toLowerCase match {
-    case "long" | "integer" | "short" | "byte" | "double" | "float" | "half_float" |
-        "scaled_float" =>
-      DecimalType
+    case "long" | "integer" | "short" | "byte" | "double" | "float" | "half_float" | "scaled_float" => DecimalType
     case "text" | "keyword" => StringType
     case "date" => DateType
     case "binary" => BinaryType

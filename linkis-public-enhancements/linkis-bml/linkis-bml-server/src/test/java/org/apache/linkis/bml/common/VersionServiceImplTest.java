@@ -17,29 +17,31 @@
 
 package org.apache.linkis.bml.common;
 
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
-
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class VersionServiceImplTest {
 
-  @Test
-  @DisplayName("testCheckBmlResourceStoragePrefixPathIfChanged")
-  public void testUpdateVersion() {
-    String path = "hdfs:///data/linkis/linkis/20220609/b4fd8f59-9492-4a0f-a074-9ac573a69b60";
-    SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
-    String dateStr = format.format(new Date());
-    ResourceHelper hdfsResourceHelper = new HdfsResourceHelper();
-    String newPath =
-        hdfsResourceHelper.generatePath(
-            "linkis", path.substring(path.lastIndexOf("/") + 1), new HashMap<>());
-    assertEquals(
-        newPath,
-        "hdfs:///apps-data/linkis/bml/" + dateStr + "/b4fd8f59-9492-4a0f-a074-9ac573a69b60");
-  }
+    @Test
+    @DisplayName("testCheckBmlResourceStoragePrefixPathIfChanged")
+    public void testUpdateVersion() {
+        String path = "hdfs:///data/linkis/linkis/20220609/b4fd8f59-9492-4a0f-a074-9ac573a69b60";
+        SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
+        String dateStr = format.format(new Date());
+        ResourceHelper hdfsResourceHelper = new HdfsResourceHelper();
+        String newPath =
+                hdfsResourceHelper.generatePath(
+                        "linkis", path.substring(path.lastIndexOf("/") + 1), new HashMap<>());
+        assertEquals(
+                newPath,
+                "hdfs:///apps-data/linkis/bml/"
+                        + dateStr
+                        + "/b4fd8f59-9492-4a0f-a074-9ac573a69b60");
+    }
 }

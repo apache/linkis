@@ -25,32 +25,32 @@ import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
 import java.lang.reflect.ParameterizedType;
 
 public abstract class BuildableByVarAccess<T> extends AbstractBuilder<T> {
-  protected VarAccess stdVarAccess;
-  protected VarAccess sysVarAccess;
+    protected VarAccess stdVarAccess;
+    protected VarAccess sysVarAccess;
 
-  protected void checkInit() {
-    if (stdVarAccess == null || sysVarAccess == null) {
-      ParameterizedType pt = (ParameterizedType) this.getClass().getGenericSuperclass();
-      Class<T> clazz = (Class<T>) pt.getActualTypeArguments()[0];
-      throw new BuilderException(
-          "BLD0003",
-          ErrorLevel.ERROR,
-          CommonErrMsg.BuilderInitErr,
-          "Cannot init builder: "
-              + clazz.getCanonicalName()
-              + "Cause: stdVarAccess or sysVarAccess is null");
+    protected void checkInit() {
+        if (stdVarAccess == null || sysVarAccess == null) {
+            ParameterizedType pt = (ParameterizedType) this.getClass().getGenericSuperclass();
+            Class<T> clazz = (Class<T>) pt.getActualTypeArguments()[0];
+            throw new BuilderException(
+                    "BLD0003",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.BuilderInitErr,
+                    "Cannot init builder: "
+                            + clazz.getCanonicalName()
+                            + "Cause: stdVarAccess or sysVarAccess is null");
+        }
+        stdVarAccess.checkInit();
+        sysVarAccess.checkInit();
     }
-    stdVarAccess.checkInit();
-    sysVarAccess.checkInit();
-  }
 
-  public BuildableByVarAccess<T> setStdVarAccess(VarAccess varAccess) {
-    this.stdVarAccess = varAccess;
-    return this;
-  }
+    public BuildableByVarAccess<T> setStdVarAccess(VarAccess varAccess) {
+        this.stdVarAccess = varAccess;
+        return this;
+    }
 
-  public BuildableByVarAccess<T> setSysVarAccess(VarAccess varAccess) {
-    this.sysVarAccess = varAccess;
-    return this;
-  }
+    public BuildableByVarAccess<T> setSysVarAccess(VarAccess varAccess) {
+        this.sysVarAccess = varAccess;
+        return this;
+    }
 }

@@ -27,12 +27,12 @@ import java.util.List;
 @Mapper
 public interface EngineConnBmlResourceDao {
 
-  List<EngineConnBmlResource> getAllEngineConnBmlResource(
-      @Param("engineConnType") String engineConnType, @Param("version") String version);
+    List<EngineConnBmlResource> getAllEngineConnBmlResource(
+            @Param("engineConnType") String engineConnType, @Param("version") String version);
 
-  void save(@Param("engineConnBmlResource") EngineConnBmlResource engineConnBmlResource);
+    void save(@Param("engineConnBmlResource") EngineConnBmlResource engineConnBmlResource);
 
-  void update(@Param("engineConnBmlResource") EngineConnBmlResource engineConnBmlResource);
+    void update(@Param("engineConnBmlResource") EngineConnBmlResource engineConnBmlResource);
 
-  void delete(@Param("engineConnBmlResource") EngineConnBmlResource engineConnBmlResource);
+    void delete(@Param("engineConnBmlResource") EngineConnBmlResource engineConnBmlResource);
 }

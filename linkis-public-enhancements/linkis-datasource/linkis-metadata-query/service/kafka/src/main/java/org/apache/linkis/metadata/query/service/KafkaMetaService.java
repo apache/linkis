@@ -32,6 +32,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -41,92 +44,100 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class KafkaMetaService extends AbstractMetaService<KafkaConnection> {
 
-  private static final Logger LOG = LoggerFactory.getLogger(KafkaMetaService.class);
-  private static final CommonVars<String> TMP_FILE_STORE_LOCATION =
-      CommonVars.apply("wds.linkis.server.mdm.service.temp.location", "/tmp/keytab");
-  private BmlClient client;
+    private static final Logger LOG = LoggerFactory.getLogger(KafkaMetaService.class);
+    private static final CommonVars<String> TMP_FILE_STORE_LOCATION =
+            CommonVars.apply("wds.linkis.server.mdm.service.temp.location", "/tmp/keytab");
+    private BmlClient client;
 
-  public KafkaMetaService() {
-    client = BmlClientFactory.createBmlClient();
-  }
+    public KafkaMetaService() {
+        client = BmlClientFactory.createBmlClient();
+    }
 
-  @Override
-  public MetadataConnection<KafkaConnection> getConnection(
-      String operator, Map<String, Object> params) throws Exception {
-    FileUtils.forceMkdir(new File(TMP_FILE_STORE_LOCATION.getValue()));
-    Resource resource =
-        new PathMatchingResourcePatternResolver().getResource(TMP_FILE_STORE_LOCATION.getValue());
-    String brokers =
-        String.valueOf(params.getOrDefault(KafkaParamsMapper.PARAM_KAFKA_BROKERS.getValue(), ""));
-    String principle =
-        String.valueOf(params.getOrDefault(KafkaParamsMapper.PARAM_KAFKA_PRINCIPLE.getValue(), ""));
-    KafkaConnection conn;
+    @Override
+    public MetadataConnection<KafkaConnection> getConnection(
+            String operator, Map<String, Object> params) throws Exception {
+        FileUtils.forceMkdir(new File(TMP_FILE_STORE_LOCATION.getValue()));
+        Resource resource =
+                new PathMatchingResourcePatternResolver()
+                        .getResource(TMP_FILE_STORE_LOCATION.getValue());
+        String brokers =
+                String.valueOf(
+                        params.getOrDefault(KafkaParamsMapper.PARAM_KAFKA_BROKERS.getValue(), ""));
+        String principle =
+                String.valueOf(
+                        params.getOrDefault(
+                                KafkaParamsMapper.PARAM_KAFKA_PRINCIPLE.getValue(), ""));
+        KafkaConnection conn;
 
-    if (StringUtils.isNotBlank(principle)) {
-      LOG.info("Try to connect Kafka MetaStore in kerberos with principle:[" + principle + "]");
-      String keytabResourceId =
-          String.valueOf(params.getOrDefault(KafkaParamsMapper.PARAM_KAFKA_KEYTAB.getValue(), ""));
-      if (StringUtils.isNotBlank(keytabResourceId)) {
-        LOG.info("Start to download resource id:[" + keytabResourceId + "]");
-        String keytabFilePath =
-            TMP_FILE_STORE_LOCATION.getValue()
-                + "/"
-                + UUID.randomUUID().toString().replace("-", "")
-                + ".keytab";
-        if (!downloadResource(keytabResourceId, operator, keytabFilePath)) {
-          throw new MetaRuntimeException(
-              "Fail to download resource i:[" + keytabResourceId + "]", null);
+        if (StringUtils.isNotBlank(principle)) {
+            LOG.info(
+                    "Try to connect Kafka MetaStore in kerberos with principle:["
+                            + principle
+                            + "]");
+            String keytabResourceId =
+                    String.valueOf(
+                            params.getOrDefault(
+                                    KafkaParamsMapper.PARAM_KAFKA_KEYTAB.getValue(), ""));
+            if (StringUtils.isNotBlank(keytabResourceId)) {
+                LOG.info("Start to download resource id:[" + keytabResourceId + "]");
+                String keytabFilePath =
+                        TMP_FILE_STORE_LOCATION.getValue()
+                                + "/"
+                                + UUID.randomUUID().toString().replace("-", "")
+                                + ".keytab";
+                if (!downloadResource(keytabResourceId, operator, keytabFilePath)) {
+                    throw new MetaRuntimeException(
+                            "Fail to download resource i:[" + keytabResourceId + "]", null);
+                }
+                conn = new KafkaConnection(brokers, principle, keytabFilePath);
+            } else {
+                throw new MetaRuntimeException(
+                        "Cannot find the keytab file in connect parameters", null);
+            }
+        } else {
+            conn = new KafkaConnection(brokers);
         }
-        conn = new KafkaConnection(brokers, principle, keytabFilePath);
-      } else {
-        throw new MetaRuntimeException("Cannot find the keytab file in connect parameters", null);
-      }
-    } else {
-      conn = new KafkaConnection(brokers);
+
+        // because KafkaAdminClient.create does not do a real connection, we use listTopics here for
+        // testing connection
+        conn.getClient().listTopics().names().get();
+
+        return new MetadataConnection<>(conn, true);
     }
 
-    // because KafkaAdminClient.create does not do a real connection, we use listTopics here for
-    // testing connection
-    conn.getClient().listTopics().names().get();
-
-    return new MetadataConnection<>(conn, true);
-  }
-
-  @Override
-  public List<String> queryDatabases(KafkaConnection connection) {
-    return Arrays.asList("default");
-  }
-
-  @Override
-  public List<String> queryTables(KafkaConnection connection, String database) {
-    try {
-      return connection.getClient().listTopics().names().get().stream()
-          .collect(Collectors.toList());
-    } catch (Exception e) {
-      throw new RuntimeException("Fail to get Kafka topics(获取topic列表失败)", e);
+    @Override
+    public List<String> queryDatabases(KafkaConnection connection) {
+        return Arrays.asList("default");
     }
-  }
 
-  private boolean downloadResource(String resourceId, String user, String absolutePath)
-      throws IOException {
-    LOG.info(
-        "Try to download resource resourceId:["
-            + resourceId
-            + "]"
-            + ",user=["
-            + user
-            + "], will store in path:"
-            + absolutePath);
-    BmlDownloadResponse downloadResponse = client.downloadResource(user, resourceId, absolutePath);
-    if (downloadResponse.isSuccess()) {
-      IOUtils.copy(downloadResponse.inputStream(), new FileOutputStream(absolutePath));
-      return true;
+    @Override
+    public List<String> queryTables(KafkaConnection connection, String database) {
+        try {
+            return connection.getClient().listTopics().names().get().stream()
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            throw new RuntimeException("Fail to get Kafka topics(获取topic列表失败)", e);
+        }
     }
-    return false;
-  }
+
+    private boolean downloadResource(String resourceId, String user, String absolutePath)
+            throws IOException {
+        LOG.info(
+                "Try to download resource resourceId:["
+                        + resourceId
+                        + "]"
+                        + ",user=["
+                        + user
+                        + "], will store in path:"
+                        + absolutePath);
+        BmlDownloadResponse downloadResponse =
+                client.downloadResource(user, resourceId, absolutePath);
+        if (downloadResponse.isSuccess()) {
+            IOUtils.copy(downloadResponse.inputStream(), new FileOutputStream(absolutePath));
+            return true;
+        }
+        return false;
+    }
 }

@@ -21,28 +21,28 @@ import org.apache.linkis.protocol.message.RequestProtocol;
 
 public class YarnAuthorizationResponse implements RequestProtocol {
 
-  public YarnAuthorizationResponse(String authorizationStr, String yarnURL) {
-    this.authorizationStr = authorizationStr;
-    this.yarnURL = yarnURL;
-  }
+    public YarnAuthorizationResponse(String authorizationStr, String yarnURL) {
+        this.authorizationStr = authorizationStr;
+        this.yarnURL = yarnURL;
+    }
 
-  public String authorizationStr;
+    public String authorizationStr;
 
-  public String yarnURL;
+    public String yarnURL;
 
-  public String getAuthorizationStr() {
-    return authorizationStr;
-  }
+    public String getAuthorizationStr() {
+        return authorizationStr;
+    }
 
-  public void setAuthorizationStr(String authorizationStr) {
-    this.authorizationStr = authorizationStr;
-  }
+    public void setAuthorizationStr(String authorizationStr) {
+        this.authorizationStr = authorizationStr;
+    }
 
-  public String getYarnURL() {
-    return yarnURL;
-  }
+    public String getYarnURL() {
+        return yarnURL;
+    }
 
-  public void setYarnURL(String yarnURL) {
-    this.yarnURL = yarnURL;
-  }
+    public void setYarnURL(String yarnURL) {
+        this.yarnURL = yarnURL;
+    }
 }

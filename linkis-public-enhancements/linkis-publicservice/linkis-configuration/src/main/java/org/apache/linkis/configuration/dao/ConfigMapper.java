@@ -28,48 +28,48 @@ import java.util.List;
 
 public interface ConfigMapper {
 
-  List<ConfigKeyValue> getConfigByEngineUserCreator(
-      @Param("engineType") String engineType,
-      @Param("creator") String creator,
-      @Param("userName") String userName);
+    List<ConfigKeyValue> getConfigByEngineUserCreator(
+            @Param("engineType") String engineType,
+            @Param("creator") String creator,
+            @Param("userName") String userName);
 
-  List<ConfigKeyValue> getConfigKeyByLabelIds(@Param("ids") List<Integer> ids);
+    List<ConfigKeyValue> getConfigKeyByLabelIds(@Param("ids") List<Integer> ids);
 
-  List<ConfigKeyValue> getConfigKeyValueByLabelId(@Param("labelId") Integer labelId);
+    List<ConfigKeyValue> getConfigKeyValueByLabelId(@Param("labelId") Integer labelId);
 
-  Long selectAppIDByAppName(@Param("name") String appName);
+    Long selectAppIDByAppName(@Param("name") String appName);
 
-  void insertValue(ConfigValue configValue);
+    void insertValue(ConfigValue configValue);
 
-  ConfigValue getConfigValueById(@Param("id") Long id);
+    ConfigValue getConfigValueById(@Param("id") Long id);
 
-  ConfigValue getConfigValueByKeyAndLabel(ConfigValue configValue);
+    ConfigValue getConfigValueByKeyAndLabel(ConfigValue configValue);
 
-  void deleteConfigKeyValue(ConfigValue configValue);
+    void deleteConfigKeyValue(ConfigValue configValue);
 
-  void insertValueList(@Param("configValues") List<ConfigValue> configValues);
+    void insertValueList(@Param("configValues") List<ConfigValue> configValues);
 
-  void updateUserValue(@Param("value") String value, @Param("id") Long id);
+    void updateUserValue(@Param("value") String value, @Param("id") Long id);
 
-  void updateUserValueList(List<ConfigValue> configValueList);
+    void updateUserValueList(List<ConfigValue> configValueList);
 
-  ConfigKey selectKeyByKeyID(@Param("id") Long keyID);
+    ConfigKey selectKeyByKeyID(@Param("id") Long keyID);
 
-  List<ConfigKey> seleteKeyByKeyName(@Param("keyName") String keyName);
+    List<ConfigKey> seleteKeyByKeyName(@Param("keyName") String keyName);
 
-  List<ConfigKey> listKeyByStringValue(@Param("stringValue") String stringValue);
+    List<ConfigKey> listKeyByStringValue(@Param("stringValue") String stringValue);
 
-  void insertCreator(String creator);
+    void insertCreator(String creator);
 
-  List<CategoryLabel> getCategory();
+    List<CategoryLabel> getCategory();
 
-  CategoryLabel getCategoryById(@Param("id") Integer id);
+    CategoryLabel getCategoryById(@Param("id") Integer id);
 
-  void insertCategory(CategoryLabel categoryLabel);
+    void insertCategory(CategoryLabel categoryLabel);
 
-  void deleteCategory(@Param("ids") List<Integer> ids);
+    void deleteCategory(@Param("ids") List<Integer> ids);
 
-  void updateCategory(CategoryLabel categoryLabel);
+    void updateCategory(CategoryLabel categoryLabel);
 
-  void insertKey(ConfigKey key);
+    void insertKey(ConfigKey key);
 }

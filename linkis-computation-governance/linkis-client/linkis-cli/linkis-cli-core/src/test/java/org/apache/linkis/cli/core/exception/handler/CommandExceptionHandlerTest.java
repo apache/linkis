@@ -29,47 +29,47 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 public class CommandExceptionHandlerTest {
-  ExceptionHandler handler = new CommandExceptionHandler();
+    ExceptionHandler handler = new CommandExceptionHandler();
 
-  // todo
-  @Disabled
-  @Test
-  public void handle() throws Exception {
-    CommandException cmdException =
-        new CommandException(
-            "CODE-001",
-            ErrorLevel.ERROR,
-            CommonErrMsg.TemplateGenErr,
-            "Failed to generate template.");
-    assertDoesNotThrow(() -> handler.handle(cmdException));
+    // todo
+    @Disabled
+    @Test
+    public void handle() throws Exception {
+        CommandException cmdException =
+                new CommandException(
+                        "CODE-001",
+                        ErrorLevel.ERROR,
+                        CommonErrMsg.TemplateGenErr,
+                        "Failed to generate template.");
+        assertDoesNotThrow(() -> handler.handle(cmdException));
 
-    String[] params = {"param1", "param2"};
-    CommandException cmdException2 =
-        new CommandException(
-            "CODE-001",
-            ErrorLevel.ERROR,
-            CommonErrMsg.TemplateGenErr,
-            params,
-            "Failed to generate template.");
-    assertDoesNotThrow(() -> handler.handle(cmdException2));
+        String[] params = {"param1", "param2"};
+        CommandException cmdException2 =
+                new CommandException(
+                        "CODE-001",
+                        ErrorLevel.ERROR,
+                        CommonErrMsg.TemplateGenErr,
+                        params,
+                        "Failed to generate template.");
+        assertDoesNotThrow(() -> handler.handle(cmdException2));
 
-    CommandException cmdException3 =
-        new CommandException(
-            "CODE-001",
-            ErrorLevel.ERROR,
-            CommonErrMsg.TemplateGenErr,
-            TestCmdType.PRIMARY,
-            "Failed to generate template.");
-    assertDoesNotThrow(() -> handler.handle(cmdException3));
+        CommandException cmdException3 =
+                new CommandException(
+                        "CODE-001",
+                        ErrorLevel.ERROR,
+                        CommonErrMsg.TemplateGenErr,
+                        TestCmdType.PRIMARY,
+                        "Failed to generate template.");
+        assertDoesNotThrow(() -> handler.handle(cmdException3));
 
-    CommandException cmdException4 =
-        new CommandException(
-            "CODE-001",
-            ErrorLevel.ERROR,
-            CommonErrMsg.TemplateGenErr,
-            TestCmdType.PRIMARY,
-            params,
-            "Failed to generate template.");
-    assertDoesNotThrow(() -> handler.handle(cmdException4));
-  }
+        CommandException cmdException4 =
+                new CommandException(
+                        "CODE-001",
+                        ErrorLevel.ERROR,
+                        CommonErrMsg.TemplateGenErr,
+                        TestCmdType.PRIMARY,
+                        params,
+                        "Failed to generate template.");
+        assertDoesNotThrow(() -> handler.handle(cmdException4));
+    }
 }

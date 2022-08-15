@@ -21,9 +21,9 @@ import org.apache.linkis.cli.common.entity.job.Job;
 import org.apache.linkis.cli.common.entity.job.JobData;
 
 public interface ResultAccessibleJob extends Job {
-  /**
-   * Retrieve reault-set. This methods should be non-blocking and result should be appended into
-   * {@link JobData}
-   */
-  void startRetrieveResult();
+    /**
+     * Retrieve reault-set. This methods should be non-blocking and result should be appended into
+     * {@link JobData}
+     */
+    void startRetrieveResult();
 }

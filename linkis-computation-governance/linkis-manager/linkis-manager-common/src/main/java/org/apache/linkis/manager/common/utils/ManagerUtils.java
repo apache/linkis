@@ -28,26 +28,26 @@ import java.util.Map;
 
 public class ManagerUtils {
 
-  private static final LabelBuilderFactory labelFactory =
-      LabelBuilderFactoryContext.getLabelBuilderFactory();
+    private static final LabelBuilderFactory labelFactory =
+            LabelBuilderFactoryContext.getLabelBuilderFactory();
 
-  public static <T> T getValueOrDefault(Map<String, Object> map, String key, T defaultValue) {
-    Object value = defaultValue;
-    if (null != map && null != map.get(key)) {
-      value = map.get(key);
+    public static <T> T getValueOrDefault(Map<String, Object> map, String key, T defaultValue) {
+        Object value = defaultValue;
+        if (null != map && null != map.get(key)) {
+            value = map.get(key);
+        }
+        return (T) value;
     }
-    return (T) value;
-  }
 
-  public static String getAdminUser() {
+    public static String getAdminUser() {
 
-    if (StringUtils.isNotBlank(ManagerCommonConf.DEFAULT_ADMIN().getValue())) {
-      return ManagerCommonConf.DEFAULT_ADMIN().getValue();
+        if (StringUtils.isNotBlank(ManagerCommonConf.DEFAULT_ADMIN().getValue())) {
+            return ManagerCommonConf.DEFAULT_ADMIN().getValue();
+        }
+        return System.getProperty("user.name");
     }
-    return System.getProperty("user.name");
-  }
 
-  public static Label<?> persistenceLabelToRealLabel(Label<?> label) {
-    return labelFactory.createLabel(label.getLabelKey(), label.getValue());
-  }
+    public static Label<?> persistenceLabelToRealLabel(Label<?> label) {
+        return labelFactory.createLabel(label.getLabelKey(), label.getValue());
+    }
 }

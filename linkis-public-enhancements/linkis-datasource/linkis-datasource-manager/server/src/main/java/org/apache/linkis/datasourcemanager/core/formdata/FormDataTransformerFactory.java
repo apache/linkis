@@ -22,16 +22,16 @@ import java.util.concurrent.ConcurrentHashMap;
 /** Simple static factory */
 public class FormDataTransformerFactory {
 
-  private static final ConcurrentHashMap<String, MultiPartFormDataTransformer>
-      formDataTransformerStored = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<String, MultiPartFormDataTransformer>
+            formDataTransformerStored = new ConcurrentHashMap<>();
 
-  /**
-   * Build custom implement
-   *
-   * @return
-   */
-  public static MultiPartFormDataTransformer buildCustom() {
-    return formDataTransformerStored.computeIfAbsent(
-        "custom", key -> new CustomMultiPartFormDataTransformer());
-  }
+    /**
+     * Build custom implement
+     *
+     * @return
+     */
+    public static MultiPartFormDataTransformer buildCustom() {
+        return formDataTransformerStored.computeIfAbsent(
+                "custom", key -> new CustomMultiPartFormDataTransformer());
+    }
 }

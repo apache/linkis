@@ -22,8 +22,8 @@ import org.apache.linkis.cs.common.exception.CSErrorException;
 
 public interface LinkisJobDataService {
 
-  LinkisJobData getLinkisJobData(String contextIDStr, String contextKey) throws CSErrorException;
+    LinkisJobData getLinkisJobData(String contextIDStr, String contextKey) throws CSErrorException;
 
-  void putLinkisJobData(String contextIDStr, String contextKeyStr, LinkisJobData linkisJobData)
-      throws CSErrorException;
+    void putLinkisJobData(String contextIDStr, String contextKeyStr, LinkisJobData linkisJobData)
+            throws CSErrorException;
 }

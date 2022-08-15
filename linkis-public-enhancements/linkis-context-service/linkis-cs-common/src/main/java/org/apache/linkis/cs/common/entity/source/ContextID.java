@@ -19,13 +19,13 @@ package org.apache.linkis.cs.common.entity.source;
 
 public interface ContextID extends Source {
 
-  String getContextId();
+    String getContextId();
 
-  void setContextId(String contextId);
+    void setContextId(String contextId);
 
-  default int getContextIDType() {
-    return 0;
-  }
+    default int getContextIDType() {
+        return 0;
+    }
 
-  default void setContextIDType(int contextIDType) {}
+    default void setContextIDType(int contextIDType) {}
 }

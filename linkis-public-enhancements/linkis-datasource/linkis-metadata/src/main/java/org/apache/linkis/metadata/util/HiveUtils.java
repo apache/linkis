@@ -21,36 +21,36 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 
-import java.io.File;
-import java.util.Base64;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.util.Base64;
+
 public class HiveUtils {
 
-  static Logger logger = LoggerFactory.getLogger(HiveUtils.class);
+    static Logger logger = LoggerFactory.getLogger(HiveUtils.class);
 
-  public static Configuration getDefaultConf(String userName) {
-    Configuration conf = new Configuration();
-    String hiveConfPath = DWSConfig.HIVE_CONF_DIR.getValue();
-    if (StringUtils.isNotEmpty(hiveConfPath)) {
-      logger.info("Load hive configuration from " + hiveConfPath);
-      conf.addResource(new Path(hiveConfPath + File.separator + "hive-site.xml"));
-    } else {
-      conf.addResource("hive-site.xml");
+    public static Configuration getDefaultConf(String userName) {
+        Configuration conf = new Configuration();
+        String hiveConfPath = DWSConfig.HIVE_CONF_DIR.getValue();
+        if (StringUtils.isNotEmpty(hiveConfPath)) {
+            logger.info("Load hive configuration from " + hiveConfPath);
+            conf.addResource(new Path(hiveConfPath + File.separator + "hive-site.xml"));
+        } else {
+            conf.addResource("hive-site.xml");
+        }
+        return conf;
     }
-    return conf;
-  }
 
-  public static String decode(String str) {
-    Base64.Decoder decoder = Base64.getMimeDecoder();
-    String res = str;
-    try {
-      res = new String(decoder.decode(str));
-    } catch (Throwable e) {
-      logger.error(str + " decode failed", e);
+    public static String decode(String str) {
+        Base64.Decoder decoder = Base64.getMimeDecoder();
+        String res = str;
+        try {
+            res = new String(decoder.decode(str));
+        } catch (Throwable e) {
+            logger.error(str + " decode failed", e);
+        }
+        return res;
     }
-    return res;
-  }
 }

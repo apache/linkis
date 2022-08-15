@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,14 +19,12 @@ package org.apache.linkis.engineconnplugin.sqoop.context
 
 import org.apache.linkis.common.conf.CommonVars
 
+
 object SqoopResourceConfiguration {
 
   val LINKIS_SQOOP_TASK_MAP_MEMORY: CommonVars[Int] = CommonVars[Int]("sqoop.task.map.memory", 2)
 
-  val LINKIS_SQOOP_TASK_MAP_CPU_CORES: CommonVars[Int] =
-    CommonVars[Int]("sqoop.task.map.cpu.cores", 1)
+  val LINKIS_SQOOP_TASK_MAP_CPU_CORES: CommonVars[Int] = CommonVars[Int]("sqoop.task.map.cpu.cores", 1)
 
-  val LINKIS_QUEUE_NAME: CommonVars[String] =
-    CommonVars[String]("wds.linkis.rm.yarnqueue", "default")
-
+  val LINKIS_QUEUE_NAME: CommonVars[String] = CommonVars[String]("wds.linkis.rm.yarnqueue", "default")
 }

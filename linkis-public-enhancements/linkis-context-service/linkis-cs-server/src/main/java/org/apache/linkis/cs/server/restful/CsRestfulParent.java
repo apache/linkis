@@ -37,91 +37,93 @@ import org.apache.linkis.server.utils.ModuleUserUtils;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
 public interface CsRestfulParent {
 
-  default HttpAnswerJob submitRestJob(
-      HttpServletRequest req, ServiceMethod method, Object... objects) throws InterruptedException {
-    // TODO: 2020/3/3 单例
-    HttpAnswerJob job = (HttpAnswerJob) new RestJobBuilder().build(getServiceType());
-    HttpRequestProtocol protocol = job.getRequestProtocol();
-    protocol.setUsername(ModuleUserUtils.getOperationUser(req));
-    protocol.setServiceMethod(method);
-    protocol.setRequestObjects(objects);
-    getScheduler().submit(job);
-    return job;
-  }
-
-  default Message generateResponse(HttpAnswerJob job, String responseKey) throws CSErrorException {
-    HttpResponseProtocol responseProtocol = job.getResponseProtocol();
-    if (responseProtocol instanceof RestResponseProtocol) {
-      Message message = ((RestResponseProtocol) responseProtocol).get();
-      if (message == null) {
-        return Message.error("job execute timeout");
-      }
-      int status = ((RestResponseProtocol) responseProtocol).get().getStatus();
-      if (status == 1) {
-        // failed
-        return ((RestResponseProtocol) responseProtocol).get();
-      } else if (status == 0) {
-        Object data = job.getResponseProtocol().getResponseData();
-        if (data == null) {
-          return Message.ok().data(responseKey, null);
-        } else if (data instanceof List && ((List) data).isEmpty()) {
-          return Message.ok().data(responseKey, new String[] {});
-        } else if (data instanceof List) {
-          ArrayList<String> strings = new ArrayList<>();
-          for (Object d : (List) data) {
-            strings.add(CsUtils.serialize(d));
-          }
-          return Message.ok().data(responseKey, strings);
-        } else {
-          String dataStr = CsUtils.serialize(data);
-          return Message.ok().data(responseKey, dataStr);
-        }
-      } else {
-
-      }
+    default HttpAnswerJob submitRestJob(
+            HttpServletRequest req, ServiceMethod method, Object... objects)
+            throws InterruptedException {
+        // TODO: 2020/3/3 单例
+        HttpAnswerJob job = (HttpAnswerJob) new RestJobBuilder().build(getServiceType());
+        HttpRequestProtocol protocol = job.getRequestProtocol();
+        protocol.setUsername(ModuleUserUtils.getOperationUser(req));
+        protocol.setServiceMethod(method);
+        protocol.setRequestObjects(objects);
+        getScheduler().submit(job);
+        return job;
     }
-    return Message.ok();
-  }
 
-  ServiceType getServiceType();
+    default Message generateResponse(HttpAnswerJob job, String responseKey)
+            throws CSErrorException {
+        HttpResponseProtocol responseProtocol = job.getResponseProtocol();
+        if (responseProtocol instanceof RestResponseProtocol) {
+            Message message = ((RestResponseProtocol) responseProtocol).get();
+            if (message == null) {
+                return Message.error("job execute timeout");
+            }
+            int status = ((RestResponseProtocol) responseProtocol).get().getStatus();
+            if (status == 1) {
+                // failed
+                return ((RestResponseProtocol) responseProtocol).get();
+            } else if (status == 0) {
+                Object data = job.getResponseProtocol().getResponseData();
+                if (data == null) {
+                    return Message.ok().data(responseKey, null);
+                } else if (data instanceof List && ((List) data).isEmpty()) {
+                    return Message.ok().data(responseKey, new String[] {});
+                } else if (data instanceof List) {
+                    ArrayList<String> strings = new ArrayList<>();
+                    for (Object d : (List) data) {
+                        strings.add(CsUtils.serialize(d));
+                    }
+                    return Message.ok().data(responseKey, strings);
+                } else {
+                    String dataStr = CsUtils.serialize(data);
+                    return Message.ok().data(responseKey, dataStr);
+                }
+            } else {
 
-  CsScheduler getScheduler();
+            }
+        }
+        return Message.ok();
+    }
 
-  default ContextID getContextIDFromJsonNode(JsonNode jsonNode)
-      throws CSErrorException, IOException, ClassNotFoundException {
-    return deserialize(jsonNode, "contextID");
-  }
+    ServiceType getServiceType();
 
-  default <T> T deserialize(JsonNode jsonNode, String key) throws CSErrorException {
-    String str = jsonNode.get(key).textValue();
-    return (T) CsUtils.SERIALIZE.deserialize(str);
-  }
+    CsScheduler getScheduler();
 
-  default ContextKey getContextKeyFromJsonNode(JsonNode jsonNode)
-      throws CSErrorException, IOException, ClassNotFoundException {
-    return deserialize(jsonNode, "contextKey");
-  }
+    default ContextID getContextIDFromJsonNode(JsonNode jsonNode)
+            throws CSErrorException, IOException, ClassNotFoundException {
+        return deserialize(jsonNode, "contextID");
+    }
 
-  default ContextValue getContextValueFromJsonNode(JsonNode jsonNode)
-      throws CSErrorException, IOException, ClassNotFoundException {
-    return deserialize(jsonNode, "contextValue");
-  }
+    default <T> T deserialize(JsonNode jsonNode, String key) throws CSErrorException {
+        String str = jsonNode.get(key).textValue();
+        return (T) CsUtils.SERIALIZE.deserialize(str);
+    }
 
-  default ContextKeyValue getContextKeyValueFromJsonNode(JsonNode jsonNode)
-      throws CSErrorException, IOException, ClassNotFoundException {
-    return deserialize(jsonNode, "contextKeyValue");
-  }
+    default ContextKey getContextKeyFromJsonNode(JsonNode jsonNode)
+            throws CSErrorException, IOException, ClassNotFoundException {
+        return deserialize(jsonNode, "contextKey");
+    }
 
-  default ContextHistory getContextHistoryFromJsonNode(JsonNode jsonNode)
-      throws CSErrorException, IOException, ClassNotFoundException {
-    return deserialize(jsonNode, "contextHistory");
-  }
+    default ContextValue getContextValueFromJsonNode(JsonNode jsonNode)
+            throws CSErrorException, IOException, ClassNotFoundException {
+        return deserialize(jsonNode, "contextValue");
+    }
+
+    default ContextKeyValue getContextKeyValueFromJsonNode(JsonNode jsonNode)
+            throws CSErrorException, IOException, ClassNotFoundException {
+        return deserialize(jsonNode, "contextKeyValue");
+    }
+
+    default ContextHistory getContextHistoryFromJsonNode(JsonNode jsonNode)
+            throws CSErrorException, IOException, ClassNotFoundException {
+        return deserialize(jsonNode, "contextHistory");
+    }
 }

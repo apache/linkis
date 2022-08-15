@@ -28,57 +28,57 @@ import org.slf4j.LoggerFactory;
 /** Description:一个微服务对contextKey的监听器 */
 public abstract class ContextKeyListener implements ContextClientListener {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(ContextKeyListener.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ContextKeyListener.class);
 
-  private ContextKey contextKey;
+    private ContextKey contextKey;
 
-  private Context context;
+    private Context context;
 
-  public ContextKeyListener() {}
+    public ContextKeyListener() {}
 
-  public ContextKeyListener(ContextKey contextKey) {
-    this.contextKey = contextKey;
-  }
-
-  public ContextKey getContextKey() {
-    return contextKey;
-  }
-
-  public void setContextKey(ContextKey contextKey) {
-    this.contextKey = contextKey;
-  }
-
-  public Context getContext() {
-    return context;
-  }
-
-  public void setContext(Context context) {
-    this.context = context;
-  }
-
-  @Override
-  public void onContextUpdated(Event event) {
-    if (event instanceof DefaultContextKeyEvent) {
-      context.setLocal(((DefaultContextKeyEvent) event).getContextKeyValue());
+    public ContextKeyListener(ContextKey contextKey) {
+        this.contextKey = contextKey;
     }
-  }
 
-  @Override
-  public void onEvent(Event event) {
-    if (event instanceof DefaultContextKeyEvent) {
-      DefaultContextKeyEvent defaultContextKeyEvent = (DefaultContextKeyEvent) event;
-      if (defaultContextKeyEvent.getContextKeyValue().getContextKey().equals(contextKey)) {
-        switch (defaultContextKeyEvent.getOperateType()) {
-          case UPDATE:
-            onContextUpdated(defaultContextKeyEvent);
-            break;
-          case CREATE:
-            onContextCreated(defaultContextKeyEvent);
-            break;
-          default:
-            break;
+    public ContextKey getContextKey() {
+        return contextKey;
+    }
+
+    public void setContextKey(ContextKey contextKey) {
+        this.contextKey = contextKey;
+    }
+
+    public Context getContext() {
+        return context;
+    }
+
+    public void setContext(Context context) {
+        this.context = context;
+    }
+
+    @Override
+    public void onContextUpdated(Event event) {
+        if (event instanceof DefaultContextKeyEvent) {
+            context.setLocal(((DefaultContextKeyEvent) event).getContextKeyValue());
         }
-      }
     }
-  }
+
+    @Override
+    public void onEvent(Event event) {
+        if (event instanceof DefaultContextKeyEvent) {
+            DefaultContextKeyEvent defaultContextKeyEvent = (DefaultContextKeyEvent) event;
+            if (defaultContextKeyEvent.getContextKeyValue().getContextKey().equals(contextKey)) {
+                switch (defaultContextKeyEvent.getOperateType()) {
+                    case UPDATE:
+                        onContextUpdated(defaultContextKeyEvent);
+                        break;
+                    case CREATE:
+                        onContextCreated(defaultContextKeyEvent);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+    }
 }

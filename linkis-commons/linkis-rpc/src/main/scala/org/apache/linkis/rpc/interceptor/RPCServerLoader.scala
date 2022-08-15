@@ -5,18 +5,19 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+ 
 package org.apache.linkis.rpc.interceptor
 
+import com.netflix.loadbalancer.{DynamicServerListLoadBalancer, ILoadBalancer, Server}
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.rpc.exception.NoInstanceExistsException
@@ -25,7 +26,6 @@ import org.apache.linkis.rpc.sender.SpringCloudFeignConfigurationCache
 import scala.collection.JavaConversions._
 import scala.concurrent.duration.Duration
 
-import com.netflix.loadbalancer.{DynamicServerListLoadBalancer, ILoadBalancer, Server}
 
 trait RPCServerLoader {
 
@@ -38,7 +38,6 @@ trait RPCServerLoader {
   def getServiceInstances(applicationName: String): Array[ServiceInstance]
 
 }
-
 abstract class AbstractRPCServerLoader extends RPCServerLoader with Logging {
 
   type SpringCloudServiceInstance = org.springframework.cloud.client.ServiceInstance
@@ -55,50 +54,26 @@ abstract class AbstractRPCServerLoader extends RPCServerLoader with Logging {
     }
   }
 
-  private def getOrRefresh(
-      refresh: => Unit,
-      refreshed: => Boolean,
-      serviceInstance: ServiceInstance
-  ): Unit = {
-    val instanceNotExists = new NoInstanceExistsException(
-      10051,
-      "The instance " +
-        serviceInstance.getInstance + " of application " + serviceInstance.getApplicationName + " is not exists."
-    )
-    if (!refreshed)
-      Utils.tryThrow(
-        Utils.waitUntil(
-          () => {
-            refresh
-            val isRefreshed = refreshed
-            if (!isRefreshed)
-              logger.info(
-                s"Need a $serviceInstance, but cannot find in DiscoveryClient refresh list."
-              )
-            isRefreshed
-          },
-          refreshMaxWaitTime,
-          500,
-          2000
-        )
-      ) { t =>
-        instanceNotExists.initCause(t)
-        instanceNotExists
-      }
+  private def getOrRefresh(refresh: => Unit, refreshed: => Boolean, serviceInstance: ServiceInstance): Unit = {
+    val instanceNotExists = new NoInstanceExistsException(10051, "The instance " +
+      serviceInstance.getInstance + " of application " + serviceInstance.getApplicationName + " is not exists.")
+    if(!refreshed) Utils.tryThrow(Utils.waitUntil(() => {
+      refresh
+      val isRefreshed = refreshed
+      if(!isRefreshed)
+        logger.info(s"Need a $serviceInstance, but cannot find in DiscoveryClient refresh list.")
+      isRefreshed
+    }, refreshMaxWaitTime, 500, 2000)) { t =>
+      instanceNotExists.initCause(t)
+      instanceNotExists
+    }
   }
 
-  override def getOrRefreshServiceInstance(serviceInstance: ServiceInstance): Unit = getOrRefresh(
-    refreshAllServers(),
-    getServiceInstances(serviceInstance.getApplicationName).contains(serviceInstance),
-    serviceInstance
-  )
+  override def getOrRefreshServiceInstance(serviceInstance: ServiceInstance): Unit = getOrRefresh(refreshAllServers(),
+    getServiceInstances(serviceInstance.getApplicationName).contains(serviceInstance), serviceInstance)
 
   override def getServer(lb: ILoadBalancer, serviceInstance: ServiceInstance): Server = {
-    getOrRefresh(
-      refreshServerList(lb),
-      lb.getAllServers.exists(_.getHostPort == serviceInstance.getInstance),
-      serviceInstance
-    )
+    getOrRefresh(refreshServerList(lb), lb.getAllServers.exists(_.getHostPort == serviceInstance.getInstance), serviceInstance)
     lb.getAllServers.find(_.getHostPort == serviceInstance.getInstance).get
 //    {
 //      var servers = lb.getAllServers
@@ -122,16 +97,10 @@ abstract class AbstractRPCServerLoader extends RPCServerLoader with Logging {
   def getDWCServiceInstance(serviceInstance: SpringCloudServiceInstance): ServiceInstance
 
   override def getServiceInstances(applicationName: String): Array[ServiceInstance] =
-    SpringCloudFeignConfigurationCache.getDiscoveryClient
-      .getInstances(applicationName)
-      .iterator()
-      .map { s =>
-        val serviceInstance = getDWCServiceInstance(s)
-        serviceInstance.setApplicationName(
-          applicationName
-        ) // 必须set，因为spring.application.name是区分大小写的，但是Discovery可能不区分
-        serviceInstance
-      }
-      .toArray
+    SpringCloudFeignConfigurationCache.getDiscoveryClient.getInstances(applicationName).iterator().map{ s =>
+      val serviceInstance = getDWCServiceInstance(s)
+      serviceInstance.setApplicationName(applicationName) //必须set，因为spring.application.name是区分大小写的，但是Discovery可能不区分
+      serviceInstance
+    }.toArray
 
 }

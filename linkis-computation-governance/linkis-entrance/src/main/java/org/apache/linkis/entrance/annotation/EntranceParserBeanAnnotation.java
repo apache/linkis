@@ -33,26 +33,26 @@ import java.lang.annotation.Target;
 @Bean(value = EntranceParserBeanAnnotation.BEAN_NAME)
 @Component(value = EntranceParserBeanAnnotation.BEAN_NAME)
 public @interface EntranceParserBeanAnnotation {
-  String BEAN_NAME = "entranceParser";
+    String BEAN_NAME = "entranceParser";
 
-  @AliasFor(annotation = Component.class)
-  String value() default BEAN_NAME;
-
-  @Target({
-    ElementType.CONSTRUCTOR,
-    ElementType.FIELD,
-    ElementType.METHOD,
-    ElementType.TYPE,
-    ElementType.PARAMETER
-  })
-  @Retention(RetentionPolicy.RUNTIME)
-  @Qualifier(BEAN_NAME)
-  @Autowired
-  @interface EntranceParserAutowiredAnnotation {
-    @AliasFor(annotation = Qualifier.class)
+    @AliasFor(annotation = Component.class)
     String value() default BEAN_NAME;
 
-    @AliasFor(annotation = Autowired.class)
-    boolean required() default true;
-  }
+    @Target({
+        ElementType.CONSTRUCTOR,
+        ElementType.FIELD,
+        ElementType.METHOD,
+        ElementType.TYPE,
+        ElementType.PARAMETER
+    })
+    @Retention(RetentionPolicy.RUNTIME)
+    @Qualifier(BEAN_NAME)
+    @Autowired
+    @interface EntranceParserAutowiredAnnotation {
+        @AliasFor(annotation = Qualifier.class)
+        String value() default BEAN_NAME;
+
+        @AliasFor(annotation = Autowired.class)
+        boolean required() default true;
+    }
 }

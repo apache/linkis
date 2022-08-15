@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -25,18 +25,13 @@ import scala.collection.convert.WrapAsScala._
 
 object GrammarFactory {
 
-  private val grammars = ClassUtils.reflections
-    .getSubTypesOf(classOf[Grammar])
-    .filterNot(ClassUtils.isInterfaceOrAbstract)
-    .map(_.newInstance)
-    .toArray
+  private val grammars = ClassUtils.reflections.getSubTypesOf(classOf[Grammar]).filterNot(ClassUtils.isInterfaceOrAbstract).map(_.newInstance).toArray
 
   def getGrammars: Array[Grammar] = grammars
 
   def apply(sql: String, context: FlinkEngineConnContext): Grammar = getGrammar(sql, context)
     .getOrElse(throw new SqlExecutionException("Not support grammar " + sql))
 
-  def getGrammar(sql: String, context: FlinkEngineConnContext): Option[Grammar] =
-    grammars.find(_.canParse(sql)).map(_.copy(context, sql))
+  def getGrammar(sql: String, context: FlinkEngineConnContext): Option[Grammar] = grammars.find(_.canParse(sql)).map(_.copy(context, sql))
 
 }

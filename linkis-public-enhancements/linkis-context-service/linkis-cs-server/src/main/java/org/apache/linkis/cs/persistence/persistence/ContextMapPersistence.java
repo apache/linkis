@@ -29,41 +29,41 @@ import java.util.List;
 
 public interface ContextMapPersistence {
 
-  void create(ContextID contextID, ContextKeyValue contextKeyValue) throws CSErrorException;
+    void create(ContextID contextID, ContextKeyValue contextKeyValue) throws CSErrorException;
 
-  void update(ContextID contextID, ContextKeyValue contextKeyValue) throws CSErrorException;
+    void update(ContextID contextID, ContextKeyValue contextKeyValue) throws CSErrorException;
 
-  ContextKeyValue get(ContextID contextID, ContextKey contextKey) throws CSErrorException;
+    ContextKeyValue get(ContextID contextID, ContextKey contextKey) throws CSErrorException;
 
-  List<ContextKeyValue> getAll(ContextID contextID, String key) throws CSErrorException;
+    List<ContextKeyValue> getAll(ContextID contextID, String key) throws CSErrorException;
 
-  List<ContextKeyValue> getAll(ContextID contextID) throws CSErrorException;
+    List<ContextKeyValue> getAll(ContextID contextID) throws CSErrorException;
 
-  List<ContextKeyValue> getAll(ContextID contextID, ContextScope contextScope)
-      throws CSErrorException;
+    List<ContextKeyValue> getAll(ContextID contextID, ContextScope contextScope)
+            throws CSErrorException;
 
-  List<ContextKeyValue> getAll(ContextID contextID, ContextType contextType)
-      throws CSErrorException;
+    List<ContextKeyValue> getAll(ContextID contextID, ContextType contextType)
+            throws CSErrorException;
 
-  void reset(ContextID contextID, ContextKey contextKey) throws CSErrorException;
+    void reset(ContextID contextID, ContextKey contextKey) throws CSErrorException;
 
-  void remove(ContextID contextID, ContextKey contextKey) throws CSErrorException;
+    void remove(ContextID contextID, ContextKey contextKey) throws CSErrorException;
 
-  void removeAll(ContextID contextID) throws CSErrorException;
+    void removeAll(ContextID contextID) throws CSErrorException;
 
-  void removeAll(ContextID contextID, ContextType contextType) throws CSErrorException;
+    void removeAll(ContextID contextID, ContextType contextType) throws CSErrorException;
 
-  void removeAll(ContextID contextID, ContextScope contextScope) throws CSErrorException;
+    void removeAll(ContextID contextID, ContextScope contextScope) throws CSErrorException;
 
-  void removeByKeyPrefix(ContextID contextID, String keyPrefix);
+    void removeByKeyPrefix(ContextID contextID, String keyPrefix);
 
-  void removeByKeyPrefix(ContextID contextID, ContextType contextType, String keyPrefix);
+    void removeByKeyPrefix(ContextID contextID, ContextType contextType, String keyPrefix);
 
-  List<ContextKeyValue> searchContextIDByTime(
-      Date createTimeStart,
-      Date createTimeEnd,
-      Date updateTimeStart,
-      Date updateTimeEnd,
-      Date accessTimeStart,
-      Date accessTimeEnd);
+    List<ContextKeyValue> searchContextIDByTime(
+            Date createTimeStart,
+            Date createTimeEnd,
+            Date updateTimeStart,
+            Date updateTimeEnd,
+            Date accessTimeStart,
+            Date accessTimeEnd);
 }

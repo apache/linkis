@@ -21,10 +21,10 @@ import org.apache.linkis.common.listener.Event;
 import org.apache.linkis.cs.listener.event.ContextKeyEvent;
 
 public interface CSKeyListener extends ContextAsyncEventListener {
-  @Override
-  void onEvent(Event event);
+    @Override
+    void onEvent(Event event);
 
-  void onCSKeyUpdate(ContextKeyEvent contextKeyEvent);
+    void onCSKeyUpdate(ContextKeyEvent contextKeyEvent);
 
-  void onCSKeyAccess(ContextKeyEvent contextKeyEvent);
+    void onCSKeyAccess(ContextKeyEvent contextKeyEvent);
 }

@@ -21,16 +21,16 @@ import org.apache.linkis.common.exception.ErrorException;
 
 public class SqlParseException extends ErrorException {
 
-  public static final int ERROR_CODE = 16021;
+    public static final int ERROR_CODE = 16021;
 
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  public SqlParseException(String message) {
-    super(ERROR_CODE, message);
-  }
+    public SqlParseException(String message) {
+        super(ERROR_CODE, message);
+    }
 
-  public SqlParseException(String message, Throwable e) {
-    super(ERROR_CODE, message);
-    this.initCause(e);
-  }
+    public SqlParseException(String message, Throwable e) {
+        super(ERROR_CODE, message);
+        this.initCause(e);
+    }
 }

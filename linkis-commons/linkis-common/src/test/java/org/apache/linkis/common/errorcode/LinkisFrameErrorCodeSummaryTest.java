@@ -25,60 +25,60 @@ import static org.junit.jupiter.api.Assertions.*;
 /** LinkisFrameErrorCodeSummary Tester */
 class LinkisFrameErrorCodeSummaryTest {
 
-  @Test
-  void testGetErrorCode() {
-    assertEquals(10000, VALIDATE_ERROR_CODE_FAILED.getErrorCode());
-  }
+    @Test
+    void testGetErrorCode() {
+        assertEquals(10000, VALIDATE_ERROR_CODE_FAILED.getErrorCode());
+    }
 
-  @Test
-  void testSetErrorCode() {
-    VALIDATE_ERROR_CODE_FAILED.setErrorCode(-1);
-    assertEquals(-1, VALIDATE_ERROR_CODE_FAILED.getErrorCode());
-    VALIDATE_ERROR_CODE_FAILED.setErrorCode(10000);
-    assertEquals(10000, VALIDATE_ERROR_CODE_FAILED.getErrorCode());
-  }
+    @Test
+    void testSetErrorCode() {
+        VALIDATE_ERROR_CODE_FAILED.setErrorCode(-1);
+        assertEquals(-1, VALIDATE_ERROR_CODE_FAILED.getErrorCode());
+        VALIDATE_ERROR_CODE_FAILED.setErrorCode(10000);
+        assertEquals(10000, VALIDATE_ERROR_CODE_FAILED.getErrorCode());
+    }
 
-  @Test
-  void testGetErrorDesc() {
-    assertEquals("错误码定义有误", VALIDATE_ERROR_CODE_FAILED.getErrorDesc());
-  }
+    @Test
+    void testGetErrorDesc() {
+        assertEquals("错误码定义有误", VALIDATE_ERROR_CODE_FAILED.getErrorDesc());
+    }
 
-  @Test
-  void testSetErrorDesc() {
-    VALIDATE_ERROR_CODE_FAILED.setErrorDesc("test");
-    assertEquals("test", VALIDATE_ERROR_CODE_FAILED.getErrorDesc());
-    VALIDATE_ERROR_CODE_FAILED.setErrorDesc("错误码定义有误");
-    assertEquals("错误码定义有误", VALIDATE_ERROR_CODE_FAILED.getErrorDesc());
-  }
+    @Test
+    void testSetErrorDesc() {
+        VALIDATE_ERROR_CODE_FAILED.setErrorDesc("test");
+        assertEquals("test", VALIDATE_ERROR_CODE_FAILED.getErrorDesc());
+        VALIDATE_ERROR_CODE_FAILED.setErrorDesc("错误码定义有误");
+        assertEquals("错误码定义有误", VALIDATE_ERROR_CODE_FAILED.getErrorDesc());
+    }
 
-  @Test
-  void testGetComment() {
-    assertEquals("错误码定义超过最大值或者小于最小值", VALIDATE_ERROR_CODE_FAILED.getComment());
-  }
+    @Test
+    void testGetComment() {
+        assertEquals("错误码定义超过最大值或者小于最小值", VALIDATE_ERROR_CODE_FAILED.getComment());
+    }
 
-  @Test
-  void testSetComment() {
-    VALIDATE_ERROR_CODE_FAILED.setComment("test");
-    assertEquals("test", VALIDATE_ERROR_CODE_FAILED.getComment());
-    VALIDATE_ERROR_CODE_FAILED.setComment("错误码定义超过最大值或者小于最小值");
-    assertEquals("错误码定义超过最大值或者小于最小值", VALIDATE_ERROR_CODE_FAILED.getComment());
-  }
+    @Test
+    void testSetComment() {
+        VALIDATE_ERROR_CODE_FAILED.setComment("test");
+        assertEquals("test", VALIDATE_ERROR_CODE_FAILED.getComment());
+        VALIDATE_ERROR_CODE_FAILED.setComment("错误码定义超过最大值或者小于最小值");
+        assertEquals("错误码定义超过最大值或者小于最小值", VALIDATE_ERROR_CODE_FAILED.getComment());
+    }
 
-  @Test
-  void testGetModule() {
-    assertEquals("linkis-frame", VALIDATE_ERROR_CODE_FAILED.getModule());
-  }
+    @Test
+    void testGetModule() {
+        assertEquals("linkis-frame", VALIDATE_ERROR_CODE_FAILED.getModule());
+    }
 
-  @Test
-  void testSetModule() {
-    VALIDATE_ERROR_CODE_FAILED.setModule("test");
-    assertEquals("test", VALIDATE_ERROR_CODE_FAILED.getModule());
-    VALIDATE_ERROR_CODE_FAILED.setModule("linkis-frame");
-    assertEquals("linkis-frame", VALIDATE_ERROR_CODE_FAILED.getModule());
-  }
+    @Test
+    void testSetModule() {
+        VALIDATE_ERROR_CODE_FAILED.setModule("test");
+        assertEquals("test", VALIDATE_ERROR_CODE_FAILED.getModule());
+        VALIDATE_ERROR_CODE_FAILED.setModule("linkis-frame");
+        assertEquals("linkis-frame", VALIDATE_ERROR_CODE_FAILED.getModule());
+    }
 
-  @Test
-  void testToString() {
-    assertEquals("errorCode: 10000, errorDesc:错误码定义有误", VALIDATE_ERROR_CODE_FAILED.toString());
-  }
+    @Test
+    void testToString() {
+        assertEquals("errorCode: 10000, errorDesc:错误码定义有误", VALIDATE_ERROR_CODE_FAILED.toString());
+    }
 }

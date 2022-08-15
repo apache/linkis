@@ -21,15 +21,15 @@ import java.util.Properties;
 
 public interface PropertiesReader {
 
-  String getPropsId();
+    String getPropsId();
 
-  PropertiesReader setPropsId(String identifier);
+    PropertiesReader setPropsId(String identifier);
 
-  String getPropsPath();
+    String getPropsPath();
 
-  PropertiesReader setPropsPath(String propertiesPath);
+    PropertiesReader setPropsPath(String propertiesPath);
 
-  Properties getProperties();
+    Properties getProperties();
 
-  void checkInit();
+    void checkInit();
 }

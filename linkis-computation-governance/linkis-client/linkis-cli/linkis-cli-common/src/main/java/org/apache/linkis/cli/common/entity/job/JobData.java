@@ -18,17 +18,17 @@
 package org.apache.linkis.cli.common.entity.job;
 
 public interface JobData {
-  JobStatus getJobStatus();
+    JobStatus getJobStatus();
 
-  String getJobID();
+    String getJobID();
 
-  String getUser();
+    String getUser();
 
-  String getMessage();
+    String getMessage();
 
-  void setMessage(String message);
+    void setMessage(String message);
 
-  Exception getException();
+    Exception getException();
 
-  void setException(Exception e);
+    void setException(Exception e);
 }

@@ -21,12 +21,12 @@ import org.apache.linkis.common.exception.ErrorException;
 
 public class CSErrorException extends ErrorException {
 
-  public CSErrorException(int errCode, String desc) {
-    super(errCode, desc);
-  }
+    public CSErrorException(int errCode, String desc) {
+        super(errCode, desc);
+    }
 
-  public CSErrorException(int errCode, String desc, Throwable e) {
-    super(errCode, desc);
-    this.initCause(e);
-  }
+    public CSErrorException(int errCode, String desc, Throwable e) {
+        super(errCode, desc);
+        this.initCause(e);
+    }
 }

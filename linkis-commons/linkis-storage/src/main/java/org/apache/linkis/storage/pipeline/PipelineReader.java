@@ -24,15 +24,15 @@ import java.util.Map;
 
 public abstract class PipelineReader extends FsReader {
 
-  Object toDF(Map<String, Object> args) {
-    return null;
-  }
+    Object toDF(Map<String, Object> args) {
+        return null;
+    }
 
-  Object toDStream(Map<String, Object> args) {
-    return null;
-  }
+    Object toDStream(Map<String, Object> args) {
+        return null;
+    }
 
-  Iterator<Object> toIterator() {
-    return null;
-  }
+    Iterator<Object> toIterator() {
+        return null;
+    }
 }

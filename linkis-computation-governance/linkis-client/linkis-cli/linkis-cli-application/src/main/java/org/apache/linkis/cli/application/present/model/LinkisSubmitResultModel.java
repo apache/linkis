@@ -27,30 +27,30 @@ import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 public class LinkisSubmitResultModel implements Model {
-  private String jobId;
-  private JobStatus status;
-  private String message;
-  private String exception;
-  private String cause;
+    private String jobId;
+    private JobStatus status;
+    private String message;
+    private String exception;
+    private String cause;
 
-  @Override
-  public void buildModel(Object data) {
-    if (!(data instanceof LinkisJobDataImpl)) {
-      throw new TransformerException(
-          "TFM0010",
-          ErrorLevel.ERROR,
-          CommonErrMsg.TransformerException,
-          "Failed to init LinkisJobInfoModel: "
-              + data.getClass().getCanonicalName()
-              + "is not instance of \"LinkisJobDataImpl\"");
+    @Override
+    public void buildModel(Object data) {
+        if (!(data instanceof LinkisJobDataImpl)) {
+            throw new TransformerException(
+                    "TFM0010",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.TransformerException,
+                    "Failed to init LinkisJobInfoModel: "
+                            + data.getClass().getCanonicalName()
+                            + "is not instance of \"LinkisJobDataImpl\"");
+        }
+        this.jobId = ((LinkisJobDataImpl) data).getJobID();
+        this.status = ((LinkisJobDataImpl) data).getJobStatus();
+        this.message = ((LinkisJobDataImpl) data).getMessage();
+        Exception e = ((LinkisJobDataImpl) data).getException();
+        if (e != null) {
+            this.exception = ExceptionUtils.getMessage(e);
+            this.cause = ExceptionUtils.getRootCauseMessage(e);
+        }
     }
-    this.jobId = ((LinkisJobDataImpl) data).getJobID();
-    this.status = ((LinkisJobDataImpl) data).getJobStatus();
-    this.message = ((LinkisJobDataImpl) data).getMessage();
-    Exception e = ((LinkisJobDataImpl) data).getException();
-    if (e != null) {
-      this.exception = ExceptionUtils.getMessage(e);
-      this.cause = ExceptionUtils.getRootCauseMessage(e);
-    }
-  }
 }

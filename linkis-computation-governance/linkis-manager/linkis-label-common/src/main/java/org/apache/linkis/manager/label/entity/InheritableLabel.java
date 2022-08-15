@@ -20,42 +20,42 @@ package org.apache.linkis.manager.label.entity;
 /** Mutable label */
 public class InheritableLabel<T> extends SerializableLabel<T> {
 
-  private static final String FEATURE_KEY = "feature";
+    private static final String FEATURE_KEY = "feature";
 
-  private String labelKey;
+    private String labelKey;
 
-  private Feature feature;
+    private Feature feature;
 
-  public void setLabelKey(String labelKey) {
-    this.labelKey = labelKey;
-  }
+    public void setLabelKey(String labelKey) {
+        this.labelKey = labelKey;
+    }
 
-  @Deprecated
-  public void setFeature(Feature feature) {
-    this.feature = feature;
-  }
+    @Deprecated
+    public void setFeature(Feature feature) {
+        this.feature = feature;
+    }
 
-  @Override
-  public final String getLabelKey() {
-    return labelKey;
-  }
+    @Override
+    public final String getLabelKey() {
+        return labelKey;
+    }
 
-  @Override
-  public final T getValue() {
-    return value;
-  }
+    @Override
+    public final T getValue() {
+        return value;
+    }
 
-  @Override
-  public Feature getFeature() {
-    return feature;
-  }
+    @Override
+    public Feature getFeature() {
+        return feature;
+    }
 
-  public void setValue(T value) {
-    this.value = value;
-  }
+    public void setValue(T value) {
+        this.value = value;
+    }
 
-  @Override
-  public String getFeatureKey() {
-    return FEATURE_KEY;
-  }
+    @Override
+    public String getFeatureKey() {
+        return FEATURE_KEY;
+    }
 }

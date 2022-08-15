@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,15 +17,10 @@
 
 package org.apache.linkis.server
 
+import com.github.xiaoymin.knife4j.spring.annotations.EnableKnife4j
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.{Bean, Configuration}
-import org.springframework.web.servlet.config.annotation.{
-  ResourceHandlerRegistry,
-  ViewControllerRegistry,
-  WebMvcConfigurer
-}
-
-import com.github.xiaoymin.knife4j.spring.annotations.EnableKnife4j
+import org.springframework.web.servlet.config.annotation.{ResourceHandlerRegistry, ViewControllerRegistry, WebMvcConfigurer}
 import springfox.documentation.builders.{ApiInfoBuilder, PathSelectors, RequestHandlerSelectors}
 import springfox.documentation.service.ApiInfo
 import springfox.documentation.spi.DocumentationType
@@ -55,20 +50,20 @@ class Knife4jConfig extends WebMvcConfigurer {
   @Value("${spring.application.name}") private var appName = "linkis service"
 
   @Bean(Array("defaultApi2"))
-  def defaultApi2(): Docket = {
+  def  defaultApi2() : Docket = {
     val docket = new Docket(DocumentationType.SWAGGER_2)
       .apiInfo(apiInfo())
-      // set group name
+      //set group name
       .groupName("RESTAPI")
       .select()
-      // specifies the controller scan package path
+      //specifies the controller scan package path
       .apis(RequestHandlerSelectors.basePackage("org.apache.linkis"))
       .paths(PathSelectors.any())
       .build()
     docket
   }
 
-  def apiInfo(): ApiInfo = {
+  def  apiInfo() : ApiInfo = {
     val apiInfo = new ApiInfoBuilder()
       .title(appName)
       .description("Linkis micro service RESTful APIs")
@@ -78,25 +73,14 @@ class Knife4jConfig extends WebMvcConfigurer {
   }
 
   override def addResourceHandlers(registry: ResourceHandlerRegistry): Unit = {
-    registry
-      .addResourceHandler("/api/rest_j/v1/doc.html**")
-      .addResourceLocations("classpath:/META-INF/resources/doc.html")
-    registry
-      .addResourceHandler("/api/rest_j/v1/webjars/**")
-      .addResourceLocations("classpath:/META-INF/resources/webjars/")
+    registry.addResourceHandler("/api/rest_j/v1/doc.html**").addResourceLocations("classpath:/META-INF/resources/doc.html")
+    registry.addResourceHandler("/api/rest_j/v1/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/")
   }
 
   override def addViewControllers(registry: ViewControllerRegistry): Unit = {
     registry.addRedirectViewController("/api/rest_j/v1/v2/api-docs", "/v2/api-docs")
-    registry.addRedirectViewController(
-      "/api/rest_j/v1/swagger-resources/configuration/ui",
-      "/swagger-resources/configuration/ui"
-    )
-    registry.addRedirectViewController(
-      "/api/rest_j/v1/swagger-resources/configuration/security",
-      "/swagger-resources/configuration/security"
-    )
+    registry.addRedirectViewController("/api/rest_j/v1/swagger-resources/configuration/ui", "/swagger-resources/configuration/ui")
+    registry.addRedirectViewController("/api/rest_j/v1/swagger-resources/configuration/security", "/swagger-resources/configuration/security")
     registry.addRedirectViewController("/api/rest_j/v1/swagger-resources", "/swagger-resources")
   }
-
 }

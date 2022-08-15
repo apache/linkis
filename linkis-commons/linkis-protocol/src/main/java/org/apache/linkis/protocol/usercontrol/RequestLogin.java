@@ -19,24 +19,24 @@ package org.apache.linkis.protocol.usercontrol;
 
 public class RequestLogin implements UserControlLoginProtocol {
 
-  private String userName;
-  private String password;
+    private String userName;
+    private String password;
 
-  public String getUserName() {
-    return userName;
-  }
+    public String getUserName() {
+        return userName;
+    }
 
-  public RequestLogin setUserName(String userName) {
-    this.userName = userName;
-    return this;
-  }
+    public RequestLogin setUserName(String userName) {
+        this.userName = userName;
+        return this;
+    }
 
-  public String getPassword() {
-    return password;
-  }
+    public String getPassword() {
+        return password;
+    }
 
-  public RequestLogin setPassword(String password) {
-    this.password = password;
-    return this;
-  }
+    public RequestLogin setPassword(String password) {
+        this.password = password;
+        return this;
+    }
 }

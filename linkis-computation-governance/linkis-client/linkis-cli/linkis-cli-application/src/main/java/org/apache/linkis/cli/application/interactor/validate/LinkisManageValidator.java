@@ -28,33 +28,33 @@ import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
 import org.apache.commons.lang3.StringUtils;
 
 public class LinkisManageValidator implements Validator {
-  @Override
-  public void doValidation(Object input) throws LinkisClientRuntimeException {
-    if (!(input instanceof LinkisManageJob)) {
-      throw new ValidateException(
-          "VLD0007",
-          ErrorLevel.ERROR,
-          CommonErrMsg.ValidationErr,
-          "Input of LinkisSubmitValidator is not instance of LinkisManageJob. Type: "
-              + input.getClass().getCanonicalName());
+    @Override
+    public void doValidation(Object input) throws LinkisClientRuntimeException {
+        if (!(input instanceof LinkisManageJob)) {
+            throw new ValidateException(
+                    "VLD0007",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.ValidationErr,
+                    "Input of LinkisSubmitValidator is not instance of LinkisManageJob. Type: "
+                            + input.getClass().getCanonicalName());
+        }
+        boolean ok = true;
+        StringBuilder reasonSb = new StringBuilder();
+        LinkisJobManDesc desc = ((LinkisManageJob) input).getJobDesc();
+        if (StringUtils.isBlank(desc.getJobID())) {
+            reasonSb.append("jobId cannot be empty or blank").append(System.lineSeparator());
+            ok = false;
+        }
+        if (StringUtils.isBlank(desc.getUser())) {
+            reasonSb.append("user cannot be empty or blank").append(System.lineSeparator());
+            ok = false;
+        }
+        if (!ok) {
+            throw new ValidateException(
+                    "VLD0008",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.ValidationErr,
+                    "LinkisJobMan validation failed. Reason: " + reasonSb.toString());
+        }
     }
-    boolean ok = true;
-    StringBuilder reasonSb = new StringBuilder();
-    LinkisJobManDesc desc = ((LinkisManageJob) input).getJobDesc();
-    if (StringUtils.isBlank(desc.getJobID())) {
-      reasonSb.append("jobId cannot be empty or blank").append(System.lineSeparator());
-      ok = false;
-    }
-    if (StringUtils.isBlank(desc.getUser())) {
-      reasonSb.append("user cannot be empty or blank").append(System.lineSeparator());
-      ok = false;
-    }
-    if (!ok) {
-      throw new ValidateException(
-          "VLD0008",
-          ErrorLevel.ERROR,
-          CommonErrMsg.ValidationErr,
-          "LinkisJobMan validation failed. Reason: " + reasonSb.toString());
-    }
-  }
 }

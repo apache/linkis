@@ -18,5 +18,5 @@
 package org.apache.linkis.variable.util;
 
 public class Constants {
-  public static final String GOLBAL_CONFIG_NAME = "全局变量";
+    public static final String GOLBAL_CONFIG_NAME = "全局变量";
 }

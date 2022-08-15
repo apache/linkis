@@ -17,108 +17,108 @@
 
 package org.apache.linkis.common.exception;
 
-import java.util.Map;
-
 import org.junit.jupiter.api.Test;
+
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class LinkisRuntimeExceptionTest {
 
-  public static LinkisRuntimeException linkisRuntimeException =
-      new LinkisRuntimeException(1, "test", "127.0.0.1", 1, "serviceKind") {
-        @Override
-        public ExceptionLevel getLevel() {
-          return ExceptionLevel.WARN;
-        }
-      };
+    public static LinkisRuntimeException linkisRuntimeException =
+            new LinkisRuntimeException(1, "test", "127.0.0.1", 1, "serviceKind") {
+                @Override
+                public ExceptionLevel getLevel() {
+                    return ExceptionLevel.WARN;
+                }
+            };
 
-  @Test
-  void testGetErrCode() {
-    assertEquals(1, linkisRuntimeException.getErrCode());
-  }
+    @Test
+    void testGetErrCode() {
+        assertEquals(1, linkisRuntimeException.getErrCode());
+    }
 
-  @Test
-  void testSetErrCode() {
-    linkisRuntimeException.setErrCode(123);
-    assertEquals(123, linkisRuntimeException.getErrCode());
-    linkisRuntimeException.setErrCode(1);
-    assertEquals(1, linkisRuntimeException.getErrCode());
-  }
+    @Test
+    void testSetErrCode() {
+        linkisRuntimeException.setErrCode(123);
+        assertEquals(123, linkisRuntimeException.getErrCode());
+        linkisRuntimeException.setErrCode(1);
+        assertEquals(1, linkisRuntimeException.getErrCode());
+    }
 
-  @Test
-  void testGetDesc() {
-    assertEquals("test", linkisRuntimeException.getDesc());
-  }
+    @Test
+    void testGetDesc() {
+        assertEquals("test", linkisRuntimeException.getDesc());
+    }
 
-  @Test
-  void testSetDesc() {
-    linkisRuntimeException.setDesc("test2");
-    assertEquals("test2", linkisRuntimeException.getDesc());
-    linkisRuntimeException.setDesc("test");
-    assertEquals("test", linkisRuntimeException.getDesc());
-  }
+    @Test
+    void testSetDesc() {
+        linkisRuntimeException.setDesc("test2");
+        assertEquals("test2", linkisRuntimeException.getDesc());
+        linkisRuntimeException.setDesc("test");
+        assertEquals("test", linkisRuntimeException.getDesc());
+    }
 
-  @Test
-  void testGetIp() {
-    assertEquals("127.0.0.1", linkisRuntimeException.getIp());
-  }
+    @Test
+    void testGetIp() {
+        assertEquals("127.0.0.1", linkisRuntimeException.getIp());
+    }
 
-  @Test
-  void testSetIp() {
-    linkisRuntimeException.setIp("0.0.0.0");
-    assertEquals("0.0.0.0", linkisRuntimeException.getIp());
-    linkisRuntimeException.setIp("127.0.0.1");
-    assertEquals("127.0.0.1", linkisRuntimeException.getIp());
-  }
+    @Test
+    void testSetIp() {
+        linkisRuntimeException.setIp("0.0.0.0");
+        assertEquals("0.0.0.0", linkisRuntimeException.getIp());
+        linkisRuntimeException.setIp("127.0.0.1");
+        assertEquals("127.0.0.1", linkisRuntimeException.getIp());
+    }
 
-  @Test
-  void testGetPort() {
-    assertEquals(1, linkisRuntimeException.getPort());
-  }
+    @Test
+    void testGetPort() {
+        assertEquals(1, linkisRuntimeException.getPort());
+    }
 
-  @Test
-  void testSetPort() {
-    linkisRuntimeException.setPort(11);
-    assertEquals(11, linkisRuntimeException.getPort());
-    linkisRuntimeException.setPort(1);
-    assertEquals(1, linkisRuntimeException.getPort());
-  }
+    @Test
+    void testSetPort() {
+        linkisRuntimeException.setPort(11);
+        assertEquals(11, linkisRuntimeException.getPort());
+        linkisRuntimeException.setPort(1);
+        assertEquals(1, linkisRuntimeException.getPort());
+    }
 
-  @Test
-  void testGetServiceKind() {
-    assertEquals("test", linkisRuntimeException.getServiceKind());
-  }
+    @Test
+    void testGetServiceKind() {
+        assertEquals("test", linkisRuntimeException.getServiceKind());
+    }
 
-  @Test
-  void testSetServiceKind() {
-    linkisRuntimeException.setServiceKind("test2");
-    assertEquals("test2", linkisRuntimeException.getServiceKind());
-    linkisRuntimeException.setServiceKind("test");
-    assertEquals("test", linkisRuntimeException.getServiceKind());
-  }
+    @Test
+    void testSetServiceKind() {
+        linkisRuntimeException.setServiceKind("test2");
+        assertEquals("test2", linkisRuntimeException.getServiceKind());
+        linkisRuntimeException.setServiceKind("test");
+        assertEquals("test", linkisRuntimeException.getServiceKind());
+    }
 
-  @Test
-  void toMap() {
-    Map<String, Object> map = new java.util.HashMap<String, Object>();
-    map.put("level", ExceptionLevel.WARN.getLevel());
-    map.put("errCode", 1);
-    map.put("desc", "test");
-    map.put("ip", "127.0.0.1");
-    map.put("port", 1);
-    map.put("serviceKind", "test");
-    assertEquals(map, linkisRuntimeException.toMap());
-  }
+    @Test
+    void toMap() {
+        Map<String, Object> map = new java.util.HashMap<String, Object>();
+        map.put("level", ExceptionLevel.WARN.getLevel());
+        map.put("errCode", 1);
+        map.put("desc", "test");
+        map.put("ip", "127.0.0.1");
+        map.put("port", 1);
+        map.put("serviceKind", "test");
+        assertEquals(map, linkisRuntimeException.toMap());
+    }
 
-  @Test
-  void testGetLevel() {
-    assertEquals(ExceptionLevel.WARN, linkisRuntimeException.getLevel());
-  }
+    @Test
+    void testGetLevel() {
+        assertEquals(ExceptionLevel.WARN, linkisRuntimeException.getLevel());
+    }
 
-  @Test
-  void testToString() {
-    assertEquals(
-        "LinkisException{errCode=1, desc='test', ip='127.0.0.1', port=1, serviceKind='test'}",
-        linkisRuntimeException.toString());
-  }
+    @Test
+    void testToString() {
+        assertEquals(
+                "LinkisException{errCode=1, desc='test', ip='127.0.0.1', port=1, serviceKind='test'}",
+                linkisRuntimeException.toString());
+    }
 }

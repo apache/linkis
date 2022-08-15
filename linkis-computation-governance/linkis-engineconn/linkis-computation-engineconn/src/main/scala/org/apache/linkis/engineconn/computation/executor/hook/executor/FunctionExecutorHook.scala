@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,11 +31,7 @@ class PyFunctionEngineHook extends UDFLoad with ExecutorHook {
   override val runType = RunType.PYSPARK
 
   override protected def constructCode(udfInfo: UDFInfoVo): String = {
-    "%py\n" + readFile(
-      udfInfo.getCreateUser,
-      udfInfo.getBmlResourceId,
-      udfInfo.getBmlResourceVersion
-    )
+    "%py\n" + readFile(udfInfo.getCreateUser, udfInfo.getBmlResourceId, udfInfo.getBmlResourceVersion)
   }
 
   override def getHookName(): String = "PyFunctionEngineHook"
@@ -49,17 +45,14 @@ class PyFunctionEngineHook extends UDFLoad with ExecutorHook {
   override def isAccepted(codeType: String): Boolean = runType.toString.equalsIgnoreCase(codeType)
 }
 
+
 class ScalaFunctionEngineHook extends UDFLoad with ExecutorHook {
   override val udfType: BigInt = ConstantVar.FUNCTION_SCALA
   override val category: String = ConstantVar.FUNCTION
   override val runType = RunType.SCALA
 
   override protected def constructCode(udfInfo: UDFInfoVo): String = {
-    "%scala\n" + readFile(
-      udfInfo.getCreateUser,
-      udfInfo.getBmlResourceId,
-      udfInfo.getBmlResourceVersion
-    )
+    "%scala\n" + readFile(udfInfo.getCreateUser, udfInfo.getBmlResourceId, udfInfo.getBmlResourceVersion)
   }
 
   override def getHookName(): String = "ScalaFunctionEngineHook"

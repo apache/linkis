@@ -24,12 +24,12 @@ import static org.apache.linkis.common.errorcode.LinkisFrameErrorCodeSummary.VAL
 
 public class ErrorCodeUtils {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(ErrorCodeUtils.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ErrorCodeUtils.class);
 
-  public static void validateErrorCode(int errCode, int startCode, int endCode) {
-    if (errCode < startCode || errCode > endCode) {
-      LOGGER.error("You error code validate failed, please fix it and reboot");
-      System.exit(VALIDATE_ERROR_CODE_FAILED.getErrorCode());
+    public static void validateErrorCode(int errCode, int startCode, int endCode) {
+        if (errCode < startCode || errCode > endCode) {
+            LOGGER.error("You error code validate failed, please fix it and reboot");
+            System.exit(VALIDATE_ERROR_CODE_FAILED.getErrorCode());
+        }
     }
-  }
 }

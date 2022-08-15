@@ -26,48 +26,48 @@ import org.apache.linkis.httpclient.dws.config.DWSClientConfig;
 
 public class ErrorCodeClientBuilder {
 
-  private String linkisGatewayUrl = ClientConfiguration.getGatewayUrl();
+    private String linkisGatewayUrl = ClientConfiguration.getGatewayUrl();
 
-  private AuthenticationStrategy authenticationStrategy = new TokenAuthenticationStrategy();
+    private AuthenticationStrategy authenticationStrategy = new TokenAuthenticationStrategy();
 
-  private ClientConfigBuilder clientConfigBuilder = ClientConfigBuilder.newBuilder();
+    private ClientConfigBuilder clientConfigBuilder = ClientConfigBuilder.newBuilder();
 
-  private long connectionTimeout = ClientConfiguration.getConnectTimeOut();
+    private long connectionTimeout = ClientConfiguration.getConnectTimeOut();
 
-  private long readTimeOut = ClientConfiguration.getReadTimeOut();
+    private long readTimeOut = ClientConfiguration.getReadTimeOut();
 
-  private String authTokenKey = ClientConfiguration.getAuthKey();
+    private String authTokenKey = ClientConfiguration.getAuthKey();
 
-  private String authTokenValue = ClientConfiguration.getAuthValue();
+    private String authTokenValue = ClientConfiguration.getAuthValue();
 
-  private String version = ClientConfiguration.getVersion();
+    private String version = ClientConfiguration.getVersion();
 
-  private int maxConnection = 100;
+    private int maxConnection = 100;
 
-  private static final String CLIENT_NAME = "ErrorCode-Client";
+    private static final String CLIENT_NAME = "ErrorCode-Client";
 
-  public LinkisErrorCodeClient build() {
-    ClientConfig clientConfig =
-        clientConfigBuilder
-            .addServerUrl(linkisGatewayUrl)
-            .connectionTimeout(connectionTimeout)
-            .discoveryEnabled(false)
-            .loadbalancerEnabled(false)
-            .maxConnectionSize(maxConnection)
-            .retryEnabled(false)
-            .readTimeout(readTimeOut)
-            .setAuthenticationStrategy(authenticationStrategy)
-            .setAuthTokenKey(authTokenKey)
-            .setAuthTokenValue(authTokenValue)
-            .build();
-    DWSClientConfig dwsClientConfig = new DWSClientConfig(clientConfig);
-    dwsClientConfig.setDWSVersion(version);
-    DWSHttpClient dwsHttpClient = new DWSHttpClient(dwsClientConfig, CLIENT_NAME);
-    return new LinkisErrorCodeClient(dwsHttpClient);
-  }
+    public LinkisErrorCodeClient build() {
+        ClientConfig clientConfig =
+                clientConfigBuilder
+                        .addServerUrl(linkisGatewayUrl)
+                        .connectionTimeout(connectionTimeout)
+                        .discoveryEnabled(false)
+                        .loadbalancerEnabled(false)
+                        .maxConnectionSize(maxConnection)
+                        .retryEnabled(false)
+                        .readTimeout(readTimeOut)
+                        .setAuthenticationStrategy(authenticationStrategy)
+                        .setAuthTokenKey(authTokenKey)
+                        .setAuthTokenValue(authTokenValue)
+                        .build();
+        DWSClientConfig dwsClientConfig = new DWSClientConfig(clientConfig);
+        dwsClientConfig.setDWSVersion(version);
+        DWSHttpClient dwsHttpClient = new DWSHttpClient(dwsClientConfig, CLIENT_NAME);
+        return new LinkisErrorCodeClient(dwsHttpClient);
+    }
 
-  public ErrorCodeClientBuilder setVersion(String version) {
-    this.version = version;
-    return this;
-  }
+    public ErrorCodeClientBuilder setVersion(String version) {
+        this.version = version;
+        return this;
+    }
 }

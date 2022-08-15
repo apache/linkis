@@ -23,5 +23,5 @@ import java.util.List;
 
 public interface LinkisErrorCodeService {
 
-  public List<LinkisErrorCode> getAllErrorCodes();
+    public List<LinkisErrorCode> getAllErrorCodes();
 }

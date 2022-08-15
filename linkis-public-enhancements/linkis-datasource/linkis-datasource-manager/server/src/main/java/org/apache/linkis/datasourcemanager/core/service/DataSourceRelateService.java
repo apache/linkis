@@ -23,46 +23,46 @@ import org.apache.linkis.datasourcemanager.common.domain.DataSourceType;
 import java.util.List;
 
 public interface DataSourceRelateService {
-  /**
-   * Get key definitions by data source type and scope
-   *
-   * @param dataSourceTypeId data source type id
-   * @param scope scope
-   * @return
-   */
-  List<DataSourceParamKeyDefinition> getKeyDefinitionsByType(
-      Long dataSourceTypeId, DataSourceParamKeyDefinition.Scope scope);
+    /**
+     * Get key definitions by data source type and scope
+     *
+     * @param dataSourceTypeId data source type id
+     * @param scope scope
+     * @return
+     */
+    List<DataSourceParamKeyDefinition> getKeyDefinitionsByType(
+            Long dataSourceTypeId, DataSourceParamKeyDefinition.Scope scope);
 
-  /**
-   * Get key definitions by data source type and scope
-   *
-   * @param dataSourceTypeId data source type id
-   * @return
-   */
-  List<DataSourceParamKeyDefinition> getKeyDefinitionsByType(Long dataSourceTypeId);
+    /**
+     * Get key definitions by data source type and scope
+     *
+     * @param dataSourceTypeId data source type id
+     * @return
+     */
+    List<DataSourceParamKeyDefinition> getKeyDefinitionsByType(Long dataSourceTypeId);
 
-  /**
-   * Get key definitions by data source type and languageType
-   *
-   * @param dataSourceTypeId data source type id
-   * @param languageType language type zh or en
-   * @return
-   */
-  List<DataSourceParamKeyDefinition> getKeyDefinitionsByType(
-      Long dataSourceTypeId, String languageType);
+    /**
+     * Get key definitions by data source type and languageType
+     *
+     * @param dataSourceTypeId data source type id
+     * @param languageType language type zh or en
+     * @return
+     */
+    List<DataSourceParamKeyDefinition> getKeyDefinitionsByType(
+            Long dataSourceTypeId, String languageType);
 
-  /**
-   * Get all data source types
-   *
-   * @return
-   */
-  List<DataSourceType> getAllDataSourceTypes();
+    /**
+     * Get all data source types
+     *
+     * @return
+     */
+    List<DataSourceType> getAllDataSourceTypes();
 
-  /**
-   * Get data source type
-   *
-   * @param typeId
-   * @return
-   */
-  DataSourceType getDataSourceType(Long typeId);
+    /**
+     * Get data source type
+     *
+     * @param typeId
+     * @return
+     */
+    DataSourceType getDataSourceType(Long typeId);
 }

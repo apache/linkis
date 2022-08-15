@@ -27,12 +27,12 @@ import java.util.List;
 
 public interface KeywordContextHistoryPersistence {
 
-  List<ContextHistory> search(ContextID contextID, String[] keywords) throws CSErrorException;
+    List<ContextHistory> search(ContextID contextID, String[] keywords) throws CSErrorException;
 
-  List<ContextHistory> search(ContextType contextType, String[] keywords) throws CSErrorException;
+    List<ContextHistory> search(ContextType contextType, String[] keywords) throws CSErrorException;
 
-  ContextHistoryIndexer getContextHistoryIndexer() throws CSErrorException;
+    ContextHistoryIndexer getContextHistoryIndexer() throws CSErrorException;
 
-  void setContextHistoryIndexer(ContextHistoryIndexer contextHistoryIndexer)
-      throws CSErrorException;
+    void setContextHistoryIndexer(ContextHistoryIndexer contextHistoryIndexer)
+            throws CSErrorException;
 }

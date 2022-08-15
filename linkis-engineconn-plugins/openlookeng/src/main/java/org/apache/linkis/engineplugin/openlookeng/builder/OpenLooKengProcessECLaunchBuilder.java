@@ -23,8 +23,8 @@ import org.apache.linkis.storage.utils.StorageConfiguration;
 
 public class OpenLooKengProcessECLaunchBuilder extends JavaProcessEngineConnLaunchBuilder {
 
-  @Override
-  public String getEngineStartUser(UserCreatorLabel label) {
-    return StorageConfiguration.HDFS_ROOT_USER().getValue();
-  }
+    @Override
+    public String getEngineStartUser(UserCreatorLabel label) {
+        return StorageConfiguration.HDFS_ROOT_USER().getValue();
+    }
 }

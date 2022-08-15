@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,57 +19,43 @@ package org.apache.linkis.metadata.query.common.protocol
 
 import java.util
 
-trait MetadataQueryProtocol {}
+trait MetadataQueryProtocol {
+
+}
 
 /**
- * Request to get database list
- * @param params
+   * Request to get database list
+   * @param params
  */
-case class MetaGetDatabases(params: util.Map[String, Object], operator: String)
-    extends MetadataQueryProtocol
+case class MetaGetDatabases(params: util.Map[String, Object], operator: String) extends MetadataQueryProtocol
 
 /**
- * Request to get table list
- * @param params
+   * Request to get table list
+   * @param params
  */
-case class MetaGetTables(params: util.Map[String, Object], database: String, operator: String)
-    extends MetadataQueryProtocol
+case class MetaGetTables(params: util.Map[String, Object], database: String, operator: String) extends MetadataQueryProtocol
 
 /**
- * Request to get table properties
- * @param params
- * @param database
- * @param table
+   * Request to get table properties
+   * @param params
+   * @param database
+   * @param table
  */
-case class MetaGetTableProps(
-    params: util.Map[String, Object],
-    database: String,
-    table: String,
-    operator: String
-) extends MetadataQueryProtocol
+case class MetaGetTableProps(params: util.Map[String, Object], database: String, table: String, operator: String) extends MetadataQueryProtocol
 
 /**
- * Request to get partition list
- * @param params
- * @param database
- * @param table
+   * Request to get partition list
+   * @param params
+   * @param database
+   * @param table
  */
-case class MetaGetPartitions(
-    params: util.Map[String, Object],
-    database: String,
-    table: String,
-    operator: String
-) extends MetadataQueryProtocol
+case class MetaGetPartitions(params: util.Map[String, Object], database: String, table: String, operator: String) extends MetadataQueryProtocol
 
 /**
- * Request to get column list
- * @param params
- * @param database
- * @param table
+   * Request to get column list
+   * @param params
+   * @param database
+   * @param table
  */
-case class MetaGetColumns(
-    params: util.Map[String, Object],
-    database: String,
-    table: String,
-    operator: String
-) extends MetadataQueryProtocol
+case class MetaGetColumns(params: util.Map[String, Object], database: String, table: String, operator: String) extends MetadataQueryProtocol
+

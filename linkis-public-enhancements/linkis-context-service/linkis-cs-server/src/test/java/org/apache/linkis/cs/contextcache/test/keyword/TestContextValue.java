@@ -22,29 +22,29 @@ import org.apache.linkis.cs.common.entity.source.ContextValue;
 
 public class TestContextValue implements ContextValue {
 
-  private Object value;
+    private Object value;
 
-  private String keywords;
+    private String keywords;
 
-  @KeywordMethod(splitter = "-")
-  @Override
-  public String getKeywords() {
-    return this.keywords;
-  }
+    @KeywordMethod(splitter = "-")
+    @Override
+    public String getKeywords() {
+        return this.keywords;
+    }
 
-  @Override
-  public void setKeywords(String keywords) {
-    this.keywords = keywords;
-  }
+    @Override
+    public void setKeywords(String keywords) {
+        this.keywords = keywords;
+    }
 
-  @KeywordMethod(regex = "hello")
-  @Override
-  public Object getValue() {
-    return this.value;
-  }
+    @KeywordMethod(regex = "hello")
+    @Override
+    public Object getValue() {
+        return this.value;
+    }
 
-  @Override
-  public void setValue(Object value) {
-    this.value = value;
-  }
+    @Override
+    public void setValue(Object value) {
+        this.value = value;
+    }
 }

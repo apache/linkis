@@ -24,37 +24,37 @@ import java.util.List;
 
 public class TestClear {
 
-  public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws Exception {
 
-    String createTimeStart = "2022-05-26 22:04:00";
+        String createTimeStart = "2022-05-26 22:04:00";
 
-    String createTimeEnd = "2022-06-01 24:00:00";
+        String createTimeEnd = "2022-06-01 24:00:00";
 
-    ContextClient contextClient = ContextClientFactory.getOrCreateContextClient();
+        ContextClient contextClient = ContextClientFactory.getOrCreateContextClient();
 
-    List<String> idList =
-        contextClient.searchHAIDByTime(
-            createTimeStart, createTimeEnd, null, null, null, null, 0, 0);
+        List<String> idList =
+                contextClient.searchHAIDByTime(
+                        createTimeStart, createTimeEnd, null, null, null, null, 0, 0);
 
-    for (String id : idList) {
-      System.out.println(id);
+        for (String id : idList) {
+            System.out.println(id);
+        }
+
+        System.out.println("Got " + idList.size() + " ids.");
+
+        if (idList.size() > 0) {
+            String id1 = idList.get(0);
+            System.out.println("will clear context of id : " + id1);
+        }
+
+        //        List<String> tmpList = new ArrayList<>();
+        //        tmpList.add(id1);
+        //        int num = contextClient.batchClearContextByHAID(tmpList);
+        //        System.out.println("Succeed to clear  " + num + " ids.");
+        //
+        int num1 =
+                contextClient.batchClearContextByTime(
+                        createTimeStart, createTimeEnd, null, null, null, null);
+        System.out.println("Succeed to clear  " + num1 + " ids by time.");
     }
-
-    System.out.println("Got " + idList.size() + " ids.");
-
-    if (idList.size() > 0) {
-      String id1 = idList.get(0);
-      System.out.println("will clear context of id : " + id1);
-    }
-
-    //        List<String> tmpList = new ArrayList<>();
-    //        tmpList.add(id1);
-    //        int num = contextClient.batchClearContextByHAID(tmpList);
-    //        System.out.println("Succeed to clear  " + num + " ids.");
-    //
-    int num1 =
-        contextClient.batchClearContextByTime(
-            createTimeStart, createTimeEnd, null, null, null, null);
-    System.out.println("Succeed to clear  " + num1 + " ids by time.");
-  }
 }

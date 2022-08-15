@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,6 +23,7 @@ import org.apache.linkis.engineconnplugin.flink.exception.JobExecutionException
 import org.apache.linkis.engineconnplugin.flink.executor.FlinkOnceExecutor
 import org.apache.linkis.manager.common.operator.Operator
 
+
 class TriggerSavepointOperator extends Operator with Logging {
 
   override def getNames: Array[String] = Array("doSavepoint")
@@ -33,14 +34,9 @@ class TriggerSavepointOperator extends Operator with Logging {
     logger.info(s"try to $mode savepoint with path $savepoint.")
     OnceExecutorManager.getInstance.getReportExecutor match {
       case flinkExecutor: FlinkOnceExecutor[_] =>
-        val writtenSavepoint =
-          flinkExecutor.getClusterDescriptorAdapter.doSavepoint(savepoint, mode)
+        val writtenSavepoint = flinkExecutor.getClusterDescriptorAdapter.doSavepoint(savepoint, mode)
         Map("writtenSavepoint" -> writtenSavepoint)
-      case executor =>
-        throw new JobExecutionException(
-          "Not support to do savepoint for " + executor.getClass.getSimpleName
-        )
+      case executor => throw new JobExecutionException("Not support to do savepoint for " + executor.getClass.getSimpleName)
     }
   }
-
 }

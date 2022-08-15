@@ -5,28 +5,28 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+ 
 package org.apache.linkis.udf
+
 
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.udf.api.rpc.{RequestUdfTree, ResponseUdfTree}
 import org.apache.linkis.udf.entity.{UDFInfo, UDFTree}
 import org.apache.linkis.udf.utils.ConstantVar
 import org.apache.linkis.udf.vo.UDFInfoVo
-
 import org.apache.commons.collections.CollectionUtils
 
-import scala.collection.JavaConversions._
 import scala.collection.mutable
+import scala.collection.JavaConversions._
 import scala.collection.mutable.ArrayBuffer
 
 object UDFClient {
@@ -39,15 +39,10 @@ object UDFClient {
     udfInfoBuilder
   }
 
-  def getUdfInfosByUdfType(
-      userName: String,
-      category: String,
-      udfType: BigInt
-  ): ArrayBuffer[UDFInfoVo] = {
+  def getUdfInfosByUdfType(userName: String, category: String, udfType: BigInt): ArrayBuffer[UDFInfoVo] = {
     val udfInfoBuilder = new ArrayBuffer[UDFInfoVo]
     val udfTree = queryUdfRpc(userName, category)
-    if (null != udfTree)
-      extractUdfInfosByUdfType(udfInfoBuilder, udfTree, userName, category, udfType)
+    if (null != udfTree) extractUdfInfosByUdfType(udfInfoBuilder, udfTree, userName, category, udfType)
     udfInfoBuilder
   }
 
@@ -71,12 +66,7 @@ object UDFClient {
     getUdfInfosByUdfType(userName, ConstantVar.FUNCTION, ConstantVar.FUNCTION_SCALA)
   }
 
-  private def extractUdfInfos(
-      udfInfoBuilder: ArrayBuffer[UDFInfoVo],
-      udfTree: UDFTree,
-      userName: String,
-      category: String
-  ): Unit = {
+  private def extractUdfInfos(udfInfoBuilder: ArrayBuffer[UDFInfoVo], udfTree: UDFTree, userName: String, category: String): Unit = {
     if (CollectionUtils.isNotEmpty(udfTree.getUdfInfos)) {
       udfTree.getUdfInfos.foreach { udfInfo: UDFInfoVo =>
         udfInfoBuilder.append(udfInfo)
@@ -95,16 +85,10 @@ object UDFClient {
     }
   }
 
-  private def extractUdfInfosByUdfType(
-      udfInfoBuilder: ArrayBuffer[UDFInfoVo],
-      udfTree: UDFTree,
-      userName: String,
-      category: String,
-      udfType: BigInt
-  ): Unit = {
+  private def extractUdfInfosByUdfType(udfInfoBuilder: ArrayBuffer[UDFInfoVo], udfTree: UDFTree,
+                                       userName: String, category: String, udfType: BigInt): Unit = {
     if (CollectionUtils.isNotEmpty(udfTree.getUdfInfos)) {
-      udfTree.getUdfInfos
-        .filter(infoVo => infoVo.getUdfType == udfType && infoVo.getLoad == true)
+      udfTree.getUdfInfos.filter(infoVo => infoVo.getUdfType == udfType && infoVo.getLoad == true)
         .foreach(infoVo => udfInfoBuilder.append(infoVo))
     }
     if (CollectionUtils.isNotEmpty(udfTree.getChildrens)) {
@@ -116,25 +100,17 @@ object UDFClient {
         } else {
           queryUdfRpc(userName, category, child.getId, ConstantVar.SELF_USER)
         }
-        if (null != childInfo)
-          extractUdfInfosByUdfType(udfInfoBuilder, childInfo, userName, category, udfType)
+        if (null != childInfo) extractUdfInfosByUdfType(udfInfoBuilder, childInfo, userName, category, udfType)
       }
     }
   }
 
-  private def queryUdfRpc(
-      userName: String,
-      category: String,
-      treeId: Long = -1,
-      treeType: String = "self"
-  ): UDFTree = {
-    val udfTree = Sender
-      .getSender(UDFClientConfiguration.UDF_SERVICE_NAME.getValue)
+  private def queryUdfRpc(userName: String, category: String, treeId: Long = -1, treeType: String = "self"): UDFTree = {
+    val udfTree = Sender.getSender(UDFClientConfiguration.UDF_SERVICE_NAME.getValue)
       .ask(RequestUdfTree(userName, treeType, treeId, category))
       .asInstanceOf[ResponseUdfTree]
       .udfTree
-    // info("got udf tree:" + new ObjectMapper().writer().withDefaultPrettyPrinter().writeValueAsString(udfTree))
+    //info("got udf tree:" + new ObjectMapper().writer().withDefaultPrettyPrinter().writeValueAsString(udfTree))
     udfTree
   }
-
 }

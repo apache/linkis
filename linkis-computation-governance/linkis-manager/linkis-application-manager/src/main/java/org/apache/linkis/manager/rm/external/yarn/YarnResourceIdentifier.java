@@ -22,18 +22,18 @@ import org.apache.linkis.manager.rm.external.domain.ExternalResourceIdentifier;
 
 public class YarnResourceIdentifier implements ExternalResourceIdentifier {
 
-  String queueName;
+    String queueName;
 
-  public YarnResourceIdentifier(String queueName) {
-    this.queueName = queueName;
-  }
+    public YarnResourceIdentifier(String queueName) {
+        this.queueName = queueName;
+    }
 
-  public String getQueueName() {
-    return queueName;
-  }
+    public String getQueueName() {
+        return queueName;
+    }
 
-  @Override
-  public ResourceType getResourceType() {
-    return ResourceType.Yarn;
-  }
+    @Override
+    public ResourceType getResourceType() {
+        return ResourceType.Yarn;
+    }
 }

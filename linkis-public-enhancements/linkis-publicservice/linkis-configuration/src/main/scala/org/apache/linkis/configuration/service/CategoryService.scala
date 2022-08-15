@@ -5,18 +5,19 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+ 
 package org.apache.linkis.configuration.service
 
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.configuration.conf.Configuration
 import org.apache.linkis.configuration.dao.{ConfigMapper, LabelMapper}
@@ -26,20 +27,17 @@ import org.apache.linkis.configuration.util.LabelEntityParser
 import org.apache.linkis.manager.label.builder.CombinedLabelBuilder
 import org.apache.linkis.manager.label.entity.CombinedLabel
 import org.apache.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
-
-import org.apache.commons.lang3.StringUtils
-
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.DuplicateKeyException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 import java.util
-
 import scala.collection.JavaConverters._
 
+
 @Service
-class CategoryService extends Logging {
+class CategoryService extends Logging{
 
   @Autowired
   private var configMapper: ConfigMapper = _
@@ -58,52 +56,40 @@ class CategoryService extends Logging {
     vo.setCreateTime(categoryLabel.getCreateTime)
     vo.setUpdateTime(categoryLabel.getUpdateTime)
     vo.setLevel(categoryLabel.getLevel)
-    if (StringUtils.isNotEmpty(categoryLabel.getDescription)) {
+    if(StringUtils.isNotEmpty(categoryLabel.getDescription)){
       vo.setDescription(categoryLabel.getDescription)
     }
-    if (StringUtils.isNotEmpty(categoryLabel.getTag)) {
+    if(StringUtils.isNotEmpty(categoryLabel.getTag)){
       vo.setTag(categoryLabel.getTag)
     }
 
   }
 
-  def buildCategoryTree(
-      categoryLabelList: util.List[CategoryLabel]
-  ): util.List[CategoryLabelVo] = {
+  def buildCategoryTree(categoryLabelList: util.List[CategoryLabel]): util.List[CategoryLabelVo] = {
     val firstCategoryList = new util.ArrayList[CategoryLabelVo]()
     val secondaryCategoryList = new util.ArrayList[CategoryLabelVo]()
     categoryLabelList.asScala.foreach(categoryLabel => {
       val vo = new CategoryLabelVo
       setCategoryVo(vo, categoryLabel)
-      val combinedLabel = combinedLabelBuilder
-        .buildFromStringValue(categoryLabel.getLabelKey, categoryLabel.getStringValue)
-        .asInstanceOf[CombinedLabel]
+      val combinedLabel = combinedLabelBuilder.buildFromStringValue(categoryLabel.getLabelKey, categoryLabel.getStringValue).asInstanceOf[CombinedLabel]
       val labelList = combinedLabel.getValue
-      labelList.asScala.foreach(label =>
-        label match {
-          case u: UserCreatorLabel =>
-            if (categoryLabel.getLevel == 1) {
-              vo.setCategoryName(u.getCreator)
-              firstCategoryList.add(vo)
-            } else if (categoryLabel.getLevel == 2) {
-              vo.setFatherCategoryName(u.getCreator)
-            }
-          case e: EngineTypeLabel =>
-            if (categoryLabel.getLevel == 2) {
-              vo.setCategoryName(e.getStringValue)
-              secondaryCategoryList.add(vo)
-            }
-          case _ =>
+      labelList.asScala.foreach(label => label match{
+        case u: UserCreatorLabel => if(categoryLabel.getLevel == 1) {
+          vo.setCategoryName(u.getCreator)
+          firstCategoryList.add(vo)
+        }else if(categoryLabel.getLevel == 2){
+          vo.setFatherCategoryName(u.getCreator)
         }
-      )
+        case e: EngineTypeLabel => if(categoryLabel.getLevel == 2) {
+          vo.setCategoryName(e.getStringValue)
+          secondaryCategoryList.add(vo)
+        }
+        case _ =>
+      })
     })
     secondaryCategoryList.asScala.foreach(secondaryVo => {
-      // TODO use getOrElse
-      firstCategoryList.asScala
-        .find(_.getCategoryName.equals(secondaryVo.getFatherCategoryName))
-        .get
-        .getChildCategory
-        .add(secondaryVo)
+      //TODO use getOrElse
+      firstCategoryList.asScala.find(_.getCategoryName.equals(secondaryVo.getFatherCategoryName)).get.getChildCategory.add(secondaryVo)
     })
     firstCategoryList
   }
@@ -119,11 +105,7 @@ class CategoryService extends Logging {
     categoryLabelTreeList.asScala.find(_.getCategoryId == categoryId)
   }
 
-  def generateCategoryLabel(
-      labelId: Integer,
-      description: String,
-      level: Integer
-  ): CategoryLabel = {
+  def generateCategoryLabel(labelId: Integer, description: String, level: Integer): CategoryLabel = {
     val categoryLabel = new CategoryLabel
     categoryLabel.setId(labelId)
     categoryLabel.setDescription(description)
@@ -133,32 +115,27 @@ class CategoryService extends Logging {
 
   @Transactional
   def createFirstCategory(categoryName: String, description: String): Unit = {
-    val categoryList =
-      getAllCategory().asScala.map(category => category.getCategoryName.toLowerCase())
-    if (categoryList.contains(categoryName.toLowerCase)) {
-      throw new ConfigurationException(
-        s"category name : ${categoryName} is exist, cannot be created(目录名：${categoryName}已存在，无法创建)"
-      )
+    val categoryList = getAllCategory().asScala.map(category => category.getCategoryName.toLowerCase())
+    if(categoryList.contains(categoryName.toLowerCase)) {
+      throw new ConfigurationException(s"category name : ${categoryName} is exist, cannot be created(目录名：${categoryName}已存在，无法创建)")
     }
-    val combinedLabel = configurationService.generateCombinedLabel(null, null, null, categoryName)
+    val combinedLabel = configurationService.generateCombinedLabel(null,null,null,categoryName)
     val parsedLabel = LabelEntityParser.parseToConfigLabel(combinedLabel)
     labelMapper.insertLabel(parsedLabel)
-    if (parsedLabel.getId != null) {
+    if(parsedLabel.getId != null){
       val categoryLabel = generateCategoryLabel(parsedLabel.getId, description, 1)
       configMapper.insertCategory(categoryLabel)
-      logger.info(
-        s"success to create category: ${categoryName} --category id: ${categoryLabel.getCategoryId} " +
-          s"--category level: 1"
-      )
+      logger.info(s"success to create category: ${categoryName} --category id: ${categoryLabel.getCategoryId} " +
+        s"--category level: 1")
     }
   }
 
   @Transactional
   def associateConfigKey(labelId: Integer, stringValue: String): Unit = {
-    if (!StringUtils.isEmpty(stringValue) && labelId != null) {
+    if(!StringUtils.isEmpty(stringValue) && labelId != null){
       val keyList = configMapper.listKeyByStringValue(stringValue)
       val keyIdList = keyList.asScala.map(_.getId)
-      if (!keyIdList.isEmpty) {
+      if(!keyIdList.isEmpty){
         val configValueList = new util.ArrayList[ConfigValue]()
         keyIdList.foreach(keyId => {
           val configValue = new ConfigValue
@@ -173,65 +150,37 @@ class CategoryService extends Logging {
   }
 
   @Transactional
-  def createSecondCategory(
-      categoryId: Integer,
-      engineType: String,
-      version: String,
-      description: String
-  ): Unit = {
+  def createSecondCategory(categoryId: Integer, engineType: String, version: String, description: String): Unit = {
     val categoryTree = getCategoryById(categoryId)
-    val categoryList = categoryTree.getOrElse(
-      throw new ConfigurationException(
-        s"category id : ${categoryId} is not exist, cannot be created(目录id：${categoryId}不存在，无法创建)"
-      )
-    )
+    val categoryList = categoryTree.getOrElse(throw new ConfigurationException(s"category id : ${categoryId} is not exist, cannot be created(目录id：${categoryId}不存在，无法创建)"))
     val childList = categoryList.getChildCategory.asScala
-    if (
-        childList != null && !childList
-          .filter(_.getCategoryName.toLowerCase.equals(engineType.toLowerCase + "-" + version))
-          .isEmpty
-    ) {
-      throw new ConfigurationException(
-        s"${engineType}-${version} is exist, cannot be created(${engineType}-${version}已经存在，无法创建)"
-      )
+    if(childList != null && !childList.filter(_.getCategoryName.toLowerCase.equals(engineType.toLowerCase + "-" + version)).isEmpty){
+      throw new ConfigurationException(s"${engineType}-${version} is exist, cannot be created(${engineType}-${version}已经存在，无法创建)")
     }
     val creator = categoryList.getCategoryName match {
       case Configuration.GLOBAL_CONF_CHN_NAME | Configuration.GLOBAL_CONF_CHN_OLDNAME =>
-        throw new ConfigurationException(
-          "Global setting do not allow the configuration of engines to be added(全局设置不允许添加引擎配置!)"
-        )
+        throw new ConfigurationException("Global setting do not allow the configuration of engines to be added(全局设置不允许添加引擎配置!)")
       case _ => categoryList.getCategoryName
     }
-    val combinedLabel =
-      configurationService.generateCombinedLabel(engineType, version, null, creator)
+    val combinedLabel = configurationService.generateCombinedLabel(engineType,version,null,creator)
     val parsedLabel = LabelEntityParser.parseToConfigLabel(combinedLabel)
     Utils.tryCatch(labelMapper.insertLabel(parsedLabel)) {
       case exception: DuplicateKeyException => {
-        parsedLabel.setId(
-          labelMapper
-            .getLabelByKeyValue(parsedLabel.getLabelKey, parsedLabel.getStringValue)
-            .getId
-        )
+        parsedLabel.setId(labelMapper.getLabelByKeyValue(parsedLabel.getLabelKey, parsedLabel.getStringValue).getId)
       }
       case exception: Exception => throw exception
     }
-    if (parsedLabel.getId != null) {
+    if(parsedLabel.getId != null){
       val categoryLabel = generateCategoryLabel(parsedLabel.getId, description, 2)
       configMapper.insertCategory(categoryLabel)
-      logger.info(
-        s"success to create category: ${combinedLabel.getStringValue} --category id: ${categoryLabel.getCategoryId} " +
-          s"--category level: 2"
-      )
-      // 1.Here, the engine and the corresponding engine default configuration are associated and initialized, and the relevant configuration of the corresponding version of the engine needs to be entered in the database in advance
-      // 2.Now all the default configurations obtained are the default configuration of the engine level, and there is no default configuration of the application level for the time being.
+      logger.info(s"success to create category: ${combinedLabel.getStringValue} --category id: ${categoryLabel.getCategoryId} " +
+        s"--category level: 2")
+      //1.Here, the engine and the corresponding engine default configuration are associated and initialized, and the relevant configuration of the corresponding version of the engine needs to be entered in the database in advance
+      //2.Now all the default configurations obtained are the default configuration of the engine level, and there is no default configuration of the application level for the time being.
       // If you need to consider, you need to change the creator of the label generated here to the corresponding application, and you need to modify the getFullTree to obtain the label of the defaultConfig, and also replace its creator with the creator of the application.
-      val linkedEngineTypeLabel =
-        configurationService.generateCombinedLabel(engineType, version, null, null)
-      val linkedEngineTypeLabelInDb = labelMapper.getLabelByKeyValue(
-        linkedEngineTypeLabel.getLabelKey,
-        linkedEngineTypeLabel.getStringValue
-      )
-      if (linkedEngineTypeLabelInDb != null) {
+      val linkedEngineTypeLabel = configurationService.generateCombinedLabel(engineType,version,null, null)
+      val linkedEngineTypeLabelInDb = labelMapper.getLabelByKeyValue(linkedEngineTypeLabel.getLabelKey, linkedEngineTypeLabel.getStringValue)
+      if(linkedEngineTypeLabelInDb != null){
         associateConfigKey(linkedEngineTypeLabelInDb.getId, linkedEngineTypeLabel.getStringValue)
       }
     }
@@ -239,13 +188,11 @@ class CategoryService extends Logging {
 
   @Transactional
   def deleteCategory(categoryId: Integer): Unit = {
-    if (categoryId > 0) {
+    if(categoryId > 0){
       val categoryLabel = configMapper.getCategoryById(categoryId)
-      if (categoryLabel == null) {
-        throw new ConfigurationException(
-          s"cannot find category, categoryId:${categoryId}" +
-            s"(没有找到要删除的目录，目录Id:${categoryId})"
-        )
+      if(categoryLabel == null) {
+        throw new ConfigurationException(s"cannot find category, categoryId:${categoryId}" +
+          s"(没有找到要删除的目录，目录Id:${categoryId})")
       }
       categoryLabel.getLevel.toInt match {
         case 1 => deleteAllNode(categoryId)
@@ -256,7 +203,7 @@ class CategoryService extends Logging {
 
   def deleteAllNode(categoryId: Integer): Unit = {
     val categoryLabelVo = getCategoryById(categoryId).getOrElse(null)
-    if (categoryLabelVo != null) {
+    if(categoryLabelVo != null){
       val idList = new util.ArrayList[Integer]()
       idList.add(categoryLabelVo.getCategoryId)
       val childCategoryList = categoryLabelVo.getChildCategory.asScala
@@ -266,14 +213,12 @@ class CategoryService extends Logging {
       idList.add(categoryLabelVo.getLabelId)
       childCategoryList.foreach(child => idList.add(child.getLabelId))
       labelMapper.deleteLabel(idList)
-      logger.info(
-        s"success to delete category:${categoryLabelVo.getCategoryName}, " +
-          s"with child category:${childCategoryList.map(_.getCategoryName).toArray}"
-      )
+      logger.info(s"success to delete category:${categoryLabelVo.getCategoryName}, " +
+        s"with child category:${childCategoryList.map(_.getCategoryName).toArray}")
     }
   }
 
-  def updateCategory(categoryId: Integer, description: String): Unit = {
+  def updateCategory(categoryId: Integer, description: String):Unit = {
     val categoryLabel = new CategoryLabel
     categoryLabel.setCategoryId(categoryId)
     categoryLabel.setDescription(description)
@@ -282,7 +227,7 @@ class CategoryService extends Logging {
 
   def deleteCurrentNode(categoryId: Integer): Unit = {
     val categoryLabel = configMapper.getCategoryById(categoryId)
-    if (categoryLabel != null) {
+    if(categoryLabel != null){
       val idList = new util.ArrayList[Integer]()
       idList.add(categoryId)
       configMapper.deleteCategory(idList)
@@ -292,5 +237,4 @@ class CategoryService extends Logging {
       logger.info(s"success to delete category:${categoryLabel.getStringValue}")
     }
   }
-
 }

@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,8 +19,8 @@ package org.apache.linkis.engineconn.computation.executor.async
 
 import org.apache.linkis.engineconn.common.exception.EngineConnException
 import org.apache.linkis.engineconn.computation.executor.utlis.ComputationErrorCode
-import org.apache.linkis.scheduler.executer._
 import org.apache.linkis.scheduler.executer.ExecutorState.ExecutorState
+import org.apache.linkis.scheduler.executer._
 
 class AsyncExecuteExecutor(executor: AsyncConcurrentComputationExecutor) extends Executor {
 
@@ -31,15 +31,8 @@ class AsyncExecuteExecutor(executor: AsyncConcurrentComputationExecutor) extends
   override def execute(executeRequest: ExecuteRequest): ExecuteResponse = {
     executeRequest match {
       case asyncExecuteRequest: AsyncExecuteRequest =>
-        executor.asyncExecuteTask(
-          asyncExecuteRequest.task,
-          asyncExecuteRequest.engineExecutionContext
-        )
-      case _ =>
-        throw EngineConnException(
-          ComputationErrorCode.ASYNC_EXECUTOR_ERROR_CODE,
-          "Mismatched execution request"
-        )
+        executor.asyncExecuteTask(asyncExecuteRequest.task, asyncExecuteRequest.engineExecutionContext)
+      case _ => throw  EngineConnException(ComputationErrorCode.ASYNC_EXECUTOR_ERROR_CODE, "Mismatched execution request")
     }
   }
 
@@ -51,5 +44,7 @@ class AsyncExecuteExecutor(executor: AsyncConcurrentComputationExecutor) extends
     null
   }
 
-  override def close(): Unit = {}
+  override def close(): Unit = {
+
+  }
 }

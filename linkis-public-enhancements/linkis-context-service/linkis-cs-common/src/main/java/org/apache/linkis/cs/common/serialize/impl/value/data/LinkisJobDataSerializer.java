@@ -24,21 +24,21 @@ import org.apache.linkis.cs.common.utils.CSCommonUtils;
 
 public class LinkisJobDataSerializer extends AbstractSerializer<LinkisJobData> {
 
-  @Override
-  public LinkisJobData fromJson(String json) throws CSErrorException {
-    return CSCommonUtils.gson.fromJson(json, LinkisJobData.class);
-  }
-
-  @Override
-  public String getType() {
-    return "LinkisJobData";
-  }
-
-  @Override
-  public boolean accepts(Object obj) {
-    if (null != obj && obj.getClass().getName().equals(LinkisJobData.class.getName())) {
-      return true;
+    @Override
+    public LinkisJobData fromJson(String json) throws CSErrorException {
+        return CSCommonUtils.gson.fromJson(json, LinkisJobData.class);
     }
-    return false;
-  }
+
+    @Override
+    public String getType() {
+        return "LinkisJobData";
+    }
+
+    @Override
+    public boolean accepts(Object obj) {
+        if (null != obj && obj.getClass().getName().equals(LinkisJobData.class.getName())) {
+            return true;
+        }
+        return false;
+    }
 }

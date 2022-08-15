@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,11 +18,10 @@
 package org.apache.linkis.common.variable
 
 import org.apache.linkis.common.variable.DateTypeUtils.{getCurHour, getMonthDay}
-
-import java.util.Calendar
-
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+
+import java.util.Calendar
 
 class VariableTypeTest {
 
@@ -89,7 +88,7 @@ class VariableTypeTest {
     val hourTypeRes = hourType.calculator("+", "24")
     val run_date = new CustomDateType(run_date_str, false)
     val dateType = DateType(run_date)
-    // add 1 days
+    //add 1 days
     val dateTypeRes = dateType.calculator("+", "1")
     val cal: Calendar = Calendar.getInstance()
     val hourOfDay = cal.get(Calendar.HOUR_OF_DAY)

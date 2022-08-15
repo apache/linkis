@@ -5,16 +5,16 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+ 
 package org.apache.linkis.computation.client.job
 
 import org.apache.linkis.computation.client.LinkisJobMetrics
@@ -23,6 +23,7 @@ import org.apache.linkis.governance.common.entity.task.RequestPersistTask
 import org.apache.linkis.ujes.client.UJESClient
 import org.apache.linkis.ujes.client.request.{JobSubmitAction, OpenLogAction}
 import org.apache.linkis.ujes.client.response.{JobInfoResult, JobSubmitResult}
+
 
 trait StorableLinkisJob extends AbstractLinkisJob {
 
@@ -43,7 +44,7 @@ trait StorableLinkisJob extends AbstractLinkisJob {
     val startTime = System.currentTimeMillis
     val jobInfoResult = wrapperId(ujesClient.getJobInfo(getJobSubmitResult))
     getJobMetrics.addClientGetJobInfoTime(System.currentTimeMillis - startTime)
-    if (jobInfoResult.isCompleted) {
+    if(jobInfoResult.isCompleted) {
       getJobMetrics.setClientFinishedTime(System.currentTimeMillis)
       completedJobInfoResult = jobInfoResult
       logger.info(s"Job-$getId is completed with status " + completedJobInfoResult.getJobStatus)
@@ -56,11 +57,8 @@ trait StorableLinkisJob extends AbstractLinkisJob {
 
   def getAllLogs: Array[String] = wrapperId {
     val jobInfo = getJobInfo
-    val action = OpenLogAction
-      .newBuilder()
-      .setLogPath(jobInfo.getLogPath)
-      .setProxyUser(jobInfo.getUmUser)
-      .build()
+    val action = OpenLogAction.newBuilder().setLogPath(jobInfo.getLogPath)
+      .setProxyUser(jobInfo.getUmUser).build()
     ujesClient.openLog(action).getLog
   }
 
@@ -71,11 +69,9 @@ trait StorableLinkisJob extends AbstractLinkisJob {
   override def isSucceed: Boolean = getJobInfoResult.isSucceed
 }
 
-abstract class StorableSubmittableLinkisJob(
-    override protected val ujesClient: UJESClient,
-    jobSubmitAction: JobSubmitAction
-) extends StorableLinkisJob
-    with AbstractSubmittableLinkisJob {
+abstract class StorableSubmittableLinkisJob(override protected val ujesClient: UJESClient,
+                                            jobSubmitAction: JobSubmitAction)
+  extends StorableLinkisJob with AbstractSubmittableLinkisJob {
 
   private var taskId: String = _
   private var jobSubmitResult: JobSubmitResult = _
@@ -84,16 +80,14 @@ abstract class StorableSubmittableLinkisJob(
 
   override protected def getJobSubmitResult: JobSubmitResult = jobSubmitResult
 
-  protected override def wrapperId[T](op: => T): T =
-    super.wrapperObj(taskId, "Please submit job first.")(op)
+  protected override def wrapperId[T](op: => T): T = super.wrapperObj(taskId, "Please submit job first.")(op)
 
   override protected def doSubmit(): Unit = {
     logger.info("Ready to submit job: " + jobSubmitAction.getRequestPayload)
     jobSubmitResult = ujesClient.submit(jobSubmitAction)
     taskId = jobSubmitResult.taskID
     addOperatorAction {
-      case operator: StorableOperator[_] =>
-        operator.setJobSubmitResult(jobSubmitResult).setUJESClient(ujesClient)
+      case operator: StorableOperator[_] => operator.setJobSubmitResult(jobSubmitResult).setUJESClient(ujesClient)
       case operator => operator
     }
     logger.info("Job submitted with taskId: " + taskId)
@@ -101,12 +95,9 @@ abstract class StorableSubmittableLinkisJob(
 
 }
 
-abstract class StorableExistingLinkisJob(
-    protected override val ujesClient: UJESClient,
-    execId: String,
-    taskId: String,
-    user: String
-) extends StorableLinkisJob {
+abstract class StorableExistingLinkisJob(protected override val ujesClient: UJESClient,
+                                         execId: String,
+                                         taskId: String, user: String) extends StorableLinkisJob {
 
   private val jobSubmitResult = new JobSubmitResult
   private val jobMetrics: LinkisJobMetrics = new LinkisJobMetrics(taskId)

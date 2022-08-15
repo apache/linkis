@@ -5,25 +5,25 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+ 
 package org.apache.linkis.orchestrator.plans.ast
 
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.governance.common.utils.JobUtils
 import org.apache.linkis.orchestrator.utils.OrchestratorIDCreator
 
-import org.apache.commons.lang3.StringUtils
-
 /**
- */
+  *
+  */
 trait Job extends ASTOrchestration[Job] {
 
   private var visited: Boolean = false
@@ -58,17 +58,15 @@ trait Job extends ASTOrchestration[Job] {
 
   /**
    * JonIDINFO generation method:
-   *   1. If taskID exists in startUp, use taskID as prefix 2. If the taskID does not exist or is
-   *      empty, use the job id directly
+   * 1. If taskID exists in startUp, use taskID as prefix
+   * 2. If the taskID does not exist or is empty, use the job id directly
    * @return
    */
   def getIDInfo(): String = {
     if (null == idInfo) idInfoLock synchronized {
       if (null == idInfo) {
         val context = getASTContext
-        if (
-            null != context && null != context.getParams && null != context.getParams.getRuntimeParams && null != context.getParams.getRuntimeParams.toMap
-        ) {
+        if (null != context && null != context.getParams && null != context.getParams.getRuntimeParams && null != context.getParams.getRuntimeParams.toMap) {
           val runtimeMap = context.getParams.getRuntimeParams.toMap
           val taskId = JobUtils.getJobIdFromMap(runtimeMap)
           if (StringUtils.isNotBlank(taskId)) {
@@ -83,5 +81,4 @@ trait Job extends ASTOrchestration[Job] {
     }
     idInfo
   }
-
 }

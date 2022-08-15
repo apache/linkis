@@ -20,15 +20,15 @@ package org.apache.linkis.manager.engineplugin.jdbc;
 import java.util.Map;
 
 public class JDBCPropertiesParser extends PropertiesParser {
-  public static long getLong(Map<String, String> prop, String key, long defaultValue) {
-    return getValue(prop, key, defaultValue, Long::parseLong);
-  }
+    public static long getLong(Map<String, String> prop, String key, long defaultValue) {
+        return getValue(prop, key, defaultValue, Long::parseLong);
+    }
 
-  public static int getInt(Map<String, String> prop, String key, int defaultValue) {
-    return getValue(prop, key, defaultValue, Integer::parseInt);
-  }
+    public static int getInt(Map<String, String> prop, String key, int defaultValue) {
+        return getValue(prop, key, defaultValue, Integer::parseInt);
+    }
 
-  public static boolean getBool(Map<String, String> prop, String key, boolean defaultValue) {
-    return getValue(prop, key, defaultValue, "true"::equalsIgnoreCase);
-  }
+    public static boolean getBool(Map<String, String> prop, String key, boolean defaultValue) {
+        return getValue(prop, key, defaultValue, "true"::equalsIgnoreCase);
+    }
 }

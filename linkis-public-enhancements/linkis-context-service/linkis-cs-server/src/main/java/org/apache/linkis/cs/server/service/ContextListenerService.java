@@ -28,12 +28,12 @@ import java.util.List;
 
 public abstract class ContextListenerService extends AbstractService {
 
-  public abstract void onBind(ContextID contextID, ContextIDListenerDomain listener)
-      throws CSErrorException;
+    public abstract void onBind(ContextID contextID, ContextIDListenerDomain listener)
+            throws CSErrorException;
 
-  public abstract void onBind(
-      ContextID contextID, ContextKey contextKey, ContextKeyListenerDomain listener)
-      throws CSErrorException;
+    public abstract void onBind(
+            ContextID contextID, ContextKey contextKey, ContextKeyListenerDomain listener)
+            throws CSErrorException;
 
-  public abstract List<ContextKeyValueBean> heartbeat(String source);
+    public abstract List<ContextKeyValueBean> heartbeat(String source);
 }

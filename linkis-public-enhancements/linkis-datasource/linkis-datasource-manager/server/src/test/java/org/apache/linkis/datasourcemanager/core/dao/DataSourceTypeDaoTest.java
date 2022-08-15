@@ -28,21 +28,21 @@ import org.slf4j.LoggerFactory;
 import static org.junit.jupiter.api.Assertions.*;
 
 class DataSourceTypeDaoTest extends BaseDaoTest {
-  private static final Logger logger = LoggerFactory.getLogger(DataSourceTypeDaoTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(DataSourceTypeDaoTest.class);
 
-  @Autowired DataSourceTypeDao dataSourceTypeDao;
+    @Autowired DataSourceTypeDao dataSourceTypeDao;
 
-  @AfterAll
-  @DisplayName("Each unit test method is executed once before execution")
-  protected static void afterAll() throws Exception {}
+    @AfterAll
+    @DisplayName("Each unit test method is executed once before execution")
+    protected static void afterAll() throws Exception {}
 
-  @Test
-  void testGetAllTypes() {
-    assertTrue(dataSourceTypeDao.getAllTypes().size() == 1);
-  }
+    @Test
+    void testGetAllTypes() {
+        assertTrue(dataSourceTypeDao.getAllTypes().size() == 1);
+    }
 
-  @Test
-  void testSelectOne() {
-    assertNotNull(dataSourceTypeDao.selectOne(1l));
-  }
+    @Test
+    void testSelectOne() {
+        assertNotNull(dataSourceTypeDao.selectOne(1l));
+    }
 }

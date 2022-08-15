@@ -38,36 +38,36 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class LinkisLogPresenter implements Presenter, LinkisClientListener {
-  private static Logger logger = LoggerFactory.getLogger(LinkisLogPresenter.class);
+    private static Logger logger = LoggerFactory.getLogger(LinkisLogPresenter.class);
 
-  @Override
-  public void present(Model model, PresentWay presentWay) {
-    if (!(model instanceof LinkisLogModel)) {
-      throw new PresenterException(
-          "PST0001",
-          ErrorLevel.ERROR,
-          CommonErrMsg.PresenterErr,
-          "Input model for \"LinkisLogPresenter\" is not instance of \"LinkisJobIncLogModel\"");
+    @Override
+    public void present(Model model, PresentWay presentWay) {
+        if (!(model instanceof LinkisLogModel)) {
+            throw new PresenterException(
+                    "PST0001",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.PresenterErr,
+                    "Input model for \"LinkisLogPresenter\" is not instance of \"LinkisJobIncLogModel\"");
+        }
+        LinkisLogModel logModel = (LinkisLogModel) model;
+        DisplayOperator displayOper = DisplayOperFactory.getDisplayOper(PresentModeImpl.STDOUT);
+        while (!logModel.logFinReceived()) {
+            String incLog = logModel.consumeLog();
+            if (StringUtils.isNotEmpty(incLog)) {
+                displayOper.doOutput(new StdoutDisplayData(incLog));
+            }
+            CommonUtils.doSleepQuietly(500l);
+        }
+        String incLog = logModel.consumeLog();
+        if (StringUtils.isNotEmpty(incLog)) {
+            displayOper.doOutput(new StdoutDisplayData(incLog));
+        }
     }
-    LinkisLogModel logModel = (LinkisLogModel) model;
-    DisplayOperator displayOper = DisplayOperFactory.getDisplayOper(PresentModeImpl.STDOUT);
-    while (!logModel.logFinReceived()) {
-      String incLog = logModel.consumeLog();
-      if (StringUtils.isNotEmpty(incLog)) {
-        displayOper.doOutput(new StdoutDisplayData(incLog));
-      }
-      CommonUtils.doSleepQuietly(500l);
-    }
-    String incLog = logModel.consumeLog();
-    if (StringUtils.isNotEmpty(incLog)) {
-      displayOper.doOutput(new StdoutDisplayData(incLog));
-    }
-  }
 
-  @Override
-  public void update(LinkisClientEvent event, Object msg) {
-    Model model = new LinkisLogModel();
-    model.buildModel(msg);
-    this.present(model, null);
-  }
+    @Override
+    public void update(LinkisClientEvent event, Object msg) {
+        Model model = new LinkisLogModel();
+        model.buildModel(msg);
+        this.present(model, null);
+    }
 }

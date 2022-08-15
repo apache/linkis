@@ -22,15 +22,15 @@ import org.apache.linkis.udf.excepiton.UDFException;
 
 public interface UDFTreeService {
 
-  UDFTree initTree(String userName, String category) throws UDFException;
+    UDFTree initTree(String userName, String category) throws UDFException;
 
-  UDFTree addTree(UDFTree udfTree, String userName) throws UDFException;
+    UDFTree addTree(UDFTree udfTree, String userName) throws UDFException;
 
-  UDFTree updateTree(UDFTree udfTree, String userName) throws UDFException;
+    UDFTree updateTree(UDFTree udfTree, String userName) throws UDFException;
 
-  Boolean deleteTree(Long id, String userName) throws UDFException;
+    Boolean deleteTree(Long id, String userName) throws UDFException;
 
-  UDFTree getTreeById(Long id, String userName, String type, String category) throws UDFException;
+    UDFTree getTreeById(Long id, String userName, String type, String category) throws UDFException;
 
-  UDFTree getSharedTree(String category) throws UDFException;
+    UDFTree getSharedTree(String category) throws UDFException;
 }

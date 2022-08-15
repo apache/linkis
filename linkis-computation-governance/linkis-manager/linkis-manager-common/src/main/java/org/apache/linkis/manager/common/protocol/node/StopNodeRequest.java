@@ -18,5 +18,5 @@
 package org.apache.linkis.manager.common.protocol.node;
 
 public class StopNodeRequest implements NodeRequestProtocol {
-  private String name = "StopNodeRequest";
+    private String name = "StopNodeRequest";
 }

@@ -28,27 +28,27 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 @Component
 public class TransactionManagerImpl implements TransactionManager {
 
-  @Autowired private PlatformTransactionManager txManager;
+    @Autowired private PlatformTransactionManager txManager;
 
-  @Override
-  public Object begin() {
-    return txManager.getTransaction(new DefaultTransactionDefinition());
-  }
+    @Override
+    public Object begin() {
+        return txManager.getTransaction(new DefaultTransactionDefinition());
+    }
 
-  @Override
-  public void rollback(Object object) {
-    TransactionStatus status = (TransactionStatus) object;
-    txManager.rollback(status);
-  }
+    @Override
+    public void rollback(Object object) {
+        TransactionStatus status = (TransactionStatus) object;
+        txManager.rollback(status);
+    }
 
-  @Override
-  public void commit(Object object) {
-    TransactionStatus status = (TransactionStatus) object;
-    txManager.commit(status);
-  }
+    @Override
+    public void commit(Object object) {
+        TransactionStatus status = (TransactionStatus) object;
+        txManager.commit(status);
+    }
 
-  @Override
-  public void onTransaction() {
-    // TODO: 2020/2/17
-  }
+    @Override
+    public void onTransaction() {
+        // TODO: 2020/2/17
+    }
 }

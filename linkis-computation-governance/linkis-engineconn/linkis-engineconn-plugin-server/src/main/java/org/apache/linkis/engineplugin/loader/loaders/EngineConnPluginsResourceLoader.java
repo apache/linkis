@@ -23,11 +23,11 @@ import org.apache.linkis.manager.engineplugin.common.loader.entity.EngineConnPlu
 
 public interface EngineConnPluginsResourceLoader {
 
-  /**
-   * @param pluginInfo plugin info
-   * @param savePath save Path
-   * @return resource of plugin
-   */
-  PluginResource loadEngineConnPluginResource(EngineConnPluginInfo pluginInfo, String savePath)
-      throws EngineConnPluginLoadResourceException;
+    /**
+     * @param pluginInfo plugin info
+     * @param savePath save Path
+     * @return resource of plugin
+     */
+    PluginResource loadEngineConnPluginResource(EngineConnPluginInfo pluginInfo, String savePath)
+            throws EngineConnPluginLoadResourceException;
 }

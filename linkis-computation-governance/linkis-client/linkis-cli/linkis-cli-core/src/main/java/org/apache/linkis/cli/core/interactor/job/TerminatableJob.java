@@ -22,8 +22,8 @@ import org.apache.linkis.cli.common.exception.LinkisClientRuntimeException;
 
 /** Backend supports killing job */
 public interface TerminatableJob extends Job {
-  /** for jobs that starts a new thread */
-  TerminateToken getTerminateToken();
+    /** for jobs that starts a new thread */
+    TerminateToken getTerminateToken();
 
-  void terminate() throws LinkisClientRuntimeException;
+    void terminate() throws LinkisClientRuntimeException;
 }

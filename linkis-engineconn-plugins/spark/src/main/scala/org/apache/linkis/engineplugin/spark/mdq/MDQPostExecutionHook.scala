@@ -5,16 +5,16 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+ 
 package org.apache.linkis.engineplugin.spark.mdq
 
 import org.apache.linkis.common.utils.Logging
@@ -28,46 +28,36 @@ import org.apache.linkis.rpc.Sender
 import org.apache.linkis.scheduler.executer.{ExecuteResponse, SuccessExecuteResponse}
 import org.apache.linkis.storage.utils.StorageUtils
 
+import javax.annotation.PostConstruct
 import org.apache.commons.lang3.StringUtils
-
 import org.springframework.stereotype.Component
 
-import javax.annotation.PostConstruct
 
 @Component
-class MDQPostExecutionHook extends SparkPostExecutionHook with Logging {
+class MDQPostExecutionHook extends SparkPostExecutionHook with Logging{
 
   @PostConstruct
-  def init(): Unit = {
+  def  init(): Unit ={
     SparkPostExecutionHook.register(this)
   }
 
   override def hookName: String = "MDQPostHook"
 
-  override def callPostExecutionHook(
-      engineExecutionContext: EngineExecutionContext,
-      executeResponse: ExecuteResponse,
-      code: String
-  ): Unit = {
-    val codeLanguageLabel = engineExecutionContext.getLabels
-      .filter(l => null != l && l.isInstanceOf[CodeLanguageLabel])
-      .head
+  override def callPostExecutionHook(engineExecutionContext: EngineExecutionContext, executeResponse: ExecuteResponse, code: String): Unit = {
+    val codeLanguageLabel = engineExecutionContext.getLabels.filter(l => null != l && l.isInstanceOf[CodeLanguageLabel]).head
     val runType: String = codeLanguageLabel match {
       case l: CodeLanguageLabel => l.getCodeType
       case _ => ""
     }
-    if (StringUtils.isEmpty(runType) || !SparkKind.FUNCTION_MDQ_TYPE.equalsIgnoreCase(runType))
-      return
+    if(StringUtils.isEmpty(runType) || ! SparkKind.FUNCTION_MDQ_TYPE.equalsIgnoreCase(runType)) return
     val sender = Sender.getSender(SparkConfiguration.MDQ_APPLICATION_NAME.getValue)
     executeResponse match {
       case SuccessExecuteResponse() =>
         sender.ask(DDLExecuteResponse(true, code, StorageUtils.getJvmUser)) match {
-          case DDLCompleteResponse(status) =>
-            if (!status)
-              logger.warn(s"failed to execute create table :$code (执行建表失败):$code")
+          case DDLCompleteResponse(status) => if (! status)
+            logger.warn(s"failed to execute create table :$code (执行建表失败):$code")
         }
-      case _ => logger.warn(s"failed to execute create table:$code (执行建表失败:$code)")
+      case _=> logger.warn(s"failed to execute create table:$code (执行建表失败:$code)")
     }
   }
-
 }

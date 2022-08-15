@@ -15,70 +15,75 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>org.apache.linkis</groupId>
-    <artifactId>linkis</artifactId>
-    <version>1.2.0</version>
-    <relativePath>../../pom.xml</relativePath>
-  </parent>
+  
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>linkis</artifactId>
+        <groupId>org.apache.linkis</groupId>
+        <version>1.2.0</version>
+        <relativePath>../../pom.xml</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>linkis-label-common</artifactId>
+    <artifactId>linkis-label-common</artifactId>
 
-  <dependencies>
-    <dependency>
-      <groupId>org.apache.linkis</groupId>
-      <artifactId>linkis-common</artifactId>
-      <version>${project.version}</version>
-      <scope>provided</scope>
-    </dependency>
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.linkis</groupId>
+            <artifactId>linkis-common</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
 
-    <dependency>
-      <groupId>org.reflections</groupId>
-      <artifactId>reflections</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>com.google.code.gson</groupId>
-          <artifactId>gson</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.google.guava</groupId>
-          <artifactId>guava</artifactId>
-        </exclusion>
 
-      </exclusions>
-    </dependency>
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <version>${reflections.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.code.gson</groupId>
+                    <artifactId>gson</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
+                </exclusion>
 
-    <dependency>
-      <groupId>org.apache.linkis</groupId>
-      <artifactId>linkis-protocol</artifactId>
-      <version>${project.version}</version>
-      <scope>provided</scope>
-    </dependency>
-  </dependencies>
-  <build>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.linkis</groupId>
+            <artifactId>linkis-protocol</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+    <build>
     <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-deploy-plugin</artifactId>
-      </plugin>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-deploy-plugin</artifactId>
+        </plugin>
 
-      <plugin>
-        <groupId>net.alchim31.maven</groupId>
-        <artifactId>scala-maven-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <configuration>
-          <!--<excludes>-->
-          <!--<exclude>**/*.yml</exclude>-->
-          <!--<exclude>**/*.properties</exclude>-->
-          <!--<exclude>**/*.sh</exclude>-->
-          <!--</excludes>-->
-        </configuration>
-      </plugin>
+        <plugin>
+            <groupId>net.alchim31.maven</groupId>
+            <artifactId>scala-maven-plugin</artifactId>
+        </plugin>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jar-plugin</artifactId>
+            <configuration>
+                <!--<excludes>-->
+                <!--<exclude>**/*.yml</exclude>-->
+                <!--<exclude>**/*.properties</exclude>-->
+                <!--<exclude>**/*.sh</exclude>-->
+                <!--</excludes>-->
+            </configuration>
+        </plugin>
     </plugins>
-  </build>
+    </build>
 </project>

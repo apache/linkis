@@ -32,17 +32,17 @@ import java.util.List;
 
 /** Operation for SHOW DATABASES command. */
 public class ShowDatabasesOperation implements NonJobOperation {
-  private final ExecutionContext context;
+    private final ExecutionContext context;
 
-  public ShowDatabasesOperation(FlinkEngineConnContext context) {
-    this.context = context.getExecutionContext();
-  }
+    public ShowDatabasesOperation(FlinkEngineConnContext context) {
+        this.context = context.getExecutionContext();
+    }
 
-  @Override
-  public ResultSet execute() throws SqlExecutionException {
-    final TableEnvironment tableEnv = context.getTableEnvironment();
-    final List<String> databases =
-        context.wrapClassLoader(() -> Arrays.asList(tableEnv.listDatabases()));
-    return OperationUtil.stringListToResultSet(databases, ConstantNames.SHOW_DATABASES_RESULT);
-  }
+    @Override
+    public ResultSet execute() throws SqlExecutionException {
+        final TableEnvironment tableEnv = context.getTableEnvironment();
+        final List<String> databases =
+                context.wrapClassLoader(() -> Arrays.asList(tableEnv.listDatabases()));
+        return OperationUtil.stringListToResultSet(databases, ConstantNames.SHOW_DATABASES_RESULT);
+    }
 }

@@ -27,37 +27,37 @@ import java.util.HashMap;
 
 public class AliasServiceInstanceLabel extends GenericLabel implements NodeLabel {
 
-  public AliasServiceInstanceLabel() {
-    setLabelKey(LabelKeyConstant.SERVER_ALIAS_KEY);
-  }
-
-  @Override
-  public Feature getFeature() {
-    return Feature.CORE;
-  }
-
-  public String getAlias() {
-    if (null == getValue()) {
-      return null;
+    public AliasServiceInstanceLabel() {
+        setLabelKey(LabelKeyConstant.SERVER_ALIAS_KEY);
     }
-    return getValue().get("alias");
-  }
 
-  @ValueSerialNum(0)
-  public void setAlias(String alias) {
-    if (null == getValue()) {
-      setValue(new HashMap<>());
+    @Override
+    public Feature getFeature() {
+        return Feature.CORE;
     }
-    getValue().put("alias", alias);
-  }
 
-  @Override
-  public String getStringValue() {
-    return getAlias();
-  }
+    public String getAlias() {
+        if (null == getValue()) {
+            return null;
+        }
+        return getValue().get("alias");
+    }
 
-  @Override
-  protected void setStringValue(String stringValue) {
-    setAlias(stringValue);
-  }
+    @ValueSerialNum(0)
+    public void setAlias(String alias) {
+        if (null == getValue()) {
+            setValue(new HashMap<>());
+        }
+        getValue().put("alias", alias);
+    }
+
+    @Override
+    public String getStringValue() {
+        return getAlias();
+    }
+
+    @Override
+    protected void setStringValue(String stringValue) {
+        setAlias(stringValue);
+    }
 }

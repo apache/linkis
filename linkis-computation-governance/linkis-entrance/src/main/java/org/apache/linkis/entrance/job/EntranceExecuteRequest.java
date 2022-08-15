@@ -24,91 +24,91 @@ import org.apache.linkis.manager.label.entity.Label;
 import org.apache.linkis.scheduler.executer.ExecuteRequest;
 import org.apache.linkis.scheduler.executer.JobExecuteRequest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class EntranceExecuteRequest
-    implements ExecuteRequest,
-        LabelExecuteRequest,
-        JobExecuteRequest,
-        RuntimePropertiesExecuteRequest,
-        UserExecuteRequest {
+        implements ExecuteRequest,
+                LabelExecuteRequest,
+                JobExecuteRequest,
+                RuntimePropertiesExecuteRequest,
+                UserExecuteRequest {
 
-  private static final Logger logger = LoggerFactory.getLogger(EntranceExecuteRequest.class);
+    private static final Logger logger = LoggerFactory.getLogger(EntranceExecuteRequest.class);
 
-  public EntranceExecuteRequest(EntranceExecutionJob job) {
-    setJob(job);
-  }
-
-  private List<Label<?>> labels;
-
-  public List<Label<?>> getLabels() {
-    return labels;
-  }
-
-  public void setLabels(List<Label<?>> labels) {
-    this.labels = labels;
-  }
-
-  public EntranceExecutionJob getJob() {
-    return job;
-  }
-
-  public void setJob(EntranceExecutionJob job) {
-    this.job = job;
-  }
-
-  private EntranceExecutionJob job;
-
-  @Override
-  public String code() {
-    if (null != job && null != job.getJobRequest()) {
-      return job.getJobRequest().getExecutionCode();
-    } else {
-      logger.error("JobRequest code is null!");
-      return null;
+    public EntranceExecuteRequest(EntranceExecutionJob job) {
+        setJob(job);
     }
-  }
 
-  @Override
-  public String jobId() {
-    if (null != job && null != job.getJobRequest()) {
-      return String.valueOf(job.getJobRequest().getId());
-    } else {
-      logger.error("job request  is null!");
-      return null;
+    private List<Label<?>> labels;
+
+    public List<Label<?>> getLabels() {
+        return labels;
     }
-  }
 
-  @Override
-  public Map<String, Object> properties() {
-    return job.getParams();
-  }
-
-  @Override
-  public List<Label<?>> labels() {
-    if (null == labels || labels.isEmpty()) {
-      if (null != job.getJobRequest()) {
-        return job.getJobRequest().getLabels();
-      } else {
-        return new ArrayList<>(0);
-      }
-    } else {
-      return new ArrayList<>(0);
+    public void setLabels(List<Label<?>> labels) {
+        this.labels = labels;
     }
-  }
 
-  @Override
-  public String submitUser() {
-    return job.getJobRequest().getSubmitUser();
-  }
+    public EntranceExecutionJob getJob() {
+        return job;
+    }
 
-  @Override
-  public String executeUser() {
-    return job.getJobRequest().getExecuteUser();
-  }
+    public void setJob(EntranceExecutionJob job) {
+        this.job = job;
+    }
+
+    private EntranceExecutionJob job;
+
+    @Override
+    public String code() {
+        if (null != job && null != job.getJobRequest()) {
+            return job.getJobRequest().getExecutionCode();
+        } else {
+            logger.error("JobRequest code is null!");
+            return null;
+        }
+    }
+
+    @Override
+    public String jobId() {
+        if (null != job && null != job.getJobRequest()) {
+            return String.valueOf(job.getJobRequest().getId());
+        } else {
+            logger.error("job request  is null!");
+            return null;
+        }
+    }
+
+    @Override
+    public Map<String, Object> properties() {
+        return job.getParams();
+    }
+
+    @Override
+    public List<Label<?>> labels() {
+        if (null == labels || labels.isEmpty()) {
+            if (null != job.getJobRequest()) {
+                return job.getJobRequest().getLabels();
+            } else {
+                return new ArrayList<>(0);
+            }
+        } else {
+            return new ArrayList<>(0);
+        }
+    }
+
+    @Override
+    public String submitUser() {
+        return job.getJobRequest().getSubmitUser();
+    }
+
+    @Override
+    public String executeUser() {
+        return job.getJobRequest().getExecuteUser();
+    }
 }

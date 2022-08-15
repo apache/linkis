@@ -23,21 +23,21 @@ import java.util.Optional;
 
 public interface SqlCommandParser {
 
-  /**
-   * Parse the given statement and return corresponding SqlCommandCall.
-   *
-   * <p>only `set`, `show modules`, `show current catalog` and `show current database` are parsed
-   * through regex matching, other commands are parsed through sql parser.
-   *
-   * <p>throw {@link SqlParseException} if the statement contains multiple sub-statements separated
-   * by semicolon or there is a parse error.
-   *
-   * <p>NOTE: sql parser only parses the statement to get the corresponding SqlCommand, do not check
-   * whether the statement is valid here.
-   */
-  Optional<SqlCommandCall> parse(String stmt, boolean isBlinkPlanner) throws SqlParseException;
+    /**
+     * Parse the given statement and return corresponding SqlCommandCall.
+     *
+     * <p>only `set`, `show modules`, `show current catalog` and `show current database` are parsed
+     * through regex matching, other commands are parsed through sql parser.
+     *
+     * <p>throw {@link SqlParseException} if the statement contains multiple sub-statements
+     * separated by semicolon or there is a parse error.
+     *
+     * <p>NOTE: sql parser only parses the statement to get the corresponding SqlCommand, do not
+     * check whether the statement is valid here.
+     */
+    Optional<SqlCommandCall> parse(String stmt, boolean isBlinkPlanner) throws SqlParseException;
 
-  static SqlCommandParser getSqlCommandParser() {
-    return SqlCommandParserImpl.getInstance();
-  }
+    static SqlCommandParser getSqlCommandParser() {
+        return SqlCommandParserImpl.getInstance();
+    }
 }

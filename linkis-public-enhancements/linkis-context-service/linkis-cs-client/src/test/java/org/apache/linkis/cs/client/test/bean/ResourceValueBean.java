@@ -22,24 +22,24 @@ import org.apache.linkis.cs.common.entity.resource.Resource;
 
 public class ResourceValueBean implements Resource {
 
-  private String resourceId;
-  private String version;
+    private String resourceId;
+    private String version;
 
-  private final ContextType contextType = ContextType.RESOURCE;
+    private final ContextType contextType = ContextType.RESOURCE;
 
-  public String getResourceId() {
-    return resourceId;
-  }
+    public String getResourceId() {
+        return resourceId;
+    }
 
-  public void setResourceId(String resourceId) {
-    this.resourceId = resourceId;
-  }
+    public void setResourceId(String resourceId) {
+        this.resourceId = resourceId;
+    }
 
-  public String getVersion() {
-    return version;
-  }
+    public String getVersion() {
+        return version;
+    }
 
-  public void setVersion(String version) {
-    this.version = version;
-  }
+    public void setVersion(String version) {
+        this.version = version;
+    }
 }

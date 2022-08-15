@@ -23,23 +23,25 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.cache.RemovalListener;
 
 public interface CacheManager {
-  /**
-   * build simple cache
-   *
-   * @param cacheId
-   * @param removalListener
-   * @return
-   */
-  <V> Cache<String, V> buildCache(String cacheId, RemovalListener<String, V> removalListener);
+    /**
+     * build simple cache
+     *
+     * @param cacheId
+     * @param removalListener
+     * @return
+     */
+    <V> Cache<String, V> buildCache(String cacheId, RemovalListener<String, V> removalListener);
 
-  /**
-   * build loading cache
-   *
-   * @param cacheId
-   * @param loader
-   * @param removalListener
-   * @return
-   */
-  <V> LoadingCache<String, V> buildCache(
-      String cacheId, CacheLoader<String, V> loader, RemovalListener<String, V> removalListener);
+    /**
+     * build loading cache
+     *
+     * @param cacheId
+     * @param loader
+     * @param removalListener
+     * @return
+     */
+    <V> LoadingCache<String, V> buildCache(
+            String cacheId,
+            CacheLoader<String, V> loader,
+            RemovalListener<String, V> removalListener);
 }

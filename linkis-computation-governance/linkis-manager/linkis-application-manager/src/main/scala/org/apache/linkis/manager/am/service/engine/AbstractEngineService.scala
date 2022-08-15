@@ -5,22 +5,22 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+ 
 package org.apache.linkis.manager.am.service.engine
 
 import org.apache.linkis.manager.am.manager.EngineNodeManager
 import org.apache.linkis.manager.am.service.{EMEngineService, EngineService}
-
 import org.springframework.beans.factory.annotation.Autowired
+
 
 abstract class AbstractEngineService extends EngineService {
 
@@ -28,7 +28,7 @@ abstract class AbstractEngineService extends EngineService {
   private var emService: EMEngineService = _
 
   @Autowired
-  private var engineNodeManager: EngineNodeManager = _
+  private var engineNodeManager:EngineNodeManager = _
 
   override def getEMService(): EMEngineService = {
     this.emService
@@ -37,5 +37,4 @@ abstract class AbstractEngineService extends EngineService {
   override def getEngineNodeManager: EngineNodeManager = {
     this.engineNodeManager
   }
-
 }

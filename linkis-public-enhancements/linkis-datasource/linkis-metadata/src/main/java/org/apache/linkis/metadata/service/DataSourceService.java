@@ -23,19 +23,19 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 public interface DataSourceService {
 
-  JsonNode getDbs(String userName) throws Exception;
+    JsonNode getDbs(String userName) throws Exception;
 
-  JsonNode getDbsWithTables(String userName) throws Exception;
+    JsonNode getDbsWithTables(String userName) throws Exception;
 
-  JsonNode queryTables(MetadataQueryParam queryParam);
+    JsonNode queryTables(MetadataQueryParam queryParam);
 
-  JsonNode queryTableMeta(MetadataQueryParam queryParam);
+    JsonNode queryTableMeta(MetadataQueryParam queryParam);
 
-  JsonNode queryTableMetaBySDID(MetadataQueryParam queryParam);
+    JsonNode queryTableMetaBySDID(MetadataQueryParam queryParam);
 
-  JsonNode getTableSize(MetadataQueryParam queryParam);
+    JsonNode getTableSize(MetadataQueryParam queryParam);
 
-  JsonNode getPartitionSize(MetadataQueryParam queryParam);
+    JsonNode getPartitionSize(MetadataQueryParam queryParam);
 
-  JsonNode getPartitions(MetadataQueryParam queryParam);
+    JsonNode getPartitions(MetadataQueryParam queryParam);
 }

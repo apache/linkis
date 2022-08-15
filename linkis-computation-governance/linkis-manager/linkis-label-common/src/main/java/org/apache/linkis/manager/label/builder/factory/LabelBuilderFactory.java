@@ -27,81 +27,85 @@ import java.util.Map;
 
 public interface LabelBuilderFactory {
 
-  /**
-   * register label builder
-   *
-   * @param labelBuilder builder
-   */
-  void registerLabelBuilder(LabelBuilder labelBuilder);
+    /**
+     * register label builder
+     *
+     * @param labelBuilder builder
+     */
+    void registerLabelBuilder(LabelBuilder labelBuilder);
 
-  /**
-   * Create single label
-   *
-   * @param inLabelKey input key
-   * @param inValueObj input value obj
-   * @param outLabelClass output label class (interface or entity class)
-   * @param outValueTypes output value types
-   * @param <T> extends Label
-   * @return label
-   */
-  <T extends Label<?>> T createLabel(
-      String inLabelKey, Object inValueObj, Class<?> outLabelClass, Type... outValueTypes);
+    /**
+     * Create single label
+     *
+     * @param inLabelKey input key
+     * @param inValueObj input value obj
+     * @param outLabelClass output label class (interface or entity class)
+     * @param outValueTypes output value types
+     * @param <T> extends Label
+     * @return label
+     */
+    <T extends Label<?>> T createLabel(
+            String inLabelKey, Object inValueObj, Class<?> outLabelClass, Type... outValueTypes);
 
-  <T extends Label<?>> T createLabel(String inLabelKey);
+    <T extends Label<?>> T createLabel(String inLabelKey);
 
-  <T extends Label<?>> T createLabel(Class<T> outLabelClass);
+    <T extends Label<?>> T createLabel(Class<T> outLabelClass);
 
-  <T extends Label<?>> T createLabel(Class<?> outLabelClass, Type... outValueTypes);
+    <T extends Label<?>> T createLabel(Class<?> outLabelClass, Type... outValueTypes);
 
-  <T extends Label<?>> T createLabel(String inLabelKey, Object inValueObj);
+    <T extends Label<?>> T createLabel(String inLabelKey, Object inValueObj);
 
-  <T extends Label<?>> T createLabel(String inLabelKey, Object inValueObj, Class<T> outLabelClass);
+    <T extends Label<?>> T createLabel(
+            String inLabelKey, Object inValueObj, Class<T> outLabelClass);
 
-  /**
-   * Create single label
-   *
-   * @param inLabelKey input key
-   * @param inValueStream input stream
-   * @param outLabelClass output label class (interface or entity class)
-   * @param outValueTypes output value type
-   * @param <T> extends Label
-   * @return label
-   */
-  <T extends Label<?>> T createLabel(
-      String inLabelKey, InputStream inValueStream, Class<?> outLabelClass, Type... outValueTypes);
+    /**
+     * Create single label
+     *
+     * @param inLabelKey input key
+     * @param inValueStream input stream
+     * @param outLabelClass output label class (interface or entity class)
+     * @param outValueTypes output value type
+     * @param <T> extends Label
+     * @return label
+     */
+    <T extends Label<?>> T createLabel(
+            String inLabelKey,
+            InputStream inValueStream,
+            Class<?> outLabelClass,
+            Type... outValueTypes);
 
-  <T extends Label<?>> T createLabel(
-      String inLabelKey, InputStream inValueStream, Class<T> outLabelClass);
+    <T extends Label<?>> T createLabel(
+            String inLabelKey, InputStream inValueStream, Class<T> outLabelClass);
 
-  <T extends Label<?>> T createLabel(String inLabelKey, InputStream inValueStream);
+    <T extends Label<?>> T createLabel(String inLabelKey, InputStream inValueStream);
 
-  /**
-   * Parse map to label list
-   *
-   * @param inMap input map
-   * @param outLabelClass output label class (interface or entity class)
-   * @param outValueTypes output value type
-   * @param <T> extends Label
-   * @return
-   */
-  <T extends Label<?>> List<T> getLabels(
-      Map<String, Object> inMap, Class<?> outLabelClass, Type... outValueTypes);
+    /**
+     * Parse map to label list
+     *
+     * @param inMap input map
+     * @param outLabelClass output label class (interface or entity class)
+     * @param outValueTypes output value type
+     * @param <T> extends Label
+     * @return
+     */
+    <T extends Label<?>> List<T> getLabels(
+            Map<String, Object> inMap, Class<?> outLabelClass, Type... outValueTypes);
 
-  <T extends Label<?>> List<T> getLabels(Map<String, Object> inMap, Class<T> outLabelType);
+    <T extends Label<?>> List<T> getLabels(Map<String, Object> inMap, Class<T> outLabelType);
 
-  <T extends Label<?>> List<T> getLabels(Map<String, Object> inMap);
+    <T extends Label<?>> List<T> getLabels(Map<String, Object> inMap);
 
-  /**
-   * Convert label
-   *
-   * @param sourceLabel source label
-   * @param targetLabelClass target label (interface or entity class)
-   * @param targetValueTypes target type
-   * @param <T> extends Label
-   * @return
-   */
-  <T extends Label<?>> T convertLabel(
-      Label<?> sourceLabel, Class<?> targetLabelClass, Type... targetValueTypes);
+    /**
+     * Convert label
+     *
+     * @param sourceLabel source label
+     * @param targetLabelClass target label (interface or entity class)
+     * @param targetValueTypes target type
+     * @param <T> extends Label
+     * @return
+     */
+    <T extends Label<?>> T convertLabel(
+            Label<?> sourceLabel, Class<?> targetLabelClass, Type... targetValueTypes);
 
-  <T extends Label<?>> T convertLabel(Label<?> sourceLabel, Class<T> targetLabelClass);
+    <T extends Label<?>> T convertLabel(Label<?> sourceLabel, Class<T> targetLabelClass);
 }

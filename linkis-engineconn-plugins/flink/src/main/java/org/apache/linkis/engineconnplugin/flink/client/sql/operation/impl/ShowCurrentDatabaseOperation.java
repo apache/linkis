@@ -29,17 +29,17 @@ import org.apache.flink.table.api.TableEnvironment;
 
 /** Operation for SHOW CURRENT DATABASE command. */
 public class ShowCurrentDatabaseOperation implements NonJobOperation {
-  private final ExecutionContext context;
+    private final ExecutionContext context;
 
-  public ShowCurrentDatabaseOperation(FlinkEngineConnContext context) {
-    this.context = context.getExecutionContext();
-  }
+    public ShowCurrentDatabaseOperation(FlinkEngineConnContext context) {
+        this.context = context.getExecutionContext();
+    }
 
-  @Override
-  public ResultSet execute() throws SqlExecutionException {
-    final TableEnvironment tableEnv = context.getTableEnvironment();
-    return OperationUtil.singleStringToResultSet(
-        context.wrapClassLoader(tableEnv::getCurrentDatabase),
-        ConstantNames.SHOW_CURRENT_DATABASE_RESULT);
-  }
+    @Override
+    public ResultSet execute() throws SqlExecutionException {
+        final TableEnvironment tableEnv = context.getTableEnvironment();
+        return OperationUtil.singleStringToResultSet(
+                context.wrapClassLoader(tableEnv::getCurrentDatabase),
+                ConstantNames.SHOW_CURRENT_DATABASE_RESULT);
+    }
 }

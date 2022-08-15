@@ -18,5 +18,5 @@
 package org.apache.linkis.manager.common.protocol.node;
 
 public class RequestNodeStatus implements NodeStatusProtocol {
-  private String name = "RequestNodeStatus";
+    private String name = "RequestNodeStatus";
 }

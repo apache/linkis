@@ -19,12 +19,12 @@ package org.apache.linkis.cs.listener.event.enumeration;
 
 public enum OperateType {
 
-  /** 对contextKey和contextId的一些操作 */
-  ADD,
-  UPDATE,
-  DELETE,
-  REMOVEALL,
-  ACCESS,
-  CREATE,
-  REMOVE
+    /** 对contextKey和contextId的一些操作 */
+    ADD,
+    UPDATE,
+    DELETE,
+    REMOVEALL,
+    ACCESS,
+    CREATE,
+    REMOVE
 }

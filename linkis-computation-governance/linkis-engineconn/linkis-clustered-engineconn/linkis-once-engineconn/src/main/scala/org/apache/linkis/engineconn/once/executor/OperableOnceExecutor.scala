@@ -19,6 +19,7 @@ package org.apache.linkis.engineconn.once.executor
 
 import org.apache.linkis.protocol.engine.JobProgressInfo
 
+
 trait OperableOnceExecutor extends OnceExecutor {
 
   def getProgress: Float

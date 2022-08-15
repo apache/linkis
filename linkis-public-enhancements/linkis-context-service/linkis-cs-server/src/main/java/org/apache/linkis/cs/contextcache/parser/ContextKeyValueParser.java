@@ -23,5 +23,5 @@ import java.util.Set;
 
 public interface ContextKeyValueParser {
 
-  Set<String> parse(ContextKeyValue contextKeyValue);
+    Set<String> parse(ContextKeyValue contextKeyValue);
 }

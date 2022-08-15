@@ -22,27 +22,27 @@ import java.util.Map;
 
 public class GenericLabel extends InheritableLabel<Map<String, String>> {
 
-  public GenericLabel() {
-    super.value = new HashMap<>();
-  }
-
-  @Override
-  public Feature getFeature() {
-    Feature feature = super.getFeature();
-    if (null == feature) {
-      // Get feature from label value;
-      try {
-        return Feature.valueOf(
-            super.getValue().getOrDefault(getFeatureKey(), Feature.OPTIONAL.name()));
-      } catch (IllegalArgumentException e) {
-        // Ignore
-      }
+    public GenericLabel() {
+        super.value = new HashMap<>();
     }
-    return feature;
-  }
 
-  @Override
-  public void setValue(Map<String, String> value) {
-    super.setValue(value);
-  }
+    @Override
+    public Feature getFeature() {
+        Feature feature = super.getFeature();
+        if (null == feature) {
+            // Get feature from label value;
+            try {
+                return Feature.valueOf(
+                        super.getValue().getOrDefault(getFeatureKey(), Feature.OPTIONAL.name()));
+            } catch (IllegalArgumentException e) {
+                // Ignore
+            }
+        }
+        return feature;
+    }
+
+    @Override
+    public void setValue(Map<String, String> value) {
+        super.setValue(value);
+    }
 }

@@ -27,46 +27,50 @@ import org.apache.linkis.cs.common.exception.ErrorCode;
 
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Map;
+
 public class CSMetaDataService implements MetaDataService {
 
-  private static final Logger logger = LoggerFactory.getLogger(CSMetaDataService.class);
+    private static final Logger logger = LoggerFactory.getLogger(CSMetaDataService.class);
 
-  private static CSMetaDataService csMetaDataService;
+    private static CSMetaDataService csMetaDataService;
 
-  private CSMetaDataService() {}
+    private CSMetaDataService() {}
 
-  public static CSMetaDataService getInstance() {
-    if (null == csMetaDataService) {
-      synchronized (CSMetaDataService.class) {
+    public static CSMetaDataService getInstance() {
         if (null == csMetaDataService) {
-          csMetaDataService = new CSMetaDataService();
+            synchronized (CSMetaDataService.class) {
+                if (null == csMetaDataService) {
+                    csMetaDataService = new CSMetaDataService();
+                }
+            }
         }
-      }
+        return csMetaDataService;
     }
-    return csMetaDataService;
-  }
 
-  @Override
-  public Map<ContextKey, MetaData> getAllUpstreamMetaData(String contextIDStr, String nodeName)
-      throws CSErrorException {
-    if (StringUtils.isBlank(contextIDStr) || StringUtils.isBlank(nodeName)) {
-      logger.warn("contextIDStr or nodeName cannot null");
-      return null;
+    @Override
+    public Map<ContextKey, MetaData> getAllUpstreamMetaData(String contextIDStr, String nodeName)
+            throws CSErrorException {
+        if (StringUtils.isBlank(contextIDStr) || StringUtils.isBlank(nodeName)) {
+            logger.warn("contextIDStr or nodeName cannot null");
+            return null;
+        }
+        try {
+            ContextID contextID = SerializeHelper.deserializeContextID(contextIDStr);
+            return DefaultSearchService.getInstance()
+                    .searchUpstreamContextMap(
+                            contextID, nodeName, Integer.MAX_VALUE, MetaData.class);
+        } catch (ErrorException e) {
+            logger.error("Deserialize contextid error. contextID : " + contextIDStr + ", e ", e);
+            throw new CSErrorException(
+                    ErrorCode.DESERIALIZE_ERROR,
+                    "Deserialize contextid error. contextID : "
+                            + contextIDStr
+                            + ", e "
+                            + e.getDesc());
+        }
     }
-    try {
-      ContextID contextID = SerializeHelper.deserializeContextID(contextIDStr);
-      return DefaultSearchService.getInstance()
-          .searchUpstreamContextMap(contextID, nodeName, Integer.MAX_VALUE, MetaData.class);
-    } catch (ErrorException e) {
-      logger.error("Deserialize contextid error. contextID : " + contextIDStr + ", e ", e);
-      throw new CSErrorException(
-          ErrorCode.DESERIALIZE_ERROR,
-          "Deserialize contextid error. contextID : " + contextIDStr + ", e " + e.getDesc());
-    }
-  }
 }

@@ -18,13 +18,13 @@
 package org.apache.linkis.manager.persistence;
 
 public interface ManagerPersistence {
-  NodeManagerPersistence getNodeManagerPersistence();
+    NodeManagerPersistence getNodeManagerPersistence();
 
-  LabelManagerPersistence getLabelManagerPersistence();
+    LabelManagerPersistence getLabelManagerPersistence();
 
-  LockManagerPersistence getLockManagerPersistence();
+    LockManagerPersistence getLockManagerPersistence();
 
-  ResourceManagerPersistence getResourceManagerPersistence();
+    ResourceManagerPersistence getResourceManagerPersistence();
 
-  NodeMetricManagerPersistence getNodeMetricManagerPersistence();
+    NodeMetricManagerPersistence getNodeMetricManagerPersistence();
 }

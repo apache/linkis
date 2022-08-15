@@ -20,7 +20,7 @@ package org.apache.linkis.cs.exception;
 import org.apache.linkis.common.exception.ErrorException;
 
 public class ContextSearchFailedException extends ErrorException {
-  public ContextSearchFailedException(int errCode, String desc) {
-    super(errCode, desc);
-  }
+    public ContextSearchFailedException(int errCode, String desc) {
+        super(errCode, desc);
+    }
 }

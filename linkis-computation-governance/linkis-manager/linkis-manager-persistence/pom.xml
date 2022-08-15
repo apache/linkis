@@ -15,93 +15,97 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>org.apache.linkis</groupId>
-    <artifactId>linkis</artifactId>
-    <version>1.2.0</version>
-    <!--<relativePath>../pom.xml</relativePath>-->
-  </parent>
+  
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>linkis</artifactId>
+        <groupId>org.apache.linkis</groupId>
+        <version>1.2.0</version>
+        <!--<relativePath>../pom.xml</relativePath>-->
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>linkis-manager-persistence</artifactId>
+    <artifactId>linkis-manager-persistence</artifactId>
 
-  <dependencies>
+    <dependencies>
 
-    <dependency>
-      <groupId>org.apache.linkis</groupId>
-      <artifactId>linkis-manager-common</artifactId>
-      <version>${project.version}</version>
-    </dependency>
+        <dependency>
+            <groupId>org.apache.linkis</groupId>
+            <artifactId>linkis-manager-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
-    <dependency>
-      <groupId>org.apache.linkis</groupId>
-      <artifactId>linkis-label-common</artifactId>
-      <version>${project.version}</version>
-    </dependency>
+        <dependency>
+            <groupId>org.apache.linkis</groupId>
+            <artifactId>linkis-label-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
-    <dependency>
-      <groupId>org.apache.linkis</groupId>
-      <artifactId>linkis-mybatis</artifactId>
-      <version>${project.version}</version>
-    </dependency>
+        <dependency>
+            <groupId>org.apache.linkis</groupId>
+            <artifactId>linkis-mybatis</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
-    <dependency>
-      <groupId>org.apache.linkis</groupId>
-      <artifactId>linkis-protocol</artifactId>
-      <version>${project.version}</version>
-      <scope>provided</scope>
-    </dependency>
 
-    <dependency>
-      <groupId>commons-beanutils</groupId>
-      <artifactId>commons-beanutils</artifactId>
-      <version>1.9.4</version>
-    </dependency>
+        <dependency>
+            <groupId>org.apache.linkis</groupId>
+            <artifactId>linkis-protocol</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
 
-    <dependency>
-      <groupId>org.apache.linkis</groupId>
-      <artifactId>linkis-rpc</artifactId>
-      <version>${project.version}</version>
-      <scope>provided</scope>
-    </dependency>
-  </dependencies>
+        <dependency>
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils</artifactId>
+            <version>1.9.4</version>
+        </dependency>
 
-  <build>
-    <finalName>${project.artifactId}-${project.version}</finalName>
+        <dependency>
+            <groupId>org.apache.linkis</groupId>
+            <artifactId>linkis-rpc</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
 
-    <resources>
-      <resource>
-        <directory>${basedir}/src/main/resources</directory>
-      </resource>
-      <resource>
-        <directory>src/main/java</directory>
-        <includes>
-          <include>**/*.xml</include>
-        </includes>
-      </resource>
-    </resources>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-deploy-plugin</artifactId>
-      </plugin>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+            </plugin>
 
-      <plugin>
-        <groupId>net.alchim31.maven</groupId>
-        <artifactId>scala-maven-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <skip>true</skip>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+            <plugin>
+                <groupId>net.alchim31.maven</groupId>
+                <artifactId>scala-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+
+        <resources>
+            <resource>
+                <directory>${basedir}/src/main/resources</directory>
+            </resource>
+            <resource>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**/*.xml</include>
+                </includes>
+            </resource>
+        </resources>
+        <finalName>${project.artifactId}-${project.version}</finalName>
+    </build>
 
 </project>

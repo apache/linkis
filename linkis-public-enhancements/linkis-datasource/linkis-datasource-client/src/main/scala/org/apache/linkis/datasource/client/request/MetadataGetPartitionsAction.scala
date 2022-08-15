@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,14 +21,14 @@ import org.apache.linkis.datasource.client.config.DatasourceClientConfig.METADAT
 import org.apache.linkis.datasource.client.exception.DataSourceClientBuilderException
 import org.apache.linkis.httpclient.request.GetAction
 
+
 class MetadataGetPartitionsAction extends GetAction with DataSourceAction {
   private var dataSourceName: String = _
   private var database: String = _
   private var table: String = _
   private var traverse: Boolean = false
 
-  override def suffixURLs: Array[String] =
-    Array(METADATA_SERVICE_MODULE.getValue, "getPartitions")
+  override def suffixURLs: Array[String] = Array(METADATA_SERVICE_MODULE.getValue, "getPartitions")
 
   private var user: String = _
 
@@ -37,10 +37,11 @@ class MetadataGetPartitionsAction extends GetAction with DataSourceAction {
   override def getUser: String = this.user
 }
 
+
 object MetadataGetPartitionsAction {
   def builder(): Builder = new Builder
 
-  class Builder private[MetadataGetPartitionsAction] () {
+  class Builder private[MetadataGetPartitionsAction]() {
     private var dataSourceName: String = _
     private var database: String = _
     private var table: String = _
@@ -79,11 +80,10 @@ object MetadataGetPartitionsAction {
     }
 
     def build(): MetadataGetPartitionsAction = {
-      if (dataSourceName == null)
-        throw new DataSourceClientBuilderException("dataSourceName is needed!")
-      if (database == null) throw new DataSourceClientBuilderException("database is needed!")
-      if (table == null) throw new DataSourceClientBuilderException("table is needed!")
-      if (system == null) throw new DataSourceClientBuilderException("system is needed!")
+      if (dataSourceName == null) throw new DataSourceClientBuilderException("dataSourceName is needed!")
+      if(database == null) throw new DataSourceClientBuilderException("database is needed!")
+      if(table == null) throw new DataSourceClientBuilderException("table is needed!")
+      if(system == null) throw new DataSourceClientBuilderException("system is needed!")
 
       val metadataGetPartitionsAction = new MetadataGetPartitionsAction
       metadataGetPartitionsAction.dataSourceName = this.dataSourceName
@@ -94,7 +94,6 @@ object MetadataGetPartitionsAction {
       metadataGetPartitionsAction.traverse = this.traverse
       metadataGetPartitionsAction
     }
-
   }
 
 }

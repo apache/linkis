@@ -19,30 +19,30 @@ package org.apache.linkis.cs.common.protocol;
 
 public enum ContextKeyType {
 
-  /** index表示type的int typeName 表示全路径类名 */
-  YML_CONTEXT_KEY(1, "org.apache.linkis.cs.common.entity.source.CommonContextKey");
+    /** index表示type的int typeName 表示全路径类名 */
+    YML_CONTEXT_KEY(1, "org.apache.linkis.cs.common.entity.source.CommonContextKey");
 
-  private int index;
-  private String typeName;
+    private int index;
+    private String typeName;
 
-  private ContextKeyType(int index, String typeName) {
-    this.index = index;
-    this.typeName = typeName;
-  }
+    private ContextKeyType(int index, String typeName) {
+        this.index = index;
+        this.typeName = typeName;
+    }
 
-  public int getIndex() {
-    return index;
-  }
+    public int getIndex() {
+        return index;
+    }
 
-  public void setIndex(int index) {
-    this.index = index;
-  }
+    public void setIndex(int index) {
+        this.index = index;
+    }
 
-  public String getTypeName() {
-    return typeName;
-  }
+    public String getTypeName() {
+        return typeName;
+    }
 
-  public void setTypeName(String typeName) {
-    this.typeName = typeName;
-  }
+    public void setTypeName(String typeName) {
+        this.typeName = typeName;
+    }
 }

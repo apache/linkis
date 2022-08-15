@@ -22,11 +22,11 @@ import org.apache.linkis.cs.contextcache.metric.ContextIDMetric;
 
 public interface ContextIDValue {
 
-  String getContextID();
+    String getContextID();
 
-  ContextKeyValueContext getContextKeyValueContext();
+    ContextKeyValueContext getContextKeyValueContext();
 
-  void refresh();
+    void refresh();
 
-  ContextIDMetric getContextIDMetric();
+    ContextIDMetric getContextIDMetric();
 }

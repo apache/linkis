@@ -19,45 +19,45 @@ package org.apache.linkis.cs.common.entity.source;
 
 public class CommonHAContextID implements HAContextID {
 
-  private String mainInstance;
-  private String backupInstance;
-  private String contextID;
+    private String mainInstance;
+    private String backupInstance;
+    private String contextID;
 
-  public CommonHAContextID() {}
+    public CommonHAContextID() {}
 
-  public CommonHAContextID(String mainInstance, String backupInstance, String contextID) {
-    this.mainInstance = mainInstance;
-    this.backupInstance = backupInstance;
-    this.contextID = contextID;
-  }
+    public CommonHAContextID(String mainInstance, String backupInstance, String contextID) {
+        this.mainInstance = mainInstance;
+        this.backupInstance = backupInstance;
+        this.contextID = contextID;
+    }
 
-  @Override
-  public String getInstance() {
-    return mainInstance;
-  }
+    @Override
+    public String getInstance() {
+        return mainInstance;
+    }
 
-  @Override
-  public void setInstance(String instance) {
-    this.mainInstance = instance;
-  }
+    @Override
+    public void setInstance(String instance) {
+        this.mainInstance = instance;
+    }
 
-  @Override
-  public String getBackupInstance() {
-    return backupInstance;
-  }
+    @Override
+    public String getBackupInstance() {
+        return backupInstance;
+    }
 
-  @Override
-  public void setBackupInstance(String backupInstance) {
-    this.backupInstance = backupInstance;
-  }
+    @Override
+    public void setBackupInstance(String backupInstance) {
+        this.backupInstance = backupInstance;
+    }
 
-  @Override
-  public String getContextId() {
-    return contextID;
-  }
+    @Override
+    public String getContextId() {
+        return contextID;
+    }
 
-  @Override
-  public void setContextId(String contextId) {
-    this.contextID = contextId;
-  }
+    @Override
+    public void setContextId(String contextId) {
+        this.contextID = contextId;
+    }
 }

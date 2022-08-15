@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,6 +23,7 @@ import org.apache.linkis.rpc.message.method.{MessageExecutor, ReceiverMethodSear
 import scala.concurrent.duration.Duration
 import scala.language.implicitConversions
 
+
 class MessageReceiver extends Receiver {
 
   private val receiverMethodSearcher = new ReceiverMethodSearcher
@@ -36,8 +37,7 @@ class MessageReceiver extends Receiver {
   override def receiveAndReply(message: Any, sender: Sender): Any = {
     message match {
       case requestProtocol: RequestProtocol => {
-        val methodExecuteWrapper =
-          receiverMethodSearcher.getMethodExecuteWrappers(requestProtocol)
+        val methodExecuteWrapper = receiverMethodSearcher.getMethodExecuteWrappers(requestProtocol)
         messageExecutor.execute(requestProtocol, methodExecuteWrapper, sender)
       }
       case _ =>
@@ -45,6 +45,8 @@ class MessageReceiver extends Receiver {
   }
 
   // TODO
-  override def receiveAndReply(message: Any, duration: Duration, sender: Sender): Any = {}
+  override def receiveAndReply(message: Any, duration: Duration, sender: Sender): Any = {
+
+  }
 
 }

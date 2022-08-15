@@ -23,103 +23,103 @@ import java.util.List;
 
 public class CategoryLabelVo {
 
-  private Integer categoryId;
+    private Integer categoryId;
 
-  private Integer labelId;
+    private Integer labelId;
 
-  private String categoryName;
+    private String categoryName;
 
-  private List<CategoryLabelVo> childCategory = new ArrayList<>();
+    private List<CategoryLabelVo> childCategory = new ArrayList<>();
 
-  private String description;
+    private String description;
 
-  private String tag;
+    private String tag;
 
-  private Date createTime;
+    private Date createTime;
 
-  private Date updateTime;
+    private Date updateTime;
 
-  private Integer level;
+    private Integer level;
 
-  private String fatherCategoryName;
+    private String fatherCategoryName;
 
-  public Integer getLabelId() {
-    return labelId;
-  }
+    public Integer getLabelId() {
+        return labelId;
+    }
 
-  public void setLabelId(Integer labelId) {
-    this.labelId = labelId;
-  }
+    public void setLabelId(Integer labelId) {
+        this.labelId = labelId;
+    }
 
-  public String getFatherCategoryName() {
-    return fatherCategoryName;
-  }
+    public String getFatherCategoryName() {
+        return fatherCategoryName;
+    }
 
-  public void setFatherCategoryName(String fatherCategoryName) {
-    this.fatherCategoryName = fatherCategoryName;
-  }
+    public void setFatherCategoryName(String fatherCategoryName) {
+        this.fatherCategoryName = fatherCategoryName;
+    }
 
-  public List<CategoryLabelVo> getChildCategory() {
-    return childCategory;
-  }
+    public List<CategoryLabelVo> getChildCategory() {
+        return childCategory;
+    }
 
-  public void setChildCategory(List<CategoryLabelVo> childCategory) {
-    this.childCategory = childCategory;
-  }
+    public void setChildCategory(List<CategoryLabelVo> childCategory) {
+        this.childCategory = childCategory;
+    }
 
-  public String getDescription() {
-    return description;
-  }
+    public String getDescription() {
+        return description;
+    }
 
-  public void setDescription(String description) {
-    this.description = description;
-  }
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-  public String getTag() {
-    return tag;
-  }
+    public String getTag() {
+        return tag;
+    }
 
-  public void setTag(String tag) {
-    this.tag = tag;
-  }
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
 
-  public Date getCreateTime() {
-    return createTime;
-  }
+    public Date getCreateTime() {
+        return createTime;
+    }
 
-  public void setCreateTime(Date createTime) {
-    this.createTime = createTime;
-  }
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
 
-  public Date getUpdateTime() {
-    return updateTime;
-  }
+    public Date getUpdateTime() {
+        return updateTime;
+    }
 
-  public void setUpdateTime(Date updateTime) {
-    this.updateTime = updateTime;
-  }
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
+    }
 
-  public String getCategoryName() {
-    return categoryName;
-  }
+    public String getCategoryName() {
+        return categoryName;
+    }
 
-  public void setCategoryName(String categoryName) {
-    this.categoryName = categoryName;
-  }
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
+    }
 
-  public Integer getCategoryId() {
-    return categoryId;
-  }
+    public Integer getCategoryId() {
+        return categoryId;
+    }
 
-  public void setCategoryId(Integer categoryId) {
-    this.categoryId = categoryId;
-  }
+    public void setCategoryId(Integer categoryId) {
+        this.categoryId = categoryId;
+    }
 
-  public Integer getLevel() {
-    return level;
-  }
+    public Integer getLevel() {
+        return level;
+    }
 
-  public void setLevel(Integer level) {
-    this.level = level;
-  }
+    public void setLevel(Integer level) {
+        this.level = level;
+    }
 }

@@ -23,45 +23,45 @@ import org.apache.linkis.cs.common.entity.source.ContextKey;
 
 public class ClientTestContextKey implements ContextKey {
 
-  private final String key = "hadoop.txt";
+    private final String key = "hadoop.txt";
 
-  @Override
-  public String getKey() {
-    return this.key;
-  }
+    @Override
+    public String getKey() {
+        return this.key;
+    }
 
-  @Override
-  public void setKey(String key) {}
+    @Override
+    public void setKey(String key) {}
 
-  @Override
-  public int getType() {
-    return 0;
-  }
+    @Override
+    public int getType() {
+        return 0;
+    }
 
-  @Override
-  public void setType(int type) {}
+    @Override
+    public void setType(int type) {}
 
-  @Override
-  public ContextType getContextType() {
-    return null;
-  }
+    @Override
+    public ContextType getContextType() {
+        return null;
+    }
 
-  @Override
-  public void setContextType(ContextType contextType) {}
+    @Override
+    public void setContextType(ContextType contextType) {}
 
-  @Override
-  public ContextScope getContextScope() {
-    return null;
-  }
+    @Override
+    public ContextScope getContextScope() {
+        return null;
+    }
 
-  @Override
-  public void setContextScope(ContextScope contextScope) {}
+    @Override
+    public void setContextScope(ContextScope contextScope) {}
 
-  @Override
-  public String getKeywords() {
-    return null;
-  }
+    @Override
+    public String getKeywords() {
+        return null;
+    }
 
-  @Override
-  public void setKeywords(String keywords) {}
+    @Override
+    public void setKeywords(String keywords) {}
 }

@@ -19,15 +19,15 @@ package org.apache.linkis.cs.common.entity.data;
 
 public class LinkisJobData implements JobData {
 
-  private long jobID;
+    private long jobID;
 
-  @Override
-  public long getJobID() {
-    return this.jobID;
-  }
+    @Override
+    public long getJobID() {
+        return this.jobID;
+    }
 
-  @Override
-  public void setJobID(long jobID) {
-    this.jobID = jobID;
-  }
+    @Override
+    public void setJobID(long jobID) {
+        this.jobID = jobID;
+    }
 }

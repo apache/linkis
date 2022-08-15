@@ -22,73 +22,76 @@ import org.apache.linkis.cs.common.exception.CSErrorException;
 import org.apache.linkis.cs.common.exception.ErrorCode;
 import org.apache.linkis.cs.common.serialize.ContextSerializer;
 
+import org.reflections.Reflections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.reflections.Reflections;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class ContextSerializationHelper extends AbstractSerializationHelper {
 
-  private static final Logger logger = LoggerFactory.getLogger(ContextSerializationHelper.class);
+    private static final Logger logger = LoggerFactory.getLogger(ContextSerializationHelper.class);
 
-  private Map<String, ContextSerializer> contextSerializerMap = new HashMap<>(16);
+    private Map<String, ContextSerializer> contextSerializerMap = new HashMap<>(16);
 
-  private void init() throws CSErrorException {
-    Reflections reflections = ClassUtils.reflections();
-    Set<Class<? extends ContextSerializer>> allSubClass =
-        reflections.getSubTypesOf(ContextSerializer.class);
+    private void init() throws CSErrorException {
+        Reflections reflections = ClassUtils.reflections();
+        Set<Class<? extends ContextSerializer>> allSubClass =
+                reflections.getSubTypesOf(ContextSerializer.class);
 
-    if (null != allSubClass) {
-      Iterator<Class<? extends ContextSerializer>> iterator = allSubClass.iterator();
-      while (iterator.hasNext()) {
-        Class<? extends ContextSerializer> next = iterator.next();
-        if (!ClassUtils.isInterfaceOrAbstract(next)) {
-          ContextSerializer contextSerializer = null;
-          try {
-            contextSerializer = next.newInstance();
-          } catch (InstantiationException e) {
-            logger.info("Failed to Instantiation  " + next.getName());
-            continue;
-          } catch (IllegalAccessException e) {
-            throw new CSErrorException(
-                ErrorCode.DESERIALIZE_ERROR, "Failed to construct contextSerializer", e);
-          }
+        if (null != allSubClass) {
+            Iterator<Class<? extends ContextSerializer>> iterator = allSubClass.iterator();
+            while (iterator.hasNext()) {
+                Class<? extends ContextSerializer> next = iterator.next();
+                if (!ClassUtils.isInterfaceOrAbstract(next)) {
+                    ContextSerializer contextSerializer = null;
+                    try {
+                        contextSerializer = next.newInstance();
+                    } catch (InstantiationException e) {
+                        logger.info("Failed to Instantiation  " + next.getName());
+                        continue;
+                    } catch (IllegalAccessException e) {
+                        throw new CSErrorException(
+                                ErrorCode.DESERIALIZE_ERROR,
+                                "Failed to construct contextSerializer",
+                                e);
+                    }
 
-          if (contextSerializerMap.containsKey(contextSerializer.getType())) {
-            throw new CSErrorException(
-                ErrorCode.DESERIALIZE_ERROR, "contextSerializer Type cannot be duplicated ");
-          }
-          contextSerializerMap.put(contextSerializer.getType(), contextSerializer);
+                    if (contextSerializerMap.containsKey(contextSerializer.getType())) {
+                        throw new CSErrorException(
+                                ErrorCode.DESERIALIZE_ERROR,
+                                "contextSerializer Type cannot be duplicated ");
+                    }
+                    contextSerializerMap.put(contextSerializer.getType(), contextSerializer);
+                }
+            }
         }
-      }
     }
-  }
 
-  private static ContextSerializationHelper contextSerializationHelper = null;
+    private static ContextSerializationHelper contextSerializationHelper = null;
 
-  public static ContextSerializationHelper getInstance() {
-    if (contextSerializationHelper == null) {
-      synchronized (ContextSerializationHelper.class) {
+    public static ContextSerializationHelper getInstance() {
         if (contextSerializationHelper == null) {
-          contextSerializationHelper = new ContextSerializationHelper();
-          try {
-            contextSerializationHelper.init();
-          } catch (CSErrorException e) {
-            logger.error("Failed init ContextSerializationHelper, now exit process", e);
-            System.exit(1);
-          }
+            synchronized (ContextSerializationHelper.class) {
+                if (contextSerializationHelper == null) {
+                    contextSerializationHelper = new ContextSerializationHelper();
+                    try {
+                        contextSerializationHelper.init();
+                    } catch (CSErrorException e) {
+                        logger.error("Failed init ContextSerializationHelper, now exit process", e);
+                        System.exit(1);
+                    }
+                }
+            }
         }
-      }
+        return contextSerializationHelper;
     }
-    return contextSerializationHelper;
-  }
 
-  @Override
-  protected Map<String, ContextSerializer> getContextSerializerMap() {
-    return this.contextSerializerMap;
-  }
+    @Override
+    protected Map<String, ContextSerializer> getContextSerializerMap() {
+        return this.contextSerializerMap;
+    }
 }

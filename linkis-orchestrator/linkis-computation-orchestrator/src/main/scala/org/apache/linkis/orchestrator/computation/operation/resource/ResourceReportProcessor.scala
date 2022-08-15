@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+
 package org.apache.linkis.orchestrator.computation.operation.resource
 
 import org.apache.linkis.manager.common.protocol.resource.ResourceWithStatus
@@ -22,14 +23,10 @@ import org.apache.linkis.orchestrator.Orchestration
 
 import java.io.Closeable
 import java.util
-
 import scala.collection.mutable.ArrayBuffer
 
-class ResourceReportProcessor(
-    rootExecTaskId: String,
-    orchestration: Orchestration,
-    resourceReportOperation: ResourceReportOperation
-) extends Closeable {
+
+class ResourceReportProcessor(rootExecTaskId: String, orchestration: Orchestration, resourceReportOperation: ResourceReportOperation) extends Closeable{
 
   private val listener = new ArrayBuffer[ResourceReportEvent => Unit]()
 
@@ -46,5 +43,4 @@ class ResourceReportProcessor(
     resourceReportOperation.removeResourceReportProcessor(rootExecTaskId)
     listener.clear()
   }
-
 }

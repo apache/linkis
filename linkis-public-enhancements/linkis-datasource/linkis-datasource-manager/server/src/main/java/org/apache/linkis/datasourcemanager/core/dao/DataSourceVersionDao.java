@@ -25,43 +25,44 @@ import java.util.List;
 
 public interface DataSourceVersionDao {
 
-  /**
-   * get latest version from datasource id, if null return 0;
-   *
-   * @param dataSourceId
-   * @return
-   */
-  Long getLatestVersion(Long dataSourceId);
+    /**
+     * get latest version from datasource id, if null return 0;
+     *
+     * @param dataSourceId
+     * @return
+     */
+    Long getLatestVersion(Long dataSourceId);
 
-  /**
-   * insert a version of the datasource
-   *
-   * @param datasourceVersion
-   */
-  void insertOne(DatasourceVersion datasourceVersion);
+    /**
+     * insert a version of the datasource
+     *
+     * @param datasourceVersion
+     */
+    void insertOne(DatasourceVersion datasourceVersion);
 
-  /**
-   * get a version of datasource
-   *
-   * @param dataSourceId
-   * @param version
-   * @return
-   */
-  String selectOneVersion(@Param("dataSourceId") Long dataSourceId, @Param("version") Long version);
+    /**
+     * get a version of datasource
+     *
+     * @param dataSourceId
+     * @param version
+     * @return
+     */
+    String selectOneVersion(
+            @Param("dataSourceId") Long dataSourceId, @Param("version") Long version);
 
-  /**
-   * get version list from datasource id
-   *
-   * @param dataSourceId
-   * @return
-   */
-  List<DatasourceVersion> getVersionsFromDatasourceId(Long dataSourceId);
+    /**
+     * get version list from datasource id
+     *
+     * @param dataSourceId
+     * @return
+     */
+    List<DatasourceVersion> getVersionsFromDatasourceId(Long dataSourceId);
 
-  /**
-   * remove all versions form datasourceId
-   *
-   * @param dataSourceId
-   * @return
-   */
-  int removeFromDataSourceId(Long dataSourceId);
+    /**
+     * remove all versions form datasourceId
+     *
+     * @param dataSourceId
+     * @return
+     */
+    int removeFromDataSourceId(Long dataSourceId);
 }

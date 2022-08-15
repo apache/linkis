@@ -14,73 +14,52 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.linkis.engineplugin.presto.executer
-
-import org.apache.linkis.common.log.LogUtils
-import org.apache.linkis.common.utils.{OverloadUtils, Utils}
-import org.apache.linkis.engineconn.common.conf.{EngineConnConf, EngineConnConstant}
-import org.apache.linkis.engineconn.computation.executor.entity.EngineConnTask
-import org.apache.linkis.engineconn.computation.executor.execute.{
-  ConcurrentComputationExecutor,
-  EngineExecutionContext
-}
-import org.apache.linkis.engineconn.core.EngineConnObject
-import org.apache.linkis.engineplugin.presto.conf.PrestoConfiguration._
-import org.apache.linkis.engineplugin.presto.conf.PrestoEngineConf
-import org.apache.linkis.engineplugin.presto.exception.{
-  PrestoClientException,
-  PrestoStateInvalidException
-}
-import org.apache.linkis.governance.common.paser.SQLCodeParser
-import org.apache.linkis.manager.common.entity.resource.{
-  CommonNodeResource,
-  LoadResource,
-  NodeResource
-}
-import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf
-import org.apache.linkis.manager.label.entity.Label
-import org.apache.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
-import org.apache.linkis.protocol.engine.JobProgressInfo
-import org.apache.linkis.rpc.Sender
-import org.apache.linkis.scheduler.executer.{
-  ErrorExecuteResponse,
-  ExecuteResponse,
-  SuccessExecuteResponse
-}
-import org.apache.linkis.storage.domain.Column
-import org.apache.linkis.storage.resultset.ResultSetFactory
-import org.apache.linkis.storage.resultset.table.{TableMetaData, TableRecord}
-
-import org.apache.commons.io.IOUtils
-import org.apache.commons.lang.exception.ExceptionUtils
-
-import org.springframework.util.CollectionUtils
 
 import java.net.URI
 import java.util
 import java.util._
 import java.util.concurrent.TimeUnit
 
-import scala.collection.JavaConverters._
-
 import com.facebook.presto.client._
 import com.facebook.presto.spi.security.SelectedRole
 import com.google.common.cache.{Cache, CacheBuilder}
 import okhttp3.OkHttpClient
+import org.apache.commons.io.IOUtils
+import org.apache.commons.lang.exception.ExceptionUtils
+import org.apache.linkis.common.log.LogUtils
+import org.apache.linkis.common.utils.{OverloadUtils, Utils}
+import org.apache.linkis.engineconn.common.conf.{EngineConnConf, EngineConnConstant}
+import org.apache.linkis.engineconn.computation.executor.entity.EngineConnTask
+import org.apache.linkis.engineconn.computation.executor.execute.{ConcurrentComputationExecutor, EngineExecutionContext}
+import org.apache.linkis.engineconn.core.EngineConnObject
+import org.apache.linkis.engineplugin.presto.conf.PrestoConfiguration._
+import org.apache.linkis.engineplugin.presto.conf.PrestoEngineConf
+import org.apache.linkis.engineplugin.presto.exception.{PrestoClientException, PrestoStateInvalidException}
+import org.apache.linkis.governance.common.paser.SQLCodeParser
+import org.apache.linkis.manager.common.entity.resource.{CommonNodeResource, LoadResource, NodeResource}
+import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf
+import org.apache.linkis.manager.label.entity.Label
+import org.apache.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
+import org.apache.linkis.protocol.engine.JobProgressInfo
+import org.apache.linkis.rpc.Sender
+import org.apache.linkis.scheduler.executer.{ErrorExecuteResponse, ExecuteResponse, SuccessExecuteResponse}
+import org.apache.linkis.storage.domain.Column
+import org.apache.linkis.storage.resultset.ResultSetFactory
+import org.apache.linkis.storage.resultset.table.{TableMetaData, TableRecord}
+import org.springframework.util.CollectionUtils
 
-class PrestoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
-    extends ConcurrentComputationExecutor(outputPrintLimit) {
+import scala.collection.JavaConverters._
+
+class PrestoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int) extends ConcurrentComputationExecutor(outputPrintLimit) {
 
   private var okHttpClient: OkHttpClient = PrestoEngineConnExecutor.OK_HTTP_CLIENT
 
   private val executorLabels: util.List[Label[_]] = new util.ArrayList[Label[_]](2)
 
-  private val clientSessionCache: Cache[String, ClientSession] = CacheBuilder
-    .newBuilder()
+  private val clientSessionCache: Cache[String, ClientSession] = CacheBuilder.newBuilder()
     .expireAfterAccess(EngineConnConf.ENGINE_TASK_EXPIRE_TIME.getValue, TimeUnit.MILLISECONDS)
-    .maximumSize(EngineConnConstant.MAX_TASK_NUM)
-    .build()
+    .maximumSize(EngineConnConstant.MAX_TASK_NUM).build()
 
   override def init: Unit = {
     setCodeParser(new SQLCodeParser)
@@ -93,40 +72,24 @@ class PrestoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
     val engineTypeLabel = engineConnTask.getLables.find(_.isInstanceOf[EngineTypeLabel]).get
     var configMap: util.Map[String, String] = null
     if (userCreatorLabel != null && engineTypeLabel != null) {
-      configMap = PrestoEngineConf.getCacheMap(
-        (
-          userCreatorLabel.asInstanceOf[UserCreatorLabel],
-          engineTypeLabel.asInstanceOf[EngineTypeLabel]
-        )
-      )
+      configMap = PrestoEngineConf.getCacheMap((userCreatorLabel.asInstanceOf[UserCreatorLabel], engineTypeLabel.asInstanceOf[EngineTypeLabel]))
     }
-    clientSessionCache.put(
-      engineConnTask.getTaskId,
-      getClientSession(user, engineConnTask.getProperties, configMap)
-    )
+    clientSessionCache.put(engineConnTask.getTaskId, getClientSession(user, engineConnTask.getProperties, configMap))
     super.execute(engineConnTask)
   }
 
-  override def executeLine(
-      engineExecutorContext: EngineExecutionContext,
-      code: String
-  ): ExecuteResponse = {
+  override def executeLine(engineExecutorContext: EngineExecutionContext, code: String): ExecuteResponse = {
     val realCode = code.trim
     logger.info(s"presto client begins to run psql code:\n $realCode")
 
     val taskId = engineExecutorContext.getJobId.get
 
     val clientSession = clientSessionCache.getIfPresent(taskId)
-    val statement =
-      StatementClientFactory.newStatementClient(okHttpClient, clientSession, realCode)
+    val statement = StatementClientFactory.newStatementClient(okHttpClient, clientSession, realCode)
 
     initialStatusUpdates(taskId, engineExecutorContext, statement)
 
-    if (
-        statement.isRunning || (statement.isFinished && statement
-          .finalStatusInfo()
-          .getError == null)
-    ) {
+    if (statement.isRunning || (statement.isFinished && statement.finalStatusInfo().getError == null)) {
       queryOutput(taskId, engineExecutorContext, statement)
     }
 
@@ -141,17 +104,12 @@ class PrestoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
 
   }
 
-  override def executeCompletely(
-      engineExecutorContext: EngineExecutionContext,
-      code: String,
-      completedLine: String
-  ): ExecuteResponse = null
+  override def executeCompletely(engineExecutorContext: EngineExecutionContext, code: String, completedLine: String): ExecuteResponse = null
 
   // todo
   override def progress(taskID: String): Float = 0.0f
 
-  override def getProgressInfo(taskID: String): Array[JobProgressInfo] =
-    Array.empty[JobProgressInfo]
+  override def getProgressInfo(taskID: String): Array[JobProgressInfo] = Array.empty[JobProgressInfo]
 
   override def getExecutorLabels(): util.List[Label[_]] = executorLabels
 
@@ -171,13 +129,9 @@ class PrestoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
   override def getCurrentNodeResource(): NodeResource = {
     val properties = EngineConnObject.getEngineCreationContext.getOptions
     if (properties.containsKey(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key)) {
-      val settingClientMemory =
-        properties.get(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key)
+      val settingClientMemory = properties.get(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key)
       if (!settingClientMemory.toLowerCase().endsWith("g")) {
-        properties.put(
-          EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key,
-          settingClientMemory + "g"
-        )
+        properties.put(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key, settingClientMemory + "g")
       }
     }
     val resource = new CommonNodeResource
@@ -190,17 +144,12 @@ class PrestoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
 
   override def getConcurrentLimit: Int = ENGINE_CONCURRENT_LIMIT.getValue
 
-  private def getClientSession(
-      user: String,
-      taskParams: util.Map[String, Object],
-      cacheMap: util.Map[String, String]
-  ): ClientSession = {
+  private def getClientSession(user: String, taskParams: util.Map[String, Object], cacheMap: util.Map[String, String]): ClientSession = {
     val configMap = new util.HashMap[String, String]()
     // 运行时指定的参数优先级大于管理台配置优先级
     if (!CollectionUtils.isEmpty(cacheMap)) configMap.putAll(cacheMap)
     taskParams.asScala.foreach {
-      case (key: String, value: Object) if value != null =>
-        configMap.put(key, String.valueOf(value))
+      case (key: String, value: Object) if value != null => configMap.put(key, String.valueOf(value))
       case _ =>
     }
     val httpUri: URI = URI.create(PRESTO_URL.getValue(configMap))
@@ -224,28 +173,10 @@ class PrestoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
     val roles: java.util.Map[String, SelectedRole] = Collections.emptyMap()
     val extraCredentials: util.Map[String, String] = Collections.emptyMap()
 
-    val clientRequestTimeout: io.airlift.units.Duration =
-      new io.airlift.units.Duration(0, TimeUnit.MILLISECONDS)
+    val clientRequestTimeout: io.airlift.units.Duration = new io.airlift.units.Duration(0, TimeUnit.MILLISECONDS)
 
-    new ClientSession(
-      httpUri,
-      user,
-      source,
-      traceToken,
-      clientTags,
-      clientInfo,
-      catalog,
-      schema,
-      timeZonId,
-      locale,
-      resourceEstimates,
-      properties,
-      preparedStatements,
-      roles,
-      extraCredentials,
-      transactionId,
-      clientRequestTimeout
-    )
+    new ClientSession(httpUri, user, source, traceToken, clientTags, clientInfo, catalog, schema, timeZonId, locale,
+      resourceEstimates, properties, preparedStatements, roles, extraCredentials, transactionId, clientRequestTimeout)
   }
 
   private def getUserCreatorLabel(labels: Array[Label[_]]): UserCreatorLabel = {
@@ -255,27 +186,15 @@ class PrestoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
       .asInstanceOf[UserCreatorLabel]
   }
 
-  private def initialStatusUpdates(
-      taskId: String,
-      engineExecutorContext: EngineExecutionContext,
-      statement: StatementClient
-  ): Unit = {
-    while (
-        statement.isRunning
-        && (statement.currentData().getData == null || statement
-          .currentStatusInfo()
-          .getUpdateType != null)
-    ) {
+  private def initialStatusUpdates(taskId: String, engineExecutorContext: EngineExecutionContext, statement: StatementClient): Unit = {
+    while (statement.isRunning
+      && (statement.currentData().getData == null || statement.currentStatusInfo().getUpdateType != null)) {
       engineExecutorContext.pushProgress(progress(taskId), getProgressInfo(taskId))
       statement.advance()
     }
   }
 
-  private def queryOutput(
-      taskId: String,
-      engineExecutorContext: EngineExecutionContext,
-      statement: StatementClient
-  ): Unit = {
+  private def queryOutput(taskId: String, engineExecutorContext: EngineExecutionContext, statement: StatementClient): Unit = {
     var columnCount = 0
     var rows = 0
     val resultSetWriter = engineExecutorContext.createResultSetWriter(ResultSetFactory.TABLE_TYPE)
@@ -290,8 +209,7 @@ class PrestoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
         throw new RuntimeException("presto columns is null.")
       }
       val columns = results.getColumns.asScala
-        .map(column => Column(column.getName, column.getType, ""))
-        .toArray[Column]
+        .map(column => Column(column.getName, column.getType, "")).toArray[Column]
       columnCount = columns.length
       resultSetWriter.addMetaData(new TableMetaData(columns))
       while (statement.isRunning) {
@@ -307,19 +225,13 @@ class PrestoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
     })(IOUtils.closeQuietly(resultSetWriter))
 
     info(s"Fetched $columnCount col(s) : $rows row(s) in presto")
-    engineExecutorContext.appendStdout(
-      LogUtils.generateInfo(s"Fetched $columnCount col(s) : $rows row(s) in presto")
-    );
+    engineExecutorContext.appendStdout(LogUtils.generateInfo(s"Fetched $columnCount col(s) : $rows row(s) in presto"));
     engineExecutorContext.sendResultSet(resultSetWriter)
     IOUtils.closeQuietly(resultSetWriter)
   }
 
   // check presto error
-  private def verifyServerError(
-      taskId: String,
-      engineExecutorContext: EngineExecutionContext,
-      statement: StatementClient
-  ): ErrorExecuteResponse = {
+  private def verifyServerError(taskId: String, engineExecutorContext: EngineExecutionContext, statement: StatementClient): ErrorExecuteResponse = {
     engineExecutorContext.pushProgress(progress(taskId), getProgressInfo(taskId))
     if (statement.isFinished) {
       val info: QueryStatusInfo = statement.finalStatusInfo()
@@ -330,9 +242,7 @@ class PrestoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
         if (error.getFailureInfo != null) {
           cause = error.getFailureInfo.toException
         }
-        engineExecutorContext.appendStdout(
-          LogUtils.generateERROR(ExceptionUtils.getFullStackTrace(cause))
-        )
+        engineExecutorContext.appendStdout(LogUtils.generateERROR(ExceptionUtils.getFullStackTrace(cause)))
         ErrorExecuteResponse(ExceptionUtils.getMessage(cause), cause)
       } else null
     } else if (statement.isClientAborted) {
@@ -345,15 +255,11 @@ class PrestoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
     }
   }
 
-  private def updateSession(
-      clientSession: ClientSession,
-      statement: StatementClient
-  ): ClientSession = {
+  private def updateSession(clientSession: ClientSession, statement: StatementClient): ClientSession = {
     var newSession = clientSession
     // update catalog and schema if present
     if (statement.getSetCatalog.isPresent || statement.getSetSchema.isPresent) {
-      newSession = ClientSession
-        .builder(newSession)
+      newSession = ClientSession.builder(newSession)
         .withCatalog(statement.getSetCatalog.orElse(newSession.getCatalog))
         .withSchema(statement.getSetSchema.orElse(newSession.getSchema))
         .build
@@ -364,15 +270,11 @@ class PrestoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
 
     var builder: ClientSession.Builder = ClientSession.builder(newSession)
 
-    if (statement.getStartedTransactionId != null)
-      builder = builder.withTransactionId(statement.getStartedTransactionId)
+    if (statement.getStartedTransactionId != null) builder = builder.withTransactionId(statement.getStartedTransactionId)
 
     // update session properties if present
-    if (
-        !statement.getSetSessionProperties.isEmpty || !statement.getResetSessionProperties.isEmpty
-    ) {
-      val sessionProperties: util.Map[String, String] =
-        new util.HashMap[String, String](newSession.getProperties)
+    if (!statement.getSetSessionProperties.isEmpty || !statement.getResetSessionProperties.isEmpty) {
+      val sessionProperties: util.Map[String, String] = new util.HashMap[String, String](newSession.getProperties)
       sessionProperties.putAll(statement.getSetSessionProperties)
       sessionProperties.keySet.removeAll(statement.getResetSessionProperties)
       builder = builder.withProperties(sessionProperties)
@@ -380,18 +282,14 @@ class PrestoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
 
     // update session roles
     if (!statement.getSetRoles.isEmpty) {
-      val roles: util.Map[String, SelectedRole] =
-        new util.HashMap[String, SelectedRole](newSession.getRoles)
+      val roles: util.Map[String, SelectedRole] = new util.HashMap[String, SelectedRole](newSession.getRoles)
       roles.putAll(statement.getSetRoles)
       builder = builder.withRoles(roles)
     }
 
     // update prepared statements if present
-    if (
-        !statement.getAddedPreparedStatements.isEmpty || !statement.getDeallocatedPreparedStatements.isEmpty
-    ) {
-      val preparedStatements: util.Map[String, String] =
-        new util.HashMap[String, String](newSession.getPreparedStatements)
+    if (!statement.getAddedPreparedStatements.isEmpty || !statement.getDeallocatedPreparedStatements.isEmpty) {
+      val preparedStatements: util.Map[String, String] = new util.HashMap[String, String](newSession.getPreparedStatements)
       preparedStatements.putAll(statement.getAddedPreparedStatements)
       preparedStatements.keySet.removeAll(statement.getDeallocatedPreparedStatements)
       builder = builder.withPreparedStatements(preparedStatements)
@@ -400,14 +298,15 @@ class PrestoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
     newSession
   }
 
-  override def killAll(): Unit = {}
+  override def killAll(): Unit = {
+
+  }
 
 }
 
 object PrestoEngineConnExecutor {
 
-  private val OK_HTTP_CLIENT: OkHttpClient = new OkHttpClient.Builder()
-    .socketFactory(new SocketChannelSocketFactory)
+  private val OK_HTTP_CLIENT: OkHttpClient = new OkHttpClient.Builder().socketFactory(new SocketChannelSocketFactory)
     .connectTimeout(PRESTO_HTTP_CONNECT_TIME_OUT.getValue, TimeUnit.SECONDS)
     .readTimeout(PRESTO_HTTP_READ_TIME_OUT.getValue, TimeUnit.SECONDS)
     .build()

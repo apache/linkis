@@ -14,24 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.linkis.engineplugin.elasticsearch.factory
 
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.engineconn.common.creation.EngineCreationContext
-import org.apache.linkis.manager.engineplugin.common.creation.{
-  ExecutorFactory,
-  MultiExecutorEngineConnFactory
-}
+import org.apache.linkis.manager.engineplugin.common.creation.{ExecutorFactory, MultiExecutorEngineConnFactory}
 import org.apache.linkis.manager.label.entity.engine.EngineType
 import org.apache.linkis.manager.label.entity.engine.EngineType.EngineType
 
 class ElasticSearchEngineConnFactory extends MultiExecutorEngineConnFactory with Logging {
-
-  private val executorFactoryArray = Array[ExecutorFactory](
-    new ElasticSearchJsonExecutorFactory,
-    new ElasticSearchSqlExecutorFactory
-  )
+  private val executorFactoryArray = Array[ExecutorFactory](new ElasticSearchJsonExecutorFactory, new ElasticSearchSqlExecutorFactory)
 
   override def getExecutorFactories: Array[ExecutorFactory] = {
     executorFactoryArray
@@ -42,8 +34,5 @@ class ElasticSearchEngineConnFactory extends MultiExecutorEngineConnFactory with
 
   override protected def getEngineConnType: EngineType = EngineType.ELASTICSEARCH
 
-  override protected def createEngineConnSession(
-      engineCreationContext: EngineCreationContext
-  ): Any = null
-
+  override protected def createEngineConnSession(engineCreationContext: EngineCreationContext): Any = null
 }

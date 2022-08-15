@@ -23,29 +23,29 @@ import java.util.Map;
 
 public interface ResourceHelper {
 
-  public long upload(
-      String path,
-      String user,
-      InputStream inputStream,
-      StringBuilder stringBuilder,
-      boolean overwrite)
-      throws UploadResourceException;
+    public long upload(
+            String path,
+            String user,
+            InputStream inputStream,
+            StringBuilder stringBuilder,
+            boolean overwrite)
+            throws UploadResourceException;
 
-  public void update(String path);
+    public void update(String path);
 
-  public void getResource(String path, int start, int end);
+    public void getResource(String path, int start, int end);
 
-  public String generatePath(String user, String fileName, Map<String, Object> properties);
+    public String generatePath(String user, String fileName, Map<String, Object> properties);
 
-  public String getSchema();
+    public String getSchema();
 
-  boolean checkIfExists(String path, String user) throws IOException;
+    boolean checkIfExists(String path, String user) throws IOException;
 
-  /**
-   * check wds.linkis.bml.hdfs.prefix or wds.linkis.bml.local.prefix has changed or not
-   *
-   * @param path resource path
-   * @return result
-   */
-  boolean checkBmlResourceStoragePrefixPathIfChanged(String path);
+    /**
+     * check wds.linkis.bml.hdfs.prefix or wds.linkis.bml.local.prefix has changed or not
+     *
+     * @param path resource path
+     * @return result
+     */
+    boolean checkBmlResourceStoragePrefixPathIfChanged(String path);
 }

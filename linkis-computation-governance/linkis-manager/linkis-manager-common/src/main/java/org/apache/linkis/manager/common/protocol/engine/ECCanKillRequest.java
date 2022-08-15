@@ -23,59 +23,59 @@ import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel;
 
 public class ECCanKillRequest implements EngineRequest {
 
-  private String user;
+    private String user;
 
-  private ServiceInstance engineConnInstance;
+    private ServiceInstance engineConnInstance;
 
-  private EngineTypeLabel engineTypeLabel;
+    private EngineTypeLabel engineTypeLabel;
 
-  private UserCreatorLabel userCreatorLabel;
+    private UserCreatorLabel userCreatorLabel;
 
-  @Override
-  public String getUser() {
-    return user;
-  }
+    @Override
+    public String getUser() {
+        return user;
+    }
 
-  public void setUser(String user) {
-    this.user = user;
-  }
+    public void setUser(String user) {
+        this.user = user;
+    }
 
-  public ServiceInstance getEngineConnInstance() {
-    return engineConnInstance;
-  }
+    public ServiceInstance getEngineConnInstance() {
+        return engineConnInstance;
+    }
 
-  public void setEngineConnInstance(ServiceInstance engineConnInstance) {
-    this.engineConnInstance = engineConnInstance;
-  }
+    public void setEngineConnInstance(ServiceInstance engineConnInstance) {
+        this.engineConnInstance = engineConnInstance;
+    }
 
-  public EngineTypeLabel getEngineTypeLabel() {
-    return engineTypeLabel;
-  }
+    public EngineTypeLabel getEngineTypeLabel() {
+        return engineTypeLabel;
+    }
 
-  public void setEngineTypeLabel(EngineTypeLabel engineTypeLabel) {
-    this.engineTypeLabel = engineTypeLabel;
-  }
+    public void setEngineTypeLabel(EngineTypeLabel engineTypeLabel) {
+        this.engineTypeLabel = engineTypeLabel;
+    }
 
-  public UserCreatorLabel getUserCreatorLabel() {
-    return userCreatorLabel;
-  }
+    public UserCreatorLabel getUserCreatorLabel() {
+        return userCreatorLabel;
+    }
 
-  public void setUserCreatorLabel(UserCreatorLabel userCreatorLabel) {
-    this.userCreatorLabel = userCreatorLabel;
-  }
+    public void setUserCreatorLabel(UserCreatorLabel userCreatorLabel) {
+        this.userCreatorLabel = userCreatorLabel;
+    }
 
-  @Override
-  public String toString() {
-    return "ECCanKillRequest{"
-        + "user='"
-        + user
-        + '\''
-        + ", engineConnInstance="
-        + engineConnInstance
-        + ", engineTypeLabel="
-        + engineTypeLabel
-        + ", userCreatorLabel="
-        + userCreatorLabel
-        + '}';
-  }
+    @Override
+    public String toString() {
+        return "ECCanKillRequest{"
+                + "user='"
+                + user
+                + '\''
+                + ", engineConnInstance="
+                + engineConnInstance
+                + ", engineTypeLabel="
+                + engineTypeLabel
+                + ", userCreatorLabel="
+                + userCreatorLabel
+                + '}';
+    }
 }

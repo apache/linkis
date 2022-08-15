@@ -20,37 +20,37 @@ package org.apache.linkis.engineconnplugin.flink.client.sql.operation.result;
 /** Constant column names. */
 public class ConstantNames {
 
-  // for statement execution
-  public static final String JOB_ID = "job_id";
-  // for results with SUCCESS result kind
-  public static final String RESULT = "result";
-  public static final String OK = "OK";
+    // for statement execution
+    public static final String JOB_ID = "job_id";
+    // for results with SUCCESS result kind
+    public static final String RESULT = "result";
+    public static final String OK = "OK";
 
-  public static final String SHOW_MODULES_RESULT = "modules";
+    public static final String SHOW_MODULES_RESULT = "modules";
 
-  public static final String SHOW_CURRENT_CATALOG_RESULT = "catalog";
+    public static final String SHOW_CURRENT_CATALOG_RESULT = "catalog";
 
-  public static final String SHOW_CATALOGS_RESULT = "catalogs";
+    public static final String SHOW_CATALOGS_RESULT = "catalogs";
 
-  public static final String SHOW_CURRENT_DATABASE_RESULT = "database";
+    public static final String SHOW_CURRENT_DATABASE_RESULT = "database";
 
-  public static final String SHOW_DATABASES_RESULT = "databases";
+    public static final String SHOW_DATABASES_RESULT = "databases";
 
-  public static final String SHOW_FUNCTIONS_RESULT = "functions";
+    public static final String SHOW_FUNCTIONS_RESULT = "functions";
 
-  public static final String EXPLAIN_RESULT = "explanation";
+    public static final String EXPLAIN_RESULT = "explanation";
 
-  public static final String DESCRIBE_NAME = "name";
-  public static final String DESCRIBE_TYPE = "type";
-  public static final String DESCRIBE_NULL = "null";
-  public static final String DESCRIBE_KEY = "key";
-  public static final String DESCRIBE_COMPUTED_COLUMN = "computed_column";
-  public static final String DESCRIBE_WATERMARK = "watermark";
+    public static final String DESCRIBE_NAME = "name";
+    public static final String DESCRIBE_TYPE = "type";
+    public static final String DESCRIBE_NULL = "null";
+    public static final String DESCRIBE_KEY = "key";
+    public static final String DESCRIBE_COMPUTED_COLUMN = "computed_column";
+    public static final String DESCRIBE_WATERMARK = "watermark";
 
-  public static final String SHOW_TABLES_RESULT = "tables";
+    public static final String SHOW_TABLES_RESULT = "tables";
 
-  public static final String SHOW_VIEWS_RESULT = "views";
+    public static final String SHOW_VIEWS_RESULT = "views";
 
-  public static final String SET_KEY = "key";
-  public static final String SET_VALUE = "value";
+    public static final String SET_KEY = "key";
+    public static final String SET_VALUE = "value";
 }

@@ -22,52 +22,52 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class LinkisResultSet implements Cloneable {
-  private int resultsetIdx;
-  private List<LinkedHashMap<String, String>> resultMeta;
-  private List<List<String>> content;
+    private int resultsetIdx;
+    private List<LinkedHashMap<String, String>> resultMeta;
+    private List<List<String>> content;
 
-  public LinkisResultSet() {}
+    public LinkisResultSet() {}
 
-  public int getResultsetIdx() {
-    return resultsetIdx;
-  }
-
-  public void setResultsetIdx(int resultsetIdx) {
-    this.resultsetIdx = resultsetIdx;
-  }
-
-  public List<LinkedHashMap<String, String>> getResultMeta() {
-    return resultMeta;
-  }
-
-  public void setResultMeta(List<LinkedHashMap<String, String>> resultMeta) {
-    this.resultMeta = resultMeta;
-  }
-
-  public List<List<String>> getContent() {
-    return content;
-  }
-
-  public void setContent(List<List<String>> content) {
-    this.content = content;
-  }
-
-  @Override
-  protected LinkisResultSet clone() throws CloneNotSupportedException {
-    LinkisResultSet ret = new LinkisResultSet();
-    if (this.resultMeta != null) {
-      List<LinkedHashMap<String, String>> resultMeta = null;
-      ret.resultMeta = new LinkedList<>();
-      for (LinkedHashMap<String, String> r1 : resultMeta) {
-        ret.resultMeta.add((LinkedHashMap<String, String>) r1.clone());
-      }
+    public int getResultsetIdx() {
+        return resultsetIdx;
     }
-    if (this.content.size() != 0) {
-      ret.content = new LinkedList<>();
-      for (List<String> r1 : content) {
-        ret.content.add(new LinkedList<>(r1));
-      }
+
+    public void setResultsetIdx(int resultsetIdx) {
+        this.resultsetIdx = resultsetIdx;
     }
-    return ret;
-  }
+
+    public List<LinkedHashMap<String, String>> getResultMeta() {
+        return resultMeta;
+    }
+
+    public void setResultMeta(List<LinkedHashMap<String, String>> resultMeta) {
+        this.resultMeta = resultMeta;
+    }
+
+    public List<List<String>> getContent() {
+        return content;
+    }
+
+    public void setContent(List<List<String>> content) {
+        this.content = content;
+    }
+
+    @Override
+    protected LinkisResultSet clone() throws CloneNotSupportedException {
+        LinkisResultSet ret = new LinkisResultSet();
+        if (this.resultMeta != null) {
+            List<LinkedHashMap<String, String>> resultMeta = null;
+            ret.resultMeta = new LinkedList<>();
+            for (LinkedHashMap<String, String> r1 : resultMeta) {
+                ret.resultMeta.add((LinkedHashMap<String, String>) r1.clone());
+            }
+        }
+        if (this.content.size() != 0) {
+            ret.content = new LinkedList<>();
+            for (List<String> r1 : content) {
+                ret.content.add(new LinkedList<>(r1));
+            }
+        }
+        return ret;
+    }
 }

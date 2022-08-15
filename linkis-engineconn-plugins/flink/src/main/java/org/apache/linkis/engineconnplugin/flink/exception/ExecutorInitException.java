@@ -21,23 +21,23 @@ import org.apache.linkis.common.exception.ErrorException;
 
 public class ExecutorInitException extends ErrorException {
 
-  public static final int ERROR_CODE = 16021;
+    public static final int ERROR_CODE = 16021;
 
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  public ExecutorInitException(int errCode, String desc) {
-    super(errCode, desc);
-  }
+    public ExecutorInitException(int errCode, String desc) {
+        super(errCode, desc);
+    }
 
-  public ExecutorInitException(String desc) {
-    super(20001, desc);
-  }
+    public ExecutorInitException(String desc) {
+        super(20001, desc);
+    }
 
-  public ExecutorInitException(Exception e) {
-    super(20001, e.getMessage());
-  }
+    public ExecutorInitException(Exception e) {
+        super(20001, e.getMessage());
+    }
 
-  public ExecutorInitException() {
-    super(20001, "argument illegal");
-  }
+    public ExecutorInitException() {
+        super(20001, "argument illegal");
+    }
 }

@@ -22,17 +22,17 @@ import org.apache.linkis.cs.client.http.HttpContextClient;
 
 public class ContextClientFactory {
 
-  private static final ContextClientConfig DEFAULT_CONTEXT_CLIENT_CONFIG;
+    private static final ContextClientConfig DEFAULT_CONTEXT_CLIENT_CONFIG;
 
-  static {
-    DEFAULT_CONTEXT_CLIENT_CONFIG = new HttpContextClientConfig();
-  }
+    static {
+        DEFAULT_CONTEXT_CLIENT_CONFIG = new HttpContextClientConfig();
+    }
 
-  public static ContextClient getOrCreateContextClient() {
-    return getOrCreateContextClient(DEFAULT_CONTEXT_CLIENT_CONFIG);
-  }
+    public static ContextClient getOrCreateContextClient() {
+        return getOrCreateContextClient(DEFAULT_CONTEXT_CLIENT_CONFIG);
+    }
 
-  public static ContextClient getOrCreateContextClient(ContextClientConfig contextClientConfig) {
-    return HttpContextClient.getInstance(contextClientConfig);
-  }
+    public static ContextClient getOrCreateContextClient(ContextClientConfig contextClientConfig) {
+        return HttpContextClient.getInstance(contextClientConfig);
+    }
 }

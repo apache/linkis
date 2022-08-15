@@ -22,19 +22,19 @@ import org.apache.linkis.cli.common.entity.job.JobData;
 
 public interface LinkisJobData extends JobData, Cloneable {
 
-  String getExecID();
+    String getExecID();
 
-  float getJobProgress();
+    float getJobProgress();
 
-  Integer getErrCode();
+    Integer getErrCode();
 
-  String getErrDesc();
+    String getErrDesc();
 
-  boolean isSuccess();
+    boolean isSuccess();
 
-  void setSuccess(boolean success);
+    void setSuccess(boolean success);
 
-  void updateByOperResult(LinkisOperResultAdapter adapter);
+    void updateByOperResult(LinkisOperResultAdapter adapter);
 
-  LinkisJobData clone() throws CloneNotSupportedException;
+    LinkisJobData clone() throws CloneNotSupportedException;
 }

@@ -24,12 +24,12 @@ import java.util.List;
 
 public interface VariableService {
 
-  ResponseQueryVariable queryGolbalVariable(String userName);
+    ResponseQueryVariable queryGolbalVariable(String userName);
 
-  ResponseQueryVariable queryAppVariable(String userName, String creator, String appName);
+    ResponseQueryVariable queryAppVariable(String userName, String creator, String appName);
 
-  List<VarKeyValueVO> listGlobalVariable(String username);
+    List<VarKeyValueVO> listGlobalVariable(String username);
 
-  void saveGlobalVaraibles(
-      List globalVariables, List<VarKeyValueVO> userVariables, String userName);
+    void saveGlobalVaraibles(
+            List globalVariables, List<VarKeyValueVO> userVariables, String userName);
 }

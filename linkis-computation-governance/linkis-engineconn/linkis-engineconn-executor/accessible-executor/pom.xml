@@ -15,79 +15,82 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>org.apache.linkis</groupId>
-    <artifactId>linkis</artifactId>
-    <version>1.2.0</version>
-    <relativePath>../../../pom.xml</relativePath>
-  </parent>
+  
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>linkis</artifactId>
+        <groupId>org.apache.linkis</groupId>
+        <version>1.2.0</version>
+        <relativePath>../../../pom.xml</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>linkis-accessible-executor</artifactId>
+    <artifactId>linkis-accessible-executor</artifactId>
 
-  <dependencies>
-    <dependency>
-      <groupId>org.apache.linkis</groupId>
-      <artifactId>linkis-executor-core</artifactId>
-      <version>${project.version}</version>
-    </dependency>
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.linkis</groupId>
+            <artifactId>linkis-executor-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
-    <dependency>
-      <groupId>org.apache.linkis</groupId>
-      <artifactId>linkis-engineconn-core</artifactId>
-      <version>${project.version}</version>
-    </dependency>
+        <dependency>
+            <groupId>org.apache.linkis</groupId>
+            <artifactId>linkis-engineconn-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
-    <dependency>
-      <groupId>org.apache.linkis</groupId>
-      <artifactId>linkis-scheduler</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.linkis</groupId>
-      <artifactId>linkis-rpc</artifactId>
-      <version>${project.version}</version>
-      <scope>provided</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.reflections</groupId>
-          <artifactId>reflections</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
+        <dependency>
+            <groupId>org.apache.linkis</groupId>
+            <artifactId>linkis-scheduler</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.linkis</groupId>
+            <artifactId>linkis-rpc</artifactId>
+            <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>reflections</artifactId>
+                    <groupId>org.reflections</groupId>
+                </exclusion>
+            </exclusions>
+            <scope>provided</scope>
+        </dependency>
 
-  </dependencies>
+    </dependencies>
 
-  <build>
-    <finalName>${project.artifactId}-${project.version}</finalName>
-    <resources>
-      <resource>
-        <directory>${basedir}/src/main/resources</directory>
-      </resource>
-    </resources>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-deploy-plugin</artifactId>
-      </plugin>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+            </plugin>
 
-      <plugin>
-        <groupId>net.alchim31.maven</groupId>
-        <artifactId>scala-maven-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <configuration>
-          <!--<excludes>-->
-          <!--<exclude>**/*.yml</exclude>-->
-          <!--<exclude>**/*.properties</exclude>-->
-          <!--<exclude>**/*.sh</exclude>-->
-          <!--</excludes>-->
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+            <plugin>
+                <groupId>net.alchim31.maven</groupId>
+                <artifactId>scala-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <!--<excludes>-->
+                    <!--<exclude>**/*.yml</exclude>-->
+                    <!--<exclude>**/*.properties</exclude>-->
+                    <!--<exclude>**/*.sh</exclude>-->
+                    <!--</excludes>-->
+                </configuration>
+            </plugin>
+        </plugins>
+        <resources>
+            <resource>
+                <directory>${basedir}/src/main/resources</directory>
+            </resource>
+        </resources>
+        <finalName>${project.artifactId}-${project.version}</finalName>
+    </build>
 
 </project>

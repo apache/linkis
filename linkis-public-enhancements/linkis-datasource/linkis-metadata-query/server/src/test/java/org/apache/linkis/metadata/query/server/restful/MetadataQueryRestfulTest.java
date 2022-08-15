@@ -34,9 +34,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -45,239 +42,243 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 @ExtendWith({SpringExtension.class})
 @AutoConfigureMockMvc
 @SpringBootTest(classes = {WebApplicationServer.class})
 class MetadataQueryRestfulTest {
 
-  @Autowired protected MockMvc mockMvc;
+    @Autowired protected MockMvc mockMvc;
 
-  @MockBean private MetadataQueryService metadataQueryService;
+    @MockBean private MetadataQueryService metadataQueryService;
 
-  private static MockedStatic<SecurityFilter> securityFilter;
+    private static MockedStatic<SecurityFilter> securityFilter;
 
-  @BeforeAll
-  private static void init() {
-    securityFilter = Mockito.mockStatic(SecurityFilter.class);
-  }
-
-  @AfterAll
-  private static void close() {
-    securityFilter.close();
-  }
-
-  String dataSourceName = "test";
-  String database = "hivedb";
-  String table = "testtab";
-  String system = "linkis";
-
-  @Test
-  void testGetDatabases() {
-    try {
-      String url = "/metadataQuery/getDatabases";
-      MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-      params.set("system", "");
-      params.set("dataSourceName", dataSourceName);
-
-      MvcUtils mvcUtils = new MvcUtils(mockMvc);
-      Message res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
-      Assertions.assertTrue(
-          MessageStatus.ERROR() == res.getStatus()
-              && res.getMessage().contains("'system' is missing"));
-      params.set("system", system);
-      Mockito.when(metadataQueryService.getDatabasesByDsName(dataSourceName, system, null))
-          .thenReturn(new ArrayList<>());
-      res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
-      Assertions.assertTrue(MessageStatus.SUCCESS() == res.getStatus());
-
-      Mockito.doThrow(new ErrorException(1, ""))
-          .when(metadataQueryService)
-          .getDatabasesByDsName(dataSourceName, system, null);
-
-      res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
-      Assertions.assertTrue(
-          MessageStatus.ERROR() == res.getStatus()
-              && res.getMessage().contains("Fail to get database list"));
-    } catch (Exception e) {
-      // ignore
+    @BeforeAll
+    private static void init() {
+        securityFilter = Mockito.mockStatic(SecurityFilter.class);
     }
-  }
 
-  @Test
-  void testGetTables() throws Exception {
-
-    String url = "/metadataQuery/getTables";
-
-    MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-    params.set("system", "");
-    params.set("dataSourceName", dataSourceName);
-    params.set("database", database);
-    MvcUtils mvcUtils = new MvcUtils(mockMvc);
-    Message res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
-    Assertions.assertTrue(
-        MessageStatus.ERROR() == res.getStatus()
-            && res.getMessage().contains("'system' is missing"));
-
-    params.set("system", system);
-    Mockito.when(metadataQueryService.getTablesByDsName(dataSourceName, database, system, null))
-        .thenReturn(new ArrayList<>());
-    res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
-    Assertions.assertTrue(MessageStatus.SUCCESS() == res.getStatus());
-
-    Mockito.doThrow(new ErrorException(1, ""))
-        .when(metadataQueryService)
-        .getTablesByDsName(dataSourceName, database, system, null);
-    res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
-    Assertions.assertTrue(
-        MessageStatus.ERROR() == res.getStatus()
-            && res.getMessage().contains("Fail to get table list"));
-  }
-
-  @Test
-  void testGetTableProps() {
-    try {
-      String url = "/metadataQuery/getTableProps";
-
-      MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-      params.set("dataSourceName", dataSourceName);
-      params.set("database", database);
-      params.set("table", table);
-      params.set("system", "");
-
-      MvcUtils mvcUtils = new MvcUtils(mockMvc);
-      Message res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
-      Assertions.assertTrue(
-          MessageStatus.ERROR() == res.getStatus()
-              && res.getMessage().contains("'system' is missing"));
-
-      params.set("system", system);
-      Mockito.when(
-              metadataQueryService.getTablePropsByDsName(
-                  dataSourceName, database, table, system, null))
-          .thenReturn(new HashMap<>());
-      res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
-      Assertions.assertTrue(MessageStatus.SUCCESS() == res.getStatus());
-
-      Mockito.doThrow(new ErrorException(1, ""))
-          .when(metadataQueryService)
-          .getTablePropsByDsName(dataSourceName, database, table, system, null);
-      res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
-      Assertions.assertTrue(
-          MessageStatus.ERROR() == res.getStatus()
-              && res.getMessage().contains("Fail to get table properties"));
-    } catch (Exception e) {
-      // ignore
+    @AfterAll
+    private static void close() {
+        securityFilter.close();
     }
-  }
 
-  @Test
-  void testGetPartitions() {
-    try {
+    String dataSourceName = "test";
+    String database = "hivedb";
+    String table = "testtab";
+    String system = "linkis";
 
-      String url = "/metadataQuery/getPartitions";
-      MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-      params.set("dataSourceName", dataSourceName);
-      params.set("database", database);
-      params.set("table", table);
-      params.set("system", "");
-      MvcUtils mvcUtils = new MvcUtils(mockMvc);
-      Message res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
-      Assertions.assertTrue(
-          MessageStatus.ERROR() == res.getStatus()
-              && res.getMessage().contains("'system' is missing"));
+    @Test
+    void testGetDatabases() {
+        try {
+            String url = "/metadataQuery/getDatabases";
+            MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+            params.set("system", "");
+            params.set("dataSourceName", dataSourceName);
 
-      params.set("system", system);
-      Mockito.when(
-              metadataQueryService.getPartitionsByDsName(
-                  dataSourceName, database, table, system, false, null))
-          .thenReturn(new MetaPartitionInfo());
-      res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
-      Assertions.assertTrue(MessageStatus.SUCCESS() == res.getStatus());
+            MvcUtils mvcUtils = new MvcUtils(mockMvc);
+            Message res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
+            Assertions.assertTrue(
+                    MessageStatus.ERROR() == res.getStatus()
+                            && res.getMessage().contains("'system' is missing"));
+            params.set("system", system);
+            Mockito.when(metadataQueryService.getDatabasesByDsName(dataSourceName, system, null))
+                    .thenReturn(new ArrayList<>());
+            res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
+            Assertions.assertTrue(MessageStatus.SUCCESS() == res.getStatus());
 
-      Mockito.doThrow(new ErrorException(1, ""))
-          .when(metadataQueryService)
-          .getPartitionsByDsName(dataSourceName, database, table, system, false, null);
-      res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
-      Assertions.assertTrue(
-          MessageStatus.ERROR() == res.getStatus()
-              && res.getMessage().contains("Fail to get partitions"));
-    } catch (Exception e) {
-      // ignore
+            Mockito.doThrow(new ErrorException(1, ""))
+                    .when(metadataQueryService)
+                    .getDatabasesByDsName(dataSourceName, system, null);
+
+            res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
+            Assertions.assertTrue(
+                    MessageStatus.ERROR() == res.getStatus()
+                            && res.getMessage().contains("Fail to get database list"));
+        } catch (Exception e) {
+            // ignore
+        }
     }
-  }
 
-  @Test
-  void testGetPartitionProps() {
-    try {
+    @Test
+    void testGetTables() throws Exception {
 
-      String partition = "ds";
+        String url = "/metadataQuery/getTables";
 
-      String url = "/metadataQuery/getPartitionProps";
-      MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-      params.set("dataSourceName", dataSourceName);
-      params.set("database", database);
-      params.set("table", table);
-      params.set("partition", partition);
-      params.set("system", "");
-      MvcUtils mvcUtils = new MvcUtils(mockMvc);
-      Message res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
-      Assertions.assertTrue(
-          MessageStatus.ERROR() == res.getStatus()
-              && res.getMessage().contains("'system' is missing"));
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.set("system", "");
+        params.set("dataSourceName", dataSourceName);
+        params.set("database", database);
+        MvcUtils mvcUtils = new MvcUtils(mockMvc);
+        Message res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
+        Assertions.assertTrue(
+                MessageStatus.ERROR() == res.getStatus()
+                        && res.getMessage().contains("'system' is missing"));
 
-      params.set("system", system);
-      Mockito.when(
-              metadataQueryService.getPartitionPropsByDsName(
-                  dataSourceName, database, table, partition, system, null))
-          .thenReturn(new HashMap<>());
-      res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
-      Assertions.assertTrue(MessageStatus.SUCCESS() == res.getStatus());
+        params.set("system", system);
+        Mockito.when(metadataQueryService.getTablesByDsName(dataSourceName, database, system, null))
+                .thenReturn(new ArrayList<>());
+        res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
+        Assertions.assertTrue(MessageStatus.SUCCESS() == res.getStatus());
 
-      Mockito.doThrow(new ErrorException(1, ""))
-          .when(metadataQueryService)
-          .getPartitionPropsByDsName(dataSourceName, database, table, partition, system, null);
-      res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
-      Assertions.assertTrue(
-          MessageStatus.ERROR() == res.getStatus()
-              && res.getMessage().contains("Fail to get partition properties"));
-    } catch (Exception e) {
-      // ignore
+        Mockito.doThrow(new ErrorException(1, ""))
+                .when(metadataQueryService)
+                .getTablesByDsName(dataSourceName, database, system, null);
+        res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
+        Assertions.assertTrue(
+                MessageStatus.ERROR() == res.getStatus()
+                        && res.getMessage().contains("Fail to get table list"));
     }
-  }
 
-  @Test
-  void testGetColumns() {
-    try {
-      String url = "/metadataQuery/getColumns";
+    @Test
+    void testGetTableProps() {
+        try {
+            String url = "/metadataQuery/getTableProps";
 
-      MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-      params.set("dataSourceName", dataSourceName);
-      params.set("database", database);
-      params.set("table", table);
-      params.set("system", "");
-      MvcUtils mvcUtils = new MvcUtils(mockMvc);
-      Message res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
-      Assertions.assertTrue(
-          MessageStatus.ERROR() == res.getStatus()
-              && res.getMessage().contains("'system' is missing"));
+            MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+            params.set("dataSourceName", dataSourceName);
+            params.set("database", database);
+            params.set("table", table);
+            params.set("system", "");
 
-      params.set("system", system);
-      Mockito.when(
-              metadataQueryService.getColumnsByDsName(
-                  dataSourceName, database, table, system, null))
-          .thenReturn(new ArrayList<>());
-      res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
-      Assertions.assertTrue(MessageStatus.SUCCESS() == res.getStatus());
+            MvcUtils mvcUtils = new MvcUtils(mockMvc);
+            Message res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
+            Assertions.assertTrue(
+                    MessageStatus.ERROR() == res.getStatus()
+                            && res.getMessage().contains("'system' is missing"));
 
-      Mockito.doThrow(new ErrorException(1, ""))
-          .when(metadataQueryService)
-          .getColumnsByDsName(dataSourceName, database, table, system, null);
-      res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
-      Assertions.assertTrue(
-          MessageStatus.ERROR() == res.getStatus()
-              && res.getMessage().contains("Fail to get column list"));
-    } catch (Exception e) {
-      // ignore
+            params.set("system", system);
+            Mockito.when(
+                            metadataQueryService.getTablePropsByDsName(
+                                    dataSourceName, database, table, system, null))
+                    .thenReturn(new HashMap<>());
+            res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
+            Assertions.assertTrue(MessageStatus.SUCCESS() == res.getStatus());
+
+            Mockito.doThrow(new ErrorException(1, ""))
+                    .when(metadataQueryService)
+                    .getTablePropsByDsName(dataSourceName, database, table, system, null);
+            res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
+            Assertions.assertTrue(
+                    MessageStatus.ERROR() == res.getStatus()
+                            && res.getMessage().contains("Fail to get table properties"));
+        } catch (Exception e) {
+            // ignore
+        }
     }
-  }
+
+    @Test
+    void testGetPartitions() {
+        try {
+
+            String url = "/metadataQuery/getPartitions";
+            MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+            params.set("dataSourceName", dataSourceName);
+            params.set("database", database);
+            params.set("table", table);
+            params.set("system", "");
+            MvcUtils mvcUtils = new MvcUtils(mockMvc);
+            Message res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
+            Assertions.assertTrue(
+                    MessageStatus.ERROR() == res.getStatus()
+                            && res.getMessage().contains("'system' is missing"));
+
+            params.set("system", system);
+            Mockito.when(
+                            metadataQueryService.getPartitionsByDsName(
+                                    dataSourceName, database, table, system, false, null))
+                    .thenReturn(new MetaPartitionInfo());
+            res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
+            Assertions.assertTrue(MessageStatus.SUCCESS() == res.getStatus());
+
+            Mockito.doThrow(new ErrorException(1, ""))
+                    .when(metadataQueryService)
+                    .getPartitionsByDsName(dataSourceName, database, table, system, false, null);
+            res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
+            Assertions.assertTrue(
+                    MessageStatus.ERROR() == res.getStatus()
+                            && res.getMessage().contains("Fail to get partitions"));
+        } catch (Exception e) {
+            // ignore
+        }
+    }
+
+    @Test
+    void testGetPartitionProps() {
+        try {
+
+            String partition = "ds";
+
+            String url = "/metadataQuery/getPartitionProps";
+            MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+            params.set("dataSourceName", dataSourceName);
+            params.set("database", database);
+            params.set("table", table);
+            params.set("partition", partition);
+            params.set("system", "");
+            MvcUtils mvcUtils = new MvcUtils(mockMvc);
+            Message res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
+            Assertions.assertTrue(
+                    MessageStatus.ERROR() == res.getStatus()
+                            && res.getMessage().contains("'system' is missing"));
+
+            params.set("system", system);
+            Mockito.when(
+                            metadataQueryService.getPartitionPropsByDsName(
+                                    dataSourceName, database, table, partition, system, null))
+                    .thenReturn(new HashMap<>());
+            res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
+            Assertions.assertTrue(MessageStatus.SUCCESS() == res.getStatus());
+
+            Mockito.doThrow(new ErrorException(1, ""))
+                    .when(metadataQueryService)
+                    .getPartitionPropsByDsName(
+                            dataSourceName, database, table, partition, system, null);
+            res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
+            Assertions.assertTrue(
+                    MessageStatus.ERROR() == res.getStatus()
+                            && res.getMessage().contains("Fail to get partition properties"));
+        } catch (Exception e) {
+            // ignore
+        }
+    }
+
+    @Test
+    void testGetColumns() {
+        try {
+            String url = "/metadataQuery/getColumns";
+
+            MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+            params.set("dataSourceName", dataSourceName);
+            params.set("database", database);
+            params.set("table", table);
+            params.set("system", "");
+            MvcUtils mvcUtils = new MvcUtils(mockMvc);
+            Message res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
+            Assertions.assertTrue(
+                    MessageStatus.ERROR() == res.getStatus()
+                            && res.getMessage().contains("'system' is missing"));
+
+            params.set("system", system);
+            Mockito.when(
+                            metadataQueryService.getColumnsByDsName(
+                                    dataSourceName, database, table, system, null))
+                    .thenReturn(new ArrayList<>());
+            res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
+            Assertions.assertTrue(MessageStatus.SUCCESS() == res.getStatus());
+
+            Mockito.doThrow(new ErrorException(1, ""))
+                    .when(metadataQueryService)
+                    .getColumnsByDsName(dataSourceName, database, table, system, null);
+            res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
+            Assertions.assertTrue(
+                    MessageStatus.ERROR() == res.getStatus()
+                            && res.getMessage().contains("Fail to get column list"));
+        } catch (Exception e) {
+            // ignore
+        }
+    }
 }

@@ -18,8 +18,8 @@
 package org.apache.linkis.cs.condition;
 
 public enum ConditionType {
-  Regex,
-  Contains,
-  Equals,
-  Logic
+    Regex,
+    Contains,
+    Equals,
+    Logic
 }

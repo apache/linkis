@@ -36,144 +36,144 @@ import java.util.Optional;
 @JsonSerialize(using = ResultSetJsonSerializer.class)
 @JsonDeserialize(using = ResultSetJsonDeserializer.class)
 public class ResultSet {
-  static final String FIELD_NAME_RESULT_KIND = "result_kind";
-  static final String FIELD_NAME_COLUMNS = "columns";
-  static final String FIELD_NAME_DATA = "data";
-  static final String FIELD_NAME_CHANGE_FLAGS = "change_flags";
+    static final String FIELD_NAME_RESULT_KIND = "result_kind";
+    static final String FIELD_NAME_COLUMNS = "columns";
+    static final String FIELD_NAME_DATA = "data";
+    static final String FIELD_NAME_CHANGE_FLAGS = "change_flags";
 
-  private final ResultKind resultKind;
-  private final List<ColumnInfo> columns;
-  private final List<Row> data;
+    private final ResultKind resultKind;
+    private final List<ColumnInfo> columns;
+    private final List<Row> data;
 
-  // null in batch mode
-  //
-  // list of boolean in streaming mode,
-  // true if the corresponding row is an append row, false if its a retract row
-  private final List<Boolean> changeFlags;
+    // null in batch mode
+    //
+    // list of boolean in streaming mode,
+    // true if the corresponding row is an append row, false if its a retract row
+    private final List<Boolean> changeFlags;
 
-  private ResultSet(
-      ResultKind resultKind,
-      List<ColumnInfo> columns,
-      List<Row> data,
-      @Nullable List<Boolean> changeFlags) {
-    this.resultKind = Preconditions.checkNotNull(resultKind, "resultKind must not be null");
-    this.columns = Preconditions.checkNotNull(columns, "columns must not be null");
-    this.data = Preconditions.checkNotNull(data, "data must not be null");
-    if (!data.isEmpty()) {
-      Preconditions.checkArgument(
-          columns.size() == data.get(0).getArity(),
-          "the size of columns and the number of fields in the row should be equal");
-    }
-    this.changeFlags = changeFlags;
-    if (changeFlags != null) {
-      Preconditions.checkArgument(
-          data.size() == changeFlags.size(),
-          "the size of data and the size of changeFlags should be equal");
-    }
-  }
-
-  public ResultKind getResultKind() {
-    return resultKind;
-  }
-
-  public List<ColumnInfo> getColumns() {
-    return columns;
-  }
-
-  public List<Row> getData() {
-    return data;
-  }
-
-  public Optional<List<Boolean>> getChangeFlags() {
-    return Optional.ofNullable(changeFlags);
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    ResultSet resultSet = (ResultSet) o;
-    return resultKind.equals(resultSet.resultKind)
-        && columns.equals(resultSet.columns)
-        && data.equals(resultSet.data)
-        && Objects.equals(changeFlags, resultSet.changeFlags);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(resultKind, columns, data, changeFlags);
-  }
-
-  @Override
-  public String toString() {
-    return "ResultSet{"
-        + "resultKind="
-        + resultKind
-        + ", columns="
-        + columns
-        + ", data="
-        + data
-        + ", changeFlags="
-        + changeFlags
-        + '}';
-  }
-
-  public static Builder builder() {
-    return new Builder();
-  }
-
-  /** Builder for {@link ResultSet}. */
-  public static class Builder {
-    private ResultKind resultKind = null;
-    private List<ColumnInfo> columns = null;
-    private List<Row> data = null;
-    private List<Boolean> changeFlags = null;
-
-    private Builder() {}
-
-    /** Set {@link ResultKind}. */
-    public Builder resultKind(ResultKind resultKind) {
-      this.resultKind = resultKind;
-      return this;
+    private ResultSet(
+            ResultKind resultKind,
+            List<ColumnInfo> columns,
+            List<Row> data,
+            @Nullable List<Boolean> changeFlags) {
+        this.resultKind = Preconditions.checkNotNull(resultKind, "resultKind must not be null");
+        this.columns = Preconditions.checkNotNull(columns, "columns must not be null");
+        this.data = Preconditions.checkNotNull(data, "data must not be null");
+        if (!data.isEmpty()) {
+            Preconditions.checkArgument(
+                    columns.size() == data.get(0).getArity(),
+                    "the size of columns and the number of fields in the row should be equal");
+        }
+        this.changeFlags = changeFlags;
+        if (changeFlags != null) {
+            Preconditions.checkArgument(
+                    data.size() == changeFlags.size(),
+                    "the size of data and the size of changeFlags should be equal");
+        }
     }
 
-    /** Set {@link ColumnInfo}s. */
-    public Builder columns(ColumnInfo... columns) {
-      this.columns = Arrays.asList(columns);
-      return this;
+    public ResultKind getResultKind() {
+        return resultKind;
     }
 
-    /** Set {@link ColumnInfo}s. */
-    public Builder columns(List<ColumnInfo> columns) {
-      this.columns = columns;
-      return this;
+    public List<ColumnInfo> getColumns() {
+        return columns;
     }
 
-    /** Set data. */
-    public Builder data(List<Row> data) {
-      this.data = data;
-      return this;
+    public List<Row> getData() {
+        return data;
     }
 
-    /** Set data. */
-    public Builder data(Row... data) {
-      this.data = Arrays.asList(data);
-      return this;
+    public Optional<List<Boolean>> getChangeFlags() {
+        return Optional.ofNullable(changeFlags);
     }
 
-    /** Set change flags. */
-    public Builder changeFlags(List<Boolean> changeFlags) {
-      this.changeFlags = changeFlags;
-      return this;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ResultSet resultSet = (ResultSet) o;
+        return resultKind.equals(resultSet.resultKind)
+                && columns.equals(resultSet.columns)
+                && data.equals(resultSet.data)
+                && Objects.equals(changeFlags, resultSet.changeFlags);
     }
 
-    /** Returns a {@link ResultSet} instance. */
-    public ResultSet build() {
-      return new ResultSet(resultKind, columns, data, changeFlags);
+    @Override
+    public int hashCode() {
+        return Objects.hash(resultKind, columns, data, changeFlags);
     }
-  }
+
+    @Override
+    public String toString() {
+        return "ResultSet{"
+                + "resultKind="
+                + resultKind
+                + ", columns="
+                + columns
+                + ", data="
+                + data
+                + ", changeFlags="
+                + changeFlags
+                + '}';
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    /** Builder for {@link ResultSet}. */
+    public static class Builder {
+        private ResultKind resultKind = null;
+        private List<ColumnInfo> columns = null;
+        private List<Row> data = null;
+        private List<Boolean> changeFlags = null;
+
+        private Builder() {}
+
+        /** Set {@link ResultKind}. */
+        public Builder resultKind(ResultKind resultKind) {
+            this.resultKind = resultKind;
+            return this;
+        }
+
+        /** Set {@link ColumnInfo}s. */
+        public Builder columns(ColumnInfo... columns) {
+            this.columns = Arrays.asList(columns);
+            return this;
+        }
+
+        /** Set {@link ColumnInfo}s. */
+        public Builder columns(List<ColumnInfo> columns) {
+            this.columns = columns;
+            return this;
+        }
+
+        /** Set data. */
+        public Builder data(List<Row> data) {
+            this.data = data;
+            return this;
+        }
+
+        /** Set data. */
+        public Builder data(Row... data) {
+            this.data = Arrays.asList(data);
+            return this;
+        }
+
+        /** Set change flags. */
+        public Builder changeFlags(List<Boolean> changeFlags) {
+            this.changeFlags = changeFlags;
+            return this;
+        }
+
+        /** Returns a {@link ResultSet} instance. */
+        public ResultSet build() {
+            return new ResultSet(resultKind, columns, data, changeFlags);
+        }
+    }
 }

@@ -26,81 +26,81 @@ import org.apache.linkis.cs.common.exception.CSErrorException;
 import org.apache.linkis.cs.common.exception.ErrorCode;
 import org.apache.linkis.cs.common.utils.CSCommonUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CSWorkServiceImpl implements CSWorkService {
 
-  private static final Logger logger = LoggerFactory.getLogger(CSWorkServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(CSWorkServiceImpl.class);
 
-  private CSWorkServiceImpl() {}
+    private CSWorkServiceImpl() {}
 
-  private static CSWorkService csWorkService = null;
+    private static CSWorkService csWorkService = null;
 
-  public static CSWorkService getInstance() {
-    if (null == csWorkService) {
-      synchronized (CSWorkServiceImpl.class) {
+    public static CSWorkService getInstance() {
         if (null == csWorkService) {
-          csWorkService = new CSWorkServiceImpl();
+            synchronized (CSWorkServiceImpl.class) {
+                if (null == csWorkService) {
+                    csWorkService = new CSWorkServiceImpl();
+                }
+            }
         }
-      }
+        return csWorkService;
     }
-    return csWorkService;
-  }
 
-  @Override
-  public void initContextServiceInfo(String contextIDStr, WorkType workType)
-      throws CSErrorException {
-    List<WorkType> typeList = new ArrayList<>();
-    typeList.add(workType);
-    initContextServiceInfo(contextIDStr, typeList);
-  }
-
-  @Override
-  public void initContextServiceInfo(String contextIDStr, List<WorkType> workTypes)
-      throws CSErrorException {
-    try {
-      ContextClient contextClient = ContextClientFactory.getOrCreateContextClient();
-      ContextID contextID = SerializeHelper.deserializeContextID(contextIDStr);
-      for (WorkType type : workTypes) {
-        contextClient.removeAllValueByKeyPrefix(contextID, getWorkTypePrefix(type));
-      }
-      logger.info("contextID: {} initContextServiceInfo", contextID.getContextId());
-    } catch (Exception e) {
-      logger.error(
-          "InitContextInfo error. contextIDStr : {}, workTypes : {}" + contextIDStr,
-          CSCommonUtils.gson.toJson(workTypes));
-      throw new CSErrorException(
-          ErrorCode.DESERIALIZE_ERROR,
-          "InitContextInfo error. contextIDStr : "
-              + contextIDStr
-              + ", workTypes : "
-              + CSCommonUtils.gson.toJson(workTypes),
-          e);
+    @Override
+    public void initContextServiceInfo(String contextIDStr, WorkType workType)
+            throws CSErrorException {
+        List<WorkType> typeList = new ArrayList<>();
+        typeList.add(workType);
+        initContextServiceInfo(contextIDStr, typeList);
     }
-  }
 
-  private String getWorkTypePrefix(WorkType workType) {
-    String prefix = null;
-    switch (workType) {
-      case WORKSPACE:
-        prefix = CSCommonUtils.WORKSPACE_PREFIX;
-        break;
-      case PROJECT:
-        prefix = CSCommonUtils.PROJECT_PREFIX;
-        break;
-      case FLOW:
-        prefix = CSCommonUtils.FLOW_PREFIX;
-        break;
-      case NODE:
-        prefix = CSCommonUtils.NODE_PREFIX;
-        break;
-      default:
-        logger.error("Invalid workType : {}", workType);
+    @Override
+    public void initContextServiceInfo(String contextIDStr, List<WorkType> workTypes)
+            throws CSErrorException {
+        try {
+            ContextClient contextClient = ContextClientFactory.getOrCreateContextClient();
+            ContextID contextID = SerializeHelper.deserializeContextID(contextIDStr);
+            for (WorkType type : workTypes) {
+                contextClient.removeAllValueByKeyPrefix(contextID, getWorkTypePrefix(type));
+            }
+            logger.info("contextID: {} initContextServiceInfo", contextID.getContextId());
+        } catch (Exception e) {
+            logger.error(
+                    "InitContextInfo error. contextIDStr : {}, workTypes : {}" + contextIDStr,
+                    CSCommonUtils.gson.toJson(workTypes));
+            throw new CSErrorException(
+                    ErrorCode.DESERIALIZE_ERROR,
+                    "InitContextInfo error. contextIDStr : "
+                            + contextIDStr
+                            + ", workTypes : "
+                            + CSCommonUtils.gson.toJson(workTypes),
+                    e);
+        }
     }
-    return prefix;
-  }
+
+    private String getWorkTypePrefix(WorkType workType) {
+        String prefix = null;
+        switch (workType) {
+            case WORKSPACE:
+                prefix = CSCommonUtils.WORKSPACE_PREFIX;
+                break;
+            case PROJECT:
+                prefix = CSCommonUtils.PROJECT_PREFIX;
+                break;
+            case FLOW:
+                prefix = CSCommonUtils.FLOW_PREFIX;
+                break;
+            case NODE:
+                prefix = CSCommonUtils.NODE_PREFIX;
+                break;
+            default:
+                logger.error("Invalid workType : {}", workType);
+        }
+        return prefix;
+    }
 }

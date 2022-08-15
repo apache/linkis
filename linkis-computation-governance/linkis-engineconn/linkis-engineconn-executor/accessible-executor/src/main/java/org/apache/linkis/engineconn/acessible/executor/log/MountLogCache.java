@@ -21,107 +21,107 @@ import org.apache.linkis.engineconn.acessible.executor.conf.AccessibleExecutorCo
 
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MountLogCache extends AbstractLogCache {
 
-  private static final Logger logger = LoggerFactory.getLogger(MountLogCache.class);
+    private static final Logger logger = LoggerFactory.getLogger(MountLogCache.class);
 
-  class CircularQueue {
+    class CircularQueue {
 
-    private int max;
-    private String[] elements;
-    private int front, rear, count;
+        private int max;
+        private String[] elements;
+        private int front, rear, count;
 
-    CircularQueue() {
-      this((Integer) AccessibleExecutorConfiguration.ENGINECONN_LOG_CACHE_NUM().getValue());
-    }
-
-    CircularQueue(int max) {
-      this.max = max;
-      this.elements = new String[max];
-    }
-
-    public boolean isEmpty() {
-      return count == 0;
-    }
-
-    public synchronized void enqueue(String value) {
-      if (count == max) {
-        logger.debug("Queue is full, log: {} needs to be dropped", value);
-      } else {
-        rear = (rear + 1) % max;
-        elements[rear] = value;
-        count++;
-      }
-    }
-
-    public String dequeue() {
-      if (count == 0) {
-        logger.debug("Queue is empty, nothing to get");
-        return null;
-      } else {
-        front = (front + 1) % max;
-        count--;
-        return elements[front];
-      }
-    }
-
-    public List<String> dequeue(int num) {
-      List<String> list = new ArrayList<>();
-      int index = 0;
-      while (index < num) {
-        String tempLog = dequeue();
-        if (StringUtils.isNotEmpty(tempLog)) {
-          list.add(tempLog);
-        } else if (tempLog == null) {
-          break;
+        CircularQueue() {
+            this((Integer) AccessibleExecutorConfiguration.ENGINECONN_LOG_CACHE_NUM().getValue());
         }
-        index++;
-      }
-      return list;
+
+        CircularQueue(int max) {
+            this.max = max;
+            this.elements = new String[max];
+        }
+
+        public boolean isEmpty() {
+            return count == 0;
+        }
+
+        public synchronized void enqueue(String value) {
+            if (count == max) {
+                logger.debug("Queue is full, log: {} needs to be dropped", value);
+            } else {
+                rear = (rear + 1) % max;
+                elements[rear] = value;
+                count++;
+            }
+        }
+
+        public String dequeue() {
+            if (count == 0) {
+                logger.debug("Queue is empty, nothing to get");
+                return null;
+            } else {
+                front = (front + 1) % max;
+                count--;
+                return elements[front];
+            }
+        }
+
+        public List<String> dequeue(int num) {
+            List<String> list = new ArrayList<>();
+            int index = 0;
+            while (index < num) {
+                String tempLog = dequeue();
+                if (StringUtils.isNotEmpty(tempLog)) {
+                    list.add(tempLog);
+                } else if (tempLog == null) {
+                    break;
+                }
+                index++;
+            }
+            return list;
+        }
+
+        public synchronized List<String> getRemain() {
+            List<String> list = new ArrayList<>();
+            while (!isEmpty()) {
+                list.add(dequeue());
+            }
+            return list;
+        }
+
+        public int size() {
+            return count;
+        }
     }
 
+    private CircularQueue logs;
+
+    public MountLogCache(int loopMax) {
+        this.logs = new CircularQueue(loopMax);
+    }
+
+    @Override
+    public void cacheLog(String log) {
+        logs.enqueue(log);
+    }
+
+    @Override
+    public List<String> getLog(int num) {
+        return logs.dequeue(num);
+    }
+
+    @Override
     public synchronized List<String> getRemain() {
-      List<String> list = new ArrayList<>();
-      while (!isEmpty()) {
-        list.add(dequeue());
-      }
-      return list;
+        return logs.getRemain();
     }
 
+    @Override
     public int size() {
-      return count;
+        return logs.size();
     }
-  }
-
-  private CircularQueue logs;
-
-  public MountLogCache(int loopMax) {
-    this.logs = new CircularQueue(loopMax);
-  }
-
-  @Override
-  public void cacheLog(String log) {
-    logs.enqueue(log);
-  }
-
-  @Override
-  public List<String> getLog(int num) {
-    return logs.dequeue(num);
-  }
-
-  @Override
-  public synchronized List<String> getRemain() {
-    return logs.getRemain();
-  }
-
-  @Override
-  public int size() {
-    return logs.size();
-  }
 }

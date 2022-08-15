@@ -21,55 +21,55 @@ import java.util.Date;
 
 public interface FxResource extends Resource {
 
-  String getCreateUser();
+    String getCreateUser();
 
-  void setCreateUser(String createUser);
+    void setCreateUser(String createUser);
 
-  String getUdfName();
+    String getUdfName();
 
-  void setUdfName(String udfName);
+    void setUdfName(String udfName);
 
-  Integer getUdfType();
+    Integer getUdfType();
 
-  void setUdfType(Integer udfType);
+    void setUdfType(Integer udfType);
 
-  String getPath();
+    String getPath();
 
-  void setPath(String path);
+    void setPath(String path);
 
-  String getRegisterFormat();
+    String getRegisterFormat();
 
-  void setRegisterFormat(String registerFormat);
+    void setRegisterFormat(String registerFormat);
 
-  String getUseFormat();
+    String getUseFormat();
 
-  void setUseFormat(String useFormat);
+    void setUseFormat(String useFormat);
 
-  String getDescription();
+    String getDescription();
 
-  void setDescription(String description);
+    void setDescription(String description);
 
-  Boolean getExpire();
+    Boolean getExpire();
 
-  void setExpire(Boolean expire);
+    void setExpire(Boolean expire);
 
-  Boolean getShared();
+    Boolean getShared();
 
-  void setShared(Boolean shared);
+    void setShared(Boolean shared);
 
-  Long getTreeId();
+    Long getTreeId();
 
-  void setTreeId(Long treeId);
+    void setTreeId(Long treeId);
 
-  Date getCreateTime();
+    Date getCreateTime();
 
-  void setCreateTime(Date createTime);
+    void setCreateTime(Date createTime);
 
-  Date getUpdateTime();
+    Date getUpdateTime();
 
-  void setUpdateTime(Date updateTime);
+    void setUpdateTime(Date updateTime);
 
-  Boolean getLoad();
+    Boolean getLoad();
 
-  void setLoad(Boolean load);
+    void setLoad(Boolean load);
 }

@@ -19,9 +19,9 @@ package org.apache.linkis.orchestrator.ecm.entity;
 
 /** */
 public enum Policy {
-  Process,
-  Label,
-  JobGroup,
-  Job,
-  Task;
+    Process,
+    Label,
+    JobGroup,
+    Job,
+    Task;
 }

@@ -5,23 +5,24 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+ 
 package org.apache.linkis.engineplugin.spark.metadata
+
+import java.util.{ArrayList => JAList, List => JList}
 
 import org.apache.linkis.common.utils.ClassUtils._
 import org.apache.linkis.cs.common.entity.history.metadata.TableOperationType
 import org.apache.linkis.cs.common.entity.metadata.CSColumn
 import org.apache.linkis.engineplugin.spark.metadata.{SparkHiveObject => HPO}
-
 import org.apache.hadoop.hive.ql.security.authorization.plugin.HivePrivilegeObject.HivePrivilegeObjectType
 import org.apache.spark.sql.catalyst.TableIdentifier
 import org.apache.spark.sql.catalyst.analysis.UnresolvedRelation
@@ -33,21 +34,20 @@ import org.apache.spark.sql.execution.datasources._
 import org.apache.spark.sql.hive.execution.CreateHiveTableAsSelectCommand
 import org.apache.spark.sql.types.{StructField, StructType}
 
-import java.util.{ArrayList => JAList, List => JList}
-
 import scala.collection.JavaConverters._
 
 /**
+ *
  */
 object SparkSQLHistoryParser {
 
   /**
-   * Parse input and output metadata from a Spark's [[LogicalPlan]]
+   * Parse input and output  metadata from a Spark's [[LogicalPlan]]
    *
-   * For [[ExplainCommand]]s, parse its child. For other queries, build inputs.
+   * For [[ExplainCommand]]s, parse its child.
+   * For other queries, build inputs.
    *
-   * @param plan
-   *   A Spark [[LogicalPlan]]
+   * @param plan A Spark [[LogicalPlan]]
    */
   def parse(plan: LogicalPlan): (JList[HPO], JList[HPO]) = {
     plan match {
@@ -57,13 +57,11 @@ object SparkSQLHistoryParser {
   }
 
   /**
-   * parse outputs if it has an target to write, parse inputs for the inside query if exists.For
-   * other queries, only parse inputs.
+   * parse outputs if it has an target to write, parse inputs for the
+   * inside query if exists.For other queries, only parse inputs.
    *
-   * @param plan
-   *   A Spark [[LogicalPlan]]
-   * @return
-   *   (Inputs, OutPuts)
+   * @param plan A Spark [[LogicalPlan]]
+   * @return (Inputs, OutPuts)
    */
   def doParse(plan: LogicalPlan): (JList[HPO], JList[HPO]) = {
     val inputMetas = new JAList[HPO]
@@ -74,6 +72,7 @@ object SparkSQLHistoryParser {
     }
     (inputMetas, outputMetas)
   }
+
 
   def toCSColumns(schema: StructType): JList[CSColumn] = {
     if (null == schema) {
@@ -104,56 +103,46 @@ object SparkSQLHistoryParser {
     if (null == projectionList) {
       return null
     }
-    projectionList
-      .map { namedExpression =>
-        val csColumn = new CSColumn
-        csColumn.setName(namedExpression.name)
-        namedExpression match {
-          case attribute: AttributeReference =>
-            csColumn.setType(attribute.dataType.typeName)
-          case _ =>
-        }
-        csColumn
+    projectionList.map { namedExpression =>
+      val csColumn = new CSColumn
+      csColumn.setName(namedExpression.name)
+      namedExpression match {
+        case attribute: AttributeReference =>
+          csColumn.setType(attribute.dataType.typeName)
+        case _ =>
       }
-      .filter(null != _)
-      .asJava
+      csColumn
+    }.filter(null != _).asJava
   }
 
   def toCSColumnsByColumnName(columnNames: Seq[String]): JList[CSColumn] = {
     if (null == columnNames) {
       return null
     }
-    columnNames
-      .map { name =>
-        val csColumn = new CSColumn
-        csColumn.setName(name)
-        csColumn
-      }
-      .filter(null != _)
-      .asJava
+    columnNames.map { name =>
+      val csColumn = new CSColumn
+      csColumn.setName(name)
+      csColumn
+    }.filter(null != _).asJava
   }
+
 
   /**
    * Parse LogicalPlan to build sparkHiveObjects
    *
-   * @param plan
-   *   A Spark [[LogicalPlan]]
-   * @param sparkHiveObjects
-   *   input or output hive privilege object list
-   * @param projectionList
-   *   Projection list after pruning
+   * @param plan             A Spark [[LogicalPlan]]
+   * @param sparkHiveObjects input or output hive privilege object list
+   * @param projectionList   Projection list after pruning
    */
   private[this] def ParseQuery(
-      plan: LogicalPlan,
-      sparkHiveObjects: JList[HPO],
-      projectionList: Seq[NamedExpression] = Nil
-  ): Unit = {
+                                plan: LogicalPlan,
+                                sparkHiveObjects: JList[HPO],
+                                projectionList: Seq[NamedExpression] = Nil): Unit = {
 
     /**
      * Columns in Projection take priority for column level privilege checking
      *
-     * @param table
-     *   catalogTable of a given relation
+     * @param table catalogTable of a given relation
      */
     def mergeProjection(table: CatalogTable): Unit = {
       if (projectionList.isEmpty) {
@@ -161,15 +150,13 @@ object SparkSQLHistoryParser {
           table.identifier,
           sparkHiveObjects,
           table.partitionColumnNames,
-          toCSColumns(table.schema)
-        )
+          toCSColumns(table.schema))
       } else {
         addTableOrViewLevelObjs(
           table.identifier,
           sparkHiveObjects,
           table.partitionColumnNames.filter(projectionList.map(_.name).contains(_)),
-          toCSColumnsByNamed(projectionList)
-        )
+          toCSColumnsByNamed(projectionList))
       }
     }
 
@@ -197,71 +184,37 @@ object SparkSQLHistoryParser {
   /**
    * Build sparkHiveObjects from Spark LogicalPlan
    *
-   * @param plan
-   *   a Spark LogicalPlan used to generate sparkHiveObjects
-   * @param inputObjects
-   *   input hive privilege object list
-   * @param outputObjects
-   *   output hive privilege object list
+   * @param plan          a Spark LogicalPlan used to generate sparkHiveObjects
+   * @param inputObjects  input hive privilege object list
+   * @param outputObjects output hive privilege object list
    */
-  private[this] def parseRunnableCommand(
-      plan: LogicalPlan,
-      inputObjects: JList[HPO],
-      outputObjects: JList[HPO]
-  ): Unit = {
+  private[this] def parseRunnableCommand(plan: LogicalPlan,
+                                         inputObjects: JList[HPO],
+                                         outputObjects: JList[HPO]): Unit = {
     plan match {
 
       case c: CreateDataSourceTableAsSelectCommand =>
-        val columnList = toCSColumns(c.table.schema)
-        addTableOrViewLevelObjs(
-          c.table.identifier,
-          outputObjects,
-          columns = columnList,
-          actionType = TableOperationType.CREATE
-        )
+        val columnList =  toCSColumns(c.table.schema)
+        addTableOrViewLevelObjs(c.table.identifier, outputObjects, columns = columnList, actionType = TableOperationType.CREATE)
         ParseQuery(c.query, inputObjects)
 
       case c: CreateDataSourceTableCommand =>
-        addTableOrViewLevelObjs(
-          c.table.identifier,
-          outputObjects,
-          columns = toCSColumns(c.table.schema),
-          actionType = TableOperationType.CREATE
-        )
+        addTableOrViewLevelObjs(c.table.identifier, outputObjects, columns = toCSColumns(c.table.schema), actionType = TableOperationType.CREATE)
 
       case c: CreateHiveTableAsSelectCommand =>
         val columnList = toCSColumns(c.tableDesc.schema)
-        addTableOrViewLevelObjs(
-          c.tableDesc.identifier,
-          outputObjects,
-          columns = columnList,
-          actionType = TableOperationType.CREATE
-        )
+        addTableOrViewLevelObjs(c.tableDesc.identifier, outputObjects, columns = columnList, actionType = TableOperationType.CREATE)
         ParseQuery(c.query, inputObjects)
 
       case c: CreateTableCommand =>
-        addTableOrViewLevelObjs(
-          c.table.identifier,
-          outputObjects,
-          columns = toCSColumns(c.table.schema),
-          actionType = TableOperationType.CREATE
-        )
+        addTableOrViewLevelObjs(c.table.identifier, outputObjects, columns = toCSColumns(c.table.schema), actionType = TableOperationType.CREATE)
 
       case c: CreateTableLikeCommand =>
-        addTableOrViewLevelObjs(
-          c.targetTable,
-          outputObjects,
-          actionType = TableOperationType.CREATE
-        )
+        addTableOrViewLevelObjs(c.targetTable, outputObjects, actionType = TableOperationType.CREATE)
         addTableOrViewLevelObjs(c.sourceTable, inputObjects)
 
       case c: CreateViewCommand =>
-        addTableOrViewLevelObjs(
-          c.name,
-          outputObjects,
-          columns = toCSColumnsByNamed(c.output),
-          actionType = TableOperationType.CREATE
-        )
+        addTableOrViewLevelObjs(c.name, outputObjects, columns = toCSColumnsByNamed(c.output), actionType = TableOperationType.CREATE)
         ParseQuery(c.child, inputObjects)
 
       case l: LoadDataCommand => addTableOrViewLevelObjs(l.table, outputObjects)
@@ -269,18 +222,12 @@ object SparkSQLHistoryParser {
       case i if i.nodeName == "InsertIntoHiveTable" =>
         val table = getFieldVal(i, "table").asInstanceOf[CatalogTable]
         addTableOrViewLevelObjs(
-          table.identifier,
-          outputObjects,
-          columns = toCSColumns(table.schema),
-          actionType = TableOperationType.CREATE
-        )
+          table.identifier, outputObjects, columns = toCSColumns(table.schema), actionType = TableOperationType.CREATE)
         ParseQuery(getFieldVal(i, "query").asInstanceOf[LogicalPlan], inputObjects)
 
-      case d: DropTableCommand =>
-        addTableOrViewLevelObjs(d.tableName, outputObjects, actionType = TableOperationType.DROP)
+      case d: DropTableCommand => addTableOrViewLevelObjs(d.tableName, outputObjects, actionType = TableOperationType.DROP)
 
-      case s: TruncateTableCommand =>
-        addTableOrViewLevelObjs(s.tableName, outputObjects, actionType = TableOperationType.DROP)
+      case s: TruncateTableCommand => addTableOrViewLevelObjs(s.tableName, outputObjects, actionType = TableOperationType.DROP)
 
       case a: AlterTableAddPartitionCommand =>
         addTableOrViewLevelObjs(a.tableName, outputObjects, actionType = TableOperationType.ALTER)
@@ -303,6 +250,7 @@ object SparkSQLHistoryParser {
         }
         ParseQuery(a.query, inputObjects)
 
+
       case a if a.nodeName == "AlterTableAddColumnsCommand" =>
         addTableOrViewLevelObjs(
           getFieldVal(a, "table").asInstanceOf[TableIdentifier],
@@ -321,8 +269,7 @@ object SparkSQLHistoryParser {
           getFieldVal(a, "tableName").asInstanceOf[TableIdentifier],
           inputObjects,
           columns = toCSColumns(Seq(getFieldVal(a, "newColumn").asInstanceOf[StructField])),
-          actionType = TableOperationType.ALTER
-        )
+          actionType = TableOperationType.ALTER)
 
       case _ =>
     }
@@ -331,37 +278,33 @@ object SparkSQLHistoryParser {
   /**
    * Add database level hive privilege objects to input or output list
    *
-   * @param dbName
-   *   database name as hive privilege object
-   * @param sparkHiveObjects
-   *   input or output list
+   * @param dbName           database name as hive privilege object
+   * @param sparkHiveObjects input or output list
    */
   private[this] def addDbLevelObjs(
-      dbName: String,
-      sparkHiveObjects: JList[HPO],
-      actionType: TableOperationType = TableOperationType.ACCESS
-  ): Unit = {
-    sparkHiveObjects.add(HPOBuilder(HivePrivilegeObjectType.DATABASE, dbName, dbName, actionType))
+                                    dbName: String,
+                                    sparkHiveObjects: JList[HPO],
+                                    actionType: TableOperationType = TableOperationType.ACCESS): Unit = {
+    sparkHiveObjects.add(
+      HPOBuilder(HivePrivilegeObjectType.DATABASE, dbName, dbName, actionType))
   }
 
+
   /**
-   * Add table level hive objects to input or output list
+   * Add table level hive  objects to input or output list
    *
-   * @param tableIdentifier
-   *   table identifier contains database name, and table name as hive privilege object
-   * @param sparkHiveObjects
-   *   input or output list
-   * @param actionType
-   *   OperationType
+   * @param tableIdentifier  table identifier contains database name, and table name as hive
+   *                         privilege object
+   * @param sparkHiveObjects input or output list
+   * @param actionType       OperationType
    */
   private def addTableOrViewLevelObjs(
-      tableIdentifier: TableIdentifier,
-      sparkHiveObjects: JList[HPO],
-      partKeys: Seq[String] = Nil,
-      columns: JList[CSColumn] = null,
-      actionType: TableOperationType = TableOperationType.ACCESS,
-      cmdParams: Seq[String] = Nil
-  ): Unit = {
+                                       tableIdentifier: TableIdentifier,
+                                       sparkHiveObjects: JList[HPO],
+                                       partKeys: Seq[String] = Nil,
+                                       columns: JList[CSColumn] = null,
+                                       actionType: TableOperationType = TableOperationType.ACCESS,
+                                       cmdParams: Seq[String] = Nil): Unit = {
     tableIdentifier.database match {
       case Some(db) =>
         val tbName = tableIdentifier.table
@@ -373,9 +316,7 @@ object SparkSQLHistoryParser {
             partKeys.asJava,
             columns,
             actionType,
-            cmdParams.asJava
-          )
-        )
+            cmdParams.asJava))
       case _ =>
     }
   }
@@ -383,26 +324,21 @@ object SparkSQLHistoryParser {
   /**
    * Add function level hive privilege objects to input or output list
    *
-   * @param databaseName
-   *   database name
-   * @param functionName
-   *   function name as hive privilege object
-   * @param sparkHiveObjects
-   *   input or output list
+   * @param databaseName     database name
+   * @param functionName     function name as hive privilege object
+   * @param sparkHiveObjects input or output list
    */
   private def addFunctionLevelObjs(
-      databaseName: Option[String],
-      functionName: String,
-      sparkHiveObjects: JList[HPO],
-      actionType: TableOperationType = TableOperationType.ACCESS
-  ): Unit = {
+                                    databaseName: Option[String],
+                                    functionName: String,
+                                    sparkHiveObjects: JList[HPO],
+                                    actionType: TableOperationType = TableOperationType.ACCESS): Unit = {
     databaseName match {
       case Some(db) =>
         sparkHiveObjects.add(
-          HPOBuilder(HivePrivilegeObjectType.FUNCTION, db, functionName, actionType)
-        )
+          HPOBuilder(HivePrivilegeObjectType.FUNCTION, db, functionName, actionType))
       case _ =>
     }
   }
-
 }
+

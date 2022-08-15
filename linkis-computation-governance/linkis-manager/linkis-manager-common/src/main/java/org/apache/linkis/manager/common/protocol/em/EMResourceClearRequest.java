@@ -23,24 +23,24 @@ import java.io.Serializable;
 
 public class EMResourceClearRequest implements EMRequest, Serializable {
 
-  private String user;
+    private String user;
 
-  private ServiceInstance em;
+    private ServiceInstance em;
 
-  @Override
-  public String getUser() {
-    return this.user;
-  }
+    @Override
+    public String getUser() {
+        return this.user;
+    }
 
-  public void setUser(String user) {
-    this.user = user;
-  }
+    public void setUser(String user) {
+        this.user = user;
+    }
 
-  public ServiceInstance getEm() {
-    return em;
-  }
+    public ServiceInstance getEm() {
+        return em;
+    }
 
-  public void setEm(ServiceInstance em) {
-    this.em = em;
-  }
+    public void setEm(ServiceInstance em) {
+        this.em = em;
+    }
 }

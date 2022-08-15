@@ -25,22 +25,22 @@ import java.util.HashMap;
 
 public class RetryCountLabel extends GenericLabel implements JobStrategyLabel {
 
-  public RetryCountLabel() {
-    setLabelKey(LabelKeyConstant.RETRY_COUNT_KEY);
-  }
-
-  public Integer getJobRetryCount() {
-    if (null == getValue()) {
-      return -1;
+    public RetryCountLabel() {
+        setLabelKey(LabelKeyConstant.RETRY_COUNT_KEY);
     }
-    return Integer.parseInt(getValue().getOrDefault(LabelKeyConstant.RETRY_COUNT_KEY, "10"));
-  }
 
-  @ValueSerialNum(0)
-  public void setJobRetryCount(String count) {
-    if (null == getValue()) {
-      setValue(new HashMap<>());
+    public Integer getJobRetryCount() {
+        if (null == getValue()) {
+            return -1;
+        }
+        return Integer.parseInt(getValue().getOrDefault(LabelKeyConstant.RETRY_COUNT_KEY, "10"));
     }
-    getValue().put(LabelKeyConstant.RETRY_COUNT_KEY, count);
-  }
+
+    @ValueSerialNum(0)
+    public void setJobRetryCount(String count) {
+        if (null == getValue()) {
+            setValue(new HashMap<>());
+        }
+        getValue().put(LabelKeyConstant.RETRY_COUNT_KEY, count);
+    }
 }

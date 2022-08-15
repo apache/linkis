@@ -21,15 +21,15 @@ import org.apache.linkis.cs.common.entity.enumeration.ContextType;
 
 public interface ContextHistory {
 
-  Integer getId();
+    Integer getId();
 
-  void setId(Integer id);
+    void setId(Integer id);
 
-  ContextType getContextType();
+    ContextType getContextType();
 
-  void setContextType(ContextType contextType);
+    void setContextType(ContextType contextType);
 
-  String getSource();
+    String getSource();
 
-  void setSource(String source);
+    void setSource(String source);
 }

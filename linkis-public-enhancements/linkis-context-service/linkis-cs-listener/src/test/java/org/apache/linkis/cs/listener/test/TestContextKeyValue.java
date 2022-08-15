@@ -23,27 +23,27 @@ import org.apache.linkis.cs.common.entity.source.ContextValue;
 
 public class TestContextKeyValue implements ContextKeyValue {
 
-  private ContextKey contextKey;
+    private ContextKey contextKey;
 
-  private ContextValue contextValue;
+    private ContextValue contextValue;
 
-  @Override
-  public ContextKey getContextKey() {
-    return this.contextKey;
-  }
+    @Override
+    public ContextKey getContextKey() {
+        return this.contextKey;
+    }
 
-  @Override
-  public void setContextKey(ContextKey contextKey) {
-    this.contextKey = contextKey;
-  }
+    @Override
+    public void setContextKey(ContextKey contextKey) {
+        this.contextKey = contextKey;
+    }
 
-  @Override
-  public ContextValue getContextValue() {
-    return this.contextValue;
-  }
+    @Override
+    public ContextValue getContextValue() {
+        return this.contextValue;
+    }
 
-  @Override
-  public void setContextValue(ContextValue contextValue) {
-    this.contextValue = contextValue;
-  }
+    @Override
+    public void setContextValue(ContextValue contextValue) {
+        this.contextValue = contextValue;
+    }
 }

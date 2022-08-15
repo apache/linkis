@@ -26,14 +26,16 @@ import org.apache.linkis.cs.execution.ruler.NearestContextSearchRuler;
 
 public class NearestConditionExecution extends UnaryLogicConditionExecution {
 
-  public NearestConditionExecution(
-      NearestCondition condition, ContextCacheService contextCacheService, ContextID contextID) {
-    super(condition, contextCacheService, contextID);
-    this.contextSearchMatcher = new NearestLogicContextSearchMatcher(condition);
-    this.contextSearchRuler =
-        new NearestContextSearchRuler(
-            contextSearchMatcher, contextCacheService, contextID, condition);
-    this.contextCacheFetcher =
-        new IterateContextCacheFetcher(contextCacheService, contextSearchRuler);
-  }
+    public NearestConditionExecution(
+            NearestCondition condition,
+            ContextCacheService contextCacheService,
+            ContextID contextID) {
+        super(condition, contextCacheService, contextID);
+        this.contextSearchMatcher = new NearestLogicContextSearchMatcher(condition);
+        this.contextSearchRuler =
+                new NearestContextSearchRuler(
+                        contextSearchMatcher, contextCacheService, contextID, condition);
+        this.contextCacheFetcher =
+                new IterateContextCacheFetcher(contextCacheService, contextSearchRuler);
+    }
 }

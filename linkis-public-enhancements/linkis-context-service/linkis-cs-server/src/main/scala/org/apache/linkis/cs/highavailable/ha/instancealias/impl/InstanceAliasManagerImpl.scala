@@ -5,34 +5,28 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+ 
 package org.apache.linkis.cs.highavailable.ha.instancealias.impl
 
+import java.util
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.utils.Logging
-import org.apache.linkis.cs.highavailable.ha.instancealias.{
-  InstanceAliasConverter,
-  InstanceAliasManager
-}
 import org.apache.linkis.rpc.conf.RPCConfiguration
+import org.apache.linkis.cs.highavailable.ha.instancealias.{InstanceAliasConverter, InstanceAliasManager}
 import org.apache.linkis.rpc.sender.eureka.EurekaRPCServerLoader
 import org.apache.linkis.rpc.utils.RPCUtils
-
 import org.apache.commons.lang3.StringUtils
-
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
-
-import java.util
 
 import scala.collection.JavaConversions._
 
@@ -67,20 +61,16 @@ class InstanceAliasManagerImpl extends InstanceAliasManager with Logging {
   }
 
   def getContextServiceID(): String = {
-    RPCUtils
-      .findService(
-        RPCConfiguration.CONTEXT_SERVICE_APPLICATION_NAME.getValue,
-        list => {
-          val services =
-            list.filter(_.contains(RPCConfiguration.CONTEXT_SERVICE_APPLICATION_NAME.getValue))
-          services.headOption
-        }
-      )
-      .getOrElse(null)
+    RPCUtils.findService (RPCConfiguration.CONTEXT_SERVICE_APPLICATION_NAME.getValue, list => {
+    val services = list.filter (_.contains (RPCConfiguration.CONTEXT_SERVICE_APPLICATION_NAME.getValue) )
+      services.headOption
+    }).getOrElse(null)
   }
 
   @Deprecated
-  override def refresh(): Unit = {}
+  override def refresh(): Unit = {
+
+  }
 
   override def getAllInstanceList(): util.List[ServiceInstance] = {
     val serviceID = getContextServiceID()
@@ -107,5 +97,5 @@ class InstanceAliasManagerImpl extends InstanceAliasManager with Logging {
     }
     instanceAliasConverter.instanceToAlias(instance.getInstance)
   }
-
 }
+

@@ -24,10 +24,10 @@ import org.apache.commons.logging.LogFactory;
 
 public class LinkisDataSourceManagerApplication {
 
-  private static final Log logger = LogFactory.getLog(LinkisDataSourceManagerApplication.class);
+    private static final Log logger = LogFactory.getLog(LinkisDataSourceManagerApplication.class);
 
-  public static void main(String[] args) throws ReflectiveOperationException {
-    logger.info("Start to running LinkisDataSourceManagerApplication");
-    LinkisBaseServerApp.main(args);
-  }
+    public static void main(String[] args) throws ReflectiveOperationException {
+        logger.info("Start to running LinkisDataSourceManagerApplication");
+        LinkisBaseServerApp.main(args);
+    }
 }

@@ -19,11 +19,11 @@ package org.apache.linkis.cs.persistence.persistence;
 
 public interface TransactionManager {
 
-  Object begin();
+    Object begin();
 
-  void rollback(Object object);
+    void rollback(Object object);
 
-  void commit(Object object);
+    void commit(Object object);
 
-  void onTransaction();
+    void onTransaction();
 }

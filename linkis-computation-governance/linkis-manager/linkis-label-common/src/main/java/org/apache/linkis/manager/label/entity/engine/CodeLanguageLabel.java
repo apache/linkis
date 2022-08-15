@@ -25,22 +25,22 @@ import java.util.HashMap;
 
 public class CodeLanguageLabel extends GenericLabel {
 
-  public CodeLanguageLabel() {
-    setLabelKey(LabelKeyConstant.CODE_TYPE_KEY);
-  }
-
-  public String getCodeType() {
-    if (null == getValue()) {
-      return null;
+    public CodeLanguageLabel() {
+        setLabelKey(LabelKeyConstant.CODE_TYPE_KEY);
     }
-    return getValue().get(LabelKeyConstant.CODE_TYPE_KEY);
-  }
 
-  @ValueSerialNum(0)
-  public void setCodeType(String runType) {
-    if (null == getValue()) {
-      setValue(new HashMap<>());
+    public String getCodeType() {
+        if (null == getValue()) {
+            return null;
+        }
+        return getValue().get(LabelKeyConstant.CODE_TYPE_KEY);
     }
-    getValue().put(LabelKeyConstant.CODE_TYPE_KEY, runType);
-  }
+
+    @ValueSerialNum(0)
+    public void setCodeType(String runType) {
+        if (null == getValue()) {
+            setValue(new HashMap<>());
+        }
+        getValue().put(LabelKeyConstant.CODE_TYPE_KEY, runType);
+    }
 }

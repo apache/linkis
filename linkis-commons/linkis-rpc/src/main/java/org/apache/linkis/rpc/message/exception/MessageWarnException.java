@@ -21,12 +21,12 @@ import org.apache.linkis.common.exception.WarnException;
 
 public class MessageWarnException extends WarnException {
 
-  public MessageWarnException(int errCode, String desc) {
-    super(errCode, desc);
-  }
+    public MessageWarnException(int errCode, String desc) {
+        super(errCode, desc);
+    }
 
-  public MessageWarnException(int errCode, String desc, Throwable t) {
-    super(errCode, desc);
-    initCause(t);
-  }
+    public MessageWarnException(int errCode, String desc, Throwable t) {
+        super(errCode, desc);
+        initCause(t);
+    }
 }

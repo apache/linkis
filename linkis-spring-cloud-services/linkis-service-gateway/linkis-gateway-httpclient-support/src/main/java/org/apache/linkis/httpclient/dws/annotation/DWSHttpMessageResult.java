@@ -23,9 +23,9 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface DWSHttpMessageResult {
-  /**
-   * Open with [[org.apache.linkis.common.Message]], specify the method of Message, support regular
-   * expressions 与[[org.apache.linkis.common.Message]]打通，指定Message的method，支持正则表达式
-   */
-  String value();
+    /**
+     * Open with [[org.apache.linkis.common.Message]], specify the method of Message, support
+     * regular expressions 与[[org.apache.linkis.common.Message]]打通，指定Message的method，支持正则表达式
+     */
+    String value();
 }

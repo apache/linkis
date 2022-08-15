@@ -26,11 +26,11 @@ import java.util.List;
 
 public interface ContextIDListenerMapper {
 
-  void createIDListener(@Param("listener") PersistenceContextIDListener listener);
+    void createIDListener(@Param("listener") PersistenceContextIDListener listener);
 
-  void remove(@Param("listener") PersistenceContextIDListener listener);
+    void remove(@Param("listener") PersistenceContextIDListener listener);
 
-  void removeAll(@Param("contextID") ContextID contextID);
+    void removeAll(@Param("contextID") ContextID contextID);
 
-  List<PersistenceContextIDListener> getAll(@Param("contextID") ContextID contextID);
+    List<PersistenceContextIDListener> getAll(@Param("contextID") ContextID contextID);
 }

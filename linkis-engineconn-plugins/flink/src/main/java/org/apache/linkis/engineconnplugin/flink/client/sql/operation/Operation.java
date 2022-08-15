@@ -22,6 +22,6 @@ import org.apache.linkis.engineconnplugin.flink.exception.SqlExecutionException;
 
 public interface Operation {
 
-  /** Execute the command and return the result. */
-  ResultSet execute() throws SqlExecutionException;
+    /** Execute the command and return the result. */
+    ResultSet execute() throws SqlExecutionException;
 }

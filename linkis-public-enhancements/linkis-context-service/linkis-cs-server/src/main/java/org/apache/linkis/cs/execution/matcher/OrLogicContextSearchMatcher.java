@@ -22,12 +22,12 @@ import org.apache.linkis.cs.condition.impl.OrCondition;
 
 public class OrLogicContextSearchMatcher extends BinaryLogicContextSearchMatcher {
 
-  public OrLogicContextSearchMatcher(OrCondition condition) {
-    super(condition);
-  }
+    public OrLogicContextSearchMatcher(OrCondition condition) {
+        super(condition);
+    }
 
-  @Override
-  public Boolean match(ContextKeyValue contextKeyValue) {
-    return leftMatcher.match(contextKeyValue) || rightMatcher.match(contextKeyValue);
-  }
+    @Override
+    public Boolean match(ContextKeyValue contextKeyValue) {
+        return leftMatcher.match(contextKeyValue) || rightMatcher.match(contextKeyValue);
+    }
 }

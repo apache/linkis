@@ -23,12 +23,12 @@ import org.apache.linkis.cs.condition.ConditionType;
 
 public class AndCondition extends BinaryLogicCondition {
 
-  public AndCondition(Condition left, Condition right) {
-    super(left, right);
-  }
+    public AndCondition(Condition left, Condition right) {
+        super(left, right);
+    }
 
-  @Override
-  public ConditionType getConditionType() {
-    return ConditionType.Logic;
-  }
+    @Override
+    public ConditionType getConditionType() {
+        return ConditionType.Logic;
+    }
 }

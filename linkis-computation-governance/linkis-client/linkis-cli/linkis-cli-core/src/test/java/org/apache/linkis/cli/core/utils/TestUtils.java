@@ -25,49 +25,49 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class TestUtils {
-  private static String replaceParas(String context, Map<String, String> m) {
-    if (context == null) {
-      return null;
+    private static String replaceParas(String context, Map<String, String> m) {
+        if (context == null) {
+            return null;
+        }
+        for (Map.Entry<String, String> entry : m.entrySet()) {
+            if (entry.getKey() == null || entry.getValue() == null) {
+                continue;
+            }
+            String key = "[#" + entry.getKey().trim() + "]";
+            String value = entry.getValue().trim();
+
+            context = StringUtils.replace(context, key, value);
+        }
+        return context;
     }
-    for (Map.Entry<String, String> entry : m.entrySet()) {
-      if (entry.getKey() == null || entry.getValue() == null) {
-        continue;
-      }
-      String key = "[#" + entry.getKey().trim() + "]";
-      String value = entry.getValue().trim();
 
-      context = StringUtils.replace(context, key, value);
+    public static Map<String, String> parseArgMap(String str, String separator) {
+
+        Map<String, String> argsProps = new HashMap<>();
+        String[] args = StringUtils.splitByWholeSeparator(str, separator);
+
+        for (String arg : args) {
+            int index = arg.indexOf("=");
+            if (index != -1) {
+                argsProps.put(arg.substring(0, index).trim(), arg.substring(index + 1).trim());
+            }
+        }
+        return argsProps;
     }
-    return context;
-  }
 
-  public static Map<String, String> parseArgMap(String str, String separator) {
+    public static String readShellFileAndReplaceParas(String filename, String argsStr, String split)
+            throws Exception {
 
-    Map<String, String> argsProps = new HashMap<>();
-    String[] args = StringUtils.splitByWholeSeparator(str, separator);
+        String fileContent;
 
-    for (String arg : args) {
-      int index = arg.indexOf("=");
-      if (index != -1) {
-        argsProps.put(arg.substring(0, index).trim(), arg.substring(index + 1).trim());
-      }
+        File inputFile = new File(filename);
+
+        fileContent = FileUtils.readFileToString(inputFile);
+
+        Map<String, String> argsMap = parseArgMap(argsStr, split);
+
+        fileContent = replaceParas(fileContent, argsMap);
+
+        return fileContent;
     }
-    return argsProps;
-  }
-
-  public static String readShellFileAndReplaceParas(String filename, String argsStr, String split)
-      throws Exception {
-
-    String fileContent;
-
-    File inputFile = new File(filename);
-
-    fileContent = FileUtils.readFileToString(inputFile);
-
-    Map<String, String> argsMap = parseArgMap(argsStr, split);
-
-    fileContent = replaceParas(fileContent, argsMap);
-
-    return fileContent;
-  }
 }

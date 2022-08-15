@@ -21,15 +21,15 @@ import org.apache.linkis.common.conf.CommonVars;
 
 public class HiveParamsMapper {
 
-  public static final CommonVars<String> PARAM_HIVE_PRINCIPLE =
-      CommonVars.apply("wds.linkis.server.mdm.service.hive.principle", "principle");
+    public static final CommonVars<String> PARAM_HIVE_PRINCIPLE =
+            CommonVars.apply("wds.linkis.server.mdm.service.hive.principle", "principle");
 
-  public static final CommonVars<String> PARAM_HIVE_URIS =
-      CommonVars.apply("wds.linkis.server.mdm.service.hive.uris", "uris");
+    public static final CommonVars<String> PARAM_HIVE_URIS =
+            CommonVars.apply("wds.linkis.server.mdm.service.hive.uris", "uris");
 
-  public static final CommonVars<String> PARAM_HIVE_KEYTAB =
-      CommonVars.apply("wds.linkis.server.mdm.service.hive.keytab", "keytab");
+    public static final CommonVars<String> PARAM_HIVE_KEYTAB =
+            CommonVars.apply("wds.linkis.server.mdm.service.hive.keytab", "keytab");
 
-  public static final CommonVars<String> PARAM_HADOOP_CONF =
-      CommonVars.apply("wds.linkis.server.mdm.service.hadoop.conf", "hadoopConf");
+    public static final CommonVars<String> PARAM_HADOOP_CONF =
+            CommonVars.apply("wds.linkis.server.mdm.service.hadoop.conf", "hadoopConf");
 }

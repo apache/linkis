@@ -27,83 +27,83 @@ import java.util.HashMap;
 
 public class BindEngineLabel extends GenericLabel implements JobStrategyLabel {
 
-  public BindEngineLabel() {
-    setLabelKey(LabelKeyConstant.BIND_ENGINE_KEY);
-  }
-
-  @Override
-  public Feature getFeature() {
-    return Feature.OPTIONAL;
-  }
-
-  public String getJobGroupId() {
-    if (null == getValue()) {
-      return null;
+    public BindEngineLabel() {
+        setLabelKey(LabelKeyConstant.BIND_ENGINE_KEY);
     }
-    return getValue().get("jobGroupId");
-  }
 
-  public boolean getIsJobGroupHead() {
-    if (null == getValue()) {
-      return false;
+    @Override
+    public Feature getFeature() {
+        return Feature.OPTIONAL;
     }
-    return Boolean.parseBoolean(getValue().get("isJobGroupHead"));
-  }
 
-  public boolean getIsJobGroupEnd() {
-    if (null == getValue()) {
-      return false;
+    public String getJobGroupId() {
+        if (null == getValue()) {
+            return null;
+        }
+        return getValue().get("jobGroupId");
     }
-    return Boolean.parseBoolean(getValue().get("isJobGroupEnd"));
-  }
 
-  @Override
-  public boolean equals(Object other) {
-    if (other instanceof BindEngineLabel) {
-      if (null != getJobGroupId()) {
-        return getJobGroupId().equals(((BindEngineLabel) other).getJobGroupId());
-      } else {
-        return false;
-      }
-    } else {
-      return false;
+    public boolean getIsJobGroupHead() {
+        if (null == getValue()) {
+            return false;
+        }
+        return Boolean.parseBoolean(getValue().get("isJobGroupHead"));
     }
-  }
 
-  @ValueSerialNum(0)
-  public BindEngineLabel setJobGroupId(String jobGroupId) {
-    if (null == getValue()) {
-      setValue(new HashMap<>());
+    public boolean getIsJobGroupEnd() {
+        if (null == getValue()) {
+            return false;
+        }
+        return Boolean.parseBoolean(getValue().get("isJobGroupEnd"));
     }
-    getValue().put("jobGroupId", jobGroupId);
-    return this;
-  }
 
-  @ValueSerialNum(1)
-  public BindEngineLabel setIsJobGroupHead(String isHead) {
-    if (null == getValue()) {
-      setValue(new HashMap<>());
+    @Override
+    public boolean equals(Object other) {
+        if (other instanceof BindEngineLabel) {
+            if (null != getJobGroupId()) {
+                return getJobGroupId().equals(((BindEngineLabel) other).getJobGroupId());
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
     }
-    getValue().put("isJobGroupHead", isHead);
-    return this;
-  }
 
-  @ValueSerialNum(2)
-  public BindEngineLabel setIsJobGroupEnd(String isEnd) {
-    if (null == getValue()) {
-      setValue(new HashMap<>());
+    @ValueSerialNum(0)
+    public BindEngineLabel setJobGroupId(String jobGroupId) {
+        if (null == getValue()) {
+            setValue(new HashMap<>());
+        }
+        getValue().put("jobGroupId", jobGroupId);
+        return this;
     }
-    getValue().put("isJobGroupEnd", isEnd);
-    return this;
-  }
 
-  @Override
-  public String getStringValue() {
+    @ValueSerialNum(1)
+    public BindEngineLabel setIsJobGroupHead(String isHead) {
+        if (null == getValue()) {
+            setValue(new HashMap<>());
+        }
+        getValue().put("isJobGroupHead", isHead);
+        return this;
+    }
 
-    return getJobGroupId()
-        + SerializableLabel.VALUE_SEPARATOR
-        + getIsJobGroupHead()
-        + SerializableLabel.VALUE_SEPARATOR
-        + getIsJobGroupEnd();
-  }
+    @ValueSerialNum(2)
+    public BindEngineLabel setIsJobGroupEnd(String isEnd) {
+        if (null == getValue()) {
+            setValue(new HashMap<>());
+        }
+        getValue().put("isJobGroupEnd", isEnd);
+        return this;
+    }
+
+    @Override
+    public String getStringValue() {
+
+        return getJobGroupId()
+                + SerializableLabel.VALUE_SEPARATOR
+                + getIsJobGroupHead()
+                + SerializableLabel.VALUE_SEPARATOR
+                + getIsJobGroupEnd();
+    }
 }

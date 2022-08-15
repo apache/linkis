@@ -21,5 +21,5 @@ import org.apache.linkis.cs.condition.Condition;
 
 public interface ConditionOptimizer {
 
-  public OptimizedCondition optimize(Condition condition);
+    public OptimizedCondition optimize(Condition condition);
 }

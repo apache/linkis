@@ -22,14 +22,14 @@ import org.apache.linkis.cli.common.exception.error.ErrorLevel;
 import org.apache.linkis.cli.common.exception.error.ErrorMsg;
 
 public class BuilderException extends LinkisClientRuntimeException {
-  private static final long serialVersionUID = 5454234257L;
+    private static final long serialVersionUID = 5454234257L;
 
-  public BuilderException(
-      String code, ErrorLevel level, ErrorMsg errMsg, String param[], String... extMsg) {
-    super(code, level, errMsg, param, extMsg);
-  }
+    public BuilderException(
+            String code, ErrorLevel level, ErrorMsg errMsg, String param[], String... extMsg) {
+        super(code, level, errMsg, param, extMsg);
+    }
 
-  public BuilderException(String code, ErrorLevel level, ErrorMsg errMsg, Object... paramsList) {
-    super(code, level, errMsg, paramsList);
-  }
+    public BuilderException(String code, ErrorLevel level, ErrorMsg errMsg, Object... paramsList) {
+        super(code, level, errMsg, paramsList);
+    }
 }

@@ -32,74 +32,74 @@ import java.util.regex.Pattern;
 
 public class WorkspaceUtil {
 
-  public static String infoReg =
-      "((19|20)[0-9]{2})-(0?[1-9]|1[012])-(0?[1-9]|[12][0-9]|3[01]) "
-          + "([01]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]"
-          + "\\.\\d{3}\\s*INFO(.*)";
-  public static String warnReg =
-      "((19|20)[0-9]{2})-(0?[1-9]|1[012])-(0?[1-9]|[12][0-9]|3[01]) "
-          + "([01]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]"
-          + "\\.\\d{3}\\s*WARN(.*)";
-  public static String errorReg =
-      "((19|20)[0-9]{2})-(0?[1-9]|1[012])-(0?[1-9]|[12][0-9]|3[01]) "
-          + "([01]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]"
-          + "\\.\\d{3}\\s*ERROR(.*)";
-  public static String allReg = "(.*?)";
+    public static String infoReg =
+            "((19|20)[0-9]{2})-(0?[1-9]|1[012])-(0?[1-9]|[12][0-9]|3[01]) "
+                    + "([01]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]"
+                    + "\\.\\d{3}\\s*INFO(.*)";
+    public static String warnReg =
+            "((19|20)[0-9]{2})-(0?[1-9]|1[012])-(0?[1-9]|[12][0-9]|3[01]) "
+                    + "([01]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]"
+                    + "\\.\\d{3}\\s*WARN(.*)";
+    public static String errorReg =
+            "((19|20)[0-9]{2})-(0?[1-9]|1[012])-(0?[1-9]|[12][0-9]|3[01]) "
+                    + "([01]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]"
+                    + "\\.\\d{3}\\s*ERROR(.*)";
+    public static String allReg = "(.*?)";
 
-  public static List<LogLevel.Type> logReg = new ArrayList<>();
+    public static List<LogLevel.Type> logReg = new ArrayList<>();
 
-  public static List<Integer> logMatch(String code, LogLevel logLevel) {
-    if (logReg.isEmpty()) {
-      synchronized (WorkspaceUtil.class) {
+    public static List<Integer> logMatch(String code, LogLevel logLevel) {
         if (logReg.isEmpty()) {
-          logReg.add(LogLevel.Type.ERROR);
-          logReg.add(LogLevel.Type.WARN);
-          logReg.add(LogLevel.Type.INFO);
+            synchronized (WorkspaceUtil.class) {
+                if (logReg.isEmpty()) {
+                    logReg.add(LogLevel.Type.ERROR);
+                    logReg.add(LogLevel.Type.WARN);
+                    logReg.add(LogLevel.Type.INFO);
+                }
+            }
         }
-      }
+        ArrayList<Integer> result = new ArrayList<>();
+        Optional<LogLevel.Type> any =
+                logReg.stream().filter(r -> Pattern.matches(r.getReg(), code)).findAny();
+        if (any.isPresent()) {
+            result.add(any.get().ordinal());
+            result.add(LogLevel.Type.ALL.ordinal());
+            logLevel.setType(any.get());
+        } else {
+            result.add(LogLevel.Type.ALL.ordinal());
+            if (logLevel.getType() != LogLevel.Type.ALL) {
+                result.add(logLevel.getType().ordinal());
+            }
+        }
+        return result;
     }
-    ArrayList<Integer> result = new ArrayList<>();
-    Optional<LogLevel.Type> any =
-        logReg.stream().filter(r -> Pattern.matches(r.getReg(), code)).findAny();
-    if (any.isPresent()) {
-      result.add(any.get().ordinal());
-      result.add(LogLevel.Type.ALL.ordinal());
-      logLevel.setType(any.get());
-    } else {
-      result.add(LogLevel.Type.ALL.ordinal());
-      if (logLevel.getType() != LogLevel.Type.ALL) {
-        result.add(logLevel.getType().ordinal());
-      }
+
+    public static Function<String, String> suffixTuningFunction =
+            p -> {
+                if (p.endsWith(File.separator)) return p;
+                else return p + File.separator;
+            };
+
+    public static String suffixTuning(String path) {
+        return suffixTuningFunction.apply(path);
     }
-    return result;
-  }
 
-  public static Function<String, String> suffixTuningFunction =
-      p -> {
-        if (p.endsWith(File.separator)) return p;
-        else return p + File.separator;
-      };
-
-  public static String suffixTuning(String path) {
-    return suffixTuningFunction.apply(path);
-  }
-
-  public static void fileAndDirNameSpecialCharCheck(String path) throws WorkSpaceException {
-    String name = new File(path).getName();
-    int i = name.lastIndexOf(".");
-    if (i != -1) {
-      name = name.substring(0, i);
+    public static void fileAndDirNameSpecialCharCheck(String path) throws WorkSpaceException {
+        String name = new File(path).getName();
+        int i = name.lastIndexOf(".");
+        if (i != -1) {
+            name = name.substring(0, i);
+        }
+        // 只支持数字,字母大小写,下划线,中文
+        String specialRegEx = "^[\\w\\u4e00-\\u9fa5]{1,200}$";
+        Pattern specialPattern = Pattern.compile(specialRegEx);
+        if (!specialPattern.matcher(name).find()) {
+            WorkspaceExceptionManager.createException(80028);
+        }
     }
-    // 只支持数字,字母大小写,下划线,中文
-    String specialRegEx = "^[\\w\\u4e00-\\u9fa5]{1,200}$";
-    Pattern specialPattern = Pattern.compile(specialRegEx);
-    if (!specialPattern.matcher(name).find()) {
-      WorkspaceExceptionManager.createException(80028);
-    }
-  }
 
-  public static boolean isLogAdmin(String username) {
-    return Arrays.stream(WorkSpaceConfiguration.FILESYSTEM_LOG_ADMIN.getValue().split(","))
-        .anyMatch(username::equalsIgnoreCase);
-  }
+    public static boolean isLogAdmin(String username) {
+        return Arrays.stream(WorkSpaceConfiguration.FILESYSTEM_LOG_ADMIN.getValue().split(","))
+                .anyMatch(username::equalsIgnoreCase);
+    }
 }

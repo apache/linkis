@@ -27,39 +27,39 @@ import java.util.Objects;
 
 public abstract class ConfigEntry {
 
-  protected final DescriptorProperties properties;
+    protected final DescriptorProperties properties;
 
-  protected ConfigEntry(DescriptorProperties properties) throws FlinkInitFailedException {
-    try {
-      validate(properties);
-    } catch (ValidationException e) {
-      throw new FlinkInitFailedException("Invalid configuration entry.", e);
+    protected ConfigEntry(DescriptorProperties properties) throws FlinkInitFailedException {
+        try {
+            validate(properties);
+        } catch (ValidationException e) {
+            throw new FlinkInitFailedException("Invalid configuration entry.", e);
+        }
+
+        this.properties = properties;
     }
 
-    this.properties = properties;
-  }
+    /** Performs syntactic validation. */
+    protected abstract void validate(DescriptorProperties properties);
 
-  /** Performs syntactic validation. */
-  protected abstract void validate(DescriptorProperties properties);
-
-  public Map<String, String> asMap() {
-    return properties.asMap();
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
+    public Map<String, String> asMap() {
+        return properties.asMap();
     }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    ConfigEntry that = (ConfigEntry) o;
-    return Objects.equals(properties, that.properties);
-  }
 
-  @Override
-  public int hashCode() {
-    return Objects.hash(properties);
-  }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ConfigEntry that = (ConfigEntry) o;
+        return Objects.equals(properties, that.properties);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(properties);
+    }
 }

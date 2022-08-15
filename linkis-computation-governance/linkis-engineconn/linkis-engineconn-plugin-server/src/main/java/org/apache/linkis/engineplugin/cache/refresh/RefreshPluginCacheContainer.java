@@ -21,34 +21,34 @@ import org.apache.linkis.manager.engineplugin.common.loader.entity.EngineConnPlu
 
 public interface RefreshPluginCacheContainer {
 
-  /**
-   * Start container
-   *
-   * @param refresher
-   */
-  void start(PluginCacheRefresher refresher);
+    /**
+     * Start container
+     *
+     * @param refresher
+     */
+    void start(PluginCacheRefresher refresher);
 
-  /** Stop container */
-  void stop();
+    /** Stop container */
+    void stop();
 
-  /**
-   * Add operation to container
-   *
-   * @param operation operation
-   */
-  void addRefreshOperation(EngineConnPluginInfo cacheKey, RefreshPluginCacheOperation operation);
+    /**
+     * Add operation to container
+     *
+     * @param operation operation
+     */
+    void addRefreshOperation(EngineConnPluginInfo cacheKey, RefreshPluginCacheOperation operation);
 
-  /**
-   * Remove operation from container
-   *
-   * @param cacheKey cache key
-   */
-  void removeRefreshOperation(EngineConnPluginInfo cacheKey);
+    /**
+     * Remove operation from container
+     *
+     * @param cacheKey cache key
+     */
+    void removeRefreshOperation(EngineConnPluginInfo cacheKey);
 
-  /**
-   * Add the refreshListener
-   *
-   * @param refreshListener listener
-   */
-  void addRefreshListener(RefreshableEngineConnPluginCache.RefreshListener refreshListener);
+    /**
+     * Add the refreshListener
+     *
+     * @param refreshListener listener
+     */
+    void addRefreshListener(RefreshableEngineConnPluginCache.RefreshListener refreshListener);
 }

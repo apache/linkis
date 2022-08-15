@@ -39,123 +39,131 @@ import org.apache.linkis.server.BDPJettyServerHelper;
 
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.Date;
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Date;
+import java.util.Map;
+
 public abstract class AbstractEntranceParser extends EntranceParser {
 
-  private EntranceContext entranceContext;
+    private EntranceContext entranceContext;
 
-  private static final Logger logger = LoggerFactory.getLogger(AbstractEntranceParser.class);
+    private static final Logger logger = LoggerFactory.getLogger(AbstractEntranceParser.class);
 
-  @Override
-  public EntranceContext getEntranceContext() {
-    return entranceContext;
-  }
-
-  @Override
-  public void setEntranceContext(EntranceContext entranceContext) {
-    this.entranceContext = entranceContext;
-  }
-
-  protected EntranceJob createEntranceJob() {
-    return new EntranceExecutionJob(getPersistenceManager());
-  }
-
-  protected PersistenceManager getPersistenceManager() {
-    return null;
-  }
-
-  /**
-   * Parse the executing job into a task, such as operations such as updating the task information
-   * in the database.(将正在执行的job解析为一个task，用于诸如更新数据库中task信息等操作)
-   *
-   * @param job
-   * @return
-   * @throws EntranceIllegalParamException
-   */
-  @Override
-  public JobRequest parseToJobRequest(Job job) throws EntranceIllegalParamException {
-    if (job == null) {
-      throw new EntranceIllegalParamException(20002, "job can't be null");
-    }
-    JobRequest jobRequest = ((EntranceJob) job).getJobRequest();
-    if (StringUtils.isEmpty(jobRequest.getReqId())) {
-      jobRequest.setReqId(job.getId());
+    @Override
+    public EntranceContext getEntranceContext() {
+        return entranceContext;
     }
 
-    jobRequest.setProgress("" + job.getProgress());
-    jobRequest.setStatus(job.getState().toString());
-    jobRequest.setUpdatedTime(new Date());
-    if (job.isCompleted()
-        && !job.isSucceed()
-        && job.getErrorResponse() != null
-        && StringUtils.isBlank(jobRequest.getErrorDesc())
-        && StringUtils.isNotEmpty(job.getErrorResponse().message())) {
-      jobRequest.setErrorDesc(job.getErrorResponse().message());
+    @Override
+    public void setEntranceContext(EntranceContext entranceContext) {
+        this.entranceContext = entranceContext;
     }
-    return jobRequest;
-  }
 
-  /**
-   * Parse a jobReq into an executable job(将一个task解析成一个可执行的job) todo Parse to jobGroup
-   *
-   * @param jobReq
-   * @return
-   */
-  @Override
-  public Job parseToJob(JobRequest jobReq) throws EntranceIllegalParamException {
-    if (jobReq == null) {
-      throw new EntranceIllegalParamException(20001, "JobReq can't be null");
+    protected EntranceJob createEntranceJob() {
+        return new EntranceExecutionJob(getPersistenceManager());
     }
-    EntranceJob job = createEntranceJob();
-    job.setId(String.valueOf(jobReq.getId()));
-    job.setJobRequest(jobReq);
-    job.setUser(jobReq.getExecuteUser());
-    Label<?> userCreateLabel =
-        jobReq.getLabels().stream()
-            .filter(l -> l.getLabelKey().equalsIgnoreCase(LabelKeyConstant.USER_CREATOR_TYPE_KEY))
-            .findFirst()
-            .orElse(null);
-    if (null != userCreateLabel) {
-      job.setCreator(userCreateLabel.getStringValue().split("-")[1]);
-    } else {
-      String msg =
-          "JobRequest doesn't hava valid userCreator label. labels : "
-              + BDPJettyServerHelper.gson().toJson(jobReq.getLabels());
-      logger.error(msg);
-      throw new EntranceIllegalParamException(
-          EntranceErrorCode.LABEL_PARAMS_INVALID.getErrCode(), msg);
-    }
-    job.setParams(jobReq.getParams());
-    Map<String, Object> properties = TaskUtils.getRuntimeMap(job.getParams());
-    properties.put(GovernanceConstant.TASK_SOURCE_MAP_KEY(), jobReq.getSource());
-    job.setEntranceListenerBus(entranceContext.getOrCreateEventListenerBus());
-    job.setEntranceContext(entranceContext);
-    job.setListenerEventBus(null);
-    job.setProgress(0f);
-    job.setJobRequest(jobReq);
-    Label<?> codeTypeLabel =
-        jobReq.getLabels().stream()
-            .filter(l -> l.getLabelKey().equalsIgnoreCase(LabelKeyConstant.CODE_TYPE_KEY))
-            .findFirst()
-            .orElse(null);
-    if (null != codeTypeLabel) {
-      CodeParser codeParser =
-          CodeParserFactory.getCodeParser(CodeType.getType(codeTypeLabel.getStringValue()));
-      if (null != codeParser && !isNoNeedParser()) {
-        job.setCodeParser(codeParser);
-      } else {
-        job.setCodeParser(new EmptyCodeParser());
-      }
-    }
-    return job;
-  }
 
-  private boolean isNoNeedParser() {
-    return !EntranceConfiguration.ENTRANCE_CODEPARSER_ENABLE().getValue();
-  }
+    protected PersistenceManager getPersistenceManager() {
+        return null;
+    }
+
+    /**
+     * Parse the executing job into a task, such as operations such as updating the task information
+     * in the database.(将正在执行的job解析为一个task，用于诸如更新数据库中task信息等操作)
+     *
+     * @param job
+     * @return
+     * @throws EntranceIllegalParamException
+     */
+    @Override
+    public JobRequest parseToJobRequest(Job job) throws EntranceIllegalParamException {
+        if (job == null) {
+            throw new EntranceIllegalParamException(20002, "job can't be null");
+        }
+        JobRequest jobRequest = ((EntranceJob) job).getJobRequest();
+        if (StringUtils.isEmpty(jobRequest.getReqId())) {
+            jobRequest.setReqId(job.getId());
+        }
+
+        jobRequest.setProgress("" + job.getProgress());
+        jobRequest.setStatus(job.getState().toString());
+        jobRequest.setUpdatedTime(new Date());
+        if (job.isCompleted()
+                && !job.isSucceed()
+                && job.getErrorResponse() != null
+                && StringUtils.isBlank(jobRequest.getErrorDesc())
+                && StringUtils.isNotEmpty(job.getErrorResponse().message())) {
+            jobRequest.setErrorDesc(job.getErrorResponse().message());
+        }
+        return jobRequest;
+    }
+
+    /**
+     * Parse a jobReq into an executable job(将一个task解析成一个可执行的job) todo Parse to jobGroup
+     *
+     * @param jobReq
+     * @return
+     */
+    @Override
+    public Job parseToJob(JobRequest jobReq) throws EntranceIllegalParamException {
+        if (jobReq == null) {
+            throw new EntranceIllegalParamException(20001, "JobReq can't be null");
+        }
+        EntranceJob job = createEntranceJob();
+        job.setId(String.valueOf(jobReq.getId()));
+        job.setJobRequest(jobReq);
+        job.setUser(jobReq.getExecuteUser());
+        Label<?> userCreateLabel =
+                jobReq.getLabels().stream()
+                        .filter(
+                                l ->
+                                        l.getLabelKey()
+                                                .equalsIgnoreCase(
+                                                        LabelKeyConstant.USER_CREATOR_TYPE_KEY))
+                        .findFirst()
+                        .orElse(null);
+        if (null != userCreateLabel) {
+            job.setCreator(userCreateLabel.getStringValue().split("-")[1]);
+        } else {
+            String msg =
+                    "JobRequest doesn't hava valid userCreator label. labels : "
+                            + BDPJettyServerHelper.gson().toJson(jobReq.getLabels());
+            logger.error(msg);
+            throw new EntranceIllegalParamException(
+                    EntranceErrorCode.LABEL_PARAMS_INVALID.getErrCode(), msg);
+        }
+        job.setParams(jobReq.getParams());
+        Map<String, Object> properties = TaskUtils.getRuntimeMap(job.getParams());
+        properties.put(GovernanceConstant.TASK_SOURCE_MAP_KEY(), jobReq.getSource());
+        job.setEntranceListenerBus(entranceContext.getOrCreateEventListenerBus());
+        job.setEntranceContext(entranceContext);
+        job.setListenerEventBus(null);
+        job.setProgress(0f);
+        job.setJobRequest(jobReq);
+        Label<?> codeTypeLabel =
+                jobReq.getLabels().stream()
+                        .filter(
+                                l ->
+                                        l.getLabelKey()
+                                                .equalsIgnoreCase(LabelKeyConstant.CODE_TYPE_KEY))
+                        .findFirst()
+                        .orElse(null);
+        if (null != codeTypeLabel) {
+            CodeParser codeParser =
+                    CodeParserFactory.getCodeParser(
+                            CodeType.getType(codeTypeLabel.getStringValue()));
+            if (null != codeParser && !isNoNeedParser()) {
+                job.setCodeParser(codeParser);
+            } else {
+                job.setCodeParser(new EmptyCodeParser());
+            }
+        }
+        return job;
+    }
+
+    private boolean isNoNeedParser() {
+        return !EntranceConfiguration.ENTRANCE_CODEPARSER_ENABLE().getValue();
+    }
 }

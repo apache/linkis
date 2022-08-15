@@ -21,11 +21,11 @@ import org.apache.linkis.cli.application.observer.listener.LinkisClientListener;
 
 public interface LinkisClientEvent {
 
-  boolean isRegistered();
+    boolean isRegistered();
 
-  void register(LinkisClientListener observer);
+    void register(LinkisClientListener observer);
 
-  void unRegister(LinkisClientListener observer);
+    void unRegister(LinkisClientListener observer);
 
-  void notifyObserver(LinkisClientEvent event, Object message);
+    void notifyObserver(LinkisClientEvent event, Object message);
 }

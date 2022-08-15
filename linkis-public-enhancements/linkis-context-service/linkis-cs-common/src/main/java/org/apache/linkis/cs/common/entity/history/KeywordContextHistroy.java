@@ -19,7 +19,7 @@ package org.apache.linkis.cs.common.entity.history;
 
 public interface KeywordContextHistroy extends ContextHistory {
 
-  String getKeywords();
+    String getKeywords();
 
-  void setKeywords(String keywords);
+    void setKeywords(String keywords);
 }

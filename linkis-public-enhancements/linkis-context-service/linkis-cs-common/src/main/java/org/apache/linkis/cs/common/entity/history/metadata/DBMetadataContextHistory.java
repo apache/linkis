@@ -21,7 +21,7 @@ import org.apache.linkis.cs.common.entity.metadata.DB;
 
 public interface DBMetadataContextHistory {
 
-  DB getDB();
+    DB getDB();
 
-  void setDB(DB db);
+    void setDB(DB db);
 }

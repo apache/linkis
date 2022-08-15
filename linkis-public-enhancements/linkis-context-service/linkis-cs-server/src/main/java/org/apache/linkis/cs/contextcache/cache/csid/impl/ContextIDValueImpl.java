@@ -34,91 +34,93 @@ import static org.apache.linkis.cs.listener.event.enumeration.OperateType.*;
 
 public class ContextIDValueImpl implements ContextIDValue, CSKeyListener {
 
-  private static final Logger logger = LoggerFactory.getLogger(ContextIDValueImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(ContextIDValueImpl.class);
 
-  private String contextID;
+    private String contextID;
 
-  private ContextKeyValueContext contextKeyValueContext;
+    private ContextKeyValueContext contextKeyValueContext;
 
-  private ContextIDMetric contextIDMetric = new DefaultContextIDMetric();
+    private ContextIDMetric contextIDMetric = new DefaultContextIDMetric();
 
-  public ContextIDValueImpl() {}
+    public ContextIDValueImpl() {}
 
-  public ContextIDValueImpl(String contextID, ContextKeyValueContext contextKeyValueContext) {
-    this.contextID = contextID;
-    this.contextKeyValueContext = contextKeyValueContext;
-  }
-
-  @Override
-  public String getContextID() {
-    return this.contextID;
-  }
-
-  @Override
-  public ContextKeyValueContext getContextKeyValueContext() {
-    return this.contextKeyValueContext;
-  }
-
-  @Override
-  public void refresh() {
-    // TODO
-  }
-
-  @Override
-  public ContextIDMetric getContextIDMetric() {
-    return this.contextIDMetric;
-  }
-
-  @Override
-  public void onEvent(Event event) {
-    DefaultContextKeyEvent defaultContextKeyEvent = null;
-    if (event != null && event instanceof DefaultContextKeyEvent) {
-      defaultContextKeyEvent = (DefaultContextKeyEvent) event;
+    public ContextIDValueImpl(String contextID, ContextKeyValueContext contextKeyValueContext) {
+        this.contextID = contextID;
+        this.contextKeyValueContext = contextKeyValueContext;
     }
-    if (null == defaultContextKeyEvent) {
-      return;
-    }
-    if (ACCESS.equals(defaultContextKeyEvent.getOperateType())) {
-      onCSKeyAccess(defaultContextKeyEvent);
-    } else {
-      onCSKeyUpdate(defaultContextKeyEvent);
-    }
-  }
 
-  @Override
-  public void onCSKeyUpdate(ContextKeyEvent contextKeyEvent) {
-
-    DefaultContextKeyEvent defaultContextKeyEvent = (DefaultContextKeyEvent) contextKeyEvent;
-    logger.debug("Start to deal csKeyEvent of csID({})", this.contextID);
-    if (ADD == defaultContextKeyEvent.getOperateType()) {
-      Long size = SizeEstimator.estimate(defaultContextKeyEvent.getContextKeyValue());
-      this.contextIDMetric.setMemory(getContextIDMetric().getMemory() + size);
-    } else if (DELETE == defaultContextKeyEvent.getOperateType()) {
-      Long size = SizeEstimator.estimate(defaultContextKeyEvent.getContextKeyValue());
-      this.contextIDMetric.setMemory(getContextIDMetric().getMemory() - size);
-    } else if (REMOVEALL == defaultContextKeyEvent.getOperateType()) {
-      Long size = SizeEstimator.estimate(getContextKeyValueContext());
-      this.contextIDMetric.setMemory(size);
-    } else {
-      long size =
-          SizeEstimator.estimate(defaultContextKeyEvent.getContextKeyValue())
-              - SizeEstimator.estimate(defaultContextKeyEvent.getOldValue());
-      this.contextIDMetric.setMemory(getContextIDMetric().getMemory() - size);
+    @Override
+    public String getContextID() {
+        return this.contextID;
     }
-    logger.info(
-        "Now, The Memory of ContextID({}) are {}", contextID, getContextIDMetric().getMemory());
-    if (logger.isDebugEnabled()) {
-      logger.debug("Finished to deal csKeyEvent of csID({})", this.contextID);
+
+    @Override
+    public ContextKeyValueContext getContextKeyValueContext() {
+        return this.contextKeyValueContext;
     }
-  }
 
-  @Override
-  public void onCSKeyAccess(ContextKeyEvent contextKeyEvent) {
-    // TODO null
-  }
+    @Override
+    public void refresh() {
+        // TODO
+    }
 
-  @Override
-  public void onEventError(Event event, Throwable t) {
-    logger.error("Failed to deal event", t);
-  }
+    @Override
+    public ContextIDMetric getContextIDMetric() {
+        return this.contextIDMetric;
+    }
+
+    @Override
+    public void onEvent(Event event) {
+        DefaultContextKeyEvent defaultContextKeyEvent = null;
+        if (event != null && event instanceof DefaultContextKeyEvent) {
+            defaultContextKeyEvent = (DefaultContextKeyEvent) event;
+        }
+        if (null == defaultContextKeyEvent) {
+            return;
+        }
+        if (ACCESS.equals(defaultContextKeyEvent.getOperateType())) {
+            onCSKeyAccess(defaultContextKeyEvent);
+        } else {
+            onCSKeyUpdate(defaultContextKeyEvent);
+        }
+    }
+
+    @Override
+    public void onCSKeyUpdate(ContextKeyEvent contextKeyEvent) {
+
+        DefaultContextKeyEvent defaultContextKeyEvent = (DefaultContextKeyEvent) contextKeyEvent;
+        logger.debug("Start to deal csKeyEvent of csID({})", this.contextID);
+        if (ADD == defaultContextKeyEvent.getOperateType()) {
+            Long size = SizeEstimator.estimate(defaultContextKeyEvent.getContextKeyValue());
+            this.contextIDMetric.setMemory(getContextIDMetric().getMemory() + size);
+        } else if (DELETE == defaultContextKeyEvent.getOperateType()) {
+            Long size = SizeEstimator.estimate(defaultContextKeyEvent.getContextKeyValue());
+            this.contextIDMetric.setMemory(getContextIDMetric().getMemory() - size);
+        } else if (REMOVEALL == defaultContextKeyEvent.getOperateType()) {
+            Long size = SizeEstimator.estimate(getContextKeyValueContext());
+            this.contextIDMetric.setMemory(size);
+        } else {
+            long size =
+                    SizeEstimator.estimate(defaultContextKeyEvent.getContextKeyValue())
+                            - SizeEstimator.estimate(defaultContextKeyEvent.getOldValue());
+            this.contextIDMetric.setMemory(getContextIDMetric().getMemory() - size);
+        }
+        logger.info(
+                "Now, The Memory of ContextID({}) are {}",
+                contextID,
+                getContextIDMetric().getMemory());
+        if (logger.isDebugEnabled()) {
+            logger.debug("Finished to deal csKeyEvent of csID({})", this.contextID);
+        }
+    }
+
+    @Override
+    public void onCSKeyAccess(ContextKeyEvent contextKeyEvent) {
+        // TODO null
+    }
+
+    @Override
+    public void onEventError(Event event, Throwable t) {
+        logger.error("Failed to deal event", t);
+    }
 }

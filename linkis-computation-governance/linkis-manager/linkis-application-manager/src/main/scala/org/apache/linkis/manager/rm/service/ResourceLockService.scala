@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,42 +17,34 @@
 
 package org.apache.linkis.manager.rm.service
 
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.manager.common.entity.persistence.PersistenceLock
 import org.apache.linkis.manager.label.entity.ResourceLabel
 import org.apache.linkis.manager.persistence.LockManagerPersistence
 import org.apache.linkis.manager.rm.domain.RMLabelContainer
-
-import org.apache.commons.lang3.StringUtils
-
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
 import java.util.Date
-
 import scala.collection.JavaConversions._
 
 @Component
 class ResourceLockService extends Logging {
 
   val DEFAULT_LOCKED_BY = "RM"
-
   @Autowired
-  var lockManagerPersistence: LockManagerPersistence = _
+  var lockManagerPersistence : LockManagerPersistence = _
 
   def tryLock(labelContainer: RMLabelContainer): Boolean = tryLock(labelContainer, Long.MaxValue)
 
   def tryLock(labelContainer: RMLabelContainer, timeout: Long): Boolean = {
-    if (
-        StringUtils.isBlank(labelContainer.getCurrentLabel.getStringValue)
-        || !labelContainer.getCurrentLabel.isInstanceOf[ResourceLabel]
-        || labelContainer.getLockedLabels.contains(labelContainer.getCurrentLabel)
-    ) {
+    if (StringUtils.isBlank(labelContainer.getCurrentLabel.getStringValue)
+      || !labelContainer.getCurrentLabel.isInstanceOf[ResourceLabel]
+      || labelContainer.getLockedLabels.contains(labelContainer.getCurrentLabel)) {
       return true
     }
-    val lockedBy =
-      if (labelContainer.getUserCreatorLabel == null) DEFAULT_LOCKED_BY
-      else labelContainer.getUserCreatorLabel.getUser
+    val lockedBy = if (labelContainer.getUserCreatorLabel == null) DEFAULT_LOCKED_BY else labelContainer.getUserCreatorLabel.getUser
     val persistenceLock = new PersistenceLock
     persistenceLock.setLockObject(labelContainer.getCurrentLabel.getStringValue)
     persistenceLock.setCreateTime(new Date)
@@ -65,10 +57,8 @@ class ResourceLockService extends Logging {
       } else {
         lockManagerPersistence.lock(persistenceLock, Long.MaxValue)
       }
-      if (isLocked) {
-        logger.info(
-          labelContainer.getCurrentLabel + " successfully locked label" + persistenceLock.getLockObject
-        )
+      if(isLocked) {
+        logger.info(labelContainer.getCurrentLabel + " successfully locked label" + persistenceLock.getLockObject)
         labelContainer.getLockedLabels.add(labelContainer.getCurrentLabel)
       }
       isLocked
@@ -81,7 +71,7 @@ class ResourceLockService extends Logging {
 
   def unLock(labelContainer: RMLabelContainer): Unit = {
     val labelIterator = labelContainer.getLockedLabels.iterator
-    while (labelIterator.hasNext) {
+    while(labelIterator.hasNext) {
       val label = labelIterator.next
       if (!StringUtils.isBlank(label.getStringValue)) {
         val persistenceLock = new PersistenceLock
@@ -101,7 +91,7 @@ class ResourceLockService extends Logging {
 
   def clearTimeoutLock(timeout: Long): Unit = {
     val currentTime = System.currentTimeMillis
-    lockManagerPersistence.getAll.foreach { lock =>
+    lockManagerPersistence.getAll.foreach{ lock =>
       if (currentTime - lock.getCreateTime.getTime > timeout) {
         lockManagerPersistence.unlock(lock)
         logger.warn("timeout force unlock " + lock.getLockObject)

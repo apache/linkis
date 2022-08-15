@@ -19,7 +19,7 @@ package org.apache.linkis.cli.core.interactor.command.fitter;
 
 public class FitterUtils {
 
-  public static boolean isOption(final String arg) {
-    return arg.matches("-[a-zA-Z-]+");
-  }
+    public static boolean isOption(final String arg) {
+        return arg.matches("-[a-zA-Z-]+");
+    }
 }

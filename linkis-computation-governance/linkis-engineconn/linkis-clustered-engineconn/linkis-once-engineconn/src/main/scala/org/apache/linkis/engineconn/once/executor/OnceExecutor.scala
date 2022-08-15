@@ -5,18 +5,19 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+ 
 package org.apache.linkis.engineconn.once.executor
-
+import org.apache.commons.io.IOUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.bml.client.BmlClientFactory
 import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.utils.{Logging, Utils}
@@ -24,29 +25,16 @@ import org.apache.linkis.engineconn.acessible.executor.entity.AccessibleExecutor
 import org.apache.linkis.engineconn.common.creation.EngineCreationContext
 import org.apache.linkis.engineconn.core.hook.ShutdownHook
 import org.apache.linkis.engineconn.core.util.EngineConnUtils
-import org.apache.linkis.engineconn.executor.entity.{
-  ExecutableExecutor,
-  LabelExecutor,
-  ResourceExecutor
-}
+import org.apache.linkis.engineconn.executor.entity.{ExecutableExecutor, LabelExecutor, ResourceExecutor}
 import org.apache.linkis.engineconn.once.executor.exception.OnceEngineConnErrorException
 import org.apache.linkis.governance.common.protocol.task.RequestTask
 import org.apache.linkis.governance.common.utils.OnceExecutorContentUtils
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import org.apache.linkis.manager.label.entity.{JobLabel, Label}
-import org.apache.linkis.scheduler.executer.{
-  AsynReturnExecuteResponse,
-  ErrorExecuteResponse,
-  ExecuteResponse,
-  SuccessExecuteResponse
-}
-
-import org.apache.commons.io.IOUtils
-import org.apache.commons.lang3.StringUtils
+import org.apache.linkis.scheduler.executer.{AsynReturnExecuteResponse, ErrorExecuteResponse, ExecuteResponse, SuccessExecuteResponse}
 
 import java.util
-
 import scala.collection.convert.wrapAsScala._
 import scala.collection.mutable.ArrayBuffer
 
@@ -69,53 +57,32 @@ trait OnceExecutor extends ExecutableExecutor[ExecuteResponse] with LabelExecuto
 
   def execute(onceExecutorExecutionContext: OnceExecutorExecutionContext): ExecuteResponse
 
-  protected def createOnceExecutorExecutionContext(
-      engineCreationContext: EngineCreationContext
-  ): OnceExecutorExecutionContext = {
-    val resource =
-      engineCreationContext.getOptions.get(OnceExecutorContentUtils.ONCE_EXECUTOR_CONTENT_KEY)
-    if (StringUtils.isEmpty(resource))
-      throw new OnceEngineConnErrorException(
-        12560,
-        OnceExecutorContentUtils.ONCE_EXECUTOR_CONTENT_KEY + " is not exist."
-      )
+  protected def createOnceExecutorExecutionContext(engineCreationContext: EngineCreationContext): OnceExecutorExecutionContext = {
+    val resource = engineCreationContext.getOptions.get(OnceExecutorContentUtils.ONCE_EXECUTOR_CONTENT_KEY)
+    if(StringUtils.isEmpty(resource)) throw new OnceEngineConnErrorException(12560, OnceExecutorContentUtils.ONCE_EXECUTOR_CONTENT_KEY + " is not exist.")
     val bmlResource = OnceExecutorContentUtils.valueToResource(resource)
     val bmlClient = BmlClientFactory.createBmlClient(engineCreationContext.getUser)
     val contentStr = Utils.tryFinally {
-      val inputStream = bmlClient
-        .downloadResource(
-          engineCreationContext.getUser,
-          bmlResource.getResourceId,
-          bmlResource.getVersion
-        )
-        .inputStream
-      Utils.tryFinally(IOUtils.toString(inputStream, Configuration.BDP_ENCODING.getValue))(
-        IOUtils.closeQuietly(inputStream)
-      )
-    }(bmlClient.close())
+      val inputStream = bmlClient.downloadResource(engineCreationContext.getUser, bmlResource.getResourceId, bmlResource.getVersion).inputStream
+      Utils.tryFinally(IOUtils.toString(inputStream, Configuration.BDP_ENCODING.getValue))(IOUtils.closeQuietly(inputStream))
+    } (bmlClient.close())
     val contentMap = EngineConnUtils.GSON.fromJson(contentStr, classOf[util.Map[String, Object]])
     val onceExecutorContent = OnceExecutorContentUtils.mapToContent(contentMap)
     new OnceExecutorExecutionContext(engineCreationContext, onceExecutorContent)
   }
 
-  protected def initOnceExecutorExecutionContext(
-      onceExecutorExecutionContext: OnceExecutorExecutionContext
-  ): Unit = {
+  protected def initOnceExecutorExecutionContext(onceExecutorExecutionContext: OnceExecutorExecutionContext): Unit = {
     val properties = onceExecutorExecutionContext.getOnceExecutorContent.getRuntimeMap
     if (properties.containsKey(RequestTask.RESULT_SET_STORE_PATH)) {
-      onceExecutorExecutionContext.setStorePath(
-        properties.get(RequestTask.RESULT_SET_STORE_PATH).toString
-      )
+      onceExecutorExecutionContext.setStorePath(properties.get(RequestTask.RESULT_SET_STORE_PATH).toString)
       logger.info(s"ResultSet storePath: ${onceExecutorExecutionContext.getStorePath}.")
     }
-    if (onceExecutorExecutionContext.getOnceExecutorContent.getExtraLabels != null) {
+    if(onceExecutorExecutionContext.getOnceExecutorContent.getExtraLabels != null) {
       val extraLabelsList = LabelBuilderFactoryContext.getLabelBuilderFactory
         .getLabels(onceExecutorExecutionContext.getOnceExecutorContent.getExtraLabels)
       val extraLabels = new ArrayBuffer[Label[_]]()
       extraLabelsList.foreach(executorLabels += _)
-      onceExecutorExecutionContext.setLabels(
-        onceExecutorExecutionContext.getLabels ++: extraLabels.toArray
-      )
+      onceExecutorExecutionContext.setLabels(onceExecutorExecutionContext.getLabels ++: extraLabels.toArray)
     }
     onceExecutorExecutionContext.getLabels.foreach {
       case jobLabel: JobLabel =>
@@ -141,9 +108,7 @@ trait ManageableOnceExecutor extends AccessibleExecutor with OnceExecutor with R
     super.tryReady()
   }
 
-  override def execute(
-      onceExecutorExecutionContext: OnceExecutorExecutionContext
-  ): ExecuteResponse = {
+  override def execute(onceExecutorExecutionContext: OnceExecutorExecutionContext): ExecuteResponse = {
     submit(onceExecutorExecutionContext)
     waitToRunning()
     transition(NodeStatus.Busy)
@@ -163,8 +128,8 @@ trait ManageableOnceExecutor extends AccessibleExecutor with OnceExecutor with R
   protected def setResponse(response: ExecuteResponse): Unit = this.response = response
 
   override protected def onStatusChanged(fromStatus: NodeStatus, toStatus: NodeStatus): Unit = {
-    if (NodeStatus.isCompleted(toStatus)) {
-      if (response == null) toStatus match {
+    if(NodeStatus.isCompleted(toStatus)) {
+      if(response == null) toStatus match {
         case NodeStatus.Success => response = SuccessExecuteResponse()
         case _ => response = ErrorExecuteResponse("Unknown reason.", null)
       }
@@ -176,7 +141,7 @@ trait ManageableOnceExecutor extends AccessibleExecutor with OnceExecutor with R
   override def tryShutdown(): Boolean = tryFailed()
 
   def tryFailed(): Boolean = {
-    if (isClosed) return true
+    if(isClosed) return true
     logger.error(s"$getId has failed with old status $getStatus, now stop it.")
     Utils.tryFinally {
       this.ensureAvailable(transition(NodeStatus.Failed))
@@ -191,7 +156,7 @@ trait ManageableOnceExecutor extends AccessibleExecutor with OnceExecutor with R
     Utils.tryFinally {
       this.ensureAvailable(transition(NodeStatus.Success))
       close()
-    }(ShutdownHook.getShutdownHook.notifyStop())
+    } (ShutdownHook.getShutdownHook.notifyStop())
     true
   }
 

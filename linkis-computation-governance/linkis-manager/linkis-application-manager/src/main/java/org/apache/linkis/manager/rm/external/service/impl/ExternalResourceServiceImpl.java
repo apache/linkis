@@ -42,13 +42,6 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.net.ConnectException;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
-
 import com.fasterxml.jackson.core.JsonParseException;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -56,168 +49,195 @@ import com.google.common.cache.LoadingCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.ConnectException;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
+
 @Component
 public class ExternalResourceServiceImpl implements ExternalResourceService, InitializingBean {
 
-  private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-  @Autowired ExternalResourceProviderDao providerDao;
+    @Autowired ExternalResourceProviderDao providerDao;
 
-  ExternalResourceIdentifierParser[] identifierParsers;
+    ExternalResourceIdentifierParser[] identifierParsers;
 
-  ExternalResourceRequester[] resourceRequesters;
+    ExternalResourceRequester[] resourceRequesters;
 
-  private LoadingCache<String, List<ExternalResourceProvider>> providerCache =
-      CacheBuilder.newBuilder()
-          .maximumSize(20)
-          .expireAfterAccess(1, TimeUnit.HOURS)
-          .refreshAfterWrite(
-              RMUtils.EXTERNAL_RESOURCE_REFRESH_TIME().getValue().toLong(), TimeUnit.MINUTES)
-          .build(
-              new CacheLoader<String, List<ExternalResourceProvider>>() {
+    private LoadingCache<String, List<ExternalResourceProvider>> providerCache =
+            CacheBuilder.newBuilder()
+                    .maximumSize(20)
+                    .expireAfterAccess(1, TimeUnit.HOURS)
+                    .refreshAfterWrite(
+                            RMUtils.EXTERNAL_RESOURCE_REFRESH_TIME().getValue().toLong(),
+                            TimeUnit.MINUTES)
+                    .build(
+                            new CacheLoader<String, List<ExternalResourceProvider>>() {
 
-                @Override
-                public List<ExternalResourceProvider> load(String resourceType) {
-                  return providerDao.selectByResourceType(resourceType);
-                }
-              });
+                                @Override
+                                public List<ExternalResourceProvider> load(String resourceType) {
+                                    return providerDao.selectByResourceType(resourceType);
+                                }
+                            });
 
-  @Override
-  public void afterPropertiesSet() throws Exception {
-    resourceRequesters = new ExternalResourceRequester[] {new YarnResourceRequester()};
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        resourceRequesters = new ExternalResourceRequester[] {new YarnResourceRequester()};
 
-    identifierParsers = new ExternalResourceIdentifierParser[] {new YarnResourceIdentifierParser()};
-  }
+        identifierParsers =
+                new ExternalResourceIdentifierParser[] {new YarnResourceIdentifierParser()};
+    }
 
-  @Override
-  public NodeResource getResource(
-      ResourceType resourceType, RMLabelContainer labelContainer, Map<String, Object> identifierMap)
-      throws RMErrorException {
-    ExternalResourceIdentifier identifier = getIdentifierParser(resourceType).parse(identifierMap);
-    return getResource(resourceType, labelContainer, identifier);
-  }
+    @Override
+    public NodeResource getResource(
+            ResourceType resourceType,
+            RMLabelContainer labelContainer,
+            Map<String, Object> identifierMap)
+            throws RMErrorException {
+        ExternalResourceIdentifier identifier =
+                getIdentifierParser(resourceType).parse(identifierMap);
+        return getResource(resourceType, labelContainer, identifier);
+    }
 
-  @Override
-  public NodeResource getResource(
-      ResourceType resourceType,
-      RMLabelContainer labelContainer,
-      ExternalResourceIdentifier identifier)
-      throws RMErrorException {
-    ExternalResourceProvider provider = chooseProvider(resourceType, labelContainer);
-    ExternalResourceRequester externalResourceRequester = getRequester(resourceType);
-    NodeResource resource =
-        (NodeResource)
-            retry(
-                (Integer) RMConfiguration.EXTERNAL_RETRY_NUM().getValue(),
-                (i) -> externalResourceRequester.requestResourceInfo(identifier, provider),
-                (i) -> externalResourceRequester.reloadExternalResourceAddress(provider));
-    return resource;
-  }
+    @Override
+    public NodeResource getResource(
+            ResourceType resourceType,
+            RMLabelContainer labelContainer,
+            ExternalResourceIdentifier identifier)
+            throws RMErrorException {
+        ExternalResourceProvider provider = chooseProvider(resourceType, labelContainer);
+        ExternalResourceRequester externalResourceRequester = getRequester(resourceType);
+        NodeResource resource =
+                (NodeResource)
+                        retry(
+                                (Integer) RMConfiguration.EXTERNAL_RETRY_NUM().getValue(),
+                                (i) ->
+                                        externalResourceRequester.requestResourceInfo(
+                                                identifier, provider),
+                                (i) ->
+                                        externalResourceRequester.reloadExternalResourceAddress(
+                                                provider));
+        return resource;
+    }
 
-  @Override
-  public List<ExternalAppInfo> getAppInfo(
-      ResourceType resourceType, RMLabelContainer labelContainer, Map<String, Object> identifierMap)
-      throws RMErrorException {
-    ExternalResourceIdentifier identifier = getIdentifierParser(resourceType).parse(identifierMap);
-    return getAppInfo(resourceType, labelContainer, identifier);
-  }
+    @Override
+    public List<ExternalAppInfo> getAppInfo(
+            ResourceType resourceType,
+            RMLabelContainer labelContainer,
+            Map<String, Object> identifierMap)
+            throws RMErrorException {
+        ExternalResourceIdentifier identifier =
+                getIdentifierParser(resourceType).parse(identifierMap);
+        return getAppInfo(resourceType, labelContainer, identifier);
+    }
 
-  @Override
-  public List<ExternalAppInfo> getAppInfo(
-      ResourceType resourceType,
-      RMLabelContainer labelContainer,
-      ExternalResourceIdentifier identifier)
-      throws RMErrorException {
-    ExternalResourceProvider provider = chooseProvider(resourceType, labelContainer);
-    ExternalResourceRequester externalResourceRequester = getRequester(resourceType);
-    List<ExternalAppInfo> appInfos =
-        (List<ExternalAppInfo>)
-            retry(
-                (Integer) RMConfiguration.EXTERNAL_RETRY_NUM().getValue(),
-                (i) -> externalResourceRequester.requestAppInfo(identifier, provider),
-                (i) -> externalResourceRequester.reloadExternalResourceAddress(provider));
-    return appInfos;
-  }
+    @Override
+    public List<ExternalAppInfo> getAppInfo(
+            ResourceType resourceType,
+            RMLabelContainer labelContainer,
+            ExternalResourceIdentifier identifier)
+            throws RMErrorException {
+        ExternalResourceProvider provider = chooseProvider(resourceType, labelContainer);
+        ExternalResourceRequester externalResourceRequester = getRequester(resourceType);
+        List<ExternalAppInfo> appInfos =
+                (List<ExternalAppInfo>)
+                        retry(
+                                (Integer) RMConfiguration.EXTERNAL_RETRY_NUM().getValue(),
+                                (i) ->
+                                        externalResourceRequester.requestAppInfo(
+                                                identifier, provider),
+                                (i) ->
+                                        externalResourceRequester.reloadExternalResourceAddress(
+                                                provider));
+        return appInfos;
+    }
 
-  private Object retry(int retryNum, Function function, Function reloadExternalAddress)
-      throws RMErrorException {
-    int times = 0;
-    String errorMsg = "Failed to request external resource";
-    while (times < retryNum) {
-      try {
-        return function.apply(null);
-      } catch (Exception e) {
-        if ((JsonParseException.class.isInstance(e.getCause())
-                && e.getCause().getMessage().contains("This is standby RM"))
-            || ConnectException.class.isInstance(e.getCause())) {
-          if (null != reloadExternalAddress) {
+    private Object retry(int retryNum, Function function, Function reloadExternalAddress)
+            throws RMErrorException {
+        int times = 0;
+        String errorMsg = "Failed to request external resource";
+        while (times < retryNum) {
             try {
-              reloadExternalAddress.apply(null);
-            } catch (Exception e1) {
-              logger.error("ReloadExternalAddress failed. {}", e.getMessage(), e);
+                return function.apply(null);
+            } catch (Exception e) {
+                if ((JsonParseException.class.isInstance(e.getCause())
+                                && e.getCause().getMessage().contains("This is standby RM"))
+                        || ConnectException.class.isInstance(e.getCause())) {
+                    if (null != reloadExternalAddress) {
+                        try {
+                            reloadExternalAddress.apply(null);
+                        } catch (Exception e1) {
+                            logger.error("ReloadExternalAddress failed. {}", e.getMessage(), e);
+                        }
+                    }
+                }
+                errorMsg =
+                        "Failed to request external resource"
+                                + ExceptionUtils.getRootCauseMessage(e);
+                logger.warn("failed to request external resource provider, retryNum {}", times, e);
+                times++;
             }
-          }
         }
-        errorMsg = "Failed to request external resource" + ExceptionUtils.getRootCauseMessage(e);
-        logger.warn("failed to request external resource provider, retryNum {}", times, e);
-        times++;
-      }
+        throw new RMErrorException(11006, errorMsg);
     }
-    throw new RMErrorException(11006, errorMsg);
-  }
 
-  @Override
-  public ExternalResourceProvider chooseProvider(
-      ResourceType resourceType, RMLabelContainer labelContainer) throws RMErrorException {
-    Label label = labelContainer.find(ClusterLabel.class);
-    ClusterLabel realClusterLabel = null;
-    if (label == null) {
-      realClusterLabel =
-          LabelBuilderFactoryContext.getLabelBuilderFactory().createLabel(ClusterLabel.class);
-      realClusterLabel.setClusterName(RMConfiguration.DEFAULT_YARN_CLUSTER_NAME().getValue());
-      realClusterLabel.setClusterType(RMConfiguration.DEFAULT_YARN_TYPE().getValue());
-    } else {
-      realClusterLabel = (ClusterLabel) label;
-    }
-    try {
-      List<ExternalResourceProvider> providers = providerCache.get(resourceType.toString());
-      for (ExternalResourceProvider provider : providers) {
-        if (provider.getName().equals(realClusterLabel.getClusterName())) {
-          return provider;
+    @Override
+    public ExternalResourceProvider chooseProvider(
+            ResourceType resourceType, RMLabelContainer labelContainer) throws RMErrorException {
+        Label label = labelContainer.find(ClusterLabel.class);
+        ClusterLabel realClusterLabel = null;
+        if (label == null) {
+            realClusterLabel =
+                    LabelBuilderFactoryContext.getLabelBuilderFactory()
+                            .createLabel(ClusterLabel.class);
+            realClusterLabel.setClusterName(RMConfiguration.DEFAULT_YARN_CLUSTER_NAME().getValue());
+            realClusterLabel.setClusterType(RMConfiguration.DEFAULT_YARN_TYPE().getValue());
+        } else {
+            realClusterLabel = (ClusterLabel) label;
         }
-      }
-    } catch (ExecutionException e) {
-      throw new RMErrorException(
-          110013,
-          "No suitable ExternalResourceProvider found for cluster: "
-              + realClusterLabel.getClusterName(),
-          e);
+        try {
+            List<ExternalResourceProvider> providers = providerCache.get(resourceType.toString());
+            for (ExternalResourceProvider provider : providers) {
+                if (provider.getName().equals(realClusterLabel.getClusterName())) {
+                    return provider;
+                }
+            }
+        } catch (ExecutionException e) {
+            throw new RMErrorException(
+                    110013,
+                    "No suitable ExternalResourceProvider found for cluster: "
+                            + realClusterLabel.getClusterName(),
+                    e);
+        }
+        throw new RMErrorException(
+                110013,
+                "No suitable ExternalResourceProvider found for cluster: "
+                        + realClusterLabel.getClusterName());
     }
-    throw new RMErrorException(
-        110013,
-        "No suitable ExternalResourceProvider found for cluster: "
-            + realClusterLabel.getClusterName());
-  }
 
-  private ExternalResourceRequester getRequester(ResourceType resourceType)
-      throws RMErrorException {
-    for (ExternalResourceRequester externalResourceRequester : resourceRequesters) {
-      if (externalResourceRequester.getResourceType().equals(resourceType)) {
-        return externalResourceRequester;
-      }
+    private ExternalResourceRequester getRequester(ResourceType resourceType)
+            throws RMErrorException {
+        for (ExternalResourceRequester externalResourceRequester : resourceRequesters) {
+            if (externalResourceRequester.getResourceType().equals(resourceType)) {
+                return externalResourceRequester;
+            }
+        }
+        throw new RMErrorException(
+                110012, "No ExternalResourceRequester found for resource type: " + resourceType);
     }
-    throw new RMErrorException(
-        110012, "No ExternalResourceRequester found for resource type: " + resourceType);
-  }
 
-  private ExternalResourceIdentifierParser getIdentifierParser(ResourceType resourceType)
-      throws RMErrorException {
-    for (ExternalResourceIdentifierParser identifierParser : identifierParsers) {
-      if (identifierParser.getResourceType().equals(resourceType)) {
-        return identifierParser;
-      }
+    private ExternalResourceIdentifierParser getIdentifierParser(ResourceType resourceType)
+            throws RMErrorException {
+        for (ExternalResourceIdentifierParser identifierParser : identifierParsers) {
+            if (identifierParser.getResourceType().equals(resourceType)) {
+                return identifierParser;
+            }
+        }
+        throw new RMErrorException(
+                110012,
+                "No ExternalResourceIdentifierParser found for resource type: " + resourceType);
     }
-    throw new RMErrorException(
-        110012, "No ExternalResourceIdentifierParser found for resource type: " + resourceType);
-  }
 }

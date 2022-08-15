@@ -26,153 +26,153 @@ import java.util.Map;
 
 public class UserResourceVo implements Serializable {
 
-  private Integer id;
+    private Integer id;
 
-  private String username;
+    private String username;
 
-  private String creator;
+    private String creator;
 
-  private String engineTypeWithVersion;
+    private String engineTypeWithVersion;
 
-  private ResourceType resourceType;
+    private ResourceType resourceType;
 
-  private Map maxResource;
+    private Map maxResource;
 
-  private Map minResource;
+    private Map minResource;
 
-  private Map usedResource;
+    private Map usedResource;
 
-  private Map lockedResource;
+    private Map lockedResource;
 
-  private Map expectedResource;
+    private Map expectedResource;
 
-  private Map leftResource;
+    private Map leftResource;
 
-  private Date createTime;
+    private Date createTime;
 
-  private Date updateTime;
+    private Date updateTime;
 
-  private ResourceStatus loadResourceStatus;
+    private ResourceStatus loadResourceStatus;
 
-  private ResourceStatus queueResourceStatus;
+    private ResourceStatus queueResourceStatus;
 
-  public ResourceStatus getLoadResourceStatus() {
-    return loadResourceStatus;
-  }
+    public ResourceStatus getLoadResourceStatus() {
+        return loadResourceStatus;
+    }
 
-  public void setLoadResourceStatus(ResourceStatus loadResourceStatus) {
-    this.loadResourceStatus = loadResourceStatus;
-  }
+    public void setLoadResourceStatus(ResourceStatus loadResourceStatus) {
+        this.loadResourceStatus = loadResourceStatus;
+    }
 
-  public ResourceStatus getQueueResourceStatus() {
-    return queueResourceStatus;
-  }
+    public ResourceStatus getQueueResourceStatus() {
+        return queueResourceStatus;
+    }
 
-  public void setQueueResourceStatus(ResourceStatus queueResourceStatus) {
-    this.queueResourceStatus = queueResourceStatus;
-  }
+    public void setQueueResourceStatus(ResourceStatus queueResourceStatus) {
+        this.queueResourceStatus = queueResourceStatus;
+    }
 
-  public Integer getId() {
-    return id;
-  }
+    public Integer getId() {
+        return id;
+    }
 
-  public String getEngineTypeWithVersion() {
-    return engineTypeWithVersion;
-  }
+    public String getEngineTypeWithVersion() {
+        return engineTypeWithVersion;
+    }
 
-  public void setEngineTypeWithVersion(String engineTypeWithVersion) {
-    this.engineTypeWithVersion = engineTypeWithVersion;
-  }
+    public void setEngineTypeWithVersion(String engineTypeWithVersion) {
+        this.engineTypeWithVersion = engineTypeWithVersion;
+    }
 
-  public void setId(Integer id) {
-    this.id = id;
-  }
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-  public String getUsername() {
-    return username;
-  }
+    public String getUsername() {
+        return username;
+    }
 
-  public void setUsername(String username) {
-    this.username = username;
-  }
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
-  public String getCreator() {
-    return creator;
-  }
+    public String getCreator() {
+        return creator;
+    }
 
-  public void setCreator(String creator) {
-    this.creator = creator;
-  }
+    public void setCreator(String creator) {
+        this.creator = creator;
+    }
 
-  public ResourceType getResourceType() {
-    return resourceType;
-  }
+    public ResourceType getResourceType() {
+        return resourceType;
+    }
 
-  public void setResourceType(ResourceType resourceType) {
-    this.resourceType = resourceType;
-  }
+    public void setResourceType(ResourceType resourceType) {
+        this.resourceType = resourceType;
+    }
 
-  public Map getMaxResource() {
-    return maxResource;
-  }
+    public Map getMaxResource() {
+        return maxResource;
+    }
 
-  public void setMaxResource(Map maxResource) {
-    this.maxResource = maxResource;
-  }
+    public void setMaxResource(Map maxResource) {
+        this.maxResource = maxResource;
+    }
 
-  public Map getMinResource() {
-    return minResource;
-  }
+    public Map getMinResource() {
+        return minResource;
+    }
 
-  public void setMinResource(Map minResource) {
-    this.minResource = minResource;
-  }
+    public void setMinResource(Map minResource) {
+        this.minResource = minResource;
+    }
 
-  public Map getUsedResource() {
-    return usedResource;
-  }
+    public Map getUsedResource() {
+        return usedResource;
+    }
 
-  public void setUsedResource(Map usedResource) {
-    this.usedResource = usedResource;
-  }
+    public void setUsedResource(Map usedResource) {
+        this.usedResource = usedResource;
+    }
 
-  public Map getLockedResource() {
-    return lockedResource;
-  }
+    public Map getLockedResource() {
+        return lockedResource;
+    }
 
-  public void setLockedResource(Map lockedResource) {
-    this.lockedResource = lockedResource;
-  }
+    public void setLockedResource(Map lockedResource) {
+        this.lockedResource = lockedResource;
+    }
 
-  public Map getExpectedResource() {
-    return expectedResource;
-  }
+    public Map getExpectedResource() {
+        return expectedResource;
+    }
 
-  public void setExpectedResource(Map expectedResource) {
-    this.expectedResource = expectedResource;
-  }
+    public void setExpectedResource(Map expectedResource) {
+        this.expectedResource = expectedResource;
+    }
 
-  public Map getLeftResource() {
-    return leftResource;
-  }
+    public Map getLeftResource() {
+        return leftResource;
+    }
 
-  public void setLeftResource(Map leftResource) {
-    this.leftResource = leftResource;
-  }
+    public void setLeftResource(Map leftResource) {
+        this.leftResource = leftResource;
+    }
 
-  public Date getCreateTime() {
-    return createTime;
-  }
+    public Date getCreateTime() {
+        return createTime;
+    }
 
-  public void setCreateTime(Date createTime) {
-    this.createTime = createTime;
-  }
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
 
-  public Date getUpdateTime() {
-    return updateTime;
-  }
+    public Date getUpdateTime() {
+        return updateTime;
+    }
 
-  public void setUpdateTime(Date updateTime) {
-    this.updateTime = updateTime;
-  }
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
+    }
 }

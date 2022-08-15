@@ -20,7 +20,7 @@ package org.apache.linkis.cs.common.entity.source;
 import org.apache.linkis.cs.common.entity.enumeration.ContextType;
 
 public interface ValueBean {
-  public ContextType getContextType();
+    public ContextType getContextType();
 
-  public void setContextType(ContextType contextType);
+    public void setContextType(ContextType contextType);
 }

@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,18 +17,15 @@
 
 package org.apache.linkis.httpclient.config
 
-import org.apache.linkis.common.utils.RetryHandler
-import org.apache.linkis.httpclient.authentication.{
-  AbstractAuthenticationStrategy,
-  AuthenticationStrategy
-}
-import org.apache.linkis.httpclient.loadbalancer.LoadBalancerStrategy
-
 import org.apache.commons.lang3.StringUtils
+import org.apache.linkis.common.utils.RetryHandler
+import org.apache.linkis.httpclient.authentication.{AbstractAuthenticationStrategy, AuthenticationStrategy}
+import org.apache.linkis.httpclient.loadbalancer.LoadBalancerStrategy
 
 import scala.concurrent.duration.TimeUnit
 
-class ClientConfig private () {
+
+class ClientConfig private() {
 
   private var serverUrl: String = _
   private var discoveryEnabled: Boolean = false
@@ -45,22 +42,10 @@ class ClientConfig private () {
   private var retryEnabled: Boolean = _
   private var retryHandler: RetryHandler = _
 
-  protected[config] def this(
-      serverUrl: String,
-      discoveryEnabled: Boolean,
-      discoveryPeriod: Long,
-      discoveryTimeUnit: TimeUnit,
-      loadbalancerEnabled: Boolean,
-      loadbalancerStrategy: LoadBalancerStrategy,
-      authenticationStrategy: AuthenticationStrategy,
-      connectTimeout: Long,
-      readTimeout: Long,
-      maxConnection: Int,
-      retryEnabled: Boolean,
-      retryHandler: RetryHandler,
-      authTokenKey: String,
-      authTokenValue: String
-  ) = {
+  protected[config] def this(serverUrl: String, discoveryEnabled: Boolean, discoveryPeriod: Long, discoveryTimeUnit: TimeUnit,
+                     loadbalancerEnabled: Boolean, loadbalancerStrategy: LoadBalancerStrategy, authenticationStrategy: AuthenticationStrategy,
+                     connectTimeout: Long, readTimeout: Long, maxConnection: Int, retryEnabled: Boolean, retryHandler: RetryHandler,
+                             authTokenKey: String, authTokenValue: String) = {
     this()
     this.serverUrl = serverUrl
 
@@ -87,10 +72,7 @@ class ClientConfig private () {
   def getServerUrl: String = serverUrl
 
   def getDefaultServerUrl: String = {
-    if (
-        StringUtils
-          .isNotBlank(serverUrl) && serverUrl.contains(HttpClientConstant.URL_SPLIT_TOKEN)
-    ) {
+    if (StringUtils.isNotBlank(serverUrl) && serverUrl.contains(HttpClientConstant.URL_SPLIT_TOKEN)) {
       serverUrl.split(HttpClientConstant.URL_SPLIT_TOKEN)(0)
     } else {
       serverUrl

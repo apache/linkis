@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,21 +23,16 @@ import org.apache.linkis.entrance.job.EntranceExecutionJob
 import org.apache.linkis.scheduler.listener.LogListener
 import org.apache.linkis.scheduler.queue.Job
 
+
 abstract class LogManager extends LogListener with Logging {
 
   protected var errorCodeListener: Option[ErrorCodeListener] = None
   protected var errorCodeManager: Option[ErrorCodeManager] = None
   protected var entranceContext: EntranceContext = _
 
-  def setEntranceContext(entranceContext: EntranceContext): Unit = this.entranceContext =
-    entranceContext
-
-  def setErrorCodeListener(errorCodeListener: ErrorCodeListener): Unit = this.errorCodeListener =
-    Option(errorCodeListener)
-
-  def setErrorCodeManager(errorCodeManager: ErrorCodeManager): Unit = this.errorCodeManager =
-    Option(errorCodeManager)
-
+  def setEntranceContext(entranceContext: EntranceContext): Unit = this.entranceContext = entranceContext
+  def setErrorCodeListener(errorCodeListener: ErrorCodeListener): Unit = this.errorCodeListener = Option(errorCodeListener)
+  def setErrorCodeManager(errorCodeManager: ErrorCodeManager): Unit = this.errorCodeManager = Option(errorCodeManager)
   def getErrorCodeManager(): Option[ErrorCodeManager] = errorCodeManager
   def getErrorCodeListener: Option[ErrorCodeListener] = errorCodeListener
 
@@ -46,30 +41,31 @@ abstract class LogManager extends LogListener with Logging {
   def createLogWriter(job: Job): LogWriter
 
   def dealLogEvent(job: Job, log: String): Unit = {
-    Utils.tryCatch {
+    Utils.tryCatch{
       //     warn(s"jobid :${job.getId()}\nlog : ${log}")
       job match {
         case entranceExecutionJob: EntranceExecutionJob =>
-          if (entranceExecutionJob.getLogWriter.isEmpty)
-            entranceExecutionJob.getLogWriterLocker synchronized {
-              if (entranceExecutionJob.getLogWriter.isEmpty) {
-                val logWriter = createLogWriter(entranceExecutionJob)
-                if (null == logWriter) {
-                  return
-                }
+          if (entranceExecutionJob.getLogWriter.isEmpty) entranceExecutionJob.getLogWriterLocker synchronized {
+            if (entranceExecutionJob.getLogWriter.isEmpty) {
+              val logWriter = createLogWriter(entranceExecutionJob)
+              if (null == logWriter) {
+                return
               }
             }
+          }
           entranceExecutionJob.getLogWriter.foreach(logWriter => logWriter.write(log))
           errorCodeManager.foreach(_.errorMatch(log).foreach { case (code, errorMsg) =>
             errorCodeListener.foreach(_.onErrorCodeCreated(job, code, errorMsg))
           })
         case _ =>
       }
-    } {
+    }{
       case e: Exception => logger.warn(s"write log for job ${job.getId} failed", e)
       case t: Throwable => logger.warn(s"write log for job ${job.getId} failed", t)
     }
   }
+
+
 
   override def onLogUpdate(job: Job, log: String): Unit = {
     dealLogEvent(job, log)

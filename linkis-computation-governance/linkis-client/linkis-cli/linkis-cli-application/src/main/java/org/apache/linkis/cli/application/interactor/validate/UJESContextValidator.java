@@ -28,51 +28,49 @@ import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
 import org.apache.commons.lang3.StringUtils;
 
 public class UJESContextValidator implements Validator {
-  @Override
-  public void doValidation(Object input) throws LinkisClientRuntimeException {
-    if (!(input instanceof UJESClientContext)) {
-      throw new ValidateException(
-          "VLD0009",
-          ErrorLevel.ERROR,
-          CommonErrMsg.ValidationErr,
-          "Input of UJESContextValidator is not instance of UjesClientDriverContext");
+    @Override
+    public void doValidation(Object input) throws LinkisClientRuntimeException {
+        if (!(input instanceof UJESClientContext)) {
+            throw new ValidateException(
+                    "VLD0009",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.ValidationErr,
+                    "Input of UJESContextValidator is not instance of UjesClientDriverContext");
+        }
+        boolean ok = true;
+        StringBuilder reasonSb = new StringBuilder();
+        UJESClientContext context = (UJESClientContext) input;
+        if (StringUtils.isBlank(context.getGatewayUrl())) {
+            reasonSb.append("gatewayUrl cannot be empty or blank").append(System.lineSeparator());
+            ok = false;
+        }
+        if (StringUtils.isBlank(context.getAuthenticationStrategyStr())) {
+            reasonSb.append("Authentication Strategy cannot be empty or blank")
+                    .append(System.lineSeparator());
+            ok = false;
+        } else if (!LinkisConstants.AUTH_STRATEGY_STATIC.equalsIgnoreCase(
+                        context.getAuthenticationStrategyStr())
+                && !LinkisConstants.AUTH_STRATEGY_TOKEN.equalsIgnoreCase(
+                        context.getAuthenticationStrategyStr())) {
+            reasonSb.append("Authentication Strategy ")
+                    .append(context.getAuthenticationStrategyStr())
+                    .append(" is not valid");
+            ok = false;
+        }
+        if (StringUtils.isBlank(context.getTokenKey())) {
+            reasonSb.append("tokenKey cannot be empty or blank").append(System.lineSeparator());
+            ok = false;
+        }
+        if (StringUtils.isBlank(context.getTokenKey())) {
+            reasonSb.append("tokenValue cannot be empty or blank").append(System.lineSeparator());
+            ok = false;
+        }
+        if (!ok) {
+            throw new ValidateException(
+                    "VLD0010",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.ValidationErr,
+                    "LinkisJob validation failed. Reason: " + reasonSb.toString());
+        }
     }
-    boolean ok = true;
-    StringBuilder reasonSb = new StringBuilder();
-    UJESClientContext context = (UJESClientContext) input;
-    if (StringUtils.isBlank(context.getGatewayUrl())) {
-      reasonSb.append("gatewayUrl cannot be empty or blank").append(System.lineSeparator());
-      ok = false;
-    }
-    if (StringUtils.isBlank(context.getAuthenticationStrategyStr())) {
-      reasonSb
-          .append("Authentication Strategy cannot be empty or blank")
-          .append(System.lineSeparator());
-      ok = false;
-    } else if (!LinkisConstants.AUTH_STRATEGY_STATIC.equalsIgnoreCase(
-            context.getAuthenticationStrategyStr())
-        && !LinkisConstants.AUTH_STRATEGY_TOKEN.equalsIgnoreCase(
-            context.getAuthenticationStrategyStr())) {
-      reasonSb
-          .append("Authentication Strategy ")
-          .append(context.getAuthenticationStrategyStr())
-          .append(" is not valid");
-      ok = false;
-    }
-    if (StringUtils.isBlank(context.getTokenKey())) {
-      reasonSb.append("tokenKey cannot be empty or blank").append(System.lineSeparator());
-      ok = false;
-    }
-    if (StringUtils.isBlank(context.getTokenKey())) {
-      reasonSb.append("tokenValue cannot be empty or blank").append(System.lineSeparator());
-      ok = false;
-    }
-    if (!ok) {
-      throw new ValidateException(
-          "VLD0010",
-          ErrorLevel.ERROR,
-          CommonErrMsg.ValidationErr,
-          "LinkisJob validation failed. Reason: " + reasonSb.toString());
-    }
-  }
 }

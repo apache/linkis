@@ -27,54 +27,54 @@ import java.util.Map;
 
 public abstract class AbstractSerializer<T> implements ContextSerializer<T> {
 
-  private static final String TYPE = "type";
+    private static final String TYPE = "type";
 
-  public String getJsonValue(T t) throws CSErrorException {
-    if (null != t) {
-      return CSCommonUtils.gson.toJson(t);
+    public String getJsonValue(T t) throws CSErrorException {
+        if (null != t) {
+            return CSCommonUtils.gson.toJson(t);
+        }
+        return null;
     }
-    return null;
-  }
 
-  public abstract T fromJson(String json) throws CSErrorException;
+    public abstract T fromJson(String json) throws CSErrorException;
 
-  @Override
-  public boolean accepts(String json) {
-    if (StringUtils.isNotBlank(json)) {
-      Map<String, String> value =
-          CSCommonUtils.gson.fromJson(json, new HashMap<String, String>().getClass());
-      if (getType().equals(value.get(TYPE))) {
-        return true;
-      }
+    @Override
+    public boolean accepts(String json) {
+        if (StringUtils.isNotBlank(json)) {
+            Map<String, String> value =
+                    CSCommonUtils.gson.fromJson(json, new HashMap<String, String>().getClass());
+            if (getType().equals(value.get(TYPE))) {
+                return true;
+            }
+        }
+        return false;
     }
-    return false;
-  }
 
-  @Override
-  public String serialize(T t) throws CSErrorException {
+    @Override
+    public String serialize(T t) throws CSErrorException {
 
-    if (accepts(t)) {
-      Map<String, String> map = new HashMap<>();
-      map.put(TYPE, getType());
-      map.put("value", getJsonValue(t));
-      return CSCommonUtils.gson.toJson(map);
+        if (accepts(t)) {
+            Map<String, String> map = new HashMap<>();
+            map.put(TYPE, getType());
+            map.put("value", getJsonValue(t));
+            return CSCommonUtils.gson.toJson(map);
+        }
+        return null;
     }
-    return null;
-  }
 
-  @Override
-  public T deserialize(String json) throws CSErrorException {
-    if (accepts(json)) {
-      Map<String, String> jsonObj =
-          CSCommonUtils.gson.fromJson(json, new HashMap<String, String>().getClass());
-      String value = jsonObj.get("value");
-      return fromJson(value);
+    @Override
+    public T deserialize(String json) throws CSErrorException {
+        if (accepts(json)) {
+            Map<String, String> jsonObj =
+                    CSCommonUtils.gson.fromJson(json, new HashMap<String, String>().getClass());
+            String value = jsonObj.get("value");
+            return fromJson(value);
+        }
+        return null;
     }
-    return null;
-  }
 
-  @Override
-  public boolean isType(String type) {
-    return getType().equals(type);
-  }
+    @Override
+    public boolean isType(String type) {
+        return getType().equals(type);
+    }
 }

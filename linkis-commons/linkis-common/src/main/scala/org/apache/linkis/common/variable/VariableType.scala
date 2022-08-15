@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -33,11 +33,9 @@ case class DateType(value: CustomDateType) extends VariableType {
     signal match {
       case "+" => value + bValue.toInt
       case "-" => value - bValue.toInt
-      case _ =>
-        throw new LinkisCommonErrorException(20046, s"DateType is not supported to use:$signal")
+      case _ => throw new LinkisCommonErrorException(20046, s"DateType is not supported to use:$signal")
     }
   }
-
 }
 
 case class MonthType(value: CustomMonthType) extends VariableType {
@@ -47,11 +45,9 @@ case class MonthType(value: CustomMonthType) extends VariableType {
     signal match {
       case "+" => value + bValue.toInt
       case "-" => value - bValue.toInt
-      case _ =>
-        throw new LinkisCommonErrorException(20046, s"MonthType is not supported to use:$signal")
+      case _ => throw new LinkisCommonErrorException(20046, s"MonthType is not supported to use:$signal")
     }
   }
-
 }
 
 case class MonType(value: CustomMonType) extends VariableType {
@@ -61,11 +57,9 @@ case class MonType(value: CustomMonType) extends VariableType {
     signal match {
       case "+" => value + bValue.toInt
       case "-" => value - bValue.toInt
-      case _ =>
-        throw new LinkisCommonErrorException(20046, s"MonType is not supported to use:$signal")
+      case _ => throw new LinkisCommonErrorException(20046, s"MonType is not supported to use:$signal")
     }
   }
-
 }
 
 case class QuarterType(value: CustomQuarterType) extends VariableType {
@@ -75,14 +69,9 @@ case class QuarterType(value: CustomQuarterType) extends VariableType {
     signal match {
       case "+" => value + bValue.toInt
       case "-" => value - bValue.toInt
-      case _ =>
-        throw new LinkisCommonErrorException(
-          20046,
-          s"QuarterType is not supported to use:$signal"
-        )
+      case _ => throw new LinkisCommonErrorException(20046, s"QuarterType is not supported to use:$signal")
     }
   }
-
 }
 
 case class HalfYearType(value: CustomHalfYearType) extends VariableType {
@@ -92,14 +81,9 @@ case class HalfYearType(value: CustomHalfYearType) extends VariableType {
     signal match {
       case "+" => value + bValue.toInt
       case "-" => value - bValue.toInt
-      case _ =>
-        throw new LinkisCommonErrorException(
-          20046,
-          s"HalfYearType is not supported to use:$signal"
-        )
+      case _ => throw new LinkisCommonErrorException(20046, s"HalfYearType is not supported to use:$signal")
     }
   }
-
 }
 
 case class YearType(value: CustomYearType) extends VariableType {
@@ -109,11 +93,9 @@ case class YearType(value: CustomYearType) extends VariableType {
     signal match {
       case "+" => value + bValue.toInt
       case "-" => value - bValue.toInt
-      case _ =>
-        throw new LinkisCommonErrorException(20046, s"YearType is not supported to use:$signal")
+      case _ => throw new LinkisCommonErrorException(20046, s"YearType is not supported to use:$signal")
     }
   }
-
 }
 
 case class LongType(value: Long) extends VariableType {
@@ -125,11 +107,9 @@ case class LongType(value: Long) extends VariableType {
       case "-" => val res = value - bValue.toLong; res.toString
       case "*" => val res = value * bValue.toLong; res.toString
       case "/" => val res = value / bValue.toLong; res.toString
-      case _ =>
-        throw new LinkisCommonErrorException(20047, s"LongType is not supported to use:$signal")
+      case _ => throw new LinkisCommonErrorException(20047, s"LongType is not supported to use:$signal")
     }
   }
-
 }
 
 case class DoubleValue(value: Double) extends VariableType {
@@ -141,11 +121,7 @@ case class DoubleValue(value: Double) extends VariableType {
       case "-" => val res = value - bValue.toDouble; doubleOrLong(res).toString
       case "*" => val res = value * bValue.toDouble; doubleOrLong(res).toString
       case "/" => val res = value / bValue.toDouble; doubleOrLong(res).toString
-      case _ =>
-        throw new LinkisCommonErrorException(
-          20047,
-          s"Double class is not supported to use:$signal"
-        )
+      case _ => throw new LinkisCommonErrorException(20047, s"Double class is not supported to use:$signal")
     }
   }
 
@@ -154,6 +130,7 @@ case class DoubleValue(value: Double) extends VariableType {
   }
 
 }
+
 
 case class FloatType(value: Float) extends VariableType {
   override def getValue: String = floatOrLong(value).toString
@@ -164,11 +141,7 @@ case class FloatType(value: Float) extends VariableType {
       case "-" => val res = value - bValue.toFloat; floatOrLong(res).toString
       case "*" => val res = value * bValue.toFloat; floatOrLong(res).toString
       case "/" => val res = value / bValue.toLong; floatOrLong(res).toString
-      case _ =>
-        throw new LinkisCommonErrorException(
-          20048,
-          s"Float class is not supported to use:$signal"
-        )
+      case _ => throw new LinkisCommonErrorException(20048, s"Float class is not supported to use:$signal")
     }
   }
 
@@ -184,14 +157,9 @@ case class StringType(value: String) extends VariableType {
   def calculator(signal: String, bValue: String): String = {
     signal match {
       case "+" => value + bValue
-      case _ =>
-        throw new LinkisCommonErrorException(
-          20049,
-          s"String class is not supported to use:$signal"
-        )
+      case _ => throw new LinkisCommonErrorException(20049, s"String class is not supported to use:$signal")
     }
   }
-
 }
 
 case class HourType(value: CustomHourType) extends VariableType {
@@ -201,9 +169,7 @@ case class HourType(value: CustomHourType) extends VariableType {
     signal match {
       case "+" => value + bValue.toInt
       case "-" => value - bValue.toInt
-      case _ =>
-        throw new LinkisCommonErrorException(20046, s"HourType is not supported to use:$signal")
+      case _ => throw new LinkisCommonErrorException(20046, s"HourType is not supported to use:$signal")
     }
   }
-
 }

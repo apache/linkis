@@ -14,31 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.linkis.engineplugin.presto.conf
 
+import java.util
+
 import org.apache.linkis.common.conf.Configuration
-import org.apache.linkis.governance.common.protocol.conf.{
-  RequestQueryEngineConfigWithGlobalConfig,
-  ResponseQueryConfig
-}
+import org.apache.linkis.governance.common.protocol.conf.{RequestQueryEngineConfigWithGlobalConfig, ResponseQueryConfig}
 import org.apache.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
 import org.apache.linkis.protocol.CacheableProtocol
 import org.apache.linkis.rpc.RPCMapCache
 
-import java.util
+object PrestoEngineConf extends RPCMapCache[(UserCreatorLabel, EngineTypeLabel), String, String](Configuration.CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME.getValue) {
 
-object PrestoEngineConf
-    extends RPCMapCache[(UserCreatorLabel, EngineTypeLabel), String, String](
-      Configuration.CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME.getValue
-    ) {
-
-  override protected def createRequest(
-      labelTuple: (UserCreatorLabel, EngineTypeLabel)
-  ): CacheableProtocol = {
+  override protected def createRequest(labelTuple: (UserCreatorLabel, EngineTypeLabel)): CacheableProtocol = {
     RequestQueryEngineConfigWithGlobalConfig(labelTuple._1, labelTuple._2)
   }
-
   override protected def createMap(any: Any): util.Map[String, String] = any match {
     case response: ResponseQueryConfig => response.getKeyAndValue
   }

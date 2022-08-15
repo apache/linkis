@@ -25,51 +25,52 @@ import org.apache.linkis.cs.common.entity.source.ContextValue;
 import org.apache.linkis.cs.common.exception.CSErrorException;
 import org.apache.linkis.cs.exception.ContextSearchFailedException;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-
 public abstract class ContextService extends AbstractService {
 
-  public abstract ContextValue getContextValue(ContextID contextID, ContextKey contextKey);
+    public abstract ContextValue getContextValue(ContextID contextID, ContextKey contextKey);
 
-  public abstract List<ContextKeyValue> searchContextValue(
-      ContextID contextID, Map<Object, Object> conditionMap) throws ContextSearchFailedException;
+    public abstract List<ContextKeyValue> searchContextValue(
+            ContextID contextID, Map<Object, Object> conditionMap)
+            throws ContextSearchFailedException;
 
-  // public abstract List<ContextKeyValue> searchContextValueByCondition(Condition condition)
-  // throws ContextSearchFailedException;
+    // public abstract List<ContextKeyValue> searchContextValueByCondition(Condition condition)
+    // throws ContextSearchFailedException;
 
-  public abstract void setValueByKey(
-      ContextID contextID, ContextKey contextKey, ContextValue contextValue)
-      throws CSErrorException, ClassNotFoundException, JsonProcessingException;
+    public abstract void setValueByKey(
+            ContextID contextID, ContextKey contextKey, ContextValue contextValue)
+            throws CSErrorException, ClassNotFoundException, JsonProcessingException;
 
-  public abstract void setValue(ContextID contextID, ContextKeyValue contextKeyValuee)
-      throws CSErrorException, ClassNotFoundException, JsonProcessingException;
+    public abstract void setValue(ContextID contextID, ContextKeyValue contextKeyValuee)
+            throws CSErrorException, ClassNotFoundException, JsonProcessingException;
 
-  public abstract void resetValue(ContextID contextID, ContextKey contextKey)
-      throws CSErrorException;
+    public abstract void resetValue(ContextID contextID, ContextKey contextKey)
+            throws CSErrorException;
 
-  public abstract void removeValue(ContextID contextID, ContextKey contextKey)
-      throws CSErrorException;
+    public abstract void removeValue(ContextID contextID, ContextKey contextKey)
+            throws CSErrorException;
 
-  public abstract void removeAllValue(ContextID contextID) throws CSErrorException;
+    public abstract void removeAllValue(ContextID contextID) throws CSErrorException;
 
-  public abstract void removeAllValueByKeyPrefixAndContextType(
-      ContextID contextID, ContextType contextType, String keyPrefix) throws CSErrorException;
+    public abstract void removeAllValueByKeyPrefixAndContextType(
+            ContextID contextID, ContextType contextType, String keyPrefix) throws CSErrorException;
 
-  public abstract void removeAllValueByKeyPrefix(ContextID contextID, String keyPrefix)
-      throws CSErrorException;
+    public abstract void removeAllValueByKeyPrefix(ContextID contextID, String keyPrefix)
+            throws CSErrorException;
 
-  public abstract int clearAllContextByID(List<String> idList) throws CSErrorException;
+    public abstract int clearAllContextByID(List<String> idList) throws CSErrorException;
 
-  public abstract int clearAllContextByTime(
-      Date createTimeStart,
-      Date createTimeEnd,
-      Date updateTimeStart,
-      Date updateTimeEnd,
-      Date accessTimeStart,
-      Date accessTimeEnd)
-      throws CSErrorException;
+    public abstract int clearAllContextByTime(
+            Date createTimeStart,
+            Date createTimeEnd,
+            Date updateTimeStart,
+            Date updateTimeEnd,
+            Date accessTimeStart,
+            Date accessTimeEnd)
+            throws CSErrorException;
 }

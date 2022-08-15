@@ -23,26 +23,29 @@ import org.apache.linkis.cli.common.exception.error.ErrorLevel;
 import org.apache.linkis.cli.core.exception.CommandException;
 import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class SingleTplFitter extends AbstractFitter {
-  private static final Logger logger = LoggerFactory.getLogger(SingleTplFitter.class);
+    private static final Logger logger = LoggerFactory.getLogger(SingleTplFitter.class);
 
-  @Override
-  public FitterResult fit(String[] input, CmdTemplate templateCopy)
-      throws LinkisClientRuntimeException {
+    @Override
+    public FitterResult fit(String[] input, CmdTemplate templateCopy)
+            throws LinkisClientRuntimeException {
 
-    if (input == null || templateCopy == null || input.length == 0) {
-      throw new CommandException(
-          "CMD0009", ErrorLevel.ERROR, CommonErrMsg.TemplateFitErr, "input or template is null");
+        if (input == null || templateCopy == null || input.length == 0) {
+            throw new CommandException(
+                    "CMD0009",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.TemplateFitErr,
+                    "input or template is null");
+        }
+
+        List<String> remains = new ArrayList<>();
+        templateCopy = this.doFit(input, templateCopy, remains); // this changes remains List
+        return new FitterResult(remains.toArray(new String[remains.size()]), templateCopy);
     }
-
-    List<String> remains = new ArrayList<>();
-    templateCopy = this.doFit(input, templateCopy, remains); // this changes remains List
-    return new FitterResult(remains.toArray(new String[remains.size()]), templateCopy);
-  }
 }

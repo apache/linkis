@@ -46,144 +46,148 @@ import static org.apache.linkis.engineconnplugin.flink.client.sql.operation.resu
 /** Json deserializer for {@link ResultSet}. */
 public class ResultSetJsonDeserializer extends StdDeserializer<ResultSet> {
 
-  protected ResultSetJsonDeserializer() {
-    super(ResultSet.class);
-  }
-
-  @Override
-  public ResultSet deserialize(JsonParser jsonParser, DeserializationContext ctx)
-      throws IOException {
-    JsonNode node = jsonParser.getCodec().readTree(jsonParser);
-
-    ResultKind resultKind;
-    List<ColumnInfo> columns;
-    List<Boolean> changeFlags = null;
-    List<Row> data;
-
-    JsonNode resultKindNode = node.get(FIELD_NAME_RESULT_KIND);
-    if (resultKindNode != null) {
-      JsonParser resultKindParser = node.get(FIELD_NAME_RESULT_KIND).traverse();
-      resultKindParser.nextToken();
-      resultKind = ctx.readValue(resultKindParser, ResultKind.class);
-    } else {
-      throw new JsonParseException(jsonParser, "Field resultKind must be provided");
+    protected ResultSetJsonDeserializer() {
+        super(ResultSet.class);
     }
 
-    JsonNode columnNode = node.get(FIELD_NAME_COLUMNS);
-    if (columnNode != null) {
-      JsonParser columnParser = node.get(FIELD_NAME_COLUMNS).traverse();
-      columnParser.nextToken();
-      columns = Arrays.asList(ctx.readValue(columnParser, ColumnInfo[].class));
-    } else {
-      throw new JsonParseException(jsonParser, "Field column must be provided");
+    @Override
+    public ResultSet deserialize(JsonParser jsonParser, DeserializationContext ctx)
+            throws IOException {
+        JsonNode node = jsonParser.getCodec().readTree(jsonParser);
+
+        ResultKind resultKind;
+        List<ColumnInfo> columns;
+        List<Boolean> changeFlags = null;
+        List<Row> data;
+
+        JsonNode resultKindNode = node.get(FIELD_NAME_RESULT_KIND);
+        if (resultKindNode != null) {
+            JsonParser resultKindParser = node.get(FIELD_NAME_RESULT_KIND).traverse();
+            resultKindParser.nextToken();
+            resultKind = ctx.readValue(resultKindParser, ResultKind.class);
+        } else {
+            throw new JsonParseException(jsonParser, "Field resultKind must be provided");
+        }
+
+        JsonNode columnNode = node.get(FIELD_NAME_COLUMNS);
+        if (columnNode != null) {
+            JsonParser columnParser = node.get(FIELD_NAME_COLUMNS).traverse();
+            columnParser.nextToken();
+            columns = Arrays.asList(ctx.readValue(columnParser, ColumnInfo[].class));
+        } else {
+            throw new JsonParseException(jsonParser, "Field column must be provided");
+        }
+
+        JsonNode changeFlagNode = node.get(FIELD_NAME_CHANGE_FLAGS);
+        if (changeFlagNode != null) {
+            JsonParser changeFlagParser = changeFlagNode.traverse();
+            changeFlagParser.nextToken();
+            changeFlags = Arrays.asList(ctx.readValue(changeFlagParser, Boolean[].class));
+        }
+
+        JsonNode dataNode = node.get(FIELD_NAME_DATA);
+        if (dataNode != null) {
+            data = deserializeRows(columns, dataNode, ctx);
+        } else {
+            throw new JsonParseException(jsonParser, "Field data must be provided");
+        }
+
+        return ResultSet.builder()
+                .resultKind(resultKind)
+                .columns(columns)
+                .data(data)
+                .changeFlags(changeFlags)
+                .build();
     }
 
-    JsonNode changeFlagNode = node.get(FIELD_NAME_CHANGE_FLAGS);
-    if (changeFlagNode != null) {
-      JsonParser changeFlagParser = changeFlagNode.traverse();
-      changeFlagParser.nextToken();
-      changeFlags = Arrays.asList(ctx.readValue(changeFlagParser, Boolean[].class));
+    private List<Row> deserializeRows(
+            List<ColumnInfo> columns, JsonNode dataNode, DeserializationContext ctx)
+            throws IOException {
+        if (!dataNode.isArray()) {
+            throw new JsonParseException(
+                    dataNode.traverse(), "Expecting data to be an array but it's not");
+        }
+
+        List<RowType.RowField> fields = new ArrayList<>();
+        for (ColumnInfo column : columns) {
+            fields.add(new RowType.RowField(column.getName(), column.getLogicalType()));
+        }
+        RowType rowType = new RowType(fields);
+
+        List<Row> data = new ArrayList<>();
+        for (JsonNode rowNode : dataNode) {
+            data.add(deserializeRow(rowType, rowNode, ctx));
+        }
+        return data;
     }
 
-    JsonNode dataNode = node.get(FIELD_NAME_DATA);
-    if (dataNode != null) {
-      data = deserializeRows(columns, dataNode, ctx);
-    } else {
-      throw new JsonParseException(jsonParser, "Field data must be provided");
+    private LocalDate deserializeLocalDate(JsonParser parser, DeserializationContext ctx)
+            throws IOException {
+        return LocalDate.parse(ctx.readValue(parser, String.class));
     }
 
-    return ResultSet.builder()
-        .resultKind(resultKind)
-        .columns(columns)
-        .data(data)
-        .changeFlags(changeFlags)
-        .build();
-  }
-
-  private List<Row> deserializeRows(
-      List<ColumnInfo> columns, JsonNode dataNode, DeserializationContext ctx) throws IOException {
-    if (!dataNode.isArray()) {
-      throw new JsonParseException(
-          dataNode.traverse(), "Expecting data to be an array but it's not");
+    private LocalTime deserializeLocalTime(JsonParser parser, DeserializationContext ctx)
+            throws IOException {
+        return LocalTime.parse(ctx.readValue(parser, String.class));
     }
 
-    List<RowType.RowField> fields = new ArrayList<>();
-    for (ColumnInfo column : columns) {
-      fields.add(new RowType.RowField(column.getName(), column.getLogicalType()));
-    }
-    RowType rowType = new RowType(fields);
-
-    List<Row> data = new ArrayList<>();
-    for (JsonNode rowNode : dataNode) {
-      data.add(deserializeRow(rowType, rowNode, ctx));
-    }
-    return data;
-  }
-
-  private LocalDate deserializeLocalDate(JsonParser parser, DeserializationContext ctx)
-      throws IOException {
-    return LocalDate.parse(ctx.readValue(parser, String.class));
-  }
-
-  private LocalTime deserializeLocalTime(JsonParser parser, DeserializationContext ctx)
-      throws IOException {
-    return LocalTime.parse(ctx.readValue(parser, String.class));
-  }
-
-  private LocalDateTime deserializeLocalDateTime(JsonParser parser, DeserializationContext ctx)
-      throws IOException {
-    return LocalDateTime.parse(ctx.readValue(parser, String.class));
-  }
-
-  private Row deserializeRow(RowType type, JsonNode node, DeserializationContext ctx)
-      throws IOException {
-    if (!node.isArray()) {
-      throw new JsonParseException(node.traverse(), "Expecting row to be an array but it's not");
+    private LocalDateTime deserializeLocalDateTime(JsonParser parser, DeserializationContext ctx)
+            throws IOException {
+        return LocalDateTime.parse(ctx.readValue(parser, String.class));
     }
 
-    int fieldCount = type.getFieldCount();
-    List<RowType.RowField> fields = type.getFields();
-    Row row = new Row(fieldCount);
+    private Row deserializeRow(RowType type, JsonNode node, DeserializationContext ctx)
+            throws IOException {
+        if (!node.isArray()) {
+            throw new JsonParseException(
+                    node.traverse(), "Expecting row to be an array but it's not");
+        }
 
-    int i = 0;
-    for (JsonNode fieldNode : node) {
-      if (i >= fieldCount) {
-        throw new JsonParseException(
-            node.traverse(), "Number of columns in the row is not consistent with column infos");
-      }
-      row.setField(i, deserializeObject(fields.get(i).getType(), fieldNode, ctx));
-      i++;
-    }
-    if (i != fieldCount) {
-      throw new JsonParseException(
-          node.traverse(), "Number of columns in the row is not consistent with column infos");
-    }
+        int fieldCount = type.getFieldCount();
+        List<RowType.RowField> fields = type.getFields();
+        Row row = new Row(fieldCount);
 
-    return row;
-  }
+        int i = 0;
+        for (JsonNode fieldNode : node) {
+            if (i >= fieldCount) {
+                throw new JsonParseException(
+                        node.traverse(),
+                        "Number of columns in the row is not consistent with column infos");
+            }
+            row.setField(i, deserializeObject(fields.get(i).getType(), fieldNode, ctx));
+            i++;
+        }
+        if (i != fieldCount) {
+            throw new JsonParseException(
+                    node.traverse(),
+                    "Number of columns in the row is not consistent with column infos");
+        }
 
-  private Object deserializeObject(LogicalType type, JsonNode node, DeserializationContext ctx)
-      throws IOException {
-    if (type instanceof RowType) {
-      return deserializeRow((RowType) type, node, ctx);
-    }
-
-    JsonParser parser = node.traverse();
-    parser.nextToken();
-    if (parser.currentToken() == JsonToken.VALUE_NULL) {
-      // we have to manually parse null value
-      // as jackson refuses to deserialize null value to java objects
-      return null;
+        return row;
     }
 
-    if (type instanceof DateType) {
-      return deserializeLocalDate(parser, ctx);
-    } else if (type instanceof TimeType) {
-      return deserializeLocalTime(parser, ctx);
-    } else if (type instanceof TimestampType) {
-      return deserializeLocalDateTime(parser, ctx);
-    } else {
-      return ctx.readValue(parser, type.getDefaultConversion());
+    private Object deserializeObject(LogicalType type, JsonNode node, DeserializationContext ctx)
+            throws IOException {
+        if (type instanceof RowType) {
+            return deserializeRow((RowType) type, node, ctx);
+        }
+
+        JsonParser parser = node.traverse();
+        parser.nextToken();
+        if (parser.currentToken() == JsonToken.VALUE_NULL) {
+            // we have to manually parse null value
+            // as jackson refuses to deserialize null value to java objects
+            return null;
+        }
+
+        if (type instanceof DateType) {
+            return deserializeLocalDate(parser, ctx);
+        } else if (type instanceof TimeType) {
+            return deserializeLocalTime(parser, ctx);
+        } else if (type instanceof TimestampType) {
+            return deserializeLocalDateTime(parser, ctx);
+        } else {
+            return ctx.readValue(parser, type.getDefaultConversion());
+        }
     }
-  }
 }

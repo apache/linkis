@@ -24,13 +24,13 @@ import java.io.Closeable;
 
 public interface Service extends Closeable {
 
-  void init();
+    void init();
 
-  void start();
+    void start();
 
-  String getName();
+    String getName();
 
-  boolean ifAccept(HttpJob job);
+    boolean ifAccept(HttpJob job);
 
-  void accept(HttpJob job) throws CSWarnException;
+    void accept(HttpJob job) throws CSWarnException;
 }

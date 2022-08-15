@@ -18,5 +18,5 @@
 package org.apache.linkis.cli.core.utils.converter;
 
 public interface Converter<FROM, TO> {
-  TO convert(FROM from);
+    TO convert(FROM from);
 }

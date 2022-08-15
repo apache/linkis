@@ -25,65 +25,68 @@ import java.util.List;
 
 public class DataSourceVo extends PageViewVo {
 
-  private String dataSourceName;
+    private String dataSourceName;
 
-  private Long dataSourceTypeId;
+    private Long dataSourceTypeId;
 
-  private List<String> createIdentifyList = new ArrayList<>();
+    private List<String> createIdentifyList = new ArrayList<>();
 
-  private String createSystem;
+    private String createSystem;
 
-  private String permissionUser;
+    private String permissionUser;
 
-  public DataSourceVo() {}
+    public DataSourceVo() {}
 
-  public DataSourceVo(
-      String dataSourceName, Long dataSourceTypeId, String createIdentifies, String createSystem) {
-    this.dataSourceName = dataSourceName;
-    this.dataSourceTypeId = dataSourceTypeId;
-    if (StringUtils.isNotBlank(createIdentifies)) {
-      createIdentifyList.addAll(Arrays.asList(createIdentifies.split(",")));
+    public DataSourceVo(
+            String dataSourceName,
+            Long dataSourceTypeId,
+            String createIdentifies,
+            String createSystem) {
+        this.dataSourceName = dataSourceName;
+        this.dataSourceTypeId = dataSourceTypeId;
+        if (StringUtils.isNotBlank(createIdentifies)) {
+            createIdentifyList.addAll(Arrays.asList(createIdentifies.split(",")));
+        }
+        this.createSystem = createSystem;
     }
-    this.createSystem = createSystem;
-  }
 
-  public String getDataSourceName() {
-    return dataSourceName;
-  }
+    public String getDataSourceName() {
+        return dataSourceName;
+    }
 
-  public void setDataSourceName(String dataSourceName) {
-    this.dataSourceName = dataSourceName;
-  }
+    public void setDataSourceName(String dataSourceName) {
+        this.dataSourceName = dataSourceName;
+    }
 
-  public Long getDataSourceTypeId() {
-    return dataSourceTypeId;
-  }
+    public Long getDataSourceTypeId() {
+        return dataSourceTypeId;
+    }
 
-  public void setDataSourceTypeId(Long dataSourceTypeId) {
-    this.dataSourceTypeId = dataSourceTypeId;
-  }
+    public void setDataSourceTypeId(Long dataSourceTypeId) {
+        this.dataSourceTypeId = dataSourceTypeId;
+    }
 
-  public String getCreateSystem() {
-    return createSystem;
-  }
+    public String getCreateSystem() {
+        return createSystem;
+    }
 
-  public void setCreateSystem(String createSystem) {
-    this.createSystem = createSystem;
-  }
+    public void setCreateSystem(String createSystem) {
+        this.createSystem = createSystem;
+    }
 
-  public List<String> getCreateIdentifyList() {
-    return createIdentifyList;
-  }
+    public List<String> getCreateIdentifyList() {
+        return createIdentifyList;
+    }
 
-  public void setCreateIdentifyList(List<String> createIdentifyList) {
-    this.createIdentifyList = createIdentifyList;
-  }
+    public void setCreateIdentifyList(List<String> createIdentifyList) {
+        this.createIdentifyList = createIdentifyList;
+    }
 
-  public String getPermissionUser() {
-    return permissionUser;
-  }
+    public String getPermissionUser() {
+        return permissionUser;
+    }
 
-  public void setPermissionUser(String permissionUser) {
-    this.permissionUser = permissionUser;
-  }
+    public void setPermissionUser(String permissionUser) {
+        this.permissionUser = permissionUser;
+    }
 }

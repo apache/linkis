@@ -21,12 +21,12 @@ import org.apache.linkis.common.exception.WarnException;
 
 public class CSWarnException extends WarnException {
 
-  public CSWarnException(int errCode, String desc) {
-    super(errCode, desc);
-  }
+    public CSWarnException(int errCode, String desc) {
+        super(errCode, desc);
+    }
 
-  public CSWarnException(int errCode, String desc, Throwable e) {
-    super(errCode, desc);
-    this.initCause(e);
-  }
+    public CSWarnException(int errCode, String desc, Throwable e) {
+        super(errCode, desc);
+        this.initCause(e);
+    }
 }

@@ -19,9 +19,9 @@ package org.apache.linkis.cli.common.entity.command;
 
 public interface CmdType extends Cloneable {
 
-  int getId();
+    int getId();
 
-  String getName();
+    String getName();
 
-  String getDesc();
+    String getDesc();
 }

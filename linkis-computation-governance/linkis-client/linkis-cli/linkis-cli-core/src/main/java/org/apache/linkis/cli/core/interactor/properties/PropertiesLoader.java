@@ -21,15 +21,15 @@ import org.apache.linkis.cli.common.entity.properties.ClientProperties;
 import org.apache.linkis.cli.core.interactor.properties.reader.PropertiesReader;
 
 public interface PropertiesLoader {
-  PropertiesLoader setPropertiesReaders(PropertiesReader[] readers);
+    PropertiesLoader setPropertiesReaders(PropertiesReader[] readers);
 
-  PropertiesLoader addPropertiesReader(PropertiesReader reader);
+    PropertiesLoader addPropertiesReader(PropertiesReader reader);
 
-  PropertiesLoader addPropertiesReaders(PropertiesReader[] readers);
+    PropertiesLoader addPropertiesReaders(PropertiesReader[] readers);
 
-  void removePropertiesReader(String identifier);
+    void removePropertiesReader(String identifier);
 
-  ClientProperties[] loadProperties();
+    ClientProperties[] loadProperties();
 
-  void checkInit();
+    void checkInit();
 }

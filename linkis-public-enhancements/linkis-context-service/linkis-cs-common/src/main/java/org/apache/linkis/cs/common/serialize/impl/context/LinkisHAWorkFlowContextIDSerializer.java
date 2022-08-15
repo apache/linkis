@@ -23,23 +23,24 @@ import org.apache.linkis.cs.common.serialize.AbstractSerializer;
 import org.apache.linkis.cs.common.utils.CSCommonUtils;
 
 public class LinkisHAWorkFlowContextIDSerializer
-    extends AbstractSerializer<LinkisHAWorkFlowContextID> {
+        extends AbstractSerializer<LinkisHAWorkFlowContextID> {
 
-  @Override
-  public String getType() {
-    return "HAWorkFlowContextID";
-  }
-
-  @Override
-  public LinkisHAWorkFlowContextID fromJson(String json) throws CSErrorException {
-    return CSCommonUtils.gson.fromJson(json, LinkisHAWorkFlowContextID.class);
-  }
-
-  @Override
-  public boolean accepts(Object obj) {
-    if (null != obj && obj.getClass().getName().equals(LinkisHAWorkFlowContextID.class.getName())) {
-      return true;
+    @Override
+    public String getType() {
+        return "HAWorkFlowContextID";
     }
-    return false;
-  }
+
+    @Override
+    public LinkisHAWorkFlowContextID fromJson(String json) throws CSErrorException {
+        return CSCommonUtils.gson.fromJson(json, LinkisHAWorkFlowContextID.class);
+    }
+
+    @Override
+    public boolean accepts(Object obj) {
+        if (null != obj
+                && obj.getClass().getName().equals(LinkisHAWorkFlowContextID.class.getName())) {
+            return true;
+        }
+        return false;
+    }
 }

@@ -32,17 +32,17 @@ import java.util.List;
 
 /** Operation for SHOW FUNCTIONS command. */
 public class ShowFunctionsOperation implements NonJobOperation {
-  private final ExecutionContext context;
+    private final ExecutionContext context;
 
-  public ShowFunctionsOperation(FlinkEngineConnContext context) {
-    this.context = context.getExecutionContext();
-  }
+    public ShowFunctionsOperation(FlinkEngineConnContext context) {
+        this.context = context.getExecutionContext();
+    }
 
-  @Override
-  public ResultSet execute() throws SqlExecutionException {
-    final TableEnvironment tableEnv = context.getTableEnvironment();
-    final List<String> functions =
-        context.wrapClassLoader(() -> Arrays.asList(tableEnv.listFunctions()));
-    return OperationUtil.stringListToResultSet(functions, ConstantNames.SHOW_FUNCTIONS_RESULT);
-  }
+    @Override
+    public ResultSet execute() throws SqlExecutionException {
+        final TableEnvironment tableEnv = context.getTableEnvironment();
+        final List<String> functions =
+                context.wrapClassLoader(() -> Arrays.asList(tableEnv.listFunctions()));
+        return OperationUtil.stringListToResultSet(functions, ConstantNames.SHOW_FUNCTIONS_RESULT);
+    }
 }

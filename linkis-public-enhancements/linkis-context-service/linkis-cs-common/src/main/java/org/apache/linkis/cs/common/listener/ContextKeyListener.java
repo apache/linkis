@@ -22,9 +22,9 @@ import org.apache.linkis.cs.common.entity.source.ContextKeyValue;
 
 public interface ContextKeyListener {
 
-  void onUpdated(ContextID contextID, ContextKeyValue contextKeyValue);
+    void onUpdated(ContextID contextID, ContextKeyValue contextKeyValue);
 
-  void onRemoved(ContextID contextID, ContextKeyValue contextKeyValue);
+    void onRemoved(ContextID contextID, ContextKeyValue contextKeyValue);
 
-  void onReset(ContextID contextID, ContextKeyValue contextKeyValue);
+    void onReset(ContextID contextID, ContextKeyValue contextKeyValue);
 }

@@ -17,12 +17,12 @@
 
 package org.apache.linkis.computation.client.operator.impl
 
+import java.util
+
 import org.apache.linkis.computation.client.once.action.EngineConnOperateAction
 import org.apache.linkis.computation.client.once.result.EngineConnOperateResult
 import org.apache.linkis.computation.client.operator.OnceJobOperator
 import org.apache.linkis.ujes.client.exception.UJESJobException
-
-import java.util
 
 class EngineConnCommonOperator extends OnceJobOperator[util.Map[String, Any]] {
 
@@ -33,19 +33,17 @@ class EngineConnCommonOperator extends OnceJobOperator[util.Map[String, Any]] {
 
   def addParameter(key: String, value: Any): Unit = parameters.put(key, value)
 
-  override protected def resultToObject(result: EngineConnOperateResult): util.Map[String, Any] =
-    result.getResult
+  override protected def resultToObject(result: EngineConnOperateResult): util.Map[String, Any] = result.getResult
 
   override protected def addParameters(builder: EngineConnOperateAction.Builder): Unit = {
-    if (operatorName == null) throw new UJESJobException(20310, "realOperatorName must be set!")
+    if(operatorName == null) throw new UJESJobException(20310, "realOperatorName must be set!")
     builder.operatorName(operatorName)
-    if (!parameters.isEmpty) builder.setParameters(parameters)
+    if(!parameters.isEmpty) builder.setParameters(parameters)
   }
 
   override def getName: String = EngineConnCommonOperator.OPERATOR_NAME
 
 }
-
 object EngineConnCommonOperator {
   val OPERATOR_NAME = "engineConnCommon"
 }

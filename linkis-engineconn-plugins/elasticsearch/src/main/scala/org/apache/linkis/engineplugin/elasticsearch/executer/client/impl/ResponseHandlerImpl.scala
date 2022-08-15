@@ -14,32 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.linkis.engineplugin.elasticsearch.executer.client.impl
 
+import java.nio.charset.Charset
+import com.fasterxml.jackson.databind.node.{ArrayNode, ObjectNode}
 import org.apache.linkis.common.utils.Utils
-import org.apache.linkis.engineplugin.elasticsearch.exception.EsConvertResponseException
-import org.apache.linkis.engineplugin.elasticsearch.executer.client.{
-  ElasticSearchJsonResponse,
-  ElasticSearchResponse,
-  ElasticSearchTableResponse,
-  ResponseHandler
-}
-import org.apache.linkis.engineplugin.elasticsearch.executer.client.ResponseHandler
 import org.apache.linkis.engineplugin.elasticsearch.executer.client.ResponseHandler._
+import org.apache.linkis.engineplugin.elasticsearch.executer.client.ResponseHandler
 import org.apache.linkis.storage.domain._
 import org.apache.linkis.storage.resultset.table.TableRecord
-
 import org.apache.http.entity.ContentType
 import org.apache.http.util.EntityUtils
-
-import java.nio.charset.Charset
+import org.apache.linkis.engineplugin.elasticsearch.exception.EsConvertResponseException
+import org.apache.linkis.engineplugin.elasticsearch.executer.client.{ElasticSearchJsonResponse, ElasticSearchResponse, ElasticSearchTableResponse, ResponseHandler}
+import org.elasticsearch.client.Response
 
 import scala.collection.JavaConverters._
 import scala.collection.mutable.ArrayBuffer
-
-import com.fasterxml.jackson.databind.node.{ArrayNode, ObjectNode}
-import org.elasticsearch.client.Response
 
 class ResponseHandlerImpl extends ResponseHandler {
 
@@ -53,13 +44,10 @@ class ResponseHandlerImpl extends ResponseHandler {
     val contentBytes = EntityUtils.toByteArray(response.getEntity)
 
     if (contentBytes == null || contentBytes.isEmpty) {
-      throw EsConvertResponseException(
-        "EsEngineExecutor convert response fail, response content is empty."
-      )
+      throw EsConvertResponseException("EsEngineExecutor convert response fail, response content is empty.")
     }
 
-    val jsonNode = Utils.tryCatch {
-      contentType match {
+    val jsonNode = Utils.tryCatch{ contentType match {
         case "application/yaml" =>
           yamlMapper.readTree(contentBytes)
         case "application/cbor" =>
@@ -95,37 +83,31 @@ class ResponseHandlerImpl extends ResponseHandler {
         hits.asScala.foreach {
           case obj: ObjectNode => {
             val lineValues = new Array[Any](columns.length).toBuffer
-            obj
-              .fields()
-              .asScala
-              .foreach(entry => {
-                val key = entry.getKey
-                val value = entry.getValue
-                if ("_source".equals(key.trim)) {
-                  value
-                    .fields()
-                    .asScala
-                    .foreach(sourceEntry => {
-                      val sourcekey = sourceEntry.getKey
-                      val sourcevalue = sourceEntry.getValue
-                      val index = columns.indexWhere(_.columnName.equals(sourcekey))
-                      if (index < 0) {
-                        columns += Column(sourcekey, getNodeDataType(sourcevalue), "")
-                        lineValues += getNodeValue(sourcevalue)
-                      } else {
-                        lineValues(index) = getNodeValue(sourcevalue)
-                      }
-                    })
-                } else {
-                  val index = columns.indexWhere(_.columnName.equals(key))
+            obj.fields().asScala.foreach(entry => {
+              val key = entry.getKey
+              val value = entry.getValue
+              if ("_source".equals(key.trim)) {
+                value.fields().asScala.foreach(sourceEntry => {
+                  val sourcekey = sourceEntry.getKey
+                  val sourcevalue = sourceEntry.getValue
+                  val index = columns.indexWhere(_.columnName.equals(sourcekey))
                   if (index < 0) {
-                    columns += Column(key, getNodeDataType(value), "")
-                    lineValues += getNodeValue(value)
+                    columns += Column(sourcekey, getNodeDataType(sourcevalue), "")
+                    lineValues += getNodeValue(sourcevalue)
                   } else {
-                    lineValues(index) = getNodeValue(value)
+                    lineValues(index) = getNodeValue(sourcevalue)
                   }
+                })
+              } else {
+                val index = columns.indexWhere(_.columnName.equals(key))
+                if (index < 0) {
+                  columns += Column(key, getNodeDataType(value), "")
+                  lineValues += getNodeValue(value)
+                } else {
+                  lineValues(index) = getNodeValue(value)
                 }
-              })
+              }
+            })
             records += new TableRecord(lineValues.toArray)
           }
           case _ =>
@@ -138,9 +120,7 @@ class ResponseHandlerImpl extends ResponseHandler {
     jsonNode.at("/rows") match {
       case rows: ArrayNode => {
         isTable = true
-        jsonNode
-          .get("columns")
-          .asInstanceOf[ArrayNode]
+        jsonNode.get("columns").asInstanceOf[ArrayNode]
           .asScala
           .foreach(node => {
             val name = node.get("name").asText()
@@ -167,5 +147,4 @@ class ResponseHandlerImpl extends ResponseHandler {
     }
   }
   // scalastyle:on
-
 }

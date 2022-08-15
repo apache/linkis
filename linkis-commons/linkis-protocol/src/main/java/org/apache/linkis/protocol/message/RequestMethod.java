@@ -19,7 +19,7 @@ package org.apache.linkis.protocol.message;
 
 public interface RequestMethod {
 
-  default String method() {
-    return null;
-  }
+    default String method() {
+        return null;
+    }
 }

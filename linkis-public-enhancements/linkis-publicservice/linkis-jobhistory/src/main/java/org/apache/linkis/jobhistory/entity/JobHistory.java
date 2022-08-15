@@ -23,220 +23,220 @@ import java.util.Date;
 
 public class JobHistory {
 
-  private Long id;
+    private Long id;
 
-  /*
-  ExecID
-   */
-  private String jobReqId;
+    /*
+    ExecID
+     */
+    private String jobReqId;
 
-  private String submitUser;
+    private String submitUser;
 
-  private String executeUser;
+    private String executeUser;
 
-  private String source;
+    private String source;
 
-  private String labels;
+    private String labels;
 
-  private String params;
+    private String params;
 
-  private String progress;
+    private String progress;
 
-  private String status;
+    private String status;
 
-  private String logPath;
+    private String logPath;
 
-  private Integer errorCode;
+    private Integer errorCode;
 
-  private String errorDesc;
+    private String errorDesc;
 
-  private Date createdTime;
+    private Date createdTime;
 
-  private Date updatedTime;
+    private Date updatedTime;
 
-  private String updateTimeMills;
+    private String updateTimeMills;
 
-  private String instances;
+    private String instances;
 
-  private String metrics;
+    private String metrics;
 
-  private String engineType;
+    private String engineType;
 
-  /*
-  Original execution code
-   */
-  private String executionCode;
+    /*
+    Original execution code
+     */
+    private String executionCode;
 
-  /** result location */
-  private String resultLocation;
+    /** result location */
+    private String resultLocation;
 
-  public Long getId() {
-    return id;
-  }
+    public Long getId() {
+        return id;
+    }
 
-  public void setId(Long id) {
-    this.id = id;
-  }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-  public String getJobReqId() {
-    return jobReqId;
-  }
+    public String getJobReqId() {
+        return jobReqId;
+    }
 
-  public void setJobReqId(String jobReqId) {
-    this.jobReqId = jobReqId;
-  }
+    public void setJobReqId(String jobReqId) {
+        this.jobReqId = jobReqId;
+    }
 
-  public String getSubmitUser() {
-    return submitUser;
-  }
+    public String getSubmitUser() {
+        return submitUser;
+    }
 
-  public void setSubmitUser(String submitUser) {
-    this.submitUser = submitUser;
-  }
+    public void setSubmitUser(String submitUser) {
+        this.submitUser = submitUser;
+    }
 
-  public String getExecuteUser() {
-    return executeUser;
-  }
+    public String getExecuteUser() {
+        return executeUser;
+    }
 
-  public void setExecuteUser(String executeUser) {
-    this.executeUser = executeUser;
-  }
+    public void setExecuteUser(String executeUser) {
+        this.executeUser = executeUser;
+    }
 
-  public String getSource() {
-    return source;
-  }
+    public String getSource() {
+        return source;
+    }
 
-  public void setSource(String source) {
-    this.source = source;
-  }
+    public void setSource(String source) {
+        this.source = source;
+    }
 
-  public String getLabels() {
-    return labels;
-  }
+    public String getLabels() {
+        return labels;
+    }
 
-  public void setLabels(String labels) {
-    this.labels = labels;
-  }
+    public void setLabels(String labels) {
+        this.labels = labels;
+    }
 
-  public String getParams() {
-    return params;
-  }
+    public String getParams() {
+        return params;
+    }
 
-  public void setParams(String params) {
-    this.params = params;
-  }
+    public void setParams(String params) {
+        this.params = params;
+    }
 
-  public String getProgress() {
-    return progress;
-  }
+    public String getProgress() {
+        return progress;
+    }
 
-  public void setProgress(String progress) {
-    this.progress = progress;
-  }
+    public void setProgress(String progress) {
+        this.progress = progress;
+    }
 
-  public String getStatus() {
-    return status;
-  }
+    public String getStatus() {
+        return status;
+    }
 
-  public void setStatus(String status) {
-    this.status = status;
-  }
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
-  public String getLogPath() {
-    return logPath;
-  }
+    public String getLogPath() {
+        return logPath;
+    }
 
-  public void setLogPath(String logPath) {
-    this.logPath = logPath;
-  }
+    public void setLogPath(String logPath) {
+        this.logPath = logPath;
+    }
 
-  public Integer getErrorCode() {
-    return errorCode;
-  }
+    public Integer getErrorCode() {
+        return errorCode;
+    }
 
-  public void setErrorCode(Integer errorCode) {
-    this.errorCode = errorCode;
-  }
+    public void setErrorCode(Integer errorCode) {
+        this.errorCode = errorCode;
+    }
 
-  public String getErrorDesc() {
-    return errorDesc;
-  }
+    public String getErrorDesc() {
+        return errorDesc;
+    }
 
-  public void setErrorDesc(String errorDesc) {
-    this.errorDesc = errorDesc;
-  }
+    public void setErrorDesc(String errorDesc) {
+        this.errorDesc = errorDesc;
+    }
 
-  public Date getCreatedTime() {
-    return createdTime;
-  }
+    public Date getCreatedTime() {
+        return createdTime;
+    }
 
-  public void setCreatedTime(Date createdTime) {
-    this.createdTime = createdTime;
-  }
+    public void setCreatedTime(Date createdTime) {
+        this.createdTime = createdTime;
+    }
 
-  public Date getUpdatedTime() {
-    return updatedTime;
-  }
+    public Date getUpdatedTime() {
+        return updatedTime;
+    }
 
-  public void setUpdatedTime(Date updatedTime) {
-    this.updatedTime = updatedTime;
-  }
+    public void setUpdatedTime(Date updatedTime) {
+        this.updatedTime = updatedTime;
+    }
 
-  public String getInstances() {
-    return instances;
-  }
+    public String getInstances() {
+        return instances;
+    }
 
-  public void setInstances(String instances) {
-    this.instances = instances;
-  }
+    public void setInstances(String instances) {
+        this.instances = instances;
+    }
 
-  public String getMetrics() {
-    return metrics;
-  }
+    public String getMetrics() {
+        return metrics;
+    }
 
-  public void setMetrics(String metrics) {
-    this.metrics = metrics;
-  }
+    public void setMetrics(String metrics) {
+        this.metrics = metrics;
+    }
 
-  public String getEngineType() {
-    return engineType;
-  }
+    public String getEngineType() {
+        return engineType;
+    }
 
-  public void setEngineType(String engineType) {
-    this.engineType = engineType;
-  }
+    public void setEngineType(String engineType) {
+        this.engineType = engineType;
+    }
 
-  public String getExecutionCode() {
-    return executionCode;
-  }
+    public String getExecutionCode() {
+        return executionCode;
+    }
 
-  public void setExecutionCode(String executionCode) {
-    this.executionCode = executionCode;
-  }
+    public void setExecutionCode(String executionCode) {
+        this.executionCode = executionCode;
+    }
 
-  public String getUpdateTimeMills() {
-    return QueryUtils.dateToString(getUpdatedTime());
-  }
+    public String getUpdateTimeMills() {
+        return QueryUtils.dateToString(getUpdatedTime());
+    }
 
-  public String getResultLocation() {
-    return resultLocation;
-  }
+    public String getResultLocation() {
+        return resultLocation;
+    }
 
-  public void setResultLocation(String resultLocation) {
-    this.resultLocation = resultLocation;
-  }
+    public void setResultLocation(String resultLocation) {
+        this.resultLocation = resultLocation;
+    }
 
-  @Override
-  public String toString() {
-    return "JobHistory{"
-        + "id="
-        + id
-        + ", jobReqId='"
-        + jobReqId
-        + '\''
-        + ", labels='"
-        + labels
-        + '\''
-        + '}';
-  }
+    @Override
+    public String toString() {
+        return "JobHistory{"
+                + "id="
+                + id
+                + ", jobReqId='"
+                + jobReqId
+                + '\''
+                + ", labels='"
+                + labels
+                + '\''
+                + '}';
+    }
 }

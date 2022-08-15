@@ -17,6 +17,7 @@
 
 package org.apache.linkis.manager.common.protocol
 
+
 trait OperateResponse {
   val result: Map[String, Any]
   def getResult: java.util.Map[String, Any]

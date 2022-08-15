@@ -5,16 +5,16 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+ 
 package org.apache.linkis.engineconnplugin.flink
 
 import org.apache.linkis.engineconnplugin.flink.factory.FlinkEngineConnFactory
@@ -26,6 +26,7 @@ import org.apache.linkis.manager.engineplugin.common.launch.EngineConnLaunchBuil
 import org.apache.linkis.manager.engineplugin.common.resource.EngineResourceFactory
 import org.apache.linkis.manager.label.entity.Label
 
+
 class FlinkEngineConnPlugin extends EngineConnPlugin {
 
   private var engineResourceFactory: EngineResourceFactory = _
@@ -36,14 +37,14 @@ class FlinkEngineConnPlugin extends EngineConnPlugin {
 
   private val engineFactoryLocker = new Array[Byte](0)
 
+
   override def init(params: java.util.Map[String, Any]): Unit = {}
 
   override def getEngineResourceFactory: EngineResourceFactory = {
-    if (null == engineResourceFactory) resourceLocker.synchronized {
-      if (null == engineResourceFactory)
-        engineResourceFactory = new FlinkEngineConnResourceFactory
-    }
-    engineResourceFactory
+      if (null == engineResourceFactory) resourceLocker.synchronized {
+        if (null == engineResourceFactory) engineResourceFactory = new FlinkEngineConnResourceFactory
+      }
+      engineResourceFactory
   }
 
   override def getEngineConnLaunchBuilder: EngineConnLaunchBuilder = {

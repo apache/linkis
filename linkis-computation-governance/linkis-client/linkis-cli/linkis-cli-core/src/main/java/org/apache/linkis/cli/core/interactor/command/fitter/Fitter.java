@@ -21,5 +21,5 @@ import org.apache.linkis.cli.common.entity.command.CmdTemplate;
 import org.apache.linkis.cli.common.exception.LinkisClientRuntimeException;
 
 public interface Fitter {
-  FitterResult fit(String[] input, CmdTemplate templateCopy) throws LinkisClientRuntimeException;
+    FitterResult fit(String[] input, CmdTemplate templateCopy) throws LinkisClientRuntimeException;
 }

@@ -19,5 +19,5 @@ package org.apache.linkis.cs.client.service;
 
 public interface CSNodeService {
 
-  void initNodeCSInfo(String contextIDStr, String ndeName);
+    void initNodeCSInfo(String contextIDStr, String ndeName);
 }

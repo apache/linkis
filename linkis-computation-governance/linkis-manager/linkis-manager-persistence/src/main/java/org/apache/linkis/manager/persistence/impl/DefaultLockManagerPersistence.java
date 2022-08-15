@@ -23,63 +23,64 @@ import org.apache.linkis.manager.persistence.LockManagerPersistence;
 
 import org.springframework.dao.DataAccessException;
 
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+
 public class DefaultLockManagerPersistence implements LockManagerPersistence {
 
-  private static final Logger logger = LoggerFactory.getLogger(DefaultLockManagerPersistence.class);
+    private static final Logger logger =
+            LoggerFactory.getLogger(DefaultLockManagerPersistence.class);
 
-  private LockManagerMapper lockManagerMapper;
+    private LockManagerMapper lockManagerMapper;
 
-  public LockManagerMapper getLockManagerMapper() {
-    return lockManagerMapper;
-  }
-
-  public void setLockManagerMapper(LockManagerMapper lockManagerMapper) {
-    this.lockManagerMapper = lockManagerMapper;
-  }
-
-  @Override
-  public Boolean lock(PersistenceLock persistenceLock, Long timeOut) {
-    long startTime = System.currentTimeMillis();
-    Boolean isLocked = tryLock(persistenceLock, timeOut);
-    while (!isLocked && System.currentTimeMillis() - startTime < timeOut) {
-      try {
-        Thread.sleep(1000); // TODO
-        isLocked = tryLock(persistenceLock, timeOut);
-      } catch (InterruptedException e) {
-        logger.warn("lock waiting interrupted", e);
-      }
+    public LockManagerMapper getLockManagerMapper() {
+        return lockManagerMapper;
     }
-    return isLocked;
-  }
 
-  private boolean tryLock(PersistenceLock persistenceLock, Long timeOut) {
-    try {
-      lockManagerMapper.lock(persistenceLock.getLockObject(), timeOut);
-      return true;
-    } catch (DataAccessException e) {
-      logger.warn("Failed to obtain lock:" + persistenceLock.getLockObject());
-      return false;
+    public void setLockManagerMapper(LockManagerMapper lockManagerMapper) {
+        this.lockManagerMapper = lockManagerMapper;
     }
-  }
 
-  @Override
-  public void unlock(PersistenceLock persistenceLock) {
-    List<PersistenceLock> lockers =
-        lockManagerMapper.getLockersByLockObject(persistenceLock.getLockObject());
-    if (lockers != null && !lockers.isEmpty()) {
-      for (PersistenceLock lock : lockers) {
-        lockManagerMapper.unlock(lock.getId());
-      }
+    @Override
+    public Boolean lock(PersistenceLock persistenceLock, Long timeOut) {
+        long startTime = System.currentTimeMillis();
+        Boolean isLocked = tryLock(persistenceLock, timeOut);
+        while (!isLocked && System.currentTimeMillis() - startTime < timeOut) {
+            try {
+                Thread.sleep(1000); // TODO
+                isLocked = tryLock(persistenceLock, timeOut);
+            } catch (InterruptedException e) {
+                logger.warn("lock waiting interrupted", e);
+            }
+        }
+        return isLocked;
     }
-  }
 
-  @Override
-  public List<PersistenceLock> getAll() {
-    return lockManagerMapper.getAll();
-  }
+    private boolean tryLock(PersistenceLock persistenceLock, Long timeOut) {
+        try {
+            lockManagerMapper.lock(persistenceLock.getLockObject(), timeOut);
+            return true;
+        } catch (DataAccessException e) {
+            logger.warn("Failed to obtain lock:" + persistenceLock.getLockObject());
+            return false;
+        }
+    }
+
+    @Override
+    public void unlock(PersistenceLock persistenceLock) {
+        List<PersistenceLock> lockers =
+                lockManagerMapper.getLockersByLockObject(persistenceLock.getLockObject());
+        if (lockers != null && !lockers.isEmpty()) {
+            for (PersistenceLock lock : lockers) {
+                lockManagerMapper.unlock(lock.getId());
+            }
+        }
+    }
+
+    @Override
+    public List<PersistenceLock> getAll() {
+        return lockManagerMapper.getAll();
+    }
 }

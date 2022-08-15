@@ -25,17 +25,17 @@ import java.util.Set;
 
 public interface ContextInvertedIndexSet {
 
-  ContextInvertedIndex getContextInvertedIndex(ContextType contextType);
+    ContextInvertedIndex getContextInvertedIndex(ContextType contextType);
 
-  boolean addValue(String keyword, ContextKey contextKey);
+    boolean addValue(String keyword, ContextKey contextKey);
 
-  boolean addValue(String keyword, String contextKey, ContextType contextType);
+    boolean addValue(String keyword, String contextKey, ContextType contextType);
 
-  boolean addKeywords(Set<String> keywords, String contextKey, ContextType contextType);
+    boolean addKeywords(Set<String> keywords, String contextKey, ContextType contextType);
 
-  List<String> getContextKeys(String keyword, ContextType contextType);
+    List<String> getContextKeys(String keyword, ContextType contextType);
 
-  boolean remove(String keyword, String contextKey, ContextType contextType);
+    boolean remove(String keyword, String contextKey, ContextType contextType);
 
-  ContextInvertedIndex removeAll(ContextType contextType);
+    ContextInvertedIndex removeAll(ContextType contextType);
 }

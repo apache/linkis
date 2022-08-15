@@ -19,5 +19,5 @@ package org.apache.linkis.cs.contextcache.cleaner;
 
 public interface AUTOCleaner {
 
-  void triggerCleanup();
+    void triggerCleanup();
 }

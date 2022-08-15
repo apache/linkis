@@ -14,10 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.linkis.engineplugin.elasticsearch.executer
 
-object ElasticSearchExecutorOrder extends Enumeration {
+object ElasticSearchExecutorOrder  extends Enumeration {
 
   type ElasticSearchExecutorOrder = Value
   val SQL = Value(1)

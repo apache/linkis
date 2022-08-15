@@ -25,18 +25,20 @@ import org.apache.linkis.cs.execution.fetcher.ContextCacheFetcher;
 
 public abstract class UnaryLogicConditionExecution extends AbstractConditionExecution {
 
-  public UnaryLogicConditionExecution(
-      UnaryLogicCondition condition, ContextCacheService contextCacheService, ContextID contextID) {
-    super(condition, contextCacheService, contextID);
-  }
+    public UnaryLogicConditionExecution(
+            UnaryLogicCondition condition,
+            ContextCacheService contextCacheService,
+            ContextID contextID) {
+        super(condition, contextCacheService, contextID);
+    }
 
-  @Override
-  protected ContextCacheFetcher getFastFetcher() {
-    return null;
-  }
+    @Override
+    protected ContextCacheFetcher getFastFetcher() {
+        return null;
+    }
 
-  @Override
-  protected boolean needOptimization() {
-    return true;
-  }
+    @Override
+    protected boolean needOptimization() {
+        return true;
+    }
 }

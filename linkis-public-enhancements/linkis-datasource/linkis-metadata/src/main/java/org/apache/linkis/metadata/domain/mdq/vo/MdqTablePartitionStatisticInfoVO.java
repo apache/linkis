@@ -22,65 +22,65 @@ import java.util.Date;
 import java.util.List;
 
 public class MdqTablePartitionStatisticInfoVO
-    implements Comparable<MdqTablePartitionStatisticInfoVO> {
-  private Integer fileNum;
-  private String partitionSize;
-  private String name;
-  private Date modificationTime;
-  private String partitionPath;
+        implements Comparable<MdqTablePartitionStatisticInfoVO> {
+    private Integer fileNum;
+    private String partitionSize;
+    private String name;
+    private Date modificationTime;
+    private String partitionPath;
 
-  public String getPartitionPath() {
-    return partitionPath;
-  }
+    public String getPartitionPath() {
+        return partitionPath;
+    }
 
-  public void setPartitionPath(String partitionPath) {
-    this.partitionPath = partitionPath;
-  }
+    public void setPartitionPath(String partitionPath) {
+        this.partitionPath = partitionPath;
+    }
 
-  public Date getModificationTime() {
-    return modificationTime;
-  }
+    public Date getModificationTime() {
+        return modificationTime;
+    }
 
-  public void setModificationTime(Date modificationTime) {
-    this.modificationTime = modificationTime;
-  }
+    public void setModificationTime(Date modificationTime) {
+        this.modificationTime = modificationTime;
+    }
 
-  public String getName() {
-    return name;
-  }
+    public String getName() {
+        return name;
+    }
 
-  public void setName(String name) {
-    this.name = name;
-  }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-  private List<MdqTablePartitionStatisticInfoVO> childrens = new ArrayList<>();
+    private List<MdqTablePartitionStatisticInfoVO> childrens = new ArrayList<>();
 
-  public List<MdqTablePartitionStatisticInfoVO> getChildrens() {
-    return childrens;
-  }
+    public List<MdqTablePartitionStatisticInfoVO> getChildrens() {
+        return childrens;
+    }
 
-  public void setChildrens(List<MdqTablePartitionStatisticInfoVO> childrens) {
-    this.childrens = childrens;
-  }
+    public void setChildrens(List<MdqTablePartitionStatisticInfoVO> childrens) {
+        this.childrens = childrens;
+    }
 
-  public Integer getFileNum() {
-    return fileNum;
-  }
+    public Integer getFileNum() {
+        return fileNum;
+    }
 
-  public void setFileNum(Integer fileNum) {
-    this.fileNum = fileNum;
-  }
+    public void setFileNum(Integer fileNum) {
+        this.fileNum = fileNum;
+    }
 
-  public String getPartitionSize() {
-    return partitionSize;
-  }
+    public String getPartitionSize() {
+        return partitionSize;
+    }
 
-  public void setPartitionSize(String partitionSize) {
-    this.partitionSize = partitionSize;
-  }
+    public void setPartitionSize(String partitionSize) {
+        this.partitionSize = partitionSize;
+    }
 
-  @Override
-  public int compareTo(MdqTablePartitionStatisticInfoVO o) {
-    return o.name.compareTo(this.name);
-  }
+    @Override
+    public int compareTo(MdqTablePartitionStatisticInfoVO o) {
+        return o.name.compareTo(this.name);
+    }
 }

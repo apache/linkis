@@ -21,15 +21,15 @@ import org.apache.linkis.cs.common.entity.source.ContextID;
 
 public class TestContextID implements ContextID {
 
-  String contextID;
+    String contextID;
 
-  @Override
-  public String getContextId() {
-    return contextID;
-  }
+    @Override
+    public String getContextId() {
+        return contextID;
+    }
 
-  @Override
-  public void setContextId(String contextId) {
-    this.contextID = contextId;
-  }
+    @Override
+    public void setContextId(String contextId) {
+        this.contextID = contextId;
+    }
 }

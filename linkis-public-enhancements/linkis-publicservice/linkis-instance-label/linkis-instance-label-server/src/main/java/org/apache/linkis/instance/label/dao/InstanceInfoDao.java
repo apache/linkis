@@ -22,16 +22,16 @@ import org.apache.linkis.instance.label.entity.InstanceInfo;
 
 public interface InstanceInfoDao {
 
-  /**
-   * Insert method
-   *
-   * @param instanceInfo instance information
-   */
-  void insertOne(InstanceInfo instanceInfo);
+    /**
+     * Insert method
+     *
+     * @param instanceInfo instance information
+     */
+    void insertOne(InstanceInfo instanceInfo);
 
-  void removeInstance(ServiceInstance instance);
+    void removeInstance(ServiceInstance instance);
 
-  void updateInstance(InstanceInfo instanceInfo);
+    void updateInstance(InstanceInfo instanceInfo);
 
-  InstanceInfo getInstanceInfoByServiceInstance(ServiceInstance serviceInstance);
+    InstanceInfo getInstanceInfoByServiceInstance(ServiceInstance serviceInstance);
 }

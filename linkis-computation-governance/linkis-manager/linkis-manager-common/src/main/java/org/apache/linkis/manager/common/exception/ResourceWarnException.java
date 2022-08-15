@@ -20,11 +20,12 @@ package org.apache.linkis.manager.common.exception;
 import org.apache.linkis.common.exception.WarnException;
 
 public class ResourceWarnException extends WarnException {
-  public ResourceWarnException(int errCode, String desc) {
-    super(errCode, desc);
-  }
+    public ResourceWarnException(int errCode, String desc) {
+        super(errCode, desc);
+    }
 
-  public ResourceWarnException(int errCode, String desc, String ip, int port, String serviceKind) {
-    super(errCode, desc, ip, port, serviceKind);
-  }
+    public ResourceWarnException(
+            int errCode, String desc, String ip, int port, String serviceKind) {
+        super(errCode, desc, ip, port, serviceKind);
+    }
 }

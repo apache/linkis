@@ -25,17 +25,17 @@ import java.util.List;
 
 public abstract class ContextHistoryService extends AbstractService {
 
-  public abstract void createHistroy(ContextID contextID, ContextHistory contextHistory)
-      throws CSErrorException;
+    public abstract void createHistroy(ContextID contextID, ContextHistory contextHistory)
+            throws CSErrorException;
 
-  public abstract void removeHistory(ContextID contextID, ContextHistory contextHistory)
-      throws CSErrorException;
+    public abstract void removeHistory(ContextID contextID, ContextHistory contextHistory)
+            throws CSErrorException;
 
-  public abstract List<ContextHistory> getHistories(ContextID contextID) throws CSErrorException;
+    public abstract List<ContextHistory> getHistories(ContextID contextID) throws CSErrorException;
 
-  public abstract ContextHistory getHistory(ContextID contextID, String source)
-      throws CSErrorException;
+    public abstract ContextHistory getHistory(ContextID contextID, String source)
+            throws CSErrorException;
 
-  public abstract List<ContextHistory> searchHistory(ContextID contextID, String[] keywords)
-      throws CSErrorException;
+    public abstract List<ContextHistory> searchHistory(ContextID contextID, String[] keywords)
+            throws CSErrorException;
 }

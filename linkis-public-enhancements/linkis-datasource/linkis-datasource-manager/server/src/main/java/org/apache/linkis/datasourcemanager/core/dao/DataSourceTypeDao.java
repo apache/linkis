@@ -22,18 +22,18 @@ import org.apache.linkis.datasourcemanager.common.domain.DataSourceType;
 import java.util.List;
 
 public interface DataSourceTypeDao {
-  /**
-   * Get all types
-   *
-   * @return type entity list
-   */
-  List<DataSourceType> getAllTypes();
+    /**
+     * Get all types
+     *
+     * @return type entity list
+     */
+    List<DataSourceType> getAllTypes();
 
-  /**
-   * View
-   *
-   * @param typeId
-   * @return
-   */
-  DataSourceType selectOne(Long typeId);
+    /**
+     * View
+     *
+     * @param typeId
+     * @return
+     */
+    DataSourceType selectOne(Long typeId);
 }

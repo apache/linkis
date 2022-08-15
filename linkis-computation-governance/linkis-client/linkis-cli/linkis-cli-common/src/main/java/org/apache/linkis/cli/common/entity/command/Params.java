@@ -20,60 +20,60 @@ package org.apache.linkis.cli.common.entity.command;
 import java.util.Map;
 
 public class Params {
-  /** identifier identifies which command corresponds to this param data structure */
-  String cid;
+    /** identifier identifies which command corresponds to this param data structure */
+    String cid;
 
-  private CmdType cmdType;
+    private CmdType cmdType;
 
-  /** Stores Mapping from param key to value/default-value etc. */
-  private Map<String, ParamItem> paramItemMap;
+    /** Stores Mapping from param key to value/default-value etc. */
+    private Map<String, ParamItem> paramItemMap;
 
-  private Map<String, Object> extraProperties;
+    private Map<String, Object> extraProperties;
 
-  public Params(
-      String cid,
-      CmdType cmdType,
-      Map<String, ParamItem> paramItemMap,
-      Map<String, Object> extraProperties) {
-    this.cid = cid;
-    this.cmdType = cmdType;
-    this.paramItemMap = paramItemMap;
-    this.extraProperties = extraProperties;
-  }
+    public Params(
+            String cid,
+            CmdType cmdType,
+            Map<String, ParamItem> paramItemMap,
+            Map<String, Object> extraProperties) {
+        this.cid = cid;
+        this.cmdType = cmdType;
+        this.paramItemMap = paramItemMap;
+        this.extraProperties = extraProperties;
+    }
 
-  public String getCid() {
-    return cid;
-  }
+    public String getCid() {
+        return cid;
+    }
 
-  public void setCid(String cid) {
-    this.cid = cid;
-  }
+    public void setCid(String cid) {
+        this.cid = cid;
+    }
 
-  public CmdType getCmdType() {
-    return cmdType;
-  }
+    public CmdType getCmdType() {
+        return cmdType;
+    }
 
-  public void setCmdType(CmdType cmdType) {
-    this.cmdType = cmdType;
-  }
+    public void setCmdType(CmdType cmdType) {
+        this.cmdType = cmdType;
+    }
 
-  public Map<String, ParamItem> getParamItemMap() {
-    return paramItemMap;
-  }
+    public Map<String, ParamItem> getParamItemMap() {
+        return paramItemMap;
+    }
 
-  public void setParamItemMap(Map<String, ParamItem> paramItemMap) {
-    this.paramItemMap = paramItemMap;
-  }
+    public void setParamItemMap(Map<String, ParamItem> paramItemMap) {
+        this.paramItemMap = paramItemMap;
+    }
 
-  public Map<String, Object> getExtraProperties() {
-    return extraProperties;
-  }
+    public Map<String, Object> getExtraProperties() {
+        return extraProperties;
+    }
 
-  public void setExtraProperties(Map<String, Object> extraProperties) {
-    this.extraProperties = extraProperties;
-  }
+    public void setExtraProperties(Map<String, Object> extraProperties) {
+        this.extraProperties = extraProperties;
+    }
 
-  public boolean containsParam(String key) {
-    return paramItemMap.containsKey(key);
-  }
+    public boolean containsParam(String key) {
+        return paramItemMap.containsKey(key);
+    }
 }

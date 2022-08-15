@@ -34,47 +34,49 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = {WebApplicationServer.class, Scan.class})
 public class CachedTokenServiceTest {
-  private static final Logger logger = LoggerFactory.getLogger(CachedTokenServiceTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(CachedTokenServiceTest.class);
 
-  private static String TokenName = "BML-AUTH";
+    private static String TokenName = "BML-AUTH";
 
-  @Autowired CachedTokenService tokenService;
+    @Autowired CachedTokenService tokenService;
 
-  @Test
-  void testIsTokenValid() {
-    boolean isOk = tokenService.isTokenValid(TokenName);
-    assertTrue(isOk);
-  }
+    @Test
+    void testIsTokenValid() {
+        boolean isOk = tokenService.isTokenValid(TokenName);
+        assertTrue(isOk);
+    }
 
-  @Test
-  void testIsTokenAcceptableWithUser() {
-    boolean isOk = tokenService.isTokenAcceptableWithUser(TokenName, "test");
-    assertTrue(isOk);
-    isOk = tokenService.isTokenAcceptableWithUser(TokenName, "test1");
-    assertFalse(isOk);
-  }
+    @Test
+    void testIsTokenAcceptableWithUser() {
+        boolean isOk = tokenService.isTokenAcceptableWithUser(TokenName, "test");
+        assertTrue(isOk);
+        isOk = tokenService.isTokenAcceptableWithUser(TokenName, "test1");
+        assertFalse(isOk);
+    }
 
-  @Test
-  void testIsTokenAcceptableWithHost() {
-    boolean isOk = tokenService.isTokenAcceptableWithHost(TokenName, "127.0.0.1");
-    assertTrue(isOk);
-    isOk = tokenService.isTokenAcceptableWithHost(TokenName, "10.10.10.10");
-    assertFalse(isOk);
-  }
+    @Test
+    void testIsTokenAcceptableWithHost() {
+        boolean isOk = tokenService.isTokenAcceptableWithHost(TokenName, "127.0.0.1");
+        assertTrue(isOk);
+        isOk = tokenService.isTokenAcceptableWithHost(TokenName, "10.10.10.10");
+        assertFalse(isOk);
+    }
 
-  @Test
-  void testDoAuth() {
-    boolean isOk = tokenService.doAuth(TokenName, "test", "127.0.0.1");
-    assertTrue(isOk);
+    @Test
+    void testDoAuth() {
+        boolean isOk = tokenService.doAuth(TokenName, "test", "127.0.0.1");
+        assertTrue(isOk);
 
-    Exception exception =
-        assertThrows(
-            TokenAuthException.class, () -> tokenService.doAuth(TokenName, "test1", "127.0.0.1"));
-    logger.info("assertThrows：{}", exception.getMessage());
+        Exception exception =
+                assertThrows(
+                        TokenAuthException.class,
+                        () -> tokenService.doAuth(TokenName, "test1", "127.0.0.1"));
+        logger.info("assertThrows：{}", exception.getMessage());
 
-    exception =
-        assertThrows(
-            TokenAuthException.class, () -> tokenService.doAuth(TokenName, "test", "10.10.10.10"));
-    logger.info("assertThrows：{}", exception.getMessage());
-  }
+        exception =
+                assertThrows(
+                        TokenAuthException.class,
+                        () -> tokenService.doAuth(TokenName, "test", "10.10.10.10"));
+        logger.info("assertThrows：{}", exception.getMessage());
+    }
 }

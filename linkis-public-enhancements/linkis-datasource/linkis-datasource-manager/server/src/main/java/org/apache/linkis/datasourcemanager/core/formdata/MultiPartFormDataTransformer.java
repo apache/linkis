@@ -19,15 +19,15 @@ package org.apache.linkis.datasourcemanager.core.formdata;
 
 /** Transformer of multipart form */
 public interface MultiPartFormDataTransformer {
-  /**
-   * Transform the form data to object and validate its fields
-   *
-   * @param formData form data
-   * @param clazz clazz
-   * @param beanValidator validator
-   * @param <T>
-   * @return
-   * @throws ValidationException
-   * @throws ErrorException
-   */
+    /**
+     * Transform the form data to object and validate its fields
+     *
+     * @param formData form data
+     * @param clazz clazz
+     * @param beanValidator validator
+     * @param <T>
+     * @return
+     * @throws ValidationException
+     * @throws ErrorException
+     */
 }

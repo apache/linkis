@@ -18,22 +18,22 @@
 package org.apache.linkis.datasourcemanager.core.vo;
 
 public class PageViewVo {
-  private int currentPage;
-  private int pageSize;
+    private int currentPage;
+    private int pageSize;
 
-  public int getCurrentPage() {
-    return currentPage;
-  }
+    public int getCurrentPage() {
+        return currentPage;
+    }
 
-  public void setCurrentPage(int currentPage) {
-    this.currentPage = currentPage;
-  }
+    public void setCurrentPage(int currentPage) {
+        this.currentPage = currentPage;
+    }
 
-  public int getPageSize() {
-    return pageSize;
-  }
+    public int getPageSize() {
+        return pageSize;
+    }
 
-  public void setPageSize(int pageSize) {
-    this.pageSize = pageSize;
-  }
+    public void setPageSize(int pageSize) {
+        this.pageSize = pageSize;
+    }
 }

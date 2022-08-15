@@ -26,11 +26,6 @@ import org.apache.linkis.metadata.query.common.protocol.MetadataResponse;
 import org.apache.linkis.rpc.BaseRPCSender;
 import org.apache.linkis.rpc.Sender;
 
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -40,51 +35,56 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 class MetadataOperateServiceTest {
-  private static final Logger logger = LoggerFactory.getLogger(MetadataOperateServiceTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(MetadataOperateServiceTest.class);
 
-  @InjectMocks MetadataOperateServiceImpl metadataOperateService;
+    @InjectMocks MetadataOperateServiceImpl metadataOperateService;
 
-  @Mock BmlAppService bmlAppService;
+    @Mock BmlAppService bmlAppService;
 
-  @Test
-  void doRemoteConnect() throws ErrorException {
-    String mdRemoteServiceName = "linkis-ps-metadata-manager";
-    String dataSourceType = "mysql";
-    String operator = "test";
-    Map<String, Object> connectParams = new HashMap<>();
-    FormStreamContent formStreamContent = new FormStreamContent();
-    String fileName = "/tmp/a.txt";
-    InputStream inputStream = Mockito.mock(FileInputStream.class);
-    formStreamContent.setFileName(fileName);
-    formStreamContent.setStream(inputStream);
-    connectParams.put("formStreamContent", formStreamContent);
-    Mockito.when(bmlAppService.clientUploadResource(operator, fileName, inputStream))
-        .thenReturn("10001");
-    Mockito.mockStatic(Sender.class);
-    BaseRPCSender baseRPCSender = Mockito.mock(BaseRPCSender.class);
-    Mockito.when(Sender.getSender("linkis-ps-metadata-manager")).thenReturn(baseRPCSender);
+    @Test
+    void doRemoteConnect() throws ErrorException {
+        String mdRemoteServiceName = "linkis-ps-metadata-manager";
+        String dataSourceType = "mysql";
+        String operator = "test";
+        Map<String, Object> connectParams = new HashMap<>();
+        FormStreamContent formStreamContent = new FormStreamContent();
+        String fileName = "/tmp/a.txt";
+        InputStream inputStream = Mockito.mock(FileInputStream.class);
+        formStreamContent.setFileName(fileName);
+        formStreamContent.setStream(inputStream);
+        connectParams.put("formStreamContent", formStreamContent);
+        Mockito.when(bmlAppService.clientUploadResource(operator, fileName, inputStream))
+                .thenReturn("10001");
+        Mockito.mockStatic(Sender.class);
+        BaseRPCSender baseRPCSender = Mockito.mock(BaseRPCSender.class);
+        Mockito.when(Sender.getSender("linkis-ps-metadata-manager")).thenReturn(baseRPCSender);
 
-    MetadataConnect metadataConnect =
-        new MetadataConnect(dataSourceType, operator, connectParams, "");
-    MetadataResponse ok = new MetadataResponse(true, "success");
-    MetadataResponse fail = new MetadataResponse(false, "fail");
+        MetadataConnect metadataConnect =
+                new MetadataConnect(dataSourceType, operator, connectParams, "");
+        MetadataResponse ok = new MetadataResponse(true, "success");
+        MetadataResponse fail = new MetadataResponse(false, "fail");
 
-    Mockito.when(baseRPCSender.ask(metadataConnect)).thenReturn(ok, fail);
-    metadataOperateService.doRemoteConnect(
-        mdRemoteServiceName, dataSourceType, operator, connectParams);
-    Mockito.verify(baseRPCSender, Mockito.times(1)).ask(metadataConnect);
+        Mockito.when(baseRPCSender.ask(metadataConnect)).thenReturn(ok, fail);
+        metadataOperateService.doRemoteConnect(
+                mdRemoteServiceName, dataSourceType, operator, connectParams);
+        Mockito.verify(baseRPCSender, Mockito.times(1)).ask(metadataConnect);
 
-    assertThrows(
-        WarnException.class,
-        () ->
-            metadataOperateService.doRemoteConnect(
-                mdRemoteServiceName, dataSourceType, operator, connectParams));
-    Mockito.verify(baseRPCSender, Mockito.times(2)).ask(metadataConnect);
+        assertThrows(
+                WarnException.class,
+                () ->
+                        metadataOperateService.doRemoteConnect(
+                                mdRemoteServiceName, dataSourceType, operator, connectParams));
+        Mockito.verify(baseRPCSender, Mockito.times(2)).ask(metadataConnect);
 
-    assertTrue(connectParams.get("formStreamContent").equals("10001"));
-  }
+        assertTrue(connectParams.get("formStreamContent").equals("10001"));
+    }
 }

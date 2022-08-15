@@ -28,7 +28,7 @@ import org.springframework.context.annotation.ComponentScan;
 @ComponentScan
 public class WebApplicationServer extends SpringBootServletInitializer {
 
-  public static void main(String[] args) {
-    new SpringApplicationBuilder(WebApplicationServer.class).run(args);
-  }
+    public static void main(String[] args) {
+        new SpringApplicationBuilder(WebApplicationServer.class).run(args);
+    }
 }

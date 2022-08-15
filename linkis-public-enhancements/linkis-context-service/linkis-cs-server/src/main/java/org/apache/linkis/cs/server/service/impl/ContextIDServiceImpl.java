@@ -29,114 +29,116 @@ import org.apache.linkis.cs.server.service.ContextIDService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 @Component
 public class ContextIDServiceImpl extends ContextIDService {
 
-  private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-  @Autowired private ContextPersistenceManager persistenceManager;
+    @Autowired private ContextPersistenceManager persistenceManager;
 
-  @Autowired private ContextHAChecker contextHAChecker;
+    @Autowired private ContextHAChecker contextHAChecker;
 
-  private ContextIDPersistence getPersistence() throws CSErrorException {
-    return persistenceManager.getContextIDPersistence();
-  }
-
-  @Override
-  public String getName() {
-    return ServiceType.CONTEXT_ID.name();
-  }
-
-  @Override
-  public String createContextID(ContextID contextID) throws CSErrorException {
-    getPersistence().createContextID(contextID);
-    logger.info(String.format("createContextID,csId:%s", contextID.getContextId()));
-    return contextID.getContextId();
-  }
-
-  @Override
-  public ContextID getContextID(String id) throws CSErrorException {
-    logger.info(String.format("getContextID,csId:%s", id));
-    return getPersistence().getContextID(id);
-  }
-
-  @Override
-  public void updateContextID(ContextID contextID) throws CSErrorException {
-    logger.info(String.format("updateContextID,csId:%s", contextID.getContextId()));
-    getPersistence().updateContextID(contextID);
-  }
-
-  @Override
-  public void resetContextID(String id) throws CSErrorException {
-    // TODO: 2020/2/23 reset 方法
-  }
-
-  @Override
-  public void removeContextID(String id) throws CSErrorException {
-    logger.info(String.format("removeContextID,csId:%s", id));
-    getPersistence().deleteContextID(id);
-  }
-
-  @Override
-  public List<String> searchCSIDByTime(
-      Date createTimeStart,
-      Date createTimeEnd,
-      Date updateTimeStart,
-      Date updateTimeEnd,
-      Date accessTimeStart,
-      Date accessTimeEnd,
-      Integer pageNow,
-      Integer pageSize)
-      throws CSErrorException {
-    List<PersistenceContextID> rs = null;
-    PageHelper.startPage(pageNow, pageSize);
-    try {
-      rs =
-          getPersistence()
-              .searchCSIDByTime(
-                  createTimeStart,
-                  createTimeEnd,
-                  updateTimeStart,
-                  updateTimeEnd,
-                  accessTimeStart,
-                  accessTimeEnd);
-    } finally {
-      PageHelper.clearPage();
+    private ContextIDPersistence getPersistence() throws CSErrorException {
+        return persistenceManager.getContextIDPersistence();
     }
-    PageInfo<PersistenceContextID> pageInfo = new PageInfo<>(rs);
-    List<PersistenceContextID> pageResult = pageInfo.getList();
-    List<String> result = new ArrayList<>();
-    List<ContextID> errList = new ArrayList<>();
-    if (null != pageResult)
-      pageResult.stream()
-          .forEach(
-              (persistenceContextID -> {
-                try {
-                  result.add(contextHAChecker.convertHAIDToHAKey(persistenceContextID));
-                } catch (CSErrorException e) {
-                  logger.error(
-                      "convert contextID to hdid failed. id : {}, source : {}",
-                      persistenceContextID.getContextId(),
-                      persistenceContextID.getSource());
-                  errList.add(persistenceContextID);
-                }
-              }));
-    if (errList.size() > 0) {
-      throw new CSErrorException(
-          97001,
-          "There are "
-              + errList.size()
-              + " persistenceContextID that cannot be deserized from source.");
+
+    @Override
+    public String getName() {
+        return ServiceType.CONTEXT_ID.name();
     }
-    return result;
-  }
+
+    @Override
+    public String createContextID(ContextID contextID) throws CSErrorException {
+        getPersistence().createContextID(contextID);
+        logger.info(String.format("createContextID,csId:%s", contextID.getContextId()));
+        return contextID.getContextId();
+    }
+
+    @Override
+    public ContextID getContextID(String id) throws CSErrorException {
+        logger.info(String.format("getContextID,csId:%s", id));
+        return getPersistence().getContextID(id);
+    }
+
+    @Override
+    public void updateContextID(ContextID contextID) throws CSErrorException {
+        logger.info(String.format("updateContextID,csId:%s", contextID.getContextId()));
+        getPersistence().updateContextID(contextID);
+    }
+
+    @Override
+    public void resetContextID(String id) throws CSErrorException {
+        // TODO: 2020/2/23 reset 方法
+    }
+
+    @Override
+    public void removeContextID(String id) throws CSErrorException {
+        logger.info(String.format("removeContextID,csId:%s", id));
+        getPersistence().deleteContextID(id);
+    }
+
+    @Override
+    public List<String> searchCSIDByTime(
+            Date createTimeStart,
+            Date createTimeEnd,
+            Date updateTimeStart,
+            Date updateTimeEnd,
+            Date accessTimeStart,
+            Date accessTimeEnd,
+            Integer pageNow,
+            Integer pageSize)
+            throws CSErrorException {
+        List<PersistenceContextID> rs = null;
+        PageHelper.startPage(pageNow, pageSize);
+        try {
+            rs =
+                    getPersistence()
+                            .searchCSIDByTime(
+                                    createTimeStart,
+                                    createTimeEnd,
+                                    updateTimeStart,
+                                    updateTimeEnd,
+                                    accessTimeStart,
+                                    accessTimeEnd);
+        } finally {
+            PageHelper.clearPage();
+        }
+        PageInfo<PersistenceContextID> pageInfo = new PageInfo<>(rs);
+        List<PersistenceContextID> pageResult = pageInfo.getList();
+        List<String> result = new ArrayList<>();
+        List<ContextID> errList = new ArrayList<>();
+        if (null != pageResult)
+            pageResult.stream()
+                    .forEach(
+                            (persistenceContextID -> {
+                                try {
+                                    result.add(
+                                            contextHAChecker.convertHAIDToHAKey(
+                                                    persistenceContextID));
+                                } catch (CSErrorException e) {
+                                    logger.error(
+                                            "convert contextID to hdid failed. id : {}, source : {}",
+                                            persistenceContextID.getContextId(),
+                                            persistenceContextID.getSource());
+                                    errList.add(persistenceContextID);
+                                }
+                            }));
+        if (errList.size() > 0) {
+            throw new CSErrorException(
+                    97001,
+                    "There are "
+                            + errList.size()
+                            + " persistenceContextID that cannot be deserized from source.");
+        }
+        return result;
+    }
 }

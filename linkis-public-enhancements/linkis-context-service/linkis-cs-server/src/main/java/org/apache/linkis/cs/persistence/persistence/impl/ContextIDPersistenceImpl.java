@@ -33,127 +33,132 @@ import org.apache.commons.math3.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-import java.util.Date;
-import java.util.List;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.util.Date;
+import java.util.List;
+
 @Component
 public class ContextIDPersistenceImpl implements ContextIDPersistence {
 
-  private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-  @Autowired private ContextIDMapper contextIDMapper;
+    @Autowired private ContextIDMapper contextIDMapper;
 
-  private Class<PersistenceContextID> pClass = PersistenceContextID.class;
+    private Class<PersistenceContextID> pClass = PersistenceContextID.class;
 
-  private ObjectMapper json = BDPJettyServerHelper.jacksonJson();
+    private ObjectMapper json = BDPJettyServerHelper.jacksonJson();
 
-  @Override
-  public ContextID createContextID(ContextID contextID) throws CSErrorException {
-    try {
-      Pair<PersistenceContextID, ExtraFieldClass> pContextID =
-          PersistenceUtils.transfer(contextID, pClass);
-      pContextID.getFirst().setSource(json.writeValueAsString(pContextID.getSecond()));
-      Date now = new Date();
-      pContextID.getFirst().setCreateTime(now);
-      pContextID.getFirst().setUpdateTime(now);
-      pContextID.getFirst().setAccessTime(now);
-      contextIDMapper.createContextID(pContextID.getFirst());
-      contextID.setContextId(pContextID.getFirst().getContextId());
-      return contextID;
-    } catch (JsonProcessingException e) {
-      logger.error("writeAsJson failed:", e);
-      throw new CSErrorException(97000, e.getMessage());
-    }
-  }
-
-  @Override
-  public void deleteContextID(String contextId) {
-    contextIDMapper.deleteContextID(contextId);
-  }
-
-  @Override
-  public void updateContextID(ContextID contextID) throws CSErrorException {
-    // contextId和source没有设置更新点
-    Pair<PersistenceContextID, ExtraFieldClass> pContextID =
-        PersistenceUtils.transfer(contextID, pClass);
-    if (null == pContextID.getFirst().getAccessTime()) {
-      pContextID.getFirst().setUpdateTime(new Date());
-    }
-    contextIDMapper.updateContextID(pContextID.getFirst());
-  }
-
-  @Override
-  public ContextID getContextID(String contextId) throws CSErrorException {
-    try {
-      PersistenceContextID pContextID = contextIDMapper.getContextID(contextId);
-      if (pContextID == null) return null;
-      if (PersistenceConf.ENABLE_CS_DESERIALIZE_REPLACE_PACKAGE_HEADER.getValue()) {
-        if (StringUtils.isBlank(pContextID.getSource())
-            || StringUtils.isBlank(
-                PersistenceConf.CS_DESERIALIZE_REPLACE_PACKAGE_HEADER.getValue())) {
-          logger.error(
-              "Source : {} of ContextID or CSID_REPLACE_PACKAGE_HEADER : {} cannot be empty.",
-              pContextID.getSource(),
-              PersistenceConf.CS_DESERIALIZE_REPLACE_PACKAGE_HEADER.getValue());
-        } else {
-          if (pContextID
-              .getSource()
-              .contains(PersistenceConf.CS_DESERIALIZE_REPLACE_PACKAGE_HEADER.getValue())) {
-            if (logger.isDebugEnabled()) {
-              logger.debug(
-                  "Will replace package header of source : {} from : {} to : {}",
-                  pContextID.getSource(),
-                  PersistenceConf.CS_DESERIALIZE_REPLACE_PACKAGE_HEADER.getValue(),
-                  PersistenceConf.CSID_PACKAGE_HEADER);
-            }
-            pContextID.setSource(
-                pContextID
-                    .getSource()
-                    .replaceAll(
-                        PersistenceConf.CS_DESERIALIZE_REPLACE_PACKAGE_HEADER.getValue(),
-                        PersistenceConf.CSID_PACKAGE_HEADER));
-          }
+    @Override
+    public ContextID createContextID(ContextID contextID) throws CSErrorException {
+        try {
+            Pair<PersistenceContextID, ExtraFieldClass> pContextID =
+                    PersistenceUtils.transfer(contextID, pClass);
+            pContextID.getFirst().setSource(json.writeValueAsString(pContextID.getSecond()));
+            Date now = new Date();
+            pContextID.getFirst().setCreateTime(now);
+            pContextID.getFirst().setUpdateTime(now);
+            pContextID.getFirst().setAccessTime(now);
+            contextIDMapper.createContextID(pContextID.getFirst());
+            contextID.setContextId(pContextID.getFirst().getContextId());
+            return contextID;
+        } catch (JsonProcessingException e) {
+            logger.error("writeAsJson failed:", e);
+            throw new CSErrorException(97000, e.getMessage());
         }
-      }
-      ExtraFieldClass extraFieldClass =
-          json.readValue(pContextID.getSource(), ExtraFieldClass.class);
-      ContextID contextID = PersistenceUtils.transfer(extraFieldClass, pContextID);
-      return contextID;
-    } catch (IOException e) {
-      logger.error("readJson failed:", e);
-      throw new CSErrorException(97000, e.getMessage());
     }
-  }
 
-  @Override
-  public List<PersistenceContextID> searchContextID(PersistenceContextID contextID)
-      throws CSErrorException {
-    PersistenceContextID persistenceContextID = new PersistenceContextID();
-    persistenceContextID.setContextId(contextID.getContextId());
-    persistenceContextID.setContextIDType(contextID.getContextIDType());
-    return contextIDMapper.searchContextID(persistenceContextID);
-  }
+    @Override
+    public void deleteContextID(String contextId) {
+        contextIDMapper.deleteContextID(contextId);
+    }
 
-  @Override
-  public List<PersistenceContextID> searchCSIDByTime(
-      Date createTimeStart,
-      Date createTimeEnd,
-      Date updateTimeStart,
-      Date updateTimeEnd,
-      Date accessTimeStart,
-      Date accessTimeEnd) {
-    return contextIDMapper.getAllContextIDByTime(
-        createTimeStart,
-        createTimeEnd,
-        updateTimeStart,
-        updateTimeEnd,
-        accessTimeStart,
-        accessTimeEnd);
-  }
+    @Override
+    public void updateContextID(ContextID contextID) throws CSErrorException {
+        // contextId和source没有设置更新点
+        Pair<PersistenceContextID, ExtraFieldClass> pContextID =
+                PersistenceUtils.transfer(contextID, pClass);
+        if (null == pContextID.getFirst().getAccessTime()) {
+            pContextID.getFirst().setUpdateTime(new Date());
+        }
+        contextIDMapper.updateContextID(pContextID.getFirst());
+    }
+
+    @Override
+    public ContextID getContextID(String contextId) throws CSErrorException {
+        try {
+            PersistenceContextID pContextID = contextIDMapper.getContextID(contextId);
+            if (pContextID == null) return null;
+            if (PersistenceConf.ENABLE_CS_DESERIALIZE_REPLACE_PACKAGE_HEADER.getValue()) {
+                if (StringUtils.isBlank(pContextID.getSource())
+                        || StringUtils.isBlank(
+                                PersistenceConf.CS_DESERIALIZE_REPLACE_PACKAGE_HEADER.getValue())) {
+                    logger.error(
+                            "Source : {} of ContextID or CSID_REPLACE_PACKAGE_HEADER : {} cannot be empty.",
+                            pContextID.getSource(),
+                            PersistenceConf.CS_DESERIALIZE_REPLACE_PACKAGE_HEADER.getValue());
+                } else {
+                    if (pContextID
+                            .getSource()
+                            .contains(
+                                    PersistenceConf.CS_DESERIALIZE_REPLACE_PACKAGE_HEADER
+                                            .getValue())) {
+                        if (logger.isDebugEnabled()) {
+                            logger.debug(
+                                    "Will replace package header of source : {} from : {} to : {}",
+                                    pContextID.getSource(),
+                                    PersistenceConf.CS_DESERIALIZE_REPLACE_PACKAGE_HEADER
+                                            .getValue(),
+                                    PersistenceConf.CSID_PACKAGE_HEADER);
+                        }
+                        pContextID.setSource(
+                                pContextID
+                                        .getSource()
+                                        .replaceAll(
+                                                PersistenceConf
+                                                        .CS_DESERIALIZE_REPLACE_PACKAGE_HEADER
+                                                        .getValue(),
+                                                PersistenceConf.CSID_PACKAGE_HEADER));
+                    }
+                }
+            }
+            ExtraFieldClass extraFieldClass =
+                    json.readValue(pContextID.getSource(), ExtraFieldClass.class);
+            ContextID contextID = PersistenceUtils.transfer(extraFieldClass, pContextID);
+            return contextID;
+        } catch (IOException e) {
+            logger.error("readJson failed:", e);
+            throw new CSErrorException(97000, e.getMessage());
+        }
+    }
+
+    @Override
+    public List<PersistenceContextID> searchContextID(PersistenceContextID contextID)
+            throws CSErrorException {
+        PersistenceContextID persistenceContextID = new PersistenceContextID();
+        persistenceContextID.setContextId(contextID.getContextId());
+        persistenceContextID.setContextIDType(contextID.getContextIDType());
+        return contextIDMapper.searchContextID(persistenceContextID);
+    }
+
+    @Override
+    public List<PersistenceContextID> searchCSIDByTime(
+            Date createTimeStart,
+            Date createTimeEnd,
+            Date updateTimeStart,
+            Date updateTimeEnd,
+            Date accessTimeStart,
+            Date accessTimeEnd) {
+        return contextIDMapper.getAllContextIDByTime(
+                createTimeStart,
+                createTimeEnd,
+                updateTimeStart,
+                updateTimeEnd,
+                accessTimeStart,
+                accessTimeEnd);
+    }
 }

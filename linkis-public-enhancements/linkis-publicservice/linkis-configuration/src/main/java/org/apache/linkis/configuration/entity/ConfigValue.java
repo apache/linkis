@@ -21,63 +21,63 @@ import java.util.Date;
 
 public class ConfigValue {
 
-  private Long id;
+    private Long id;
 
-  private Long configKeyId;
+    private Long configKeyId;
 
-  private String configValue;
+    private String configValue;
 
-  private Integer configLabelId;
+    private Integer configLabelId;
 
-  private Date createTime;
+    private Date createTime;
 
-  private Date updateTime;
+    private Date updateTime;
 
-  public Date getCreateTime() {
-    return createTime;
-  }
+    public Date getCreateTime() {
+        return createTime;
+    }
 
-  public void setCreateTime(Date createTime) {
-    this.createTime = createTime;
-  }
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
 
-  public Date getUpdateTime() {
-    return updateTime;
-  }
+    public Date getUpdateTime() {
+        return updateTime;
+    }
 
-  public void setUpdateTime(Date updateTime) {
-    this.updateTime = updateTime;
-  }
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
+    }
 
-  public Long getId() {
-    return id;
-  }
+    public Long getId() {
+        return id;
+    }
 
-  public void setId(Long id) {
-    this.id = id;
-  }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-  public Long getConfigKeyId() {
-    return configKeyId;
-  }
+    public Long getConfigKeyId() {
+        return configKeyId;
+    }
 
-  public void setConfigKeyId(Long configKeyId) {
-    this.configKeyId = configKeyId;
-  }
+    public void setConfigKeyId(Long configKeyId) {
+        this.configKeyId = configKeyId;
+    }
 
-  public String getConfigValue() {
-    return configValue;
-  }
+    public String getConfigValue() {
+        return configValue;
+    }
 
-  public void setConfigValue(String configValue) {
-    this.configValue = configValue;
-  }
+    public void setConfigValue(String configValue) {
+        this.configValue = configValue;
+    }
 
-  public Integer getConfigLabelId() {
-    return configLabelId;
-  }
+    public Integer getConfigLabelId() {
+        return configLabelId;
+    }
 
-  public void setConfigLabelId(Integer configLabelId) {
-    this.configLabelId = configLabelId;
-  }
+    public void setConfigLabelId(Integer configLabelId) {
+        this.configLabelId = configLabelId;
+    }
 }

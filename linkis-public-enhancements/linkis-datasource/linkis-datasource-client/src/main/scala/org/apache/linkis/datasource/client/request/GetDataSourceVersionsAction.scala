@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -29,15 +29,12 @@ class GetDataSourceVersionsAction extends GetAction with DataSourceAction {
 
   override def getUser: String = this.user
 
-  override def suffixURLs: Array[String] =
-    Array(DATA_SOURCE_SERVICE_MODULE.getValue, dataSourceId.toString, "versions")
-
+  override def suffixURLs: Array[String] = Array(DATA_SOURCE_SERVICE_MODULE.getValue, dataSourceId.toString, "versions")
 }
-
 object GetDataSourceVersionsAction {
   def builder(): Builder = new Builder
 
-  class Builder private[GetDataSourceVersionsAction] () {
+  class Builder private[GetDataSourceVersionsAction]() {
     private var user: String = _
     private var dataSourceId: Long = _
 
@@ -52,9 +49,8 @@ object GetDataSourceVersionsAction {
     }
 
     def build(): GetDataSourceVersionsAction = {
-      if (dataSourceId == null)
-        throw new DataSourceClientBuilderException("dataSourceId is needed!")
-      if (user == null) throw new DataSourceClientBuilderException("user is needed!")
+      if (dataSourceId == null) throw new DataSourceClientBuilderException("dataSourceId is needed!")
+      if(user == null) throw new DataSourceClientBuilderException("user is needed!")
 
       val action = new GetDataSourceVersionsAction
       action.user = user
@@ -62,7 +58,5 @@ object GetDataSourceVersionsAction {
 
       action
     }
-
   }
-
 }

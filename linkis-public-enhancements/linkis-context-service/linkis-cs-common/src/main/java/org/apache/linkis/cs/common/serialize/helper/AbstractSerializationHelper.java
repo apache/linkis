@@ -30,74 +30,75 @@ import java.util.stream.Stream;
 
 public abstract class AbstractSerializationHelper implements SerializationHelper {
 
-  protected abstract Map<String, ContextSerializer> getContextSerializerMap();
+    protected abstract Map<String, ContextSerializer> getContextSerializerMap();
 
-  @Override
-  public boolean accepts(String json) {
-    return null != getContextSerializer(json);
-  }
-
-  @Override
-  public boolean accepts(Object obj) {
-    return null != getContextSerializer(obj);
-  }
-
-  @Override
-  public String serialize(Object obj) throws CSErrorException {
-    ContextSerializer contextSerializer = getContextSerializer(obj);
-    if (null != contextSerializer) {
-      return contextSerializer.serialize(obj);
+    @Override
+    public boolean accepts(String json) {
+        return null != getContextSerializer(json);
     }
 
-    if (null != obj) {
-      throw new CSErrorException(97001, "Failed to find Serializer of " + obj.getClass().getName());
+    @Override
+    public boolean accepts(Object obj) {
+        return null != getContextSerializer(obj);
     }
-    throw new CSErrorException(97001, "The obj not null");
-  }
 
-  @Override
-  public Object deserialize(String json) throws CSErrorException {
-
-    ContextSerializer contextSerializer = getContextSerializer(json);
-
-    if (contextSerializer != null) {
-      return contextSerializer.deserialize(json);
-    }
-    if (StringUtils.isNotBlank(json)) {
-      throw new CSErrorException(97001, "Failed to find deserialize of " + json);
-    }
-    throw new CSErrorException(97001, "The json not null");
-  }
-
-  @Override
-  public <T> T deserialize(String s, Class<T> interfaceClass) throws CSErrorException {
-    return null;
-  }
-
-  private ContextSerializer getContextSerializer(String json) {
-
-    if (StringUtils.isNotBlank(json)) {
-      Map<String, String> value =
-          CSCommonUtils.gson.fromJson(json, new HashMap<String, String>().getClass());
-      String type = value.get("type");
-      return getContextSerializerMap().get(type);
-    }
-    return null;
-  }
-
-  private ContextSerializer getContextSerializer(Object obj) {
-
-    if (null != obj) {
-      Stream<ContextSerializer> contextSerializerStream =
-          getContextSerializerMap().values().stream()
-              .filter(contextSerializer -> contextSerializer.accepts(obj));
-      if (null != contextSerializerStream) {
-        Optional<ContextSerializer> first = contextSerializerStream.findFirst();
-        if (first.isPresent()) {
-          return first.get();
+    @Override
+    public String serialize(Object obj) throws CSErrorException {
+        ContextSerializer contextSerializer = getContextSerializer(obj);
+        if (null != contextSerializer) {
+            return contextSerializer.serialize(obj);
         }
-      }
+
+        if (null != obj) {
+            throw new CSErrorException(
+                    97001, "Failed to find Serializer of " + obj.getClass().getName());
+        }
+        throw new CSErrorException(97001, "The obj not null");
     }
-    return null;
-  }
+
+    @Override
+    public Object deserialize(String json) throws CSErrorException {
+
+        ContextSerializer contextSerializer = getContextSerializer(json);
+
+        if (contextSerializer != null) {
+            return contextSerializer.deserialize(json);
+        }
+        if (StringUtils.isNotBlank(json)) {
+            throw new CSErrorException(97001, "Failed to find deserialize of " + json);
+        }
+        throw new CSErrorException(97001, "The json not null");
+    }
+
+    @Override
+    public <T> T deserialize(String s, Class<T> interfaceClass) throws CSErrorException {
+        return null;
+    }
+
+    private ContextSerializer getContextSerializer(String json) {
+
+        if (StringUtils.isNotBlank(json)) {
+            Map<String, String> value =
+                    CSCommonUtils.gson.fromJson(json, new HashMap<String, String>().getClass());
+            String type = value.get("type");
+            return getContextSerializerMap().get(type);
+        }
+        return null;
+    }
+
+    private ContextSerializer getContextSerializer(Object obj) {
+
+        if (null != obj) {
+            Stream<ContextSerializer> contextSerializerStream =
+                    getContextSerializerMap().values().stream()
+                            .filter(contextSerializer -> contextSerializer.accepts(obj));
+            if (null != contextSerializerStream) {
+                Optional<ContextSerializer> first = contextSerializerStream.findFirst();
+                if (first.isPresent()) {
+                    return first.get();
+                }
+            }
+        }
+        return null;
+    }
 }

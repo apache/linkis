@@ -21,7 +21,7 @@ import org.apache.linkis.cs.server.protocol.HttpResponseProtocol;
 
 public interface HttpAnswerJob extends HttpJob {
 
-  HttpResponseProtocol getResponseProtocol();
+    HttpResponseProtocol getResponseProtocol();
 
-  void setResponseProtocol(HttpResponseProtocol protocol);
+    void setResponseProtocol(HttpResponseProtocol protocol);
 }

@@ -82,149 +82,153 @@ import static org.apache.linkis.entrance.conf.EntranceConfiguration.ENTRANCE_SCH
 @Configuration
 public class EntranceSpringConfiguration {
 
-  private Logger logger = LoggerFactory.getLogger(getClass());
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
-  {
-    logger.info("load the linkis-cg-entrance spring configuration.");
-  }
+    {
+        logger.info("load the linkis-cg-entrance spring configuration.");
+    }
 
-  @Bean
-  @ConditionalOnMissingBean
-  public PersistenceEngine persistenceEngine() {
-    return new QueryPersistenceEngine();
-  }
+    @Bean
+    @ConditionalOnMissingBean
+    public PersistenceEngine persistenceEngine() {
+        return new QueryPersistenceEngine();
+    }
 
-  @Bean
-  @ConditionalOnMissingBean
-  public ResultSetEngine resultSetEngine() {
-    return new EntranceResultSetEngine();
-  }
+    @Bean
+    @ConditionalOnMissingBean
+    public ResultSetEngine resultSetEngine() {
+        return new EntranceResultSetEngine();
+    }
 
-  @Bean
-  @ConditionalOnMissingBean
-  public CliHeartbeatMonitor cliHeartbeatMonitor() {
-    CliHeartbeatMonitor cliHeartbeatMonitor = new CliHeartbeatMonitor(new KillHandler());
-    cliHeartbeatMonitor.start();
-    return cliHeartbeatMonitor;
-  }
+    @Bean
+    @ConditionalOnMissingBean
+    public CliHeartbeatMonitor cliHeartbeatMonitor() {
+        CliHeartbeatMonitor cliHeartbeatMonitor = new CliHeartbeatMonitor(new KillHandler());
+        cliHeartbeatMonitor.start();
+        return cliHeartbeatMonitor;
+    }
 
-  @Bean
-  @ConditionalOnMissingBean
-  public PersistenceManager persistenceManager(
-      PersistenceEngine persistenceEngine,
-      ResultSetEngine resultSetEngine,
-      CliHeartbeatMonitor cliHeartbeatMonitor) {
-    logger.info("init PersistenceManager.");
-    QueryPersistenceManager persistenceManager = new QueryPersistenceManager();
-    persistenceManager.setPersistenceEngine(persistenceEngine);
-    persistenceManager.setResultSetEngine(resultSetEngine);
-    persistenceManager.setCliHeartbeatMonitor(cliHeartbeatMonitor);
-    return persistenceManager;
-  }
+    @Bean
+    @ConditionalOnMissingBean
+    public PersistenceManager persistenceManager(
+            PersistenceEngine persistenceEngine,
+            ResultSetEngine resultSetEngine,
+            CliHeartbeatMonitor cliHeartbeatMonitor) {
+        logger.info("init PersistenceManager.");
+        QueryPersistenceManager persistenceManager = new QueryPersistenceManager();
+        persistenceManager.setPersistenceEngine(persistenceEngine);
+        persistenceManager.setResultSetEngine(resultSetEngine);
+        persistenceManager.setCliHeartbeatMonitor(cliHeartbeatMonitor);
+        return persistenceManager;
+    }
 
-  @Bean
-  @ConditionalOnMissingBean
-  public EntranceParser entranceParser(PersistenceManager persistenceManager) {
-    return new CommonEntranceParser(persistenceManager);
-  }
+    @Bean
+    @ConditionalOnMissingBean
+    public EntranceParser entranceParser(PersistenceManager persistenceManager) {
+        return new CommonEntranceParser(persistenceManager);
+    }
 
-  @Bean
-  @ConditionalOnMissingBean
-  public EntranceEventListenerBus<EntranceEventListener, EntranceEvent> entranceEventListenerBus() {
-    EntranceEventListenerBus<EntranceEventListener, EntranceEvent> entranceEventListenerBus =
-        new EntranceEventListenerBus<>();
-    entranceEventListenerBus.start();
-    return entranceEventListenerBus;
-  }
+    @Bean
+    @ConditionalOnMissingBean
+    public EntranceEventListenerBus<EntranceEventListener, EntranceEvent>
+            entranceEventListenerBus() {
+        EntranceEventListenerBus<EntranceEventListener, EntranceEvent> entranceEventListenerBus =
+                new EntranceEventListenerBus<>();
+        entranceEventListenerBus.start();
+        return entranceEventListenerBus;
+    }
 
-  /**
-   * add CSEntranceInterceptor
-   *
-   * @return
-   */
-  @Bean
-  @ConditionalOnMissingBean(name = {ServiceNameConsts.ENTRANCE_INTERCEPTOR})
-  public EntranceInterceptor[] entranceInterceptors() {
-    return new EntranceInterceptor[] {
-      new OnceJobInterceptor(),
-      new CSEntranceInterceptor(),
-      new ShellDangerousGrammerInterceptor(),
-      // new PythonCodeCheckInterceptor(),
-      // new DBInfoCompleteInterceptor(),
-      new CompatibleInterceptor(),
-      new SparkCodeCheckInterceptor(),
-      new SQLCodeCheckInterceptor(),
-      new LabelCheckInterceptor(),
-      new ParserVarLabelInterceptor(),
-      new VarSubstitutionInterceptor(),
-      new LogPathCreateInterceptor(),
-      new StorePathEntranceInterceptor(),
-      new ScalaCodeInterceptor(),
-      new SQLLimitEntranceInterceptor(),
-      new CommentInterceptor()
-    };
-  }
+    /**
+     * add CSEntranceInterceptor
+     *
+     * @return
+     */
+    @Bean
+    @ConditionalOnMissingBean(name = {ServiceNameConsts.ENTRANCE_INTERCEPTOR})
+    public EntranceInterceptor[] entranceInterceptors() {
+        return new EntranceInterceptor[] {
+            new OnceJobInterceptor(),
+            new CSEntranceInterceptor(),
+            new ShellDangerousGrammerInterceptor(),
+            // new PythonCodeCheckInterceptor(),
+            // new DBInfoCompleteInterceptor(),
+            new CompatibleInterceptor(),
+            new SparkCodeCheckInterceptor(),
+            new SQLCodeCheckInterceptor(),
+            new LabelCheckInterceptor(),
+            new ParserVarLabelInterceptor(),
+            new VarSubstitutionInterceptor(),
+            new LogPathCreateInterceptor(),
+            new StorePathEntranceInterceptor(),
+            new ScalaCodeInterceptor(),
+            new SQLLimitEntranceInterceptor(),
+            new CommentInterceptor()
+        };
+    }
 
-  @Bean
-  @ConditionalOnMissingBean
-  public ErrorCodeListener errorCodeListener(
-      PersistenceManager persistenceManager, EntranceParser entranceParser) {
-    PersistenceErrorCodeListener errorCodeListener = new PersistenceErrorCodeListener();
-    errorCodeListener.setEntranceParser(entranceParser);
-    errorCodeListener.setPersistenceManager(persistenceManager);
-    return errorCodeListener;
-  }
+    @Bean
+    @ConditionalOnMissingBean
+    public ErrorCodeListener errorCodeListener(
+            PersistenceManager persistenceManager, EntranceParser entranceParser) {
+        PersistenceErrorCodeListener errorCodeListener = new PersistenceErrorCodeListener();
+        errorCodeListener.setEntranceParser(entranceParser);
+        errorCodeListener.setPersistenceManager(persistenceManager);
+        return errorCodeListener;
+    }
 
-  @Bean
-  @ConditionalOnMissingBean
-  public ErrorCodeManager errorCodeManager() {
-    return FlexibleErrorCodeManager$.MODULE$;
-  }
+    @Bean
+    @ConditionalOnMissingBean
+    public ErrorCodeManager errorCodeManager() {
+        return FlexibleErrorCodeManager$.MODULE$;
+    }
 
-  @Bean
-  @ConditionalOnMissingBean
-  public LogManager logManager(
-      ErrorCodeListener errorCodeListener, ErrorCodeManager errorCodeManager) {
-    CacheLogManager logManager = new CacheLogManager();
-    logManager.setErrorCodeListener(errorCodeListener);
-    logManager.setErrorCodeManager(errorCodeManager);
-    return logManager;
-  }
+    @Bean
+    @ConditionalOnMissingBean
+    public LogManager logManager(
+            ErrorCodeListener errorCodeListener, ErrorCodeManager errorCodeManager) {
+        CacheLogManager logManager = new CacheLogManager();
+        logManager.setErrorCodeListener(errorCodeListener);
+        logManager.setErrorCodeManager(errorCodeManager);
+        return logManager;
+    }
 
-  @Bean
-  @ConditionalOnMissingBean
-  public GroupFactory groupFactory() {
-    return new EntranceGroupFactory();
-  }
+    @Bean
+    @ConditionalOnMissingBean
+    public GroupFactory groupFactory() {
+        return new EntranceGroupFactory();
+    }
 
-  @Bean
-  @ConditionalOnMissingBean
-  public ConsumerManager consumerManager() {
-    return new ParallelConsumerManager(
-        ENTRANCE_SCHEDULER_MAX_PARALLELISM_USERS().getValue(), "EntranceJobScheduler");
-  }
+    @Bean
+    @ConditionalOnMissingBean
+    public ConsumerManager consumerManager() {
+        return new ParallelConsumerManager(
+                ENTRANCE_SCHEDULER_MAX_PARALLELISM_USERS().getValue(), "EntranceJobScheduler");
+    }
 
-  @Bean
-  @ConditionalOnMissingBean
-  public SchedulerContext schedulerContext(
-      GroupFactory groupFactory, ExecutorManager executorManager, ConsumerManager consumerManager) {
-    return new EntranceSchedulerContext(groupFactory, consumerManager, executorManager);
-  }
+    @Bean
+    @ConditionalOnMissingBean
+    public SchedulerContext schedulerContext(
+            GroupFactory groupFactory,
+            ExecutorManager executorManager,
+            ConsumerManager consumerManager) {
+        return new EntranceSchedulerContext(groupFactory, consumerManager, executorManager);
+    }
 
-  @Bean
-  @ConditionalOnMissingBean
-  public ExecutorManager executorManager(GroupFactory groupFactory) {
-    EngineConnManagerBuilder engineConnManagerBuilder = EngineConnManagerBuilder$.MODULE$.builder();
-    engineConnManagerBuilder.setPolicy(Policy.Process);
-    return new EntranceExecutorManagerImpl(groupFactory, engineConnManagerBuilder.build());
-  }
+    @Bean
+    @ConditionalOnMissingBean
+    public ExecutorManager executorManager(GroupFactory groupFactory) {
+        EngineConnManagerBuilder engineConnManagerBuilder =
+                EngineConnManagerBuilder$.MODULE$.builder();
+        engineConnManagerBuilder.setPolicy(Policy.Process);
+        return new EntranceExecutorManagerImpl(groupFactory, engineConnManagerBuilder.build());
+    }
 
-  @Bean
-  @ConditionalOnMissingBean
-  public Scheduler scheduler(SchedulerContext schedulerContext) {
-    Scheduler scheduler = new ParallelScheduler(schedulerContext);
-    scheduler.init();
-    scheduler.start();
-    return scheduler;
-  }
+    @Bean
+    @ConditionalOnMissingBean
+    public Scheduler scheduler(SchedulerContext schedulerContext) {
+        Scheduler scheduler = new ParallelScheduler(schedulerContext);
+        scheduler.init();
+        scheduler.start();
+        return scheduler;
+    }
 }

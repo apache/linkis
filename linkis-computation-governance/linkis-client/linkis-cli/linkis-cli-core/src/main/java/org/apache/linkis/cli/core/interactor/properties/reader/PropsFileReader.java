@@ -23,75 +23,79 @@ import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
 
 import org.apache.commons.lang3.StringUtils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Properties;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class PropsFileReader implements PropertiesReader {
-  private static final Logger logger = LoggerFactory.getLogger(PropsFileReader.class);
-  private String propsId;
-  private String propsPath;
+    private static final Logger logger = LoggerFactory.getLogger(PropsFileReader.class);
+    private String propsId;
+    private String propsPath;
 
-  @Override
-  public String getPropsId() {
-    return propsId;
-  }
-
-  @Override
-  public PropertiesReader setPropsId(String identifier) {
-    this.propsId = identifier;
-    return this;
-  }
-
-  @Override
-  public String getPropsPath() {
-    return propsPath;
-  }
-
-  @Override
-  public PropsFileReader setPropsPath(String propsPath) {
-    File propsFile = new File(propsPath);
-    this.propsPath = propsFile.getAbsolutePath();
-    return this;
-  }
-
-  @Override
-  public Properties getProperties() {
-    checkInit();
-    Properties properties = new Properties();
-    InputStream in = null;
-    try {
-      in = new BufferedInputStream(new FileInputStream(propsPath));
-      properties.load(in);
-    } catch (Exception e) {
-      throw new PropsException(
-          "PRP0002", ErrorLevel.ERROR, CommonErrMsg.PropsReaderErr, "Source: " + propsPath, e);
-    } finally {
-      try {
-        in.close();
-      } catch (Exception ignore) {
-        // ignore
-      }
+    @Override
+    public String getPropsId() {
+        return propsId;
     }
 
-    return properties;
-  }
-
-  @Override
-  public void checkInit() {
-    if (StringUtils.isBlank(propsId) || StringUtils.isBlank(propsPath)) {
-      throw new PropsException(
-          "PRP0001",
-          ErrorLevel.WARN,
-          CommonErrMsg.PropsReaderInitErr,
-          "properties reader for source: "
-              + propsPath
-              + " is not inited. because of blank propsId or propsPath");
+    @Override
+    public PropertiesReader setPropsId(String identifier) {
+        this.propsId = identifier;
+        return this;
     }
-  }
+
+    @Override
+    public String getPropsPath() {
+        return propsPath;
+    }
+
+    @Override
+    public PropsFileReader setPropsPath(String propsPath) {
+        File propsFile = new File(propsPath);
+        this.propsPath = propsFile.getAbsolutePath();
+        return this;
+    }
+
+    @Override
+    public Properties getProperties() {
+        checkInit();
+        Properties properties = new Properties();
+        InputStream in = null;
+        try {
+            in = new BufferedInputStream(new FileInputStream(propsPath));
+            properties.load(in);
+        } catch (Exception e) {
+            throw new PropsException(
+                    "PRP0002",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.PropsReaderErr,
+                    "Source: " + propsPath,
+                    e);
+        } finally {
+            try {
+                in.close();
+            } catch (Exception ignore) {
+                // ignore
+            }
+        }
+
+        return properties;
+    }
+
+    @Override
+    public void checkInit() {
+        if (StringUtils.isBlank(propsId) || StringUtils.isBlank(propsPath)) {
+            throw new PropsException(
+                    "PRP0001",
+                    ErrorLevel.WARN,
+                    CommonErrMsg.PropsReaderInitErr,
+                    "properties reader for source: "
+                            + propsPath
+                            + " is not inited. because of blank propsId or propsPath");
+        }
+    }
 }

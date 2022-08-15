@@ -22,16 +22,17 @@ import org.apache.linkis.common.exception.LinkisRuntimeException;
 
 public class LabelRuntimeException extends LinkisRuntimeException {
 
-  public LabelRuntimeException(int errCode, String desc, String ip, int port, String serviceKind) {
-    super(errCode, desc, ip, port, serviceKind);
-  }
+    public LabelRuntimeException(
+            int errCode, String desc, String ip, int port, String serviceKind) {
+        super(errCode, desc, ip, port, serviceKind);
+    }
 
-  public LabelRuntimeException(int errCode, String desc) {
-    super(errCode, desc);
-  }
+    public LabelRuntimeException(int errCode, String desc) {
+        super(errCode, desc);
+    }
 
-  @Override
-  public ExceptionLevel getLevel() {
-    return null;
-  }
+    @Override
+    public ExceptionLevel getLevel() {
+        return null;
+    }
 }

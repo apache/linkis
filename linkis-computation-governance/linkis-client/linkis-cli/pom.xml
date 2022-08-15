@@ -15,43 +15,47 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+  
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>org.apache.linkis</groupId>
-    <artifactId>linkis</artifactId>
-    <version>1.2.0</version>
-  </parent>
-  <artifactId>linkis-cli</artifactId>
-  <packaging>pom</packaging>
+    <parent>
+        <artifactId>linkis</artifactId>
+        <groupId>org.apache.linkis</groupId>
+        <version>1.2.0</version>
+    </parent>
+    <artifactId>linkis-cli</artifactId>
+    <packaging>pom</packaging>
 
-  <modules>
-    <module>linkis-cli-common</module>
-    <module>linkis-cli-core</module>
-    <module>linkis-cli-application</module>
-  </modules>
+    <modules>
+        <module>linkis-cli-common</module>
+        <module>linkis-cli-core</module>
+        <module>linkis-cli-application</module>
+    </modules>
 
-  <dependencies>
-    <dependency>
-      <groupId>org.apache.linkis</groupId>
-      <artifactId>linkis-common</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-lang3</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.google.code.gson</groupId>
-      <artifactId>gson</artifactId>
-      <version>${gson.version}</version>
-    </dependency>
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.linkis</groupId>
+            <artifactId>linkis-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>${gson.version}</version>
+        </dependency>
 
-  </dependencies>
+    </dependencies>
 
-  <build>
-    <finalName>${project.artifactId}-${project.version}</finalName>
-  </build>
+
+    <build>
+        <finalName>${project.artifactId}-${project.version}</finalName>
+    </build>
 
 </project>

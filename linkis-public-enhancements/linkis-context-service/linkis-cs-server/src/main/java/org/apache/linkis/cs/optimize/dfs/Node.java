@@ -18,17 +18,17 @@
 package org.apache.linkis.cs.optimize.dfs;
 
 public interface Node {
-  Double getCost();
+    Double getCost();
 
-  Double getPriority();
+    Double getPriority();
 
-  Node getLeft();
+    Node getLeft();
 
-  Node getRight();
+    Node getRight();
 
-  void shift();
+    void shift();
 
-  boolean visited();
+    boolean visited();
 
-  void visit();
+    void visit();
 }

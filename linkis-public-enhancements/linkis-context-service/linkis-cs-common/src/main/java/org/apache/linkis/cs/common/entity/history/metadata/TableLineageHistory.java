@@ -23,7 +23,7 @@ import java.util.List;
 
 public interface TableLineageHistory {
 
-  List<Table> getSourceTables();
+    List<Table> getSourceTables();
 
-  void setSourceTables(List<Table> tables);
+    void setSourceTables(List<Table> tables);
 }

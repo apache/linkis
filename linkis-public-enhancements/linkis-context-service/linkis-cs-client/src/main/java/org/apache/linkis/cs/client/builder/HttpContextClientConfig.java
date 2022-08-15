@@ -28,36 +28,36 @@ import org.apache.linkis.httpclient.dws.authentication.TokenAuthenticationStrate
 /** Description: 以http的方式和cs-server进行交互的配置,包括http的诸多配置 */
 public class HttpContextClientConfig extends ContextClientConfig {
 
-  private ClientConfig clientConfig;
+    private ClientConfig clientConfig;
 
-  private static final int CS_CONNECTION_TIMEOUT =
-      CommonVars.apply("wds.linkis.cs.connection.timeout", 3 * 60 * 1000).getValue();
-  private static final int CS_READ_TIMEOUT =
-      CommonVars.apply("wds.linkis.cs.read.timeout", 3 * 60 * 1000).getValue();
-  private static final int CS_MAX_CONNECTION =
-      CommonVars.apply("wds.linkis.cs.max.connection", 50).getValue();
+    private static final int CS_CONNECTION_TIMEOUT =
+            CommonVars.apply("wds.linkis.cs.connection.timeout", 3 * 60 * 1000).getValue();
+    private static final int CS_READ_TIMEOUT =
+            CommonVars.apply("wds.linkis.cs.read.timeout", 3 * 60 * 1000).getValue();
+    private static final int CS_MAX_CONNECTION =
+            CommonVars.apply("wds.linkis.cs.max.connection", 50).getValue();
 
-  public HttpContextClientConfig() {
-    // 初始化clientConfig
-    String gatewayUrl = Configuration.getGateWayURL();
-    AuthenticationStrategy authenticationStrategy = new TokenAuthenticationStrategy();
-    clientConfig =
-        ClientConfigBuilder.newBuilder()
-            .addServerUrl(gatewayUrl)
-            .connectionTimeout(CS_CONNECTION_TIMEOUT)
-            .discoveryEnabled(false)
-            .loadbalancerEnabled(false)
-            .maxConnectionSize(CS_MAX_CONNECTION)
-            .retryEnabled(false)
-            .readTimeout(CS_READ_TIMEOUT)
-            .setAuthenticationStrategy(authenticationStrategy)
-            .setAuthTokenKey(ContextClientConf.CONTEXT_CLIENT_AUTH_KEY().getValue())
-            .setAuthTokenValue(ContextClientConf.CONTEXT_CLIENT_AUTH_VALUE().getValue())
-            .build();
-  }
+    public HttpContextClientConfig() {
+        // 初始化clientConfig
+        String gatewayUrl = Configuration.getGateWayURL();
+        AuthenticationStrategy authenticationStrategy = new TokenAuthenticationStrategy();
+        clientConfig =
+                ClientConfigBuilder.newBuilder()
+                        .addServerUrl(gatewayUrl)
+                        .connectionTimeout(CS_CONNECTION_TIMEOUT)
+                        .discoveryEnabled(false)
+                        .loadbalancerEnabled(false)
+                        .maxConnectionSize(CS_MAX_CONNECTION)
+                        .retryEnabled(false)
+                        .readTimeout(CS_READ_TIMEOUT)
+                        .setAuthenticationStrategy(authenticationStrategy)
+                        .setAuthTokenKey(ContextClientConf.CONTEXT_CLIENT_AUTH_KEY().getValue())
+                        .setAuthTokenValue(ContextClientConf.CONTEXT_CLIENT_AUTH_VALUE().getValue())
+                        .build();
+    }
 
-  /** @return 返回一个的 */
-  public ClientConfig getClientConfig() {
-    return this.clientConfig;
-  }
+    /** @return 返回一个的 */
+    public ClientConfig getClientConfig() {
+        return this.clientConfig;
+    }
 }

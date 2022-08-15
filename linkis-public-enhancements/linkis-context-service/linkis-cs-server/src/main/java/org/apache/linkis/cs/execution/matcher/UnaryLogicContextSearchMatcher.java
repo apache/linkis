@@ -21,10 +21,10 @@ import org.apache.linkis.cs.condition.UnaryLogicCondition;
 
 public abstract class UnaryLogicContextSearchMatcher extends AbstractContextSearchMatcher {
 
-  ContextSearchMatcher originalMatcher;
+    ContextSearchMatcher originalMatcher;
 
-  public UnaryLogicContextSearchMatcher(UnaryLogicCondition condition) {
-    super(condition);
-    originalMatcher = ConditionMatcherResolver.getMatcher(condition.getOrigin());
-  }
+    public UnaryLogicContextSearchMatcher(UnaryLogicCondition condition) {
+        super(condition);
+        originalMatcher = ConditionMatcherResolver.getMatcher(condition.getOrigin());
+    }
 }

@@ -25,13 +25,13 @@ import java.util.Map;
 
 /** Persist Hook */
 public interface DataSourceParamsHook {
-  /**
-   * Before persisting params
-   *
-   * @param connectParams connect params
-   * @param keyDefinitionList key definitions
-   */
-  void beforePersist(
-      Map<String, Object> connectParams, List<DataSourceParamKeyDefinition> keyDefinitionList)
-      throws ErrorException;
+    /**
+     * Before persisting params
+     *
+     * @param connectParams connect params
+     * @param keyDefinitionList key definitions
+     */
+    void beforePersist(
+            Map<String, Object> connectParams, List<DataSourceParamKeyDefinition> keyDefinitionList)
+            throws ErrorException;
 }

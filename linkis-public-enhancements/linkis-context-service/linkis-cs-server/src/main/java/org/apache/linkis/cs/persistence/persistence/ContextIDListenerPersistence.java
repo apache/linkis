@@ -25,15 +25,15 @@ import java.util.List;
 
 public interface ContextIDListenerPersistence {
 
-  void create(ContextID contextID, ContextIDListenerDomain contextIDListenerDomain)
-      throws CSErrorException;
+    void create(ContextID contextID, ContextIDListenerDomain contextIDListenerDomain)
+            throws CSErrorException;
 
-  void remove(ContextIDListenerDomain contextIDListenerDomain) throws CSErrorException;
+    void remove(ContextIDListenerDomain contextIDListenerDomain) throws CSErrorException;
 
-  void removeAll(ContextID contextID) throws CSErrorException;
+    void removeAll(ContextID contextID) throws CSErrorException;
 
-  List<ContextIDListenerDomain> getAll(ContextID contextID) throws CSErrorException;
+    List<ContextIDListenerDomain> getAll(ContextID contextID) throws CSErrorException;
 
-  ContextIDListenerDomain getBy(ContextIDListenerDomain contextIDListenerDomain)
-      throws CSErrorException;
+    ContextIDListenerDomain getBy(ContextIDListenerDomain contextIDListenerDomain)
+            throws CSErrorException;
 }

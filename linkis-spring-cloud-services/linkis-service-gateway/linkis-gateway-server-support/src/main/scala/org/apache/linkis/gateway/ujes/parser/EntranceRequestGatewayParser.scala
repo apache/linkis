@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,40 +23,32 @@ import org.apache.linkis.gateway.http.GatewayContext
 import org.apache.linkis.gateway.parser.AbstractGatewayParser
 import org.apache.linkis.gateway.ujes.parser.EntranceExecutionGatewayParser._
 import org.apache.linkis.protocol.utils.ZuulEntranceUtils
-
 import org.springframework.stereotype.Component
 
 @Component
 class EntranceRequestGatewayParser extends AbstractGatewayParser {
   override def shouldContainRequestBody(gatewayContext: GatewayContext): Boolean = false
 
-  override def parse(gatewayContext: GatewayContext): Unit =
-    gatewayContext.getRequest.getRequestURI match {
-      case EntranceRequestGatewayParser.ENTRANCE_REQUEST_REGEX(version, execId) =>
-        if (sendResponseWhenNotMatchVersion(gatewayContext, version)) return
-        val serviceInstance = if (execId.startsWith(EntranceRequestGatewayParser.API_REQUEST)) {
-          if (
-              gatewayContext.getRequest.getQueryParams.containsKey(
-                EntranceRequestGatewayParser.INSTANCE
-              )
-          ) {
-            val instances =
-              gatewayContext.getRequest.getQueryParams.get(EntranceRequestGatewayParser.INSTANCE)
-            if (null != instances && instances.length == 1) {
-              ServiceInstance(GatewayConfiguration.ENTRANCE_SPRING_NAME.getValue, instances(0))
-            } else {
-              ServiceInstance(GatewayConfiguration.ENTRANCE_SPRING_NAME.getValue, null)
-            }
+  override def parse(gatewayContext: GatewayContext): Unit = gatewayContext.getRequest.getRequestURI match {
+    case EntranceRequestGatewayParser.ENTRANCE_REQUEST_REGEX(version, execId) =>
+      if (sendResponseWhenNotMatchVersion(gatewayContext, version)) return
+      val serviceInstance = if (execId.startsWith(EntranceRequestGatewayParser.API_REQUEST)) {
+        if (gatewayContext.getRequest.getQueryParams.containsKey(EntranceRequestGatewayParser.INSTANCE)) {
+          val instances = gatewayContext.getRequest.getQueryParams.get(EntranceRequestGatewayParser.INSTANCE)
+          if (null != instances && instances.length == 1) {
+            ServiceInstance(GatewayConfiguration.ENTRANCE_SPRING_NAME.getValue, instances(0))
           } else {
             ServiceInstance(GatewayConfiguration.ENTRANCE_SPRING_NAME.getValue, null)
           }
         } else {
-          ZuulEntranceUtils.parseServiceInstanceByExecID(execId)(0)
+          ServiceInstance(GatewayConfiguration.ENTRANCE_SPRING_NAME.getValue, null)
         }
-        gatewayContext.getGatewayRoute.setServiceInstance(serviceInstance)
-      case _ =>
-    }
-
+      } else {
+        ZuulEntranceUtils.parseServiceInstanceByExecID(execId)(0)
+      }
+      gatewayContext.getGatewayRoute.setServiceInstance(serviceInstance)
+    case _ =>
+  }
 }
 
 object EntranceRequestGatewayParser {

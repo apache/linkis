@@ -23,33 +23,33 @@ import org.apache.linkis.cli.common.entity.operator.JobOperator;
 import org.apache.linkis.cli.common.entity.present.PresentWay;
 
 public interface Job {
-  /** Linkis-cli specified id, not server-side returned job-id/task-id */
-  String getCid();
+    /** Linkis-cli specified id, not server-side returned job-id/task-id */
+    String getCid();
 
-  /**
-   * Command Type for this Job, should be able to use this to find out corresponding {@link
-   * CmdTemplate}
-   */
-  CmdType getCmdType();
+    /**
+     * Command Type for this Job, should be able to use this to find out corresponding {@link
+     * CmdTemplate}
+     */
+    CmdType getCmdType();
 
-  /** specifies which kind of sub-execution: e.g. jobManagement: status/list/log/kill; */
-  JobSubType getSubType();
+    /** specifies which kind of sub-execution: e.g. jobManagement: status/list/log/kill; */
+    JobSubType getSubType();
 
-  /**
-   * input-param/config will be stored in JobDescription information contained by this
-   * data-structure should be passed to server
-   */
-  JobDescription getJobDesc();
+    /**
+     * input-param/config will be stored in JobDescription information contained by this
+     * data-structure should be passed to server
+     */
+    JobDescription getJobDesc();
 
-  /**
-   * data generated during execution(e.g. job status, job id, log, result etc.) is stored here
-   * information contained by this data-structure can be further passed to server
-   */
-  JobData getJobData();
+    /**
+     * data generated during execution(e.g. job status, job id, log, result etc.) is stored here
+     * information contained by this data-structure can be further passed to server
+     */
+    JobData getJobData();
 
-  /** operates lower level components(usually encapsulates a client) */
-  JobOperator getJobOperator();
+    /** operates lower level components(usually encapsulates a client) */
+    JobOperator getJobOperator();
 
-  /** decide how result should be presented */
-  PresentWay getPresentWay();
+    /** decide how result should be presented */
+    PresentWay getPresentWay();
 }

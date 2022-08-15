@@ -31,63 +31,64 @@ import java.util.Objects;
 /** A column info represents a table column's structure with column name, column type. */
 public class ColumnInfo {
 
-  private static final String FIELD_NAME_NAME = "name";
-  private static final String FIELD_NAME_TYPE = "type";
+    private static final String FIELD_NAME_NAME = "name";
+    private static final String FIELD_NAME_TYPE = "type";
 
-  @JsonProperty(FIELD_NAME_NAME)
-  private String name;
+    @JsonProperty(FIELD_NAME_NAME)
+    private String name;
 
-  @JsonProperty(FIELD_NAME_TYPE)
-  private String type;
+    @JsonProperty(FIELD_NAME_TYPE)
+    private String type;
 
-  @JsonIgnore @Nullable private LogicalType logicalType;
+    @JsonIgnore @Nullable private LogicalType logicalType;
 
-  @JsonCreator
-  public ColumnInfo(
-      @JsonProperty(FIELD_NAME_NAME) String name, @JsonProperty(FIELD_NAME_TYPE) String type) {
-    this.name = Preconditions.checkNotNull(name, "name must not be null");
-    this.type = Preconditions.checkNotNull(type, "type must not be null");
-  }
-
-  public static ColumnInfo create(String name, LogicalType type) {
-    return new ColumnInfo(name, type.toString());
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public String getType() {
-    return type;
-  }
-
-  @JsonIgnore
-  public LogicalType getLogicalType() {
-    if (logicalType == null) {
-      logicalType = LogicalTypeParser.parse(type);
+    @JsonCreator
+    public ColumnInfo(
+            @JsonProperty(FIELD_NAME_NAME) String name,
+            @JsonProperty(FIELD_NAME_TYPE) String type) {
+        this.name = Preconditions.checkNotNull(name, "name must not be null");
+        this.type = Preconditions.checkNotNull(type, "type must not be null");
     }
-    return logicalType;
-  }
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
+    public static ColumnInfo create(String name, LogicalType type) {
+        return new ColumnInfo(name, type.toString());
     }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
+
+    public String getName() {
+        return name;
     }
-    ColumnInfo that = (ColumnInfo) o;
-    return name.equals(that.name) && type.equals(that.type);
-  }
 
-  @Override
-  public int hashCode() {
-    return Objects.hash(name, type);
-  }
+    public String getType() {
+        return type;
+    }
 
-  @Override
-  public String toString() {
-    return "ColumnInfo{" + "name='" + name + '\'' + ", type='" + type + '\'' + '}';
-  }
+    @JsonIgnore
+    public LogicalType getLogicalType() {
+        if (logicalType == null) {
+            logicalType = LogicalTypeParser.parse(type);
+        }
+        return logicalType;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ColumnInfo that = (ColumnInfo) o;
+        return name.equals(that.name) && type.equals(that.type);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, type);
+    }
+
+    @Override
+    public String toString() {
+        return "ColumnInfo{" + "name='" + name + '\'' + ", type='" + type + '\'' + '}';
+    }
 }

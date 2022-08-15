@@ -19,23 +19,23 @@ package org.apache.linkis.cs.common.entity.source;
 
 public interface WorkflowContextID extends ContextID {
 
-  String getWorkSpace();
+    String getWorkSpace();
 
-  void setWorkSpace(String workSpace);
+    void setWorkSpace(String workSpace);
 
-  String getProject();
+    String getProject();
 
-  void setProject(String project);
+    void setProject(String project);
 
-  String getFlow();
+    String getFlow();
 
-  void setFlow(String flow);
+    void setFlow(String flow);
 
-  String getVersion();
+    String getVersion();
 
-  void setVersion(String version);
+    void setVersion(String version);
 
-  String getEnv();
+    String getEnv();
 
-  void setEnv(String env);
+    void setEnv(String env);
 }

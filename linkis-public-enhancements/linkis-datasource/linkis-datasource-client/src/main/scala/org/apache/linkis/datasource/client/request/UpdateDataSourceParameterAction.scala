@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,14 +22,11 @@ import org.apache.linkis.datasource.client.exception.DataSourceClientBuilderExce
 import org.apache.linkis.httpclient.dws.DWSHttpClient
 import org.apache.linkis.httpclient.request.POSTAction
 
+import scala.collection.JavaConverters._
 import java.util
 
-import scala.collection.JavaConverters._
-
 class UpdateDataSourceParameterAction extends POSTAction with DataSourceAction {
-
-  override def getRequestPayload: String =
-    DWSHttpClient.jacksonJson.writeValueAsString(getRequestPayloads)
+  override def getRequestPayload: String = DWSHttpClient.jacksonJson.writeValueAsString(getRequestPayloads)
 
   private var user: String = _
   private var dataSourceId: Long = _
@@ -38,15 +35,12 @@ class UpdateDataSourceParameterAction extends POSTAction with DataSourceAction {
 
   override def getUser: String = this.user
 
-  override def suffixURLs: Array[String] =
-    Array(DATA_SOURCE_SERVICE_MODULE.getValue, "parameter", dataSourceId.toString, "json")
-
+  override def suffixURLs: Array[String] = Array(DATA_SOURCE_SERVICE_MODULE.getValue, "parameter", dataSourceId.toString, "json")
 }
-
 object UpdateDataSourceParameterAction {
   def builder(): Builder = new Builder
 
-  class Builder private[UpdateDataSourceParameterAction] () {
+  class Builder private[UpdateDataSourceParameterAction]() {
     private var user: String = _
     private var dataSourceId: Long = _
     private var payload: util.Map[String, Any] = new util.HashMap[String, Any]
@@ -72,9 +66,8 @@ object UpdateDataSourceParameterAction {
     }
 
     def build(): UpdateDataSourceParameterAction = {
-      if (dataSourceId == null)
-        throw new DataSourceClientBuilderException("dataSourceId is needed!")
-      if (user == null) throw new DataSourceClientBuilderException("user is needed!")
+      if (dataSourceId == null) throw new DataSourceClientBuilderException("dataSourceId is needed!")
+      if(user == null) throw new DataSourceClientBuilderException("user is needed!")
 
       val action = new UpdateDataSourceParameterAction()
       action.dataSourceId = dataSourceId
@@ -85,7 +78,5 @@ object UpdateDataSourceParameterAction {
 
       action
     }
-
   }
-
 }

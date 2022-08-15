@@ -25,26 +25,26 @@ import org.apache.linkis.cs.condition.impl.ContainsCondition;
 import org.apache.linkis.cs.condition.impl.ContextValueTypeCondition;
 import org.apache.linkis.cs.condition.impl.RegexCondition;
 
-import java.util.Map;
-
 import com.google.common.collect.Maps;
+
+import java.util.Map;
 
 public class ConditionCostCalculator {
 
-  static Map<Class, Double> initialCost = Maps.newHashMap();
+    static Map<Class, Double> initialCost = Maps.newHashMap();
 
-  static {
-    initialCost.put(RegexCondition.class, 100d);
-    initialCost.put(ContainsCondition.class, 10d);
-    initialCost.put(ContextScope.class, 10d);
-    initialCost.put(ContextType.class, 1d);
-    initialCost.put(ContextValueTypeCondition.class, 1d);
-  }
-
-  public Double calculate(Condition condition) {
-    if (condition instanceof AtomicCondition) {
-      return initialCost.get(condition.getClass());
+    static {
+        initialCost.put(RegexCondition.class, 100d);
+        initialCost.put(ContainsCondition.class, 10d);
+        initialCost.put(ContextScope.class, 10d);
+        initialCost.put(ContextType.class, 1d);
+        initialCost.put(ContextValueTypeCondition.class, 1d);
     }
-    return 0d;
-  }
+
+    public Double calculate(Condition condition) {
+        if (condition instanceof AtomicCondition) {
+            return initialCost.get(condition.getClass());
+        }
+        return 0d;
+    }
 }

@@ -29,12 +29,12 @@ import java.util.List;
 @Mapper
 public interface ErrorCodeMapper {
 
-  @Select("SELECT * FROM linkis_ps_error_code")
-  @Results({
-    @Result(property = "errorCode", column = "error_code"),
-    @Result(property = "errorDesc", column = "error_desc"),
-    @Result(property = "errorRegexStr", column = "error_regex"),
-    @Result(property = "errorType", column = "error_type"),
-  })
-  List<LinkisErrorCode> getAllErrorCodes();
+    @Select("SELECT * FROM linkis_ps_error_code")
+    @Results({
+        @Result(property = "errorCode", column = "error_code"),
+        @Result(property = "errorDesc", column = "error_desc"),
+        @Result(property = "errorRegexStr", column = "error_regex"),
+        @Result(property = "errorType", column = "error_type"),
+    })
+    List<LinkisErrorCode> getAllErrorCodes();
 }

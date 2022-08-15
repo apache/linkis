@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,18 +24,19 @@ import org.apache.linkis.manager.label.service.NodeLabelService
 import org.apache.linkis.manager.rm.domain.RMLabelContainer
 import org.apache.linkis.manager.rm.service.ResourceManager
 import org.apache.linkis.rpc.message.annotation.Receiver
-
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
 @Component
 class RMMessageService extends Logging {
 
+
   @Autowired
   private var resourceManager: ResourceManager = _
 
   @Autowired
   private var nodeLabelService: NodeLabelService = _
+
 
   @Receiver
   def dealWithResourceUsedProtocol(resourceUsedProtocol: ResourceUsedProtocol): Unit = {
@@ -44,24 +45,19 @@ class RMMessageService extends Logging {
     Utils.tryCatch(resourceManager.resourceUsed(labels, resourceUsedProtocol.engineResource)) {
       case exception: Exception => {
         val nodeLabels = new RMLabelContainer(labels)
-        val value: String = Option(nodeLabels.getCombinedUserCreatorEngineTypeLabel)
-          .map(_.getStringValue)
-          .getOrElse("")
-        logger.warn(
-          s"usedResource failed, request from:$value, request engine: ${nodeLabels.getEngineInstanceLabel}, " +
-            s"reason:${exception.getMessage}"
-        )
+        val value: String = Option(nodeLabels.getCombinedUserCreatorEngineTypeLabel).map(_.getStringValue).getOrElse("")
+        logger.warn(s"usedResource failed, request from:$value, request engine: ${nodeLabels.getEngineInstanceLabel}, " +
+          s"reason:${exception.getMessage}")
         throw exception
       }
     }
   }
 
+
   def dealWithRegisterEMRequest(registerEMRequest: EMResourceRegisterRequest): Unit = {
-    resourceManager.register(
-      registerEMRequest.getServiceInstance,
-      registerEMRequest.getNodeResource
-    )
+    resourceManager.register(registerEMRequest.getServiceInstance, registerEMRequest.getNodeResource)
   }
+
 
   def dealWithStopEMRequest(stopEMRequest: StopEMRequest): Unit = {
     resourceManager.unregister(stopEMRequest.getEm)

@@ -19,7 +19,7 @@ package org.apache.linkis.cs.common.entity.source;
 
 public interface CreatorContextKey extends ContextKey {
 
-  String getCreator();
+    String getCreator();
 
-  void setCreator(String creator);
+    void setCreator(String creator);
 }

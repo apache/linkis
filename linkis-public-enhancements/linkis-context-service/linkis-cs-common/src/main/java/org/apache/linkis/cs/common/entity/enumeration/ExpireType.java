@@ -18,18 +18,18 @@
 package org.apache.linkis.cs.common.entity.enumeration;
 
 public enum ExpireType {
-  /** */
-  TODAY(0),
-  MAX_EXISTS_TIME(1),
-  NEVER(2);
+    /** */
+    TODAY(0),
+    MAX_EXISTS_TIME(1),
+    NEVER(2);
 
-  private Integer id;
+    private Integer id;
 
-  ExpireType(Integer id) {
-    this.id = id;
-  }
+    ExpireType(Integer id) {
+        this.id = id;
+    }
 
-  public Integer getId() {
-    return this.id;
-  }
+    public Integer getId() {
+        return this.id;
+    }
 }

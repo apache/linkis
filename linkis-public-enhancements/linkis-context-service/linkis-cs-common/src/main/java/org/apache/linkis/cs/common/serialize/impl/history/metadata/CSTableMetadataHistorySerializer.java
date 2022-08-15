@@ -29,35 +29,36 @@ import org.apache.linkis.cs.common.utils.CSCommonUtils;
 import java.util.Map;
 
 public class CSTableMetadataHistorySerializer
-    extends AbstractSerializer<CSTableMetadataContextHistory> implements CommonHistorySerializer {
+        extends AbstractSerializer<CSTableMetadataContextHistory>
+        implements CommonHistorySerializer {
 
-  @Override
-  public CSTableMetadataContextHistory fromJson(String json) throws CSErrorException {
-    Map<String, String> map = getMapValue(json);
-    CSTableMetadataContextHistory history = get(map, new CSTableMetadataContextHistory());
-    history.setTable(CSCommonUtils.gson.fromJson(map.get("table"), CSTable.class));
-    history.setOperationType(TableOperationType.valueOf(map.get("operationType")));
-    return history;
-  }
+    @Override
+    public CSTableMetadataContextHistory fromJson(String json) throws CSErrorException {
+        Map<String, String> map = getMapValue(json);
+        CSTableMetadataContextHistory history = get(map, new CSTableMetadataContextHistory());
+        history.setTable(CSCommonUtils.gson.fromJson(map.get("table"), CSTable.class));
+        history.setOperationType(TableOperationType.valueOf(map.get("operationType")));
+        return history;
+    }
 
-  @Override
-  public String getJsonValue(CSTableMetadataContextHistory tableHistory) throws CSErrorException {
-    Table table = tableHistory.getTable();
-    String tableStr = CSCommonUtils.gson.toJson(table);
-    Map<String, String> mapValue = getMapValue(tableHistory);
-    mapValue.put("table", tableStr);
-    mapValue.put("operationType", tableHistory.getOperationType().name());
-    return CSCommonUtils.gson.toJson(mapValue);
-  }
+    @Override
+    public String getJsonValue(CSTableMetadataContextHistory tableHistory) throws CSErrorException {
+        Table table = tableHistory.getTable();
+        String tableStr = CSCommonUtils.gson.toJson(table);
+        Map<String, String> mapValue = getMapValue(tableHistory);
+        mapValue.put("table", tableStr);
+        mapValue.put("operationType", tableHistory.getOperationType().name());
+        return CSCommonUtils.gson.toJson(mapValue);
+    }
 
-  @Override
-  public String getType() {
-    return "CSTableMetadataContextHistory";
-  }
+    @Override
+    public String getType() {
+        return "CSTableMetadataContextHistory";
+    }
 
-  @Override
-  public boolean accepts(Object obj) {
-    return null != obj
-        && obj.getClass().getName().equals(CSTableMetadataContextHistory.class.getName());
-  }
+    @Override
+    public boolean accepts(Object obj) {
+        return null != obj
+                && obj.getClass().getName().equals(CSTableMetadataContextHistory.class.getName());
+    }
 }

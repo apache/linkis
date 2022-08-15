@@ -18,12 +18,12 @@
 package org.apache.linkis.common.exception;
 
 public class LinkisCommonErrorException extends ErrorException {
-  public LinkisCommonErrorException(int errCode, String desc) {
-    super(errCode, desc);
-  }
+    public LinkisCommonErrorException(int errCode, String desc) {
+        super(errCode, desc);
+    }
 
-  public LinkisCommonErrorException(
-      int errCode, String desc, String ip, int port, String serviceKind) {
-    super(errCode, desc, ip, port, serviceKind);
-  }
+    public LinkisCommonErrorException(
+            int errCode, String desc, String ip, int port, String serviceKind) {
+        super(errCode, desc, ip, port, serviceKind);
+    }
 }

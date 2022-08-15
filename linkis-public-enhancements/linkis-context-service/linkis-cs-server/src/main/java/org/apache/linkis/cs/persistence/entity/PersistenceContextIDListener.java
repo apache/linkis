@@ -23,65 +23,65 @@ import java.util.Date;
 
 public class PersistenceContextIDListener implements ListenerDomain {
 
-  private Integer id;
+    private Integer id;
 
-  private String source;
+    private String source;
 
-  private String contextId;
+    private String contextId;
 
-  private Date createTime;
+    private Date createTime;
 
-  private Date updateTime;
+    private Date updateTime;
 
-  private Date accessTime;
+    private Date accessTime;
 
-  public Integer getId() {
-    return id;
-  }
+    public Integer getId() {
+        return id;
+    }
 
-  public void setId(Integer id) {
-    this.id = id;
-  }
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-  public String getContextId() {
-    return contextId;
-  }
+    public String getContextId() {
+        return contextId;
+    }
 
-  public void setContextId(String contextId) {
-    this.contextId = contextId;
-  }
+    public void setContextId(String contextId) {
+        this.contextId = contextId;
+    }
 
-  @Override
-  public String getSource() {
-    return this.source;
-  }
+    @Override
+    public String getSource() {
+        return this.source;
+    }
 
-  @Override
-  public void setSource(String source) {
-    this.source = source;
-  }
+    @Override
+    public void setSource(String source) {
+        this.source = source;
+    }
 
-  public Date getCreateTime() {
-    return createTime;
-  }
+    public Date getCreateTime() {
+        return createTime;
+    }
 
-  public void setCreateTime(Date createTime) {
-    this.createTime = createTime;
-  }
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
 
-  public Date getUpdateTime() {
-    return updateTime;
-  }
+    public Date getUpdateTime() {
+        return updateTime;
+    }
 
-  public void setUpdateTime(Date updateTime) {
-    this.updateTime = updateTime;
-  }
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
+    }
 
-  public Date getAccessTime() {
-    return accessTime;
-  }
+    public Date getAccessTime() {
+        return accessTime;
+    }
 
-  public void setAccessTime(Date accessTime) {
-    this.accessTime = accessTime;
-  }
+    public void setAccessTime(Date accessTime) {
+        this.accessTime = accessTime;
+    }
 }

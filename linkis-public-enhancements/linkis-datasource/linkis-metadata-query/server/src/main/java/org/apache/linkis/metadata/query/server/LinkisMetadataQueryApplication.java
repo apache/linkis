@@ -24,10 +24,10 @@ import org.apache.commons.logging.LogFactory;
 
 public class LinkisMetadataQueryApplication {
 
-  private static final Log logger = LogFactory.getLog(LinkisMetadataQueryApplication.class);
+    private static final Log logger = LogFactory.getLog(LinkisMetadataQueryApplication.class);
 
-  public static void main(String[] args) throws ReflectiveOperationException {
-    logger.info("Start to running LinkisMetadataQueryApplication");
-    LinkisBaseServerApp.main(args);
-  }
+    public static void main(String[] args) throws ReflectiveOperationException {
+        logger.info("Start to running LinkisMetadataQueryApplication");
+        LinkisBaseServerApp.main(args);
+    }
 }

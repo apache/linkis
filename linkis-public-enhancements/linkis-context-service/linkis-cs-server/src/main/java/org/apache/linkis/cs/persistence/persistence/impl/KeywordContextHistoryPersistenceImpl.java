@@ -36,35 +36,35 @@ import java.util.stream.Collectors;
 @Component
 public class KeywordContextHistoryPersistenceImpl implements KeywordContextHistoryPersistence {
 
-  @Autowired private ContextHistoryMapper contextHistoryMapper;
-  @Autowired private ContextHistoryPersistenceImpl contextHistoryPersistence;
+    @Autowired private ContextHistoryMapper contextHistoryMapper;
+    @Autowired private ContextHistoryPersistenceImpl contextHistoryPersistence;
 
-  @Override
-  public List<ContextHistory> search(ContextID contextID, String[] keywords)
-      throws CSErrorException {
-    List<PersistenceContextHistory> pHistory =
-        contextHistoryMapper.searchByKeywords(contextID, keywords);
-    return pHistory.stream()
-        .map(PersistenceUtils.map(contextHistoryPersistence::transfer))
-        .collect(Collectors.toList());
-  }
+    @Override
+    public List<ContextHistory> search(ContextID contextID, String[] keywords)
+            throws CSErrorException {
+        List<PersistenceContextHistory> pHistory =
+                contextHistoryMapper.searchByKeywords(contextID, keywords);
+        return pHistory.stream()
+                .map(PersistenceUtils.map(contextHistoryPersistence::transfer))
+                .collect(Collectors.toList());
+    }
 
-  @Override
-  public List<ContextHistory> search(ContextType contextType, String[] keywords)
-      throws CSErrorException {
-    List<PersistenceContextHistory> pHistory =
-        contextHistoryMapper.searchByKeywordsAndType(contextType, keywords);
-    return pHistory.stream()
-        .map(PersistenceUtils.map(contextHistoryPersistence::transfer))
-        .collect(Collectors.toList());
-  }
+    @Override
+    public List<ContextHistory> search(ContextType contextType, String[] keywords)
+            throws CSErrorException {
+        List<PersistenceContextHistory> pHistory =
+                contextHistoryMapper.searchByKeywordsAndType(contextType, keywords);
+        return pHistory.stream()
+                .map(PersistenceUtils.map(contextHistoryPersistence::transfer))
+                .collect(Collectors.toList());
+    }
 
-  @Override
-  public ContextHistoryIndexer getContextHistoryIndexer() throws CSErrorException {
-    return null;
-  }
+    @Override
+    public ContextHistoryIndexer getContextHistoryIndexer() throws CSErrorException {
+        return null;
+    }
 
-  @Override
-  public void setContextHistoryIndexer(ContextHistoryIndexer contextHistoryIndexer)
-      throws CSErrorException {}
+    @Override
+    public void setContextHistoryIndexer(ContextHistoryIndexer contextHistoryIndexer)
+            throws CSErrorException {}
 }

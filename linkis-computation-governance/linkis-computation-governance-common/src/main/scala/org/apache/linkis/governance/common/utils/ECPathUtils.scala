@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,30 +17,19 @@
 
 package org.apache.linkis.governance.common.utils
 
-import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.time.DateFormatUtils
+import org.apache.commons.lang3.StringUtils
 
 import java.io.File
 import java.nio.file.Paths
 
 object ECPathUtils {
 
-  def getECWOrkDirPathSuffix(
-      user: String,
-      ticketId: String,
-      engineType: String,
-      timeStamp: Long = System.currentTimeMillis()
-  ): String = {
+  def getECWOrkDirPathSuffix(user: String, ticketId: String, engineType: String, timeStamp: Long = System.currentTimeMillis()): String = {
     val suffix = if (StringUtils.isBlank(engineType)) {
-      Paths
-        .get(user, DateFormatUtils.format(System.currentTimeMillis(), "yyyyMMdd"))
-        .toFile
-        .getPath
+      Paths.get(user, DateFormatUtils.format(System.currentTimeMillis(), "yyyyMMdd")).toFile.getPath
     } else {
-      Paths
-        .get(user, DateFormatUtils.format(System.currentTimeMillis(), "yyyyMMdd"), engineType)
-        .toFile
-        .getPath
+      Paths.get(user, DateFormatUtils.format(System.currentTimeMillis(), "yyyyMMdd"), engineType).toFile.getPath
     }
     suffix + File.separator + ticketId
   }

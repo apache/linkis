@@ -21,5 +21,5 @@ import org.apache.linkis.cs.common.entity.source.ContextKeyValue;
 
 public interface ContextSearchMatcher {
 
-  Boolean match(ContextKeyValue contextKeyValue);
+    Boolean match(ContextKeyValue contextKeyValue);
 }

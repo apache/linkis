@@ -5,20 +5,21 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+ 
 package org.apache.linkis.orchestrator.exception
 
 /**
- */
+  *
+  */
 object OrchestratorErrorCodeSummary {
 
   val LABEL_NOT_EXISTS_ERROR_CODE = 21001
@@ -27,6 +28,7 @@ object OrchestratorErrorCodeSummary {
   val PARSER_FOR_NOT_SUPPORT_ERROR_CODE = 21101
   val PLANNER_FOR_NOT_SUPPORT_ERROR_CODE = 21102
   val OPTIMIZER_FOR_NOT_SUPPORT_ERROR_CODE = 21103
+
 
   val ORCHESTRATION_FOR_RESPONSE_NOT_SUPPORT_ERROR_CODE = 21200
   val ORCHESTRATION_FOR_OPERATION_NOT_SUPPORT_ERROR_CODE = 21201

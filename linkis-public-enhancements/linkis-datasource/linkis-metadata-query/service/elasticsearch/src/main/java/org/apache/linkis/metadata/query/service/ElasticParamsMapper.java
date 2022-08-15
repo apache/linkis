@@ -21,12 +21,12 @@ import org.apache.linkis.common.conf.CommonVars;
 
 /** Configuration */
 public class ElasticParamsMapper {
-  public static final CommonVars<String> PARAM_ES_URLS =
-      CommonVars.apply("wds.linkis.server.mdm.service.es.urls", "elasticUrls");
+    public static final CommonVars<String> PARAM_ES_URLS =
+            CommonVars.apply("wds.linkis.server.mdm.service.es.urls", "elasticUrls");
 
-  public static final CommonVars<String> PARAM_ES_USERNAME =
-      CommonVars.apply("wds.linkis.server.mdm.service.es.username", "username");
+    public static final CommonVars<String> PARAM_ES_USERNAME =
+            CommonVars.apply("wds.linkis.server.mdm.service.es.username", "username");
 
-  public static final CommonVars<String> PARAM_ES_PASSWORD =
-      CommonVars.apply("wds.linkis.server.mdm.service.es.password", "password");
+    public static final CommonVars<String> PARAM_ES_PASSWORD =
+            CommonVars.apply("wds.linkis.server.mdm.service.es.password", "password");
 }

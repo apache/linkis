@@ -5,35 +5,34 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+ 
 package org.apache.linkis.engineconn.executor
-
-import org.apache.linkis.common.io.{FsPath, MetaData, Record}
-import org.apache.linkis.common.io.resultset.{ResultSet, ResultSetWriter}
-import org.apache.linkis.common.utils.Utils
-import org.apache.linkis.governance.common.conf.GovernanceCommonConf
-import org.apache.linkis.manager.label.entity.Label
-
-import org.apache.commons.lang3.StringUtils
-import org.apache.commons.lang3.time.DateFormatUtils
 
 import java.util.concurrent.atomic.AtomicInteger
 
+import org.apache.linkis.common.io.resultset.{ResultSet, ResultSetWriter}
+import org.apache.linkis.common.io.{FsPath, MetaData, Record}
+import org.apache.linkis.common.utils.Utils
+import org.apache.linkis.governance.common.conf.GovernanceCommonConf
+import org.apache.linkis.manager.label.entity.Label
+import org.apache.commons.lang3.StringUtils
+import org.apache.commons.lang3.time.DateFormatUtils
+
 import scala.collection.mutable.ArrayBuffer
+
 
 trait ExecutorExecutionContext {
 
-  protected val resultSetWriters: ArrayBuffer[ResultSetWriter[_ <: MetaData, _ <: Record]] =
-    ArrayBuffer[ResultSetWriter[_ <: MetaData, _ <: Record]]()
+  protected val resultSetWriters: ArrayBuffer[ResultSetWriter[_ <: MetaData, _ <: Record]] = ArrayBuffer[ResultSetWriter[_ <: MetaData, _ <: Record]]()
 
   private var interrupted = false
 
@@ -63,17 +62,12 @@ trait ExecutorExecutionContext {
     val path = GovernanceCommonConf.RESULT_SET_STORE_PATH.getValue
     val pathPrefix = (if (path.endsWith("/")) path else path + "/") + Utils.getJvmUser + "/" +
       DateFormatUtils.format(System.currentTimeMillis(), "yyyyMMdd") + "/"
-    getJobId.map(pathPrefix + _ + "/" + System.nanoTime).getOrElse(pathPrefix + System.nanoTime)
+    getJobId.map(pathPrefix + _ + "/" + System.nanoTime).getOrElse(pathPrefix  + System.nanoTime)
   }
 
-  protected def getResultSetPath(
-      resultSet: ResultSet[_ <: MetaData, _ <: Record],
-      alias: String
-  ): FsPath = {
+  protected def getResultSetPath(resultSet: ResultSet[_ <: MetaData, _ <: Record], alias: String): FsPath = {
     val filePath = storePath.getOrElse(getDefaultStorePath)
-    val fileName =
-      if (StringUtils.isEmpty(alias)) "_" + aliasNum.getAndIncrement()
-      else alias + "_" + aliasNum.getAndIncrement()
+    val fileName = if (StringUtils.isEmpty(alias)) "_" + aliasNum.getAndIncrement() else alias + "_" + aliasNum.getAndIncrement()
     resultSet.getResultSetPath(new FsPath(filePath), fileName)
   }
 
@@ -90,32 +84,22 @@ trait ExecutorExecutionContext {
   def createResultSetWriter(resultSetType: String): ResultSetWriter[_ <: MetaData, _ <: Record] =
     createResultSetWriter(getResultSetByType(resultSetType), null)
 
-  def createResultSetWriter(
-      resultSet: ResultSet[_ <: MetaData, _ <: Record]
-  ): ResultSetWriter[_ <: MetaData, _ <: Record] =
+  def createResultSetWriter(resultSet: ResultSet[_ <: MetaData, _ <: Record]): ResultSetWriter[_ <: MetaData, _ <: Record] =
     createResultSetWriter(resultSet, null)
 
-  def createResultSetWriter(
-      resultSetType: String,
-      alias: String
-  ): ResultSetWriter[_ <: MetaData, _ <: Record] =
+  def createResultSetWriter(resultSetType: String, alias: String): ResultSetWriter[_ <: MetaData, _ <: Record] =
     createResultSetWriter(getResultSetByType(resultSetType), alias)
 
-  def createResultSetWriter(
-      resultSet: ResultSet[_ <: MetaData, _ <: Record],
-      alias: String
-  ): ResultSetWriter[_ <: MetaData, _ <: Record] = {
+  def createResultSetWriter(resultSet: ResultSet[_ <: MetaData, _ <: Record], alias: String): ResultSetWriter[_ <: MetaData, _ <: Record] = {
     val resultSetPath = getResultSetPath(resultSet, alias)
     val resultSetWriter = newResultSetWriter(resultSet, resultSetPath, alias)
     resultSetWriters synchronized resultSetWriters += resultSetWriter
     resultSetWriter
   }
 
-  protected def newResultSetWriter(
-      resultSet: ResultSet[_ <: MetaData, _ <: Record],
-      resultSetPath: FsPath,
-      alias: String
-  ): ResultSetWriter[_ <: MetaData, _ <: Record]
+  protected def newResultSetWriter(resultSet: ResultSet[_ <: MetaData, _ <: Record],
+                                   resultSetPath: FsPath,
+                                   alias: String): ResultSetWriter[_ <: MetaData, _ <: Record]
 
   def close(): Unit = {
     resultSetWriters.toArray.foreach(_.close())

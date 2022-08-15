@@ -25,70 +25,70 @@ import java.util.Date;
 
 public class PersistenceNodeEntity implements Node {
 
-  private ServiceInstance serviceInstance;
-  private String owner;
-  private String mark;
-  private NodeStatus nodeStatus;
+    private ServiceInstance serviceInstance;
+    private String owner;
+    private String mark;
+    private NodeStatus nodeStatus;
 
-  private Date startTime;
+    private Date startTime;
 
-  private Date updateTime;
+    private Date updateTime;
 
-  @Override
-  public Date getUpdateTime() {
-    return updateTime;
-  }
+    @Override
+    public Date getUpdateTime() {
+        return updateTime;
+    }
 
-  @Override
-  public void setUpdateTime(Date updateTime) {
-    this.updateTime = updateTime;
-  }
+    @Override
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
+    }
 
-  @Override
-  public Date getStartTime() {
-    return startTime;
-  }
+    @Override
+    public Date getStartTime() {
+        return startTime;
+    }
 
-  @Override
-  public void setStartTime(Date startTime) {
-    this.startTime = startTime;
-  }
+    @Override
+    public void setStartTime(Date startTime) {
+        this.startTime = startTime;
+    }
 
-  @Override
-  public ServiceInstance getServiceInstance() {
-    return this.serviceInstance;
-  }
+    @Override
+    public ServiceInstance getServiceInstance() {
+        return this.serviceInstance;
+    }
 
-  @Override
-  public void setServiceInstance(ServiceInstance serviceInstance) {
-    this.serviceInstance = serviceInstance;
-  }
+    @Override
+    public void setServiceInstance(ServiceInstance serviceInstance) {
+        this.serviceInstance = serviceInstance;
+    }
 
-  @Override
-  public NodeStatus getNodeStatus() {
-    return this.nodeStatus;
-  }
+    @Override
+    public NodeStatus getNodeStatus() {
+        return this.nodeStatus;
+    }
 
-  @Override
-  public void setNodeStatus(NodeStatus status) {
-    this.nodeStatus = status;
-  }
+    @Override
+    public void setNodeStatus(NodeStatus status) {
+        this.nodeStatus = status;
+    }
 
-  @Override
-  public String getOwner() {
-    return this.owner;
-  }
+    @Override
+    public String getOwner() {
+        return this.owner;
+    }
 
-  public void setMark(String mark) {
-    this.mark = mark;
-  }
+    public void setMark(String mark) {
+        this.mark = mark;
+    }
 
-  @Override
-  public String getMark() {
-    return this.mark;
-  }
+    @Override
+    public String getMark() {
+        return this.mark;
+    }
 
-  public void setOwner(String owner) {
-    this.owner = owner;
-  }
+    public void setOwner(String owner) {
+        this.owner = owner;
+    }
 }

@@ -19,20 +19,20 @@ package org.apache.linkis.cli.core.constants;
 
 public class CommonConstants {
 
-  public static final Long JOB_QUERY_SLEEP_MILLS = 2000l;
-  public static final Integer REQUEST_MAX_RETRY_TIME = 3;
+    public static final Long JOB_QUERY_SLEEP_MILLS = 2000l;
+    public static final Integer REQUEST_MAX_RETRY_TIME = 3;
 
-  public static final String UNIVERSAL_SUBCMD = "linkis-cli";
-  public static final String UNIVERSAL_SUBCMD_DESC =
-      "command for all types of jobs supported by Linkis";
+    public static final String UNIVERSAL_SUBCMD = "linkis-cli";
+    public static final String UNIVERSAL_SUBCMD_DESC =
+            "command for all types of jobs supported by Linkis";
 
-  public static final String SUCCESS_INDICATOR = "############Execute Success!!!########";
-  public static final String FAILURE_INDICATOR = "############Execute Error!!!########";
-  public static final String ARRAY_SEQ = "@#@";
-  public static final String ARRAY_SEQ_REGEX = "(?=([^\"]*\"[^\"]*\")*[^\"]*$)";
-  public static final int MAX_NUM_OF_COMMAND_ARGUEMENTS = 10;
-  public static final String CONFIG_DIR = "config.path";
-  public static final String[] CONFIG_EXTENSION = {"properties"};
-  public static final String SYSTEM_PROPERTIES_IDENTIFIER = "SYS_PROP";
-  public static final String SYSTEM_ENV_IDENTIFIER = "SYS_ENV";
+    public static final String SUCCESS_INDICATOR = "############Execute Success!!!########";
+    public static final String FAILURE_INDICATOR = "############Execute Error!!!########";
+    public static final String ARRAY_SEQ = "@#@";
+    public static final String ARRAY_SEQ_REGEX = "(?=([^\"]*\"[^\"]*\")*[^\"]*$)";
+    public static final int MAX_NUM_OF_COMMAND_ARGUEMENTS = 10;
+    public static final String CONFIG_DIR = "config.path";
+    public static final String[] CONFIG_EXTENSION = {"properties"};
+    public static final String SYSTEM_PROPERTIES_IDENTIFIER = "SYS_PROP";
+    public static final String SYSTEM_ENV_IDENTIFIER = "SYS_ENV";
 }

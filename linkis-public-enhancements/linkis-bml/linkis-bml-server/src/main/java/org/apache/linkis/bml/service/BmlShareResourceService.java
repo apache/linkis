@@ -24,16 +24,16 @@ import java.util.Map;
 
 public interface BmlShareResourceService {
 
-  void uploadShareResource(
-      MultipartFile multipartFile, String user, Map<String, Object> properties);
+    void uploadShareResource(
+            MultipartFile multipartFile, String user, Map<String, Object> properties);
 
-  void updateShareResource(
-      MultipartFile multipartFile, String user, Map<String, Object> properties);
+    void updateShareResource(
+            MultipartFile multipartFile, String user, Map<String, Object> properties);
 
-  void downloadShareResource(
-      String user,
-      String resourceId,
-      String version,
-      OutputStream outputStream,
-      Map<String, Object> properties);
+    void downloadShareResource(
+            String user,
+            String resourceId,
+            String version,
+            OutputStream outputStream,
+            Map<String, Object> properties);
 }

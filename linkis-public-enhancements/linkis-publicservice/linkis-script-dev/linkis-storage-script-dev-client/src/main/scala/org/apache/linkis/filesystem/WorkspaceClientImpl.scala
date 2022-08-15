@@ -5,16 +5,16 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+ 
 package org.apache.linkis.filesystem
 
 import org.apache.linkis.filesystem.action.OpenScriptFromBMLAction
@@ -29,9 +29,10 @@ import org.apache.linkis.httpclient.dws.authentication.TokenAuthenticationStrate
 import org.apache.linkis.httpclient.dws.config.DWSClientConfig
 import org.apache.linkis.httpclient.response.Result
 
+
 class WorkspaceClientImpl extends WorkspaceClient with WorkspaceHttpConf {
 
-  def this(user: String, token: String, gatewayAddress: String) {
+  def this(user: String, token: String,gatewayAddress:String) {
     this
     this.user = user
     this.token = token
@@ -39,31 +40,19 @@ class WorkspaceClientImpl extends WorkspaceClient with WorkspaceHttpConf {
     val readTimeout: Int = 10 * 60 * 1000
     val connectiontimeout = 5 * 60 * 1000
     authenticationStrategy = new TokenAuthenticationStrategy()
-    clientConfig = ClientConfigBuilder
-      .newBuilder()
-      .addServerUrl("http://" + gatewayAddress)
-      .connectionTimeout(connectiontimeout)
-      .discoveryEnabled(false)
-      .loadbalancerEnabled(false)
-      .maxConnectionSize(maxConnection)
-      .retryEnabled(false)
-      .readTimeout(readTimeout)
-      .setAuthenticationStrategy(authenticationStrategy)
-      .setAuthTokenKey(WorkspaceClientConf.tokenKey)
-      .setAuthTokenValue(this.token)
-      .build()
+    clientConfig = ClientConfigBuilder.newBuilder().addServerUrl( "http://" + gatewayAddress)
+      .connectionTimeout(connectiontimeout).discoveryEnabled(false)
+      .loadbalancerEnabled(false).maxConnectionSize(maxConnection)
+      .retryEnabled(false).readTimeout(readTimeout)
+      .setAuthenticationStrategy(authenticationStrategy).
+      setAuthTokenKey(WorkspaceClientConf.tokenKey).setAuthTokenValue(this.token).build()
     dwsClientConfig = new DWSClientConfig(clientConfig)
     dwsClientConfig.setDWSVersion(WorkspaceClientConf.dwsVersion)
     dwsClientName = "Workspace-Client"
     dwsClient = new DWSHttpClient(dwsClientConfig, dwsClientName)
   }
-
   @throws[IllegalArgumentException]
-  override def requestOpenScriptFromBML(
-      resourceId: String,
-      version: String,
-      fileName: String
-  ): ScriptFromBMLResponse = {
+  override def requestOpenScriptFromBML(resourceId: String, version: String, fileName: String): ScriptFromBMLResponse = {
     val action: OpenScriptFromBMLAction = new OpenScriptFromBMLAction()
     action.setUser(user)
     action.setParameter("resourceId", resourceId)
@@ -72,20 +61,16 @@ class WorkspaceClientImpl extends WorkspaceClient with WorkspaceHttpConf {
     val result: Result = dwsClient.execute(action)
     result match {
       case r: ScriptFromBMLResult => {
-        if (r.getStatus != 0) throw new IllegalArgumentException(r.getMessage)
+        if(r.getStatus!= 0) throw new IllegalArgumentException(r.getMessage)
         ScriptFromBMLResponse(r.scriptContent, r.metadata)
       }
       case _ => null
     }
   }
 
+
   @throws[IllegalArgumentException]
-  override def requestOpenScriptFromBML(
-      resourceId: String,
-      version: String,
-      fileName: String,
-      user: String
-  ): ScriptFromBMLResponse = {
+  override def requestOpenScriptFromBML(resourceId: String, version: String, fileName: String, user: String): ScriptFromBMLResponse = {
     val action: OpenScriptFromBMLAction = new OpenScriptFromBMLAction()
     action.setUser(user)
     action.setParameter("resourceId", resourceId)
@@ -94,7 +79,7 @@ class WorkspaceClientImpl extends WorkspaceClient with WorkspaceHttpConf {
     val result: Result = dwsClient.execute(action)
     result match {
       case r: ScriptFromBMLResult => {
-        if (r.getStatus != 0) throw new IllegalArgumentException(r.getMessage)
+        if(r.getStatus!= 0) throw new IllegalArgumentException(r.getMessage)
         ScriptFromBMLResponse(r.scriptContent, r.metadata)
       }
       case _ => null

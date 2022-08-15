@@ -27,44 +27,46 @@ import java.util.Map;
 
 public interface TaskService {
 
-  ResourceTask createUploadTask(
-      List<MultipartFile> files, String user, Map<String, Object> properties) throws Exception;
+    ResourceTask createUploadTask(
+            List<MultipartFile> files, String user, Map<String, Object> properties)
+            throws Exception;
 
-  ResourceTask createUpdateTask(
-      String resourceId, String user, MultipartFile file, Map<String, Object> properties)
-      throws Exception;
+    ResourceTask createUpdateTask(
+            String resourceId, String user, MultipartFile file, Map<String, Object> properties)
+            throws Exception;
 
-  ResourceTask createDownloadTask(String resourceId, String version, String user, String clientIp);
+    ResourceTask createDownloadTask(
+            String resourceId, String version, String user, String clientIp);
 
-  /**
-   * 更新任务状态
-   *
-   * @param taskId 任务ID
-   * @param state 执行状态
-   * @param updateTime 操作时间
-   */
-  void updateState(long taskId, String state, Date updateTime);
+    /**
+     * 更新任务状态
+     *
+     * @param taskId 任务ID
+     * @param state 执行状态
+     * @param updateTime 操作时间
+     */
+    void updateState(long taskId, String state, Date updateTime);
 
-  /**
-   * 更新任务状态为失败
-   *
-   * @param taskId 任务ID
-   * @param state 执行状态
-   * @param updateTime 操作时间
-   * @param errMsg 异常信息
-   */
-  void updateState2Failed(long taskId, String state, Date updateTime, String errMsg);
+    /**
+     * 更新任务状态为失败
+     *
+     * @param taskId 任务ID
+     * @param state 执行状态
+     * @param updateTime 操作时间
+     * @param errMsg 异常信息
+     */
+    void updateState2Failed(long taskId, String state, Date updateTime, String errMsg);
 
-  ResourceTask createDeleteVersionTask(String resourceId, String version, String user, String ip);
+    ResourceTask createDeleteVersionTask(String resourceId, String version, String user, String ip);
 
-  ResourceTask createDeleteResourceTask(String resourceId, String user, String ip);
+    ResourceTask createDeleteResourceTask(String resourceId, String user, String ip);
 
-  ResourceTask createDeleteResourcesTask(List<String> resourceIds, String user, String ip);
+    ResourceTask createDeleteResourcesTask(List<String> resourceIds, String user, String ip);
 
-  ResourceTask createRollbackVersionTask(
-      String resourceId, String version, String user, Map<String, Object> properties)
-      throws Exception;
+    ResourceTask createRollbackVersionTask(
+            String resourceId, String version, String user, Map<String, Object> properties)
+            throws Exception;
 
-  ResourceTask createCopyResourceTask(
-      String resourceId, String anotherUser, Map<String, Object> properties) throws Exception;
+    ResourceTask createCopyResourceTask(
+            String resourceId, String anotherUser, Map<String, Object> properties) throws Exception;
 }

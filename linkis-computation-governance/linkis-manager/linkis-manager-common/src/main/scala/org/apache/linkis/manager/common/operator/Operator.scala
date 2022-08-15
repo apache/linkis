@@ -19,15 +19,14 @@ package org.apache.linkis.manager.common.operator
 
 import org.apache.linkis.governance.common.exception.GovernanceErrorException
 
+
 trait Operator {
 
   def getNames: Array[String]
 
   def apply(implicit parameters: Map[String, Any]): Map[String, Any]
 
-  protected def getAs[T](key: String, defaultVal: => T)(implicit
-      parameters: Map[String, Any]
-  ): T =
+  protected def getAs[T](key: String, defaultVal: => T)(implicit parameters: Map[String, Any]): T =
     parameters.getOrElse(key, defaultVal) match {
       case t: T => t
       case null => null.asInstanceOf[T]
@@ -37,10 +36,8 @@ trait Operator {
   protected def getAsThrow[T](key: String)(implicit parameters: Map[String, Any]): T =
     parameters.get(key) match {
       case Some(t: T) => t
-      case Some(t: Any) =>
-        throw new GovernanceErrorException(20305, s"Unknown class type, cannot cast $t.")
-      case None =>
-        throw new GovernanceErrorException(20305, s"The parameter of $key is not exists.")
+      case Some(t: Any) => throw new GovernanceErrorException(20305, s"Unknown class type, cannot cast $t.")
+      case None => throw new GovernanceErrorException(20305, s"The parameter of $key is not exists.")
     }
 
 }

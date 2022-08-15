@@ -28,76 +28,76 @@ import org.slf4j.LoggerFactory;
 
 public class RestResponseProtocol implements HttpResponseProtocol<Message> {
 
-  private Logger logger = LoggerFactory.getLogger(getClass());
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
-  private final Object lock = new Object();
+    private final Object lock = new Object();
 
-  private Message message;
+    private Message message;
 
-  private Object responseData;
+    private Object responseData;
 
-  @Override
-  public void waitForComplete() throws InterruptedException {
-    synchronized (lock) {
-      lock.wait();
+    @Override
+    public void waitForComplete() throws InterruptedException {
+        synchronized (lock) {
+            lock.wait();
+        }
     }
-  }
 
-  @Override
-  public void waitTimeEnd(long mills) throws InterruptedException {
-    logger.info(String.format("start to wait %smills until job complete", mills));
-    synchronized (lock) {
-      lock.wait(mills);
+    @Override
+    public void waitTimeEnd(long mills) throws InterruptedException {
+        logger.info(String.format("start to wait %smills until job complete", mills));
+        synchronized (lock) {
+            lock.wait(mills);
+        }
     }
-  }
 
-  @Override
-  public void notifyJob() {
-    logger.info("notify the job");
-    synchronized (lock) {
-      lock.notify();
+    @Override
+    public void notifyJob() {
+        logger.info("notify the job");
+        synchronized (lock) {
+            lock.notify();
+        }
     }
-  }
 
-  @Override
-  public Message get() {
-    return this.message;
-  }
-
-  @Override
-  public void set(Message message) {
-    this.message = message;
-  }
-
-  @Override
-  public Object getResponseData() {
-    return this.responseData;
-  }
-
-  @Override
-  public void setResponseData(Object responseData) {
-    this.responseData = responseData;
-  }
-
-  public void ok(String msg) {
-    if (message == null) {
-      message = new Message();
+    @Override
+    public Message get() {
+        return this.message;
     }
-    if (StringUtils.isEmpty(msg)) {
-      message.setMessage("OK");
-    } else {
-      message.setMessage(msg);
-    }
-  }
 
-  public void error(String msg, Throwable t) {
-    if (message == null) {
-      message = new Message();
-      message.setStatus(1);
+    @Override
+    public void set(Message message) {
+        this.message = message;
     }
-    message.setMessage(msg);
-    if (t != null) {
-      message.$less$less("stack", ExceptionUtils.getStackTrace(t));
+
+    @Override
+    public Object getResponseData() {
+        return this.responseData;
     }
-  }
+
+    @Override
+    public void setResponseData(Object responseData) {
+        this.responseData = responseData;
+    }
+
+    public void ok(String msg) {
+        if (message == null) {
+            message = new Message();
+        }
+        if (StringUtils.isEmpty(msg)) {
+            message.setMessage("OK");
+        } else {
+            message.setMessage(msg);
+        }
+    }
+
+    public void error(String msg, Throwable t) {
+        if (message == null) {
+            message = new Message();
+            message.setStatus(1);
+        }
+        message.setMessage(msg);
+        if (t != null) {
+            message.$less$less("stack", ExceptionUtils.getStackTrace(t));
+        }
+    }
 }

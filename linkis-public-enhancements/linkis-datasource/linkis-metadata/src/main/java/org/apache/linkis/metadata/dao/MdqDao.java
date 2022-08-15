@@ -28,25 +28,25 @@ import java.util.List;
 
 public interface MdqDao {
 
-  void activateTable(Long tableId);
+    void activateTable(Long tableId);
 
-  MdqTable selectTableByName(
-      @Param("database") String database,
-      @Param("tableName") String tableName,
-      @Param("user") String user);
+    MdqTable selectTableByName(
+            @Param("database") String database,
+            @Param("tableName") String tableName,
+            @Param("user") String user);
 
-  List<MdqField> listMdqFieldByTableId(Long tableId);
+    List<MdqField> listMdqFieldByTableId(Long tableId);
 
-  void insertTable(MdqTable table);
+    void insertTable(MdqTable table);
 
-  void insertFields(@Param("mdqFieldList") List<MdqField> mdqFieldList);
+    void insertFields(@Param("mdqFieldList") List<MdqField> mdqFieldList);
 
-  void insertImport(MdqImport mdqImport);
+    void insertImport(MdqImport mdqImport);
 
-  void insertLineage(MdqLineage mdqLineage);
+    void insertLineage(MdqLineage mdqLineage);
 
-  MdqTable selectTableForUpdate(
-      @Param("database") String database, @Param("tableName") String tableName);
+    MdqTable selectTableForUpdate(
+            @Param("database") String database, @Param("tableName") String tableName);
 
-  void deleteTableBaseInfo(Long id);
+    void deleteTableBaseInfo(Long id);
 }

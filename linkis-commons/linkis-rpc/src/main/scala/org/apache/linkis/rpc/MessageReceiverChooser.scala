@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,6 +21,7 @@ import org.apache.linkis.protocol.message.RequestProtocol
 
 import java.util
 
+
 class MessageReceiverChooser extends ReceiverChooser {
 
   val receiver: Option[Receiver] = Option(new MessageReceiver)
@@ -30,5 +31,4 @@ class MessageReceiverChooser extends ReceiverChooser {
     case _: RequestProtocol => receiver
     case _ => None
   }
-
 }

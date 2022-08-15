@@ -21,9 +21,9 @@ import org.apache.linkis.cs.contextcache.ContextCacheService;
 
 public abstract class AbstractContextCacheFetcher implements ContextCacheFetcher {
 
-  ContextCacheService contextCacheService;
+    ContextCacheService contextCacheService;
 
-  public AbstractContextCacheFetcher(ContextCacheService contextCacheService) {
-    this.contextCacheService = contextCacheService;
-  }
+    public AbstractContextCacheFetcher(ContextCacheService contextCacheService) {
+        this.contextCacheService = contextCacheService;
+    }
 }

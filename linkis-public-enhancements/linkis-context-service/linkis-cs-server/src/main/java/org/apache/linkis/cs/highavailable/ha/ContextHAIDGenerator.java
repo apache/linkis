@@ -23,5 +23,5 @@ import org.apache.linkis.cs.common.exception.CSErrorException;
 
 public interface ContextHAIDGenerator {
 
-  HAContextID generateHAContextID(ContextID contextID) throws CSErrorException;
+    HAContextID generateHAContextID(ContextID contextID) throws CSErrorException;
 }

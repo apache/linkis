@@ -5,31 +5,24 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+ 
 package org.apache.linkis.manager.engineplugin.python.executor
 
 import org.apache.linkis.common.utils.Utils
-import org.apache.linkis.engineconn.computation.executor.execute.{
-  ComputationExecutor,
-  EngineExecutionContext
-}
+import org.apache.linkis.engineconn.computation.executor.execute.{ComputationExecutor, EngineExecutionContext}
 import org.apache.linkis.engineconn.core.EngineConnObject
 import org.apache.linkis.engineconn.launch.EngineConnServer
 import org.apache.linkis.governance.common.paser.PythonCodeParser
-import org.apache.linkis.manager.common.entity.resource.{
-  CommonNodeResource,
-  LoadInstanceResource,
-  NodeResource
-}
+import org.apache.linkis.manager.common.entity.resource.{CommonNodeResource, LoadInstanceResource, NodeResource}
 import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.protocol.engine.JobProgressInfo
@@ -37,11 +30,9 @@ import org.apache.linkis.rpc.Sender
 import org.apache.linkis.scheduler.executer.{ExecuteResponse, SuccessExecuteResponse}
 
 import java.util
-
 import scala.collection.mutable.ArrayBuffer
 
-class PythonEngineConnExecutor(id: Int, pythonSession: PythonSession, outputPrintLimit: Int)
-    extends ComputationExecutor(outputPrintLimit) {
+class PythonEngineConnExecutor(id: Int, pythonSession: PythonSession, outputPrintLimit: Int) extends ComputationExecutor(outputPrintLimit) {
 
   private var engineExecutionContext: EngineExecutionContext = _
 
@@ -54,25 +45,16 @@ class PythonEngineConnExecutor(id: Int, pythonSession: PythonSession, outputPrin
     super.init
   }
 
-  private val pythonDefaultVersion: String =
-    EngineConnServer.getEngineCreationContext.getOptions.getOrDefault("python.version", "python")
+  private val pythonDefaultVersion: String = EngineConnServer.getEngineCreationContext.getOptions.getOrDefault("python.version", "python")
 
-  override def executeLine(
-      engineExecutionContext: EngineExecutionContext,
-      code: String
-  ): ExecuteResponse = {
-    val pythonVersion = engineExecutionContext.getProperties
-      .getOrDefault("python.version", pythonDefaultVersion)
-      .toString
-      .toLowerCase()
+  override def executeLine(engineExecutionContext: EngineExecutionContext, code: String): ExecuteResponse = {
+    val pythonVersion = engineExecutionContext.getProperties.getOrDefault("python.version", pythonDefaultVersion).toString.toLowerCase()
     logger.info(s" EngineExecutionContext user python.version = > ${pythonVersion}")
     System.getProperties.put("python.version", pythonVersion)
-    logger.info(
-      s" System getProperties python.version = > ${System.getProperties.getProperty("python.version")}"
-    )
-    // System.getProperties.put("python.application.pyFiles", engineExecutionContext.getProperties.getOrDefault("python.application.pyFiles", "file:///mnt/bdap/test/test/test.zip").toString)
+    logger.info(s" System getProperties python.version = > ${System.getProperties.getProperty("python.version")}")
+    //System.getProperties.put("python.application.pyFiles", engineExecutionContext.getProperties.getOrDefault("python.application.pyFiles", "file:///mnt/bdap/test/test/test.zip").toString)
     pythonSession.lazyInitGageWay()
-    if (engineExecutionContext != this.engineExecutionContext) {
+    if(engineExecutionContext != this.engineExecutionContext){
       this.engineExecutionContext = engineExecutionContext
       pythonSession.setEngineExecutionContext(engineExecutionContext)
 //      lineOutputStream.reset(engineExecutorContext)
@@ -84,11 +66,7 @@ class PythonEngineConnExecutor(id: Int, pythonSession: PythonSession, outputPrin
     SuccessExecuteResponse()
   }
 
-  override def executeCompletely(
-      engineExecutionContext: EngineExecutionContext,
-      code: String,
-      completedLine: String
-  ): ExecuteResponse = {
+  override def executeCompletely(engineExecutionContext: EngineExecutionContext, code: String, completedLine: String): ExecuteResponse = {
     val newcode = completedLine + code
     logger.debug("newcode is " + newcode)
     executeLine(engineExecutionContext, newcode)
@@ -96,8 +74,7 @@ class PythonEngineConnExecutor(id: Int, pythonSession: PythonSession, outputPrin
 
   override def progress(taskID: String): Float = {
     if (null != this.engineExecutionContext) {
-      this.engineExecutionContext.getCurrentParagraph / this.engineExecutionContext.getTotalParagraph
-        .asInstanceOf[Float]
+      this.engineExecutionContext.getCurrentParagraph / this.engineExecutionContext.getTotalParagraph.asInstanceOf[Float]
     } else {
       0.0f
     }
@@ -109,21 +86,9 @@ class PythonEngineConnExecutor(id: Int, pythonSession: PythonSession, outputPrin
       return jobProgressInfo.toArray
     }
     if (0.0f == progress(taskID)) {
-      jobProgressInfo += JobProgressInfo(
-        engineExecutionContext.getJobId.getOrElse(""),
-        1,
-        1,
-        0,
-        0
-      )
+      jobProgressInfo += JobProgressInfo(engineExecutionContext.getJobId.getOrElse(""), 1, 1, 0, 0)
     } else {
-      jobProgressInfo += JobProgressInfo(
-        engineExecutionContext.getJobId.getOrElse(""),
-        1,
-        0,
-        0,
-        1
-      )
+      jobProgressInfo += JobProgressInfo(engineExecutionContext.getJobId.getOrElse(""), 1, 0, 0, 1)
     }
     jobProgressInfo.toArray
   }
@@ -141,20 +106,13 @@ class PythonEngineConnExecutor(id: Int, pythonSession: PythonSession, outputPrin
     // todo refactor for duplicate
     val properties = EngineConnObject.getEngineCreationContext.getOptions
     if (properties.containsKey(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key)) {
-      val settingClientMemory =
-        properties.get(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key)
+      val settingClientMemory = properties.get(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key)
       if (!settingClientMemory.toLowerCase().endsWith("g")) {
-        properties.put(
-          EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key,
-          settingClientMemory + "g"
-        )
+        properties.put(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key, settingClientMemory + "g")
       }
     }
-    val actualUsedResource = new LoadInstanceResource(
-      EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.getValue(properties).toLong,
-      EngineConnPluginConf.JAVA_ENGINE_REQUEST_CORES.getValue(properties),
-      EngineConnPluginConf.JAVA_ENGINE_REQUEST_INSTANCE
-    )
+    val actualUsedResource = new LoadInstanceResource(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.getValue(properties).toLong,
+      EngineConnPluginConf.JAVA_ENGINE_REQUEST_CORES.getValue(properties), EngineConnPluginConf.JAVA_ENGINE_REQUEST_INSTANCE)
     val resource = new CommonNodeResource
     resource.setUsedResource(actualUsedResource)
     resource
@@ -171,6 +129,7 @@ class PythonEngineConnExecutor(id: Int, pythonSession: PythonSession, outputPrin
 
   override def getId(): String = Sender.getThisServiceInstance.getInstance + "_" + id
 
+
   override def killTask(taskID: String): Unit = {
     logger.info(s"Start to kill python task $taskID")
     super.killTask(taskID)
@@ -181,7 +140,7 @@ class PythonEngineConnExecutor(id: Int, pythonSession: PythonSession, outputPrin
   override def close(): Unit = {
     Utils.tryAndError(pythonSession.close)
     logger.info(s"To delete python executor")
-    // Utils.tryAndError(ExecutorManager.getInstance.removeExecutor(getExecutorLabels().asScala.toArray))
+    //Utils.tryAndError(ExecutorManager.getInstance.removeExecutor(getExecutorLabels().asScala.toArray))
     logger.info(s"Finished to kill python")
   }
 

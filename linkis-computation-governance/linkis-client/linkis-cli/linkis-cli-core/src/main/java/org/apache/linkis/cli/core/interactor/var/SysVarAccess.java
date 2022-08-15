@@ -23,92 +23,92 @@ import org.apache.linkis.cli.common.exception.error.ErrorLevel;
 import org.apache.linkis.cli.core.exception.VarAccessException;
 import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class SysVarAccess implements VarAccess {
-  private static Logger logger = LoggerFactory.getLogger(SysVarAccess.class);
-  private ClientProperties sysProp;
-  private ClientProperties sysEnv;
+    private static Logger logger = LoggerFactory.getLogger(SysVarAccess.class);
+    private ClientProperties sysProp;
+    private ClientProperties sysEnv;
 
-  public SysVarAccess setSysProp(ClientProperties sysProp) {
-    this.sysProp = sysProp;
-    return this;
-  }
-
-  public ClientProperties getSysProp(String identifier) {
-    return this.sysProp;
-  }
-
-  public SysVarAccess setSysEnv(ClientProperties sysEnv) {
-    this.sysEnv = sysEnv;
-    return this;
-  }
-
-  public ClientProperties getSysEnv(String identifier) {
-    return this.sysEnv;
-  }
-
-  @Override
-  public void checkInit() {
-    if (this.sysProp == null && this.sysEnv == null) {
-      throw new VarAccessException(
-          "VA0001",
-          ErrorLevel.ERROR,
-          CommonErrMsg.VarAccessInitErr,
-          "sys_prop and sys_env are both null");
+    public SysVarAccess setSysProp(ClientProperties sysProp) {
+        this.sysProp = sysProp;
+        return this;
     }
-  }
 
-  @Override
-  public <T> T getVar(Class<T> clazz, String key) {
-    checkInit();
-    if (clazz != String.class) {
-      // throw exception
+    public ClientProperties getSysProp(String identifier) {
+        return this.sysProp;
     }
-    Object o1 = sysProp.get(key);
-    Object o2 = sysEnv.get(key);
-    if (o1 != null && o2 != null) {
-      throw new VarAccessException(
-          "VA0002",
-          ErrorLevel.WARN,
-          CommonErrMsg.VarAccessErr,
-          "same key occurred in sys_prop and sys_env. will use sys_prop");
-    }
-    Object ret = o1 != null ? o1 : o2;
-    return clazz.cast(ret);
-  }
 
-  @Override
-  public <T> T getVarOrDefault(Class<T> clazz, String key, T defaultValue) {
-    T ret = getVar(clazz, key);
-    if (ret == null) {
-      ret = defaultValue;
+    public SysVarAccess setSysEnv(ClientProperties sysEnv) {
+        this.sysEnv = sysEnv;
+        return this;
     }
-    return ret;
-  }
 
-  @Override
-  public String[] getAllVarKeys() {
-    List<String> varKeys = new ArrayList<>();
-    if (sysProp != null) {
-      for (Object key : sysProp.keySet()) {
-        varKeys.add((String) key);
-      }
+    public ClientProperties getSysEnv(String identifier) {
+        return this.sysEnv;
     }
-    if (sysEnv != null) {
-      for (Object key : sysEnv.keySet()) {
-        varKeys.add((String) key);
-      }
-    }
-    return varKeys.toArray(new String[varKeys.size()]);
-  }
 
-  @Override
-  public boolean hasVar(String key) {
-    return sysEnv.containsKey(key) || sysProp.containsKey(key);
-  }
+    @Override
+    public void checkInit() {
+        if (this.sysProp == null && this.sysEnv == null) {
+            throw new VarAccessException(
+                    "VA0001",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.VarAccessInitErr,
+                    "sys_prop and sys_env are both null");
+        }
+    }
+
+    @Override
+    public <T> T getVar(Class<T> clazz, String key) {
+        checkInit();
+        if (clazz != String.class) {
+            // throw exception
+        }
+        Object o1 = sysProp.get(key);
+        Object o2 = sysEnv.get(key);
+        if (o1 != null && o2 != null) {
+            throw new VarAccessException(
+                    "VA0002",
+                    ErrorLevel.WARN,
+                    CommonErrMsg.VarAccessErr,
+                    "same key occurred in sys_prop and sys_env. will use sys_prop");
+        }
+        Object ret = o1 != null ? o1 : o2;
+        return clazz.cast(ret);
+    }
+
+    @Override
+    public <T> T getVarOrDefault(Class<T> clazz, String key, T defaultValue) {
+        T ret = getVar(clazz, key);
+        if (ret == null) {
+            ret = defaultValue;
+        }
+        return ret;
+    }
+
+    @Override
+    public String[] getAllVarKeys() {
+        List<String> varKeys = new ArrayList<>();
+        if (sysProp != null) {
+            for (Object key : sysProp.keySet()) {
+                varKeys.add((String) key);
+            }
+        }
+        if (sysEnv != null) {
+            for (Object key : sysEnv.keySet()) {
+                varKeys.add((String) key);
+            }
+        }
+        return varKeys.toArray(new String[varKeys.size()]);
+    }
+
+    @Override
+    public boolean hasVar(String key) {
+        return sysEnv.containsKey(key) || sysProp.containsKey(key);
+    }
 }

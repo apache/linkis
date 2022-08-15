@@ -18,41 +18,41 @@
 package org.apache.linkis.cs.common.entity.source;
 
 public class LinkisHAWorkFlowContextID extends LinkisWorkflowContextID
-    implements HAContextID, UserContextID {
+        implements HAContextID, UserContextID {
 
-  private String instance;
+    private String instance;
 
-  private String backupInstance;
+    private String backupInstance;
 
-  private String user;
+    private String user;
 
-  @Override
-  public String getInstance() {
-    return this.instance;
-  }
+    @Override
+    public String getInstance() {
+        return this.instance;
+    }
 
-  @Override
-  public void setInstance(String instance) {
-    this.instance = instance;
-  }
+    @Override
+    public void setInstance(String instance) {
+        this.instance = instance;
+    }
 
-  @Override
-  public String getBackupInstance() {
-    return this.backupInstance;
-  }
+    @Override
+    public String getBackupInstance() {
+        return this.backupInstance;
+    }
 
-  @Override
-  public void setBackupInstance(String backupInstance) {
-    this.backupInstance = backupInstance;
-  }
+    @Override
+    public void setBackupInstance(String backupInstance) {
+        this.backupInstance = backupInstance;
+    }
 
-  @Override
-  public void setUser(String user) {
-    this.user = user;
-  }
+    @Override
+    public void setUser(String user) {
+        this.user = user;
+    }
 
-  @Override
-  public String getUser() {
-    return this.user;
-  }
+    @Override
+    public String getUser() {
+        return this.user;
+    }
 }

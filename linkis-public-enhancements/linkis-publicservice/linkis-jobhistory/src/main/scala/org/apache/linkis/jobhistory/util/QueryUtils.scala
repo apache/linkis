@@ -5,18 +5,20 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+ 
 package org.apache.linkis.jobhistory.util
 
+import org.apache.commons.io.IOUtils
+import org.apache.commons.lang3.time.DateFormatUtils
 import org.apache.linkis.common.conf.CommonVars
 import org.apache.linkis.common.io.FsPath
 import org.apache.linkis.common.utils.{Logging, Utils}
@@ -27,9 +29,6 @@ import org.apache.linkis.storage.FSFactory
 import org.apache.linkis.storage.fs.FileSystem
 import org.apache.linkis.storage.utils.{FileSystemUtils, StorageUtils}
 
-import org.apache.commons.io.IOUtils
-import org.apache.commons.lang3.time.DateFormatUtils
-
 import java.io.{InputStream, OutputStream}
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -37,12 +36,8 @@ import java.util.regex.Pattern
 
 object QueryUtils extends Logging {
 
-  private val CODE_STORE_PREFIX =
-    CommonVars("wds.linkis.query.store.prefix", "hdfs:///apps-data/bdp-ide/")
-
-  private val CODE_STORE_PREFIX_VIEW_FS =
-    CommonVars("wds.linkis.query.store.prefix.viewfs", "hdfs:///apps-data/")
-
+  private val CODE_STORE_PREFIX = CommonVars("wds.linkis.query.store.prefix", "hdfs:///apps-data/bdp-ide/")
+  private val CODE_STORE_PREFIX_VIEW_FS = CommonVars("wds.linkis.query.store.prefix.viewfs", "hdfs:///apps-data/")
   private val IS_VIEW_FS_ENV = CommonVars("wds.linkis.env.is.viewfs", true)
   private val CODE_STORE_SUFFIX = CommonVars("wds.linkis.query.store.suffix", "")
   private val CODE_STORE_LENGTH = CommonVars("wds.linkis.query.code.store.length", 50000)
@@ -57,23 +52,15 @@ object QueryUtils extends Logging {
   }
 
   def storeExecutionCode(jobRequest: JobRequest): Unit = {
-    storeExecutionCode(
-      jobRequest.getExecuteUser,
-      jobRequest.getExecutionCode,
-      path => jobRequest.setExecutionCode(path)
-    )
-  }
+      storeExecutionCode(jobRequest.getExecuteUser, jobRequest.getExecutionCode, path => jobRequest.setExecutionCode(path))
+    }
 
-  def storeExecutionCode(subJobDetail: SubJobDetail, user: String): Unit = {
-    storeExecutionCode(
-      user,
-      subJobDetail.getExecutionContent,
-      path => subJobDetail.setExecutionContent(path)
-    )
-  }
+    def storeExecutionCode(subJobDetail: SubJobDetail, user: String): Unit = {
+      storeExecutionCode(user, subJobDetail.getExecutionContent, path => subJobDetail.setExecutionContent(path))
+    }
 
-  def storeExecutionCode(user: String, code: String, pathCallback: String => Unit): Unit = {
-    if (null == code || code.getBytes().length < CODE_STORE_LENGTH.getValue) return
+    def storeExecutionCode(user: String, code: String, pathCallback: String => Unit): Unit = {
+      if (null == code || code.getBytes().length < CODE_STORE_LENGTH.getValue) return
     val path: String = getCodeStorePath(user)
     val fsPath: FsPath = new FsPath(path)
     val fileSystem = FSFactory.getFsByProxyUser(fsPath, user).asInstanceOf[FileSystem]
@@ -99,11 +86,7 @@ object QueryUtils extends Logging {
   // todo exchangeExecutionCode for subJobDetail
   def exchangeExecutionCode(queryTask: JobHistory): Unit = {
     import scala.util.control.Breaks._
-    if (
-        queryTask.getExecutionCode == null || !queryTask.getExecutionCode.startsWith(
-          StorageUtils.HDFS_SCHEMA
-        )
-    ) return
+    if (queryTask.getExecutionCode == null || !queryTask.getExecutionCode.startsWith(StorageUtils.HDFS_SCHEMA)) return
     val codePath = queryTask.getExecutionCode
     val path = codePath.substring(0, codePath.lastIndexOf(CODE_SPLIT))
     val codeInfo = codePath.substring(codePath.lastIndexOf(CODE_SPLIT) + 1)
@@ -113,8 +96,7 @@ object QueryUtils extends Logging {
     val tub = new Array[Byte](1024)
     val executionCode: StringBuilder = new StringBuilder
     val fsPath: FsPath = new FsPath(path)
-    val fileSystem =
-      FSFactory.getFsByProxyUser(fsPath, queryTask.getExecuteUser).asInstanceOf[FileSystem]
+    val fileSystem = FSFactory.getFsByProxyUser(fsPath, queryTask.getExecuteUser).asInstanceOf[FileSystem]
     fileSystem.init(null)
     var is: InputStream = null
     if (!fileSystem.exists(fsPath)) return
@@ -139,8 +121,7 @@ object QueryUtils extends Logging {
 
   private def getCodeStorePath(user: String): String = {
     val date: String = DateFormatUtils.format(new Date, "yyyyMMdd")
-    val suffix: String =
-      DateFormatUtils.format(System.currentTimeMillis, "HH_mm_ss_SSS") + "_scripts"
+    val suffix: String = DateFormatUtils.format(System.currentTimeMillis, "HH_mm_ss_SSS") + "_scripts"
     if (IS_VIEW_FS_ENV.getValue) {
       s"${CODE_STORE_PREFIX_VIEW_FS.getValue}${user}${CODE_STORE_SUFFIX.getValue}/executionCode/${date}/$suffix"
     } else {
@@ -149,9 +130,7 @@ object QueryUtils extends Logging {
   }
 
   def isJobHistoryAdmin(username: String): Boolean = {
-    JobhistoryConfiguration.GOVERNANCE_STATION_ADMIN.getValue
-      .split(",")
-      .exists(username.equalsIgnoreCase)
+    JobhistoryConfiguration.GOVERNANCE_STATION_ADMIN.getValue.split(",").exists(username.equalsIgnoreCase)
   }
 
   def getJobHistoryAdmin(): Array[String] = {

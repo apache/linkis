@@ -29,51 +29,53 @@ import java.util.Date;
 import java.util.List;
 
 public interface ContextMapMapper {
-  void createMap(PersistenceContextKeyValue pKV);
+    void createMap(PersistenceContextKeyValue pKV);
 
-  void updateMap(PersistenceContextKeyValue pKV);
+    void updateMap(PersistenceContextKeyValue pKV);
 
-  PersistenceContextKeyValue getContextMap(
-      @Param("contextID") ContextID contextID, @Param("contextKey") ContextKey contextKey);
+    PersistenceContextKeyValue getContextMap(
+            @Param("contextID") ContextID contextID, @Param("contextKey") ContextKey contextKey);
 
-  List<PersistenceContextKeyValue> getAllContextMapByKey(
-      @Param("contextID") ContextID contextID, @Param("key") String key);
+    List<PersistenceContextKeyValue> getAllContextMapByKey(
+            @Param("contextID") ContextID contextID, @Param("key") String key);
 
-  List<PersistenceContextKeyValue> getAllContextMapByContextID(
-      @Param("contextID") ContextID contextID);
+    List<PersistenceContextKeyValue> getAllContextMapByContextID(
+            @Param("contextID") ContextID contextID);
 
-  List<PersistenceContextKeyValue> getAllContextMapByScope(
-      @Param("contextID") ContextID contextID, @Param("contextScope") ContextScope contextScope);
+    List<PersistenceContextKeyValue> getAllContextMapByScope(
+            @Param("contextID") ContextID contextID,
+            @Param("contextScope") ContextScope contextScope);
 
-  List<PersistenceContextKeyValue> getAllContextMapByType(
-      @Param("contextID") ContextID contextID, @Param("contextType") ContextType contextType);
+    List<PersistenceContextKeyValue> getAllContextMapByType(
+            @Param("contextID") ContextID contextID, @Param("contextType") ContextType contextType);
 
-  List<PersistenceContextKeyValue> getAllContextMap(PersistenceContextKeyValue pKV);
+    List<PersistenceContextKeyValue> getAllContextMap(PersistenceContextKeyValue pKV);
 
-  List<PersistenceContextKeyValue> getAllContextMapByTime(
-      @Param("createTimeStart") Date createTimeStart,
-      @Param("createTimeEnd") Date createTimeEnd,
-      @Param("updateTimeStart") Date updateTimeStart,
-      @Param("updateTimeEnd") Date updateTimeEnd,
-      @Param("accessTimeStart") Date accessTimeStart,
-      @Param("accessTimeEnd") Date accessTimeEnd);
+    List<PersistenceContextKeyValue> getAllContextMapByTime(
+            @Param("createTimeStart") Date createTimeStart,
+            @Param("createTimeEnd") Date createTimeEnd,
+            @Param("updateTimeStart") Date updateTimeStart,
+            @Param("updateTimeEnd") Date updateTimeEnd,
+            @Param("accessTimeStart") Date accessTimeStart,
+            @Param("accessTimeEnd") Date accessTimeEnd);
 
-  void removeContextMap(
-      @Param("contextID") ContextID contextID, @Param("contextKey") ContextKey contextKey);
+    void removeContextMap(
+            @Param("contextID") ContextID contextID, @Param("contextKey") ContextKey contextKey);
 
-  void removeAllContextMapByContextID(@Param("contextID") ContextID contextID);
+    void removeAllContextMapByContextID(@Param("contextID") ContextID contextID);
 
-  void removeAllContextMapByType(
-      @Param("contextID") ContextID contextID, @Param("contextType") ContextType contextType);
+    void removeAllContextMapByType(
+            @Param("contextID") ContextID contextID, @Param("contextType") ContextType contextType);
 
-  void removeAllContextMapByScope(
-      @Param("contextID") ContextID contextID, @Param("contextScope") ContextScope contextScope);
+    void removeAllContextMapByScope(
+            @Param("contextID") ContextID contextID,
+            @Param("contextScope") ContextScope contextScope);
 
-  void removeByKeyPrefixAndContextType(
-      @Param("contextID") ContextID contextID,
-      @Param("contextType") ContextType contextType,
-      @Param("keyPrefix") String keyPrefix);
+    void removeByKeyPrefixAndContextType(
+            @Param("contextID") ContextID contextID,
+            @Param("contextType") ContextType contextType,
+            @Param("keyPrefix") String keyPrefix);
 
-  void removeByKeyPrefix(
-      @Param("contextID") ContextID contextID, @Param("keyPrefix") String keyPrefix);
+    void removeByKeyPrefix(
+            @Param("contextID") ContextID contextID, @Param("keyPrefix") String keyPrefix);
 }

@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,11 +32,12 @@ import org.apache.linkis.manager.rm.service.ResourceManager
 import org.apache.linkis.manager.service.common.metrics.MetricsConverter
 import org.apache.linkis.manager.service.common.pointer.NodePointerBuilder
 import org.apache.linkis.rpc.message.annotation.Receiver
-
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 import scala.collection.JavaConversions._
+
+
 
 @Service
 class DefaultEMInfoService extends EMInfoService with Logging {
@@ -59,6 +60,7 @@ class DefaultEMInfoService extends EMInfoService with Logging {
   @Autowired
   private var defaultMetricsConverter: MetricsConverter = _
 
+
   @Receiver
   override def getEM(getEMInfoRequest: GetEMInfoRequest): EMNode = {
     val node = emNodeManager.getEM(getEMInfoRequest.getEm)
@@ -76,18 +78,11 @@ class DefaultEMInfoService extends EMInfoService with Logging {
     val instances = nodeLabelService.getNodesByLabel(label)
     val resourceInfo = resourceManager.getResourceInfo(instances.toSeq.toArray).resourceInfo
     val resourceInfoMap = resourceInfo.map(r => (r.getServiceInstance.toString, r)).toMap
-    instances
-      .map(emNodeManager.getEM)
-      .filter(_ != null)
-      .map { node =>
-        node.setLabels(nodeLabelService.getNodeLabels(node.getServiceInstance))
-        resourceInfoMap
-          .get(node.getServiceInstance.toString)
-          .map(_.getNodeResource)
-          .foreach(node.setNodeResource)
-        node
-      }
-      .toArray[EMNode]
+    instances.map(emNodeManager.getEM).filter(_!= null).map { node =>
+      node.setLabels(nodeLabelService.getNodeLabels(node.getServiceInstance))
+      resourceInfoMap.get(node.getServiceInstance.toString).map(_.getNodeResource).foreach(node.setNodeResource)
+      node
+    }.toArray[EMNode]
   }
 
   override def getEM(serviceInstance: ServiceInstance): EMNode = {
@@ -98,27 +93,22 @@ class DefaultEMInfoService extends EMInfoService with Logging {
     }
   }
 
-  override def updateEMInfo(
-      serviceInstance: ServiceInstance,
-      nodeHealthyInfo: NodeHealthyInfo
-  ): Unit = {
+
+  override def updateEMInfo(serviceInstance: ServiceInstance, nodeHealthyInfo: NodeHealthyInfo): Unit = {
     val node = emNodeManager.getEM(serviceInstance)
     if (null != node) {
       val metrics = nodeMetricManagerPersistence.getNodeMetrics(node)
-      if (null != metrics && null != nodeHealthyInfo) {
+      if(null != metrics && null != nodeHealthyInfo) {
         val oldHealthyInfo = defaultMetricsConverter.parseHealthyInfo(metrics)
-        if (!nodeHealthyInfo.getNodeHealthy.equals(oldHealthyInfo.getNodeHealthy)) {
+        if (! nodeHealthyInfo.getNodeHealthy.equals(oldHealthyInfo.getNodeHealthy)) {
           metrics.setHealthy(defaultMetricsConverter.convertHealthyInfo(nodeHealthyInfo))
           nodeMetricManagerPersistence.addOrupdateNodeMetrics(metrics)
           val nodeHealthyRequest: NodeHealthyRequest = new NodeHealthyRequest
           nodeHealthyRequest.setNodeHealthy(nodeHealthyInfo.getNodeHealthy)
           nodePointerBuilder.buildEMNodePointer(node).updateNodeHealthyRequest(nodeHealthyRequest)
-          logger.info(
-            s"success to update healthy metric of instance: ${serviceInstance.getInstance},${metrics.getHealthy}"
-          )
+          logger.info(s"success to update healthy metric of instance: ${serviceInstance.getInstance},${metrics.getHealthy}")
         }
       }
     }
   }
-
 }

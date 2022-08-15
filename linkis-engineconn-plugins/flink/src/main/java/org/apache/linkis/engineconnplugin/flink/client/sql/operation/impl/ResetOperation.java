@@ -26,25 +26,24 @@ import org.apache.linkis.engineconnplugin.flink.exception.SqlExecutionException;
 
 /** Operation for RESET command. */
 public class ResetOperation implements NonJobOperation {
-  private final FlinkEngineConnContext context;
+    private final FlinkEngineConnContext context;
 
-  public ResetOperation(FlinkEngineConnContext context) {
-    this.context = context;
-  }
+    public ResetOperation(FlinkEngineConnContext context) {
+        this.context = context;
+    }
 
-  @Override
-  public ResultSet execute() throws SqlExecutionException {
-    ExecutionContext executionContext = context.getExecutionContext();
-    // Renew the ExecutionContext by merging the default environment with original session
-    // context.
-    // Book keep all the session states of current ExecutionContext then
-    // re-register them into the new one.
-    ExecutionContext.Builder builder =
-        context
-            .newExecutionContextBuilder(context.getEnvironmentContext().getDefaultEnv())
-            .sessionState(executionContext.getSessionState());
-    context.setExecutionContext(executionContext.cloneExecutionContext(builder));
+    @Override
+    public ResultSet execute() throws SqlExecutionException {
+        ExecutionContext executionContext = context.getExecutionContext();
+        // Renew the ExecutionContext by merging the default environment with original session
+        // context.
+        // Book keep all the session states of current ExecutionContext then
+        // re-register them into the new one.
+        ExecutionContext.Builder builder =
+                context.newExecutionContextBuilder(context.getEnvironmentContext().getDefaultEnv())
+                        .sessionState(executionContext.getSessionState());
+        context.setExecutionContext(executionContext.cloneExecutionContext(builder));
 
-    return OperationUtil.OK;
-  }
+        return OperationUtil.OK;
+    }
 }

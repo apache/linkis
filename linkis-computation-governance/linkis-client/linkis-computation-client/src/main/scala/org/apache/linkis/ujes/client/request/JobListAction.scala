@@ -5,23 +5,23 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+ 
 package org.apache.linkis.ujes.client.request
 
 import org.apache.linkis.httpclient.request.GetAction
-
 import org.apache.commons.lang3.StringUtils
 
 import scala.collection.mutable.ArrayBuffer
+
 
 class JobListAction extends GetAction with UJESJobAction {
 
@@ -29,10 +29,11 @@ class JobListAction extends GetAction with UJESJobAction {
 
 }
 
+
 object JobListAction {
   def newBuilder(): Builder = new Builder
 
-  class Builder private[JobListAction] () {
+  class Builder private[JobListAction]() {
     private var proxyUser: String = _
     private var startDateMills: Long = 0
     private var endDateMills: Long = 0
@@ -97,11 +98,12 @@ object JobListAction {
       if (pageNow > 0) jobListAction.setParameter("pageNow", pageNow)
       if (pageSize > 0) jobListAction.setParameter("pageSize", pageSize)
       if (taskID > 0) jobListAction.setParameter("taskID", taskID)
-      if (StringUtils.isNotBlank(executeApplicationName))
-        jobListAction.setParameter("executeApplicationName", executeApplicationName)
+      if (StringUtils.isNotBlank(executeApplicationName)) jobListAction.setParameter("executeApplicationName", executeApplicationName)
       jobListAction
     }
 
   }
 
 }
+
+

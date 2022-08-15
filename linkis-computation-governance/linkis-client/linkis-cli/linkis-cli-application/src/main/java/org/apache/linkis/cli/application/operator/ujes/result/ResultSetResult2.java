@@ -20,19 +20,19 @@ package org.apache.linkis.cli.application.operator.ujes.result;
 import org.apache.linkis.ujes.client.response.ResultSetResult;
 
 public class ResultSetResult2 implements UJESResult {
-  private ResultSetResult resultSetResult;
-  private int idxResultSet;
+    private ResultSetResult resultSetResult;
+    private int idxResultSet;
 
-  public ResultSetResult2(int idxResultSet, ResultSetResult resultSetResult) {
-    this.resultSetResult = resultSetResult;
-    this.idxResultSet = idxResultSet;
-  }
+    public ResultSetResult2(int idxResultSet, ResultSetResult resultSetResult) {
+        this.resultSetResult = resultSetResult;
+        this.idxResultSet = idxResultSet;
+    }
 
-  public ResultSetResult getResultSetResult() {
-    return resultSetResult;
-  }
+    public ResultSetResult getResultSetResult() {
+        return resultSetResult;
+    }
 
-  public int getIdxResultSet() {
-    return idxResultSet;
-  }
+    public int getIdxResultSet() {
+        return idxResultSet;
+    }
 }

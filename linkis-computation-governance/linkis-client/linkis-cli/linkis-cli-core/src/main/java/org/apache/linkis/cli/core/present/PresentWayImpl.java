@@ -21,31 +21,31 @@ import org.apache.linkis.cli.common.entity.present.PresentWay;
 
 public class PresentWayImpl implements PresentWay {
 
-  private PresentMode mode;
-  private String path;
-  private boolean displayMetaAndLogo = true;
+    private PresentMode mode;
+    private String path;
+    private boolean displayMetaAndLogo = true;
 
-  public String getPath() {
-    return path;
-  }
+    public String getPath() {
+        return path;
+    }
 
-  public void setPath(String path) {
-    this.path = path;
-  }
+    public void setPath(String path) {
+        this.path = path;
+    }
 
-  public boolean isDisplayMetaAndLogo() {
-    return displayMetaAndLogo;
-  }
+    public boolean isDisplayMetaAndLogo() {
+        return displayMetaAndLogo;
+    }
 
-  public void setDisplayMetaAndLogo(boolean displayMetaAndLogo) {
-    this.displayMetaAndLogo = displayMetaAndLogo;
-  }
+    public void setDisplayMetaAndLogo(boolean displayMetaAndLogo) {
+        this.displayMetaAndLogo = displayMetaAndLogo;
+    }
 
-  public PresentMode getMode() {
-    return mode;
-  }
+    public PresentMode getMode() {
+        return mode;
+    }
 
-  public void setMode(PresentMode mode) {
-    this.mode = mode;
-  }
+    public void setMode(PresentMode mode) {
+        this.mode = mode;
+    }
 }

@@ -21,20 +21,20 @@ import org.apache.linkis.common.ServiceInstance;
 
 public class InsLabelQueryRequest implements LabelRequest {
 
-  /** Service instance */
-  private ServiceInstance serviceInstance;
+    /** Service instance */
+    private ServiceInstance serviceInstance;
 
-  public InsLabelQueryRequest(ServiceInstance serviceInstance) {
-    this.serviceInstance = serviceInstance;
-  }
+    public InsLabelQueryRequest(ServiceInstance serviceInstance) {
+        this.serviceInstance = serviceInstance;
+    }
 
-  public InsLabelQueryRequest() {}
+    public InsLabelQueryRequest() {}
 
-  public ServiceInstance getServiceInstance() {
-    return serviceInstance;
-  }
+    public ServiceInstance getServiceInstance() {
+        return serviceInstance;
+    }
 
-  public void setServiceInstance(ServiceInstance serviceInstance) {
-    this.serviceInstance = serviceInstance;
-  }
+    public void setServiceInstance(ServiceInstance serviceInstance) {
+        this.serviceInstance = serviceInstance;
+    }
 }

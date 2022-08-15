@@ -18,18 +18,18 @@
 package org.apache.linkis.common.exception;
 
 public class WarnException extends LinkisRuntimeException {
-  private ExceptionLevel level = ExceptionLevel.WARN;
+    private ExceptionLevel level = ExceptionLevel.WARN;
 
-  public WarnException(int errCode, String desc) {
-    super(errCode, desc);
-  }
+    public WarnException(int errCode, String desc) {
+        super(errCode, desc);
+    }
 
-  public WarnException(int errCode, String desc, String ip, int port, String serviceKind) {
-    super(errCode, desc, ip, port, serviceKind);
-  }
+    public WarnException(int errCode, String desc, String ip, int port, String serviceKind) {
+        super(errCode, desc, ip, port, serviceKind);
+    }
 
-  @Override
-  public ExceptionLevel getLevel() {
-    return this.level;
-  }
+    @Override
+    public ExceptionLevel getLevel() {
+        return this.level;
+    }
 }

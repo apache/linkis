@@ -27,17 +27,17 @@ import java.util.List;
 
 public interface VarMapper {
 
-  List<VarKeyValueVO> listGlobalVariable(@Param("userName") String userName);
+    List<VarKeyValueVO> listGlobalVariable(@Param("userName") String userName);
 
-  VarKeyUser getValueByKeyID(@Param("keyID") Long keyID);
+    VarKeyUser getValueByKeyID(@Param("keyID") Long keyID);
 
-  void removeKey(@Param("keyID") Long keyID);
+    void removeKey(@Param("keyID") Long keyID);
 
-  void removeValue(@Param("valueID") Long valueID);
+    void removeValue(@Param("valueID") Long valueID);
 
-  void insertKey(VarKey varKey);
+    void insertKey(VarKey varKey);
 
-  void insertValue(VarKeyUser varKeyUser);
+    void insertValue(VarKeyUser varKeyUser);
 
-  void updateValue(@Param("valueID") Long valueID, @Param("value") String value);
+    void updateValue(@Param("valueID") Long valueID, @Param("value") String value);
 }

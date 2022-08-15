@@ -20,5 +20,5 @@ package org.apache.linkis.cli.common.entity.validate;
 import org.apache.linkis.cli.common.exception.LinkisClientRuntimeException;
 
 public interface Validator {
-  void doValidation(Object input) throws LinkisClientRuntimeException;
+    void doValidation(Object input) throws LinkisClientRuntimeException;
 }

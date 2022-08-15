@@ -22,12 +22,12 @@ import org.apache.linkis.engineconn.once.executor.OperableOnceExecutor
 import org.apache.linkis.engineconn.once.executor.creation.OnceExecutorManager
 import org.apache.linkis.manager.common.operator.{Operator, OperatorFactory}
 
+
 class OperableOnceEngineConnOperator extends Operator {
 
   import OperableOnceEngineConnOperator._
 
-  override def getNames: Array[String] =
-    Array(PROGRESS_OPERATOR_NAME, METRICS_OPERATOR_NAME, DIAGNOSIS_OPERATOR_NAME)
+  override def getNames: Array[String] = Array(PROGRESS_OPERATOR_NAME, METRICS_OPERATOR_NAME, DIAGNOSIS_OPERATOR_NAME)
 
   override def apply(implicit parameters: Map[String, Any]): Map[String, Any] = {
     val operatorName = OperatorFactory().getOperatorName(parameters)
@@ -37,15 +37,8 @@ class OperableOnceEngineConnOperator extends Operator {
           case PROGRESS_OPERATOR_NAME =>
             val progressInfo = operableOnceExecutor.getProgressInfo
             val progressInfoMap = if (progressInfo != null && progressInfo.nonEmpty) {
-              progressInfo.map(progressInfo =>
-                Map(
-                  "id" -> progressInfo.id,
-                  "totalTasks" -> progressInfo.totalTasks,
-                  "runningTasks" -> progressInfo.runningTasks,
-                  "failedTasks" -> progressInfo.failedTasks,
-                  "succeedTasks" -> progressInfo.succeedTasks
-                )
-              )
+              progressInfo.map(progressInfo => Map("id" -> progressInfo.id, "totalTasks" -> progressInfo.totalTasks,
+                "runningTasks" -> progressInfo.runningTasks, "failedTasks" -> progressInfo.failedTasks, "succeedTasks" -> progressInfo.succeedTasks))
             } else Array.empty[Map[String, Any]]
             Map("progress" -> operableOnceExecutor.getProgress, "progressInfo" -> progressInfoMap)
           case METRICS_OPERATOR_NAME =>
@@ -53,18 +46,13 @@ class OperableOnceEngineConnOperator extends Operator {
           case DIAGNOSIS_OPERATOR_NAME =>
             Map("diagnosis" -> operableOnceExecutor.getDiagnosis)
           case _ =>
-            throw EngineConnException(
-              20308,
-              s"This engineConn don't support $operatorName operator."
-            )
+            throw EngineConnException(20308, s"This engineConn don't support $operatorName operator.")
         }
-      case _ =>
-        throw EngineConnException(20308, s"This engineConn don't support $operatorName operator.")
+      case _ => throw EngineConnException(20308, s"This engineConn don't support $operatorName operator.")
     }
   }
 
 }
-
 object OperableOnceEngineConnOperator {
   val PROGRESS_OPERATOR_NAME = "engineConnProgress"
   val METRICS_OPERATOR_NAME = "engineConnMetrics"

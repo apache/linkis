@@ -26,12 +26,12 @@ import java.util.List;
 
 public interface ConfigKeyService {
 
-  ConfigValue saveConfigValue(ConfigKeyValue configKeyValue, List<Label<?>> labelList)
-      throws ConfigurationException;
+    ConfigValue saveConfigValue(ConfigKeyValue configKeyValue, List<Label<?>> labelList)
+            throws ConfigurationException;
 
-  List<ConfigValue> getConfigValue(String configKey, List<Label<?>> labelList)
-      throws ConfigurationException;
+    List<ConfigValue> getConfigValue(String configKey, List<Label<?>> labelList)
+            throws ConfigurationException;
 
-  List<ConfigValue> deleteConfigValue(String configKey, List<Label<?>> labelList)
-      throws ConfigurationException;
+    List<ConfigValue> deleteConfigValue(String configKey, List<Label<?>> labelList)
+            throws ConfigurationException;
 }

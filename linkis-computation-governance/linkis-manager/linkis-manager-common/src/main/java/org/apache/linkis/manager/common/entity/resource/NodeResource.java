@@ -24,43 +24,43 @@ import java.util.Date;
 
 public interface NodeResource extends Serializable, RequestProtocol {
 
-  Integer getId();
+    Integer getId();
 
-  void setId(Integer id);
+    void setId(Integer id);
 
-  ResourceType getResourceType();
+    ResourceType getResourceType();
 
-  void setCreateTime(Date createTime);
+    void setCreateTime(Date createTime);
 
-  Date getCreateTime();
+    Date getCreateTime();
 
-  Date getUpdateTime();
+    Date getUpdateTime();
 
-  void setUpdateTime(Date updateTime);
+    void setUpdateTime(Date updateTime);
 
-  void setResourceType(ResourceType resourceType);
+    void setResourceType(ResourceType resourceType);
 
-  void setMinResource(Resource minResource);
+    void setMinResource(Resource minResource);
 
-  Resource getMinResource();
+    Resource getMinResource();
 
-  void setMaxResource(Resource maxResource);
+    void setMaxResource(Resource maxResource);
 
-  Resource getMaxResource();
+    Resource getMaxResource();
 
-  void setUsedResource(Resource usedResource);
+    void setUsedResource(Resource usedResource);
 
-  Resource getUsedResource();
+    Resource getUsedResource();
 
-  void setLockedResource(Resource lockedResource);
+    void setLockedResource(Resource lockedResource);
 
-  Resource getLockedResource();
+    Resource getLockedResource();
 
-  void setExpectedResource(Resource expectedResource);
+    void setExpectedResource(Resource expectedResource);
 
-  Resource getExpectedResource();
+    Resource getExpectedResource();
 
-  void setLeftResource(Resource leftResource);
+    void setLeftResource(Resource leftResource);
 
-  Resource getLeftResource();
+    Resource getLeftResource();
 }

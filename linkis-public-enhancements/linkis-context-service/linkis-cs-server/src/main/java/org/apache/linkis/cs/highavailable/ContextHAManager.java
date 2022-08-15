@@ -22,5 +22,5 @@ import org.apache.linkis.cs.common.exception.CSErrorException;
 /** 动态代理实现持久层HAIDKey和contextID的动态转换 */
 public interface ContextHAManager {
 
-  <T> T getContextHAProxy(T persistence) throws CSErrorException;
+    <T> T getContextHAProxy(T persistence) throws CSErrorException;
 }

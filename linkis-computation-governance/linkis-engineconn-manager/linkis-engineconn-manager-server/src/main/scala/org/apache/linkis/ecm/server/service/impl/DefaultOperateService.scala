@@ -17,17 +17,16 @@
 
 package org.apache.linkis.ecm.server.service.impl
 
+import org.apache.commons.lang3.exception.ExceptionUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.ecm.server.service.OperateService
 import org.apache.linkis.manager.common.operator.OperatorFactory
 import org.apache.linkis.manager.common.protocol.em.{ECMOperateRequest, ECMOperateResponse}
 import org.apache.linkis.rpc.message.annotation.Receiver
-
-import org.apache.commons.lang3.exception.ExceptionUtils
-
 import org.springframework.stereotype.Service
 
 import scala.collection.JavaConverters.mapAsScalaMapConverter
+
 
 @Service
 class DefaultOperateService extends OperateService with Logging {
@@ -39,14 +38,11 @@ class DefaultOperateService extends OperateService with Logging {
       logger.error(s"Get operator failed, parameters is ${ecmOperateRequest.parameters}.", t)
       return ECMOperateResponse(Map.empty, true, ExceptionUtils.getRootCauseMessage(t))
     }
-    logger.info(
-      s"Try to execute operator ${operator.getClass.getSimpleName} with parameters ${ecmOperateRequest.parameters}."
-    )
-    val result = Utils.tryCatch(operator(parameters)) { t =>
+    logger.info(s"Try to execute operator ${operator.getClass.getSimpleName} with parameters ${ecmOperateRequest.parameters}.")
+    val result = Utils.tryCatch(operator(parameters)) {t =>
       logger.error(s"Execute ${operator.getClass.getSimpleName} failed.", t)
       return ECMOperateResponse(Map.empty, true, ExceptionUtils.getRootCauseMessage(t))
     }
     ECMOperateResponse(result)
   }
-
 }

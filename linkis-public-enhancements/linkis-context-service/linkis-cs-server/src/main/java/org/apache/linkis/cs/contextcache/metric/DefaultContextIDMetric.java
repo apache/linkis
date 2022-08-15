@@ -19,49 +19,49 @@ package org.apache.linkis.cs.contextcache.metric;
 
 public class DefaultContextIDMetric implements ContextIDMetric {
 
-  private int usedCount;
+    private int usedCount;
 
-  private long memory;
+    private long memory;
 
-  private long cachedTime = System.currentTimeMillis();
+    private long cachedTime = System.currentTimeMillis();
 
-  private long accessTime = System.currentTimeMillis();
+    private long accessTime = System.currentTimeMillis();
 
-  @Override
-  public int getUsedCount() {
-    return this.usedCount;
-  }
-
-  @Override
-  public void addCount() {
-    this.usedCount++;
-  }
-
-  @Override
-  public long getMemory() {
-    return this.memory;
-  }
-
-  @Override
-  public void setMemory(long memory) {
-    if (memory < 0) {
-      memory = 0;
+    @Override
+    public int getUsedCount() {
+        return this.usedCount;
     }
-    this.memory = memory;
-  }
 
-  @Override
-  public long getCachedTime() {
-    return this.cachedTime;
-  }
+    @Override
+    public void addCount() {
+        this.usedCount++;
+    }
 
-  @Override
-  public long getLastAccessTime() {
-    return this.accessTime;
-  }
+    @Override
+    public long getMemory() {
+        return this.memory;
+    }
 
-  @Override
-  public void setLastAccessTime(long accessTime) {
-    this.accessTime = accessTime;
-  }
+    @Override
+    public void setMemory(long memory) {
+        if (memory < 0) {
+            memory = 0;
+        }
+        this.memory = memory;
+    }
+
+    @Override
+    public long getCachedTime() {
+        return this.cachedTime;
+    }
+
+    @Override
+    public long getLastAccessTime() {
+        return this.accessTime;
+    }
+
+    @Override
+    public void setLastAccessTime(long accessTime) {
+        this.accessTime = accessTime;
+    }
 }

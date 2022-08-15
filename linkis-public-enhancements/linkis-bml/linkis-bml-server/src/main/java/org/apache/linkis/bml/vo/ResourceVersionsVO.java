@@ -23,43 +23,43 @@ import java.util.List;
 
 public class ResourceVersionsVO {
 
-  private String resourceId;
+    private String resourceId;
 
-  private String user;
+    private String user;
 
-  // private String system;
+    // private String system;
 
-  private List<Version> versions;
+    private List<Version> versions;
 
-  public String getResourceId() {
-    return resourceId;
-  }
+    public String getResourceId() {
+        return resourceId;
+    }
 
-  public void setResourceId(String resourceId) {
-    this.resourceId = resourceId;
-  }
+    public void setResourceId(String resourceId) {
+        this.resourceId = resourceId;
+    }
 
-  public String getUser() {
-    return user;
-  }
+    public String getUser() {
+        return user;
+    }
 
-  public void setUser(String user) {
-    this.user = user;
-  }
+    public void setUser(String user) {
+        this.user = user;
+    }
 
-  //    public String getSystem() {
-  //        return system;
-  //    }
-  //
-  //    public void setSystem(String system) {
-  //        this.system = system;
-  //    }
+    //    public String getSystem() {
+    //        return system;
+    //    }
+    //
+    //    public void setSystem(String system) {
+    //        this.system = system;
+    //    }
 
-  public List<Version> getVersions() {
-    return versions;
-  }
+    public List<Version> getVersions() {
+        return versions;
+    }
 
-  public void setVersions(List<Version> versions) {
-    this.versions = versions;
-  }
+    public void setVersions(List<Version> versions) {
+        this.versions = versions;
+    }
 }

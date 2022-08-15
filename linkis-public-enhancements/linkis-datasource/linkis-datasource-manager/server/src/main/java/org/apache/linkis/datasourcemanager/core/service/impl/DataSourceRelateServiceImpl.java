@@ -31,38 +31,38 @@ import java.util.List;
 @Service
 public class DataSourceRelateServiceImpl implements DataSourceRelateService {
 
-  @Autowired private DataSourceParamKeyDao paramKeyDao;
+    @Autowired private DataSourceParamKeyDao paramKeyDao;
 
-  @Autowired private DataSourceTypeDao dataSourceTypeDao;
+    @Autowired private DataSourceTypeDao dataSourceTypeDao;
 
-  @Override
-  public List<DataSourceParamKeyDefinition> getKeyDefinitionsByType(
-      Long dataSourceTypeId, DataSourceParamKeyDefinition.Scope scope) {
-    return paramKeyDao.listByDataSourceTypeAndScope(dataSourceTypeId, scope);
-  }
-
-  @Override
-  public List<DataSourceParamKeyDefinition> getKeyDefinitionsByType(Long dataSourceTypeId) {
-    return paramKeyDao.listByDataSourceType(dataSourceTypeId);
-  }
-
-  @Override
-  public List<DataSourceParamKeyDefinition> getKeyDefinitionsByType(
-      Long dataSourceTypeId, String languageType) {
-    if (!"en".equals(languageType)) {
-      return paramKeyDao.listByDataSourceType(dataSourceTypeId);
-    } else {
-      return paramKeyDao.listByDataSourceTypeEn(dataSourceTypeId);
+    @Override
+    public List<DataSourceParamKeyDefinition> getKeyDefinitionsByType(
+            Long dataSourceTypeId, DataSourceParamKeyDefinition.Scope scope) {
+        return paramKeyDao.listByDataSourceTypeAndScope(dataSourceTypeId, scope);
     }
-  }
 
-  @Override
-  public List<DataSourceType> getAllDataSourceTypes() {
-    return dataSourceTypeDao.getAllTypes();
-  }
+    @Override
+    public List<DataSourceParamKeyDefinition> getKeyDefinitionsByType(Long dataSourceTypeId) {
+        return paramKeyDao.listByDataSourceType(dataSourceTypeId);
+    }
 
-  @Override
-  public DataSourceType getDataSourceType(Long typeId) {
-    return dataSourceTypeDao.selectOne(typeId);
-  }
+    @Override
+    public List<DataSourceParamKeyDefinition> getKeyDefinitionsByType(
+            Long dataSourceTypeId, String languageType) {
+        if (!"en".equals(languageType)) {
+            return paramKeyDao.listByDataSourceType(dataSourceTypeId);
+        } else {
+            return paramKeyDao.listByDataSourceTypeEn(dataSourceTypeId);
+        }
+    }
+
+    @Override
+    public List<DataSourceType> getAllDataSourceTypes() {
+        return dataSourceTypeDao.getAllTypes();
+    }
+
+    @Override
+    public DataSourceType getDataSourceType(Long typeId) {
+        return dataSourceTypeDao.selectOne(typeId);
+    }
 }

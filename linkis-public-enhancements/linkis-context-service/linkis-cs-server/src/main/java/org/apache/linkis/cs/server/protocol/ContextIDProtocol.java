@@ -20,8 +20,8 @@ package org.apache.linkis.cs.server.protocol;
 import org.apache.linkis.cs.server.enumeration.ServiceType;
 
 public class ContextIDProtocol extends AbstractHttpRequestProtocol {
-  @Override
-  public String getServiceName() {
-    return ServiceType.CONTEXT_ID.name();
-  }
+    @Override
+    public String getServiceName() {
+        return ServiceType.CONTEXT_ID.name();
+    }
 }

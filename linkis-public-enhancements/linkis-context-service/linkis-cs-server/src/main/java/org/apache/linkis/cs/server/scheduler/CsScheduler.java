@@ -21,9 +21,9 @@ import org.apache.linkis.cs.server.service.Service;
 
 public interface CsScheduler {
 
-  void addService(Service service);
+    void addService(Service service);
 
-  Service[] getServices();
+    Service[] getServices();
 
-  void submit(HttpJob job) throws InterruptedException;
+    void submit(HttpJob job) throws InterruptedException;
 }

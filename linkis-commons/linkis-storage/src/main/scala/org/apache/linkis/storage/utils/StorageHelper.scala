@@ -5,21 +5,22 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+ 
 package org.apache.linkis.storage.utils
 
 import org.apache.linkis.storage.FSFactory
-import org.apache.linkis.storage.resultset.{ResultSetFactory, ResultSetReader}
 import org.apache.linkis.storage.resultset.table.{TableMetaData, TableRecord}
+import org.apache.linkis.storage.resultset.{ResultSetFactory, ResultSetReader}
+
 
 object StorageHelper {
 
@@ -38,11 +39,11 @@ object StorageHelper {
   }
 
   /**
-   * Get the number of table result set file lines(获得表格结果集文件行数)
-   *
-   * @param args
-   */
-  def getTableResLines(args: Array[String]): Unit = {
+    * Get the number of table result set file lines(获得表格结果集文件行数)
+    *
+    * @param args
+    */
+  def  getTableResLines(args: Array[String]): Unit = {
     val resPath = StorageUtils.getFsPath(args(0))
     val resultSetFactory = ResultSetFactory.getInstance
     val resultSet = resultSetFactory.getResultSetByType(ResultSetFactory.TABLE_TYPE)
@@ -76,10 +77,10 @@ object StorageHelper {
     var num = 0
     while (reader.hasNext) {
       num = num + 1
-      if (num > max) return
-      if (num > len) {
+      if(num > max) return
+      if(num > len) {
         val record = reader.getRecord
-        record.asInstanceOf[TableRecord].row.foreach { value =>
+        record.asInstanceOf[TableRecord].row.foreach{ value =>
           print(value.toString)
           print(",")
         }

@@ -33,62 +33,62 @@ import java.util.Map;
 
 public final class ParserUtils {
 
-  private static final Map<String, String> types = new HashMap<>();
+    private static final Map<String, String> types = new HashMap<>();
 
-  static {
-    types.put("py", "python");
-    types.put("python", "python");
-    types.put("sql", "sql");
-    types.put("pyspark", "python");
-    types.put("scala", "scala");
-    types.put("rspark", "r");
-    types.put("r", "r");
-    types.put("java", "java");
-    types.put("hql", "hql");
-    types.put("sparksql", "sql");
-  }
+    static {
+        types.put("py", "python");
+        types.put("python", "python");
+        types.put("sql", "sql");
+        types.put("pyspark", "python");
+        types.put("scala", "scala");
+        types.put("rspark", "r");
+        types.put("r", "r");
+        types.put("java", "java");
+        types.put("hql", "hql");
+        types.put("sparksql", "sql");
+    }
 
-  public static void generateLogPath(JobRequest jobRequest, Map<String, String> params) {
-    String logPath = null;
-    String logPathPrefix = null;
-    String logMid = "log";
-    if (StringUtils.isEmpty(logPathPrefix)) {
-      logPathPrefix = EntranceConfiguration$.MODULE$.DEFAULT_LOGPATH_PREFIX().getValue();
+    public static void generateLogPath(JobRequest jobRequest, Map<String, String> params) {
+        String logPath = null;
+        String logPathPrefix = null;
+        String logMid = "log";
+        if (StringUtils.isEmpty(logPathPrefix)) {
+            logPathPrefix = EntranceConfiguration$.MODULE$.DEFAULT_LOGPATH_PREFIX().getValue();
+        }
+        /*Determine whether logPathPrefix is terminated with /, if it is, delete */
+        /*判断是否logPathPrefix是否是以 / 结尾， 如果是，就删除*/
+        if (logPathPrefix.endsWith("/")) {
+            logPathPrefix = logPathPrefix.substring(0, logPathPrefix.length() - 1);
+        }
+        Date date = new Date(System.currentTimeMillis());
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String dateString = dateFormat.format(date);
+        String creator = LabelUtil.getUserCreator(jobRequest.getLabels())._2;
+        String umUser = jobRequest.getExecuteUser();
+        FsPath lopPrefixPath = new FsPath(logPathPrefix);
+        if (StorageUtils.HDFS().equals(lopPrefixPath.getFsType())) {
+            String commonLogPath = logPathPrefix + "/" + "log" + "/" + dateString + "/" + creator;
+            logPath = commonLogPath + "/" + umUser + "/" + jobRequest.getId() + ".log";
+            CommonLogPathUtils.buildCommonPath(commonLogPath);
+        } else {
+            logPath =
+                    logPathPrefix
+                            + "/"
+                            + umUser
+                            + "/"
+                            + "log"
+                            + "/"
+                            + creator
+                            + "/"
+                            + dateString
+                            + "/"
+                            + jobRequest.getId()
+                            + ".log";
+        }
+        jobRequest.setLogPath(logPath);
     }
-    /*Determine whether logPathPrefix is terminated with /, if it is, delete */
-    /*判断是否logPathPrefix是否是以 / 结尾， 如果是，就删除*/
-    if (logPathPrefix.endsWith("/")) {
-      logPathPrefix = logPathPrefix.substring(0, logPathPrefix.length() - 1);
-    }
-    Date date = new Date(System.currentTimeMillis());
-    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-    String dateString = dateFormat.format(date);
-    String creator = LabelUtil.getUserCreator(jobRequest.getLabels())._2;
-    String umUser = jobRequest.getExecuteUser();
-    FsPath lopPrefixPath = new FsPath(logPathPrefix);
-    if (StorageUtils.HDFS().equals(lopPrefixPath.getFsType())) {
-      String commonLogPath = logPathPrefix + "/" + "log" + "/" + dateString + "/" + creator;
-      logPath = commonLogPath + "/" + umUser + "/" + jobRequest.getId() + ".log";
-      CommonLogPathUtils.buildCommonPath(commonLogPath);
-    } else {
-      logPath =
-          logPathPrefix
-              + "/"
-              + umUser
-              + "/"
-              + "log"
-              + "/"
-              + creator
-              + "/"
-              + dateString
-              + "/"
-              + jobRequest.getId()
-              + ".log";
-    }
-    jobRequest.setLogPath(logPath);
-  }
 
-  public static String getCorrespondingType(String runType) {
-    return types.get(runType.toLowerCase());
-  }
+    public static String getCorrespondingType(String runType) {
+        return types.get(runType.toLowerCase());
+    }
 }

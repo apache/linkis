@@ -25,43 +25,45 @@ import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
 import org.apache.linkis.cli.core.interactor.command.fitter.FitterResult;
 import org.apache.linkis.cli.core.interactor.command.parser.result.ParseResult;
 
-import java.util.Arrays;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
+
 public class SingleCmdParser extends AbstarctParser {
-  private static final Logger logger = LoggerFactory.getLogger(SingleCmdParser.class);
+    private static final Logger logger = LoggerFactory.getLogger(SingleCmdParser.class);
 
-  @Override
-  public ParseResult parse(String[] input) {
-    checkInit();
+    @Override
+    public ParseResult parse(String[] input) {
+        checkInit();
 
-    if (input == null || input.length == 0) {
-      throw new CommandException(
-          "CMD0015",
-          ErrorLevel.ERROR,
-          CommonErrMsg.ParserParseErr,
-          template.getCmdType(),
-          "nothing to parse");
+        if (input == null || input.length == 0) {
+            throw new CommandException(
+                    "CMD0015",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.ParserParseErr,
+                    template.getCmdType(),
+                    "nothing to parse");
+        }
+
+        FitterResult result = fitter.fit(input, template);
+
+        String[] remains = result.getRemains();
+
+        if (remains != null && remains.length != 0) {
+            throw new CommandException(
+                    "CMD0022",
+                    ErrorLevel.ERROR,
+                    CommonErrMsg.ParserParseErr,
+                    template.getCmdType(),
+                    "Cannot parse argument(s): "
+                            + Arrays.toString(remains)
+                            + ". Please check help message");
+        }
+
+        CmdTemplate parsedTemplate = result.getParsedTemplate();
+        Params param = templateToParams(parsedTemplate, mapper);
+
+        return new ParseResult(parsedTemplate, param, remains);
     }
-
-    FitterResult result = fitter.fit(input, template);
-
-    String[] remains = result.getRemains();
-
-    if (remains != null && remains.length != 0) {
-      throw new CommandException(
-          "CMD0022",
-          ErrorLevel.ERROR,
-          CommonErrMsg.ParserParseErr,
-          template.getCmdType(),
-          "Cannot parse argument(s): " + Arrays.toString(remains) + ". Please check help message");
-    }
-
-    CmdTemplate parsedTemplate = result.getParsedTemplate();
-    Params param = templateToParams(parsedTemplate, mapper);
-
-    return new ParseResult(parsedTemplate, param, remains);
-  }
 }

@@ -32,17 +32,17 @@ import java.util.List;
 
 /** Operation for SHOW CATALOGS command. */
 public class ShowCatalogsOperation implements NonJobOperation {
-  private final ExecutionContext context;
+    private final ExecutionContext context;
 
-  public ShowCatalogsOperation(FlinkEngineConnContext context) {
-    this.context = context.getExecutionContext();
-  }
+    public ShowCatalogsOperation(FlinkEngineConnContext context) {
+        this.context = context.getExecutionContext();
+    }
 
-  @Override
-  public ResultSet execute() throws SqlExecutionException {
-    final TableEnvironment tableEnv = context.getTableEnvironment();
-    final List<String> catalogs =
-        context.wrapClassLoader(() -> Arrays.asList(tableEnv.listCatalogs()));
-    return OperationUtil.stringListToResultSet(catalogs, ConstantNames.SHOW_CATALOGS_RESULT);
-  }
+    @Override
+    public ResultSet execute() throws SqlExecutionException {
+        final TableEnvironment tableEnv = context.getTableEnvironment();
+        final List<String> catalogs =
+                context.wrapClassLoader(() -> Arrays.asList(tableEnv.listCatalogs()));
+        return OperationUtil.stringListToResultSet(catalogs, ConstantNames.SHOW_CATALOGS_RESULT);
+    }
 }

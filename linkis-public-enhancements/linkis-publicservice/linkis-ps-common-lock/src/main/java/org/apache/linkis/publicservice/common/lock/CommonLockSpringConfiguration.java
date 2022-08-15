@@ -28,11 +28,11 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class CommonLockSpringConfiguration {
 
-  @Bean
-  @ConditionalOnMissingBean
-  public CommonLockService getDefaultLockManagerPersistence(CommonLockMapper commonLockMapper) {
-    DefaultCommonLockService defaultCommonLockService = new DefaultCommonLockService();
-    defaultCommonLockService.setLockManagerMapper(commonLockMapper);
-    return defaultCommonLockService;
-  }
+    @Bean
+    @ConditionalOnMissingBean
+    public CommonLockService getDefaultLockManagerPersistence(CommonLockMapper commonLockMapper) {
+        DefaultCommonLockService defaultCommonLockService = new DefaultCommonLockService();
+        defaultCommonLockService.setLockManagerMapper(commonLockMapper);
+        return defaultCommonLockService;
+    }
 }

@@ -15,26 +15,29 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>org.apache.linkis</groupId>
-    <artifactId>linkis</artifactId>
-    <version>1.2.0</version>
-  </parent>
+  
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>linkis</artifactId>
+        <groupId>org.apache.linkis</groupId>
+        <version>1.2.0</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>linkis-commons</artifactId>
-  <packaging>pom</packaging>
-  <modules>
-    <module>linkis-common</module>
-    <module>linkis-hadoop-common</module>
-    <module>linkis-httpclient</module>
-    <module>linkis-protocol</module>
-    <module>linkis-scheduler</module>
-    <module>linkis-module</module>
-    <module>linkis-mybatis</module>
-    <module>linkis-rpc</module>
-    <module>linkis-storage</module>
-  </modules>
+    <artifactId>linkis-commons</artifactId>
+    <packaging>pom</packaging>
+    <modules>
+        <module>linkis-common</module>
+        <module>linkis-hadoop-common</module>
+        <module>linkis-httpclient</module>
+        <module>linkis-protocol</module>
+        <module>linkis-scheduler</module>
+        <module>linkis-module</module>
+        <module>linkis-mybatis</module>
+        <module>linkis-rpc</module>
+        <module>linkis-storage</module>
+    </modules>
 
 </project>

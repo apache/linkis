@@ -26,42 +26,42 @@ import java.util.HashMap;
 
 public class ClusterLabel extends GenericLabel {
 
-  public ClusterLabel() {
-    setLabelKey(LabelKeyConstant.YARN_CLUSTER_KEY);
-  }
-
-  @Override
-  public Feature getFeature() {
-    return Feature.CORE;
-  }
-
-  @ValueSerialNum(1)
-  public void setClusterName(String clusterName) {
-    if (null == getValue()) {
-      setValue(new HashMap<>());
+    public ClusterLabel() {
+        setLabelKey(LabelKeyConstant.YARN_CLUSTER_KEY);
     }
-    getValue().put("clusterName", clusterName);
-  }
 
-  public String getClusterName() {
-    if (null != getValue().get("clusterName")) {
-      return getValue().get("clusterName");
+    @Override
+    public Feature getFeature() {
+        return Feature.CORE;
     }
-    return null;
-  }
 
-  @ValueSerialNum(0)
-  public void setClusterType(String clusterType) {
-    if (null == getValue()) {
-      setValue(new HashMap<>());
+    @ValueSerialNum(1)
+    public void setClusterName(String clusterName) {
+        if (null == getValue()) {
+            setValue(new HashMap<>());
+        }
+        getValue().put("clusterName", clusterName);
     }
-    getValue().put("clusterType", clusterType);
-  }
 
-  public String getClusterType() {
-    if (null != getValue().get("clusterType")) {
-      return getValue().get("clusterType");
+    public String getClusterName() {
+        if (null != getValue().get("clusterName")) {
+            return getValue().get("clusterName");
+        }
+        return null;
     }
-    return null;
-  }
+
+    @ValueSerialNum(0)
+    public void setClusterType(String clusterType) {
+        if (null == getValue()) {
+            setValue(new HashMap<>());
+        }
+        getValue().put("clusterType", clusterType);
+    }
+
+    public String getClusterType() {
+        if (null != getValue().get("clusterType")) {
+            return getValue().get("clusterType");
+        }
+        return null;
+    }
 }

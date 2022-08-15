@@ -18,6 +18,6 @@
 package org.apache.linkis.cli.application.constants;
 
 public class LinkisConstants {
-  public static final String AUTH_STRATEGY_TOKEN = "token";
-  public static final String AUTH_STRATEGY_STATIC = "static";
+    public static final String AUTH_STRATEGY_TOKEN = "token";
+    public static final String AUTH_STRATEGY_STATIC = "static";
 }

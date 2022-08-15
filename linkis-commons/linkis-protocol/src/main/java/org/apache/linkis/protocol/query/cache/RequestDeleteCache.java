@@ -23,25 +23,25 @@ import java.util.List;
 
 public class RequestDeleteCache implements QueryProtocol {
 
-  private String executionContent;
-  private String user;
-  private List<String> labelsStr;
+    private String executionContent;
+    private String user;
+    private List<String> labelsStr;
 
-  public RequestDeleteCache(String executionContent, String user, List<String> labelsStr) {
-    this.executionContent = executionContent;
-    this.user = user;
-    this.labelsStr = labelsStr;
-  }
+    public RequestDeleteCache(String executionContent, String user, List<String> labelsStr) {
+        this.executionContent = executionContent;
+        this.user = user;
+        this.labelsStr = labelsStr;
+    }
 
-  public String getExecutionContent() {
-    return executionContent;
-  }
+    public String getExecutionContent() {
+        return executionContent;
+    }
 
-  public String getUser() {
-    return user;
-  }
+    public String getUser() {
+        return user;
+    }
 
-  public List<String> getLabelsStr() {
-    return labelsStr;
-  }
+    public List<String> getLabelsStr() {
+        return labelsStr;
+    }
 }

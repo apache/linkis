@@ -22,20 +22,20 @@ import org.apache.linkis.cs.condition.impl.ContainsCondition;
 
 public class ContainsContextSearchMatcher extends AbstractContextSearchMatcher {
 
-  String value;
+    String value;
 
-  public ContainsContextSearchMatcher(ContainsCondition condition) {
-    super(condition);
-    this.value = condition.getValue();
-  }
-
-  @Override
-  public Boolean match(ContextKeyValue contextKeyValue) {
-    if (contextKeyValue.getContextKey().getKeywords() == null) {
-      return contextKeyValue.getContextKey().getKey().contains(value);
-    } else {
-      return contextKeyValue.getContextKey().getKey().contains(value)
-          || contextKeyValue.getContextKey().getKeywords().contains(value);
+    public ContainsContextSearchMatcher(ContainsCondition condition) {
+        super(condition);
+        this.value = condition.getValue();
     }
-  }
+
+    @Override
+    public Boolean match(ContextKeyValue contextKeyValue) {
+        if (contextKeyValue.getContextKey().getKeywords() == null) {
+            return contextKeyValue.getContextKey().getKey().contains(value);
+        } else {
+            return contextKeyValue.getContextKey().getKey().contains(value)
+                    || contextKeyValue.getContextKey().getKeywords().contains(value);
+        }
+    }
 }

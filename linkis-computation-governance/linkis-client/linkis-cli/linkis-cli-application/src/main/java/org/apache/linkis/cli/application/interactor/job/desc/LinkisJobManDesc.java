@@ -22,32 +22,32 @@ import org.apache.linkis.cli.common.entity.job.JobDescription;
 import java.util.Map;
 
 public class LinkisJobManDesc implements JobDescription {
-  private String jobId;
-  private String user;
+    private String jobId;
+    private String user;
 
-  private Map<String, Object> params;
+    private Map<String, Object> params;
 
-  public String getJobID() {
-    return jobId;
-  }
+    public String getJobID() {
+        return jobId;
+    }
 
-  public void setJobId(String jobId) {
-    this.jobId = jobId;
-  }
+    public void setJobId(String jobId) {
+        this.jobId = jobId;
+    }
 
-  public String getUser() {
-    return user;
-  }
+    public String getUser() {
+        return user;
+    }
 
-  public void setUser(String user) {
-    this.user = user;
-  }
+    public void setUser(String user) {
+        this.user = user;
+    }
 
-  public Map<String, Object> getParams() {
-    return params;
-  }
+    public Map<String, Object> getParams() {
+        return params;
+    }
 
-  public void setParams(Map<String, Object> params) {
-    this.params = params;
-  }
+    public void setParams(Map<String, Object> params) {
+        this.params = params;
+    }
 }

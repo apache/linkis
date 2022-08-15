@@ -24,59 +24,59 @@ import java.util.Date;
 
 public interface LinkisOperResultAdapter {
 
-  String getJobID();
+    String getJobID();
 
-  String getUser();
+    String getUser();
 
-  String getProxyUser();
+    String getProxyUser();
 
-  JobStatus getJobStatus();
+    JobStatus getJobStatus();
 
-  String getStrongerExecId();
+    String getStrongerExecId();
 
-  Float getJobProgress();
+    Float getJobProgress();
 
-  String getLogPath();
+    String getLogPath();
 
-  String getResultLocation();
+    String getResultLocation();
 
-  String[] getResultSetPaths();
+    String[] getResultSetPaths();
 
-  Integer getErrCode();
+    Integer getErrCode();
 
-  String getErrDesc();
+    String getErrDesc();
 
-  String getLog();
+    String getLog();
 
-  Integer getNextLogLine();
+    Integer getNextLogLine();
 
-  Boolean hasNextLogLine();
+    Boolean hasNextLogLine();
 
-  LinkisResultSet getResultContent();
+    LinkisResultSet getResultContent();
 
-  Boolean resultHasNextPage();
+    Boolean resultHasNextPage();
 
-  String getInstance();
+    String getInstance();
 
-  String getUmUser();
+    String getUmUser();
 
-  String getSimpleExecId();
+    String getSimpleExecId();
 
-  String getExecutionCode();
+    String getExecutionCode();
 
-  String getEngineType();
+    String getEngineType();
 
-  String getRunType();
+    String getRunType();
 
-  Long getCostTime();
+    Long getCostTime();
 
-  Date getCreatedTime();
+    Date getCreatedTime();
 
-  Date getUpdatedTime();
+    Date getUpdatedTime();
 
-  Date getEngineStartTime();
+    Date getEngineStartTime();
 
-  String getExecuteApplicationName();
+    String getExecuteApplicationName();
 
-  String getRequestApplicationName();
+    String getRequestApplicationName();
 }

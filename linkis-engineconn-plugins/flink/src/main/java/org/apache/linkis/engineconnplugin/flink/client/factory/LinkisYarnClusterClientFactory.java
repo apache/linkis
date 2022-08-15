@@ -31,87 +31,87 @@ import org.apache.hadoop.yarn.client.api.YarnClient;
 import org.apache.hadoop.yarn.conf.YarnConfiguration;
 import org.apache.hadoop.yarn.exceptions.YarnException;
 
-import java.io.Closeable;
-import java.io.IOException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.Closeable;
+import java.io.IOException;
 
 import static org.apache.flink.configuration.ConfigOptions.key;
 import static org.apache.flink.util.Preconditions.checkNotNull;
 
 public class LinkisYarnClusterClientFactory extends YarnClusterClientFactory implements Closeable {
 
-  public static final ConfigOption<String> YARN_CONFIG_DIR =
-      key("$internal.yarn.config-dir")
-          .stringType()
-          .noDefaultValue()
-          .withDescription(
-              "**DO NOT USE** The location of the log config file, e.g. the path to your log4j.properties for log4j.");
+    public static final ConfigOption<String> YARN_CONFIG_DIR =
+            key("$internal.yarn.config-dir")
+                    .stringType()
+                    .noDefaultValue()
+                    .withDescription(
+                            "**DO NOT USE** The location of the log config file, e.g. the path to your log4j.properties for log4j.");
 
-  private YarnConfiguration yarnConfiguration;
-  private YarnClient yarnClient;
+    private YarnConfiguration yarnConfiguration;
+    private YarnClient yarnClient;
 
-  private Configuration configuration;
+    private Configuration configuration;
 
-  private static final Logger LOG = LoggerFactory.getLogger(LinkisYarnClusterClientFactory.class);
+    private static final Logger LOG = LoggerFactory.getLogger(LinkisYarnClusterClientFactory.class);
 
-  private void initYarnClient(Configuration configuration) {
-    checkNotNull(configuration);
-    String configurationDirectory = configuration.get(DeploymentOptionsInternal.CONF_DIR);
-    YarnLogConfigUtil.setLogConfigFileInConfig(configuration, configurationDirectory);
-    String yarnConfDir = configuration.getString(YARN_CONFIG_DIR);
-    this.configuration = configuration;
-    yarnConfiguration = YarnConfLoader.getYarnConf(yarnConfDir);
-    yarnClient = YarnClient.createYarnClient();
-    yarnClient.init(yarnConfiguration);
-    yarnClient.start();
-  }
+    private void initYarnClient(Configuration configuration) {
+        checkNotNull(configuration);
+        String configurationDirectory = configuration.get(DeploymentOptionsInternal.CONF_DIR);
+        YarnLogConfigUtil.setLogConfigFileInConfig(configuration, configurationDirectory);
+        String yarnConfDir = configuration.getString(YARN_CONFIG_DIR);
+        this.configuration = configuration;
+        yarnConfiguration = YarnConfLoader.getYarnConf(yarnConfDir);
+        yarnClient = YarnClient.createYarnClient();
+        yarnClient.init(yarnConfiguration);
+        yarnClient.start();
+    }
 
-  public YarnConfiguration getYarnConfiguration(Configuration configuration) {
-    if (yarnClient == null) {
-      synchronized (this) {
+    public YarnConfiguration getYarnConfiguration(Configuration configuration) {
         if (yarnClient == null) {
-          initYarnClient(configuration);
+            synchronized (this) {
+                if (yarnClient == null) {
+                    initYarnClient(configuration);
+                }
+            }
         }
-      }
+        return yarnConfiguration;
     }
-    return yarnConfiguration;
-  }
 
-  @Override
-  public YarnClusterDescriptor createClusterDescriptor(Configuration configuration) {
-    if (yarnClient == null) {
-      synchronized (this) {
+    @Override
+    public YarnClusterDescriptor createClusterDescriptor(Configuration configuration) {
         if (yarnClient == null) {
-          initYarnClient(configuration);
+            synchronized (this) {
+                if (yarnClient == null) {
+                    initYarnClient(configuration);
+                }
+            }
         }
-      }
+        return new YarnClusterDescriptor(
+                configuration,
+                yarnConfiguration,
+                yarnClient,
+                YarnClientYarnClusterInformationRetriever.create(yarnClient),
+                true);
     }
-    return new YarnClusterDescriptor(
-        configuration,
-        yarnConfiguration,
-        yarnClient,
-        YarnClientYarnClusterInformationRetriever.create(yarnClient),
-        true);
-  }
 
-  @Override
-  public void close() throws IOException {
-    if (yarnClient != null) {
-      ApplicationId applicationId = getClusterId(configuration);
-      if (applicationId != null) {
-        LOG.info("Begin to kill application {}", applicationId);
-        try {
-          yarnClient.killApplication(applicationId);
-        } catch (YarnException e) {
-          LOG.error("Failed to kill application {}.", applicationId, e);
+    @Override
+    public void close() throws IOException {
+        if (yarnClient != null) {
+            ApplicationId applicationId = getClusterId(configuration);
+            if (applicationId != null) {
+                LOG.info("Begin to kill application {}", applicationId);
+                try {
+                    yarnClient.killApplication(applicationId);
+                } catch (YarnException e) {
+                    LOG.error("Failed to kill application {}.", applicationId, e);
+                }
+            }
+            yarnClient.close();
+            LOG.info("End to kill application {},", applicationId);
+        } else {
+            LOG.warn("yarnClient is null, this is not able to kill application");
         }
-      }
-      yarnClient.close();
-      LOG.info("End to kill application {},", applicationId);
-    } else {
-      LOG.warn("yarnClient is null, this is not able to kill application");
     }
-  }
 }

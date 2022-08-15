@@ -30,13 +30,13 @@ import java.util.Optional;
 
 public interface JobOperation extends Operation, FlinkListenerGroup {
 
-  JobID getJobId();
+    JobID getJobId();
 
-  Optional<ResultSet> getJobResult() throws SqlExecutionException;
+    Optional<ResultSet> getJobResult() throws SqlExecutionException;
 
-  JobStatus getJobStatus() throws JobExecutionException;
+    JobStatus getJobStatus() throws JobExecutionException;
 
-  void cancelJob() throws JobExecutionException;
+    void cancelJob() throws JobExecutionException;
 
-  void setClusterDescriptorAdapter(YarnSessionClusterDescriptorAdapter clusterDescriptor);
+    void setClusterDescriptorAdapter(YarnSessionClusterDescriptorAdapter clusterDescriptor);
 }

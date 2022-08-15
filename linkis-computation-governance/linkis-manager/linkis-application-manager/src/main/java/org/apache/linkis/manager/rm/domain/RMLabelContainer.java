@@ -29,163 +29,165 @@ import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel;
 import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel;
 import org.apache.linkis.manager.label.utils.LabelUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class RMLabelContainer {
 
-  private static final Logger logger = LoggerFactory.getLogger(RMLabelContainer.class);
-  private static CombinedLabelBuilder combinedLabelBuilder = new CombinedLabelBuilder();
+    private static final Logger logger = LoggerFactory.getLogger(RMLabelContainer.class);
+    private static CombinedLabelBuilder combinedLabelBuilder = new CombinedLabelBuilder();
 
-  List<Label<?>> labels;
-  List<Label<?>> lockedLabels;
-  private EMInstanceLabel EMInstanceLabel;
-  private EngineTypeLabel engineTypeLabel;
-  private UserCreatorLabel userCreatorLabel;
-  private EngineInstanceLabel engineInstanceLabel;
-  private CombinedLabel combinedUserCreatorEngineTypeLabel;
-  private Label currentLabel;
+    List<Label<?>> labels;
+    List<Label<?>> lockedLabels;
+    private EMInstanceLabel EMInstanceLabel;
+    private EngineTypeLabel engineTypeLabel;
+    private UserCreatorLabel userCreatorLabel;
+    private EngineInstanceLabel engineInstanceLabel;
+    private CombinedLabel combinedUserCreatorEngineTypeLabel;
+    private Label currentLabel;
 
-  public RMLabelContainer(List<Label<?>> labels) {
-    this.labels = labels;
-    this.lockedLabels = Lists.newArrayList();
-    try {
-      if (getUserCreatorLabel() != null && getEngineTypeLabel() != null) {
-        this.combinedUserCreatorEngineTypeLabel =
-            (CombinedLabel)
-                combinedLabelBuilder.build(
-                    "", Lists.newArrayList(getUserCreatorLabel(), getEngineTypeLabel()));
-        this.labels.add(combinedUserCreatorEngineTypeLabel);
-      }
-    } catch (Exception e) {
-      logger.warn("failed to get combinedUserCreatorEngineTypeLabel", e);
-    }
-    this.labels = LabelUtils.distinctLabel(this.labels, labels);
-  }
-
-  public List<Label<?>> getLabels() {
-    return labels;
-  }
-
-  public List<Label<?>> getResourceLabels() {
-    if (null != labels) {
-      return labels.stream()
-          .filter(label -> label instanceof ResourceLabel)
-          .collect(Collectors.toList());
-    }
-    return new ArrayList<>();
-  }
-
-  public Label find(Class labelClass) {
-    for (Label label : labels) {
-      if (labelClass.isInstance(label)) {
-        return label;
-      }
-    }
-    return null;
-  }
-
-  public EMInstanceLabel getEMInstanceLabel() throws RMErrorException {
-    if (EMInstanceLabel == null) {
-      for (Label label : labels) {
-        if (label instanceof EMInstanceLabel) {
-          return (EMInstanceLabel) label;
+    public RMLabelContainer(List<Label<?>> labels) {
+        this.labels = labels;
+        this.lockedLabels = Lists.newArrayList();
+        try {
+            if (getUserCreatorLabel() != null && getEngineTypeLabel() != null) {
+                this.combinedUserCreatorEngineTypeLabel =
+                        (CombinedLabel)
+                                combinedLabelBuilder.build(
+                                        "",
+                                        Lists.newArrayList(
+                                                getUserCreatorLabel(), getEngineTypeLabel()));
+                this.labels.add(combinedUserCreatorEngineTypeLabel);
+            }
+        } catch (Exception e) {
+            logger.warn("failed to get combinedUserCreatorEngineTypeLabel", e);
         }
-      }
-    } else {
-      return EMInstanceLabel;
+        this.labels = LabelUtils.distinctLabel(this.labels, labels);
     }
-    logger.warn("EMInstanceLabel not found");
-    return null;
-  }
 
-  public EngineTypeLabel getEngineTypeLabel() throws RMErrorException {
-    if (engineTypeLabel == null) {
-      for (Label label : labels) {
-        if (label instanceof EngineTypeLabel) {
-          return (EngineTypeLabel) label;
+    public List<Label<?>> getLabels() {
+        return labels;
+    }
+
+    public List<Label<?>> getResourceLabels() {
+        if (null != labels) {
+            return labels.stream()
+                    .filter(label -> label instanceof ResourceLabel)
+                    .collect(Collectors.toList());
         }
-      }
-    } else {
-      return engineTypeLabel;
+        return new ArrayList<>();
     }
-    logger.warn("EngineTypeLabel not found");
-    return null;
-  }
 
-  public UserCreatorLabel getUserCreatorLabel() throws RMErrorException {
-    if (userCreatorLabel == null) {
-      for (Label label : labels) {
-        if (label instanceof UserCreatorLabel) {
-          return (UserCreatorLabel) label;
+    public Label find(Class labelClass) {
+        for (Label label : labels) {
+            if (labelClass.isInstance(label)) {
+                return label;
+            }
         }
-      }
-    } else {
-      return userCreatorLabel;
+        return null;
     }
-    return null;
-  }
 
-  public EngineInstanceLabel getEngineInstanceLabel() throws RMErrorException {
-    if (engineInstanceLabel == null) {
-      for (Label label : labels) {
-        if (label instanceof EngineInstanceLabel) {
-          return (EngineInstanceLabel) label;
+    public EMInstanceLabel getEMInstanceLabel() throws RMErrorException {
+        if (EMInstanceLabel == null) {
+            for (Label label : labels) {
+                if (label instanceof EMInstanceLabel) {
+                    return (EMInstanceLabel) label;
+                }
+            }
+        } else {
+            return EMInstanceLabel;
         }
-      }
-    } else {
-      return engineInstanceLabel;
+        logger.warn("EMInstanceLabel not found");
+        return null;
     }
-    logger.warn("EngineInstanceLabel not found");
-    return null;
-  }
 
-  public CombinedLabel getCombinedUserCreatorEngineTypeLabel() {
-    return combinedUserCreatorEngineTypeLabel;
-  }
+    public EngineTypeLabel getEngineTypeLabel() throws RMErrorException {
+        if (engineTypeLabel == null) {
+            for (Label label : labels) {
+                if (label instanceof EngineTypeLabel) {
+                    return (EngineTypeLabel) label;
+                }
+            }
+        } else {
+            return engineTypeLabel;
+        }
+        logger.warn("EngineTypeLabel not found");
+        return null;
+    }
 
-  public Label getCurrentLabel() {
-    return currentLabel;
-  }
+    public UserCreatorLabel getUserCreatorLabel() throws RMErrorException {
+        if (userCreatorLabel == null) {
+            for (Label label : labels) {
+                if (label instanceof UserCreatorLabel) {
+                    return (UserCreatorLabel) label;
+                }
+            }
+        } else {
+            return userCreatorLabel;
+        }
+        return null;
+    }
 
-  public void setCurrentLabel(Label currentLabel) {
-    this.currentLabel = currentLabel;
-  }
+    public EngineInstanceLabel getEngineInstanceLabel() throws RMErrorException {
+        if (engineInstanceLabel == null) {
+            for (Label label : labels) {
+                if (label instanceof EngineInstanceLabel) {
+                    return (EngineInstanceLabel) label;
+                }
+            }
+        } else {
+            return engineInstanceLabel;
+        }
+        logger.warn("EngineInstanceLabel not found");
+        return null;
+    }
 
-  public List<Label<?>> getLockedLabels() {
-    return lockedLabels;
-  }
+    public CombinedLabel getCombinedUserCreatorEngineTypeLabel() {
+        return combinedUserCreatorEngineTypeLabel;
+    }
 
-  public String getEngineServiceName() throws RMErrorException {
-    return GovernanceCommonConf.ENGINE_CONN_SPRING_NAME().getValue();
-  }
+    public Label getCurrentLabel() {
+        return currentLabel;
+    }
 
-  public void sort() {
-    // TODO lock sequence
-  }
+    public void setCurrentLabel(Label currentLabel) {
+        this.currentLabel = currentLabel;
+    }
 
-  @Override
-  public String toString() {
-    return "RMLabelContainer{"
-        + "labels="
-        + labels
-        + ", lockedLabels="
-        + lockedLabels
-        + ", EMInstanceLabel="
-        + EMInstanceLabel
-        + ", engineTypeLabel="
-        + engineTypeLabel
-        + ", userCreatorLabel="
-        + userCreatorLabel
-        + ", engineInstanceLabel="
-        + engineInstanceLabel
-        + ", currentLabel="
-        + currentLabel
-        + '}';
-  }
+    public List<Label<?>> getLockedLabels() {
+        return lockedLabels;
+    }
+
+    public String getEngineServiceName() throws RMErrorException {
+        return GovernanceCommonConf.ENGINE_CONN_SPRING_NAME().getValue();
+    }
+
+    public void sort() {
+        // TODO lock sequence
+    }
+
+    @Override
+    public String toString() {
+        return "RMLabelContainer{"
+                + "labels="
+                + labels
+                + ", lockedLabels="
+                + lockedLabels
+                + ", EMInstanceLabel="
+                + EMInstanceLabel
+                + ", engineTypeLabel="
+                + engineTypeLabel
+                + ", userCreatorLabel="
+                + userCreatorLabel
+                + ", engineInstanceLabel="
+                + engineInstanceLabel
+                + ", currentLabel="
+                + currentLabel
+                + '}';
+    }
 }

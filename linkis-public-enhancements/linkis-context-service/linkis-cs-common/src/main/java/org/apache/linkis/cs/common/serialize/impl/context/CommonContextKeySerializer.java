@@ -24,21 +24,21 @@ import org.apache.linkis.cs.common.utils.CSCommonUtils;
 
 public class CommonContextKeySerializer extends AbstractSerializer<CommonContextKey> {
 
-  @Override
-  public CommonContextKey fromJson(String json) throws CSErrorException {
-    return CSCommonUtils.gson.fromJson(json, CommonContextKey.class);
-  }
-
-  @Override
-  public String getType() {
-    return "commonContextKey";
-  }
-
-  @Override
-  public boolean accepts(Object obj) {
-    if (null != obj && obj instanceof CommonContextKey) {
-      return true;
+    @Override
+    public CommonContextKey fromJson(String json) throws CSErrorException {
+        return CSCommonUtils.gson.fromJson(json, CommonContextKey.class);
     }
-    return false;
-  }
+
+    @Override
+    public String getType() {
+        return "commonContextKey";
+    }
+
+    @Override
+    public boolean accepts(Object obj) {
+        if (null != obj && obj instanceof CommonContextKey) {
+            return true;
+        }
+        return false;
+    }
 }

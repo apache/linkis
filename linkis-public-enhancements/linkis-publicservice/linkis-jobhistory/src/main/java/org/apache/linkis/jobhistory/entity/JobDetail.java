@@ -23,125 +23,125 @@ import java.util.Date;
 
 public class JobDetail {
 
-  private Long id;
+    private Long id;
 
-  private Long jobHistoryId;
+    private Long jobHistoryId;
 
-  /*
-  separated multi result path
-   */
+    /*
+    separated multi result path
+     */
 
-  private String resultLocation;
+    private String resultLocation;
 
-  /*
-  how many result sets
-   */
+    /*
+    how many result sets
+     */
 
-  private Integer resultArraySize;
+    private Integer resultArraySize;
 
-  /*
-  code
-   */
+    /*
+    code
+     */
 
-  private String executionContent;
+    private String executionContent;
 
-  /*
-  json of jobGroup
-   */
+    /*
+    json of jobGroup
+     */
 
-  private String jobGroupInfo;
+    private String jobGroupInfo;
 
-  private Date createdTime;
+    private Date createdTime;
 
-  private Date updatedTime;
+    private Date updatedTime;
 
-  private String status;
+    private String status;
 
-  private Integer priority;
+    private Integer priority;
 
-  private String updatedTimeMills;
+    private String updatedTimeMills;
 
-  public String getUpdatedTimeMills() {
-    return QueryUtils.dateToString(getUpdatedTime());
-  }
+    public String getUpdatedTimeMills() {
+        return QueryUtils.dateToString(getUpdatedTime());
+    }
 
-  public Long getId() {
-    return id;
-  }
+    public Long getId() {
+        return id;
+    }
 
-  public void setId(Long id) {
-    this.id = id;
-  }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-  public Long getJobHistoryId() {
-    return jobHistoryId;
-  }
+    public Long getJobHistoryId() {
+        return jobHistoryId;
+    }
 
-  public void setJobHistoryId(Long jobHistoryId) {
-    this.jobHistoryId = jobHistoryId;
-  }
+    public void setJobHistoryId(Long jobHistoryId) {
+        this.jobHistoryId = jobHistoryId;
+    }
 
-  public String getResultLocation() {
-    return resultLocation;
-  }
+    public String getResultLocation() {
+        return resultLocation;
+    }
 
-  public void setResultLocation(String resultLocation) {
-    this.resultLocation = resultLocation;
-  }
+    public void setResultLocation(String resultLocation) {
+        this.resultLocation = resultLocation;
+    }
 
-  public Integer getResultArraySize() {
-    return resultArraySize;
-  }
+    public Integer getResultArraySize() {
+        return resultArraySize;
+    }
 
-  public void setResultArraySize(Integer resultArraySize) {
-    this.resultArraySize = resultArraySize;
-  }
+    public void setResultArraySize(Integer resultArraySize) {
+        this.resultArraySize = resultArraySize;
+    }
 
-  public String getExecutionContent() {
-    return executionContent;
-  }
+    public String getExecutionContent() {
+        return executionContent;
+    }
 
-  public void setExecutionContent(String executionContent) {
-    this.executionContent = executionContent;
-  }
+    public void setExecutionContent(String executionContent) {
+        this.executionContent = executionContent;
+    }
 
-  public String getJobGroupInfo() {
-    return jobGroupInfo;
-  }
+    public String getJobGroupInfo() {
+        return jobGroupInfo;
+    }
 
-  public void setJobGroupInfo(String jobGroupInfo) {
-    this.jobGroupInfo = jobGroupInfo;
-  }
+    public void setJobGroupInfo(String jobGroupInfo) {
+        this.jobGroupInfo = jobGroupInfo;
+    }
 
-  public Date getCreatedTime() {
-    return createdTime;
-  }
+    public Date getCreatedTime() {
+        return createdTime;
+    }
 
-  public void setCreatedTime(Date createdTime) {
-    this.createdTime = createdTime;
-  }
+    public void setCreatedTime(Date createdTime) {
+        this.createdTime = createdTime;
+    }
 
-  public Date getUpdatedTime() {
-    return updatedTime;
-  }
+    public Date getUpdatedTime() {
+        return updatedTime;
+    }
 
-  public void setUpdatedTime(Date updatedTime) {
-    this.updatedTime = updatedTime;
-  }
+    public void setUpdatedTime(Date updatedTime) {
+        this.updatedTime = updatedTime;
+    }
 
-  public String getStatus() {
-    return status;
-  }
+    public String getStatus() {
+        return status;
+    }
 
-  public void setStatus(String status) {
-    this.status = status;
-  }
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
-  public Integer getPriority() {
-    return priority;
-  }
+    public Integer getPriority() {
+        return priority;
+    }
 
-  public void setPriority(Integer priority) {
-    this.priority = priority;
-  }
+    public void setPriority(Integer priority) {
+        this.priority = priority;
+    }
 }

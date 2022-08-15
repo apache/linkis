@@ -21,26 +21,26 @@ import org.apache.linkis.manager.common.entity.node.EngineNode;
 
 public class EngineInfoClearRequest implements EngineRequest {
 
-  private EngineNode engineNode;
+    private EngineNode engineNode;
 
-  private String user;
+    private String user;
 
-  public EngineInfoClearRequest() {}
+    public EngineInfoClearRequest() {}
 
-  public EngineNode getEngineNode() {
-    return engineNode;
-  }
+    public EngineNode getEngineNode() {
+        return engineNode;
+    }
 
-  public void setEngineNode(EngineNode engineNode) {
-    this.engineNode = engineNode;
-  }
+    public void setEngineNode(EngineNode engineNode) {
+        this.engineNode = engineNode;
+    }
 
-  public void setUser(String user) {
-    this.user = user;
-  }
+    public void setUser(String user) {
+        this.user = user;
+    }
 
-  @Override
-  public String getUser() {
-    return user;
-  }
+    @Override
+    public String getUser() {
+        return user;
+    }
 }

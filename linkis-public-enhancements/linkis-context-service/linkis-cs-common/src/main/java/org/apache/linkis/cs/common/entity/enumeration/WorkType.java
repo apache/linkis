@@ -18,8 +18,8 @@
 package org.apache.linkis.cs.common.entity.enumeration;
 
 public enum WorkType {
-  WORKSPACE,
-  PROJECT,
-  FLOW,
-  NODE
+    WORKSPACE,
+    PROJECT,
+    FLOW,
+    NODE
 }

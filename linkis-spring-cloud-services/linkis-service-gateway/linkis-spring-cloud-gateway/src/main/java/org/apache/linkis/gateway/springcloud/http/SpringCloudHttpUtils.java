@@ -23,55 +23,58 @@ import org.springframework.http.HttpCookie;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.reactive.socket.WebSocketMessage;
 
-import javax.servlet.http.Cookie;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
-import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.netty.http.websocket.WebsocketOutbound;
 
+import javax.servlet.http.Cookie;
+
+import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
+import io.netty.handler.codec.http.websocketx.WebSocketFrame;
+
+import java.util.HashMap;
+import java.util.Map;
+
 public class SpringCloudHttpUtils {
 
-  public static Mono<Void> sendWebSocket(WebsocketOutbound out, DataBuffer dataBuffer) {
-    WebSocketMessage webSocketMessage =
-        new WebSocketMessage(WebSocketMessage.Type.TEXT, dataBuffer).retain();
-    TextWebSocketFrame textWebSocketFrame =
-        new TextWebSocketFrame(NettyDataBufferFactory.toByteBuf(webSocketMessage.getPayload()));
-    Flux<WebSocketFrame> frames = Flux.just(textWebSocketFrame);
-    // todo
-    return out.sendObject(frames).then();
-    // return out.options(NettyPipeline.SendOptions::flushOnEach).sendObject(frames).then();
-  }
+    public static Mono<Void> sendWebSocket(WebsocketOutbound out, DataBuffer dataBuffer) {
+        WebSocketMessage webSocketMessage =
+                new WebSocketMessage(WebSocketMessage.Type.TEXT, dataBuffer).retain();
+        TextWebSocketFrame textWebSocketFrame =
+                new TextWebSocketFrame(
+                        NettyDataBufferFactory.toByteBuf(webSocketMessage.getPayload()));
+        Flux<WebSocketFrame> frames = Flux.just(textWebSocketFrame);
+        // todo
+        return out.sendObject(frames).then();
+        // return out.options(NettyPipeline.SendOptions::flushOnEach).sendObject(frames).then();
+    }
 
-  public static void addIgnoreTimeoutSignal(HttpHeaders httpHeaders) {
-    Cookie cookie = org.apache.linkis.server.security.SecurityFilter.ignoreTimeoutSignal();
-    Map<String, Cookie[]> cookies = new HashMap<>();
-    cookies.put(cookie.getName(), new Cookie[] {cookie});
-    addCookies(httpHeaders, cookies);
-  }
+    public static void addIgnoreTimeoutSignal(HttpHeaders httpHeaders) {
+        Cookie cookie = org.apache.linkis.server.security.SecurityFilter.ignoreTimeoutSignal();
+        Map<String, Cookie[]> cookies = new HashMap<>();
+        cookies.put(cookie.getName(), new Cookie[] {cookie});
+        addCookies(httpHeaders, cookies);
+    }
 
-  public static void addCookies(HttpHeaders httpHeaders, Map<String, Cookie[]> cookies) {
-    if (cookies == null || cookies.isEmpty()) {
-      return;
+    public static void addCookies(HttpHeaders httpHeaders, Map<String, Cookie[]> cookies) {
+        if (cookies == null || cookies.isEmpty()) {
+            return;
+        }
+        StringBuilder cookieStr = new StringBuilder();
+        for (String cookieName : cookies.keySet()) {
+            Cookie[] cookie = cookies.get(cookieName);
+            if (cookie == null || cookie.length == 0) continue;
+            HttpCookie httpCookie = new HttpCookie(cookie[0].getName(), cookie[0].getValue());
+            cookieStr.append(httpCookie.toString()).append(";");
+        }
+        if (cookieStr.length() > 1) {
+            cookieStr.setLength(cookieStr.length() - 1);
+            if (!httpHeaders.containsKey("Cookie")) {
+                httpHeaders.set("Cookie", cookieStr.toString());
+            } else {
+                httpHeaders.set(
+                        "Cookie", httpHeaders.getFirst("Cookie") + ";" + cookieStr.toString());
+            }
+        }
     }
-    StringBuilder cookieStr = new StringBuilder();
-    for (String cookieName : cookies.keySet()) {
-      Cookie[] cookie = cookies.get(cookieName);
-      if (cookie == null || cookie.length == 0) continue;
-      HttpCookie httpCookie = new HttpCookie(cookie[0].getName(), cookie[0].getValue());
-      cookieStr.append(httpCookie.toString()).append(";");
-    }
-    if (cookieStr.length() > 1) {
-      cookieStr.setLength(cookieStr.length() - 1);
-      if (!httpHeaders.containsKey("Cookie")) {
-        httpHeaders.set("Cookie", cookieStr.toString());
-      } else {
-        httpHeaders.set("Cookie", httpHeaders.getFirst("Cookie") + ";" + cookieStr.toString());
-      }
-    }
-  }
 }

@@ -18,58 +18,58 @@
 package org.apache.linkis.variable.entity;
 
 public class VarKey {
-  private Long id;
-  private String key;
-  private String description;
-  private String name;
-  private Long applicationID;
-  private String defaultValue;
+    private Long id;
+    private String key;
+    private String description;
+    private String name;
+    private Long applicationID;
+    private String defaultValue;
 
-  public Long getId() {
-    return id;
-  }
+    public Long getId() {
+        return id;
+    }
 
-  public void setId(Long id) {
-    this.id = id;
-  }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-  public String getKey() {
-    return key;
-  }
+    public String getKey() {
+        return key;
+    }
 
-  public void setKey(String key) {
-    this.key = key;
-  }
+    public void setKey(String key) {
+        this.key = key;
+    }
 
-  public String getDescription() {
-    return description;
-  }
+    public String getDescription() {
+        return description;
+    }
 
-  public void setDescription(String description) {
-    this.description = description;
-  }
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-  public String getName() {
-    return name;
-  }
+    public String getName() {
+        return name;
+    }
 
-  public void setName(String name) {
-    this.name = name;
-  }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-  public Long getApplicationID() {
-    return applicationID;
-  }
+    public Long getApplicationID() {
+        return applicationID;
+    }
 
-  public void setApplicationID(Long applicationID) {
-    this.applicationID = applicationID;
-  }
+    public void setApplicationID(Long applicationID) {
+        this.applicationID = applicationID;
+    }
 
-  public String getDefaultValue() {
-    return defaultValue;
-  }
+    public String getDefaultValue() {
+        return defaultValue;
+    }
 
-  public void setDefaultValue(String defaultValue) {
-    this.defaultValue = defaultValue;
-  }
+    public void setDefaultValue(String defaultValue) {
+        this.defaultValue = defaultValue;
+    }
 }

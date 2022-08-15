@@ -24,14 +24,14 @@ import java.io.File;
 import java.net.URL;
 
 public class EngineConnPluginLoaderTest {
-  public static void main(String[] args) throws Exception {
-    EngineConnPluginClassLoader enginePluginClassLoader =
-        new EngineConnPluginClassLoader(
-            new URL[] {new File("").toURI().toURL()},
-            Thread.currentThread().getContextClassLoader());
-    String engineConnPluginClass =
-        EngineConnPluginUtils.getEngineConnPluginClass(enginePluginClassLoader);
-    Class<?> clazz = Class.forName(engineConnPluginClass, true, enginePluginClassLoader);
-    clazz.newInstance();
-  }
+    public static void main(String[] args) throws Exception {
+        EngineConnPluginClassLoader enginePluginClassLoader =
+                new EngineConnPluginClassLoader(
+                        new URL[] {new File("").toURI().toURL()},
+                        Thread.currentThread().getContextClassLoader());
+        String engineConnPluginClass =
+                EngineConnPluginUtils.getEngineConnPluginClass(enginePluginClassLoader);
+        Class<?> clazz = Class.forName(engineConnPluginClass, true, enginePluginClassLoader);
+        clazz.newInstance();
+    }
 }

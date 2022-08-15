@@ -19,17 +19,17 @@ package org.apache.linkis.cs.server.protocol;
 
 public interface HttpResponseProtocol<T> extends HttpProtocol {
 
-  void waitForComplete() throws InterruptedException;
+    void waitForComplete() throws InterruptedException;
 
-  void waitTimeEnd(long mills) throws InterruptedException;
+    void waitTimeEnd(long mills) throws InterruptedException;
 
-  void notifyJob();
+    void notifyJob();
 
-  T get();
+    T get();
 
-  void set(T t);
+    void set(T t);
 
-  Object getResponseData();
+    Object getResponseData();
 
-  void setResponseData(Object responseData);
+    void setResponseData(Object responseData);
 }

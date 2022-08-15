@@ -19,30 +19,30 @@ package org.apache.linkis.cs.common.protocol;
 
 public enum ContextKeyValueType {
 
-  /** */
-  COMMON_CONTEXT_KV_TYPE(0, "org.apache.linkis.cs.common.entity.source.CommonContextID");
+    /** */
+    COMMON_CONTEXT_KV_TYPE(0, "org.apache.linkis.cs.common.entity.source.CommonContextID");
 
-  private int index;
-  private String typeName;
+    private int index;
+    private String typeName;
 
-  private ContextKeyValueType(int index, String typeName) {
-    this.index = index;
-    this.typeName = typeName;
-  }
+    private ContextKeyValueType(int index, String typeName) {
+        this.index = index;
+        this.typeName = typeName;
+    }
 
-  public int getIndex() {
-    return index;
-  }
+    public int getIndex() {
+        return index;
+    }
 
-  public void setIndex(int index) {
-    this.index = index;
-  }
+    public void setIndex(int index) {
+        this.index = index;
+    }
 
-  public String getTypeName() {
-    return typeName;
-  }
+    public String getTypeName() {
+        return typeName;
+    }
 
-  public void setTypeName(String typeName) {
-    this.typeName = typeName;
-  }
+    public void setTypeName(String typeName) {
+        this.typeName = typeName;
+    }
 }

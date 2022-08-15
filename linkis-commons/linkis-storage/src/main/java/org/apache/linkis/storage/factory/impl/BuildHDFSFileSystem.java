@@ -28,41 +28,42 @@ import org.springframework.cglib.proxy.Enhancer;
 
 public class BuildHDFSFileSystem implements BuildFactory {
 
-  /**
-   * If it is a node with hdfs configuration file, then go to the proxy mode of hdfs, if not go to
-   * io proxy mode 如果是有hdfs配置文件的节点，则走hdfs的代理模式，如果不是走io代理模式
-   *
-   * @param user
-   * @param proxyUser
-   * @return
-   */
-  @Override
-  public Fs getFs(String user, String proxyUser) {
-    FileSystem fs = null;
+    /**
+     * If it is a node with hdfs configuration file, then go to the proxy mode of hdfs, if not go to
+     * io proxy mode 如果是有hdfs配置文件的节点，则走hdfs的代理模式，如果不是走io代理模式
+     *
+     * @param user
+     * @param proxyUser
+     * @return
+     */
+    @Override
+    public Fs getFs(String user, String proxyUser) {
+        FileSystem fs = null;
 
-    if (StorageUtils.isHDFSNode()) {
-      fs = new HDFSFileSystem();
-    } else {
-      // TODO Agent user(代理的用户)
-      Enhancer enhancer = new Enhancer();
-      enhancer.setSuperclass(HDFSFileSystem.class.getSuperclass());
-      enhancer.setCallback(IOMethodInterceptorCreator$.MODULE$.getIOMethodInterceptor(fsName()));
-      fs = (FileSystem) enhancer.create();
+        if (StorageUtils.isHDFSNode()) {
+            fs = new HDFSFileSystem();
+        } else {
+            // TODO Agent user(代理的用户)
+            Enhancer enhancer = new Enhancer();
+            enhancer.setSuperclass(HDFSFileSystem.class.getSuperclass());
+            enhancer.setCallback(
+                    IOMethodInterceptorCreator$.MODULE$.getIOMethodInterceptor(fsName()));
+            fs = (FileSystem) enhancer.create();
+        }
+        fs.setUser(proxyUser);
+        return fs;
     }
-    fs.setUser(proxyUser);
-    return fs;
-  }
 
-  @Override
-  public Fs getFs(String user, String proxyUser, String label) {
-    HDFSFileSystem fs = new HDFSFileSystem();
-    fs.setUser(proxyUser);
-    fs.setLabel(label);
-    return fs;
-  }
+    @Override
+    public Fs getFs(String user, String proxyUser, String label) {
+        HDFSFileSystem fs = new HDFSFileSystem();
+        fs.setUser(proxyUser);
+        fs.setLabel(label);
+        return fs;
+    }
 
-  @Override
-  public String fsName() {
-    return "hdfs";
-  }
+    @Override
+    public String fsName() {
+        return "hdfs";
+    }
 }

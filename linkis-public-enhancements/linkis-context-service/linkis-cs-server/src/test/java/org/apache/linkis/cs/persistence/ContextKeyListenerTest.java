@@ -23,48 +23,48 @@ import org.apache.linkis.cs.persistence.persistence.ContextKeyListenerPersistenc
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 public class ContextKeyListenerTest {
-  AnnotationConfigApplicationContext context = null;
-  ContextKeyListenerPersistence contextKeyListenerPersistence = null;
+    AnnotationConfigApplicationContext context = null;
+    ContextKeyListenerPersistence contextKeyListenerPersistence = null;
 
-  public void before() {
-    context = new AnnotationConfigApplicationContext(Scan.class);
-    contextKeyListenerPersistence = context.getBean(ContextKeyListenerPersistence.class);
-  }
+    public void before() {
+        context = new AnnotationConfigApplicationContext(Scan.class);
+        contextKeyListenerPersistence = context.getBean(ContextKeyListenerPersistence.class);
+    }
 
-  public void testcreateContextKeyListener() throws CSErrorException {
-    AContextKeyListener aContextKeyListener = new AContextKeyListener();
-    aContextKeyListener.setSource("source");
-    AContextKey aContextKey = new AContextKey();
-    aContextKey.setKey("flow1.node2");
-    aContextKeyListener.setContextKey(aContextKey);
-    AContextID aContextID = new AContextID();
-    aContextID.setContextId("84716");
-    contextKeyListenerPersistence.create(aContextID, aContextKeyListener);
-  }
+    public void testcreateContextKeyListener() throws CSErrorException {
+        AContextKeyListener aContextKeyListener = new AContextKeyListener();
+        aContextKeyListener.setSource("source");
+        AContextKey aContextKey = new AContextKey();
+        aContextKey.setKey("flow1.node2");
+        aContextKeyListener.setContextKey(aContextKey);
+        AContextID aContextID = new AContextID();
+        aContextID.setContextId("84716");
+        contextKeyListenerPersistence.create(aContextID, aContextKeyListener);
+    }
 
-  public void testDeleteContextKeyListener() throws CSErrorException {
-    AContextKeyListener aContextKeyListener = new AContextKeyListener();
-    AContextID aContextID = new AContextID();
-    aContextID.setContextId("84716");
-    AContextKey aContextKey = new AContextKey();
-    aContextKey.setKey("flow1.node2");
-    aContextKeyListener.setContextKey(aContextKey);
-    aContextKeyListener.setSource("source");
-    contextKeyListenerPersistence.remove(aContextID, aContextKeyListener);
-  }
+    public void testDeleteContextKeyListener() throws CSErrorException {
+        AContextKeyListener aContextKeyListener = new AContextKeyListener();
+        AContextID aContextID = new AContextID();
+        aContextID.setContextId("84716");
+        AContextKey aContextKey = new AContextKey();
+        aContextKey.setKey("flow1.node2");
+        aContextKeyListener.setContextKey(aContextKey);
+        aContextKeyListener.setSource("source");
+        contextKeyListenerPersistence.remove(aContextID, aContextKeyListener);
+    }
 
-  public void testDeleteAllContextIDListener() throws CSErrorException {
-    AContextKeyListener aContextKeyListener = new AContextKeyListener();
-    AContextID aContextID = new AContextID();
-    aContextID.setContextId("84716");
-    AContextKey aContextKey = new AContextKey();
-    aContextKey.setKey("flow1.node2");
-    aContextKeyListener.setContextKey(aContextKey);
-    contextKeyListenerPersistence.removeAll(aContextID);
-  }
+    public void testDeleteAllContextIDListener() throws CSErrorException {
+        AContextKeyListener aContextKeyListener = new AContextKeyListener();
+        AContextID aContextID = new AContextID();
+        aContextID.setContextId("84716");
+        AContextKey aContextKey = new AContextKey();
+        aContextKey.setKey("flow1.node2");
+        aContextKeyListener.setContextKey(aContextKey);
+        contextKeyListenerPersistence.removeAll(aContextID);
+    }
 
-  public void testGetContextID() throws CSErrorException {
-    // ContextID contextID = contextIDPersistence.getContextID(32312579);
-    // System.out.println(((AContextID)contextID).getProject());
-  }
+    public void testGetContextID() throws CSErrorException {
+        // ContextID contextID = contextIDPersistence.getContextID(32312579);
+        // System.out.println(((AContextID)contextID).getProject());
+    }
 }

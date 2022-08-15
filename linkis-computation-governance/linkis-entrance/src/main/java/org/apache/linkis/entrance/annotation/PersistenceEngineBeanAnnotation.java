@@ -33,26 +33,26 @@ import java.lang.annotation.Target;
 @Bean(value = PersistenceEngineBeanAnnotation.BEAN_NAME)
 @Component(value = PersistenceEngineBeanAnnotation.BEAN_NAME)
 public @interface PersistenceEngineBeanAnnotation {
-  String BEAN_NAME = "persistenceEngine";
+    String BEAN_NAME = "persistenceEngine";
 
-  @AliasFor(annotation = Component.class)
-  String value() default BEAN_NAME;
-
-  @Target({
-    ElementType.CONSTRUCTOR,
-    ElementType.FIELD,
-    ElementType.METHOD,
-    ElementType.TYPE,
-    ElementType.PARAMETER
-  })
-  @Retention(RetentionPolicy.RUNTIME)
-  @Qualifier(BEAN_NAME)
-  @Autowired
-  @interface PersistenceEngineAutowiredAnnotation {
-    @AliasFor(annotation = Qualifier.class)
+    @AliasFor(annotation = Component.class)
     String value() default BEAN_NAME;
 
-    @AliasFor(annotation = Autowired.class)
-    boolean required() default true;
-  }
+    @Target({
+        ElementType.CONSTRUCTOR,
+        ElementType.FIELD,
+        ElementType.METHOD,
+        ElementType.TYPE,
+        ElementType.PARAMETER
+    })
+    @Retention(RetentionPolicy.RUNTIME)
+    @Qualifier(BEAN_NAME)
+    @Autowired
+    @interface PersistenceEngineAutowiredAnnotation {
+        @AliasFor(annotation = Qualifier.class)
+        String value() default BEAN_NAME;
+
+        @AliasFor(annotation = Autowired.class)
+        boolean required() default true;
+    }
 }

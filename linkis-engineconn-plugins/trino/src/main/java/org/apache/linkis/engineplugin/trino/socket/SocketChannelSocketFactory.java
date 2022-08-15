@@ -28,30 +28,31 @@ import java.nio.channels.SocketChannel;
 
 public class SocketChannelSocketFactory extends SocketFactory {
 
-  @Override
-  public Socket createSocket() throws IOException {
-    return SocketChannel.open().socket();
-  }
+    @Override
+    public Socket createSocket() throws IOException {
+        return SocketChannel.open().socket();
+    }
 
-  @Override
-  public Socket createSocket(String host, int port) throws IOException {
-    return SocketChannel.open(new InetSocketAddress(host, port)).socket();
-  }
+    @Override
+    public Socket createSocket(String host, int port) throws IOException {
+        return SocketChannel.open(new InetSocketAddress(host, port)).socket();
+    }
 
-  @Override
-  public Socket createSocket(String host, int port, InetAddress localAddress, int localPort)
-      throws IOException {
-    throw new SocketException("not supported");
-  }
+    @Override
+    public Socket createSocket(String host, int port, InetAddress localAddress, int localPort)
+            throws IOException {
+        throw new SocketException("not supported");
+    }
 
-  @Override
-  public Socket createSocket(InetAddress address, int port) throws IOException {
-    return SocketChannel.open(new InetSocketAddress(address, port)).socket();
-  }
+    @Override
+    public Socket createSocket(InetAddress address, int port) throws IOException {
+        return SocketChannel.open(new InetSocketAddress(address, port)).socket();
+    }
 
-  @Override
-  public Socket createSocket(InetAddress address, int port, InetAddress localAddress, int localPort)
-      throws IOException {
-    throw new SocketException("not supported");
-  }
+    @Override
+    public Socket createSocket(
+            InetAddress address, int port, InetAddress localAddress, int localPort)
+            throws IOException {
+        throw new SocketException("not supported");
+    }
 }

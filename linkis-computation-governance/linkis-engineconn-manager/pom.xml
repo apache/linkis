@@ -15,20 +15,23 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>org.apache.linkis</groupId>
-    <artifactId>linkis</artifactId>
-    <version>1.2.0</version>
-  </parent>
+  
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>linkis</artifactId>
+        <groupId>org.apache.linkis</groupId>
+        <version>1.2.0</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>linkis-engineconn-manager</artifactId>
-  <packaging>pom</packaging>
-  <modules>
-    <module>linkis-engineconn-manager-core</module>
-    <module>linkis-engineconn-manager-server</module>
-    <module>linkis-engineconn-linux-launch</module>
-  </modules>
+    <artifactId>linkis-engineconn-manager</artifactId>
+    <packaging>pom</packaging>
+    <modules>
+        <module>linkis-engineconn-manager-core</module>
+        <module>linkis-engineconn-manager-server</module>
+        <module>linkis-engineconn-linux-launch</module>
+    </modules>
 
 </project>

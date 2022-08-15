@@ -21,12 +21,13 @@ import org.apache.linkis.common.conf.CommonVars;
 
 public class EngineConnPluginCacheConfig {
 
-  public static final CommonVars<Integer> PLUGIN_CACHE_SIZE =
-      CommonVars.apply("linkis.engineConn.plugin.cache.size", 1000);
+    public static final CommonVars<Integer> PLUGIN_CACHE_SIZE =
+            CommonVars.apply("linkis.engineConn.plugin.cache.size", 1000);
 
-  public static final CommonVars<Long> PLUGIN_CACHE_EXPIRE_TIME_SECONDS =
-      CommonVars.apply("linkis.engineConn.plugin.cache.expire-in-seconds", 30 * 60 * 60 * 1000L);
+    public static final CommonVars<Long> PLUGIN_CACHE_EXPIRE_TIME_SECONDS =
+            CommonVars.apply(
+                    "linkis.engineConn.plugin.cache.expire-in-seconds", 30 * 60 * 60 * 1000L);
 
-  public static final CommonVars<Integer> PLUGIN_CACHE_REFRESH_WORKERS =
-      CommonVars.apply("linkis.engineConn.plugin.cache.refresh.workers", 5);
+    public static final CommonVars<Integer> PLUGIN_CACHE_REFRESH_WORKERS =
+            CommonVars.apply("linkis.engineConn.plugin.cache.refresh.workers", 5);
 }

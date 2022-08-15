@@ -23,22 +23,22 @@ import org.apache.linkis.cs.condition.ConditionType;
 
 public class ContextScopeCondition extends AtomicCondition {
 
-  ContextScope contextScop;
+    ContextScope contextScop;
 
-  public ContextScopeCondition(ContextScope contextScop) {
-    this.contextScop = contextScop;
-  }
+    public ContextScopeCondition(ContextScope contextScop) {
+        this.contextScop = contextScop;
+    }
 
-  public ContextScope getContextScop() {
-    return contextScop;
-  }
+    public ContextScope getContextScop() {
+        return contextScop;
+    }
 
-  public void setContextScop(ContextScope contextScop) {
-    this.contextScop = contextScop;
-  }
+    public void setContextScop(ContextScope contextScop) {
+        this.contextScop = contextScop;
+    }
 
-  @Override
-  public ConditionType getConditionType() {
-    return ConditionType.Equals;
-  }
+    @Override
+    public ConditionType getConditionType() {
+        return ConditionType.Equals;
+    }
 }

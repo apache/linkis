@@ -24,13 +24,13 @@ package org.apache.linkis.cli.common.entity.var;
  */
 public interface VarAccess {
 
-  void checkInit();
+    void checkInit();
 
-  <T> T getVar(Class<T> clazz, String key);
+    <T> T getVar(Class<T> clazz, String key);
 
-  <T> T getVarOrDefault(Class<T> clazz, String key, T defaultValue);
+    <T> T getVarOrDefault(Class<T> clazz, String key, T defaultValue);
 
-  boolean hasVar(String key);
+    boolean hasVar(String key);
 
-  String[] getAllVarKeys();
+    String[] getAllVarKeys();
 }

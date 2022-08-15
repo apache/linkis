@@ -18,13 +18,13 @@
 package org.apache.linkis.cs.common.entity.enumeration;
 
 public enum ContextType {
-  /** */
-  METADATA,
-  DATA,
-  RESOURCE,
-  OBJECT,
-  ENV,
-  COST,
-  UDF,
-  Variable
+    /** */
+    METADATA,
+    DATA,
+    RESOURCE,
+    OBJECT,
+    ENV,
+    COST,
+    UDF,
+    Variable
 }

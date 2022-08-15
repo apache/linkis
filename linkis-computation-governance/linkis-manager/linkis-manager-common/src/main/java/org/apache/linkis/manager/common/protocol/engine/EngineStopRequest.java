@@ -22,47 +22,47 @@ import org.apache.linkis.protocol.message.RequestMethod;
 
 public class EngineStopRequest implements EngineRequest, RequestMethod {
 
-  private ServiceInstance serviceInstance;
+    private ServiceInstance serviceInstance;
 
-  private String user;
+    private String user;
 
-  public EngineStopRequest() {}
+    public EngineStopRequest() {}
 
-  public EngineStopRequest(ServiceInstance serviceInstance, String user) {
-    this.serviceInstance = serviceInstance;
-    this.user = user;
-  }
+    public EngineStopRequest(ServiceInstance serviceInstance, String user) {
+        this.serviceInstance = serviceInstance;
+        this.user = user;
+    }
 
-  public ServiceInstance getServiceInstance() {
-    return serviceInstance;
-  }
+    public ServiceInstance getServiceInstance() {
+        return serviceInstance;
+    }
 
-  public void setServiceInstance(ServiceInstance serviceInstance) {
-    this.serviceInstance = serviceInstance;
-  }
+    public void setServiceInstance(ServiceInstance serviceInstance) {
+        this.serviceInstance = serviceInstance;
+    }
 
-  public void setUser(String user) {
-    this.user = user;
-  }
+    public void setUser(String user) {
+        this.user = user;
+    }
 
-  @Override
-  public String getUser() {
-    return user;
-  }
+    @Override
+    public String getUser() {
+        return user;
+    }
 
-  @Override
-  public String method() {
-    return "/engine/stop";
-  }
+    @Override
+    public String method() {
+        return "/engine/stop";
+    }
 
-  @Override
-  public String toString() {
-    return "EngineStopRequest{"
-        + "serviceInstance="
-        + serviceInstance
-        + ", user='"
-        + user
-        + '\''
-        + '}';
-  }
+    @Override
+    public String toString() {
+        return "EngineStopRequest{"
+                + "serviceInstance="
+                + serviceInstance
+                + ", user='"
+                + user
+                + '\''
+                + '}';
+    }
 }

@@ -27,31 +27,31 @@ import org.junit.jupiter.api.Test;
 /** LabelEntityParser Tester */
 public class LabelEntityParserTest {
 
-  @Autowired private LabelEntityParser labelEntityParser;
+    @Autowired private LabelEntityParser labelEntityParser;
 
-  @BeforeEach
-  @DisplayName("Each unit test method is executed once before execution")
-  public void before() throws Exception {}
+    @BeforeEach
+    @DisplayName("Each unit test method is executed once before execution")
+    public void before() throws Exception {}
 
-  @AfterEach
-  @DisplayName("Each unit test method is executed once after execution")
-  public void after() throws Exception {}
+    @AfterEach
+    @DisplayName("Each unit test method is executed once after execution")
+    public void after() throws Exception {}
 
-  @Test
-  public void testParseToConfigLabel() throws Exception {
-    //        List<Label<?>> list = new ArrayList<>();
-    //
-    //        ConfigLabel configLabel = labelEntityParser.parseToConfigLabel(CombinedLabel);
-    //        assertEquals(10,configLabel.getId());
-  }
+    @Test
+    public void testParseToConfigLabel() throws Exception {
+        //        List<Label<?>> list = new ArrayList<>();
+        //
+        //        ConfigLabel configLabel = labelEntityParser.parseToConfigLabel(CombinedLabel);
+        //        assertEquals(10,configLabel.getId());
+    }
 
-  @Test
-  public void testGenerateUserCreatorEngineTypeLabelList() throws Exception {
-    // TODO: Test goes here...
-  }
+    @Test
+    public void testGenerateUserCreatorEngineTypeLabelList() throws Exception {
+        // TODO: Test goes here...
+    }
 
-  @Test
-  public void testLabelDecompile() throws Exception {
-    // TODO: Test goes here...
-  }
+    @Test
+    public void testLabelDecompile() throws Exception {
+        // TODO: Test goes here...
+    }
 }

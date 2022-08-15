@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,6 +17,7 @@
 
 package org.apache.linkis.jobhistory.conversions
 
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.governance.common.entity.job.{JobRequest, SubJobDetail}
 import org.apache.linkis.governance.common.entity.task.RequestQueryTask
@@ -29,17 +30,14 @@ import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.protocol.utils.ZuulEntranceUtils
-import org.apache.linkis.server.{toScalaBuffer, toScalaMap, BDPJettyServerHelper}
-
-import org.apache.commons.lang3.StringUtils
-
+import org.apache.linkis.server.{BDPJettyServerHelper, toScalaBuffer, toScalaMap}
 import org.springframework.beans.BeanUtils
 
 import java.text.SimpleDateFormat
 import java.util
 import java.util.Date
-
 import scala.collection.JavaConverters.{asScalaBufferConverter, mapAsScalaMapConverter}
+
 
 object TaskConversions extends Logging {
 
@@ -106,9 +104,9 @@ object TaskConversions extends Logging {
 
   def isJobFinished(status: String): Boolean = {
     TaskStatus.Succeed.toString.equals(status) ||
-    TaskStatus.Failed.toString.equals(status) ||
-    TaskStatus.Cancelled.toString.equals(status) ||
-    TaskStatus.Timeout.toString.equals(status)
+      TaskStatus.Failed.toString.equals(status) ||
+      TaskStatus.Cancelled.toString.equals(status) ||
+      TaskStatus.Timeout.toString.equals(status)
   }
 
   def jobHistory2JobRequest(jobHistoryList: util.List[JobHistory]): util.List[JobRequest] = {
@@ -128,14 +126,9 @@ object TaskConversions extends Logging {
     //    jobReq.setPriority(job.getPriority)
     jobReq.setSubmitUser(job.getSubmitUser)
     jobReq.setExecuteUser(job.getExecuteUser)
-    if (null != job.getSource)
-      jobReq.setSource(
-        BDPJettyServerHelper.gson.fromJson(job.getSource, classOf[util.Map[String, Object]])
-      )
+    if (null != job.getSource) jobReq.setSource(BDPJettyServerHelper.gson.fromJson(job.getSource, classOf[util.Map[String, Object]]))
     if (null != job.getLabels) jobReq.setLabels(getLabelListFromJson(job.getLabels))
-    jobReq.setParams(
-      BDPJettyServerHelper.gson.fromJson(job.getParams, classOf[util.Map[String, Object]])
-    )
+    jobReq.setParams(BDPJettyServerHelper.gson.fromJson(job.getParams, classOf[util.Map[String, Object]]))
     jobReq.setProgress(job.getProgress)
     jobReq.setStatus(job.getStatus)
     jobReq.setLogPath(job.getLogPath)
@@ -143,9 +136,7 @@ object TaskConversions extends Logging {
     jobReq.setErrorDesc(job.getErrorDesc)
     jobReq.setCreatedTime(job.getCreatedTime)
     jobReq.setUpdatedTime(job.getUpdatedTime)
-    jobReq.setMetrics(
-      BDPJettyServerHelper.gson.fromJson((job.getMetrics), classOf[util.Map[String, Object]])
-    )
+    jobReq.setMetrics(BDPJettyServerHelper.gson.fromJson((job.getMetrics), classOf[util.Map[String, Object]]))
     jobReq.setInstances(job.getInstances)
     jobReq.setResultLocation(job.getResultLocation)
     QueryUtils.exchangeExecutionCode(job)
@@ -164,32 +155,28 @@ object TaskConversions extends Logging {
     jobHistory.setSource(BDPJettyServerHelper.gson.toJson(jobReq.getSource))
     if (null != jobReq.getLabels) {
       val labelMap = new util.HashMap[String, String](jobReq.getLabels.size())
-      jobReq.getLabels.asScala
-        .map(l => l.getLabelKey -> l.getStringValue)
-        .foreach(kv => labelMap.put(kv._1, kv._2))
+      jobReq.getLabels.asScala.map(l => l.getLabelKey -> l.getStringValue).foreach(kv => labelMap.put(kv._1, kv._2))
       jobHistory.setLabels(BDPJettyServerHelper.gson.toJson(labelMap))
     }
-    if (null != jobReq.getParams)
-      jobHistory.setParams(BDPJettyServerHelper.gson.toJson(jobReq.getParams))
+    if (null != jobReq.getParams) jobHistory.setParams(BDPJettyServerHelper.gson.toJson(jobReq.getParams))
     jobHistory.setProgress(jobReq.getProgress)
     jobHistory.setStatus(jobReq.getStatus)
     jobHistory.setLogPath(jobReq.getLogPath)
     jobHistory.setErrorCode(jobReq.getErrorCode)
     jobHistory.setErrorDesc(jobReq.getErrorDesc)
     jobHistory.setResultLocation(jobReq.getResultLocation)
-    if (null != jobReq.getCreatedTime)
-      jobHistory.setCreatedTime(new Date(jobReq.getCreatedTime.getTime))
+    if (null != jobReq.getCreatedTime) jobHistory.setCreatedTime(new Date(jobReq.getCreatedTime.getTime))
     if (null != jobReq.getUpdatedTime) {
       jobHistory.setUpdatedTime(new Date(jobReq.getUpdatedTime.getTime))
     }
     jobHistory.setInstances(jobReq.getInstances)
-    if (null != jobReq.getMetrics)
-      jobHistory.setMetrics(BDPJettyServerHelper.gson.toJson(jobReq.getMetrics))
+    if (null != jobReq.getMetrics) jobHistory.setMetrics(BDPJettyServerHelper.gson.toJson(jobReq.getMetrics))
     val engineType = LabelUtil.getEngineType(jobReq.getLabels)
     jobHistory.setEngineType(engineType)
     jobHistory.setExecutionCode(jobReq.getExecutionCode)
     jobHistory
   }
+
 
   def subjobDetails2JobDetail(subjobDetails: util.List[SubJobDetail]): util.List[JobDetail] = {
     val lists = new util.ArrayList[JobDetail](subjobDetails.size())
@@ -273,25 +260,16 @@ object TaskConversions extends Logging {
     taskVO.setErrCode(job.getErrorCode)
     taskVO.setErrDesc(job.getErrorDesc)
     val labelStringList = new util.ArrayList[String]()
-    labelList.foreach(label =>
-      labelStringList.add(label.getLabelKey + ":" + label.getStringValue)
-    )
+    labelList.foreach(label => labelStringList.add(label.getLabelKey + ":" + label.getStringValue))
     taskVO.setLabels(labelStringList)
 
-    val metrics =
-      BDPJettyServerHelper.gson.fromJson((job.getMetrics), classOf[util.Map[String, Object]])
+    val metrics = BDPJettyServerHelper.gson.fromJson((job.getMetrics), classOf[util.Map[String, Object]])
     var completeTime: Date = null
-    if (
-        null != metrics && metrics.containsKey(TaskConstant.ENTRANCEJOB_COMPLETE_TIME) && metrics
-          .get(TaskConstant.ENTRANCEJOB_COMPLETE_TIME) != null
-    ) {
+    if (null != metrics && metrics.containsKey(TaskConstant.ENTRANCEJOB_COMPLETE_TIME) && metrics.get(TaskConstant.ENTRANCEJOB_COMPLETE_TIME) != null) {
       completeTime = dealString2Date(metrics.get(TaskConstant.ENTRANCEJOB_COMPLETE_TIME).toString)
     }
     var createTime: Date = null
-    if (
-        null != metrics && metrics.containsKey(TaskConstant.ENTRANCEJOB_SUBMIT_TIME) && metrics
-          .get(TaskConstant.ENTRANCEJOB_SUBMIT_TIME) != null
-    ) {
+    if (null != metrics && metrics.containsKey(TaskConstant.ENTRANCEJOB_SUBMIT_TIME) && metrics.get(TaskConstant.ENTRANCEJOB_SUBMIT_TIME) != null) {
       createTime = dealString2Date(metrics.get(TaskConstant.ENTRANCEJOB_SUBMIT_TIME).toString)
     }
     if (null != createTime) {
@@ -308,9 +286,7 @@ object TaskConversions extends Logging {
       }
     }
     if (metrics.containsKey(TaskConstant.ENTRANCEJOB_ENGINECONN_MAP)) {
-      val engineMap = metrics
-        .get(TaskConstant.ENTRANCEJOB_ENGINECONN_MAP)
-        .asInstanceOf[util.Map[String, Object]]
+      val engineMap = metrics.get(TaskConstant.ENTRANCEJOB_ENGINECONN_MAP).asInstanceOf[util.Map[String, Object]]
       if (null != engineMap && !engineMap.isEmpty) {
         taskVO.setEngineInstance(engineMap.map(_._1).toList.mkString(","))
       }
@@ -319,11 +295,8 @@ object TaskConversions extends Logging {
     }
 
     val entranceName = JobhistoryConfiguration.ENTRANCE_SPRING_NAME.getValue
-    val instances =
-      job.getInstances().split(JobhistoryConfiguration.ENTRANCE_INSTANCE_DELEMITER.getValue)
-    taskVO.setStrongerExecId(
-      ZuulEntranceUtils.generateExecID(job.getJobReqId, entranceName, instances)
-    )
+    val instances = job.getInstances().split(JobhistoryConfiguration.ENTRANCE_INSTANCE_DELEMITER.getValue)
+    taskVO.setStrongerExecId(ZuulEntranceUtils.generateExecID(job.getJobReqId, entranceName, instances))
     taskVO.setSourceJson(job.getSource)
     if (StringUtils.isNotBlank(job.getExecutionCode)) {
       taskVO.setExecutionCode(job.getExecutionCode)
@@ -333,24 +306,20 @@ object TaskConversions extends Logging {
     taskVO.setSourceJson(job.getSource)
     if (StringUtils.isNotBlank(job.getSource)) {
       Utils.tryCatch {
-        val source =
-          BDPJettyServerHelper.gson.fromJson(job.getSource, classOf[util.Map[String, String]])
+        val source = BDPJettyServerHelper.gson.fromJson(job.getSource, classOf[util.Map[String, String]])
         taskVO.setSourceTailor(source.map(_._2).foldLeft("")(_ + _ + "-").stripSuffix("-"))
-      } { case _ =>
-        logger.warn("sourceJson deserialization failed, this task may be the old data.")
+      } {
+        case _ => logger.warn("sourceJson deserialization failed, this task may be the old data.")
       }
     }
     taskVO
   }
 
   def getLabelListFromJson(labelJson: String): util.List[Label[_]] = {
-    val labelMap =
-      BDPJettyServerHelper.gson.fromJson(labelJson, classOf[util.HashMap[String, String]])
+    val labelMap = BDPJettyServerHelper.gson.fromJson(labelJson, classOf[util.HashMap[String, String]])
     val labels = new util.ArrayList[Label[_]]()
     Utils.tryAndWarn {
-      labelMap.asScala
-        .map(l => labelBuilderFactory.createLabel[Label[_]](l._1, l._2))
-        .foreach(labels.add)
+      labelMap.asScala.map(l => labelBuilderFactory.createLabel[Label[_]](l._1, l._2)).foreach(labels.add)
     }
     labels
   }
@@ -360,10 +329,10 @@ object TaskConversions extends Logging {
     Utils.tryCatch {
       val date = df.parse(strDate)
       date
-    } { _ =>
-      logger.warn("String to Date deserialization failed.")
-      null
+    } {
+      _ =>
+        logger.warn("String to Date deserialization failed.")
+        null
     }
   }
-
 }

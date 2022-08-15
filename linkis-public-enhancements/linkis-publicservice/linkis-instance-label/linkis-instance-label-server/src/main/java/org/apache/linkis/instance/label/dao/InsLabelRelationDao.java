@@ -29,79 +29,79 @@ import java.util.Map;
 /** Operate the relation between label and instance */
 public interface InsLabelRelationDao {
 
-  /**
-   * Search instances
-   *
-   * @param valueContent key -> value map
-   * @return
-   */
-  List<InstanceInfo> searchInsDirectByValues(
-      @Param("valueMapList") List<Map<String, String>> valueContent,
-      @Param("relation") String relation);
+    /**
+     * Search instances
+     *
+     * @param valueContent key -> value map
+     * @return
+     */
+    List<InstanceInfo> searchInsDirectByValues(
+            @Param("valueMapList") List<Map<String, String>> valueContent,
+            @Param("relation") String relation);
 
-  List<InstanceInfo> searchInsDirectByLabels(List<InsPersistenceLabel> labels);
+    List<InstanceInfo> searchInsDirectByLabels(List<InsPersistenceLabel> labels);
 
-  /**
-   * Search instances( will fetch the labels of instance cascade)
-   *
-   * @param valueContent key -> value map
-   * @return
-   */
-  List<InstanceInfo> searchInsCascadeByValues(
-      List<Map<String, String>> valueContent, String relation);
+    /**
+     * Search instances( will fetch the labels of instance cascade)
+     *
+     * @param valueContent key -> value map
+     * @return
+     */
+    List<InstanceInfo> searchInsCascadeByValues(
+            List<Map<String, String>> valueContent, String relation);
 
-  List<InstanceInfo> searchInsCascadeByLabels(List<InsPersistenceLabel> labels);
+    List<InstanceInfo> searchInsCascadeByLabels(List<InsPersistenceLabel> labels);
 
-  /**
-   * Search instances that are not related with other labels
-   *
-   * @param instanceInfo
-   * @return
-   */
-  List<InstanceInfo> searchUnRelateInstances(InstanceInfo instanceInfo);
+    /**
+     * Search instances that are not related with other labels
+     *
+     * @param instanceInfo
+     * @return
+     */
+    List<InstanceInfo> searchUnRelateInstances(InstanceInfo instanceInfo);
 
-  List<InstanceInfo> searchLabelRelatedInstances(InstanceInfo instanceInfo);
-  /**
-   * Search labels
-   *
-   * @param instance instance value (http:port)
-   * @return
-   */
-  List<InsPersistenceLabel> searchLabelsByInstance(String instance);
+    List<InstanceInfo> searchLabelRelatedInstances(InstanceInfo instanceInfo);
+    /**
+     * Search labels
+     *
+     * @param instance instance value (http:port)
+     * @return
+     */
+    List<InsPersistenceLabel> searchLabelsByInstance(String instance);
 
-  /**
-   * Search Instance with label
-   *
-   * @return
-   */
-  List<InstanceInfo> listAllInstanceWithLabel();
+    /**
+     * Search Instance with label
+     *
+     * @return
+     */
+    List<InstanceInfo> listAllInstanceWithLabel();
 
-  List<ServiceInstance> getInstancesByNames(String appName);
+    List<ServiceInstance> getInstancesByNames(String appName);
 
-  /**
-   * Drop relationships by instance and label ids
-   *
-   * @param instance instance value (http:port)
-   * @param labelIds label ids
-   */
-  void dropRelationsByInstanceAndLabelIds(
-      @Param("instance") String instance, @Param("labelIds") List<Integer> labelIds);
+    /**
+     * Drop relationships by instance and label ids
+     *
+     * @param instance instance value (http:port)
+     * @param labelIds label ids
+     */
+    void dropRelationsByInstanceAndLabelIds(
+            @Param("instance") String instance, @Param("labelIds") List<Integer> labelIds);
 
-  void dropRelationsByInstance(String instance);
-  /**
-   * Insert relationship
-   *
-   * @param instance instance
-   * @param labelIds label ids
-   */
-  void insertRelations(
-      @Param("instance") String instance, @Param("labelIds") List<Integer> labelIds);
+    void dropRelationsByInstance(String instance);
+    /**
+     * Insert relationship
+     *
+     * @param instance instance
+     * @param labelIds label ids
+     */
+    void insertRelations(
+            @Param("instance") String instance, @Param("labelIds") List<Integer> labelIds);
 
-  /**
-   * If has relationship
-   *
-   * @param labelId
-   * @return
-   */
-  Integer existRelations(Integer labelId);
+    /**
+     * If has relationship
+     *
+     * @param labelId
+     * @return
+     */
+    Integer existRelations(Integer labelId);
 }

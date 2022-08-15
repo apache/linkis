@@ -21,42 +21,42 @@ import org.apache.linkis.common.ServiceInstance;
 
 public class EngineSuicideRequest implements EngineRequest {
 
-  private ServiceInstance serviceInstance;
+    private ServiceInstance serviceInstance;
 
-  private String user;
+    private String user;
 
-  public EngineSuicideRequest() {}
+    public EngineSuicideRequest() {}
 
-  public EngineSuicideRequest(ServiceInstance serviceInstance, String user) {
-    this.serviceInstance = serviceInstance;
-    this.user = user;
-  }
+    public EngineSuicideRequest(ServiceInstance serviceInstance, String user) {
+        this.serviceInstance = serviceInstance;
+        this.user = user;
+    }
 
-  public ServiceInstance getServiceInstance() {
-    return serviceInstance;
-  }
+    public ServiceInstance getServiceInstance() {
+        return serviceInstance;
+    }
 
-  public void setServiceInstance(ServiceInstance serviceInstance) {
-    this.serviceInstance = serviceInstance;
-  }
+    public void setServiceInstance(ServiceInstance serviceInstance) {
+        this.serviceInstance = serviceInstance;
+    }
 
-  public void setUser(String user) {
-    this.user = user;
-  }
+    public void setUser(String user) {
+        this.user = user;
+    }
 
-  @Override
-  public String getUser() {
-    return user;
-  }
+    @Override
+    public String getUser() {
+        return user;
+    }
 
-  @Override
-  public String toString() {
-    return "EngineSuicideRequest{"
-        + "serviceInstance="
-        + serviceInstance
-        + ", user='"
-        + user
-        + '\''
-        + '}';
-  }
+    @Override
+    public String toString() {
+        return "EngineSuicideRequest{"
+                + "serviceInstance="
+                + serviceInstance
+                + ", user='"
+                + user
+                + '\''
+                + '}';
+    }
 }

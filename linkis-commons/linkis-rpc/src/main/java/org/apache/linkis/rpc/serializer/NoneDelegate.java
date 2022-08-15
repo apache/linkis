@@ -17,36 +17,37 @@
 
 package org.apache.linkis.rpc.serializer;
 
+import io.protostuff.*;
+import io.protostuff.runtime.Delegate;
+
 import java.io.IOException;
 
 import scala.Option;
 
-import io.protostuff.*;
-import io.protostuff.runtime.Delegate;
-
 public class NoneDelegate implements Delegate<Option> {
-  @Override
-  public WireFormat.FieldType getFieldType() {
-    return WireFormat.FieldType.UINT32;
-  }
+    @Override
+    public WireFormat.FieldType getFieldType() {
+        return WireFormat.FieldType.UINT32;
+    }
 
-  @Override
-  public Option readFrom(Input input) throws IOException {
-    throw new ProtostuffException("Corrupt input. option cannot serialize");
-  }
+    @Override
+    public Option readFrom(Input input) throws IOException {
+        throw new ProtostuffException("Corrupt input. option cannot serialize");
+    }
 
-  @Override
-  public void writeTo(Output output, int i, Option option, boolean b) throws IOException {
-    throw new ProtostuffException("Corrupt input. option cannot serialize");
-  }
+    @Override
+    public void writeTo(Output output, int i, Option option, boolean b) throws IOException {
+        throw new ProtostuffException("Corrupt input. option cannot serialize");
+    }
 
-  @Override
-  public void transfer(Pipe pipe, Input input, Output output, int i, boolean b) throws IOException {
-    throw new ProtostuffException("Corrupt input. option cannot serialize");
-  }
+    @Override
+    public void transfer(Pipe pipe, Input input, Output output, int i, boolean b)
+            throws IOException {
+        throw new ProtostuffException("Corrupt input. option cannot serialize");
+    }
 
-  @Override
-  public Class<?> typeClass() {
-    return Option.class;
-  }
+    @Override
+    public Class<?> typeClass() {
+        return Option.class;
+    }
 }

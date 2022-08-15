@@ -20,17 +20,17 @@ package org.apache.linkis.cs.common.entity.history;
 import org.apache.linkis.cs.common.entity.resource.Resource;
 
 public class CommonResourceHistory extends AbstractContextHistory
-    implements ResourceContextHistory {
+        implements ResourceContextHistory {
 
-  private Resource resource;
+    private Resource resource;
 
-  @Override
-  public Resource getResource() {
-    return this.resource;
-  }
+    @Override
+    public Resource getResource() {
+        return this.resource;
+    }
 
-  @Override
-  public void setResource(Resource resource) {
-    this.resource = resource;
-  }
+    @Override
+    public void setResource(Resource resource) {
+        this.resource = resource;
+    }
 }

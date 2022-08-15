@@ -21,35 +21,35 @@ import java.util.concurrent.locks.ReentrantLock;
 
 /** Connection for metadata */
 public class MetadataConnection<C> {
-  /** * Avoid complication when different threads calling connection API */
-  private ReentrantLock lock = new ReentrantLock();
+    /** * Avoid complication when different threads calling connection API */
+    private ReentrantLock lock = new ReentrantLock();
 
-  private boolean isLock = true;
+    private boolean isLock = true;
 
-  private C connection;
+    private C connection;
 
-  public MetadataConnection(C connection) {
-    this.connection = connection;
-  }
+    public MetadataConnection(C connection) {
+        this.connection = connection;
+    }
 
-  public MetadataConnection(C connection, boolean isLock) {
-    this.connection = connection;
-    this.isLock = isLock;
-  }
+    public MetadataConnection(C connection, boolean isLock) {
+        this.connection = connection;
+        this.isLock = isLock;
+    }
 
-  public ReentrantLock getLock() {
-    return lock;
-  }
+    public ReentrantLock getLock() {
+        return lock;
+    }
 
-  public C getConnection() {
-    return connection;
-  }
+    public C getConnection() {
+        return connection;
+    }
 
-  public boolean isLock() {
-    return isLock;
-  }
+    public boolean isLock() {
+        return isLock;
+    }
 
-  public void setLock(boolean lock) {
-    isLock = lock;
-  }
+    public void setLock(boolean lock) {
+        isLock = lock;
+    }
 }

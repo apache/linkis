@@ -27,46 +27,46 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.HashMap;
 
 public class TenantLabel extends GenericLabel
-    implements EMNodeLabel, EngineNodeLabel, UserModifiable {
+        implements EMNodeLabel, EngineNodeLabel, UserModifiable {
 
-  public TenantLabel() {
-    setLabelKey(LabelKeyConstant.TENANT_KEY);
-  }
-
-  @ValueSerialNum(0)
-  public void setTenant(String tenant) {
-    if (getValue() == null) {
-      setValue(new HashMap<>());
+    public TenantLabel() {
+        setLabelKey(LabelKeyConstant.TENANT_KEY);
     }
-    getValue().put(getLabelKey(), tenant);
-  }
 
-  public String getTenant() {
-    if (getValue() == null) {
-      return null;
+    @ValueSerialNum(0)
+    public void setTenant(String tenant) {
+        if (getValue() == null) {
+            setValue(new HashMap<>());
+        }
+        getValue().put(getLabelKey(), tenant);
     }
-    return getValue().get(getLabelKey());
-  }
 
-  @Override
-  public Feature getFeature() {
-    return Feature.CORE;
-  }
-
-  @Override
-  public Boolean getModifiable() {
-    return true;
-  }
-
-  @Override
-  public void valueCheck(String stringValue) throws LabelErrorException {
-    if (!StringUtils.isEmpty(stringValue)) {
-      if (stringValue.split(SerializableLabel.VALUE_SEPARATOR).length != 1) {
-        throw new LabelErrorException(
-            LabelConstant.LABEL_BUILDER_ERROR_CODE,
-            "The value of the label is set incorrectly, only one value can be set, and the symbol cannot be used"
-                + VALUE_SEPARATOR);
-      }
+    public String getTenant() {
+        if (getValue() == null) {
+            return null;
+        }
+        return getValue().get(getLabelKey());
     }
-  }
+
+    @Override
+    public Feature getFeature() {
+        return Feature.CORE;
+    }
+
+    @Override
+    public Boolean getModifiable() {
+        return true;
+    }
+
+    @Override
+    public void valueCheck(String stringValue) throws LabelErrorException {
+        if (!StringUtils.isEmpty(stringValue)) {
+            if (stringValue.split(SerializableLabel.VALUE_SEPARATOR).length != 1) {
+                throw new LabelErrorException(
+                        LabelConstant.LABEL_BUILDER_ERROR_CODE,
+                        "The value of the label is set incorrectly, only one value can be set, and the symbol cannot be used"
+                                + VALUE_SEPARATOR);
+            }
+        }
+    }
 }

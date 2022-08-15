@@ -29,67 +29,68 @@ import org.slf4j.LoggerFactory;
 
 public class DataSourceUtils {
 
-  private static final Logger logger = LoggerFactory.getLogger(DataSourceUtils.class);
+    private static final Logger logger = LoggerFactory.getLogger(DataSourceUtils.class);
 
-  /**
-   * @param dbUrl Can be Null, take the default value
-   * @param username Can be Null, take the default value
-   * @param pwd Can be Null, take the default value
-   * @return
-   */
-  public static DataSource buildDataSource(String dbUrl, String username, String pwd) {
-    if (StringUtils.isBlank(dbUrl)) {
-      dbUrl = MybatisConfiguration.BDP_SERVER_MYBATIS_DATASOURCE_URL.getValue();
+    /**
+     * @param dbUrl Can be Null, take the default value
+     * @param username Can be Null, take the default value
+     * @param pwd Can be Null, take the default value
+     * @return
+     */
+    public static DataSource buildDataSource(String dbUrl, String username, String pwd) {
+        if (StringUtils.isBlank(dbUrl)) {
+            dbUrl = MybatisConfiguration.BDP_SERVER_MYBATIS_DATASOURCE_URL.getValue();
+        }
+        if (StringUtils.isBlank(username)) {
+            username = MybatisConfiguration.BDP_SERVER_MYBATIS_DATASOURCE_USERNAME.getValue();
+        }
+        if (StringUtils.isBlank(pwd)) {
+            pwd = MybatisConfiguration.BDP_SERVER_MYBATIS_DATASOURCE_PASSWORD.getValue();
+        }
+        String driverClassName =
+                MybatisConfiguration.BDP_SERVER_MYBATIS_DATASOURCE_DRIVER_CLASS_NAME.getValue();
+        int initialSize = MybatisConfiguration.BDP_SERVER_MYBATIS_DATASOURCE_INITIALSIZE.getValue();
+        int minIdle = MybatisConfiguration.BDP_SERVER_MYBATIS_DATASOURCE_MINIDLE.getValue();
+        int maxActive = MybatisConfiguration.BDP_SERVER_MYBATIS_DATASOURCE_MAXACTIVE.getValue();
+        int maxWait = MybatisConfiguration.BDP_SERVER_MYBATIS_DATASOURCE_MAXWAIT.getValue();
+        int timeBetweenEvictionRunsMillis =
+                MybatisConfiguration.BDP_SERVER_MYBATIS_DATASOURCE_TBERM.getValue();
+        int minEvictableIdleTimeMillis =
+                MybatisConfiguration.BDP_SERVER_MYBATIS_DATASOURCE_MEITM.getValue();
+        String validationQuery =
+                MybatisConfiguration.BDP_SERVER_MYBATIS_DATASOURCE_VALIDATIONQUERY.getValue();
+        boolean testWhileIdle =
+                MybatisConfiguration.BDP_SERVER_MYBATIS_DATASOURCE_TESTWHILEIDLE.getValue();
+        boolean testOnBorrow =
+                MybatisConfiguration.BDP_SERVER_MYBATIS_DATASOURCE_TESTONBORROW.getValue();
+        boolean testOnReturn =
+                MybatisConfiguration.BDP_SERVER_MYBATIS_DATASOURCE_TESTONRETURN.getValue();
+        boolean poolPreparedStatements =
+                MybatisConfiguration.BDP_SERVER_MYBATIS_DATASOURCE_POOLPREPAREDSTATEMENTS
+                        .getValue();
+        boolean removeAbandoned =
+                MybatisConfiguration.MYBATIS_DATASOURCE_REMOVE_ABANDONED_ENABLED.getValue();
+        int removeAbandonedTimeout =
+                MybatisConfiguration.MYBATIS_DATASOURCE_REMOVE_ABANDONED_TIMEOUT.getValue();
+        DruidDataSource datasource = new DruidDataSource();
+        logger.info("Database connection address information(数据库连接地址信息)=" + dbUrl);
+        datasource.setUrl(dbUrl);
+        datasource.setUsername(username);
+        datasource.setPassword(pwd);
+        datasource.setDriverClassName(driverClassName);
+        datasource.setInitialSize(initialSize);
+        datasource.setMinIdle(minIdle);
+        datasource.setMaxActive(maxActive);
+        datasource.setMaxWait(maxWait);
+        datasource.setTimeBetweenEvictionRunsMillis(timeBetweenEvictionRunsMillis);
+        datasource.setMinEvictableIdleTimeMillis(minEvictableIdleTimeMillis);
+        datasource.setValidationQuery(validationQuery);
+        datasource.setTestWhileIdle(testWhileIdle);
+        datasource.setTestOnBorrow(testOnBorrow);
+        datasource.setTestOnReturn(testOnReturn);
+        datasource.setPoolPreparedStatements(poolPreparedStatements);
+        datasource.setRemoveAbandoned(removeAbandoned);
+        datasource.setRemoveAbandonedTimeout(removeAbandonedTimeout);
+        return datasource;
     }
-    if (StringUtils.isBlank(username)) {
-      username = MybatisConfiguration.BDP_SERVER_MYBATIS_DATASOURCE_USERNAME.getValue();
-    }
-    if (StringUtils.isBlank(pwd)) {
-      pwd = MybatisConfiguration.BDP_SERVER_MYBATIS_DATASOURCE_PASSWORD.getValue();
-    }
-    String driverClassName =
-        MybatisConfiguration.BDP_SERVER_MYBATIS_DATASOURCE_DRIVER_CLASS_NAME.getValue();
-    int initialSize = MybatisConfiguration.BDP_SERVER_MYBATIS_DATASOURCE_INITIALSIZE.getValue();
-    int minIdle = MybatisConfiguration.BDP_SERVER_MYBATIS_DATASOURCE_MINIDLE.getValue();
-    int maxActive = MybatisConfiguration.BDP_SERVER_MYBATIS_DATASOURCE_MAXACTIVE.getValue();
-    int maxWait = MybatisConfiguration.BDP_SERVER_MYBATIS_DATASOURCE_MAXWAIT.getValue();
-    int timeBetweenEvictionRunsMillis =
-        MybatisConfiguration.BDP_SERVER_MYBATIS_DATASOURCE_TBERM.getValue();
-    int minEvictableIdleTimeMillis =
-        MybatisConfiguration.BDP_SERVER_MYBATIS_DATASOURCE_MEITM.getValue();
-    String validationQuery =
-        MybatisConfiguration.BDP_SERVER_MYBATIS_DATASOURCE_VALIDATIONQUERY.getValue();
-    boolean testWhileIdle =
-        MybatisConfiguration.BDP_SERVER_MYBATIS_DATASOURCE_TESTWHILEIDLE.getValue();
-    boolean testOnBorrow =
-        MybatisConfiguration.BDP_SERVER_MYBATIS_DATASOURCE_TESTONBORROW.getValue();
-    boolean testOnReturn =
-        MybatisConfiguration.BDP_SERVER_MYBATIS_DATASOURCE_TESTONRETURN.getValue();
-    boolean poolPreparedStatements =
-        MybatisConfiguration.BDP_SERVER_MYBATIS_DATASOURCE_POOLPREPAREDSTATEMENTS.getValue();
-    boolean removeAbandoned =
-        MybatisConfiguration.MYBATIS_DATASOURCE_REMOVE_ABANDONED_ENABLED.getValue();
-    int removeAbandonedTimeout =
-        MybatisConfiguration.MYBATIS_DATASOURCE_REMOVE_ABANDONED_TIMEOUT.getValue();
-    DruidDataSource datasource = new DruidDataSource();
-    logger.info("Database connection address information(数据库连接地址信息)=" + dbUrl);
-    datasource.setUrl(dbUrl);
-    datasource.setUsername(username);
-    datasource.setPassword(pwd);
-    datasource.setDriverClassName(driverClassName);
-    datasource.setInitialSize(initialSize);
-    datasource.setMinIdle(minIdle);
-    datasource.setMaxActive(maxActive);
-    datasource.setMaxWait(maxWait);
-    datasource.setTimeBetweenEvictionRunsMillis(timeBetweenEvictionRunsMillis);
-    datasource.setMinEvictableIdleTimeMillis(minEvictableIdleTimeMillis);
-    datasource.setValidationQuery(validationQuery);
-    datasource.setTestWhileIdle(testWhileIdle);
-    datasource.setTestOnBorrow(testOnBorrow);
-    datasource.setTestOnReturn(testOnReturn);
-    datasource.setPoolPreparedStatements(poolPreparedStatements);
-    datasource.setRemoveAbandoned(removeAbandoned);
-    datasource.setRemoveAbandonedTimeout(removeAbandonedTimeout);
-    return datasource;
-  }
 }

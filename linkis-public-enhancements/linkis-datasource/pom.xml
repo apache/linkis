@@ -15,26 +15,29 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>org.apache.linkis</groupId>
-    <artifactId>linkis</artifactId>
-    <version>1.2.0</version>
-    <relativePath>../../pom.xml</relativePath>
-  </parent>
 
-  <artifactId>linkis-datasource</artifactId>
-  <packaging>pom</packaging>
-  <modules>
-    <module>linkis-datasource-manager/common</module>
-    <module>linkis-datasource-manager/server</module>
-    <module>linkis-metadata-query/common</module>
-    <module>linkis-metadata-query/service/elasticsearch</module>
-    <module>linkis-metadata-query/service/hive</module>
-    <module>linkis-metadata-query/service/kafka</module>
-    <module>linkis-metadata-query/service/mysql</module>
-    <module>linkis-metadata-query/server</module>
-    <module>linkis-datasource-client</module>
-  </modules>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>linkis</artifactId>
+        <groupId>org.apache.linkis</groupId>
+        <version>1.2.0</version>
+        <relativePath>../../pom.xml</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>linkis-datasource</artifactId>
+    <packaging>pom</packaging>
+    <modules>
+        <module>linkis-datasource-manager/common</module>
+        <module>linkis-datasource-manager/server</module>
+        <module>linkis-metadata-query/common</module>
+        <module>linkis-metadata-query/service/elasticsearch</module>
+        <module>linkis-metadata-query/service/hive</module>
+        <module>linkis-metadata-query/service/kafka</module>
+        <module>linkis-metadata-query/service/mysql</module>
+        <module>linkis-metadata-query/server</module>
+        <module>linkis-datasource-client</module>
+    </modules>
 </project>

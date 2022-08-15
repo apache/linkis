@@ -30,56 +30,57 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class YarnPerJobClusterDescriptorAdapter extends ClusterDescriptorAdapter {
-  private static final Logger LOG =
-      LoggerFactory.getLogger(YarnPerJobClusterDescriptorAdapter.class);
+    private static final Logger LOG =
+            LoggerFactory.getLogger(YarnPerJobClusterDescriptorAdapter.class);
 
-  YarnPerJobClusterDescriptorAdapter(ExecutionContext executionContext) {
-    super(executionContext);
-  }
-
-  @Override
-  public boolean isGloballyTerminalState() throws JobExecutionException {
-    boolean isGloballyTerminalState;
-    try {
-      JobStatus jobStatus = getJobStatus();
-      isGloballyTerminalState = jobStatus.isGloballyTerminalState();
-    } catch (JobExecutionException e) {
-      if (isYarnApplicationStopped(e)) {
-        isGloballyTerminalState = true;
-      } else {
-        throw e;
-      }
+    YarnPerJobClusterDescriptorAdapter(ExecutionContext executionContext) {
+        super(executionContext);
     }
 
-    return isGloballyTerminalState;
-  }
+    @Override
+    public boolean isGloballyTerminalState() throws JobExecutionException {
+        boolean isGloballyTerminalState;
+        try {
+            JobStatus jobStatus = getJobStatus();
+            isGloballyTerminalState = jobStatus.isGloballyTerminalState();
+        } catch (JobExecutionException e) {
+            if (isYarnApplicationStopped(e)) {
+                isGloballyTerminalState = true;
+            } else {
+                throw e;
+            }
+        }
 
-  /**
-   * The yarn application is not running when its final status is not UNDEFINED.
-   *
-   * <p>In this case, it will throw <code>
-   * RuntimeException("The Yarn application " + applicationId + " doesn't run anymore.")</code> from
-   * retrieve method in YarnClusterDescriptor.java
-   */
-  private boolean isYarnApplicationStopped(Throwable e) {
-    do {
-      String exceptionMessage = e.getMessage();
-      if (StringUtils.equals(
-          exceptionMessage, "The Yarn application " + clusterID + " doesn't run anymore.")) {
-        LOG.info("{} is stopped.", clusterID);
-        return true;
-      }
-      e = e.getCause();
-    } while (e != null);
-    return false;
-  }
+        return isGloballyTerminalState;
+    }
 
-  public void deployCluster(JobID jobId, ClusterClient<ApplicationId> clusterClient)
-      throws JobExecutionException {
-    this.clusterClient = clusterClient;
-    this.setJobId(jobId);
-    this.clusterID = clusterClient.getClusterId();
-    webInterfaceUrl = clusterClient.getWebInterfaceURL();
-    bindApplicationId();
-  }
+    /**
+     * The yarn application is not running when its final status is not UNDEFINED.
+     *
+     * <p>In this case, it will throw <code>
+     * RuntimeException("The Yarn application " + applicationId + " doesn't run anymore.")</code>
+     * from retrieve method in YarnClusterDescriptor.java
+     */
+    private boolean isYarnApplicationStopped(Throwable e) {
+        do {
+            String exceptionMessage = e.getMessage();
+            if (StringUtils.equals(
+                    exceptionMessage,
+                    "The Yarn application " + clusterID + " doesn't run anymore.")) {
+                LOG.info("{} is stopped.", clusterID);
+                return true;
+            }
+            e = e.getCause();
+        } while (e != null);
+        return false;
+    }
+
+    public void deployCluster(JobID jobId, ClusterClient<ApplicationId> clusterClient)
+            throws JobExecutionException {
+        this.clusterClient = clusterClient;
+        this.setJobId(jobId);
+        this.clusterID = clusterClient.getClusterId();
+        webInterfaceUrl = clusterClient.getWebInterfaceURL();
+        bindApplicationId();
+    }
 }

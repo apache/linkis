@@ -22,10 +22,10 @@ import org.apache.linkis.cli.common.entity.validate.Validator;
 import org.apache.linkis.cli.common.exception.LinkisClientRuntimeException;
 
 public class ParamValidator implements Validator {
-  @Override
-  public void doValidation(Object input) throws LinkisClientRuntimeException {
-    if (!(input instanceof Params)) {
-      // TODO:throw
+    @Override
+    public void doValidation(Object input) throws LinkisClientRuntimeException {
+        if (!(input instanceof Params)) {
+            // TODO:throw
+        }
     }
-  }
 }

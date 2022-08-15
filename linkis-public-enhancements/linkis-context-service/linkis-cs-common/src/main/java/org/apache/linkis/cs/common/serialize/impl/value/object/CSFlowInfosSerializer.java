@@ -23,21 +23,21 @@ import org.apache.linkis.cs.common.serialize.AbstractSerializer;
 import org.apache.linkis.cs.common.utils.CSCommonUtils;
 
 public class CSFlowInfosSerializer extends AbstractSerializer<CSFlowInfos> {
-  @Override
-  public CSFlowInfos fromJson(String json) throws CSErrorException {
-    return CSCommonUtils.gson.fromJson(json, CSFlowInfos.class);
-  }
-
-  @Override
-  public String getType() {
-    return "CSFlowInfos";
-  }
-
-  @Override
-  public boolean accepts(Object obj) {
-    if (null != obj && obj.getClass().getName().equals(CSFlowInfos.class.getName())) {
-      return true;
+    @Override
+    public CSFlowInfos fromJson(String json) throws CSErrorException {
+        return CSCommonUtils.gson.fromJson(json, CSFlowInfos.class);
     }
-    return false;
-  }
+
+    @Override
+    public String getType() {
+        return "CSFlowInfos";
+    }
+
+    @Override
+    public boolean accepts(Object obj) {
+        if (null != obj && obj.getClass().getName().equals(CSFlowInfos.class.getName())) {
+            return true;
+        }
+        return false;
+    }
 }

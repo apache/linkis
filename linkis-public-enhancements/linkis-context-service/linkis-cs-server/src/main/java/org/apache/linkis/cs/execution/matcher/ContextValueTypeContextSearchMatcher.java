@@ -22,15 +22,15 @@ import org.apache.linkis.cs.condition.impl.ContextValueTypeCondition;
 
 public class ContextValueTypeContextSearchMatcher extends AbstractContextSearchMatcher {
 
-  Class contextValueType;
+    Class contextValueType;
 
-  public ContextValueTypeContextSearchMatcher(ContextValueTypeCondition condition) {
-    super(condition);
-    contextValueType = condition.getContextValueType();
-  }
+    public ContextValueTypeContextSearchMatcher(ContextValueTypeCondition condition) {
+        super(condition);
+        contextValueType = condition.getContextValueType();
+    }
 
-  @Override
-  public Boolean match(ContextKeyValue contextKeyValue) {
-    return contextValueType.isInstance(contextKeyValue.getContextValue().getValue());
-  }
+    @Override
+    public Boolean match(ContextKeyValue contextKeyValue) {
+        return contextValueType.isInstance(contextKeyValue.getContextValue().getValue());
+    }
 }

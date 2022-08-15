@@ -17,71 +17,71 @@
 
 package org.apache.linkis.metadata.query.common.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
 /** The meta information of partition */
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_EMPTY)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class MetaPartitionInfo implements Serializable {
-  private List<String> partKeys = new ArrayList<>();
+    private List<String> partKeys = new ArrayList<>();
 
-  private String name;
-  /** Partition tree */
-  private PartitionNode root;
-
-  @JsonSerialize(include = JsonSerialize.Inclusion.NON_EMPTY)
-  @JsonIgnoreProperties(ignoreUnknown = true)
-  public static class PartitionNode {
-    /** Node name */
     private String name;
-    /** Key: partition value Value: child partition node */
-    private Map<String, PartitionNode> partitions = new HashMap<>();
+    /** Partition tree */
+    private PartitionNode root;
+
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_EMPTY)
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class PartitionNode {
+        /** Node name */
+        private String name;
+        /** Key: partition value Value: child partition node */
+        private Map<String, PartitionNode> partitions = new HashMap<>();
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public Map<String, PartitionNode> getPartitions() {
+            return partitions;
+        }
+
+        public void setPartitions(Map<String, PartitionNode> partitions) {
+            this.partitions = partitions;
+        }
+    }
+
+    public List<String> getPartKeys() {
+        return partKeys;
+    }
+
+    public void setPartKeys(List<String> partKeys) {
+        this.partKeys = partKeys;
+    }
 
     public String getName() {
-      return name;
+        return name;
     }
 
     public void setName(String name) {
-      this.name = name;
+        this.name = name;
     }
 
-    public Map<String, PartitionNode> getPartitions() {
-      return partitions;
+    public PartitionNode getRoot() {
+        return root;
     }
 
-    public void setPartitions(Map<String, PartitionNode> partitions) {
-      this.partitions = partitions;
+    public void setRoot(PartitionNode root) {
+        this.root = root;
     }
-  }
-
-  public List<String> getPartKeys() {
-    return partKeys;
-  }
-
-  public void setPartKeys(List<String> partKeys) {
-    this.partKeys = partKeys;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public PartitionNode getRoot() {
-    return root;
-  }
-
-  public void setRoot(PartitionNode root) {
-    this.root = root;
-  }
 }

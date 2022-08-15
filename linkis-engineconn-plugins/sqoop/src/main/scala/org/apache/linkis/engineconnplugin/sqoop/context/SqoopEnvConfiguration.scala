@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,20 +21,15 @@ import org.apache.linkis.common.conf.{CommonVars, TimeType}
 
 object SqoopEnvConfiguration {
 
-  val SQOOP_HADOOP_SITE_FILE: CommonVars[String] = CommonVars(
-    "wds.linkis.hadoop.site.xml",
-    "core-site.xml;hdfs-site.xml;yarn-site.xml;mapred-site.xml"
-  )
+  val SQOOP_HADOOP_SITE_FILE: CommonVars[String] = CommonVars("wds.linkis.hadoop.site.xml", "core-site.xml;hdfs-site.xml;yarn-site.xml;mapred-site.xml")
 
-  val SQOOP_STATUS_FETCH_INTERVAL: CommonVars[TimeType] =
-    CommonVars("sqoop.fetch.status.interval", new TimeType("5s"))
+  val SQOOP_STATUS_FETCH_INTERVAL: CommonVars[TimeType] = CommonVars("sqoop.fetch.status.interval", new TimeType("5s"))
 
-  val LINKIS_DATASOURCE_SERVICE_NAME: CommonVars[String] =
-    CommonVars("wds.linkis.datasource.service.name", "linkis-ps-data-source-manager")
+  val LINKIS_DATASOURCE_SERVICE_NAME: CommonVars[String] = CommonVars("wds.linkis.datasource.service.name", "linkis-ps-data-source-manager")
 
   val SQOOP_HOME: CommonVars[String] = CommonVars("SQOOP_HOME", "")
 
-  val SQOOP_CONF_DIR: CommonVars[String] = CommonVars("SQOOP_CONF_DIR", "")
+  val  SQOOP_CONF_DIR: CommonVars[String] = CommonVars("SQOOP_CONF_DIR", "")
 
   val SQOOP_HCAT_HOME: CommonVars[String] = CommonVars("HCAT_HOME", "")
 

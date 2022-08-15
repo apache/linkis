@@ -23,10 +23,10 @@ import org.apache.linkis.engineconnplugin.flink.exception.SqlParseException;
 
 public interface OperationFactory {
 
-  static OperationFactory getOperationFactory() {
-    return OperationFactoryImpl.getInstance();
-  }
+    static OperationFactory getOperationFactory() {
+        return OperationFactoryImpl.getInstance();
+    }
 
-  Operation createOperation(SqlCommandCall call, FlinkEngineConnContext context)
-      throws SqlParseException;
+    Operation createOperation(SqlCommandCall call, FlinkEngineConnContext context)
+            throws SqlParseException;
 }

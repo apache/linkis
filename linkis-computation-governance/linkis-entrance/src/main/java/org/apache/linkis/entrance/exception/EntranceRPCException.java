@@ -25,12 +25,12 @@ import org.apache.linkis.common.exception.ErrorException;
  * 当entrance 向 query 模块提交数据库查询的请求，sender的send和ask操作出现异常，就抛出该异常
  */
 public class EntranceRPCException extends ErrorException {
-  public EntranceRPCException(int errCode, String desc) {
-    super(errCode, desc);
-  }
+    public EntranceRPCException(int errCode, String desc) {
+        super(errCode, desc);
+    }
 
-  public EntranceRPCException(int errCode, String desc, Exception e) {
-    super(errCode, desc + " " + e.getMessage());
-    this.initCause(e);
-  }
+    public EntranceRPCException(int errCode, String desc, Exception e) {
+        super(errCode, desc + " " + e.getMessage());
+        this.initCause(e);
+    }
 }

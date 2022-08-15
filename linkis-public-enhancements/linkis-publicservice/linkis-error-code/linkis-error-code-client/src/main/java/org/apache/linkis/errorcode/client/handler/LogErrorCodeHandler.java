@@ -22,5 +22,5 @@ import org.apache.linkis.errorcode.common.ErrorCode;
 import java.util.List;
 
 public interface LogErrorCodeHandler extends ErrorCodeHandler {
-  List<ErrorCode> handle(String log);
+    List<ErrorCode> handle(String log);
 }

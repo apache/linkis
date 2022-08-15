@@ -23,15 +23,15 @@ import org.apache.linkis.manager.common.entity.metrics.NodeTaskInfo;
 
 public interface AMNode extends Node {
 
-  NodeTaskInfo getNodeTaskInfo();
+    NodeTaskInfo getNodeTaskInfo();
 
-  void setNodeTaskInfo(NodeTaskInfo nodeTaskInfo);
+    void setNodeTaskInfo(NodeTaskInfo nodeTaskInfo);
 
-  void setNodeOverLoadInfo(NodeOverLoadInfo nodeOverLoadInfo);
+    void setNodeOverLoadInfo(NodeOverLoadInfo nodeOverLoadInfo);
 
-  NodeOverLoadInfo getNodeOverLoadInfo();
+    NodeOverLoadInfo getNodeOverLoadInfo();
 
-  NodeHealthyInfo getNodeHealthyInfo();
+    NodeHealthyInfo getNodeHealthyInfo();
 
-  void setNodeHealthyInfo(NodeHealthyInfo nodeHealthyInfo);
+    void setNodeHealthyInfo(NodeHealthyInfo nodeHealthyInfo);
 }

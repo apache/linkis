@@ -24,11 +24,11 @@ import java.util.List;
 
 public interface CSResultDataService {
 
-  CSResultData getCSResultData(String contextIDStr, String contextKey) throws CSErrorException;
+    CSResultData getCSResultData(String contextIDStr, String contextKey) throws CSErrorException;
 
-  void putCSResultData(String contextIDStr, String contextKeyStr, CSResultData csResultData)
-      throws CSErrorException;
+    void putCSResultData(String contextIDStr, String contextKeyStr, CSResultData csResultData)
+            throws CSErrorException;
 
-  List<CSResultData> getUpstreamCSResultData(String contextIDStr, String nodeName)
-      throws CSErrorException;
+    List<CSResultData> getUpstreamCSResultData(String contextIDStr, String nodeName)
+            throws CSErrorException;
 }

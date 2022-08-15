@@ -25,36 +25,36 @@ import java.util.List;
 
 public class ExcelStorageReader {
 
-  public static List<List<String>> getExcelTitle(
-      InputStream in, File file, Boolean hasHeader, String suffix) throws Exception {
+    public static List<List<String>> getExcelTitle(
+            InputStream in, File file, Boolean hasHeader, String suffix) throws Exception {
 
-    List<List<String>> res;
-    if (".xls".equalsIgnoreCase(suffix)) {
-      if (in == null) {
-        in = new FileInputStream(file);
-      }
-      res = XlsUtils.getBasicInfo(in);
-    } else {
-      res = XlsxUtils.getBasicInfo(in, file);
+        List<List<String>> res;
+        if (".xls".equalsIgnoreCase(suffix)) {
+            if (in == null) {
+                in = new FileInputStream(file);
+            }
+            res = XlsUtils.getBasicInfo(in);
+        } else {
+            res = XlsxUtils.getBasicInfo(in, file);
+        }
+        if (res == null && res.size() < 2) {
+            throw new Exception("There is a problem with the file format(文件格式有问题)");
+        }
+        List<String> headerType = new ArrayList<>();
+        List<String> header = res.get(1);
+        if (hasHeader) {
+            for (int i = 0; i < header.size(); i++) {
+                headerType.add("string");
+            }
+        } else {
+            List<String> headerNew = new ArrayList<>();
+            for (int i = 0; i < header.size(); i++) {
+                headerNew.add("col_" + (i + 1));
+                headerType.add("string");
+            }
+            res.set(1, headerNew);
+        }
+        res.add(headerType);
+        return res;
     }
-    if (res == null && res.size() < 2) {
-      throw new Exception("There is a problem with the file format(文件格式有问题)");
-    }
-    List<String> headerType = new ArrayList<>();
-    List<String> header = res.get(1);
-    if (hasHeader) {
-      for (int i = 0; i < header.size(); i++) {
-        headerType.add("string");
-      }
-    } else {
-      List<String> headerNew = new ArrayList<>();
-      for (int i = 0; i < header.size(); i++) {
-        headerNew.add("col_" + (i + 1));
-        headerType.add("string");
-      }
-      res.set(1, headerNew);
-    }
-    res.add(headerType);
-    return res;
-  }
 }

@@ -27,89 +27,89 @@ import java.util.List;
 /** Data source dao */
 public interface DataSourceDao {
 
-  /**
-   * Insert
-   *
-   * @param dataSource data source
-   */
-  void insertOne(DataSource dataSource);
+    /**
+     * Insert
+     *
+     * @param dataSource data source
+     */
+    void insertOne(DataSource dataSource);
 
-  /**
-   * View detail
-   *
-   * @param dataSourceId data source id
-   * @return data source entity
-   */
-  DataSource selectOneDetail(@Param("dataSourceId") Long dataSourceId);
+    /**
+     * View detail
+     *
+     * @param dataSourceId data source id
+     * @return data source entity
+     */
+    DataSource selectOneDetail(@Param("dataSourceId") Long dataSourceId);
 
-  /**
-   * View detail by name
-   *
-   * @param dataSourceName data source name
-   * @return data source entity
-   */
-  DataSource selectOneDetailByName(@Param("dataSourceName") String dataSourceName);
-  /**
-   * View normal
-   *
-   * @param dataSourceId data source id
-   * @return data source entity
-   */
-  DataSource selectOne(@Param("dataSourceId") Long dataSourceId);
+    /**
+     * View detail by name
+     *
+     * @param dataSourceName data source name
+     * @return data source entity
+     */
+    DataSource selectOneDetailByName(@Param("dataSourceName") String dataSourceName);
+    /**
+     * View normal
+     *
+     * @param dataSourceId data source id
+     * @return data source entity
+     */
+    DataSource selectOne(@Param("dataSourceId") Long dataSourceId);
 
-  /**
-   * Select one by username
-   *
-   * @param dataSourceName data source name
-   * @return data source entity
-   */
-  DataSource selectOneByName(@Param("dataSourceName") String dataSourceName);
-  /**
-   * Delete One
-   *
-   * @param dataSourceId data source id
-   * @return affect row
-   */
-  int removeOne(@Param("dataSourceId") Long dataSourceId);
+    /**
+     * Select one by username
+     *
+     * @param dataSourceName data source name
+     * @return data source entity
+     */
+    DataSource selectOneByName(@Param("dataSourceName") String dataSourceName);
+    /**
+     * Delete One
+     *
+     * @param dataSourceId data source id
+     * @return affect row
+     */
+    int removeOne(@Param("dataSourceId") Long dataSourceId);
 
-  /**
-   * Expire One
-   *
-   * @param dataSourceId data source id
-   * @return affect row
-   */
-  int expireOne(@Param("dataSourceId") Long dataSourceId);
+    /**
+     * Expire One
+     *
+     * @param dataSourceId data source id
+     * @return affect row
+     */
+    int expireOne(@Param("dataSourceId") Long dataSourceId);
 
-  /**
-   * Update one
-   *
-   * @param updatedOne updated one
-   */
-  void updateOne(DataSource updatedOne);
+    /**
+     * Update one
+     *
+     * @param updatedOne updated one
+     */
+    void updateOne(DataSource updatedOne);
 
-  /**
-   * Page of query
-   *
-   * @param dataSourceVo data source view entity
-   * @return query list
-   */
-  List<DataSource> selectByPageVo(DataSourceVo dataSourceVo);
+    /**
+     * Page of query
+     *
+     * @param dataSourceVo data source view entity
+     * @return query list
+     */
+    List<DataSource> selectByPageVo(DataSourceVo dataSourceVo);
 
-  /**
-   * update published version id
-   *
-   * @param dataSourceId
-   * @param versionId
-   */
-  int setPublishedVersionId(
-      @Param("dataSourceId") Long dataSourceId, @Param("versionId") Long versionId);
+    /**
+     * update published version id
+     *
+     * @param dataSourceId
+     * @param versionId
+     */
+    int setPublishedVersionId(
+            @Param("dataSourceId") Long dataSourceId, @Param("versionId") Long versionId);
 
-  /**
-   * update version id
-   *
-   * @param datasourceId
-   * @param versionId
-   */
-  void updateVersionId(
-      @Param("dataSourceId") Long datasourceId, @Param("versionId") long versionId);
+    /**
+     * update version id
+     *
+     * @param datasourceId
+     * @param versionId
+     */
+    void updateVersionId(
+            @Param("dataSourceId") Long datasourceId, @Param("versionId") long versionId);
 }

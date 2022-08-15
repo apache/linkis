@@ -21,38 +21,38 @@ import org.apache.linkis.cli.common.entity.command.CmdType;
 import org.apache.linkis.cli.core.constants.TestConstants;
 
 public enum TestCmdType implements CmdType {
-  PRIMARY(TestConstants.PRIMARY, 0, TestConstants.PRIMARY_DESC),
-  SPARK(TestConstants.SPARK, 1, TestConstants.SPARK_DESC);
-  //  TEST(TestConstants.TEST_COMMAND, 0, TestConstants.TEST_DESC);
+    PRIMARY(TestConstants.PRIMARY, 0, TestConstants.PRIMARY_DESC),
+    SPARK(TestConstants.SPARK, 1, TestConstants.SPARK_DESC);
+    //  TEST(TestConstants.TEST_COMMAND, 0, TestConstants.TEST_DESC);
 
-  private int id;
-  private String name;
-  private String desc;
+    private int id;
+    private String name;
+    private String desc;
 
-  TestCmdType(String name, int id) {
-    this.id = id;
-    this.name = name;
-    this.desc = null;
-  }
+    TestCmdType(String name, int id) {
+        this.id = id;
+        this.name = name;
+        this.desc = null;
+    }
 
-  TestCmdType(String name, int id, String desc) {
-    this.id = id;
-    this.name = name;
-    this.desc = desc;
-  }
+    TestCmdType(String name, int id, String desc) {
+        this.id = id;
+        this.name = name;
+        this.desc = desc;
+    }
 
-  @Override
-  public int getId() {
-    return this.id;
-  }
+    @Override
+    public int getId() {
+        return this.id;
+    }
 
-  @Override
-  public String getName() {
-    return this.name;
-  }
+    @Override
+    public String getName() {
+        return this.name;
+    }
 
-  @Override
-  public String getDesc() {
-    return this.desc;
-  }
+    @Override
+    public String getDesc() {
+        return this.desc;
+    }
 }

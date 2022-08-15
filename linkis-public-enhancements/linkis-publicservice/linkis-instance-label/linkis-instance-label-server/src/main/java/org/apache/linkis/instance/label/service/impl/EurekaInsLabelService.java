@@ -30,64 +30,64 @@ import java.util.List;
 @AdapterMode
 public class EurekaInsLabelService implements InsLabelAccessService {
 
-  public EurekaInsLabelService(EurekaDiscoveryClient discoveryClient) {}
+    public EurekaInsLabelService(EurekaDiscoveryClient discoveryClient) {}
 
-  @Override
-  public void attachLabelToInstance(Label<?> label, ServiceInstance serviceInstance) {}
+    @Override
+    public void attachLabelToInstance(Label<?> label, ServiceInstance serviceInstance) {}
 
-  @Override
-  public void attachLabelsToInstance(
-      List<? extends Label<?>> labels, ServiceInstance serviceInstance) {}
+    @Override
+    public void attachLabelsToInstance(
+            List<? extends Label<?>> labels, ServiceInstance serviceInstance) {}
 
-  @Override
-  public void refreshLabelsToInstance(
-      List<? extends Label<?>> labels, ServiceInstance serviceInstance) {}
+    @Override
+    public void refreshLabelsToInstance(
+            List<? extends Label<?>> labels, ServiceInstance serviceInstance) {}
 
-  @Override
-  public void removeLabelsFromInstance(ServiceInstance serviceInstance) {}
+    @Override
+    public void removeLabelsFromInstance(ServiceInstance serviceInstance) {}
 
-  @Override
-  public List<ServiceInstance> searchInstancesByLabels(List<? extends Label<?>> labels) {
-    return null;
-  }
+    @Override
+    public List<ServiceInstance> searchInstancesByLabels(List<? extends Label<?>> labels) {
+        return null;
+    }
 
-  @Override
-  public List<ServiceInstance> searchInstancesByLabels(
-      List<? extends Label<?>> labels, Label.ValueRelation relation) {
-    return null;
-  }
+    @Override
+    public List<ServiceInstance> searchInstancesByLabels(
+            List<? extends Label<?>> labels, Label.ValueRelation relation) {
+        return null;
+    }
 
-  @Override
-  public List<ServiceInstance> searchUnRelateInstances(ServiceInstance serviceInstance) {
-    return null;
-  }
+    @Override
+    public List<ServiceInstance> searchUnRelateInstances(ServiceInstance serviceInstance) {
+        return null;
+    }
 
-  @Override
-  public List<ServiceInstance> searchLabelRelatedInstances(ServiceInstance serviceInstance) {
-    return null;
-  }
+    @Override
+    public List<ServiceInstance> searchLabelRelatedInstances(ServiceInstance serviceInstance) {
+        return null;
+    }
 
-  @Override
-  public void removeLabelsIfNotRelation(List<? extends Label<?>> labels) {}
+    @Override
+    public void removeLabelsIfNotRelation(List<? extends Label<?>> labels) {}
 
-  @Override
-  public List<InstanceInfo> listAllInstanceWithLabel() {
-    return null;
-  }
+    @Override
+    public List<InstanceInfo> listAllInstanceWithLabel() {
+        return null;
+    }
 
-  @Override
-  public List<ServiceInstance> getInstancesByNames(String appName) {
-    return null;
-  }
+    @Override
+    public List<ServiceInstance> getInstancesByNames(String appName) {
+        return null;
+    }
 
-  @Override
-  public void removeInstance(ServiceInstance serviceInstance) {}
+    @Override
+    public void removeInstance(ServiceInstance serviceInstance) {}
 
-  @Override
-  public void updateInstance(InstanceInfo instanceInfo) {}
+    @Override
+    public void updateInstance(InstanceInfo instanceInfo) {}
 
-  @Override
-  public InstanceInfo getInstanceInfoByServiceInstance(ServiceInstance serviceInstance) {
-    return null;
-  }
+    @Override
+    public InstanceInfo getInstanceInfoByServiceInstance(ServiceInstance serviceInstance) {
+        return null;
+    }
 }

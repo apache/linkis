@@ -5,27 +5,28 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.httpclient.dws.response
 
 import org.apache.linkis.common.conf.CommonVars
-
-import java.util
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.httpclient.dws.DWSHttpClient
+import org.apache.linkis.httpclient.dws.response.DWSResult.LOGGEDIN_STR
 import org.apache.linkis.httpclient.exception.HttpClientResultException
 import org.apache.linkis.httpclient.response.HttpResult
+
 import org.apache.commons.lang3.StringUtils
-import org.apache.linkis.httpclient.dws.response.DWSResult.LOGGEDIN_STR
+
+import java.util
 
 trait DWSResult extends Logging with HttpResult {
 
@@ -53,16 +54,24 @@ trait DWSResult extends Logging with HttpResult {
 
   override def getStatusCode: Int = statusCode
 
-  override def set(responseBody: String, statusCode: Int, url: String, contentType: String): Unit = {
+  override def set(
+      responseBody: String,
+      statusCode: Int,
+      url: String,
+      contentType: String
+  ): Unit = {
 //    if(statusCode != 200) throw new HttpClientResultException(s"URL $url request failed! ResponseBody is $responseBody." )
     var newStatusCode = statusCode
     Utils.tryCatch {
-      resultMap = DWSHttpClient.jacksonJson.readValue(responseBody, classOf[util.Map[String, Object]])
+      resultMap =
+        DWSHttpClient.jacksonJson.readValue(responseBody, classOf[util.Map[String, Object]])
       status = resultMap.get("status").asInstanceOf[Int]
       message = getResultMap.get("message").asInstanceOf[String]
-      if(status != 0) {
+      if (status != 0) {
         if (StringUtils.isBlank(message) || !message.contains(LOGGEDIN_STR)) {
-          throw new HttpClientResultException(s"URL $url request failed! ResponseBody is $responseBody.")
+          throw new HttpClientResultException(
+            s"URL $url request failed! ResponseBody is $responseBody."
+          )
         }
         this.status = 0
         newStatusCode = 200
@@ -72,9 +81,10 @@ trait DWSResult extends Logging with HttpResult {
       this.statusCode = newStatusCode
       this.url = url
       this.contentType = contentType
-    } {
-      case e: Exception =>
-        throw new HttpClientResultException(s"URL $url request failed! ResponseBody is $responseBody. ${e.getMessage}")
+    } { case e: Exception =>
+      throw new HttpClientResultException(
+        s"URL $url request failed! ResponseBody is $responseBody. ${e.getMessage}"
+      )
     }
 
   }
@@ -84,6 +94,9 @@ trait DWSResult extends Logging with HttpResult {
 
 object DWSResult {
 
-  lazy val LOGGEDIN_STR = CommonVars("wds.linkis.httpclient.default.logged_in.str", "Already logged in, please log out").getValue
+  lazy val LOGGEDIN_STR = CommonVars(
+    "wds.linkis.httpclient.default.logged_in.str",
+    "Already logged in, please log out"
+  ).getValue
 
 }

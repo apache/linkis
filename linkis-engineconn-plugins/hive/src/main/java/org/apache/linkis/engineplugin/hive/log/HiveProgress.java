@@ -18,37 +18,37 @@
 package org.apache.linkis.engineplugin.hive.log;
 
 public class HiveProgress {
-    private int stage;
-    private int map;
-    private int reduce;
+  private int stage;
+  private int map;
+  private int reduce;
 
-    public HiveProgress(int stage, int map, int reduce) {
-        this.stage = stage;
-        this.map = map;
-        this.reduce = reduce;
-    }
+  public HiveProgress(int stage, int map, int reduce) {
+    this.stage = stage;
+    this.map = map;
+    this.reduce = reduce;
+  }
 
-    public int getStage() {
-        return stage;
-    }
+  public int getStage() {
+    return stage;
+  }
 
-    public void setStage(int stage) {
-        this.stage = stage;
-    }
+  public void setStage(int stage) {
+    this.stage = stage;
+  }
 
-    public int getMap() {
-        return map;
-    }
+  public int getMap() {
+    return map;
+  }
 
-    public void setMap(int map) {
-        this.map = map;
-    }
+  public void setMap(int map) {
+    this.map = map;
+  }
 
-    public int getReduce() {
-        return reduce;
-    }
+  public int getReduce() {
+    return reduce;
+  }
 
-    public void setReduce(int reduce) {
-        this.reduce = reduce;
-    }
+  public void setReduce(int reduce) {
+    this.reduce = reduce;
+  }
 }

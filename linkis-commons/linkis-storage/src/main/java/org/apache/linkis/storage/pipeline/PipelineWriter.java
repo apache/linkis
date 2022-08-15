@@ -23,5 +23,5 @@ import java.util.Map;
 
 public abstract class PipelineWriter extends FsWriter {
 
-    public void close(Map<String, Object> args) {}
+  public void close(Map<String, Object> args) {}
 }

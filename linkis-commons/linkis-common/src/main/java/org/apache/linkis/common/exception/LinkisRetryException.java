@@ -18,16 +18,16 @@
 package org.apache.linkis.common.exception;
 
 public class LinkisRetryException extends LinkisException {
-    LinkisRetryException(int errCode, String desc, String ip, int port, String serviceKind) {
-        super(errCode, desc, ip, port, serviceKind);
-    }
+  LinkisRetryException(int errCode, String desc, String ip, int port, String serviceKind) {
+    super(errCode, desc, ip, port, serviceKind);
+  }
 
-    public LinkisRetryException(int errCode, String desc) {
-        super(errCode, desc);
-    }
+  public LinkisRetryException(int errCode, String desc) {
+    super(errCode, desc);
+  }
 
-    @Override
-    ExceptionLevel getLevel() {
-        return ExceptionLevel.RETRY;
-    }
+  @Override
+  ExceptionLevel getLevel() {
+    return ExceptionLevel.RETRY;
+  }
 }

@@ -1,0 +1,52 @@
+---
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+{{- if ne .Values.linkis.datasource.initSchema "None" }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: init-db
+spec:
+  template:
+    spec:
+      volumes:
+        - name: init-sql
+          configMap:
+            name: {{ include "linkis.fullname" . }}-init-sql
+            items:
+              - key: linkis_ddl.sql
+                path: linkis_ddl.sql
+              - key: linkis_dml.sql
+                path: linkis_dml.sql
+      containers:
+        - name: init-db
+          image: mysql:{{ .Values.linkis.deps.mysql.version }}
+          volumeMounts:
+            - name: init-sql
+              readOnly: true
+              mountPath: /db
+          command:
+            - /bin/bash
+            - -ecx
+            - >-
+              mysql -h{{ .Values.linkis.datasource.host }} -P{{ .Values.linkis.datasource.port }} -u{{ .Values.linkis.datasource.username }} -p{{ .Values.linkis.datasource.password }} --default-character-set=utf8 -e "CREATE DATABASE IF NOT EXISTS {{ .Values.linkis.datasource.database }} DEFAULT CHARSET utf8 COLLATE utf8_general_ci";
+              mysql -h{{ .Values.linkis.datasource.host }} -P{{ .Values.linkis.datasource.port }} -u{{ .Values.linkis.datasource.username }} -p{{ .Values.linkis.datasource.password }} -D{{ .Values.linkis.datasource.database }}  --default-character-set=utf8 -e "source /db/linkis_ddl.sql";
+              mysql -h{{ .Values.linkis.datasource.host }} -P{{ .Values.linkis.datasource.port }} -u{{ .Values.linkis.datasource.username }} -p{{ .Values.linkis.datasource.password }} -D{{ .Values.linkis.datasource.database }}  --default-character-set=utf8 -e "source /db/linkis_dml.sql"
+
+      restartPolicy: Never
+  backoffLimit: 0
+
+{{- end }}

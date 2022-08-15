@@ -20,20 +20,21 @@ package org.apache.linkis.engineplugin.trino.password;
 import javax.security.auth.callback.PasswordCallback;
 
 public class StaticPasswordCallback extends PasswordCallback {
-    private final char[] password;
 
-    public StaticPasswordCallback(String prompt, boolean echoOn) {
-        super(prompt, echoOn);
-        this.password = prompt.toCharArray();
-    }
+  private final char[] password;
 
-    public StaticPasswordCallback(String prompt) {
-        super(prompt, false);
-        this.password = prompt.toCharArray();
-    }
+  public StaticPasswordCallback(String prompt, boolean echoOn) {
+    super(prompt, echoOn);
+    this.password = prompt.toCharArray();
+  }
 
-    @Override
-    public char[] getPassword() {
-        return password;
-    }
+  public StaticPasswordCallback(String prompt) {
+    super(prompt, false);
+    this.password = prompt.toCharArray();
+  }
+
+  @Override
+  public char[] getPassword() {
+    return password;
+  }
 }

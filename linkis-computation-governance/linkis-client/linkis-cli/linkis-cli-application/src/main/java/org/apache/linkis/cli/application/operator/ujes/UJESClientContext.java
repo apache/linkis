@@ -18,116 +18,116 @@
 package org.apache.linkis.cli.application.operator.ujes;
 
 public class UJESClientContext {
-    private String gatewayUrl;
-    private Long connectionTimeout;
-    private Boolean discoveryEnabled;
-    private Boolean loadBalancerEnabled;
-    private Long readTimeoutMills;
+  private String gatewayUrl;
+  private Long connectionTimeout;
+  private Boolean discoveryEnabled;
+  private Boolean loadBalancerEnabled;
+  private Long readTimeoutMills;
 
-    private String tokenKey;
-    private String tokenValue;
+  private String tokenKey;
+  private String tokenValue;
 
-    private String authenticationStrategyStr;
-    private Long discoveryFrequencyMills;
-    private Integer maxConnectionSize;
-    private Boolean retryEnabled;
-    private String dwsVersion;
+  private String authenticationStrategyStr;
+  private Long discoveryFrequencyMills;
+  private Integer maxConnectionSize;
+  private Boolean retryEnabled;
+  private String dwsVersion;
 
-    public UJESClientContext() {}
+  public UJESClientContext() {}
 
-    public String getGatewayUrl() {
-        return gatewayUrl;
-    }
+  public String getGatewayUrl() {
+    return gatewayUrl;
+  }
 
-    public void setGatewayUrl(String gatewayUrl) {
-        this.gatewayUrl = gatewayUrl;
-    }
+  public void setGatewayUrl(String gatewayUrl) {
+    this.gatewayUrl = gatewayUrl;
+  }
 
-    public Long getConnectionTimeout() {
-        return connectionTimeout;
-    }
+  public Long getConnectionTimeout() {
+    return connectionTimeout;
+  }
 
-    public void setConnectionTimeout(Long connectionTimeout) {
-        this.connectionTimeout = connectionTimeout;
-    }
+  public void setConnectionTimeout(Long connectionTimeout) {
+    this.connectionTimeout = connectionTimeout;
+  }
 
-    public Boolean getDiscoveryEnabled() {
-        return discoveryEnabled;
-    }
+  public Boolean getDiscoveryEnabled() {
+    return discoveryEnabled;
+  }
 
-    public void setDiscoveryEnabled(Boolean discoveryEnabled) {
-        this.discoveryEnabled = discoveryEnabled;
-    }
+  public void setDiscoveryEnabled(Boolean discoveryEnabled) {
+    this.discoveryEnabled = discoveryEnabled;
+  }
 
-    public Boolean getLoadBalancerEnabled() {
-        return loadBalancerEnabled;
-    }
+  public Boolean getLoadBalancerEnabled() {
+    return loadBalancerEnabled;
+  }
 
-    public void setLoadBalancerEnabled(Boolean loadBalancerEnabled) {
-        this.loadBalancerEnabled = loadBalancerEnabled;
-    }
+  public void setLoadBalancerEnabled(Boolean loadBalancerEnabled) {
+    this.loadBalancerEnabled = loadBalancerEnabled;
+  }
 
-    public Long getReadTimeoutMills() {
-        return readTimeoutMills;
-    }
+  public Long getReadTimeoutMills() {
+    return readTimeoutMills;
+  }
 
-    public void setReadTimeoutMills(Long readTimeoutMills) {
-        this.readTimeoutMills = readTimeoutMills;
-    }
+  public void setReadTimeoutMills(Long readTimeoutMills) {
+    this.readTimeoutMills = readTimeoutMills;
+  }
 
-    public String getTokenKey() {
-        return tokenKey;
-    }
+  public String getTokenKey() {
+    return tokenKey;
+  }
 
-    public void setTokenKey(String tokenKey) {
-        this.tokenKey = tokenKey;
-    }
+  public void setTokenKey(String tokenKey) {
+    this.tokenKey = tokenKey;
+  }
 
-    public String getTokenValue() {
-        return tokenValue;
-    }
+  public String getTokenValue() {
+    return tokenValue;
+  }
 
-    public void setTokenValue(String tokenValue) {
-        this.tokenValue = tokenValue;
-    }
+  public void setTokenValue(String tokenValue) {
+    this.tokenValue = tokenValue;
+  }
 
-    public String getAuthenticationStrategyStr() {
-        return authenticationStrategyStr;
-    }
+  public String getAuthenticationStrategyStr() {
+    return authenticationStrategyStr;
+  }
 
-    public void setAuthenticationStrategyStr(String authenticationStrategyStr) {
-        this.authenticationStrategyStr = authenticationStrategyStr;
-    }
+  public void setAuthenticationStrategyStr(String authenticationStrategyStr) {
+    this.authenticationStrategyStr = authenticationStrategyStr;
+  }
 
-    public Long getDiscoveryFrequencyMills() {
-        return discoveryFrequencyMills;
-    }
+  public Long getDiscoveryFrequencyMills() {
+    return discoveryFrequencyMills;
+  }
 
-    public void setDiscoveryFrequencyMills(Long discoveryFrequencyMills) {
-        this.discoveryFrequencyMills = discoveryFrequencyMills;
-    }
+  public void setDiscoveryFrequencyMills(Long discoveryFrequencyMills) {
+    this.discoveryFrequencyMills = discoveryFrequencyMills;
+  }
 
-    public Integer getMaxConnectionSize() {
-        return maxConnectionSize;
-    }
+  public Integer getMaxConnectionSize() {
+    return maxConnectionSize;
+  }
 
-    public void setMaxConnectionSize(Integer maxConnectionSize) {
-        this.maxConnectionSize = maxConnectionSize;
-    }
+  public void setMaxConnectionSize(Integer maxConnectionSize) {
+    this.maxConnectionSize = maxConnectionSize;
+  }
 
-    public Boolean getRetryEnabled() {
-        return retryEnabled;
-    }
+  public Boolean getRetryEnabled() {
+    return retryEnabled;
+  }
 
-    public void setRetryEnabled(Boolean retryEnabled) {
-        this.retryEnabled = retryEnabled;
-    }
+  public void setRetryEnabled(Boolean retryEnabled) {
+    this.retryEnabled = retryEnabled;
+  }
 
-    public String getDwsVersion() {
-        return dwsVersion;
-    }
+  public String getDwsVersion() {
+    return dwsVersion;
+  }
 
-    public void setDwsVersion(String dwsVersion) {
-        this.dwsVersion = dwsVersion;
-    }
+  public void setDwsVersion(String dwsVersion) {
+    this.dwsVersion = dwsVersion;
+  }
 }

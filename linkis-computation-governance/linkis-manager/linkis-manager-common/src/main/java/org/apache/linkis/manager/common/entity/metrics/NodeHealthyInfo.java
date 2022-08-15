@@ -21,23 +21,23 @@ import org.apache.linkis.manager.common.entity.enumeration.NodeHealthy;
 
 public class NodeHealthyInfo {
 
-    private NodeHealthy nodeHealthy;
+  private NodeHealthy nodeHealthy;
 
-    private String msg;
+  private String msg;
 
-    public NodeHealthy getNodeHealthy() {
-        return nodeHealthy;
-    }
+  public NodeHealthy getNodeHealthy() {
+    return nodeHealthy;
+  }
 
-    public void setNodeHealthy(NodeHealthy nodeHealthy) {
-        this.nodeHealthy = nodeHealthy;
-    }
+  public void setNodeHealthy(NodeHealthy nodeHealthy) {
+    this.nodeHealthy = nodeHealthy;
+  }
 
-    public String getMsg() {
-        return msg;
-    }
+  public String getMsg() {
+    return msg;
+  }
 
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
+  public void setMsg(String msg) {
+    this.msg = msg;
+  }
 }

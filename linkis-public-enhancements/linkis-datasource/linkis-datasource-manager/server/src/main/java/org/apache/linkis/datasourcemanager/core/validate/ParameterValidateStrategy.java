@@ -21,21 +21,21 @@ import org.apache.linkis.datasourcemanager.common.domain.DataSourceParamKeyDefin
 
 /** Parameter validate strategy */
 public interface ParameterValidateStrategy {
-    /**
-     * If accept value type
-     *
-     * @param valueType validate type
-     * @return result
-     */
-    boolean accept(DataSourceParamKeyDefinition.ValueType valueType);
+  /**
+   * If accept value type
+   *
+   * @param valueType validate type
+   * @return result
+   */
+  boolean accept(DataSourceParamKeyDefinition.ValueType valueType);
 
-    /**
-     * Validate actual value by key definition
-     *
-     * @param keyDefinition key definition
-     * @param actualValue actual value
-     * @return new value
-     */
-    Object validate(DataSourceParamKeyDefinition keyDefinition, Object actualValue)
-            throws ParameterValidateException;
+  /**
+   * Validate actual value by key definition
+   *
+   * @param keyDefinition key definition
+   * @param actualValue actual value
+   * @return new value
+   */
+  Object validate(DataSourceParamKeyDefinition keyDefinition, Object actualValue)
+      throws ParameterValidateException;
 }

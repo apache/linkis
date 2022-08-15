@@ -20,69 +20,69 @@ package org.apache.linkis.manager.engineplugin.jdbc.monitor.impl;
 import org.apache.linkis.manager.engineplugin.jdbc.monitor.ProgressMonitor;
 import org.apache.linkis.protocol.engine.JobProgressInfo;
 
+import java.sql.Statement;
+
 import io.trino.jdbc.QueryStats;
 import io.trino.jdbc.TrinoStatement;
 
-import java.sql.Statement;
-
 public class TrinoProgressMonitor extends ProgressMonitor<QueryStats> {
-    private volatile Runnable callback;
-    private volatile double sqlProgress = 0.0;
-    private volatile int completedSplits = 0;
-    private volatile int totalSplits = 0;
-    private volatile int runningSplits = 0;
+  private volatile Runnable callback;
+  private volatile double sqlProgress = 0.0;
+  private volatile int completedSplits = 0;
+  private volatile int totalSplits = 0;
+  private volatile int runningSplits = 0;
 
-    @Override
-    public void accept(QueryStats stats) {
-        sqlProgress = stats.getProgressPercentage().orElse(0.0) / 100;
-        completedSplits = stats.getCompletedSplits();
-        totalSplits = stats.getTotalSplits();
-        runningSplits = stats.getRunningSplits();
+  @Override
+  public void accept(QueryStats stats) {
+    sqlProgress = stats.getProgressPercentage().orElse(0.0) / 100;
+    completedSplits = stats.getCompletedSplits();
+    totalSplits = stats.getTotalSplits();
+    runningSplits = stats.getRunningSplits();
 
-        if (callback != null) {
-            callback.run();
-        }
+    if (callback != null) {
+      callback.run();
     }
+  }
 
-    @Override
-    public void attach(Statement statement) {
-        if (statement instanceof TrinoStatement) {
-            ((TrinoStatement) statement).setProgressMonitor(this);
-        }
+  @Override
+  public void attach(Statement statement) {
+    if (statement instanceof TrinoStatement) {
+      ((TrinoStatement) statement).setProgressMonitor(this);
     }
+  }
 
-    @Override
-    public void callback(Runnable callback) {
-        this.callback = callback;
-    }
+  @Override
+  public void callback(Runnable callback) {
+    this.callback = callback;
+  }
 
-    @Override
-    public float getSqlProgress() {
-        return Double.valueOf(sqlProgress).floatValue();
-    }
+  @Override
+  public float getSqlProgress() {
+    return Double.valueOf(sqlProgress).floatValue();
+  }
 
-    @Override
-    public int getSucceedTasks() {
-        return completedSplits;
-    }
+  @Override
+  public int getSucceedTasks() {
+    return completedSplits;
+  }
 
-    @Override
-    public int getTotalTasks() {
-        return totalSplits;
-    }
+  @Override
+  public int getTotalTasks() {
+    return totalSplits;
+  }
 
-    @Override
-    public int getRunningTasks() {
-        return runningSplits;
-    }
+  @Override
+  public int getRunningTasks() {
+    return runningSplits;
+  }
 
-    @Override
-    public int getFailedTasks() {
-        return 0;
-    }
+  @Override
+  public int getFailedTasks() {
+    return 0;
+  }
 
-    @Override
-    public JobProgressInfo jobProgressInfo(String id) {
-        return new JobProgressInfo(id, totalSplits, runningSplits, 0, completedSplits);
-    }
+  @Override
+  public JobProgressInfo jobProgressInfo(String id) {
+    return new JobProgressInfo(id, totalSplits, runningSplits, 0, completedSplits);
+  }
 }

@@ -26,10 +26,10 @@ import org.apache.linkis.cli.core.present.display.data.StdoutDisplayData;
 import org.apache.linkis.cli.core.utils.CommonUtils;
 
 public class DefaultStdOutPresenter implements Presenter {
-    DisplayOperator driver = new StdOutWriter();
+  DisplayOperator driver = new StdOutWriter();
 
-    @Override
-    public void present(Model model, PresentWay presentWay) {
-        driver.doOutput(new StdoutDisplayData(CommonUtils.GSON.toJson(model)));
-    }
+  @Override
+  public void present(Model model, PresentWay presentWay) {
+    driver.doOutput(new StdoutDisplayData(CommonUtils.GSON.toJson(model)));
+  }
 }

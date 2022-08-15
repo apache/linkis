@@ -32,147 +32,145 @@ import org.apache.linkis.cli.core.interactor.command.parser.transformer.ParamKey
 
 import org.apache.commons.lang3.StringUtils;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public abstract class AbstarctParser implements Parser {
-    private static final Logger logger = LoggerFactory.getLogger(AbstarctParser.class);
+  private static final Logger logger = LoggerFactory.getLogger(AbstarctParser.class);
 
-    Fitter fitter;
-    CmdTemplate template;
-    ParamKeyMapper mapper;
+  Fitter fitter;
+  CmdTemplate template;
+  ParamKeyMapper mapper;
 
-    public AbstarctParser setFitter(Fitter fitter) {
-        this.fitter = fitter;
-        return this;
+  public AbstarctParser setFitter(Fitter fitter) {
+    this.fitter = fitter;
+    return this;
+  }
+
+  public AbstarctParser setTemplate(CmdTemplate template) {
+    this.template = template;
+    return this;
+  }
+
+  public AbstarctParser setMapper(ParamKeyMapper mapper) {
+    this.mapper = mapper;
+    return this;
+  }
+
+  public void checkInit() {
+    if (fitter == null) {
+      throw new CommandException(
+          "CMD0013",
+          ErrorLevel.ERROR,
+          CommonErrMsg.ParserInitErr,
+          "failed to init parser: \n" + "fitter is null");
+    }
+    if (template == null) {
+      throw new CommandException(
+          "CMD0013",
+          ErrorLevel.ERROR,
+          CommonErrMsg.ParserInitErr,
+          "failed to init parser: \n" + "template is null");
+    }
+  }
+
+  public Params templateToParams(CmdTemplate template, ParamKeyMapper mapper) {
+    List<CmdOption<?>> options = template.getOptions();
+
+    Map<String, ParamItem> params = new HashMap<>();
+    StringBuilder mapperInfoSb = new StringBuilder();
+
+    for (CmdOption<?> option : options) {
+      ParamItem paramItem = optionToParamItem(option, params, mapper, mapperInfoSb);
+      if (params.containsKey(paramItem.getKey())) {
+        throw new TransformerException(
+            "TFM0012",
+            ErrorLevel.ERROR,
+            CommonErrMsg.TransformerException,
+            MessageFormat.format(
+                "Failed to convert option into ParamItem: params contains duplicated identifier: \"{0}\"",
+                option.getKey()));
+
+      } else {
+        params.put(paramItem.getKey(), paramItem);
+      }
     }
 
-    public AbstarctParser setTemplate(CmdTemplate template) {
-        this.template = template;
-        return this;
+    if (mapper != null) {
+      logger.info("\nParam Key Substitution: " + mapperInfoSb.toString());
     }
+    Map<String, Object> extraProperties = new HashMap<>();
+    return new Params(null, template.getCmdType(), params, extraProperties);
+  }
 
-    public AbstarctParser setMapper(ParamKeyMapper mapper) {
-        this.mapper = mapper;
-        return this;
+  protected ParamItem optionToParamItem(
+      CmdOption<?> option,
+      Map<String, ParamItem> params,
+      ParamKeyMapper mapper,
+      StringBuilder mapperInfoSb) {
+    String oriKey = option.getKey();
+    String keyPrefix = option.getKeyPrefix();
+    String key = oriKey;
+    if (params.containsKey(oriKey)) {
+      throw new TransformerException(
+          "TFM0012",
+          ErrorLevel.ERROR,
+          CommonErrMsg.TransformerException,
+          MessageFormat.format(
+              "Failed to convert option into ParamItem: params contains duplicated identifier: \"{0}\"",
+              option.getKey()));
     }
-
-    public void checkInit() {
-        if (fitter == null) {
-            throw new CommandException(
-                    "CMD0013",
-                    ErrorLevel.ERROR,
-                    CommonErrMsg.ParserInitErr,
-                    "failed to init parser: \n" + "fitter is null");
-        }
-        if (template == null) {
-            throw new CommandException(
-                    "CMD0013",
-                    ErrorLevel.ERROR,
-                    CommonErrMsg.ParserInitErr,
-                    "failed to init parser: \n" + "template is null");
-        }
+    if (mapper != null) {
+      key = getMappedKey(oriKey, mapper, mapperInfoSb);
     }
-
-    public Params templateToParams(CmdTemplate template, ParamKeyMapper mapper) {
-        List<CmdOption<?>> options = template.getOptions();
-
-        Map<String, ParamItem> params = new HashMap<>();
-        StringBuilder mapperInfoSb = new StringBuilder();
-
-        for (CmdOption<?> option : options) {
-            ParamItem paramItem = optionToParamItem(option, params, mapper, mapperInfoSb);
-            if (params.containsKey(paramItem.getKey())) {
-                throw new TransformerException(
-                        "TFM0012",
-                        ErrorLevel.ERROR,
-                        CommonErrMsg.TransformerException,
-                        MessageFormat.format(
-                                "Failed to convert option into ParamItem: params contains duplicated identifier: \"{0}\"",
-                                option.getKey()));
-
-            } else {
-                params.put(paramItem.getKey(), paramItem);
-            }
-        }
-
-        if (mapper != null) {
-            logger.info("\nParam Key Substitution: " + mapperInfoSb.toString());
-        }
-        Map<String, Object> extraProperties = new HashMap<>();
-        return new Params(null, template.getCmdType(), params, extraProperties);
+    Object val = option.getValue();
+    if (option.getValue() != null
+        && option.getValue() instanceof Map
+        && !(option.getValue() instanceof SpecialMap)) {
+      Map<String, Object> subMap;
+      try {
+        subMap = (Map<String, Object>) option.getValue();
+      } catch (Exception e) {
+        logger.warn("Failed to get subMap for option: " + option.getKey() + ".", e);
+        return null;
+      }
+      if (mapper != null) {
+        subMap = mapper.getMappedMapping(subMap);
+      }
+      val = addPrefixToSubMapKey(subMap, keyPrefix);
     }
+    return new ParamItem(keyPrefix, key, val, option.hasVal(), option.getDefaultValue());
+  }
 
-    protected ParamItem optionToParamItem(
-            CmdOption<?> option,
-            Map<String, ParamItem> params,
-            ParamKeyMapper mapper,
-            StringBuilder mapperInfoSb) {
-        String oriKey = option.getKey();
-        String keyPrefix = option.getKeyPrefix();
-        String key = oriKey;
-        if (params.containsKey(oriKey)) {
-            throw new TransformerException(
-                    "TFM0012",
-                    ErrorLevel.ERROR,
-                    CommonErrMsg.TransformerException,
-                    MessageFormat.format(
-                            "Failed to convert option into ParamItem: params contains duplicated identifier: \"{0}\"",
-                            option.getKey()));
-        }
-        if (mapper != null) {
-            key = getMappedKey(oriKey, mapper, mapperInfoSb);
-        }
-        Object val = option.getValue();
-        if (option.getValue() != null
-                && option.getValue() instanceof Map
-                && !(option.getValue() instanceof SpecialMap)) {
-            Map<String, Object> subMap;
-            try {
-                subMap = (Map<String, Object>) option.getValue();
-            } catch (Exception e) {
-                logger.warn("Failed to get subMap for option: " + option.getKey() + ".", e);
-                return null;
-            }
-            if (mapper != null) {
-                subMap = mapper.getMappedMapping(subMap);
-            }
-            val = addPrefixToSubMapKey(subMap, keyPrefix);
-        }
-        return new ParamItem(keyPrefix, key, val, option.hasVal(), option.getDefaultValue());
+  private Map<String, Object> addPrefixToSubMapKey(Map<String, Object> subMap, String keyPrefix) {
+    Map<String, Object> newSubMap = new HashMap<>();
+    StringBuilder keyBuilder = new StringBuilder();
+    for (Map.Entry<String, Object> entry : subMap.entrySet()) {
+      if (StringUtils.isNotBlank(keyPrefix) && !StringUtils.startsWith(entry.getKey(), keyPrefix)) {
+        keyBuilder.append(keyPrefix).append('.').append(entry.getKey());
+      } else {
+        keyBuilder.append(entry.getKey());
+      }
+      newSubMap.put(keyBuilder.toString(), entry.getValue());
+      keyBuilder.setLength(0);
     }
+    return newSubMap;
+  }
 
-    private Map<String, Object> addPrefixToSubMapKey(Map<String, Object> subMap, String keyPrefix) {
-        Map<String, Object> newSubMap = new HashMap<>();
-        StringBuilder keyBuilder = new StringBuilder();
-        for (Map.Entry<String, Object> entry : subMap.entrySet()) {
-            if (StringUtils.isNotBlank(keyPrefix)
-                    && !StringUtils.startsWith(entry.getKey(), keyPrefix)) {
-                keyBuilder.append(keyPrefix).append('.').append(entry.getKey());
-            } else {
-                keyBuilder.append(entry.getKey());
-            }
-            newSubMap.put(keyBuilder.toString(), entry.getValue());
-            keyBuilder.setLength(0);
-        }
-        return newSubMap;
+  protected String getMappedKey(String keyOri, ParamKeyMapper mapper, StringBuilder mapperInfoSb) {
+    /** Transform option keys */
+    String key = mapper.getMappedKey(keyOri);
+    if (!key.equals(keyOri)) {
+      mapperInfoSb.append("\n\t").append(keyOri).append(" ==> ").append(key);
     }
+    return key;
+  }
 
-    protected String getMappedKey(
-            String keyOri, ParamKeyMapper mapper, StringBuilder mapperInfoSb) {
-        /** Transform option keys */
-        String key = mapper.getMappedKey(keyOri);
-        if (!key.equals(keyOri)) {
-            mapperInfoSb.append("\n\t").append(keyOri).append(" ==> ").append(key);
-        }
-        return key;
-    }
-
-    @Override
-    public abstract ParseResult parse(String[] input);
+  @Override
+  public abstract ParseResult parse(String[] input);
 }

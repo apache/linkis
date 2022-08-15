@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,9 +19,11 @@ package org.apache.linkis.manager.rm.service.impl
 
 import org.apache.linkis.manager.common.entity.resource.{ResourceSerializer, ResourceType}
 import org.apache.linkis.manager.rm.service.{LabelResourceService, RequestResourceService}
+
 import org.json4s.DefaultFormats
 
-class DefaultReqResourceService(labelResourceService: LabelResourceService) extends RequestResourceService(labelResourceService) {
+class DefaultReqResourceService(labelResourceService: LabelResourceService)
+    extends RequestResourceService(labelResourceService) {
 
   implicit val formats = DefaultFormats + ResourceSerializer
 

@@ -23,37 +23,37 @@ import org.apache.linkis.manager.engineplugin.common.loader.entity.EngineConnPlu
 
 public interface RefreshableEngineConnPluginCache extends EngineConnPluginCache {
 
-    /**
-     * Add the refreshListener
-     *
-     * @param refreshListener listener
-     */
-    void addRefreshListener(RefreshListener refreshListener);
+  /**
+   * Add the refreshListener
+   *
+   * @param refreshListener listener
+   */
+  void addRefreshListener(RefreshListener refreshListener);
+
+  /**
+   * Set refresher
+   *
+   * @param refresher
+   */
+  void setRefresher(PluginCacheRefresher refresher);
+
+  /**
+   * Refresh method
+   *
+   * @param pluginInfo
+   * @param pluginInstance
+   * @throws Exception
+   */
+  void refresh(EngineConnPluginInfo pluginInfo, EngineConnPluginInstance pluginInstance)
+      throws Exception;
+
+  interface RefreshListener {
 
     /**
-     * Set refresher
+     * On refresh
      *
-     * @param refresher
+     * @param enginePluginInfo plugin info
      */
-    void setRefresher(PluginCacheRefresher refresher);
-
-    /**
-     * Refresh method
-     *
-     * @param pluginInfo
-     * @param pluginInstance
-     * @throws Exception
-     */
-    void refresh(EngineConnPluginInfo pluginInfo, EngineConnPluginInstance pluginInstance)
-            throws Exception;
-
-    interface RefreshListener {
-
-        /**
-         * On refresh
-         *
-         * @param enginePluginInfo plugin info
-         */
-        void onRefresh(EngineConnPluginInfo enginePluginInfo);
-    }
+    void onRefresh(EngineConnPluginInfo enginePluginInfo);
+  }
 }

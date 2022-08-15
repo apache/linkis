@@ -25,24 +25,24 @@ import java.util.List;
 
 public abstract class ContextIDService extends AbstractService {
 
-    public abstract String createContextID(ContextID contextID) throws CSErrorException;
+  public abstract String createContextID(ContextID contextID) throws CSErrorException;
 
-    public abstract ContextID getContextID(String id) throws CSErrorException;
+  public abstract ContextID getContextID(String id) throws CSErrorException;
 
-    public abstract void updateContextID(ContextID contextID) throws CSErrorException;
+  public abstract void updateContextID(ContextID contextID) throws CSErrorException;
 
-    public abstract void resetContextID(String id) throws CSErrorException;
+  public abstract void resetContextID(String id) throws CSErrorException;
 
-    public abstract void removeContextID(String id) throws CSErrorException;
+  public abstract void removeContextID(String id) throws CSErrorException;
 
-    public abstract List<String> searchCSIDByTime(
-            Date createTimeStart,
-            Date createTimeEnd,
-            Date updateTimeStart,
-            Date updateTimeEnd,
-            Date accessTimeStart,
-            Date accessTimeEnd,
-            Integer pageNow,
-            Integer pageSize)
-            throws CSErrorException;
+  public abstract List<String> searchCSIDByTime(
+      Date createTimeStart,
+      Date createTimeEnd,
+      Date updateTimeStart,
+      Date updateTimeEnd,
+      Date accessTimeStart,
+      Date accessTimeEnd,
+      Integer pageNow,
+      Integer pageSize)
+      throws CSErrorException;
 }

@@ -17,7 +17,6 @@
 
 package org.apache.linkis.mybatis;
 
-import org.apache.linkis.common.utils.JavaLog;
 import org.apache.linkis.mybatis.conf.MybatisConfiguration;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -27,7 +26,6 @@ import org.apache.ibatis.session.SqlSessionFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -40,105 +38,104 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
 
-import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
-import com.github.pagehelper.PageInterceptor;
-import org.mybatis.spring.SqlSessionTemplate;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
+import com.github.pagehelper.PageInterceptor;
+import org.mybatis.spring.SqlSessionTemplate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @Configuration
-@ConfigurationProperties
 @AutoConfigureAfter(DataSourceConfig.class)
 @EnableTransactionManagement
-public class MybatisConfigurationFactory extends JavaLog {
+public class MybatisConfigurationFactory {
 
-    @Autowired private DataSource dataSource;
-    // Provide SqlSeesion(提供SqlSeesion)
-    @Bean(name = "sqlSessionFactory")
-    @Primary
-    public MybatisSqlSessionFactoryBean sqlSessionFactory() {
-        String typeAliasesPackage =
-                MybatisConfiguration.BDP_SERVER_MYBATIS_TYPEALIASESPACKAGE.getValue();
-        // Configure the mapper scan to find all mapper.xml mapping
-        // files(配置mapper的扫描，找到所有的mapper.xml映射文件)
-        String mapperLocations =
-                MybatisConfiguration.BDP_SERVER_MYBATIS_MAPPER_LOCATIONS.getValue();
-        // Load the global configuration file(加载全局的配置文件)
-        String configLocation = MybatisConfiguration.BDP_SERVER_MYBATIS_CONFIGLOCATION.getValue();
-        try {
-            MybatisSqlSessionFactoryBean sessionFactoryBean = new MybatisSqlSessionFactoryBean();
-            sessionFactoryBean.setDataSource(dataSource);
+  private static final Logger logger = LoggerFactory.getLogger(MybatisConfigurationFactory.class);
 
-            info("Mybatis typeAliasesPackage=" + typeAliasesPackage);
-            info("Mybatis mapperLocations=" + mapperLocations);
-            info("Mybatis configLocation=" + configLocation);
-            // Read configuration(读取配置)
-            sessionFactoryBean.setTypeAliasesPackage(typeAliasesPackage);
+  @Autowired private DataSource dataSource;
 
-            // Set the location of the mapper.xml file(设置mapper.xml文件所在位置)
-            if (StringUtils.isNotBlank(mapperLocations)) {
-                String[] mapperArray = mapperLocations.split(",");
-                List<Resource> resources = new ArrayList<>();
-                for (String mapperLocation : mapperArray) {
-                    CollectionUtils.addAll(
-                            resources,
-                            new PathMatchingResourcePatternResolver().getResources(mapperLocation));
-                }
-                sessionFactoryBean.setMapperLocations(resources.toArray(new Resource[0]));
-            }
-            /* Resource[] resources = new PathMatchingResourcePatternResolver().getResources(mapperLocations);
-            sessionFactoryBean.setMapperLocations(resources);*/
-            //            Set the location of the mybatis-config.xml configuration
-            // file(设置mybatis-config.xml配置文件位置)
-            sessionFactoryBean.setConfigLocation(
-                    new DefaultResourceLoader().getResource(configLocation));
+  @Bean(name = "sqlSessionFactory")
+  @Primary
+  public MybatisSqlSessionFactoryBean sqlSessionFactory() {
+    String typeAliasesPackage =
+        MybatisConfiguration.BDP_SERVER_MYBATIS_TYPEALIASESPACKAGE.getValue();
+    // Configure the mapper scan to find all mapper.xml mapping
+    // files(配置mapper的扫描，找到所有的mapper.xml映射文件)
+    String mapperLocations = MybatisConfiguration.BDP_SERVER_MYBATIS_MAPPER_LOCATIONS.getValue();
+    // Load the global configuration file(加载全局的配置文件)
+    String configLocation = MybatisConfiguration.BDP_SERVER_MYBATIS_CONFIGLOCATION.getValue();
+    try {
+      MybatisSqlSessionFactoryBean sessionFactoryBean = new MybatisSqlSessionFactoryBean();
+      sessionFactoryBean.setDataSource(dataSource);
 
-            //            Add paging plugin, print sql plugin(添加分页插件、打印sql插件)
-            Interceptor[] plugins = new Interceptor[] {pageInterceptor()};
-            sessionFactoryBean.setPlugins(plugins);
+      logger.info("Mybatis typeAliasesPackage=" + typeAliasesPackage);
+      logger.info("Mybatis mapperLocations=" + mapperLocations);
+      logger.info("Mybatis configLocation=" + configLocation);
+      // Read configuration(读取配置)
+      sessionFactoryBean.setTypeAliasesPackage(typeAliasesPackage);
 
-            return sessionFactoryBean;
-        } catch (IOException e) {
-            error("mybatis resolver mapper*xml is error", e);
-            return null;
-        } catch (Exception e) {
-            error("mybatis sqlSessionFactoryBean create error", e);
-            return null;
+      // Set the location of the mapper.xml file(设置mapper.xml文件所在位置)
+      if (StringUtils.isNotBlank(mapperLocations)) {
+        String[] mapperArray = mapperLocations.split(",");
+        List<Resource> resources = new ArrayList<>();
+        for (String mapperLocation : mapperArray) {
+          CollectionUtils.addAll(
+              resources, new PathMatchingResourcePatternResolver().getResources(mapperLocation));
         }
-    }
+        sessionFactoryBean.setMapperLocations(resources.toArray(new Resource[0]));
+      }
+      /* Resource[] resources = new PathMatchingResourcePatternResolver().getResources(mapperLocations);
+      sessionFactoryBean.setMapperLocations(resources);*/
+      //            Set the location of the mybatis-config.xml configuration
+      // file(设置mybatis-config.xml配置文件位置)
+      sessionFactoryBean.setConfigLocation(new DefaultResourceLoader().getResource(configLocation));
 
-    @Bean
-    @Primary
-    public SqlSessionTemplate sqlSessionTemplate(SqlSessionFactory sqlSessionFactory) {
-        return new SqlSessionTemplate(sqlSessionFactory);
-    }
+      //            Add paging plugin, print sql plugin(添加分页插件、打印sql插件)
+      Interceptor[] plugins = new Interceptor[] {pageInterceptor()};
+      sessionFactoryBean.setPlugins(plugins);
 
-    // Transaction management(事务管理)
-    @Bean
-    @Primary
-    public PlatformTransactionManager annotationDrivenTransactionManager() {
-        return new DataSourceTransactionManager(dataSource);
+      return sessionFactoryBean;
+    } catch (IOException e) {
+      logger.error("mybatis resolver mapper*xml is error", e);
+      return null;
+    } catch (Exception e) {
+      logger.error("mybatis sqlSessionFactoryBean create error", e);
+      return null;
     }
-    //    Log the log to be executed (if you don't want to intercept it, comment out this method)
-    //    将要执行的sql进行日志打印(不想拦截，就把这方法注释掉)
-    //    @Bean
-    //    public SqlPrintInterceptor sqlPrintInterceptor(){
-    //        return new SqlPrintInterceptor();
-    //    }
+  }
 
-    @Bean
-    public PageInterceptor pageInterceptor() {
-        PageInterceptor pageInterceptor = new PageInterceptor();
-        Properties p = new Properties();
-        //        p.setProperty("offsetAsPageNum", "true");
-        //        p.setProperty("rowBoundsWithCount", "true");
-        p.setProperty("reasonable", "true");
-        p.setProperty("pageSizeZero", "true");
-        p.setProperty("helperDialect", "mysql");
-        pageInterceptor.setProperties(p);
-        return pageInterceptor;
-    }
+  @Bean
+  @Primary
+  public SqlSessionTemplate sqlSessionTemplate(SqlSessionFactory sqlSessionFactory) {
+    return new SqlSessionTemplate(sqlSessionFactory);
+  }
+
+  @Bean
+  @Primary
+  public PlatformTransactionManager annotationDrivenTransactionManager() {
+    return new DataSourceTransactionManager(dataSource);
+  }
+  //    Log the log to be executed (if you don't want to intercept it, comment out this method)
+  //    将要执行的sql进行日志打印(不想拦截，就把这方法注释掉)
+  //    @Bean
+  //    public SqlPrintInterceptor sqlPrintInterceptor(){
+  //        return new SqlPrintInterceptor();
+  //    }
+
+  @Bean
+  public PageInterceptor pageInterceptor() {
+    PageInterceptor pageInterceptor = new PageInterceptor();
+    Properties p = new Properties();
+    //        p.setProperty("offsetAsPageNum", "true");
+    //        p.setProperty("rowBoundsWithCount", "true");
+    p.setProperty("reasonable", "true");
+    p.setProperty("pageSizeZero", "true");
+    p.setProperty("helperDialect", "mysql");
+    pageInterceptor.setProperties(p);
+    return pageInterceptor;
+  }
 }

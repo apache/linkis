@@ -5,23 +5,28 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.orchestrator.ecm.service.impl
 
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
-import org.apache.linkis.governance.common.protocol.task.{RequestTask, RequestTaskKill, RequestTaskStatus, ResponseTaskStatus}
+import org.apache.linkis.governance.common.protocol.task.{
+  RequestTask,
+  RequestTaskKill,
+  RequestTaskStatus,
+  ResponseTaskStatus
+}
 import org.apache.linkis.manager.common.entity.node.EngineNode
 import org.apache.linkis.manager.common.protocol.RequestManagerUnlock
 import org.apache.linkis.orchestrator.ecm.conf.ECMPluginConf
@@ -31,11 +36,8 @@ import org.apache.linkis.orchestrator.ecm.utils.ECMPUtils
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.scheduler.executer._
 
-
 /**
-  *
-  *
-  */
+ */
 class ComputationEngineConnExecutor(engineNode: EngineNode) extends AbstractEngineConnExecutor {
 
   private val locker: String = engineNode.getLock
@@ -46,7 +48,8 @@ class ComputationEngineConnExecutor(engineNode: EngineNode) extends AbstractEngi
 
   override def close(): Unit = {
     logger.info(s"Start to release engineConn $getServiceInstance")
-    val requestManagerUnlock = RequestManagerUnlock(getServiceInstance, locker, Sender.getThisServiceInstance)
+    val requestManagerUnlock =
+      RequestManagerUnlock(getServiceInstance, locker, Sender.getThisServiceInstance)
     killAll()
     getManagerSender.send(requestManagerUnlock)
     logger.debug(s"Finished to release engineConn $getServiceInstance")
@@ -68,33 +71,52 @@ class ComputationEngineConnExecutor(engineNode: EngineNode) extends AbstractEngi
   }
 
   override def execute(requestTask: RequestTask): ExecuteResponse = {
-    logger.debug(s"Start to submit task${requestTask.getSourceID()} to engineConn($getServiceInstance)")
+    logger.debug(
+      s"Start to submit task${requestTask.getSourceID()} to engineConn($getServiceInstance)"
+    )
     requestTask.setLabels(ECMPUtils.filterJobStrategyLabel(requestTask.getLabels))
     requestTask.setLock(this.locker)
     getEngineConnSender.ask(requestTask) match {
       case submitResponse: SubmitResponse =>
-        logger.info(s"Succeed to submit task${requestTask.getSourceID()} to engineConn($getServiceInstance), Get asyncResponse execID is ${submitResponse}")
+        logger.info(
+          s"Succeed to submit task${requestTask.getSourceID()} to engineConn($getServiceInstance), Get asyncResponse execID is ${submitResponse}"
+        )
         getRunningTasks.put(submitResponse.taskId, requestTask)
         submitResponse
       case outPutResponse: OutputExecuteResponse =>
-        logger.info(s" engineConn($getServiceInstance) Succeed to execute task${requestTask.getSourceID()}, and get Res")
+        logger.info(
+          s" engineConn($getServiceInstance) Succeed to execute task${requestTask.getSourceID()}, and get Res"
+        )
         outPutResponse
       case errorExecuteResponse: ErrorExecuteResponse =>
-        logger.error(s"engineConn($getServiceInstance) Failed to execute task${requestTask.getSourceID()} ,error msg ${errorExecuteResponse.message}", errorExecuteResponse.t)
+        logger.error(
+          s"engineConn($getServiceInstance) Failed to execute task${requestTask
+            .getSourceID()} ,error msg ${errorExecuteResponse.message}",
+          errorExecuteResponse.t
+        )
         errorExecuteResponse
       case successExecuteResponse: SuccessExecuteResponse =>
-        logger.info(s" engineConn($getServiceInstance) Succeed to execute task${requestTask.getSourceID()}, no res")
+        logger.info(
+          s" engineConn($getServiceInstance) Succeed to execute task${requestTask.getSourceID()}, no res"
+        )
         successExecuteResponse
       case _ =>
-        throw new ECMPluginErrorException(ECMPluginConf.ECM_ERROR_CODE, s"engineConn($getServiceInstance) Failed to execute task${requestTask.getSourceID()}, get response error")
+        throw new ECMPluginErrorException(
+          ECMPluginConf.ECM_ERROR_CODE,
+          s"engineConn($getServiceInstance) Failed to execute task${requestTask.getSourceID()}, get response error"
+        )
     }
   }
 
   override def killTask(execId: String): Boolean = {
     Utils.tryCatch {
-      logger.info(s"begin to send RequestTaskKill to engineConn($getServiceInstance), execID: $execId")
+      logger.info(
+        s"begin to send RequestTaskKill to engineConn($getServiceInstance), execID: $execId"
+      )
       getEngineConnSender.send(RequestTaskKill(execId))
-      logger.info(s"Finished to send RequestTaskKill to engineConn($getServiceInstance), execID: $execId")
+      logger.info(
+        s"Finished to send RequestTaskKill to engineConn($getServiceInstance), execID: $execId"
+      )
       true
     } { t: Throwable =>
       logger.error(s"Failed to kill task $execId engineConn($getServiceInstance)", t)
@@ -116,22 +138,22 @@ class ComputationEngineConnExecutor(engineNode: EngineNode) extends AbstractEngi
   }
 
   override def pause(execId: String): Boolean = {
-    //TODO
+    // TODO
     true
   }
 
   override def pauseAll(): Boolean = {
-    //TODO
+    // TODO
     true
   }
 
   override def resume(execId: String): Boolean = {
-    //TODO
+    // TODO
     true
   }
 
   override def resumeAll(): Boolean = {
-    //TODO
+    // TODO
     true
   }
 
@@ -140,16 +162,20 @@ class ComputationEngineConnExecutor(engineNode: EngineNode) extends AbstractEngi
       case ResponseTaskStatus(execId, status) =>
         status
       case _ =>
-        throw new ECMPluginErrorException(ECMPluginConf.ECM_ERROR_CODE, s"Failed to get engineConn($getServiceInstance) status ")
+        throw new ECMPluginErrorException(
+          ECMPluginConf.ECM_ERROR_CODE,
+          s"Failed to get engineConn($getServiceInstance) status "
+        )
     }
   }
 
-  private def getManagerSender: Sender = Sender.getSender(GovernanceCommonConf.MANAGER_SPRING_NAME.getValue)
+  private def getManagerSender: Sender =
+    Sender.getSender(GovernanceCommonConf.MANAGER_SPRING_NAME.getValue)
 
 }
 
-class ComputationConcurrentEngineConnExecutor(engineNode: EngineNode, parallelism: Int) extends
-  ComputationEngineConnExecutor(engineNode) {
+class ComputationConcurrentEngineConnExecutor(engineNode: EngineNode, parallelism: Int)
+    extends ComputationEngineConnExecutor(engineNode) {
 
   override def useEngineConn: Boolean = {
     isAvailable

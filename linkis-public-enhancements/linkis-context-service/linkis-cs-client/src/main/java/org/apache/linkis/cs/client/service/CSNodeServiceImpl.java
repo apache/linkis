@@ -29,36 +29,36 @@ import org.slf4j.LoggerFactory;
 
 public class CSNodeServiceImpl implements CSNodeService {
 
-    private static final Logger logger = LoggerFactory.getLogger(CSNodeServiceImpl.class);
+  private static final Logger logger = LoggerFactory.getLogger(CSNodeServiceImpl.class);
 
-    private SearchService searchService = DefaultSearchService.getInstance();
+  private SearchService searchService = DefaultSearchService.getInstance();
 
-    private static CSNodeService csNodeService;
+  private static CSNodeService csNodeService;
 
-    private CSNodeServiceImpl() {}
+  private CSNodeServiceImpl() {}
 
-    public static CSNodeService getInstance() {
+  public static CSNodeService getInstance() {
+    if (null == csNodeService) {
+      synchronized (CSNodeServiceImpl.class) {
         if (null == csNodeService) {
-            synchronized (CSNodeServiceImpl.class) {
-                if (null == csNodeService) {
-                    csNodeService = new CSNodeServiceImpl();
-                }
-            }
+          csNodeService = new CSNodeServiceImpl();
         }
-        return csNodeService;
+      }
     }
+    return csNodeService;
+  }
 
-    @Override
-    public void initNodeCSInfo(String contextIDStr, String ndeName) {
+  @Override
+  public void initNodeCSInfo(String contextIDStr, String ndeName) {
 
-        try {
-            ContextClient contextClient = ContextClientFactory.getOrCreateContextClient();
-            ContextID contextID = SerializeHelper.deserializeContextID(contextIDStr);
-            contextClient.removeAllValueByKeyPrefixAndContextType(
-                    contextID, ContextType.METADATA, CSCommonUtils.NODE_PREFIX + ndeName);
-            logger.info("contextIDStr: {} and  nodeName: {} init cs info", contextIDStr, ndeName);
-        } catch (Exception e) {
-            logger.error("Failed to init node cs Info", e);
-        }
+    try {
+      ContextClient contextClient = ContextClientFactory.getOrCreateContextClient();
+      ContextID contextID = SerializeHelper.deserializeContextID(contextIDStr);
+      contextClient.removeAllValueByKeyPrefixAndContextType(
+          contextID, ContextType.METADATA, CSCommonUtils.NODE_PREFIX + ndeName);
+      logger.info("contextIDStr: {} and  nodeName: {} init cs info", contextIDStr, ndeName);
+    } catch (Exception e) {
+      logger.error("Failed to init node cs Info", e);
     }
+  }
 }

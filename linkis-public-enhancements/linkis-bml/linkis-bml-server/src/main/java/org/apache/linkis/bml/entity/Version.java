@@ -19,23 +19,23 @@ package org.apache.linkis.bml.entity;
 
 public class Version {
 
-    private String version;
+  private String version;
 
-    private String resource;
+  private String resource;
 
-    public String getVersion() {
-        return version;
-    }
+  public String getVersion() {
+    return version;
+  }
 
-    public void setVersion(String version) {
-        this.version = version;
-    }
+  public void setVersion(String version) {
+    this.version = version;
+  }
 
-    public String getResource() {
-        return resource;
-    }
+  public String getResource() {
+    return resource;
+  }
 
-    public void setResource(String resource) {
-        this.resource = resource;
-    }
+  public void setResource(String resource) {
+    this.resource = resource;
+  }
 }

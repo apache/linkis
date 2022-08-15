@@ -21,17 +21,16 @@ import org.apache.linkis.common.exception.ErrorException;
 
 public class StorageErrorException extends ErrorException {
 
-    public StorageErrorException(int errCode, String desc) {
-        super(errCode, desc);
-    }
+  public StorageErrorException(int errCode, String desc) {
+    super(errCode, desc);
+  }
 
-    public StorageErrorException(int errCode, String desc, Throwable t) {
-        super(errCode, desc);
-        initCause(t);
-    }
+  public StorageErrorException(int errCode, String desc, Throwable t) {
+    super(errCode, desc);
+    initCause(t);
+  }
 
-    public StorageErrorException(
-            int errCode, String desc, String ip, int port, String serviceKind) {
-        super(errCode, desc, ip, port, serviceKind);
-    }
+  public StorageErrorException(int errCode, String desc, String ip, int port, String serviceKind) {
+    super(errCode, desc, ip, port, serviceKind);
+  }
 }

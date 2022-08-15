@@ -14,20 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.linkis.engineplugin.elasticsearch.executer.client
+
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.engineplugin.elasticsearch.executer.client.impl.ElasticSearchExecutorImpl
+import org.apache.linkis.scheduler.executer.ExecuteResponse
 
 import java.io.IOException
 import java.util
-import org.apache.linkis.common.utils.Logging
-import org.apache.linkis.scheduler.executer.ExecuteResponse
-import org.apache.linkis.engineplugin.elasticsearch.executer.client.impl.ElasticSearchExecutorImpl
 
 import scala.collection.JavaConverters._
 
 trait ElasticSearchExecutor extends Logging {
 
   @throws(classOf[IOException])
-  def open : Unit
+  def open: Unit
 
   def executeLine(code: String): ElasticSearchResponse
 

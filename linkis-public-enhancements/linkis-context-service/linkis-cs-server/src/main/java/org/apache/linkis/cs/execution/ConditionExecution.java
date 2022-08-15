@@ -28,17 +28,17 @@ import java.util.List;
 
 public interface ConditionExecution {
 
-    ContextSearchMatcher getContextSearchMatcher();
+  ContextSearchMatcher getContextSearchMatcher();
 
-    ContextSearchRuler getContextSearchRuler();
+  ContextSearchRuler getContextSearchRuler();
 
-    ContextCacheFetcher getContextCacheFetcher();
+  ContextCacheFetcher getContextCacheFetcher();
 
-    List<ContextKeyValue> execute();
+  List<ContextKeyValue> execute();
 
-    void setContextCacheService(ContextCacheService contextCacheService);
+  void setContextCacheService(ContextCacheService contextCacheService);
 
-    ContextCacheService getContextCacheService();
+  ContextCacheService getContextCacheService();
 
-    Condition getCondition();
+  Condition getCondition();
 }

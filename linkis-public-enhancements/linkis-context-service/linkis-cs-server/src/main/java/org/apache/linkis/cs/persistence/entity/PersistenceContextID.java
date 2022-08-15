@@ -27,121 +27,121 @@ import java.util.Date;
 @Ignore
 public class PersistenceContextID implements UserContextID, HAContextID {
 
-    private String contextId;
+  private String contextId;
 
-    private String user;
+  private String user;
 
-    private String instance;
+  private String instance;
 
-    private String backupInstance;
+  private String backupInstance;
 
-    private String application;
+  private String application;
 
-    private ExpireType expireType;
+  private ExpireType expireType;
 
-    private Date expireTime;
+  private Date expireTime;
 
-    private String source;
+  private String source;
 
-    private Date createTime;
+  private Date createTime;
 
-    private Date updateTime;
+  private Date updateTime;
 
-    private Date accessTime;
+  private Date accessTime;
 
-    public String getSource() {
-        return source;
-    }
+  public String getSource() {
+    return source;
+  }
 
-    public void setSource(String source) {
-        this.source = source;
-    }
+  public void setSource(String source) {
+    this.source = source;
+  }
 
-    @Override
-    public String getContextId() {
-        return this.contextId;
-    }
+  @Override
+  public String getContextId() {
+    return this.contextId;
+  }
 
-    @Override
-    public void setContextId(String contextId) {
-        this.contextId = contextId;
-    }
+  @Override
+  public void setContextId(String contextId) {
+    this.contextId = contextId;
+  }
 
-    @Override
-    public void setUser(String user) {
-        this.user = user;
-    }
+  @Override
+  public void setUser(String user) {
+    this.user = user;
+  }
 
-    @Override
-    public String getUser() {
-        return this.user;
-    }
+  @Override
+  public String getUser() {
+    return this.user;
+  }
 
-    @Override
-    public String getInstance() {
-        return this.instance;
-    }
+  @Override
+  public String getInstance() {
+    return this.instance;
+  }
 
-    @Override
-    public void setInstance(String instance) {
-        this.instance = instance;
-    }
+  @Override
+  public void setInstance(String instance) {
+    this.instance = instance;
+  }
 
-    @Override
-    public String getBackupInstance() {
-        return this.backupInstance;
-    }
+  @Override
+  public String getBackupInstance() {
+    return this.backupInstance;
+  }
 
-    @Override
-    public void setBackupInstance(String backupInstance) {
-        this.backupInstance = backupInstance;
-    }
+  @Override
+  public void setBackupInstance(String backupInstance) {
+    this.backupInstance = backupInstance;
+  }
 
-    public String getApplication() {
-        return application;
-    }
+  public String getApplication() {
+    return application;
+  }
 
-    public void setApplication(String application) {
-        this.application = application;
-    }
+  public void setApplication(String application) {
+    this.application = application;
+  }
 
-    public ExpireType getExpireType() {
-        return expireType;
-    }
+  public ExpireType getExpireType() {
+    return expireType;
+  }
 
-    public void setExpireType(ExpireType expireType) {
-        this.expireType = expireType;
-    }
+  public void setExpireType(ExpireType expireType) {
+    this.expireType = expireType;
+  }
 
-    public Date getExpireTime() {
-        return expireTime;
-    }
+  public Date getExpireTime() {
+    return expireTime;
+  }
 
-    public void setExpireTime(Date expireTime) {
-        this.expireTime = expireTime;
-    }
+  public void setExpireTime(Date expireTime) {
+    this.expireTime = expireTime;
+  }
 
-    public Date getCreateTime() {
-        return createTime;
-    }
+  public Date getCreateTime() {
+    return createTime;
+  }
 
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
+  public void setCreateTime(Date createTime) {
+    this.createTime = createTime;
+  }
 
-    public Date getUpdateTime() {
-        return updateTime;
-    }
+  public Date getUpdateTime() {
+    return updateTime;
+  }
 
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
-    }
+  public void setUpdateTime(Date updateTime) {
+    this.updateTime = updateTime;
+  }
 
-    public Date getAccessTime() {
-        return accessTime;
-    }
+  public Date getAccessTime() {
+    return accessTime;
+  }
 
-    public void setAccessTime(Date accessTime) {
-        this.accessTime = accessTime;
-    }
+  public void setAccessTime(Date accessTime) {
+    this.accessTime = accessTime;
+  }
 }

@@ -25,16 +25,16 @@ import org.apache.linkis.cs.optimize.dfs.MinCostBinaryTree;
 
 public class CostBasedConditionOptimizer implements ConditionOptimizer {
 
-    ConditionCostCalculator conditionCostCalculator;
+  ConditionCostCalculator conditionCostCalculator;
 
-    public CostBasedConditionOptimizer(ConditionCostCalculator conditionCostCalculator) {
-        this.conditionCostCalculator = conditionCostCalculator;
-    }
+  public CostBasedConditionOptimizer(ConditionCostCalculator conditionCostCalculator) {
+    this.conditionCostCalculator = conditionCostCalculator;
+  }
 
-    @Override
-    public OptimizedCondition optimize(Condition condition) {
-        OptimizedCondition dfsTreeNode = new OptimizedCondition(condition, conditionCostCalculator);
-        MinCostBinaryTree minCostBinaryTree = new MinCostBinaryTree(dfsTreeNode);
-        return dfsTreeNode;
-    }
+  @Override
+  public OptimizedCondition optimize(Condition condition) {
+    OptimizedCondition dfsTreeNode = new OptimizedCondition(condition, conditionCostCalculator);
+    MinCostBinaryTree minCostBinaryTree = new MinCostBinaryTree(dfsTreeNode);
+    return dfsTreeNode;
+  }
 }

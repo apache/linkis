@@ -21,7 +21,7 @@ import org.apache.linkis.cs.common.entity.source.ContextKey;
 
 public interface ContextKeyListenerDomain extends ListenerDomain {
 
-    ContextKey getContextKey();
+  ContextKey getContextKey();
 
-    void setContextKey(ContextKey contextKey);
+  void setContextKey(ContextKey contextKey);
 }

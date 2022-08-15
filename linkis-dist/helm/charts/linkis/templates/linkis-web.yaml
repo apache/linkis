@@ -33,9 +33,7 @@ spec:
   selector:
     {{- include "linkis.Web.selectorLabels" . | nindent 4 }}
     app: {{ include "linkis.fullname" . }}-web
-  type: LoadBalancer
-  externalTrafficPolicy: Cluster
-  publishNotReadyAddresses: true
+  {{- toYaml .Values.svc | nindent 2 }}
 ---
 apiVersion: apps/v1
 kind: Deployment

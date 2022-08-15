@@ -21,39 +21,39 @@ import org.apache.linkis.cs.server.enumeration.ServiceMethod;
 
 public abstract class AbstractHttpRequestProtocol implements HttpRequestProtocol {
 
-    private Object[] requestObjects;
+  private Object[] requestObjects;
 
-    private String username;
+  private String username;
 
-    private ServiceMethod serviceMethod;
+  private ServiceMethod serviceMethod;
 
-    @Override
-    public Object[] getRequestObjects() {
-        return requestObjects;
-    }
+  @Override
+  public Object[] getRequestObjects() {
+    return requestObjects;
+  }
 
-    @Override
-    public void setRequestObjects(Object[] requestObjects) {
-        this.requestObjects = requestObjects;
-    }
+  @Override
+  public void setRequestObjects(Object[] requestObjects) {
+    this.requestObjects = requestObjects;
+  }
 
-    @Override
-    public String getUsername() {
-        return username;
-    }
+  @Override
+  public String getUsername() {
+    return username;
+  }
 
-    @Override
-    public ServiceMethod getServiceMethod() {
-        return serviceMethod;
-    }
+  @Override
+  public ServiceMethod getServiceMethod() {
+    return serviceMethod;
+  }
 
-    @Override
-    public void setServiceMethod(ServiceMethod serviceMethod) {
-        this.serviceMethod = serviceMethod;
-    }
+  @Override
+  public void setServiceMethod(ServiceMethod serviceMethod) {
+    this.serviceMethod = serviceMethod;
+  }
 
-    @Override
-    public void setUsername(String username) {
-        this.username = username;
-    }
+  @Override
+  public void setUsername(String username) {
+    this.username = username;
+  }
 }

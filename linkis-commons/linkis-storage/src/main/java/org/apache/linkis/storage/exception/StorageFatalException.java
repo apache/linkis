@@ -21,17 +21,16 @@ import org.apache.linkis.common.exception.FatalException;
 
 public class StorageFatalException extends FatalException {
 
-    public StorageFatalException(int errCode, String desc) {
-        super(errCode, desc);
-    }
+  public StorageFatalException(int errCode, String desc) {
+    super(errCode, desc);
+  }
 
-    public StorageFatalException(
-            int errCode, String desc, String ip, int port, String serviceKind) {
-        super(errCode, desc, ip, port, serviceKind);
-    }
+  public StorageFatalException(int errCode, String desc, String ip, int port, String serviceKind) {
+    super(errCode, desc, ip, port, serviceKind);
+  }
 
-    public StorageFatalException(int errCode, String desc, Throwable t) {
-        super(errCode, desc);
-        initCause(t);
-    }
+  public StorageFatalException(int errCode, String desc, Throwable t) {
+    super(errCode, desc);
+    initCause(t);
+  }
 }

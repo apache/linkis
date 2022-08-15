@@ -26,251 +26,251 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import java.util.*;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-import java.util.*;
-
 /** Store the data source information */
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_EMPTY)
 @JsonIgnoreProperties(
-        value = {"hibernateLazyInitializer", "handler"},
-        ignoreUnknown = true)
+    value = {"hibernateLazyInitializer", "handler"},
+    ignoreUnknown = true)
 public class DataSource {
 
-    private Long id;
+  private Long id;
 
-    /** Data source name */
-    @NotNull
-    @Pattern(regexp = "^[\\w\\u4e00-\\u9fa5_-]+$")
-    private String dataSourceName;
+  /** Data source name */
+  @NotNull
+  @Pattern(regexp = "^[\\w\\u4e00-\\u9fa5_-]+$")
+  private String dataSourceName;
 
-    /** Data source description */
-    @Size(min = 0, max = 200)
-    private String dataSourceDesc;
+  /** Data source description */
+  @Size(min = 0, max = 200)
+  private String dataSourceDesc;
 
-    /** ID of data source type */
-    @NotNull private Long dataSourceTypeId;
+  /** ID of data source type */
+  @NotNull private Long dataSourceTypeId;
 
-    /** Identify from creator */
-    private String createIdentify;
+  /** Identify from creator */
+  private String createIdentify;
 
-    /** System name from creator */
-    @NotNull private String createSystem;
-    /** Connection parameters */
-    private Map<String, Object> connectParams = new HashMap<>();
-    /** Parameter JSON string */
-    @JsonIgnore private String parameter;
+  /** System name from creator */
+  @NotNull private String createSystem;
+  /** Connection parameters */
+  private Map<String, Object> connectParams = new HashMap<>();
+  /** Parameter JSON string */
+  @JsonIgnore private String parameter;
 
-    /** ID of data source environment */
-    private Long dataSourceEnvId;
+  /** ID of data source environment */
+  private Long dataSourceEnvId;
 
-    /** Create time */
-    private Date createTime;
+  /** Create time */
+  private Date createTime;
 
-    /** Modify time */
-    private Date modifyTime;
+  /** Modify time */
+  private Date modifyTime;
 
-    /** Modify user */
-    private String modifyUser;
+  /** Modify user */
+  private String modifyUser;
 
-    private String createUser;
+  private String createUser;
 
-    private String labels;
+  private String labels;
 
-    private Long versionId;
+  private Long versionId;
 
-    private List<DatasourceVersion> versions = new ArrayList<>();
+  private List<DatasourceVersion> versions = new ArrayList<>();
 
-    private Long publishedVersionId;
+  private Long publishedVersionId;
 
-    private boolean expire;
+  private boolean expire;
 
-    /** Data source type entity */
-    private DataSourceType dataSourceType;
+  /** Data source type entity */
+  private DataSourceType dataSourceType;
 
-    /** Data source env */
-    private DataSourceEnv dataSourceEnv;
+  /** Data source env */
+  private DataSourceEnv dataSourceEnv;
 
-    @JsonIgnore private List<DataSourceParamKeyDefinition> keyDefinitions = new ArrayList<>();
+  @JsonIgnore private List<DataSourceParamKeyDefinition> keyDefinitions = new ArrayList<>();
 
-    public DataSource() {
-        this.createTime = Calendar.getInstance().getTime();
+  public DataSource() {
+    this.createTime = Calendar.getInstance().getTime();
+  }
+
+  public Long getId() {
+    return id;
+  }
+
+  public void setId(Long id) {
+    this.id = id;
+  }
+
+  public String getDataSourceName() {
+    return dataSourceName;
+  }
+
+  public void setDataSourceName(String dataSourceName) {
+    this.dataSourceName = dataSourceName;
+  }
+
+  public String getDataSourceDesc() {
+    return dataSourceDesc;
+  }
+
+  public void setDataSourceDesc(String dataSourceDesc) {
+    this.dataSourceDesc = dataSourceDesc;
+  }
+
+  public Long getDataSourceTypeId() {
+    return dataSourceTypeId;
+  }
+
+  public void setDataSourceTypeId(Long dataSourceTypeId) {
+    this.dataSourceTypeId = dataSourceTypeId;
+  }
+
+  public String getCreateIdentify() {
+    return createIdentify;
+  }
+
+  public void setCreateIdentify(String createIdentify) {
+    this.createIdentify = createIdentify;
+  }
+
+  public String getCreateSystem() {
+    return createSystem;
+  }
+
+  public void setCreateSystem(String createSystem) {
+    this.createSystem = createSystem;
+  }
+
+  public String getParameter() {
+    return parameter;
+  }
+
+  public void setParameter(String parameter) {
+    this.parameter = parameter;
+  }
+
+  public Long getDataSourceEnvId() {
+    return dataSourceEnvId;
+  }
+
+  public void setDataSourceEnvId(Long dataSourceEnvId) {
+    this.dataSourceEnvId = dataSourceEnvId;
+  }
+
+  public Date getCreateTime() {
+    return createTime;
+  }
+
+  public void setCreateTime(Date createTime) {
+    this.createTime = createTime;
+  }
+
+  public Date getModifyTime() {
+    return modifyTime;
+  }
+
+  public void setModifyTime(Date modifyTime) {
+    this.modifyTime = modifyTime;
+  }
+
+  public String getCreateUser() {
+    return createUser;
+  }
+
+  public void setCreateUser(String createUser) {
+    this.createUser = createUser;
+  }
+
+  public String getModifyUser() {
+    return modifyUser;
+  }
+
+  public void setModifyUser(String modifyUser) {
+    this.modifyUser = modifyUser;
+  }
+
+  public DataSourceType getDataSourceType() {
+    return dataSourceType;
+  }
+
+  public void setDataSourceType(DataSourceType dataSourceType) {
+    this.dataSourceType = dataSourceType;
+  }
+
+  public DataSourceEnv getDataSourceEnv() {
+    return dataSourceEnv;
+  }
+
+  public void setDataSourceEnv(DataSourceEnv dataSourceEnv) {
+    this.dataSourceEnv = dataSourceEnv;
+  }
+
+  public List<DataSourceParamKeyDefinition> getKeyDefinitions() {
+    return keyDefinitions;
+  }
+
+  public void setKeyDefinitions(List<DataSourceParamKeyDefinition> keyDefinitions) {
+    this.keyDefinitions = keyDefinitions;
+  }
+
+  public String getLabels() {
+    return labels;
+  }
+
+  public void setLabels(String labels) {
+    this.labels = labels;
+  }
+
+  public Map<String, Object> getConnectParams() {
+    if (connectParams.isEmpty() && StringUtils.isNotBlank(parameter)) {
+      try {
+        connectParams.putAll(Objects.requireNonNull(Json.fromJson(parameter, Map.class)));
+      } catch (JsonErrorException e) {
+        // Ignore
+      }
     }
+    return connectParams;
+  }
 
-    public Long getId() {
-        return id;
-    }
+  public void setConnectParams(Map<String, Object> connectParams) {
+    this.connectParams = connectParams;
+  }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+  public List<DatasourceVersion> getVersion() {
+    return versions;
+  }
 
-    public String getDataSourceName() {
-        return dataSourceName;
-    }
+  public boolean isExpire() {
+    return expire;
+  }
 
-    public void setDataSourceName(String dataSourceName) {
-        this.dataSourceName = dataSourceName;
-    }
+  public void setExpire(boolean expire) {
+    this.expire = expire;
+  }
 
-    public String getDataSourceDesc() {
-        return dataSourceDesc;
-    }
+  public void setVersions(List<DatasourceVersion> versions) {
+    this.versions = versions;
+  }
 
-    public void setDataSourceDesc(String dataSourceDesc) {
-        this.dataSourceDesc = dataSourceDesc;
-    }
+  public Long getVersionId() {
+    return versionId;
+  }
 
-    public Long getDataSourceTypeId() {
-        return dataSourceTypeId;
-    }
+  public void setVersionId(Long versionId) {
+    this.versionId = versionId;
+  }
 
-    public void setDataSourceTypeId(Long dataSourceTypeId) {
-        this.dataSourceTypeId = dataSourceTypeId;
-    }
+  public Long getPublishedVersionId() {
+    return publishedVersionId;
+  }
 
-    public String getCreateIdentify() {
-        return createIdentify;
-    }
-
-    public void setCreateIdentify(String createIdentify) {
-        this.createIdentify = createIdentify;
-    }
-
-    public String getCreateSystem() {
-        return createSystem;
-    }
-
-    public void setCreateSystem(String createSystem) {
-        this.createSystem = createSystem;
-    }
-
-    public String getParameter() {
-        return parameter;
-    }
-
-    public void setParameter(String parameter) {
-        this.parameter = parameter;
-    }
-
-    public Long getDataSourceEnvId() {
-        return dataSourceEnvId;
-    }
-
-    public void setDataSourceEnvId(Long dataSourceEnvId) {
-        this.dataSourceEnvId = dataSourceEnvId;
-    }
-
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    public Date getModifyTime() {
-        return modifyTime;
-    }
-
-    public void setModifyTime(Date modifyTime) {
-        this.modifyTime = modifyTime;
-    }
-
-    public String getCreateUser() {
-        return createUser;
-    }
-
-    public void setCreateUser(String createUser) {
-        this.createUser = createUser;
-    }
-
-    public String getModifyUser() {
-        return modifyUser;
-    }
-
-    public void setModifyUser(String modifyUser) {
-        this.modifyUser = modifyUser;
-    }
-
-    public DataSourceType getDataSourceType() {
-        return dataSourceType;
-    }
-
-    public void setDataSourceType(DataSourceType dataSourceType) {
-        this.dataSourceType = dataSourceType;
-    }
-
-    public DataSourceEnv getDataSourceEnv() {
-        return dataSourceEnv;
-    }
-
-    public void setDataSourceEnv(DataSourceEnv dataSourceEnv) {
-        this.dataSourceEnv = dataSourceEnv;
-    }
-
-    public List<DataSourceParamKeyDefinition> getKeyDefinitions() {
-        return keyDefinitions;
-    }
-
-    public void setKeyDefinitions(List<DataSourceParamKeyDefinition> keyDefinitions) {
-        this.keyDefinitions = keyDefinitions;
-    }
-
-    public String getLabels() {
-        return labels;
-    }
-
-    public void setLabels(String labels) {
-        this.labels = labels;
-    }
-
-    public Map<String, Object> getConnectParams() {
-        if (connectParams.isEmpty() && StringUtils.isNotBlank(parameter)) {
-            try {
-                connectParams.putAll(Objects.requireNonNull(Json.fromJson(parameter, Map.class)));
-            } catch (JsonErrorException e) {
-                // Ignore
-            }
-        }
-        return connectParams;
-    }
-
-    public void setConnectParams(Map<String, Object> connectParams) {
-        this.connectParams = connectParams;
-    }
-
-    public List<DatasourceVersion> getVersion() {
-        return versions;
-    }
-
-    public boolean isExpire() {
-        return expire;
-    }
-
-    public void setExpire(boolean expire) {
-        this.expire = expire;
-    }
-
-    public void setVersions(List<DatasourceVersion> versions) {
-        this.versions = versions;
-    }
-
-    public Long getVersionId() {
-        return versionId;
-    }
-
-    public void setVersionId(Long versionId) {
-        this.versionId = versionId;
-    }
-
-    public Long getPublishedVersionId() {
-        return publishedVersionId;
-    }
-
-    public void setPublishedVersionId(Long publishedVersionId) {
-        this.publishedVersionId = publishedVersionId;
-    }
+  public void setPublishedVersionId(Long publishedVersionId) {
+    this.publishedVersionId = publishedVersionId;
+  }
 }

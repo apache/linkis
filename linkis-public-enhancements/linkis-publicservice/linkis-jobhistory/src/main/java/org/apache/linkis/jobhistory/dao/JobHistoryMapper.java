@@ -26,78 +26,78 @@ import java.util.List;
 
 public interface JobHistoryMapper {
 
-    List<JobHistory> selectJobHistory(JobHistory jobReq);
+  List<JobHistory> selectJobHistory(JobHistory jobReq);
 
-    void insertJobHistory(JobHistory jobReq);
+  void insertJobHistory(JobHistory jobReq);
 
-    void updateJobHistory(JobHistory jobReq);
+  void updateJobHistory(JobHistory jobReq);
 
-    List<JobHistory> searchWithIdOrderAsc(
-            @Param("id") Long id,
-            @Param("umUser") String username,
-            @Param("status") List<String> status,
-            @Param("startDate") Date startDate,
-            @Param("endDate") Date endDate,
-            @Param("engineType") String engineType);
+  List<JobHistory> searchWithIdOrderAsc(
+      @Param("id") Long id,
+      @Param("umUser") String username,
+      @Param("status") List<String> status,
+      @Param("startDate") Date startDate,
+      @Param("endDate") Date endDate,
+      @Param("engineType") String engineType);
 
-    List<JobHistory> search(
-            @Param("id") Long id,
-            @Param("umUser") String username,
-            @Param("status") List<String> status,
-            @Param("startDate") Date startDate,
-            @Param("endDate") Date endDate,
-            @Param("engineType") String engineType,
-            @Param("startId") Long startId);
+  List<JobHistory> search(
+      @Param("id") Long id,
+      @Param("umUser") String username,
+      @Param("status") List<String> status,
+      @Param("startDate") Date startDate,
+      @Param("endDate") Date endDate,
+      @Param("engineType") String engineType,
+      @Param("startId") Long startId);
 
-    List<JobHistory> searchWithUserCreator(
-            @Param("id") Long id,
-            @Param("umUser") String username,
-            @Param("userCreatorKey") String userCreatorKey,
-            @Param("userCreatorValue") String userCreator,
-            @Param("status") List<String> status,
-            @Param("startDate") Date startDate,
-            @Param("endDate") Date endDate,
-            @Param("engineType") String engineType,
-            @Param("startId") Long startId);
+  List<JobHistory> searchWithUserCreator(
+      @Param("id") Long id,
+      @Param("umUser") String username,
+      @Param("userCreatorKey") String userCreatorKey,
+      @Param("userCreatorValue") String userCreator,
+      @Param("status") List<String> status,
+      @Param("startDate") Date startDate,
+      @Param("endDate") Date endDate,
+      @Param("engineType") String engineType,
+      @Param("startId") Long startId);
 
-    List<JobHistory> searchWithCreatorOnly(
-            @Param("id") Long id,
-            @Param("umUser") String username,
-            @Param("userCreatorKey") String userCreatorKey,
-            @Param("creator") String userCreator,
-            @Param("status") List<String> status,
-            @Param("startDate") Date startDate,
-            @Param("endDate") Date endDate,
-            @Param("engineType") String engineType,
-            @Param("startId") Long startId);
+  List<JobHistory> searchWithCreatorOnly(
+      @Param("id") Long id,
+      @Param("umUser") String username,
+      @Param("userCreatorKey") String userCreatorKey,
+      @Param("creator") String userCreator,
+      @Param("status") List<String> status,
+      @Param("startDate") Date startDate,
+      @Param("endDate") Date endDate,
+      @Param("engineType") String engineType,
+      @Param("startId") Long startId);
 
-    Integer countUndoneTaskNoCreator(
-            @Param("umUser") String username,
-            @Param("status") List<String> status,
-            @Param("startDate") Date startDate,
-            @Param("endDate") Date endDate,
-            @Param("engineType") String engineType,
-            @Param("startId") Long startId);
+  Integer countUndoneTaskNoCreator(
+      @Param("umUser") String username,
+      @Param("status") List<String> status,
+      @Param("startDate") Date startDate,
+      @Param("endDate") Date endDate,
+      @Param("engineType") String engineType,
+      @Param("startId") Long startId);
 
-    Integer countUndoneTaskWithUserCreator(
-            @Param("umUser") String username,
-            @Param("userCreatorKey") String userCreatorKey,
-            @Param("userCreatorValue") String userCreator,
-            @Param("status") List<String> status,
-            @Param("startDate") Date startDate,
-            @Param("endDate") Date endDate,
-            @Param("engineType") String engineType,
-            @Param("startId") Long startId);
+  Integer countUndoneTaskWithUserCreator(
+      @Param("umUser") String username,
+      @Param("userCreatorKey") String userCreatorKey,
+      @Param("userCreatorValue") String userCreator,
+      @Param("status") List<String> status,
+      @Param("startDate") Date startDate,
+      @Param("endDate") Date endDate,
+      @Param("engineType") String engineType,
+      @Param("startId") Long startId);
 
-    Integer countUndoneTaskWithCreatorOnly(
-            @Param("umUser") String username,
-            @Param("userCreatorKey") String userCreatorKey,
-            @Param("creator") String userCreator,
-            @Param("status") List<String> status,
-            @Param("startDate") Date startDate,
-            @Param("endDate") Date endDate,
-            @Param("engineType") String engineType,
-            @Param("startId") Long startId);
+  Integer countUndoneTaskWithCreatorOnly(
+      @Param("umUser") String username,
+      @Param("userCreatorKey") String userCreatorKey,
+      @Param("creator") String userCreator,
+      @Param("status") List<String> status,
+      @Param("startDate") Date startDate,
+      @Param("endDate") Date endDate,
+      @Param("engineType") String engineType,
+      @Param("startId") Long startId);
 
-    String selectJobHistoryStatusForUpdate(Long jobId);
+  String selectJobHistoryStatusForUpdate(Long jobId);
 }

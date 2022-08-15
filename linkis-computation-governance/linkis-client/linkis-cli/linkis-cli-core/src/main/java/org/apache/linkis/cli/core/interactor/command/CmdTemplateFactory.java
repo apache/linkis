@@ -27,44 +27,44 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class CmdTemplateFactory {
-    private static Map<String, CmdTemplate> templateMap = new ConcurrentHashMap<>();
+  private static Map<String, CmdTemplate> templateMap = new ConcurrentHashMap<>();
 
-    public static void register(CmdTemplate template) {
-        if (templateMap.containsKey(template.getCmdType().getName())) {
-            throw new CommandException(
-                    "CMD0022",
-                    ErrorLevel.ERROR,
-                    CommonErrMsg.TemplateGenErr,
-                    "template: \"{0}\" already exists",
-                    template.getCmdType());
-        }
-        templateMap.put(template.getCmdType().getName(), template);
+  public static void register(CmdTemplate template) {
+    if (templateMap.containsKey(template.getCmdType().getName())) {
+      throw new CommandException(
+          "CMD0022",
+          ErrorLevel.ERROR,
+          CommonErrMsg.TemplateGenErr,
+          "template: \"{0}\" already exists",
+          template.getCmdType());
     }
+    templateMap.put(template.getCmdType().getName(), template);
+  }
 
-    public static boolean isRegistered(CmdType cmdType) {
-        return templateMap.containsKey(cmdType.getName());
-    }
+  public static boolean isRegistered(CmdType cmdType) {
+    return templateMap.containsKey(cmdType.getName());
+  }
 
-    public static boolean isRegistered(String cmdType) {
-        return templateMap.containsKey(cmdType);
-    }
+  public static boolean isRegistered(String cmdType) {
+    return templateMap.containsKey(cmdType);
+  }
 
-    /*
-    should not set value to Original template
-    */
-    public static CmdTemplate getTemplateOri(CmdType cmdType) {
-        return templateMap.get(cmdType.getName());
-    }
+  /*
+  should not set value to Original template
+  */
+  public static CmdTemplate getTemplateOri(CmdType cmdType) {
+    return templateMap.get(cmdType.getName());
+  }
 
-    public static CmdTemplate getTemplateCopy(CmdType cmdType) {
-        return templateMap.get(cmdType.getName()).getCopy();
-    }
+  public static CmdTemplate getTemplateCopy(CmdType cmdType) {
+    return templateMap.get(cmdType.getName()).getCopy();
+  }
 
-    public static CmdTemplate getTemplateOri(String cmdType) {
-        return templateMap.get(cmdType);
-    }
+  public static CmdTemplate getTemplateOri(String cmdType) {
+    return templateMap.get(cmdType);
+  }
 
-    public static CmdTemplate getTemplateCopy(String cmdType) {
-        return templateMap.get(cmdType).getCopy();
-    }
+  public static CmdTemplate getTemplateCopy(String cmdType) {
+    return templateMap.get(cmdType).getCopy();
+  }
 }

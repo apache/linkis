@@ -21,27 +21,27 @@ import org.apache.linkis.common.ServiceInstance;
 
 public class DefaultScoreServiceInstance implements ScoreServiceInstance {
 
-    private double score;
+  private double score;
 
-    private ServiceInstance serviceInstance;
+  private ServiceInstance serviceInstance;
 
-    @Override
-    public double getScore() {
-        return this.score;
-    }
+  @Override
+  public double getScore() {
+    return this.score;
+  }
 
-    @Override
-    public void setScore(double score) {
-        this.score = score;
-    }
+  @Override
+  public void setScore(double score) {
+    this.score = score;
+  }
 
-    @Override
-    public ServiceInstance getServiceInstance() {
-        return this.serviceInstance;
-    }
+  @Override
+  public ServiceInstance getServiceInstance() {
+    return this.serviceInstance;
+  }
 
-    @Override
-    public void setServiceInstance(ServiceInstance serviceInstance) {
-        this.serviceInstance = serviceInstance;
-    }
+  @Override
+  public void setServiceInstance(ServiceInstance serviceInstance) {
+    this.serviceInstance = serviceInstance;
+  }
 }

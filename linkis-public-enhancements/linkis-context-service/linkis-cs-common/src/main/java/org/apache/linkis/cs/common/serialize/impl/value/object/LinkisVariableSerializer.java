@@ -23,21 +23,21 @@ import org.apache.linkis.cs.common.serialize.AbstractSerializer;
 import org.apache.linkis.cs.common.utils.CSCommonUtils;
 
 public class LinkisVariableSerializer extends AbstractSerializer<LinkisVariable> {
-    @Override
-    public LinkisVariable fromJson(String json) throws CSErrorException {
-        return CSCommonUtils.gson.fromJson(json, LinkisVariable.class);
-    }
+  @Override
+  public LinkisVariable fromJson(String json) throws CSErrorException {
+    return CSCommonUtils.gson.fromJson(json, LinkisVariable.class);
+  }
 
-    @Override
-    public String getType() {
-        return "LinkisVariable";
-    }
+  @Override
+  public String getType() {
+    return "LinkisVariable";
+  }
 
-    @Override
-    public boolean accepts(Object obj) {
-        if (null != obj && obj.getClass().getName().equals(LinkisVariable.class.getName())) {
-            return true;
-        }
-        return false;
+  @Override
+  public boolean accepts(Object obj) {
+    if (null != obj && obj.getClass().getName().equals(LinkisVariable.class.getName())) {
+      return true;
     }
+    return false;
+  }
 }

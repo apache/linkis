@@ -24,23 +24,23 @@ import javax.annotation.Nullable;
 
 /** Store basic method, can be implemented by any user */
 public interface LabelBuilder {
-    /**
-     * If accept label key
-     *
-     * @param labelKey label key
-     */
-    boolean canBuild(String labelKey);
+  /**
+   * If accept label key
+   *
+   * @param labelKey label key
+   */
+  boolean canBuild(String labelKey);
 
-    /**
-     * Build method
-     *
-     * @param labelKey label key
-     * @param valueObj value object
-     * @return label
-     */
-    Label<?> build(String labelKey, @Nullable Object valueObj) throws LabelErrorException;
+  /**
+   * Build method
+   *
+   * @param labelKey label key
+   * @param valueObj value object
+   * @return label
+   */
+  Label<?> build(String labelKey, @Nullable Object valueObj) throws LabelErrorException;
 
-    default int getOrder() {
-        return Integer.MAX_VALUE;
-    }
+  default int getOrder() {
+    return Integer.MAX_VALUE;
+  }
 }

@@ -24,15 +24,15 @@ import java.util.List;
 
 public interface ECResourceInfoService {
 
-    ECResourceInfoRecord getECResourceInfoRecord(String ticketId);
+  ECResourceInfoRecord getECResourceInfoRecord(String ticketId);
 
-    void deleteECResourceInfoRecordByTicketId(String ticketId);
+  void deleteECResourceInfoRecordByTicketId(String ticketId);
 
-    void deleteECResourceInfoRecord(Integer id);
+  void deleteECResourceInfoRecord(Integer id);
 
-    List<ECResourceInfoRecord> getECResourceInfoRecordList(
-            String instance, Date endDate, Date startDate, String username, String engineType);
+  List<ECResourceInfoRecord> getECResourceInfoRecordList(
+      String instance, Date endDate, Date startDate, String username, String engineType);
 
-    // TODO add search method
+  // TODO add search method
 
 }

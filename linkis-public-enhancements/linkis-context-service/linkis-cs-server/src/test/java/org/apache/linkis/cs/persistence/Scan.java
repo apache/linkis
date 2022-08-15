@@ -26,18 +26,18 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import javax.sql.DataSource;
 
 @ComponentScan(
-        value = "org.apache.linkis",
-        excludeFilters =
-                @ComponentScan.Filter(
-                        type = FilterType.ASSIGNABLE_TYPE,
-                        value = DataWorkCloudApplication.class))
+    value = "org.apache.linkis",
+    excludeFilters =
+        @ComponentScan.Filter(
+            type = FilterType.ASSIGNABLE_TYPE,
+            value = DataWorkCloudApplication.class))
 @Configuration
 @EnableAspectJAutoProxy
 public class Scan {
-    @Autowired private DataSource dataSource;
+  @Autowired private DataSource dataSource;
 
-    @Bean
-    public JdbcTemplate getJdbcTemplate() {
-        return new JdbcTemplate(dataSource);
-    }
+  @Bean
+  public JdbcTemplate getJdbcTemplate() {
+    return new JdbcTemplate(dataSource);
+  }
 }

@@ -19,7 +19,7 @@ package org.apache.linkis.cs.common.entity.source;
 
 public interface OrderContextKey extends ContextKey {
 
-    Integer getOrder();
+  Integer getOrder();
 
-    void setOrder(Integer order);
+  void setOrder(Integer order);
 }

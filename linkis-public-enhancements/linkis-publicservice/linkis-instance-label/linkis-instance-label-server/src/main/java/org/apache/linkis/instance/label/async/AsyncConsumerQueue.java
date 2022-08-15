@@ -23,38 +23,38 @@ import java.util.function.Consumer;
 
 public interface AsyncConsumerQueue<T> {
 
-    /**
-     * Size of queue
-     *
-     * @return value
-     */
-    int size();
+  /**
+   * Size of queue
+   *
+   * @return value
+   */
+  int size();
 
-    /**
-     * Inserts the specified entity
-     *
-     * @param entity entity
-     * @return if the queue is full, return false
-     */
-    boolean offer(T entity);
+  /**
+   * Inserts the specified entity
+   *
+   * @param entity entity
+   * @return if the queue is full, return false
+   */
+  boolean offer(T entity);
 
-    /**
-     * Inserts the specified entity
-     *
-     * @param entity entity
-     * @param timeout timeout
-     * @param timeUnit unit
-     * @return if the queue is full, return false
-     */
-    boolean offer(T entity, long timeout, TimeUnit timeUnit) throws InterruptedException;
+  /**
+   * Inserts the specified entity
+   *
+   * @param entity entity
+   * @param timeout timeout
+   * @param timeUnit unit
+   * @return if the queue is full, return false
+   */
+  boolean offer(T entity, long timeout, TimeUnit timeUnit) throws InterruptedException;
 
-    /**
-     * Define the consumer
-     *
-     * @param batchSize batch size for each consuming
-     * @param interval consume interval
-     * @param timeUnit time unit of interval
-     * @param consumer consume function
-     */
-    void consumer(int batchSize, long interval, TimeUnit timeUnit, Consumer<List<T>> consumer);
+  /**
+   * Define the consumer
+   *
+   * @param batchSize batch size for each consuming
+   * @param interval consume interval
+   * @param timeUnit time unit of interval
+   * @param consumer consume function
+   */
+  void consumer(int batchSize, long interval, TimeUnit timeUnit, Consumer<List<T>> consumer);
 }

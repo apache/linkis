@@ -25,11 +25,11 @@ import java.util.List;
 
 public class TestLogListener implements LogListener {
 
-    @Override
-    public void onLogUpdate(List<String> logs) {
-        String log = logs.get(3);
-        if (StringUtils.isNoneBlank(log)) {
-            System.out.println(log);
-        }
+  @Override
+  public void onLogUpdate(List<String> logs) {
+    String log = logs.get(3);
+    if (StringUtils.isNoneBlank(log)) {
+      System.out.println(log);
     }
+  }
 }

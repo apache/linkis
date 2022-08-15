@@ -21,12 +21,12 @@ import org.apache.linkis.cs.condition.BinaryLogicCondition;
 
 public abstract class BinaryLogicContextSearchMatcher extends AbstractContextSearchMatcher {
 
-    ContextSearchMatcher leftMatcher;
-    ContextSearchMatcher rightMatcher;
+  ContextSearchMatcher leftMatcher;
+  ContextSearchMatcher rightMatcher;
 
-    public BinaryLogicContextSearchMatcher(BinaryLogicCondition condition) {
-        super(condition);
-        this.leftMatcher = ConditionMatcherResolver.getMatcher(condition.getLeft());
-        this.rightMatcher = ConditionMatcherResolver.getMatcher(condition.getRight());
-    }
+  public BinaryLogicContextSearchMatcher(BinaryLogicCondition condition) {
+    super(condition);
+    this.leftMatcher = ConditionMatcherResolver.getMatcher(condition.getLeft());
+    this.rightMatcher = ConditionMatcherResolver.getMatcher(condition.getRight());
+  }
 }

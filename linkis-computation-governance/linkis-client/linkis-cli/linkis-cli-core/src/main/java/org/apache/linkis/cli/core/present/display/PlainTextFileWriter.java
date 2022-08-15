@@ -29,88 +29,88 @@ import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 
 public class PlainTextFileWriter implements DisplayOperator {
-    @Override
-    public void doOutput(DisplayData data) {
-        if (!(data instanceof FileDisplayData)) {
-            throw new PresenterException(
-                    "PST0004",
-                    ErrorLevel.ERROR,
-                    CommonErrMsg.PresentDriverErr,
-                    "input data is not instance of FileDisplayData");
-        }
-
-        String pathName = ((FileDisplayData) data).getPathName();
-        String fileName = pathName + File.separator + ((FileDisplayData) data).getFileName();
-        String content = ((FileDisplayData) data).getContent();
-        Boolean overWrite = ((FileDisplayData) data).getCreateNewFile();
-
-        File dir = new File(pathName);
-        File file = new File(fileName);
-
-        if (!dir.exists()) {
-            try {
-                dir.mkdirs();
-            } catch (Exception e) {
-                throw new PresenterException(
-                        "PST0005",
-                        ErrorLevel.ERROR,
-                        CommonErrMsg.PresentDriverErr,
-                        "Cannot mkdir for path: " + dir.getAbsolutePath(),
-                        e);
-            }
-        }
-
-        if (overWrite || !file.exists()) {
-            try {
-                file.createNewFile();
-            } catch (Exception e) {
-                throw new PresenterException(
-                        "PST0006",
-                        ErrorLevel.ERROR,
-                        CommonErrMsg.PresentDriverErr,
-                        "Cannot create file for path: " + file.getAbsolutePath(),
-                        e);
-            }
-        }
-
-        FileOutputStream fos = null;
-        OutputStreamWriter osWritter = null;
-        BufferedWriter bufferedWriter = null;
-        try {
-            fos = new FileOutputStream(file, !overWrite);
-            osWritter = new OutputStreamWriter(fos, "UTF-8");
-            bufferedWriter = new BufferedWriter(osWritter, 1024);
-            bufferedWriter.write(content + "\n");
-        } catch (Exception e) {
-            throw new PresenterException(
-                    "PST0007",
-                    ErrorLevel.ERROR,
-                    CommonErrMsg.PresentDriverErr,
-                    "Cannot write: " + file.getAbsolutePath(),
-                    e);
-
-        } finally {
-            if (bufferedWriter != null) {
-                try {
-                    bufferedWriter.close();
-                } catch (Exception e) {
-                    // ignore
-                }
-            }
-            if (osWritter != null) {
-                try {
-                    osWritter.close();
-                } catch (Exception e) {
-                    // ignore
-                }
-            }
-            if (fos != null) {
-                try {
-                    fos.close();
-                } catch (Exception e) {
-                    // ignore
-                }
-            }
-        }
+  @Override
+  public void doOutput(DisplayData data) {
+    if (!(data instanceof FileDisplayData)) {
+      throw new PresenterException(
+          "PST0004",
+          ErrorLevel.ERROR,
+          CommonErrMsg.PresentDriverErr,
+          "input data is not instance of FileDisplayData");
     }
+
+    String pathName = ((FileDisplayData) data).getPathName();
+    String fileName = pathName + File.separator + ((FileDisplayData) data).getFileName();
+    String content = ((FileDisplayData) data).getContent();
+    Boolean overWrite = ((FileDisplayData) data).getCreateNewFile();
+
+    File dir = new File(pathName);
+    File file = new File(fileName);
+
+    if (!dir.exists()) {
+      try {
+        dir.mkdirs();
+      } catch (Exception e) {
+        throw new PresenterException(
+            "PST0005",
+            ErrorLevel.ERROR,
+            CommonErrMsg.PresentDriverErr,
+            "Cannot mkdir for path: " + dir.getAbsolutePath(),
+            e);
+      }
+    }
+
+    if (overWrite || !file.exists()) {
+      try {
+        file.createNewFile();
+      } catch (Exception e) {
+        throw new PresenterException(
+            "PST0006",
+            ErrorLevel.ERROR,
+            CommonErrMsg.PresentDriverErr,
+            "Cannot create file for path: " + file.getAbsolutePath(),
+            e);
+      }
+    }
+
+    FileOutputStream fos = null;
+    OutputStreamWriter osWritter = null;
+    BufferedWriter bufferedWriter = null;
+    try {
+      fos = new FileOutputStream(file, !overWrite);
+      osWritter = new OutputStreamWriter(fos, "UTF-8");
+      bufferedWriter = new BufferedWriter(osWritter, 1024);
+      bufferedWriter.write(content + "\n");
+    } catch (Exception e) {
+      throw new PresenterException(
+          "PST0007",
+          ErrorLevel.ERROR,
+          CommonErrMsg.PresentDriverErr,
+          "Cannot write: " + file.getAbsolutePath(),
+          e);
+
+    } finally {
+      if (bufferedWriter != null) {
+        try {
+          bufferedWriter.close();
+        } catch (Exception e) {
+          // ignore
+        }
+      }
+      if (osWritter != null) {
+        try {
+          osWritter.close();
+        } catch (Exception e) {
+          // ignore
+        }
+      }
+      if (fos != null) {
+        try {
+          fos.close();
+        } catch (Exception e) {
+          // ignore
+        }
+      }
+    }
+  }
 }

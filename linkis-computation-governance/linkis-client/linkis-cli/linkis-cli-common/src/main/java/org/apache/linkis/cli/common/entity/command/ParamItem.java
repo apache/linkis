@@ -18,54 +18,54 @@
 package org.apache.linkis.cli.common.entity.command;
 
 public class ParamItem {
-    private String keyPrefix;
-    private String key;
-    private Object value;
-    private Object defaultValue;
-    private boolean hasVal;
+  private String keyPrefix;
+  private String key;
+  private Object value;
+  private Object defaultValue;
+  private boolean hasVal;
 
-    public ParamItem(
-            String keyPrefix, String key, Object value, boolean hasVal, Object defaultValue) {
-        this.keyPrefix = keyPrefix;
-        this.key = key;
-        this.value = value;
-        this.defaultValue = defaultValue;
-        this.hasVal = hasVal;
-    }
+  public ParamItem(
+      String keyPrefix, String key, Object value, boolean hasVal, Object defaultValue) {
+    this.keyPrefix = keyPrefix;
+    this.key = key;
+    this.value = value;
+    this.defaultValue = defaultValue;
+    this.hasVal = hasVal;
+  }
 
-    public String getKeyPrefix() {
-        return keyPrefix;
-    }
+  public String getKeyPrefix() {
+    return keyPrefix;
+  }
 
-    public String getKey() {
-        return key;
-    }
+  public String getKey() {
+    return key;
+  }
 
-    public Object getValue() {
-        return value;
-    }
+  public Object getValue() {
+    return value;
+  }
 
-    public Object getDefaultValue() {
-        return defaultValue;
-    }
+  public Object getDefaultValue() {
+    return defaultValue;
+  }
 
-    public boolean hasVal() {
-        return this.hasVal;
-    }
+  public boolean hasVal() {
+    return this.hasVal;
+  }
 
-    @Override
-    public String toString() {
-        return "ParamItem{"
-                + "keyPrefix='"
-                + keyPrefix
-                + '\''
-                + "key='"
-                + key
-                + '\''
-                + ", value="
-                + value
-                + ", defaultValue="
-                + defaultValue
-                + '}';
-    }
+  @Override
+  public String toString() {
+    return "ParamItem{"
+        + "keyPrefix='"
+        + keyPrefix
+        + '\''
+        + "key='"
+        + key
+        + '\''
+        + ", value="
+        + value
+        + ", defaultValue="
+        + defaultValue
+        + '}';
+  }
 }

@@ -18,17 +18,17 @@
 package org.apache.linkis.cs.server.enumeration;
 
 public enum ServiceMethod {
-    /** */
-    CREATE,
-    GET,
-    SEARCH,
-    REMOVE,
-    REMOVEALL,
-    UPDATE,
-    RESET,
-    SET,
-    BIND,
-    HEARTBEAT,
+  /** */
+  CREATE,
+  GET,
+  SEARCH,
+  REMOVE,
+  REMOVEALL,
+  UPDATE,
+  RESET,
+  SET,
+  BIND,
+  HEARTBEAT,
 
-    CLEAR
+  CLEAR
 }

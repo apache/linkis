@@ -5,51 +5,67 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
-package org.apache.linkis.ujes.client
 
-import java.io.Closeable
-import java.util.concurrent.TimeUnit
+package org.apache.linkis.ujes.client
 
 import org.apache.linkis.httpclient.authentication.AuthenticationStrategy
 import org.apache.linkis.httpclient.dws.authentication.StaticAuthenticationStrategy
 import org.apache.linkis.httpclient.dws.config.{DWSClientConfig, DWSClientConfigBuilder}
 import org.apache.linkis.httpclient.response.Result
-import org.apache.linkis.ujes.client.request.JobExecIdAction.JobServiceType
 import org.apache.linkis.ujes.client.request._
+import org.apache.linkis.ujes.client.request.JobExecIdAction.JobServiceType
 import org.apache.linkis.ujes.client.response._
+
+import java.io.Closeable
+import java.util.concurrent.TimeUnit
 
 abstract class UJESClient extends Closeable {
 
-  def execute(jobExecuteAction: JobExecuteAction): JobExecuteResult = executeUJESJob(jobExecuteAction).asInstanceOf[JobExecuteResult]
+  def execute(jobExecuteAction: JobExecuteAction): JobExecuteResult = executeUJESJob(
+    jobExecuteAction
+  ).asInstanceOf[JobExecuteResult]
 
-  def submit(jobSubmitAction: JobSubmitAction): JobSubmitResult = executeUJESJob(jobSubmitAction).asInstanceOf[JobSubmitResult]
+  def submit(jobSubmitAction: JobSubmitAction): JobSubmitResult =
+    executeUJESJob(jobSubmitAction).asInstanceOf[JobSubmitResult]
 
   protected[client] def executeUJESJob(ujesJobAction: UJESJobAction): Result
 
-  private def executeJobExecIdAction[T](jobExecuteResult: JobExecuteResult, jobServiceType: JobServiceType.JobServiceType): T = {
-    val jobExecIdAction = JobExecIdAction.builder().setJobServiceType(jobServiceType)
-      .setExecId(jobExecuteResult.getExecID).setUser(jobExecuteResult.getUser).build()
+  private def executeJobExecIdAction[T](
+      jobExecuteResult: JobExecuteResult,
+      jobServiceType: JobServiceType.JobServiceType
+  ): T = {
+    val jobExecIdAction = JobExecIdAction
+      .builder()
+      .setJobServiceType(jobServiceType)
+      .setExecId(jobExecuteResult.getExecID)
+      .setUser(jobExecuteResult.getUser)
+      .build()
     executeUJESJob(jobExecIdAction).asInstanceOf[T]
   }
 
-  def status(jobExecuteResult: JobExecuteResult): JobStatusResult = executeJobExecIdAction(jobExecuteResult, JobServiceType.JobStatus)
+  def status(jobExecuteResult: JobExecuteResult): JobStatusResult =
+    executeJobExecIdAction(jobExecuteResult, JobServiceType.JobStatus)
 
   def progress(jobExecuteResult: JobExecuteResult): JobProgressResult =
     executeJobExecIdAction(jobExecuteResult, JobServiceType.JobProgress)
 
   def log(jobExecuteResult: JobExecuteResult, fromLine: Int, size: Int): JobLogResult = {
-    val jobLogAction = JobLogAction.builder().setExecId(jobExecuteResult.getExecID)
-      .setUser(jobExecuteResult.getUser).setFromLine(fromLine).setSize(size).build()
+    val jobLogAction = JobLogAction
+      .builder()
+      .setExecId(jobExecuteResult.getExecID)
+      .setUser(jobExecuteResult.getUser)
+      .setFromLine(fromLine)
+      .setSize(size)
+      .build()
     executeUJESJob(jobLogAction).asInstanceOf[JobLogResult]
   }
 
@@ -58,8 +74,12 @@ abstract class UJESClient extends Closeable {
   }
 
   def log(jobExecuteResult: JobExecuteResult, jobLogResult: JobLogResult): JobLogResult = {
-    val jobLogAction = JobLogAction.builder().setExecId(jobExecuteResult.getExecID)
-      .setUser(jobExecuteResult.getUser).setFromLine(jobLogResult.getFromLine).build()
+    val jobLogAction = JobLogAction
+      .builder()
+      .setExecId(jobExecuteResult.getExecID)
+      .setUser(jobExecuteResult.getUser)
+      .setFromLine(jobLogResult.getFromLine)
+      .build()
     executeUJESJob(jobLogAction).asInstanceOf[JobLogResult]
   }
 
@@ -67,9 +87,11 @@ abstract class UJESClient extends Closeable {
     executeUJESJob(openLogAction).asInstanceOf[OpenLogResult]
   }
 
-  def kill(jobExecuteResult: JobExecuteResult): JobKillResult = executeJobExecIdAction(jobExecuteResult, JobServiceType.JobKill)
+  def kill(jobExecuteResult: JobExecuteResult): JobKillResult =
+    executeJobExecIdAction(jobExecuteResult, JobServiceType.JobKill)
 
-  def pause(jobExecuteResult: JobExecuteResult): JobPauseResult = executeJobExecIdAction(jobExecuteResult, JobServiceType.JobPause)
+  def pause(jobExecuteResult: JobExecuteResult): JobPauseResult =
+    executeJobExecIdAction(jobExecuteResult, JobServiceType.JobPause)
 
   def getJobInfo(jobExecuteResult: JobExecuteResult): JobInfoResult = {
     val jobInfoAction = JobInfoAction.builder().setTaskId(jobExecuteResult).build()
@@ -91,7 +113,9 @@ abstract class UJESClient extends Closeable {
     executeUJESJob(getColumnsAction).asInstanceOf[GetColumnsResult]
   }
 
-  def getTableStatisticInfo(getTableStatisticInfoAction: GetTableStatisticInfoAction): GetTableStatisticInfoResult = {
+  def getTableStatisticInfo(
+      getTableStatisticInfoAction: GetTableStatisticInfoAction
+  ): GetTableStatisticInfoResult = {
     executeUJESJob(getTableStatisticInfoAction).asInstanceOf[GetTableStatisticInfoResult]
   }
 
@@ -99,11 +123,14 @@ abstract class UJESClient extends Closeable {
     executeUJESJob(getTableBaseInfoAction).asInstanceOf[GetTableBaseInfoResult]
   }
 
-  def getPartitionStatisticInfo(getPartitionStatisticInfoAction: GetPartitionStatisticInfoAction): GetPartitionStatisticInfoResult = {
+  def getPartitionStatisticInfo(
+      getPartitionStatisticInfoAction: GetPartitionStatisticInfoAction
+  ): GetPartitionStatisticInfoResult = {
     executeUJESJob(getPartitionStatisticInfoAction).asInstanceOf[GetPartitionStatisticInfoResult]
   }
 
 }
+
 object UJESClient {
   def apply(clientConfig: DWSClientConfig): UJESClient = new UJESClientImpl(clientConfig)
 
@@ -112,30 +139,60 @@ object UJESClient {
   def apply(serverUrl: String, readTimeout: Int, maxConnection: Int): UJESClient =
     apply(serverUrl, readTimeout, maxConnection, new StaticAuthenticationStrategy, "v1")
 
-  def apply(serverUrl: String, readTimeout: Int, maxConnection: Int,
-            authenticationStrategy: AuthenticationStrategy, dwsVersion: String): UJESClient = {
-    val clientConfig = DWSClientConfigBuilder.newBuilder().addServerUrl(serverUrl)
-      .connectionTimeout(30000).discoveryEnabled(false)
-        .loadbalancerEnabled(false).maxConnectionSize(maxConnection)
-      .retryEnabled(false).readTimeout(readTimeout)
+  def apply(
+      serverUrl: String,
+      readTimeout: Int,
+      maxConnection: Int,
+      authenticationStrategy: AuthenticationStrategy,
+      dwsVersion: String
+  ): UJESClient = {
+    val clientConfig = DWSClientConfigBuilder
+      .newBuilder()
+      .addServerUrl(serverUrl)
+      .connectionTimeout(30000)
+      .discoveryEnabled(false)
+      .loadbalancerEnabled(false)
+      .maxConnectionSize(maxConnection)
+      .retryEnabled(false)
+      .readTimeout(readTimeout)
       .setAuthenticationStrategy(authenticationStrategy)
-      .setDWSVersion(dwsVersion).build()
+      .setDWSVersion(dwsVersion)
+      .build()
     apply(clientConfig)
   }
 
   def getDiscoveryClient(serverUrl: String): UJESClient = getDiscoveryClient(serverUrl, 30000, 10)
 
   def getDiscoveryClient(serverUrl: String, readTimeout: Int, maxConnection: Int): UJESClient =
-    getDiscoveryClient(serverUrl, readTimeout, maxConnection, new StaticAuthenticationStrategy, "v1")
+    getDiscoveryClient(
+      serverUrl,
+      readTimeout,
+      maxConnection,
+      new StaticAuthenticationStrategy,
+      "v1"
+    )
 
-  def getDiscoveryClient(serverUrl: String, readTimeout: Int, maxConnection: Int,
-                         authenticationStrategy: AuthenticationStrategy, dwsVersion: String): UJESClient = {
-    val clientConfig = DWSClientConfigBuilder.newBuilder().addServerUrl(serverUrl)
-      .connectionTimeout(30000).discoveryEnabled(true)
+  def getDiscoveryClient(
+      serverUrl: String,
+      readTimeout: Int,
+      maxConnection: Int,
+      authenticationStrategy: AuthenticationStrategy,
+      dwsVersion: String
+  ): UJESClient = {
+    val clientConfig = DWSClientConfigBuilder
+      .newBuilder()
+      .addServerUrl(serverUrl)
+      .connectionTimeout(30000)
+      .discoveryEnabled(true)
       .discoveryFrequency(1, TimeUnit.MINUTES)
-      .loadbalancerEnabled(true).maxConnectionSize(maxConnection)
-      .retryEnabled(false).readTimeout(readTimeout)
-      .setAuthenticationStrategy(authenticationStrategy).setDWSVersion(dwsVersion).build()
+      .loadbalancerEnabled(true)
+      .maxConnectionSize(maxConnection)
+      .retryEnabled(false)
+      .readTimeout(readTimeout)
+      .setAuthenticationStrategy(authenticationStrategy)
+      .setDWSVersion(dwsVersion)
+      .build()
     apply(clientConfig)
   }
+
 }

@@ -5,29 +5,28 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.storage.domain
 
+import org.apache.linkis.common.utils.{Logging, Utils}
+
+import java.math.{BigDecimal => JavaBigDecimal}
 import java.sql.{Date, Timestamp}
 
-import org.apache.linkis.common.utils.{Logging, Utils}
-import java.math.{BigDecimal => JavaBigDecimal}
-
-object DataType extends Logging{
-
+object DataType extends Logging {
 
   val NULL_VALUE = "NULL"
   val LOWCASE_NULL_VALUE = "null"
-  //TODO Change to fine-grained regular expressions(改为精细化正则表达式)
+  // TODO Change to fine-grained regular expressions(改为精细化正则表达式)
   val DECIMAL_REGEX = "^decimal\\(\\d*\\,\\d*\\)".r.unanchored
 
   val SHORT_REGEX = "^short.*".r.unanchored
@@ -36,7 +35,6 @@ object DataType extends Logging{
   val BIGINT_REGEX = "^bigint.*".r.unanchored
   val FLOAT_REGEX = "^float.*".r.unanchored
   val DOUBLE_REGEX = "^double.*".r.unanchored
-
 
   val VARCHAR_REGEX = "^varchar.*".r.unanchored
   val CHAR_REGEX = "^char.*".r.unanchored
@@ -74,7 +72,8 @@ object DataType extends Logging{
 
   def toValue(dataType: DataType, value: String): Any = Utils.tryCatch(dataType match {
     case NullType => null
-    case StringType | CharType | VarcharType | StructType | ListType | ArrayType | MapType => value
+    case StringType | CharType | VarcharType | StructType | ListType | ArrayType | MapType =>
+      value
     case BooleanType => if (isNumberNull(value)) null else value.toBoolean
     case ShortIntType => if (isNumberNull(value)) null else value.toShort
     case IntType => if (isNumberNull(value)) null else value.toInt
@@ -83,22 +82,24 @@ object DataType extends Logging{
     case DoubleType => if (isNumberNull(value)) null else value.toDouble
     case DecimalType => if (isNumberNull(value)) null else new JavaBigDecimal(value)
     case DateType => if (isNumberNull(value)) null else Date.valueOf(value)
-    case TimestampType => if (isNumberNull(value)) null else Timestamp.valueOf(value).toString.stripSuffix(".0")
+    case TimestampType =>
+      if (isNumberNull(value)) null else Timestamp.valueOf(value).toString.stripSuffix(".0")
     case BinaryType => if (isNull(value)) null else value.getBytes()
     case _ => value
-  }) {
-    t =>
-      logger.debug(s"Failed to  $value switch  to dataType:", t)
-      value
+  }) { t =>
+    logger.debug(s"Failed to  $value switch  to dataType:", t)
+    value
   }
 
-  def isNull(value: String): Boolean = if (value == null || value == NULL_VALUE || value.trim == "") true else false
+  def isNull(value: String): Boolean =
+    if (value == null || value == NULL_VALUE || value.trim == "") true else false
 
-  def isNumberNull(value: String): Boolean = if (null == value || NULL_VALUE.equalsIgnoreCase(value)  || value.trim == "") {
-    true
-  } else {
-    false
-  }
+  def isNumberNull(value: String): Boolean =
+    if (null == value || NULL_VALUE.equalsIgnoreCase(value) || value.trim == "") {
+      true
+    } else {
+      false
+    }
 
   def valueToString(value: Any): String = {
     if (null == value) return LOWCASE_NULL_VALUE
@@ -145,4 +146,3 @@ case class Column(columnName: String, dataType: DataType, comment: String) {
 
   override def toString: String = s"columnName:$columnName,dataType:$dataType,comment:$comment"
 }
-

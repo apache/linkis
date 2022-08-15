@@ -21,34 +21,34 @@ import org.apache.linkis.common.conf.CommonVars;
 
 public class InsLabelConf {
 
-    /** Limit the size of batch operation */
-    public static final CommonVars<Integer> DB_PERSIST_BATCH_SIZE =
-            CommonVars.apply("wds.linkis.instance.label.persist.batch.size", 100);
+  /** Limit the size of batch operation */
+  public static final CommonVars<Integer> DB_PERSIST_BATCH_SIZE =
+      CommonVars.apply("wds.linkis.instance.label.persist.batch.size", 100);
 
-    /** Capacity of async queue */
-    public static final CommonVars<Integer> ASYNC_QUEUE_CAPACITY =
-            CommonVars.apply("wds.linkis.instance.label.async.queue.capacity", 1000);
+  /** Capacity of async queue */
+  public static final CommonVars<Integer> ASYNC_QUEUE_CAPACITY =
+      CommonVars.apply("wds.linkis.instance.label.async.queue.capacity", 1000);
 
-    public static final CommonVars<Integer> ASYNC_QUEUE_CONSUME_BATCH_SIZE =
-            CommonVars.apply("wds.linkis.instance.label.async.queue.batch.size", 100);
+  public static final CommonVars<Integer> ASYNC_QUEUE_CONSUME_BATCH_SIZE =
+      CommonVars.apply("wds.linkis.instance.label.async.queue.batch.size", 100);
 
-    /** Interval of consuming period */
-    public static final CommonVars<Long> ASYNC_QUEUE_CONSUME_INTERVAL =
-            CommonVars.apply("wds.linkis.instance.label.async.queue.interval-in-seconds", 10L);
+  /** Interval of consuming period */
+  public static final CommonVars<Long> ASYNC_QUEUE_CONSUME_INTERVAL =
+      CommonVars.apply("wds.linkis.instance.label.async.queue.interval-in-seconds", 10L);
 
-    /** Expire time of cache */
-    public static final CommonVars<Integer> CACHE_EXPIRE_TIME =
-            CommonVars.apply("wds.linkis.instance.label.cache.expire.time-in-seconds", 10);
+  /** Expire time of cache */
+  public static final CommonVars<Integer> CACHE_EXPIRE_TIME =
+      CommonVars.apply("wds.linkis.instance.label.cache.expire.time-in-seconds", 10);
 
-    public static final CommonVars<Integer> CACHE_MAX_SIZE =
-            CommonVars.apply("wds.linkis.instance.label.cache.maximum.size", 1000);
+  public static final CommonVars<Integer> CACHE_MAX_SIZE =
+      CommonVars.apply("wds.linkis.instance.label.cache.maximum.size", 1000);
 
-    public static final CommonVars<String> CACHE_NAMES =
-            CommonVars.apply("wds.linkis.instance.label.cache.names", "instance,label,appInstance");
+  public static final CommonVars<String> CACHE_NAMES =
+      CommonVars.apply("wds.linkis.instance.label.cache.names", "instance,label,appInstance");
 
-    public static final CommonVars<String> EUREKA_URL =
-            CommonVars.apply("wds.linkis.eureka.defaultZone", "http://localhost:20303");
+  public static final CommonVars<String> EUREKA_URL =
+      CommonVars.apply("wds.linkis.eureka.defaultZone", "http://localhost:20303");
 
-    public static final CommonVars<String> EUREKA_IPADDRESS =
-            CommonVars.apply("wds.linkis.eureka.url", "");
+  public static final CommonVars<String> EUREKA_IPADDRESS =
+      CommonVars.apply("wds.linkis.eureka.url", "");
 }

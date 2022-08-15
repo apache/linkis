@@ -21,37 +21,37 @@ import org.apache.linkis.cs.common.entity.source.HAContextID;
 
 public class TestHAID implements HAContextID {
 
-    private String contextId;
-    private String instance;
-    private String backupInstance;
+  private String contextId;
+  private String instance;
+  private String backupInstance;
 
-    @Override
-    public String getContextId() {
-        return contextId;
-    }
+  @Override
+  public String getContextId() {
+    return contextId;
+  }
 
-    @Override
-    public void setContextId(String contextId) {
-        this.contextId = contextId;
-    }
+  @Override
+  public void setContextId(String contextId) {
+    this.contextId = contextId;
+  }
 
-    @Override
-    public String getInstance() {
-        return instance;
-    }
+  @Override
+  public String getInstance() {
+    return instance;
+  }
 
-    @Override
-    public void setInstance(String instance) {
-        this.instance = instance;
-    }
+  @Override
+  public void setInstance(String instance) {
+    this.instance = instance;
+  }
 
-    @Override
-    public String getBackupInstance() {
-        return backupInstance;
-    }
+  @Override
+  public String getBackupInstance() {
+    return backupInstance;
+  }
 
-    @Override
-    public void setBackupInstance(String backupInstance) {
-        this.backupInstance = backupInstance;
-    }
+  @Override
+  public void setBackupInstance(String backupInstance) {
+    this.backupInstance = backupInstance;
+  }
 }

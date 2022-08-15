@@ -27,45 +27,45 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.Date;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 public class ECResourceInfoServiceImpl implements ECResourceInfoService {
 
-    private static final Logger logger = LoggerFactory.getLogger(EMRestfulApi.class);
+  private static final Logger logger = LoggerFactory.getLogger(EMRestfulApi.class);
 
-    @Autowired private ECResourceRecordMapper ecResourceRecordMapper;
+  @Autowired private ECResourceRecordMapper ecResourceRecordMapper;
 
-    @Override
-    public ECResourceInfoRecord getECResourceInfoRecord(String ticketId) {
-        if (StringUtils.isNoneBlank(ticketId)) {
-            return ecResourceRecordMapper.getECResourceInfoRecord(ticketId);
-        }
-        return null;
+  @Override
+  public ECResourceInfoRecord getECResourceInfoRecord(String ticketId) {
+    if (StringUtils.isNoneBlank(ticketId)) {
+      return ecResourceRecordMapper.getECResourceInfoRecord(ticketId);
     }
+    return null;
+  }
 
-    @Override
-    public void deleteECResourceInfoRecordByTicketId(String ticketId) {
-        if (StringUtils.isNoneBlank(ticketId)) {
-            logger.info("Start to delete ec：{} info ", ticketId);
-            ecResourceRecordMapper.deleteECResourceInfoRecordByTicketId(ticketId);
-        }
+  @Override
+  public void deleteECResourceInfoRecordByTicketId(String ticketId) {
+    if (StringUtils.isNoneBlank(ticketId)) {
+      logger.info("Start to delete ec：{} info ", ticketId);
+      ecResourceRecordMapper.deleteECResourceInfoRecordByTicketId(ticketId);
     }
+  }
 
-    @Override
-    public void deleteECResourceInfoRecord(Integer id) {
-        logger.info("Start to delete ec id：{} info ", id);
-        ecResourceRecordMapper.deleteECResourceInfoRecord(id);
-    }
+  @Override
+  public void deleteECResourceInfoRecord(Integer id) {
+    logger.info("Start to delete ec id：{} info ", id);
+    ecResourceRecordMapper.deleteECResourceInfoRecord(id);
+  }
 
-    @Override
-    public List<ECResourceInfoRecord> getECResourceInfoRecordList(
-            String instance, Date endDate, Date startDate, String username, String engineType) {
-        return ecResourceRecordMapper.getECResourceInfoHistory(
-                username, instance, endDate, startDate, engineType);
-    }
+  @Override
+  public List<ECResourceInfoRecord> getECResourceInfoRecordList(
+      String instance, Date endDate, Date startDate, String username, String engineType) {
+    return ecResourceRecordMapper.getECResourceInfoHistory(
+        username, instance, endDate, startDate, engineType);
+  }
 }

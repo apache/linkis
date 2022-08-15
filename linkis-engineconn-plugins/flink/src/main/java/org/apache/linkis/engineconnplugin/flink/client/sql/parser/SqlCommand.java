@@ -22,96 +22,96 @@ import java.util.function.Function;
 import java.util.regex.Pattern;
 
 public enum SqlCommand {
-    LINKIS_GRAMMAR,
+  LINKIS_GRAMMAR,
 
-    SELECT,
+  SELECT,
 
-    INSERT_INTO,
+  INSERT_INTO,
 
-    INSERT_OVERWRITE,
+  INSERT_OVERWRITE,
 
-    CREATE_TABLE,
+  CREATE_TABLE,
 
-    ALTER_TABLE,
+  ALTER_TABLE,
 
-    DROP_TABLE,
+  DROP_TABLE,
 
-    CREATE_CATALOG,
+  CREATE_CATALOG,
 
-    DROP_CATALOG,
+  DROP_CATALOG,
 
-    CREATE_VIEW,
+  CREATE_VIEW,
 
-    DROP_VIEW,
+  DROP_VIEW,
 
-    CREATE_DATABASE,
+  CREATE_DATABASE,
 
-    ALTER_DATABASE,
+  ALTER_DATABASE,
 
-    DROP_DATABASE,
+  DROP_DATABASE,
 
-    USE_CATALOG,
+  USE_CATALOG,
 
-    USE,
+  USE,
 
-    SHOW_CATALOGS,
+  SHOW_CATALOGS,
 
-    SHOW_DATABASES,
+  SHOW_DATABASES,
 
-    SHOW_TABLES,
+  SHOW_TABLES,
 
-    SHOW_FUNCTIONS,
+  SHOW_FUNCTIONS,
 
-    EXPLAIN,
+  EXPLAIN,
 
-    DESCRIBE_TABLE,
+  DESCRIBE_TABLE,
 
-    RESET,
+  RESET,
 
-    SET("SET", Inner_Config.NO_OPERANDS),
+  SET("SET", Inner_Config.NO_OPERANDS),
 
-    SHOW_MODULES("SHOW\\s+MODULES", Inner_Config.NO_OPERANDS),
+  SHOW_MODULES("SHOW\\s+MODULES", Inner_Config.NO_OPERANDS),
 
-    SHOW_VIEWS("SHOW\\s+VIEWS", Inner_Config.NO_OPERANDS),
+  SHOW_VIEWS("SHOW\\s+VIEWS", Inner_Config.NO_OPERANDS),
 
-    SHOW_CURRENT_CATALOG("SHOW\\s+CURRENT\\s+CATALOG", Inner_Config.NO_OPERANDS),
+  SHOW_CURRENT_CATALOG("SHOW\\s+CURRENT\\s+CATALOG", Inner_Config.NO_OPERANDS),
 
-    SHOW_CURRENT_DATABASE("SHOW\\s+CURRENT\\s+DATABASE", Inner_Config.NO_OPERANDS);
+  SHOW_CURRENT_DATABASE("SHOW\\s+CURRENT\\s+DATABASE", Inner_Config.NO_OPERANDS);
 
-    private final Pattern pattern;
-    private final Function<String[], Optional<String[]>> operandConverter;
+  private final Pattern pattern;
+  private final Function<String[], Optional<String[]>> operandConverter;
 
-    SqlCommand(String matchingRegex, Function<String[], Optional<String[]>> operandConverter) {
-        this.pattern = Pattern.compile(matchingRegex, Inner_Config.DEFAULT_PATTERN_FLAGS);
-        this.operandConverter = operandConverter;
-    }
+  SqlCommand(String matchingRegex, Function<String[], Optional<String[]>> operandConverter) {
+    this.pattern = Pattern.compile(matchingRegex, Inner_Config.DEFAULT_PATTERN_FLAGS);
+    this.operandConverter = operandConverter;
+  }
 
-    SqlCommand() {
-        this.pattern = null;
-        this.operandConverter = null;
-    }
+  SqlCommand() {
+    this.pattern = null;
+    this.operandConverter = null;
+  }
 
-    @Override
-    public String toString() {
-        return super.toString().replace('_', ' ');
-    }
+  @Override
+  public String toString() {
+    return super.toString().replace('_', ' ');
+  }
 
-    boolean hasPattern() {
-        return pattern != null && operandConverter != null;
-    }
+  boolean hasPattern() {
+    return pattern != null && operandConverter != null;
+  }
 
-    Pattern getPattern() {
-        return pattern;
-    }
+  Pattern getPattern() {
+    return pattern;
+  }
 
-    Function<String[], Optional<String[]>> getOperandConverter() {
-        return operandConverter;
-    }
+  Function<String[], Optional<String[]>> getOperandConverter() {
+    return operandConverter;
+  }
 
-    static class Inner_Config {
-        private static final Function<String[], Optional<String[]>> NO_OPERANDS =
-                (operands) -> Optional.of(new String[0]);
+  static class Inner_Config {
+    private static final Function<String[], Optional<String[]>> NO_OPERANDS =
+        (operands) -> Optional.of(new String[0]);
 
-        private static final int DEFAULT_PATTERN_FLAGS = Pattern.CASE_INSENSITIVE | Pattern.DOTALL;
-    }
+    private static final int DEFAULT_PATTERN_FLAGS = Pattern.CASE_INSENSITIVE | Pattern.DOTALL;
+  }
 }

@@ -35,9 +35,12 @@ else
   # load image
   if [ "X${KIND_LOAD_IMAGE}" == "Xtrue" ]; then
     echo "# Loading Linkis image ..."
-    kind load docker-image linkis:${PROJECT_VERSION} --name ${KIND_CLUSTER_NAME}
-    kind load docker-image linkis-web:${PROJECT_VERSION} --name ${KIND_CLUSTER_NAME}
+    kind load docker-image linkis:${LINKIS_IMAGE_TAG} --name ${KIND_CLUSTER_NAME}
+    kind load docker-image linkis-web:${LINKIS_IMAGE_TAG} --name ${KIND_CLUSTER_NAME}
   fi
   # install helm charts
-  helm install --create-namespace --namespace ${KUBE_NAMESPACE} -f ${LINKIS_CHART_DIR}/values.yaml ${HELM_RELEASE_NAME} ${LINKIS_CHART_DIR}
+  helm install --create-namespace --namespace ${KUBE_NAMESPACE} \
+    -f ${LINKIS_CHART_DIR}/values.yaml \
+    --set image.tag=${LINKIS_IMAGE_TAG} \
+    ${HELM_RELEASE_NAME} ${LINKIS_CHART_DIR}
 fi

@@ -5,31 +5,38 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
-package org.apache.linkis.rpc.interceptor.common
 
-import java.net.ConnectException
+package org.apache.linkis.rpc.interceptor.common
 
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.exception.LinkisRetryException
 import org.apache.linkis.common.utils.RetryHandler
 import org.apache.linkis.protocol.RetryableProtocol
 import org.apache.linkis.rpc.exception.DWCRPCRetryException
-import org.apache.linkis.rpc.interceptor.{RPCInterceptor, RPCInterceptorChain, RPCInterceptorExchange, ServiceInstanceRPCInterceptorChain}
+import org.apache.linkis.rpc.interceptor.{
+  RPCInterceptor,
+  RPCInterceptorChain,
+  RPCInterceptorExchange,
+  ServiceInstanceRPCInterceptorChain
+}
 import org.apache.linkis.rpc.utils.RPCUtils
-import feign.RetryableException
+
 import org.apache.commons.lang3.StringUtils
+
 import org.springframework.stereotype.Component
 
+import java.net.ConnectException
+
+import feign.RetryableException
 
 @Component
 class RetryableRPCInterceptor extends RPCInterceptor {
@@ -42,14 +49,17 @@ class RetryableRPCInterceptor extends RPCInterceptor {
 //    retry.period == commonRetryHandler.getRetryPeriod && retry.retryNum == commonRetryHandler.getRetryNum &&
 //    (retry.retryExceptions.isEmpty || commonRetryHandler.getRetryExceptions.containsSlice(retry.retryExceptions))
 
-  override def intercept(interceptorExchange: RPCInterceptorExchange, chain: RPCInterceptorChain): Any = interceptorExchange.getProtocol match {
+  override def intercept(
+      interceptorExchange: RPCInterceptorExchange,
+      chain: RPCInterceptorChain
+  ): Any = interceptorExchange.getProtocol match {
     case retry: RetryableProtocol =>
       val retryName = retry.getClass.getSimpleName
 //      if(isCommonRetryHandler(retry)) commonRetryHandler.retry(chain.handle(interceptorExchange), retryName)
 //      else {
-        val retryHandler = new RPCRetryHandler
-        retryHandler.setRetryInfo(retry, chain)
-        retryHandler.retry(chain.handle(interceptorExchange), retryName)
+      val retryHandler = new RPCRetryHandler
+      retryHandler.setRetryInfo(retry, chain)
+      retryHandler.retry(chain.handle(interceptorExchange), retryName)
 //      }
     case _ => chain.handle(interceptorExchange)
   }
@@ -58,13 +68,15 @@ class RetryableRPCInterceptor extends RPCInterceptor {
     addRetryException(classOf[ConnectException])
     addRetryException(classOf[RetryableException])
     private var serviceInstance: Option[ServiceInstance] = None
-    def setRetryInfo(retry: RetryableProtocol, chain: RPCInterceptorChain): Unit ={
+
+    def setRetryInfo(retry: RetryableProtocol, chain: RPCInterceptorChain): Unit = {
       setRetryNum(retry.retryNum)
       setRetryPeriod(retry.period)
       setRetryMaxPeriod(retry.maxPeriod)
       retry.retryExceptions.foreach(addRetryException)
       chain match {
-        case s: ServiceInstanceRPCInterceptorChain => serviceInstance = Option(s.getServiceInstance)
+        case s: ServiceInstanceRPCInterceptorChain =>
+          serviceInstance = Option(s.getServiceInstance)
         case _ =>
       }
     }
@@ -74,13 +86,21 @@ class RetryableRPCInterceptor extends RPCInterceptor {
     override def exceptionCanRetry(t: Throwable): Boolean = t match {
       case _: DWCRPCRetryException => true
       case r: LinkisRetryException => r.getErrCode == DWCRPCRetryException.RPC_RETRY_ERROR_CODE
-      case _ => (serviceInstance.exists(s => StringUtils.isBlank(s.getInstance)) && isNoServiceException(t)) || super.exceptionCanRetry(t)
+      case _ =>
+        (serviceInstance.exists(s => StringUtils.isBlank(s.getInstance)) && isNoServiceException(
+          t
+        )) || super.exceptionCanRetry(t)
     }
+
   }
+
 }
+
 object RetryableRPCInterceptor {
+
   def isRetryableProtocol(message: Any): Boolean = message match {
     case protocol: RetryableProtocol => true
     case _ => false
   }
+
 }

@@ -59,6 +59,9 @@ object CSTableParser extends Logging {
     */
   def parse(engineExecutorContext: EngineExecutionContext, code: String, contextIDValueStr: String, nodeNameStr: String): String = {
     val csTempTables = getCSTempTable(code)
+    if (null == csTempTables || csTempTables.isEmpty) {
+      return code
+    }
     val parsedTables = new ArrayBuffer[String]()
     csTempTables.foreach{ csTempTable =>
       val table = getCSTable(csTempTable, contextIDValueStr, nodeNameStr)

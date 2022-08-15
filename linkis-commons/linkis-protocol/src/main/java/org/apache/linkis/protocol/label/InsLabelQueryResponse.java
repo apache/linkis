@@ -23,20 +23,20 @@ import java.util.List;
 
 public class InsLabelQueryResponse {
 
-    public InsLabelQueryResponse() {}
+  public InsLabelQueryResponse() {}
 
-    public InsLabelQueryResponse(List<ImmutablePair<String, String>> labelList) {
-        this.labelList = labelList;
-    }
+  public InsLabelQueryResponse(List<ImmutablePair<String, String>> labelList) {
+    this.labelList = labelList;
+  }
 
-    private List<ImmutablePair<String, String>> labelList;
+  private List<ImmutablePair<String, String>> labelList;
 
-    public List<ImmutablePair<String, String>> getLabelList() {
-        return labelList;
-    }
+  public List<ImmutablePair<String, String>> getLabelList() {
+    return labelList;
+  }
 
-    public InsLabelQueryResponse setLabelList(List<ImmutablePair<String, String>> labelList) {
-        this.labelList = labelList;
-        return this;
-    }
+  public InsLabelQueryResponse setLabelList(List<ImmutablePair<String, String>> labelList) {
+    this.labelList = labelList;
+    return this;
+  }
 }

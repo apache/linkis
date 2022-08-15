@@ -28,27 +28,25 @@ import org.slf4j.LoggerFactory;
 
 public class LinkisBaseServerApp {
 
-    private static final Logger logger = LoggerFactory.getLogger(LinkisBaseServerApp.class);
+  private static final Logger logger = LoggerFactory.getLogger(LinkisBaseServerApp.class);
 
-    public static void main(String[] args) throws ReflectiveOperationException {
+  public static void main(String[] args) throws ReflectiveOperationException {
 
-        String userName = Utils.getJvmUser();
-        String hostName = Utils.getComputerName();
-        // val allArgs = args ++
-        System.setProperty("hostName", hostName);
-        System.setProperty("userName", userName);
+    String userName = Utils.getJvmUser();
+    String hostName = Utils.getComputerName();
+    // val allArgs = args ++
+    System.setProperty("hostName", hostName);
+    System.setProperty("userName", userName);
 
-        String serviceName = System.getProperty(LinkisMainHelper.SERVER_NAME_KEY());
+    String serviceName = System.getProperty(LinkisMainHelper.SERVER_NAME_KEY());
 
-        System.setProperty("spring.application.name", serviceName);
-        LinkisMainHelper.formatPropertyFiles(serviceName);
-        String[] allArgs =
-                (String[])
-                        ArrayUtils.addAll(args, LinkisMainHelper.getExtraSpringOptions("linkis"));
-        String argsString = StringUtils.join(allArgs, "\n");
-        String startLog =
-                String.format("Ready to start %s with args: %s.", serviceName, argsString);
-        logger.info(startLog);
-        DataWorkCloudApplication.main(allArgs);
-    }
+    System.setProperty("spring.application.name", serviceName);
+    LinkisMainHelper.formatPropertyFiles(serviceName);
+    String[] allArgs =
+        (String[]) ArrayUtils.addAll(args, LinkisMainHelper.getExtraSpringOptions("linkis"));
+    String argsString = StringUtils.join(allArgs, "\n");
+    String startLog = String.format("Ready to start %s with args: %s.", serviceName, argsString);
+    logger.info(startLog);
+    DataWorkCloudApplication.main(allArgs);
+  }
 }

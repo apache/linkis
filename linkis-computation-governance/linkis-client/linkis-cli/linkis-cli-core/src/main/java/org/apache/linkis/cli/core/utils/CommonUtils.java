@@ -19,64 +19,64 @@ package org.apache.linkis.cli.core.utils;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 public class CommonUtils {
 
-    public static final Gson GSON =
-            new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
+  public static final Gson GSON =
+      new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 
-    public static <T> T castStringToAny(Class<T> clazz, String val) {
-        if (StringUtils.isBlank(val)) {
-            return null;
-        }
-        T ret = null;
-        if (clazz == Object.class) {
-            ret = clazz.cast(val);
-        } else if (clazz == String.class) {
-            ret = clazz.cast(val);
-        } else if (clazz == Integer.class) {
-            ret = clazz.cast(Integer.parseInt(val));
-        } else if (clazz == Double.class) {
-            ret = clazz.cast(Double.parseDouble(val));
-        } else if (clazz == Float.class) {
-            ret = clazz.cast(Float.parseFloat(val));
-        } else if (clazz == Long.class) {
-            ret = clazz.cast(Long.parseLong(val));
-        } else if (clazz == Boolean.class) {
-            ret = clazz.cast(Boolean.parseBoolean(val));
-        }
-        return ret;
+  public static <T> T castStringToAny(Class<T> clazz, String val) {
+    if (StringUtils.isBlank(val)) {
+      return null;
+    }
+    T ret = null;
+    if (clazz == Object.class) {
+      ret = clazz.cast(val);
+    } else if (clazz == String.class) {
+      ret = clazz.cast(val);
+    } else if (clazz == Integer.class) {
+      ret = clazz.cast(Integer.parseInt(val));
+    } else if (clazz == Double.class) {
+      ret = clazz.cast(Double.parseDouble(val));
+    } else if (clazz == Float.class) {
+      ret = clazz.cast(Float.parseFloat(val));
+    } else if (clazz == Long.class) {
+      ret = clazz.cast(Long.parseLong(val));
+    } else if (clazz == Boolean.class) {
+      ret = clazz.cast(Boolean.parseBoolean(val));
+    }
+    return ret;
+  }
+
+  public static void doSleepQuietly(Long sleepMills) {
+    try {
+      Thread.sleep(sleepMills);
+    } catch (Exception ignore) {
+      // ignored
+    }
+  }
+
+  public static Map<String, String> parseKVStringToMap(String kvStr, String separator) {
+    if (StringUtils.isBlank(separator)) {
+      separator = ",";
+    }
+    if (StringUtils.isBlank(kvStr)) {
+      return null;
+    }
+    Map<String, String> argsProps = new HashMap<>();
+    String[] args = StringUtils.splitByWholeSeparator(kvStr, separator);
+    for (String arg : args) {
+      int index = arg.indexOf("=");
+      if (index != -1) {
+        argsProps.put(arg.substring(0, index).trim(), arg.substring(index + 1).trim());
+      }
     }
 
-    public static void doSleepQuietly(Long sleepMills) {
-        try {
-            Thread.sleep(sleepMills);
-        } catch (Exception ignore) {
-            // ignored
-        }
-    }
-
-    public static Map<String, String> parseKVStringToMap(String kvStr, String separator) {
-        if (StringUtils.isBlank(separator)) {
-            separator = ",";
-        }
-        if (StringUtils.isBlank(kvStr)) {
-            return null;
-        }
-        Map<String, String> argsProps = new HashMap<>();
-        String[] args = StringUtils.splitByWholeSeparator(kvStr, separator);
-        for (String arg : args) {
-            int index = arg.indexOf("=");
-            if (index != -1) {
-                argsProps.put(arg.substring(0, index).trim(), arg.substring(index + 1).trim());
-            }
-        }
-
-        return argsProps;
-    }
+    return argsProps;
+  }
 }

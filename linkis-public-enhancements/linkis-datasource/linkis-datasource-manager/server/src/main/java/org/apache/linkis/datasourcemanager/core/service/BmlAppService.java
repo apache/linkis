@@ -24,30 +24,30 @@ import java.io.InputStream;
 /** BML application service */
 public interface BmlAppService {
 
-    /**
-     * Upload resource by bml client
-     *
-     * @param fileName file name
-     * @param inputStream inputStream
-     * @return resource id
-     */
-    String clientUploadResource(String userName, String fileName, InputStream inputStream)
-            throws ErrorException;
+  /**
+   * Upload resource by bml client
+   *
+   * @param fileName file name
+   * @param inputStream inputStream
+   * @return resource id
+   */
+  String clientUploadResource(String userName, String fileName, InputStream inputStream)
+      throws ErrorException;
 
-    /**
-     * Remove resource by bml client
-     *
-     * @param resourceId resource id
-     */
-    void clientRemoveResource(String userName, String resourceId) throws ErrorException;
+  /**
+   * Remove resource by bml client
+   *
+   * @param resourceId resource id
+   */
+  void clientRemoveResource(String userName, String resourceId) throws ErrorException;
 
-    /**
-     * Update resource by bml client
-     *
-     * @param resourceId resource id
-     * @param inputStream input stream
-     * @return version
-     */
-    String clientUpdateResource(String userName, String resourceId, InputStream inputStream)
-            throws ErrorException;
+  /**
+   * Update resource by bml client
+   *
+   * @param resourceId resource id
+   * @param inputStream input stream
+   * @return version
+   */
+  String clientUpdateResource(String userName, String resourceId, InputStream inputStream)
+      throws ErrorException;
 }

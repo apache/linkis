@@ -28,19 +28,19 @@ import org.slf4j.LoggerFactory;
 
 public class ScheduledRefreshJob extends QuartzJobBean {
 
-    private static Logger logger = LoggerFactory.getLogger(ScheduledRefreshJob.class);
+  private static Logger logger = LoggerFactory.getLogger(ScheduledRefreshJob.class);
 
-    @Override
-    protected void executeInternal(JobExecutionContext jobExecutionContext)
-            throws JobExecutionException {
-        logger.info("Started cache refresh job.");
-        QueryCacheManager queryCacheManager =
-                (QueryCacheManager)
-                        jobExecutionContext
-                                .getJobDetail()
-                                .getJobDataMap()
-                                .get(QueryCacheManager.class.getName());
-        queryCacheManager.refreshAll();
-        logger.info("Finished cache refresh job.");
-    }
+  @Override
+  protected void executeInternal(JobExecutionContext jobExecutionContext)
+      throws JobExecutionException {
+    logger.info("Started cache refresh job.");
+    QueryCacheManager queryCacheManager =
+        (QueryCacheManager)
+            jobExecutionContext
+                .getJobDetail()
+                .getJobDataMap()
+                .get(QueryCacheManager.class.getName());
+    queryCacheManager.refreshAll();
+    logger.info("Finished cache refresh job.");
+  }
 }

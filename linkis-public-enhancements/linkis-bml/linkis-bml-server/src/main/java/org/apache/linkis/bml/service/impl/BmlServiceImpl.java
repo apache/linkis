@@ -27,5 +27,5 @@ import org.slf4j.LoggerFactory;
 @Service
 public class BmlServiceImpl implements BmlService {
 
-    private static final Logger logger = LoggerFactory.getLogger(BmlServiceImpl.class);
+  private static final Logger logger = LoggerFactory.getLogger(BmlServiceImpl.class);
 }

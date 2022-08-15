@@ -22,30 +22,30 @@ import org.apache.linkis.cs.common.entity.source.ContextID;
 import org.apache.linkis.cs.common.entity.source.ContextKeyValue;
 import org.apache.linkis.cs.contextcache.ContextCacheService;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-
 public class ContextTypeContextSearchFetcher extends AbstractContextCacheFetcher {
 
-    private static final Logger logger =
-            LoggerFactory.getLogger(ContextTypeContextSearchFetcher.class);
+  private static final Logger logger =
+      LoggerFactory.getLogger(ContextTypeContextSearchFetcher.class);
 
-    ContextType contextType;
+  ContextType contextType;
 
-    public ContextTypeContextSearchFetcher(
-            ContextCacheService contextCacheService, ContextType contextType) {
-        super(contextCacheService);
-        this.contextType = contextType;
-    }
+  public ContextTypeContextSearchFetcher(
+      ContextCacheService contextCacheService, ContextType contextType) {
+    super(contextCacheService);
+    this.contextType = contextType;
+  }
 
-    private ContextTypeContextSearchFetcher(ContextCacheService contextCacheService) {
-        super(contextCacheService);
-    }
+  private ContextTypeContextSearchFetcher(ContextCacheService contextCacheService) {
+    super(contextCacheService);
+  }
 
-    @Override
-    public List<ContextKeyValue> fetch(ContextID contextID) {
-        return contextCacheService.getAllByType(contextID, contextType);
-    }
+  @Override
+  public List<ContextKeyValue> fetch(ContextID contextID) {
+    return contextCacheService.getAllByType(contextID, contextType);
+  }
 }

@@ -18,5 +18,5 @@
 package org.apache.linkis.cli.common.exception.handler;
 
 public interface ExceptionHandler {
-    void handle(Exception e);
+  void handle(Exception e);
 }

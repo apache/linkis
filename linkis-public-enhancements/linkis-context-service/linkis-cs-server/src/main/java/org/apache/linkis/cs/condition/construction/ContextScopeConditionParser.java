@@ -24,14 +24,14 @@ import org.apache.linkis.cs.condition.impl.ContextScopeCondition;
 import java.util.Map;
 
 public class ContextScopeConditionParser implements ConditionParser {
-    @Override
-    public Condition parse(Map<Object, Object> conditionMap) {
-        return new ContextScopeCondition(
-                ContextScope.valueOf((String) conditionMap.get("contextScope")));
-    }
+  @Override
+  public Condition parse(Map<Object, Object> conditionMap) {
+    return new ContextScopeCondition(
+        ContextScope.valueOf((String) conditionMap.get("contextScope")));
+  }
 
-    @Override
-    public String getName() {
-        return "ContextScope";
-    }
+  @Override
+  public String getName() {
+    return "ContextScope";
+  }
 }

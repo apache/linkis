@@ -19,38 +19,37 @@ package org.apache.linkis.engineplugin.trino.interceptor;
 
 import javax.security.auth.callback.PasswordCallback;
 
+import java.io.IOException;
+
 import okhttp3.Credentials;
 import okhttp3.Interceptor;
 import okhttp3.Response;
 
-import java.io.IOException;
-
 import static com.google.common.net.HttpHeaders.AUTHORIZATION;
 
 public class PasswordInterceptor implements Interceptor {
-    private final String user;
-    private final PasswordCallback callback;
-    private volatile String credentials = null;
-    private volatile long expiredTimestamp = 0;
+  private final String user;
+  private final PasswordCallback callback;
+  private volatile String credentials = null;
+  private volatile long expiredTimestamp = 0;
 
-    public PasswordInterceptor(String user, PasswordCallback callback) {
-        this.user = user;
-        this.callback = callback;
-    }
+  public PasswordInterceptor(String user, PasswordCallback callback) {
+    this.user = user;
+    this.callback = callback;
+  }
 
-    @Override
-    public Response intercept(Chain chain) throws IOException {
-        return chain.proceed(
-                chain.request().newBuilder().header(AUTHORIZATION, credentials()).build());
-    }
+  @Override
+  public Response intercept(Chain chain) throws IOException {
+    return chain.proceed(chain.request().newBuilder().header(AUTHORIZATION, credentials()).build());
+  }
 
-    private synchronized String credentials() {
-        long timeMillis = System.currentTimeMillis();
-        if (credentials == null || timeMillis > expiredTimestamp) {
-            /* expired for 10 minutes */
-            expiredTimestamp = timeMillis + 600000L;
-            credentials = Credentials.basic(user, new String(callback.getPassword()));
-        }
-        return credentials;
+  private synchronized String credentials() {
+    long timeMillis = System.currentTimeMillis();
+    if (credentials == null || timeMillis > expiredTimestamp) {
+      /* expired for 10 minutes */
+      expiredTimestamp = timeMillis + 600000L;
+      credentials = Credentials.basic(user, new String(callback.getPassword()));
     }
+    return credentials;
+  }
 }

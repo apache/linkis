@@ -19,14 +19,14 @@ package org.apache.linkis.metadata.util;
 
 public class Constants {
 
-    public static final String APPLICATION_NAME = "Datasource";
+  public static final String APPLICATION_NAME = "Datasource";
 
-    public static final String SUBMITTED = "submitted";
-    public static final String APPROVED = "approved";
-    public static final String REJECTED = "rejected";
+  public static final String SUBMITTED = "submitted";
+  public static final String APPROVED = "approved";
+  public static final String REJECTED = "rejected";
 
-    public static final String COLUMN = "column";
-    public static final String ROW = "row";
-    public static final String TABLE = "table";
-    public static final String SCRIPT = "script";
+  public static final String COLUMN = "column";
+  public static final String ROW = "row";
+  public static final String TABLE = "table";
+  public static final String SCRIPT = "script";
 }

@@ -21,7 +21,7 @@ import org.apache.linkis.cs.common.entity.env.Env;
 
 public interface EnvContextHistory extends ContextHistory {
 
-    Env getEnv();
+  Env getEnv();
 
-    void setEnv(Env env);
+  void setEnv(Env env);
 }

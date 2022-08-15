@@ -25,151 +25,151 @@ import org.apache.commons.lang3.StringUtils;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import java.util.*;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-import java.util.*;
-
 /** Store the data source environment information */
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_EMPTY)
 @JsonIgnoreProperties(
-        value = {"hibernateLazyInitializer", "handler"},
-        ignoreUnknown = true)
+    value = {"hibernateLazyInitializer", "handler"},
+    ignoreUnknown = true)
 public class DataSourceEnv {
 
-    private Long id;
-    /** Environment name */
-    @NotNull private String envName;
+  private Long id;
+  /** Environment name */
+  @NotNull private String envName;
 
-    /** Environment description */
-    @Size(min = 0, max = 200)
-    private String envDesc;
+  /** Environment description */
+  @Size(min = 0, max = 200)
+  private String envDesc;
 
-    /** ID of data source type */
-    @NotNull private Long dataSourceTypeId;
+  /** ID of data source type */
+  @NotNull private Long dataSourceTypeId;
 
-    private DataSourceType dataSourceType;
-    /** Connection parameters for environment */
-    private Map<String, Object> connectParams = new HashMap<>();
+  private DataSourceType dataSourceType;
+  /** Connection parameters for environment */
+  private Map<String, Object> connectParams = new HashMap<>();
 
-    /** Parameter JSON string */
-    @JsonIgnore private String parameter;
+  /** Parameter JSON string */
+  @JsonIgnore private String parameter;
 
-    /** Create time */
-    private Date createTime;
+  /** Create time */
+  private Date createTime;
 
-    /** Creator */
-    private String createUser;
+  /** Creator */
+  private String createUser;
 
-    /** Modify time */
-    private Date modifyTime;
+  /** Modify time */
+  private Date modifyTime;
 
-    /** Modify user */
-    private String modifyUser;
+  /** Modify user */
+  private String modifyUser;
 
-    @JsonIgnore private List<DataSourceParamKeyDefinition> keyDefinitions = new ArrayList<>();
+  @JsonIgnore private List<DataSourceParamKeyDefinition> keyDefinitions = new ArrayList<>();
 
-    public Long getId() {
-        return id;
+  public Long getId() {
+    return id;
+  }
+
+  public void setId(Long id) {
+    this.id = id;
+  }
+
+  public String getEnvName() {
+    return envName;
+  }
+
+  public void setEnvName(String envName) {
+    this.envName = envName;
+  }
+
+  public String getEnvDesc() {
+    return envDesc;
+  }
+
+  public void setEnvDesc(String envDesc) {
+    this.envDesc = envDesc;
+  }
+
+  public Map<String, Object> getConnectParams() {
+    if (connectParams.isEmpty() && StringUtils.isNotBlank(parameter)) {
+      try {
+        connectParams.putAll(Objects.requireNonNull(Json.fromJson(parameter, Map.class)));
+      } catch (JsonErrorException e) {
+        // Ignore
+      }
     }
+    return connectParams;
+  }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+  public void setConnectParams(Map<String, Object> connectParams) {
+    this.connectParams = connectParams;
+  }
 
-    public String getEnvName() {
-        return envName;
-    }
+  public String getParameter() {
+    return parameter;
+  }
 
-    public void setEnvName(String envName) {
-        this.envName = envName;
-    }
+  public void setParameter(String parameter) {
+    this.parameter = parameter;
+  }
 
-    public String getEnvDesc() {
-        return envDesc;
-    }
+  public Date getCreateTime() {
+    return createTime;
+  }
 
-    public void setEnvDesc(String envDesc) {
-        this.envDesc = envDesc;
-    }
+  public void setCreateTime(Date createTime) {
+    this.createTime = createTime;
+  }
 
-    public Map<String, Object> getConnectParams() {
-        if (connectParams.isEmpty() && StringUtils.isNotBlank(parameter)) {
-            try {
-                connectParams.putAll(Objects.requireNonNull(Json.fromJson(parameter, Map.class)));
-            } catch (JsonErrorException e) {
-                // Ignore
-            }
-        }
-        return connectParams;
-    }
+  public String getCreateUser() {
+    return createUser;
+  }
 
-    public void setConnectParams(Map<String, Object> connectParams) {
-        this.connectParams = connectParams;
-    }
+  public void setCreateUser(String createUser) {
+    this.createUser = createUser;
+  }
 
-    public String getParameter() {
-        return parameter;
-    }
+  public Date getModifyTime() {
+    return modifyTime;
+  }
 
-    public void setParameter(String parameter) {
-        this.parameter = parameter;
-    }
+  public void setModifyTime(Date modifyTime) {
+    this.modifyTime = modifyTime;
+  }
 
-    public Date getCreateTime() {
-        return createTime;
-    }
+  public String getModifyUser() {
+    return modifyUser;
+  }
 
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
+  public void setModifyUser(String modifyUser) {
+    this.modifyUser = modifyUser;
+  }
 
-    public String getCreateUser() {
-        return createUser;
-    }
+  public Long getDataSourceTypeId() {
+    return dataSourceTypeId;
+  }
 
-    public void setCreateUser(String createUser) {
-        this.createUser = createUser;
-    }
+  public void setDataSourceTypeId(Long dataSourceTypeId) {
+    this.dataSourceTypeId = dataSourceTypeId;
+  }
 
-    public Date getModifyTime() {
-        return modifyTime;
-    }
+  public List<DataSourceParamKeyDefinition> getKeyDefinitions() {
+    return keyDefinitions;
+  }
 
-    public void setModifyTime(Date modifyTime) {
-        this.modifyTime = modifyTime;
-    }
+  public void setKeyDefinitions(List<DataSourceParamKeyDefinition> keyDefinitions) {
+    this.keyDefinitions = keyDefinitions;
+  }
 
-    public String getModifyUser() {
-        return modifyUser;
-    }
+  public DataSourceType getDataSourceType() {
+    return dataSourceType;
+  }
 
-    public void setModifyUser(String modifyUser) {
-        this.modifyUser = modifyUser;
-    }
-
-    public Long getDataSourceTypeId() {
-        return dataSourceTypeId;
-    }
-
-    public void setDataSourceTypeId(Long dataSourceTypeId) {
-        this.dataSourceTypeId = dataSourceTypeId;
-    }
-
-    public List<DataSourceParamKeyDefinition> getKeyDefinitions() {
-        return keyDefinitions;
-    }
-
-    public void setKeyDefinitions(List<DataSourceParamKeyDefinition> keyDefinitions) {
-        this.keyDefinitions = keyDefinitions;
-    }
-
-    public DataSourceType getDataSourceType() {
-        return dataSourceType;
-    }
-
-    public void setDataSourceType(DataSourceType dataSourceType) {
-        this.dataSourceType = dataSourceType;
-    }
+  public void setDataSourceType(DataSourceType dataSourceType) {
+    this.dataSourceType = dataSourceType;
+  }
 }

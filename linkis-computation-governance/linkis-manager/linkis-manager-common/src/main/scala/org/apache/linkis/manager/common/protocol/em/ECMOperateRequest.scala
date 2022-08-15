@@ -21,12 +21,18 @@ import org.apache.linkis.manager.common.protocol.OperateRequest
 import org.apache.linkis.protocol.message.RequestProtocol
 
 import java.util
+
 import scala.collection.JavaConverters.mapAsJavaMapConverter
 
+case class ECMOperateRequest(user: String, parameters: util.Map[String, Object])
+    extends OperateRequest
+    with RequestProtocol {
 
-case class ECMOperateRequest(user: String,
-                             parameters: util.Map[String, Object]) extends OperateRequest with RequestProtocol {
-  def this(user: String, parameters: Map[String, Any]) = this(user, new util.HashMap[String, Object](parameters.map{case (k, v: Object) => (k, v)}.asJava))
+  def this(user: String, parameters: Map[String, Any]) = this(
+    user,
+    new util.HashMap[String, Object](parameters.map { case (k, v: Object) => (k, v) }.asJava)
+  )
+
 }
 
 object ECMOperateRequest {

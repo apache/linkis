@@ -18,28 +18,28 @@
 package org.apache.linkis.manager.engineplugin.jdbc;
 
 public enum JdbcAuthType {
-    /** the auth type of jdbc */
-    SIMPLE("SIMPLE"),
-    USERNAME("USERNAME"),
-    KERBEROS("KERBEROS");
+  /** the auth type of jdbc */
+  SIMPLE("SIMPLE"),
+  USERNAME("USERNAME"),
+  KERBEROS("KERBEROS");
 
-    private final String authType;
+  private final String authType;
 
-    JdbcAuthType(String authType) {
-        this.authType = authType;
+  JdbcAuthType(String authType) {
+    this.authType = authType;
+  }
+
+  public String getAuthType() {
+    return authType;
+  }
+
+  public static JdbcAuthType of(String authType) {
+    for (JdbcAuthType s : values()) {
+      if (authType.equals(s.getAuthType())) {
+        return s;
+      }
     }
-
-    public String getAuthType() {
-        return authType;
-    }
-
-    public static JdbcAuthType of(String authType) {
-        for (JdbcAuthType s : values()) {
-            if (authType.equals(s.getAuthType())) {
-                return s;
-            }
-        }
-        throw new UnsupportedOperationException(
-                "the login authentication type of " + authType + " is not supported");
-    }
+    throw new UnsupportedOperationException(
+        "the login authentication type of " + authType + " is not supported");
+  }
 }

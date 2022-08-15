@@ -19,7 +19,7 @@ package org.apache.linkis.cli.common.exception.error;
 
 public interface ErrorMsg {
 
-    String getMsgTemplate();
+  String getMsgTemplate();
 
-    void setMsgTemplate(String template);
+  void setMsgTemplate(String template);
 }

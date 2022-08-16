@@ -17,6 +17,17 @@
 
 package org.apache.linkis.datasourcemanager.core.service.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.linkis.common.exception.ErrorException;
 import org.apache.linkis.datasourcemanager.common.domain.DataSource;
 import org.apache.linkis.datasourcemanager.common.domain.DataSourceEnv;
@@ -24,45 +35,43 @@ import org.apache.linkis.datasourcemanager.common.domain.DataSourceParamKeyDefin
 import org.apache.linkis.datasourcemanager.common.domain.DatasourceVersion;
 import org.apache.linkis.datasourcemanager.common.exception.JsonErrorException;
 import org.apache.linkis.datasourcemanager.common.util.json.Json;
-import org.apache.linkis.datasourcemanager.core.dao.*;
+import org.apache.linkis.datasourcemanager.core.dao.DataSourceDao;
+import org.apache.linkis.datasourcemanager.core.dao.DataSourceEnvDao;
+import org.apache.linkis.datasourcemanager.core.dao.DataSourceParamKeyDao;
+import org.apache.linkis.datasourcemanager.core.dao.DataSourceVersionDao;
 import org.apache.linkis.datasourcemanager.core.formdata.FormStreamContent;
 import org.apache.linkis.datasourcemanager.core.service.BmlAppService;
 import org.apache.linkis.datasourcemanager.core.service.DataSourceInfoService;
 import org.apache.linkis.datasourcemanager.core.service.hooks.DataSourceParamsHook;
 import org.apache.linkis.datasourcemanager.core.vo.DataSourceEnvVo;
 import org.apache.linkis.datasourcemanager.core.vo.DataSourceVo;
-
-import org.apache.commons.lang3.StringUtils;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.InputStream;
-import java.util.*;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 @Service
 public class DataSourceInfoServiceImpl implements DataSourceInfoService {
 
     private static final Logger LOG = LoggerFactory.getLogger(DataSourceInfoService.class);
-    @Autowired private BmlAppService bmlAppService;
+    @Autowired
+    private BmlAppService bmlAppService;
 
-    @Autowired private DataSourceDao dataSourceDao;
+    @Autowired
+    private DataSourceDao dataSourceDao;
 
-    @Autowired private DataSourceEnvDao dataSourceEnvDao;
+    @Autowired
+    private DataSourceEnvDao dataSourceEnvDao;
 
-    @Autowired private DataSourceParamKeyDao dataSourceParamKeyDao;
+    @Autowired
+    private DataSourceParamKeyDao dataSourceParamKeyDao;
 
-    @Autowired private DataSourceVersionDao dataSourceVersionDao;
+    @Autowired
+    private DataSourceVersionDao dataSourceVersionDao;
 
-    @Autowired private List<DataSourceParamsHook> dataSourceParamsHooks = new ArrayList<>();
+    @Autowired
+    private List<DataSourceParamsHook> dataSourceParamsHooks = new ArrayList<>();
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -91,7 +100,7 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
         DataSource dataSource = dataSourceDao.selectOneDetail(dataSourceId);
         if (Objects.nonNull(dataSource)) {
             String parameter =
-                    dataSourceVersionDao.selectOneVersion(dataSourceId, dataSource.getVersionId());
+                dataSourceVersionDao.selectOneVersion(dataSourceId, dataSource.getVersionId());
             dataSource.setParameter(parameter);
         }
         return dataSource;
@@ -102,9 +111,26 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
         DataSource dataSource = dataSourceDao.selectOneDetailByName(dataSourceName);
         if (Objects.nonNull(dataSource)) {
             String parameter =
-                    dataSourceVersionDao.selectOneVersion(
-                            dataSource.getId(), dataSource.getVersionId());
+                dataSourceVersionDao.selectOneVersion(
+                    dataSource.getId(), dataSource.getVersionId());
             dataSource.setParameter(parameter);
+        }
+        return dataSource;
+    }
+
+    @Override
+    public DataSource getDataSourcePublishInfo(String dataSourceName) {
+        DataSource dataSource = dataSourceDao.selectOneDetailByName(dataSourceName);
+        if (Objects.nonNull(dataSource)) {
+            Long publishedVersionId = dataSource.getPublishedVersionId();
+            if (publishedVersionId == null) {
+                LOG.warn("Datasource name:{} is not published. ", dataSourceName);
+            } else {
+                String parameter =
+                    dataSourceVersionDao.selectOneVersion(
+                        dataSource.getId(), publishedVersionId);
+                dataSource.setParameter(parameter);
+            }
         }
         return dataSource;
     }
@@ -120,11 +146,8 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
     }
 
     /**
-     * get datasource info for connect for published version, if there is a dependency environment,
-     * merge datasource parameter and environment parameter.
-     *
-     * @param dataSourceId
-     * @return
+     * get datasource info for connect for published version, if there is a dependency environment, merge datasource parameter and environment
+     * parameter.
      */
     @Override
     public DataSource getDataSourceInfoForConnect(Long dataSourceId) {
@@ -132,8 +155,8 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
         if (Objects.nonNull(dataSource)) {
             // TODO dataSource.getPublishedVersionId() NullPoint Exception
             String parameter =
-                    dataSourceVersionDao.selectOneVersion(
-                            dataSourceId, dataSource.getPublishedVersionId());
+                dataSourceVersionDao.selectOneVersion(
+                    dataSourceId, dataSource.getPublishedVersionId());
             return mergeParams(dataSource, parameter);
         }
         return null;
@@ -144,8 +167,8 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
         DataSource dataSource = dataSourceDao.selectOneDetailByName(dataSourceName);
         if (Objects.nonNull(dataSource)) {
             String parameter =
-                    dataSourceVersionDao.selectOneVersion(
-                            dataSource.getId(), dataSource.getPublishedVersionId());
+                dataSourceVersionDao.selectOneVersion(
+                    dataSource.getId(), dataSource.getPublishedVersionId());
             return mergeParams(dataSource, parameter);
         }
         return null;
@@ -159,12 +182,12 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
                 connectParams = Objects.requireNonNull(Json.fromJson(parameter, Map.class));
             } catch (JsonErrorException e) {
                 LOG.warn(
-                        "Unrecognized the parameter: "
-                                + parameter
-                                + " in data source, id: ["
-                                + dataSource.getId()
-                                + "]",
-                        e);
+                    "Unrecognized the parameter: "
+                        + parameter
+                        + " in data source, id: ["
+                        + dataSource.getId()
+                        + "]",
+                    e);
                 // TODO throws Exception defined Exception
             }
             if (connectParams.containsKey("envId")) {
@@ -178,12 +201,7 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
     }
 
     /**
-     * get datasource info for connect, if there is a dependency environment, merge datasource
-     * parameter and environment parameter.
-     *
-     * @param dataSourceId
-     * @param version
-     * @return
+     * get datasource info for connect, if there is a dependency environment, merge datasource parameter and environment parameter.
      */
     @Override
     public DataSource getDataSourceInfoForConnect(Long dataSourceId, Long version) {
@@ -247,14 +265,14 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
     @Transactional(rollbackFor = Exception.class)
     public void saveDataSourceEnv(DataSourceEnv dataSourceEnv) throws ErrorException {
         storeConnectParams(
-                dataSourceEnv.getCreateUser(),
-                dataSourceEnv.getKeyDefinitions(),
-                dataSourceEnv.getConnectParams(),
-                parameter -> {
-                    dataSourceEnv.setParameter(parameter);
-                    // Save environment into database
-                    dataSourceEnvDao.insertOne(dataSourceEnv);
-                });
+            dataSourceEnv.getCreateUser(),
+            dataSourceEnv.getKeyDefinitions(),
+            dataSourceEnv.getConnectParams(),
+            parameter -> {
+                dataSourceEnv.setParameter(parameter);
+                // Save environment into database
+                dataSourceEnvDao.insertOne(dataSourceEnv);
+            });
     }
 
     @Override
@@ -278,27 +296,27 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
                 // Remove resource
                 Map<String, Object> connectParams = dataSourceEnv.getConnectParams();
                 List<DataSourceParamKeyDefinition> keyDefinitions =
-                        dataSourceParamKeyDao.listByDataSourceTypeAndScope(
-                                dataSourceEnv.getDataSourceTypeId(),
-                                DataSourceParamKeyDefinition.Scope.ENV);
+                    dataSourceParamKeyDao.listByDataSourceTypeAndScope(
+                        dataSourceEnv.getDataSourceTypeId(),
+                        DataSourceParamKeyDefinition.Scope.ENV);
                 // TODO throws ERROR Exception
                 keyDefinitions.forEach(
-                        keyDefinition -> {
-                            if (keyDefinition.getValueType()
-                                            == DataSourceParamKeyDefinition.ValueType.FILE
-                                    && connectParams.containsKey(keyDefinition.getKey())) {
-                                try {
-                                    // Proxy creator to delete resource
-                                    bmlAppService.clientRemoveResource(
-                                            dataSourceEnv.getCreateUser(),
-                                            String.valueOf(
-                                                    connectParams.get(keyDefinition.getKey())));
-                                } catch (Exception e) {
-                                    // Ignore remove error
-                                    // TODO LOG and throws LinkisRuntimeException
-                                }
+                    keyDefinition -> {
+                        if (keyDefinition.getValueType()
+                            == DataSourceParamKeyDefinition.ValueType.FILE
+                            && connectParams.containsKey(keyDefinition.getKey())) {
+                            try {
+                                // Proxy creator to delete resource
+                                bmlAppService.clientRemoveResource(
+                                    dataSourceEnv.getCreateUser(),
+                                    String.valueOf(
+                                        connectParams.get(keyDefinition.getKey())));
+                            } catch (Exception e) {
+                                // Ignore remove error
+                                // TODO LOG and throws LinkisRuntimeException
                             }
-                        });
+                        }
+                    });
                 return envId;
             }
         }
@@ -308,17 +326,17 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateDataSourceEnv(DataSourceEnv updatedOne, DataSourceEnv storedOne)
-            throws ErrorException {
+        throws ErrorException {
         updateConnectParams(
-                updatedOne.getCreateUser(),
-                updatedOne.getKeyDefinitions(),
-                updatedOne.getConnectParams(),
-                storedOne.getConnectParams(),
-                parameter -> {
-                    updatedOne.setParameter(parameter);
-                    // Update environment into database
-                    dataSourceEnvDao.updateOne(updatedOne);
-                });
+            updatedOne.getCreateUser(),
+            updatedOne.getKeyDefinitions(),
+            updatedOne.getConnectParams(),
+            storedOne.getConnectParams(),
+            parameter -> {
+                updatedOne.setParameter(parameter);
+                // Update environment into database
+                dataSourceEnvDao.updateOne(updatedOne);
+            });
     }
 
     @Override
@@ -331,9 +349,6 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
 
     /**
      * expire data source
-     *
-     * @param dataSourceId
-     * @return
      */
     @Override
     public Long expireDataSource(Long dataSourceId) {
@@ -350,9 +365,6 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
 
     /**
      * publish datasource by id set published_version_id to versionId;
-     *
-     * @param dataSourceId
-     * @return
      */
     @Override
     public int publishByDataSourceId(Long dataSourceId, Long versionId) {
@@ -366,23 +378,16 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
 
     /**
      * insert a datasource parameter, return new version, and update current versionId of datasource
-     *
-     * @param keyDefinitionList
-     * @param datasourceId
-     * @param connectParams
-     * @param username
-     * @param comment
-     * @return
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public long insertDataSourceParameter(
-            List<DataSourceParamKeyDefinition> keyDefinitionList,
-            Long datasourceId,
-            Map<String, Object> connectParams,
-            String username,
-            String comment)
-            throws ErrorException {
+        List<DataSourceParamKeyDefinition> keyDefinitionList,
+        Long datasourceId,
+        Map<String, Object> connectParams,
+        String username,
+        String comment)
+        throws ErrorException {
 
         DatasourceVersion datasourceVersion = new DatasourceVersion();
         datasourceVersion.setCreateUser(username);
@@ -399,9 +404,9 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
 
         // 2. set parameter, (check connectParams and remove if not in definedKeyNames);
         List<String> definedKeyNames =
-                keyDefinitionList.stream()
-                        .map(DataSourceParamKeyDefinition::getKey)
-                        .collect(Collectors.toList());
+            keyDefinitionList.stream()
+                .map(DataSourceParamKeyDefinition::getKey)
+                .collect(Collectors.toList());
         // Accept the other parameters
         //        connectParams.entrySet().removeIf(entry ->
         // !definedKeyNames.contains(entry.getKey()));
@@ -422,81 +427,73 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
 
     /**
      * get datasource version list
-     *
-     * @param datasourceId
-     * @return
      */
     @Override
     public List<DatasourceVersion> getVersionList(Long datasourceId) {
         List<DatasourceVersion> versionList =
-                dataSourceVersionDao.getVersionsFromDatasourceId(datasourceId);
+            dataSourceVersionDao.getVersionsFromDatasourceId(datasourceId);
         return versionList;
     }
 
     /**
-     * @param userName
-     * @param keyDefinitionList
-     * @param updatedParams
-     * @param storedParams
-     * @param parameterCallback
-     * @throws ErrorException
+     *
      */
     private void updateConnectParams(
-            String userName,
-            List<DataSourceParamKeyDefinition> keyDefinitionList,
-            Map<String, Object> updatedParams,
-            Map<String, Object> storedParams,
-            Consumer<String> parameterCallback)
-            throws ErrorException {
+        String userName,
+        List<DataSourceParamKeyDefinition> keyDefinitionList,
+        Map<String, Object> updatedParams,
+        Map<String, Object> storedParams,
+        Consumer<String> parameterCallback)
+        throws ErrorException {
         List<String> definedKeyNames =
-                keyDefinitionList.stream()
-                        .map(DataSourceParamKeyDefinition::getKey)
-                        .collect(Collectors.toList());
+            keyDefinitionList.stream()
+                .map(DataSourceParamKeyDefinition::getKey)
+                .collect(Collectors.toList());
         List<String> uploadedResources = new ArrayList<>();
         try {
             updatedParams
-                    .entrySet()
-                    .removeIf(
-                            entry -> {
-                                if (!definedKeyNames.contains(entry.getKey())) {
-                                    return true;
-                                }
-                                Object paramValue = entry.getValue();
-                                if (paramValue instanceof FormStreamContent) {
-                                    String resourceId =
-                                            String.valueOf(
-                                                    storedParams.getOrDefault(entry.getKey(), ""));
-                                    if (StringUtils.isNotBlank(resourceId)) {
-                                        uploadFormStream(
-                                                userName,
-                                                (FormStreamContent) paramValue,
-                                                resourceId);
-                                    } else {
-                                        resourceId =
-                                                uploadFormStream(
-                                                        userName,
-                                                        (FormStreamContent) paramValue,
-                                                        "");
-                                    }
-                                    if (null == resourceId) {
-                                        return true;
-                                    }
-                                    uploadedResources.add(resourceId);
-                                    entry.setValue(resourceId);
-                                }
-                                storedParams.remove(entry.getKey());
-                                return false;
-                            });
+                .entrySet()
+                .removeIf(
+                    entry -> {
+                        if (!definedKeyNames.contains(entry.getKey())) {
+                            return true;
+                        }
+                        Object paramValue = entry.getValue();
+                        if (paramValue instanceof FormStreamContent) {
+                            String resourceId =
+                                String.valueOf(
+                                    storedParams.getOrDefault(entry.getKey(), ""));
+                            if (StringUtils.isNotBlank(resourceId)) {
+                                uploadFormStream(
+                                    userName,
+                                    (FormStreamContent) paramValue,
+                                    resourceId);
+                            } else {
+                                resourceId =
+                                    uploadFormStream(
+                                        userName,
+                                        (FormStreamContent) paramValue,
+                                        "");
+                            }
+                            if (null == resourceId) {
+                                return true;
+                            }
+                            uploadedResources.add(resourceId);
+                            entry.setValue(resourceId);
+                        }
+                        storedParams.remove(entry.getKey());
+                        return false;
+                    });
             // Found the duplicate File
             List<String> duplicateResources = new ArrayList<>();
             keyDefinitionList.forEach(
-                    definedKey -> {
-                        if (definedKey.getValueType() == DataSourceParamKeyDefinition.ValueType.FILE
-                                && storedParams.containsKey(definedKey.getKey())) {
-                            duplicateResources.add(
-                                    String.valueOf(storedParams.get(definedKey.getKey())));
-                        }
-                    });
+                definedKey -> {
+                    if (definedKey.getValueType() == DataSourceParamKeyDefinition.ValueType.FILE
+                        && storedParams.containsKey(definedKey.getKey())) {
+                        duplicateResources.add(
+                            String.valueOf(storedParams.get(definedKey.getKey())));
+                    }
+                });
             for (DataSourceParamsHook hook : dataSourceParamsHooks) {
                 hook.beforePersist(updatedParams, keyDefinitionList);
             }
@@ -513,44 +510,40 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
 
     /**
      * Upload the form stream context in connect parameters, and serialize parameters
-     *
-     * @param keyDefinitionList
-     * @param connectParams
-     * @param parameterCallback
      */
     private void storeConnectParams(
-            String userName,
-            List<DataSourceParamKeyDefinition> keyDefinitionList,
-            Map<String, Object> connectParams,
-            Consumer<String> parameterCallback)
-            throws ErrorException {
+        String userName,
+        List<DataSourceParamKeyDefinition> keyDefinitionList,
+        Map<String, Object> connectParams,
+        Consumer<String> parameterCallback)
+        throws ErrorException {
         List<String> definedKeyNames =
-                keyDefinitionList.stream()
-                        .map(DataSourceParamKeyDefinition::getKey)
-                        .collect(Collectors.toList());
+            keyDefinitionList.stream()
+                .map(DataSourceParamKeyDefinition::getKey)
+                .collect(Collectors.toList());
         List<String> uploadedResources = new ArrayList<>();
         try {
             connectParams
-                    .entrySet()
-                    .removeIf(
-                            entry -> {
-                                if (!definedKeyNames.contains(entry.getKey())) {
-                                    return true;
-                                }
-                                Object paramValue = entry.getValue();
-                                // Upload stream resource in connection params
-                                if (paramValue instanceof FormStreamContent) {
-                                    String resourceId =
-                                            uploadFormStream(
-                                                    userName, (FormStreamContent) paramValue, "");
-                                    if (null == resourceId) {
-                                        return true;
-                                    }
-                                    uploadedResources.add(resourceId);
-                                    entry.setValue(resourceId);
-                                }
-                                return false;
-                            });
+                .entrySet()
+                .removeIf(
+                    entry -> {
+                        if (!definedKeyNames.contains(entry.getKey())) {
+                            return true;
+                        }
+                        Object paramValue = entry.getValue();
+                        // Upload stream resource in connection params
+                        if (paramValue instanceof FormStreamContent) {
+                            String resourceId =
+                                uploadFormStream(
+                                    userName, (FormStreamContent) paramValue, "");
+                            if (null == resourceId) {
+                                return true;
+                            }
+                            uploadedResources.add(resourceId);
+                            entry.setValue(resourceId);
+                        }
+                        return false;
+                    });
             for (DataSourceParamsHook hook : dataSourceParamsHooks) {
                 hook.beforePersist(connectParams, keyDefinitionList);
             }
@@ -574,15 +567,15 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
      * @return resource id or version tab
      */
     private String uploadFormStream(
-            String userName, FormStreamContent streamContent, String resourceId) {
+        String userName, FormStreamContent streamContent, String resourceId) {
         String fileName = streamContent.getFileName();
         InputStream inputStream = streamContent.getStream();
         if (null != inputStream) {
             // Proxy creator to upload resource
             try {
                 return StringUtils.isBlank(resourceId)
-                        ? bmlAppService.clientUploadResource(userName, fileName, inputStream)
-                        : bmlAppService.clientUpdateResource(userName, resourceId, inputStream);
+                    ? bmlAppService.clientUploadResource(userName, fileName, inputStream)
+                    : bmlAppService.clientUpdateResource(userName, resourceId, inputStream);
             } catch (Exception e) {
                 // Wrap with runtime exception
                 //                throw new RuntimeException(e);

@@ -58,8 +58,15 @@ class PythonSession extends Logging {
   private var code: String = _
   private var pid: Option[String] = None
 
-  private val pythonDefaultVersion: String = EngineConnServer.getEngineCreationContext.getOptions.getOrDefault("python.version", "python")
+  private val pythonDefaultVersion: String = getPyVersion
 
+
+  private def getPyVersion(): String = {
+    if (null != EngineConnServer.getEngineCreationContext.getOptions) {
+      EngineConnServer.getEngineCreationContext.getOptions.getOrDefault("python.version", "python")
+    }
+    PythonEngineConfiguration.PYTHON_VERSION.getValue
+  }
 
   def init(): Unit = {
 

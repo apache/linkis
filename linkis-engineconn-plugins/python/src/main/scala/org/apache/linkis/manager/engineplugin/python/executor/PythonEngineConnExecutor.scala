@@ -24,6 +24,7 @@ import org.apache.linkis.engineconn.launch.EngineConnServer
 import org.apache.linkis.governance.common.paser.PythonCodeParser
 import org.apache.linkis.manager.common.entity.resource.{CommonNodeResource, LoadInstanceResource, NodeResource}
 import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf
+import org.apache.linkis.manager.engineplugin.python.conf.PythonEngineConfiguration
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.apache.linkis.rpc.Sender
@@ -45,8 +46,14 @@ class PythonEngineConnExecutor(id: Int, pythonSession: PythonSession, outputPrin
     super.init
   }
 
-  private val pythonDefaultVersion: String = EngineConnServer.getEngineCreationContext.getOptions.getOrDefault("python.version", "python")
+  private val pythonDefaultVersion: String = getPyVersion
 
+  private def getPyVersion(): String = {
+    if (null != EngineConnServer.getEngineCreationContext.getOptions) {
+      EngineConnServer.getEngineCreationContext.getOptions.getOrDefault("python.version", "python")
+    }
+    PythonEngineConfiguration.PYTHON_VERSION.getValue
+  }
   override def executeLine(engineExecutionContext: EngineExecutionContext, code: String): ExecuteResponse = {
     val pythonVersion = engineExecutionContext.getProperties.getOrDefault("python.version", pythonDefaultVersion).toString.toLowerCase()
     logger.info(s" EngineExecutionContext user python.version = > ${pythonVersion}")

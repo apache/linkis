@@ -143,12 +143,12 @@ npm install
 npm run build
 ```
 
-请参考[快速安装部署 ](https://linkis.apache.org/zh-CN/docs/latest/deployment/quick_deploy) 来部署 Linkis
+请参考[快速安装部署](https://linkis.apache.org/zh-CN/docs/latest/deployment/quick-deploy) 来部署Linkis
 
 # 示例和使用指引
 
-- [用户手册 ](https://linkis.apache.org/zh-CN/docs/latest/user_guide/overview),
-- [各引擎使用指引 ](https://linkis.apache.org/zh-CN/docs/latest/engine_usage/overview) 
+- [用户手册 ](https://linkis.apache.org/zh-CN/docs/latest/user-guide/overview),
+- [各引擎使用指引 ](https://linkis.apache.org/zh-CN/docs/latest/engine-usage/overview) 
 - [API 文档 ](https://linkis.apache.org/zh-CN/docs/latest/api/overview)
 
 # 文档&视频

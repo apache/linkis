@@ -65,11 +65,8 @@ class ElasticSearchEngineConnExecutor(override val outputPrintLimit: Int, val id
 
   override def execute(engineConnTask: EngineConnTask): ExecuteResponse = {
 
-    logger.info(s"mytest EngineConnTask.getProperties：" + engineConnTask.getProperties)
-
     val properties: util.Map[String, String] = buildRuntimeParams(engineConnTask)
     logger.info(s"The elasticsearch properties is: $properties")
-
 
     val elasticSearchExecutor = ElasticSearchExecutor(runType, properties)
     elasticSearchExecutor.open
@@ -80,9 +77,6 @@ class ElasticSearchEngineConnExecutor(override val outputPrintLimit: Int, val id
   override def executeLine(engineExecutorContext: EngineExecutionContext, code: String): ExecuteResponse = {
     val taskId = engineExecutorContext.getJobId.get
     val elasticSearchExecutor = elasticSearchExecutorCache.getIfPresent(taskId)
-
-    val properties = engineExecutorContext.getProperties.asInstanceOf[util.Map[String, String]]
-    logger.info(s"mytest engineExecutorContext.getProperties：" + properties)
 
     val elasticSearchResponse = elasticSearchExecutor.executeLine(code)
 
@@ -152,8 +146,6 @@ class ElasticSearchEngineConnExecutor(override val outputPrintLimit: Int, val id
 
   override def getCurrentNodeResource(): NodeResource = {
     val properties = EngineConnObject.getEngineCreationContext.getOptions
-
-    logger.info(s"mytest EngineConnObject.getEngineCreationContext：" + properties)
 
     if (properties.containsKey(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key)) {
       val settingClientMemory = properties.get(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key)

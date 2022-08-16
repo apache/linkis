@@ -161,8 +161,8 @@ class HttpBmlClient(
    * @param overwrite
    *   Whether to append
    * @return
-   *   The returned InputStream has been read completely, so a null is returned,
-   *   and the other fullfilename is the name of the entire file
+   *   The returned InputStream has been read completely, so a null is returned, and the other
+   *   fullfilename is the name of the entire file
    */
   override def downloadResource(
       user: String,
@@ -198,16 +198,11 @@ class HttpBmlClient(
       }
     } catch {
       case e: IOException =>
-        logger.error(
-          "failed to copy inputStream and outputStream",
-          e
-        )
-        val exception = BmlClientFailException(
-          "failed to copy inputStream and outputStream"
-        )
+        logger.error("failed to copy inputStream and outputStream", e)
+        val exception = BmlClientFailException("failed to copy inputStream and outputStream")
         exception.initCause(e)
         throw exception
-      case t : Throwable =>
+      case t: Throwable =>
         logger.error("failed to copy stream", t)
         throw t
     } finally {
@@ -246,16 +241,11 @@ class HttpBmlClient(
       IOUtils.copy(inputStream, outputStream)
     } catch {
       case e: IOException =>
-        logger.error(
-          "failed to copy inputStream and outputStream",
-          e
-        )
-        val exception = BmlClientFailException(
-          "failed to copy inputStream and outputStream"
-        )
+        logger.error("failed to copy inputStream and outputStream", e)
+        val exception = BmlClientFailException("failed to copy inputStream and outputStream")
         exception.initCause(e)
         throw e
-      case t : Throwable =>
+      case t: Throwable =>
         logger.error("failed to copy stream", t)
         throw t
     } finally {
@@ -319,9 +309,9 @@ class HttpBmlClient(
   }
 
   /**
-   * The relateresource method associates the file
-   * with the targetfilepath path path to the resourceid
-   * Targetfilepath needs to include schema. If it does not include schema, the default is HDFS
+   * The relateresource method associates the file with the targetfilepath path path to the
+   * resourceid Targetfilepath needs to include schema. If it does not include schema, the default
+   * is HDFS
    *
    * @param resourceID
    *   resourceID
@@ -365,8 +355,8 @@ class HttpBmlClient(
   }
 
   /**
-   * Upload the file,
-   * the user specifies the file path, and the client automatically obtains the input stream
+   * Upload the file, the user specifies the file path, and the client automatically obtains the
+   * input stream
    * @param user
    *   user
    * @param filePath

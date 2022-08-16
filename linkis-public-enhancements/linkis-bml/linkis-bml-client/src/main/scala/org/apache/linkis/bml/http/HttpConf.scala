@@ -50,5 +50,4 @@ object HttpConf {
   val rollbackVersionUrl: String = urlPrefix + "/" + "rollbackVersion"
   val copyResourceUrl: String = urlPrefix + "/" + "copyResourceToAnotherUser"
 
-
 }

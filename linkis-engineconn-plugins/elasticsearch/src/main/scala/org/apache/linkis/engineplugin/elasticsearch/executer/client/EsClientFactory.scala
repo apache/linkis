@@ -20,7 +20,6 @@ import java.util
 import java.util.Map
 import org.apache.linkis.common.conf.CommonVars
 import org.apache.linkis.engineplugin.elasticsearch.conf.ElasticSearchConfiguration._
-import org.apache.linkis.server.JMap
 import org.apache.commons.lang3.StringUtils
 import org.apache.http.auth.{AuthScope, UsernamePasswordCredentials}
 import org.apache.http.client.CredentialsProvider
@@ -36,7 +35,7 @@ import scala.collection.JavaConverters._
 
 object EsClientFactory {
 
-  def getRestClient(options: JMap[String, String]): EsClient = {
+  def getRestClient(options: util.Map[String, String]): EsClient = {
     val key = getDatasourceName(options)
     if (StringUtils.isBlank(key)) {
       return defaultClient
@@ -63,7 +62,7 @@ object EsClientFactory {
     }
   }
 
-  private def getDatasourceName(options: JMap[String, String]): String = {
+  private def getDatasourceName(options: util.Map[String, String]): String = {
     options.getOrDefault(ES_DATASOURCE_NAME.key, "")
   }
 
@@ -71,7 +70,7 @@ object EsClientFactory {
     ES_CLIENT_MAP.put(client.getDatasourceName, client)
   }
 
-  private def createRestClient(options: JMap[String, String]): EsClient = {
+  private def createRestClient(options: util.Map[String, String]): EsClient = {
     val clusterStr = options.get(ES_CLUSTER.key)
     if (StringUtils.isBlank(clusterStr)) {
       throw EsParamsIllegalException("cluster is blank!")

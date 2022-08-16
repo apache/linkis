@@ -17,6 +17,7 @@
 package org.apache.linkis.engineplugin.elasticsearch.executer.client
 
 import java.nio.charset.StandardCharsets.UTF_8
+import java.util
 
 import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.engineplugin.elasticsearch.conf.ElasticSearchConfiguration._
@@ -34,7 +35,7 @@ import scala.collection.JavaConverters._
 
 trait EsClientOperate {
 
-  def execute(code: String, options: JMap[String, String], responseListener: ResponseListener): Cancellable
+  def execute(code: String, options: util.Map[String, String], responseListener: ResponseListener): Cancellable
 
   def close(): Unit
 
@@ -64,12 +65,12 @@ abstract class EsClient(datasourceName: String, client: RestClient, sniffer: Sni
 class EsClientImpl(datasourceName: String, client: RestClient, sniffer: Sniffer)
   extends EsClient(datasourceName, client, sniffer) {
 
-  override def execute(code: String, options: JMap[String, String], responseListener: ResponseListener): Cancellable = {
+  override def execute(code: String, options: util.Map[String, String], responseListener: ResponseListener): Cancellable = {
     val request = createRequest(code, options)
     client.performRequestAsync(request, responseListener)
   }
 
-  private def createRequest(code: String, options: JMap[String, String]): Request = {
+  private def createRequest(code: String, options: util.Map[String, String]): Request = {
     val endpoint = ES_HTTP_ENDPOINT.getValue(options)
     val method = ES_HTTP_METHOD.getValue(options)
     val request = new Request(method, endpoint)
@@ -78,7 +79,7 @@ class EsClientImpl(datasourceName: String, client: RestClient, sniffer: Sniffer)
     request
   }
 
-  private def getRequestOptions(options: JMap[String, String]): RequestOptions = {
+  private def getRequestOptions(options: util.Map[String, String]): RequestOptions = {
     val builder = RequestOptions.DEFAULT.toBuilder()
 
     val username = ES_USERNAME.getValue(options)

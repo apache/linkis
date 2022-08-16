@@ -18,8 +18,7 @@ package org.apache.linkis.engineplugin.elasticsearch.executer.client
 
 import java.util
 import java.util.Map
-import org.apache.linkis.common.conf.CommonVars
-import org.apache.linkis.engineplugin.elasticsearch.conf.ElasticSearchConfiguration._
+
 import org.apache.commons.lang3.StringUtils
 import org.apache.http.auth.{AuthScope, UsernamePasswordCredentials}
 import org.apache.http.client.CredentialsProvider
@@ -27,6 +26,8 @@ import org.apache.http.impl.client.BasicCredentialsProvider
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder
 import org.apache.http.message.BasicHeader
 import org.apache.http.{Header, HttpHost}
+import org.apache.linkis.common.conf.CommonVars
+import org.apache.linkis.engineplugin.elasticsearch.conf.ElasticSearchConfiguration._
 import org.apache.linkis.engineplugin.elasticsearch.exception.EsParamsIllegalException
 import org.elasticsearch.client.sniff.Sniffer
 import org.elasticsearch.client.{RestClient, RestClientBuilder}
@@ -93,8 +94,8 @@ object EsClientFactory {
           if (!ES_AUTH_CACHE.getValue) {
             httpAsyncClientBuilder.disableAuthCaching
           }
-//        httpClientBuilder.setDefaultRequestConfig(RequestConfig.DEFAULT)
-//        httpClientBuilder.setDefaultConnectionConfig(ConnectionConfig.DEFAULT)
+          //        httpClientBuilder.setDefaultRequestConfig(RequestConfig.DEFAULT)
+          //        httpClientBuilder.setDefaultConnectionConfig(ConnectionConfig.DEFAULT)
           httpAsyncClientBuilder.setDefaultCredentialsProvider(credentialsProvider)
         }
       })
@@ -138,7 +139,11 @@ object EsClientFactory {
     clusterStr.split(",")
       .map(value => {
         val arr = value.split(":")
-        (arr(0).trim, arr(1).trim.toInt)
+        if (value.startsWith("http://")) {
+          (arr(1).trim.replace("//", ""), arr(2).trim.toInt)
+        } else {
+          (arr(0).trim, arr(1).trim.toInt)
+        }
       })
   } else Array()
 
@@ -146,7 +151,7 @@ object EsClientFactory {
   private def setAuthScope(cluster: Array[(String, Int)], username: String, password: String): Unit = if (cluster != null && !cluster.isEmpty
     && StringUtils.isNotBlank(username)
     && StringUtils.isNotBlank(password)) {
-    cluster.foreach{
+    cluster.foreach {
       case (host, port) => {
         credentialsProvider.setCredentials(new AuthScope(host, port, AuthScope.ANY_REALM, AuthScope.ANY_SCHEME)
           , new UsernamePasswordCredentials(username, password))

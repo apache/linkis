@@ -138,12 +138,8 @@ object EsClientFactory {
   private def getCluster(clusterStr: String): Array[(String, Int)] = if (StringUtils.isNotBlank(clusterStr)) {
     clusterStr.split(",")
       .map(value => {
-        val arr = value.split(":")
-        if (value.startsWith("http://")) {
-          (arr(1).trim.replace("//", ""), arr(2).trim.toInt)
-        } else {
-          (arr(0).trim, arr(1).trim.toInt)
-        }
+        val arr = value.replace("http://", "").split(":")
+        (arr(0).trim, arr(1).trim.toInt)
       })
   } else Array()
 

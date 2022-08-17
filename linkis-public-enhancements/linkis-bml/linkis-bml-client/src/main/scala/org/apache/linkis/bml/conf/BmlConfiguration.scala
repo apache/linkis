@@ -28,7 +28,7 @@ object BmlConfiguration {
     CommonVars[String](
       "wds.linkis.bml.url.prefix",
       "/api/rest_j/v1/bml",
-      "url prefix of the bml service (url prefix of the bml service)"
+      "url prefix of the bml service (bml服务的url前缀)"
     )
 
   val AUTH_TOKEN_KEY: CommonVars[String] =

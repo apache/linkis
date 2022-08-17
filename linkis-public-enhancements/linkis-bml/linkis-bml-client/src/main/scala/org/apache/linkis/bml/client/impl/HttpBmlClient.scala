@@ -241,12 +241,19 @@ class HttpBmlClient(
       IOUtils.copy(inputStream, outputStream)
     } catch {
       case e: IOException =>
-        logger.error("failed to copy inputStream and outputStream", e)
-        val exception = BmlClientFailException("failed to copy inputStream and outputStream")
+        logger.error(
+          "failed to copy inputStream and outputStream" +
+            "(inputStream和outputStream流copy失败)",
+          e
+        )
+        val exception = BmlClientFailException(
+          "failed to copy inputStream and outputStream" +
+            "(inputStream和outputStream流copy失败)"
+        )
         exception.initCause(e)
         throw e
       case t: Throwable =>
-        logger.error("failed to copy stream", t)
+        logger.error("failed to copy stream(流复制失败)", t)
         throw t
     } finally {
       if (null != inputStream) IOUtils.closeQuietly(inputStream)

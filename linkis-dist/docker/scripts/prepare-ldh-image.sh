@@ -55,12 +55,6 @@ ZOOKEEPER_VERSION=${ZOOKEEPER_VERSION:-3.5.9}
 
 set -e
 
-# evaluate project version
-PROJECT_VERSION=`cd ${PROJECT_ROOT} \
-   && MAVEN_OPTS="-Dorg.slf4j.simpleLogger.defaultLogLevel=WARN -Dorg.slf4j.simpleLogger.log.org.apache.maven.plugins.help=INFO" \
-   mvn help:evaluate -o -Dexpression=project.version | tail -1`
-echo "# Project version: ${PROJECT_VERSION}"
-
 echo "# Tars for hadoop component will be cached to: ${TAR_CACHE_ROOT}"
 
 TARFILENAME_HADOOP="hadoop-${HADOOP_VERSION}.tar.gz"

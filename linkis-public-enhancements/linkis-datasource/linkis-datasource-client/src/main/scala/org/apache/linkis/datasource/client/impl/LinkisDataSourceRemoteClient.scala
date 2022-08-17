@@ -17,6 +17,8 @@
 
 package org.apache.linkis.datasource.client.impl
 
+import java.util.concurrent.TimeUnit
+
 import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.datasource.client.config.DatasourceClientConfig._
@@ -29,8 +31,6 @@ import org.apache.linkis.httpclient.dws.DWSHttpClient
 import org.apache.linkis.httpclient.dws.authentication.TokenAuthenticationStrategy
 import org.apache.linkis.httpclient.dws.config.{DWSClientConfig, DWSClientConfigBuilder}
 
-import java.util.concurrent.TimeUnit
-
 
 class LinkisDataSourceRemoteClient(clientConfig: DWSClientConfig, clientName: String) extends AbstractRemoteClient with DataSourceRemoteClient {
   def this() = this(null, null)
@@ -41,7 +41,7 @@ class LinkisDataSourceRemoteClient(clientConfig: DWSClientConfig, clientName: St
 
   def createClientConfig(): DWSClientConfig = {
     val serverUrl = Configuration.getGateWayURL()
-    if(StringUtils.isEmpty(serverUrl)) throw new DataSourceClientBuilderException("serverUrl cannot be null.")
+    if (StringUtils.isEmpty(serverUrl)) throw new DataSourceClientBuilderException("serverUrl cannot be null.")
 
     val maxConnection: Int = CONNECTION_MAX_SIZE.getValue
     val connectTimeout: Int = CONNECTION_TIMEOUT.getValue
@@ -74,9 +74,13 @@ class LinkisDataSourceRemoteClient(clientConfig: DWSClientConfig, clientName: St
 
   override def getInfoByDataSourceName(action: GetInfoByDataSourceNameAction): GetInfoByDataSourceNameResult = execute(action).asInstanceOf[GetInfoByDataSourceNameResult]
 
+  override def getInfoPublishedByDataSourceName(action: GetInfoPublishedByDataSourceNameAction): GetInfoPublishedByDataSourceNameResult = execute(action).asInstanceOf[GetInfoPublishedByDataSourceNameResult]
+
   override def queryDataSource(action: QueryDataSourceAction): QueryDataSourceResult = execute(action).asInstanceOf[QueryDataSourceResult]
 
   override def getConnectParams(action: GetConnectParamsByDataSourceIdAction): GetConnectParamsByDataSourceIdResult = execute(action).asInstanceOf[GetConnectParamsByDataSourceIdResult]
+
+  override def getConnectParamsByName(action: GetConnectParamsByDataSourceNameAction): GetConnectParamsByDataSourceNameResult = execute(action).asInstanceOf[GetConnectParamsByDataSourceNameResult]
 
   override def createDataSource(action: CreateDataSourceAction): CreateDataSourceResult = execute(action).asInstanceOf[CreateDataSourceResult]
 

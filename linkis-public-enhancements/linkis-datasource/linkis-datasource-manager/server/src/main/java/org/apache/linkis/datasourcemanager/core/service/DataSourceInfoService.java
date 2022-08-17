@@ -63,7 +63,6 @@ public interface DataSourceInfoService {
      */
     DataSource getDataSourceInfo(String dataSourceName);
 
-
     /**
      * Get data source for latest published version by data source name
      *
@@ -71,7 +70,6 @@ public interface DataSourceInfoService {
      * @return data source entity
      */
     DataSource getDataSourcePublishInfo(String dataSourceName);
-
 
     /**
      * Get data source

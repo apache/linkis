@@ -148,7 +148,7 @@ npm install
 npm run build
 ```
  
-Please refer to [Quick Deployment](https://linkis.apache.org/docs/latest/deployment/quick_deploy) to do the deployment.
+Please refer to [Quick Deployment](https://linkis.apache.org/docs/latest/deployment/quick-deploy) to do the deployment.
 
 # Examples and Guidance
 - [User Manual](https://linkis.apache.org/docs/latest/user-guide/overview)

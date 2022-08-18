@@ -143,7 +143,7 @@ npm install
 npm run build
 ```
 
-请参考[快速安装部署 ](https://linkis.apache.org/zh-CN/docs/latest/deployment/quick_deploy) 来部署 Linkis
+请参考[快速安装部署 ](https://linkis.apache.org/zh-CN/docs/latest/deployment/quick-deploy) 来部署 Linkis
 
 # 示例和使用指引
 

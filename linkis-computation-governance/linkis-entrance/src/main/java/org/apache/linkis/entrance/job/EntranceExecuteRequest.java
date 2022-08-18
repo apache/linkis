@@ -26,112 +26,112 @@ import org.apache.linkis.scheduler.executer.ExecuteRequest;
 import org.apache.linkis.scheduler.executer.JobExecuteRequest;
 import org.apache.linkis.server.BDPJettyServerHelper;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class EntranceExecuteRequest
-        implements ExecuteRequest,
-                LabelExecuteRequest,
-                JobExecuteRequest,
-                RuntimePropertiesExecuteRequest,
-                UserExecuteRequest {
+    implements ExecuteRequest,
+        LabelExecuteRequest,
+        JobExecuteRequest,
+        RuntimePropertiesExecuteRequest,
+        UserExecuteRequest {
 
-    private static final Logger logger = LoggerFactory.getLogger(EntranceExecuteRequest.class);
+  private static final Logger logger = LoggerFactory.getLogger(EntranceExecuteRequest.class);
 
-    public EntranceExecuteRequest(EntranceExecutionJob job) {
-        setJob(job);
+  public EntranceExecuteRequest(EntranceExecutionJob job) {
+    setJob(job);
+  }
+
+  private SubJobInfo subJobInfo;
+  private List<Label<?>> labels;
+
+  public SubJobInfo getSubJobInfo() {
+    return subJobInfo;
+  }
+
+  public void setSubJobInfo(SubJobInfo subJobInfo) {
+    this.subJobInfo = subJobInfo;
+  }
+
+  public List<Label<?>> getLabels() {
+    return labels;
+  }
+
+  public void setLabels(List<Label<?>> labels) {
+    this.labels = labels;
+  }
+
+  public EntranceExecutionJob getJob() {
+    return job;
+  }
+
+  public void setJob(EntranceExecutionJob job) {
+    this.job = job;
+  }
+
+  private EntranceExecutionJob job;
+
+  public void setExecutionCode(int index) {
+    SubJobInfo[] jobGroupInfo = job.getJobGroups();
+    if (null != jobGroupInfo && index >= 0 && index < jobGroupInfo.length) {
+      subJobInfo = jobGroupInfo[index];
+    } else {
+      logger.warn(
+          "Invalid index : {} in jobRequest : {}. ",
+          index,
+          BDPJettyServerHelper.gson().toJson(jobGroupInfo));
     }
+  }
 
-    private SubJobInfo subJobInfo;
-    private List<Label<?>> labels;
-
-    public SubJobInfo getSubJobInfo() {
-        return subJobInfo;
+  @Override
+  public String code() {
+    if (null != subJobInfo) {
+      return subJobInfo.getCode();
+    } else {
+      logger.error("SubJobInfo is null!");
+      return null;
     }
+  }
 
-    public void setSubJobInfo(SubJobInfo subJobInfo) {
-        this.subJobInfo = subJobInfo;
+  @Override
+  public String jobId() {
+    if (null != subJobInfo && null != subJobInfo.getSubJobDetail()) {
+      return String.valueOf(subJobInfo.getSubJobDetail().getId());
+    } else {
+      logger.error("JobDetail is null!");
+      return null;
     }
+  }
 
-    public List<Label<?>> getLabels() {
-        return labels;
+  @Override
+  public Map<String, Object> properties() {
+    return job.getParams();
+  }
+
+  @Override
+  public List<Label<?>> labels() {
+    if (null == labels || labels.isEmpty()) {
+      if (null != job.getJobRequest()) {
+        return job.getJobRequest().getLabels();
+      } else {
+        return new ArrayList<>(0);
+      }
+    } else {
+      return new ArrayList<>(0);
     }
+  }
 
-    public void setLabels(List<Label<?>> labels) {
-        this.labels = labels;
-    }
+  @Override
+  public String submitUser() {
+    return job.getJobRequest().getSubmitUser();
+  }
 
-    public EntranceExecutionJob getJob() {
-        return job;
-    }
-
-    public void setJob(EntranceExecutionJob job) {
-        this.job = job;
-    }
-
-    private EntranceExecutionJob job;
-
-    public void setExecutionCode(int index) {
-        SubJobInfo[] jobGroupInfo = job.getJobGroups();
-        if (null != jobGroupInfo && index >= 0 && index < jobGroupInfo.length) {
-            subJobInfo = jobGroupInfo[index];
-        } else {
-            logger.warn(
-                    "Invalid index : {} in jobRequest : {}. ",
-                    index,
-                    BDPJettyServerHelper.gson().toJson(jobGroupInfo));
-        }
-    }
-
-    @Override
-    public String code() {
-        if (null != subJobInfo) {
-            return subJobInfo.getCode();
-        } else {
-            logger.error("SubJobInfo is null!");
-            return null;
-        }
-    }
-
-    @Override
-    public String jobId() {
-        if (null != subJobInfo && null != subJobInfo.getSubJobDetail()) {
-            return String.valueOf(subJobInfo.getSubJobDetail().getId());
-        } else {
-            logger.error("JobDetail is null!");
-            return null;
-        }
-    }
-
-    @Override
-    public Map<String, Object> properties() {
-        return job.getParams();
-    }
-
-    @Override
-    public List<Label<?>> labels() {
-        if (null == labels || labels.isEmpty()) {
-            if (null != job.getJobRequest()) {
-                return job.getJobRequest().getLabels();
-            } else {
-                return new ArrayList<>(0);
-            }
-        } else {
-            return new ArrayList<>(0);
-        }
-    }
-
-    @Override
-    public String submitUser() {
-        return job.getJobRequest().getSubmitUser();
-    }
-
-    @Override
-    public String executeUser() {
-        return job.getJobRequest().getExecuteUser();
-    }
+  @Override
+  public String executeUser() {
+    return job.getJobRequest().getExecuteUser();
+  }
 }

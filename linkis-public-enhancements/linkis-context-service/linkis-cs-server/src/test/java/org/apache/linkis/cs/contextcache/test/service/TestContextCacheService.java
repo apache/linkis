@@ -31,136 +31,134 @@ import org.apache.linkis.cs.contextcache.test.keyword.TestContextValue;
 
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import org.junit.jupiter.api.BeforeEach;
-
 import java.util.List;
+
+import org.junit.jupiter.api.BeforeEach;
 
 public class TestContextCacheService {
 
-    AnnotationConfigApplicationContext context;
+  AnnotationConfigApplicationContext context;
 
-    private String contextIDStr = "84693";
+  private String contextIDStr = "84693";
 
-    private ContextCacheService contextCacheService;
+  private ContextCacheService contextCacheService;
 
-    @BeforeEach
-    public void generateData() throws CSErrorException {
-        context =
-                new AnnotationConfigApplicationContext(
-                        "org.apache.linkis.cs", "org.apache.linkis.mybatis");
-        System.out.println("ioc容器加载完成");
-        contextCacheService = context.getBean(ContextCacheService.class);
-        /* ContextPersistenceManager persistenceManager = context.getBean(ContextPersistenceManager.class);
-        persistenceManager.getContextIDPersistence().deleteContextID(contextIDStr);
-        PersistenceContextID persistenceContextID = new PersistenceContextID();
-        persistenceContextID.setContextId(String.valueOf(contextIDStr));
-        persistenceContextID.setUser("hadoop");
-        persistenceContextID.setExpireTime(new Date());
-        persistenceContextID.setExpireType(ExpireType.TODAY);
-        persistenceContextID.setInstance("updateInstance");
-        persistenceContextID.setBackupInstance("updatebackup");
-        persistenceContextID.setApplication("hive");
-        persistenceManager.getContextIDPersistence().createContextID(persistenceContextID);
-        ContextID contextID = persistenceManager.getContextIDPersistence().getContextID(persistenceContextID.getContextId());
-        System.out.println(contextID.getContextId());
+  @BeforeEach
+  public void generateData() throws CSErrorException {
+    context =
+        new AnnotationConfigApplicationContext("org.apache.linkis.cs", "org.apache.linkis.mybatis");
+    System.out.println("ioc容器加载完成");
+    contextCacheService = context.getBean(ContextCacheService.class);
+    /* ContextPersistenceManager persistenceManager = context.getBean(ContextPersistenceManager.class);
+    persistenceManager.getContextIDPersistence().deleteContextID(contextIDStr);
+    PersistenceContextID persistenceContextID = new PersistenceContextID();
+    persistenceContextID.setContextId(String.valueOf(contextIDStr));
+    persistenceContextID.setUser("hadoop");
+    persistenceContextID.setExpireTime(new Date());
+    persistenceContextID.setExpireType(ExpireType.TODAY);
+    persistenceContextID.setInstance("updateInstance");
+    persistenceContextID.setBackupInstance("updatebackup");
+    persistenceContextID.setApplication("hive");
+    persistenceManager.getContextIDPersistence().createContextID(persistenceContextID);
+    ContextID contextID = persistenceManager.getContextIDPersistence().getContextID(persistenceContextID.getContextId());
+    System.out.println(contextID.getContextId());
 
-        TestContextKey contextKey = new TestContextKey();
-        contextKey.setContextScope(ContextScope.FRIENDLY);
-        contextKey.setContextType(ContextType.OBJECT);
-        contextKey.setKey("flow1.node1.test");
-        contextKey.setKeywords("flow1,flow2,flow3");
-        TestContextValue contextValue = new TestContextValue();
-        contextValue.setKeywords("test1,test2,test3");
-        contextValue.setValue("test1.flow1");
-        TestContextKeyValue testContextKeyValue = new TestContextKeyValue();
-        testContextKeyValue.setContextKey(contextKey);
-        testContextKeyValue.setContextValue(contextValue);
-        persistenceManager.getContextMapPersistence().create(contextID, testContextKeyValue);*/
+    TestContextKey contextKey = new TestContextKey();
+    contextKey.setContextScope(ContextScope.FRIENDLY);
+    contextKey.setContextType(ContextType.OBJECT);
+    contextKey.setKey("flow1.node1.test");
+    contextKey.setKeywords("flow1,flow2,flow3");
+    TestContextValue contextValue = new TestContextValue();
+    contextValue.setKeywords("test1,test2,test3");
+    contextValue.setValue("test1.flow1");
+    TestContextKeyValue testContextKeyValue = new TestContextKeyValue();
+    testContextKeyValue.setContextKey(contextKey);
+    testContextKeyValue.setContextValue(contextValue);
+    persistenceManager.getContextMapPersistence().create(contextID, testContextKeyValue);*/
+  }
+
+  // @Test
+  public void testGetAll() {
+    try {
+      ContextID contextID = new TestContextID();
+      contextID.setContextId(contextIDStr);
+      List<ContextKeyValue> all = contextCacheService.getAll(contextID);
+      if (null != all) {
+        all.stream()
+            .forEach(
+                contextKeyValue -> {
+                  System.out.println(contextKeyValue.getContextKey().getKey());
+                  System.out.println(contextKeyValue.getContextValue().getValue());
+                });
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
     }
+  }
 
-    // @Test
-    public void testGetAll() {
-        try {
-            ContextID contextID = new TestContextID();
-            contextID.setContextId(contextIDStr);
-            List<ContextKeyValue> all = contextCacheService.getAll(contextID);
-            if (null != all) {
-                all.stream()
-                        .forEach(
-                                contextKeyValue -> {
-                                    System.out.println(contextKeyValue.getContextKey().getKey());
-                                    System.out.println(
-                                            contextKeyValue.getContextValue().getValue());
-                                });
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+  // @Test
+  public void testGet() {
+    ContextID contextID = new TestContextID();
+    contextID.setContextId(contextIDStr);
+    ContextKey contextKey1 = new TestContextKey();
+    contextKey1.setKey("flow1.node1.test");
+    ContextKeyValue contextKeyValue1 = contextCacheService.get(contextID, contextKey1);
+    System.out.println(contextKeyValue1.getContextValue().getValue());
+  }
+
+  // @Test
+  public void testGetValues() {
+    ContextID contextID = new TestContextID();
+    contextID.setContextId(contextIDStr);
+    List<ContextKeyValue> contextKeyValueList =
+        contextCacheService.getValues(contextID, "flow2", ContextType.METADATA);
+    if (null != contextKeyValueList) {
+      contextKeyValueList.stream()
+          .forEach(
+              contextKeyValue -> {
+                System.out.println(contextKeyValue.getContextKey().getKey());
+              });
     }
+  }
 
-    // @Test
-    public void testGet() {
-        ContextID contextID = new TestContextID();
-        contextID.setContextId(contextIDStr);
-        ContextKey contextKey1 = new TestContextKey();
-        contextKey1.setKey("flow1.node1.test");
-        ContextKeyValue contextKeyValue1 = contextCacheService.get(contextID, contextKey1);
-        System.out.println(contextKeyValue1.getContextValue().getValue());
+  // @Test
+  public void testLike() {
+    ContextID contextID = new TestContextID();
+    contextID.setContextId(contextIDStr);
+    List<ContextKeyValue> contextKeyValueList =
+        contextCacheService.getAllLikes(contextID, ".*node1.*", ContextType.METADATA);
+    if (null != contextKeyValueList) {
+      contextKeyValueList.stream()
+          .forEach(
+              contextKeyValue -> {
+                System.out.println(contextKeyValue.getContextKey().getKey());
+              });
     }
+  }
 
-    // @Test
-    public void testGetValues() {
-        ContextID contextID = new TestContextID();
-        contextID.setContextId(contextIDStr);
-        List<ContextKeyValue> contextKeyValueList =
-                contextCacheService.getValues(contextID, "flow2", ContextType.METADATA);
-        if (null != contextKeyValueList) {
-            contextKeyValueList.stream()
-                    .forEach(
-                            contextKeyValue -> {
-                                System.out.println(contextKeyValue.getContextKey().getKey());
-                            });
-        }
-    }
+  // @BeforeEach
+  public void testPut() throws CSErrorException {
 
-    // @Test
-    public void testLike() {
-        ContextID contextID = new TestContextID();
-        contextID.setContextId(contextIDStr);
-        List<ContextKeyValue> contextKeyValueList =
-                contextCacheService.getAllLikes(contextID, ".*node1.*", ContextType.METADATA);
-        if (null != contextKeyValueList) {
-            contextKeyValueList.stream()
-                    .forEach(
-                            contextKeyValue -> {
-                                System.out.println(contextKeyValue.getContextKey().getKey());
-                            });
-        }
-    }
+    ContextID contextID = new TestContextID();
+    contextID.setContextId(contextIDStr);
+    ContextKey contextKey1 = new TestContextKey();
+    contextKey1.setKey("key1");
+    contextKey1.setKeywords("keyword1,keyword2,keyword3");
+    ContextKeyValue contextKeyValue1 = contextCacheService.get(contextID, contextKey1);
 
-    // @BeforeEach
-    public void testPut() throws CSErrorException {
+    ContextKey contextKey3 = new TestContextKey();
+    contextKey3.setKey("key3");
+    contextKey3.setKeywords("keyworddd1,keyworddd2,keyworddd3");
 
-        ContextID contextID = new TestContextID();
-        contextID.setContextId(contextIDStr);
-        ContextKey contextKey1 = new TestContextKey();
-        contextKey1.setKey("key1");
-        contextKey1.setKeywords("keyword1,keyword2,keyword3");
-        ContextKeyValue contextKeyValue1 = contextCacheService.get(contextID, contextKey1);
+    ContextValue contextValue3 = new TestContextValue();
+    contextValue3.setKeywords("keyworddd4-keyworddd5-keyworddd6");
+    contextValue3.setValue("hello,hello3");
+    ContextKeyValue contextKeyValue3 = new TestContextKeyValue();
+    contextKeyValue3.setContextKey(contextKey3);
+    contextKeyValue3.setContextValue(contextValue3);
+    contextCacheService.put(contextID, contextKeyValue3);
 
-        ContextKey contextKey3 = new TestContextKey();
-        contextKey3.setKey("key3");
-        contextKey3.setKeywords("keyworddd1,keyworddd2,keyworddd3");
-
-        ContextValue contextValue3 = new TestContextValue();
-        contextValue3.setKeywords("keyworddd4-keyworddd5-keyworddd6");
-        contextValue3.setValue("hello,hello3");
-        ContextKeyValue contextKeyValue3 = new TestContextKeyValue();
-        contextKeyValue3.setContextKey(contextKey3);
-        contextKeyValue3.setContextValue(contextValue3);
-        contextCacheService.put(contextID, contextKeyValue3);
-
-        ContextKeyValue contextKeyValue4 = contextCacheService.get(contextID, contextKey3);
-        System.out.println(contextKeyValue4.getContextKey().getKey());
-    }
+    ContextKeyValue contextKeyValue4 = contextCacheService.get(contextID, contextKey3);
+    System.out.println(contextKeyValue4.getContextKey().getKey());
+  }
 }

@@ -21,19 +21,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class CloneableLabel implements Cloneable {
-    private static final Logger LOG = LoggerFactory.getLogger(CloneableLabel.class);
-    /**
-     * Do clone
-     *
-     * @return object cloned
-     */
-    @Override
-    public Object clone() {
-        try {
-            return super.clone();
-        } catch (CloneNotSupportedException e) {
-            LOG.info("Not support to clone label:[" + toString() + "]", e);
-            return null;
-        }
+  private static final Logger LOG = LoggerFactory.getLogger(CloneableLabel.class);
+  /**
+   * Do clone
+   *
+   * @return object cloned
+   */
+  @Override
+  public Object clone() {
+    try {
+      return super.clone();
+    } catch (CloneNotSupportedException e) {
+      LOG.info("Not support to clone label:[" + toString() + "]", e);
+      return null;
     }
+  }
 }

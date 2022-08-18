@@ -18,8 +18,8 @@
 package org.apache.linkis.cs.common.entity.history.metadata;
 
 public enum TableOperationType {
-    ACCESS,
-    DROP,
-    ALTER,
-    CREATE
+  ACCESS,
+  DROP,
+  ALTER,
+  CREATE
 }

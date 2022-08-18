@@ -23,23 +23,23 @@ import java.util.List;
 
 public interface JobDetailMapper {
 
-    List<JobDetail> selectJobDetailByJobHistoryId(Long jobHistoryId);
+  List<JobDetail> selectJobDetailByJobHistoryId(Long jobHistoryId);
 
-    JobDetail selectJobDetailByJobDetailId(Long jobId);
+  JobDetail selectJobDetailByJobDetailId(Long jobId);
 
-    List<JobDetail> queryJobHistoryDetail(JobDetail JobDetail);
+  List<JobDetail> queryJobHistoryDetail(JobDetail JobDetail);
 
-    int insertJobDetail(JobDetail insertJob);
+  int insertJobDetail(JobDetail insertJob);
 
-    void updateJobDetail(JobDetail updateJob);
+  void updateJobDetail(JobDetail updateJob);
 
-    //  def search(@Param("jobId") taskID: Long, @Param("umUser") username: String, @Param("status")
-    // status: util.List[String],
-    //             @Param("startDate") startDate: Date, @Param("endDate") endDate: Date,
-    // @Param("executeApplicationName") executeApplicationName: String,
-    //             @Param("instance") instance: String, @Param("execId") execId: String))
+  //  def search(@Param("jobId") taskID: Long, @Param("umUser") username: String, @Param("status")
+  // status: util.List[String],
+  //             @Param("startDate") startDate: Date, @Param("endDate") endDate: Date,
+  // @Param("executeApplicationName") executeApplicationName: String,
+  //             @Param("instance") instance: String, @Param("execId") execId: String))
 
-    String selectJobDetailStatusForUpdateByJobDetailId(Long jobId);
+  String selectJobDetailStatusForUpdateByJobDetailId(Long jobId);
 
-    //  List<String> selectJobStatusForUpdateByJobHistoryId(Long jobId);
+  //  List<String> selectJobStatusForUpdateByJobHistoryId(Long jobId);
 }

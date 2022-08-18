@@ -25,18 +25,16 @@ import org.apache.flink.yarn.configuration.YarnDeploymentTarget;
 /** Cluster Descriptor Adapter Factory(集群交互适配器工厂) */
 public class ClusterDescriptorAdapterFactory {
 
-    public static ClusterDescriptorAdapter create(ExecutionContext executionContext) {
-        String yarnDeploymentTarget =
-                executionContext.getFlinkConfig().get(DeploymentOptions.TARGET);
-        ClusterDescriptorAdapter clusterDescriptorAdapter = null;
-        if (YarnDeploymentTarget.PER_JOB.getName().equals(yarnDeploymentTarget)) {
-            clusterDescriptorAdapter = new YarnPerJobClusterDescriptorAdapter(executionContext);
-        } else if (YarnDeploymentTarget.APPLICATION.getName().equals(yarnDeploymentTarget)) {
-            clusterDescriptorAdapter =
-                    new YarnApplicationClusterDescriptorAdapter(executionContext);
-        } else if (YarnDeploymentTarget.SESSION.getName().equals(yarnDeploymentTarget)) {
-            clusterDescriptorAdapter = new YarnSessionClusterDescriptorAdapter(executionContext);
-        }
-        return clusterDescriptorAdapter;
+  public static ClusterDescriptorAdapter create(ExecutionContext executionContext) {
+    String yarnDeploymentTarget = executionContext.getFlinkConfig().get(DeploymentOptions.TARGET);
+    ClusterDescriptorAdapter clusterDescriptorAdapter = null;
+    if (YarnDeploymentTarget.PER_JOB.getName().equals(yarnDeploymentTarget)) {
+      clusterDescriptorAdapter = new YarnPerJobClusterDescriptorAdapter(executionContext);
+    } else if (YarnDeploymentTarget.APPLICATION.getName().equals(yarnDeploymentTarget)) {
+      clusterDescriptorAdapter = new YarnApplicationClusterDescriptorAdapter(executionContext);
+    } else if (YarnDeploymentTarget.SESSION.getName().equals(yarnDeploymentTarget)) {
+      clusterDescriptorAdapter = new YarnSessionClusterDescriptorAdapter(executionContext);
     }
+    return clusterDescriptorAdapter;
+  }
 }

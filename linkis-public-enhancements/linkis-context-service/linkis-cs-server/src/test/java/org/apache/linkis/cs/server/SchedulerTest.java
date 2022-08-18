@@ -20,21 +20,21 @@ package org.apache.linkis.cs.server;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 public class SchedulerTest {
-    AnnotationConfigApplicationContext context = null;
+  AnnotationConfigApplicationContext context = null;
 
-    public void before() {
-        context = new AnnotationConfigApplicationContext(Scan.class);
-    }
+  public void before() {
+    context = new AnnotationConfigApplicationContext(Scan.class);
+  }
 
-    public void test() throws InterruptedException {
-        /* CsScheduler scheduler = context.getBean(CsScheduler.class);
-        DefaultHttpAnswerJob job = new DefaultHttpAnswerJob();
-        ContextIDProtocol contextIDProtocol = new ContextIDProtocol();
-        RestResponseProtocol responseProtocol = new RestResponseProtocol();
-        contextIDProtocol.setUsername("hadoop");
-        job.setRequestProtocol(contextIDProtocol);
-        job.setResponseProtocol(responseProtocol);
-        scheduler.sumbit(job);
-        Thread.sleep(10000);*/
-    }
+  public void test() throws InterruptedException {
+    /* CsScheduler scheduler = context.getBean(CsScheduler.class);
+    DefaultHttpAnswerJob job = new DefaultHttpAnswerJob();
+    ContextIDProtocol contextIDProtocol = new ContextIDProtocol();
+    RestResponseProtocol responseProtocol = new RestResponseProtocol();
+    contextIDProtocol.setUsername("hadoop");
+    job.setRequestProtocol(contextIDProtocol);
+    job.setResponseProtocol(responseProtocol);
+    scheduler.sumbit(job);
+    Thread.sleep(10000);*/
+  }
 }

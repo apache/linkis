@@ -17,49 +17,49 @@
 
 package org.apache.linkis.metadata.query.common.domain;
 
+import java.io.Serializable;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
-import java.io.Serializable;
 
 /** The meta information of field */
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_EMPTY)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class MetaColumnInfo implements Serializable {
-    private int index = -1;
-    private boolean primaryKey;
-    private String name;
-    private String type;
+  private int index = -1;
+  private boolean primaryKey;
+  private String name;
+  private String type;
 
-    public int getIndex() {
-        return index;
-    }
+  public int getIndex() {
+    return index;
+  }
 
-    public void setIndex(int index) {
-        this.index = index;
-    }
+  public void setIndex(int index) {
+    this.index = index;
+  }
 
-    public String getName() {
-        return name;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    public String getType() {
-        return type;
-    }
+  public String getType() {
+    return type;
+  }
 
-    public void setType(String type) {
-        this.type = type;
-    }
+  public void setType(String type) {
+    this.type = type;
+  }
 
-    public boolean isPrimaryKey() {
-        return primaryKey;
-    }
+  public boolean isPrimaryKey() {
+    return primaryKey;
+  }
 
-    public void setPrimaryKey(boolean primaryKey) {
-        this.primaryKey = primaryKey;
-    }
+  public void setPrimaryKey(boolean primaryKey) {
+    this.primaryKey = primaryKey;
+  }
 }

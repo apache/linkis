@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -49,7 +49,8 @@ object DateTypeUtils {
   /**
    * Get Today"s date
    *
-   * @param std :2017-11-16
+   * @param std
+   *   :2017-11-16
    * @return
    */
   def getToday(std: Boolean = true, dateString: String = null): String = {
@@ -69,7 +70,8 @@ object DateTypeUtils {
   /**
    * Get Yesterday"s date
    *
-   * @param std :2017-11-16
+   * @param std
+   *   :2017-11-16
    * @return
    */
   def getYesterday(std: Boolean = true): String = {
@@ -85,8 +87,8 @@ object DateTypeUtils {
   }
 
   /**
-   *
-   * @param std 202106
+   * @param std
+   *   202106
    * @return
    */
   def getMonthDay(std: Boolean = true, date: Date = null): String = {
@@ -102,8 +104,10 @@ object DateTypeUtils {
   /**
    * Get Month"s date
    *
-   * @param std   :2017-11-01
-   * @param isEnd :01 or 30,31
+   * @param std
+   *   :2017-11-01
+   * @param isEnd
+   *   :01 or 30,31
    * @return
    */
   def getMonth(std: Boolean = true, isEnd: Boolean = false, date: Date): String = {
@@ -151,7 +155,7 @@ object DateTypeUtils {
     val cal: Calendar = Calendar.getInstance()
     cal.setTime(date)
     cal.set(Calendar.DATE, 1)
-    val monthDigit: Int = cal.get(Calendar.MONTH) //get method with MONTH field returns 0-11
+    val monthDigit: Int = cal.get(Calendar.MONTH) // get method with MONTH field returns 0-11
     if (0 <= monthDigit && monthDigit <= 2) {
       cal.set(Calendar.MONTH, 0)
     } else if (3 <= monthDigit && monthDigit <= 5) {
@@ -186,7 +190,7 @@ object DateTypeUtils {
     val cal: Calendar = Calendar.getInstance()
     cal.setTime(date)
     cal.set(Calendar.DATE, 1)
-    val monthDigit: Int = cal.get(Calendar.MONTH) //get method with MONTH field returns 0-11
+    val monthDigit: Int = cal.get(Calendar.MONTH) // get method with MONTH field returns 0-11
     if (0 <= monthDigit && monthDigit <= 5) {
       cal.set(Calendar.MONTH, 0)
     } else if (6 <= monthDigit && monthDigit <= 11) {

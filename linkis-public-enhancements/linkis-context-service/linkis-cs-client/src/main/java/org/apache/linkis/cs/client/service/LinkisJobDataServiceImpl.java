@@ -36,84 +36,84 @@ import org.slf4j.LoggerFactory;
 
 public class LinkisJobDataServiceImpl implements LinkisJobDataService {
 
-    private static final Logger logger = LoggerFactory.getLogger(LinkisJobDataServiceImpl.class);
+  private static final Logger logger = LoggerFactory.getLogger(LinkisJobDataServiceImpl.class);
 
-    private SearchService searchService = DefaultSearchService.getInstance();
+  private SearchService searchService = DefaultSearchService.getInstance();
 
-    private static LinkisJobDataService linkisJobDataService;
+  private static LinkisJobDataService linkisJobDataService;
 
-    private LinkisJobDataServiceImpl() {}
+  private LinkisJobDataServiceImpl() {}
 
-    public static LinkisJobDataService getInstance() {
+  public static LinkisJobDataService getInstance() {
+    if (null == linkisJobDataService) {
+      synchronized (LinkisJobDataServiceImpl.class) {
         if (null == linkisJobDataService) {
-            synchronized (LinkisJobDataServiceImpl.class) {
-                if (null == linkisJobDataService) {
-                    linkisJobDataService = new LinkisJobDataServiceImpl();
-                }
-            }
+          linkisJobDataService = new LinkisJobDataServiceImpl();
         }
-        return linkisJobDataService;
+      }
     }
+    return linkisJobDataService;
+  }
 
-    @Override
-    public LinkisJobData getLinkisJobData(String contextIDStr, String contextKeyStr)
-            throws CSErrorException {
-        if (StringUtils.isBlank(contextIDStr) || StringUtils.isBlank(contextKeyStr)) {
-            logger.warn("contextIDStr or nodeName cannot null");
-            return null;
-        }
-        try {
-            ContextID contextID = SerializeHelper.deserializeContextID(contextIDStr);
-            ContextKey contextKey = SerializeHelper.deserializeContextKey(contextKeyStr);
-            LinkisJobData jobData =
-                    searchService.getContextValue(contextID, contextKey, LinkisJobData.class);
-            if (null != jobData)
-                logger.info(
-                        "contextID: {} and contextKeyStr: {} succeed to getLinkisJobData  {}",
-                        contextID.getContextId(),
-                        contextKeyStr,
-                        jobData.getJobID());
-            return jobData;
-        } catch (ErrorException e) {
-            logger.error(
-                    "Deserialize failed, invalid contextId : "
-                            + contextIDStr
-                            + ", or contextKey : "
-                            + contextKeyStr
-                            + ", e : "
-                            + e.getMessage());
-            logger.error("exception ", e);
-            throw new CSErrorException(
-                    ErrorCode.DESERIALIZE_ERROR,
-                    "Deserialize failed, invalid contextId : "
-                            + contextIDStr
-                            + ", or contextKey : "
-                            + contextKeyStr
-                            + ", e : "
-                            + e.getMessage());
-        }
+  @Override
+  public LinkisJobData getLinkisJobData(String contextIDStr, String contextKeyStr)
+      throws CSErrorException {
+    if (StringUtils.isBlank(contextIDStr) || StringUtils.isBlank(contextKeyStr)) {
+      logger.warn("contextIDStr or nodeName cannot null");
+      return null;
     }
+    try {
+      ContextID contextID = SerializeHelper.deserializeContextID(contextIDStr);
+      ContextKey contextKey = SerializeHelper.deserializeContextKey(contextKeyStr);
+      LinkisJobData jobData =
+          searchService.getContextValue(contextID, contextKey, LinkisJobData.class);
+      if (null != jobData)
+        logger.info(
+            "contextID: {} and contextKeyStr: {} succeed to getLinkisJobData  {}",
+            contextID.getContextId(),
+            contextKeyStr,
+            jobData.getJobID());
+      return jobData;
+    } catch (ErrorException e) {
+      logger.error(
+          "Deserialize failed, invalid contextId : "
+              + contextIDStr
+              + ", or contextKey : "
+              + contextKeyStr
+              + ", e : "
+              + e.getMessage());
+      logger.error("exception ", e);
+      throw new CSErrorException(
+          ErrorCode.DESERIALIZE_ERROR,
+          "Deserialize failed, invalid contextId : "
+              + contextIDStr
+              + ", or contextKey : "
+              + contextKeyStr
+              + ", e : "
+              + e.getMessage());
+    }
+  }
 
-    @Override
-    public void putLinkisJobData(
-            String contextIDStr, String contextKeyStr, LinkisJobData linkisJobData)
-            throws CSErrorException {
-        ContextClient contextClient = ContextClientFactory.getOrCreateContextClient();
-        try {
-            ContextID contextID = SerializeHelper.deserializeContextID(contextIDStr);
-            ContextKey contextKey = SerializeHelper.deserializeContextKey(contextKeyStr);
-            ContextValue contextValue = new CommonContextValue();
-            contextValue.setValue(linkisJobData);
-            contextClient.update(contextID, contextKey, contextValue);
-            logger.info(
-                    "contextID: {} and contextKeyStr: {} succeed to putLinkisJobData  {}",
-                    contextID.getContextId(),
-                    contextKeyStr,
-                    linkisJobData.getJobID());
-        } catch (ErrorException e) {
-            logger.error("Deserialize error. e ", e);
-            throw new CSErrorException(
-                    ErrorCode.DESERIALIZE_ERROR, "Deserialize error. e : " + e.getDesc());
-        }
+  @Override
+  public void putLinkisJobData(
+      String contextIDStr, String contextKeyStr, LinkisJobData linkisJobData)
+      throws CSErrorException {
+    ContextClient contextClient = ContextClientFactory.getOrCreateContextClient();
+    try {
+      ContextID contextID = SerializeHelper.deserializeContextID(contextIDStr);
+      ContextKey contextKey = SerializeHelper.deserializeContextKey(contextKeyStr);
+      ContextValue contextValue = new CommonContextValue();
+      contextValue.setValue(linkisJobData);
+      contextClient.update(contextID, contextKey, contextValue);
+      logger.info(
+          "contextID: {} and contextKeyStr: {} succeed to putLinkisJobData  {}",
+          contextID.getContextId(),
+          contextKeyStr,
+          linkisJobData.getJobID());
+    } catch (ErrorException e) {
+      logger.error("Deserialize error. e ", e);
+      throw new CSErrorException(
+          ErrorCode.DESERIALIZE_ERROR, "Deserialize error. e : " + e.getDesc());
     }
+  }
 }

@@ -26,54 +26,54 @@ import java.util.Map;
 
 public interface HiveMetaDao {
 
-    String getLocationByDbAndTable(MetadataQueryParam queryParam);
+  String getLocationByDbAndTable(MetadataQueryParam queryParam);
 
-    /**
-     * get user's roles by username
-     *
-     * @param userName user's username
-     * @return the role name list
-     */
-    List<String> getRolesByUser(String userName);
+  /**
+   * get user's roles by username
+   *
+   * @param userName user's username
+   * @return the role name list
+   */
+  List<String> getRolesByUser(String userName);
 
-    /**
-     * get dbs by user's username and user's roles
-     *
-     * @param userName user's username
-     * @param roles user's roles
-     * @return the db name list
-     */
-    List<String> getDbsByUserAndRoles(
-            @Param("userName") String userName, @Param("roles") List<String> roles);
+  /**
+   * get dbs by user's username and user's roles
+   *
+   * @param userName user's username
+   * @param roles user's roles
+   * @return the db name list
+   */
+  List<String> getDbsByUserAndRoles(
+      @Param("userName") String userName, @Param("roles") List<String> roles);
 
-    /**
-     * get all list of DBS NAME
-     *
-     * @return the db name list
-     */
-    List<String> getAllDbs();
+  /**
+   * get all list of DBS NAME
+   *
+   * @return the db name list
+   */
+  List<String> getAllDbs();
 
-    List<Map<String, Object>> getTablesByDbNameAndUserAndRoles(MetadataQueryParam queryParam);
+  List<Map<String, Object>> getTablesByDbNameAndUserAndRoles(MetadataQueryParam queryParam);
 
-    List<Map<String, Object>> getTablesByDbName(MetadataQueryParam queryParam);
+  List<Map<String, Object>> getTablesByDbName(MetadataQueryParam queryParam);
 
-    /**
-     * get the table partition's size
-     *
-     * @param queryParam the database search properties
-     * @return the size
-     */
-    Long getPartitionSize(MetadataQueryParam queryParam);
+  /**
+   * get the table partition's size
+   *
+   * @param queryParam the database search properties
+   * @return the size
+   */
+  Long getPartitionSize(MetadataQueryParam queryParam);
 
-    List<String> getPartitions(MetadataQueryParam queryParam);
+  List<String> getPartitions(MetadataQueryParam queryParam);
 
-    List<Map<String, Object>> getColumns(MetadataQueryParam queryParam);
+  List<Map<String, Object>> getColumns(MetadataQueryParam queryParam);
 
-    Map<String, Object> getStorageDescriptionIDByDbTableNameAndUser(MetadataQueryParam queryParam);
+  Map<String, Object> getStorageDescriptionIDByDbTableNameAndUser(MetadataQueryParam queryParam);
 
-    List<Map<String, Object>> getColumnsByStorageDescriptionID(MetadataQueryParam queryParam);
+  List<Map<String, Object>> getColumnsByStorageDescriptionID(MetadataQueryParam queryParam);
 
-    List<Map<String, Object>> getPartitionKeys(MetadataQueryParam queryParam);
+  List<Map<String, Object>> getPartitionKeys(MetadataQueryParam queryParam);
 
-    String getTableComment(@Param("DbName") String DbName, @Param("tableName") String tableName);
+  String getTableComment(@Param("DbName") String DbName, @Param("tableName") String tableName);
 }

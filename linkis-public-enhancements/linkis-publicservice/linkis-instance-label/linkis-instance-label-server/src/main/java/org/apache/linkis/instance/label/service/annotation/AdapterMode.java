@@ -23,5 +23,5 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface AdapterMode {
-    int order() default -1;
+  int order() default -1;
 }

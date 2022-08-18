@@ -24,21 +24,21 @@ import org.apache.linkis.cs.common.utils.CSCommonUtils;
 
 public class CSTableSerializer extends AbstractSerializer<CSTable> {
 
-    @Override
-    public CSTable fromJson(String json) throws CSErrorException {
-        return CSCommonUtils.gson.fromJson(json, CSTable.class);
-    }
+  @Override
+  public CSTable fromJson(String json) throws CSErrorException {
+    return CSCommonUtils.gson.fromJson(json, CSTable.class);
+  }
 
-    @Override
-    public String getType() {
-        return "CSTable";
-    }
+  @Override
+  public String getType() {
+    return "CSTable";
+  }
 
-    @Override
-    public boolean accepts(Object obj) {
-        if (null != obj && obj.getClass().getName().equals(CSTable.class.getName())) {
-            return true;
-        }
-        return false;
+  @Override
+  public boolean accepts(Object obj) {
+    if (null != obj && obj.getClass().getName().equals(CSTable.class.getName())) {
+      return true;
     }
+    return false;
+  }
 }

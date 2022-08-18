@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,26 +17,35 @@
 
 package org.apache.linkis.common.utils
 
+import org.apache.linkis.common.exception.{
+  ErrorException,
+  FatalException,
+  LinkisCommonErrorException,
+  WarnException
+}
+
 import org.apache.commons.io.IOUtils
-import org.apache.linkis.common.exception.{ErrorException, FatalException, LinkisCommonErrorException, WarnException}
-import org.slf4j.Logger
 
 import java.io.{BufferedReader, InputStreamReader}
 import java.net.InetAddress
-import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent._
+import java.util.concurrent.atomic.AtomicInteger
+
 import scala.annotation.tailrec
 import scala.collection.JavaConversions._
-import scala.concurrent.duration.Duration
 import scala.concurrent.{ExecutionContext, ExecutionContextExecutorService}
+import scala.concurrent.duration.Duration
 import scala.util.control.ControlThrowable
+
+import org.slf4j.Logger
 
 object Utils extends Logging {
 
   def tryQuietly[T](tryOp: => T): T = tryQuietly(tryOp, _ => ())
 
   def tryCatch[T](tryOp: => T)(catchOp: Throwable => T): T = {
-    try tryOp catch {
+    try tryOp
+    catch {
       case t: ControlThrowable => throw t
       case fatal: FatalException =>
         logger.error("Fatal error, system exit...", fatal)
@@ -57,21 +66,23 @@ object Utils extends Logging {
     t: Throwable => throw exception(t)
   }
 
-  def tryFinally[T](tryOp: => T)(finallyOp: => Unit): T = try tryOp finally finallyOp
+  def tryFinally[T](tryOp: => T)(finallyOp: => Unit): T = try tryOp
+  finally finallyOp
 
-  def tryQuietly[T](tryOp: => T, catchOp: Throwable => Unit): T = tryCatch(tryOp) {
-    t =>
-      catchOp(t)
-      null.asInstanceOf[T]
+  def tryQuietly[T](tryOp: => T, catchOp: Throwable => Unit): T = tryCatch(tryOp) { t =>
+    catchOp(t)
+    null.asInstanceOf[T]
   }
 
   def tryAndWarn[T](tryOp: => T)(implicit log: Logger): T = tryCatch(tryOp) {
     case error: ErrorException =>
-      val errorMsg = s"error code（错误码）: ${error.getErrCode}, Error message（错误信息）: ${error.getDesc}."
+      val errorMsg =
+        s"error code（错误码）: ${error.getErrCode}, Error message（错误信息）: ${error.getDesc}."
       log.error(errorMsg, error)
       null.asInstanceOf[T]
     case warn: WarnException =>
-      val warnMsg = s"Warning code（警告码）: ${warn.getErrCode}, Warning message（警告信息）: ${warn.getDesc}."
+      val warnMsg =
+        s"Warning code（警告码）: ${warn.getErrCode}, Warning message（警告信息）: ${warn.getDesc}."
       log.warn(warnMsg, warn)
       null.asInstanceOf[T]
     case t: Throwable =>
@@ -95,11 +106,13 @@ object Utils extends Logging {
 
   def tryAndError[T](tryOp: => T)(implicit log: Logger): T = tryCatch(tryOp) {
     case error: ErrorException =>
-      val errorMsg = s"error code（错误码）: ${error.getErrCode}, Error message（错误信息）: ${error.getDesc}."
+      val errorMsg =
+        s"error code（错误码）: ${error.getErrCode}, Error message（错误信息）: ${error.getDesc}."
       log.error(errorMsg, error)
       null.asInstanceOf[T]
     case warn: WarnException =>
-      val warnMsg = s"Warning code（警告码）: ${warn.getErrCode}, Warning message（警告信息）: ${warn.getDesc}."
+      val warnMsg =
+        s"Warning code（警告码）: ${warn.getErrCode}, Warning message（警告信息）: ${warn.getDesc}."
       log.warn(warnMsg, warn)
       null.asInstanceOf[T]
     case t: Throwable =>
@@ -136,27 +149,49 @@ object Utils extends Logging {
     }
   }
 
-  def newCachedThreadPool(threadNum: Int, threadName: String, isDaemon: Boolean = true): ThreadPoolExecutor = {
-    val threadPool = new ThreadPoolExecutor(threadNum, threadNum, 120L, TimeUnit.SECONDS,
+  def newCachedThreadPool(
+      threadNum: Int,
+      threadName: String,
+      isDaemon: Boolean = true
+  ): ThreadPoolExecutor = {
+    val threadPool = new ThreadPoolExecutor(
+      threadNum,
+      threadNum,
+      120L,
+      TimeUnit.SECONDS,
       new LinkedBlockingQueue[Runnable](10 * threadNum),
-      threadFactory(threadName, isDaemon))
+      threadFactory(threadName, isDaemon)
+    )
     threadPool.allowCoreThreadTimeOut(true)
     threadPool
   }
 
-  def newCachedExecutionContext(threadNum: Int, threadName: String, isDaemon: Boolean = true): ExecutionContextExecutorService =
+  def newCachedExecutionContext(
+      threadNum: Int,
+      threadName: String,
+      isDaemon: Boolean = true
+  ): ExecutionContextExecutorService =
     ExecutionContext.fromExecutorService(newCachedThreadPool(threadNum, threadName, isDaemon))
 
-  def newFixedThreadPool(threadNum: Int, threadName: String, isDaemon: Boolean = true): ExecutorService = {
+  def newFixedThreadPool(
+      threadNum: Int,
+      threadName: String,
+      isDaemon: Boolean = true
+  ): ExecutorService = {
     Executors.newFixedThreadPool(threadNum, threadFactory(threadName, isDaemon))
   }
 
-  def newFixedExecutionContext(threadNum: Int, threadName: String, isDaemon: Boolean = true): ExecutionContextExecutorService = {
+  def newFixedExecutionContext(
+      threadNum: Int,
+      threadName: String,
+      isDaemon: Boolean = true
+  ): ExecutionContextExecutorService = {
     ExecutionContext.fromExecutorService(newFixedThreadPool(threadNum, threadName, isDaemon))
   }
 
   val defaultScheduler: ScheduledThreadPoolExecutor = {
-    val scheduler = new ScheduledThreadPoolExecutor(20, threadFactory("Linkis-Default-Scheduler-Thread-", true))
+    val scheduler =
+      new ScheduledThreadPoolExecutor(20, threadFactory("Linkis-Default-Scheduler-Thread-", true))
     scheduler.setMaximumPoolSize(20)
     scheduler.setKeepAliveTime(5, TimeUnit.MINUTES)
     scheduler
@@ -164,24 +199,36 @@ object Utils extends Logging {
 
   def getLocalHostname: String = InetAddress.getLocalHost.getHostAddress
 
-  def getComputerName: String = Utils.tryCatch(InetAddress.getLocalHost.getCanonicalHostName)(t => sys.env("COMPUTERNAME"))
+  def getComputerName: String =
+    Utils.tryCatch(InetAddress.getLocalHost.getCanonicalHostName)(t => sys.env("COMPUTERNAME"))
 
   /**
-   * Checks if event has occurred during some time period. This performs an exponential backoff
-   * to limit the poll calls.
+   * Checks if event has occurred during some time period. This performs an exponential backoff to
+   * limit the poll calls.
    *
-   * @param checkForEvent event to check, until it is true
-   * @param atMost        most wait time
-   * @throws java.util.concurrent.TimeoutException throws this exception when it is timeout
-   * @throws java.lang.InterruptedException        throws this exception when it is interrupted
+   * @param checkForEvent
+   *   event to check, until it is true
+   * @param atMost
+   *   most wait time
+   * @throws java.util.concurrent.TimeoutException
+   *   throws this exception when it is timeout
+   * @throws java.lang.InterruptedException
+   *   throws this exception when it is interrupted
    * @return
    */
   @throws(classOf[TimeoutException])
   @throws(classOf[InterruptedException])
-  final def waitUntil(checkForEvent: () => Boolean, atMost: Duration, radix: Int, maxPeriod: Long): Unit = {
-    val endTime = try System.currentTimeMillis() + atMost.toMillis catch {
-      case _: IllegalArgumentException => 0L
-    }
+  final def waitUntil(
+      checkForEvent: () => Boolean,
+      atMost: Duration,
+      radix: Int,
+      maxPeriod: Long
+  ): Unit = {
+    val endTime =
+      try System.currentTimeMillis() + atMost.toMillis
+      catch {
+        case _: IllegalArgumentException => 0L
+      }
 
     @tailrec
     def aux(count: Int): Unit = {
@@ -201,12 +248,14 @@ object Utils extends Logging {
     aux(1)
   }
 
-  final def waitUntil(checkForEvent: () => Boolean, atMost: Duration): Unit = waitUntil(checkForEvent, atMost, 100, 2000)
+  final def waitUntil(checkForEvent: () => Boolean, atMost: Duration): Unit =
+    waitUntil(checkForEvent, atMost, 100, 2000)
 
   /**
    * do not exec complex shell command with lots of output, may cause io blocking
    *
-   * @param commandLine shell command
+   * @param commandLine
+   *   shell command
    * @return
    */
   def exec(commandLine: Array[String]): String = exec(commandLine, -1)
@@ -214,7 +263,8 @@ object Utils extends Logging {
   /**
    * do not exec complex shell command with lots of output, may cause io blocking
    *
-   * @param commandLine shell command
+   * @param commandLine
+   *   shell command
    * @return
    */
   def exec(commandLine: List[String]): String = exec(commandLine, -1)
@@ -222,17 +272,22 @@ object Utils extends Logging {
   /**
    * do not exec complex shell command with lots of output, may cause io blocking
    *
-   * @param commandLine shell command
-   * @param maxWaitTime max wait time
+   * @param commandLine
+   *   shell command
+   * @param maxWaitTime
+   *   max wait time
    * @return
    */
-  def exec(commandLine: Array[String], maxWaitTime: Long): String = exec(commandLine.toList, maxWaitTime)
+  def exec(commandLine: Array[String], maxWaitTime: Long): String =
+    exec(commandLine.toList, maxWaitTime)
 
   /**
    * do not exec complex shell command with lots of output, may cause io blocking
    *
-   * @param commandLine shell command
-   * @param maxWaitTime max wait time
+   * @param commandLine
+   *   shell command
+   * @param maxWaitTime
+   *   max wait time
    * @return
    */
   def exec(commandLine: List[String], maxWaitTime: Long): String = {
@@ -246,7 +301,9 @@ object Utils extends Logging {
       if (!completed) {
         IOUtils.closeQuietly(log)
         process.destroy()
-        throw new TimeoutException(s"exec timeout with ${ByteTimeUtils.msDurationToString(maxWaitTime)}!")
+        throw new TimeoutException(
+          s"exec timeout with ${ByteTimeUtils.msDurationToString(maxWaitTime)}!"
+        )
       }
       process.exitValue
     } else {
@@ -257,7 +314,10 @@ object Utils extends Logging {
     val lines = log.lines().toArray
     IOUtils.closeQuietly(log)
     if (exitCode != 0) {
-      throw new LinkisCommonErrorException(0, s"exec failed with exit code: $exitCode, ${lines.mkString(". ")}")
+      throw new LinkisCommonErrorException(
+        0,
+        s"exec failed with exit code: $exitCode, ${lines.mkString(". ")}"
+      )
     }
     lines.mkString("\n")
   }
@@ -266,7 +326,11 @@ object Utils extends Logging {
 
   def getClassInstance[T](className: String): T = {
     Utils.tryThrow(
-      Thread.currentThread.getContextClassLoader.loadClass(className).asInstanceOf[Class[T]].newInstance())(t => {
+      Thread.currentThread.getContextClassLoader
+        .loadClass(className)
+        .asInstanceOf[Class[T]]
+        .newInstance()
+    )(t => {
       logger.error(s"Failed to instance: $className ", t)
       throw t
     })

@@ -1,0 +1,187 @@
+---
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+{{- if .Values.linkis.featureGates.enableMetadataQuery }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "linkis.fullname" . }}-ps-metadataquery
+  labels:
+    app: {{ include "linkis.fullname" . }}-ps-metadataquery
+    {{- include "linkis.psMetadataQuery.labels" . | nindent 4 }}
+  annotations:
+    prometheus.io/path: {{ .Values.psMetadataQuery.prometheus.metricsPath }}
+    prometheus.io/port: '{{ .Values.psMetadataQuery.port }}'
+    prometheus.io/scrape: 'true'
+spec:
+  ports:
+    - name: "http"
+      protocol: TCP
+      port: {{ .Values.psMetadataQuery.port }}
+  selector:
+    {{- include "linkis.psMetadataQuery.selectorLabels" . | nindent 4 }}
+    app: {{ include "linkis.fullname" . }}-ps-metadataquery
+  {{- toYaml .Values.svc | nindent 2 }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "linkis.fullname" . }}-ps-metadataquery-headless
+  labels:
+    app: {{ include "linkis.fullname" . }}-ps-metadataquery
+    {{- include "linkis.psMetadataQuery.labels" . | nindent 4 }}
+  annotations:
+    prometheus.io/path: {{ .Values.psMetadataQuery.prometheus.metricsPath }}
+    prometheus.io/port: '{{ .Values.psMetadataQuery.port }}'
+    prometheus.io/scrape: 'true'
+spec:
+  ports:
+    - name: "http"
+      protocol: TCP
+      port: {{ .Values.psMetadataQuery.port }}
+  selector:
+    {{- include "linkis.psMetadataQuery.selectorLabels" . | nindent 4 }}
+    app: {{ include "linkis.fullname" . }}-ps-metadataquery
+  clusterIP: None
+  type: ClusterIP
+  publishNotReadyAddresses: true
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "linkis.fullname" . }}-ps-metadataquery
+  labels:
+    app: {{ include "linkis.fullname" . }}-ps-metadataquery
+    version: {{ .Chart.AppVersion }}
+    {{- include "linkis.psMetadataQuery.labels" . | nindent 4 }}
+  {{- if .Values.psMetadataQuery.annotations }}
+  annotations:
+    {{- toYaml .Values.psMetadataQuery.annotations | nindent 4 }}
+  {{- end }}
+spec:
+  replicas: {{ .Values.psMetadataQuery.replicas }}
+  selector:
+    matchLabels:
+      {{- include "linkis.psMetadataQuery.selectorLabels" . | nindent 6 }}
+      app: {{ include "linkis.fullname" . }}-ps-metadataquery
+  template:
+    metadata:
+      {{- with .Values.psMetadataQuery.annotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        app: {{ include "linkis.fullname" . }}-ps-metadataquery
+        version: {{ .Chart.AppVersion }}
+        {{- include "linkis.psMetadataQuery.selectorLabels" . | nindent 8 }}
+    spec:
+      subdomain: {{ include "linkis.fullname" . }}-ps-metadataquery-headless
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
+        - name: conf
+          configMap:
+            name: {{ include "linkis.fullname" . }}-linkis-config
+        - name: log
+          emptyDir: {}
+        - name: runtime
+          {{- if .Values.linkis.featureGates.localMode }}
+          hostPath:
+            path: {{ .Values.linkis.locations.hostPath }}
+            type: DirectoryOrCreate
+          {{- else }}
+          emptyDir: {}
+          {{- end }}
+      serviceAccountName: {{ include "linkis.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.psMetadataQuery.podSecurityContext | nindent 8 }}
+      containers:
+        - name: "metadataquery"
+          securityContext:
+            {{- toYaml .Values.psMetadataQuery.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command:
+            - /bin/bash
+            - -ecx
+            - >-
+              RUN_IN_FOREGROUND=true {{ .Values.linkis.locations.homeDir }}/sbin/linkis-daemon.sh start ps-metadataquery
+          ports:
+            - name: "http"
+              containerPort: {{ .Values.psMetadataQuery.port }}
+              protocol: TCP
+            {{- if .Values.linkis.featureGates.enableJvmRemoteDebug }}
+            - name: "debug"
+              containerPort: 5005
+              protocol: TCP
+            {{- end }}
+          # TODO: replace with httpGet when spring-boot readiness probe is implemented.
+          readinessProbe:
+            initialDelaySeconds: 15
+            periodSeconds: 5
+            timeoutSeconds: 20
+            failureThreshold: 10
+            tcpSocket:
+              port: {{ .Values.psMetadataQuery.port }}
+          env:
+            {{- if .Values.linkis.featureGates.enableJvmRemoteDebug }}
+            - name: DEBUG_PORT
+              value: "5005"
+            {{- end }}
+            - name: SERVER_HEAP_SIZE
+              value: {{ .Values.psMetadataQuery.jvmHeapSize }}
+            - name: EUREKA_URL
+              value: {{- include "linkis.registration.url" . | quote | indent 1 }}
+            - name: EUREKA_PREFER_IP
+              value: "true"
+            - name: EUREKA_PORT
+              value: "{{ .Values.mgEureka.port }}"
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            {{- if .Values.psMetadataQuery.envs.extras }}
+{{ toYaml .Values.psMetadataQuery.envs.extras | indent 12 }}
+            {{- end }}
+          {{- if .Values.psMetadataQuery.envs.froms }}
+          envFrom:
+{{ toYaml .Values.psMetadataQuery.envs.froms | indent 12 }}
+          {{- end }}
+          volumeMounts:
+            - name: conf
+              mountPath: {{ .Values.linkis.locations.confDir }}
+            - name: log
+              mountPath: {{ .Values.linkis.locations.logDir }}
+            - name: runtime
+              mountPath: {{ .Values.linkis.locations.runtimeDir }}
+          resources:
+            {{- toYaml .Values.psMetadataQuery.resources | nindent 12 }}
+      {{- with .Values.psMetadataQuery.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.psMetadataQuery.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.psMetadataQuery.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+
+{{- end }}

@@ -21,11 +21,11 @@ import org.apache.linkis.common.ServiceInstance;
 
 public interface ScoreServiceInstance {
 
-    double getScore();
+  double getScore();
 
-    void setScore(double score);
+  void setScore(double score);
 
-    ServiceInstance getServiceInstance();
+  ServiceInstance getServiceInstance();
 
-    void setServiceInstance(ServiceInstance serviceInstance);
+  void setServiceInstance(ServiceInstance serviceInstance);
 }

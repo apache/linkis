@@ -22,9 +22,11 @@ import org.apache.linkis.protocol.message.RequestProtocol
 
 import scala.collection.JavaConverters.mapAsJavaMapConverter
 
-
-case class EngineOperateResponse(result: Map[String, Any],
-                                 isError: Boolean = false,
-                                 errorMsg: String = "") extends OperateResponse with RequestProtocol {
+case class EngineOperateResponse(
+    result: Map[String, Any],
+    isError: Boolean = false,
+    errorMsg: String = ""
+) extends OperateResponse
+    with RequestProtocol {
   override def getResult: java.util.Map[String, Any] = result.asJava
 }

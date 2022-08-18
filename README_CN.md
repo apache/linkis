@@ -95,8 +95,8 @@ Linkis 自 2019 年开源发布以来，已累计积累了 700 多家试验企�
 |Pipeline|-|\>=1.0.3|否|Pipeline EngineConn， 支持文件的导入和导出|
 |openLooKeng|openLooKeng >= 1.5.0, <br/>(默认 openLookEng 1.5.0)|\>=1.1.1|否|openLooKeng EngineConn， 支持用 Sql 查询数据虚拟化引擎 openLooKeng|
 |Sqoop| Sqoop >= 1.4.6, <br/>(默认 Apache Sqoop 1.4.6)|\>=1.1.2|否|Sqoop EngineConn， 支持 数据迁移工具 Sqoop 引擎|
-|Presto|Presto >= 0.180|\>=1.2.0|否|Presto EngineConn， 支持 Presto SQL 代码|
-|ElasticSearch|ElasticSearch >=6.0|\>=1.2.0|否|ElasticSearch EngineConn， 支持 SQL 和 DSL 代码|
+|Presto|Presto >= 0.180, <br/>(默认 Presto 0.234)|\>=1.2.0|否|Presto EngineConn， 支持 Presto SQL 代码|
+|ElasticSearch|ElasticSearch >=6.0, <br/>((默认 ElasticSearch 7.6.2)|\>=1.2.0|否|ElasticSearch EngineConn， 支持 SQL 和 DSL 代码|
 |Impala|Impala >= 3.2.0, CDH >=6.3.0|ongoing|-|Impala EngineConn，支持 Impala SQL 代码|
 |MLSQL| MLSQL >=1.1.0|ongoing|-|MLSQL EngineConn， 支持 MLSQL 代码.|
 |Hadoop|Apache >=2.6.0, <br/>CDH >=5.4.0|ongoing|-|Hadoop EngineConn， 支持 Hadoop MR/YARN application|
@@ -123,8 +123,8 @@ Linkis 自 2019 年开源发布以来，已累计积累了 700 多家试验企�
 # 编译和安装部署
 
 > 更详细的步骤参见:
->[后端编译打包 ](https://linkis.apache.org/zh-CN/docs/latest/development/linkis-compile-and-package)
->[管理台编译 ](https://linkis.apache.org/zh-CN/docs/latest/development/web-build)
+>- [后端编译打包 ](https://linkis.apache.org/zh-CN/docs/latest/development/linkis-compile-and-package)
+>- [管理台编译 ](https://linkis.apache.org/zh-CN/docs/latest/development/web-build)
 
 ```shell script
 ## 后端编译
@@ -143,7 +143,7 @@ npm install
 npm run build
 ```
 
-请参考[快速安装部署 ](https://linkis.apache.org/zh-CN/docs/latest/deployment/quick_deploy) 来部署 Linkis
+请参考[快速安装部署 ](https://linkis.apache.org/zh-CN/docs/latest/deployment/quick-deploy) 来部署 Linkis
 
 # 示例和使用指引
 

@@ -125,20 +125,19 @@ class HttpBmlClient(
     val bmlDownloadAction = BmlDownloadAction()
     import scala.collection.JavaConverters._
     bmlDownloadAction.getParameters.asScala += "resourceId" -> resourceId
-    // TODO: Non empty parameters cannot be placed
+    // TODO: 不能放非空的参数
     if (version != null) bmlDownloadAction.getParameters.asScala += "version" -> version
     bmlDownloadAction.setUser(user)
     val downloadResult = dwsClient.execute(bmlDownloadAction)
-//    val retIs = new ByteArrayInputStream(
-//    IOUtils.toString(bmlDownloadAction.getInputStream).getBytes("UTF-8"))
-//    if (downloadResult != null) {
-//      bmlDownloadAction.getResponse match {
-//        case r: CloseableHttpResponse =>
-//          Utils.tryAndWarn(r.close())
-//        case o: Any =>
-//          info(s"Download response : ${o.getClass.getName} cannot close.")
-//      }
-//    }
+    //    val retIs = new ByteArrayInputStream(IOUtils.toString(bmlDownloadAction.getInputStream).getBytes("UTF-8"))
+    //    if (downloadResult != null) {
+    //      bmlDownloadAction.getResponse match {
+    //        case r: CloseableHttpResponse =>
+    //          Utils.tryAndWarn(r.close())
+    //        case o: Any =>
+    //          info(s"Download response : ${o.getClass.getName} cannot close.")
+    //      }
+    //    }
     BmlDownloadResponse(
       isSuccess = true,
       bmlDownloadAction.getInputStream,
@@ -149,20 +148,19 @@ class HttpBmlClient(
   }
 
   /**
-   * Download resources to the specified path
+   * 下载资源到指定的path中
    * @param user
-   *   user name
+   *   用户名
    * @param resourceId
-   *   Resource ID
+   *   资源ID
    * @param version
-   *   Version information
+   *   版本信息
    * @param path
-   *   The specified directory should be preceded by schema share: / / local: / /
+   *   指定的目录,前面要加schema share:// local:// 等
    * @param overwrite
-   *   Whether to append
+   *   是否是追加
    * @return
-   *   The returned InputStream has been read completely, so a null is returned, and the other
-   *   fullfilename is the name of the entire file
+   *   返回的inputStream已经被全部读完，所以返回一个null,另外的fullFileName是整个文件的名字
    */
   override def downloadResource(
       user: String,
@@ -198,12 +196,17 @@ class HttpBmlClient(
       }
     } catch {
       case e: IOException =>
-        logger.error("failed to copy inputStream and outputStream", e)
-        val exception = BmlClientFailException("failed to copy inputStream and outputStream")
+        logger.error(
+          "failed to copy inputStream and outputStream (inputStream和outputStream流copy失败)",
+          e
+        )
+        val exception = BmlClientFailException(
+          "failed to copy inputStream and outputStream (inputStream和outputStream流copy失败)"
+        )
         exception.initCause(e)
         throw exception
       case t: Throwable =>
-        logger.error("failed to copy stream", t)
+        logger.error("failed to copy stream (流复制失败)", t)
         throw t
     } finally {
       if (null != inputStream) IOUtils.closeQuietly(inputStream)
@@ -242,18 +245,16 @@ class HttpBmlClient(
     } catch {
       case e: IOException =>
         logger.error(
-          "failed to copy inputStream and outputStream" +
-            "(inputStream和outputStream流copy失败)",
+          "failed to copy inputStream and outputStream (inputStream和outputStream流copy失败)",
           e
         )
         val exception = BmlClientFailException(
-          "failed to copy inputStream and outputStream" +
-            "(inputStream和outputStream流copy失败)"
+          "failed to copy inputStream and outputStream (inputStream和outputStream流copy失败)"
         )
         exception.initCause(e)
         throw e
       case t: Throwable =>
-        logger.error("failed to copy stream(流复制失败)", t)
+        logger.error("failed to copy stream (流复制失败)", t)
         throw t
     } finally {
       if (null != inputStream) IOUtils.closeQuietly(inputStream)
@@ -264,14 +265,14 @@ class HttpBmlClient(
   }
 
   /**
-   * Update resource information
+   * 更新资源信息
    *
    * @param resourceID
-   *   Resource ID
+   *   资源id
    * @param filePath
-   *   Destination file path
+   *   目标文件路径
    * @return
-   *   resourceId New version information
+   *   resourceId 新的版本信息
    */
   override def updateResource(
       user: String,
@@ -316,29 +317,28 @@ class HttpBmlClient(
   }
 
   /**
-   * The relateresource method associates the file with the targetfilepath path path to the
-   * resourceid Targetfilepath needs to include schema. If it does not include schema, the default
-   * is HDFS
+   * relateResource方法将targetFilePath路径的文件关联到resourceID下面
+   * targetFilePath需要包括schema，如果不包含schema，默认是hdfs
    *
    * @param resourceID
    *   resourceID
    * @param targetFilePath
-   *   Specify file directory
+   *   指定文件目录
    * @return
-   *   The bmlrelateresult contains the resourceid and the new version
+   *   BmlRelateResult 包含resourceId和新的version
    */
   override def relateResource(resourceID: String, targetFilePath: String): BmlRelateResponse = {
     null
   }
 
   /**
-   * Get all versions of resources corresponding to resourceid
+   * 获取resourceid 对应资源的所有版本
    * @param user
-   *   user name
+   *   用户名
    * @param resourceId
-   *   resourceId
+   *   资源Id
    * @return
-   *   All version information under the corresponding resourceid
+   *   resourceId对应下的所有版本信息
    */
   override def getVersions(user: String, resourceId: String): BmlResourceVersionsResponse = {
     val getVersionsAction = BmlGetVersionsAction(user, resourceId)
@@ -362,14 +362,13 @@ class HttpBmlClient(
   }
 
   /**
-   * Upload the file, the user specifies the file path, and the client automatically obtains the
-   * input stream
+   * 上传文件，用户指定文件路径，客户端自动获取输入流
    * @param user
-   *   user
+   *   用户名
    * @param filePath
-   *   filePath
+   *   文件路径
    * @return
-   *   Including resourceid and version
+   *   包含resourceId和version
    */
   override def uploadResource(user: String, filePath: String): BmlUploadResponse = {
     val inputStream: InputStream = getInputStream(filePath)
@@ -379,14 +378,14 @@ class HttpBmlClient(
   private def pathToName(filePath: String): String = new File(filePath).getName
 
   /**
-   * Upload resources
+   * 上传资源
    *
    * @param user
-   *   user
+   *   用户名
    * @param filePath
-   *   filePath
+   *   上传的资源的路径
    * @param inputStream
-   *   Input stream for uploading resources
+   *   上传资源的输入流
    * @return
    */
   override def uploadResource(
@@ -453,7 +452,7 @@ class HttpBmlClient(
     }
   }
 
-  // todo Now it is to compile
+  // todo 现在是为了通过编译
   private def getInputStream(str: String): InputStream = {
     null
   }
@@ -477,8 +476,7 @@ class HttpBmlClient(
           BmlCreateProjectResponse(isSuccess)
         } else {
           logger.error(
-            s"user $user create bml project, " +
-              s"status code is ${bmlCreateBmlProjectResult.getStatusCode}"
+            s"user $user create bml project, status code is ${bmlCreateBmlProjectResult.getStatusCode}"
           )
           BmlCreateProjectResponse(isSuccess)
         }
@@ -537,7 +535,7 @@ class HttpBmlClient(
     val bmlDownloadShareAction = BmlDownloadShareAction()
     import scala.collection.JavaConverters._
     bmlDownloadShareAction.getParameters.asScala += "resourceId" -> resourceId
-    // TODO: Non empty parameters cannot be placed
+    // TODO: 不能放非空的参数
     if (version != null) bmlDownloadShareAction.getParameters.asScala += "version" -> version
     bmlDownloadShareAction.setUser(user)
     val result = dwsClient.execute(bmlDownloadShareAction)
@@ -574,8 +572,7 @@ class HttpBmlClient(
           BmlUpdateResponse(isSuccess, resourceId, version)
         } else {
           logger.error(
-            s"user $user update resource failed, " +
-              s"status code is ${bmlUpdateShareResourceResult.getStatusCode}"
+            s"user $user update resource failed, status code is ${bmlUpdateShareResourceResult.getStatusCode}"
           )
           BmlUpdateResponse(isSuccess, null, null)
         }

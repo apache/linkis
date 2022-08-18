@@ -25,8 +25,7 @@ case class POSTActionFailException()
 case class POSTResultNotMatchException()
     extends ErrorException(
       70021,
-      "The result returned by the repository client POST request does not match" +
-        "(物料库客户端POST请求返回的result不匹配)"
+      "The result returned by the repository client POST request does not match(物料库客户端POST请求返回的result不匹配)"
     )
 
 case class IllegalPathException()
@@ -41,8 +40,7 @@ case class BmlResponseErrorException(errorMessage: String)
 case class GetResultNotMatchException()
     extends ErrorException(
       70078,
-      "The result returned by the repository client GET request does not match" +
-        "(物料库客户端GET请求返回的result不匹配)"
+      "The result returned by the repository client GET request does not match(物料库客户端GET请求返回的result不匹配)"
     )
 
 case class BmlClientFailException(errorMsg: String)

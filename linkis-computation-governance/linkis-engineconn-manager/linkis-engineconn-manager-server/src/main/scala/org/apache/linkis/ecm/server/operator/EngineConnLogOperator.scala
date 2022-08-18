@@ -32,7 +32,7 @@ import org.apache.commons.io.input.ReversedLinesFileReader
 import org.apache.commons.lang3.StringUtils
 
 import java.io.{File, RandomAccessFile}
-import java.nio.charset.Charset
+import java.nio.charset.{Charset, StandardCharsets}
 import java.util
 import java.util.Collections
 
@@ -79,7 +79,16 @@ class EngineConnLogOperator extends Operator with Logging {
     }
     def randomAndReversedReadLine(): String = {
       if (null != randomReader) {
-        randomReader.readLine()
+        // For random access file, it uses the ISO-8859 encoding default
+        Option(randomReader.readLine()) match {
+          case Some(line) =>
+            new String(
+              line
+                .getBytes(StandardCharsets.ISO_8859_1),
+              Charset.defaultCharset()
+            )
+          case _ => null
+        }
       } else {
         reversedReader.readLine()
       }

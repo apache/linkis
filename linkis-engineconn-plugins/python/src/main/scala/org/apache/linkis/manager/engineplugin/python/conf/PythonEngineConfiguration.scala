@@ -24,7 +24,7 @@ object PythonEngineConfiguration {
   val PYTHON_CONSOLE_OUTPUT_LINE_LIMIT = CommonVars("wds.linkis.python.line.limit", 10)
 
   val PY4J_HOME =
-    CommonVars("wds.linkis.python.py4j.home", this.getClass.getResource("/conf").getPath)
+    CommonVars("wds.linkis.python.py4j.home", getPy4jHome)
 
   val PYTHON_VERSION = CommonVars("pythonVersion", "python3")
 
@@ -36,5 +36,13 @@ object PythonEngineConfiguration {
 
   val PYTHON_LANGUAGE_REPL_INIT_TIME =
     CommonVars[TimeType]("wds.linkis.engine.python.language-repl.init.time", new TimeType("30s"))
+
+  private def getPy4jHome(): String = {
+    val confDir = "/conf"
+    if (null !=  this.getClass.getResource(confDir)) {
+      this.getClass.getResource(confDir).getPath
+    }
+    this.getClass.getResource("/").getPath
+  }
 
 }

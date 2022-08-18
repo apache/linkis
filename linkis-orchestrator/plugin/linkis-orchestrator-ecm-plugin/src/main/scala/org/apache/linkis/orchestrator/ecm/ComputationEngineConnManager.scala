@@ -83,6 +83,8 @@ class ComputationEngineConnManager extends AbstractEngineConnManager with Loggin
       }
       createMark(markReq)
     } else {
+      mark.getMarkReq.getProperties.clear()
+      mark.getMarkReq.setProperties(markReq.getProperties)
       mark
     }
   }

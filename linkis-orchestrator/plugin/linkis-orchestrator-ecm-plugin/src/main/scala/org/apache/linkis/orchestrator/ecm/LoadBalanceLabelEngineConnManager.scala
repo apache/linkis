@@ -101,6 +101,8 @@ class LoadBalanceLabelEngineConnManager extends ComputationEngineConnManager wit
         // getRandom mark
         chooseMark = markList.get(new util.Random().nextInt(markList.length))
         // chooseMark.asInstanceOf[LoadBalanceMark].setTaskMarkReq(markReq)
+        chooseMark.getMarkReq.getProperties.clear()
+        chooseMark.getMarkReq.setProperties(markReq.getProperties)
         getIdToMarkCache().put(bindEngineLabel.getJobGroupId, chooseMark)
       } else if (getIdToMarkCache().containsKey(bindEngineLabel.getJobGroupId)) {
         chooseMark = getIdToMarkCache().get(bindEngineLabel.getJobGroupId)

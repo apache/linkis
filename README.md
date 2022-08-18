@@ -99,8 +99,8 @@ Since the first release of Linkis in 2019, it has accumulated more than **700** 
 |Pipeline|-|\>=1.0.3|No|Pipeline EngineConn, supports file import and export|
 |openLooKeng|openLooKeng >= 1.5.0, <br/>(default openLookEng 1.5.0)|\>=1.1.1|No|openLooKeng EngineConn, supports querying data virtualization engine with Sql openLooKeng|
 |Sqoop| Sqoop >= 1.4.6, <br/>(default Apache Sqoop 1.4.6)|\>=1.1.2|No|Sqoop EngineConn, support data migration tool Sqoop engine|
-|Presto|Presto >= 0.180|\>=1.2.0|-|Presto EngineConn, supports Presto SQL code|
-|ElasticSearch|ElasticSearch >=6.0|\>=1.2.0|-|ElasticSearch EngineConn, supports SQL and DSL code|
+|Presto|Presto >= 0.180, <br/>(default Presto 0.234)|\>=1.2.0|-|Presto EngineConn, supports Presto SQL code|
+|ElasticSearch|ElasticSearch >=6.0, <br/>(default ElasticSearch 7.6.2)|\>=1.2.0|-|ElasticSearch EngineConn, supports SQL and DSL code|
 |Impala|Impala >= 3.2.0, CDH >=6.3.0|ongoing|-|Impala EngineConn, supports Impala SQL code|
 |MLSQL| MLSQL >=1.1.0|ongoing|-|MLSQL EngineConn, supports MLSQL code.|
 |Hadoop|Apache >=2.6.0, <br/>CDH >=5.4.0|ongoing|-|Hadoop EngineConn, supports Hadoop MR/YARN application|
@@ -127,8 +127,8 @@ Please go to the [Linkis Releases Page](https://linkis.apache.org/download/main)
 # Compile and Deploy
 
 > For more detailed guidance see:
->[[Backend Compile]](https://linkis.apache.org/zh-CN/docs/latest/development/linkis-compile-and-package)
->[[Management Console Build]](https://linkis.apache.org/zh-CN/docs/latest/development/web-build)
+>- [[Backend Compile]](https://linkis.apache.org/docs/latest/development/linkis-compile-and-package)
+>- [[Management Console Build]](https://linkis.apache.org/docs/latest/development/web-build)
 
 ```shell
 
@@ -148,7 +148,7 @@ npm install
 npm run build
 ```
  
-Please refer to [Quick Deployment](https://linkis.apache.org/docs/latest/deployment/quick_deploy) to do the deployment.
+Please refer to [Quick Deployment](https://linkis.apache.org/docs/latest/deployment/quick-deploy) to do the deployment.
 
 # Examples and Guidance
 - [User Manual](https://linkis.apache.org/docs/latest/user-guide/overview)

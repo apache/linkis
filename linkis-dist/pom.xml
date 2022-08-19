@@ -321,6 +321,12 @@
                   <target if="linkis.build.ldh" name="linkis-ldh-image">
                     <echo message="Building linkis ldh (hadoop all in one) image ..."></echo>
                     <exec executable="sh" failonerror="true">
+                      <env key="HADOOP_VERSION" value="${ldh.hadoop.version}"></env>
+                      <env key="HIVE_VERSION" value="${ldh.hive.version}"></env>
+                      <env key="SPARK_VERSION" value="${ldh.spark.version}"></env>
+                      <env key="SPARK_HADOOP_VERSION" value="${ldh.spark.hadoop.version}"></env>
+                      <env key="FLINK_VERSION" value="${ldh.flink.version}"></env>
+                      <env key="ZOOKEEPER_VERSION" value="${ldh.zookeeper.version}"></env>
                       <arg value="${basedir}/docker/scripts/prepare-ldh-image.sh"></arg>
                     </exec>
                     <exec executable="docker" failonerror="true">

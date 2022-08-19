@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,11 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.linkis.manager.engineplugin.python.exception
 
 import org.junit.jupiter.api.{Assertions, Test}
 
 class TestNoSupportEngineException {
+
   @Test
   def testNoSupportEngineException: Unit = {
     val errorMsg = "NoSupportEngine"
@@ -42,8 +44,7 @@ class TestNoSupportEngineException {
     Assertions.assertEquals(errorMsg, exception.getDesc)
   }
 
-
-    @Test
+  @Test
   def testPythonEngineException: Unit = {
     val errorMsg = "PythonEngine"
     val exception = new PythonEngineException(50012, errorMsg)
@@ -59,32 +60,36 @@ class TestNoSupportEngineException {
     Assertions.assertEquals(errorMsg, exception.getDesc)
   }
 
-    @Test
-    def testPythonExecuteError: Unit = {
-      val errorMsg = "PythonExecuteError"
-      val exception = new PythonExecuteError(60006, errorMsg)
-      Assertions.assertEquals(60006, exception.getErrCode)
-      Assertions.assertEquals(errorMsg, exception.getDesc)
-    }
-    @Test
-    def testSessionStartFailedException: Unit = {
-      val errorMsg = "SessionStartFailed"
-      val exception = new SessionStartFailedException(60002, errorMsg)
-      Assertions.assertEquals(60002, exception.getErrCode)
-      Assertions.assertEquals(errorMsg, exception.getDesc)
-    }
-    @Test
-    def testExecuteException: Unit = {
-      val errorMsg = "ExecuteException"
-      val exception = new ExecuteException(60003, errorMsg)
-      Assertions.assertEquals(60003, exception.getErrCode)
-      Assertions.assertEquals(errorMsg, exception.getDesc)
-    }
-    @Test
-    def testEngineException: Unit = {
-      val errorMsg = "EngineException"
-      val exception = new EngineException(60004, errorMsg)
-      Assertions.assertEquals(60004, exception.getErrCode)
-      Assertions.assertEquals(errorMsg, exception.getDesc)
-    }
+  @Test
+  def testPythonExecuteError: Unit = {
+    val errorMsg = "PythonExecuteError"
+    val exception = new PythonExecuteError(60006, errorMsg)
+    Assertions.assertEquals(60006, exception.getErrCode)
+    Assertions.assertEquals(errorMsg, exception.getDesc)
+  }
+
+  @Test
+  def testSessionStartFailedException: Unit = {
+    val errorMsg = "SessionStartFailed"
+    val exception = new SessionStartFailedException(60002, errorMsg)
+    Assertions.assertEquals(60002, exception.getErrCode)
+    Assertions.assertEquals(errorMsg, exception.getDesc)
+  }
+
+  @Test
+  def testExecuteException: Unit = {
+    val errorMsg = "ExecuteException"
+    val exception = new ExecuteException(60003, errorMsg)
+    Assertions.assertEquals(60003, exception.getErrCode)
+    Assertions.assertEquals(errorMsg, exception.getDesc)
+  }
+
+  @Test
+  def testEngineException: Unit = {
+    val errorMsg = "EngineException"
+    val exception = new EngineException(60004, errorMsg)
+    Assertions.assertEquals(60004, exception.getErrCode)
+    Assertions.assertEquals(errorMsg, exception.getDesc)
+  }
+
 }

@@ -39,7 +39,7 @@ object PythonEngineConfiguration {
 
   private def getPy4jHome(): String = {
     val confDir = "/conf"
-    if (null !=  this.getClass.getResource(confDir)) {
+    if (null != this.getClass.getResource(confDir)) {
       this.getClass.getResource(confDir).getPath
     }
     this.getClass.getResource("/").getPath

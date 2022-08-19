@@ -19,7 +19,7 @@
 <connector-plugin class='linkis_jdbc' superclass='jdbc' plugin-version='1.0' name='Linkis (JDBC)' version='2020.1.0'>
   <vendor-information>
     <company name="Linkis"/>
-    <support-link url="https://127.0.0.1/wds/portalis/#/map/en"/>
+    <support-link url="https://linkis.apache.org/"/>
   </vendor-information>
   <connection-customization class="linkis_jdbc" enabled="true" version='2020.1.0'>
     <vendor name="linkis"/>

@@ -24,7 +24,10 @@ import org.apache.linkis.datasourcemanager.common.domain.DataSourceParamKeyDefin
 import org.apache.linkis.datasourcemanager.common.domain.DatasourceVersion;
 import org.apache.linkis.datasourcemanager.common.exception.JsonErrorException;
 import org.apache.linkis.datasourcemanager.common.util.json.Json;
-import org.apache.linkis.datasourcemanager.core.dao.*;
+import org.apache.linkis.datasourcemanager.core.dao.DataSourceDao;
+import org.apache.linkis.datasourcemanager.core.dao.DataSourceEnvDao;
+import org.apache.linkis.datasourcemanager.core.dao.DataSourceParamKeyDao;
+import org.apache.linkis.datasourcemanager.core.dao.DataSourceVersionDao;
 import org.apache.linkis.datasourcemanager.core.formdata.FormStreamContent;
 import org.apache.linkis.datasourcemanager.core.service.BmlAppService;
 import org.apache.linkis.datasourcemanager.core.service.DataSourceInfoService;
@@ -44,7 +47,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -110,6 +117,23 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
     }
 
     @Override
+    public DataSource getDataSourcePublishInfo(String dataSourceName) {
+        DataSource dataSource = dataSourceDao.selectOneDetailByName(dataSourceName);
+        if (Objects.nonNull(dataSource)) {
+            Long publishedVersionId = dataSource.getPublishedVersionId();
+            if (publishedVersionId == null) {
+                LOG.warn("Datasource name:{} is not published. ", dataSourceName);
+            } else {
+                String parameter =
+                        dataSourceVersionDao.selectOneVersion(
+                                dataSource.getId(), publishedVersionId);
+                dataSource.setParameter(parameter);
+            }
+        }
+        return dataSource;
+    }
+
+    @Override
     public DataSource getDataSourceInfo(Long dataSourceId, Long version) {
         DataSource dataSource = dataSourceDao.selectOneDetail(dataSourceId);
         if (Objects.nonNull(dataSource)) {
@@ -122,9 +146,6 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
     /**
      * get datasource info for connect for published version, if there is a dependency environment,
      * merge datasource parameter and environment parameter.
-     *
-     * @param dataSourceId
-     * @return
      */
     @Override
     public DataSource getDataSourceInfoForConnect(Long dataSourceId) {
@@ -180,10 +201,6 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
     /**
      * get datasource info for connect, if there is a dependency environment, merge datasource
      * parameter and environment parameter.
-     *
-     * @param dataSourceId
-     * @param version
-     * @return
      */
     @Override
     public DataSource getDataSourceInfoForConnect(Long dataSourceId, Long version) {
@@ -329,12 +346,7 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
         return pageInfo.getList();
     }
 
-    /**
-     * expire data source
-     *
-     * @param dataSourceId
-     * @return
-     */
+    /** expire data source */
     @Override
     public Long expireDataSource(Long dataSourceId) {
         DataSource dataSource = dataSourceDao.selectOne(dataSourceId);
@@ -348,12 +360,7 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
         return -1L;
     }
 
-    /**
-     * publish datasource by id set published_version_id to versionId;
-     *
-     * @param dataSourceId
-     * @return
-     */
+    /** publish datasource by id set published_version_id to versionId; */
     @Override
     public int publishByDataSourceId(Long dataSourceId, Long versionId) {
         Long latestVersion = dataSourceVersionDao.getLatestVersion(dataSourceId);
@@ -366,13 +373,6 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
 
     /**
      * insert a datasource parameter, return new version, and update current versionId of datasource
-     *
-     * @param keyDefinitionList
-     * @param datasourceId
-     * @param connectParams
-     * @param username
-     * @param comment
-     * @return
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -420,12 +420,7 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
         return newVersionId;
     }
 
-    /**
-     * get datasource version list
-     *
-     * @param datasourceId
-     * @return
-     */
+    /** get datasource version list */
     @Override
     public List<DatasourceVersion> getVersionList(Long datasourceId) {
         List<DatasourceVersion> versionList =
@@ -433,14 +428,7 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
         return versionList;
     }
 
-    /**
-     * @param userName
-     * @param keyDefinitionList
-     * @param updatedParams
-     * @param storedParams
-     * @param parameterCallback
-     * @throws ErrorException
-     */
+    /** */
     private void updateConnectParams(
             String userName,
             List<DataSourceParamKeyDefinition> keyDefinitionList,
@@ -511,13 +499,7 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
         }
     }
 
-    /**
-     * Upload the form stream context in connect parameters, and serialize parameters
-     *
-     * @param keyDefinitionList
-     * @param connectParams
-     * @param parameterCallback
-     */
+    /** Upload the form stream context in connect parameters, and serialize parameters */
     private void storeConnectParams(
             String userName,
             List<DataSourceParamKeyDefinition> keyDefinitionList,

@@ -16,7 +16,9 @@
  */
 package org.apache.linkis.engineplugin.elasticsearch.executer.client.impl
 
+import java.util
 import java.util.concurrent.CountDownLatch
+
 import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.engineplugin.elasticsearch.executer.client.ResponseHandler
 import org.apache.linkis.protocol.constants.TaskConstant
@@ -28,7 +30,7 @@ import org.apache.linkis.engineplugin.elasticsearch.exception.EsConvertResponseE
 import org.apache.linkis.engineplugin.elasticsearch.executer.client.{ElasticSearchErrorResponse, ElasticSearchExecutor, ElasticSearchResponse, EsClient, EsClientFactory, ResponseHandler}
 import org.elasticsearch.client.{Cancellable, Response, ResponseListener}
 
-class ElasticSearchExecutorImpl(runType: String, properties: JMap[String, String]) extends ElasticSearchExecutor {
+class ElasticSearchExecutorImpl(runType: String, properties: util.Map[String, String]) extends ElasticSearchExecutor {
 
   private var client: EsClient = _
   private var cancelable: Cancellable = _

@@ -501,28 +501,32 @@ class RMMonitorRest extends Logging {
       } else {
         metrics.get(node.getServiceInstance.toString).foreach(metricsConverter.fillMetricsToNode(node, _))
         if (withResource) {
-          val userCreatorLabel = node.getLabels.asScala.find(_.isInstanceOf[UserCreatorLabel]).get.asInstanceOf[UserCreatorLabel]
-          val engineTypeLabel = node.getLabels.asScala.find(_.isInstanceOf[EngineTypeLabel]).get.asInstanceOf[EngineTypeLabel]
-          val engineInstanceLabel = node.getLabels.asScala.find(_.isInstanceOf[EngineInstanceLabel]).get.asInstanceOf[EngineInstanceLabel]
-          engineInstanceLabel.setServiceName(node.getServiceInstance.getApplicationName)
-          engineInstanceLabel.setInstance(node.getServiceInstance.getInstance)
-          val nodeResource = labelResourceService.getLabelResource(engineInstanceLabel)
-          val configurationKey = getUserCreator(userCreatorLabel) + getEngineType(engineTypeLabel)
-          val configuredResource = configurationMap.get(configurationKey) match {
-            case Some(resource) => resource
-            case None =>
-              if (nodeResource != null) {
-                val resource = UserConfiguration.getUserConfiguredResource(nodeResource.getResourceType, userCreatorLabel, engineTypeLabel)
-                configurationMap.put(configurationKey, resource)
-                resource
-              } else null
-          }
-          if(nodeResource != null) {
-            nodeResource.setMaxResource(configuredResource)
-            if(null == nodeResource.getUsedResource) nodeResource.setUsedResource(nodeResource.getLockedResource)
-            if(null == nodeResource.getMinResource) nodeResource.setMinResource(Resource.initResource(nodeResource.getResourceType))
-//            node.setNodeResource(ResourceUtils.convertTo(nodeResource, ResourceType.LoadInstance))
-            node.setNodeResource(nodeResource)
+          val userCreatorLabelOption = node.getLabels.asScala.find(_.isInstanceOf[UserCreatorLabel])
+          val engineTypeLabelOption = node.getLabels.asScala.find(_.isInstanceOf[EngineTypeLabel])
+          val engineInstanceOption = node.getLabels.asScala.find(_.isInstanceOf[EngineInstanceLabel])
+          if (userCreatorLabelOption.isDefined && engineTypeLabelOption.isDefined && engineInstanceOption.isDefined) {
+            val userCreatorLabel = userCreatorLabelOption.get.asInstanceOf[UserCreatorLabel]
+            val engineTypeLabel = engineTypeLabelOption.get.asInstanceOf[EngineTypeLabel]
+            val engineInstanceLabel = engineInstanceOption.get.asInstanceOf[EngineInstanceLabel]
+            engineInstanceLabel.setServiceName(node.getServiceInstance.getApplicationName)
+            engineInstanceLabel.setInstance(node.getServiceInstance.getInstance)
+            val nodeResource = labelResourceService.getLabelResource(engineInstanceLabel)
+            val configurationKey = getUserCreator(userCreatorLabel) + getEngineType(engineTypeLabel)
+            val configuredResource = configurationMap.get(configurationKey) match {
+              case Some(resource) => resource
+              case None =>
+                if (nodeResource != null) {
+                  val resource = UserConfiguration.getUserConfiguredResource(nodeResource.getResourceType, userCreatorLabel, engineTypeLabel)
+                  configurationMap.put(configurationKey, resource)
+                  resource
+                } else null
+            }
+            if (nodeResource != null) {
+              nodeResource.setMaxResource(configuredResource)
+              if (null == nodeResource.getUsedResource) nodeResource.setUsedResource(nodeResource.getLockedResource)
+              if (null == nodeResource.getMinResource) nodeResource.setMinResource(Resource.initResource(nodeResource.getResourceType))
+              node.setNodeResource(nodeResource)
+            }
           }
         }
         node

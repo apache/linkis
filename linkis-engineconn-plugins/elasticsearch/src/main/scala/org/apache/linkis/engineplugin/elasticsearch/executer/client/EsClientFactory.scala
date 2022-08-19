@@ -18,9 +18,7 @@ package org.apache.linkis.engineplugin.elasticsearch.executer.client
 
 import java.util
 import java.util.Map
-import org.apache.linkis.common.conf.CommonVars
-import org.apache.linkis.engineplugin.elasticsearch.conf.ElasticSearchConfiguration._
-import org.apache.linkis.server.JMap
+
 import org.apache.commons.lang3.StringUtils
 import org.apache.http.auth.{AuthScope, UsernamePasswordCredentials}
 import org.apache.http.client.CredentialsProvider
@@ -28,6 +26,8 @@ import org.apache.http.impl.client.BasicCredentialsProvider
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder
 import org.apache.http.message.BasicHeader
 import org.apache.http.{Header, HttpHost}
+import org.apache.linkis.common.conf.CommonVars
+import org.apache.linkis.engineplugin.elasticsearch.conf.ElasticSearchConfiguration._
 import org.apache.linkis.engineplugin.elasticsearch.exception.EsParamsIllegalException
 import org.elasticsearch.client.sniff.Sniffer
 import org.elasticsearch.client.{RestClient, RestClientBuilder}
@@ -36,7 +36,7 @@ import scala.collection.JavaConverters._
 
 object EsClientFactory {
 
-  def getRestClient(options: JMap[String, String]): EsClient = {
+  def getRestClient(options: util.Map[String, String]): EsClient = {
     val key = getDatasourceName(options)
     if (StringUtils.isBlank(key)) {
       return defaultClient
@@ -63,7 +63,7 @@ object EsClientFactory {
     }
   }
 
-  private def getDatasourceName(options: JMap[String, String]): String = {
+  private def getDatasourceName(options: util.Map[String, String]): String = {
     options.getOrDefault(ES_DATASOURCE_NAME.key, "")
   }
 
@@ -71,7 +71,7 @@ object EsClientFactory {
     ES_CLIENT_MAP.put(client.getDatasourceName, client)
   }
 
-  private def createRestClient(options: JMap[String, String]): EsClient = {
+  private def createRestClient(options: util.Map[String, String]): EsClient = {
     val clusterStr = options.get(ES_CLUSTER.key)
     if (StringUtils.isBlank(clusterStr)) {
       throw EsParamsIllegalException("cluster is blank!")
@@ -94,8 +94,8 @@ object EsClientFactory {
           if (!ES_AUTH_CACHE.getValue) {
             httpAsyncClientBuilder.disableAuthCaching
           }
-//        httpClientBuilder.setDefaultRequestConfig(RequestConfig.DEFAULT)
-//        httpClientBuilder.setDefaultConnectionConfig(ConnectionConfig.DEFAULT)
+          //        httpClientBuilder.setDefaultRequestConfig(RequestConfig.DEFAULT)
+          //        httpClientBuilder.setDefaultConnectionConfig(ConnectionConfig.DEFAULT)
           httpAsyncClientBuilder.setDefaultCredentialsProvider(credentialsProvider)
         }
       })
@@ -138,7 +138,7 @@ object EsClientFactory {
   private def getCluster(clusterStr: String): Array[(String, Int)] = if (StringUtils.isNotBlank(clusterStr)) {
     clusterStr.split(",")
       .map(value => {
-        val arr = value.split(":")
+        val arr = value.replace("http://", "").split(":")
         (arr(0).trim, arr(1).trim.toInt)
       })
   } else Array()
@@ -147,7 +147,7 @@ object EsClientFactory {
   private def setAuthScope(cluster: Array[(String, Int)], username: String, password: String): Unit = if (cluster != null && !cluster.isEmpty
     && StringUtils.isNotBlank(username)
     && StringUtils.isNotBlank(password)) {
-    cluster.foreach{
+    cluster.foreach {
       case (host, port) => {
         credentialsProvider.setCredentials(new AuthScope(host, port, AuthScope.ANY_REALM, AuthScope.ANY_SCHEME)
           , new UsernamePasswordCredentials(username, password))

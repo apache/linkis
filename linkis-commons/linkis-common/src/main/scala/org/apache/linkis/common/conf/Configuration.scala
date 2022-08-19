@@ -51,7 +51,7 @@ object Configuration extends Logging {
 
   val GOVERNANCE_STATION_ADMIN = CommonVars("wds.linkis.governance.station.admin", "hadoop")
 
-  val VARIABLE_OPERATION: Boolean = CommonVars("wds.linkis.variable.operation", true).getValue
+  val VARIABLE_OPERATION: Boolean = CommonVars("wds.linkis.variable.operation", false).getValue
 
   private val adminUsers = GOVERNANCE_STATION_ADMIN.getValue.split(",")
 

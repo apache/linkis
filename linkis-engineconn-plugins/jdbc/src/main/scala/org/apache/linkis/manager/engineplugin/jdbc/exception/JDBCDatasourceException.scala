@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,29 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.linkis.engineplugin.elasticsearch.executer.client
 
-import java.io.IOException
-import java.util
+package org.apache.linkis.manager.engineplugin.jdbc.exception
 
-import org.apache.linkis.common.utils.Logging
-import org.apache.linkis.engineplugin.elasticsearch.executer.client.impl.ElasticSearchExecutorImpl
+import org.apache.linkis.common.exception.ErrorException
 
-trait ElasticSearchExecutor extends Logging {
-
-  @throws(classOf[IOException])
-  def open: Unit
-
-  def executeLine(code: String): ElasticSearchResponse
-
-  def close: Unit
-
-}
-
-object ElasticSearchExecutor {
-
-  def apply(runType: String, properties: util.Map[String, String]): ElasticSearchExecutor = {
-    new ElasticSearchExecutorImpl(runType, properties)
+class JDBCGetDatasourceInfoException(errorDesc: String) extends ErrorException(70022, errorDesc) {
+  def this(errorDesc: String, t: Throwable) = {
+    this(errorDesc)
+    super.initCause(t)
   }
-
 }

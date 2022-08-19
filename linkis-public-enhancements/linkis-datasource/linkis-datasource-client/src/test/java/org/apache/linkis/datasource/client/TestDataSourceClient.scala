@@ -58,10 +58,35 @@ object TestDataSourceClient {
 
     val dataSourceClient = new LinkisDataSourceRemoteClient(clientConfig)
 
-    val getDataSourceByName = dataSourceClient.getInfoByDataSourceName(GetInfoByDataSourceNameAction.builder()
-    .setDataSourceName("test_mysql")
-    .setUser("linkis")
-    .setSystem("").build()).getDataSource
+      val getDataSourceByName = dataSourceClient.getInfoByDataSourceName(GetInfoByDataSourceNameAction.builder()
+        .setDataSourceName("mysql_test_0706")
+        .setUser("hadoop")
+        .setSystem("").build()).getDataSource
+
+
+
+      val getDataSourceByName2 = dataSourceClient.getInfoByDataSourceId(GetInfoByDataSourceIdAction.builder()
+        .setDataSourceId(2)
+        .setUser("hadoop")
+        .setSystem("").build()).getDataSource
+
+
+
+      val dataSource = dataSourceClient.getInfoPublishedByDataSourceName(GetInfoPublishedByDataSourceNameAction.builder()
+        .setDataSourceName("mysql_test_0706")
+        .setUser("hadoop")
+        .setSystem("").build()).getDataSource
+
+
+
+
+
+
+
+
+
+
+
 
     val getAllDataSourceTypesResult = dataSourceClient.getAllDataSourceTypes(GetAllDataSourceTypesAction.builder().setUser("linkis").build()).getAllDataSourceType
 

@@ -60,9 +60,9 @@ class BmlRelateStorageResult extends BmlRelateResult {}
 @DWSHttpMessageResult("/api/rest_j/v\\d+/bml/relateHdfs")
 class BmlRelateHdfsResult extends BmlRelateResult {}
 
-//case class Version(version:String,
+// case class Version(version:String,
 //                   resource:String)
-//case class ResourceVersions(resourceId:String,
+// case class ResourceVersions(resourceId:String,
 //                           user:String,
 //                           system:String,
 //                           versions:java.util.List[Version])

@@ -99,15 +99,7 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
           case _ =>
             0d
         }
-        val absoluteUsedCapacity = r \ "absoluteUsedCapacity" match {
-          case jDecimal: JDecimal =>
-            jDecimal.values.toDouble
-          case jDouble: JDouble =>
-            jDouble.values
-          case _ =>
-            0d
-        }
-        val effectiveResource = absoluteCapacity - absoluteUsedCapacity
+        val effectiveResource = absoluteCapacity
         new YarnResource(
           math
             .floor(effectiveResource * totalResouceInfoResponse._1 * 1024L * 1024L / 100)

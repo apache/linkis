@@ -31,6 +31,7 @@ import org.apache.linkis.manager.common.entity.resource.{
   NodeResource
 }
 import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf
+import org.apache.linkis.manager.engineplugin.python.conf.PythonEngineConfiguration
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.apache.linkis.rpc.Sender
@@ -54,8 +55,16 @@ class PythonEngineConnExecutor(id: Int, pythonSession: PythonSession, outputPrin
     super.init
   }
 
-  private val pythonDefaultVersion: String =
-    EngineConnServer.getEngineCreationContext.getOptions.getOrDefault("python.version", "python")
+  private val pythonDefaultVersion: String = getPyVersion
+
+  private def getPyVersion(): String = {
+    if (null != EngineConnServer.getEngineCreationContext.getOptions) {
+      EngineConnServer.getEngineCreationContext.getOptions
+        .getOrDefault("python.version", "python")
+    } else {
+      PythonEngineConfiguration.PYTHON_VERSION.getValue
+    }
+  }
 
   override def executeLine(
       engineExecutionContext: EngineExecutionContext,

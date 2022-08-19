@@ -950,3 +950,5 @@ CREATE TABLE `linkis_mg_gateway_auth_token` (
 PRIMARY KEY (`id`),
 UNIQUE KEY `token_name` (`token_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+

@@ -68,8 +68,9 @@ class PythonSession extends Logging {
     if (null != EngineConnServer.getEngineCreationContext.getOptions) {
       EngineConnServer.getEngineCreationContext.getOptions
         .getOrDefault("python.version", "python")
+    } else {
+      PythonEngineConfiguration.PYTHON_VERSION.getValue
     }
-    PythonEngineConfiguration.PYTHON_VERSION.getValue
   }
 
   def init(): Unit = {}

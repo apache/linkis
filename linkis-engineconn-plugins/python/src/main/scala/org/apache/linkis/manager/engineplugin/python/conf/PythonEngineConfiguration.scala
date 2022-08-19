@@ -41,8 +41,9 @@ object PythonEngineConfiguration {
     val confDir = "/conf"
     if (null != this.getClass.getResource(confDir)) {
       this.getClass.getResource(confDir).getPath
+    } else {
+      this.getClass.getResource("/").getPath
     }
-    this.getClass.getResource("/").getPath
   }
 
 }

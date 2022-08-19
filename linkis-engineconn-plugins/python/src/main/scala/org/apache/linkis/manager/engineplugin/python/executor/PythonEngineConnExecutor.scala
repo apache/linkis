@@ -61,8 +61,9 @@ class PythonEngineConnExecutor(id: Int, pythonSession: PythonSession, outputPrin
     if (null != EngineConnServer.getEngineCreationContext.getOptions) {
       EngineConnServer.getEngineCreationContext.getOptions
         .getOrDefault("python.version", "python")
+    } else {
+      PythonEngineConfiguration.PYTHON_VERSION.getValue
     }
-    PythonEngineConfiguration.PYTHON_VERSION.getValue
   }
 
   override def executeLine(

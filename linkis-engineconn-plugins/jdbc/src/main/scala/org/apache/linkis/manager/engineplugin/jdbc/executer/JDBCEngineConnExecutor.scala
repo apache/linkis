@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,6 +19,8 @@ package org.apache.linkis.manager.engineplugin.jdbc.executer
 
 import java.sql.{Connection, ResultSet, SQLException, Statement}
 import java.util
+import java.util.Collections
+
 import org.apache.linkis.common.utils.{OverloadUtils, Utils}
 import org.apache.linkis.engineconn.computation.executor.execute.{ConcurrentComputationExecutor, EngineExecutionContext}
 import org.apache.linkis.engineconn.core.EngineConnObject
@@ -42,9 +44,9 @@ import org.apache.linkis.protocol.CacheableProtocol
 import org.springframework.util.CollectionUtils
 import org.apache.linkis.governance.common.paser.SQLCodeParser
 import org.apache.linkis.manager.engineplugin.jdbc.constant.JDBCEngineConnConstant
+import org.apache.linkis.manager.engineplugin.jdbc.exception.JDBCGetDatasourceInfoException
 
 import scala.collection.JavaConversions._
-
 import scala.collection.mutable.ArrayBuffer
 
 class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int) extends ConcurrentComputationExecutor(outputPrintLimit) {
@@ -66,7 +68,18 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int) ex
   override def executeLine(engineExecutorContext: EngineExecutionContext, code: String): ExecuteResponse = {
     val realCode = code.trim()
     val taskId = engineExecutorContext.getJobId.get
-    val properties: util.Map[String, String] = getJDBCRuntimeParams(engineExecutorContext)
+
+    var properties: util.Map[String, String] = Collections.emptyMap()
+
+
+    Utils.tryCatch({
+      properties = getJDBCRuntimeParams(engineExecutorContext)
+    }) {
+      e: Throwable =>
+        logger.error(s"try to build JDBC runtime params error! $e")
+        return ErrorExecuteResponse(e.getMessage, e)
+    }
+
     logger.info(s"The jdbc properties is: $properties")
     val dataSourceName = properties.get(JDBCEngineConnConstant.JDBC_ENGINE_RUN_TIME_DS)
     val dataSourceMaxVersionId = properties.get(JDBCEngineConnConstant.JDBC_ENGINE_RUN_TIME_DS_MAX_VERSION_ID)
@@ -153,7 +166,8 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int) ex
       Utils.tryCatch {
         dataSourceInfo = JDBCMultiDatasourceParser.queryDatasourceInfoByName(dataSourceName, execSqlUser, dataSourceQuerySystemParam)
       } {
-        e: Throwable => logger.error(s"Failed to get datasource info about [$dataSourceName] from datasource server.", e)
+        e: Throwable =>
+          throw new JDBCGetDatasourceInfoException(s"Failed to get datasource info about [$dataSourceName] from datasource server.", e)
       }
     }
     if (StringUtils.isBlank(dataSourceName)) {

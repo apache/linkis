@@ -43,5 +43,5 @@ object ExecutorListenerBusContext {
 
   private val executorListenerBusContext = new ExecutorListenerBusContext
 
-  def getExecutorListenerBusContext() : ExecutorListenerBusContext = executorListenerBusContext
+  def getExecutorListenerBusContext(): ExecutorListenerBusContext = executorListenerBusContext
 }

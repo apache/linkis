@@ -17,31 +17,26 @@
 
 package org.apache.linkis.manager.engineplugin.common.loader.entity
 
+import org.junit.jupiter.api.{DisplayName, Test}
 import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel
+import org.junit.jupiter.api.Assertions.assertTrue
 
-case class EngineConnPluginInfo(
-    typeLabel: EngineTypeLabel,
-    var resourceUpdateTime: Long = -1L,
-    var resourceId: String,
-    var resourceVersion: String,
-    var classLoader: ClassLoader
-) {
+class EngineConnPluginInfoTest {
 
-  override def toString: String = {
-    if (Option(typeLabel).isDefined) {
-      typeLabel.toString
-    } else {
-      null
-    }
+  @Test
+  @DisplayName("testEngineConnPluginInfoEquals")
+  def testEngineConnPluginInfoEquals(): Unit = {
+
+
+    val engineTypeLabel = new EngineTypeLabel
+    engineTypeLabel.setVersion("3.0.1")
+    engineTypeLabel.setEngineType("spark")
+
+
+    val engineConnPluginInfo1 = new EngineConnPluginInfo(engineTypeLabel, -1, "1", "v001", null)
+    val engineConnPluginInfo2 = new EngineConnPluginInfo(engineTypeLabel, -1, "1", "v001", null)
+    assertTrue(engineConnPluginInfo1 == engineConnPluginInfo2)
+
   }
-
-  override def equals(obj: Any): Boolean = {
-    obj match {
-      case info: EngineConnPluginInfo => typeLabel.equals(info.typeLabel)
-      case _ => super.equals(obj)
-    }
-  }
-
-  override def hashCode(): Int = super.hashCode()
 
 }

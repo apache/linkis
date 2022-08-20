@@ -27,7 +27,7 @@ import org.apache.linkis.manager.label.entity.engine.EngineType.EngineType
 
 import java.util
 
-import scala.collection.JavaConversions.asScalaBuffer
+import scala.collection.JavaConverters._
 
 trait EngineConnFactory {
 
@@ -77,7 +77,7 @@ trait MultiExecutorEngineConnFactory extends AbstractEngineConnFactory with Logg
   protected def getDefaultExecutorFactoryClass: Class[_ <: ExecutorFactory]
 
   protected def getEngineConnModeLabel(labels: util.List[Label[_]]): EngineConnModeLabel =
-    labels
+    labels.asScala
       .find(_.isInstanceOf[EngineConnModeLabel])
       .map(_.asInstanceOf[EngineConnModeLabel])
       .orNull

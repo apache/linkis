@@ -25,7 +25,7 @@ import java.util
 
 trait LabelService {
 
-  /*def labelUpdate(labelUpdateRequest: LabelUpdateRequest): Unit*/
+  /* def labelUpdate(labelUpdateRequest: LabelUpdateRequest): Unit */
 
   def labelReport(labels: util.List[Label[_]], executor: Executor): Unit
 
@@ -33,7 +33,7 @@ trait LabelService {
 
 class DefaultLabelService extends LabelService with Logging {
 
-  /*override def labelUpdate(labelUpdateRequest: LabelUpdateRequest): Unit = ???*/
+  /* override def labelUpdate(labelUpdateRequest: LabelUpdateRequest): Unit = ??? */
 
   override def labelReport(labels: util.List[Label[_]], executor: Executor): Unit = {
     logger.info(s"executor ${executor.getId} prepare to report Labels ")

@@ -35,9 +35,9 @@ class UserNodeResource extends NodeResource {
   private var createTime: Date = _
   private var updateTime: Date = _
 
-  def getUser = user
+  def getUser: String = user
 
-  def setUser(user: String) = this.user = user
+  def setUser(user: String): Unit = this.user = user
 
   override def getResourceType: ResourceType = resourceType
 

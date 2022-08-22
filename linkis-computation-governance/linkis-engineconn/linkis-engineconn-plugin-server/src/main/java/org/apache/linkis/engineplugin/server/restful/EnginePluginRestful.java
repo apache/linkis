@@ -51,6 +51,7 @@ public class EnginePluginRestful {
     @Autowired private EngineConnResourceService engineConnResourceService;
     @Autowired private EnginePluginAdminService enginePluginAdminService;
 
+    @ApiOperation(value = "rollBack", notes = "modify the default bmlResourceVersion of the engineplugin", response = Message.class)
     @RequestMapping(path = "/rollBack", method = RequestMethod.POST)
     public Message rollBackEnginePlugin(HttpServletRequest req,
                                         @RequestBody EngineConnBmlResource engineConnBmlResource) {
@@ -69,6 +70,7 @@ public class EnginePluginRestful {
         }
     }
 
+    @ApiOperation(value = "getVersionList", notes = "get all bmlResourceVersion of engineplugin", response = Message.class)
     @RequestMapping(path = "/getVersionList", method = RequestMethod.GET)
     public Message getVersionList(HttpServletRequest req,
                                   @RequestParam(value = "ecType", required = false) String ecType,
@@ -89,6 +91,7 @@ public class EnginePluginRestful {
         }
     }
 
+    @ApiOperation(value = "getTypeList", notes = "get all types of engineplugin", response = Message.class)
     @RequestMapping(path = "/getTypeList", method = RequestMethod.GET)
     public Message getTypeList(HttpServletRequest req) {
         String username = ModuleUserUtils.getOperationUser(req, "getTypeList");
@@ -106,6 +109,7 @@ public class EnginePluginRestful {
         }
     }
 
+    @ApiOperation(value = "getTypeVersionList", notes = "get all versions of the engineplgin type", response = Message.class)
     @RequestMapping(path = "/getTypeVersionList/{type}", method = RequestMethod.GET)
     public Message getTypeVersionList(
             @PathVariable("type") String type,
@@ -125,6 +129,7 @@ public class EnginePluginRestful {
         }
     }
 
+    @ApiOperation(value = "updateEnginePluginBML", notes = "Add a new version of the engineplugin", response = Message.class)
     @RequestMapping(path = "/updateEnginePluginBML", method = RequestMethod.POST)
     public Message updateEnginePluginBML(@RequestParam("file") MultipartFile file,
                                          @RequestParam(value = "ecType") String ecType,
@@ -160,6 +165,7 @@ public class EnginePluginRestful {
         }
     }
 
+    @ApiOperation(value = "list", notes = "list all engineplugin", response = Message.class)
     @RequestMapping(path = "/list", method = RequestMethod.GET)
     public Message list(
             @RequestParam(value = "ecType", required = false) String ecType,
@@ -184,6 +190,8 @@ public class EnginePluginRestful {
             return Message.error("Only administrators can operate");
         }
     }
+
+    @ApiOperation(value = "uploadEnginePluginBML", notes = "add one engineplugin", response = Message.class)
     @RequestMapping(path = "/uploadEnginePluginBML", method = RequestMethod.POST)
     public Message uploadEnginePluginBML(@RequestParam("file") MultipartFile file, HttpServletRequest req) {
         file.getOriginalFilename().toLowerCase().endsWith(".zip");
@@ -207,6 +215,7 @@ public class EnginePluginRestful {
         }
     }
 
+    @ApiOperation(value = "deleteEnginePluginBML", notes = "delete one engineplugin", response = Message.class)
     @RequestMapping(path = "/deleteEnginePluginBML", method = RequestMethod.GET)
     public Message deleteEnginePluginBML(HttpServletRequest req,
                                          @RequestParam(value = "ecType") String ecType,

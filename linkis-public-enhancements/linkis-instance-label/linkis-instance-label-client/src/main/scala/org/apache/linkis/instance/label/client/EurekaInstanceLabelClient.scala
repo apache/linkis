@@ -25,6 +25,7 @@ import org.apache.linkis.rpc.Sender
 import org.apache.commons.lang3.StringUtils
 
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.context.event.ApplicationStartedEvent
 import org.springframework.cloud.client.serviceregistry.Registration
 import org.springframework.context.event.{ContextClosedEvent, EventListener}
 import org.springframework.stereotype.Component
@@ -39,8 +40,8 @@ class EurekaInstanceLabelClient extends Logging {
   @Autowired
   private var registration: Registration = _
 
-  @PostConstruct
-  def init(): Unit = {
+  @EventListener(Array(classOf[ApplicationStartedEvent]))
+  def init(applicationStartedEvent: ApplicationStartedEvent): Unit = {
     logger.info("EurekaInstanceLabelClient init")
     val metadata = registration.getMetadata
     if (

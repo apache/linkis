@@ -118,8 +118,9 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
         queue.foreach { q =>
           val yarnQueueName = (q \ "queueName").asInstanceOf[JString].values
           if (yarnQueueName == realQueueName) return Some(q)
-          else if (realQueueName.startsWith(yarnQueueName + "."))
+          else if (realQueueName.startsWith(yarnQueueName + ".")) {
             return getQueue(getChildQueues(q))
+          }
         }
         None
       case JObject(queue) =>
@@ -127,13 +128,15 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
             queue
               .find(_._1 == "queueName")
               .exists(_._2.asInstanceOf[JString].values == realQueueName)
-        ) Some(queues)
+        ) {
+          Some(queues)
+        }
         else {
           val childQueues = queue.find(_._1 == "childQueues")
           if (childQueues.isEmpty) None
           else getQueue(childQueues.map(_._2).get)
         }
-      case JNull | JNothing => None
+      case _ => None
     }
 
     def getChildQueues(resp: JValue): JValue = {
@@ -163,13 +166,15 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
             queue
               .find(_._1 == "queueName")
               .exists(_._2.asInstanceOf[JString].values == realQueueName)
-        ) return Some(queues)
+        ) {
+          return Some(queues)
+        }
         else if ((queues \ "queues").toOption.nonEmpty) {
           val matchQueue = getQueueOfCapacity(getChildQueuesOfCapacity(queues))
           if (matchQueue.nonEmpty) return matchQueue
         }
         None
-      case JNull | JNothing => None
+      case _ => None
     }
 
     def getChildQueuesOfCapacity(resp: JValue) = resp \ "queues" \ "queue"
@@ -265,7 +270,7 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
             }
           }
           appInfoBuffer.toArray
-        case JNull | JNothing => new Array[YarnAppInfo](0)
+        case _ => new Array[YarnAppInfo](0)
       }
     }
 

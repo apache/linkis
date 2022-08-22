@@ -63,7 +63,7 @@ object RPCConfiguration {
 
   val PUBLIC_SERVICE_LIST: Array[String] = CommonVars(
     "wds.linkis.gateway.conf.publicservice.list",
-    "query,jobhistory,application,configuration,filesystem,udf,variable,microservice,errorcode,bml,datasource"
+    "cs,data-source-manager,metadataquery,query,jobhistory,application,configuration,filesystem,udf,variable,microservice,errorcode,bml,datasource"
   ).getValue.split(",")
 
   val METADATAQUERY_SERVICE_APPLICATION_NAME: CommonVars[String] =

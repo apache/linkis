@@ -1,3 +1,5 @@
+## linkis-common 配置项
+
 | 模块名(服务名) | 参数名 | 默认值 | 描述 | 是否引用|
 | -------- | -------- | ----- |----- |  -----   |
 |linkis-common|wds.linkis.encoding|utf-8|字符类型|true|

@@ -25,12 +25,14 @@ import org.apache.linkis.rpc.Sender
 import org.apache.commons.lang3.StringUtils
 
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.context.event.ApplicationStartedEvent
+import org.springframework.boot.availability.{
+  AvailabilityChangeEvent,
+  AvailabilityState,
+  ReadinessState
+}
 import org.springframework.cloud.client.serviceregistry.Registration
 import org.springframework.context.event.{ContextClosedEvent, EventListener}
 import org.springframework.stereotype.Component
-
-import javax.annotation.PostConstruct
 
 import java.util
 
@@ -40,21 +42,25 @@ class EurekaInstanceLabelClient extends Logging {
   @Autowired
   private var registration: Registration = _
 
-  @EventListener(Array(classOf[ApplicationStartedEvent]))
-  def init(applicationStartedEvent: ApplicationStartedEvent): Unit = {
-    logger.info("EurekaInstanceLabelClient init")
-    val metadata = registration.getMetadata
-    if (
-        null != metadata && metadata.containsKey(LabelKeyConstant.ROUTE_KEY) && StringUtils
-          .isNoneBlank(metadata.get(LabelKeyConstant.ROUTE_KEY))
-    ) {
-      logger.info(s"Start to register label for instance $metadata")
-      val labels = new util.HashMap[String, Object]()
-      labels.put(LabelKeyConstant.ROUTE_KEY, metadata.get(LabelKeyConstant.ROUTE_KEY))
-      val insLabelRefreshRequest = new InsLabelRefreshRequest
-      insLabelRefreshRequest.setLabels(labels)
-      insLabelRefreshRequest.setServiceInstance(Sender.getThisServiceInstance)
-      InstanceLabelClient.getInstance.refreshLabelsToInstance(insLabelRefreshRequest)
+  @EventListener
+  def init(availabilityChangeEvent: AvailabilityChangeEvent[AvailabilityState]): Unit = {
+    availabilityChangeEvent.getState match {
+      case state: ReadinessState if state.equals(ReadinessState.ACCEPTING_TRAFFIC) =>
+        logger.info("EurekaInstanceLabelClient init")
+        val metadata = registration.getMetadata
+        if (
+            null != metadata && metadata.containsKey(LabelKeyConstant.ROUTE_KEY) && StringUtils
+              .isNoneBlank(metadata.get(LabelKeyConstant.ROUTE_KEY))
+        ) {
+          logger.info(s"Start to register label for instance $metadata")
+          val labels = new util.HashMap[String, Object]()
+          labels.put(LabelKeyConstant.ROUTE_KEY, metadata.get(LabelKeyConstant.ROUTE_KEY))
+          val insLabelRefreshRequest = new InsLabelRefreshRequest
+          insLabelRefreshRequest.setLabels(labels)
+          insLabelRefreshRequest.setServiceInstance(Sender.getThisServiceInstance)
+          InstanceLabelClient.getInstance.refreshLabelsToInstance(insLabelRefreshRequest)
+        }
+      case _ =>
     }
   }
 

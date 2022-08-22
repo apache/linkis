@@ -46,6 +46,7 @@ import org.apache.commons.lang3.StringUtils
 
 import java.io.{BufferedReader, File, FileReader, InputStreamReader, IOException}
 import java.util
+import java.util.concurrent.CountDownLatch
 import java.util.concurrent.atomic.AtomicBoolean
 
 import scala.collection.JavaConverters._
@@ -177,17 +178,17 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
 
       bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream))
       errorsReader = new BufferedReader(new InputStreamReader(process.getErrorStream))
-
+      val counter: CountDownLatch = new CountDownLatch(2)
       inputReaderThread =
-        new ReaderThread(engineExecutionContext, bufferedReader, extractor, true)
-      errReaderThread = new ReaderThread(engineExecutionContext, bufferedReader, extractor, false)
+        new ReaderThread(engineExecutionContext, bufferedReader, extractor, true, counter)
+      errReaderThread =
+        new ReaderThread(engineExecutionContext, bufferedReader, extractor, false, counter)
 
       inputReaderThread.start()
       errReaderThread.start()
 
       val exitCode = process.waitFor()
-      joinThread(inputReaderThread)
-      joinThread(errReaderThread)
+      counter.await()
 
       completed.set(true)
 
@@ -199,18 +200,17 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
         logger.error("Execute shell code failed, reason:", e)
         ErrorExecuteResponse("run shell failed", e)
       }
-      case t: Throwable =>
-        ErrorExecuteResponse("Internal error executing shell process(执行shell进程内部错误)", t)
+
     } finally {
       if (!completed.get()) {
-        errReaderThread.interrupt()
-        joinThread(errReaderThread)
+        Utils.tryAndWarn(errReaderThread.interrupt())
+        Utils.tryAndWarn(inputReaderThread.interrupt())
       }
-
-      extractor.onDestroy()
-      inputReaderThread.onDestroy()
-      errReaderThread.onDestroy()
-
+      Utils.tryAndWarn {
+        extractor.onDestroy()
+        inputReaderThread.onDestroy()
+        errReaderThread.onDestroy()
+      }
       IOUtils.closeQuietly(bufferedReader)
       IOUtils.closeQuietly(errorsReader)
     }
@@ -226,23 +226,7 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
   }
 
   private def generateRunCodeWithArgs(code: String, args: Array[String]): Array[String] = {
-    Array(
-      "sh",
-      "-c",
-      "echo \"dummy " + args.mkString(" ") + "\" | xargs sh -c \'" + code + "\'"
-    ) // pass args by pipeline
-  }
-
-  private def joinThread(thread: Thread) = {
-    while ({
-      thread.isAlive
-    }) {
-      Utils.tryCatch {
-        thread.join()
-      } { t =>
-        logger.warn("Exception thrown while joining on: " + thread, t)
-      }
-    }
+    Array("sh", "-c", "echo \"dummy " + args.mkString(" ") + "\" | xargs sh -c \'" + code + "\'")
   }
 
   override def getId(): String = Sender.getThisServiceInstance.getInstance + "_" + id

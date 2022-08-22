@@ -18,10 +18,10 @@
 <template>
   <Form :model="searchBar" :rules="ruleInline" inline @submit.native.prevent>
     <FormItem prop="instance" :label="`${$t('message.linkis.instanceName')}`">
-      <Input :maxlength="50" v-model="searchBar.instance" :placeholder="$t('message.linkis.instanceName')"/>
+      <Input :maxlength="50" v-model="searchBar.instance" style="width:80px" :placeholder="$t('message.linkis.instanceName')"/>
     </FormItem>
     <FormItem prop="nodeHealthy" :label="$t('message.linkis.formItems.status.label')">
-      <Select v-model="searchBar.nodeHealthy" style="width:200px" clearable>
+      <Select v-model="searchBar.nodeHealthy" style="width:120px" clearable>
         <Option
           v-for="(item) in statusList"
           :label="item"
@@ -30,7 +30,7 @@
       </Select>
     </FormItem>
     <FormItem prop="owner" :label="$t('message.linkis.initiator')" >
-      <Select  v-model="searchBar.owner" style="width:200px" clearable>
+      <Select  v-model="searchBar.owner" style="width:120px" clearable>
         <Option
           v-for="(item) in ownerList"
           :label="item"
@@ -39,7 +39,7 @@
       </Select>
     </FormItem>
     <FormItem v-if="engineTypes.length" prop="engineType" :label="$t('message.linkis.tableColumns.engineType')" >
-      <Select  v-model="searchBar.engineType" style="width:200px" clearable>
+      <Select  v-model="searchBar.engineType" style="width:120px" clearable>
         <Option
           v-for="(item) in engineTypes"
           :label="item"

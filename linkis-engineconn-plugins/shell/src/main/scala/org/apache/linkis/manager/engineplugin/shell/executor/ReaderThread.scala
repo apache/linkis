@@ -25,6 +25,7 @@ import org.apache.commons.lang3.StringUtils
 
 import java.io.BufferedReader
 import java.util
+import java.util.concurrent.CountDownLatch
 
 class ReaderThread extends Thread with Logging {
   private var engineExecutionContext: EngineExecutionContext = _
@@ -32,18 +33,21 @@ class ReaderThread extends Thread with Logging {
   private var extractor: YarnAppIdExtractor = _
   private var isStdout: Boolean = false
   private val logListCount = CommonVars[Int]("wds.linkis.engineconn.log.list.count", 50)
+  private var counter: CountDownLatch = _
 
   def this(
       engineExecutionContext: EngineExecutionContext,
       inputReader: BufferedReader,
       extractor: YarnAppIdExtractor,
-      isStdout: Boolean
+      isStdout: Boolean,
+      counter: CountDownLatch
   ) {
     this()
     this.inputReader = inputReader
     this.engineExecutionContext = engineExecutionContext
     this.extractor = extractor
     this.isStdout = isStdout
+    this.counter = counter
   }
 
   def onDestroy(): Unit = {
@@ -71,27 +75,27 @@ class ReaderThread extends Thread with Logging {
     Utils.tryCatch {
       var line: String = null
       val logArray: util.List[String] = new util.ArrayList[String]
-      while ({ line = inputReader.readLine(); line != null }) {
+      while ({ line = inputReader.readLine(); line != null && !isInterrupted }) {
         logger.info("read logger line :{}", line)
         logArray.add(line)
+        extractor.appendLineToExtractor(line)
+        if (isStdout) engineExecutionContext.appendTextResultSet(line)
+
         if (logArray.size > logListCount.getValue) {
           val linelist = StringUtils.join(logArray, "\n")
-          extractor.appendLineToExtractor(linelist)
-          if (isStdout) engineExecutionContext.appendStdout(linelist)
-          engineExecutionContext.appendTextResultSet(linelist)
+          engineExecutionContext.appendStdout(linelist)
           logArray.clear()
         }
       }
       if (logArray.size > 0) {
         val linelist = StringUtils.join(logArray, "\n")
-        extractor.appendLineToExtractor(linelist)
-        if (isStdout) engineExecutionContext.appendStdout(linelist)
-        engineExecutionContext.appendTextResultSet(linelist)
+        engineExecutionContext.appendStdout(linelist)
         logArray.clear()
       }
     } { t =>
       logger.warn("inputReader reading the input stream", t)
     }
+    counter.countDown()
   }
 
 }

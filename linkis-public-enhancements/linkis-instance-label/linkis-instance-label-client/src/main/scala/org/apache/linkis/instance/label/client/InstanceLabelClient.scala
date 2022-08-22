@@ -19,7 +19,7 @@ package org.apache.linkis.instance.label.client
 
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.conf.CommonVars
-import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.common.utils.{JsonUtils, Logging, Utils}
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.utils.LabelUtils
@@ -92,8 +92,8 @@ class InstanceLabelClient extends Logging {
           }
           resp.getInsList
         case o =>
-          logger.error(s"Invalid resp : ${BDPJettyServerHelper.gson
-            .toJson(o)} from request : ${BDPJettyServerHelper.gson.toJson(request)}")
+          logger.error(s"Invalid resp : ${JsonUtils.jackson
+            .writeValueAsString(o)} from request : ${BDPJettyServerHelper.gson.toJson(request)}")
           new util.ArrayList[ServiceInstance]()
       }
     }

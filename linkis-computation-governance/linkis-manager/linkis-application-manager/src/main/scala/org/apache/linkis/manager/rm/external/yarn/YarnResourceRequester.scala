@@ -130,8 +130,7 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
               .exists(_._2.asInstanceOf[JString].values == realQueueName)
         ) {
           Some(queues)
-        }
-        else {
+        } else {
           val childQueues = queue.find(_._1 == "childQueues")
           if (childQueues.isEmpty) None
           else getQueue(childQueues.map(_._2).get)
@@ -168,8 +167,7 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
               .exists(_._2.asInstanceOf[JString].values == realQueueName)
         ) {
           return Some(queues)
-        }
-        else if ((queues \ "queues").toOption.nonEmpty) {
+        } else if ((queues \ "queues").toOption.nonEmpty) {
           val matchQueue = getQueueOfCapacity(getChildQueuesOfCapacity(queues))
           if (matchQueue.nonEmpty) return matchQueue
         }

@@ -18,24 +18,37 @@
 package org.apache.linkis.manager.engineplugin.shell.executor
 
 import org.apache.linkis.common.utils.{Logging, Utils}
-import org.apache.linkis.engineconn.computation.executor.execute.{ComputationExecutor, EngineExecutionContext}
+import org.apache.linkis.engineconn.computation.executor.execute.{
+  ComputationExecutor,
+  EngineExecutionContext
+}
 import org.apache.linkis.engineconn.core.EngineConnObject
 import org.apache.linkis.governance.common.utils.GovernanceUtils
-import org.apache.linkis.manager.common.entity.resource.{CommonNodeResource, LoadInstanceResource, NodeResource}
+import org.apache.linkis.manager.common.entity.resource.{
+  CommonNodeResource,
+  LoadInstanceResource,
+  NodeResource
+}
 import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf
 import org.apache.linkis.manager.engineplugin.shell.common.ShellEngineConnPluginConst
 import org.apache.linkis.manager.engineplugin.shell.exception.ShellCodeErrorException
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.apache.linkis.rpc.Sender
-import org.apache.linkis.scheduler.executer.{ErrorExecuteResponse, ExecuteResponse, SuccessExecuteResponse}
+import org.apache.linkis.scheduler.executer.{
+  ErrorExecuteResponse,
+  ExecuteResponse,
+  SuccessExecuteResponse
+}
+
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang3.StringUtils
 
-import java.io.{BufferedReader, File, FileReader, IOException, InputStreamReader}
+import java.io.{BufferedReader, File, FileReader, InputStreamReader, IOException}
 import java.util
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.atomic.AtomicBoolean
+
 import scala.collection.JavaConverters._
 import scala.collection.mutable.ArrayBuffer
 
@@ -167,8 +180,9 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
       errorsReader = new BufferedReader(new InputStreamReader(process.getErrorStream))
       val counter: CountDownLatch = new CountDownLatch(2)
       inputReaderThread =
-        new ReaderThread(engineExecutionContext, bufferedReader, extractor, true,counter)
-      errReaderThread = new ReaderThread(engineExecutionContext, bufferedReader, extractor, false,counter)
+        new ReaderThread(engineExecutionContext, bufferedReader, extractor, true, counter)
+      errReaderThread =
+        new ReaderThread(engineExecutionContext, bufferedReader, extractor, false, counter)
 
       inputReaderThread.start()
       errReaderThread.start()
@@ -192,7 +206,7 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
         Utils.tryAndWarn(errReaderThread.interrupt())
         Utils.tryAndWarn(inputReaderThread.interrupt())
       }
-      Utils.tryAndWarn{
+      Utils.tryAndWarn {
         extractor.onDestroy()
         inputReaderThread.onDestroy()
         errReaderThread.onDestroy()
@@ -212,14 +226,8 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
   }
 
   private def generateRunCodeWithArgs(code: String, args: Array[String]): Array[String] = {
-    Array(
-      "sh",
-      "-c",
-      "echo \"dummy " + args.mkString(" ") + "\" | xargs sh -c \'" + code + "\'"
-    )
+    Array("sh", "-c", "echo \"dummy " + args.mkString(" ") + "\" | xargs sh -c \'" + code + "\'")
   }
-
-
 
   override def getId(): String = Sender.getThisServiceInstance.getInstance + "_" + id
 

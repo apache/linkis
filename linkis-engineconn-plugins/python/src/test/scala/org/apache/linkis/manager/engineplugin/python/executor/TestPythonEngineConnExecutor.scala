@@ -58,6 +58,7 @@ class TestPythonEngineConnExecutor {
     val engineCreationContext: EngineCreationContext = new DefaultEngineCreationContext
     val path = this.getClass.getResource("/").getPath
     System.setProperty("pythonVersion", "python")
+    System.setProperty("HADOOP_CONF_DIR", "./")
     System.setProperty(
       "wds.linkis.python.py4j.home",
       path.substring(0, path.indexOf("/target")) + "/src/main/py4j"

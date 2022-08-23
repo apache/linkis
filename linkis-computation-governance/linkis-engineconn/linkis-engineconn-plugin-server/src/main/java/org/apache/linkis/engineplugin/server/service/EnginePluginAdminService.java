@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,31 +15,31 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineplugin.server.dao;
+package org.apache.linkis.engineplugin.server.service;
 
+import org.apache.linkis.bml.protocol.Version;
 import org.apache.linkis.engineplugin.server.entity.EngineConnBmlResource;
 import org.apache.linkis.engineplugin.vo.EnginePluginBMLVo;
 
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-@Mapper
-public interface EngineConnBmlResourceDao {
+import com.github.pagehelper.PageInfo;
+
+public interface EnginePluginAdminService {
+
+  void rollBackEnginePlugin(EngineConnBmlResource engineConnBmlResource);
+
+  void uploadToECHome(MultipartFile file);
+
+  void deleteEnginePluginBML(String ecType, String version, String username);
+
+  PageInfo<EngineConnBmlResource> queryDataSourceInfoPage(EnginePluginBMLVo enginePluginBMLVo);
 
   List<String> getTypeList();
 
-  List<String> getTypeVersionList(@Param("type") String type);
+  List<String> getTypeVersionList(String type);
 
-  List<EngineConnBmlResource> selectByPageVo(EnginePluginBMLVo enginePluginBMLVo);
-
-  List<EngineConnBmlResource> getAllEngineConnBmlResource(
-      @Param("engineConnType") String engineConnType, @Param("version") String version);
-
-  void save(@Param("engineConnBmlResource") EngineConnBmlResource engineConnBmlResource);
-
-  void update(@Param("engineConnBmlResource") EngineConnBmlResource engineConnBmlResource);
-
-  void delete(@Param("engineConnBmlResource") EngineConnBmlResource engineConnBmlResource);
+  List<Version> getVersionList(String userName, String bmlResourceId);
 }

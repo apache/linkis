@@ -103,6 +103,7 @@ export default {
           { key: '1-7', name: this.$t('message.linkis.sideNavList.function.children.microserviceManage'), path: '/console/microService' },
           { key: '1-9', name: this.$t('message.linkis.sideNavList.function.children.udfFunctionTitle'), path: '/console/urm/udfManagement'},
           { key: '1-8', name: this.$t('message.linkis.sideNavList.function.children.dataSourceManage'), path: '/console/dataSource' },
+          { key: '1-10', name: this.$t('message.linkis.sideNavList.function.children.EnginePluginManagement'), path: '/console/EnginePluginManagement' },
         ],
       },
       urmSideNavList: {
@@ -111,7 +112,7 @@ export default {
         padding: 0,
         icon: 'ios-options',
         children: [
-          {key: '1-9-1', name: this.$t('message.linkis.sideNavList.function.children.udfFunctionManage'), path: '/console/urm/udfManagement'}, 
+          {key: '1-9-1', name: this.$t('message.linkis.sideNavList.function.children.udfFunctionManage'), path: '/console/urm/udfManagement'},
           {key: '1-9-2', name: this.$t('message.linkis.sideNavList.function.children.functionManagement'), path: '/console/urm/functionManagement'}
         ]
       },

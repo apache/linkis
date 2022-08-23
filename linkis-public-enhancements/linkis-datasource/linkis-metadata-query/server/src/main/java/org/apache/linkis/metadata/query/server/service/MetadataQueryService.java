@@ -123,6 +123,17 @@ public interface MetadataQueryService {
       throws ErrorException;
 
   /**
+   * get database, filter by env id
+   *
+   * @param dataSourceName data source name
+   * @param system system
+   * @return
+   */
+  List<String> getFilteredDatabasesByDsName(
+      String dataSourceName, String system, String userName, List<Long> envIdList)
+      throws ErrorException;
+
+  /**
    * @param dataSourceName data source name
    * @param system system
    * @param database database

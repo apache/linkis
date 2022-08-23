@@ -34,6 +34,7 @@ import org.apache.linkis.rpc.Sender;
 import org.apache.commons.lang3.StringUtils;
 
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.PostConstruct;
 
@@ -42,6 +43,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.function.BiFunction;
 
+import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -197,11 +199,35 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
   }
 
   @Override
+  public List<String> getFilteredDatabasesByDsName(
+      String dataSourceName, String system, String userName, List<Long> envIdList)
+      throws ErrorException {
+    DsInfoResponse dsInfoResponse = queryDataSourceInfoByName(dataSourceName, system, userName);
+    logger.info("queryDataSourceInfoByName, resp:{}", dsInfoResponse);
+    if (StringUtils.isNotBlank(dsInfoResponse.dsType())) {
+      List<String> databaseList = getDatabaseFromEnv(dsInfoResponse, envIdList);
+      if (!CollectionUtils.isEmpty(databaseList)) {
+        return databaseList;
+      }
+      return invokeMetaMethod(
+          dsInfoResponse.dsType(),
+          "getDatabases",
+          new Object[] {dsInfoResponse.creator(), dsInfoResponse.params()},
+          List.class);
+    }
+    return new ArrayList<>();
+  }
+
+  @Override
   public List<String> getTablesByDsName(
       String dataSourceName, String database, String system, String userName)
       throws ErrorException {
     DsInfoResponse dsInfoResponse = queryDataSourceInfoByName(dataSourceName, system, userName);
     if (StringUtils.isNotBlank(dsInfoResponse.dsType())) {
+      List<String> tableList = getTableFromEnv(dsInfoResponse, database);
+      if (!CollectionUtils.isEmpty(tableList)) {
+        return tableList;
+      }
       return invokeMetaMethod(
           dsInfoResponse.dsType(),
           "getTables",
@@ -276,6 +302,10 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
       throws ErrorException {
     DsInfoResponse dsInfoResponse = queryDataSourceInfoByName(dataSourceName, system, userName);
     if (StringUtils.isNotBlank(dsInfoResponse.dsType())) {
+      List<MetaColumnInfo> columnInfoList = getColumnsFromEnv(dsInfoResponse, database, table);
+      if (!CollectionUtils.isEmpty(columnInfoList)) {
+        return columnInfoList;
+      }
       return invokeMetaMethod(
           dsInfoResponse.dsType(),
           "getColumns",
@@ -396,5 +426,79 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
       }
     }
     return null;
+  }
+
+  private List<String> getDatabaseFromEnv(
+      DsInfoResponse dsInfoResponse, List<Long> permitEnvIdList) {
+    if (!dsInfoResponse.params().containsKey("envConnectParamsList")) {
+      return Collections.emptyList();
+    }
+    List<String> resultList = Lists.newArrayList();
+    List<Map<String, Object>> envConnectParamsList =
+        (List<Map<String, Object>>) dsInfoResponse.params().get("envConnectParamsList");
+    for (Map envConnectParams : envConnectParamsList) {
+      Long envId = (Long) envConnectParams.get("envId");
+      if (CollectionUtils.isEmpty(permitEnvIdList) || permitEnvIdList.contains(envId)) {
+        try {
+          List<String> databases =
+              invokeMetaMethod(
+                  dsInfoResponse.dsType(),
+                  "getDatabases",
+                  new Object[] {dsInfoResponse.creator(), envConnectParams},
+                  List.class);
+          resultList.addAll(databases);
+        } catch (MetaMethodInvokeException e) {
+          throw new RuntimeException(e);
+        }
+      }
+    }
+    return resultList;
+  }
+
+  private List<String> getTableFromEnv(DsInfoResponse dsInfoResponse, String database) {
+    if (!dsInfoResponse.params().containsKey("envConnectParamsList")) {
+      return Collections.emptyList();
+    }
+    List<String> resultList = Lists.newArrayList();
+    List<Map<String, Object>> envConnectParamsList =
+        (List<Map<String, Object>>) dsInfoResponse.params().get("envConnectParamsList");
+    for (Map envConnectParams : envConnectParamsList) {
+      try {
+        List<String> databases =
+            invokeMetaMethod(
+                dsInfoResponse.dsType(),
+                "getTables",
+                new Object[] {dsInfoResponse.creator(), envConnectParams, database},
+                List.class);
+        resultList.addAll(databases);
+      } catch (MetaMethodInvokeException e) {
+        throw new RuntimeException(e);
+      }
+    }
+    return resultList;
+  }
+
+  private List<MetaColumnInfo> getColumnsFromEnv(
+      DsInfoResponse dsInfoResponse, String database, String table) {
+    if (!dsInfoResponse.params().containsKey("envConnectParamsList")) {
+      return Collections.emptyList();
+    }
+    List<MetaColumnInfo> columnInfoList = new ArrayList<>();
+    List<Map<String, Object>> envConnectParamsList =
+        (List<Map<String, Object>>) dsInfoResponse.params().get("envConnectParamsList");
+    for (Map envConnectParams : envConnectParamsList) {
+      try {
+        List<MetaColumnInfo> list =
+            invokeMetaMethod(
+                dsInfoResponse.dsType(),
+                "getColumns",
+                new Object[] {dsInfoResponse.creator(), envConnectParams, database, table},
+                List.class);
+        columnInfoList.addAll(list);
+      } catch (MetaMethodInvokeException e) {
+        throw new RuntimeException(e);
+      }
+    }
+    return columnInfoList;
   }
 }

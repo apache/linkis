@@ -40,8 +40,11 @@ import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Api(tags = "metadata query")
 @RestController
@@ -61,15 +64,25 @@ public class MetadataQueryRestful {
     public Message getDatabases(
             @RequestParam("dataSourceName") String dataSourceName,
             @RequestParam("system") String system,
+            @RequestParam(name = "envIdArray", required = false) String envIdArray,
             HttpServletRequest request) {
         try {
             if (StringUtils.isBlank(system)) {
                 return Message.error("'system' is missing[缺少系统名]");
             }
-
+            List<Long> envIdList = Collections.emptyList();
+            if (StringUtils.isNotBlank(envIdArray)) {
+                envIdList =
+                        Arrays.stream(StringUtils.split(envIdArray, ","))
+                                .map(Long::valueOf)
+                                .collect(Collectors.toList());
+            }
             List<String> databases =
-                    metadataQueryService.getDatabasesByDsName(
-                            dataSourceName, system, SecurityFilter.getLoginUsername(request));
+                    metadataQueryService.getFilteredDatabasesByDsName(
+                            dataSourceName,
+                            system,
+                            SecurityFilter.getLoginUsername(request),
+                            envIdList);
             return Message.ok().data("dbs", databases);
         } catch (Exception e) {
             return errorToResponseMessage(

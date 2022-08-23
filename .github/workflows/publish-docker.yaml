@@ -55,7 +55,7 @@ jobs:
       uses: docker/setup-buildx-action@v1
     - name: Build frontend by node.js
       run: |
-          cd web
+          cd linkis-web
           sed -i "/VUE_APP_MN_CONFIG_PREFIX/d" .env
           npm install
           npm run build

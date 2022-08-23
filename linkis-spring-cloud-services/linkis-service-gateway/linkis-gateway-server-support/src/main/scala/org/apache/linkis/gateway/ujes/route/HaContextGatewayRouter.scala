@@ -36,7 +36,7 @@ import org.springframework.stereotype.Component
 
 import java.util
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 import scala.util.Random
 import scala.util.matching.Regex
 
@@ -55,15 +55,12 @@ class HaContextGatewayRouter extends AbstractGatewayRouter {
 
     if (
         gatewayContext.getGatewayRoute.getRequestURI.contains(
-          HaContextGatewayRouter.CONTEXT_SERVICE_STR
-        ) ||
-        gatewayContext.getGatewayRoute.getRequestURI.contains(
-          HaContextGatewayRouter.OLD_CONTEXT_SERVICE_PREFIX
+          HaContextGatewayRouter.CONTEXT_SERVICE_REQUEST_PREFIX
         )
     ) {
       val params: util.HashMap[String, String] = gatewayContext.getGatewayRoute.getParams
       if (!gatewayContext.getRequest.getQueryParams.isEmpty) {
-        for ((k, vArr) <- gatewayContext.getRequest.getQueryParams) {
+        for ((k, vArr) <- gatewayContext.getRequest.getQueryParams.asScala) {
           if (vArr.nonEmpty) {
             params.putIfAbsent(k, vArr.head)
           }
@@ -79,13 +76,13 @@ class HaContextGatewayRouter extends AbstractGatewayRouter {
         dealContextCreate(gatewayContext)
       } else {
         var contextId: String = null
-        for ((key, value) <- params) {
+        for ((key, value) <- params.asScala) {
           if (key.equalsIgnoreCase(ContextHTTPConstant.CONTEXT_ID_STR)) {
             contextId = value
           }
         }
         if (StringUtils.isNotBlank(contextId)) {
-          dealContextAccess(contextId.toString, gatewayContext)
+          dealContextAccess(contextId, gatewayContext)
         } else {
           dealContextCreate(gatewayContext)
         }
@@ -97,9 +94,9 @@ class HaContextGatewayRouter extends AbstractGatewayRouter {
 
   def dealContextCreate(gatewayContext: GatewayContext): ServiceInstance = {
     val serviceId = findService(
-      HaContextGatewayRouter.CONTEXT_SERVICE_STR,
+      HaContextGatewayRouter.CONTEXT_SERVICE_NAME,
       list => {
-        val services = list.filter(_.contains(HaContextGatewayRouter.CONTEXT_SERVICE_STR))
+        val services = list.filter(_.contains(HaContextGatewayRouter.CONTEXT_SERVICE_NAME))
         services.headOption
       }
     )
@@ -137,9 +134,9 @@ class HaContextGatewayRouter extends AbstractGatewayRouter {
     val instances = contextIDParser.parse(contextId)
     var serviceId: Option[String] = None
     serviceId = findService(
-      HaContextGatewayRouter.CONTEXT_SERVICE_STR,
+      HaContextGatewayRouter.CONTEXT_SERVICE_NAME,
       list => {
-        val services = list.filter(_.contains(HaContextGatewayRouter.CONTEXT_SERVICE_STR))
+        val services = list.filter(_.contains(HaContextGatewayRouter.CONTEXT_SERVICE_NAME))
         services.headOption
       }
     )
@@ -159,10 +156,11 @@ class HaContextGatewayRouter extends AbstractGatewayRouter {
 
 object HaContextGatewayRouter {
   val CONTEXT_ID_STR: String = "contextId"
-  val CONTEXT_SERVICE_STR: String = "ps-cs"
 
-  @Deprecated
-  val OLD_CONTEXT_SERVICE_PREFIX = "contextservice"
+  // because the ps-cs service had merged to ps-publicservice, so change the serviceName to ps-publicservice
+  val CONTEXT_SERVICE_NAME: String = "ps-publicservice"
+
+  val CONTEXT_SERVICE_REQUEST_PREFIX = "contextservice"
 
   val CONTEXT_REGEX: Regex =
     (normalPath(API_URL_PREFIX) + "rest_[a-zA-Z][a-zA-Z_0-9]*/(v\\d+)/contextservice/" + ".+").r

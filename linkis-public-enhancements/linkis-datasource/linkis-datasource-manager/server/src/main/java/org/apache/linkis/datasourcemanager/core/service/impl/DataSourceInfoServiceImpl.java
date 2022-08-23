@@ -138,9 +138,7 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
       Map envConnectParams = dataSourceEnv.getConnectParams();
       if (decrypt) {
         RestfulApiHelper.decryptPasswordKey(
-            dataSourceRelateService.getKeyDefinitionsByType(
-                dataSourceTypeId, DataSourceParamKeyDefinition.Scope.ENV),
-            envConnectParams);
+            dataSourceRelateService.getKeyDefinitionsByType(dataSourceTypeId), envConnectParams);
       }
       envConnectParams.put("envId", dataSourceEnv.getId());
       envConnectParamsList.add(envConnectParams);

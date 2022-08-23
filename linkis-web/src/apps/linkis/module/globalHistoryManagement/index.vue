@@ -363,7 +363,7 @@ export default {
 
     getParams(page) {
       const startDate = this.searchBar.shortcut[0]
-      const endDate = new Date(this.searchBar.shortcut[1].getTime()+86399999)
+      const endDate = this.searchBar.shortcut[1] ? new Date(this.searchBar.shortcut[1].getTime()+86399999) : this.searchBar.shortcut[1]
       const params = {
         taskID: this.searchBar.id,
         creator: this.searchBar.creator,

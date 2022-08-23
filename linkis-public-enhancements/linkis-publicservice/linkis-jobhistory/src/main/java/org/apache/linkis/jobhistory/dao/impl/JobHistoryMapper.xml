@@ -15,7 +15,7 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-  
+
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
 <mapper namespace="org.apache.linkis.jobhistory.dao.JobHistoryMapper">
@@ -114,7 +114,7 @@
             <if test="startDate != null">and created_time >= #{startDate} AND created_time <![CDATA[<=]]> #{endDate}</if>
             <if test="status != null">and <foreach collection="status" item="element" close=")" separator="," open="status in (">#{element}</foreach></if>
             <if test="userCreatorKey != null and userCreatorValue != null">
-                and  LOCATE('"${userCreatorKey}":"${userCreatorValue}', labels) > 0
+                and  LOCATE(CONCAT('"', #{userCreatorKey}, '":"', #{userCreatorValue}), labels) > 0
             </if>
             <if test="startId != null">and id >= #{startId}</if>
         </where>
@@ -130,7 +130,7 @@
             <if test="startDate != null">and created_time >= #{startDate} AND created_time <![CDATA[<=]]> #{endDate}</if>
             <if test="status != null">and <foreach collection="status" item="element" close=")" separator="," open="status in (">#{element}</foreach></if>
             <if test="userCreatorKey != null and creator != null">
-                and labels like '%"${userCreatorKey}":"%-${creator}%'
+                and labels like CONCAT('%"', #{userCreatorKey}, '":"%-', #{creator}, '%')
             </if>
             <if test="startId != null">and id >= #{startId}</if>
         </where>
@@ -194,7 +194,7 @@
             <if test="startDate != null">and created_time >= #{startDate} AND created_time <![CDATA[<=]]> #{endDate}</if>
             <if test="status != null">and <foreach collection="status" item="element" close=")" separator="," open="status in (">#{element}</foreach></if>
             <if test="userCreatorKey != null and userCreatorValue != null">
-                and  LOCATE('"${userCreatorKey}":"${userCreatorValue}', labels) > 0
+                and  LOCATE(CONCAT('"', #{userCreatorKey}, '":"', #{userCreatorValue}), labels) > 0
             </if>
         </where>
     </select>
@@ -208,7 +208,7 @@
             <if test="startDate != null">and created_time >= #{startDate} AND created_time <![CDATA[<=]]> #{endDate}</if>
             <if test="status != null">and <foreach collection="status" item="element" close=")" separator="," open="status in (">#{element}</foreach></if>
             <if test="userCreatorKey != null and creator != null">
-                and labels like '%"${userCreatorKey}":"%-${creator}%'
+                and labels like CONCAT('%"', #{userCreatorKey}, '":"%-', #{creator}, '%')
             </if>
         </where>
     </select>

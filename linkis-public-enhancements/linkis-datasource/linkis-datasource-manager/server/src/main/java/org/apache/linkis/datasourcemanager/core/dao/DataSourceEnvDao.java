@@ -20,6 +20,8 @@ package org.apache.linkis.datasourcemanager.core.dao;
 import org.apache.linkis.datasourcemanager.common.domain.DataSourceEnv;
 import org.apache.linkis.datasourcemanager.core.vo.DataSourceEnvVo;
 
+import org.apache.ibatis.annotations.Param;
+
 import java.util.List;
 
 /** Data source dao */
@@ -70,4 +72,12 @@ public interface DataSourceEnvDao {
    * @return
    */
   List<DataSourceEnv> selectByPageVo(DataSourceEnvVo dataSourceEnvVo);
+
+  /**
+   * get DataSourceEnv by envName
+   *
+   * @param envName
+   * @return
+   */
+  DataSourceEnv selectOneByName(@Param("envName") String envName);
 }

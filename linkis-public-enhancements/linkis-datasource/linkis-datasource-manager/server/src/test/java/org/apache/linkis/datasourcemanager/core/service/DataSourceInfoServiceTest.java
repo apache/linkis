@@ -21,6 +21,7 @@ import org.apache.linkis.common.exception.ErrorException;
 import org.apache.linkis.datasourcemanager.common.domain.DataSource;
 import org.apache.linkis.datasourcemanager.common.domain.DataSourceEnv;
 import org.apache.linkis.datasourcemanager.common.domain.DataSourceParamKeyDefinition;
+import org.apache.linkis.datasourcemanager.common.exception.JsonErrorException;
 import org.apache.linkis.datasourcemanager.core.dao.*;
 import org.apache.linkis.datasourcemanager.core.service.impl.DataSourceInfoServiceImpl;
 import org.apache.linkis.datasourcemanager.core.vo.DataSourceVo;
@@ -97,7 +98,7 @@ public class DataSourceInfoServiceTest {
   }
 
   @Test
-  void testGetDataSourceInfo() {
+  void testGetDataSourceInfo() throws JsonErrorException {
     DataSource dataSource = buildDataSource();
     Mockito.when(dataSourceDao.selectOneDetail(dataSource.getId())).thenReturn(dataSource);
     Mockito.when(
@@ -109,7 +110,7 @@ public class DataSourceInfoServiceTest {
   }
 
   @Test
-  void testGetDataSourceInfoByName() {
+  void testGetDataSourceInfoByName() throws JsonErrorException {
     DataSource dataSource = buildDataSource();
     Mockito.when(dataSourceDao.selectOneDetailByName(dataSource.getDataSourceName()))
         .thenReturn(dataSource);
@@ -123,7 +124,7 @@ public class DataSourceInfoServiceTest {
   }
 
   @Test
-  void testGetDataSourceInfoByIdAndVerId() {
+  void testGetDataSourceInfoByIdAndVerId() throws JsonErrorException {
     DataSource dataSource = buildDataSource();
     Mockito.when(dataSourceDao.selectOneDetail(dataSource.getId())).thenReturn(dataSource);
     Mockito.when(
@@ -136,7 +137,7 @@ public class DataSourceInfoServiceTest {
   }
 
   @Test
-  void testGetDataSourceInfoForConnectById() {
+  void testGetDataSourceInfoForConnectById() throws JsonErrorException {
     DataSource dataSource = buildDataSource();
     Mockito.when(dataSourceDao.selectOneDetail(dataSource.getId())).thenReturn(dataSource);
     Mockito.when(
@@ -153,7 +154,7 @@ public class DataSourceInfoServiceTest {
   }
 
   @Test
-  void testGetDataSourceInfoForConnectByName() {
+  void testGetDataSourceInfoForConnectByName() throws JsonErrorException {
     DataSource dataSource = buildDataSource();
     Mockito.when(dataSourceDao.selectOneDetailByName(dataSource.getDataSourceName()))
         .thenReturn(dataSource);
@@ -170,7 +171,7 @@ public class DataSourceInfoServiceTest {
   }
 
   @Test
-  void testGetDataSourceInfoForConnectByIdAndVerId() {
+  void testGetDataSourceInfoForConnectByIdAndVerId() throws JsonErrorException {
     DataSource dataSource = buildDataSource();
     Mockito.when(dataSourceDao.selectOneDetail(dataSource.getId())).thenReturn(dataSource);
     Mockito.when(

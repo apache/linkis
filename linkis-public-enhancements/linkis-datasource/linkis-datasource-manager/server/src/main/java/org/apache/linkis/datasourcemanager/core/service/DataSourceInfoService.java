@@ -22,6 +22,7 @@ import org.apache.linkis.datasourcemanager.common.domain.DataSource;
 import org.apache.linkis.datasourcemanager.common.domain.DataSourceEnv;
 import org.apache.linkis.datasourcemanager.common.domain.DataSourceParamKeyDefinition;
 import org.apache.linkis.datasourcemanager.common.domain.DatasourceVersion;
+import org.apache.linkis.datasourcemanager.common.exception.JsonErrorException;
 import org.apache.linkis.datasourcemanager.core.vo.DataSourceEnvVo;
 import org.apache.linkis.datasourcemanager.core.vo.DataSourceVo;
 
@@ -53,7 +54,7 @@ public interface DataSourceInfoService {
    * @param dataSourceId id
    * @return data source entity
    */
-  DataSource getDataSourceInfo(Long dataSourceId);
+  DataSource getDataSourceInfo(Long dataSourceId) throws JsonErrorException;
 
   /**
    * Get data source for current version by data source name
@@ -61,14 +62,14 @@ public interface DataSourceInfoService {
    * @param dataSourceName data source name
    * @return data source entity
    */
-  DataSource getDataSourceInfo(String dataSourceName);
+  DataSource getDataSourceInfo(String dataSourceName) throws JsonErrorException;
   /**
    * Get data source
    *
    * @param dataSourceId id
    * @return data source entity
    */
-  DataSource getDataSourceInfo(Long dataSourceId, Long version);
+  DataSource getDataSourceInfo(Long dataSourceId, Long version) throws JsonErrorException;
 
   /**
    * Get data source brief information
@@ -109,6 +110,14 @@ public interface DataSourceInfoService {
   void saveDataSourceEnv(DataSourceEnv dataSourceEnv) throws ErrorException;
 
   /**
+   * Batch save data source environment
+   *
+   * @param dataSourceEnvList
+   * @throws ErrorException
+   */
+  void saveBatchDataSourceEnv(List<DataSourceEnv> dataSourceEnvList) throws ErrorException;
+
+  /**
    * List data source environments
    *
    * @param dataSourceTypeId type id
@@ -139,6 +148,14 @@ public interface DataSourceInfoService {
    * @param storedOne
    */
   void updateDataSourceEnv(DataSourceEnv updatedOne, DataSourceEnv storedOne) throws ErrorException;
+
+  /**
+   * Batch update data source environment
+   *
+   * @param dataSourceEnvList
+   * @throws ErrorException
+   */
+  void updateBatchDataSourceEnv(List<DataSourceEnv> dataSourceEnvList) throws ErrorException;
 
   /**
    * Page query of data source environment
@@ -196,7 +213,7 @@ public interface DataSourceInfoService {
    * @param dataSourceId
    * @return
    */
-  DataSource getDataSourceInfoForConnect(Long dataSourceId);
+  DataSource getDataSourceInfoForConnect(Long dataSourceId) throws JsonErrorException;
 
   /**
    * get datasource info for connect for published version by name, if there is a dependency
@@ -205,7 +222,7 @@ public interface DataSourceInfoService {
    * @param dataSourceName
    * @return
    */
-  DataSource getDataSourceInfoForConnect(String dataSourceName);
+  DataSource getDataSourceInfoForConnect(String dataSourceName) throws JsonErrorException;
   /**
    * get datasource info for connect, if there is a dependency environment, merge datasource
    * parameter and environment parameter.
@@ -214,7 +231,7 @@ public interface DataSourceInfoService {
    * @param version
    * @return
    */
-  DataSource getDataSourceInfoForConnect(Long dataSourceId, Long version);
+  DataSource getDataSourceInfoForConnect(Long dataSourceId, Long version) throws JsonErrorException;
 
   /**
    * Check if exist data source
@@ -223,4 +240,12 @@ public interface DataSourceInfoService {
    * @return boolean
    */
   boolean existDataSource(String dataSourceName);
+
+  /**
+   * Check if exist data source env
+   *
+   * @param dataSourceEnvName
+   * @return
+   */
+  boolean existDataSourceEnv(String dataSourceEnvName);
 }

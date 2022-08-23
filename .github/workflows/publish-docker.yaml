@@ -56,6 +56,7 @@ jobs:
     - name: Build frontend by node.js
       run: |
           pwd
+          ls -l
           cd linkis-web
           sed -i "/VUE_APP_MN_CONFIG_PREFIX/d" .env
           npm install

@@ -57,7 +57,7 @@ jobs:
       run: |
           pwd
           ls -l
-          cd linkis-web
+          cd ../linkis-web
           sed -i "/VUE_APP_MN_CONFIG_PREFIX/d" .env
           npm install
           npm run build

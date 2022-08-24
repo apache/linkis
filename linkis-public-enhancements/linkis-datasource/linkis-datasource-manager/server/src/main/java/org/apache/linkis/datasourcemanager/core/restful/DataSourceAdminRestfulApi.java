@@ -104,6 +104,8 @@ public class DataSourceAdminRestfulApi {
                 "Fail to insert data source environment[新增数据源环境失败]");
     }
 
+    @ApiOperation(value = "insertJsonEnvBatch", notes = "insert batch json env", response = Message.class)
+    @ApiOperationSupport(ignoreParameters = {"dataSourceEnvList", "system"})
     @RequestMapping(value = "/env/json/batch", method = RequestMethod.POST)
     public Message insertJsonEnvBatch(
             @RequestBody List<DataSourceEnv> dataSourceEnvList,
@@ -146,6 +148,8 @@ public class DataSourceAdminRestfulApi {
                 "Fail to insert data source environment[新增数据源环境失败]");
     }
 
+    @ApiOperation(value = "insertJsonEnvBatch", notes = "update batch json env", response = Message.class)
+    @ApiOperationSupport(ignoreParameters = {"dataSourceEnvList", "system"})
     @RequestMapping(value = "/env/json/batch", method = RequestMethod.PUT)
     public Message updateEnvBatch(
             @RequestBody List<DataSourceEnv> dataSourceEnvList,

@@ -95,7 +95,7 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
   public DataSource getDataSourceInfo(Long dataSourceId) {
     DataSource dataSource = dataSourceDao.selectOneDetail(dataSourceId);
     if (Objects.nonNull(dataSource)) {
-      String parameter = mergeDataSourceVersionParameter(dataSource, null);
+      String parameter = mergeDataSourceVersionParameter(dataSource, dataSource.getVersionId());
       dataSource.setParameter(parameter);
     }
     return dataSource;
@@ -678,9 +678,6 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
 
   private String mergeDataSourceVersionParameter(DataSource dataSource, Long version) {
     Map<String, Object> connectParams = dataSource.getConnectParams();
-    if (Objects.isNull(version) || version <= 0) {
-      version = dataSource.getVersionId();
-    }
     String versionParameter = dataSourceVersionDao.selectOneVersion(dataSource.getId(), version);
     if (StringUtils.isNotBlank(versionParameter)) {
       try {

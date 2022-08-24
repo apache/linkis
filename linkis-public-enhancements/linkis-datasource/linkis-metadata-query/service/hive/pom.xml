@@ -87,6 +87,10 @@
           <groupId>org.apache.hadoop</groupId>
           <artifactId>hadoop-yarn-common</artifactId>
         </exclusion>
+        <exclusion>
+          <artifactId>netty</artifactId>
+          <groupId>io.netty</groupId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>

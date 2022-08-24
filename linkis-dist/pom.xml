@@ -285,7 +285,7 @@
                     <echo message="Building linkis web image ..."></echo>
                     <mkdir dir="${basedir}/target/apache-linkis-web-${project.version}-dist"></mkdir>
                     <copy todir="${basedir}/target/apache-linkis-web-${project.version}-dist">
-                      <fileset dir="${basedir}/../web/dist" includes="**"></fileset>
+                      <fileset dir="${basedir}/../linkis-web/dist" includes="**"></fileset>
                     </copy>
                     <exec executable="docker" failonerror="true">
                       <arg value="build"></arg>

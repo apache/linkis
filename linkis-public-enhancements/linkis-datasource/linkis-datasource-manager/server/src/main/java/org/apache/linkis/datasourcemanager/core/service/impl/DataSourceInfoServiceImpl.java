@@ -92,7 +92,7 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
   }
 
   @Override
-  public DataSource getDataSourceInfo(Long dataSourceId) throws JsonErrorException {
+  public DataSource getDataSourceInfo(Long dataSourceId) {
     DataSource dataSource = dataSourceDao.selectOneDetail(dataSourceId);
     if (Objects.nonNull(dataSource)) {
       String parameter = mergeDataSourceVersionParameter(dataSource, null);
@@ -102,7 +102,7 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
   }
 
   @Override
-  public DataSource getDataSourceInfo(String dataSourceName) throws JsonErrorException {
+  public DataSource getDataSourceInfo(String dataSourceName) {
     DataSource dataSource = dataSourceDao.selectOneDetailByName(dataSourceName);
     if (Objects.nonNull(dataSource)) {
       String parameter = mergeDataSourceVersionParameter(dataSource, dataSource.getVersionId());
@@ -112,7 +112,7 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
   }
 
   @Override
-  public DataSource getDataSourceInfo(Long dataSourceId, Long version) throws JsonErrorException {
+  public DataSource getDataSourceInfo(Long dataSourceId, Long version) {
     DataSource dataSource = dataSourceDao.selectOneDetail(dataSourceId);
     if (Objects.nonNull(dataSource)) {
       String parameter = mergeDataSourceVersionParameter(dataSource, version);
@@ -154,7 +154,7 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
    * @return
    */
   @Override
-  public DataSource getDataSourceInfoForConnect(Long dataSourceId) throws JsonErrorException {
+  public DataSource getDataSourceInfoForConnect(Long dataSourceId) {
     DataSource dataSource = dataSourceDao.selectOneDetail(dataSourceId);
     if (Objects.nonNull(dataSource)) {
       // TODO dataSource.getPublishedVersionId() NullPoint Exception
@@ -166,7 +166,7 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
   }
 
   @Override
-  public DataSource getDataSourceInfoForConnect(String dataSourceName) throws JsonErrorException {
+  public DataSource getDataSourceInfoForConnect(String dataSourceName) {
     DataSource dataSource = dataSourceDao.selectOneDetailByName(dataSourceName);
     if (Objects.nonNull(dataSource)) {
       String parameter =
@@ -219,8 +219,7 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
    * @return
    */
   @Override
-  public DataSource getDataSourceInfoForConnect(Long dataSourceId, Long version)
-      throws JsonErrorException {
+  public DataSource getDataSourceInfoForConnect(Long dataSourceId, Long version) {
     DataSource dataSource = dataSourceDao.selectOneDetail(dataSourceId);
     if (Objects.nonNull(dataSource)) {
       String parameter = mergeDataSourceVersionParameter(dataSource, version);
@@ -677,17 +676,21 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
     }
   }
 
-  private String mergeDataSourceVersionParameter(DataSource dataSource, Long version)
-      throws JsonErrorException {
+  private String mergeDataSourceVersionParameter(DataSource dataSource, Long version) {
     Map<String, Object> connectParams = dataSource.getConnectParams();
     if (Objects.isNull(version) || version <= 0) {
       version = dataSource.getVersionId();
     }
     String versionParameter = dataSourceVersionDao.selectOneVersion(dataSource.getId(), version);
     if (StringUtils.isNotBlank(versionParameter)) {
-      connectParams.putAll(Objects.requireNonNull(Json.fromJson(versionParameter, Map.class)));
+      try {
+        connectParams.putAll(Objects.requireNonNull(Json.fromJson(versionParameter, Map.class)));
+        return Json.toJson(connectParams, null);
+      } catch (JsonErrorException e) {
+        LOG.warn("Parameter is not json string");
+      }
     }
 
-    return Json.toJson(connectParams, null);
+    return dataSource.getParameter();
   }
 }

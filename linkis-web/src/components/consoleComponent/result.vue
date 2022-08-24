@@ -134,21 +134,24 @@
         :list="script.resultList"
         @change="changeSet">
       </result-set-list>
-      <Page
-        :transfer="true"
-        v-if="resultType === '2'"
-        ref="page"
-        :total="tableData.total"
-        :page-size-opts="page.sizeOpts"
-        :page-size="page.size"
-        :current="page.current"
-        class-name="page"
-        size="small"
-        show-total
-        show-sizer
-        :prev-text="$t('message.linkis.previousPage')" :next-text="$t('message.linkis.nextPage')"
-        @on-change="change"
-        @on-page-size-change="changeSize" />
+      <div class="page-hint">
+        <Page
+          :transfer="true"
+          v-if="resultType === '2'"
+          ref="page"
+          :total="tableData.total"
+          :page-size-opts="page.sizeOpts"
+          :page-size="page.size"
+          :current="page.current"
+          class-name="page"
+          size="small"
+          show-total
+          show-sizer
+          :prev-text="$t('message.linkis.previousPage')" :next-text="$t('message.linkis.nextPage')"
+          @on-change="change"
+          @on-page-size-change="changeSize" />
+        <span class="hint-text">{{tableData.total === 5000 ? '前端只展示5000条数据' : ''}}</span>
+      </div>
     </div>
     <we-menu
       ref="contextMenu"
@@ -699,10 +702,19 @@ export default {
     text-align: center;
     padding-top: 10px;
     padding-left: 10px;
-    .page {
-      display: inline-block;
+    .page-hint {
+      display: inline-flex;
       margin: 0 auto;
+      align-items: center;
+      .page {
+        display: inline-block;
+      }
+      .hint-text {
+        display: inline-block;
+        margin-left: 5px;
+      }
     }
+    
     .set {
       width: 90px;
       // padding-right: 20px;

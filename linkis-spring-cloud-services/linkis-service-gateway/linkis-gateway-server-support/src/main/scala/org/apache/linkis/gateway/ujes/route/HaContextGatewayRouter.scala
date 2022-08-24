@@ -27,6 +27,7 @@ import org.apache.linkis.gateway.springcloud.SpringCloudGatewayConfiguration.{
   normalPath,
   API_URL_PREFIX
 }
+import org.apache.linkis.rpc.conf.RPCConfiguration
 import org.apache.linkis.rpc.interceptor.ServiceInstanceUtils
 
 import org.apache.commons.lang3.StringUtils
@@ -157,8 +158,11 @@ class HaContextGatewayRouter extends AbstractGatewayRouter {
 object HaContextGatewayRouter {
   val CONTEXT_ID_STR: String = "contextId"
 
-  // because the ps-cs service had merged to ps-publicservice, so change the serviceName to ps-publicservice
-  val CONTEXT_SERVICE_NAME: String = "ps-publicservice"
+  val CONTEXT_SERVICE_NAME: String = if (RPCConfiguration.ENABLE_PUBLIC_SERVICE.getValue) {
+    RPCConfiguration.PUBLIC_SERVICE_APPLICATION_NAME.getValue
+  } else {
+    RPCConfiguration.CONTEXT_SERVICE_APPLICATION_NAME.getValue
+  }
 
   val CONTEXT_SERVICE_REQUEST_PREFIX = "contextservice"
 

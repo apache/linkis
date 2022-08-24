@@ -130,6 +130,7 @@
     <commons-beanutils.version>1.9.4</commons-beanutils.version>
     <commons-compress.version>1.21</commons-compress.version>
     <commons-configuration.version>1.10</commons-configuration.version>
+    <commons-exec.version>1.3</commons-exec.version>
     <protobuf.version>3.15.8</protobuf.version>
     <cglib.version>3.3.0</cglib.version>
     <asm-bom.version>9.3</asm-bom.version>
@@ -271,6 +272,13 @@
         <artifactId>ant-launcher</artifactId>
         <version>${ant.version}</version>
       </dependency>
+
+      <dependency>
+        <groupId>org.reflections</groupId>
+        <artifactId>reflections</artifactId>
+        <version>${reflections.version}</version>
+      </dependency>
+
       <dependency>
         <groupId>commons-collections</groupId>
         <artifactId>commons-collections</artifactId>
@@ -312,15 +320,16 @@
         <version>${commons-compress.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.reflections</groupId>
-        <artifactId>reflections</artifactId>
-        <version>${reflections.version}</version>
-      </dependency>
-      <dependency>
         <groupId>commons-configuration</groupId>
         <artifactId>commons-configuration</artifactId>
         <version>${commons-configuration.version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-exec</artifactId>
+        <version>${commons-exec.version}</version>
+      </dependency>
+
       <dependency>
         <groupId>mysql</groupId>
         <artifactId>mysql-connector-java</artifactId>

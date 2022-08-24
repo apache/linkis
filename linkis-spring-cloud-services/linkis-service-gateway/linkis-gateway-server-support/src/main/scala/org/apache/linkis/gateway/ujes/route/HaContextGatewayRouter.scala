@@ -156,15 +156,20 @@ class HaContextGatewayRouter extends AbstractGatewayRouter {
 }
 
 object HaContextGatewayRouter {
+
   val CONTEXT_ID_STR: String = "contextId"
 
-  val CONTEXT_SERVICE_NAME: String = if (RPCConfiguration.ENABLE_PUBLIC_SERVICE.getValue) {
-    RPCConfiguration.PUBLIC_SERVICE_APPLICATION_NAME.getValue
-  } else {
-    RPCConfiguration.CONTEXT_SERVICE_APPLICATION_NAME.getValue
-  }
-
   val CONTEXT_SERVICE_REQUEST_PREFIX = "contextservice"
+
+  val CONTEXT_SERVICE_NAME: String =
+    if (
+        RPCConfiguration.ENABLE_PUBLIC_SERVICE.getValue && RPCConfiguration.PUBLIC_SERVICE_LIST
+          .exists(_.equalsIgnoreCase(CONTEXT_SERVICE_REQUEST_PREFIX))
+    ) {
+      RPCConfiguration.PUBLIC_SERVICE_APPLICATION_NAME.getValue
+    } else {
+      RPCConfiguration.CONTEXT_SERVICE_APPLICATION_NAME.getValue
+    }
 
   val CONTEXT_REGEX: Regex =
     (normalPath(API_URL_PREFIX) + "rest_[a-zA-Z][a-zA-Z_0-9]*/(v\\d+)/contextservice/" + ".+").r

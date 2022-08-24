@@ -130,7 +130,7 @@
                 "engineTop": "引擎上限资源"
             },
             "logLoading": "日志请求中，请稍后",
-            "title": "Linkis计算治理台",
+            "title": "Linkis管理台",
             "info": "{num} 条新消息",
             "hint": "请在跳转页面查看……",
             "sideNavList": {

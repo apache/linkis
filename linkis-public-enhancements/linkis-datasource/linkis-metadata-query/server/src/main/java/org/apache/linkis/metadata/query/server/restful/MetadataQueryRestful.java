@@ -58,7 +58,8 @@ public class MetadataQueryRestful {
     @ApiOperation(value = "getDatabases", notes = "get databases", response = Message.class)
     @ApiImplicitParams({
         @ApiImplicitParam(name = "dataSourceName", required = true, dataType = "String", value = "data source name"),
-        @ApiImplicitParam(name = "system", required = true, dataType = "String", value = "system")
+        @ApiImplicitParam(name = "system", required = true, dataType = "String", value = "system"),
+            @ApiImplicitParam(name = "envIdArray", required = false, dataType = "String", value = "envIdArray")
     })
     @RequestMapping(value = "/getDatabases", method = RequestMethod.GET)
     public Message getDatabases(

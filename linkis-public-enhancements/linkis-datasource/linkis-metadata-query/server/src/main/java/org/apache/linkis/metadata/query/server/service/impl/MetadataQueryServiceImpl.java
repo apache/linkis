@@ -439,30 +439,31 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
       DsInfoResponse dsInfoResponse, List<Long> permitEnvIdList) {
     if (!dsInfoResponse.params().containsKey("envConnectParamsList")) {
       return Collections.emptyList();
-    }
-    Map<String, Object> params = dsInfoResponse.params();
-    boolean isSharedAccount = isSharedAccount(params);
-    List<String> resultList = Lists.newArrayList();
-    List<Map<String, Object>> envConnectParamsList =
-        (List<Map<String, Object>>) dsInfoResponse.params().get("envConnectParamsList");
-    for (Map envConnectParams : envConnectParamsList) {
-      Long envId = (Long) envConnectParams.get("envId");
-      if (CollectionUtils.isEmpty(permitEnvIdList) || permitEnvIdList.contains(envId)) {
-        setSharedAccount(envConnectParams, params, isSharedAccount);
-        try {
-          List<String> databases =
-              invokeMetaMethod(
-                  dsInfoResponse.dsType(),
-                  "getDatabases",
-                  new Object[] {dsInfoResponse.creator(), envConnectParams},
-                  List.class);
-          resultList.addAll(databases);
-        } catch (MetaMethodInvokeException e) {
-          throw new RuntimeException(e);
+    } else {
+      Map<String, Object> dataSourceConnectParams = dsInfoResponse.params();
+      boolean isSharedAccount = isSharedAccount(dataSourceConnectParams);
+      List<String> resultList = Lists.newArrayList();
+      List<Map<String, Object>> envConnectParamsList =
+          (List<Map<String, Object>>) dsInfoResponse.params().get("envConnectParamsList");
+      for (Map envConnectParams : envConnectParamsList) {
+        Long envId = (Long) envConnectParams.get("envId");
+        if (CollectionUtils.isEmpty(permitEnvIdList) || permitEnvIdList.contains(envId)) {
+          setSharedAccount(envConnectParams, dataSourceConnectParams, isSharedAccount);
+          try {
+            List<String> databases =
+                invokeMetaMethod(
+                    dsInfoResponse.dsType(),
+                    "getDatabases",
+                    new Object[] {dsInfoResponse.creator(), envConnectParams},
+                    List.class);
+            resultList.addAll(databases);
+          } catch (MetaMethodInvokeException e) {
+            throw new RuntimeException(e);
+          }
         }
       }
+      return resultList;
     }
-    return resultList;
   }
 
   /**
@@ -475,27 +476,28 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
   private List<String> getTableFromEnv(DsInfoResponse dsInfoResponse, String database) {
     if (!dsInfoResponse.params().containsKey("envConnectParamsList")) {
       return Collections.emptyList();
-    }
-    Map<String, Object> params = dsInfoResponse.params();
-    boolean isSharedAccount = isSharedAccount(params);
-    List<String> resultList = Lists.newArrayList();
-    List<Map<String, Object>> envConnectParamsList =
-        (List<Map<String, Object>>) dsInfoResponse.params().get("envConnectParamsList");
-    for (Map envConnectParams : envConnectParamsList) {
-      setSharedAccount(envConnectParams, params, isSharedAccount);
-      try {
-        List<String> databases =
-            invokeMetaMethod(
-                dsInfoResponse.dsType(),
-                "getTables",
-                new Object[] {dsInfoResponse.creator(), envConnectParams, database},
-                List.class);
-        resultList.addAll(databases);
-      } catch (MetaMethodInvokeException e) {
-        throw new RuntimeException(e);
+    } else {
+      Map<String, Object> dataSourceConnectParams = dsInfoResponse.params();
+      boolean isSharedAccount = isSharedAccount(dataSourceConnectParams);
+      List<String> resultList = Lists.newArrayList();
+      List<Map<String, Object>> envConnectParamsList =
+          (List<Map<String, Object>>) dsInfoResponse.params().get("envConnectParamsList");
+      for (Map envConnectParams : envConnectParamsList) {
+        setSharedAccount(envConnectParams, dataSourceConnectParams, isSharedAccount);
+        try {
+          List<String> databases =
+              invokeMetaMethod(
+                  dsInfoResponse.dsType(),
+                  "getTables",
+                  new Object[] {dsInfoResponse.creator(), envConnectParams, database},
+                  List.class);
+          resultList.addAll(databases);
+        } catch (MetaMethodInvokeException e) {
+          throw new RuntimeException(e);
+        }
       }
+      return resultList;
     }
-    return resultList;
   }
 
   /**
@@ -510,56 +512,59 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
       DsInfoResponse dsInfoResponse, String database, String table) {
     if (!dsInfoResponse.params().containsKey("envConnectParamsList")) {
       return Collections.emptyList();
-    }
-    Map<String, Object> params = dsInfoResponse.params();
-    boolean isSharedAccount = isSharedAccount(params);
-    List<MetaColumnInfo> columnInfoList = new ArrayList<>();
-    List<Map<String, Object>> envConnectParamsList =
-        (List<Map<String, Object>>) dsInfoResponse.params().get("envConnectParamsList");
-    for (Map envConnectParams : envConnectParamsList) {
-      setSharedAccount(envConnectParams, params, isSharedAccount);
-      try {
-        List<MetaColumnInfo> list =
-            invokeMetaMethod(
-                dsInfoResponse.dsType(),
-                "getColumns",
-                new Object[] {dsInfoResponse.creator(), envConnectParams, database, table},
-                List.class);
-        columnInfoList.addAll(list);
-      } catch (MetaMethodInvokeException e) {
-        throw new RuntimeException(e);
+    } else {
+      Map<String, Object> dataSourceConnectParams = dsInfoResponse.params();
+      boolean isSharedAccount = isSharedAccount(dataSourceConnectParams);
+      List<MetaColumnInfo> columnInfoList = new ArrayList<>();
+      List<Map<String, Object>> envConnectParamsList =
+          (List<Map<String, Object>>) dsInfoResponse.params().get("envConnectParamsList");
+      for (Map envConnectParams : envConnectParamsList) {
+        setSharedAccount(envConnectParams, dataSourceConnectParams, isSharedAccount);
+        try {
+          List<MetaColumnInfo> list =
+              invokeMetaMethod(
+                  dsInfoResponse.dsType(),
+                  "getColumns",
+                  new Object[] {dsInfoResponse.creator(), envConnectParams, database, table},
+                  List.class);
+          columnInfoList.addAll(list);
+        } catch (MetaMethodInvokeException e) {
+          throw new RuntimeException(e);
+        }
       }
+      return columnInfoList;
     }
-    return columnInfoList;
   }
 
   /**
    * check datasource if contain share account
    *
-   * @param params
+   * @param connectParams
    * @return
    */
-  private Boolean isSharedAccount(Map params) {
-    return params.containsKey("share") && Boolean.TRUE.equals(params.get("share"));
+  private Boolean isSharedAccount(Map connectParams) {
+    return connectParams.containsKey("share") && Boolean.TRUE.equals(connectParams.get("share"));
   }
 
   /**
    * set share account to env params
    *
    * @param envConnectParams
-   * @param params
+   * @param dataSourceConnectParams
    * @param isSharedAccount
    */
-  private void setSharedAccount(Map envConnectParams, Map params, boolean isSharedAccount) {
+  private void setSharedAccount(
+      Map envConnectParams, Map dataSourceConnectParams, boolean isSharedAccount) {
     if (isSharedAccount) {
-      if ("accountPwd".equals(params.get("authType"))) {
-        envConnectParams.put("username", params.get("username"));
-        envConnectParams.put("password", params.get("password"));
-      } else if ("dpm".equals(params.get("authType"))) {
-        envConnectParams.put("appid", params.get("appid"));
-        envConnectParams.put("objectid", params.get("objectid"));
-        envConnectParams.put("mkPrivate", params.get("mkPrivate"));
-        envConnectParams.put("dk", params.get("dk"));
+      if ("accountPwd".equals(dataSourceConnectParams.get("authType"))) {
+        envConnectParams.put("username", dataSourceConnectParams.get("username"));
+        envConnectParams.put("password", dataSourceConnectParams.get("password"));
+      } else if ("dpm".equals(dataSourceConnectParams.get("authType"))) {
+        envConnectParams.put("appid", dataSourceConnectParams.get("appid"));
+        envConnectParams.put("objectid", dataSourceConnectParams.get("objectid"));
+        envConnectParams.put("mkPrivate", dataSourceConnectParams.get("mkPrivate"));
+        envConnectParams.put("dk", dataSourceConnectParams.get("dk"));
+        envConnectParams.put("timestamp", dataSourceConnectParams.get("timestamp"));
       }
     }
   }

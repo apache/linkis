@@ -25,6 +25,8 @@ import org.apache.linkis.server.Message;
 import org.apache.linkis.server.MessageStatus;
 import org.apache.linkis.server.security.SecurityFilter;
 
+import org.apache.commons.lang3.StringUtils;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -34,8 +36,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
@@ -78,6 +80,7 @@ class MetadataQueryRestfulTest {
       MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
       params.set("system", "");
       params.set("dataSourceName", dataSourceName);
+      params.set("envIdArray", "");
 
       MvcUtils mvcUtils = new MvcUtils(mockMvc);
       Message res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
@@ -85,14 +88,24 @@ class MetadataQueryRestfulTest {
           MessageStatus.ERROR() == res.getStatus()
               && res.getMessage().contains("'system' is missing"));
       params.set("system", system);
-      Mockito.when(metadataQueryService.getDatabasesByDsName(dataSourceName, system, null))
+      List<Long> envIdList = Collections.emptyList();
+      String envIdArray = String.valueOf(params.get("envIdArray"));
+      if (StringUtils.isNotBlank(envIdArray)) {
+        envIdList =
+            Arrays.stream(StringUtils.split(envIdArray, ","))
+                .map(Long::valueOf)
+                .collect(Collectors.toList());
+      }
+      Mockito.when(
+              metadataQueryService.getFilteredDatabasesByDsName(
+                  dataSourceName, system, null, envIdList))
           .thenReturn(new ArrayList<>());
       res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
       Assertions.assertTrue(MessageStatus.SUCCESS() == res.getStatus());
 
       Mockito.doThrow(new ErrorException(1, ""))
           .when(metadataQueryService)
-          .getDatabasesByDsName(dataSourceName, system, null);
+          .getFilteredDatabasesByDsName(dataSourceName, system, null, envIdList);
 
       res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
       Assertions.assertTrue(

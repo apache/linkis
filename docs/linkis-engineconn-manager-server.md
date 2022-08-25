@@ -31,7 +31,7 @@
 |linkis-engineconn-manager-server|linkis.engineconn.log.fetch.lines.max| 5000 | fetch.lines.max|
 |linkis-engineconn-manager-server|linkis.engineconn.log.tail.start.size|20000 |start.size|
 |linkis-engineconn-manager-server|linkis.engineconn.log.multiline.pattern|    |multiline.pattern|
-|linkis-engineconn-manager-server|linkis.engineconn.log.multiline.max| 500|log.multiline.max|
+|linkis-engineconn-manager-server| linkis.engineconn.log.multiline.max| 500|log.multiline.max|
 
 
  

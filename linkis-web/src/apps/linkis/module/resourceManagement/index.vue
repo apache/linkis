@@ -87,7 +87,7 @@
         <WbProgress @expandChange="expandChange" :progressData="item">
         </WbProgress>
         <template v-for="subItem in item.engineTypes">
-          <WbProgress v-if="item.expand" :key="subItem.id" @expandChange="expandChange" :progressData="subItem" :children="true"></WbProgress>
+          <WbProgress v-if="item.expand" :key="subItem.id" @expandChange="expandChange" :progressData="subItem" :children="true" :parentData="item"></WbProgress>
         </template>
       </div>
     </template>
@@ -465,7 +465,7 @@ export default {
       }
     },
     // 展开和关闭
-    async expandChange(item, isChildren = false) {
+    async expandChange(item, isChildren = false, parentData = {},) {
       // 显示表格
       this.isShowTable = true;
       this.isChildren = isChildren;
@@ -484,7 +484,7 @@ export default {
         this.tagTitle = Object.assign(this.tagTitle, [this.currentParentsData.userCreator, item.engineType])
       }
       let parameter = {
-        userCreator: this.currentParentsData.userCreator,
+        userCreator: isChildren ? parentData.userCreator : this.currentParentsData.userCreator,
         engineType: isChildren ? this.currentEngineData.engineType : undefined
       };
       try {

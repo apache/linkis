@@ -55,8 +55,7 @@ import java.util.*;
         produces = {"application/json"})
 public class DataSourceAdminRestfulApi {
 
-    private final List<String> permitSystemList =
-            Lists.newCopyOnWriteArrayList(Arrays.asList("Qualitis"));
+    private final List<String> permitSystemList = Arrays.asList("Qualitis");
     @Autowired private DataSourceInfoService dataSourceInfoService;
 
     @Autowired private DataSourceRelateService dataSourceRelateService;

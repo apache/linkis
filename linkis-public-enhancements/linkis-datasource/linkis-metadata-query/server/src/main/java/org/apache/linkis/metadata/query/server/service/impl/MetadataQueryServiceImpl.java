@@ -199,7 +199,7 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
   }
 
   @Override
-  public List<String> getFilteredDatabasesByDsName(
+  public List<String> getDatabasesByDsEnv(
       String dataSourceName, String system, String userName, List<Long> envIdList)
       throws ErrorException {
     DsInfoResponse dsInfoResponse = queryDataSourceInfoByName(dataSourceName, system, userName);
@@ -224,7 +224,22 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
       throws ErrorException {
     DsInfoResponse dsInfoResponse = queryDataSourceInfoByName(dataSourceName, system, userName);
     if (StringUtils.isNotBlank(dsInfoResponse.dsType())) {
-      List<String> tableList = getTableFromEnv(dsInfoResponse, database);
+      return invokeMetaMethod(
+          dsInfoResponse.dsType(),
+          "getTables",
+          new Object[] {dsInfoResponse.creator(), dsInfoResponse.params(), database},
+          List.class);
+    }
+    return new ArrayList<>();
+  }
+
+  @Override
+  public List<String> getTablesByDsEnv(
+      String dataSourceName, String database, String system, String userName, List<Long> envIdList)
+      throws ErrorException {
+    DsInfoResponse dsInfoResponse = queryDataSourceInfoByName(dataSourceName, system, userName);
+    if (StringUtils.isNotBlank(dsInfoResponse.dsType())) {
+      List<String> tableList = getTableFromEnv(dsInfoResponse, database, envIdList);
       if (!CollectionUtils.isEmpty(tableList)) {
         return tableList;
       }
@@ -302,7 +317,28 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
       throws ErrorException {
     DsInfoResponse dsInfoResponse = queryDataSourceInfoByName(dataSourceName, system, userName);
     if (StringUtils.isNotBlank(dsInfoResponse.dsType())) {
-      List<MetaColumnInfo> columnInfoList = getColumnsFromEnv(dsInfoResponse, database, table);
+      return invokeMetaMethod(
+          dsInfoResponse.dsType(),
+          "getColumns",
+          new Object[] {dsInfoResponse.creator(), dsInfoResponse.params(), database, table},
+          List.class);
+    }
+    return new ArrayList<>();
+  }
+
+  @Override
+  public List<MetaColumnInfo> getColumnsByDsEnv(
+      String dataSourceName,
+      String database,
+      String table,
+      String system,
+      String userName,
+      List<Long> envIdList)
+      throws ErrorException {
+    DsInfoResponse dsInfoResponse = queryDataSourceInfoByName(dataSourceName, system, userName);
+    if (StringUtils.isNotBlank(dsInfoResponse.dsType())) {
+      List<MetaColumnInfo> columnInfoList =
+          getColumnsFromEnv(dsInfoResponse, database, table, envIdList);
       if (!CollectionUtils.isEmpty(columnInfoList)) {
         return columnInfoList;
       }
@@ -432,11 +468,10 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
    * get databases from multi env
    *
    * @param dsInfoResponse
-   * @param permitEnvIdList
+   * @param envIdList
    * @return
    */
-  private List<String> getDatabaseFromEnv(
-      DsInfoResponse dsInfoResponse, List<Long> permitEnvIdList) {
+  private List<String> getDatabaseFromEnv(DsInfoResponse dsInfoResponse, List<Long> envIdList) {
     if (!dsInfoResponse.params().containsKey("envConnectParamsList")) {
       return Collections.emptyList();
     } else {
@@ -447,7 +482,7 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
           (List<Map<String, Object>>) dsInfoResponse.params().get("envConnectParamsList");
       for (Map envConnectParams : envConnectParamsList) {
         Long envId = (Long) envConnectParams.get("envId");
-        if (CollectionUtils.isEmpty(permitEnvIdList) || permitEnvIdList.contains(envId)) {
+        if (CollectionUtils.isEmpty(envIdList) || envIdList.contains(envId)) {
           setSharedAccount(envConnectParams, dataSourceConnectParams, isSharedAccount);
           try {
             List<String> databases =
@@ -473,7 +508,8 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
    * @param database
    * @return
    */
-  private List<String> getTableFromEnv(DsInfoResponse dsInfoResponse, String database) {
+  private List<String> getTableFromEnv(
+      DsInfoResponse dsInfoResponse, String database, List<Long> envIdList) {
     if (!dsInfoResponse.params().containsKey("envConnectParamsList")) {
       return Collections.emptyList();
     } else {
@@ -483,17 +519,20 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
       List<Map<String, Object>> envConnectParamsList =
           (List<Map<String, Object>>) dsInfoResponse.params().get("envConnectParamsList");
       for (Map envConnectParams : envConnectParamsList) {
-        setSharedAccount(envConnectParams, dataSourceConnectParams, isSharedAccount);
-        try {
-          List<String> databases =
-              invokeMetaMethod(
-                  dsInfoResponse.dsType(),
-                  "getTables",
-                  new Object[] {dsInfoResponse.creator(), envConnectParams, database},
-                  List.class);
-          resultList.addAll(databases);
-        } catch (MetaMethodInvokeException e) {
-          throw new RuntimeException(e);
+        Long envId = (Long) envConnectParams.get("envId");
+        if (CollectionUtils.isEmpty(envIdList) || envIdList.contains(envId)) {
+          setSharedAccount(envConnectParams, dataSourceConnectParams, isSharedAccount);
+          try {
+            List<String> databases =
+                invokeMetaMethod(
+                    dsInfoResponse.dsType(),
+                    "getTables",
+                    new Object[] {dsInfoResponse.creator(), envConnectParams, database},
+                    List.class);
+            resultList.addAll(databases);
+          } catch (MetaMethodInvokeException e) {
+            throw new RuntimeException(e);
+          }
         }
       }
       return resultList;
@@ -509,7 +548,7 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
    * @return
    */
   private List<MetaColumnInfo> getColumnsFromEnv(
-      DsInfoResponse dsInfoResponse, String database, String table) {
+      DsInfoResponse dsInfoResponse, String database, String table, List<Long> envIdList) {
     if (!dsInfoResponse.params().containsKey("envConnectParamsList")) {
       return Collections.emptyList();
     } else {
@@ -519,17 +558,20 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
       List<Map<String, Object>> envConnectParamsList =
           (List<Map<String, Object>>) dsInfoResponse.params().get("envConnectParamsList");
       for (Map envConnectParams : envConnectParamsList) {
-        setSharedAccount(envConnectParams, dataSourceConnectParams, isSharedAccount);
-        try {
-          List<MetaColumnInfo> list =
-              invokeMetaMethod(
-                  dsInfoResponse.dsType(),
-                  "getColumns",
-                  new Object[] {dsInfoResponse.creator(), envConnectParams, database, table},
-                  List.class);
-          columnInfoList.addAll(list);
-        } catch (MetaMethodInvokeException e) {
-          throw new RuntimeException(e);
+        Long envId = (Long) envConnectParams.get("envId");
+        if (CollectionUtils.isEmpty(envIdList) || envIdList.contains(envId)) {
+          setSharedAccount(envConnectParams, dataSourceConnectParams, isSharedAccount);
+          try {
+            List<MetaColumnInfo> list =
+                invokeMetaMethod(
+                    dsInfoResponse.dsType(),
+                    "getColumns",
+                    new Object[] {dsInfoResponse.creator(), envConnectParams, database, table},
+                    List.class);
+            columnInfoList.addAll(list);
+          } catch (MetaMethodInvokeException e) {
+            throw new RuntimeException(e);
+          }
         }
       }
       return columnInfoList;

@@ -97,15 +97,14 @@ class MetadataQueryRestfulTest {
                 .collect(Collectors.toList());
       }
       Mockito.when(
-              metadataQueryService.getFilteredDatabasesByDsName(
-                  dataSourceName, system, null, envIdList))
+              metadataQueryService.getDatabasesByDsEnv(dataSourceName, system, null, envIdList))
           .thenReturn(new ArrayList<>());
       res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
       Assertions.assertTrue(MessageStatus.SUCCESS() == res.getStatus());
 
       Mockito.doThrow(new ErrorException(1, ""))
           .when(metadataQueryService)
-          .getFilteredDatabasesByDsName(dataSourceName, system, null, envIdList);
+          .getDatabasesByDsEnv(dataSourceName, system, null, envIdList);
 
       res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
       Assertions.assertTrue(

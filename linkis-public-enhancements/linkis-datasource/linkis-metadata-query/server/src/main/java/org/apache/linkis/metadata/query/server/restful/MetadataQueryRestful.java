@@ -71,15 +71,9 @@ public class MetadataQueryRestful {
             if (StringUtils.isBlank(system)) {
                 return Message.error("'system' is missing[缺少系统名]");
             }
-            List<Long> envIdList = Collections.emptyList();
-            if (StringUtils.isNotBlank(envIdArray)) {
-                envIdList =
-                        Arrays.stream(StringUtils.split(envIdArray, ","))
-                                .map(Long::valueOf)
-                                .collect(Collectors.toList());
-            }
+            List<Long> envIdList = convertStringToList(envIdArray);
             List<String> databases =
-                    metadataQueryService.getFilteredDatabasesByDsName(
+                    metadataQueryService.getDatabasesByDsEnv(
                             dataSourceName,
                             system,
                             SecurityFilter.getLoginUsername(request),
@@ -100,24 +94,28 @@ public class MetadataQueryRestful {
     @ApiImplicitParams({
         @ApiImplicitParam(name = "dataSourceName", required = true, dataType = "String", value = "data source name"),
         @ApiImplicitParam(name = "system", required = true, dataType = "String", value = "system"),
-        @ApiImplicitParam(name = "database", required = true, dataType = "String", value = "database")
+        @ApiImplicitParam(name = "database", required = true, dataType = "String", value = "database"),
+            @ApiImplicitParam(name = "envIdArray", required = false, dataType = "String", value = "envIdArray")
     })
     @RequestMapping(value = "/getTables", method = RequestMethod.GET)
     public Message getTables(
             @RequestParam("dataSourceName") String dataSourceName,
             @RequestParam("database") String database,
             @RequestParam("system") String system,
+            @RequestParam(name = "envIdArray", required = false) String envIdArray,
             HttpServletRequest request) {
         try {
             if (StringUtils.isBlank(system)) {
                 return Message.error("'system' is missing[缺少系统名]");
             }
+            List<Long> envIdList = convertStringToList(envIdArray);
             List<String> tables =
-                    metadataQueryService.getTablesByDsName(
+                    metadataQueryService.getTablesByDsEnv(
                             dataSourceName,
                             database,
                             system,
-                            SecurityFilter.getLoginUsername(request));
+                            SecurityFilter.getLoginUsername(request),
+                            envIdList);
             return Message.ok().data("tables", tables);
         } catch (Exception e) {
             return errorToResponseMessage(
@@ -272,7 +270,8 @@ public class MetadataQueryRestful {
         @ApiImplicitParam(name = "dataSourceName", required = true, dataType = "String", value = "data source name"),
         @ApiImplicitParam(name = "system", required = true, dataType = "String", value = "system"),
         @ApiImplicitParam(name = "database", required = true, dataType = "String", value = "database"),
-        @ApiImplicitParam(name = "table", required = true, dataType = "String", value = "table")
+        @ApiImplicitParam(name = "table", required = true, dataType = "String", value = "table"),
+            @ApiImplicitParam(name = "envIdArray", required = false, dataType = "String", value = "envIdArray")
     })
     @RequestMapping(value = "/getColumns", method = RequestMethod.GET)
     public Message getColumns(
@@ -280,18 +279,21 @@ public class MetadataQueryRestful {
             @RequestParam("database") String database,
             @RequestParam("table") String table,
             @RequestParam("system") String system,
+            @RequestParam(name = "envIdArray", required = false) String envIdArray,
             HttpServletRequest request) {
         try {
             if (StringUtils.isBlank(system)) {
                 return Message.error("'system' is missing[缺少系统名]");
             }
+            List<Long> envIdList = convertStringToList(envIdArray);
             List<MetaColumnInfo> columns =
-                    metadataQueryService.getColumnsByDsName(
+                    metadataQueryService.getColumnsByDsEnv(
                             dataSourceName,
                             database,
                             table,
                             system,
-                            SecurityFilter.getLoginUsername(request));
+                            SecurityFilter.getLoginUsername(request),
+                            envIdList);
             return Message.ok().data("columns", columns);
         } catch (Exception e) {
             return errorToResponseMessage(
@@ -336,5 +338,16 @@ public class MetadataQueryRestful {
         }
         logger.error(uiMessage, e);
         return Message.error(uiMessage);
+    }
+
+    private List<Long> convertStringToList(String envIdArray) {
+        List<Long> envIdList = Collections.emptyList();
+        if (StringUtils.isNotBlank(envIdArray)) {
+            envIdList =
+                    Arrays.stream(StringUtils.split(envIdArray, ","))
+                            .map(Long::valueOf)
+                            .collect(Collectors.toList());
+        }
+        return envIdList;
     }
 }

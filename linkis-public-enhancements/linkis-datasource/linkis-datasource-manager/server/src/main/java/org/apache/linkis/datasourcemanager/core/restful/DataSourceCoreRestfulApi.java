@@ -217,6 +217,12 @@ public class DataSourceCoreRestfulApi {
                                         + dataSourceName
                                         + " 已经存在]");
                     }
+                    List<DataSourceParamKeyDefinition> keyDefinitionList =
+                            dataSourceRelateService.getKeyDefinitionsByType(dataSource.getDataSourceTypeId());
+                    dataSource.setKeyDefinitions(keyDefinitionList);
+                    for (DataSourceParamsHook hook : dataSourceParamsHooks) {
+                        hook.beforePersist(dataSource.getConnectParams(), keyDefinitionList);
+                    }
                     String parameter = Json.toJson(dataSource.getConnectParams(), null);
                     dataSource.setParameter(parameter);
                     dataSourceInfoService.updateDataSourceInfo(dataSource);
@@ -698,6 +704,9 @@ public class DataSourceCoreRestfulApi {
         List<DataSourceParamKeyDefinition> keyDefinitionList =
                 dataSourceRelateService.getKeyDefinitionsByType(dataSource.getDataSourceTypeId());
         dataSource.setKeyDefinitions(keyDefinitionList);
+        for (DataSourceParamsHook hook : dataSourceParamsHooks) {
+            hook.beforePersist(dataSource.getConnectParams(), keyDefinitionList);
+        }
         String parameter = Json.toJson(dataSource.getConnectParams(), null);
         dataSource.setParameter(parameter);
         dataSourceInfoService.saveDataSourceInfo(dataSource);

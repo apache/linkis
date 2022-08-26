@@ -36,6 +36,3 @@
 |linkis-gateway-core|wds.linkis.gateway.this.schema|   | gateway.this.schema|
 |linkis-gateway-core|wds.linkis.web.enable.water.mark|true| web.enable.water.mark|
 |linkis-gateway-core|wds.linkis.entrance.name|   |linkis.entrance.name|
-
-
-

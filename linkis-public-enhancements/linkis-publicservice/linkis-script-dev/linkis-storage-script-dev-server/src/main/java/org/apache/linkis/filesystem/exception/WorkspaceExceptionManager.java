@@ -65,7 +65,7 @@ public class WorkspaceExceptionManager {
           put("80028", "the path exist special char");
           put("80029", "empty dir!");
           put("80030", "Failed to create user path");
-          put("80031", "The user does not exist(用户在机器上不存在)");
+          put("80031", "The user was not initialized(用户未初始化)");
         }
       };
 

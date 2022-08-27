@@ -25,7 +25,10 @@ import org.apache.linkis.engineconn.computation.executor.execute.{
   EngineExecutionContext
 }
 import org.apache.linkis.engineconn.core.EngineConnObject
-import org.apache.linkis.engineplugin.elasticsearch.conf.ElasticSearchConfiguration
+import org.apache.linkis.engineplugin.elasticsearch.conf.{
+  ElasticSearchConfiguration,
+  ElasticSearchEngineConsoleConf
+}
 import org.apache.linkis.engineplugin.elasticsearch.executer.client.{
   ElasticSearchErrorResponse,
   ElasticSearchExecutor,

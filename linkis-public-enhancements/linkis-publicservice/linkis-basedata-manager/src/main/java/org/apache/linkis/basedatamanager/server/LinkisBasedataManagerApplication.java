@@ -16,18 +16,17 @@
  */
 package org.apache.linkis.basedatamanager.server;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.linkis.LinkisBaseServerApp;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class LinkisBasedataManagerApplication {
 
-    private static final Log logger = LogFactory.getLog(LinkisBasedataManagerApplication.class);
+  private static final Log logger = LogFactory.getLog(LinkisBasedataManagerApplication.class);
 
-    public static void main(String[] args) throws ReflectiveOperationException {
-        logger.info("Start to running LinkisDataSourceManagerApplication");
-        LinkisBaseServerApp.main(args);
-    }
-
+  public static void main(String[] args) throws ReflectiveOperationException {
+    logger.info("Start to running LinkisDataSourceManagerApplication");
+    LinkisBaseServerApp.main(args);
+  }
 }

@@ -13,13 +13,24 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
-*/
+ */
 
--- ----------------------------
--- add corresponding table fields for linkis_ps_dm_datasource_type_key
--- ----------------------------
+package org.apache.linkis.datasource.client.response
 
-ALTER TABLE `linkis_ps_dm_datasource_type_key` ADD COLUMN `name_en` varchar(32) COLLATE utf8_bin  NOT NULL;
-ALTER TABLE `linkis_ps_dm_datasource_type_key` ADD COLUMN `description_en` varchar(200) COLLATE utf8_bin NULL DEFAULT NULL;
-ALTER TABLE `linkis_ps_instance_label_value_relation` ADD  UNIQUE KEY `label_instance` (`label_id`,`service_instance`);
+import org.apache.linkis.datasourcemanager.common.domain.DataSource
+import org.apache.linkis.httpclient.dws.DWSHttpClient
+import org.apache.linkis.httpclient.dws.annotation.DWSHttpMessageResult
+import org.apache.linkis.httpclient.dws.response.DWSResult
 
+import scala.beans.BeanProperty
+
+@DWSHttpMessageResult("/api/rest_j/v\\d+/data-source-manager/publishedInfo/name/(\\S+)")
+class GetInfoPublishedByDataSourceNameResult extends DWSResult {
+  @BeanProperty var info: java.util.Map[String, Any] = _
+
+  def getDataSource: DataSource = {
+    val str = DWSHttpClient.jacksonJson.writeValueAsString(info)
+    DWSHttpClient.jacksonJson.readValue(str, classOf[DataSource])
+  }
+
+}

@@ -39,11 +39,12 @@ import org.apache.linkis.scheduler.executer.{
 import org.apache.linkis.server.JMap
 import org.apache.linkis.storage.utils.StorageUtils
 
+import java.util
 import java.util.concurrent.CountDownLatch
 
 import org.elasticsearch.client.{Cancellable, Response, ResponseListener}
 
-class ElasticSearchExecutorImpl(runType: String, properties: JMap[String, String])
+class ElasticSearchExecutorImpl(runType: String, properties: util.Map[String, String])
     extends ElasticSearchExecutor {
 
   private var client: EsClient = _

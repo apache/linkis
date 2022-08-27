@@ -17,7 +17,6 @@
 package org.apache.linkis.basedatamanager.server.dao;
 
 import org.apache.linkis.basedatamanager.server.domain.DatasourceAccessEntity;
-import org.apache.linkis.basedatamanager.server.domain.ErrorCodeEntity;
 
 import java.util.List;
 
@@ -36,5 +35,5 @@ public interface DatasourceAccessMapper extends BaseMapper<DatasourceAccessEntit
    * @param searchName
    * @return
    */
-  List<ErrorCodeEntity> getListByPage(String searchName);
+  List<DatasourceAccessEntity> getListByPage(String searchName);
 }

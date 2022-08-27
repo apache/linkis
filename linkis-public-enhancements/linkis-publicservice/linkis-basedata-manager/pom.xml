@@ -105,52 +105,6 @@
         </executions>
       </plugin>
 
-      <plugin>
-        <groupId>com.diffplug.spotless</groupId>
-        <artifactId>spotless-maven-plugin</artifactId>
-        <version>${spotless-maven-plugin.version}</version>
-        <configuration>
-          <pom>
-            <sortPom></sortPom>
-          </pom>
-          <java>
-            <googleJavaFormat>
-              <version>1.7</version>
-              <style>GOOGLE</style>
-            </googleJavaFormat>
-
-            <!-- \# refers to the static imports -->
-            <importOrder>
-              <order>org.apache.linkis,org.apache,org.springframework,javax,java,scala,,\#</order>
-            </importOrder>
-
-            <excludes>
-              <exclude>**/restful/**/*RestfulApi.java</exclude>
-              <exclude>**/restful/**/*Restful.java</exclude>
-            </excludes>
-
-            <removeUnusedImports></removeUnusedImports>
-          </java>
-          <scala>
-            <scalafmt>
-              <file>${maven.multiModuleProjectDirectory}/.scalafmt.conf</file>
-            </scalafmt>
-            <licenseHeader>
-              <file>${maven.multiModuleProjectDirectory}/tool/license-header</file>
-              <delimiter>package</delimiter>
-            </licenseHeader>
-          </scala>
-        </configuration>
-        <executions>
-          <execution>
-            <id>spotless-check</id>
-            <goals>
-              <goal>check</goal>
-            </goals>
-            <phase>validate</phase>
-          </execution>
-        </executions>
-      </plugin>
     </plugins>
   </build>
 

@@ -18,7 +18,6 @@ package org.apache.linkis.basedatamanager.server.service.impl;
 
 import org.apache.linkis.basedatamanager.server.dao.DatasourceAccessMapper;
 import org.apache.linkis.basedatamanager.server.domain.DatasourceAccessEntity;
-import org.apache.linkis.basedatamanager.server.domain.ErrorCodeEntity;
 import org.apache.linkis.basedatamanager.server.service.DatasourceAccessService;
 
 import org.springframework.stereotype.Service;
@@ -41,7 +40,7 @@ public class DatasourceAccessServiceImpl
   @Override
   public PageInfo getListByPage(String searchName, Integer currentPage, Integer pageSize) {
     PageHelper.startPage(currentPage, pageSize);
-    List<ErrorCodeEntity> listByPage = this.getBaseMapper().getListByPage(searchName);
+    List<DatasourceAccessEntity> listByPage = this.getBaseMapper().getListByPage(searchName);
     PageInfo pageInfo = new PageInfo(listByPage);
     return pageInfo;
   }

@@ -17,13 +17,13 @@
 
 package org.apache.linkis.basedatamanager.server.domain;
 
+import java.io.Serializable;
+import java.util.Date;
+
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-
-import java.io.Serializable;
-import java.util.Date;
 
 /** @TableName linkis_ps_dm_datasource_env */
 @TableName(value = "linkis_ps_dm_datasource_env")

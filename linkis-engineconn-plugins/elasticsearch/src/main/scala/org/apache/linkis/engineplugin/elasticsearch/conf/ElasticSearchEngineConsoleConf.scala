@@ -14,26 +14,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.linkis.engineplugin.elasticsearch.conf
 
-import java.util
-
 import org.apache.linkis.common.conf.Configuration
-import org.apache.linkis.governance.common.protocol.conf.{RequestQueryEngineConfig, ResponseQueryConfig}
+import org.apache.linkis.governance.common.protocol.conf.{
+  RequestQueryEngineConfig,
+  ResponseQueryConfig
+}
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
 import org.apache.linkis.protocol.CacheableProtocol
 import org.apache.linkis.rpc.RPCMapCache
 
-object ElasticSearchEngineConsoleConf extends RPCMapCache[Array[Label[_]], String, String](Configuration.CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME.getValue) {
+import java.util
+
+object ElasticSearchEngineConsoleConf
+    extends RPCMapCache[Array[Label[_]], String, String](
+      Configuration.CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME.getValue
+    ) {
 
   override protected def createRequest(labels: Array[Label[_]]): CacheableProtocol = {
-    val userCreatorLabel = labels.find(_.isInstanceOf[UserCreatorLabel]).get.asInstanceOf[UserCreatorLabel]
-    val engineTypeLabel = labels.find(_.isInstanceOf[EngineTypeLabel]).get.asInstanceOf[EngineTypeLabel]
+    val userCreatorLabel =
+      labels.find(_.isInstanceOf[UserCreatorLabel]).get.asInstanceOf[UserCreatorLabel]
+    val engineTypeLabel =
+      labels.find(_.isInstanceOf[EngineTypeLabel]).get.asInstanceOf[EngineTypeLabel]
     RequestQueryEngineConfig(userCreatorLabel, engineTypeLabel)
   }
 
   override protected def createMap(any: Any): util.Map[String, String] = any match {
     case response: ResponseQueryConfig => response.getKeyAndValue
   }
+
 }

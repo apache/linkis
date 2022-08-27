@@ -36,7 +36,7 @@
     <module>linkis-instance-label/linkis-instance-label-server</module>
     <module>linkis-script-dev/linkis-storage-script-dev-client</module>
     <module>linkis-script-dev/linkis-storage-script-dev-server</module>
-
+    <module>linkis-basedata-manager</module>
     <module>linkis-error-code</module>
     <module>linkis-ps-common-lock</module>
 
@@ -79,7 +79,11 @@
       <artifactId>linkis-error-code-server</artifactId>
       <version>${project.version}</version>
     </dependency>
-
+    <dependency>
+      <groupId>org.apache.linkis</groupId>
+      <artifactId>linkis-basedata-manager</artifactId>
+      <version>${project.version}</version>
+    </dependency>
   </dependencies>
   <build>
     <finalName>${project.artifactId}-${project.version}</finalName>

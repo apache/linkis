@@ -97,45 +97,61 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
     return dataSource;
   }
 
-  @Override
-  public DataSource getDataSourceInfo(String dataSourceName) {
-    DataSource dataSource = dataSourceDao.selectOneDetailByName(dataSourceName);
-    if (Objects.nonNull(dataSource)) {
-      String parameter =
-          dataSourceVersionDao.selectOneVersion(dataSource.getId(), dataSource.getVersionId());
-      dataSource.setParameter(parameter);
+    @Override
+    public DataSource getDataSourceInfo(String dataSourceName) {
+        DataSource dataSource = dataSourceDao.selectOneDetailByName(dataSourceName);
+        if (Objects.nonNull(dataSource)) {
+            String parameter =
+                    dataSourceVersionDao.selectOneVersion(
+                            dataSource.getId(), dataSource.getVersionId());
+            dataSource.setParameter(parameter);
+        }
+        return dataSource;
     }
-    return dataSource;
-  }
 
-  @Override
-  public DataSource getDataSourceInfo(Long dataSourceId, Long version) {
-    DataSource dataSource = dataSourceDao.selectOneDetail(dataSourceId);
-    if (Objects.nonNull(dataSource)) {
-      String parameter = dataSourceVersionDao.selectOneVersion(dataSourceId, version);
-      dataSource.setParameter(parameter);
+    @Override
+    public DataSource getDataSourcePublishInfo(String dataSourceName) {
+        DataSource dataSource = dataSourceDao.selectOneDetailByName(dataSourceName);
+        if (Objects.nonNull(dataSource)) {
+            Long publishedVersionId = dataSource.getPublishedVersionId();
+            if (publishedVersionId == null) {
+                LOG.warn("Datasource name:{} is not published. ", dataSourceName);
+            } else {
+                String parameter =
+                        dataSourceVersionDao.selectOneVersion(
+                                dataSource.getId(), publishedVersionId);
+                dataSource.setParameter(parameter);
+            }
+        }
+        return dataSource;
     }
-    return dataSource;
-  }
 
-  /**
-   * get datasource info for connect for published version, if there is a dependency environment,
-   * merge datasource parameter and environment parameter.
-   *
-   * @param dataSourceId
-   * @return
-   */
-  @Override
-  public DataSource getDataSourceInfoForConnect(Long dataSourceId) {
-    DataSource dataSource = dataSourceDao.selectOneDetail(dataSourceId);
-    if (Objects.nonNull(dataSource)) {
-      // TODO dataSource.getPublishedVersionId() NullPoint Exception
-      String parameter =
-          dataSourceVersionDao.selectOneVersion(dataSourceId, dataSource.getPublishedVersionId());
-      return mergeParams(dataSource, parameter);
+    @Override
+    public DataSource getDataSourceInfo(Long dataSourceId, Long version) {
+        DataSource dataSource = dataSourceDao.selectOneDetail(dataSourceId);
+        if (Objects.nonNull(dataSource)) {
+            String parameter = dataSourceVersionDao.selectOneVersion(dataSourceId, version);
+            dataSource.setParameter(parameter);
+        }
+        return dataSource;
     }
-    return null;
-  }
+
+    /**
+     * get datasource info for connect for published version, if there is a dependency environment,
+     * merge datasource parameter and environment parameter.
+     */
+    @Override
+    public DataSource getDataSourceInfoForConnect(Long dataSourceId) {
+        DataSource dataSource = dataSourceDao.selectOneDetail(dataSourceId);
+        if (Objects.nonNull(dataSource)) {
+            // TODO dataSource.getPublishedVersionId() NullPoint Exception
+            String parameter =
+                    dataSourceVersionDao.selectOneVersion(
+                            dataSourceId, dataSource.getPublishedVersionId());
+            return mergeParams(dataSource, parameter);
+        }
+        return null;
+    }
 
   @Override
   public DataSource getDataSourceInfoForConnect(String dataSourceName) {
@@ -260,69 +276,72 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
     return dataSourceEnvDao.listByTypeId(dataSourceTypeId);
   }
 
-  @Override
-  public DataSourceEnv getDataSourceEnv(Long envId) {
-    return dataSourceEnvDao.selectOneDetail(envId);
-  }
-
-  @Override
-  @Transactional(rollbackFor = Exception.class)
-  public Long removeDataSourceEnv(Long envId) {
-    DataSourceEnv dataSourceEnv = dataSourceEnvDao.selectOneDetail(envId);
-    if (null != dataSourceEnv) {
-      // First to delete record in db
-      int affect = dataSourceEnvDao.removeOne(envId);
-      if (affect > 0) {
-        // Remove resource
-        Map<String, Object> connectParams = dataSourceEnv.getConnectParams();
-        List<DataSourceParamKeyDefinition> keyDefinitions =
-            dataSourceParamKeyDao.listByDataSourceTypeAndScope(
-                dataSourceEnv.getDataSourceTypeId(), DataSourceParamKeyDefinition.Scope.ENV);
-        // TODO throws ERROR Exception
-        keyDefinitions.forEach(
-            keyDefinition -> {
-              if (keyDefinition.getValueType() == DataSourceParamKeyDefinition.ValueType.FILE
-                  && connectParams.containsKey(keyDefinition.getKey())) {
-                try {
-                  // Proxy creator to delete resource
-                  bmlAppService.clientRemoveResource(
-                      dataSourceEnv.getCreateUser(),
-                      String.valueOf(connectParams.get(keyDefinition.getKey())));
-                } catch (Exception e) {
-                  // Ignore remove error
-                  // TODO LOG and throws LinkisRuntimeException
-                }
-              }
-            });
-        return envId;
-      }
+    @Override
+    public DataSourceEnv getDataSourceEnv(Long envId) {
+        return dataSourceEnvDao.selectOneDetail(envId);
     }
-    return -1L;
-  }
 
-  @Override
-  @Transactional(rollbackFor = Exception.class)
-  public void updateDataSourceEnv(DataSourceEnv updatedOne, DataSourceEnv storedOne)
-      throws ErrorException {
-    updateConnectParams(
-        updatedOne.getCreateUser(),
-        updatedOne.getKeyDefinitions(),
-        updatedOne.getConnectParams(),
-        storedOne.getConnectParams(),
-        parameter -> {
-          updatedOne.setParameter(parameter);
-          // Update environment into database
-          dataSourceEnvDao.updateOne(updatedOne);
-        });
-  }
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Long removeDataSourceEnv(Long envId) {
+        DataSourceEnv dataSourceEnv = dataSourceEnvDao.selectOneDetail(envId);
+        if (null != dataSourceEnv) {
+            // First to delete record in db
+            int affect = dataSourceEnvDao.removeOne(envId);
+            if (affect > 0) {
+                // Remove resource
+                Map<String, Object> connectParams = dataSourceEnv.getConnectParams();
+                List<DataSourceParamKeyDefinition> keyDefinitions =
+                        dataSourceParamKeyDao.listByDataSourceTypeAndScope(
+                                dataSourceEnv.getDataSourceTypeId(),
+                                DataSourceParamKeyDefinition.Scope.ENV);
+                // TODO throws ERROR Exception
+                keyDefinitions.forEach(
+                        keyDefinition -> {
+                            if (keyDefinition.getValueType()
+                                            == DataSourceParamKeyDefinition.ValueType.FILE
+                                    && connectParams.containsKey(keyDefinition.getKey())) {
+                                try {
+                                    // Proxy creator to delete resource
+                                    bmlAppService.clientRemoveResource(
+                                            dataSourceEnv.getCreateUser(),
+                                            String.valueOf(
+                                                    connectParams.get(keyDefinition.getKey())));
+                                } catch (Exception e) {
+                                    // Ignore remove error
+                                    // TODO LOG and throws LinkisRuntimeException
+                                }
+                            }
+                        });
+                return envId;
+            }
+        }
+        return -1L;
+    }
 
-  @Override
-  public List<DataSourceEnv> queryDataSourceEnvPage(DataSourceEnvVo dataSourceEnvVo) {
-    PageHelper.startPage(dataSourceEnvVo.getCurrentPage(), dataSourceEnvVo.getPageSize());
-    List<DataSourceEnv> queryList = dataSourceEnvDao.selectByPageVo(dataSourceEnvVo);
-    PageInfo<DataSourceEnv> pageInfo = new PageInfo<>(queryList);
-    return pageInfo.getList();
-  }
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void updateDataSourceEnv(DataSourceEnv updatedOne, DataSourceEnv storedOne)
+            throws ErrorException {
+        updateConnectParams(
+                updatedOne.getCreateUser(),
+                updatedOne.getKeyDefinitions(),
+                updatedOne.getConnectParams(),
+                storedOne.getConnectParams(),
+                parameter -> {
+                    updatedOne.setParameter(parameter);
+                    // Update environment into database
+                    dataSourceEnvDao.updateOne(updatedOne);
+                });
+    }
+
+    @Override
+    public List<DataSourceEnv> queryDataSourceEnvPage(DataSourceEnvVo dataSourceEnvVo) {
+        PageHelper.startPage(dataSourceEnvVo.getCurrentPage(), dataSourceEnvVo.getPageSize());
+        List<DataSourceEnv> queryList = dataSourceEnvDao.selectByPageVo(dataSourceEnvVo);
+        PageInfo<DataSourceEnv> pageInfo = new PageInfo<>(queryList);
+        return pageInfo.getList();
+    }
 
   /**
    * expire data source

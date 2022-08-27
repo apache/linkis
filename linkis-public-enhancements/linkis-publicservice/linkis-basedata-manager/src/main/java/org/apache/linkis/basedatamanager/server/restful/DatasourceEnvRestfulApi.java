@@ -21,19 +21,19 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.apache.linkis.basedatamanager.server.domain.DatasourceAccessEntity;
-import org.apache.linkis.basedatamanager.server.service.DatasourceAccessService;
+import org.apache.linkis.basedatamanager.server.domain.DatasourceEnvEntity;
+import org.apache.linkis.basedatamanager.server.service.DatasourceEnvService;
 import org.apache.linkis.server.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-@Api(tags = "DatasourceAccessRestfulApi")
+@Api(tags = "DatasourceEnvRestfulApi")
 @RestController
-@RequestMapping(path = "/basedata_manager/datasource_access")
-public class DatasourceAccessRestfulApi {
+@RequestMapping(path = "/basedata_manager/datasource_env")
+public class DatasourceEnvRestfulApi {
 
     @Autowired
-    DatasourceAccessService datasourceAccessService;
+    DatasourceEnvService datasourceEnvService;
 
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "query", dataType = "string", name = "searchName", value = ""),
@@ -43,11 +43,9 @@ public class DatasourceAccessRestfulApi {
     @ApiOperation(value = "list", notes = "get list data", httpMethod = "GET")
     @RequestMapping(path = "", method = RequestMethod.GET)
     public Message list(String searchName,Integer currentPage,Integer pageSize) {
-        PageInfo pageList = datasourceAccessService.getListByPage(searchName,currentPage,pageSize);
+        PageInfo pageList = datasourceEnvService.getListByPage(searchName,currentPage,pageSize);
         return Message.ok("").data("list", pageList);
     }
-
-
 
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "path", dataType = "long", name = "id", value = "")
@@ -55,17 +53,17 @@ public class DatasourceAccessRestfulApi {
     @ApiOperation(value = "get", notes = "get data by id", httpMethod = "GET")
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
     public Message get(@PathVariable("id") Long id) {
-        DatasourceAccessEntity datasourceAccess = datasourceAccessService.getById(id);
-        return Message.ok("").data("item", datasourceAccess);
+        DatasourceEnvEntity datasourceEnv = datasourceEnvService.getById(id);
+        return Message.ok("").data("item", datasourceEnv);
     }
 
     @ApiImplicitParams({
-            @ApiImplicitParam(paramType = "body", dataType = "DatasourceAccessEntity", name = "errorCode", value = "")
+            @ApiImplicitParam(paramType = "body", dataType = "DatasourceEnvEntity", name = "datasourceEnv", value = "")
     })
     @ApiOperation(value = "add", notes = "add data", httpMethod = "POST")
     @RequestMapping(path = "", method = RequestMethod.POST)
-    public Message add(@RequestBody DatasourceAccessEntity datasourceAccessEntity) {
-        boolean result = datasourceAccessService.save(datasourceAccessEntity);
+    public Message add(@RequestBody DatasourceEnvEntity datasourceEnv) {
+        boolean result = datasourceEnvService.save(datasourceEnv);
         return Message.ok("").data("result", result);
     }
 
@@ -75,17 +73,17 @@ public class DatasourceAccessRestfulApi {
     @ApiOperation(value = "remove", notes = "remove data by id", httpMethod = "DELETE")
     @RequestMapping(path = "/{id}", method = RequestMethod.DELETE)
     public Message remove(@PathVariable("id") Long id) {
-        boolean result = datasourceAccessService.removeById(id);
+        boolean result = datasourceEnvService.removeById(id);
         return Message.ok("").data("result", result);
     }
 
     @ApiImplicitParams({
-            @ApiImplicitParam(paramType = "body", dataType = "DatasourceAccessEntity", name = "errorCode", value = "")
+            @ApiImplicitParam(paramType = "body", dataType = "DatasourceEnvEntity", name = "errorCode", value = "")
     })
     @ApiOperation(value = "update", notes = "update data", httpMethod = "PUT")
     @RequestMapping(path = "", method = RequestMethod.PUT)
-    public Message update(@RequestBody DatasourceAccessEntity errorCode) {
-        boolean result = datasourceAccessService.updateById(errorCode);
+    public Message update(@RequestBody DatasourceEnvEntity errorCode) {
+        boolean result = datasourceEnvService.updateById(errorCode);
         return Message.ok("").data("result", result);
     }
 

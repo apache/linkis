@@ -6,20 +6,22 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
-*/
+ */
 
--- ----------------------------
--- add corresponding table fields for linkis_ps_dm_datasource_type_key
--- ----------------------------
+package org.apache.linkis.manager.engineplugin.jdbc.exception
 
-ALTER TABLE `linkis_ps_dm_datasource_type_key` ADD COLUMN `name_en` varchar(32) COLLATE utf8_bin  NOT NULL;
-ALTER TABLE `linkis_ps_dm_datasource_type_key` ADD COLUMN `description_en` varchar(200) COLLATE utf8_bin NULL DEFAULT NULL;
-ALTER TABLE `linkis_ps_instance_label_value_relation` ADD  UNIQUE KEY `label_instance` (`label_id`,`service_instance`);
+import org.apache.linkis.common.exception.ErrorException
 
+class JDBCGetDatasourceInfoException(errorDesc: String) extends ErrorException(70022, errorDesc) {
+  def this(errorDesc: String, t: Throwable) = {
+    this(errorDesc)
+    super.initCause(t)
+  }
+}

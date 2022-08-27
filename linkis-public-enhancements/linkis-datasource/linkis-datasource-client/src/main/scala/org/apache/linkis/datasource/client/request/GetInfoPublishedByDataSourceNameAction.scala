@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,11 +21,11 @@ import org.apache.linkis.datasource.client.config.DatasourceClientConfig.DATA_SO
 import org.apache.linkis.datasource.client.exception.DataSourceClientBuilderException
 import org.apache.linkis.httpclient.request.GetAction
 
-
 class GetInfoPublishedByDataSourceNameAction extends GetAction with DataSourceAction {
   private var dataSourceName: String = _
 
-  override def suffixURLs: Array[String] = Array(DATA_SOURCE_SERVICE_MODULE.getValue, "publishedInfo", "name", dataSourceName)
+  override def suffixURLs: Array[String] =
+    Array(DATA_SOURCE_SERVICE_MODULE.getValue, "publishedInfo", "name", dataSourceName)
 
   private var user: String = _
 
@@ -34,12 +34,10 @@ class GetInfoPublishedByDataSourceNameAction extends GetAction with DataSourceAc
   override def getUser: String = this.user
 }
 
-
-
 object GetInfoPublishedByDataSourceNameAction {
   def builder(): Builder = new Builder
 
-  class Builder private[GetInfoPublishedByDataSourceNameAction]() {
+  class Builder private[GetInfoPublishedByDataSourceNameAction] () {
     private var dataSourceName: String = _
     private var system: String = _
     private var user: String = _
@@ -60,7 +58,8 @@ object GetInfoPublishedByDataSourceNameAction {
     }
 
     def build(): GetInfoPublishedByDataSourceNameAction = {
-      if (dataSourceName == null) throw new DataSourceClientBuilderException("dataSourceName is needed!")
+      if (dataSourceName == null)
+        throw new DataSourceClientBuilderException("dataSourceName is needed!")
       if (system == null) throw new DataSourceClientBuilderException("system is needed!")
       if (user == null) throw new DataSourceClientBuilderException("user is needed!")
 
@@ -70,8 +69,7 @@ object GetInfoPublishedByDataSourceNameAction {
       getPublishedInfoByDataSourceNameAction.setUser(user)
       getPublishedInfoByDataSourceNameAction
     }
+
   }
 
 }
-
-

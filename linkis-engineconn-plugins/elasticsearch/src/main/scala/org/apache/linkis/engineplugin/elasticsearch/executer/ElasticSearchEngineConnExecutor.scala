@@ -141,7 +141,6 @@ class ElasticSearchEngineConnExecutor(
     }
   }
 
-
   private def buildRuntimeParams(engineConnTask: EngineConnTask): util.Map[String, String] = {
 
     // parameters specified at runtime
@@ -151,7 +150,8 @@ class ElasticSearchEngineConnExecutor(
     }
 
     // global  engine params by console
-    val globalConfig: util.Map[String, String] = Utils.tryAndWarn(ElasticSearchEngineConsoleConf.getCacheMap(engineConnTask.getLables))
+    val globalConfig: util.Map[String, String] =
+      Utils.tryAndWarn(ElasticSearchEngineConsoleConf.getCacheMap(engineConnTask.getLables))
 
     if (!executorProperties.isEmpty) {
       globalConfig.putAll(executorProperties)
@@ -160,8 +160,11 @@ class ElasticSearchEngineConnExecutor(
     globalConfig
   }
 
-
-  override def executeCompletely(engineExecutorContext: EngineExecutionContext, code: String, completedLine: String): ExecuteResponse = null
+  override def executeCompletely(
+      engineExecutorContext: EngineExecutionContext,
+      code: String,
+      completedLine: String
+  ): ExecuteResponse = null
 
   override def progress(taskID: String): Float = 0.0f
 

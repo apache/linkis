@@ -55,29 +55,29 @@ public interface DataSourceInfoService {
    */
   DataSource getDataSourceInfo(Long dataSourceId);
 
-    /**
-     * Get data source for current version by data source name
-     *
-     * @param dataSourceName data source name
-     * @return data source entity
-     */
-    DataSource getDataSourceInfo(String dataSourceName);
+  /**
+   * Get data source for current version by data source name
+   *
+   * @param dataSourceName data source name
+   * @return data source entity
+   */
+  DataSource getDataSourceInfo(String dataSourceName);
 
-    /**
-     * Get data source for latest published version by data source name
-     *
-     * @param dataSourceName data source name
-     * @return data source entity
-     */
-    DataSource getDataSourcePublishInfo(String dataSourceName);
+  /**
+   * Get data source for latest published version by data source name
+   *
+   * @param dataSourceName data source name
+   * @return data source entity
+   */
+  DataSource getDataSourcePublishInfo(String dataSourceName);
 
-    /**
-     * Get data source
-     *
-     * @param dataSourceId id
-     * @return data source entity
-     */
-    DataSource getDataSourceInfo(Long dataSourceId, Long version);
+  /**
+   * Get data source
+   *
+   * @param dataSourceId id
+   * @return data source entity
+   */
+  DataSource getDataSourceInfo(Long dataSourceId, Long version);
 
   /**
    * Get data source brief information

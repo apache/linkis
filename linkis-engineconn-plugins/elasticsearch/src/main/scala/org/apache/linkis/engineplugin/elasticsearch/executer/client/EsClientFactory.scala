@@ -14,25 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.linkis.engineplugin.elasticsearch.executer.client
 
-import java.util
-import java.util.Map
+import org.apache.linkis.common.conf.CommonVars
+import org.apache.linkis.engineplugin.elasticsearch.conf.ElasticSearchConfiguration._
+import org.apache.linkis.engineplugin.elasticsearch.exception.EsParamsIllegalException
 
 import org.apache.commons.lang3.StringUtils
+import org.apache.http.{Header, HttpHost}
 import org.apache.http.auth.{AuthScope, UsernamePasswordCredentials}
 import org.apache.http.client.CredentialsProvider
 import org.apache.http.impl.client.BasicCredentialsProvider
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder
 import org.apache.http.message.BasicHeader
-import org.apache.http.{Header, HttpHost}
-import org.apache.linkis.common.conf.CommonVars
-import org.apache.linkis.engineplugin.elasticsearch.conf.ElasticSearchConfiguration._
-import org.apache.linkis.engineplugin.elasticsearch.exception.EsParamsIllegalException
-import org.elasticsearch.client.sniff.Sniffer
-import org.elasticsearch.client.{RestClient, RestClientBuilder}
+
+import java.util
+import java.util.Map
 
 import scala.collection.JavaConverters._
+
+import org.elasticsearch.client.{RestClient, RestClientBuilder}
+import org.elasticsearch.client.sniff.Sniffer
 
 object EsClientFactory {
 
@@ -54,13 +57,17 @@ object EsClientFactory {
   }
 
   private val MAX_CACHE_CLIENT_SIZE = 20
+
   private val ES_CLIENT_MAP: Map[String, EsClient] = new util.LinkedHashMap[String, EsClient]() {
-    override def removeEldestEntry(eldest: Map.Entry[String, EsClient]): Boolean = if (size > MAX_CACHE_CLIENT_SIZE) {
-      eldest.getValue.close()
-      true
-    } else {
-      false
-    }
+
+    override def removeEldestEntry(eldest: Map.Entry[String, EsClient]): Boolean =
+      if (size > MAX_CACHE_CLIENT_SIZE) {
+        eldest.getValue.close()
+        true
+      } else {
+        false
+      }
+
   }
 
   private def getDatasourceName(options: util.Map[String, String]): String = {
@@ -88,9 +95,12 @@ object EsClientFactory {
     }
 
     val httpHosts = cluster.map(item => new HttpHost(item._1, item._2))
-    val builder = RestClient.builder(httpHosts: _*)
+    val builder = RestClient
+      .builder(httpHosts: _*)
       .setHttpClientConfigCallback(new RestClientBuilder.HttpClientConfigCallback() {
-        override def customizeHttpClient(httpAsyncClientBuilder: HttpAsyncClientBuilder): HttpAsyncClientBuilder = {
+        override def customizeHttpClient(
+            httpAsyncClientBuilder: HttpAsyncClientBuilder
+        ): HttpAsyncClientBuilder = {
           if (!ES_AUTH_CACHE.getValue) {
             httpAsyncClientBuilder.disableAuthCaching
           }
@@ -130,27 +140,43 @@ object EsClientFactory {
     }
   }
 
-  private val defaultHeaders: Array[Header] = CommonVars.properties.entrySet().asScala
-    .filter(entry => entry.getKey != null && entry.getValue != null && entry.getKey.toString.startsWith(ES_HTTP_HEADER_PREFIX))
-    .map(entry => new BasicHeader(entry.getKey.toString, entry.getValue.toString)).toArray[Header]
+  private val defaultHeaders: Array[Header] = CommonVars.properties
+    .entrySet()
+    .asScala
+    .filter(entry =>
+      entry.getKey != null && entry.getValue != null && entry.getKey.toString
+        .startsWith(ES_HTTP_HEADER_PREFIX)
+    )
+    .map(entry => new BasicHeader(entry.getKey.toString, entry.getValue.toString))
+    .toArray[Header]
 
   // host1:port1,host2:port2 -> [(host1,port1),(host2,port2)]
-  private def getCluster(clusterStr: String): Array[(String, Int)] = if (StringUtils.isNotBlank(clusterStr)) {
-    clusterStr.split(",")
-      .map(value => {
-        val arr = value.replace("http://", "").split(":")
-        (arr(0).trim, arr(1).trim.toInt)
-      })
-  } else Array()
+  private def getCluster(clusterStr: String): Array[(String, Int)] =
+    if (StringUtils.isNotBlank(clusterStr)) {
+      clusterStr
+        .split(",")
+        .map(value => {
+          val arr = value.replace("http://", "").split(":")
+          (arr(0).trim, arr(1).trim.toInt)
+        })
+    } else Array()
 
   // set cluster auth
-  private def setAuthScope(cluster: Array[(String, Int)], username: String, password: String): Unit = if (cluster != null && !cluster.isEmpty
-    && StringUtils.isNotBlank(username)
-    && StringUtils.isNotBlank(password)) {
+  private def setAuthScope(
+      cluster: Array[(String, Int)],
+      username: String,
+      password: String
+  ): Unit = if (
+      cluster != null && !cluster.isEmpty
+      && StringUtils.isNotBlank(username)
+      && StringUtils.isNotBlank(password)
+  ) {
     cluster.foreach {
       case (host, port) => {
-        credentialsProvider.setCredentials(new AuthScope(host, port, AuthScope.ANY_REALM, AuthScope.ANY_SCHEME)
-          , new UsernamePasswordCredentials(username, password))
+        credentialsProvider.setCredentials(
+          new AuthScope(host, port, AuthScope.ANY_REALM, AuthScope.ANY_SCHEME),
+          new UsernamePasswordCredentials(username, password)
+        )
       }
       case _ =>
     }

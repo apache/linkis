@@ -42,10 +42,11 @@ class EurekaInstanceLabelClient extends Logging {
   @Autowired
   private var registration: Registration = _
 
-  @EventListener
+  @EventListener(classes = Array(classOf[AvailabilityChangeEvent[AvailabilityState]]))
   def init(availabilityChangeEvent: AvailabilityChangeEvent[AvailabilityState]): Unit = {
+    logger.info(s"EurekaInstanceLabelClient app state ${availabilityChangeEvent.getState}")
     availabilityChangeEvent.getState match {
-      case state: ReadinessState if state.equals(ReadinessState.ACCEPTING_TRAFFIC) =>
+      case state: ReadinessState if state == ReadinessState.ACCEPTING_TRAFFIC =>
         logger.info("EurekaInstanceLabelClient init")
         val metadata = registration.getMetadata
         if (

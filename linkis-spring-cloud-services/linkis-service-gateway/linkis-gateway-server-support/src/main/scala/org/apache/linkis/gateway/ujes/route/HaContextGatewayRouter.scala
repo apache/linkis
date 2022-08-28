@@ -95,9 +95,9 @@ class HaContextGatewayRouter extends AbstractGatewayRouter {
 
   def dealContextCreate(gatewayContext: GatewayContext): ServiceInstance = {
     val serviceId = findService(
-      HaContextGatewayRouter.CONTEXT_SERVICE_NAME,
+      RPCConfiguration.CONTEXT_SERVICE_NAME,
       list => {
-        val services = list.filter(_.contains(HaContextGatewayRouter.CONTEXT_SERVICE_NAME))
+        val services = list.filter(_.contains(RPCConfiguration.CONTEXT_SERVICE_NAME))
         services.headOption
       }
     )
@@ -135,9 +135,9 @@ class HaContextGatewayRouter extends AbstractGatewayRouter {
     val instances = contextIDParser.parse(contextId)
     var serviceId: Option[String] = None
     serviceId = findService(
-      HaContextGatewayRouter.CONTEXT_SERVICE_NAME,
+      RPCConfiguration.CONTEXT_SERVICE_NAME,
       list => {
-        val services = list.filter(_.contains(HaContextGatewayRouter.CONTEXT_SERVICE_NAME))
+        val services = list.filter(_.contains(RPCConfiguration.CONTEXT_SERVICE_NAME))
         services.headOption
       }
     )
@@ -159,12 +159,14 @@ object HaContextGatewayRouter {
 
   val CONTEXT_ID_STR: String = "contextId"
 
+  @deprecated("please use RPCConfiguration.CONTEXT_SERVICE_REQUEST_PREFIX")
   val CONTEXT_SERVICE_REQUEST_PREFIX = "contextservice"
 
+  @deprecated("please use RPCConfiguration.CONTEXT_SERVICE_NAME")
   val CONTEXT_SERVICE_NAME: String =
     if (
         RPCConfiguration.ENABLE_PUBLIC_SERVICE.getValue && RPCConfiguration.PUBLIC_SERVICE_LIST
-          .exists(_.equalsIgnoreCase(CONTEXT_SERVICE_REQUEST_PREFIX))
+          .exists(_.equalsIgnoreCase(RPCConfiguration.CONTEXT_SERVICE_REQUEST_PREFIX))
     ) {
       RPCConfiguration.PUBLIC_SERVICE_APPLICATION_NAME.getValue
     } else {

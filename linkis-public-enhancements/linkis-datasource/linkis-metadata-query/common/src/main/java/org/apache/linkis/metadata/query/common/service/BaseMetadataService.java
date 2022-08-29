@@ -34,13 +34,14 @@ public interface BaseMetadataService {
 
     /**
      * Get connection information (default empty)
+     *
      * @param operator operator
      * @param params connect params
      * @param queryParams query params
      * @return information
      */
     default Map<String, String> getConnectionInfo(
-            String operator, Map<String, Object> params, Map<String, String> queryParams){
+            String operator, Map<String, Object> params, Map<String, String> queryParams) {
         return Collections.emptyMap();
     }
 }

@@ -17,9 +17,11 @@
 
 package org.apache.linkis.metadata.query.service;
 
+import org.apache.linkis.hadoop.common.utils.HDFSUtils;
+
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
-import org.apache.linkis.hadoop.common.utils.HDFSUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,33 +30,28 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Objects;
 
-/**
- * Hdfs connection
- */
+/** Hdfs connection */
 public class HdfsConnection implements Closeable {
 
     private static final Logger LOG = LoggerFactory.getLogger(HdfsConnection.class);
 
-    /**
-     * Hadoop configuration
-     */
+    /** Hadoop configuration */
     private final Configuration hadoopConf;
 
-    /**
-     * File system
-     */
+    /** File system */
     private final FileSystem fs;
 
     public HdfsConnection(String scheme, String operator, String clusterLabel, boolean cache)
-            throws IOException{
+            throws IOException {
         // TODO fix the problem of connecting multiple cluster in FSFactory.getFSByLabelAndUser
-//        Fs fileSystem = FSFactory.getFSByLabelAndUser(scheme, operator, clusterLabel);
+        //        Fs fileSystem = FSFactory.getFSByLabelAndUser(scheme, operator, clusterLabel);
         hadoopConf = HDFSUtils.getConfigurationByLabel(operator, clusterLabel);
         fs = createFileSystem(operator, this.hadoopConf, cache);
     }
 
-    public HdfsConnection(String scheme, String operator, Map<String, String> configuration, boolean cache){
-        if (Objects.nonNull(configuration)){
+    public HdfsConnection(
+            String scheme, String operator, Map<String, String> configuration, boolean cache) {
+        if (Objects.nonNull(configuration)) {
             hadoopConf = new Configuration();
             configuration.forEach(hadoopConf::set);
         } else {
@@ -62,6 +59,7 @@ public class HdfsConnection implements Closeable {
         }
         fs = createFileSystem(operator, this.hadoopConf, cache);
     }
+
     @Override
     public void close() throws IOException {
         this.fs.close();
@@ -69,36 +67,40 @@ public class HdfsConnection implements Closeable {
 
     /**
      * Get schema value
+     *
      * @return schema
      */
-    public String getSchema(){
+    public String getSchema() {
         return fs.getScheme();
     }
 
     /**
      * Get hadoop configuration
+     *
      * @return configuration
      */
-    public Configuration getConfiguration(){
+    public Configuration getConfiguration() {
         return this.hadoopConf;
     }
 
     /**
      * Get file system
+     *
      * @return file system
      */
-    public FileSystem getFileSystem(){
+    public FileSystem getFileSystem() {
         return this.fs;
     }
     /**
      * Create file system
+     *
      * @param operator operator
      * @param hadoopConf hadoop conf
      * @param cache cache
      * @return file system
      */
-    private FileSystem createFileSystem(String operator, Configuration hadoopConf, boolean cache){
-        if (!cache){
+    private FileSystem createFileSystem(String operator, Configuration hadoopConf, boolean cache) {
+        if (!cache) {
             hadoopConf.set("fs.hdfs.impl.disable.cache", "true");
         }
         return HDFSUtils.createFileSystem(operator, hadoopConf);

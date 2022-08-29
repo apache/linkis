@@ -20,15 +20,18 @@ package org.apache.linkis.metadata.query.common.service;
 import org.apache.linkis.common.exception.WarnException;
 import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
 import org.apache.linkis.metadata.query.common.domain.MetaPartitionInfo;
+
 import java.io.Closeable;
 import java.util.List;
 import java.util.Map;
 
 /**
  * Database meta service
+ *
  * @param <C>
  */
-public abstract class AbstractDbMetaService<C extends Closeable> extends AbstractCacheMetaService<C> implements MetadataDbService {
+public abstract class AbstractDbMetaService<C extends Closeable> extends AbstractCacheMetaService<C>
+        implements MetadataDbService {
 
     @Override
     public List<String> getDatabases(String operator, Map<String, Object> params) {
@@ -149,6 +152,4 @@ public abstract class AbstractDbMetaService<C extends Closeable> extends Abstrac
     public Map<String, String> queryTableProps(C connection, String database, String table) {
         throw new WarnException(-1, "This method is no supported");
     }
-
-
 }

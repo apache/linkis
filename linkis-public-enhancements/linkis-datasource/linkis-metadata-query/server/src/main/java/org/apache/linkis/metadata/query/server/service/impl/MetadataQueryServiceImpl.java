@@ -197,16 +197,16 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
     }
 
     @Override
-    public Map<String, String> getConnectionInfoByDsName(String dataSourceName, Map<String, String> queryParams,
-                                                         String system, String userName) throws ErrorException {
+    public Map<String, String> getConnectionInfoByDsName(
+            String dataSourceName, Map<String, String> queryParams, String system, String userName)
+            throws ErrorException {
         DsInfoResponse dsInfoResponse = queryDataSourceInfoByName(dataSourceName, system, userName);
         if (StringUtils.isNotBlank(dsInfoResponse.dsType())) {
             return invokeMetaMethod(
                     dsInfoResponse.dsType(),
                     "getConnectionInfo",
                     new Object[] {dsInfoResponse.creator(), dsInfoResponse.params(), queryParams},
-                    Map.class
-            );
+                    Map.class);
         }
         return new HashMap<>();
     }
@@ -376,7 +376,8 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
             rpcResult = reqGetDefaultDataSource(dataSourceName);
             if (Objects.isNull(rpcResult)) {
                 rpcResult =
-                        dataSourceRpcSender.ask(new DsInfoQueryRequest(null, dataSourceName, system));
+                        dataSourceRpcSender.ask(
+                                new DsInfoQueryRequest(null, dataSourceName, system));
             } else {
                 useDefault = true;
             }
@@ -406,14 +407,19 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
 
     /**
      * Request to get default data source
+     *
      * @param dataSourceName data source name
      * @return response
      */
-    private DsInfoResponse reqGetDefaultDataSource(String dataSourceName){
+    private DsInfoResponse reqGetDefaultDataSource(String dataSourceName) {
         DataSource dataSource = DataSources.getDefault(dataSourceName);
-        return (Objects.nonNull(dataSource))? new DsInfoResponse(true,
-                dataSource.getDataSourceType().getName(), dataSource.getConnectParams(), dataSource.getCreateUser()) :
-                null ;
+        return (Objects.nonNull(dataSource))
+                ? new DsInfoResponse(
+                        true,
+                        dataSource.getDataSourceType().getName(),
+                        dataSource.getConnectParams(),
+                        dataSource.getCreateUser())
+                : null;
     }
     /**
      * Invoke method in meta service
@@ -454,5 +460,4 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
         }
         return null;
     }
-
 }

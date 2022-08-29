@@ -49,17 +49,18 @@ public class MetadataUtils {
 
     /**
      * Get the primitive class
+     *
      * @param clazz class
      * @return return
      */
-    public static Class<?> getPrimitive(Class<?> clazz){
+    public static Class<?> getPrimitive(Class<?> clazz) {
         try {
             Class<?> primitive = null;
             if (clazz.isPrimitive()) {
                 primitive = clazz;
             } else {
                 Class<?> innerType = ((Class<?>) clazz.getField("TYPE").get(null));
-                if (innerType.isPrimitive()){
+                if (innerType.isPrimitive()) {
                     primitive = innerType;
                 }
             }
@@ -68,8 +69,10 @@ public class MetadataUtils {
             return null;
         }
     }
+
     public static BaseMetadataService loadMetaService(
-            Class<? extends BaseMetadataService> metaServiceClass, ClassLoader metaServiceClassLoader) {
+            Class<? extends BaseMetadataService> metaServiceClass,
+            ClassLoader metaServiceClassLoader) {
         ClassLoader storeClassLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(metaServiceClassLoader);
         try {
@@ -137,7 +140,7 @@ public class MetadataUtils {
             return Class.forName(className, initialize, classLoader)
                     .asSubclass(BaseMetadataService.class);
         } catch (ClassNotFoundException ne) {
-//            LOG.warn(notFoundMessage, ne);
+            //            LOG.warn(notFoundMessage, ne);
             LOG.warn(notFoundMessage);
         }
         return null;

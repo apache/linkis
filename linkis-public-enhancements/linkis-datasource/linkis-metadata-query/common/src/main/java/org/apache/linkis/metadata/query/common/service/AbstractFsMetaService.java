@@ -22,9 +22,11 @@ import java.util.Map;
 
 /**
  * Filesystem meta service
+ *
  * @param <C>
  */
-public abstract class AbstractFsMetaService<C extends Closeable> extends AbstractCacheMetaService<C> implements MetadataFsService{
+public abstract class AbstractFsMetaService<C extends Closeable> extends AbstractCacheMetaService<C>
+        implements MetadataFsService {
     @Override
     public String getSchema(String operator, Map<String, Object> params) {
         return this.getConnAndRun(operator, params, this::getSchema);

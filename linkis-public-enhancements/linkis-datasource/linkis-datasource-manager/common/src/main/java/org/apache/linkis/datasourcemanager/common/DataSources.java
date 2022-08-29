@@ -26,30 +26,31 @@ import java.util.Map;
 
 public class DataSources {
 
-    /**
-     * Default HDFS name
-     */
+    /** Default HDFS name */
     private static final CommonVars<String> DEFAULT_HDFS_NAME =
             CommonVars.apply("wds.linkis.server.dsm.default.hdfs.name", ".LOCAL_HDFS");
 
-    private static final Map<String, DataSource> DEFAULT_DATASOURCES= new HashMap<>();
+    private static final Map<String, DataSource> DEFAULT_DATASOURCES = new HashMap<>();
 
-    static{
+    static {
         DataSourceType hdfsType = new DataSourceType();
         hdfsType.setName("hdfs");
         DataSource hdfs = new DataSource();
         hdfs.setDataSourceType(hdfsType);
         hdfs.setDataSourceName(DEFAULT_HDFS_NAME.getValue());
         DEFAULT_DATASOURCES.put(hdfs.getDataSourceName(), hdfs);
-        DEFAULT_DATASOURCES.values().forEach(dataSource -> dataSource.setCreateUser(System.getProperty("user.name")));
+        DEFAULT_DATASOURCES
+                .values()
+                .forEach(dataSource -> dataSource.setCreateUser(System.getProperty("user.name")));
     }
 
     /**
      * Find the default data source by name
+     *
      * @param dataSourceName data source name
      * @return data source
      */
-    public static DataSource getDefault(String dataSourceName){
+    public static DataSource getDefault(String dataSourceName) {
         return DEFAULT_DATASOURCES.get(dataSourceName);
     }
 }

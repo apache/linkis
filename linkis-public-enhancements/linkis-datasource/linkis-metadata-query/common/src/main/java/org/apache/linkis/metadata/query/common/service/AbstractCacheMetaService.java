@@ -17,17 +17,20 @@
 
 package org.apache.linkis.metadata.query.common.service;
 
-import com.google.common.cache.Cache;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.linkis.datasourcemanager.common.util.json.Json;
 import org.apache.linkis.metadata.query.common.cache.CacheConfiguration;
 import org.apache.linkis.metadata.query.common.cache.CacheManager;
 import org.apache.linkis.metadata.query.common.cache.ConnCacheManager;
 import org.apache.linkis.metadata.query.common.exception.MetaRuntimeException;
+
+import org.apache.commons.lang3.StringUtils;
+
+import javax.annotation.PostConstruct;
+
+import com.google.common.cache.Cache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.PostConstruct;
 import java.io.Closeable;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -41,6 +44,7 @@ import java.util.function.Function;
 
 /**
  * Meta service use cache manager
+ *
  * @param <C>
  */
 public abstract class AbstractCacheMetaService<C extends Closeable> implements BaseMetadataService {
@@ -65,7 +69,7 @@ public abstract class AbstractCacheMetaService<C extends Closeable> implements B
      * @param cacheManager cache manage
      */
     protected void initCache(CacheManager cacheManager) {
-        if (useCache()){
+        if (useCache()) {
             String prefix = this.getClass().getSimpleName();
             reqCache =
                     cacheManager.buildCache(
@@ -81,21 +85,23 @@ public abstract class AbstractCacheMetaService<C extends Closeable> implements B
 
     /**
      * If use the cache
+     *
      * @return boolean
      */
     protected boolean useCache() {
         return true;
     }
+
     @Override
     public abstract MetadataConnection<C> getConnection(String operator, Map<String, Object> params)
             throws Exception;
 
     @Override
-    public Map<String, String> getConnectionInfo(String operator, Map<String, Object> params, Map<String, String> queryParams) {
-        return this.getConnAndRun(operator, params, connection ->
-                    this.queryConnectionInfo(connection, queryParams));
+    public Map<String, String> getConnectionInfo(
+            String operator, Map<String, Object> params, Map<String, String> queryParams) {
+        return this.getConnAndRun(
+                operator, params, connection -> this.queryConnectionInfo(connection, queryParams));
     }
-
 
     public void close(C connection) {
         try {
@@ -108,13 +114,15 @@ public abstract class AbstractCacheMetaService<C extends Closeable> implements B
 
     /**
      * Get connection information
+     *
      * @param connection connection
      * @param queryParams query params
      * @return map
      */
-    public Map<String, String> queryConnectionInfo(C connection, Map<String, String> queryParams){
+    public Map<String, String> queryConnectionInfo(C connection, Map<String, String> queryParams) {
         return Collections.emptyMap();
     }
+
     protected <R> R getConnAndRun(
             String operator, Map<String, Object> params, Function<C, R> action) {
         String cacheKey = "";

@@ -168,41 +168,83 @@ public class MetaClassLoaderManager {
                 Thread.currentThread().setContextClassLoader(finalServiceInstance.metaClassLoader);
                 List<Method> methodsMatched =
                         Arrays.stream(childMethods)
-                                .filter(eachMethod -> {
-                                    if (eachMethod.getName().equals(m)){
-                                        Class<?>[] parameterType = eachMethod.getParameterTypes();
-                                        if (parameterType.length == args.length){
-                                            for(int i = 0; i < parameterType.length; i++){
-                                                if (Objects.nonNull(args[i])) {
-                                                    boolean matches = parameterType[i].isAssignableFrom(args[i].getClass()) ||
-                                                            ((args[i].getClass().isPrimitive() || parameterType[i].isPrimitive()) &&
-                                                                    MetadataUtils.getPrimitive(args[i].getClass()) == MetadataUtils.getPrimitive(parameterType[i]));
-                                                    if (!matches) {
-                                                        return false;
+                                .filter(
+                                        eachMethod -> {
+                                            if (eachMethod.getName().equals(m)) {
+                                                Class<?>[] parameterType =
+                                                        eachMethod.getParameterTypes();
+                                                if (parameterType.length == args.length) {
+                                                    for (int i = 0; i < parameterType.length; i++) {
+                                                        if (Objects.nonNull(args[i])) {
+                                                            boolean matches =
+                                                                    parameterType[i]
+                                                                                    .isAssignableFrom(
+                                                                                            args[i]
+                                                                                                    .getClass())
+                                                                            || ((args[i].getClass()
+                                                                                                    .isPrimitive()
+                                                                                            || parameterType[
+                                                                                                    i]
+                                                                                                    .isPrimitive())
+                                                                                    && MetadataUtils
+                                                                                                    .getPrimitive(
+                                                                                                            args[
+                                                                                                                    i]
+                                                                                                                    .getClass())
+                                                                                            == MetadataUtils
+                                                                                                    .getPrimitive(
+                                                                                                            parameterType[
+                                                                                                                    i]));
+                                                            if (!matches) {
+                                                                return false;
+                                                            }
+                                                        }
                                                     }
+                                                    return true;
                                                 }
                                             }
-                                            return true;
-                                        }
-                                    }
-                                    return false;
-                                })
+                                            return false;
+                                        })
                                 .collect(Collectors.toList());
-                if (methodsMatched.isEmpty()){
+                if (methodsMatched.isEmpty()) {
                     String type = null;
-                    if (Objects.nonNull(args)){
-                        type = Arrays.stream(args)
-                                .map(arg -> Objects.nonNull(arg)? arg.getClass().toString(): "null").collect(Collectors.joining(","));
+                    if (Objects.nonNull(args)) {
+                        type =
+                                Arrays.stream(args)
+                                        .map(
+                                                arg ->
+                                                        Objects.nonNull(arg)
+                                                                ? arg.getClass().toString()
+                                                                : "null")
+                                        .collect(Collectors.joining(","));
                     }
-                    String message = "Unknown method: [ name: " + m + ", type: [" + type + "]] for meta service instance: ["
-                            + finalServiceInstance.getServiceInstance().toString() + "]";
+                    String message =
+                            "Unknown method: [ name: "
+                                    + m
+                                    + ", type: ["
+                                    + type
+                                    + "]] for meta service instance: ["
+                                    + finalServiceInstance.getServiceInstance().toString()
+                                    + "]";
                     LOG.warn(message);
                     throw new MetaRuntimeException(message, null);
-                } else if (methodsMatched.size() > 1){
-                    LOG.warn("Find multiple matched methods with name: [" + m + "] such as: \n" +
-                            methodsMatched.stream().map(method ->
-                                    method.getName() + ":" + Arrays.toString(method.getParameterTypes())).collect(Collectors.joining("\n")) +
-                            "\n in meta service instance: [" + finalServiceInstance.getServiceInstance().toString() + "], will choose the first one");
+                } else if (methodsMatched.size() > 1) {
+                    LOG.warn(
+                            "Find multiple matched methods with name: ["
+                                    + m
+                                    + "] such as: \n"
+                                    + methodsMatched.stream()
+                                            .map(
+                                                    method ->
+                                                            method.getName()
+                                                                    + ":"
+                                                                    + Arrays.toString(
+                                                                            method
+                                                                                    .getParameterTypes()))
+                                            .collect(Collectors.joining("\n"))
+                                    + "\n in meta service instance: ["
+                                    + finalServiceInstance.getServiceInstance().toString()
+                                    + "], will choose the first one");
                 }
                 return methodsMatched.get(0).invoke(finalServiceInstance.serviceInstance, args);
             } catch (Exception e) {
@@ -290,7 +332,8 @@ public class MetaClassLoaderManager {
 
         private long initTimeStamp = 0L;
 
-        public MetaServiceInstance(BaseMetadataService serviceInstance, ClassLoader metaClassLoader) {
+        public MetaServiceInstance(
+                BaseMetadataService serviceInstance, ClassLoader metaClassLoader) {
             this.serviceInstance = serviceInstance;
             this.metaClassLoader = metaClassLoader;
             this.methods = serviceInstance.getClass().getMethods();

@@ -17,7 +17,6 @@
 
 package org.apache.linkis.metadata.query.service;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.linkis.common.conf.CommonVars;
 import org.apache.linkis.datasourcemanager.common.util.json.Json;
 import org.apache.linkis.hadoop.common.conf.HadoopConf;
@@ -25,6 +24,9 @@ import org.apache.linkis.metadata.query.common.exception.MetaRuntimeException;
 import org.apache.linkis.metadata.query.common.service.AbstractFsMetaService;
 import org.apache.linkis.metadata.query.common.service.MetadataConnection;
 import org.apache.linkis.metadata.query.service.conf.ConfigurationUtils;
+
+import org.apache.commons.lang3.StringUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,79 +35,88 @@ import java.net.URISyntaxException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
-/**
- * Hdfs meta service
- */
+/** Hdfs meta service */
 public class HdfsMetaService extends AbstractFsMetaService<HdfsConnection> {
 
     private static final Logger LOG = LoggerFactory.getLogger(HdfsMetaService.class);
 
     private static final String PARAM_FILTER_RULE = "filter";
-    /**
-     * Filter rules
-     */
-    private static final CommonVars<String> DEFAULT_FILTER_RULES = CommonVars.apply("wds.linkis.server.mdm.service.hadoop.filter.rules",
-            StringUtils.join(new String[]{
-                    "fs.defaultFS",
-                    "dfs.nameservices",
-                    "dfs.ha.namenodes.<service>",
-                    "dfs.namenode.rpc-address.<suffix>",
-                    "dfs.client.failover.proxy.provider.<suffix>"
-            }, ","));
+    /** Filter rules */
+    private static final CommonVars<String> DEFAULT_FILTER_RULES =
+            CommonVars.apply(
+                    "wds.linkis.server.mdm.service.hadoop.filter.rules",
+                    StringUtils.join(
+                            new String[] {
+                                "fs.defaultFS",
+                                "dfs.nameservices",
+                                "dfs.ha.namenodes.<service>",
+                                "dfs.namenode.rpc-address.<suffix>",
+                                "dfs.client.failover.proxy.provider.<suffix>"
+                            },
+                            ","));
 
     @Override
-    public MetadataConnection<HdfsConnection> getConnection(String creator, Map<String, Object> params) throws Exception {
-        Map<String, String> hadoopConf = toMap(params, HdfsParamsMapper.PARAM_HADOOP_CONF.getValue());
-        if (Objects.nonNull(hadoopConf) && !hadoopConf.isEmpty()){
+    public MetadataConnection<HdfsConnection> getConnection(
+            String creator, Map<String, Object> params) throws Exception {
+        Map<String, String> hadoopConf =
+                toMap(params, HdfsParamsMapper.PARAM_HADOOP_CONF.getValue());
+        if (Objects.nonNull(hadoopConf) && !hadoopConf.isEmpty()) {
             return new MetadataConnection<>(
                     new HdfsConnection("", creator, hadoopConf, !useCache()), true);
         } else {
-            String clusterLabel = Optional.ofNullable(toMap(params, "labels"))
-                    .orElse(Collections.emptyMap()).get(HdfsParamsMapper.PARAM_HADOOP_LABEL_CLUSTER.getValue());
-            LOG.info("Use Hadoop root config directory: " + HadoopConf.hadoopConfDir() );
+            String clusterLabel =
+                    Optional.ofNullable(toMap(params, "labels"))
+                            .orElse(Collections.emptyMap())
+                            .get(HdfsParamsMapper.PARAM_HADOOP_LABEL_CLUSTER.getValue());
+            LOG.info("Use Hadoop root config directory: " + HadoopConf.hadoopConfDir());
             return new MetadataConnection<>(
                     new HdfsConnection("", creator, clusterLabel, !useCache()), true);
         }
     }
 
     @Override
-    public Map<String, String> queryConnectionInfo(HdfsConnection connection, Map<String, String> queryParams) {
+    public Map<String, String> queryConnectionInfo(
+            HdfsConnection connection, Map<String, String> queryParams) {
         List<String> filterRules = new ArrayList<>();
         AtomicReference<URI> uriReference = new AtomicReference<>();
         Optional.ofNullable(queryParams.get("uri"))
-                .ifPresent(uri -> {
-                    try {
-                        uriReference.set(new URI(uri));
-                    } catch (URISyntaxException e) {
-                        LOG.warn("Unrecognized uri value: [" + uri + "]", e);
-                    }
-                });
+                .ifPresent(
+                        uri -> {
+                            try {
+                                uriReference.set(new URI(uri));
+                            } catch (URISyntaxException e) {
+                                LOG.warn("Unrecognized uri value: [" + uri + "]", e);
+                            }
+                        });
         Optional.ofNullable(queryParams.get(PARAM_FILTER_RULE))
-                .ifPresent(rules -> {if (StringUtils.isNotBlank(rules)) {
-            filterRules.addAll(Arrays.asList(rules.split(",")));
-        }});
-        if (filterRules.isEmpty()){
+                .ifPresent(
+                        rules -> {
+                            if (StringUtils.isNotBlank(rules)) {
+                                filterRules.addAll(Arrays.asList(rules.split(",")));
+                            }
+                        });
+        if (filterRules.isEmpty()) {
             filterRules.addAll(Arrays.asList(DEFAULT_FILTER_RULES.getValue().split(",")));
         }
-        return ConfigurationUtils.filterConfiguration(connection.getFileSystem(), filterRules, uriReference.get());
+        return ConfigurationUtils.filterConfiguration(
+                connection.getFileSystem(), filterRules, uriReference.get());
     }
 
     @SuppressWarnings("unchecked")
-    private Map<String, String> toMap(Map<String, Object> connectParams, String key){
+    private Map<String, String> toMap(Map<String, Object> connectParams, String key) {
         Map<String, String> valueMap = new HashMap<>();
         Object mapObj = connectParams.get(key);
-        if (Objects.nonNull(mapObj)){
-            try{
-                if (!(mapObj instanceof Map)){
-                    valueMap = Json.fromJson(String.valueOf(mapObj),
-                            Map.class, String.class, String.class);
+        if (Objects.nonNull(mapObj)) {
+            try {
+                if (!(mapObj instanceof Map)) {
+                    valueMap =
+                            Json.fromJson(
+                                    String.valueOf(mapObj), Map.class, String.class, String.class);
                 } else {
                     valueMap = (Map<String, String>) mapObj;
                 }
             } catch (Exception e) {
-                throw new MetaRuntimeException(
-                        "Cannot parse the param:[" + key + "]", null
-                );
+                throw new MetaRuntimeException("Cannot parse the param:[" + key + "]", null);
             }
         }
         return valueMap;

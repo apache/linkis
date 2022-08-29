@@ -18,17 +18,15 @@ package org.apache.linkis.metadata.query.common.service;
 
 import java.util.Map;
 
-/**
- * Metadata Fs service
- */
-public interface MetadataFsService extends BaseMetadataService{
+/** Metadata Fs service */
+public interface MetadataFsService extends BaseMetadataService {
 
     /**
      * Get the File System schema
+     *
      * @return schema name
      */
     default String getSchema(String operator, Map<String, Object> params) {
         return "file";
     }
-
 }

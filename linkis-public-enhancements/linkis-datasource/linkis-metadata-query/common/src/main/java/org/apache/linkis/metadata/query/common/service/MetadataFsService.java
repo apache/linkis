@@ -14,7 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.linkis.metadata.query.common.service;
 
-public interface MetadataService extends MetadataDbService {}
+import java.util.Map;
+
+/** Metadata Fs service */
+public interface MetadataFsService extends BaseMetadataService {
+
+  /**
+   * Get the File System schema
+   *
+   * @return schema name
+   */
+  default String getSchema(String operator, Map<String, Object> params) {
+    return "file";
+  }
+}

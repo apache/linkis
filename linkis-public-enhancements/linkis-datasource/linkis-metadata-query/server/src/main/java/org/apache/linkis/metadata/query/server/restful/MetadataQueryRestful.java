@@ -42,6 +42,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Api(tags = "metadata query")
 @RestController
@@ -51,6 +52,32 @@ public class MetadataQueryRestful {
     private static final Logger logger = LoggerFactory.getLogger(MetadataQueryRestful.class);
 
     @Autowired private MetadataQueryService metadataQueryService;
+
+    @RequestMapping(value = "/getConnectionInfo", method = RequestMethod.GET)
+    public Message getConnectionInfo(
+            @RequestParam("dataSourceName") String dataSourceName,
+            @RequestParam("system") String system,
+            HttpServletRequest request){
+        try {
+            if (StringUtils.isBlank(system)){
+                return Message.error("'system' is missing[缺少系统名]");
+            }
+            Map<String, String> queryParams = request.getParameterMap().entrySet().stream()
+                    .collect(Collectors.toMap(Map.Entry::getKey,
+                            entry -> StringUtils.join(entry.getValue(), ",")));
+            Map<String, String> info = metadataQueryService.getConnectionInfoByDsName(dataSourceName, queryParams,
+                    system, SecurityFilter.getLoginUsername(request));
+            return Message.ok().data("info", info);
+        } catch (Exception e){
+            return errorToResponseMessage(
+                    "Fail to get connection info [获得连接信息失败], name: ["
+                            + dataSourceName
+                            + "], system:["
+                            + system
+                            + "]",
+                    e);
+        }
+    }
 
     @ApiOperation(value = "getDatabases", notes = "get databases", response = Message.class)
     @ApiImplicitParams({

@@ -27,10 +27,10 @@
             <DefaultRolloverStrategy max="10"/>
         </RollingFile>
 
-        <RollingFile name="YarnAppIdOutputFile" append="true" fileName="${env:LOG_DIRS}/yarnApp.log">
+        <File name="YarnAppIdOutputFile" append="true" fileName="${env:LOG_DIRS}/yarnApp.log">
             <RegexFilter regex=".* application .*" onMatch="ACCEPT" onMismatch="DENY"/>
             <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] [%-40t] %c{1.} (%L) [%M] - %msg%xEx%n"/>
-        </RollingFile>
+        </File>
 
         <Send name="Send" >
             <Filters>

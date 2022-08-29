@@ -42,4 +42,6 @@ case class EngineConnPluginInfo(
     }
   }
 
+  override def hashCode(): Int = super.hashCode()
+
 }

@@ -155,7 +155,8 @@
                         "udfFunctionManage": "UDF管理",
                         "functionManagement": "函数管理",
                         "dataSourceManage": "数据源管理",
-                        "userResourceManagement": "用户资源管理"
+                        "userResourceManagement": "用户资源管理",
+                        "EnginePluginManagement": "引擎物料管理"
                     }
                 }
             },
@@ -317,7 +318,29 @@
                 "cannotPublish": "不可发布",
                 "used": "可用",
                 "commentValue": "从版本 {text} 回滚"
-            }
+            },
+          "EnginePluginManagement": {
+            "engineConnType": "引擎类型",
+            "engineConnVersion": "引擎版本",
+            "create": "新增引擎插件",
+            "fileName": "文件名称",
+            "fileSize": "文件大小",
+            "lastModified": "文件更新时间",
+            "bmlResourceId": "物料资源Id",
+            "bmlResourceVersion": "物料资源版本",
+            "lastUpdateTime": "更新时间",
+            "createTime": "创建时间",
+            "Reset": "重置",
+            "delete": "删除已选物料的版本",
+            "update": "更新引擎插件",
+            "updateFileOnly": "更新",
+            "resourceVersion": "引擎物料bml版本",
+            "user": "所属人",
+            "deleteCurrentbml": "删除",
+            "versionList": "版本列表",
+            "rollback": "回滚",
+            "action": "操作"
+          }
         }
     }
 }

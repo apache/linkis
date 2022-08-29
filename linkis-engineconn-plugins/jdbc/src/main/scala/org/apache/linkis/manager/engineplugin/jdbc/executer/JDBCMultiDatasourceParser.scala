@@ -19,7 +19,7 @@ package org.apache.linkis.manager.engineplugin.jdbc.executer
 
 import org.apache.linkis.common.utils.{JsonUtils, Logging, Utils}
 import org.apache.linkis.datasource.client.impl.LinkisDataSourceRemoteClient
-import org.apache.linkis.datasource.client.request.GetInfoByDataSourceNameAction
+import org.apache.linkis.datasource.client.request.GetInfoPublishedByDataSourceNameAction
 import org.apache.linkis.datasourcemanager.common.domain.DataSource
 import org.apache.linkis.manager.engineplugin.jdbc.JdbcAuthType
 import org.apache.linkis.manager.engineplugin.jdbc.constant.JDBCEngineConnConstant
@@ -41,20 +41,18 @@ object JDBCMultiDatasourceParser extends Logging {
     logger.info(s"Starting query [$system, $username, $datasourceName] datasource info ......")
     val dataSourceClient = new LinkisDataSourceRemoteClient()
     var dataSource: DataSource = null
-    Utils.tryCatch {
-      dataSource = dataSourceClient
-        .getInfoByDataSourceName(
-          GetInfoByDataSourceNameAction
-            .builder()
-            .setSystem(system)
-            .setDataSourceName(datasourceName)
-            .setUser(username)
-            .build()
-        )
-        .getDataSource
-    } { case e: Exception =>
-      logger.warn(s"Get data source info error, $e")
-    }
+
+    dataSource = dataSourceClient
+      .getInfoPublishedByDataSourceName(
+        GetInfoPublishedByDataSourceNameAction
+          .builder()
+          .setSystem(system)
+          .setDataSourceName(datasourceName)
+          .setUser(username)
+          .build()
+      )
+      .getDataSource
+
     queryDatasourceInfo(datasourceName, dataSource)
   }
 
@@ -73,8 +71,8 @@ object JDBCMultiDatasourceParser extends Logging {
     }
 
     var maxVersionId = "0"
-    if (dataSource.getVersionId != null) {
-      maxVersionId = dataSource.getVersionId.toString
+    if (dataSource.getPublishedVersionId != null) {
+      maxVersionId = dataSource.getPublishedVersionId.toString
     }
     dsConnInfo.put(JDBCEngineConnConstant.JDBC_ENGINE_RUN_TIME_DS_MAX_VERSION_ID, maxVersionId)
 

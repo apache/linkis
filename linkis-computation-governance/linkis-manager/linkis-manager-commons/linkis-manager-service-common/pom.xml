@@ -53,7 +53,7 @@
                 </exclusion>
                 <exclusion>
                     <groupId>com.fasterxml.jackson.module</groupId>
-                    <artifactId>jackson-module-scala_2.11</artifactId>
+                    <artifactId>jackson-module-scala_2.12</artifactId>
                 </exclusion>
                 <exclusion>
                     <groupId>org.apache.linkis</groupId>

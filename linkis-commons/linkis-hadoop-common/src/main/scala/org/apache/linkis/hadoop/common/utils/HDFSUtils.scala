@@ -119,7 +119,8 @@ object HDFSUtils extends Logging {
   def createFileSystem(userName: String, conf: org.apache.hadoop.conf.Configuration): FileSystem =
     getUserGroupInformation(userName)
       .doAs(new PrivilegedExceptionAction[FileSystem] {
-        def run = FileSystem.get(conf)
+        conf.set("fs.hdfs.impl", "org.apache.hadoop.hdfs.DistributedFileSystem")
+        def run = FileSystem.get(new Configuration(conf))
       })
 
   def closeHDFSFIleSystem(fileSystem: FileSystem, userName: String): Unit = if (null != fileSystem && StringUtils.isNotBlank(userName)) {

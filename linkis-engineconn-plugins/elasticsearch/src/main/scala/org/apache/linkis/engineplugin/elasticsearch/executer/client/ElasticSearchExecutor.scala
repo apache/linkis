@@ -39,14 +39,8 @@ trait ElasticSearchExecutor extends Logging {
 
 object ElasticSearchExecutor {
 
-  def apply(runType: String, properties: util.Map[String, Object]): ElasticSearchExecutor = {
-    val newProperties = new util.HashMap[String, String]()
-    properties.asScala.foreach {
-      case (key: String, value: Object) if value != null =>
-        newProperties.put(key, String.valueOf(value))
-      case _ =>
-    }
-    new ElasticSearchExecutorImpl(runType, newProperties)
+  def apply(runType: String, properties: util.Map[String, String]): ElasticSearchExecutor = {
+    new ElasticSearchExecutorImpl(runType, properties)
   }
 
 }

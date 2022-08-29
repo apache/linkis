@@ -51,9 +51,9 @@ abstract class AbstractEngineConnBmlResourceGenerator extends EngineConnBmlResou
         "Cannot find the home path of engineconn dist."
       )
     if (StringUtils.isBlank(version) || NO_VERSION_MARK == version) return engineConnDistHome
-    val engineConnPackageHome = Paths.get(engineConnDistHome, "v" + version).toFile.getPath
+    val engineConnPackageHome = Paths.get(engineConnDistHome, version).toFile.getPath
     if (new File(engineConnPackageHome).exists()) engineConnPackageHome
-    else engineConnDistHome
+    else Paths.get(engineConnDistHome, "v" + version).toFile.getPath
   }
 
   protected def getEngineConnDistHomeList(engineConnType: String): Array[String] = {

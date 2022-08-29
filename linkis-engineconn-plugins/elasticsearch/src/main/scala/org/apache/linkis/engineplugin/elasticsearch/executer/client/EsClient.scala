@@ -29,6 +29,7 @@ import org.apache.http.message.BufferedHeader
 import org.apache.http.util.{CharArrayBuffer, EncodingUtils}
 
 import java.nio.charset.StandardCharsets.UTF_8
+import java.util
 
 import scala.collection.JavaConverters._
 
@@ -45,7 +46,7 @@ trait EsClientOperate {
 
   def execute(
       code: String,
-      options: JMap[String, String],
+      options: util.Map[String, String],
       responseListener: ResponseListener
   ): Cancellable
 
@@ -80,14 +81,14 @@ class EsClientImpl(datasourceName: String, client: RestClient, sniffer: Sniffer)
 
   override def execute(
       code: String,
-      options: JMap[String, String],
+      options: util.Map[String, String],
       responseListener: ResponseListener
   ): Cancellable = {
     val request = createRequest(code, options)
     client.performRequestAsync(request, responseListener)
   }
 
-  private def createRequest(code: String, options: JMap[String, String]): Request = {
+  private def createRequest(code: String, options: util.Map[String, String]): Request = {
     val endpoint = ES_HTTP_ENDPOINT.getValue(options)
     val method = ES_HTTP_METHOD.getValue(options)
     val request = new Request(method, endpoint)
@@ -96,7 +97,7 @@ class EsClientImpl(datasourceName: String, client: RestClient, sniffer: Sniffer)
     request
   }
 
-  private def getRequestOptions(options: JMap[String, String]): RequestOptions = {
+  private def getRequestOptions(options: util.Map[String, String]): RequestOptions = {
     val builder = RequestOptions.DEFAULT.toBuilder()
 
     val username = ES_USERNAME.getValue(options)

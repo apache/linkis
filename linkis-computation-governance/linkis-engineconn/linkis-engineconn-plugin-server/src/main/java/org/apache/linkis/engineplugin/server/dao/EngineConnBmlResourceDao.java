@@ -18,6 +18,7 @@
 package org.apache.linkis.engineplugin.server.dao;
 
 import org.apache.linkis.engineplugin.server.entity.EngineConnBmlResource;
+import org.apache.linkis.engineplugin.vo.EnginePluginBMLVo;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -26,6 +27,12 @@ import java.util.List;
 
 @Mapper
 public interface EngineConnBmlResourceDao {
+
+  List<String> getTypeList();
+
+  List<String> getTypeVersionList(@Param("type") String type);
+
+  List<EngineConnBmlResource> selectByPageVo(EnginePluginBMLVo enginePluginBMLVo);
 
   List<EngineConnBmlResource> getAllEngineConnBmlResource(
       @Param("engineConnType") String engineConnType, @Param("version") String version);

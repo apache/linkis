@@ -29,7 +29,7 @@ import org.reflections.scanners.{
 object RPCConfiguration {
 
   val BDP_RPC_BROADCAST_THREAD_SIZE: CommonVars[Integer] =
-    CommonVars("wds.linkis.rpc.broadcast.thread.num", new Integer(25))
+    CommonVars("wds.linkis.rpc.broadcast.thread.num", 25)
 
   val BDP_RPC_EUREKA_SERVICE_REFRESH_INTERVAL: CommonVars[TimeType] =
     CommonVars("wds.linkis.rpc.eureka.client.refresh.interval", new TimeType("1s"))
@@ -63,7 +63,7 @@ object RPCConfiguration {
 
   val PUBLIC_SERVICE_LIST: Array[String] = CommonVars(
     "wds.linkis.gateway.conf.publicservice.list",
-    "query,jobhistory,application,configuration,filesystem,udf,variable,microservice,errorcode,bml,datasource"
+    "cs,contextservice,data-source-manager,metadataquery,metadatamanager,query,jobhistory,application,configuration,filesystem,udf,variable,microservice,errorcode,bml,datasource"
   ).getValue.split(",")
 
   val METADATAQUERY_SERVICE_APPLICATION_NAME: CommonVars[String] =
@@ -104,5 +104,17 @@ object RPCConfiguration {
 
   val BDP_RPC_CACHE_CONF_EXPIRE_TIME: CommonVars[Long] =
     CommonVars("wds.linkis.rpc.cache.expire.time", 120000L)
+
+  val CONTEXT_SERVICE_REQUEST_PREFIX = "contextservice"
+
+  val CONTEXT_SERVICE_NAME: String =
+    if (
+        ENABLE_PUBLIC_SERVICE.getValue && PUBLIC_SERVICE_LIST
+          .exists(_.equalsIgnoreCase(CONTEXT_SERVICE_REQUEST_PREFIX))
+    ) {
+      PUBLIC_SERVICE_APPLICATION_NAME.getValue
+    } else {
+      CONTEXT_SERVICE_APPLICATION_NAME.getValue
+    }
 
 }

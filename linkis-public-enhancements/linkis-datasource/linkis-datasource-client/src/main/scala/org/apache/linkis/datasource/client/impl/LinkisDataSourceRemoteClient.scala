@@ -88,6 +88,11 @@ class LinkisDataSourceRemoteClient(clientConfig: DWSClientConfig, clientName: St
       action: GetInfoByDataSourceNameAction
   ): GetInfoByDataSourceNameResult = execute(action).asInstanceOf[GetInfoByDataSourceNameResult]
 
+  override def getInfoPublishedByDataSourceName(
+      action: GetInfoPublishedByDataSourceNameAction
+  ): GetInfoPublishedByDataSourceNameResult =
+    execute(action).asInstanceOf[GetInfoPublishedByDataSourceNameResult]
+
   override def queryDataSource(action: QueryDataSourceAction): QueryDataSourceResult = execute(
     action
   ).asInstanceOf[QueryDataSourceResult]
@@ -96,6 +101,11 @@ class LinkisDataSourceRemoteClient(clientConfig: DWSClientConfig, clientName: St
       action: GetConnectParamsByDataSourceIdAction
   ): GetConnectParamsByDataSourceIdResult =
     execute(action).asInstanceOf[GetConnectParamsByDataSourceIdResult]
+
+  override def getConnectParamsByName(
+      action: GetConnectParamsByDataSourceNameAction
+  ): GetConnectParamsByDataSourceNameResult =
+    execute(action).asInstanceOf[GetConnectParamsByDataSourceNameResult]
 
   override def createDataSource(action: CreateDataSourceAction): CreateDataSourceResult = execute(
     action

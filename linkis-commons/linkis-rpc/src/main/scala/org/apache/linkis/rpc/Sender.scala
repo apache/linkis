@@ -20,7 +20,6 @@ package org.apache.linkis.rpc
 import org.apache.linkis.DataWorkCloudApplication
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.rpc.conf.RPCConfiguration
-import org.apache.linkis.rpc.sender.SpringMVCRPCSender
 import org.apache.linkis.rpc.utils.RPCUtils
 
 import java.util
@@ -92,7 +91,7 @@ object Sender {
         RPCConfiguration.PUBLIC_SERVICE_APPLICATION_NAME.getValue
       )
     }
-    if (!serviceInstanceToSenders.containsKey(serviceInstance))
+    if (!serviceInstanceToSenders.containsKey(serviceInstance)) {
       serviceInstanceToSenders synchronized {
         if (!serviceInstanceToSenders.containsKey(serviceInstance)) {
           serviceInstanceToSenders.put(
@@ -101,6 +100,7 @@ object Sender {
           )
         }
       }
+    }
     serviceInstanceToSenders.get(serviceInstance)
   }
 

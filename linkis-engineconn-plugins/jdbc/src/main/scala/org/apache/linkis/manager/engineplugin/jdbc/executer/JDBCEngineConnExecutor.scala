@@ -62,8 +62,8 @@ import org.springframework.util.CollectionUtils
 
 import java.sql.{Connection, ResultSet, SQLException, Statement}
 import java.util
-import java.util.concurrent.ConcurrentHashMap
 import java.util.Collections
+import java.util.concurrent.ConcurrentHashMap
 
 import scala.collection.JavaConversions._
 import scala.collection.mutable.ArrayBuffer

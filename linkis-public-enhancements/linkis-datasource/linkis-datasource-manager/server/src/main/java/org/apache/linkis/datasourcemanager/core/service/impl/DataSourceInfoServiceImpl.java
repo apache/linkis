@@ -26,7 +26,6 @@ import org.apache.linkis.datasourcemanager.common.exception.JsonErrorException;
 import org.apache.linkis.datasourcemanager.common.util.json.Json;
 import org.apache.linkis.datasourcemanager.core.dao.*;
 import org.apache.linkis.datasourcemanager.core.formdata.FormStreamContent;
-import org.apache.linkis.datasourcemanager.core.restful.RestfulApiHelper;
 import org.apache.linkis.datasourcemanager.core.service.BmlAppService;
 import org.apache.linkis.datasourcemanager.core.service.DataSourceInfoService;
 import org.apache.linkis.datasourcemanager.core.service.DataSourceRelateService;
@@ -34,6 +33,7 @@ import org.apache.linkis.datasourcemanager.core.service.hooks.DataSourceParamsHo
 import org.apache.linkis.datasourcemanager.core.vo.DataSourceEnvVo;
 import org.apache.linkis.datasourcemanager.core.vo.DataSourceVo;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +47,6 @@ import java.util.stream.Collectors;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -119,34 +118,6 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
   }
 
   /**
-   * Get env parameter by ids
-   *
-   * @param envIdList
-   * @param decrypt if decrypt password
-   * @param dataSourceTypeId
-   * @return
-   */
-  private List<Map<String, Object>> getEnvParams(
-      List<String> envIdList, Boolean decrypt, Long dataSourceTypeId) {
-    List<Map<String, Object>> envConnectParamsList =
-        Lists.newArrayListWithCapacity(envIdList.size());
-    for (String envId : envIdList) {
-      DataSourceEnv dataSourceEnv = dataSourceEnvDao.selectOneDetail(Long.valueOf(envId));
-      if (Objects.isNull(dataSourceEnv)) {
-        continue;
-      }
-      Map envConnectParams = dataSourceEnv.getConnectParams();
-      if (decrypt) {
-        RestfulApiHelper.decryptPasswordKey(
-            dataSourceRelateService.getKeyDefinitionsByType(dataSourceTypeId), envConnectParams);
-      }
-      envConnectParams.put("envId", dataSourceEnv.getId());
-      envConnectParamsList.add(envConnectParams);
-    }
-    return envConnectParamsList;
-  }
-
-  /**
    * get datasource info for connect for published version, if there is a dependency environment,
    * merge datasource parameter and environment parameter.
    *
@@ -181,15 +152,16 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
       connectParams.remove("envId");
       addEnvParamsToDataSource(envId, dataSource);
     }
+    //    if exists multi env
     if (connectParams.containsKey("envIdArray")) {
       Object envIdArray = connectParams.get("envIdArray");
       if (envIdArray instanceof List) {
         List<String> envIdList = (List<String>) envIdArray;
+        if (CollectionUtils.isNotEmpty(envIdList)) {
+          addEnvParamsToDataSource(Long.valueOf(envIdList.get(0)), dataSource);
+        }
         // remove envIdArray for connect
         connectParams.remove("envIdArray");
-        List<Map<String, Object>> envConnectParamsList =
-            getEnvParams(envIdList, true, dataSource.getDataSourceTypeId());
-        connectParams.put("envConnectParamsList", envConnectParamsList);
       }
     }
   }

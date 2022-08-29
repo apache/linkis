@@ -5,9 +5,9 @@
   ~ The ASF licenses this file to You under the Apache License, Version 2.0
   ~ (the "License"); you may not use this file except in compliance with
   ~ the License.  You may obtain a copy of the License at
-  ~ 
+  ~
   ~   http://www.apache.org/licenses/LICENSE-2.0
-  ~ 
+  ~
   ~ Unless required by applicable law or agreed to in writing, software
   ~ distributed under the License is distributed on an "AS IS" BASIS,
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,7 +25,7 @@
         ></Input>
       </FormItem>
       <Divider type="vertical" class="divider" />
-      <FormItem prop="functionType" :label="$t('message.linkis.udfName')">
+      <FormItem prop="functionType" :label="$t('message.linkis.udfType')">
         <Select v-model="searchBar.functionType" style="width:120px;">
           <Option :label="$t('message.linkis.all')" value="0,1,2" key="0,1,2" />
           <Option :label="$t('message.linkis.common')" value="0" key="0" />
@@ -102,9 +102,9 @@
       @on-visible-change="changUserModalChange"
     >
       <span>移交给：</span>
-      <Select ref="userSelect" v-model="handleUser" filterable 
+      <Select ref="userSelect" v-model="handleUser" filterable
         v-if=allUsers.length
-        :remoteMethod="filterSelectTransUser" 
+        :remoteMethod="filterSelectTransUser"
         @on-query-change="queryChange"
         placeholder="请输入用户名" style="width:200px;">
         <Option
@@ -396,7 +396,7 @@ export default {
       this.loading = true
       const params = {
         udfUpdateVo: {
-          id: this.handleRow.id,	
+          id: this.handleRow.id,
           udfName: data.name,
           udfType: data.udfType,
           description: data.description,
@@ -406,7 +406,7 @@ export default {
           // sys: 'all',
           // clusterName: data.clusterName,
           // directory: data.directory
-        }	
+        }
       }
       api
         .fetch('/udf/update', params, 'post')
@@ -569,7 +569,7 @@ export default {
           this.search()
         })
         .catch(() => {
-      
+
         })
     },
     vlist(args) {
@@ -601,7 +601,7 @@ export default {
             this.search()
           })
           .catch(() => {
-        
+
           })
       }
     },
@@ -614,7 +614,7 @@ export default {
           this.search()
         })
         .catch(() => {
-      
+
         })
     },
     changeUser(args) {
@@ -643,7 +643,7 @@ export default {
             this.search()
           })
           .catch(() => {
-        
+
           })
       }
     },

@@ -27,7 +27,7 @@ import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel
 
 import java.util
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 trait ProcessEngineConnLaunchBuilder extends EngineConnLaunchBuilder {
 
@@ -66,7 +66,7 @@ trait ProcessEngineConnLaunchBuilder extends EngineConnLaunchBuilder {
     }
     bmlResources.addAll(getBmlResources)
     val environment = getEnvironment
-    engineConnBuildRequest.labels
+    engineConnBuildRequest.labels.asScala
       .find(_.isInstanceOf[UserCreatorLabel])
       .map { case label: UserCreatorLabel =>
         CommonProcessEngineConnLaunchRequest(

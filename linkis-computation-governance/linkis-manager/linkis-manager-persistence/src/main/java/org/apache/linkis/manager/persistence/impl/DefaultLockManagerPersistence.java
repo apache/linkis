@@ -59,8 +59,16 @@ public class DefaultLockManagerPersistence implements LockManagerPersistence {
 
   private boolean tryLock(PersistenceLock persistenceLock, Long timeOut) {
     try {
-      lockManagerMapper.lock(persistenceLock.getLockObject(), timeOut);
-      return true;
+      List<PersistenceLock> lockers =
+          lockManagerMapper.getLockersByLockObject(persistenceLock.getLockObject());
+      if (lockers == null || lockers.isEmpty()) {
+        lockManagerMapper.lock(persistenceLock.getLockObject(), timeOut);
+        return true;
+      } else {
+        logger.info(
+            "Failed to obtain lock {} ,Because locker is exists", persistenceLock.getLockObject());
+        return false;
+      }
     } catch (DataAccessException e) {
       logger.warn("Failed to obtain lock:" + persistenceLock.getLockObject());
       return false;

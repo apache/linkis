@@ -61,7 +61,7 @@ object EngineConnExecutorConfiguration {
     "org.apache.linkis.engineconn.core.executor.LabelExecutorManagerImpl"
   )
 
-  /*val EXECUTOR_MANAGER_CLAZZ = CommonVars("wds.linkis.engineconn.executor.manager.claazz", "")*/
+  /* val EXECUTOR_MANAGER_CLAZZ = CommonVars("wds.linkis.engineconn.executor.manager.claazz", "") */
 
   val DEFAULT_EXECUTOR_NAME =
     CommonVars("wds.linkis.engineconn.executor.default.name", "ComputationExecutor")

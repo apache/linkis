@@ -25,7 +25,6 @@ import org.apache.linkis.engineconn.common.creation.{
   EngineCreationContext
 }
 import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
-import org.apache.linkis.engineconn.launch.EngineConnServer
 import org.apache.linkis.manager.engineplugin.python.factory.PythonEngineConnFactory
 import org.apache.linkis.manager.engineplugin.python.hook.PythonVersionEngineHook
 
@@ -57,17 +56,12 @@ class TestPythonEngineConnExecutor {
     val engineConnFactory: PythonEngineConnFactory = new PythonEngineConnFactory
     val engineCreationContext: EngineCreationContext = new DefaultEngineCreationContext
     val path = this.getClass.getResource("/").getPath
-    System.setProperty("pythonVersion", "python")
     System.setProperty("HADOOP_CONF_DIR", "./")
     System.setProperty(
       "wds.linkis.python.py4j.home",
       path.substring(0, path.indexOf("/target")) + "/src/main/py4j"
     )
-    val jMap = new java.util.HashMap[String, String]()
-    jMap.put("python.version", "python")
-    engineCreationContext.setOptions(jMap)
     val engineConn = engineConnFactory.createEngineConn(engineCreationContext)
-    EngineConnServer.getEngineCreationContext.setOptions(jMap)
     hookPre.beforeCreateEngineConn(engineCreationContext)
     val executor = engineConnFactory
       .newExecutor(1, engineCreationContext, engineConn)
@@ -78,7 +72,6 @@ class TestPythonEngineConnExecutor {
 //      engineConn.getEngineConnSession.asInstanceOf[PythonSession].onPythonScriptInitialized(1)
 //      hookPre.beforeExecutionExecute(engineCreationContext, engineConn)
       val engineExecutionContext = new EngineExecutionContext(executor, Utils.getJvmUser)
-      engineExecutionContext.addProperty("python.version", "python")
       val code = "for i in range(10):\n    print(i)"
       val response = executor.executeLine(engineExecutionContext, code)
       Assertions.assertNotNull(response)

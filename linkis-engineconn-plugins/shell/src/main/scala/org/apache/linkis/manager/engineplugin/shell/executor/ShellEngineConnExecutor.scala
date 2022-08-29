@@ -178,11 +178,10 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
 
       bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream))
       errorsReader = new BufferedReader(new InputStreamReader(process.getErrorStream))
+
       val counter: CountDownLatch = new CountDownLatch(2)
-      inputReaderThread =
-        new ReaderThread(engineExecutionContext, bufferedReader, extractor, true, counter)
-      errReaderThread =
-        new ReaderThread(engineExecutionContext, bufferedReader, extractor, false, counter)
+      inputReaderThread = new ReaderThread(engineExecutionContext, bufferedReader, extractor, true, counter)
+      errReaderThread = new ReaderThread(engineExecutionContext, errorsReader, extractor, false, counter)
 
       inputReaderThread.start()
       errReaderThread.start()
@@ -200,7 +199,6 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
         logger.error("Execute shell code failed, reason:", e)
         ErrorExecuteResponse("run shell failed", e)
       }
-
     } finally {
       if (!completed.get()) {
         Utils.tryAndWarn(errReaderThread.interrupt())

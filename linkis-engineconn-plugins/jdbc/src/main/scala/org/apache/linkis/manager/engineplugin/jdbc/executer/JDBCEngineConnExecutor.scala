@@ -38,6 +38,7 @@ import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf
 import org.apache.linkis.manager.engineplugin.jdbc.ConnectionManager
 import org.apache.linkis.manager.engineplugin.jdbc.conf.JDBCConfiguration
 import org.apache.linkis.manager.engineplugin.jdbc.constant.JDBCEngineConnConstant
+import org.apache.linkis.manager.engineplugin.jdbc.exception.JDBCGetDatasourceInfoException
 import org.apache.linkis.manager.engineplugin.jdbc.monitor.ProgressMonitor
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
@@ -62,6 +63,7 @@ import org.springframework.util.CollectionUtils
 import java.sql.{Connection, ResultSet, SQLException, Statement}
 import java.util
 import java.util.concurrent.ConcurrentHashMap
+import java.util.Collections
 
 import scala.collection.JavaConversions._
 import scala.collection.mutable.ArrayBuffer
@@ -90,7 +92,16 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
   ): ExecuteResponse = {
     val realCode = code.trim()
     val taskId = engineExecutorContext.getJobId.get
-    val properties: util.Map[String, String] = getJDBCRuntimeParams(engineExecutorContext)
+
+    var properties: util.Map[String, String] = Collections.emptyMap()
+
+    Utils.tryCatch({
+      properties = getJDBCRuntimeParams(engineExecutorContext)
+    }) { e: Throwable =>
+      logger.error(s"try to build JDBC runtime params error! $e")
+      return ErrorExecuteResponse(e.getMessage, e)
+    }
+
     logger.info(s"The jdbc properties is: $properties")
     val dataSourceName = properties.get(JDBCEngineConnConstant.JDBC_ENGINE_RUN_TIME_DS)
     val dataSourceMaxVersionId =
@@ -171,7 +182,6 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
         }
       }
       connectionManager.removeStatement(taskId)
-      progressMonitors.remove(taskId)
     }
     SuccessExecuteResponse()
   }
@@ -210,7 +220,7 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
           dataSourceQuerySystemParam
         )
       } { e: Throwable =>
-        logger.error(
+        throw new JDBCGetDatasourceInfoException(
           s"Failed to get datasource info about [$dataSourceName] from datasource server.",
           e
         )

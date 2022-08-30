@@ -19,6 +19,8 @@ package org.apache.linkis.engineplugin.server.entity;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 public class EngineConnBmlResource {
 
   private Long id;
@@ -29,7 +31,11 @@ public class EngineConnBmlResource {
   private Long fileSize;
   private String bmlResourceId;
   private String bmlResourceVersion;
+
+  @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
   private Date createTime;
+
+  @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
   private Date lastUpdateTime;
 
   public Long getId() {

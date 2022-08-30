@@ -244,44 +244,6 @@
             </includes>
         </fileSet>
 
-        <!--linkis-contextservice-->
-        <fileSet>
-            <directory>
-                ../linkis-public-enhancements/linkis-context-service/linkis-cs-server/target/out/lib
-            </directory>
-            <outputDirectory>
-                linkis-package/lib/linkis-public-enhancements/linkis-ps-cs
-            </outputDirectory>
-            <includes>
-                <include>*.jar</include>
-            </includes>
-        </fileSet>
-
-        <!-- datasource manager -->
-        <fileSet>
-            <directory>
-                ../linkis-public-enhancements/linkis-datasource/linkis-datasource-manager/server/target/out/lib/
-            </directory>
-            <outputDirectory>
-                linkis-package/lib/linkis-public-enhancements/linkis-ps-data-source-manager
-            </outputDirectory>
-            <includes>
-                <include>*.jar</include>
-            </includes>
-        </fileSet>
-        <!-- metadata query -->
-        <fileSet>
-            <directory>
-                ../linkis-public-enhancements/linkis-datasource/linkis-metadata-query/server/target/out/lib/
-            </directory>
-            <outputDirectory>
-                linkis-package/lib/linkis-public-enhancements/linkis-ps-metadataquery
-            </outputDirectory>
-            <includes>
-                <include>**/*</include>
-            </includes>
-        </fileSet>
-
     </fileSets>
 
     <dependencySets>

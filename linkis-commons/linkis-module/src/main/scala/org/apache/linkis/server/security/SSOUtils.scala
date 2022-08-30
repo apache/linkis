@@ -19,12 +19,13 @@ package org.apache.linkis.server.security
 
 import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.utils.{Logging, RSAUtils, Utils}
-import org.apache.linkis.server.conf.ServerConfiguration
+import org.apache.linkis.server.conf.{ServerConfiguration, SessionHAConfiguration}
 import org.apache.linkis.server.exception.{
   IllegalUserTicketException,
   LoginExpireException,
   NonLoginException
 }
+import org.apache.linkis.server.ticket.UserTicketService
 
 import org.apache.commons.lang3.time.DateFormatUtils
 
@@ -41,9 +42,16 @@ object SSOUtils extends Logging {
 
   private val sessionTimeout = ServerConfiguration.BDP_SERVER_WEB_SESSION_TIMEOUT.getValue.toLong
 
-  private val userTicketIdToLastAccessTime = new ConcurrentHashMap[String, Long]()
+  private val userTicketIdToLastAccessTime = getUserTicketIdMap
 
   val sslEnable: Boolean = ServerConfiguration.BDP_SERVER_SECURITY_SSL.getValue
+
+  def getUserTicketIdMap: ConcurrentHashMap[String, Long] = {
+    if (SessionHAConfiguration.SsoRedis) {
+      return new UserTicketService
+    }
+    new ConcurrentHashMap[String, Long]
+  }
 
   def decryptLogin(passwordString: String): String = if (sslEnable) {
     new String(RSAUtils.decrypt(passwordString), Configuration.BDP_ENCODING.getValue)

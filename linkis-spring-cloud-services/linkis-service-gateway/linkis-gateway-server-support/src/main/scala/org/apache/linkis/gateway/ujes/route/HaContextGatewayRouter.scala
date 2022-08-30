@@ -27,6 +27,7 @@ import org.apache.linkis.gateway.springcloud.SpringCloudGatewayConfiguration.{
   normalPath,
   API_URL_PREFIX
 }
+import org.apache.linkis.rpc.conf.RPCConfiguration
 import org.apache.linkis.rpc.interceptor.ServiceInstanceUtils
 
 import org.apache.commons.lang3.StringUtils
@@ -36,7 +37,7 @@ import org.springframework.stereotype.Component
 
 import java.util
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 import scala.util.Random
 import scala.util.matching.Regex
 
@@ -55,15 +56,12 @@ class HaContextGatewayRouter extends AbstractGatewayRouter {
 
     if (
         gatewayContext.getGatewayRoute.getRequestURI.contains(
-          HaContextGatewayRouter.CONTEXT_SERVICE_STR
-        ) ||
-        gatewayContext.getGatewayRoute.getRequestURI.contains(
-          HaContextGatewayRouter.OLD_CONTEXT_SERVICE_PREFIX
+          HaContextGatewayRouter.CONTEXT_SERVICE_REQUEST_PREFIX
         )
     ) {
       val params: util.HashMap[String, String] = gatewayContext.getGatewayRoute.getParams
       if (!gatewayContext.getRequest.getQueryParams.isEmpty) {
-        for ((k, vArr) <- gatewayContext.getRequest.getQueryParams) {
+        for ((k, vArr) <- gatewayContext.getRequest.getQueryParams.asScala) {
           if (vArr.nonEmpty) {
             params.putIfAbsent(k, vArr.head)
           }
@@ -79,13 +77,13 @@ class HaContextGatewayRouter extends AbstractGatewayRouter {
         dealContextCreate(gatewayContext)
       } else {
         var contextId: String = null
-        for ((key, value) <- params) {
+        for ((key, value) <- params.asScala) {
           if (key.equalsIgnoreCase(ContextHTTPConstant.CONTEXT_ID_STR)) {
             contextId = value
           }
         }
         if (StringUtils.isNotBlank(contextId)) {
-          dealContextAccess(contextId.toString, gatewayContext)
+          dealContextAccess(contextId, gatewayContext)
         } else {
           dealContextCreate(gatewayContext)
         }
@@ -97,9 +95,9 @@ class HaContextGatewayRouter extends AbstractGatewayRouter {
 
   def dealContextCreate(gatewayContext: GatewayContext): ServiceInstance = {
     val serviceId = findService(
-      HaContextGatewayRouter.CONTEXT_SERVICE_STR,
+      RPCConfiguration.CONTEXT_SERVICE_NAME,
       list => {
-        val services = list.filter(_.contains(HaContextGatewayRouter.CONTEXT_SERVICE_STR))
+        val services = list.filter(_.contains(RPCConfiguration.CONTEXT_SERVICE_NAME))
         services.headOption
       }
     )
@@ -137,9 +135,9 @@ class HaContextGatewayRouter extends AbstractGatewayRouter {
     val instances = contextIDParser.parse(contextId)
     var serviceId: Option[String] = None
     serviceId = findService(
-      HaContextGatewayRouter.CONTEXT_SERVICE_STR,
+      RPCConfiguration.CONTEXT_SERVICE_NAME,
       list => {
-        val services = list.filter(_.contains(HaContextGatewayRouter.CONTEXT_SERVICE_STR))
+        val services = list.filter(_.contains(RPCConfiguration.CONTEXT_SERVICE_NAME))
         services.headOption
       }
     )
@@ -158,11 +156,22 @@ class HaContextGatewayRouter extends AbstractGatewayRouter {
 }
 
 object HaContextGatewayRouter {
-  val CONTEXT_ID_STR: String = "contextId"
-  val CONTEXT_SERVICE_STR: String = "ps-cs"
 
-  @Deprecated
-  val OLD_CONTEXT_SERVICE_PREFIX = "contextservice"
+  val CONTEXT_ID_STR: String = "contextId"
+
+  @deprecated("please use RPCConfiguration.CONTEXT_SERVICE_REQUEST_PREFIX")
+  val CONTEXT_SERVICE_REQUEST_PREFIX = "contextservice"
+
+  @deprecated("please use RPCConfiguration.CONTEXT_SERVICE_NAME")
+  val CONTEXT_SERVICE_NAME: String =
+    if (
+        RPCConfiguration.ENABLE_PUBLIC_SERVICE.getValue && RPCConfiguration.PUBLIC_SERVICE_LIST
+          .exists(_.equalsIgnoreCase(RPCConfiguration.CONTEXT_SERVICE_REQUEST_PREFIX))
+    ) {
+      RPCConfiguration.PUBLIC_SERVICE_APPLICATION_NAME.getValue
+    } else {
+      RPCConfiguration.CONTEXT_SERVICE_APPLICATION_NAME.getValue
+    }
 
   val CONTEXT_REGEX: Regex =
     (normalPath(API_URL_PREFIX) + "rest_[a-zA-Z][a-zA-Z_0-9]*/(v\\d+)/contextservice/" + ".+").r

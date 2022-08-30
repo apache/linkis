@@ -51,5 +51,5 @@ object ManagerService {
     EngineConnExecutorConfiguration.EXECUTOR_MANAGER_SERVICE_CLAZZ.getValue
   )
 
-  def getManagerService = managerService
+  def getManagerService: ManagerService = managerService
 }

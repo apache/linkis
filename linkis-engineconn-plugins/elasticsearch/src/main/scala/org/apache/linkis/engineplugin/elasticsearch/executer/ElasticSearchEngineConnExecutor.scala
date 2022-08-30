@@ -25,7 +25,10 @@ import org.apache.linkis.engineconn.computation.executor.execute.{
   EngineExecutionContext
 }
 import org.apache.linkis.engineconn.core.EngineConnObject
-import org.apache.linkis.engineplugin.elasticsearch.conf.ElasticSearchConfiguration
+import org.apache.linkis.engineplugin.elasticsearch.conf.{
+  ElasticSearchConfiguration,
+  ElasticSearchEngineConsoleConf
+}
 import org.apache.linkis.engineplugin.elasticsearch.executer.client.{
   ElasticSearchErrorResponse,
   ElasticSearchExecutor,
@@ -96,7 +99,11 @@ class ElasticSearchEngineConnExecutor(
   }
 
   override def execute(engineConnTask: EngineConnTask): ExecuteResponse = {
-    val elasticSearchExecutor = ElasticSearchExecutor(runType, engineConnTask.getProperties)
+
+    val properties: util.Map[String, String] = buildRuntimeParams(engineConnTask)
+    logger.info(s"The elasticsearch properties is: $properties")
+
+    val elasticSearchExecutor = ElasticSearchExecutor(runType, properties)
     elasticSearchExecutor.open
     elasticSearchExecutorCache.put(engineConnTask.getTaskId, elasticSearchExecutor)
     super.execute(engineConnTask)
@@ -135,6 +142,25 @@ class ElasticSearchEngineConnExecutor(
       case ElasticSearchErrorResponse(message, body, cause) =>
         ErrorExecuteResponse(message, cause)
     }
+  }
+
+  private def buildRuntimeParams(engineConnTask: EngineConnTask): util.Map[String, String] = {
+
+    // parameters specified at runtime
+    var executorProperties = engineConnTask.getProperties.asInstanceOf[util.Map[String, String]]
+    if (executorProperties == null) {
+      executorProperties = new util.HashMap[String, String]()
+    }
+
+    // global  engine params by console
+    val globalConfig: util.Map[String, String] =
+      Utils.tryAndWarn(ElasticSearchEngineConsoleConf.getCacheMap(engineConnTask.getLables))
+
+    if (!executorProperties.isEmpty) {
+      globalConfig.putAll(executorProperties)
+    }
+
+    globalConfig
   }
 
   override def executeCompletely(

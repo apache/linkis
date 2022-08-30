@@ -116,14 +116,14 @@ class DWSHttpClient(clientConfig: DWSClientConfig, clientName: String)
   }
 
   protected def deserializeResponseBody(responseBody: String): Any = {
-    if (responseBody.startsWith("{") && responseBody.endsWith("}"))
+    if (responseBody.startsWith("{") && responseBody.endsWith("}")) {
       DWSHttpClient.jacksonJson.readValue(responseBody, classOf[util.Map[String, Object]])
-    else if (responseBody.startsWith("[") && responseBody.endsWith("]"))
+    } else if (responseBody.startsWith("[") && responseBody.endsWith("]")) {
       DWSHttpClient.jacksonJson.readValue(
         responseBody,
         classOf[util.List[util.Map[String, Object]]]
       )
-    else if (StringUtils.isEmpty(responseBody)) new util.HashMap[String, Object]
+    } else if (StringUtils.isEmpty(responseBody)) new util.HashMap[String, Object]
     else if (responseBody.length > 200) throw new HttpException(responseBody.substring(0, 200))
     else throw new HttpException(responseBody)
   }

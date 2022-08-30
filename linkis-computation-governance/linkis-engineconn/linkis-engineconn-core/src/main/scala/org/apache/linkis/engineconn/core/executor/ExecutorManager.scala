@@ -98,7 +98,7 @@ class LabelExecutorManagerImpl extends LabelExecutorManager with Logging {
     logger.info(s"Try to create a executor with labels $labelStr.")
     val labelExecutor = if (null == labels || labels.isEmpty) {
       defaultFactory.createExecutor(engineCreationContext, engineConn).asInstanceOf[LabelExecutor]
-    } else
+    } else {
       factories
         .find {
           case labelExecutorFactory: LabelExecutorFactory =>
@@ -117,6 +117,7 @@ class LabelExecutorManagerImpl extends LabelExecutorManager with Logging {
             .createExecutor(engineCreationContext, engineConn)
             .asInstanceOf[LabelExecutor]
         }
+    }
     val codeType = LabelUtil.getCodeType(labelExecutor.getExecutorLabels())
     logger.info(
       s"Finished to create ${labelExecutor.getClass.getSimpleName}(${labelExecutor.getId}) with labels $labelStr."
@@ -222,9 +223,11 @@ class LabelExecutorManagerImpl extends LabelExecutorManager with Logging {
       case labelExecutorFactory: CodeLanguageLabelExecutorFactory =>
         Array[Label[_]](labelExecutorFactory.getDefaultCodeLanguageLabel)
       case _ =>
-        if (null == engineConn.getEngineCreationContext.getLabels()) Array.empty[Label[_]]
-        else
+        if (null == engineConn.getEngineCreationContext.getLabels()) {
+          Array.empty[Label[_]]
+        } else {
           engineConn.getEngineCreationContext.getLabels().toArray[Label[_]](Array.empty[Label[_]])
+        }
     }
     createExecutor(engineConn.getEngineCreationContext, labels)
   } else {

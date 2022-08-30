@@ -34,7 +34,7 @@ import org.springframework.stereotype.Component
 
 import java.util
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 @Component
 class InstanceAliasManagerImpl extends InstanceAliasManager with Logging {
@@ -69,17 +69,17 @@ class InstanceAliasManagerImpl extends InstanceAliasManager with Logging {
   def getContextServiceID(): String = {
     RPCUtils
       .findService(
-        RPCConfiguration.CONTEXT_SERVICE_APPLICATION_NAME.getValue,
+        RPCConfiguration.CONTEXT_SERVICE_NAME,
         list => {
           val services =
-            list.filter(_.contains(RPCConfiguration.CONTEXT_SERVICE_APPLICATION_NAME.getValue))
+            list.filter(_.contains(RPCConfiguration.CONTEXT_SERVICE_NAME))
           services.headOption
         }
       )
       .getOrElse(null)
   }
 
-  @Deprecated
+  @deprecated
   override def refresh(): Unit = {}
 
   override def getAllInstanceList(): util.List[ServiceInstance] = {
@@ -87,7 +87,7 @@ class InstanceAliasManagerImpl extends InstanceAliasManager with Logging {
     if (null == serviceID) {
       return new util.ArrayList[ServiceInstance](0)
     }
-    serverLoader.getServiceInstances(serviceID).toList
+    serverLoader.getServiceInstances(serviceID).toList.asJava
   }
 
   override def isInstanceAliasValid(alias: String): Boolean = {

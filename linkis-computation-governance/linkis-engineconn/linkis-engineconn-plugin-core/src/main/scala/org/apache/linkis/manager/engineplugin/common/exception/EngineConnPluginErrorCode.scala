@@ -19,8 +19,8 @@ package org.apache.linkis.manager.engineplugin.common.exception
 
 object EngineConnPluginErrorCode {
 
-  def INVALID_RUNTYPE = 70101
+  def INVALID_RUNTYPE: Int = 70101
 
-  def INVALID_LABELS = 70102
+  def INVALID_LABELS: Int = 70102
 
 }

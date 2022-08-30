@@ -145,8 +145,9 @@ class StorageResultSetWriter[K <: MetaData, V <: Record](
   }
 
   def closeFs: Unit = {
-    if (fs != null)
+    if (fs != null) {
       fs.close()
+    }
   }
 
   override def close(): Unit = {
@@ -172,7 +173,7 @@ class StorageResultSetWriter[K <: MetaData, V <: Record](
           case _ =>
             outputStream.flush()
         }
-      }(s"$toString Error encounters when flush result set ")
+      }(s"Error encounters when flush result set ")
     }
   }
 

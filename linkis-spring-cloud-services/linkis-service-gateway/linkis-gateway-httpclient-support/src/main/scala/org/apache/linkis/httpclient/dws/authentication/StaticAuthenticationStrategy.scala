@@ -61,12 +61,13 @@ class StaticAuthenticationStrategy(override protected val sessionMaxAliveTime: L
   ): AuthenticationAction = {
     val action = new DWSAuthenticationAction(serverUrl)
 
-    def pwd: String = if (StringUtils.isNotBlank(getClientConfig.getAuthTokenValue))
+    def pwd: String = if (StringUtils.isNotBlank(getClientConfig.getAuthTokenValue)) {
       getClientConfig.getAuthTokenValue
-    else
+    } else {
       throw new AuthenticationFailedException(
         "the value of authTokenValue in ClientConfig must be exists, since no password is found to login."
       )
+    }
 
     requestAction match {
       case userPwd: UserPwdAction =>
@@ -76,10 +77,11 @@ class StaticAuthenticationStrategy(override protected val sessionMaxAliveTime: L
         action.addRequestPayload("userName", userAction.getUser)
         action.addRequestPayload("password", pwd)
       case _ =>
-        if (StringUtils.isBlank(getClientConfig.getAuthTokenKey))
+        if (StringUtils.isBlank(getClientConfig.getAuthTokenKey)) {
           throw new AuthenticationFailedException(
             "the value of authTokenKey in ClientConfig must be exists, since no user is found to login."
           )
+        }
         action.addRequestPayload("userName", getClientConfig.getAuthTokenKey)
         action.addRequestPayload("password", pwd)
     }

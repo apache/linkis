@@ -62,9 +62,10 @@ class DWSAuthenticationResult(response: HttpResponse, serverUrl: String)
 
     override def updateLastAccessTime(): Unit = lastAccessTime = System.currentTimeMillis
   }
-  else
+  else {
     throw new HttpMessageParseException(
       s"login to gateway $serverUrl failed! Reason: " + getMessage
     )
+  }
 
 }

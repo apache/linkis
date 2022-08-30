@@ -168,10 +168,9 @@ case class ProxyGatewayWebSocketSession(
       webSocketSession.bufferFactory().wrap("".getBytes())
     )
   )
+
   override def hashCode(): Int = super.hashCode()
 }
-
-
 
 import org.apache.linkis.gateway.springcloud.websocket.GatewayWebSocketSession.getWebSocketConnection
 

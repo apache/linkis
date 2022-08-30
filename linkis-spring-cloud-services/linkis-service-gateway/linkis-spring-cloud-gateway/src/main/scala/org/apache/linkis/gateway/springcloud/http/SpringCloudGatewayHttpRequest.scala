@@ -37,9 +37,9 @@ class SpringCloudGatewayHttpRequest(request: AbstractServerHttpRequest)
     val headerEntrys = request.getHeaders
     val header = new JMap[String, Array[String]]
     headerEntrys.foreach { case (key, value) =>
-      if (value != null && value.nonEmpty)
+      if (value != null && value.nonEmpty) {
         header.put(key, value.toArray(new Array[String](value.size())))
-      else header.put(key, Array.empty)
+      } else header.put(key, Array.empty)
     }
     header
   }
@@ -48,9 +48,9 @@ class SpringCloudGatewayHttpRequest(request: AbstractServerHttpRequest)
     val querys = request.getQueryParams
     val queryParams = new JMap[String, Array[String]]
     querys.foreach { case (key, value) =>
-      if (value != null && value.nonEmpty)
+      if (value != null && value.nonEmpty) {
         queryParams.put(key, value.toArray(new Array[String](value.size())))
-      else queryParams.put(key, Array.empty)
+      } else queryParams.put(key, Array.empty)
     }
     queryParams
   }
@@ -59,9 +59,9 @@ class SpringCloudGatewayHttpRequest(request: AbstractServerHttpRequest)
     val cookieMap = request.getCookies
     val cookies = new JMap[String, Array[Cookie]]
     cookieMap.foreach { case (key, value) =>
-      if (value != null && value.nonEmpty)
+      if (value != null && value.nonEmpty) {
         cookies.put(key, value.map(c => new Cookie(c.getName, c.getValue)).toArray)
-      else cookies.put(key, Array.empty)
+      } else cookies.put(key, Array.empty)
     }
     cookies
   }

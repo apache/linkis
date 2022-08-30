@@ -26,7 +26,6 @@ import org.apache.linkis.udf.vo.UDFInfoVo
 import org.apache.commons.collections.CollectionUtils
 
 import scala.collection.JavaConversions._
-import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 
 object UDFClient {
@@ -46,8 +45,9 @@ object UDFClient {
   ): ArrayBuffer[UDFInfoVo] = {
     val udfInfoBuilder = new ArrayBuffer[UDFInfoVo]
     val udfTree = queryUdfRpc(userName, category)
-    if (null != udfTree)
+    if (null != udfTree) {
       extractUdfInfosByUdfType(udfInfoBuilder, udfTree, userName, category, udfType)
+    }
     udfInfoBuilder
   }
 
@@ -116,8 +116,9 @@ object UDFClient {
         } else {
           queryUdfRpc(userName, category, child.getId, ConstantVar.SELF_USER)
         }
-        if (null != childInfo)
+        if (null != childInfo) {
           extractUdfInfosByUdfType(udfInfoBuilder, childInfo, userName, category, udfType)
+        }
       }
     }
   }

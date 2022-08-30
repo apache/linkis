@@ -39,7 +39,7 @@ import org.apache.http.{HttpException, HttpResponse}
 
 import java.util
 
-import scala.collection.JavaConversions
+import scala.collection.{JavaConversions, JavaConverters}
 
 class DWSHttpClient(clientConfig: DWSClientConfig, clientName: String)
     extends AbstractHttpClient(clientConfig, clientName)
@@ -101,8 +101,9 @@ class DWSHttpClient(clientConfig: DWSClientConfig, clientName: String)
             transfer(value, map)
             value
           case list: util.List[util.Map[String, Object]] =>
-            val results = JavaConversions
-              .asScalaBuffer(list)
+            val results = JavaConverters
+              .asScalaBufferConverter(list)
+              .asScala
               .map { map =>
                 val value = clazz.getConstructor().newInstance().asInstanceOf[Result]
                 transfer(value, map)
@@ -116,14 +117,14 @@ class DWSHttpClient(clientConfig: DWSClientConfig, clientName: String)
   }
 
   protected def deserializeResponseBody(responseBody: String): Any = {
-    if (responseBody.startsWith("{") && responseBody.endsWith("}"))
+    if (responseBody.startsWith("{") && responseBody.endsWith("}")) {
       DWSHttpClient.jacksonJson.readValue(responseBody, classOf[util.Map[String, Object]])
-    else if (responseBody.startsWith("[") && responseBody.endsWith("]"))
+    } else if (responseBody.startsWith("[") && responseBody.endsWith("]")) {
       DWSHttpClient.jacksonJson.readValue(
         responseBody,
         classOf[util.List[util.Map[String, Object]]]
       )
-    else if (StringUtils.isEmpty(responseBody)) new util.HashMap[String, Object]
+    } else if (StringUtils.isEmpty(responseBody)) new util.HashMap[String, Object]
     else if (responseBody.length > 200) throw new HttpException(responseBody.substring(0, 200))
     else throw new HttpException(responseBody)
   }

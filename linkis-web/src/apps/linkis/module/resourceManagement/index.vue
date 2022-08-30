@@ -118,7 +118,7 @@
       </div>
       <Table  class="table-content" border :width="tableWidth" :columns="columns" :data="tableData">
         <template slot-scope="{row}" slot="engineInstance">
-          <span>{{`${row.engineType}:${row.instance}`}}</span>
+          <span>{{`${row.instance}`}}</span>
         </template>
         <template slot-scope="{row}" slot="usedResource">
           <span>{{`${calcCompany(row.resource.usedResource)}`}}</span>

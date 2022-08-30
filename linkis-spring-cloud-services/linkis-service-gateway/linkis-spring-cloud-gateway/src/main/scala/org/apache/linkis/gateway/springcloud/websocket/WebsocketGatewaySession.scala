@@ -147,13 +147,14 @@ case class ProxyGatewayWebSocketSession(
   private var lastPingTime = System.currentTimeMillis
 
   override def equals(obj: scala.Any): Boolean = if (obj == null) false
-  else
+  else {
     obj match {
       case w: ProxyGatewayWebSocketSession =>
         if (w.webSocketSession != null) webSocketSession.getId == w.webSocketSession.getId
         else false
       case _ => false
     }
+  }
 
   def heartbeat(pingMsg: WebSocketMessage): Unit =
     if (System.currentTimeMillis - lastPingTime >= SPRING_CLOUD_GATEWAY_WEBSOCKET_HEARTBEAT) {
@@ -167,8 +168,10 @@ case class ProxyGatewayWebSocketSession(
       webSocketSession.bufferFactory().wrap("".getBytes())
     )
   )
-
+  override def hashCode(): Int = super.hashCode()
 }
+
+
 
 import org.apache.linkis.gateway.springcloud.websocket.GatewayWebSocketSession.getWebSocketConnection
 

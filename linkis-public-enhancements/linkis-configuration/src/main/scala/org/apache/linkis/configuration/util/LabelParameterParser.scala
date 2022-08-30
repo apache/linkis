@@ -31,6 +31,7 @@ import org.apache.linkis.manager.label.entity.engine.{
 import org.springframework.util.CollectionUtils
 
 import java.util
+import java.util.Locale
 
 import scala.collection.JavaConverters._
 
@@ -40,8 +41,8 @@ object LabelParameterParser {
   def getDefaultEngineVersion(engineType: String): String = {
     var returnType: CommonVars[String] = null
     EngineType.values.foreach(DefinedEngineType => {
-      if (DefinedEngineType.toString.equals(engineType.toLowerCase)) {
-        returnType = engineType.toLowerCase match {
+      if (DefinedEngineType.toString.equals(engineType.toLowerCase(Locale.ROOT))) {
+        returnType = engineType.toLowerCase(Locale.ROOT) match {
           case "spark" => GovernanceCommonConf.SPARK_ENGINE_VERSION
           case "hive" => GovernanceCommonConf.HIVE_ENGINE_VERSION
           case "python" => GovernanceCommonConf.PYTHON_ENGINE_VERSION

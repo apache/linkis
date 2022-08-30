@@ -39,7 +39,7 @@ import org.apache.http.{HttpException, HttpResponse}
 
 import java.util
 
-import scala.collection.JavaConversions
+import scala.collection.{JavaConversions, JavaConverters}
 
 class DWSHttpClient(clientConfig: DWSClientConfig, clientName: String)
     extends AbstractHttpClient(clientConfig, clientName)
@@ -101,8 +101,9 @@ class DWSHttpClient(clientConfig: DWSClientConfig, clientName: String)
             transfer(value, map)
             value
           case list: util.List[util.Map[String, Object]] =>
-            val results = JavaConversions
-              .asScalaBuffer(list)
+            val results = JavaConverters
+              .asScalaBufferConverter(list)
+              .asScala
               .map { map =>
                 val value = clazz.getConstructor().newInstance().asInstanceOf[Result]
                 transfer(value, map)

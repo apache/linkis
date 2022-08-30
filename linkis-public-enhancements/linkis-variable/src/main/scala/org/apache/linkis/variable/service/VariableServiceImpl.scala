@@ -73,24 +73,6 @@ class VariableServiceImpl extends VariableService with Logging {
     varMapper.removeValue(value.getId)
   }
 
-  /*  @Transactional
-    override def addGlobalVariable(f: VarKeyValueVO, userName: String): Unit = {
-      if (f.getValueID == null || StringUtils.isEmpty(f.getValueID.toString)) {
-        val newKey = new VarKey
-        newKey.setApplicationID(-1L)
-        newKey.setKey(f.getKey)
-        varMapper.insertKey(newKey)
-        val newValue = new VarKeyUser
-        newValue.setApplicationID(-1L)
-        newValue.setKeyID(newKey.getId)
-        newValue.setUserName(userName)
-        newValue.setValue(f.getValue)
-        varMapper.insertValue(newValue)
-      } else {
-        varMapper.updateValue(f.getValueID, f.getValue)
-      }
-    }*/
-
   private def insertGlobalVariable(saveVariable: VarKeyValueVO, userName: String): Unit = {
     val newKey = new VarKey
     newKey.setApplicationID(-1L)
@@ -121,8 +103,9 @@ class VariableServiceImpl extends VariableService with Logging {
         .fromJson(BDPJettyServerHelper.gson.toJson(f), classOf[VarKeyValueVO])
     )
     saves.foreach { f =>
-      if (StringUtils.isBlank(f.getKey) || StringUtils.isBlank(f.getValue))
-        throw new VariableException("key或value不能为空")
+      if (StringUtils.isBlank(f.getKey) || StringUtils.isBlank(f.getValue)) {
+        throw new VariableException("Key or value cannot be empty(key或value不能为空)")
+      }
       var flag = true
       breakable {
         for (ele <- userVariables) {

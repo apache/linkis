@@ -28,6 +28,8 @@ import org.apache.linkis.server.conf.ServerConfiguration
 
 import org.apache.commons.lang3.StringUtils
 
+import java.util.Locale
+
 trait GatewayParser {
 
   def shouldContainRequestBody(gatewayContext: GatewayContext): Boolean
@@ -93,7 +95,7 @@ class DefaultGatewayParser(gatewayParsers: Array[GatewayParser]) extends Abstrac
     s"/api/rest_[a-zA-Z]+/(v\\d+)/${AbstractGatewayParser.GATEWAY_HEART_BEAT_URL.mkString("/")}".r
 
   override def shouldContainRequestBody(gatewayContext: GatewayContext): Boolean =
-    gatewayContext.getRequest.getMethod.toUpperCase != "GET" &&
+    gatewayContext.getRequest.getMethod.toUpperCase(Locale.ROOT) != "GET" &&
       (gatewayContext.getRequest.getRequestURI match {
         case uri if uri.startsWith(ServerConfiguration.BDP_SERVER_USER_URI.getValue) => true
         case _ => gatewayParsers.exists(_.shouldContainRequestBody(gatewayContext))

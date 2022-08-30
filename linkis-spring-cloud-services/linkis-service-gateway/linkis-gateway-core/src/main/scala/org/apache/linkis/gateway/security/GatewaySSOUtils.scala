@@ -90,10 +90,11 @@ object GatewaySSOUtils extends Logging {
       c => {
         if (cookieDomainSetupSwitch) {
           val host = gatewayContext.getRequest.getHeaders.get("Host")
-          if (host != null && host.nonEmpty)
+          if (host != null && host.nonEmpty) {
             c.setDomain(
               getCookieDomain(host.head, GatewayConfiguration.GATEWAY_DOMAIN_LEVEL.getValue)
             )
+          }
         }
         gatewayContext.getResponse.addCookie(c)
       },

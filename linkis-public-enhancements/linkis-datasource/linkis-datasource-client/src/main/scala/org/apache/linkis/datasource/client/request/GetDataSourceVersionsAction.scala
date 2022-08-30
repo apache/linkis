@@ -52,8 +52,9 @@ object GetDataSourceVersionsAction {
     }
 
     def build(): GetDataSourceVersionsAction = {
-      if (dataSourceId == null)
+      if (dataSourceId == null) {
         throw new DataSourceClientBuilderException("dataSourceId is needed!")
+      }
       if (user == null) throw new DataSourceClientBuilderException("user is needed!")
 
       val action = new GetDataSourceVersionsAction

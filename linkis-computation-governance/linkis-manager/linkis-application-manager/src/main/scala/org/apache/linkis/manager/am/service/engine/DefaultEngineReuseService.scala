@@ -49,10 +49,7 @@ import scala.collection.JavaConversions._
 import scala.concurrent.duration.Duration
 
 @Service
-class DefaultEngineReuseService
-    extends AbstractEngineService
-    with EngineReuseService
-    with Logging {
+class DefaultEngineReuseService extends AbstractEngineService with EngineReuseService with Logging {
 
   @Autowired
   private var nodeSelector: NodeSelector = _

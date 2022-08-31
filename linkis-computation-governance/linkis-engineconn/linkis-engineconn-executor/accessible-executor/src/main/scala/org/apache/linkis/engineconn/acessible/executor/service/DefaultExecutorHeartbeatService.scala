@@ -101,8 +101,8 @@ class DefaultExecutorHeartbeatService
   }
 
   /**
-   * Generate heartbeat information through report by default If engine conn is not initialized,
-   * the default information is generated
+   * Generate heartbeat information through report by default If engine conn is not initialized, the
+   * default information is generated
    * @param executor
    * @return
    */

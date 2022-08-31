@@ -64,9 +64,7 @@ class DefaultAccessibleService extends AccessibleService with Logging {
   ): Unit = {
     // todo check user
     if (
-        DataWorkCloudApplication.getServiceInstance.equals(
-          engineSuicideRequest.getServiceInstance
-        )
+        DataWorkCloudApplication.getServiceInstance.equals(engineSuicideRequest.getServiceInstance)
     ) {
       stopEngine()
       logger.info(s"engine will suiside now.")

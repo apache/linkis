@@ -83,11 +83,7 @@ object EngineConnMonitor extends Logging {
             }
           })
           if (!engineList.isEmpty) {
-            queryEngineStatusAndHandle(
-              engineConnExecutorCache,
-              engineList,
-              endJobByEngineInstance
-            )
+            queryEngineStatusAndHandle(engineConnExecutorCache, engineList, endJobByEngineInstance)
             engineList.clear()
           }
         }
@@ -178,10 +174,7 @@ object EngineConnMonitor extends Logging {
                   .toJson(o)} for request : ${BDPJettyServerHelper.gson.toJson(requestNodeStatus)}"))
             }
           } { case t: Throwable =>
-            logger.error(
-              s"Failed to get status of engineConn : ${status._1}, now end the job. ",
-              t
-            )
+            logger.error(s"Failed to get status of engineConn : ${status._1}, now end the job. ", t)
             endJobByEngineInstance(status._1)
           }
         }

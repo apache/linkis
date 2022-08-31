@@ -76,9 +76,7 @@ object EngineConnServer extends Logging {
         "Finished to create EngineCreationContext, EngineCreationContext content: " + EngineConnUtils.GSON
           .toJson(engineCreationContext)
       )
-      EngineConnHook.getEngineConnHooks.foreach(
-        _.beforeCreateEngineConn(getEngineCreationContext)
-      )
+      EngineConnHook.getEngineConnHooks.foreach(_.beforeCreateEngineConn(getEngineCreationContext))
       logger.info("Finished to execute hook of beforeCreateEngineConn.")
       // 2. cresate EngineConn
       val engineConn = getEngineConnManager.createEngineConn(getEngineCreationContext)
@@ -128,10 +126,7 @@ object EngineConnServer extends Logging {
     val host = CommonVars(Environment.ECM_HOST.toString, "127.0.0.1").getValue
     val port = CommonVars(Environment.ECM_PORT.toString, "80").getValue
     this.engineCreationContext.setEMInstance(
-      ServiceInstance(
-        GovernanceCommonConf.ENGINE_CONN_MANAGER_SPRING_NAME.getValue,
-        s"$host:$port"
-      )
+      ServiceInstance(GovernanceCommonConf.ENGINE_CONN_MANAGER_SPRING_NAME.getValue, s"$host:$port")
     )
     val labels = new ArrayBuffer[Label[_]]
     val labelArgs = engineConf.filter(_._1.startsWith(EngineConnArgumentsParser.LABEL_PREFIX))

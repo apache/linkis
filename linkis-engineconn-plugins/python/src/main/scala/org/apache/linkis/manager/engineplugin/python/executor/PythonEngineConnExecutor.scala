@@ -118,21 +118,9 @@ class PythonEngineConnExecutor(id: Int, pythonSession: PythonSession, outputPrin
       return jobProgressInfo.toArray
     }
     if (0.0f == progress(taskID)) {
-      jobProgressInfo += JobProgressInfo(
-        engineExecutionContext.getJobId.getOrElse(""),
-        1,
-        1,
-        0,
-        0
-      )
+      jobProgressInfo += JobProgressInfo(engineExecutionContext.getJobId.getOrElse(""), 1, 1, 0, 0)
     } else {
-      jobProgressInfo += JobProgressInfo(
-        engineExecutionContext.getJobId.getOrElse(""),
-        1,
-        0,
-        0,
-        1
-      )
+      jobProgressInfo += JobProgressInfo(engineExecutionContext.getJobId.getOrElse(""), 1, 0, 0, 1)
     }
     jobProgressInfo.toArray
   }

@@ -245,10 +245,8 @@ class HiveEngineConnExecutor(
           return SuccessExecuteResponse()
         }
         // get column data
-        val metaData: TableMetaData = getResultMetaData(
-          fieldSchemas,
-          engineExecutorContext.getEnableResultsetMetaWithTableName
-        )
+        val metaData: TableMetaData =
+          getResultMetaData(fieldSchemas, engineExecutorContext.getEnableResultsetMetaWithTableName)
         // send result
         rows = sendResultSet(engineExecutorContext, driver, metaData)
         columnCount = if (fieldSchemas != null) fieldSchemas.size() else 0
@@ -355,11 +353,7 @@ class HiveEngineConnExecutor(
 
     val columns = results
       .map(result =>
-        Column(
-          result.getName,
-          DataType.toDataType(result.getType.toLowerCase()),
-          result.getComment
-        )
+        Column(result.getName, DataType.toDataType(result.getType.toLowerCase()), result.getComment)
       )
       .toArray[Column]
     val metaData = new TableMetaData(columns)

@@ -191,9 +191,7 @@ class DefaultECMHealthService extends ECMHealthService with ECMEventListener {
   override def transitionStatus(toStatus: NodeStatus): Unit = statusLocker synchronized {
     this.status match {
       case NodeStatus.Failed | NodeStatus.Success =>
-        logger.warn(
-          s"$toString attempt to change status ${this.status} => $toStatus, ignore it ."
-        )
+        logger.warn(s"$toString attempt to change status ${this.status} => $toStatus, ignore it .")
         return
       case NodeStatus.ShuttingDown =>
         toStatus match {

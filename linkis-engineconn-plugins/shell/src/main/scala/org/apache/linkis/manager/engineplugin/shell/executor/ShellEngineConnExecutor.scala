@@ -183,8 +183,7 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
       /*
         Read stderr with another thread
        */
-      errReaderThread =
-        new ErrorStreamReaderThread(engineExecutionContext, errorsReader, extractor)
+      errReaderThread = new ErrorStreamReaderThread(engineExecutionContext, errorsReader, extractor)
       errReaderThread.start()
 
       /*
@@ -266,21 +265,9 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
       return jobProgressInfo.toArray
     }
     if (0.0f == progress(taskID)) {
-      jobProgressInfo += JobProgressInfo(
-        engineExecutionContext.getJobId.getOrElse(""),
-        1,
-        1,
-        0,
-        0
-      )
+      jobProgressInfo += JobProgressInfo(engineExecutionContext.getJobId.getOrElse(""), 1, 1, 0, 0)
     } else {
-      jobProgressInfo += JobProgressInfo(
-        engineExecutionContext.getJobId.getOrElse(""),
-        1,
-        0,
-        0,
-        1
-      )
+      jobProgressInfo += JobProgressInfo(engineExecutionContext.getJobId.getOrElse(""), 1, 0, 0, 1)
     }
     jobProgressInfo.toArray
   }

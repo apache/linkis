@@ -40,9 +40,7 @@ class DefaultResultSetFactory extends ResultSetFactory with Logging {
 
   val resultTypes = ResultSetFactory.resultSetType.keys.toArray
 
-  override def getResultSetByType(
-      resultSetType: String
-  ): ResultSet[_ <: MetaData, _ <: Record] = {
+  override def getResultSetByType(resultSetType: String): ResultSet[_ <: MetaData, _ <: Record] = {
     if (!resultClasses.contains(resultSetType))
       throw new StorageErrorException(50000, s"Unsupported result type(不支持的结果类型)：$resultSetType")
     resultClasses(resultSetType).newInstance()
@@ -73,10 +71,7 @@ class DefaultResultSetFactory extends ResultSetFactory with Logging {
 
   override def getResultSetType: Array[String] = resultTypes
 
-  override def getResultSetByPath(
-      fsPath: FsPath,
-      fs: Fs
-  ): ResultSet[_ <: MetaData, _ <: Record] = {
+  override def getResultSetByPath(fsPath: FsPath, fs: Fs): ResultSet[_ <: MetaData, _ <: Record] = {
     val inputStream = fs.read(fsPath)
     val resultSetType = Dolphin.getType(inputStream)
     if (StringUtils.isEmpty(resultSetType))

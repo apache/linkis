@@ -45,9 +45,7 @@ class DefaultEngineConnLaunchService extends EngineConnLaunchService with Loggin
   @Autowired
   private var engineConnResourceGenerator: EngineConnResourceGenerator = _
 
-  private def getEngineLaunchBuilder(
-      engineTypeLabel: EngineTypeLabel
-  ): EngineConnLaunchBuilder = {
+  private def getEngineLaunchBuilder(engineTypeLabel: EngineTypeLabel): EngineConnLaunchBuilder = {
     val engineConnPluginInstance =
       EngineConnPluginsLoader.getEngineConnPluginsLoader().getEngineConnPlugin(engineTypeLabel)
     val builder = engineConnPluginInstance.plugin.getEngineConnLaunchBuilder
@@ -67,17 +65,16 @@ class DefaultEngineConnLaunchService extends EngineConnLaunchService with Loggin
     val engineTypeOption = engineBuildRequest.labels.find(_.isInstanceOf[EngineTypeLabel])
     if (engineTypeOption.isDefined) {
       val engineTypeLabel = engineTypeOption.get.asInstanceOf[EngineTypeLabel]
-      Utils.tryCatch(
-        getEngineLaunchBuilder(engineTypeLabel).buildEngineConn(engineBuildRequest)
-      ) { t =>
-        logger.error(
-          s"Failed to createEngineConnLaunchRequest(${engineBuildRequest.ticketId})",
-          t
-        )
-        throw new EngineConnPluginErrorException(
-          10001,
-          s"Failed to createEngineConnLaunchRequest, ${ExceptionUtils.getRootCauseMessage(t)}"
-        )
+      Utils.tryCatch(getEngineLaunchBuilder(engineTypeLabel).buildEngineConn(engineBuildRequest)) {
+        t =>
+          logger.error(
+            s"Failed to createEngineConnLaunchRequest(${engineBuildRequest.ticketId})",
+            t
+          )
+          throw new EngineConnPluginErrorException(
+            10001,
+            s"Failed to createEngineConnLaunchRequest, ${ExceptionUtils.getRootCauseMessage(t)}"
+          )
       }
     } else {
       throw new EngineConnPluginErrorException(10001, "EngineTypeLabel are requested")

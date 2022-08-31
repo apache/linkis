@@ -32,9 +32,6 @@ trait EngineConnLaunchService {
    */
   def launchEngineConn(engineConnBuildRequest: EngineConnBuildRequest): EngineNode
 
-  def launchEngineConn(
-      engineConnLaunchRequest: EngineConnLaunchRequest,
-      duration: Long
-  ): EngineNode
+  def launchEngineConn(engineConnLaunchRequest: EngineConnLaunchRequest, duration: Long): EngineNode
 
 }

@@ -32,10 +32,7 @@ import org.apache.linkis.manager.common.protocol.em.StopEMRequest
 import org.apache.linkis.manager.common.protocol.engine.EngineStopRequest
 import org.apache.linkis.manager.common.protocol.node.{NodeHeartbeatMsg, NodeHeartbeatRequest}
 import org.apache.linkis.manager.common.utils.ManagerUtils
-import org.apache.linkis.manager.persistence.{
-  NodeManagerPersistence,
-  NodeMetricManagerPersistence
-}
+import org.apache.linkis.manager.persistence.{NodeManagerPersistence, NodeMetricManagerPersistence}
 import org.apache.linkis.manager.service.common.label.ManagerLabelService
 import org.apache.linkis.manager.service.common.metrics.MetricsConverter
 import org.apache.linkis.rpc.Sender
@@ -90,8 +87,8 @@ class NodeHeartbeatMonitor extends ManagerMonitor with Logging {
   private val ecmHeartBeatTime = ManagerMonitorConf.ECM_HEARTBEAT_MAX_UPDATE_TIME.getValue.toLong
 
   /**
-   *   1. Scan all nodes regularly for three minutes to determine the update time of Metrics, 2.
-   *      If the update time exceeds a period of time and has not been updated, initiate a Metrics
+   *   1. Scan all nodes regularly for three minutes to determine the update time of Metrics, 2. If
+   *      the update time exceeds a period of time and has not been updated, initiate a Metrics
    *      update request proactively. If the node status is already Unhealthy, then directly
    *      initiate a kill request 3. If send reports that the node does not exist, you need to
    *      remove the node to determine whether the node is Engine or EM information 4. If send
@@ -133,10 +130,10 @@ class NodeHeartbeatMonitor extends ManagerMonitor with Logging {
 
   /**
    *   1. When the engine starts, the status is empty, and it needs to judge whether the startup
-   *      timeout, if the startup timeout, kill directly 2. After the engine is in the state, it
-   *      is normal that the heartbeat information is reported after the startup is completed: if
-   *      the heartbeat is not updated for a long time, kill it, if it does not exist on Eureka,
-   *      it needs to be killed.
+   *      timeout, if the startup timeout, kill directly 2. After the engine is in the state, it is
+   *      normal that the heartbeat information is reported after the startup is completed: if the
+   *      heartbeat is not updated for a long time, kill it, if it does not exist on Eureka, it
+   *      needs to be killed.
    *
    * @param engineNodes
    */
@@ -160,9 +157,7 @@ class NodeHeartbeatMonitor extends ManagerMonitor with Logging {
         }
         val updateOverdue = (System.currentTimeMillis() - updateTime) > maxUpdateInterval
         if (null == engineNode.getNodeStatus) {
-          if (
-              !existingEngineInstances.contains(engineNode.getServiceInstance) && engineIsStarted
-          ) {
+          if (!existingEngineInstances.contains(engineNode.getServiceInstance) && engineIsStarted) {
             logger.warn(
               s"Failed to find instance ${engineNode.getServiceInstance} from eureka prepare to kill, engineIsStarted"
             )
@@ -202,15 +197,14 @@ class NodeHeartbeatMonitor extends ManagerMonitor with Logging {
 
   /**
    * When the EM status is Healthy and WARN:
-   *   1. Determine the update time of Metrics. If it is not reported for more than a certain
-   *      period of time, initiate a Metrics update request. 2. If send is abnormal, it will be
-   *      marked as UnHealthy 3. If the result of send is not available, update to the
-   *      corresponding state 4. Update Metrics if normal When the Engine status is Healthy and
-   *      WARN:
-   *   1. Determine the update time of Metrics. If it is not reported for more than a certain
-   *      period of time, initiate a Metrics update request. 2. If send is abnormal, it will be
-   *      marked as UnHealthy 3. If the result of send is not available, update to UnHealthy
-   *      status 4. Update Metrics if normal
+   *   1. Determine the update time of Metrics. If it is not reported for more than a certain period
+   *      of time, initiate a Metrics update request. 2. If send is abnormal, it will be marked as
+   *      UnHealthy 3. If the result of send is not available, update to the corresponding state 4.
+   *      Update Metrics if normal When the Engine status is Healthy and WARN:
+   *   1. Determine the update time of Metrics. If it is not reported for more than a certain period
+   *      of time, initiate a Metrics update request. 2. If send is abnormal, it will be marked as
+   *      UnHealthy 3. If the result of send is not available, update to UnHealthy status 4. Update
+   *      Metrics if normal
    *
    * @param healthyList
    */
@@ -289,8 +283,8 @@ class NodeHeartbeatMonitor extends ManagerMonitor with Logging {
 
   /**
    * When the EM status is StockAvailable:
-   *   1. Determine the update time of Metrics. If the state is not changed for a certain period
-   *      of time, change the Node to the StockUnavailable state
+   *   1. Determine the update time of Metrics. If the state is not changed for a certain period of
+   *      time, change the Node to the StockUnavailable state
    *
    * @param stockAvailableList
    */
@@ -462,10 +456,7 @@ class NodeHeartbeatMonitor extends ManagerMonitor with Logging {
    * @param nodeMetric
    * @param e
    */
-  private def dealMetricUpdateTimeOut(
-      nodeMetric: NodeMetrics,
-      e: UndeclaredThrowableException
-  ) = {
+  private def dealMetricUpdateTimeOut(nodeMetric: NodeMetrics, e: UndeclaredThrowableException) = {
     val maxInterval = ManagerMonitorConf.NODE_HEARTBEAT_MAX_UPDATE_TIME.getValue.toLong
     val timeout = System.currentTimeMillis() - nodeMetric.getUpdateTime.getTime > maxInterval
     if (timeout) {

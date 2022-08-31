@@ -37,10 +37,8 @@ import java.util
 
 abstract class InitSQLHook extends EngineConnHook with Logging {
 
-  private val INIT_SQL_DIR = CommonVars(
-    "wds.linkis.bdp.hive.init.sql.dir",
-    "/appcom/config/hive-config/init_sql/"
-  ).getValue
+  private val INIT_SQL_DIR =
+    CommonVars("wds.linkis.bdp.hive.init.sql.dir", "/appcom/config/hive-config/init_sql/").getValue
 
   private val INIT_SQL_ENABLE = CommonVars("wds.linkis.bdp.hive.init.sql.enable", false)
 

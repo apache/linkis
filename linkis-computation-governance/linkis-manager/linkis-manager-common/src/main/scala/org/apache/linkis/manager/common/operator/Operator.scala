@@ -25,9 +25,7 @@ trait Operator {
 
   def apply(implicit parameters: Map[String, Any]): Map[String, Any]
 
-  protected def getAs[T](key: String, defaultVal: => T)(implicit
-      parameters: Map[String, Any]
-  ): T =
+  protected def getAs[T](key: String, defaultVal: => T)(implicit parameters: Map[String, Any]): T =
     parameters.getOrElse(key, defaultVal) match {
       case t: T => t
       case null => null.asInstanceOf[T]

@@ -18,10 +18,7 @@
 package org.apache.linkis.engineconnplugin.flink.setting
 
 import org.apache.linkis.engineconn.common.creation.EngineCreationContext
-import org.apache.linkis.engineconnplugin.flink.context.{
-  EnvironmentContext,
-  FlinkEngineConnContext
-}
+import org.apache.linkis.engineconnplugin.flink.context.{EnvironmentContext, FlinkEngineConnContext}
 
 /**
  * Used to set extra configurations when launching a flink EngineConn. These configurations is not

@@ -45,10 +45,8 @@ trait InsLabelRpcService {
    * @param insLabelRemoveRequest
    *   request
    */
-  def removeLabelsFromInstance(
-      sender: Sender,
-      insLabelRemoveRequest: InsLabelRemoveRequest
-  ): Unit = ???
+  def removeLabelsFromInstance(sender: Sender, insLabelRemoveRequest: InsLabelRemoveRequest): Unit =
+    ???
 
   def queryLabelsFromInstance(
       sender: Sender,

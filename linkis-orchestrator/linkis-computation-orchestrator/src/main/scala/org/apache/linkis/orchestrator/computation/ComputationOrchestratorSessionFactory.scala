@@ -48,9 +48,8 @@ object ComputationOrchestratorSessionFactory {
       if (sessionFactory == null) {
         sessionFactory =
           if (
-              StringUtils.isNotBlank(
-                ComputationOrchestratorConf.COMPUTATION_SESSION_FACTORY_CLASS.getValue
-              )
+              StringUtils
+                .isNotBlank(ComputationOrchestratorConf.COMPUTATION_SESSION_FACTORY_CLASS.getValue)
           )
             ClassUtils.getClassInstance(
               ComputationOrchestratorConf.COMPUTATION_SESSION_FACTORY_CLASS.getValue

@@ -35,9 +35,7 @@ import org.springframework.stereotype.Service
 import java.util
 
 @Service
-class DefaultEngineConnStatusCallbackService
-    extends EngineConnStatusCallbackService
-    with Logging {
+class DefaultEngineConnStatusCallbackService extends EngineConnStatusCallbackService with Logging {
 
   @Autowired
   private var nodeMetricManagerPersistence: NodeMetricManagerPersistence = _

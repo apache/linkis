@@ -169,10 +169,7 @@ object RMUtils extends Logging {
         aggregateResource(firstNodeResource.getUsedResource, secondNodeResource.getUsedResource)
       )
       aggregatedNodeResource.setLockedResource(
-        aggregateResource(
-          firstNodeResource.getLockedResource,
-          secondNodeResource.getLockedResource
-        )
+        aggregateResource(firstNodeResource.getLockedResource, secondNodeResource.getLockedResource)
       )
       aggregatedNodeResource.setLeftResource(
         aggregateResource(firstNodeResource.getLeftResource, secondNodeResource.getLeftResource)

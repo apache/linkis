@@ -72,8 +72,7 @@ class EntranceWebSocketService
   private val pauseUrlPattern = (restfulURI + """entrance/(.+)/pause""").r
   private val backgroundUrlPattern = restfulURI + """entrance/backgroundservice"""
 
-  def setEntranceServer(entranceServer: EntranceServer): Unit = this.entranceServer =
-    entranceServer
+  def setEntranceServer(entranceServer: EntranceServer): Unit = this.entranceServer = entranceServer
 
   def setEntranceRestfulApi(entranceRestfulApi: EntranceRestfulApi): Unit =
     this.entranceRestfulApi = entranceRestfulApi
@@ -404,12 +403,7 @@ class EntranceWebSocketService
      }
    }*/
 
-  private def concatLog(
-      length: Int,
-      log: String,
-      flag: StringBuilder,
-      all: StringBuilder
-  ): Unit = {
+  private def concatLog(length: Int, log: String, flag: StringBuilder, all: StringBuilder): Unit = {
     if (length == 1) {
       flag ++= log ++= "\n"
       all ++= log ++= "\n"

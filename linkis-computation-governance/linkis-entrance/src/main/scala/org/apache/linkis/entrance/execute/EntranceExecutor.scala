@@ -141,10 +141,6 @@ class EngineExecuteAsyncReturn(
 
   private var progressProcessor: ProgressProcessor = _
 
-  private var resourceReportProcessor: ResourceReportProcessor = _
-
-  private var subJobId: String = _
-
   def getLastNotifyTime: Long = lastNotifyTime
 
   def setOrchestrationObjects(
@@ -174,10 +170,6 @@ class EngineExecuteAsyncReturn(
     getProgressProcessor().foreach(IOUtils.closeQuietly(_))
   }
 
-  def setSubJobId(subJobId: String): Unit = {
-    this.subJobId = subJobId
-  }
-
   private[execute] def notifyStatus(responseEngineStatus: ResponseTaskStatus): Unit = {
     lastNotifyTime = System.currentTimeMillis()
     val response = responseEngineStatus.status match {
@@ -193,8 +185,7 @@ class EngineExecuteAsyncReturn(
               case ErrorExecuteResponse(errorMsg, error) =>
                 val errorStackTrace =
                   if (error != null) ExceptionUtils.getStackTrace(error) else StringUtils.EMPTY
-                val msg =
-                  s"Job with execId-$id + subJobId : $subJobId  execute failed,$errorMsg \n $errorStackTrace"
+                val msg = s"jobRequest($id)  execute failed,$errorMsg \n ${errorStackTrace}"
                 entranceExecuteRequest.getJob.getLogListener.foreach(
                   _.onLogUpdate(entranceExecuteRequest.getJob, LogUtils.generateERROR(msg))
                 )
@@ -245,7 +236,6 @@ class EngineExecuteAsyncReturn(
 
   override def notify(rs: ExecuteResponse => Unit): Unit = {
     notifyJob = rs
-    //    this synchronized notify()
   }
 
 }

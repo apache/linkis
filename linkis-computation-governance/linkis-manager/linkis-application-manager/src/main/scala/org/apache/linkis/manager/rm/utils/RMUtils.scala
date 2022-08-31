@@ -18,7 +18,8 @@
 package org.apache.linkis.manager.rm.utils
 
 import org.apache.linkis.common.conf.{CommonVars, Configuration, TimeType}
-import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.common.utils.{ByteTimeUtils, Logging, Utils}
+import org.apache.linkis.manager.common.constant.RMConstant
 import org.apache.linkis.manager.common.entity.persistence.PersistenceResource
 import org.apache.linkis.manager.common.entity.resource._
 import org.apache.linkis.manager.common.serializer.NodeResourceSerializer
@@ -196,6 +197,44 @@ object RMUtils extends Logging {
         firstResource.add(secondResource)
       case _ => null
     }
+  }
+
+  def getResourceInfoMsg(
+      resourceType: String,
+      unitType: String,
+      requestResource: Any,
+      availableResource: Any,
+      maxResource: Any
+  ): String = {
+
+    def dealMemory(resourceType: String, unitType: String, resource: Any): String = {
+      if (
+          RMConstant.MEMORY.equals(resourceType) && RMConstant.MEMORY_UNIT_BYTE.equals(unitType)
+      ) {
+        Utils.tryCatch {
+          if (logger.isDebugEnabled()) {
+            logger.debug(s"Will change ${resource.toString} from ${unitType} to GB")
+          }
+          ByteTimeUtils.byteStringAsGb(resource.toString + "b").toString + "GB"
+        } { case e: Exception =>
+          logger.error(s"Cannot convert ${resource} to Gb, " + e.getMessage)
+          resource.toString + unitType
+        }
+      } else {
+        resource.toString + unitType
+      }
+    }
+
+    val reqMsg =
+      if (null == requestResource) "null" + unitType
+      else dealMemory(resourceType, unitType, requestResource)
+    val availMsg =
+      if (null == availableResource) "null" + unitType
+      else dealMemory(resourceType, unitType, availableResource.toString)
+    val maxMsg =
+      if (null == maxResource) "null" + unitType
+      else dealMemory(resourceType, unitType, maxResource.toString)
+    s" user ${resourceType}, requestResource : ${reqMsg} > availableResource : ${availMsg},  maxResource : ${maxMsg}."
   }
 
 }

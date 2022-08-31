@@ -219,12 +219,6 @@ class EntranceWebSocketService
         job,
         "************************************SCRIPT CODE************************************"
       )
-    val jobGroups = job.asInstanceOf[EntranceJob].getJobGroups
-    jobGroups.foreach(subJobInfo => {
-      entranceServer.getEntranceContext
-        .getOrCreateLogManager()
-        .onLogUpdate(job, subJobInfo.getCode)
-    })
     entranceServer.getEntranceContext
       .getOrCreateLogManager()
       .onLogUpdate(

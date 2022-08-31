@@ -116,7 +116,7 @@ class EntranceGroupFactory extends GroupFactory with Logging {
       }(
         "Get user configurations from configuration server failed! Next use the default value to continue."
       )
-      val maxRunningJobs = EntranceConfiguration.WDS_LINKIS_INSTANCE.getValue(keyAndValue)
+      val maxRunningJobs = getUserMaxRunningJobs(keyAndValue)
       val initCapacity = GROUP_INIT_CAPACITY.getValue(keyAndValue)
       val maxCapacity = if (null != specifiedUsernameRegexPattern) {
         if (specifiedUsernameRegexPattern.matcher(userCreatorLabel.getUser).find()) {
@@ -151,6 +151,22 @@ class EntranceGroupFactory extends GroupFactory with Logging {
       )
     }
     group
+  }
+
+  private def getUserMaxRunningJobs(keyAndValue: util.Map[String, String]): Int = {
+    var userDefinedRunningJobs = EntranceConfiguration.WDS_LINKIS_INSTANCE.getValue(keyAndValue)
+    var entranceNum = Sender.getInstances(Sender.getThisServiceInstance.getApplicationName).length
+    /*
+    Sender.getInstances may get 0 instances due to cache in Sender. So this instance is the one instance.
+     */
+    if (0 == entranceNum) {
+      entranceNum = 1
+      logger.error(s"Got 0 ${Sender.getThisServiceInstance.getApplicationName} instances.")
+    }
+    Math.max(
+      EntranceConfiguration.ENTRANCE_INSTANCE_MIN.getValue,
+      userDefinedRunningJobs / entranceNum
+    );
   }
 
 }

@@ -30,7 +30,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
-import java.lang.Long
 import java.util
 
 @Service
@@ -43,8 +42,8 @@ class VariableServiceImpl extends VariableService with Logging {
     val globals = listGlobalVariable(userName)
     val response = new ResponseQueryVariable
     val map = new util.HashMap[String, String]()
-    import scala.collection.JavaConversions._
-    globals.foreach(f => map.put(f.getKey, f.getValue))
+    import scala.collection.JavaConverters._
+    globals.asScala.foreach(f => map.put(f.getKey, f.getValue))
     response.setKeyAndValue(map)
     response
   }
@@ -57,8 +56,8 @@ class VariableServiceImpl extends VariableService with Logging {
     val globals = listGlobalVariable(userName)
     val response = new ResponseQueryVariable
     val map = new util.HashMap[String, String]()
-    import scala.collection.JavaConversions._
-    globals.foreach(f => map.put(f.getKey, f.getValue))
+    import scala.collection.JavaConverters._
+    globals.asScala.foreach(f => map.put(f.getKey, f.getValue))
     response.setKeyAndValue(map)
     response
   }
@@ -96,29 +95,29 @@ class VariableServiceImpl extends VariableService with Logging {
       userVariables: util.List[VarKeyValueVO],
       userName: String
   ): Unit = {
-    import scala.collection.JavaConversions._
+    import scala.collection.JavaConverters._
     import scala.util.control.Breaks._
-    val saves = globalVariables.map(f =>
+    val saves = globalVariables.asScala.map(f =>
       BDPJettyServerHelper.gson
         .fromJson(BDPJettyServerHelper.gson.toJson(f), classOf[VarKeyValueVO])
     )
     saves.foreach { f =>
       if (StringUtils.isBlank(f.getKey) || StringUtils.isBlank(f.getValue)) {
-        throw new VariableException("Key or value cannot be empty(key或value不能为空)")
+        throw new VariableException("Key or value cannot be empty")
       }
       var flag = true
       breakable {
-        for (ele <- userVariables) {
+        for (ele <- userVariables.asScala) {
           if (f.getKey.equals(ele.getKey)) {
             flag = false
-            updateGlobalVariable(f, ele.getValueID)
+            updateGlobalVariable(f, ele.getValueID: Long)
             break()
           }
         }
       }
       if (flag) insertGlobalVariable(f, userName)
     }
-    userVariables.foreach { f =>
+    userVariables.asScala.foreach { f =>
       var flag = true
       breakable {
         for (ele <- saves) {
@@ -127,7 +126,7 @@ class VariableServiceImpl extends VariableService with Logging {
             break()
           }
         }
-        if (flag) removeGlobalVariable(f.getKeyID)
+        if (flag) removeGlobalVariable(f.getKeyID: Long)
       }
     }
 

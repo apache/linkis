@@ -39,6 +39,7 @@ import org.apache.linkis.manager.engineplugin.jdbc.ConnectionManager
 import org.apache.linkis.manager.engineplugin.jdbc.conf.JDBCConfiguration
 import org.apache.linkis.manager.engineplugin.jdbc.constant.JDBCEngineConnConstant
 import org.apache.linkis.manager.engineplugin.jdbc.exception.JDBCGetDatasourceInfoException
+import org.apache.linkis.manager.engineplugin.jdbc.monitor.ProgressMonitor
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
 import org.apache.linkis.protocol.CacheableProtocol
@@ -62,6 +63,7 @@ import org.springframework.util.CollectionUtils
 import java.sql.{Connection, ResultSet, SQLException, Statement}
 import java.util
 import java.util.Collections
+import java.util.concurrent.ConcurrentHashMap
 
 import scala.collection.JavaConversions._
 import scala.collection.mutable.ArrayBuffer
@@ -71,6 +73,9 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
 
   private val connectionManager = ConnectionManager.getInstance()
   private val executorLabels: util.List[Label[_]] = new util.ArrayList[Label[_]](2)
+
+  private val progressMonitors: util.Map[String, ProgressMonitor[_]] =
+    new ConcurrentHashMap[String, ProgressMonitor[_]]()
 
   override def init(): Unit = {
     logger.info("jdbc executor start init.")
@@ -122,10 +127,24 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
       statement.setQueryTimeout(JDBCConfiguration.JDBC_QUERY_TIMEOUT.getValue)
       statement.setFetchSize(outputPrintLimit)
       statement.setMaxRows(outputPrintLimit)
+
+      val monitor = ProgressMonitor.attachMonitor(statement)
+      if (monitor != null) {
+        monitor.callback(new Runnable {
+          override def run(): Unit = {
+            engineExecutorContext.pushProgress(progress(taskId), getProgressInfo(taskId))
+          }
+        })
+        progressMonitors.put(taskId, monitor)
+      }
       logger.info(s"create statement is:  $statement")
       connectionManager.saveStatement(taskId, statement)
       val isResultSetAvailable = statement.execute(code)
       logger.info(s"Is ResultSet available ? : $isResultSetAvailable")
+      if (monitor != null) {
+        /* refresh progress */
+        engineExecutorContext.pushProgress(progress(taskId), getProgressInfo(taskId))
+      }
       try {
         if (isResultSetAvailable) {
           logger.info("ResultSet is available")
@@ -287,12 +306,25 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
     updatedCount < 0 && columnCount <= 0
   }
 
-  override def getProgressInfo(taskID: String): Array[JobProgressInfo] =
-    Array.empty[JobProgressInfo]
+  override def getProgressInfo(taskID: String): Array[JobProgressInfo] = {
+    val monitor = progressMonitors.get(taskID)
+    if (monitor != null) {
+      Array(monitor.jobProgressInfo(taskID))
+    } else {
+      Array.empty[JobProgressInfo]
+    }
+  }
 
   override protected def callback(): Unit = {}
 
-  override def progress(taskID: String): Float = 0
+  override def progress(taskID: String): Float = {
+    val monitor = progressMonitors.get(taskID)
+    if (monitor != null) {
+      monitor.getSqlProgress
+    } else {
+      0
+    }
+  }
 
   override def close(): Unit = {
     logger.info("Start closing the jdbc engine.")

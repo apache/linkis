@@ -40,7 +40,6 @@ import java.util
 import scala.collection.JavaConversions._
 import scala.collection.JavaConverters.asScalaBufferConverter
 
-@Service
 class JobHistoryDetailQueryServiceImpl extends JobHistoryDetailQueryService with Logging {
 
   @Autowired
@@ -89,11 +88,12 @@ class JobHistoryDetailQueryServiceImpl extends JobHistoryDetailQueryService with
       if (jobDetail.getStatus != null) {
         val oldStatus: String =
           jobDetailMapper.selectJobDetailStatusForUpdateByJobDetailId(jobDetail.getId)
-        if (oldStatus != null && !shouldUpdate(oldStatus, jobDetail.getStatus))
+        if (oldStatus != null && !shouldUpdate(oldStatus, jobDetail.getStatus)) {
           throw new QueryException(
             120001,
             s"${jobDetail.getId}数据库中的task状态为：${oldStatus}更新的task状态为：${jobDetail.getStatus}更新失败！"
           )
+        }
       }
       jobDetail.setExecutionContent(null)
       val jobUpdate = subjobDetail2JobDetail(jobDetail)
@@ -103,12 +103,12 @@ class JobHistoryDetailQueryServiceImpl extends JobHistoryDetailQueryService with
       jobDetailMapper.updateJobDetail(jobUpdate)
 
       // todo
-      /*// to write cache
+      /* // to write cache
       if (TaskStatus.Succeed.toString.equals(jobReq.getStatus) && queryCacheService.needCache(jobReq)) {
         info("Write cache for task: " + jobReq.getId)
         jobReq.setExecutionCode(executionCode)
         queryCacheService.writeCache(jobReq)
-      }*/
+      } */
 
       val map = new util.HashMap[String, Object]
       map.put(JobRequestConstants.JOB_ID, jobDetail.getId.asInstanceOf[Object])
@@ -148,11 +148,12 @@ class JobHistoryDetailQueryServiceImpl extends JobHistoryDetailQueryService with
           if (jobDetail.getStatus != null) {
             val oldStatus: String =
               jobDetailMapper.selectJobDetailStatusForUpdateByJobDetailId(jobDetail.getId)
-            if (oldStatus != null && !shouldUpdate(oldStatus, jobDetail.getStatus))
+            if (oldStatus != null && !shouldUpdate(oldStatus, jobDetail.getStatus)) {
               throw new QueryException(
                 120001,
                 s"${jobDetail.getId}数据库中的task状态为：${oldStatus}更新的task状态为：${jobDetail.getStatus}更新失败！"
               )
+            }
           }
           jobDetail.setExecutionContent(null)
           val jobUpdate = subjobDetail2JobDetail(jobDetail)
@@ -162,12 +163,12 @@ class JobHistoryDetailQueryServiceImpl extends JobHistoryDetailQueryService with
           jobDetailMapper.updateJobDetail(jobUpdate)
 
           // todo
-          /*//to write cache
+          /* //to write cache
             if (TaskStatus.Succeed.toString.equals(jobReq.getStatus) && queryCacheService.needCache(jobReq)) {
               info("Write cache for task: " + jobReq.getId)
               jobReq.setExecutionCode(executionCode)
               queryCacheService.writeCache(jobReq)
-            }*/
+            } */
 
           val map = new util.HashMap[String, Object]
           map.put(JobRequestConstants.JOB_ID, jobDetail.getId.asInstanceOf[Object])
@@ -204,34 +205,6 @@ class JobHistoryDetailQueryServiceImpl extends JobHistoryDetailQueryService with
     }
     jobResp
   }
-
-  /*private def queryTaskList2RequestPersistTaskList(queryTask: java.util.List[QueryTask]): java.util.List[RequestPersistTask] = {
-    import scala.collection.JavaConversions._
-    val tasks = new util.ArrayList[RequestPersistTask]
-    import org.apache.linkis.jobhistory.conversions.TaskConversions.queryTask2RequestPersistTask
-    queryTask.foreach(f => tasks.add(f))
-    tasks
-  }*/
-
-  /*override def getJobDetailByIdAndName(jobDetailId: java.lang.Long, userName: String): QueryJobDetail = {
-     val jobHistory = new JobHistory
-     jobHistory.set
-    val jobReq = new JobDetail
-    jobReq.setId(jobId)
-    jobReq.setSub(userName)
-    val jobHistoryList = jobDetailMapper.selectJobDetail(jobReq)
-    if (jobHistoryList.isEmpty) null else jobHistoryList.get(0)
-  }*/
-
-  /*override def search(jobId: java.lang.Long, username: String, status: String, sDate: Date, eDate: Date): util.List[QueryJobDetail] = {
-    import scala.collection.JavaConversions._
-    val split: util.List[String] = if (status != null) status.split(",").toList else null
-    jobDetailMapper.search(jobId, username, split, sDate, eDate, null)
-  }*/
-
-  /*override def getQueryVOList(list: java.util.List[QueryJobDetail]): java.util.List[JobRequest] = {
-    jobHistory2JobRequest(list)
-  }*/
 
   private def shouldUpdate(oldStatus: String, newStatus: String): Boolean =
     TaskStatus.valueOf(oldStatus).ordinal <= TaskStatus.valueOf(newStatus).ordinal

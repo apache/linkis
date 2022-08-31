@@ -67,9 +67,9 @@
               <BreadcrumbItem>EngineConnList</BreadcrumbItem>
             </template>
           </Breadcrumb>
-          <Tabs v-if="$route.name === 'resource' || $route.name === 'resourceEngineConnList'" value="resource" @on-click="clickResourceTab" class="resource-tab">
-            <Tab-pane name="resource" :label="$t('message.linkis.sideNavList.function.children.resource')" href="/resource"></Tab-pane>
+          <Tabs v-if="$route.name === 'resource' || $route.name === 'resourceEngineConnList'" value="resourceEngineConnList" @on-click="clickResourceTab" class="resource-tab">
             <Tab-pane name="resourceEngineConnList" :label="$t('message.linkis.sideNavList.function.children.resourceEngineConnList')" href="/ecm"></Tab-pane>
+            <Tab-pane name="resource" :label="$t('message.linkis.sideNavList.function.children.resource')" href="/resource"></Tab-pane>
           </Tabs>
         </div>
         <div
@@ -96,7 +96,7 @@ export default {
         icon: 'ios-options',
         children: [
           { key: '1-1', name: this.$t('message.linkis.sideNavList.function.children.globalHistory'), path: '/console/globalHistory' },
-          { key: '1-2', name: this.$t('message.linkis.sideNavList.function.children.resource'), path: '/console/resource' },
+          { key: '1-2', name: this.$t('message.linkis.sideNavList.function.children.resource'), path: '/console/resourceEngineConnList' },
           { key: '1-3', name: this.$t('message.linkis.sideNavList.function.children.setting'), path: '/console/setting' },
           { key: '1-4', name: this.$t('message.linkis.sideNavList.function.children.dateReport'), path: '/console/globalValiable' },
           { key: '1-6', name: this.$t('message.linkis.sideNavList.function.children.ECMManage'), path: '/console/ECM' },

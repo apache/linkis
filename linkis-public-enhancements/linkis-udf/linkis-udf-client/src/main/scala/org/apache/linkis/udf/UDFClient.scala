@@ -25,13 +25,12 @@ import org.apache.linkis.udf.vo.UDFInfoVo
 
 import org.apache.commons.collections.CollectionUtils
 
-import scala.collection.JavaConversions._
-import scala.collection.mutable
+import scala.collection.JavaConverters._
 import scala.collection.mutable.ArrayBuffer
 
 object UDFClient {
 
-  @Deprecated
+  @deprecated
   def getUdfInfos(userName: String, category: String): ArrayBuffer[UDFInfoVo] = {
     val udfInfoBuilder = new ArrayBuffer[UDFInfoVo]
     val udfTree = queryUdfRpc(userName, category)
@@ -46,8 +45,9 @@ object UDFClient {
   ): ArrayBuffer[UDFInfoVo] = {
     val udfInfoBuilder = new ArrayBuffer[UDFInfoVo]
     val udfTree = queryUdfRpc(userName, category)
-    if (null != udfTree)
+    if (null != udfTree) {
       extractUdfInfosByUdfType(udfInfoBuilder, udfTree, userName, category, udfType)
+    }
     udfInfoBuilder
   }
 
@@ -78,12 +78,12 @@ object UDFClient {
       category: String
   ): Unit = {
     if (CollectionUtils.isNotEmpty(udfTree.getUdfInfos)) {
-      udfTree.getUdfInfos.foreach { udfInfo: UDFInfoVo =>
+      udfTree.getUdfInfos.asScala.foreach { udfInfo: UDFInfoVo =>
         udfInfoBuilder.append(udfInfo)
       }
     }
     if (CollectionUtils.isNotEmpty(udfTree.getChildrens)) {
-      udfTree.getChildrens.foreach { child: UDFTree =>
+      udfTree.getChildrens.asScala.foreach { child: UDFTree =>
         var childInfo = child
         if (ConstantVar.specialTypes.contains(child.getUserName)) {
           childInfo = queryUdfRpc(userName, category, child.getId, child.getUserName)
@@ -103,12 +103,12 @@ object UDFClient {
       udfType: BigInt
   ): Unit = {
     if (CollectionUtils.isNotEmpty(udfTree.getUdfInfos)) {
-      udfTree.getUdfInfos
+      udfTree.getUdfInfos.asScala
         .filter(infoVo => infoVo.getUdfType == udfType && infoVo.getLoad == true)
         .foreach(infoVo => udfInfoBuilder.append(infoVo))
     }
     if (CollectionUtils.isNotEmpty(udfTree.getChildrens)) {
-      udfTree.getChildrens.foreach { child: UDFTree =>
+      udfTree.getChildrens.asScala.foreach { child: UDFTree =>
         val childInfo = if (ConstantVar.SYS_USER.equalsIgnoreCase(child.getUserName)) {
           null
         } else if (ConstantVar.specialTypes.contains(child.getUserName)) {
@@ -116,8 +116,9 @@ object UDFClient {
         } else {
           queryUdfRpc(userName, category, child.getId, ConstantVar.SELF_USER)
         }
-        if (null != childInfo)
+        if (null != childInfo) {
           extractUdfInfosByUdfType(udfInfoBuilder, childInfo, userName, category, udfType)
+        }
       }
     }
   }
@@ -133,7 +134,6 @@ object UDFClient {
       .ask(RequestUdfTree(userName, treeType, treeId, category))
       .asInstanceOf[ResponseUdfTree]
       .udfTree
-    // info("got udf tree:" + new ObjectMapper().writer().withDefaultPrettyPrinter().writeValueAsString(udfTree))
     udfTree
   }
 

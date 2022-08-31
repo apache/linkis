@@ -29,7 +29,7 @@ trait UploadAction extends UserAction {
    * The file to be uploaded, the key is the parameter name, and the value is the file path.
    * 需要上传的文件，key为参数名，value为文件路径
    */
-  @Deprecated val files: util.Map[String, String]
+  @deprecated val files: util.Map[String, String]
 
   /**
    * The inputStream that needs to be uploaded, the key is the parameter name, and the value is
@@ -41,7 +41,7 @@ trait UploadAction extends UserAction {
    * The inputStream that needs to be uploaded, the key is the parameter name, and the value is
    * the fileName of inputStream. 需要上传的输入流，key为参数名，value为输入流的文件名
    */
-  @Deprecated def inputStreamNames: util.Map[String, String] = new util.HashMap[String, String]()
+  @deprecated def inputStreamNames: util.Map[String, String] = new util.HashMap[String, String]()
   def binaryBodies: util.List[BinaryBody] = new util.ArrayList[BinaryBody](0)
   def user: Option[String] = Option(getUser)
 

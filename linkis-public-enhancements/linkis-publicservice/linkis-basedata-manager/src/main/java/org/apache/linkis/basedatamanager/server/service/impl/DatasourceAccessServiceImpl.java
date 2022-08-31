@@ -29,7 +29,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 
 /**
- * @description 针对表【linkis_ps_datasource_access】的数据库操作Service实现
+ * @description Database operation Service implementation for the table [linkis_PS_datasource_access]
  * @createDate 2022-08-13 15:17:35
  */
 @Service

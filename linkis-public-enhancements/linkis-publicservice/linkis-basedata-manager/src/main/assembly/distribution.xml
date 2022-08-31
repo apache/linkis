@@ -37,7 +37,7 @@
             <unpack>false</unpack>
             <useStrictFiltering>false</useStrictFiltering>
             <useTransitiveFiltering>true</useTransitiveFiltering>
-            <excludes> <!-- 不包括 -->
+            <excludes>
                 <exclude>antlr:antlr:jar</exclude>
                 <exclude>aopalliance:aopalliance:jar</exclude>
                 <exclude>com.fasterxml.jackson.core:jackson-annotations:jar</exclude>
@@ -175,7 +175,6 @@
             </excludes>
         </dependencySet>
     </dependencySets>
-    <!-- 文件集合 -->
     <fileSets>
         <fileSet>
             <directory>${basedir}/src/main/resources</directory>

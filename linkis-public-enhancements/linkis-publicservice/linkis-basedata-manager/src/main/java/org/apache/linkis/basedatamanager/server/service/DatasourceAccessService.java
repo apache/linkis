@@ -22,7 +22,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.github.pagehelper.PageInfo;
 
 /**
- * @description 针对表【linkis_ps_datasource_access】的数据库操作Service
+ * @description Database operation Service for the [linkis_ps_datasource_access] table
  * @createDate 2022-08-13 15:17:35
  */
 public interface DatasourceAccessService extends IService<DatasourceAccessEntity> {

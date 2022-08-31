@@ -23,10 +23,10 @@ import java.util.List;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
- * @description 针对表【linkis_ps_dm_datasource_env】的数据库操作Mapper
+ * @description Database operation Mapper for table [linkis_PS_DM_DATASource_env]
  * @createDate 2022-08-13 15:15:25 @Entity
  *     org.apache.linkis.basedatamanager.server.domain.LinkisPsDmDatasourceEnv
  */
 public interface DatasourceEnvMapper extends BaseMapper<DatasourceEnvEntity> {
-  public List<DatasourceEnvEntity> getListByPage(String searchName);
+  List<DatasourceEnvEntity> getListByPage(String searchName);
 }

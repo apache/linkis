@@ -30,14 +30,14 @@ import java.util.concurrent.TimeUnit
 object ProxyUserUtils extends Logging {
 
   private val (props, file) =
-    if (ENABLE_PROXY_USER.getValue)
+    if (ENABLE_PROXY_USER.getValue) {
       (
         new Properties,
         new File(
           this.getClass.getClassLoader.getResource(PROXY_USER_CONFIG.getValue).toURI.getPath
         )
       )
-    else (null, null)
+    } else (null, null)
 
   private var lastModified = 0L
 

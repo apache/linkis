@@ -22,7 +22,6 @@ import org.apache.linkis.orchestrator.plans.logical.CommandDesc
 
 /**
  */
-case class ExplainCommandDesc(orchestration: Orchestration, allPlans: Boolean)
-    extends CommandDesc {
+case class ExplainCommandDesc(orchestration: Orchestration, allPlans: Boolean) extends CommandDesc {
   override def copy(): ExplainCommandDesc = ExplainCommandDesc(orchestration, allPlans)
 }

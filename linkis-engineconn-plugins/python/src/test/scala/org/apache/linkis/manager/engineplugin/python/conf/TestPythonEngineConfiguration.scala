@@ -27,10 +27,7 @@ class TestPythonEngineConfiguration {
   def testConfig: Unit = {
     System.setProperty("pythonVersion", "python")
     System.setProperty("wds.linkis.python.py4j.home", this.getClass.getResource("/").getPath)
-    Assertions.assertEquals(
-      10,
-      PythonEngineConfiguration.PYTHON_CONSOLE_OUTPUT_LINE_LIMIT.getValue
-    )
+    Assertions.assertEquals(10, PythonEngineConfiguration.PYTHON_CONSOLE_OUTPUT_LINE_LIMIT.getValue)
     Assertions.assertEquals("python", PythonEngineConfiguration.PYTHON_VERSION.getValue)
     Assertions.assertEquals(
       new TimeType("30s").toString,

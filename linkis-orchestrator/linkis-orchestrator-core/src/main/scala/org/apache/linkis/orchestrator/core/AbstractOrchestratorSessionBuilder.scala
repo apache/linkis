@@ -92,47 +92,46 @@ abstract class AbstractOrchestratorSessionBuilder extends OrchestratorSessionBui
   protected def createCheckRulerExtensions(): CheckRulerExtensions = new CheckRulerExtensionsImpl
   protected def createOperationExtensions(): OperationExtensions = new OperationExtensionsImpl
 
-  override def getOrCreate(): OrchestratorSession = if (
-      orchestrator.getActiveOrchestratorSession != null
-  ) orchestrator.getActiveOrchestratorSession
-  else {
-    initBuilders[CatalystExtensions](
-      catalystExtensionsBuilders,
-      createCatalystExtensions(),
-      classOf[CatalystExtensions]
-    )
-    initBuilders[CheckRulerExtensions](
-      checkRulerExtensionsBuilders,
-      createCheckRulerExtensions(),
-      classOf[CheckRulerExtensions]
-    )
-    initBuilders[OperationExtensions](
-      operationExtensionsBuilders,
-      createOperationExtensions(),
-      classOf[OperationExtensions]
-    )
-    // extensions.find(_.isInstanceOf[CatalystExtensions]).foreach( extensions => catalystExtensionsBuilders.foreach( builder => builder(extensions.asInstanceOf[CatalystExtensions])))
-    val orchestratorSession = createOrchestratorSession { implicit orchestratorSession =>
-      val transforms = getTransforms
-      val checkRulers = getCheckRulers
-      val operations = getOperations
-      val extractExtensions = extensions
-        .filterNot(_.isInstanceOf[CatalystExtensions])
-        .filterNot(_.isInstanceOf[OperationExtensions])
-        .filterNot(_.isInstanceOf[CheckRulerExtensions])
-        .toArray
-      createSessionState(
-        orchestratorSession,
-        transforms,
-        checkRulers,
-        operations,
-        extractExtensions
+  override def getOrCreate(): OrchestratorSession =
+    if (orchestrator.getActiveOrchestratorSession != null) orchestrator.getActiveOrchestratorSession
+    else {
+      initBuilders[CatalystExtensions](
+        catalystExtensionsBuilders,
+        createCatalystExtensions(),
+        classOf[CatalystExtensions]
       )
+      initBuilders[CheckRulerExtensions](
+        checkRulerExtensionsBuilders,
+        createCheckRulerExtensions(),
+        classOf[CheckRulerExtensions]
+      )
+      initBuilders[OperationExtensions](
+        operationExtensionsBuilders,
+        createOperationExtensions(),
+        classOf[OperationExtensions]
+      )
+      // extensions.find(_.isInstanceOf[CatalystExtensions]).foreach( extensions => catalystExtensionsBuilders.foreach( builder => builder(extensions.asInstanceOf[CatalystExtensions])))
+      val orchestratorSession = createOrchestratorSession { implicit orchestratorSession =>
+        val transforms = getTransforms
+        val checkRulers = getCheckRulers
+        val operations = getOperations
+        val extractExtensions = extensions
+          .filterNot(_.isInstanceOf[CatalystExtensions])
+          .filterNot(_.isInstanceOf[OperationExtensions])
+          .filterNot(_.isInstanceOf[CheckRulerExtensions])
+          .toArray
+        createSessionState(
+          orchestratorSession,
+          transforms,
+          checkRulers,
+          operations,
+          extractExtensions
+        )
+      }
+      orchestratorSession.initialize(configMap.toMap)
+      orchestrator.setActiveOrchestratorSession(orchestratorSession)
+      orchestratorSession
     }
-    orchestratorSession.initialize(configMap.toMap)
-    orchestrator.setActiveOrchestratorSession(orchestratorSession)
-    orchestratorSession
-  }
 
   private def initBuilders[E](
       builders: ArrayBuffer[E => Unit],

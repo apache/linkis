@@ -19,10 +19,7 @@ package org.apache.linkis.orchestrator.computation.catalyst.physical
 
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.orchestrator.code.plans.logical.{CacheTask, CodeLogicalUnitTask}
-import org.apache.linkis.orchestrator.computation.physical.{
-  CacheExecTask,
-  CodeLogicalUnitExecTask
-}
+import org.apache.linkis.orchestrator.computation.physical.{CacheExecTask, CodeLogicalUnitExecTask}
 import org.apache.linkis.orchestrator.extensions.catalyst.PhysicalTransform
 import org.apache.linkis.orchestrator.plans.logical.{
   CommandTask,

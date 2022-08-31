@@ -32,9 +32,7 @@ class DefaultEngineConnPluginPointer extends EngineConnPluginPointer {
   private def getEngineConnPluginSender: Sender =
     Sender.getSender(AMConfiguration.ENGINECONN_SPRING_APPLICATION_NAME.getValue)
 
-  override def createEngineResource(
-      engineResourceRequest: EngineResourceRequest
-  ): NodeResource = {
+  override def createEngineResource(engineResourceRequest: EngineResourceRequest): NodeResource = {
     getEngineConnPluginSender.ask(engineResourceRequest) match {
       case nodeResource: NodeResource =>
         nodeResource
@@ -45,10 +43,7 @@ class DefaultEngineConnPluginPointer extends EngineConnPluginPointer {
           ecpTaskException
         )
       case _ =>
-        throw new AMErrorException(
-          AMConstant.ENGINE_ERROR_CODE,
-          s"Failed to create engineResource"
-        )
+        throw new AMErrorException(AMConstant.ENGINE_ERROR_CODE, s"Failed to create engineResource")
     }
   }
 

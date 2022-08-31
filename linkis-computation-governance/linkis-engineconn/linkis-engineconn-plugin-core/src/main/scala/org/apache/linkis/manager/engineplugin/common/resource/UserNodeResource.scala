@@ -41,8 +41,7 @@ class UserNodeResource extends NodeResource {
 
   override def getResourceType: ResourceType = resourceType
 
-  override def setResourceType(resourceType: ResourceType): Unit = this.resourceType =
-    resourceType
+  override def setResourceType(resourceType: ResourceType): Unit = this.resourceType = resourceType
 
   override def getMinResource: Resource = minResource
 

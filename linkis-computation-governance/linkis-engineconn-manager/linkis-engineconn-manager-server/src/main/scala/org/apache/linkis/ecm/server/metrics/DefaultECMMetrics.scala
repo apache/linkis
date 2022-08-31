@@ -57,13 +57,12 @@ class DefaultECMMetrics extends ECMMetrics {
     map.values().toSeq.toArray
 
   private val decreaseEngineConnMetric =
-    (engineConn: EngineConn, map: ConcurrentHashMap[String, EngineConn], count: AtomicInteger) =>
-      {
-        val conn = map.remove(engineConn.getTickedId)
-        if (conn != null) {
-          count.decrementAndGet()
-        }
+    (engineConn: EngineConn, map: ConcurrentHashMap[String, EngineConn], count: AtomicInteger) => {
+      val conn = map.remove(engineConn.getTickedId)
+      if (conn != null) {
+        count.decrementAndGet()
       }
+    }
 
   private val increaseEngineConnMetric = (
       engineConn: EngineConn,

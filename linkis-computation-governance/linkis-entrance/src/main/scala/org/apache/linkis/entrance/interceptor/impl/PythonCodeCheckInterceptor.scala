@@ -55,9 +55,7 @@ class PythonCodeCheckInterceptor extends EntranceInterceptor with Logging {
           case t: Throwable =>
             val exception = PythonCodeCheckException(
               20073,
-              "Checking python code failed!(检查python代码失败！)" + ExceptionUtils.getRootCauseMessage(
-                t
-              )
+              "Checking python code failed!(检查python代码失败！)" + ExceptionUtils.getRootCauseMessage(t)
             )
             exception.initCause(t)
             exception

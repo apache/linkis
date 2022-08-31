@@ -175,8 +175,7 @@ object LinkisJobBuilder {
   private var authTokenValue: String =
     "LINKIS_CLI_TEST" // This is the default authToken, we usually suggest set different ones for users.
 
-  def setDefaultClientConfig(clientConfig: DWSClientConfig): Unit = this.clientConfig =
-    clientConfig
+  def setDefaultClientConfig(clientConfig: DWSClientConfig): Unit = this.clientConfig = clientConfig
 
   def getDefaultClientConfig: DWSClientConfig = {
     if (clientConfig == null) synchronized {

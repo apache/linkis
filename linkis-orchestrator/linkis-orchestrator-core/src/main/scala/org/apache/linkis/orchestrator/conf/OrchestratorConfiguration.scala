@@ -75,10 +75,8 @@ object OrchestratorConfiguration {
 
   val ORCHESTRATOR_USER_MAX_RUNNING = CommonVars("wds.linkis.task.user.max.running", 5)
 
-  val SCHEDULIS_CREATOR = CommonVars(
-    "wds.linkis.orchestrator.task.schedulis.creator",
-    "schedulis,nodeexecution"
-  ).getValue
+  val SCHEDULIS_CREATOR =
+    CommonVars("wds.linkis.orchestrator.task.schedulis.creator", "schedulis,nodeexecution").getValue
 
   val ORCHESTRATOR_METRIC_LOG = CommonVars("wds.linkis.orchestrator.metric.log.enable", true)
 

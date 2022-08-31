@@ -54,10 +54,8 @@ object ZuulEntranceUtils {
         6 + creatorLength + executeLength,
         6 + creatorLength + executeLength + instanceLength
       )
-      val shortExecID = longExecID.substring(
-        6 + creatorLength + executeLength + instanceLength,
-        longExecID.length
-      )
+      val shortExecID =
+        longExecID.substring(6 + creatorLength + executeLength + instanceLength, longExecID.length)
       Array(creator, executeApplicationName, instance, shortExecID)
     }
   }

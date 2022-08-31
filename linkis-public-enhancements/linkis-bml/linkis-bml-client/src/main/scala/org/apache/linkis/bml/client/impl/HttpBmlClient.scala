@@ -62,10 +62,8 @@ class HttpBmlClient(
     if (properties == null) "BML-Client"
     else properties.getOrDefault(CLIENT_NAME_SHORT_NAME, "BML-Client").asInstanceOf[String]
 
-  private val dwsClient = new DWSHttpClient(
-    if (clientConfig != null) clientConfig else createClientConfig(),
-    clientName
-  )
+  private val dwsClient =
+    new DWSHttpClient(if (clientConfig != null) clientConfig else createClientConfig(), clientName)
 
   val FIRST_VERSION = "v000001"
 

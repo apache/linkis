@@ -25,11 +25,8 @@ import scala.collection.mutable.ArrayBuffer
 
 /**
  */
-class LogProcessor(
-    rootExecTaskId: String,
-    orchestration: Orchestration,
-    logOperation: LogOperation
-) extends Closeable {
+class LogProcessor(rootExecTaskId: String, orchestration: Orchestration, logOperation: LogOperation)
+    extends Closeable {
 
   private val listener = new ArrayBuffer[LogEvent => Unit]()
 

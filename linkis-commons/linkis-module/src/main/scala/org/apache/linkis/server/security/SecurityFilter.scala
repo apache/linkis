@@ -76,9 +76,7 @@ class SecurityFilter extends Filter {
       if (SSOUtils.sslEnable) message.data("publicKey", RSAUtils.getDefaultPublicKey())
       filterResponse(message)
       false
-    } else if (
-        request.getRequestURI == ServerConfiguration.BDP_SERVER_RESTFUL_LOGIN_URI.getValue
-    ) {
+    } else if (request.getRequestURI == ServerConfiguration.BDP_SERVER_RESTFUL_LOGIN_URI.getValue) {
       true
     } else if (
         ServerConfiguration.BDP_SERVER_RESTFUL_PASS_AUTH_REQUEST_URI

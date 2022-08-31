@@ -177,10 +177,7 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long)
     res
   }
 
-  def executeLine(
-      code: String,
-      engineExecutionContext: EngineExecutionContext
-  ): ExecuteResponse = {
+  def executeLine(code: String, engineExecutionContext: EngineExecutionContext): ExecuteResponse = {
     if (sparkContext.isStopped) {
       logger.error("Spark application has already stopped, please restart it.")
       throw new ApplicationAlreadyStoppedException(
@@ -370,9 +367,7 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long)
       sparkILoop.interpret("import org.apache.spark.sql.SparkSession")
       sparkILoop.interpret("import org.apache.spark.sql.SQLContext")
       sparkILoop.interpret("import org.apache.spark.sql.DataFrame")
-      sparkILoop.interpret(
-        "import org.apache.linkis.engineplugin.spark.executor.SQLSession.showDF"
-      )
+      sparkILoop.interpret("import org.apache.linkis.engineplugin.spark.executor.SQLSession.showDF")
       sparkILoop.interpret(
         "import org.apache.linkis.engineplugin.spark.executor.SQLSession.showHTML"
       )

@@ -35,8 +35,8 @@ import scala.collection.JavaConverters.{asScalaBufferConverter, mapAsScalaMapCon
 class StorePathEntranceInterceptor extends EntranceInterceptor with Logging {
 
   /**
-   * The apply function is to supplement the information of the incoming parameter task, making
-   * the content of this task more complete. Additional information includes: database information
+   * The apply function is to supplement the information of the incoming parameter task, making the
+   * content of this task more complete. Additional information includes: database information
    * supplement, custom variable substitution, code check, limit limit, etc.
    * apply函数是对传入参数task进行信息的补充，使得这个task的内容更加完整。 补充的信息包括: 数据库信息补充、自定义变量替换、代码检查、limit限制等
    *
@@ -51,9 +51,8 @@ class StorePathEntranceInterceptor extends EntranceInterceptor with Logging {
     else parentPath += "linkis/"
     val userCreator = LabelUtil.getUserCreator(jobReq.getLabels)
     if (null == userCreator) {
-      val labelJson = BDPJettyServerHelper.gson.toJson(
-        jobReq.getLabels.asScala.filter(_ != null).map(_.toString)
-      )
+      val labelJson =
+        BDPJettyServerHelper.gson.toJson(jobReq.getLabels.asScala.filter(_ != null).map(_.toString))
       throw new EntranceErrorException(
         EntranceErrorCode.LABEL_PARAMS_INVALID.getErrCode,
         s"UserCreator cannot be empty in labels : ${labelJson} of job with id : ${jobReq.getId}"

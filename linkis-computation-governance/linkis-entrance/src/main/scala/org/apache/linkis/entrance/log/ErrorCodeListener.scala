@@ -41,8 +41,7 @@ class PersistenceErrorCodeListener extends ErrorCodeListener {
 
   def getPersistenceManager = persistenceManager
 
-  def setEntranceParser(entranceParser: EntranceParser): Unit = this.entranceParser =
-    entranceParser
+  def setEntranceParser(entranceParser: EntranceParser): Unit = this.entranceParser = entranceParser
 
   def getEntranceParser = entranceParser
 

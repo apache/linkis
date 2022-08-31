@@ -36,10 +36,7 @@ import org.apache.linkis.engineconnplugin.flink.client.sql.operation.result.Resu
 import org.apache.linkis.engineconnplugin.flink.client.sql.parser.SqlCommandParser
 import org.apache.linkis.engineconnplugin.flink.config.FlinkEnvConfiguration
 import org.apache.linkis.engineconnplugin.flink.context.FlinkEngineConnContext
-import org.apache.linkis.engineconnplugin.flink.exception.{
-  ExecutorInitException,
-  SqlParseException
-}
+import org.apache.linkis.engineconnplugin.flink.exception.{ExecutorInitException, SqlParseException}
 import org.apache.linkis.engineconnplugin.flink.listener.{
   FlinkStreamingResultSetListener,
   InteractiveFlinkStatusListener

@@ -23,10 +23,7 @@ import org.apache.linkis.orchestrator.core.AbstractOrchestration
 import org.apache.linkis.orchestrator.extensions.operation.Operation
 import org.apache.linkis.orchestrator.extensions.operation.Operation.OperationBuilder
 import org.apache.linkis.orchestrator.listener.OrchestratorAsyncEvent
-import org.apache.linkis.orchestrator.listener.task.{
-  ResourceReportListener,
-  TaskYarnResourceEvent
-}
+import org.apache.linkis.orchestrator.listener.task.{ResourceReportListener, TaskYarnResourceEvent}
 
 import java.util.concurrent.ConcurrentHashMap
 

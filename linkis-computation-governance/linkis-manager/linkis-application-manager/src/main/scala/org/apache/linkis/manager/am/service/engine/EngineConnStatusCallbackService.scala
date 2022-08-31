@@ -21,8 +21,6 @@ import org.apache.linkis.manager.common.protocol.engine.EngineConnStatusCallback
 
 trait EngineConnStatusCallbackService {
 
-  def dealEngineConnStatusCallback(
-      engineConnStatusCallbackToAM: EngineConnStatusCallbackToAM
-  ): Unit
+  def dealEngineConnStatusCallback(engineConnStatusCallbackToAM: EngineConnStatusCallbackToAM): Unit
 
 }

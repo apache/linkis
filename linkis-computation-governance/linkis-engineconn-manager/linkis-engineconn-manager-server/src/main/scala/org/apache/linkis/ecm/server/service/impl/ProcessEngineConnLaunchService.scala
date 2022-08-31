@@ -137,10 +137,8 @@ abstract class ProcessEngineConnLaunchService extends AbstractEngineConnLaunchSe
       }
     }
     Utils.tryThrow(
-      Utils.waitUntil(
-        () => engineConn.getStatus != Starting,
-        Duration(timeout, TimeUnit.MILLISECONDS)
-      )
+      Utils
+        .waitUntil(() => engineConn.getStatus != Starting, Duration(timeout, TimeUnit.MILLISECONDS))
     ) {
       case e: TimeoutException =>
         throw new ECMErrorException(

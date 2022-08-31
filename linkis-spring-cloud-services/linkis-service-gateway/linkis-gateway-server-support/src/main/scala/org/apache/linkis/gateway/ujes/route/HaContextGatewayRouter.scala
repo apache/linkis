@@ -56,7 +56,7 @@ class HaContextGatewayRouter extends AbstractGatewayRouter {
 
     if (
         gatewayContext.getGatewayRoute.getRequestURI.contains(
-          HaContextGatewayRouter.CONTEXT_SERVICE_REQUEST_PREFIX
+          RPCConfiguration.CONTEXT_SERVICE_REQUEST_PREFIX
         )
     ) {
       val params: util.HashMap[String, String] = gatewayContext.getGatewayRoute.getParams
@@ -160,7 +160,7 @@ object HaContextGatewayRouter {
   val CONTEXT_ID_STR: String = "contextId"
 
   @deprecated("please use RPCConfiguration.CONTEXT_SERVICE_REQUEST_PREFIX")
-  val CONTEXT_SERVICE_REQUEST_PREFIX = "contextservice"
+  val CONTEXT_SERVICE_REQUEST_PREFIX = RPCConfiguration.CONTEXT_SERVICE_REQUEST_PREFIX
 
   @deprecated("please use RPCConfiguration.CONTEXT_SERVICE_NAME")
   val CONTEXT_SERVICE_NAME: String =

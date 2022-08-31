@@ -32,9 +32,8 @@ class LinkisMetaDataRemoteClient(clientConfig: DWSClientConfig)
   override def getDatabases(action: MetadataGetDatabasesAction): MetadataGetDatabasesResult =
     execute(action).asInstanceOf[MetadataGetDatabasesResult]
 
-  override def getTables(action: MetadataGetTablesAction): MetadataGetTablesResult = execute(
-    action
-  ).asInstanceOf[MetadataGetTablesResult]
+  override def getTables(action: MetadataGetTablesAction): MetadataGetTablesResult =
+    execute(action).asInstanceOf[MetadataGetTablesResult]
 
   override def getTableProps(action: MetadataGetTablePropsAction): MetadataGetTablePropsResult =
     execute(action).asInstanceOf[MetadataGetTablePropsResult]

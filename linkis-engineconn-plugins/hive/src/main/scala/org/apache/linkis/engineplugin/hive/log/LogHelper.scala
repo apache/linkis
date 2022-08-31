@@ -36,11 +36,7 @@ object LogHelper {
     logPattern findAllIn log foreach {
       case logPattern(stage, map, reduce) =>
         val hiveProgress =
-          new HiveProgress(
-            Integer.parseInt(stage),
-            Integer.parseInt(map),
-            Integer.parseInt(reduce)
-          )
+          new HiveProgress(Integer.parseInt(stage), Integer.parseInt(map), Integer.parseInt(reduce))
         hiveProgresses.add(hiveProgress)
       case _ => logger.warn(s"log $log pattern can not be matched")
     }

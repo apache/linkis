@@ -148,8 +148,8 @@ class BlockingLoopArray[T](maxCapacity: Int = 32) extends LoopArray[T](maxCapaci
   }
 
   /**
-   * Get the latest one, if not, it will return None.(获取最新的一个，如果没有，将会返回None.) Note: This method
-   * does not move the pointer(注意：该方法不会移动指针)
+   * Get the latest one, if not, it will return None.(获取最新的一个，如果没有，将会返回None.) Note: This method does
+   * not move the pointer(注意：该方法不会移动指针)
    * @return
    */
   def peek(): Option[T] = readLock synchronized {
@@ -159,8 +159,8 @@ class BlockingLoopArray[T](maxCapacity: Int = 32) extends LoopArray[T](maxCapaci
   }
 
   /**
-   * Get the latest one, if not, it will return None.(获取最新的一个，如果没有，将会返回None.) Note: This method
-   * will move the pointer(注意：该方法会移动指针)
+   * Get the latest one, if not, it will return None.(获取最新的一个，如果没有，将会返回None.) Note: This method will
+   * move the pointer(注意：该方法会移动指针)
    * @return
    */
   def poll(): Option[T] = {

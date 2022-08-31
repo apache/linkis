@@ -18,10 +18,7 @@
 package org.apache.linkis.orchestrator.converter
 
 import org.apache.linkis.orchestrator.domain.JobReq
-import org.apache.linkis.orchestrator.extensions.catalyst.{
-  ConverterCheckRuler,
-  ConverterTransform
-}
+import org.apache.linkis.orchestrator.extensions.catalyst.{ConverterCheckRuler, ConverterTransform}
 import org.apache.linkis.orchestrator.plans.ast.ASTContext
 
 /**

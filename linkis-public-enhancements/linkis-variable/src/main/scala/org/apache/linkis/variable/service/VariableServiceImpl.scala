@@ -103,7 +103,7 @@ class VariableServiceImpl extends VariableService with Logging {
     )
     saves.foreach { f =>
       if (StringUtils.isBlank(f.getKey) || StringUtils.isBlank(f.getValue)) {
-        throw new VariableException("key或value不能为空")
+        throw new VariableException("Key or value cannot be empty")
       }
       var flag = true
       breakable {

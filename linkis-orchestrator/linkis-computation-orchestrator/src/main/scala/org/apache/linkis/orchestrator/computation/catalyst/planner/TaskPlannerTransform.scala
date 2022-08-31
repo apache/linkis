@@ -77,13 +77,11 @@ class TaskPlannerTransform extends PlannerTransform with Logging {
       case startStageTask: StartStageTaskDesc => {
 
         /**
-         * when the construction node arrives at stage-task-start check whether this stage has
-         * child nodes if true -> use the same way to build another stage tasks if false -> build
-         * or reuse job-task-start and points to the stage-task-start
+         * when the construction node arrives at stage-task-start check whether this stage has child
+         * nodes if true -> use the same way to build another stage tasks if false -> build or reuse
+         * job-task-start and points to the stage-task-start
          */
-        if (
-            null == startStageTask.stage.getChildren || startStageTask.stage.getChildren.isEmpty
-        ) {
+        if (null == startStageTask.stage.getChildren || startStageTask.stage.getChildren.isEmpty) {
           var newStartJobTask: Task = null
           val stageTaskTmp = new StageTask(
             Array(),

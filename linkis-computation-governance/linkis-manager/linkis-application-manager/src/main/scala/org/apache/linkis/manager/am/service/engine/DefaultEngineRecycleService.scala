@@ -20,10 +20,7 @@ package org.apache.linkis.manager.am.service.engine
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.manager.am.recycle.RecyclingRuleExecutor
-import org.apache.linkis.manager.common.protocol.engine.{
-  EngineRecyclingRequest,
-  EngineStopRequest
-}
+import org.apache.linkis.manager.common.protocol.engine.{EngineRecyclingRequest, EngineStopRequest}
 import org.apache.linkis.rpc.message.annotation.Receiver
 
 import org.springframework.beans.factory.annotation.Autowired

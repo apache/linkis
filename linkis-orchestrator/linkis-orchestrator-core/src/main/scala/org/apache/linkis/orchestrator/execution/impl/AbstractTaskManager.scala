@@ -17,11 +17,7 @@
 
 package org.apache.linkis.orchestrator.execution.impl
 
-import org.apache.linkis.orchestrator.execution.{
-  CompletedTaskResponse,
-  ExecutionTask,
-  TaskManager
-}
+import org.apache.linkis.orchestrator.execution.{CompletedTaskResponse, ExecutionTask, TaskManager}
 import org.apache.linkis.orchestrator.listener.task.RootTaskResponseListener
 
 /**

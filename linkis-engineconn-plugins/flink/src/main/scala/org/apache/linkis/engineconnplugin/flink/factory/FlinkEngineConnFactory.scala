@@ -25,10 +25,7 @@ import org.apache.linkis.engineconnplugin.flink.client.context.ExecutionContext
 import org.apache.linkis.engineconnplugin.flink.config.FlinkEnvConfiguration
 import org.apache.linkis.engineconnplugin.flink.config.FlinkEnvConfiguration._
 import org.apache.linkis.engineconnplugin.flink.config.FlinkResourceConfiguration._
-import org.apache.linkis.engineconnplugin.flink.context.{
-  EnvironmentContext,
-  FlinkEngineConnContext
-}
+import org.apache.linkis.engineconnplugin.flink.context.{EnvironmentContext, FlinkEngineConnContext}
 import org.apache.linkis.engineconnplugin.flink.exception.FlinkInitFailedException
 import org.apache.linkis.engineconnplugin.flink.setting.Settings
 import org.apache.linkis.engineconnplugin.flink.util.ClassUtil
@@ -205,10 +202,7 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
       )
       flinkConfig.set(PipelineOptions.JARS, Collections.singletonList(flinkMainClassJarPath))
       flinkConfig.set(DeploymentOptions.TARGET, YarnDeploymentTarget.APPLICATION.getName)
-      flinkConfig.setBoolean(
-        DeploymentOptions.ATTACHED,
-        FLINK_EXECUTION_ATTACHED.getValue(options)
-      )
+      flinkConfig.setBoolean(DeploymentOptions.ATTACHED, FLINK_EXECUTION_ATTACHED.getValue(options))
       context.setDeploymentTarget(YarnDeploymentTarget.APPLICATION)
       addApplicationLabels(engineCreationContext)
     } else if (isOnceEngineConn(engineCreationContext.getLabels())) {

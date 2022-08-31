@@ -23,14 +23,13 @@ import java.util.List;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
- * @author jack
- * @description 针对表【linkis_ps_datasource_access】的数据库操作Mapper
+ * @description Database operation Mapper for table [linKIS_PS_DATASOURCE_access]
  * @createDate 2022-08-13 15:17:35 @Entity
  *     org.apache.linkis.basedatamanager.server.domain.LinkisPsDatasourceAccess
  */
 public interface DatasourceAccessMapper extends BaseMapper<DatasourceAccessEntity> {
   /**
-   * 获取列表（分页）
+   * Get the list with paging
    *
    * @param searchName
    * @return

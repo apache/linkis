@@ -14,11 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.linkis.basedatamanager.server.service.impl;
 
-import org.apache.linkis.basedatamanager.server.dao.DatasourceAccessMapper;
-import org.apache.linkis.basedatamanager.server.domain.DatasourceAccessEntity;
-import org.apache.linkis.basedatamanager.server.service.DatasourceAccessService;
+import org.apache.linkis.basedatamanager.server.dao.DatasourceEnvMapper;
+import org.apache.linkis.basedatamanager.server.domain.DatasourceEnvEntity;
+import org.apache.linkis.basedatamanager.server.service.DatasourceEnvService;
 
 import org.springframework.stereotype.Service;
 
@@ -29,17 +30,16 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 
 /**
- * @description Database operation Service implementation for the table [linkis_PS_datasource_access]
- * @createDate 2022-08-13 15:17:35
+ * @description Database operation Service implementation for the table [linKIS_PS_DM_DATASource_env]
+ * @createDate 2022-08-13 15:15:25
  */
 @Service
-public class DatasourceAccessServiceImpl
-    extends ServiceImpl<DatasourceAccessMapper, DatasourceAccessEntity>
-    implements DatasourceAccessService {
+public class DatasourceEnvServiceImpl extends ServiceImpl<DatasourceEnvMapper, DatasourceEnvEntity>
+    implements DatasourceEnvService {
   @Override
   public PageInfo getListByPage(String searchName, Integer currentPage, Integer pageSize) {
     PageHelper.startPage(currentPage, pageSize);
-    List<DatasourceAccessEntity> listByPage = this.getBaseMapper().getListByPage(searchName);
+    List<DatasourceEnvEntity> listByPage = this.getBaseMapper().getListByPage(searchName);
     PageInfo pageInfo = new PageInfo(listByPage);
     return pageInfo;
   }

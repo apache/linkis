@@ -14,17 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.linkis.basedatamanager.server.service;
 
-import org.apache.linkis.basedatamanager.server.domain.DatasourceAccessEntity;
+import org.apache.linkis.basedatamanager.server.domain.DatasourceEnvEntity;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.github.pagehelper.PageInfo;
 
 /**
- * @description Database operation Service for the [linkis_ps_datasource_access] table
- * @createDate 2022-08-13 15:17:35
+ * @description Database operation Service for the [linkis_PS_DM_DATASource_env] table
+ * @createDate 2022-08-13 15:15:25
  */
-public interface DatasourceAccessService extends IService<DatasourceAccessEntity> {
-  public PageInfo getListByPage(String searchName, Integer currentPage, Integer pageSize);
+public interface DatasourceEnvService extends IService<DatasourceEnvEntity> {
+  PageInfo getListByPage(String searchName, Integer currentPage, Integer pageSize);
 }

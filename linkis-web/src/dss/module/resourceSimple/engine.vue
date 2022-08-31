@@ -27,7 +27,7 @@
       <div class="engine-header-bar">
         <h3 class="data-type-title">{{ $t('message.common.resourceSimple.YS') }}</h3>
         <div class="classify">
-          <span>{{ $t('message.common.resourceSimple.FL') }}</span>
+          <span style="display: inline">{{ $t('message.common.resourceSimple.FL') }}</span>
           <Select v-model="ideSelectData">
             <Option
               v-for="item in typeList"

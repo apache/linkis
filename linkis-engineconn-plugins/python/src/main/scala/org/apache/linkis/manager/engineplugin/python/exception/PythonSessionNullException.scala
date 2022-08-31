@@ -23,8 +23,7 @@ class PythonSessionNullException(errCode: Int, desc: String) extends ErrorExcept
 
 class PythonEngineException(errCode: Int, desc: String) extends ErrorException(errCode, desc)
 
-class QueryFailedException(errCode: Int = 60001, desc: String)
-    extends ErrorException(errCode, desc)
+class QueryFailedException(errCode: Int = 60001, desc: String) extends ErrorException(errCode, desc)
 
 class SessionStartFailedException(errCode: Int = 60002, desc: String)
     extends ErrorException(errCode, desc)

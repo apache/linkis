@@ -32,13 +32,13 @@ trait OrchestratorListenerBusContext {
 
 class OrchestratorListenerBusContextImpl extends OrchestratorListenerBusContext {
 
-  private val orchestratorAsyncListenerBus
-      : OrchestratorAsyncListenerBus = new OrchestratorAsyncListenerBus(
-    OrchestratorConfiguration.ORCHESTRATOR_LISTENER_ASYNC_QUEUE_CAPACITY.getValue,
-    "Orchestrator-Listener-Asyn-Thread",
-    OrchestratorConfiguration.ORCHESTRATOR_LISTENER_ASYNC_CONSUMER_THREAD_MAX.getValue,
-    OrchestratorConfiguration.ORCHESTRATOR_LISTENER_ASYNC_CONSUMER_THREAD_FREE_TIME_MAX.getValue.toLong
-  )
+  private val orchestratorAsyncListenerBus: OrchestratorAsyncListenerBus =
+    new OrchestratorAsyncListenerBus(
+      OrchestratorConfiguration.ORCHESTRATOR_LISTENER_ASYNC_QUEUE_CAPACITY.getValue,
+      "Orchestrator-Listener-Asyn-Thread",
+      OrchestratorConfiguration.ORCHESTRATOR_LISTENER_ASYNC_CONSUMER_THREAD_MAX.getValue,
+      OrchestratorConfiguration.ORCHESTRATOR_LISTENER_ASYNC_CONSUMER_THREAD_FREE_TIME_MAX.getValue.toLong
+    )
 
   private val orchestratorSyncListenerBus: OrchestratorSyncListenerBus =
     new OrchestratorSyncListenerBus

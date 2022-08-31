@@ -24,11 +24,7 @@ import org.apache.linkis.manager.am.conf.AMConfiguration
 import org.apache.linkis.manager.am.locker.EngineNodeLocker
 import org.apache.linkis.manager.common.constant.AMConstant
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
-import org.apache.linkis.manager.common.entity.node.{
-  AMEngineNode,
-  EngineNode,
-  ScoreServiceInstance
-}
+import org.apache.linkis.manager.common.entity.node.{AMEngineNode, EngineNode, ScoreServiceInstance}
 import org.apache.linkis.manager.common.entity.persistence.PersistenceLabel
 import org.apache.linkis.manager.common.protocol.engine.{
   EngineOperateRequest,
@@ -258,10 +254,7 @@ class DefaultEngineNodeManager extends EngineNodeManager with Logging {
    * @param serviceInstance
    * @param engineNode
    */
-  override def updateEngineNode(
-      serviceInstance: ServiceInstance,
-      engineNode: EngineNode
-  ): Unit = {
+  override def updateEngineNode(serviceInstance: ServiceInstance, engineNode: EngineNode): Unit = {
     nodeManagerPersistence.updateEngineNode(serviceInstance, engineNode)
     Utils.tryAndWarnMsg(nodeMetricManagerPersistence.deleteNodeMetrics(engineNode))(
       "Failed to clear old metrics"

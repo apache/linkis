@@ -103,10 +103,7 @@ class CodeLogicalUnitExecTask(parents: Array[ExecTask], children: Array[ExecTask
             s"Failed to submit ${getIDInfo()} to ${codeExecutor.getEngineConnExecutor.getServiceInstance}",
             t
           )
-          throw new LinkisRetryException(
-            ECMPluginConf.ECM_ENGNE_CREATION_ERROR_CODE,
-            t.getMessage
-          )
+          throw new LinkisRetryException(ECMPluginConf.ECM_ENGNE_CREATION_ERROR_CODE, t.getMessage)
       }
       response match {
         case SubmitResponse(engineConnExecId) =>

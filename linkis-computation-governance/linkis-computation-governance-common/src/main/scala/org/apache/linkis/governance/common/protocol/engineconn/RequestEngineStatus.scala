@@ -23,8 +23,7 @@ import org.apache.linkis.protocol.message.RequestProtocol
 
 import java.util
 
-case class RequestEngineStatusBatch(engineList: util.List[ServiceInstance])
-    extends RequestProtocol
+case class RequestEngineStatusBatch(engineList: util.List[ServiceInstance]) extends RequestProtocol
 
 case class ResponseEngineStatusBatch(
     engineStatus: util.Map[ServiceInstance, NodeExistStatus],

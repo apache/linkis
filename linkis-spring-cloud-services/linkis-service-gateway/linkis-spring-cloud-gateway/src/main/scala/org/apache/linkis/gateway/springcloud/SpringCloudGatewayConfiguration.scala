@@ -130,45 +130,44 @@ class SpringCloudGatewayConfiguration {
     .build()
 
   @Bean
-  def createLoadBalancerClient(
-      springClientFactory: SpringClientFactory
-  ): RibbonLoadBalancerClient = new RibbonLoadBalancerClient(springClientFactory) {
+  def createLoadBalancerClient(springClientFactory: SpringClientFactory): RibbonLoadBalancerClient =
+    new RibbonLoadBalancerClient(springClientFactory) {
 
-    override def getServer(serviceId: String): Server = if (isMergeModuleInstance(serviceId)) {
-      val serviceInstance = getServiceInstance(serviceId)
-      logger.info("redirect to " + serviceInstance)
-      val lb = this.getLoadBalancer(serviceInstance.getApplicationName)
-      lb.getAllServers.find(_.getHostPort == serviceInstance.getInstance).get
-    } else super.getServer(serviceId)
-
-    def isSecure(server: Server, serviceId: String) = {
-      val config = springClientFactory.getClientConfig(serviceId)
-      val serverIntrospector = serverIntrospectorFun(serviceId)
-      RibbonUtils.isSecure(config, serverIntrospector, server)
-    }
-
-    def serverIntrospectorFun(serviceId: String) = {
-      var serverIntrospector =
-        springClientFactory.getInstance(serviceId, classOf[ServerIntrospector])
-      if (serverIntrospector == null) serverIntrospector = new DefaultServerIntrospector
-      serverIntrospector
-    }
-
-    override def choose(serviceId: String, hint: Any): client.ServiceInstance =
-      if (isMergeModuleInstance(serviceId)) {
+      override def getServer(serviceId: String): Server = if (isMergeModuleInstance(serviceId)) {
         val serviceInstance = getServiceInstance(serviceId)
         logger.info("redirect to " + serviceInstance)
         val lb = this.getLoadBalancer(serviceInstance.getApplicationName)
-        val server = lb.getAllServers.find(_.getHostPort == serviceInstance.getInstance).get
-        new RibbonLoadBalancerClient.RibbonServer(
-          serviceId,
-          server,
-          isSecure(server, serviceId),
-          serverIntrospectorFun(serviceId).getMetadata(server)
-        )
-      } else super.choose(serviceId, hint)
+        lb.getAllServers.find(_.getHostPort == serviceInstance.getInstance).get
+      } else super.getServer(serviceId)
 
-  }
+      def isSecure(server: Server, serviceId: String) = {
+        val config = springClientFactory.getClientConfig(serviceId)
+        val serverIntrospector = serverIntrospectorFun(serviceId)
+        RibbonUtils.isSecure(config, serverIntrospector, server)
+      }
+
+      def serverIntrospectorFun(serviceId: String) = {
+        var serverIntrospector =
+          springClientFactory.getInstance(serviceId, classOf[ServerIntrospector])
+        if (serverIntrospector == null) serverIntrospector = new DefaultServerIntrospector
+        serverIntrospector
+      }
+
+      override def choose(serviceId: String, hint: Any): client.ServiceInstance =
+        if (isMergeModuleInstance(serviceId)) {
+          val serviceInstance = getServiceInstance(serviceId)
+          logger.info("redirect to " + serviceInstance)
+          val lb = this.getLoadBalancer(serviceInstance.getApplicationName)
+          val server = lb.getAllServers.find(_.getHostPort == serviceInstance.getInstance).get
+          new RibbonLoadBalancerClient.RibbonServer(
+            serviceId,
+            server,
+            isSecure(server, serviceId),
+            serverIntrospectorFun(serviceId).getMetadata(server)
+          )
+        } else super.choose(serviceId, hint)
+
+    }
 
   @Bean
   @ConditionalOnProperty(name = Array("spring.cloud.gateway.url.enabled"), matchIfMissing = true)

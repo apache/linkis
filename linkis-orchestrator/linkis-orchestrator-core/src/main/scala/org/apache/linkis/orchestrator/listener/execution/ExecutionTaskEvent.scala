@@ -33,8 +33,6 @@ case class ExecutionTaskStatusEvent(executionTaskId: String, status: ExecutionNo
     extends ExecutionTaskEvent
     with OrchestratorSyncEvent
 
-case class ExecutionTaskCompletedEvent(
-    executionTaskId: String,
-    taskResponse: CompletedTaskResponse
-) extends ExecutionTaskEvent
+case class ExecutionTaskCompletedEvent(executionTaskId: String, taskResponse: CompletedTaskResponse)
+    extends ExecutionTaskEvent
     with OrchestratorSyncEvent

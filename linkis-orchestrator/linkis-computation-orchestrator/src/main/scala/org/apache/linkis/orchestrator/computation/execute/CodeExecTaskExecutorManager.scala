@@ -49,9 +49,9 @@ trait CodeExecTaskExecutorManager {
   def shutdown(): Unit
 
   /**
-   * The job execution process is normal. After the job is completed, you can call this method.
-   * This method will determine the bind engine label. If it is a non-end type job, no operation
-   * will be performed.
+   * The job execution process is normal. After the job is completed, you can call this method. This
+   * method will determine the bind engine label. If it is a non-end type job, no operation will be
+   * performed.
    *
    * @param execTask
    * @param executor
@@ -93,8 +93,7 @@ trait CodeExecTaskExecutorManager {
       isSucceed: Boolean
   ): Unit
 
-  def getAllInstanceToExecutorCache()
-      : mutable.HashMap[ServiceInstance, Array[CodeExecTaskExecutor]]
+  def getAllInstanceToExecutorCache(): mutable.HashMap[ServiceInstance, Array[CodeExecTaskExecutor]]
 
   def getAllExecTaskToExecutorCache(): mutable.HashMap[String, CodeExecTaskExecutor]
 

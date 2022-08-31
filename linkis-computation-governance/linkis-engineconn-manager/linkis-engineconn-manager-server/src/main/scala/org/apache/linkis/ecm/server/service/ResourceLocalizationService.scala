@@ -22,9 +22,6 @@ import org.apache.linkis.manager.engineplugin.common.launch.entity.EngineConnLau
 
 trait ResourceLocalizationService {
 
-  def handleInitEngineConnResources(
-      request: EngineConnLaunchRequest,
-      engineConn: EngineConn
-  ): Unit
+  def handleInitEngineConnResources(request: EngineConnLaunchRequest, engineConn: EngineConn): Unit
 
 }

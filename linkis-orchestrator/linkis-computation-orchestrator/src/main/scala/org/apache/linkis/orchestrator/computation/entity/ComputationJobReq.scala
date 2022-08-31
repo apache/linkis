@@ -46,8 +46,7 @@ class ComputationJobReq extends AbstractJobReq {
 
   def getCodeLogicalUnit = codeLogicalUnit
 
-  def setCodeLogicalUnit(codeLogicalUnit: CodeLogicalUnit) = this.codeLogicalUnit =
-    codeLogicalUnit
+  def setCodeLogicalUnit(codeLogicalUnit: CodeLogicalUnit) = this.codeLogicalUnit = codeLogicalUnit
 
   def getCodeLanguageLabel: CodeLanguageLabel = {
     codeLogicalUnit.getLabel

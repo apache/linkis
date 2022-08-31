@@ -57,8 +57,7 @@ class BaseGatewayContext extends GatewayContext {
 
   override def isWebSocketRequest: Boolean = webSocketRequest
 
-  override def setGatewayRoute(gatewayRoute: GatewayRoute): Unit = this.gatewayRoute =
-    gatewayRoute
+  override def setGatewayRoute(gatewayRoute: GatewayRoute): Unit = this.gatewayRoute = gatewayRoute
 
   override def getGatewayRoute: GatewayRoute = gatewayRoute
 

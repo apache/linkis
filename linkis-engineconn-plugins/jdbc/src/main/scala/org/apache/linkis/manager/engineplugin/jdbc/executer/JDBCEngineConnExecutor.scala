@@ -259,9 +259,7 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
       val md = resultSet.getMetaData
       val metaArrayBuffer = new ArrayBuffer[(String, String)]()
       for (i <- 1 to md.getColumnCount) {
-        metaArrayBuffer.add(
-          Tuple2(md.getColumnName(i), JDBCHelper.getTypeStr(md.getColumnType(i)))
-        )
+        metaArrayBuffer.add(Tuple2(md.getColumnName(i), JDBCHelper.getTypeStr(md.getColumnType(i))))
       }
       val columns =
         metaArrayBuffer.map { c => Column(c._1, DataType.toDataType(c._2), "") }.toArray[Column]

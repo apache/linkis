@@ -58,17 +58,13 @@ object AMUtils {
           EMNodeVo.setResourceType(node.getNodeResource.getResourceType)
         if (node.getNodeResource.getMaxResource != null)
           EMNodeVo.setMaxResource(
-            mapper.readValue(
-              write(node.getNodeResource.getMaxResource),
-              classOf[util.Map[String, Any]]
-            )
+            mapper
+              .readValue(write(node.getNodeResource.getMaxResource), classOf[util.Map[String, Any]])
           )
         if (node.getNodeResource.getMinResource != null)
           EMNodeVo.setMinResource(
-            mapper.readValue(
-              write(node.getNodeResource.getMinResource),
-              classOf[util.Map[String, Any]]
-            )
+            mapper
+              .readValue(write(node.getNodeResource.getMinResource), classOf[util.Map[String, Any]])
           )
         if (node.getNodeResource.getUsedResource != null)
           EMNodeVo.setUsedResource(

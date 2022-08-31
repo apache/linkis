@@ -115,15 +115,13 @@ abstract class JavaProcessEngineConnLaunchBuilder
       addPathToClassPath(environment, Seq(LINKIS_PUBLIC_MODULE_PATH.getValue + "/*"))
     }
     // finally, add the suitable properties key to classpath
-    engineConnBuildRequest.engineConnCreationDesc.properties.asScala.foreach {
-      case (key, value) =>
-        if (
-            key.startsWith("engineconn.classpath") || key.startsWith(
-              "wds.linkis.engineconn.classpath"
-            )
-        ) {
-          addPathToClassPath(environment, Seq(variable(PWD), new File(value).getName))
-        }
+    engineConnBuildRequest.engineConnCreationDesc.properties.asScala.foreach { case (key, value) =>
+      if (
+          key
+            .startsWith("engineconn.classpath") || key.startsWith("wds.linkis.engineconn.classpath")
+      ) {
+        addPathToClassPath(environment, Seq(variable(PWD), new File(value).getName))
+      }
     }
     getExtraClassPathFile.foreach { file: String =>
       addPathToClassPath(environment, Seq(variable(PWD), new File(file).getName))
@@ -175,9 +173,7 @@ abstract class JavaProcessEngineConnLaunchBuilder
     val engineType = engineConnBuildRequest.labels.asScala
       .find(_.isInstanceOf[EngineTypeLabel])
       .map { case engineTypeLabel: EngineTypeLabel => engineTypeLabel }
-      .getOrElse(
-        throw new EngineConnBuildFailedException(20000, "EngineTypeLabel is not exists.")
-      )
+      .getOrElse(throw new EngineConnBuildFailedException(20000, "EngineTypeLabel is not exists."))
     val engineConnResource = engineConnResourceGenerator.getEngineConnBMLResources(engineType)
     Array(
       engineConnResource.getConfBmlResource,

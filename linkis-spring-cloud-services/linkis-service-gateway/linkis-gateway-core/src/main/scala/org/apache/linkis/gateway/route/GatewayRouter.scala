@@ -128,8 +128,7 @@ abstract class AbstractGatewayRouter extends GatewayRouter with Logging {
 
 }
 
-class DefaultGatewayRouter(var gatewayRouters: Array[GatewayRouter])
-    extends AbstractGatewayRouter {
+class DefaultGatewayRouter(var gatewayRouters: Array[GatewayRouter]) extends AbstractGatewayRouter {
 
   gatewayRouters = gatewayRouters.sortWith((left, right) => {
     left.order() < right.order()

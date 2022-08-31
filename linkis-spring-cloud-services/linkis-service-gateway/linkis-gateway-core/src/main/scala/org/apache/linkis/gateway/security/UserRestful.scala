@@ -72,9 +72,7 @@ abstract class AbstractUserRestful extends UserRestful with Logging {
         Utils.tryCatch {
           val loginUser = GatewaySSOUtils.getLoginUsername(gatewayContext)
           Message
-            .ok(
-              loginUser + "Already logged in, please log out before signing in(已经登录，请先退出再进行登录)！"
-            )
+            .ok(loginUser + "Already logged in, please log out before signing in(已经登录，请先退出再进行登录)！")
             .data("userName", loginUser)
         }(_ => login(gatewayContext))
       case "logout" => logout(gatewayContext)
@@ -173,9 +171,7 @@ abstract class UserPwdAbstractUserRestful extends AbstractUserRestful with Loggi
     val userNameArray = gatewayContext.getRequest.getQueryParams.get(USERNAME_STR)
     var passwordArray = gatewayContext.getRequest.getQueryParams.get(PASSWD_STR)
     val passwordArrayEncrypt = gatewayContext.getRequest.getQueryParams.get(PASSWD_ENCRYPT_STR)
-    if (
-        null == passwordArray || passwordArray.isEmpty || StringUtils.isBlank(passwordArray.head)
-    ) {
+    if (null == passwordArray || passwordArray.isEmpty || StringUtils.isBlank(passwordArray.head)) {
       passwordArray = passwordArrayEncrypt
     }
     val (userName, passwordEncrypt) =
@@ -330,9 +326,8 @@ abstract class UserPwdAbstractUserRestful extends AbstractUserRestful with Loggi
               .data("userName", proxyUser)
               .data("isAdmin", false)
           } else {
-            message = Message.error(
-              "Invalid proxy user, please contact with administrator(代理用户无效，请联系管理员)"
-            )
+            message =
+              Message.error("Invalid proxy user, please contact with administrator(代理用户无效，请联系管理员)")
           }
 
         } else {

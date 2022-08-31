@@ -36,8 +36,8 @@ import javax.annotation.Resource
 import java.util
 
 /**
- * Description: If id is correct format of ContextHAId, will parse it to get the instance and
- * backup instances.
+ * Description: If id is correct format of ContextHAId, will parse it to get the instance and backup
+ * instances.
  */
 @Component
 class ContextIdParserImpl extends ContextIDParser with Logging {
@@ -66,13 +66,6 @@ class ContextIdParserImpl extends ContextIDParser with Logging {
     } else {
       new util.ArrayList[String](0)
     }
-  }
-
-  private def isNumberic(s: String): Boolean = {
-    s.toCharArray foreach { c =>
-      if (c < 48 || c > 57) return false
-    }
-    true
   }
 
   // todo same as that in RouteLabelInstanceAliasConverter

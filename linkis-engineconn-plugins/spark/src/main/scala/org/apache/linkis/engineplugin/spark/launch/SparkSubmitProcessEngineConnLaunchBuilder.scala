@@ -18,10 +18,7 @@
 package org.apache.linkis.engineplugin.spark.launch
 
 import org.apache.linkis.common.conf.CommonVars
-import org.apache.linkis.engineplugin.spark.config.{
-  SparkConfiguration,
-  SparkResourceConfiguration
-}
+import org.apache.linkis.engineplugin.spark.config.{SparkConfiguration, SparkResourceConfiguration}
 import org.apache.linkis.engineplugin.spark.config.SparkResourceConfiguration.LINKIS_SPARK_DRIVER_MEMORY
 import org.apache.linkis.engineplugin.spark.launch.SparkSubmitProcessEngineConnLaunchBuilder.{
   getValueAndRemove,
@@ -49,8 +46,7 @@ import scala.collection.mutable.ArrayBuffer
 
 import com.google.common.collect.Lists
 
-class SparkSubmitProcessEngineConnLaunchBuilder private
-    extends JavaProcessEngineConnLaunchBuilder {
+class SparkSubmitProcessEngineConnLaunchBuilder private extends JavaProcessEngineConnLaunchBuilder {
 
   private[this] val fsRoot = "hdfs://"
   protected var port: Int = _

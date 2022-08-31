@@ -83,10 +83,7 @@ class DefaultEngineAskEngineService
                 s"task: $taskId user ${engineAskRequest.getUser} reuse engine failed ${t.getMessage}"
               )
             case _ =>
-              logger.info(
-                s"task: $taskId user ${engineAskRequest.getUser} reuse engine failed",
-                t
-              )
+              logger.info(s"task: $taskId user ${engineAskRequest.getUser} reuse engine failed", t)
           }
           null
       }

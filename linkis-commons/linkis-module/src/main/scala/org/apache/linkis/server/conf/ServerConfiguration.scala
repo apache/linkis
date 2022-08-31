@@ -131,10 +131,8 @@ object ServerConfiguration extends Logging {
   val BDP_SERVER_RESTFUL_URI: CommonVars[String] =
     CommonVars("wds.linkis.server.restful.uri", "/api/rest_j/" + BDP_SERVER_VERSION)
 
-  val BDP_SERVER_USER_URI = CommonVars(
-    "wds.linkis.server.user.restful.uri",
-    "/api/rest_j/" + BDP_SERVER_VERSION + "/user"
-  )
+  val BDP_SERVER_USER_URI =
+    CommonVars("wds.linkis.server.user.restful.uri", "/api/rest_j/" + BDP_SERVER_VERSION + "/user")
 
   val BDP_SERVER_RESTFUL_LOGIN_URI = CommonVars(
     "wds.linkis.server.user.restful.login.uri",
@@ -205,9 +203,7 @@ object ServerConfiguration extends Logging {
   val LINKIS_SERVER_SESSION_TICKETID_KEY =
     CommonVars("wds.linkis.session.ticket.key", "linkis_user_session_ticket_id_v1")
 
-  val LINKIS_SERVER_SESSION_PROXY_TICKETID_KEY = CommonVars(
-    "wds.linkis.session.proxy.user.ticket.key",
-    "linkis_user_session_proxy_ticket_id_v1"
-  )
+  val LINKIS_SERVER_SESSION_PROXY_TICKETID_KEY =
+    CommonVars("wds.linkis.session.proxy.user.ticket.key", "linkis_user_session_proxy_ticket_id_v1")
 
 }

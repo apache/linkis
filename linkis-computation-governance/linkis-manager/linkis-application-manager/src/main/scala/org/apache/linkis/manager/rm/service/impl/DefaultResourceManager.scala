@@ -115,9 +115,7 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
       new Runnable {
         override def run(): Unit = {
           logger.info("Start force release timeout locks")
-          resourceLockService.clearTimeoutLock(
-            RMConfiguration.LOCK_RELEASE_TIMEOUT.getValue.toLong
-          )
+          resourceLockService.clearTimeoutLock(RMConfiguration.LOCK_RELEASE_TIMEOUT.getValue.toLong)
         }
       },
       RMConfiguration.LOCK_RELEASE_CHECK_INTERVAL.getValue.toLong,
@@ -342,15 +340,12 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
       emNode.setServiceInstance(labelContainer.getEMInstanceLabel.getServiceInstance)
       val engineNode = new AMEngineNode
       engineNode.setEMNode(emNode)
-      engineNode.setServiceInstance(
-        ServiceInstance(labelContainer.getEngineServiceName, tickedId)
-      )
+      engineNode.setServiceInstance(ServiceInstance(labelContainer.getEngineServiceName, tickedId))
       engineNode.setNodeResource(resource)
       nodeManagerPersistence.addEngineNode(engineNode)
 
-      val engineInstanceLabel = LabelBuilderFactoryContext.getLabelBuilderFactory.createLabel(
-        classOf[EngineInstanceLabel]
-      )
+      val engineInstanceLabel =
+        LabelBuilderFactoryContext.getLabelBuilderFactory.createLabel(classOf[EngineInstanceLabel])
       engineInstanceLabel.setServiceName(labelContainer.getEngineServiceName)
       engineInstanceLabel.setInstance(tickedId)
 
@@ -402,13 +397,13 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
   }
 
   /**
-   * When the resource is instantiated, the total amount of resources actually occupied is
-   * returned. 当资源被实例化后，返回实际占用的资源总量
+   * When the resource is instantiated, the total amount of resources actually occupied is returned.
+   * 当资源被实例化后，返回实际占用的资源总量
    *
    * @param labels
    *   In general, resourceReleased will release the resources occupied by the user, but if the
-   *   process that uses the resource does not have time to call the resourceReleased method to
-   *   die, you need to unregister to release the resource.
+   *   process that uses the resource does not have time to call the resourceReleased method to die,
+   *   you need to unregister to release the resource.
    * @param usedResource
    */
   override def resourceUsed(labels: util.List[Label[_]], usedResource: NodeResource): Unit = {
@@ -432,9 +427,8 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
         )
         throw e
     }
-    val nodeInstance = nodeManagerPersistence.getEngineNode(
-      labelContainer.getEngineInstanceLabel.getServiceInstance
-    )
+    val nodeInstance =
+      nodeManagerPersistence.getEngineNode(labelContainer.getEngineInstanceLabel.getServiceInstance)
     if (nodeInstance == null) {
       throw new RMErrorException(
         RMErrorCode.LABEL_RESOURCE_NOT_FOUND.getCode,
@@ -458,8 +452,7 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
       // lock labels
       tryLock(labelContainer)
       // check again after lock resource
-      lockedResource =
-        labelResourceService.getLabelResource(labelContainer.getEngineInstanceLabel)
+      lockedResource = labelResourceService.getLabelResource(labelContainer.getEngineInstanceLabel)
       if (
           lockedResource == null || lockedResource.getLockedResource <= Resource.initResource(
             lockedResource.getResourceType
@@ -504,9 +497,7 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
             if (labelResource != null) {
               labelResource.setLockedResource(labelResource.getLockedResource - addedResource)
               if (null == labelResource.getUsedResource)
-                labelResource.setUsedResource(
-                  Resource.initResource(labelResource.getResourceType)
-                )
+                labelResource.setUsedResource(Resource.initResource(labelResource.getResourceType))
               labelResource.setUsedResource(labelResource.getUsedResource + addedResource)
               labelResourceService.setLabelResource(
                 label,
@@ -745,8 +736,8 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
   }
 
   /**
-   * If the IP and port are empty, return the resource status of all modules of a module   *
-   * Return the use of this instance resource if there is an IP and port
+   * If the IP and port are empty, return the resource status of all modules of a module   * Return
+   * the use of this instance resource if there is an IP and port
    *
    * @param serviceInstances
    * @return
@@ -767,9 +758,8 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
           aggregatedResource = labelResourceService.getLabelResource(engineInstanceLabel)
         }
         case GovernanceCommonConf.ENGINE_CONN_MANAGER_SPRING_NAME.getValue => {
-          val emInstanceLabel = LabelBuilderFactoryContext.getLabelBuilderFactory.createLabel(
-            classOf[EMInstanceLabel]
-          )
+          val emInstanceLabel =
+            LabelBuilderFactoryContext.getLabelBuilderFactory.createLabel(classOf[EMInstanceLabel])
           emInstanceLabel.setServiceName(serviceInstance.getApplicationName)
           emInstanceLabel.setInstance(serviceInstance.getInstance)
           aggregatedResource = labelResourceService.getLabelResource(emInstanceLabel)

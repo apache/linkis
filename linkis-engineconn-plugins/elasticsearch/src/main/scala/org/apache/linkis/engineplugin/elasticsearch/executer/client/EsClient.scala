@@ -33,13 +33,7 @@ import java.util
 
 import scala.collection.JavaConverters._
 
-import org.elasticsearch.client.{
-  Cancellable,
-  Request,
-  RequestOptions,
-  ResponseListener,
-  RestClient
-}
+import org.elasticsearch.client.{Cancellable, Request, RequestOptions, ResponseListener, RestClient}
 import org.elasticsearch.client.sniff.Sniffer
 
 trait EsClientOperate {

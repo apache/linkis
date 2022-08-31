@@ -33,9 +33,8 @@ class ParserVarLabelInterceptor extends EntranceInterceptor {
   override def apply(jobRequest: JobRequest, logAppender: lang.StringBuilder): JobRequest = {
     jobRequest match {
       case requestPersistTask: JobRequest =>
-        val variableMap = TaskUtils.getVariableMap(
-          requestPersistTask.getParams.asInstanceOf[util.Map[String, Any]]
-        )
+        val variableMap =
+          TaskUtils.getVariableMap(requestPersistTask.getParams.asInstanceOf[util.Map[String, Any]])
         val labels = requestPersistTask.getLabels
         if (variableMap.contains(LabelKeyConstant.TENANT_KEY)) {
           val tenantLabel = LabelBuilderFactoryContext.getLabelBuilderFactory

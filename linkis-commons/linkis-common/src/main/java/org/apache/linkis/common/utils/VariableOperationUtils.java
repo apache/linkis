@@ -54,11 +54,20 @@ public class VariableOperationUtils {
    * @param date
    * @return
    */
-  public static ZonedDateTime toZonedDateTime(Date date) {
+  public static ZonedDateTime toZonedDateTime(Date date, ZoneId zoneId) {
     Instant instant = date.toInstant();
-    ZoneId zoneId = ZoneId.systemDefault();
     LocalDateTime localDateTime = instant.atZone(zoneId).toLocalDateTime();
     return ZonedDateTime.of(localDateTime, zoneId);
+  }
+
+  /**
+   * yyyy-MM-dd HH:mm:ss
+   *
+   * @param date
+   * @return
+   */
+  public static ZonedDateTime toZonedDateTime(Date date) {
+    return toZonedDateTime(date, ZoneId.systemDefault());
   }
 
   /**
@@ -121,9 +130,9 @@ public class VariableOperationUtils {
           if (buffer.substring(startIndex, endIndex + 1).contains(DOLLAR)) {
             buffer.replace(startIndex, endIndex + 1, newContent);
           }
-          startIndex = buffer.indexOf(PLACEHOLDER_LEFT, startIndex + newContent.length());
+          startIndex = buffer.indexOf(LEFT, startIndex + newContent.length());
         } catch (IllegalArgumentException e1) {
-          startIndex = buffer.indexOf(PLACEHOLDER_LEFT, endIndex);
+          startIndex = buffer.indexOf(LEFT, endIndex);
         } catch (Exception e2) {
           throw new VariableOperationFailedException(
               20050, "variable operation expression" + e2.getMessage(), e2);

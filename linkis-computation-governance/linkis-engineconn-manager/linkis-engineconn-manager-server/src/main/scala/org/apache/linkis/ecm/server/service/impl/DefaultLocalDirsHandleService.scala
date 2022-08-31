@@ -32,11 +32,7 @@ class DefaultLocalDirsHandleService extends LocalDirsHandleService {
 
   override def getEngineConnManagerHomeDir: String = ECM_HOME_DIR
 
-  override def getEngineConnWorkDir(
-      user: String,
-      ticketId: String,
-      engineType: String
-  ): String = {
+  override def getEngineConnWorkDir(user: String, ticketId: String, engineType: String): String = {
     val prefix = ENGINECONN_ROOT_DIR
     val suffix = ECPathUtils.getECWOrkDirPathSuffix(user, ticketId, engineType)
     new FsPath(prefix + File.separator + suffix).getPath

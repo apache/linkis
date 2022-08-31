@@ -25,10 +25,6 @@ trait ExecutorListener extends SchedulerListener {
 
   def onExecutorCompleted(executor: Executor, message: String): Unit
 
-  def onExecutorStateChanged(
-      executor: Executor,
-      fromState: EngineState,
-      toState: EngineState
-  ): Unit
+  def onExecutorStateChanged(executor: Executor, fromState: EngineState, toState: EngineState): Unit
 
 }

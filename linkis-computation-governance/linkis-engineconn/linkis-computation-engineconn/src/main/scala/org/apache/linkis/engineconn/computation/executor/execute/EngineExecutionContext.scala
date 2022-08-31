@@ -49,10 +49,8 @@ import org.apache.commons.lang3.StringUtils
 import java.io.File
 import java.util
 
-class EngineExecutionContext(
-    executor: ComputationExecutor,
-    executorUser: String = Utils.getJvmUser
-) extends ExecutorExecutionContext
+class EngineExecutionContext(executor: ComputationExecutor, executorUser: String = Utils.getJvmUser)
+    extends ExecutorExecutionContext
     with Logging {
 
   private val resultSetFactory = ResultSetFactory.getInstance

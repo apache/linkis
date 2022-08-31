@@ -26,10 +26,10 @@ class EngineConnAsyncListenerBus(
     name: String,
     listenerConsumerThreadSize: Int,
     listenerThreadMaxFreeTime: Long
-) extends ListenerEventBus[EngineConnAsyncListener, EngineConnAsyncEvent](
-      eventQueueCapacity,
-      name
-    )(listenerConsumerThreadSize, listenerThreadMaxFreeTime) {
+) extends ListenerEventBus[EngineConnAsyncListener, EngineConnAsyncEvent](eventQueueCapacity, name)(
+      listenerConsumerThreadSize,
+      listenerThreadMaxFreeTime
+    ) {
 
   /**
    * Post an event to the specified listener. `onPostEvent` is guaranteed to be called in the same

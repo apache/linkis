@@ -24,9 +24,7 @@ import scala.collection.mutable
 
 trait ResultSetFactory extends scala.AnyRef {
 
-  def getResultSetByType(
-      resultSetType: scala.Predef.String
-  ): ResultSet[_ <: MetaData, _ <: Record]
+  def getResultSetByType(resultSetType: scala.Predef.String): ResultSet[_ <: MetaData, _ <: Record]
 
   def getResultSetByPath(fsPath: FsPath): ResultSet[_ <: MetaData, _ <: Record]
   def getResultSetByPath(fsPath: FsPath, fs: Fs): ResultSet[_ <: MetaData, _ <: Record]

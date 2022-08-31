@@ -29,8 +29,8 @@ import scala.concurrent.duration.Duration
 abstract class Sender {
 
   /**
-   * Ask is a synchronous method that requests the target microservice in real time and requires
-   * the target microservice to return a non-null return value.
+   * Ask is a synchronous method that requests the target microservice in real time and requires the
+   * target microservice to return a non-null return value.
    * ask是一个同步方法，该方法实时请求目标微服务，且要求目标微服务必须返回一个非空的返回值
    * @param message
    *   Requested parameter(请求的参数)
@@ -53,9 +53,9 @@ abstract class Sender {
   def ask(message: Any, timeout: Duration): Any
 
   /**
-   * Send is a synchronization method that requests the target microservice in real time and
-   * ensures that the target microservice successfully receives the request, but does not require
-   * the target microservice to respond in real time.
+   * Send is a synchronization method that requests the target microservice in real time and ensures
+   * that the target microservice successfully receives the request, but does not require the target
+   * microservice to respond in real time.
    * send是一个同步方法，该方法实时请求目标微服务，并确保目标微服务成功接收了本次请求，但不要求目标微服务实时给出答复。
    * @param message
    *   Requested parameter(请求的参数)
@@ -64,8 +64,8 @@ abstract class Sender {
 
   /**
    * Deliver is an asynchronous method that requests the target microservice asynchronously,
-   * ensuring that the target microservice is requested once, but does not guarantee that the
-   * target microservice will successfully receive the request.
+   * ensuring that the target microservice is requested once, but does not guarantee that the target
+   * microservice will successfully receive the request.
    * deliver是一个异步方法，该方法异步请求目标微服务，确保一定会请求目标微服务一次，但不保证目标微服务一定能成功接收到本次请求。
    * @param message
    *   Requested parameter(请求的参数)
@@ -81,23 +81,16 @@ object Sender {
 
   private val serviceInstanceToSenders = new util.HashMap[ServiceInstance, Sender]
 
-  def getSender(applicationName: String): Sender = getSender(
-    ServiceInstance(applicationName, null)
-  )
+  def getSender(applicationName: String): Sender = getSender(ServiceInstance(applicationName, null))
 
   def getSender(serviceInstance: ServiceInstance): Sender = {
     if (RPCUtils.isPublicService(serviceInstance.getApplicationName)) {
-      serviceInstance.setApplicationName(
-        RPCConfiguration.PUBLIC_SERVICE_APPLICATION_NAME.getValue
-      )
+      serviceInstance.setApplicationName(RPCConfiguration.PUBLIC_SERVICE_APPLICATION_NAME.getValue)
     }
     if (!serviceInstanceToSenders.containsKey(serviceInstance)) {
       serviceInstanceToSenders synchronized {
         if (!serviceInstanceToSenders.containsKey(serviceInstance)) {
-          serviceInstanceToSenders.put(
-            serviceInstance,
-            senderFactory.createSender(serviceInstance)
-          )
+          serviceInstanceToSenders.put(serviceInstance, senderFactory.createSender(serviceInstance))
         }
       }
     }

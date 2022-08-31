@@ -65,9 +65,7 @@ class DefaultNodeLabelRemoveService extends NodeLabelRemoveService with Logging 
     }
 
     labelPersistence.removeLabel(persistenceLabel)
-    logger.info(
-      s"Finished to remove labels from node ${nodeLabelRemoveRequest.getServiceInstance}"
-    )
+    logger.info(s"Finished to remove labels from node ${nodeLabelRemoveRequest.getServiceInstance}")
   }
 
 }

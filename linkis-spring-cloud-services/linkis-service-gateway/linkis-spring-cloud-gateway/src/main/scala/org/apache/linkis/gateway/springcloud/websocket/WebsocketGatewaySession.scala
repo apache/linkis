@@ -90,9 +90,8 @@ class GatewayWebSocketSessionConnection(
   def getProxyWebSocketSession(
       serviceInstance: ServiceInstance
   ): Option[ProxyGatewayWebSocketSession] = {
-    val proxySession = proxySessions.find(
-      _.serviceInstance.getApplicationName == serviceInstance.getApplicationName
-    )
+    val proxySession =
+      proxySessions.find(_.serviceInstance.getApplicationName == serviceInstance.getApplicationName)
     proxySession.find(p =>
       if (!p.isAlive) {
         proxySessions synchronized proxySessions -= p

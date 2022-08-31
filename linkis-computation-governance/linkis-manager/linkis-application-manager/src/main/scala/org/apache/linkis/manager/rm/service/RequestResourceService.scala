@@ -25,8 +25,7 @@ import org.apache.linkis.manager.rm.domain.RMLabelContainer
 import org.apache.linkis.manager.rm.exception.RMErrorCode
 import org.apache.linkis.manager.rm.utils.{RMUtils, UserConfiguration}
 
-abstract class RequestResourceService(labelResourceService: LabelResourceService)
-    extends Logging {
+abstract class RequestResourceService(labelResourceService: LabelResourceService) extends Logging {
 
   val resourceType: ResourceType = ResourceType.Default
 
@@ -48,9 +47,7 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
     val requestResource = resource.getMinResource
     // for configuration resource
     if (
-        labelContainer.getCombinedUserCreatorEngineTypeLabel.equals(
-          labelContainer.getCurrentLabel
-        )
+        labelContainer.getCombinedUserCreatorEngineTypeLabel.equals(labelContainer.getCurrentLabel)
     ) {
       if (labelResource == null) {
         labelResource = new CommonNodeResource
@@ -182,10 +179,7 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
           RMErrorCode.DRIVER_MEMORY_INSUFFICIENT.getMessage
         )
       case i: InstanceResource =>
-        (
-          RMErrorCode.INSTANCES_INSUFFICIENT.getCode,
-          RMErrorCode.INSTANCES_INSUFFICIENT.getMessage
-        )
+        (RMErrorCode.INSTANCES_INSUFFICIENT.getCode, RMErrorCode.INSTANCES_INSUFFICIENT.getMessage)
       case c: CPUResource =>
         (
           RMErrorCode.DRIVER_CPU_INSUFFICIENT.getCode,

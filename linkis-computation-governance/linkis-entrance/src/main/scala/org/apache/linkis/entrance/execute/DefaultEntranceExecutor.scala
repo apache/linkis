@@ -109,11 +109,7 @@ class DefaultEntranceExecutor(
                 )
               }
               entranceJob.getProgressListener.foreach(
-                _.onProgressUpdate(
-                  entranceJob,
-                  totalProgress.toFloat,
-                  entranceJob.getProgressInfo
-                )
+                _.onProgressUpdate(entranceJob, totalProgress.toFloat, entranceJob.getProgressInfo)
               )
             } else {
               logger.error("Invalid runningIndex.")
@@ -121,11 +117,7 @@ class DefaultEntranceExecutor(
           }
         } else {
           entranceJob.getProgressListener.foreach(
-            _.onProgressUpdate(
-              entranceJob,
-              progressInfoEvent.progress,
-              entranceJob.getProgressInfo
-            )
+            _.onProgressUpdate(entranceJob, progressInfoEvent.progress, entranceJob.getProgressInfo)
           )
         }
         JobHistoryHelper.updateJobRequestMetrics(
@@ -284,9 +276,7 @@ class DefaultEntranceExecutor(
     jobReqBuilder.setCodeLogicalUnit(codeLogicalUnit)
     jobReqBuilder.setLabels(entranceExecuteRequest.getLabels)
     jobReqBuilder.setExecuteUser(entranceExecuteRequest.executeUser())
-    jobReqBuilder.setParams(
-      entranceExecuteRequest.properties().asInstanceOf[util.Map[String, Any]]
-    )
+    jobReqBuilder.setParams(entranceExecuteRequest.properties().asInstanceOf[util.Map[String, Any]])
     jobReqBuilder.build()
   }
 

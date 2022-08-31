@@ -89,15 +89,15 @@ object EntranceConfiguration {
   val CLEAR_LOG = CommonVars("wds.linkis.log.clear", false)
 
   /**
-   * LOG_EXCLUDE is used to remove the log of the framework log, such as hive spark spring, so
-   * that it is not pushed to the front end through websocket. LOG_EXCLUDE 是用来进行把框架日志，比如hive spark
+   * LOG_EXCLUDE is used to remove the log of the framework log, such as hive spark spring, so that
+   * it is not pushed to the front end through websocket. LOG_EXCLUDE 是用来进行把框架日志，比如hive spark
    * spring等日志进行剔除，不让其通过websocket进行推送到前端
    */
   val LOG_EXCLUDE = CommonVars("wds.linkis.log.exclude", "com.netflix")
 
   /**
-   * wds.linkis.dwc.instance is a parameter used to control the number of engines each user
-   * starts. wds.linkis.instance 是用来进行控制每个用户启动engine数量的参数
+   * wds.linkis.dwc.instance is a parameter used to control the number of engines each user starts.
+   * wds.linkis.instance 是用来进行控制每个用户启动engine数量的参数
    */
   val WDS_LINKIS_INSTANCE = CommonVars("wds.linkis.rm.instance", 10)
 

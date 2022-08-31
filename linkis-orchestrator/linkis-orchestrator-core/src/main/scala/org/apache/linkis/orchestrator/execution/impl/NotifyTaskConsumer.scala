@@ -25,10 +25,7 @@ import org.apache.linkis.orchestrator.listener.task.TaskConsumerEvent
 
 /**
  */
-abstract class NotifyTaskConsumer
-    extends TaskConsumer
-    with OrchestratorAsyncListener
-    with Logging {
+abstract class NotifyTaskConsumer extends TaskConsumer with OrchestratorAsyncListener with Logging {
 
   private val notifyLock = new Array[Byte](0)
   private var isStopped = false
@@ -44,9 +41,9 @@ abstract class NotifyTaskConsumer
   protected def afterLaunchTask(runnableTasks: Array[ExecTaskRunner]): Unit = {}
 
   /**
-   *   1. The reheater gets the tasks that can be executed and performs the reheater 2. If a task
-   *      is reheater, it will not be executed this time until it is scheduled next time 3.
-   *      Execute the tasks after the reheater
+   *   1. The reheater gets the tasks that can be executed and performs the reheater 2. If a task is
+   *      reheater, it will not be executed this time until it is scheduled next time 3. Execute the
+   *      tasks after the reheater
    */
   override def run(): Unit = {
     while (!isStopped)

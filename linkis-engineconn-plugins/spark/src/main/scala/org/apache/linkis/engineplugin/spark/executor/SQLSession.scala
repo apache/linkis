@@ -97,11 +97,7 @@ object SQLSession extends Logging {
     // val columnsSet = dataFrame.schema
     val columns = columnsSet
       .map(c =>
-        Column(
-          c.name,
-          DataType.toDataType(c.dataType.typeName.toLowerCase),
-          c.getComment().orNull
-        )
+        Column(c.name, DataType.toDataType(c.dataType.typeName.toLowerCase), c.getComment().orNull)
       )
       .toArray[Column]
     columns.foreach(c => logger.info(s"c is ${c.columnName}, comment is ${c.comment}"))

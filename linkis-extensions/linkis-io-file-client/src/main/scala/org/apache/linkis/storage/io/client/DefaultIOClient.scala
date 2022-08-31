@@ -123,9 +123,7 @@ class DefaultIOClient extends IOClient with Logging {
               // tod check
               firstResultSet.result
             } else {
-              logger.info(
-                s"JobId ${jobReq.getId} execute method ${methodEntity} with null result."
-              )
+              logger.info(s"JobId ${jobReq.getId} execute method ${methodEntity} with null result.")
               IOClientUtils.SUCCESS
             }
           case _ =>

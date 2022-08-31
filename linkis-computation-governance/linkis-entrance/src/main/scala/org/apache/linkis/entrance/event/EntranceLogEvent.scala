@@ -30,9 +30,9 @@ trait EntranceLogEvent extends Event {}
 case class EntranceJobLogEvent(job: Job, log: String) extends EntranceLogEvent
 
 /**
- * EntranceLogEvent is used when we have a log to send, we will post this event, eventListener
- * will perform the corresponding operation.  * For example, the log will be pushed to the front
- * end through websocket EntranceLogEvent 用在当有日志需要发送的时候，我们将这个事件进行post，eventListener会进行相应的操作。
+ * EntranceLogEvent is used when we have a log to send, we will post this event, eventListener will
+ * perform the corresponding operation.  * For example, the log will be pushed to the front end
+ * through websocket EntranceLogEvent 用在当有日志需要发送的时候，我们将这个事件进行post，eventListener会进行相应的操作。
  * 比如会通过websocket方式将日志推送到前端
  * @param job
  * @param log

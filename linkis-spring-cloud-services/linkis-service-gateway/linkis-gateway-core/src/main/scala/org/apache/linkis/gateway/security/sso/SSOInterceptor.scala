@@ -59,8 +59,7 @@ object SSOInterceptor {
     if (ssoInterceptors != null && !ssoInterceptors.isEmpty) {
       interceptor = ssoInterceptors.head._2
     } else {
-      interceptor =
-        ClassUtils.getClassInstance(GatewayConfiguration.SSO_INTERCEPTOR_CLASS.getValue)
+      interceptor = ClassUtils.getClassInstance(GatewayConfiguration.SSO_INTERCEPTOR_CLASS.getValue)
     }
     interceptor
   }

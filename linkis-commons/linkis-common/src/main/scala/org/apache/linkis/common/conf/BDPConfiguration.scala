@@ -33,10 +33,9 @@ private[conf] object BDPConfiguration extends Logging {
 
   val DEFAULT_SERVER_CONF_FILE_NAME = "linkis-server.properties"
 
+  private val extractConfig = new Properties
   private val config = new Properties
   private val sysProps = sys.props
-  private val extractConfig = new Properties
-
   private val env = sys.env
 
   private def init: Unit = {
@@ -45,27 +44,29 @@ private[conf] object BDPConfiguration extends Logging {
     val propertyFile = sysProps.getOrElse("wds.linkis.configuration", DEFAULT_PROPERTY_FILE_NAME)
     val configFileURL = getClass.getClassLoader.getResource(propertyFile)
     if (configFileURL != null && new File(configFileURL.getPath).exists) {
-      logger.warn(
-        s"******************************** Notice: The Linkis configuration file is $propertyFile ! ***************************"
+      logger.info(
+        s"******************* Notice: The Linkis configuration file is $propertyFile ! *******************"
       )
       initConfig(config, configFileURL.getPath)
-    } else
+    } else {
       logger.warn(
-        s"******************************** Notice: The Linkis configuration file $propertyFile is not exists! ***************************"
+        s"************ Notice: The Linkis configuration file $propertyFile is not exists! *******************"
       )
+    }
 
     // load pub linkis conf
     val serverConf = sysProps.getOrElse("wds.linkis.server.conf", DEFAULT_SERVER_CONF_FILE_NAME)
     val serverConfFileURL = getClass.getClassLoader.getResource(serverConf)
     if (serverConfFileURL != null && new File(serverConfFileURL.getPath).exists) {
-      logger.warn(
-        s"******************************** Notice: The Linkis serverConf file is $serverConf ! ***************************"
+      logger.info(
+        s"*********************** Notice: The Linkis serverConf file is $serverConf ! ******************"
       )
       initConfig(config, serverConfFileURL.getPath)
-    } else
+    } else {
       logger.warn(
-        s"******************************** Notice: The Linkis serverConf file $serverConf is not exists! ***************************"
+        s"**************** Notice: The Linkis serverConf file $serverConf is not exists! *******************"
       )
+    }
 
     // load  server confs
     val propertyFileOptions = sysProps.get("wds.linkis.server.confs")
@@ -74,14 +75,15 @@ private[conf] object BDPConfiguration extends Logging {
       propertyFiles.foreach { propertyF =>
         val configFileURL = getClass.getClassLoader.getResource(propertyF)
         if (configFileURL != null && new File(configFileURL.getPath).exists) {
-          logger.warn(
-            s"******************************** Notice: The Linkis server.confs  is file $propertyF ***************************"
+          logger.info(
+            s"************** Notice: The Linkis server.confs  is file $propertyF ****************"
           )
           initConfig(config, configFileURL.getPath)
-        } else
+        } else {
           logger.warn(
-            s"******************************** Notice: The Linkis server.confs file $propertyF is not exists! ***************************"
+            s"********** Notice: The Linkis server.confs file $propertyF is not exists! **************"
           )
+        }
       }
     }
 
@@ -125,16 +127,16 @@ private[conf] object BDPConfiguration extends Logging {
 
   def properties: Properties = {
     val props = new Properties
+    props.putAll(env.asJava)
     props.putAll(sysProps.asJava)
     props.putAll(config)
     props.putAll(extractConfig)
-    props.putAll(env.asJava)
     props
   }
 
-  def getOption[T](commonVars: CommonVars[T]): Option[T] = if (commonVars.value != null)
+  def getOption[T](commonVars: CommonVars[T]): Option[T] = if (commonVars.value != null) {
     Option(commonVars.value)
-  else {
+  } else {
     val value = BDPConfiguration.getOption(commonVars.key)
     if (value.isEmpty) Option(commonVars.defaultValue)
     else formatValue(commonVars.defaultValue, value)

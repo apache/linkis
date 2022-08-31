@@ -46,10 +46,8 @@ object ECMConfiguration {
     CommonVars("wds.linkis.ecm.async.bus.waittoempty.time", 5000L).getValue
 
   // resource
-  val ECM_MAX_MEMORY_AVAILABLE: Long = CommonVars[Long](
-    "wds.linkis.ecm.memory.max",
-    ByteTimeUtils.byteStringAsBytes("100g")
-  ).getValue
+  val ECM_MAX_MEMORY_AVAILABLE: Long =
+    CommonVars[Long]("wds.linkis.ecm.memory.max", ByteTimeUtils.byteStringAsBytes("100g")).getValue
 
   val ECM_MAX_CORES_AVAILABLE: Int = CommonVars[Integer]("wds.linkis.ecm.cores.max", 100).getValue
 

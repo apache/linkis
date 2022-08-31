@@ -151,9 +151,9 @@ class DefaultMarkReq extends MarkReq with Logging {
 
   /**
    * Register labelKey that override the equals method, so when compair label in new request with
-   * cached labels in markReq, the label with labelKey contained in labelKeySet, would be convert
-   * to Label object , and call it's equals method. If you didn't override the equalis method in
-   * the label class, please do not register labelKey here.
+   * cached labels in markReq, the label with labelKey contained in labelKeySet, would be convert to
+   * Label object , and call it's equals method. If you didn't override the equalis method in the
+   * label class, please do not register labelKey here.
    * @param labelKey
    *   in LabelKeyConstants
    */

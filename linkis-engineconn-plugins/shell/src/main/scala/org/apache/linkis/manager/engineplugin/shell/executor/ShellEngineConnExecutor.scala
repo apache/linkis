@@ -178,7 +178,6 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
 
       bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream))
       errorsReader = new BufferedReader(new InputStreamReader(process.getErrorStream))
-
       val counter: CountDownLatch = new CountDownLatch(2)
       inputReaderThread =
         new ReaderThread(engineExecutionContext, bufferedReader, extractor, true, counter)
@@ -197,10 +196,9 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
         ErrorExecuteResponse("run shell failed", ShellCodeErrorException())
       } else SuccessExecuteResponse()
     } catch {
-      case e: Exception => {
+      case e: Exception =>
         logger.error("Execute shell code failed, reason:", e)
         ErrorExecuteResponse("run shell failed", e)
-      }
     } finally {
       if (!completed.get()) {
         Utils.tryAndWarn(errReaderThread.interrupt())
@@ -237,21 +235,9 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
       return jobProgressInfo.toArray
     }
     if (0.0f == progress(taskID)) {
-      jobProgressInfo += JobProgressInfo(
-        engineExecutionContext.getJobId.getOrElse(""),
-        1,
-        1,
-        0,
-        0
-      )
+      jobProgressInfo += JobProgressInfo(engineExecutionContext.getJobId.getOrElse(""), 1, 1, 0, 0)
     } else {
-      jobProgressInfo += JobProgressInfo(
-        engineExecutionContext.getJobId.getOrElse(""),
-        1,
-        0,
-        0,
-        1
-      )
+      jobProgressInfo += JobProgressInfo(engineExecutionContext.getJobId.getOrElse(""), 1, 0, 0, 1)
     }
     jobProgressInfo.toArray
   }

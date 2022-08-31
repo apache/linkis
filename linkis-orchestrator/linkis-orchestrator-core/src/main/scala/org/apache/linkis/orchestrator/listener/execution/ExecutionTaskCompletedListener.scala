@@ -23,8 +23,6 @@ import org.apache.linkis.orchestrator.listener.OrchestratorSyncListener
  */
 trait ExecutionTaskCompletedListener extends OrchestratorSyncListener {
 
-  def onExecutionTaskCompletedEvent(
-      executionTaskCompletedEvent: ExecutionTaskCompletedEvent
-  ): Unit
+  def onExecutionTaskCompletedEvent(executionTaskCompletedEvent: ExecutionTaskCompletedEvent): Unit
 
 }

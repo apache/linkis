@@ -28,8 +28,6 @@ import org.apache.commons.lang3.StringUtils
 
 object TokenAuthentication extends Logging {
 
-  //  @Autowired
-  //  private var tokenService: TokenService = _ //Not working
   private var tokenService: TokenService = _
 
   def setTokenService(tokenService: TokenService): Unit = {
@@ -46,9 +44,8 @@ object TokenAuthentication extends Logging {
 
   def tokenAuth(gatewayContext: GatewayContext): Boolean = {
     if (!ENABLE_TOKEN_AUTHENTICATION.getValue) {
-      val message = Message.noLogin(
-        s"Gateway未启用token认证，请采用其他认证方式!"
-      ) << gatewayContext.getRequest.getRequestURI
+      val message =
+        Message.noLogin(s"Gateway未启用token认证，请采用其他认证方式!") << gatewayContext.getRequest.getRequestURI
       SecurityFilter.filterResponse(gatewayContext, message)
       return false
     }

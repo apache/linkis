@@ -24,7 +24,7 @@ import org.apache.linkis.metadata.exception.MdqIllegalParamException
 
 import org.apache.commons.lang3.StringUtils
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 import scala.collection.mutable.ArrayBuffer
 
 object ScalaDDLCreator extends DDLCreator with SQLConst with Logging {
@@ -40,7 +40,7 @@ object ScalaDDLCreator extends DDLCreator with SQLConst with Logging {
     createTableCode.append(LEFT_PARENTHESES)
     val partitions = new ArrayBuffer[MdqTableFieldsInfoBO]()
     val fieldsArray = new ArrayBuffer[String]()
-    fields foreach { field =>
+    fields.asScala foreach { field =>
       if (field.getPartitionField != null && field.getPartitionField == true) partitions += field
       else {
         val name = field.getName
@@ -59,8 +59,9 @@ object ScalaDDLCreator extends DDLCreator with SQLConst with Logging {
       partitions foreach { p =>
         val name = p.getName
         val _type = p.getType
-        if (StringUtils.isEmpty(name) || StringUtils.isEmpty(_type))
+        if (StringUtils.isEmpty(name) || StringUtils.isEmpty(_type)) {
           throw MdqIllegalParamException("partition name or type is null")
+        }
         partitionArr += (name + SPACE + _type)
       }
       createTableCode
@@ -102,17 +103,6 @@ object ScalaDDLCreator extends DDLCreator with SQLConst with Logging {
     val finalCode = createTableCode.toString()
     logger.info(s"End to create ddl code, code is $finalCode")
     finalCode
-  }
-
-  def main(args: Array[String]): Unit = {
-    val filePath = "E:\\data\\json\\data.json"
-    val json = scala.io.Source.fromFile(filePath).mkString
-    println(json)
-
-    // val obj = new Gson().fromJson(json, classOf[MdqTableVO])
-    // val sql = createDDL(obj, "hadoop")
-    // println(System.currentTimeMillis())
-    // println(sql)
   }
 
 }

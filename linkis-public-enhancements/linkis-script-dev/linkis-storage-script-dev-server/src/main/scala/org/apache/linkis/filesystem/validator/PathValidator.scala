@@ -72,30 +72,26 @@ class PathValidator extends Logging {
     var username: String = null
     paramNames.indexOf("req") match {
       case -1 =>
-      case index: Int => {
+      case index: Int =>
         val proxyUser = paramNames.indexOf("proxyUser")
         if (proxyUser == -1 || StringUtils.isEmpty(args(proxyUser))) {
-          username =
-            ModuleUserUtils.getOperationUser(args(index).asInstanceOf[HttpServletRequest])
+          username = ModuleUserUtils.getOperationUser(args(index).asInstanceOf[HttpServletRequest])
         } else {
           // 增加proxyuser的判断
           username = args(proxyUser).toString
         }
-      }
     }
     username
   }
 
-  def checkPath(path: String, username: String) = {
+  def checkPath(path: String, username: String): Unit = {
     // 校验path的逻辑
     val userLocalRootPath: String = WorkspaceUtil.suffixTuning(LOCAL_USER_ROOT_PATH.getValue) +
       username
     var userHdfsRootPath: String =
       WorkspaceUtil.suffixTuning(HDFS_USER_ROOT_PATH_PREFIX.getValue) +
         username + HDFS_USER_ROOT_PATH_SUFFIX.getValue
-    if (
-        !(path.contains(StorageUtils.FILE_SCHEMA)) && !(path.contains(StorageUtils.HDFS_SCHEMA))
-    ) {
+    if (!(path.contains(StorageUtils.FILE_SCHEMA)) && !(path.contains(StorageUtils.HDFS_SCHEMA))) {
       throw new WorkSpaceException(80025, "the path should contain schema")
     }
     userHdfsRootPath = StringUtils.trimTrailingCharacter(userHdfsRootPath, File.separatorChar)
@@ -110,7 +106,7 @@ class PathValidator extends Logging {
     }
   }
 
-  def validate(args: Array[Object], paramNames: Array[String]) = {
+  def validate(args: Array[Object], paramNames: Array[String]): Unit = {
     // 获取path:String,json:JsonNode,json:Map中的path 参数
     val path: String = getPath(args, paramNames)
     val username: String = getUserName(args, paramNames)

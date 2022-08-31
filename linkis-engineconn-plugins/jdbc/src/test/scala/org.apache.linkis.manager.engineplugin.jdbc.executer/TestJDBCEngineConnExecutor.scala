@@ -174,10 +174,7 @@ class TestJDBCEngineConnExecutor {
     val host = CommonVars(Environment.ECM_HOST.toString, "127.0.0.1").getValue
     val port = CommonVars(Environment.ECM_PORT.toString, "80").getValue
     this.engineCreationContext.setEMInstance(
-      ServiceInstance(
-        GovernanceCommonConf.ENGINE_CONN_MANAGER_SPRING_NAME.getValue,
-        s"$host:$port"
-      )
+      ServiceInstance(GovernanceCommonConf.ENGINE_CONN_MANAGER_SPRING_NAME.getValue, s"$host:$port")
     )
     val labels = new ArrayBuffer[Label[_]]
     val labelArgs = engineConf.filter(_._1.startsWith(EngineConnArgumentsParser.LABEL_PREFIX))

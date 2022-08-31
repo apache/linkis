@@ -18,11 +18,7 @@
 package org.apache.linkis.httpclient.dws.discovery
 
 import org.apache.linkis.httpclient.config.HttpClientConstant
-import org.apache.linkis.httpclient.discovery.{
-  AbstractDiscovery,
-  HeartbeatAction,
-  HeartbeatResult
-}
+import org.apache.linkis.httpclient.discovery.{AbstractDiscovery, HeartbeatAction, HeartbeatResult}
 import org.apache.linkis.httpclient.dws.request.DWSHeartbeatAction
 import org.apache.linkis.httpclient.dws.response.DWSHeartbeatResult
 

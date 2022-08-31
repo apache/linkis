@@ -21,11 +21,7 @@ import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.computation.client.LinkisJobMetrics
 import org.apache.linkis.computation.client.job.AbstractSubmittableLinkisJob
-import org.apache.linkis.computation.client.once.{
-  LinkisManagerClient,
-  OnceJob,
-  SubmittableOnceJob
-}
+import org.apache.linkis.computation.client.once.{LinkisManagerClient, OnceJob, SubmittableOnceJob}
 import org.apache.linkis.computation.client.once.action.CreateEngineConnAction
 import org.apache.linkis.computation.client.operator.OnceJobOperator
 

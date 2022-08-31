@@ -49,10 +49,11 @@ private[conf] object BDPConfiguration extends Logging {
         s"******************************** Notice: The Linkis configuration file is $propertyFile ! ***************************"
       )
       initConfig(config, configFileURL.getPath)
-    } else
+    } else {
       logger.warn(
         s"******************************** Notice: The Linkis configuration file $propertyFile is not exists! ***************************"
       )
+    }
 
     // load pub linkis conf
     val serverConf = sysProps.getOrElse("wds.linkis.server.conf", DEFAULT_SERVER_CONF_FILE_NAME)
@@ -62,10 +63,11 @@ private[conf] object BDPConfiguration extends Logging {
         s"******************************** Notice: The Linkis serverConf file is $serverConf ! ***************************"
       )
       initConfig(config, serverConfFileURL.getPath)
-    } else
+    } else {
       logger.warn(
         s"******************************** Notice: The Linkis serverConf file $serverConf is not exists! ***************************"
       )
+    }
 
     // load  server confs
     val propertyFileOptions = sysProps.get("wds.linkis.server.confs")
@@ -78,10 +80,11 @@ private[conf] object BDPConfiguration extends Logging {
             s"******************************** Notice: The Linkis server.confs  is file $propertyF ***************************"
           )
           initConfig(config, configFileURL.getPath)
-        } else
+        } else {
           logger.warn(
             s"******************************** Notice: The Linkis server.confs file $propertyF is not exists! ***************************"
           )
+        }
       }
     }
 
@@ -132,9 +135,9 @@ private[conf] object BDPConfiguration extends Logging {
     props
   }
 
-  def getOption[T](commonVars: CommonVars[T]): Option[T] = if (commonVars.value != null)
+  def getOption[T](commonVars: CommonVars[T]): Option[T] = if (commonVars.value != null) {
     Option(commonVars.value)
-  else {
+  } else {
     val value = BDPConfiguration.getOption(commonVars.key)
     if (value.isEmpty) Option(commonVars.defaultValue)
     else formatValue(commonVars.defaultValue, value)

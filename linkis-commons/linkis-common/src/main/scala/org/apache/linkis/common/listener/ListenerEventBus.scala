@@ -277,8 +277,9 @@ abstract class ListenerEventBus[L <: EventListener, E <: Event](
 
     def isRunning: Boolean = event.isDefined
 
-    def putEvent(event: E): Boolean = if (this.event.isDefined) false
-    else
+    def putEvent(event: E): Boolean = if (this.event.isDefined) {
+      false
+    } else {
       synchronized {
         if (this.event.isDefined) false
         else {
@@ -289,6 +290,7 @@ abstract class ListenerEventBus[L <: EventListener, E <: Event](
           true
         }
       }
+    }
 
     override def run(): Unit = {
       val threadName = Thread.currentThread().getName

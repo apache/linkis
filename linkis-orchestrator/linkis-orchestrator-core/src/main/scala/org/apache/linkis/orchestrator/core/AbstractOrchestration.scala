@@ -142,8 +142,7 @@ abstract class AbstractOrchestration(
 
   protected def createOrchestration(logicalPlan: Task): Orchestration
 
-  class OrchestrationFutureImpl(asyncTaskResponse: AsyncTaskResponse)
-      extends OrchestrationFuture {
+  class OrchestrationFutureImpl(asyncTaskResponse: AsyncTaskResponse) extends OrchestrationFuture {
 
     private val waitLock = new Array[Byte](0)
 

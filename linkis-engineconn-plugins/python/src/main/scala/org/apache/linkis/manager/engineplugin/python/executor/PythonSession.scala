@@ -157,10 +157,7 @@ class PythonSession extends Logging {
       if (process == null) {
         Utils.tryThrow(initGateway) { t =>
           {
-            logger.error(
-              "initialize python executor failed, please ask administrator for help!",
-              t
-            )
+            logger.error("initialize python executor failed, please ask administrator for help!", t)
             Utils.tryAndWarn(close)
             throw t
           }

@@ -65,15 +65,9 @@ class SparkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
       if (StringUtils.isEmpty(sparkConfValue1) && StringUtils.isEmpty(sparkConfValue2))
         sparkConf.set("spark.yarn.dist.files", pythonLibUris.mkString(","))
       else if (StringUtils.isEmpty(sparkConfValue1))
-        sparkConf.set(
-          "spark.yarn.dist.files",
-          sparkConfValue2 + "," + pythonLibUris.mkString(",")
-        )
+        sparkConf.set("spark.yarn.dist.files", sparkConfValue2 + "," + pythonLibUris.mkString(","))
       else if (StringUtils.isEmpty(sparkConfValue2))
-        sparkConf.set(
-          "spark.yarn.dist.files",
-          sparkConfValue1 + "," + pythonLibUris.mkString(",")
-        )
+        sparkConf.set("spark.yarn.dist.files", sparkConfValue1 + "," + pythonLibUris.mkString(","))
       else
         sparkConf.set(
           "spark.yarn.dist.files",

@@ -334,8 +334,7 @@ object PythonExplain extends Explain {
   private val FROM_SUBPROCESS_IMPORT = """from\s+subprocess\s+import\s+.*""".r.unanchored
 
   /**
-   * Because of importing numpy package, spark engine will report an error, so we forbid this
-   * usage.
+   * Because of importing numpy package, spark engine will report an error, so we forbid this usage.
    */
   private val FROM_NUMPY_IMPORT = """from\s+numpy\s+import\s+.*""".r.unanchored
 
@@ -381,9 +380,7 @@ object PythonExplain extends Explain {
     code.split(System.lineSeparator()) foreach { code =>
       if (IMPORT_SYS_MOUDLE.findAllIn(code).nonEmpty || FROM_SYS_IMPORT.findAllIn(code).nonEmpty)
         throw PythonCodeCheckException(20070, "can not use sys module")
-      else if (
-          IMPORT_OS_MOUDLE.findAllIn(code).nonEmpty || FROM_OS_IMPORT.findAllIn(code).nonEmpty
-      )
+      else if (IMPORT_OS_MOUDLE.findAllIn(code).nonEmpty || FROM_OS_IMPORT.findAllIn(code).nonEmpty)
         throw PythonCodeCheckException(20071, "can not use os moudle")
       else if (
           IMPORT_PROCESS_MODULE.findAllIn(code).nonEmpty || FROM_MULTIPROCESS_IMPORT

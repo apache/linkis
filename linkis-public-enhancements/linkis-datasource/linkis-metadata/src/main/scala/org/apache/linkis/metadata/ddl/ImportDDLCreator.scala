@@ -173,9 +173,7 @@ object HiveImportDDLHelper extends ImportHelper with SQLConst with Logging {
     val destinationTable = mdqTableBO.getTableBaseInfo.getBase.getName
     if (StringUtils.isEmpty(destinationDatabase) || StringUtils.isEmpty(destinationTable)) {
       logger.error("Hive create table destination database or tablename is null")
-      throw MdqIllegalParamException(
-        "Hive create table destination database or tablename is null"
-      )
+      throw MdqIllegalParamException("Hive create table destination database or tablename is null")
     }
     val sourceDatabase =
       if (StringUtils.isEmpty(args.get(DATABASE))) {

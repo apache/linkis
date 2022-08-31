@@ -231,12 +231,7 @@ private class PythonInterpreter(process: Process, gatewayServer: GatewayServer)
 
 object SQLSession extends Logging {
 
-  def showDF(
-      sc: SparkContext,
-      jobGroup: String,
-      df: Any,
-      maxResult: Int = Int.MaxValue
-  ): String = {
+  def showDF(sc: SparkContext, jobGroup: String, df: Any, maxResult: Int = Int.MaxValue): String = {
     val startTime = System.currentTimeMillis()
 
     val iterator = Utils.tryThrow(df.asInstanceOf[DataFrame].toLocalIterator)(t => {

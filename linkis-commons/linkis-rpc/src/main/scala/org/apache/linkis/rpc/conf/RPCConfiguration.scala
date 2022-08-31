@@ -20,11 +20,7 @@ package org.apache.linkis.rpc.conf
 import org.apache.linkis.common.conf.{CommonVars, TimeType}
 
 import org.reflections.Reflections
-import org.reflections.scanners.{
-  MethodAnnotationsScanner,
-  SubTypesScanner,
-  TypeAnnotationsScanner
-}
+import org.reflections.scanners.{MethodAnnotationsScanner, SubTypesScanner, TypeAnnotationsScanner}
 
 object RPCConfiguration {
 

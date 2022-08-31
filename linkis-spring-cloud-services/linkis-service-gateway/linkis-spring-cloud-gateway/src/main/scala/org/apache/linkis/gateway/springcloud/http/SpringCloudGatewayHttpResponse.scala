@@ -81,10 +81,7 @@ class SpringCloudGatewayHttpResponse(response: ServerHttpResponse) extends Gatew
           val nativeResponse = abstractResponse.getNativeResponse.asInstanceOf[HttpServerResponse]
           responseMono = nativeResponse.sendWebsocket(
             new BiFunction[WebsocketInbound, WebsocketOutbound, Publisher[Void]] {
-              override def apply(
-                  in: WebsocketInbound,
-                  out: WebsocketOutbound
-              ): Publisher[Void] = {
+              override def apply(in: WebsocketInbound, out: WebsocketOutbound): Publisher[Void] = {
                 val dataBuffer = response
                   .bufferFactory()
                   .wrap(

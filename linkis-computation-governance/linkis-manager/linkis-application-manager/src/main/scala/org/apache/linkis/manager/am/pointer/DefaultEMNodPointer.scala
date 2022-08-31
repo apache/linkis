@@ -61,9 +61,7 @@ class DefaultEMNodPointer(val node: Node) extends AbstractNodePointer with EMNod
               s"Kill engine : ${engineStopRequest.getServiceInstance.toString} failed, because ${engineStopResponse.getMsg} . Will ask engine to suicide."
             )
           } else {
-            logger.info(
-              s"Succeed to kill engine ${engineStopRequest.getServiceInstance.toString}."
-            )
+            logger.info(s"Succeed to kill engine ${engineStopRequest.getServiceInstance.toString}.")
           }
         case o: AnyRef =>
           logger.warn(
@@ -78,10 +76,7 @@ class DefaultEMNodPointer(val node: Node) extends AbstractNodePointer with EMNod
     getSender.ask(request) match {
       case response: ECMOperateResponse => response
       case _ =>
-        throw new AMErrorException(
-          AMConstant.ENGINE_ERROR_CODE,
-          "Failed to execute ECM operation."
-        )
+        throw new AMErrorException(AMConstant.ENGINE_ERROR_CODE, "Failed to execute ECM operation.")
     }
   }
 

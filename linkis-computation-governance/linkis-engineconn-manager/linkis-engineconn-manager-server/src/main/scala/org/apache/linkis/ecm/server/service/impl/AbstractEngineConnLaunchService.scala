@@ -145,11 +145,7 @@ abstract class AbstractEngineConnLaunchService extends EngineConnLaunchService w
     engineNode
   }
 
-  def waitEngineConnStart(
-      request: EngineConnLaunchRequest,
-      conn: EngineConn,
-      duration: Long
-  ): Unit
+  def waitEngineConnStart(request: EngineConnLaunchRequest, conn: EngineConn, duration: Long): Unit
 
   def createEngineConn: EngineConn = new DefaultEngineConn
 

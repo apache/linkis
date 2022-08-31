@@ -126,11 +126,8 @@ class TableResultSetIterator(
 import scala.collection.convert.WrapAsJava._
 import scala.collection.convert.WrapAsScala._
 
-class TextResultSetIterator(
-    resultSetIterable: ResultSetIterable,
-    metadata: Object,
-    records: Object
-) extends ResultSetIterator[String, String](resultSetIterable, metadata, records) {
+class TextResultSetIterator(resultSetIterable: ResultSetIterable, metadata: Object, records: Object)
+    extends ResultSetIterator[String, String](resultSetIterable, metadata, records) {
 
   override protected def recordsTo(records: Object): util.List[String] = records match {
     case list: util.List[util.List[String]] => list.map(_.head)

@@ -109,14 +109,13 @@ class ECTaskEntranceInfoAccess extends ConnectionInfoAccess with Logging {
     JavaConversions.asScalaIterator(ret.iterator()).toList
   }
 
-  private def getDWCServiceInstance(
-      serviceInstance: SpringCloudServiceInstance
-  ): ServiceInstance = serviceInstance match {
-    case instance: EurekaServiceInstance =>
-      val applicationName = instance.getInstanceInfo.getAppName
-      val instanceId = instance.getInstanceInfo.getInstanceId
-      ServiceInstance(applicationName.toLowerCase, getInstance(applicationName, instanceId))
-  }
+  private def getDWCServiceInstance(serviceInstance: SpringCloudServiceInstance): ServiceInstance =
+    serviceInstance match {
+      case instance: EurekaServiceInstance =>
+        val applicationName = instance.getInstanceInfo.getAppName
+        val instanceId = instance.getInstanceInfo.getInstanceId
+        ServiceInstance(applicationName.toLowerCase, getInstance(applicationName, instanceId))
+    }
 
   private def getInstance(applicationName: String, instanceId: String): String =
     if (instanceId.toLowerCase.indexOf(applicationName.toLowerCase) > 0) {

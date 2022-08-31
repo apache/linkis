@@ -75,11 +75,7 @@ class DefaultResourceLabelService extends ResourceLabelService with Logging {
    * @param label
    * @param resource
    */
-  override def setResourceToLabel(
-      label: Label[_],
-      resource: NodeResource,
-      source: String
-  ): Unit = {
+  override def setResourceToLabel(label: Label[_], resource: NodeResource, source: String): Unit = {
     val persistResource = ResourceUtils.toPersistenceResource(resource)
     persistResource.setUpdator(source)
     resourceLabelPersistence.setResourceToLabel(
@@ -138,9 +134,7 @@ class DefaultResourceLabelService extends ResourceLabelService with Logging {
    * @param label
    */
   override def removeResourceByLabel(label: Label[_]): Unit = {
-    resourceLabelPersistence.removeResourceByLabel(
-      LabelManagerUtils.convertPersistenceLabel(label)
-    )
+    resourceLabelPersistence.removeResourceByLabel(LabelManagerUtils.convertPersistenceLabel(label))
   }
 
   override def removeResourceByLabels(labels: util.List[Label[_]]): Unit = {

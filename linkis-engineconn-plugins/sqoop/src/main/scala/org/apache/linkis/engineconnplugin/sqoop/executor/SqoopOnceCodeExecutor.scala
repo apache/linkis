@@ -86,10 +86,7 @@ class SqoopOnceCodeExecutor(
     })
   }
 
-  protected def runSqoop(
-      params: util.Map[String, String],
-      context: EngineCreationContext
-  ): Int = {
+  protected def runSqoop(params: util.Map[String, String], context: EngineCreationContext): Int = {
     Utils.tryCatch {
       val finalParams = paramsResolvers.foldLeft(params) { case (newParam, resolver) =>
         resolver.resolve(newParam, context)
@@ -121,16 +118,11 @@ class SqoopOnceCodeExecutor(
   override def getCurrentNodeResource(): NodeResource = {
     val memorySuffix = "g"
     val properties = EngineConnObject.getEngineCreationContext.getOptions
-    Option(properties.get(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key)).foreach(
-      memory => {
-        if (!memory.toLowerCase.endsWith(memorySuffix)) {
-          properties.put(
-            EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key,
-            memory + memorySuffix
-          )
-        }
+    Option(properties.get(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key)).foreach(memory => {
+      if (!memory.toLowerCase.endsWith(memorySuffix)) {
+        properties.put(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key, memory + memorySuffix)
       }
-    )
+    })
     val resource = new DriverAndYarnResource(
       new LoadInstanceResource(
         EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.getValue(properties).toLong,

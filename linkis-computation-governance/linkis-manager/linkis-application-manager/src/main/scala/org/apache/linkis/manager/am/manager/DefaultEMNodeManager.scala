@@ -25,10 +25,7 @@ import org.apache.linkis.manager.common.protocol.em.{ECMOperateRequest, ECMOpera
 import org.apache.linkis.manager.common.protocol.engine.EngineStopRequest
 import org.apache.linkis.manager.engineplugin.common.launch.entity.EngineConnBuildRequest
 import org.apache.linkis.manager.exception.NodeInstanceDuplicateException
-import org.apache.linkis.manager.persistence.{
-  NodeManagerPersistence,
-  NodeMetricManagerPersistence
-}
+import org.apache.linkis.manager.persistence.{NodeManagerPersistence, NodeMetricManagerPersistence}
 import org.apache.linkis.manager.rm.service.ResourceManager
 import org.apache.linkis.manager.service.common.metrics.MetricsConverter
 import org.apache.linkis.manager.service.common.pointer.NodePointerBuilder
@@ -150,10 +147,7 @@ class DefaultEMNodeManager extends EMNodeManager with Logging {
       case _ =>
     }
     emNode.setMark(emNode.getMark)
-    metricsConverter.fillMetricsToNode(
-      emNode,
-      nodeMetricManagerPersistence.getNodeMetrics(emNode)
-    )
+    metricsConverter.fillMetricsToNode(emNode, nodeMetricManagerPersistence.getNodeMetrics(emNode))
     emNode
   }
 
@@ -188,10 +182,7 @@ class DefaultEMNodeManager extends EMNodeManager with Logging {
     nodePointerBuilder.buildEMNodePointer(emNode).stopEngine(engineStopRequest)
   }
 
-  override def executeOperation(
-      ecmNode: EMNode,
-      request: ECMOperateRequest
-  ): ECMOperateResponse = {
+  override def executeOperation(ecmNode: EMNode, request: ECMOperateRequest): ECMOperateResponse = {
     nodePointerBuilder.buildEMNodePointer(ecmNode).executeOperation(request)
   }
 

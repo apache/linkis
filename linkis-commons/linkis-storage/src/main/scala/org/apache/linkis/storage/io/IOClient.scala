@@ -30,11 +30,7 @@ import org.slf4j.{Logger, LoggerFactory}
  */
 trait IOClient {
 
-  def execute(
-      user: String,
-      methodEntity: MethodEntity,
-      params: java.util.Map[String, Any]
-  ): String
+  def execute(user: String, methodEntity: MethodEntity, params: java.util.Map[String, Any]): String
 
   def executeWithEngine(
       user: String,

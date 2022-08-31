@@ -147,10 +147,7 @@ class AsyncExecTaskRunnerImpl(override val task: ExecTask)
    * @param fromStatus
    * @param toStatus
    */
-  def beforeStatusChanged(
-      fromStatus: ExecutionNodeStatus,
-      toStatus: ExecutionNodeStatus
-  ): Unit = {
+  def beforeStatusChanged(fromStatus: ExecutionNodeStatus, toStatus: ExecutionNodeStatus): Unit = {
     task match {
       case asyncExecTask: AsyncExecTask =>
         if (

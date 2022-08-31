@@ -67,10 +67,7 @@ trait EntranceRestfulRemote {
   ): Message
 
   @RequestMapping(value = Array("/entrance/{id}/kill"), method = Array(RequestMethod.GET))
-  def kill(
-      @PathVariable("id") id: String,
-      @RequestParam("taskID") taskID: java.lang.Long
-  ): Message
+  def kill(@PathVariable("id") id: String, @RequestParam("taskID") taskID: java.lang.Long): Message
 
   @RequestMapping(value = Array("/entrance/{id}/pause"), method = Array(RequestMethod.GET))
   def pause(@PathVariable("id") id: String): Message

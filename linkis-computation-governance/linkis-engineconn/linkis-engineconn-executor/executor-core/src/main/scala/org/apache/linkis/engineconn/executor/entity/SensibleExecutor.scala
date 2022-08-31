@@ -70,10 +70,7 @@ object SensibleExecutor {
   lazy val defaultErrorSensibleExecutor: SensibleExecutor = new SensibleExecutor {
     override def getStatus: NodeStatus = NodeStatus.ShuttingDown
 
-    override protected def onStatusChanged(
-        fromStatus: NodeStatus,
-        toStatus: NodeStatus
-    ): Unit = {}
+    override protected def onStatusChanged(fromStatus: NodeStatus, toStatus: NodeStatus): Unit = {}
 
     override def getId: String = "0"
 

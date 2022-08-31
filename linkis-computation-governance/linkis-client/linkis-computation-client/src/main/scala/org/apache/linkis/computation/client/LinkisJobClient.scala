@@ -23,9 +23,8 @@ import org.apache.linkis.computation.client.once.OnceJob
 import java.io.Closeable
 
 /**
- * This class is only used to provide a unified entry for user to build a LinkisJob conveniently
- * and simply. Please keep this class lightweight enough, do not set too many field to confuse
- * user.
+ * This class is only used to provide a unified entry for user to build a LinkisJob conveniently and
+ * simply. Please keep this class lightweight enough, do not set too many field to confuse user.
  */
 object LinkisJobClient extends Closeable {
 

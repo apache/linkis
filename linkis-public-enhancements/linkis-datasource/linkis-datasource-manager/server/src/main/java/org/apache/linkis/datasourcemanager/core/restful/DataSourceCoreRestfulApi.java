@@ -24,6 +24,7 @@ import org.apache.linkis.datasourcemanager.common.domain.DataSource;
 import org.apache.linkis.datasourcemanager.common.domain.DataSourceParamKeyDefinition;
 import org.apache.linkis.datasourcemanager.common.domain.DataSourceType;
 import org.apache.linkis.datasourcemanager.common.domain.DatasourceVersion;
+import org.apache.linkis.datasourcemanager.common.util.json.Json;
 import org.apache.linkis.datasourcemanager.core.formdata.FormDataTransformerFactory;
 import org.apache.linkis.datasourcemanager.core.formdata.MultiPartFormDataTransformer;
 import org.apache.linkis.datasourcemanager.core.service.DataSourceInfoService;
@@ -216,6 +217,14 @@ public class DataSourceCoreRestfulApi {
                                         + dataSourceName
                                         + " 已经存在]");
                     }
+                    List<DataSourceParamKeyDefinition> keyDefinitionList =
+                            dataSourceRelateService.getKeyDefinitionsByType(dataSource.getDataSourceTypeId());
+                    dataSource.setKeyDefinitions(keyDefinitionList);
+                    for (DataSourceParamsHook hook : dataSourceParamsHooks) {
+                        hook.beforePersist(dataSource.getConnectParams(), keyDefinitionList);
+                    }
+                    String parameter = Json.toJson(dataSource.getConnectParams(), null);
+                    dataSource.setParameter(parameter);
                     dataSourceInfoService.updateDataSourceInfo(dataSource);
                     return Message.ok().data("updateId", dataSourceId);
                 },
@@ -728,6 +737,11 @@ public class DataSourceCoreRestfulApi {
         List<DataSourceParamKeyDefinition> keyDefinitionList =
                 dataSourceRelateService.getKeyDefinitionsByType(dataSource.getDataSourceTypeId());
         dataSource.setKeyDefinitions(keyDefinitionList);
+        for (DataSourceParamsHook hook : dataSourceParamsHooks) {
+            hook.beforePersist(dataSource.getConnectParams(), keyDefinitionList);
+        }
+        String parameter = Json.toJson(dataSource.getConnectParams(), null);
+        dataSource.setParameter(parameter);
         dataSourceInfoService.saveDataSourceInfo(dataSource);
     }
 }

@@ -123,4 +123,14 @@
             `id` = #{id}
         </where>
     </update>
+
+    <select id="selectOneByName" resultMap="dataSourceEnvMap">
+        <![CDATA[SELECT ]]>
+        <include refid="data_source_env_detail"/>
+        <![CDATA[ FROM `linkis_ps_dm_datasource_env` ]]>
+        <where>
+            `env_name` = #{envName}
+        </where>
+        <![CDATA[ LIMIT 1; ]]>
+    </select>
 </mapper>

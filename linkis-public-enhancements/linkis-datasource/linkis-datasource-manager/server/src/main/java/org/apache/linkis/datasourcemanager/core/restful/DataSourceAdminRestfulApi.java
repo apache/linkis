@@ -17,6 +17,7 @@
 
 package org.apache.linkis.datasourcemanager.core.restful;
 
+import com.google.common.collect.Lists;
 import org.apache.linkis.common.exception.ErrorException;
 import org.apache.linkis.datasourcemanager.common.domain.DataSourceEnv;
 import org.apache.linkis.datasourcemanager.common.domain.DataSourceParamKeyDefinition;
@@ -45,10 +46,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
-import java.util.Calendar;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Api(tags = "data source admin restful api")
 @RestController
@@ -57,6 +55,7 @@ import java.util.Set;
         produces = {"application/json"})
 public class DataSourceAdminRestfulApi {
 
+    private final List<String> permitSystemList = Arrays.asList("Qualitis");
     @Autowired private DataSourceInfoService dataSourceInfoService;
 
     @Autowired private DataSourceRelateService dataSourceRelateService;
@@ -89,11 +88,124 @@ public class DataSourceAdminRestfulApi {
                     if (result.size() > 0) {
                         throw new ConstraintViolationException(result);
                     }
+                    if (dataSourceInfoService.existDataSourceEnv(dataSourceEnv.getEnvName())) {
+                        return Message.error(
+                                "The data source env named: "
+                                        + dataSourceEnv.getEnvName()
+                                        + " has been existed [数据源环境: "
+                                        + dataSourceEnv.getEnvName()
+                                        + " 已经存在]");
+                    }
                     dataSourceEnv.setCreateUser(userName);
                     insertDataSourceEnv(dataSourceEnv);
                     return Message.ok().data("insertId", dataSourceEnv.getId());
                 },
                 "Fail to insert data source environment[新增数据源环境失败]");
+    }
+
+    @ApiOperation(value = "insertJsonEnvBatch", notes = "insert batch json env", response = Message.class)
+    @ApiOperationSupport(ignoreParameters = {"dataSourceEnvList", "system"})
+    @RequestMapping(value = "/env/json/batch", method = RequestMethod.POST)
+    public Message insertJsonEnvBatch(
+            @RequestBody List<DataSourceEnv> dataSourceEnvList,
+            @RequestParam("system") String system,
+            HttpServletRequest req)
+            throws ErrorException {
+        String userName = SecurityFilter.getLoginUsername(req);
+        if (!RestfulApiHelper.isAdminUser(userName) && !permitSystemList.contains(system)) {
+            return Message.error("User '" + userName + "' is not admin user[非管理员用户]");
+        }
+        for (DataSourceEnv dataSourceEnv : dataSourceEnvList) {
+            // Bean validation
+            Set<ConstraintViolation<DataSourceEnv>> result =
+                    beanValidator.validate(dataSourceEnv, Default.class);
+            if (result.size() > 0) {
+                throw new ConstraintViolationException(result);
+            }
+            if (dataSourceInfoService.existDataSourceEnv(dataSourceEnv.getEnvName())) {
+                return Message.error(
+                        "The data source env named: "
+                                + dataSourceEnv.getEnvName()
+                                + " has been existed [数据源环境: "
+                                + dataSourceEnv.getEnvName()
+                                + " 已经存在]");
+            }
+            dataSourceEnv.setCreateUser(userName);
+            // Get key definitions in environment scope
+            List<DataSourceParamKeyDefinition> keyDefinitionList =
+                    dataSourceRelateService.getKeyDefinitionsByType(
+                            dataSourceEnv.getDataSourceTypeId(),
+                            DataSourceParamKeyDefinition.Scope.ENV);
+            dataSourceEnv.setKeyDefinitions(keyDefinitionList);
+            Map<String, Object> connectParams = dataSourceEnv.getConnectParams();
+            // Validate connect parameters
+            parameterValidator.validate(keyDefinitionList, connectParams);
+        }
+        dataSourceInfoService.saveBatchDataSourceEnv(dataSourceEnvList);
+        return RestfulApiHelper.doAndResponse(
+                () -> Message.ok().data("envs", dataSourceEnvList),
+                "Fail to insert data source environment[新增数据源环境失败]");
+    }
+
+    @ApiOperation(value = "insertJsonEnvBatch", notes = "update batch json env", response = Message.class)
+    @ApiOperationSupport(ignoreParameters = {"dataSourceEnvList", "system"})
+    @RequestMapping(value = "/env/json/batch", method = RequestMethod.PUT)
+    public Message updateEnvBatch(
+            @RequestBody List<DataSourceEnv> dataSourceEnvList,
+            @RequestParam("system") String system,
+            HttpServletRequest request)
+            throws ErrorException {
+        String userName = SecurityFilter.getLoginUsername(request);
+        if (!RestfulApiHelper.isAdminUser(userName) && !permitSystemList.contains(system)) {
+            return Message.error("User '" + userName + "' is not admin user[非管理员用户]");
+        }
+        for (DataSourceEnv dataSourceEnv : dataSourceEnvList) {
+            if (Objects.isNull(dataSourceEnv.getId())) {
+                return Message.error(
+                        "Fail to update data source environment[更新数据源环境失败], "
+                                + "[Please check the id if exists']");
+            }
+            // Bean validation
+            Set<ConstraintViolation<DataSourceEnv>> result =
+                    beanValidator.validate(dataSourceEnv, Default.class);
+            if (result.size() > 0) {
+                throw new ConstraintViolationException(result);
+            }
+            Long envId = dataSourceEnv.getId();
+            dataSourceEnv.setModifyUser(userName);
+            dataSourceEnv.setModifyTime(Calendar.getInstance().getTime());
+            DataSourceEnv storedDataSourceEnv = dataSourceInfoService.getDataSourceEnv(envId);
+            if (null == storedDataSourceEnv) {
+                return Message.error(
+                        "Fail to update data source environment[更新数据源环境失败], "
+                                + "[Please check the id:'"
+                                + envId
+                                + " is correct ']");
+            }
+            if (!Objects.equals(dataSourceEnv.getEnvName(), storedDataSourceEnv.getEnvName())
+                    && dataSourceInfoService.existDataSourceEnv(dataSourceEnv.getEnvName())) {
+                return Message.error(
+                        "The data source env named: "
+                                + dataSourceEnv.getEnvName()
+                                + " has been existed [数据源环境: "
+                                + dataSourceEnv.getEnvName()
+                                + " 已经存在]");
+            }
+            dataSourceEnv.setCreateUser(storedDataSourceEnv.getCreateUser());
+            // Get key definitions in environment scope
+            List<DataSourceParamKeyDefinition> keyDefinitionList =
+                    dataSourceRelateService.getKeyDefinitionsByType(
+                            dataSourceEnv.getDataSourceTypeId(),
+                            DataSourceParamKeyDefinition.Scope.ENV);
+            dataSourceEnv.setKeyDefinitions(keyDefinitionList);
+            Map<String, Object> connectParams = dataSourceEnv.getConnectParams();
+            // Validate connect parameters
+            parameterValidator.validate(keyDefinitionList, connectParams);
+        }
+        dataSourceInfoService.updateBatchDataSourceEnv(dataSourceEnvList);
+        return RestfulApiHelper.doAndResponse(
+                () -> Message.ok().data("envs", dataSourceEnvList),
+                "Fail to update data source environment[更新数据源环境失败]");
     }
 
     @ApiOperation(value = "getAllEnvListByDataSourceType", notes = "get all env list by data source type", response = Message.class)
@@ -183,6 +295,15 @@ public class DataSourceAdminRestfulApi {
                                         + "[Please check the id:'"
                                         + envId
                                         + " is correct ']");
+                    }
+                    if (!Objects.equals(dataSourceEnv.getEnvName(), storedDataSourceEnv.getEnvName())
+                            && dataSourceInfoService.existDataSourceEnv(dataSourceEnv.getEnvName())) {
+                        return Message.error(
+                                "The data source env named: "
+                                        + dataSourceEnv.getEnvName()
+                                        + " has been existed [数据源环境: "
+                                        + dataSourceEnv.getEnvName()
+                                        + " 已经存在]");
                     }
                     dataSourceEnv.setCreateUser(storedDataSourceEnv.getCreateUser());
                     updateDataSourceEnv(dataSourceEnv, storedDataSourceEnv);

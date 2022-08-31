@@ -182,7 +182,7 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
       inputReaderThread =
         new ReaderThread(engineExecutionContext, bufferedReader, extractor, true, counter)
       errReaderThread =
-        new ReaderThread(engineExecutionContext, bufferedReader, extractor, false, counter)
+        new ReaderThread(engineExecutionContext, errorsReader, extractor, false, counter)
 
       inputReaderThread.start()
       errReaderThread.start()

@@ -13,7 +13,7 @@
       "saveSuccess": "Successfully saved",
       "detail": "Details",
       "FAQ": "FAQ",
-      "clearCache": "Clear cache",
+      "clearCache": "Clear Cache",
       "logOut": "Log out",
       "action": "Action",
       "path": "Please choose the path",
@@ -108,14 +108,14 @@
         }
       },
       "progress": {
-        "title": "Execution progress",
+        "title": "Execution Progress",
         "watingList": "{num} jobs wating in front",
         "columns": {
           "id": {
             "title": "Name"
           },
           "progress": {
-            "title": "Progress bar"
+            "title": "Progress Bar"
           },
           "taskNum": {
             "title": "Number of Tasks",
@@ -175,11 +175,11 @@
         }
       },
       "monacoMenu": {
-        "YXJB": "Run script",
+        "YXJB": "Run Script",
         "GSH": "Format",
         "CZ": "Search",
         "TH": "Replace",
-        "HZS": "Line comment",
+        "HZS": "Line Comment",
         "ZT": "Paste",
         "HBQWJCFZWB": "Sorry, no copied text detected by IDE, if you performed the copy operation outside IDE, please use ctrl+v to paste!",
         "TDZDH": "Jump to line",

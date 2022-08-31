@@ -114,10 +114,7 @@ class DefaultProgressOperation(orchestratorSession: OrchestratorSession)
         }
       } else {
         val progressMap = physicalContext
-          .getOrElsePut(
-            ProgressConstraints.PROGRESS_MAP_NAME,
-            new ConcurrentHashMap[String, Float]
-          )
+          .getOrElsePut(ProgressConstraints.PROGRESS_MAP_NAME, new ConcurrentHashMap[String, Float])
           .asInstanceOf[ConcurrentHashMap[String, Float]]
         // Init the value of progress as 0
         val codeExecTasks = TaskTreeUtil.getAllTaskRecursive(
@@ -133,12 +130,7 @@ class DefaultProgressOperation(orchestratorSession: OrchestratorSession)
 
       Option(execTaskToProgressProcessor.get(execTask.getPhysicalContext.getRootTask.getId))
         .foreach(progress => {
-          progress.onProgress(
-            event.progress,
-            event.progressInfo,
-            event.resourceMap,
-            event.infoMap
-          )
+          progress.onProgress(event.progress, event.progressInfo, event.resourceMap, event.infoMap)
         })
     })
 

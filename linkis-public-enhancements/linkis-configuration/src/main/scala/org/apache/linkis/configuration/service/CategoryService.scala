@@ -67,9 +67,7 @@ class CategoryService extends Logging {
 
   }
 
-  def buildCategoryTree(
-      categoryLabelList: util.List[CategoryLabel]
-  ): util.List[CategoryLabelVo] = {
+  def buildCategoryTree(categoryLabelList: util.List[CategoryLabel]): util.List[CategoryLabelVo] = {
     val firstCategoryList = new util.ArrayList[CategoryLabelVo]()
     val secondaryCategoryList = new util.ArrayList[CategoryLabelVo]()
     categoryLabelList.asScala.foreach(categoryLabel => {

@@ -25,8 +25,7 @@ trait OutputExecuteResponse extends ExecuteResponse {
   def getOutput: String
 }
 
-case class AliasOutputExecuteResponse(alias: String, output: String)
-    extends OutputExecuteResponse {
+case class AliasOutputExecuteResponse(alias: String, output: String) extends OutputExecuteResponse {
   override def getOutput: String = output
 }
 

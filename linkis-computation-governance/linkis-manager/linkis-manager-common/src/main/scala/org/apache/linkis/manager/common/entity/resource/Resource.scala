@@ -245,8 +245,7 @@ class LoadResource(val memory: Long, val cores: Int) extends Resource {
   override def toString: String = toJson
 }
 
-class LoadInstanceResource(val memory: Long, val cores: Int, val instances: Int)
-    extends Resource {
+class LoadInstanceResource(val memory: Long, val cores: Int, val instances: Int) extends Resource {
 
   implicit def toLoadInstanceResource(r: Resource): LoadInstanceResource = r match {
     case t: LoadInstanceResource => t
@@ -416,15 +415,9 @@ class DriverAndYarnResource(
         new YarnResource(0, 0, 0)
       )
     case m: MemoryResource =>
-      new DriverAndYarnResource(
-        new LoadInstanceResource(m.memory, 0, 0),
-        new YarnResource(0, 0, 0)
-      )
+      new DriverAndYarnResource(new LoadInstanceResource(m.memory, 0, 0), new YarnResource(0, 0, 0))
     case c: CPUResource =>
-      new DriverAndYarnResource(
-        new LoadInstanceResource(0, c.cores, 0),
-        new YarnResource(0, 0, 0)
-      )
+      new DriverAndYarnResource(new LoadInstanceResource(0, c.cores, 0), new YarnResource(0, 0, 0))
     case _ =>
       new DriverAndYarnResource(
         new LoadInstanceResource(Long.MaxValue, Integer.MAX_VALUE, Integer.MAX_VALUE),

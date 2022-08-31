@@ -22,10 +22,8 @@ import org.apache.linkis.orchestrator.ecm.EngineConnManager
 import org.apache.linkis.scheduler.listener.ExecutorListener
 import org.apache.linkis.scheduler.queue.GroupFactory
 
-class EntranceExecutorManagerImpl(
-    groupFactory: GroupFactory,
-    engineConnManager: EngineConnManager
-) extends EntranceExecutorManager(groupFactory) {
+class EntranceExecutorManagerImpl(groupFactory: GroupFactory, engineConnManager: EngineConnManager)
+    extends EntranceExecutorManager(groupFactory) {
 
   override def getOrCreateInterceptors(): Array[ExecuteRequestInterceptor] = Array(
     JobExecuteRequestInterceptor,

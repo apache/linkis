@@ -17,10 +17,7 @@
 
 package org.apache.linkis.gateway.springcloud.http
 
-import org.apache.linkis.gateway.config.GatewayConfiguration.{
-  THIS_GATEWAY_SCHEMA,
-  THIS_GATEWAY_URL
-}
+import org.apache.linkis.gateway.config.GatewayConfiguration.{THIS_GATEWAY_SCHEMA, THIS_GATEWAY_URL}
 import org.apache.linkis.rpc.Sender
 
 import org.apache.commons.lang3.StringUtils

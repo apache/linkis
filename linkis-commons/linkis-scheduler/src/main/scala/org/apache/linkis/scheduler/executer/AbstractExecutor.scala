@@ -90,9 +90,7 @@ abstract class AbstractExecutor(id: Long) extends Executor with Logging {
             this._state = state
             executorListener.foreach(_.onExecutorStateChanged(this, oldState, state))
           case _ =>
-            logger.warn(
-              s"$toString attempt to change a ShuttingDown session to $state, ignore it."
-            )
+            logger.warn(s"$toString attempt to change a ShuttingDown session to $state, ignore it.")
         }
       case _ =>
         logger.info(s"$toString change state ${_state} => $state.")

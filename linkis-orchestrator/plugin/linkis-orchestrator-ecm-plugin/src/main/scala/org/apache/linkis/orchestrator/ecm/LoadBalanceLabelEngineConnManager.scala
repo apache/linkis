@@ -217,10 +217,7 @@ class LoadBalanceLabelEngineConnManager extends ComputationEngineConnManager wit
     }
   }
 
-  private def releaseMarkAndServiceInstance(
-      mark: Mark,
-      serviceInstance: ServiceInstance
-  ): Unit = {
+  private def releaseMarkAndServiceInstance(mark: Mark, serviceInstance: ServiceInstance): Unit = {
     logger.info(
       s" Start to release mark${mark.getMarkId()} relation to serviceInstance $serviceInstance"
     )

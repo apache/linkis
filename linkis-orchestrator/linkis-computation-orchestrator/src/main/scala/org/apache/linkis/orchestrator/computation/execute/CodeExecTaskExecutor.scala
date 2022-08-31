@@ -23,11 +23,7 @@ import org.apache.linkis.orchestrator.plans.physical.ExecTask
 
 /**
  */
-class CodeExecTaskExecutor(
-    engineConnExecutor: EngineConnExecutor,
-    execTask: ExecTask,
-    mark: Mark
-) {
+class CodeExecTaskExecutor(engineConnExecutor: EngineConnExecutor, execTask: ExecTask, mark: Mark) {
 
   private var engineConnTaskId: String = _
 
@@ -39,8 +35,7 @@ class CodeExecTaskExecutor(
 
   def getEngineConnTaskId: String = engineConnTaskId
 
-  def setEngineConnTaskId(engineConnTaskId: String): Unit = this.engineConnTaskId =
-    engineConnTaskId
+  def setEngineConnTaskId(engineConnTaskId: String): Unit = this.engineConnTaskId = engineConnTaskId
 
   def getMark: Mark = mark
 

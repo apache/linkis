@@ -82,7 +82,7 @@ class StorageScriptFsWriter(
         case _ =>
           outputStream.flush()
       }
-    }(s"$toString Error encounters when flush script ")
+    }(s"Error encounters when flush script ")
   }
 
   def getInputStream(): InputStream = {

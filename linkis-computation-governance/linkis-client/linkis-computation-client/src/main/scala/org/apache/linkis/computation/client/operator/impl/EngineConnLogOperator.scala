@@ -19,10 +19,7 @@ package org.apache.linkis.computation.client.operator.impl
 
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.computation.client.LinkisJob
-import org.apache.linkis.computation.client.once.action.{
-  ECMOperateAction,
-  EngineConnOperateAction
-}
+import org.apache.linkis.computation.client.once.action.{ECMOperateAction, EngineConnOperateAction}
 import org.apache.linkis.computation.client.once.result.EngineConnOperateResult
 import org.apache.linkis.computation.client.once.simple.SubmittableSimpleOnceJob
 import org.apache.linkis.computation.client.operator.OnceJobOperator

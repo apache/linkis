@@ -152,9 +152,7 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
         MAX_TASK_EXECUTE_NUM > 0 && runningTasks
           .getCount() == 0 && executorNumber > MAX_TASK_EXECUTE_NUM
     ) {
-      logger.error(
-        s"Task has reached max execute number $MAX_TASK_EXECUTE_NUM, now  tryShutdown. "
-      )
+      logger.error(s"Task has reached max execute number $MAX_TASK_EXECUTE_NUM, now  tryShutdown. ")
       ExecutorManager.getInstance.getReportExecutor.tryShutdown()
     }
   }

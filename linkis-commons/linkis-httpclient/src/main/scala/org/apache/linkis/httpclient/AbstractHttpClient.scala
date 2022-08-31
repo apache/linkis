@@ -102,13 +102,14 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
           d.setSchedule(clientConfig.getDiscoveryPeriod, clientConfig.getDiscoveryTimeUnit)
         case d => d.setServerUrl(clientConfig.getServerUrl)
       }
-      val loadBalancer = if (
-          clientConfig.isLoadbalancerEnabled && this.clientConfig.getLoadbalancerStrategy != null
-      ) {
-        Some(this.clientConfig.getLoadbalancerStrategy.createLoadBalancer())
-      } else if (clientConfig.isLoadbalancerEnabled)
-        Some(DefaultLoadbalancerStrategy.createLoadBalancer())
-      else None
+      val loadBalancer =
+        if (
+            clientConfig.isLoadbalancerEnabled && this.clientConfig.getLoadbalancerStrategy != null
+        ) {
+          Some(this.clientConfig.getLoadbalancerStrategy.createLoadBalancer())
+        } else if (clientConfig.isLoadbalancerEnabled)
+          Some(DefaultLoadbalancerStrategy.createLoadBalancer())
+        else None
       loadBalancer match {
         case Some(lb: AbstractLoadBalancer) =>
           discovery.foreach(_.addDiscoveryListener(lb))
@@ -169,9 +170,7 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
         if (metricResult.getMetric == null) metricResult.setMetric(new HttpMetric)
         metricResult.getMetric.setPrepareReqTime(prepareReqTime)
         metricResult.getMetric.addRetries(attempts)
-        metricResult.getMetric.setDeserializeTime(
-          System.currentTimeMillis - beforeDeserializeTime
-        )
+        metricResult.getMetric.setDeserializeTime(System.currentTimeMillis - beforeDeserializeTime)
         metricResult.getMetric.setExecuteTotalTime(System.currentTimeMillis - startTime)
         metricResult
       case result: Result => result
@@ -344,9 +343,7 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
             val entity: HttpEntity = EntityBuilder
               .create()
               . /*setContentEncoding("UTF-8").*/
-              setContentType(
-                ContentType.create("application/x-www-form-urlencoded", Consts.UTF_8)
-              )
+              setContentType(ContentType.create("application/x-www-form-urlencoded", Consts.UTF_8))
               .setParameters(nvps)
               .build();
             httpPost.setEntity(entity)

@@ -46,11 +46,7 @@ object LoadData {
     create_table_from_a_file(spark, parse(source), parse(destination))
   }
 
-  def loadDataToTableByFile(
-      spark: SparkSession,
-      destinationPath: String,
-      source: String
-  ): Unit = {
+  def loadDataToTableByFile(spark: SparkSession, destinationPath: String, source: String): Unit = {
     val destination = BackGroundServiceUtils.exchangeExecutionCode(destinationPath)
     create_table_from_a_file(spark, parse(source), parse(destination))
   }
@@ -268,8 +264,8 @@ object LoadData {
       val precision = Utils.tryCatch(column.getOrElse("precision", 20).toString.toInt) {
         case e: Exception => 20
       }
-      val scale = Utils.tryCatch(column.getOrElse("scale", 4).toString.toInt) {
-        case e: Exception => 4
+      val scale = Utils.tryCatch(column.getOrElse("scale", 4).toString.toInt) { case e: Exception =>
+        4
       }
       StructField(name, toDataType(dataType.toLowerCase, precision, scale), true)
     }.toArray

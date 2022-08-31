@@ -21,11 +21,7 @@ import org.apache.linkis.common.io.FsPath
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.manager.label.constant.LabelKeyConstant
 import org.apache.linkis.manager.label.entity.entrance.BindEngineLabel
-import org.apache.linkis.storage.domain.{
-  FsPathListWithError,
-  MethodEntity,
-  MethodEntitySerializer
-}
+import org.apache.linkis.storage.domain.{FsPathListWithError, MethodEntity, MethodEntitySerializer}
 import org.apache.linkis.storage.exception.{FSNotInitException, StorageErrorException}
 import org.apache.linkis.storage.io.client.IOClient
 import org.apache.linkis.storage.io.utils.IOClientUtils
@@ -83,8 +79,7 @@ class IOMethodInterceptor(fsType: String) extends MethodInterceptor with Logging
   }
 
   /**
-   * Call io-client to execute the corresponding method, except init.
-   * 调用io-client执行相应的方法，除了init都走该方法
+   * Call io-client to execute the corresponding method, except init. 调用io-client执行相应的方法，除了init都走该方法
    * @param methodName
    * @param params
    * @return
@@ -173,9 +168,7 @@ class IOMethodInterceptor(fsType: String) extends MethodInterceptor with Logging
         case _ =>
           if (inited) {
             initFS()
-            logger.info(
-              s"since the $fsType storage($id) is free for too long time, re-inited it."
-            )
+            logger.info(s"since the $fsType storage($id) is free for too long time, re-inited it.")
           }
       }
     }

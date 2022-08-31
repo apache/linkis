@@ -160,9 +160,7 @@ class DefaultTaskManager extends AbstractTaskManager with Logging {
       .toArray
   }
 
-  override def taskRunnableTasks(
-      execTaskRunners: Array[ExecTaskRunner]
-  ): Array[ExecTaskRunner] = {
+  override def taskRunnableTasks(execTaskRunners: Array[ExecTaskRunner]): Array[ExecTaskRunner] = {
     // 2. Take the current maximum number of runnables from the priority queue: Maximum limit-jobs that are already running
     val nowRunningNumber = executionTaskToRunningExecTask.values.map(_.length).sum
     val maxRunning =
@@ -242,8 +240,8 @@ class DefaultTaskManager extends AbstractTaskManager with Logging {
   }
 
   /**
-   * Modified TaskRunner The runningExecTaskMap needs to be removed and cleaned Need to increase
-   * the difference of completedExecTaskMap
+   * Modified TaskRunner The runningExecTaskMap needs to be removed and cleaned Need to increase the
+   * difference of completedExecTaskMap
    *
    * @param task
    */
@@ -282,10 +280,8 @@ class DefaultTaskManager extends AbstractTaskManager with Logging {
         if (shouldMinusTaskNumber) {
           val oldNumber =
             userRunningNumber.minusNumber(astContext.getExecuteUser, astContext.getLabels)
-          logger.info(
-            s"executionTask(${executionTask.getId}) no task running, user key ${userRunningNumber
-              .getKey(astContext.getLabels, astContext.getExecuteUser)}, minusNumber: ${oldNumber - 1}"
-          )
+          logger.info(s"executionTask(${executionTask.getId}) no task running, user key ${userRunningNumber
+            .getKey(astContext.getLabels, astContext.getExecuteUser)}, minusNumber: ${oldNumber - 1}")
         }
       }
 
@@ -294,8 +290,8 @@ class DefaultTaskManager extends AbstractTaskManager with Logging {
   }
 
   /**
-   * TODO executionTaskAndRootExecTask Will clean up, the data is not the most complete, you need
-   * to consider storing the removed to the persistence layer
+   * TODO executionTaskAndRootExecTask Will clean up, the data is not the most complete, you need to
+   * consider storing the removed to the persistence layer
    *
    * @return
    */
@@ -308,11 +304,11 @@ class DefaultTaskManager extends AbstractTaskManager with Logging {
   /**
    * Recursively obtain tasks that can be run under ExecutionTask
    *   1. First judge whether the child node of the corresponding node is completed, and if the
-   *      operation is completed, submit the node (recursive exit condition 1) 2. If there are
-   *      child nodes that are not completed, submit the child nodes recursively 3. If the
-   *      obtained task exceeds the maximum concurrent number of ExecutionTask, return directly
-   *      (recursive exit condition 2) TODO Whether needs to do strict maximum task concurrency
-   *      control, exit condition 2 also needs to consider the task currently running
+   *      operation is completed, submit the node (recursive exit condition 1) 2. If there are child
+   *      nodes that are not completed, submit the child nodes recursively 3. If the obtained task
+   *      exceeds the maximum concurrent number of ExecutionTask, return directly (recursive exit
+   *      condition 2) TODO Whether needs to do strict maximum task concurrency control, exit
+   *      condition 2 also needs to consider the task currently running
    *
    * @param executionTask
    * @param execTask

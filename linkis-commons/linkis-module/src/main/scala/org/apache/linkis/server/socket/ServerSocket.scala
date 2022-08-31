@@ -35,7 +35,7 @@ case class ServerSocket(
   private var session: Session = _
   private[socket] var id: Int = _
   val createTime = System.currentTimeMillis
-  def user = SecurityFilter.getLoginUser(request)
+  def user: Option[String] = SecurityFilter.getLoginUser(request)
   // Add a queue to do buffering, can not directly sendMessage back, will lead to the connection can not stand
   // 加一个队列做缓冲，不能直接sendMessage回去，会导致连接受不住
   private val cacheMessages = new BlockingLoopArray[String](100)

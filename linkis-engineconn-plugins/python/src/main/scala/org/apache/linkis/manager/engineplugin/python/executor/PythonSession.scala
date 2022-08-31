@@ -62,8 +62,16 @@ class PythonSession extends Logging {
   private var code: String = _
   private var pid: Option[String] = None
 
-  private val pythonDefaultVersion: String =
-    EngineConnServer.getEngineCreationContext.getOptions.getOrDefault("python.version", "python")
+  private val pythonDefaultVersion: String = getPyVersion
+
+  private def getPyVersion(): String = {
+    if (null != EngineConnServer.getEngineCreationContext.getOptions) {
+      EngineConnServer.getEngineCreationContext.getOptions
+        .getOrDefault("python.version", "python")
+    } else {
+      PythonEngineConfiguration.PYTHON_VERSION.getValue
+    }
+  }
 
   def init(): Unit = {}
 
@@ -149,10 +157,7 @@ class PythonSession extends Logging {
       if (process == null) {
         Utils.tryThrow(initGateway) { t =>
           {
-            logger.error(
-              "initialize python executor failed, please ask administrator for help!",
-              t
-            )
+            logger.error("initialize python executor failed, please ask administrator for help!", t)
             Utils.tryAndWarn(close)
             throw t
           }

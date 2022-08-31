@@ -60,10 +60,8 @@ class CodeAndRunTypeUtilsTest {
     val python =
       CodeAndRunTypeUtils.getSuffixBelongToRunTypeOrNot("py", CodeAndRunTypeUtils.RUN_TYPE_PYTHON)
     assertTrue(python)
-    val scala = CodeAndRunTypeUtils.getSuffixBelongToRunTypeOrNot(
-      "java",
-      CodeAndRunTypeUtils.RUN_TYPE_SCALA
-    )
+    val scala =
+      CodeAndRunTypeUtils.getSuffixBelongToRunTypeOrNot("java", CodeAndRunTypeUtils.RUN_TYPE_SCALA)
     assertTrue(!scala)
   }
 

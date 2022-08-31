@@ -170,10 +170,7 @@ object RMUtils extends Logging {
         aggregateResource(firstNodeResource.getUsedResource, secondNodeResource.getUsedResource)
       )
       aggregatedNodeResource.setLockedResource(
-        aggregateResource(
-          firstNodeResource.getLockedResource,
-          secondNodeResource.getLockedResource
-        )
+        aggregateResource(firstNodeResource.getLockedResource, secondNodeResource.getLockedResource)
       )
       aggregatedNodeResource.setLeftResource(
         aggregateResource(firstNodeResource.getLeftResource, secondNodeResource.getLeftResource)
@@ -211,9 +208,7 @@ object RMUtils extends Logging {
   ): String = {
 
     def dealMemory(resourceType: String, unitType: String, resource: Any): String = {
-      if (
-          RMConstant.MEMORY.equals(resourceType) && RMConstant.MEMORY_UNIT_BYTE.equals(unitType)
-      ) {
+      if (RMConstant.MEMORY.equals(resourceType) && RMConstant.MEMORY_UNIT_BYTE.equals(unitType)) {
         Utils.tryCatch {
           if (logger.isDebugEnabled()) {
             logger.debug(s"Will change ${resource.toString} from ${unitType} to GB")

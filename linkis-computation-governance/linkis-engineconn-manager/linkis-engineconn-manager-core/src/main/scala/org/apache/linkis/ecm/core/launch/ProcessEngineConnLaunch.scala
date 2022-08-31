@@ -259,8 +259,7 @@ trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
     // execCommand = sudoCommand(request.user, execCommand.mkString(" "))
     execCommand.foreach(setMoreAvailPort)
     processBuilder.setCommand(execCommand)
-    preparedExecFile =
-      new File(engineConnManagerEnv.engineConnWorkDir, "engineConnExec.sh").getPath
+    preparedExecFile = new File(engineConnManagerEnv.engineConnWorkDir, "engineConnExec.sh").getPath
     val output = getFileOutputStream
     Utils.tryFinally(processBuilder.writeTo(output))(output.close())
   }

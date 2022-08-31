@@ -143,10 +143,7 @@ object SpringCloudGatewayWebsocketUtils extends Logging {
       webSocketSession: WebSocketSession,
       proxySession: WebSocketSession
   ): Unit = {
-    getGatewayWebSocketSessionConnection(user, webSocketSession).add(
-      serviceInstance,
-      proxySession
-    )
+    getGatewayWebSocketSessionConnection(user, webSocketSession).add(serviceInstance, proxySession)
   }
 
   def getHeadersFilters(

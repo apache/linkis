@@ -32,14 +32,14 @@ trait UploadAction extends UserAction {
   @Deprecated val files: util.Map[String, String]
 
   /**
-   * The inputStream that needs to be uploaded, the key is the parameter name, and the value is
-   * the input stream. 需要上传的输入流，key为参数名，value为输入流
+   * The inputStream that needs to be uploaded, the key is the parameter name, and the value is the
+   * input stream. 需要上传的输入流，key为参数名，value为输入流
    */
   def inputStreams: util.Map[String, InputStream] = new util.HashMap[String, InputStream]()
 
   /**
-   * The inputStream that needs to be uploaded, the key is the parameter name, and the value is
-   * the fileName of inputStream. 需要上传的输入流，key为参数名，value为输入流的文件名
+   * The inputStream that needs to be uploaded, the key is the parameter name, and the value is the
+   * fileName of inputStream. 需要上传的输入流，key为参数名，value为输入流的文件名
    */
   @Deprecated def inputStreamNames: util.Map[String, String] = new util.HashMap[String, String]()
   def binaryBodies: util.List[BinaryBody] = new util.ArrayList[BinaryBody](0)

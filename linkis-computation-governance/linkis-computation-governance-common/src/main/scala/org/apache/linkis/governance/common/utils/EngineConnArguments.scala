@@ -126,9 +126,7 @@ class DefaultEngineConnArgumentsParser extends EngineConnArgumentsParser {
             }
           )
         case _ =>
-          throw new IllegalArgumentException(
-            s"illegal command line, ${args(i)} cannot recognize."
-          )
+          throw new IllegalArgumentException(s"illegal command line, ${args(i)} cannot recognize.")
       }
       i += 1
     }

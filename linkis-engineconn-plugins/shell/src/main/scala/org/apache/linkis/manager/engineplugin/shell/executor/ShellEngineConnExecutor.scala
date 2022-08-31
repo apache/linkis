@@ -182,7 +182,7 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
       inputReaderThread =
         new ReaderThread(engineExecutionContext, bufferedReader, extractor, true, counter)
       errReaderThread =
-        new ReaderThread(engineExecutionContext, bufferedReader, extractor, false, counter)
+        new ReaderThread(engineExecutionContext, errorsReader, extractor, false, counter)
 
       inputReaderThread.start()
       errReaderThread.start()
@@ -196,11 +196,9 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
         ErrorExecuteResponse("run shell failed", ShellCodeErrorException())
       } else SuccessExecuteResponse()
     } catch {
-      case e: Exception => {
+      case e: Exception =>
         logger.error("Execute shell code failed, reason:", e)
         ErrorExecuteResponse("run shell failed", e)
-      }
-
     } finally {
       if (!completed.get()) {
         Utils.tryAndWarn(errReaderThread.interrupt())
@@ -237,21 +235,9 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
       return jobProgressInfo.toArray
     }
     if (0.0f == progress(taskID)) {
-      jobProgressInfo += JobProgressInfo(
-        engineExecutionContext.getJobId.getOrElse(""),
-        1,
-        1,
-        0,
-        0
-      )
+      jobProgressInfo += JobProgressInfo(engineExecutionContext.getJobId.getOrElse(""), 1, 1, 0, 0)
     } else {
-      jobProgressInfo += JobProgressInfo(
-        engineExecutionContext.getJobId.getOrElse(""),
-        1,
-        0,
-        0,
-        1
-      )
+      jobProgressInfo += JobProgressInfo(engineExecutionContext.getJobId.getOrElse(""), 1, 0, 0, 1)
     }
     jobProgressInfo.toArray
   }

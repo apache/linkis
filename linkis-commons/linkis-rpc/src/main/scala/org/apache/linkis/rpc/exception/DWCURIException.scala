@@ -19,5 +19,4 @@ package org.apache.linkis.rpc.exception
 
 import org.apache.linkis.common.exception.ErrorException
 
-private[rpc] class DWCURIException(errCode: Int, desc: String)
-    extends ErrorException(errCode, desc)
+private[rpc] class DWCURIException(errCode: Int, desc: String) extends ErrorException(errCode, desc)

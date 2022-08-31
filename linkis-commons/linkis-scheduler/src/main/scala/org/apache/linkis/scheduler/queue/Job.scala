@@ -152,8 +152,9 @@ abstract class Job extends Runnable with SchedulerEvent with Closeable with Logg
 
   def getLogListener: Option[LogListener] = logListener
 
-  def setProgressListener(progressListener: ProgressListener): Unit = this.progressListener =
-    Some(progressListener)
+  def setProgressListener(progressListener: ProgressListener): Unit = this.progressListener = Some(
+    progressListener
+  )
 
   def getProgressListener: Option[ProgressListener] = progressListener
 
@@ -347,9 +348,9 @@ abstract class Job extends Runnable with SchedulerEvent with Closeable with Logg
 }
 
 /**
- * Mainly used to get the status and log. If the Executor can't directly notify the
- * ProgressListener and LogListener, then the Consumer is submitting a Job. A JobDaemon must be
- * submitted at the same time to ensure that progress and logs are notified in a timely manner.
+ * Mainly used to get the status and log. If the Executor can't directly notify the ProgressListener
+ * and LogListener, then the Consumer is submitting a Job. A JobDaemon must be submitted at the same
+ * time to ensure that progress and logs are notified in a timely manner.
  * 主要用于获取状态和日志，如果Executor做不到直接通知ProgressListener和LogListener，则Consumer在提交一个Job时，
  * 必须同时提交一个JobDaemon，确保进度和日志能及时通知出去
  * @param job

@@ -50,14 +50,4 @@ object HttpConf {
   val rollbackVersionUrl: String = urlPrefix + "/" + "rollbackVersion"
   val copyResourceUrl: String = urlPrefix + "/" + "copyResourceToAnotherUser"
 
-  def main(args: Array[String]): Unit = {
-    println(uploadURL)
-    println(downloadURL)
-    println(updateVersionURL)
-    println(relateHdfsURL)
-    println(relateStorageURL)
-    println(getResourcesUrl)
-    println(updateBasicUrl)
-  }
-
 }

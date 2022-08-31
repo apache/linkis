@@ -62,10 +62,8 @@ class HttpBmlClient(
     if (properties == null) "BML-Client"
     else properties.getOrDefault(CLIENT_NAME_SHORT_NAME, "BML-Client").asInstanceOf[String]
 
-  private val dwsClient = new DWSHttpClient(
-    if (clientConfig != null) clientConfig else createClientConfig(),
-    clientName
-  )
+  private val dwsClient =
+    new DWSHttpClient(if (clientConfig != null) clientConfig else createClientConfig(), clientName)
 
   val FIRST_VERSION = "v000001"
 
@@ -123,21 +121,21 @@ class HttpBmlClient(
       version: String
   ): BmlDownloadResponse = {
     val bmlDownloadAction = BmlDownloadAction()
-    import scala.collection.JavaConversions._
-    bmlDownloadAction.getParameters += "resourceId" -> resourceId
+    import scala.collection.JavaConverters._
+    bmlDownloadAction.getParameters.asScala += "resourceId" -> resourceId
     // TODO: 不能放非空的参数
-    if (version != null) bmlDownloadAction.getParameters += "version" -> version
+    if (version != null) bmlDownloadAction.getParameters.asScala += "version" -> version
     bmlDownloadAction.setUser(user)
     val downloadResult = dwsClient.execute(bmlDownloadAction)
-//    val retIs = new ByteArrayInputStream(IOUtils.toString(bmlDownloadAction.getInputStream).getBytes("UTF-8"))
-//    if (downloadResult != null) {
-//      bmlDownloadAction.getResponse match {
-//        case r: CloseableHttpResponse =>
-//          Utils.tryAndWarn(r.close())
-//        case o: Any =>
-//          info(s"Download response : ${o.getClass.getName} cannot close.")
-//      }
-//    }
+    //    val retIs = new ByteArrayInputStream(IOUtils.toString(bmlDownloadAction.getInputStream).getBytes("UTF-8"))
+    //    if (downloadResult != null) {
+    //      bmlDownloadAction.getResponse match {
+    //        case r: CloseableHttpResponse =>
+    //          Utils.tryAndWarn(r.close())
+    //        case o: Any =>
+    //          info(s"Download response : ${o.getClass.getName} cannot close.")
+    //      }
+    //    }
     BmlDownloadResponse(
       isSuccess = true,
       bmlDownloadAction.getInputStream,
@@ -174,9 +172,11 @@ class HttpBmlClient(
     fileSystem.init(new util.HashMap[String, String]())
     val fullFileName = path
     val downloadAction = BmlDownloadAction()
-    import scala.collection.JavaConversions._
-    downloadAction.getParameters += "resourceId" -> resourceId
-    if (StringUtils.isNotEmpty(version)) downloadAction.getParameters += "version" -> version
+    import scala.collection.JavaConverters._
+    downloadAction.getParameters.asScala += "resourceId" -> resourceId
+    if (StringUtils.isNotEmpty(version)) {
+      downloadAction.getParameters.asScala += "version" -> version
+    }
     downloadAction.setUser(user)
     var inputStream: InputStream = null
     var outputStream: OutputStream = null
@@ -226,9 +226,11 @@ class HttpBmlClient(
     fileSystem.init(new util.HashMap[String, String]())
     val fullFileName = path
     val downloadAction = BmlDownloadShareAction()
-    import scala.collection.JavaConversions._
-    downloadAction.getParameters += "resourceId" -> resourceId
-    if (StringUtils.isNotEmpty(version)) downloadAction.getParameters += "version" -> version
+    import scala.collection.JavaConverters._
+    downloadAction.getParameters.asScala += "resourceId" -> resourceId
+    if (StringUtils.isNotEmpty(version)) {
+      downloadAction.getParameters.asScala += "version" -> version
+    }
     downloadAction.setUser(user)
     var inputStream: InputStream = null
     var outputStream: OutputStream = null
@@ -521,7 +523,7 @@ class HttpBmlClient(
       user: String,
       projectName: String,
       filePath: String
-  ): BmlUploadResponse = ???
+  ): BmlUploadResponse = null
 
   override def downloadShareResource(
       user: String,
@@ -529,10 +531,10 @@ class HttpBmlClient(
       version: String
   ): BmlDownloadResponse = {
     val bmlDownloadShareAction = BmlDownloadShareAction()
-    import scala.collection.JavaConversions._
-    bmlDownloadShareAction.getParameters += "resourceId" -> resourceId
+    import scala.collection.JavaConverters._
+    bmlDownloadShareAction.getParameters.asScala += "resourceId" -> resourceId
     // TODO: 不能放非空的参数
-    if (version != null) bmlDownloadShareAction.getParameters += "version" -> version
+    if (version != null) bmlDownloadShareAction.getParameters.asScala += "version" -> version
     bmlDownloadShareAction.setUser(user)
     val result = dwsClient.execute(bmlDownloadShareAction)
     BmlDownloadResponse(
@@ -544,7 +546,7 @@ class HttpBmlClient(
     )
   }
 
-  override def downloadShareResource(user: String, resourceId: String): BmlDownloadResponse = ???
+  override def downloadShareResource(user: String, resourceId: String): BmlDownloadResponse = null
 
   override def updateShareResource(
       user: String,
@@ -583,13 +585,13 @@ class HttpBmlClient(
       user: String,
       resourceId: String,
       filePath: String
-  ): BmlUpdateResponse = ???
+  ): BmlUpdateResponse = null
 
-  override def getProjectInfoByName(projectName: String): BmlProjectInfoResponse = ???
+  override def getProjectInfoByName(projectName: String): BmlProjectInfoResponse = null
 
-  override def getResourceInfo(resourceId: String): BmlResourceInfoResponse = ???
+  override def getResourceInfo(resourceId: String): BmlResourceInfoResponse = null
 
-  override def getProjectPriv(projectName: String): BmlProjectPrivResponse = ???
+  override def getProjectPriv(projectName: String): BmlProjectPrivResponse = null
 
   override def attachResourceAndProject(
       projectName: String,

@@ -27,13 +27,11 @@ import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel
 
 import java.util
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 trait ProcessEngineConnLaunchBuilder extends EngineConnLaunchBuilder {
 
-  protected def getCommands(implicit
-      engineConnBuildRequest: EngineConnBuildRequest
-  ): Array[String]
+  protected def getCommands(implicit engineConnBuildRequest: EngineConnBuildRequest): Array[String]
 
   protected def getMaxRetries(implicit engineConnBuildRequest: EngineConnBuildRequest): Int =
     EnvConfiguration.ENGINE_CONN_MAX_RETRIES.getValue
@@ -66,7 +64,7 @@ trait ProcessEngineConnLaunchBuilder extends EngineConnLaunchBuilder {
     }
     bmlResources.addAll(getBmlResources)
     val environment = getEnvironment
-    engineConnBuildRequest.labels
+    engineConnBuildRequest.labels.asScala
       .find(_.isInstanceOf[UserCreatorLabel])
       .map { case label: UserCreatorLabel =>
         CommonProcessEngineConnLaunchRequest(
@@ -83,9 +81,7 @@ trait ProcessEngineConnLaunchBuilder extends EngineConnLaunchBuilder {
           getMaxRetries
         )
       }
-      .getOrElse(
-        throw new EngineConnBuildFailedException(20000, "UserCreatorLabel is not exists.")
-      )
+      .getOrElse(throw new EngineConnBuildFailedException(20000, "UserCreatorLabel is not exists."))
   }
 
   protected def getEngineStartUser(label: UserCreatorLabel): String = {

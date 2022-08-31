@@ -134,8 +134,8 @@ private[rpc] class SpringMVCRPCSender private[rpc] (
 
   /**
    * Deliver is an asynchronous method that requests the target microservice asynchronously,
-   * ensuring that the target microservice is requested once, but does not guarantee that the
-   * target microservice will successfully receive the request.
+   * ensuring that the target microservice is requested once, but does not guarantee that the target
+   * microservice will successfully receive the request.
    * deliver是一个异步方法，该方法异步请求目标微服务，确保一定会请求目标微服务一次，但不保证目标微服务一定能成功接收到本次请求。
    * @param message
    *   Requested parameters(请求的参数)

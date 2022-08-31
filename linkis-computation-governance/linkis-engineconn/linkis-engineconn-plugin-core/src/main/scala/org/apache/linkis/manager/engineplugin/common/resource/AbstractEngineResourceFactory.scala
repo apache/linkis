@@ -31,18 +31,17 @@ trait AbstractEngineResourceFactory extends EngineResourceFactory {
   protected def getMaxRequestResource(engineResourceRequest: EngineResourceRequest): Resource =
     getRequestResource(engineResourceRequest.properties)
 
-  override def createEngineResource(
-      engineResourceRequest: EngineResourceRequest
-  ): NodeResource = {
+  override def createEngineResource(engineResourceRequest: EngineResourceRequest): NodeResource = {
     val user = engineResourceRequest.user
     val engineResource = new UserNodeResource
     val minResource = getMinRequestResource(engineResourceRequest)
     val maxResource = getMaxRequestResource(engineResourceRequest)
-    if (minResource.getClass != maxResource.getClass)
+    if (minResource.getClass != maxResource.getClass) {
       throw new EngineConnPluginErrorException(
         70103,
         s"The minResource ${minResource.getClass.getSimpleName} is not the same with the maxResource${maxResource.getClass.getSimpleName}."
       )
+    }
     engineResource.setUser(user)
     engineResource.setMinResource(minResource)
     engineResource.setResourceType(ResourceUtils.getResourceTypeByResource(minResource))

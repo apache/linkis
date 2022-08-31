@@ -105,8 +105,9 @@ class RouteLabelInstanceAliasConverter extends InstanceAliasConverter with Loggi
         }
         if (routeLabels.size >= 1) {
           val alias = routeLabels.head.getStringValue
+          logger.info(s"alias for instance : ${instance} is $alias")
           insAliasCache.put(instance, alias)
-          routeLabels.head.getStringValue
+          alias
         } else {
           val msg = s"No routeLabel got for instance : ${instance}"
           logger.error(msg)

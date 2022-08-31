@@ -24,6 +24,8 @@ import org.apache.linkis.engineconn.common.hook.EngineConnHook
 import org.apache.linkis.manager.engineplugin.python.conf.PythonEngineConfiguration
 import org.apache.linkis.manager.engineplugin.python.executor.PythonSession
 
+import java.util
+
 class PythonVersionEngineHook extends EngineConnHook with Logging {
   var _sparkpythonVersion: String = _
   var _sparkpythonExtraPackage: String = _
@@ -31,8 +33,10 @@ class PythonVersionEngineHook extends EngineConnHook with Logging {
   var _pythonExtraPackage: String = _
 
   override def beforeCreateEngineConn(engineCreationContext: EngineCreationContext): Unit = {
-    val params = engineCreationContext.getOptions
-    _pythonVersion = params.getOrDefault("python.version", "python3").toString
+    val params =
+      if (engineCreationContext.getOptions == null) new util.HashMap[String, String]()
+      else engineCreationContext.getOptions
+    _pythonVersion = params.getOrDefault("python.version", "python3")
     _pythonExtraPackage = params
       .getOrDefault("python.application.pyFiles", "file:///mnt/bdap/test/test/test.zip")
       .toString
@@ -48,13 +52,9 @@ class PythonVersionEngineHook extends EngineConnHook with Logging {
     engineConn.getEngineConnSession match {
       case pythonSession: PythonSession =>
         pythonSession.execute("print(1/2)")
-        logger.info(
-          s"print python version => ${PythonEngineConfiguration.PYTHON_VERSION.getValue}"
-        )
+        logger.info(s"print python version => ${PythonEngineConfiguration.PYTHON_VERSION.getValue}")
       case _ =>
-        logger.error(
-          s"Invalid pythonSession : ${engineConn.getEngineConnSession.getClass.getName}"
-        )
+        logger.error(s"Invalid pythonSession : ${engineConn.getEngineConnSession.getClass.getName}")
     }
 
   }

@@ -35,12 +35,8 @@ class PublishDataSourceVersionAction extends POSTAction with DataSourceAction {
 
   override def getUser: String = this.user
 
-  override def suffixURLs: Array[String] = Array(
-    DATA_SOURCE_SERVICE_MODULE.getValue,
-    "publish",
-    dataSourceId.toString,
-    versionId.toString
-  )
+  override def suffixURLs: Array[String] =
+    Array(DATA_SOURCE_SERVICE_MODULE.getValue, "publish", dataSourceId.toString, versionId.toString)
 
 }
 
@@ -68,8 +64,9 @@ object PublishDataSourceVersionAction {
     }
 
     def build(): PublishDataSourceVersionAction = {
-      if (dataSourceId == null)
+      if (dataSourceId == null) {
         throw new DataSourceClientBuilderException("dataSourceId is needed!")
+      }
       if (versionId == null) throw new DataSourceClientBuilderException("versionId is needed!")
       if (user == null) throw new DataSourceClientBuilderException("user is needed!")
 

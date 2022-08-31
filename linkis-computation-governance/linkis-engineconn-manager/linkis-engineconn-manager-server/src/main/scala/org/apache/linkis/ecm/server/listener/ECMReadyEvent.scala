@@ -37,5 +37,4 @@ case class EngineConnPidCallbackEvent(protocol: ResponseEngineConnPid) extends E
 
 case class EngineConnAddEvent(conn: EngineConn) extends ECMEvent
 
-case class EngineConnStatusChangeEvent(tickedId: String, updateStatus: NodeStatus)
-    extends ECMEvent
+case class EngineConnStatusChangeEvent(tickedId: String, updateStatus: NodeStatus) extends ECMEvent

@@ -237,6 +237,16 @@ export default [
           title: 'datasourceType',
           publicPage: true,
         }
+      },
+      {
+        name: 'EnginePluginManagement',
+        path: 'EnginePluginManagement',
+        component: () =>
+          import('./module/EnginePluginManagement/index.vue'),
+        meta: {
+          title: 'EnginePluginManagement',
+          publicPage: true,
+        },
       }
     ],
   },

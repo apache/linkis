@@ -24,10 +24,6 @@
   </parent>
   <artifactId>linkis-metadata-query-server</artifactId>
 
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  </properties>
-
   <dependencies>
     <!--Metadata common-->
     <dependency>

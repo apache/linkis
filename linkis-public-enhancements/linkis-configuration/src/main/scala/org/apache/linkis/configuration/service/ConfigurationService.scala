@@ -149,12 +149,7 @@ class ConfigurationService extends Logging {
     }
   }
 
-  def clearAMCacheConf(
-      username: String,
-      creator: String,
-      engine: String,
-      version: String
-  ): Unit = {
+  def clearAMCacheConf(username: String, creator: String, engine: String, version: String): Unit = {
     val sender = Sender.getSender(Configuration.MANAGER_SPRING_NAME.getValue)
     if (StringUtils.isNotBlank(username)) {
       val userCreatorLabel =

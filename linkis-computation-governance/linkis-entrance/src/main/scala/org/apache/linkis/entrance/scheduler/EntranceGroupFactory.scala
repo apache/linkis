@@ -101,9 +101,8 @@ class EntranceGroupFactory extends GroupFactory with Logging {
           }
         }
       }
-      val sender: Sender = Sender.getSender(
-        Configuration.CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME.getValue
-      )
+      val sender: Sender =
+        Sender.getSender(Configuration.CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME.getValue)
       val userCreatorLabel: UserCreatorLabel = LabelUtil.getUserCreatorLabel(labels)
       val engineTypeLabel: EngineTypeLabel = LabelUtil.getEngineTypeLabel(labels)
       logger.info(

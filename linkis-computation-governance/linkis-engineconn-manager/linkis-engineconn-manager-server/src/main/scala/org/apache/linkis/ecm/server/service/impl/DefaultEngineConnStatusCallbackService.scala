@@ -34,9 +34,7 @@ import org.apache.linkis.rpc.message.annotation.Receiver
 import org.springframework.stereotype.Service
 
 @Service
-class DefaultEngineConnStatusCallbackService
-    extends EngineConnStatusCallbackService
-    with Logging {
+class DefaultEngineConnStatusCallbackService extends EngineConnStatusCallbackService with Logging {
 
   @Receiver
   override def dealEngineConnStatusCallback(protocol: EngineConnStatusCallback): Unit = {

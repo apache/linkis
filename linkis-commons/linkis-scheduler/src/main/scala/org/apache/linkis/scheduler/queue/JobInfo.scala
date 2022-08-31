@@ -20,8 +20,8 @@ package org.apache.linkis.scheduler.queue
 /**
  * JobInfo Is the job information that the server sends to the front end.（是服务端传给前端的job信息） id: Job
  * execution id（job执行id） output: Result set（结果集） state: Job status（job状态） progress: Job execution
- * progress（job执行的进度） metric: Some common information about the job, including the startup time,
- * the time that has been run, etc.（job的一些常用信息，包含启动时间，已经运行的时间等）
+ * progress（job执行的进度） metric: Some common information about the job, including the startup time, the
+ * time that has been run, etc.（job的一些常用信息，包含启动时间，已经运行的时间等）
  */
 class JobInfo(id: String, output: String, state: String, progress: Float, metric: String) {
   def getId: String = id

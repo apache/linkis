@@ -79,8 +79,7 @@ abstract class EntranceJob extends Job {
   ): Unit =
     this.entranceListenerBus = Option(entranceListenerBus)
 
-  def setProgressInfo(progressInfo: Array[JobProgressInfo]): Unit = this.progressInfo =
-    progressInfo
+  def setProgressInfo(progressInfo: Array[JobProgressInfo]): Unit = this.progressInfo = progressInfo
 
   def getProgressInfo: Array[JobProgressInfo] = this.progressInfo
 

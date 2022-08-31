@@ -190,9 +190,8 @@ object CSEntranceHelper extends Logging {
       }
       if (variableMap.nonEmpty) {
         // 1.cs priority is low, the same ones are not added
-        val varMap = TaskUtils.getVariableMap(
-          requestPersistTask.getParams.asInstanceOf[util.Map[String, Any]]
-        )
+        val varMap =
+          TaskUtils.getVariableMap(requestPersistTask.getParams.asInstanceOf[util.Map[String, Any]])
         variableMap.foreach { keyAndValue =>
           if (!varMap.containsKey(keyAndValue._1)) {
             varMap.put(keyAndValue._1, keyAndValue._2)

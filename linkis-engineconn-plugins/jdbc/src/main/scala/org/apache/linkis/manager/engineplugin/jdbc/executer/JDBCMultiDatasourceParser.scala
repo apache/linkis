@@ -202,9 +202,7 @@ object JDBCMultiDatasourceParser extends Logging {
           )
         }
       case _ =>
-        throw JDBCParamsIllegalException(
-          s"Unsupported authentication type ${authType.getAuthType}"
-        )
+        throw JDBCParamsIllegalException(s"Unsupported authentication type ${authType.getAuthType}")
     }
     dsConnInfo.put(JDBCEngineConnConstant.JDBC_AUTH_TYPE, authType.getAuthType)
     dsConnInfo

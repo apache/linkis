@@ -72,21 +72,19 @@ class PathValidator extends Logging {
     var username: String = null
     paramNames.indexOf("req") match {
       case -1 =>
-      case index: Int => {
+      case index: Int =>
         val proxyUser = paramNames.indexOf("proxyUser")
         if (proxyUser == -1 || StringUtils.isEmpty(args(proxyUser))) {
           username =
             ModuleUserUtils.getOperationUser(args(index).asInstanceOf[HttpServletRequest])
         } else {
-          // 增加proxyuser的判断
           username = args(proxyUser).toString
         }
-      }
     }
     username
   }
 
-  def checkPath(path: String, username: String) = {
+  def checkPath(path: String, username: String): Unit = {
     // 校验path的逻辑
     val userLocalRootPath: String = WorkspaceUtil.suffixTuning(LOCAL_USER_ROOT_PATH.getValue) +
       username
@@ -110,8 +108,7 @@ class PathValidator extends Logging {
     }
   }
 
-  def validate(args: Array[Object], paramNames: Array[String]) = {
-    // 获取path:String,json:JsonNode,json:Map中的path 参数
+  def validate(args: Array[Object], paramNames: Array[String]): Unit = {
     val path: String = getPath(args, paramNames)
     val username: String = getUserName(args, paramNames)
     if (!StringUtils.isEmpty(path) && !StringUtils.isEmpty(username)) {

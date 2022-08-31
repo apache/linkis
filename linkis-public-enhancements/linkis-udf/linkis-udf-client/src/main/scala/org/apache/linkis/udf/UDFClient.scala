@@ -46,8 +46,8 @@ object UDFClient {
   ): ArrayBuffer[UDFInfoVo] = {
     val udfInfoBuilder = new ArrayBuffer[UDFInfoVo]
     val udfTree = queryUdfRpc(userName, category)
-    if (null != udfTree)
-      extractUdfInfosByUdfType(udfInfoBuilder, udfTree, userName, category, udfType)
+    if (null != udfTree) PathValidator
+    extractUdfInfosByUdfType(udfInfoBuilder, udfTree, userName, category, udfType)
     udfInfoBuilder
   }
 

@@ -32,12 +32,11 @@ import org.apache.linkis.rpc.message.annotation.Receiver
 import org.apache.commons.lang3.exception.ExceptionUtils
 
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 import java.util
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 import scala.collection.JavaConverters.asScalaBufferConverter
 
 class JobHistoryDetailQueryServiceImpl extends JobHistoryDetailQueryService with Logging {
@@ -47,8 +46,6 @@ class JobHistoryDetailQueryServiceImpl extends JobHistoryDetailQueryService with
 
   @Autowired
   private var jobHistoryMapper: JobHistoryMapper = _
-//  @Autowired
-//  private var queryCacheService: QueryCacheService = _
 
   @Receiver
   override def add(jobReqInsert: JobDetailReqInsert): JobRespProtocol = {
@@ -88,11 +85,12 @@ class JobHistoryDetailQueryServiceImpl extends JobHistoryDetailQueryService with
       if (jobDetail.getStatus != null) {
         val oldStatus: String =
           jobDetailMapper.selectJobDetailStatusForUpdateByJobDetailId(jobDetail.getId)
-        if (oldStatus != null && !shouldUpdate(oldStatus, jobDetail.getStatus))
+        if (oldStatus != null && !shouldUpdate(oldStatus, jobDetail.getStatus)) {
           throw new QueryException(
             120001,
             s"${jobDetail.getId}数据库中的task状态为：${oldStatus}更新的task状态为：${jobDetail.getStatus}更新失败！"
           )
+        }
       }
       jobDetail.setExecutionContent(null)
       val jobUpdate = subjobDetail2JobDetail(jobDetail)
@@ -102,13 +100,6 @@ class JobHistoryDetailQueryServiceImpl extends JobHistoryDetailQueryService with
       jobDetailMapper.updateJobDetail(jobUpdate)
 
       // todo
-      /*// to write cache
-      if (TaskStatus.Succeed.toString.equals(jobReq.getStatus) && queryCacheService.needCache(jobReq)) {
-        info("Write cache for task: " + jobReq.getId)
-        jobReq.setExecutionCode(executionCode)
-        queryCacheService.writeCache(jobReq)
-      }*/
-
       val map = new util.HashMap[String, Object]
       map.put(JobRequestConstants.JOB_ID, jobDetail.getId.asInstanceOf[Object])
       jobResp.setStatus(0)
@@ -137,7 +128,7 @@ class JobHistoryDetailQueryServiceImpl extends JobHistoryDetailQueryService with
     val subJobInfoList = jobReqUpdate.jobInfo
     val jobRespList = new util.ArrayList[JobRespProtocol]()
     if (subJobInfoList != null) {
-      subJobInfoList.foreach(subJobInfo => {
+      subJobInfoList.asScala.foreach(subJobInfo => {
         val jobDetail = subJobInfo.getSubJobDetail()
         if (null != jobDetail && null != jobDetail.getId) {
           logger.info("Update data to the database(往数据库中更新数据)：" + jobDetail.getId.toString)
@@ -147,11 +138,12 @@ class JobHistoryDetailQueryServiceImpl extends JobHistoryDetailQueryService with
           if (jobDetail.getStatus != null) {
             val oldStatus: String =
               jobDetailMapper.selectJobDetailStatusForUpdateByJobDetailId(jobDetail.getId)
-            if (oldStatus != null && !shouldUpdate(oldStatus, jobDetail.getStatus))
+            if (oldStatus != null && !shouldUpdate(oldStatus, jobDetail.getStatus)) {
               throw new QueryException(
                 120001,
                 s"${jobDetail.getId}数据库中的task状态为：${oldStatus}更新的task状态为：${jobDetail.getStatus}更新失败！"
               )
+            }
           }
           jobDetail.setExecutionContent(null)
           val jobUpdate = subjobDetail2JobDetail(jobDetail)
@@ -161,13 +153,6 @@ class JobHistoryDetailQueryServiceImpl extends JobHistoryDetailQueryService with
           jobDetailMapper.updateJobDetail(jobUpdate)
 
           // todo
-          /*//to write cache
-            if (TaskStatus.Succeed.toString.equals(jobReq.getStatus) && queryCacheService.needCache(jobReq)) {
-              info("Write cache for task: " + jobReq.getId)
-              jobReq.setExecutionCode(executionCode)
-              queryCacheService.writeCache(jobReq)
-            }*/
-
           val map = new util.HashMap[String, Object]
           map.put(JobRequestConstants.JOB_ID, jobDetail.getId.asInstanceOf[Object])
           jobResp.setStatus(0)

@@ -171,24 +171,18 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
           }
           if (jobReq.getStatus != null) {
             val oldStatus: String = jobHistoryMapper.selectJobHistoryStatusForUpdate(jobReq.getId)
-            if (oldStatus != null && !shouldUpdate(oldStatus, jobReq.getStatus))
+            if (oldStatus != null && !shouldUpdate(oldStatus, jobReq.getStatus)) {
               throw new QueryException(
                 120001,
                 s"jobId:${jobReq.getId}，在数据库中的task状态为：${oldStatus}，更新的task状态为：${jobReq.getStatus}，更新失败！"
               )
+            }
           }
           val jobUpdate = jobRequest2JobHistory(jobReq)
           jobUpdate.setUpdatedTime(new Timestamp(System.currentTimeMillis()))
           jobHistoryMapper.updateJobHistory(jobUpdate)
 
           // todo
-          /*//to write cache
-            if (TaskStatus.Succeed.toString.equals(jobReq.getStatus) && queryCacheService.needCache(jobReq)) {
-              info("Write cache for task: " + jobReq.getId)
-              jobReq.setExecutionCode(executionCode)
-              queryCacheService.writeCache(jobReq)
-            }*/
-
           val map = new util.HashMap[String, Object]
           map.put(JobRequestConstants.JOB_ID, jobReq.getId.asInstanceOf[Object])
           jobResp.setStatus(0)
@@ -235,14 +229,6 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
     }
     jobResp
   }
-
-  /*private def queryTaskList2RequestPersistTaskList(queryTask: java.util.List[QueryTask]): java.util.List[RequestPersistTask] = {
-    import scala.collection.JavaConversions._
-    val tasks = new util.ArrayList[RequestPersistTask]
-    import org.apache.linkis.jobhistory.conversions.TaskConversions.queryTask2RequestPersistTask
-    queryTask.foreach(f => tasks.add(f))
-    tasks
-  }*/
 
   override def getJobHistoryByIdAndName(jobId: java.lang.Long, userName: String): JobHistory = {
     val jobReq = new JobHistory

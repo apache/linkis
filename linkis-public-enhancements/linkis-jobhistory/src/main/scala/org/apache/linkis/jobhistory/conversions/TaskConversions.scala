@@ -45,64 +45,17 @@ object TaskConversions extends Logging {
 
   lazy private val labelBuilderFactory = LabelBuilderFactoryContext.getLabelBuilderFactory
 
-  @Deprecated
+  @deprecated
   def requestQueryTask2QueryTask(requestQueryTask: RequestQueryTask): QueryTask = {
     val task: QueryTask = new QueryTask
     BeanUtils.copyProperties(requestQueryTask, task)
-    if (requestQueryTask.getParams != null)
+    if (requestQueryTask.getParams != null) {
       task.setParamsJson(BDPJettyServerHelper.gson.toJson(requestQueryTask.getParams))
-    else
+    } else {
       task.setParamsJson(null)
+    }
     task
   }
-
-  /*@Deprecated
-  def queryTask2RequestPersistTask(queryTask: QueryTask): RequestPersistTask = {
-    QueryUtils.exchangeExecutionCode(queryTask)
-    val task = new RequestPersistTask
-    BeanUtils.copyProperties(queryTask, task)
-    task.setSource(BDPJettyServerHelper.gson.fromJson(queryTask.getSourceJson, classOf[java.util.HashMap[String, String]]))
-    task.setParams(BDPJettyServerHelper.gson.fromJson(queryTask.getParamsJson, classOf[java.util.HashMap[String, Object]]))
-    task
-  }*/
-
-  /*@Deprecated
-  def requestPersistTaskTask2QueryTask(requestPersistTask: RequestPersistTask): QueryTask = {
-    val task: QueryTask = new QueryTask
-    BeanUtils.copyProperties(requestPersistTask, task)
-    if (requestPersistTask.getParams != null)
-      task.setParamsJson(BDPJettyServerHelper.gson.toJson(requestPersistTask.getParams))
-    else
-      task.setParamsJson(null)
-    task
-  }*/
-
-  /*def queryTask2QueryTaskVO(queryTask: QueryTask): QueryTaskVO = {
-    QueryUtils.exchangeExecutionCode(queryTask)
-    val taskVO = new QueryTaskVO
-    BeanUtils.copyProperties(queryTask, taskVO)
-    if (!StringUtils.isEmpty(taskVO.getSourceJson)) {
-      Utils.tryCatch {
-        val source = BDPJettyServerHelper.gson.fromJson(taskVO.getSourceJson, classOf[util.Map[String, String]])
-        taskVO.setSourceTailor(source.asScala.map(_._2).foldLeft("")(_ + _ + "-").stripSuffix("-"))
-      } {
-        case _ => warn("sourceJson deserializae failed,this task may be the old data")
-      }
-    }
-    if (queryTask.getExecId() != null && queryTask.getExecuteApplicationName() != null && queryTask.getInstance() != null) {
-      taskVO.setStrongerExecId(ZuulEntranceUtils.generateExecID(queryTask.getExecId(),
-        queryTask.getExecuteApplicationName(), queryTask.getInstance(), queryTask.getRequestApplicationName))
-    }
-    val status = queryTask.getStatus()
-    val createdTime = queryTask.getCreatedTime()
-    val updatedTime = queryTask.getUpdatedTime()
-    if (isJobFinished(status) && createdTime != null && updatedTime != null) {
-      taskVO.setCostTime(queryTask.getUpdatedTime().getTime() - queryTask.getCreatedTime().getTime());
-    } else if (createdTime != null) {
-      taskVO.setCostTime(System.currentTimeMillis() - queryTask.getCreatedTime().getTime());
-    }
-    taskVO
-  }*/
 
   def isJobFinished(status: String): Boolean = {
     TaskStatus.Succeed.toString.equals(status) ||
@@ -128,10 +81,11 @@ object TaskConversions extends Logging {
     //    jobReq.setPriority(job.getPriority)
     jobReq.setSubmitUser(job.getSubmitUser)
     jobReq.setExecuteUser(job.getExecuteUser)
-    if (null != job.getSource)
+    if (null != job.getSource) {
       jobReq.setSource(
         BDPJettyServerHelper.gson.fromJson(job.getSource, classOf[util.Map[String, Object]])
       )
+    }
     if (null != job.getLabels) jobReq.setLabels(getLabelListFromJson(job.getLabels))
     jobReq.setParams(
       BDPJettyServerHelper.gson.fromJson(job.getParams, classOf[util.Map[String, Object]])
@@ -169,22 +123,25 @@ object TaskConversions extends Logging {
         .foreach(kv => labelMap.put(kv._1, kv._2))
       jobHistory.setLabels(BDPJettyServerHelper.gson.toJson(labelMap))
     }
-    if (null != jobReq.getParams)
+    if (null != jobReq.getParams) {
       jobHistory.setParams(BDPJettyServerHelper.gson.toJson(jobReq.getParams))
+    }
     jobHistory.setProgress(jobReq.getProgress)
     jobHistory.setStatus(jobReq.getStatus)
     jobHistory.setLogPath(jobReq.getLogPath)
     jobHistory.setErrorCode(jobReq.getErrorCode)
     jobHistory.setErrorDesc(jobReq.getErrorDesc)
     jobHistory.setResultLocation(jobReq.getResultLocation)
-    if (null != jobReq.getCreatedTime)
+    if (null != jobReq.getCreatedTime) {
       jobHistory.setCreatedTime(new Date(jobReq.getCreatedTime.getTime))
+    }
     if (null != jobReq.getUpdatedTime) {
       jobHistory.setUpdatedTime(new Date(jobReq.getUpdatedTime.getTime))
     }
     jobHistory.setInstances(jobReq.getInstances)
-    if (null != jobReq.getMetrics)
+    if (null != jobReq.getMetrics) {
       jobHistory.setMetrics(BDPJettyServerHelper.gson.toJson(jobReq.getMetrics))
+    }
     val engineType = LabelUtil.getEngineType(jobReq.getLabels)
     jobHistory.setEngineType(engineType)
     jobHistory.setExecutionCode(jobReq.getExecutionCode)
@@ -328,8 +285,6 @@ object TaskConversions extends Logging {
     if (StringUtils.isNotBlank(job.getExecutionCode)) {
       taskVO.setExecutionCode(job.getExecutionCode)
     }
-    // Do not attach subjobs for performance
-    //    taskVO.setSubJobs(subjobs)
     taskVO.setSourceJson(job.getSource)
     if (StringUtils.isNotBlank(job.getSource)) {
       Utils.tryCatch {

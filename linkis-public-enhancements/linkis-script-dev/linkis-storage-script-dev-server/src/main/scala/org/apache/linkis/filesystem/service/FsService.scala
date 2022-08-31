@@ -30,7 +30,7 @@ import org.springframework.stereotype.Service
 
 import java.util.concurrent.{Callable, ExecutionException, FutureTask, TimeoutException, TimeUnit}
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 import scala.collection.mutable.ArrayBuffer
 
 @Service
@@ -52,7 +52,7 @@ class FsService extends Logging {
     } else {
       FsCache.fsInfo synchronized {
         if (FsCache.fsInfo.get(user) == null) {
-          FsCache.fsInfo += user -> ArrayBuffer(produceFSInfo(user, fsPath))
+          FsCache.fsInfo.asScala += user -> ArrayBuffer(produceFSInfo(user, fsPath))
         }
       }
       // (43-49) Prevent file and hdfs from entering 37 lines at the same time, causing 51 lines to report the cross mark
@@ -65,7 +65,7 @@ class FsService extends Logging {
         }
       }
     }
-    FsCache.fsInfo(user).filter(_.fs.fsName().equals(fsPath.getFsType))(0).fs
+    FsCache.fsInfo.asScala(user).filter(_.fs.fsName().equals(fsPath.getFsType))(0).fs
   }
 
   @throws(classOf[WorkSpaceException])
@@ -95,12 +95,13 @@ class FsService extends Logging {
         s"${user} gets the ${fsPath.getFsType} type filesystem using a total of ${end - start} milliseconds(${user}获取${fsPath.getFsType}类型的filesystem一共使用了${end - start}毫秒)"
       )
     }
-    if (fs == null)
+    if (fs == null) {
       throw WorkspaceExceptionManager.createException(
         80002,
         timeout.asInstanceOf[AnyRef],
         timeout.asInstanceOf[AnyRef]
       )
+    }
     fs
   }
 
@@ -113,14 +114,13 @@ class FsService extends Logging {
       new FSInfo(user, fs, System.currentTimeMillis())
     } catch {
       // If rpc fails to get fs, for example, io-engine restarts or hangs.(如果rpc获取fs失败了 比如io-engine重启或者挂掉)
-      case e: Exception => {
+      case e: Exception =>
         logger.error("Requesting IO-Engine to initialize fileSystem failed", e)
         // todo Clean up the cache(清理缓存 目前先遗留)
-        /*FsCache.fsInfo.foreach{
+        /* FsCache.fsInfo.foreach{
           case (_,list) =>list synchronized list.filter(f =>true).foreach(f =>list -=f)
-        }*/
+        } */
         throw WorkspaceExceptionManager.createException(80001)
-      }
     }
   }
 

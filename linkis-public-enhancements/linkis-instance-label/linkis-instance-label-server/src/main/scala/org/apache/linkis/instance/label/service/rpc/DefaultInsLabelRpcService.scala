@@ -135,9 +135,8 @@ class DefaultInsLabelRpcService extends InsLabelRpcService with Logging {
       labelInsQueryRequest: LabelInsQueryRequest
   ): LabelInsQueryResponse = {
     Utils.tryAndError {
-      val labels = LabelBuilderFactoryContext.getLabelBuilderFactory.getLabels(
-        labelInsQueryRequest.getLabels
-      )
+      val labels =
+        LabelBuilderFactoryContext.getLabelBuilderFactory.getLabels(labelInsQueryRequest.getLabels)
       new LabelInsQueryResponse(insLabelService.searchInstancesByLabels(labels))
     }
   }

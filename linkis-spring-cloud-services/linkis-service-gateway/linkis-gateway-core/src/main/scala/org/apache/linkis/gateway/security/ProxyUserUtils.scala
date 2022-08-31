@@ -33,9 +33,7 @@ object ProxyUserUtils extends Logging {
     if (ENABLE_PROXY_USER.getValue) {
       (
         new Properties,
-        new File(
-          this.getClass.getClassLoader.getResource(PROXY_USER_CONFIG.getValue).toURI.getPath
-        )
+        new File(this.getClass.getClassLoader.getResource(PROXY_USER_CONFIG.getValue).toURI.getPath)
       )
     } else (null, null)
 

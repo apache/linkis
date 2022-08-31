@@ -199,10 +199,8 @@ class TaskExecutionServiceImpl
 
     val taskId: Int = taskExecutedNum.incrementAndGet()
     val retryAble: Boolean = {
-      val retry = requestTask.getProperties.getOrDefault(
-        ComputationEngineConstant.RETRYABLE_TYPE_NAME,
-        null
-      )
+      val retry =
+        requestTask.getProperties.getOrDefault(ComputationEngineConstant.RETRYABLE_TYPE_NAME, null)
       if (null != retry) retry.asInstanceOf[Boolean]
       else false
     }
@@ -262,10 +260,7 @@ class TaskExecutionServiceImpl
         logger.error(msg)
         ErrorExecuteResponse(
           "Invalid computationExecutor(生成无效的计算引擎，请联系管理员).",
-          new EngineConnExecutorErrorException(
-            EngineConnExecutorErrorCode.INVALID_ENGINE_TYPE,
-            msg
-          )
+          new EngineConnExecutorErrorException(EngineConnExecutorErrorCode.INVALID_ENGINE_TYPE, msg)
         )
     }
   }
@@ -698,9 +693,7 @@ class TaskExecutionServiceImpl
     }
   }
 
-  override def onResultSizeCreated(
-      taskResultSizeCreatedEvent: TaskResultSizeCreatedEvent
-  ): Unit = {
+  override def onResultSizeCreated(taskResultSizeCreatedEvent: TaskResultSizeCreatedEvent): Unit = {
     val task = getTaskByTaskId(taskResultSizeCreatedEvent.taskId)
     if (null != task) {
       sendToEntrance(

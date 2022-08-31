@@ -30,10 +30,7 @@ import org.apache.linkis.engineconn.executor.entity.{Executor, LabelExecutor, Re
 import org.apache.linkis.engineconn.executor.listener.ExecutorListenerBusContext
 import org.apache.linkis.engineconn.executor.service.ManagerService
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
-import org.apache.linkis.manager.common.protocol.engine.{
-  ECCanKillRequest,
-  EngineConnReleaseRequest
-}
+import org.apache.linkis.manager.common.protocol.engine.{ECCanKillRequest, EngineConnReleaseRequest}
 import org.apache.linkis.manager.common.protocol.resource.ResourceUsedProtocol
 import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.rpc.Sender
@@ -66,9 +63,7 @@ class AccessibleEngineConnExecution extends EngineConnExecution with Logging {
   ): Unit = {
     init(engineCreationContext)
     val executor = findReportExecutor(engineCreationContext, engineConn)
-    logger.info(
-      s"Created a report executor ${executor.getClass.getSimpleName}(${executor.getId})."
-    )
+    logger.info(s"Created a report executor ${executor.getClass.getSimpleName}(${executor.getId}).")
     beforeReportToLinkisManager(executor, engineCreationContext, engineConn)
     reportUsedResource(executor, engineCreationContext)
     reportLabel(executor)

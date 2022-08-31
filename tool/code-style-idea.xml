@@ -59,6 +59,7 @@
         <option value="all other imports" />
       </array>
     </option>
+    <option name="SCALAFMT_REFORMAT_ON_FILES_SAVE" value="true" />
     <option name="FORMATTER" value="1" />
   </ScalaCodeStyleSettings>
   <codeStyleSettings language="JAVA">

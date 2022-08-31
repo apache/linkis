@@ -64,10 +64,8 @@ class PruneTaskRetryTransform extends ReheaterTransform with Logging {
                   task match {
                     case retryExecTask: RetryExecTask => {
                       if (retryExecTask.getAge() < retryExecTask.getMaxRetryCount()) {
-                        val newTask = new RetryExecTask(
-                          retryExecTask.getOriginTask,
-                          retryExecTask.getAge() + 1
-                        )
+                        val newTask =
+                          new RetryExecTask(retryExecTask.getOriginTask, retryExecTask.getAge() + 1)
                         newTask.initialize(retryExecTask.getPhysicalContext)
                         TreeNodeUtil.replaceNode(retryExecTask, newTask)
                         context.set(OrchestratorConfiguration.REHEATER_KEY, true)

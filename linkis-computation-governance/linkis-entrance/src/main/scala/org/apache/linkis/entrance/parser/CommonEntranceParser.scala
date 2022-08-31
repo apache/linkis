@@ -259,10 +259,7 @@ class CommonEntranceParser(val persistenceManager: PersistenceManager)
     // 封装Labels
     jobReq.setLabels(labelList)
     jobReq.setMetrics(new util.HashMap[String, Object]())
-    jobReq.getMetrics.put(
-      TaskConstant.ENTRANCEJOB_SUBMIT_TIME,
-      new Date(System.currentTimeMillis)
-    )
+    jobReq.getMetrics.put(TaskConstant.ENTRANCEJOB_SUBMIT_TIME, new Date(System.currentTimeMillis))
     jobReq
   }
 

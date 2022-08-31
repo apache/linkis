@@ -110,10 +110,7 @@ class DefaultNodeLabelService extends NodeLabelService with Logging {
     }
   }
 
-  override def updateLabelsToNode(
-      instance: ServiceInstance,
-      labels: util.List[Label[_]]
-  ): Unit = {
+  override def updateLabelsToNode(instance: ServiceInstance, labels: util.List[Label[_]]): Unit = {
     val newKeyList = labels.map(label => label.getLabelKey)
     val nodeLabels = labelManagerPersistence.getLabelByServiceInstance(instance)
     val oldKeyList = nodeLabels.map(label => label.getLabelKey)

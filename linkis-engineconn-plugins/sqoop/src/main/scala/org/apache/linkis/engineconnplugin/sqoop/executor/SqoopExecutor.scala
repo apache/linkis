@@ -17,11 +17,7 @@
 
 package org.apache.linkis.engineconnplugin.sqoop.executor
 
-import org.apache.linkis.engineconn.executor.entity.{
-  LabelExecutor,
-  ResourceExecutor,
-  YarnExecutor
-}
+import org.apache.linkis.engineconn.executor.entity.{LabelExecutor, ResourceExecutor, YarnExecutor}
 import org.apache.linkis.engineconnplugin.sqoop.client.Sqoop
 import org.apache.linkis.engineconnplugin.sqoop.client.exception.JobExecutionException
 import org.apache.linkis.engineconnplugin.sqoop.context.SqoopEngineConnContext

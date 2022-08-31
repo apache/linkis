@@ -90,7 +90,7 @@ object SecurityFilter extends Logging {
         return false
       }
       // Security certification support, solving verb tampering(安全认证支持，解决动词篡改)
-      gatewayContext.getRequest.getMethod.toUpperCase match {
+      gatewayContext.getRequest.getMethod.toUpperCase(Locale.getDefault()) match {
         case "GET" | "POST" | "PUT" | "DELETE" | "HEAD" | "TRACE" | "CONNECT" | "OPTIONS" =>
         case _ =>
           filterResponse(

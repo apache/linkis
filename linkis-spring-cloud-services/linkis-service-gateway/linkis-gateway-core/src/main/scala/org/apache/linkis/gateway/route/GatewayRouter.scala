@@ -31,6 +31,7 @@ import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.exception.ExceptionUtils
 
 import java.util
+import java.util.Locale
 
 trait GatewayRouter {
 
@@ -88,7 +89,10 @@ abstract class AbstractGatewayRouter extends GatewayRouter with Logging {
       tooManyDeal: List[String] => Option[String]
   ): Option[String] = {
     val services = SpringCloudFeignConfigurationCache.getDiscoveryClient.getServices
-      .filter(_.toLowerCase.contains(parsedServiceId.toLowerCase))
+      .filter(
+        _.toLowerCase(Locale.getDefault())
+          .contains(parsedServiceId.toLowerCase(Locale.getDefault()))
+      )
       .toList
     if (services.length == 1) Some(services.head)
     else if (services.length > 1) tooManyDeal(services)
@@ -147,8 +151,9 @@ class DefaultGatewayRouter(var gatewayRouters: Array[GatewayRouter])
     for (router <- gatewayRouters if serviceInstance == null) {
       serviceInstance = router.route(gatewayContext)
     }
-    if (serviceInstance == null)
+    if (serviceInstance == null) {
       serviceInstance = gatewayContext.getGatewayRoute.getServiceInstance
+    }
     val service = findAndRefreshIfNotExists(
       serviceInstance.getApplicationName,
       findCommonService(serviceInstance.getApplicationName)

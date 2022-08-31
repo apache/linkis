@@ -49,7 +49,7 @@ trait SSOInterceptor {
 }
 
 object SSOInterceptor {
-  import scala.collection.JavaConversions._
+  import scala.collection.JavaConverters._
   private var interceptor: SSOInterceptor = _
 
   def getSSOInterceptor: SSOInterceptor = if (interceptor != null) interceptor
@@ -57,7 +57,7 @@ object SSOInterceptor {
     val ssoInterceptors =
       DataWorkCloudApplication.getApplicationContext.getBeansOfType(classOf[SSOInterceptor])
     if (ssoInterceptors != null && !ssoInterceptors.isEmpty) {
-      interceptor = ssoInterceptors.head._2
+      interceptor = ssoInterceptors.asScala.head._2
     } else {
       interceptor =
         ClassUtils.getClassInstance(GatewayConfiguration.SSO_INTERCEPTOR_CLASS.getValue)

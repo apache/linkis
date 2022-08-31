@@ -84,7 +84,7 @@ object TestHiveClient {
     val createDataSourceResult: CreateDataSourceResult = dataSourceclient.createDataSource(createDataSourceAction)
     val dataSourceId = createDataSourceResult.getInsertId
 
-    //set connectParams
+    // set connectParams
     val params = new util.HashMap[String, Any]
     val connectParams = new util.HashMap[String, Any]
     connectParams.put("envId", "3")
@@ -100,7 +100,7 @@ object TestHiveClient {
 
     val version: Long = updateParameterResult.getVersion
 
-    //publist dataSource version
+    // publist dataSource version
     dataSourceclient.publishDataSourceVersion(
       PublishDataSourceVersionAction.builder()
         .setDataSourceId(dataSourceId)
@@ -108,7 +108,7 @@ object TestHiveClient {
         .setVersion(version)
         .build())
 
-    //example of use
+    // example of use
     val metadataGetDatabasesAction: MetadataGetDatabasesAction = MetadataGetDatabasesAction.builder()
       .setUser(user)
       .setDataSourceName(dataSourceName)

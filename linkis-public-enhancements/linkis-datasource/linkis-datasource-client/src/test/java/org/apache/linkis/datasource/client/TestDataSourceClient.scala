@@ -27,21 +27,21 @@ import java.util.concurrent.TimeUnit
 object TestDataSourceClient {
   def main(args: Array[String]): Unit = {
     val clientConfig = DWSClientConfigBuilder.newBuilder()
-      .addServerUrl("http://127.0.0.1:9001") //set linkis-mg-gateway url: http://{ip}:{port}
-      .connectionTimeout(30000) //connection timtout
-      .discoveryEnabled(false) //disable discovery
+      .addServerUrl("http://127.0.0.1:9001") // set linkis-mg-gateway url: http://{ip}:{port}
+      .connectionTimeout(30000) // connection timtout
+      .discoveryEnabled(false) // disable discovery
       .discoveryFrequency(1, TimeUnit.MINUTES)  // discovery frequency
       .loadbalancerEnabled(false) // enable loadbalance
       .maxConnectionSize(5) // set max Connection
       .retryEnabled(false) // set retry
-      .readTimeout(30000) //set read timeout
-      .setAuthenticationStrategy(new TokenAuthenticationStrategy()) //AuthenticationStrategy Linkis authen suppory static and Token
+      .readTimeout(30000) // set read timeout
+      .setAuthenticationStrategy(new TokenAuthenticationStrategy()) // AuthenticationStrategy Linkis authen suppory static and Token
       .setAuthTokenKey("Token-Code")  // set submit user
       .setAuthTokenValue("DSM-AUTH") // set passwd or token
-      .setDWSVersion("v1") //linkis rest version v1
+      .setDWSVersion("v1") // linkis rest version v1
       .build()
 
-    /*val clientConfig = DWSClientConfigBuilder.newBuilder()
+    /* val clientConfig = DWSClientConfigBuilder.newBuilder()
       .addServerUrl("http://192.168.28.98:9001")
       .connectionTimeout(30000)
       .discoveryEnabled(false)
@@ -54,7 +54,7 @@ object TestDataSourceClient {
       .setAuthTokenKey("linkis")
       .setAuthTokenValue("123456")
       .setDWSVersion("v1")
-      .build()*/
+      .build() */
 
     val dataSourceClient = new LinkisDataSourceRemoteClient(clientConfig)
 

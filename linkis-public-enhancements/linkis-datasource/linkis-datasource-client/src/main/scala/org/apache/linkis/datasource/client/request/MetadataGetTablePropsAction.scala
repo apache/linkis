@@ -73,8 +73,9 @@ object MetadataGetTablePropsAction {
     }
 
     def build(): MetadataGetTablePropsAction = {
-      if (dataSourceName == null)
+      if (dataSourceName == null) {
         throw new DataSourceClientBuilderException("dataSourceName is needed!")
+      }
       if (database == null) throw new DataSourceClientBuilderException("database is needed!")
       if (table == null) throw new DataSourceClientBuilderException("table is needed!")
       if (system == null) throw new DataSourceClientBuilderException("system is needed!")

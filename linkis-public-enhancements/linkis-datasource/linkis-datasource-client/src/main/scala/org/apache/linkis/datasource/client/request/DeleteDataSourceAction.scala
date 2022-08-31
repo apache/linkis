@@ -54,8 +54,9 @@ object DeleteDataSourceAction {
 
     def builder(): DeleteDataSourceAction = {
       if (user == null) throw new DataSourceClientBuilderException("user is needed!")
-      if (dataSourceId == null)
+      if (dataSourceId == null) {
         throw new DataSourceClientBuilderException("dataSourceId is needed!")
+      }
 
       val action = new DeleteDataSourceAction
       action.user = user

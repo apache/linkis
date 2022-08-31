@@ -58,8 +58,9 @@ object GetConnectParamsByDataSourceIdAction {
     }
 
     def build(): GetConnectParamsByDataSourceIdAction = {
-      if (dataSourceId == null)
+      if (dataSourceId == null) {
         throw new DataSourceClientBuilderException("dataSourceId is needed!")
+      }
       if (user == null) throw new DataSourceClientBuilderException("user is needed!")
 
       val getConnectParamsByDataSourceIdAction = new GetConnectParamsByDataSourceIdAction

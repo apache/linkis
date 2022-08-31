@@ -27,12 +27,14 @@ import org.apache.linkis.protocol.constants.TaskConstant
 
 import org.apache.commons.lang3.StringUtils
 
+import java.util.Locale
+
 class EntranceGatewayRouter extends AbstractGatewayRouter {
 
   protected def findEntranceService(parsedServiceId: String) = findService(
     parsedServiceId,
     list => {
-      val services = list.filter(_.toLowerCase.contains("entrance"))
+      val services = list.filter(_.toLowerCase(Locale.getDefault()).contains("entrance"))
       if (services.length == 1) Some(services.head)
       else if (services.isEmpty) None
       else {
@@ -56,15 +58,16 @@ class EntranceGatewayRouter extends AbstractGatewayRouter {
           return null
         }
         val serviceId =
-          if (StringUtils.isBlank(creator) || creator == "IDE")
+          if (StringUtils.isBlank(creator) || creator == "IDE") {
             findEntranceService(applicationName)
-          else
+          } else {
             findEntranceService(creator).orElse {
               logger.warn(
                 s"Cannot find a service which named $creator, now redirect to $applicationName entrance."
               )
               findEntranceService(applicationName)
             }
+          }
         serviceId
           .map(ServiceInstance(_, gatewayContext.getGatewayRoute.getServiceInstance.getInstance))
           .orNull

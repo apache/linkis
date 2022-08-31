@@ -40,7 +40,7 @@ export default {
     getProjectJsonResult(key, name = 'visualis') {
       // 用于判断返回什么样的返回值
       const baseInfo = storage.get('baseInfo', 'local');
-      if (!baseInfo) return;
+      if (!baseInfo) return true;
       const vsBi = baseInfo.applications ? (baseInfo.applications.find((item) => item.name === name) || {}) : {};
       let projectJson = vsBi.enhanceJson;
       if(!projectJson && key==='rsDownload') {

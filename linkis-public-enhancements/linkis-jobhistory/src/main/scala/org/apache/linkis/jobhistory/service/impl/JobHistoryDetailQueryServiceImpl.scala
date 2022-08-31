@@ -88,11 +88,12 @@ class JobHistoryDetailQueryServiceImpl extends JobHistoryDetailQueryService with
       if (jobDetail.getStatus != null) {
         val oldStatus: String =
           jobDetailMapper.selectJobDetailStatusForUpdateByJobDetailId(jobDetail.getId)
-        if (oldStatus != null && !shouldUpdate(oldStatus, jobDetail.getStatus))
+        if (oldStatus != null && !shouldUpdate(oldStatus, jobDetail.getStatus)) {
           throw new QueryException(
             120001,
             s"${jobDetail.getId}数据库中的task状态为：${oldStatus}更新的task状态为：${jobDetail.getStatus}更新失败！"
           )
+        }
       }
       jobDetail.setExecutionContent(null)
       val jobUpdate = subjobDetail2JobDetail(jobDetail)
@@ -102,12 +103,12 @@ class JobHistoryDetailQueryServiceImpl extends JobHistoryDetailQueryService with
       jobDetailMapper.updateJobDetail(jobUpdate)
 
       // todo
-      /*// to write cache
+      /* // to write cache
       if (TaskStatus.Succeed.toString.equals(jobReq.getStatus) && queryCacheService.needCache(jobReq)) {
         info("Write cache for task: " + jobReq.getId)
         jobReq.setExecutionCode(executionCode)
         queryCacheService.writeCache(jobReq)
-      }*/
+      } */
 
       val map = new util.HashMap[String, Object]
       map.put(JobRequestConstants.JOB_ID, jobDetail.getId.asInstanceOf[Object])
@@ -147,11 +148,12 @@ class JobHistoryDetailQueryServiceImpl extends JobHistoryDetailQueryService with
           if (jobDetail.getStatus != null) {
             val oldStatus: String =
               jobDetailMapper.selectJobDetailStatusForUpdateByJobDetailId(jobDetail.getId)
-            if (oldStatus != null && !shouldUpdate(oldStatus, jobDetail.getStatus))
+            if (oldStatus != null && !shouldUpdate(oldStatus, jobDetail.getStatus)) {
               throw new QueryException(
                 120001,
                 s"${jobDetail.getId}数据库中的task状态为：${oldStatus}更新的task状态为：${jobDetail.getStatus}更新失败！"
               )
+            }
           }
           jobDetail.setExecutionContent(null)
           val jobUpdate = subjobDetail2JobDetail(jobDetail)
@@ -161,12 +163,12 @@ class JobHistoryDetailQueryServiceImpl extends JobHistoryDetailQueryService with
           jobDetailMapper.updateJobDetail(jobUpdate)
 
           // todo
-          /*//to write cache
+          /* //to write cache
             if (TaskStatus.Succeed.toString.equals(jobReq.getStatus) && queryCacheService.needCache(jobReq)) {
               info("Write cache for task: " + jobReq.getId)
               jobReq.setExecutionCode(executionCode)
               queryCacheService.writeCache(jobReq)
-            }*/
+            } */
 
           val map = new util.HashMap[String, Object]
           map.put(JobRequestConstants.JOB_ID, jobDetail.getId.asInstanceOf[Object])

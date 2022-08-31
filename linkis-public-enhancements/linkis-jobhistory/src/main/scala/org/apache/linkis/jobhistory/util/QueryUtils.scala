@@ -103,7 +103,9 @@ object QueryUtils extends Logging {
         queryTask.getExecutionCode == null || !queryTask.getExecutionCode.startsWith(
           StorageUtils.HDFS_SCHEMA
         )
-    ) return
+    ) {
+      return
+    }
     val codePath = queryTask.getExecutionCode
     val path = codePath.substring(0, codePath.lastIndexOf(CODE_SPLIT))
     val codeInfo = codePath.substring(codePath.lastIndexOf(CODE_SPLIT) + 1)

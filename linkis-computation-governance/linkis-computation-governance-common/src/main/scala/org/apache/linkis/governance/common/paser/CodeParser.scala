@@ -121,6 +121,9 @@ class PythonCodeParser extends SingleCodeParser with Logging {
   val LOG: Logger = LoggerFactory.getLogger(getClass)
 
   override def parse(code: String): Array[String] = {
+    if (GovernanceCommonConf.SKIP_PYTHON_PARSER.getValue) {
+      return Array(code)
+    }
     Utils.tryCatch(parsePythonCode(code)) { e =>
       logger.info(s"Your code will be submitted in overall mode. ${e.getMessage} ")
       Array(code)

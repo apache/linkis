@@ -34,6 +34,25 @@ public class VariableOperationTest {
   private static final ZonedDateTime zonedDateTime = VariableOperationUtils.toZonedDateTime(date);
 
   @Test
+  public void testSqlFormat() throws VariableOperationFailedException {
+    String jsonOld =
+        "select \n"
+            + "\"&{yyyy-MM}\",\n"
+            + "\"&{yyyy-MM-dd HHmmss}\",\n"
+            + "\"&yyyyMMddHH\",\n"
+            + "\"&{yyyy-MM-dd-HH}\"";
+    String jsonNew = VariableOperationUtils.replaces(zonedDateTime, jsonOld);
+    System.out.println(jsonNew);
+    assertEquals(
+        jsonNew,
+        "select \n"
+            + "\"2022-04\",\n"
+            + "\"2022-04-02 173507\",\n"
+            + "\"&yyyyMMddHH\",\n"
+            + "\"2022-04-02-17\"");
+  }
+
+  @Test
   public void testJsonFormat() throws VariableOperationFailedException {
     String jsonOld =
         "{\"name\":\"&{yyyyMMdd%-1d}\",\"address\":{\"street\":\"&{yyyyMMdd%-1y}\"},\"links\":[{\"name\":\"&{yyyyMMdd%-1M}\"}]}";

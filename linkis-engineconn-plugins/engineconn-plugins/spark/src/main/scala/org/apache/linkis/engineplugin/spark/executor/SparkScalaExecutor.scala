@@ -257,7 +257,7 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long) exten
     sparkILoop.settings = settings
     sparkILoop.createInterpreter()
 
-    val in0 = getField(sparkILoop, "scala$tools$nsc$interpreter$ILoop$$in0").asInstanceOf[Option[BufferedReader]]
+    val in0 = getDeclaredField(sparkILoop, "in0").asInstanceOf[Option[BufferedReader]]
     val reader = in0.fold(sparkILoop.chooseReader(settings))(r => SimpleReader(r,
       jOut, interactive = true))
 
@@ -266,8 +266,8 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long) exten
     SparkScalaExecutor.loopPostInit(sparkILoop)
   }
 
-  protected def getField(obj: Object, name: String): Object = {
-    val field = obj.getClass.getField(name)
+  protected def getDeclaredField(obj: Object, name: String): Object = {
+    val field = obj.getClass.getDeclaredField(name)
     field.setAccessible(true)
     field.get(obj)
   }

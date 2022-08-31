@@ -20,7 +20,7 @@ package org.apache.linkis.bml.common
 import org.apache.linkis.common.exception.ErrorException
 
 case class POSTActionFailException()
-    extends ErrorException(70025, "material house client request failed (物料库客户端请求失败)") {}
+    extends ErrorException(70025, "material house client request failed(物料库客户端请求失败)") {}
 
 case class POSTResultNotMatchException()
     extends ErrorException(

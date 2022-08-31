@@ -23,7 +23,7 @@ object ElasticSearchConfiguration {
 
   // es client
   val ES_CLUSTER = CommonVars("linkis.es.cluster", "127.0.0.1:9200")
-  val ES_DATASOURCE_NAME = CommonVars("linkis.datasource", "default_datasource")
+  val ES_DATASOURCE_NAME = CommonVars("linkis.es.datasource", "default_datasource")
   val ES_AUTH_CACHE = CommonVars("linkis.es.auth.cache", false)
   val ES_USERNAME = CommonVars("linkis.es.username", "")
   val ES_PASSWORD = CommonVars("linkis.es.password", "")

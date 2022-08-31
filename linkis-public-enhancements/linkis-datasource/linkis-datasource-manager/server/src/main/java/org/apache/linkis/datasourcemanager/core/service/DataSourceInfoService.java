@@ -62,7 +62,17 @@ public interface DataSourceInfoService {
    * @param dataSourceName data source name
    * @return data source entity
    */
+
   DataSource getDataSourceInfo(String dataSourceName) throws JsonErrorException;
+
+  /**
+   * Get data source for latest published version by data source name
+   *
+   * @param dataSourceName data source name
+   * @return data source entity
+   */
+  DataSource getDataSourcePublishInfo(String dataSourceName);
+  
   /**
    * Get data source
    *

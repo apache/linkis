@@ -109,6 +109,22 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
   }
 
   @Override
+  public DataSource getDataSourcePublishInfo(String dataSourceName) {
+    DataSource dataSource = dataSourceDao.selectOneDetailByName(dataSourceName);
+    if (Objects.nonNull(dataSource)) {
+      Long publishedVersionId = dataSource.getPublishedVersionId();
+      if (publishedVersionId == null) {
+        LOG.warn("Datasource name:{} is not published. ", dataSourceName);
+      } else {
+        String parameter =
+            dataSourceVersionDao.selectOneVersion(dataSource.getId(), publishedVersionId);
+        dataSource.setParameter(parameter);
+      }
+    }
+    return dataSource;
+  }
+
+  @Override
   public DataSource getDataSourceInfo(Long dataSourceId, Long version) {
     DataSource dataSource = dataSourceDao.selectOneDetail(dataSourceId);
     if (Objects.nonNull(dataSource)) {
@@ -120,9 +136,6 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
   /**
    * get datasource info for connect for published version, if there is a dependency environment,
    * merge datasource parameter and environment parameter.
-   *
-   * @param dataSourceId
-   * @return
    */
   @Override
   public DataSource getDataSourceInfoForConnect(Long dataSourceId) {

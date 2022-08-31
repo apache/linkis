@@ -64,9 +64,7 @@ object ResourceUtils {
     if (persistenceResource.getLockedResource != null)
       nodeResource.setLockedResource(deserializeResource(persistenceResource.getLockedResource))
     if (persistenceResource.getExpectedResource != null)
-      nodeResource.setExpectedResource(
-        deserializeResource(persistenceResource.getExpectedResource)
-      )
+      nodeResource.setExpectedResource(deserializeResource(persistenceResource.getExpectedResource))
     if (persistenceResource.getLeftResource != null)
       nodeResource.setLeftResource(deserializeResource(persistenceResource.getLeftResource))
     if (persistenceResource.getUsedResource != null)
@@ -90,9 +88,7 @@ object ResourceUtils {
     if (persistenceResource.getLockedResource != null)
       nodeResource.setLockedResource(deserializeResource(persistenceResource.getLockedResource))
     if (persistenceResource.getExpectedResource != null)
-      nodeResource.setExpectedResource(
-        deserializeResource(persistenceResource.getExpectedResource)
-      )
+      nodeResource.setExpectedResource(deserializeResource(persistenceResource.getExpectedResource))
     if (persistenceResource.getLeftResource != null)
       nodeResource.setLeftResource(deserializeResource(persistenceResource.getLeftResource))
     if (persistenceResource.getUsedResource != null)

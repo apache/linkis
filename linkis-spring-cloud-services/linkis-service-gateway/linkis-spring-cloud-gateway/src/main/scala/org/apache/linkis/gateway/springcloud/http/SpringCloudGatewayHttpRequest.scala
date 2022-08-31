@@ -30,8 +30,7 @@ import java.net.{InetSocketAddress, URI}
 
 import scala.collection.JavaConverters._
 
-class SpringCloudGatewayHttpRequest(request: AbstractServerHttpRequest)
-    extends GatewayHttpRequest {
+class SpringCloudGatewayHttpRequest(request: AbstractServerHttpRequest) extends GatewayHttpRequest {
 
   private val headers = {
     val headerEntrys = request.getHeaders

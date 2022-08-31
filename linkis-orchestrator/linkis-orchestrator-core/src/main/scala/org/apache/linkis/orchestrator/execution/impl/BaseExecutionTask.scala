@@ -91,10 +91,7 @@ class BaseExecutionTask(maxParallelism: Int, rootExecTask: ExecTask)
 
   override def getResponse: TaskResponse = this.response
 
-  def beforeStatusChanged(
-      fromStatus: ExecutionNodeStatus,
-      toStatus: ExecutionNodeStatus
-  ): Unit = {}
+  def beforeStatusChanged(fromStatus: ExecutionNodeStatus, toStatus: ExecutionNodeStatus): Unit = {}
 
   override def getId: String = {
     if (null == id) synchronized {

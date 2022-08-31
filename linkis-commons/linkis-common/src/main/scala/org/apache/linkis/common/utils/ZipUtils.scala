@@ -42,9 +42,7 @@ object ZipUtils {
    *   :The name of the compressed file（压缩后文件的名称）
    * @return
    */
-  def zip(sourceFilePath: String, zipFilePath: String, fileName: String)(implicit
-      fs: Fs
-  ): Unit = {
+  def zip(sourceFilePath: String, zipFilePath: String, fileName: String)(implicit fs: Fs): Unit = {
     var bis: BufferedInputStream = null
     var zos: ZipOutputStream = null
     val sourcePath = new FsPath(sourceFilePath)

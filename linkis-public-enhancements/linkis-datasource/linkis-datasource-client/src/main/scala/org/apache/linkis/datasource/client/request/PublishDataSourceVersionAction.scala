@@ -35,12 +35,8 @@ class PublishDataSourceVersionAction extends POSTAction with DataSourceAction {
 
   override def getUser: String = this.user
 
-  override def suffixURLs: Array[String] = Array(
-    DATA_SOURCE_SERVICE_MODULE.getValue,
-    "publish",
-    dataSourceId.toString,
-    versionId.toString
-  )
+  override def suffixURLs: Array[String] =
+    Array(DATA_SOURCE_SERVICE_MODULE.getValue, "publish", dataSourceId.toString, versionId.toString)
 
 }
 

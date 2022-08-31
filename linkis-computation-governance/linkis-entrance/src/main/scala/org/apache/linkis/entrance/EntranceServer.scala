@@ -17,11 +17,7 @@
 
 package org.apache.linkis.entrance
 
-import org.apache.linkis.common.exception.{
-  ErrorException,
-  LinkisException,
-  LinkisRuntimeException
-}
+import org.apache.linkis.common.exception.{ErrorException, LinkisException, LinkisRuntimeException}
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.entrance.cs.CSEntranceHelper
 import org.apache.linkis.entrance.exception.{EntranceErrorException, SubmitFailedException}

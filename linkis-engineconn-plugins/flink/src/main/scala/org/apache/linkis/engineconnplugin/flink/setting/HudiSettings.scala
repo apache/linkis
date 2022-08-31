@@ -21,10 +21,7 @@ import org.apache.linkis.common.conf.CommonVars
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.engineconn.common.conf.EngineConnConf
 import org.apache.linkis.engineconn.common.creation.EngineCreationContext
-import org.apache.linkis.engineconnplugin.flink.context.{
-  EnvironmentContext,
-  FlinkEngineConnContext
-}
+import org.apache.linkis.engineconnplugin.flink.context.{EnvironmentContext, FlinkEngineConnContext}
 import org.apache.linkis.engineconnplugin.flink.exception.FlinkInitFailedException
 
 import org.apache.commons.collections.CollectionUtils

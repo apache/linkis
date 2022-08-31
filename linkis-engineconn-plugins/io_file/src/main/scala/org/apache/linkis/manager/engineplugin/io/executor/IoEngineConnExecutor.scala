@@ -319,9 +319,7 @@ class IoEngineConnExecutor(val id: Int, val outputLimit: Int = 10)
         userFsInfo += new FSInfo(fsId, fs)
       }
     }
-    logger.info(
-      s"Creator ${methodEntity.creatorUser}为用户${methodEntity.proxyUser}初始化结束 fsId=$fsId"
-    )
+    logger.info(s"Creator ${methodEntity.creatorUser}为用户${methodEntity.proxyUser}初始化结束 fsId=$fsId")
     fsId
   }
 

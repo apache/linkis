@@ -54,11 +54,20 @@ public class VariableOperationUtils {
    * @param date
    * @return
    */
-  public static ZonedDateTime toZonedDateTime(Date date) {
+  public static ZonedDateTime toZonedDateTime(Date date, ZoneId zoneId) {
     Instant instant = date.toInstant();
-    ZoneId zoneId = ZoneId.systemDefault();
     LocalDateTime localDateTime = instant.atZone(zoneId).toLocalDateTime();
     return ZonedDateTime.of(localDateTime, zoneId);
+  }
+
+  /**
+   * yyyy-MM-dd HH:mm:ss
+   *
+   * @param date
+   * @return
+   */
+  public static ZonedDateTime toZonedDateTime(Date date) {
+    return toZonedDateTime(date, ZoneId.systemDefault());
   }
 
   /**

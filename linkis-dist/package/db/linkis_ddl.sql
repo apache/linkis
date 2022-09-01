@@ -873,7 +873,8 @@ CREATE TABLE `linkis_ps_dm_datasource_env`
     `create_user`        varchar(255) COLLATE utf8_bin NULL     DEFAULT NULL,
     `modify_time`        datetime                      NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `modify_user`        varchar(255) COLLATE utf8_bin NULL     DEFAULT NULL,
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `env_name` (`env_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 

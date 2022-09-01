@@ -38,6 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MockitoExtension.class)
@@ -69,6 +70,17 @@ public class DataSourceInfoServiceTest {
     dataSource.setCreateTime(new Date());
     dataSource.setModifyTime(new Date());
     return dataSource;
+  }
+
+  private DataSourceEnv buildDataSourceEnv() {
+    DataSourceEnv dataSourceEnv = new DataSourceEnv();
+    dataSourceEnv.setId(1L);
+    dataSourceEnv.setEnvName("test_env_name");
+    dataSourceEnv.setCreateUser("test");
+    dataSourceEnv.setParameter("{\"username\":\"test_dev\",\"password\":\"12e12e12e1\"}");
+    dataSourceEnv.setModifyUser("test");
+    dataSourceEnv.setDataSourceTypeId(1L);
+    return dataSourceEnv;
   }
 
   @Test
@@ -321,5 +333,48 @@ public class DataSourceInfoServiceTest {
         dataSourceInfoService.insertDataSourceParameter(
             keyDefinitionList, datasourceId, connectParams, username, comment);
     assertTrue(expectedVersion == res);
+  }
+
+  @Test
+  void testExistDataSourceEnv() {
+    String dataSourceEnvName = "test_env_name";
+    DataSourceEnv dataSourceEnv = new DataSourceEnv();
+    dataSourceEnv.setEnvName(dataSourceEnvName);
+    dataSourceEnv.setId(1L);
+    Mockito.when(dataSourceEnvDao.selectOneByName(dataSourceEnvName)).thenReturn(dataSourceEnv);
+    Boolean result = dataSourceInfoService.existDataSourceEnv(dataSourceEnvName);
+    assertTrue(result);
+
+    Mockito.when(dataSourceEnvDao.selectOneByName(dataSourceEnvName)).thenReturn(null);
+    result = dataSourceInfoService.existDataSourceEnv(dataSourceEnvName);
+    assertFalse(result);
+
+    assertFalse(dataSourceInfoService.existDataSourceEnv(""));
+  }
+
+  @Test
+  void testSaveBatchDataSourceEnv() throws ErrorException {
+    List<DataSourceEnv> list = new ArrayList<>();
+    for (int i = 0; i < 5; i++) {
+      DataSourceEnv dataSourceEnv = buildDataSourceEnv();
+      list.add(dataSourceEnv);
+      Mockito.doNothing().when(dataSourceEnvDao).insertOne(dataSourceEnv);
+    }
+
+    dataSourceInfoService.saveBatchDataSourceEnv(list);
+  }
+
+  @Test
+  void testUpdateBatchDataSourceEnv() throws ErrorException {
+    List<DataSourceEnv> list = new ArrayList<>();
+    for (int i = 0; i < 5; i++) {
+      DataSourceEnv dataSourceEnv = buildDataSourceEnv();
+      list.add(dataSourceEnv);
+      Mockito.doNothing().when(dataSourceEnvDao).updateOne(dataSourceEnv);
+      Mockito.when(dataSourceEnvDao.selectOneDetail(dataSourceEnv.getId()))
+          .thenReturn(dataSourceEnv);
+    }
+
+    dataSourceInfoService.updateBatchDataSourceEnv(list);
   }
 }

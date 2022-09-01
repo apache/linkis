@@ -36,7 +36,7 @@ trait Interpreter {
 
   @throws(classOf[TimeoutException])
   @throws(classOf[InterruptedException])
-  final def waitForStateChange(oldState: State, atMost: Duration) = {
+  final def waitForStateChange(oldState: State, atMost: Duration): Unit = {
     Utils.waitUntil({ () => state != oldState }, atMost)
   }
 

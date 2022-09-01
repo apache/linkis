@@ -71,6 +71,7 @@ object CSTableParser extends Logging {
     csTempTables.foreach { csTempTable =>
       val table = getCSTable(csTempTable, contextIDValueStr, nodeNameStr)
       if (null == table) {
+        // scalastyle:off throwerror
         throw new ExecuteError(40007, s"The csTable that name is $csTempTable not found in cs")
       }
       registerTempTable(table)

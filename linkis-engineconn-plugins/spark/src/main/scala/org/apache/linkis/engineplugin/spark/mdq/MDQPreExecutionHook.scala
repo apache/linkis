@@ -60,8 +60,9 @@ class MDQPreExecutionHook extends SparkPreExecutionHook with Logging {
       case _ =>
         ""
     }
-    if (StringUtils.isEmpty(runType) || !SparkKind.FUNCTION_MDQ_TYPE.equalsIgnoreCase(runType))
+    if (StringUtils.isEmpty(runType) || !SparkKind.FUNCTION_MDQ_TYPE.equalsIgnoreCase(runType)) {
       return code
+    }
     val sender = Sender.getSender(SparkConfiguration.MDQ_APPLICATION_NAME.getValue)
     val params = new util.HashMap[String, Object]()
     params.put("user", StorageUtils.getJvmUser)

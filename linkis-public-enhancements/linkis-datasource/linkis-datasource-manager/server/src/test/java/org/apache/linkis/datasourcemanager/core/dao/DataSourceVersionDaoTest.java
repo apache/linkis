@@ -57,7 +57,7 @@ class DataSourceVersionDaoTest extends BaseDaoTest {
     dataSourceVersionDao.insertOne(datasourceVersion);
 
     datasourceVersion.setVersionId(2l);
-    datasourceVersion.setParameter("a:b");
+    datasourceVersion.setParameter("b:a");
     dataSourceVersionDao.insertOne(datasourceVersion);
     return datasourceVersion;
   }
@@ -78,7 +78,7 @@ class DataSourceVersionDaoTest extends BaseDaoTest {
   void testSelectOneVersion() {
     insertOne();
     String param = dataSourceVersionDao.selectOneVersion(1l, 2l);
-    assertTrue("a:b".equals(param));
+    assertTrue("b:a".equals(param));
   }
 
   @Test

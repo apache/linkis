@@ -48,11 +48,12 @@ object IOClient {
   val FAILED = "FAILED"
 
   def getIOClient(): IOClient = {
-    if (ioClient == null)
+    if (ioClient == null) {
       throw new StorageErrorException(
         52004,
         "You must register IOClient before you can use proxy mode.(必须先注册IOClient，才能使用代理模式)"
       )
+    }
     ioClient
   }
 

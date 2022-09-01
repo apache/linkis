@@ -31,8 +31,9 @@ object FSFactory extends Logging {
   )
 
   def getBuildFactory(fsName: String): BuildFactory = {
-    if (!buildClasses.contains(fsName))
+    if (!buildClasses.contains(fsName)) {
       throw new StorageFatalException(50000, s"Unsupported file system type(不支持的文件系统类型)：$fsName")
+    }
     buildClasses(fsName)
   }
 

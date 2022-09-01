@@ -17,9 +17,6 @@
 
 package org.apache.linkis.orchestrator.computation.utils
 
-import org.apache.linkis.manager.common.entity.node.Node
-import org.apache.linkis.orchestrator.conf.OrchestratorConfiguration
-import org.apache.linkis.orchestrator.domain.TreeNode
 import org.apache.linkis.orchestrator.exception.{
   OrchestratorErrorCodeSummary,
   OrchestratorErrorException
@@ -35,7 +32,7 @@ import org.apache.linkis.orchestrator.strategy.{ExecTaskStatusInfo, StatusInfoEx
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 
-//TODO 考虑TreeNode修改的并发操作问题
+// TODO 考虑TreeNode修改的并发操作问题
 object TreeNodeUtil {
 
   // private method, only support to check adjacent node
@@ -132,9 +129,8 @@ object TreeNodeUtil {
       val status = statusInfoMap.get(node.getId).getOrElse(null)
       if (status != null) {
         status.taskResponse match {
-          case response: FailedTaskResponse => {
+          case response: FailedTaskResponse =>
             failedTasks += node
-          }
           case _ =>
         }
       }

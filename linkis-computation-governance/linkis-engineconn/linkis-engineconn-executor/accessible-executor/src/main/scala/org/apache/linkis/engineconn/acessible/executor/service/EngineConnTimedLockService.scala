@@ -198,12 +198,12 @@ class EngineConnConcurrentLockService extends LockService {
   override def isLockExist(lock: String): Boolean = true
 
   override def tryLock(requestEngineLock: RequestEngineLock): Option[String] = {
-    /*ExecutorManager.getInstance().getDefaultExecutor match {
+    /* ExecutorManager.getInstance().getDefaultExecutor match {
       case accessibleExecutor: AccessibleExecutor =>
         // Concurrent Engine don't change status when get lock, status will change in other rules
 //        accessibleExecutor.transition(NodeStatus.Idle)
       case _ =>
-    }*/
+    } */
     Some("lock")
   }
 
@@ -213,11 +213,11 @@ class EngineConnConcurrentLockService extends LockService {
    * @param lock
    */
   override def unlock(lock: String): Boolean = {
-    /*ExecutorManager.getInstance().getDefaultExecutor match {
+    /* ExecutorManager.getInstance().getDefaultExecutor match {
       case accessibleExecutor: AccessibleExecutor =>
         accessibleExecutor.transition(NodeStatus.Unlock)
       case _ =>
-    }*/
+    } */
     true
   }
 

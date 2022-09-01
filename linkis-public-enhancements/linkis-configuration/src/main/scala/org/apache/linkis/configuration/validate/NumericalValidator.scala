@@ -38,7 +38,7 @@ class NumericalValidator extends Validator with Logging {
           s"${value} cannot be converted to int, validation failed(${value}不能转换为int，校验失败)"
         ); return false
       // If there is a problem with range, then an exception is thrown.(如果range出问题，那么还是抛出异常)
-      /*case e:JsonSyntaxException =>info(s"${range}Cannot convert to int, check failed(不能转换为int，校验失败)"); return false*/
+      /* case e:JsonSyntaxException =>info(s"${range}Cannot convert to int, check failed(不能转换为int，校验失败)"); return false */
       case e: Exception => throw e
     }
   }
@@ -46,8 +46,8 @@ class NumericalValidator extends Validator with Logging {
   override var kind: String = "NumInterval"
 }
 
-/*object NumericalValidator {
+/* object NumericalValidator {
   def main(args: Array[String]): Unit = {
     print(new NumericalValidator().validate("22.5", "[17.5,150]"))
   }
-}*/
+} */

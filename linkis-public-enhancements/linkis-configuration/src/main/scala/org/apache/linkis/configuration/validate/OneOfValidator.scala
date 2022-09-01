@@ -29,7 +29,7 @@ class OneOfValidator extends Validator {
   override var kind: String = "OFT" // one of them
 }
 
-/*object OneOfValidator{
+/* object OneOfValidator{
   def main(args: Array[String]): Unit = {
     val range = "[\",\",\"\\t\"]"
     print(new OneOfValidator().validate(",,",range))
@@ -39,4 +39,4 @@ class OneOfValidator extends Validator {
     new GsonBuilder().create().toJson(a)
     print(new GsonBuilder().create().toJson(a))*/
   }
-}*/
+} */

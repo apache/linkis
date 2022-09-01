@@ -40,6 +40,6 @@ class FloatValidator extends Validator with Logging {
   override var kind: String = "FloatInterval"
 }
 
-/*object FloatValidator extends App {
+/* object FloatValidator extends App {
   print(new FloatValidator().validate("3", "[1.12,5.22]"))
-}*/
+} */

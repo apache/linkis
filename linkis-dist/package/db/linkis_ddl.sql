@@ -951,4 +951,7 @@ PRIMARY KEY (`id`),
 UNIQUE KEY `token_name` (`token_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-
+-- ----------------------------
+-- Create unique index for linkis_ps_dm_datasource_env
+-- ----------------------------
+ALTER TABLE `linkis_ps_dm_datasource_env` ADD CONSTRAINT `uk_env_name` UNIQUE (`env_name`);

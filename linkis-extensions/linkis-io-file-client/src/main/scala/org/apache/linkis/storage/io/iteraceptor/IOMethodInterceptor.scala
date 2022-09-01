@@ -38,7 +38,7 @@ import java.lang.reflect.Method
 import java.net.InetAddress
 
 import scala.beans.BeanProperty
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 import scala.collection.mutable
 
 import com.google.gson.reflect.TypeToken
@@ -68,7 +68,7 @@ class IOMethodInterceptor(fsType: String) extends MethodInterceptor with Logging
     label.setJobGroupId(IOClientUtils.generateJobGrupID())
   }
 
-  def getProxyUser: String = StorageConfiguration.PROXY_USER.getValue(properties)
+  def getProxyUser: String = StorageConfiguration.PROXY_USER.getValue(properties.asJava)
 
   def getCreatorUser: String = StorageUtils.getJvmUser
 
@@ -102,11 +102,12 @@ class IOMethodInterceptor(fsType: String) extends MethodInterceptor with Logging
   }
 
   def initFS(methodName: String = "init"): Unit = {
-    if (!properties.contains(StorageConfiguration.PROXY_USER.key))
+    if (!properties.contains(StorageConfiguration.PROXY_USER.key)) {
       throw new StorageErrorException(
         52002,
         "no user set, we cannot get the permission information."
       )
+    }
     bindEngineLabel.setIsJobGroupHead("true")
     bindEngineLabel.setIsJobGroupEnd("false")
     val res = ioClient.executeWithRetry(
@@ -134,11 +135,12 @@ class IOMethodInterceptor(fsType: String) extends MethodInterceptor with Logging
   }
 
   def beforeOperation(): Unit = {
-    if (closed)
+    if (closed) {
       throw new StorageErrorException(
         52002,
         s"$fsType storage($id) engine($bindEngineLabel) has been closed, IO operation was illegal."
       )
+    }
     if (System.currentTimeMillis() - lastAccessTime >= iOEngineExecutorMaxFreeTime) synchronized {
       if (System.currentTimeMillis() - lastAccessTime >= iOEngineExecutorMaxFreeTime) {
         initFS()
@@ -156,8 +158,9 @@ class IOMethodInterceptor(fsType: String) extends MethodInterceptor with Logging
       args: Array[AnyRef],
       methodProxy: MethodProxy
   ): AnyRef = {
-    if (closed && method.getName != "close")
+    if (closed && method.getName != "close") {
       throw new StorageErrorException(52002, s"$fsType storage has been closed.")
+    }
     if (System.currentTimeMillis() - lastAccessTime >= iOEngineExecutorMaxFreeTime) synchronized {
       method.getName match {
         case "init" =>
@@ -176,14 +179,15 @@ class IOMethodInterceptor(fsType: String) extends MethodInterceptor with Logging
     method.getName match {
       case "init" =>
         val user =
-          if (properties.contains(StorageConfiguration.PROXY_USER.key))
+          if (properties.contains(StorageConfiguration.PROXY_USER.key)) {
             StorageConfiguration.PROXY_USER.getValue(properties.toMap)
-          else null
+          } else null
         if (args.length > 0 && args(0).isInstanceOf[java.util.Map[String, String]]) {
-          properties ++= args(0).asInstanceOf[java.util.Map[String, String]]
+          properties ++= args(0).asInstanceOf[java.util.Map[String, String]].asScala
         }
-        if (StringUtils.isNotEmpty(user))
+        if (StringUtils.isNotEmpty(user)) {
           properties += StorageConfiguration.PROXY_USER.key -> user
+        }
         initFS()
         logger.warn(s"For user($user)inited a $fsType storage($id) .")
         Unit
@@ -197,15 +201,17 @@ class IOMethodInterceptor(fsType: String) extends MethodInterceptor with Logging
         if (!inited) throw new IllegalAccessException("storage has not been inited.")
         new IOOutputStream(args)
       case "renameTo" =>
-        if (!inited || args.length < 2)
+        if (!inited || args.length < 2) {
           throw new IllegalAccessException("storage has not been inited.")
+        }
         val params =
           args.map(MethodEntitySerializer.serializerJavaObject(_)).map(_.asInstanceOf[AnyRef])
         executeMethod(method.getName, params)
         new java.lang.Boolean(true)
       case "list" =>
-        if (!inited || args.length < 1)
+        if (!inited || args.length < 1) {
           throw new IllegalAccessException("storage has not been inited.")
+        }
         val params =
           Array(MethodEntitySerializer.serializerJavaObject(args(0))).map(_.asInstanceOf[AnyRef])
         val msg = executeMethod(method.getName, params)
@@ -214,8 +220,9 @@ class IOMethodInterceptor(fsType: String) extends MethodInterceptor with Logging
           new TypeToken[java.util.List[FsPath]]() {}.getType
         )
       case "listPathWithError" =>
-        if (!inited || args.length < 1)
+        if (!inited || args.length < 1) {
           throw new IllegalAccessException("storage has not been inited.")
+        }
         val params =
           Array(MethodEntitySerializer.serializerJavaObject(args(0))).map(_.asInstanceOf[AnyRef])
         val msg = executeMethod(method.getName, params)

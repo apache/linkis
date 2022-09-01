@@ -28,10 +28,10 @@ eureka:
     metadata-map:
       prometheus.path: ${prometheus.path:/actuator/prometheus}
     hostname:
-#    preferIpAddress: true
+    preferIpAddress: true
   client:
-#    register-with-eureka: false
-#    fetch-registry: false
+    register-with-eureka: false
+    fetch-registry: false
     serviceUrl:
       defaultZone: http://127.0.0.1:20303/eureka/
 

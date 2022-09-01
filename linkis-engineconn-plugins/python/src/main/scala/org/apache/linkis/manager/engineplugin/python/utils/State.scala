@@ -38,37 +38,37 @@ object State {
 }
 
 case class NotStarted() extends State {
-  override def toString = "not_started"
+  override def toString: String = "not_started"
 }
 
 case class Starting() extends State {
-  override def toString = "starting"
+  override def toString: String = "starting"
 }
 
 case class Idle() extends State {
-  override def toString = "idle"
+  override def toString: String = "idle"
 }
 
 case class Running() extends State {
-  override def toString = "running"
+  override def toString: String = "running"
 }
 
 case class Busy() extends State {
-  override def toString = "busy"
+  override def toString: String = "busy"
 }
 
 case class Error() extends State {
-  override def toString = "error"
+  override def toString: String = "error"
 }
 
 case class ShuttingDown() extends State {
-  override def toString = "shutting_down"
+  override def toString: String = "shutting_down"
 }
 
 case class Dead() extends State {
-  override def toString = "dead"
+  override def toString: String = "dead"
 }
 
 case class Success() extends State {
-  override def toString = "success"
+  override def toString: String = "success"
 }

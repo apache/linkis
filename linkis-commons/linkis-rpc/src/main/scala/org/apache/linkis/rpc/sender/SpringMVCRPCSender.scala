@@ -143,19 +143,21 @@ private[rpc] class SpringMVCRPCSender private[rpc] (
   override def deliver(message: Any): Unit =
     getRPCSenderListenerBus.post(RPCMessageEvent(message, serviceInstance))
 
-  override def equals(obj: Any): Boolean = if (obj == null) false
-  else
+  override def equals(obj: Any): Boolean = if (obj == null) {
+    false
+  } else {
     obj match {
       case sender: SpringMVCRPCSender => sender.serviceInstance == serviceInstance
       case _ => false
     }
+  }
 
   override def hashCode(): Int = serviceInstance.hashCode()
 
   override val toString: String =
-    if (StringUtils.isBlank(serviceInstance.getInstance))
+    if (StringUtils.isBlank(serviceInstance.getInstance)) {
       s"RPCSender(${serviceInstance.getApplicationName})"
-    else s"RPCSender($getApplicationName, ${serviceInstance.getInstance})"
+    } else s"RPCSender($getApplicationName, ${serviceInstance.getInstance})"
 
 }
 

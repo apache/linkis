@@ -127,12 +127,16 @@ private[rpc] class BaseRPCSender extends Sender with Logging {
 
   protected def getRPCSenderListenerBus = BaseRPCSender.rpcSenderListenerBus
 
-  override def equals(obj: scala.Any): Boolean = if (obj == null) false
-  else
-    obj match {
-      case sender: BaseRPCSender => name == sender.name
-      case _ => false
+  override def equals(obj: Any): Boolean = {
+    if (obj == null) {
+      false
+    } else {
+      obj match {
+        case sender: BaseRPCSender => name == sender.name
+        case _ => false
+      }
     }
+  }
 
   override def hashCode(): Int = if (name == null) 0 else name.hashCode
 

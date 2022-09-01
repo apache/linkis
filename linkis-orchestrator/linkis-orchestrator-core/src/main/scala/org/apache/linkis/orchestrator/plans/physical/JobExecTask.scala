@@ -39,7 +39,7 @@ class JobExecTask(parents: Array[ExecTask], children: Array[ExecTask])
 
   override def theSame(other: ExecTask): Boolean = if (super.equals(other)) true
   else if (other == null) false
-  else
+  else {
     other match {
       case jobTask: ExecTask =>
         jobTask.getParents.sameElements(parents) && jobTask.getChildren.sameElements(
@@ -47,12 +47,13 @@ class JobExecTask(parents: Array[ExecTask], children: Array[ExecTask])
         ) && jobTask.getTaskDesc == getTaskDesc
       case _ => false
     }
+  }
 
   override def initialize(physicalContext: PhysicalContext): Unit = {
     this.physicalContext = physicalContext
   }
 
-  override def verboseString: String = ???
+  override def verboseString: String = null
 
   override def getId: String = {
     if (null == id) synchronized {

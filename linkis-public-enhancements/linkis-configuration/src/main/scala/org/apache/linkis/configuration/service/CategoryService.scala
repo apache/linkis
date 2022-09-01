@@ -35,6 +35,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 import java.util
+import java.util.Locale
 
 import scala.collection.JavaConverters._
 
@@ -52,7 +53,7 @@ class CategoryService extends Logging {
 
   private val combinedLabelBuilder = new CombinedLabelBuilder
 
-  def setCategoryVo(vo: CategoryLabelVo, categoryLabel: CategoryLabel) = {
+  def setCategoryVo(vo: CategoryLabelVo, categoryLabel: CategoryLabel): Unit = {
     vo.setCategoryId(categoryLabel.getCategoryId)
     vo.setLabelId(categoryLabel.getId)
     vo.setCreateTime(categoryLabel.getCreateTime)
@@ -133,7 +134,7 @@ class CategoryService extends Logging {
   def createFirstCategory(categoryName: String, description: String): Unit = {
     val categoryList =
       getAllCategory().asScala.map(category => category.getCategoryName.toLowerCase())
-    if (categoryList.contains(categoryName.toLowerCase)) {
+    if (categoryList.contains(categoryName.toLowerCase(Locale.ROOT))) {
       throw new ConfigurationException(
         s"category name : ${categoryName} is exist, cannot be created(目录名：${categoryName}已存在，无法创建)"
       )
@@ -186,7 +187,11 @@ class CategoryService extends Logging {
     val childList = categoryList.getChildCategory.asScala
     if (
         childList != null && !childList
-          .filter(_.getCategoryName.toLowerCase.equals(engineType.toLowerCase + "-" + version))
+          .filter(
+            _.getCategoryName
+              .toLowerCase(Locale.ROOT)
+              .equals(engineType.toLowerCase(Locale.ROOT) + "-" + version)
+          )
           .isEmpty
     ) {
       throw new ConfigurationException(
@@ -204,13 +209,12 @@ class CategoryService extends Logging {
       configurationService.generateCombinedLabel(engineType, version, null, creator)
     val parsedLabel = LabelEntityParser.parseToConfigLabel(combinedLabel)
     Utils.tryCatch(labelMapper.insertLabel(parsedLabel)) {
-      case exception: DuplicateKeyException => {
+      case exception: DuplicateKeyException =>
         parsedLabel.setId(
           labelMapper
             .getLabelByKeyValue(parsedLabel.getLabelKey, parsedLabel.getStringValue)
             .getId
         )
-      }
       case exception: Exception => throw exception
     }
     if (parsedLabel.getId != null) {
@@ -220,9 +224,11 @@ class CategoryService extends Logging {
         s"success to create category: ${combinedLabel.getStringValue} --category id: ${categoryLabel.getCategoryId} " +
           s"--category level: 2"
       )
-      // 1.Here, the engine and the corresponding engine default configuration are associated and initialized, and the relevant configuration of the corresponding version of the engine needs to be entered in the database in advance
+      // 1.Here, the engine and the corresponding engine default configuration are associated and initialized,
+      // and the relevant configuration of the corresponding version of the engine needs to be entered in the database in advance
       // 2.Now all the default configurations obtained are the default configuration of the engine level, and there is no default configuration of the application level for the time being.
-      // If you need to consider, you need to change the creator of the label generated here to the corresponding application, and you need to modify the getFullTree to obtain the label of the defaultConfig, and also replace its creator with the creator of the application.
+      // If you need to consider, you need to change the creator of the label generated here to the corresponding application,
+      // and you need to modify the getFullTree to obtain the label of the defaultConfig, and also replace its creator with the creator of the application.
       val linkedEngineTypeLabel =
         configurationService.generateCombinedLabel(engineType, version, null, null)
       val linkedEngineTypeLabelInDb = labelMapper.getLabelByKeyValue(

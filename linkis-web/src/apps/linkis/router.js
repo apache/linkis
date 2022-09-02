@@ -138,36 +138,116 @@ export default [
         publicPage: true,
       },
     },
-    {
-      name: 'microService',
-      path: 'microService',
-      component: () =>
-        import('./module/microServiceManagement/index.vue'),
-      meta: {
-        title: 'microServiceManagement',
-        publicPage: true,
+      {
+        name: 'microService',
+        path: 'microService',
+        component: () =>
+          import('./module/microServiceManagement/index.vue'),
+        meta: {
+          title: 'microServiceManagement',
+          publicPage: true,
+        },
       },
-    },
-    {
-      name: 'datasource',
-      path: 'datasource',
-      component: () =>
-        import('./module/datasource/index.vue'),
-      meta: {
-        title: 'datasourceManagement',
-        publicPage: true,
+      {
+        name: 'datasource',
+        path: 'datasource',
+        component: () =>
+          import('./module/datasource/index.vue'),
+        meta: {
+          title: 'datasourceManagement',
+          publicPage: true,
+        },
       },
-    },
-    {
-      name: 'EnginePluginManagement',
-      path: 'EnginePluginManagement',
-      component: () =>
-        import('./module/EnginePluginManagement/index.vue'),
-      meta: {
-        title: 'EnginePluginManagement',
-        publicPage: true,
+      {
+        name: 'errorCode',
+        path: 'errorCode',
+        component: () =>
+          import('./module/errorCode/index.vue'),
+        meta: {
+          title: 'errorCode',
+          publicPage: true,
+        },
       },
-    }
+      {
+        name: 'gatewayAuthToken',
+        path: 'gatewayAuthToken',
+        component: () =>
+          import('./module/gatewayAuthToken/index.vue'),
+        meta: {
+          title: 'gatewayAuthToken',
+          publicPage: true,
+        },
+      },
+      {
+        name: 'rmExternalResourceProvider',
+        path: 'rmExternalResourceProvider',
+        component: () =>
+          import('./module/rmExternalResourceProvider/index.vue'),
+        meta: {
+          title: 'rmExternalResourceProvider',
+          publicPage: true,
+        },
+      },
+      {
+        name: 'udfManager',
+        path: 'udfManager',
+        component: () =>
+          import('./module/udfManager/index.vue'),
+        meta: {
+          title: 'udfManager',
+          publicPage: true,
+        },
+      },
+      {
+        name: 'udfTree',
+        path: 'udfTree',
+        component: () =>
+          import('./module/udfTree/index.vue'),
+        meta: {
+          title: 'udfTree',
+          publicPage: true,
+        },
+      },
+      {
+        name: 'datasourceAccess',
+        path: 'datasourceAccess',
+        component: () =>
+          import('./module/datasourceAccess/index.vue'),
+        meta: {
+          title: 'datasourceAccess',
+          publicPage: true,
+        },
+      },
+      {
+        name: 'datasourceEnv',
+        path: 'datasourceEnv',
+        component: () =>
+          import('./module/datasourceEnv/index.vue'),
+        meta: {
+          title: 'datasourceEnv',
+          publicPage: true,
+        },
+      },
+      {
+        name: 'datasourceType',
+        path: 'datasourceType',
+        component: () =>
+          import('./module/datasourceType/index.vue'),
+        meta: {
+          title: 'datasourceType',
+          publicPage: true,
+        }
+      },
+      {
+        name: 'EnginePluginManagement',
+        path: 'EnginePluginManagement',
+        component: () =>
+          import('./module/EnginePluginManagement/index.vue'),
+        meta: {
+          title: 'EnginePluginManagement',
+          publicPage: true,
+        },
+      }
     ],
   },
 ]

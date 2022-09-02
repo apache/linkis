@@ -37,11 +37,12 @@ class FlinkEngineConnResourceFactory extends AbstractEngineResourceFactory {
         String.valueOf(containers * LINKIS_FLINK_TASK_SLOTS.getValue(properties))
       )
       containers
-    } else
+    } else {
       math.round(
         FLINK_APP_DEFAULT_PARALLELISM.getValue(properties) * 1.0f / LINKIS_FLINK_TASK_SLOTS
           .getValue(properties)
       )
+    }
     val yarnMemory = ByteTimeUtils.byteStringAsBytes(
       LINKIS_FLINK_TASK_MANAGER_MEMORY.getValue(properties) * containers + "M"
     ) +

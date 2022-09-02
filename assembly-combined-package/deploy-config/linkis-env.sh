@@ -26,7 +26,7 @@
 ### deploy user
 deployUser=hadoop
 ##If you don't set it, a random password string will be generated during installation
-deployPwd=
+deployPwd=hadoop
 
 
 ##Linkis_SERVER_VERSION

@@ -156,6 +156,14 @@
                         "functionManagement": "函数管理",
                         "dataSourceManage": "数据源管理",
                         "userResourceManagement": "用户资源管理",
+                        "errorCode": "异常代码管理",
+                        "gatewayAuthToken": "网关验证Token管理",
+                        "rmExternalResourceProvider": "扩展资源管理",
+                        "udfManager": "UDF用户管理",
+                        "udfTree": "UDF分类",
+                        "datasourceAccess": "数据源访问权限",
+                        "datasourceEnv": "数据源环境",
+                        "datasourceType": "数据源分类",
                         "EnginePluginManagement": "引擎物料管理"
                     }
                 }
@@ -318,6 +326,10 @@
                 "cannotPublish": "不可发布",
                 "used": "可用",
                 "commentValue": "从版本 {text} 回滚"
+            },
+            "basedata": {
+              "add": "新增",
+              "remove": "删除"
             },
           "EnginePluginManagement": {
             "engineConnType": "引擎类型",

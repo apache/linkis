@@ -74,11 +74,12 @@ trait OnceExecutor extends ExecutableExecutor[ExecuteResponse] with LabelExecuto
   ): OnceExecutorExecutionContext = {
     val resource =
       engineCreationContext.getOptions.get(OnceExecutorContentUtils.ONCE_EXECUTOR_CONTENT_KEY)
-    if (StringUtils.isEmpty(resource))
+    if (StringUtils.isEmpty(resource)) {
       throw new OnceEngineConnErrorException(
         12560,
         OnceExecutorContentUtils.ONCE_EXECUTOR_CONTENT_KEY + " is not exist."
       )
+    }
     val bmlResource = OnceExecutorContentUtils.valueToResource(resource)
     val bmlClient = BmlClientFactory.createBmlClient(engineCreationContext.getUser)
     val contentStr = Utils.tryFinally {

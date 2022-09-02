@@ -26,7 +26,7 @@ import org.apache.linkis.engineconn.core.EngineConnObject
 import java.util
 import java.util.concurrent.TimeUnit
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 object LogHelper extends Logging {
 
@@ -59,8 +59,8 @@ object LogHelper extends Logging {
       }
       if (logs != null && logs.size > 0) {
         val sb: StringBuilder = new StringBuilder
-        import scala.collection.JavaConversions._
-        logs map (log => log + "\n") foreach sb.append
+        import scala.collection.JavaConverters._
+        logs.asScala map (log => log + "\n") foreach sb.append
         logListener.onLogUpdate(TaskLogUpdateEvent(null, sb.toString))
       }
     }
@@ -108,7 +108,7 @@ object LogHelper extends Logging {
             val logs = logCache.getRemain
             val sb = new StringBuilder
 
-            for (log <- logs) {
+            for (log <- logs.asScala) {
               sb.append(log).append("\n")
             }
             if (EngineConnObject.isReady) {

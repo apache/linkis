@@ -24,6 +24,7 @@ import org.apache.linkis.governance.common.paser.CodeType.CodeType
 import org.apache.commons.lang3.StringUtils
 
 import java.util
+import java.util.Locale
 
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
@@ -247,9 +248,9 @@ class SQLCodeParser extends SingleCodeParser with Logging {
     var code = cmd.trim
     if (!cmd.split("\\s+")(0).equalsIgnoreCase("select")) return false
     if (code.contains("limit")) code = code.substring(code.lastIndexOf("limit")).trim
-    else if (code.contains("LIMIT"))
-      code = code.substring(code.lastIndexOf("LIMIT")).trim.toLowerCase
-    else return true
+    else if (code.contains("LIMIT")) {
+      code = code.substring(code.lastIndexOf("LIMIT")).trim.toLowerCase(Locale.getDefault)
+    } else return true
     val hasLimit = code.matches("limit\\s+\\d+\\s*;?")
     if (hasLimit) {
       if (code.indexOf(";") > 0) code = code.substring(5, code.length - 1).trim
@@ -285,7 +286,7 @@ class JsonCodeParser extends SingleCodeParser {
     var status = 0
     var isBegin = false
     code.trim.toCharArray().foreach {
-      case '{' => {
+      case '{' =>
         if (status == 0) {
           if (isBegin && !statementBuffer.isEmpty) {
             codeBuffer.append(new String(statementBuffer.toArray))
@@ -296,11 +297,9 @@ class JsonCodeParser extends SingleCodeParser {
         }
         status -= 1
         statementBuffer.append('{')
-      }
-      case '}' => {
+      case '}' =>
         status += 1
         statementBuffer.append('}')
-      }
       case char: Char =>
         if (status == 0 && isBegin && !statementBuffer.isEmpty) {
           codeBuffer.append(new String(statementBuffer.toArray))
@@ -327,11 +326,13 @@ object CodeType extends Enumeration {
       CodeAndRunTypeUtils.getRunTypeAndCodeTypeRelationMap
     if (
         runTypeAndCodeTypeRelationMap.isEmpty || !runTypeAndCodeTypeRelationMap.contains(
-          codeType.toLowerCase
+          codeType.toLowerCase(Locale.getDefault)
         )
-    ) return Other
+    ) {
+      return Other
+    }
 
-    val runType = runTypeAndCodeTypeRelationMap(codeType.toLowerCase)
+    val runType = runTypeAndCodeTypeRelationMap(codeType.toLowerCase(Locale.getDefault))
     runType match {
       case CodeAndRunTypeUtils.RUN_TYPE_PYTHON => Python
       case CodeAndRunTypeUtils.RUN_TYPE_SQL => SQL

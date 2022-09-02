@@ -23,7 +23,7 @@ import org.json4s.{CustomSerializer, JArray, JObject}
 import org.json4s.jackson.JsonMethods.parse
 import org.json4s.jackson.Serialization.write
 
-//TODO is now only the simplest implementation, and there is a need to optimize it later.(TODO 现在只做最简单的实现，后续有需要再优化)
+// TODO is now only the simplest implementation, and there is a need to optimize it later.(TODO 现在只做最简单的实现，后续有需要再优化)
 
 object JavaCollectionSerializer
     extends CustomSerializer[java.util.List[_]](implicit formats =>

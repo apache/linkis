@@ -27,8 +27,9 @@ import org.apache.commons.lang3.StringUtils
 
 import java.lang.reflect.UndeclaredThrowableException
 import java.net.ConnectException
+import java.util.Locale
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 import com.netflix.client.ClientException
 import feign.RetryableException
@@ -66,8 +67,11 @@ object RPCUtils {
       parsedServiceId: String,
       tooManyDeal: List[String] => Option[String]
   ): Option[String] = {
-    val services = SpringCloudFeignConfigurationCache.getDiscoveryClient.getServices
-      .filter(_.toLowerCase.contains(parsedServiceId.toLowerCase))
+    val services = SpringCloudFeignConfigurationCache.getDiscoveryClient.getServices.asScala
+      .filter(
+        _.toLowerCase(Locale.getDefault)
+          .contains(parsedServiceId.toLowerCase(Locale.getDefault()))
+      )
       .toList
     if (services.length == 1) Some(services.head)
     else if (services.length > 1) tooManyDeal(services)

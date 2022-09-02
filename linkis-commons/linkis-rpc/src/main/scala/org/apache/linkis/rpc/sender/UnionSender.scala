@@ -51,8 +51,9 @@ object UnionSender {
   def getUnionSender(receiver: Receiver, recycler: Receiver): Sender = {
     val key = receiver.hashCode() + "_" + recycler.hashCode()
     if (!receiverStringToSenders.containsKey(key)) receiverStringToSenders synchronized {
-      if (!receiverStringToSenders.containsKey(key))
+      if (!receiverStringToSenders.containsKey(key)) {
         receiverStringToSenders.put(key, new UnionSender(receiver, recycler))
+      }
     }
     receiverStringToSenders.get(key)
   }

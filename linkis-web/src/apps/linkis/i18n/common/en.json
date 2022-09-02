@@ -152,7 +152,15 @@
             "udfFunctionTitle": "UDF Function",
             "udfFunctionManage": "UDF Management",
             "dataSourceManage": "DataSource Manage",
-            "userResourceManagement": "User Resource Management"
+            "userResourceManagement": "User Resource Management",
+            "errorCode": "Error Manage",
+            "gatewayAuthToken": "Gateway Auth Token Manage",
+            "rmExternalResourceProvider": "External Resource Provider Manage",
+            "udfManager": "UDF User Manage",
+            "udfTree": "UDF Tree",
+            "datasourceAccess": "Data source access permissions",
+            "datasourceEnv": "Datasource Environment",
+            "datasourceType": "Datasource Type"
           }
         }
       },
@@ -315,6 +323,10 @@
         "used": "Available",
         "commentValue": "Roll back from version {text}",
         "undefinedVersion": "Cannot find the version of DataSource"
+      },
+      "basedata": {
+        "add": "add",
+        "remove": "remove"
       }
     }
   }

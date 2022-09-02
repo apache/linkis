@@ -846,7 +846,7 @@ CREATE TABLE `linkis_ps_dm_datasource`
     `datasource_type_id`   int(11)                       NOT NULL,
     `create_identify`      varchar(255) COLLATE utf8_bin      DEFAULT NULL,
     `create_system`        varchar(255) COLLATE utf8_bin      DEFAULT NULL,
-    `parameter`            varchar(255) COLLATE utf8_bin NULL DEFAULT NULL,
+    `parameter`            varchar(1024) COLLATE utf8_bin NULL DEFAULT NULL,
     `create_time`          datetime                      NULL DEFAULT CURRENT_TIMESTAMP,
     `modify_time`          datetime                      NULL DEFAULT CURRENT_TIMESTAMP,
     `create_user`          varchar(255) COLLATE utf8_bin      DEFAULT NULL,
@@ -868,7 +868,7 @@ CREATE TABLE `linkis_ps_dm_datasource_env`
     `env_name`           varchar(32) COLLATE utf8_bin  NOT NULL,
     `env_desc`           varchar(255) COLLATE utf8_bin          DEFAULT NULL,
     `datasource_type_id` int(11)                       NOT NULL,
-    `parameter`          varchar(255) COLLATE utf8_bin          DEFAULT NULL,
+    `parameter`          varchar(1024) COLLATE utf8_bin          DEFAULT NULL,
     `create_time`        datetime                      NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `create_user`        varchar(255) COLLATE utf8_bin NULL     DEFAULT NULL,
     `modify_time`        datetime                      NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -917,7 +917,8 @@ CREATE TABLE `linkis_ps_dm_datasource_type_key`
     `data_source`         varchar(200) COLLATE utf8_bin NULL     DEFAULT NULL,
     `update_time`         datetime                      NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `create_time`         datetime                      NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `data_source_type_id_key` (`data_source_type_id`, `key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 -- ----------------------------
 -- Table structure for linkis_ps_dm_datasource_version

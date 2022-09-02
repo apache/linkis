@@ -33,12 +33,13 @@ class TableResultDeserializer extends ResultDeserializer[TableMetaData, TableRec
     val colByteLen = Dolphin.getString(bytes, 0, Dolphin.INT_LEN).toInt
     val colString = Dolphin.getString(bytes, Dolphin.INT_LEN, colByteLen)
     val colArray =
-      if (colString.endsWith(Dolphin.COL_SPLIT))
+      if (colString.endsWith(Dolphin.COL_SPLIT)) {
         colString.substring(0, colString.length - 1).split(Dolphin.COL_SPLIT)
-      else colString.split(Dolphin.COL_SPLIT)
+      } else colString.split(Dolphin.COL_SPLIT)
     var index = Dolphin.INT_LEN + colByteLen
-    if (colArray.length % 3 != 0)
+    if (colArray.length % 3 != 0) {
       throw new StorageErrorException(52001, "Parsing metadata failed(解析元数据失败)")
+    }
     val columns = new ArrayBuffer[Column]()
     for (i <- 0 until (colArray.length, 3)) {
       var len = colArray(i).toInt
@@ -66,9 +67,9 @@ class TableResultDeserializer extends ResultDeserializer[TableMetaData, TableRec
     val colByteLen = Dolphin.getString(bytes, 0, Dolphin.INT_LEN).toInt
     val colString = Dolphin.getString(bytes, Dolphin.INT_LEN, colByteLen)
     val colArray =
-      if (colString.endsWith(Dolphin.COL_SPLIT))
+      if (colString.endsWith(Dolphin.COL_SPLIT)) {
         colString.substring(0, colString.length - 1).split(Dolphin.COL_SPLIT)
-      else colString.split(Dolphin.COL_SPLIT)
+      } else colString.split(Dolphin.COL_SPLIT)
     var index = Dolphin.INT_LEN + colByteLen
     val data = colArray.indices.map { i =>
       val len = colArray(i).toInt

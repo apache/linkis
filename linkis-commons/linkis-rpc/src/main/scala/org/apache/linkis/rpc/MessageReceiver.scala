@@ -35,11 +35,10 @@ class MessageReceiver extends Receiver {
 
   override def receiveAndReply(message: Any, sender: Sender): Any = {
     message match {
-      case requestProtocol: RequestProtocol => {
+      case requestProtocol: RequestProtocol =>
         val methodExecuteWrapper =
           receiverMethodSearcher.getMethodExecuteWrappers(requestProtocol)
         messageExecutor.execute(requestProtocol, methodExecuteWrapper, sender)
-      }
       case _ =>
     }
   }

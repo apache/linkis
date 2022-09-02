@@ -91,11 +91,9 @@ class CacheableRPCInterceptor extends RPCInterceptor with Logging {
         guavaCache.invalidate(cacheKey)
       }
       true
-    } {
-      case exception: Exception => {
-        logger.warn(s"Failed to clean RPC cache, cache key:${cacheKey}", exception)
-        false
-      }
+    } { case exception: Exception =>
+      logger.warn(s"Failed to clean RPC cache, cache key:${cacheKey}", exception)
+      false
     }
   }
 

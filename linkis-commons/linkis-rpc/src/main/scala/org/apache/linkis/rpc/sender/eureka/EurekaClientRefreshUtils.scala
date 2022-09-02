@@ -38,20 +38,23 @@ class EurekaClientRefreshUtils {
   val serviceRefreshInterval =
     RPCConfiguration.BDP_RPC_EUREKA_SERVICE_REFRESH_INTERVAL.getValue.toLong
 
-  private[eureka] def refreshEurekaClient(): Unit = if (
-      System.currentTimeMillis - eurekaClientLastRefreshTime > serviceRefreshInterval
-  ) synchronized {
-    if (System.currentTimeMillis - eurekaClientLastRefreshTime < serviceRefreshInterval) return
-    eurekaClientLastRefreshTime = System.currentTimeMillis
-    eurekaClient match {
-      case disClient: NetflixDiscoveryClient =>
-        val refreshRegistry = classOf[NetflixDiscoveryClient].getDeclaredMethod("refreshRegistry")
-        refreshRegistry.setAccessible(true)
-        refreshRegistry.invoke(disClient)
-        Thread.sleep(100)
-      case _ =>
+  private[eureka] def refreshEurekaClient(): Unit =
+    if (System.currentTimeMillis - eurekaClientLastRefreshTime > serviceRefreshInterval) {
+      synchronized {
+        if (System.currentTimeMillis - eurekaClientLastRefreshTime < serviceRefreshInterval)
+          return
+        eurekaClientLastRefreshTime = System.currentTimeMillis
+        eurekaClient match {
+          case disClient: NetflixDiscoveryClient =>
+            val refreshRegistry =
+              classOf[NetflixDiscoveryClient].getDeclaredMethod("refreshRegistry")
+            refreshRegistry.setAccessible(true)
+            refreshRegistry.invoke(disClient)
+            Thread.sleep(100)
+          case _ =>
+        }
+      }
     }
-  }
 
   @PostConstruct
   def storeEurekaClientRefreshUtils(): Unit = {

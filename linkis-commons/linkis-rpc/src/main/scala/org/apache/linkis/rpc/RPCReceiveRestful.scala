@@ -171,8 +171,9 @@ private[rpc] class RPCReceiveRestful extends RPCReceiveRemote with Logging {
   @RequestMapping(path = Array("/rpc/replyInMills"), method = Array(RequestMethod.POST))
   override def receiveAndReplyInMills(@RequestBody message: Message): Message = catchIt {
     val duration = message.getData.get("duration")
-    if (duration == null || StringUtils.isEmpty(duration.toString))
+    if (duration == null || StringUtils.isEmpty(duration.toString)) {
       throw new DWCURIException(10002, "The timeout period is not set!(超时时间未设置！)")
+    }
     val timeout = Duration(duration.toString.toLong, TimeUnit.MILLISECONDS)
     receiveAndReply(message, _.receiveAndReply(_, timeout, _))
   }

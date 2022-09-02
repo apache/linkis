@@ -193,7 +193,7 @@ def java_watchdog_thread(sleep=10):
             print(e)
             sys.exit(1)
 watchdog_thread = threading.Thread(target=java_watchdog_thread)
-watchdog_thread.setDaemon(True)
+watchdog_thread.daemon = True
 watchdog_thread.start()
 
 while True :

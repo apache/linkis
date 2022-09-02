@@ -97,9 +97,9 @@ trait Compaction {
 class ScriptMetaData(var variables: Array[Variable]) extends MetaData {
   override def cloneMeta(): MetaData = new ScriptMetaData(variables)
 
-  def getMetaData = variables
+  def getMetaData: Array[Variable] = variables
 
-  def setMetaData(variables: Array[Variable]) = {
+  def setMetaData(variables: Array[Variable]): Unit = {
     this.variables = variables
   }
 
@@ -107,5 +107,5 @@ class ScriptMetaData(var variables: Array[Variable]) extends MetaData {
 
 class ScriptRecord(line: String) extends LineRecord(line)
 
-//definition  variable; specialConfiguration ;runConfiguration; startUpConfiguration;
+// definition  variable; specialConfiguration ;runConfiguration; startUpConfiguration;
 case class Variable(sortParent: String, sort: String, key: String, value: String)

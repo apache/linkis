@@ -28,21 +28,23 @@ abstract class CommonScriptParser extends Parser {
     line match {
       case variableReg(key, value) =>
         Variable(VariableParser.VARIABLE, null, key.trim, value.trim)
-      case _ => {
+      case _ =>
         val split = line.split("=")
-        if (split.length != 2)
+        if (split.length != 2) {
           throw new StorageErrorException(65000, "Invalid custom parameter(不合法的自定义参数)")
+        }
         val value = split(1).trim
         val subSplit = split(0).split(" ")
-        if (subSplit.filter(_ != "").size != 4)
+        if (subSplit.filter(_ != "").size != 4) {
           throw new StorageErrorException(65000, "Invalid custom parameter(不合法的自定义参数)")
-        if (!subSplit.filter(_ != "")(0).equals(prefixConf))
+        }
+        if (!subSplit.filter(_ != "")(0).equals(prefixConf)) {
           throw new StorageErrorException(65000, "Invalid custom parameter(不合法的自定义参数)")
+        }
         val sortParent = subSplit.filter(_ != "")(1).trim
         val sort = subSplit.filter(_ != "")(2).trim
         val key = subSplit.filter(_ != "")(3).trim
         Variable(sortParent, sort, key, value)
-      }
     }
   }
 

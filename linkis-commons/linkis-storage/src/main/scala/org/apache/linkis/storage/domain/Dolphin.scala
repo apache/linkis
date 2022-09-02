@@ -91,8 +91,9 @@ object Dolphin extends Logging {
   }
 
   def getType(content: String): String = {
-    if (content.length < MAGIC.length || content.substring(0, MAGIC.length) != MAGIC)
+    if (content.length < MAGIC.length || content.substring(0, MAGIC.length) != MAGIC) {
       throw new IOException(s"File header type must be dolphin,content:$content is not")
+    }
     content.substring(MAGIC.length, MAGIC.length + INT_LEN).toInt.toString
   }
 

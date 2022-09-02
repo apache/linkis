@@ -29,7 +29,7 @@ import org.apache.commons.math3.util.Pair
 import java.io.Closeable
 import java.util
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 class FileSplit(
     var fsReader: FsReader[_ <: MetaData, _ <: Record],
@@ -63,7 +63,7 @@ class FileSplit(
   }
 
   def addParams(key: String, value: String): Unit = {
-    this.params += key -> value
+    this.params.asScala += key -> value
   }
 
   def `while`[M](m: MetaData => M, r: Record => Unit): M = {
@@ -133,7 +133,7 @@ class FileSplit(
       "comment" -> column.comment,
       "dataType" -> column.dataType.typeName
     )
-  }
+  }.asJava
 
   // 如果不分页,则一直读,如果分页,则 count需要小于count
   def ifContinueRead: Boolean = !pageTrigger || count <= end

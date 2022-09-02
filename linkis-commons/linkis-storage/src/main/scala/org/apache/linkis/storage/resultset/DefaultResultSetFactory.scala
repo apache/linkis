@@ -28,6 +28,7 @@ import org.apache.linkis.storage.utils.{StorageConfiguration, StorageUtils}
 import org.apache.commons.lang3.StringUtils
 
 import java.util
+import java.util.Locale
 
 class DefaultResultSetFactory extends ResultSetFactory with Logging {
 
@@ -35,14 +36,15 @@ class DefaultResultSetFactory extends ResultSetFactory with Logging {
     StorageUtils.loadClasses(
       StorageConfiguration.STORAGE_RESULT_SET_CLASSES.getValue,
       StorageConfiguration.STORAGE_RESULT_SET_PACKAGE.getValue,
-      t => t.newInstance().resultSetType().toLowerCase
+      t => t.newInstance().resultSetType().toLowerCase(Locale.getDefault)
     )
 
   val resultTypes = ResultSetFactory.resultSetType.keys.toArray
 
   override def getResultSetByType(resultSetType: String): ResultSet[_ <: MetaData, _ <: Record] = {
-    if (!resultClasses.contains(resultSetType))
+    if (!resultClasses.contains(resultSetType)) {
       throw new StorageErrorException(50000, s"Unsupported result type(不支持的结果类型)：$resultSetType")
+    }
     resultClasses(resultSetType).newInstance()
   }
 
@@ -74,11 +76,12 @@ class DefaultResultSetFactory extends ResultSetFactory with Logging {
   override def getResultSetByPath(fsPath: FsPath, fs: Fs): ResultSet[_ <: MetaData, _ <: Record] = {
     val inputStream = fs.read(fsPath)
     val resultSetType = Dolphin.getType(inputStream)
-    if (StringUtils.isEmpty(resultSetType))
+    if (StringUtils.isEmpty(resultSetType)) {
       throw new StorageWarnException(
         51000,
         s"The file (${fsPath.getPath}) is empty(文件(${fsPath.getPath}) 为空)"
       )
+    }
     Utils.tryQuietly(inputStream.close())
     // Utils.tryQuietly(fs.close())
     getResultSetByType(resultSetType)
@@ -94,11 +97,12 @@ class DefaultResultSetFactory extends ResultSetFactory with Logging {
     fs.init(new util.HashMap[String, String]())
     val inputStream = fs.read(fsPath)
     val resultSetType = Dolphin.getType(inputStream)
-    if (StringUtils.isEmpty(resultSetType))
+    if (StringUtils.isEmpty(resultSetType)) {
       throw new StorageWarnException(
         51000,
         s"The file (${fsPath.getPath}) is empty(文件(${fsPath.getPath}) 为空)"
       )
+    }
     Utils.tryQuietly(inputStream.close())
     Utils.tryQuietly(fs.close())
     getResultSetByType(resultSetType)

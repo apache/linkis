@@ -37,7 +37,7 @@ import org.apache.linkis.scheduler.executer.ExecuteResponse
 
 import java.util
 
-import scala.collection.JavaConversions.mapAsScalaMap
+import scala.collection.JavaConverters._
 
 class PipelineEngineConnExecutor(val id: Int) extends ComputationExecutor with Logging {
 
@@ -60,7 +60,7 @@ class PipelineEngineConnExecutor(val id: Int) extends ComputationExecutor with L
     var succeedTasks = 1
     val newOptions = new util.HashMap[String, String]()
     newOptions.putAll(EngineConnObject.getEngineCreationContext.getOptions)
-    engineExecutorContext.getProperties.foreach { keyAndValue =>
+    engineExecutorContext.getProperties.asScala.foreach { keyAndValue =>
       newOptions.put(keyAndValue._1, keyAndValue._2.toString)
     }
     newOptions.foreach({ case (k, v) => logger.info(s"key is $k, value is $v") })

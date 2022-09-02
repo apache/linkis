@@ -59,7 +59,8 @@ class DefaultEngineConnListService
     engineConnMap.get(engineConnId)
   )
 
-  override def getEngineConns: util.List[EngineConn] = engineConnMap.values().asScala.toList.asJava
+  override def getEngineConns: util.List[EngineConn] =
+    new util.ArrayList[EngineConn](engineConnMap.values())
 
   override def addEngineConn(engineConn: EngineConn): Unit = {
     logger.info(s"add engineConn ${engineConn.getServiceInstance} to engineConnMap")

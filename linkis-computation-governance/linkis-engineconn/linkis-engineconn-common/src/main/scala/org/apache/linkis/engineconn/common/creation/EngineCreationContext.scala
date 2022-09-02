@@ -97,7 +97,7 @@ class DefaultEngineCreationContext extends EngineCreationContext {
 
   override def getArgs: Array[String] = args
 
-  override def toString =
+  override def toString: String =
     s"DefaultEngineCreationContext(user-$user, ticketID-$ticketId, emInstance-$emInstance)"
 
 }

@@ -76,9 +76,9 @@ class ParallelConsumerManager(maxParallelismUsers: Int, schedulerName: String)
     this.consumerListener = Some(consumerListener)
   }
 
-  override def getOrCreateExecutorService: ExecutorService = if (executorService != null)
+  override def getOrCreateExecutorService: ExecutorService = if (executorService != null) {
     executorService
-  else
+  } else {
     executorServiceLock.synchronized {
       if (executorService == null) {
         executorService = Utils.newCachedThreadPool(
@@ -89,14 +89,17 @@ class ParallelConsumerManager(maxParallelismUsers: Int, schedulerName: String)
       }
       executorService
     }
+  }
 
   override def getOrCreateConsumer(groupName: String): Consumer = {
     val consumer =
-      if (consumerGroupMap.contains(groupName)) consumerGroupMap(groupName)
-      else
+      if (consumerGroupMap.contains(groupName)) {
+        consumerGroupMap(groupName)
+      } else {
         CONSUMER_LOCK.synchronized {
-          if (consumerGroupMap.contains(groupName)) consumerGroupMap(groupName)
-          else
+          if (consumerGroupMap.contains(groupName)) {
+            consumerGroupMap(groupName)
+          } else {
             consumerGroupMap.getOrElseUpdate(
               groupName, {
                 val newConsumer = createConsumer(groupName)
@@ -108,7 +111,9 @@ class ParallelConsumerManager(maxParallelismUsers: Int, schedulerName: String)
                 newConsumer
               }
             )
+          }
         }
+      }
     consumer.setLastTime(System.currentTimeMillis())
     consumer
   }

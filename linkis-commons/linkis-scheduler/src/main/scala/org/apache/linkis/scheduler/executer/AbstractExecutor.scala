@@ -106,7 +106,7 @@ abstract class AbstractExecutor(id: Long) extends Executor with Logging {
 
   override def getExecutorInfo: ExecutorInfo = ExecutorInfo(id, _state)
 
-  def getLastActivityTime = lastActivityTime
+  def getLastActivityTime: Long = lastActivityTime
 
   def setLastActivityTime(lastActivityTime: Long): Unit = this.lastActivityTime = lastActivityTime
 

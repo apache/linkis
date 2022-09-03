@@ -64,7 +64,7 @@ class SecurityFilter extends Filter {
         return false
       }
       // Security certification support, solving verb tampering(安全认证支持，解决动词篡改)
-      request.getMethod.toUpperCase match {
+      request.getMethod.toUpperCase(Locale.getDefault) match {
         case "GET" | "POST" | "PUT" | "DELETE" | "HEAD" | "TRACE" | "CONNECT" | "OPTIONS" =>
         case _ =>
           filterResponse(validateFailed("Do not use HTTP verbs to tamper with!(不可使用HTTP动词篡改！)"))
@@ -121,8 +121,9 @@ class SecurityFilter extends Filter {
     val request = servletRequest.asInstanceOf[HttpServletRequest]
     implicit val response = servletResponse.asInstanceOf[HttpServletResponse]
     if (doFilter(request)) filterChain.doFilter(servletRequest, servletResponse)
-    if (SecurityFilter.isRequestIgnoreTimeout(request))
+    if (SecurityFilter.isRequestIgnoreTimeout(request)) {
       SecurityFilter.removeIgnoreTimeoutSignal(response)
+    }
   }
 
   protected def addAccessHeaders(response: HttpServletResponse) {

@@ -66,7 +66,7 @@ package object server {
   implicit def error(msg: String, t: Throwable): Message = Message.error(msg -> t)
 
   //  def tryCatch[T](tryOp: => T)(catchOp: Throwable => T): T = Utils.tryCatch(tryOp)(catchOp)
-//  def tryCatch(tryOp: => Message)(catchOp: Throwable => Message): Message = Utils.tryCatch(tryOp){
+//  def tryCatch(tryOp: => Message)(catchOp: Throwable => Message): Message = Utils.tryCatch(tryOp) {
 //    case nonLogin: NonLoginException => Message.noLogin(msg = nonLogin.getMessage)
 //    case t => catchOp(t)
 //  }
@@ -103,9 +103,9 @@ package object server {
         log.error(msg, t)
         val errorMsg = ExceptionUtils.getRootCauseMessage(t)
         val message =
-          if (StringUtils.isNotEmpty(errorMsg) && "operation failed(操作失败)" != msg)
+          if (StringUtils.isNotEmpty(errorMsg) && "operation failed(操作失败)" != msg) {
             error(msg + "！the reason(原因)：" + errorMsg)
-          else if (StringUtils.isNotEmpty(errorMsg)) error(errorMsg)
+          } else if (StringUtils.isNotEmpty(errorMsg)) error(errorMsg)
           else error(msg)
         message.data(EXCEPTION_MSG, ExceptionManager.unknownException(message.getMessage))
     }

@@ -188,6 +188,7 @@ This file is divided into 3 sections:
     ]]></customMessage>
   </check>
 
+  <!--
   <check customId="classforname" level="error" class="org.scalastyle.file.RegexChecker" enabled="true">
     <parameters><parameter name="regex">Class\.forName</parameter></parameters>
     <customMessage><![CDATA[
@@ -198,7 +199,7 @@ This file is divided into 3 sections:
       // scalastyle:on classforname
     ]]></customMessage>
   </check>
-
+-->
   <check customId="awaitresult" level="error" class="org.scalastyle.file.RegexChecker" enabled="true">
     <parameters><parameter name="regex">Await\.result</parameter></parameters>
     <customMessage><![CDATA[

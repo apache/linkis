@@ -34,7 +34,7 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v2
 
-      - name: Verify MySQL connection from host
+      - name: Verify linkis init sql
         run: |
           sudo apt-get install -y mysql-client
 

@@ -63,7 +63,7 @@ class JobInfoResult extends DWSResult with UserAction with Status {
 
   }
 
-  def getTask = task
+  def getTask: java.util.Map[_, _] = task
 
   def getRequestPersistTask: RequestPersistTask = requestPersistTask
 
@@ -81,12 +81,13 @@ class JobInfoResult extends DWSResult with UserAction with Status {
       resultSetList
     }
     else if (resultSetList != null) resultSetList
-    else if (isFailed)
+    else if (isFailed) {
       throw new UJESJobException(requestPersistTask.getErrCode, requestPersistTask.getErrDesc)
-    else
+    } else {
       throw new UJESJobException(
         s"job ${requestPersistTask.getTaskID} is still executing with state ${requestPersistTask.getStatus}."
       )
+    }
   }
 
   override def getJobStatus: String = requestPersistTask.getStatus

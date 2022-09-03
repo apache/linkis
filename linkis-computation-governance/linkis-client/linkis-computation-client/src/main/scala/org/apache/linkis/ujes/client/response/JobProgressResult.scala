@@ -36,14 +36,14 @@ class JobProgressResult extends UJESJobResult {
 
   private implicit val formats = DefaultFormats
 
-  def setProgress(progress: Float) = this.progress = progress
-  def getProgress = progress
+  def setProgress(progress: Float): Unit = this.progress = progress
+  def getProgress: Float = progress
 
-  def setProgressInfo(progressInfo: List[Map[String, AnyRef]]) = {
+  def setProgressInfo(progressInfo: List[Map[String, AnyRef]]): Unit = {
     this.progressInfo = progressInfo
     progressInfos = progressInfo.map(map => read[JobProgressInfo](write(map.toMap))).toArray
   }
 
-  def getProgressInfo = progressInfos
+  def getProgressInfo: Array[JobProgressInfo] = progressInfos
 
 }

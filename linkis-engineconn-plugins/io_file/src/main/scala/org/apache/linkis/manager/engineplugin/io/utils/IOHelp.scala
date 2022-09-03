@@ -38,11 +38,12 @@ object IOHelp {
    * @return
    */
   def read(fs: Fs, method: MethodEntity): String = {
-    if (method.params == null || method.params.isEmpty)
+    if (method.params == null || method.params.isEmpty) {
       throw new StorageErrorException(
         53002,
         "The read method parameter cannot be empty(read方法参数不能为空)"
       )
+    }
     val dest = MethodEntitySerializer.deserializerToJavaObject(
       method.params(0).asInstanceOf[String],
       classOf[FsPath]
@@ -82,8 +83,9 @@ object IOHelp {
    * @param method
    */
   def write(fs: Fs, method: MethodEntity): Unit = {
-    if (method.params == null || method.params.isEmpty)
+    if (method.params == null || method.params.isEmpty) {
       throw new StorageErrorException(53003, "Unsupported parameter call(不支持的参数调用)")
+    }
     val dest = MethodEntitySerializer.deserializerToJavaObject(
       method.params(0).asInstanceOf[String],
       classOf[FsPath]

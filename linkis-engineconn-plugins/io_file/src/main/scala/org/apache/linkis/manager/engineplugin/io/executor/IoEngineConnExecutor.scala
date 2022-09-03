@@ -84,7 +84,7 @@ class IoEngineConnExecutor(val id: Int, val outputLimit: Int = 10)
   }
 
   /*
-   * 定时清理空闲的FS
+   * Regularly clean up idle FS
    */
   private val cleanupThread = new Thread("IOEngineExecutor-Cleanup-Scanner") {
     setDaemon(true)
@@ -136,8 +136,9 @@ class IoEngineConnExecutor(val id: Int, val outputLimit: Int = 10)
         AliasOutputExecuteResponse(method.id.toString, IOHelp.read(fs, method))
       case "available" =>
         val fs = getUserFS(method)
-        if (method.params == null || method.params.length != 2)
+        if (method.params == null || method.params.length != 2) {
           throw new StorageErrorException(53003, "Unsupported parameter calls")
+        }
         val dest = MethodEntitySerializer.deserializerToJavaObject(
           method.params(0).asInstanceOf[String],
           classOf[FsPath]
@@ -157,8 +158,9 @@ class IoEngineConnExecutor(val id: Int, val outputLimit: Int = 10)
         SuccessExecuteResponse()
       case "renameTo" =>
         val fs = getUserFS(method)
-        if (method.params == null || method.params.length != 2)
+        if (method.params == null || method.params.length != 2) {
           throw new StorageErrorException(53003, "Unsupported parameter calls")
+        }
         fs.renameTo(
           MethodEntitySerializer
             .deserializerToJavaObject(method.params(0).asInstanceOf[String], classOf[FsPath]),
@@ -169,8 +171,9 @@ class IoEngineConnExecutor(val id: Int, val outputLimit: Int = 10)
         )
         SuccessExecuteResponse()
       case "list" =>
-        if (method.params == null || method.params.length != 1)
+        if (method.params == null || method.params.length != 1) {
           throw new StorageErrorException(53003, "Unsupported parameter calls")
+        }
         val fs = getUserFS(method)
         val dest = MethodEntitySerializer.deserializerToJavaObject(
           method.params(0).asInstanceOf[String],
@@ -183,8 +186,9 @@ class IoEngineConnExecutor(val id: Int, val outputLimit: Int = 10)
           )
         )
       case "listPathWithError" =>
-        if (method.params == null || method.params.length != 1)
+        if (method.params == null || method.params.length != 1) {
           throw new StorageErrorException(53003, "Unsupported parameter calls")
+        }
         val fs = getUserFS(method).asInstanceOf[FileSystem]
         val dest = MethodEntitySerializer.deserializerToJavaObject(
           method.params(0).asInstanceOf[String],
@@ -355,16 +359,18 @@ class IoEngineConnExecutor(val id: Int, val outputLimit: Int = 10)
     val realMethod = fs.getClass.getMethods
       .filter(_.getName == methodName)
       .find(_.getGenericParameterTypes.length == parameterSize)
-    if (realMethod.isEmpty)
+    if (realMethod.isEmpty) {
       throw new StorageErrorException(
         53003,
         s"not exists method $methodName in fs ${fs.getClass.getSimpleName}."
       )
-    if (parameterSize > 0)
+    }
+    if (parameterSize > 0) {
       method.params(0) = MethodEntitySerializer.deserializerToJavaObject(
         method.params(0).asInstanceOf[String],
         methodParamType
       )
+    }
     val res = MethodEntitySerializer.serializerJavaObject(
       ReflectionUtils.invoke(fs, realMethod.get, method.params)
     )

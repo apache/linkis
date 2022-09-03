@@ -25,7 +25,7 @@ import org.apache.linkis.storage.utils.StorageConfiguration
  */
 class FSInfo(val id: Long, val fs: Fs, var lastAccessTime: Long = System.currentTimeMillis()) {
 
-  def timeout = System
+  def timeout: Boolean = System
     .currentTimeMillis() - lastAccessTime > (StorageConfiguration.IO_FS_EXPIRE_TIME.getValue + 60 * 1000)
 
 }

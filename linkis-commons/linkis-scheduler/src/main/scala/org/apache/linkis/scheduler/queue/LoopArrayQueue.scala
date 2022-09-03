@@ -68,12 +68,13 @@ class LoopArrayQueue(var group: Group) extends ConsumeQueue with Logging {
     var event: SchedulerEvent = null
     eventQueue synchronized {
       val _max = max
-      if (index < realSize)
+      if (index < realSize) {
         throw new IllegalArgumentException(
           "The index " + index + " has already been deleted, now index must be better than " + realSize
         )
-      else if (index > _max)
+      } else if (index > _max) {
         throw new IllegalArgumentException("The index " + index + " must be less than " + _max)
+      }
       val _index = (flag + (index - realSize)) % maxCapacity
       event = eventQueue(_index).asInstanceOf[SchedulerEvent]
     }
@@ -86,9 +87,9 @@ class LoopArrayQueue(var group: Group) extends ConsumeQueue with Logging {
     this.group = group
   }
 
-  def toIndexedSeq: IndexedSeq[SchedulerEvent] = if (filledSize == 0)
+  def toIndexedSeq: IndexedSeq[SchedulerEvent] = if (filledSize == 0) {
     IndexedSeq.empty[SchedulerEvent]
-  else eventQueue synchronized { (min to max).map(x => get(x).get).filter(x => x != None) }
+  } else eventQueue synchronized { (min to max).map(x => get(x).get).filter(x => x != None) }
 
   def add(event: SchedulerEvent): Int = {
     eventQueue synchronized {

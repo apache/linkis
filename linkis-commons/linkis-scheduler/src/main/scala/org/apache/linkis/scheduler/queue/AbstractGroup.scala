@@ -25,14 +25,14 @@ abstract class AbstractGroup extends Group {
   private var maxRunningJobs: Int = _
   private var maxAskExecutorTimes: Long = 0L
 
-  def setMaxRunningJobs(maxRunningJobs: Int) = this.maxRunningJobs = maxRunningJobs
-  def getMaxRunningJobs = maxRunningJobs
+  def setMaxRunningJobs(maxRunningJobs: Int): Unit = this.maxRunningJobs = maxRunningJobs
+  def getMaxRunningJobs: Int = maxRunningJobs
 
-  def setMaxAskExecutorTimes(maxAskExecutorTimes: Long) = this.maxAskExecutorTimes =
+  def setMaxAskExecutorTimes(maxAskExecutorTimes: Long): Unit = this.maxAskExecutorTimes =
     maxAskExecutorTimes
 
-  def getMaxAskExecutorTimes = maxAskExecutorTimes
+  def getMaxAskExecutorTimes: Long = maxAskExecutorTimes
 
   override def getStatus: GroupStatus = _status
-  def setStatus(status: GroupStatus) = this._status = status
+  def setStatus(status: GroupStatus): Unit = this._status = status
 }

@@ -53,11 +53,12 @@ abstract class AbstractScheduler extends Scheduler {
       getSchedulerContext.getOrCreateConsumerManager.getOrCreateConsumer(group.getGroupName)
     val index = consumer.getConsumeQueue.offer(event)
     index.map(getEventId(_, group.getGroupName)).foreach(event.setId)
-    if (index.isEmpty)
+    if (index.isEmpty) {
       throw new SchedulerErrorException(
         12001,
         "The submission job failed and the queue is full!(提交作业失败，队列已满！)"
       )
+    }
   }
 
   override def get(event: SchedulerEvent): Option[SchedulerEvent] = get(event.getId)

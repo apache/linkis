@@ -24,7 +24,7 @@ import org.apache.commons.io.IOUtils
 import java.io._
 import java.util.zip.{ZipEntry, ZipInputStream, ZipOutputStream}
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 object ZipUtils {
 
@@ -46,25 +46,28 @@ object ZipUtils {
     var bis: BufferedInputStream = null
     var zos: ZipOutputStream = null
     val sourcePath = new FsPath(sourceFilePath)
-    if (!fs.exists(sourcePath))
+    if (!fs.exists(sourcePath)) {
       throw new IOException(
         "File directory to be compressed（待压缩的文件目录）：" + sourceFilePath + "does not exist（不存在）."
       )
+    }
     val zipFile = FsPath.getFsPath(zipFilePath, fileName)
-    if (fs.exists(zipFile))
+    if (fs.exists(zipFile)) {
       throw new IOException(
         zipFilePath + "The name exists under the directory（目录下存在名字为）:" + fileName + "Package file（打包文件）."
       )
+    }
     val sourceFiles = fs.list(sourcePath)
-    if (null == sourceFiles || sourceFiles.size() < 1)
+    if (null == sourceFiles || sourceFiles.size() < 1) {
       throw new IOException(
         "File directory to be compressed（待压缩的文件目录）：" + sourceFilePath + "There are no files in it, no need to compress.(里面不存在文件，无需压缩.)"
       )
+    }
     Utils.tryFinally {
       val fos = fs.write(zipFile, true)
       zos = new ZipOutputStream(new BufferedOutputStream(fos))
       val bufs = new Array[Byte](BUFFER_SIZE)
-      sourceFiles.foreach { f =>
+      sourceFiles.asScala.foreach { f =>
         // Create a ZIP entity and add it to the archive(创建ZIP实体，并添加进压缩包)
         val zipEntry = new ZipEntry(f.toFile.getName)
         zos.putNextEntry(zipEntry)
@@ -82,28 +85,30 @@ object ZipUtils {
     }(IOUtils.closeQuietly(zos))
   }
 
-  @Deprecated
+  @deprecated
   def zipDir(sourceFilePath: String, zipFilePath: String, fileName: String)(implicit
       fileService: FileService,
       user: String
   ): Unit = {
     var bis: BufferedInputStream = null
     var zos: ZipOutputStream = null
-    if (!fileService.exists(sourceFilePath, user))
+    if (!fileService.exists(sourceFilePath, user)) {
       throw new IOException(
         "File directory to be compressed（待压缩的文件目录）：" + sourceFilePath + "does not exist（不存在）."
       )
+    }
     val zipFile = new File(zipFilePath, fileName)
-    if (fileService.exists(zipFile.getAbsolutePath, user))
+    if (fileService.exists(zipFile.getAbsolutePath, user)) {
       throw new IOException(
         zipFilePath + "The name exists under the directory（目录下存在名字为）:" + fileName + "Package file（打包文件）."
       )
-    else fileService.createFile(zipFile.getAbsolutePath, user, true)
+    } else fileService.createFile(zipFile.getAbsolutePath, user, true)
     val sourceFiles = fileService.listFileNames(sourceFilePath, user)
-    if (null == sourceFiles || sourceFiles.length < 1)
+    if (null == sourceFiles || sourceFiles.length < 1) {
       throw new IOException(
         "File directory to be compressed(待压缩的文件目录)：" + sourceFilePath + "There are no files in it, no need to compress(里面不存在文件，无需压缩)."
       )
+    }
     Utils.tryFinally {
       val fos = fileService.append(zipFile.getAbsolutePath, user, true)
       zos = new ZipOutputStream(new BufferedOutputStream(fos))
@@ -142,20 +147,23 @@ object ZipUtils {
     val sourceFile = new File(sourceFilePath)
     var bis: BufferedInputStream = null
     var zos: ZipOutputStream = null
-    if (!sourceFile.exists())
+    if (!sourceFile.exists()) {
       throw new IOException(
         "File directory to be compressed(待压缩的文件目录)：" + sourceFilePath + "does not exist(不存在)."
       )
+    }
     val zipFile = new File(zipFilePath + "/" + fileName)
-    if (zipFile.exists())
+    if (zipFile.exists()) {
       throw new IOException(
         zipFilePath + "The name exists under the directory(目录下存在名字为):" + fileName + "Package file(打包文件)."
       )
+    }
     val sourceFiles = sourceFile.listFiles()
-    if (null == sourceFiles || sourceFiles.length < 1)
+    if (null == sourceFiles || sourceFiles.length < 1) {
       throw new IOException(
         "File directory to be compressed(待压缩的文件目录)：" + sourceFilePath + "There are no files in it, no need to compress(里面不存在文件，无需压缩)."
       )
+    }
     Utils.tryFinally {
       val fos = new FileOutputStream(zipFile)
       zos = new ZipOutputStream(new BufferedOutputStream(fos))
@@ -203,7 +211,7 @@ object ZipUtils {
     }
   }
 
-  @Deprecated
+  @deprecated
   def unzipDir(zipFilePath: String, unzipDir: String)(implicit
       fileService: FileService,
       user: String
@@ -211,8 +219,9 @@ object ZipUtils {
     val zipIn = new ZipInputStream(fileService.open(zipFilePath, user))
     Utils.tryFinally {
       val destDir = new FsPath(unzipDir)
-      if (!fileService.exists(unzipDir, user))
+      if (!fileService.exists(unzipDir, user)) {
         fileService.mkdirs(unzipDir, user, true)
+      }
       var entry = zipIn.getNextEntry
       while (entry != null) {
         val filePath = destDir.getPath + File.separator + entry.getName
@@ -227,7 +236,7 @@ object ZipUtils {
     }(IOUtils.closeQuietly(zipIn))
   }
 
-  @Deprecated
+  @deprecated
   private def extractPath(zipIn: ZipInputStream, destFilePath: String)(implicit
       fileService: FileService,
       user: String
@@ -253,10 +262,11 @@ object ZipUtils {
     val zipIn = new ZipInputStream(fs.read(new FsPath(zipFilePath)))
     Utils.tryFinally {
       val destDir = new FsPath(unzipDir)
-      if (!fs.exists(destDir))
+      if (!fs.exists(destDir)) {
         // TODO never goto here
         // fs.create("mkdirs " + unzipDir)
         fs.mkdir(new FsPath(unzipDir))
+      }
       var entry = zipIn.getNextEntry
       while (entry != null) {
         val filePath = destDir.getPath + File.separator + entry.getName
@@ -302,8 +312,9 @@ object ZipUtils {
     val zipIn = new ZipInputStream(new FileInputStream(zipFilePath))
     Utils.tryFinally {
       val destDir = new File(unzipDir)
-      if (!destDir.exists())
+      if (!destDir.exists()) {
         destDir.mkdir()
+      }
       var entry = zipIn.getNextEntry
       while (entry != null) {
         val filePath = destDir.getPath + File.separator + entry.getName

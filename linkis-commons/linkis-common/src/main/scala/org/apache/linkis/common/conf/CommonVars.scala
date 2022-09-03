@@ -17,18 +17,20 @@
 
 package org.apache.linkis.common.conf
 
-import scala.collection.JavaConversions._
+import java.util.Properties
+
+import scala.collection.JavaConverters._
 
 case class CommonVars[T](key: String, defaultValue: T, value: T, description: String = null) {
   val getValue: T = BDPConfiguration.getOption(this).getOrElse(defaultValue)
 
   def getValue(properties: java.util.Map[String, String]): T = {
-    if (properties == null || !properties.containsKey(key) || properties.get(key) == null)
+    if (properties == null || !properties.containsKey(key) || properties.get(key) == null) {
       getValue
-    else BDPConfiguration.formatValue(defaultValue, Option(properties.get(key))).get
+    } else BDPConfiguration.formatValue(defaultValue, Option(properties.get(key))).get
   }
 
-  def getValue(properties: Map[String, String]): T = getValue(mapAsJavaMap(properties))
+  def getValue(properties: Map[String, String]): T = getValue(properties.asJava)
   def acquireNew: T = BDPConfiguration.getOption(this).getOrElse(defaultValue)
 }
 
@@ -42,6 +44,6 @@ object CommonVars {
 
   implicit def apply[T](key: String): CommonVars[T] = apply(key, null.asInstanceOf[T])
 
-  def properties = BDPConfiguration.properties
+  def properties: Properties = BDPConfiguration.properties
 
 }

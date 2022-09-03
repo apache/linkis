@@ -25,6 +25,8 @@ import org.apache.linkis.computation.client.once.{LinkisManagerClient, OnceJob, 
 import org.apache.linkis.computation.client.once.action.CreateEngineConnAction
 import org.apache.linkis.computation.client.operator.OnceJobOperator
 
+import java.util.Locale
+
 import scala.concurrent.duration.Duration
 
 trait SimpleOnceJob extends OnceJob {
@@ -43,7 +45,7 @@ trait SimpleOnceJob extends OnceJob {
     isCompleted(lastEngineConnState)
   }
 
-  protected def isCompleted(status: String): Boolean = status.toLowerCase match {
+  protected def isCompleted(status: String): Boolean = status.toLowerCase(Locale.getDefault) match {
     case "success" | "failed" =>
       finalEngineConnState = status
       getJobListeners.foreach(_.onJobFinished(this))
@@ -60,7 +62,7 @@ trait SimpleOnceJob extends OnceJob {
   def getStatus: String = lastEngineConnState
 
   override def isSucceed: Boolean = wrapperEC {
-    finalEngineConnState.toLowerCase match {
+    finalEngineConnState.toLowerCase(Locale.getDefault) match {
       case "success" => true
       case _ => false
     }

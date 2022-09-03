@@ -32,7 +32,7 @@ import org.apache.commons.lang3.time.DateFormatUtils
 import java.util
 import java.util.concurrent.atomic.AtomicInteger
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 import org.eclipse.jetty.websocket.servlet._
 
@@ -59,28 +59,30 @@ private[server] class ControllerServer(serverListenerEventBus: ServerListenerEve
 
   def sendMessage(id: Int, message: Message): Unit = {
     val socket = socketList.get(id)
-    if (socket == null)
+    if (socket == null) {
       throw new BDPServerErrorException(
         11004,
         s"ServerSocket($id) does not exist!(ServerSocket($id)不存在！)"
       )
+    }
     socket.sendMessage(message)
   }
 
   def sendMessageToAll(message: Message): Unit =
-    socketList.values().foreach(_.sendMessage(message))
+    socketList.values().asScala.foreach(_.sendMessage(message))
 
   def sendMessageToUser(user: String, message: Message): Unit =
     socketList
       .values()
+      .asScala
       .filter(s => s != null && s.user.contains(user))
       .foreach(_.sendMessage(message))
 
   override def onClose(socket: ServerSocket, code: Int, message: String): Unit = {
     val date = DateFormatUtils.format(socket.createTime, DEFAULT_DATE_PATTERN.getValue)
-    if (!socketList.containsKey(socket.id))
+    if (!socketList.containsKey(socket.id)) {
       logger.warn(s"$socket created at $date has expired, ignore the close function!")
-    else {
+    } else {
       logger.info(s"$socket closed at $date with code $code and message: " + message)
       socketList synchronized {
         if (socketList.containsKey(socket.id)) socketList.remove(socket.id)
@@ -116,7 +118,7 @@ private[server] class ControllerServer(serverListenerEventBus: ServerListenerEve
             socketServerEvent.serverEvent.getWebsocketTag
           ) << socketServerEvent.serverEvent.getMethod
       )
-    } else
+    } else {
       Utils.tryCatch(serverListenerEventBus.post(socketServerEvent)) {
         case t: BDPServerErrorException =>
           Message
@@ -126,6 +128,7 @@ private[server] class ControllerServer(serverListenerEventBus: ServerListenerEve
               socketServerEvent.serverEvent.getWebsocketTag
             ) << socketServerEvent.serverEvent.getMethod
       }
+    }
   }
 
 }

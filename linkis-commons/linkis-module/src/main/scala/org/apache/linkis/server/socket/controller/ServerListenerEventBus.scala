@@ -41,9 +41,9 @@ class ServerListenerEventBus(
       event: SocketServerEvent
   ): Unit = {
     val serverEvent = event.serverEvent
-    if (StringUtils.isEmpty(serverEvent.getMethod))
+    if (StringUtils.isEmpty(serverEvent.getMethod)) {
       logger.info("ignore empty method with " + serverEvent.getData)
-    else if (serverEvent.getMethod.startsWith(listener.serviceName)) {
+    } else if (serverEvent.getMethod.startsWith(listener.serviceName)) {
       val response = listener.onEvent(serverEvent)
       if (response != null) {
         response.setMethod(serverEvent.getMethod)

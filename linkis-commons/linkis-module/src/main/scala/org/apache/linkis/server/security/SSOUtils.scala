@@ -91,8 +91,9 @@ object SSOUtils extends Logging {
   private[security] def getUserAndLoginTime(userTicketId: String): Option[(String, Long)] = {
     ServerConfiguration.getUsernameByTicket(userTicketId).map { userAndLoginTime =>
       {
-        if (userAndLoginTime.indexOf(",") < 0)
+        if (userAndLoginTime.indexOf(",") < 0) {
           throw new IllegalUserTicketException(s"Illegal user token information(非法的用户token信息).")
+        }
         val index = userAndLoginTime.lastIndexOf(",")
         (userAndLoginTime.substring(0, index), userAndLoginTime.substring(index + 1).toLong)
       }

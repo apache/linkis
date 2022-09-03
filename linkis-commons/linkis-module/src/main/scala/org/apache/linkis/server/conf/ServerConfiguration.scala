@@ -52,9 +52,9 @@ object ServerConfiguration extends Logging {
 
   private val ticketHeader = CommonVars("wds.linkis.ticket.header", "bfs_").getValue
 
-  def getUsernameByTicket(ticketId: String): Option[String] = if (StringUtils.isEmpty(ticketId))
+  def getUsernameByTicket(ticketId: String): Option[String] = if (StringUtils.isEmpty(ticketId)) {
     None
-  else {
+  } else {
     val userName = DESUtil.decrypt(ticketId, ServerConfiguration.cryptKey)
     if (userName.startsWith(ticketHeader)) Some(userName.substring(ticketHeader.length))
     else None

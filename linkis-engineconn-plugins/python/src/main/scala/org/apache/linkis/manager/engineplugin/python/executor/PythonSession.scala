@@ -152,7 +152,7 @@ class PythonSession extends Logging {
     )
   }
 
-  def lazyInitGageWay(): Unit = {
+  def lazyInitGateway(): Unit = {
     if (process == null) synchronized {
       if (process == null) {
         Utils.tryThrow(initGateway) { t =>

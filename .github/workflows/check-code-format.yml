@@ -20,7 +20,7 @@ name: Code Format Check
 on: [push, pull_request]
 
 jobs:
-  build:
+  spotless-check:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout source

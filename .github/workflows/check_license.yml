@@ -15,12 +15,12 @@
 # specific language governing permissions and limitations
 # under the License.
 
-name: License check
+name: License Check
 
 on: [push, pull_request]
 
 jobs:
-  build:
+  apache-rat-check:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout source

@@ -21,7 +21,7 @@ name: Dead Link Check
 on: [push, pull_request]
 
 jobs:
-  CheckDeadLinks:
+  dead-links-check:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     if: (github.repository == 'apache/incubator-linkis')

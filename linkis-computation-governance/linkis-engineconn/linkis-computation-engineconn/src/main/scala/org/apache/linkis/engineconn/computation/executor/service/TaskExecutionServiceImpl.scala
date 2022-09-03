@@ -360,16 +360,14 @@ class TaskExecutionServiceImpl
                   Utils.tryCatch {
                     logger.info(s"Start to run task ${task.getTaskId}")
                     executeTask(task, executor)
-                  } {
-                    case t: Throwable => {
-                      errCount += 1
-                      logger.error(s"Execute task ${task.getTaskId} failed  :", t)
-                      if (errCount > ERR_COUNT_MAX) {
-                        logger.error(
-                          s"Executor run failed for ${errCount} times over ERROR_COUNT_MAX : ${ERR_COUNT_MAX}, will shutdown."
-                        )
-                        executor.transition(NodeStatus.ShuttingDown)
-                      }
+                  } { case t: Throwable =>
+                    errCount += 1
+                    logger.error(s"Execute task ${task.getTaskId} failed  :", t)
+                    if (errCount > ERR_COUNT_MAX) {
+                      logger.error(
+                        s"Executor run failed for ${errCount} times over ERROR_COUNT_MAX : ${ERR_COUNT_MAX}, will shutdown."
+                      )
+                      executor.transition(NodeStatus.ShuttingDown)
                     }
                   }
                 }
@@ -425,7 +423,7 @@ class TaskExecutionServiceImpl
             val progressResponse = taskProgress(task.getTaskId)
             val resourceResponse: ResponseTaskYarnResource =
               taskYarnResource(task.getTaskId) match {
-                case responseTaskYarnResource: ResponseTaskYarnResource => {
+                case responseTaskYarnResource: ResponseTaskYarnResource =>
                   if (
                       responseTaskYarnResource.resourceMap != null && !responseTaskYarnResource.resourceMap.isEmpty
                   ) {
@@ -433,7 +431,6 @@ class TaskExecutionServiceImpl
                   } else {
                     null
                   }
-                }
                 case _ =>
                   null
               }
@@ -534,9 +531,9 @@ class TaskExecutionServiceImpl
     }
   }
 
-  /*override def resumeTask(taskID: String): Unit = {
+  /* override def resumeTask(taskID: String): Unit = {
     // todo
-  }*/
+  } */
 
   @Receiver
   override def dealRequestTaskStatus(requestTaskStatus: RequestTaskStatus): ResponseTaskStatus = {

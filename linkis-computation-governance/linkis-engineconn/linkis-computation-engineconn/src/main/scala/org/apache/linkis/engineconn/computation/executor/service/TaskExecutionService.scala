@@ -33,9 +33,9 @@ trait TaskExecutionService {
 
   def killTask(taskID: String): Unit
 
-  /*def pauseTask(taskID: String): Unit
+  /* def pauseTask(taskID: String): Unit
 
-  def resumeTask(taskID: String): Unit*/
+  def resumeTask(taskID: String): Unit */
 
   def dealRequestTaskStatus(requestTaskStatus: RequestTaskStatus): ResponseTaskStatus
 

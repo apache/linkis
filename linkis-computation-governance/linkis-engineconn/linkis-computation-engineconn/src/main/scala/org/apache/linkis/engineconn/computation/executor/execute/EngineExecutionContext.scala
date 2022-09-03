@@ -207,7 +207,7 @@ class EngineExecutionContext(executor: ComputationExecutor, executorUser: String
 
   def getExecutor: Executor = executor
 
-  def getEnableResultsetMetaWithTableName = enableResultsetMetaWithTableName
+  def getEnableResultsetMetaWithTableName: Boolean = enableResultsetMetaWithTableName
 
   def setEnableResultsetMetaWithTableName(withTableName: Boolean): Unit =
     this.enableResultsetMetaWithTableName = withTableName

@@ -29,8 +29,9 @@ import org.springframework.cloud.client.{ServiceInstance => SpringCloudServiceIn
 import org.springframework.cloud.netflix.eureka.EurekaDiscoveryClient.EurekaServiceInstance
 
 import java.util
+import java.util.Locale
 
-import scala.collection.JavaConversions
+import scala.collection.JavaConverters
 import scala.collection.JavaConverters._
 
 /**
@@ -49,8 +50,8 @@ class ECTaskEntranceInfoAccess extends ConnectionInfoAccess with Logging {
     val ret: util.List[ECTaskEntranceConnection] = new util.ArrayList[ECTaskEntranceConnection]
 
     request match {
-      case eCTaskEntranceInfoAccessRequest: ECTaskEntranceInfoAccessRequest => {
-        //        val instances = Sender.getInstances(GovernanceCommonConf.ENTRANCE_SPRING_NAME.getValue) //use discoveryClient
+      case eCTaskEntranceInfoAccessRequest: ECTaskEntranceInfoAccessRequest =>
+        // val instances = Sender.getInstances(GovernanceCommonConf.ENTRANCE_SPRING_NAME.getValue) //use discoveryClient
         val instanceMap = new util.HashMap[String, ServiceInstance]
         Utils.tryCatch(discoveryClient.getServices.asScala.map(s => {
           discoveryClient.getInstances(s).asScala.map { s1 =>
@@ -82,7 +83,7 @@ class ECTaskEntranceInfoAccess extends ConnectionInfoAccess with Logging {
             logger.warn("wrapper should not be null")
           } else {
             wrapper match {
-              case ecWrapper: ECTaskEntranceConnectionWrapper => {
+              case ecWrapper: ECTaskEntranceConnectionWrapper =>
                 val engineConnTask = ecWrapper.getEngineConnTask
                 val instance = engineConnTask.getCallbackServiceInstance
                 val eCTaskEntranceConnection =
@@ -91,7 +92,6 @@ class ECTaskEntranceInfoAccess extends ConnectionInfoAccess with Logging {
                   eCTaskEntranceConnection.updatePrevAliveTimeStamp(currentTime)
                 }
                 ret.add(eCTaskEntranceConnection)
-              }
               case _ =>
                 logger.warn(
                   "invalid data-type: " + wrapper.getClass.getCanonicalName + " for data in ECTaskEntranceInfoAccessRequest"
@@ -99,14 +99,13 @@ class ECTaskEntranceInfoAccess extends ConnectionInfoAccess with Logging {
             }
           }
         }
-      }
       case _ =>
         throw new EngineConnException(
           ComputationErrorCode.INVALID_DATA_TYPE_ERROR_CODE,
           "invalid data-type: " + request.getClass.getCanonicalName
         )
     }
-    JavaConversions.asScalaIterator(ret.iterator()).toList
+    JavaConverters.asScalaIteratorConverter(ret.iterator()).asScala.toList
   }
 
   private def getDWCServiceInstance(serviceInstance: SpringCloudServiceInstance): ServiceInstance =
@@ -114,11 +113,18 @@ class ECTaskEntranceInfoAccess extends ConnectionInfoAccess with Logging {
       case instance: EurekaServiceInstance =>
         val applicationName = instance.getInstanceInfo.getAppName
         val instanceId = instance.getInstanceInfo.getInstanceId
-        ServiceInstance(applicationName.toLowerCase, getInstance(applicationName, instanceId))
+        ServiceInstance(
+          applicationName.toLowerCase(Locale.getDefault),
+          getInstance(applicationName, instanceId)
+        )
     }
 
   private def getInstance(applicationName: String, instanceId: String): String =
-    if (instanceId.toLowerCase.indexOf(applicationName.toLowerCase) > 0) {
+    if (
+        instanceId
+          .toLowerCase(Locale.getDefault)
+          .indexOf(applicationName.toLowerCase(Locale.getDefault)) > 0
+    ) {
       val instanceInfos = instanceId.split(":")
       instanceInfos(0) + ":" + instanceInfos(2)
     } else instanceId

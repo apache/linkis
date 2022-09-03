@@ -71,11 +71,12 @@ class ComputationExecutorManagerEngineConnExecution extends EngineConnExecution 
         shouldSet = ComputationEngineConnExecution.getSupportedEngineConnModes.contains(mode)
       case _ =>
     }
-    if (shouldSet)
+    if (shouldSet) {
       DataWorkCloudApplication.setProperty(
         EngineConnExecutorConfiguration.EXECUTOR_MANAGER_CLASS.key,
         ComputationExecutorConf.DEFAULT_COMPUTATION_EXECUTORMANAGER_CLAZZ.getValue
       )
+    }
   }
 
   /**

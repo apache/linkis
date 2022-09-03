@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 
-name: publish-docker
+name: Publish Docker
 on: 
   push:
     branches:

@@ -15,7 +15,7 @@
 # specific language governing permissions and limitations
 # under the License.
 
-name: third-party dependencies check
+name: Third-party Dependencies Check
 
 on: [push, pull_request]
 

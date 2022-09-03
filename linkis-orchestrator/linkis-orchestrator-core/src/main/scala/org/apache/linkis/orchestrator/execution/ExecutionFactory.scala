@@ -50,11 +50,11 @@ object ExecutionFactory extends Logging {
           if (
               StringUtils
                 .isNotBlank(OrchestratorConfiguration.ORCHESTRATOR_EXECUTION_FACTORY.getValue)
-          )
+          ) {
             ClassUtils.getClassInstance(
               OrchestratorConfiguration.ORCHESTRATOR_EXECUTION_FACTORY.getValue
             )
-          else {
+          } else {
             throw new FatalException(
               OrchestratorErrorCodeSummary.EXECUTION_FATAL_CODE,
               s"Execution Factory class is null,please set ${OrchestratorConfiguration.ORCHESTRATOR_EXECUTION_FACTORY.key} "

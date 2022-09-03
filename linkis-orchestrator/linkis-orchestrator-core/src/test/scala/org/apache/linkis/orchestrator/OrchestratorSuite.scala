@@ -38,6 +38,7 @@ object OrchestratorSuite extends App {
   }
 
   val orchestration = orchestratorSession.orchestrate(jobReq)
+  // scalastyle:off println
   println(orchestration.explain(true))
   orchestration.collectAndPrint()
   orchestratorSession.close()

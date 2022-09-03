@@ -58,9 +58,9 @@ object Orchestrator extends Logging {
     if (orchestrator == null) synchronized {
       if (orchestrator == null) {
         val orchestratorBuilder =
-          if (StringUtils.isNotBlank(ORCHESTRATOR_BUILDER_CLASS.getValue))
+          if (StringUtils.isNotBlank(ORCHESTRATOR_BUILDER_CLASS.getValue)) {
             ClassUtils.getClassInstance(ORCHESTRATOR_BUILDER_CLASS.getValue)
-          else () => new OrchestratorImpl
+          } else () => new OrchestratorImpl
         logger.info(
           "Use " + orchestratorBuilder.getClass.getName + " to instance a new orchestrator."
         )

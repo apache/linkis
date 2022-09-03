@@ -31,20 +31,20 @@ abstract class AbstractJob extends Job {
 
   private var executeUser: String = _
 
-  def getParams = params
+  def getParams: util.Map[String, Any] = params
 
-  def setParams(params: util.Map[String, Any]) = this.params = params
+  def setParams(params: util.Map[String, Any]): Unit = this.params = params
 
   def getExecuteUser: String = executeUser
 
-  def setExecuteUser(executeUser: String) = this.executeUser = executeUser
+  def setExecuteUser(executeUser: String): Unit = this.executeUser = executeUser
 
   def getLabels: util.List[Label[_]] = labels
 
-  def setLabels(labels: util.List[Label[_]]) = this.labels = labels
+  def setLabels(labels: util.List[Label[_]]): Unit = this.labels = labels
 
   def getPriority: Int = priority
 
-  def setPriority(priority: Int) = this.priority = priority
+  def setPriority(priority: Int): Unit = this.priority = priority
 
 }

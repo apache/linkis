@@ -30,9 +30,9 @@ abstract class AbstractTask extends Task {
 
   override def isResolved: Boolean = _isResolved
 
-  override def simpleString: String = ???
+  override def simpleString: String = null
 
-  override def verboseString: String = ???
+  override def verboseString: String = null
 
   // override def theSame(other: Task): Boolean = ???
 

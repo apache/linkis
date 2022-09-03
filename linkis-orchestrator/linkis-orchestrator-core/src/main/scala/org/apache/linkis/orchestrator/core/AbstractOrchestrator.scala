@@ -56,10 +56,12 @@ abstract class AbstractOrchestrator extends Orchestrator {
 
   override def createOrchestratorSessionBuilder(): OrchestratorSessionBuilder = {
     val builder = newOrchestratorSessionBuilder().setOrchestrator(this)
-    if (getOrchestratorContext.getGlobalExtensions != null)
+    if (getOrchestratorContext.getGlobalExtensions != null) {
       getOrchestratorContext.getGlobalExtensions.foreach(builder.withExtensions)
-    if (getOrchestratorContext.getGlobalConfigs != null)
+    }
+    if (getOrchestratorContext.getGlobalConfigs != null) {
       getOrchestratorContext.getGlobalConfigs.foreach { case (k, v) => builder.config(k, v) }
+    }
     builder
   }
 

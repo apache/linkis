@@ -37,12 +37,13 @@ object Origin {
     override def getPosition: Int = position
 
     override def equals(obj: Any): Boolean = if (super.equals(obj)) true
-    else
+    else {
       obj match {
         case o: Origin =>
           o.getASTOrchestration == getASTOrchestration && position == o.getPosition
         case _ => false
       }
+    }
 
   }
 

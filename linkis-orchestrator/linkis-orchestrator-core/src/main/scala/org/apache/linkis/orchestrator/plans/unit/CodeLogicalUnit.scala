@@ -45,13 +45,13 @@ class CodeLogicalUnit(
 
   def getLabel: CodeLanguageLabel = codeLogicalLabel
 
-  def getSeparator = separator
+  def getSeparator: String = separator
 
   def parseCodes(op: String => String): CodeLogicalUnit = {
     new CodeLogicalUnit(codes.asScala.map(op).asJava, codeLogicalLabel, separator)
   }
 
-  def getCodes = codes
+  def getCodes: java.util.List[String] = codes
 
 }
 

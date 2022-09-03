@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 
-name: Build
+name: Build Backend
 
 on: [push, pull_request]
 
@@ -23,13 +23,8 @@ env:
   MAVEN_OPTS: -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.http.retryHandler.class=standard -Dmaven.wagon.http.retryHandler.count=3 -Dmaven.wagon.httpconnectionManager.ttlSeconds=120
 
 jobs:
-  build:
+  build-backend:
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [14.17.3]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
     - name: Checkout
@@ -39,10 +34,7 @@ jobs:
       with:
         distribution: 'adopt'
         java-version: 8
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v2
-      with:
-        node-version: ${{ matrix.node-version }}
+
     - name: Build backend by maven
       run: |
           ./mvnw -N install
@@ -51,8 +43,3 @@ jobs:
       uses: codecov/codecov-action@v3.0.0
 #      with:
 #        token: ${{ secrets.CODECOV_TOKEN }}
-    - name: Build frontend by node.js
-      run: |
-          cd linkis-web
-          npm install
-          npm run build

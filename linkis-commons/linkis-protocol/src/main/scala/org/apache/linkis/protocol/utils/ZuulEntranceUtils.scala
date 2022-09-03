@@ -60,7 +60,7 @@ object ZuulEntranceUtils {
     }
   }
 
-  @Deprecated
+  @deprecated
   def generateExecID(
       shortExecID: String,
       executeApplicationName: String,
@@ -87,7 +87,7 @@ object ZuulEntranceUtils {
    *   {dd}{dd}${executeApplicationName}${instance}${shortExecID}
    * @return
    */
-  @Deprecated
+  @deprecated
   def generateExecID(
       shortExecID: String,
       executeApplicationName: String,
@@ -102,13 +102,6 @@ object ZuulEntranceUtils {
       return creatorLength + executeLength + instanceLength + creator + executeApplicationName + instance + shortExecID
     }
     executeLength + instanceLength + executeApplicationName + instance + shortExecID
-  }
-
-  def main(args: Array[String]): Unit = {
-    val str =
-      generateExecID("spark_test_01", "linkis-cg-entrance", Array[String]("127.0.0.1:8080"))
-    val array = parseServiceInstanceByExecID(str)
-    println(array(3))
   }
 
   def parseServiceInstanceByExecID(longExecID: String): Array[ServiceInstance] = {

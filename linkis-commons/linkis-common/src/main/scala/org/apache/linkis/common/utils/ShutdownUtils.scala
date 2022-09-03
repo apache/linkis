@@ -79,7 +79,7 @@ class DefaultShutdownRunner(override val order: Int, runnable: Runnable) extends
     ShutdownUtils synchronized ShutdownUtils.notify()
   }
 
-  def isCompleted = completed
+  def isCompleted: Boolean = completed
 }
 
 class FunctionShutdownRunner(override val order: Int, hook: => Unit) extends ShutdownRunner {

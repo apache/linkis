@@ -83,8 +83,7 @@ class HiveEngineConnFactory extends ComputationSingleExecutorEngineConnFactory w
         )
     )
     options.asScala.foreach { case (k, v) => logger.info(s"key is $k, value is $v") }
-    options
-      .asScala
+    options.asScala
       .filter { case (k, v) =>
         k.startsWith("hive.") || k.startsWith("mapreduce.") || k.startsWith("mapred.reduce.") || k
           .startsWith("wds.linkis.")

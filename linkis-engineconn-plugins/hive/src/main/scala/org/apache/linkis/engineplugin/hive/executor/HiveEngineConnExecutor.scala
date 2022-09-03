@@ -304,8 +304,13 @@ class HiveEngineConnExecutor(
         val arr: Array[String] = s.split("\t")
         val arrAny: ArrayBuffer[Any] = new ArrayBuffer[Any]()
         if (arr.length > colLength) {
-          logger.error(s"""There is a \t tab in the result of hive code query, hive cannot cut it, please use spark to execute""")
-          throw new ErrorException(60078, """There is a \t tab in the result of your query, hive cannot cut it, please use spark to execute""")
+          logger.error(
+            s"""There is a \t tab in the result of hive code query, hive cannot cut it, please use spark to execute"""
+          )
+          throw new ErrorException(
+            60078,
+            """There is a \t tab in the result of your query, hive cannot cut it, please use spark to execute"""
+          )
         }
         if (arr.length == colLength) arr foreach arrAny.asJava.add
         else if (arr.length == 0) for (i <- 1 to colLength) arrAny.asJava add ""
@@ -352,8 +357,7 @@ class HiveEngineConnExecutor(
       }
     }
 
-    val columns = results
-      .asScala
+    val columns = results.asScala
       .map(result =>
         Column(result.getName, DataType.toDataType(result.getType.toLowerCase()), result.getComment)
       )
@@ -367,8 +371,8 @@ class HiveEngineConnExecutor(
   }
 
   /**
-   * Before the job is completed, all the remaining contents
-   * of the singleSqlProgressMap should be changed to success
+   * Before the job is completed, all the remaining contents of the singleSqlProgressMap should be
+   * changed to success
    */
   private def onComplete(): Unit = {}
 

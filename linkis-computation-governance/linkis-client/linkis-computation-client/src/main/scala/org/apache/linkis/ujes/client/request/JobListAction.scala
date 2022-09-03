@@ -97,8 +97,9 @@ object JobListAction {
       if (pageNow > 0) jobListAction.setParameter("pageNow", pageNow)
       if (pageSize > 0) jobListAction.setParameter("pageSize", pageSize)
       if (taskID > 0) jobListAction.setParameter("taskID", taskID)
-      if (StringUtils.isNotBlank(executeApplicationName))
+      if (StringUtils.isNotBlank(executeApplicationName)) {
         jobListAction.setParameter("executeApplicationName", executeApplicationName)
+      }
       jobListAction
     }
 

@@ -189,8 +189,9 @@ object LinkisJobBuilder {
   def getDefaultServerUrl: String = {
     if (StringUtils.isEmpty(serverUrl)) {
       serverUrl = Configuration.getGateWayURL()
-      if (StringUtils.isEmpty(serverUrl))
+      if (StringUtils.isEmpty(serverUrl)) {
         throw new UJESClientBuilderException("serverUrl must be set!")
+      }
     }
     serverUrl
   }

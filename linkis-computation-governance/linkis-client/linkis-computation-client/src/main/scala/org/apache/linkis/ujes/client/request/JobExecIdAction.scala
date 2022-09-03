@@ -55,8 +55,9 @@ object JobExecIdAction {
       val jobStatusAction = new JobExecIdAction
       if (execId == null) throw new UJESClientBuilderException("execId is needed!")
       if (user == null) throw new UJESClientBuilderException("user is needed!")
-      if (jobServiceType == null)
+      if (jobServiceType == null) {
         throw new UJESClientBuilderException("jobServiceType is needed!")
+      }
       jobStatusAction.execId = execId
       jobStatusAction.setUser(user)
       jobStatusAction.jobServiceType = jobServiceType

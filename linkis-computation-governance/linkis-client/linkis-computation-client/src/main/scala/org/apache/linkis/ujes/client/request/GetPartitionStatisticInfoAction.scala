@@ -59,11 +59,13 @@ object GetPartitionStatisticInfoAction {
 
     def builder(): GetPartitionStatisticInfoAction = {
       if (StringUtils.isBlank(user)) throw new UJESClientBuilderException("user is needed!")
-      if (StringUtils.isBlank(database))
+      if (StringUtils.isBlank(database)) {
         throw new UJESClientBuilderException("database is needed!")
+      }
       if (StringUtils.isBlank(tableName)) throw new UJESClientBuilderException("table is needed!")
-      if (StringUtils.isBlank(partitionPath))
+      if (StringUtils.isBlank(partitionPath)) {
         throw new UJESClientBuilderException("partitionPath is needed!")
+      }
       val getPartitionStatisticInfoAction = new GetPartitionStatisticInfoAction
       getPartitionStatisticInfoAction.setUser(user)
       getPartitionStatisticInfoAction.setParameter("database", database)

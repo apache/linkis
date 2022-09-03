@@ -71,8 +71,9 @@ object GetTableStatisticInfoAction {
 
     def builder(): GetTableStatisticInfoAction = {
       if (StringUtils.isBlank(user)) throw new UJESClientBuilderException("user is needed!")
-      if (StringUtils.isBlank(database))
+      if (StringUtils.isBlank(database)) {
         throw new UJESClientBuilderException("database is needed!")
+      }
       if (StringUtils.isBlank(tableName)) throw new UJESClientBuilderException("table is needed!")
       val getTableStatisticInfoAction = new GetTableStatisticInfoAction
       getTableStatisticInfoAction.setUser(user)

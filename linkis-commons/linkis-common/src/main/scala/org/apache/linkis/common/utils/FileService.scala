@@ -19,7 +19,7 @@ package org.apache.linkis.common.utils
 
 import java.io.{InputStream, OutputStream}
 
-@Deprecated
+@deprecated
 trait FileService {
 
   def getLength(path: String, user: String): Long

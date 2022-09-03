@@ -53,7 +53,7 @@ import org.apache.linkis.storage.resultset.ResultSetFactory
 import org.apache.linkis.storage.resultset.table.{TableMetaData, TableRecord}
 
 import org.apache.commons.io.IOUtils
-import org.apache.commons.lang.exception.ExceptionUtils
+import org.apache.commons.lang3.exception.ExceptionUtils
 
 import org.springframework.util.CollectionUtils
 
@@ -196,7 +196,7 @@ class PrestoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
       cacheMap: util.Map[String, String]
   ): ClientSession = {
     val configMap = new util.HashMap[String, String]()
-    // 运行时指定的参数优先级大于管理台配置优先级
+    // The parameter priority specified at runtime is higher than the configuration priority of the management console
     if (!CollectionUtils.isEmpty(cacheMap)) configMap.putAll(cacheMap)
     taskParams.asScala.foreach {
       case (key: String, value: Object) if value != null =>
@@ -331,7 +331,7 @@ class PrestoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
           cause = error.getFailureInfo.toException
         }
         engineExecutorContext.appendStdout(
-          LogUtils.generateERROR(ExceptionUtils.getFullStackTrace(cause))
+          LogUtils.generateERROR(ExceptionUtils.getStackTrace(cause))
         )
         ErrorExecuteResponse(ExceptionUtils.getMessage(cause), cause)
       } else null
@@ -364,8 +364,9 @@ class PrestoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
 
     var builder: ClientSession.Builder = ClientSession.builder(newSession)
 
-    if (statement.getStartedTransactionId != null)
+    if (statement.getStartedTransactionId != null) {
       builder = builder.withTransactionId(statement.getStartedTransactionId)
+    }
 
     // update session properties if present
     if (

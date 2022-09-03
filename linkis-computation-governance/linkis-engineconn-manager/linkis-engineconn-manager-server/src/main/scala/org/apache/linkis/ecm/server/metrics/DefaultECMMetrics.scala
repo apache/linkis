@@ -25,7 +25,7 @@ import org.apache.linkis.manager.common.entity.enumeration.NodeStatus._
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 class DefaultECMMetrics extends ECMMetrics {
 
@@ -54,7 +54,7 @@ class DefaultECMMetrics extends ECMMetrics {
   override def getFailedEngineConns: Array[EngineConn] = getEngineConns(failedEngineConnMap)
 
   private val getEngineConns = (map: ConcurrentHashMap[String, EngineConn]) =>
-    map.values().toSeq.toArray
+    map.values().asScala.toSeq.toArray
 
   private val decreaseEngineConnMetric =
     (engineConn: EngineConn, map: ConcurrentHashMap[String, EngineConn], count: AtomicInteger) => {

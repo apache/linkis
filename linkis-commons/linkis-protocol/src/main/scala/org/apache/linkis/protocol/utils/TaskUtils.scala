@@ -21,38 +21,38 @@ import org.apache.linkis.protocol.constants.TaskConstant
 
 import java.util
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 object TaskUtils {
 
   def getMap(params: util.Map[String, Any], key: String): util.Map[String, Any] =
-    if (params != null && params.containsKey(key))
+    if (params != null && params.containsKey(key)) {
       params.get(key) match {
         case map: util.Map[String, Any] => map
         case map: util.Map[String, Object] =>
           val resultMap = new util.HashMap[String, Any]
-          map.keySet().foreach { k => resultMap.put(k, map.get(k)) }
+          map.keySet().asScala.foreach { k => resultMap.put(k, map.get(k)) }
           resultMap
         case _ => new util.HashMap[String, Any]()
       }
-    else new util.HashMap[String, Any]()
+    } else new util.HashMap[String, Any]()
 
   private def addMap(
       params: util.Map[String, Any],
       waitToAdd: util.Map[String, Any],
       key: String
   ): Unit =
-    if (params != null && params.containsKey(key))
+    if (params != null && params.containsKey(key)) {
       params.get(key) match {
         case map: util.Map[String, Any] => map.putAll(waitToAdd)
         case map: util.Map[String, _] =>
           val resultMap = new util.HashMap[String, Any]
-          map.keySet().foreach { k => resultMap.put(k, map.get(k)) }
+          map.keySet().asScala.foreach { k => resultMap.put(k, map.get(k)) }
           resultMap.putAll(waitToAdd)
           params.put(key, resultMap)
         case _ => params.put(key, waitToAdd)
       }
-    else params.put(key, waitToAdd)
+    } else params.put(key, waitToAdd)
 
   private def getConfigurationMap(params: util.Map[String, Any], key: String) = {
     val configurationMap = getMap(params, TaskConstant.PARAMS_CONFIGURATION)
@@ -69,31 +69,33 @@ object TaskUtils {
     addMap(configurationMap, waitToAdd, key)
   }
 
-  def getVariableMap(params: util.Map[String, Any]) = getMap(params, TaskConstant.PARAMS_VARIABLE)
+  def getVariableMap(params: util.Map[String, Any]): util.Map[String, Any] =
+    getMap(params, TaskConstant.PARAMS_VARIABLE)
 
-  def getStartupMap(params: util.Map[String, Any]) =
+  def getStartupMap(params: util.Map[String, Any]): util.Map[String, Any] =
     getConfigurationMap(params, TaskConstant.PARAMS_CONFIGURATION_STARTUP)
 
-  def getRuntimeMap(params: util.Map[String, Any]) =
+  def getRuntimeMap(params: util.Map[String, Any]): util.Map[String, Any] =
     getConfigurationMap(params, TaskConstant.PARAMS_CONFIGURATION_RUNTIME)
 
-  def getSpecialMap(params: util.Map[String, Any]) =
+  def getSpecialMap(params: util.Map[String, Any]): util.Map[String, Any] =
     getConfigurationMap(params, TaskConstant.PARAMS_CONFIGURATION_SPECIAL)
 
-  def addVariableMap(params: util.Map[String, Any], variableMap: util.Map[String, Any]) =
+  def addVariableMap(params: util.Map[String, Any], variableMap: util.Map[String, Any]): Unit =
     addMap(params, variableMap, TaskConstant.PARAMS_VARIABLE)
 
-  def addStartupMap(params: util.Map[String, Any], startupMap: util.Map[String, Any]) =
+  def addStartupMap(params: util.Map[String, Any], startupMap: util.Map[String, Any]): Unit =
     addConfigurationMap(params, startupMap, TaskConstant.PARAMS_CONFIGURATION_STARTUP)
 
-  def addRuntimeMap(params: util.Map[String, Any], runtimeMap: util.Map[String, Any]) =
+  def addRuntimeMap(params: util.Map[String, Any], runtimeMap: util.Map[String, Any]): Unit =
     addConfigurationMap(params, runtimeMap, TaskConstant.PARAMS_CONFIGURATION_RUNTIME)
 
-  def addSpecialMap(params: util.Map[String, Any], specialMap: util.Map[String, Any]) =
+  def addSpecialMap(params: util.Map[String, Any], specialMap: util.Map[String, Any]): Unit =
     addConfigurationMap(params, specialMap, TaskConstant.PARAMS_CONFIGURATION_SPECIAL)
 
   // tdoo
-  def getLabelsMap(params: util.Map[String, Any]) = getMap(params, TaskConstant.LABELS)
+  def getLabelsMap(params: util.Map[String, Any]): util.Map[String, Any] =
+    getMap(params, TaskConstant.LABELS)
 
   def addLabelsMap(params: util.Map[String, Any], labels: util.Map[String, Any]): Unit =
     addMap(params, labels, TaskConstant.LABELS)

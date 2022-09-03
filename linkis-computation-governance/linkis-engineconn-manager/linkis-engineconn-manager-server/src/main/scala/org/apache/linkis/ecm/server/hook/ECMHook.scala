@@ -31,5 +31,5 @@ trait ECMHook {
 
 object ECMHook {
   val ecmHooks = Array[ECMHook](new JarUDFLoadECMHook)
-  def getECMHooks = ecmHooks
+  def getECMHooks: Array[ECMHook] = ecmHooks
 }

@@ -21,5 +21,5 @@ import org.apache.linkis.ecm.core.listener.{ECMEvent, ECMEventListener}
 import org.apache.linkis.ecm.server.service.ECMMetricsService
 
 class DefaultECMMetricsService extends ECMMetricsService with ECMEventListener {
-  override def onEvent(event: ECMEvent): Unit = ???
+  override def onEvent(event: ECMEvent): Unit = {}
 }

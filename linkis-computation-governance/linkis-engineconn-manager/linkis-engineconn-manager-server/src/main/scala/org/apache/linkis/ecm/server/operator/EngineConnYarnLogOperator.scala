@@ -38,7 +38,7 @@ class EngineConnYarnLogOperator extends EngineConnLogOperator {
       result
     } {
       result.get("logPath") match {
-        case Some(path: String) => {
+        case Some(path: String) =>
           val logFile = new File(path)
           if (logFile.exists() && logFile.getName.startsWith(".")) {
             // If is a temporary file, drop it
@@ -47,7 +47,6 @@ class EngineConnYarnLogOperator extends EngineConnLogOperator {
               logger.warn(s"Fail to delete the temporary yarn log file: [$path]")
             }
           }
-        }
       }
     }
   }

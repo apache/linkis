@@ -29,7 +29,7 @@ import org.apache.commons.io.{FileUtils, IOUtils}
 import java.io.{File, InputStream}
 import java.util
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 object ECMUtils {
 
@@ -46,9 +46,9 @@ object ECMUtils {
     }
     if (!response.isSuccess) throw new ECMErrorException(911115, "failed to downLoad(下载失败)")
     val map = new util.HashMap[String, Object]
-    map += "path" -> response.fullFilePath
-    map += "is" -> response.inputStream
-  }
+    map.asScala += "path" -> response.fullFilePath
+    map.asScala += "is" -> response.inputStream
+  }.asJava
 
   def downLoadBmlResourceToLocal(resource: BmlResource, userName: String, path: String)(implicit
       fs: FileSystem

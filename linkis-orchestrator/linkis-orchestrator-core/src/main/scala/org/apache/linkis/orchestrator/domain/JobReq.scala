@@ -58,29 +58,29 @@ object AbstractJobReq {
 
     protected val jobReq: AbstractJobReq = createJobReq()
 
-    def clone(jobReq: JobReq) = {
+    def clone(jobReq: JobReq): AbstractJobReqBuilder = {
       setExecuteUser(jobReq.getExecuteUser)
       setLabels(jobReq.getLabels)
       setParams(jobReq.getParams)
       setPriority(jobReq.getPriority)
     }
 
-    def setExecuteUser(executeUser: String) = {
+    def setExecuteUser(executeUser: String): AbstractJobReqBuilder = {
       jobReq.executeUser = executeUser
       this
     }
 
-    def setLabels(labels: util.List[Label[_]]) = {
+    def setLabels(labels: util.List[Label[_]]): AbstractJobReqBuilder = {
       jobReq.labels = labels
       this
     }
 
-    def setParams(params: util.Map[String, Any]) = {
+    def setParams(params: util.Map[String, Any]): AbstractJobReqBuilder = {
       jobReq.params = params
       this
     }
 
-    def setPriority(priority: Int) = {
+    def setPriority(priority: Int): AbstractJobReqBuilder = {
       jobReq.priority = priority
       this
     }
@@ -94,5 +94,5 @@ object AbstractJobReq {
 }
 
 object JobReq {
-  def getDefaultPriority = 0
+  def getDefaultPriority: Unit = 0
 }

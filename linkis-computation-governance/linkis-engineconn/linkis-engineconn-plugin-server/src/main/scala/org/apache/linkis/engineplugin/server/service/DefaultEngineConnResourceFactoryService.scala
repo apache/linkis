@@ -30,7 +30,7 @@ import org.apache.linkis.rpc.message.annotation.Receiver
 
 import org.springframework.stereotype.Component
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 @Component
 class DefaultEngineConnResourceFactoryService
@@ -46,7 +46,8 @@ class DefaultEngineConnResourceFactoryService
   @Receiver
   override def createEngineResource(engineResourceRequest: EngineResourceRequest): NodeResource = {
     logger.info(s"To invoke createEngineResource $engineResourceRequest")
-    val engineTypeOption = engineResourceRequest.labels.find(_.isInstanceOf[EngineTypeLabel])
+    val engineTypeOption =
+      engineResourceRequest.labels.asScala.find(_.isInstanceOf[EngineTypeLabel])
 
     if (engineTypeOption.isDefined) {
       val engineTypeLabel = engineTypeOption.get.asInstanceOf[EngineTypeLabel]

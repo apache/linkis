@@ -56,7 +56,7 @@ class DefaultEngineConnBmlResourceGenerator
           new File(path, f.getName.replace(".zip", "")).exists
       )
     validFiles.map { file =>
-      if (file.isFile)
+      if (file.isFile) {
         EngineConnLocalizeResourceImpl(
           file.getPath,
           file.getName,
@@ -64,7 +64,7 @@ class DefaultEngineConnBmlResourceGenerator
           file.length()
         )
           .asInstanceOf[EngineConnLocalizeResource]
-      else {
+      } else {
         val newFile = new File(path, file.getName + ".zip")
         if (newFile.exists() && !newFile.delete()) {
           throw new EngineConnPluginErrorException(

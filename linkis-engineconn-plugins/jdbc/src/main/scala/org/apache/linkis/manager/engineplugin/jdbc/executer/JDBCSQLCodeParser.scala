@@ -21,6 +21,8 @@ import org.apache.linkis.manager.engineplugin.jdbc.conf.JDBCConfiguration
 
 import org.apache.commons.lang3.StringUtils
 
+import java.util.Locale
+
 import scala.collection.mutable.ArrayBuffer
 
 object JDBCSQLCodeParser {
@@ -55,18 +57,20 @@ object JDBCSQLCodeParser {
     var code = cmd.trim
     if (!cmd.split("\\s+")(0).equalsIgnoreCase("select")) return false
     if (code.contains("limit")) code = code.substring(code.lastIndexOf("limit")).trim
-    else if (code.contains("LIMIT"))
-      code = code.substring(code.lastIndexOf("LIMIT")).trim.toLowerCase
-    else return true
+    else if (code.contains("LIMIT")) {
+      // scalastyle:off caselocale
+      code = code.substring(code.lastIndexOf("LIMIT")).trim.toLowerCase(Locale.getDefault())
+    } else return true
     val hasLimit = code.matches("limit\\s+\\d+\\s*;?")
     if (hasLimit) {
       if (code.indexOf(";") > 0) code = code.substring(5, code.length - 1).trim
       else code = code.substring(5).trim
       val limitNum = code.toInt
-      if (limitNum > defaultLimit)
+      if (limitNum > defaultLimit) {
         throw new IllegalArgumentException(
           "We at most allowed to limit " + defaultLimit + ", but your SQL has been over the max rows."
         )
+      }
     }
     !hasLimit
   }

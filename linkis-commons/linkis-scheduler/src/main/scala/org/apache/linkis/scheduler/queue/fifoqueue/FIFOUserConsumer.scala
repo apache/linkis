@@ -57,19 +57,20 @@ class FIFOUserConsumer(
     bdpFutureTask = new BDPFutureTask(this.future)
   }
 
-  override def setConsumeQueue(consumeQueue: ConsumeQueue) = {
+  override def setConsumeQueue(consumeQueue: ConsumeQueue): Unit = {
     queue = consumeQueue
   }
 
-  override def getConsumeQueue = queue
+  override def getConsumeQueue: ConsumeQueue = queue
 
-  override def getGroup = fifoGroup
+  override def getGroup: FIFOGroup = fifoGroup
 
-  override def setGroup(group: Group) = {
+  override def setGroup(group: Group): Unit = {
     this.fifoGroup = group.asInstanceOf[FIFOGroup]
   }
 
-  override def getRunningEvents = getEvents(e => e.isRunning || e.isWaitForRetry)
+  override def getRunningEvents: Array[SchedulerEvent] =
+    getEvents(e => e.isRunning || e.isWaitForRetry)
 
   private def getEvents(op: SchedulerEvent => Boolean): Array[SchedulerEvent] = {
     val result = ArrayBuffer[SchedulerEvent]()
@@ -77,7 +78,7 @@ class FIFOUserConsumer(
     result.toArray
   }
 
-  override def run() = {
+  override def run(): Unit = {
     Thread.currentThread().setName(s"${toString}Thread")
     logger.info(s"$toString thread started!")
     while (!terminate) {
@@ -121,8 +122,9 @@ class FIFOUserConsumer(
                   false
                 }
               )
-          ) takeEvent
-          else getWaitForRetryEvent
+          ) {
+            takeEvent
+          } else getWaitForRetryEvent
       }
     }
     event.foreach { case job: Job =>
@@ -185,7 +187,7 @@ class FIFOUserConsumer(
     runningJobs(index) = job
   }
 
-  override def shutdown() = {
+  override def shutdown(): Unit = {
     future.cancel(true)
     super.shutdown()
   }

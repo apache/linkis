@@ -30,11 +30,12 @@ import java.nio.file.Paths
 
 abstract class AbstractEngineConnBmlResourceGenerator extends EngineConnBmlResourceGenerator {
 
-  if (!new File(getEngineConnsHome).exists)
+  if (!new File(getEngineConnsHome).exists) {
     throw new EngineConnPluginErrorException(
       20001,
       s"Cannot find the home path(${getEngineConnsHome}) of engineConn."
     )
+  }
 
   protected def getEngineConnsHome: String = {
     ENGINE_CONN_HOME.getValue
@@ -45,11 +46,12 @@ abstract class AbstractEngineConnBmlResourceGenerator extends EngineConnBmlResou
 
   protected def getEngineConnDistHome(engineConnType: String, version: String): String = {
     val engineConnDistHome = Paths.get(getEngineConnsHome, engineConnType, "dist").toFile.getPath
-    if (!new File(engineConnDistHome).exists())
+    if (!new File(engineConnDistHome).exists()) {
       throw new EngineConnPluginErrorException(
         20001,
         "Cannot find the home path of engineconn dist."
       )
+    }
     if (StringUtils.isBlank(version) || NO_VERSION_MARK == version) return engineConnDistHome
     val engineConnPackageHome = Paths.get(engineConnDistHome, version).toFile.getPath
     if (new File(engineConnPackageHome).exists()) engineConnPackageHome
@@ -59,25 +61,28 @@ abstract class AbstractEngineConnBmlResourceGenerator extends EngineConnBmlResou
   protected def getEngineConnDistHomeList(engineConnType: String): Array[String] = {
     val engineConnDistHome = Paths.get(getEngineConnsHome, engineConnType, "dist").toFile.getPath
     val engineConnDistHomeFile = new File(engineConnDistHome)
-    if (!engineConnDistHomeFile.exists())
+    if (!engineConnDistHomeFile.exists()) {
       throw new EngineConnPluginErrorException(
         20001,
         "Cannot find the home path of engineconn dist."
       )
+    }
     val children = engineConnDistHomeFile.listFiles()
-    if (children.isEmpty)
+    if (children.isEmpty) {
       throw new EngineConnPluginErrorException(
         20001,
         s"The dist of ${engineConnType}EngineConn is empty."
       )
-    else if (!children.exists(_.getName.startsWith("v"))) {
+    } else if (!children.exists(_.getName.startsWith("v"))) {
       Array(engineConnDistHome)
-    } else if (children.forall(_.getName.startsWith("v"))) children.map(_.getPath)
-    else
+    } else if (children.forall(_.getName.startsWith("v"))) {
+      children.map(_.getPath)
+    } else {
       throw new EngineConnPluginErrorException(
         20001,
         s"The dist of ${engineConnType}EngineConn is irregular, both the version dir and non-version dir are exist."
       )
+    }
   }
 
   def getEngineConnTypeListFromDisk: Array[String] =

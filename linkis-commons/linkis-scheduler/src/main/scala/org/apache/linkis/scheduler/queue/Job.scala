@@ -70,7 +70,7 @@ abstract class Job extends Runnable with SchedulerEvent with Closeable with Logg
     jobDaemon
   }
 
-  override def cancel() = kill()
+  override def cancel(): Unit = kill()
 
   override def getId(): String = super.getId
 
@@ -219,11 +219,11 @@ abstract class Job extends Runnable with SchedulerEvent with Closeable with Logg
     val state = getState
     executeCompleted match {
       case _: SuccessExecuteResponse =>
-        if (!interrupt)
+        if (!interrupt) {
           Utils.tryAndWarnMsg(transition(Succeed))(
             s"update Job $toString from $state to Succeed failed."
           )
-        else transitionCompleted(errorExecuteResponse)
+        } else transitionCompleted(errorExecuteResponse)
       case e: ErrorExecuteResponse =>
         val canRetry = Utils.tryCatch(isJobShouldRetry(e)) { t =>
           logger.error(s"Job $toString failed to get the retry information!", t)
@@ -269,8 +269,9 @@ abstract class Job extends Runnable with SchedulerEvent with Closeable with Logg
       case _ => false
     })
 
-  final def isJobCanRetry: Boolean = if (!isJobSupportRetry || getState != WaitForRetry) false
-  else
+  final def isJobCanRetry: Boolean = if (!isJobSupportRetry || getState != WaitForRetry) {
+    false
+  } else {
     synchronized {
       if (getState == WaitForRetry && (getMaxRetryNum < 1 || retryNum < getMaxRetryNum)) true
       else if (WaitForRetry == getState && getMaxRetryNum > 0 && retryNum >= getMaxRetryNum) {
@@ -284,9 +285,11 @@ abstract class Job extends Runnable with SchedulerEvent with Closeable with Logg
         false
       } else false
     }
+  }
 
-  final def turnToRetry(): Boolean = if (!isJobSupportRetry || getState != WaitForRetry) false
-  else
+  final def turnToRetry(): Boolean = if (!isJobSupportRetry || getState != WaitForRetry) {
+    false
+  } else {
     synchronized(Utils.tryThrow {
       if (isJobCanRetry) {
         transition(Scheduled)
@@ -297,6 +300,7 @@ abstract class Job extends Runnable with SchedulerEvent with Closeable with Logg
       retryNum += 1
       t
     })
+  }
 
   override def run(): Unit = {
     if (!isScheduled || interrupt) return
@@ -329,8 +333,9 @@ abstract class Job extends Runnable with SchedulerEvent with Closeable with Logg
       case r: AsynReturnExecuteResponse =>
         r.notify(r1 => {
           val realRS =
-            if (interrupt) errorExecuteResponse
-            else
+            if (interrupt) {
+              errorExecuteResponse
+            } else {
               r1 match {
                 case r: IncompleteExecuteResponse =>
                   ErrorExecuteResponse(
@@ -339,6 +344,7 @@ abstract class Job extends Runnable with SchedulerEvent with Closeable with Logg
                   )
                 case r: CompletedExecuteResponse => r
               }
+            }
           transitionCompleted(realRS)
         })
     }
@@ -398,10 +404,11 @@ class JobDaemon(job: Job, listenerUpdateIntervalMs: Long, executor: Executor)
         lastProgress = progress
       }
       val log = Utils.tryAndWarnMsg(getLog)(s"Can not get logs from $executor for job $job.")
-      if (StringUtils.isNotEmpty(log))
+      if (StringUtils.isNotEmpty(log)) {
         Utils.tryAndWarnMsg(job.getLogListener.foreach(_.onLogUpdate(job, log)))(
           s"Can not update logs for job $job."
         )
+      }
       Utils.tryQuietly(Thread.sleep(listenerUpdateIntervalMs))
     }
   }

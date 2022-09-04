@@ -200,6 +200,10 @@ public class HDFSFileSystem extends FileSystem {
     if (fs == null) {
       throw new IOException("init HDFS FileSystem failed!");
     }
+    if (StorageConfiguration.FS_CACHE_DISABLE().getValue()) {
+      fs.setVerifyChecksum(false);
+      fs.setWriteChecksum(false);
+    }
   }
 
   @Override

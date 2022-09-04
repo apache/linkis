@@ -35,7 +35,7 @@ import org.apache.commons.lang3.StringUtils
 import java.util
 import java.util.concurrent.ConcurrentHashMap
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 import com.google.common.collect.Interners
 
@@ -59,12 +59,14 @@ class DefaultEngineConnListService
     engineConnMap.get(engineConnId)
   )
 
-  override def getEngineConns: util.List[EngineConn] = engineConnMap.values().toList
+  override def getEngineConns: util.List[EngineConn] =
+    new util.ArrayList[EngineConn](engineConnMap.values())
 
   override def addEngineConn(engineConn: EngineConn): Unit = {
     logger.info(s"add engineConn ${engineConn.getServiceInstance} to engineConnMap")
-    if (LinkisECMApplication.isReady)
+    if (LinkisECMApplication.isReady) {
       engineConnMap.put(engineConn.getTickedId, engineConn)
+    }
   }
 
   override def killEngineConn(engineConnId: String): Unit = {
@@ -86,6 +88,7 @@ class DefaultEngineConnListService
 
   override def getUsedResources: Resource = engineConnMap
     .values()
+    .asScala
     .map(_.getResource.getMinResource)
     .fold(Resource.initResource(ResourceType.Default))(_ + _)
 
@@ -170,6 +173,7 @@ class DefaultEngineConnListService
     logger.info("start to kill all engines belonging the ecm")
     engineConnMap
       .values()
+      .asScala
       .foreach(engineconn => {
         killECByEngineConnKillService(engineconn)
       })

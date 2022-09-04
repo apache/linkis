@@ -28,8 +28,8 @@ class ResultSetResult extends DWSResult with UserAction {
 
   private var `type`: String = _
 
-  def setType(`type`: String) = this.`type` = `type`
-  def getType = `type`
+  def setType(`type`: String): Unit = this.`type` = `type`
+  def getType: String = `type`
 
   @BeanProperty
   var metadata: Object = _

@@ -45,7 +45,7 @@ trait ResultSetExecTask extends ExecTask {
   }
 
   /**
-   * 移除子节点的response
+   * Remove the response of the child node 移除子节点的response
    * @return
    */
   def removeResultSet(): Unit = {

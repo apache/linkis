@@ -25,6 +25,7 @@ import org.springframework.web.context.request.{RequestContextHolder, ServletReq
 import javax.servlet.http.HttpServletRequest
 
 import java.util
+import java.util.Locale
 
 class Message(
     private var method: String,
@@ -81,7 +82,7 @@ object Message {
       Thread
         .currentThread()
         .getStackTrace
-        .find(_.getClassName.toLowerCase.endsWith("restfulapi"))
+        .find(_.getClassName.toLowerCase(Locale.getDefault).endsWith("restfulapi"))
         .foreach { stack =>
           {
             val httpRequest: HttpServletRequest = getCurrentHttpRequest

@@ -248,7 +248,7 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
 
     val realQueueName = "root." + queueName
 
-    def getAppInfos(): Array[YarnAppInfo] = {
+    def getAppInfos(): Array[ExternalAppInfo] = {
       val resp = getResponseByUrl("apps", rmWebAddress)
       resp \ "apps" \ "app" match {
         case JArray(apps) =>
@@ -268,7 +268,7 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
             }
           }
           appInfoBuffer.toArray
-        case _ => new Array[YarnAppInfo](0)
+        case _ => new ArrayBuffer[YarnAppInfo](0).toArray
       }
     }
 
@@ -279,7 +279,7 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
         t
       )
     })
-  }: util.List[YarnAppInfo]
+  }
 
   override def getResourceType: ResourceType = ResourceType.Yarn
 

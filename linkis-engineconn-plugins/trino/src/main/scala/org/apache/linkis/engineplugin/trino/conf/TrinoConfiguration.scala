@@ -35,10 +35,8 @@ object TrinoConfiguration {
 
   val DEFAULT_LIMIT = CommonVars[Int]("wds.linkis.trino.default.limit", 5000)
 
-  val TRINO_HTTP_CONNECT_TIME_OUT = CommonVars[java.lang.Long](
-    "wds.linkis.trino.http.connectTimeout",
-    new lang.Long(60)
-  ) // seconds
+  val TRINO_HTTP_CONNECT_TIME_OUT =
+    CommonVars[java.lang.Long]("wds.linkis.trino.http.connectTimeout", new lang.Long(60)) // seconds
 
   val TRINO_HTTP_READ_TIME_OUT =
     CommonVars[java.lang.Long]("wds.linkis.trino.http.readTimeout", new lang.Long(60))

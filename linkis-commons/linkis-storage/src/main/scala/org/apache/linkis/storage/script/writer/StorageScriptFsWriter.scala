@@ -53,8 +53,8 @@ class StorageScriptFsWriter(
       if (outputStream != null) {
         IOUtils.writeLines(metadataLine, "\n", outputStream, charset)
       } else {
-        import scala.collection.JavaConversions._
-        metadataLine.foreach(m => stringBuilder.append(s"$m\n"))
+        import scala.collection.JavaConverters._
+        metadataLine.asScala.foreach(m => stringBuilder.append(s"$m\n"))
       }
     }
   }
@@ -82,7 +82,7 @@ class StorageScriptFsWriter(
         case _ =>
           outputStream.flush()
       }
-    }(s"$toString Error encounters when flush script ")
+    }(s"Error encounters when flush script ")
   }
 
   def getInputStream(): InputStream = {

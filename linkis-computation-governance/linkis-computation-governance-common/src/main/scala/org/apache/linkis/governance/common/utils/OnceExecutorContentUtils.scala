@@ -32,21 +32,23 @@ object OnceExecutorContentUtils {
   def resourceToValue(bmlResource: BmlResource): String = {
     val resourceId = bmlResource.getResourceId
     val resourceIdLength = resourceId.length.toString.length
-    if (resourceIdLength > LEN)
+    if (resourceIdLength > LEN) {
       throw new GovernanceErrorException(
         40108,
         s"Invalid resourceId $resourceId, it is too length."
       )
+    }
     val len = if (resourceIdLength < LEN) "0" * (LEN - resourceIdLength) + resourceId.length
     HEADER + len + resourceId + bmlResource.getVersion
   }
 
   def valueToResource(resource: String): BmlResource = {
-    if (!resource.startsWith(HEADER))
+    if (!resource.startsWith(HEADER)) {
       throw new GovernanceErrorException(
         40108,
         s"Invalid resource $resource, it doesn't contain $HEADER."
       )
+    }
     val value = resource.substring(HEADER.length)
     val len = value.substring(0, LEN)
     val resourceId = value.substring(LEN, len.toInt + LEN)

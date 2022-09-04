@@ -71,11 +71,11 @@ object Kind {
   def getRealCode(code: String): String = {
     val _code = StringUtils.strip(code)
     val kindStr = getKindString(_code)
-    if (kindStr.matches("[%|@][a-zA-Z]{1,12}"))
+    if (kindStr.matches("[%|@][a-zA-Z]{1,12}")) {
       StringUtils.strip(_code.substring(_code.indexOf(kindStr) + kindStr.length))
-    else if (_code.startsWith(RESTART_CODE))
+    } else if (_code.startsWith(RESTART_CODE)) {
       StringUtils.strip(_code.substring(RESTART_CODE.length))
-    else _code
+    } else _code
   }
 
   /**

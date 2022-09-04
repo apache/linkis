@@ -29,7 +29,7 @@ import org.apache.commons.lang3.StringUtils
 
 import java.util
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 object JDBCMultiDatasourceParser extends Logging {
 
@@ -127,13 +127,14 @@ object JDBCMultiDatasourceParser extends Logging {
       else new util.HashMap[String, Object]()
 
     if (!paramsMap.isEmpty) {
-      val headConf = paramsMap.head
+      val headConf = paramsMap.asScala.head
       jdbcUrl = s"$jdbcUrl?${headConf._1}=${headConf._2}"
       paramsMap.remove(headConf._1)
     }
 
     if (!paramsMap.isEmpty) {
-      val paramsJoin = for ((k, v) <- paramsMap) yield s"$k=${v.toString}".toList.mkString("&")
+      val paramsJoin =
+        for ((k, v) <- paramsMap.asScala) yield s"$k=${v.toString}".toList.mkString("&")
       jdbcUrl = s"$jdbcUrl&$paramsJoin"
     }
 
@@ -202,9 +203,7 @@ object JDBCMultiDatasourceParser extends Logging {
           )
         }
       case _ =>
-        throw JDBCParamsIllegalException(
-          s"Unsupported authentication type ${authType.getAuthType}"
-        )
+        throw JDBCParamsIllegalException(s"Unsupported authentication type ${authType.getAuthType}")
     }
     dsConnInfo.put(JDBCEngineConnConstant.JDBC_AUTH_TYPE, authType.getAuthType)
     dsConnInfo

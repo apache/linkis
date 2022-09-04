@@ -24,15 +24,13 @@ import org.apache.linkis.scheduler.event.{ScheduleEvent, SchedulerEventListener}
 import org.apache.linkis.scheduler.executer.ExecutorManager
 import org.apache.linkis.scheduler.queue.{ConsumerManager, GroupFactory}
 
-class FIFOSchedulerContextImpl(val maxParallelismUsers: Int)
-    extends SchedulerContext
-    with Logging {
+class FIFOSchedulerContextImpl(val maxParallelismUsers: Int) extends SchedulerContext with Logging {
   private var consumerManager: ConsumerManager = _
   private var groupFactory: GroupFactory = _
   private var executorManager: ExecutorManager = _
 
-  private var listenerEventBus
-      : ListenerEventBus[_ <: SchedulerEventListener, _ <: ScheduleEvent] = _
+  private var listenerEventBus: ListenerEventBus[_ <: SchedulerEventListener, _ <: ScheduleEvent] =
+    _
 
   private val lock = new Object()
 

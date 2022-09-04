@@ -24,7 +24,7 @@ import org.apache.linkis.rpc.interceptor.common.BroadcastSenderBuilder
 
 import java.util
 
-import scala.collection.JavaConversions.mapAsScalaMap
+import scala.collection.JavaConverters._
 
 private[rpc] object RPCSpringBeanCache extends Logging {
   import DataWorkCloudApplication.getApplicationContext
@@ -36,8 +36,9 @@ private[rpc] object RPCSpringBeanCache extends Logging {
   private var rpcReceiveRestful: RPCReceiveRestful = _
 
   def registerReceiver(receiverName: String, receiver: Receiver): Unit = {
-    if (beanNameToReceivers == null)
+    if (beanNameToReceivers == null) {
       beanNameToReceivers = getApplicationContext.getBeansOfType(classOf[Receiver])
+    }
     logger.info(s"register a new receiver with name $receiverName, receiver is " + receiver)
     beanNameToReceivers synchronized beanNameToReceivers.put(receiverName, receiver)
   }
@@ -64,44 +65,52 @@ private[rpc] object RPCSpringBeanCache extends Logging {
   }
 
   private[rpc] def getReceivers: util.Map[String, Receiver] = {
-    if (beanNameToReceivers == null)
+    if (beanNameToReceivers == null) {
       beanNameToReceivers = getApplicationContext.getBeansOfType(classOf[Receiver])
+    }
     beanNameToReceivers
   }
 
   private[rpc] def getRPCInterceptors: Array[RPCInterceptor] = {
-    if (rpcInterceptors == null)
+    if (rpcInterceptors == null) {
       rpcInterceptors = getApplicationContext
         .getBeansOfType(classOf[RPCInterceptor])
+        .asScala
         .map(_._2)
         .toArray
         .sortBy(_.order)
+    }
     rpcInterceptors
   }
 
   private[rpc] def getRPCLoadBalancers: Array[RPCLoadBalancer] = {
-    if (rpcLoadBalancers == null)
+    if (rpcLoadBalancers == null) {
       rpcLoadBalancers = getApplicationContext
         .getBeansOfType(classOf[RPCLoadBalancer])
+        .asScala
         .map(_._2)
         .toArray
         .sortBy(_.order)
+    }
     rpcLoadBalancers
   }
 
   private[rpc] def getRPCServerLoader: RPCServerLoader = {
-    if (rpcServerLoader == null)
+    if (rpcServerLoader == null) {
       rpcServerLoader = getApplicationContext.getBean(classOf[RPCServerLoader])
+    }
     rpcServerLoader
   }
 
   private[rpc] def getBroadcastSenderBuilders: Array[BroadcastSenderBuilder] = {
-    if (senderBuilders == null)
+    if (senderBuilders == null) {
       senderBuilders = getApplicationContext
         .getBeansOfType(classOf[BroadcastSenderBuilder])
+        .asScala
         .map(_._2)
         .toArray
         .sortBy(_.order)
+    }
     senderBuilders
   }
 

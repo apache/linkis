@@ -278,9 +278,7 @@ object TaskConversions extends Logging {
     taskVO.setErrCode(job.getErrorCode)
     taskVO.setErrDesc(job.getErrorDesc)
     val labelStringList = new util.ArrayList[String]()
-    labelList.foreach(label =>
-      labelStringList.add(label.getLabelKey + ":" + label.getStringValue)
-    )
+    labelList.foreach(label => labelStringList.add(label.getLabelKey + ":" + label.getStringValue))
     taskVO.setLabels(labelStringList)
 
     val metrics =

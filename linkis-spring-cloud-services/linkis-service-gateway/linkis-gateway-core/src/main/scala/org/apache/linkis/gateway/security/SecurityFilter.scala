@@ -73,11 +73,12 @@ object SecurityFilter extends Logging {
       // Security certification support, referer limited(安全认证支持，referer限定)
       val referer = gatewayContext.getRequest.getHeaders.get("Referer")
       val refList = if (StringUtils.isNotEmpty(referers)) referers.split(",") else Array.empty
-      val flag = refList.exists(ref =>
-        referer != null && referer.nonEmpty && StringUtils.isNotEmpty(
-          referer.head
-        ) && referer.head.trim().contains(ref)
-      )
+      val flag =
+        refList.exists(ref =>
+          referer != null && referer.nonEmpty && StringUtils.isNotEmpty(
+            referer.head
+          ) && referer.head.trim().contains(ref)
+        )
       if (referer != null && referer.nonEmpty && StringUtils.isNotEmpty(referer.head) && !flag) {
         filterResponse(gatewayContext, validateFailed("Unallowed cross-site request(不允许的跨站请求)！"))
         return false
@@ -90,7 +91,7 @@ object SecurityFilter extends Logging {
         return false
       }
       // Security certification support, solving verb tampering(安全认证支持，解决动词篡改)
-      gatewayContext.getRequest.getMethod.toUpperCase match {
+      gatewayContext.getRequest.getMethod.toUpperCase(Locale.getDefault()) match {
         case "GET" | "POST" | "PUT" | "DELETE" | "HEAD" | "TRACE" | "CONNECT" | "OPTIONS" =>
         case _ =>
           filterResponse(

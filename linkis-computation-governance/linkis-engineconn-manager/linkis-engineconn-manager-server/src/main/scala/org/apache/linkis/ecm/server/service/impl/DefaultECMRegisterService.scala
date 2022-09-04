@@ -48,11 +48,11 @@ class DefaultECMRegisterService extends ECMRegisterService with ECMEventListener
   }
 
   private def getLabelsFromArgs(params: Array[String]): util.Map[String, AnyRef] = {
-    import scala.collection.JavaConversions._
+    import scala.collection.JavaConverters._
     val labelRegex = """label\.(.+)\.(.+)=(.+)""".r
     val labels = new util.HashMap[String, AnyRef]()
     // TODO: magic
-    labels += LabelKeyConstant.SERVER_ALIAS_KEY -> Collections.singletonMap(
+    labels.asScala += LabelKeyConstant.SERVER_ALIAS_KEY -> Collections.singletonMap(
       "alias",
       ENGINE_CONN_MANAGER_SPRING_NAME
     )

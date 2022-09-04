@@ -30,11 +30,7 @@ import org.slf4j.{Logger, LoggerFactory}
  */
 trait IOClient {
 
-  def execute(
-      user: String,
-      methodEntity: MethodEntity,
-      params: java.util.Map[String, Any]
-  ): String
+  def execute(user: String, methodEntity: MethodEntity, params: java.util.Map[String, Any]): String
 
   def executeWithEngine(
       user: String,
@@ -52,11 +48,12 @@ object IOClient {
   val FAILED = "FAILED"
 
   def getIOClient(): IOClient = {
-    if (ioClient == null)
+    if (ioClient == null) {
       throw new StorageErrorException(
         52004,
         "You must register IOClient before you can use proxy mode.(必须先注册IOClient，才能使用代理模式)"
       )
+    }
     ioClient
   }
 

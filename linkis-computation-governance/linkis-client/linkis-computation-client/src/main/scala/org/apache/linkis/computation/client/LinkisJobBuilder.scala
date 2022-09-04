@@ -175,8 +175,7 @@ object LinkisJobBuilder {
   private var authTokenValue: String =
     "LINKIS_CLI_TEST" // This is the default authToken, we usually suggest set different ones for users.
 
-  def setDefaultClientConfig(clientConfig: DWSClientConfig): Unit = this.clientConfig =
-    clientConfig
+  def setDefaultClientConfig(clientConfig: DWSClientConfig): Unit = this.clientConfig = clientConfig
 
   def getDefaultClientConfig: DWSClientConfig = {
     if (clientConfig == null) synchronized {
@@ -190,8 +189,9 @@ object LinkisJobBuilder {
   def getDefaultServerUrl: String = {
     if (StringUtils.isEmpty(serverUrl)) {
       serverUrl = Configuration.getGateWayURL()
-      if (StringUtils.isEmpty(serverUrl))
+      if (StringUtils.isEmpty(serverUrl)) {
         throw new UJESClientBuilderException("serverUrl must be set!")
+      }
     }
     serverUrl
   }

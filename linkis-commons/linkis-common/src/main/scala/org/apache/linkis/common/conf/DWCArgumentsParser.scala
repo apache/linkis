@@ -45,14 +45,10 @@ object DWCArgumentsParser {
               optionParser.setConf(args(i), key, value)
               i += 1
             case _ =>
-              throw new IllegalArgumentException(
-                "illegal commond line, format: --conf key=value."
-              )
+              throw new IllegalArgumentException("illegal commond line, format: --conf key=value.")
           }
         case _ =>
-          throw new IllegalArgumentException(
-            s"illegal commond line, ${args(i)} cannot recognize."
-          )
+          throw new IllegalArgumentException(s"illegal commond line, ${args(i)} cannot recognize.")
       }
       i += 1
     }
@@ -78,9 +74,7 @@ object DWCArgumentsParser {
       springOptionMap: Map[String, String],
       dwcOptionMap: Map[String, String]
   ): Array[String] =
-    formatToArray(
-      new DWCArgumentsParser().setSpringConf(springOptionMap).setDWCConf(dwcOptionMap)
-    )
+    formatToArray(new DWCArgumentsParser().setSpringConf(springOptionMap).setDWCConf(dwcOptionMap))
 
   def format(optionParser: DWCArgumentsParser): String = formatToArray(optionParser).mkString(" ")
 

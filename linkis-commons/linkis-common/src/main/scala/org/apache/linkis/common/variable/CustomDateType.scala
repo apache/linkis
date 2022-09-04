@@ -158,11 +158,7 @@ class CustomQuarterType(date: String, std: Boolean = true, isEnd: Boolean = fals
   }
 
   def +(quarters: Int): String = {
-    DateTypeUtils.getQuarter(
-      std,
-      isEnd,
-      DateUtils.addMonths(getCurrentQuarter(date), quarters * 3)
-    )
+    DateTypeUtils.getQuarter(std, isEnd, DateUtils.addMonths(getCurrentQuarter(date), quarters * 3))
   }
 
   override def toString: String = {

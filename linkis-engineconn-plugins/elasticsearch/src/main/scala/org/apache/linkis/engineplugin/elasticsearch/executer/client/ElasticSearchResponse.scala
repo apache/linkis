@@ -27,8 +27,5 @@ case class ElasticSearchTableResponse(columns: Array[Column], records: Array[Tab
 
 case class ElasticSearchJsonResponse(value: String) extends ElasticSearchResponse
 
-case class ElasticSearchErrorResponse(
-    message: String,
-    body: String = null,
-    cause: Throwable = null
-) extends ElasticSearchResponse
+case class ElasticSearchErrorResponse(message: String, body: String = null, cause: Throwable = null)
+    extends ElasticSearchResponse

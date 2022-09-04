@@ -44,7 +44,7 @@ import java.util
 import java.util.Base64
 import java.util.concurrent.ConcurrentHashMap
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 import scala.collection.mutable.ArrayBuffer
 
 import org.json4s.JsonAST._
@@ -248,7 +248,7 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
 
     val realQueueName = "root." + queueName
 
-    def getAppInfos() = {
+    def getAppInfos(): Array[YarnAppInfo] = {
       val resp = getResponseByUrl("apps", rmWebAddress)
       resp \ "apps" \ "app" match {
         case JArray(apps) =>
@@ -272,16 +272,16 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
       }
     }
 
-    Utils.tryCatch(getAppInfos().toList)(t => {
+    Utils.tryCatch(getAppInfos().toList.asJava)(t => {
       throw new RMErrorException(
         11006,
         "Get the Yarn Application information exception.(获取Yarn Application信息异常)",
         t
       )
     })
-  }
+  }: util.List[YarnAppInfo]
 
-  override def getResourceType = ResourceType.Yarn
+  override def getResourceType: ResourceType = ResourceType.Yarn
 
   private def getResponseByUrl(url: String, rmWebAddress: String) = {
     val httpGet = new HttpGet(rmWebAddress + "/ws/v1/cluster/" + url)

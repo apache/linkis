@@ -71,24 +71,18 @@ class ResourceLogService extends Logging {
   ): Unit = Utils.tryAndWarn {
     if (changeType != null) {
       val log: String = changeType match {
-        case ChangeType.ENGINE_INIT => {
+        case ChangeType.ENGINE_INIT =>
           printLog(changeType, resource, ChangeType.FAILED, engineLabel, ecmLabel)
-        }
-        case ChangeType.ENGINE_CLEAR => {
+        case ChangeType.ENGINE_CLEAR =>
           printLog(changeType, resource, ChangeType.FAILED, engineLabel, ecmLabel)
-        }
-        case ChangeType.ECM_INIT => {
+        case ChangeType.ECM_INIT =>
           printLog(changeType, resource, ChangeType.FAILED, null, ecmLabel)
-        }
-        case ChangeType.ECM_CLEAR => {
+        case ChangeType.ECM_CLEAR =>
           printLog(changeType, resource, ChangeType.FAILED, null, ecmLabel)
-        }
-        case ChangeType.ECM_RESOURCE_ADD => {
+        case ChangeType.ECM_RESOURCE_ADD =>
           printLog(changeType, resource, ChangeType.FAILED, engineLabel, ecmLabel)
-        }
-        case ChangeType.ECM_Resource_MINUS => {
+        case ChangeType.ECM_Resource_MINUS =>
           printLog(changeType, resource, ChangeType.FAILED, engineLabel, ecmLabel)
-        }
         case _ => " "
       }
       if (exception != null) {
@@ -107,24 +101,18 @@ class ResourceLogService extends Logging {
   ): Unit = Utils.tryAndWarn {
     if (changeType != null) {
       val log: String = changeType match {
-        case ChangeType.ENGINE_INIT => {
+        case ChangeType.ENGINE_INIT =>
           printLog(changeType, resource, ChangeType.SUCCESS, engineLabel, ecmLabel)
-        }
-        case ChangeType.ENGINE_CLEAR => {
+        case ChangeType.ENGINE_CLEAR =>
           printLog(changeType, resource, ChangeType.SUCCESS, engineLabel, ecmLabel)
-        }
-        case ChangeType.ECM_INIT => {
+        case ChangeType.ECM_INIT =>
           printLog(changeType, resource, ChangeType.SUCCESS, null, ecmLabel)
-        }
-        case ChangeType.ECM_CLEAR => {
+        case ChangeType.ECM_CLEAR =>
           printLog(changeType, resource, ChangeType.SUCCESS, null, ecmLabel)
-        }
-        case ChangeType.ECM_RESOURCE_ADD => {
+        case ChangeType.ECM_RESOURCE_ADD =>
           printLog(changeType, resource, ChangeType.SUCCESS, engineLabel, ecmLabel)
-        }
-        case ChangeType.ECM_Resource_MINUS => {
+        case ChangeType.ECM_Resource_MINUS =>
           printLog(changeType, resource, ChangeType.SUCCESS, engineLabel, ecmLabel)
-        }
         case _ => " "
       }
       logger.info(log)

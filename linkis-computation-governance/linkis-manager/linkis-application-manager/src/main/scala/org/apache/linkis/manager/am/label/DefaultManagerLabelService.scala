@@ -30,7 +30,7 @@ import org.springframework.stereotype.Service
 
 import java.util
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 @Service
 class DefaultManagerLabelService extends ManagerLabelService with Logging {
@@ -45,13 +45,13 @@ class DefaultManagerLabelService extends ManagerLabelService with Logging {
 
   override def isEM(serviceInstance: ServiceInstance): Boolean = {
     val list = nodeLabelService.getNodeLabels(serviceInstance)
-    val isEngine = list.exists {
+    val isEngine = list.asScala.exists {
       case _: EngineInstanceLabel =>
         true
       case _ => false
     }
     if (!isEngine) {
-      list.exists {
+      list.asScala.exists {
         case _: EMInstanceLabel =>
           true
         case _ => false
@@ -62,7 +62,7 @@ class DefaultManagerLabelService extends ManagerLabelService with Logging {
   }
 
   override def isEngine(labels: util.List[Label[_]]): Boolean = {
-    labels.exists {
+    labels.asScala.exists {
       case _: EngineInstanceLabel =>
         true
       case _ => false

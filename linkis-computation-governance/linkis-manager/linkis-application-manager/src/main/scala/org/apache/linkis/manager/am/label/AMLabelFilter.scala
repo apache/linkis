@@ -26,13 +26,13 @@ import org.springframework.stereotype.Component
 
 import java.util
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 @Component
 class AMLabelFilter extends LabelFilter {
 
   override def choseEngineLabel(labelList: util.List[Label[_]]): util.List[Label[_]] = {
-    labelList.filter {
+    labelList.asScala.filter {
       case _: EngineNodeLabel => true
       // TODO: magic
       case label: AliasServiceInstanceLabel
@@ -40,10 +40,10 @@ class AMLabelFilter extends LabelFilter {
         true
       case _ => false
     }
-  }
+  }.asJava
 
   override def choseEMLabel(labelList: util.List[Label[_]]): util.List[Label[_]] = {
-    labelList.filter {
+    labelList.asScala.filter {
       case _: EMNodeLabel => true
       // TODO: magic
       case label: AliasServiceInstanceLabel
@@ -51,6 +51,6 @@ class AMLabelFilter extends LabelFilter {
         true
       case _ => false
     }
-  }
+  }.asJava
 
 }

@@ -35,7 +35,7 @@ import org.springframework.stereotype.Component
 
 import java.util
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 @Component
 class DefaultEMNodeManager extends EMNodeManager with Logging {
@@ -82,9 +82,10 @@ class DefaultEMNodeManager extends EMNodeManager with Logging {
     val nodes = nodeManagerPersistence.getEngineNodeByEM(emNode.getServiceInstance)
     val metricses = nodeMetricManagerPersistence
       .getNodeMetrics(nodes)
+      .asScala
       .map(m => (m.getServiceInstance.toString, m))
       .toMap
-    nodes.map { node =>
+    nodes.asScala.map { node =>
       metricses
         .get(node.getServiceInstance.toString)
         .foreach(metricsConverter.fillMetricsToNode(node, _))
@@ -94,8 +95,8 @@ class DefaultEMNodeManager extends EMNodeManager with Logging {
   }
 
   override def listUserEngines(emNode: EMNode, user: String): util.List[EngineNode] = {
-    listEngines(emNode).filter(_.getOwner.equals(user))
-  }
+    listEngines(emNode).asScala.filter(_.getOwner.equals(user))
+  }.asJava
 
   def listUserNodes(user: String): java.util.List[Node] = {
     nodeManagerPersistence.getNodes(user)
@@ -121,11 +122,14 @@ class DefaultEMNodeManager extends EMNodeManager with Logging {
     // 1. add nodeMetrics  2 add RM info
     val resourceInfo =
       resourceManager.getResourceInfo(scoreServiceInstances.map(_.getServiceInstance))
-    val nodeMetrics = nodeMetricManagerPersistence.getNodeMetrics(emNodes.toList)
+    val nodeMetrics = nodeMetricManagerPersistence.getNodeMetrics(emNodes.toList.asJava)
     emNodes.map { emNode =>
-      val optionMetrics = nodeMetrics.find(_.getServiceInstance.equals(emNode.getServiceInstance))
+      val optionMetrics =
+        nodeMetrics.asScala.find(_.getServiceInstance.equals(emNode.getServiceInstance))
       val optionRMNode =
-        resourceInfo.resourceInfo.find(_.getServiceInstance.equals(emNode.getServiceInstance))
+        resourceInfo.resourceInfo.asScala.find(
+          _.getServiceInstance.equals(emNode.getServiceInstance)
+        )
       optionMetrics.foreach(metricsConverter.fillMetricsToNode(emNode, _))
       optionRMNode.foreach(rmNode => emNode.setNodeResource(rmNode.getNodeResource))
       emNode

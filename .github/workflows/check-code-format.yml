@@ -15,12 +15,12 @@
 # specific language governing permissions and limitations
 # under the License.
 
-name: License check
+name: Code Format Check
 
 on: [push, pull_request]
 
 jobs:
-  build:
+  spotless-check:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout source
@@ -30,16 +30,7 @@ jobs:
         with:
           java-version: '8'
           distribution: 'adopt'
-      - name: mvn -N install
-        run:
-          mvn -N install
-      - name: License check with Maven
+      - name: Code format check
         run: |
-          rat_file=`mvn apache-rat:check  | { grep -oe "\\S\\+/rat.txt" || true; }`
-          echo "rat_file=$rat_file"
-          if [[ -n "$rat_file" ]];then  echo "check error!" && cat $rat_file && exit 123;else echo "check success!" ;fi
-      - name: Upload the report
-        uses: actions/upload-artifact@v2
-        with:
-          name: license-check-report
-          path: "**/target/rat.txt"
+          ./mvnw -N install
+          ./mvnw spotless:check

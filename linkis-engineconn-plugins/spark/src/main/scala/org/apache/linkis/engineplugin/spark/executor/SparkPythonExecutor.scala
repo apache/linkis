@@ -259,12 +259,12 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
       lineOutputStream.ready()
       //      info("Spark scala executor reset new engineExecutorContext!")
     }
-    lazyInitGageWay()
+    lazyInitGateway()
     this.jobGroup = jobGroup
     executeLine(code)
   }
 
-  def lazyInitGageWay(): Unit = {
+  def lazyInitGateway(): Unit = {
     if (process == null) {
       Utils.tryThrow(initGateway) { t =>
         {
@@ -302,13 +302,13 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
     Await.result(promise.future, Duration.Inf)
     lineOutputStream.flush()
     val outStr = lineOutputStream.toString()
-    if (outStr.length > 0) {
+    if (outStr.nonEmpty) {
       val output = Utils.tryQuietly(
         ResultSetWriter
           .getRecordByRes(outStr, SparkConfiguration.SPARK_CONSOLE_OUTPUT_NUM.getValue)
       )
       val res = if (output != null) output.map(x => x.toString).toList.mkString("\n") else ""
-      if (res.length > 0) {
+      if (res.nonEmpty) {
         engineExecutionContext.appendStdout(s"result is $res")
       }
     }

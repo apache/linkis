@@ -50,7 +50,7 @@ class PythonCodeParseTest {
         |        .getOrCreate()
         |    return spark
         |""".stripMargin
-    val strings = parser.parse(pythonCode)
+    val strings = parser.parsePythonCode(pythonCode)
     assertTrue(strings.length == 8)
   }
 

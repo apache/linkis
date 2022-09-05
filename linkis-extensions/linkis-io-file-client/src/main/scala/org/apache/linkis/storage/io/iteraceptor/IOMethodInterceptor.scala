@@ -36,6 +36,7 @@ import org.springframework.cglib.proxy.{MethodInterceptor, MethodProxy}
 import java.io.{InputStream, IOException, OutputStream}
 import java.lang.reflect.Method
 import java.net.InetAddress
+import java.util
 
 import scala.beans.BeanProperty
 import scala.collection.JavaConverters._
@@ -47,7 +48,7 @@ class IOMethodInterceptor(fsType: String) extends MethodInterceptor with Logging
 
   @BeanProperty var ioClient: IOClient = _
 
-  private val properties: mutable.HashMap[String, String] = mutable.HashMap[String, String]()
+  private val properties: java.util.Map[String, String] = new util.HashMap[String, String]
 
   private var inited = false
 
@@ -68,7 +69,7 @@ class IOMethodInterceptor(fsType: String) extends MethodInterceptor with Logging
     label.setJobGroupId(IOClientUtils.generateJobGrupID())
   }
 
-  def getProxyUser: String = StorageConfiguration.PROXY_USER.getValue(properties.asJava)
+  def getProxyUser: String = StorageConfiguration.PROXY_USER.getValue(properties)
 
   def getCreatorUser: String = StorageUtils.getJvmUser
 
@@ -102,7 +103,7 @@ class IOMethodInterceptor(fsType: String) extends MethodInterceptor with Logging
   }
 
   def initFS(methodName: String = "init"): Unit = {
-    if (!properties.contains(StorageConfiguration.PROXY_USER.key)) {
+    if (!properties.asScala.contains(StorageConfiguration.PROXY_USER.key)) {
       throw new StorageErrorException(
         52002,
         "no user set, we cannot get the permission information."
@@ -119,7 +120,7 @@ class IOMethodInterceptor(fsType: String) extends MethodInterceptor with Logging
         getProxyUser,
         getLocalIP,
         methodName,
-        Array(properties.toMap)
+        Array(properties.asScala.toMap)
       ),
       bindEngineLabel
     )
@@ -166,7 +167,7 @@ class IOMethodInterceptor(fsType: String) extends MethodInterceptor with Logging
         case "init" =>
         case "storageName" => return fsType
         case "setUser" =>
-          properties += StorageConfiguration.PROXY_USER.key -> args(0).asInstanceOf[String];
+          properties.asScala += StorageConfiguration.PROXY_USER.key -> args(0).asInstanceOf[String];
           return Unit
         case _ =>
           if (inited) {
@@ -179,21 +180,22 @@ class IOMethodInterceptor(fsType: String) extends MethodInterceptor with Logging
     method.getName match {
       case "init" =>
         val user =
-          if (properties.contains(StorageConfiguration.PROXY_USER.key)) {
-            StorageConfiguration.PROXY_USER.getValue(properties.toMap)
+          if (properties.asScala.contains(StorageConfiguration.PROXY_USER.key)) {
+            StorageConfiguration.PROXY_USER.getValue(properties.asScala.toMap)
           } else null
         if (args.length > 0 && args(0).isInstanceOf[java.util.Map[String, String]]) {
-          properties ++= args(0).asInstanceOf[java.util.Map[String, String]].asScala
+          properties.asScala ++= args(0).asInstanceOf[java.util.Map[String, String]].asScala
         }
         if (StringUtils.isNotEmpty(user)) {
-          properties += StorageConfiguration.PROXY_USER.key -> user
+          properties.asScala += StorageConfiguration.PROXY_USER.key -> user
         }
         initFS()
         logger.warn(s"For user($user)inited a $fsType storage($id) .")
         Unit
       case "fsName" => fsType
       case "setUser" =>
-        properties += StorageConfiguration.PROXY_USER.key -> args(0).asInstanceOf[String]; Unit
+        properties.asScala += StorageConfiguration.PROXY_USER.key -> args(0).asInstanceOf[String];
+        Unit
       case "read" =>
         if (!inited) throw new IllegalAccessException("storage has not been inited.")
         new IOInputStream(args)

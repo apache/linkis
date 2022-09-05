@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.manager.engineplugin.jdbc.executer
+package org.apache.linkis.manager.engineplugin.jdbc.executor
 
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.conf.CommonVars
@@ -31,6 +31,7 @@ import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
 import org.apache.linkis.governance.common.utils.EngineConnArgumentsParser
 import org.apache.linkis.manager.engineplugin.common.launch.process.Environment
+import org.apache.linkis.manager.engineplugin.jdbc.executor.JDBCEngineConnExecutor
 import org.apache.linkis.manager.engineplugin.jdbc.factory.JDBCEngineConnFactory
 import org.apache.linkis.manager.engineplugin.jdbc.monitor.ProgressMonitor
 import org.apache.linkis.manager.label.builder.factory.{
@@ -156,7 +157,7 @@ class TestJDBCEngineConnExecutor {
     }
     ProgressMonitor.register(
       "com.mysql.cj.jdbc.JdbcStatement",
-      "org.apache.linkis.manager.engineplugin.jdbc.executer.TestJDBCEngineConnExecutor.TestMonitor"
+      "org.apache.linkis.manager.engineplugin.jdbc.executor.TestJDBCEngineConnExecutor.TestMonitor"
     )
 
     // val response = jdbcExecutor.executeLine(engineExecutionContext, cmd)

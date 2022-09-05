@@ -63,7 +63,7 @@ class PipelineEngineConnExecutor(val id: Int) extends ComputationExecutor with L
     engineExecutorContext.getProperties.asScala.foreach { keyAndValue =>
       newOptions.put(keyAndValue._1, keyAndValue._2.toString)
     }
-    newOptions.foreach({ case (k, v) => logger.info(s"key is $k, value is $v") })
+    newOptions.asScala.foreach({ case (k, v) => logger.info(s"key is $k, value is $v") })
     val regex = "(?i)\\s*from\\s+(\\S+)\\s+to\\s+(\\S+)\\s?".r
     try {
       thread = Thread.currentThread()

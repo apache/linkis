@@ -59,14 +59,15 @@ class FlinkCodeOnceExecutor(
     codes = options(TaskConstant.CODE)
     options(TaskConstant.RUNTYPE) match {
       case "sql" =>
-        if (StringUtils.isBlank(codes))
+        if (StringUtils.isBlank(codes)) {
           throw new FlinkInitFailedException(s"The sql code is empty.")
+        }
         logger.info(s"Ready to submit flink application, sql is: $codes.")
         val variableMap =
-          if (onceExecutorExecutionContext.getOnceExecutorContent.getVariableMap != null)
+          if (onceExecutorExecutionContext.getOnceExecutorContent.getVariableMap != null) {
             onceExecutorExecutionContext.getOnceExecutorContent.getVariableMap
               .asInstanceOf[util.Map[String, Any]]
-          else new util.HashMap[String, Any]
+          } else new util.HashMap[String, Any]
         codes = VariableUtils.replace(codes, variableMap)
         logger.info(s"After variable replace, sql is: $codes.")
       case runType =>

@@ -40,8 +40,9 @@ class FlinkEngineConnPlugin extends EngineConnPlugin {
 
   override def getEngineResourceFactory: EngineResourceFactory = {
     if (null == engineResourceFactory) resourceLocker.synchronized {
-      if (null == engineResourceFactory)
+      if (null == engineResourceFactory) {
         engineResourceFactory = new FlinkEngineConnResourceFactory
+      }
     }
     engineResourceFactory
   }

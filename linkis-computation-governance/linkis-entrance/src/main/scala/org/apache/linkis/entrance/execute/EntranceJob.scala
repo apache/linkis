@@ -328,6 +328,6 @@ abstract class EntranceJob extends Job {
 
 object EntranceJob {
 
-  def JOB_COMPLETED_PROGRESS: Unit = 1.0f
+  def JOB_COMPLETED_PROGRESS: Float = 1.0f
 
 }

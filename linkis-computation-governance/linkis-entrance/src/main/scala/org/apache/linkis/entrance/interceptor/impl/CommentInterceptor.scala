@@ -110,7 +110,9 @@ object CommentMain {
   def main(args: Array[String]): Unit = {
     val sqlCode = "select * from default.user;--你好;show tables"
     val sqlCode1 = "select * from default.user--你好;show tables"
+    // scalastyle:off println
     println(SQLCommentHelper.dealComment(sqlCode))
+    // scalastyle:on println
   }
 
 }

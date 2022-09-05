@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.manager.engineplugin.jdbc.executer
+package org.apache.linkis.manager.engineplugin.jdbc.executor
 
 import org.apache.linkis.datasourcemanager.common.domain.{DataSource, DataSourceType}
 import org.apache.linkis.manager.engineplugin.jdbc.JdbcAuthType

@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Api(tags = "RmExternalResourceProviderRestfulApi")
 @RestController
-@RequestMapping(path = "/basedata_manager/rm_external_resource_provier")
+@RequestMapping(path = "/basedata-manager/rm-external-resource-provier")
 public class RmExternalResourceProviderRestfulApi {
 
     @Autowired

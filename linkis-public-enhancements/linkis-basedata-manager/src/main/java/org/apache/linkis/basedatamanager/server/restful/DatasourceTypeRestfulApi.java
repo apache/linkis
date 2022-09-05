@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Api(tags="DatasourceTypeRestfulApi")
 @RestController
-@RequestMapping(path = "/basedata_manager/datasource_type")
+@RequestMapping(path = "/basedata-manager/datasource-type")
 public class DatasourceTypeRestfulApi {
 
     @Autowired

@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Api(tags="UdfTreeRestfulApi")
 @RestController
-@RequestMapping(path = "/basedata_manager/udf_tree")
+@RequestMapping(path = "/basedata-manager/udf-tree")
 public class UdfTreeRestfulApi {
 
     @Autowired

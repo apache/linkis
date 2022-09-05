@@ -32,7 +32,7 @@ import java.util.HashMap;
 
 @Api(tags = "GatewayAuthTokenRestfulApi")
 @RestController
-@RequestMapping(path = "/basedata_manager/gateway_auth_token")
+@RequestMapping(path = "/basedata-manager/gateway-auth-token")
 public class GatewayAuthTokenRestfulApi {
     @Autowired
     GatewayAuthTokenService gatewayAuthTokenService;

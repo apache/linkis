@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Api(tags="ErrorCodeRestfulApi")
 @RestController
-@RequestMapping(path = "/basedata_manager/error_code")
+@RequestMapping(path = "/basedata-manager/error-code")
 public class ErrorCodeRestfulApi {
 
     @Autowired

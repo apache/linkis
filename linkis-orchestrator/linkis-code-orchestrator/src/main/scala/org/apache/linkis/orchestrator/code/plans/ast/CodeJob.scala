@@ -112,5 +112,5 @@ class CodeJob(private var parents: Array[Job], private var children: Array[Job])
     job
   }
 
-  override def toString: Unit = s"CodeJob($name, $submitUser, $codeLogicalUnit)"
+  override def toString: String = s"CodeJob($name, $submitUser, $codeLogicalUnit)"
 }

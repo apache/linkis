@@ -31,6 +31,14 @@
   </properties>
 
   <dependencies>
+    <!--rpc-->
+    <dependency>
+      <groupId>org.apache.linkis</groupId>
+      <artifactId>linkis-rpc</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
     <dependency>
       <groupId>org.apache.linkis</groupId>
       <artifactId>linkis-module</artifactId>

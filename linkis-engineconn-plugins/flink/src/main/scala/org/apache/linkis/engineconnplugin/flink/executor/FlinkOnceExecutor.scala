@@ -102,7 +102,7 @@ trait FlinkOnceExecutor[T <: ClusterDescriptorAdapter]
   }
 
   override protected def waitToRunning(): Unit = {
-    if (!isCompleted)
+    if (!isCompleted) {
       daemonThread = Utils.defaultScheduler.scheduleAtFixedRate(
         new Runnable {
           private var lastStatus: JobStatus = JobStatus.INITIALIZING
@@ -146,6 +146,7 @@ trait FlinkOnceExecutor[T <: ClusterDescriptorAdapter]
         FLINK_ONCE_APP_STATUS_FETCH_INTERVAL.getValue.toLong,
         TimeUnit.MILLISECONDS
       )
+    }
   }
 
   override def supportCallBackLogs(): Boolean = true

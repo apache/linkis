@@ -19,7 +19,7 @@ package org.apache.linkis.engineconnplugin.flink.listener
 
 import java.util
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 trait FlinkListenerGroup {
 
@@ -49,7 +49,7 @@ abstract class FlinkListenerGroupImpl extends FlinkListenerGroup {
   private def getFlinkListeners[T <: FlinkListener](clazz: Class[T]): util.List[T] =
     flinkListeners match {
       case listeners: util.List[FlinkListener] =>
-        listeners.filter(clazz.isInstance).map(_.asInstanceOf[T])
+        listeners.asScala.filter(clazz.isInstance).map(_.asInstanceOf[T]).asJava
       case _ => new util.ArrayList[T]
     }
 

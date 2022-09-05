@@ -6,23 +6,14 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
-*/
+ */
 
--- ----------------------------
--- Alter table structure for linkis_ps_dm_datasource_env
--- ----------------------------
-
-ALTER TABLE `linkis_ps_dm_datasource_env` ADD CONSTRAINT `env_name` UNIQUE (`env_name`);
-ALTER TABLE `linkis_ps_dm_datasource_env` MODIFY COLUMN `parameter` varchar(1024) CHARACTER SET utf8 COLLATE utf8_bin NULL;
-
--- ----------------------------
--- Alter table structure for linkis_ps_dm_datasource
--- ----------------------------
-ALTER TABLE `linkis_ps_dm_datasource` MODIFY COLUMN `parameter` varchar(1024) CHARACTER SET utf8 COLLATE utf8_bin NULL;
+-- Update field for linkis_ps_dm_datasource_type_key
+UPDATE `linkis_ps_dm_datasource_type_key` SET `require`=0 WHERE `data_source_type_id` = 1;

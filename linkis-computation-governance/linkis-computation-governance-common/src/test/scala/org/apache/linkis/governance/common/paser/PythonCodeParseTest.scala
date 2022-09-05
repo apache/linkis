@@ -17,8 +17,8 @@
 
 package org.apache.linkis.governance.common.paser
 
-import org.junit.jupiter.api.{DisplayName, Test}
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.{DisplayName, Test}
 
 class PythonCodeParseTest {
 
@@ -50,7 +50,7 @@ class PythonCodeParseTest {
         |        .getOrCreate()
         |    return spark
         |""".stripMargin
-    val strings = parser.parse(pythonCode)
+    val strings = parser.parsePythonCode(pythonCode)
     assertTrue(strings.length == 8)
   }
 

@@ -39,13 +39,13 @@ class CSTableResultSetWriter(
 ) extends StorageResultSetWriter[TableMetaData, TableRecord](tableResult, maxCacheSize, storePath)
     with Logging {
 
-  override def toString: String = {
+  override def close(): Unit = {
     Utils.tryCatch {
       registerToCS
     } { case t: Throwable =>
       logger.info("Failed to register tmp table", t)
     }
-    super.toString
+    super.close()
   }
 
   private def registerToCS: Unit = {

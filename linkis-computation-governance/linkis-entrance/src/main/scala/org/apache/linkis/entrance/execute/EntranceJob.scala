@@ -198,7 +198,7 @@ abstract class EntranceJob extends Job {
             )
           )
         }
-        this.setProgress(EntranceJob.JOB_COMPLETED_PROGRESS: Unit)
+        this.setProgress(EntranceJob.JOB_COMPLETED_PROGRESS)
         entranceListenerBus.foreach(
           _.post(
             EntranceProgressEvent(this, EntranceJob.JOB_COMPLETED_PROGRESS, this.getProgressInfo)

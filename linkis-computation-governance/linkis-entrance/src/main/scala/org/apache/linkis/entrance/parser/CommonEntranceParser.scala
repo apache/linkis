@@ -145,7 +145,7 @@ class CommonEntranceParser(val persistenceManager: PersistenceManager)
       runType: String,
       labels: util.Map[String, Label[_]]
   ): Unit = {
-    val engineRunTypeLabel = labels.getOrElse(LabelKeyConstant.CODE_TYPE_KEY, null)
+    val engineRunTypeLabel = labels.asScala.getOrElse(LabelKeyConstant.CODE_TYPE_KEY, null)
     if (StringUtils.isBlank(runType) && null == engineRunTypeLabel) {
       val msg = s"You need to specify runType in execution content, such as sql"
       logger.warn(msg)

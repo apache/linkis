@@ -80,7 +80,7 @@ class ReadCacheConsumer(
               val cacheResult = JobHistoryHelper.getCache(
                 jobRequest.getExecutionCode,
                 jobRequest.getExecuteUser,
-                labelStrList,
+                labelStrList.asJava,
                 readCacheBefore
               )
               if (cacheResult != null && StringUtils.isNotBlank(cacheResult.getResultLocation)) {

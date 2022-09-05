@@ -64,6 +64,16 @@ class LoadBalanceLabelEngineConnManager extends ComputationEngineConnManager wit
     }
   }
 
+  /**
+   * Apply for a mark
+   *   1. If there is no corresponding mark, a new one will be generated. 2. A markrequest
+   *      corresponds to multiple marks, and a mark corresponds to an engine. 3 If there is a
+   *      bindenginelabel, you need to randomly select one at jobstart and cache it for subsequent
+   *      jobgroups. Delete the cache at jobend. 4. Return mark
+   *
+   * @param markReq
+   * @return
+   */
   override def applyMark(markReq: MarkReq): Mark = {
     if (null == markReq) return null
     val markNum: Int = getMarkNumByMarReq(markReq)

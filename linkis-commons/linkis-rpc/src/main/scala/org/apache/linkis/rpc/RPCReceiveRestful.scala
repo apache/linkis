@@ -164,7 +164,7 @@ private[rpc] class RPCReceiveRestful extends RPCReceiveRemote with Logging {
     val event = RPCMessageEvent(obj, serviceInstance)
     event
       .map(receiver => {
-        logger.debug(s"show the receiver ${receiver.getClass}")
+        logger.debug("show the receiver {}", receiver.getClass)
         toMessage(opEvent(receiver, obj, event))
       })
       .getOrElse(RPCProduct.getRPCProduct.notFound())

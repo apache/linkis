@@ -46,7 +46,7 @@ private[linkis] object RPCConsumer {
           if (data.isEmpty) return BoxedUnit.UNIT
           val objectStr = data.get(OBJECT_VALUE).toString
           val objectClass = data.get(CLASS_VALUE).toString
-          logger.debug(s"The corresponding anti-sequence is class $objectClass")
+          logger.debug("The corresponding anti-sequence is class {}", objectClass)
           val clazz = Utils.tryThrow(Class.forName(objectClass)) {
             case _: ClassNotFoundException =>
               new DWCURIException(

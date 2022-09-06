@@ -41,13 +41,11 @@ class BaseMetaReceiver {
   @Receiver
   def dealMetadataConnectRequest(metadataConnect: MetadataConnect): MetadataResponse =
     Utils.tryCatch {
-      logger.info(s"dealMetadataConnectRequest: ${metadataConnect.dataSourceType}")
       metadataQueryService.getConnection(
         metadataConnect.dataSourceType,
         metadataConnect.operator,
         metadataConnect.params
       )
-      logger.info(s"dealMetadataConnectRequest success: ${metadataConnect.operator}")
       MetadataResponse(status = true, BDPJettyServerHelper.gson.toJson(null))
     } {
       case e: WarnException =>

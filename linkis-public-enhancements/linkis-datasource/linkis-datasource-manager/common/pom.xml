@@ -34,7 +34,7 @@
     <!--rpc-->
     <dependency>
       <groupId>org.apache.linkis</groupId>
-      <artifactId>linkis-rpc</artifactId>
+      <artifactId>linkis-protocol</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
@@ -50,6 +50,7 @@
         </exclusion>
       </exclusions>
     </dependency>
+
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-text</artifactId>

@@ -38,7 +38,7 @@ import org.apache.linkis.engineplugin.trino.password.{
   StaticPasswordCallback
 }
 import org.apache.linkis.engineplugin.trino.socket.SocketChannelSocketFactory
-import org.apache.linkis.engineplugin.trino.utils.TrinoCode
+import org.apache.linkis.engineplugin.trino.utils.{TrinoCode, TrinoSQLHook}
 import org.apache.linkis.governance.common.paser.SQLCodeParser
 import org.apache.linkis.manager.common.entity.resource.{
   CommonNodeResource,
@@ -60,8 +60,8 @@ import org.apache.linkis.storage.resultset.ResultSetFactory
 import org.apache.linkis.storage.resultset.table.{TableMetaData, TableRecord}
 
 import org.apache.commons.io.IOUtils
-import org.apache.commons.lang.exception.ExceptionUtils
 import org.apache.commons.lang3.StringUtils
+import org.apache.commons.lang3.exception.ExceptionUtils
 
 import org.springframework.util.CollectionUtils
 
@@ -168,16 +168,20 @@ class TrinoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
       engineExecutorContext: EngineExecutionContext,
       code: String
   ): ExecuteResponse = {
-    val trimmedCode = code.trim
-    val realCode = getCodeParser
-      .map { parser => parser.parse(trimmedCode).head }
-      .getOrElse(trimmedCode)
+    val enableSqlHook = TRINO_SQL_HOOK_ENABLED.getValue
+    val realCode = if (StringUtils.isBlank(code)) {
+      "SELECT 1"
+    } else if (enableSqlHook) {
+      TrinoSQLHook.preExecuteHook(code.trim)
+    } else {
+      code.trim
+    }
 
     TrinoCode.checkCode(realCode)
     logger.info(s"trino client begins to run psql code:\n $realCode")
 
     val trinoUser = Optional
-      .ofNullable(TRINO_USER.getValue)
+      .ofNullable(TRINO_DEFAULT_USER.getValue)
       .orElseGet(new Supplier[String] {
         override def get(): String = getCurrentUser(engineExecutorContext.getLabels)
       })
@@ -366,7 +370,7 @@ class TrinoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
     labels
       .find(l => l.isInstanceOf[UserCreatorLabel])
       .map(label => label.asInstanceOf[UserCreatorLabel].getUser)
-      .getOrElse(TRINO_USER.getValue)
+      .getOrElse(TRINO_DEFAULT_USER.getValue)
   }
 
   private def initialStatusUpdates(
@@ -444,7 +448,7 @@ class TrinoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
           cause = error.getFailureInfo.toException
         }
         engineExecutorContext.appendStdout(
-          LogUtils.generateERROR(ExceptionUtils.getFullStackTrace(cause))
+          LogUtils.generateERROR(ExceptionUtils.getStackTrace(cause))
         )
         ErrorExecuteResponse(ExceptionUtils.getMessage(cause), cause)
       } else null
@@ -477,8 +481,9 @@ class TrinoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
 
     var builder: ClientSession.Builder = ClientSession.builder(newSession)
 
-    if (statement.getStartedTransactionId != null)
+    if (statement.getStartedTransactionId != null) {
       builder = builder.withTransactionId(statement.getStartedTransactionId)
+    }
 
     // update session properties if present
     if (

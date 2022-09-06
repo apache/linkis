@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineplugin.presto.executer
+package org.apache.linkis.engineplugin.presto.executor
 
 import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{OverloadUtils, Utils}
@@ -32,7 +32,7 @@ import org.apache.linkis.engineplugin.presto.exception.{
   PrestoClientException,
   PrestoStateInvalidException
 }
-import org.apache.linkis.engineplugin.presto.utils.SqlCodeParser
+import org.apache.linkis.engineplugin.presto.utils.{PrestoSQLHook, SqlCodeParser}
 import org.apache.linkis.governance.common.paser.SQLCodeParser
 import org.apache.linkis.manager.common.entity.resource.{
   CommonNodeResource,
@@ -54,6 +54,7 @@ import org.apache.linkis.storage.resultset.ResultSetFactory
 import org.apache.linkis.storage.resultset.table.{TableMetaData, TableRecord}
 
 import org.apache.commons.io.IOUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.exception.ExceptionUtils
 
 import org.springframework.util.CollectionUtils
@@ -122,7 +123,14 @@ class PrestoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
       engineExecutorContext: EngineExecutionContext,
       code: String
   ): ExecuteResponse = {
-    val realCode = code.trim
+    val enableSqlHook = PRESTO_SQL_HOOK_ENABLED.getValue
+    val realCode = if (StringUtils.isBlank(code)) {
+      "SELECT 1"
+    } else if (enableSqlHook) {
+      PrestoSQLHook.preExecuteHook(code.trim)
+    } else {
+      code.trim
+    }
     logger.info(s"presto client begins to run psql code:\n $realCode")
 
     val taskId = engineExecutorContext.getJobId.get

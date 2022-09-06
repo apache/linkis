@@ -260,7 +260,7 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long) exten
 
     val isScala211 = versionNumberString.startsWith("2.11");
     val in0 = if (isScala211) {
-      getField(sparkILoop, "scala$tools$nsc$interpreter$ILoop$$in0").asInstanceOf[Option[BufferedReader]]
+      getDeclaredField(sparkILoop, "in0").asInstanceOf[Option[BufferedReader]]
     } else {
       // TODO: have problem with scala2.13 or higher
       FieldUtils.readDeclaredField(sparkILoop, "in0", true)
@@ -275,8 +275,8 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long) exten
     SparkScalaExecutor.loopPostInit(sparkILoop)
   }
 
-  protected def getField(obj: Object, name: String): Object = {
-    val field = obj.getClass.getField(name)
+  protected def getDeclaredField(obj: Object, name: String): Object = {
+    val field = obj.getClass.getDeclaredField(name)
     field.setAccessible(true)
     field.get(obj)
   }

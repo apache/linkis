@@ -78,6 +78,8 @@ public class FsRestfulApi {
 
     @Autowired private FsService fsService;
 
+    @Autowired private UserService userService;
+
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
     /**
@@ -139,7 +141,10 @@ public class FsRestfulApi {
         FsPath fsPath = new FsPath(path);
         FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
         if (!fileSystem.exists(fsPath)) {
-
+            if (!userService.isUserExist(userName)) {
+                LOGGER.error("User {} not exist in linkis node.", userName);
+                throw WorkspaceExceptionManager.createException(80031);
+            }
             if (FILESYSTEM_PATH_AUTO_CREATE.getValue()) {
                 try {
                     fileSystem.mkdirs(fsPath);

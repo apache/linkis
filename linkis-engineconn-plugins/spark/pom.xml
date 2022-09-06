@@ -377,6 +377,12 @@
       <version>3.0.9</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.poi</groupId>
+      <artifactId>poi</artifactId>
+      <version>5.2.2</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>

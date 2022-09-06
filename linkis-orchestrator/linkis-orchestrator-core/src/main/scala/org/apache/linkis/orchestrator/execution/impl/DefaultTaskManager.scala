@@ -319,15 +319,16 @@ class DefaultTaskManager extends AbstractTaskManager with Logging {
       execTask: ExecTask,
       subTasks: mutable.Set[ExecTask]
   ): Unit = {
-    if (subTasks.size > executionTask.getMaxParallelism || isExecuted(executionTask, execTask))
+    if (subTasks.size > executionTask.getMaxParallelism || isExecuted(executionTask, execTask)) {
       return
+    }
     val tasks = findUnCompletedExecTasks(executionTask.getId, execTask.getChildren)
     if (null == tasks || tasks.isEmpty) {
       if (execTask.canExecute) {
         subTasks.add(execTask)
       }
     } else {
-      // 递归子节点
+      // Recursive child node
       tasks.foreach(getSubTasksRecursively(executionTask, _, subTasks))
     }
   }

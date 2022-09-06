@@ -62,7 +62,7 @@ object OrchestratorListenerBusContext {
 
   private val listenerBusContext = new OrchestratorListenerBusContextImpl
 
-  def getListenerBusContext() = listenerBusContext
+  def getListenerBusContext(): OrchestratorListenerBusContextImpl = listenerBusContext
 
   def createBusContext: OrchestratorListenerBusContext = new OrchestratorListenerBusContextImpl
 

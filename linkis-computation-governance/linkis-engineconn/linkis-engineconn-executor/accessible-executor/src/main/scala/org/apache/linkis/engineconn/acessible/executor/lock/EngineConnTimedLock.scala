@@ -169,9 +169,9 @@ class EngineConnTimedLock(private var timeout: Long)
   }
 
   private def unlockCallback(lockStr: String): Unit = {
-    /*if (null != lockedBy) {
+    /* if (null != lockedBy) {
       lockedBy.transition(NodeStatus.Unlock)
-    }*/
+    } */
     val executors = ExecutorManager.getInstance.getExecutors.filter(executor =>
       null != executor && !executor.isClosed
     )

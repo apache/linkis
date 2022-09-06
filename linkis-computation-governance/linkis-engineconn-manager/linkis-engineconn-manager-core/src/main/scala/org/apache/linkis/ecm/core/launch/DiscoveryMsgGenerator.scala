@@ -19,7 +19,7 @@ package org.apache.linkis.ecm.core.launch
 
 import java.util
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 trait DiscoveryMsgGenerator {
 
@@ -34,5 +34,6 @@ class EurekaDiscoveryMsgGenerator extends DiscoveryMsgGenerator {
       .get("eureka.client.serviceUrl.defaultZone")
       .map(v => Map("eureka.client.serviceUrl.defaultZone" -> v))
       .getOrElse[Map[String, String]](Map.empty)
+      .asJava
 
 }

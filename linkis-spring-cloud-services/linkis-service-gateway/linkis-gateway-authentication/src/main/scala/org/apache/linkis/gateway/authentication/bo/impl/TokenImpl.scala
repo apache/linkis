@@ -125,7 +125,7 @@ class TokenImpl extends Token {
   /**
    * Unit: second
    */
-  override def setElapseDay(elapseDay: Long) = {
+  override def setElapseDay(elapseDay: Long): Unit = {
     this.elapseDay = elapseDay
   }
 

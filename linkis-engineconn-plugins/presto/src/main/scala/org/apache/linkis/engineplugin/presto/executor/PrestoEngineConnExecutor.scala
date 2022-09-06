@@ -223,7 +223,7 @@ class PrestoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
       cacheMap: util.Map[String, String]
   ): ClientSession = {
     val configMap = new util.HashMap[String, String]()
-    // 运行时指定的参数优先级大于管理台配置优先级
+    // The parameter priority specified at runtime is higher than the configuration priority of the management console
     if (!CollectionUtils.isEmpty(cacheMap)) configMap.putAll(cacheMap)
     taskParams.asScala.foreach {
       case (key: String, value: Object) if value != null =>

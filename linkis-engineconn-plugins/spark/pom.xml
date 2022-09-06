@@ -29,7 +29,7 @@
 
     <artifactId>linkis-engineplugin-spark</artifactId>
     <properties>
-        <spark.version>2.4.3</spark.version>
+        <spark.version>3.1.1</spark.version>
     </properties>
 
     <dependencies>

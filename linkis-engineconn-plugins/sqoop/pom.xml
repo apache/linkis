@@ -29,8 +29,8 @@
 
     <artifactId>linkis-engineplugin-sqoop</artifactId>
     <properties>
-        <sqoop.version>1.4.6</sqoop.version>
-        <hive.version>3.1.2</hive.version>
+        <sqoop.version>1.4.7-cdh6.3.2</sqoop.version>
+        <hive.version>2.1.1-cdh6.3.2</hive.version>
     </properties>
 
     <dependencies>
@@ -43,7 +43,6 @@
         <dependency>
             <groupId>org.apache.sqoop</groupId>
             <artifactId>sqoop</artifactId>
-            <classifier>hadoop200</classifier>
             <version>${sqoop.version}</version>
         </dependency>
         <dependency>

@@ -30,12 +30,12 @@ import org.apache.hadoop.mapreduce.OutputFormat;
 import org.apache.hadoop.util.StringUtils;
 import org.apache.sqoop.config.ConfigurationConstants;
 
-import com.cloudera.sqoop.SqoopOptions;
-import com.cloudera.sqoop.config.ConfigurationHelper;
-import com.cloudera.sqoop.manager.ConnManager;
-import com.cloudera.sqoop.tool.SqoopTool;
-import com.cloudera.sqoop.util.ClassLoaderStack;
-import com.cloudera.sqoop.util.Jars;
+import org.apache.sqoop.SqoopOptions;
+import org.apache.sqoop.config.ConfigurationHelper;
+import org.apache.sqoop.manager.ConnManager;
+import org.apache.sqoop.tool.SqoopTool;
+import org.apache.sqoop.util.ClassLoaderStack;
+import org.apache.sqoop.util.Jars;
 
 import java.io.File;
 import java.io.IOException;

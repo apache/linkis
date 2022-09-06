@@ -430,4 +430,4 @@ export WORK_DIR=`cd ${work_dir};pwd`
 cd ${current_dir}/
 
 parse
-exec ${WORK_DIR}/bin/linkis-cli-pre --mode once -engineType sqoop-1.4.6 -codeType none "${PARSED_CMD[@]}"
+exec ${WORK_DIR}/bin/linkis-cli-pre --mode once -engineType sqoop-1.4.7_cdh6.3.2 -codeType none "${PARSED_CMD[@]}"

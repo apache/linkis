@@ -119,7 +119,8 @@ object HDFSUtils extends Logging {
     getUserGroupInformation(userName)
       .doAs(new PrivilegedExceptionAction[FileSystem] {
         // scalastyle:off FileSystemGet
-        def run: FileSystem = FileSystem.get(conf)
+        conf.set("fs.hdfs.impl", "org.apache.hadoop.hdfs.DistributedFileSystem")
+        def run = FileSystem.get(new Configuration(conf))
         // scalastyle:on FileSystemGet
       })
 

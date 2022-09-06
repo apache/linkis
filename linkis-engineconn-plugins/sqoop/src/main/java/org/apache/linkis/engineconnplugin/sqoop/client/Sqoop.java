@@ -36,10 +36,10 @@ import org.apache.sqoop.manager.SqlManager;
 import org.apache.sqoop.manager.oracle.OraOopManagerFactory;
 import org.apache.sqoop.util.LoggingUtils;
 
-import com.cloudera.sqoop.SqoopOptions;
-import com.cloudera.sqoop.manager.DefaultManagerFactory;
-import com.cloudera.sqoop.tool.SqoopTool;
-import com.cloudera.sqoop.util.OptionsFileUtil;
+import org.apache.sqoop.SqoopOptions;
+import org.apache.sqoop.manager.DefaultManagerFactory;
+import org.apache.sqoop.tool.SqoopTool;
+import org.apache.sqoop.util.OptionsFileUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -52,7 +52,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * Main entry-point for Sqoop Usage: hadoop jar (this_jar_name) com.cloudera.sqoop.Sqoop (options)
+ * Main entry-point for Sqoop Usage: hadoop jar (this_jar_name) org.apache.sqoop.Sqoop (options)
  * See the SqoopOptions class for options.
  */
 public class Sqoop extends Configured implements Tool {

@@ -78,7 +78,7 @@ class UserService extends Logging {
   }
 
   def isUserExist(username: String): Boolean = {
-    userIdMap.contains(username)
+    userIdMap.containsKey(username)
   }
 
 }

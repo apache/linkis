@@ -57,6 +57,10 @@ public class WorkSpaceConfiguration {
   public static final CommonVars<Boolean> FILESYSTEM_PATH_AUTO_CREATE =
       CommonVars$.MODULE$.apply("linkis.workspace.filesystem.auto.create", false);
 
+  public static final CommonVars<Long> LOCAL_FILESYSTEM_USER_REFRESH_INTERVAL =
+      CommonVars$.MODULE$.apply(
+          "wds.linkis.filesystem.local.usermap.refresh.interval.mills", 30 * 60 * 1000L);
+
   public static final ExecutorService executorService =
       new ThreadPoolExecutor(
           FILESYSTEM_FS_THREAD_NUM.getValue(),

@@ -25,7 +25,7 @@ import org.apache.linkis.filesystem.entity.LogLevel;
 import org.apache.linkis.filesystem.exception.WorkSpaceException;
 import org.apache.linkis.filesystem.exception.WorkspaceExceptionManager;
 import org.apache.linkis.filesystem.service.FsService;
-import org.apache.linkis.filesystem.util.UserUtil;
+import org.apache.linkis.filesystem.service.UserService;
 import org.apache.linkis.filesystem.util.WorkspaceUtil;
 import org.apache.linkis.filesystem.validator.PathValidator$;
 import org.apache.linkis.server.Message;
@@ -78,6 +78,8 @@ import static org.apache.linkis.filesystem.constant.WorkSpaceConstants.*;
 public class FsRestfulApi {
 
     @Autowired private FsService fsService;
+
+    @Autowired private UserService userService;
 
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
@@ -140,7 +142,7 @@ public class FsRestfulApi {
         FsPath fsPath = new FsPath(path);
         FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
         if (!fileSystem.exists(fsPath)) {
-            if (!UserUtil.isUserExist(userName)) {
+            if (!userService.isUserExist(userName)) {
                 LOGGER.error("User {} not exist in linkis node.", userName);
                 throw WorkspaceExceptionManager.createException(80031);
             }

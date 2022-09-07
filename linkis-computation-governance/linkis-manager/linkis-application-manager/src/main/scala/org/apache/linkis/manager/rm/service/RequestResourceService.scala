@@ -86,7 +86,8 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
       val labelMaxResource = labelResource.getMaxResource
       if (labelAvailableResource < requestResource && enableRequest) {
         logger.info(
-          s"Failed check: ${labelContainer.getUserCreatorLabel.getUser} want to use label [${labelContainer.getCurrentLabel}] resource[${requestResource}] > label available resource[${labelAvailableResource}]"
+          s"Failed check: ${labelContainer.getUserCreatorLabel.getUser} want to use label [${labelContainer.getCurrentLabel}] resource[${requestResource}] > " +
+            s"label available resource[${labelAvailableResource}]"
         )
         // TODO sendAlert(moduleInstance, user, creator, requestResource, moduleAvailableResource.resource, moduleLeftResource)
         val notEnoughMessage =
@@ -94,7 +95,8 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
         throw new RMWarnException(notEnoughMessage._1, notEnoughMessage._2)
       }
       logger.debug(
-        s"Passed check: ${labelContainer.getUserCreatorLabel.getUser} want to use label [${labelContainer.getCurrentLabel}] resource[${requestResource}] <= label available resource[${labelAvailableResource}]"
+        s"Passed check: ${labelContainer.getUserCreatorLabel.getUser} want to use label [${labelContainer.getCurrentLabel}] resource[${requestResource}] <= " +
+          s"label available resource[${labelAvailableResource}]"
       )
       true
     } else {

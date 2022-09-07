@@ -37,7 +37,6 @@ import org.springframework.stereotype.Service
 
 import java.util
 
-import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
 
 @Service
@@ -67,9 +66,9 @@ class DefaultEngineInfoService extends AbstractEngineService with EngineInfoServ
     // 1.获取node 和metric信息
     val nodes = engineNodeManager.listEngines(user)
     val resourceInfo =
-      resourceManager.getResourceInfo(nodes.map(_.getServiceInstance).toArray).resourceInfo
-    val resourceInfoMap = resourceInfo.map(r => (r.getServiceInstance.toString, r)).toMap
-    nodes.map { node =>
+      resourceManager.getResourceInfo(nodes.asScala.map(_.getServiceInstance).toArray).resourceInfo
+    val resourceInfoMap = resourceInfo.asScala.map(r => (r.getServiceInstance.toString, r)).toMap
+    nodes.asScala.map { node =>
       resourceInfoMap
         .get(node.getServiceInstance.toString)
         .map(_.getNodeResource)
@@ -89,9 +88,9 @@ class DefaultEngineInfoService extends AbstractEngineService with EngineInfoServ
   override def listEMEngines(em: EMNode): java.util.List[EngineNode] = {
     val nodes = emNodeManager.listEngines(em)
     val resourceInfo =
-      resourceManager.getResourceInfo(nodes.map(_.getServiceInstance).toArray).resourceInfo
-    val resourceInfoMap = resourceInfo.map(r => (r.getServiceInstance.toString, r)).toMap
-    nodes.map { node =>
+      resourceManager.getResourceInfo(nodes.asScala.map(_.getServiceInstance).toArray).resourceInfo
+    val resourceInfoMap = resourceInfo.asScala.map(r => (r.getServiceInstance.toString, r)).toMap
+    nodes.asScala.map { node =>
       resourceInfoMap
         .get(node.getServiceInstance.toString)
         .map(_.getNodeResource)

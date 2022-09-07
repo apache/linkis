@@ -80,38 +80,47 @@ object RMUtils extends Logging {
   def toUserResourceVo(userResource: UserResource): UserResourceVo = {
     val userResourceVo = new UserResourceVo
     if (userResource.getCreator != null) userResourceVo.setCreator(userResource.getCreator)
-    if (userResource.getEngineType != null)
+    if (userResource.getEngineType != null) {
       userResourceVo.setEngineTypeWithVersion(
         userResource.getEngineType + "-" + userResource.getVersion
       )
+    }
     if (userResource.getUsername != null) userResourceVo.setUsername(userResource.getUsername)
-    if (userResource.getCreateTime != null)
+    if (userResource.getCreateTime != null) {
       userResourceVo.setCreateTime(userResource.getCreateTime)
-    if (userResource.getUpdateTime != null)
+    }
+    if (userResource.getUpdateTime != null) {
       userResourceVo.setUpdateTime(userResource.getUpdateTime)
+    }
     if (userResource.getId != null) userResourceVo.setId(userResource.getId)
-    if (userResource.getUsedResource != null)
+    if (userResource.getUsedResource != null) {
       userResourceVo.setUsedResource(
         mapper.readValue(write(userResource.getUsedResource), classOf[util.Map[String, Any]])
       )
-    if (userResource.getLeftResource != null)
+    }
+    if (userResource.getLeftResource != null) {
       userResourceVo.setLeftResource(
         mapper.readValue(write(userResource.getLeftResource), classOf[util.Map[String, Any]])
       )
-    if (userResource.getLockedResource != null)
+    }
+    if (userResource.getLockedResource != null) {
       userResourceVo.setLockedResource(
         mapper.readValue(write(userResource.getLockedResource), classOf[util.Map[String, Any]])
       )
-    if (userResource.getMaxResource != null)
+    }
+    if (userResource.getMaxResource != null) {
       userResourceVo.setMaxResource(
         mapper.readValue(write(userResource.getMaxResource), classOf[util.Map[String, Any]])
       )
-    if (userResource.getMinResource != null)
+    }
+    if (userResource.getMinResource != null) {
       userResourceVo.setMinResource(
         mapper.readValue(write(userResource.getMinResource), classOf[util.Map[String, Any]])
       )
-    if (userResource.getResourceType != null)
+    }
+    if (userResource.getResourceType != null) {
       userResourceVo.setResourceType(userResource.getResourceType)
+    }
     if (userResource.getLeftResource != null && userResource.getMaxResource != null) {
       if (userResource.getResourceType.equals(ResourceType.DriverAndYarn)) {
         val leftDriverResource =
@@ -139,16 +148,21 @@ object RMUtils extends Logging {
 
   def toPersistenceResource(nodeResource: NodeResource): PersistenceResource = {
     val persistenceResource = new PersistenceResource
-    if (nodeResource.getMaxResource != null)
+    if (nodeResource.getMaxResource != null) {
       persistenceResource.setMaxResource(serializeResource(nodeResource.getMaxResource))
-    if (nodeResource.getMinResource != null)
+    }
+    if (nodeResource.getMinResource != null) {
       persistenceResource.setMinResource(serializeResource(nodeResource.getMinResource))
-    if (nodeResource.getLockedResource != null)
+    }
+    if (nodeResource.getLockedResource != null) {
       persistenceResource.setLockedResource(serializeResource(nodeResource.getLockedResource))
-    if (nodeResource.getExpectedResource != null)
+    }
+    if (nodeResource.getExpectedResource != null) {
       persistenceResource.setExpectedResource(serializeResource(nodeResource.getExpectedResource))
-    if (nodeResource.getLeftResource != null)
+    }
+    if (nodeResource.getLeftResource != null) {
       persistenceResource.setLeftResource(serializeResource(nodeResource.getLeftResource))
+    }
     persistenceResource.setResourceType(nodeResource.getResourceType.toString())
     persistenceResource
   }

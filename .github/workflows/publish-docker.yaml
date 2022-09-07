@@ -78,7 +78,7 @@ jobs:
         DOCKER_VERSION: ${{ github.ref_name }}-${{ github.sha }}
       run: |
         docker images
-        docker tag linkis:${{ env.LINKIS_VERSION }} ${{ env.HUB }}/library/linkis:${{ env.DOCKER_VERSION }}
-        docker push ${{ env.HUB }}/library/linkis:${{ env.DOCKER_VERSION }}
-        docker tag linkis-web:${{ env.LINKIS_VERSION }} ${{ env.HUB }}/library/linkis-web:${{ env.DOCKER_VERSION }}
-        docker push ${{ env.HUB }}/library/linkis-web:${{ env.DOCKER_VERSION }}
+        docker tag linkis:${{ env.LINKIS_VERSION }} ${{ env.HUB }}/linkis:${{ env.DOCKER_VERSION }}
+        docker push ${{ env.HUB }}/linkis:${{ env.DOCKER_VERSION }}
+        docker tag linkis-web:${{ env.LINKIS_VERSION }} ${{ env.HUB }}/linkis-web:${{ env.DOCKER_VERSION }}
+        docker push ${{ env.HUB }}/linkis-web:${{ env.DOCKER_VERSION }}

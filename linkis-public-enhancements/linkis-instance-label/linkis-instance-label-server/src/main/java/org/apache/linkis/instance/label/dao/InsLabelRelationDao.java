@@ -48,7 +48,8 @@ public interface InsLabelRelationDao {
    * @return
    */
   List<InstanceInfo> searchInsCascadeByValues(
-      List<Map<String, String>> valueContent, String relation);
+      @Param("valueMapList") List<Map<String, String>> valueContent,
+      @Param("relation") String relation);
 
   List<InstanceInfo> searchInsCascadeByLabels(List<InsPersistenceLabel> labels);
 

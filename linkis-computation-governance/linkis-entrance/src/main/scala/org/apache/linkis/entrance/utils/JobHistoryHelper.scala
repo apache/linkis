@@ -91,7 +91,7 @@ object JobHistoryHelper extends Logging {
   }
 
   /**
-   * 对于一个在内存中找不到这个任务的话，可以直接干掉
+   * If the task cannot be found in memory, you can directly kill it
    *
    * @param taskID
    */
@@ -106,7 +106,7 @@ object JobHistoryHelper extends Logging {
   }
 
   /**
-   * 批量强制kill
+   * Batch forced kill
    *
    * @param taskIdList
    */

@@ -109,7 +109,7 @@ abstract class EntranceJob extends Job {
     }
   }
 
-  @Deprecated
+  @deprecated
   def incrementResultSetPersisted(): Unit = {
     //    persistedResultSets.incrementAndGet()
   }
@@ -178,8 +178,9 @@ abstract class EntranceJob extends Job {
           TaskConstant.ENTRANCEJOB_COMPLETE_TIME,
           new Date(System.currentTimeMillis())
         )
-        if (getJobInfo != null)
+        if (getJobInfo != null) {
           getLogListener.foreach(_.onLogUpdate(this, LogUtils.generateInfo(getJobInfo.getMetric)))
+        }
         if (isSucceed) {
           getLogListener.foreach(
             _.onLogUpdate(
@@ -327,6 +328,6 @@ abstract class EntranceJob extends Job {
 
 object EntranceJob {
 
-  def JOB_COMPLETED_PROGRESS = 1.0f
+  def JOB_COMPLETED_PROGRESS: Float = 1.0f
 
 }

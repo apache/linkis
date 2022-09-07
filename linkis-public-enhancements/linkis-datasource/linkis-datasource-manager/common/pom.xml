@@ -31,6 +31,14 @@
   </properties>
 
   <dependencies>
+    <!--rpc-->
+    <dependency>
+      <groupId>org.apache.linkis</groupId>
+      <artifactId>linkis-protocol</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
     <dependency>
       <groupId>org.apache.linkis</groupId>
       <artifactId>linkis-module</artifactId>
@@ -42,6 +50,7 @@
         </exclusion>
       </exclusions>
     </dependency>
+
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-text</artifactId>

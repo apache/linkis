@@ -48,11 +48,11 @@ class CacheTask(private var parents: Array[Task], private var children: Array[Ta
     cacheTask
   }
 
-  def setRealTask(realTask: CodeLogicalUnitTask) = {
+  def setRealTask(realTask: CodeLogicalUnitTask): Unit = {
     this.realTask = realTask
   }
 
-  def getRealTask() = realTask
+  def getRealTask(): CodeLogicalUnitTask = realTask
 
   override def getId: String = {
     if (null == id) synchronized {
@@ -65,7 +65,7 @@ class CacheTask(private var parents: Array[Task], private var children: Array[Ta
 
   override def theSame(other: Task): Boolean = if (super.equals(other)) true
   else if (other == null) false
-  else
+  else {
     other match {
       case jobTask: CacheTask =>
         jobTask.getParents.sameElements(parents) && jobTask.getChildren.sameElements(
@@ -73,5 +73,6 @@ class CacheTask(private var parents: Array[Task], private var children: Array[Ta
         ) && jobTask.getTaskDesc == getTaskDesc
       case _ => false
     }
+  }
 
 }

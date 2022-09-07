@@ -35,8 +35,9 @@ object PipelineExecutorSelector extends Logging {
   ): PipeLineExecutor = {
     PipelineEngineConnExecutor.listPipelineExecutors.foreach(_.init(options))
     Utils.tryCatch {
-      if (new File(sourcePath).getName.equals(new File(destPath).getName))
+      if (new File(sourcePath).getName.equals(new File(destPath).getName)) {
         return PipelineEngineConnExecutor.listPipelineExecutors()(0)
+      }
       getSuffix(destPath) match {
         case ".csv" => PipelineEngineConnExecutor.listPipelineExecutors()(1)
         case ".xlsx" => PipelineEngineConnExecutor.listPipelineExecutors()(2)

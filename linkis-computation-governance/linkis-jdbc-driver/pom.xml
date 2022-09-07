@@ -24,7 +24,7 @@
         <artifactId>linkis</artifactId>
         <groupId>org.apache.linkis</groupId>
         <version>1.3.0</version>
-<!--        <relativePath>../../pom.xml</relativePath>-->
+        <relativePath>../../pom.xml</relativePath>
     </parent>
     <artifactId>linkis-jdbc-driver</artifactId>
 

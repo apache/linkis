@@ -139,7 +139,7 @@ private[rpc] class RPCReceiveRestful extends RPCReceiveRemote with Logging {
       })
     }
 
-  private implicit def toMessage(obj: Any): Message = obj match {
+  private def toMessage(obj: Any): Message = obj match {
     case Unit | () | null =>
       RPCProduct.getRPCProduct.ok()
     case _: BoxedUnit => RPCProduct.getRPCProduct.ok()
@@ -152,29 +152,36 @@ private[rpc] class RPCReceiveRestful extends RPCReceiveRemote with Logging {
     val obj = RPCConsumer.getRPCConsumer.toObject(message)
     val event = RPCMessageEvent(obj, BaseRPCSender.getInstanceInfo(message.getData))
     rpcReceiverListenerBus.post(event)
+    toMessage(Unit)
   }
 
-  private def receiveAndReply(
+  private def receiveAndReplyWithMessage(
       message: Message,
-      opEvent: (Receiver, Any, Sender) => Message
+      opEvent: (Receiver, Any, Sender) => Any
   ): Message = catchIt {
     val obj = RPCConsumer.getRPCConsumer.toObject(message)
     val serviceInstance = BaseRPCSender.getInstanceInfo(message.getData)
     val event = RPCMessageEvent(obj, serviceInstance)
-    event.map(opEvent(_, obj, event)).getOrElse(RPCProduct.getRPCProduct.notFound())
+    event
+      .map(receiver => {
+        logger.debug("show the receiver {}", receiver.getClass)
+        toMessage(opEvent(receiver, obj, event))
+      })
+      .getOrElse(RPCProduct.getRPCProduct.notFound())
   }
 
   @RequestMapping(path = Array("/rpc/receiveAndReply"), method = Array(RequestMethod.POST))
   override def receiveAndReply(@RequestBody message: Message): Message =
-    receiveAndReply(message, _.receiveAndReply(_, _))
+    receiveAndReplyWithMessage(message, _.receiveAndReply(_, _))
 
   @RequestMapping(path = Array("/rpc/replyInMills"), method = Array(RequestMethod.POST))
   override def receiveAndReplyInMills(@RequestBody message: Message): Message = catchIt {
     val duration = message.getData.get("duration")
-    if (duration == null || StringUtils.isEmpty(duration.toString))
+    if (duration == null || StringUtils.isEmpty(duration.toString)) {
       throw new DWCURIException(10002, "The timeout period is not set!(超时时间未设置！)")
+    }
     val timeout = Duration(duration.toString.toLong, TimeUnit.MILLISECONDS)
-    receiveAndReply(message, _.receiveAndReply(_, timeout, _))
+    receiveAndReplyWithMessage(message, _.receiveAndReply(_, timeout, _))
   }
 
 }

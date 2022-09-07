@@ -165,9 +165,9 @@ class DefaultEngineCreateService
     logger.info(s"Task: $taskId start to create Engine for request: $engineCreateRequest.")
     val labelBuilderFactory = LabelBuilderFactoryContext.getLabelBuilderFactory
     val timeout =
-      if (engineCreateRequest.getTimeOut <= 0)
+      if (engineCreateRequest.getTimeOut <= 0) {
         AMConfiguration.ENGINE_START_MAX_TIME.getValue.toLong
-      else engineCreateRequest.getTimeOut
+      } else engineCreateRequest.getTimeOut
 
     // 1. 检查Label是否合法
     var labelList: util.List[Label[_]] = LabelUtils.distinctLabel(
@@ -340,7 +340,7 @@ class DefaultEngineCreateService
       engineCreateRequest.getProperties
     )
     val resource = engineConnPluginPointer.createEngineResource(timeoutEngineResourceRequest)
-    /*  emNode.setLabels(nodeLabelService.getNodeLabels(emNode.getServiceInstance))*/
+    /*  emNode.setLabels(nodeLabelService.getNodeLabels(emNode.getServiceInstance)) */
 
     resourceManager.requestResource(
       LabelUtils.distinctLabel(labelList, emNode.getLabels),

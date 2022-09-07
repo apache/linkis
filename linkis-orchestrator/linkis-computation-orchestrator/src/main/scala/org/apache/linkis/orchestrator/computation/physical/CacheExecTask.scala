@@ -42,7 +42,7 @@ import org.apache.linkis.protocol.query.cache.{
 }
 import org.apache.linkis.rpc.Sender
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 class CacheExecTask(parents: Array[ExecTask], children: Array[ExecTask]) extends AbstractExecTask {
 
@@ -74,7 +74,7 @@ class CacheExecTask(parents: Array[ExecTask], children: Array[ExecTask]) extends
             codeLogicalUnitExecTask.getCodeLogicalUnit.toStringCode,
             aSTContext.getExecuteUser,
             java.lang.Long.parseLong(cacheLabel.getCacheExpireAfter),
-            codeLogicalUnitExecTask.getLabels.map(_.getStringValue),
+            codeLogicalUnitExecTask.getLabels.asScala.map(_.getStringValue).asJava,
             resp.getResultSet
           )
           sender.ask(requestWriteCache)
@@ -103,11 +103,11 @@ class CacheExecTask(parents: Array[ExecTask], children: Array[ExecTask]) extends
         val aSTContext =
           codeLogicalUnitExecTask.getTaskDesc.getOrigin.getASTOrchestration.getASTContext
         val cacheLabel =
-          aSTContext.getLabels.find(_.isInstanceOf[CacheLabel]).get.asInstanceOf[CacheLabel]
+          aSTContext.getLabels.asScala.find(_.isInstanceOf[CacheLabel]).get.asInstanceOf[CacheLabel]
         val requestReadCache = new RequestReadCache(
           codeLogicalUnitExecTask.getCodeLogicalUnit.toStringCode,
           aSTContext.getExecuteUser,
-          codeLogicalUnitExecTask.getLabels.map(_.getStringValue),
+          codeLogicalUnitExecTask.getLabels.asScala.map(_.getStringValue).asJava,
           java.lang.Long.parseLong(cacheLabel.getReadCacheBefore)
         )
         sender.ask(requestReadCache) match {
@@ -132,9 +132,9 @@ class CacheExecTask(parents: Array[ExecTask], children: Array[ExecTask]) extends
 
   override def isLocalMode: Boolean = true
 
-  def getRealExecTask = realExecTask
+  def getRealExecTask: ExecTask = realExecTask
 
-  def setRealExecTask(realExecTask: ExecTask) = this.realExecTask = realExecTask
+  def setRealExecTask(realExecTask: ExecTask): Unit = this.realExecTask = realExecTask
 
   override def getPhysicalContext: PhysicalContext = physicalContext
 

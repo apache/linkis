@@ -48,7 +48,7 @@ class EnrichLabelParserTransform extends ParserTransform {
     }
   }
 
-  def enrichLabels(codeJob: CodeJob, context: ASTContext) = {
+  def enrichLabels(codeJob: CodeJob, context: ASTContext): Unit = {
     parserLabelFillers.foreach { filler =>
       filler.parseToLabel(codeJob, context) match {
         case Some(label) => context.getLabels.add(label)
@@ -57,7 +57,7 @@ class EnrichLabelParserTransform extends ParserTransform {
     }
   }
 
-  def initParserLabelFillers = {
+  def initParserLabelFillers: Unit = {
     parserLabelFillers = Array(new CacheParserLabelFiller)
   }
 

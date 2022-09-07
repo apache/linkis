@@ -131,7 +131,8 @@ export default {
   methods: {
     search(isChangingPage) {
       if (!isChangingPage) this.page.pageNow = 1
-      this.searchBar.shortcut[1] = this.searchBar.shortcut[1] ? new Date(this.searchBar.shortcut[1].getTime()+86399999) : this.searchBar.shortcut[1]
+      this.searchBar.shortcut[0] = this.searchBar.shortcut[0] ? new Date(this.searchBar.shortcut[0].setHours(0, 0, 0, 0)) : this.searchBar.shortcut[0]
+      this.searchBar.shortcut[1] = this.searchBar.shortcut[1] ? new Date(this.searchBar.shortcut[1].setHours(23, 59, 59, 0)): this.searchBar.shortcut[1]
       this.$emit("search", this.searchBar)
     },
     stop() {

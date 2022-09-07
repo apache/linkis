@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component
 
 import java.util
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 @Component
 class AMLabelChecker extends LabelChecker {
@@ -44,7 +44,7 @@ class AMLabelChecker extends LabelChecker {
       clazz: Class[_]*
   ): Boolean = {
     // TODO: 是否需要做子类的判断
-    labelList.filter(null != _).map(_.getClass).containsAll(clazz)
+    labelList.asScala.filter(null != _).map(_.getClass).asJava.containsAll(clazz.asJava)
   }
 
 }

@@ -45,7 +45,7 @@ import java.lang.reflect.UndeclaredThrowableException
 import java.util
 import java.util.concurrent.ExecutorService
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 @Component
 class NodeHeartbeatMonitor extends ManagerMonitor with Logging {
@@ -100,8 +100,8 @@ class NodeHeartbeatMonitor extends ManagerMonitor with Logging {
     val nodes = nodeManagerPersistence.getAllNodes
     val metricList = nodeMetricManagerPersistence.getNodeMetrics(nodes)
     if (null != metricList) {
-      val metricses = metricList.map(m => (m.getServiceInstance.toString, m)).toMap
-      nodes.foreach { node =>
+      val metricses = metricList.asScala.map(m => (m.getServiceInstance.toString, m)).toMap
+      nodes.asScala.foreach { node =>
         metricses.get(node.getServiceInstance.toString).foreach { metrics =>
           node.setNodeStatus(NodeStatus.values()(metrics.getStatus))
           node.setUpdateTime(metrics.getUpdateTime)
@@ -110,12 +110,13 @@ class NodeHeartbeatMonitor extends ManagerMonitor with Logging {
     }
     // EngineConn remove
     val engineNodes =
-      nodes.filter(_.getServiceInstance.getApplicationName.equalsIgnoreCase(ecName))
-    Utils.tryAndWarn(dealECNodes(engineNodes))
-    val ecmNodes = nodes.filter(_.getServiceInstance.getApplicationName.equalsIgnoreCase(ecmName))
-    dealECMNotExistsInRegistry(ecmNodes)
+      nodes.asScala.filter(_.getServiceInstance.getApplicationName.equalsIgnoreCase(ecName))
+    Utils.tryAndWarn(dealECNodes(engineNodes.asJava))
+    val ecmNodes =
+      nodes.asScala.filter(_.getServiceInstance.getApplicationName.equalsIgnoreCase(ecmName))
+    dealECMNotExistsInRegistry(ecmNodes.asJava)
 
-    /*val engineMetricList = nodeMetricManagerPersistence.getNodeMetrics(engineNodes)
+    /* val engineMetricList = nodeMetricManagerPersistence.getNodeMetrics(engineNodes)
     val healthyList = filterHealthyAndWarnList(engineMetricList)
     dealHealthyList(healthyList)
      val unHealthyList = filterUnHealthyList(engineMetricList)
@@ -124,7 +125,7 @@ class NodeHeartbeatMonitor extends ManagerMonitor with Logging {
      val stockAvailableList = filterStockAvailableList(engineMetricList)
      dealStockAvailableList(stockAvailableList)
      val stockUnAvailableList = filterStockUnAvailableList(engineMetricList)
-     dealStockUnAvailableList(stockUnAvailableList)*/
+     dealStockUnAvailableList(stockUnAvailableList) */
     logger.info("Finished to check the health of the node")
   }
 
@@ -139,7 +140,7 @@ class NodeHeartbeatMonitor extends ManagerMonitor with Logging {
    */
   private def dealECNodes(engineNodes: util.List[Node]): Unit = {
     val existingEngineInstances = Sender.getInstances(ecName)
-    engineNodes.foreach { engineNode =>
+    engineNodes.asScala.foreach { engineNode =>
       if (NodeStatus.isCompleted(engineNode.getNodeStatus)) {
         logger.info(
           s"${engineNode.getServiceInstance} is completed ${engineNode.getNodeStatus}, will be remove"
@@ -177,7 +178,7 @@ class NodeHeartbeatMonitor extends ManagerMonitor with Logging {
 
   private def dealECMNotExistsInRegistry(ecmNodes: util.List[Node]): Unit = {
     val existingECMInstances = Sender.getInstances(ecmName)
-    ecmNodes.foreach { ecm =>
+    ecmNodes.asScala.foreach { ecm =>
       val updateTime = if (null == ecm.getUpdateTime) {
         ecm.getStartTime.getTime
       } else {
@@ -210,7 +211,7 @@ class NodeHeartbeatMonitor extends ManagerMonitor with Logging {
    */
   private def dealHealthyList(healthyList: util.List[NodeMetrics]): Unit = Utils.tryAndWarn {
     if (null != healthyList) {
-      healthyList.foreach { nodeMetric =>
+      healthyList.asScala.foreach { nodeMetric =>
         var sender: Sender = null
         try {
           sender = Sender.getSender(nodeMetric.getServiceInstance)
@@ -263,13 +264,13 @@ class NodeHeartbeatMonitor extends ManagerMonitor with Logging {
    */
   private def dealUnHealthyList(unhealthyList: util.List[NodeMetrics]): Unit = Utils.tryAndWarn {
     if (null == unhealthyList) return
-    unhealthyList.foreach { nodeMetric =>
+    unhealthyList.asScala.foreach { nodeMetric =>
       if (managerLabelService.isEM(nodeMetric.getServiceInstance)) {
         val nodes = nodeManagerPersistence.getEngineNodeByEM(nodeMetric.getServiceInstance)
         if (null == nodes || nodes.isEmpty) {
           triggerEMSuicide(nodeMetric.getServiceInstance)
         } else {
-          nodes.foreach(node => triggerEngineSuicide(node.getServiceInstance))
+          nodes.asScala.foreach(node => triggerEngineSuicide(node.getServiceInstance))
         }
       } else {
         fixedThreadPoll.submit {
@@ -291,7 +292,7 @@ class NodeHeartbeatMonitor extends ManagerMonitor with Logging {
   private def dealStockAvailableList(stockAvailableList: util.List[NodeMetrics]): Unit =
     Utils.tryAndWarn {
       if (null == stockAvailableList) return
-      stockAvailableList.foreach { nodeMetric =>
+      stockAvailableList.asScala.foreach { nodeMetric =>
         updateMetricHealthy(
           nodeMetric,
           NodeHealthy.StockUnavailable,
@@ -303,7 +304,7 @@ class NodeHeartbeatMonitor extends ManagerMonitor with Logging {
   private def dealStockUnAvailableList(stockUnAvailableList: util.List[NodeMetrics]): Unit =
     Utils.tryAndWarn {
       if (null == stockUnAvailableList) return
-      stockUnAvailableList.foreach { nodeMetric =>
+      stockUnAvailableList.asScala.foreach { nodeMetric =>
         if (managerLabelService.isEM(nodeMetric.getServiceInstance)) {
           val nodes = nodeManagerPersistence.getEngineNodeByEM(nodeMetric.getServiceInstance)
           if (null == nodes || nodes.isEmpty) {
@@ -316,7 +317,7 @@ class NodeHeartbeatMonitor extends ManagerMonitor with Logging {
             fixedThreadPoll.submit {
               new Runnable {
                 override def run(): Unit =
-                  nodes.foreach(node => triggerEMToStopEngine(node.getServiceInstance))
+                  nodes.asScala.foreach(node => triggerEMToStopEngine(node.getServiceInstance))
               }
             }
           }
@@ -329,7 +330,7 @@ class NodeHeartbeatMonitor extends ManagerMonitor with Logging {
   ): java.util.List[NodeMetrics] = {
     val curTime = System.currentTimeMillis()
     val maxInterval = ManagerMonitorConf.NODE_HEARTBEAT_MAX_UPDATE_TIME.getValue.toLong
-    nodeMetrics.filter { metric =>
+    nodeMetrics.asScala.filter { metric =>
       val interval = curTime - metric.getUpdateTime.getTime
       if (interval > maxInterval) {
         val healthy = metricsConverter.parseHealthyInfo(metric).getNodeHealthy
@@ -338,14 +339,14 @@ class NodeHeartbeatMonitor extends ManagerMonitor with Logging {
         false
       }
     }
-  }
+  }.asJava
 
   private def filterStockAvailableList(
       nodeMetrics: java.util.List[NodeMetrics]
   ): java.util.List[NodeMetrics] = {
     val curTime = System.currentTimeMillis()
     val maxInterval = ManagerMonitorConf.NODE_HEARTBEAT_MAX_UPDATE_TIME.getValue.toLong
-    nodeMetrics.filter { metric =>
+    nodeMetrics.asScala.filter { metric =>
       val interval = curTime - metric.getUpdateTime.getTime
       if (interval > maxInterval) {
         val healthy = metricsConverter.parseHealthyInfo(metric).getNodeHealthy
@@ -354,14 +355,14 @@ class NodeHeartbeatMonitor extends ManagerMonitor with Logging {
         false
       }
     }
-  }
+  }.asJava
 
   private def filterStockUnAvailableList(
       nodeMetrics: java.util.List[NodeMetrics]
   ): java.util.List[NodeMetrics] = {
     val curTime = System.currentTimeMillis()
     val maxInterval = ManagerMonitorConf.NODE_HEARTBEAT_MAX_UPDATE_TIME.getValue.toLong
-    nodeMetrics.filter { metric =>
+    nodeMetrics.asScala.filter { metric =>
       val interval = curTime - metric.getUpdateTime.getTime
       if (interval > maxInterval) {
         val healthy = metricsConverter.parseHealthyInfo(metric).getNodeHealthy
@@ -370,16 +371,16 @@ class NodeHeartbeatMonitor extends ManagerMonitor with Logging {
         false
       }
     }
-  }
+  }.asJava
 
   private def filterUnHealthyList(
       nodeMetrics: java.util.List[NodeMetrics]
   ): java.util.List[NodeMetrics] = {
-    nodeMetrics.filter { metric =>
+    nodeMetrics.asScala.filter { metric =>
       val healthy = metricsConverter.parseHealthyInfo(metric).getNodeHealthy
       NodeHealthy.UnHealthy == healthy
     }
-  }
+  }.asJava
 
   private def clearUnhealthyNode(ownerNodeMetrics: OwnerNodeMetrics): Unit = {
     val sender = Sender.getSender(Sender.getThisServiceInstance)

@@ -27,7 +27,7 @@ import org.springframework.context.annotation.{Bean, Configuration}
 
 import java.util
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 trait EngineConnConfigurationService {
 
@@ -39,8 +39,8 @@ class DefaultEngineConnConfigurationService extends EngineConnConfigurationServi
 
   override def getConsoleConfiguration(label: util.List[Label[_]]): util.Map[String, String] = {
     val properties = new JMap[String, String]
-    val userCreatorLabelOption = label.find(_.isInstanceOf[UserCreatorLabel])
-    val engineTypeLabelOption = label.find(_.isInstanceOf[EngineTypeLabel])
+    val userCreatorLabelOption = label.asScala.find(_.isInstanceOf[UserCreatorLabel])
+    val engineTypeLabelOption = label.asScala.find(_.isInstanceOf[EngineTypeLabel])
     if (userCreatorLabelOption.isDefined) {
       val userCreatorLabel = userCreatorLabelOption.get.asInstanceOf[UserCreatorLabel]
       if (engineTypeLabelOption.isDefined) {

@@ -33,7 +33,7 @@ import org.springframework.stereotype.Component
 
 import java.util
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 @Component
 class LabelResourceServiceImpl extends LabelResourceService with Logging {
@@ -64,6 +64,7 @@ class LabelResourceServiceImpl extends LabelResourceService with Logging {
   override def getResourcesByUser(user: String): Array[NodeResource] = {
     resourceManagerPersistence
       .getResourceByUser(user)
+      .asScala
       .map(ResourceUtils.fromPersistenceResource)
       .toArray
   }
@@ -85,6 +86,7 @@ class LabelResourceServiceImpl extends LabelResourceService with Logging {
   override def getLabelsByResource(resource: PersistenceResource): Array[Label[_]] = {
     labelManagerPersistence
       .getLabelByResource(resource)
+      .asScala
       .map { label =>
         labelFactory.createLabel(label.getLabelKey, label.getValue)
       }

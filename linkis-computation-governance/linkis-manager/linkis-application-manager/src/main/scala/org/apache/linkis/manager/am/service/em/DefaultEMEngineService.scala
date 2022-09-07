@@ -39,7 +39,7 @@ import org.springframework.stereotype.Service
 
 import java.util
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 @Service
 class DefaultEMEngineService extends EMEngineService with Logging {
@@ -72,7 +72,7 @@ class DefaultEMEngineService extends EMEngineService with Logging {
     logger.info(
       s"EM ${emNode.getServiceInstance} Finished to create Engine ${engineBuildRequest.ticketId}"
     )
-    engineNode.setLabels(emNode.getLabels.filter(_.isInstanceOf[EngineNodeLabel]))
+    engineNode.setLabels(emNode.getLabels.asScala.filter(_.isInstanceOf[EngineNodeLabel]).asJava)
     engineNode.setEMNode(emNode)
     engineNode
 
@@ -106,19 +106,21 @@ class DefaultEMEngineService extends EMEngineService with Logging {
       new AMErrorException(AMConstant.EM_ERROR_CODE, "No corresponding EM")
     }
     // TODO add em select rule to do this
-    val emInstanceLabelOption = labels.find(_.isInstanceOf[EMInstanceLabel])
+    val emInstanceLabelOption = labels.asScala.find(_.isInstanceOf[EMInstanceLabel])
     val filterInstanceAndLabel = if (emInstanceLabelOption.isDefined) {
       val emInstanceLabel = emInstanceLabelOption.get.asInstanceOf[EMInstanceLabel]
       logger.info(s"use emInstanceLabel , will be route to ${emInstanceLabel.getServiceInstance}")
-      if (!instanceAndLabels.exists(_._1.equals(emInstanceLabel.getServiceInstance))) {
+      if (!instanceAndLabels.asScala.exists(_._1.equals(emInstanceLabel.getServiceInstance))) {
         throw new AMErrorException(
           AMConstant.EM_ERROR_CODE,
           s"You specified em ${emInstanceLabel.getServiceInstance}, but the corresponding EM does not exist in the Manager"
         )
       }
-      instanceAndLabels.filter(_._1.getServiceInstance.equals(emInstanceLabel.getServiceInstance))
+      instanceAndLabels.asScala.filter(
+        _._1.getServiceInstance.equals(emInstanceLabel.getServiceInstance)
+      )
     } else {
-      instanceAndLabels.toMap
+      instanceAndLabels.asScala.toMap
     }
     val nodes = getEMNodes(filterInstanceAndLabel.keys.toArray)
     if (null == nodes) {
@@ -129,7 +131,7 @@ class DefaultEMEngineService extends EMEngineService with Logging {
         .find(_._1.getServiceInstance.equals(node.getServiceInstance))
         .map(_._2)
       persistenceLabel.foreach(labelList =>
-        node.setLabels(labelList.map(ManagerUtils.persistenceLabelToRealLabel))
+        node.setLabels(labelList.asScala.map(ManagerUtils.persistenceLabelToRealLabel).asJava)
       )
     }
     nodes

@@ -29,10 +29,11 @@ import org.springframework.stereotype.Component
 class OverLoadNodeSelectRule extends NodeSelectRule with Logging {
 
   override def ruleFiltering(nodes: Array[Node]): Array[Node] = {
-    if (null != nodes)
+    if (null != nodes) {
       nodes.sortWith(sortByOverload)
-    else
+    } else {
       nodes
+    }
   }
 
   /**

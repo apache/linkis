@@ -36,7 +36,7 @@ import org.apache.linkis.rpc.message.annotation.Receiver
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 @Service
 class DefaultEMInfoService extends EMInfoService with Logging {
@@ -74,9 +74,9 @@ class DefaultEMInfoService extends EMInfoService with Logging {
     val label = new AliasServiceInstanceLabel
     label.setAlias(GovernanceCommonConf.ENGINE_CONN_MANAGER_SPRING_NAME.getValue)
     val instances = nodeLabelService.getNodesByLabel(label)
-    val resourceInfo = resourceManager.getResourceInfo(instances.toSeq.toArray).resourceInfo
-    val resourceInfoMap = resourceInfo.map(r => (r.getServiceInstance.toString, r)).toMap
-    instances
+    val resourceInfo = resourceManager.getResourceInfo(instances.asScala.toSeq.toArray).resourceInfo
+    val resourceInfoMap = resourceInfo.asScala.map(r => (r.getServiceInstance.toString, r)).toMap
+    instances.asScala
       .map(emNodeManager.getEM)
       .filter(_ != null)
       .map { node =>

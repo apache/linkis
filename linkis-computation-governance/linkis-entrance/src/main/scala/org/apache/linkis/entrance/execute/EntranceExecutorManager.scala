@@ -72,10 +72,8 @@ abstract class EntranceExecutorManager(groupFactory: GroupFactory)
 
     }
 
-  // todo 提交任务逻辑调整：将job切分成多条语句，塞到jobGroup队列中。任务提交后，按照队列先后顺序，依次执行任务；
-  // 没个子任务运行后，更新整体的Job运行状态
-  // 直到所有任务都完毕，或者存在任务异常退出，则结束整体的Job
-
+  // Update the overall job running status after no subtask runs
+  // Until all the tasks are completed, or the task exits abnormally, the overall job ends
   override def askExecutor(schedulerEvent: SchedulerEvent, wait: Duration): Option[Executor] =
     schedulerEvent match {
       case job: Job =>
@@ -89,14 +87,7 @@ abstract class EntranceExecutorManager(groupFactory: GroupFactory)
               warnException = warn
               None
             case t: Throwable => throw t
-          } /*match {
-          case Some(e) => executor = Option(e)
-          case _ =>
-            if (System.currentTimeMillis - startTime < wait.toMillis) {
-              val interval = math.min(3000, wait.toMillis - System.currentTimeMillis + startTime)
-              //getOrCreateEngineManager().waitForIdle(interval)
-            }
-        }*/
+          }
         // todo check
         if (warnException != null && executor.isEmpty) throw warnException
         executor

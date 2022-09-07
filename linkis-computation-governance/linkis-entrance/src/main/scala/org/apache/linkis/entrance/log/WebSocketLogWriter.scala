@@ -33,7 +33,8 @@ class WebSocketLogWriter(
     entranceLogListenerBus: EntranceLogListenerBus[EntranceLogListener, EntranceLogEvent]
 ) {
 
-  def write(msg: String): Unit = if (entranceLogListenerBus != null)
+  def write(msg: String): Unit = if (entranceLogListenerBus != null) {
     entranceLogListenerBus.post(EntrancePushLogEvent(job, msg))
+  }
 
 }

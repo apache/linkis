@@ -44,12 +44,13 @@ class LoopArray[T](maxCapacity: Int) {
 
   def get(index: Int): T = eventQueue synchronized {
     val _max = max
-    if (index < realSize)
+    if (index < realSize) {
       throw new IllegalArgumentException(
         "The index " + index + " has already been deleted, now index must be bigger than " + realSize
       )
-    else if (index > _max)
+    } else if (index > _max) {
       throw new IllegalArgumentException("The index " + index + " must be less than " + _max)
+    }
     val _index = (flag + (index - realSize)) % maxCapacity
     eventQueue(_index).asInstanceOf[T]
   }

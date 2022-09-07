@@ -107,9 +107,7 @@ class ShellDangerousGrammerInterceptor extends EntranceInterceptor with Logging 
       logger.info(s"GET REQUEST CODE_TYPE ${codeType} and ENGINE_TYPE ${EngineType}")
       if (shellContainDangerUsage(jobRequest.getExecutionCode)) {
         throw DangerousGramsCheckException("Shell code contains blacklisted code(shell中包含黑名单代码)")
-      } /*else if (!shellWhiteUsage(jobRequest.getExecutionCode)) {
-        throw  DangerousGramsCheckException("The shell code is not in the whitelist code(shell代码不在白名单中)")
-      }*/
+      }
       jobRequest
     } else {
       jobRequest

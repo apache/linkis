@@ -47,10 +47,9 @@ abstract class LogManager extends LogListener with Logging {
 
   def dealLogEvent(job: Job, log: String): Unit = {
     Utils.tryCatch {
-      //     warn(s"jobid :${job.getId()}\nlog : ${log}")
       job match {
         case entranceExecutionJob: EntranceExecutionJob =>
-          if (entranceExecutionJob.getLogWriter.isEmpty)
+          if (entranceExecutionJob.getLogWriter.isEmpty) {
             entranceExecutionJob.getLogWriterLocker synchronized {
               if (entranceExecutionJob.getLogWriter.isEmpty) {
                 val logWriter = createLogWriter(entranceExecutionJob)
@@ -59,6 +58,7 @@ abstract class LogManager extends LogListener with Logging {
                 }
               }
             }
+          }
           entranceExecutionJob.getLogWriter.foreach(logWriter => logWriter.write(log))
           errorCodeManager.foreach(_.errorMatch(log).foreach { case (code, errorMsg) =>
             errorCodeListener.foreach(_.onErrorCodeCreated(job, code, errorMsg))

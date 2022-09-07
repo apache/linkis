@@ -74,8 +74,9 @@ abstract class LogWriter(charset: String) extends Closeable with Flushable with 
 abstract class AbstractLogWriter(logPath: String, user: String, charset: String)
     extends LogWriter(charset) {
 
-  if (StringUtils.isBlank(logPath))
+  if (StringUtils.isBlank(logPath)) {
     throw new EntranceErrorException(20301, "logPath cannot be empty.")
+  }
 
   protected var fileSystem =
     FSFactory.getFsByProxyUser(new FsPath(logPath), user).asInstanceOf[FileSystem]

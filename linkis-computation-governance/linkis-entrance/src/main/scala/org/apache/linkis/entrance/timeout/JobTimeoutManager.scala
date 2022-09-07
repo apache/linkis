@@ -31,7 +31,7 @@ import org.apache.linkis.manager.label.entity.entrance.{
 import java.util
 import java.util.concurrent.{ConcurrentHashMap, ConcurrentMap, TimeUnit}
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 class JobTimeoutManager extends Logging {
 
@@ -43,9 +43,9 @@ class JobTimeoutManager extends Logging {
 
   def add(jobKey: String, job: EntranceJob): Unit = {
     logger.info(s"Adding timeout job: ${job.getId()}")
-    if (!timeoutJobByName.contains(jobKey)) {
+    if (!timeoutJobByName.asScala.contains(jobKey)) {
       synchronized {
-        if (!timeoutJobByName.contains(jobKey)) {
+        if (!timeoutJobByName.asScala.contains(jobKey)) {
           timeoutJobByName.put(jobKey, job)
         }
       }
@@ -65,7 +65,7 @@ class JobTimeoutManager extends Logging {
   }
 
   def jobExist(jobKey: String): Boolean = {
-    timeoutJobByName.contains(jobKey)
+    timeoutJobByName.asScala.contains(jobKey)
   }
 
   def jobCompleteDelete(jobkey: String): Unit = {
@@ -89,7 +89,7 @@ class JobTimeoutManager extends Logging {
           if (job.getStartTime > 0) job.getStartTime / 1000 else currentTimeSeconds
         val runningTimeSeconds = currentTimeSeconds - jobRunningStartTimeSeconds
         if (!job.isCompleted) {
-          job.jobRequest.getLabels foreach {
+          job.jobRequest.getLabels.asScala foreach {
             case queueTimeOutLabel: JobQueuingTimeoutLabel =>
               if (
                   job.isWaiting && queueTimeOutLabel.getQueuingTimeout > 0 && queuingTimeSeconds >= queueTimeOutLabel.getQueuingTimeout
@@ -119,7 +119,7 @@ class JobTimeoutManager extends Logging {
         }
       }
 
-      timeoutJobByName.foreach(item => {
+      timeoutJobByName.asScala.foreach(item => {
         logger.info(s"Running timeout detection!")
         synchronized {
           jobCompleteDelete(item._1)
@@ -129,7 +129,7 @@ class JobTimeoutManager extends Logging {
     }
   }
 
-  // 线程周期性扫描超时任务
+  // Thread periodic scan timeout task
   val woker = Utils.defaultScheduler.scheduleAtFixedRate(
     new Runnable() {
 
@@ -153,8 +153,10 @@ object JobTimeoutManager {
 
   // If the timeout label set by the user is invalid, execution is not allowed
   def checkTimeoutLabel(labels: util.Map[String, Label[_]]): Unit = {
-    val jobQueuingTimeoutLabel = labels.getOrElse(LabelKeyConstant.JOB_QUEUING_TIMEOUT_KEY, null)
-    val jobRunningTimeoutLabel = labels.getOrElse(LabelKeyConstant.JOB_RUNNING_TIMEOUT_KEY, null)
+    val jobQueuingTimeoutLabel =
+      labels.asScala.getOrElse(LabelKeyConstant.JOB_QUEUING_TIMEOUT_KEY, null)
+    val jobRunningTimeoutLabel =
+      labels.asScala.getOrElse(LabelKeyConstant.JOB_RUNNING_TIMEOUT_KEY, null)
     val posNumPattern = "^[0-9]+$"
     if (
         (null != jobQueuingTimeoutLabel && !jobQueuingTimeoutLabel.getStringValue.matches(
@@ -174,7 +176,7 @@ object JobTimeoutManager {
 
   def hasTimeoutLabel(entranceJob: EntranceJob): Boolean = {
     val labels = entranceJob.jobRequest.getLabels
-    labels.exists(label =>
+    labels.asScala.exists(label =>
       label.getLabelKey == LabelKeyConstant.JOB_QUEUING_TIMEOUT_KEY ||
         label.getLabelKey == LabelKeyConstant.JOB_RUNNING_TIMEOUT_KEY
     )

@@ -73,7 +73,7 @@ class CacheLogManager extends LogManager with Logging {
       return null
     }
     job match {
-      case entranceExecutionJob: EntranceExecutionJob => {
+      case entranceExecutionJob: EntranceExecutionJob =>
         val cache: Cache = Cache(EntranceConfiguration.DEFAULT_CACHE_MAX.getValue)
         val logPath: String = entranceExecutionJob.getJobRequest.getLogPath
         val fsLogPath = new FsPath(logPath)
@@ -97,13 +97,7 @@ class CacheLogManager extends LogManager with Logging {
           }
         entranceExecutionJob.setLogWriter(cacheLogWriter)
         logger.info(s"job ${entranceExecutionJob.getJobRequest.getId} create cacheLogWriter")
-        /*val webSocketCacheLogReader: WebSocketCacheLogReader =
-          new WebSocketCacheLogReader(logPath, EntranceConfiguration.DEFAULT_LOG_CHARSET.getValue, cache, entranceExecutionJob.getUser)
-        entranceExecutionJob.setWebSocketLogReader(webSocketCacheLogReader)
-        val webSocketLogWriter: WebSocketLogWriter = new WebSocketLogWriter(entranceExecutionJob, entranceContext.getOrCreateLogListenerBus)
-        entranceExecutionJob.setWebSocketLogWriter(webSocketLogWriter)*/
         cacheLogWriter
-      }
       case _ => null
     }
   }

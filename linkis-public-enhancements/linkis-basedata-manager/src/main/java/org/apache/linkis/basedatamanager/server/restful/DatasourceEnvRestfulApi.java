@@ -21,19 +21,19 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.apache.linkis.basedatamanager.server.domain.RmExternalResourceProviderEntity;
-import org.apache.linkis.basedatamanager.server.service.RmExternalResourceProviderService;
+import org.apache.linkis.basedatamanager.server.domain.DatasourceEnvEntity;
+import org.apache.linkis.basedatamanager.server.service.DatasourceEnvService;
 import org.apache.linkis.server.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-@Api(tags = "RmExternalResourceProviderRestfulApi")
+@Api(tags = "DatasourceEnvRestfulApi")
 @RestController
-@RequestMapping(path = "/basedata_manager/rm_external_resource_provier")
-public class RmExternalResourceProviderRestfulApi {
+@RequestMapping(path = "/basedata-manager/datasource-env")
+public class DatasourceEnvRestfulApi {
 
     @Autowired
-    RmExternalResourceProviderService rmExternalResourceProviderService;
+    DatasourceEnvService datasourceEnvService;
 
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "query", dataType = "string", name = "searchName", value = ""),
@@ -43,7 +43,7 @@ public class RmExternalResourceProviderRestfulApi {
     @ApiOperation(value = "list", notes = "get list data", httpMethod = "GET")
     @RequestMapping(path = "", method = RequestMethod.GET)
     public Message list(String searchName,Integer currentPage,Integer pageSize) {
-        PageInfo pageList = rmExternalResourceProviderService.getListByPage(searchName,currentPage,pageSize);
+        PageInfo pageList = datasourceEnvService.getListByPage(searchName,currentPage,pageSize);
         return Message.ok("").data("list", pageList);
     }
 
@@ -53,18 +53,18 @@ public class RmExternalResourceProviderRestfulApi {
     @ApiOperation(value = "get", notes = "get data by id", httpMethod = "GET")
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
     public Message get(@PathVariable("id") Long id) {
-        RmExternalResourceProviderEntity rmExternalResourceProvider = rmExternalResourceProviderService.getById(id);
-        return Message.ok("").data("dbs", rmExternalResourceProvider);
+        DatasourceEnvEntity datasourceEnv = datasourceEnvService.getById(id);
+        return Message.ok("").data("item", datasourceEnv);
     }
 
     @ApiImplicitParams({
-            @ApiImplicitParam(paramType = "body", dataType = "RmExternalResourceProviderEntity", name = "rmExternalResourceProvider", value = "")
+            @ApiImplicitParam(paramType = "body", dataType = "DatasourceEnvEntity", name = "datasourceEnv", value = "")
     })
     @ApiOperation(value = "add", notes = "add data", httpMethod = "POST")
     @RequestMapping(path = "", method = RequestMethod.POST)
-    public Message add(@RequestBody RmExternalResourceProviderEntity rmExternalResourceProvider) {
-        boolean result = rmExternalResourceProviderService.save(rmExternalResourceProvider);
-        return Message.ok("").data("dbs", result);
+    public Message add(@RequestBody DatasourceEnvEntity datasourceEnv) {
+        boolean result = datasourceEnvService.save(datasourceEnv);
+        return Message.ok("").data("result", result);
     }
 
     @ApiImplicitParams({
@@ -73,18 +73,18 @@ public class RmExternalResourceProviderRestfulApi {
     @ApiOperation(value = "remove", notes = "remove data by id", httpMethod = "DELETE")
     @RequestMapping(path = "/{id}", method = RequestMethod.DELETE)
     public Message remove(@PathVariable("id") Long id) {
-        boolean result = rmExternalResourceProviderService.removeById(id);
-        return Message.ok("").data("dbs", result);
+        boolean result = datasourceEnvService.removeById(id);
+        return Message.ok("").data("result", result);
     }
 
     @ApiImplicitParams({
-            @ApiImplicitParam(paramType = "body", dataType = "RmExternalResourceProviderEntity", name = "rmExternalResourceProvider", value = "")
+            @ApiImplicitParam(paramType = "body", dataType = "DatasourceEnvEntity", name = "errorCode", value = "")
     })
     @ApiOperation(value = "update", notes = "update data", httpMethod = "PUT")
     @RequestMapping(path = "", method = RequestMethod.PUT)
-    public Message update(@RequestBody RmExternalResourceProviderEntity rmExternalResourceProvider) {
-        boolean result = rmExternalResourceProviderService.updateById(rmExternalResourceProvider);
-        return Message.ok("").data("dbs", result);
+    public Message update(@RequestBody DatasourceEnvEntity errorCode) {
+        boolean result = datasourceEnvService.updateById(errorCode);
+        return Message.ok("").data("result", result);
     }
 
 

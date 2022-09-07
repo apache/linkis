@@ -18,10 +18,9 @@ package org.apache.linkis.basedatamanager.server.dao;
 
 import org.apache.linkis.basedatamanager.server.domain.GatewayAuthTokenEntity;
 
+import java.util.List;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-
-import java.util.List;
 
 /** @TableName linkis_mg_gateway_auth_token */
 public interface GatewayAuthTokenMapper extends BaseMapper<GatewayAuthTokenEntity> {

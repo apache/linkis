@@ -21,6 +21,8 @@ import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.engineplugin.elasticsearch.executer.client.impl.ResponseHandlerImpl
 import org.apache.linkis.storage.domain._
 
+import java.util.Locale
+
 import com.fasterxml.jackson.databind.{JsonNode, ObjectMapper}
 import com.fasterxml.jackson.databind.node.JsonNodeType
 import com.fasterxml.jackson.dataformat.cbor.CBORFactory
@@ -61,7 +63,7 @@ object ResponseHandler {
     case _ => StringType
   }
 
-  def getNodeTypeByEsType(estype: String): DataType = estype.toLowerCase match {
+  def getNodeTypeByEsType(estype: String): DataType = estype.toLowerCase(Locale.getDefault) match {
     case "long" | "integer" | "short" | "byte" | "double" | "float" | "half_float" |
         "scaled_float" =>
       DecimalType

@@ -19,7 +19,7 @@ package org.apache.linkis.cs.common.entity.listener;
 
 public interface ListenerDomain {
 
-    String getSource();
+  String getSource();
 
-    void setSource(String source);
+  void setSource(String source);
 }

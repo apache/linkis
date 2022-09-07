@@ -39,11 +39,18 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 import javax.validation.groups.Default;
 
+import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+@Api(tags = "data source admin restful api")
 @RestController
 @RequestMapping(
         value = "/data-source-manager",
@@ -65,6 +72,8 @@ public class DataSourceAdminRestfulApi {
         this.formDataTransformer = FormDataTransformerFactory.buildCustom();
     }
 
+    @ApiOperation(value = "insertJsonEnv", notes = "insert json env", response = Message.class)
+    @ApiOperationSupport(ignoreParameters = {"dataSourceEnv"})
     @RequestMapping(value = "/env/json", method = RequestMethod.POST)
     public Message insertJsonEnv(@RequestBody DataSourceEnv dataSourceEnv, HttpServletRequest req)
             throws ErrorException {
@@ -87,6 +96,10 @@ public class DataSourceAdminRestfulApi {
                 "Fail to insert data source environment[新增数据源环境失败]");
     }
 
+    @ApiOperation(value = "getAllEnvListByDataSourceType", notes = "get all env list by data source type", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "typeId", required = true, dataType = "Long", value = "type id")
+    })
     @RequestMapping(value = "/env-list/all/type/{typeId}", method = RequestMethod.GET)
     public Message getAllEnvListByDataSourceType(@PathVariable("typeId") Long typeId) {
         return RestfulApiHelper.doAndResponse(
@@ -98,6 +111,10 @@ public class DataSourceAdminRestfulApi {
                 "Fail to get data source environment list[获取数据源环境清单失败]");
     }
 
+    @ApiOperation(value = "getEnvEntityById", notes = "get env entity by id", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "envId", required = true, dataType = "Long", value = "env id")
+    })
     @RequestMapping(value = "/env/{envId}", method = RequestMethod.GET)
     public Message getEnvEntityById(@PathVariable("envId") Long envId) {
         return RestfulApiHelper.doAndResponse(
@@ -108,6 +125,10 @@ public class DataSourceAdminRestfulApi {
                 "Fail to get data source environment[获取数据源环境信息失败]");
     }
 
+    @ApiOperation(value = "removeEnvEntity", notes = "remove env entity", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "envId", required = true, dataType = "Long", value = "env id")
+    })
     @RequestMapping(value = "/env/{envId}", method = RequestMethod.DELETE)
     public Message removeEnvEntity(@PathVariable("envId") Long envId, HttpServletRequest request) {
         return RestfulApiHelper.doAndResponse(
@@ -128,6 +149,11 @@ public class DataSourceAdminRestfulApi {
                 "Fail to remove data source environment[删除数据源环境信息失败]");
     }
 
+    @ApiOperation(value = "updateJsonEnv", notes = "update json env", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "envId", required = true, dataType = "Long", value = "env id")
+    })
+    @ApiOperationSupport(includeParameters = {"dataSourceEnv"})
     @RequestMapping(value = "/env/{envId}/json", method = RequestMethod.PUT)
     public Message updateJsonEnv(
             @RequestBody DataSourceEnv dataSourceEnv,
@@ -165,6 +191,13 @@ public class DataSourceAdminRestfulApi {
                 "Fail to update data source environment[更新数据源环境失败]");
     }
 
+    @ApiOperation(value = "queryDataSourceEnv", notes = "query data source env", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "name", required = true, dataType = "Long", value = "name"),
+        @ApiImplicitParam(name = "typeId", required = true, dataType = "Long", value = "type id"),
+        @ApiImplicitParam(name = "currentPage", required = true, dataType = "Long", value = "current page"),
+        @ApiImplicitParam(name = "pageSize", required = true, dataType = "Long", value = "page size")
+    })
     @RequestMapping(value = "/env", method = RequestMethod.GET)
     public Message queryDataSourceEnv(
             @RequestParam(value = "name", required = false) String envName,

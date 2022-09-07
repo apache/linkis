@@ -5,20 +5,18 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.ecm.server.service.impl
 
-import com.google.common.collect.Interners
-import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.DataWorkCloudApplication
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.ecm.core.engineconn.{EngineConn, YarnEngineConn}
@@ -32,11 +30,20 @@ import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.common.entity.resource.{Resource, ResourceType}
 import org.apache.linkis.manager.common.protocol.engine.EngineStopRequest
 
+import org.apache.commons.lang3.StringUtils
+
 import java.util
 import java.util.concurrent.ConcurrentHashMap
+
 import scala.collection.JavaConversions._
 
-class DefaultEngineConnListService extends EngineConnListService with ECMEventListener with Logging {
+import com.google.common.collect.Interners
+
+class DefaultEngineConnListService
+    extends EngineConnListService
+    with ECMEventListener
+    with Logging {
+
   /**
    * key:tickedId,value :engineConn
    */
@@ -48,7 +55,9 @@ class DefaultEngineConnListService extends EngineConnListService with ECMEventLi
 
   override def init(): Unit = {}
 
-  override def getEngineConn(engineConnId: String): Option[EngineConn] = Option(engineConnMap.get(engineConnId))
+  override def getEngineConn(engineConnId: String): Option[EngineConn] = Option(
+    engineConnMap.get(engineConnId)
+  )
 
   override def getEngineConns: util.List[EngineConn] = engineConnMap.values().toList
 
@@ -63,7 +72,7 @@ class DefaultEngineConnListService extends EngineConnListService with ECMEventLi
     if (conn != null) engineConnId.intern().synchronized {
       conn = engineConnMap.get(engineConnId)
       if (conn != null) {
-        Utils.tryAndWarn{
+        Utils.tryAndWarn {
           if (NodeStatus.Failed == conn.getStatus && StringUtils.isNotBlank(conn.getPid)) {
             killECByEngineConnKillService(conn)
           }
@@ -75,17 +84,26 @@ class DefaultEngineConnListService extends EngineConnListService with ECMEventLi
     }
   }
 
-  override def getUsedResources: Resource = engineConnMap.values().map(_.getResource.getMinResource).fold(Resource.initResource(ResourceType.Default))(_ + _)
+  override def getUsedResources: Resource = engineConnMap
+    .values()
+    .map(_.getResource.getMinResource)
+    .fold(Resource.initResource(ResourceType.Default))(_ + _)
 
   override def submit(runner: EngineConnLaunchRunner): Option[EngineConn] = {
     None
   }
 
   def updateYarnAppId(event: YarnAppIdCallbackEvent): Unit = {
-    updateYarnEngineConn(x => x.setApplicationId(event.protocol.applicationId), event.protocol.nodeId)
+    updateYarnEngineConn(
+      x => x.setApplicationId(event.protocol.applicationId),
+      event.protocol.nodeId
+    )
   }
 
-  def updateYarnEngineConn(implicit updateFunction: YarnEngineConn => Unit, nodeId: String): Unit = {
+  def updateYarnEngineConn(implicit
+      updateFunction: YarnEngineConn => Unit,
+      nodeId: String
+  ): Unit = {
     lock.intern(nodeId) synchronized {
       engineConnMap.get(nodeId) match {
         case e: YarnEngineConn => updateFunction(e)
@@ -109,35 +127,39 @@ class DefaultEngineConnListService extends EngineConnListService with ECMEventLi
   }
 
   def updatePid(event: EngineConnPidCallbackEvent): Unit = {
-    updateEngineConn(x => {
-      x.setPid(event.protocol.pid)
-      x.setServiceInstance(event.protocol.serviceInstance)
-    }, event.protocol.ticketId)
+    updateEngineConn(
+      x => {
+        x.setPid(event.protocol.pid)
+        x.setServiceInstance(event.protocol.serviceInstance)
+      },
+      event.protocol.ticketId
+    )
   }
 
   def updateEngineConnStatus(tickedId: String, updateStatus: NodeStatus): Unit = {
     updateEngineConn(x => x.setStatus(updateStatus), tickedId)
     if (NodeStatus.isCompleted(updateStatus)) {
-      info(s" from engineConnMap to remove engineconn ticketId ${tickedId}")
+      logger.info(s" from engineConnMap to remove engineconn ticketId ${tickedId}")
       killEngineConn(tickedId)
     }
   }
 
   override def onEvent(event: ECMEvent): Unit = {
-    info(s"Deal event $event")
+    logger.info(s"Deal event $event")
     event match {
       case event: ECMClosedEvent => shutdownEngineConns(event)
       case event: YarnAppIdCallbackEvent => updateYarnAppId(event)
       case event: YarnInfoCallbackEvent => updateYarnInfo(event)
       case event: EngineConnPidCallbackEvent => updatePid(event)
       case EngineConnAddEvent(engineConn) => addEngineConn(engineConn)
-      case EngineConnStatusChangeEvent(tickedId, updateStatus) => updateEngineConnStatus(tickedId, updateStatus)
+      case EngineConnStatusChangeEvent(tickedId, updateStatus) =>
+        updateEngineConnStatus(tickedId, updateStatus)
       case _ =>
     }
   }
 
   private def getEngineConnKillService(): DefaultEngineConnKillService = {
-    if(engineConnKillService == null){
+    if (engineConnKillService == null) {
       val applicationContext = DataWorkCloudApplication.getApplicationContext
       engineConnKillService = applicationContext.getBean(classOf[DefaultEngineConnKillService])
     }
@@ -145,15 +167,17 @@ class DefaultEngineConnListService extends EngineConnListService with ECMEventLi
   }
 
   private def shutdownEngineConns(event: ECMClosedEvent): Unit = {
-    info("start to kill all engines belonging the ecm")
-    engineConnMap.values().foreach(engineconn => {
-      killECByEngineConnKillService(engineconn)
-    })
-    info("Done! success to kill all engines belonging the ecm")
+    logger.info("start to kill all engines belonging the ecm")
+    engineConnMap
+      .values()
+      .foreach(engineconn => {
+        killECByEngineConnKillService(engineconn)
+      })
+    logger.info("Done! success to kill all engines belonging the ecm")
   }
 
   private def killECByEngineConnKillService(engineconn: EngineConn): Unit = {
-    info(s"start to kill ec by engineConnKillService ${engineconn.getServiceInstance}")
+    logger.info(s"start to kill ec by engineConnKillService ${engineconn.getServiceInstance}")
     val engineStopRequest = new EngineStopRequest()
     engineStopRequest.setServiceInstance(engineconn.getServiceInstance)
     getEngineConnKillService.dealEngineConnStop(engineStopRequest)

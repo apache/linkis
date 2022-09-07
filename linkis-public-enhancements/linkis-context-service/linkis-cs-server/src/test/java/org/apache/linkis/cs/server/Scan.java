@@ -24,10 +24,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.FilterType;
 
 @ComponentScan(
-        value = "org.apache.linkis",
-        excludeFilters =
-                @ComponentScan.Filter(
-                        type = FilterType.ASSIGNABLE_TYPE,
-                        value = DataWorkCloudApplication.class))
+    value = "org.apache.linkis",
+    excludeFilters =
+        @ComponentScan.Filter(
+            type = FilterType.ASSIGNABLE_TYPE,
+            value = DataWorkCloudApplication.class))
 @Configuration
 public class Scan {}

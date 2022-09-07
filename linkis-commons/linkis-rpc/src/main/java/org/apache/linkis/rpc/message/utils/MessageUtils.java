@@ -24,70 +24,105 @@ import org.apache.linkis.rpc.message.parser.ServiceMethod;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 public class MessageUtils {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MessageUtils.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(MessageUtils.class);
 
-    public static <T> T getBean(Class<T> tClass) {
-        T t = null;
-        ApplicationContext applicationContext = DataWorkCloudApplication.getApplicationContext();
-        if (applicationContext != null) {
-            try {
-                t = applicationContext.getBean(tClass);
-            } catch (NoSuchBeanDefinitionException e) {
-                LOGGER.warn(String.format("can not get bean from spring ioc:%s", tClass.getName()));
-            }
-        }
-        return t;
+  public static <T> T getBean(Class<T> tClass) {
+    T t = null;
+    ApplicationContext applicationContext = DataWorkCloudApplication.getApplicationContext();
+    if (applicationContext != null) {
+      try {
+        t = applicationContext.getBean(tClass);
+      } catch (NoSuchBeanDefinitionException e) {
+        LOGGER.warn(String.format("can not get bean from spring ioc:%s", tClass.getName()));
+      }
+    }
+    return t;
+  }
+
+  public static boolean isAssignableFrom(String supperClassName, String className) {
+    try {
+      return Class.forName(supperClassName).isAssignableFrom(Class.forName(className));
+    } catch (ClassNotFoundException e) {
+      LOGGER.error("class not found", e);
+      return false;
+    }
+  }
+
+  /**
+   * find the MethodExecuteWrappers have the min order number in the MethodExecuteWrapper list
+   *
+   * @param methodExecuteWrappers the MethodExecuteWrapper list
+   * @return the min MethodExecuteWrapper list
+   */
+  public static List<MethodExecuteWrapper> getMinOrders(
+      List<MethodExecuteWrapper> methodExecuteWrappers) {
+    if (methodExecuteWrappers == null || methodExecuteWrappers.isEmpty()) {
+      return Collections.emptyList();
     }
 
-    public static boolean isAssignableFrom(String supperClassName, String className) {
-        try {
-            return Class.forName(supperClassName).isAssignableFrom(Class.forName(className));
-        } catch (ClassNotFoundException e) {
-            LOGGER.error("class not found", e);
-            return false;
-        }
+    MethodExecuteWrapper minOrderMethodExecute = methodExecuteWrappers.get(0);
+
+    for (MethodExecuteWrapper tmp : methodExecuteWrappers) {
+      if (tmp.getOrder() < minOrderMethodExecute.getOrder()) {
+        minOrderMethodExecute = tmp;
+      }
     }
 
-    public static boolean orderIsMin(
-            MethodExecuteWrapper methodExecuteWrapper,
-            List<MethodExecuteWrapper> methodExecuteWrappers) {
-        for (MethodExecuteWrapper tmp : methodExecuteWrappers) {
-            if (tmp.getOrder() < methodExecuteWrapper.getOrder()) {
-                return false;
-            }
-        }
-        return true;
+    List<MethodExecuteWrapper> result = new ArrayList<>();
+    for (MethodExecuteWrapper tmp : methodExecuteWrappers) {
+      if (tmp.getOrder() == minOrderMethodExecute.getOrder()) {
+        result.add(tmp);
+      }
     }
+    return result;
+  }
 
-    public static boolean orderIsLast(int order, List<ServiceMethod> serviceMethods) {
-        if (order == 2147483647) return true;
-        for (ServiceMethod serviceMethod : serviceMethods) {
-            if (serviceMethod.getOrder() > order) {
-                return false;
-            }
-        }
+  /**
+   * if the order number is the last/max number in the serviceMethod
+   *
+   * @param order the order number
+   * @param serviceMethods the service methods
+   * @return if the input order is the last/max order number
+   */
+  public static boolean orderIsLast(int order, List<ServiceMethod> serviceMethods) {
+    if (order == Integer.MAX_VALUE) {
+      return true;
+    }
+    for (ServiceMethod serviceMethod : serviceMethods) {
+      if (serviceMethod.getOrder() > order) {
         return false;
+      }
     }
+    return true;
+  }
 
-    public static Integer repeatOrder(List<ServiceMethod> serviceMethods) {
-        Map<Integer, Integer> tmp = new HashMap<>();
-        for (ServiceMethod serviceMethod : serviceMethods) {
-            int order = serviceMethod.getOrder();
-            if (tmp.get(order) == null) {
-                tmp.put(order, order);
-            } else {
-                return order;
-            }
-        }
-        return null;
+  /**
+   * find the first repeated order number, if there have no repeated order number return null
+   *
+   * @param serviceMethods serviceMethods
+   * @return the repeated order number
+   */
+  public static Integer repeatOrder(List<ServiceMethod> serviceMethods) {
+    Set<Integer> tmp = new HashSet<>();
+    for (ServiceMethod serviceMethod : serviceMethods) {
+      int order = serviceMethod.getOrder();
+      if (tmp.contains(order)) {
+        return order;
+      } else {
+        tmp.add(order);
+      }
     }
+    return null;
+  }
 }

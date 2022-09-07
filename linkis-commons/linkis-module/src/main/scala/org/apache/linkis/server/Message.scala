@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,95 +17,118 @@
 
 package org.apache.linkis.server
 
-import java.util
+import org.apache.commons.lang3.StringUtils
+import org.apache.commons.lang3.exception.ExceptionUtils
 
-import javax.servlet.http.HttpServletRequest
-import org.apache.commons.lang.StringUtils
-import org.apache.commons.lang.exception.ExceptionUtils
-import org.slf4j.LoggerFactory
 import org.springframework.web.context.request.{RequestContextHolder, ServletRequestAttributes}
 
+import javax.servlet.http.HttpServletRequest
 
-class Message(private var method: String,
-              private var status: Int = 0,          //-1 no login, 0 success, 1 error, 2 validate failed, 3 auth failed, 4 warning
-              private var message: String,
-              private var data: util.HashMap[String, Object] = new util.HashMap[String, Object]) {
+import java.util
+
+class Message(
+    private var method: String,
+    private var status: Int =
+      0, // -1 no login, 0 success, 1 error, 2 validate failed, 3 auth failed, 4 warning
+    private var message: String,
+    private var data: util.HashMap[String, Object] = new util.HashMap[String, Object]
+) {
   def this() = this(null, 0, null)
-  def << (key: String, value: Any): Message = {
+
+  def <<(key: String, value: Any): Message = {
     data.put(key, value.asInstanceOf[AnyRef])
     this
   }
-  def << (keyValue: (String, Any)): Message = <<(keyValue._1, keyValue._2)
 
-  def list[T <: Any](keyValue: (String, java.util.List[T])): Message = << (keyValue)
+  def <<(keyValue: (String, Any)): Message = <<(keyValue._1, keyValue._2)
 
-  def map[K <: Any, V <: Any](keyValue: (String, java.util.Map[K, V])): Message = << (keyValue)
+  def list[T <: Any](keyValue: (String, java.util.List[T])): Message = <<(keyValue)
+
+  def map[K <: Any, V <: Any](keyValue: (String, java.util.Map[K, V])): Message = <<(keyValue)
 
   def data(key: String, value: Any): Message = <<(key, value)
 
-  def << (method: String): Message = {
+  def <<(method: String): Message = {
     this.method = method
     this
   }
-  def setMessage(message: String) = {
+
+  def setMessage(message: String): Message = {
     this.message = message
     this
   }
-  def getMessage = message
+
+  def getMessage: String = message
   def setMethod(method: String): Unit = this.method = method
-  def getMethod = method
+  def getMethod: String = method
   def setStatus(status: Int): Unit = this.status = status
-  def getStatus = status
+  def getStatus: Int = status
   def setData(data: util.HashMap[String, Object]): Unit = this.data = data
-  def getData = data
+  def getData: util.HashMap[String, Object] = data
 
-  //  def isSuccess = status == 0
-  //  def isError = status != 0
-
-  override def toString = s"Message($getMethod, $getStatus, $getData)"
+  override def toString: String = s"Message($getMethod, $getStatus, $getData)"
 }
 
 object Message {
-  private val logger = LoggerFactory.getLogger(getClass)
 
-  def apply(method: String = null, status: Int = 0, message: String = null,
-            data: util.HashMap[String, Object] = new util.HashMap[String, Object]): Message = {
+  def apply(
+      method: String = null,
+      status: Int = 0,
+      message: String = null,
+      data: util.HashMap[String, Object] = new util.HashMap[String, Object]
+  ): Message = {
     if (StringUtils.isEmpty(method)) {
-      Thread.currentThread().getStackTrace.find(_.getClassName.toLowerCase.endsWith("restfulapi")).foreach {
-        stack => {
-            val httpRequest:HttpServletRequest=getCurrentHttpRequest
-            if(httpRequest!=null){
-              val pathInfo=httpRequest.getPathInfo;
-              if(pathInfo!=null) {
-                  val method = if (pathInfo.startsWith("/")) "/api"+ pathInfo else "/api" + "/" + pathInfo
-                  return new Message(method, status, message, data)
-              }else{
-                logger.warn("get HttpServletRequest pathInfo is null,please check it!")
+      Thread
+        .currentThread()
+        .getStackTrace
+        .find(_.getClassName.toLowerCase.endsWith("restfulapi"))
+        .foreach { stack =>
+          {
+            val httpRequest: HttpServletRequest = getCurrentHttpRequest
+            if (httpRequest != null) {
+              val pathInfo = httpRequest.getPathInfo;
+              if (pathInfo != null) {
+                val method =
+                  if (pathInfo.startsWith("/")) "/api" + pathInfo else "/api/" + pathInfo
+                return new Message(method, status, message, data)
+              } else {
+                warn("get HttpServletRequest pathInfo is null,please check it!")
               }
             }
           }
-      }
+        }
     }
     new Message(method, status, message, data)
   }
+
   implicit def ok(): Message = Message().setMessage("OK")
+
   implicit def ok(msg: String): Message = {
     val message = Message()
-    if(StringUtils.isNotBlank(msg)) message.setMessage(msg) else message.setMessage("OK")
+    if (StringUtils.isNotBlank(msg)) message.setMessage(msg) else message.setMessage("OK")
   }
+
   def error(msg: String): Message = error(msg, null)
+
   implicit def error(t: Throwable): Message = {
-    Message(status =  1).setMessage(ExceptionUtils.getRootCauseMessage(t)) << ("stack", ExceptionUtils.getFullStackTrace(t))
+    error(ExceptionUtils.getRootCauseMessage(t), t)
   }
+
   implicit def error(e: (String, Throwable)): Message = error(e._1, e._2)
+
   implicit def error(msg: String, t: Throwable): Message = {
-    val message = Message(status =  1)
+    error(msg, t, MessageStatus.ERROR)
+  }
+
+  implicit def error(msg: String, t: Throwable, status: Int): Message = {
+    val message = Message(status = status)
     message.setMessage(msg)
-    if(t != null) message << ("stack", ExceptionUtils.getFullStackTrace(t))
+    if (t != null) message << ("stack", ExceptionUtils.getStackTrace(t))
     message
   }
+
   implicit def warn(msg: String): Message = {
-    val message = Message(status = 4)
+    val message = Message(status = MessageStatus.WARNING)
     message.setMessage(msg)
     message
   }
@@ -122,11 +145,9 @@ object Message {
   }
 
   def noLogin(msg: String, t: Throwable): Message = {
-    val message = Message(status = -1)
-    message.setMessage(msg)
-    if(t != null) message << ("stack", ExceptionUtils.getFullStackTrace(t))
-    message
+    error(msg, t, MessageStatus.NO_LOGIN)
   }
+
   def noLogin(msg: String): Message = noLogin(msg, null)
 
   def messageToHttpStatus(message: Message): Int = message.getStatus match {
@@ -137,6 +158,7 @@ object Message {
     case 3 => 403
     case 4 => 206
   }
+
 }
 
 object MessageStatus {
@@ -144,7 +166,7 @@ object MessageStatus {
   val NO_LOGIN: Int = -1
   val SUCCESS: Int = 0
   val ERROR: Int = 1
-  val VALIDATE_FAILED : Int = 2
+  val VALIDATE_FAILED: Int = 2
   val AUTH_FAILED: Int = 3
   val WARNING: Int = 4
 }

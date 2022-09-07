@@ -1,0 +1,80 @@
+{
+  "message": {
+    "linkis": {
+      "sideNavList": {
+        "function": {
+          "children": {
+            "udfFunctionManage": "UDF管理",
+            "functionManagement": "函数管理"
+          }
+        }
+      },
+      "udf": {
+        "functionName": "函数名称",
+        "functionType": "函数类型",
+        "creator": "创建者",
+        "search": "查询",
+        "addUDF": "新增UDF",
+        "addFunction": "新增函数",
+        "updateFunction": "更新函数",
+        "batchExportFunction": "批量导出函数",
+        "batchImportFunction": "批量导入函数",
+        "status": "状态",
+        "availableCluster": "可用集群",
+        "accessSetting": "权限设置",
+        "functionDescription": "函数描述",
+        "clusterName": "集群",
+        "class": "分类",
+        "lastModifyTime": "修改时间",
+        "lastModifyUser": "修改人",
+        "changeuser": "UDF移交",
+        "action": {
+          "title": "操作",
+          "markAsExpired": "标为过期",
+          "edit": "编辑",
+          "delete": "删除",
+          "changeuser": "移交",
+          "vlist": "版本列表",
+          "share": "共享",
+          "expire": "标记过期"
+        },
+        "common": "通用",
+        "expire": "过期",
+        "normal": "正常",
+        "yes": "是",
+        "no": "否",
+        "sprak": "sprak",
+        "jarPackage": "jar包",
+        "scriptPath": "脚本路径",
+        "registerFunction": "注册函数",
+        "registerFormat": "注册格式",
+        "preview": "预览",
+        "useFormat": "使用格式",
+        "returnType": "返回类型",
+        "paramType": "参数类型",
+        "inputType": "输入类型",
+        "defaultLoad": "默认加载",
+        "LJCJ": "立即创建",
+        "QSRMC": "请输入名称",
+        "CDZ": "长度在1到100个字符",
+        "ZDYHS": "自定义函数",
+        "BXYZMKT": "必须以字母开头，且只支持字母、数字、下划线和中文",
+        "QZSXZYZLX": "请至少选择一种类型",
+        "QSRWZLJ": "请输入完整的路径",
+        "KHDBJZPP": "括号代表精准匹配",
+        "HZMZC": "后缀名只支持jar，且jar包名仅支持英文，数字，下划线！",
+        "ZCPYSCA": "后缀名只支持py、scala！",
+        "BHJZCYW": "包名仅支持英文",
+        "XHX": "下划线",
+        "SRZCHS": "请输入注册函数",
+        "SRFHLX": "请输入返回类型",
+        "SRCSLX": "请输入参数类型",
+        "SRFL": "请输入分类",
+        "XGHS": "修改函数",
+        "XG": "修改",
+        "QPZS": "全屏展示",
+        "QXQP": "取消全屏"
+      }
+    }
+  }
+}

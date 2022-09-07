@@ -1,0 +1,59 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+ 
+@import '@/common/style/variables.scss';
+.user-menu {
+  background: $menu-dark-active-bg;
+  width: 130px;
+  border: none;
+  position: $absolute;
+  top: 62px;
+  left: 50%;
+  margin-left: -110px;
+  border-radius: $border-radius-small;
+  .user-menu-arrow {
+      width: 0;
+      height: 0;
+      border: 8px solid $body-background;
+      border-color: transparent transparent $menu-dark-active-bg transparent;
+      border-top: 0;
+      list-style: none;
+      position: $absolute;
+      top: -8px;
+      left: 50%;
+      margin-left: 40px;
+  }
+  .user-menu-item {
+      list-style: none;
+      padding-left: 20px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      font-size: $font-size-base;
+      &:hover {
+          color: $body-background;
+          background: $dark-bg-dark;
+          border-top: none;
+          border-radius: $border-radius-small;
+      }
+      .user-menu-item-icon {
+          font-size: $font-size-large;
+          font-weight: bold;
+      }
+  }
+}

@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,8 +17,6 @@
 
 package org.apache.linkis.entrance.execute
 
-import org.apache.commons.io.IOUtils
-import org.apache.commons.lang.exception.ExceptionUtils
 import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.entrance.job.EntranceExecuteRequest
@@ -29,9 +27,12 @@ import org.apache.linkis.orchestrator.computation.operation.progress.ProgressPro
 import org.apache.linkis.orchestrator.computation.operation.resource.ResourceReportProcessor
 import org.apache.linkis.orchestrator.core.OrchestrationFuture
 import org.apache.linkis.protocol.UserWithCreator
-import org.apache.linkis.scheduler.executer.ExecutorState.ExecutorState
 import org.apache.linkis.scheduler.executer._
+import org.apache.linkis.scheduler.executer.ExecutorState.ExecutorState
 
+import org.apache.commons.io.IOUtils
+import org.apache.commons.lang3.StringUtils
+import org.apache.commons.lang3.exception.ExceptionUtils
 
 abstract class EntranceExecutor(val id: Long, val mark: MarkReq) extends Executor with Logging {
 
@@ -39,22 +40,25 @@ abstract class EntranceExecutor(val id: Long, val mark: MarkReq) extends Executo
 
   private var engineReturn: EngineExecuteAsyncReturn = _
 
-  protected var interceptors: Array[ExecuteRequestInterceptor] = Array(LabelExecuteRequestInterceptor, JobExecuteRequestInterceptor)
+  protected var interceptors: Array[ExecuteRequestInterceptor] =
+    Array(LabelExecuteRequestInterceptor, JobExecuteRequestInterceptor)
 
-  def setInterceptors(interceptors: Array[ExecuteRequestInterceptor]): Unit = if (interceptors != null && interceptors.nonEmpty) {
-    this.interceptors = interceptors
-  }
+  def setInterceptors(interceptors: Array[ExecuteRequestInterceptor]): Unit =
+    if (interceptors != null && interceptors.nonEmpty) {
+      this.interceptors = interceptors
+    }
 
-  def setUser(user: String): Unit = userWithCreator = if (userWithCreator != null) UserWithCreator(user, userWithCreator.creator)
-  else UserWithCreator(user, null)
+  def setUser(user: String): Unit = userWithCreator =
+    if (userWithCreator != null) UserWithCreator(user, userWithCreator.creator)
+    else UserWithCreator(user, null)
 
   def getUser: String = if (userWithCreator != null) userWithCreator.user else null
 
-  def setCreator(creator: String): Unit = userWithCreator = if (userWithCreator != null) UserWithCreator(userWithCreator.user, creator)
-  else UserWithCreator(null, creator)
+  def setCreator(creator: String): Unit = userWithCreator =
+    if (userWithCreator != null) UserWithCreator(userWithCreator.user, creator)
+    else UserWithCreator(null, creator)
 
   def getCreator: String = if (userWithCreator != null) userWithCreator.creator else null
-
 
   def getEngineExecuteAsyncReturn: Option[EngineExecuteAsyncReturn] = {
     Option(engineReturn)
@@ -101,7 +105,6 @@ abstract class EntranceExecutor(val id: Long, val mark: MarkReq) extends Executo
     }
   }
 
-
   override def hashCode(): Int = {
     //    getOrchestratorSession().hashCode()
     // todo
@@ -118,8 +121,11 @@ abstract class EntranceExecutor(val id: Long, val mark: MarkReq) extends Executo
 
 }
 
-class EngineExecuteAsyncReturn(val request: ExecuteRequest,
-                               callback: EngineExecuteAsyncReturn => Unit) extends AsynReturnExecuteResponse with Logging {
+class EngineExecuteAsyncReturn(
+    val request: ExecuteRequest,
+    callback: EngineExecuteAsyncReturn => Unit
+) extends AsynReturnExecuteResponse
+    with Logging {
 
   private var notifyJob: ExecuteResponse => Unit = _
 
@@ -135,17 +141,20 @@ class EngineExecuteAsyncReturn(val request: ExecuteRequest,
 
   private var progressProcessor: ProgressProcessor = _
 
-  private var resourceReportProcessor : ResourceReportProcessor = _
+  private var resourceReportProcessor: ResourceReportProcessor = _
 
   private var subJobId: String = _
 
   def getLastNotifyTime: Long = lastNotifyTime
 
-  def setOrchestrationObjects(orchestrationFuture: OrchestrationFuture, logProcessor: LogProcessor, progressProcessor: ProgressProcessor, resourceReportProcessor: ResourceReportProcessor): Unit = {
+  def setOrchestrationObjects(
+      orchestrationFuture: OrchestrationFuture,
+      logProcessor: LogProcessor,
+      progressProcessor: ProgressProcessor
+  ): Unit = {
     this.orchestrationFuture = orchestrationFuture
     this.logProcessor = logProcessor
     this.progressProcessor = progressProcessor
-    this.resourceReportProcessor = resourceReportProcessor
   }
 
   def getOrchestrationFuture(): Option[OrchestrationFuture] = {
@@ -160,14 +169,9 @@ class EngineExecuteAsyncReturn(val request: ExecuteRequest,
     Option(progressProcessor)
   }
 
-  def getResourceReportProcessor(): Option[ResourceReportProcessor] = {
-    Option(resourceReportProcessor)
-  }
-
   def closeOrchestration(): Unit = {
     getLogProcessor().foreach(IOUtils.closeQuietly(_))
     getProgressProcessor().foreach(IOUtils.closeQuietly(_))
-    getResourceReportProcessor().foreach(IOUtils.closeQuietly(_))
   }
 
   def setSubJobId(subJobId: String): Unit = {
@@ -187,8 +191,13 @@ class EngineExecuteAsyncReturn(val request: ExecuteRequest,
           case entranceExecuteRequest: EntranceExecuteRequest =>
             r match {
               case ErrorExecuteResponse(errorMsg, error) =>
-                val msg = s"Job with execId-$id + subJobId : $subJobId  execute failed,$errorMsg \n ${ExceptionUtils.getFullStackTrace(error)}"
-                entranceExecuteRequest.getJob.getLogListener.foreach(_.onLogUpdate(entranceExecuteRequest.getJob, LogUtils.generateERROR(msg)))
+                val errorStackTrace =
+                  if (error != null) ExceptionUtils.getStackTrace(error) else StringUtils.EMPTY
+                val msg =
+                  s"Job with execId-$id + subJobId : $subJobId  execute failed,$errorMsg \n $errorStackTrace"
+                entranceExecuteRequest.getJob.getLogListener.foreach(
+                  _.onLogUpdate(entranceExecuteRequest.getJob, LogUtils.generateERROR(msg))
+                )
               case _ =>
             }
           case _ =>
@@ -238,4 +247,5 @@ class EngineExecuteAsyncReturn(val request: ExecuteRequest,
     notifyJob = rs
     //    this synchronized notify()
   }
+
 }

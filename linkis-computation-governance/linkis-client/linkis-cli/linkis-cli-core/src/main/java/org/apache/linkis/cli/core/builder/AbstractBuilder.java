@@ -18,37 +18,37 @@
 package org.apache.linkis.cli.core.builder;
 
 public abstract class AbstractBuilder<T> implements Builder<T> {
-    protected T targetObj;
+  protected T targetObj;
 
-    public AbstractBuilder() {
-        reset();
-    }
+  public AbstractBuilder() {
+    reset();
+  }
 
-    protected void reset() {
-        targetObj = getTargetNewInstance();
-    }
+  protected void reset() {
+    targetObj = getTargetNewInstance();
+  }
 
-    @Override
-    public T build() {
-        T ret = targetObj;
-        reset();
-        return ret;
-    }
+  @Override
+  public T build() {
+    T ret = targetObj;
+    reset();
+    return ret;
+  }
 
-    protected abstract T getTargetNewInstance();
+  protected abstract T getTargetNewInstance();
 
-    //    protected T getTargetNewInstance() {
-    //        try {
-    //            ParameterizedType pt = (ParameterizedType) this.getClass().getGenericSuperclass();
-    //            Class<T> clazz = (Class<T>) pt.getActualTypeArguments()[0];
-    //            targetObj = clazz.newInstance();
-    //        } catch (InstantiationException e) {
-    //            throw new BuilderException("BLD0001", ErrorLevel.ERROR,
-    // CommonErrMsg.BuilderBuildErr, "Cannot generate new instance.", e);
-    //        } catch (IllegalAccessException ie) {
-    //            throw new BuilderException("BLD0001", ErrorLevel.ERROR,
-    // CommonErrMsg.BuilderBuildErr, "Cannot generate new instance.", ie);
-    //        }
-    //        return targetObj;
-    //    }
+  //    protected T getTargetNewInstance() {
+  //        try {
+  //            ParameterizedType pt = (ParameterizedType) this.getClass().getGenericSuperclass();
+  //            Class<T> clazz = (Class<T>) pt.getActualTypeArguments()[0];
+  //            targetObj = clazz.newInstance();
+  //        } catch (InstantiationException e) {
+  //            throw new BuilderException("BLD0001", ErrorLevel.ERROR,
+  // CommonErrMsg.BuilderBuildErr, "Cannot generate new instance.", e);
+  //        } catch (IllegalAccessException ie) {
+  //            throw new BuilderException("BLD0001", ErrorLevel.ERROR,
+  // CommonErrMsg.BuilderBuildErr, "Cannot generate new instance.", ie);
+  //        }
+  //        return targetObj;
+  //    }
 }

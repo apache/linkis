@@ -20,13 +20,13 @@ package org.apache.linkis.cli.core.interactor.job;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class TerminateToken {
-    private AtomicBoolean shouldTerminate = new AtomicBoolean(false);
+  private AtomicBoolean shouldTerminate = new AtomicBoolean(false);
 
-    public boolean shouldTerminate() {
-        return shouldTerminate.get();
-    }
+  public boolean shouldTerminate() {
+    return shouldTerminate.get();
+  }
 
-    public void setTerminate() {
-        shouldTerminate.set(true);
-    }
+  public void setTerminate() {
+    shouldTerminate.set(true);
+  }
 }

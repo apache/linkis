@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one or more
+  ~ contributor license agreements.  See the NOTICE file distributed with
+  ~ this work for additional information regarding copyright ownership.
+  ~ The ASF licenses this file to You under the Apache License, Version 2.0
+  ~ (the "License"); you may not use this file except in compliance with
+  ~ the License.  You may obtain a copy of the License at
+  ~ 
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~ 
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="org.apache.linkis.manager.rm.external.dao.ExternalResourceProviderDao">
+    <resultMap id="ExternalResourceProviderMap"
+               type="org.apache.linkis.manager.rm.external.domain.ExternalResourceProvider">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="resource_type" property="resourceType" jdbcType="VARCHAR"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="labels" property="labels" jdbcType="VARCHAR"/>
+        <result column="config" property="config" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="ExternalResourceProvider_Column_List_Insert">
+        resource_type
+        , name, labels, config
+    </sql>
+
+    <sql id="ExternalResourceProvider_Column_List">
+        id,
+        <include refid="ExternalResourceProvider_Column_List_Insert"/>
+    </sql>
+
+    <select id="selectByResourceType" resultMap="ExternalResourceProviderMap">
+        select
+        <include refid="ExternalResourceProvider_Column_List"/>
+        from linkis_cg_rm_external_resource_provider where resource_type=#{resourceType}
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" keyColumn="id"
+            parameterType="org.apache.linkis.manager.rm.external.domain.ExternalResourceProvider">
+        INSERT INTO linkis_cg_rm_external_resource_provider (
+        <include refid="ExternalResourceProvider_Column_List_Insert"/>
+        ) VALUES (
+        #{resourceType},#{name},#{labels},#{config}
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE linkis_cg_rm_external_resource_provider
+        <set>
+            <if test="name != null">name=#{name},</if>
+            <if test="labels != null">labels=#{labels},</if>
+            <if test="config != null">config=#{config},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM linkis_cg_rm_external_resource_provider WHERE id=#{id}
+    </delete>
+
+</mapper>

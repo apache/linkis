@@ -23,32 +23,32 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class InsLabelAttachRequest implements LabelRequest {
-    /** Service instance */
-    private ServiceInstance serviceInstance;
+  /** Service instance */
+  private ServiceInstance serviceInstance;
 
-    /** Labels stored as map structure */
-    private Map<String, Object> labels = new HashMap<>();
+  /** Labels stored as map structure */
+  private Map<String, Object> labels = new HashMap<>();
 
-    public InsLabelAttachRequest() {}
+  public InsLabelAttachRequest() {}
 
-    public InsLabelAttachRequest(ServiceInstance serviceInstance, Map<String, Object> labels) {
-        this.serviceInstance = serviceInstance;
-        this.labels = labels;
-    }
+  public InsLabelAttachRequest(ServiceInstance serviceInstance, Map<String, Object> labels) {
+    this.serviceInstance = serviceInstance;
+    this.labels = labels;
+  }
 
-    public ServiceInstance getServiceInstance() {
-        return serviceInstance;
-    }
+  public ServiceInstance getServiceInstance() {
+    return serviceInstance;
+  }
 
-    public void setServiceInstance(ServiceInstance serviceInstance) {
-        this.serviceInstance = serviceInstance;
-    }
+  public void setServiceInstance(ServiceInstance serviceInstance) {
+    this.serviceInstance = serviceInstance;
+  }
 
-    public Map<String, Object> getLabels() {
-        return labels;
-    }
+  public Map<String, Object> getLabels() {
+    return labels;
+  }
 
-    public void setLabels(Map<String, Object> labels) {
-        this.labels = labels;
-    }
+  public void setLabels(Map<String, Object> labels) {
+    this.labels = labels;
+  }
 }

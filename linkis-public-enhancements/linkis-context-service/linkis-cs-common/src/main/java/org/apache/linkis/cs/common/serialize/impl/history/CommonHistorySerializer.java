@@ -26,26 +26,26 @@ import java.util.Map;
 
 public interface CommonHistorySerializer {
 
-    default Map<String, String> getMapValue(ContextHistory history) {
-        Map<String, String> map = new HashMap<>();
-        if (history.getId() != null) {
-            map.put("id", String.valueOf(history.getId()));
-        }
-        map.put("source", history.getSource());
-        map.put("contextType", history.getContextType().name());
-        return map;
+  default Map<String, String> getMapValue(ContextHistory history) {
+    Map<String, String> map = new HashMap<>();
+    if (history.getId() != null) {
+      map.put("id", String.valueOf(history.getId()));
     }
+    map.put("source", history.getSource());
+    map.put("contextType", history.getContextType().name());
+    return map;
+  }
 
-    default Map<String, String> getMapValue(String json) {
-        return CSCommonUtils.gson.fromJson(json, new HashMap<String, String>().getClass());
-    }
+  default Map<String, String> getMapValue(String json) {
+    return CSCommonUtils.gson.fromJson(json, new HashMap<String, String>().getClass());
+  }
 
-    default <T extends ContextHistory> T get(Map<String, String> map, T t) {
-        if (map.get("id") != null) {
-            t.setId(Integer.valueOf(map.get("id")));
-        }
-        t.setContextType(ContextType.valueOf(map.get("contextType")));
-        t.setSource(map.get("source"));
-        return t;
+  default <T extends ContextHistory> T get(Map<String, String> map, T t) {
+    if (map.get("id") != null) {
+      t.setId(Integer.valueOf(map.get("id")));
     }
+    t.setContextType(ContextType.valueOf(map.get("contextType")));
+    t.setSource(map.get("source"));
+    return t;
+  }
 }

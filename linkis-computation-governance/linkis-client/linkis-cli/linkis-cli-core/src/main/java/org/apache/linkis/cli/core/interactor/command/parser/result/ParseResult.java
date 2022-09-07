@@ -21,39 +21,39 @@ import org.apache.linkis.cli.common.entity.command.CmdTemplate;
 import org.apache.linkis.cli.common.entity.command.Params;
 
 public class ParseResult {
-    CmdTemplate parsedTemplate;
-    Params params;
-    String[] remains;
+  CmdTemplate parsedTemplate;
+  Params params;
+  String[] remains;
 
-    public ParseResult() {}
+  public ParseResult() {}
 
-    public ParseResult(CmdTemplate parsedTemplate, Params params, String[] remains) {
-        this.parsedTemplate = parsedTemplate;
-        this.params = params;
-        this.remains = remains;
-    }
+  public ParseResult(CmdTemplate parsedTemplate, Params params, String[] remains) {
+    this.parsedTemplate = parsedTemplate;
+    this.params = params;
+    this.remains = remains;
+  }
 
-    public CmdTemplate getParsedTemplate() {
-        return parsedTemplate;
-    }
+  public CmdTemplate getParsedTemplate() {
+    return parsedTemplate;
+  }
 
-    public void setParsedTemplate(CmdTemplate parsedTemplate) {
-        this.parsedTemplate = parsedTemplate;
-    }
+  public void setParsedTemplate(CmdTemplate parsedTemplate) {
+    this.parsedTemplate = parsedTemplate;
+  }
 
-    public Params getParams() {
-        return params;
-    }
+  public Params getParams() {
+    return params;
+  }
 
-    public void setParams(Params params) {
-        this.params = params;
-    }
+  public void setParams(Params params) {
+    this.params = params;
+  }
 
-    public String[] getRemains() {
-        return remains;
-    }
+  public String[] getRemains() {
+    return remains;
+  }
 
-    public void setRemains(String[] remains) {
-        this.remains = remains;
-    }
+  public void setRemains(String[] remains) {
+    this.remains = remains;
+  }
 }

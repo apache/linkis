@@ -5,26 +5,27 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.common.conf
 
-import java.io.{File, FileInputStream, IOException, InputStream}
-import java.util.Properties
 import org.apache.linkis.common.utils.{Logging, Utils}
+
 import org.apache.commons.io.IOUtils
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 
-import scala.collection.JavaConversions._
+import java.io.{File, FileInputStream, InputStream, IOException}
+import java.util.Properties
 
+import scala.collection.JavaConverters.mapAsJavaMapConverter
 
 private[conf] object BDPConfiguration extends Logging {
 
@@ -32,12 +33,10 @@ private[conf] object BDPConfiguration extends Logging {
 
   val DEFAULT_SERVER_CONF_FILE_NAME = "linkis-server.properties"
 
+  private val extractConfig = new Properties
   private val config = new Properties
   private val sysProps = sys.props
-  private val extractConfig = new Properties
-
   private val env = sys.env
-
 
   private def init: Unit = {
 
@@ -45,19 +44,29 @@ private[conf] object BDPConfiguration extends Logging {
     val propertyFile = sysProps.getOrElse("wds.linkis.configuration", DEFAULT_PROPERTY_FILE_NAME)
     val configFileURL = getClass.getClassLoader.getResource(propertyFile)
     if (configFileURL != null && new File(configFileURL.getPath).exists) {
-      warn(s"******************************** Notice: The Linkis configuration file is $propertyFile ! ***************************")
+      logger.info(
+        s"******************* Notice: The Linkis configuration file is $propertyFile ! *******************"
+      )
       initConfig(config, configFileURL.getPath)
+    } else {
+      logger.warn(
+        s"************ Notice: The Linkis configuration file $propertyFile is not exists! *******************"
+      )
     }
-    else warn(s"******************************** Notice: The Linkis configuration file $propertyFile is not exists! ***************************")
 
     // load pub linkis conf
     val serverConf = sysProps.getOrElse("wds.linkis.server.conf", DEFAULT_SERVER_CONF_FILE_NAME)
     val serverConfFileURL = getClass.getClassLoader.getResource(serverConf)
     if (serverConfFileURL != null && new File(serverConfFileURL.getPath).exists) {
-      warn(s"******************************** Notice: The Linkis serverConf file is $propertyFile ! ***************************")
+      logger.info(
+        s"*********************** Notice: The Linkis serverConf file is $serverConf ! ******************"
+      )
       initConfig(config, serverConfFileURL.getPath)
+    } else {
+      logger.warn(
+        s"**************** Notice: The Linkis serverConf file $serverConf is not exists! *******************"
+      )
     }
-    else warn(s"******************************** Notice: The Linkis serverConf file $serverConfFileURL is not exists! ***************************")
 
     // load  server confs
     val propertyFileOptions = sysProps.get("wds.linkis.server.confs")
@@ -66,70 +75,75 @@ private[conf] object BDPConfiguration extends Logging {
       propertyFiles.foreach { propertyF =>
         val configFileURL = getClass.getClassLoader.getResource(propertyF)
         if (configFileURL != null && new File(configFileURL.getPath).exists) {
-          warn(s"******************************** Notice: The Linkis server.confs  is file $propertyF ***************************")
+          logger.info(
+            s"************** Notice: The Linkis server.confs  is file $propertyF ****************"
+          )
           initConfig(config, configFileURL.getPath)
+        } else {
+          logger.warn(
+            s"********** Notice: The Linkis server.confs file $propertyF is not exists! **************"
+          )
         }
-        else warn(s"******************************** Notice: The Linkis server.confs file $propertyF is not exists! ***************************")
       }
     }
 
   }
 
-  Utils.tryCatch{
+  Utils.tryCatch {
     init
-  }{
-    e: Throwable =>
-      warn("Failed to init conf", e)
+  } { e: Throwable =>
+    logger.warn("Failed to init conf", e)
   }
 
   private def initConfig(config: Properties, filePath: String) {
     var inputStream: InputStream = null
 
-    Utils.tryFinally{
-      Utils.tryCatch{
+    Utils.tryFinally {
+      Utils.tryCatch {
         inputStream = new FileInputStream(filePath)
         config.load(inputStream)
-      }{
-        case e: IOException =>
-          error("Can't load " + filePath, e)
+      } { case e: IOException =>
+        logger.error("Can't load " + filePath, e)
       }
-    }{
+    } {
       IOUtils.closeQuietly(inputStream)
     }
   }
 
   def getOption(key: String): Option[String] = {
-    if(extractConfig.containsKey(key))
+    if (extractConfig.containsKey(key)) {
       return Some(extractConfig.getProperty(key))
+    }
     val value = config.getProperty(key)
-    if(StringUtils.isNotEmpty(value)) {
+    if (StringUtils.isNotEmpty(value)) {
       return Some(value)
     }
-    val propsValue =  sysProps.get(key).orElse(sys.props.get(key))
-    if(propsValue.isDefined){
+    val propsValue = sysProps.get(key).orElse(sys.props.get(key))
+    if (propsValue.isDefined) {
       return propsValue
     }
     env.get(key)
   }
 
-  def properties = {
+  def properties: Properties = {
     val props = new Properties
-    props.putAll(sysProps)
+    props.putAll(env.asJava)
+    props.putAll(sysProps.asJava)
     props.putAll(config)
     props.putAll(extractConfig)
-    props.putAll(env)
     props
   }
 
-  def getOption[T](commonVars: CommonVars[T]): Option[T] = if(commonVars.value != null) Option(commonVars.value)
-  else {
+  def getOption[T](commonVars: CommonVars[T]): Option[T] = if (commonVars.value != null) {
+    Option(commonVars.value)
+  } else {
     val value = BDPConfiguration.getOption(commonVars.key)
     if (value.isEmpty) Option(commonVars.defaultValue)
     else formatValue(commonVars.defaultValue, value)
   }
 
   private[common] def formatValue[T](defaultValue: T, value: Option[String]): Option[T] = {
-    if(value.isEmpty || value.exists(StringUtils.isEmpty)) return Option(defaultValue)
+    if (value.isEmpty || value.exists(StringUtils.isEmpty)) return Option(defaultValue)
     val formattedValue = defaultValue match {
       case _: String => value
       case _: Byte => value.map(_.toByte)
@@ -147,11 +161,14 @@ private[conf] object BDPConfiguration extends Logging {
     formattedValue.asInstanceOf[Option[T]]
   }
 
-  def set(key: String, value: String) = extractConfig.setProperty(key, value)
+  def set(key: String, value: String): AnyRef = extractConfig.setProperty(key, value)
 
-  def setIfNotExists(key: String, value: String) = if(!config.containsKey(key)) set(key, value)
+  def setIfNotExists(key: String, value: String): Any =
+    if (!config.containsKey(key)) set(key, value)
 
-  def getBoolean(key: String, default: Boolean):Boolean = getOption(key).map(_.toBoolean).getOrElse(default)
+  def getBoolean(key: String, default: Boolean): Boolean =
+    getOption(key).map(_.toBoolean).getOrElse(default)
+
   def getBoolean(commonVars: CommonVars[Boolean]): Option[Boolean] = getOption(commonVars)
 
   def get(key: String, default: String): String = getOption(key).getOrElse(default)
@@ -159,7 +176,7 @@ private[conf] object BDPConfiguration extends Logging {
 
   def get(key: String): String = getOption(key).getOrElse(throw new NoSuchElementException(key))
 
-  def getInt(key: String, default: Int):Int = getOption(key).map(_.toInt).getOrElse(default)
+  def getInt(key: String, default: Int): Int = getOption(key).map(_.toInt).getOrElse(default)
   def getInt(commonVars: CommonVars[Int]): Option[Int] = getOption(commonVars)
 
   def contains(key: String): Boolean = getOption(key).isDefined

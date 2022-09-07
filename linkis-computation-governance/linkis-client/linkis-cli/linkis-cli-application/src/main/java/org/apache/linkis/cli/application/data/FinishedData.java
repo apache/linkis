@@ -21,27 +21,27 @@ import org.apache.linkis.cli.common.entity.result.ExecutionResult;
 import org.apache.linkis.cli.common.entity.result.ResultHandler;
 
 public class FinishedData {
-    ExecutionResult executionResult;
-    ResultHandler[] resultHandlers;
+  ExecutionResult executionResult;
+  ResultHandler[] resultHandlers;
 
-    public FinishedData(ExecutionResult executionResult, ResultHandler[] resultHandlers) {
-        this.executionResult = executionResult;
-        this.resultHandlers = resultHandlers;
-    }
+  public FinishedData(ExecutionResult executionResult, ResultHandler[] resultHandlers) {
+    this.executionResult = executionResult;
+    this.resultHandlers = resultHandlers;
+  }
 
-    public ExecutionResult getExecutionResult() {
-        return executionResult;
-    }
+  public ExecutionResult getExecutionResult() {
+    return executionResult;
+  }
 
-    public void setExecutionResult(ExecutionResult executionResult) {
-        this.executionResult = executionResult;
-    }
+  public void setExecutionResult(ExecutionResult executionResult) {
+    this.executionResult = executionResult;
+  }
 
-    public ResultHandler[] getResultHandlers() {
-        return resultHandlers;
-    }
+  public ResultHandler[] getResultHandlers() {
+    return resultHandlers;
+  }
 
-    public void setResultHandlers(ResultHandler[] resultHandlers) {
-        this.resultHandlers = resultHandlers;
-    }
+  public void setResultHandlers(ResultHandler[] resultHandlers) {
+    this.resultHandlers = resultHandlers;
+  }
 }

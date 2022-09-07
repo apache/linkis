@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,38 +17,51 @@
 
 package org.apache.linkis.engineconn.computation.executor.async
 
-import java.util
-import java.util.concurrent.ConcurrentHashMap
-
 import org.apache.linkis.DataWorkCloudApplication
 import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.engineconn.acessible.executor.listener.event.TaskResponseErrorEvent
 import org.apache.linkis.engineconn.common.conf.EngineConnConf
 import org.apache.linkis.engineconn.computation.executor.entity.EngineConnTask
-import org.apache.linkis.engineconn.computation.executor.execute.{ComputationExecutor, EngineExecutionContext}
+import org.apache.linkis.engineconn.computation.executor.execute.{
+  ComputationExecutor,
+  EngineExecutionContext
+}
 import org.apache.linkis.engineconn.computation.executor.hook.ComputationExecutorHook
 import org.apache.linkis.engineconn.core.EngineConnObject
 import org.apache.linkis.engineconn.executor.entity.ConcurrentExecutor
-import org.apache.linkis.engineconn.executor.listener.{EngineConnSyncListenerBus, ExecutorListenerBusContext}
+import org.apache.linkis.engineconn.executor.listener.{
+  EngineConnSyncListenerBus,
+  ExecutorListenerBusContext
+}
 import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.apache.linkis.scheduler.executer._
 import org.apache.linkis.scheduler.listener.JobListener
-import org.apache.linkis.scheduler.queue.SchedulerEventState._
 import org.apache.linkis.scheduler.queue.{Job, SchedulerEventState}
-import org.apache.commons.lang.StringUtils
-import org.apache.commons.lang.exception.ExceptionUtils
+import org.apache.linkis.scheduler.queue.SchedulerEventState._
 
-abstract class AsyncConcurrentComputationExecutor(override val outputPrintLimit: Int = 1000) extends ComputationExecutor(outputPrintLimit) with ConcurrentExecutor with JobListener {
+import org.apache.commons.lang3.StringUtils
+import org.apache.commons.lang3.exception.ExceptionUtils
 
-  private lazy val scheduler = AsyncExecuteContext.getAsyncExecuteContext.getOrCreateScheduler(this)
+import java.util
+import java.util.concurrent.ConcurrentHashMap
 
+abstract class AsyncConcurrentComputationExecutor(override val outputPrintLimit: Int = 1000)
+    extends ComputationExecutor(outputPrintLimit)
+    with ConcurrentExecutor
+    with JobListener {
+
+  private lazy val scheduler =
+    AsyncExecuteContext.getAsyncExecuteContext.getOrCreateScheduler(this)
 
   private val taskIdToJobMap: util.Map[String, Job] = new ConcurrentHashMap[String, Job](8)
 
-  override def toExecuteTask(engineConnTask: EngineConnTask, internalExecute: Boolean = false): ExecuteResponse = {
+  override def toExecuteTask(
+      engineConnTask: EngineConnTask,
+      internalExecute: Boolean = false
+  ): ExecuteResponse = {
 
     transformTaskStatus(engineConnTask, ExecutionNodeStatus.Running)
 
@@ -70,40 +83,55 @@ abstract class AsyncConcurrentComputationExecutor(override val outputPrintLimit:
     new AsyncEngineConnJob(engineConnTask, engineExecutionContext)
   }
 
-  def asyncExecuteTask(engineConnTask: EngineConnTask, engineExecutionContext: EngineExecutionContext): ExecuteResponse = {
+  def asyncExecuteTask(
+      engineConnTask: EngineConnTask,
+      engineExecutionContext: EngineExecutionContext
+  ): ExecuteResponse = {
 
     var hookedCode = engineConnTask.getCode
     Utils.tryCatch {
       val engineCreationContext = EngineConnObject.getEngineCreationContext
       ComputationExecutorHook.getComputationExecutorHooks.foreach(hook => {
-        hookedCode = hook.beforeExecutorExecute(engineExecutionContext, engineCreationContext, hookedCode)
+        hookedCode =
+          hook.beforeExecutorExecute(engineExecutionContext, engineCreationContext, hookedCode)
       })
-    }{
-      e =>
-        info("failed to do with hook", e)
-        engineExecutionContext.appendStdout(LogUtils.generateWarn(s"failed execute hook: ${ExceptionUtils.getFullStackTrace(e)}"))
+    } { e =>
+      logger.info("failed to do with hook", e)
+      engineExecutionContext.appendStdout(
+        LogUtils.generateWarn(s"failed execute hook: ${ExceptionUtils.getStackTrace(e)}")
+      )
     }
     if (hookedCode.length > 100) {
-      info(s"hooked after code: ${hookedCode.substring(0, 100)} ....")
+      logger.info(s"hooked after code: ${hookedCode.substring(0, 100)} ....")
     } else {
-      info(s"hooked after code: $hookedCode ")
+      logger.info(s"hooked after code: $hookedCode ")
     }
     val localPath = EngineConnConf.getLogDir
-    engineExecutionContext.appendStdout(LogUtils.generateInfo(s"EngineConn local log path: ${DataWorkCloudApplication.getServiceInstance.toString} $localPath"))
+    engineExecutionContext.appendStdout(
+      LogUtils.generateInfo(
+        s"EngineConn local log path: ${DataWorkCloudApplication.getServiceInstance.toString} $localPath"
+      )
+    )
 
-    var response: ExecuteResponse = Utils.tryCatch(executeLine(engineExecutionContext, hookedCode)
-    ) {
-      t => ErrorExecuteResponse(ExceptionUtils.getRootCauseMessage(t), t)
-    }
+    var response: ExecuteResponse =
+      Utils.tryCatch(executeLine(engineExecutionContext, hookedCode)) { t =>
+        ErrorExecuteResponse(ExceptionUtils.getRootCauseMessage(t), t)
+      }
 
     response match {
       case e: ErrorExecuteResponse =>
         logger.error("execute code failed!", e.t)
-        engineExecutionContext.appendStdout(LogUtils.generateERROR(s"execute code failed!: ${ExceptionUtils.getFullStackTrace(e.t)}"))
+        val errorStr = if (e.t != null) {
+          ExceptionUtils.getStackTrace(e.t)
+        } else StringUtils.EMPTY
+        engineExecutionContext.appendStdout(
+          LogUtils.generateERROR(s"execute code failed!: $errorStr")
+        )
       case SuccessExecuteResponse() =>
         logger.info(s"task{${engineConnTask.getTaskId} execute success")
       case e: OutputExecuteResponse =>
-        val output = if (StringUtils.isNotEmpty(e.getOutput) && e.getOutput.length > outputPrintLimit) {
+        val output =
+          if (StringUtils.isNotEmpty(e.getOutput) && e.getOutput.length > outputPrintLimit) {
             e.getOutput.substring(0, outputPrintLimit)
           } else e.getOutput
         engineExecutionContext.appendStdout(output)
@@ -156,8 +184,10 @@ abstract class AsyncConcurrentComputationExecutor(override val outputPrintLimit:
 
   protected override def ensureOp[A](f: => A): A = f
 
-  override def afterExecute(engineConnTask: EngineConnTask, executeResponse: ExecuteResponse): Unit = {
-  }
+  override def afterExecute(
+      engineConnTask: EngineConnTask,
+      executeResponse: ExecuteResponse
+  ): Unit = {}
 
   private def getEngineSyncListenerBus: EngineConnSyncListenerBus = {
     ExecutorListenerBusContext.getExecutorListenerBusContext().getEngineConnSyncListenerBus
@@ -165,22 +195,23 @@ abstract class AsyncConcurrentComputationExecutor(override val outputPrintLimit:
 
   // JobListener
 
-  override def onJobScheduled(job: Job): Unit = {
-  }
+  override def onJobScheduled(job: Job): Unit = {}
 
-  override def onJobInited(job: Job): Unit = {
-  }
+  override def onJobInited(job: Job): Unit = {}
 
-  override def onJobWaitForRetry(job: Job): Unit = {
-  }
+  override def onJobWaitForRetry(job: Job): Unit = {}
 
   override def onJobRunning(job: Job): Unit = {
     if (isBusy) {
-      error(s"Executor is busy but still got new task ! Running task num : ${getRunningTask}")
+      logger.error(
+        s"Executor is busy but still got new task ! Running task num : ${getRunningTask}"
+      )
     }
     if (getRunningTask >= getConcurrentLimit) synchronized {
       if (getRunningTask >= getConcurrentLimit && NodeStatus.isIdle(getStatus)) {
-        info(s"running task($getRunningTask) > concurrent limit $getConcurrentLimit, now to mark engine to busy ")
+        logger.info(
+          s"running task($getRunningTask) > concurrent limit $getConcurrentLimit, now to mark engine to busy "
+        )
         transition(NodeStatus.Busy)
       }
     }
@@ -192,16 +223,21 @@ abstract class AsyncConcurrentComputationExecutor(override val outputPrintLimit:
     job match {
       case asyncEngineConnJob: AsyncEngineConnJob =>
         job.getState match {
-          case  Succeed =>
+          case Succeed =>
             succeedTasks.increase()
             transformTaskStatus(asyncEngineConnJob.getEngineConnTask, ExecutionNodeStatus.Succeed)
-          case  Failed =>
+          case Failed =>
             failedTasks.increase()
             transformTaskStatus(asyncEngineConnJob.getEngineConnTask, ExecutionNodeStatus.Failed)
           case _ =>
         }
-        if(!SchedulerEventState.isSucceed(job.getState)) {
-            getEngineSyncListenerBus.postToAll(TaskResponseErrorEvent(asyncEngineConnJob.getEngineConnTask.getTaskId, job.getErrorResponse.message))
+        if (!SchedulerEventState.isSucceed(job.getState)) {
+          getEngineSyncListenerBus.postToAll(
+            TaskResponseErrorEvent(
+              asyncEngineConnJob.getEngineConnTask.getTaskId,
+              job.getErrorResponse.message
+            )
+          )
         }
         removeJob(asyncEngineConnJob.getEngineConnTask.getTaskId)
         clearTaskCache(asyncEngineConnJob.getEngineConnTask.getTaskId)
@@ -211,10 +247,12 @@ abstract class AsyncConcurrentComputationExecutor(override val outputPrintLimit:
 
     if (getStatus == NodeStatus.Busy && getConcurrentLimit > getRunningTask) synchronized {
       if (getStatus == NodeStatus.Busy && getConcurrentLimit > getRunningTask) {
-        info(s"running task($getRunningTask) < concurrent limit $getConcurrentLimit, now to mark engine to Unlock ")
+        logger.info(
+          s"running task($getRunningTask) < concurrent limit $getConcurrentLimit, now to mark engine to Unlock "
+        )
         transition(NodeStatus.Unlock)
       }
     }
   }
-}
 
+}

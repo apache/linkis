@@ -1,0 +1,80 @@
+{
+  "message": {
+    "linkis": {
+      "sideNavList": {
+        "function": {
+          "children": {
+            "udfFunctionManage": "UDF Management",
+            "functionManagement": "Function Management"
+          }
+        }
+      },
+      "udf": {
+        "functionName": "Function Name",
+        "functionType": "Function Type",
+        "addUDF": "Add UDF",
+        "creator": "Creator",
+        "search": "Search",
+        "addFunction": "Add Function",
+        "updateFunction": "Update Function",
+        "batchExportFunction": "Batch Export Function",
+        "batchImportFunction": "Batch Import Function",
+        "status": "Status",
+        "availableCluster": "Available Cluster",
+        "accessSetting": "Access Setting",
+        "functionDescription": "Function Description",
+        "clusterName": "Cluster",
+        "class": "Category",
+        "lastModifyTime": "Modify Time",
+        "lastModifyUser": "Modify User",
+        "changeuser": "UDF Transfer",
+        "action": {
+          "title": "Action",
+          "markAsExpired": "Mark As Expired",
+          "edit": "Edit",
+          "delete": "Delete",
+          "vlist": "Version List",
+          "share": "Share",
+          "expire": "Expire",
+          "changeuser": "Transfer"
+        },
+        "common": "Common",
+        "expire": "Expire",
+        "normal": "Normal",
+        "yes": "Yes",
+        "no": "No",
+        "sprak": "sprak",
+        "jarPackage": "jar Package",
+        "scriptPath": "Script Path",
+        "registerFunction": "Register Function",
+        "registerFormat": "Register Format",
+        "preview": "preview",
+        "useFormat": "Use Format",
+        "returnType": "Return Type",
+        "paramType": "Param Type",
+        "inputType": "Input Type",
+        "defaultLoad": "Default Load",
+        "LJCJ": "Create",
+        "QSRMC": "Please enter the name",
+        "CDZ": "Length should be between 1 to 100 characters",
+        "ZDYHS": "Self Defining Function",
+        "BXYZMKT": "Must starts with alphabetic characters, followed by only alphanumeric, underscore and Chinese characters",
+        "QZSXZYZLX": "Please choose at least one type",
+        "QSRWZLJ": "Please enter the complete path",
+        "KHDBJZPP": "Brackets indicate precise matching",
+        "HZMZC": "Only jar is allowed as the suffix. Only alphanumeric characters and underscore is allowed for the name of jar package!",
+        "ZCPYSCA": "Only py and scala are allowed as the suffix!",
+        "BHJZCYW": "Only alphabetic characters are allowed as the package name",
+        "XHX": "Underscore",
+        "SRZCHS": "Please enter function registration",
+        "SRFHLX": "Please enter the return type",
+        "SRCSLX": "Please enter the parameter type",
+        "SRFL": "Please enter the directory",
+        "XGHS": "Update funtion",
+        "XG": "Update",
+        "QPZS": "View In Full Screen",
+        "QXQP": "Cancel Full Screen"
+      }
+    }
+  }
+}

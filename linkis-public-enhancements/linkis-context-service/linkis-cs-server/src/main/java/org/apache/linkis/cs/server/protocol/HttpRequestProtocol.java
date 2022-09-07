@@ -21,17 +21,17 @@ import org.apache.linkis.cs.server.enumeration.ServiceMethod;
 
 public interface HttpRequestProtocol extends HttpProtocol {
 
-    Object[] getRequestObjects();
+  Object[] getRequestObjects();
 
-    void setRequestObjects(Object[] objs);
+  void setRequestObjects(Object[] objs);
 
-    String getServiceName();
+  String getServiceName();
 
-    void setUsername(String username);
+  void setUsername(String username);
 
-    String getUsername();
+  String getUsername();
 
-    ServiceMethod getServiceMethod();
+  ServiceMethod getServiceMethod();
 
-    void setServiceMethod(ServiceMethod method);
+  void setServiceMethod(ServiceMethod method);
 }

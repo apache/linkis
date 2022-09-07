@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,12 +21,11 @@ import org.apache.linkis.datasource.client.config.DatasourceClientConfig.METADAT
 import org.apache.linkis.datasource.client.exception.DataSourceClientBuilderException
 import org.apache.linkis.httpclient.request.GetAction
 
-
 class MetadataGetTablesAction extends GetAction with DataSourceAction {
-  private var dataSourceId: Long = _
+  private var dataSourceName: String = _
   private var database: String = _
 
-  override def suffixURLs: Array[String] = Array(METADATA_SERVICE_MODULE.getValue, "tables", dataSourceId.toString, "db", database)
+  override def suffixURLs: Array[String] = Array(METADATA_SERVICE_MODULE.getValue, "getTables")
 
   private var user: String = _
 
@@ -38,8 +37,8 @@ class MetadataGetTablesAction extends GetAction with DataSourceAction {
 object MetadataGetTablesAction {
   def builder(): Builder = new Builder
 
-  class Builder private[MetadataGetTablesAction]() {
-    private var dataSourceId: Long = _
+  class Builder private[MetadataGetTablesAction] () {
+    private var dataSourceName: String = _
     private var database: String = _
     private var system: String = _
     private var user: String = _
@@ -48,8 +47,9 @@ object MetadataGetTablesAction {
       this.user = user
       this
     }
-    def setDataSourceId(dataSourceId: Long): Builder = {
-      this.dataSourceId = dataSourceId
+
+    def setDataSourceName(dataSourceId: String): Builder = {
+      this.dataSourceName = dataSourceId
       this
     }
 
@@ -64,18 +64,20 @@ object MetadataGetTablesAction {
     }
 
     def build(): MetadataGetTablesAction = {
-      if (dataSourceId == null) throw new DataSourceClientBuilderException("dataSourceId is needed!")
-      if(database == null) throw new DataSourceClientBuilderException("database is needed!")
-      if(system == null) throw new DataSourceClientBuilderException("system is needed!")
-      if(user == null) throw new DataSourceClientBuilderException("user is needed!")
+      if (dataSourceName == null)
+        throw new DataSourceClientBuilderException("dataSourceName is needed!")
+      if (database == null) throw new DataSourceClientBuilderException("database is needed!")
+      if (system == null) throw new DataSourceClientBuilderException("system is needed!")
+      if (user == null) throw new DataSourceClientBuilderException("user is needed!")
 
       val metadataGetTablesAction = new MetadataGetTablesAction
-      metadataGetTablesAction.dataSourceId = this.dataSourceId
+      metadataGetTablesAction.dataSourceName = this.dataSourceName
       metadataGetTablesAction.database = this.database
       metadataGetTablesAction.setParameter("system", system)
       metadataGetTablesAction.setUser(user)
       metadataGetTablesAction
     }
+
   }
 
 }

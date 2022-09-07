@@ -172,12 +172,11 @@ object EsClientFactory {
       && StringUtils.isNotBlank(password)
   ) {
     cluster.foreach {
-      case (host, port) => {
+      case (host, port) =>
         credentialsProvider.setCredentials(
           new AuthScope(host, port, AuthScope.ANY_REALM, AuthScope.ANY_SCHEME),
           new UsernamePasswordCredentials(username, password)
         )
-      }
       case _ =>
     }
   }

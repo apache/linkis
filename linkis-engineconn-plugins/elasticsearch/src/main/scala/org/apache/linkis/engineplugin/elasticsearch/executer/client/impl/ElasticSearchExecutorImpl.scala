@@ -40,6 +40,7 @@ import org.apache.linkis.server.JMap
 import org.apache.linkis.storage.utils.StorageUtils
 
 import java.util
+import java.util.Locale
 import java.util.concurrent.CountDownLatch
 
 import org.elasticsearch.client.{Cancellable, Response, ResponseListener}
@@ -54,7 +55,7 @@ class ElasticSearchExecutorImpl(runType: String, properties: util.Map[String, St
   override def open: Unit = {
     this.client = EsClientFactory.getRestClient(properties)
     this.user = properties.getOrDefault(TaskConstant.UMUSER, StorageUtils.getJvmUser)
-    runType.trim.toLowerCase match {
+    runType.trim.toLowerCase(Locale.getDefault) match {
       case "essql" | "sql" =>
         properties.putIfAbsent(
           ElasticSearchConfiguration.ES_HTTP_ENDPOINT.key,

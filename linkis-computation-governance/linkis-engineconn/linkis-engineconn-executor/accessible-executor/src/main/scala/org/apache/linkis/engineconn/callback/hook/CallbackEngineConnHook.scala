@@ -47,7 +47,7 @@ class CallbackEngineConnHook extends EngineConnHook with Logging {
     val parser = DWCArgumentsParser.parse(engineCreationContext.getArgs)
     DWCArgumentsParser.setDWCOptionMap(parser.getDWCConfMap)
     val existsExcludePackages = ServerConfiguration.BDP_SERVER_EXCLUDE_PACKAGES.getValue
-    if (!StringUtils.isEmpty(existsExcludePackages)) {
+    if (StringUtils.isNotBlank(existsExcludePackages)) {
       DataWorkCloudApplication.setProperty(
         ServerConfiguration.BDP_SERVER_EXCLUDE_PACKAGES.key,
         existsExcludePackages

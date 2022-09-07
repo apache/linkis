@@ -20,7 +20,7 @@ package org.apache.linkis.entrance.execute
 import java.util
 
 import scala.beans.BeanProperty
-import scala.collection.JavaConversions.mapAsScalaMap
+import scala.collection.JavaConverters._
 
 class MarkReq {
 
@@ -60,20 +60,11 @@ class MarkReq {
         return flag
       }
 
-      /* if (other.getProperties != null && getProperties != null) {
-         val iterator = other.getProperties.iterator
-         while (iterator.hasNext) {
-           val next = iterator.next()
-           if (!next._2.equalsIgnoreCase(getProperties.get(next._1))) {
-             return flag
-           }
-         }
-       }*/
       if (other.getLabels != null && getLabels != null) {
         if (getLabels.size() != other.getLabels.size()) {
           return false
         }
-        val iterator = other.getLabels.iterator
+        val iterator = other.getLabels.asScala.iterator
         while (iterator.hasNext) {
           val next = iterator.next()
           if (null == next._2 || !next._2.equals(getLabels.get(next._1))) {
@@ -86,4 +77,5 @@ class MarkReq {
     flag
   }
 
+  override def hashCode(): Int = super.hashCode()
 }

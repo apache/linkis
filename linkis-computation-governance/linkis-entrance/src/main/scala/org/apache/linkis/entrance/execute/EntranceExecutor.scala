@@ -78,7 +78,6 @@ abstract class EntranceExecutor(val id: Long, val mark: MarkReq) extends Executo
 
   protected def callExecute(request: ExecuteRequest): ExecuteResponse
 
-  //  override def toString: String = s"${getInstance.getApplicationName}Engine($getId, $getUser, $getCreator, ${getInstance.getInstance})"
   override def toString: String = "${getId}"
 
   override def getId: Long = this.id

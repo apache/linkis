@@ -15,14 +15,14 @@
  * limitations under the License.
  */
 
-package java.org.apache.linkis.instance.label.dao;
+package org.apache.linkis.instance.label.dao;
+
+import org.apache.linkis.instance.label.Scan;
 
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.org.apache.linkis.instance.label.Scan;
 
 @SpringBootTest(classes = Scan.class)
 @Transactional

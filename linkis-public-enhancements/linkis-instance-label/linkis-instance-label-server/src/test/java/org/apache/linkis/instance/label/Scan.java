@@ -15,10 +15,11 @@
  * limitations under the License.
  */
 
-package java.org.apache.linkis.instance.label;
+package org.apache.linkis.instance.label;
+
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 
 import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 
 @EnableAutoConfiguration
 @MapperScan("org.apache.linkis.instance.label.dao")

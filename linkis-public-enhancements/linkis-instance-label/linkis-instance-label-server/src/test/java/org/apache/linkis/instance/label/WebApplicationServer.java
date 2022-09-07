@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package java.org.apache.linkis.instance.label;
+package org.apache.linkis.instance.label;
 
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;

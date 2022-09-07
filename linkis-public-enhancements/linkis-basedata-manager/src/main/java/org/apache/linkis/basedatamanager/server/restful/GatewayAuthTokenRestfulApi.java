@@ -21,19 +21,21 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.apache.linkis.basedatamanager.server.domain.UdfTreeEntity;
-import org.apache.linkis.basedatamanager.server.service.UdfTreeService;
+import org.apache.linkis.basedatamanager.server.domain.GatewayAuthTokenEntity;
+import org.apache.linkis.basedatamanager.server.service.GatewayAuthTokenService;
 import org.apache.linkis.server.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-@Api(tags="UdfTreeRestfulApi")
-@RestController
-@RequestMapping(path = "/basedata_manager/udf_tree")
-public class UdfTreeRestfulApi {
+import java.util.HashMap;
 
+
+@Api(tags = "GatewayAuthTokenRestfulApi")
+@RestController
+@RequestMapping(path = "/basedata-manager/gateway-auth-token")
+public class GatewayAuthTokenRestfulApi {
     @Autowired
-    UdfTreeService udfTreeService;
+    GatewayAuthTokenService gatewayAuthTokenService;
 
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "query", dataType = "string", name = "searchName", value = ""),
@@ -43,7 +45,7 @@ public class UdfTreeRestfulApi {
     @ApiOperation(value = "list", notes = "get list data", httpMethod = "GET")
     @RequestMapping(path = "", method = RequestMethod.GET)
     public Message list(String searchName,Integer currentPage,Integer pageSize) {
-        PageInfo pageList = udfTreeService.getListByPage(searchName,currentPage,pageSize);
+        PageInfo pageList = gatewayAuthTokenService.getListByPage(searchName,currentPage,pageSize);
         return Message.ok("").data("list", pageList);
     }
 
@@ -53,37 +55,39 @@ public class UdfTreeRestfulApi {
     @ApiOperation(value = "get", notes = "get data by id", httpMethod = "GET")
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
     public Message get(@PathVariable("id") Long id) {
-        UdfTreeEntity errorCode = udfTreeService.getById(id);
-        return Message.ok("").data("item", errorCode);
+        GatewayAuthTokenEntity gatewayAuthToken = gatewayAuthTokenService.getById(id);
+        return Message.ok("").data("item", gatewayAuthToken);
     }
 
     @ApiImplicitParams({
-            @ApiImplicitParam(paramType = "body", dataType = "UdfTreeEntity", name = "errorCode", value = "")
+            @ApiImplicitParam(paramType = "body", dataType = "GatewayAuthTokenEntity", name = "gatewayAuthToken", value = "")
     })
     @ApiOperation(value = "add", notes = "add data", httpMethod = "POST")
     @RequestMapping(path = "", method = RequestMethod.POST)
-    public Message add(@RequestBody UdfTreeEntity errorCode) {
-        boolean result = udfTreeService.save(errorCode);
+    public Message add(@RequestBody GatewayAuthTokenEntity gatewayAuthToken) {
+        boolean result = gatewayAuthTokenService.save(gatewayAuthToken);
         return Message.ok("").data("result", result);
     }
 
     @ApiImplicitParams({
-            @ApiImplicitParam(paramType = "path", dataType = "long", name = "id", value = "")
+            @ApiImplicitParam(paramType = "body", dataType = "GatewayAuthTokenEntity", name = "token", value = "")
     })
-    @ApiOperation(value = "remove", notes = "remove data by id", httpMethod = "DELETE")
-    @RequestMapping(path = "/{id}", method = RequestMethod.DELETE)
-    public Message remove(@PathVariable("id") Long id) {
-        boolean result = udfTreeService.removeById(id);
-        return Message.ok("").data("result", result);
-    }
-
-    @ApiImplicitParams({
-            @ApiImplicitParam(paramType = "body", dataType = "UdfTreeEntity", name = "errorCode", value = "")
-    })
-    @ApiOperation(value = "update", notes = "update data", httpMethod = "PUT")
+    @ApiOperation(value = "update", notes = "remove data by id", httpMethod = "PUT")
     @RequestMapping(path = "", method = RequestMethod.PUT)
-    public Message update(@RequestBody UdfTreeEntity errorCode) {
-        boolean result = udfTreeService.updateById(errorCode);
+    public Message update(@RequestBody GatewayAuthTokenEntity token) {
+        boolean result = gatewayAuthTokenService.updateById(token);
+        return Message.ok("").data("result", result);
+    }
+
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "query", dataType = "string", name = "tokenName", value = "")
+    })
+    @ApiOperation(value = "remove", notes = "update data", httpMethod = "DELETE")
+    @RequestMapping(path = "", method = RequestMethod.DELETE)
+    public Message remove(String tokenName) {
+        HashMap columnMap = new HashMap<String,Object>();
+        columnMap.put("token_name",tokenName);
+        boolean result = gatewayAuthTokenService.removeByMap(columnMap);
         return Message.ok("").data("result", result);
     }
 

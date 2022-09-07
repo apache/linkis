@@ -21,29 +21,29 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.apache.linkis.basedatamanager.server.domain.ErrorCodeEntity;
-import org.apache.linkis.basedatamanager.server.service.ErrorCodeService;
+import org.apache.linkis.basedatamanager.server.domain.DatasourceTypeEntity;
+import org.apache.linkis.basedatamanager.server.service.DatasourceTypeService;
 import org.apache.linkis.server.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-@Api(tags="ErrorCodeRestfulApi")
+@Api(tags="DatasourceTypeRestfulApi")
 @RestController
-@RequestMapping(path = "/basedata_manager/error_code")
-public class ErrorCodeRestfulApi {
+@RequestMapping(path = "/basedata-manager/datasource-type")
+public class DatasourceTypeRestfulApi {
 
     @Autowired
-    ErrorCodeService errorCodeService;
+    DatasourceTypeService datasourceTypeService;
 
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "query", dataType = "string", name = "searchName", value = ""),
             @ApiImplicitParam(paramType = "query", dataType = "int", name = "currentPage", value = ""),
             @ApiImplicitParam(paramType = "query", dataType = "int", name = "pageSize", value = "")
     })
-    @ApiOperation(value = "list", notes = "get list data with page", httpMethod = "GET")
+    @ApiOperation(value = "list", notes = "get list data", httpMethod = "GET")
     @RequestMapping(path = "", method = RequestMethod.GET)
     public Message list(String searchName,Integer currentPage,Integer pageSize) {
-        PageInfo pageList = errorCodeService.getListByPage(searchName,currentPage,pageSize);
+        PageInfo pageList = datasourceTypeService.getListByPage(searchName,currentPage,pageSize);
         return Message.ok("").data("list", pageList);
     }
 
@@ -53,17 +53,17 @@ public class ErrorCodeRestfulApi {
     @ApiOperation(value = "get", notes = "get data by id", httpMethod = "GET")
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
     public Message get(@PathVariable("id") Long id) {
-        ErrorCodeEntity errorCode = errorCodeService.getById(id);
-        return Message.ok("").data("item", errorCode);
+        DatasourceTypeEntity datasourceType = datasourceTypeService.getById(id);
+        return Message.ok("").data("item", datasourceType);
     }
 
     @ApiImplicitParams({
-            @ApiImplicitParam(paramType = "body", dataType = "ErrorCodeEntity", name = "errorCode", value = "")
+            @ApiImplicitParam(paramType = "body", dataType = "DatasourceTypeEntity", name = "datasourceType", value = "")
     })
     @ApiOperation(value = "add", notes = "add data", httpMethod = "POST")
     @RequestMapping(path = "", method = RequestMethod.POST)
-    public Message add(@RequestBody ErrorCodeEntity errorCode) {
-        boolean result = errorCodeService.save(errorCode);
+    public Message add(@RequestBody DatasourceTypeEntity datasourceType) {
+        boolean result = datasourceTypeService.save(datasourceType);
         return Message.ok("").data("result", result);
     }
 
@@ -73,17 +73,17 @@ public class ErrorCodeRestfulApi {
     @ApiOperation(value = "remove", notes = "remove data by id", httpMethod = "DELETE")
     @RequestMapping(path = "/{id}", method = RequestMethod.DELETE)
     public Message remove(@PathVariable("id") Long id) {
-        boolean result = errorCodeService.removeById(id);
+        boolean result = datasourceTypeService.removeById(id);
         return Message.ok("").data("result", result);
     }
 
     @ApiImplicitParams({
-            @ApiImplicitParam(paramType = "body", dataType = "ErrorCodeEntity", name = "errorCode", value = "")
+            @ApiImplicitParam(paramType = "body", dataType = "DatasourceTypeEntity", name = "errorCode", value = "")
     })
     @ApiOperation(value = "update", notes = "update data", httpMethod = "PUT")
     @RequestMapping(path = "", method = RequestMethod.PUT)
-    public Message update(@RequestBody ErrorCodeEntity errorCode) {
-        boolean result = errorCodeService.updateById(errorCode);
+    public Message update(@RequestBody DatasourceTypeEntity errorCode) {
+        boolean result = datasourceTypeService.updateById(errorCode);
         return Message.ok("").data("result", result);
     }
 

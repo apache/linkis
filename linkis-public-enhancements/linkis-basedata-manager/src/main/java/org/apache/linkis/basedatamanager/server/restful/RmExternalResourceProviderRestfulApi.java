@@ -21,21 +21,19 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.apache.linkis.basedatamanager.server.domain.GatewayAuthTokenEntity;
-import org.apache.linkis.basedatamanager.server.service.GatewayAuthTokenService;
+import org.apache.linkis.basedatamanager.server.domain.RmExternalResourceProviderEntity;
+import org.apache.linkis.basedatamanager.server.service.RmExternalResourceProviderService;
 import org.apache.linkis.server.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-
-
-@Api(tags = "GatewayAuthTokenRestfulApi")
+@Api(tags = "RmExternalResourceProviderRestfulApi")
 @RestController
-@RequestMapping(path = "/basedata_manager/gateway_auth_token")
-public class GatewayAuthTokenRestfulApi {
+@RequestMapping(path = "/basedata-manager/rm-external-resource-provier")
+public class RmExternalResourceProviderRestfulApi {
+
     @Autowired
-    GatewayAuthTokenService gatewayAuthTokenService;
+    RmExternalResourceProviderService rmExternalResourceProviderService;
 
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "query", dataType = "string", name = "searchName", value = ""),
@@ -45,7 +43,7 @@ public class GatewayAuthTokenRestfulApi {
     @ApiOperation(value = "list", notes = "get list data", httpMethod = "GET")
     @RequestMapping(path = "", method = RequestMethod.GET)
     public Message list(String searchName,Integer currentPage,Integer pageSize) {
-        PageInfo pageList = gatewayAuthTokenService.getListByPage(searchName,currentPage,pageSize);
+        PageInfo pageList = rmExternalResourceProviderService.getListByPage(searchName,currentPage,pageSize);
         return Message.ok("").data("list", pageList);
     }
 
@@ -55,40 +53,38 @@ public class GatewayAuthTokenRestfulApi {
     @ApiOperation(value = "get", notes = "get data by id", httpMethod = "GET")
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
     public Message get(@PathVariable("id") Long id) {
-        GatewayAuthTokenEntity gatewayAuthToken = gatewayAuthTokenService.getById(id);
-        return Message.ok("").data("item", gatewayAuthToken);
+        RmExternalResourceProviderEntity rmExternalResourceProvider = rmExternalResourceProviderService.getById(id);
+        return Message.ok("").data("dbs", rmExternalResourceProvider);
     }
 
     @ApiImplicitParams({
-            @ApiImplicitParam(paramType = "body", dataType = "GatewayAuthTokenEntity", name = "gatewayAuthToken", value = "")
+            @ApiImplicitParam(paramType = "body", dataType = "RmExternalResourceProviderEntity", name = "rmExternalResourceProvider", value = "")
     })
     @ApiOperation(value = "add", notes = "add data", httpMethod = "POST")
     @RequestMapping(path = "", method = RequestMethod.POST)
-    public Message add(@RequestBody GatewayAuthTokenEntity gatewayAuthToken) {
-        boolean result = gatewayAuthTokenService.save(gatewayAuthToken);
-        return Message.ok("").data("result", result);
+    public Message add(@RequestBody RmExternalResourceProviderEntity rmExternalResourceProvider) {
+        boolean result = rmExternalResourceProviderService.save(rmExternalResourceProvider);
+        return Message.ok("").data("dbs", result);
     }
 
     @ApiImplicitParams({
-            @ApiImplicitParam(paramType = "body", dataType = "GatewayAuthTokenEntity", name = "token", value = "")
+            @ApiImplicitParam(paramType = "path", dataType = "long", name = "id", value = "")
     })
-    @ApiOperation(value = "update", notes = "remove data by id", httpMethod = "PUT")
+    @ApiOperation(value = "remove", notes = "remove data by id", httpMethod = "DELETE")
+    @RequestMapping(path = "/{id}", method = RequestMethod.DELETE)
+    public Message remove(@PathVariable("id") Long id) {
+        boolean result = rmExternalResourceProviderService.removeById(id);
+        return Message.ok("").data("dbs", result);
+    }
+
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "body", dataType = "RmExternalResourceProviderEntity", name = "rmExternalResourceProvider", value = "")
+    })
+    @ApiOperation(value = "update", notes = "update data", httpMethod = "PUT")
     @RequestMapping(path = "", method = RequestMethod.PUT)
-    public Message update(@RequestBody GatewayAuthTokenEntity token) {
-        boolean result = gatewayAuthTokenService.updateById(token);
-        return Message.ok("").data("result", result);
-    }
-
-    @ApiImplicitParams({
-            @ApiImplicitParam(paramType = "query", dataType = "string", name = "tokenName", value = "")
-    })
-    @ApiOperation(value = "remove", notes = "update data", httpMethod = "DELETE")
-    @RequestMapping(path = "", method = RequestMethod.DELETE)
-    public Message remove(String tokenName) {
-        HashMap columnMap = new HashMap<String,Object>();
-        columnMap.put("token_name",tokenName);
-        boolean result = gatewayAuthTokenService.removeByMap(columnMap);
-        return Message.ok("").data("result", result);
+    public Message update(@RequestBody RmExternalResourceProviderEntity rmExternalResourceProvider) {
+        boolean result = rmExternalResourceProviderService.updateById(rmExternalResourceProvider);
+        return Message.ok("").data("dbs", result);
     }
 
 

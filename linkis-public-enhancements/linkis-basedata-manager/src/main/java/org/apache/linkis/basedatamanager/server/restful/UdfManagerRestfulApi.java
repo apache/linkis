@@ -21,19 +21,19 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.apache.linkis.basedatamanager.server.domain.DatasourceTypeEntity;
-import org.apache.linkis.basedatamanager.server.service.DatasourceTypeService;
+import org.apache.linkis.basedatamanager.server.domain.UdfManagerEntity;
+import org.apache.linkis.basedatamanager.server.service.UdfManagerService;
 import org.apache.linkis.server.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-@Api(tags="DatasourceTypeRestfulApi")
+@Api(tags="UdfManagerRestfulApi")
 @RestController
-@RequestMapping(path = "/basedata_manager/datasource_type")
-public class DatasourceTypeRestfulApi {
+@RequestMapping(path = "/basedata-manager/udf-manager")
+public class UdfManagerRestfulApi {
 
     @Autowired
-    DatasourceTypeService datasourceTypeService;
+    UdfManagerService udfManagerService;
 
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "query", dataType = "string", name = "searchName", value = ""),
@@ -43,7 +43,7 @@ public class DatasourceTypeRestfulApi {
     @ApiOperation(value = "list", notes = "get list data", httpMethod = "GET")
     @RequestMapping(path = "", method = RequestMethod.GET)
     public Message list(String searchName,Integer currentPage,Integer pageSize) {
-        PageInfo pageList = datasourceTypeService.getListByPage(searchName,currentPage,pageSize);
+        PageInfo pageList = udfManagerService.getListByPage(searchName,currentPage,pageSize);
         return Message.ok("").data("list", pageList);
     }
 
@@ -53,17 +53,17 @@ public class DatasourceTypeRestfulApi {
     @ApiOperation(value = "get", notes = "get data by id", httpMethod = "GET")
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
     public Message get(@PathVariable("id") Long id) {
-        DatasourceTypeEntity datasourceType = datasourceTypeService.getById(id);
-        return Message.ok("").data("item", datasourceType);
+        UdfManagerEntity errorCode = udfManagerService.getById(id);
+        return Message.ok("").data("item", errorCode);
     }
 
     @ApiImplicitParams({
-            @ApiImplicitParam(paramType = "body", dataType = "DatasourceTypeEntity", name = "datasourceType", value = "")
+            @ApiImplicitParam(paramType = "body", dataType = "UdfManagerEntity", name = "errorCode", value = "")
     })
     @ApiOperation(value = "add", notes = "add data", httpMethod = "POST")
     @RequestMapping(path = "", method = RequestMethod.POST)
-    public Message add(@RequestBody DatasourceTypeEntity datasourceType) {
-        boolean result = datasourceTypeService.save(datasourceType);
+    public Message add(@RequestBody UdfManagerEntity errorCode) {
+        boolean result = udfManagerService.save(errorCode);
         return Message.ok("").data("result", result);
     }
 
@@ -73,17 +73,17 @@ public class DatasourceTypeRestfulApi {
     @ApiOperation(value = "remove", notes = "remove data by id", httpMethod = "DELETE")
     @RequestMapping(path = "/{id}", method = RequestMethod.DELETE)
     public Message remove(@PathVariable("id") Long id) {
-        boolean result = datasourceTypeService.removeById(id);
+        boolean result = udfManagerService.removeById(id);
         return Message.ok("").data("result", result);
     }
 
     @ApiImplicitParams({
-            @ApiImplicitParam(paramType = "body", dataType = "DatasourceTypeEntity", name = "errorCode", value = "")
+            @ApiImplicitParam(paramType = "body", dataType = "UdfManagerEntity", name = "errorCode", value = "")
     })
     @ApiOperation(value = "update", notes = "update data", httpMethod = "PUT")
     @RequestMapping(path = "", method = RequestMethod.PUT)
-    public Message update(@RequestBody DatasourceTypeEntity errorCode) {
-        boolean result = datasourceTypeService.updateById(errorCode);
+    public Message update(@RequestBody UdfManagerEntity errorCode) {
+        boolean result = udfManagerService.updateById(errorCode);
         return Message.ok("").data("result", result);
     }
 

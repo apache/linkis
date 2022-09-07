@@ -24,7 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(path = "/basedata_manager/datasource_access")
+@RequestMapping(path = "/basedata-manager/datasource-access")
 public class DatasourceAccessRestfulApi {
 
     @Autowired

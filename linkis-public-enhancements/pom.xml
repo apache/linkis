@@ -108,6 +108,11 @@
       <artifactId>linkis-error-code-server</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.apache.linkis</groupId>
+      <artifactId>linkis-basedata-manager</artifactId>
+      <version>${project.version}</version>
+    </dependency>
   </dependencies>
 
   <build>

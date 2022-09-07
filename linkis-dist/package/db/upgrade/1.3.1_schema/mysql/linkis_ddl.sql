@@ -26,3 +26,8 @@ ALTER TABLE `linkis_ps_dm_datasource_env` MODIFY COLUMN `parameter` varchar(1024
 -- Alter table structure for linkis_ps_dm_datasource
 -- ----------------------------
 ALTER TABLE `linkis_ps_dm_datasource` MODIFY COLUMN `parameter` varchar(1024) CHARACTER SET utf8 COLLATE utf8_bin NULL;
+
+-- ----------------------------
+-- Alter table structure for linkis_ps_dm_datasource_type_key
+-- ----------------------------
+ALTER TABLE `linkis_ps_dm_datasource_type_key` ADD CONSTRAINT  `data_source_type_id_key` UNIQUE (`data_source_type_id`, `key`);

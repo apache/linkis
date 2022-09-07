@@ -98,11 +98,11 @@ abstract class AbstractDiscovery extends Discovery with Closeable with Logging {
     logger.info("start Discovery thread")
     client.execute(getHeartbeatAction(serverUrl), 3000) match {
       case heartbeat: HeartbeatResult =>
-        if (!heartbeat.isHealthy)
+        if (!heartbeat.isHealthy) {
           throw new DiscoveryException(
             s"connect to serverUrl $serverUrl failed! Reason: gateway server is unhealthy!"
           )
-        else discoveryListeners.asScala.foreach(_.onServerDiscovered(serverUrl))
+        } else discoveryListeners.asScala.foreach(_.onServerDiscovered(serverUrl))
     }
 
     Utils.defaultScheduler.scheduleAtFixedRate(
@@ -133,8 +133,9 @@ abstract class AbstractDiscovery extends Discovery with Closeable with Logging {
                   unhealthyServerInstances synchronized unhealthyServerInstances.remove(serverUrl)
                   discoveryListeners.asScala.foreach(_.onServerHealthy(serverUrl))
                   serverInstances synchronized serverInstances.add(serverUrl)
-                } else if (serverInstances.contains(serverUrl))
+                } else if (serverInstances.contains(serverUrl)) {
                   serverInstances synchronized serverInstances.remove(serverUrl)
+                }
             }) { case _: ConnectException =>
               unhealthyServerInstances synchronized unhealthyServerInstances.remove(serverUrl)
               serverInstances synchronized serverInstances.remove(serverUrl)

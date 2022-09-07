@@ -68,7 +68,7 @@ abstract class AbstractAuthenticationStrategy extends AuthenticationStrategy wit
       val authenticationAction = userNameToAuthentications.get(key)
       authenticationAction.updateLastAccessTime()
       authenticationAction
-    } else
+    } else {
       key.intern() synchronized {
         var authentication = userNameToAuthentications.get(key)
         if (authentication == null || isTimeout(authentication)) {
@@ -78,6 +78,7 @@ abstract class AbstractAuthenticationStrategy extends AuthenticationStrategy wit
         }
         authentication
       }
+    }
   }
 
   def tryLogin(requestAction: Action, serverUrl: String): Authentication = {

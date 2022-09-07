@@ -86,9 +86,6 @@ public class EngineConnPluginClassLoader extends URLClassLoader {
         if (c == null) {
           return super.loadClass(name, resolve);
         }
-        // For compatibility with higher versions > java 1.8.0_141
-        //                sun.misc.PerfCounter.getFindClasses().addElapsedTimeFrom(t0);
-        //                sun.misc.PerfCounter.getFindClasses().increment();
       }
       if (resolve) {
         resolveClass(c);

@@ -24,18 +24,15 @@ import java.util
 
 object ErrorCodeMatcher extends Logging {
 
-  def errorMatch(
-      errorCodes: util.List[LinkisErrorCode],
-      log: String
-  ): Option[(String, String)] = {
+  def errorMatch(errorCodes: util.List[LinkisErrorCode], log: String): Option[(String, String)] = {
     Utils.tryCatch {
-      import scala.collection.JavaConversions._
-      errorCodes.foreach(e =>
+      import scala.collection.JavaConverters._
+      errorCodes.asScala.foreach(e =>
         if (e.getErrorRegex.findFirstIn(log).isDefined) {
           val matched = e.getErrorRegex.unapplySeq(log)
-          if (matched.nonEmpty)
+          if (matched.nonEmpty) {
             return Some(e.getErrorCode -> e.getErrorDesc.format(matched.get: _*))
-          else return Some(e.getErrorCode -> e.getErrorDesc)
+          } else return Some(e.getErrorCode -> e.getErrorDesc)
         }
       )
       None

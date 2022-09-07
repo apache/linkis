@@ -132,9 +132,7 @@ class CsvRelation(@transient private val source: Map[String, Any]) extends Seria
         }
         val data = if (nanValue.equalsIgnoreCase(field)) {
           null
-        } else if (
-            schema(i).dataType != StringType && (field.isEmpty || nullValue.equals(field))
-        ) {
+        } else if (schema(i).dataType != StringType && (field.isEmpty || nullValue.equals(field))) {
           null
         } else {
           val dateFormat = columns(i).getOrElse("dateFormat", "yyyy-MM-dd").toString

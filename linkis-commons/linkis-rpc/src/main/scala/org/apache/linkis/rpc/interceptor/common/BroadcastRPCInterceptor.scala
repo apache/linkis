@@ -42,11 +42,11 @@ class BroadcastRPCInterceptor extends RPCInterceptor with Logging {
   implicit val executor = BroadcastRPCInterceptor.broadcastThreadPool
 
   protected def getSenders(broadcast: BroadcastProtocol, applicationName: String): Array[Sender] =
-    if (broadcast.instances != null && broadcast.instances.nonEmpty)
+    if (broadcast.instances != null && broadcast.instances.nonEmpty) {
       broadcast.instances.map(instance =>
         Sender.getSender(ServiceInstance(applicationName, instance))
       )
-    else {
+    } else {
       var senders: Option[Array[Sender]] = None
       for (builder <- RPCSpringBeanCache.getBroadcastSenderBuilders if senders.isEmpty)
         senders = builder.build(broadcast, applicationName)

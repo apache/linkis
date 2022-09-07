@@ -27,9 +27,7 @@ import org.apache.linkis.manager.label.entity.engine.{EngineType, RunType}
 import org.apache.linkis.manager.label.entity.engine.EngineType.EngineType
 import org.apache.linkis.manager.label.entity.engine.RunType.RunType
 
-class OpenLooKengEngineConnFactory
-    extends ComputationSingleExecutorEngineConnFactory
-    with Logging {
+class OpenLooKengEngineConnFactory extends ComputationSingleExecutorEngineConnFactory with Logging {
 
   override protected def getEngineConnType: EngineType = EngineType.OPENLOOKENG
 

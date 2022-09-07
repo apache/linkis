@@ -58,8 +58,9 @@ object GetInfoPublishedByDataSourceNameAction {
     }
 
     def build(): GetInfoPublishedByDataSourceNameAction = {
-      if (dataSourceName == null)
+      if (dataSourceName == null) {
         throw new DataSourceClientBuilderException("dataSourceName is needed!")
+      }
       if (system == null) throw new DataSourceClientBuilderException("system is needed!")
       if (user == null) throw new DataSourceClientBuilderException("user is needed!")
 

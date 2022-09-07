@@ -52,13 +52,9 @@ class PythonVersionEngineHook extends EngineConnHook with Logging {
     engineConn.getEngineConnSession match {
       case pythonSession: PythonSession =>
         pythonSession.execute("print(1/2)")
-        logger.info(
-          s"print python version => ${PythonEngineConfiguration.PYTHON_VERSION.getValue}"
-        )
+        logger.info(s"print python version => ${PythonEngineConfiguration.PYTHON_VERSION.getValue}")
       case _ =>
-        logger.error(
-          s"Invalid pythonSession : ${engineConn.getEngineConnSession.getClass.getName}"
-        )
+        logger.error(s"Invalid pythonSession : ${engineConn.getEngineConnSession.getClass.getName}")
     }
 
   }

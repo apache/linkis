@@ -63,8 +63,8 @@ abstract class ResourceManager {
   ): ResultResource
 
   /**
-   * When the resource is instantiated, the total amount of resources actually occupied is
-   * returned. 当资源被实例化后，返回实际占用的资源总量
+   * When the resource is instantiated, the total amount of resources actually occupied is returned.
+   * 当资源被实例化后，返回实际占用的资源总量
    *
    * @param labels
    * @param usedResource
@@ -87,8 +87,8 @@ abstract class ResourceManager {
   def resourceReleased(labels: util.List[Label[_]]): Unit
 
   /**
-   * If the IP and port are empty, return the resource status of all modules of a module   *
-   * Return the use of this instance resource if there is an IP and port
+   * If the IP and port are empty, return the resource status of all modules of a module   * Return
+   * the use of this instance resource if there is an IP and port
    *
    * @param serviceInstances
    * @return

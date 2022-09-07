@@ -40,11 +40,12 @@ object IOMethodInterceptorCreator {
   }
 
   def getIOMethodInterceptor(fsName: String): MethodInterceptor = {
-    if (interceptorCreator == null)
+    if (interceptorCreator == null) {
       throw new StorageErrorException(
         52004,
         "You must register IOMethodInterceptorCreator before you can use proxy mode.(必须先注册IOMethodInterceptorCreator，才能使用代理模式)"
       )
+    }
     interceptorCreator.createIOMethodInterceptor(fsName)
   }
 

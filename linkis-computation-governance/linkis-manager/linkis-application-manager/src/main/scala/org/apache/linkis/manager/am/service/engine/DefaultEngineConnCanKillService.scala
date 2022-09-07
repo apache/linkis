@@ -127,9 +127,7 @@ class DefaultEngineConnCanKillService
       val engineTypeLabel = LabelUtil.getEngineTypeLabel(labels)
       ecCanKillRequest.getUserCreatorLabel.getStringValue.equals(
         userCreatorLabel.getStringValue
-      ) && ecCanKillRequest.getEngineTypeLabel.getStringValue.equals(
-        engineTypeLabel.getStringValue
-      )
+      ) && ecCanKillRequest.getEngineTypeLabel.getStringValue.equals(engineTypeLabel.getStringValue)
     }
 
     if (ecWithLabels.nonEmpty) {

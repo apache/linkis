@@ -20,11 +20,7 @@ package org.apache.linkis.rpc.conf
 import org.apache.linkis.common.conf.{CommonVars, TimeType}
 
 import org.reflections.Reflections
-import org.reflections.scanners.{
-  MethodAnnotationsScanner,
-  SubTypesScanner,
-  TypeAnnotationsScanner
-}
+import org.reflections.scanners.{MethodAnnotationsScanner, SubTypesScanner, TypeAnnotationsScanner}
 
 object RPCConfiguration {
 
@@ -63,7 +59,7 @@ object RPCConfiguration {
 
   val PUBLIC_SERVICE_LIST: Array[String] = CommonVars(
     "wds.linkis.gateway.conf.publicservice.list",
-    "cs,contextservice,data-source-manager,metadataquery,metadatamanager,query,jobhistory,application,configuration,filesystem,udf,variable,microservice,errorcode,bml,datasource"
+    "cs,contextservice,data-source-manager,metadataquery,metadatamanager,query,jobhistory,application,configuration,filesystem,udf,variable,microservice,errorcode,bml,datasource,basedata-manager"
   ).getValue.split(",")
 
   val METADATAQUERY_SERVICE_APPLICATION_NAME: CommonVars[String] =

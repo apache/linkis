@@ -44,8 +44,7 @@ import org.apache.linkis.rpc.Sender
 
 import scala.collection.JavaConversions._
 
-class CacheExecTask(parents: Array[ExecTask], children: Array[ExecTask])
-    extends AbstractExecTask {
+class CacheExecTask(parents: Array[ExecTask], children: Array[ExecTask]) extends AbstractExecTask {
 
   private var physicalContext: PhysicalContext = _
 
@@ -120,13 +119,7 @@ class CacheExecTask(parents: Array[ExecTask], children: Array[ExecTask])
           case cacheNotFound: CacheNotFound =>
             // new DefaultFailedTaskResponse()
             val realResponse = realExecTask.execute()
-            dealWithResponse(
-              codeLogicalUnitExecTask,
-              sender,
-              aSTContext,
-              cacheLabel,
-              realResponse
-            )
+            dealWithResponse(codeLogicalUnitExecTask, sender, aSTContext, cacheLabel, realResponse)
         }
       case _ =>
         throw new OrchestratorErrorException(

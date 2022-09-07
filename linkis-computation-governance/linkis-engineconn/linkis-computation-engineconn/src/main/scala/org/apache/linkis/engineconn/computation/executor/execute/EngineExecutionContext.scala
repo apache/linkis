@@ -49,10 +49,8 @@ import org.apache.commons.lang3.StringUtils
 import java.io.File
 import java.util
 
-class EngineExecutionContext(
-    executor: ComputationExecutor,
-    executorUser: String = Utils.getJvmUser
-) extends ExecutorExecutionContext
+class EngineExecutionContext(executor: ComputationExecutor, executorUser: String = Utils.getJvmUser)
+    extends ExecutorExecutionContext
     with Logging {
 
   private val resultSetFactory = ResultSetFactory.getInstance
@@ -209,7 +207,7 @@ class EngineExecutionContext(
 
   def getExecutor: Executor = executor
 
-  def getEnableResultsetMetaWithTableName = enableResultsetMetaWithTableName
+  def getEnableResultsetMetaWithTableName: Boolean = enableResultsetMetaWithTableName
 
   def setEnableResultsetMetaWithTableName(withTableName: Boolean): Unit =
     this.enableResultsetMetaWithTableName = withTableName

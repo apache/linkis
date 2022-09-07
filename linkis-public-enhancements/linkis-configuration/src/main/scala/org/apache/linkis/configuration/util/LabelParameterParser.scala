@@ -22,15 +22,12 @@ import org.apache.linkis.configuration.exception.ConfigurationException
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import org.apache.linkis.manager.label.entity.Label
-import org.apache.linkis.manager.label.entity.engine.{
-  EngineType,
-  EngineTypeLabel,
-  UserCreatorLabel
-}
+import org.apache.linkis.manager.label.entity.engine.{EngineType, EngineTypeLabel, UserCreatorLabel}
 
 import org.springframework.util.CollectionUtils
 
 import java.util
+import java.util.Locale
 
 import scala.collection.JavaConverters._
 
@@ -40,8 +37,8 @@ object LabelParameterParser {
   def getDefaultEngineVersion(engineType: String): String = {
     var returnType: CommonVars[String] = null
     EngineType.values.foreach(DefinedEngineType => {
-      if (DefinedEngineType.toString.equals(engineType.toLowerCase)) {
-        returnType = engineType.toLowerCase match {
+      if (DefinedEngineType.toString.equals(engineType.toLowerCase(Locale.ROOT))) {
+        returnType = engineType.toLowerCase(Locale.ROOT) match {
           case "spark" => GovernanceCommonConf.SPARK_ENGINE_VERSION
           case "hive" => GovernanceCommonConf.HIVE_ENGINE_VERSION
           case "python" => GovernanceCommonConf.PYTHON_ENGINE_VERSION
@@ -88,9 +85,7 @@ object LabelParameterParser {
         case a: UserCreatorLabel => Unit
         case a: EngineTypeLabel => Unit
         case label =>
-          throw new ConfigurationException(
-            s"this type of label is not supported:${label.getClass}"
-          )
+          throw new ConfigurationException(s"this type of label is not supported:${label.getClass}")
       }
       true
     } else {

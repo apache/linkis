@@ -25,9 +25,6 @@ import org.apache.linkis.engineconn.executor.entity.Executor
  */
 trait ExecutorFactory {
 
-  def createExecutor(
-      engineCreationContext: EngineCreationContext,
-      engineConn: EngineConn
-  ): Executor
+  def createExecutor(engineCreationContext: EngineCreationContext, engineConn: EngineConn): Executor
 
 }

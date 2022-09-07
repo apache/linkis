@@ -24,6 +24,8 @@ import org.apache.linkis.rpc.interceptor.AbstractRPCServerLoader
 
 import org.springframework.cloud.netflix.eureka.EurekaDiscoveryClient.EurekaServiceInstance
 
+import java.util.Locale
+
 import scala.concurrent.duration.Duration
 
 class EurekaRPCServerLoader extends AbstractRPCServerLoader {
@@ -34,17 +36,20 @@ class EurekaRPCServerLoader extends AbstractRPCServerLoader {
   override val refreshMaxWaitTime: Duration =
     RPCConfiguration.BDP_RPC_EUREKA_SERVICE_REFRESH_MAX_WAIT_TIME.getValue.toDuration
 
-  override def getDWCServiceInstance(
-      serviceInstance: SpringCloudServiceInstance
-  ): ServiceInstance = serviceInstance match {
-    case instance: EurekaServiceInstance =>
-      val applicationName = instance.getInstanceInfo.getAppName
-      val instanceId = instance.getInstanceInfo.getInstanceId
-      ServiceInstance(applicationName, getInstance(applicationName, instanceId))
-  }
+  override def getDWCServiceInstance(serviceInstance: SpringCloudServiceInstance): ServiceInstance =
+    serviceInstance match {
+      case instance: EurekaServiceInstance =>
+        val applicationName = instance.getInstanceInfo.getAppName
+        val instanceId = instance.getInstanceInfo.getInstanceId
+        ServiceInstance(applicationName, getInstance(applicationName, instanceId))
+    }
 
   private[rpc] def getInstance(applicationName: String, instanceId: String): String =
-    if (instanceId.toLowerCase.indexOf(":" + applicationName.toLowerCase + ":") > 0) {
+    if (
+        instanceId
+          .toLowerCase(Locale.getDefault)
+          .indexOf(":" + applicationName.toLowerCase(Locale.getDefault) + ":") > 0
+    ) {
       val instanceInfos = instanceId.split(":")
       instanceInfos(0) + ":" + instanceInfos(2)
     } else instanceId

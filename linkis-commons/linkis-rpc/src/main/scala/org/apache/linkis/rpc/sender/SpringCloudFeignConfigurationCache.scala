@@ -84,10 +84,11 @@ private[linkis] object SpringCloudFeignConfigurationCache {
   private[rpc] def getContract = contract
 
   private[rpc] def getClient = {
-    if (client == null)
+    if (client == null) {
       DataWorkCloudApplication.getApplicationContext.getBean(
         classOf[SpringCloudFeignConfigurationCache]
       )
+    }
     client
   }
 
@@ -95,10 +96,11 @@ private[linkis] object SpringCloudFeignConfigurationCache {
   private[rpc] def getLoadBalancedRetryFactory = loadBalancedRetryFactory
 
   private[linkis] def getDiscoveryClient = {
-    if (discoveryClient == null)
+    if (discoveryClient == null) {
       DataWorkCloudApplication.getApplicationContext.getBean(
         classOf[SpringCloudFeignConfigurationCache]
       )
+    }
     discoveryClient
   }
 

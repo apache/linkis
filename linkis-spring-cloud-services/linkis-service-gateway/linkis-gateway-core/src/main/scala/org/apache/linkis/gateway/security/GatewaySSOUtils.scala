@@ -26,12 +26,12 @@ import org.apache.linkis.server.security.SecurityFilter._
 
 import javax.servlet.http.Cookie
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 object GatewaySSOUtils extends Logging {
 
   private def getCookies(gatewayContext: GatewayContext): Array[Cookie] =
-    gatewayContext.getRequest.getCookies.flatMap(_._2).toArray
+    gatewayContext.getRequest.getCookies.asScala.flatMap(_._2).toArray
 
   private val DOMAIN_REGEX = "[a-zA-Z][a-zA-Z0-9\\.]+".r
   private val IP_REGEX = "([^:]+):.+".r
@@ -90,10 +90,11 @@ object GatewaySSOUtils extends Logging {
       c => {
         if (cookieDomainSetupSwitch) {
           val host = gatewayContext.getRequest.getHeaders.get("Host")
-          if (host != null && host.nonEmpty)
+          if (host != null && host.nonEmpty) {
             c.setDomain(
               getCookieDomain(host.head, GatewayConfiguration.GATEWAY_DOMAIN_LEVEL.getValue)
             )
+          }
         }
         gatewayContext.getResponse.addCookie(c)
       },
@@ -107,11 +108,13 @@ object GatewaySSOUtils extends Logging {
   }
 
   def removeLoginUser(gatewayContext: GatewayContext): Unit = {
-    SSOUtils.removeLoginUser(gatewayContext.getRequest.getCookies.flatMap(_._2).toArray)
+    SSOUtils.removeLoginUser(gatewayContext.getRequest.getCookies.asScala.flatMap(_._2).toArray)
     SSOUtils.removeLoginUserByAddCookie(c => gatewayContext.getResponse.addCookie(c))
   }
 
   def updateLastAccessTime(gatewayContext: GatewayContext): Unit =
-    SSOUtils.updateLastAccessTime(gatewayContext.getRequest.getCookies.flatMap(_._2).toArray)
+    SSOUtils.updateLastAccessTime(
+      gatewayContext.getRequest.getCookies.asScala.flatMap(_._2).toArray
+    )
 
 }

@@ -48,7 +48,7 @@ import java.util
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 import scala.concurrent.duration.Duration
 
 /**
@@ -64,7 +64,7 @@ class ComputationEngineConnManager extends AbstractEngineConnManager with Loggin
   override def applyMark(markReq: MarkReq): Mark = {
     if (null == markReq) return null
     val mark = MARK_CACHE_LOCKER.synchronized {
-      val markCache = getMarkCache().keys
+      val markCache = getMarkCache().asScala.keys
       val maybeMark = markCache.find(_.getMarkReq.equals(markReq))
       maybeMark.orNull
     }
@@ -120,7 +120,7 @@ class ComputationEngineConnManager extends AbstractEngineConnManager with Loggin
               new ComputationEngineConnExecutor(engineNode)
             }
           if (null != engineNode.getLabels) {
-            engineConnExecutor.setLabels(engineNode.getLabels.toList.toArray)
+            engineConnExecutor.setLabels(engineNode.getLabels.asScala.toList.toArray)
           }
           return engineConnExecutor
         }

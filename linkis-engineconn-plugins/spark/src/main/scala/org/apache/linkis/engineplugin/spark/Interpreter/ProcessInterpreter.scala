@@ -87,6 +87,7 @@ abstract class ProcessInterpreter(process: Process) extends Interpreter with Log
   Future {
     val exitCode = process.waitFor()
     if (exitCode != 0) {
+      // scalastyle:off println
       errOut.lines.foreach(println)
       println(getClass.getSimpleName + " has stopped with exit code " + process.exitValue)
       _state = Error()
@@ -115,8 +116,7 @@ abstract class ProcessInterpreter(process: Process) extends Interpreter with Log
     IOUtils.closeQuietly(stdin)
     IOUtils.closeQuietly(stdout)
     errOut.close
-
-    // Give ourselves 10 seconds to tear down the process.
+    // scalastyle:off awaitresult
     Utils.tryFinally(Await.result(future, Duration(10, TimeUnit.SECONDS))) {
       process.destroy()
     }

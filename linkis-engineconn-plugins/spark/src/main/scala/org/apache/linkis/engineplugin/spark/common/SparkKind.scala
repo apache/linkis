@@ -44,12 +44,12 @@ object SparkKind {
     getKind(Kind.getKind(code))
   }
 
-  def getSessionKind(code: String) = {
+  def getSessionKind(code: String): Kind with Product with Serializable = {
     val kindStr = Kind.getKindString(code)
     if (kindStr.indexOf("@") == 0) getKind(kindStr.substring(1)) else SparkMix()
   }
 
-  private def getKind(kindStr: String) = {
+  private def getKind(kindStr: String): Kind with Product with Serializable = {
     kindStr match {
       case SPARKSCALA_TYPE | SCALA_LAN => SparkScala()
       case PYSPARK_TYPE | PYTHON_LAN | PYTHON_END => PySpark()

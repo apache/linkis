@@ -31,6 +31,7 @@ import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.types._
 
 import java.io.{BufferedInputStream, File, FileInputStream}
+import java.util.Locale
 
 import scala.collection.JavaConverters._
 
@@ -146,14 +147,16 @@ object LoadData {
             )
           }
         } else {
-          if (isOverwrite)
+          if (isOverwrite) {
             spark.sql(s"INSERT OVERWRITE TABLE  $database.$tableName select * from tempTable")
-          else
+          } else {
             spark.sql(s"INSERT INTO   $database.$tableName select * from tempTable")
+          }
         }
       } else {
-        if (spark.catalog.tableExists(database, tableName))
+        if (spark.catalog.tableExists(database, tableName)) {
           spark.sql(s"drop table if exists $database.$tableName")
+        }
         if (isPartition) {
           val columnSql = getColumnSql(columns)
           val sql =
@@ -187,8 +190,9 @@ object LoadData {
 
   def copyFileToHdfs(path: String, fs: FileSystem): String = {
     val file = new File(path)
-    if (file.isDirectory)
+    if (file.isDirectory) {
       throw new Exception("Import must be a file, not a directory(导入的必须是文件，不能是目录)")
+    }
     val in = new BufferedInputStream(new FileInputStream(file))
     val hdfsPath =
       "/tmp/" + System.getProperty("user.name") + "/" + System.currentTimeMillis + file.getName
@@ -207,18 +211,20 @@ object LoadData {
       case JNothing => default
       case value: JValue =>
         if ("JString()".equals(value.toString)) default
-        else
+        else {
           try value.extract[T]
           catch { case t: Throwable => default }
+        }
     }
   }
 
   def getMapValue[T](map: Map[String, Any], key: String, default: T = null.asInstanceOf[T]): T = {
     val value = map.get(key).map(_.asInstanceOf[T]).getOrElse(default)
-    if (StringUtils.isEmpty(value.toString))
+    if (StringUtils.isEmpty(value.toString)) {
       default
-    else
+    } else {
       value
+    }
   }
 
   def getColumnSql(columns: List[Map[String, Any]]): String = {
@@ -226,12 +232,14 @@ object LoadData {
     columns.foreach { column =>
       val name =
         if (column("name") != null) column("name").asInstanceOf[String]
-        else
+        else {
           throw new IllegalArgumentException(
             "When create a table, the field name must be defined(建立新表时，字段名必须定义)"
           )
+        }
       sql.append("`").append(name).append("` ")
-      val dataType = column.getOrElse("type", "string").asInstanceOf[String].toLowerCase
+      val dataType =
+        column.getOrElse("type", "string").asInstanceOf[String].toLowerCase(Locale.getDefault())
       sql.append(dataType)
       dataType match {
         case "char" | "varchar" =>
@@ -256,10 +264,11 @@ object LoadData {
     columns.map { column =>
       val name =
         if (column("name") != null) column("name").asInstanceOf[String]
-        else
+        else {
           throw new IllegalArgumentException(
             "When create a table, the field name must be defined(建立新表时，字段名必须定义)"
           )
+        }
       val dataType = column.getOrElse("type", "string").asInstanceOf[String]
       val precision = Utils.tryCatch(column.getOrElse("precision", 20).toString.toInt) {
         case e: Exception => 20
@@ -267,7 +276,7 @@ object LoadData {
       val scale = Utils.tryCatch(column.getOrElse("scale", 4).toString.toInt) { case e: Exception =>
         4
       }
-      StructField(name, toDataType(dataType.toLowerCase, precision, scale), true)
+      StructField(name, toDataType(dataType.toLowerCase(Locale.getDefault), precision, scale), true)
     }.toArray
   }
 

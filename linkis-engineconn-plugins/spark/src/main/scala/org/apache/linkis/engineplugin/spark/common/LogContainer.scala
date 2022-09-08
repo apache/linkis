@@ -39,11 +39,11 @@ class LogContainer(val logSize: Int) {
     }
   }
 
-  def putLogs(logs: Iterable[String]) = synchronized {
+  def putLogs(logs: Iterable[String]): Unit = synchronized {
     logs.foreach(putLog)
   }
 
-  def reset() = synchronized {
+  def reset(): Unit = synchronized {
     flag = 0
     tail = 0
   }
@@ -64,7 +64,7 @@ class LogContainer(val logSize: Int) {
     }
   }
 
-  def size = {
+  def size: Int = {
     if (flag == tail) 0
     else if (flag > tail) tail + logSize - flag
     else tail - flag

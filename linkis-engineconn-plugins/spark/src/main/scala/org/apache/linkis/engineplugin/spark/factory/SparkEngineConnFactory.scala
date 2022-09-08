@@ -62,19 +62,18 @@ class SparkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     if (pythonLibUris.length == 2) {
       val sparkConfValue1 = Utils.tryQuietly(CommonVars("spark.yarn.dist.files", "").getValue)
       val sparkConfValue2 = Utils.tryQuietly(sparkConf.get("spark.yarn.dist.files"))
-      if (StringUtils.isEmpty(sparkConfValue1) && StringUtils.isEmpty(sparkConfValue2))
+      if (StringUtils.isEmpty(sparkConfValue1) && StringUtils.isEmpty(sparkConfValue2)) {
         sparkConf.set("spark.yarn.dist.files", pythonLibUris.mkString(","))
-      else if (StringUtils.isEmpty(sparkConfValue1))
+      } else if (StringUtils.isEmpty(sparkConfValue1)) {
         sparkConf.set("spark.yarn.dist.files", sparkConfValue2 + "," + pythonLibUris.mkString(","))
-      else if (StringUtils.isEmpty(sparkConfValue2))
+      } else if (StringUtils.isEmpty(sparkConfValue2)) {
         sparkConf.set("spark.yarn.dist.files", sparkConfValue1 + "," + pythonLibUris.mkString(","))
-      else
+      } else {
         sparkConf.set(
           "spark.yarn.dist.files",
           sparkConfValue1 + "," + sparkConfValue2 + "," + pythonLibUris.mkString(",")
         )
-//      if (!useSparkSubmit) sparkConf.set("spark.files", sparkConf.get("spark.yarn.dist.files"))
-//      sparkConf.set("spark.submit.pyFiles", pythonLibUris.mkString(","))
+      }
     }
     // Distributes needed libraries to workers
     // when spark version is greater than or equal to 1.5.0
@@ -86,8 +85,9 @@ class SparkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
       "print current thread name " + Thread.currentThread().getContextClassLoader.toString
     )
     val sparkSession = createSparkSession(outputDir, sparkConf)
-    if (sparkSession == null)
+    if (sparkSession == null) {
       throw new SparkSessionNullException(40009, "sparkSession can not be null")
+    }
 
     val sc = sparkSession.sparkContext
     val sqlContext =

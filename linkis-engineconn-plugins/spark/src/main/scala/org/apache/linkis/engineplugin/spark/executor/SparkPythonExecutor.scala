@@ -73,8 +73,6 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
   private val lineOutputStream = new RsOutputStream
   val sqlContext = sparkEngineSession.sqlContext
   val SUCCESS = "success"
-  /*@throws(classOf[IOException])
-  override def open = {}*/
   private lazy val py4jToken: String = RandomStringUtils.randomAlphanumeric(256)
 
   private lazy val gwBuilder: GatewayServerBuilder = {
@@ -91,11 +89,11 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
     }
   }
 
-  def getSparkConf = sc.getConf
+  def getSparkConf: Unit = sc.getConf
 
-  def getJavaSparkContext = new JavaSparkContext(sc)
+  def getJavaSparkContext: Unit = new JavaSparkContext(sc)
 
-  def getSparkSession = if (sparkSession != null) sparkSession
+  def getSparkSession: Object = if (sparkSession != null) sparkSession
   else () => throw new IllegalAccessException("not supported keyword spark in spark1.x versions")
 
   override def init(): Unit = {
@@ -136,7 +134,7 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
   override def getKind: Kind = PySpark()
 
   private def initGateway = {
-    //  如果从前端获取到用户所设置的Python版本为Python3 则取Python3的环境变量，否则默认为Python2
+    //  If the python version set by the user is obtained from the front end as python3, the environment variable of python3 is taken; otherwise, the default is python2
     logger.info(
       s"spark.python.version => ${engineCreationContext.getOptions.get("spark.python.version")}"
     )
@@ -168,7 +166,6 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
     )
     val pythonClasspath = new StringBuilder(pythonPath)
 
-    //
     val files = sc.getConf.get("spark.files", "")
     logger.info(s"output spark files ${files}")
     if (StringUtils.isNotEmpty(files)) {
@@ -231,9 +228,6 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
       //      close
       Utils.tryFinally({
         if (promise != null && !promise.isCompleted) {
-          /*val out = outputStream.toString
-          if (StringUtils.isNotEmpty(out)) promise.failure(new ExecuteError(30034,out))
-          else*/
           promise.failure(new ExecuteError(40007, "Pyspark process  has stopped, query failed!"))
         }
       }) {
@@ -276,16 +270,6 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
     }
   }
 
-  /*override protected def getInitLabels(): util.List[Label[_]] = {
-    val runTypeLabel = new CodeLanguageLabel
-    runTypeLabel.setRunType(RunType.PYSPARK.toString)
-    val engineTypeLabel = getEngineTypeLabel
-    val labels = new util.ArrayList[Label[_]](2)
-    labels.add(runTypeLabel)
-    labels.add(engineTypeLabel)
-    labels
-  }*/
-
   def executeLine(code: String): ExecuteResponse = {
     if (sc.isStopped) {
       throw new IllegalStateException("Application has been stopped, please relogin to try it.")
@@ -299,6 +283,7 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
     this.code = code
     engineExecutionContext.appendStdout(s"${EngineUtils.getName} >> $code")
     queryLock synchronized queryLock.notify()
+    // scalastyle:off awaitresult
     Await.result(promise.future, Duration.Inf)
     lineOutputStream.flush()
     val outStr = lineOutputStream.toString()
@@ -315,13 +300,13 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
     SuccessExecuteResponse()
   }
 
-  def onPythonScriptInitialized(pid: Int) = {
+  def onPythonScriptInitialized(pid: Int): Unit = {
     this.pid = Some(pid.toString)
     pythonScriptInitialized = true
     logger.info(s"Pyspark process has been initialized.pid is $pid")
   }
 
-  def getStatements = {
+  def getStatements: PythonInterpretRequest = {
     queryLock synchronized { while (code == null || !pythonScriptInitialized) queryLock.wait() }
     logger.info(
       "Prepare to deal python code, code: " + code
@@ -333,7 +318,7 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
     request
   }
 
-  def setStatementsFinished(out: String, error: Boolean) = {
+  def setStatementsFinished(out: String, error: Boolean): Any = {
     logger.info(s"A python code finished, has some errors happened?  $error.")
     Utils.tryQuietly(Thread.sleep(10))
     if (!error) {
@@ -348,7 +333,7 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
     }
   }
 
-  def appendOutput(message: String) = {
+  def appendOutput(message: String): Unit = {
     if (!pythonScriptInitialized) {
       logger.info(message)
     } else {
@@ -356,7 +341,7 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
     }
   }
 
-  def appendErrorOutput(message: String) = {
+  def appendErrorOutput(message: String): Unit = {
     if (!pythonScriptInitialized) {
       logger.info(message)
     } else {
@@ -365,7 +350,7 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
     }
   }
 
-  def showDF(jobGroup: String, df: Any) = {
+  def showDF(jobGroup: String, df: Any): Unit = {
     SQLSession.showDF(
       sc,
       jobGroup,
@@ -377,7 +362,7 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
     logger.info("Pyspark showDF execute success!")
   }
 
-  def showAliasDF(jobGroup: String, df: Any, alias: String) = {
+  def showAliasDF(jobGroup: String, df: Any, alias: String): Unit = {
     SQLSession.showDF(
       sc,
       jobGroup,
@@ -389,7 +374,7 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
     logger.info("Pyspark showAliasDF execute success!")
   }
 
-  def showHTML(jobGroup: String, htmlContent: Any) = {
+  def showHTML(jobGroup: String, htmlContent: Any): Unit = {
     SQLSession.showHTML(sc, jobGroup, htmlContent, this.engineExecutionContext)
     logger.info("Pyspark showHTML execute success!")
   }
@@ -411,9 +396,9 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
     )
   }
 
-  def listUDFs() = UDF.listUDFs
+  def listUDFs(): Unit = UDF.listUDFs
 
-  def existsUDF(name: String) = UDF.existsUDF(name)
+  def existsUDF(name: String): Boolean = UDF.existsUDF(name)
 
   override protected def getExecutorIdPreFix: String = "SparkPythonExecutor_"
 

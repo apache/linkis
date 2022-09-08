@@ -49,6 +49,7 @@ import org.apache.spark.sql.{SparkSession, SQLContext}
 import org.apache.spark.util.SparkUtils
 
 import java.io.{BufferedReader, File}
+import java.util.Locale
 
 import scala.tools.nsc.interpreter.{
   isReplPower,
@@ -246,7 +247,7 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long)
   private def matchFatalLog(errorMsg: String): Boolean = {
     var flag = false
     if (StringUtils.isNotBlank(errorMsg)) {
-      val errorMsgLowCase = errorMsg.toLowerCase
+      val errorMsgLowCase = errorMsg.toLowerCase(Locale.getDefault())
       fatalLogs.foreach(fatalLog =>
         if (errorMsgLowCase.contains(fatalLog)) {
           logger.error(s"match engineConn log fatal logs,is $fatalLog")

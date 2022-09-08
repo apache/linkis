@@ -60,8 +60,9 @@ class MDQPreExecutionHook extends SparkPreExecutionHook with Logging {
       case _ =>
         ""
     }
-    if (StringUtils.isEmpty(runType) || !SparkKind.FUNCTION_MDQ_TYPE.equalsIgnoreCase(runType))
+    if (StringUtils.isEmpty(runType) || !SparkKind.FUNCTION_MDQ_TYPE.equalsIgnoreCase(runType)) {
       return code
+    }
     val sender = Sender.getSender(SparkConfiguration.MDQ_APPLICATION_NAME.getValue)
     val params = new util.HashMap[String, Object]()
     params.put("user", StorageUtils.getJvmUser)
@@ -71,7 +72,10 @@ class MDQPreExecutionHook extends SparkPreExecutionHook with Logging {
       resp = sender.ask(DDLRequest(params))
     } { case e: Exception =>
       logger.error(s"Call MDQ rpc failed, ${e.getMessage}", e)
-      throw new MDQErrorException(40010, s"向MDQ服务请求解析为可以执行的sql时失败, ${e.getMessage}")
+      throw new MDQErrorException(
+        40010,
+        s"The request to the MDQ service to parse into executable SQL failed(向MDQ服务请求解析为可以执行的sql时失败), ${e.getMessage}"
+      )
     }
     resp match {
       case DDLResponse(postCode) => postCode

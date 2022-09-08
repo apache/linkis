@@ -92,6 +92,11 @@ class DefaultEntranceExecutor(
       orchestratorFuture.operate[ProgressProcessor](DefaultProgressOperation.PROGRESS_NAME)
     progressProcessor.doOnObtain(progressInfoEvent => {
       if (null != entranceJob) {
+        JobHistoryHelper.updateJobRequestMetrics(
+          entranceJob.getJobRequest,
+          progressInfoEvent.resourceMap,
+          progressInfoEvent.infoMap
+        )
         val jobGroups = entranceJob.getJobGroups
         if (jobGroups.length > 0) {
           val subJobInfo = entranceJob.getRunningSubJob
@@ -120,11 +125,6 @@ class DefaultEntranceExecutor(
             _.onProgressUpdate(entranceJob, progressInfoEvent.progress, entranceJob.getProgressInfo)
           )
         }
-        JobHistoryHelper.updateJobRequestMetrics(
-          entranceJob.getJobRequest,
-          progressInfoEvent.resourceMap,
-          progressInfoEvent.infoMap
-        )
       }
     })
     progressProcessor

@@ -47,7 +47,7 @@ public class InstanceInfoDaoTest extends BaseDaoTest {
     serviceInstance.setInstance("testInstance");
     serviceInstance.setApplicationName("testApplicationName");
     InstanceInfo instanceInfo = instanceInfoDao.getInstanceInfoByServiceInstance(serviceInstance);
-    assertTrue(instanceInfo != null);
+    assertTrue(instanceInfo.getInstance().equals("testInstance"));
   }
 
   @Test
@@ -59,8 +59,8 @@ public class InstanceInfoDaoTest extends BaseDaoTest {
     ServiceInstance serviceInstances = new ServiceInstance();
     serviceInstances.setInstance("testInstance");
     serviceInstances.setApplicationName("testApplicationName");
-    InstanceInfo instanceInfos = instanceInfoDao.getInstanceInfoByServiceInstance(serviceInstances);
-    assertTrue(instanceInfos == null);
+    InstanceInfo instanceInfo = instanceInfoDao.getInstanceInfoByServiceInstance(serviceInstances);
+    assertTrue(instanceInfo == null);
   }
 
   @Test
@@ -75,8 +75,8 @@ public class InstanceInfoDaoTest extends BaseDaoTest {
     ServiceInstance serviceInstance = new ServiceInstance();
     serviceInstance.setInstance("testInstance1");
     serviceInstance.setApplicationName("testApplicationName1");
-    InstanceInfo instanceInfos = instanceInfoDao.getInstanceInfoByServiceInstance(serviceInstance);
-    assertTrue(instanceInfos != null);
+    InstanceInfo instanceInfo1 = instanceInfoDao.getInstanceInfoByServiceInstance(serviceInstance);
+    assertTrue(instanceInfo1.getInstance().equals("testInstance1"));
   }
 
   @Test
@@ -86,6 +86,6 @@ public class InstanceInfoDaoTest extends BaseDaoTest {
     serviceInstance.setInstance("testInstance");
     serviceInstance.setApplicationName("testApplicationName");
     InstanceInfo instanceInfo = instanceInfoDao.getInstanceInfoByServiceInstance(serviceInstance);
-    assertTrue(instanceInfo != null);
+    assertTrue(instanceInfo.getInstance().equals("testInstance"));
   }
 }

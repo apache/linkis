@@ -38,7 +38,7 @@ public class InstanceLabelDaoTest extends BaseDaoTest {
   public void testSelectForUpdate() {
     testInsert();
     InsPersistenceLabel insPersistenceLabel = instanceLabelDao.selectForUpdate(1);
-    assertTrue(insPersistenceLabel != null);
+    assertTrue(!insPersistenceLabel.isEmpty());
   }
 
   @Test
@@ -83,7 +83,7 @@ public class InstanceLabelDaoTest extends BaseDaoTest {
   public void testUpdateForLock() {
     testInsert();
     int i = instanceLabelDao.updateForLock(1);
-    assertTrue(i == 1);
+    assertTrue(i >= 1);
   }
 
   @Test

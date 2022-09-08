@@ -64,7 +64,9 @@ class SparkPythonArgsPreExecutionHook extends SparkPreExecutionHook with Logging
         engineExecutionContext.getTotalParagraph != 1 || StringUtils.isEmpty(
           runType
         ) || !StringUtils.equals(RunType.PYSPARK.toString, runType)
-    ) return code
+    ) {
+      return code
+    }
 
     val argsArr =
       if (

@@ -56,15 +56,17 @@ class MDQPostExecutionHook extends SparkPostExecutionHook with Logging {
       case l: CodeLanguageLabel => l.getCodeType
       case _ => ""
     }
-    if (StringUtils.isEmpty(runType) || !SparkKind.FUNCTION_MDQ_TYPE.equalsIgnoreCase(runType))
+    if (StringUtils.isEmpty(runType) || !SparkKind.FUNCTION_MDQ_TYPE.equalsIgnoreCase(runType)) {
       return
+    }
     val sender = Sender.getSender(SparkConfiguration.MDQ_APPLICATION_NAME.getValue)
     executeResponse match {
       case SuccessExecuteResponse() =>
         sender.ask(DDLExecuteResponse(true, code, StorageUtils.getJvmUser)) match {
           case DDLCompleteResponse(status) =>
-            if (!status)
+            if (!status) {
               logger.warn(s"failed to execute create table :$code (执行建表失败):$code")
+            }
         }
       case _ => logger.warn(s"failed to execute create table:$code (执行建表失败:$code)")
     }

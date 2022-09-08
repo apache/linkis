@@ -24,6 +24,7 @@ import org.apache.spark.sql.SparkSession
 object UDF extends Serializable {
 
   def listUDFs()(implicit spark: SparkSession): Unit =
+    // scalastyle:off println
     spark.sessionState.functionRegistry.listFunction().foreach(println)
 
   def existsUDF(name: String)(implicit spark: SparkSession): Boolean = {

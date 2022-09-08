@@ -36,14 +36,24 @@ public class InstanceLabelDaoTest extends BaseDaoTest {
 
   @Test
   public void testSelectForUpdate() {
-    testInsert();
+    InsPersistenceLabel label = new InsPersistenceLabel();
+    label.setLabelKey("testKey");
+    label.setStringValue("testValue");
+    label.setLabelValueSize(2);
+    label.setId(1);
+    instanceLabelDao.insert(label);
     InsPersistenceLabel insPersistenceLabel = instanceLabelDao.selectForUpdate(1);
     assertTrue(!insPersistenceLabel.isEmpty());
   }
 
   @Test
   public void testSearchForUpdate() {
-    testInsert();
+    InsPersistenceLabel label = new InsPersistenceLabel();
+    label.setLabelKey("testKey");
+    label.setStringValue("testValue");
+    label.setLabelValueSize(2);
+    label.setId(1);
+    instanceLabelDao.insert(label);
     String labelKey = "testKey";
     String labelValue = "testValue";
     InsPersistenceLabel insPersistenceLabel =
@@ -81,7 +91,12 @@ public class InstanceLabelDaoTest extends BaseDaoTest {
 
   @Test
   public void testUpdateForLock() {
-    testInsert();
+    InsPersistenceLabel label = new InsPersistenceLabel();
+    label.setLabelKey("testKey");
+    label.setStringValue("testValue");
+    label.setLabelValueSize(2);
+    label.setId(1);
+    instanceLabelDao.insert(label);
     int i = instanceLabelDao.updateForLock(1);
     assertTrue(i >= 1);
   }

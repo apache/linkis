@@ -22,6 +22,7 @@ import org.apache.linkis.common.utils.ByteTimeUtils;
 import org.apache.linkis.manager.am.conf.AMConfiguration;
 import org.apache.linkis.manager.am.exception.AMErrorCode;
 import org.apache.linkis.manager.am.exception.AMErrorException;
+import org.apache.linkis.manager.am.manager.EngineNodeManager;
 import org.apache.linkis.manager.am.service.engine.EngineCreateService;
 import org.apache.linkis.manager.am.service.engine.EngineInfoService;
 import org.apache.linkis.manager.am.service.engine.EngineOperateService;
@@ -79,6 +80,8 @@ public class EngineRestfulApi {
     @Autowired private EngineInfoService engineInfoService;
 
     @Autowired private EngineCreateService engineCreateService;
+
+    @Autowired private EngineNodeManager engineNodeManager;
 
     @Autowired private EngineOperateService engineOperateService;
 
@@ -146,7 +149,7 @@ public class EngineRestfulApi {
             throws AMErrorException {
         String userName = ModuleUserUtils.getOperationUser(req, "getEngineConn");
         ServiceInstance serviceInstance = getServiceInstance(jsonNode);
-        EngineNode engineNode = engineCreateService.getEngineNode(serviceInstance);
+        EngineNode engineNode = engineNodeManager.getEngineNode(serviceInstance);
         if (!userName.equals(engineNode.getOwner()) && !isAdmin(userName)) {
             return Message.error("You have no permission to access EngineConn " + serviceInstance);
         }
@@ -163,7 +166,7 @@ public class EngineRestfulApi {
         String userName =
                 ModuleUserUtils.getOperationUser(req, "killEngineConn：" + serviceInstance);
         logger.info("User {} try to kill engineConn {}.", userName, serviceInstance);
-        EngineNode engineNode = engineCreateService.getEngineNode(serviceInstance);
+        EngineNode engineNode = engineNodeManager.getEngineNode(serviceInstance);
         if (!userName.equals(engineNode.getOwner()) && !isAdmin(userName)) {
             return Message.error("You have no permission to kill EngineConn " + serviceInstance);
         }
@@ -356,7 +359,7 @@ public class EngineRestfulApi {
         String userName = ModuleUserUtils.getOperationUser(req, "executeEngineConnOperation");
         ServiceInstance serviceInstance = getServiceInstance(jsonNode);
         logger.info("User {} try to execute Engine Operation {}.", userName, serviceInstance);
-        EngineNode engineNode = engineCreateService.getEngineNode(serviceInstance);
+        EngineNode engineNode = engineNodeManager.getEngineNode(serviceInstance);
         if (!userName.equals(engineNode.getOwner()) && !isAdmin(userName)) {
             return Message.error(
                     "You have no permission to execute Engine Operation " + serviceInstance);

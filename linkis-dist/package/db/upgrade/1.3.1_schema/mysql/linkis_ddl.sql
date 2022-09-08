@@ -22,7 +22,4 @@
 ALTER TABLE `linkis_ps_dm_datasource_env` ADD CONSTRAINT `env_name` UNIQUE (`env_name`);
 ALTER TABLE `linkis_ps_dm_datasource_env` MODIFY COLUMN `parameter` varchar(1024) CHARACTER SET utf8 COLLATE utf8_bin NULL;
 
--- ----------------------------
--- Alter table structure for linkis_ps_dm_datasource
--- ----------------------------
-ALTER TABLE `linkis_ps_dm_datasource` MODIFY COLUMN `parameter` varchar(1024) CHARACTER SET utf8 COLLATE utf8_bin NULL;
+ALTER TABLE `linkis_cg_ec_resource_info_record` ADD COLUMN `status` varchar(50) DEFAULT NULL COMMENT 'EC status: Starting,Unlock,Locked,Idle,Busy,Running,ShuttingDown,Failed,Success';

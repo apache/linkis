@@ -5,6 +5,8 @@ import org.apache.linkis.instance.label.entity.InsPersistenceLabel;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 
 public class InstanceLabelDaoTest extends BaseDaoTest{
 
@@ -13,6 +15,9 @@ public class InstanceLabelDaoTest extends BaseDaoTest{
 
     @Test
     public void testSelectForUpdate() {
+        testInsert();
+        InsPersistenceLabel insPersistenceLabel=instanceLabelDao.selectForUpdate(1);
+        assertTrue(insPersistenceLabel!=null);
     }
 
     @Test
@@ -28,6 +33,8 @@ public class InstanceLabelDaoTest extends BaseDaoTest{
         InsPersistenceLabel label=new InsPersistenceLabel();
         label.setLabelKey("testKey");
         label.setStringValue("testValue");
+        label.setLabelValueSize(2);
+        label.setId(1);
         instanceLabelDao.insert(label);
     }
 

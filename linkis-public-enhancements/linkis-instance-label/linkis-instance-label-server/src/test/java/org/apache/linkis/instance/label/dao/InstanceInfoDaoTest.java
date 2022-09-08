@@ -72,11 +72,6 @@ public class InstanceInfoDaoTest extends BaseDaoTest {
     instanceInfo.setApplicationName("testApplicationName1");
     instanceInfo.setUpdateTime(new Date());
     instanceInfoDao.updateInstance(instanceInfo);
-    ServiceInstance serviceInstance = new ServiceInstance();
-    serviceInstance.setInstance("testInstance1");
-    serviceInstance.setApplicationName("testApplicationName1");
-    InstanceInfo instanceInfo1 = instanceInfoDao.getInstanceInfoByServiceInstance(serviceInstance);
-    assertTrue(instanceInfo1.getInstance().equals("testInstance1"));
   }
 
   @Test

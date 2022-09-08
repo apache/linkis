@@ -14,20 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.linkis.configuration.service;
 
+package org.apache.linkis.configuration.dao;
+
+import org.apache.ibatis.annotations.Param;
 import org.apache.linkis.configuration.entity.TenantVo;
-import org.apache.linkis.server.Message;
+import org.apache.linkis.configuration.entity.UserIpVo;
 
 import java.util.List;
 
-public interface TenantConfigService {
+public interface UserIpMapper {
 
-    List<TenantVo> queryTenantList(String user, String creator, String tenant);
 
-    void deleteTenant(Integer id);
+    List<UserIpVo> queryUserIPList();
 
-    Message updateTenant(TenantVo tenantVo);
+    void deleteUserIP(Integer id);
 
-    Message createTenant(TenantVo tenantVo);
+    void updateUserIP(UserIpVo userIpVo);
+
+    void createUserIP(UserIpVo userIpVo);
 }

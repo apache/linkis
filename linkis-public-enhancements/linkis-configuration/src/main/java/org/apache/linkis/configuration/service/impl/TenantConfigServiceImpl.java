@@ -1,7 +1,25 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.apache.linkis.configuration.service.impl;
 
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.linkis.configuration.dao.TenantMapper;
 import org.apache.linkis.configuration.entity.TenantVo;
 import org.apache.linkis.configuration.exception.ConfigurationException;
@@ -75,6 +93,9 @@ public class TenantConfigServiceImpl implements TenantConfigService {
     @Override
     public Message createTenant(TenantVo tenantVo) {
         try {
+            if (StringUtils.isBlank(tenantVo.getId())) {
+                throw new ConfigurationException("id couldn't be empty ");
+            }
             dataProcessing(tenantVo);
             tenantVo.setCreateTime(new Date());
             tenantVo.setUpdateTime(new Date());
@@ -90,14 +111,28 @@ public class TenantConfigServiceImpl implements TenantConfigService {
     private void dataProcessing(TenantVo tenantVo) throws ConfigurationException {
         AtomicReference<Boolean> tenantResult = new AtomicReference<>(false);
         //参数校验
-        CommonUtils.validateObject(tenantVo);
+        if (StringUtils.isBlank(tenantVo.getCreator())) {
+            throw new ConfigurationException("creator couldn't be empty ");
+        }
+        if (StringUtils.isBlank(tenantVo.getUser())) {
+            throw new ConfigurationException("user couldn't be empty ");
+        }
+        if (StringUtils.isBlank(tenantVo.getBussinessUser())) {
+            throw new ConfigurationException("bussiness_user couldn't be empty ");
+        }
+        if (StringUtils.isBlank(tenantVo.getDesc())) {
+            throw new ConfigurationException("desc couldn't be empty ");
+        }
+        if (StringUtils.isBlank(tenantVo.getTenantValue())) {
+            throw new ConfigurationException("tenant couldn't be empty ");
+        }
         //获取ECM列表的租户信息
         Map<String, Object> resultmap = null;
         try {
             resultmap = HttpsUtil.sendHttp(null, null);
             logger.info("ResourceMonitor  response  {}:", resultmap);
         } catch (IOException e) {
-            logger.warn("failed to get EcmResource data");
+            logger.warn("failed to get ecmResource data");
         }
         Map<String, List<Map<String, Object>>> data = MapUtils.getMap(resultmap, "data");
         List<Map<String, Object>> emNodeVoList = data.get("EMs");

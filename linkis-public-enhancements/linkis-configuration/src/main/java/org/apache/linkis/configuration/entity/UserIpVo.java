@@ -20,26 +20,24 @@ package org.apache.linkis.configuration.entity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @ApiModel
-public class TenantVo {
+public class UserIpVo {
 
     @ApiModelProperty(name = "序号")
     private String id ;
 
-    @NotBlank(message = "user不能为空")
-    @ApiModelProperty(value = "用户(必填)", name = "user", required = true)
+    @NotNull
+    @ApiModelProperty(name = "用户")
     private String user ;
 
-    @NotBlank(message = "creator不能为空")
-    @ApiModelProperty(value = "creator(必填)", name = "creator", required = true)
+    @ApiModelProperty(name = "creator")
     private String creator ;
 
-    @NotBlank
-    @ApiModelProperty(name = "租户")
-    private String tenantValue ;
+    @ApiModelProperty(name = "ip列表")
+    private String ipList ;
 
     @ApiModelProperty(name = "创建时间")
     private Date createTime;
@@ -50,7 +48,6 @@ public class TenantVo {
     @ApiModelProperty(name = "业务来源")
     private String desc ;
 
-    @NotBlank
     @ApiModelProperty(name = "对接人")
     private String bussinessUser ;
 
@@ -79,12 +76,20 @@ public class TenantVo {
         this.creator = creator;
     }
 
-    public String getTenantValue() {
-        return tenantValue;
+    public String getDesc() {
+        return desc;
     }
 
-    public void setTenantValue(String tenantValue) {
-        this.tenantValue = tenantValue;
+    public void setDesc(String desc) {
+        this.desc = desc;
+    }
+
+    public String getBussinessUser() {
+        return bussinessUser;
+    }
+
+    public void setBussinessUser(String bussinessUser) {
+        this.bussinessUser = bussinessUser;
     }
 
     public Date getCreateTime() {
@@ -103,19 +108,11 @@ public class TenantVo {
         this.updateTime = updateTime;
     }
 
-    public String getDesc() {
-        return desc;
+    public String getIpList() {
+        return ipList;
     }
 
-    public void setDesc(String desc) {
-        this.desc = desc;
-    }
-
-    public String getBussinessUser() {
-        return bussinessUser;
-    }
-
-    public void setBussinessUser(String bussinessUser) {
-        this.bussinessUser = bussinessUser;
+    public void setIpList(String ipList) {
+        this.ipList = ipList;
     }
 }

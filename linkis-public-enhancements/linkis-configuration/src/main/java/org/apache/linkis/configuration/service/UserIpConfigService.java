@@ -16,18 +16,20 @@
  */
 package org.apache.linkis.configuration.service;
 
-import org.apache.linkis.configuration.entity.TenantVo;
+import org.apache.linkis.configuration.entity.UserIpVo;
 import org.apache.linkis.server.Message;
 
 import java.util.List;
 
-public interface TenantConfigService {
+public interface UserIpConfigService {
 
-    List<TenantVo> queryTenantList(String user, String creator, String tenant);
 
-    void deleteTenant(Integer id);
+    Message createUserIP(UserIpVo userIpVo);
 
-    Message updateTenant(TenantVo tenantVo);
+    Message updateUserIP(UserIpVo userIpVo);
 
-    Message createTenant(TenantVo tenantVo);
+    void deleteUserIP(Integer id);
+
+    List<UserIpVo> queryUserIPList();
 }
+

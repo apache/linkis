@@ -305,11 +305,11 @@ class HiveEngineConnExecutor(
         val arrAny: ArrayBuffer[Any] = new ArrayBuffer[Any]()
         if (arr.length > colLength) {
           logger.error(
-            s"""There is a \t tab in the result of hive code query, hive cannot cut it, please use spark to execute"""
+            s"""There is a \t tab in the result of hive code query, hive cannot cut it, please use spark to execute(查询的结果中有\t制表符，hive不能进行切割,请使用spark执行)"""
           )
           throw new ErrorException(
             60078,
-            """There is a \t tab in the result of your query, hive cannot cut it, please use spark to execute"""
+            """There is a \t tab in the result of your query, hive cannot cut it, please use spark to execute(您查询的结果中有\t制表符，hive不能进行切割,请使用spark执行)"""
           )
         }
         if (arr.length == colLength) arr foreach arrAny.asJava.add

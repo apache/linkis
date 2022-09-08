@@ -64,8 +64,8 @@
     <insert id="insert">
         <![CDATA[INSERT INTO `linkis_ps_instance_label`(]]>
         <include refid="label_insert_columns"/>
-        <![CDATA[) VALUES(#{item.labelKey}, #{item.stringValue},
-             #{item.feature}, #{item.labelValueSize});]]>
+        <![CDATA[) VALUES(#{labelKey}, #{stringValue},
+             #{feature}, #{labelValueSize});]]>
     </insert>
 
     <update id="updateForLock">

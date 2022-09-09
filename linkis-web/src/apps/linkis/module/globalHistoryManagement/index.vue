@@ -458,7 +458,8 @@ export default {
             createdTime: item.createdTime,
             progress: item.progress,
             failedReason: getFailedReason(item),
-            runType: item.runType
+            runType: item.runType,
+            instance: item.instance,
           }
         })
       }

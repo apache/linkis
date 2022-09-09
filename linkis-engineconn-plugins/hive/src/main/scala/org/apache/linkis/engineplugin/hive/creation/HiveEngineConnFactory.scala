@@ -40,7 +40,7 @@ import org.apache.hadoop.hive.ql.session.SessionState
 import java.io.{ByteArrayOutputStream, PrintStream}
 import java.security.PrivilegedExceptionAction
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 class HiveEngineConnFactory extends ComputationSingleExecutorEngineConnFactory with Logging {
 
@@ -82,8 +82,8 @@ class HiveEngineConnFactory extends ComputationSingleExecutorEngineConnFactory w
           )
         )
     )
-    options.foreach { case (k, v) => logger.info(s"key is $k, value is $v") }
-    options
+    options.asScala.foreach { case (k, v) => logger.info(s"key is $k, value is $v") }
+    options.asScala
       .filter { case (k, v) =>
         k.startsWith("hive.") || k.startsWith("mapreduce.") || k.startsWith("mapred.reduce.") || k
           .startsWith("wds.linkis.")
@@ -108,7 +108,8 @@ class HiveEngineConnFactory extends ComputationSingleExecutorEngineConnFactory w
       hiveConf.setVar(HiveConf.ConfVars.HIVEAUXJARS, HiveEngineConfiguration.HIVE_AUX_JARS_PATH)
     }
 
-    /* //add hook to HiveDriver
+    /*
+    //add hook to HiveDriver
      if (StringUtils.isNotBlank(EnvConfiguration.LINKIS_HIVE_POST_HOOKS)) {
        val hooks = if (StringUtils.isNotBlank(hiveConf.get("hive.exec.post.hooks"))) {
          hiveConf.get("hive.exec.post.hooks") + "," + EnvConfiguration.LINKIS_HIVE_POST_HOOKS
@@ -116,7 +117,8 @@ class HiveEngineConnFactory extends ComputationSingleExecutorEngineConnFactory w
          EnvConfiguration.LINKIS_HIVE_POST_HOOKS
        }
        hiveConf.set("hive.exec.post.hooks", hooks)
-     }*/
+     }
+     */
     // enable hive.stats.collect.scancols
     hiveConf.setBoolean("hive.stats.collect.scancols", true)
     val ugi = HDFSUtils.getUserGroupInformation(Utils.getJvmUser)

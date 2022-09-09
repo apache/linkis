@@ -85,7 +85,9 @@ object HiveUtils {
   }
 
   def main(args: Array[String]): Unit = {
+    // scalastyle:off println
     jarOfClass(classOf[Driver]).foreach(println)
+    // scalastyle:on println
   }
 
 }

@@ -43,8 +43,8 @@ object HiveProgressHelper {
 
   def storeHiveProgress(hiveProgress: java.util.List[HiveProgress]): Unit = {
     // logger.info("begin to store hive progress")
-    import scala.collection.JavaConversions._
-    hiveProgress foreach hiveProgressQueue.put
+    import scala.collection.JavaConverters._
+    hiveProgress.asScala foreach hiveProgressQueue.put
   }
 
   def clearHiveProgress(): Unit = {

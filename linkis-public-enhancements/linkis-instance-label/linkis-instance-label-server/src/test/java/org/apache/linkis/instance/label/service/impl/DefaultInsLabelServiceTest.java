@@ -21,6 +21,7 @@ package org.apache.linkis.instance.label.service.impl;
 import org.apache.linkis.common.ServiceInstance;
 import org.apache.linkis.instance.label.dao.InsLabelRelationDao;
 import org.apache.linkis.instance.label.entity.InsPersistenceLabel;
+import org.apache.linkis.manager.label.entity.Label;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,6 +32,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /** 
  * DefaultInsLabelService Tester
@@ -62,13 +65,22 @@ public class DefaultInsLabelServiceTest {
         Mockito.when(insLabelRelationDao.searchLabelsByInstance(serviceInstance.getInstance())).thenReturn(labelsCandidateRemoved);
         Mockito.doNothing().when(insLabelRelationDao).dropRelationsByInstance(serviceInstance.getInstance());
         defaultInsLabelService.removeLabelsFromInstance(serviceInstance);
+
     }
  
  
     @Test
-    @DisplayName("Method description: ...")
     public void testSearchInstancesByLabelsLabels() throws Exception { 
-        //TODO: Test goes here... 
+        //TODO: Test goes here...
+        /*List<? extends Label<?>> labels =new ArrayList<>();
+        List<ServiceInstance> list=new ArrayList<>();
+        ServiceInstance serviceInstance=new ServiceInstance();
+        serviceInstance.setInstance("testInstance");
+        serviceInstance.setApplicationName("testApplicationName");
+        list.add(serviceInstance);
+        Mockito.when(defaultInsLabelService.searchInstancesByLabels(labels, Label.ValueRelation.ALL)).thenReturn(list);
+        List<ServiceInstance> lists=defaultInsLabelService.searchInstancesByLabels(labels);
+        assertTrue( list.equals(lists));*/
     } 
  
  

@@ -90,7 +90,6 @@ class JobInfoResult extends DWSResult with UserAction with Status {
     }
   }
 
-
   override def getJobStatus: String = requestPersistTask.getStatus
 
   def canRetry: Boolean = {

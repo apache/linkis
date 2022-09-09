@@ -30,6 +30,8 @@ public interface ECResourceRecordMapper {
 
   ECResourceInfoRecord getECResourceInfoRecord(@Param("ticketId") String ticketId);
 
+  ECResourceInfoRecord getECResourceInfoRecordByInstances(@Param("instance") String instance);
+
   void updateECResourceInfoRecord(ECResourceInfoRecord resourceActionRecord);
 
   void insertECResourceInfoRecord(ECResourceInfoRecord resourceActionRecord);

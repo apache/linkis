@@ -24,6 +24,10 @@
         SELECT * FROM linkis_cg_ec_resource_info_record WHERE ticket_id = #{ticketId}
     </select>
 
+    <select id="getECResourceInfoRecordByInstances" resultType="org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord">
+        SELECT * FROM linkis_cg_ec_resource_info_record WHERE service_instance = #{instance}
+    </select>
+
 
     <insert id="insertECResourceInfoRecord" flushCache="true" useGeneratedKeys="true" keyProperty="id" parameterType="org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord">
         INSERT INTO linkis_cg_ec_resource_info_record(label_value,create_user, ticket_id, service_instance, request_times, request_resource,

@@ -31,7 +31,7 @@ import org.apache.linkis.manager.label.entity.engine.{CodeLanguageLabel, RunType
 
 import org.apache.commons.lang3.StringUtils
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 class HiveAddJarsEngineHook extends EngineConnHook with Logging {
 
@@ -54,7 +54,7 @@ class HiveAddJarsEngineHook extends EngineConnHook with Logging {
     var jars: String = ""
     val udf_jars = CommonVars(Environment.UDF_JARS.toString, "", "UDF jar PAth").getValue
     logger.info("udf jar_path:" + udf_jars)
-    options foreach { case (key, value) =>
+    options.asScala foreach { case (key, value) =>
       if (JARS.equals(key)) {
         jars = value
       }

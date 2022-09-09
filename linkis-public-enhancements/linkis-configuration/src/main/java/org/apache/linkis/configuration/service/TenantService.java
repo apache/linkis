@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,23 +16,12 @@
  */
 package org.apache.linkis.configuration.service;
 
-import org.apache.linkis.configuration.entity.UserIpVo;
-import org.apache.linkis.configuration.exception.ConfigurationException;
-import org.apache.linkis.server.Message;
+import org.apache.linkis.governance.common.protocol.conf.TenantRequest;
+import org.apache.linkis.governance.common.protocol.conf.TenantResponse;
+import org.apache.linkis.rpc.Sender;
 
-import java.util.List;
+public interface TenantService {
 
-public interface UserIpConfigService {
+    TenantResponse getTenantData(TenantRequest request, Sender sender);
 
-
-    Message createUserIP(UserIpVo userIpVo);
-
-    Message updateUserIP(UserIpVo userIpVo);
-
-    void deleteUserIP(Integer id);
-
-    List<UserIpVo> queryUserIPList();
-
-    Message queryUserIP(UserIpVo userIpVo);
 }
-

@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,25 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.linkis.configuration.service;
 
-import org.apache.linkis.configuration.entity.UserIpVo;
-import org.apache.linkis.configuration.exception.ConfigurationException;
-import org.apache.linkis.server.Message;
+package org.apache.linkis.entrance.interceptor.exception
 
-import java.util.List;
+import org.apache.linkis.common.exception.ErrorException
 
-public interface UserIpConfigService {
-
-
-    Message createUserIP(UserIpVo userIpVo);
-
-    Message updateUserIP(UserIpVo userIpVo);
-
-    void deleteUserIP(Integer id);
-
-    List<UserIpVo> queryUserIPList();
-
-    Message queryUserIP(UserIpVo userIpVo);
-}
-
+case class TenantCheckException(errCode: Int, errDesc: String)
+    extends ErrorException(errCode, errDesc) {}

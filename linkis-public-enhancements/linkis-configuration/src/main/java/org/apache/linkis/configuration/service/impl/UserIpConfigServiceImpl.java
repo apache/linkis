@@ -17,7 +17,7 @@
 package org.apache.linkis.configuration.service.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.http.util.Asserts;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.linkis.configuration.dao.UserIpMapper;
 import org.apache.linkis.configuration.entity.UserIpVo;
 import org.apache.linkis.configuration.exception.ConfigurationException;
@@ -27,7 +27,6 @@ import org.apache.linkis.server.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
-
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -58,7 +57,6 @@ public class UserIpConfigServiceImpl implements UserIpConfigService {
         }
         return Message.ok();
     }
-
 
     /**
      * 更新IP数据
@@ -100,6 +98,21 @@ public class UserIpConfigServiceImpl implements UserIpConfigService {
         return userIpMapper.queryUserIPList();
     }
 
+    @Override
+    public Message queryUserIP(UserIpVo userIpVo) {
+        //参数校验
+        if (StringUtils.isBlank(userIpVo.getCreator())) {
+            return Message.error("creator couldn't be empty ");
+        }
+        if (StringUtils.isBlank(userIpVo.getUser())) {
+            return Message.error("user couldn't be empty ");
+        }
+        UserIpVo userIp = userIpMapper.queryUserIP(userIpVo.getUser(), userIpVo.getCreator());
+        if (ObjectUtils.isEmpty(userIp)) {
+            return Message.error("No data found");
+        }
+        return Message.ok().data("userIp", userIp);
+    }
 
     private void dataProcessing(UserIpVo userIpVo) throws ConfigurationException {
         //参数校验

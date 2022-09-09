@@ -15,4 +15,6 @@ public interface TenantMapper {
     void updateTenant(TenantVo tenantVo);
 
     void createTenant(TenantVo tenantVo);
+
+    TenantVo queryTenant(@Param("user") String user, @Param("creator") String creator);
 }

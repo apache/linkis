@@ -75,4 +75,13 @@
         </trim>
         WHERE id = #{id}
     </update>
+
+    <select id="queryUserIP" resultType="org.apache.linkis.configuration.entity.UserIpVo">
+        select <include refid="UserIp_Column_List"/>
+        from linkis_cg_user_ip_config
+        <where>
+            <if test="user != null">`user` = #{user}</if>
+            <if test="creator != null">and `creator` = #{creator}</if>
+        </where>
+    </select>
 </mapper>

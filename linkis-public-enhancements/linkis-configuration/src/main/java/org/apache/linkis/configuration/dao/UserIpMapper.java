@@ -33,4 +33,7 @@ public interface UserIpMapper {
     void updateUserIP(UserIpVo userIpVo);
 
     void createUserIP(UserIpVo userIpVo);
+
+    UserIpVo queryUserIP(@Param("user") String user, @Param("creator") String creator);
+
 }

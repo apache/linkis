@@ -19,8 +19,6 @@ package org.apache.linkis.configuration.entity;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-
-import javax.validation.constraints.NotBlank;
 import java.util.Date;
 
 @ApiModel
@@ -29,15 +27,12 @@ public class TenantVo {
     @ApiModelProperty(name = "序号")
     private String id ;
 
-    @NotBlank(message = "user不能为空")
     @ApiModelProperty(value = "用户(必填)", name = "user", required = true)
     private String user ;
 
-    @NotBlank(message = "creator不能为空")
     @ApiModelProperty(value = "creator(必填)", name = "creator", required = true)
     private String creator ;
 
-    @NotBlank
     @ApiModelProperty(name = "租户")
     private String tenantValue ;
 
@@ -50,10 +45,8 @@ public class TenantVo {
     @ApiModelProperty(name = "业务来源")
     private String desc ;
 
-    @NotBlank
     @ApiModelProperty(name = "对接人")
     private String bussinessUser ;
-
 
     public String getId() {
         return id;

@@ -35,7 +35,7 @@ import javax.servlet.http.HttpServletRequest;
 
 @Api(tags = "tenant label  configuration")
 @RestController
-@RequestMapping(path = "/tenantconfig")
+@RequestMapping(path = "/tenantConfig")
 public class TenantConfigrationRestfulApi {
 
     private static final Logger logger = LoggerFactory.getLogger(TenantConfigrationRestfulApi.class);

@@ -19,8 +19,6 @@ package org.apache.linkis.configuration.entity;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-
-import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @ApiModel
@@ -29,7 +27,6 @@ public class UserIpVo {
     @ApiModelProperty(name = "序号")
     private String id ;
 
-    @NotNull
     @ApiModelProperty(name = "用户")
     private String user ;
 

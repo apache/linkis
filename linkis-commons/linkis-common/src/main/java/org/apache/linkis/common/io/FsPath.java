@@ -262,7 +262,7 @@ public class FsPath {
 
   public String getPath() {
     if (WINDOWS && !"hdfs".equals(getFsType())) {
-      return uri.getAuthority() + uri.getPath();
+      return StringUtils.isNotBlank(uri.getAuthority()) ? uri.getAuthority() + uri.getPath() : uri.getPath();
     }
     return uri.getPath();
   }

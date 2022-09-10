@@ -26,8 +26,7 @@ jobs:
   analyze:
     name: Code Analyze
     runs-on: ubuntu-latest
-    if: (github.repository == 'apache/linkis')
-
+#    if: (github.repository == 'apache/linkis')
     strategy:
       fail-fast: false
       matrix:

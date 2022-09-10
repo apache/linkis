@@ -19,6 +19,7 @@ package org.apache.linkis.manager.rm.service.impl
 
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.governance.common.utils.ECPathUtils
+import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord
 import org.apache.linkis.manager.common.entity.resource.Resource
 import org.apache.linkis.manager.dao.ECResourceRecordMapper
@@ -71,24 +72,18 @@ class ResourceLogService extends Logging {
   ): Unit = Utils.tryAndWarn {
     if (changeType != null) {
       val log: String = changeType match {
-        case ChangeType.ENGINE_INIT => {
+        case ChangeType.ENGINE_INIT =>
           printLog(changeType, resource, ChangeType.FAILED, engineLabel, ecmLabel)
-        }
-        case ChangeType.ENGINE_CLEAR => {
+        case ChangeType.ENGINE_CLEAR =>
           printLog(changeType, resource, ChangeType.FAILED, engineLabel, ecmLabel)
-        }
-        case ChangeType.ECM_INIT => {
+        case ChangeType.ECM_INIT =>
           printLog(changeType, resource, ChangeType.FAILED, null, ecmLabel)
-        }
-        case ChangeType.ECM_CLEAR => {
+        case ChangeType.ECM_CLEAR =>
           printLog(changeType, resource, ChangeType.FAILED, null, ecmLabel)
-        }
-        case ChangeType.ECM_RESOURCE_ADD => {
+        case ChangeType.ECM_RESOURCE_ADD =>
           printLog(changeType, resource, ChangeType.FAILED, engineLabel, ecmLabel)
-        }
-        case ChangeType.ECM_Resource_MINUS => {
+        case ChangeType.ECM_Resource_MINUS =>
           printLog(changeType, resource, ChangeType.FAILED, engineLabel, ecmLabel)
-        }
         case _ => " "
       }
       if (exception != null) {
@@ -107,24 +102,18 @@ class ResourceLogService extends Logging {
   ): Unit = Utils.tryAndWarn {
     if (changeType != null) {
       val log: String = changeType match {
-        case ChangeType.ENGINE_INIT => {
+        case ChangeType.ENGINE_INIT =>
           printLog(changeType, resource, ChangeType.SUCCESS, engineLabel, ecmLabel)
-        }
-        case ChangeType.ENGINE_CLEAR => {
+        case ChangeType.ENGINE_CLEAR =>
           printLog(changeType, resource, ChangeType.SUCCESS, engineLabel, ecmLabel)
-        }
-        case ChangeType.ECM_INIT => {
+        case ChangeType.ECM_INIT =>
           printLog(changeType, resource, ChangeType.SUCCESS, null, ecmLabel)
-        }
-        case ChangeType.ECM_CLEAR => {
+        case ChangeType.ECM_CLEAR =>
           printLog(changeType, resource, ChangeType.SUCCESS, null, ecmLabel)
-        }
-        case ChangeType.ECM_RESOURCE_ADD => {
+        case ChangeType.ECM_RESOURCE_ADD =>
           printLog(changeType, resource, ChangeType.SUCCESS, engineLabel, ecmLabel)
-        }
-        case ChangeType.ECM_Resource_MINUS => {
+        case ChangeType.ECM_Resource_MINUS =>
           printLog(changeType, resource, ChangeType.SUCCESS, engineLabel, ecmLabel)
-        }
         case _ => " "
       }
       logger.info(log)
@@ -148,7 +137,8 @@ class ResourceLogService extends Logging {
       labelContainer: RMLabelContainer,
       ticketId: String,
       changeType: String,
-      resource: Resource
+      resource: Resource,
+      status: String = NodeStatus.Starting.toString
   ): Unit = if (RMUtils.RM_RESOURCE_ACTION_RECORD.getValue) Utils.tryAndWarn {
     val userCreatorEngineType: CombinedLabel =
       labelContainer.getCombinedUserCreatorEngineTypeLabel
@@ -195,6 +185,7 @@ class ResourceLogService extends Logging {
         }
         ecResourceInfoRecord.setReleaseTime(new Date(System.currentTimeMillis))
     }
+    ecResourceInfoRecord.setStatus(status)
     ecResourceRecordMapper.updateECResourceInfoRecord(ecResourceInfoRecord)
   }
 

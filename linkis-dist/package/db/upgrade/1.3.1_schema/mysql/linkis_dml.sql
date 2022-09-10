@@ -15,26 +15,5 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.manager.am.service;
-
-import org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord;
-
-import java.util.Date;
-import java.util.List;
-
-public interface ECResourceInfoService {
-
-  ECResourceInfoRecord getECResourceInfoRecord(String ticketId);
-
-  ECResourceInfoRecord getECResourceInfoRecordByInstances(String instance);
-
-  void deleteECResourceInfoRecordByTicketId(String ticketId);
-
-  void deleteECResourceInfoRecord(Integer id);
-
-  List<ECResourceInfoRecord> getECResourceInfoRecordList(
-      String instance, Date endDate, Date startDate, String username, String engineType);
-
-  // TODO add search method
-
-}
+-- Update field for linkis_ps_dm_datasource_type_key
+UPDATE `linkis_ps_dm_datasource_type_key` SET `require`=0 WHERE `data_source_type_id` = 1;

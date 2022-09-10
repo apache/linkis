@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,26 +15,17 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.manager.am.service;
+package org.apache.linkis.instance.label.dao;
 
-import org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord;
+import org.apache.linkis.instance.label.Scan;
 
-import java.util.Date;
-import java.util.List;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.annotation.Transactional;
 
-public interface ECResourceInfoService {
-
-  ECResourceInfoRecord getECResourceInfoRecord(String ticketId);
-
-  ECResourceInfoRecord getECResourceInfoRecordByInstances(String instance);
-
-  void deleteECResourceInfoRecordByTicketId(String ticketId);
-
-  void deleteECResourceInfoRecord(Integer id);
-
-  List<ECResourceInfoRecord> getECResourceInfoRecordList(
-      String instance, Date endDate, Date startDate, String username, String engineType);
-
-  // TODO add search method
-
-}
+@SpringBootTest(classes = Scan.class)
+@Transactional
+@Rollback(true)
+@EnableTransactionManagement
+public abstract class BaseDaoTest {}

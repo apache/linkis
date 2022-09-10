@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,26 +15,12 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.manager.am.service;
+package org.apache.linkis.instance.label;
 
-import org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 
-import java.util.Date;
-import java.util.List;
+import org.mybatis.spring.annotation.MapperScan;
 
-public interface ECResourceInfoService {
-
-  ECResourceInfoRecord getECResourceInfoRecord(String ticketId);
-
-  ECResourceInfoRecord getECResourceInfoRecordByInstances(String instance);
-
-  void deleteECResourceInfoRecordByTicketId(String ticketId);
-
-  void deleteECResourceInfoRecord(Integer id);
-
-  List<ECResourceInfoRecord> getECResourceInfoRecordList(
-      String instance, Date endDate, Date startDate, String username, String engineType);
-
-  // TODO add search method
-
-}
+@EnableAutoConfiguration
+@MapperScan("org.apache.linkis.instance.label.dao")
+public class Scan {}

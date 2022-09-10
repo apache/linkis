@@ -42,15 +42,23 @@ public class ECResourceInfoServiceImpl implements ECResourceInfoService {
 
   @Override
   public ECResourceInfoRecord getECResourceInfoRecord(String ticketId) {
-    if (StringUtils.isNoneBlank(ticketId)) {
+    if (StringUtils.isNotBlank(ticketId)) {
       return ecResourceRecordMapper.getECResourceInfoRecord(ticketId);
     }
     return null;
   }
 
   @Override
+  public ECResourceInfoRecord getECResourceInfoRecordByInstances(String instance) {
+    if (StringUtils.isNotBlank(instance)) {
+      return ecResourceRecordMapper.getECResourceInfoRecordByInstances(instance);
+    }
+    return null;
+  }
+
+  @Override
   public void deleteECResourceInfoRecordByTicketId(String ticketId) {
-    if (StringUtils.isNoneBlank(ticketId)) {
+    if (StringUtils.isNotBlank(ticketId)) {
       logger.info("Start to delete ec：{} info ", ticketId);
       ecResourceRecordMapper.deleteECResourceInfoRecordByTicketId(ticketId);
     }

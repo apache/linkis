@@ -14,27 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.linkis.basedatamanager.server.dao;
 
-package org.apache.linkis.manager.am.service;
+import org.apache.linkis.basedatamanager.server.domain.GatewayAuthTokenEntity;
 
-import org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord;
-
-import java.util.Date;
 import java.util.List;
 
-public interface ECResourceInfoService {
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
-  ECResourceInfoRecord getECResourceInfoRecord(String ticketId);
+/** @TableName linkis_mg_gateway_auth_token */
+public interface GatewayAuthTokenMapper extends BaseMapper<GatewayAuthTokenEntity> {
 
-  ECResourceInfoRecord getECResourceInfoRecordByInstances(String instance);
-
-  void deleteECResourceInfoRecordByTicketId(String ticketId);
-
-  void deleteECResourceInfoRecord(Integer id);
-
-  List<ECResourceInfoRecord> getECResourceInfoRecordList(
-      String instance, Date endDate, Date startDate, String username, String engineType);
-
-  // TODO add search method
-
+  List<GatewayAuthTokenEntity> getListByPage(String searchName);
 }

@@ -24,8 +24,9 @@ on:
 
 jobs:
   auto-code-format:
-    runs-on: ubuntu-latest
+    if: ${{ startsWith(github.repository, 'apache/') }}
 
+    runs-on: ubuntu-latest
     env:
       BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
       SHA: ${{ github.sha }}

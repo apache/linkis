@@ -164,7 +164,8 @@
                         "datasourceAccess": "数据源访问权限",
                         "datasourceEnv": "数据源环境",
                         "datasourceType": "数据源分类",
-                        "EnginePluginManagement": "引擎物料管理"
+                        "EnginePluginManagement": "引擎物料管理",
+                        "basedataManagement": "基础数据管理"
                     }
                 }
             },

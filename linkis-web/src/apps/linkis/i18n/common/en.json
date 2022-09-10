@@ -161,7 +161,8 @@
             "udfTree": "UDF Tree",
             "datasourceAccess": "Data source access permissions",
             "datasourceEnv": "Datasource Environment",
-            "datasourceType": "Datasource Type"
+            "datasourceType": "Datasource Type",
+            "basedataManagement": "Base data management"
           }
         }
       },

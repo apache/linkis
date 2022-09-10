@@ -56,8 +56,12 @@ jobs:
         with:
           languages: ${{ matrix.language }}
 
-      - name: Autobuild
-        uses: github/codeql-action/autobuild@v2
+#      - name: Autobuild
+#        uses: github/codeql-action/autobuild@v2
+
+        run: |
+          ./mvnw -N install
+          ./mvnw clean package
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v2

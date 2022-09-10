@@ -28,7 +28,7 @@ import org.apache.linkis.orchestrator.ecm.service.EngineConnExecutor
 
 import java.util
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 /**
  */
@@ -146,12 +146,13 @@ abstract class AbstractEngineConnManager extends EngineConnManager with Logging 
     val instances = getInstances(mark)
     if (null != instances) {
       val executors = Utils.tryAndWarn {
-        instances.map(getEngineConnExecutorCache().get(_)).filter(null != _).sortBy { executor =>
-          if (null == executor.getRunningTaskCount) {
-            0
-          } else {
-            executor.getRunningTaskCount
-          }
+        instances.asScala.map(getEngineConnExecutorCache().get(_)).filter(null != _).sortBy {
+          executor =>
+            if (null == executor.getRunningTaskCount) {
+              0
+            } else {
+              executor.getRunningTaskCount
+            }
         }
       }
 
@@ -206,9 +207,9 @@ abstract class AbstractEngineConnManager extends EngineConnManager with Logging 
 
   protected def getMarksByInstance(serviceInstance: ServiceInstance): Array[Mark] =
     MARK_CACHE_LOCKER.synchronized {
-      getMarkCache()
+      getMarkCache().asScala
         .filter { keyValue =>
-          keyValue._2.exists(serviceInstance.equals(_))
+          keyValue._2.asScala.exists(serviceInstance.equals(_))
         }
         .keys
         .toArray
@@ -240,7 +241,7 @@ abstract class AbstractEngineConnManager extends EngineConnManager with Logging 
   override def releaseMark(mark: Mark): Unit = {
     if (null != mark && getMarkCache().containsKey(mark)) {
       logger.debug(s"Start to release mark ${mark.getMarkId()}")
-      val executors = getMarkCache().get(mark).map(getEngineConnExecutorCache().get(_))
+      val executors = getMarkCache().get(mark).asScala.map(getEngineConnExecutorCache().get(_))
       Utils.tryAndError(executors.foreach { executor =>
         getEngineConnExecutorCache().remove(executor.getServiceInstance)
         executor.close()

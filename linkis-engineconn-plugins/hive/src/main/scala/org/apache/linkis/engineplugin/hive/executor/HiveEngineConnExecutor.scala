@@ -74,7 +74,7 @@ import java.security.PrivilegedExceptionAction
 import java.util
 import java.util.concurrent.atomic.AtomicBoolean
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 
@@ -215,8 +215,9 @@ class HiveEngineConnExecutor(
           case e: Exception => logger.warn("obtain hive execute query plan failed,", e)
           case t: Throwable => logger.warn("obtain hive execute query plan failed,", t)
         }
-        if (numberOfMRJobs > 0)
+        if (numberOfMRJobs > 0) {
           engineExecutorContext.appendStdout(s"Your hive sql has $numberOfMRJobs MR jobs to do")
+        }
         val hiveResponse: CommandProcessorResponse = driver.run(realCode)
         if (hiveResponse.getResponseCode != 0) {
           LOG.error("Hive query failed, response code is {}", hiveResponse.getResponseCode)
@@ -298,20 +299,25 @@ class HiveEngineConnExecutor(
     val result = new util.ArrayList[String]()
     var rows = 0
     while (driver.getResults(result)) {
-      val scalaResult: mutable.Buffer[String] = result
+      val scalaResult: mutable.Buffer[String] = result.asScala
       scalaResult foreach { s =>
         val arr: Array[String] = s.split("\t")
         val arrAny: ArrayBuffer[Any] = new ArrayBuffer[Any]()
         if (arr.length > colLength) {
-          logger.error(s"""hive code 查询的结果中有\t制表符，hive不能进行切割,请使用spark执行""")
-          throw new ErrorException(60078, """您查询的结果中有\t制表符，hive不能进行切割,请使用spark执行""")
+          logger.error(
+            s"""There is a \t tab in the result of hive code query, hive cannot cut it, please use spark to execute(查询的结果中有\t制表符，hive不能进行切割,请使用spark执行)"""
+          )
+          throw new ErrorException(
+            60078,
+            """There is a \t tab in the result of your query, hive cannot cut it, please use spark to execute(您查询的结果中有\t制表符，hive不能进行切割,请使用spark执行)"""
+          )
         }
-        if (arr.length == colLength) arr foreach arrAny.add
-        else if (arr.length == 0) for (i <- 1 to colLength) arrAny add ""
+        if (arr.length == colLength) arr foreach arrAny.asJava.add
+        else if (arr.length == 0) for (i <- 1 to colLength) arrAny.asJava add ""
         else {
           val i = colLength - arr.length
-          arr foreach arrAny.add
-          for (i <- 1 to i) arrAny add ""
+          arr foreach arrAny.asJava.add
+          for (i <- 1 to i) arrAny.asJava add ""
         }
         resultSetWriter.addRecord(new TableRecord(arrAny.toArray))
       }
@@ -330,18 +336,18 @@ class HiveEngineConnExecutor(
     var results: util.List[FieldSchema] = null
     val nameSet = new mutable.HashSet[String]()
     val cleanSchema = new util.ArrayList[FieldSchema]()
-    fieldSchemas foreach { fieldSchema =>
+    fieldSchemas.asScala foreach { fieldSchema =>
       val name = fieldSchema.getName
       if (name.split('.').length == 2) {
         nameSet.add(name.split('.')(1))
-        cleanSchema += new FieldSchema(
+        cleanSchema.asScala += new FieldSchema(
           name.split('.')(1),
           fieldSchema.getType,
           fieldSchema.getComment
         )
       }
     }
-    if (nameSet.size < fieldSchemas.length) {
+    if (nameSet.size < fieldSchemas.asScala.length) {
       results = fieldSchemas
     } else {
       if (useTableName) {
@@ -351,7 +357,7 @@ class HiveEngineConnExecutor(
       }
     }
 
-    val columns = results
+    val columns = results.asScala
       .map(result =>
         Column(result.getName, DataType.toDataType(result.getType.toLowerCase()), result.getComment)
       )
@@ -365,7 +371,8 @@ class HiveEngineConnExecutor(
   }
 
   /**
-   * 在job完成之前，要将singleSqlProgressMap的剩余的内容全部变为成功
+   * Before the job is completed, all the remaining contents of the singleSqlProgressMap should be
+   * changed to success
    */
   private def onComplete(): Unit = {}
 
@@ -399,7 +406,7 @@ class HiveEngineConnExecutor(
   override def FetchResource: util.HashMap[String, ResourceWithStatus] = {
     val resourceMap = new util.HashMap[String, ResourceWithStatus]()
     val queue = hiveConf.get("mapreduce.job.queuename")
-    HadoopJobExecHelper.runningJobs.foreach(yarnJob => {
+    HadoopJobExecHelper.runningJobs.asScala.foreach(yarnJob => {
       val counters = yarnJob.getCounters
       if (counters != null) {
         val millsMap = counters.getCounter(Counters.MILLIS_MAPS)
@@ -439,7 +446,7 @@ class HiveEngineConnExecutor(
       val currentSQL = engineExecutorContext.getCurrentParagraph
       val currentBegin = (currentSQL - 1) / totalSQLs.asInstanceOf[Float]
       HadoopJobExecHelper.runningJobs synchronized {
-        HadoopJobExecHelper.runningJobs foreach { runningJob =>
+        HadoopJobExecHelper.runningJobs.asScala foreach { runningJob =>
           val name = runningJob.getID.toString
           val _progress = runningJob.reduceProgress() + runningJob.mapProgress()
           singleSqlProgressMap.put(name, _progress / 2)
@@ -447,7 +454,7 @@ class HiveEngineConnExecutor(
       }
       var totalProgress: Float = 0.0f
       val hiveRunJobs = if (numberOfMRJobs <= 0) 1 else numberOfMRJobs
-      singleSqlProgressMap foreach { case (_name, _progress) =>
+      singleSqlProgressMap.asScala foreach { case (_name, _progress) =>
         totalProgress += _progress
       }
       try {
@@ -484,7 +491,7 @@ class HiveEngineConnExecutor(
     }
 
     HadoopJobExecHelper.runningJobs synchronized {
-      HadoopJobExecHelper.runningJobs foreach { runningJob =>
+      HadoopJobExecHelper.runningJobs.asScala foreach { runningJob =>
         val succeedTask =
           ((runningJob.mapProgress() + runningJob.reduceProgress()) * 100).asInstanceOf[Int]
         if (

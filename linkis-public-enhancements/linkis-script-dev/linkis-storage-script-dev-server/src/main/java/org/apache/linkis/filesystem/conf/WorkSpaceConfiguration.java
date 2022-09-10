@@ -59,7 +59,10 @@ public class WorkSpaceConfiguration {
 
   public static final CommonVars<Long> LOCAL_FILESYSTEM_USER_REFRESH_INTERVAL =
       CommonVars$.MODULE$.apply(
-          "wds.linkis.filesystem.local.usermap.refresh.interval.mills", 30 * 60 * 1000L);
+          "linkis.filesystem.local.usermap.refresh.interval.mills", 30 * 60 * 1000L);
+
+  public static final CommonVars<Boolean> ENABLE_USER_GROUP =
+      CommonVars$.MODULE$.apply("linkis.os.user.group.enabled", true);
 
   public static final ExecutorService executorService =
       new ThreadPoolExecutor(

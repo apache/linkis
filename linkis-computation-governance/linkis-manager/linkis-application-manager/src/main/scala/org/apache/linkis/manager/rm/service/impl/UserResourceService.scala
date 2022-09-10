@@ -39,7 +39,7 @@ import org.springframework.util.CollectionUtils
 
 import java.util
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 @Component
 class UserResourceService {
@@ -106,9 +106,9 @@ class UserResourceService {
   @Transactional
   def resetAllUserResource(combinedLabelKey: String): Unit = {
     val userLabels = labelManagerPersistence.getLabelByPattern("%", combinedLabelKey, 0, 0)
-    val resourceIdList = userLabels.map(_.getResourceId)
-    resourceManagerPersistence.deleteResourceById(resourceIdList)
-    resourceManagerPersistence.deleteResourceRelByResourceId(resourceIdList)
+    val resourceIdList = userLabels.asScala.map(_.getResourceId)
+    resourceManagerPersistence.deleteResourceById(resourceIdList.asJava)
+    resourceManagerPersistence.deleteResourceRelByResourceId(resourceIdList.asJava)
   }
 
 }

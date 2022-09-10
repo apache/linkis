@@ -38,5 +38,5 @@ trait PipeLineExecutor {
     options = newOptions
   }
 
-  def cleanOptions = options = null
+  def cleanOptions: Unit = options = null
 }

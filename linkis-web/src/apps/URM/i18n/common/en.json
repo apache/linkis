@@ -48,7 +48,7 @@
         "scriptPath": "Script Path",
         "registerFunction": "Register Function",
         "registerFormat": "Register Format",
-        "preview": "preview",
+        "preview": "Preview",
         "useFormat": "Use Format",
         "returnType": "Return Type",
         "paramType": "Param Type",
@@ -70,7 +70,7 @@
         "SRFHLX": "Please enter the return type",
         "SRCSLX": "Please enter the parameter type",
         "SRFL": "Please enter the directory",
-        "XGHS": "Update funtion",
+        "XGHS": "Update Funtion",
         "XG": "Update",
         "QPZS": "View In Full Screen",
         "QXQP": "Cancel Full Screen"

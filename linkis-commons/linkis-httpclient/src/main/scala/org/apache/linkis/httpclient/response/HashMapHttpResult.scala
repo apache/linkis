@@ -44,10 +44,11 @@ class HashMapHttpResult extends HttpResult {
       url: String,
       contentType: String
   ): Unit = {
-    if (statusCode != 200)
+    if (statusCode != 200) {
       throw new HttpClientResultException(
         s"URL $url request failed! ResponseBody is $responseBody."
       )
+    }
     resultMap = JsonUtils.jackson.readValue(responseBody, classOf[util.Map[String, Object]])
     this.responseBody = responseBody
     this.statusCode = statusCode

@@ -526,6 +526,7 @@ class TrinoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
         Utils.tryAndWarn(statement.cancelLeafStage())
       }
     }
+    statementClientCache.clear()
   }
 
   override def close(): Unit = {

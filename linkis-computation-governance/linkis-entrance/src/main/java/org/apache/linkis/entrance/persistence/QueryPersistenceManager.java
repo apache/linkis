@@ -146,7 +146,9 @@ public class QueryPersistenceManager extends PersistenceManager {
     } catch (Exception e) {
       logger.warn("Invalid progress : " + entranceJob.getJobRequest().getProgress(), e);
     }
-    if (job.getProgress() >= 0 && persistedProgress >= updatedProgress && entranceJob.getUpdateMetrisFlag()) {
+    if (job.getProgress() >= 0
+        && persistedProgress >= updatedProgress
+        && entranceJob.getUpdateMetrisFlag()) {
       return;
     }
     job.setProgress(updatedProgress);

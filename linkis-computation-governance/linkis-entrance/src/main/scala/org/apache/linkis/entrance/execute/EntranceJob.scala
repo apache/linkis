@@ -74,7 +74,6 @@ abstract class EntranceJob extends Job {
 
   def setUpdateMetrisFlag(updateDbFlag: Boolean): Unit = this.updateMetrisFlag = updateDbFlag
 
-
   /**
    * Record newest time that a client access status of this job Can be used to monitor client
    * status. e.g. server can detect if linkis-cli process has abnormally ended then kill the job

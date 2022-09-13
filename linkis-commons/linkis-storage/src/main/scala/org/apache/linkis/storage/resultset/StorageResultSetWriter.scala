@@ -25,6 +25,7 @@ import org.apache.linkis.storage.conf.LinkisStorageConf
 import org.apache.linkis.storage.domain.Dolphin
 import org.apache.linkis.storage.utils.{FileSystemUtils, StorageUtils}
 
+import org.apache.commons.io.IOUtils
 import org.apache.hadoop.hdfs.client.HdfsDataOutputStream
 
 import java.io.{IOException, OutputStream}
@@ -146,7 +147,8 @@ class StorageResultSetWriter[K <: MetaData, V <: Record](
 
   def closeFs: Unit = {
     if (fs != null) {
-      fs.close()
+      IOUtils.closeQuietly(fs)
+      fs = null
     }
   }
 
@@ -154,7 +156,8 @@ class StorageResultSetWriter[K <: MetaData, V <: Record](
     Utils.tryFinally(if (outputStream != null) flush()) {
       closeFs
       if (outputStream != null) {
-        outputStream.close()
+        IOUtils.closeQuietly(outputStream)
+        outputStream = null
       }
     }
   }

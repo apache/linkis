@@ -299,7 +299,7 @@ class PrestoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
     var columnCount = 0
     var rows = 0
     val resultSetWriter = engineExecutorContext.createResultSetWriter(ResultSetFactory.TABLE_TYPE)
-    Utils.tryFinally({
+    Utils.tryCatch {
       var results: QueryStatusInfo = null
       if (statement.isRunning) {
         results = statement.currentStatusInfo()
@@ -324,14 +324,15 @@ class PrestoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
         engineExecutorContext.pushProgress(progress(taskId), getProgressInfo(taskId))
         statement.advance()
       }
-    })(IOUtils.closeQuietly(resultSetWriter))
-
+    } { case e: Exception =>
+      IOUtils.closeQuietly(resultSetWriter)
+      throw e
+    }
     logger.info(s"Fetched $columnCount col(s) : $rows row(s) in presto")
     engineExecutorContext.appendStdout(
       LogUtils.generateInfo(s"Fetched $columnCount col(s) : $rows row(s) in presto")
     );
     engineExecutorContext.sendResultSet(resultSetWriter)
-    IOUtils.closeQuietly(resultSetWriter)
   }
 
   // check presto error

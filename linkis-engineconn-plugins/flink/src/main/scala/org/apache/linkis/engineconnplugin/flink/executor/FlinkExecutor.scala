@@ -135,10 +135,8 @@ object FlinkExecutor {
   ): Unit = {
     val resultSetWriter =
       engineExecutionContext.createResultSetWriter(ResultSetFactory.TABLE_TYPE)
-    Utils.tryFinally {
-      writeResultSet(resultSet, resultSetWriter)
-      engineExecutionContext.sendResultSet(resultSetWriter)
-    }(IOUtils.closeQuietly(resultSetWriter))
+    writeResultSet(resultSet, resultSetWriter)
+    engineExecutionContext.sendResultSet(resultSetWriter)
   }
 
 }

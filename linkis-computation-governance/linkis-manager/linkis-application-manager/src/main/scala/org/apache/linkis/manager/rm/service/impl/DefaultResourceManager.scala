@@ -523,7 +523,7 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
                   persistenceResource.getTicketId,
                   ChangeType.ENGINE_INIT,
                   addedResource,
-                  NodeStatus.Running.toString
+                  NodeStatus.Running
                 )
               }
               resourceCheck(label, labelResource)
@@ -634,13 +634,13 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
       node.setServiceInstance(labelContainer.getEngineInstanceLabel.getServiceInstance)
       val metrics = nodeMetricManagerPersistence.getNodeMetrics(node)
       val status = if (null != metrics) {
-        NodeStatus.values()(metrics.getStatus).toString
+        NodeStatus.values()(metrics.getStatus)
       } else {
         logger.warn(
           "EC {} status unknown",
           labelContainer.getEngineInstanceLabel.getServiceInstance
         )
-        NodeStatus.Failed.toString
+        NodeStatus.Failed
       }
       labelContainer.getResourceLabels.asScala.foreach {
         case label: Label[_] =>

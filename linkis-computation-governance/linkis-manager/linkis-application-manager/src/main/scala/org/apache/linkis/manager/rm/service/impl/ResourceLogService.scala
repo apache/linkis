@@ -29,6 +29,8 @@ import org.apache.linkis.manager.label.entity.engine.EngineInstanceLabel
 import org.apache.linkis.manager.rm.domain.RMLabelContainer
 import org.apache.linkis.manager.rm.utils.RMUtils
 
+import org.apache.commons.lang3.StringUtils
+
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
@@ -138,7 +140,7 @@ class ResourceLogService extends Logging {
       ticketId: String,
       changeType: String,
       resource: Resource,
-      status: String = NodeStatus.Starting.toString
+      status: NodeStatus = NodeStatus.Starting
   ): Unit = if (RMUtils.RM_RESOURCE_ACTION_RECORD.getValue) Utils.tryAndWarn {
     val userCreatorEngineType: CombinedLabel =
       labelContainer.getCombinedUserCreatorEngineTypeLabel
@@ -185,7 +187,13 @@ class ResourceLogService extends Logging {
         }
         ecResourceInfoRecord.setReleaseTime(new Date(System.currentTimeMillis))
     }
-    ecResourceInfoRecord.setStatus(status)
+    if (
+        (NodeStatus.Starting != status || StringUtils.isBlank(
+          ecResourceInfoRecord.getStatus
+        )) && !NodeStatus.isCompleted(NodeStatus.toNodeStatus(ecResourceInfoRecord.getStatus))
+    ) {
+      ecResourceInfoRecord.setStatus(status.toString)
+    }
     ecResourceRecordMapper.updateECResourceInfoRecord(ecResourceInfoRecord)
   }
 

@@ -32,7 +32,7 @@ import org.apache.linkis.engineplugin.presto.exception.{
   PrestoClientException,
   PrestoStateInvalidException
 }
-import org.apache.linkis.engineplugin.presto.utils.{PrestoSQLHook, SqlCodeParser}
+import org.apache.linkis.engineplugin.presto.utils.PrestoSQLHook
 import org.apache.linkis.governance.common.paser.SQLCodeParser
 import org.apache.linkis.manager.common.entity.resource.{
   CommonNodeResource,
@@ -60,20 +60,13 @@ import org.apache.commons.lang3.exception.ExceptionUtils
 import org.springframework.util.CollectionUtils
 
 import java.net.URI
-import java.sql.SQLException
 import java.util
 import java.util._
 import java.util.concurrent.{ConcurrentHashMap, TimeUnit}
 
 import scala.collection.JavaConverters._
 
-import com.facebook.presto.client.{
-  ClientSession,
-  QueryStatusInfo,
-  SocketChannelSocketFactory,
-  StatementClient,
-  StatementClientFactory
-}
+import com.facebook.presto.client._
 import com.facebook.presto.spi.security.SelectedRole
 import com.google.common.cache.{Cache, CacheBuilder}
 import okhttp3.OkHttpClient

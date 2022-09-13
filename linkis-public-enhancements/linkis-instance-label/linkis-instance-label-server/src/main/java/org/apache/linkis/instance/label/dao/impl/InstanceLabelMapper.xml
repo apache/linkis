@@ -49,7 +49,7 @@
         <![CDATA[SELECT ]]>
         <include refid="label_search_columns"/>
         <![CDATA[ FROM `linkis_ps_instance_label` WHERE `label_key` = #{labelKey}
-        AND `label_value` = #{stringValue} FOR UPDATE;]]>
+        AND `label_value` = #{labelValue} FOR UPDATE;]]>
     </select>
 
     <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">

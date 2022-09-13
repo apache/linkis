@@ -136,7 +136,7 @@ public class FsRestfulApi {
         FsPath fsPath = new FsPath(path);
         FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
         if (!fileSystem.exists(fsPath)) {
-            if (!FsPath.WINDOWS && UserGroupUtils.isUserExist(userName)) {
+            if (!FsPath.WINDOWS && ! UserGroupUtils.isUserExist(userName)) {
                 LOGGER.warn("User {} not exist in linkis node.", userName);
                 throw WorkspaceExceptionManager.createException(80031);
             }

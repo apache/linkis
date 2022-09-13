@@ -49,7 +49,7 @@ import org.springframework.stereotype.Service
 import java.lang.reflect.UndeclaredThrowableException
 import java.util
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 @Service
 class DefaultEngineNodeManager extends EngineNodeManager with Logging {
@@ -81,10 +81,12 @@ class DefaultEngineNodeManager extends EngineNodeManager with Logging {
     // TODO: user 应该是除了root，hadoop
     val nodes = nodeManagerPersistence
       .getNodes(user)
+      .asScala
       .map(_.getServiceInstance)
       .map(nodeManagerPersistence.getEngineNode)
     val metricses = nodeMetricManagerPersistence
-      .getNodeMetrics(nodes)
+      .getNodeMetrics(nodes.asJava)
+      .asScala
       .map(m => (m.getServiceInstance.toString, m))
       .toMap
     nodes.map { node =>
@@ -93,7 +95,7 @@ class DefaultEngineNodeManager extends EngineNodeManager with Logging {
         .foreach(metricsConverter.fillMetricsToNode(node, _))
       node
     }
-  }
+  }.asJava
 
   override def getEngineNodeInfo(engineNode: EngineNode): EngineNode = {
 
@@ -206,13 +208,15 @@ class DefaultEngineNodeManager extends EngineNodeManager with Logging {
     // 1. add nodeMetrics 2 add RM info
     val resourceInfo =
       resourceManager.getResourceInfo(scoreServiceInstances.map(_.getServiceInstance))
-    val nodeMetrics = nodeMetricManagerPersistence.getNodeMetrics(engineNodes.toList)
+    val nodeMetrics = nodeMetricManagerPersistence.getNodeMetrics(engineNodes.toList.asJava)
     engineNodes.map { engineNode =>
       val optionMetrics =
-        nodeMetrics.find(_.getServiceInstance.equals(engineNode.getServiceInstance))
+        nodeMetrics.asScala.find(_.getServiceInstance.equals(engineNode.getServiceInstance))
 
       val optionRMNode =
-        resourceInfo.resourceInfo.find(_.getServiceInstance.equals(engineNode.getServiceInstance))
+        resourceInfo.resourceInfo.asScala.find(
+          _.getServiceInstance.equals(engineNode.getServiceInstance)
+        )
 
       optionMetrics.foreach(metricsConverter.fillMetricsToNode(engineNode, _))
       optionRMNode.foreach(rmNode => engineNode.setNodeResource(rmNode.getNodeResource))

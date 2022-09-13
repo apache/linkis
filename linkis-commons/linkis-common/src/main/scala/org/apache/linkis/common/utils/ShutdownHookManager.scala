@@ -58,12 +58,12 @@ private[linkis] object ShutdownHookManager {
    * @return
    *   A handle that can be used to unregister the shutdown hook.
    */
-  def addShutdownHook(hook: => Unit): AnyRef = {
+  def addShutdownHook(hook: => Unit): LinkisShutdownHook = {
     addShutdownHook(DEFAULT_SHUTDOWN_ORDER)(hook)
   }
 
   /**
-   * Adds a shutdown hook with the given order. Hooks with higher priority values run first.
+   * Adds a shutdown hook with the given order. Hooks with lower order values run first.
    *
    * @param hook
    *   The code to run during shutdown.

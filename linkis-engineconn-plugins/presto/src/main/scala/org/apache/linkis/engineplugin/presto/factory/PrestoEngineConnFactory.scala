@@ -22,7 +22,7 @@ import org.apache.linkis.engineconn.common.engineconn.EngineConn
 import org.apache.linkis.engineconn.computation.executor.creation.ComputationSingleExecutorEngineConnFactory
 import org.apache.linkis.engineconn.executor.entity.LabelExecutor
 import org.apache.linkis.engineplugin.presto.conf.PrestoConfiguration
-import org.apache.linkis.engineplugin.presto.executer.PrestoEngineConnExecutor
+import org.apache.linkis.engineplugin.presto.executor.PrestoEngineConnExecutor
 import org.apache.linkis.manager.label.entity.engine.{EngineType, RunType}
 import org.apache.linkis.manager.label.entity.engine.EngineType.EngineType
 import org.apache.linkis.manager.label.entity.engine.RunType.RunType

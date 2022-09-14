@@ -345,8 +345,9 @@ public class OpenLooKengEngineConnExecutor extends ConcurrentComputationExecutor
       }
       LOG.warn("Fetched {} col(s) : {} row(s) in openlookeng", columnCount, rows);
       engineExecutorContext.sendResultSet(resultSetWriter);
-    } finally {
+    } catch (Exception e) {
       IOUtils.closeQuietly(resultSetWriter);
+      throw e;
     }
   }
 

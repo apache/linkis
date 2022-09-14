@@ -57,7 +57,7 @@ body:
 
   - type: textarea
     attributes:
-      label: solutions
+      label: Solutions
       description: Describe alternatives you've considered A clear and concise description of any alternative solutions or features you've considered.
 
   - type: textarea

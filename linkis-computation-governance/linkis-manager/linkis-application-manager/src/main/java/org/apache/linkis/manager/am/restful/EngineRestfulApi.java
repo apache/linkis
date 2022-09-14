@@ -155,7 +155,7 @@ public class EngineRestfulApi {
             throws AMErrorException {
         String userName = ModuleUserUtils.getOperationUser(req, "getEngineConn");
         ServiceInstance serviceInstance = getServiceInstance(jsonNode);
-        EngineNode engineNode = engineNodeManager.getEngineNode(serviceInstance);
+        EngineNode engineNode = engineNodeManager.getEngineNodeInfo(serviceInstance);
         if (null == engineNode) {
             ECResourceInfoRecord ecInfo = ecResourceInfoService.getECResourceInfoRecordByInstances(serviceInstance.getInstance());
             if (null == ecInfo) {

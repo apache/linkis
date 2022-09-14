@@ -188,9 +188,8 @@ class ResourceLogService extends Logging {
         ecResourceInfoRecord.setReleaseTime(new Date(System.currentTimeMillis))
     }
     if (
-        (NodeStatus.Starting != status || StringUtils.isBlank(
-          ecResourceInfoRecord.getStatus
-        )) && !NodeStatus.isCompleted(NodeStatus.toNodeStatus(ecResourceInfoRecord.getStatus))
+        StringUtils.isBlank(ecResourceInfoRecord.getStatus) || !NodeStatus
+          .isCompleted(NodeStatus.toNodeStatus(ecResourceInfoRecord.getStatus))
     ) {
       ecResourceInfoRecord.setStatus(status.toString)
     }

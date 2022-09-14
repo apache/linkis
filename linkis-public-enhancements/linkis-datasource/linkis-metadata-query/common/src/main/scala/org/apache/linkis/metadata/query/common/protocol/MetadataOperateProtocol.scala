@@ -17,9 +17,11 @@
 
 package org.apache.linkis.metadata.query.common.protocol
 
+import org.apache.linkis.protocol.message.RequestProtocol
+
 import java.util
 
-trait MetadataOperateProtocol {}
+trait MetadataOperateProtocol extends RequestProtocol {}
 
 /**
  * Request to do connect

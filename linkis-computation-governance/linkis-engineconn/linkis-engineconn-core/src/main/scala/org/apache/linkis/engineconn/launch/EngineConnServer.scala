@@ -80,7 +80,7 @@ object EngineConnServer extends Logging {
       logger.info("Finished to execute hook of beforeCreateEngineConn.")
       // 2. cresate EngineConn
       val engineConn = getEngineConnManager.createEngineConn(getEngineCreationContext)
-      logger.info(s"Finished to create ${engineConn.getEngineConnType}EngineConn.")
+      logger.info(s"Finished to create ${engineConn.getEngineConnType} EngineConn.")
       EngineConnHook.getEngineConnHooks.foreach(
         _.beforeExecutionExecute(getEngineCreationContext, engineConn)
       )

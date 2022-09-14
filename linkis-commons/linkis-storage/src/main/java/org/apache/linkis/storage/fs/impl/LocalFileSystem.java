@@ -285,6 +285,9 @@ public class LocalFileSystem extends FileSystem {
     } else {
       this.properties = new HashMap<String, String>();
     }
+    if (FsPath.WINDOWS) {
+      group = StorageConfiguration.STORAGE_USER_GROUP().getValue(properties);
+    }
     if (StringUtils.isEmpty(group)) {
       String groupInfo;
       try {

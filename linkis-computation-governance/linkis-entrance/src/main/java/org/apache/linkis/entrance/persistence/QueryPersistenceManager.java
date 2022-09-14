@@ -146,10 +146,13 @@ public class QueryPersistenceManager extends PersistenceManager {
     } catch (Exception e) {
       logger.warn("Invalid progress : " + entranceJob.getJobRequest().getProgress(), e);
     }
-    if (job.getProgress() >= 0 && persistedProgress >= updatedProgress) {
+    if (job.getProgress() >= 0
+        && persistedProgress >= updatedProgress
+        && entranceJob.getUpdateMetrisFlag()) {
       return;
     }
     job.setProgress(updatedProgress);
+    entranceJob.setUpdateMetrisFlag(true);
     entranceJob.getJobRequest().setProgress(String.valueOf(updatedProgress));
     updateJobStatus(job);
   }

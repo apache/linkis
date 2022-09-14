@@ -15,22 +15,21 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineplugin.trino.builder
-
-import org.apache.linkis.engineplugin.trino.conf.TrinoConfiguration
-import org.apache.linkis.manager.engineplugin.common.launch.process.JavaProcessEngineConnLaunchBuilder
-import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel
+package org.apache.linkis.engineplugin.trino.utils
 
 import org.apache.commons.lang3.StringUtils
 
-class TrinoProcessEngineConnLaunchBuilder extends JavaProcessEngineConnLaunchBuilder {
+object TrinoSQLHook {
 
-  override def getEngineStartUser(label: UserCreatorLabel): String = {
-    if (TrinoConfiguration.TRINO_USER_ISOLATION_MODE.getValue) {
-      /* using user label if user is blank */
-      label.getUser
+  def preExecuteHook(code: String): String = {
+    replaceBackQuoted(code)
+  }
+
+  private def replaceBackQuoted(code: String): String = {
+    if (StringUtils.isNotBlank(code)) {
+      code.replaceAll("`", "\"")
     } else {
-      TrinoConfiguration.TRINO_DEFAULT_USER.getValue
+      code
     }
   }
 

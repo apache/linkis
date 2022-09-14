@@ -22,6 +22,5 @@ import org.apache.linkis.rpc.Sender;
 
 public interface TenantService {
 
-    TenantResponse getTenantData(TenantRequest request, Sender sender);
-
+  TenantResponse getTenantData(TenantRequest request, Sender sender);
 }

@@ -35,14 +35,12 @@ abstract class ConfigurationHttpClient extends Closeable {
     executeJob(emsListAction).asInstanceOf[EmsListResult]
   }
 
-
 }
 
 object ConfigurationHttpClient {
 
-  def apply(clientConfig: DWSClientConfig): ConfigurationHttpClient = new ConfigurationHttpClientImpl(
-    clientConfig
-  )
+  def apply(clientConfig: DWSClientConfig): ConfigurationHttpClient =
+    new ConfigurationHttpClientImpl(clientConfig)
 
   def apply(serverUrl: String): ConfigurationHttpClient = apply(serverUrl, 30000, 10)
 

@@ -22,6 +22,5 @@ import org.apache.linkis.rpc.Sender;
 
 public interface UserIpService {
 
-    UserIpResponse getUserIpData(UserIpRequest request, Sender sender);
-
+  UserIpResponse getUserIpData(UserIpRequest request, Sender sender);
 }

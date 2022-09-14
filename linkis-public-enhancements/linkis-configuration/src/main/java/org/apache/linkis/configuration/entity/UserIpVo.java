@@ -17,99 +17,99 @@
 
 package org.apache.linkis.configuration.entity;
 
+import java.util.Date;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import java.util.Date;
 
 @ApiModel
 public class UserIpVo {
 
-    @ApiModelProperty(name = "序号")
-    private String id ;
+  @ApiModelProperty(name = "序号")
+  private String id;
 
-    @ApiModelProperty(name = "用户")
-    private String user ;
+  @ApiModelProperty(name = "用户")
+  private String user;
 
-    @ApiModelProperty(name = "creator")
-    private String creator ;
+  @ApiModelProperty(name = "creator")
+  private String creator;
 
-    @ApiModelProperty(name = "ip列表")
-    private String ipList ;
+  @ApiModelProperty(name = "ip列表")
+  private String ipList;
 
-    @ApiModelProperty(name = "创建时间")
-    private Date createTime;
+  @ApiModelProperty(name = "创建时间")
+  private Date createTime;
 
-    @ApiModelProperty(name = "更新时间")
-    private Date updateTime;
+  @ApiModelProperty(name = "更新时间")
+  private Date updateTime;
 
-    @ApiModelProperty(name = "业务来源")
-    private String desc ;
+  @ApiModelProperty(name = "业务来源")
+  private String desc;
 
-    @ApiModelProperty(name = "对接人")
-    private String bussinessUser ;
+  @ApiModelProperty(name = "对接人")
+  private String bussinessUser;
 
+  public String getId() {
+    return id;
+  }
 
-    public String getId() {
-        return id;
-    }
+  public void setId(String id) {
+    this.id = id;
+  }
 
-    public void setId(String id) {
-        this.id = id;
-    }
+  public String getUser() {
+    return user;
+  }
 
-    public String getUser() {
-        return user;
-    }
+  public void setUser(String user) {
+    this.user = user;
+  }
 
-    public void setUser(String user) {
-        this.user = user;
-    }
+  public String getCreator() {
+    return creator;
+  }
 
-    public String getCreator() {
-        return creator;
-    }
+  public void setCreator(String creator) {
+    this.creator = creator;
+  }
 
-    public void setCreator(String creator) {
-        this.creator = creator;
-    }
+  public String getDesc() {
+    return desc;
+  }
 
-    public String getDesc() {
-        return desc;
-    }
+  public void setDesc(String desc) {
+    this.desc = desc;
+  }
 
-    public void setDesc(String desc) {
-        this.desc = desc;
-    }
+  public String getBussinessUser() {
+    return bussinessUser;
+  }
 
-    public String getBussinessUser() {
-        return bussinessUser;
-    }
+  public void setBussinessUser(String bussinessUser) {
+    this.bussinessUser = bussinessUser;
+  }
 
-    public void setBussinessUser(String bussinessUser) {
-        this.bussinessUser = bussinessUser;
-    }
+  public Date getCreateTime() {
+    return createTime;
+  }
 
-    public Date getCreateTime() {
-        return createTime;
-    }
+  public void setCreateTime(Date createTime) {
+    this.createTime = createTime;
+  }
 
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
+  public Date getUpdateTime() {
+    return updateTime;
+  }
 
-    public Date getUpdateTime() {
-        return updateTime;
-    }
+  public void setUpdateTime(Date updateTime) {
+    this.updateTime = updateTime;
+  }
 
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
-    }
+  public String getIpList() {
+    return ipList;
+  }
 
-    public String getIpList() {
-        return ipList;
-    }
-
-    public void setIpList(String ipList) {
-        this.ipList = ipList;
-    }
+  public void setIpList(String ipList) {
+    this.ipList = ipList;
+  }
 }

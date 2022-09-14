@@ -17,11 +17,12 @@
 
 package org.apache.linkis.entrance.interceptor.impl
 
+import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.entrance.interceptor.EntranceInterceptor
 import org.apache.linkis.governance.common.entity.job.JobRequest
 import java.{lang, util}
 
-class TenantCheckInterceptor extends EntranceInterceptor {
+class TenantCheckInterceptor extends EntranceInterceptor with Logging {
 
   /**
    * The apply function is to supplement the information of the incoming parameter task, making the
@@ -31,12 +32,10 @@ class TenantCheckInterceptor extends EntranceInterceptor {
    *
    * @param jobRequest
    * @param logAppender
-   * Used to cache the necessary reminder logs and pass them to the upper layer(用于缓存必要的提醒日志，传给上层)
+   *   Used to cache the necessary reminder logs and pass them to the upper layer(用于缓存必要的提醒日志，传给上层)
    * @return
    */
   override def apply(jobRequest: JobRequest, logAppender: lang.StringBuilder): JobRequest = {
-
-    TenantData.checkSensitiveTables(jobRequest, logAppender)
-
+    TenantData.checkTenantLabel(jobRequest, logAppender)
   }
 }

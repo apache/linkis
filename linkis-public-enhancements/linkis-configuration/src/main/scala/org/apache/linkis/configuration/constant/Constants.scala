@@ -24,8 +24,6 @@ import org.apache.linkis.common.conf.CommonVars
  */
 object Constants {
 
-
-
   val LINKIS_API_VERSION: CommonVars[String] =
     CommonVars[String]("wds.linkis.bml.api.version", "v1")
 

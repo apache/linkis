@@ -38,7 +38,7 @@ import javax.servlet.http.HttpServletRequest;
 
 @Api(tags = "user ip configuration")
 @RestController
-@RequestMapping(path = "/userIpConfig")
+@RequestMapping(path = "/configuration/userIpConfig")
 public class UserIpConfigrationRestfulApi {
 
     private static final Logger logger = LoggerFactory.getLogger(UserIpConfigrationRestfulApi.class);

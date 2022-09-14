@@ -19,6 +19,7 @@ package org.apache.linkis.entrance.interceptor.impl
 
 import org.apache.linkis.entrance.interceptor.EntranceInterceptor
 import org.apache.linkis.governance.common.entity.job.JobRequest
+
 import java.lang
 
 class UserIpCheckInterceptor extends EntranceInterceptor {
@@ -31,10 +32,11 @@ class UserIpCheckInterceptor extends EntranceInterceptor {
    *
    * @param jobRequest
    * @param logAppender
-   * Used to cache the necessary reminder logs and pass them to the upper layer(用于缓存必要的提醒日志，传给上层)
+   *   Used to cache the necessary reminder logs and pass them to the upper layer(用于缓存必要的提醒日志，传给上层)
    * @return
    */
   override def apply(jobRequest: JobRequest, logAppender: lang.StringBuilder): JobRequest = {
     UserIpData.checkUserIp(jobRequest, logAppender)
   }
+
 }

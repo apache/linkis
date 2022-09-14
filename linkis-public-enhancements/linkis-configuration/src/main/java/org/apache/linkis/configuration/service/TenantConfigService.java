@@ -23,11 +23,11 @@ import java.util.List;
 
 public interface TenantConfigService {
 
-    List<TenantVo> queryTenantList(String user, String creator, String tenant);
+  List<TenantVo> queryTenantList(String user, String creator, String tenant);
 
-    void deleteTenant(Integer id);
+  void deleteTenant(Integer id);
 
-    Message updateTenant(TenantVo tenantVo);
+  Message updateTenant(TenantVo tenantVo);
 
-    Message createTenant(TenantVo tenantVo);
+  Message createTenant(TenantVo tenantVo);
 }

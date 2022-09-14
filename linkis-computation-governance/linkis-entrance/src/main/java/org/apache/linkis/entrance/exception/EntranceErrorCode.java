@@ -32,7 +32,7 @@ public enum EntranceErrorCode {
   JOB_UPDATE_FAILED(20016, "job update failed"),
   VARIABLE_NULL_EXCEPTION(20017, "variable is null"),
   USER_NULL_EXCEPTION(20018, "User information not obtained"),
-  USER_IP_EXCEPTION(20019, "Tenant IP address is not configured");
+  USER_IP_EXCEPTION(20019, "User IP address is not configured");
 
   private int errCode;
   private String desc;

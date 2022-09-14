@@ -21,7 +21,6 @@ import org.apache.linkis.httpclient.request.GetAction
 
 import org.apache.commons.lang3.StringUtils
 
-
 class EmsListAction extends GetAction with ConfigrationResourceAction {
 
   override def suffixURLs: Array[String] = Array("linkisManager", "listAllEMs")
@@ -60,7 +59,8 @@ object EmsListAction {
     def build(): EmsListAction = {
       val emsListAction = new EmsListAction
       if (StringUtils.isNotBlank(instance)) emsListAction.setParameter("instance", instance)
-      if (StringUtils.isNotBlank(nodeHealthy)) emsListAction.setParameter("nodeHealthy", nodeHealthy)
+      if (StringUtils.isNotBlank(nodeHealthy))
+        emsListAction.setParameter("nodeHealthy", nodeHealthy)
       if (StringUtils.isNotBlank(owner)) emsListAction.setParameter("owner", owner)
       if (StringUtils.isNotBlank(user)) emsListAction.setUser(user)
       emsListAction

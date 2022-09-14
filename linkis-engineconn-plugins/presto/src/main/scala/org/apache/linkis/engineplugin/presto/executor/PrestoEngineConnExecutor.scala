@@ -299,7 +299,7 @@ class PrestoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
     var columnCount = 0
     var rows = 0
     val resultSetWriter = engineExecutorContext.createResultSetWriter(ResultSetFactory.TABLE_TYPE)
-    Utils.tryFinally({
+    Utils.tryCatch {
       var results: QueryStatusInfo = null
       if (statement.isRunning) {
         results = statement.currentStatusInfo()
@@ -357,7 +357,7 @@ class PrestoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
         ErrorExecuteResponse(ExceptionUtils.getMessage(cause), cause)
       } else null
     } else if (statement.isClientAborted) {
-      warn(s"Presto statement is killed.")
+      logger.warn(s"Presto statement is killed.")
       null
     } else if (statement.isClientError) {
       throw PrestoClientException("Presto client error.")

@@ -1230,7 +1230,6 @@
               <goals>
                 <goal>check</goal>
               </goals>
-              <phase>validate</phase>
             </execution>
           </executions>
         </plugin>

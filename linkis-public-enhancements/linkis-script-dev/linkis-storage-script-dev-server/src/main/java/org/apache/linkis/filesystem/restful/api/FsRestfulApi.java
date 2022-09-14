@@ -763,7 +763,7 @@ public class FsRestfulApi {
         }
     }
 
-    @ApiOperation(value = "resultsetToExcel", notes = "resultset to excel", response = Message.class)
+    @ApiOperation(value = "resultsetsToExcel", notes = "resultsets to excel", response = Message.class)
     @ApiImplicitParams({
         @ApiImplicitParam(name = "path", required = false, dataType = "String", value = "path"),
         @ApiImplicitParam(name = "outputFileName", required = true, dataType = "String", value = "output file name", defaultValue = "downloadResultset"),

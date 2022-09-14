@@ -325,7 +325,6 @@ class HiveEngineConnExecutor(
       result.clear()
     }
     engineExecutorContext.sendResultSet(resultSetWriter)
-    IOUtils.closeQuietly(resultSetWriter)
     rows
   }
 

@@ -25,14 +25,6 @@ object PrestoConfiguration {
 
   val ENGINE_CONCURRENT_LIMIT = CommonVars[Int]("wds.linkis.engineconn.concurrent.limit", 100)
 
-  val ENTRANCE_MAX_JOB_INSTANCE = CommonVars[Int]("wds.linkis.entrance.max.job.instance", 100)
-
-  val ENTRANCE_PROTECTED_JOB_INSTANCE =
-    CommonVars[Int]("wds.linkis.entrance.protected.job.instance", 0)
-
-  val ENTRANCE_RESULTS_MAX_CACHE =
-    CommonVars("wds.linkis.presto.resultSet.cache.max", new ByteType("512k"))
-
   val PRESTO_HTTP_CONNECT_TIME_OUT = CommonVars[java.lang.Long](
     "wds.linkis.presto.http.connectTimeout",
     new lang.Long(60)
@@ -50,5 +42,8 @@ object PrestoConfiguration {
   val PRESTO_SCHEMA = CommonVars("wds.linkis.presto.schema", "")
   val PRESTO_SOURCE = CommonVars("wds.linkis.presto.source", "global")
   val PRESTO_REQUEST_MEMORY = CommonVars("presto.session.query_max_total_memory", "8GB")
+
+  val PRESTO_SQL_HOOK_ENABLED =
+    CommonVars("linkis.presto.sql.hook.enabled", true, "presto sql hook")
 
 }

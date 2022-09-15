@@ -41,7 +41,7 @@
               :name="item.key">
               <div>
                 <span>{{item.name}}</span>
-                <div style="position: absolute; top: 5px; right: 10px;">
+                <div class="sub-menu-row">
                   <Icon v-show="item.showSubMenu && (item.key === '1-9' || item.key === '1-11')" type="ios-arrow-down" class="user-icon"/>
                   <Icon v-show="!item.showSubMenu && (item.key === '1-9' || item.key === '1-11')" type="ios-arrow-up" class="user-icon"/>
                 </div>
@@ -51,7 +51,7 @@
                   <CellGroup
                     v-for="(item3, index3) in (item.key === '1-9' ? urmSideNavList.children : basedataNavList.children)"
                     :key="index3"
-                    @on-click="handleCellClick2">
+                    @on-click="clickToRoute">
                     <Cell
                       :key="index3"
                       :class="{ crrentItem: crrentItem === item3.key }"
@@ -195,7 +195,7 @@ export default {
         },
       });
     },
-    handleCellClick2(index) {
+    clickToRoute(index) {
       const activedCellParent = index.split('-').slice(0, 2).join('-') === '1-9' ? this.urmSideNavList : this.basedataNavList;
       this.crrentItem = index;
       const activedCell = activedCellParent.children.find((item) => item.key === index);
@@ -226,7 +226,7 @@ export default {
       next((vm) => {
         if (lastActiveConsole) {
           if (lastActiveConsole.key === '1-9-1' || lastActiveConsole.key === '1-9-2') {
-            vm.handleCellClick2(lastActiveConsole.key);
+            vm.clickToRoute(lastActiveConsole.key);
           } else {
             vm.handleCellClick(lastActiveConsole.key);
           }
@@ -251,5 +251,10 @@ export default {
     .ivu-tabs-bar {
       border-bottom: 0;
     }
+  }
+  .sub-menu-row{
+    position: absolute;
+    top: 5px;
+    right: 10px;
   }
   </style>

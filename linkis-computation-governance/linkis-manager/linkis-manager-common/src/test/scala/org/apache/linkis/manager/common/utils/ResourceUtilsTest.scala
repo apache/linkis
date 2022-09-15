@@ -18,15 +18,28 @@
 package org.apache.linkis.manager.common.utils
 
 import org.apache.linkis.manager.common.entity.persistence.PersistenceResource
-import org.apache.linkis.manager.common.entity.resource.{CPUResource, CommonNodeResource, DriverAndYarnResource, InstanceResource, LoadInstanceResource, LoadResource, MemoryResource, Resource, ResourceType, SpecialResource, YarnResource}
+import org.apache.linkis.manager.common.entity.resource.{
+  CommonNodeResource,
+  CPUResource,
+  DriverAndYarnResource,
+  InstanceResource,
+  LoadInstanceResource,
+  LoadResource,
+  MemoryResource,
+  Resource,
+  ResourceType,
+  SpecialResource,
+  YarnResource
+}
 import org.apache.linkis.manager.common.utils.ResourceUtils.serializeResource
-import org.junit.jupiter.api.Assertions.{assertEquals, assertTrue}
-import org.junit.jupiter.api.{BeforeEach, Test}
 
 import java.util.Date
 
+import org.junit.jupiter.api.{BeforeEach, Test}
+import org.junit.jupiter.api.Assertions.{assertEquals, assertTrue}
+
 class ResourceUtilsTest {
-  
+
   @Test def testFromPersistenceResource: Unit = {
     val persistenceResource = new PersistenceResource
     val s = "{\"cores\":8}"
@@ -51,7 +64,8 @@ class ResourceUtilsTest {
     val rate0: Float = ResourceUtils.getLoadInstanceResourceRate(null, null)
     val rate1: Float = ResourceUtils.getLoadInstanceResourceRate(cpuResource, null)
     val rate2: Float = ResourceUtils.getLoadInstanceResourceRate(loadInstanceResource, cpuResource)
-    val rate3: Float = ResourceUtils.getLoadInstanceResourceRate(loadInstanceResource, loadInstanceResource1)
+    val rate3: Float =
+      ResourceUtils.getLoadInstanceResourceRate(loadInstanceResource, loadInstanceResource1)
     assertEquals(0, rate0)
     assertEquals(1, rate1)
     assertEquals(1, rate2)
@@ -88,7 +102,8 @@ class ResourceUtilsTest {
     val memoryType: ResourceType = ResourceUtils.getResourceTypeByResource(memoryResource)
     val instanceType: ResourceType = ResourceUtils.getResourceTypeByResource(instanceResource)
     val loadType: ResourceType = ResourceUtils.getResourceTypeByResource(loadResource)
-    val loadInstanceType: ResourceType = ResourceUtils.getResourceTypeByResource(loadInstanceResource)
+    val loadInstanceType: ResourceType =
+      ResourceUtils.getResourceTypeByResource(loadInstanceResource)
     val yarnType: ResourceType = ResourceUtils.getResourceTypeByResource(yarnResource)
     val driverType: ResourceType = ResourceUtils.getResourceTypeByResource(driverAndYarnResource)
     val specialType: ResourceType = ResourceUtils.getResourceTypeByResource(specialResource)
@@ -113,7 +128,8 @@ class ResourceUtilsTest {
     val yn = ResourceUtils.convertTo(labelResource, ResourceType.Yarn);
     assertEquals(labelResource, yn);
 
-    val driverResource: DriverAndYarnResource = new DriverAndYarnResource(new LoadInstanceResource(0, 0, 0), new YarnResource(0, 0, 0))
+    val driverResource: DriverAndYarnResource =
+      new DriverAndYarnResource(new LoadInstanceResource(0, 0, 0), new YarnResource(0, 0, 0))
     labelResource.setResourceType(ResourceType.DriverAndYarn)
     labelResource.setMaxResource(driverResource)
     labelResource.setMaxResource(driverResource)
@@ -141,7 +157,8 @@ class ResourceUtilsTest {
     labelResource.setCreateTime(new Date)
     labelResource.setUpdateTime(new Date)
     labelResource.setResourceType(ResourceType.CPU)
-    val persistenceResource: PersistenceResource = ResourceUtils.toPersistenceResource(labelResource)
+    val persistenceResource: PersistenceResource =
+      ResourceUtils.toPersistenceResource(labelResource)
     assertEquals("{\"cores\":8}", persistenceResource.getMaxResource)
   }
 
@@ -158,8 +175,10 @@ class ResourceUtilsTest {
     persistenceResource.setCreateTime(new Date)
     persistenceResource.setUpdateTime(new Date)
     persistenceResource.setResourceType("CPU")
-    val resource: CommonNodeResource = ResourceUtils.fromPersistenceResourceAndUser(persistenceResource)
+    val resource: CommonNodeResource =
+      ResourceUtils.fromPersistenceResourceAndUser(persistenceResource)
     val resourceType: ResourceType = resource.getResourceType
     assertEquals(resourceType, ResourceType.CPU)
   }
+
 }

@@ -1,4 +1,3 @@
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -16,68 +15,60 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.manager.common.utils; 
- 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.linkis.common.exception.ExceptionLevel;
-import org.apache.linkis.manager.common.conf.ManagerCommonConf;
+package org.apache.linkis.manager.common.utils;
+
 import org.apache.linkis.manager.common.entity.persistence.PersistenceLabel;
 import org.apache.linkis.manager.label.entity.Label;
+
+import java.util.HashMap;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-/** 
- * ManagerUtils Tester
-*/ 
-public class ManagerUtilsTest { 
+/** ManagerUtils Tester */
+public class ManagerUtilsTest {
 
-    @BeforeEach
-    @DisplayName("Each unit test method is executed once before execution")
-    public void before() throws Exception {
-    }
- 
-    @AfterEach
-    @DisplayName("Each unit test method is executed once before execution")
-    public void after() throws Exception {
-    }
- 
- 
-    @Test
-    public void testGetValueOrDefault() throws Exception {
-        String key = "testKey";
-        String value = "testValue";
-        HashMap<String, Object> map = new HashMap<>();
-        map.put(key, value);
-        String defaultVal = ManagerUtils.getValueOrDefault(map, key, null);
-        assertEquals(value, defaultVal);
+  @BeforeEach
+  @DisplayName("Each unit test method is executed once before execution")
+  public void before() throws Exception {}
 
-        defaultVal = ManagerUtils.getValueOrDefault(map, "otherKey", "test");
-        assertEquals("test", defaultVal);
-    } 
- 
-    @Test
-    public void testGetAdminUser() throws Exception {
-        String adminUser = ManagerUtils.getAdminUser();
-        assertEquals("hadoop", adminUser);
-    } 
- 
-    @Test
-    public void testPersistenceLabelToRealLabel() throws Exception {
-        PersistenceLabel pl = new PersistenceLabel();
-        pl.setLabelKey("testKey");
+  @AfterEach
+  @DisplayName("Each unit test method is executed once before execution")
+  public void after() throws Exception {}
 
-        HashMap<String, String> map = new HashMap<>();
-        map.put("test", "test");
-        pl.setValue(map);
-        Label<?> label = ManagerUtils.persistenceLabelToRealLabel(pl);
-        assertNull(label);
-    } 
-} 
+  @Test
+  public void testGetValueOrDefault() throws Exception {
+    String key = "testKey";
+    String value = "testValue";
+    HashMap<String, Object> map = new HashMap<>();
+    map.put(key, value);
+    String defaultVal = ManagerUtils.getValueOrDefault(map, key, null);
+    assertEquals(value, defaultVal);
+
+    defaultVal = ManagerUtils.getValueOrDefault(map, "otherKey", "test");
+    assertEquals("test", defaultVal);
+  }
+
+  @Test
+  public void testGetAdminUser() throws Exception {
+    String adminUser = ManagerUtils.getAdminUser();
+    assertEquals("hadoop", adminUser);
+  }
+
+  @Test
+  public void testPersistenceLabelToRealLabel() throws Exception {
+    PersistenceLabel pl = new PersistenceLabel();
+    pl.setLabelKey("testKey");
+
+    HashMap<String, String> map = new HashMap<>();
+    map.put("test", "test");
+    pl.setValue(map);
+    Label<?> label = ManagerUtils.persistenceLabelToRealLabel(pl);
+    assertNull(label);
+  }
+}

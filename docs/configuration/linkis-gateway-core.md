@@ -1,20 +1,19 @@
 ## linkis-gateway-core 配置
 
-
 | 模块名(服务名) | 参数名 | 默认值 | 描述 | 是否引用|
 | -------- | -------- | ----- |----- |  -----   |
 |linkis-gateway-core|wds.linkis.gateway.conf.enable.proxy.user |false|gateway.conf.enable.proxy.user|
 |linkis-gateway-core|wds.linkis.gateway.conf.proxy.user.config|proxy.properties|proxy.user.config|
-|linkis-gateway-core|wds.linkis.gateway.conf.proxy.user.scan.interval|1000 * 60 * 10|gateway.conf.proxy.user.scan.interval|
+|linkis-gateway-core|wds.linkis.gateway.conf.proxy.user.scan.interval|1000 *60* 10|gateway.conf.proxy.user.scan.interval|
 |linkis-gateway-core|wds.linkis.gateway.conf.enable.token.auth| false |gateway.conf.enable.token.auth|
-|linkis-gateway-core|wds.linkis.gateway.conf.token.auth.scan.interval|1000 * 60 * 10 |gateway.conf.token.auth.scan.interval|
+|linkis-gateway-core|wds.linkis.gateway.conf.token.auth.scan.interval|1000 *60* 10 |gateway.conf.token.auth.scan.interval|
 |linkis-gateway-core|wds.linkis.gateway.conf.url.pass.auth|  |gateway.conf.url.pass.auth  |
 |linkis-gateway-core|wds.linkis.gateway.conf.enable.sso|false| gateway.conf.enable.sso |
 |linkis-gateway-core|wds.linkis.gateway.conf.sso.interceptor|   |gateway.conf.sso.interceptor|
 |linkis-gateway-core|wds.linkis.admin.user| hadoop |admin.user |
 |linkis-gateway-core|wds.linkis.admin.password|  |admin.password|
 |linkis-gateway-core|wds.linkis.gateway.usercontrol_switch_on|false|gateway.usercontrol_switch_on|
-|linkis-gateway-core|wds.linkis.gateway.publickey.url|http://127.0.0.1:8088| gateway.publickey.url |
+|linkis-gateway-core|wds.linkis.gateway.publickey.url|<http://127.0.0.1:8088>| gateway.publickey.url |
 |linkis-gateway-core|wds.linkis.gateway.conf.proxy.user.list|  | gateway.conf.proxy.user.list|
 |linkis-gateway-core|wds.linkis.usercontrol.application.name|cloud-usercontrol| usercontrol.application.name|
 |linkis-gateway-core|wds.linkis.login_encrypt.enable| false |login_encrypt.enable|

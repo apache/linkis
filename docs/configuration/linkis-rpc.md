@@ -1,6 +1,5 @@
 ## linkis-rpc 配置
 
-
 | 模块名(服务名) | 参数名 | 默认值 | 描述 | 是否引用|
 | -------- | -------- | ----- |----- |  -----   |
 |linkis-rpc|wds.linkis.rpc.broadcast.thread.num| 25 | thread.num |true|
@@ -23,6 +22,3 @@
 |linkis-rpc|wds.linkis.ms.service.scan.package|org.apache.linkis |scan.package|true|
 |linkis-rpc|wds.linkis.rpc.spring.params.enable| false  | params.enable |true|
 |linkis-rpc|wds.linkis.rpc.cache.expire.time|120000L  |expire.time|true|
-
-
-

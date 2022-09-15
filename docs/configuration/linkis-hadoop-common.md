@@ -1,6 +1,5 @@
 ## linkis-hadoop-common 配置
 
-
 | 模块名(服务名) | 参数名 | 默认值 | 描述 | 是否引用|
 | -------- | -------- | ----- |----- |  -----   |
 |linkis-hadoop-common|wds.linkis.hadoop.root.user|hadoop-8|hadoop.root.user|true|
@@ -13,5 +12,5 @@
 |linkis-hadoop-common|hadoop.config.dir|  |config.dir|true|
 |linkis-hadoop-common|wds.linkis.hadoop.external.conf.dir.prefix| /appcom/config/external-conf/hadoop|scan.package  |true|
 |linkis-hadoop-common|wds.linkis.hadoop.hdfs.cache.enable|false|hdfs.cache.enable|true|
-|linkis-hadoop-common|wds.linkis.hadoop.hdfs.cache.idle.time|3 * 60 * 1000|idle.time|true|
+|linkis-hadoop-common|wds.linkis.hadoop.hdfs.cache.idle.time|3 *60* 1000|idle.time|true|
 |linkis-hadoop-common|wds.linkis.hadoop.hdfs.cache.max.time|12h| max.time |true|

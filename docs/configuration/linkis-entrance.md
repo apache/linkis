@@ -1,6 +1,5 @@
 ## linkis-entrance 配置
 
-
 | 模块名(服务名) | 参数名 | 默认值 | 描述 | 是否引用|
 | -------- | -------- | ----- |----- |  -----   |
 |linkis-entrance|wds.linkis.entrance.scheduler.maxParallelismUsers |1000| scheduler.maxParallelismUsers|
@@ -41,7 +40,7 @@
 |linkis-entrance|wds.linkis.entrance.push.progress| false |push.progress|
 |linkis-entrance|wds.linkis.concurrent.group.factory.capacity| 1000|factory.capacity|
 |linkis-entrance|wds.linkis.concurrent.group.factory.running.jobs| 30 | running.jobs|
-|linkis-entrance|wds.linkis.concurrent.group.factory.executor.time| 5 * 60 * 1000 | factory.executor.time|
+|linkis-entrance|wds.linkis.concurrent.group.factory.executor.time| 5 *60* 1000 | factory.executor.time|
 |linkis-entrance|wds.linkis.entrance.engine.lastupdate.timeout| 5s |lastupdate.timeout|
 |linkis-entrance|wds.linkis.entrance.engine.timeout| 10s|engine.timeout|
 |linkis-entrance|wds.linkis.entrance.engine.activity_monitor.interval| 3s|activity_monitor.interval|
@@ -50,17 +49,14 @@
 |linkis-entrance|wds.linkis.user.parallel.reflesh.time| 30|user.parallel.reflesh.time|
 |linkis-entrance|wds.linkis.entrance.jobinfo.update.retry| true | jobinfo.update.retry|
 |linkis-entrance|wds.linkis.entrance.jobinfo.update.retry.max.times| 3 | update.retry.max.times|
-|linkis-entrance|wds.linkis.entrance.jobinfo.update.retry.interval| 2 * 60 * 1000| update.retry.interval|
+|linkis-entrance|wds.linkis.entrance.jobinfo.update.retry.interval| 2 *60* 1000| update.retry.interval|
 |linkis-entrance|wds.linkis.entrance.code.parser.selective.ignored| true|parser.selective.ignored|
 |linkis-entrance|wds.linkis.entrance.code.parser.enable| false|parser.enable|
 |linkis-entrance|wds.linkis.entrance.yarn.queue.core.max| 300|yarn.queue.core.max|
 |linkis-entrance|wds.linkis.entrance.yarn.queue.memory.max.g| 1000|yarn.queue.memory.max.g|
 |linkis-entrance|linkis.entrance.enable.hdfs.log.cache|true|hdfs.log.cache|
 |linkis-entrance|linkis.entrance.cli.heartbeat.threshold.sec| 30L |heartbeat.threshold.sec|
-|linkis-entrance|wds.linkis.entrance.log.push.interval.time| 5 * 60 * 1000|push.interval.time|
+|linkis-entrance|wds.linkis.entrance.log.push.interval.time| 5 *60* 1000|push.interval.time|
 |linkis-entrance|wds.linkis.consumer.group.cache.capacity| 5000 | group.cache.capacity|
 |linkis-entrance|wds.linkis.consumer.group.expire.time.hour| 50 | expire.time.hour|
 |linkis-entrance|wds.linkis.entrance.client.monitor.creator|LINKISCLI| client.monitor.creator|
- 
-
-

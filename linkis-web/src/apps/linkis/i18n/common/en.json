@@ -155,13 +155,14 @@
             "dataSourceManage": "DataSource Manage",
             "userResourceManagement": "User Resource Management",
             "errorCode": "Error Manage",
-            "gatewayAuthToken": "Gateway Auth Token Manage",
+            "gatewayAuthToken": "Token Manage",
             "rmExternalResourceProvider": "External Resource Provider Manage",
             "udfManager": "UDF User Manage",
             "udfTree": "UDF Tree",
             "datasourceAccess": "Data source access permissions",
             "datasourceEnv": "Datasource Environment",
             "datasourceType": "Datasource Type",
+            "EnginePluginManagement": "Engine Plugin Management",
             "basedataManagement": "Base data management"
           }
         }

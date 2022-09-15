@@ -55,168 +55,159 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 
 import javax.servlet.DispatcherType;
 
+import java.util.EnumSet;
+
 import com.google.gson.Gson;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.webapp.WebAppContext;
 
-import java.util.EnumSet;
-
 @SpringBootApplication
 @EnableDiscoveryClient
 @ComponentScan(basePackages = "org.apache.linkis")
 public class TestContextHAManager extends SpringBootServletInitializer {
 
-    private static ConfigurableApplicationContext applicationContext;
-    private static ServiceInstance serviceInstance;
-    private static final Gson gson = new Gson();
+  private static ConfigurableApplicationContext applicationContext;
+  private static ServiceInstance serviceInstance;
+  private static final Gson gson = new Gson();
 
-    public static void main(String[] args) throws ReflectiveOperationException {
+  public static void main(String[] args) throws ReflectiveOperationException {
 
-        final SpringApplication application = new SpringApplication(TestContextHAManager.class);
-        application.addListeners(
-                new ApplicationListener<ApplicationPreparedEvent>() {
-                    public void onApplicationEvent(
-                            ApplicationPreparedEvent applicationPreparedEvent) {
-                        System.out.println("add config from config server...");
-                        if (applicationContext == null) {
-                            applicationContext = applicationPreparedEvent.getApplicationContext();
-                        }
-                        System.out.println("initialize DataWorkCloud spring application...");
-                        initDWCApplication();
-                    }
-                });
-        application.addListeners(
-                new ApplicationListener<RefreshScopeRefreshedEvent>() {
-                    public void onApplicationEvent(RefreshScopeRefreshedEvent applicationEvent) {
-                        System.out.println("refresh config from config server...");
-                        updateRemoteConfig();
-                    }
-                });
-        String listeners = ServerConfiguration.BDP_SERVER_SPRING_APPLICATION_LISTENERS().getValue();
-        if (StringUtils.isNotBlank(listeners)) {
-            for (String listener : listeners.split(",")) {
-                application.addListeners(
-                        (ApplicationListener<?>) Class.forName(listener).newInstance());
+    final SpringApplication application = new SpringApplication(TestContextHAManager.class);
+    application.addListeners(
+        new ApplicationListener<ApplicationPreparedEvent>() {
+          public void onApplicationEvent(ApplicationPreparedEvent applicationPreparedEvent) {
+            System.out.println("add config from config server...");
+            if (applicationContext == null) {
+              applicationContext = applicationPreparedEvent.getApplicationContext();
             }
-        }
-        applicationContext = application.run(args);
-
-        try {
-            //            Thread.sleep(3000l);
-            AbstractContextHAManager haManager =
-                    (AbstractContextHAManager)
-                            applicationContext.getBean(AbstractContextHAManager.class);
-            if (null == haManager) {
-                System.err.println("Null haManager!");
-                return;
-            }
-            testHAManager(haManager);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+            System.out.println("initialize DataWorkCloud spring application...");
+            initDWCApplication();
+          }
+        });
+    application.addListeners(
+        new ApplicationListener<RefreshScopeRefreshedEvent>() {
+          public void onApplicationEvent(RefreshScopeRefreshedEvent applicationEvent) {
+            System.out.println("refresh config from config server...");
+            updateRemoteConfig();
+          }
+        });
+    String listeners = ServerConfiguration.BDP_SERVER_SPRING_APPLICATION_LISTENERS().getValue();
+    if (StringUtils.isNotBlank(listeners)) {
+      for (String listener : listeners.split(",")) {
+        application.addListeners((ApplicationListener<?>) Class.forName(listener).newInstance());
+      }
     }
+    applicationContext = application.run(args);
 
-    private static void initDWCApplication() {
-        serviceInstance = new ServiceInstance();
-        serviceInstance.setApplicationName(
-                applicationContext.getEnvironment().getProperty("spring.application.name"));
-        serviceInstance.setInstance(
-                Utils.getComputerName()
-                        + ":"
-                        + applicationContext.getEnvironment().getProperty("server.port"));
-        LinkisException.setApplicationName(serviceInstance.getApplicationName());
-        LinkisException.setHostname(Utils.getComputerName());
-        LinkisException.setHostPort(
-                Integer.parseInt(applicationContext.getEnvironment().getProperty("server.port")));
+    try {
+      //            Thread.sleep(3000l);
+      AbstractContextHAManager haManager =
+          (AbstractContextHAManager) applicationContext.getBean(AbstractContextHAManager.class);
+      if (null == haManager) {
+        System.err.println("Null haManager!");
+        return;
+      }
+      testHAManager(haManager);
+    } catch (Exception e) {
+      e.printStackTrace();
     }
+  }
 
-    public static void updateRemoteConfig() {
-        addOrUpdateRemoteConfig(applicationContext.getEnvironment(), true);
-    }
+  private static void initDWCApplication() {
+    serviceInstance = new ServiceInstance();
+    serviceInstance.setApplicationName(
+        applicationContext.getEnvironment().getProperty("spring.application.name"));
+    serviceInstance.setInstance(
+        Utils.getComputerName()
+            + ":"
+            + applicationContext.getEnvironment().getProperty("server.port"));
+    LinkisException.setApplicationName(serviceInstance.getApplicationName());
+    LinkisException.setHostname(Utils.getComputerName());
+    LinkisException.setHostPort(
+        Integer.parseInt(applicationContext.getEnvironment().getProperty("server.port")));
+  }
 
-    public static void addRemoteConfig() {
-        addOrUpdateRemoteConfig(applicationContext.getEnvironment(), false);
-    }
+  public static void updateRemoteConfig() {
+    addOrUpdateRemoteConfig(applicationContext.getEnvironment(), true);
+  }
 
-    private static void addOrUpdateRemoteConfig(Environment env, boolean isUpdateOrNot) {
-        StandardEnvironment environment = (StandardEnvironment) env;
-        PropertySource propertySource = environment.getPropertySources().get("bootstrapProperties");
-        if (propertySource == null) {
-            return;
-        }
-        CompositePropertySource source = (CompositePropertySource) propertySource;
-        for (String key : source.getPropertyNames()) {
-            Object val = source.getProperty(key);
-            if (val == null) {
-                continue;
-            }
-            if (isUpdateOrNot) {
-                System.out.println(
-                        "update remote config => " + key + " = " + source.getProperty(key));
-                BDPConfiguration.set(key, val.toString());
-            } else {
-                System.out.println("add remote config => " + key + " = " + source.getProperty(key));
-                BDPConfiguration.setIfNotExists(key, val.toString());
-            }
-        }
-    }
+  public static void addRemoteConfig() {
+    addOrUpdateRemoteConfig(applicationContext.getEnvironment(), false);
+  }
 
-    @Override
-    protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
-        return builder.sources(DataWorkCloudApplication.class);
+  private static void addOrUpdateRemoteConfig(Environment env, boolean isUpdateOrNot) {
+    StandardEnvironment environment = (StandardEnvironment) env;
+    PropertySource propertySource = environment.getPropertySources().get("bootstrapProperties");
+    if (propertySource == null) {
+      return;
     }
+    CompositePropertySource source = (CompositePropertySource) propertySource;
+    for (String key : source.getPropertyNames()) {
+      Object val = source.getProperty(key);
+      if (val == null) {
+        continue;
+      }
+      if (isUpdateOrNot) {
+        System.out.println("update remote config => " + key + " = " + source.getProperty(key));
+        BDPConfiguration.set(key, val.toString());
+      } else {
+        System.out.println("add remote config => " + key + " = " + source.getProperty(key));
+        BDPConfiguration.setIfNotExists(key, val.toString());
+      }
+    }
+  }
 
-    @Bean
-    public WebServerFactoryCustomizer<JettyServletWebServerFactory> jettyFactoryCustomizer() {
-        return new WebServerFactoryCustomizer<JettyServletWebServerFactory>() {
-            public void customize(JettyServletWebServerFactory jettyServletWebServerFactory) {
-                jettyServletWebServerFactory.addServerCustomizers(
-                        new JettyServerCustomizer() {
-                            public void customize(Server server) {
-                                Handler[] childHandlersByClass =
-                                        server.getChildHandlersByClass(WebAppContext.class);
-                                final WebAppContext webApp =
-                                        (WebAppContext) childHandlersByClass[0];
-                                FilterHolder filterHolder =
-                                        new FilterHolder(CharacterEncodingFilter.class);
-                                filterHolder.setInitParameter(
-                                        "encoding", Configuration.BDP_ENCODING().getValue());
-                                filterHolder.setInitParameter("forceEncoding", "true");
-                                webApp.addFilter(
-                                        filterHolder, "/*", EnumSet.allOf(DispatcherType.class));
-                                // BDPJettyServerHelper.setupRestApiContextHandler(webApp);
-                                BDPJettyServerHelper.setupSpringRestApiContextHandler(webApp);
-                                if (ServerConfiguration.BDP_SERVER_SOCKET_MODE().getValue()) {
-                                    BDPJettyServerHelper.setupControllerServer(webApp);
-                                }
-                                if (!ServerConfiguration.BDP_SERVER_DISTINCT_MODE().getValue()) {
-                                    BDPJettyServerHelper.setupWebAppContext(webApp);
-                                }
-                            }
-                        });
-            }
-        };
-    }
+  @Override
+  protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
+    return builder.sources(DataWorkCloudApplication.class);
+  }
 
-    // test
-    private static void testHAManager(AbstractContextHAManager contextHAManager) {
-        // 1 test create
-        TestHAID haid = new TestHAID();
-        try {
-            TestPersistence testPersistence =
-                    contextHAManager.getContextHAProxy(new TestPersistence());
-            HAContextID haContextID = testPersistence.createHAID(haid);
-            testPersistence.passHAID(haContextID);
-            testPersistence.setContextId(haContextID.getContextId());
-        } catch (CSErrorException e) {
-            e.printStackTrace();
-        }
-        System.out.println("Test HaManager End.");
-    }
+  @Bean
+  public WebServerFactoryCustomizer<JettyServletWebServerFactory> jettyFactoryCustomizer() {
+    return new WebServerFactoryCustomizer<JettyServletWebServerFactory>() {
+      public void customize(JettyServletWebServerFactory jettyServletWebServerFactory) {
+        jettyServletWebServerFactory.addServerCustomizers(
+            new JettyServerCustomizer() {
+              public void customize(Server server) {
+                Handler[] childHandlersByClass =
+                    server.getChildHandlersByClass(WebAppContext.class);
+                final WebAppContext webApp = (WebAppContext) childHandlersByClass[0];
+                FilterHolder filterHolder = new FilterHolder(CharacterEncodingFilter.class);
+                filterHolder.setInitParameter("encoding", Configuration.BDP_ENCODING().getValue());
+                filterHolder.setInitParameter("forceEncoding", "true");
+                webApp.addFilter(filterHolder, "/*", EnumSet.allOf(DispatcherType.class));
+                // BDPJettyServerHelper.setupRestApiContextHandler(webApp);
+                BDPJettyServerHelper.setupSpringRestApiContextHandler(webApp);
+                if (ServerConfiguration.BDP_SERVER_SOCKET_MODE().getValue()) {
+                  BDPJettyServerHelper.setupControllerServer(webApp);
+                }
+                if (!ServerConfiguration.BDP_SERVER_DISTINCT_MODE().getValue()) {
+                  BDPJettyServerHelper.setupWebAppContext(webApp);
+                }
+              }
+            });
+      }
+    };
+  }
 
-    public static ServiceInstance getServiceInstance() {
-        return serviceInstance;
+  // test
+  private static void testHAManager(AbstractContextHAManager contextHAManager) {
+    // 1 test create
+    TestHAID haid = new TestHAID();
+    try {
+      TestPersistence testPersistence = contextHAManager.getContextHAProxy(new TestPersistence());
+      HAContextID haContextID = testPersistence.createHAID(haid);
+      testPersistence.passHAID(haContextID);
+      testPersistence.setContextId(haContextID.getContextId());
+    } catch (CSErrorException e) {
+      e.printStackTrace();
     }
+    System.out.println("Test HaManager End.");
+  }
+
+  public static ServiceInstance getServiceInstance() {
+    return serviceInstance;
+  }
 }

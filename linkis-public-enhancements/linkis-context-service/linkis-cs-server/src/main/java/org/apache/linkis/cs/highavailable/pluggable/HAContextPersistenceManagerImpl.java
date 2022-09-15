@@ -30,68 +30,67 @@ import javax.annotation.PostConstruct;
 @Component
 public class HAContextPersistenceManagerImpl implements ContextPersistenceManager {
 
-    @Autowired private ContextIDPersistence contextIDPersistence;
-    @Autowired private ContextMapPersistence contextMapPersistence;
-    @Autowired private ContextHistoryPersistence contextHistoryPersistence;
-    @Autowired private ContextMetricsPersistence contextMetricsPersistence;
-    @Autowired private ContextIDListenerPersistence contextIDListenerPersistence;
-    @Autowired private ContextKeyListenerPersistence contextKeyListenerPersistence;
-    @Autowired private TransactionManager transactionManager;
-    @Autowired private KeywordContextHistoryPersistence keywordContextHistoryPersistence;
+  @Autowired private ContextIDPersistence contextIDPersistence;
+  @Autowired private ContextMapPersistence contextMapPersistence;
+  @Autowired private ContextHistoryPersistence contextHistoryPersistence;
+  @Autowired private ContextMetricsPersistence contextMetricsPersistence;
+  @Autowired private ContextIDListenerPersistence contextIDListenerPersistence;
+  @Autowired private ContextKeyListenerPersistence contextKeyListenerPersistence;
+  @Autowired private TransactionManager transactionManager;
+  @Autowired private KeywordContextHistoryPersistence keywordContextHistoryPersistence;
 
-    @Autowired private AbstractContextHAManager contextHAManager;
+  @Autowired private AbstractContextHAManager contextHAManager;
 
-    @PostConstruct
-    void init() throws CSErrorException {
-        contextIDPersistence = contextHAManager.getContextHAProxy(contextIDPersistence);
-        contextMapPersistence = contextHAManager.getContextHAProxy(contextMapPersistence);
-        contextHistoryPersistence = contextHAManager.getContextHAProxy(contextHistoryPersistence);
-        contextMetricsPersistence = contextHAManager.getContextHAProxy(contextMetricsPersistence);
-        contextIDListenerPersistence =
-                contextHAManager.getContextHAProxy(contextIDListenerPersistence);
-        contextKeyListenerPersistence =
-                contextHAManager.getContextHAProxy(contextKeyListenerPersistence);
-        keywordContextHistoryPersistence =
-                contextHAManager.getContextHAProxy(keywordContextHistoryPersistence);
-    }
+  @PostConstruct
+  void init() throws CSErrorException {
+    contextIDPersistence = contextHAManager.getContextHAProxy(contextIDPersistence);
+    contextMapPersistence = contextHAManager.getContextHAProxy(contextMapPersistence);
+    contextHistoryPersistence = contextHAManager.getContextHAProxy(contextHistoryPersistence);
+    contextMetricsPersistence = contextHAManager.getContextHAProxy(contextMetricsPersistence);
+    contextIDListenerPersistence = contextHAManager.getContextHAProxy(contextIDListenerPersistence);
+    contextKeyListenerPersistence =
+        contextHAManager.getContextHAProxy(contextKeyListenerPersistence);
+    keywordContextHistoryPersistence =
+        contextHAManager.getContextHAProxy(keywordContextHistoryPersistence);
+  }
 
-    @Override
-    public ContextIDPersistence getContextIDPersistence() {
-        return this.contextIDPersistence;
-    }
+  @Override
+  public ContextIDPersistence getContextIDPersistence() {
+    return this.contextIDPersistence;
+  }
 
-    @Override
-    public ContextMapPersistence getContextMapPersistence() {
-        return this.contextMapPersistence;
-    }
+  @Override
+  public ContextMapPersistence getContextMapPersistence() {
+    return this.contextMapPersistence;
+  }
 
-    @Override
-    public ContextHistoryPersistence getContextHistoryPersistence() {
-        return this.contextHistoryPersistence;
-    }
+  @Override
+  public ContextHistoryPersistence getContextHistoryPersistence() {
+    return this.contextHistoryPersistence;
+  }
 
-    @Override
-    public KeywordContextHistoryPersistence getKeywordContextHistoryPersistence() {
-        return this.keywordContextHistoryPersistence;
-    }
+  @Override
+  public KeywordContextHistoryPersistence getKeywordContextHistoryPersistence() {
+    return this.keywordContextHistoryPersistence;
+  }
 
-    @Override
-    public ContextMetricsPersistence getContextMetricsPersistence() {
-        return this.contextMetricsPersistence;
-    }
+  @Override
+  public ContextMetricsPersistence getContextMetricsPersistence() {
+    return this.contextMetricsPersistence;
+  }
 
-    @Override
-    public ContextIDListenerPersistence getContextIDListenerPersistence() {
-        return this.contextIDListenerPersistence;
-    }
+  @Override
+  public ContextIDListenerPersistence getContextIDListenerPersistence() {
+    return this.contextIDListenerPersistence;
+  }
 
-    @Override
-    public ContextKeyListenerPersistence getContextKeyListenerPersistence() {
-        return this.contextKeyListenerPersistence;
-    }
+  @Override
+  public ContextKeyListenerPersistence getContextKeyListenerPersistence() {
+    return this.contextKeyListenerPersistence;
+  }
 
-    @Override
-    public TransactionManager getTransactionManager() {
-        return this.transactionManager;
-    }
+  @Override
+  public TransactionManager getTransactionManager() {
+    return this.transactionManager;
+  }
 }

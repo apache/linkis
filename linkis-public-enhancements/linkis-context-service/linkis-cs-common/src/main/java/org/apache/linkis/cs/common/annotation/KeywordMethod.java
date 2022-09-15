@@ -24,7 +24,7 @@ import java.lang.annotation.*;
 @Documented
 public @interface KeywordMethod {
 
-    String splitter() default "";
+  String splitter() default "";
 
-    String regex() default "";
+  String regex() default "";
 }

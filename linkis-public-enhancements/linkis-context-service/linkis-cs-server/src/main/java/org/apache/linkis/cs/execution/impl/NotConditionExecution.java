@@ -26,12 +26,12 @@ import org.apache.linkis.cs.execution.ruler.CommonListContextSearchRuler;
 
 public class NotConditionExecution extends UnaryLogicConditionExecution {
 
-    public NotConditionExecution(
-            NotCondition condition, ContextCacheService contextCacheService, ContextID contextID) {
-        super(condition, contextCacheService, contextID);
-        this.contextSearchMatcher = new NotLogicContextSearchMatcher(condition);
-        this.contextSearchRuler = new CommonListContextSearchRuler(contextSearchMatcher);
-        this.contextCacheFetcher =
-                new IterateContextCacheFetcher(contextCacheService, contextSearchRuler);
-    }
+  public NotConditionExecution(
+      NotCondition condition, ContextCacheService contextCacheService, ContextID contextID) {
+    super(condition, contextCacheService, contextID);
+    this.contextSearchMatcher = new NotLogicContextSearchMatcher(condition);
+    this.contextSearchRuler = new CommonListContextSearchRuler(contextSearchMatcher);
+    this.contextCacheFetcher =
+        new IterateContextCacheFetcher(contextCacheService, contextSearchRuler);
+  }
 }

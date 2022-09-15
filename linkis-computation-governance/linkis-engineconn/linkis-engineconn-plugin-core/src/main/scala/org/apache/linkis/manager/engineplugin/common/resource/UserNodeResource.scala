@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,10 +17,9 @@
 
 package org.apache.linkis.manager.engineplugin.common.resource
 
-import java.util.Date
-
 import org.apache.linkis.manager.common.entity.resource.{NodeResource, Resource, ResourceType}
 
+import java.util.Date
 
 class UserNodeResource extends NodeResource {
 
@@ -36,9 +35,9 @@ class UserNodeResource extends NodeResource {
   private var createTime: Date = _
   private var updateTime: Date = _
 
-  def getUser = user
+  def getUser: String = user
 
-  def setUser(user: String) = this.user = user
+  def setUser(user: String): Unit = this.user = user
 
   override def getResourceType: ResourceType = resourceType
 
@@ -60,7 +59,8 @@ class UserNodeResource extends NodeResource {
 
   override def getUsedResource: Resource = this.usedResource
 
-  override def setLockedResource(lockedResource: Resource): Unit = this.lockedResource = lockedResource
+  override def setLockedResource(lockedResource: Resource): Unit = this.lockedResource =
+    lockedResource
 
   override def getLockedResource: Resource = this.lockedResource
 

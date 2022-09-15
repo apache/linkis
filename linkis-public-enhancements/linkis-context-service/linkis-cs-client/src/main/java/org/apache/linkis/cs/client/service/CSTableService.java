@@ -37,215 +37,211 @@ import org.apache.linkis.cs.common.utils.CSCommonUtils;
 
 import org.apache.commons.lang3.StringUtils;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class CSTableService implements TableService {
 
-    private static final Logger logger = LoggerFactory.getLogger(CSTableService.class);
+  private static final Logger logger = LoggerFactory.getLogger(CSTableService.class);
 
-    private SearchService searchService = DefaultSearchService.getInstance();
+  private SearchService searchService = DefaultSearchService.getInstance();
 
-    private static CSTableService csTableService;
+  private static CSTableService csTableService;
 
-    private CSTableService() {}
+  private CSTableService() {}
 
-    public static CSTableService getInstance() {
+  public static CSTableService getInstance() {
+    if (null == csTableService) {
+      synchronized (CSTableService.class) {
         if (null == csTableService) {
-            synchronized (CSTableService.class) {
-                if (null == csTableService) {
-                    csTableService = new CSTableService();
-                }
-            }
+          csTableService = new CSTableService();
         }
-        return csTableService;
+      }
     }
+    return csTableService;
+  }
 
-    @Override
-    public CSTable getCSTable(ContextID contextID, ContextKey contextKey) throws CSErrorException {
-        if (null == contextID || null == contextKey) {
-            logger.warn("contextIDStr or nodeName cannot null");
-            return null;
-        }
+  @Override
+  public CSTable getCSTable(ContextID contextID, ContextKey contextKey) throws CSErrorException {
+    if (null == contextID || null == contextKey) {
+      logger.warn("contextIDStr or nodeName cannot null");
+      return null;
+    }
+    if (contextID instanceof CombinedNodeIDContextID) {
+      contextID = ((CombinedNodeIDContextID) contextID).getLinkisHaWorkFlowContextID();
+    }
+    CSTable csTable = searchService.getContextValue(contextID, contextKey, CSTable.class);
+    if (null != csTable)
+      logger.info(
+          "contextID: {} and contextKey: {} succeed to get table tableName {}",
+          contextID.getContextId(),
+          contextKey.getKey(),
+          csTable.getName());
+    return csTable;
+  }
+
+  @Override
+  public List<CSTable> getUpstreamTables(String contextIDStr, String nodeName)
+      throws CSErrorException {
+    List<CSTable> rsList = new ArrayList<>();
+    if (StringUtils.isBlank(contextIDStr) || StringUtils.isBlank(nodeName)) {
+      logger.warn("contextIDStr or nodeName cannot null");
+      return rsList;
+    }
+    try {
+      ContextID contextID = SerializeHelper.deserializeContextID(contextIDStr);
+      if (null != contextID) {
         if (contextID instanceof CombinedNodeIDContextID) {
-            contextID = ((CombinedNodeIDContextID) contextID).getLinkisHaWorkFlowContextID();
+          contextID = ((CombinedNodeIDContextID) contextID).getLinkisHaWorkFlowContextID();
         }
-        CSTable csTable = searchService.getContextValue(contextID, contextKey, CSTable.class);
+        rsList =
+            searchService.searchUpstreamContext(
+                contextID, nodeName, Integer.MAX_VALUE, CSTable.class);
+      }
+      if (null != rsList)
+        logger.info(
+            "contextID: {} and nodeName: {} succeed to get tables size {}",
+            contextID.getContextId(),
+            nodeName,
+            rsList.size());
+      return rsList;
+    } catch (ErrorException e) {
+      logger.error("Deserialize contextID error. contextIDStr : " + contextIDStr);
+      throw new CSErrorException(ErrorCode.DESERIALIZE_ERROR, "getUpstreamTables error ", e);
+    }
+  }
+
+  @Override
+  public CSTable getUpstreamSuitableTable(String contextIDStr, String nodeName, String keyword)
+      throws CSErrorException {
+    CSTable csTable = null;
+    if (StringUtils.isBlank(contextIDStr) || StringUtils.isBlank(nodeName)) {
+      logger.warn("contextIDStr or nodeName cannot null");
+      return csTable;
+    }
+    try {
+      ContextID contextID = SerializeHelper.deserializeContextID(contextIDStr);
+      if (null != contextID) {
+        if (contextID instanceof CombinedNodeIDContextID) {
+          contextID = ((CombinedNodeIDContextID) contextID).getLinkisHaWorkFlowContextID();
+        }
+        csTable = searchService.searchContext(contextID, keyword, nodeName, CSTable.class);
         if (null != csTable)
-            logger.info(
-                    "contextID: {} and contextKey: {} succeed to get table tableName {}",
-                    contextID.getContextId(),
-                    contextKey.getKey(),
-                    csTable.getName());
-        return csTable;
+          logger.info(
+              "contextID: {} , nodeName: {}, keyword {} succeed to getUpstreamSuitableTable tableName {}",
+              contextID.getContextId(),
+              nodeName,
+              keyword,
+              csTable.getName());
+      }
+    } catch (ErrorException e) {
+      throw new CSErrorException(ErrorCode.DESERIALIZE_ERROR, "getUpstreamSuitableTable error ", e);
     }
+    return csTable;
+  }
 
-    @Override
-    public List<CSTable> getUpstreamTables(String contextIDStr, String nodeName)
-            throws CSErrorException {
-        List<CSTable> rsList = new ArrayList<>();
-        if (StringUtils.isBlank(contextIDStr) || StringUtils.isBlank(nodeName)) {
-            logger.warn("contextIDStr or nodeName cannot null");
-            return rsList;
-        }
+  @Override
+  public List<ContextKeyValue> searchUpstreamTableKeyValue(String contextIDStr, String nodeName)
+      throws CSErrorException {
+    try {
+      ContextID contextID = SerializeHelper.deserializeContextID(contextIDStr);
+      if (contextID instanceof CombinedNodeIDContextID) {
+        contextID = ((CombinedNodeIDContextID) contextID).getLinkisHaWorkFlowContextID();
+      }
+      return searchService.searchUpstreamKeyValue(
+          contextID, nodeName, Integer.MAX_VALUE, CSTable.class);
+    } catch (ErrorException e) {
+      throw new CSErrorException(
+          ErrorCode.DESERIALIZE_ERROR, "Failed to searchUpstreamTableKeyValue ", e);
+    }
+  }
+
+  @Override
+  public void putCSTable(String contextIDStr, String contextKeyStr, CSTable csTable)
+      throws CSErrorException {
+    ContextClient contextClient = ContextClientFactory.getOrCreateContextClient();
+    try {
+      ContextID contextID = SerializeHelper.deserializeContextID(contextIDStr);
+      ContextKey contextKey = SerializeHelper.deserializeContextKey(contextKeyStr);
+      ContextValue contextValue = new CommonContextValue();
+      // todo check keywords
+      contextValue.setKeywords("");
+      contextValue.setValue(csTable);
+      if (contextID instanceof CombinedNodeIDContextID) {
+        contextID = ((CombinedNodeIDContextID) contextID).getLinkisHaWorkFlowContextID();
+      }
+      contextClient.update(contextID, contextKey, contextValue);
+      logger.info(
+          "contextID: {} , contextKeyStr: {} succeed to putCSTable tableName {}",
+          contextID.getContextId(),
+          contextKeyStr,
+          csTable.getName());
+    } catch (ErrorException e) {
+      throw new CSErrorException(ErrorCode.DESERIALIZE_ERROR, "putCSTable error ", e);
+    }
+  }
+
+  @Override
+  public CSTable getCSTable(String contextIDStr, String contextKeyStr) throws CSErrorException {
+    if (StringUtils.isBlank(contextIDStr) || StringUtils.isBlank(contextKeyStr)) {
+      return null;
+    }
+    try {
+      ContextID contextID = SerializeHelper.deserializeContextID(contextIDStr);
+      ContextKey contextKey = SerializeHelper.deserializeContextKey(contextKeyStr);
+      if (contextID instanceof CombinedNodeIDContextID) {
+        contextID = ((CombinedNodeIDContextID) contextID).getLinkisHaWorkFlowContextID();
+      }
+      return getCSTable(contextID, contextKey);
+    } catch (ErrorException e) {
+      throw new CSErrorException(ErrorCode.DESERIALIZE_ERROR, "getCSTable error ", e);
+    }
+  }
+
+  @Override
+  public void registerCSTable(String contextIDStr, String nodeName, String alias, CSTable csTable)
+      throws CSErrorException {
+
+    if (StringUtils.isBlank(contextIDStr) || StringUtils.isBlank(nodeName)) {
+      return;
+    }
+    String tableName = "";
+    if (StringUtils.isNotBlank(alias)) {
+      tableName = CSCommonUtils.CS_TMP_TABLE_PREFIX + nodeName + "_" + alias;
+    } else {
+      for (int i = 1; i < 10; i++) {
+        String tmpTable = CSCommonUtils.CS_TMP_TABLE_PREFIX + nodeName + "_rs" + i;
         try {
-            ContextID contextID = SerializeHelper.deserializeContextID(contextIDStr);
-            if (null != contextID) {
-                if (contextID instanceof CombinedNodeIDContextID) {
-                    contextID =
-                            ((CombinedNodeIDContextID) contextID).getLinkisHaWorkFlowContextID();
-                }
-                rsList =
-                        searchService.searchUpstreamContext(
-                                contextID, nodeName, Integer.MAX_VALUE, CSTable.class);
-            }
-            if (null != rsList)
-                logger.info(
-                        "contextID: {} and nodeName: {} succeed to get tables size {}",
-                        contextID.getContextId(),
-                        nodeName,
-                        rsList.size());
-            return rsList;
-        } catch (ErrorException e) {
-            logger.error("Deserialize contextID error. contextIDStr : " + contextIDStr);
-            throw new CSErrorException(ErrorCode.DESERIALIZE_ERROR, "getUpstreamTables error ", e);
+          ContextKey contextKey = new CommonContextKey();
+          contextKey.setContextScope(ContextScope.PUBLIC);
+          contextKey.setContextType(ContextType.METADATA);
+          contextKey.setKey(CSCommonUtils.getTableKey(nodeName, tmpTable));
+          CSTable oldCsTable =
+              getCSTable(contextIDStr, SerializeHelper.serializeContextKey(contextKey));
+          if (null == oldCsTable) {
+            tableName = tmpTable;
+            break;
+          }
+        } catch (Exception e) {
+          tableName = tmpTable;
+          logger.warn("Failed to build tmp tableName", e);
+          break;
         }
+      }
     }
-
-    @Override
-    public CSTable getUpstreamSuitableTable(String contextIDStr, String nodeName, String keyword)
-            throws CSErrorException {
-        CSTable csTable = null;
-        if (StringUtils.isBlank(contextIDStr) || StringUtils.isBlank(nodeName)) {
-            logger.warn("contextIDStr or nodeName cannot null");
-            return csTable;
-        }
-        try {
-            ContextID contextID = SerializeHelper.deserializeContextID(contextIDStr);
-            if (null != contextID) {
-                if (contextID instanceof CombinedNodeIDContextID) {
-                    contextID =
-                            ((CombinedNodeIDContextID) contextID).getLinkisHaWorkFlowContextID();
-                }
-                csTable = searchService.searchContext(contextID, keyword, nodeName, CSTable.class);
-                if (null != csTable)
-                    logger.info(
-                            "contextID: {} , nodeName: {}, keyword {} succeed to getUpstreamSuitableTable tableName {}",
-                            contextID.getContextId(),
-                            nodeName,
-                            keyword,
-                            csTable.getName());
-            }
-        } catch (ErrorException e) {
-            throw new CSErrorException(
-                    ErrorCode.DESERIALIZE_ERROR, "getUpstreamSuitableTable error ", e);
-        }
-        return csTable;
+    try {
+      csTable.setName(tableName);
+      ContextKey contextKey = new CommonContextKey();
+      contextKey.setContextScope(ContextScope.PUBLIC);
+      contextKey.setContextType(ContextType.METADATA);
+      contextKey.setKey(CSCommonUtils.getTableKey(nodeName, tableName));
+      putCSTable(contextIDStr, SerializeHelper.serializeContextKey(contextKey), csTable);
+    } catch (ErrorException e) {
+      throw new CSErrorException(
+          ErrorCode.DESERIALIZE_ERROR, "Failed to register cs tmp table ", e);
     }
-
-    @Override
-    public List<ContextKeyValue> searchUpstreamTableKeyValue(String contextIDStr, String nodeName)
-            throws CSErrorException {
-        try {
-            ContextID contextID = SerializeHelper.deserializeContextID(contextIDStr);
-            if (contextID instanceof CombinedNodeIDContextID) {
-                contextID = ((CombinedNodeIDContextID) contextID).getLinkisHaWorkFlowContextID();
-            }
-            return searchService.searchUpstreamKeyValue(
-                    contextID, nodeName, Integer.MAX_VALUE, CSTable.class);
-        } catch (ErrorException e) {
-            throw new CSErrorException(
-                    ErrorCode.DESERIALIZE_ERROR, "Failed to searchUpstreamTableKeyValue ", e);
-        }
-    }
-
-    @Override
-    public void putCSTable(String contextIDStr, String contextKeyStr, CSTable csTable)
-            throws CSErrorException {
-        ContextClient contextClient = ContextClientFactory.getOrCreateContextClient();
-        try {
-            ContextID contextID = SerializeHelper.deserializeContextID(contextIDStr);
-            ContextKey contextKey = SerializeHelper.deserializeContextKey(contextKeyStr);
-            ContextValue contextValue = new CommonContextValue();
-            // todo check keywords
-            contextValue.setKeywords("");
-            contextValue.setValue(csTable);
-            if (contextID instanceof CombinedNodeIDContextID) {
-                contextID = ((CombinedNodeIDContextID) contextID).getLinkisHaWorkFlowContextID();
-            }
-            contextClient.update(contextID, contextKey, contextValue);
-            logger.info(
-                    "contextID: {} , contextKeyStr: {} succeed to putCSTable tableName {}",
-                    contextID.getContextId(),
-                    contextKeyStr,
-                    csTable.getName());
-        } catch (ErrorException e) {
-            throw new CSErrorException(ErrorCode.DESERIALIZE_ERROR, "putCSTable error ", e);
-        }
-    }
-
-    @Override
-    public CSTable getCSTable(String contextIDStr, String contextKeyStr) throws CSErrorException {
-        if (StringUtils.isBlank(contextIDStr) || StringUtils.isBlank(contextKeyStr)) {
-            return null;
-        }
-        try {
-            ContextID contextID = SerializeHelper.deserializeContextID(contextIDStr);
-            ContextKey contextKey = SerializeHelper.deserializeContextKey(contextKeyStr);
-            if (contextID instanceof CombinedNodeIDContextID) {
-                contextID = ((CombinedNodeIDContextID) contextID).getLinkisHaWorkFlowContextID();
-            }
-            return getCSTable(contextID, contextKey);
-        } catch (ErrorException e) {
-            throw new CSErrorException(ErrorCode.DESERIALIZE_ERROR, "getCSTable error ", e);
-        }
-    }
-
-    @Override
-    public void registerCSTable(String contextIDStr, String nodeName, String alias, CSTable csTable)
-            throws CSErrorException {
-
-        if (StringUtils.isBlank(contextIDStr) || StringUtils.isBlank(nodeName)) {
-            return;
-        }
-        String tableName = "";
-        if (StringUtils.isNotBlank(alias)) {
-            tableName = CSCommonUtils.CS_TMP_TABLE_PREFIX + nodeName + "_" + alias;
-        } else {
-            for (int i = 1; i < 10; i++) {
-                String tmpTable = CSCommonUtils.CS_TMP_TABLE_PREFIX + nodeName + "_rs" + i;
-                try {
-                    ContextKey contextKey = new CommonContextKey();
-                    contextKey.setContextScope(ContextScope.PUBLIC);
-                    contextKey.setContextType(ContextType.METADATA);
-                    contextKey.setKey(CSCommonUtils.getTableKey(nodeName, tmpTable));
-                    CSTable oldCsTable =
-                            getCSTable(
-                                    contextIDStr, SerializeHelper.serializeContextKey(contextKey));
-                    if (null == oldCsTable) {
-                        tableName = tmpTable;
-                        break;
-                    }
-                } catch (Exception e) {
-                    tableName = tmpTable;
-                    logger.warn("Failed to build tmp tableName", e);
-                    break;
-                }
-            }
-        }
-        try {
-            csTable.setName(tableName);
-            ContextKey contextKey = new CommonContextKey();
-            contextKey.setContextScope(ContextScope.PUBLIC);
-            contextKey.setContextType(ContextType.METADATA);
-            contextKey.setKey(CSCommonUtils.getTableKey(nodeName, tableName));
-            putCSTable(contextIDStr, SerializeHelper.serializeContextKey(contextKey), csTable);
-        } catch (ErrorException e) {
-            throw new CSErrorException(
-                    ErrorCode.DESERIALIZE_ERROR, "Failed to register cs tmp table ", e);
-        }
-    }
+  }
 }

@@ -17,28 +17,28 @@
 
 package org.apache.linkis.bml.common;
 
-import com.google.common.collect.Lists;
-
 import java.util.Arrays;
 import java.util.List;
 
+import com.google.common.collect.Lists;
+
 public interface Constant {
 
-    String FILE_SYSTEM_USER = "hadoop";
+  String FILE_SYSTEM_USER = "hadoop";
 
-    List<String> resourceTypes = Lists.newArrayList(Arrays.asList("hdfs", "share", "file"));
+  List<String> resourceTypes = Lists.newArrayList(Arrays.asList("hdfs", "share", "file"));
 
-    String FIRST_VERSION = "v000001";
+  String FIRST_VERSION = "v000001";
 
-    String DEFAULT_SYSTEM = "WTSS";
+  String DEFAULT_SYSTEM = "WTSS";
 
-    String TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
+  String TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
-    String VERSION_FORMAT = "%06d";
+  String VERSION_FORMAT = "%06d";
 
-    String VERSION_PREFIX = "v";
+  String VERSION_PREFIX = "v";
 
-    String UTF8_ENCODE = "UTF-8";
+  String UTF8_ENCODE = "UTF-8";
 
-    String ISO_ENCODE = "ISO8859-1";
+  String ISO_ENCODE = "ISO8859-1";
 }

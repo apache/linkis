@@ -26,64 +26,62 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
 
 public class RefreshPluginCacheOperation implements Delayed {
-    private AtomicLong triggerTime = new AtomicLong(0);
+  private AtomicLong triggerTime = new AtomicLong(0);
 
-    private TimeUnit timeUnit = TimeUnit.SECONDS;
+  private TimeUnit timeUnit = TimeUnit.SECONDS;
 
-    private long duration = 0L;
+  private long duration = 0L;
 
-    private EngineConnPluginInfo pluginInfo;
+  private EngineConnPluginInfo pluginInfo;
 
-    private Function<EngineConnPluginInfo, EngineConnPluginInstance> operation;
+  private Function<EngineConnPluginInfo, EngineConnPluginInstance> operation;
 
-    public RefreshPluginCacheOperation(
-            Function<EngineConnPluginInfo, EngineConnPluginInstance> operation) {
-        this.operation = operation;
-        this.triggerTime.set(System.currentTimeMillis());
+  public RefreshPluginCacheOperation(
+      Function<EngineConnPluginInfo, EngineConnPluginInstance> operation) {
+    this.operation = operation;
+    this.triggerTime.set(System.currentTimeMillis());
+  }
+
+  void setDuration(long duration) {
+    this.duration = duration;
+  }
+
+  void setTimeUnit(TimeUnit timeUnit) {
+    if (null != timeUnit) {
+      this.timeUnit = timeUnit;
     }
+  }
 
-    void setDuration(long duration) {
-        this.duration = duration;
-    }
+  String cacheStringKey() {
+    return this.pluginInfo != null ? this.pluginInfo.toString() : null;
+  }
 
-    void setTimeUnit(TimeUnit timeUnit) {
-        if (null != timeUnit) {
-            this.timeUnit = timeUnit;
-        }
-    }
+  EngineConnPluginInfo pluginInfo() {
+    return this.pluginInfo;
+  }
 
-    String cacheStringKey() {
-        return this.pluginInfo != null ? this.pluginInfo.toString() : null;
-    }
+  void setPluginInfo(EngineConnPluginInfo pluginInfo) {
+    this.pluginInfo = pluginInfo;
+  }
 
-    EngineConnPluginInfo pluginInfo() {
-        return this.pluginInfo;
-    }
+  public Function<EngineConnPluginInfo, EngineConnPluginInstance> getOperation() {
+    return operation;
+  }
 
-    void setPluginInfo(EngineConnPluginInfo pluginInfo) {
-        this.pluginInfo = pluginInfo;
-    }
+  public void nextTime() {
+    this.triggerTime.addAndGet(TimeUnit.MILLISECONDS.convert(duration, timeUnit));
+  }
 
-    public Function<EngineConnPluginInfo, EngineConnPluginInstance> getOperation() {
-        return operation;
-    }
+  @Override
+  public long getDelay(TimeUnit unit) {
+    return unit.convert(this.triggerTime.get() - System.currentTimeMillis(), TimeUnit.MILLISECONDS);
+  }
 
-    public void nextTime() {
-        this.triggerTime.addAndGet(TimeUnit.MILLISECONDS.convert(duration, timeUnit));
+  @Override
+  public int compareTo(Delayed o) {
+    if (o instanceof RefreshPluginCacheOperation) {
+      return (int) (this.triggerTime.get() - ((RefreshPluginCacheOperation) o).triggerTime.get());
     }
-
-    @Override
-    public long getDelay(TimeUnit unit) {
-        return unit.convert(
-                this.triggerTime.get() - System.currentTimeMillis(), TimeUnit.MILLISECONDS);
-    }
-
-    @Override
-    public int compareTo(Delayed o) {
-        if (o instanceof RefreshPluginCacheOperation) {
-            return (int)
-                    (this.triggerTime.get() - ((RefreshPluginCacheOperation) o).triggerTime.get());
-        }
-        return -1;
-    }
+    return -1;
+  }
 }

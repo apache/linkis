@@ -18,13 +18,13 @@
 package org.apache.linkis.bml.client;
 
 public abstract class AbstractBmlClient implements BmlClient {
-    protected String user;
+  protected String user;
 
-    public String getUser() {
-        return user;
-    }
+  public String getUser() {
+    return user;
+  }
 
-    public void setUser(String user) {
-        this.user = user;
-    }
+  public void setUser(String user) {
+    this.user = user;
+  }
 }

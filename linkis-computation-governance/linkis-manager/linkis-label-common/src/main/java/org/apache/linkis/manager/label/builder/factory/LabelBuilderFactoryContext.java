@@ -23,72 +23,69 @@ import org.apache.linkis.manager.label.conf.LabelCommonConfig;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Iterator;
+import java.util.Set;
+
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Iterator;
-import java.util.Set;
-
 public class LabelBuilderFactoryContext {
 
-    private static final Logger logger = LoggerFactory.getLogger(LabelBuilderFactoryContext.class);
+  private static final Logger logger = LoggerFactory.getLogger(LabelBuilderFactoryContext.class);
 
-    private static Class<? extends LabelBuilderFactory> clazz = StdLabelBuilderFactory.class;
-    private static LabelBuilderFactory labelBuilderFactory = null;
+  private static Class<? extends LabelBuilderFactory> clazz = StdLabelBuilderFactory.class;
+  private static LabelBuilderFactory labelBuilderFactory = null;
 
-    public static void register(Class<? extends LabelBuilderFactory> clazz) {
-        LabelBuilderFactoryContext.clazz = clazz;
-    }
+  public static void register(Class<? extends LabelBuilderFactory> clazz) {
+    LabelBuilderFactoryContext.clazz = clazz;
+  }
 
-    public static LabelBuilderFactory getLabelBuilderFactory() {
+  public static LabelBuilderFactory getLabelBuilderFactory() {
+    if (labelBuilderFactory == null) {
+      synchronized (LabelBuilderFactoryContext.class) {
         if (labelBuilderFactory == null) {
-            synchronized (LabelBuilderFactoryContext.class) {
-                if (labelBuilderFactory == null) {
-                    String className = LabelCommonConfig.LABEL_FACTORY_CLASS.acquireNew();
-                    if (clazz == StdLabelBuilderFactory.class
-                            && StringUtils.isNotBlank(className)) {
-                        try {
-                            clazz =
-                                    (Class<? extends LabelBuilderFactory>)
-                                            ClassUtils.getClass(className);
-                        } catch (ClassNotFoundException e) {
-                            throw new RuntimeException("find class + " + className + " failed!", e);
-                        }
-                    }
-                    try {
-                        labelBuilderFactory = clazz.newInstance();
-                        labelBuilderInitRegister(labelBuilderFactory);
-                    } catch (Throwable e) {
-                        throw new RuntimeException("initial class + " + className + " failed!", e);
-                    }
-                }
+          String className = LabelCommonConfig.LABEL_FACTORY_CLASS.acquireNew();
+          if (clazz == StdLabelBuilderFactory.class && StringUtils.isNotBlank(className)) {
+            try {
+              clazz = (Class<? extends LabelBuilderFactory>) ClassUtils.getClass(className);
+            } catch (ClassNotFoundException e) {
+              throw new RuntimeException("find class + " + className + " failed!", e);
             }
+          }
+          try {
+            labelBuilderFactory = clazz.newInstance();
+            labelBuilderInitRegister(labelBuilderFactory);
+          } catch (Throwable e) {
+            throw new RuntimeException("initial class + " + className + " failed!", e);
+          }
         }
-        return labelBuilderFactory;
+      }
     }
+    return labelBuilderFactory;
+  }
 
-    /**
-     * init register label builder to org.apache.linkis.entrance.factory
-     *
-     * @param labelBuilderFactory
-     */
-    private static void labelBuilderInitRegister(LabelBuilderFactory labelBuilderFactory) {
-        Reflections reflections = org.apache.linkis.common.utils.ClassUtils.reflections();
+  /**
+   * init register label builder to org.apache.linkis.entrance.factory
+   *
+   * @param labelBuilderFactory
+   */
+  private static void labelBuilderInitRegister(LabelBuilderFactory labelBuilderFactory) {
+    Reflections reflections = org.apache.linkis.common.utils.ClassUtils.reflections();
 
-        Set<Class<? extends LabelBuilder>> allLabelBuilderClass =
-                reflections.getSubTypesOf(LabelBuilder.class);
-        if (null != allLabelBuilderClass) {
-            Iterator<Class<? extends LabelBuilder>> iterator = allLabelBuilderClass.iterator();
-            while (iterator.hasNext()) {
-                Class<? extends LabelBuilder> next = iterator.next();
-                try {
-                    labelBuilderFactory.registerLabelBuilder(next.newInstance());
-                    logger.info("Succeed  to register label builder: " + next.getName());
-                } catch (Throwable e) {
-                    logger.error("Failed to register label builder: " + next.getName(), e);
-                }
-            }
+    Set<Class<? extends LabelBuilder>> allLabelBuilderClass =
+        reflections.getSubTypesOf(LabelBuilder.class);
+    if (null != allLabelBuilderClass) {
+      Iterator<Class<? extends LabelBuilder>> iterator = allLabelBuilderClass.iterator();
+      while (iterator.hasNext()) {
+        Class<? extends LabelBuilder> next = iterator.next();
+        try {
+          labelBuilderFactory.registerLabelBuilder(next.newInstance());
+          logger.info("Succeed  to register label builder: " + next.getName());
+        } catch (Throwable e) {
+          logger.error("Failed to register label builder: " + next.getName(), e);
         }
+      }
     }
+  }
 }

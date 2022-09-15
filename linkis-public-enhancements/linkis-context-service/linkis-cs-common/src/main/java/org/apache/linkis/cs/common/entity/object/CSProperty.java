@@ -19,11 +19,11 @@ package org.apache.linkis.cs.common.entity.object;
 
 public interface CSProperty {
 
-    String getKey();
+  String getKey();
 
-    void setKey(String key);
+  void setKey(String key);
 
-    String getValue();
+  String getValue();
 
-    void setValue(String value);
+  void setValue(String value);
 }

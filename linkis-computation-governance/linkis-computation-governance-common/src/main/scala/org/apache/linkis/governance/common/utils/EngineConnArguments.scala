@@ -5,16 +5,16 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.governance.common.utils
 
 import org.apache.commons.lang3.StringUtils
@@ -77,6 +77,7 @@ class DefaultEngineConnArgumentsBuilder extends EngineConnArgumentsBuilder {
     override def getSpringConfMap: Map[String, String] = springOptionMap.toMap
     override def getEngineConnConfMap: Map[String, String] = engineConnOptionMap.toMap
   }
+
 }
 
 trait EngineConnArgumentsParser {
@@ -86,6 +87,7 @@ trait EngineConnArgumentsParser {
   def parseToArgs(engineConnArguments: EngineConnArguments): Array[String]
 
 }
+
 object EngineConnArgumentsParser {
 
   val LABEL_PREFIX = "label."
@@ -105,41 +107,52 @@ class DefaultEngineConnArgumentsParser extends EngineConnArgumentsParser {
   override def parseToObj(args: Array[String]): EngineConnArguments = {
     var i = 0
     val argumentsBuilder = new DefaultEngineConnArgumentsBuilder
-    while(i < args.length) {
+    while (i < args.length) {
       args(i) match {
         case ENGINE_CONN_CONF =>
-          addKeyValue(args(i + 1), (key, value) => {
-            argumentsBuilder.addEngineConnConf(key, value)
-            i += 1
-          })
+          addKeyValue(
+            args(i + 1),
+            (key, value) => {
+              argumentsBuilder.addEngineConnConf(key, value)
+              i += 1
+            }
+          )
         case SPRING_CONF =>
-          addKeyValue(args(i + 1), (key, value) => {
-            argumentsBuilder.addSpringConf(key, value)
-            i += 1
-          })
-        case _ => throw new IllegalArgumentException(s"illegal command line, ${args(i)} cannot recognize.")
+          addKeyValue(
+            args(i + 1),
+            (key, value) => {
+              argumentsBuilder.addSpringConf(key, value)
+              i += 1
+            }
+          )
+        case _ =>
+          throw new IllegalArgumentException(s"illegal command line, ${args(i)} cannot recognize.")
       }
       i += 1
     }
     argumentsBuilder.build()
   }
 
-  private def addKeyValue(keyValue: String, argumentsBuilder: (String, String) => Unit): Unit = keyValue match {
-    case keyValueRegex(key, value) =>
-      argumentsBuilder(key, value)
-    case _ => throw new IllegalArgumentException("illegal command line, format: --conf key=value.")
-  }
+  private def addKeyValue(keyValue: String, argumentsBuilder: (String, String) => Unit): Unit =
+    keyValue match {
+      case keyValueRegex(key, value) =>
+        argumentsBuilder(key, value)
+      case _ =>
+        throw new IllegalArgumentException("illegal command line, format: --conf key=value.")
+    }
 
   override def parseToArgs(engineConnArguments: EngineConnArguments): Array[String] = {
     val options = ArrayBuffer[String]()
-    def write(confMap: Map[String, String], optionType: String): Unit = confMap.foreach { case (key, value) =>
-      if (StringUtils.isNotEmpty(key) && StringUtils.isNotEmpty(value)) {
-        options += optionType
-        options += (key + "=" + value)
-      }
+    def write(confMap: Map[String, String], optionType: String): Unit = confMap.foreach {
+      case (key, value) =>
+        if (StringUtils.isNotEmpty(key) && StringUtils.isNotEmpty(value)) {
+          options += optionType
+          options += (key + "=" + value)
+        }
     }
     write(engineConnArguments.getEngineConnConfMap, ENGINE_CONN_CONF)
     write(engineConnArguments.getSpringConfMap, SPRING_CONF)
     options.toArray
   }
+
 }

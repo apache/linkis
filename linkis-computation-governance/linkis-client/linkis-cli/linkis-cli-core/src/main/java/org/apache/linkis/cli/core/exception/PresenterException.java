@@ -22,15 +22,14 @@ import org.apache.linkis.cli.common.exception.error.ErrorLevel;
 import org.apache.linkis.cli.common.exception.error.ErrorMsg;
 
 public class PresenterException extends LinkisClientRuntimeException {
-    private static final long serialVersionUID = 212314213L;
+  private static final long serialVersionUID = 212314213L;
 
-    public PresenterException(
-            String code, ErrorLevel level, ErrorMsg errMsg, String param[], String... extMsg) {
-        super(code, level, errMsg, param, extMsg);
-    }
+  public PresenterException(
+      String code, ErrorLevel level, ErrorMsg errMsg, String param[], String... extMsg) {
+    super(code, level, errMsg, param, extMsg);
+  }
 
-    public PresenterException(
-            String code, ErrorLevel level, ErrorMsg errMsg, Object... paramsList) {
-        super(code, level, errMsg, paramsList);
-    }
+  public PresenterException(String code, ErrorLevel level, ErrorMsg errMsg, Object... paramsList) {
+    super(code, level, errMsg, paramsList);
+  }
 }

@@ -5,28 +5,29 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.storage.source
 
-import java.io.{Closeable, InputStream}
-import java.util
 import org.apache.linkis.common.io._
+import org.apache.linkis.storage.conf.LinkisStorageConf
 import org.apache.linkis.storage.exception.StorageErrorException
 import org.apache.linkis.storage.resultset.{ResultSetFactory, ResultSetReader}
 import org.apache.linkis.storage.script.ScriptFsReader
 import org.apache.linkis.storage.utils.StorageConfiguration
-import org.apache.commons.math3.util.Pair
-import org.apache.linkis.storage.conf.LinkisStorageConf
 
+import org.apache.commons.math3.util.Pair
+
+import java.io.{Closeable, InputStream}
+import java.util
 
 trait FileSource extends Closeable {
 
@@ -74,20 +75,22 @@ object FileSource {
    * @return
    */
   def create(fsPaths: Array[FsPath], fs: Fs): FileSource = {
-    //非table结果集的过滤掉
+    // 非table结果集的过滤掉
     val fileSplits = fsPaths.map(createResultSetFileSplit(_, fs)).filter(isTableResultSet)
     new ResultsetFileSource(fileSplits)
   }
 
-  private def isTableResultSet(fileSplit: FileSplit): Boolean = fileSplit.`type`.equals(ResultSetFactory.TABLE_TYPE)
+  private def isTableResultSet(fileSplit: FileSplit): Boolean =
+    fileSplit.`type`.equals(ResultSetFactory.TABLE_TYPE)
 
   def isTableResultSet(fileSource: FileSource): Boolean = {
-    //分片中全部为table结果集才返回true
+    // 分片中全部为table结果集才返回true
     fileSource.getFileSplits.forall(isTableResultSet)
   }
 
   def create(fsPath: FsPath, fs: Fs): FileSource = {
-    if (!canRead(fsPath.getPath)) throw new StorageErrorException(54001, "Unsupported open file type(不支持打开的文件类型)")
+    if (!canRead(fsPath.getPath))
+      throw new StorageErrorException(54001, "Unsupported open file type(不支持打开的文件类型)")
     if (isResultSet(fsPath)) {
       new ResultsetFileSource(Array(createResultSetFileSplit(fsPath, fs)))
     } else {
@@ -96,7 +99,8 @@ object FileSource {
   }
 
   def create(fsPath: FsPath, is: InputStream): FileSource = {
-    if (!canRead(fsPath.getPath)) throw new StorageErrorException(54001, "Unsupported open file type(不支持打开的文件类型)")
+    if (!canRead(fsPath.getPath))
+      throw new StorageErrorException(54001, "Unsupported open file type(不支持打开的文件类型)")
     if (isResultSet(fsPath)) {
       new ResultsetFileSource(Array(createResultSetFileSplit(fsPath, is)))
     } else {
@@ -117,12 +121,20 @@ object FileSource {
   }
 
   private def createTextFileSplit(fsPath: FsPath, is: InputStream): FileSplit = {
-    val scriptFsReader = ScriptFsReader.getScriptFsReader(fsPath, StorageConfiguration.STORAGE_RS_FILE_TYPE.getValue, is)
+    val scriptFsReader = ScriptFsReader.getScriptFsReader(
+      fsPath,
+      StorageConfiguration.STORAGE_RS_FILE_TYPE.getValue,
+      is
+    )
     new FileSplit(scriptFsReader)
   }
 
   private def createTextFileSplit(fsPath: FsPath, fs: Fs): FileSplit = {
-    val scriptFsReader = ScriptFsReader.getScriptFsReader(fsPath, StorageConfiguration.STORAGE_RS_FILE_TYPE.getValue, fs.read(fsPath))
+    val scriptFsReader = ScriptFsReader.getScriptFsReader(
+      fsPath,
+      StorageConfiguration.STORAGE_RS_FILE_TYPE.getValue,
+      fs.read(fsPath)
+    )
     new FileSplit(scriptFsReader)
   }
 
@@ -131,4 +143,3 @@ object FileSource {
   }
 
 }
-

@@ -5,22 +5,28 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.engineconn.acessible.executor.service
-import org.apache.commons.lang3.exception.ExceptionUtils
+
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.manager.common.operator.OperatorFactory
-import org.apache.linkis.manager.common.protocol.engine.{EngineOperateRequest, EngineOperateResponse}
+import org.apache.linkis.manager.common.protocol.engine.{
+  EngineOperateRequest,
+  EngineOperateResponse
+}
 import org.apache.linkis.rpc.message.annotation.Receiver
+
+import org.apache.commons.lang3.exception.ExceptionUtils
+
 import org.springframework.stereotype.Service
 
 import scala.collection.JavaConverters.mapAsScalaMapConverter
@@ -29,17 +35,22 @@ import scala.collection.JavaConverters.mapAsScalaMapConverter
 class DefaultOperateService extends OperateService with Logging {
 
   @Receiver
-  override def executeOperation(engineOperateRequest: EngineOperateRequest): EngineOperateResponse = {
+  override def executeOperation(
+      engineOperateRequest: EngineOperateRequest
+  ): EngineOperateResponse = {
     val parameters = engineOperateRequest.parameters.asScala.toMap
     val operator = Utils.tryCatch(OperatorFactory().getOperatorRequest(parameters)) { t =>
       logger.error(s"Get operator failed, parameters is ${engineOperateRequest.parameters}.", t)
       return EngineOperateResponse(Map.empty, true, ExceptionUtils.getRootCauseMessage(t))
     }
-    logger.info(s"Try to execute operator ${operator.getClass.getSimpleName} with parameters ${engineOperateRequest.parameters}.")
-    val result = Utils.tryCatch(operator(parameters)) {t =>
+    logger.info(
+      s"Try to execute operator ${operator.getClass.getSimpleName} with parameters ${engineOperateRequest.parameters}."
+    )
+    val result = Utils.tryCatch(operator(parameters)) { t =>
       logger.error(s"Execute ${operator.getClass.getSimpleName} failed.", t)
       return EngineOperateResponse(Map.empty, true, ExceptionUtils.getRootCauseMessage(t))
     }
     EngineOperateResponse(result)
   }
+
 }

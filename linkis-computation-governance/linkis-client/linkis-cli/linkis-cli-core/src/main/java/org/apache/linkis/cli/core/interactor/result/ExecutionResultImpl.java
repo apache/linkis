@@ -25,44 +25,44 @@ import java.util.Map;
 
 public class ExecutionResultImpl implements ExecutionResult {
 
-    Map<String, Job> jobsMap;
-    ExecutionStatus executionStatus;
-    Exception exception;
+  Map<String, Job> jobsMap;
+  ExecutionStatus executionStatus;
+  Exception exception;
 
-    public ExecutionResultImpl(Map<String, Job> jobsMap, ExecutionStatus executionStatus) {
-        this.jobsMap = jobsMap;
-        this.executionStatus = executionStatus;
-    }
+  public ExecutionResultImpl(Map<String, Job> jobsMap, ExecutionStatus executionStatus) {
+    this.jobsMap = jobsMap;
+    this.executionStatus = executionStatus;
+  }
 
-    public ExecutionResultImpl(
-            Map<String, Job> jobsMap, ExecutionStatus executionStatus, Exception exception) {
-        this.jobsMap = jobsMap;
-        this.executionStatus = executionStatus;
-        this.exception = exception;
-    }
+  public ExecutionResultImpl(
+      Map<String, Job> jobsMap, ExecutionStatus executionStatus, Exception exception) {
+    this.jobsMap = jobsMap;
+    this.executionStatus = executionStatus;
+    this.exception = exception;
+  }
 
-    @Override
-    public Map<String, Job> getJobs() {
-        return jobsMap;
-    }
+  @Override
+  public Map<String, Job> getJobs() {
+    return jobsMap;
+  }
 
-    @Override
-    public ExecutionStatus getExecutionStatus() {
-        return this.executionStatus;
-    }
+  @Override
+  public ExecutionStatus getExecutionStatus() {
+    return this.executionStatus;
+  }
 
-    @Override
-    public void setExecutionStatus(ExecutionStatus executionStatus) {
-        this.executionStatus = executionStatus;
-    }
+  @Override
+  public void setExecutionStatus(ExecutionStatus executionStatus) {
+    this.executionStatus = executionStatus;
+  }
 
-    @Override
-    public Exception getException() {
-        return this.exception;
-    }
+  @Override
+  public Exception getException() {
+    return this.exception;
+  }
 
-    @Override
-    public void setException(Exception exception) {
-        this.exception = exception;
-    }
+  @Override
+  public void setException(Exception exception) {
+    this.exception = exception;
+  }
 }

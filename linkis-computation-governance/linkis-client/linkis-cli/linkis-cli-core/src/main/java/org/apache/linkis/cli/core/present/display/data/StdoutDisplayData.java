@@ -18,13 +18,13 @@
 package org.apache.linkis.cli.core.present.display.data;
 
 public class StdoutDisplayData implements DisplayData {
-    private String content;
+  private String content;
 
-    public StdoutDisplayData(String content) {
-        this.content = content;
-    }
+  public StdoutDisplayData(String content) {
+    this.content = content;
+  }
 
-    public String getContent() {
-        return content;
-    }
+  public String getContent() {
+    return content;
+  }
 }

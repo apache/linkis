@@ -30,48 +30,46 @@ import org.apache.flink.table.client.config.entries.ViewEntry;
 
 /** Operation for DROP VIEW command. */
 public class DropViewOperation implements NonJobOperation {
-    private final FlinkEngineConnContext context;
-    private final String viewName;
-    private final boolean ifExists;
+  private final FlinkEngineConnContext context;
+  private final String viewName;
+  private final boolean ifExists;
 
-    public DropViewOperation(FlinkEngineConnContext context, String viewName, boolean ifExists) {
-        this.context = context;
-        this.viewName = viewName;
-        this.ifExists = ifExists;
+  public DropViewOperation(FlinkEngineConnContext context, String viewName, boolean ifExists) {
+    this.context = context;
+    this.viewName = viewName;
+    this.ifExists = ifExists;
+  }
+
+  @Override
+  public ResultSet execute() throws SqlExecutionException {
+    Environment env = context.getExecutionContext().getEnvironment();
+    TableEntry tableEntry = env.getTables().get(viewName);
+    if (!(tableEntry instanceof ViewEntry) && !ifExists) {
+      throw new SqlExecutionException("'" + viewName + "' does not exist in the current session.");
     }
 
-    @Override
-    public ResultSet execute() throws SqlExecutionException {
-        Environment env = context.getExecutionContext().getEnvironment();
-        TableEntry tableEntry = env.getTables().get(viewName);
-        if (!(tableEntry instanceof ViewEntry) && !ifExists) {
-            throw new SqlExecutionException(
-                    "'" + viewName + "' does not exist in the current session.");
-        }
-
-        // Here we rebuild the ExecutionContext because we want to ensure that all the remaining
-        // views can work fine.
-        // Assume the case:
-        //   view1=select 1;
-        //   view2=select * from view1;
-        // If we delete view1 successfully, then query view2 will throw exception because view1 does
-        // not exist. we want
-        // all the remaining views are OK, so do the ExecutionContext rebuilding to avoid breaking
-        // the view dependency.
-        Environment newEnv = env.clone();
-        if (newEnv.getTables().remove(viewName) != null) {
-            ExecutionContext oldExecutionContext = context.getExecutionContext();
-            oldExecutionContext.wrapClassLoader(tableEnv -> tableEnv.dropTemporaryView(viewName));
-            // Renew the ExecutionContext.
-            ExecutionContext.Builder builder =
-                    context.newExecutionContextBuilder(
-                                    context.getEnvironmentContext().getDefaultEnv())
-                            .env(newEnv)
-                            .sessionState(context.getExecutionContext().getSessionState());
-            context.setExecutionContext(
-                    context.getExecutionContext().cloneExecutionContext(builder));
-        }
-
-        return OperationUtil.OK;
+    // Here we rebuild the ExecutionContext because we want to ensure that all the remaining
+    // views can work fine.
+    // Assume the case:
+    //   view1=select 1;
+    //   view2=select * from view1;
+    // If we delete view1 successfully, then query view2 will throw exception because view1 does
+    // not exist. we want
+    // all the remaining views are OK, so do the ExecutionContext rebuilding to avoid breaking
+    // the view dependency.
+    Environment newEnv = env.clone();
+    if (newEnv.getTables().remove(viewName) != null) {
+      ExecutionContext oldExecutionContext = context.getExecutionContext();
+      oldExecutionContext.wrapClassLoader(tableEnv -> tableEnv.dropTemporaryView(viewName));
+      // Renew the ExecutionContext.
+      ExecutionContext.Builder builder =
+          context
+              .newExecutionContextBuilder(context.getEnvironmentContext().getDefaultEnv())
+              .env(newEnv)
+              .sessionState(context.getExecutionContext().getSessionState());
+      context.setExecutionContext(context.getExecutionContext().cloneExecutionContext(builder));
     }
+
+    return OperationUtil.OK;
+  }
 }

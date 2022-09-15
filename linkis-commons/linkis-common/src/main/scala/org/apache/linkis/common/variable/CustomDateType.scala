@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -72,6 +72,7 @@ class CustomDateType(date: String, std: Boolean = true) {
       dateFormat.format(dateFormat.parse(date))
     }
   }
+
 }
 
 class CustomMonthType(date: String, std: Boolean = true, isEnd: Boolean = false) {
@@ -138,19 +139,22 @@ class CustomMonType(date: String, std: Boolean = true, isEnd: Boolean = false) {
 
 }
 
-
-
 /*
  Given a Date, convert into Quarter
  */
 class CustomQuarterType(date: String, std: Boolean = true, isEnd: Boolean = false) {
+
   def getCurrentQuarter(date: String): Date = {
     val dateFormat = DateTypeUtils.dateFormatLocal.get()
     dateFormat.parse(DateTypeUtils.getQuarter(false, false, dateFormat.parse(date)))
   }
 
   def -(quarters: Int): String = {
-    DateTypeUtils.getQuarter(std, isEnd, DateUtils.addMonths(getCurrentQuarter(date), -quarters * 3))
+    DateTypeUtils.getQuarter(
+      std,
+      isEnd,
+      DateUtils.addMonths(getCurrentQuarter(date), -quarters * 3)
+    )
   }
 
   def +(quarters: Int): String = {
@@ -180,11 +184,19 @@ class CustomHalfYearType(date: String, std: Boolean = true, isEnd: Boolean = fal
   }
 
   def -(halfYears: Int): String = {
-    DateTypeUtils.getHalfYear(std, isEnd, DateUtils.addMonths(getCurrentHalfYear(date), -halfYears * 6))
+    DateTypeUtils.getHalfYear(
+      std,
+      isEnd,
+      DateUtils.addMonths(getCurrentHalfYear(date), -halfYears * 6)
+    )
   }
 
   def +(halfYears: Int): String = {
-    DateTypeUtils.getHalfYear(std, isEnd, DateUtils.addMonths(getCurrentHalfYear(date), halfYears * 6))
+    DateTypeUtils.getHalfYear(
+      std,
+      isEnd,
+      DateUtils.addMonths(getCurrentHalfYear(date), halfYears * 6)
+    )
   }
 
   override def toString: String = {

@@ -19,5 +19,5 @@ package org.apache.linkis.rpc.message.registry;
 
 public interface ServiceRegistry {
 
-    void register(Object service);
+  void register(Object service);
 }

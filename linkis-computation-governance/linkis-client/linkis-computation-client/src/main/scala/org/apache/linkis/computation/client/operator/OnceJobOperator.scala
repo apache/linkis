@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,7 +23,6 @@ import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.computation.client.once.LinkisManagerClient
 import org.apache.linkis.computation.client.once.action.EngineConnOperateAction
 import org.apache.linkis.computation.client.once.result.EngineConnOperateResult
-
 
 trait OnceJobOperator[T] extends Operator[T] with Logging {
 
@@ -69,12 +68,17 @@ trait OnceJobOperator[T] extends Operator[T] with Logging {
     addParameters(builder)
     val engineConnOperateAction = builder.build()
     if (OnceJobOperator.ONCE_JOB_OPERATOR_LOG_ENABLE.getValue) {
-      logger.info(s"$getUser try to ask EngineConn($serviceInstance) to execute $getName operation, parameters is ${engineConnOperateAction.getRequestPayload}.")
+      logger.info(
+        s"$getUser try to ask EngineConn($serviceInstance) to execute $getName operation, parameters is ${engineConnOperateAction.getRequestPayload}."
+      )
     }
     val result = linkisManagerClient.executeEngineConnOperation(engineConnOperateAction)
     if (OnceJobOperator.ONCE_JOB_OPERATOR_LOG_ENABLE.getValue) {
       val resultStr = String.valueOf(result.getResult)
-      logger.info(s"$getUser asked EngineConn($serviceInstance) to execute $getName operation, results is ${if (resultStr.length <= 250) resultStr else resultStr.substring(0, 250) + "..."} .")
+      logger.info(
+        s"$getUser asked EngineConn($serviceInstance) to execute $getName operation, results is ${if (resultStr.length <= 250) resultStr
+        else resultStr.substring(0, 250) + "..."} ."
+      )
     }
     resultToObject(result)
   }

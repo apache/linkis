@@ -21,15 +21,15 @@ import java.util.List;
 
 public interface LinkisResultData extends LinkisJobData, Cloneable {
 
-    String getResultLocation();
+  String getResultLocation();
 
-    String[] getResultSetPaths();
+  String[] getResultSetPaths();
 
-    Boolean hasNextResultPage();
+  Boolean hasNextResultPage();
 
-    List<LinkisResultSet> consumeResultContent();
+  List<LinkisResultSet> consumeResultContent();
 
-    void sendResultFin();
+  void sendResultFin();
 
-    boolean resultFinReceived();
+  boolean resultFinReceived();
 }

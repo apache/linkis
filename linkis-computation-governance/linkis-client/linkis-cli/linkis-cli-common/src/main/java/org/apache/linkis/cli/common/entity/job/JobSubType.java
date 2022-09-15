@@ -19,5 +19,5 @@ package org.apache.linkis.cli.common.entity.job;
 
 public interface JobSubType {
 
-    String getName();
+  String getName();
 }

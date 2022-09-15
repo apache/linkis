@@ -25,23 +25,22 @@ import java.util.HashMap;
 
 public class JobQueuingTimeoutLabel extends GenericLabel {
 
-    public JobQueuingTimeoutLabel() {
-        setLabelKey(LabelKeyConstant.JOB_QUEUING_TIMEOUT_KEY);
-    }
+  public JobQueuingTimeoutLabel() {
+    setLabelKey(LabelKeyConstant.JOB_QUEUING_TIMEOUT_KEY);
+  }
 
-    public Long getQueuingTimeout() {
-        if (null == getValue()) {
-            return -1L;
-        }
-        return Long.parseLong(
-                getValue().getOrDefault(LabelKeyConstant.JOB_QUEUING_TIMEOUT_KEY, "-1"));
+  public Long getQueuingTimeout() {
+    if (null == getValue()) {
+      return -1L;
     }
+    return Long.parseLong(getValue().getOrDefault(LabelKeyConstant.JOB_QUEUING_TIMEOUT_KEY, "-1"));
+  }
 
-    @ValueSerialNum(0)
-    public void setJobQueuingTimeout(String queuingTimeout) {
-        if (null == getValue()) {
-            setValue(new HashMap<>());
-        }
-        getValue().put(LabelKeyConstant.JOB_QUEUING_TIMEOUT_KEY, queuingTimeout);
+  @ValueSerialNum(0)
+  public void setJobQueuingTimeout(String queuingTimeout) {
+    if (null == getValue()) {
+      setValue(new HashMap<>());
     }
+    getValue().put(LabelKeyConstant.JOB_QUEUING_TIMEOUT_KEY, queuingTimeout);
+  }
 }

@@ -27,10 +27,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class DownloadServiceImpl implements DownloadService {
 
-    @Autowired DownloadDao downloadDao;
+  @Autowired DownloadDao downloadDao;
 
-    @Override
-    public void addDownloadRecord(DownloadModel downloadModel) {
-        downloadDao.insertDownloadModel(downloadModel);
-    }
+  @Override
+  public void addDownloadRecord(DownloadModel downloadModel) {
+    downloadDao.insertDownloadModel(downloadModel);
+  }
 }

@@ -5,39 +5,39 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.orchestrator.ecm.entity
 
 import org.apache.linkis.common.utils.Logging
-
-import java.util
 import org.apache.linkis.manager.common.protocol.engine.EngineAskRequest
-import org.apache.linkis.manager.label.builder.factory.{LabelBuilderFactoryContext, StdLabelBuilderFactory}
+import org.apache.linkis.manager.label.builder.factory.{
+  LabelBuilderFactoryContext,
+  StdLabelBuilderFactory
+}
 import org.apache.linkis.manager.label.constant.LabelKeyConstant
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.entrance.LoadBalanceLabel
-import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.orchestrator.ecm.utils.ECMPUtils
+
+import org.apache.commons.lang3.StringUtils
+
+import java.util
 
 import scala.beans.BeanProperty
 import scala.collection.JavaConversions._
 
-
 /**
-  *
-  *
-  */
+ */
 trait MarkReq {
-
 
   def createEngineConnAskReq(): EngineAskRequest
 
@@ -48,21 +48,19 @@ trait MarkReq {
   def registerLabelKey(labelKey: String): Unit
 
   /**
-    * StartUp params
-    */
+   * StartUp params
+   */
   @BeanProperty
   var properties: util.Map[String, String] = null
-
 
   @BeanProperty
   var labels: util.Map[String, AnyRef] = null
 
   /**
-    * executeUser
-    */
+   * executeUser
+   */
   @BeanProperty
   var user: String = null
-
 
   @BeanProperty
   var createService: String = null
@@ -110,8 +108,10 @@ class DefaultMarkReq extends MarkReq with Logging {
             return false
           }
           if (null != labelKeySet && labelKeySet.contains(next._1)) {
-            val cachedLabel = MarkReq.getLabelBuilderFactory.createLabel[Label[_]](next._1, getLabels.get(next._1))
-            val otherLabel = MarkReq.getLabelBuilderFactory.createLabel[Label[_]](next._1, next._2)
+            val cachedLabel = MarkReq.getLabelBuilderFactory
+              .createLabel[Label[_]](next._1, getLabels.get(next._1))
+            val otherLabel =
+              MarkReq.getLabelBuilderFactory.createLabel[Label[_]](next._1, next._2)
             if (!cachedLabel.equals(otherLabel)) {
               return false
             }
@@ -132,10 +132,12 @@ class DefaultMarkReq extends MarkReq with Logging {
   }
 
   /**
-   * Register labelKey that override the equals method, so when compair label in new request with cached labels in markReq,
-   * the label with labelKey contained in labelKeySet, would be convert to Label object , and call it's equals method.
-   * If you didn't override the equalis method in the label class, please do not register labelKey here.
-   * @param labelKey in LabelKeyConstants
+   * Register labelKey that override the equals method, so when compair label in new request with
+   * cached labels in markReq, the label with labelKey contained in labelKeySet, would be convert to
+   * Label object , and call it's equals method. If you didn't override the equalis method in the
+   * label class, please do not register labelKey here.
+   * @param labelKey
+   *   in LabelKeyConstants
    */
   override def registerLabelKey(labelKey: String): Unit = {
     if (StringUtils.isNotBlank(labelKey)) {
@@ -155,8 +157,14 @@ class LoadBanlanceMarkReq extends DefaultMarkReq with Logging {
       if (other.getUser != getUser) {
         return flag
       }
-      val loadBalancdLabel = MarkReq.getLabelBuilderFactory.createLabel[LoadBalanceLabel](LabelKeyConstant.LOAD_BALANCE_KEY, getLabels.get(LabelKeyConstant.LOAD_BALANCE_KEY))
-      val otherBalancdLabel = MarkReq.getLabelBuilderFactory.createLabel[LoadBalanceLabel](LabelKeyConstant.LOAD_BALANCE_KEY, getLabels.get(LabelKeyConstant.LOAD_BALANCE_KEY))
+      val loadBalancdLabel = MarkReq.getLabelBuilderFactory.createLabel[LoadBalanceLabel](
+        LabelKeyConstant.LOAD_BALANCE_KEY,
+        getLabels.get(LabelKeyConstant.LOAD_BALANCE_KEY)
+      )
+      val otherBalancdLabel = MarkReq.getLabelBuilderFactory.createLabel[LoadBalanceLabel](
+        LabelKeyConstant.LOAD_BALANCE_KEY,
+        getLabels.get(LabelKeyConstant.LOAD_BALANCE_KEY)
+      )
       if (loadBalancdLabel.getGroupId.equals(otherBalancdLabel.getGroupId)) {
         flag = true
       }
@@ -166,7 +174,10 @@ class LoadBanlanceMarkReq extends DefaultMarkReq with Logging {
   }
 
   override def hashCode(): Int = {
-    val loadBalancdLabel = MarkReq.getLabelBuilderFactory.createLabel[LoadBalanceLabel](LabelKeyConstant.LOAD_BALANCE_KEY, getLabels.get(LabelKeyConstant.LOAD_BALANCE_KEY))
+    val loadBalancdLabel = MarkReq.getLabelBuilderFactory.createLabel[LoadBalanceLabel](
+      LabelKeyConstant.LOAD_BALANCE_KEY,
+      getLabels.get(LabelKeyConstant.LOAD_BALANCE_KEY)
+    )
     if (StringUtils.isNotBlank(loadBalancdLabel.getGroupId)) {
       loadBalancdLabel.getCapacity.hashCode()
     } else {
@@ -178,7 +189,7 @@ class LoadBanlanceMarkReq extends DefaultMarkReq with Logging {
 
 object MarkReq {
 
-  lazy val labelBuilderFactory =  LabelBuilderFactoryContext.getLabelBuilderFactory
+  lazy val labelBuilderFactory = LabelBuilderFactoryContext.getLabelBuilderFactory
 
   def getLabelBuilderFactory = labelBuilderFactory
 

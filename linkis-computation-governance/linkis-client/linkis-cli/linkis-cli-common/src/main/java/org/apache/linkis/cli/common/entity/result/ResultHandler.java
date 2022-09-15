@@ -18,5 +18,5 @@
 package org.apache.linkis.cli.common.entity.result;
 
 public interface ResultHandler {
-    void process(ExecutionResult executionResult);
+  void process(ExecutionResult executionResult);
 }

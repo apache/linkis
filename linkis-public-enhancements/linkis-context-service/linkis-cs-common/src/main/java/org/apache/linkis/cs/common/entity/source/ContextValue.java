@@ -19,11 +19,11 @@ package org.apache.linkis.cs.common.entity.source;
 
 public interface ContextValue {
 
-    String getKeywords();
+  String getKeywords();
 
-    void setKeywords(String keywords);
+  void setKeywords(String keywords);
 
-    Object getValue();
+  Object getValue();
 
-    void setValue(Object value);
+  void setValue(Object value);
 }

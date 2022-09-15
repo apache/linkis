@@ -25,59 +25,57 @@ import org.apache.linkis.cli.core.exception.CommandException;
 import org.apache.linkis.cli.core.exception.ValidateException;
 import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.text.MessageFormat;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 1. Check if there is missing or unknown option. 2. Call checkParam method for command-specific
  * validation.
  */
 public class ParsedTplValidator implements Validator {
-    private static final Logger logger = LoggerFactory.getLogger(ParsedTplValidator.class);
+  private static final Logger logger = LoggerFactory.getLogger(ParsedTplValidator.class);
 
-    @Override
-    public void doValidation(Object input) throws CommandException {
-        if (!(input instanceof CmdTemplate)) {
-            throw new ValidateException(
-                    "VLD0006",
-                    ErrorLevel.ERROR,
-                    CommonErrMsg.ValidationErr,
-                    "Input of ParsedTplValidator is not instance of CmdTemplate");
-        }
-
-        CmdTemplate parsedTemplateCopy = (CmdTemplate) input;
-
-        String msg = "start validating command \"{0}\", template \"{1}\"";
-        logger.info(
-                MessageFormat.format(
-                        msg,
-                        parsedTemplateCopy.getCmdType().getName(),
-                        parsedTemplateCopy.getCmdType()));
-
-        checkOptions(parsedTemplateCopy);
-
-        logger.info("Start params-check");
-        parsedTemplateCopy.checkParams();
-        logger.info("params-check ok.");
+  @Override
+  public void doValidation(Object input) throws CommandException {
+    if (!(input instanceof CmdTemplate)) {
+      throw new ValidateException(
+          "VLD0006",
+          ErrorLevel.ERROR,
+          CommonErrMsg.ValidationErr,
+          "Input of ParsedTplValidator is not instance of CmdTemplate");
     }
 
-    /** Validation */
-    private void checkOptions(CmdTemplate template) throws CommandException {
-        List<CmdOption<?>> options = template.getOptions();
-        for (CmdOption<?> cmdOption : options) {
-            if (!cmdOption.hasVal() && !cmdOption.isOptional()) {
-                throw new ValidateException(
-                        "VLD0003",
-                        ErrorLevel.ERROR,
-                        CommonErrMsg.ValidationErr,
-                        "CmdOption value cannot be empty: paramName:"
-                                + cmdOption.getParamName()
-                                + "CmdType: "
-                                + template.getCmdType());
-            }
-        }
+    CmdTemplate parsedTemplateCopy = (CmdTemplate) input;
+
+    String msg = "start validating command \"{0}\", template \"{1}\"";
+    logger.info(
+        MessageFormat.format(
+            msg, parsedTemplateCopy.getCmdType().getName(), parsedTemplateCopy.getCmdType()));
+
+    checkOptions(parsedTemplateCopy);
+
+    logger.info("Start params-check");
+    parsedTemplateCopy.checkParams();
+    logger.info("params-check ok.");
+  }
+
+  /** Validation */
+  private void checkOptions(CmdTemplate template) throws CommandException {
+    List<CmdOption<?>> options = template.getOptions();
+    for (CmdOption<?> cmdOption : options) {
+      if (!cmdOption.hasVal() && !cmdOption.isOptional()) {
+        throw new ValidateException(
+            "VLD0003",
+            ErrorLevel.ERROR,
+            CommonErrMsg.ValidationErr,
+            "CmdOption value cannot be empty: paramName:"
+                + cmdOption.getParamName()
+                + "CmdType: "
+                + template.getCmdType());
+      }
     }
+  }
 }

@@ -21,13 +21,13 @@ import org.apache.linkis.cs.common.exception.CSErrorException;
 
 public interface SerializationHelper {
 
-    boolean accepts(String json);
+  boolean accepts(String json);
 
-    boolean accepts(Object obj);
+  boolean accepts(Object obj);
 
-    String serialize(Object obj) throws CSErrorException;
+  String serialize(Object obj) throws CSErrorException;
 
-    Object deserialize(String json) throws CSErrorException;
+  Object deserialize(String json) throws CSErrorException;
 
-    <T> T deserialize(String s, Class<T> interfaceClass) throws CSErrorException;
+  <T> T deserialize(String s, Class<T> interfaceClass) throws CSErrorException;
 }

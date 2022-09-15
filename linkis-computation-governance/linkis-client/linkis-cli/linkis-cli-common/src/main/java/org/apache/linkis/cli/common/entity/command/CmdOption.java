@@ -18,25 +18,25 @@
 package org.apache.linkis.cli.common.entity.command;
 
 public interface CmdOption<T> extends Cloneable {
-    String getParamName();
+  String getParamName();
 
-    String getKeyPrefix();
+  String getKeyPrefix();
 
-    String getKey();
+  String getKey();
 
-    String getDescription();
+  String getDescription();
 
-    boolean isOptional();
+  boolean isOptional();
 
-    String getRawVal();
+  String getRawVal();
 
-    T getDefaultValue();
+  T getDefaultValue();
 
-    T getValue();
+  T getValue();
 
-    void setValueWithStr(String value);
+  void setValueWithStr(String value);
 
-    boolean hasVal();
+  boolean hasVal();
 
-    CmdOption<T> clone() throws CloneNotSupportedException;
+  CmdOption<T> clone() throws CloneNotSupportedException;
 }

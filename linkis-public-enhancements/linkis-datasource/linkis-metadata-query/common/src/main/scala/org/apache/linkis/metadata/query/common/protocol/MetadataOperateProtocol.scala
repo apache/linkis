@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,15 +17,20 @@
 
 package org.apache.linkis.metadata.query.common.protocol
 
+import org.apache.linkis.protocol.message.RequestProtocol
+
 import java.util
 
-trait MetadataOperateProtocol {
-
-}
+trait MetadataOperateProtocol extends RequestProtocol {}
 
 /**
-   * Request to do connect
-   * @param version
-   * @param params
+ * Request to do connect
+ * @param version
+ * @param params
  */
-case class MetadataConnect(dataSourceType: String, operator: String, params: util.Map[String, Object], version: String) extends MetadataOperateProtocol
+case class MetadataConnect(
+    dataSourceType: String,
+    operator: String,
+    params: util.Map[String, Object],
+    version: String
+) extends MetadataOperateProtocol

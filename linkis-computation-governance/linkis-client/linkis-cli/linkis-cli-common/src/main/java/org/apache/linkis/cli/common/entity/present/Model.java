@@ -18,5 +18,5 @@
 package org.apache.linkis.cli.common.entity.present;
 
 public interface Model {
-    void buildModel(Object data);
+  void buildModel(Object data);
 }

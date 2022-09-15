@@ -28,11 +28,11 @@ import org.apache.linkis.cli.common.exception.LinkisClientRuntimeException;
  */
 public interface AsyncBackendJob extends Job {
 
-    void submit() throws LinkisClientRuntimeException;
+  void submit() throws LinkisClientRuntimeException;
 
-    void updateJobStatus() throws LinkisClientRuntimeException;
+  void updateJobStatus() throws LinkisClientRuntimeException;
 
-    void waitJobComplete() throws LinkisClientRuntimeException;
+  void waitJobComplete() throws LinkisClientRuntimeException;
 
-    void terminate() throws LinkisClientRuntimeException;
+  void terminate() throws LinkisClientRuntimeException;
 }

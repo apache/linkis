@@ -22,79 +22,79 @@ import java.util.List;
 
 public interface Table {
 
-    String getName();
+  String getName();
 
-    void setName(String name);
+  void setName(String name);
 
-    String getAlias();
+  String getAlias();
 
-    void setAlias(String alias);
+  void setAlias(String alias);
 
-    String getCreator();
+  String getCreator();
 
-    void setCreator(String creator);
+  void setCreator(String creator);
 
-    String getComment();
+  String getComment();
 
-    void setComment(String comment);
+  void setComment(String comment);
 
-    Date getCreateTime();
+  Date getCreateTime();
 
-    void setCreateTime(Date createTime);
+  void setCreateTime(Date createTime);
 
-    String getProductName();
+  String getProductName();
 
-    void setProductName(String productName);
+  void setProductName(String productName);
 
-    String getProjectName();
+  String getProjectName();
 
-    void setProjectName(String projectName);
+  void setProjectName(String projectName);
 
-    String getUsage();
+  String getUsage();
 
-    void setUsage(String usage);
+  void setUsage(String usage);
 
-    Integer getLifecycle();
+  Integer getLifecycle();
 
-    void setLifecycle(Integer lifecycle);
+  void setLifecycle(Integer lifecycle);
 
-    Integer getUseWay();
+  Integer getUseWay();
 
-    void setUseWay(Integer useWay);
+  void setUseWay(Integer useWay);
 
-    Boolean getImport();
+  Boolean getImport();
 
-    void setImport(Boolean anImport);
+  void setImport(Boolean anImport);
 
-    Integer getModelLevel();
+  Integer getModelLevel();
 
-    void setModelLevel(Integer modelLevel);
+  void setModelLevel(Integer modelLevel);
 
-    Boolean getExternalUse();
+  Boolean getExternalUse();
 
-    void setExternalUse(Boolean externalUse);
+  void setExternalUse(Boolean externalUse);
 
-    Boolean getPartitionTable();
+  Boolean getPartitionTable();
 
-    void setPartitionTable(Boolean partitionTable);
+  void setPartitionTable(Boolean partitionTable);
 
-    Boolean getAvailable();
+  Boolean getAvailable();
 
-    void setAvailable(Boolean available);
+  void setAvailable(Boolean available);
 
-    Boolean getView();
+  Boolean getView();
 
-    CSDB getDb();
+  CSDB getDb();
 
-    void setDb(CSDB db);
+  void setDb(CSDB db);
 
-    void setView(Boolean view);
+  void setView(Boolean view);
 
-    CSColumn[] getColumns();
+  CSColumn[] getColumns();
 
-    void setColumns(CSColumn[] columns);
+  void setColumns(CSColumn[] columns);
 
-    List<CSPartition> getPartitions();
+  List<CSPartition> getPartitions();
 
-    void setPartitions(List<CSPartition> partitions);
+  void setPartitions(List<CSPartition> partitions);
 }

@@ -20,5 +20,5 @@ package org.apache.linkis.cli.application.observer.listener;
 import org.apache.linkis.cli.application.observer.event.LinkisClientEvent;
 
 public interface LinkisClientListener {
-    void update(LinkisClientEvent event, Object msg);
+  void update(LinkisClientEvent event, Object msg);
 }

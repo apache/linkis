@@ -25,46 +25,45 @@ import org.apache.linkis.cs.common.serialize.AbstractSerializer;
 import org.apache.linkis.cs.common.serialize.impl.history.CommonHistorySerializer;
 import org.apache.linkis.cs.common.utils.CSCommonUtils;
 
-import com.google.gson.reflect.TypeToken;
-
 import java.util.List;
 import java.util.Map;
 
+import com.google.gson.reflect.TypeToken;
+
 public class CSTableLineageSerializer extends AbstractSerializer<CSTableLineageHistory>
-        implements CommonHistorySerializer {
+    implements CommonHistorySerializer {
 
-    @Override
-    public CSTableLineageHistory fromJson(String json) throws CSErrorException {
-        Map<String, String> map = getMapValue(json);
-        CSTableLineageHistory history = get(map, new CSTableLineageHistory());
-        history.setSourceTables(
-                CSCommonUtils.gson.fromJson(
-                        map.get("sourceTables"), new TypeToken<List<CSTable>>() {}.getType()));
-        history.setTable(CSCommonUtils.gson.fromJson(map.get("targetTable"), CSTable.class));
-        return history;
-    }
+  @Override
+  public CSTableLineageHistory fromJson(String json) throws CSErrorException {
+    Map<String, String> map = getMapValue(json);
+    CSTableLineageHistory history = get(map, new CSTableLineageHistory());
+    history.setSourceTables(
+        CSCommonUtils.gson.fromJson(
+            map.get("sourceTables"), new TypeToken<List<CSTable>>() {}.getType()));
+    history.setTable(CSCommonUtils.gson.fromJson(map.get("targetTable"), CSTable.class));
+    return history;
+  }
 
-    @Override
-    public String getJsonValue(CSTableLineageHistory tableLineageMetadataContextHistory)
-            throws CSErrorException {
-        Table targetTable = tableLineageMetadataContextHistory.getTable();
-        List<Table> sourceTables = tableLineageMetadataContextHistory.getSourceTables();
-        String targetTableStr = CSCommonUtils.gson.toJson(targetTable);
-        String sourceTablesStr = CSCommonUtils.gson.toJson(sourceTables);
-        Map<String, String> mapValue = getMapValue(tableLineageMetadataContextHistory);
-        mapValue.put("targetTable", targetTableStr);
-        mapValue.put("sourceTables", sourceTablesStr);
-        return CSCommonUtils.gson.toJson(mapValue);
-    }
+  @Override
+  public String getJsonValue(CSTableLineageHistory tableLineageMetadataContextHistory)
+      throws CSErrorException {
+    Table targetTable = tableLineageMetadataContextHistory.getTable();
+    List<Table> sourceTables = tableLineageMetadataContextHistory.getSourceTables();
+    String targetTableStr = CSCommonUtils.gson.toJson(targetTable);
+    String sourceTablesStr = CSCommonUtils.gson.toJson(sourceTables);
+    Map<String, String> mapValue = getMapValue(tableLineageMetadataContextHistory);
+    mapValue.put("targetTable", targetTableStr);
+    mapValue.put("sourceTables", sourceTablesStr);
+    return CSCommonUtils.gson.toJson(mapValue);
+  }
 
-    @Override
-    public String getType() {
-        return "CSTableLineageMetadataContextHistory";
-    }
+  @Override
+  public String getType() {
+    return "CSTableLineageMetadataContextHistory";
+  }
 
-    @Override
-    public boolean accepts(Object obj) {
-        return null != obj
-                && obj.getClass().getName().equals(CSTableLineageHistory.class.getName());
-    }
+  @Override
+  public boolean accepts(Object obj) {
+    return null != obj && obj.getClass().getName().equals(CSTableLineageHistory.class.getName());
+  }
 }

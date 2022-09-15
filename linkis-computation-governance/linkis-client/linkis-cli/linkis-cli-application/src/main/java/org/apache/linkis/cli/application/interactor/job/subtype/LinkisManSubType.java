@@ -20,21 +20,21 @@ package org.apache.linkis.cli.application.interactor.job.subtype;
 import org.apache.linkis.cli.common.entity.job.JobSubType;
 
 public enum LinkisManSubType implements JobSubType {
-    KILL("kill"),
-    LOG("log"),
-    DESC("desc"),
-    STATUS("status"),
-    LIST("list"),
-    RESULT("result");
+  KILL("kill"),
+  LOG("log"),
+  DESC("desc"),
+  STATUS("status"),
+  LIST("list"),
+  RESULT("result");
 
-    private String name;
+  private String name;
 
-    LinkisManSubType(String name) {
-        this.name = name;
-    }
+  LinkisManSubType(String name) {
+    this.name = name;
+  }
 
-    @Override
-    public String getName() {
-        return this.name;
-    }
+  @Override
+  public String getName() {
+    return this.name;
+  }
 }

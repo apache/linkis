@@ -23,26 +23,26 @@ import java.io.Serializable;
 
 public class EngineReourceClearRequest implements EngineRequest, Serializable {
 
-    private EngineNode engineNode;
+  private EngineNode engineNode;
 
-    private String user;
+  private String user;
 
-    public EngineReourceClearRequest() {}
+  public EngineReourceClearRequest() {}
 
-    public EngineNode getEngineNode() {
-        return engineNode;
-    }
+  public EngineNode getEngineNode() {
+    return engineNode;
+  }
 
-    public void setEngineNode(EngineNode engineNode) {
-        this.engineNode = engineNode;
-    }
+  public void setEngineNode(EngineNode engineNode) {
+    this.engineNode = engineNode;
+  }
 
-    public void setUser(String user) {
-        this.user = user;
-    }
+  public void setUser(String user) {
+    this.user = user;
+  }
 
-    @Override
-    public String getUser() {
-        return user;
-    }
+  @Override
+  public String getUser() {
+    return user;
+  }
 }

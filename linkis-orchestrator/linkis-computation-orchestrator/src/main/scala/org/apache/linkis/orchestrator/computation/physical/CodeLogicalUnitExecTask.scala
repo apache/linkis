@@ -5,19 +5,18 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.orchestrator.computation.physical
 
-import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.exception.{ErrorException, LinkisRetryException}
 import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
@@ -25,41 +24,58 @@ import org.apache.linkis.governance.common.protocol.task.{RequestTask, RequestTa
 import org.apache.linkis.manager.common.protocol.resource.ResourceWithStatus
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.orchestrator.computation.conf.ComputationOrchestratorConf
-import org.apache.linkis.orchestrator.computation.execute.{CodeExecTaskExecutor, CodeExecTaskExecutorManager}
+import org.apache.linkis.orchestrator.computation.execute.{
+  CodeExecTaskExecutor,
+  CodeExecTaskExecutorManager
+}
 import org.apache.linkis.orchestrator.ecm.conf.ECMPluginConf
-import org.apache.linkis.orchestrator.exception.{OrchestratorErrorCodeSummary, OrchestratorErrorException, OrchestratorRetryException}
+import org.apache.linkis.orchestrator.exception.{
+  OrchestratorErrorCodeSummary,
+  OrchestratorErrorException,
+  OrchestratorRetryException
+}
+import org.apache.linkis.orchestrator.execution.{AsyncTaskResponse, TaskResponse}
 import org.apache.linkis.orchestrator.execution.AsyncTaskResponse.NotifyListener
 import org.apache.linkis.orchestrator.execution.impl.DefaultFailedTaskResponse
-import org.apache.linkis.orchestrator.execution.{AsyncTaskResponse, TaskResponse}
 import org.apache.linkis.orchestrator.listener.task.{TaskLogEvent, TaskRunningInfoEvent}
 import org.apache.linkis.orchestrator.plans.ast.QueryParams
 import org.apache.linkis.orchestrator.plans.physical.{AbstractExecTask, ExecTask, PhysicalContext}
 import org.apache.linkis.orchestrator.plans.unit.CodeLogicalUnit
-import org.apache.linkis.orchestrator.strategy.async.AsyncExecTask
 import org.apache.linkis.orchestrator.strategy.{ResultSetExecTask, StatusInfoExecTask}
+import org.apache.linkis.orchestrator.strategy.async.AsyncExecTask
 import org.apache.linkis.orchestrator.utils.OrchestratorIDCreator
 import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.scheduler.executer.{ErrorExecuteResponse, SubmitResponse}
 
+import org.apache.commons.lang3.StringUtils
+
 import java.util
 import java.util.concurrent.TimeUnit
+
 import scala.collection.convert.decorateAsScala._
 import scala.concurrent.duration.Duration
-/**
-  *
-  *
-  */
-class CodeLogicalUnitExecTask (parents: Array[ExecTask], children: Array[ExecTask])
-  extends AbstractExecTask(parents, children) with StatusInfoExecTask with ResultSetExecTask
-    with AsyncExecTask with Logging {
 
+/**
+ */
+class CodeLogicalUnitExecTask(parents: Array[ExecTask], children: Array[ExecTask])
+    extends AbstractExecTask(parents, children)
+    with StatusInfoExecTask
+    with ResultSetExecTask
+    with AsyncExecTask
+    with Logging {
 
   private var physicalContext: PhysicalContext = _
 
   private var id: String = _
 
-  private val codeExecTaskExecutorManager = CodeExecTaskExecutorManager.getCodeExecTaskExecutorManager
-  private val askDuration = Duration(ComputationOrchestratorConf.MAX_ASK_EXECUTOR_TIME.getValue.toLong, TimeUnit.MILLISECONDS)
+  private val codeExecTaskExecutorManager =
+    CodeExecTaskExecutorManager.getCodeExecTaskExecutorManager
+
+  private val askDuration = Duration(
+    ComputationOrchestratorConf.MAX_ASK_EXECUTOR_TIME.getValue.toLong,
+    TimeUnit.MILLISECONDS
+  )
+
   private var codeLogicalUnit: CodeLogicalUnit = _
 
   private var isCanceled = false
@@ -83,32 +99,64 @@ class CodeLogicalUnitExecTask (parents: Array[ExecTask], children: Array[ExecTas
       val codeExecutor = executor.get
       val response = Utils.tryCatch(codeExecutor.getEngineConnExecutor.execute(requestTask)) {
         t: Throwable =>
-          logger.error(s"Failed to submit ${getIDInfo()} to ${codeExecutor.getEngineConnExecutor.getServiceInstance}", t)
+          logger.error(
+            s"Failed to submit ${getIDInfo()} to ${codeExecutor.getEngineConnExecutor.getServiceInstance}",
+            t
+          )
           throw new LinkisRetryException(ECMPluginConf.ECM_ENGNE_CREATION_ERROR_CODE, t.getMessage)
       }
       response match {
         case SubmitResponse(engineConnExecId) =>
           codeExecutor.setEngineConnTaskId(engineConnExecId)
           codeExecTaskExecutorManager.addEngineConnTaskID(codeExecutor)
-          val infoMap = new  util.HashMap[String, Object]
-          infoMap.put(TaskConstant.ENGINE_INSTANCE, codeExecutor.getEngineConnExecutor.getServiceInstance.getInstance)
-          val event = TaskRunningInfoEvent(this, 0f,
-            Array.empty, new util.HashMap[String, ResourceWithStatus], infoMap)
+          val infoMap = new util.HashMap[String, Object]
+          infoMap.put(
+            TaskConstant.ENGINE_INSTANCE,
+            codeExecutor.getEngineConnExecutor.getServiceInstance.getInstance
+          )
+          val event = TaskRunningInfoEvent(
+            this,
+            0f,
+            Array.empty,
+            new util.HashMap[String, ResourceWithStatus],
+            infoMap
+          )
           getPhysicalContext.pushProgress(event)
-          getPhysicalContext.pushLog(TaskLogEvent(this, LogUtils.generateInfo(s"Task submit to ec: ${codeExecutor.getEngineConnExecutor.getServiceInstance} get engineConnExecId is: ${engineConnExecId}")))
+          getPhysicalContext.pushLog(
+            TaskLogEvent(
+              this,
+              LogUtils.generateInfo(
+                s"Task submit to ec: ${codeExecutor.getEngineConnExecutor.getServiceInstance} get engineConnExecId is: ${engineConnExecId}"
+              )
+            )
+          )
           new AsyncTaskResponse {
             override def notifyMe(listener: NotifyListener): Unit = {}
 
-            override def waitForCompleted(): TaskResponse = throw new OrchestratorErrorException(OrchestratorErrorCodeSummary.METHOD_NUT_SUPPORT_CODE, "waitForCompleted method not support")
+            override def waitForCompleted(): TaskResponse = throw new OrchestratorErrorException(
+              OrchestratorErrorCodeSummary.METHOD_NUT_SUPPORT_CODE,
+              "waitForCompleted method not support"
+            )
           }
         case ErrorExecuteResponse(message, t) =>
           logger.info(s"failed to submit task to engineConn,reason: $message")
-          throw new OrchestratorRetryException(OrchestratorErrorCodeSummary.EXECUTION_FOR_EXECUTION_ERROR_CODE, "failed to submit task to engineConn", t)
+          throw new OrchestratorRetryException(
+            OrchestratorErrorCodeSummary.EXECUTION_FOR_EXECUTION_ERROR_CODE,
+            "failed to submit task to engineConn",
+            t
+          )
       }
     } else if (null != retryException) {
-      new DefaultFailedTaskResponse(s"ask Engine failed + ${retryException.getMessage}", OrchestratorErrorCodeSummary.EXECUTION_FOR_EXECUTION_ERROR_CODE, retryException)
+      new DefaultFailedTaskResponse(
+        s"ask Engine failed + ${retryException.getMessage}",
+        OrchestratorErrorCodeSummary.EXECUTION_FOR_EXECUTION_ERROR_CODE,
+        retryException
+      )
     } else {
-      throw new OrchestratorRetryException(OrchestratorErrorCodeSummary.EXECUTION_FOR_EXECUTION_ERROR_CODE, "Failed to ask executor")
+      throw new OrchestratorRetryException(
+        OrchestratorErrorCodeSummary.EXECUTION_FOR_EXECUTION_ERROR_CODE,
+        "Failed to ask executor"
+      )
     }
 
   }
@@ -116,9 +164,9 @@ class CodeLogicalUnitExecTask (parents: Array[ExecTask], children: Array[ExecTas
   private def toRequestTask: RequestTask = {
     val requestTask = new RequestTaskExecute
     requestTask.setCode(getCodeLogicalUnit.toStringCode)
-    //getLabels.add(getCodeLogicalUnit.getLabel)
+    // getLabels.add(getCodeLogicalUnit.getLabel)
     requestTask.setLabels(getLabels)
-    //Map
+    // Map
 //    if (null != getParams.getRuntimeParams.getDataSources ) {
 //      requestTask.getProperties.putAll(getParams.getRuntimeParams.getDataSources)
 //    }
@@ -133,7 +181,7 @@ class CodeLogicalUnitExecTask (parents: Array[ExecTask], children: Array[ExecTas
 
     if (null != getParams.getRuntimeParams.getJobs) {
       requestTask.getProperties.putAll(getParams.getRuntimeParams.getJobs)
-   }
+    }
 //    requestTask.getProperties.put(GovernanceConstant.TASK_SOURCE_MAP_KEY, getParams.getRuntimeParams.get(GovernanceConstant.TASK_SOURCE_MAP_KEY) match {
 //      case o: Object => o
 //      case _ => null
@@ -147,11 +195,13 @@ class CodeLogicalUnitExecTask (parents: Array[ExecTask], children: Array[ExecTas
 
   override def canExecute: Boolean = true
 
-  override def verboseString: String = s"CodeLogicalUnitExecTask(codes=${codeLogicalUnit.codes.toArray.mkString(";")}, labels=${getLabels.asScala.map(_.getStringValue).mkString("&")})"
+  override def verboseString: String =
+    s"CodeLogicalUnitExecTask(codes=${codeLogicalUnit.codes.toArray
+      .mkString(";")}, labels=${getLabels.asScala.map(_.getStringValue).mkString("&")})"
 
   override def initialize(physicalContext: PhysicalContext): Unit = {
     this.physicalContext = physicalContext
-    //CodeLogicalUnitExecTask is an executable task which has progress information, so initialize it as 0.0
+    // CodeLogicalUnitExecTask is an executable task which has progress information, so initialize it as 0.0
 
   }
 
@@ -168,7 +218,8 @@ class CodeLogicalUnitExecTask (parents: Array[ExecTask], children: Array[ExecTas
 
   def getCodeLogicalUnit: CodeLogicalUnit = this.codeLogicalUnit
 
-  def setCodeLogicalUnit(codeLogicalUnit: CodeLogicalUnit): Unit = this.codeLogicalUnit = codeLogicalUnit
+  def setCodeLogicalUnit(codeLogicalUnit: CodeLogicalUnit): Unit = this.codeLogicalUnit =
+    codeLogicalUnit
 
   def getParams: QueryParams = {
     getTaskDesc.getOrigin.getASTOrchestration.getASTContext.getParams
@@ -183,7 +234,6 @@ class CodeLogicalUnitExecTask (parents: Array[ExecTask], children: Array[ExecTas
     }
   }
 
-
   def getExecuteUser: String = {
     getTaskDesc.getOrigin.getASTOrchestration.getASTContext.getExecuteUser
   }
@@ -191,9 +241,14 @@ class CodeLogicalUnitExecTask (parents: Array[ExecTask], children: Array[ExecTas
   override def kill(): Unit = {
     codeExecTaskExecutorManager.getByExecTaskId(this.getId).foreach { codeEngineConnExecutor =>
       if (StringUtils.isNotBlank(codeEngineConnExecutor.getEngineConnTaskId)) {
-        logger.info(s"execTask($getId) be killed, engineConn execId is${codeEngineConnExecutor.getEngineConnTaskId}")
-        Utils.tryAndWarn(codeEngineConnExecutor.getEngineConnExecutor.killTask(codeEngineConnExecutor.getEngineConnTaskId))
-        //Utils.tryAndWarn(codeExecTaskExecutorManager.unLockEngineConn(this, codeEngineConnExecutor))
+        logger.info(
+          s"execTask($getId) be killed, engineConn execId is${codeEngineConnExecutor.getEngineConnTaskId}"
+        )
+        Utils.tryAndWarn(
+          codeEngineConnExecutor.getEngineConnExecutor
+            .killTask(codeEngineConnExecutor.getEngineConnTaskId)
+        )
+        // Utils.tryAndWarn(codeExecTaskExecutorManager.unLockEngineConn(this, codeEngineConnExecutor))
       }
     }
     isCanceled = true
@@ -222,5 +277,5 @@ class CodeLogicalUnitExecTask (parents: Array[ExecTask], children: Array[ExecTas
       codeExecTaskExecutorManager.markTaskCompleted(this, codeEngineConnExecutor, isSucceed)
     }
   }
-}
 
+}

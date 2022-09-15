@@ -38,13 +38,18 @@ object OperatorFactory {
 }
 
 import scala.collection.convert.WrapAsScala._
+
 class OperatorFactoryImpl extends OperatorFactory with Logging {
 
-  private val operators: Map[String, _ <: Operator] = ClassUtils.reflections.getSubTypesOf(classOf[Operator])
-    .filterNot(ClassUtils.isInterfaceOrAbstract).flatMap { clazz =>
-    val operator = clazz.newInstance()
-    operator.getNames.map(name => name -> operator)
-  }.toMap
+  private val operators: Map[String, _ <: Operator] = ClassUtils.reflections
+    .getSubTypesOf(classOf[Operator])
+    .filterNot(ClassUtils.isInterfaceOrAbstract)
+    .flatMap { clazz =>
+      val operator = clazz.newInstance()
+      operator.getNames.map(name => name -> operator)
+    }
+    .toMap
+
   logger.info("Launched operators list => " + operators)
 
   override def getOperatorName(parameters: Map[String, Any]): String =

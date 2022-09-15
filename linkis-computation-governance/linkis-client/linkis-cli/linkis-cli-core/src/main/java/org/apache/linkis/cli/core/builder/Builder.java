@@ -18,5 +18,5 @@
 package org.apache.linkis.cli.core.builder;
 
 public interface Builder<T> {
-    T build();
+  T build();
 }

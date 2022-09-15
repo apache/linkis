@@ -21,9 +21,9 @@ import org.apache.linkis.cs.listener.event.ContextIDEvent;
 
 public interface CSIDListener extends ContextAsyncEventListener {
 
-    void onCSIDAccess(ContextIDEvent contextIDEvent);
+  void onCSIDAccess(ContextIDEvent contextIDEvent);
 
-    void onCSIDADD(ContextIDEvent contextIDEvent);
+  void onCSIDADD(ContextIDEvent contextIDEvent);
 
-    void onCSIDRemoved(ContextIDEvent contextIDEvent);
+  void onCSIDRemoved(ContextIDEvent contextIDEvent);
 }

@@ -30,48 +30,48 @@ import java.util.HashMap;
 
 public class EngineTypeLabel extends GenericLabel implements EngineNodeLabel, EMNodeLabel {
 
-    public EngineTypeLabel() {
-        setLabelKey(LabelKeyConstant.ENGINE_TYPE_KEY);
+  public EngineTypeLabel() {
+    setLabelKey(LabelKeyConstant.ENGINE_TYPE_KEY);
+  }
+
+  @Override
+  public Feature getFeature() {
+    return Feature.CORE;
+  }
+
+  public String getEngineType() {
+    if (null == getValue()) {
+      return null;
+    }
+    return getValue().get("engineType");
+  }
+
+  public String getVersion() {
+    if (null == getValue()) {
+      return null;
     }
 
-    @Override
-    public Feature getFeature() {
-        return Feature.CORE;
-    }
+    return getValue().get("version");
+  }
 
-    public String getEngineType() {
-        if (null == getValue()) {
-            return null;
-        }
-        return getValue().get("engineType");
+  @ValueSerialNum(0)
+  public void setEngineType(String type) {
+    if (null == getValue()) {
+      setValue(new HashMap<>());
     }
+    getValue().put("engineType", type);
+  }
 
-    public String getVersion() {
-        if (null == getValue()) {
-            return null;
-        }
-
-        return getValue().get("version");
+  @ValueSerialNum(1)
+  public void setVersion(String version) {
+    if (null == getValue()) {
+      setValue(new HashMap<>());
     }
+    getValue().put("version", version);
+  }
 
-    @ValueSerialNum(0)
-    public void setEngineType(String type) {
-        if (null == getValue()) {
-            setValue(new HashMap<>());
-        }
-        getValue().put("engineType", type);
-    }
-
-    @ValueSerialNum(1)
-    public void setVersion(String version) {
-        if (null == getValue()) {
-            setValue(new HashMap<>());
-        }
-        getValue().put("version", version);
-    }
-
-    @Override
-    public Boolean isEmpty() {
-        return StringUtils.isBlank(getEngineType()) || StringUtils.isBlank(getVersion());
-    }
+  @Override
+  public Boolean isEmpty() {
+    return StringUtils.isBlank(getEngineType()) || StringUtils.isBlank(getVersion());
+  }
 }

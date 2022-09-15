@@ -27,7 +27,7 @@ package org.apache.linkis.manager.common.entity.enumeration;
  * </pre>
  */
 public enum MaintainType {
-    Default,
-    day,
-    week
+  Default,
+  day,
+  week
 }

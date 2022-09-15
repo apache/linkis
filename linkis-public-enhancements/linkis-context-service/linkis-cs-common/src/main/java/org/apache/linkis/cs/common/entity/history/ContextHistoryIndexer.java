@@ -19,5 +19,5 @@ package org.apache.linkis.cs.common.entity.history;
 
 public interface ContextHistoryIndexer {
 
-    String getKeywords(ContextHistory contextHistory);
+  String getKeywords(ContextHistory contextHistory);
 }

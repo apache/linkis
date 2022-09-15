@@ -26,16 +26,16 @@ import java.util.Map;
 
 public interface ResourceService {
 
-    /**
-     * 通过ContextID和NodeName，获取上游的所有Resource数据
-     *
-     * @param contextIDStr
-     * @param nodeName
-     * @return
-     */
-    Map<ContextKey, BMLResource> getAllUpstreamBMLResource(String contextIDStr, String nodeName)
-            throws CSErrorException;
+  /**
+   * 通过ContextID和NodeName，获取上游的所有Resource数据
+   *
+   * @param contextIDStr
+   * @param nodeName
+   * @return
+   */
+  Map<ContextKey, BMLResource> getAllUpstreamBMLResource(String contextIDStr, String nodeName)
+      throws CSErrorException;
 
-    List<BMLResource> getUpstreamBMLResource(String contextIDStr, String nodeName)
-            throws CSErrorException;
+  List<BMLResource> getUpstreamBMLResource(String contextIDStr, String nodeName)
+      throws CSErrorException;
 }

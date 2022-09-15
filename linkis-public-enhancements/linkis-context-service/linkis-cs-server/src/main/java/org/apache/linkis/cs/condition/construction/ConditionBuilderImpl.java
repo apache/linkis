@@ -32,72 +32,72 @@ import java.util.Collection;
 
 public class ConditionBuilderImpl implements ConditionBuilder {
 
-    Collection<ContextType> contextTypes;
-    Collection<ContextScope> contextScopes;
-    String regex;
-    String containsValue;
+  Collection<ContextType> contextTypes;
+  Collection<ContextScope> contextScopes;
+  String regex;
+  String containsValue;
 
-    @Override
-    public ConditionBuilder contextTypes(Collection<ContextType> contextTypes) {
-        this.contextTypes = contextTypes;
-        return this;
+  @Override
+  public ConditionBuilder contextTypes(Collection<ContextType> contextTypes) {
+    this.contextTypes = contextTypes;
+    return this;
+  }
+
+  @Override
+  public ConditionBuilder contextScopes(Collection<ContextScope> contextScopes) {
+    this.contextScopes = contextScopes;
+    return this;
+  }
+
+  @Override
+  public ConditionBuilder regex(String regex) {
+    this.regex = regex;
+    return this;
+  }
+
+  @Override
+  public ConditionBuilder contains(String value) {
+    this.containsValue = value;
+    return this;
+  }
+
+  @Override
+  public Condition build() {
+    Condition condition = null;
+    if (CollectionUtils.isNotEmpty(contextTypes)) {
+      for (ContextType contextType : contextTypes) {
+        Condition subCondition = new ContextTypeCondition(contextType);
+        condition = combineCondition(condition, subCondition, true);
+      }
+    }
+    Condition conditionContextScope = null;
+    if (CollectionUtils.isNotEmpty(contextScopes)) {
+      for (ContextScope contextScope : contextScopes) {
+        Condition subCondition = new ContextScopeCondition(contextScope);
+        conditionContextScope = combineCondition(conditionContextScope, subCondition, true);
+      }
+      condition = combineCondition(condition, conditionContextScope, false);
     }
 
-    @Override
-    public ConditionBuilder contextScopes(Collection<ContextScope> contextScopes) {
-        this.contextScopes = contextScopes;
-        return this;
+    if (StringUtils.isNotBlank(regex)) {
+      Condition subCondition = new RegexCondition(regex);
+      condition = combineCondition(condition, subCondition, false);
     }
-
-    @Override
-    public ConditionBuilder regex(String regex) {
-        this.regex = regex;
-        return this;
+    if (StringUtils.isNotBlank(containsValue)) {
+      Condition subCondition = new ContainsCondition(containsValue);
+      condition = combineCondition(condition, subCondition, false);
     }
+    return condition;
+  }
 
-    @Override
-    public ConditionBuilder contains(String value) {
-        this.containsValue = value;
-        return this;
+  private Condition combineCondition(Condition condition, Condition subCondition, boolean or) {
+    if (condition == null) {
+      condition = subCondition;
+    } else if (or) {
+      condition = condition.or(subCondition);
+    } else {
+      condition = condition.and(subCondition);
     }
-
-    @Override
-    public Condition build() {
-        Condition condition = null;
-        if (CollectionUtils.isNotEmpty(contextTypes)) {
-            for (ContextType contextType : contextTypes) {
-                Condition subCondition = new ContextTypeCondition(contextType);
-                condition = combineCondition(condition, subCondition, true);
-            }
-        }
-        Condition conditionContextScope = null;
-        if (CollectionUtils.isNotEmpty(contextScopes)) {
-            for (ContextScope contextScope : contextScopes) {
-                Condition subCondition = new ContextScopeCondition(contextScope);
-                conditionContextScope = combineCondition(conditionContextScope, subCondition, true);
-            }
-            condition = combineCondition(condition, conditionContextScope, false);
-        }
-
-        if (StringUtils.isNotBlank(regex)) {
-            Condition subCondition = new RegexCondition(regex);
-            condition = combineCondition(condition, subCondition, false);
-        }
-        if (StringUtils.isNotBlank(containsValue)) {
-            Condition subCondition = new ContainsCondition(containsValue);
-            condition = combineCondition(condition, subCondition, false);
-        }
-        return condition;
-    }
-
-    private Condition combineCondition(Condition condition, Condition subCondition, boolean or) {
-        if (condition == null) {
-            condition = subCondition;
-        } else if (or) {
-            condition = condition.or(subCondition);
-        } else {
-            condition = condition.and(subCondition);
-        }
-        return condition;
-    }
+    return condition;
+  }
 }

@@ -5,32 +5,29 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.ecm.server.metrics
-
-
-import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.atomic.AtomicInteger
 
 import org.apache.linkis.ecm.core.engineconn.EngineConn
 import org.apache.linkis.ecm.core.metrics.ECMMetrics
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus._
 
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.atomic.AtomicInteger
+
 import scala.collection.JavaConversions._
 
-
 class DefaultECMMetrics extends ECMMetrics {
-
 
   private val startingEngineConnCount = new AtomicInteger(0)
 
@@ -56,16 +53,23 @@ class DefaultECMMetrics extends ECMMetrics {
 
   override def getFailedEngineConns: Array[EngineConn] = getEngineConns(failedEngineConnMap)
 
-  private val getEngineConns = (map: ConcurrentHashMap[String, EngineConn]) => map.values().toSeq.toArray
+  private val getEngineConns = (map: ConcurrentHashMap[String, EngineConn]) =>
+    map.values().toSeq.toArray
 
-  private val decreaseEngineConnMetric = (engineConn: EngineConn, map: ConcurrentHashMap[String, EngineConn], count: AtomicInteger) => {
-    val conn = map.remove(engineConn.getTickedId)
-    if (conn != null) {
-      count.decrementAndGet()
+  private val decreaseEngineConnMetric =
+    (engineConn: EngineConn, map: ConcurrentHashMap[String, EngineConn], count: AtomicInteger) => {
+      val conn = map.remove(engineConn.getTickedId)
+      if (conn != null) {
+        count.decrementAndGet()
+      }
     }
-  }
 
-  private val increaseEngineConnMetric = (engineConn: EngineConn, map: ConcurrentHashMap[String, EngineConn], count: AtomicInteger, status: NodeStatus) => {
+  private val increaseEngineConnMetric = (
+      engineConn: EngineConn,
+      map: ConcurrentHashMap[String, EngineConn],
+      count: AtomicInteger,
+      status: NodeStatus
+  ) => {
     if (engineConn.getStatus.equals(status)) {
       count.incrementAndGet()
       map.put(engineConn.getTickedId, engineConn)

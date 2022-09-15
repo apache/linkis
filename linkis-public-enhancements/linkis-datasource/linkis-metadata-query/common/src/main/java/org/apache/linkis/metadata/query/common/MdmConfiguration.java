@@ -21,9 +21,9 @@ import org.apache.linkis.common.conf.CommonVars;
 
 public class MdmConfiguration {
 
-    public static CommonVars<String> METADATA_SERVICE_APPLICATION =
-            CommonVars.apply("wds.linkis.server.mdm.service.app.name", "linkis-ps-metadataquery");
+  public static CommonVars<String> METADATA_SERVICE_APPLICATION =
+      CommonVars.apply("wds.linkis.server.mdm.service.app.name", "linkis-ps-metadataquery");
 
-    public static CommonVars<String> DATA_SOURCE_SERVICE_APPLICATION =
-            CommonVars.apply("wds.linkis.server.dsm.app.name", "linkis-ps-data-source-manager");
+  public static CommonVars<String> DATA_SOURCE_SERVICE_APPLICATION =
+      CommonVars.apply("wds.linkis.server.dsm.app.name", "linkis-ps-data-source-manager");
 }

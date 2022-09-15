@@ -20,5 +20,5 @@ package org.apache.linkis.manager.common.protocol.em;
 import org.apache.linkis.protocol.message.RequestProtocol;
 
 public interface EMRequest extends RequestProtocol {
-    String getUser();
+  String getUser();
 }

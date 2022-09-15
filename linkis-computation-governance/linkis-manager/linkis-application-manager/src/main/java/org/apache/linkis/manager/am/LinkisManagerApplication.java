@@ -22,8 +22,8 @@ import org.apache.linkis.LinkisBaseServerApp;
 /** @date 2020/7/7 16:22 */
 public class LinkisManagerApplication {
 
-    public static void main(String[] args) throws ReflectiveOperationException {
-        LinkisBaseServerApp.main(args);
-        // DataWorkCloudApplication.main(args);
-    }
+  public static void main(String[] args) throws ReflectiveOperationException {
+    LinkisBaseServerApp.main(args);
+    // DataWorkCloudApplication.main(args);
+  }
 }

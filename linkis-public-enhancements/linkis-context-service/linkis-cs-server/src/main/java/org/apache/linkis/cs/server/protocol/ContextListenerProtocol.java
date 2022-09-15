@@ -21,8 +21,8 @@ import org.apache.linkis.cs.server.enumeration.ServiceType;
 
 public class ContextListenerProtocol extends AbstractHttpRequestProtocol {
 
-    @Override
-    public String getServiceName() {
-        return ServiceType.CONTEXT_LISTENER.name();
-    }
+  @Override
+  public String getServiceName() {
+    return ServiceType.CONTEXT_LISTENER.name();
+  }
 }

@@ -23,34 +23,34 @@ import org.apache.linkis.cs.listener.ContextAsyncEventListener;
 import org.apache.linkis.cs.listener.conf.ContextListenerConf;
 
 public class ContextAsyncListenerBus<L extends ContextAsyncEventListener, E extends Event>
-        extends ListenerEventBus<L, E> {
+    extends ListenerEventBus<L, E> {
 
-    private static final String NAME = "ContextAsyncListenerBus";
+  private static final String NAME = "ContextAsyncListenerBus";
 
-    public ContextAsyncListenerBus() {
-        super(
-                ContextListenerConf.WDS_CS_LISTENER_ASYN_QUEUE_CAPACITY,
-                NAME,
-                ContextListenerConf.WDS_CS_LISTENER_ASYN_CONSUMER_THREAD_MAX,
-                ContextListenerConf.WDS_CS_LISTENER_ASYN_CONSUMER_THREAD_FREE_TIME_MAX);
-    }
+  public ContextAsyncListenerBus() {
+    super(
+        ContextListenerConf.WDS_CS_LISTENER_ASYN_QUEUE_CAPACITY,
+        NAME,
+        ContextListenerConf.WDS_CS_LISTENER_ASYN_CONSUMER_THREAD_MAX,
+        ContextListenerConf.WDS_CS_LISTENER_ASYN_CONSUMER_THREAD_FREE_TIME_MAX);
+  }
 
-    @Override
-    public void doPostEvent(L listener, E event) {
-        listener.onEvent(event);
-    }
+  @Override
+  public void doPostEvent(L listener, E event) {
+    listener.onEvent(event);
+  }
 
-    private static ContextAsyncListenerBus contextAsyncListenerBus = null;
+  private static ContextAsyncListenerBus contextAsyncListenerBus = null;
 
-    public static ContextAsyncListenerBus getInstance() {
+  public static ContextAsyncListenerBus getInstance() {
+    if (contextAsyncListenerBus == null) {
+      synchronized (ContextAsyncListenerBus.class) {
         if (contextAsyncListenerBus == null) {
-            synchronized (ContextAsyncListenerBus.class) {
-                if (contextAsyncListenerBus == null) {
-                    contextAsyncListenerBus = new ContextAsyncListenerBus();
-                    contextAsyncListenerBus.start();
-                }
-            }
+          contextAsyncListenerBus = new ContextAsyncListenerBus();
+          contextAsyncListenerBus.start();
         }
-        return contextAsyncListenerBus;
+      }
     }
+    return contextAsyncListenerBus;
+  }
 }

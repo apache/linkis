@@ -17,10 +17,10 @@
 
 package org.apache.linkis.computation.client.once.result
 
-import java.util
-
 import org.apache.linkis.httpclient.dws.annotation.DWSHttpMessageResult
 import org.apache.linkis.ujes.client.exception.UJESJobException
+
+import java.util
 
 @DWSHttpMessageResult("/api/rest_j/v\\d+/linkisManager/executeEngineConnOperation")
 class EngineConnOperateResult extends LinkisManagerResult {
@@ -39,12 +39,15 @@ class EngineConnOperateResult extends LinkisManagerResult {
 
   def setIsError(isError: Boolean): Unit = this.isError = isError
 
-  def getResult: util.Map[String, Any] = if (isError) throw new UJESJobException(20301, errorMsg) else result
+  def getResult: util.Map[String, Any] =
+    if (isError) throw new UJESJobException(20301, errorMsg) else result
 
   def getAsOption[T](key: String): Option[T] = Option(getAs(key))
 
   def getAs[T](key: String): T = getAs[T](key, null.asInstanceOf[T])
 
-  def getAs[T](key: String, defaultValue: T): T = if (getResult != null && result.containsKey(key)) result.get(key).asInstanceOf[T]
-  else defaultValue
+  def getAs[T](key: String, defaultValue: T): T =
+    if (getResult != null && result.containsKey(key)) result.get(key).asInstanceOf[T]
+    else defaultValue
+
 }

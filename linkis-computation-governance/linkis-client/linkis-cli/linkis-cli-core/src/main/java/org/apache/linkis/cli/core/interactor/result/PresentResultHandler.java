@@ -26,54 +26,53 @@ import org.apache.linkis.cli.common.exception.error.ErrorLevel;
 import org.apache.linkis.cli.core.exception.LinkisClientExecutionException;
 import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
 
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Map;
-
 public class PresentResultHandler implements ResultHandler {
-    private static Logger logger = LoggerFactory.getLogger(PresentResultHandler.class);
-    Presenter presenter;
-    Model model;
+  private static Logger logger = LoggerFactory.getLogger(PresentResultHandler.class);
+  Presenter presenter;
+  Model model;
 
-    public void checkInit() {
-        if (presenter == null || model == null) {
-            throw new LinkisClientExecutionException(
-                    "EXE0031",
-                    ErrorLevel.ERROR,
-                    CommonErrMsg.ExecutionResultErr,
-                    "Presenter or model is null");
+  public void checkInit() {
+    if (presenter == null || model == null) {
+      throw new LinkisClientExecutionException(
+          "EXE0031",
+          ErrorLevel.ERROR,
+          CommonErrMsg.ExecutionResultErr,
+          "Presenter or model is null");
+    }
+  }
+
+  public void setPresenter(Presenter presenter) {
+    this.presenter = presenter;
+  }
+
+  public void setModel(Model model) {
+    this.model = model;
+  }
+
+  @Override
+  public void process(ExecutionResult executionResult) {
+    checkInit();
+    Map<String, Job> jobs = executionResult.getJobs();
+    // Probably need modification if we further want multiple-jobs support
+    // but we probably don't want to support that
+    if (jobs != null) {
+      for (Job job : jobs.values()) {
+        if (job != null) {
+          model.buildModel(job.getJobData());
         }
-    }
-
-    public void setPresenter(Presenter presenter) {
-        this.presenter = presenter;
-    }
-
-    public void setModel(Model model) {
-        this.model = model;
-    }
-
-    @Override
-    public void process(ExecutionResult executionResult) {
-        checkInit();
-        Map<String, Job> jobs = executionResult.getJobs();
-        // Probably need modification if we further want multiple-jobs support
-        // but we probably don't want to support that
-        if (jobs != null) {
-            for (Job job : jobs.values()) {
-                if (job != null) {
-                    model.buildModel(job.getJobData());
-                }
-                try {
-                    presenter.present(model, job.getPresentWay());
-                } catch (Exception e) {
-                    logger.error(
-                            "Execution failed because exception thrown when presenting data.", e);
-                    executionResult.setExecutionStatus(ExecutionStatusEnum.FAILED);
-                    executionResult.setException(e);
-                }
-            }
+        try {
+          presenter.present(model, job.getPresentWay());
+        } catch (Exception e) {
+          logger.error("Execution failed because exception thrown when presenting data.", e);
+          executionResult.setExecutionStatus(ExecutionStatusEnum.FAILED);
+          executionResult.setException(e);
         }
+      }
     }
+  }
 }

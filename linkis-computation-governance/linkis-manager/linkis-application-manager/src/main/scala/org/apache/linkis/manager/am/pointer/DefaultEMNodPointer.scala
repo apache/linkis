@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,24 +27,28 @@ import org.apache.linkis.manager.common.protocol.engine.{EngineStopRequest, Engi
 import org.apache.linkis.manager.engineplugin.common.launch.entity.EngineConnBuildRequest
 import org.apache.linkis.manager.service.common.pointer.EMNodPointer
 
-
 class DefaultEMNodPointer(val node: Node) extends AbstractNodePointer with EMNodPointer {
 
-
   /**
-    * 与该远程指针关联的node信息
-    *
-    * @return
-    */
+   * 与该远程指针关联的node信息
+   *
+   * @return
+   */
   override def getNode(): Node = node
 
   override def createEngine(engineBuildRequest: EngineConnBuildRequest): EngineNode = {
     logger.info(s"Start to createEngine ask em ${getNode().getServiceInstance}")
     getSender.ask(engineBuildRequest) match {
       case engineNode: EngineNode =>
-        logger.info(s"Succeed to createEngine ask em ${getNode().getServiceInstance}, engineNode $engineNode ")
+        logger.info(
+          s"Succeed to createEngine ask em ${getNode().getServiceInstance}, engineNode $engineNode "
+        )
         engineNode
-      case _ => throw new AMErrorException(AMConstant.ENGINE_ERROR_CODE, s"Failed to createEngine ask em ${getNode().getServiceInstance}")
+      case _ =>
+        throw new AMErrorException(
+          AMConstant.ENGINE_ERROR_CODE,
+          s"Failed to createEngine ask em ${getNode().getServiceInstance}"
+        )
     }
   }
 
@@ -53,12 +57,17 @@ class DefaultEMNodPointer(val node: Node) extends AbstractNodePointer with EMNod
       getSender.ask(engineStopRequest) match {
         case engineStopResponse: EngineStopResponse =>
           if (!engineStopResponse.getStopStatus) {
-            logger.info(s"Kill engine : ${engineStopRequest.getServiceInstance.toString} failed, because ${engineStopResponse.getMsg} . Will ask engine to suicide.")
+            logger.info(
+              s"Kill engine : ${engineStopRequest.getServiceInstance.toString} failed, because ${engineStopResponse.getMsg} . Will ask engine to suicide."
+            )
           } else {
             logger.info(s"Succeed to kill engine ${engineStopRequest.getServiceInstance.toString}.")
           }
         case o: AnyRef =>
-          logger.warn(s"Ask em : ${getNode().getServiceInstance.toString} to kill engine : ${engineStopRequest.getServiceInstance.toString} failed, response is : ${AMUtils.GSON.toJson(o)}. ")
+          logger.warn(
+            s"Ask em : ${getNode().getServiceInstance.toString} to kill engine : ${engineStopRequest.getServiceInstance.toString} failed, response is : ${AMUtils.GSON
+              .toJson(o)}. "
+          )
       }
     }
   }
@@ -66,7 +75,9 @@ class DefaultEMNodPointer(val node: Node) extends AbstractNodePointer with EMNod
   override def executeOperation(request: ECMOperateRequest): ECMOperateResponse = {
     getSender.ask(request) match {
       case response: ECMOperateResponse => response
-      case _ => throw new AMErrorException(AMConstant.ENGINE_ERROR_CODE, "Failed to execute ECM operation.")
+      case _ =>
+        throw new AMErrorException(AMConstant.ENGINE_ERROR_CODE, "Failed to execute ECM operation.")
     }
   }
+
 }

@@ -22,11 +22,11 @@ import org.apache.linkis.cs.common.exception.CSErrorException;
 
 public interface ContextHAChecker {
 
-    boolean isHAIDValid(String haIDKey);
+  boolean isHAIDValid(String haIDKey);
 
-    boolean isHAContextIDValid(HAContextID haContextID) throws CSErrorException;
+  boolean isHAContextIDValid(HAContextID haContextID) throws CSErrorException;
 
-    String convertHAIDToHAKey(HAContextID haContextID) throws CSErrorException;
+  String convertHAIDToHAKey(HAContextID haContextID) throws CSErrorException;
 
-    HAContextID parseHAIDFromKey(String haIDKey) throws CSErrorException;
+  HAContextID parseHAIDFromKey(String haIDKey) throws CSErrorException;
 }

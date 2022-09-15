@@ -30,37 +30,37 @@ import java.util.Map;
 
 public interface ContextKeyValueContext {
 
-    ContextID getContextID();
+  ContextID getContextID();
 
-    void setContextID(ContextID contextID) throws CSWarnException;
+  void setContextID(ContextID contextID) throws CSWarnException;
 
-    ContextInvertedIndexSet getContextInvertedIndexSet();
+  ContextInvertedIndexSet getContextInvertedIndexSet();
 
-    ContextValueMapSet getContextValueMapSet();
+  ContextValueMapSet getContextValueMapSet();
 
-    ContextKeyValueParser getContextKeyValueParser();
+  ContextKeyValueParser getContextKeyValueParser();
 
-    ContextKeyValue put(ContextKeyValue contextKeyValue);
+  ContextKeyValue put(ContextKeyValue contextKeyValue);
 
-    ContextKeyValue getContextKeyValue(ContextKey contextKey, ContextType contextType);
+  ContextKeyValue getContextKeyValue(ContextKey contextKey, ContextType contextType);
 
-    List<ContextKeyValue> getValues(String keyword, ContextType contextType);
+  List<ContextKeyValue> getValues(String keyword, ContextType contextType);
 
-    List<ContextKeyValue> getValues(List<String> contextKeys, ContextType contextType);
+  List<ContextKeyValue> getValues(List<String> contextKeys, ContextType contextType);
 
-    List<ContextKeyValue> getAllValues(ContextType contextType);
+  List<ContextKeyValue> getAllValues(ContextType contextType);
 
-    List<ContextKeyValue> getAllLikes(String regex, ContextType contextType);
+  List<ContextKeyValue> getAllLikes(String regex, ContextType contextType);
 
-    List<ContextKeyValue> getAll();
+  List<ContextKeyValue> getAll();
 
-    ContextKeyValue remove(ContextKey contextKey);
+  ContextKeyValue remove(ContextKey contextKey);
 
-    Map<String, ContextKeyValue> removeAll(ContextType contextType);
+  Map<String, ContextKeyValue> removeAll(ContextType contextType);
 
-    Boolean putAll(List<ContextKeyValue> contextKeyValueList);
+  Boolean putAll(List<ContextKeyValue> contextKeyValueList);
 
-    void removeByKeyPrefix(String preFix);
+  void removeByKeyPrefix(String preFix);
 
-    void removeByKeyPrefix(String preFix, ContextType csType);
+  void removeByKeyPrefix(String preFix, ContextType csType);
 }

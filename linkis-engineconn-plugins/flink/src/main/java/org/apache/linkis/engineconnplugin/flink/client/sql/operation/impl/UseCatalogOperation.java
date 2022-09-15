@@ -29,29 +29,29 @@ import org.apache.flink.table.catalog.exceptions.CatalogException;
 
 /** Operation for USE CATALOG command. */
 public class UseCatalogOperation implements NonJobOperation {
-    private final ExecutionContext context;
-    private final String catalogName;
+  private final ExecutionContext context;
+  private final String catalogName;
 
-    public UseCatalogOperation(FlinkEngineConnContext context, String catalogName) {
-        this.context = context.getExecutionContext();
-        this.catalogName = catalogName;
+  public UseCatalogOperation(FlinkEngineConnContext context, String catalogName) {
+    this.context = context.getExecutionContext();
+    this.catalogName = catalogName;
+  }
+
+  @Override
+  public ResultSet execute() throws SqlExecutionException {
+    final TableEnvironment tableEnv = context.getTableEnvironment();
+
+    try {
+      context.wrapClassLoader(
+          () -> {
+            // Rely on TableEnvironment/CatalogManager to validate input
+            tableEnv.useCatalog(catalogName);
+            return null;
+          });
+    } catch (CatalogException e) {
+      throw new SqlExecutionException("Failed to switch to catalog " + catalogName, e);
     }
 
-    @Override
-    public ResultSet execute() throws SqlExecutionException {
-        final TableEnvironment tableEnv = context.getTableEnvironment();
-
-        try {
-            context.wrapClassLoader(
-                    () -> {
-                        // Rely on TableEnvironment/CatalogManager to validate input
-                        tableEnv.useCatalog(catalogName);
-                        return null;
-                    });
-        } catch (CatalogException e) {
-            throw new SqlExecutionException("Failed to switch to catalog " + catalogName, e);
-        }
-
-        return OperationUtil.OK;
-    }
+    return OperationUtil.OK;
+  }
 }

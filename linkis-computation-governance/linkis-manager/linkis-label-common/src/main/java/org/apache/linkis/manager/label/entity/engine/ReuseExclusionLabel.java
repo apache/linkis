@@ -26,38 +26,38 @@ import java.util.HashMap;
 
 public class ReuseExclusionLabel extends GenericLabel {
 
-    public ReuseExclusionLabel() {
-        setLabelKey(LabelKeyConstant.REUSE_EXCLUSION_KEY);
-    }
+  public ReuseExclusionLabel() {
+    setLabelKey(LabelKeyConstant.REUSE_EXCLUSION_KEY);
+  }
 
-    @Override
-    public Feature getFeature() {
-        return Feature.OPTIONAL;
-    }
+  @Override
+  public Feature getFeature() {
+    return Feature.OPTIONAL;
+  }
 
-    public String[] getInstances() {
-        if (null == getValue()) {
-            return null;
-        }
-        return getValue().get("instances").split(";");
+  public String[] getInstances() {
+    if (null == getValue()) {
+      return null;
     }
+    return getValue().get("instances").split(";");
+  }
 
-    @ValueSerialNum(0)
-    public ReuseExclusionLabel setInstances(String instances) {
-        if (null == getValue()) {
-            setValue(new HashMap<>());
-        }
-        getValue().put("instances", instances);
-        return this;
+  @ValueSerialNum(0)
+  public ReuseExclusionLabel setInstances(String instances) {
+    if (null == getValue()) {
+      setValue(new HashMap<>());
     }
+    getValue().put("instances", instances);
+    return this;
+  }
 
-    @Override
-    public String getStringValue() {
-        return getValue().get("instances");
-    }
+  @Override
+  public String getStringValue() {
+    return getValue().get("instances");
+  }
 
-    @Override
-    protected void setStringValue(String stringValue) {
-        setInstances(stringValue);
-    }
+  @Override
+  protected void setStringValue(String stringValue) {
+    setInstances(stringValue);
+  }
 }

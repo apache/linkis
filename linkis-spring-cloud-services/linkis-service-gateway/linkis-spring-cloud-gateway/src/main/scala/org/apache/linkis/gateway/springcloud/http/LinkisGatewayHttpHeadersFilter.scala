@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,16 +17,18 @@
 
 package org.apache.linkis.gateway.springcloud.http
 
-import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.gateway.config.GatewayConfiguration.{THIS_GATEWAY_SCHEMA, THIS_GATEWAY_URL}
 import org.apache.linkis.rpc.Sender
+
+import org.apache.commons.lang3.StringUtils
+
 import org.springframework.cloud.gateway.filter.headers.HttpHeadersFilter
 import org.springframework.core.Ordered
 import org.springframework.http.HttpHeaders
 import org.springframework.http.server.reactive.ServerHttpRequest
 import org.springframework.web.server.ServerWebExchange
 
-class LinkisGatewayHttpHeadersFilter extends HttpHeadersFilter with  Ordered{
+class LinkisGatewayHttpHeadersFilter extends HttpHeadersFilter with Ordered {
 
   private val GATEWAY_URL = "GATEWAY_URL"
 

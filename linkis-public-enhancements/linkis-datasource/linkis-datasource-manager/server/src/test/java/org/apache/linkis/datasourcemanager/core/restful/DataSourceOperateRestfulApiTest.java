@@ -36,11 +36,11 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {WebApplicationServer.class, Scan.class})
 class DataSourceOperateRestfulApiTest {
 
-    @Autowired protected MockMvc mockMvc;
+  @Autowired protected MockMvc mockMvc;
 
-    @Test
-    void connect() {}
+  @Test
+  void connect() {}
 
-    @Test
-    void doConnect() {}
+  @Test
+  void doConnect() {}
 }

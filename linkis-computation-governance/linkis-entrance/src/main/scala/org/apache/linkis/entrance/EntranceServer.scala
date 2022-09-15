@@ -5,20 +5,18 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.entrance
 
-import org.apache.commons.lang3.exception.ExceptionUtils
-import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.exception.{ErrorException, LinkisException, LinkisRuntimeException}
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.entrance.cs.CSEntranceHelper
@@ -33,8 +31,10 @@ import org.apache.linkis.rpc.Sender
 import org.apache.linkis.scheduler.queue.{Job, SchedulerEventState}
 import org.apache.linkis.server.conf.ServerConfiguration
 
-import java.util
+import org.apache.commons.lang3.StringUtils
+import org.apache.commons.lang3.exception.ExceptionUtils
 
+import java.util
 
 abstract class EntranceServer extends Logging {
 
@@ -48,35 +48,57 @@ abstract class EntranceServer extends Logging {
 
   def getEntranceContext: EntranceContext
 
-
   /**
-    * Execute a task and return an execId(执行一个task，返回一个execId)
-    * @param params
-    * @return
-    */
+   * Execute a task and return an execId(执行一个task，返回一个execId)
+   * @param params
+   * @return
+   */
   def execute(params: java.util.Map[String, Any]): String = {
-    if (!params.containsKey(EntranceServer.DO_NOT_PRINT_PARAMS_LOG)) logger.debug("received a request: " + params)
+    if (!params.containsKey(EntranceServer.DO_NOT_PRINT_PARAMS_LOG))
+      logger.debug("received a request: " + params)
     else params.remove(EntranceServer.DO_NOT_PRINT_PARAMS_LOG)
     var jobRequest = getEntranceContext.getOrCreateEntranceParser().parseToTask(params)
-    //todo: multi entrance instances
+    // todo: multi entrance instances
     jobRequest.setInstances(Sender.getThisInstance)
     Utils.tryAndWarn(CSEntranceHelper.resetCreator(jobRequest))
-    //After parse the map into a jobRequest, we need to store it in the database, and the jobRequest can get a unique taskID.
-    //将map parse 成 jobRequest 之后，我们需要将它存储到数据库中，task可以获得唯一的taskID
-    getEntranceContext.getOrCreatePersistenceManager().createPersistenceEngine().persist(jobRequest)
+    // After parse the map into a jobRequest, we need to store it in the database, and the jobRequest can get a unique taskID.
+    // 将map parse 成 jobRequest 之后，我们需要将它存储到数据库中，task可以获得唯一的taskID
+    getEntranceContext
+      .getOrCreatePersistenceManager()
+      .createPersistenceEngine()
+      .persist(jobRequest)
     if (null == jobRequest.getId || jobRequest.getId <= 0) {
-      throw new EntranceErrorException(20052, "Persist jobRequest error, please submit again later(存储Job异常，请稍后重新提交任务)")
+      throw new EntranceErrorException(
+        20052,
+        "Persist jobRequest error, please submit again later(存储Job异常，请稍后重新提交任务)"
+      )
     }
     logger.info(s"received a request,convert $jobRequest")
 
     val logAppender = new java.lang.StringBuilder()
-    Utils.tryThrow(getEntranceContext.getOrCreateEntranceInterceptors().foreach(int => jobRequest = int.apply(jobRequest, logAppender))) { t =>
+    Utils.tryThrow(
+      getEntranceContext
+        .getOrCreateEntranceInterceptors()
+        .foreach(int => jobRequest = int.apply(jobRequest, logAppender))
+    ) { t =>
       val error = t match {
         case error: ErrorException => error
-        case t1:Throwable => val exception = new EntranceErrorException(20039, "failed to analysis task ! the reason is :"+ExceptionUtils.getRootCauseMessage(t)+"(解析task失败！原因：" + ExceptionUtils.getRootCauseMessage(t))
+        case t1: Throwable =>
+          val exception = new EntranceErrorException(
+            20039,
+            "failed to analysis task ! the reason is :" + ExceptionUtils.getRootCauseMessage(
+              t
+            ) + "(解析task失败！原因：" + ExceptionUtils.getRootCauseMessage(t)
+          )
           exception.initCause(t1)
           exception
-        case _ => new EntranceErrorException(20039, "failed to analysis task ! the reason is :"+ExceptionUtils.getRootCauseMessage(t)+"(解析task失败！原因：" + ExceptionUtils.getRootCauseMessage(t))
+        case _ =>
+          new EntranceErrorException(
+            20039,
+            "failed to analysis task ! the reason is :" + ExceptionUtils.getRootCauseMessage(
+              t
+            ) + "(解析task失败！原因：" + ExceptionUtils.getRootCauseMessage(t)
+          )
       }
       jobRequest match {
         case t: JobRequest =>
@@ -84,13 +106,16 @@ abstract class EntranceServer extends Logging {
           t.setErrorDesc(error.getDesc)
           t.setStatus(SchedulerEventState.Failed.toString)
           t.setProgress(EntranceJob.JOB_COMPLETED_PROGRESS.toString)
-          val infoMap = new  util.HashMap[String, Object]
+          val infoMap = new util.HashMap[String, Object]
           infoMap.put(TaskConstant.ENGINE_INSTANCE, "NULL")
           infoMap.put("message", "Task interception failed and cannot be retried")
           JobHistoryHelper.updateJobRequestMetrics(jobRequest, null, infoMap)
         case _ =>
       }
-      getEntranceContext.getOrCreatePersistenceManager().createPersistenceEngine().updateIfNeeded(jobRequest)
+      getEntranceContext
+        .getOrCreatePersistenceManager()
+        .createPersistenceEngine()
+        .updateIfNeeded(jobRequest)
       error
     }
 
@@ -106,16 +131,18 @@ abstract class EntranceServer extends Logging {
         }
         case _ =>
       }
-      Utils.tryCatch{
-        if (logAppender.length() > 0) job.getLogListener.foreach(_.onLogUpdate(job, logAppender.toString.trim))
-      }{
-        t => logger.error("Failed to write init log, reason: ", t)
+      Utils.tryCatch {
+        if (logAppender.length() > 0)
+          job.getLogListener.foreach(_.onLogUpdate(job, logAppender.toString.trim))
+      } { t =>
+        logger.error("Failed to write init log, reason: ", t)
       }
 
       /**
-       * job.afterStateChanged() method is only called in job.run(), and job.run() is called only after job is scheduled
-       * so it suggest that we lack a hook for job init, currently we call this to trigger JobListener.onJobinit()
-       * */
+       * job.afterStateChanged() method is only called in job.run(), and job.run() is called only
+       * after job is scheduled so it suggest that we lack a hook for job init, currently we call
+       * this to trigger JobListener.onJobinit()
+       */
       Utils.tryAndWarn(job.getJobListener.foreach(_.onJobInited(job)))
       getEntranceContext.getOrCreateScheduler().submit(job)
       val msg = s"Job with jobId : ${jobRequest.getId} and execID : ${job.getId()} submitted "
@@ -124,54 +151,76 @@ abstract class EntranceServer extends Logging {
       job match {
         case entranceJob: EntranceJob =>
           entranceJob.getJobRequest.setReqId(job.getId())
-          if(jobTimeoutManager.timeoutCheck && JobTimeoutManager.hasTimeoutLabel(entranceJob)) jobTimeoutManager.add(job.getId(), entranceJob)
+          if (jobTimeoutManager.timeoutCheck && JobTimeoutManager.hasTimeoutLabel(entranceJob))
+            jobTimeoutManager.add(job.getId(), entranceJob)
           entranceJob.getLogListener.foreach(_.onLogUpdate(entranceJob, msg))
         case _ =>
       }
 
       job.getId()
-    } {
-      t =>
+    } { t =>
       job.onFailure("Submitting the query failed!(提交查询失败！)", t)
-      val _jobRequest: JobRequest = getEntranceContext.getOrCreateEntranceParser().parseToJobRequest(job)
-      getEntranceContext.getOrCreatePersistenceManager().createPersistenceEngine().updateIfNeeded(_jobRequest)
+      val _jobRequest: JobRequest =
+        getEntranceContext.getOrCreateEntranceParser().parseToJobRequest(job)
+      getEntranceContext
+        .getOrCreatePersistenceManager()
+        .createPersistenceEngine()
+        .updateIfNeeded(_jobRequest)
       t match {
         case e: LinkisException => e
         case e: LinkisRuntimeException => e
         case t: Throwable =>
-          new SubmitFailedException(30009, "Submitting the query failed!(提交查询失败！)" + ExceptionUtils.getRootCauseMessage(t), t)
+          new SubmitFailedException(
+            30009,
+            "Submitting the query failed!(提交查询失败！)" + ExceptionUtils.getRootCauseMessage(t),
+            t
+          )
       }
     }
   }
 
   def logReader(execId: String): LogReader
 
-  def getJob(execId: String): Option[Job] = getEntranceContext.getOrCreateScheduler().get(execId).map(_.asInstanceOf[Job])
+  def getJob(execId: String): Option[Job] =
+    getEntranceContext.getOrCreateScheduler().get(execId).map(_.asInstanceOf[Job])
 
-  private[entrance] def getEntranceWebSocketService: Option[EntranceWebSocketService] = if (ServerConfiguration.BDP_SERVER_SOCKET_MODE.getValue) {
-    if (entranceWebSocketService.isEmpty) synchronized {
-      if (entranceWebSocketService.isEmpty) {
-        entranceWebSocketService = Some(new EntranceWebSocketService)
-        entranceWebSocketService.foreach(_.setEntranceServer(this))
-        entranceWebSocketService.foreach(getEntranceContext.getOrCreateEventListenerBus.addListener)
+  private[entrance] def getEntranceWebSocketService: Option[EntranceWebSocketService] =
+    if (ServerConfiguration.BDP_SERVER_SOCKET_MODE.getValue) {
+      if (entranceWebSocketService.isEmpty) synchronized {
+        if (entranceWebSocketService.isEmpty) {
+          entranceWebSocketService = Some(new EntranceWebSocketService)
+          entranceWebSocketService.foreach(_.setEntranceServer(this))
+          entranceWebSocketService.foreach(
+            getEntranceContext.getOrCreateEventListenerBus.addListener
+          )
+        }
       }
-    }
-    entranceWebSocketService
-  } else None
+      entranceWebSocketService
+    } else None
 
   def getAllUndoneTask(filterWords: String): Array[EntranceJob] = {
-    val consumers = getEntranceContext.getOrCreateScheduler().getSchedulerContext.getOrCreateConsumerManager.listConsumers().toSet
+    val consumers = getEntranceContext
+      .getOrCreateScheduler()
+      .getSchedulerContext
+      .getOrCreateConsumerManager
+      .listConsumers()
+      .toSet
     val filterConsumer = if (StringUtils.isNotBlank(filterWords)) {
       consumers.filter(_.getGroup.getGroupName.contains(filterWords))
     } else {
       consumers
     }
-    filterConsumer.flatMap { consumer =>
-      consumer.getRunningEvents ++ consumer.getConsumeQueue.getWaitingEvents
-    }.filter(job => job != null && job.isInstanceOf[EntranceJob]).map(_.asInstanceOf[EntranceJob]).toArray
+    filterConsumer
+      .flatMap { consumer =>
+        consumer.getRunningEvents ++ consumer.getConsumeQueue.getWaitingEvents
+      }
+      .filter(job => job != null && job.isInstanceOf[EntranceJob])
+      .map(_.asInstanceOf[EntranceJob])
+      .toArray
   }
 
 }
+
 object EntranceServer {
   val DO_NOT_PRINT_PARAMS_LOG = "doNotPrintParamsLog"
 }

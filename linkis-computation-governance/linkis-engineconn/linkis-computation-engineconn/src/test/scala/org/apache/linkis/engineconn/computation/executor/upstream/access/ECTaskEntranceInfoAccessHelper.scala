@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,7 +17,6 @@
 
 package org.apache.linkis.engineconn.computation.executor.upstream.access
 
-import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.DataWorkCloudApplication
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.conf.{CommonVars, DWCArgumentsParser}
@@ -27,13 +26,18 @@ import org.apache.linkis.engineconn.core.util.EngineConnUtils
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.governance.common.utils.EngineConnArgumentsParser
 import org.apache.linkis.manager.engineplugin.common.launch.process.Environment
-import org.apache.linkis.manager.label.builder.factory.{LabelBuilderFactory, LabelBuilderFactoryContext}
+import org.apache.linkis.manager.label.builder.factory.{
+  LabelBuilderFactory,
+  LabelBuilderFactoryContext
+}
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.server.conf.ServerConfiguration
-import org.slf4j.{Logger, LoggerFactory}
+
+import org.apache.commons.lang3.StringUtils
 
 import java.util
 
+import org.slf4j.{Logger, LoggerFactory}
 
 object ECTaskEntranceInfoAccessHelper {
   val logger: Logger = LoggerFactory.getLogger(ECTaskEntranceInfoAccessHelper.getClass)
@@ -48,12 +52,17 @@ object ECTaskEntranceInfoAccessHelper {
     engineCreationContext.setTicketId(engineConf.getOrElse("ticketId", ""))
     val host = CommonVars(Environment.ECM_HOST.toString, "127.0.0.1").getValue
     val port = CommonVars(Environment.ECM_PORT.toString, "80").getValue
-    engineCreationContext.setEMInstance(ServiceInstance(GovernanceCommonConf.ENGINE_CONN_MANAGER_SPRING_NAME.getValue, s"$host:$port"))
+    engineCreationContext.setEMInstance(
+      ServiceInstance(GovernanceCommonConf.ENGINE_CONN_MANAGER_SPRING_NAME.getValue, s"$host:$port")
+    )
     val labels = new util.ArrayList[Label[_]]
     val labelArgs = engineConf.filter(_._1.startsWith(EngineConnArgumentsParser.LABEL_PREFIX))
     if (labelArgs.nonEmpty) {
       labelArgs.foreach { case (key, value) =>
-        labels.add(labelBuilderFactory.createLabel[Label[_]](key.replace(EngineConnArgumentsParser.LABEL_PREFIX, ""), value))
+        labels.add(
+          labelBuilderFactory
+            .createLabel[Label[_]](key.replace(EngineConnArgumentsParser.LABEL_PREFIX, ""), value)
+        )
       }
       engineCreationContext.setLabels(labels)
     }
@@ -62,7 +71,10 @@ object ECTaskEntranceInfoAccessHelper {
     engineCreationContext.setOptions(jMap)
     engineCreationContext.setArgs(args)
     //    EngineConnObject.setEngineCreationContext(engineCreationContext)
-    logger.info("Finished to init engineCreationContext: " + EngineConnUtils.GSON.toJson(engineCreationContext))
+    logger.info(
+      "Finished to init engineCreationContext: " + EngineConnUtils.GSON
+        .toJson(engineCreationContext)
+    )
 
     logger.info("Spring is enabled, now try to start SpringBoot.")
     logger.info("<--------------------Start SpringBoot App-------------------->")
@@ -70,7 +82,10 @@ object ECTaskEntranceInfoAccessHelper {
     DWCArgumentsParser.setDWCOptionMap(parser.getDWCConfMap)
     val existsExcludePackages = ServerConfiguration.BDP_SERVER_EXCLUDE_PACKAGES.getValue
     if (!StringUtils.isEmpty(existsExcludePackages)) {
-      DataWorkCloudApplication.setProperty(ServerConfiguration.BDP_SERVER_EXCLUDE_PACKAGES.key, existsExcludePackages)
+      DataWorkCloudApplication.setProperty(
+        ServerConfiguration.BDP_SERVER_EXCLUDE_PACKAGES.key,
+        existsExcludePackages
+      )
     }
     // 加载spring类
     DataWorkCloudApplication.main(DWCArgumentsParser.formatSpringOptions(parser.getSpringConfMap))

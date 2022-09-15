@@ -32,64 +32,57 @@ import java.util.stream.Collectors;
 
 public class ReceiverMethodSearcher {
 
-    /** key是requestProtocol的全类名，Map中，key是groupName */
-    private final Map<String, Map<String, List<ServiceMethod>>> protocolServiceMethodCache =
-            new ConcurrentHashMap<>();
+  /** key是requestProtocol的全类名，Map中，key是groupName */
+  private final Map<String, Map<String, List<ServiceMethod>>> protocolServiceMethodCache =
+      new ConcurrentHashMap<>();
 
-    private SpringServiceRegistry serviceRegistry;
+  private SpringServiceRegistry serviceRegistry;
 
-    private void initRegistry() {
-        serviceRegistry = new SpringServiceRegistry();
-    }
+  private void initRegistry() {
+    serviceRegistry = new SpringServiceRegistry();
+  }
 
-    public Map<String, List<MethodExecuteWrapper>> getMethodExecuteWrappers(
-            RequestProtocol requestProtocol) {
+  public Map<String, List<MethodExecuteWrapper>> getMethodExecuteWrappers(
+      RequestProtocol requestProtocol) {
+    if (serviceRegistry == null) {
+      synchronized (ReceiverMethodSearcher.class) {
         if (serviceRegistry == null) {
-            synchronized (ReceiverMethodSearcher.class) {
-                if (serviceRegistry == null) {
-                    initRegistry();
-                }
-            }
+          initRegistry();
         }
-        String protocolName = requestProtocol.getClass().getName();
-        Map<String, List<ServiceMethod>> protocolServiceMethods =
-                this.protocolServiceMethodCache.get(protocolName);
-        if (protocolServiceMethods == null) {
-            Map<String, List<ServiceMethod>> serviceMethodCache =
-                    serviceRegistry.getServiceMethodCache();
-            Map<String, List<ServiceMethod>> serviceMatchs =
-                    serviceMethodCache.entrySet().stream()
-                            .filter(e -> MessageUtils.isAssignableFrom(e.getKey(), protocolName))
-                            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-            serviceMatchs =
-                    serviceMatchs.values().stream()
-                            .flatMap(Collection::stream)
-                            .collect(Collectors.groupingBy(ServiceMethod::getChainName));
-            // order判断
-            for (List<ServiceMethod> value : serviceMatchs.values()) {
-                Integer repeatOrder = MessageUtils.repeatOrder(value);
-                if (repeatOrder != null && !MessageUtils.orderIsLast(repeatOrder, value)) {
-                    throw new MessageWarnException(
-                            10000,
-                            String.format(
-                                    "repeat order : %s for request %s", repeatOrder, protocolName));
-                }
-            }
-            this.protocolServiceMethodCache.put(protocolName, serviceMatchs);
-        }
-        return serviceMethod2Wrapper(this.protocolServiceMethodCache.get(protocolName));
+      }
     }
+    String protocolName = requestProtocol.getClass().getName();
+    Map<String, List<ServiceMethod>> protocolServiceMethods =
+        this.protocolServiceMethodCache.get(protocolName);
+    if (protocolServiceMethods == null) {
+      Map<String, List<ServiceMethod>> serviceMethodCache = serviceRegistry.getServiceMethodCache();
+      Map<String, List<ServiceMethod>> serviceMatchs =
+          serviceMethodCache.entrySet().stream()
+              .filter(e -> MessageUtils.isAssignableFrom(e.getKey(), protocolName))
+              .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+      serviceMatchs =
+          serviceMatchs.values().stream()
+              .flatMap(Collection::stream)
+              .collect(Collectors.groupingBy(ServiceMethod::getChainName));
+      // order判断
+      for (List<ServiceMethod> value : serviceMatchs.values()) {
+        Integer repeatOrder = MessageUtils.repeatOrder(value);
+        if (repeatOrder != null && !MessageUtils.orderIsLast(repeatOrder, value)) {
+          throw new MessageWarnException(
+              10000, String.format("repeat order : %s for request %s", repeatOrder, protocolName));
+        }
+      }
+      this.protocolServiceMethodCache.put(protocolName, serviceMatchs);
+    }
+    return serviceMethod2Wrapper(this.protocolServiceMethodCache.get(protocolName));
+  }
 
-    private Map<String, List<MethodExecuteWrapper>> serviceMethod2Wrapper(
-            Map<String, List<ServiceMethod>> source) {
-        HashMap<String, List<MethodExecuteWrapper>> target = new HashMap<>();
-        source.forEach(
-                (k, v) ->
-                        target.put(
-                                k,
-                                v.stream()
-                                        .map(MethodExecuteWrapper::new)
-                                        .collect(Collectors.toList())));
-        return target;
-    }
+  private Map<String, List<MethodExecuteWrapper>> serviceMethod2Wrapper(
+      Map<String, List<ServiceMethod>> source) {
+    HashMap<String, List<MethodExecuteWrapper>> target = new HashMap<>();
+    source.forEach(
+        (k, v) ->
+            target.put(k, v.stream().map(MethodExecuteWrapper::new).collect(Collectors.toList())));
+    return target;
+  }
 }

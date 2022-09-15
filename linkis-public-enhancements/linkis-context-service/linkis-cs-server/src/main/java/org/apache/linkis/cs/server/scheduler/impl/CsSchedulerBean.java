@@ -32,25 +32,24 @@ import org.springframework.context.annotation.Import;
 @Import(CsExecutorExecutionManager.class)
 public class CsSchedulerBean {
 
-    @Bean
-    public SchedulerContext getSchedulerContext(CsExecutorExecutionManager csExecutorManager) {
-        ParallelSchedulerContextImpl parallelSchedulerContext =
-                new ParallelSchedulerContextImpl(3000);
-        parallelSchedulerContext.setExecutorManager(csExecutorManager);
-        if (parallelSchedulerContext.getOrCreateGroupFactory() instanceof FIFOGroupFactory) {
-            FIFOGroupFactory groupFactory =
-                    (FIFOGroupFactory) parallelSchedulerContext.getOrCreateGroupFactory();
-            groupFactory.setDefaultMaxRunningJobs(ContextServerConf.CS_SCHEDULER_MAX_RUNNING_JOBS);
-            groupFactory.setDefaultMaxAskExecutorTimes(
-                    ContextServerConf.CS_SCHEDULER_MAX_ASK_EXECUTOR_TIMES);
-        }
-        return parallelSchedulerContext;
+  @Bean
+  public SchedulerContext getSchedulerContext(CsExecutorExecutionManager csExecutorManager) {
+    ParallelSchedulerContextImpl parallelSchedulerContext = new ParallelSchedulerContextImpl(3000);
+    parallelSchedulerContext.setExecutorManager(csExecutorManager);
+    if (parallelSchedulerContext.getOrCreateGroupFactory() instanceof FIFOGroupFactory) {
+      FIFOGroupFactory groupFactory =
+          (FIFOGroupFactory) parallelSchedulerContext.getOrCreateGroupFactory();
+      groupFactory.setDefaultMaxRunningJobs(ContextServerConf.CS_SCHEDULER_MAX_RUNNING_JOBS);
+      groupFactory.setDefaultMaxAskExecutorTimes(
+          ContextServerConf.CS_SCHEDULER_MAX_ASK_EXECUTOR_TIMES);
     }
+    return parallelSchedulerContext;
+  }
 
-    @Bean
-    public Scheduler getScheduler(SchedulerContext context) {
-        ParallelScheduler parallelScheduler = new ParallelScheduler(context);
-        parallelScheduler.init();
-        return parallelScheduler;
-    }
+  @Bean
+  public Scheduler getScheduler(SchedulerContext context) {
+    ParallelScheduler parallelScheduler = new ParallelScheduler(context);
+    parallelScheduler.init();
+    return parallelScheduler;
+  }
 }

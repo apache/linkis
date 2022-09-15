@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,22 +21,26 @@ import org.apache.linkis.datasource.client.request._
 import org.apache.linkis.datasource.client.response._
 
 trait DataSourceRemoteClient extends RemoteClient {
-
   def getAllDataSourceTypes(action: GetAllDataSourceTypesAction): GetAllDataSourceTypesResult
 
   def queryDataSourceEnv(action: QueryDataSourceEnvAction): QueryDataSourceEnvResult
-
   def getInfoByDataSourceId(action: GetInfoByDataSourceIdAction): GetInfoByDataSourceIdResult
 
   def getInfoByDataSourceName(action: GetInfoByDataSourceNameAction): GetInfoByDataSourceNameResult
 
-  def getInfoPublishedByDataSourceName(action: GetInfoPublishedByDataSourceNameAction): GetInfoPublishedByDataSourceNameResult
+  def getInfoPublishedByDataSourceName(
+      action: GetInfoPublishedByDataSourceNameAction
+  ): GetInfoPublishedByDataSourceNameResult
 
   def queryDataSource(action: QueryDataSourceAction): QueryDataSourceResult
 
-  def getConnectParams(action: GetConnectParamsByDataSourceIdAction): GetConnectParamsByDataSourceIdResult
+  def getConnectParams(
+      action: GetConnectParamsByDataSourceIdAction
+  ): GetConnectParamsByDataSourceIdResult
 
-  def getConnectParamsByName(action: GetConnectParamsByDataSourceNameAction): GetConnectParamsByDataSourceNameResult
+  def getConnectParamsByName(
+      action: GetConnectParamsByDataSourceNameAction
+  ): GetConnectParamsByDataSourceNameResult
 
   def createDataSource(action: CreateDataSourceAction): CreateDataSourceResult
 
@@ -48,11 +52,15 @@ trait DataSourceRemoteClient extends RemoteClient {
 
   def getDataSourceVersions(action: GetDataSourceVersionsAction): GetDataSourceVersionsResult
 
-  def publishDataSourceVersion(action: PublishDataSourceVersionAction): PublishDataSourceVersionResult
+  def publishDataSourceVersion(
+      action: PublishDataSourceVersionAction
+  ): PublishDataSourceVersionResult
 
   def updateDataSource(action: UpdateDataSourceAction): UpdateDataSourceResult
 
-  def updateDataSourceParameter(action: UpdateDataSourceParameterAction): UpdateDataSourceParameterResult
+  def updateDataSourceParameter(
+      action: UpdateDataSourceParameterAction
+  ): UpdateDataSourceParameterResult
 
   def getKeyDefinitionsByType(action: GetKeyTypeDatasourceAction): GetKeyTypeDatasourceResult
 }

@@ -5,22 +5,20 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.engineconnplugin.flink.executor
 
-import java.util
-
-import org.apache.linkis.common.io.resultset.ResultSetWriter
 import org.apache.linkis.common.io.{MetaData, Record}
+import org.apache.linkis.common.io.resultset.ResultSetWriter
 import org.apache.linkis.common.utils.{OverloadUtils, Utils}
 import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
 import org.apache.linkis.engineconn.executor.entity.{LabelExecutor, ResourceExecutor, YarnExecutor}
@@ -36,11 +34,13 @@ import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.storage.domain.{Column, DataType}
 import org.apache.linkis.storage.resultset.ResultSetFactory
 import org.apache.linkis.storage.resultset.table.{TableMetaData, TableRecord}
+
 import org.apache.commons.io.IOUtils
 import org.apache.flink.configuration.{CoreOptions, JobManagerOptions, TaskManagerOptions}
 import org.apache.flink.types.Row
 import org.apache.flink.yarn.configuration.YarnConfigOptions
 
+import java.util
 
 trait FlinkExecutor extends YarnExecutor with LabelExecutor with ResourceExecutor {
 
@@ -74,25 +74,27 @@ trait FlinkExecutor extends YarnExecutor with LabelExecutor with ResourceExecuto
 
   override def setExecutorLabels(labels: util.List[Label[_]]): Unit = this.executorLabels = labels
 
-  override def requestExpectedResource(expectedResource: NodeResource): NodeResource = throw new JobExecutionException("Not support method for requestExpectedResource.")
+  override def requestExpectedResource(expectedResource: NodeResource): NodeResource =
+    throw new JobExecutionException("Not support method for requestExpectedResource.")
 
   protected val flinkEngineConnContext: FlinkEngineConnContext
 
-  queue = flinkEngineConnContext.getEnvironmentContext.getFlinkConfig.get(YarnConfigOptions.APPLICATION_QUEUE)
+  queue = flinkEngineConnContext.getEnvironmentContext.getFlinkConfig.get(
+    YarnConfigOptions.APPLICATION_QUEUE
+  )
 
   override def getCurrentNodeResource(): NodeResource = {
     val flinkConfig = flinkEngineConnContext.getEnvironmentContext.getFlinkConfig
     val jobManagerMemory = flinkConfig.get(JobManagerOptions.TOTAL_PROCESS_MEMORY).getBytes
     val taskManagerMemory = flinkConfig.get(TaskManagerOptions.TOTAL_PROCESS_MEMORY).getBytes
     val parallelism = flinkConfig.get(CoreOptions.DEFAULT_PARALLELISM)
-    val numOfTaskSlots =flinkConfig.get(TaskManagerOptions.NUM_TASK_SLOTS)
+    val numOfTaskSlots = flinkConfig.get(TaskManagerOptions.NUM_TASK_SLOTS)
     val containers = Math.round(parallelism * 1.0f / numOfTaskSlots)
     val yarnMemory = taskManagerMemory * containers + jobManagerMemory
-    val yarnCores = FlinkResourceConfiguration.LINKIS_FLINK_TASK_MANAGER_CPU_CORES.getValue * containers + 1
+    val yarnCores =
+      FlinkResourceConfiguration.LINKIS_FLINK_TASK_MANAGER_CPU_CORES.getValue * containers + 1
     val resource = new DriverAndYarnResource(
-      new LoadInstanceResource(OverloadUtils.getProcessMaxMemory,
-        LINKIS_FLINK_CLIENT_CORES,
-        1),
+      new LoadInstanceResource(OverloadUtils.getProcessMaxMemory, LINKIS_FLINK_CLIENT_CORES, 1),
       new YarnResource(yarnMemory, yarnCores, 0, queue)
     )
     val engineResource = new CommonNodeResource
@@ -108,24 +110,35 @@ object FlinkExecutor {
 
   import scala.collection.JavaConversions._
 
-  def writeResultSet(resultSet: ResultSet, resultSetWriter: ResultSetWriter[_ <: MetaData, _ <: Record]): Unit = {
-    val columns = resultSet.getColumns.map(columnInfo => Column(columnInfo.getName, DataType.toDataType(columnInfo.getType), null)).toArray
+  def writeResultSet(
+      resultSet: ResultSet,
+      resultSetWriter: ResultSetWriter[_ <: MetaData, _ <: Record]
+  ): Unit = {
+    val columns = resultSet.getColumns
+      .map(columnInfo => Column(columnInfo.getName, DataType.toDataType(columnInfo.getType), null))
+      .toArray
     resultSetWriter.addMetaData(new TableMetaData(columns))
     resultSet.getData match {
-      case data: util.List[Row] => data.foreach { row =>
-        val record = (0 until row.getArity).map(row.getField).map(FlinkValueFormatUtil.formatValue).toArray
-        resultSetWriter.addRecord(new TableRecord(record))
-      }
+      case data: util.List[Row] =>
+        data.foreach { row =>
+          val record =
+            (0 until row.getArity).map(row.getField).map(FlinkValueFormatUtil.formatValue).toArray
+          resultSetWriter.addRecord(new TableRecord(record))
+        }
       case _ =>
     }
   }
 
-  def writeAndSendResultSet(resultSet: ResultSet, engineExecutionContext: EngineExecutionContext): Unit = {
-    val resultSetWriter = engineExecutionContext.createResultSetWriter(ResultSetFactory.TABLE_TYPE)
-    Utils.tryFinally{
+  def writeAndSendResultSet(
+      resultSet: ResultSet,
+      engineExecutionContext: EngineExecutionContext
+  ): Unit = {
+    val resultSetWriter =
+      engineExecutionContext.createResultSetWriter(ResultSetFactory.TABLE_TYPE)
+    Utils.tryFinally {
       writeResultSet(resultSet, resultSetWriter)
       engineExecutionContext.sendResultSet(resultSetWriter)
-    } (IOUtils.closeQuietly(resultSetWriter))
+    }(IOUtils.closeQuietly(resultSetWriter))
   }
 
 }

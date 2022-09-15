@@ -28,9 +28,12 @@ object ECMOperateAction {
   def newBuilder(): Builder = new Builder
 
   class Builder extends EngineConnOperateAction.Builder {
+
     override protected def newEngineConnOperateAction(): EngineConnOperateAction =
       new ECMOperateAction
+
   }
+
 }
 
 class ECMOperateByECAction extends ECMOperateAction {
@@ -41,7 +44,10 @@ object ECMOperateByECAction {
   def newBuilder(): Builder = new Builder
 
   class Builder extends EngineConnOperateAction.Builder {
+
     override protected def newEngineConnOperateAction(): EngineConnOperateAction =
       new ECMOperateByECAction
+
   }
+
 }

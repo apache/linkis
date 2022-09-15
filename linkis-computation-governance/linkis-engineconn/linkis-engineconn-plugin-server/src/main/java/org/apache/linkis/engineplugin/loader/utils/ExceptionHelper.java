@@ -20,10 +20,10 @@ package org.apache.linkis.engineplugin.loader.utils;
 import org.apache.linkis.common.exception.ErrorException;
 
 public class ExceptionHelper {
-    public static void dealErrorException(int errorCode, String errorMsg, Throwable t)
-            throws ErrorException {
-        ErrorException errorException = new ErrorException(errorCode, errorMsg);
-        errorException.initCause(t);
-        throw errorException;
-    }
+  public static void dealErrorException(int errorCode, String errorMsg, Throwable t)
+      throws ErrorException {
+    ErrorException errorException = new ErrorException(errorCode, errorMsg);
+    errorException.initCause(t);
+    throw errorException;
+  }
 }

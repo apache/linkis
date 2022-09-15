@@ -36,106 +36,105 @@ import org.apache.linkis.cli.core.present.PresentWayImpl;
 
 import org.apache.commons.lang3.StringUtils;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.HashSet;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class LinkisManageJobBuilder extends JobBuilder {
-    private static Logger logger = LoggerFactory.getLogger(LinkisSubmitJobBuilder.class);
+  private static Logger logger = LoggerFactory.getLogger(LinkisSubmitJobBuilder.class);
 
-    LinkisClientListener logListener;
+  LinkisClientListener logListener;
 
-    public LinkisManageJobBuilder setLogListener(LinkisClientListener observer) {
-        this.logListener = observer;
-        return this;
+  public LinkisManageJobBuilder setLogListener(LinkisClientListener observer) {
+    this.logListener = observer;
+    return this;
+  }
+
+  @Override
+  protected LinkisJobManDesc buildJobDesc() {
+    LinkisJobManDesc desc = new LinkisJobManDesc();
+    String osUser = sysVarAccess.getVar(String.class, AppKeys.LINUX_USER_KEY);
+    String[] adminUsers = StringUtils.split(AppKeys.ADMIN_USERS, ',');
+    Set<String> adminSet = new HashSet<>();
+    for (String admin : adminUsers) {
+      adminSet.add(admin);
+    }
+    String submitUsr = ExecutionUtils.getSubmitUser(stdVarAccess, osUser, adminSet);
+
+    String jobId = null;
+    if (stdVarAccess.hasVar(AppKeys.LINKIS_CLIENT_KILL_OPT)) {
+      jobId = stdVarAccess.getVar(String.class, AppKeys.LINKIS_CLIENT_KILL_OPT);
+    } else if (stdVarAccess.hasVar(AppKeys.LINKIS_CLIENT_STATUS_OPT)) {
+      jobId = stdVarAccess.getVar(String.class, AppKeys.LINKIS_CLIENT_STATUS_OPT);
+    } else if (stdVarAccess.hasVar(AppKeys.LINKIS_CLIENT_DESC_OPT)) {
+      jobId = stdVarAccess.getVar(String.class, AppKeys.LINKIS_CLIENT_DESC_OPT);
+    } else if (stdVarAccess.hasVar(AppKeys.LINKIS_CLIENT_LOG_OPT)) {
+      jobId = stdVarAccess.getVar(String.class, AppKeys.LINKIS_CLIENT_LOG_OPT);
+    } else if (stdVarAccess.hasVar(AppKeys.LINKIS_CLIENT_RESULT_OPT)) {
+      jobId = stdVarAccess.getVar(String.class, AppKeys.LINKIS_CLIENT_RESULT_OPT);
+    } else if (stdVarAccess.hasVar(AppKeys.LINKIS_CLIENT_LIST_OPT)) {
+      jobId = stdVarAccess.getVar(String.class, AppKeys.LINKIS_CLIENT_LIST_OPT);
     }
 
-    @Override
-    protected LinkisJobManDesc buildJobDesc() {
-        LinkisJobManDesc desc = new LinkisJobManDesc();
-        String osUser = sysVarAccess.getVar(String.class, AppKeys.LINUX_USER_KEY);
-        String[] adminUsers = StringUtils.split(AppKeys.ADMIN_USERS, ',');
-        Set<String> adminSet = new HashSet<>();
-        for (String admin : adminUsers) {
-            adminSet.add(admin);
-        }
-        String submitUsr = ExecutionUtils.getSubmitUser(stdVarAccess, osUser, adminSet);
+    desc.setJobId(jobId);
+    desc.setUser(submitUsr);
+    return desc;
+  }
 
-        String jobId = null;
-        if (stdVarAccess.hasVar(AppKeys.LINKIS_CLIENT_KILL_OPT)) {
-            jobId = stdVarAccess.getVar(String.class, AppKeys.LINKIS_CLIENT_KILL_OPT);
-        } else if (stdVarAccess.hasVar(AppKeys.LINKIS_CLIENT_STATUS_OPT)) {
-            jobId = stdVarAccess.getVar(String.class, AppKeys.LINKIS_CLIENT_STATUS_OPT);
-        } else if (stdVarAccess.hasVar(AppKeys.LINKIS_CLIENT_DESC_OPT)) {
-            jobId = stdVarAccess.getVar(String.class, AppKeys.LINKIS_CLIENT_DESC_OPT);
-        } else if (stdVarAccess.hasVar(AppKeys.LINKIS_CLIENT_LOG_OPT)) {
-            jobId = stdVarAccess.getVar(String.class, AppKeys.LINKIS_CLIENT_LOG_OPT);
-        } else if (stdVarAccess.hasVar(AppKeys.LINKIS_CLIENT_RESULT_OPT)) {
-            jobId = stdVarAccess.getVar(String.class, AppKeys.LINKIS_CLIENT_RESULT_OPT);
-        } else if (stdVarAccess.hasVar(AppKeys.LINKIS_CLIENT_LIST_OPT)) {
-            jobId = stdVarAccess.getVar(String.class, AppKeys.LINKIS_CLIENT_LIST_OPT);
-        }
+  @Override
+  protected LinkisJobData buildJobData() {
+    LinkisJobDataImpl data = new LinkisJobDataImpl();
+    if (logListener == null) {
+      logger.warn("logListener is not registered, will not be able to display log");
+    } else {
+      data.registerincLogListener(logListener);
+    }
+    return data;
+  }
 
-        desc.setJobId(jobId);
-        desc.setUser(submitUsr);
-        return desc;
+  @Override
+  protected LinkisJobOperator buildJobOperator() {
+    LinkisJobOperator oper;
+    try {
+      oper = (LinkisJobOperator) JobOperatorFactory.getReusable(AppKeys.REUSABLE_UJES_CLIENT);
+    } catch (Exception e) {
+      throw new LinkisClientRuntimeException(
+          "BLD0012",
+          ErrorLevel.ERROR,
+          CommonErrMsg.BuilderBuildErr,
+          "Failed to get a valid operator.",
+          e);
+    }
+    return oper;
+  }
+
+  @Override
+  protected PresentWay buildPresentWay() {
+    PresentWayImpl presentWay = new PresentWayImpl();
+    String outputPath = stdVarAccess.getVar(String.class, AppKeys.LINKIS_CLIENT_COMMON_OUTPUT_PATH);
+
+    presentWay.setPath(outputPath);
+    presentWay.setMode(PresentModeImpl.STDOUT);
+    if (StringUtils.isNotBlank(outputPath)) {
+      presentWay.setMode(PresentModeImpl.TEXT_FILE);
     }
 
-    @Override
-    protected LinkisJobData buildJobData() {
-        LinkisJobDataImpl data = new LinkisJobDataImpl();
-        if (logListener == null) {
-            logger.warn("logListener is not registered, will not be able to display log");
-        } else {
-            data.registerincLogListener(logListener);
-        }
-        return data;
-    }
+    return presentWay;
+  }
 
-    @Override
-    protected LinkisJobOperator buildJobOperator() {
-        LinkisJobOperator oper;
-        try {
-            oper = (LinkisJobOperator) JobOperatorFactory.getReusable(AppKeys.REUSABLE_UJES_CLIENT);
-        } catch (Exception e) {
-            throw new LinkisClientRuntimeException(
-                    "BLD0012",
-                    ErrorLevel.ERROR,
-                    CommonErrMsg.BuilderBuildErr,
-                    "Failed to get a valid operator.",
-                    e);
-        }
-        return oper;
-    }
+  @Override
+  protected LinkisManageJob getTargetNewInstance() {
+    return new LinkisManageJob();
+  }
 
-    @Override
-    protected PresentWay buildPresentWay() {
-        PresentWayImpl presentWay = new PresentWayImpl();
-        String outputPath =
-                stdVarAccess.getVar(String.class, AppKeys.LINKIS_CLIENT_COMMON_OUTPUT_PATH);
-
-        presentWay.setPath(outputPath);
-        presentWay.setMode(PresentModeImpl.STDOUT);
-        if (StringUtils.isNotBlank(outputPath)) {
-            presentWay.setMode(PresentModeImpl.TEXT_FILE);
-        }
-
-        return presentWay;
-    }
-
-    @Override
-    protected LinkisManageJob getTargetNewInstance() {
-        return new LinkisManageJob();
-    }
-
-    @Override
-    public LinkisManageJob build() {
-        ((LinkisManageJob) targetObj).setJobDesc(buildJobDesc());
-        ((LinkisManageJob) targetObj).setJobData(buildJobData());
-        targetObj.setOperator(buildJobOperator());
-        targetObj.setPresentWay(buildPresentWay());
-        return (LinkisManageJob) super.build();
-    }
+  @Override
+  public LinkisManageJob build() {
+    ((LinkisManageJob) targetObj).setJobDesc(buildJobDesc());
+    ((LinkisManageJob) targetObj).setJobData(buildJobData());
+    targetObj.setOperator(buildJobOperator());
+    targetObj.setPresentWay(buildPresentWay());
+    return (LinkisManageJob) super.build();
+  }
 }

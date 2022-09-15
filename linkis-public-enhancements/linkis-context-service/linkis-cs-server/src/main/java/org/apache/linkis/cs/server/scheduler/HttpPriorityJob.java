@@ -19,5 +19,5 @@ package org.apache.linkis.cs.server.scheduler;
 
 public interface HttpPriorityJob extends HttpJob {
 
-    int getPriority();
+  int getPriority();
 }

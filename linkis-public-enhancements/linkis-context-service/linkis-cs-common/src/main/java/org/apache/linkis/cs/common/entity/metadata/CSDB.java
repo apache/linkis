@@ -22,69 +22,69 @@ import org.apache.linkis.cs.common.entity.enumeration.DBType;
 
 public class CSDB implements DB {
 
-    private String name;
+  private String name;
 
-    private DBType dbType;
+  private DBType dbType;
 
-    private String[] lables;
+  private String[] lables;
 
-    private String comment;
+  private String comment;
 
-    private String owners;
+  private String owners;
 
-    public static DB build() {
-        return null;
-    };
+  public static DB build() {
+    return null;
+  };
 
-    @Override
-    @KeywordMethod
-    public String getName() {
-        return this.name;
-    }
+  @Override
+  @KeywordMethod
+  public String getName() {
+    return this.name;
+  }
 
-    @Override
-    public void setName(String name) {
-        this.name = name;
-    }
+  @Override
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    @Override
-    public DBType getDbType() {
-        return this.dbType;
-    }
+  @Override
+  public DBType getDbType() {
+    return this.dbType;
+  }
 
-    @Override
-    public void setDbType(DBType dbType) {
-        this.dbType = dbType;
-    }
+  @Override
+  public void setDbType(DBType dbType) {
+    this.dbType = dbType;
+  }
 
-    @Override
-    @KeywordMethod
-    public String getOwners() {
-        return this.owners;
-    }
+  @Override
+  @KeywordMethod
+  public String getOwners() {
+    return this.owners;
+  }
 
-    @Override
-    public void setOwners(String owners) {
-        this.owners = owners;
-    }
+  @Override
+  public void setOwners(String owners) {
+    this.owners = owners;
+  }
 
-    @Override
-    public String getComment() {
-        return this.comment;
-    }
+  @Override
+  public String getComment() {
+    return this.comment;
+  }
 
-    @Override
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
+  @Override
+  public void setComment(String comment) {
+    this.comment = comment;
+  }
 
-    @Override
-    public String[] getLables() {
-        return this.lables;
-    }
+  @Override
+  public String[] getLables() {
+    return this.lables;
+  }
 
-    @Override
-    public void setLables(String[] lables) {
-        this.lables = lables;
-    }
+  @Override
+  public void setLables(String[] lables) {
+    this.lables = lables;
+  }
 }

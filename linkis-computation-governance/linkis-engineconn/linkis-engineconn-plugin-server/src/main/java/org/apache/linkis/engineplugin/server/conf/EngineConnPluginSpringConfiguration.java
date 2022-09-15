@@ -27,9 +27,9 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class EngineConnPluginSpringConfiguration {
 
-    @Bean
-    @ConditionalOnMissingBean(EngineConnBmlResourceGenerator.class)
-    public EngineConnBmlResourceGenerator getEngineConnBmlResourceGenerator() {
-        return new DefaultEngineConnBmlResourceGenerator();
-    }
+  @Bean
+  @ConditionalOnMissingBean(EngineConnBmlResourceGenerator.class)
+  public EngineConnBmlResourceGenerator getEngineConnBmlResourceGenerator() {
+    return new DefaultEngineConnBmlResourceGenerator();
+  }
 }

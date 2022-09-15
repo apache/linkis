@@ -39,75 +39,75 @@ import org.slf4j.LoggerFactory;
 
 @Component(ServiceNameConsts.ENTRANCE_CONTEXT)
 public class DefaultEntranceContext extends EntranceContext {
-    private static final Logger logger = LoggerFactory.getLogger(DefaultEntranceContext.class);
+  private static final Logger logger = LoggerFactory.getLogger(DefaultEntranceContext.class);
 
-    @Autowired private EntranceParser entranceParser;
+  @Autowired private EntranceParser entranceParser;
 
-    @Autowired private PersistenceManager persistenceManager;
+  @Autowired private PersistenceManager persistenceManager;
 
-    @Autowired private LogManager logManager;
+  @Autowired private LogManager logManager;
 
-    @Autowired private Scheduler scheduler;
+  @Autowired private Scheduler scheduler;
 
-    @Autowired
-    @Qualifier(ServiceNameConsts.ENTRANCE_INTERCEPTOR)
-    private EntranceInterceptor[] entranceInterceptors;
+  @Autowired
+  @Qualifier(ServiceNameConsts.ENTRANCE_INTERCEPTOR)
+  private EntranceInterceptor[] entranceInterceptors;
 
-    @Autowired private EntranceEventListenerBus<EntranceEventListener, EntranceEvent> listenerBus;
+  @Autowired private EntranceEventListenerBus<EntranceEventListener, EntranceEvent> listenerBus;
 
-    public DefaultEntranceContext(
-            EntranceParser entranceParser,
-            PersistenceManager persistenceManager,
-            LogManager logManager,
-            Scheduler scheduler,
-            EntranceInterceptor[] entranceInterceptors,
-            EntranceEventListenerBus<EntranceEventListener, EntranceEvent> listenerBus) {
-        this.entranceParser = entranceParser;
-        this.persistenceManager = persistenceManager;
-        this.logManager = logManager;
-        this.scheduler = scheduler;
-        this.entranceInterceptors = entranceInterceptors;
-        this.listenerBus = listenerBus;
-    }
+  public DefaultEntranceContext(
+      EntranceParser entranceParser,
+      PersistenceManager persistenceManager,
+      LogManager logManager,
+      Scheduler scheduler,
+      EntranceInterceptor[] entranceInterceptors,
+      EntranceEventListenerBus<EntranceEventListener, EntranceEvent> listenerBus) {
+    this.entranceParser = entranceParser;
+    this.persistenceManager = persistenceManager;
+    this.logManager = logManager;
+    this.scheduler = scheduler;
+    this.entranceInterceptors = entranceInterceptors;
+    this.listenerBus = listenerBus;
+  }
 
-    public DefaultEntranceContext() {}
+  public DefaultEntranceContext() {}
 
-    @PostConstruct
-    public void init() {
-        entranceParser.setEntranceContext(this);
-        logger.info("Finished init entranceParser from postConstruct end!");
-        persistenceManager.setEntranceContext(this);
-        logManager.setEntranceContext(this);
-    }
+  @PostConstruct
+  public void init() {
+    entranceParser.setEntranceContext(this);
+    logger.info("Finished init entranceParser from postConstruct end!");
+    persistenceManager.setEntranceContext(this);
+    logManager.setEntranceContext(this);
+  }
 
-    @Override
-    public Scheduler getOrCreateScheduler() {
-        return scheduler;
-    }
+  @Override
+  public Scheduler getOrCreateScheduler() {
+    return scheduler;
+  }
 
-    @Override
-    public EntranceParser getOrCreateEntranceParser() {
-        return this.entranceParser;
-    }
+  @Override
+  public EntranceParser getOrCreateEntranceParser() {
+    return this.entranceParser;
+  }
 
-    @Override
-    public EntranceInterceptor[] getOrCreateEntranceInterceptors() {
-        return entranceInterceptors;
-    }
+  @Override
+  public EntranceInterceptor[] getOrCreateEntranceInterceptors() {
+    return entranceInterceptors;
+  }
 
-    @Override
-    public LogManager getOrCreateLogManager() {
-        return logManager;
-    }
+  @Override
+  public LogManager getOrCreateLogManager() {
+    return logManager;
+  }
 
-    @Override
-    public PersistenceManager getOrCreatePersistenceManager() {
-        return persistenceManager;
-    }
+  @Override
+  public PersistenceManager getOrCreatePersistenceManager() {
+    return persistenceManager;
+  }
 
-    @Override
-    public EntranceEventListenerBus<EntranceEventListener, EntranceEvent>
-            getOrCreateEventListenerBus() {
-        return this.listenerBus;
-    }
+  @Override
+  public EntranceEventListenerBus<EntranceEventListener, EntranceEvent>
+      getOrCreateEventListenerBus() {
+    return this.listenerBus;
+  }
 }

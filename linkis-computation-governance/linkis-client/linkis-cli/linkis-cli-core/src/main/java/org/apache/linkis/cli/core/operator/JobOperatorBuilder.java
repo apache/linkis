@@ -22,13 +22,13 @@ import org.apache.linkis.cli.common.entity.var.VarAccess;
 import org.apache.linkis.cli.core.builder.BuildableByVarAccess;
 
 public abstract class JobOperatorBuilder extends BuildableByVarAccess<JobOperator> {
-    @Override
-    public JobOperatorBuilder setStdVarAccess(VarAccess varAccess) {
-        return (JobOperatorBuilder) super.setStdVarAccess(varAccess);
-    }
+  @Override
+  public JobOperatorBuilder setStdVarAccess(VarAccess varAccess) {
+    return (JobOperatorBuilder) super.setStdVarAccess(varAccess);
+  }
 
-    @Override
-    public JobOperatorBuilder setSysVarAccess(VarAccess varAccess) {
-        return (JobOperatorBuilder) super.setSysVarAccess(varAccess);
-    }
+  @Override
+  public JobOperatorBuilder setSysVarAccess(VarAccess varAccess) {
+    return (JobOperatorBuilder) super.setSysVarAccess(varAccess);
+  }
 }

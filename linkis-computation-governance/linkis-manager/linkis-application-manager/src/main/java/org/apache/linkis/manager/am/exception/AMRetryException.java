@@ -21,12 +21,12 @@ import org.apache.linkis.common.exception.LinkisRetryException;
 
 public class AMRetryException extends LinkisRetryException {
 
-    public AMRetryException(int errCode, String desc) {
-        super(errCode, desc);
-    }
+  public AMRetryException(int errCode, String desc) {
+    super(errCode, desc);
+  }
 
-    public AMRetryException(int errCode, String desc, Throwable t) {
-        this(errCode, desc);
-        initCause(t);
-    }
+  public AMRetryException(int errCode, String desc, Throwable t) {
+    this(errCode, desc);
+    initCause(t);
+  }
 }

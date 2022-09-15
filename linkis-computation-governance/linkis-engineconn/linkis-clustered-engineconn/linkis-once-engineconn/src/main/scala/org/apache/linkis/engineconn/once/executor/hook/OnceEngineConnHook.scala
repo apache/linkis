@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,17 +24,21 @@ import org.apache.linkis.engineconn.core.executor.ExecutorManager
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 
 /**
-  * Conn Hook
+ * Conn Hook
  */
-class OnceEngineConnHook extends CallbackEngineConnHook{
+class OnceEngineConnHook extends CallbackEngineConnHook {
 
-  override protected def getNodeStatusOfStartSuccess(engineCreationContext: EngineCreationContext,
-                                                     engineConn: EngineConn): NodeStatus = NodeStatus.Unlock
+  override protected def getNodeStatusOfStartSuccess(
+      engineCreationContext: EngineCreationContext,
+      engineConn: EngineConn
+  ): NodeStatus = NodeStatus.Unlock
 
-  override def afterEngineServerStartSuccess(engineCreationContext: EngineCreationContext,
-                                             engineConn: EngineConn): Unit =
-  {
+  override def afterEngineServerStartSuccess(
+      engineCreationContext: EngineCreationContext,
+      engineConn: EngineConn
+  ): Unit = {
     super.afterEngineServerStartSuccess(engineCreationContext, engineConn)
     ExecutorManager.getInstance.getReportExecutor.tryReady()
   }
+
 }

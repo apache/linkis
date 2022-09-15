@@ -22,5 +22,5 @@ import java.util.Map;
 
 public interface ServiceParser {
 
-    Map<String, List<ServiceMethod>> parse(Object service);
+  Map<String, List<ServiceMethod>> parse(Object service);
 }

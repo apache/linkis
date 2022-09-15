@@ -22,12 +22,12 @@ import org.apache.linkis.cs.condition.impl.AndCondition;
 
 public class AndLogicContextSearchMatcher extends BinaryLogicContextSearchMatcher {
 
-    public AndLogicContextSearchMatcher(AndCondition condition) {
-        super(condition);
-    }
+  public AndLogicContextSearchMatcher(AndCondition condition) {
+    super(condition);
+  }
 
-    @Override
-    public Boolean match(ContextKeyValue contextKeyValue) {
-        return leftMatcher.match(contextKeyValue) && rightMatcher.match(contextKeyValue);
-    }
+  @Override
+  public Boolean match(ContextKeyValue contextKeyValue) {
+    return leftMatcher.match(contextKeyValue) && rightMatcher.match(contextKeyValue);
+  }
 }

@@ -49,9 +49,9 @@ public class ECResourceInfoServiceImpl implements ECResourceInfoService {
   }
 
   @Override
-  public ECResourceInfoRecord getECResourceInfoRecordByInstances(String instance) {
+  public ECResourceInfoRecord getECResourceInfoRecordByInstance(String instance) {
     if (StringUtils.isNotBlank(instance)) {
-      return ecResourceRecordMapper.getECResourceInfoRecordByInstances(instance);
+      return ecResourceRecordMapper.getECResourceInfoRecordByInstance(instance);
     }
     return null;
   }

@@ -21,14 +21,14 @@ import java.util.List;
 import java.util.Map;
 
 public interface CmdTemplate extends Cloneable {
-    CmdType getCmdType();
+  CmdType getCmdType();
 
-    List<CmdOption<?>> getOptions();
+  List<CmdOption<?>> getOptions();
 
-    /** Mapping from option name -> option */
-    Map<String, CmdOption<?>> getOptionsMap();
+  /** Mapping from option name -> option */
+  Map<String, CmdOption<?>> getOptionsMap();
 
-    void checkParams();
+  void checkParams();
 
-    CmdTemplate getCopy();
+  CmdTemplate getCopy();
 }

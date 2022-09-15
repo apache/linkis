@@ -21,8 +21,8 @@ import org.apache.linkis.cs.common.exception.CSErrorException;
 
 public class ProxyMethodA {
 
-    public <T> T getContextHAProxy(T persistence) throws CSErrorException {
-        System.out.println("invoke proxy");
-        return persistence;
-    }
+  public <T> T getContextHAProxy(T persistence) throws CSErrorException {
+    System.out.println("invoke proxy");
+    return persistence;
+  }
 }

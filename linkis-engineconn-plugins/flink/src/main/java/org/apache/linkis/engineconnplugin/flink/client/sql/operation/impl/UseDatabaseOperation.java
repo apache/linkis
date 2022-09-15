@@ -29,27 +29,27 @@ import org.apache.flink.table.catalog.exceptions.CatalogException;
 
 /** Operation for USE DATABASE command. */
 public class UseDatabaseOperation implements NonJobOperation {
-    private final ExecutionContext context;
-    private final String databaseName;
+  private final ExecutionContext context;
+  private final String databaseName;
 
-    public UseDatabaseOperation(FlinkEngineConnContext context, String databaseName) {
-        this.context = context.getExecutionContext();
-        this.databaseName = databaseName;
-    }
+  public UseDatabaseOperation(FlinkEngineConnContext context, String databaseName) {
+    this.context = context.getExecutionContext();
+    this.databaseName = databaseName;
+  }
 
-    @Override
-    public ResultSet execute() throws SqlExecutionException {
-        final TableEnvironment tableEnv = context.getTableEnvironment();
-        try {
-            context.wrapClassLoader(
-                    () -> {
-                        // Rely on TableEnvironment/CatalogManager to validate input
-                        tableEnv.useDatabase(databaseName);
-                        return null;
-                    });
-        } catch (CatalogException e) {
-            throw new SqlExecutionException("Failed to switch to database " + databaseName, e);
-        }
-        return OperationUtil.OK;
+  @Override
+  public ResultSet execute() throws SqlExecutionException {
+    final TableEnvironment tableEnv = context.getTableEnvironment();
+    try {
+      context.wrapClassLoader(
+          () -> {
+            // Rely on TableEnvironment/CatalogManager to validate input
+            tableEnv.useDatabase(databaseName);
+            return null;
+          });
+    } catch (CatalogException e) {
+      throw new SqlExecutionException("Failed to switch to database " + databaseName, e);
     }
+    return OperationUtil.OK;
+  }
 }

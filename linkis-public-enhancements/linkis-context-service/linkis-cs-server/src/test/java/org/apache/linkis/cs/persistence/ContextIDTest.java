@@ -27,39 +27,39 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import java.util.Date;
 
 public class ContextIDTest {
-    AnnotationConfigApplicationContext context = null;
-    ContextIDPersistence contextIDPersistence = null;
+  AnnotationConfigApplicationContext context = null;
+  ContextIDPersistence contextIDPersistence = null;
 
-    public void before() {
-        context = new AnnotationConfigApplicationContext(Scan.class);
-        contextIDPersistence = context.getBean(ContextIDPersistence.class);
-    }
+  public void before() {
+    context = new AnnotationConfigApplicationContext(Scan.class);
+    contextIDPersistence = context.getBean(ContextIDPersistence.class);
+  }
 
-    public void testcreateContextID() throws CSErrorException {
-        AContextID aContextID = new AContextID();
-        aContextID.setContextId(null);
-        ContextID contextID = contextIDPersistence.createContextID(aContextID);
-        System.out.println(contextID.getContextId());
-    }
+  public void testcreateContextID() throws CSErrorException {
+    AContextID aContextID = new AContextID();
+    aContextID.setContextId(null);
+    ContextID contextID = contextIDPersistence.createContextID(aContextID);
+    System.out.println(contextID.getContextId());
+  }
 
-    public void testDeleteContextID() throws CSErrorException {
-        contextIDPersistence.deleteContextID("3");
-    }
+  public void testDeleteContextID() throws CSErrorException {
+    contextIDPersistence.deleteContextID("3");
+  }
 
-    public void testGetContextID() throws CSErrorException {
-        ContextID contextID = contextIDPersistence.getContextID("2");
-        System.out.println(((AContextID) contextID).getProject());
-    }
+  public void testGetContextID() throws CSErrorException {
+    ContextID contextID = contextIDPersistence.getContextID("2");
+    System.out.println(((AContextID) contextID).getProject());
+  }
 
-    public void testUpdateContextID() throws CSErrorException {
-        AContextID aContextID = new AContextID();
-        aContextID.setContextId("84695");
-        aContextID.setUser("hadoop");
-        aContextID.setExpireTime(new Date());
-        aContextID.setExpireType(ExpireType.TODAY);
-        aContextID.setInstance("updateInstance");
-        aContextID.setBackupInstance("updatebackup");
-        aContextID.setApplication("hive");
-        contextIDPersistence.updateContextID(aContextID);
-    }
+  public void testUpdateContextID() throws CSErrorException {
+    AContextID aContextID = new AContextID();
+    aContextID.setContextId("84695");
+    aContextID.setUser("hadoop");
+    aContextID.setExpireTime(new Date());
+    aContextID.setExpireType(ExpireType.TODAY);
+    aContextID.setInstance("updateInstance");
+    aContextID.setBackupInstance("updatebackup");
+    aContextID.setApplication("hive");
+    contextIDPersistence.updateContextID(aContextID);
+  }
 }

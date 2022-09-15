@@ -5,22 +5,26 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.engineconn.acessible.executor.service
 
 import org.apache.linkis.DataWorkCloudApplication
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.engineconn.acessible.executor.entity.AccessibleExecutor
-import org.apache.linkis.engineconn.acessible.executor.listener.event.{ExecutorCompletedEvent, ExecutorCreateEvent, ExecutorStatusChangedEvent}
+import org.apache.linkis.engineconn.acessible.executor.listener.event.{
+  ExecutorCompletedEvent,
+  ExecutorCreateEvent,
+  ExecutorStatusChangedEvent
+}
 import org.apache.linkis.engineconn.core.EngineConnObject
 import org.apache.linkis.engineconn.core.executor.ExecutorManager
 import org.apache.linkis.engineconn.core.hook.ShutdownHook
@@ -28,16 +32,19 @@ import org.apache.linkis.engineconn.executor.entity.{Executor, SensibleExecutor}
 import org.apache.linkis.engineconn.executor.listener.ExecutorListenerBusContext
 import org.apache.linkis.engineconn.executor.service.ManagerService
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
-import org.apache.linkis.manager.common.protocol.engine.{EngineConnReleaseRequest, EngineSuicideRequest}
+import org.apache.linkis.manager.common.protocol.engine.{
+  EngineConnReleaseRequest,
+  EngineSuicideRequest
+}
 import org.apache.linkis.manager.common.protocol.node.{RequestNodeStatus, ResponseNodeStatus}
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.rpc.message.annotation.Receiver
+
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.event.{ContextClosedEvent, EventListener}
 import org.springframework.stereotype.Service
 
 import javax.annotation.PostConstruct
-
 
 @Service
 class DefaultAccessibleService extends AccessibleService with Logging {
@@ -45,31 +52,38 @@ class DefaultAccessibleService extends AccessibleService with Logging {
   @Autowired
   private var executorHeartbeatService: ExecutorHeartbeatService = _
 
-  private val asyncListenerBusContext = ExecutorListenerBusContext.getExecutorListenerBusContext().getEngineConnAsyncListenerBus
+  private val asyncListenerBusContext =
+    ExecutorListenerBusContext.getExecutorListenerBusContext().getEngineConnAsyncListenerBus
 
   private var shutDownHooked: Boolean = false
 
   @Receiver
-  override def dealEngineStopRequest(engineSuicideRequest: EngineSuicideRequest, sender: Sender): Unit = {
+  override def dealEngineStopRequest(
+      engineSuicideRequest: EngineSuicideRequest,
+      sender: Sender
+  ): Unit = {
     // todo check user
-    if (DataWorkCloudApplication.getServiceInstance.equals(engineSuicideRequest.getServiceInstance)) {
+    if (
+        DataWorkCloudApplication.getServiceInstance.equals(engineSuicideRequest.getServiceInstance)
+    ) {
       stopEngine()
       logger.info(s"engine will suiside now.")
       ShutdownHook.getShutdownHook.notifyStop()
     } else {
       if (null != engineSuicideRequest.getServiceInstance) {
-        logger.error(s"Invalid serviceInstance : ${engineSuicideRequest.getServiceInstance.toString}, will not suicide.")
+        logger.error(
+          s"Invalid serviceInstance : ${engineSuicideRequest.getServiceInstance.toString}, will not suicide."
+        )
       } else {
         logger.error("Invalid empty serviceInstance.")
       }
     }
   }
 
-
   @EventListener
   def executorShutDownHook(event: ContextClosedEvent): Unit = {
     logger.info("executorShutDownHook  start to execute.")
-    if (! EngineConnObject.isReady) {
+    if (!EngineConnObject.isReady) {
       logger.warn("EngineConn not ready, do not shutdown")
       return
     }
@@ -79,7 +93,7 @@ class DefaultAccessibleService extends AccessibleService with Logging {
     }
     var executor: Executor = ExecutorManager.getInstance.getReportExecutor
     if (null != executor) {
-      Utils.tryAndWarn{
+      Utils.tryAndWarn {
         executor.close()
         executor.tryShutdown()
       }
@@ -87,7 +101,7 @@ class DefaultAccessibleService extends AccessibleService with Logging {
     } else {
       executor = SensibleExecutor.getDefaultErrorSensibleExecutor
     }
-    ExecutorManager.getInstance.getExecutors.foreach{ closeExecutor =>
+    ExecutorManager.getInstance.getExecutors.foreach { closeExecutor =>
       Utils.tryAndWarn(closeExecutor.close())
       logger.warn(s"executorShutDownHook  start to close executor... $executor")
     }
@@ -102,15 +116,11 @@ class DefaultAccessibleService extends AccessibleService with Logging {
     // todo
   }
 
-
-  override def pauseExecutor: Unit = {
-
-  }
+  override def pauseExecutor: Unit = {}
 
   override def reStartExecutor: Boolean = {
     true
   }
-
 
   @PostConstruct
   def init(): Unit = {
@@ -123,10 +133,13 @@ class DefaultAccessibleService extends AccessibleService with Logging {
     }
   }
 
-
-
   override def requestManagerReleaseExecutor(msg: String): Unit = {
-    val engineReleaseRequest = new EngineConnReleaseRequest(Sender.getThisServiceInstance, Utils.getJvmUser, msg, EngineConnObject.getEngineCreationContext.getTicketId)
+    val engineReleaseRequest = new EngineConnReleaseRequest(
+      Sender.getThisServiceInstance,
+      Utils.getJvmUser,
+      msg,
+      EngineConnObject.getEngineCreationContext.getTicketId
+    )
     ManagerService.getManagerService.requestReleaseEngineConn(engineReleaseRequest)
   }
 
@@ -154,7 +167,9 @@ class DefaultAccessibleService extends AccessibleService with Logging {
     reportHeartBeatMsg(executorCompletedEvent.executor)
   }
 
-  override def onExecutorStatusChanged(executorStatusChangedEvent: ExecutorStatusChangedEvent): Unit = {
+  override def onExecutorStatusChanged(
+      executorStatusChangedEvent: ExecutorStatusChangedEvent
+  ): Unit = {
     reportHeartBeatMsg(executorStatusChangedEvent.executor)
   }
 
@@ -162,7 +177,9 @@ class DefaultAccessibleService extends AccessibleService with Logging {
     val reportExecutor = executor match {
       case accessibleExecutor: AccessibleExecutor => accessibleExecutor
       case e: Executor =>
-        logger.warn(s"Executor(${e.getId}) is not a AccessibleExecutor, do noting on status changed.")
+        logger.warn(
+          s"Executor(${e.getId}) is not a AccessibleExecutor, do noting on status changed."
+        )
         return
     }
     executorHeartbeatService.reportHeartBeatMsg(reportExecutor)

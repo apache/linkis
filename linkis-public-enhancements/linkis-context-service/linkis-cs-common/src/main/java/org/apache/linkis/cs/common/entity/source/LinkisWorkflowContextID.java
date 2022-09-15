@@ -21,80 +21,80 @@ import org.apache.linkis.cs.common.protocol.ContextIDType;
 
 public class LinkisWorkflowContextID implements WorkflowContextID {
 
-    private String workspace;
+  private String workspace;
 
-    private String project;
+  private String project;
 
-    private String flow;
+  private String flow;
 
-    private String contextId;
+  private String contextId;
 
-    private String version;
+  private String version;
 
-    private String env;
+  private String env;
 
-    @Override
-    public String getWorkSpace() {
-        return this.workspace;
-    }
+  @Override
+  public String getWorkSpace() {
+    return this.workspace;
+  }
 
-    @Override
-    public void setWorkSpace(String workSpace) {
-        this.workspace = workSpace;
-    }
+  @Override
+  public void setWorkSpace(String workSpace) {
+    this.workspace = workSpace;
+  }
 
-    @Override
-    public String getProject() {
-        return this.project;
-    }
+  @Override
+  public String getProject() {
+    return this.project;
+  }
 
-    @Override
-    public void setProject(String project) {
-        this.project = project;
-    }
+  @Override
+  public void setProject(String project) {
+    this.project = project;
+  }
 
-    @Override
-    public String getFlow() {
-        return this.flow;
-    }
+  @Override
+  public String getFlow() {
+    return this.flow;
+  }
 
-    @Override
-    public void setFlow(String flow) {
-        this.flow = flow;
-    }
+  @Override
+  public void setFlow(String flow) {
+    this.flow = flow;
+  }
 
-    @Override
-    public String getVersion() {
-        return this.version;
-    }
+  @Override
+  public String getVersion() {
+    return this.version;
+  }
 
-    @Override
-    public void setVersion(String version) {
-        this.version = version;
-    }
+  @Override
+  public void setVersion(String version) {
+    this.version = version;
+  }
 
-    @Override
-    public String getEnv() {
-        return this.env;
-    }
+  @Override
+  public String getEnv() {
+    return this.env;
+  }
 
-    @Override
-    public void setEnv(String env) {
-        this.env = env;
-    }
+  @Override
+  public void setEnv(String env) {
+    this.env = env;
+  }
 
-    @Override
-    public String getContextId() {
-        return this.contextId;
-    }
+  @Override
+  public String getContextId() {
+    return this.contextId;
+  }
 
-    @Override
-    public void setContextId(String contextId) {
-        this.contextId = contextId;
-    }
+  @Override
+  public void setContextId(String contextId) {
+    this.contextId = contextId;
+  }
 
-    @Override
-    public int getContextIDType() {
-        return ContextIDType.LINKIS_WORKFLOW_CONTEXT_ID_TYPE.getIndex();
-    }
+  @Override
+  public int getContextIDType() {
+    return ContextIDType.LINKIS_WORKFLOW_CONTEXT_ID_TYPE.getIndex();
+  }
 }

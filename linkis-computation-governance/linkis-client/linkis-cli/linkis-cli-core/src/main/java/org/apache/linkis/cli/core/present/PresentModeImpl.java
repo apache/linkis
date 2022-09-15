@@ -18,19 +18,19 @@
 package org.apache.linkis.cli.core.present;
 
 public enum PresentModeImpl implements PresentMode {
-    STDOUT("stdout", 0),
-    TEXT_FILE("text_file", 1);
+  STDOUT("stdout", 0),
+  TEXT_FILE("text_file", 1);
 
-    private String name;
-    private int id;
+  private String name;
+  private int id;
 
-    PresentModeImpl(String name, int id) {
-        this.name = name;
-        this.id = id;
-    }
+  PresentModeImpl(String name, int id) {
+    this.name = name;
+    this.id = id;
+  }
 
-    @Override
-    public String getName() {
-        return this.name();
-    }
+  @Override
+  public String getName() {
+    return this.name();
+  }
 }

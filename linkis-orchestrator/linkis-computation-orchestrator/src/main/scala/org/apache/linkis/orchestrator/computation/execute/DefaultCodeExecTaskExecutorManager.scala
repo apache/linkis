@@ -5,19 +5,18 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.orchestrator.computation.execute
 
-import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.exception.LinkisRetryException
 import org.apache.linkis.common.log.LogUtils
@@ -28,20 +27,23 @@ import org.apache.linkis.manager.label.entity.entrance.LoadBalanceLabel
 import org.apache.linkis.manager.label.utils.{LabelUtil, LabelUtils}
 import org.apache.linkis.orchestrator.computation.conf.ComputationOrchestratorConf
 import org.apache.linkis.orchestrator.computation.physical.CodeLogicalUnitExecTask
-import org.apache.linkis.orchestrator.ecm.entity._
 import org.apache.linkis.orchestrator.ecm.{EngineConnManager, EngineConnManagerBuilder}
+import org.apache.linkis.orchestrator.ecm.entity._
 import org.apache.linkis.orchestrator.exception.OrchestratorLabelConflictException
 import org.apache.linkis.orchestrator.listener.task.TaskLogEvent
 
+import org.apache.commons.lang3.StringUtils
+
 import java.util
+
 import scala.collection.JavaConverters._
 import scala.collection.mutable
 import scala.concurrent.duration.Duration
 
-
 class DefaultCodeExecTaskExecutorManager extends CodeExecTaskExecutorManager with Logging {
 
-  private val instanceToExecutors = new mutable.HashMap[ServiceInstance, Array[CodeExecTaskExecutor]]
+  private val instanceToExecutors =
+    new mutable.HashMap[ServiceInstance, Array[CodeExecTaskExecutor]]
 
   private val execTaskToExecutor = new mutable.HashMap[String, CodeExecTaskExecutor]()
 
@@ -50,14 +52,19 @@ class DefaultCodeExecTaskExecutorManager extends CodeExecTaskExecutorManager wit
     builder.setPolicy(Policy.Process)
     builder.build()
   }
+
   private val labelEngineConnManager: EngineConnManager = {
     val builder = EngineConnManagerBuilder.builder
     builder.setPolicy(Policy.Label)
     builder.build()
   }
+
   private val waitLock = new Array[Byte](0)
 
-  override def askExecutor(execTask: CodeLogicalUnitExecTask, wait: Duration): Option[CodeExecTaskExecutor] = {
+  override def askExecutor(
+      execTask: CodeLogicalUnitExecTask,
+      wait: Duration
+  ): Option[CodeExecTaskExecutor] = {
     logger.info(s"Start to askExecutor for execId ${execTask.getIDInfo()}, wait $wait")
     val startTime = System.currentTimeMillis()
     var retryException: LinkisRetryException = null
@@ -71,7 +78,8 @@ class DefaultCodeExecTaskExecutorManager extends CodeExecTaskExecutorManager wit
         case t: Throwable => throw t
       } match {
         case Some(e) =>
-          logger.info(s"Finished to askExecutor for execId ${execTask.getIDInfo()}, wait ${System.currentTimeMillis() - startTime}")
+          logger.info(s"Finished to askExecutor for execId ${execTask
+            .getIDInfo()}, wait ${System.currentTimeMillis() - startTime}")
           executor = Option(e)
         case _ =>
           if (System.currentTimeMillis - startTime < wait.toMillis) {
@@ -100,15 +108,25 @@ class DefaultCodeExecTaskExecutorManager extends CodeExecTaskExecutorManager wit
     val loadBalanceLabel = LabelUtil.getLoadBalanceLabel(execTask.getLabels)
 
     if (null != executeOnceLabel && null != loadBalanceLabel) {
-      throw new OrchestratorLabelConflictException(s"ExecuteOnceLabel : ${markReq.getLabels.get(LabelKeyConstant.EXECUTE_ONCE_KEY)} should not come with LoadBalanceLabel : ${markReq.getLabels.get(LabelKeyConstant.LOAD_BALANCE_KEY)}")
+      throw new OrchestratorLabelConflictException(
+        s"ExecuteOnceLabel : ${markReq.getLabels.get(LabelKeyConstant.EXECUTE_ONCE_KEY)} should not come with LoadBalanceLabel : ${markReq.getLabels
+          .get(LabelKeyConstant.LOAD_BALANCE_KEY)}"
+      )
     }
 
     // getMark
     val mark: Mark = engineConnManager.applyMark(markReq)
     markReq.setCreateService(markReq.getCreateService + s"mark_id: ${mark.getMarkId()}")
     // getEngineConn Executor
-    logger.info(s"create Executor for execId ${execTask.getIDInfo()} mark id is ${mark.getMarkId()}, user ${mark.getMarkReq.getUser}")
-    execTask.getPhysicalContext.pushLog(TaskLogEvent(execTask, LogUtils.generateInfo(s"Background is starting a new engine for you,execId ${execTask.getIDInfo()} mark id is ${mark.getMarkId()}, it may take several seconds, please wait")))
+    logger.info(s"create Executor for execId ${execTask.getIDInfo()} mark id is ${mark
+      .getMarkId()}, user ${mark.getMarkReq.getUser}")
+    execTask.getPhysicalContext.pushLog(
+      TaskLogEvent(
+        execTask,
+        LogUtils.generateInfo(s"Background is starting a new engine for you,execId ${execTask
+          .getIDInfo()} mark id is ${mark.getMarkId()}, it may take several seconds, please wait")
+      )
+    )
     val engineConnExecutor = engineConnManager.getAvailableEngineConnExecutor(mark)
     if (null == engineConnExecutor) {
       return null
@@ -117,7 +135,8 @@ class DefaultCodeExecTaskExecutorManager extends CodeExecTaskExecutorManager wit
     execTaskToExecutor synchronized {
       execTaskToExecutor.put(execTask.getId, codeExecTaskExecutor)
     }
-    logger.info(s"Finished to create Executor for execId ${execTask.getIDInfo()} mark id is ${mark.getMarkId()}, user ${mark.getMarkReq.getUser}")
+    logger.info(s"Finished to create Executor for execId ${execTask.getIDInfo()} mark id is ${mark
+      .getMarkId()}, user ${mark.getMarkReq.getUser}")
     codeExecTaskExecutor
   }
 
@@ -133,15 +152,18 @@ class DefaultCodeExecTaskExecutorManager extends CodeExecTaskExecutorManager wit
     }
     markReq.setPolicyObj(Policy.Task)
     markReq.setCreateService(ComputationOrchestratorConf.DEFAULT_CREATE_SERVICE.getValue)
-    //markReq.setDescription
+    // markReq.setDescription
     markReq.setEngineConnCount(ComputationOrchestratorConf.DEFAULT_MARK_MAX_ENGINE.getValue)
-    val properties = if (execTask.getParams.getStartupParams == null) new util.HashMap[String, String]
-    else {
-      val startupMap = execTask.getParams.getStartupParams.getConfigurationMap().asScala
-      val properties = new util.HashMap[String, String]
-      startupMap.foreach { case (k, v) => if (v != null && StringUtils.isNotEmpty(v.toString)) properties.put(k, v.toString) }
-      properties
-    }
+    val properties =
+      if (execTask.getParams.getStartupParams == null) new util.HashMap[String, String]
+      else {
+        val startupMap = execTask.getParams.getStartupParams.getConfigurationMap().asScala
+        val properties = new util.HashMap[String, String]
+        startupMap.foreach { case (k, v) =>
+          if (v != null && StringUtils.isNotEmpty(v.toString)) properties.put(k, v.toString)
+        }
+        properties
+      }
 
     markReq.setProperties(properties)
     markReq.setUser(execTask.getExecuteUser)
@@ -155,7 +177,10 @@ class DefaultCodeExecTaskExecutorManager extends CodeExecTaskExecutorManager wit
     waitLock.wait(waitTime)
   }
 
-  override def getByEngineConnAndTaskId(serviceInstance: ServiceInstance, engineConnTaskId: String): Option[CodeExecTaskExecutor] = {
+  override def getByEngineConnAndTaskId(
+      serviceInstance: ServiceInstance,
+      engineConnTaskId: String
+  ): Option[CodeExecTaskExecutor] = {
     val maybeExecutors = instanceToExecutors.get(serviceInstance)
     if (maybeExecutors.isDefined) {
       val executors = maybeExecutors.get.filter(_.getEngineConnTaskId == engineConnTaskId)
@@ -170,26 +195,29 @@ class DefaultCodeExecTaskExecutorManager extends CodeExecTaskExecutorManager wit
     execTaskToExecutor.get(execTaskId)
   }
 
-  override def shutdown(): Unit = {
-
-  }
-
-
+  override def shutdown(): Unit = {}
 
   /**
-   * The method is used to clean up the executor, here will trigger the unlock of ec,
-   * but if it is with the loadBlance tag, the unlock step will be skipped
+   * The method is used to clean up the executor, here will trigger the unlock of ec, but if it is
+   * with the loadBlance tag, the unlock step will be skipped
    *
    * @param executor
    * @param labels
    */
-  private def clearExecutorById(executor: CodeExecTaskExecutor, labels: util.List[Label[_]], forceRelease: Boolean = false): Unit = {
+  private def clearExecutorById(
+      executor: CodeExecTaskExecutor,
+      labels: util.List[Label[_]],
+      forceRelease: Boolean = false
+  ): Unit = {
     if (null == executor || executor.getEngineConnExecutor == null) return
     val loadBalanceLabel = LabelUtil.getLoadBalanceLabel(labels)
     if (null == loadBalanceLabel || forceRelease) {
       logger.info(s"To release engine ConnExecutor ${executor}")
       Utils.tryAndWarn {
-        getEngineConnManager(labels).releaseEngineConnExecutor(executor.getEngineConnExecutor, executor.getMark)
+        getEngineConnManager(labels).releaseEngineConnExecutor(
+          executor.getEngineConnExecutor,
+          executor.getMark
+        )
       }
     } else {
       logger.info(s"Task has loadBalanceLabel, Not need to delete executor ${executor}")
@@ -197,12 +225,13 @@ class DefaultCodeExecTaskExecutorManager extends CodeExecTaskExecutorManager wit
     removeExecutorFromInstanceToExecutors(executor)
   }
 
-
   private def removeExecutorFromInstanceToExecutors(executor: CodeExecTaskExecutor): Unit = {
     logger.debug(s"To delete codeExecTaskExecutor  ${executor} from instanceToExecutors")
-    val maybeExecutors = instanceToExecutors.get(executor.getEngineConnExecutor.getServiceInstance)
+    val maybeExecutors =
+      instanceToExecutors.get(executor.getEngineConnExecutor.getServiceInstance)
     if (maybeExecutors.isDefined) {
-      val executors = maybeExecutors.get.filter(_.getEngineConnTaskId != executor.getEngineConnTaskId)
+      val executors =
+        maybeExecutors.get.filter(_.getEngineConnTaskId != executor.getEngineConnTaskId)
       instanceToExecutors synchronized {
         if (null != executors && executors.nonEmpty) {
           instanceToExecutors.put(executor.getEngineConnExecutor.getServiceInstance, executors)
@@ -211,7 +240,9 @@ class DefaultCodeExecTaskExecutorManager extends CodeExecTaskExecutorManager wit
         }
       }
     }
-    logger.info(s"To delete exec task ${executor.getExecTask.getIDInfo()} and CodeExecTaskExecutor ${executor.getEngineConnExecutor.getServiceInstance} relation")
+    logger.info(
+      s"To delete exec task ${executor.getExecTask.getIDInfo()} and CodeExecTaskExecutor ${executor.getEngineConnExecutor.getServiceInstance} relation"
+    )
     execTaskToExecutor synchronized {
       execTaskToExecutor.remove(executor.getExecTaskId)
     }
@@ -224,9 +255,15 @@ class DefaultCodeExecTaskExecutorManager extends CodeExecTaskExecutorManager wit
       execTaskToExecutor.put(executor.getExecTaskId, executor)
     }
     logger.info(s"To add codeExecTaskExecutor  $executor to instanceToExecutors")
-    val executors = instanceToExecutors.getOrElse(executor.getEngineConnExecutor.getServiceInstance, Array.empty[CodeExecTaskExecutor])
+    val executors = instanceToExecutors.getOrElse(
+      executor.getEngineConnExecutor.getServiceInstance,
+      Array.empty[CodeExecTaskExecutor]
+    )
     instanceToExecutors synchronized {
-      instanceToExecutors.put(executor.getEngineConnExecutor.getServiceInstance, executors.+:(executor))
+      instanceToExecutors.put(
+        executor.getEngineConnExecutor.getServiceInstance,
+        executors.+:(executor)
+      )
     }
   }
 
@@ -238,23 +275,36 @@ class DefaultCodeExecTaskExecutorManager extends CodeExecTaskExecutorManager wit
     defaultEngineConnManager
   }
 
-  override def getAllInstanceToExecutorCache(): mutable.HashMap[ServiceInstance, Array[CodeExecTaskExecutor]] = instanceToExecutors
+  override def getAllInstanceToExecutorCache()
+      : mutable.HashMap[ServiceInstance, Array[CodeExecTaskExecutor]] = instanceToExecutors
 
-  override def getAllExecTaskToExecutorCache(): mutable.HashMap[String, CodeExecTaskExecutor] = execTaskToExecutor
+  override def getAllExecTaskToExecutorCache(): mutable.HashMap[String, CodeExecTaskExecutor] =
+    execTaskToExecutor
 
-
-  override protected def unLockEngineConn(execTask: CodeLogicalUnitExecTask, execTaskExecutor: CodeExecTaskExecutor): Unit = {
-    logger.info(s"${execTask.getIDInfo()} task be killed or failed , Now to delete executor ${execTaskExecutor.getEngineConnExecutor.getServiceInstance}")
+  override protected def unLockEngineConn(
+      execTask: CodeLogicalUnitExecTask,
+      execTaskExecutor: CodeExecTaskExecutor
+  ): Unit = {
+    logger.info(
+      s"${execTask.getIDInfo()} task be killed or failed , Now to delete executor ${execTaskExecutor.getEngineConnExecutor.getServiceInstance}"
+    )
     clearExecutorById(execTaskExecutor, execTask.getLabels)
   }
 
-
-  override protected def markECFailed(execTask: CodeLogicalUnitExecTask, executor: CodeExecTaskExecutor): Unit = {
-    logger.info(s"${execTask.getIDInfo()} task  failed because executor exit, Now to delete executor ${executor.getEngineConnExecutor.getServiceInstance}")
+  override protected def markECFailed(
+      execTask: CodeLogicalUnitExecTask,
+      executor: CodeExecTaskExecutor
+  ): Unit = {
+    logger.info(
+      s"${execTask.getIDInfo()} task  failed because executor exit, Now to delete executor ${executor.getEngineConnExecutor.getServiceInstance}"
+    )
     clearExecutorById(executor, execTask.getLabels, true)
   }
 
-  override protected def delete(execTask: CodeLogicalUnitExecTask, executor: CodeExecTaskExecutor): Unit = {
+  override protected def delete(
+      execTask: CodeLogicalUnitExecTask,
+      executor: CodeExecTaskExecutor
+  ): Unit = {
     val jobGroupLabel = LabelUtil.getBindEngineLabel(execTask.getLabels)
     var isEndJob = false
     var jobGroupId = ""
@@ -262,11 +312,15 @@ class DefaultCodeExecTaskExecutorManager extends CodeExecTaskExecutorManager wit
       isEndJob = jobGroupLabel.getIsJobGroupEnd
       jobGroupId = jobGroupLabel.getJobGroupId
       if (isEndJob) {
-        logger.debug(s"To delete codeExecTaskExecutor  $executor from execTaskToExecutor for lastjob of jobGroupId : ${jobGroupId}")
+        logger.debug(
+          s"To delete codeExecTaskExecutor  $executor from execTaskToExecutor for lastjob of jobGroupId : ${jobGroupId}"
+        )
         clearExecutorById(executor, execTask.getLabels)
       } else {
         removeExecutorFromInstanceToExecutors(executor)
-        logger.info(s"Subjob is not end of JobGroup with id : ${jobGroupId}, we will not delete codeExecTaskExecutor with id : ${executor} ")
+        logger.info(
+          s"Subjob is not end of JobGroup with id : ${jobGroupId}, we will not delete codeExecTaskExecutor with id : ${executor} "
+        )
       }
     } else {
       logger.debug(s"To delete codeExecTaskExecutor  ${executor}  from execTaskToExecutor.")
@@ -274,13 +328,19 @@ class DefaultCodeExecTaskExecutorManager extends CodeExecTaskExecutorManager wit
     }
   }
 
-  override def markTaskCompleted(execTask: CodeLogicalUnitExecTask, executor: CodeExecTaskExecutor, isSucceed: Boolean): Unit = {
+  override def markTaskCompleted(
+      execTask: CodeLogicalUnitExecTask,
+      executor: CodeExecTaskExecutor,
+      isSucceed: Boolean
+  ): Unit = {
     if (isSucceed) {
       logger.debug(s"ExecTask(${execTask.getIDInfo()}) execute  success executor be delete.")
       Utils.tryAndWarn(delete(execTask, executor))
     } else {
       if (StringUtils.isBlank(executor.getEngineConnTaskId)) {
-        logger.error(s"${execTask.getIDInfo()} Failed to submit running, now to remove  codeEngineConnExecutor, forceRelease")
+        logger.error(
+          s"${execTask.getIDInfo()} Failed to submit running, now to remove  codeEngineConnExecutor, forceRelease"
+        )
         Utils.tryAndWarn(markECFailed(execTask, executor))
       } else {
         logger.debug(s"ExecTask(${execTask.getIDInfo()}) execute  failed executor be unLock.")
@@ -291,4 +351,5 @@ class DefaultCodeExecTaskExecutorManager extends CodeExecTaskExecutorManager wit
       executor.getEngineConnExecutor.removeTask(executor.getEngineConnTaskId)
     }
   }
+
 }

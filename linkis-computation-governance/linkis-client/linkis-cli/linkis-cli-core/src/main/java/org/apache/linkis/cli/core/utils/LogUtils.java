@@ -21,14 +21,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class LogUtils {
-    private static final Logger PlainTextLogger = LoggerFactory.getLogger("PlaintTextLogger");
-    private static final Logger InformationLogger = LoggerFactory.getLogger("InformationLogger");
+  private static final Logger PlainTextLogger = LoggerFactory.getLogger("PlaintTextLogger");
+  private static final Logger InformationLogger = LoggerFactory.getLogger("InformationLogger");
 
-    public static Logger getPlaintTextLogger() {
-        return PlainTextLogger;
-    }
+  public static Logger getPlaintTextLogger() {
+    return PlainTextLogger;
+  }
 
-    public static Logger getInformationLogger() {
-        return InformationLogger;
-    }
+  public static Logger getInformationLogger() {
+    return InformationLogger;
+  }
 }

@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,21 +17,29 @@
 
 package org.apache.linkis.entrance.cli.heartbeat
 
-import org.apache.commons.lang3.concurrent.BasicThreadFactory
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.entrance.conf.EntranceConfiguration
 import org.apache.linkis.entrance.exception.{EntranceErrorCode, EntranceErrorException}
 import org.apache.linkis.entrance.execute.EntranceJob
 import org.apache.linkis.scheduler.queue.Job
 
+import org.apache.commons.lang3.concurrent.BasicThreadFactory
+
 import java.util
 import java.util.concurrent.{ConcurrentHashMap, ScheduledThreadPoolExecutor, TimeUnit}
+
 import scala.collection.JavaConverters._
 
 class CliHeartbeatMonitor(handler: HeartbeatLossHandler) extends Logging {
   private val infoMap = new ConcurrentHashMap[String, EntranceJob]
-  private val clientHeartbeatThreshold = 1000 * EntranceConfiguration.CLI_HEARTBEAT_THRESHOLD_SECONDS
-  private val clientHeartbeatDaemon = new ScheduledThreadPoolExecutor(1, new BasicThreadFactory.Builder().namingPattern("entrance-cli-heartbeat-%d").daemon(true).build)
+
+  private val clientHeartbeatThreshold =
+    1000 * EntranceConfiguration.CLI_HEARTBEAT_THRESHOLD_SECONDS
+
+  private val clientHeartbeatDaemon = new ScheduledThreadPoolExecutor(
+    1,
+    new BasicThreadFactory.Builder().namingPattern("entrance-cli-heartbeat-%d").daemon(true).build
+  )
 
   def panicIfNull(obj: Any, msg: String): Unit = {
     if (obj == null) {
@@ -60,7 +68,7 @@ class CliHeartbeatMonitor(handler: HeartbeatLossHandler) extends Logging {
 
   /*
   remove from scan list
- */
+   */
   def unRegisterIfCliJob(job: Job): Unit = {
     job match {
       case entranceJob: EntranceJob =>
@@ -82,7 +90,8 @@ class CliHeartbeatMonitor(handler: HeartbeatLossHandler) extends Logging {
       case entranceJob: EntranceJob =>
         if (isCliJob(entranceJob)) {
           val id = entranceJob.getJobRequest.getId.toString
-          if (!infoMap.containsKey(id)) logger.error(s"heartbeat on non-existing job!! job id: $id")
+          if (!infoMap.containsKey(id))
+            logger.error(s"heartbeat on non-existing job!! job id: $id")
           else infoMap.get(id).updateNewestAccessByClientTimestamp()
         }
       case _ =>
@@ -91,16 +100,22 @@ class CliHeartbeatMonitor(handler: HeartbeatLossHandler) extends Logging {
 
   def start(): Unit = {
     panicIfNull(handler, "handler should not be null")
-    clientHeartbeatDaemon.scheduleAtFixedRate(new Runnable {
-      override def run(): Unit = Utils.tryCatch(scanOneIteration()) {
-        t => logger.error("ClientHeartbeatMonitor failed to scan for one iteration", t)
-      }
-    }, 0, 5, TimeUnit.SECONDS)
+    clientHeartbeatDaemon.scheduleAtFixedRate(
+      new Runnable {
+        override def run(): Unit = Utils.tryCatch(scanOneIteration()) { t =>
+          logger.error("ClientHeartbeatMonitor failed to scan for one iteration", t)
+        }
+      },
+      0,
+      5,
+      TimeUnit.SECONDS
+    )
     logger.info("started cliHeartbeatMonitor")
     Utils.addShutdownHook(() -> this.shutdown())
   }
 
-  def scanOneIteration(): Unit = { //        LOG.info("ClientHeartbeatMonitor starts scanning for one iteration");
+  def scanOneIteration()
+      : Unit = { //        LOG.info("ClientHeartbeatMonitor starts scanning for one iteration");
     val currentTime = System.currentTimeMillis
     val entries = infoMap.entrySet.iterator
     val problemJobs = new util.ArrayList[EntranceJob]
@@ -115,7 +130,7 @@ class CliHeartbeatMonitor(handler: HeartbeatLossHandler) extends Logging {
 
     val iterator = problemJobs.iterator
     while (iterator.hasNext) {
-      //remove to avoid handle same job twice
+      // remove to avoid handle same job twice
       infoMap.remove(iterator.next)
     }
 
@@ -139,4 +154,5 @@ class CliHeartbeatMonitor(handler: HeartbeatLossHandler) extends Logging {
   def shutdown(): Unit = {
     clientHeartbeatDaemon.shutdownNow
   }
+
 }

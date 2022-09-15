@@ -25,5 +25,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
 public @interface ValueSerialNum {
-    int value() default Integer.MAX_VALUE;
+  int value() default Integer.MAX_VALUE;
 }

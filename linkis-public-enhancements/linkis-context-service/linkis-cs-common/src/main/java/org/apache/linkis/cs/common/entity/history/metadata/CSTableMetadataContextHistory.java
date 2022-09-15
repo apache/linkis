@@ -21,23 +21,23 @@ import org.apache.linkis.cs.common.entity.metadata.Table;
 
 public class CSTableMetadataContextHistory extends MetadataContextHistory {
 
-    private TableOperationType operationType;
+  private TableOperationType operationType;
 
-    private Table table;
+  private Table table;
 
-    public Table getTable() {
-        return this.table;
-    }
+  public Table getTable() {
+    return this.table;
+  }
 
-    public void setTable(Table table) {
-        this.table = table;
-    }
+  public void setTable(Table table) {
+    this.table = table;
+  }
 
-    public TableOperationType getOperationType() {
-        return this.operationType;
-    }
+  public TableOperationType getOperationType() {
+    return this.operationType;
+  }
 
-    public void setOperationType(TableOperationType operationType) {
-        this.operationType = operationType;
-    }
+  public void setOperationType(TableOperationType operationType) {
+    this.operationType = operationType;
+  }
 }

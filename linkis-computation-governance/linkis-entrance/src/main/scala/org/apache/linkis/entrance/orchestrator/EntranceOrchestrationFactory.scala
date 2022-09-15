@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,14 +26,15 @@ import org.apache.linkis.orchestrator.core.AbstractOrchestratorContext
 import org.apache.linkis.orchestrator.extensions.OperationExtensions
 import org.apache.linkis.orchestrator.extensions.OperationExtensions.OperationExtensionsBuilder
 
-
 object EntranceOrchestrationFactory {
 
   val ENTRANCE_ORCHESTRATOR_DEFAULT_ID = "entranceOrchestrator"
 
   private lazy val orchestratorSession: OrchestratorSession = {
-    val orchestratorSessionFactory = ComputationOrchestratorSessionFactory.getOrCreateExecutionFactory()
-    val orchestratorSessionBuilder = orchestratorSessionFactory.createSessionBuilder(ENTRANCE_ORCHESTRATOR_DEFAULT_ID)
+    val orchestratorSessionFactory =
+      ComputationOrchestratorSessionFactory.getOrCreateExecutionFactory()
+    val orchestratorSessionBuilder =
+      orchestratorSessionFactory.createSessionBuilder(ENTRANCE_ORCHESTRATOR_DEFAULT_ID)
     val addOnOperation = new OperationExtensionsBuilder {
       override def apply(v1: OperationExtensions): Unit = {
         v1.injectOperation(new ProgressOperationBuilder())
@@ -50,6 +51,5 @@ object EntranceOrchestrationFactory {
   }
 
   def getOrchestrationSession(): OrchestratorSession = orchestratorSession
-
 
 }

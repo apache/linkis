@@ -26,69 +26,69 @@ import org.apache.linkis.cli.core.interactor.properties.reader.PropertiesReader;
 import java.util.*;
 
 public class StdPropsLoader implements PropertiesLoader {
-    Map<String, PropertiesReader> readersMap;
+  Map<String, PropertiesReader> readersMap;
 
-    public StdPropsLoader() {
-        this.readersMap = new HashMap<>();
-    }
+  public StdPropsLoader() {
+    this.readersMap = new HashMap<>();
+  }
 
-    @Override
-    public PropertiesLoader setPropertiesReaders(PropertiesReader[] readers) {
-        this.readersMap = new HashMap<>();
-        for (PropertiesReader reader : readers) {
-            readersMap.put(reader.getPropsId(), reader);
-        }
-        return this;
+  @Override
+  public PropertiesLoader setPropertiesReaders(PropertiesReader[] readers) {
+    this.readersMap = new HashMap<>();
+    for (PropertiesReader reader : readers) {
+      readersMap.put(reader.getPropsId(), reader);
     }
+    return this;
+  }
 
-    @Override
-    public PropertiesLoader addPropertiesReader(PropertiesReader reader) {
-        if (reader != null) {
-            readersMap.put(reader.getPropsId(), reader);
-        }
-        return this;
+  @Override
+  public PropertiesLoader addPropertiesReader(PropertiesReader reader) {
+    if (reader != null) {
+      readersMap.put(reader.getPropsId(), reader);
     }
+    return this;
+  }
 
-    @Override
-    public PropertiesLoader addPropertiesReaders(PropertiesReader[] readers) {
-        if (readers != null && readers.length > 0) {
-            for (PropertiesReader reader : readers) {
-                readersMap.put(reader.getPropsId(), reader);
-            }
-        }
-        return this;
+  @Override
+  public PropertiesLoader addPropertiesReaders(PropertiesReader[] readers) {
+    if (readers != null && readers.length > 0) {
+      for (PropertiesReader reader : readers) {
+        readersMap.put(reader.getPropsId(), reader);
+      }
     }
+    return this;
+  }
 
-    @Override
-    public void removePropertiesReader(String identifier) {
-        readersMap.remove(identifier);
-    }
+  @Override
+  public void removePropertiesReader(String identifier) {
+    readersMap.remove(identifier);
+  }
 
-    @Override
-    public ClientProperties[] loadProperties() {
-        checkInit();
-        List<ClientProperties> propsList = new ArrayList<>();
-        PropertiesReader readerTmp;
-        for (Map.Entry<String, PropertiesReader> entry : readersMap.entrySet()) {
-            readerTmp = entry.getValue();
-            Properties props = readerTmp.getProperties();
-            ClientProperties clientProperties = new ClientProperties();
-            clientProperties.putAll(props);
-            clientProperties.setPropsId(readerTmp.getPropsId());
-            clientProperties.setPropertiesSourcePath(readerTmp.getPropsPath());
-            propsList.add(clientProperties);
-        }
-        return propsList.toArray(new ClientProperties[propsList.size()]);
+  @Override
+  public ClientProperties[] loadProperties() {
+    checkInit();
+    List<ClientProperties> propsList = new ArrayList<>();
+    PropertiesReader readerTmp;
+    for (Map.Entry<String, PropertiesReader> entry : readersMap.entrySet()) {
+      readerTmp = entry.getValue();
+      Properties props = readerTmp.getProperties();
+      ClientProperties clientProperties = new ClientProperties();
+      clientProperties.putAll(props);
+      clientProperties.setPropsId(readerTmp.getPropsId());
+      clientProperties.setPropertiesSourcePath(readerTmp.getPropsPath());
+      propsList.add(clientProperties);
     }
+    return propsList.toArray(new ClientProperties[propsList.size()]);
+  }
 
-    @Override
-    public void checkInit() {
-        if (readersMap == null || readersMap.size() == 0) {
-            throw new PropsException(
-                    "PRP0003",
-                    ErrorLevel.ERROR,
-                    CommonErrMsg.PropsLoaderInitErr,
-                    "properties loader is not inited because it contains no reader");
-        }
+  @Override
+  public void checkInit() {
+    if (readersMap == null || readersMap.size() == 0) {
+      throw new PropsException(
+          "PRP0003",
+          ErrorLevel.ERROR,
+          CommonErrMsg.PropsLoaderInitErr,
+          "properties loader is not inited because it contains no reader");
     }
+  }
 }

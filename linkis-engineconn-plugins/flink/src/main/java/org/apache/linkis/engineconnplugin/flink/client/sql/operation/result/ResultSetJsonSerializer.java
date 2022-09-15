@@ -36,74 +36,74 @@ import static org.apache.linkis.engineconnplugin.flink.client.sql.operation.resu
 /** Json serializer for {@link ResultSet}. */
 public class ResultSetJsonSerializer extends StdSerializer<ResultSet> {
 
-    protected ResultSetJsonSerializer() {
-        super(ResultSet.class);
+  protected ResultSetJsonSerializer() {
+    super(ResultSet.class);
+  }
+
+  @Override
+  public void serialize(
+      ResultSet resultSet, JsonGenerator jsonGenerator, SerializerProvider serializerProvider)
+      throws IOException {
+    jsonGenerator.writeStartObject();
+
+    serializerProvider.defaultSerializeField(
+        FIELD_NAME_RESULT_KIND, resultSet.getResultKind(), jsonGenerator);
+    serializerProvider.defaultSerializeField(
+        FIELD_NAME_COLUMNS, resultSet.getColumns(), jsonGenerator);
+
+    jsonGenerator.writeFieldName(FIELD_NAME_DATA);
+    jsonGenerator.writeStartArray();
+    for (Row row : resultSet.getData()) {
+      serializeRow(row, jsonGenerator, serializerProvider);
+    }
+    jsonGenerator.writeEndArray();
+
+    if (resultSet.getChangeFlags().isPresent()) {
+      serializerProvider.defaultSerializeField(
+          FIELD_NAME_CHANGE_FLAGS, resultSet.getChangeFlags().get(), jsonGenerator);
     }
 
-    @Override
-    public void serialize(
-            ResultSet resultSet, JsonGenerator jsonGenerator, SerializerProvider serializerProvider)
-            throws IOException {
-        jsonGenerator.writeStartObject();
+    jsonGenerator.writeEndObject();
+  }
 
-        serializerProvider.defaultSerializeField(
-                FIELD_NAME_RESULT_KIND, resultSet.getResultKind(), jsonGenerator);
-        serializerProvider.defaultSerializeField(
-                FIELD_NAME_COLUMNS, resultSet.getColumns(), jsonGenerator);
+  private void serializeLocalDate(LocalDate localDate, JsonGenerator jsonGenerator)
+      throws IOException {
+    jsonGenerator.writeString(localDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
+  }
 
-        jsonGenerator.writeFieldName(FIELD_NAME_DATA);
-        jsonGenerator.writeStartArray();
-        for (Row row : resultSet.getData()) {
-            serializeRow(row, jsonGenerator, serializerProvider);
-        }
-        jsonGenerator.writeEndArray();
+  private void serializeLocalTime(LocalTime localTime, JsonGenerator jsonGenerator)
+      throws IOException {
+    jsonGenerator.writeString(localTime.format(DateTimeFormatter.ISO_LOCAL_TIME));
+  }
 
-        if (resultSet.getChangeFlags().isPresent()) {
-            serializerProvider.defaultSerializeField(
-                    FIELD_NAME_CHANGE_FLAGS, resultSet.getChangeFlags().get(), jsonGenerator);
-        }
+  private void serializeLocalDateTime(LocalDateTime localDateTime, JsonGenerator jsonGenerator)
+      throws IOException {
+    jsonGenerator.writeString(localDateTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+  }
 
-        jsonGenerator.writeEndObject();
+  private void serializeRow(
+      Row row, JsonGenerator jsonGenerator, SerializerProvider serializerProvider)
+      throws IOException {
+    jsonGenerator.writeStartArray();
+    for (int i = 0; i < row.getArity(); i++) {
+      serializeObject(row.getField(i), jsonGenerator, serializerProvider);
     }
+    jsonGenerator.writeEndArray();
+  }
 
-    private void serializeLocalDate(LocalDate localDate, JsonGenerator jsonGenerator)
-            throws IOException {
-        jsonGenerator.writeString(localDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
+  private void serializeObject(
+      Object o, JsonGenerator jsonGenerator, SerializerProvider serializerProvider)
+      throws IOException {
+    if (o instanceof LocalDate) {
+      serializeLocalDate((LocalDate) o, jsonGenerator);
+    } else if (o instanceof LocalTime) {
+      serializeLocalTime((LocalTime) o, jsonGenerator);
+    } else if (o instanceof LocalDateTime) {
+      serializeLocalDateTime((LocalDateTime) o, jsonGenerator);
+    } else if (o instanceof Row) {
+      serializeRow((Row) o, jsonGenerator, serializerProvider);
+    } else {
+      serializerProvider.defaultSerializeValue(o, jsonGenerator);
     }
-
-    private void serializeLocalTime(LocalTime localTime, JsonGenerator jsonGenerator)
-            throws IOException {
-        jsonGenerator.writeString(localTime.format(DateTimeFormatter.ISO_LOCAL_TIME));
-    }
-
-    private void serializeLocalDateTime(LocalDateTime localDateTime, JsonGenerator jsonGenerator)
-            throws IOException {
-        jsonGenerator.writeString(localDateTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
-    }
-
-    private void serializeRow(
-            Row row, JsonGenerator jsonGenerator, SerializerProvider serializerProvider)
-            throws IOException {
-        jsonGenerator.writeStartArray();
-        for (int i = 0; i < row.getArity(); i++) {
-            serializeObject(row.getField(i), jsonGenerator, serializerProvider);
-        }
-        jsonGenerator.writeEndArray();
-    }
-
-    private void serializeObject(
-            Object o, JsonGenerator jsonGenerator, SerializerProvider serializerProvider)
-            throws IOException {
-        if (o instanceof LocalDate) {
-            serializeLocalDate((LocalDate) o, jsonGenerator);
-        } else if (o instanceof LocalTime) {
-            serializeLocalTime((LocalTime) o, jsonGenerator);
-        } else if (o instanceof LocalDateTime) {
-            serializeLocalDateTime((LocalDateTime) o, jsonGenerator);
-        } else if (o instanceof Row) {
-            serializeRow((Row) o, jsonGenerator, serializerProvider);
-        } else {
-            serializerProvider.defaultSerializeValue(o, jsonGenerator);
-        }
-    }
+  }
 }

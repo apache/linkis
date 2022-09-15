@@ -5,21 +5,17 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.scheduler.queue.fifoqueue
-
-
-
-import java.util.concurrent.{ExecutorService, Future}
 
 import org.apache.linkis.common.exception.{ErrorException, WarnException}
 import org.apache.linkis.common.log.LogUtils
@@ -30,12 +26,17 @@ import org.apache.linkis.scheduler.executer.Executor
 import org.apache.linkis.scheduler.future.{BDPFuture, BDPFutureTask}
 import org.apache.linkis.scheduler.queue._
 
+import java.util.concurrent.{ExecutorService, Future}
+
 import scala.beans.BeanProperty
 import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.TimeoutException
 
-class FIFOUserConsumer(schedulerContext: SchedulerContext,
-                       executeService: ExecutorService, private var group: Group) extends Consumer(schedulerContext, executeService) {
+class FIFOUserConsumer(
+    schedulerContext: SchedulerContext,
+    executeService: ExecutorService,
+    private var group: Group
+) extends Consumer(schedulerContext, executeService) {
   private var fifoGroup = group.asInstanceOf[FIFOGroup]
   private var queue: ConsumeQueue = _
   private val maxRunningJobsNum = fifoGroup.getMaxRunningJobs
@@ -47,8 +48,8 @@ class FIFOUserConsumer(schedulerContext: SchedulerContext,
   @BeanProperty
   var lastTime: Long = _
 
-  def this(schedulerContext: SchedulerContext,executeService: ExecutorService) = {
-    this(schedulerContext,executeService, null)
+  def this(schedulerContext: SchedulerContext, executeService: ExecutorService) = {
+    this(schedulerContext, executeService, null)
   }
 
   def start(): Unit = {
@@ -92,66 +93,88 @@ class FIFOUserConsumer(schedulerContext: SchedulerContext,
     var isRetryJob = false
     def getWaitForRetryEvent: Option[SchedulerEvent] = {
       val waitForRetryJobs = runningJobs.filter(job => job != null && job.isJobCanRetry)
-      waitForRetryJobs.find{job =>
-        isRetryJob = Utils.tryCatch(job.turnToRetry()){ t =>
-          job.onFailure("Job state flipped to Scheduled failed in Retry(Retry时，job状态翻转为Scheduled失败)！", t)
+      waitForRetryJobs.find { job =>
+        isRetryJob = Utils.tryCatch(job.turnToRetry()) { t =>
+          job.onFailure(
+            "Job state flipped to Scheduled failed in Retry(Retry时，job状态翻转为Scheduled失败)！",
+            t
+          )
           false
         }
         isRetryJob
       }
     }
     var event: Option[SchedulerEvent] = getWaitForRetryEvent
-    if(event.isEmpty) {
+    if (event.isEmpty) {
       val completedNums = runningJobs.filter(e => e == null || e.isCompleted)
       if (completedNums.length < 1) {
-        Utils.tryQuietly(Thread.sleep(1000))  //TODO 还可以优化，通过实现JobListener进行优化
+        Utils.tryQuietly(Thread.sleep(1000)) // TODO 还可以优化，通过实现JobListener进行优化
         return
       }
-      while(event.isEmpty) {
-        val takeEvent = if(getRunningEvents.isEmpty) Option(queue.take()) else queue.take(3000)
-        event = if(takeEvent.exists(e => Utils.tryCatch(e.turnToScheduled()) {t =>
-          takeEvent.get.asInstanceOf[Job].onFailure("Job状态翻转为Scheduled失败！", t)
-          false
-        })) takeEvent else getWaitForRetryEvent
+      while (event.isEmpty) {
+        val takeEvent = if (getRunningEvents.isEmpty) Option(queue.take()) else queue.take(3000)
+        event =
+          if (
+              takeEvent.exists(e =>
+                Utils.tryCatch(e.turnToScheduled()) { t =>
+                  takeEvent.get.asInstanceOf[Job].onFailure("Job状态翻转为Scheduled失败！", t)
+                  false
+                }
+              )
+          ) takeEvent
+          else getWaitForRetryEvent
       }
     }
     event.foreach { case job: Job =>
       Utils.tryCatch {
-        val (totalDuration, askDuration) = (fifoGroup.getMaxAskExecutorDuration, fifoGroup.getAskExecutorInterval)
+        val (totalDuration, askDuration) =
+          (fifoGroup.getMaxAskExecutorDuration, fifoGroup.getAskExecutorInterval)
         var executor: Option[Executor] = None
         job.consumerFuture = bdpFutureTask
-        Utils.waitUntil(() => {
-          executor = Utils.tryCatch(schedulerContext.getOrCreateExecutorManager.askExecutor(job, askDuration)) {
-            case warn: WarnException =>
-              job.getLogListener.foreach(_.onLogUpdate(job, LogUtils.generateWarn(warn.getDesc)))
-              None
-            case e: ErrorException =>
-              job.getLogListener.foreach(_.onLogUpdate(job, LogUtils.generateERROR(e.getMessage)))
-              throw e
-            case error: Throwable =>
-              job.getLogListener.foreach(_.onLogUpdate(job, LogUtils.generateERROR(error.getMessage)))
-              throw error
-          }
-          Utils.tryQuietly(askExecutorGap())
-          executor.isDefined
-        }, totalDuration)
+        Utils.waitUntil(
+          () => {
+            executor = Utils.tryCatch(
+              schedulerContext.getOrCreateExecutorManager.askExecutor(job, askDuration)
+            ) {
+              case warn: WarnException =>
+                job.getLogListener.foreach(_.onLogUpdate(job, LogUtils.generateWarn(warn.getDesc)))
+                None
+              case e: ErrorException =>
+                job.getLogListener.foreach(_.onLogUpdate(job, LogUtils.generateERROR(e.getMessage)))
+                throw e
+              case error: Throwable =>
+                job.getLogListener.foreach(
+                  _.onLogUpdate(job, LogUtils.generateERROR(error.getMessage))
+                )
+                throw error
+            }
+            Utils.tryQuietly(askExecutorGap())
+            executor.isDefined
+          },
+          totalDuration
+        )
         job.consumerFuture = null
         executor.foreach { executor =>
           job.setExecutor(executor)
           job.future = executeService.submit(job)
           job.getJobDaemon.foreach(jobDaemon => jobDaemon.future = executeService.submit(jobDaemon))
-          if(!isRetryJob) putToRunningJobs(job)
+          if (!isRetryJob) putToRunningJobs(job)
         }
-      }{
+      } {
         case _: TimeoutException =>
           logger.warn(s"Ask executor for Job $job timeout!")
-          job.onFailure("The request engine times out (请求引擎超时，可能是EngineConnManager 启动EngineConn失败导致，可以去查看看EngineConnManager的linkis.out和linkis.log日志).",
-            new SchedulerErrorException(11055, "The request engine times out (请求引擎超时，可能是EngineConnManager 启动EngineConn失败导致，可以去观看EngineConnManager的linkis.out和linkis.log日志)."))
+          job.onFailure(
+            "The request engine times out (请求引擎超时，可能是EngineConnManager 启动EngineConn失败导致，可以去查看看EngineConnManager的linkis.out和linkis.log日志).",
+            new SchedulerErrorException(
+              11055,
+              "The request engine times out (请求引擎超时，可能是EngineConnManager 启动EngineConn失败导致，可以去观看EngineConnManager的linkis.out和linkis.log日志)."
+            )
+          )
         case error: Throwable =>
           job.onFailure("请求引擎失败，可能是由于后台进程错误!请联系管理员", error)
-          if(job.isWaitForRetry) {
+          if (job.isWaitForRetry) {
             logger.warn(s"Ask executor for Job $job failed, wait for the next retry!", error)
-            if(!isRetryJob)  putToRunningJobs(job)
+            if (!isRetryJob) putToRunningJobs(job)
           } else logger.warn(s"Ask executor for Job $job failed!", error)
       }
     }
@@ -168,12 +191,15 @@ class FIFOUserConsumer(schedulerContext: SchedulerContext,
   }
 
   /**
-    * Determine whether the consumer is idle, by determining whether the queue and running job are empty
-    * @return
-    */
+   * Determine whether the consumer is idle, by determining whether the queue and running job are
+   * empty
+   * @return
+   */
   def isIdle: Boolean = {
     logger.info(s"${getGroup.getGroupName} queue isEmpty:${queue.isEmpty},size ${queue.size}")
-    logger.info(s"${getGroup.getGroupName} running jobs is not empty:${this.runningJobs.exists(job => job !=null && ! job.isCompleted)}")
-    this.queue.peek.isEmpty && ! this.runningJobs.exists(job => job !=null && ! job.isCompleted)
+    logger.info(s"${getGroup.getGroupName} running jobs is not empty:${this.runningJobs
+      .exists(job => job != null && !job.isCompleted)}")
+    this.queue.peek.isEmpty && !this.runningJobs.exists(job => job != null && !job.isCompleted)
   }
+
 }

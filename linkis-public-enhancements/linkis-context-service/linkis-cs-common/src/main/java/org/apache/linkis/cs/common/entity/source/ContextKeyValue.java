@@ -19,11 +19,11 @@ package org.apache.linkis.cs.common.entity.source;
 
 public interface ContextKeyValue {
 
-    ContextKey getContextKey();
+  ContextKey getContextKey();
 
-    void setContextKey(ContextKey contextKey);
+  void setContextKey(ContextKey contextKey);
 
-    ContextValue getContextValue();
+  ContextValue getContextValue();
 
-    void setContextValue(ContextValue contextValue);
+  void setContextValue(ContextValue contextValue);
 }

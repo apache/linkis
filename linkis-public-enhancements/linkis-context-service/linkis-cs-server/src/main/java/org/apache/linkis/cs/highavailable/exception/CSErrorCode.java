@@ -19,19 +19,19 @@ package org.apache.linkis.cs.highavailable.exception;
 
 public class CSErrorCode {
 
-    public static int INVALID_INSTANCE_ALIAS = 70010;
+  public static int INVALID_INSTANCE_ALIAS = 70010;
 
-    public static int INVALID_HAID = 70011;
+  public static int INVALID_HAID = 70011;
 
-    public static int GENERATE_HAID_ERROR = 70012;
+  public static int GENERATE_HAID_ERROR = 70012;
 
-    public static int INVALID_CONTEXTID = 70013;
+  public static int INVALID_CONTEXTID = 70013;
 
-    public static int GENERATE_BACKUP_INSTANCE_ERROR = 70014;
+  public static int GENERATE_BACKUP_INSTANCE_ERROR = 70014;
 
-    public static int INVALID_INSTANCE = 70015;
+  public static int INVALID_INSTANCE = 70015;
 
-    public static int INVAID_HA_CONTEXTID = 70016;
+  public static int INVAID_HA_CONTEXTID = 70016;
 
-    public static int CS_RPC_ERROR = 70017;
+  public static int CS_RPC_ERROR = 70017;
 }

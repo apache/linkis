@@ -19,30 +19,30 @@ package org.apache.linkis.datasourcemanager.core.vo;
 
 public class DataSourceEnvVo extends PageViewVo {
 
-    private String envName;
+  private String envName;
 
-    private Long dataSourceTypeId;
+  private Long dataSourceTypeId;
 
-    public DataSourceEnvVo() {}
+  public DataSourceEnvVo() {}
 
-    public DataSourceEnvVo(String envName, Long dataSourceTypeId) {
-        this.envName = envName;
-        this.dataSourceTypeId = dataSourceTypeId;
-    }
+  public DataSourceEnvVo(String envName, Long dataSourceTypeId) {
+    this.envName = envName;
+    this.dataSourceTypeId = dataSourceTypeId;
+  }
 
-    public String getEnvName() {
-        return envName;
-    }
+  public String getEnvName() {
+    return envName;
+  }
 
-    public void setEnvName(String envName) {
-        this.envName = envName;
-    }
+  public void setEnvName(String envName) {
+    this.envName = envName;
+  }
 
-    public Long getDataSourceTypeId() {
-        return dataSourceTypeId;
-    }
+  public Long getDataSourceTypeId() {
+    return dataSourceTypeId;
+  }
 
-    public void setDataSourceTypeId(Long dataSourceTypeId) {
-        this.dataSourceTypeId = dataSourceTypeId;
-    }
+  public void setDataSourceTypeId(Long dataSourceTypeId) {
+    this.dataSourceTypeId = dataSourceTypeId;
+  }
 }

@@ -22,15 +22,14 @@ import org.apache.linkis.cli.common.exception.error.ErrorLevel;
 import org.apache.linkis.cli.common.exception.error.ErrorMsg;
 
 public class VarAccessException extends LinkisClientRuntimeException {
-    private static final long serialVersionUID = 125344127L;
+  private static final long serialVersionUID = 125344127L;
 
-    public VarAccessException(
-            String code, ErrorLevel level, ErrorMsg errMsg, String param[], String... extMsg) {
-        super(code, level, errMsg, param, extMsg);
-    }
+  public VarAccessException(
+      String code, ErrorLevel level, ErrorMsg errMsg, String param[], String... extMsg) {
+    super(code, level, errMsg, param, extMsg);
+  }
 
-    public VarAccessException(
-            String code, ErrorLevel level, ErrorMsg errMsg, Object... paramsList) {
-        super(code, level, errMsg, paramsList);
-    }
+  public VarAccessException(String code, ErrorLevel level, ErrorMsg errMsg, Object... paramsList) {
+    super(code, level, errMsg, paramsList);
+  }
 }

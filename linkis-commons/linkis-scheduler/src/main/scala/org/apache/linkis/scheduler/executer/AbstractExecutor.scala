@@ -5,23 +5,22 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.scheduler.executer
 
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.scheduler.exception.SchedulerErrorException
 import org.apache.linkis.scheduler.executer.ExecutorState._
 import org.apache.linkis.scheduler.listener.ExecutorListener
-
 
 abstract class AbstractExecutor(id: Long) extends Executor with Logging {
 
@@ -49,7 +48,7 @@ abstract class AbstractExecutor(id: Long) extends Executor with Logging {
     if (_state == Busy) synchronized {
       if (_state == Busy) return f
     }
-    throw new SchedulerErrorException(20001, "%s is in state %s." format(toString, _state))
+    throw new SchedulerErrorException(20001, "%s is in state %s." format (toString, _state))
   }
 
   protected def ensureIdle[A](f: => A): A = ensureIdle(f, true)
@@ -64,21 +63,20 @@ abstract class AbstractExecutor(id: Long) extends Executor with Logging {
         }
       }
     }
-    throw new SchedulerErrorException(20001, "%s is in state %s." format(toString, _state))
+    throw new SchedulerErrorException(20001, "%s is in state %s." format (toString, _state))
   }
 
   protected def ensureAvailable[A](f: => A): A = {
     if (ExecutorState.isAvailable(_state)) synchronized {
       if (ExecutorState.isAvailable(_state)) return Utils.tryFinally(f)(callback())
     }
-    throw new SchedulerErrorException(20001, "%s is in state %s." format(toString, _state))
+    throw new SchedulerErrorException(20001, "%s is in state %s." format (toString, _state))
   }
 
   protected def whenAvailable[A](f: => A): A = {
     if (ExecutorState.isAvailable(_state)) return Utils.tryFinally(f)(callback())
     throw new SchedulerErrorException(20001, "%s is in state %s." format (toString, _state))
   }
-
 
   protected def transition(state: ExecutorState) = this synchronized {
     lastActivityTime = System.currentTimeMillis
@@ -91,7 +89,8 @@ abstract class AbstractExecutor(id: Long) extends Executor with Logging {
             val oldState = _state
             this._state = state
             executorListener.foreach(_.onExecutorStateChanged(this, oldState, state))
-          case _ => logger.warn(s"$toString attempt to change a ShuttingDown session to $state, ignore it.")
+          case _ =>
+            logger.warn(s"$toString attempt to change a ShuttingDown session to $state, ignore it.")
         }
       case _ =>
         logger.info(s"$toString change state ${_state} => $state.")
@@ -109,6 +108,6 @@ abstract class AbstractExecutor(id: Long) extends Executor with Logging {
 
   def getLastActivityTime = lastActivityTime
 
-  def setLastActivityTime(lastActivityTime:Long):Unit = this.lastActivityTime = lastActivityTime
+  def setLastActivityTime(lastActivityTime: Long): Unit = this.lastActivityTime = lastActivityTime
 
 }

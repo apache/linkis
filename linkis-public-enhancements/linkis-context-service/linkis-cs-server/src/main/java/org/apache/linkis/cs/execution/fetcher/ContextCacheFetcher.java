@@ -24,5 +24,5 @@ import java.util.List;
 
 public interface ContextCacheFetcher {
 
-    List<ContextKeyValue> fetch(ContextID contextID);
+  List<ContextKeyValue> fetch(ContextID contextID);
 }

@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,14 +21,14 @@ import org.apache.linkis.datasource.client.config.DatasourceClientConfig.METADAT
 import org.apache.linkis.datasource.client.exception.DataSourceClientBuilderException
 import org.apache.linkis.httpclient.request.GetAction
 
-
 class MetadataGetTablePropsAction extends GetAction with DataSourceAction {
   private var dataSourceName: String = _
 
   private var database: String = _
   private var table: String = _
 
-  override def suffixURLs: Array[String] = Array(METADATA_SERVICE_MODULE.getValue, "getTableProps")
+  override def suffixURLs: Array[String] =
+    Array(METADATA_SERVICE_MODULE.getValue, "getTableProps")
 
   private var user: String = _
 
@@ -40,7 +40,7 @@ class MetadataGetTablePropsAction extends GetAction with DataSourceAction {
 object MetadataGetTablePropsAction {
   def builder(): Builder = new Builder
 
-  class Builder private[MetadataGetTablePropsAction]() {
+  class Builder private[MetadataGetTablePropsAction] () {
     private var dataSourceName: String = _
     private var database: String = _
     private var table: String = _
@@ -73,7 +73,8 @@ object MetadataGetTablePropsAction {
     }
 
     def build(): MetadataGetTablePropsAction = {
-      if (dataSourceName == null) throw new DataSourceClientBuilderException("dataSourceName is needed!")
+      if (dataSourceName == null)
+        throw new DataSourceClientBuilderException("dataSourceName is needed!")
       if (database == null) throw new DataSourceClientBuilderException("database is needed!")
       if (table == null) throw new DataSourceClientBuilderException("table is needed!")
       if (system == null) throw new DataSourceClientBuilderException("system is needed!")
@@ -87,7 +88,7 @@ object MetadataGetTablePropsAction {
       metadataGetTablePropsAction.setUser(user)
       metadataGetTablePropsAction
     }
+
   }
 
 }
-

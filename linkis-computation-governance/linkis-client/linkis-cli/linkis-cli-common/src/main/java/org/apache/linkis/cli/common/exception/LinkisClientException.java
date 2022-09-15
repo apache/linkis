@@ -18,5 +18,5 @@
 package org.apache.linkis.cli.common.exception;
 
 public abstract class LinkisClientException extends Exception {
-    private static final long serialVersionUID = 42563456489L;
+  private static final long serialVersionUID = 42563456489L;
 }

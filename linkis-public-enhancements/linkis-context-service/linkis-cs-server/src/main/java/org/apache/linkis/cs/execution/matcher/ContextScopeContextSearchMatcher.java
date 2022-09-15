@@ -23,15 +23,15 @@ import org.apache.linkis.cs.condition.impl.ContextScopeCondition;
 
 public class ContextScopeContextSearchMatcher extends AbstractContextSearchMatcher {
 
-    ContextScope contextScope;
+  ContextScope contextScope;
 
-    public ContextScopeContextSearchMatcher(ContextScopeCondition condition) {
-        super(condition);
-        this.contextScope = condition.getContextScop();
-    }
+  public ContextScopeContextSearchMatcher(ContextScopeCondition condition) {
+    super(condition);
+    this.contextScope = condition.getContextScop();
+  }
 
-    @Override
-    public Boolean match(ContextKeyValue contextKeyValue) {
-        return contextScope.equals(contextKeyValue.getContextKey().getContextScope());
-    }
+  @Override
+  public Boolean match(ContextKeyValue contextKeyValue) {
+    return contextScope.equals(contextKeyValue.getContextKey().getContextScope());
+  }
 }

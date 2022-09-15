@@ -21,19 +21,19 @@ import org.apache.linkis.cs.persistence.persistence.*;
 
 public interface ContextPersistenceManager {
 
-    ContextIDPersistence getContextIDPersistence();
+  ContextIDPersistence getContextIDPersistence();
 
-    ContextMapPersistence getContextMapPersistence();
+  ContextMapPersistence getContextMapPersistence();
 
-    ContextHistoryPersistence getContextHistoryPersistence();
+  ContextHistoryPersistence getContextHistoryPersistence();
 
-    KeywordContextHistoryPersistence getKeywordContextHistoryPersistence();
+  KeywordContextHistoryPersistence getKeywordContextHistoryPersistence();
 
-    ContextMetricsPersistence getContextMetricsPersistence();
+  ContextMetricsPersistence getContextMetricsPersistence();
 
-    ContextIDListenerPersistence getContextIDListenerPersistence();
+  ContextIDListenerPersistence getContextIDListenerPersistence();
 
-    ContextKeyListenerPersistence getContextKeyListenerPersistence();
+  ContextKeyListenerPersistence getContextKeyListenerPersistence();
 
-    TransactionManager getTransactionManager();
+  TransactionManager getTransactionManager();
 }

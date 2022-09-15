@@ -22,12 +22,12 @@ import org.apache.linkis.cs.condition.Condition;
 import org.apache.linkis.cs.condition.ConditionType;
 
 public class OrCondition extends BinaryLogicCondition {
-    public OrCondition(Condition left, Condition right) {
-        super(left, right);
-    }
+  public OrCondition(Condition left, Condition right) {
+    super(left, right);
+  }
 
-    @Override
-    public ConditionType getConditionType() {
-        return ConditionType.Logic;
-    }
+  @Override
+  public ConditionType getConditionType() {
+    return ConditionType.Logic;
+  }
 }

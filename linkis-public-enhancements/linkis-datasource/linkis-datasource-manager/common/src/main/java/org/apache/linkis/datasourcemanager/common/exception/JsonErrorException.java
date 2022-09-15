@@ -21,8 +21,8 @@ import org.apache.linkis.common.exception.ErrorException;
 
 /** Deal the exception of json processing */
 public class JsonErrorException extends ErrorException {
-    public JsonErrorException(int errCode, String desc, Throwable cause) {
-        super(errCode, desc);
-        super.initCause(cause);
-    }
+  public JsonErrorException(int errCode, String desc, Throwable cause) {
+    super(errCode, desc);
+    super.initCause(cause);
+  }
 }

@@ -26,12 +26,12 @@ import org.apache.linkis.cs.execution.ruler.CommonListContextSearchRuler;
 
 public class OrConditionExecution extends BinaryLogicConditionExecution {
 
-    public OrConditionExecution(
-            OrCondition condition, ContextCacheService contextCacheService, ContextID contextID) {
-        super(condition, contextCacheService, contextID);
-        this.contextSearchMatcher = new OrLogicContextSearchMatcher(condition);
-        this.contextSearchRuler = new CommonListContextSearchRuler(contextSearchMatcher);
-        this.contextCacheFetcher =
-                new IterateContextCacheFetcher(contextCacheService, contextSearchRuler);
-    }
+  public OrConditionExecution(
+      OrCondition condition, ContextCacheService contextCacheService, ContextID contextID) {
+    super(condition, contextCacheService, contextID);
+    this.contextSearchMatcher = new OrLogicContextSearchMatcher(condition);
+    this.contextSearchRuler = new CommonListContextSearchRuler(contextSearchMatcher);
+    this.contextCacheFetcher =
+        new IterateContextCacheFetcher(contextCacheService, contextSearchRuler);
+  }
 }

@@ -5,28 +5,31 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
-package org.apache.linkis.computation.client
 
-import java.util
+package org.apache.linkis.computation.client
 
 import org.apache.linkis.ujes.client.UJESClient
 import org.apache.linkis.ujes.client.exception.UJESJobException
 import org.apache.linkis.ujes.client.request.ResultSetAction
 import org.apache.linkis.ujes.client.response.ResultSetResult
 
+import java.util
 
-abstract class ResultSetIterator[M, R](resultSetIterable: ResultSetIterable, metadata: Object, records: Object)
-  extends Iterator[R] with java.util.Iterator[R] {
+abstract class ResultSetIterator[M, R](
+    resultSetIterable: ResultSetIterable,
+    metadata: Object,
+    records: Object
+) extends Iterator[R]
+    with java.util.Iterator[R] {
 
   protected var cachedRecords: util.List[R] = recordsTo(records)
   protected var canFetch = true
@@ -42,10 +45,11 @@ abstract class ResultSetIterator[M, R](resultSetIterable: ResultSetIterable, met
     case l => throw new UJESJobException(s"Not support resultSet type $l.")
   }
 
-  override def hasNext: Boolean = if(!canFetch && index >= cachedRecords.size) false else {
-    if(index >= cachedRecords.size) {
+  override def hasNext: Boolean = if (!canFetch && index >= cachedRecords.size) false
+  else {
+    if (index >= cachedRecords.size) {
       cachedRecords = recordsTo(resultSetIterable.fetch())
-      if(cachedRecords.size < resultSetIterable.pageSize) canFetch = false
+      if (cachedRecords.size < resultSetIterable.pageSize) canFetch = false
       index = 0
     }
     index < cachedRecords.size
@@ -58,12 +62,14 @@ abstract class ResultSetIterator[M, R](resultSetIterable: ResultSetIterable, met
   }
 
 }
-class ResultSetIterable(ujesClient: UJESClient,
-                                       user: String,
-                                       fsPath: String,
-                                       jobMetrics: LinkisJobMetrics,
-                        val pageSize: Int = 100)
-  extends MetricIterator[LinkisJobMetrics] {
+
+class ResultSetIterable(
+    ujesClient: UJESClient,
+    user: String,
+    fsPath: String,
+    jobMetrics: LinkisJobMetrics,
+    val pageSize: Int = 100
+) extends MetricIterator[LinkisJobMetrics] {
 
   private var metadata: Object = _
   private var `type`: String = _
@@ -76,7 +82,13 @@ class ResultSetIterable(ujesClient: UJESClient,
   private[client] def fetch(): Object = {
     val startTime = System.currentTimeMillis
     page += 1
-    val action = ResultSetAction.builder().setPath(fsPath).setUser(user).setPage(page).setPageSize(pageSize).build()
+    val action = ResultSetAction
+      .builder()
+      .setPath(fsPath)
+      .setUser(user)
+      .setPage(page)
+      .setPageSize(pageSize)
+      .build()
     ujesClient.resultSet(action) match {
       case resultSet: ResultSetResult =>
         jobMetrics.addClientFetchResultSetTime(System.currentTimeMillis - startTime)
@@ -90,22 +102,32 @@ class ResultSetIterable(ujesClient: UJESClient,
     val records = fetch()
     `type` match {
       case "1" | "5" =>
-        new TextResultSetIterator(this, metadata, records).asInstanceOf[ResultSetIterator[Object, Object]]
+        new TextResultSetIterator(this, metadata, records)
+          .asInstanceOf[ResultSetIterator[Object, Object]]
       case "2" =>
-        new TableResultSetIterator(this, metadata, records).asInstanceOf[ResultSetIterator[Object, Object]]
+        new TableResultSetIterator(this, metadata, records)
+          .asInstanceOf[ResultSetIterator[Object, Object]]
       case _ => throw new UJESJobException(s"Not support resultSet type ${`type`}.")
     }
   }
 
 }
 
-class TableResultSetIterator(resultSetIterable: ResultSetIterable, metadata: Object, records: Object)
-  extends ResultSetIterator[util.List[util.Map[String, String]], util.List[Any]](resultSetIterable, metadata, records)
+class TableResultSetIterator(
+    resultSetIterable: ResultSetIterable,
+    metadata: Object,
+    records: Object
+) extends ResultSetIterator[util.List[util.Map[String, String]], util.List[Any]](
+      resultSetIterable,
+      metadata,
+      records
+    )
 
-import scala.collection.convert.WrapAsScala._
 import scala.collection.convert.WrapAsJava._
+import scala.collection.convert.WrapAsScala._
+
 class TextResultSetIterator(resultSetIterable: ResultSetIterable, metadata: Object, records: Object)
-  extends ResultSetIterator[String, String](resultSetIterable, metadata, records) {
+    extends ResultSetIterator[String, String](resultSetIterable, metadata, records) {
 
   override protected def recordsTo(records: Object): util.List[String] = records match {
     case list: util.List[util.List[String]] => list.map(_.head)

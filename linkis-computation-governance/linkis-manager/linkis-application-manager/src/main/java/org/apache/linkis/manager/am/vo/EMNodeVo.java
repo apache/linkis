@@ -27,223 +27,223 @@ import java.util.Map;
 
 public class EMNodeVo {
 
-    private List<Label> labels;
+  private List<Label> labels;
 
-    private String applicationName;
+  private String applicationName;
 
-    private String instance;
+  private String instance;
 
-    private ResourceType resourceType;
+  private ResourceType resourceType;
 
-    private Map maxResource;
+  private Map maxResource;
 
-    private Map minResource;
+  private Map minResource;
 
-    private Map usedResource;
+  private Map usedResource;
 
-    private Map lockedResource;
+  private Map lockedResource;
 
-    private Map expectedResource;
+  private Map expectedResource;
 
-    private Map leftResource;
+  private Map leftResource;
 
-    private String owner;
+  private String owner;
 
-    private Integer runningTasks;
+  private Integer runningTasks;
 
-    private Integer pendingTasks;
+  private Integer pendingTasks;
 
-    private Integer succeedTasks;
+  private Integer succeedTasks;
 
-    private Integer failedTasks;
+  private Integer failedTasks;
 
-    private Long maxMemory;
+  private Long maxMemory;
 
-    private Long usedMemory;
+  private Long usedMemory;
 
-    private Float systemCPUUsed;
+  private Float systemCPUUsed;
 
-    private Long systemLeftMemory;
+  private Long systemLeftMemory;
 
-    private NodeHealthy nodeHealthy;
+  private NodeHealthy nodeHealthy;
 
-    private String msg;
+  private String msg;
 
-    private Date startTime;
+  private Date startTime;
 
-    public List<Label> getLabels() {
-        return labels;
-    }
+  public List<Label> getLabels() {
+    return labels;
+  }
 
-    public void setLabels(List<Label> labels) {
-        this.labels = labels;
-    }
+  public void setLabels(List<Label> labels) {
+    this.labels = labels;
+  }
 
-    public String getApplicationName() {
-        return applicationName;
-    }
+  public String getApplicationName() {
+    return applicationName;
+  }
 
-    public void setApplicationName(String applicationName) {
-        this.applicationName = applicationName;
-    }
+  public void setApplicationName(String applicationName) {
+    this.applicationName = applicationName;
+  }
 
-    public String getInstance() {
-        return instance;
-    }
+  public String getInstance() {
+    return instance;
+  }
 
-    public void setInstance(String instance) {
-        this.instance = instance;
-    }
+  public void setInstance(String instance) {
+    this.instance = instance;
+  }
 
-    public ResourceType getResourceType() {
-        return resourceType;
-    }
+  public ResourceType getResourceType() {
+    return resourceType;
+  }
 
-    public void setResourceType(ResourceType resourceType) {
-        this.resourceType = resourceType;
-    }
+  public void setResourceType(ResourceType resourceType) {
+    this.resourceType = resourceType;
+  }
 
-    public Map getMaxResource() {
-        return maxResource;
-    }
+  public Map getMaxResource() {
+    return maxResource;
+  }
 
-    public void setMaxResource(Map maxResource) {
-        this.maxResource = maxResource;
-    }
+  public void setMaxResource(Map maxResource) {
+    this.maxResource = maxResource;
+  }
 
-    public Map getMinResource() {
-        return minResource;
-    }
+  public Map getMinResource() {
+    return minResource;
+  }
 
-    public void setMinResource(Map minResource) {
-        this.minResource = minResource;
-    }
+  public void setMinResource(Map minResource) {
+    this.minResource = minResource;
+  }
 
-    public Map getUsedResource() {
-        return usedResource;
-    }
+  public Map getUsedResource() {
+    return usedResource;
+  }
 
-    public void setUsedResource(Map usedResource) {
-        this.usedResource = usedResource;
-    }
+  public void setUsedResource(Map usedResource) {
+    this.usedResource = usedResource;
+  }
 
-    public Map getLockedResource() {
-        return lockedResource;
-    }
-
-    public void setLockedResource(Map lockedResource) {
-        this.lockedResource = lockedResource;
-    }
-
-    public Map getExpectedResource() {
-        return expectedResource;
-    }
-
-    public void setExpectedResource(Map expectedResource) {
-        this.expectedResource = expectedResource;
-    }
-
-    public Map getLeftResource() {
-        return leftResource;
-    }
-
-    public void setLeftResource(Map leftResource) {
-        this.leftResource = leftResource;
-    }
-
-    public String getOwner() {
-        return owner;
-    }
-
-    public void setOwner(String owner) {
-        this.owner = owner;
-    }
-
-    public Integer getRunningTasks() {
-        return runningTasks;
-    }
-
-    public void setRunningTasks(Integer runningTasks) {
-        this.runningTasks = runningTasks;
-    }
-
-    public Integer getPendingTasks() {
-        return pendingTasks;
-    }
-
-    public void setPendingTasks(Integer pendingTasks) {
-        this.pendingTasks = pendingTasks;
-    }
-
-    public Integer getSucceedTasks() {
-        return succeedTasks;
-    }
-
-    public void setSucceedTasks(Integer succeedTasks) {
-        this.succeedTasks = succeedTasks;
-    }
-
-    public Integer getFailedTasks() {
-        return failedTasks;
-    }
-
-    public void setFailedTasks(Integer failedTasks) {
-        this.failedTasks = failedTasks;
-    }
-
-    public Long getMaxMemory() {
-        return maxMemory;
-    }
-
-    public void setMaxMemory(Long maxMemory) {
-        this.maxMemory = maxMemory;
-    }
-
-    public Long getUsedMemory() {
-        return usedMemory;
-    }
-
-    public void setUsedMemory(Long usedMemory) {
-        this.usedMemory = usedMemory;
-    }
-
-    public Float getSystemCPUUsed() {
-        return systemCPUUsed;
-    }
-
-    public void setSystemCPUUsed(Float systemCPUUsed) {
-        this.systemCPUUsed = systemCPUUsed;
-    }
-
-    public Long getSystemLeftMemory() {
-        return systemLeftMemory;
-    }
-
-    public void setSystemLeftMemory(Long systemLeftMemory) {
-        this.systemLeftMemory = systemLeftMemory;
-    }
-
-    public NodeHealthy getNodeHealthy() {
-        return nodeHealthy;
-    }
-
-    public void setNodeHealthy(NodeHealthy nodeHealthy) {
-        this.nodeHealthy = nodeHealthy;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
-
-    public Date getStartTime() {
-        return startTime;
-    }
-
-    public void setStartTime(Date startTime) {
-        this.startTime = startTime;
-    }
+  public Map getLockedResource() {
+    return lockedResource;
+  }
+
+  public void setLockedResource(Map lockedResource) {
+    this.lockedResource = lockedResource;
+  }
+
+  public Map getExpectedResource() {
+    return expectedResource;
+  }
+
+  public void setExpectedResource(Map expectedResource) {
+    this.expectedResource = expectedResource;
+  }
+
+  public Map getLeftResource() {
+    return leftResource;
+  }
+
+  public void setLeftResource(Map leftResource) {
+    this.leftResource = leftResource;
+  }
+
+  public String getOwner() {
+    return owner;
+  }
+
+  public void setOwner(String owner) {
+    this.owner = owner;
+  }
+
+  public Integer getRunningTasks() {
+    return runningTasks;
+  }
+
+  public void setRunningTasks(Integer runningTasks) {
+    this.runningTasks = runningTasks;
+  }
+
+  public Integer getPendingTasks() {
+    return pendingTasks;
+  }
+
+  public void setPendingTasks(Integer pendingTasks) {
+    this.pendingTasks = pendingTasks;
+  }
+
+  public Integer getSucceedTasks() {
+    return succeedTasks;
+  }
+
+  public void setSucceedTasks(Integer succeedTasks) {
+    this.succeedTasks = succeedTasks;
+  }
+
+  public Integer getFailedTasks() {
+    return failedTasks;
+  }
+
+  public void setFailedTasks(Integer failedTasks) {
+    this.failedTasks = failedTasks;
+  }
+
+  public Long getMaxMemory() {
+    return maxMemory;
+  }
+
+  public void setMaxMemory(Long maxMemory) {
+    this.maxMemory = maxMemory;
+  }
+
+  public Long getUsedMemory() {
+    return usedMemory;
+  }
+
+  public void setUsedMemory(Long usedMemory) {
+    this.usedMemory = usedMemory;
+  }
+
+  public Float getSystemCPUUsed() {
+    return systemCPUUsed;
+  }
+
+  public void setSystemCPUUsed(Float systemCPUUsed) {
+    this.systemCPUUsed = systemCPUUsed;
+  }
+
+  public Long getSystemLeftMemory() {
+    return systemLeftMemory;
+  }
+
+  public void setSystemLeftMemory(Long systemLeftMemory) {
+    this.systemLeftMemory = systemLeftMemory;
+  }
+
+  public NodeHealthy getNodeHealthy() {
+    return nodeHealthy;
+  }
+
+  public void setNodeHealthy(NodeHealthy nodeHealthy) {
+    this.nodeHealthy = nodeHealthy;
+  }
+
+  public String getMsg() {
+    return msg;
+  }
+
+  public void setMsg(String msg) {
+    this.msg = msg;
+  }
+
+  public Date getStartTime() {
+    return startTime;
+  }
+
+  public void setStartTime(Date startTime) {
+    this.startTime = startTime;
+  }
 }

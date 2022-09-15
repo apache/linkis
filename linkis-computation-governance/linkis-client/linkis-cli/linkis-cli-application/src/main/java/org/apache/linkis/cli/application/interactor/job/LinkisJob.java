@@ -21,6 +21,6 @@ import org.apache.linkis.cli.application.interactor.job.data.LinkisJobData;
 import org.apache.linkis.cli.core.interactor.job.AbstractJob;
 
 public abstract class LinkisJob extends AbstractJob {
-    @Override
-    public abstract LinkisJobData getJobData();
+  @Override
+  public abstract LinkisJobData getJobData();
 }

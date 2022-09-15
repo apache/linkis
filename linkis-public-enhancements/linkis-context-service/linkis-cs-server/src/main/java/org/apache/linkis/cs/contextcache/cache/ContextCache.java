@@ -27,19 +27,19 @@ import java.util.Map;
 
 public interface ContextCache {
 
-    ContextIDValue getContextIDValue(ContextID contextID) throws CSErrorException;
+  ContextIDValue getContextIDValue(ContextID contextID) throws CSErrorException;
 
-    void remove(ContextID contextID);
+  void remove(ContextID contextID);
 
-    void put(ContextIDValue contextIDValue) throws CSErrorException;
+  void put(ContextIDValue contextIDValue) throws CSErrorException;
 
-    Map<String, ContextIDValue> getAllPresent(List<ContextID> contextIDList);
+  Map<String, ContextIDValue> getAllPresent(List<ContextID> contextIDList);
 
-    void refreshAll() throws CSErrorException;
+  void refreshAll() throws CSErrorException;
 
-    void putAll(List<ContextIDValue> contextIDValueList) throws CSErrorException;
+  void putAll(List<ContextIDValue> contextIDValueList) throws CSErrorException;
 
-    ContextIDValue loadContextIDValue(ContextID contextID);
+  ContextIDValue loadContextIDValue(ContextID contextID);
 
-    ContextCacheMetric getContextCacheMetric();
+  ContextCacheMetric getContextCacheMetric();
 }

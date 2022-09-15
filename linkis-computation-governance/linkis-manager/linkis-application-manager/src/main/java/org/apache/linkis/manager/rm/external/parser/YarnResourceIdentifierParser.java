@@ -25,15 +25,15 @@ import java.util.Map;
 
 public class YarnResourceIdentifierParser implements ExternalResourceIdentifierParser {
 
-    public static String QUEUE_NAME = "queueName";
+  public static String QUEUE_NAME = "queueName";
 
-    @Override
-    public ExternalResourceIdentifier parse(Map<String, Object> identifierMap) {
-        return new YarnResourceIdentifier((String) identifierMap.get(QUEUE_NAME));
-    }
+  @Override
+  public ExternalResourceIdentifier parse(Map<String, Object> identifierMap) {
+    return new YarnResourceIdentifier((String) identifierMap.get(QUEUE_NAME));
+  }
 
-    @Override
-    public ResourceType getResourceType() {
-        return ResourceType.Yarn;
-    }
+  @Override
+  public ResourceType getResourceType() {
+    return ResourceType.Yarn;
+  }
 }

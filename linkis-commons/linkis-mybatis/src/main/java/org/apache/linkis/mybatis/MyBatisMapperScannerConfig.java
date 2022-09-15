@@ -28,14 +28,14 @@ import org.mybatis.spring.mapper.MapperScannerConfigurer;
 @Configuration
 @AutoConfigureAfter(MybatisConfigurationFactory.class)
 public class MyBatisMapperScannerConfig {
-    @Bean
-    public MapperScannerConfigurer mapperScannerConfigurer() {
-        MapperScannerConfigurer mapperScannerConfigurer = new MapperScannerConfigurer();
-        mapperScannerConfigurer.setSqlSessionFactoryBeanName("sqlSessionFactory");
-        // Each table corresponds to the XXMapper.java interface type Java file
-        // 每张表对应的XXMapper.java interface类型的Java文件
-        mapperScannerConfigurer.setBasePackage(
-                MybatisConfiguration.BDP_SERVER_MYBATIS_BASEPACKAGE.getValue());
-        return mapperScannerConfigurer;
-    }
+  @Bean
+  public MapperScannerConfigurer mapperScannerConfigurer() {
+    MapperScannerConfigurer mapperScannerConfigurer = new MapperScannerConfigurer();
+    mapperScannerConfigurer.setSqlSessionFactoryBeanName("sqlSessionFactory");
+    // Each table corresponds to the XXMapper.java interface type Java file
+    // 每张表对应的XXMapper.java interface类型的Java文件
+    mapperScannerConfigurer.setBasePackage(
+        MybatisConfiguration.BDP_SERVER_MYBATIS_BASEPACKAGE.getValue());
+    return mapperScannerConfigurer;
+  }
 }

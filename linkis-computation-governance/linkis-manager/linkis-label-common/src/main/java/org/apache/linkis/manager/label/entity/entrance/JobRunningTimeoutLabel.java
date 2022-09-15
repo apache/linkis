@@ -25,23 +25,22 @@ import java.util.HashMap;
 
 public class JobRunningTimeoutLabel extends GenericLabel {
 
-    public JobRunningTimeoutLabel() {
-        setLabelKey(LabelKeyConstant.JOB_RUNNING_TIMEOUT_KEY);
-    }
+  public JobRunningTimeoutLabel() {
+    setLabelKey(LabelKeyConstant.JOB_RUNNING_TIMEOUT_KEY);
+  }
 
-    public Long getRunningTimeout() {
-        if (null == getValue()) {
-            return -1L;
-        }
-        return Long.parseLong(
-                getValue().getOrDefault(LabelKeyConstant.JOB_RUNNING_TIMEOUT_KEY, "-1"));
+  public Long getRunningTimeout() {
+    if (null == getValue()) {
+      return -1L;
     }
+    return Long.parseLong(getValue().getOrDefault(LabelKeyConstant.JOB_RUNNING_TIMEOUT_KEY, "-1"));
+  }
 
-    @ValueSerialNum(0)
-    public void setJobRunningTimeout(String runningTimeout) {
-        if (null == getValue()) {
-            setValue(new HashMap<>());
-        }
-        getValue().put(LabelKeyConstant.JOB_RUNNING_TIMEOUT_KEY, runningTimeout);
+  @ValueSerialNum(0)
+  public void setJobRunningTimeout(String runningTimeout) {
+    if (null == getValue()) {
+      setValue(new HashMap<>());
     }
+    getValue().put(LabelKeyConstant.JOB_RUNNING_TIMEOUT_KEY, runningTimeout);
+  }
 }

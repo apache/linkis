@@ -5,20 +5,17 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
-package org.apache.linkis.engineplugin.spark.Interpreter
 
-import java.io._
-import java.nio.file.Files
+package org.apache.linkis.engineplugin.spark.Interpreter
 
 import org.apache.linkis.common.conf.CommonVars
 import org.apache.linkis.common.io.FsPath
@@ -27,34 +24,36 @@ import org.apache.linkis.engineplugin.spark.common.LineBufferedStream
 import org.apache.linkis.engineplugin.spark.config.SparkConfiguration
 import org.apache.linkis.engineplugin.spark.utils.EngineUtils
 import org.apache.linkis.storage.FSFactory
+
 import org.apache.commons.io.IOUtils
+import org.apache.spark.{SparkContext, SparkException}
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.catalyst.expressions.Attribute
-import org.apache.spark.{SparkContext, SparkException}
-import org.json4s.jackson.JsonMethods._
-import org.json4s.jackson.Serialization
-import org.json4s.{DefaultFormats, JValue}
-import py4j.GatewayServer
+
+import java.io._
+import java.nio.file.Files
 
 import scala.collection.JavaConverters._
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 
+import org.json4s.{DefaultFormats, JValue}
+import org.json4s.jackson.JsonMethods._
+import org.json4s.jackson.Serialization
+import py4j.GatewayServer
+
 /**
-  *
-  */
+ */
 
 object PythonInterpreter {
+
   def create(): Interpreter = {
     val pythonExec = CommonVars("PYSPARK_DRIVER_PYTHON", "python").getValue
 
     val gatewayServer = new GatewayServer(SQLSession, 0)
     gatewayServer.start()
 
-    val builder = new ProcessBuilder(Array(
-      pythonExec,
-      createFakeShell().toString
-    ).toList.asJava)
+    val builder = new ProcessBuilder(Array(pythonExec, createFakeShell().toString).toList.asJava)
 
     val env = builder.environment()
     env.put("PYTHONPATH", pythonPath)
@@ -72,9 +71,11 @@ object PythonInterpreter {
     val pythonHomePath = new File(SparkConfiguration.SPARK_HOME.getValue, "python").getPath
     val pythonParentPath = new File(pythonHomePath, "lib")
     pythonPath += pythonHomePath
-    pythonParentPath.listFiles(new FileFilter {
-      override def accept(pathname: File): Boolean = pathname.getName.endsWith(".zip")
-    }).foreach(f => pythonPath += f.getPath)
+    pythonParentPath
+      .listFiles(new FileFilter {
+        override def accept(pathname: File): Boolean = pathname.getName.endsWith(".zip")
+      })
+      .foreach(f => pythonPath += f.getPath)
     EngineUtils.jarOfClass(classOf[SparkContext]).foreach(pythonPath += _)
     pythonPath.mkString(File.pathSeparator)
   }
@@ -124,12 +125,12 @@ object PythonInterpreter {
 
     file
   }
+
 }
 
 private class PythonInterpreter(process: Process, gatewayServer: GatewayServer)
-  extends ProcessInterpreter(process)
-    with Logging
-{
+    extends ProcessInterpreter(process)
+    with Logging {
   implicit val formats = DefaultFormats
 
   override def close(): Unit = {
@@ -142,16 +143,20 @@ private class PythonInterpreter(process: Process, gatewayServer: GatewayServer)
 
   final override protected def waitUntilReady(): Unit = {
     var running = false
-    val code = try process.exitValue catch { case t: IllegalThreadStateException => running = true;-1}
-    if(!running) {
-      throw new SparkException(s"Spark python application has already finished with exit code $code, now exit...")
+    val code =
+      try process.exitValue
+      catch { case t: IllegalThreadStateException => running = true; -1 }
+    if (!running) {
+      throw new SparkException(
+        s"Spark python application has already finished with exit code $code, now exit..."
+      )
     }
     var continue = true
     val initOut = new LineBufferedStream(process.getInputStream)
     val iterable = initOut.iterator
-    while(continue && iterable.hasNext) {
+    while (continue && iterable.hasNext) {
       iterable.next match {
-        case "READY" => println("Start python application succeed.");continue = false
+        case "READY" => println("Start python application succeed."); continue = false
         case str: String => println(str)
         case _ =>
       }
@@ -171,10 +176,7 @@ private class PythonInterpreter(process: Process, gatewayServer: GatewayServer)
   }
 
   override protected def sendShutdownRequest(): Unit = {
-    sendRequest(Map(
-      "msg_type" -> "shutdown_request",
-      "content" -> ()
-    )).foreach { rep =>
+    sendRequest(Map("msg_type" -> "shutdown_request", "content" -> ())).foreach { rep =>
       logger.warn(f"process failed to shut down while returning $rep")
     }
   }
@@ -193,9 +195,11 @@ private class PythonInterpreter(process: Process, gatewayServer: GatewayServer)
     val pythonHomePath = new File(SparkConfiguration.SPARK_HOME.getValue, "python").getPath
     val pythonParentPath = new File(pythonHomePath, "lib")
     pythonPath += pythonHomePath
-    pythonParentPath.listFiles(new FileFilter {
-      override def accept(pathname: File): Boolean = pathname.getName.endsWith(".zip")
-    }).foreach(f => pythonPath += f.getPath)
+    pythonParentPath
+      .listFiles(new FileFilter {
+        override def accept(pathname: File): Boolean = pathname.getName.endsWith(".zip")
+      })
+      .foreach(f => pythonPath += f.getPath)
     EngineUtils.jarOfClass(classOf[SparkContext]).foreach(pythonPath += _)
     pythonPath.mkString(File.pathSeparator)
   }
@@ -222,6 +226,7 @@ private class PythonInterpreter(process: Process, gatewayServer: GatewayServer)
 
     file
   }
+
 }
 
 object SQLSession extends Logging {
@@ -232,8 +237,7 @@ object SQLSession extends Logging {
     val iterator = Utils.tryThrow(df.asInstanceOf[DataFrame].toLocalIterator)(t => {
       sc.clearJobGroup()
       t
-    }
-    )
+    })
 
     var columns: List[Attribute] = null
     // get field names
@@ -277,7 +281,8 @@ object SQLSession extends Logging {
         msg.write("\n".getBytes("utf-8"))
         val row = iterator.next()
         columns.indices.foreach { i =>
-          if (row.isNullAt(i)) msg.write("NULL".getBytes("utf-8")) else msg.write(row.apply(i).asInstanceOf[Object].toString.getBytes("utf-8"))
+          if (row.isNullAt(i)) msg.write("NULL".getBytes("utf-8"))
+          else msg.write(row.apply(i).asInstanceOf[Object].toString.getBytes("utf-8"))
           if (i != columns.size - 1) {
             msg.write("\t".getBytes("utf-8"))
           }
@@ -287,16 +292,14 @@ object SQLSession extends Logging {
     })(t => {
       sc.clearJobGroup()
       t
-    }
-    )
+    })
     val colCount = if (columns != null) columns.size else 0
     logger.warn(s"Fetched $colCount col(s) :  $index row(s).")
     sc.clearJobGroup()
     Utils.tryFinally({
       msg.flush();
       msg.toString
-    }){ () => IOUtils.closeQuietly(msg)}
+    }) { () => IOUtils.closeQuietly(msg) }
   }
 
 }
-

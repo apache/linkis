@@ -24,14 +24,13 @@ import org.apache.linkis.cs.condition.impl.ContextTypeCondition;
 import java.util.Map;
 
 public class ContextTypeConditionParser implements ConditionParser {
-    @Override
-    public Condition parse(Map<Object, Object> conditionMap) {
-        return new ContextTypeCondition(
-                ContextType.valueOf((String) conditionMap.get("contextType")));
-    }
+  @Override
+  public Condition parse(Map<Object, Object> conditionMap) {
+    return new ContextTypeCondition(ContextType.valueOf((String) conditionMap.get("contextType")));
+  }
 
-    @Override
-    public String getName() {
-        return "ContextType";
-    }
+  @Override
+  public String getName() {
+    return "ContextType";
+  }
 }

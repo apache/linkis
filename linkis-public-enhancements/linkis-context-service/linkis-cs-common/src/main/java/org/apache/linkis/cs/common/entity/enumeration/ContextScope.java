@@ -18,9 +18,9 @@
 package org.apache.linkis.cs.common.entity.enumeration;
 
 public enum ContextScope {
-    /** */
-    PRIVATE,
-    PUBLIC,
-    PROTECTED,
-    FRIENDLY
+  /** */
+  PRIVATE,
+  PUBLIC,
+  PROTECTED,
+  FRIENDLY
 }

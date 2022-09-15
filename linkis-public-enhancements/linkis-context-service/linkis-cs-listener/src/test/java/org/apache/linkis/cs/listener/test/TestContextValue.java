@@ -20,25 +20,25 @@ package org.apache.linkis.cs.listener.test;
 import org.apache.linkis.cs.common.entity.source.ContextValue;
 
 public class TestContextValue implements ContextValue {
-    private Object value;
+  private Object value;
 
-    private String keywords;
+  private String keywords;
 
-    @Override
-    public String getKeywords() {
-        return null;
-    }
+  @Override
+  public String getKeywords() {
+    return null;
+  }
 
-    @Override
-    public void setKeywords(String keywords) {}
+  @Override
+  public void setKeywords(String keywords) {}
 
-    @Override
-    public Object getValue() {
-        return this.value;
-    }
+  @Override
+  public Object getValue() {
+    return this.value;
+  }
 
-    @Override
-    public void setValue(Object value) {
-        this.value = value;
-    }
+  @Override
+  public void setValue(Object value) {
+    this.value = value;
+  }
 }

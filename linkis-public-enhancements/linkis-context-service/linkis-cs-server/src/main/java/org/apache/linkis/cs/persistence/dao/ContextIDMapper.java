@@ -25,21 +25,21 @@ import java.util.Date;
 import java.util.List;
 
 public interface ContextIDMapper {
-    void createContextID(PersistenceContextID persistenceContextID);
+  void createContextID(PersistenceContextID persistenceContextID);
 
-    void deleteContextID(String contextId);
+  void deleteContextID(String contextId);
 
-    PersistenceContextID getContextID(String contextId);
+  PersistenceContextID getContextID(String contextId);
 
-    void updateContextID(PersistenceContextID persistenceContextID);
+  void updateContextID(PersistenceContextID persistenceContextID);
 
-    List<PersistenceContextID> searchContextID(PersistenceContextID persistenceContextID);
+  List<PersistenceContextID> searchContextID(PersistenceContextID persistenceContextID);
 
-    List<PersistenceContextID> getAllContextIDByTime(
-            @Param("createTimeStart") Date createTimeStart,
-            @Param("createTimeEnd") Date createTimeEnd,
-            @Param("updateTimeStart") Date updateTimeStart,
-            @Param("updateTimeEnd") Date updateTimeEnd,
-            @Param("accessTimeStart") Date accessTimeStart,
-            @Param("accessTimeEnd") Date accessTimeEnd);
+  List<PersistenceContextID> getAllContextIDByTime(
+      @Param("createTimeStart") Date createTimeStart,
+      @Param("createTimeEnd") Date createTimeEnd,
+      @Param("updateTimeStart") Date updateTimeStart,
+      @Param("updateTimeEnd") Date updateTimeEnd,
+      @Param("accessTimeStart") Date accessTimeStart,
+      @Param("accessTimeEnd") Date accessTimeEnd);
 }

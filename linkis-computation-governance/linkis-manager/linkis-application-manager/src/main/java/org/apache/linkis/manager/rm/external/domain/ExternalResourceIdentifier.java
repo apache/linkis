@@ -20,5 +20,5 @@ package org.apache.linkis.manager.rm.external.domain;
 import org.apache.linkis.manager.common.entity.resource.ResourceType;
 
 public interface ExternalResourceIdentifier {
-    ResourceType getResourceType();
+  ResourceType getResourceType();
 }

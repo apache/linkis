@@ -27,81 +27,76 @@ import org.apache.linkis.protocol.AbstractRetryableProtocol;
 import java.io.Serializable;
 
 public class NodeHeartbeatResourceMsg extends AbstractRetryableProtocol
-        implements HeartbeatProtocol, Serializable {
+    implements HeartbeatProtocol, Serializable {
 
-    private NodeStatus status;
+  private NodeStatus status;
 
-    private NodeHealthyInfo healthyInfo;
+  private NodeHealthyInfo healthyInfo;
 
-    private String heartBeatMsg;
+  private String heartBeatMsg;
 
-    private NodeOverLoadInfo overLoadInfo;
+  private NodeOverLoadInfo overLoadInfo;
 
-    private ServiceInstance serviceInstance;
+  private ServiceInstance serviceInstance;
 
-    private NodeResource nodeResource;
+  private NodeResource nodeResource;
 
-    public NodeStatus getStatus() {
-        return status;
-    }
+  public NodeStatus getStatus() {
+    return status;
+  }
 
-    public NodeHeartbeatResourceMsg setStatus(NodeStatus status) {
-        this.status = status;
-        return this;
-    }
+  public NodeHeartbeatResourceMsg setStatus(NodeStatus status) {
+    this.status = status;
+    return this;
+  }
 
-    public NodeHealthyInfo getHealthyInfo() {
-        return healthyInfo;
-    }
+  public NodeHealthyInfo getHealthyInfo() {
+    return healthyInfo;
+  }
 
-    public NodeHeartbeatResourceMsg setHealthyInfo(NodeHealthyInfo healthyInfo) {
-        this.healthyInfo = healthyInfo;
-        return this;
-    }
+  public NodeHeartbeatResourceMsg setHealthyInfo(NodeHealthyInfo healthyInfo) {
+    this.healthyInfo = healthyInfo;
+    return this;
+  }
 
-    public String getHeartBeatMsg() {
-        return heartBeatMsg;
-    }
+  public String getHeartBeatMsg() {
+    return heartBeatMsg;
+  }
 
-    public NodeHeartbeatResourceMsg setHeartBeatMsg(String heartBeatMsg) {
-        this.heartBeatMsg = heartBeatMsg;
-        return this;
-    }
+  public NodeHeartbeatResourceMsg setHeartBeatMsg(String heartBeatMsg) {
+    this.heartBeatMsg = heartBeatMsg;
+    return this;
+  }
 
-    public NodeOverLoadInfo getOverLoadInfo() {
-        return overLoadInfo;
-    }
+  public NodeOverLoadInfo getOverLoadInfo() {
+    return overLoadInfo;
+  }
 
-    public NodeHeartbeatResourceMsg setOverLoadInfo(NodeOverLoadInfo overLoadInfo) {
-        this.overLoadInfo = overLoadInfo;
-        return this;
-    }
+  public NodeHeartbeatResourceMsg setOverLoadInfo(NodeOverLoadInfo overLoadInfo) {
+    this.overLoadInfo = overLoadInfo;
+    return this;
+  }
 
-    public ServiceInstance getServiceInstance() {
-        return serviceInstance;
-    }
+  public ServiceInstance getServiceInstance() {
+    return serviceInstance;
+  }
 
-    public NodeHeartbeatResourceMsg setServiceInstance(ServiceInstance serviceInstance) {
-        this.serviceInstance = serviceInstance;
-        return this;
-    }
+  public NodeHeartbeatResourceMsg setServiceInstance(ServiceInstance serviceInstance) {
+    this.serviceInstance = serviceInstance;
+    return this;
+  }
 
-    public NodeResource getNodeResource() {
-        return nodeResource;
-    }
+  public NodeResource getNodeResource() {
+    return nodeResource;
+  }
 
-    public NodeHeartbeatResourceMsg setNodeResource(NodeResource nodeResource) {
-        this.nodeResource = nodeResource;
-        return this;
-    }
+  public NodeHeartbeatResourceMsg setNodeResource(NodeResource nodeResource) {
+    this.nodeResource = nodeResource;
+    return this;
+  }
 
-    @Override
-    public String toString() {
-        return "NodeHeartbeatMsg{"
-                + "status="
-                + status
-                + ", serviceInstance="
-                + serviceInstance
-                + '}';
-    }
+  @Override
+  public String toString() {
+    return "NodeHeartbeatMsg{" + "status=" + status + ", serviceInstance=" + serviceInstance + '}';
+  }
 }

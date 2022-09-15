@@ -56,6 +56,8 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 
 import javax.servlet.DispatcherType;
 
+import java.util.EnumSet;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -64,184 +66,173 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.webapp.WebAppContext;
 
-import java.util.EnumSet;
-
 @SpringBootApplication
 @EnableDiscoveryClient
 @RefreshScope
 @ComponentScan(
-        basePackages = {"org.apache.linkis", "com.webank.wedatasphere"},
-        excludeFilters =
-                @ComponentScan.Filter(
-                        type = FilterType.CUSTOM,
-                        classes = {DataWorkCloudCustomExcludeFilter.class}))
+    basePackages = {"org.apache.linkis", "com.webank.wedatasphere"},
+    excludeFilters =
+        @ComponentScan.Filter(
+            type = FilterType.CUSTOM,
+            classes = {DataWorkCloudCustomExcludeFilter.class}))
 public class DataWorkCloudApplication extends SpringBootServletInitializer {
-    private static final Log logger = LogFactory.getLog(DataWorkCloudApplication.class);
+  private static final Log logger = LogFactory.getLog(DataWorkCloudApplication.class);
 
-    private static ConfigurableApplicationContext applicationContext;
-    private static ServiceInstance serviceInstance;
+  private static ConfigurableApplicationContext applicationContext;
+  private static ServiceInstance serviceInstance;
 
-    public static ApplicationContext getApplicationContext() {
-        return applicationContext;
-    }
+  public static ApplicationContext getApplicationContext() {
+    return applicationContext;
+  }
 
-    public static void main(String[] args) throws ReflectiveOperationException {
+  public static void main(String[] args) throws ReflectiveOperationException {
 
-        final SpringApplication application = new SpringApplication(DataWorkCloudApplication.class);
-        application.addListeners(
-                new ApplicationListener<ApplicationPreparedEvent>() {
-                    public void onApplicationEvent(
-                            ApplicationPreparedEvent applicationPreparedEvent) {
-                        logger.info("add config from config server...");
-                        if (applicationContext == null) {
-                            applicationContext = applicationPreparedEvent.getApplicationContext();
-                        }
-                        addRemoteConfig();
-                        logger.info("initialize DataWorkCloud spring application...");
-                        initDWCApplication();
-                    }
-                });
-        application.addListeners(
-                new ApplicationListener<RefreshScopeRefreshedEvent>() {
-                    @Override
-                    public void onApplicationEvent(RefreshScopeRefreshedEvent applicationEvent) {
-                        logger.info("refresh config from config server...");
-                        updateRemoteConfig();
-                    }
-                });
-        String listeners = ServerConfiguration.BDP_SERVER_SPRING_APPLICATION_LISTENERS().getValue();
-        if (StringUtils.isNotBlank(listeners)) {
-            for (String listener : listeners.split(",")) {
-                application.addListeners(
-                        (ApplicationListener<?>) Class.forName(listener).newInstance());
+    final SpringApplication application = new SpringApplication(DataWorkCloudApplication.class);
+    application.addListeners(
+        new ApplicationListener<ApplicationPreparedEvent>() {
+          public void onApplicationEvent(ApplicationPreparedEvent applicationPreparedEvent) {
+            logger.info("add config from config server...");
+            if (applicationContext == null) {
+              applicationContext = applicationPreparedEvent.getApplicationContext();
             }
-        }
-        if ("true".equals(ServerConfiguration.IS_GATEWAY().getValue())) {
-            application.setWebApplicationType(WebApplicationType.REACTIVE);
-        }
-        applicationContext = application.run(args);
+            addRemoteConfig();
+            logger.info("initialize DataWorkCloud spring application...");
+            initDWCApplication();
+          }
+        });
+    application.addListeners(
+        new ApplicationListener<RefreshScopeRefreshedEvent>() {
+          @Override
+          public void onApplicationEvent(RefreshScopeRefreshedEvent applicationEvent) {
+            logger.info("refresh config from config server...");
+            updateRemoteConfig();
+          }
+        });
+    String listeners = ServerConfiguration.BDP_SERVER_SPRING_APPLICATION_LISTENERS().getValue();
+    if (StringUtils.isNotBlank(listeners)) {
+      for (String listener : listeners.split(",")) {
+        application.addListeners((ApplicationListener<?>) Class.forName(listener).newInstance());
+      }
     }
-
-    public static void updateRemoteConfig() {
-        addOrUpdateRemoteConfig(applicationContext.getEnvironment(), true);
+    if ("true".equals(ServerConfiguration.IS_GATEWAY().getValue())) {
+      application.setWebApplicationType(WebApplicationType.REACTIVE);
     }
+    applicationContext = application.run(args);
+  }
 
-    public static void addRemoteConfig() {
-        addOrUpdateRemoteConfig(applicationContext.getEnvironment(), false);
+  public static void updateRemoteConfig() {
+    addOrUpdateRemoteConfig(applicationContext.getEnvironment(), true);
+  }
+
+  public static void addRemoteConfig() {
+    addOrUpdateRemoteConfig(applicationContext.getEnvironment(), false);
+  }
+
+  private static void addOrUpdateRemoteConfig(Environment env, boolean isUpdateOrNot) {
+    StandardEnvironment environment = (StandardEnvironment) env;
+    PropertySource propertySource = environment.getPropertySources().get("bootstrapProperties");
+    if (propertySource == null) {
+      return;
     }
-
-    private static void addOrUpdateRemoteConfig(Environment env, boolean isUpdateOrNot) {
-        StandardEnvironment environment = (StandardEnvironment) env;
-        PropertySource propertySource = environment.getPropertySources().get("bootstrapProperties");
-        if (propertySource == null) {
-            return;
-        }
-        CompositePropertySource source = (CompositePropertySource) propertySource;
-        for (String key : source.getPropertyNames()) {
-            Object val = source.getProperty(key);
-            if (val == null) {
-                continue;
-            }
-            if (isUpdateOrNot) {
-                logger.info("update remote config => " + key + " = " + source.getProperty(key));
-                BDPConfiguration.set(key, val.toString());
-            } else {
-                logger.info("add remote config => " + key + " = " + source.getProperty(key));
-                BDPConfiguration.setIfNotExists(key, val.toString());
-            }
-        }
+    CompositePropertySource source = (CompositePropertySource) propertySource;
+    for (String key : source.getPropertyNames()) {
+      Object val = source.getProperty(key);
+      if (val == null) {
+        continue;
+      }
+      if (isUpdateOrNot) {
+        logger.info("update remote config => " + key + " = " + source.getProperty(key));
+        BDPConfiguration.set(key, val.toString());
+      } else {
+        logger.info("add remote config => " + key + " = " + source.getProperty(key));
+        BDPConfiguration.setIfNotExists(key, val.toString());
+      }
     }
+  }
 
-    private static void initDWCApplication() {
-        String hostName = Utils.getComputerName();
-        boolean eurekaPreferIp = Configuration.EUREKA_PREFER_IP();
-        if (eurekaPreferIp) {
-            hostName =
-                    applicationContext
-                            .getEnvironment()
-                            .getProperty("spring.cloud.client.ip-address");
-            logger.info(
-                    "using ip address replace hostname,beacause eureka.instance.prefer-ip-address:"
-                            + eurekaPreferIp);
-        }
-        serviceInstance = new ServiceInstance();
-        serviceInstance.setApplicationName(
-                applicationContext.getEnvironment().getProperty("spring.application.name"));
-        serviceInstance.setInstance(
-                hostName + ":" + applicationContext.getEnvironment().getProperty("server.port"));
-        LinkisException.setApplicationName(serviceInstance.getApplicationName());
-        LinkisException.setHostname(hostName);
-        LinkisException.setHostPort(
-                Integer.parseInt(applicationContext.getEnvironment().getProperty("server.port")));
+  private static void initDWCApplication() {
+    String hostName = Utils.getComputerName();
+    boolean eurekaPreferIp = Configuration.EUREKA_PREFER_IP();
+    if (eurekaPreferIp) {
+      hostName = applicationContext.getEnvironment().getProperty("spring.cloud.client.ip-address");
+      logger.info(
+          "using ip address replace hostname,beacause eureka.instance.prefer-ip-address:"
+              + eurekaPreferIp);
     }
+    serviceInstance = new ServiceInstance();
+    serviceInstance.setApplicationName(
+        applicationContext.getEnvironment().getProperty("spring.application.name"));
+    serviceInstance.setInstance(
+        hostName + ":" + applicationContext.getEnvironment().getProperty("server.port"));
+    LinkisException.setApplicationName(serviceInstance.getApplicationName());
+    LinkisException.setHostname(hostName);
+    LinkisException.setHostPort(
+        Integer.parseInt(applicationContext.getEnvironment().getProperty("server.port")));
+  }
 
-    public static ServiceInstance getServiceInstance() {
-        return serviceInstance;
-    }
+  public static ServiceInstance getServiceInstance() {
+    return serviceInstance;
+  }
 
-    public static String getApplicationName() {
-        return serviceInstance.getApplicationName();
-    }
+  public static String getApplicationName() {
+    return serviceInstance.getApplicationName();
+  }
 
-    public static String getInstance() {
-        return serviceInstance.getInstance();
-    }
+  public static String getInstance() {
+    return serviceInstance.getInstance();
+  }
 
-    public static void setProperty(String key, String value) {
-        BDPConfiguration.set(key, value);
-    }
+  public static void setProperty(String key, String value) {
+    BDPConfiguration.set(key, value);
+  }
 
-    public static void setPropertyIfNotExists(String key, String value) {
-        BDPConfiguration.setIfNotExists(key, value);
-    }
+  public static void setPropertyIfNotExists(String key, String value) {
+    BDPConfiguration.setIfNotExists(key, value);
+  }
 
-    @Override
-    protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
-        return builder.sources(DataWorkCloudApplication.class);
-    }
+  @Override
+  protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
+    return builder.sources(DataWorkCloudApplication.class);
+  }
 
-    // todo confirm
-    @Bean
-    public ObjectMapper defaultObjectMapper() {
-        ObjectMapper objectMapper =
-                new ObjectMapper()
-                        .registerModule(new JavaTimeModule())
-                        .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, true);
-        return objectMapper;
-    }
+  // todo confirm
+  @Bean
+  public ObjectMapper defaultObjectMapper() {
+    ObjectMapper objectMapper =
+        new ObjectMapper()
+            .registerModule(new JavaTimeModule())
+            .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, true);
+    return objectMapper;
+  }
 
-    @Bean
-    public WebServerFactoryCustomizer<JettyServletWebServerFactory> jettyFactoryCustomizer() {
-        return new WebServerFactoryCustomizer<JettyServletWebServerFactory>() {
-            @Override
-            public void customize(JettyServletWebServerFactory jettyServletWebServerFactory) {
-                jettyServletWebServerFactory.addServerCustomizers(
-                        new JettyServerCustomizer() {
-                            @Override
-                            public void customize(Server server) {
-                                Handler[] childHandlersByClass =
-                                        server.getChildHandlersByClass(WebAppContext.class);
-                                final WebAppContext webApp =
-                                        (WebAppContext) childHandlersByClass[0];
-                                FilterHolder filterHolder =
-                                        new FilterHolder(CharacterEncodingFilter.class);
-                                filterHolder.setInitParameter(
-                                        "encoding", Configuration.BDP_ENCODING().getValue());
-                                filterHolder.setInitParameter("forceEncoding", "true");
-                                webApp.addFilter(
-                                        filterHolder, "/*", EnumSet.allOf(DispatcherType.class));
+  @Bean
+  public WebServerFactoryCustomizer<JettyServletWebServerFactory> jettyFactoryCustomizer() {
+    return new WebServerFactoryCustomizer<JettyServletWebServerFactory>() {
+      @Override
+      public void customize(JettyServletWebServerFactory jettyServletWebServerFactory) {
+        jettyServletWebServerFactory.addServerCustomizers(
+            new JettyServerCustomizer() {
+              @Override
+              public void customize(Server server) {
+                Handler[] childHandlersByClass =
+                    server.getChildHandlersByClass(WebAppContext.class);
+                final WebAppContext webApp = (WebAppContext) childHandlersByClass[0];
+                FilterHolder filterHolder = new FilterHolder(CharacterEncodingFilter.class);
+                filterHolder.setInitParameter("encoding", Configuration.BDP_ENCODING().getValue());
+                filterHolder.setInitParameter("forceEncoding", "true");
+                webApp.addFilter(filterHolder, "/*", EnumSet.allOf(DispatcherType.class));
 
-                                // set servletHolder  for spring restful api
-                                BDPJettyServerHelper.setupSpringRestApiContextHandler(webApp);
-                                if (ServerConfiguration.BDP_SERVER_SOCKET_MODE().getValue()) {
-                                    BDPJettyServerHelper.setupControllerServer(webApp);
-                                }
-                                if (!ServerConfiguration.BDP_SERVER_DISTINCT_MODE().getValue()) {
-                                    BDPJettyServerHelper.setupWebAppContext(webApp);
-                                }
-                            }
-                        });
-            }
-        };
-    }
+                // set servletHolder  for spring restful api
+                BDPJettyServerHelper.setupSpringRestApiContextHandler(webApp);
+                if (ServerConfiguration.BDP_SERVER_SOCKET_MODE().getValue()) {
+                  BDPJettyServerHelper.setupControllerServer(webApp);
+                }
+                if (!ServerConfiguration.BDP_SERVER_DISTINCT_MODE().getValue()) {
+                  BDPJettyServerHelper.setupWebAppContext(webApp);
+                }
+              }
+            });
+      }
+    };
+  }
 }

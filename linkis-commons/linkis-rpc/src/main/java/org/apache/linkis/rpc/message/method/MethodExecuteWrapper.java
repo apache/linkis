@@ -23,47 +23,47 @@ import java.lang.reflect.Method;
 
 public class MethodExecuteWrapper {
 
-    public MethodExecuteWrapper(ServiceMethod serviceMethod) {
-        this.serviceMethod = serviceMethod;
-    }
+  public MethodExecuteWrapper(ServiceMethod serviceMethod) {
+    this.serviceMethod = serviceMethod;
+  }
 
-    private final ServiceMethod serviceMethod;
+  private final ServiceMethod serviceMethod;
 
-    private boolean shouldSkip;
+  private boolean shouldSkip;
 
-    public boolean isShouldSkip() {
-        return shouldSkip;
-    }
+  public boolean isShouldSkip() {
+    return shouldSkip;
+  }
 
-    public void setShouldSkip(boolean shouldSkip) {
-        this.shouldSkip = shouldSkip;
-    }
+  public void setShouldSkip(boolean shouldSkip) {
+    this.shouldSkip = shouldSkip;
+  }
 
-    public Method getMethod() {
-        return this.serviceMethod.getMethod();
-    }
+  public Method getMethod() {
+    return this.serviceMethod.getMethod();
+  }
 
-    public Object getService() {
-        return this.serviceMethod.getService();
-    }
+  public Object getService() {
+    return this.serviceMethod.getService();
+  }
 
-    public String getAlias() {
-        return this.serviceMethod.getAlias();
-    }
+  public String getAlias() {
+    return this.serviceMethod.getAlias();
+  }
 
-    public int getOrder() {
-        return this.serviceMethod.getOrder();
-    }
+  public int getOrder() {
+    return this.serviceMethod.getOrder();
+  }
 
-    public String getChainName() {
-        return this.serviceMethod.getChainName();
-    }
+  public String getChainName() {
+    return this.serviceMethod.getChainName();
+  }
 
-    public boolean isHasSender() {
-        return this.serviceMethod.isHasSender();
-    }
+  public boolean isHasSender() {
+    return this.serviceMethod.isHasSender();
+  }
 
-    public boolean isSenderOnLeft() {
-        return this.serviceMethod.isSenderOnLeft();
-    }
+  public boolean isSenderOnLeft() {
+    return this.serviceMethod.isSenderOnLeft();
+  }
 }

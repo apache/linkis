@@ -19,11 +19,11 @@ package org.apache.linkis.cs.condition;
 
 public interface Condition {
 
-    Condition and(Condition right);
+  Condition and(Condition right);
 
-    Condition or(Condition right);
+  Condition or(Condition right);
 
-    Condition not();
+  Condition not();
 
-    ConditionType getConditionType();
+  ConditionType getConditionType();
 }

@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,9 +16,6 @@
  */
 
 package org.apache.linkis.engineconn.computation.executor.hook
-
-import java.io.File
-import java.util
 
 import org.apache.linkis.common.conf.CommonVars
 import org.apache.linkis.common.utils.{Logging, Utils}
@@ -31,28 +28,39 @@ import org.apache.linkis.engineconn.core.executor.ExecutorManager
 import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.{CodeLanguageLabel, RunType}
+
 import org.apache.commons.io.FileUtils
 import org.apache.commons.lang3.StringUtils
 
+import java.io.File
+import java.util
 
-abstract class InitSQLHook  extends EngineConnHook with Logging {
+abstract class InitSQLHook extends EngineConnHook with Logging {
 
-
-  private val INIT_SQL_DIR = CommonVars("wds.linkis.bdp.hive.init.sql.dir", "/appcom/config/hive-config/init_sql/").getValue
+  private val INIT_SQL_DIR =
+    CommonVars("wds.linkis.bdp.hive.init.sql.dir", "/appcom/config/hive-config/init_sql/").getValue
 
   private val INIT_SQL_ENABLE = CommonVars("wds.linkis.bdp.hive.init.sql.enable", false)
 
   override def beforeCreateEngineConn(engineCreationContext: EngineCreationContext): Unit = {}
 
-  override def beforeExecutionExecute(engineCreationContext: EngineCreationContext, engineConn: EngineConn): Unit = {}
+  override def beforeExecutionExecute(
+      engineCreationContext: EngineCreationContext,
+      engineConn: EngineConn
+  ): Unit = {}
 
   protected def getRunType(): String
 
-  override def afterExecutionExecute(engineCreationContext: EngineCreationContext, engineConn: EngineConn): Unit = Utils.tryAndError {
-    val user: String = if (StringUtils.isNotBlank(engineCreationContext.getUser)) engineCreationContext.getUser else {
-      Utils.getJvmUser
-    }
-    if (! INIT_SQL_ENABLE.getValue(engineCreationContext.getOptions)) {
+  override def afterExecutionExecute(
+      engineCreationContext: EngineCreationContext,
+      engineConn: EngineConn
+  ): Unit = Utils.tryAndError {
+    val user: String =
+      if (StringUtils.isNotBlank(engineCreationContext.getUser)) engineCreationContext.getUser
+      else {
+        Utils.getJvmUser
+      }
+    if (!INIT_SQL_ENABLE.getValue(engineCreationContext.getOptions)) {
       logger.info(s"$user engineConn skip execute init_sql")
       return
     }
@@ -89,6 +97,7 @@ abstract class InitSQLHook  extends EngineConnHook with Logging {
       ""
     }
   }
+
 }
 
 class SparkInitSQLHook extends InitSQLHook {

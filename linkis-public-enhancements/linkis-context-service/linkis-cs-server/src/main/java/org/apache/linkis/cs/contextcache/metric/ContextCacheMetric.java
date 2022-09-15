@@ -19,15 +19,15 @@ package org.apache.linkis.cs.contextcache.metric;
 
 public interface ContextCacheMetric extends Metrtic {
 
-    int getUsedCount();
+  int getUsedCount();
 
-    void addCount();
+  void addCount();
 
-    int getCachedCount();
+  int getCachedCount();
 
-    void setCachedCount(int count);
+  void setCachedCount(int count);
 
-    long getCachedMemory();
+  long getCachedMemory();
 
-    void setCachedMemory(long memory);
+  void setCachedMemory(long memory);
 }

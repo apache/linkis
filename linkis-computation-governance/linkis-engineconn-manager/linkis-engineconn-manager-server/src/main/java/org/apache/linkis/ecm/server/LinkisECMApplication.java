@@ -38,86 +38,86 @@ import static org.apache.linkis.ecm.server.conf.ECMConfiguration.ECM_ASYNC_BUS_W
 
 public class LinkisECMApplication extends DataWorkCloudApplication {
 
-    private static ECMContext ecmContext;
+  private static ECMContext ecmContext;
 
-    private static volatile boolean ready;
+  private static volatile boolean ready;
 
-    private static ServiceInstance ecmServiceInstance;
+  private static ServiceInstance ecmServiceInstance;
 
-    private static String[] parmas;
+  private static String[] parmas;
 
-    public static void main(String[] args) throws ReflectiveOperationException {
-        parmas = args;
-        LinkisBaseServerApp.main(args);
-    }
+  public static void main(String[] args) throws ReflectiveOperationException {
+    parmas = args;
+    LinkisBaseServerApp.main(args);
+  }
 
-    public static ECMContext getContext() {
-        return ecmContext;
-    }
+  public static ECMContext getContext() {
+    return ecmContext;
+  }
 
-    public static void setContext(ECMContext context) {
-        ecmContext = context;
-    }
+  public static void setContext(ECMContext context) {
+    ecmContext = context;
+  }
 
-    public static ServiceInstance getECMServiceInstance() {
-        return ecmServiceInstance;
-    }
+  public static ServiceInstance getECMServiceInstance() {
+    return ecmServiceInstance;
+  }
 
-    public static void setECMServiceInstance(ServiceInstance serviceInstance) {
-        ecmServiceInstance = serviceInstance;
-    }
+  public static void setECMServiceInstance(ServiceInstance serviceInstance) {
+    ecmServiceInstance = serviceInstance;
+  }
 
-    public static boolean isReady() {
-        return ready;
-    }
+  public static boolean isReady() {
+    return ready;
+  }
 
-    public static void setReady(boolean applicationReady) {
-        ready = applicationReady;
-    }
+  public static void setReady(boolean applicationReady) {
+    ready = applicationReady;
+  }
 
-    public static String[] getParmas() {
-        return parmas;
-    }
+  public static String[] getParmas() {
+    return parmas;
+  }
 }
 
 @Configuration
 class ECMApplicationListener {
 
-    private final Log logger = LogFactory.getLog(this.getClass());
+  private final Log logger = LogFactory.getLog(this.getClass());
 
-    @EventListener
-    public void onApplicationReady(ApplicationReadyEvent event) {
-        ServiceInstance serviceInstance = DataWorkCloudApplication.getServiceInstance();
-        LinkisECMApplication.setECMServiceInstance(serviceInstance);
-        ECMContext context = event.getApplicationContext().getBean(ECMContext.class);
-        LinkisECMApplication.setContext(context);
-        ECMAsyncListenerBus emAsyncListenerBus = context.getECMAsyncListenerBus();
-        ECMSyncListenerBus emSyncListenerBus = context.getECMSyncListenerBus();
-        emAsyncListenerBus.start();
-        ECMReadyEvent ecmReadyEvent = new ECMReadyEvent(LinkisECMApplication.getParmas());
-        emAsyncListenerBus.postToAll(ecmReadyEvent);
-        emSyncListenerBus.postToAll(ecmReadyEvent);
-        LinkisECMApplication.setReady(true);
-        logger.info(String.format("ECM:%s is ready", serviceInstance));
-    }
+  @EventListener
+  public void onApplicationReady(ApplicationReadyEvent event) {
+    ServiceInstance serviceInstance = DataWorkCloudApplication.getServiceInstance();
+    LinkisECMApplication.setECMServiceInstance(serviceInstance);
+    ECMContext context = event.getApplicationContext().getBean(ECMContext.class);
+    LinkisECMApplication.setContext(context);
+    ECMAsyncListenerBus emAsyncListenerBus = context.getECMAsyncListenerBus();
+    ECMSyncListenerBus emSyncListenerBus = context.getECMSyncListenerBus();
+    emAsyncListenerBus.start();
+    ECMReadyEvent ecmReadyEvent = new ECMReadyEvent(LinkisECMApplication.getParmas());
+    emAsyncListenerBus.postToAll(ecmReadyEvent);
+    emSyncListenerBus.postToAll(ecmReadyEvent);
+    LinkisECMApplication.setReady(true);
+    logger.info(String.format("ECM:%s is ready", serviceInstance));
+  }
 
-    @EventListener
-    public void onApplicationClosed(ContextClosedEvent contextClosedEvent) {
-        ServiceInstance serviceInstance = DataWorkCloudApplication.getServiceInstance();
-        LinkisECMApplication.setReady(false);
-        ECMClosedEvent ecmClosedEvent = new ECMClosedEvent();
-        LinkisECMApplication.getContext().getECMSyncListenerBus().postToAll(ecmClosedEvent);
-        ECMAsyncListenerBus ecmAsyncListenerBus =
-                LinkisECMApplication.getContext().getECMAsyncListenerBus();
-        ecmAsyncListenerBus.postToAll(ecmClosedEvent);
-        logger.info(String.format("wait ECM:%s asyncBus empty", serviceInstance));
-        try {
-            ecmAsyncListenerBus.waitUntilEmpty(ECM_ASYNC_BUS_WAITTOEMPTY_TIME());
-        } catch (Throwable e) {
-            logger.error("wait ECM asyncBus empty failed", e);
-        }
-        logger.info("ECM asyncBus is empty");
-        ecmAsyncListenerBus.stop();
-        logger.info("ECM is closed");
+  @EventListener
+  public void onApplicationClosed(ContextClosedEvent contextClosedEvent) {
+    ServiceInstance serviceInstance = DataWorkCloudApplication.getServiceInstance();
+    LinkisECMApplication.setReady(false);
+    ECMClosedEvent ecmClosedEvent = new ECMClosedEvent();
+    LinkisECMApplication.getContext().getECMSyncListenerBus().postToAll(ecmClosedEvent);
+    ECMAsyncListenerBus ecmAsyncListenerBus =
+        LinkisECMApplication.getContext().getECMAsyncListenerBus();
+    ecmAsyncListenerBus.postToAll(ecmClosedEvent);
+    logger.info(String.format("wait ECM:%s asyncBus empty", serviceInstance));
+    try {
+      ecmAsyncListenerBus.waitUntilEmpty(ECM_ASYNC_BUS_WAITTOEMPTY_TIME());
+    } catch (Throwable e) {
+      logger.error("wait ECM asyncBus empty failed", e);
     }
+    logger.info("ECM asyncBus is empty");
+    ecmAsyncListenerBus.stop();
+    logger.info("ECM is closed");
+  }
 }

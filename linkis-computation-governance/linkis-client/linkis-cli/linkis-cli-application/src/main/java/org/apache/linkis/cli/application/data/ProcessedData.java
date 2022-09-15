@@ -21,32 +21,32 @@ import org.apache.linkis.cli.common.entity.command.CmdType;
 import org.apache.linkis.cli.common.entity.var.VarAccess;
 
 public class ProcessedData {
-    String cid;
-    CmdType cmdType;
-    VarAccess stdVarAccess;
-    VarAccess sysVarAccess;
+  String cid;
+  CmdType cmdType;
+  VarAccess stdVarAccess;
+  VarAccess sysVarAccess;
 
-    public ProcessedData(
-            String cid, CmdType cmdType, VarAccess stdVarAccess, VarAccess sysVarAccess) {
-        this.cid = cid;
-        this.cmdType = cmdType;
-        this.stdVarAccess = stdVarAccess;
-        this.sysVarAccess = sysVarAccess;
-    }
+  public ProcessedData(
+      String cid, CmdType cmdType, VarAccess stdVarAccess, VarAccess sysVarAccess) {
+    this.cid = cid;
+    this.cmdType = cmdType;
+    this.stdVarAccess = stdVarAccess;
+    this.sysVarAccess = sysVarAccess;
+  }
 
-    public String getCid() {
-        return cid;
-    }
+  public String getCid() {
+    return cid;
+  }
 
-    public CmdType getCmdType() {
-        return cmdType;
-    }
+  public CmdType getCmdType() {
+    return cmdType;
+  }
 
-    public VarAccess getStdVarAccess() {
-        return stdVarAccess;
-    }
+  public VarAccess getStdVarAccess() {
+    return stdVarAccess;
+  }
 
-    public VarAccess getSysVarAccess() {
-        return sysVarAccess;
-    }
+  public VarAccess getSysVarAccess() {
+    return sysVarAccess;
+  }
 }

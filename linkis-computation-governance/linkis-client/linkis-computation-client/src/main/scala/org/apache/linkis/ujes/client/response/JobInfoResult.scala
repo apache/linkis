@@ -5,20 +5,18 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.ujes.client.response
 
-import java.util
-import java.util.Date
 import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.governance.common.entity.task.RequestPersistTask
 import org.apache.linkis.httpclient.dws.annotation.DWSHttpMessageResult
@@ -26,7 +24,11 @@ import org.apache.linkis.httpclient.dws.response.DWSResult
 import org.apache.linkis.ujes.client.UJESClient
 import org.apache.linkis.ujes.client.exception.UJESJobException
 import org.apache.linkis.ujes.client.request.{ResultSetListAction, UserAction}
+
 import org.apache.commons.beanutils.BeanUtils
+
+import java.util
+import java.util.Date
 
 @DWSHttpMessageResult("/api/rest_j/v\\d+/jobhistory/\\S+/get")
 class JobInfoResult extends DWSResult with UserAction with Status {
@@ -46,10 +48,10 @@ class JobInfoResult extends DWSResult with UserAction with Status {
     task.remove("updatedTime")
     task.remove("engineStartTime")
     task.remove("labels")
-    Utils.tryCatch{
+    Utils.tryCatch {
       BeanUtils.populate(requestPersistTask, task.asInstanceOf[util.Map[String, _]])
-    }{
-      case e:Exception => logger.error("copy failed", e)
+    } { case e: Exception =>
+      logger.error("copy failed", e)
     }
     requestPersistTask.setStatus(task.get("status").asInstanceOf[String])
     requestPersistTask.setCreatedTime(new Date(createdTime))
@@ -72,13 +74,19 @@ class JobInfoResult extends DWSResult with UserAction with Status {
   def getResultSetList(ujesClient: UJESClient): Array[String] = {
     if (isSucceed && resultSetList == null) synchronized {
       if (resultSetList != null) return resultSetList
-      resultSetList = ujesClient.executeUJESJob(ResultSetListAction.builder().set(this).build()) match {
-        case resultSetList: ResultSetListResult => resultSetList.getResultSetList
-      }
+      resultSetList =
+        ujesClient.executeUJESJob(ResultSetListAction.builder().set(this).build()) match {
+          case resultSetList: ResultSetListResult => resultSetList.getResultSetList
+        }
       resultSetList
-    } else if (resultSetList != null) resultSetList
-    else if (isFailed) throw new UJESJobException(requestPersistTask.getErrCode, requestPersistTask.getErrDesc)
-    else throw new UJESJobException(s"job ${requestPersistTask.getTaskID} is still executing with state ${requestPersistTask.getStatus}.")
+    }
+    else if (resultSetList != null) resultSetList
+    else if (isFailed)
+      throw new UJESJobException(requestPersistTask.getErrCode, requestPersistTask.getErrDesc)
+    else
+      throw new UJESJobException(
+        s"job ${requestPersistTask.getTaskID} is still executing with state ${requestPersistTask.getStatus}."
+      )
   }
 
   override def getJobStatus: String = requestPersistTask.getStatus
@@ -91,4 +99,5 @@ class JobInfoResult extends DWSResult with UserAction with Status {
       false
     }
   }
+
 }

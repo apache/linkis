@@ -27,76 +27,71 @@ import org.apache.linkis.cs.common.exception.ErrorCode;
 
 import org.apache.commons.lang3.StringUtils;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class CSResourceService implements ResourceService {
 
-    private static final Logger logger = LoggerFactory.getLogger(CSResourceService.class);
+  private static final Logger logger = LoggerFactory.getLogger(CSResourceService.class);
 
-    private static CSResourceService csResourceService;
+  private static CSResourceService csResourceService;
 
-    private CSResourceService() {}
+  private CSResourceService() {}
 
-    public static CSResourceService getInstance() {
+  public static CSResourceService getInstance() {
+    if (null == csResourceService) {
+      synchronized (CSResourceService.class) {
         if (null == csResourceService) {
-            synchronized (CSResourceService.class) {
-                if (null == csResourceService) {
-                    csResourceService = new CSResourceService();
-                }
-            }
+          csResourceService = new CSResourceService();
         }
-        return csResourceService;
+      }
     }
+    return csResourceService;
+  }
 
-    @Override
-    public Map<ContextKey, BMLResource> getAllUpstreamBMLResource(
-            String contextIDStr, String nodeName) throws CSErrorException {
-        if (StringUtils.isBlank(contextIDStr) || StringUtils.isBlank(nodeName)) {
-            logger.warn("contextIDStr or nodeName cannot null");
-            return null;
-        }
-        try {
-            ContextID contextID = SerializeHelper.deserializeContextID(contextIDStr);
-            return DefaultSearchService.getInstance()
-                    .searchUpstreamContextMap(
-                            contextID, nodeName, Integer.MAX_VALUE, BMLResource.class);
-        } catch (ErrorException e) {
-            logger.error("Deserialize contextid error. contextID : " + contextIDStr + ", e ", e);
-            throw new CSErrorException(
-                    ErrorCode.DESERIALIZE_ERROR,
-                    "Deserialize contextid error. contextID : "
-                            + contextIDStr
-                            + ", e "
-                            + e.getDesc());
-        }
+  @Override
+  public Map<ContextKey, BMLResource> getAllUpstreamBMLResource(
+      String contextIDStr, String nodeName) throws CSErrorException {
+    if (StringUtils.isBlank(contextIDStr) || StringUtils.isBlank(nodeName)) {
+      logger.warn("contextIDStr or nodeName cannot null");
+      return null;
     }
+    try {
+      ContextID contextID = SerializeHelper.deserializeContextID(contextIDStr);
+      return DefaultSearchService.getInstance()
+          .searchUpstreamContextMap(contextID, nodeName, Integer.MAX_VALUE, BMLResource.class);
+    } catch (ErrorException e) {
+      logger.error("Deserialize contextid error. contextID : " + contextIDStr + ", e ", e);
+      throw new CSErrorException(
+          ErrorCode.DESERIALIZE_ERROR,
+          "Deserialize contextid error. contextID : " + contextIDStr + ", e " + e.getDesc());
+    }
+  }
 
-    @Override
-    public List<BMLResource> getUpstreamBMLResource(String contextIDStr, String nodeName)
-            throws CSErrorException {
-        List<BMLResource> rsList = new ArrayList<>();
-        if (StringUtils.isBlank(contextIDStr) || StringUtils.isBlank(nodeName)) {
-            logger.warn("contextIDStr or nodeName cannot null");
-            return rsList;
-        }
-        try {
-            ContextID contextID = SerializeHelper.deserializeContextID(contextIDStr);
-            if (null != contextID) {
-                rsList =
-                        DefaultSearchService.getInstance()
-                                .searchUpstreamContext(
-                                        contextID, nodeName, Integer.MAX_VALUE, BMLResource.class);
-            }
-            return rsList;
-        } catch (ErrorException e) {
-            logger.error("Failed to get Resource: " + e.getMessage());
-            throw new CSErrorException(
-                    ErrorCode.DESERIALIZE_ERROR, "Deserialize contextID error. contextIDStr : ", e);
-        }
+  @Override
+  public List<BMLResource> getUpstreamBMLResource(String contextIDStr, String nodeName)
+      throws CSErrorException {
+    List<BMLResource> rsList = new ArrayList<>();
+    if (StringUtils.isBlank(contextIDStr) || StringUtils.isBlank(nodeName)) {
+      logger.warn("contextIDStr or nodeName cannot null");
+      return rsList;
     }
+    try {
+      ContextID contextID = SerializeHelper.deserializeContextID(contextIDStr);
+      if (null != contextID) {
+        rsList =
+            DefaultSearchService.getInstance()
+                .searchUpstreamContext(contextID, nodeName, Integer.MAX_VALUE, BMLResource.class);
+      }
+      return rsList;
+    } catch (ErrorException e) {
+      logger.error("Failed to get Resource: " + e.getMessage());
+      throw new CSErrorException(
+          ErrorCode.DESERIALIZE_ERROR, "Deserialize contextID error. contextIDStr : ", e);
+    }
+  }
 }

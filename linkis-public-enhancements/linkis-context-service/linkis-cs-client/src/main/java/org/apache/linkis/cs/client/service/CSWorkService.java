@@ -24,8 +24,8 @@ import java.util.List;
 
 public interface CSWorkService {
 
-    void initContextServiceInfo(String contextIDStr, WorkType workType) throws CSErrorException;
+  void initContextServiceInfo(String contextIDStr, WorkType workType) throws CSErrorException;
 
-    void initContextServiceInfo(String contextIDStr, List<WorkType> workTypes)
-            throws CSErrorException;
+  void initContextServiceInfo(String contextIDStr, List<WorkType> workTypes)
+      throws CSErrorException;
 }

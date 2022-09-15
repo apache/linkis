@@ -20,30 +20,30 @@ package org.apache.linkis.cs.condition.construction;
 import org.apache.linkis.cs.condition.Condition;
 import org.apache.linkis.cs.condition.impl.ContextValueTypeCondition;
 
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Map;
-
 public class ContextValueTypeConditionParser implements ConditionParser {
 
-    private static final Logger logger =
-            LoggerFactory.getLogger(ContextValueTypeConditionParser.class);
+  private static final Logger logger =
+      LoggerFactory.getLogger(ContextValueTypeConditionParser.class);
 
-    @Override
-    public Condition parse(Map<Object, Object> conditionMap) {
+  @Override
+  public Condition parse(Map<Object, Object> conditionMap) {
 
-        Class contextValueType = Object.class;
-        try {
-            contextValueType = Class.forName((String) conditionMap.get("contextValueType"));
-        } catch (ClassNotFoundException e) {
-            logger.error("Cannot find contextValueType:" + conditionMap.get("contextValueType"));
-        }
-        return new ContextValueTypeCondition(contextValueType);
+    Class contextValueType = Object.class;
+    try {
+      contextValueType = Class.forName((String) conditionMap.get("contextValueType"));
+    } catch (ClassNotFoundException e) {
+      logger.error("Cannot find contextValueType:" + conditionMap.get("contextValueType"));
     }
+    return new ContextValueTypeCondition(contextValueType);
+  }
 
-    @Override
-    public String getName() {
-        return "ContextValueType";
-    }
+  @Override
+  public String getName() {
+    return "ContextValueType";
+  }
 }

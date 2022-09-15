@@ -26,12 +26,12 @@ import org.apache.linkis.cs.execution.ruler.CommonListContextSearchRuler;
 
 public class AndConditionExecution extends BinaryLogicConditionExecution {
 
-    public AndConditionExecution(
-            AndCondition condition, ContextCacheService contextCacheService, ContextID contextID) {
-        super(condition, contextCacheService, contextID);
-        this.contextSearchMatcher = new AndLogicContextSearchMatcher(condition);
-        this.contextSearchRuler = new CommonListContextSearchRuler(contextSearchMatcher);
-        this.contextCacheFetcher =
-                new IterateContextCacheFetcher(contextCacheService, contextSearchRuler);
-    }
+  public AndConditionExecution(
+      AndCondition condition, ContextCacheService contextCacheService, ContextID contextID) {
+    super(condition, contextCacheService, contextID);
+    this.contextSearchMatcher = new AndLogicContextSearchMatcher(condition);
+    this.contextSearchRuler = new CommonListContextSearchRuler(contextSearchMatcher);
+    this.contextCacheFetcher =
+        new IterateContextCacheFetcher(contextCacheService, contextSearchRuler);
+  }
 }

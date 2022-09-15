@@ -21,7 +21,7 @@ import org.apache.linkis.common.io.FsPath;
 
 public interface Data {
 
-    FsPath getLocation();
+  FsPath getLocation();
 
-    void setLocation(FsPath fsPath);
+  void setLocation(FsPath fsPath);
 }

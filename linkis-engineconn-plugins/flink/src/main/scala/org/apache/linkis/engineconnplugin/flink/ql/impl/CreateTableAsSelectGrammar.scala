@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,11 +22,14 @@ import org.apache.linkis.engineconnplugin.flink.client.sql.operation.OperationUt
 import org.apache.linkis.engineconnplugin.flink.client.sql.operation.result.ResultSet
 import org.apache.linkis.engineconnplugin.flink.context.FlinkEngineConnContext
 import org.apache.linkis.engineconnplugin.flink.ql.Grammar
+
 import org.apache.flink.table.api.internal.TableEnvironmentInternal
 
 import scala.util.matching.Regex
 
-class CreateTableAsSelectGrammar(context: FlinkEngineConnContext, sql: String) extends Grammar with Logging {
+class CreateTableAsSelectGrammar(context: FlinkEngineConnContext, sql: String)
+    extends Grammar
+    with Logging {
 
   def this() = this(null, null)
 
@@ -34,8 +37,8 @@ class CreateTableAsSelectGrammar(context: FlinkEngineConnContext, sql: String) e
     CreateTableAsSelectGrammar.CREATE_TABLE_AS_SELECT_GRAMMAR.unapplySeq(sql).isDefined
 
   /**
-    * Execute the command and return the result.
-    */
+   * Execute the command and return the result.
+   */
   override def execute(): ResultSet = sql match {
     case CreateTableAsSelectGrammar.CREATE_TABLE_AS_SELECT_GRAMMAR(_, _, tableName, _, _, select) =>
       logger.info(s"Ready to create a table $tableName, the sql is: $select.")
@@ -49,11 +52,14 @@ class CreateTableAsSelectGrammar(context: FlinkEngineConnContext, sql: String) e
       OperationUtil.OK
   }
 
-  override def copy(context: FlinkEngineConnContext, sql: String): CreateTableAsSelectGrammar = new CreateTableAsSelectGrammar(context, sql)
+  override def copy(context: FlinkEngineConnContext, sql: String): CreateTableAsSelectGrammar =
+    new CreateTableAsSelectGrammar(context, sql)
+
 }
 
 object CreateTableAsSelectGrammar {
 
-  val CREATE_TABLE_AS_SELECT_GRAMMAR: Regex = "(create|CREATE)\\s+(table|TABLE)\\s+([a-zA-Z_][a-zA-Z_0-9]*)\\s+(as|AS)?\\s*(select|SELECT)(.+)".r
+  val CREATE_TABLE_AS_SELECT_GRAMMAR: Regex =
+    "(create|CREATE)\\s+(table|TABLE)\\s+([a-zA-Z_][a-zA-Z_0-9]*)\\s+(as|AS)?\\s*(select|SELECT)(.+)".r
 
 }

@@ -28,13 +28,13 @@ import java.util.Map;
 
 public interface ContextSearch {
 
-    List<ContextKeyValue> search(
-            ContextCacheService contextCacheService,
-            ContextID contextID,
-            Map<Object, Object> conditionMap)
-            throws ContextSearchFailedException;
+  List<ContextKeyValue> search(
+      ContextCacheService contextCacheService,
+      ContextID contextID,
+      Map<Object, Object> conditionMap)
+      throws ContextSearchFailedException;
 
-    List<ContextKeyValue> search(
-            ContextCacheService contextCacheService, ContextID contextID, Condition condition)
-            throws ContextSearchFailedException;
+  List<ContextKeyValue> search(
+      ContextCacheService contextCacheService, ContextID contextID, Condition condition)
+      throws ContextSearchFailedException;
 }

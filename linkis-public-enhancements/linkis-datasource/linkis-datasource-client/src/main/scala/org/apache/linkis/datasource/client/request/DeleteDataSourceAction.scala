@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,8 +21,7 @@ import org.apache.linkis.datasource.client.config.DatasourceClientConfig.DATA_SO
 import org.apache.linkis.datasource.client.exception.DataSourceClientBuilderException
 import org.apache.linkis.httpclient.request.DeleteAction
 
-
-class DeleteDataSourceAction extends DeleteAction with DataSourceAction  {
+class DeleteDataSourceAction extends DeleteAction with DataSourceAction {
   private var user: String = _
 
   private var dataSourceId: Long = _
@@ -31,11 +30,15 @@ class DeleteDataSourceAction extends DeleteAction with DataSourceAction  {
 
   override def getUser: String = this.user
 
-  override def suffixURLs: Array[String] = Array(DATA_SOURCE_SERVICE_MODULE.getValue, "info/delete", dataSourceId.toString)
+  override def suffixURLs: Array[String] =
+    Array(DATA_SOURCE_SERVICE_MODULE.getValue, "info/delete", dataSourceId.toString)
+
 }
-object DeleteDataSourceAction{
+
+object DeleteDataSourceAction {
   def builder(): Builder = new Builder
-  class Builder private[DeleteDataSourceAction]() {
+
+  class Builder private[DeleteDataSourceAction] () {
     private var user: String = _
     private var dataSourceId: Long = _
 
@@ -51,12 +54,15 @@ object DeleteDataSourceAction{
 
     def builder(): DeleteDataSourceAction = {
       if (user == null) throw new DataSourceClientBuilderException("user is needed!")
-      if(dataSourceId == null) throw new DataSourceClientBuilderException("dataSourceId is needed!")
+      if (dataSourceId == null)
+        throw new DataSourceClientBuilderException("dataSourceId is needed!")
 
       val action = new DeleteDataSourceAction
       action.user = user
       action.dataSourceId = dataSourceId
       action
     }
+
   }
+
 }

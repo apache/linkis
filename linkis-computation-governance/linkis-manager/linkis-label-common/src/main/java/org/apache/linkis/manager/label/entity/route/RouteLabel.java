@@ -29,39 +29,39 @@ import org.apache.commons.lang3.StringUtils;
 
 public class RouteLabel extends InheritableLabel<String> implements UserModifiable {
 
-    public RouteLabel() {
-        setLabelKey(LabelKeyConstant.ROUTE_KEY);
-    }
+  public RouteLabel() {
+    setLabelKey(LabelKeyConstant.ROUTE_KEY);
+  }
 
-    @ValueSerialNum(0)
-    public void setRoutePath(String value) {
-        super.setValue(value);
-    }
+  @ValueSerialNum(0)
+  public void setRoutePath(String value) {
+    super.setValue(value);
+  }
 
-    @Override
-    public Boolean getModifiable() {
-        return modifiable;
-    }
+  @Override
+  public Boolean getModifiable() {
+    return modifiable;
+  }
 
-    @Override
-    public void valueCheck(String stringValue) throws LabelErrorException {
-        if (!StringUtils.isEmpty(stringValue)) {
-            if (stringValue.split(SerializableLabel.VALUE_SEPARATOR).length != 1) {
-                throw new LabelErrorException(
-                        LabelConstant.LABEL_BUILDER_ERROR_CODE,
-                        "The value of the label is set incorrectly, only 1 value can be set, and the symbol cannot be used"
-                                + VALUE_SEPARATOR);
-            }
-        }
+  @Override
+  public void valueCheck(String stringValue) throws LabelErrorException {
+    if (!StringUtils.isEmpty(stringValue)) {
+      if (stringValue.split(SerializableLabel.VALUE_SEPARATOR).length != 1) {
+        throw new LabelErrorException(
+            LabelConstant.LABEL_BUILDER_ERROR_CODE,
+            "The value of the label is set incorrectly, only 1 value can be set, and the symbol cannot be used"
+                + VALUE_SEPARATOR);
+      }
     }
+  }
 
-    @Override
-    public String getStringValue() {
-        return getValue();
-    }
+  @Override
+  public String getStringValue() {
+    return getValue();
+  }
 
-    @Override
-    protected void setStringValue(String stringValue) {
-        setRoutePath(stringValue);
-    }
+  @Override
+  protected void setStringValue(String stringValue) {
+    setRoutePath(stringValue);
+  }
 }

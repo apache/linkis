@@ -22,12 +22,12 @@ import org.apache.linkis.cs.condition.impl.NotCondition;
 
 public class NotLogicContextSearchMatcher extends UnaryLogicContextSearchMatcher {
 
-    public NotLogicContextSearchMatcher(NotCondition condition) {
-        super(condition);
-    }
+  public NotLogicContextSearchMatcher(NotCondition condition) {
+    super(condition);
+  }
 
-    @Override
-    public Boolean match(ContextKeyValue contextKeyValue) {
-        return !originalMatcher.match(contextKeyValue);
-    }
+  @Override
+  public Boolean match(ContextKeyValue contextKeyValue) {
+    return !originalMatcher.match(contextKeyValue);
+  }
 }

@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,18 +17,20 @@
 
 package org.apache.linkis.manager.engineplugin.shell.executor
 
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.engineconn.common.conf.EngineConnConf
+
+import org.apache.commons.lang3.StringUtils
+
 import java.io._
 import java.util
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.regex.Pattern
-import org.apache.linkis.common.utils.{Logging, Utils}
-import org.apache.commons.lang3.StringUtils
-import org.apache.linkis.engineconn.common.conf.EngineConnConf
 
-class YarnAppIdExtractor extends Thread with Logging{
-  val MAX_BUFFER: Int = 32 * 1024 * 1024 //32MB
+class YarnAppIdExtractor extends Thread with Logging {
+  val MAX_BUFFER: Int = 32 * 1024 * 1024 // 32MB
 
-  val buff : StringBuilder = new StringBuilder
+  val buff: StringBuilder = new StringBuilder
 
   val appIdList: util.List[String] = new util.ArrayList[String]()
 
@@ -37,8 +39,12 @@ class YarnAppIdExtractor extends Thread with Logging{
   def appendLineToExtractor(content: String): Unit = {
     buff.synchronized {
       if (content.length + buff.length > MAX_BUFFER) {
-        logger.warn(s"input exceed max-buffer-size, will abandon some part of input. maybe will lost some yarn-app-id.")
-        buff.append(StringUtils.substring(content, 0, MAX_BUFFER-buff.length)).append(System.lineSeparator())
+        logger.warn(
+          s"input exceed max-buffer-size, will abandon some part of input. maybe will lost some yarn-app-id."
+        )
+        buff
+          .append(StringUtils.substring(content, 0, MAX_BUFFER - buff.length))
+          .append(System.lineSeparator())
       } else {
         buff.append(content).append(System.lineSeparator())
       }
@@ -72,9 +78,9 @@ class YarnAppIdExtractor extends Thread with Logging{
     val ret = new util.ArrayList[String]
 
     var line = reader.readLine()
-    while ( {
+    while ({
       line != null
-    }) { //match application_xxx_xxx
+    }) { // match application_xxx_xxx
       val mApp = pattern.matcher(line)
       if (mApp.find) {
         val candidate1 = mApp.group(2)
@@ -116,11 +122,13 @@ class YarnAppIdExtractor extends Thread with Logging{
   def addYarnAppIds(yarnAppIds: Array[String]): Unit = {
     if (yarnAppIds != null && !yarnAppIds.isEmpty) {
       appIdList.synchronized {
-        yarnAppIds.foreach(id => if (!appIdList.contains(id)) {
-          appIdList.add(id)
-          // input application id to logs/stderr
-          logger.info(s"Submitted application $id")
-        })
+        yarnAppIds.foreach(id =>
+          if (!appIdList.contains(id)) {
+            appIdList.add(id)
+            // input application id to logs/stderr
+            logger.info(s"Submitted application $id")
+          }
+        )
       }
     }
   }
@@ -130,4 +138,5 @@ class YarnAppIdExtractor extends Thread with Logging{
       appIdList.toArray(new Array[String](appIdList.size()))
     }
   }
+
 }

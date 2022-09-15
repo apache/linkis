@@ -20,9 +20,9 @@ package org.apache.linkis.manager.am.service.em
 import org.apache.linkis.manager.am.manager.EMNodeManager
 import org.apache.linkis.manager.common.entity.node.EMNode
 import org.apache.linkis.manager.common.protocol.em.{ECMOperateRequest, ECMOperateResponse}
+
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-
 
 @Service
 class DefaultECMOperateService extends ECMOperateService {
@@ -32,4 +32,5 @@ class DefaultECMOperateService extends ECMOperateService {
 
   override def executeOperation(ecmNode: EMNode, request: ECMOperateRequest): ECMOperateResponse =
     emNodeManager.executeOperation(ecmNode, request)
+
 }

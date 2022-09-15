@@ -19,17 +19,17 @@ package org.apache.linkis.cli.common.entity.job;
 
 public interface JobStatus {
 
-    boolean isJobSubmitted();
+  boolean isJobSubmitted();
 
-    boolean isJobFinishedState();
+  boolean isJobFinishedState();
 
-    boolean isJobSuccess();
+  boolean isJobSuccess();
 
-    boolean isJobFailure();
+  boolean isJobFailure();
 
-    boolean isJobCancelled();
+  boolean isJobCancelled();
 
-    boolean isJobTimeout();
+  boolean isJobTimeout();
 
-    boolean isJobAbnormalStatus();
+  boolean isJobAbnormalStatus();
 }

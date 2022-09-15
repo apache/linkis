@@ -24,21 +24,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class LinkisOperatorBuilder extends JobOperatorBuilder {
-    private static Logger logger = LoggerFactory.getLogger(LinkisOperatorBuilder.class);
+  private static Logger logger = LoggerFactory.getLogger(LinkisOperatorBuilder.class);
 
-    @Override
-    public LinkisJobOperator build() {
+  @Override
+  public LinkisJobOperator build() {
 
-        ((LinkisJobOperator) targetObj)
-                .setUJESClient(UJESClientFactory.getReusable(stdVarAccess, sysVarAccess));
-        ((LinkisJobOperator) targetObj)
-                .setServerUrl(stdVarAccess.getVar(String.class, AppKeys.LINKIS_COMMON_GATEWAY_URL));
+    ((LinkisJobOperator) targetObj)
+        .setUJESClient(UJESClientFactory.getReusable(stdVarAccess, sysVarAccess));
+    ((LinkisJobOperator) targetObj)
+        .setServerUrl(stdVarAccess.getVar(String.class, AppKeys.LINKIS_COMMON_GATEWAY_URL));
 
-        return (LinkisJobOperator) super.build();
-    }
+    return (LinkisJobOperator) super.build();
+  }
 
-    @Override
-    protected LinkisJobOperator getTargetNewInstance() {
-        return new LinkisJobOperator();
-    }
+  @Override
+  protected LinkisJobOperator getTargetNewInstance() {
+    return new LinkisJobOperator();
+  }
 }

@@ -26,13 +26,13 @@ import javax.ws.rs.ext.Provider;
 /** Map bean validation exception to response */
 @Provider
 public class BeanValidationExceptionMapper {
-    public Message toResponse(ValidationException exception) {
-        StringBuilder stringBuilder = new StringBuilder();
-        ((ConstraintViolationException) exception)
-                .getConstraintViolations()
-                .forEach(
-                        constraintViolation ->
-                                stringBuilder.append(constraintViolation.getMessage()).append(";"));
-        return Message.error("Bean validation error[实例校验出错], detail:" + stringBuilder.toString());
-    }
+  public Message toResponse(ValidationException exception) {
+    StringBuilder stringBuilder = new StringBuilder();
+    ((ConstraintViolationException) exception)
+        .getConstraintViolations()
+        .forEach(
+            constraintViolation ->
+                stringBuilder.append(constraintViolation.getMessage()).append(";"));
+    return Message.error("Bean validation error[实例校验出错], detail:" + stringBuilder.toString());
+  }
 }

@@ -39,91 +39,89 @@ import java.util.Map;
  */
 public abstract class ParamKeyMapper {
 
-    protected Map<String, String> mapperRules;
+  protected Map<String, String> mapperRules;
 
-    public ParamKeyMapper() {
-        mapperRules = new HashMap<>();
-        initMapperRules();
+  public ParamKeyMapper() {
+    mapperRules = new HashMap<>();
+    initMapperRules();
+  }
+
+  public ParamKeyMapper(Map<String, String> mapperRules) {
+    mapperRules = new HashMap<>();
+    initMapperRules(mapperRules);
+  }
+
+  /** Executor should overwrite init() method to set key to key mapping */
+  public abstract void initMapperRules();
+
+  public void initMapperRules(Map<String, String> mapperRules) {
+    this.mapperRules = mapperRules;
+  }
+
+  /**
+   * update keyMapping one by one.
+   *
+   * @param key
+   * @param targetKey
+   */
+  public void updateMapping(String key, String targetKey) {
+    if (this.mapperRules.containsKey(key)) {
+      throw new CommandException(
+          "CMD0020",
+          ErrorLevel.ERROR,
+          CommonErrMsg.ParserParseErr,
+          "ParamMapper should not map different keys into same key. Key is: " + targetKey);
+    } else {
+      this.mapperRules.put(key, targetKey);
     }
+  }
 
-    public ParamKeyMapper(Map<String, String> mapperRules) {
-        mapperRules = new HashMap<>();
-        initMapperRules(mapperRules);
+  /** update keyMapping according to kv-String. */
+  private void updateMappingbyConfig(String kvString) {
+    if (StringUtils.isNotBlank(kvString)) {
+      Map<String, String> result = CommonUtils.parseKVStringToMap(kvString, ",");
+      this.mapperRules.putAll(result);
     }
+  }
 
-    /** Executor should overwrite init() method to set key to key mapping */
-    public abstract void initMapperRules();
-
-    public void initMapperRules(Map<String, String> mapperRules) {
-        this.mapperRules = mapperRules;
+  /**
+   * Given a param map, replace all keys of this map.
+   *
+   * @param paramMap
+   * @param <T>
+   * @return
+   */
+  public <T> Map<String, T> getMappedMapping(Map<String, T> paramMap)
+      throws LinkisClientRuntimeException {
+    Map<String, T> resultMap = new HashMap<>();
+    String targetKey;
+    for (Map.Entry<String, T> entry : paramMap.entrySet()) {
+      targetKey = getMappedKey(entry.getKey());
+      if (resultMap.containsKey(targetKey)) {
+        throw new CommandException(
+            "CMD0020",
+            ErrorLevel.ERROR,
+            CommonErrMsg.ParserParseErr,
+            "ParamMapper should not map different keys into same key. Key is: " + targetKey);
+      } else {
+        resultMap.put(targetKey, entry.getValue());
+      }
     }
+    return resultMap;
+  }
 
-    /**
-     * update keyMapping one by one.
-     *
-     * @param key
-     * @param targetKey
-     */
-    public void updateMapping(String key, String targetKey) {
-        if (this.mapperRules.containsKey(key)) {
-            throw new CommandException(
-                    "CMD0020",
-                    ErrorLevel.ERROR,
-                    CommonErrMsg.ParserParseErr,
-                    "ParamMapper should not map different keys into same key. Key is: "
-                            + targetKey);
-        } else {
-            this.mapperRules.put(key, targetKey);
-        }
+  /**
+   * Get transformed key for executor given linkis-cli key. If there exists none mapping for
+   * linkis-cli key. Then this method returns paramKey.
+   *
+   * @param paramKey
+   * @return
+   */
+  public String getMappedKey(String paramKey) {
+    if (this.mapperRules.containsKey(paramKey)) {
+      return this.mapperRules.get(paramKey);
+    } else {
+      return paramKey;
     }
-
-    /** update keyMapping according to kv-String. */
-    private void updateMappingbyConfig(String kvString) {
-        if (StringUtils.isNotBlank(kvString)) {
-            Map<String, String> result = CommonUtils.parseKVStringToMap(kvString, ",");
-            this.mapperRules.putAll(result);
-        }
-    }
-
-    /**
-     * Given a param map, replace all keys of this map.
-     *
-     * @param paramMap
-     * @param <T>
-     * @return
-     */
-    public <T> Map<String, T> getMappedMapping(Map<String, T> paramMap)
-            throws LinkisClientRuntimeException {
-        Map<String, T> resultMap = new HashMap<>();
-        String targetKey;
-        for (Map.Entry<String, T> entry : paramMap.entrySet()) {
-            targetKey = getMappedKey(entry.getKey());
-            if (resultMap.containsKey(targetKey)) {
-                throw new CommandException(
-                        "CMD0020",
-                        ErrorLevel.ERROR,
-                        CommonErrMsg.ParserParseErr,
-                        "ParamMapper should not map different keys into same key. Key is: "
-                                + targetKey);
-            } else {
-                resultMap.put(targetKey, entry.getValue());
-            }
-        }
-        return resultMap;
-    }
-
-    /**
-     * Get transformed key for executor given linkis-cli key. If there exists none mapping for
-     * linkis-cli key. Then this method returns paramKey.
-     *
-     * @param paramKey
-     * @return
-     */
-    public String getMappedKey(String paramKey) {
-        if (this.mapperRules.containsKey(paramKey)) {
-            return this.mapperRules.get(paramKey);
-        } else {
-            return paramKey;
-        }
-    }
+  }
 }

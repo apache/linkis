@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,31 +17,33 @@
 
 package org.apache.linkis.datasource.client.request
 
+import org.apache.linkis.datasource.client.config.DatasourceClientConfig.DATA_SOURCE_SERVICE_MODULE
+import org.apache.linkis.datasource.client.exception.DataSourceClientBuilderException
+import org.apache.linkis.httpclient.request.GetAction
+
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
-import org.apache.linkis.datasource.client.exception.DataSourceClientBuilderException
-import org.apache.linkis.datasource.client.config.DatasourceClientConfig.DATA_SOURCE_SERVICE_MODULE
-import org.apache.linkis.httpclient.request.GetAction
 /**
-  * Get version parameters from data source
+ * Get version parameters from data source
  */
-class GetConnectParamsByDataSourceNameAction extends GetAction with DataSourceAction{
+class GetConnectParamsByDataSourceNameAction extends GetAction with DataSourceAction {
   private var dataSourceName: String = _
 
   private var user: String = _
 
-  override def suffixURLs: Array[String] = Array(DATA_SOURCE_SERVICE_MODULE.getValue, "name", dataSourceName, "connect-params")
+  override def suffixURLs: Array[String] =
+    Array(DATA_SOURCE_SERVICE_MODULE.getValue, "name", dataSourceName, "connect-params")
 
   override def setUser(user: String): Unit = this.user = user
 
   override def getUser: String = user
 }
 
-object GetConnectParamsByDataSourceNameAction{
+object GetConnectParamsByDataSourceNameAction {
   def builder(): Builder = new Builder
 
-  class Builder private[GetConnectParamsByDataSourceNameAction]() {
+  class Builder private[GetConnectParamsByDataSourceNameAction] () {
     private var dataSourceName: String = _
     private var system: String = _
     private var user: String = _
@@ -62,16 +64,20 @@ object GetConnectParamsByDataSourceNameAction{
     }
 
     def build(): GetConnectParamsByDataSourceNameAction = {
-      if (dataSourceName == null) throw new DataSourceClientBuilderException("dataSourceName is needed!")
-      if(system == null) throw new DataSourceClientBuilderException("system is needed!")
-      if(user == null) throw new DataSourceClientBuilderException("user is needed!")
+      if (dataSourceName == null)
+        throw new DataSourceClientBuilderException("dataSourceName is needed!")
+      if (system == null) throw new DataSourceClientBuilderException("system is needed!")
+      if (user == null) throw new DataSourceClientBuilderException("user is needed!")
       // Use URIEncoder to encode the datSourceName
       var requestDataSourceName = this.dataSourceName
       try {
         requestDataSourceName = URLEncoder.encode(dataSourceName, StandardCharsets.UTF_8.name())
       } catch {
         case e: Exception =>
-          throw new DataSourceClientBuilderException(s"Cannot encode the name of data source:[$dataSourceName] for request", e)
+          throw new DataSourceClientBuilderException(
+            s"Cannot encode the name of data source:[$dataSourceName] for request",
+            e
+          )
       }
       val getConnectParamsByDataSourceNameAction = new GetConnectParamsByDataSourceNameAction
       getConnectParamsByDataSourceNameAction.dataSourceName = requestDataSourceName
@@ -79,5 +85,7 @@ object GetConnectParamsByDataSourceNameAction{
       getConnectParamsByDataSourceNameAction.setUser(user)
       getConnectParamsByDataSourceNameAction
     }
+
   }
+
 }

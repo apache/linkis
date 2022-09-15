@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.linkis.engineplugin.elasticsearch.executer.client
 
 import org.apache.linkis.storage.domain.Column
@@ -21,8 +22,10 @@ import org.apache.linkis.storage.resultset.table.TableRecord
 
 trait ElasticSearchResponse
 
-case class ElasticSearchTableResponse(columns: Array[Column], records: Array[TableRecord]) extends ElasticSearchResponse
+case class ElasticSearchTableResponse(columns: Array[Column], records: Array[TableRecord])
+    extends ElasticSearchResponse
 
 case class ElasticSearchJsonResponse(value: String) extends ElasticSearchResponse
 
-case class ElasticSearchErrorResponse(message: String, body: String = null, cause: Throwable = null) extends ElasticSearchResponse
+case class ElasticSearchErrorResponse(message: String, body: String = null, cause: Throwable = null)
+    extends ElasticSearchResponse

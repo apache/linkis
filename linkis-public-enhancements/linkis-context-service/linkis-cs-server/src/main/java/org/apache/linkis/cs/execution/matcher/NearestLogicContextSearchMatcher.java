@@ -22,12 +22,12 @@ import org.apache.linkis.cs.condition.impl.NearestCondition;
 
 public class NearestLogicContextSearchMatcher extends UnaryLogicContextSearchMatcher {
 
-    public NearestLogicContextSearchMatcher(NearestCondition condition) {
-        super(condition);
-    }
+  public NearestLogicContextSearchMatcher(NearestCondition condition) {
+    super(condition);
+  }
 
-    @Override
-    public Boolean match(ContextKeyValue contextKeyValue) {
-        return originalMatcher.match(contextKeyValue);
-    }
+  @Override
+  public Boolean match(ContextKeyValue contextKeyValue) {
+    return originalMatcher.match(contextKeyValue);
+  }
 }

@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,7 +23,7 @@ object ProgressUtils {
 
   private val OLD_PROGRESS_KEY = "oldProgress"
 
-   def getOldProgress(engineExecutionContext: EngineExecutionContext): Float = {
+  def getOldProgress(engineExecutionContext: EngineExecutionContext): Float = {
     if (null == engineExecutionContext) {
       0f
     } else {
@@ -32,7 +32,7 @@ object ProgressUtils {
     }
   }
 
-   def putProgress(newProgress: Float, engineExecutionContext: EngineExecutionContext): Unit = {
+  def putProgress(newProgress: Float, engineExecutionContext: EngineExecutionContext): Unit = {
     if (null != engineExecutionContext) {
       engineExecutionContext.getProperties.put(OLD_PROGRESS_KEY, newProgress.asInstanceOf[AnyRef])
     }

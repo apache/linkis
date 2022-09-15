@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,9 +21,9 @@ import org.apache.linkis.engineconn.computation.executor.upstream.access.Connect
 import org.apache.linkis.engineconn.computation.executor.upstream.handler.MonitorHandler
 
 /**
-  * query upstream node info by UpstreamNodeInfoAccess
-  * call UpstreamMonitorHandler to handle undesirable upstream states
-  */
+ * query upstream node info by UpstreamNodeInfoAccess call UpstreamMonitorHandler to handle
+ * undesirable upstream states
+ */
 trait UpstreamConnectionMonitor {
   def getUpstreamNodeInfoAccess(): ConnectionInfoAccess
 

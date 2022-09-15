@@ -19,43 +19,43 @@ package org.apache.linkis.manager.rm.restful.vo;
 
 public class UserCreatorEngineType {
 
-    private String user;
+  private String user;
 
-    private String creator;
+  private String creator;
 
-    private String engineType;
+  private String engineType;
 
-    private String version;
+  private String version;
 
-    public String getUser() {
-        return user;
-    }
+  public String getUser() {
+    return user;
+  }
 
-    public void setUser(String user) {
-        this.user = user;
-    }
+  public void setUser(String user) {
+    this.user = user;
+  }
 
-    public String getCreator() {
-        return creator;
-    }
+  public String getCreator() {
+    return creator;
+  }
 
-    public void setCreator(String creator) {
-        this.creator = creator;
-    }
+  public void setCreator(String creator) {
+    this.creator = creator;
+  }
 
-    public String getEngineType() {
-        return engineType;
-    }
+  public String getEngineType() {
+    return engineType;
+  }
 
-    public void setEngineType(String engineType) {
-        this.engineType = engineType;
-    }
+  public void setEngineType(String engineType) {
+    this.engineType = engineType;
+  }
 
-    public String getVersion() {
-        return version;
-    }
+  public String getVersion() {
+    return version;
+  }
 
-    public void setVersion(String version) {
-        this.version = version;
-    }
+  public void setVersion(String version) {
+    this.version = version;
+  }
 }

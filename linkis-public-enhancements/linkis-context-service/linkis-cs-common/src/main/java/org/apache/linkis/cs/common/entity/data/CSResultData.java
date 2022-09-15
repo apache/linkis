@@ -21,13 +21,13 @@ import org.apache.linkis.common.io.FsPath;
 
 public class CSResultData implements Data {
 
-    private FsPath fsPath;
+  private FsPath fsPath;
 
-    @Override
-    public FsPath getLocation() {
-        return null;
-    }
+  @Override
+  public FsPath getLocation() {
+    return null;
+  }
 
-    @Override
-    public void setLocation(FsPath fsPath) {}
+  @Override
+  public void setLocation(FsPath fsPath) {}
 }

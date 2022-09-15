@@ -27,51 +27,46 @@ import java.util.List;
 
 /** Use to build subLabels of generic label */
 public class GenericLabelBuilder extends DefaultGlobalLabelBuilder {
-    @Override
-    public boolean canBuild(String labelKey, Class<?> labelClass) {
-        return null != labelClass && GenericLabel.class.isAssignableFrom(labelClass);
-    }
+  @Override
+  public boolean canBuild(String labelKey, Class<?> labelClass) {
+    return null != labelClass && GenericLabel.class.isAssignableFrom(labelClass);
+  }
 
-    @Override
-    @SuppressWarnings(value = {"unchecked", "rawtypes"})
-    public <T extends Label<?>> T build(
-            String labelKey, Object valueObj, Class<?> labelClass, Type... valueTypes)
-            throws LabelErrorException {
-        Class<? extends Label> suitableLabelClass = getSuitableLabelClass(labelKey, labelClass);
-        if (null != suitableLabelClass) {
-            Type suitableValueType = getSuitableValueType(suitableLabelClass, valueTypes);
-            if (null != suitableValueType) {
-                if (null != valueObj && List.class.isAssignableFrom(valueObj.getClass())) {
-                    List<?> rawList = (List<?>) valueObj;
-                    if (!rawList.isEmpty()
-                            && Label.class.isAssignableFrom(rawList.get(0).getClass())) {
-                        List<GenericLabel> genericLabels = new ArrayList<>();
-                        for (Object rawObj : rawList) {
-                            genericLabels.add(
-                                    buildInner(
-                                            labelKey,
-                                            ((Label<?>) rawObj).getValue(),
-                                            suitableLabelClass,
-                                            suitableValueType));
-                        }
-                        return (T)
-                                genericLabels.stream()
-                                        .filter(
-                                                (label) ->
-                                                        label != null && label.getValue() != null)
-                                        .reduce(
-                                                (leftLabel, rightLabel) -> {
-                                                    leftLabel
-                                                            .getValue()
-                                                            .putAll(rightLabel.getValue());
-                                                    return leftLabel;
-                                                })
-                                        .orElse(null);
-                    }
-                }
-                return super.buildInner(labelKey, valueObj, suitableLabelClass, suitableValueType);
+  @Override
+  @SuppressWarnings(value = {"unchecked", "rawtypes"})
+  public <T extends Label<?>> T build(
+      String labelKey, Object valueObj, Class<?> labelClass, Type... valueTypes)
+      throws LabelErrorException {
+    Class<? extends Label> suitableLabelClass = getSuitableLabelClass(labelKey, labelClass);
+    if (null != suitableLabelClass) {
+      Type suitableValueType = getSuitableValueType(suitableLabelClass, valueTypes);
+      if (null != suitableValueType) {
+        if (null != valueObj && List.class.isAssignableFrom(valueObj.getClass())) {
+          List<?> rawList = (List<?>) valueObj;
+          if (!rawList.isEmpty() && Label.class.isAssignableFrom(rawList.get(0).getClass())) {
+            List<GenericLabel> genericLabels = new ArrayList<>();
+            for (Object rawObj : rawList) {
+              genericLabels.add(
+                  buildInner(
+                      labelKey,
+                      ((Label<?>) rawObj).getValue(),
+                      suitableLabelClass,
+                      suitableValueType));
             }
+            return (T)
+                genericLabels.stream()
+                    .filter((label) -> label != null && label.getValue() != null)
+                    .reduce(
+                        (leftLabel, rightLabel) -> {
+                          leftLabel.getValue().putAll(rightLabel.getValue());
+                          return leftLabel;
+                        })
+                    .orElse(null);
+          }
         }
-        return null;
+        return super.buildInner(labelKey, valueObj, suitableLabelClass, suitableValueType);
+      }
     }
+    return null;
+  }
 }

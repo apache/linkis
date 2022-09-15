@@ -23,10 +23,10 @@ import java.io.Closeable;
 import java.util.List;
 
 public interface HeartBeater extends Closeable {
-    /** */
-    public void heartBeat();
+  /** */
+  public void heartBeat();
 
-    public void dealCallBack(List<ContextKeyValueBean> kvs);
+  public void dealCallBack(List<ContextKeyValueBean> kvs);
 
-    public void start();
+  public void start();
 }

@@ -14,25 +14,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.linkis.engineplugin.elasticsearch.factory
 
 import org.apache.linkis.engineconn.common.creation.EngineCreationContext
 import org.apache.linkis.engineconn.common.engineconn.EngineConn
 import org.apache.linkis.engineconn.computation.executor.creation.ComputationExecutorFactory
 import org.apache.linkis.engineconn.computation.executor.execute.ComputationExecutor
+import org.apache.linkis.engineplugin.elasticsearch.conf.ElasticSearchConfiguration
+import org.apache.linkis.engineplugin.elasticsearch.executer.ElasticSearchEngineConnExecutor
 import org.apache.linkis.governance.common.paser.JsonCodeParser
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.RunType
 import org.apache.linkis.manager.label.entity.engine.RunType.RunType
-import org.apache.linkis.engineplugin.elasticsearch.conf.ElasticSearchConfiguration
-import org.apache.linkis.engineplugin.elasticsearch.executer.ElasticSearchEngineConnExecutor
 
 class ElasticSearchJsonExecutorFactory extends ComputationExecutorFactory {
 
-  override protected def newExecutor(id: Int, engineCreationContext: EngineCreationContext,
-                                     engineConn: EngineConn, labels: Array[Label[_]]): ComputationExecutor = {
-    val executor = new ElasticSearchEngineConnExecutor(ElasticSearchConfiguration.ENGINE_DEFAULT_LIMIT.getValue,
-      id, RunType.ES_JSON.toString)
+  override protected def newExecutor(
+      id: Int,
+      engineCreationContext: EngineCreationContext,
+      engineConn: EngineConn,
+      labels: Array[Label[_]]
+  ): ComputationExecutor = {
+    val executor = new ElasticSearchEngineConnExecutor(
+      ElasticSearchConfiguration.ENGINE_DEFAULT_LIMIT.getValue,
+      id,
+      RunType.ES_JSON.toString
+    )
     executor.setCodeParser(new JsonCodeParser)
     executor
   }

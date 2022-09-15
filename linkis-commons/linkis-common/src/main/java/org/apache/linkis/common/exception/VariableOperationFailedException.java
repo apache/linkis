@@ -19,12 +19,12 @@ package org.apache.linkis.common.exception;
 
 public class VariableOperationFailedException extends ErrorException {
 
-    public VariableOperationFailedException(int errCode, String desc) {
-        super(errCode, desc);
-    }
+  public VariableOperationFailedException(int errCode, String desc) {
+    super(errCode, desc);
+  }
 
-    public VariableOperationFailedException(int errCode, String desc, Exception e) {
-        super(errCode, desc);
-        this.initCause(e);
-    }
+  public VariableOperationFailedException(int errCode, String desc, Exception e) {
+    super(errCode, desc);
+    this.initCause(e);
+  }
 }

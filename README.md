@@ -1,5 +1,5 @@
 <h2 align="center">
-  Apache Linkis
+  Apache Linkis(Incubating)
 </h2>
 
 <p align="center">
@@ -134,8 +134,17 @@ Please go to the [Linkis Releases Page](https://linkis.apache.org/download/main)
 
 ## compile backend
 ### Mac OS/Linux
+# 1. When compiling for the first time, execute the following command first
 ./mvnw -N install
-./mvnw  clean install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
+# 2. make the linkis distribution package
+# - Option 1: make the linkis distribution package only
+./mvnw clean install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
+# - Option 2: make the linkis distribution package and docker image
+./mvnw clean install -Pdocker -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
+# - Option 3: linkis distribution package and docker image (included web)
+./mvnw clean install -Pdocker -Dmaven.javadoc.skip=true -Dmaven.test.skip=true -Dlinkis.build.web=true
+# - Option 4: linkis distribution package and docker image (included web and ldh (hadoop all in one for test))
+./mvnw clean install -Pdocker -Dmaven.javadoc.skip=true -Dmaven.test.skip=true -Dlinkis.build.web=true -Dlinkis.build.ldh=true
 
 
 ### Windows

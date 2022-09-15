@@ -30,51 +30,50 @@ import static org.apache.linkis.datasourcemanager.core.formdata.CustomMultiPartF
 
 /** Type validate strategy */
 public class TypeParameterValidateStrategy implements ParameterValidateStrategy {
-    @Override
-    public boolean accept(DataSourceParamKeyDefinition.ValueType valueType) {
-        // Accept all value
-        return true;
-    }
+  @Override
+  public boolean accept(DataSourceParamKeyDefinition.ValueType valueType) {
+    // Accept all value
+    return true;
+  }
 
-    @Override
-    public Object validate(DataSourceParamKeyDefinition keyDefinition, Object actualValue)
-            throws ParameterValidateException {
-        DataSourceParamKeyDefinition.ValueType valueType = keyDefinition.getValueType();
-        Class<?> javaType = valueType.getJavaType();
-        if (valueType == DataSourceParamKeyDefinition.ValueType.FILE) {
-            if (!actualValue.getClass().equals(FormStreamContent.class)) {
-                throw new ParameterValidateException(
-                        "Param Validate Failed[参数校验出错], [the value of '"
-                                + keyDefinition.getKey()
-                                + "' must be 'File']");
-            }
-            return actualValue;
-        }
-        if (!javaType.isAssignableFrom(actualValue.getClass())) {
-            try {
-                if (javaType.equals(List.class)) {
-                    return Json.fromJson(String.valueOf(actualValue), List.class, String.class);
-                } else if (javaType.equals(Map.class)) {
-                    return Json.fromJson(
-                            String.valueOf(actualValue), Map.class, String.class, String.class);
-                } else if (PrimitiveUtils.isPrimitive(javaType)) {
-                    return PrimitiveUtils.primitiveTypeConverse(actualValue, javaType);
-                }
-            } catch (Exception e) {
-                throw new ParameterValidateException(
-                        "Param Validate Failed[参数校验出错], [type of value: '"
-                                + actualValue
-                                + "' is not '"
-                                + javaType.getSimpleName()
-                                + "']");
-            }
-            throw new ParameterValidateException(
-                    "Param Validate Failed[参数校验出错], [type of value: '"
-                            + actualValue
-                            + "' is not '"
-                            + javaType.getSimpleName()
-                            + "']");
-        }
-        return actualValue;
+  @Override
+  public Object validate(DataSourceParamKeyDefinition keyDefinition, Object actualValue)
+      throws ParameterValidateException {
+    DataSourceParamKeyDefinition.ValueType valueType = keyDefinition.getValueType();
+    Class<?> javaType = valueType.getJavaType();
+    if (valueType == DataSourceParamKeyDefinition.ValueType.FILE) {
+      if (!actualValue.getClass().equals(FormStreamContent.class)) {
+        throw new ParameterValidateException(
+            "Param Validate Failed[参数校验出错], [the value of '"
+                + keyDefinition.getKey()
+                + "' must be 'File']");
+      }
+      return actualValue;
     }
+    if (!javaType.isAssignableFrom(actualValue.getClass())) {
+      try {
+        if (javaType.equals(List.class)) {
+          return Json.fromJson(String.valueOf(actualValue), List.class, String.class);
+        } else if (javaType.equals(Map.class)) {
+          return Json.fromJson(String.valueOf(actualValue), Map.class, String.class, String.class);
+        } else if (PrimitiveUtils.isPrimitive(javaType)) {
+          return PrimitiveUtils.primitiveTypeConverse(actualValue, javaType);
+        }
+      } catch (Exception e) {
+        throw new ParameterValidateException(
+            "Param Validate Failed[参数校验出错], [type of value: '"
+                + actualValue
+                + "' is not '"
+                + javaType.getSimpleName()
+                + "']");
+      }
+      throw new ParameterValidateException(
+          "Param Validate Failed[参数校验出错], [type of value: '"
+              + actualValue
+              + "' is not '"
+              + javaType.getSimpleName()
+              + "']");
+    }
+    return actualValue;
+  }
 }

@@ -106,6 +106,13 @@ spec:
           {{- else }}
           emptyDir: {}
           {{- end }}
+        {{- if eq .Values.linkis.featureGates.localMode false }}
+        - name: hadoop-conf
+          projected:
+            sources:
+              - configMap:
+                  name: {{ .Values.linkis.deps.hadoop.configMapName }}
+        {{- end }}
       serviceAccountName: {{ include "linkis.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.cgEntrance.podSecurityContext | nindent 8 }}
@@ -142,6 +149,10 @@ spec:
             - name: DEBUG_PORT
               value: "5005"
             {{- end }}
+            {{- if eq .Values.linkis.featureGates.localMode false }}
+            - name: HADOOP_CONF_DIR
+              value: /etc/hadoop-conf
+            {{- end }}
             - name: SERVER_HEAP_SIZE
               value: {{ .Values.cgEntrance.jvmHeapSize }}
             - name: EUREKA_URL
@@ -162,6 +173,10 @@ spec:
 {{ toYaml .Values.cgEntrance.envs.froms | indent 12 }}
           {{- end }}
           volumeMounts:
+            {{- if eq .Values.linkis.featureGates.localMode false }}
+            - name: hadoop-conf
+              mountPath: /etc/hadoop-conf
+            {{- end }}
             - name: conf
               mountPath: {{ .Values.linkis.locations.confDir }}
             - name: log

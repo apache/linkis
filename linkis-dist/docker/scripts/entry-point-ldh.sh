@@ -34,6 +34,8 @@ hdfs dfs -mkdir -p /spark2-history
 hdfs dfs -chmod -R 777 /spark2-history
 hdfs dfs -mkdir -p /completed-jobs
 hdfs dfs -chmod -R 777 /completed-jobs
+hdfs dfs -chmod 777 /
+
 
 # - hive
 /opt/ldh/current/hive/bin/schematool -initSchema -dbType mysql

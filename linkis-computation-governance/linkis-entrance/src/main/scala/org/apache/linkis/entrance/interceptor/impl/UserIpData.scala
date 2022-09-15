@@ -22,14 +22,8 @@ import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.entrance.conf.EntranceConfiguration
 import org.apache.linkis.entrance.exception.EntranceErrorCode
 import org.apache.linkis.entrance.interceptor.exception.{TenantCheckException, UserIpCheckException}
-import org.apache.linkis.entrance.interceptor.impl.TenantData.logger
 import org.apache.linkis.governance.common.entity.job.JobRequest
-import org.apache.linkis.governance.common.protocol.conf.{
-  TenantRequest,
-  TenantResponse,
-  UserIpRequest,
-  UserIpResponse
-}
+import org.apache.linkis.governance.common.protocol.conf.{UserIpRequest, UserIpResponse}
 import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.rpc.Sender

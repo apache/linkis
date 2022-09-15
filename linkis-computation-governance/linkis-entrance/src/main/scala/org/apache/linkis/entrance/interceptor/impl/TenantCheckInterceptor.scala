@@ -20,6 +20,7 @@ package org.apache.linkis.entrance.interceptor.impl
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.entrance.interceptor.EntranceInterceptor
 import org.apache.linkis.governance.common.entity.job.JobRequest
+
 import java.{lang, util}
 
 class TenantCheckInterceptor extends EntranceInterceptor with Logging {
@@ -38,4 +39,5 @@ class TenantCheckInterceptor extends EntranceInterceptor with Logging {
   override def apply(jobRequest: JobRequest, logAppender: lang.StringBuilder): JobRequest = {
     TenantData.checkTenantLabel(jobRequest, logAppender)
   }
+
 }

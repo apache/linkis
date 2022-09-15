@@ -21,27 +21,27 @@ import org.apache.linkis.cs.common.entity.source.ContextID;
 
 public class CommonContextIDListenerDomain implements ContextIDListenerDomain {
 
-    private String source;
+  private String source;
 
-    private ContextID contextID;
+  private ContextID contextID;
 
-    @Override
-    public String getSource() {
-        return this.source;
-    }
+  @Override
+  public String getSource() {
+    return this.source;
+  }
 
-    @Override
-    public void setSource(String source) {
-        this.source = source;
-    }
+  @Override
+  public void setSource(String source) {
+    this.source = source;
+  }
 
-    @Override
-    public ContextID getContextID() {
-        return this.contextID;
-    }
+  @Override
+  public ContextID getContextID() {
+    return this.contextID;
+  }
 
-    @Override
-    public void setContextID(ContextID contextID) {
-        this.contextID = contextID;
-    }
+  @Override
+  public void setContextID(ContextID contextID) {
+    this.contextID = contextID;
+  }
 }

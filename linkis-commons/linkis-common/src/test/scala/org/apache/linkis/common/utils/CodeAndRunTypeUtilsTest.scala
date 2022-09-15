@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,7 +19,6 @@ package org.apache.linkis.common.utils
 
 import org.junit.jupiter.api.Assertions._
 import org.junit.jupiter.api.Test
-
 
 @Test
 class CodeAndRunTypeUtilsTest {
@@ -49,15 +48,21 @@ class CodeAndRunTypeUtilsTest {
 
   @Test
   def testGetSuffixBelongToRunTypeOrNot(): Unit = {
-    val shell = CodeAndRunTypeUtils.getSuffixBelongToRunTypeOrNot("sh", CodeAndRunTypeUtils.RUN_TYPE_SHELL)
+    val shell =
+      CodeAndRunTypeUtils.getSuffixBelongToRunTypeOrNot("sh", CodeAndRunTypeUtils.RUN_TYPE_SHELL)
     assertTrue(shell)
-    val sql = CodeAndRunTypeUtils.getSuffixBelongToRunTypeOrNot("jdbc", CodeAndRunTypeUtils.RUN_TYPE_SQL)
+    val sql =
+      CodeAndRunTypeUtils.getSuffixBelongToRunTypeOrNot("jdbc", CodeAndRunTypeUtils.RUN_TYPE_SQL)
     assertTrue(sql)
-    val hql = CodeAndRunTypeUtils.getSuffixBelongToRunTypeOrNot("hql", CodeAndRunTypeUtils.RUN_TYPE_SQL)
+    val hql =
+      CodeAndRunTypeUtils.getSuffixBelongToRunTypeOrNot("hql", CodeAndRunTypeUtils.RUN_TYPE_SQL)
     assertTrue(hql)
-    val python = CodeAndRunTypeUtils.getSuffixBelongToRunTypeOrNot("py", CodeAndRunTypeUtils.RUN_TYPE_PYTHON)
+    val python =
+      CodeAndRunTypeUtils.getSuffixBelongToRunTypeOrNot("py", CodeAndRunTypeUtils.RUN_TYPE_PYTHON)
     assertTrue(python)
-    val scala = CodeAndRunTypeUtils.getSuffixBelongToRunTypeOrNot("java", CodeAndRunTypeUtils.RUN_TYPE_SCALA)
+    val scala =
+      CodeAndRunTypeUtils.getSuffixBelongToRunTypeOrNot("java", CodeAndRunTypeUtils.RUN_TYPE_SCALA)
     assertTrue(!scala)
   }
+
 }

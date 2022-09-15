@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,9 +17,6 @@
 
 package org.apache.linkis.manager.am.service.engine
 
-import java.util
-
-import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.manager.am.conf.AMConfiguration
 import org.apache.linkis.manager.common.constant.AMConstant
@@ -29,8 +26,13 @@ import org.apache.linkis.manager.persistence.NodeMetricManagerPersistence
 import org.apache.linkis.manager.service.common.metrics.MetricsConverter
 import org.apache.linkis.rpc.message.annotation.Receiver
 import org.apache.linkis.server.BDPJettyServerHelper
+
+import org.apache.commons.lang3.StringUtils
+
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+
+import java.util
 
 @Service
 class DefaultEngineConnStatusCallbackService extends EngineConnStatusCallbackService with Logging {
@@ -43,11 +45,13 @@ class DefaultEngineConnStatusCallbackService extends EngineConnStatusCallbackSer
 
   private val canRetryLogs = AMConfiguration.AM_CAN_RETRY_LOGS.getValue.split(";")
 
-  //The heartBeatMsg field is of type text, mysql text max byte num is 65535
+  // The heartBeatMsg field is of type text, mysql text max byte num is 65535
   private val initErrorMsgMaxByteNum = 60000
 
   @Receiver
-  override def dealEngineConnStatusCallback(engineConnStatusCallbackToAM: EngineConnStatusCallbackToAM): Unit = {
+  override def dealEngineConnStatusCallback(
+      engineConnStatusCallbackToAM: EngineConnStatusCallbackToAM
+  ): Unit = {
 
     if (null == engineConnStatusCallbackToAM.serviceInstance) {
       logger.warn(s"call back service instance is null")
@@ -57,7 +61,11 @@ class DefaultEngineConnStatusCallbackService extends EngineConnStatusCallbackSer
     val heartBeatMsg: java.util.Map[String, Any] = new util.HashMap[String, Any]()
 
     var initErrorMsg = engineConnStatusCallbackToAM.initErrorMsg
-    if (StringUtils.isNotBlank(initErrorMsg) && initErrorMsg.getBytes("utf-8").length >= initErrorMsgMaxByteNum) {
+    if (
+        StringUtils.isNotBlank(initErrorMsg) && initErrorMsg
+          .getBytes("utf-8")
+          .length >= initErrorMsgMaxByteNum
+    ) {
       initErrorMsg = initErrorMsg.substring(0, initErrorMsgMaxByteNum)
     }
     heartBeatMsg.put(AMConstant.START_REASON, initErrorMsg)
@@ -73,12 +81,10 @@ class DefaultEngineConnStatusCallbackService extends EngineConnStatusCallbackSer
     nodeMetrics.setServiceInstance(engineConnStatusCallbackToAM.serviceInstance)
     nodeMetrics.setStatus(metricsConverter.convertStatus(engineConnStatusCallbackToAM.status))
 
-
     nodeMetricManagerPersistence.addOrupdateNodeMetrics(nodeMetrics)
     logger.info(s"Finished to deal engineConnStatusCallbackToAM $engineConnStatusCallbackToAM")
 
   }
-
 
   private def matchRetryLog(errorMsg: String): Boolean = {
     var flag = false
@@ -93,4 +99,5 @@ class DefaultEngineConnStatusCallbackService extends EngineConnStatusCallbackSer
     }
     flag
   }
+
 }

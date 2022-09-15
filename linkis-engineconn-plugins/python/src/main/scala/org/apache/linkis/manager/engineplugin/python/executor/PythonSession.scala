@@ -5,44 +5,48 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.manager.engineplugin.python.executor
-
-
-import java.io.{File, FileFilter, FileOutputStream, InputStream}
-import java.net.ServerSocket
-import java.nio.file.Files
-import java.util.{List => JList}
 
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
 import org.apache.linkis.engineconn.computation.executor.rs.RsOutputStream
 import org.apache.linkis.engineconn.launch.EngineConnServer
 import org.apache.linkis.manager.engineplugin.python.conf.PythonEngineConfiguration
-import org.apache.linkis.manager.engineplugin.python.exception.{ExecuteException, PythonExecuteError}
+import org.apache.linkis.manager.engineplugin.python.exception.{
+  ExecuteException,
+  PythonExecuteError
+}
 import org.apache.linkis.manager.engineplugin.python.utils.Kind
-import org.apache.linkis.storage.domain._
-import org.apache.linkis.storage.resultset.table.{TableMetaData, TableRecord}
-import org.apache.linkis.storage.resultset.{ResultSetFactory, ResultSetWriter}
 import org.apache.linkis.storage.{LineMetaData, LineRecord}
+import org.apache.linkis.storage.domain._
+import org.apache.linkis.storage.resultset.{ResultSetFactory, ResultSetWriter}
+import org.apache.linkis.storage.resultset.table.{TableMetaData, TableRecord}
+
 import org.apache.commons.exec.CommandLine
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang3.StringUtils
-import py4j.GatewayServer
+
+import java.io.{File, FileFilter, FileOutputStream, InputStream}
+import java.net.ServerSocket
+import java.nio.file.Files
+import java.util.{List => JList}
 
 import scala.collection.JavaConverters._
 import scala.collection.mutable.ArrayBuffer
-import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future, Promise}
+import scala.concurrent.duration.Duration
+
+import py4j.GatewayServer
 
 class PythonSession extends Logging {
 
@@ -58,12 +62,18 @@ class PythonSession extends Logging {
   private var code: String = _
   private var pid: Option[String] = None
 
-  private val pythonDefaultVersion: String = EngineConnServer.getEngineCreationContext.getOptions.getOrDefault("python.version", "python")
+  private val pythonDefaultVersion: String = getPyVersion
 
-
-  def init(): Unit = {
-
+  private def getPyVersion(): String = {
+    if (null != EngineConnServer.getEngineCreationContext.getOptions) {
+      EngineConnServer.getEngineCreationContext.getOptions
+        .getOrDefault("python.version", "python")
+    } else {
+      PythonEngineConfiguration.PYTHON_VERSION.getValue
+    }
   }
+
+  def init(): Unit = {}
 
   def setEngineExecutionContext(engineExecutorContext: EngineExecutionContext): Unit = {
     if (engineExecutorContext != this.engineExecutionContext) {
@@ -76,7 +86,10 @@ class PythonSession extends Logging {
   private def initGateway = {
     val userDefinePythonVersion = Some(pythonDefaultVersion).getOrElse("python")
     logger.info(s"System userDefinePythonVersion => ${userDefinePythonVersion}")
-    val pythonExec = if ("python3".equalsIgnoreCase(userDefinePythonVersion)) PythonEngineConfiguration.PYTHON_VERSION.getValue else "python"
+    val pythonExec =
+      if ("python3".equalsIgnoreCase(userDefinePythonVersion))
+        PythonEngineConfiguration.PYTHON_VERSION.getValue
+      else "python"
     logger.info(s"pythonExec => ${pythonExec}")
     val port = {
       val socket = new ServerSocket(0)
@@ -86,9 +99,15 @@ class PythonSession extends Logging {
     }
     gatewayServer = new GatewayServer(this, port)
     gatewayServer.start()
-    logger.info("Python executor file path is: " + getClass.getClassLoader.getResource("python/python.py").toURI)
+    logger.info(
+      "Python executor file path is: " + getClass.getClassLoader
+        .getResource("python/python.py")
+        .toURI
+    )
     val pythonClasspath = new StringBuilder(PythonSession.pythonPath)
-    val pyFiles = PythonEngineConfiguration.PYTHON_PATH.getValue(EngineConnServer.getEngineCreationContext.getOptions)
+    val pyFiles = PythonEngineConfiguration.PYTHON_PATH.getValue(
+      EngineConnServer.getEngineCreationContext.getOptions
+    )
     logger.info(s"pyFiles => ${pyFiles}")
     if (StringUtils.isNotEmpty(pyFiles)) {
       pythonClasspath ++= File.pathSeparator ++= pyFiles.split(",").mkString(File.pathSeparator)
@@ -99,7 +118,6 @@ class PythonSession extends Logging {
     cmd.addArgument(pythonClasspath.toString(), false)
     val cmdList = cmd.toStrings.toList.asJava
     val builder = new ProcessBuilder(cmdList)
-
 
     val env = builder.environment()
     env.put("PYTHONPATH", pythonClasspath.toString())
@@ -119,24 +137,30 @@ class PythonSession extends Logging {
       logger.info("PythonExecutor has stopped with exit code " + exitCode)
       Utils.tryFinally({
         if (promise != null && !promise.isCompleted) {
-          promise.failure(new ExecuteException(60003, "Pyspark process  has stopped, query failed!"))
+          promise.failure(
+            new ExecuteException(60003, "Pyspark process  has stopped, query failed!")
+          )
         }
       }) {
         close
       }
     }
     // Wait up to 30 seconds（最多等待30秒）
-    Utils.waitUntil(() => pythonScriptInitialized, PythonEngineConfiguration.PYTHON_LANGUAGE_REPL_INIT_TIME.getValue.toDuration)
+    Utils.waitUntil(
+      () => pythonScriptInitialized,
+      PythonEngineConfiguration.PYTHON_LANGUAGE_REPL_INIT_TIME.getValue.toDuration
+    )
   }
 
-  def lazyInitGageWay(): Unit = {
+  def lazyInitGateway(): Unit = {
     if (process == null) synchronized {
       if (process == null) {
-        Utils.tryThrow(initGateway) { t => {
-          logger.error("initialize python executor failed, please ask administrator for help!", t)
-          Utils.tryAndWarn(close)
-          throw t
-        }
+        Utils.tryThrow(initGateway) { t =>
+          {
+            logger.error("initialize python executor failed, please ask administrator for help!", t)
+            Utils.tryAndWarn(close)
+            throw t
+          }
         }
       }
     }
@@ -144,7 +168,9 @@ class PythonSession extends Logging {
 
   def execute(code: String): Unit = {
     if (!pythonScriptInitialized) {
-      throw new IllegalStateException("PythonSession process cannot be initialized, please ask administrator for help.")
+      throw new IllegalStateException(
+        "PythonSession process cannot be initialized, please ask administrator for help."
+      )
     }
     promise = Promise[String]()
     this.code = Kind.getRealCode(code)
@@ -160,7 +186,12 @@ class PythonSession extends Logging {
       outputStream.flush()
       val outStr = outputStream.toString()
       if (StringUtils.isNotBlank(outStr)) {
-        val output = Utils.tryQuietly(ResultSetWriter.getRecordByRes(outStr, PythonEngineConfiguration.PYTHON_CONSOLE_OUTPUT_LINE_LIMIT.getValue))
+        val output = Utils.tryQuietly(
+          ResultSetWriter.getRecordByRes(
+            outStr,
+            PythonEngineConfiguration.PYTHON_CONSOLE_OUTPUT_LINE_LIMIT.getValue
+          )
+        )
         val res = if (output != null) output.toString else ""
         logger.info(s"result is {$res} ")
         if (StringUtils.isNotBlank(res)) engineExecutionContext.appendStdout(res)
@@ -257,12 +288,12 @@ class PythonSession extends Logging {
   }
 
   /**
-    * show table
-    *
-    * @param data
-    * @param schema
-    * @param header
-    */
+   * show table
+   *
+   * @param data
+   * @param schema
+   * @param header
+   */
   def showDF(data: JList[JList[Any]], schema: JList[String], header: JList[String]): Unit = {
     val writer = engineExecutionContext.createResultSetWriter(ResultSetFactory.TABLE_TYPE)
     val length = schema.size() - 1
@@ -290,9 +321,11 @@ class PythonSession extends Logging {
     logger.warn(s"Time taken: ${System.currentTimeMillis() - startTime}, done with html")
     engineExecutionContext.sendResultSet(writer)
   }
+
 }
 
 object PythonSession extends Logging {
+
   private[PythonSession] def createFakeShell(script: String, fileType: String = ".py"): File = {
     val source: InputStream = getClass.getClassLoader.getResourceAsStream(script)
 
@@ -317,18 +350,21 @@ object PythonSession extends Logging {
   private[PythonSession] def pythonPath = {
     logger.info("this is pythonPath")
     val pythonPath = new ArrayBuffer[String]
-    //借用spark的py4j
+    // 借用spark的py4j
     val pythonHomePath = new File(PythonEngineConfiguration.PY4J_HOME.getValue).getPath
     logger.info(s"pythonHomePath => $pythonHomePath")
     val pythonParentPath = new File(pythonHomePath)
     logger.info(s"pythonParentPath => $pythonParentPath")
     pythonPath += pythonHomePath
     logger.info(s"pythonPath => $pythonPath")
-    pythonParentPath.listFiles(new FileFilter {
-      override def accept(pathname: File): Boolean = pathname.getName.endsWith(".zip")
-    }).foreach(f => pythonPath += f.getPath)
+    pythonParentPath
+      .listFiles(new FileFilter {
+        override def accept(pathname: File): Boolean = pathname.getName.endsWith(".zip")
+      })
+      .foreach(f => pythonPath += f.getPath)
     pythonPath.mkString(File.pathSeparator)
   }
+
 }
 
 case class PythonInterpretRequest(statements: String)
@@ -336,4 +372,3 @@ case class PythonInterpretRequest(statements: String)
 case class Python() extends Kind {
   override def toString: String = "python"
 }
-

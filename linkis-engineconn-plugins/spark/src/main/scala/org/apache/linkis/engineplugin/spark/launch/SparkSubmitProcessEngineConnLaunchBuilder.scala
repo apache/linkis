@@ -5,25 +5,28 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.engineplugin.spark.launch
 
-import java.lang.ProcessBuilder.Redirect
-import java.util
-import com.google.common.collect.Lists
 import org.apache.linkis.common.conf.CommonVars
-import org.apache.linkis.engineplugin.spark.config.SparkResourceConfiguration.LINKIS_SPARK_DRIVER_MEMORY
 import org.apache.linkis.engineplugin.spark.config.{SparkConfiguration, SparkResourceConfiguration}
-import org.apache.linkis.engineplugin.spark.launch.SparkSubmitProcessEngineConnLaunchBuilder.{AbsolutePath, Path, RelativePath, getValueAndRemove}
+import org.apache.linkis.engineplugin.spark.config.SparkResourceConfiguration.LINKIS_SPARK_DRIVER_MEMORY
+import org.apache.linkis.engineplugin.spark.launch.SparkSubmitProcessEngineConnLaunchBuilder.{
+  getValueAndRemove,
+  AbsolutePath,
+  Path,
+  RelativePath
+}
+import org.apache.linkis.hadoop.common.conf.HadoopConf
 import org.apache.linkis.manager.common.entity.resource.{DriverAndYarnResource, NodeResource}
 import org.apache.linkis.manager.engineplugin.common.conf.EnvConfiguration
 import org.apache.linkis.manager.engineplugin.common.launch.entity.EngineConnBuildRequest
@@ -32,13 +35,16 @@ import org.apache.linkis.manager.engineplugin.common.launch.process.JavaProcessE
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel
 import org.apache.linkis.protocol.UserWithCreator
+
 import org.apache.commons.lang3.StringUtils
+
+import java.lang.ProcessBuilder.Redirect
+import java.util
 
 import scala.collection.JavaConverters._
 import scala.collection.mutable.ArrayBuffer
-import org.apache.linkis.hadoop.common.conf.HadoopConf
 
-
+import com.google.common.collect.Lists
 
 class SparkSubmitProcessEngineConnLaunchBuilder private extends JavaProcessEngineConnLaunchBuilder {
 
@@ -71,7 +77,10 @@ class SparkSubmitProcessEngineConnLaunchBuilder private extends JavaProcessEngin
   private[this] var _redirectOutput: Option[ProcessBuilder.Redirect] = None
   private[this] var _redirectError: Option[ProcessBuilder.Redirect] = None
   private[this] var _redirectErrorStream: Option[Boolean] = None
-  private[this] var _userWithCreator: UserWithCreator = UserWithCreator("DefaultUser", "DefaultCreator")
+
+  private[this] var _userWithCreator: UserWithCreator =
+    UserWithCreator("DefaultUser", "DefaultCreator")
+
   private[this] var _labels: ArrayBuffer[Label[_]] = ArrayBuffer()
 
   def executable(executable: Path): SparkSubmitProcessEngineConnLaunchBuilder = {
@@ -104,14 +113,17 @@ class SparkSubmitProcessEngineConnLaunchBuilder private extends JavaProcessEngin
     this
   }
 
-  def conf(conf: (String, String)): SparkSubmitProcessEngineConnLaunchBuilder = this.conf(conf._1, conf._2)
+  def conf(conf: (String, String)): SparkSubmitProcessEngineConnLaunchBuilder =
+    this.conf(conf._1, conf._2)
 
   def driverJavaOptions(driverJavaOptions: String): SparkSubmitProcessEngineConnLaunchBuilder = {
     _driverJavaOptions = Some(driverJavaOptions)
     this
   }
 
-  def driverClassPaths(classPaths: Traversable[String]): SparkSubmitProcessEngineConnLaunchBuilder = {
+  def driverClassPaths(
+      classPaths: Traversable[String]
+  ): SparkSubmitProcessEngineConnLaunchBuilder = {
     _driverClassPath ++= classPaths
     this
   }
@@ -126,14 +138,18 @@ class SparkSubmitProcessEngineConnLaunchBuilder private extends JavaProcessEngin
     this
   }
 
-  def redirectError(redirect: ProcessBuilder.Redirect): SparkSubmitProcessEngineConnLaunchBuilder = {
+  def redirectError(
+      redirect: ProcessBuilder.Redirect
+  ): SparkSubmitProcessEngineConnLaunchBuilder = {
     _redirectError = Some(redirect)
     this
   }
 
   def setPort(port: Int): Unit = this.port = port
 
-  override protected def getCommands(implicit engineConnBuildRequest: EngineConnBuildRequest): Array[String] = {
+  override protected def getCommands(implicit
+      engineConnBuildRequest: EngineConnBuildRequest
+  ): Array[String] = {
     build(engineConnBuildRequest)
     val commandLine: ArrayBuffer[String] = ArrayBuffer[String]()
     commandLine += SparkConfiguration.SPARK_SUBMIT_PATH.getValue
@@ -167,8 +183,8 @@ class SparkSubmitProcessEngineConnLaunchBuilder private extends JavaProcessEngin
       addOpt("--proxy-user", _proxyUser)
     }
 
-    //addOpt("--jars",Some(ENGINEMANAGER_JAR.getValue))
-    //info("No need to add jars for " + _jars.map(fromPath).exists(x => x.equals("hdfs:///")).toString())
+    // addOpt("--jars",Some(ENGINEMANAGER_JAR.getValue))
+    // info("No need to add jars for " + _jars.map(fromPath).exists(x => x.equals("hdfs:///")).toString())
     _jars = _jars.filter(_.isNotBlankPath())
 
     if (_jars.isEmpty) {
@@ -180,25 +196,24 @@ class SparkSubmitProcessEngineConnLaunchBuilder private extends JavaProcessEngin
     }
 
     _pyFiles = _pyFiles.filter(_.isNotBlankPath())
-    if(_pyFiles.nonEmpty) {
+    if (_pyFiles.nonEmpty) {
       addList("--py-files", _pyFiles.map(fromPath))
     }
 
     _files = _files.filter(_.isNotBlankPath())
-    if(_files.nonEmpty) {
+    if (_files.nonEmpty) {
       addList("--files", _files.map(fromPath))
     }
 
     _archives = _archives.filter(_.isNotBlankPath())
-    if(_archives.nonEmpty) {
+    if (_archives.nonEmpty) {
       addList("--archives", _archives.map(fromPath))
     }
-    _conf.foreach {
-      case (key, value) =>
-        if (key.startsWith("spark.")) {
-          // subcommand cannot be quoted by double quote, use single quote instead
-          addOpt("--conf", Some(key + "=\"" + value + "\""))
-        }
+    _conf.foreach { case (key, value) =>
+      if (key.startsWith("spark.")) {
+        // subcommand cannot be quoted by double quote, use single quote instead
+        addOpt("--conf", Some(key + "=\"" + value + "\""))
+      }
     }
     addOpt("--driver-memory", _driverMemory)
     addClasspath("--driver-class-path", _driverClassPath)
@@ -311,7 +326,9 @@ class SparkSubmitProcessEngineConnLaunchBuilder private extends JavaProcessEngin
     this
   }
 
-  def redirectOutput(redirect: ProcessBuilder.Redirect): SparkSubmitProcessEngineConnLaunchBuilder = {
+  def redirectOutput(
+      redirect: ProcessBuilder.Redirect
+  ): SparkSubmitProcessEngineConnLaunchBuilder = {
     _redirectOutput = Some(redirect)
     this
   }
@@ -326,29 +343,42 @@ class SparkSubmitProcessEngineConnLaunchBuilder private extends JavaProcessEngin
   def build(engineRequest: EngineConnBuildRequest): Unit = {
     this.request = engineRequest
     this.userEngineResource = engineRequest.engineResource
-    val darResource: DriverAndYarnResource = userEngineResource.getLockedResource.asInstanceOf[DriverAndYarnResource]
+    val darResource: DriverAndYarnResource =
+      userEngineResource.getLockedResource.asInstanceOf[DriverAndYarnResource]
     val properties = engineRequest.engineConnCreationDesc.properties
     this.master("yarn")
     this.deployMode("client")
     val driverJavaSet = new StringBuilder(" -server")
 
     if (StringUtils.isNotEmpty(EnvConfiguration.ENGINE_CONN_DEFAULT_JAVA_OPTS.getValue))
-      EnvConfiguration.ENGINE_CONN_DEFAULT_JAVA_OPTS.getValue.format(getGcLogDir(engineRequest)).split("\\s+").foreach(l => {
+      EnvConfiguration.ENGINE_CONN_DEFAULT_JAVA_OPTS.getValue
+        .format(getGcLogDir(engineRequest))
+        .split("\\s+")
+        .foreach(l => {
+          driverJavaSet.append(" ").append(l)
+        })
+    getLogDir(engineRequest).trim
+      .split(" ")
+      .foreach(l => {
         driverJavaSet.append(" ").append(l)
       })
-    getLogDir(engineRequest).trim.split(" ").foreach(l => {
-      driverJavaSet.append(" ").append(l)
-    })
     driverJavaSet.append(" -Djava.io.tmpdir=" + variable(TEMP_DIRS))
     if (EnvConfiguration.ENGINE_CONN_DEBUG_ENABLE.getValue) {
-      driverJavaSet.append(s" -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=${variable(RANDOM_PORT)}")
+      driverJavaSet.append(
+        s" -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=${variable(RANDOM_PORT)}"
+      )
     }
     this.conf(SparkConfiguration.SPARK_DRIVER_EXTRA_JAVA_OPTIONS.key, driverJavaSet.toString())
-    //this.conf("spark.sql.extensions", "org.apache.linkis.hook.spark.extension.SparkHistoryExtension")
-    this.className(getValueAndRemove(properties,"className", getMainClass))
+    // this.conf("spark.sql.extensions", "org.apache.linkis.hook.spark.extension.SparkHistoryExtension")
+    this.className(getValueAndRemove(properties, "className", getMainClass))
 
-    getValueAndRemove(properties,"archives", "").toString.split(",").map(AbsolutePath).foreach(this.archive)
-    this.driverCores(getValueAndRemove(properties, SparkResourceConfiguration.LINKIS_SPARK_DRIVER_CORES))
+    getValueAndRemove(properties, "archives", "").toString
+      .split(",")
+      .map(AbsolutePath)
+      .foreach(this.archive)
+    this.driverCores(
+      getValueAndRemove(properties, SparkResourceConfiguration.LINKIS_SPARK_DRIVER_CORES)
+    )
     val driverMemory = getValueAndRemove(properties, LINKIS_SPARK_DRIVER_MEMORY)
     val driverMemoryWithUnit = if (StringUtils.isNumeric(driverMemory)) {
       driverMemory + "g"
@@ -356,44 +386,55 @@ class SparkSubmitProcessEngineConnLaunchBuilder private extends JavaProcessEngin
       driverMemory
     }
     this.driverMemory(driverMemoryWithUnit)
-    this.executorCores(getValueAndRemove(properties, SparkResourceConfiguration.LINKIS_SPARK_EXECUTOR_CORES))
-    val executorMemory = getValueAndRemove(properties, SparkResourceConfiguration.LINKIS_SPARK_EXECUTOR_MEMORY)
+    this.executorCores(
+      getValueAndRemove(properties, SparkResourceConfiguration.LINKIS_SPARK_EXECUTOR_CORES)
+    )
+    val executorMemory =
+      getValueAndRemove(properties, SparkResourceConfiguration.LINKIS_SPARK_EXECUTOR_MEMORY)
     val executorMemoryWithUnit = if (StringUtils.isNumeric(executorMemory)) {
       executorMemory + "g"
     } else {
       executorMemory
     }
     this.executorMemory(executorMemoryWithUnit)
-    this.numExecutors(getValueAndRemove(properties, SparkResourceConfiguration.LINKIS_SPARK_EXECUTOR_INSTANCES))
-    getValueAndRemove(properties,"files", "").split(",").map(AbsolutePath).foreach(file)
-    getValueAndRemove(properties,"jars", "").split(",").map(AbsolutePath).foreach(jar)
-    val defaultExternalJars = getValueAndRemove(properties,  SparkConfiguration.SPARK_DEFAULT_EXTERNAL_JARS_PATH)
-    defaultExternalJars.split(",").map(AbsolutePath).filter(x => {
-      val file = new java.io.File(x.path)
-      file.isFile
-    }).foreach(jar)
+    this.numExecutors(
+      getValueAndRemove(properties, SparkResourceConfiguration.LINKIS_SPARK_EXECUTOR_INSTANCES)
+    )
+    getValueAndRemove(properties, "files", "").split(",").map(AbsolutePath).foreach(file)
+    getValueAndRemove(properties, "jars", "").split(",").map(AbsolutePath).foreach(jar)
+    val defaultExternalJars =
+      getValueAndRemove(properties, SparkConfiguration.SPARK_DEFAULT_EXTERNAL_JARS_PATH)
+    defaultExternalJars
+      .split(",")
+      .map(AbsolutePath)
+      .filter(x => {
+        val file = new java.io.File(x.path)
+        file.isFile
+      })
+      .foreach(jar)
 
-    proxyUser(getValueAndRemove(properties,"proxyUser", ""))
+    proxyUser(getValueAndRemove(properties, "proxyUser", ""))
     if (null != darResource) {
       this.queue(darResource.yarnResource.queueName)
     } else {
       this.queue("default")
     }
 
-    this.driverClassPath(getValueAndRemove(properties,  SparkConfiguration.SPARK_DRIVER_CLASSPATH))
+    this.driverClassPath(getValueAndRemove(properties, SparkConfiguration.SPARK_DRIVER_CLASSPATH))
     this.driverClassPath(variable(CLASSPATH))
     this.redirectOutput(Redirect.PIPE)
     this.redirectErrorStream(true)
 
     val labels = engineRequest.labels.asScala
-    labels.foreach { l => {
-      this._labels += l
-      l match {
-        case label: UserCreatorLabel =>
-          this._userWithCreator = UserWithCreator(label.getUser, label.getCreator)
-        case _ =>
+    labels.foreach { l =>
+      {
+        this._labels += l
+        l match {
+          case label: UserCreatorLabel =>
+            this._userWithCreator = UserWithCreator(label.getUser, label.getCreator)
+          case _ =>
+        }
       }
-    }
     }
 
     if (!HadoopConf.KEYTAB_PROXYUSER_ENABLED.getValue) {
@@ -401,28 +442,37 @@ class SparkSubmitProcessEngineConnLaunchBuilder private extends JavaProcessEngin
     } else {
       this.proxyUser(this._userWithCreator.user)
     }
-    
-    //deal spark conf and spark.hadoop.*
+
+    // deal spark conf and spark.hadoop.*
     val iterator = properties.entrySet().iterator()
     val sparkConfKeys = ArrayBuffer[String]()
     while (iterator.hasNext) {
       val keyValue = iterator.next()
-      if (!SparkConfiguration.SPARK_PYTHON_VERSION.key.equals(keyValue.getKey) && keyValue.getKey.startsWith("spark.") && StringUtils.isNotBlank(keyValue.getValue)) {
+      if (
+          !SparkConfiguration.SPARK_PYTHON_VERSION.key.equals(keyValue.getKey) && keyValue.getKey
+            .startsWith("spark.") && StringUtils.isNotBlank(keyValue.getValue)
+      ) {
         conf(keyValue.getKey, keyValue.getValue)
-        sparkConfKeys  += keyValue.getKey
+        sparkConfKeys += keyValue.getKey
       }
     }
-    this.name(getValueAndRemove(properties, SparkConfiguration.SPARK_APP_NAME ) + "_" +this._userWithCreator.creator)
+    this.name(
+      getValueAndRemove(
+        properties,
+        SparkConfiguration.SPARK_APP_NAME
+      ) + "_" + this._userWithCreator.creator
+    )
     sparkConfKeys.foreach(properties.remove(_))
   }
-
 
   private def fromPath(path: Path): String = path match {
     case AbsolutePath(p) => p
     case RelativePath(p) => p
   }
 
-  override protected def getEngineConnManagerHooks(implicit engineConnBuildRequest: EngineConnBuildRequest): util.List[String] = {
+  override protected def getEngineConnManagerHooks(implicit
+      engineConnBuildRequest: EngineConnBuildRequest
+  ): util.List[String] = {
     Lists.newArrayList("JarUDFLoadECMHook")
   }
 
@@ -430,15 +480,19 @@ class SparkSubmitProcessEngineConnLaunchBuilder private extends JavaProcessEngin
 
 object SparkSubmitProcessEngineConnLaunchBuilder {
 
-  def newBuilder(): SparkSubmitProcessEngineConnLaunchBuilder = new SparkSubmitProcessEngineConnLaunchBuilder
+  def newBuilder(): SparkSubmitProcessEngineConnLaunchBuilder =
+    new SparkSubmitProcessEngineConnLaunchBuilder
 
   sealed trait Path {
 
     def isNotBlankPath(): Boolean;
 
     protected def isNotBlankPath(path: String): Boolean = {
-      StringUtils.isNotBlank(path) && !"/".equals(path.trim) && !"hdfs:///".equals(path.trim) && !"file:///".equals(path.trim)
+      StringUtils.isNotBlank(path) && !"/".equals(path.trim) && !"hdfs:///".equals(
+        path.trim
+      ) && !"file:///".equals(path.trim)
     }
+
   }
 
   case class AbsolutePath(path: String) extends Path {
@@ -449,13 +503,20 @@ object SparkSubmitProcessEngineConnLaunchBuilder {
     override def isNotBlankPath(): Boolean = isNotBlankPath(path)
   }
 
-  def getValueAndRemove[T](properties: java.util.Map[String, String], commonVars: CommonVars[T]): T = {
+  def getValueAndRemove[T](
+      properties: java.util.Map[String, String],
+      commonVars: CommonVars[T]
+  ): T = {
     val value = commonVars.getValue(properties)
     properties.remove(commonVars.key)
     value
   }
 
-  def getValueAndRemove(properties: java.util.Map[String, String], key: String, defaultValue: String): String = {
+  def getValueAndRemove(
+      properties: java.util.Map[String, String],
+      key: String,
+      defaultValue: String
+  ): String = {
     if (properties.containsKey(key)) {
       properties.remove(key)
     } else {

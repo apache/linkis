@@ -23,70 +23,70 @@ import java.util.Date;
 
 public class AMNodeMetrics implements NodeMetrics {
 
-    private Integer status;
+  private Integer status;
 
-    private String overLoad;
+  private String overLoad;
 
-    private String heartBeatMsg;
+  private String heartBeatMsg;
 
-    private String healthy;
+  private String healthy;
 
-    private ServiceInstance serviceInstance;
+  private ServiceInstance serviceInstance;
 
-    private Date updateTime;
+  private Date updateTime;
 
-    @Override
-    public ServiceInstance getServiceInstance() {
-        return serviceInstance;
-    }
+  @Override
+  public ServiceInstance getServiceInstance() {
+    return serviceInstance;
+  }
 
-    public void setServiceInstance(ServiceInstance serviceInstance) {
-        this.serviceInstance = serviceInstance;
-    }
+  public void setServiceInstance(ServiceInstance serviceInstance) {
+    this.serviceInstance = serviceInstance;
+  }
 
-    @Override
-    public Integer getStatus() {
-        return status;
-    }
+  @Override
+  public Integer getStatus() {
+    return status;
+  }
 
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
+  public void setStatus(Integer status) {
+    this.status = status;
+  }
 
-    @Override
-    public String getOverLoad() {
-        return overLoad;
-    }
+  @Override
+  public String getOverLoad() {
+    return overLoad;
+  }
 
-    public void setOverLoad(String overLoad) {
-        this.overLoad = overLoad;
-    }
+  public void setOverLoad(String overLoad) {
+    this.overLoad = overLoad;
+  }
 
-    @Override
-    public String getHeartBeatMsg() {
-        return heartBeatMsg;
-    }
+  @Override
+  public String getHeartBeatMsg() {
+    return heartBeatMsg;
+  }
 
-    public void setHeartBeatMsg(String heartBeatMsg) {
-        this.heartBeatMsg = heartBeatMsg;
-    }
+  public void setHeartBeatMsg(String heartBeatMsg) {
+    this.heartBeatMsg = heartBeatMsg;
+  }
 
-    @Override
-    public String getHealthy() {
-        return healthy;
-    }
+  @Override
+  public String getHealthy() {
+    return healthy;
+  }
 
-    @Override
-    public Date getUpdateTime() {
-        return updateTime;
-    }
+  @Override
+  public Date getUpdateTime() {
+    return updateTime;
+  }
 
-    @Override
-    public void setHealthy(String healthy) {
-        this.healthy = healthy;
-    }
+  @Override
+  public void setHealthy(String healthy) {
+    this.healthy = healthy;
+  }
 
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
-    }
+  public void setUpdateTime(Date updateTime) {
+    this.updateTime = updateTime;
+  }
 }

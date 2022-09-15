@@ -21,15 +21,15 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 
 public class ProxyTest {
 
-    AnnotationConfigApplicationContext context = null;
-    ContextPersistenceManager persistenceManager = null;
+  AnnotationConfigApplicationContext context = null;
+  ContextPersistenceManager persistenceManager = null;
 
-    public void before() {
-        context = new AnnotationConfigApplicationContext(Scan.class);
-        persistenceManager = context.getBean(ContextPersistenceManager.class);
-    }
+  public void before() {
+    context = new AnnotationConfigApplicationContext(Scan.class);
+    persistenceManager = context.getBean(ContextPersistenceManager.class);
+  }
 
-    public void test01() {
-        System.out.println(persistenceManager.getContextIDPersistence());
-    }
+  public void test01() {
+    System.out.println(persistenceManager.getContextIDPersistence());
+  }
 }

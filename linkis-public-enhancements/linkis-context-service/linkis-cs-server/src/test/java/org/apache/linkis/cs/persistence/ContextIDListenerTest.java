@@ -23,40 +23,40 @@ import org.apache.linkis.cs.persistence.persistence.ContextIDListenerPersistence
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 public class ContextIDListenerTest {
-    AnnotationConfigApplicationContext context = null;
-    ContextIDListenerPersistence contextIDListenerPersistence = null;
+  AnnotationConfigApplicationContext context = null;
+  ContextIDListenerPersistence contextIDListenerPersistence = null;
 
-    public void before() {
-        context = new AnnotationConfigApplicationContext(Scan.class);
-        contextIDListenerPersistence = context.getBean(ContextIDListenerPersistence.class);
-    }
+  public void before() {
+    context = new AnnotationConfigApplicationContext(Scan.class);
+    contextIDListenerPersistence = context.getBean(ContextIDListenerPersistence.class);
+  }
 
-    public void testcreateContextIDListener() throws CSErrorException {
-        AContextIDListener aContextIDListener = new AContextIDListener();
-        aContextIDListener.setSource("source");
-        AContextID aContextID = new AContextID();
-        aContextID.setContextId("84716");
-        aContextIDListener.setContextID(aContextID);
-        contextIDListenerPersistence.create(aContextID, aContextIDListener);
-    }
+  public void testcreateContextIDListener() throws CSErrorException {
+    AContextIDListener aContextIDListener = new AContextIDListener();
+    aContextIDListener.setSource("source");
+    AContextID aContextID = new AContextID();
+    aContextID.setContextId("84716");
+    aContextIDListener.setContextID(aContextID);
+    contextIDListenerPersistence.create(aContextID, aContextIDListener);
+  }
 
-    public void testDeleteContextIDListener() throws CSErrorException {
-        AContextIDListener aContextIDListener = new AContextIDListener();
-        AContextID aContextID = new AContextID();
-        aContextID.setContextId("84716");
-        aContextIDListener.setSource("source");
-        aContextIDListener.setContextID(aContextID);
-        contextIDListenerPersistence.remove(aContextIDListener);
-    }
+  public void testDeleteContextIDListener() throws CSErrorException {
+    AContextIDListener aContextIDListener = new AContextIDListener();
+    AContextID aContextID = new AContextID();
+    aContextID.setContextId("84716");
+    aContextIDListener.setSource("source");
+    aContextIDListener.setContextID(aContextID);
+    contextIDListenerPersistence.remove(aContextIDListener);
+  }
 
-    public void testDeleteAllContextIDListener() throws CSErrorException {
-        AContextID aContextID = new AContextID();
-        aContextID.setContextId("84716");
-        contextIDListenerPersistence.removeAll(aContextID);
-    }
+  public void testDeleteAllContextIDListener() throws CSErrorException {
+    AContextID aContextID = new AContextID();
+    aContextID.setContextId("84716");
+    contextIDListenerPersistence.removeAll(aContextID);
+  }
 
-    public void testGetContextID() throws CSErrorException {
-        // ContextID contextID = contextIDPersistence.getContextID(32312579);
-        // System.out.println(((AContextID)contextID).getProject());
-    }
+  public void testGetContextID() throws CSErrorException {
+    // ContextID contextID = contextIDPersistence.getContextID(32312579);
+    // System.out.println(((AContextID)contextID).getProject());
+  }
 }

@@ -22,29 +22,29 @@ import org.apache.linkis.cs.common.entity.source.ContextKeyValue;
 import org.apache.linkis.cs.contextcache.ContextCacheService;
 import org.apache.linkis.cs.execution.ruler.ContextSearchRuler;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-
 public class IterateContextCacheFetcher extends AbstractContextCacheFetcher {
 
-    private static final Logger logger = LoggerFactory.getLogger(IterateContextCacheFetcher.class);
+  private static final Logger logger = LoggerFactory.getLogger(IterateContextCacheFetcher.class);
 
-    ContextSearchRuler contextSearchRuler;
+  ContextSearchRuler contextSearchRuler;
 
-    public IterateContextCacheFetcher(
-            ContextCacheService contextCacheService, ContextSearchRuler contextSearchRuler) {
-        super(contextCacheService);
-        this.contextSearchRuler = contextSearchRuler;
-    }
+  public IterateContextCacheFetcher(
+      ContextCacheService contextCacheService, ContextSearchRuler contextSearchRuler) {
+    super(contextCacheService);
+    this.contextSearchRuler = contextSearchRuler;
+  }
 
-    private IterateContextCacheFetcher(ContextCacheService contextCacheService) {
-        super(contextCacheService);
-    }
+  private IterateContextCacheFetcher(ContextCacheService contextCacheService) {
+    super(contextCacheService);
+  }
 
-    @Override
-    public List<ContextKeyValue> fetch(ContextID contextID) {
-        return contextSearchRuler.rule(contextCacheService.getAll(contextID));
-    }
+  @Override
+  public List<ContextKeyValue> fetch(ContextID contextID) {
+    return contextSearchRuler.rule(contextCacheService.getAll(contextID));
+  }
 }

@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,16 +19,15 @@ package org.apache.linkis.engineconnplugin.sqoop.executor
 
 import org.apache.linkis.engineconn.executor.entity.{LabelExecutor, ResourceExecutor, YarnExecutor}
 import org.apache.linkis.engineconnplugin.sqoop.client.Sqoop
+import org.apache.linkis.engineconnplugin.sqoop.client.exception.JobExecutionException
+import org.apache.linkis.engineconnplugin.sqoop.context.SqoopEngineConnContext
 import org.apache.linkis.engineconnplugin.sqoop.context.SqoopResourceConfiguration.LINKIS_QUEUE_NAME
 import org.apache.linkis.manager.common.entity.resource.NodeResource
 import org.apache.linkis.manager.label.entity.Label
+
 import java.util
 
-import org.apache.linkis.engineconnplugin.sqoop.client.Sqoop
-import org.apache.linkis.engineconnplugin.sqoop.client.exception.JobExecutionException
-import org.apache.linkis.engineconnplugin.sqoop.context.SqoopEngineConnContext
-
-trait SqoopExecutor extends YarnExecutor with LabelExecutor with ResourceExecutor{
+trait SqoopExecutor extends YarnExecutor with LabelExecutor with ResourceExecutor {
   private var yarnMode: String = "Client"
   private var executorLabels: util.List[Label[_]] = new util.ArrayList[Label[_]]
   override def getApplicationId: String = Sqoop.getApplicationId
@@ -44,7 +43,8 @@ trait SqoopExecutor extends YarnExecutor with LabelExecutor with ResourceExecuto
 
   override def setExecutorLabels(labels: util.List[Label[_]]): Unit = this.executorLabels = labels
 
-  override def requestExpectedResource(expectedResource: NodeResource): NodeResource = throw new JobExecutionException("Not support method for requestExpectedResource.")
+  override def requestExpectedResource(expectedResource: NodeResource): NodeResource =
+    throw new JobExecutionException("Not support method for requestExpectedResource.")
 
   protected val sqoopEngineConnContext: SqoopEngineConnContext
 }

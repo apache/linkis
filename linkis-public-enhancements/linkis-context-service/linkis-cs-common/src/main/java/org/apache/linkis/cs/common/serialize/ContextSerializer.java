@@ -21,15 +21,15 @@ import org.apache.linkis.cs.common.exception.CSErrorException;
 
 public interface ContextSerializer<T> {
 
-    String getType();
+  String getType();
 
-    boolean accepts(String json);
+  boolean accepts(String json);
 
-    boolean accepts(Object obj);
+  boolean accepts(Object obj);
 
-    boolean isType(String type);
+  boolean isType(String type);
 
-    String serialize(T t) throws CSErrorException;
+  String serialize(T t) throws CSErrorException;
 
-    T deserialize(String json) throws CSErrorException;
+  T deserialize(String json) throws CSErrorException;
 }

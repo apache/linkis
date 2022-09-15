@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,9 +17,6 @@
 
 package org.apache.linkis.manager.engineplugin.jdbc.executer
 
-import java.util
-
-import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.utils.{JsonUtils, Logging, Utils}
 import org.apache.linkis.datasource.client.impl.LinkisDataSourceRemoteClient
 import org.apache.linkis.datasource.client.request.GetInfoPublishedByDataSourceNameAction
@@ -28,25 +25,41 @@ import org.apache.linkis.manager.engineplugin.jdbc.JdbcAuthType
 import org.apache.linkis.manager.engineplugin.jdbc.constant.JDBCEngineConnConstant
 import org.apache.linkis.manager.engineplugin.jdbc.exception.JDBCParamsIllegalException
 
+import org.apache.commons.lang3.StringUtils
+
+import java.util
+
 import scala.collection.JavaConversions._
 
 object JDBCMultiDatasourceParser extends Logging {
 
-  def queryDatasourceInfoByName(datasourceName: String, username: String, system: String): util.Map[String, String] = {
+  def queryDatasourceInfoByName(
+      datasourceName: String,
+      username: String,
+      system: String
+  ): util.Map[String, String] = {
     logger.info(s"Starting query [$system, $username, $datasourceName] datasource info ......")
     val dataSourceClient = new LinkisDataSourceRemoteClient()
     var dataSource: DataSource = null
 
-    dataSource = dataSourceClient.getInfoPublishedByDataSourceName(GetInfoPublishedByDataSourceNameAction.builder()
-        .setSystem(system)
-        .setDataSourceName(datasourceName)
-        .setUser(username)
-        .build()).getDataSource
+    dataSource = dataSourceClient
+      .getInfoPublishedByDataSourceName(
+        GetInfoPublishedByDataSourceNameAction
+          .builder()
+          .setSystem(system)
+          .setDataSourceName(datasourceName)
+          .setUser(username)
+          .build()
+      )
+      .getDataSource
 
     queryDatasourceInfo(datasourceName, dataSource)
   }
 
-  def queryDatasourceInfo(datasourceName: String, dataSource: DataSource): util.Map[String, String] = {
+  def queryDatasourceInfo(
+      datasourceName: String,
+      dataSource: DataSource
+  ): util.Map[String, String] = {
     val dsConnInfo = new util.HashMap[String, String]()
 
     if (strObjIsBlank(dataSource)) {
@@ -67,7 +80,11 @@ object JDBCMultiDatasourceParser extends Logging {
       throw JDBCParamsIllegalException(s"Data source [$datasourceName] is expired!")
     }
 
-    if (dataSource.getDataSourceType == null || StringUtils.isBlank(dataSource.getDataSourceType.getName)) {
+    if (
+        dataSource.getDataSourceType == null || StringUtils.isBlank(
+          dataSource.getDataSourceType.getName
+        )
+    ) {
       throw JDBCParamsIllegalException("The data source jdbc type cannot be null!")
     }
 
@@ -105,7 +122,9 @@ object JDBCMultiDatasourceParser extends Logging {
     }
 
     val params = dbConnParams.get(JDBCEngineConnConstant.DS_JDBC_PARAMS)
-    val paramsMap = if (strObjIsNotBlank(params)) convertJsonStrToMap(params.toString) else new util.HashMap[String, Object]()
+    val paramsMap =
+      if (strObjIsNotBlank(params)) convertJsonStrToMap(params.toString)
+      else new util.HashMap[String, Object]()
 
     if (!paramsMap.isEmpty) {
       val headConf = paramsMap.head
@@ -121,7 +140,10 @@ object JDBCMultiDatasourceParser extends Logging {
     jdbcUrl
   }
 
-  def appendJdbcAuthType(dbConnParams: util.Map[String, Object], dsConnInfo: util.HashMap[String, String]): util.HashMap[String, String] = {
+  def appendJdbcAuthType(
+      dbConnParams: util.Map[String, Object],
+      dsConnInfo: util.HashMap[String, String]
+  ): util.HashMap[String, String] = {
     val username = dbConnParams.get(JDBCEngineConnConstant.DS_JDBC_USERNAME)
     val password = dbConnParams.get(JDBCEngineConnConstant.DS_JDBC_PASSWORD)
     val enableKerberos = dbConnParams.get(JDBCEngineConnConstant.DS_JDBC_ENABLE_KERBEROS)
@@ -134,10 +156,14 @@ object JDBCMultiDatasourceParser extends Logging {
       if (strObjIsNotBlank(enableKerberos) && enableKerberos.toString.toBoolean) {
         authType = JdbcAuthType.KERBEROS
         if (strObjIsBlank(kerberosPrincipal)) {
-          throw JDBCParamsIllegalException("In the jdbc authentication mode of kerberos, the kerberos principal cannot be empty!")
+          throw JDBCParamsIllegalException(
+            "In the jdbc authentication mode of kerberos, the kerberos principal cannot be empty!"
+          )
         }
         if (strObjIsBlank(kerberosKeytab)) {
-          throw JDBCParamsIllegalException("In the jdbc authentication mode of kerberos, the kerberos keytab cannot be empty!")
+          throw JDBCParamsIllegalException(
+            "In the jdbc authentication mode of kerberos, the kerberos keytab cannot be empty!"
+          )
         }
       } else {
         authType = JdbcAuthType.SIMPLE
@@ -151,17 +177,32 @@ object JDBCMultiDatasourceParser extends Logging {
         dsConnInfo.put(JDBCEngineConnConstant.JDBC_USERNAME, username.toString)
         dsConnInfo.put(JDBCEngineConnConstant.JDBC_PASSWORD, password.toString)
       case JdbcAuthType.KERBEROS =>
-        dsConnInfo.put(JDBCEngineConnConstant.JDBC_KERBEROS_AUTH_TYPE_PRINCIPAL, kerberosPrincipal.toString)
-        dsConnInfo.put(JDBCEngineConnConstant.JDBC_KERBEROS_AUTH_TYPE_KEYTAB_LOCATION, kerberosKeytab.toString)
-        val enableKerberosProxyUser = dbConnParams.get(JDBCEngineConnConstant.DS_JDBC_ENABLE_KERBEROS_PROXY_USER)
+        dsConnInfo.put(
+          JDBCEngineConnConstant.JDBC_KERBEROS_AUTH_TYPE_PRINCIPAL,
+          kerberosPrincipal.toString
+        )
+        dsConnInfo.put(
+          JDBCEngineConnConstant.JDBC_KERBEROS_AUTH_TYPE_KEYTAB_LOCATION,
+          kerberosKeytab.toString
+        )
+        val enableKerberosProxyUser =
+          dbConnParams.get(JDBCEngineConnConstant.DS_JDBC_ENABLE_KERBEROS_PROXY_USER)
         if (strObjIsNotBlank(enableKerberosProxyUser)) {
-          dsConnInfo.put(JDBCEngineConnConstant.JDBC_KERBEROS_AUTH_PROXY_ENABLE, enableKerberosProxyUser.toString)
+          dsConnInfo.put(
+            JDBCEngineConnConstant.JDBC_KERBEROS_AUTH_PROXY_ENABLE,
+            enableKerberosProxyUser.toString
+          )
         }
-        val kerberosProxyUserProperty = dbConnParams.get(JDBCEngineConnConstant.DS_JDBC_KERBEROS_PROXY_USER_PROPERTY)
+        val kerberosProxyUserProperty =
+          dbConnParams.get(JDBCEngineConnConstant.DS_JDBC_KERBEROS_PROXY_USER_PROPERTY)
         if (strObjIsNotBlank(kerberosProxyUserProperty)) {
-          dsConnInfo.put(JDBCEngineConnConstant.JDBC_PROXY_USER_PROPERTY, kerberosProxyUserProperty.toString)
+          dsConnInfo.put(
+            JDBCEngineConnConstant.JDBC_PROXY_USER_PROPERTY,
+            kerberosProxyUserProperty.toString
+          )
         }
-      case _ => throw JDBCParamsIllegalException(s"Unsupported authentication type ${authType.getAuthType}")
+      case _ =>
+        throw JDBCParamsIllegalException(s"Unsupported authentication type ${authType.getAuthType}")
     }
     dsConnInfo.put(JDBCEngineConnConstant.JDBC_AUTH_TYPE, authType.getAuthType)
     dsConnInfo
@@ -176,6 +217,7 @@ object JDBCMultiDatasourceParser extends Logging {
   }
 
   private def strObjIsBlank(str: Object): Boolean = {
-    ! strObjIsNotBlank(str)
+    !strObjIsNotBlank(str)
   }
+
 }

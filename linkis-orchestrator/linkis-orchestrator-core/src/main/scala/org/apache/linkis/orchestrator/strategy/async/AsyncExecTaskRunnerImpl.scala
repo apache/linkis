@@ -5,16 +5,16 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.orchestrator.strategy.async
 
 import org.apache.linkis.common.utils.Logging
@@ -22,20 +22,30 @@ import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
 import org.apache.linkis.orchestrator.conf.OrchestratorConfiguration
 import org.apache.linkis.orchestrator.core.ResultSet
 import org.apache.linkis.orchestrator.exception.OrchestratorErrorCodeSummary
-import org.apache.linkis.orchestrator.execution.impl.{DefaultFailedTaskResponse, DefaultResultSetTaskResponse}
 import org.apache.linkis.orchestrator.execution.{ArrayResultSetTaskResponse, _}
+import org.apache.linkis.orchestrator.execution.impl.{
+  DefaultFailedTaskResponse,
+  DefaultResultSetTaskResponse
+}
+import org.apache.linkis.orchestrator.listener.{
+  OrchestratorListenerBusContext,
+  OrchestratorSyncListenerBus
+}
 import org.apache.linkis.orchestrator.listener.execution.ExecTaskRunnerCompletedEvent
-import org.apache.linkis.orchestrator.listener.{OrchestratorListenerBusContext, OrchestratorSyncListenerBus}
 import org.apache.linkis.orchestrator.plans.physical.ExecTask
-import org.apache.linkis.orchestrator.strategy.{ExecTaskStatusInfo, ResultSetExecTask, StatusInfoExecTask}
+import org.apache.linkis.orchestrator.strategy.{
+  ExecTaskStatusInfo,
+  ResultSetExecTask,
+  StatusInfoExecTask
+}
 
 import scala.collection.mutable.ArrayBuffer
 
 /**
-  *
-  *
-  */
-class AsyncExecTaskRunnerImpl(override val task: ExecTask) extends AsyncExecTaskRunner with Logging {
+ */
+class AsyncExecTaskRunnerImpl(override val task: ExecTask)
+    extends AsyncExecTaskRunner
+    with Logging {
 
   private var status: ExecutionNodeStatus = ExecutionNodeStatus.Inited
 
@@ -43,9 +53,8 @@ class AsyncExecTaskRunnerImpl(override val task: ExecTask) extends AsyncExecTask
 
   private val resultSets = new ArrayBuffer[ResultSet]()
 
-  //private val syncListenerBus: OrchestratorSyncListenerBus = OrchestratorListenerBusContext.getListenerBusContext().getOrchestratorSyncListenerBus
+  // private val syncListenerBus: OrchestratorSyncListenerBus = OrchestratorListenerBusContext.getListenerBusContext().getOrchestratorSyncListenerBus
   private var resultSize: Int = -1
-
 
   override def getTaskResponse: TaskResponse = taskResponse
 
@@ -77,16 +86,22 @@ class AsyncExecTaskRunnerImpl(override val task: ExecTask) extends AsyncExecTask
   } catch {
     case e: Throwable =>
       logger.error(s"Failed to execute task ${task.getIDInfo}", e)
-      this.taskResponse = new DefaultFailedTaskResponse(e.getMessage, OrchestratorErrorCodeSummary.EXECUTION_ERROR_CODE, e)
+      this.taskResponse = new DefaultFailedTaskResponse(
+        e.getMessage,
+        OrchestratorErrorCodeSummary.EXECUTION_ERROR_CODE,
+        e
+      )
       transientStatus(ExecutionNodeStatus.Failed)
   }
 
   override def transientStatus(status: ExecutionNodeStatus): Unit = {
     if (status.ordinal() < this.status.ordinal() && status != ExecutionNodeStatus.WaitForRetry) {
-      logger.info(s"Task${task.getIDInfo()} status flip error! Cause: Failed to flip from ${this.status} to $status.")
+      logger.info(
+        s"Task${task.getIDInfo()} status flip error! Cause: Failed to flip from ${this.status} to $status."
+      )
       return
     }
-      //throw new OrchestratorErrorException(OrchestratorErrorCodeSummary.EXECUTION_FOR_EXECUTION_ERROR_CODE, s"Task status flip error! Cause: Failed to flip from ${this.status} to $status.") //抛异常
+    // throw new OrchestratorErrorException(OrchestratorErrorCodeSummary.EXECUTION_FOR_EXECUTION_ERROR_CODE, s"Task status flip error! Cause: Failed to flip from ${this.status} to $status.") //抛异常
     logger.info(s"${task.getIDInfo} change status ${this.status} => $status.")
     beforeStatusChanged(this.status, status)
     val oldStatus = this.status
@@ -123,23 +138,30 @@ class AsyncExecTaskRunnerImpl(override val task: ExecTask) extends AsyncExecTask
           asyncExecTask.clear(ExecutionNodeStatus.isSucceed(toStatus))
         case _ =>
       }
-      //to notify taskManager clear running tasks
+      // to notify taskManager clear running tasks
       task.getPhysicalContext.broadcastSyncEvent(ExecTaskRunnerCompletedEvent(this))
     }
   }
 
   /**
-    *
-    * @param fromStatus
-    * @param toStatus
-    */
+   * @param fromStatus
+   * @param toStatus
+   */
   def beforeStatusChanged(fromStatus: ExecutionNodeStatus, toStatus: ExecutionNodeStatus): Unit = {
     task match {
       case asyncExecTask: AsyncExecTask =>
-        if (ExecutionNodeStatus.isSucceed(toStatus) && ( resultSize < 0 || resultSets.size < resultSize)) {
+        if (
+            ExecutionNodeStatus.isSucceed(
+              toStatus
+            ) && (resultSize < 0 || resultSets.size < resultSize)
+        ) {
           val startWaitForPersistedTime = System.currentTimeMillis
           resultSets synchronized {
-            while (( resultSize < 0 ||  resultSets.size < resultSize) && !isWaitForPersistedTimeout(startWaitForPersistedTime))
+            while (
+                (resultSize < 0 || resultSets.size < resultSize) && !isWaitForPersistedTimeout(
+                  startWaitForPersistedTime
+                )
+            )
               resultSets.wait(1000)
           }
           // if (isWaitForPersistedTimeout(startWaitForPersistedTime)) onFailure("persist resultSets timeout!", new EntranceErrorException(20305, "persist resultSets timeout!"))
@@ -150,7 +172,6 @@ class AsyncExecTaskRunnerImpl(override val task: ExecTask) extends AsyncExecTask
 
   protected def isWaitForPersistedTimeout(startWaitForPersistedTime: Long): Boolean =
     System.currentTimeMillis - startWaitForPersistedTime >= OrchestratorConfiguration.TASK_MAX_PERSIST_WAIT_TIME.getValue.toLong
-
 
   override def interrupt(): Unit = {
     markFailed("Job be cancelled", null)
@@ -169,12 +190,19 @@ class AsyncExecTaskRunnerImpl(override val task: ExecTask) extends AsyncExecTask
   }
 
   override def addResultSet(resultSet: ResultSet): Unit = {
-    logger.info(s"BaseExecTaskRunner ${task.getIDInfo()} get result, now size is ${resultSets.size}")
+    logger.info(
+      s"BaseExecTaskRunner ${task.getIDInfo()} get result, now size is ${resultSets.size}"
+    )
     resultSets += resultSet
     resultSets.notify()
   }
 
   override def markFailed(errorMsg: String, cause: Throwable): Unit = {
-    this.taskResponse = new DefaultFailedTaskResponse(errorMsg, OrchestratorErrorCodeSummary.EXECUTION_ERROR_CODE, cause)
+    this.taskResponse = new DefaultFailedTaskResponse(
+      errorMsg,
+      OrchestratorErrorCodeSummary.EXECUTION_ERROR_CODE,
+      cause
+    )
   }
+
 }

@@ -29,111 +29,108 @@ import java.text.MessageFormat;
  * effect other than displaying default value
  */
 public abstract class BaseOption<T> implements CmdOption<T>, Cloneable {
-    private final String keyPrefix;
-    private final String key;
-    private final String description;
-    private final boolean isOptional;
-    private final AbstractStringConverter<T> converter;
-    private final T defaultValue;
-    protected boolean hasVal = false;
+  private final String keyPrefix;
+  private final String key;
+  private final String description;
+  private final boolean isOptional;
+  private final AbstractStringConverter<T> converter;
+  private final T defaultValue;
+  protected boolean hasVal = false;
 
-    protected String rawVal = null;
-    protected T value = null;
+  protected String rawVal = null;
+  protected T value = null;
 
-    protected BaseOption(
-            final String keyPrefix,
-            final String key,
-            final String description,
-            final boolean isOptional,
-            final T defaultValue,
-            final AbstractStringConverter<T> converter) {
-        this.keyPrefix = keyPrefix;
-        this.key = key;
-        this.description = description;
-        this.defaultValue = defaultValue;
-        this.converter = converter;
-        this.isOptional = isOptional;
+  protected BaseOption(
+      final String keyPrefix,
+      final String key,
+      final String description,
+      final boolean isOptional,
+      final T defaultValue,
+      final AbstractStringConverter<T> converter) {
+    this.keyPrefix = keyPrefix;
+    this.key = key;
+    this.description = description;
+    this.defaultValue = defaultValue;
+    this.converter = converter;
+    this.isOptional = isOptional;
+  }
+
+  /**
+   * Get StdOption paramName
+   *
+   * @return StdOption paramName
+   */
+  public String getKeyPrefix() {
+    return keyPrefix;
+  }
+
+  public String getKey() {
+    return key;
+  }
+
+  @Override
+  public abstract String getParamName();
+
+  public String getDescription() {
+    return description;
+  }
+
+  public void setValueWithStr(String value) throws IllegalArgumentException {
+    if (StringUtils.isNotBlank(this.rawVal) && !StringUtils.equals(this.rawVal, value)) {
+      String msg =
+          MessageFormat.format(
+              "Multiple Values for same option were found! Option: \"{0}\"", this.getParamName());
+      throw new IllegalArgumentException(msg);
+    } else {
+      try {
+        this.rawVal = value;
+        this.value = converter.convert(value);
+        this.hasVal = true;
+      } catch (Throwable e) {
+        throw new IllegalArgumentException(e);
+      }
     }
+  }
 
-    /**
-     * Get StdOption paramName
-     *
-     * @return StdOption paramName
-     */
-    public String getKeyPrefix() {
-        return keyPrefix;
-    }
+  public T getValue() {
+    return this.value;
+  }
 
-    public String getKey() {
-        return key;
-    }
+  public void setValue(T value) {
+    this.value = value;
+  }
 
-    @Override
-    public abstract String getParamName();
+  public void reset() {
+    value = null;
+  }
 
-    public String getDescription() {
-        return description;
-    }
+  public boolean isOptional() {
+    return isOptional;
+  }
 
-    public void setValueWithStr(String value) throws IllegalArgumentException {
-        if (StringUtils.isNotBlank(this.rawVal) && !StringUtils.equals(this.rawVal, value)) {
-            String msg =
-                    MessageFormat.format(
-                            "Multiple Values for same option were found! Option: \"{0}\"",
-                            this.getParamName());
-            throw new IllegalArgumentException(msg);
-        } else {
-            try {
-                this.rawVal = value;
-                this.value = converter.convert(value);
-                this.hasVal = true;
-            } catch (Throwable e) {
-                throw new IllegalArgumentException(e);
-            }
-        }
-    }
+  public T getDefaultValue() {
+    return defaultValue;
+  }
 
-    public T getValue() {
-        return this.value;
-    }
+  @Override
+  public String getRawVal() {
+    return rawVal;
+  }
 
-    public void setValue(T value) {
-        this.value = value;
-    }
+  public AbstractStringConverter<T> getConverter() {
+    return converter;
+  }
 
-    public void reset() {
-        value = null;
-    }
+  @Override
+  public BaseOption<T> clone() throws CloneNotSupportedException {
+    BaseOption<T> ret = (BaseOption<T>) super.clone();
+    ret.value =
+        StringUtils.isBlank(rawVal) || ret.converter == null ? null : ret.converter.convert(rawVal);
+    return ret;
+  }
 
-    public boolean isOptional() {
-        return isOptional;
-    }
-
-    public T getDefaultValue() {
-        return defaultValue;
-    }
-
-    @Override
-    public String getRawVal() {
-        return rawVal;
-    }
-
-    public AbstractStringConverter<T> getConverter() {
-        return converter;
-    }
-
-    @Override
-    public BaseOption<T> clone() throws CloneNotSupportedException {
-        BaseOption<T> ret = (BaseOption<T>) super.clone();
-        ret.value =
-                StringUtils.isBlank(rawVal) || ret.converter == null
-                        ? null
-                        : ret.converter.convert(rawVal);
-        return ret;
-    }
-
-    @Override
-    public boolean hasVal() {
-        return hasVal;
-    }
+  @Override
+  public boolean hasVal() {
+    return hasVal;
+  }
 }

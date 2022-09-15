@@ -27,69 +27,69 @@ import java.util.List;
 @Mapper
 public interface BmlProjectDao {
 
-    @Insert(
-            "insert ignore into linkis_ps_bml_project(name, `system`, source, description, creator, enabled, create_time) "
-                    + "values(#{bmlProject.name}, #{bmlProject.system}, #{bmlProject.source}, #{bmlProject.description}, "
-                    + "#{bmlProject.creator}, #{bmlProject.enabled}, #{bmlProject.createTime})")
-    @Options(useGeneratedKeys = true, keyProperty = "bmlProject.id", keyColumn = "id")
-    void createNewProject(@Param("bmlProject") BmlProject bmlProject);
+  @Insert(
+      "insert ignore into linkis_ps_bml_project(name, `system`, source, description, creator, enabled, create_time) "
+          + "values(#{bmlProject.name}, #{bmlProject.system}, #{bmlProject.source}, #{bmlProject.description}, "
+          + "#{bmlProject.creator}, #{bmlProject.enabled}, #{bmlProject.createTime})")
+  @Options(useGeneratedKeys = true, keyProperty = "bmlProject.id", keyColumn = "id")
+  void createNewProject(@Param("bmlProject") BmlProject bmlProject);
 
-    @Select("select * from linkis_ps_bml_project where name = #{projectName}")
-    @Results(
-            value = {
-                @Result(property = "id", column = "id"),
-                @Result(property = "name", column = "name"),
-                @Result(property = "createTime", column = "create_time")
-            })
-    BmlProject getBmlProject(@Param("projectName") String projectName);
+  @Select("select * from linkis_ps_bml_project where name = #{projectName}")
+  @Results(
+      value = {
+        @Result(property = "id", column = "id"),
+        @Result(property = "name", column = "name"),
+        @Result(property = "createTime", column = "create_time")
+      })
+  BmlProject getBmlProject(@Param("projectName") String projectName);
 
-    @Insert({
-        "<script>",
-        "insert ignore into  linkis_ps_bml_project_user(project_id, username, priv, creator, create_time)",
-        "values",
-        "<foreach collection='usernames' item='username' open='(' separator='),(' close=')'>",
-        "#{projectId}, #{username}, #{priv}, #{creator}, #{createTime}",
-        "</foreach>",
-        "</script>"
-    })
-    void setProjectPriv(
-            @Param("projectId") Integer projectId,
-            @Param("usernames") List<String> usernames,
-            @Param("priv") int priv,
-            @Param("creator") String creator,
-            @Param("createTime") Date createTime);
+  @Insert({
+    "<script>",
+    "insert ignore into  linkis_ps_bml_project_user(project_id, username, priv, creator, create_time)",
+    "values",
+    "<foreach collection='usernames' item='username' open='(' separator='),(' close=')'>",
+    "#{projectId}, #{username}, #{priv}, #{creator}, #{createTime}",
+    "</foreach>",
+    "</script>"
+  })
+  void setProjectPriv(
+      @Param("projectId") Integer projectId,
+      @Param("usernames") List<String> usernames,
+      @Param("priv") int priv,
+      @Param("creator") String creator,
+      @Param("createTime") Date createTime);
 
-    @Select(
-            "select a.priv from linkis_ps_bml_project_user a join linkis_ps_bml_project b on "
-                    + "a.project_id = b.id and b.name = #{projectName} and a.username = #{username}")
-    Integer getPrivInProject(
-            @Param("projectName") String projectName, @Param("username") String username);
+  @Select(
+      "select a.priv from linkis_ps_bml_project_user a join linkis_ps_bml_project b on "
+          + "a.project_id = b.id and b.name = #{projectName} and a.username = #{username}")
+  Integer getPrivInProject(
+      @Param("projectName") String projectName, @Param("username") String username);
 
-    @Insert(
-            "insert ignore into linkis_ps_bml_project_resource(project_id, resource_id) "
-                    + "values(#{projectId}, #{resourceId})")
-    // @Options(useGeneratedKeys = true, keyProperty = "bmlProject.id", keyColumn = "id")
-    void addProjectResource(@Param("projectId") Integer id, @Param("resourceId") String resourceId);
+  @Insert(
+      "insert ignore into linkis_ps_bml_project_resource(project_id, resource_id) "
+          + "values(#{projectId}, #{resourceId})")
+  // @Options(useGeneratedKeys = true, keyProperty = "bmlProject.id", keyColumn = "id")
+  void addProjectResource(@Param("projectId") Integer id, @Param("resourceId") String resourceId);
 
-    @Select(
-            "select a.name from linkis_ps_bml_project a join "
-                    + " linkis_ps_bml_project_resource b on b.resource_id = #{resourceId} and a.id = b.project_id")
-    String getProjectNameByResourceId(@Param("resourceId") String resourceId);
+  @Select(
+      "select a.name from linkis_ps_bml_project a join "
+          + " linkis_ps_bml_project_resource b on b.resource_id = #{resourceId} and a.id = b.project_id")
+  String getProjectNameByResourceId(@Param("resourceId") String resourceId);
 
-    @Select("select id from linkis_ps_bml_project where name = #{projectName}")
-    Integer getProjectIdByName(@Param("projectName") String projectName);
+  @Select("select id from linkis_ps_bml_project where name = #{projectName}")
+  Integer getProjectIdByName(@Param("projectName") String projectName);
 
-    @Insert(
-            "insert ignore into linkis_ps_bml_project_resource(project_id, resource_id) "
-                    + "values(#{projectId}, #{resourceId})")
-    void attachResourceAndProject(
-            @Param("projectId") Integer projectId, @Param("resourceId") String resourceId);
+  @Insert(
+      "insert ignore into linkis_ps_bml_project_resource(project_id, resource_id) "
+          + "values(#{projectId}, #{resourceId})")
+  void attachResourceAndProject(
+      @Param("projectId") Integer projectId, @Param("resourceId") String resourceId);
 
-    @Select(
-            "select count(*) from linkis_ps_bml_project_resource where project_id = #{resourceId} and resource_id = #{resourceId}")
-    Integer checkIfExists(
-            @Param("projectId") Integer projectId, @Param("resourceId") String resourceId);
+  @Select(
+      "select count(*) from linkis_ps_bml_project_resource where project_id = #{resourceId} and resource_id = #{resourceId}")
+  Integer checkIfExists(
+      @Param("projectId") Integer projectId, @Param("resourceId") String resourceId);
 
-    @Delete("delete from linkis_ps_bml_project_user where project_id = #{projectId}")
-    void deleteAllPriv(@Param("projectId") Integer projectId);
+  @Delete("delete from linkis_ps_bml_project_user where project_id = #{projectId}")
+  void deleteAllPriv(@Param("projectId") Integer projectId);
 }

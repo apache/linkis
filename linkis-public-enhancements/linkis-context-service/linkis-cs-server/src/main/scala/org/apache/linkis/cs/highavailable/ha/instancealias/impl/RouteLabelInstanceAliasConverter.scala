@@ -5,19 +5,18 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.cs.highavailable.ha.instancealias.impl
 
-import com.google.common.cache.CacheBuilder
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.cs.common.exception.CSErrorException
@@ -30,14 +29,19 @@ import org.apache.linkis.manager.label.constant.LabelKeyConstant
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.route.RouteLabel
 import org.apache.linkis.rpc.Sender
+
 import org.apache.commons.lang3.StringUtils
+
 import org.springframework.stereotype.Component
+
+import javax.annotation.PostConstruct
 
 import java.util
 import java.util.concurrent.TimeUnit
-import javax.annotation.PostConstruct
+
 import scala.collection.JavaConverters.asScalaBufferConverter
 
+import com.google.common.cache.CacheBuilder
 
 @Component
 class RouteLabelInstanceAliasConverter extends InstanceAliasConverter with Logging {
@@ -48,13 +52,22 @@ class RouteLabelInstanceAliasConverter extends InstanceAliasConverter with Loggi
 
   private val thisInstance = Sender.getThisServiceInstance
 
-  private val insAliasCache = CacheBuilder.newBuilder()
+  private val insAliasCache = CacheBuilder
+    .newBuilder()
     .maximumSize(MAX_ID_INSTANCE_CACHE_SUM)
-    .expireAfterWrite(ContextHighAvailableConf.CS_ALIAS_CACHE_EXPIRE_TIMEMILLS.getValue, TimeUnit.MILLISECONDS)
+    .expireAfterWrite(
+      ContextHighAvailableConf.CS_ALIAS_CACHE_EXPIRE_TIMEMILLS.getValue,
+      TimeUnit.MILLISECONDS
+    )
     .build[String, String]()
-  private val aliasInsCache = CacheBuilder.newBuilder()
+
+  private val aliasInsCache = CacheBuilder
+    .newBuilder()
     .maximumSize(MAX_ID_INSTANCE_CACHE_SUM)
-    .expireAfterWrite(ContextHighAvailableConf.CS_ALIAS_CACHE_EXPIRE_TIMEMILLS.getValue, TimeUnit.MILLISECONDS)
+    .expireAfterWrite(
+      ContextHighAvailableConf.CS_ALIAS_CACHE_EXPIRE_TIMEMILLS.getValue,
+      TimeUnit.MILLISECONDS
+    )
     .build[String, String]()
 
   @PostConstruct
@@ -70,22 +83,31 @@ class RouteLabelInstanceAliasConverter extends InstanceAliasConverter with Loggi
       }
       var labels: util.List[Label[_]] = null
       Utils.tryCatch {
-        labels = instanceLabelClient.getLabelFromInstance(ServiceInstance(thisInstance.getApplicationName, instance))
-      } {
-        case e: Exception =>
-          val msg = s"GetLabelFromInstance for instance : ${instance} failed, ${e.getMessage}"
-          logger.error(msg, e)
-          throw new CSErrorException(CSErrorCode.CS_RPC_ERROR, msg, e)
+        labels = instanceLabelClient.getLabelFromInstance(
+          ServiceInstance(thisInstance.getApplicationName, instance)
+        )
+      } { case e: Exception =>
+        val msg = s"GetLabelFromInstance for instance : ${instance} failed, ${e.getMessage}"
+        logger.error(msg, e)
+        throw new CSErrorException(CSErrorCode.CS_RPC_ERROR, msg, e)
       }
       if (null != labels && labels.size() > 0) {
-        val routeLabels = labels.asScala.filter(_ != null).filter(l => LabelKeyConstant.ROUTE_KEY.equals(l.getLabelKey) && l.getStringValue.startsWith(ContextHighAvailableConf.CONTEXTSERVICE_PREFIX.getValue))
+        val routeLabels = labels.asScala
+          .filter(_ != null)
+          .filter(l =>
+            LabelKeyConstant.ROUTE_KEY.equals(l.getLabelKey) && l.getStringValue
+              .startsWith(ContextHighAvailableConf.CONTEXTSERVICE_PREFIX.getValue)
+          )
         if (routeLabels.size != 1) {
-          logger.warn(s"Instance ${instance} has no or more than one route label : ${routeLabels.map(_.getStringValue)}")
+          logger.warn(
+            s"Instance ${instance} has no or more than one route label : ${routeLabels.map(_.getStringValue)}"
+          )
         }
         if (routeLabels.size >= 1) {
           val alias = routeLabels.head.getStringValue
+          logger.info(s"alias for instance : ${instance} is $alias")
           insAliasCache.put(instance, alias)
-          routeLabels.head.getStringValue
+          alias
         } else {
           val msg = s"No routeLabel got for instance : ${instance}"
           logger.error(msg)
@@ -107,17 +129,17 @@ class RouteLabelInstanceAliasConverter extends InstanceAliasConverter with Loggi
       if (StringUtils.isNotBlank(instance)) {
         return instance
       }
-      val routeLabel = LabelBuilderFactoryContext.getLabelBuilderFactory.createLabel[RouteLabel](LabelKeyConstant.ROUTE_KEY, alias)
+      val routeLabel = LabelBuilderFactoryContext.getLabelBuilderFactory
+        .createLabel[RouteLabel](LabelKeyConstant.ROUTE_KEY, alias)
       val labels = new util.ArrayList[Label[_]]
       labels.add(routeLabel)
       var insList: util.List[ServiceInstance] = null
       Utils.tryCatch {
         insList = instanceLabelClient.getInstanceFromLabel(labels)
-      } {
-        case e: Exception =>
-          val msg = s"GetInsFromLabel rpc failed : ${e.getMessage}"
-          logger.error(msg, e)
-          throw new CSErrorException(CSErrorCode.CS_RPC_ERROR, msg, e)
+      } { case e: Exception =>
+        val msg = s"GetInsFromLabel rpc failed : ${e.getMessage}"
+        logger.error(msg, e)
+        throw new CSErrorException(CSErrorCode.CS_RPC_ERROR, msg, e)
       }
       if (null != insList) {
         if (insList.size() >= 1) {

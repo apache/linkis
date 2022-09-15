@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,9 +23,9 @@ import org.apache.linkis.engineconn.common.engineconn.EngineConn
 import org.apache.linkis.engineconn.computation.executor.creation.ComputationSingleExecutorEngineConnFactory
 import org.apache.linkis.engineconn.executor.entity.LabelExecutor
 import org.apache.linkis.engineplugin.openlookeng.executor.OpenLooKengEngineConnExecutor
+import org.apache.linkis.manager.label.entity.engine.{EngineType, RunType}
 import org.apache.linkis.manager.label.entity.engine.EngineType.EngineType
 import org.apache.linkis.manager.label.entity.engine.RunType.RunType
-import org.apache.linkis.manager.label.entity.engine.{EngineType, RunType}
 
 class OpenLooKengEngineConnFactory extends ComputationSingleExecutorEngineConnFactory with Logging {
 
@@ -33,7 +33,12 @@ class OpenLooKengEngineConnFactory extends ComputationSingleExecutorEngineConnFa
 
   override protected def getRunType: RunType = RunType.SQL
 
-  override def newExecutor(id: Int, engineCreationContext: EngineCreationContext, engineConn: EngineConn): LabelExecutor = {
+  override def newExecutor(
+      id: Int,
+      engineCreationContext: EngineCreationContext,
+      engineConn: EngineConn
+  ): LabelExecutor = {
     new OpenLooKengEngineConnExecutor(100, id)
   }
+
 }

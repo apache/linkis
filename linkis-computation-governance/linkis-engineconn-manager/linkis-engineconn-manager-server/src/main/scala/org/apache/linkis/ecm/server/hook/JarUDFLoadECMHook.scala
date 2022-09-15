@@ -5,18 +5,18 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.ecm.server.hook
-import org.apache.commons.lang3.StringUtils
+
 import org.apache.linkis.common.io.FsPath
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.ecm.core.engineconn.EngineConn
@@ -25,15 +25,21 @@ import org.apache.linkis.ecm.server.service.impl.DefaultLocalDirsHandleService
 import org.apache.linkis.ecm.server.util.ECMUtils
 import org.apache.linkis.manager.common.protocol.bml.BmlResource
 import org.apache.linkis.manager.engineplugin.common.launch.entity.EngineConnLaunchRequest
-import org.apache.linkis.manager.engineplugin.common.launch.process.{Environment, ProcessEngineConnLaunchRequest}
+import org.apache.linkis.manager.engineplugin.common.launch.process.{
+  Environment,
+  ProcessEngineConnLaunchRequest
+}
 import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.storage.FSFactory
 import org.apache.linkis.storage.fs.FileSystem
 import org.apache.linkis.storage.utils.{FileSystemUtils, StorageUtils}
 import org.apache.linkis.udf.UDFClient
 
+import org.apache.commons.lang3.StringUtils
+
 import java.io.File
 import java.nio.file.Paths
+
 import scala.collection.mutable
 
 class JarUDFLoadECMHook extends ECMHook with Logging {
@@ -66,7 +72,8 @@ class JarUDFLoadECMHook extends ECMHook with Logging {
         udfInfos.foreach { udfInfo =>
           val resourceId = udfInfo.getBmlResourceId
           val version = udfInfo.getBmlResourceVersion
-          val bmlResourceDir = StorageUtils.FILE_SCHEMA + Paths.get(pubDir, resourceId, version).toFile.getPath
+          val bmlResourceDir =
+            StorageUtils.FILE_SCHEMA + Paths.get(pubDir, resourceId, version).toFile.getPath
           val fsPath = new FsPath(bmlResourceDir)
           val bmlResource: BmlResource = new BmlResource
           bmlResource.setResourceId(resourceId)
@@ -81,12 +88,21 @@ class JarUDFLoadECMHook extends ECMHook with Logging {
             fileNameSet += bmlResource.getFileName
             if (!fs.exists(fsPath)) resourceId.intern().synchronized {
               if (!fs.exists(fsPath)) {
-                ECMUtils.downLoadBmlResourceToLocal(bmlResource, if (udfInfo.getCreateUser.equals("bdp")) "hadoop" else udfInfo.getCreateUser, fsPath.getPath)(fs)
+                ECMUtils.downLoadBmlResourceToLocal(
+                  bmlResource,
+                  if (udfInfo.getCreateUser.equals("bdp")) "hadoop" else udfInfo.getCreateUser,
+                  fsPath.getPath
+                )(fs)
                 logger.info(s"Finished to download bml resource ${fsPath.getPath}")
               }
             }
-            conn.getEngineConnLaunchRunner.getEngineConnLaunch.getEngineConnManagerEnv().linkDirs.
-              put(fsPath.getPath + File.separator + bmlResource.getFileName, udfDir + File.separator + bmlResource.getFileName)
+            conn.getEngineConnLaunchRunner.getEngineConnLaunch
+              .getEngineConnManagerEnv()
+              .linkDirs
+              .put(
+                fsPath.getPath + File.separator + bmlResource.getFileName,
+                udfDir + File.separator + bmlResource.getFileName
+              )
           }
         }
         //        LaunchConstants.addPathToClassPath(pel.environment, udfDir + File.separator + "*")
@@ -95,9 +111,7 @@ class JarUDFLoadECMHook extends ECMHook with Logging {
     }
   }
 
-  override def afterLaunch(conn: EngineConn): Unit = {
-
-  }
+  override def afterLaunch(conn: EngineConn): Unit = {}
 
   override def getName: String = "JarUDFLoadECMHook"
 }

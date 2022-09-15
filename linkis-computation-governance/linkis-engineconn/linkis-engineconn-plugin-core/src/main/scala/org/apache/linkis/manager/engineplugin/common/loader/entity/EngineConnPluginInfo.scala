@@ -5,31 +5,32 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.manager.engineplugin.common.loader.entity
 
 import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel
 
-
-case class EngineConnPluginInfo(typeLabel: EngineTypeLabel,
-                                var resourceUpdateTime: Long = -1L,
-                                var resourceId: String,
-                                var resourceVersion: String,
-                                var classLoader: ClassLoader){
+case class EngineConnPluginInfo(
+    typeLabel: EngineTypeLabel,
+    var resourceUpdateTime: Long = -1L,
+    var resourceId: String,
+    var resourceVersion: String,
+    var classLoader: ClassLoader
+) {
 
   override def toString: String = {
-    if (Option(typeLabel).isDefined){
+    if (Option(typeLabel).isDefined) {
       typeLabel.toString
-    }else{
+    } else {
       null
     }
   }
@@ -40,4 +41,7 @@ case class EngineConnPluginInfo(typeLabel: EngineTypeLabel,
       case _ => super.equals(obj)
     }
   }
+
+  override def hashCode(): Int = super.hashCode()
+
 }

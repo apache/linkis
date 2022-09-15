@@ -5,21 +5,24 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.entrance.cs
 
-import java.util
 import org.apache.linkis.common.utils.Logging
-import org.apache.linkis.cs.client.service.{CSNodeServiceImpl, CSVariableService, LinkisJobDataServiceImpl}
+import org.apache.linkis.cs.client.service.{
+  CSNodeServiceImpl,
+  CSVariableService,
+  LinkisJobDataServiceImpl
+}
 import org.apache.linkis.cs.client.utils.{ContextServiceUtils, SerializeHelper}
 import org.apache.linkis.cs.common.entity.`object`.LinkisVariable
 import org.apache.linkis.cs.common.entity.data.LinkisJobData
@@ -35,13 +38,14 @@ import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.protocol.utils.TaskUtils
 import org.apache.linkis.scheduler.queue.Job
+
 import org.apache.commons.lang3.StringUtils
+
+import java.util
 
 import scala.collection.JavaConversions._
 
-
 object CSEntranceHelper extends Logging {
-
 
   def getContextInfo(params: util.Map[String, Any]): (String, String) = {
 
@@ -69,18 +73,18 @@ object CSEntranceHelper extends Logging {
     }
   }
 
-
   /**
-    * register job id to cs
-    *
-    * @param job
-    */
+   * register job id to cs
+   *
+   * @param job
+   */
   def registerCSRSData(job: Job): Unit = {
     job match {
       case entranceJob: EntranceJob => {
         val (contextIDValueStr, nodeNameStr) = getContextInfo(entranceJob.getParams)
         logger.info(s"registerCSRSData: nodeName:$nodeNameStr")
-        if (StringUtils.isBlank(contextIDValueStr) || StringUtils.isBlank(nodeNameStr)) return null
+        if (StringUtils.isBlank(contextIDValueStr) || StringUtils.isBlank(nodeNameStr))
+          return null
 
         val contextKey = new CommonContextKey
         contextKey.setContextScope(ContextScope.PUBLIC)
@@ -90,7 +94,13 @@ object CSEntranceHelper extends Logging {
           case jobRequest: JobRequest =>
             val data = new LinkisJobData
             data.setJobID(jobRequest.getId)
-            LinkisJobDataServiceImpl.getInstance().putLinkisJobData(contextIDValueStr, SerializeHelper.serializeContextKey(contextKey), data)
+            LinkisJobDataServiceImpl
+              .getInstance()
+              .putLinkisJobData(
+                contextIDValueStr,
+                SerializeHelper.serializeContextKey(contextKey),
+                data
+              )
             logger.info(s"(${contextKey.getKey} put ${jobRequest.getId} of jobId to cs)")
           case _ =>
         }
@@ -101,14 +111,16 @@ object CSEntranceHelper extends Logging {
   }
 
   /**
-    * initNodeCSInfo
-    *
-    * @param requestPersistTask
-    * @return
-    */
+   * initNodeCSInfo
+   *
+   * @param requestPersistTask
+   * @return
+   */
   def initNodeCSInfo(requestPersistTask: JobRequest): Unit = {
 
-    val (contextIDValueStr, nodeNameStr) = getContextInfo(requestPersistTask.getParams.asInstanceOf[util.Map[String, Any]])
+    val (contextIDValueStr, nodeNameStr) = getContextInfo(
+      requestPersistTask.getParams.asInstanceOf[util.Map[String, Any]]
+    )
 
     if (StringUtils.isNotBlank(contextIDValueStr) && StringUtils.isNotBlank(nodeNameStr)) {
       logger.info(s"init node($nodeNameStr) cs info")
@@ -116,30 +128,36 @@ object CSEntranceHelper extends Logging {
     }
   }
 
-
   /**
-    * reset creator by contextID information
-    * 1. Not set If contextID does not exists
-    * 2. If env of contextID are dev set  nodeexecution
-    * 3. If env of contextID are prod set scheduler
-    *
-    * @param requestPersistTask
-    */
+   * reset creator by contextID information
+   *   1. Not set If contextID does not exists 2. If env of contextID are dev set nodeexecution 3.
+   *      If env of contextID are prod set scheduler
+   *
+   * @param requestPersistTask
+   */
   def resetCreator(requestPersistTask: JobRequest): Unit = {
 
-    val (contextIDValueStr, nodeNameStr) = getContextInfo(requestPersistTask.getParams.asInstanceOf[util.Map[String, Any]])
+    val (contextIDValueStr, nodeNameStr) = getContextInfo(
+      requestPersistTask.getParams.asInstanceOf[util.Map[String, Any]]
+    )
 
     if (StringUtils.isNotBlank(contextIDValueStr) && StringUtils.isNotBlank(nodeNameStr)) {
       val userCreatorLabel = LabelUtil.getUserCreatorLabel(requestPersistTask.getLabels)
       val newLabels = new util.ArrayList[Label[_]]
-      requestPersistTask.getLabels.filterNot(_.isInstanceOf[UserCreatorLabel]).foreach(newLabels.add)
+      requestPersistTask.getLabels
+        .filterNot(_.isInstanceOf[UserCreatorLabel])
+        .foreach(newLabels.add)
       SerializeHelper.deserializeContextID(contextIDValueStr) match {
         case contextID: LinkisWorkflowContextID =>
           if (CSCommonUtils.CONTEXT_ENV_PROD.equalsIgnoreCase(contextID.getEnv)) {
-            logger.info(s"reset creator from ${userCreatorLabel.getCreator} to " + EntranceConfiguration.SCHEDULER_CREATOR.getValue)
+            logger.info(
+              s"reset creator from ${userCreatorLabel.getCreator} to " + EntranceConfiguration.SCHEDULER_CREATOR.getValue
+            )
             userCreatorLabel.setCreator(EntranceConfiguration.SCHEDULER_CREATOR.getValue)
           } else {
-            logger.info(s"reset creator from ${userCreatorLabel.getCreator} to " + EntranceConfiguration.FLOW_EXECUTION_CREATOR.getValue)
+            logger.info(
+              s"reset creator from ${userCreatorLabel.getCreator} to " + EntranceConfiguration.FLOW_EXECUTION_CREATOR.getValue
+            )
             userCreatorLabel.setCreator(EntranceConfiguration.FLOW_EXECUTION_CREATOR.getValue)
           }
         case _ =>
@@ -149,37 +167,44 @@ object CSEntranceHelper extends Logging {
     }
   }
 
-
   /**
-    * From cs to get variable
-    *
-    * @param requestPersistTask
-    * @return
-    */
+   * From cs to get variable
+   *
+   * @param requestPersistTask
+   * @return
+   */
   def addCSVariable(requestPersistTask: JobRequest): Unit = {
     val variableMap = new util.HashMap[String, Any]()
-    val (contextIDValueStr, nodeNameStr) = getContextInfo(requestPersistTask.getParams.asInstanceOf[util.Map[String, Any]])
+    val (contextIDValueStr, nodeNameStr) = getContextInfo(
+      requestPersistTask.getParams.asInstanceOf[util.Map[String, Any]]
+    )
 
     if (StringUtils.isNotBlank(contextIDValueStr)) {
       logger.info(s"parse variable nodeName:$nodeNameStr")
-      val linkisVariableList: util.List[LinkisVariable] = CSVariableService.getInstance().getUpstreamVariables(contextIDValueStr, nodeNameStr);
+      val linkisVariableList: util.List[LinkisVariable] =
+        CSVariableService.getInstance().getUpstreamVariables(contextIDValueStr, nodeNameStr);
       if (null != linkisVariableList) {
         linkisVariableList.foreach { linkisVariable =>
           variableMap.put(linkisVariable.getKey, linkisVariable.getValue)
         }
       }
-      if(variableMap.nonEmpty) {
+      if (variableMap.nonEmpty) {
         // 1.cs priority is low, the same ones are not added
-        val varMap = TaskUtils.getVariableMap(requestPersistTask.getParams.asInstanceOf[util.Map[String, Any]])
+        val varMap =
+          TaskUtils.getVariableMap(requestPersistTask.getParams.asInstanceOf[util.Map[String, Any]])
         variableMap.foreach { keyAndValue =>
-          if (! varMap.containsKey(keyAndValue._1)) {
+          if (!varMap.containsKey(keyAndValue._1)) {
             varMap.put(keyAndValue._1, keyAndValue._2)
           }
         }
-        TaskUtils.addVariableMap(requestPersistTask.getParams.asInstanceOf[util.Map[String, Any]], varMap)
+        TaskUtils.addVariableMap(
+          requestPersistTask.getParams.asInstanceOf[util.Map[String, Any]],
+          varMap
+        )
       }
 
       logger.info(s"parse variable end nodeName:$nodeNameStr")
     }
   }
+
 }

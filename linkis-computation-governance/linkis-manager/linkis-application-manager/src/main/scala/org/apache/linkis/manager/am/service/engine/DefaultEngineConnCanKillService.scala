@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,7 +17,6 @@
 
 package org.apache.linkis.manager.am.service.engine
 
-import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.manager.am.conf.{AMConfiguration, EngineConnConfigurationService}
@@ -27,19 +26,25 @@ import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.service.NodeLabelService
 import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.rpc.message.annotation.Receiver
+
+import org.apache.commons.lang3.StringUtils
+
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 import java.time.{DayOfWeek, LocalDateTime}
 import java.util
+
 import scala.collection.JavaConverters._
 
 @Service
-class DefaultEngineConnCanKillService extends AbstractEngineService with EngineConnCanKillService with Logging {
+class DefaultEngineConnCanKillService
+    extends AbstractEngineService
+    with EngineConnCanKillService
+    with Logging {
 
   @Autowired
   private var engineConnConfigurationService: EngineConnConfigurationService = _
-
 
   @Autowired
   private var labelService: NodeLabelService = _
@@ -47,7 +52,11 @@ class DefaultEngineConnCanKillService extends AbstractEngineService with EngineC
   @Receiver
   override def canKillEngineConn(ecCanKillRequest: ECCanKillRequest): ECCanKillResponse = {
     val ecCanKillResponse = new ECCanKillResponse()
-    if (null == ecCanKillRequest || StringUtils.isBlank(ecCanKillRequest.getUser) || null == ecCanKillRequest.getEngineTypeLabel) {
+    if (
+        null == ecCanKillRequest || StringUtils.isBlank(
+          ecCanKillRequest.getUser
+        ) || null == ecCanKillRequest.getEngineTypeLabel
+    ) {
       ecCanKillResponse.setFlag(true)
       return ecCanKillResponse
     }
@@ -94,7 +103,10 @@ class DefaultEngineConnCanKillService extends AbstractEngineService with EngineC
 
   private def canKill(ecCanKillRequest: ECCanKillRequest): ECCanKillResponse = {
     val ecCanKillResponse = new ECCanKillResponse
-    val ecNodes = getEngineNodeManager.listEngines(ecCanKillRequest.getUser).asScala.filter(!_.getServiceInstance.equals(ecCanKillRequest.getEngineConnInstance))
+    val ecNodes = getEngineNodeManager
+      .listEngines(ecCanKillRequest.getUser)
+      .asScala
+      .filter(!_.getServiceInstance.equals(ecCanKillRequest.getEngineConnInstance))
     if (null == ecNodes || ecNodes.isEmpty) {
       ecCanKillResponse.setFlag(false)
       logger.info(s"There are no other engines, $ecCanKillRequest can not be killed")
@@ -113,7 +125,9 @@ class DefaultEngineConnCanKillService extends AbstractEngineService with EngineC
       val labels = labelService.getNodeLabels(node.getServiceInstance)
       val userCreatorLabel = LabelUtil.getUserCreatorLabel(labels)
       val engineTypeLabel = LabelUtil.getEngineTypeLabel(labels)
-      ecCanKillRequest.getUserCreatorLabel.getStringValue.equals(userCreatorLabel.getStringValue) && ecCanKillRequest.getEngineTypeLabel.getStringValue.equals(engineTypeLabel.getStringValue)
+      ecCanKillRequest.getUserCreatorLabel.getStringValue.equals(
+        userCreatorLabel.getStringValue
+      ) && ecCanKillRequest.getEngineTypeLabel.getStringValue.equals(engineTypeLabel.getStringValue)
     }
 
     if (ecWithLabels.nonEmpty) {
@@ -122,7 +136,9 @@ class DefaultEngineConnCanKillService extends AbstractEngineService with EngineC
       ecCanKillResponse.setReason("There are  engines available")
     } else {
       ecCanKillResponse.setFlag(false)
-      logger.info(s"There are no label equal engines available, $ecCanKillRequest can not be killed")
+      logger.info(
+        s"There are no label equal engines available, $ecCanKillRequest can not be killed"
+      )
       ecCanKillResponse.setReason("There are no label equal engines available")
     }
     ecCanKillResponse
@@ -139,7 +155,6 @@ class DefaultEngineConnCanKillService extends AbstractEngineService with EngineC
     }
   }
 
-
   private def isWeekend(): Boolean = {
     if (Configuration.IS_TEST_MODE.getValue) {
       return true
@@ -154,6 +169,5 @@ class DefaultEngineConnCanKillService extends AbstractEngineService with EngineC
     val date = LocalDateTime.now()
     date.getHour > AMConfiguration.EC_MAINTAIN_WORK_START_TIME && date.getHour < AMConfiguration.EC_MAINTAIN_WORK_END_TIME
   }
-
 
 }

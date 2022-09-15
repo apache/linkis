@@ -20,28 +20,28 @@ package org.apache.linkis.engineconn.acessible.executor.log;
 import java.util.List;
 
 public interface LogCache {
-    /**
-     * Store logs in the cache for subsequent delivery 将日志存储到缓存当中，用于后续的发送
-     *
-     * @param log 日志信息
-     */
-    void cacheLog(String log);
+  /**
+   * Store logs in the cache for subsequent delivery 将日志存储到缓存当中，用于后续的发送
+   *
+   * @param log 日志信息
+   */
+  void cacheLog(String log);
 
-    /**
-     * Get the log of the number of num（获取num数目的日志）
-     *
-     * @param num The number of logs you want to get（希望获取的日志的数量）
-     * @return Log List Collection（日志List集合）
-     */
-    List<String> getLog(int num);
+  /**
+   * Get the log of the number of num（获取num数目的日志）
+   *
+   * @param num The number of logs you want to get（希望获取的日志的数量）
+   * @return Log List Collection（日志List集合）
+   */
+  List<String> getLog(int num);
 
-    /**
-     * Take all the logs in the log cache for the engine to take out all the logs after performing a
-     * task 将日志缓存中的所有日志都取出，用于engine执行完一个任务之后将日志全部取出
-     *
-     * @return
-     */
-    List<String> getRemain();
+  /**
+   * Take all the logs in the log cache for the engine to take out all the logs after performing a
+   * task 将日志缓存中的所有日志都取出，用于engine执行完一个任务之后将日志全部取出
+   *
+   * @return
+   */
+  List<String> getRemain();
 
-    int size();
+  int size();
 }

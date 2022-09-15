@@ -39,6 +39,29 @@
       </value>
     </option>
   </JavaCodeStyleSettings>
+  <ScalaCodeStyleSettings>
+    <option name="importLayout">
+      <array>
+        <option value="base package imports" />
+        <option value="_______ blank line _______" />
+        <option value="org.apache.linkis" />
+        <option value="_______ blank line _______" />
+        <option value="org.apache" />
+        <option value="_______ blank line _______" />
+        <option value="org.springframework" />
+        <option value="_______ blank line _______" />
+        <option value="javax" />
+        <option value="_______ blank line _______" />
+        <option value="java" />
+        <option value="_______ blank line _______" />
+        <option value="scala" />
+        <option value="_______ blank line _______" />
+        <option value="all other imports" />
+      </array>
+    </option>
+    <option name="SCALAFMT_REFORMAT_ON_FILES_SAVE" value="true" />
+    <option name="FORMATTER" value="1" />
+  </ScalaCodeStyleSettings>
   <codeStyleSettings language="JAVA">
     <option name="RIGHT_MARGIN" value="100" />
     <indentOptions>

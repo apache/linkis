@@ -24,12 +24,12 @@ import org.apache.linkis.common.exception.ErrorException;
  * entrance 模块向 query 提交数据库查询可能出现的异常
  */
 public class QueryFailedException extends ErrorException {
-    public QueryFailedException(int errCode, String desc) {
-        super(errCode, desc);
-    }
+  public QueryFailedException(int errCode, String desc) {
+    super(errCode, desc);
+  }
 
-    public QueryFailedException(int errCode, String desc, Exception e) {
-        super(errCode, desc);
-        this.initCause(e);
-    }
+  public QueryFailedException(int errCode, String desc, Exception e) {
+    super(errCode, desc);
+    this.initCause(e);
+  }
 }

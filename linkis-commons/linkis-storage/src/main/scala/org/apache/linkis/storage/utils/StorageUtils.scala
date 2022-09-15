@@ -5,32 +5,34 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.storage.utils
+
+import org.apache.linkis.common.io.{Fs, FsPath}
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.hadoop.common.conf.HadoopConf
+import org.apache.linkis.storage.{LineMetaData, LineRecord}
+import org.apache.linkis.storage.exception.StorageFatalException
+import org.apache.linkis.storage.resultset.{ResultSetFactory, ResultSetReader, ResultSetWriter}
+
+import org.apache.commons.lang3.StringUtils
 
 import java.io.{Closeable, File, InputStream, OutputStream}
 import java.lang.reflect.Method
 import java.text.NumberFormat
-import org.apache.linkis.common.io.{Fs, FsPath}
-import org.apache.linkis.common.utils.{Logging, Utils}
-import org.apache.linkis.hadoop.common.conf.HadoopConf
-import org.apache.linkis.storage.exception.StorageFatalException
-import org.apache.linkis.storage.resultset.{ResultSetFactory, ResultSetReader, ResultSetWriter}
-import org.apache.linkis.storage.{LineMetaData, LineRecord}
-import org.apache.commons.lang3.StringUtils
 
 import scala.collection.mutable
 
-object StorageUtils extends Logging{
+object StorageUtils extends Logging {
 
   val HDFS = "hdfs"
   val FILE = "file"
@@ -42,7 +44,7 @@ object StorageUtils extends Logging{
   nf.setGroupingUsed(false)
   nf.setMaximumFractionDigits(StorageConfiguration.DOUBLE_FRACTION_LEN.getValue)
 
-  def doubleToString(value:Double): String ={
+  def doubleToString(value: Double): String = {
     nf.format(value)
   }
 
@@ -50,7 +52,7 @@ object StorageUtils extends Logging{
     val _classes = classStr.split(",")
     val classes = mutable.LinkedHashMap[String, T]()
     for (clazz <- _classes) {
-      Utils.tryAndError{
+      Utils.tryAndError {
         val obj = Utils.getClassInstance[T](clazz.trim)
         classes += op(obj) -> obj
       }
@@ -59,19 +61,29 @@ object StorageUtils extends Logging{
   }
 
   /**
-    * Get the corresponding class by passing in the subclass and package name(通过传入子类和包名获得对应的class)
-    * @param classStr：Class name(类名)
-    * @param pge:Class package name(类的包名)
-    * @param op：Get key value(获取键值)
-    * @tparam T
-    * @return
-    */
-  def loadClasses[T](classStr: String, pge:String, op: Class[T] => String): Map[String, Class[T]] = {
-    val _classes: Array[String] = if(StringUtils.isEmpty(pge))classStr.split(",") else classStr.split(",").map{ value:String => pge + "." + value }
+   * Get the corresponding class by passing in the subclass and package name(通过传入子类和包名获得对应的class)
+   * @param classStr：Class
+   *   name(类名)
+   * @param pge:Class
+   *   package name(类的包名)
+   * @param op：Get
+   *   key value(获取键值)
+   * @tparam T
+   * @return
+   */
+  def loadClasses[T](
+      classStr: String,
+      pge: String,
+      op: Class[T] => String
+  ): Map[String, Class[T]] = {
+    val _classes: Array[String] =
+      if (StringUtils.isEmpty(pge)) classStr.split(",")
+      else classStr.split(",").map { value: String => pge + "." + value }
     val classes = mutable.LinkedHashMap[String, Class[T]]()
     for (clazz <- _classes) {
       Utils.tryAndError({
-        val _class = Thread.currentThread.getContextClassLoader.loadClass(clazz.trim).asInstanceOf[Class[T]]
+        val _class =
+          Thread.currentThread.getContextClassLoader.loadClass(clazz.trim).asInstanceOf[Class[T]]
         classes += op(_class) -> _class
       })
     }
@@ -79,11 +91,11 @@ object StorageUtils extends Logging{
   }
 
   /**
-    * Get the suffix of the file name(获得文件名的后缀)
-    * @param path
-    * @return
-    */
-  def pathToSuffix(path:String):String = {
+   * Get the suffix of the file name(获得文件名的后缀)
+   * @param path
+   * @return
+   */
+  def pathToSuffix(path: String): String = {
     val fileName = new File(path).getName
     if ((fileName != null) && (fileName.length > 0)) {
       val dot: Int = fileName.lastIndexOf('.')
@@ -93,21 +105,21 @@ object StorageUtils extends Logging{
   }
 
   /**
-    * Reflection calling method(反射调用方法)
-    * @param obj
-    * @param method
-    * @param args
-    * @return
-    */
-  def invoke(obj: Any, method:Method, args: Array[AnyRef]): Any ={
+   * Reflection calling method(反射调用方法)
+   * @param obj
+   * @param method
+   * @param args
+   * @return
+   */
+  def invoke(obj: Any, method: Method, args: Array[AnyRef]): Any = {
     method.invoke(obj, args)
   }
 
   /**
-    * Serialized string is a result set of type Text(序列化字符串为Text类型的结果集)
-    * @param value
-    * @return
-    */
+   * Serialized string is a result set of type Text(序列化字符串为Text类型的结果集)
+   * @param value
+   * @return
+   */
   def serializerStringToResult(value: String): String = {
     val resultSet = ResultSetFactory.getInstance.getResultSetByType(ResultSetFactory.TEXT_TYPE)
     val writer = ResultSetWriter.getResultSetWriter(resultSet, Long.MaxValue, null)
@@ -121,10 +133,10 @@ object StorageUtils extends Logging{
   }
 
   /**
-    * The result set of serialized text is a string(序列化text的结果集为字符串)
-    * @param result
-    * @return
-    */
+   * The result set of serialized text is a string(序列化text的结果集为字符串)
+   * @param result
+   * @return
+   */
   def deserializerResultToString(result: String): String = {
     val resultSet = ResultSetFactory.getInstance.getResultSetByType(ResultSetFactory.TEXT_TYPE)
     val reader = ResultSetReader.getResultSetReader(resultSet, result)
@@ -138,8 +150,6 @@ object StorageUtils extends Logging{
     Utils.tryQuietly(reader.close())
     value
   }
-
-
 
   def close(outputStream: OutputStream): Unit = {
     close(outputStream, null, null)
@@ -167,18 +177,21 @@ object StorageUtils extends Logging{
 
   def isHDFSNode: Boolean = {
     val confPath = new File(HadoopConf.hadoopConfDir)
-    //TODO IO-client mode need return false
+    // TODO IO-client mode need return false
     if (!confPath.exists() || confPath.isFile) {
-      throw new StorageFatalException(50001, "HDFS configuration was not read, please configure hadoop.config.dir or add env:HADOOP_CONF_DIR")
+      throw new StorageFatalException(
+        50001,
+        "HDFS configuration was not read, please configure hadoop.config.dir or add env:HADOOP_CONF_DIR"
+      )
     } else true
   }
 
   /**
-    * Returns the FsPath by determining whether the path is a schema. By default, the FsPath of the file is returned.
-    * 通过判断path是否为schema来返回FsPath，默认返回file的FsPath
-    * @param path
-    * @return
-    */
+   * Returns the FsPath by determining whether the path is a schema. By default, the FsPath of the
+   * file is returned. 通过判断path是否为schema来返回FsPath，默认返回file的FsPath
+   * @param path
+   * @return
+   */
   def getFsPath(path: String): FsPath = {
     if (path.startsWith(FILE_SCHEMA) || path.startsWith(HDFS_SCHEMA)) new FsPath(path)
     else {
@@ -208,7 +221,7 @@ object StorageUtils extends Logging{
     }
   }
 
- def isIOProxy(): Boolean = {
+  def isIOProxy(): Boolean = {
     StorageConfiguration.ENABLE_IO_PROXY.getValue
   }
 

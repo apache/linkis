@@ -1,13 +1,12 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,8 +17,6 @@
 
 package org.apache.linkis.computation.client.operator.impl
 
-import java.util
-
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.computation.client.LinkisJob
 import org.apache.linkis.computation.client.once.action.{ECMOperateAction, EngineConnOperateAction}
@@ -28,10 +25,12 @@ import org.apache.linkis.computation.client.once.simple.SubmittableSimpleOnceJob
 import org.apache.linkis.computation.client.operator.OnceJobOperator
 import org.apache.linkis.computation.client.utils.LabelKeyUtils
 import org.apache.linkis.ujes.client.exception.UJESJobException
+
 import org.apache.commons.lang3.StringUtils
 
+import java.util
 
-class EngineConnLogOperator extends OnceJobOperator[EngineConnLogs]  {
+class EngineConnLogOperator extends OnceJobOperator[EngineConnLogs] {
 
   private var pageSize = 100
   private var fromLine = 1
@@ -44,7 +43,8 @@ class EngineConnLogOperator extends OnceJobOperator[EngineConnLogs]  {
 
   def setEngineConnType(engineConnType: String): Unit = this.engineConnType = engineConnType
 
-  def setECMServiceInstance(serviceInstance: ServiceInstance): Unit = ecmServiceInstance = serviceInstance
+  def setECMServiceInstance(serviceInstance: ServiceInstance): Unit = ecmServiceInstance =
+    serviceInstance
 
   def setPageSize(pageSize: Int): Unit = this.pageSize = pageSize
 
@@ -57,9 +57,9 @@ class EngineConnLogOperator extends OnceJobOperator[EngineConnLogs]  {
   def setLastRows(lastRows: Int): Unit = this.lastRows = lastRows
 
   /**
-    * Try to fetch logs from ECM.
-    * @return
-    */
+   * Try to fetch logs from ECM.
+   * @return
+   */
   override protected def createOperateActionBuilder(): EngineConnOperateAction.Builder = {
     if (ecInstance == null) {
       ecInstance = getServiceInstance.getInstance
@@ -71,13 +71,13 @@ class EngineConnLogOperator extends OnceJobOperator[EngineConnLogs]  {
     ECMOperateAction.newBuilder()
   }
 
-
   override def initOperator[U <: LinkisJob](job: U): Unit = job match {
     case submittableSimpleOnceJob: SubmittableSimpleOnceJob =>
       this.ecmServiceInstance = submittableSimpleOnceJob.getECMServiceInstance
-      this.engineConnType = submittableSimpleOnceJob.createEngineConnAction.getRequestPayloads.get("labels") match {
-        case labels: util.Map[String, String] => labels.get(LabelKeyUtils.ENGINE_TYPE_LABEL_KEY)
-      }
+      this.engineConnType =
+        submittableSimpleOnceJob.createEngineConnAction.getRequestPayloads.get("labels") match {
+          case labels: util.Map[String, String] => labels.get(LabelKeyUtils.ENGINE_TYPE_LABEL_KEY)
+        }
     case _ =>
   }
 

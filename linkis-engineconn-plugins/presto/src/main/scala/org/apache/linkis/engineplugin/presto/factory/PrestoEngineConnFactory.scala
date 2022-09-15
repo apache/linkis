@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.linkis.engineplugin.presto.factory
 
 import org.apache.linkis.engineconn.common.creation.EngineCreationContext
@@ -21,14 +22,18 @@ import org.apache.linkis.engineconn.common.engineconn.EngineConn
 import org.apache.linkis.engineconn.computation.executor.creation.ComputationSingleExecutorEngineConnFactory
 import org.apache.linkis.engineconn.executor.entity.LabelExecutor
 import org.apache.linkis.engineplugin.presto.conf.PrestoConfiguration
-import org.apache.linkis.engineplugin.presto.executer.PrestoEngineConnExecutor
+import org.apache.linkis.engineplugin.presto.executor.PrestoEngineConnExecutor
+import org.apache.linkis.manager.label.entity.engine.{EngineType, RunType}
 import org.apache.linkis.manager.label.entity.engine.EngineType.EngineType
 import org.apache.linkis.manager.label.entity.engine.RunType.RunType
-import org.apache.linkis.manager.label.entity.engine.{EngineType, RunType}
 
 class PrestoEngineConnFactory extends ComputationSingleExecutorEngineConnFactory {
 
-  override def newExecutor(id: Int, engineCreationContext: EngineCreationContext, engineConn: EngineConn): LabelExecutor = {
+  override def newExecutor(
+      id: Int,
+      engineCreationContext: EngineCreationContext,
+      engineConn: EngineConn
+  ): LabelExecutor = {
     new PrestoEngineConnExecutor(PrestoConfiguration.ENGINE_DEFAULT_LIMIT.getValue, id)
   }
 

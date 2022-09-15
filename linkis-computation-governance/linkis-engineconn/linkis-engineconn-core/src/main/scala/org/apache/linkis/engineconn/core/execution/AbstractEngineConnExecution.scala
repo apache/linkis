@@ -5,16 +5,16 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.engineconn.core.execution
 
 import org.apache.linkis.common.utils.Logging
@@ -27,7 +27,6 @@ import org.apache.linkis.manager.label.entity.engine.EngineConnMode._
 import org.apache.linkis.manager.label.entity.engine.EngineConnModeLabel
 
 import scala.collection.convert.decorateAsScala._
-
 
 trait AbstractEngineConnExecution extends EngineConnExecution with Logging {
 
@@ -43,8 +42,11 @@ trait AbstractEngineConnExecution extends EngineConnExecution with Logging {
 
   protected def getSupportedEngineConnModes: Array[EngineConnMode]
 
-  override def execute(engineCreationContext: EngineCreationContext, engineConn: EngineConn): Unit = {
-    if(canExecute(engineCreationContext)) {
+  override def execute(
+      engineCreationContext: EngineCreationContext,
+      engineConn: EngineConn
+  ): Unit = {
+    if (canExecute(engineCreationContext)) {
       logger.warn(s"${getClass.getName} is enabled, now step into it's execution.")
       doExecution(ExecutorManager.getInstance.getReportExecutor, engineCreationContext, engineConn)
     } else {
@@ -52,13 +54,17 @@ trait AbstractEngineConnExecution extends EngineConnExecution with Logging {
     }
   }
 
-  protected def doExecution(executor: Executor,
-                            engineCreationContext: EngineCreationContext,
-                            engineConn: EngineConn): Unit
+  protected def doExecution(
+      executor: Executor,
+      engineCreationContext: EngineCreationContext,
+      engineConn: EngineConn
+  ): Unit
 
-  def returnAfterMeExecuted(engineCreationContext: EngineCreationContext,
-                            engineConn: EngineConn): Boolean = {
-    if(getReturnEngineConnModes.isEmpty) return false
+  def returnAfterMeExecuted(
+      engineCreationContext: EngineCreationContext,
+      engineConn: EngineConn
+  ): Boolean = {
+    if (getReturnEngineConnModes.isEmpty) return false
     engineCreationContext.getLabels().asScala.exists {
       case engineConnModeLabel: EngineConnModeLabel =>
         val mode: EngineConnMode = engineConnModeLabel.getEngineConnMode

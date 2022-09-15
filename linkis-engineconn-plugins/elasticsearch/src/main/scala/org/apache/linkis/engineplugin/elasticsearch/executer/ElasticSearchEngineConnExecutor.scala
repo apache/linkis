@@ -14,50 +14,85 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.linkis.engineplugin.elasticsearch.executer
 
-import java.util
-import java.util.concurrent.TimeUnit
-
-import com.google.common.cache.{Cache, CacheBuilder, RemovalListener, RemovalNotification}
-import org.apache.commons.io.IOUtils
 import org.apache.linkis.common.utils.{Logging, OverloadUtils, Utils}
 import org.apache.linkis.engineconn.common.conf.{EngineConnConf, EngineConnConstant}
 import org.apache.linkis.engineconn.computation.executor.entity.EngineConnTask
-import org.apache.linkis.engineconn.computation.executor.execute.{ConcurrentComputationExecutor, EngineExecutionContext}
+import org.apache.linkis.engineconn.computation.executor.execute.{
+  ConcurrentComputationExecutor,
+  EngineExecutionContext
+}
 import org.apache.linkis.engineconn.core.EngineConnObject
-import org.apache.linkis.engineplugin.elasticsearch.conf.{ElasticSearchConfiguration, ElasticSearchEngineConsoleConf}
-import org.apache.linkis.engineplugin.elasticsearch.executer.client.{ElasticSearchErrorResponse, ElasticSearchExecutor, ElasticSearchJsonResponse, ElasticSearchTableResponse}
+import org.apache.linkis.engineplugin.elasticsearch.conf.{
+  ElasticSearchConfiguration,
+  ElasticSearchEngineConsoleConf
+}
+import org.apache.linkis.engineplugin.elasticsearch.executer.client.{
+  ElasticSearchErrorResponse,
+  ElasticSearchExecutor,
+  ElasticSearchJsonResponse,
+  ElasticSearchTableResponse
+}
+import org.apache.linkis.engineplugin.elasticsearch.executer.client.ElasticSearchErrorResponse
 import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
-import org.apache.linkis.manager.common.entity.resource.{CommonNodeResource, LoadResource, NodeResource}
+import org.apache.linkis.manager.common.entity.resource.{
+  CommonNodeResource,
+  LoadResource,
+  NodeResource
+}
 import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.apache.linkis.rpc.Sender
-import org.apache.linkis.scheduler.executer.{AliasOutputExecuteResponse, ErrorExecuteResponse, ExecuteResponse}
+import org.apache.linkis.scheduler.executer.{
+  AliasOutputExecuteResponse,
+  ErrorExecuteResponse,
+  ExecuteResponse
+}
 import org.apache.linkis.storage.LineRecord
 import org.apache.linkis.storage.resultset.ResultSetFactory
 import org.apache.linkis.storage.resultset.table.TableMetaData
+
+import org.apache.commons.io.IOUtils
+
 import org.springframework.util.CollectionUtils
+
+import java.util
+import java.util.concurrent.TimeUnit
 
 import scala.collection.JavaConverters._
 
-class ElasticSearchEngineConnExecutor(override val outputPrintLimit: Int, val id: Int, runType: String) extends ConcurrentComputationExecutor(outputPrintLimit) with Logging {
+import com.google.common.cache.{Cache, CacheBuilder, RemovalListener, RemovalNotification}
+
+class ElasticSearchEngineConnExecutor(
+    override val outputPrintLimit: Int,
+    val id: Int,
+    runType: String
+) extends ConcurrentComputationExecutor(outputPrintLimit)
+    with Logging {
 
   private val executorLabels: util.List[Label[_]] = new util.ArrayList[Label[_]](2)
 
-  private val elasticSearchExecutorCache: Cache[String, ElasticSearchExecutor] = CacheBuilder.newBuilder()
+  private val elasticSearchExecutorCache: Cache[String, ElasticSearchExecutor] = CacheBuilder
+    .newBuilder()
     .expireAfterAccess(EngineConnConf.ENGINE_TASK_EXPIRE_TIME.getValue, TimeUnit.MILLISECONDS)
     .removalListener(new RemovalListener[String, ElasticSearchExecutor] {
-      override def onRemoval(notification: RemovalNotification[String, ElasticSearchExecutor]): Unit = {
+
+      override def onRemoval(
+          notification: RemovalNotification[String, ElasticSearchExecutor]
+      ): Unit = {
         notification.getValue.close
         val task = getTaskById(notification.getKey)
         if (!ExecutionNodeStatus.isCompleted(task.getStatus)) {
           killTask(notification.getKey)
         }
       }
+
     })
-    .maximumSize(EngineConnConstant.MAX_TASK_NUM).build()
+    .maximumSize(EngineConnConstant.MAX_TASK_NUM)
+    .build()
 
   override def init(): Unit = {
     super.init()
@@ -74,16 +109,19 @@ class ElasticSearchEngineConnExecutor(override val outputPrintLimit: Int, val id
     super.execute(engineConnTask)
   }
 
-  override def executeLine(engineExecutorContext: EngineExecutionContext, code: String): ExecuteResponse = {
+  override def executeLine(
+      engineExecutorContext: EngineExecutionContext,
+      code: String
+  ): ExecuteResponse = {
     val taskId = engineExecutorContext.getJobId.get
     val elasticSearchExecutor = elasticSearchExecutorCache.getIfPresent(taskId)
-
     val elasticSearchResponse = elasticSearchExecutor.executeLine(code)
 
     elasticSearchResponse match {
       case ElasticSearchTableResponse(columns, records) =>
         val metaData = new TableMetaData(columns)
-        val resultSetWriter = engineExecutorContext.createResultSetWriter(ResultSetFactory.TABLE_TYPE)
+        val resultSetWriter =
+          engineExecutorContext.createResultSetWriter(ResultSetFactory.TABLE_TYPE)
         resultSetWriter.addMetaData(metaData)
         records.foreach(record => resultSetWriter.addRecord(record))
         val output = resultSetWriter.toString
@@ -92,7 +130,8 @@ class ElasticSearchEngineConnExecutor(override val outputPrintLimit: Int, val id
         }
         AliasOutputExecuteResponse(null, output)
       case ElasticSearchJsonResponse(content) =>
-        val resultSetWriter = engineExecutorContext.createResultSetWriter(ResultSetFactory.TEXT_TYPE)
+        val resultSetWriter =
+          engineExecutorContext.createResultSetWriter(ResultSetFactory.TEXT_TYPE)
         resultSetWriter.addMetaData(null)
         content.split("\\n").foreach(item => resultSetWriter.addRecord(new LineRecord(item)))
         val output = resultSetWriter.toString
@@ -105,7 +144,6 @@ class ElasticSearchEngineConnExecutor(override val outputPrintLimit: Int, val id
     }
   }
 
-
   private def buildRuntimeParams(engineConnTask: EngineConnTask): util.Map[String, String] = {
 
     // parameters specified at runtime
@@ -115,7 +153,8 @@ class ElasticSearchEngineConnExecutor(override val outputPrintLimit: Int, val id
     }
 
     // global  engine params by console
-    val globalConfig: util.Map[String, String] = Utils.tryAndWarn(ElasticSearchEngineConsoleConf.getCacheMap(engineConnTask.getLables))
+    val globalConfig: util.Map[String, String] =
+      Utils.tryAndWarn(ElasticSearchEngineConsoleConf.getCacheMap(engineConnTask.getLables))
 
     if (!executorProperties.isEmpty) {
       globalConfig.putAll(executorProperties)
@@ -124,12 +163,16 @@ class ElasticSearchEngineConnExecutor(override val outputPrintLimit: Int, val id
     globalConfig
   }
 
-
-  override def executeCompletely(engineExecutorContext: EngineExecutionContext, code: String, completedLine: String): ExecuteResponse = null
+  override def executeCompletely(
+      engineExecutorContext: EngineExecutionContext,
+      code: String,
+      completedLine: String
+  ): ExecuteResponse = null
 
   override def progress(taskID: String): Float = 0.0f
 
-  override def getProgressInfo(taskID: String): Array[JobProgressInfo] = Array.empty[JobProgressInfo]
+  override def getProgressInfo(taskID: String): Array[JobProgressInfo] =
+    Array.empty[JobProgressInfo]
 
   override def getExecutorLabels(): util.List[Label[_]] = executorLabels
 
@@ -146,11 +189,14 @@ class ElasticSearchEngineConnExecutor(override val outputPrintLimit: Int, val id
 
   override def getCurrentNodeResource(): NodeResource = {
     val properties = EngineConnObject.getEngineCreationContext.getOptions
-
     if (properties.containsKey(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key)) {
-      val settingClientMemory = properties.get(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key)
+      val settingClientMemory =
+        properties.get(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key)
       if (!settingClientMemory.toLowerCase().endsWith("g")) {
-        properties.put(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key, settingClientMemory + "g")
+        properties.put(
+          EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key,
+          settingClientMemory + "g"
+        )
       }
     }
     val resource = new CommonNodeResource
@@ -161,7 +207,8 @@ class ElasticSearchEngineConnExecutor(override val outputPrintLimit: Int, val id
 
   override def getId(): String = Sender.getThisServiceInstance.getInstance + s"_$id"
 
-  override def getConcurrentLimit: Int = ElasticSearchConfiguration.ENGINE_CONCURRENT_LIMIT.getValue
+  override def getConcurrentLimit: Int =
+    ElasticSearchConfiguration.ENGINE_CONCURRENT_LIMIT.getValue
 
   override def killTask(taskId: String): Unit = {
     Utils.tryAndWarn {
@@ -174,8 +221,10 @@ class ElasticSearchEngineConnExecutor(override val outputPrintLimit: Int, val id
   }
 
   override def killAll(): Unit = {
-    elasticSearchExecutorCache.asMap()
-      .values().asScala
+    elasticSearchExecutorCache
+      .asMap()
+      .values()
+      .asScala
       .foreach(e => e.close)
   }
 

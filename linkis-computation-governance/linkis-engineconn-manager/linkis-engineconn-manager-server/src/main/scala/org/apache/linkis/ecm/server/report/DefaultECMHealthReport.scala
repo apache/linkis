@@ -5,16 +5,16 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.ecm.server.report
 
 import org.apache.linkis.ecm.core.engineconn.EngineConn
@@ -22,7 +22,6 @@ import org.apache.linkis.ecm.core.report.ECMHealthReport
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.common.entity.metrics.NodeOverLoadInfo
 import org.apache.linkis.manager.common.entity.resource.Resource
-
 
 class DefaultECMHealthReport extends ECMHealthReport {
 
@@ -44,7 +43,8 @@ class DefaultECMHealthReport extends ECMHealthReport {
 
   private var nodeId: String = _
 
-  override def setProtectedResource(protectedResource: Resource): Unit = this.protectedResource = protectedResource
+  override def setProtectedResource(protectedResource: Resource): Unit = this.protectedResource =
+    protectedResource
 
   override def getProtectResource: Resource = protectedResource
 
@@ -52,7 +52,8 @@ class DefaultECMHealthReport extends ECMHealthReport {
 
   override def getOverload: NodeOverLoadInfo = overload
 
-  override def setRunningEngineConns(runningEngines: Array[EngineConn]): Unit = this.runningEngineConns = runningEngines
+  override def setRunningEngineConns(runningEngines: Array[EngineConn]): Unit =
+    this.runningEngineConns = runningEngines
 
   override def getRunningEngineConns: Array[EngineConn] = runningEngineConns
 

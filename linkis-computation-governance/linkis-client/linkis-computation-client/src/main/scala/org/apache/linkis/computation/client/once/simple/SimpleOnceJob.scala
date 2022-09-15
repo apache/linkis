@@ -5,28 +5,27 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.computation.client.once.simple
 
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.computation.client.LinkisJobMetrics
 import org.apache.linkis.computation.client.job.AbstractSubmittableLinkisJob
-import org.apache.linkis.computation.client.once.action.CreateEngineConnAction
 import org.apache.linkis.computation.client.once.{LinkisManagerClient, OnceJob, SubmittableOnceJob}
+import org.apache.linkis.computation.client.once.action.CreateEngineConnAction
 import org.apache.linkis.computation.client.operator.OnceJobOperator
 
 import scala.concurrent.duration.Duration
-
 
 trait SimpleOnceJob extends OnceJob {
 
@@ -68,7 +67,8 @@ trait SimpleOnceJob extends OnceJob {
   }
 
   protected def transformToId(): Unit = {
-    engineConnId = s"${ticketId.length}_${serviceInstance.getApplicationName.length}_${ticketId}${serviceInstance.getApplicationName}${serviceInstance.getInstance}"
+    engineConnId =
+      s"${ticketId.length}_${serviceInstance.getApplicationName.length}_${ticketId}${serviceInstance.getApplicationName}${serviceInstance.getInstance}"
   }
 
   protected def transformToServiceInstance(): Unit = engineConnId match {
@@ -76,20 +76,30 @@ trait SimpleOnceJob extends OnceJob {
       val index1 = ticketIdLen.toInt
       val index2 = index1 + appNameLen.toInt
       ticketId = serviceInstanceStr.substring(0, index1)
-      serviceInstance = ServiceInstance(serviceInstanceStr.substring(index1, index2), serviceInstanceStr.substring(index2))
+      serviceInstance = ServiceInstance(
+        serviceInstanceStr.substring(index1, index2),
+        serviceInstanceStr.substring(index2)
+      )
   }
 
   protected def initOnceOperatorActions(): Unit = addOperatorAction {
     case onceJobOperator: OnceJobOperator[_] =>
-      onceJobOperator.setUser(user).setTicketId(ticketId).setServiceInstance(serviceInstance).setLinkisManagerClient(linkisManagerClient)
+      onceJobOperator
+        .setUser(user)
+        .setTicketId(ticketId)
+        .setServiceInstance(serviceInstance)
+        .setLinkisManagerClient(linkisManagerClient)
     case operator => operator
   }
 
 }
 
-class SubmittableSimpleOnceJob(protected override val linkisManagerClient: LinkisManagerClient,
-                               val createEngineConnAction: CreateEngineConnAction)
-  extends SimpleOnceJob with SubmittableOnceJob with AbstractSubmittableLinkisJob {
+class SubmittableSimpleOnceJob(
+    protected override val linkisManagerClient: LinkisManagerClient,
+    val createEngineConnAction: CreateEngineConnAction
+) extends SimpleOnceJob
+    with SubmittableOnceJob
+    with AbstractSubmittableLinkisJob {
 
   private var ecmServiceInstance: ServiceInstance = _
 
@@ -103,9 +113,11 @@ class SubmittableSimpleOnceJob(protected override val linkisManagerClient: Linki
     ticketId = getTicketId(lastNodeInfo)
     ecmServiceInstance = getECMServiceInstance(lastNodeInfo)
     lastEngineConnState = getStatus(lastNodeInfo)
-    logger.info(s"EngineConn created with status $lastEngineConnState, the nodeInfo is $lastNodeInfo.")
+    logger.info(
+      s"EngineConn created with status $lastEngineConnState, the nodeInfo is $lastNodeInfo."
+    )
     initOnceOperatorActions()
-    if(!isCompleted(lastEngineConnState) && !isRunning) {
+    if (!isCompleted(lastEngineConnState) && !isRunning) {
       logger.info(s"Wait for EngineConn $serviceInstance to be running or completed.")
       Utils.waitUntil(() => isCompleted || isRunning, Duration.Inf)
       serviceInstance = getServiceInstance(lastNodeInfo)
@@ -116,11 +128,15 @@ class SubmittableSimpleOnceJob(protected override val linkisManagerClient: Linki
       transformToId()
     }
   }
+
   override protected val user: String = createEngineConnAction.getUser
 }
 
-class ExistingSimpleOnceJob(protected override val linkisManagerClient: LinkisManagerClient,
-                            id: String, override protected val user: String) extends SimpleOnceJob {
+class ExistingSimpleOnceJob(
+    protected override val linkisManagerClient: LinkisManagerClient,
+    id: String,
+    override protected val user: String
+) extends SimpleOnceJob {
   engineConnId = id
   transformToServiceInstance()
   initOnceOperatorActions()
@@ -136,11 +152,14 @@ object SimpleOnceJob {
   def builder(): SimpleOnceJobBuilder = new SimpleOnceJobBuilder
 
   /**
-    * Build a submitted SimpleOnceJob by id and user.
-    * @param id the id of submitted SimpleOnceJob
-    * @param user the execution user of submitted SimpleOnceJob
-    * @return
-    */
-  def build(id: String, user: String): SimpleOnceJob = new ExistingSimpleOnceJob(SimpleOnceJobBuilder.getLinkisManagerClient, id, user)
+   * Build a submitted SimpleOnceJob by id and user.
+   * @param id
+   *   the id of submitted SimpleOnceJob
+   * @param user
+   *   the execution user of submitted SimpleOnceJob
+   * @return
+   */
+  def build(id: String, user: String): SimpleOnceJob =
+    new ExistingSimpleOnceJob(SimpleOnceJobBuilder.getLinkisManagerClient, id, user)
 
 }

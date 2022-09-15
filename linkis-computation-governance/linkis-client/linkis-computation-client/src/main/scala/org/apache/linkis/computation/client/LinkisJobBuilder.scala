@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,19 +17,20 @@
 
 package org.apache.linkis.computation.client
 
-import java.util
-import java.util.concurrent.{ScheduledThreadPoolExecutor, TimeUnit}
-
 import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.exception.LinkisRetryException
 import org.apache.linkis.common.utils.{RetryHandler, Utils}
 import org.apache.linkis.httpclient.dws.authentication.TokenAuthenticationStrategy
 import org.apache.linkis.httpclient.dws.config.{DWSClientConfig, DWSClientConfigBuilder}
 import org.apache.linkis.protocol.utils.TaskUtils
-import org.apache.linkis.ujes.client.exception.{UJESClientBuilderException, UJESJobException}
 import org.apache.linkis.ujes.client.{UJESClient, UJESClientImpl}
+import org.apache.linkis.ujes.client.exception.{UJESClientBuilderException, UJESJobException}
 import org.apache.linkis.ujes.client.request.JobSubmitAction
+
 import org.apache.commons.lang3.StringUtils
+
+import java.util
+import java.util.concurrent.{ScheduledThreadPoolExecutor, TimeUnit}
 
 trait LinkisJobBuilder[Job <: LinkisJob] {
 
@@ -118,7 +119,11 @@ trait LinkisJobBuilder[Job <: LinkisJob] {
 
   def addVariable(key: String, value: Any): this.type = addToMap(key, value, setVariableMap)
 
-  protected def addToMap(key: String, value: Any, op: util.Map[String, Any] => this.type): this.type = {
+  protected def addToMap(
+      key: String,
+      value: Any,
+      op: util.Map[String, Any] => this.type
+  ): this.type = {
     val map = new util.HashMap[String, Any]
     map.put(key, value)
     op(map)
@@ -137,9 +142,15 @@ abstract class AbstractLinkisJobBuilder[Job <: LinkisJob] extends LinkisJobBuild
     this
   }
 
-  protected def createJobSubmitAction(): JobSubmitAction = JobSubmitAction.builder()
-    .setExecutionContent(jobContent).addExecuteUser(executeUser)
-    .setLabels(labels).setParams(params).setSource(source).setUser(executeUser).build()
+  protected def createJobSubmitAction(): JobSubmitAction = JobSubmitAction
+    .builder()
+    .setExecutionContent(jobContent)
+    .addExecuteUser(executeUser)
+    .setLabels(labels)
+    .setParams(params)
+    .setSource(source)
+    .setUser(executeUser)
+    .build()
 
   protected def createLinkisJob(ujesClient: UJESClient, jobSubmitAction: JobSubmitAction): Job
 
@@ -148,7 +159,7 @@ abstract class AbstractLinkisJobBuilder[Job <: LinkisJob] extends LinkisJobBuild
   override def build(): Job = {
     validate()
     val jobSubmitAction = createJobSubmitAction()
-    if(ujesClient == null) ujesClient = LinkisJobBuilder.getDefaultUJESClient
+    if (ujesClient == null) ujesClient = LinkisJobBuilder.getDefaultUJESClient
     createLinkisJob(ujesClient, jobSubmitAction)
   }
 
@@ -160,7 +171,9 @@ object LinkisJobBuilder {
   private var ujesClient: UJESClient = _
   private var threadPool: ScheduledThreadPoolExecutor = Utils.defaultScheduler
   private var serverUrl: String = _
-  private var authTokenValue: String = "LINKIS_CLI_TEST" // This is the default authToken, we usually suggest set different ones for users.
+
+  private var authTokenValue: String =
+    "LINKIS_CLI_TEST" // This is the default authToken, we usually suggest set different ones for users.
 
   def setDefaultClientConfig(clientConfig: DWSClientConfig): Unit = this.clientConfig = clientConfig
 
@@ -176,7 +189,8 @@ object LinkisJobBuilder {
   def getDefaultServerUrl: String = {
     if (StringUtils.isEmpty(serverUrl)) {
       serverUrl = Configuration.getGateWayURL()
-      if (StringUtils.isEmpty(serverUrl)) throw new UJESClientBuilderException("serverUrl must be set!")
+      if (StringUtils.isEmpty(serverUrl))
+        throw new UJESClientBuilderException("serverUrl must be set!")
     }
     serverUrl
   }
@@ -190,7 +204,7 @@ object LinkisJobBuilder {
   def getDefaultUJESClient: UJESClient = {
     if (ujesClient == null) synchronized {
       if (clientConfig == null) buildDefaultConfig()
-      if(ujesClient == null) {
+      if (ujesClient == null) {
         ujesClient = new UJESClientImpl(clientConfig)
       }
     }
@@ -198,21 +212,28 @@ object LinkisJobBuilder {
   }
 
   private def buildDefaultConfig(): Unit = {
-    val retryHandler = new RetryHandler{}
+    val retryHandler = new RetryHandler {}
     retryHandler.addRetryException(classOf[LinkisRetryException])
-    clientConfig = DWSClientConfigBuilder.newBuilder()
+    clientConfig = DWSClientConfigBuilder
+      .newBuilder()
       .addServerUrl(getDefaultServerUrl)
       .connectionTimeout(45000)
-      .discoveryEnabled(false).discoveryFrequency(1, TimeUnit.MINUTES)
+      .discoveryEnabled(false)
+      .discoveryFrequency(1, TimeUnit.MINUTES)
       .loadbalancerEnabled(false)
       .maxConnectionSize(10)
-      .retryEnabled(true).setRetryHandler(retryHandler).readTimeout(90000) // We think 90s is enough, if SocketTimeoutException is throw, just set a new clientConfig to modify it.
+      .retryEnabled(true)
+      .setRetryHandler(retryHandler)
+      .readTimeout(90000) // We think 90s is enough, if SocketTimeoutException is throw, just set a new clientConfig to modify it.
       .setAuthenticationStrategy(new TokenAuthenticationStrategy())
-      .setAuthTokenKey(TokenAuthenticationStrategy.TOKEN_KEY).setAuthTokenValue(authTokenValue)
-      .setDWSVersion(Configuration.LINKIS_WEB_VERSION.getValue).build()
+      .setAuthTokenKey(TokenAuthenticationStrategy.TOKEN_KEY)
+      .setAuthTokenValue(authTokenValue)
+      .setDWSVersion(Configuration.LINKIS_WEB_VERSION.getValue)
+      .build()
   }
 
-  def setThreadPoolExecutor(threadPool: ScheduledThreadPoolExecutor): Unit = this.threadPool = threadPool
+  def setThreadPoolExecutor(threadPool: ScheduledThreadPoolExecutor): Unit = this.threadPool =
+    threadPool
 
   def getThreadPoolExecutor: ScheduledThreadPoolExecutor = threadPool
 

@@ -157,7 +157,7 @@ public class EngineRestfulApi {
         ServiceInstance serviceInstance = getServiceInstance(jsonNode);
         EngineNode engineNode = engineNodeManager.getEngineNodeInfo(serviceInstance);
         if (null == engineNode) {
-            ECResourceInfoRecord ecInfo = ecResourceInfoService.getECResourceInfoRecordByInstances(serviceInstance.getInstance());
+            ECResourceInfoRecord ecInfo = ecResourceInfoService.getECResourceInfoRecordByInstance(serviceInstance.getInstance());
             if (null == ecInfo) {
                 return Message.error("Instance does not exist " + serviceInstance);
             }

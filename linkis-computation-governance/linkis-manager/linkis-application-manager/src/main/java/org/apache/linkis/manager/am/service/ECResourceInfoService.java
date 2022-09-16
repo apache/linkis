@@ -26,7 +26,7 @@ public interface ECResourceInfoService {
 
   ECResourceInfoRecord getECResourceInfoRecord(String ticketId);
 
-  ECResourceInfoRecord getECResourceInfoRecordByInstances(String instance);
+  ECResourceInfoRecord getECResourceInfoRecordByInstance(String instance);
 
   void deleteECResourceInfoRecordByTicketId(String ticketId);
 

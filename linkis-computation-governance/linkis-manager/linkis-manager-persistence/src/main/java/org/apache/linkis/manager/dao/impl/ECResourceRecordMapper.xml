@@ -24,7 +24,7 @@
         SELECT * FROM linkis_cg_ec_resource_info_record WHERE ticket_id = #{ticketId}
     </select>
 
-    <select id="getECResourceInfoRecordByInstances" resultType="org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord">
+    <select id="getECResourceInfoRecordByInstance" resultType="org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord">
         SELECT * FROM linkis_cg_ec_resource_info_record WHERE service_instance = #{instance}
     </select>
 

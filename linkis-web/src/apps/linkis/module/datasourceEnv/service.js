@@ -17,21 +17,23 @@
 
 import api from '@/common/service/api';
 
+const dataSourceEnvBaseUrl = '/basedata-manager/datasource-env'
+
 const getList = (params)=> {
   console.log(params)
-  return api.fetch('/basedata_manager/datasource_env', params , 'get')
+  return api.fetch(dataSourceEnvBaseUrl, params , 'get')
 }
 
 const add = (data)=> {
-  return api.fetch('/basedata_manager/datasource_env', data , 'post')
+  return api.fetch(dataSourceEnvBaseUrl, data , 'post')
 }
 
 const edit = (data)=> {
-  return api.fetch('/basedata_manager/datasource_env', data , 'put')
+  return api.fetch(dataSourceEnvBaseUrl, data , 'put')
 }
 
 const del = (params)=> {
-  return api.fetch(`/basedata_manager/datasource_env/${params.id}`,'delete')
+  return api.fetch(`${dataSourceEnvBaseUrl}/${params.id}`,'delete')
 }
 
 export{

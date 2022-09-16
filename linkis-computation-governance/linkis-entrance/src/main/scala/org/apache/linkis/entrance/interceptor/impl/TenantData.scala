@@ -18,10 +18,10 @@
 package org.apache.linkis.entrance.interceptor.impl
 
 import org.apache.linkis.common.conf.Configuration
+import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.Logging
-import org.apache.linkis.entrance.conf.EntranceConfiguration
 import org.apache.linkis.entrance.exception.EntranceErrorCode
-import org.apache.linkis.entrance.interceptor.exception.TenantCheckException
+import org.apache.linkis.entrance.interceptor.exception.SetTenantLabelException
 import org.apache.linkis.governance.common.entity.job.JobRequest
 import org.apache.linkis.governance.common.protocol.conf.{TenantRequest, TenantResponse}
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
@@ -42,8 +42,7 @@ object TenantData extends Logging {
   private val configCache: LoadingCache[String, String] = CacheBuilder
     .newBuilder()
     .maximumSize(1000)
-    .expireAfterAccess(1, TimeUnit.HOURS)
-    .refreshAfterWrite(EntranceConfiguration.USER_PARALLEL_REFLESH_TIME.getValue, TimeUnit.MINUTES)
+    .expireAfterAccess(1, TimeUnit.MINUTES)
     .build(new CacheLoader[String, String]() {
 
       override def load(userCreator: String): String = {
@@ -66,16 +65,15 @@ object TenantData extends Logging {
     jobRequest match {
       case requestPersistTask: JobRequest =>
         logger.info("start to checkTenantLabel")
-        var labels = requestPersistTask.getLabels
+        val labels = requestPersistTask.getLabels
         // 判断tenant 是否存在。存在则放行，不存在则进行回填
-        logger.info("check lalabels contains tenant :{} ", labels)
+        logger.debug("check lalabels contains tenant :{} ", labels)
         if (!labels.contains(LabelKeyConstant.TENANT_KEY)) {
           // 获取user信息
           val userName = jobRequest.getSubmitUser
           // 未获取到用户信息报错
-          logger.info("userName {} ", userName)
           if (StringUtils.isEmpty(userName)) {
-            throw TenantCheckException(
+            throw SetTenantLabelException(
               EntranceErrorCode.USER_NULL_EXCEPTION.getErrCode,
               EntranceErrorCode.USER_NULL_EXCEPTION.getDesc
             )
@@ -89,7 +87,7 @@ object TenantData extends Logging {
               .createLabel[TenantLabel](LabelKeyConstant.TENANT_KEY)
             tenantLabel.setTenant(tenant)
             labels.add(tenantLabel)
-            logger.info("end to checkTenantLabel labels :{} ", labels)
+            LogUtils.generateInfo(s"Your task should be to set tenant label $tenant") + "\n"
           }
         }
       case _ => jobRequest

@@ -15,9 +15,12 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.entrance.interceptor.exception
+package org.apache.linkis.governance.common.protocol.conf
 
-import org.apache.linkis.common.exception.ErrorException
+import org.apache.linkis.protocol.message.RequestProtocol
 
-case class UserIpCheckException(errCode: Int, errDesc: String)
-    extends ErrorException(errCode, errDesc) {}
+trait TenantConf extends RequestProtocol
+
+case class TenantRequest(user: String, creator: String) extends TenantConf
+
+case class TenantResponse(user: String, creator: String, tenant: String)

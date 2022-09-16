@@ -19,5 +19,5 @@ package org.apache.linkis.entrance.interceptor.exception
 
 import org.apache.linkis.common.exception.ErrorException
 
-case class TenantCheckException(errCode: Int, errDesc: String)
+case class UserCreatorIPCheckException(errCode: Int, errDesc: String)
     extends ErrorException(errCode, errDesc) {}

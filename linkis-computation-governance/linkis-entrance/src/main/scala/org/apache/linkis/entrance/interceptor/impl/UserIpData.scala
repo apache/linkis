@@ -21,7 +21,7 @@ import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.entrance.conf.EntranceConfiguration
 import org.apache.linkis.entrance.exception.EntranceErrorCode
-import org.apache.linkis.entrance.interceptor.exception.{TenantCheckException, UserIpCheckException}
+import org.apache.linkis.entrance.interceptor.exception.UserCreatorIPCheckException
 import org.apache.linkis.governance.common.entity.job.JobRequest
 import org.apache.linkis.governance.common.protocol.conf.{UserIpRequest, UserIpResponse}
 import org.apache.linkis.manager.label.utils.LabelUtil
@@ -40,8 +40,7 @@ object UserIpData extends Logging {
   private val configCache: LoadingCache[String, String] = CacheBuilder
     .newBuilder()
     .maximumSize(1000)
-    .expireAfterAccess(1, TimeUnit.HOURS)
-    .refreshAfterWrite(EntranceConfiguration.USER_PARALLEL_REFLESH_TIME.getValue, TimeUnit.MINUTES)
+    .expireAfterAccess(1, TimeUnit.MINUTES)
     .build(new CacheLoader[String, String]() {
 
       override def load(userCreator: String): String = {
@@ -68,7 +67,7 @@ object UserIpData extends Logging {
         case jobRequest: JobRequest =>
           // 获取user信息,未获取到用户信息报错
           if (StringUtils.isBlank(jobRequest.getSubmitUser)) {
-            throw TenantCheckException(
+            throw UserCreatorIPCheckException(
               EntranceErrorCode.USER_NULL_EXCEPTION.getErrCode,
               EntranceErrorCode.USER_NULL_EXCEPTION.getDesc
             )
@@ -79,7 +78,7 @@ object UserIpData extends Logging {
           logger.info("get cache cacheIp {} ", cacheIp)
           // 缓存获取数据不为空则进行判断
           if (StringUtils.isNotBlank(cacheIp) && (!cacheIp.contains(jobIp))) {
-            throw new UserIpCheckException(
+            throw new UserCreatorIPCheckException(
               EntranceErrorCode.USER_IP_EXCEPTION.getErrCode,
               EntranceErrorCode.USER_IP_EXCEPTION.getDesc
             )

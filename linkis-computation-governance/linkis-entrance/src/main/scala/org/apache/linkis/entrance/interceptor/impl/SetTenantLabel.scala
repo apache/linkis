@@ -17,12 +17,13 @@
 
 package org.apache.linkis.entrance.interceptor.impl
 
+import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.entrance.interceptor.EntranceInterceptor
 import org.apache.linkis.governance.common.entity.job.JobRequest
 
-import java.lang
+import java.{lang, util}
 
-class UserIpCheckInterceptor extends EntranceInterceptor {
+class SetTenantLabel extends EntranceInterceptor with Logging {
 
   /**
    * The apply function is to supplement the information of the incoming parameter task, making the
@@ -36,7 +37,7 @@ class UserIpCheckInterceptor extends EntranceInterceptor {
    * @return
    */
   override def apply(jobRequest: JobRequest, logAppender: lang.StringBuilder): JobRequest = {
-    UserIpData.checkUserIp(jobRequest, logAppender)
+    TenantData.checkTenantLabel(jobRequest, logAppender)
   }
 
 }

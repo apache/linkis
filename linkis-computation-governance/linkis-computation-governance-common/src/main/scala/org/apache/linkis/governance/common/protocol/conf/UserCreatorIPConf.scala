@@ -19,8 +19,8 @@ package org.apache.linkis.governance.common.protocol.conf
 
 import org.apache.linkis.protocol.message.RequestProtocol
 
-trait UserIpProtocol extends RequestProtocol
+trait UserCreatorIPConf extends RequestProtocol
 
-case class UserIpRequest(user: String, creator: String) extends UserIpProtocol
+case class UserIpRequest(user: String, creator: String) extends UserCreatorIPConf
 
 case class UserIpResponse(user: String, creator: String, ip: String)

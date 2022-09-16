@@ -255,6 +255,12 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
   }
 
   @Override
+  public List<DataSource> queryDataSourceInfo(List ids, String permissionUser) {
+    List<DataSource> queryList = dataSourceDao.selectByIds(ids, permissionUser);
+    return queryList;
+  }
+
+  @Override
   @Transactional(rollbackFor = Exception.class)
   public void saveDataSourceEnv(DataSourceEnv dataSourceEnv) throws ErrorException {
     storeConnectParams(

@@ -96,6 +96,15 @@ public interface DataSourceDao {
   List<DataSource> selectByPageVo(DataSourceVo dataSourceVo);
 
   /**
+   * Find by id list
+   *
+   * @param ids
+   * @return
+   */
+  List<DataSource> selectByIds(
+      @Param("ids") List ids, @Param("permissionUser") String permissionUser);
+
+  /**
    * update published version id
    *
    * @param dataSourceId

@@ -38,6 +38,7 @@ import org.apache.linkis.metadata.query.common.MdmConfiguration;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.security.SecurityFilter;
 
+import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -685,6 +686,29 @@ public class DataSourceCoreRestfulApi {
                     return Message.ok().data("ok", true);
                 },
                 "Fail to connect data source[连接数据源失败]");
+    }
+
+    @ApiOperation(value = "queryDataSourceByIds", notes = "query data source by ids", response = Message.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "ids", required = true, dataType = "List", value = "ids"),
+    })
+    @RequestMapping(value = "/info/ids", method = RequestMethod.GET)
+    public Message queryDataSource(
+            @RequestParam(value = "ids") String idsJson
+            , HttpServletRequest req) {
+        return RestfulApiHelper.doAndResponse(
+                () -> {
+                    List ids = new ObjectMapper().readValue(idsJson, List.class);
+                    String permissionUser = SecurityFilter.getLoginUsername(req);
+                    if (AuthContext.isAdministrator(permissionUser)) {
+                        permissionUser = null;
+                    }
+                    List<DataSource> dataSourceList = dataSourceInfoService.queryDataSourceInfo(ids, permissionUser);
+                    return Message.ok()
+                            .data("queryList", dataSourceList)
+                            .data("totalPage", dataSourceList.size());
+                }, "Fail to query page of data source[查询数据源失败]"
+        );
     }
 
     @ApiOperation(value = "queryDataSource", notes = "query data source", response = Message.class)

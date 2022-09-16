@@ -322,7 +322,7 @@ object Utils extends Logging {
     lines.mkString("\n")
   }
 
-  def addShutdownHook(hook: => Unit): Unit = ShutdownUtils.addShutdownHook(hook)
+  def addShutdownHook(hook: => Unit): Unit = ShutdownHookManager.addShutdownHook(hook)
 
   def getClassInstance[T](className: String): T = {
     Utils.tryThrow(

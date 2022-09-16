@@ -22,6 +22,7 @@ import org.apache.linkis.common.exception.LinkisRetryException
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.manager.common.conf.RMConfiguration
+import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.common.entity.node.{AMEMNode, AMEngineNode, InfoRMNode}
 import org.apache.linkis.manager.common.entity.persistence.{PersistenceLabel, PersistenceResource}
 import org.apache.linkis.manager.common.entity.resource._
@@ -521,7 +522,8 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
                   labelContainer,
                   persistenceResource.getTicketId,
                   ChangeType.ENGINE_INIT,
-                  addedResource
+                  addedResource,
+                  NodeStatus.Running
                 )
               }
               resourceCheck(label, labelResource)
@@ -628,6 +630,18 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
           s"No used resource found by engine ${labelContainer.getEngineInstanceLabel}"
         )
       }
+      val node = new AMEngineNode()
+      node.setServiceInstance(labelContainer.getEngineInstanceLabel.getServiceInstance)
+      val metrics = nodeMetricManagerPersistence.getNodeMetrics(node)
+      val status = if (null != metrics) {
+        NodeStatus.values()(metrics.getStatus)
+      } else {
+        logger.warn(
+          "EC {} status unknown",
+          labelContainer.getEngineInstanceLabel.getServiceInstance
+        )
+        NodeStatus.Failed
+      }
       labelContainer.getResourceLabels.asScala.foreach {
         case label: Label[_] =>
           Utils.tryCatch {
@@ -672,14 +686,16 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
                       labelContainer,
                       persistenceResource.getTicketId,
                       ChangeType.ENGINE_CLEAR,
-                      usedResource.getUsedResource
+                      usedResource.getUsedResource,
+                      status
                     )
                   } else if (usedResource.getLockedResource != null) {
                     resourceLogService.recordUserResourceAction(
                       labelContainer,
                       persistenceResource.getTicketId,
                       ChangeType.ENGINE_CLEAR,
-                      usedResource.getLockedResource
+                      usedResource.getLockedResource,
+                      status
                     )
                   }
                 }

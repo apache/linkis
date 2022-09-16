@@ -24,7 +24,7 @@ import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf.ENGINE_CONN_MANAGER_SPRING_NAME
 import org.apache.linkis.governance.common.utils.JobUtils
 import org.apache.linkis.manager.am.conf.{AMConfiguration, EngineConnConfigurationService}
-import org.apache.linkis.manager.am.exception.{AMErrorCode, AMErrorException}
+import org.apache.linkis.manager.am.exception.AMErrorException
 import org.apache.linkis.manager.am.label.EngineReuseLabelChooser
 import org.apache.linkis.manager.am.pointer.EngineConnPluginPointer
 import org.apache.linkis.manager.am.selector.{ECAvailableRule, NodeSelector}
@@ -41,15 +41,11 @@ import org.apache.linkis.manager.engineplugin.common.launch.entity.{
 import org.apache.linkis.manager.engineplugin.common.resource.TimeoutEngineResourceRequest
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import org.apache.linkis.manager.label.entity.{EngineNodeLabel, Label}
-import org.apache.linkis.manager.label.entity.engine.{EngineInstanceLabel, EngineTypeLabel}
+import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel
 import org.apache.linkis.manager.label.entity.node.AliasServiceInstanceLabel
 import org.apache.linkis.manager.label.service.{NodeLabelService, UserLabelService}
 import org.apache.linkis.manager.label.utils.LabelUtils
-import org.apache.linkis.manager.persistence.{
-  NodeManagerPersistence,
-  NodeMetricManagerPersistence,
-  ResourceManagerPersistence
-}
+import org.apache.linkis.manager.persistence.NodeMetricManagerPersistence
 import org.apache.linkis.manager.rm.{AvailableResource, NotEnoughResource}
 import org.apache.linkis.manager.rm.service.ResourceManager
 import org.apache.linkis.manager.service.common.label.{LabelChecker, LabelFilter}
@@ -78,9 +74,6 @@ class DefaultEngineCreateService
   private var nodeSelector: NodeSelector = _
 
   @Autowired
-  private var engineRecycleService: EngineRecycleService = _
-
-  @Autowired
   private var nodeLabelService: NodeLabelService = _
 
   @Autowired
@@ -105,54 +98,10 @@ class DefaultEngineCreateService
   private var nodeMetricManagerPersistence: NodeMetricManagerPersistence = _
 
   @Autowired
-  private var resourceManagerPersistence: ResourceManagerPersistence = _
-
-  @Autowired
   private var engineReuseLabelChoosers: util.List[EngineReuseLabelChooser] = _
 
   @Autowired
-  private var nodeManagerPersistence: NodeManagerPersistence = _
-
-  @Autowired
   private var engineStopService: EngineStopService = _
-
-  def getEngineNode(serviceInstance: ServiceInstance): EngineNode = {
-    val engineNode = getEngineNodeManager.getEngineNode(serviceInstance)
-    if (engineNode != null) {
-      if (engineNode.getNodeStatus == null) {
-        val nodeMetric = nodeMetricManagerPersistence.getNodeMetrics(engineNode)
-        engineNode.setNodeStatus(
-          if (Option(nodeMetric).isDefined) NodeStatus.values()(nodeMetric.getStatus)
-          else NodeStatus.Starting
-        )
-      }
-      return engineNode
-    }
-    val labels = resourceManagerPersistence.getLabelsByTicketId(serviceInstance.getInstance)
-    labels.asScala.foreach { label =>
-      LabelBuilderFactoryContext.getLabelBuilderFactory
-        .createLabel[Label[_]](label.getLabelKey, label.getStringValue) match {
-        case engineInstanceLabel: EngineInstanceLabel =>
-          val serviceInstance =
-            ServiceInstance(engineInstanceLabel.getServiceName, engineInstanceLabel.getInstance)
-          val engineNode = getEngineNodeManager.getEngineNode(serviceInstance)
-          if (engineNode != null) {
-            if (engineNode.getNodeStatus == null) {
-              engineNode.setNodeStatus(
-                NodeStatus
-                  .values()(nodeMetricManagerPersistence.getNodeMetrics(engineNode).getStatus)
-              )
-            }
-            return engineNode
-          }
-        case _ =>
-      }
-    }
-    throw new AMErrorException(
-      AMErrorCode.NOT_EXISTS_ENGINE_CONN.getCode,
-      AMErrorCode.NOT_EXISTS_ENGINE_CONN.getMessage
-    )
-  }
 
   @Receiver
   @throws[LinkisRetryException]

@@ -16,8 +16,13 @@
  */
 package org.apache.linkis.manager.am.util;
 
+import org.apache.linkis.common.ServiceInstance;
 import org.apache.linkis.common.utils.ByteTimeUtils;
+import org.apache.linkis.governance.common.conf.GovernanceCommonConf;
 import org.apache.linkis.manager.am.vo.ResourceVo;
+import org.apache.linkis.manager.common.entity.enumeration.NodeStatus;
+import org.apache.linkis.manager.common.entity.node.AMEMNode;
+import org.apache.linkis.manager.common.entity.node.AMEngineNode;
 import org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord;
 import org.apache.linkis.server.BDPJettyServerHelper;
 
@@ -68,5 +73,26 @@ public class ECResourceInfoUtils {
       resourceVo.setCores(core.intValue());
     }
     return resourceVo;
+  }
+
+  public static AMEngineNode convertECInfoTOECNode(ECResourceInfoRecord ecInfo) {
+    AMEngineNode engineNode = new AMEngineNode();
+    AMEMNode ecmNode = new AMEMNode();
+    ServiceInstance ecmInstance = new ServiceInstance();
+    ecmInstance.setApplicationName(
+        GovernanceCommonConf.ENGINE_CONN_MANAGER_SPRING_NAME().getValue());
+    ecmInstance.setInstance(ecInfo.getEcmInstance());
+    ecmNode.setServiceInstance(ecmInstance);
+    engineNode.setEMNode(ecmNode);
+    ServiceInstance ecInstance = new ServiceInstance();
+    ecInstance.setInstance(ecInfo.getServiceInstance());
+    ecInstance.setApplicationName(GovernanceCommonConf.ENGINE_CONN_SPRING_NAME().getValue());
+    engineNode.setServiceInstance(ecInstance);
+    engineNode.setOwner(ecInfo.getCreateUser());
+    engineNode.setNodeStatus(NodeStatus.valueOf(ecInfo.getStatus()));
+    engineNode.setTicketId(ecInfo.getTicketId());
+    engineNode.setStartTime(ecInfo.getCreateTime());
+    engineNode.setUpdateTime(ecInfo.getReleaseTime());
+    return engineNode;
   }
 }

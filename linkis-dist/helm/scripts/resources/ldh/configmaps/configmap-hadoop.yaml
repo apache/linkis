@@ -534,6 +534,12 @@ data:
            <name>yarn.nodemanager.aux-services</name>
            <value>mapreduce_shuffle</value>
        </property>
+       <!--
+       <property>
+           <name>yarn.nodemanager.disk-health-checker.enable</name>
+           <value>false</value>
+       </property>
+       -->
     </configuration>
   capacity-scheduler.xml: |
     <configuration>

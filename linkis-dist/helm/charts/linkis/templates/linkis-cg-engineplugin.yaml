@@ -106,6 +106,23 @@ spec:
           {{- else }}
           emptyDir: {}
           {{- end }}
+        {{- if eq .Values.linkis.featureGates.localMode false }}
+        - name: hadoop-conf
+          projected:
+            sources:
+              - configMap:
+                  name: {{ .Values.linkis.deps.hadoop.configMapName }}
+        - name: hive-conf
+          projected:
+            sources:
+              - configMap:
+                  name: {{ .Values.linkis.deps.hive.configMapName }}
+        - name: spark-conf
+          projected:
+            sources:
+              - configMap:
+                  name: {{ .Values.linkis.deps.spark.configMapName }}
+        {{- end }}
       serviceAccountName: {{ include "linkis.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.cgEnginePlugin.podSecurityContext | nindent 8 }}
@@ -142,6 +159,14 @@ spec:
             - name: DEBUG_PORT
               value: "5005"
             {{- end }}
+            {{- if eq .Values.linkis.featureGates.localMode false }}
+            - name: HADOOP_CONF_DIR
+              value: /etc/hadoop-conf
+            - name: HIVE_CONF_DIR
+              value: /etc/hive-conf
+            - name: SPARK_CONF_DIR
+              value: /etc/spark-conf
+            {{- end }}
             - name: SERVER_HEAP_SIZE
               value: {{ .Values.cgEnginePlugin.jvmHeapSize }}
             - name: EUREKA_URL
@@ -162,6 +187,14 @@ spec:
 {{ toYaml .Values.cgEnginePlugin.envs.froms | indent 12 }}
           {{- end }}
           volumeMounts:
+            {{- if eq .Values.linkis.featureGates.localMode false }}
+            - name: hadoop-conf
+              mountPath: /etc/hadoop-conf
+            - name: hive-conf
+              mountPath: /etc/hive-conf
+            - name: spark-conf
+              mountPath: /etc/spark-conf
+            {{- end }}
             - name: conf
               mountPath: {{ .Values.linkis.locations.confDir }}
             - name: log

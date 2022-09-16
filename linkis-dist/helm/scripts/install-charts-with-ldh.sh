@@ -19,25 +19,9 @@ WORK_DIR=`cd $(dirname $0); pwd -P`
 
 . ${WORK_DIR}/common.sh
 
-set -e
+KUBE_NAMESPACE=${1:-linkis}
+HELM_RELEASE_NAME=${2:-linkis-demo}
 
-LDH_VERSION=${LDH_VERSION-${LINKIS_IMAGE_TAG}}
-echo "# LDH version: ${LINKIS_IMAGE_TAG}"
+sh ${WORK_DIR}/install-linkis.sh ${KUBE_NAMESPACE} ${HELM_RELEASE_NAME} false
 
-# load image
-if [ "X${KIND_LOAD_IMAGE}" == "Xtrue" ]; then
-  echo "# Loading LDH image ..."
-  kind load docker-image linkis-ldh:${LINKIS_IMAGE_TAG} --name ${KIND_CLUSTER_NAME}
-fi
-
-# deploy LDH
-echo "# Deploying LDH ..."
-set +e
-x=`kubectl get ns ldh 2> /dev/null`
-set -e
-if [ "X${x}" == "X" ]; then
-  kubectl create ns ldh
-fi
-kubectl apply -n ldh -f ${RESOURCE_DIR}/ldh/configmaps
-
-LDH_VERSION=${LDH_VERSION} envsubst < ${RESOURCE_DIR}/ldh/ldh.yaml | kubectl apply -n ldh -f -
+kubectl apply -n ${KUBE_NAMESPACE} -f ${RESOURCE_DIR}/ldh/configmaps

@@ -271,6 +271,17 @@ public class QueryRestfulApi {
         }
         if (StringUtils.isEmpty(creator)) {
             creator = null;
+        } else {
+            if (!QueryUtils.checkNameValid(creator)) {
+                return Message.error("Invalid creator : " + creator);
+            }
+        }
+        if (StringUtils.isEmpty(engineType)) {
+            engineType = null;
+        } else {
+            if (!QueryUtils.checkNameValid(engineType)) {
+                return Message.error("Invalid engienType: " + engineType);
+            }
         }
         Date sDate = new Date(startDate);
         Date eDate = new Date(endDate);
@@ -345,6 +356,17 @@ public class QueryRestfulApi {
         }
         if (StringUtils.isEmpty(creator)) {
             creator = null;
+        } else {
+            if (!QueryUtils.checkNameValid(creator)) {
+                return Message.error("Invalid creator : " + creator);
+            }
+        }
+        if (StringUtils.isEmpty(engineType)) {
+            engineType = null;
+        } else {
+            if (!QueryUtils.checkNameValid(engineType)) {
+                return Message.error("Invalid engienType: " + engineType);
+            }
         }
         Date sDate = new Date(startDate);
         Date eDate = new Date(endDate);

@@ -15,21 +15,30 @@
 # limitations under the License.
 #
 
-######################################################################
-# linkis image
-######################################################################
-
 ARG IMAGE_BASE=centos:7
 ARG IMAGE_BASE_WEB=nginx:1.19.6
 
-FROM ${IMAGE_BASE} as linkis
-
-ARG BUILD_TYPE=dev
+######################################################################
+# linkis image base
+######################################################################
+FROM ${IMAGE_BASE} as linkis-base
 
 ARG JDK_VERSION=1.8.0-openjdk
 ARG JDK_BUILD_REVISION=1.8.0.332.b09-1.el7_9
 
-ARG MYSQL_JDBC_VERSION=5.1.49
+# TODO: remove install mysql client when schema-init-tools is ready
+RUN yum install -y \
+       vim unzip curl sudo krb5-workstation sssd crontabs python-pip \
+       java-${JDK_VERSION}-${JDK_BUILD_REVISION} \
+       java-${JDK_VERSION}-devel-${JDK_BUILD_REVISION} \
+       mysql \
+    && yum clean all
+
+
+######################################################################
+# linkis image for release
+######################################################################
+FROM linkis-base as linkis
 
 ARG LINKIS_VERSION=0.0.0
 ARG LINKIS_SYSTEM_USER="hadoop"
@@ -42,15 +51,6 @@ ARG LINKIS_LOG_DIR=/var/logs/linkis
 WORKDIR ${LINKIS_HOME}
 
 RUN useradd -r -s /bin/bash -u ${LINKIS_SYSTEM_UID} -g root -G wheel ${LINKIS_SYSTEM_USER}
-
-# TODO: remove install mysql client when schema-init-tools is ready
-RUN yum install -y \
-       vim unzip curl sudo krb5-workstation sssd crontabs python-pip \
-       java-${JDK_VERSION}-${JDK_BUILD_REVISION} \
-       java-${JDK_VERSION}-devel-${JDK_BUILD_REVISION} \
-       mysql \
-    && yum clean all
-
 RUN sed -i "s#^%wheel.*#%wheel        ALL=(ALL)       NOPASSWD: ALL#g" /etc/sudoers
 
 RUN mkdir -p /opt/tmp \
@@ -67,13 +67,6 @@ ADD apache-linkis-${LINKIS_VERSION}-incubating-bin.tar.gz /opt/tmp/
 RUN mv /opt/tmp/linkis-package/* ${LINKIS_HOME}/ \
     && rm -rf /opt/tmp
 
-# Put mysql-connector-java-*.jar package into the image only in development mode
-RUN if [ "$BUILD_TYPE" = "dev" ] ; then \
-      curl -L -o ${LINKIS_HOME}/lib/linkis-commons/public-module/mysql-connector-java-${MYSQL_JDBC_VERSION}.jar \
-        https://repo1.maven.org/maven2/mysql/mysql-connector-java/${MYSQL_JDBC_VERSION}/mysql-connector-java-${MYSQL_JDBC_VERSION}.jar \
-      && cp ${LINKIS_HOME}/lib/linkis-commons/public-module/mysql-connector-java-${MYSQL_JDBC_VERSION}.jar ${LINKIS_HOME}/lib/linkis-spring-cloud-services/linkis-mg-gateway/ ;\
-    fi
-
 RUN chmod g+w -R ${LINKIS_HOME} && chown ${LINKIS_SYSTEM_USER}:${LINKIS_SYSTEM_GROUP} -R ${LINKIS_HOME} \
     && chmod g+w -R ${LINKIS_CONF_DIR} && chown ${LINKIS_SYSTEM_USER}:${LINKIS_SYSTEM_GROUP} -R ${LINKIS_CONF_DIR}  \
     && chmod g+w -R ${LINKIS_LOG_DIR} && chown ${LINKIS_SYSTEM_USER}:${LINKIS_SYSTEM_GROUP} -R ${LINKIS_LOG_DIR} \
@@ -83,7 +76,6 @@ RUN chmod g+w -R ${LINKIS_HOME} && chown ${LINKIS_SYSTEM_USER}:${LINKIS_SYSTEM_G
 USER ${LINKIS_SYSTEM_USER}
 
 ENTRYPOINT ["/bin/bash"]
-
 
 ######################################################################
 # linkis web image

@@ -140,7 +140,10 @@ Please go to the [Linkis Releases Page](https://linkis.apache.org/download/main)
 # - Option 1: make the linkis distribution package only
 ./mvnw clean install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
 # - Option 2: make the linkis distribution package and docker image
+#   - Option 2.1: image without mysql jdbc jars
 ./mvnw clean install -Pdocker -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
+#   - Option 2.2: image with mysql jdbc jars
+./mvnw clean install -Pdocker -Dmaven.javadoc.skip=true -Dmaven.test.skip=true -Dlinkis.build.with.jdbc=true
 # - Option 3: linkis distribution package and docker image (included web)
 ./mvnw clean install -Pdocker -Dmaven.javadoc.skip=true -Dmaven.test.skip=true -Dlinkis.build.web=true
 # - Option 4: linkis distribution package and docker image (included web and ldh (hadoop all in one for test))
@@ -156,7 +159,28 @@ cd incubator-linkis/linkis-web
 npm install
 npm run build
 ```
- 
+
+### Bundled with MySQL JDBC Driver
+Due to the MySQL licensing restrictions, the MySQL Java Database Connectivity (JDBC) driver is not bundled with the 
+official released linkis image by default. However, at current stage, linkis still relies on this library to work properly.
+To solve this problem, we provide a script which can help to creating an custom image with mysql jdbc from the official 
+linkis image by yourself, the image created by this tool will be tagged as `linkis:with-jdbc` by default.
+
+```shell
+$> LINKIS_IMAGE=linkis:1.3.0 ./linkis-dist/docker/scripts/make-linikis-image-with-mysql-jdbc.sh
+
+#          build dir: ...
+#         base image: linkis:1.3.0
+# mysql jdbc version: 5.1.49
+...                                                                                                                                                                                                                                                     0.0s
+ => exporting to image                                                                                                                                                                                                                                                                                                                                                     0.0s
+ => => exporting layers                                                                                                                                                                                                                                                                                                                                                    0.0s
+ => => writing image sha256:3870df5500a71fcf879b5b7d5699c3c9804c7e03e33ad842e5d11f3504371fe8                                                                                                                                                                                                                                                                               0.0s
+ => => naming to docker.io/library/linkis:with-jdbc                                                                                                                                                                                                                                                                                                                        0.0s
+# done, image: linkis:with-jdbc
+```
+
+
 Please refer to [Quick Deployment](https://linkis.apache.org/docs/latest/deployment/quick-deploy) to do the deployment.
 
 # Examples and Guidance

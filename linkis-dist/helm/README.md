@@ -207,7 +207,8 @@ $> ./mvnw clean install -Pdocker \
    -Dmaven.javadoc.skip=true \
    -Dmaven.test.skip=true \
    -Dlinkis.build.web=true \
-   -Dlinkis.build.ldh=true
+   -Dlinkis.build.ldh=true \
+   -Dlinkis.build.with.jdbc=true
 ```
 
 By default, we download the pre-built binary distributions for each hadoop component from the official site of [Apache Archives](https://archive.apache.org/dist/), which can be very slow for members in some regions.

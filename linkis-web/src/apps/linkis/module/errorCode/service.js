@@ -17,21 +17,23 @@
 
 import api from '@/common/service/api';
 
+const errorCodeBaseUrl = '/basedata-manager/error-code'
+
 const getList = (params)=> {
   console.log(params)
-  return api.fetch('/basedata_manager/error_code', params , 'get')
+  return api.fetch(errorCodeBaseUrl, params , 'get')
 }
 
 const add = (data)=> {
-  return api.fetch('/basedata_manager/error_code', data , 'post')
+  return api.fetch(errorCodeBaseUrl, data , 'post')
 }
 
 const edit = (data)=> {
-  return api.fetch('/basedata_manager/error_code', data , 'put')
+  return api.fetch(errorCodeBaseUrl, data , 'put')
 }
 
 const del = (params)=> {
-  return api.fetch(`/basedata_manager/error_code/${params.id}`,'delete')
+  return api.fetch(`${errorCodeBaseUrl}/${params.id}`,'delete')
 }
 
 export{

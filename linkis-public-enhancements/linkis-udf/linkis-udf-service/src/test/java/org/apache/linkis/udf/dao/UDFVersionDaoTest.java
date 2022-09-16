@@ -18,6 +18,7 @@
 package org.apache.linkis.udf.dao;
 
 import org.apache.linkis.udf.entity.UDFVersion;
+import org.apache.linkis.udf.vo.UDFVersionVo;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -42,9 +43,9 @@ public class UDFVersionDaoTest extends BaseDaoTest {
     UDFVersion udfVersion = new UDFVersion();
     udfVersion.setId(99L);
     udfVersion.setUdfId(1L);
-    udfVersion.setPath("file:///home/hadoop/logs/linkis/hadoop/baoyang/udf/udfPy.py");
+    udfVersion.setPath("file:///home/hadoop/logs/linkis/hadoop/hadoops/udf/udfPy.py");
     udfVersion.setBmlResourceId("fe124e5e-4fdd-4509-aa93-10c3748ba34a");
-    udfVersion.setBmlResourceVersion("v000001");
+    udfVersion.setBmlResourceVersion("v000006");
     udfVersion.setPublished(true);
     udfVersion.setRegisterFormat("udf.register(\"pyUdfTest\",test)");
     udfVersion.setUseFormat("int pyUdfTest(api)");
@@ -52,6 +53,9 @@ public class UDFVersionDaoTest extends BaseDaoTest {
     udfVersion.setCreateTime(new Date());
     udfVersion.setMd5("0774ebbaef1efae6e7554ad569235d2f");
     udfVersionDao.addUdfVersion(udfVersion);
+
+    UDFVersion udfIdAndVersion = udfVersionDao.selectByUdfIdAndVersion(1L, "v000006");
+    Assertions.assertNotNull(udfIdAndVersion);
   }
 
   @Test
@@ -71,10 +75,10 @@ public class UDFVersionDaoTest extends BaseDaoTest {
   @Test
   @DisplayName("updatePublishStatusTest")
   public void updatePublishStatusTest() {
-    Assertions.assertAll(
-        () -> {
-          udfVersionDao.updatePublishStatus(1L, "v000001", false);
-        });
+    udfVersionDao.updatePublishStatus(3L, "v000001", false);
+    List<UDFVersionVo> versionVos = udfVersionDao.getAllVersionByUdfId(2L);
+    Assertions.assertTrue(versionVos.size() == 1);
+    Assertions.assertFalse(versionVos.get(0).getPublished());
   }
 
   @Test
@@ -87,10 +91,9 @@ public class UDFVersionDaoTest extends BaseDaoTest {
   @Test
   @DisplayName("deleteVersionByUdfIdTest")
   public void deleteVersionByUdfIdTest() {
-    Assertions.assertAll(
-        () -> {
-          udfVersionDao.deleteVersionByUdfId(4L);
-        });
+    udfVersionDao.deleteVersionByUdfId(4L);
+    List<UDFVersion> allVersions = udfVersionDao.getAllVersions(4L);
+    Assertions.assertTrue(allVersions.size() == 0);
   }
 
   @Test
@@ -117,11 +120,13 @@ public class UDFVersionDaoTest extends BaseDaoTest {
   @DisplayName("updateResourceIdByUdfIdTest")
   public void updateResourceIdByUdfIdTest() {
 
-    Assertions.assertAll(
-        () -> {
-          udfVersionDao.updateResourceIdByUdfId(
-              2L, "0de8c361-22ce-4402-bf6f-098b4021deca", "hadoop", "hadoop");
-        });
+    udfVersionDao.updateResourceIdByUdfId(
+        2L, "0de8c361-22ce-4402-bf6f-xxxxxxxxx", "hadoop", "hadoop");
+    List<UDFVersionVo> versionVos = udfVersionDao.getAllVersionByUdfId(2L);
+    Assertions.assertTrue(versionVos.size() == 1);
+
+    Assertions.assertEquals(
+        "0de8c361-22ce-4402-bf6f-xxxxxxxxx", versionVos.get(0).getBmlResourceId());
   }
 
   @Test
@@ -129,11 +134,15 @@ public class UDFVersionDaoTest extends BaseDaoTest {
   public void updateUDFVersionTest() {
 
     UDFVersion udfVersion = new UDFVersion();
-    udfVersion.setId(2L);
-    udfVersion.setPath("file:///home/hadoop/logs/linkis/hadoop/baoyang/udf/activation.jar");
+    udfVersion.setId(3L);
+    udfVersion.setPath("file:///home/hadoop/logs/linkis/hadoop/hadoops/udf/activation.jar");
     udfVersion.setRegisterFormat("0");
     udfVersion.setUseFormat("string jarUdf(name)");
-    udfVersion.setDescription("update infos.");
+    udfVersion.setDescription("updateTests");
     udfVersionDao.updateUDFVersion(udfVersion);
+
+    List<UDFVersionVo> versionVos = udfVersionDao.getAllVersionByUdfId(2L);
+    Assertions.assertTrue(versionVos.size() == 1);
+    Assertions.assertEquals("updateTests", versionVos.get(0).getDescription());
   }
 }

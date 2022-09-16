@@ -57,7 +57,10 @@ public class UDFDaoTest extends BaseDaoTest {
     udfInfo.setExpire(null);
     udfInfo.setShared(null);
 
-    Assertions.assertAll(() -> udfDao.addUDF(udfInfo));
+    udfDao.addUDF(udfInfo);
+    UDFInfo info = udfDao.getUDFById(6L);
+
+    Assertions.assertNotNull(info);
   }
 
   @Test
@@ -66,19 +69,24 @@ public class UDFDaoTest extends BaseDaoTest {
 
     UDFInfo udfInfo = new UDFInfo();
     udfInfo.setId(4L);
-    udfInfo.setCreateUser("hadoop");
+    udfInfo.setCreateUser("hadoops");
     udfInfo.setUdfName("updateTest");
     udfInfo.setUdfType(3);
     udfInfo.setTreeId(13L);
     udfInfo.setUpdateTime(new Date());
 
-    Assertions.assertAll(() -> udfDao.updateUDF(udfInfo));
+    udfDao.updateUDF(udfInfo);
+    UDFInfo info = udfDao.getUDFById(4L);
+
+    Assertions.assertEquals(udfInfo.getCreateUser(), info.getCreateUser());
   }
 
   @Test
   @DisplayName("deleteUDFTest")
   public void deleteUDFTest() {
-    Assertions.assertAll(() -> udfDao.deleteUDF(4L, "hadoop"));
+    udfDao.deleteUDF(4L, "hadoop");
+    UDFInfo info = udfDao.getUDFById(4L);
+    Assertions.assertNull(info);
   }
 
   @Test
@@ -91,13 +99,19 @@ public class UDFDaoTest extends BaseDaoTest {
   @Test
   @DisplayName("deleteLoadInfoTest")
   public void deleteLoadInfoTest() {
-    Assertions.assertAll(() -> udfDao.deleteLoadInfo(4L, "hadoop"));
+    udfDao.deleteLoadInfo(3L, "hadoop");
+    List<Long> udfIds = udfDao.getLoadedUDFIds("hadoop");
+
+    Assertions.assertTrue(udfIds.size() == 0);
   }
 
   @Test
   @DisplayName("addLoadInfoTest")
   public void addLoadInfoTest() {
-    Assertions.assertAll(() -> udfDao.addLoadInfo(7L, "hadoop"));
+    udfDao.addLoadInfo(7L, "hadoops");
+
+    List<Long> udfIds = udfDao.getLoadedUDFIds("hadoops");
+    Assertions.assertTrue(udfIds.size() == 1);
   }
 
   @Test
@@ -130,7 +144,7 @@ public class UDFDaoTest extends BaseDaoTest {
   @DisplayName("getSharedUDFByUserTest")
   public void getSharedUDFByUserTest() {
     List<UDFInfoVo> udfInfoVos = udfDao.getSharedUDFByUser("hadoop");
-    Assertions.assertTrue(udfInfoVos.size() == 0);
+    Assertions.assertTrue(udfInfoVos.size() == 1);
   }
 
   @Test
@@ -177,7 +191,7 @@ public class UDFDaoTest extends BaseDaoTest {
             Exception.class,
             () ->
                 udfDao.getSameJarUDF(
-                    "hadoop", "file:///home/hadoop/logs/linkis/hadoop/baoyang/udf/udfPy.py"));
+                    "hadoop", "file:///home/hadoop/logs/linkis/hadoop/hadoops/udf/udfPy.py"));
     LOG.info("assertThrows pass, the error message: {} ", exception.getMessage());
   }
 
@@ -220,59 +234,73 @@ public class UDFDaoTest extends BaseDaoTest {
   @DisplayName("getShareSameNameCountByUserTest")
   public void getShareSameNameCountByUserTest() {
     long count = udfDao.getShareSameNameCountByUser("test", "hadoop");
-    Assertions.assertTrue(count == 0L);
+    Assertions.assertTrue(count == 1L);
   }
 
   @Test
   @DisplayName("getShareSameNameCountExcludeUserTest")
   public void getShareSameNameCountExcludeUserTest() {
     long count = udfDao.getShareSameNameCountExcludeUser("test", "hadoop", "baoyang");
-    Assertions.assertTrue(count == 0L);
+    Assertions.assertTrue(count == 1L);
   }
 
   @Test
   @DisplayName("insertUDFSharedUserTest")
   public void insertUDFSharedUserTest() {
-    Assertions.assertAll(() -> udfDao.insertUDFSharedUser(3L, "hadoop"));
+    udfDao.insertUDFSharedUser(4L, "hadoop");
+
+    long sharedCount = udfDao.getSharedUserCountByUdfId(4L);
+    Assertions.assertTrue(sharedCount == 1L);
   }
 
   @Test
   @DisplayName("updateUDFIsSharedTest")
   public void updateUDFIsSharedTest() {
 
-    Assertions.assertAll(() -> udfDao.updateUDFIsShared(true, 3L));
+    udfDao.updateUDFIsShared(true, 3L);
+    UDFInfo udf = udfDao.getUDFById(3L);
+    Assertions.assertTrue(udf.getShared().booleanValue());
   }
 
   @Test
   @DisplayName("selectAllShareUDFInfoIdByUDFIdTest")
   public void selectAllShareUDFInfoIdByUDFIdTest() {
 
-    Assertions.assertAll(() -> udfDao.selectAllShareUDFInfoIdByUDFId("hadoop", "test"));
+    Long udfId = udfDao.selectAllShareUDFInfoIdByUDFId("hadoop", "test");
+
+    Assertions.assertNotNull(udfId);
   }
 
   @Test
   @DisplayName("insertSharedUserTest")
   public void insertSharedUserTest() {
-    Assertions.assertAll(() -> udfDao.insertSharedUser("hadoop", 3L));
+    udfDao.insertSharedUser("hadoops", 4L);
+    long udfId = udfDao.getSharedUserCountByUdfId(4L);
+
+    Assertions.assertNotNull(udfId);
   }
 
   @Test
   @DisplayName("deleteSharedUserTest")
   public void deleteSharedUserTest() {
-    Assertions.assertAll(() -> udfDao.deleteSharedUser("hadoop", 3L));
+    udfDao.deleteSharedUser("hadoop", 3L);
+    long udfId = udfDao.getSharedUserCountByUdfId(3L);
+    Assertions.assertTrue(udfId == 0L);
   }
 
   @Test
   @DisplayName("deleteAllSharedUserTest")
   public void deleteAllSharedUserTest() {
-    Assertions.assertAll(() -> udfDao.deleteAllSharedUser(3l));
+    udfDao.deleteAllSharedUser(3l);
+    long udfId = udfDao.getSharedUserCountByUdfId(3L);
+    Assertions.assertTrue(udfId == 0L);
   }
 
   @Test
   @DisplayName("getSharedUserCountByUdfIdTest")
   public void getSharedUserCountByUdfIdTest() {
     long counts = udfDao.getSharedUserCountByUdfId(3L);
-    Assertions.assertTrue(counts == 0L);
+    Assertions.assertTrue(counts == 1L);
   }
 
   @Test
@@ -285,7 +313,9 @@ public class UDFDaoTest extends BaseDaoTest {
   @Test
   @DisplayName("updateLoadUserTest")
   public void updateLoadUserTest() {
-    Assertions.assertAll(() -> udfDao.updateLoadUser(3L, "hadoop", "hadoop"));
+    udfDao.updateLoadUser(3L, "hadoop", "hadoops");
+    long udfCount = udfDao.getUserLoadCountByUdfId(3L, "hadoop");
+    Assertions.assertTrue(udfCount == 1L);
   }
 
   @Test

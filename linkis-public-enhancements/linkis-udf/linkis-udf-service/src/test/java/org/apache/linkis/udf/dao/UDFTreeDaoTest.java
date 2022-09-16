@@ -47,7 +47,10 @@ public class UDFTreeDaoTest extends BaseDaoTest {
     udfTree.setCreateTime(new Date());
     udfTree.setUpdateTime(new Date());
     udfTree.setCategory("function");
-    Assertions.assertAll(() -> udfTreeDao.addTree(udfTree));
+    udfTreeDao.addTree(udfTree);
+
+    UDFTree tree = udfTreeDao.getTreeById(15L);
+    Assertions.assertNotNull(tree);
   }
 
   @Test
@@ -57,18 +60,23 @@ public class UDFTreeDaoTest extends BaseDaoTest {
     UDFTree udfTree = new UDFTree();
     udfTree.setId(13L);
     udfTree.setParent(10L);
-    udfTree.setName("udfTreeUpdate");
+    udfTree.setName("udfTreeUpdates");
     udfTree.setUserName("hadoop");
     udfTree.setDescription("test descs");
     udfTree.setUpdateTime(new Date());
-    Assertions.assertAll(() -> udfTreeDao.updateTree(udfTree));
+    udfTreeDao.updateTree(udfTree);
+
+    UDFTree tree = udfTreeDao.getTreeById(13L);
+    Assertions.assertEquals(udfTree.getName(), tree.getName());
   }
 
   @Test
   @DisplayName("deleteTreeTest")
   public void deleteTreeTest() {
 
-    Assertions.assertAll(() -> udfTreeDao.deleteTree(13L, "hadoop"));
+    udfTreeDao.deleteTree(13L, "hadoop");
+    UDFTree tree = udfTreeDao.getTreeById(13L);
+    Assertions.assertNull(tree);
   }
 
   @Test

@@ -22,7 +22,7 @@ WORK_DIR=`cd $(dirname $0); pwd -P`
 IMAGE_NAME=${IMAGE_NAME:-linkis:with-jdbc}
 LINKIS_IMAGE=${LINKIS_IMAGE:-linkis:dev}
 LINKIS_HOME=${LINKIS_HOME:-/opt/linkis}
-MYSQL_JDBC_VERSION=${MYSQL_JDBC_VERSION:-5.1.49}
+MYSQL_JDBC_VERSION=${MYSQL_JDBC_VERSION:-8.0.28}
 MYSQL_JDBC_FILENAME=mysql-connector-java-${MYSQL_JDBC_VERSION}.jar
 MYSQL_JDBC_URL="https://repo1.maven.org/maven2/mysql/mysql-connector-java/${MYSQL_JDBC_VERSION}/${MYSQL_JDBC_FILENAME}"
 

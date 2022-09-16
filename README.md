@@ -171,7 +171,7 @@ $> LINKIS_IMAGE=linkis:1.3.0 ./linkis-dist/docker/scripts/make-linikis-image-wit
 
 #          build dir: ...
 #         base image: linkis:1.3.0
-# mysql jdbc version: 5.1.49
+# mysql jdbc version: 8.0.28
 ...                                                                                                                                                                                                                                                     0.0s
  => exporting to image                                                                                                                                                                                                                                                                                                                                                     0.0s
  => => exporting layers                                                                                                                                                                                                                                                                                                                                                    0.0s

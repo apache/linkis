@@ -281,6 +281,7 @@
                       <env key="IMAGE_NAME" value="${project.parent.artifactId}:${project.version}-with-jdbc"></env>
                       <env key="LINKIS_IMAGE" value="${project.parent.artifactId}:${project.version}"></env>
                       <env key="LINKIS_HOME" value="${linkis.home}"></env>
+                      <env key="MYSQL_JDBC_VERSION" value="${mysql.connector.version}"></env>
                       <arg value="${basedir}/docker/scripts/make-linikis-image-with-mysql-jdbc.sh"></arg>
                     </exec>
                     <exec executable="docker" failonerror="true">

@@ -17,21 +17,23 @@
 
 import api from '@/common/service/api';
 
+const udfTreeBaseUrl = '/basedata-manager/udf-tree'
+
 const getList = (params)=> {
   console.log(params)
-  return api.fetch('/basedata_manager/udf_tree', params , 'get')
+  return api.fetch(udfTreeBaseUrl, params , 'get')
 }
 
 const add = (data)=> {
-  return api.fetch('/basedata_manager/udf_tree', data , 'post')
+  return api.fetch(udfTreeBaseUrl, data , 'post')
 }
 
 const edit = (data)=> {
-  return api.fetch('/basedata_manager/udf_tree', data , 'put')
+  return api.fetch(udfTreeBaseUrl, data , 'put')
 }
 
 const del = (params)=> {
-  return api.fetch(`/basedata_manager/udf_tree/${params.id}`,'delete')
+  return api.fetch(`${udfTreeBaseUrl}/${params.id}`,'delete')
 }
 
 export{

@@ -121,7 +121,7 @@ export default {
         padding: 0,
         icon: 'ios-options',
         children: [
-          {key: '1-11-1', name: this.$t('message.linkis.sideNavList.function.children.gatewayAuthToken'), path: '/console/urm/udfManagement'},
+          {key: '1-11-1', name: this.$t('message.linkis.sideNavList.function.children.gatewayAuthToken'), path: '/console/gatewayAuthToken'},
           {key: '1-11-2', name: this.$t('message.linkis.sideNavList.function.children.rmExternalResourceProvider'), path: '/console/urm/functionManagement'},
           {key: '1-11-3', name: this.$t('message.linkis.sideNavList.function.children.datasourceAccess'), path: '/console/datasourceAccess' },
           {key: '1-11-4', name: this.$t('message.linkis.sideNavList.function.children.datasourceEnv'), path: '/console/datasourceEnv' },

@@ -377,6 +377,12 @@
       <version>3.0.9</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>com.github.pjfanning</groupId>
+      <artifactId>excel-streaming-reader</artifactId>
+      <version>4.0.1</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>

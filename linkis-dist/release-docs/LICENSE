@@ -579,7 +579,7 @@ See licenses/ for text of these licenses.
     (Apache License, version 2.0) swagger-annotations (io.swagger:swagger-annotations:1.5.22 - https://github.com/swagger-api)
     (Apache License, version 2.0) swagger-models (io.swagger:swagger-models:1.5.22 - https://github.com/swagger-api)
     (Apache License, version 2.0) token-provider (org.apache.kerby:token-provider:1.0.1)
-    (Apache License, version 2.0) XmlBeans:XmlBeans main jar (org.apache.xmlbeans:xmlbeans:5.0.3 - https://xmlbeans.apache.org/)
+    (Apache License, version 2.0) XmlBeans:XmlBeans main jar (org.apache.xmlbeans:xmlbeans:5.1:1 - https://xmlbeans.apache.org/)
     (Apache License, version 2.0) XStream Core (com.thoughtworks.xstream:xstream:1.4.18)
     (Apache License, version 2.0) Apache ZooKeeper - Server (org.apache.zookeeper:zookeeper:3.4.6 - https://zookeeper.apache.org/)
     (Apache License, version 2.0) Apache twill (org.apache.twill:* - https://twill.apache.org/)

@@ -130,8 +130,20 @@ Linkis 自 2019 年开源发布以来，已累计积累了 700 多家试验企�
 ## 后端编译
 
 ### Mac OS/Linux 系统
+# 1. 首次编译，请执行如下命令
 ./mvnw -N install
-./mvnw  clean install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
+# 2. 构建 Linkis 部署包
+# - 选项 1: 仅构建 Linkis 服务部署包
+./mvnw clean install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
+# - 选项 2: 构建 Linkis 服务部署包和 Docker 镜像
+#   - 选项 2.1: 构建的镜像中不包含 mysql jdbc 包
+./mvnw clean install -Pdocker -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
+#   - 选项 2.2: 构建的镜像中包含 mysql jdbc 包
+./mvnw clean install -Pdocker -Dmaven.javadoc.skip=true -Dmaven.test.skip=true -Dlinkis.build.with.jdbc=true
+# - 选项 3: 构建 Linkis 服务部署包和 Docker 镜像（包括 Web 控制台）
+./mvnw clean install -Pdocker -Dmaven.javadoc.skip=true -Dmaven.test.skip=true -Dlinkis.build.web=true
+# - 选项 4: 仅构建 Linkis 服务部署包和 Docker 镜像（包括 Web 控制台和 LDH 镜像，LDH 镜像包换了多个预先配置和部署好的 Hadoop 组件，主要面向测试用途）
+./mvnw clean install -Pdocker -Dmaven.javadoc.skip=true -Dmaven.test.skip=true -Dlinkis.build.web=true -Dlinkis.build.ldh=true
 
 ### Windows 系统
 mvnw.cmd -N install
@@ -141,6 +153,25 @@ mvnw.cmd clean install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
 cd incubator-linkis/linkis-web
 npm install
 npm run build
+```
+
+### 集成 MySQL JDBC 驱动
+
+由于MySQL的许可协议限制，官方发布的 Linkis 镜像没有集成 MySQL JDBC 驱动。 然而，在现阶段，Linkis 仍然依赖这个库才能正常运行。 为了解决这个问题，
+我们提供了一个脚本，它可以帮助你快速的基于官方的 Linkis 镜像创建一个集成了MySQL JDBC 的自定义镜像。 这个工具创建的镜像默认的名称是 `linkis:with-jdbc`。
+
+```shell
+$> LINKIS_IMAGE=linkis:1.3.0 ./linkis-dist/docker/scripts/make-linikis-image-with-mysql-jdbc.sh
+
+#          build dir: ...
+#         base image: linkis:1.3.0
+# mysql jdbc version: 8.0.28
+...                                                                                                                                                                                                                                                     0.0s
+ => exporting to image                                                                                                                                                                                                                                                                                                                                                     0.0s
+ => => exporting layers                                                                                                                                                                                                                                                                                                                                                    0.0s
+ => => writing image sha256:3870df5500a71fcf879b5b7d5699c3c9804c7e03e33ad842e5d11f3504371fe8                                                                                                                                                                                                                                                                               0.0s
+ => => naming to docker.io/library/linkis:with-jdbc                                                                                                                                                                                                                                                                                                                        0.0s
+# done, image: linkis:with-jdbc
 ```
 
 请参考[快速安装部署 ](https://linkis.apache.org/zh-CN/docs/latest/deployment/quick-deploy) 来部署 Linkis

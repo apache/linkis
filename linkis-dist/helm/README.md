@@ -192,7 +192,7 @@ $> kind delete cluster --name test-helm
 
 ## Test with LDH 
 We introduced a new image, called LDH (Linkis's hadoop all-in-one image), which provides a pseudo-distributed hadoop cluster for testing quickly. This image contains the following hadoop components, the default mode for engines in LDH is on-yarn.
-* Hadoop 2.7.2 , including HDFS and YARN
+* Hadoop 2.7.4, including HDFS and YARN
 * Hive 2.3.3
 * Spark 2.4.3
 * Flink 1.12.2

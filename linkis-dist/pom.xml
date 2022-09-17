@@ -212,7 +212,7 @@
         <linkis.home>/opt/linkis</linkis.home>
         <linkis.conf.dir>/etc/linkis-conf</linkis.conf.dir>
         <linkis.log.dir>/var/logs/linkis</linkis.log.dir>
-        <ldh.hadoop.version>2.7.2</ldh.hadoop.version>
+        <ldh.hadoop.version>2.7.4</ldh.hadoop.version>
         <ldh.hive.version>2.3.3</ldh.hive.version>
         <ldh.spark.version>2.4.3</ldh.spark.version>
         <ldh.spark.hadoop.version>2.7</ldh.spark.hadoop.version>

@@ -109,7 +109,7 @@ linkis:
     python:
       version: 2.7
     hadoop:
-      version: 2.7.2
+      version: 2.7.4
     yarn:
       restfulUrl: http://localhost:8080
       authEnable: false

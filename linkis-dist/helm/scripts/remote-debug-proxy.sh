@@ -26,10 +26,7 @@ LINKIS_PORT_MAP_WEB="8087:8087"
 LINKIS_PORT_MAP_MG_EUREKA="5001:5005"
 LINKIS_PORT_MAP_MG_GATEWAY="5002:5005"
 
-LINKIS_PORT_MAP_PS_CS="5003:5005"
 LINKIS_PORT_MAP_PS_PUBLICSERVICE="5004:5005"
-LINKIS_PORT_MAP_PS_METADATAQUERY="5005:5005"
-LINKIS_PORT_MAP_PS_DATASOURCEMANAGER="5006:5005"
 
 LINKIS_PORT_MAP_CG_LINKISMANAGER="5007:5005"
 LINKIS_PORT_MAP_CG_ENTRANCE="5008:5005"
@@ -61,11 +58,8 @@ start_port_forward_all() {
   start_port_forward mg-eureka              ${LINKIS_PORT_MAP_MG_EUREKA}
   start_port_forward mg-gateway             ${LINKIS_PORT_MAP_MG_GATEWAY}
   
-  start_port_forward ps-cs                  ${LINKIS_PORT_MAP_PS_CS}
   start_port_forward ps-publicservice       ${LINKIS_PORT_MAP_PS_PUBLICSERVICE}
-  start_port_forward ps-metadataquery       ${LINKIS_PORT_MAP_PS_METADATAQUERY}
-  start_port_forward ps-data-source-manager ${LINKIS_PORT_MAP_PS_DATASOURCEMANAGER}
-  
+
   start_port_forward cg-linkismanager       ${LINKIS_PORT_MAP_CG_LINKISMANAGER}
   start_port_forward cg-entrance            ${LINKIS_PORT_MAP_CG_ENTRANCE}
   start_port_forward cg-engineconnmanager   ${LINKIS_PORT_MAP_CG_ENGINECONNMANAGER}
@@ -78,11 +72,8 @@ stop_port_forward_all() {
   stop_port_forward mg-eureka              ${LINKIS_PORT_MAP_MG_EUREKA}
   stop_port_forward mg-gateway             ${LINKIS_PORT_MAP_MG_GATEWAY}
   
-  stop_port_forward ps-cs                  ${LINKIS_PORT_MAP_PS_CS}
   stop_port_forward ps-publicservice       ${LINKIS_PORT_MAP_PS_PUBLICSERVICE}
-  stop_port_forward ps-metadataquery       ${LINKIS_PORT_MAP_PS_METADATAQUERY}
-  stop_port_forward ps-data-source-manager ${LINKIS_PORT_MAP_PS_DATASOURCEMANAGER}
-  
+
   stop_port_forward cg-linkismanager       ${LINKIS_PORT_MAP_CG_LINKISMANAGER}
   stop_port_forward cg-entrance            ${LINKIS_PORT_MAP_CG_ENTRANCE}
   stop_port_forward cg-engineconnmanager   ${LINKIS_PORT_MAP_CG_ENGINECONNMANAGER}

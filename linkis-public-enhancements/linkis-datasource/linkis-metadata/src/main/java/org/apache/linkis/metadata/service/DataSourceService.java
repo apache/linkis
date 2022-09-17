@@ -17,24 +17,25 @@
 
 package org.apache.linkis.metadata.service;
 
+import org.apache.linkis.metadata.hive.dto.MetadataQueryParam;
+
 import com.fasterxml.jackson.databind.JsonNode;
 
 public interface DataSourceService {
 
-    JsonNode getDbs(String userName) throws Exception;
+  JsonNode getDbs(String userName) throws Exception;
 
-    JsonNode getDbsWithTables(String userName) throws Exception;
+  JsonNode getDbsWithTables(String userName) throws Exception;
 
-    JsonNode queryTables(String database, String userName);
+  JsonNode queryTables(MetadataQueryParam queryParam);
 
-    JsonNode queryTableMeta(String dbName, String tableName, String userName);
+  JsonNode queryTableMeta(MetadataQueryParam queryParam);
 
-    JsonNode queryTableMetaBySDID(String dbName, String tableName, String sdid);
+  JsonNode queryTableMetaBySDID(MetadataQueryParam queryParam);
 
-    JsonNode getTableSize(String dbName, String tableName, String userName);
+  JsonNode getTableSize(MetadataQueryParam queryParam);
 
-    JsonNode getPartitionSize(
-            String dbName, String tableName, String partitionName, String userName);
+  JsonNode getPartitionSize(MetadataQueryParam queryParam);
 
-    JsonNode getPartitions(String dbName, String tableName, String userName);
+  JsonNode getPartitions(MetadataQueryParam queryParam);
 }

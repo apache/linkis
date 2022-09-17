@@ -20,34 +20,33 @@ package org.apache.linkis;
 import org.apache.linkis.common.utils.Utils;
 import org.apache.linkis.server.utils.LinkisMainHelper;
 
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class LinkisBaseServerApp {
 
-    private static final Log logger = LogFactory.getLog(LinkisBaseServerApp.class);
+  private static final Logger logger = LoggerFactory.getLogger(LinkisBaseServerApp.class);
 
-    public static void main(String[] args) throws ReflectiveOperationException {
+  public static void main(String[] args) throws ReflectiveOperationException {
 
-        String userName = Utils.getJvmUser();
-        String hostName = Utils.getComputerName();
-        // val allArgs = args ++
-        System.setProperty("hostName", hostName);
-        System.setProperty("userName", userName);
+    String userName = Utils.getJvmUser();
+    String hostName = Utils.getComputerName();
+    // val allArgs = args ++
+    System.setProperty("hostName", hostName);
+    System.setProperty("userName", userName);
 
-        String serviceName = System.getProperty(LinkisMainHelper.SERVER_NAME_KEY());
+    String serviceName = System.getProperty(LinkisMainHelper.SERVER_NAME_KEY());
 
-        System.setProperty("spring.application.name", serviceName);
-        LinkisMainHelper.formatPropertyFiles(serviceName);
-        String[] allArgs =
-                (String[])
-                        ArrayUtils.addAll(args, LinkisMainHelper.getExtraSpringOptions("linkis"));
-        String argsString = StringUtils.join(allArgs, "\n");
-        String startLog =
-                String.format("Ready to start %s with args: %s.", serviceName, argsString);
-        logger.info(startLog);
-        DataWorkCloudApplication.main(allArgs);
-    }
+    System.setProperty("spring.application.name", serviceName);
+    LinkisMainHelper.formatPropertyFiles(serviceName);
+    String[] allArgs =
+        (String[]) ArrayUtils.addAll(args, LinkisMainHelper.getExtraSpringOptions("linkis"));
+    String argsString = StringUtils.join(allArgs, "\n");
+    String startLog = String.format("Ready to start %s with args: %s.", serviceName, argsString);
+    logger.info(startLog);
+    DataWorkCloudApplication.main(allArgs);
+  }
 }

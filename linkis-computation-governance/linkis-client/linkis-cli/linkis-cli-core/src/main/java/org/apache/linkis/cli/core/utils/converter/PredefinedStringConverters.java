@@ -32,149 +32,146 @@ import java.util.Map;
 
 public class PredefinedStringConverters {
 
-    public static final AbstractStringConverter<String> NO_CONVERTER =
-            new AbstractStringConverter<String>() {
-                @Override
-                public String convert(String from) {
-                    if (StringUtils.isBlank(from)) {
-                        return null;
-                    }
-                    return from;
+  public static final AbstractStringConverter<String> NO_CONVERTER =
+      new AbstractStringConverter<String>() {
+        @Override
+        public String convert(String from) {
+          if (StringUtils.isBlank(from)) {
+            return null;
+          }
+          return from;
+        }
+      };
+
+  public static final AbstractStringConverter<String[]> STR_ARRAY_CONVERTER =
+      new AbstractStringConverter<String[]>() {
+        @Override
+        public String[] convert(String from) {
+          if (StringUtils.isBlank(from)) {
+            return null;
+          }
+          String[] ret = from.trim().split(CommonConstants.ARRAY_SEQ);
+          for (int i = 0; i < ret.length; i++) {
+            ret[i] = StringUtils.strip(ret[i], " \"");
+          }
+          return ret;
+        }
+      };
+
+  public static final AbstractStringConverter<Map<String, String>> STRING_MAP_CONVERTER =
+      new AbstractStringConverter<Map<String, String>>() {
+        @Override
+        public Map<String, String> convert(String from) {
+          if (StringUtils.isBlank(from)) {
+            return null;
+          }
+          Map<String, String> paraMap = new HashMap<>();
+          String[] arr = from.trim().split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
+          for (String prop : arr) {
+            prop = prop.trim();
+            int index = prop.indexOf("=");
+            if (index != -1) {
+              paraMap.put(
+                  StringUtils.strip(prop.substring(0, index).trim(), " \""),
+                  StringUtils.strip(prop.substring(index + 1).trim(), " \""));
+            } else {
+              throw new CommandException(
+                  "CMD0021",
+                  ErrorLevel.ERROR,
+                  CommonErrMsg.ParserParseErr,
+                  "Illegal Input: "
+                      + from
+                      + ". Input should be a Map described by kv-pairs. e.g. key1=value1,key2=value2");
+            }
+          }
+          return paraMap;
+        }
+      };
+
+  public static final AbstractStringConverter<SpecialMap<String, String>>
+      STRING_SPECIAL_MAP_CONVERTER =
+          new AbstractStringConverter<SpecialMap<String, String>>() {
+            @Override
+            public SpecialMap<String, String> convert(String from) {
+              if (StringUtils.isBlank(from)) {
+                return null;
+              }
+              SpecialMap<String, String> paraMap = new SpecialMap<>();
+              String[] arr = from.trim().split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
+              for (String prop : arr) {
+                prop = prop.trim();
+                int index = prop.indexOf("=");
+                if (index != -1) {
+                  paraMap.put(
+                      StringUtils.strip(prop.substring(0, index).trim(), " \""),
+                      StringUtils.strip(prop.substring(index + 1).trim(), " \""));
+                } else {
+                  throw new CommandException(
+                      "CMD0021",
+                      ErrorLevel.ERROR,
+                      CommonErrMsg.ParserParseErr,
+                      "Illegal Input: "
+                          + from
+                          + ". Input should be a Map described by kv-pairs. e.g. key1=value1,key2=value2");
                 }
-            };
+              }
+              return paraMap;
+            }
+          };
 
-    public static final AbstractStringConverter<String[]> STR_ARRAY_CONVERTER =
-            new AbstractStringConverter<String[]>() {
-                @Override
-                public String[] convert(String from) {
-                    if (StringUtils.isBlank(from)) {
-                        return null;
-                    }
-                    String[] ret = from.trim().split(CommonConstants.ARRAY_SEQ);
-                    for (int i = 0; i < ret.length; i++) {
-                        ret[i] = StringUtils.strip(ret[i], " \"");
-                    }
-                    return ret;
-                }
-            };
+  public static final AbstractStringConverter<Boolean> BOOLEAN_CONVERTER =
+      new AbstractStringConverter<Boolean>() {
+        @Override
+        public Boolean convert(String from) {
+          if (StringUtils.isBlank(from)) {
+            return null;
+          }
+          return Boolean.valueOf(from);
+        }
+      };
 
-    public static final AbstractStringConverter<Map<String, String>> STRING_MAP_CONVERTER =
-            new AbstractStringConverter<Map<String, String>>() {
-                @Override
-                public Map<String, String> convert(String from) {
-                    if (StringUtils.isBlank(from)) {
-                        return null;
-                    }
-                    Map<String, String> paraMap = new HashMap<>();
-                    String[] arr = from.trim().split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
-                    for (String prop : arr) {
-                        prop = prop.trim();
-                        int index = prop.indexOf("=");
-                        if (index != -1) {
-                            paraMap.put(
-                                    StringUtils.strip(prop.substring(0, index).trim(), " \""),
-                                    StringUtils.strip(prop.substring(index + 1).trim(), " \""));
-                        } else {
-                            throw new CommandException(
-                                    "CMD0021",
-                                    ErrorLevel.ERROR,
-                                    CommonErrMsg.ParserParseErr,
-                                    "Illegal Input: "
-                                            + from
-                                            + ". Input should be a Map described by kv-pairs. e.g. key1=value1,key2=value2");
-                        }
-                    }
-                    return paraMap;
-                }
-            };
+  public static final AbstractStringConverter<Integer> INT_CONVERTER =
+      new AbstractStringConverter<Integer>() {
+        @Override
+        public Integer convert(String from) {
+          if (StringUtils.isBlank(from)) {
+            return null;
+          }
+          return Integer.valueOf(from);
+        }
+      };
 
-    public static final AbstractStringConverter<SpecialMap<String, String>>
-            STRING_SPECIAL_MAP_CONVERTER =
-                    new AbstractStringConverter<SpecialMap<String, String>>() {
-                        @Override
-                        public SpecialMap<String, String> convert(String from) {
-                            if (StringUtils.isBlank(from)) {
-                                return null;
-                            }
-                            SpecialMap<String, String> paraMap = new SpecialMap<>();
-                            String[] arr =
-                                    from.trim().split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
-                            for (String prop : arr) {
-                                prop = prop.trim();
-                                int index = prop.indexOf("=");
-                                if (index != -1) {
-                                    paraMap.put(
-                                            StringUtils.strip(
-                                                    prop.substring(0, index).trim(), " \""),
-                                            StringUtils.strip(
-                                                    prop.substring(index + 1).trim(), " \""));
-                                } else {
-                                    throw new CommandException(
-                                            "CMD0021",
-                                            ErrorLevel.ERROR,
-                                            CommonErrMsg.ParserParseErr,
-                                            "Illegal Input: "
-                                                    + from
-                                                    + ". Input should be a Map described by kv-pairs. e.g. key1=value1,key2=value2");
-                                }
-                            }
-                            return paraMap;
-                        }
-                    };
+  public static final AbstractStringConverter<Long> LONG_CONVERTER =
+      new AbstractStringConverter<Long>() {
+        @Override
+        public Long convert(String from) {
+          return Long.valueOf(from);
+        }
+      };
 
-    public static final AbstractStringConverter<Boolean> BOOLEAN_CONVERTER =
-            new AbstractStringConverter<Boolean>() {
-                @Override
-                public Boolean convert(String from) {
-                    if (StringUtils.isBlank(from)) {
-                        return null;
-                    }
-                    return Boolean.valueOf(from);
-                }
-            };
+  public static final AbstractStringConverter<List<Long>> LONG_ARRAY_CONVERTER =
+      new AbstractStringConverter<List<Long>>() {
+        @Override
+        public List<Long> convert(String from) {
+          if (StringUtils.isBlank(from)) {
+            return null;
+          }
 
-    public static final AbstractStringConverter<Integer> INT_CONVERTER =
-            new AbstractStringConverter<Integer>() {
-                @Override
-                public Integer convert(String from) {
-                    if (StringUtils.isBlank(from)) {
-                        return null;
-                    }
-                    return Integer.valueOf(from);
-                }
-            };
+          String[] split = from.split("\\s*,\\s*");
+          if (split.length <= 0) {
+            return new ArrayList<>(0);
+          }
 
-    public static final AbstractStringConverter<Long> LONG_CONVERTER =
-            new AbstractStringConverter<Long>() {
-                @Override
-                public Long convert(String from) {
-                    return Long.valueOf(from);
-                }
-            };
+          List<Long> ret = new ArrayList<>(split.length);
+          for (String str : split) {
+            if ("".equals(str)) {
+              continue;
+            }
 
-    public static final AbstractStringConverter<List<Long>> LONG_ARRAY_CONVERTER =
-            new AbstractStringConverter<List<Long>>() {
-                @Override
-                public List<Long> convert(String from) {
-                    if (StringUtils.isBlank(from)) {
-                        return null;
-                    }
+            ret.add(Long.valueOf(str));
+          }
 
-                    String[] split = from.split("\\s*,\\s*");
-                    if (split.length <= 0) {
-                        return new ArrayList<>(0);
-                    }
-
-                    List<Long> ret = new ArrayList<>(split.length);
-                    for (String str : split) {
-                        if ("".equals(str)) {
-                            continue;
-                        }
-
-                        ret.add(Long.valueOf(str));
-                    }
-
-                    return ret;
-                }
-            };
+          return ret;
+        }
+      };
 }

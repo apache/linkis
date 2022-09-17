@@ -19,13 +19,37 @@ package org.apache.linkis.protocol.label;
 
 import org.apache.linkis.common.ServiceInstance;
 
+import java.util.HashMap;
 import java.util.Map;
 
-public class InsLabelRefreshRequest extends InsLabelAttachRequest {
+public class InsLabelRefreshRequest implements LabelRequest {
 
-    public InsLabelRefreshRequest() {}
+  /** Service instance */
+  private ServiceInstance serviceInstance;
 
-    public InsLabelRefreshRequest(ServiceInstance serviceInstance, Map<String, Object> labels) {
-        super(serviceInstance, labels);
-    }
+  /** Labels stored as map structure */
+  private Map<String, Object> labels = new HashMap<>();
+
+  public InsLabelRefreshRequest() {}
+
+  public InsLabelRefreshRequest(ServiceInstance serviceInstance, Map<String, Object> labels) {
+    this.serviceInstance = serviceInstance;
+    this.labels = labels;
+  }
+
+  public ServiceInstance getServiceInstance() {
+    return serviceInstance;
+  }
+
+  public void setServiceInstance(ServiceInstance serviceInstance) {
+    this.serviceInstance = serviceInstance;
+  }
+
+  public Map<String, Object> getLabels() {
+    return labels;
+  }
+
+  public void setLabels(Map<String, Object> labels) {
+    this.labels = labels;
+  }
 }

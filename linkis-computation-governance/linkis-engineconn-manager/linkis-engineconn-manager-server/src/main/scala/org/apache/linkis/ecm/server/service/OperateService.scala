@@ -19,7 +19,6 @@ package org.apache.linkis.ecm.server.service
 
 import org.apache.linkis.manager.common.protocol.em.{ECMOperateRequest, ECMOperateResponse}
 
-
 trait OperateService {
 
   def executeOperation(ecmOperateRequest: ECMOperateRequest): ECMOperateResponse

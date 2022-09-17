@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,14 +18,18 @@
 package org.apache.linkis.engineconn.computation.executor.upstream.handler
 
 import org.apache.linkis.common.utils.{Logging, Utils}
-import org.apache.linkis.engineconn.computation.executor.upstream.wrapper.{ConnectionInfoWrapper, ECTaskEntranceConnectionWrapper}
+import org.apache.linkis.engineconn.computation.executor.upstream.wrapper.{
+  ConnectionInfoWrapper,
+  ECTaskEntranceConnectionWrapper
+}
 import org.apache.linkis.engineconn.core.executor.ExecutorManager
 import org.apache.linkis.manager.label.entity.entrance.ExecuteOnceLabel
 
 class ECTaskKillHandler extends MonitorHandler with Logging {
+
   override def handle(request: MonitorHandlerRequest): Unit = {
     if (request == null) {
-      error("illegal input for handler: null")
+      logger.error("illegal input for handler: null")
     } else {
       request match {
         case _: ECTaskKillHandlerRequest => {
@@ -34,16 +38,18 @@ class ECTaskKillHandler extends MonitorHandler with Logging {
             val elements = toBeKilled.iterator
             while (elements.hasNext) {
               val element = elements.next
-              Utils.tryCatch{
+              Utils.tryCatch {
                 doKill(element)
-                logger.error(s"ERROR: entrance : ${element.getUpstreamConnection().getUpstreamServiceInstanceName()} lose connect, will kill job : ${element.getKey()}")
-              } {
-                t => error("Failed to kill job: " + element.getKey, t)
+                logger.error(
+                  s"ERROR: entrance : ${element.getUpstreamConnection().getUpstreamServiceInstanceName()} lose connect, will kill job : ${element.getKey()}"
+                )
+              } { t =>
+                logger.error("Failed to kill job: " + element.getKey, t)
               }
             }
           }
         }
-        case _ => error("illegal input for handler: " + request.getClass.getCanonicalName)
+        case _ => logger.error("illegal input for handler: " + request.getClass.getCanonicalName)
       }
     }
   }
@@ -52,20 +58,31 @@ class ECTaskKillHandler extends MonitorHandler with Logging {
     if (wrapper != null) {
       wrapper match {
         case eCTaskEntranceConnectionWrapper: ECTaskEntranceConnectionWrapper => {
-          if (eCTaskEntranceConnectionWrapper.getExecutor == null || eCTaskEntranceConnectionWrapper.getEngineConnTask == null) {
-            error("Failed to kill job, executor or engineConnTask in wrapper is null")
+          if (
+              eCTaskEntranceConnectionWrapper.getExecutor == null || eCTaskEntranceConnectionWrapper.getEngineConnTask == null
+          ) {
+            logger.error("Failed to kill job, executor or engineConnTask in wrapper is null")
           } else {
-            eCTaskEntranceConnectionWrapper.getExecutor.killTask(eCTaskEntranceConnectionWrapper.getEngineConnTask.getTaskId)
-            if (eCTaskEntranceConnectionWrapper.getEngineConnTask.getLables.exists(_.isInstanceOf[ExecuteOnceLabel])) {
-              warn("upstream monitor tries to shutdown engineConn because executeOnce-label was found")
+            eCTaskEntranceConnectionWrapper.getExecutor.killTask(
+              eCTaskEntranceConnectionWrapper.getEngineConnTask.getTaskId
+            )
+            if (
+                eCTaskEntranceConnectionWrapper.getEngineConnTask.getLables.exists(
+                  _.isInstanceOf[ExecuteOnceLabel]
+                )
+            ) {
+              logger.warn(
+                "upstream monitor tries to shutdown engineConn because executeOnce-label was found"
+              )
               ExecutorManager.getInstance.getReportExecutor.tryShutdown()
             }
           }
         }
-        case _ => error("invalid data-type: " + wrapper.getClass.getCanonicalName)
+        case _ => logger.error("invalid data-type: " + wrapper.getClass.getCanonicalName)
       }
     } else {
-      error("wrapper is null")
+      logger.error("wrapper is null")
     }
   }
+
 }

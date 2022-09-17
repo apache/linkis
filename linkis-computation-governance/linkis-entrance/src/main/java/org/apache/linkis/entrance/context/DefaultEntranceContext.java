@@ -19,91 +19,95 @@ package org.apache.linkis.entrance.context;
 
 import org.apache.linkis.entrance.EntranceContext;
 import org.apache.linkis.entrance.EntranceParser;
-import org.apache.linkis.entrance.annotation.*;
-import org.apache.linkis.entrance.event.*;
+import org.apache.linkis.entrance.constant.ServiceNameConsts;
+import org.apache.linkis.entrance.event.EntranceEvent;
+import org.apache.linkis.entrance.event.EntranceEventListener;
+import org.apache.linkis.entrance.event.EntranceEventListenerBus;
 import org.apache.linkis.entrance.interceptor.EntranceInterceptor;
 import org.apache.linkis.entrance.log.LogManager;
 import org.apache.linkis.entrance.persistence.PersistenceManager;
 import org.apache.linkis.scheduler.Scheduler;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@EntranceContextBeanAnnotation
+@Component(ServiceNameConsts.ENTRANCE_CONTEXT)
 public class DefaultEntranceContext extends EntranceContext {
-    private static Logger logger = LoggerFactory.getLogger(DefaultEntranceContext.class);
+  private static final Logger logger = LoggerFactory.getLogger(DefaultEntranceContext.class);
 
-    @EntranceParserBeanAnnotation.EntranceParserAutowiredAnnotation
-    private EntranceParser entranceParser;
+  @Autowired private EntranceParser entranceParser;
 
-    @PersistenceManagerBeanAnnotation.PersistenceManagerAutowiredAnnotation
-    private PersistenceManager persistenceManager;
+  @Autowired private PersistenceManager persistenceManager;
 
-    @LogManagerBeanAnnotation.LogManagerAutowiredAnnotation private LogManager logManager;
+  @Autowired private LogManager logManager;
 
-    @SchedulerBeanAnnotation.SchedulerAutowiredAnnotation private Scheduler scheduler;
+  @Autowired private Scheduler scheduler;
 
-    @EntranceInterceptorBeanAnnotation.EntranceInterceptorAutowiredAnnotation
-    private EntranceInterceptor[] interceptors;
+  @Autowired
+  @Qualifier(ServiceNameConsts.ENTRANCE_INTERCEPTOR)
+  private EntranceInterceptor[] entranceInterceptors;
 
-    @EntranceListenerBusBeanAnnotation.EntranceListenerBusAutowiredAnnotation
-    private EntranceEventListenerBus<EntranceEventListener, EntranceEvent> listenerBus;
+  @Autowired private EntranceEventListenerBus<EntranceEventListener, EntranceEvent> listenerBus;
 
-    public DefaultEntranceContext(
-            EntranceParser entranceParser,
-            PersistenceManager persistenceManager,
-            LogManager logManager,
-            Scheduler scheduler,
-            EntranceInterceptor[] interceptors,
-            EntranceEventListenerBus<EntranceEventListener, EntranceEvent> listenerBus) {
-        this.entranceParser = entranceParser;
-        this.persistenceManager = persistenceManager;
-        this.logManager = logManager;
-        this.scheduler = scheduler;
-        this.interceptors = interceptors;
-        this.listenerBus = listenerBus;
-    }
+  public DefaultEntranceContext(
+      EntranceParser entranceParser,
+      PersistenceManager persistenceManager,
+      LogManager logManager,
+      Scheduler scheduler,
+      EntranceInterceptor[] entranceInterceptors,
+      EntranceEventListenerBus<EntranceEventListener, EntranceEvent> listenerBus) {
+    this.entranceParser = entranceParser;
+    this.persistenceManager = persistenceManager;
+    this.logManager = logManager;
+    this.scheduler = scheduler;
+    this.entranceInterceptors = entranceInterceptors;
+    this.listenerBus = listenerBus;
+  }
 
-    public DefaultEntranceContext() {}
+  public DefaultEntranceContext() {}
 
-    @PostConstruct
-    public void init() {
-        entranceParser.setEntranceContext(this);
-        logger.info("Finished init entranceParser from postConstruct end!");
-        persistenceManager.setEntranceContext(this);
-        logManager.setEntranceContext(this);
-    }
+  @PostConstruct
+  public void init() {
+    entranceParser.setEntranceContext(this);
+    logger.info("Finished init entranceParser from postConstruct end!");
+    persistenceManager.setEntranceContext(this);
+    logManager.setEntranceContext(this);
+  }
 
-    @Override
-    public Scheduler getOrCreateScheduler() {
-        return scheduler;
-    }
+  @Override
+  public Scheduler getOrCreateScheduler() {
+    return scheduler;
+  }
 
-    @Override
-    public EntranceParser getOrCreateEntranceParser() {
-        return this.entranceParser;
-    }
+  @Override
+  public EntranceParser getOrCreateEntranceParser() {
+    return this.entranceParser;
+  }
 
-    @Override
-    public EntranceInterceptor[] getOrCreateEntranceInterceptors() {
-        return interceptors;
-    }
+  @Override
+  public EntranceInterceptor[] getOrCreateEntranceInterceptors() {
+    return entranceInterceptors;
+  }
 
-    @Override
-    public LogManager getOrCreateLogManager() {
-        return logManager;
-    }
+  @Override
+  public LogManager getOrCreateLogManager() {
+    return logManager;
+  }
 
-    @Override
-    public PersistenceManager getOrCreatePersistenceManager() {
-        return persistenceManager;
-    }
+  @Override
+  public PersistenceManager getOrCreatePersistenceManager() {
+    return persistenceManager;
+  }
 
-    @Override
-    public EntranceEventListenerBus<EntranceEventListener, EntranceEvent>
-            getOrCreateEventListenerBus() {
-        return this.listenerBus;
-    }
+  @Override
+  public EntranceEventListenerBus<EntranceEventListener, EntranceEvent>
+      getOrCreateEventListenerBus() {
+    return this.listenerBus;
+  }
 }

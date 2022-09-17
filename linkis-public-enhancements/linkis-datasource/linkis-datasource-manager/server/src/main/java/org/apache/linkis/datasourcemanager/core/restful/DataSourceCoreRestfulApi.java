@@ -33,7 +33,7 @@ import org.apache.linkis.datasourcemanager.core.service.hooks.DataSourceParamsHo
 import org.apache.linkis.datasourcemanager.core.validate.ParameterValidateException;
 import org.apache.linkis.datasourcemanager.core.validate.ParameterValidator;
 import org.apache.linkis.datasourcemanager.core.vo.DataSourceVo;
-import org.apache.linkis.metadatamanager.common.MdmConfiguration;
+import org.apache.linkis.metadata.query.common.MdmConfiguration;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.security.SecurityFilter;
 
@@ -48,12 +48,18 @@ import javax.validation.Validator;
 import javax.validation.groups.Default;
 
 import com.github.pagehelper.PageInfo;
+import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.UnsupportedEncodingException;
 import java.util.*;
 
+@Api(tags = "data source core restful api")
 @RestController
 @RequestMapping(
         value = "/data-source-manager",
@@ -80,6 +86,7 @@ public class DataSourceCoreRestfulApi {
         this.formDataTransformer = FormDataTransformerFactory.buildCustom();
     }
 
+    @ApiOperation(value = "getAllDataSourceTypes", notes = "get all data source types", response = Message.class)
     @RequestMapping(value = "/type/all", method = RequestMethod.GET)
     public Message getAllDataSourceTypes() {
         return RestfulApiHelper.doAndResponse(
@@ -91,17 +98,38 @@ public class DataSourceCoreRestfulApi {
                 "Fail to get all types of data source[获取数据源类型列表失败]");
     }
 
+    @ApiOperation(value = "getKeyDefinitionsByType", notes = "get key definitions by type", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "typeId", required = true, dataType = "Long", value = "type id")
+    })
     @RequestMapping(value = "/key-define/type/{typeId}", method = RequestMethod.GET)
-    public Message getKeyDefinitionsByType(@PathVariable("typeId") Long dataSourceTypeId) {
+    public Message getKeyDefinitionsByType(
+            @PathVariable("typeId") Long dataSourceTypeId, HttpServletRequest req) {
         return RestfulApiHelper.doAndResponse(
                 () -> {
                     List<DataSourceParamKeyDefinition> keyDefinitions =
-                            dataSourceRelateService.getKeyDefinitionsByType(dataSourceTypeId);
+                            dataSourceRelateService.getKeyDefinitionsByType(
+                                    dataSourceTypeId, req.getHeader("Content-Language"));
                     return Message.ok().data("keyDefine", keyDefinitions);
                 },
                 "Fail to get key definitions of data source type[查询数据源参数键值对失败]");
     }
 
+    @ApiOperation(value = "insertJsonInfo", notes = "insert json info", response = Message.class)
+    @ApiOperationSupport(ignoreParameters = {"dataSource"})
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "createSystem", example = "Linkis", required = true, dataType = "String", value = "create system"),
+        @ApiImplicitParam(name = "dataSourceDesc", required = true, dataType = "String", value = "data source desc"),
+        @ApiImplicitParam(name = "dataSourceName", required = true, dataType = "String", value = "data source name"),
+        @ApiImplicitParam(name = "dataSourceTypeId", required = true, dataType = "String", value = "data source type id"),
+        @ApiImplicitParam(name = "labels", required = true, dataType = "String", value = "labels"),
+        @ApiImplicitParam(name = "connectParams", required = true, dataType = "List", value = "connect params"),
+        @ApiImplicitParam(name = "host", example = "10.107.93.146", required = false, dataType = "String", value = "host"),
+        @ApiImplicitParam(name = "password", required = false, dataType = "String", value = "password"),
+        @ApiImplicitParam(name = "port", required = false, dataType = "String", value = "port", example = "9523"),
+        @ApiImplicitParam(name = "subSystem", required = false, dataType = "String", value = "sub system"),
+        @ApiImplicitParam(name = "username", required = false, dataType = "String", value = "user name")
+    })
     @RequestMapping(value = "/info/json", method = RequestMethod.POST)
     public Message insertJsonInfo(@RequestBody DataSource dataSource, HttpServletRequest req) {
         return RestfulApiHelper.doAndResponse(
@@ -129,6 +157,29 @@ public class DataSourceCoreRestfulApi {
                 "Fail to insert data source[新增数据源失败]");
     }
 
+    @ApiOperation(value = "updateDataSourceInJson", notes = "update data source in json", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "dataSourceId", required = true, dataType = "Long", value = "data source id"),
+        @ApiImplicitParam(name = "createSystem", required = true, dataType = "String", value = "create system", example = "Linkis"),
+        @ApiImplicitParam(name = "createTime", required = true, dataType = "String", value = "create time", example = "1650426189000"),
+        @ApiImplicitParam(name = "createUser", required = true, dataType = "String", value = "create user", example = "johnnwang"),
+        @ApiImplicitParam(name = "dataSourceDesc", required = true, dataType = "String", value = "data source desc"),
+        @ApiImplicitParam(name = "dataSourceName", required = true, dataType = "String", value = "data source name"),
+        @ApiImplicitParam(name = "dataSourceTypeId", required = true, dataType = "String", value = "data source type id"),
+        @ApiImplicitParam(name = "labels", required = true, dataType = "String", value = "labels"),
+        @ApiImplicitParam(name = "connectParams", required = true, dataType = "List", value = "connect params"),
+        @ApiImplicitParam(name = "host", required = false, dataType = "String", value = "host", example = "10.107.93.146"),
+        @ApiImplicitParam(name = "password", required = false, dataType = "String", value = "password"),
+        @ApiImplicitParam(name = "port", required = false, dataType = "String", value = "port", example = "9523"),
+        @ApiImplicitParam(name = "subSystem", required = false, dataType = "String", value = "sub system"),
+        @ApiImplicitParam(name = "username", required = false, dataType = "String", value = "user name"),
+        @ApiImplicitParam(name = "expire", required = false, dataType = "boolean", value = "expire", example = "false"),
+        @ApiImplicitParam(name = "file", required = false, dataType = "String", value = "file", example = "adn"),
+        @ApiImplicitParam(name = "modifyTime", required = false, dataType = "String", value = "modify time", example = "1657611440000"),
+        @ApiImplicitParam(name = "modifyUser", required = false, dataType = "String", value = "modify user", example = "johnnwang"),
+        @ApiImplicitParam(name = "versionId", required = false, dataType = "String", value = "versionId", example = "18")
+    })
+    @ApiOperationSupport(ignoreParameters = {"dataSource"})
     @RequestMapping(value = "/info/{dataSourceId}/json", method = RequestMethod.PUT)
     public Message updateDataSourceInJson(
             @RequestBody DataSource dataSource,
@@ -178,10 +229,15 @@ public class DataSourceCoreRestfulApi {
      * @param req
      * @return
      */
+    @ApiOperation(value = "insertJsonParameter", notes = "insert json parameter", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "dataSourceId", required = true, dataType = "Long", value = "data source id")
+    })
+    @ApiOperationSupport(ignoreParameters = {"params"})
     @RequestMapping(value = "/parameter/{dataSourceId}/json", method = RequestMethod.POST)
     public Message insertJsonParameter(
             @PathVariable("dataSourceId") Long dataSourceId,
-            @RequestBody Map<String, Object> params,
+            @RequestBody() Map<String, Object> params,
             HttpServletRequest req) {
         return RestfulApiHelper.doAndResponse(
                 () -> {
@@ -227,6 +283,10 @@ public class DataSourceCoreRestfulApi {
      * @param request
      * @return
      */
+    @ApiOperation(value = "getInfoByDataSourceId", notes = "get info by data source id", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "dataSourceId", required = true, dataType = "Long", value = "data source id")
+    })
     @RequestMapping(value = "/info/{dataSourceId}", method = RequestMethod.GET)
     public Message getInfoByDataSourceId(
             @PathVariable("dataSourceId") Long dataSourceId, HttpServletRequest request) {
@@ -250,6 +310,10 @@ public class DataSourceCoreRestfulApi {
                 "Fail to access data source[获取数据源信息失败]");
     }
 
+    @ApiOperation(value = "getInfoByDataSourceName", notes = "get info by data source name", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "dataSourceName", required = true, dataType = "String", value = "data source name")
+    })
     @RequestMapping(value = "/info/name/{dataSourceName}", method = RequestMethod.GET)
     public Message getInfoByDataSourceName(
             @PathVariable("dataSourceName") String dataSourceName, HttpServletRequest request)
@@ -277,6 +341,39 @@ public class DataSourceCoreRestfulApi {
                 "Fail to access data source[获取数据源信息失败]");
     }
 
+
+    @ApiOperation(value = "getPublishedInfoByDataSourceName", notes = "get published info by data source name", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "dataSourceName", required = true, dataType = "String", value = "data source name")
+    })
+    @RequestMapping(value = "/publishedInfo/name/{dataSourceName}", method = RequestMethod.GET)
+    public Message getPublishedInfoByDataSourceName(
+        @PathVariable("dataSourceName") String dataSourceName, HttpServletRequest request)
+        throws UnsupportedEncodingException {
+        return RestfulApiHelper.doAndResponse(
+            () -> {
+                DataSource dataSource = dataSourceInfoService.getDataSourcePublishInfo(dataSourceName);
+
+                if (dataSource == null) {
+                    return Message.error("No Exists The DataSource [不存在该数据源]");
+                }
+
+                if (!AuthContext.hasPermission(dataSource, request)) {
+                    return Message.error(
+                        "Don't have query permission for data source [没有数据源的查询权限]");
+                }
+                // Decrypt
+                RestfulApiHelper.decryptPasswordKey(
+                    dataSourceRelateService.getKeyDefinitionsByType(
+                        dataSource.getDataSourceTypeId()),
+                    dataSource.getConnectParams());
+
+                return Message.ok().data("info", dataSource);
+            },
+            "Fail to access data source[获取数据源信息失败]");
+    }
+
+
     /**
      * get datasource detail
      *
@@ -284,6 +381,11 @@ public class DataSourceCoreRestfulApi {
      * @param version
      * @return
      */
+    @ApiOperation(value = "getInfoByDataSourceIdAndVersion",notes = "get info by data source id and version", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "dataSourceId", required = true, dataType = "Long", value = "data source id"),
+        @ApiImplicitParam(name = "version", required = true, dataType = "Long", value = "version")
+    })
     @RequestMapping(value = "/info/{dataSourceId}/{version}", method = RequestMethod.GET)
     public Message getInfoByDataSourceIdAndVersion(
             @PathVariable("dataSourceId") Long dataSourceId,
@@ -319,6 +421,10 @@ public class DataSourceCoreRestfulApi {
      * @param request
      * @return
      */
+    @ApiOperation(value = "getVersionList", notes = "get version list", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "dataSourceId", required = true, dataType = "Long", value = "data source id")
+    })
     @RequestMapping(value = "/{dataSourceId}/versions", method = RequestMethod.GET)
     public Message getVersionList(
             @PathVariable("dataSourceId") Long dataSourceId, HttpServletRequest request) {
@@ -352,6 +458,11 @@ public class DataSourceCoreRestfulApi {
                 "Fail to access data source[获取数据源信息失败]");
     }
 
+    @ApiOperation(value = "publishByDataSourceId", notes = "publish by data source id", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "dataSourceId", required = true, dataType = "Long", value = "data source id"),
+        @ApiImplicitParam(name = "version", required = true, dataType = "Long", value = "version")
+    })
     @RequestMapping(value = "/publish/{dataSourceId}/{versionId}", method = RequestMethod.POST)
     public Message publishByDataSourceId(
             @PathVariable("dataSourceId") Long dataSourceId,
@@ -387,6 +498,10 @@ public class DataSourceCoreRestfulApi {
      * @param dataSourceId
      * @return
      */
+    @ApiOperation(value = "removeDataSource", notes = "remove data source", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "dataSourceId", required = true, dataType = "Long", value = "data source id")
+    })
     @RequestMapping(value = "/info/delete/{dataSourceId}", method = RequestMethod.DELETE)
     public Message removeDataSource(
             @PathVariable("dataSourceId") Long dataSourceId, HttpServletRequest request) {
@@ -414,6 +529,10 @@ public class DataSourceCoreRestfulApi {
                 "Fail to remove data source[删除数据源信息失败]");
     }
 
+    @ApiOperation(value = "expireDataSource", notes = "expire data source", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "dataSourceId", required = true, dataType = "Long", value = "data source id")
+    })
     @RequestMapping(value = "/info/{dataSourceId}/expire", method = RequestMethod.PUT)
     public Message expireDataSource(
             @PathVariable("dataSourceId") Long dataSourceId, HttpServletRequest request) {
@@ -448,6 +567,10 @@ public class DataSourceCoreRestfulApi {
      * @param req
      * @return
      */
+    @ApiOperation(value = "getConnectParams(dataSourceId)", notes = "get connect params(dataSourceId)", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "dataSourceId", required = true, dataType = "Long", value = "data source id")
+    })
     @RequestMapping(value = "/{dataSourceId}/connect-params", method = RequestMethod.GET)
     public Message getConnectParams(
             @PathVariable("dataSourceId") Long dataSourceId, HttpServletRequest req) {
@@ -474,6 +597,10 @@ public class DataSourceCoreRestfulApi {
                 "Fail to connect data source[连接数据源失败]");
     }
 
+    @ApiOperation(value = "getConnectParams(dataSourceName)", notes = "get connect params(dataSourceName)", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "dataSourceName", required = true, dataType = "String", value = "data source name")
+    })
     @RequestMapping(value = "/name/{dataSourceName}/connect-params", method = RequestMethod.GET)
     public Message getConnectParams(
             @PathVariable("dataSourceName") String dataSourceName, HttpServletRequest req)
@@ -501,6 +628,11 @@ public class DataSourceCoreRestfulApi {
                 "Fail to connect data source[连接数据源失败]");
     }
 
+    @ApiOperation(value = "connectDataSource", notes = "connect data source", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "dataSourceId", required = true, dataType = "Long", value = "data source id"),
+        @ApiImplicitParam(name = "version", required = true, dataType = "Long", value = "version")
+    })
     @RequestMapping(value = "/{dataSourceId}/{version}/op/connect", method = RequestMethod.PUT)
     public Message connectDataSource(
             @PathVariable("dataSourceId") Long dataSourceId,
@@ -546,6 +678,15 @@ public class DataSourceCoreRestfulApi {
                 "Fail to connect data source[连接数据源失败]");
     }
 
+    @ApiOperation(value = "queryDataSource", notes = "query data source", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "system", required = false, dataType = "String", value = "system"),
+        @ApiImplicitParam(name = "name", required = false, dataType = "Long", value = "name"),
+        @ApiImplicitParam(name = "typeId", required = false, dataType = "Long", value = "type id"),
+        @ApiImplicitParam(name = "identifies", required = false, dataType = "String", value = "identifies"),
+        @ApiImplicitParam(name = "currentPage", required = false, dataType = "Integer", value = "current page"),
+        @ApiImplicitParam(name = "pageSize", required = false, dataType = "Integer", value = "page size")
+    })
     @RequestMapping(value = "/info", method = RequestMethod.GET)
     public Message queryDataSource(
             @RequestParam(value = "system", required = false) String createSystem,

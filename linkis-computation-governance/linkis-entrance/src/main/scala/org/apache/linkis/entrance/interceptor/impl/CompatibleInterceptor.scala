@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -35,9 +35,12 @@ class CompatibleInterceptor extends EntranceInterceptor with Logging {
   override def apply(task: JobRequest, logAppender: lang.StringBuilder): JobRequest = {
     val startMap = TaskUtils.getStartupMap(task.getParams.asInstanceOf[util.Map[String, Any]])
     if (null != startMap && startMap.containsKey(oldQueueKey)) {
-      logger.info(s"Compatible with queue parameters, the queue $newQueueKey will be set to ${startMap.get(oldQueueKey)}")
+      logger.info(
+        s"Compatible with queue parameters, the queue $newQueueKey will be set to ${startMap.get(oldQueueKey)}"
+      )
       startMap.put(newQueueKey, startMap.get(oldQueueKey))
     }
     task
   }
+
 }

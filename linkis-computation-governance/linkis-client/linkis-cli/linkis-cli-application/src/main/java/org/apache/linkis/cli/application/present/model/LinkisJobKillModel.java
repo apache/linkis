@@ -28,36 +28,36 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 
 public class LinkisJobKillModel implements Model {
 
-    private String cid;
-    private String jobId;
-    private String message;
-    private String exception;
-    private String cause;
+  private String cid;
+  private String jobId;
+  private String message;
+  private String exception;
+  private String cause;
 
-    private String execID;
-    private String user;
-    private JobStatus jobStatus;
+  private String execID;
+  private String user;
+  private JobStatus jobStatus;
 
-    @Override
-    public void buildModel(Object data) {
-        if (!(data instanceof LinkisJobDataImpl)) {
-            throw new TransformerException(
-                    "TFM0010",
-                    ErrorLevel.ERROR,
-                    CommonErrMsg.TransformerException,
-                    "Failed to init LinkisJobKillModel: "
-                            + data.getClass().getCanonicalName()
-                            + "is not instance of \"LinkisJobDataImpl\"");
-        }
-        this.jobId = ((LinkisJobDataImpl) data).getJobID();
-        this.message = ((LinkisJobDataImpl) data).getMessage();
-        this.execID = ((LinkisJobDataImpl) data).getExecID();
-        this.user = ((LinkisJobDataImpl) data).getUser();
-        this.jobStatus = ((LinkisJobDataImpl) data).getJobStatus();
-        Exception e = ((LinkisJobDataImpl) data).getException();
-        if (e != null) {
-            this.exception = ExceptionUtils.getMessage(e);
-            this.cause = ExceptionUtils.getRootCauseMessage(e);
-        }
+  @Override
+  public void buildModel(Object data) {
+    if (!(data instanceof LinkisJobDataImpl)) {
+      throw new TransformerException(
+          "TFM0010",
+          ErrorLevel.ERROR,
+          CommonErrMsg.TransformerException,
+          "Failed to init LinkisJobKillModel: "
+              + data.getClass().getCanonicalName()
+              + "is not instance of \"LinkisJobDataImpl\"");
     }
+    this.jobId = ((LinkisJobDataImpl) data).getJobID();
+    this.message = ((LinkisJobDataImpl) data).getMessage();
+    this.execID = ((LinkisJobDataImpl) data).getExecID();
+    this.user = ((LinkisJobDataImpl) data).getUser();
+    this.jobStatus = ((LinkisJobDataImpl) data).getJobStatus();
+    Exception e = ((LinkisJobDataImpl) data).getException();
+    if (e != null) {
+      this.exception = ExceptionUtils.getMessage(e);
+      this.cause = ExceptionUtils.getRootCauseMessage(e);
+    }
+  }
 }

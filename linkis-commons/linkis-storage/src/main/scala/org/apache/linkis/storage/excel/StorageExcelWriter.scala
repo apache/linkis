@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,27 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.storage.excel
 
-import java.io._
-import java.util
 import org.apache.linkis.common.io.{MetaData, Record}
-import org.apache.linkis.storage.domain.{BigIntType, DataType, IntType, LongType, ShortIntType, TinyIntType}
+import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.storage.domain._
 import org.apache.linkis.storage.resultset.table.{TableMetaData, TableRecord}
+
 import org.apache.commons.io.IOUtils
-import org.apache.linkis.common.utils.Logging
-import org.apache.linkis.storage.domain.DataType.valueToString
 import org.apache.poi.ss.usermodel._
 import org.apache.poi.xssf.streaming.{SXSSFCell, SXSSFSheet, SXSSFWorkbook}
 
-import scala.collection.mutable.ArrayBuffer
-import org.apache.linkis.storage.domain._
+import java.io._
+import java.util
 import java.util.Date
 
+import scala.collection.mutable.ArrayBuffer
 
-class StorageExcelWriter(val charset: String, val sheetName: String, val dateFormat: String, val outputStream: OutputStream, val autoFormat: Boolean) extends ExcelFsWriter with Logging {
-
+class StorageExcelWriter(
+    val charset: String,
+    val sheetName: String,
+    val dateFormat: String,
+    val outputStream: OutputStream,
+    val autoFormat: Boolean
+) extends ExcelFsWriter
+    with Logging {
 
   protected var workBook: SXSSFWorkbook = _
   protected var sheet: SXSSFSheet = _
@@ -47,7 +52,7 @@ class StorageExcelWriter(val charset: String, val sheetName: String, val dateFor
   protected val os = new ByteArrayOutputStream()
   protected var is: ByteArrayInputStream = _
 
-  def init = {
+  def init: Unit = {
     workBook = new SXSSFWorkbook()
     sheet = workBook.createSheet(sheetName)
   }
@@ -63,7 +68,7 @@ class StorageExcelWriter(val charset: String, val sheetName: String, val dateFor
   }
 
   def getWorkBook: Workbook = {
-    //自适应列宽
+    // 自适应列宽
     sheet.trackAllColumnsForAutoSizing()
     for (elem <- 0 to columnCounter) {
       sheet.autoSizeColumn(elem)
@@ -127,7 +132,6 @@ class StorageExcelWriter(val charset: String, val sheetName: String, val dateFor
     rowPoint += 1
   }
 
-
   @scala.throws[IOException]
   override def addRecord(record: Record): Unit = {
     // TODO: 是否需要替换null值
@@ -150,29 +154,28 @@ class StorageExcelWriter(val charset: String, val sheetName: String, val dateFor
 
   private def setCellTypeValue(dataType: DataType, elem: Any, cell: SXSSFCell): Unit = {
     if (null == elem) return
-    dataType match {
-      case StringType => cell.setCellValue(DataType.valueToString(elem))
-      case TinyIntType => cell.setCellValue(elem.toString.toInt)
-      case ShortIntType => cell.setCellValue(elem.toString.toInt)
-      case IntType => cell.setCellValue(elem.toString.toInt)
-      case LongType => cell.setCellValue(elem.toString.toLong)
-      case BigIntType => cell.setCellValue(elem.toString.toLong)
-      case FloatType => cell.setCellValue(elem.toString.toFloat)
-      case DoubleType => cell.setCellValue(elem.toString.toDouble)
-      case CharType => cell.setCellValue(DataType.valueToString(elem))
-      case VarcharType => cell.setCellValue(DataType.valueToString(elem))
-      case DateType => cell.setCellValue(getDate(elem))
-      case TimestampType => cell.setCellValue(getDate(elem))
-      case DecimalType => cell.setCellValue(DataType.valueToString(elem))
-      case BigDecimalType => cell.setCellValue(DataType.valueToString(elem))
-      case _ =>
-        val value = DataType.valueToString(elem)
-        cell.setCellValue(value)
-        if (null != dataType) {
-          logger.warn(s"Cannot find matched type for dataType : ${dataType.toString}, string value:${value}, value className : ${elem.getClass.getName}, will treat it as string.")
-        } else {
-          logger.warn(s"Invalid null dataType. Will treat value string : ${value}, value className : ${elem.getClass.getName} as string.")
-        }
+    Utils.tryCatch {
+      dataType match {
+        case StringType => cell.setCellValue(DataType.valueToString(elem))
+        case TinyIntType => cell.setCellValue(elem.toString.toInt)
+        case ShortIntType => cell.setCellValue(elem.toString.toInt)
+        case IntType => cell.setCellValue(elem.toString.toInt)
+        case LongType => cell.setCellValue(elem.toString.toLong)
+        case BigIntType => cell.setCellValue(elem.toString.toLong)
+        case FloatType => cell.setCellValue(elem.toString.toFloat)
+        case DoubleType => cell.setCellValue(elem.toString.toDouble)
+        case CharType => cell.setCellValue(DataType.valueToString(elem))
+        case VarcharType => cell.setCellValue(DataType.valueToString(elem))
+        case DateType => cell.setCellValue(getDate(elem))
+        case TimestampType => cell.setCellValue(getDate(elem))
+        case DecimalType => cell.setCellValue(DataType.valueToString(elem))
+        case BigDecimalType => cell.setCellValue(DataType.valueToString(elem))
+        case _ =>
+          val value = DataType.valueToString(elem)
+          cell.setCellValue(value)
+      }
+    } { case e: Exception =>
+      cell.setCellValue(DataType.valueToString(elem))
     }
   }
 
@@ -180,7 +183,9 @@ class StorageExcelWriter(val charset: String, val sheetName: String, val dateFor
     if (value.isInstanceOf[Date]) {
       value.asInstanceOf[Date]
     } else {
-      throw new NumberFormatException(s"Value ${value} with class : ${value.getClass.getName} is not a valid type of Date.");
+      throw new NumberFormatException(
+        s"Value ${value} with class : ${value.getClass.getName} is not a valid type of Date."
+      );
     }
   }
 
@@ -209,5 +214,3 @@ class StorageExcelWriter(val charset: String, val sheetName: String, val dateFor
   }
 
 }
-
-

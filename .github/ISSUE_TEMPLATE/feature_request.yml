@@ -15,10 +15,11 @@
 # limitations under the License.
 #
 
-name: Linkis feature request
-description: Suggest an idea for Linkis project
-title: "[Feature] "
-labels: [enhancement]
+
+name: 💅 Feature Request
+description: Submit a detailed feature request
+title: "[Feature][Module Name] Feature title "
+labels: [feature, 'status: needs triage']
 body:
   - type: markdown
     attributes:
@@ -56,7 +57,7 @@ body:
 
   - type: textarea
     attributes:
-      label: solutions
+      label: Solutions
       description: Describe alternatives you've considered A clear and concise description of any alternative solutions or features you've considered.
 
   - type: textarea

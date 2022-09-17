@@ -23,16 +23,16 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.LogEvent;
 
 public abstract class AbstractLogCache implements LogCache {
-    protected String generateLog(LogEvent event) {
-        if (event.getLevel() == Level.INFO) {
-            return LogUtils.generateInfo(event.getMessage().toString());
-        } else if (event.getLevel() == Level.WARN) {
-            return LogUtils.generateWarn(event.getMessage().toString());
-        } else if (event.getLevel() == Level.ERROR) {
-            return LogUtils.generateERROR(event.getMessage().toString());
-        } else if (event.getLevel() == Level.FATAL) {
-            return LogUtils.generateSystemError(event.getMessage().toString());
-        }
-        return "";
+  protected String generateLog(LogEvent event) {
+    if (event.getLevel() == Level.INFO) {
+      return LogUtils.generateInfo(event.getMessage().toString());
+    } else if (event.getLevel() == Level.WARN) {
+      return LogUtils.generateWarn(event.getMessage().toString());
+    } else if (event.getLevel() == Level.ERROR) {
+      return LogUtils.generateERROR(event.getMessage().toString());
+    } else if (event.getLevel() == Level.FATAL) {
+      return LogUtils.generateSystemError(event.getMessage().toString());
     }
+    return "";
+  }
 }

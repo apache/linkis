@@ -23,15 +23,15 @@ import org.junit.jupiter.api.Test;
 /** ErrorCodeUtils Tester */
 public class ErrorCodeUtilsTest {
 
-    @Test
-    @ExpectSystemExitWithStatus(10000)
-    public void testValidateErrorCode1() {
-        ErrorCodeUtils.validateErrorCode(1, 2, 3);
-    }
+  @Test
+  @ExpectSystemExitWithStatus(10000)
+  public void testValidateErrorCode1() {
+    ErrorCodeUtils.validateErrorCode(1, 2, 3);
+  }
 
-    @Test
-    @ExpectSystemExitWithStatus(10000)
-    public void testValidateErrorCode2() {
-        ErrorCodeUtils.validateErrorCode(4, 2, 3);
-    }
+  @Test
+  @ExpectSystemExitWithStatus(10000)
+  public void testValidateErrorCode2() {
+    ErrorCodeUtils.validateErrorCode(4, 2, 3);
+  }
 }

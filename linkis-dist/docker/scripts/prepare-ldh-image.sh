@@ -15,28 +15,10 @@
 #
 #
 
-download() {
-  TAR_URL=$1
-  TAR_FILE=$2
-  HARD_LINK_ROOT=$3
-
-  if [ ! -f ${TAR_CACHE_ROOT}/${TAR_FILE} ]; then
-    echo "- downloading ${TAR_FILE} to ${TAR_CACHE_ROOT} from ${TAR_URL}"
-    curl -L ${TAR_URL} -o ${TAR_CACHE_ROOT}/${TAR_FILE}
-  else
-    echo "- ${TAR_FILE} already exists in ${TAR_CACHE_ROOT}, downloading skipped."
-  fi
-
-  echo "- create hard link: ${HARD_LINK_ROOT}/${TAR_FILE} -> ${TAR_CACHE_ROOT}/${TAR_FILE}"
-  rm -rf ${HARD_LINK_ROOT}/${TAR_FILE}
-  ln ${TAR_CACHE_ROOT}/${TAR_FILE} ${HARD_LINK_ROOT}/${TAR_FILE}
-}
-
 WORK_DIR=`cd $(dirname $0); pwd -P`
-PROJECT_ROOT=${WORK_DIR}/../..
-PROJECT_TARGET=${PROJECT_ROOT}/target
 
-TAR_CACHE_ROOT=${HOME}/.linkis-build-cache
+. ${WORK_DIR}/utils.sh
+
 LDH_TAR_DIR=${PROJECT_TARGET}/ldh-tars
 
 mkdir -p ${TAR_CACHE_ROOT}

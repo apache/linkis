@@ -87,19 +87,6 @@ spec:
         version: {{ .Chart.AppVersion }}
         {{- include "linkis.psPublicService.selectorLabels" . | nindent 8 }}
     spec:
-      initContainers:
-      - name: init-container
-        image: busybox
-        imagePullPolicy: IfNotPresent
-        command: ["sh"]
-        args:
-          [
-            "-c",
-            "{{- printf "%s%s%s" "mkdir -p " .Values.linkis.locations.runtimeDir "/hadoop" -}}"
-          ]
-        volumeMounts:
-        - name: runtime
-          mountPath: {{ .Values.linkis.locations.runtimeDir }}
       subdomain: {{ include "linkis.fullname" . }}-ps-publicservice-headless
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:

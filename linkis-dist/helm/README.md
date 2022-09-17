@@ -221,7 +221,7 @@ Run the following command to setup a local kubernetes cluster with LDH on it.
 $> sh ./scripts/create-kind-cluster.sh \
    && sh ./scripts/install-mysql.sh \
    && sh ./scripts/install-ldh.sh \
-   && sh ./scripts/install-charts.sh
+   && sh ./scripts/install-charts-with-ldh.sh
    
 ...
 

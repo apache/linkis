@@ -173,7 +173,7 @@ data:
     wds.linkis.home={{ .Values.linkis.locations.homeDir }}
     #Linkis governance station administrators
     wds.linkis.governance.station.admin=hadoop
-    wds.linkis.gateway.conf.publicservice.list=query,jobhistory,application,configuration,filesystem,udf,variable,microservice,errorcode,bml,datasource
+    #wds.linkis.gateway.conf.publicservice.list=query,jobhistory,application,configuration,filesystem,udf,variable,microservice,errorcode,bml,datasource
     spring.spring.servlet.multipart.max-file-size=500MB
     spring.spring.servlet.multipart.max-request-size=500MB
     # note:value of zero means Jetty will never write to disk.
@@ -258,7 +258,7 @@ data:
 
   linkis-ps-publicservice.properties: |
     wds.linkis.server.mdm.service.instance.expire-in-seconds=1800
-
+    linkis.workspace.filesystem.auto.create=true
     ##restful
     wds.linkis.server.restful.scan.packages=org.apache.linkis.cs.server.restful,org.apache.linkis.datasourcemanager.core.restful,org.apache.linkis.metadata.query.server.restful,org.apache.linkis.jobhistory.restful,org.apache.linkis.variable.restful,org.apache.linkis.configuration.restful,org.apache.linkis.udf.api,org.apache.linkis.filesystem.restful,org.apache.linkis.filesystem.restful,org.apache.linkis.instance.label.restful,org.apache.linkis.metadata.restful.api,org.apache.linkis.cs.server.restful,org.apache.linkis.bml.restful,org.apache.linkis.errorcode.server.restful
 

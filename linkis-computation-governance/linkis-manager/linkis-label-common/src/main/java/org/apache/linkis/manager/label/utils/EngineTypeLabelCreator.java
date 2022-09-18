@@ -82,7 +82,9 @@ public class EngineTypeLabelCreator {
           defaultVersion.put(
               EngineType.ELASTICSEARCH().toString(),
               LabelCommonConfig.ELASTICSEARCH_ENGINE_VERSION.getValue());
-
+          defaultVersion.put(
+              EngineType.SEATUNNEL().toString(),
+              LabelCommonConfig.SEATUNNEL_ENGINE_CONN_VERSION.getValue());
           defaultVersion.put("*", "*");
         }
       }

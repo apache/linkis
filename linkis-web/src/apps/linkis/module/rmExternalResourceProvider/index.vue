@@ -19,7 +19,7 @@
   <div>
     <Row class="search-bar" type="flex">
       <Col span="6">
-        <Input v-model="searchName" clearable suffix="ios-search" class="input" placeholder="搜索错误信息"></Input>
+        <Input v-model="searchName" clearable suffix="ios-search" class="input" placeholder="搜索"></Input>
       </Col>
       <Col span="3">
         <Button type="primary" class="Button" @click="load()">{{
@@ -81,7 +81,6 @@
 import mixin from '@/common/service/mixin';
 import ErrorCodeForm from './EditForm/index'
 import {add, del, edit, getList} from "./service";
-import {formatDate} from "iview/src/components/date-picker/util";
 export default {
   mixins: [mixin],
   components: {ErrorCodeForm},

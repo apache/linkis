@@ -81,7 +81,6 @@
 import mixin from '@/common/service/mixin';
 import ErrorCodeForm from './EditForm/index'
 import {add, del, edit, getList} from "./service";
-import {formatDate} from "iview/src/components/date-picker/util";
 export default {
   mixins: [mixin],
   components: {ErrorCodeForm},
@@ -127,8 +126,8 @@ export default {
           align: 'center',
         },
         {
-          title: "icon",
-          key: '图标',
+          title: "图标",
+          key: 'icon',
           tooltip: true,
           align: 'center',
         },

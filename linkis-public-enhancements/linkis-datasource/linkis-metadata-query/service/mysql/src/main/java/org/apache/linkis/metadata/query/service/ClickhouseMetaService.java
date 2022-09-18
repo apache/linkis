@@ -21,23 +21,23 @@ import org.apache.linkis.datasourcemanager.common.util.json.Json;
 import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
 import org.apache.linkis.metadata.query.common.service.AbstractMetaService;
 import org.apache.linkis.metadata.query.common.service.MetadataConnection;
+import org.apache.linkis.metadata.query.service.clickhouse.SqlConnection;
 import org.apache.linkis.metadata.query.service.conf.SqlParamsMapper;
-import org.apache.linkis.metadata.query.service.mysql.SqlConnection;
 
-import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Component;
 
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MysqlMetaService extends AbstractMetaService<SqlConnection> {
+@Component
+public class ClickhouseMetaService extends AbstractMetaService<SqlConnection> {
   @Override
   public MetadataConnection<SqlConnection> getConnection(
       String operator, Map<String, Object> params) throws Exception {
     String host =
         String.valueOf(params.getOrDefault(SqlParamsMapper.PARAM_SQL_HOST.getValue(), ""));
-    // After deserialize, Integer will be Double, Why?
     Integer port =
         (Double.valueOf(
                 String.valueOf(params.getOrDefault(SqlParamsMapper.PARAM_SQL_PORT.getValue(), 0))))
@@ -53,11 +53,8 @@ public class MysqlMetaService extends AbstractMetaService<SqlConnection> {
     Object sqlParamObj = params.get(SqlParamsMapper.PARAM_SQL_EXTRA_PARAMS.getValue());
     if (null != sqlParamObj) {
       if (!(sqlParamObj instanceof Map)) {
-        String paramStr = String.valueOf(sqlParamObj);
-        if (StringUtils.isNotBlank(paramStr)) {
-          extraParams = Json.fromJson(paramStr, Map.class, String.class, Object.class);
-        }
-
+        extraParams =
+            Json.fromJson(String.valueOf(sqlParamObj), Map.class, String.class, Object.class);
       } else {
         extraParams = (Map<String, Object>) sqlParamObj;
       }

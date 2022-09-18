@@ -52,10 +52,15 @@ public class SqlConnection implements Closeable {
   private ConnectMessage connectMessage;
 
   public SqlConnection(
-      String host, Integer port, String username, String password, Map<String, Object> extraParams)
+      String host,
+      Integer port,
+      String username,
+      String password,
+      String database,
+      Map<String, Object> extraParams)
       throws ClassNotFoundException, SQLException {
     connectMessage = new ConnectMessage(host, port, username, password, extraParams);
-    conn = getDBConnection(connectMessage, "");
+    conn = getDBConnection(connectMessage, database);
     // Try to create statement
     Statement statement = conn.createStatement();
     statement.close();

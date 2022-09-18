@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.metadata.query.service;
+package org.apache.linkis.metadata.query.service.clickhouse;
 
 import org.apache.linkis.common.conf.CommonVars;
 import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
@@ -36,10 +36,11 @@ public class SqlConnection implements Closeable {
   private static final Logger LOG = LoggerFactory.getLogger(SqlConnection.class);
 
   private static final CommonVars<String> SQL_DRIVER_CLASS =
-      CommonVars.apply("wds.linkis.server.mdm.service.sql.driver", "com.mysql.jdbc.Driver");
+      CommonVars.apply(
+          "wds.linkis.server.mdm.service.sql.driver", "ru.yandex.clickhouse.ClickHouseDriver");
 
   private static final CommonVars<String> SQL_CONNECT_URL =
-      CommonVars.apply("wds.linkis.server.mdm.service.sql.url", "jdbc:mysql://%s:%s/%s");
+      CommonVars.apply("wds.linkis.server.mdm.service.sql.url", "jdbc:clickhouse://%s:%s/%s");
 
   private static final CommonVars<Integer> SQL_CONNECT_TIMEOUT =
       CommonVars.apply("wds.linkis.server.mdm.service.sql.connect.timeout", 3000);
@@ -52,10 +53,15 @@ public class SqlConnection implements Closeable {
   private ConnectMessage connectMessage;
 
   public SqlConnection(
-      String host, Integer port, String username, String password, Map<String, Object> extraParams)
+      String host,
+      Integer port,
+      String username,
+      String password,
+      String database,
+      Map<String, Object> extraParams)
       throws ClassNotFoundException, SQLException {
     connectMessage = new ConnectMessage(host, port, username, password, extraParams);
-    conn = getDBConnection(connectMessage, "");
+    conn = getDBConnection(connectMessage, database);
     // Try to create statement
     Statement statement = conn.createStatement();
     statement.close();
@@ -219,9 +225,6 @@ public class SqlConnection implements Closeable {
       this.port = port;
       this.username = username;
       this.password = password;
-      if (extraParams != null) {
-        this.extraParams = extraParams;
-      }
       this.extraParams = extraParams;
       this.extraParams.put("connectTimeout", SQL_CONNECT_TIMEOUT.getValue());
       this.extraParams.put("socketTimeout", SQL_SOCKET_TIMEOUT.getValue());

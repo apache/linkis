@@ -46,7 +46,7 @@ hdfs dfs -chmod 777 /
 /opt/ldh/current/spark/sbin/start-history-server.sh
 
 # flink
-/opt/ldh/current/flink/bin/yarn-session.sh --detached
+HADOOP_CLASSPATH=`hadoop classpath` /opt/ldh/current/flink/bin/yarn-session.sh --detached
 
 # zookeeper
 /opt/ldh/current/zookeeper/bin/zkServer.sh start

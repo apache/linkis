@@ -18,7 +18,7 @@
 
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
-<mapper namespace="org.apache.linkis.configuration.dao.TenantMapper">
+<mapper namespace="org.apache.linkis.configuration.dao.UserTenantMapper">
 
     <resultMap id="TenantMap" type="org.apache.linkis.configuration.entity.TenantVo">
         <id column="id" property="id" jdbcType="INTEGER"/>

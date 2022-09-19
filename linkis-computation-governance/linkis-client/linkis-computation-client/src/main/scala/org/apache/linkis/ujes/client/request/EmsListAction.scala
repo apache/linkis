@@ -15,13 +15,12 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.configuration.request
-
-import org.apache.linkis.httpclient.request.GetAction
+package org.apache.linkis.ujes.client.request
 
 import org.apache.commons.lang3.StringUtils
+import org.apache.linkis.httpclient.request.GetAction
 
-class EmsListAction extends GetAction with ConfigrationResourceAction {
+class EmsListAction extends GetAction with UJESJobAction {
 
   override def suffixURLs: Array[String] = Array("linkisManager", "listAllEMs")
 
@@ -30,7 +29,7 @@ class EmsListAction extends GetAction with ConfigrationResourceAction {
 object EmsListAction {
   def newBuilder(): Builder = new Builder
 
-  class Builder private[EmsListAction] () {
+  class Builder private[EmsListAction]() {
     private var user: String = _
     private var instance: String = _
     private var nodeHealthy: String = _

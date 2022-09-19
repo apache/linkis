@@ -112,4 +112,18 @@ public class TenantVo {
   public void setBussinessUser(String bussinessUser) {
     this.bussinessUser = bussinessUser;
   }
+
+  @Override
+  public String toString() {
+    return "TenantVo{" +
+            "id='" + id + '\'' +
+            ", user='" + user + '\'' +
+            ", creator='" + creator + '\'' +
+            ", tenantValue='" + tenantValue + '\'' +
+            ", createTime=" + createTime +
+            ", updateTime=" + updateTime +
+            ", desc='" + desc + '\'' +
+            ", bussinessUser='" + bussinessUser + '\'' +
+            '}';
+  }
 }

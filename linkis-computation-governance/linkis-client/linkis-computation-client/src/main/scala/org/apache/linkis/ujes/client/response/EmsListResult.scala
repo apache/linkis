@@ -15,12 +15,21 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.configuration.request
+package org.apache.linkis.ujes.client.response
 
-trait UserAction extends org.apache.linkis.httpclient.request.UserAction {
-  private var user: String = _
+import org.apache.linkis.httpclient.dws.annotation.DWSHttpMessageResult
+import org.apache.linkis.httpclient.dws.response.DWSResult
 
-  override def setUser(user: String): Unit = this.user = user
+import java.util
+import scala.beans.BeanProperty
 
-  override def getUser: String = user
+@DWSHttpMessageResult("/api/rest_j/v\\d+/linkisManager/listAllEMs")
+class EmsListResult extends DWSResult {
+
+  @BeanProperty
+  var tasks: util.ArrayList[util.Map[String, Object]] = _
+
+  @BeanProperty
+  var totalPage: Int = _
+
 }

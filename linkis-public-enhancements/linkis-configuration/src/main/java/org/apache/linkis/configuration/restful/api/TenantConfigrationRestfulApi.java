@@ -18,20 +18,24 @@
 package org.apache.linkis.configuration.restful.api;
 
 import io.swagger.annotations.Api;
+import org.apache.commons.lang.StringUtils;
 import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.configuration.entity.TenantVo;
+import org.apache.linkis.configuration.exception.ConfigurationException;
 import org.apache.linkis.configuration.service.TenantConfigService;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
 
 @Api(tags = "tenant label  configuration")
 @RestController
@@ -49,7 +53,14 @@ public class TenantConfigrationRestfulApi {
         if (!Configuration.isAdmin(userName)) {
             return Message.error("Only administrators can configure ");
         }
-        return   tenantConfigService.createTenant(tenantVo);
+        try {
+            tenantConfigService.createTenant(tenantVo);
+        } catch (DuplicateKeyException e) {
+            return Message.error("create user-creator is existed");
+        } catch (ConfigurationException e) {
+            return Message.error(e.getMessage());
+        }
+        return Message.ok();
     }
 
     @RequestMapping(path = "/updateTenant", method = RequestMethod.POST)
@@ -58,7 +69,12 @@ public class TenantConfigrationRestfulApi {
         if (!Configuration.isAdmin(userName)) {
             return Message.error("Only administrators can configure ");
         }
-        return  tenantConfigService.updateTenant(tenantVo);
+        try {
+            tenantConfigService.updateTenant(tenantVo);
+        } catch (ConfigurationException e) {
+            return Message.error(e.getMessage());
+        }
+        return Message.ok();
     }
 
     @RequestMapping(path = "/deleteTenant", method = RequestMethod.GET)
@@ -72,11 +88,20 @@ public class TenantConfigrationRestfulApi {
     }
 
     @RequestMapping(path = "/queryTenantList", method = RequestMethod.GET)
-    public Message queryTenantList(HttpServletRequest req,String user,String creator,String tenant) {
+    public Message queryTenantList(HttpServletRequest req, String user, String creator, String tenant) {
         String userName = ModuleUserUtils.getOperationUser(req, "queryTenantList");
         if (!Configuration.isAdmin(userName)) {
             return Message.error("Only administrators can configure ");
         }
-        return Message.ok().data("tenantLIst",tenantConfigService.queryTenantList(user,creator,tenant));
+        return Message.ok().data("tenantLIst", tenantConfigService.queryTenantList(user, creator, tenant));
+    }
+
+    @RequestMapping(path = "/checkUserCteator", method = RequestMethod.GET)
+    public Message checkUserCteator(HttpServletRequest req, String user, String creator, String tenant) {
+        String userName = ModuleUserUtils.getOperationUser(req, "queryTenantList");
+        if (!Configuration.isAdmin(userName)) {
+            return Message.error("Only administrators can configure ");
+        }
+        return Message.ok().data("result", tenantConfigService.checkUserCteator(user, creator, tenant));
     }
 }

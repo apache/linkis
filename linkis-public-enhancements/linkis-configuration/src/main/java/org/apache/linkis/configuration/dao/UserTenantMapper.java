@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,23 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.linkis.configuration.dao;
 
-package org.apache.linkis.configuration.response
+import org.apache.linkis.configuration.entity.TenantVo;
 
-import org.apache.linkis.httpclient.dws.annotation.DWSHttpMessageResult
-import org.apache.linkis.httpclient.dws.response.DWSResult
+import org.apache.ibatis.annotations.Param;
 
-import java.util
+import java.util.List;
 
-import scala.beans.BeanProperty
+public interface UserTenantMapper {
 
-@DWSHttpMessageResult("/api/rest_j/v\\d+/linkisManager/listAllEMs")
-class EmsListResult extends DWSResult {
+  List<TenantVo> queryTenantList(
+      @Param("user") String user,
+      @Param("creator") String creator,
+      @Param("tenant_value") String tenant);
 
-  @BeanProperty
-  var tasks: util.ArrayList[util.Map[String, Object]] = _
+  void deleteTenant(@Param("id") Integer id);
 
-  @BeanProperty
-  var totalPage: Int = _
+  void updateTenant(TenantVo tenantVo);
 
+  void createTenant(TenantVo tenantVo);
+
+  TenantVo queryTenant(@Param("user") String user, @Param("creator") String creator);
 }

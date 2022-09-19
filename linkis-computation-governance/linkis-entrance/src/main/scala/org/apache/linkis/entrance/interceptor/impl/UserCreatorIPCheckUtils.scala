@@ -18,7 +18,7 @@
 package org.apache.linkis.entrance.interceptor.impl
 
 import org.apache.linkis.common.conf.Configuration
-import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.entrance.conf.EntranceConfiguration
 import org.apache.linkis.entrance.exception.EntranceErrorCode
 import org.apache.linkis.entrance.interceptor.exception.UserCreatorIPCheckException
@@ -27,56 +27,55 @@ import org.apache.linkis.governance.common.protocol.conf.{UserIpRequest, UserIpR
 import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.rpc.Sender
-
 import org.apache.commons.lang3.StringUtils
 
 import java.lang
 import java.util.concurrent.TimeUnit
-
 import com.google.common.cache.{CacheBuilder, CacheLoader, LoadingCache}
 
-object UserIpData extends Logging {
+object UserCreatorIPCheckUtils extends Logging {
 
   private val configCache: LoadingCache[String, String] = CacheBuilder
     .newBuilder()
     .maximumSize(1000)
-    .expireAfterAccess(1, TimeUnit.MINUTES)
+    .refreshAfterWrite(EntranceConfiguration.USER_PARALLEL_REFLESH_TIME.getValue, TimeUnit.MINUTES)
     .build(new CacheLoader[String, String]() {
-
-      override def load(userCreator: String): String = {
-        val sender: Sender = Sender
-          .getSender(Configuration.CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME.getValue)
-        val user = userCreator.split("-")(0)
-        val creator = userCreator.split("-")(1)
-        sender.ask(UserIpRequest(user, creator)) match {
-          case useripResponse: UserIpResponse => useripResponse.ip
-          case _ =>
-            logger.warn(s"UserIpCache user $user creator $creator data loading failed")
-            ""
+      override def load(userCreatorLabel: String): String = {
+        Utils.tryAndWarn {
+          val sender: Sender = Sender
+            .getSender(Configuration.CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME.getValue)
+          val user = userCreatorLabel.split("-")(0)
+          val creator = userCreatorLabel.split("-")(1)
+          sender.ask(UserIpRequest(user, creator)) match {
+            case useripResponse: UserIpResponse => useripResponse.ip
+            case _ =>
+              logger.warn(s"UserIpCache user $user creator $creator data loading failed")
+              ""
+          }
         }
       }
 
     })
 
   def checkUserIp(jobRequest: JobRequest, logAppender: lang.StringBuilder): JobRequest = {
-    // 获取IP地址
+    // Get IP address
     val jobIp = jobRequest.getSource.get(TaskConstant.REQUEST_IP)
     logger.info(s"start to checkTenantLabel $jobIp")
     if (StringUtils.isNotBlank(jobIp)) {
       jobRequest match {
         case jobRequest: JobRequest =>
-          // 获取user信息,未获取到用户信息报错
+          // The user information is obtained, and an error is reported if the user information is not obtained
           if (StringUtils.isBlank(jobRequest.getSubmitUser)) {
             throw UserCreatorIPCheckException(
               EntranceErrorCode.USER_NULL_EXCEPTION.getErrCode,
               EntranceErrorCode.USER_NULL_EXCEPTION.getDesc
             )
           }
-          // 通过user-creator  获取缓存中的 ip
+          // Obtain the IP address in the cache through user creator
           val cacheIp =
             configCache.get(LabelUtil.getUserCreatorLabel(jobRequest.getLabels).getStringValue)
           logger.info("get cache cacheIp {} ", cacheIp)
-          // 缓存获取数据不为空则进行判断
+          // Judge if the cached data is not empty
           if (StringUtils.isNotBlank(cacheIp) && (!cacheIp.contains(jobIp))) {
             throw new UserCreatorIPCheckException(
               EntranceErrorCode.USER_IP_EXCEPTION.getErrCode,

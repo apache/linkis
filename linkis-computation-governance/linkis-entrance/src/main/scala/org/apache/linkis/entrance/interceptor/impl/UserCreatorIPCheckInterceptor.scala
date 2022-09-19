@@ -17,27 +17,24 @@
 
 package org.apache.linkis.entrance.interceptor.impl
 
-import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.entrance.interceptor.EntranceInterceptor
 import org.apache.linkis.governance.common.entity.job.JobRequest
 
-import java.{lang, util}
+import java.lang
 
-class SetTenantLabel extends EntranceInterceptor with Logging {
+class UserCreatorIPCheckInterceptor extends EntranceInterceptor {
 
   /**
-   * The apply function is to supplement the information of the incoming parameter task, making the
-   * content of this task more complete.    * Additional information includes: database information
-   * supplement, custom variable substitution, code check, limit limit, etc.
-   * apply函数是对传入参数task进行信息的补充，使得这个task的内容更加完整。 补充的信息包括: 数据库信息补充、自定义变量替换、代码检查、limit限制等
-   *
+   * The apply function supplements the information of the incoming parameter task, making the content of the task more complete.
+   * Additional information includes: User IP address restrictions
+   * apply函数是对传入参数task进行信息的补充，使得这个task的内容更加完整。 补充的信息包括: 用户IP地址限制
    * @param jobRequest
    * @param logAppender
    *   Used to cache the necessary reminder logs and pass them to the upper layer(用于缓存必要的提醒日志，传给上层)
    * @return
    */
   override def apply(jobRequest: JobRequest, logAppender: lang.StringBuilder): JobRequest = {
-    TenantData.checkTenantLabel(jobRequest, logAppender)
+    UserCreatorIPCheckUtils.checkUserIp(jobRequest, logAppender)
   }
 
 }

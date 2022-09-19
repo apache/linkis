@@ -16,7 +16,7 @@
  */
 package org.apache.linkis.configuration.service.impl;
 
-import org.apache.linkis.configuration.dao.TenantMapper;
+import org.apache.linkis.configuration.dao.UserTenantMapper;
 import org.apache.linkis.configuration.entity.TenantVo;
 import org.apache.linkis.configuration.service.TenantService;
 import org.apache.linkis.governance.common.protocol.conf.TenantRequest;
@@ -35,12 +35,12 @@ public class TenantServiceImpl implements TenantService {
 
   private static final Logger logger = LoggerFactory.getLogger(TenantService.class);
 
-  @Autowired private TenantMapper tenantMapper;
+  @Autowired private UserTenantMapper userTenantMapper;
 
   @Receiver
   @Override
   public TenantResponse getTenantData(TenantRequest request, Sender sender) {
-    TenantVo tenantVo = tenantMapper.queryTenant(request.user(), request.creator());
+    TenantVo tenantVo = userTenantMapper.queryTenant(request.user(), request.creator());
     return new TenantResponse(tenantVo.getUser(), tenantVo.getCreator(), tenantVo.getTenantValue());
   }
 }

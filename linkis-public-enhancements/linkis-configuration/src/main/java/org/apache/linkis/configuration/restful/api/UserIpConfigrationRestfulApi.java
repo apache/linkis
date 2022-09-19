@@ -18,8 +18,10 @@
 package org.apache.linkis.configuration.restful.api;
 
 import io.swagger.annotations.Api;
+import org.apache.commons.lang.StringUtils;
 import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.configuration.entity.UserIpVo;
+import org.apache.linkis.configuration.exception.ConfigurationException;
 import org.apache.linkis.configuration.service.UserIpConfigService;
 import org.apache.linkis.configuration.util.CommonUtils;
 import org.apache.linkis.server.Message;
@@ -27,6 +29,7 @@ import org.apache.linkis.server.utils.ModuleUserUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -35,6 +38,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
 
 @Api(tags = "user ip configuration")
 @RestController
@@ -52,7 +56,14 @@ public class UserIpConfigrationRestfulApi {
         if (!Configuration.isAdmin(userName)) {
             return Message.error("Only administrators can configure ");
         }
-        return userIpConfigService.createUserIP(userIpVo);
+        try {
+            userIpConfigService.createUserIP(userIpVo);
+        } catch (DuplicateKeyException e) {
+            return Message.error("create user-creator is existed");
+        } catch (ConfigurationException e) {
+            return Message.error(e.getMessage());
+        }
+        return Message.ok();
     }
 
     @RequestMapping(path = "/updateUserIP", method = RequestMethod.POST)
@@ -61,7 +72,12 @@ public class UserIpConfigrationRestfulApi {
         if (!Configuration.isAdmin(userName)) {
             return Message.error("Only administrators can configure ");
         }
-        return userIpConfigService.updateUserIP(UserIpVo);
+        try {
+            userIpConfigService.updateUserIP(UserIpVo);
+        } catch (ConfigurationException e) {
+            return Message.error(e.getMessage());
+        }
+        return Message.ok();
     }
 
     @RequestMapping(path = "/deleteUserIP", method = RequestMethod.GET)
@@ -75,7 +91,7 @@ public class UserIpConfigrationRestfulApi {
     }
 
     @RequestMapping(path = "/queryUserIPList", method = RequestMethod.GET)
-    public Message queryUserIPList(HttpServletRequest req) {
+    public Message queryUserIPList(HttpServletRequest req, String user, String creator) {
         String userName = ModuleUserUtils.getOperationUser(req, "queryUserIPList");
         if (!Configuration.isAdmin(userName)) {
             return Message.error("Only administrators can configure ");
@@ -83,13 +99,5 @@ public class UserIpConfigrationRestfulApi {
         return Message.ok().data("userIpList", userIpConfigService.queryUserIPList());
     }
 
-    @RequestMapping(path = "/queryUserIP", method = RequestMethod.POST)
-    public Message queryUserIPList(HttpServletRequest req, @RequestBody UserIpVo UserIpVo) {
-        String userName = ModuleUserUtils.getOperationUser(req, "queryUserIP");
-        if (!Configuration.isAdmin(userName)) {
-            return Message.error("Only administrators can configure ");
-        }
 
-        return userIpConfigService.queryUserIP(UserIpVo);
-    }
 }

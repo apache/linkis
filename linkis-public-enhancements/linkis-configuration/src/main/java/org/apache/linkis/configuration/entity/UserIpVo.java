@@ -112,4 +112,18 @@ public class UserIpVo {
   public void setIpList(String ipList) {
     this.ipList = ipList;
   }
+
+  @Override
+  public String toString() {
+    return "UserIpVo{" +
+            "id='" + id + '\'' +
+            ", user='" + user + '\'' +
+            ", creator='" + creator + '\'' +
+            ", ipList='" + ipList + '\'' +
+            ", createTime=" + createTime +
+            ", updateTime=" + updateTime +
+            ", desc='" + desc + '\'' +
+            ", bussinessUser='" + bussinessUser + '\'' +
+            '}';
+  }
 }

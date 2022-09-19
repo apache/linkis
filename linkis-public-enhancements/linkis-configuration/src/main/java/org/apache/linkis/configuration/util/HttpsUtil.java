@@ -17,11 +17,7 @@
 package org.apache.linkis.configuration.util;
 
 import org.apache.linkis.common.conf.Configuration;
-import org.apache.linkis.configuration.client.ConfigurationHttpClient;
-import org.apache.linkis.configuration.client.ConfigurationHttpClientImpl;
 import org.apache.linkis.configuration.constant.Constants;
-import org.apache.linkis.configuration.request.EmsListAction;
-import org.apache.linkis.configuration.response.EmsListResult;
 import org.apache.linkis.httpclient.dws.authentication.TokenAuthenticationStrategy;
 import org.apache.linkis.httpclient.dws.config.DWSClientConfig;
 import org.apache.linkis.httpclient.dws.config.DWSClientConfigBuilder;
@@ -34,6 +30,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.linkis.ujes.client.UJESClientImpl;
+import org.apache.linkis.ujes.client.request.EmsListAction;
+import org.apache.linkis.ujes.client.response.EmsListResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +42,7 @@ public class HttpsUtil {
 
   public static DWSClientConfig dwsClientConfig = createClientConfig(null, null);
 
-  public static ConfigurationHttpClient client = new ConfigurationHttpClientImpl(dwsClientConfig);
+  public static UJESClientImpl client = new UJESClientImpl(dwsClientConfig);
 
   // TODO   client 优化
   public static Map<String, Object> sendHttp(String url, Map<String, Object> properties)
@@ -52,7 +51,7 @@ public class HttpsUtil {
       dwsClientConfig = createClientConfig(url, properties);
     }
     if (null == client) {
-      client = new ConfigurationHttpClientImpl(dwsClientConfig);
+      client = new UJESClientImpl(dwsClientConfig);
     }
     EmsListAction build = EmsListAction.newBuilder().setUser("hadoop").build();
     EmsListResult result = client.list(build);

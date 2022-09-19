@@ -17,19 +17,20 @@
 package org.apache.linkis.configuration.service;
 
 import org.apache.linkis.configuration.entity.UserIpVo;
+import org.apache.linkis.configuration.exception.ConfigurationException;
 import org.apache.linkis.server.Message;
 
 import java.util.List;
 
 public interface UserIpConfigService {
 
-  Message createUserIP(UserIpVo userIpVo);
+    void createUserIP(UserIpVo userIpVo) throws ConfigurationException;
 
-  Message updateUserIP(UserIpVo userIpVo);
+    void updateUserIP(UserIpVo userIpVo) throws ConfigurationException;
 
-  void deleteUserIP(Integer id);
+    void deleteUserIP(Integer id);
 
-  List<UserIpVo> queryUserIPList();
+    List<UserIpVo> queryUserIPList();
 
-  Message queryUserIP(UserIpVo userIpVo);
+    Message queryUserIP(UserIpVo userIpVo);
 }

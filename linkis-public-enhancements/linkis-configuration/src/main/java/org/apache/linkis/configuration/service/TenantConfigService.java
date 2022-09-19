@@ -17,6 +17,7 @@
 package org.apache.linkis.configuration.service;
 
 import org.apache.linkis.configuration.entity.TenantVo;
+import org.apache.linkis.configuration.exception.ConfigurationException;
 import org.apache.linkis.server.Message;
 
 import java.util.List;
@@ -27,7 +28,9 @@ public interface TenantConfigService {
 
   void deleteTenant(Integer id);
 
-  Message updateTenant(TenantVo tenantVo);
+  void updateTenant(TenantVo tenantVo) throws ConfigurationException;
 
-  Message createTenant(TenantVo tenantVo);
+  void createTenant(TenantVo tenantVo) throws ConfigurationException;
+
+  Boolean checkUserCteator(String user, String creator, String tenant);
 }

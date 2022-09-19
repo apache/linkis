@@ -129,6 +129,10 @@ abstract class UJESClient extends Closeable {
     executeUJESJob(getPartitionStatisticInfoAction).asInstanceOf[GetPartitionStatisticInfoResult]
   }
 
+  def list(emsListAction: EmsListAction): EmsListResult = {
+    executeUJESJob(emsListAction).asInstanceOf[EmsListResult]
+  }
+
 }
 
 object UJESClient {

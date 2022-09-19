@@ -154,6 +154,7 @@
     <mockito.version>3.9.0</mockito.version>
     <assertj.version>3.17.2</assertj.version>
     <h2.version>1.4.200</h2.version>
+    <poi.version>5.2.3</poi.version>
 
     <!-- platform encoding override -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

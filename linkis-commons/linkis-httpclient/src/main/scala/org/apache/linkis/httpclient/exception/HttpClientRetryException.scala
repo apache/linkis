@@ -18,7 +18,7 @@
 package org.apache.linkis.httpclient.exception
 
 import org.apache.linkis.common.exception.LinkisRetryException
-import org.apache.linkis.httpclient.errorcode.ErrorCodeHttpClientRetryException.RETRY_EXCEPTION
+import org.apache.linkis.httpclient.errorcode.LinkisHttpclientErrorCodeSummary.RETRY_EXCEPTION
 
 class HttpClientRetryException(errorDesc: String)
     extends LinkisRetryException(RETRY_EXCEPTION.getErrorCode, errorDesc) {

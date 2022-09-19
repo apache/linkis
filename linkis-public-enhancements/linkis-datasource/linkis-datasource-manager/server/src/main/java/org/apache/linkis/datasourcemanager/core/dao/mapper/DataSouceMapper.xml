@@ -224,7 +224,7 @@
         <where>
             <if test="ids != null and ids.size > 0">
                 <![CDATA[AND d.`id` in ]]>
-                <foreach collection="ids" index="id" separator="," open="(" close=")">
+                <foreach collection="ids" index="index" item="id" separator="," open="(" close=")">
                     #{id}
                 </foreach>
             </if>

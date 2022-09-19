@@ -25,6 +25,7 @@
     <div class="console-page-content-body">
       <div class="content-body-side-nav">
         <Card
+          style="height:87vh; overflow: auto;"
           :padding="sideNavList.padding"
           :icon="sideNavList.icon"
           shadow

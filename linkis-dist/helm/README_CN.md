@@ -307,6 +307,10 @@ dataLength = 0
 numChildren = 0
 [zk: localhost:2181(CONNECTED) 1] quit
 
+# 以 per-job cluster 模式启动 Flink 作业
+[root@ldh-96bdc757c-dnkbs /]# HADOOP_CLASSPATH=`hadoop classpath` flink run -t yarn-per-job /opt/ldh/current/flink/examples/streaming/TopSpeedWindowing.jar
+# 以 session 模式启动 Flink 作业,
+# Flink session 在 LDH Pod 启动时会被启动了一个.
 [root@ldh-96bdc757c-dnkbs /]# flink run /opt/ldh/current/flink/examples/streaming/TopSpeedWindowing.jar
 Executing TopSpeedWindowing example with default input data set.
 Use --input to specify file input.

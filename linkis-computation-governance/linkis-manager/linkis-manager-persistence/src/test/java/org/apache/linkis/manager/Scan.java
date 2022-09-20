@@ -17,11 +17,10 @@
 
 package org.apache.linkis.manager;
 
-import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+
+import org.mybatis.spring.annotation.MapperScan;
 
 @EnableAutoConfiguration
 @MapperScan("org.apache.linkis.manager")
-public class Scan {
-
-}
+public class Scan {}

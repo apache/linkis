@@ -25,28 +25,28 @@ import io.swagger.annotations.ApiModelProperty;
 @ApiModel
 public class TenantVo {
 
-  @ApiModelProperty(name = "序号")
+  @ApiModelProperty("id")
   private String id;
 
-  @ApiModelProperty(value = "用户(必填)", name = "user", required = true)
+  @ApiModelProperty("user")
   private String user;
 
-  @ApiModelProperty(value = "creator(必填)", name = "creator", required = true)
+  @ApiModelProperty("creator")
   private String creator;
 
-  @ApiModelProperty(name = "租户")
+  @ApiModelProperty("tenantValue")
   private String tenantValue;
 
-  @ApiModelProperty(name = "创建时间")
+  @ApiModelProperty("createTime")
   private Date createTime;
 
-  @ApiModelProperty(name = "更新时间")
+  @ApiModelProperty("updateTime")
   private Date updateTime;
 
-  @ApiModelProperty(name = "业务来源")
+  @ApiModelProperty("desc")
   private String desc;
 
-  @ApiModelProperty(name = "对接人")
+  @ApiModelProperty("bussinessUser")
   private String bussinessUser;
 
   public String getId() {
@@ -115,15 +115,29 @@ public class TenantVo {
 
   @Override
   public String toString() {
-    return "TenantVo{" +
-            "id='" + id + '\'' +
-            ", user='" + user + '\'' +
-            ", creator='" + creator + '\'' +
-            ", tenantValue='" + tenantValue + '\'' +
-            ", createTime=" + createTime +
-            ", updateTime=" + updateTime +
-            ", desc='" + desc + '\'' +
-            ", bussinessUser='" + bussinessUser + '\'' +
-            '}';
+    return "TenantVo{"
+        + "id='"
+        + id
+        + '\''
+        + ", user='"
+        + user
+        + '\''
+        + ", creator='"
+        + creator
+        + '\''
+        + ", tenantValue='"
+        + tenantValue
+        + '\''
+        + ", createTime="
+        + createTime
+        + ", updateTime="
+        + updateTime
+        + ", desc='"
+        + desc
+        + '\''
+        + ", bussinessUser='"
+        + bussinessUser
+        + '\''
+        + '}';
   }
 }

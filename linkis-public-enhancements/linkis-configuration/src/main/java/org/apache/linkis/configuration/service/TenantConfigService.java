@@ -18,13 +18,12 @@ package org.apache.linkis.configuration.service;
 
 import org.apache.linkis.configuration.entity.TenantVo;
 import org.apache.linkis.configuration.exception.ConfigurationException;
-import org.apache.linkis.server.Message;
 
 import java.util.List;
 
 public interface TenantConfigService {
 
-  List<TenantVo> queryTenantList(String user, String creator, String tenant);
+  List<TenantVo> queryTenantList(String user, String creator, String tenantValue);
 
   void deleteTenant(Integer id);
 
@@ -32,5 +31,5 @@ public interface TenantConfigService {
 
   void createTenant(TenantVo tenantVo) throws ConfigurationException;
 
-  Boolean checkUserCteator(String user, String creator, String tenant);
+  Boolean checkUserCteator(String user, String creator, String tenantValue);
 }

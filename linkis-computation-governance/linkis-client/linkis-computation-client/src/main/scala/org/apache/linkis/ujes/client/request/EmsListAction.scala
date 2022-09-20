@@ -17,8 +17,9 @@
 
 package org.apache.linkis.ujes.client.request
 
-import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.httpclient.request.GetAction
+
+import org.apache.commons.lang3.StringUtils
 
 class EmsListAction extends GetAction with UJESJobAction {
 
@@ -29,7 +30,7 @@ class EmsListAction extends GetAction with UJESJobAction {
 object EmsListAction {
   def newBuilder(): Builder = new Builder
 
-  class Builder private[EmsListAction]() {
+  class Builder private[EmsListAction] () {
     private var user: String = _
     private var instance: String = _
     private var nodeHealthy: String = _

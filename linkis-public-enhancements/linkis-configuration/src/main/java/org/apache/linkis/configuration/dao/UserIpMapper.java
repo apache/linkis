@@ -25,7 +25,7 @@ import java.util.List;
 
 public interface UserIpMapper {
 
-  List<UserIpVo> queryUserIPList();
+  List<UserIpVo> queryUserIPList(@Param("user") String user, @Param("creator") String creator);
 
   void deleteUserIP(Integer id);
 

@@ -27,10 +27,12 @@ import org.apache.linkis.governance.common.protocol.conf.{UserIpRequest, UserIpR
 import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.rpc.Sender
+
 import org.apache.commons.lang3.StringUtils
 
 import java.lang
 import java.util.concurrent.TimeUnit
+
 import com.google.common.cache.{CacheBuilder, CacheLoader, LoadingCache}
 
 object UserCreatorIPCheckUtils extends Logging {
@@ -40,6 +42,7 @@ object UserCreatorIPCheckUtils extends Logging {
     .maximumSize(1000)
     .refreshAfterWrite(EntranceConfiguration.USER_PARALLEL_REFLESH_TIME.getValue, TimeUnit.MINUTES)
     .build(new CacheLoader[String, String]() {
+
       override def load(userCreatorLabel: String): String = {
         Utils.tryAndWarn {
           val sender: Sender = Sender
@@ -76,11 +79,13 @@ object UserCreatorIPCheckUtils extends Logging {
             configCache.get(LabelUtil.getUserCreatorLabel(jobRequest.getLabels).getStringValue)
           logger.info("get cache cacheIp {} ", cacheIp)
           // Judge if the cached data is not empty
-          if (StringUtils.isNotBlank(cacheIp) && (!cacheIp.contains(jobIp))) {
-            throw new UserCreatorIPCheckException(
-              EntranceErrorCode.USER_IP_EXCEPTION.getErrCode,
-              EntranceErrorCode.USER_IP_EXCEPTION.getDesc
-            )
+          if (StringUtils.isNotBlank(cacheIp)) {
+            if (!cacheIp.equals("*") && (!cacheIp.contains(jobIp))) {
+              throw new UserCreatorIPCheckException(
+                EntranceErrorCode.USER_IP_EXCEPTION.getErrCode,
+                EntranceErrorCode.USER_IP_EXCEPTION.getDesc
+              )
+            }
           }
         case _ => jobRequest
       }

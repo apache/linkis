@@ -25,28 +25,28 @@ import io.swagger.annotations.ApiModelProperty;
 @ApiModel
 public class UserIpVo {
 
-  @ApiModelProperty(name = "序号")
+  @ApiModelProperty("id")
   private String id;
 
-  @ApiModelProperty(name = "用户")
+  @ApiModelProperty("user")
   private String user;
 
-  @ApiModelProperty(name = "creator")
+  @ApiModelProperty("creator")
   private String creator;
 
-  @ApiModelProperty(name = "ip列表")
+  @ApiModelProperty("ipList")
   private String ipList;
 
-  @ApiModelProperty(name = "创建时间")
+  @ApiModelProperty("createTime")
   private Date createTime;
 
-  @ApiModelProperty(name = "更新时间")
+  @ApiModelProperty("updateTime")
   private Date updateTime;
 
-  @ApiModelProperty(name = "业务来源")
+  @ApiModelProperty("desc")
   private String desc;
 
-  @ApiModelProperty(name = "对接人")
+  @ApiModelProperty("bussinessUser")
   private String bussinessUser;
 
   public String getId() {
@@ -115,15 +115,29 @@ public class UserIpVo {
 
   @Override
   public String toString() {
-    return "UserIpVo{" +
-            "id='" + id + '\'' +
-            ", user='" + user + '\'' +
-            ", creator='" + creator + '\'' +
-            ", ipList='" + ipList + '\'' +
-            ", createTime=" + createTime +
-            ", updateTime=" + updateTime +
-            ", desc='" + desc + '\'' +
-            ", bussinessUser='" + bussinessUser + '\'' +
-            '}';
+    return "UserIpVo{"
+        + "id='"
+        + id
+        + '\''
+        + ", user='"
+        + user
+        + '\''
+        + ", creator='"
+        + creator
+        + '\''
+        + ", ipList='"
+        + ipList
+        + '\''
+        + ", createTime="
+        + createTime
+        + ", updateTime="
+        + updateTime
+        + ", desc='"
+        + desc
+        + '\''
+        + ", bussinessUser='"
+        + bussinessUser
+        + '\''
+        + '}';
   }
 }

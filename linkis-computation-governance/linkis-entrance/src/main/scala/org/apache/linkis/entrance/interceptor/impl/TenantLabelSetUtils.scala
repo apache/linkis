@@ -20,6 +20,7 @@ package org.apache.linkis.entrance.interceptor.impl
 import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.entrance.conf.EntranceConfiguration
 import org.apache.linkis.entrance.exception.EntranceErrorCode
 import org.apache.linkis.entrance.interceptor.exception.SetTenantLabelException
 import org.apache.linkis.governance.common.entity.job.JobRequest
@@ -29,12 +30,13 @@ import org.apache.linkis.manager.label.constant.LabelKeyConstant
 import org.apache.linkis.manager.label.entity.TenantLabel
 import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.rpc.Sender
+
 import org.apache.commons.lang3.StringUtils
 
 import java.{lang, util}
 import java.util.concurrent.TimeUnit
+
 import com.google.common.cache.{CacheBuilder, CacheLoader, LoadingCache}
-import org.apache.linkis.entrance.conf.EntranceConfiguration
 
 object TenantLabelSetUtils extends Logging {
 
@@ -59,6 +61,7 @@ object TenantLabelSetUtils extends Logging {
           }
         }
       }
+
     })
 
   def checkTenantLabel(jobRequest: JobRequest, logAppender: lang.StringBuilder): JobRequest = {
@@ -78,7 +81,8 @@ object TenantLabelSetUtils extends Logging {
             )
           }
           // Get the tenant in the cache through user creator
-          val tenant = userCreatorTenantCache.get(LabelUtil.getUserCreatorLabel(labels).getStringValue)
+          val tenant =
+            userCreatorTenantCache.get(LabelUtil.getUserCreatorLabel(labels).getStringValue)
           logger.info("get cache tenant {} ", tenant)
           // Add cached data if it is not empty
           if (StringUtils.isNotBlank(tenant)) {

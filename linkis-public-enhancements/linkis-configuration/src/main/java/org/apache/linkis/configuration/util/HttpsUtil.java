@@ -21,6 +21,9 @@ import org.apache.linkis.configuration.constant.Constants;
 import org.apache.linkis.httpclient.dws.authentication.TokenAuthenticationStrategy;
 import org.apache.linkis.httpclient.dws.config.DWSClientConfig;
 import org.apache.linkis.httpclient.dws.config.DWSClientConfigBuilder;
+import org.apache.linkis.ujes.client.UJESClientImpl;
+import org.apache.linkis.ujes.client.request.EmsListAction;
+import org.apache.linkis.ujes.client.response.EmsListResult;
 
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -30,9 +33,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.linkis.ujes.client.UJESClientImpl;
-import org.apache.linkis.ujes.client.request.EmsListAction;
-import org.apache.linkis.ujes.client.response.EmsListResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -18,19 +18,18 @@ package org.apache.linkis.configuration.service;
 
 import org.apache.linkis.configuration.entity.UserIpVo;
 import org.apache.linkis.configuration.exception.ConfigurationException;
-import org.apache.linkis.server.Message;
 
 import java.util.List;
 
 public interface UserIpConfigService {
 
-    void createUserIP(UserIpVo userIpVo) throws ConfigurationException;
+  void createUserIP(UserIpVo userIpVo) throws ConfigurationException;
 
-    void updateUserIP(UserIpVo userIpVo) throws ConfigurationException;
+  void updateUserIP(UserIpVo userIpVo) throws ConfigurationException;
 
-    void deleteUserIP(Integer id);
+  void deleteUserIP(Integer id);
 
-    List<UserIpVo> queryUserIPList();
+  List<UserIpVo> queryUserIPList(String user, String creator);
 
-    Message queryUserIP(UserIpVo userIpVo);
+  Boolean checkUserCteator(String user, String creator);
 }

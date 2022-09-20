@@ -25,6 +25,8 @@ import org.apache.linkis.datasourcemanager.core.dao.*;
 import org.apache.linkis.datasourcemanager.core.service.impl.DataSourceInfoServiceImpl;
 import org.apache.linkis.datasourcemanager.core.vo.DataSourceVo;
 
+import org.apache.commons.collections.CollectionUtils;
+
 import java.util.*;
 
 import com.github.pagehelper.PageInfo;
@@ -38,8 +40,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 public class DataSourceInfoServiceTest {
@@ -376,5 +377,19 @@ public class DataSourceInfoServiceTest {
     }
 
     dataSourceInfoService.updateBatchDataSourceEnv(list);
+  }
+
+  @Test
+  void testQueryDataSourceInfo() {
+    List<DataSource> dataSourceList = new ArrayList<>();
+    DataSource dataSource = new DataSource();
+    dataSource.setId(1l);
+    dataSource.setCreateUser("test");
+    dataSourceList.add(dataSource);
+    Mockito.when(dataSourceDao.selectByIds(Arrays.asList(1l), "test")).thenReturn(dataSourceList);
+
+    List<DataSource> list = dataSourceInfoService.queryDataSourceInfo(Arrays.asList(1l), "test");
+    assertTrue(CollectionUtils.isNotEmpty(list));
+    assertEquals(dataSourceList.get(0).getId(), 1l);
   }
 }

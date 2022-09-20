@@ -56,7 +56,7 @@ class EntranceUserParallelOrchestratorPlugin extends UserParallelOrchestratorPlu
     .newBuilder()
     .maximumSize(1000)
     .expireAfterAccess(1, TimeUnit.HOURS)
-    .refreshAfterWrite(EntranceConfiguration.USER_PARALLEL_REFLESH_TIME.getValue, TimeUnit.MINUTES)
+    .expireAfterWrite(EntranceConfiguration.USER_PARALLEL_REFLESH_TIME.getValue, TimeUnit.MINUTES)
     .build(new CacheLoader[String, Integer]() {
 
       override def load(key: String): Integer = {

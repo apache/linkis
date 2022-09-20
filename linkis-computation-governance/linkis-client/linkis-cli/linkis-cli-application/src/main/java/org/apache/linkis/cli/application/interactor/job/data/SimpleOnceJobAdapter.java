@@ -48,6 +48,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingDeque;
 
+import static org.apache.linkis.cli.core.errorcode.LinkisCliApplicationErrorCodeSummary.INSTANCE_IS_NULL;
+import static org.apache.linkis.cli.core.errorcode.LinkisCliApplicationErrorCodeSummary.PROPERLY_INITIATED;
+
 public class SimpleOnceJobAdapter implements LinkisLogData {
   LinkisJobStatus jobStatus = LinkisJobStatus.UNSUBMITTED;
   EngineConnLogOperator logOperator = null;
@@ -125,7 +128,7 @@ public class SimpleOnceJobAdapter implements LinkisLogData {
   private void panicIfNull(Object obj) {
     if (obj == null) {
       throw new LinkisClientExecutionException(
-          "EXE0040",
+          INSTANCE_IS_NULL.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionErr,
           "Instance of " + obj.getClass().getCanonicalName() + " is null");
@@ -136,7 +139,7 @@ public class SimpleOnceJobAdapter implements LinkisLogData {
     panicIfNull(onceJob);
     if (!(onceJob instanceof SubmittableSimpleOnceJob)) {
       throw new LinkisClientExecutionException(
-          "EXE0041",
+          PROPERLY_INITIATED.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionErr,
           "onceJob is not properly initiated");

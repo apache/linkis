@@ -26,13 +26,15 @@ import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static org.apache.linkis.cli.core.errorcode.LinkisCliCoreErrorCodeSummary.TEMPLATE_EXISTS;
+
 public class CmdTemplateFactory {
   private static Map<String, CmdTemplate> templateMap = new ConcurrentHashMap<>();
 
   public static void register(CmdTemplate template) {
     if (templateMap.containsKey(template.getCmdType().getName())) {
       throw new CommandException(
-          "CMD0022",
+          TEMPLATE_EXISTS.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.TemplateGenErr,
           "template: \"{0}\" already exists",

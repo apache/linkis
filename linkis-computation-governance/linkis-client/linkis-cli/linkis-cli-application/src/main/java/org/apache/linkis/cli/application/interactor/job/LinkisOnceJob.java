@@ -40,6 +40,8 @@ import java.text.MessageFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.linkis.cli.core.errorcode.LinkisCliApplicationErrorCodeSummary.*;
+
 public class LinkisOnceJob extends LinkisJob
     implements ManagableBackendJob,
         LogAccessibleJob,
@@ -160,11 +162,17 @@ public class LinkisOnceJob extends LinkisJob
   public void startRetrieveLogInternal(LinkisOnceJobData jobData) {
     if (!(jobData instanceof LinkisLogData)) {
       throw new LinkisClientExecutionException(
-          "EXE0034", ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, "JobData is not LinkisLogData");
+          JIBDATA_IS_NOT_LOG.getErrorCode(),
+          ErrorLevel.ERROR,
+          CommonErrMsg.ExecutionErr,
+          "JobData is not LinkisLogData");
     }
     if (jobData.getUser() == null || jobData.getJobID() == null) {
       throw new LinkisClientExecutionException(
-          "EXE0036", ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, "user or jobID is null");
+          USER_OR_JOBID_EXECID.getErrorCode(),
+          ErrorLevel.ERROR,
+          CommonErrMsg.ExecutionErr,
+          "user or jobID is null");
     }
     LinkisOnceJobData logData = jobData;
     if (logData.getJobStatus() != null) {

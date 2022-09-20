@@ -30,6 +30,8 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.*;
 import java.util.Set;
 
+import static org.apache.linkis.cli.core.errorcode.LinkisCliApplicationErrorCodeSummary.*;
+
 public class ExecutionUtils {
   public static String getSubmitUser(VarAccess stdVarAccess, String osUser, Set<String> adminSet) {
 
@@ -57,7 +59,7 @@ public class ExecutionUtils {
           submitUsr = stdVarAccess.getVar(String.class, AppKeys.JOB_COMMON_SUBMIT_USER);
           if (!adminSet.contains(osUser) && adminSet.contains(submitUsr)) {
             throw new BuilderException(
-                "BLD0010",
+                SPECIFY.getErrorCode(),
                 ErrorLevel.ERROR,
                 CommonErrMsg.BuilderBuildErr,
                 "Cannot specify admin-user as submit-user");
@@ -74,7 +76,7 @@ public class ExecutionUtils {
         submitUsr = stdVarAccess.getVar(String.class, AppKeys.JOB_COMMON_SUBMIT_USER);
         if (!StringUtils.equals(submitUsr, osUser)) {
           throw new BuilderException(
-              "BLD0010",
+              SPECIFY.getErrorCode(),
               ErrorLevel.ERROR,
               CommonErrMsg.BuilderBuildErr,
               "Cannot specify submit-user when user-specification switch is off");
@@ -96,14 +98,14 @@ public class ExecutionUtils {
         submitUsr = authKey;
       } else {
         throw new BuilderException(
-            "BLD0011",
+            SHOULD_BE_THE_SAME.getErrorCode(),
             ErrorLevel.ERROR,
             CommonErrMsg.BuilderBuildErr,
             "Submit-User should be the same as Auth-Key under Static-Authentication-Strategy \'");
       }
     } else {
       throw new BuilderException(
-          "BLD0011",
+          SHOULD_BE_THE_SAME.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.BuilderBuildErr,
           "Authentication strategy \'" + authenticationStrategy + "\' is not supported");
@@ -133,7 +135,7 @@ public class ExecutionUtils {
         proxyUsr = stdVarAccess.getVar(String.class, AppKeys.JOB_COMMON_PROXY_USER);
         if (!adminSet.contains(submitUsr) && adminSet.contains(proxyUsr)) {
           throw new BuilderException(
-              "BLD0010",
+              SPECIFY.getErrorCode(),
               ErrorLevel.ERROR,
               CommonErrMsg.BuilderBuildErr,
               "Cannot specify admin-user as proxy-user");
@@ -150,7 +152,7 @@ public class ExecutionUtils {
       proxyUsr = stdVarAccess.getVar(String.class, AppKeys.JOB_COMMON_PROXY_USER);
       if (!StringUtils.equals(proxyUsr, submitUsr)) {
         throw new BuilderException(
-            "BLD0010",
+            SPECIFY.getErrorCode(),
             ErrorLevel.ERROR,
             CommonErrMsg.BuilderBuildErr,
             "Cannot specify proxy-user when proxy-user-specification switch is off");
@@ -185,14 +187,14 @@ public class ExecutionUtils {
 
     } catch (FileNotFoundException fe) {
       throw new BuilderException(
-          "BLD0005",
+          SPECIFY_SCRIPT.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.BuilderBuildErr,
           "User specified script file does not exist: " + path,
           fe);
     } catch (Exception e) {
       throw new BuilderException(
-          "BLD0006",
+          UNABLE_TO_READ.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.BuilderBuildErr,
           "Cannot read user specified script file: " + path,

@@ -26,6 +26,7 @@ import org.apache.linkis.cli.core.interactor.command.TestCmdType;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.linkis.cli.core.errorcode.LinkisCliCoreErrorCodeSummary.GENERATE_TEMPLATE;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 public class CommandExceptionHandlerTest {
@@ -37,7 +38,7 @@ public class CommandExceptionHandlerTest {
   public void handle() throws Exception {
     CommandException cmdException =
         new CommandException(
-            "CODE-001",
+            GENERATE_TEMPLATE.getErrorCode(),
             ErrorLevel.ERROR,
             CommonErrMsg.TemplateGenErr,
             "Failed to generate template.");
@@ -46,7 +47,7 @@ public class CommandExceptionHandlerTest {
     String[] params = {"param1", "param2"};
     CommandException cmdException2 =
         new CommandException(
-            "CODE-001",
+            GENERATE_TEMPLATE.getErrorCode(),
             ErrorLevel.ERROR,
             CommonErrMsg.TemplateGenErr,
             params,
@@ -55,7 +56,7 @@ public class CommandExceptionHandlerTest {
 
     CommandException cmdException3 =
         new CommandException(
-            "CODE-001",
+            GENERATE_TEMPLATE.getErrorCode(),
             ErrorLevel.ERROR,
             CommonErrMsg.TemplateGenErr,
             TestCmdType.PRIMARY,
@@ -64,7 +65,7 @@ public class CommandExceptionHandlerTest {
 
     CommandException cmdException4 =
         new CommandException(
-            "CODE-001",
+            GENERATE_TEMPLATE.getErrorCode(),
             ErrorLevel.ERROR,
             CommonErrMsg.TemplateGenErr,
             TestCmdType.PRIMARY,

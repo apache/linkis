@@ -30,6 +30,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.apache.linkis.cli.core.errorcode.LinkisCliCoreErrorCodeSummary.DESCRIBED_BY;
+
 public class PredefinedStringConverters {
 
   public static final AbstractStringConverter<String> NO_CONVERTER =
@@ -76,7 +78,7 @@ public class PredefinedStringConverters {
                   StringUtils.strip(prop.substring(index + 1).trim(), " \""));
             } else {
               throw new CommandException(
-                  "CMD0021",
+                  DESCRIBED_BY.getErrorCode(),
                   ErrorLevel.ERROR,
                   CommonErrMsg.ParserParseErr,
                   "Illegal Input: "
@@ -107,7 +109,7 @@ public class PredefinedStringConverters {
                       StringUtils.strip(prop.substring(index + 1).trim(), " \""));
                 } else {
                   throw new CommandException(
-                      "CMD0021",
+                      DESCRIBED_BY.getErrorCode(),
                       ErrorLevel.ERROR,
                       CommonErrMsg.ParserParseErr,
                       "Illegal Input: "

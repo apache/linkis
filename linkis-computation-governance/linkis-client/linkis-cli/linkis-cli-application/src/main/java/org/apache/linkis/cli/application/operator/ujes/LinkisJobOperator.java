@@ -42,6 +42,8 @@ import java.text.MessageFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.linkis.cli.core.errorcode.LinkisCliApplicationErrorCodeSummary.*;
+
 /** Based on UjesClient */
 public class LinkisJobOperator implements JobOperator {
   protected UJESClient client;
@@ -77,7 +79,10 @@ public class LinkisJobOperator implements JobOperator {
   public void checkInit() throws LinkisClientRuntimeException {
     if (client == null) {
       throw new LinkisClientExecutionException(
-          "EXE0011", ErrorLevel.ERROR, CommonErrMsg.ExecutionInitErr, "UjesClientDriver is null");
+          UJES_CLIENT_DRIVER.getErrorCode(),
+          ErrorLevel.ERROR,
+          CommonErrMsg.ExecutionInitErr,
+          "UjesClientDriver is null");
     }
   }
 
@@ -132,7 +137,11 @@ public class LinkisJobOperator implements JobOperator {
     } catch (Exception e) {
       // must throw if exception
       throw new LinkisClientExecutionException(
-          "EXE0011", ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, "Failed to submit job", e);
+          SUBMIT_JOB.getErrorCode(),
+          ErrorLevel.ERROR,
+          CommonErrMsg.ExecutionErr,
+          "Failed to submit job",
+          e);
     }
 
     if (jobSubmitResult == null
@@ -148,7 +157,7 @@ public class LinkisJobOperator implements JobOperator {
       }
       String msg = MessageFormat.format("Failed to submit job， Reason: {0}", reason);
       throw new LinkisClientExecutionException(
-          "EXE0012", ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, msg);
+          SUBMIT_JOB_REASON.getErrorCode(), ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, msg);
     }
 
     return new UJESResultAdapter(jobSubmitResult);
@@ -165,7 +174,10 @@ public class LinkisJobOperator implements JobOperator {
       throws LinkisClientRuntimeException {
     if (user == null || taskID == null) {
       throw new LinkisClientExecutionException(
-          "EXE0036", ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, "user or jobID is null");
+          USER_OR_JOBID_EXECID.getErrorCode(),
+          ErrorLevel.ERROR,
+          CommonErrMsg.ExecutionErr,
+          "user or jobID is null");
     }
     return new UJESResultAdapter(queryJobInfoInternal(user, taskID));
   }
@@ -174,7 +186,7 @@ public class LinkisJobOperator implements JobOperator {
       throws LinkisClientRuntimeException {
     if (user == null || taskID == null || execID == null) {
       throw new LinkisClientExecutionException(
-          "EXE0036",
+          USER_OR_JOBID_EXECID.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionErr,
           "user or jobID or execID is null");
@@ -207,7 +219,10 @@ public class LinkisJobOperator implements JobOperator {
           logger.debug(
               "",
               new LinkisClientExecutionException(
-                  "EXE0013", ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, msg));
+                  GET_JOB_STATUS_TIME.getErrorCode(),
+                  ErrorLevel.ERROR,
+                  CommonErrMsg.ExecutionErr,
+                  msg));
         } else {
           break;
         }
@@ -221,7 +236,11 @@ public class LinkisJobOperator implements JobOperator {
         logger.warn(msg, e);
         if (retryTime >= MAX_RETRY_TIME) {
           throw new LinkisClientExecutionException(
-              "EXE0013", ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, msg, e);
+              GET_JOB_STATUS_TIME.getErrorCode(),
+              ErrorLevel.ERROR,
+              CommonErrMsg.ExecutionErr,
+              msg,
+              e);
         }
       }
       Utils.doSleepQuietly(UJESConstants.DRIVER_QUERY_SLEEP_MILLS);
@@ -237,7 +256,7 @@ public class LinkisJobOperator implements JobOperator {
           MessageFormat.format(
               "Get status failed. Retry exhausted. taskID={0}, Reason: {1}", taskID, reason);
       throw new LinkisClientExecutionException(
-          "EXE0013", ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, msg);
+          GET_JOB_STATUS_TIME.getErrorCode(), ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, msg);
     }
     return new UJESResultAdapter(jobStatusResult);
   }
@@ -271,7 +290,10 @@ public class LinkisJobOperator implements JobOperator {
           logger.debug(
               "",
               new LinkisClientExecutionException(
-                  "EXE0013", ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, msg));
+                  GET_JOB_STATUS_TIME.getErrorCode(),
+                  ErrorLevel.ERROR,
+                  CommonErrMsg.ExecutionErr,
+                  msg));
         } else {
           break;
         }
@@ -285,7 +307,11 @@ public class LinkisJobOperator implements JobOperator {
         logger.warn(msg, e);
         if (retryTime >= MAX_RETRY_TIME) {
           throw new LinkisClientExecutionException(
-              "EXE0013", ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, msg, e);
+              GET_JOB_STATUS_TIME.getErrorCode(),
+              ErrorLevel.ERROR,
+              CommonErrMsg.ExecutionErr,
+              msg,
+              e);
         }
       }
       Utils.doSleepQuietly(UJESConstants.DRIVER_QUERY_SLEEP_MILLS);
@@ -301,7 +327,7 @@ public class LinkisJobOperator implements JobOperator {
           MessageFormat.format(
               "Get info failed. Retry exhausted. taskID={0}, Reason: {1}", taskID, reason);
       throw new LinkisClientExecutionException(
-          "EXE0013", ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, msg);
+          GET_JOB_STATUS_TIME.getErrorCode(), ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, msg);
     }
     return jobInfoResult;
   }
@@ -336,7 +362,10 @@ public class LinkisJobOperator implements JobOperator {
           logger.debug(
               "",
               new LinkisClientExecutionException(
-                  "EXE0015", ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, msg));
+                  GET_LOG_TIME_TASKID.getErrorCode(),
+                  ErrorLevel.ERROR,
+                  CommonErrMsg.ExecutionErr,
+                  msg));
         } else {
           break;
         }
@@ -347,7 +376,7 @@ public class LinkisJobOperator implements JobOperator {
         // ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, msg));
         if (retryTime >= MAX_RETRY_TIME) {
           throw new LinkisClientExecutionException(
-              "EXE0016", ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, msg, e);
+              GET_LOG_TIME.getErrorCode(), ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, msg, e);
         }
       }
       Utils.doSleepQuietly(UJESConstants.DRIVER_QUERY_SLEEP_MILLS);
@@ -365,7 +394,7 @@ public class LinkisJobOperator implements JobOperator {
       //            logger.warn("", new LinkisClientExecutionException("EXE0016",
       // ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, msg));
       throw new LinkisClientExecutionException(
-          "EXE0016", ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, msg);
+          GET_LOG_TIME_EXHAUSTED.getErrorCode(), ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, msg);
     }
     return new UJESResultAdapter(logResult);
   }
@@ -418,7 +447,7 @@ public class LinkisJobOperator implements JobOperator {
         logger.debug(msg, e);
         if (retryCnt >= MAX_RETRY_TIMES) {
           throw new LinkisClientExecutionException(
-              "EXE0017",
+              GET_OPENLOG_LOG_TIME_EXHAUSTED.getErrorCode(),
               ErrorLevel.ERROR,
               CommonErrMsg.ExecutionErr,
               "Get log from openLog failed. Retry exhausted. taskID=" + taskID,
@@ -449,7 +478,10 @@ public class LinkisJobOperator implements JobOperator {
                 "Get log from openLog failed. Retry exhausted. taskID={0}, Reason: {1}",
                 taskID, reason);
         throw new LinkisClientExecutionException(
-            "EXE0017", ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, msg);
+            GET_OPENLOG_LOG_TIME_REASON.getErrorCode(),
+            ErrorLevel.ERROR,
+            CommonErrMsg.ExecutionErr,
+            msg);
       }
     }
     return openLogResult;
@@ -495,7 +527,7 @@ public class LinkisJobOperator implements JobOperator {
         logger.warn(msg, e);
         if (retryTime >= MAX_RETRY_TIME) {
           throw new LinkisClientExecutionException(
-              "EXE0019",
+              GET_PROGRESS_FAILED_EXHAUSTED.getErrorCode(),
               ErrorLevel.ERROR,
               CommonErrMsg.ExecutionErr,
               "Get progress failed. Retry exhausted. taskID=" + taskID,
@@ -516,7 +548,10 @@ public class LinkisJobOperator implements JobOperator {
           MessageFormat.format(
               "Get progress failed. Retry exhausted. taskID={0}, Reason: {1}", taskID, reason);
       throw new LinkisClientExecutionException(
-          "EXE0020", ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, msg);
+          GET_PROGRESS_FAILED_REASON.getErrorCode(),
+          ErrorLevel.ERROR,
+          CommonErrMsg.ExecutionErr,
+          msg);
     }
 
     return new UJESResultAdapter(jobProgressResult);
@@ -531,12 +566,15 @@ public class LinkisJobOperator implements JobOperator {
       String msg = "Get ResultSet Failed: Cannot get a valid jobInfo";
       logger.error(msg);
       throw new LinkisClientExecutionException(
-          "EXE0021", ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, msg);
+          GET_RESULTSET_FAILED.getErrorCode(), ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, msg);
     }
     if (!jobInfoResult.isSucceed()) {
       String msg = "Get ResultSet Failed: job Status is not \"Succeed\", .";
       throw new LinkisClientExecutionException(
-          "EXE0021", ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, msg);
+          GET_RESULTSET_NOT_SUCCEED.getErrorCode(),
+          ErrorLevel.ERROR,
+          CommonErrMsg.ExecutionErr,
+          msg);
     }
 
     if (StringUtils.isBlank(jobInfoResult.getRequestPersistTask().getResultLocation())) {
@@ -546,7 +584,10 @@ public class LinkisJobOperator implements JobOperator {
 
     if (StringUtils.isBlank(jobInfoResult.getRequestPersistTask().getResultLocation())) {
       throw new LinkisClientExecutionException(
-          "EXE0021", ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, "ResultLocation is blank.");
+          RESULTLOCATION_IS_BLANK.getErrorCode(),
+          ErrorLevel.ERROR,
+          CommonErrMsg.ExecutionErr,
+          "ResultLocation is blank.");
     }
 
     String[] resultSetArray = null;
@@ -582,7 +623,7 @@ public class LinkisJobOperator implements JobOperator {
         logger.warn(msg, e);
         if (retryTime >= MAX_RETRY_TIME) {
           throw new LinkisClientExecutionException(
-              "EXE0022",
+              GET_RESULTSETARRAY_FAILED.getErrorCode(),
               ErrorLevel.ERROR,
               CommonErrMsg.ExecutionErr,
               "Get resultSetArray failed. Retry exhausted. taskID=" + taskID,
@@ -604,7 +645,10 @@ public class LinkisJobOperator implements JobOperator {
               taskID, reason);
       logger.warn(msg);
       throw new LinkisClientExecutionException(
-          "EXE0023", ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, msg + ". taskID=" + taskID);
+          GET_RESULTSETARRAY_EXHAUSTED.getErrorCode(),
+          ErrorLevel.ERROR,
+          CommonErrMsg.ExecutionErr,
+          msg + ". taskID=" + taskID);
     }
     return new UJESResultAdapter(resultSetArray);
   }
@@ -652,7 +696,7 @@ public class LinkisJobOperator implements JobOperator {
         logger.warn(msg, e);
         if (retryTime >= MAX_RETRY_TIME) {
           throw new LinkisClientExecutionException(
-              "EXE0024",
+              GET_RESULTSET_EXHAUSTED_PATH.getErrorCode(),
               ErrorLevel.ERROR,
               CommonErrMsg.ExecutionErr,
               "Get resultSet failed. Retry exhausted. path=" + resultSetPath,
@@ -673,7 +717,10 @@ public class LinkisJobOperator implements JobOperator {
               "Get resultSet failed. Retry exhausted. Path={0}, Reason: {1}",
               resultSetPath, reason);
       throw new LinkisClientExecutionException(
-          "EXE0024", ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, msg);
+          GET_RESULTSET_EXHAUSTED_REASON.getErrorCode(),
+          ErrorLevel.ERROR,
+          CommonErrMsg.ExecutionErr,
+          msg);
     }
     return new UJESResultAdapter(new ResultSetResult2(idxResultSet, result));
   }
@@ -720,7 +767,7 @@ public class LinkisJobOperator implements JobOperator {
         logger.warn(msg, e);
         if (retryTime >= MAX_RETRY_TIME) {
           throw new LinkisClientExecutionException(
-              "EXE0025",
+              KILL_JOB_FAILED.getErrorCode(),
               ErrorLevel.ERROR,
               CommonErrMsg.ExecutionErr,
               "Kill job failed. taskId={0} Retry exhausted.",
@@ -741,7 +788,7 @@ public class LinkisJobOperator implements JobOperator {
           MessageFormat.format(
               "Kill job failed. Retry exhausted. taskId={0}, Reason: {1}", taskId, reason);
       throw new LinkisClientExecutionException(
-          "EXE0025", ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, msg);
+          KILL_JOB_FAILED_REASON.getErrorCode(), ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, msg);
     }
     return new UJESResultAdapter(result);
   }

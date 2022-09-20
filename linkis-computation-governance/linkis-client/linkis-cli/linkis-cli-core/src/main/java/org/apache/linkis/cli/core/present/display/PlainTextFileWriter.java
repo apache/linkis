@@ -28,12 +28,14 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 
+import static org.apache.linkis.cli.core.errorcode.LinkisCliCoreErrorCodeSummary.*;
+
 public class PlainTextFileWriter implements DisplayOperator {
   @Override
   public void doOutput(DisplayData data) {
     if (!(data instanceof FileDisplayData)) {
       throw new PresenterException(
-          "PST0004",
+          INSTANCE_FILEDISPLAYDATA.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.PresentDriverErr,
           "input data is not instance of FileDisplayData");
@@ -52,7 +54,7 @@ public class PlainTextFileWriter implements DisplayOperator {
         dir.mkdirs();
       } catch (Exception e) {
         throw new PresenterException(
-            "PST0005",
+            CANNOT_MKDIR.getErrorCode(),
             ErrorLevel.ERROR,
             CommonErrMsg.PresentDriverErr,
             "Cannot mkdir for path: " + dir.getAbsolutePath(),
@@ -65,7 +67,7 @@ public class PlainTextFileWriter implements DisplayOperator {
         file.createNewFile();
       } catch (Exception e) {
         throw new PresenterException(
-            "PST0006",
+            CANNOT_CREATE.getErrorCode(),
             ErrorLevel.ERROR,
             CommonErrMsg.PresentDriverErr,
             "Cannot create file for path: " + file.getAbsolutePath(),
@@ -83,7 +85,7 @@ public class PlainTextFileWriter implements DisplayOperator {
       bufferedWriter.write(content + "\n");
     } catch (Exception e) {
       throw new PresenterException(
-          "PST0007",
+          CANNOT_WRITE.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.PresentDriverErr,
           "Cannot write: " + file.getAbsolutePath(),

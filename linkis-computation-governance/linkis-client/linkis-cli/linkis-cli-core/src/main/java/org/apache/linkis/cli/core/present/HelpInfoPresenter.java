@@ -39,6 +39,9 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.linkis.cli.core.errorcode.LinkisCliCoreErrorCodeSummary.DRIVER_IS_NULL;
+import static org.apache.linkis.cli.core.errorcode.LinkisCliCoreErrorCodeSummary.IS_NOT_MODEL;
+
 public class HelpInfoPresenter implements Presenter {
   private static Logger logger = LoggerFactory.getLogger(HelpInfoPresenter.class);
   DisplayOperator driver = new StdOutWriter();
@@ -47,14 +50,17 @@ public class HelpInfoPresenter implements Presenter {
   public void present(Model model, PresentWay presentWay) {
     if (!(model instanceof HelpInfoModel)) {
       throw new PresenterException(
-          "PST0010",
+          IS_NOT_MODEL.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.PresenterErr,
           "Input for HelpInfoPresenter is not instance of model");
     }
     if (driver == null) {
       throw new PresenterException(
-          "PST0007", ErrorLevel.ERROR, CommonErrMsg.PresenterErr, "Driver is null");
+          DRIVER_IS_NULL.getErrorCode(),
+          ErrorLevel.ERROR,
+          CommonErrMsg.PresenterErr,
+          "Driver is null");
     }
     HelpInfoModel helpInfoModel = (HelpInfoModel) model;
 

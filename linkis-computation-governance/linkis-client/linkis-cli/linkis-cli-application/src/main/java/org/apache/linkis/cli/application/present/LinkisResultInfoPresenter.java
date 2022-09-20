@@ -31,12 +31,15 @@ import org.apache.linkis.cli.core.utils.LogUtils;
 
 import org.apache.commons.lang3.StringUtils;
 
+import static org.apache.linkis.cli.core.errorcode.LinkisCliApplicationErrorCodeSummary.MODEL_IS_NOT_INSTANCE_RESULTINFO;
+import static org.apache.linkis.cli.core.errorcode.LinkisCliApplicationErrorCodeSummary.RESULTPRESENTER_TRIGGERED;
+
 public class LinkisResultInfoPresenter implements Presenter {
   @Override
   public void present(Model model, PresentWay presentWay) {
     if (!(model instanceof LinkisResultInfoModel)) {
       throw new PresenterException(
-          "PST0001",
+          MODEL_IS_NOT_INSTANCE_RESULTINFO.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.PresenterErr,
           "Input model for \"LinkisResultInfoPresenter\" is not instance of \"LinkisResultInfoModel\"");
@@ -104,7 +107,7 @@ public class LinkisResultInfoPresenter implements Presenter {
       }
     } else {
       throw new PresenterException(
-          "PST0011",
+          RESULTPRESENTER_TRIGGERED.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.PresenterErr,
           "Job is not completed but triggered ResultPresenter");

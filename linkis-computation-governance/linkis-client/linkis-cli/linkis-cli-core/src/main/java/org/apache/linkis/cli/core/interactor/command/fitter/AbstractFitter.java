@@ -39,6 +39,9 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.linkis.cli.core.errorcode.LinkisCliCoreErrorCodeSummary.SET_OPTION_VALUE;
+import static org.apache.linkis.cli.core.errorcode.LinkisCliCoreErrorCodeSummary.SET_PARAMETRT_VALUE;
+
 public abstract class AbstractFitter implements Fitter {
 
   private static final Logger logger = LoggerFactory.getLogger(AbstractFitter.class);
@@ -176,7 +179,7 @@ public abstract class AbstractFitter implements Fitter {
         return next + 1;
       } else {
         throw new CommandException(
-            "CMD0010",
+            SET_OPTION_VALUE.getErrorCode(),
             ErrorLevel.ERROR,
             CommonErrMsg.TemplateFitErr,
             "Failed to set option value: optionMap contains objects that is not Option!");
@@ -217,7 +220,7 @@ public abstract class AbstractFitter implements Fitter {
     CmdOption<?> cmdOption = parameters.get(paraIdx);
     if (!(cmdOption instanceof Parameter<?>)) {
       throw new CommandException(
-          "CMD001",
+          SET_PARAMETRT_VALUE.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.TemplateFitErr,
           "Failed to set param value: parameters contains objects that is not Parameter!");

@@ -24,6 +24,8 @@ import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
 
 import java.lang.reflect.ParameterizedType;
 
+import static org.apache.linkis.cli.core.errorcode.LinkisCliCoreErrorCodeSummary.REASON_IS_EMPTY;
+
 public abstract class BuildableByVarAccess<T> extends AbstractBuilder<T> {
   protected VarAccess stdVarAccess;
   protected VarAccess sysVarAccess;
@@ -33,7 +35,7 @@ public abstract class BuildableByVarAccess<T> extends AbstractBuilder<T> {
       ParameterizedType pt = (ParameterizedType) this.getClass().getGenericSuperclass();
       Class<T> clazz = (Class<T>) pt.getActualTypeArguments()[0];
       throw new BuilderException(
-          "BLD0003",
+          REASON_IS_EMPTY.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.BuilderInitErr,
           "Cannot init builder: "

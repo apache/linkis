@@ -33,6 +33,8 @@ import org.apache.linkis.cli.core.utils.converter.PredefinedStringConverters;
 import java.lang.reflect.Field;
 import java.util.*;
 
+import static org.apache.linkis.cli.core.errorcode.LinkisCliCoreErrorCodeSummary.MAKE_DEEP_COPY;
+
 /**
  * CmdTemplate defines what CmdOption/Flag/Parameter that a command should contains. StdOption:
  * CmdOption.name should starts with '-' String that follows is treated as CmdOption.value. User
@@ -363,7 +365,7 @@ public abstract class AbstractCmdTemplate implements CmdTemplate, Cloneable {
         fieldObj = field.get(ret);
       } catch (IllegalArgumentException | IllegalAccessException e) {
         throw new CommandException(
-            "CMD0018",
+            MAKE_DEEP_COPY.getErrorCode(),
             ErrorLevel.ERROR,
             CommonErrMsg.ParserParseErr,
             "failed to make deep copy of template: " + this.getCmdType(),
@@ -377,7 +379,7 @@ public abstract class AbstractCmdTemplate implements CmdTemplate, Cloneable {
           field.set(ret, opt);
         } catch (Exception e) {
           throw new CommandException(
-              "CMD0018",
+              MAKE_DEEP_COPY.getErrorCode(),
               ErrorLevel.ERROR,
               CommonErrMsg.ParserParseErr,
               "failed to make deep copy of template: " + this.getCmdType(),
@@ -397,7 +399,7 @@ public abstract class AbstractCmdTemplate implements CmdTemplate, Cloneable {
           field.set(ret, param);
         } catch (Exception e) {
           throw new CommandException(
-              "CMD0018",
+              MAKE_DEEP_COPY.getErrorCode(),
               ErrorLevel.ERROR,
               CommonErrMsg.ParserParseErr,
               "failed to make deep copy of template: " + this.getCmdType(),
@@ -418,7 +420,7 @@ public abstract class AbstractCmdTemplate implements CmdTemplate, Cloneable {
       ret = (AbstractCmdTemplate) this.clone();
     } catch (CloneNotSupportedException e) {
       throw new CommandException(
-          "CMD0018",
+          MAKE_DEEP_COPY.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ParserParseErr,
           "failed to make deep copy of template: " + this.getCmdType(),

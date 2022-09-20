@@ -32,6 +32,9 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.linkis.cli.core.errorcode.LinkisCliCoreErrorCodeSummary.IS_NOT_INITED;
+import static org.apache.linkis.cli.core.errorcode.LinkisCliCoreErrorCodeSummary.SOURCE_PROPSPATH;
+
 public class PropsFileReader implements PropertiesReader {
   private static final Logger logger = LoggerFactory.getLogger(PropsFileReader.class);
   private String propsId;
@@ -70,7 +73,11 @@ public class PropsFileReader implements PropertiesReader {
       properties.load(in);
     } catch (Exception e) {
       throw new PropsException(
-          "PRP0002", ErrorLevel.ERROR, CommonErrMsg.PropsReaderErr, "Source: " + propsPath, e);
+          SOURCE_PROPSPATH.getErrorCode(),
+          ErrorLevel.ERROR,
+          CommonErrMsg.PropsReaderErr,
+          "Source: " + propsPath,
+          e);
     } finally {
       try {
         in.close();
@@ -86,7 +93,7 @@ public class PropsFileReader implements PropertiesReader {
   public void checkInit() {
     if (StringUtils.isBlank(propsId) || StringUtils.isBlank(propsPath)) {
       throw new PropsException(
-          "PRP0001",
+          IS_NOT_INITED.getErrorCode(),
           ErrorLevel.WARN,
           CommonErrMsg.PropsReaderInitErr,
           "properties reader for source: "

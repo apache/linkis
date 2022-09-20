@@ -27,6 +27,8 @@ import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.apache.linkis.cli.core.errorcode.LinkisCliCoreErrorCodeSummary.DESCRIBED_BY;
+
 public class MapOption extends BaseOption<Map<String, String>> implements Cloneable {
   final String[] paramNames;
 
@@ -101,7 +103,7 @@ public class MapOption extends BaseOption<Map<String, String>> implements Clonea
       kvMap.put(key, value);
     } else {
       throw new CommandException(
-          "CMD0021",
+          DESCRIBED_BY.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ParserParseErr,
           "Illegal Input: "

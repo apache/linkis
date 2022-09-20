@@ -29,6 +29,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.linkis.cli.core.errorcode.LinkisCliCoreErrorCodeSummary.IMPUT_OR_TEMPLATE;
+
 public class SingleTplFitter extends AbstractFitter {
   private static final Logger logger = LoggerFactory.getLogger(SingleTplFitter.class);
 
@@ -38,7 +40,10 @@ public class SingleTplFitter extends AbstractFitter {
 
     if (input == null || templateCopy == null || input.length == 0) {
       throw new CommandException(
-          "CMD0009", ErrorLevel.ERROR, CommonErrMsg.TemplateFitErr, "input or template is null");
+          IMPUT_OR_TEMPLATE.getErrorCode(),
+          ErrorLevel.ERROR,
+          CommonErrMsg.TemplateFitErr,
+          "input or template is null");
     }
 
     List<String> remains = new ArrayList<>();

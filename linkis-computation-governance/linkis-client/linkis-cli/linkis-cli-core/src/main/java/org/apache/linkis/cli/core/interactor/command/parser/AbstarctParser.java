@@ -40,6 +40,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.linkis.cli.core.errorcode.LinkisCliCoreErrorCodeSummary.DAILED_TO_INIT_PARSER;
+
 public abstract class AbstarctParser implements Parser {
   private static final Logger logger = LoggerFactory.getLogger(AbstarctParser.class);
 
@@ -65,14 +67,14 @@ public abstract class AbstarctParser implements Parser {
   public void checkInit() {
     if (fitter == null) {
       throw new CommandException(
-          "CMD0013",
+          DAILED_TO_INIT_PARSER.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ParserInitErr,
           "failed to init parser: \n" + "fitter is null");
     }
     if (template == null) {
       throw new CommandException(
-          "CMD0013",
+          DAILED_TO_INIT_PARSER.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ParserInitErr,
           "failed to init parser: \n" + "template is null");

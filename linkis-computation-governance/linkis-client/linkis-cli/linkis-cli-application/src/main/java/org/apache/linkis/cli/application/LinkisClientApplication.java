@@ -81,6 +81,9 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.linkis.cli.core.errorcode.LinkisCliApplicationErrorCodeSummary.ENV_IS_EMPTY;
+import static org.apache.linkis.cli.core.errorcode.LinkisCliApplicationErrorCodeSummary.USER_CONFIGURATION;
+
 public class LinkisClientApplication {
   private static Logger logger = LoggerFactory.getLogger(LinkisClientApplication.class);
 
@@ -167,7 +170,7 @@ public class LinkisClientApplication {
             String.class, AppKeys.DEFAULT_CONFIG_FILE_NAME_KEY, AppConstants.DEFAULT_CONFIG_NAME);
     if (StringUtils.isBlank(configPath)) {
       throw new PropsException(
-          "PRP0007",
+          ENV_IS_EMPTY.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.PropsLoaderErr,
           "configuration root path specified by env variable: "
@@ -208,7 +211,7 @@ public class LinkisClientApplication {
           if (StringUtils.startsWith(
               (String) prop.getKey(), AppKeys.LINKIS_CLIENT_NONCUSTOMIZABLE)) {
             throw new PropsException(
-                "PRP0007",
+                USER_CONFIGURATION.getErrorCode(),
                 ErrorLevel.ERROR,
                 CommonErrMsg.PropsLoaderErr,
                 "User cannot specify non-customizable configuration: " + prop.getKey());

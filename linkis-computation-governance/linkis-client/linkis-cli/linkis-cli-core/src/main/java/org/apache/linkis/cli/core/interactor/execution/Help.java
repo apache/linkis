@@ -31,13 +31,15 @@ import org.apache.linkis.cli.core.present.model.HelpInfoModel;
 
 import java.util.Map;
 
+import static org.apache.linkis.cli.core.errorcode.LinkisCliCoreErrorCodeSummary.MULTIPLE_JOBS_IS_NOT;
+
 public class Help implements Execution {
   @Override
   public ExecutionResult execute(Map<String, Job> jobs) {
 
     if (jobs.size() > 1) {
       throw new LinkisClientExecutionException(
-          "EXE0001",
+          MULTIPLE_JOBS_IS_NOT.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionInitErr,
           "Multiple Jobs is not Supported by current execution");

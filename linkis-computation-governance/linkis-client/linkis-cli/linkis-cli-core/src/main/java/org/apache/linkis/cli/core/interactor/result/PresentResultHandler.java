@@ -31,6 +31,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.linkis.cli.core.errorcode.LinkisCliCoreErrorCodeSummary.PRESENTER_OR_MODEL_IS_NOLL;
+
 public class PresentResultHandler implements ResultHandler {
   private static Logger logger = LoggerFactory.getLogger(PresentResultHandler.class);
   Presenter presenter;
@@ -39,7 +41,7 @@ public class PresentResultHandler implements ResultHandler {
   public void checkInit() {
     if (presenter == null || model == null) {
       throw new LinkisClientExecutionException(
-          "EXE0031",
+          PRESENTER_OR_MODEL_IS_NOLL.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionResultErr,
           "Presenter or model is null");

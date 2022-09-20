@@ -28,6 +28,8 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.apache.linkis.cli.core.errorcode.LinkisCliCoreErrorCodeSummary.PARAMMAPPER_DIFFERENT_KEY;
+
 /**
  * Substitute a String key(e.g. spark.executor.cores) into another String key accepted by
  * Linkis-Client(e.g. wds.linkis.client.conf.spark.executor.cores) according to mapperRules.
@@ -67,7 +69,7 @@ public abstract class ParamKeyMapper {
   public void updateMapping(String key, String targetKey) {
     if (this.mapperRules.containsKey(key)) {
       throw new CommandException(
-          "CMD0020",
+          PARAMMAPPER_DIFFERENT_KEY.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ParserParseErr,
           "ParamMapper should not map different keys into same key. Key is: " + targetKey);
@@ -99,7 +101,7 @@ public abstract class ParamKeyMapper {
       targetKey = getMappedKey(entry.getKey());
       if (resultMap.containsKey(targetKey)) {
         throw new CommandException(
-            "CMD0020",
+            PARAMMAPPER_DIFFERENT_KEY.getErrorCode(),
             ErrorLevel.ERROR,
             CommonErrMsg.ParserParseErr,
             "ParamMapper should not map different keys into same key. Key is: " + targetKey);

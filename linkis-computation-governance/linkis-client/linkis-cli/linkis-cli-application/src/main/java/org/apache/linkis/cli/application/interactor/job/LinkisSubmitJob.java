@@ -39,6 +39,8 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.linkis.cli.core.errorcode.LinkisCliApplicationErrorCodeSummary.*;
+
 public class LinkisSubmitJob extends LinkisJob
     implements AsyncBackendJob, LogAccessibleJob, ResultAccessibleJob, TerminatableJob {
   private static final Logger logger = LoggerFactory.getLogger(LinkisSubmitJob.class);
@@ -61,7 +63,7 @@ public class LinkisSubmitJob extends LinkisJob
   public LinkisJobOperator getJobOperator() {
     if (!(super.getJobOperator() instanceof LinkisJobOperator)) {
       throw new LinkisClientExecutionException(
-          "EXE0003",
+          SHOULD_BE_INSTANCE.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionInitErr,
           "JobOperator of LinkisManageJob should be instance of LinkisJobOperator");
@@ -73,7 +75,7 @@ public class LinkisSubmitJob extends LinkisJob
   public void setOperator(JobOperator operator) {
     if (!(operator instanceof LinkisJobOperator)) {
       throw new LinkisClientExecutionException(
-          "EXE0003",
+          SHOULD_BE_INSTANCE.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionInitErr,
           "JobOperator of LinkisManageJob should be instance of LinkisJobOperator");
@@ -168,7 +170,7 @@ public class LinkisSubmitJob extends LinkisJob
         retryCnt++;
         if (retryCnt >= MAX_RETRY) {
           throw new LinkisClientExecutionException(
-              "EXE0013",
+              CONTINUPUSLY.getErrorCode(),
               ErrorLevel.ERROR,
               CommonErrMsg.ExecutionErr,
               "Cannot get jobStatus from server continuously for {0} seconds. Client aborted! Error message: \n",
@@ -214,7 +216,7 @@ public class LinkisSubmitJob extends LinkisJob
       manageJob.startRetrieveResult();
       data.setSuccess(true);
     } catch (LinkisClientExecutionException e) {
-      if (e.getCode().equals("EXE0037")) {
+      if (e.getCode().equals(GOT_BLANK_RESULTLOCATION.getErrorCode())) {
         data.setSuccess(true);
         LogUtils.getInformationLogger().warn(e.getMessage());
       } else {
@@ -233,14 +235,21 @@ public class LinkisSubmitJob extends LinkisJob
   public void startRetrieveLog() {
     if (!(data instanceof LinkisLogData)) {
       throw new LinkisClientExecutionException(
-          "EXE0034", ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, "JobData is not LinkisLogData");
+          JIBDATA_IS_NOT_LOG.getErrorCode(),
+          ErrorLevel.ERROR,
+          CommonErrMsg.ExecutionErr,
+          "JobData is not LinkisLogData");
     }
     LinkisLogData dataCopy;
     try {
       dataCopy = ((LinkisLogData) data).clone(); // make a copy to avoid race condition
     } catch (CloneNotSupportedException e) {
       throw new LinkisClientExecutionException(
-          "EXE0035", ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, "logData is not Cloneable", e);
+          LOGDATA_CLONEABLE.getErrorCode(),
+          ErrorLevel.ERROR,
+          CommonErrMsg.ExecutionErr,
+          "logData is not Cloneable",
+          e);
     }
     dataCopy.setIncLogMode(true);
     manageJob.startRetrieveLogInternal(dataCopy);
@@ -273,7 +282,7 @@ public class LinkisSubmitJob extends LinkisJob
   private void checkJobAvailability(LinkisJobData data) throws LinkisClientRuntimeException {
     if (data.getJobStatus().isJobAbnormalStatus()) {
       throw new LinkisClientExecutionException(
-          "EXE0006",
+          ABNORMAL_STATUS.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionErr,
           "Job is in abnormal status: " + CommonUtils.GSON.toJson(data));

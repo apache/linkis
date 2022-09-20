@@ -67,6 +67,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.linkis.cli.core.errorcode.LinkisCliApplicationErrorCodeSummary.COMMAND_TYPE_IS_NOT;
+
 public class ExecutionSuiteFactory {
   private static Logger logger = LoggerFactory.getLogger(ExecutionSuiteFactory.class);
 
@@ -216,7 +218,7 @@ public class ExecutionSuiteFactory {
       return suite;
     } else {
       throw new LinkisClientExecutionException(
-          "EXE0029",
+          COMMAND_TYPE_IS_NOT.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionInitErr,
           "Command Type is not supported");

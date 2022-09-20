@@ -25,6 +25,8 @@ import org.apache.linkis.cli.core.present.PresentMode;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static org.apache.linkis.cli.core.errorcode.LinkisCliCoreErrorCodeSummary.DUPLICATE_DISPLAYOPERATOR;
+
 public class DisplayOperFactory {
   private static final Map<String, DisplayOperator> operatorMap = new ConcurrentHashMap<>();
 
@@ -32,7 +34,7 @@ public class DisplayOperFactory {
       throws Exception {
     if (operatorMap.containsKey(mode.getName())) {
       throw new PresenterException(
-          "PST0012",
+          DUPLICATE_DISPLAYOPERATOR.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.PresenterInitErr,
           "Attempting to register a duplicate DisplayOperator, name: " + mode.getName());

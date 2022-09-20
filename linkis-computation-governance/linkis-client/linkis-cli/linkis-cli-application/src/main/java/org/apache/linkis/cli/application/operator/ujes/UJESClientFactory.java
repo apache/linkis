@@ -42,6 +42,8 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.linkis.cli.core.errorcode.LinkisCliApplicationErrorCodeSummary.*;
+
 public class UJESClientFactory {
   private static Logger logger = LoggerFactory.getLogger(UJESClientFactory.class);
 
@@ -66,7 +68,11 @@ public class UJESClientFactory {
       return ret;
     } catch (Exception e) {
       throw new LinkisClientExecutionException(
-          "EXE0010", ErrorLevel.ERROR, CommonErrMsg.ExecutionInitErr, "Cannot init UJESClient", e);
+          CANNOT_INIT_UJE.getErrorCode(),
+          ErrorLevel.ERROR,
+          CommonErrMsg.ExecutionInitErr,
+          "Cannot init UJESClient",
+          e);
     }
   }
 
@@ -107,7 +113,7 @@ public class UJESClientFactory {
       return config;
     } catch (Exception e) {
       throw new LinkisClientExecutionException(
-          "EXE0010",
+          CANNOT_INIT_DWS.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionInitErr,
           "Cannot init DWSClientConfig",
@@ -152,7 +158,7 @@ public class UJESClientFactory {
       return config;
     } catch (Exception e) {
       throw new LinkisClientExecutionException(
-          "EXE0010",
+          CANNOT_INIT_DWS.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionInitErr,
           "Cannot init DWSClientConfig",
@@ -164,7 +170,7 @@ public class UJESClientFactory {
     String gatewayUrl = stdVarAccess.getVar(String.class, AppKeys.LINKIS_COMMON_GATEWAY_URL);
     if (StringUtils.isBlank(gatewayUrl)) {
       throw new BuilderException(
-          "BLD0007",
+          LIENT_FACTORY.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.BuilderBuildErr,
           "Cannot build UjesClientDriverContext: gatewayUrl is empty");

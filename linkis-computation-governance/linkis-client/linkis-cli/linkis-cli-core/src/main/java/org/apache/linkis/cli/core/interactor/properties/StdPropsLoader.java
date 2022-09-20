@@ -25,6 +25,8 @@ import org.apache.linkis.cli.core.interactor.properties.reader.PropertiesReader;
 
 import java.util.*;
 
+import static org.apache.linkis.cli.core.errorcode.LinkisCliCoreErrorCodeSummary.PROPERTIES_LOADER;
+
 public class StdPropsLoader implements PropertiesLoader {
   Map<String, PropertiesReader> readersMap;
 
@@ -85,7 +87,7 @@ public class StdPropsLoader implements PropertiesLoader {
   public void checkInit() {
     if (readersMap == null || readersMap.size() == 0) {
       throw new PropsException(
-          "PRP0003",
+          PROPERTIES_LOADER.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.PropsLoaderInitErr,
           "properties loader is not inited because it contains no reader");

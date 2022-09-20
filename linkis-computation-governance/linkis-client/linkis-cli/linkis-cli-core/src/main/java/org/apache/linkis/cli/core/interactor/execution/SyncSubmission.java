@@ -38,6 +38,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.linkis.cli.core.errorcode.LinkisCliCoreErrorCodeSummary.*;
+
 /**
  * Execute job synchronously. i.e. Client submit job, and wait til job finish, and get result, no
  * matter what server behaves.
@@ -53,7 +55,7 @@ public class SyncSubmission implements Execution {
 
     if (jobs == null || jobs.size() == 0) {
       throw new LinkisClientExecutionException(
-          "EXE0001",
+          EMPTY_JOBS_IS_SUBMITTED.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionErr,
           "Null or empty Jobs is submitted to current execution");
@@ -61,7 +63,7 @@ public class SyncSubmission implements Execution {
 
     if (jobs.size() > 1) {
       throw new LinkisClientExecutionException(
-          "EXE0001",
+          MULTIPLE_JOBS_IS_NOT.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionErr,
           "Multiple Jobs is not Supported by current execution");
@@ -84,7 +86,7 @@ public class SyncSubmission implements Execution {
       }
     } else {
       throw new LinkisClientExecutionException(
-          "EXE0002",
+          EXECUTOR_TYPE_IS_NOT.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionErr,
           "Executor Type: \"" + job.getClass().getCanonicalName() + "\" is not Supported");
@@ -151,7 +153,7 @@ public class SyncSubmission implements Execution {
 
     if (!(job instanceof AsyncBackendJob)) {
       throw new LinkisClientExecutionException(
-          "EXE0002",
+          INSTANCE_ASYNCBACKENDJOB.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionErr,
           "job is not instance of AsyncBackendJob");
@@ -163,7 +165,7 @@ public class SyncSubmission implements Execution {
 
     if (!submitJob.getJobData().getJobStatus().isJobSubmitted()) {
       throw new LinkisClientExecutionException(
-          "EXE0005",
+          EXHAUSTED_CHECKING_NOT_SUBMITTED.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionErr,
           "Retry exhausted checking job submission. Job is probably not submitted");

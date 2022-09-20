@@ -27,6 +27,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
+import static org.apache.linkis.cli.core.errorcode.LinkisCliCoreErrorCodeSummary.DUPLICATE_JOBOPERATOR;
+import static org.apache.linkis.cli.core.errorcode.LinkisCliCoreErrorCodeSummary.REUSABLE_JOBOPERATOR;
+
 public class JobOperatorFactory {
   private static Map<String, JobOperatorBuilder> builderMap = new ConcurrentHashMap<>();
 
@@ -39,7 +42,7 @@ public class JobOperatorFactory {
         || lockMap.containsKey(name)
         || instanceMap.containsKey(name)) {
       throw new LinkisClientExecutionException(
-          "EXE0027",
+          DUPLICATE_JOBOPERATOR.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionInitErr,
           "Attempting to register a duplicate jobOperator, name: " + name);
@@ -60,7 +63,7 @@ public class JobOperatorFactory {
     JobOperator instance = instanceMap.get(name);
     if (lock == null || builder == null) {
       throw new LinkisClientExecutionException(
-          "EXE0028",
+          REUSABLE_JOBOPERATOR.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionInitErr,
           "Failed to get a reusable joboperator, name: " + name);
@@ -69,7 +72,7 @@ public class JobOperatorFactory {
       boolean ok = lock.tryLock(500, TimeUnit.MILLISECONDS);
       if (!ok) {
         throw new LinkisClientExecutionException(
-            "EXE0028",
+            REUSABLE_JOBOPERATOR.getErrorCode(),
             ErrorLevel.ERROR,
             CommonErrMsg.ExecutionInitErr,
             "Failed to get a reusable joboperator, name: " + name);

@@ -39,20 +39,22 @@ import org.apache.commons.lang3.StringUtils;
 import java.text.MessageFormat;
 import java.util.*;
 
+import static org.apache.linkis.cli.core.errorcode.LinkisCliApplicationErrorCodeSummary.*;
+
 public class LinkisResultPresenter implements Presenter {
 
   @Override
   public void present(Model model, PresentWay presentWay) {
     if (!(model instanceof LinkisResultModel)) {
       throw new PresenterException(
-          "PST0001",
+          INSTANCE_RESULTIPRESEMTER.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.PresenterErr,
           "Input model for \"LinkisResultPresenter\" is not instance of \"LinkisResultModel\"");
     }
     if (!(presentWay instanceof PresentWayImpl)) {
       throw new PresenterException(
-          "PST0002",
+          PRESENTWAY_RESULTIPRESEMTER.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.PresenterErr,
           "Input PresentWay for \"LinkisResultPresenter\" is not instance of \"PresentWayImpl\"");
@@ -106,7 +108,7 @@ public class LinkisResultPresenter implements Presenter {
          */
         if (idxResultset - preIdx != 0 && idxResultset - preIdx != 1) {
           throw new PresenterException(
-              "PST0002",
+              VISITED_IN_DESCENDING.getErrorCode(),
               ErrorLevel.ERROR,
               CommonErrMsg.PresenterErr,
               "Linkis resultsets are visited in descending order or are not visited one-by-one");

@@ -44,6 +44,8 @@ import java.text.MessageFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.linkis.cli.core.errorcode.LinkisCliApplicationErrorCodeSummary.*;
+
 public class LinkisManageJob extends LinkisJob
     implements ManagableBackendJob, TerminatableJob, LogAccessibleJob, ResultAccessibleJob {
   private static final Logger logger = LoggerFactory.getLogger(LinkisManageJob.class);
@@ -56,7 +58,7 @@ public class LinkisManageJob extends LinkisJob
   public LinkisJobOperator getJobOperator() {
     if (!(super.getJobOperator() instanceof LinkisJobOperator)) {
       throw new LinkisClientExecutionException(
-          "EXE0003",
+          SHOULD_BE_INSTANCE.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionInitErr,
           "JobOperator of LinkisManageJob should be instance of LinkisJobOperator");
@@ -68,7 +70,7 @@ public class LinkisManageJob extends LinkisJob
   public void setOperator(JobOperator operator) {
     if (!(operator instanceof LinkisJobOperator)) {
       throw new LinkisClientExecutionException(
-          "EXE0003",
+          SHOULD_BE_INSTANCE.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionInitErr,
           "JobOperator of LinkisManageJob should be instance of LinkisJobOperator");
@@ -104,7 +106,7 @@ public class LinkisManageJob extends LinkisJob
     LinkisManSubType subType = (LinkisManSubType) getSubType();
     if (!(subType instanceof LinkisManSubType)) {
       throw new LinkisClientExecutionException(
-          "EXE0030",
+          IS_NOT_INSTANCE_OF.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionErr,
           "JobSubType is not instance of JobManSubType");
@@ -141,7 +143,7 @@ public class LinkisManageJob extends LinkisJob
           startRetrieveResult();
           data.setSuccess(true);
         } catch (LinkisClientExecutionException e) {
-          if (e.getCode().equals("EXE0037")) {
+          if (e.getCode().equals(GOT_BLANK_RESULTLOCATION.getErrorCode())) {
             ((LinkisResultData) data).sendResultFin(); // inform listener to stop
             data.setSuccess(true);
           } else {
@@ -163,7 +165,7 @@ public class LinkisManageJob extends LinkisJob
         break;
       default:
         throw new LinkisClientExecutionException(
-            "EXE0002",
+            NOT_SUPPORTED.getErrorCode(),
             ErrorLevel.ERROR,
             CommonErrMsg.ExecutionErr,
             "JobSubType + \"" + subType + "\" is not supported");
@@ -174,7 +176,10 @@ public class LinkisManageJob extends LinkisJob
   public void startRetrieveLog() {
     if (jobDesc.getUser() == null || jobDesc.getJobID() == null) {
       throw new LinkisClientExecutionException(
-          "EXE0036", ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, "user or jobID is null");
+          USER_OR_JOBID_EXECID.getErrorCode(),
+          ErrorLevel.ERROR,
+          CommonErrMsg.ExecutionErr,
+          "user or jobID is null");
     }
     data.updateByOperResult(getJobOperator().queryJobInfo(jobDesc.getUser(), jobDesc.getJobID()));
     startRetrieveLogInternal(data);
@@ -197,11 +202,17 @@ public class LinkisManageJob extends LinkisJob
   public void startRetrieveLogInternal(JobData jobData) {
     if (!(jobData instanceof LinkisLogData)) {
       throw new LinkisClientExecutionException(
-          "EXE0034", ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, "JobData is not LinkisLogData");
+          JIBDATA_IS_NOT_RESU.getErrorCode(),
+          ErrorLevel.ERROR,
+          CommonErrMsg.ExecutionErr,
+          "JobData is not LinkisLogData");
     }
     if (jobData.getUser() == null || jobData.getJobID() == null) {
       throw new LinkisClientExecutionException(
-          "EXE0036", ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, "user or jobID is null");
+          USER_OR_JOBID_EXECID.getErrorCode(),
+          ErrorLevel.ERROR,
+          CommonErrMsg.ExecutionErr,
+          "user or jobID is null");
     }
     LinkisLogData logData = (LinkisLogData) jobData;
     if (logData.getJobStatus() != null) {
@@ -307,19 +318,25 @@ public class LinkisManageJob extends LinkisJob
   public void startRetrieveResult() {
     if (!(data instanceof LinkisResultData)) {
       throw new LinkisClientExecutionException(
-          "EXE0034",
+          JIBDATA_IS_NOT_RESU.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionErr,
           "JobData is not LinkisResultData");
     }
     if (jobDesc.getUser() == null || jobDesc.getJobID() == null) {
       throw new LinkisClientExecutionException(
-          "EXE0036", ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, "user or jobID is null");
+          USER_OR_JOBID_EXECID.getErrorCode(),
+          ErrorLevel.ERROR,
+          CommonErrMsg.ExecutionErr,
+          "user or jobID is null");
     }
     data.updateByOperResult(getJobOperator().queryJobInfo(jobDesc.getUser(), jobDesc.getJobID()));
     if (data.getJobStatus() == null) {
       throw new LinkisClientExecutionException(
-          "EXE0038", ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, "jobStatus is null");
+          JOBSTATUS_IS_NULL.getErrorCode(),
+          ErrorLevel.ERROR,
+          CommonErrMsg.ExecutionErr,
+          "jobStatus is null");
     }
     LinkisResultData resultData = (LinkisResultData) data;
     if (!resultData.getJobStatus().isJobSuccess()
@@ -341,7 +358,7 @@ public class LinkisManageJob extends LinkisJob
     }
     if (StringUtils.isBlank(resultData.getResultLocation())) {
       throw new LinkisClientExecutionException(
-          "EXE0037",
+          GOT_BLANK_RESULTLOCATION.getErrorCode(),
           ErrorLevel.WARN,
           CommonErrMsg.ExecutionErr,
           "Got blank ResultLocation from server. Job may not have result-set. Will not try to retrieve any Result");
@@ -353,7 +370,7 @@ public class LinkisManageJob extends LinkisJob
                 resultData.getUser(), resultData.getJobID(), resultData.getResultLocation()));
     if (resultData.getResultSetPaths() == null || resultData.getResultSetPaths().length == 0) {
       throw new LinkisClientExecutionException(
-          "EXE0039",
+          GOT_NULL_OR_EMPTY.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionResultErr,
           "Got null or empty ResultSetPaths");
@@ -418,7 +435,7 @@ public class LinkisManageJob extends LinkisJob
                   AppConstants.RESULTSET_PAGE_SIZE));
       if (data.hasNextResultPage() == null) {
         throw new LinkisClientExecutionException(
-            "EXE0040",
+            SOMETHING_FOES_WRONG.getErrorCode(),
             ErrorLevel.ERROR,
             CommonErrMsg.ExecutionResultErr,
             "Something foes wrong. Got null as \'hasNextPage\'.");
@@ -435,11 +452,17 @@ public class LinkisManageJob extends LinkisJob
     data.updateByOperResult(getJobOperator().queryJobInfo(jobDesc.getUser(), jobDesc.getJobID()));
     if (data.getUser() == null || data.getJobID() == null) {
       throw new LinkisClientExecutionException(
-          "EXE0036", ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, "user or jobID is null");
+          USER_OR_JOBID_EXECID.getErrorCode(),
+          ErrorLevel.ERROR,
+          CommonErrMsg.ExecutionErr,
+          "user or jobID is null");
     }
     if (data.getJobStatus() == null) {
       throw new LinkisClientExecutionException(
-          "EXE0038", ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, "jobStatus is null");
+          JOBSTATUS_IS_NULL.getErrorCode(),
+          ErrorLevel.ERROR,
+          CommonErrMsg.ExecutionErr,
+          "jobStatus is null");
     }
     String msg;
     if (data.getJobStatus().isJobCancelled()) {

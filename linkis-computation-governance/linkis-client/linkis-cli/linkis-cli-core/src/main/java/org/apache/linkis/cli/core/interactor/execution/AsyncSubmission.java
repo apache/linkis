@@ -35,6 +35,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.linkis.cli.core.errorcode.LinkisCliCoreErrorCodeSummary.*;
+
 /**
  * Execute job asynchronously TODO: put exception during execution in ExecutionResult and do not
  * interrupt execution
@@ -49,7 +51,7 @@ public class AsyncSubmission implements Execution {
 
     if (jobs == null || jobs.size() == 0) {
       throw new LinkisClientExecutionException(
-          "EXE0001",
+          EMPTY_JOBS_IS_SUBMITTED.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionInitErr,
           "Null or empty Jobs is submitted to current execution");
@@ -57,7 +59,7 @@ public class AsyncSubmission implements Execution {
 
     if (jobs.size() > 1) {
       throw new LinkisClientExecutionException(
-          "EXE0001",
+          EMPTY_JOBS_IS_SUBMITTED.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionInitErr,
           "Multiple Jobs is not Supported by current execution");
@@ -67,7 +69,7 @@ public class AsyncSubmission implements Execution {
 
     if (!(job instanceof AsyncBackendJob)) {
       throw new LinkisClientExecutionException(
-          "EXE0001",
+          BACKEND_NOT_ASYNC.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionInitErr,
           "Backend for \"" + job.getClass().getCanonicalName() + "\" does not support async");
@@ -75,7 +77,7 @@ public class AsyncSubmission implements Execution {
 
     if (job.getSubType() == null) {
       throw new LinkisClientExecutionException(
-          "EXE0001",
+          SUBEXECTYPE_SHOULD_NOT.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionInitErr,
           "SubExecType should not be null");

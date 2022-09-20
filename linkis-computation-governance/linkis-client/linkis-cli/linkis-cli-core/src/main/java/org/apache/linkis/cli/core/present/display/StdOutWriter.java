@@ -26,12 +26,14 @@ import org.apache.linkis.cli.core.utils.LogUtils;
 
 import org.slf4j.Logger;
 
+import static org.apache.linkis.cli.core.errorcode.LinkisCliCoreErrorCodeSummary.DATA_IS_NOT_INSTANCE;
+
 public class StdOutWriter implements DisplayOperator {
   @Override
   public void doOutput(DisplayData data) {
     if (!(data instanceof StdoutDisplayData)) {
       throw new PresenterException(
-          "PST0008",
+          DATA_IS_NOT_INSTANCE.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.PresentDriverErr,
           "input data is not instance of StdoutDisplayData");

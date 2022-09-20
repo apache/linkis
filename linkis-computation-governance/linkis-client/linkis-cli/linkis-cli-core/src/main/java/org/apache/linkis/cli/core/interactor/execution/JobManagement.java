@@ -30,6 +30,8 @@ import org.apache.linkis.cli.core.interactor.result.ExecutionStatusEnum;
 
 import java.util.Map;
 
+import static org.apache.linkis.cli.core.errorcode.LinkisCliCoreErrorCodeSummary.*;
+
 public class JobManagement implements Execution {
   @Override
   public ExecutionResult execute(Map<String, Job> jobs) {
@@ -38,7 +40,7 @@ public class JobManagement implements Execution {
 
     if (jobs == null || jobs.size() == 0) {
       throw new LinkisClientExecutionException(
-          "EXE0001",
+          EMPTY_JOBS_IS_SUBMITTED.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionInitErr,
           "Null or empty Jobs is submitted to current execution");
@@ -46,7 +48,7 @@ public class JobManagement implements Execution {
 
     if (jobs.size() > 1) {
       throw new LinkisClientExecutionException(
-          "EXE0001",
+          EMPTY_JOBS_IS_SUBMITTED.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionInitErr,
           "Multiple Jobs is not Supported by current execution");
@@ -56,7 +58,7 @@ public class JobManagement implements Execution {
 
     if (!(job instanceof ManagableBackendJob)) {
       throw new LinkisClientExecutionException(
-          "EXE0001",
+          BACKEND_NOT_MANAGEABLE.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionInitErr,
           "Backend for \"" + job.getClass().getCanonicalName() + "\" is not manageable");
@@ -64,7 +66,7 @@ public class JobManagement implements Execution {
 
     if (job.getSubType() == null) {
       throw new LinkisClientExecutionException(
-          "EXE0001",
+          SUBEXECTYPE_SHOULD_NOT.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionInitErr,
           "SubExecType should not be null");

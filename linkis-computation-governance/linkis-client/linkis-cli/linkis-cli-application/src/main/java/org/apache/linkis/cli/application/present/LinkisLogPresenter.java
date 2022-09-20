@@ -37,6 +37,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.linkis.cli.core.errorcode.LinkisCliApplicationErrorCodeSummary.MODEL_IS_NOT_INSTANCE_JOBINCLOG;
+
 public class LinkisLogPresenter implements Presenter, LinkisClientListener {
   private static Logger logger = LoggerFactory.getLogger(LinkisLogPresenter.class);
 
@@ -44,7 +46,7 @@ public class LinkisLogPresenter implements Presenter, LinkisClientListener {
   public void present(Model model, PresentWay presentWay) {
     if (!(model instanceof LinkisLogModel)) {
       throw new PresenterException(
-          "PST0001",
+          MODEL_IS_NOT_INSTANCE_JOBINCLOG.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.PresenterErr,
           "Input model for \"LinkisLogPresenter\" is not instance of \"LinkisJobIncLogModel\"");

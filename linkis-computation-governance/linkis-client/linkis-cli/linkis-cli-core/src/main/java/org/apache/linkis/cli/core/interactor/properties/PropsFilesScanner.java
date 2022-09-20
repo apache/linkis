@@ -34,6 +34,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.linkis.cli.core.errorcode.LinkisCliCoreErrorCodeSummary.*;
+
 public class PropsFilesScanner {
   private static final Logger logger = LoggerFactory.getLogger(PropsFilesScanner.class);
 
@@ -41,7 +43,7 @@ public class PropsFilesScanner {
     logger.info("Start scanning for properties files. Root path = \"{}\"", rootPath);
     if (StringUtils.isBlank(rootPath)) {
       throw new PropsException(
-          "PRP0004",
+          PROPERTIES_IS_EMPTY.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.PropsLoaderErr,
           "Failed to  properties files because rootPath is empty");
@@ -54,7 +56,7 @@ public class PropsFilesScanner {
               FileUtils.listFiles(new File(rootPath), CommonConstants.CONFIG_EXTENSION, false);
     } catch (Exception e) {
       throw new PropsException(
-          "PRP0005",
+          PROPERTIES_FILES.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.PropsLoaderErr,
           "Failed to list properties files",
@@ -63,7 +65,7 @@ public class PropsFilesScanner {
 
     if (files == null || files.size() == 0) {
       throw new PropsException(
-          "PRP0006",
+          PROPSFILESSCANNER_GIVEN.getErrorCode(),
           ErrorLevel.WARN,
           CommonErrMsg.PropsLoaderErr,
           "PropsFilesScanner has scanned 0 files given root " + rootPath);

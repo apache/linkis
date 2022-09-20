@@ -28,6 +28,7 @@ import org.apache.linkis.engineconn.computation.executor.execute.{
 import org.apache.linkis.engineconn.core.EngineConnObject
 import org.apache.linkis.engineplugin.presto.conf.PrestoConfiguration._
 import org.apache.linkis.engineplugin.presto.conf.PrestoEngineConf
+import org.apache.linkis.engineplugin.presto.errorcode.PrestoErrorCodeSummary
 import org.apache.linkis.engineplugin.presto.exception.{
   PrestoClientException,
   PrestoStateInvalidException
@@ -360,9 +361,15 @@ class PrestoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
       logger.warn(s"Presto statement is killed.")
       null
     } else if (statement.isClientError) {
-      throw PrestoClientException("Presto client error.")
+      throw PrestoClientException(
+        PrestoErrorCodeSummary.PRESTO_CLIENT_ERROR.getErrorCode,
+        PrestoErrorCodeSummary.PRESTO_CLIENT_ERROR.getErrorDesc
+      )
     } else {
-      throw PrestoStateInvalidException("Presto status error. Statement is not finished.")
+      throw PrestoStateInvalidException(
+        PrestoErrorCodeSummary.PRESTO_STATE_INVALID.getErrorCode,
+        PrestoErrorCodeSummary.PRESTO_STATE_INVALID.getErrorDesc
+      )
     }
   }
 

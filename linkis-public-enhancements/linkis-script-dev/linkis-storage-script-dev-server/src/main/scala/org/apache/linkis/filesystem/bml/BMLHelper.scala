@@ -20,14 +20,11 @@ package org.apache.linkis.filesystem.bml
 import org.apache.linkis.bml.client.{BmlClient, BmlClientFactory}
 import org.apache.linkis.bml.protocol.{BmlDownloadResponse, BmlUpdateResponse, BmlUploadResponse}
 import org.apache.linkis.filesystem.exception.WorkspaceExceptionManager
-
 import org.springframework.stereotype.Component
 
 import java.io.{ByteArrayInputStream, InputStream}
 import java.util
 import java.util.UUID
-
-import scala.collection.JavaConverters._
 
 @Component
 class BMLHelper {
@@ -111,8 +108,8 @@ class BMLHelper {
     else resource = client.downloadShareResource(userName, resourceId, version)
     if (!resource.isSuccess) throw WorkspaceExceptionManager.createException(80023)
     val map = new util.HashMap[String, Object]
-    map.put("resourceId", resource.resourceId)
-    map.put("version", resource.version)
+    map.put("path", resource.fullFilePath)
+    map.put("stream", resource.inputStream)
     map
   }
 

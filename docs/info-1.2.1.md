@@ -2,7 +2,6 @@
 
 | 模块名(服务名)| 类型  |     参数名                                                | 默认值             | 描述                                                    |
 | ----------- | ----- | -------------------------------------------------------- | ---------------- | ------------------------------------------------------- |
-|ps-metadataquery | 新增 |   linkis.server.mdq.mysql.relationship    | oracle,kingbase,postgresql,sqlserver,db2,greenplum,dm,mysql | 在mysql元数据服务兼容oracle,kingbase,postgresql,sqlserver,db2,greenplum,dm,驱动外部引入 |
 |cg-engineplugin | 新增  |   linkis.trino.default.limit    | 5000 | Trino查询的结果集返回条数限制 |
 |cg-engineplugin | 新增  |   linkis.trino.http.connectTimeout    | 60 | 连接Trino服务器的超时时间 |
 |cg-engineplugin | 新增  |   linkis.trino.http.readTimeout    | 60 | 等待Trino服务器返回数据的超时时间 |

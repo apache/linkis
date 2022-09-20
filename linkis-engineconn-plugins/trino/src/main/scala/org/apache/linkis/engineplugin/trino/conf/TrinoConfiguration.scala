@@ -17,7 +17,7 @@
 
 package org.apache.linkis.engineplugin.trino.conf
 
-import org.apache.linkis.common.conf.{ByteType, CommonVars}
+import org.apache.linkis.common.conf.CommonVars
 import org.apache.linkis.storage.utils.StorageConfiguration
 
 import java.lang

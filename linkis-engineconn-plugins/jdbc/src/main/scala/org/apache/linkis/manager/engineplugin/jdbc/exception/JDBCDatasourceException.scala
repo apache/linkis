@@ -19,10 +19,11 @@ package org.apache.linkis.manager.engineplugin.jdbc.exception
 
 import org.apache.linkis.common.exception.ErrorException
 
-class JDBCGetDatasourceInfoException(errorDesc: String) extends ErrorException(70022, errorDesc) {
+class JDBCGetDatasourceInfoException(errorCode: Int, errorDesc: String)
+    extends ErrorException(errorCode, errorDesc) {
 
-  def this(errorDesc: String, t: Throwable) = {
-    this(errorDesc)
+  def this(errorCode: Int, errorDesc: String, t: Throwable) = {
+    this(errorCode, errorDesc)
     super.initCause(t)
   }
 

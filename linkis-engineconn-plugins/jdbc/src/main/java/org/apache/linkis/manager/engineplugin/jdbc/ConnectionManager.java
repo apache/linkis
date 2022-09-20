@@ -41,6 +41,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.linkis.manager.engineplugin.jdbc.JdbcAuthType.*;
+import static org.apache.linkis.manager.engineplugin.jdbc.errorcode.JDBCErrorCodeSummary.*;
 
 public class ConnectionManager {
   private static final Logger LOG = LoggerFactory.getLogger(ConnectionManager.class);
@@ -114,7 +115,8 @@ public class ConnectionManager {
         JDBCPropertiesParser.getString(properties, JDBCEngineConnConstant.JDBC_DRIVER, "");
     if (StringUtils.isBlank(driverClassName)) {
       LOG.error("The driver class name is required.");
-      throw new JDBCParamsIllegalException("The driver class name is required.");
+      throw new JDBCParamsIllegalException(
+          DRIVER_CLASS_NAME_ERROR.getErrorCode(), DRIVER_CLASS_NAME_ERROR.getErrorDesc());
     }
 
     String username = JdbcParamUtils.getJdbcUsername(properties);
@@ -132,7 +134,11 @@ public class ConnectionManager {
         break;
       default:
         throw new JDBCParamsIllegalException(
-            "Unsupported jdbc authentication types " + jdbcAuthType.getAuthType());
+            UNSUPPORT_JDBC_AUTHENTICATION_TYPES.getErrorCode(),
+            UNSUPPORT_JDBC_AUTHENTICATION_TYPES
+                .getErrorDesc()
+                .concat("  ")
+                .concat(jdbcAuthType.getAuthType()));
     }
 
     boolean testOnBorrow =
@@ -219,7 +225,8 @@ public class ConnectionManager {
             properties, JDBCEngineConnConstant.JDBC_SCRIPTS_EXEC_USER, "");
     if (StringUtils.isBlank(execUser)) {
       LOG.warn("No such execUser: {}", execUser);
-      throw new JDBCParamsIllegalException("No execUser");
+      throw new JDBCParamsIllegalException(
+          NO_EXEC_USER_ERROR.getErrorCode(), NO_EXEC_USER_ERROR.getErrorDesc());
     }
     Connection connection = null;
     final String jdbcUrl = getJdbcUrl(properties);
@@ -261,7 +268,8 @@ public class ConnectionManager {
                     execUser, UserGroupInformation.getCurrentUser());
           } catch (Exception e) {
             LOG.error("Error in getCurrentUser", e);
-            throw new JDBCParamsIllegalException("Error in getCurrentUser");
+            throw new JDBCParamsIllegalException(
+                GET_CURRENT_USER_ERROR.getErrorCode(), GET_CURRENT_USER_ERROR.getErrorDesc());
           }
 
           try {
@@ -271,13 +279,16 @@ public class ConnectionManager {
                         () ->
                             getConnectionFromDataSource(dataSourceIdentifier, jdbcUrl, properties));
           } catch (Exception e) {
-            throw new JDBCParamsIllegalException("Error in doAs to get one connection.");
+            throw new JDBCParamsIllegalException(
+                DOAS_FOR_GET_CONNECTION_ERROR.getErrorCode(),
+                DOAS_FOR_GET_CONNECTION_ERROR.getErrorDesc());
           }
         }
         break;
       default:
         throw new JDBCParamsIllegalException(
-            "Unsupported jdbc authentication types " + jdbcAuthType.getAuthType());
+            UNSUPPORT_JDBC_AUTHENTICATION_TYPES.getErrorCode(),
+            UNSUPPORT_JDBC_AUTHENTICATION_TYPES.getErrorDesc() + jdbcAuthType.getAuthType());
     }
     return connection;
   }

@@ -15,8 +15,20 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.gateway.springcloud.errorcode
+package org.apache.linkis.udf;
 
-object GatewayErrorConstants {
-  val WEBSOCKET_CONNECT_ERROR = 10032
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.web.servlet.ServletComponentScan;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.springframework.context.annotation.ComponentScan;
+
+@EnableAutoConfiguration
+@ServletComponentScan
+@ComponentScan
+public class WebApplicationServer extends SpringBootServletInitializer {
+
+  public static void main(String[] args) {
+    new SpringApplicationBuilder(WebApplicationServer.class).run(args);
+  }
 }

@@ -22,15 +22,20 @@ import org.apache.linkis.common.utils.ByteTimeUtils;
 import org.apache.linkis.manager.am.conf.AMConfiguration;
 import org.apache.linkis.manager.am.exception.AMErrorCode;
 import org.apache.linkis.manager.am.exception.AMErrorException;
+import org.apache.linkis.manager.am.manager.EngineNodeManager;
+import org.apache.linkis.manager.am.service.ECResourceInfoService;
 import org.apache.linkis.manager.am.service.engine.EngineCreateService;
 import org.apache.linkis.manager.am.service.engine.EngineInfoService;
 import org.apache.linkis.manager.am.service.engine.EngineOperateService;
 import org.apache.linkis.manager.am.service.engine.EngineStopService;
+import org.apache.linkis.manager.am.util.ECResourceInfoUtils;
 import org.apache.linkis.manager.am.utils.AMUtils;
 import org.apache.linkis.manager.am.vo.AMEngineNodeVo;
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus;
 import org.apache.linkis.manager.common.entity.node.AMEMNode;
+import org.apache.linkis.manager.common.entity.node.AMEngineNode;
 import org.apache.linkis.manager.common.entity.node.EngineNode;
+import org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord;
 import org.apache.linkis.manager.common.protocol.engine.EngineCreateRequest;
 import org.apache.linkis.manager.common.protocol.engine.EngineOperateRequest;
 import org.apache.linkis.manager.common.protocol.engine.EngineOperateResponse;
@@ -80,11 +85,15 @@ public class EngineRestfulApi {
 
     @Autowired private EngineCreateService engineCreateService;
 
+    @Autowired private EngineNodeManager engineNodeManager;
+
     @Autowired private EngineOperateService engineOperateService;
 
     @Autowired private NodeLabelService nodeLabelService;
 
     @Autowired private EngineStopService engineStopService;
+
+    @Autowired private ECResourceInfoService ecResourceInfoService;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -146,7 +155,14 @@ public class EngineRestfulApi {
             throws AMErrorException {
         String userName = ModuleUserUtils.getOperationUser(req, "getEngineConn");
         ServiceInstance serviceInstance = getServiceInstance(jsonNode);
-        EngineNode engineNode = engineCreateService.getEngineNode(serviceInstance);
+        EngineNode engineNode = engineNodeManager.getEngineNodeInfo(serviceInstance);
+        if (null == engineNode) {
+            ECResourceInfoRecord ecInfo = ecResourceInfoService.getECResourceInfoRecordByInstance(serviceInstance.getInstance());
+            if (null == ecInfo) {
+                return Message.error("Instance does not exist " + serviceInstance);
+            }
+            engineNode = ECResourceInfoUtils.convertECInfoTOECNode(ecInfo);
+        }
         if (!userName.equals(engineNode.getOwner()) && !isAdmin(userName)) {
             return Message.error("You have no permission to access EngineConn " + serviceInstance);
         }
@@ -163,7 +179,7 @@ public class EngineRestfulApi {
         String userName =
                 ModuleUserUtils.getOperationUser(req, "killEngineConn：" + serviceInstance);
         logger.info("User {} try to kill engineConn {}.", userName, serviceInstance);
-        EngineNode engineNode = engineCreateService.getEngineNode(serviceInstance);
+        EngineNode engineNode = engineNodeManager.getEngineNode(serviceInstance);
         if (!userName.equals(engineNode.getOwner()) && !isAdmin(userName)) {
             return Message.error("You have no permission to kill EngineConn " + serviceInstance);
         }
@@ -356,7 +372,7 @@ public class EngineRestfulApi {
         String userName = ModuleUserUtils.getOperationUser(req, "executeEngineConnOperation");
         ServiceInstance serviceInstance = getServiceInstance(jsonNode);
         logger.info("User {} try to execute Engine Operation {}.", userName, serviceInstance);
-        EngineNode engineNode = engineCreateService.getEngineNode(serviceInstance);
+        EngineNode engineNode = engineNodeManager.getEngineNode(serviceInstance);
         if (!userName.equals(engineNode.getOwner()) && !isAdmin(userName)) {
             return Message.error(
                     "You have no permission to execute Engine Operation " + serviceInstance);

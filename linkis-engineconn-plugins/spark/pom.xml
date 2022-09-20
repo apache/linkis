@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.apache.linkis</groupId>
     <artifactId>linkis</artifactId>
-    <version>1.2.0</version>
+    <version>1.3.0</version>
     <relativePath>../../pom.xml</relativePath>
   </parent>
 
@@ -375,6 +375,12 @@
       <groupId>org.codehaus.janino</groupId>
       <artifactId>janino</artifactId>
       <version>3.0.9</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.github.pjfanning</groupId>
+      <artifactId>excel-streaming-reader</artifactId>
+      <version>4.0.1</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

@@ -156,15 +156,16 @@
                         "functionManagement": "函数管理",
                         "dataSourceManage": "数据源管理",
                         "userResourceManagement": "用户资源管理",
-                        "errorCode": "异常代码管理",
-                        "gatewayAuthToken": "网关验证Token管理",
+                        "errorCode": "错误码管理",
+                        "gatewayAuthToken": "令牌管理",
                         "rmExternalResourceProvider": "扩展资源管理",
-                        "udfManager": "UDF用户管理",
+                        "udfManager": "用户管理",
                         "udfTree": "UDF分类",
-                        "datasourceAccess": "数据源访问权限",
+                        "datasourceAccess": "数据源权限",
                         "datasourceEnv": "数据源环境",
                         "datasourceType": "数据源分类",
-                        "EnginePluginManagement": "引擎物料管理"
+                        "EnginePluginManagement": "引擎物料管理",
+                        "basedataManagement": "基础数据管理"
                     }
                 }
             },

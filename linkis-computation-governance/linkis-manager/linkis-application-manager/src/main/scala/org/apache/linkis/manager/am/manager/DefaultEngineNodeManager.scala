@@ -21,6 +21,7 @@ import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.exception.LinkisRetryException
 import org.apache.linkis.common.utils.{Logging, RetryHandler, Utils}
 import org.apache.linkis.manager.am.conf.AMConfiguration
+import org.apache.linkis.manager.am.exception.{AMErrorCode, AMErrorException}
 import org.apache.linkis.manager.am.locker.EngineNodeLocker
 import org.apache.linkis.manager.common.constant.AMConstant
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
@@ -31,6 +32,7 @@ import org.apache.linkis.manager.common.protocol.engine.{
   EngineOperateResponse
 }
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
+import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.EngineInstanceLabel
 import org.apache.linkis.manager.persistence.{
   LabelManagerPersistence,
@@ -287,6 +289,24 @@ class DefaultEngineNodeManager extends EngineNodeManager with Logging {
   ): EngineOperateResponse = {
     val engine = nodePointerBuilder.buildEngineNodePointer(engineNode)
     engine.executeOperation(request)
+  }
+
+  override def getEngineNodeInfo(serviceInstance: ServiceInstance): EngineNode = {
+    val engineNode = getEngineNode(serviceInstance)
+    if (engineNode != null) {
+      if (engineNode.getNodeStatus == null) {
+        val nodeMetric = nodeMetricManagerPersistence.getNodeMetrics(engineNode)
+        engineNode.setNodeStatus(
+          if (Option(nodeMetric).isDefined) NodeStatus.values()(nodeMetric.getStatus)
+          else NodeStatus.Starting
+        )
+      }
+      return engineNode
+    }
+    throw new AMErrorException(
+      AMErrorCode.NOT_EXISTS_ENGINE_CONN.getCode,
+      AMErrorCode.NOT_EXISTS_ENGINE_CONN.getMessage
+    )
   }
 
 }

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineplugin.presto.executer
+package org.apache.linkis.engineplugin.presto.executor
 
 import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{OverloadUtils, Utils}
@@ -28,10 +28,12 @@ import org.apache.linkis.engineconn.computation.executor.execute.{
 import org.apache.linkis.engineconn.core.EngineConnObject
 import org.apache.linkis.engineplugin.presto.conf.PrestoConfiguration._
 import org.apache.linkis.engineplugin.presto.conf.PrestoEngineConf
+import org.apache.linkis.engineplugin.presto.errorcode.PrestoErrorCodeSummary
 import org.apache.linkis.engineplugin.presto.exception.{
   PrestoClientException,
   PrestoStateInvalidException
 }
+import org.apache.linkis.engineplugin.presto.utils.PrestoSQLHook
 import org.apache.linkis.governance.common.paser.SQLCodeParser
 import org.apache.linkis.manager.common.entity.resource.{
   CommonNodeResource,
@@ -53,6 +55,7 @@ import org.apache.linkis.storage.resultset.ResultSetFactory
 import org.apache.linkis.storage.resultset.table.{TableMetaData, TableRecord}
 
 import org.apache.commons.io.IOUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.exception.ExceptionUtils
 
 import org.springframework.util.CollectionUtils
@@ -60,7 +63,7 @@ import org.springframework.util.CollectionUtils
 import java.net.URI
 import java.util
 import java.util._
-import java.util.concurrent.TimeUnit
+import java.util.concurrent.{ConcurrentHashMap, TimeUnit}
 
 import scala.collection.JavaConverters._
 
@@ -72,9 +75,12 @@ import okhttp3.OkHttpClient
 class PrestoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
     extends ConcurrentComputationExecutor(outputPrintLimit) {
 
-  private var okHttpClient: OkHttpClient = PrestoEngineConnExecutor.OK_HTTP_CLIENT
+  private val okHttpClient: OkHttpClient = PrestoEngineConnExecutor.OK_HTTP_CLIENT
 
   private val executorLabels: util.List[Label[_]] = new util.ArrayList[Label[_]](2)
+
+  private val statementClientCache: util.Map[String, StatementClient] =
+    new ConcurrentHashMap[String, StatementClient]()
 
   private val clientSessionCache: Cache[String, ClientSession] = CacheBuilder
     .newBuilder()
@@ -111,32 +117,40 @@ class PrestoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
       engineExecutorContext: EngineExecutionContext,
       code: String
   ): ExecuteResponse = {
-    val realCode = code.trim
+    val enableSqlHook = PRESTO_SQL_HOOK_ENABLED.getValue
+    val realCode = if (StringUtils.isBlank(code)) {
+      "SELECT 1"
+    } else if (enableSqlHook) {
+      PrestoSQLHook.preExecuteHook(code.trim)
+    } else {
+      code.trim
+    }
     logger.info(s"presto client begins to run psql code:\n $realCode")
 
     val taskId = engineExecutorContext.getJobId.get
 
     val clientSession = clientSessionCache.getIfPresent(taskId)
-    val statement =
-      StatementClientFactory.newStatementClient(okHttpClient, clientSession, realCode)
-
-    initialStatusUpdates(taskId, engineExecutorContext, statement)
-
-    if (
-        statement.isRunning || (statement.isFinished && statement
-          .finalStatusInfo()
-          .getError == null)
-    ) {
-      queryOutput(taskId, engineExecutorContext, statement)
-    }
-
-    val errorResponse = verifyServerError(taskId, engineExecutorContext, statement)
-    if (errorResponse == null) {
-      // update session
-      clientSessionCache.put(taskId, updateSession(clientSession, statement))
-      SuccessExecuteResponse()
-    } else {
-      errorResponse
+    val statement = StatementClientFactory.newStatementClient(okHttpClient, clientSession, realCode)
+    statementClientCache.put(taskId, statement)
+    Utils.tryFinally {
+      initialStatusUpdates(taskId, engineExecutorContext, statement)
+      if (
+          statement.isRunning || (statement.isFinished && statement
+            .finalStatusInfo()
+            .getError == null)
+      ) {
+        queryOutput(taskId, engineExecutorContext, statement)
+      }
+      val errorResponse = verifyServerError(taskId, engineExecutorContext, statement)
+      if (errorResponse == null) {
+        // update session
+        clientSessionCache.put(taskId, updateSession(clientSession, statement))
+        SuccessExecuteResponse()
+      } else {
+        errorResponse
+      }
+    } {
+      statementClientCache.remove(taskId)
     }
 
   }
@@ -152,6 +166,14 @@ class PrestoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
 
   override def getProgressInfo(taskID: String): Array[JobProgressInfo] =
     Array.empty[JobProgressInfo]
+
+  override def killTask(taskId: String): Unit = {
+    val statement = statementClientCache.remove(taskId)
+    if (null != statement) {
+      Utils.tryAndWarn(statement.cancelLeafStage())
+    }
+    super.killTask(taskId)
+  }
 
   override def getExecutorLabels(): util.List[Label[_]] = executorLabels
 
@@ -171,8 +193,7 @@ class PrestoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
   override def getCurrentNodeResource(): NodeResource = {
     val properties = EngineConnObject.getEngineCreationContext.getOptions
     if (properties.containsKey(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key)) {
-      val settingClientMemory =
-        properties.get(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key)
+      val settingClientMemory = properties.get(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key)
       if (!settingClientMemory.toLowerCase().endsWith("g")) {
         properties.put(
           EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key,
@@ -279,7 +300,7 @@ class PrestoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
     var columnCount = 0
     var rows = 0
     val resultSetWriter = engineExecutorContext.createResultSetWriter(ResultSetFactory.TABLE_TYPE)
-    Utils.tryFinally({
+    Utils.tryCatch {
       var results: QueryStatusInfo = null
       if (statement.isRunning) {
         results = statement.currentStatusInfo()
@@ -304,14 +325,15 @@ class PrestoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
         engineExecutorContext.pushProgress(progress(taskId), getProgressInfo(taskId))
         statement.advance()
       }
-    })(IOUtils.closeQuietly(resultSetWriter))
-
-    info(s"Fetched $columnCount col(s) : $rows row(s) in presto")
+    } { case e: Exception =>
+      IOUtils.closeQuietly(resultSetWriter)
+      throw e
+    }
+    logger.info(s"Fetched $columnCount col(s) : $rows row(s) in presto")
     engineExecutorContext.appendStdout(
       LogUtils.generateInfo(s"Fetched $columnCount col(s) : $rows row(s) in presto")
     );
     engineExecutorContext.sendResultSet(resultSetWriter)
-    IOUtils.closeQuietly(resultSetWriter)
   }
 
   // check presto error
@@ -336,12 +358,18 @@ class PrestoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
         ErrorExecuteResponse(ExceptionUtils.getMessage(cause), cause)
       } else null
     } else if (statement.isClientAborted) {
-      warn(s"Presto statement is killed.")
+      logger.warn(s"Presto statement is killed.")
       null
     } else if (statement.isClientError) {
-      throw PrestoClientException("Presto client error.")
+      throw PrestoClientException(
+        PrestoErrorCodeSummary.PRESTO_CLIENT_ERROR.getErrorCode,
+        PrestoErrorCodeSummary.PRESTO_CLIENT_ERROR.getErrorDesc
+      )
     } else {
-      throw PrestoStateInvalidException("Presto status error. Statement is not finished.")
+      throw PrestoStateInvalidException(
+        PrestoErrorCodeSummary.PRESTO_STATE_INVALID.getErrorCode,
+        PrestoErrorCodeSummary.PRESTO_STATE_INVALID.getErrorDesc
+      )
     }
   }
 
@@ -401,7 +429,21 @@ class PrestoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
     newSession
   }
 
-  override def killAll(): Unit = {}
+  override def killAll(): Unit = {
+    val iterator = statementClientCache.values().iterator()
+    while (iterator.hasNext) {
+      val statement = iterator.next()
+      if (null != statement) {
+        Utils.tryAndWarn(statement.cancelLeafStage())
+      }
+    }
+    statementClientCache.clear()
+  }
+
+  override def close(): Unit = {
+    killAll()
+    super.close()
+  }
 
 }
 

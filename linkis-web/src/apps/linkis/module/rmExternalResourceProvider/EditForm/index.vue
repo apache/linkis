@@ -119,6 +119,8 @@ export default {
           value: '',
           props: {
             placeholder: "",
+            "type": "textarea",
+            "rows": 11
           },
           validate: [
             {

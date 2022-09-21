@@ -27,7 +27,7 @@ import org.apache.linkis.engineconn.acessible.executor.listener.event.{
 import org.apache.linkis.engineconn.acessible.executor.lock.EngineConnTimedLock
 import org.apache.linkis.engineconn.core.executor.ExecutorManager
 import org.apache.linkis.engineconn.executor.listener.ExecutorListenerBusContext
-import org.apache.linkis.governance.common.exception.engineconn.{
+import org.apache.linkis.governance.exception.engineconn.{
   EngineConnExecutorErrorCode,
   EngineConnExecutorErrorException
 }

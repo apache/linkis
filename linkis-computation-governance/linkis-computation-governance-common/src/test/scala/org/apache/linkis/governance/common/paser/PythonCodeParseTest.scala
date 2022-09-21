@@ -75,7 +75,7 @@ class PythonCodeParseTest {
         |foo(1,2,3)
         """.stripMargin
     val strings = parser.parsePythonCode(pythonCode)
-    assertTrue(strings.length == 3)
+    assertTrue(strings.length == 4)
   }
 
 }

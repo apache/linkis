@@ -19,6 +19,7 @@ package org.apache.linkis.datasourcemanager.core.dao;
 
 import org.apache.linkis.datasourcemanager.common.domain.DatasourceVersion;
 
+import org.junit.jupiter.api.Disabled;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Date;
@@ -74,6 +75,7 @@ class DataSourceVersionDaoTest extends BaseDaoTest {
     assertTrue(dataSourceVersionDao.getLatestVersion(1l) == 2l);
   }
 
+  @Disabled
   @Test
   void testSelectOneVersion() {
     insertOne();

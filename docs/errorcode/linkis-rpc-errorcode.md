@@ -11,7 +11,7 @@
 |linkis-rpc|10003|The corresponding anti-sequence class $objectClass was not found:(找不到对应的反序列类:)|LinkisRpcErrorCodeSummary|
 |linkis-rpc|10004|The corresponding anti-sequence class failed to initialize:(对应的反序列类初始化失败:)|LinkisRpcErrorCodeSummary|
 |linkis-rpc|10001|The transmitted bean is Null.(传输的bean为Null.|LinkisRpcErrorCodeSummary|
-|linkis-rpc|10051|The instance ## of application ### is not exists.|LinkisRpcErrorCodeSummary|
+|linkis-rpc|10051|The instance ## of application ## is not exists.(应用程序## 的实例## 不存在。)|LinkisRpcErrorCodeSummary|
 |linkis-rpc|10000|method call failed:(方法调用失败：)|LinkisRpcErrorCodeSummary|
 
 

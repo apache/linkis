@@ -138,16 +138,16 @@ public interface NodeManagerMapper {
       @Param("emNodeInstance") String emNodeInstance);
 
   /// not use
-  ///@Select("select engine_id from  linkis_cg_manager_engine_em where em_id = #{emId}")
-  ///List<Integer> getEngineNodeIDsByEMId(@Param("emId") int emId);
+  /// @Select("select engine_id from  linkis_cg_manager_engine_em where em_id = #{emId}")
+  /// List<Integer> getEngineNodeIDsByEMId(@Param("emId") int emId);
 
   /// not use
   /// @Select("select em_id from  linkis_cg_manager_engine_em where engine_id = #{engineNodeId}")
-  ///int getEMIdByEngineId(@Param("engineNodeId") int engineNodeId);
+  /// int getEMIdByEngineId(@Param("engineNodeId") int engineNodeId);
 
   /// not use
-  ///@Select("select id from linkis_cg_manager_service_instance where owner = #{owner}")
-  ///List<Integer> getNodeInstanceIdsByOwner(@Param("owner") String owner);
+  /// @Select("select id from linkis_cg_manager_service_instance where owner = #{owner}")
+  /// List<Integer> getNodeInstanceIdsByOwner(@Param("owner") String owner);
 
   void updateNodeRelation(@Param("tickedId") String tickedId, @Param("instance") String instance);
 

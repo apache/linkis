@@ -25,11 +25,12 @@ public interface TenantConfigService {
 
   List<TenantVo> queryTenantList(String user, String creator, String tenantValue);
 
-  void deleteTenant(Integer id);
+  void deleteTenant(Integer id) throws ConfigurationException;
 
   void updateTenant(TenantVo tenantVo) throws ConfigurationException;
 
   void createTenant(TenantVo tenantVo) throws ConfigurationException;
 
-  Boolean checkUserCteator(String user, String creator, String tenantValue);
+  Boolean checkUserCteator(String user, String creator, String tenantValue)
+      throws ConfigurationException;
 }

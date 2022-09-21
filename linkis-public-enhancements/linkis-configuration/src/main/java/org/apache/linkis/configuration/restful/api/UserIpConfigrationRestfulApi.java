@@ -35,6 +35,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
 import javax.servlet.http.HttpServletRequest;
 
 @Api
@@ -54,16 +55,16 @@ public class UserIpConfigrationRestfulApi {
     @ApiOperation(value = "create-user-ip", notes = "create user ip", httpMethod = "POST")
     @RequestMapping(path = "/create-user-ip", method = RequestMethod.POST)
     public Message createUserIp(HttpServletRequest req, @RequestBody UserIpVo userIpVo) {
-        String userName = ModuleUserUtils.getOperationUser(req, "createUserIP");
-        if (!Configuration.isAdmin(userName)) {
-            return Message.error("Failed to create-user-ip,msg: only administrators can configure");
-        }
         try {
+            String userName = ModuleUserUtils.getOperationUser(req, "createUserIP");
+            if (!Configuration.isAdmin(userName)) {
+                return Message.error("Failed to create-user-ip,msg: only administrators can configure");
+            }
             userIpConfigService.createUserIP(userIpVo);
         } catch (DuplicateKeyException e) {
             return Message.error("Failed to create-user-ip,msg:create user-creator is existed");
         } catch (ConfigurationException e) {
-            return Message.error("Failed to create-user-ip,msg:"+e.getMessage());
+            return Message.error("Failed to create-user-ip,msg:" + e.getMessage());
         }
         return Message.ok();
     }
@@ -75,14 +76,14 @@ public class UserIpConfigrationRestfulApi {
     @ApiOperation(value = "update-user-ip", notes = "update user ip", httpMethod = "POST")
     @RequestMapping(path = "/update-user-ip", method = RequestMethod.POST)
     public Message updateUserIp(HttpServletRequest req, @RequestBody UserIpVo UserIpVo) {
-        String userName = ModuleUserUtils.getOperationUser(req, "updateUserIP");
-        if (!Configuration.isAdmin(userName)) {
-            return Message.error("Failed to update-user-ip,msg: only administrators can configure ");
-        }
         try {
+            String userName = ModuleUserUtils.getOperationUser(req, "updateUserIP");
+            if (!Configuration.isAdmin(userName)) {
+                return Message.error("Failed to update-user-ip,msg: only administrators can configure ");
+            }
             userIpConfigService.updateUserIP(UserIpVo);
         } catch (ConfigurationException e) {
-            return Message.error("Failed to update-user-ip,msg:"+e.getMessage());
+            return Message.error("Failed to update-user-ip,msg:" + e.getMessage());
         }
         return Message.ok();
     }
@@ -94,11 +95,15 @@ public class UserIpConfigrationRestfulApi {
     @ApiOperation(value = "delete-user-ip", notes = "delete user ip", httpMethod = "GET")
     @RequestMapping(path = "/delete-user-ip", method = RequestMethod.GET)
     public Message deleteUserIp(HttpServletRequest req, Integer id) {
-        String userName = ModuleUserUtils.getOperationUser(req, "deleteUserIP");
-        if (!Configuration.isAdmin(userName)) {
-            return Message.error("Failed to delete-user-ip,msg: only administrators can configure");
+        try {
+            String userName = ModuleUserUtils.getOperationUser(req, "delete-user-ip");
+            if (!Configuration.isAdmin(userName)) {
+                return Message.error("Failed to delete-user-ip,msg: only administrators can configure");
+            }
+            userIpConfigService.deleteUserIP(id);
+        } catch (ConfigurationException e) {
+            return Message.error("Failed to check-user-creator,msg:" + e.getMessage());
         }
-        userIpConfigService.deleteUserIP(id);
         return Message.ok();
     }
 
@@ -125,11 +130,17 @@ public class UserIpConfigrationRestfulApi {
     @ApiOperation(value = "check-user-creator", notes = " check user creator", httpMethod = "GET")
     @RequestMapping(path = "/check-user-creator", method = RequestMethod.GET)
     public Message checkUserCreator(HttpServletRequest req, String user, String creator) {
-        String userName = ModuleUserUtils.getOperationUser(req, "checkUserCreator");
-        if (!Configuration.isAdmin(userName)) {
-            return Message.error("Failed to check-user-creator,msg: only administrators can configure");
+        Boolean result = false;
+        try {
+            String userName = ModuleUserUtils.getOperationUser(req, "checkUserCreator");
+            if (!Configuration.isAdmin(userName)) {
+                return Message.error("Failed to check-user-creator,msg: only administrators can configure");
+            }
+            result = userIpConfigService.checkUserCteator(user, creator);
+        } catch (ConfigurationException e) {
+            return Message.error("Failed to check-user-creator,msg:" + e.getMessage());
         }
-        return Message.ok().data("result", userIpConfigService.checkUserCteator(user, creator));
+        return Message.ok().data("result", result);
     }
 
 

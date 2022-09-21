@@ -66,8 +66,11 @@ public class TenantConfigServiceImpl implements TenantConfigService {
    * @param id
    */
   @Override
-  public void deleteTenant(Integer id) {
-    logger.info("deleteTenant : id:{}", id);
+  public void deleteTenant(Integer id) throws ConfigurationException {
+    logger.info("deleteUserIP : id:{}", id);
+    if (StringUtils.isBlank(id.toString())) {
+      throw new ConfigurationException("id couldn't be empty ");
+    }
     userTenantMapper.deleteTenant(id);
   }
 
@@ -152,7 +155,18 @@ public class TenantConfigServiceImpl implements TenantConfigService {
   }
 
   @Override
-  public Boolean checkUserCteator(String user, String creator, String tenantValue) {
+  public Boolean checkUserCteator(String user, String creator, String tenantValue)
+      throws ConfigurationException {
+    // 参数校验
+    if (StringUtils.isBlank(creator)) {
+      throw new ConfigurationException("creator couldn't be empty ");
+    }
+    if (StringUtils.isBlank(user)) {
+      throw new ConfigurationException("user couldn't be empty ");
+    }
+    if (StringUtils.isBlank(tenantValue)) {
+      throw new ConfigurationException("tenant couldn't be empty ");
+    }
     return CollectionUtils.isNotEmpty(queryTenantList(user, creator, tenantValue));
   }
 }

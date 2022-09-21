@@ -27,9 +27,9 @@ public interface UserIpConfigService {
 
   void updateUserIP(UserIpVo userIpVo) throws ConfigurationException;
 
-  void deleteUserIP(Integer id);
+  void deleteUserIP(Integer id) throws ConfigurationException;
 
   List<UserIpVo> queryUserIPList(String user, String creator);
 
-  Boolean checkUserCteator(String user, String creator);
+  Boolean checkUserCteator(String user, String creator) throws ConfigurationException;
 }

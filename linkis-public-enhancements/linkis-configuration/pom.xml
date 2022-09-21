@@ -45,6 +45,16 @@
     </dependency>
     <dependency>
       <groupId>org.apache.linkis</groupId>
+      <artifactId>linkis-httpclient</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.linkis</groupId>
+      <artifactId>linkis-gateway-httpclient-support</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.linkis</groupId>
       <artifactId>linkis-computation-client</artifactId>
       <version>${project.version}</version>
     </dependency>

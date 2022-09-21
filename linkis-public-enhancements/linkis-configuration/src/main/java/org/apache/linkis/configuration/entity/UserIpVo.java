@@ -34,8 +34,8 @@ public class UserIpVo {
   @ApiModelProperty("creator")
   private String creator;
 
-  @ApiModelProperty("ipList")
-  private String ipList;
+  @ApiModelProperty("ips")
+  private String ips;
 
   @ApiModelProperty("createTime")
   private Date createTime;
@@ -105,12 +105,12 @@ public class UserIpVo {
     this.updateTime = updateTime;
   }
 
-  public String getIpList() {
-    return ipList;
+  public String getIps() {
+    return ips;
   }
 
-  public void setIpList(String ipList) {
-    this.ipList = ipList;
+  public void setIpList(String ips) {
+    this.ips = ips;
   }
 
   @Override
@@ -126,7 +126,7 @@ public class UserIpVo {
         + creator
         + '\''
         + ", ipList='"
-        + ipList
+        + ips
         + '\''
         + ", createTime="
         + createTime

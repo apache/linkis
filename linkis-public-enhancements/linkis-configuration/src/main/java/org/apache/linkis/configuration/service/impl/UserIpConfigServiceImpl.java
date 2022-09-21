@@ -27,6 +27,7 @@ import org.apache.commons.lang.StringUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -79,8 +80,12 @@ public class UserIpConfigServiceImpl implements UserIpConfigService {
    * @param id
    */
   @Override
-  public void deleteUserIP(Integer id) {
+  @Transactional(rollbackFor = Throwable.class)
+  public void deleteUserIP(Integer id) throws ConfigurationException {
     logger.info("deleteUserIP : id:{}", id);
+    if (StringUtils.isBlank(id.toString())) {
+      throw new ConfigurationException("id couldn't be empty ");
+    }
     userIpMapper.deleteUserIP(id);
   }
 
@@ -109,14 +114,14 @@ public class UserIpConfigServiceImpl implements UserIpConfigService {
     if (StringUtils.isBlank(userIpVo.getBussinessUser())) {
       throw new ConfigurationException("bussiness_user couldn't be empty ");
     }
-    if (StringUtils.isBlank(userIpVo.getIpList())) {
+    if (StringUtils.isBlank(userIpVo.getIps())) {
       throw new ConfigurationException("ipList couldn't be empty ");
     }
     if (StringUtils.isBlank(userIpVo.getDesc())) {
       throw new ConfigurationException("desc couldn't be empty ");
     }
     // ip规则校验
-    String ipList = userIpVo.getIpList();
+    String ipList = userIpVo.getIps();
     if (!ipList.equals("*")) {
       String[] split = ipList.split(",");
       StringJoiner joiner = new StringJoiner(",");
@@ -131,7 +136,14 @@ public class UserIpConfigServiceImpl implements UserIpConfigService {
   }
 
   @Override
-  public Boolean checkUserCteator(String user, String creator) {
+  public Boolean checkUserCteator(String user, String creator) throws ConfigurationException {
+    // 参数校验
+    if (StringUtils.isBlank(creator)) {
+      throw new ConfigurationException("creator couldn't be empty ");
+    }
+    if (StringUtils.isBlank(user)) {
+      throw new ConfigurationException("user couldn't be empty ");
+    }
     return CollectionUtils.isNotEmpty(queryUserIPList(user, creator));
   }
 }

@@ -56,16 +56,16 @@ public class TenantConfigrationRestfulApi {
     @ApiOperation(value = "create-tenant", notes = "create tenant", httpMethod = "POST", response = Message.class)
     @RequestMapping(path = "/create-tenant", method = RequestMethod.POST)
     public Message createTenant(HttpServletRequest req, @RequestBody TenantVo tenantVo) {
-        String userName = ModuleUserUtils.getOperationUser(req, "createTenant");
-        if (!Configuration.isAdmin(userName)) {
-            return Message.error("Failed to create-tenant,msg: only administrators can configure");
-        }
         try {
+            String userName = ModuleUserUtils.getOperationUser(req, "createTenant");
+            if (!Configuration.isAdmin(userName)) {
+                return Message.error("Failed to create-tenant,msg: only administrators can configure");
+            }
             tenantConfigService.createTenant(tenantVo);
         } catch (DuplicateKeyException e) {
             return Message.error("Failed to create-tenant,msg:create user-creator is existed");
         } catch (ConfigurationException e) {
-            return Message.error("Failed to update-tenant,msg:"+e.getMessage());
+            return Message.error("Failed to update-tenant,msg:" + e.getMessage());
         }
         return Message.ok();
     }
@@ -77,14 +77,14 @@ public class TenantConfigrationRestfulApi {
     @ApiOperation(value = "update-tenant", notes = "update tenant", httpMethod = "POST", response = Message.class)
     @RequestMapping(path = "/update-tenant", method = RequestMethod.POST)
     public Message updateTenant(HttpServletRequest req, @RequestBody TenantVo tenantVo) {
-        String userName = ModuleUserUtils.getOperationUser(req, "updateTenant");
-        if (!Configuration.isAdmin(userName)) {
-            return Message.error("Failed to update-tenant,msg: only administrators can configure");
-        }
         try {
+            String userName = ModuleUserUtils.getOperationUser(req, "updateTenant");
+            if (!Configuration.isAdmin(userName)) {
+                return Message.error("Failed to update-tenant,msg: only administrators can configure");
+            }
             tenantConfigService.updateTenant(tenantVo);
         } catch (ConfigurationException e) {
-            return Message.error("Failed to update-tenant,msg:"+e.getMessage());
+            return Message.error("Failed to update-tenant,msg:" + e.getMessage());
         }
         return Message.ok();
     }
@@ -96,11 +96,15 @@ public class TenantConfigrationRestfulApi {
     @ApiOperation(value = "delete-tenant", notes = "delete tenant", httpMethod = "GET", response = Message.class)
     @RequestMapping(path = "/delete-tenant", method = RequestMethod.GET)
     public Message deleteTenant(HttpServletRequest req, Integer id) {
-        String userName = ModuleUserUtils.getOperationUser(req, "deleteTenant");
-        if (!Configuration.isAdmin(userName)) {
-            return Message.error("Failed to delete-tenant,msg: only administrators can configure");
+        try {
+            String userName = ModuleUserUtils.getOperationUser(req, "deleteTenant");
+            if (!Configuration.isAdmin(userName)) {
+                return Message.error("Failed to delete-tenant,msg: only administrators can configure");
+            }
+            tenantConfigService.deleteTenant(id);
+        } catch (ConfigurationException e) {
+            return Message.error("Failed to delete-tenant,msg:" + e.getMessage());
         }
-        tenantConfigService.deleteTenant(id);
         return Message.ok();
     }
 
@@ -129,10 +133,16 @@ public class TenantConfigrationRestfulApi {
     @ApiOperation(value = "check-user-creator", notes = "check user creator", httpMethod = "GET", response = Message.class)
     @RequestMapping(path = "/check-user-creator", method = RequestMethod.GET)
     public Message checkUserCreator(HttpServletRequest req, String user, String creator, String tenantValue) {
-        String userName = ModuleUserUtils.getOperationUser(req, "checkUserCreator");
-        if (!Configuration.isAdmin(userName)) {
-            return Message.error("Failed to check-user-creator,msg: only administrators can configure");
+        Boolean result = false;
+        try {
+            String userName = ModuleUserUtils.getOperationUser(req, "checkUserCreator");
+            if (!Configuration.isAdmin(userName)) {
+                return Message.error("Failed to check-user-creator,msg: only administrators can configure");
+            }
+            result = tenantConfigService.checkUserCteator(user, creator, tenantValue);
+        } catch (ConfigurationException e) {
+            return Message.error("Failed to check-user-creator,msg:" + e.getMessage());
         }
-        return Message.ok().data("result", tenantConfigService.checkUserCteator(user, creator, tenantValue));
+        return Message.ok().data("result", result);
     }
 }

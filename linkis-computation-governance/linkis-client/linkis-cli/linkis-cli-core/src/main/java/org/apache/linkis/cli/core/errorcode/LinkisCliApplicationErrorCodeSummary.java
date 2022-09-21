@@ -73,8 +73,8 @@ public enum LinkisCliApplicationErrorCodeSummary {
       "Got null or empty ResultSetPaths(得到 null 或空的 ResultSetPaths)"),
   SOMETHING_FOES_WRONG(
       "EXE0040",
-      "Something foes wrong. Got null as \\'hasNextPage\\'.(有什么不对劲的。 得到 null 作为 \\'hasNextPage\\'。)",
-      "Something foes wrong. Got null as \\'hasNextPage\\'.(有什么不对劲的。 得到 null 作为 \\'hasNextPage\\'。)"),
+      "Something foes wrong. Got null as hasNextPage.(有什么不对劲的。 得到 null 作为 hasNextPage 。)",
+      "Something foes wrong. Got null as hasNextPage.(有什么不对劲的。 得到 null 作为 hasNextPage 。)"),
   INSTANCE_IS_NULL(
       "EXE0040",
       "Instance of is null(Instance of is null)",
@@ -108,8 +108,8 @@ public enum LinkisCliApplicationErrorCodeSummary {
       "Get job status failed. retry time (获取作业状态失败。 重试时间XXXX)"),
   GET_LOG_TIME_TASKID(
       "EXE0015",
-      "Get log failed. retry time : {0}/{1}. taskID={2}. Reason: {3}  ( 获取日志失败。 重试时间XXXX,任务id=##,原因:##)",
-      "Get log failed. retry time : {0}/{1}. taskID={2}. Reason: {3} ( 获取日志失败。 重试时间XXXX,任务id=##,原因:##)"),
+      "Get log failed. retry time : ##/##. taskID=### Reason: ### ( 获取日志失败。 重试时间XXXX,任务id=##,原因:##)",
+      "Get log failed. retry time : ##/##. taskID=### Reason: ### ( 获取日志失败。 重试时间XXXX,任务id=##,原因:##)"),
   GET_LOG_TIME(
       "EXE0016",
       "Get log failed. Retry time ( 获取日志失败。 重试时间XXXX)",

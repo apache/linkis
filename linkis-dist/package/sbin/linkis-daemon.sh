@@ -152,6 +152,14 @@ status()
 
 COMMAND=$1
 export SERVER_NAME=$2
+case $SERVER_NAME in
+  "ps-publicservice"|"linkis-ps-publicservice"|"publicservice")
+    export SERVER_NAME="ps-publicservice"
+    ;;
+  *)
+    ;;
+esac
+
 export SERVER_PID=$LINKIS_PID_DIR/linkis_$SERVER_NAME.pid
 case $COMMAND in
   start|stop|restart|status)

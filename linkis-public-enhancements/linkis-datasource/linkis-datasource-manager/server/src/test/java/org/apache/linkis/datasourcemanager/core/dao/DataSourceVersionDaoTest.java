@@ -19,12 +19,12 @@ package org.apache.linkis.datasourcemanager.core.dao;
 
 import org.apache.linkis.datasourcemanager.common.domain.DatasourceVersion;
 
-import org.junit.jupiter.api.Disabled;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Date;
 
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;

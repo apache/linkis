@@ -54,6 +54,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
+import org.json4s.jackson.Json;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -155,9 +156,25 @@ public class EngineRestfulApi {
             throws AMErrorException {
         String userName = ModuleUserUtils.getOperationUser(req, "getEngineConn");
         ServiceInstance serviceInstance = getServiceInstance(jsonNode);
-        EngineNode engineNode = engineNodeManager.getEngineNodeInfo(serviceInstance);
+        JsonNode ticketIdNode = jsonNode.get("ticketId");
+        EngineNode engineNode = null;
+        try {
+            engineNode = engineNodeManager.getEngineNodeInfo(serviceInstance);
+        } catch (Exception e) {
+            logger.info("Instances {} is not exists", serviceInstance.getInstance());
+        }
         if (null == engineNode) {
-            ECResourceInfoRecord ecInfo = ecResourceInfoService.getECResourceInfoRecordByInstance(serviceInstance.getInstance());
+            ECResourceInfoRecord ecInfo = null;
+            if (null != ticketIdNode) {
+                try{
+                    ecInfo = ecResourceInfoService.getECResourceInfoRecord(ticketIdNode.asText());
+                } catch (Exception e) {
+                    logger.info("TicketId  {} is not exists", ticketIdNode.asText());
+                }
+            }
+            if (null == ecInfo) {
+                ecInfo = ecResourceInfoService.getECResourceInfoRecordByInstance(serviceInstance.getInstance());
+            }
             if (null == ecInfo) {
                 return Message.error("Instance does not exist " + serviceInstance);
             }

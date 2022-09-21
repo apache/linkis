@@ -22,6 +22,7 @@ import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.engineconn.acessible.executor.entity.AccessibleExecutor
 import org.apache.linkis.engineconn.common.creation.EngineCreationContext
+import org.apache.linkis.engineconn.core.EngineConnObject
 import org.apache.linkis.engineconn.core.hook.ShutdownHook
 import org.apache.linkis.engineconn.core.util.EngineConnUtils
 import org.apache.linkis.engineconn.executor.entity.{
@@ -29,12 +30,15 @@ import org.apache.linkis.engineconn.executor.entity.{
   LabelExecutor,
   ResourceExecutor
 }
+import org.apache.linkis.engineconn.executor.service.ManagerService
 import org.apache.linkis.engineconn.once.executor.exception.OnceEngineConnErrorException
 import org.apache.linkis.governance.common.protocol.task.RequestTask
 import org.apache.linkis.governance.common.utils.OnceExecutorContentUtils
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
+import org.apache.linkis.manager.common.protocol.engine.EngineConnReleaseRequest
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import org.apache.linkis.manager.label.entity.{JobLabel, Label}
+import org.apache.linkis.rpc.Sender
 import org.apache.linkis.scheduler.executer.{
   AsynReturnExecuteResponse,
   ErrorExecuteResponse,
@@ -178,22 +182,35 @@ trait ManageableOnceExecutor extends AccessibleExecutor with OnceExecutor with R
 
   def tryFailed(): Boolean = {
     if (isClosed) return true
-    logger.error(s"$getId has failed with old status $getStatus, now stop it.")
+    val msg = s"$getId has failed with old status $getStatus, now stop it."
+    logger.error(msg)
     Utils.tryFinally {
       this.ensureAvailable(transition(NodeStatus.Failed))
       close()
-    }(ShutdownHook.getShutdownHook.notifyStop())
+    }(stopOnceExecutor(msg))
     true
   }
 
   def trySucceed(): Boolean = {
     if (isClosed) return true
-    logger.warn(s"$getId has succeed with old status $getStatus, now stop it.")
+    val msg = s"$getId has succeed with old status $getStatus, now stop it."
+    logger.warn(msg)
     Utils.tryFinally {
       this.ensureAvailable(transition(NodeStatus.Success))
       close()
-    }(ShutdownHook.getShutdownHook.notifyStop())
+    }(stopOnceExecutor(msg))
     true
+  }
+
+  private def stopOnceExecutor(msg: String): Unit = {
+    val engineReleaseRequest = new EngineConnReleaseRequest(
+      Sender.getThisServiceInstance,
+      Utils.getJvmUser,
+      msg,
+      EngineConnObject.getEngineCreationContext.getTicketId
+    )
+    ManagerService.getManagerService.requestReleaseEngineConn(engineReleaseRequest)
+    ShutdownHook.getShutdownHook.notifyStop()
   }
 
   override protected def callback(): Unit = {}

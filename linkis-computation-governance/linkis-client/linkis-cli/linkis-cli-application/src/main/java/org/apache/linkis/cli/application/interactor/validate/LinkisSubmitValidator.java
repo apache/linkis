@@ -30,12 +30,15 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.Map;
 
+import static org.apache.linkis.cli.core.errorcode.LinkisCliApplicationErrorCodeSummary.NOT_A_INSTANCE_SUBMITJOB;
+import static org.apache.linkis.cli.core.errorcode.LinkisCliApplicationErrorCodeSummary.VALIDATION_FAILED;
+
 public class LinkisSubmitValidator implements Validator {
   @Override
   public void doValidation(Object input) throws LinkisClientRuntimeException {
     if (!(input instanceof LinkisSubmitJob)) {
       throw new ValidateException(
-          "VLD0007",
+          NOT_A_INSTANCE_SUBMITJOB.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ValidationErr,
           "Input of LinkisSubmitValidator is not instance of LinkisSubmitJob. Type: "
@@ -258,7 +261,7 @@ public class LinkisSubmitValidator implements Validator {
     }
     if (!ok) {
       throw new ValidateException(
-          "VLD0008",
+          VALIDATION_FAILED.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ValidationErr,
           "LinkisJob validation failed. Reason: " + reasonSb.toString());

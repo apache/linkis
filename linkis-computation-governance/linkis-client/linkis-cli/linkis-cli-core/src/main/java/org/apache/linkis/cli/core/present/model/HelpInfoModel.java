@@ -23,6 +23,8 @@ import org.apache.linkis.cli.common.exception.error.ErrorLevel;
 import org.apache.linkis.cli.core.exception.TransformerException;
 import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
 
+import static org.apache.linkis.cli.core.errorcode.LinkisCliCoreErrorCodeSummary.INIT_HELPINFOMODEL;
+
 public class HelpInfoModel implements Model {
   CmdTemplate template;
 
@@ -30,7 +32,7 @@ public class HelpInfoModel implements Model {
   public void buildModel(Object data) {
     if (!(data instanceof CmdTemplate)) {
       throw new TransformerException(
-          "TFM0010",
+          INIT_HELPINFOMODEL.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.TransformerException,
           "Failed to init HelpInfoModel: "

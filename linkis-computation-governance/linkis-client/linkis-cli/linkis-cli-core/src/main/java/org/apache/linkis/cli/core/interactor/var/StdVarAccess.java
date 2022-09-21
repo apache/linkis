@@ -35,6 +35,8 @@ import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.linkis.cli.core.errorcode.LinkisCliCoreErrorCodeSummary.*;
+
 public class StdVarAccess implements VarAccess {
   private static Logger logger = LoggerFactory.getLogger(StdVarAccess.class);
   private Params cmdParams;
@@ -108,7 +110,7 @@ public class StdVarAccess implements VarAccess {
   public void checkInit() {
     if (this.cmdParams == null || this.defaultConf == null || this.subMapCache == null) {
       throw new VarAccessException(
-          "VA0002",
+          STDVARACCESS_IS_NOT_INITED.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.VarAccessInitErr,
           "stdVarAccess is not inited. "
@@ -204,7 +206,7 @@ public class StdVarAccess implements VarAccess {
       strVal = (String) val;
     } catch (ClassCastException e) {
       throw new VarAccessException(
-          "VA0003",
+          VALUE_IS_NOT_STRING.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.VarAccessErr,
           "Cannot getVar \"" + key + "\" from config. Cause: value is not String");
@@ -257,7 +259,7 @@ public class StdVarAccess implements VarAccess {
       // PredefinedStringConverters.STR_ARRAY_CONVERTER);
     } else {
       throw new VarAccessException(
-          "VA0004",
+          IN_NOT_SUPPORTED.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.VarAccessErr,
           "Cannot convertStringVal \""

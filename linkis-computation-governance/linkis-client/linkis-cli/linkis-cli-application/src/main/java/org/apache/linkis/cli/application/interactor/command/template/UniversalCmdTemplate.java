@@ -32,6 +32,8 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.util.Arrays;
 
+import static org.apache.linkis.cli.core.errorcode.LinkisCliApplicationErrorCodeSummary.*;
+
 public class UniversalCmdTemplate extends AbstractCmdTemplate implements Cloneable {
 
   protected StdOption<String> gatewayUrl =
@@ -296,7 +298,7 @@ public class UniversalCmdTemplate extends AbstractCmdTemplate implements Cloneab
     }
     if (cnt > 1) {
       throw new ValidateException(
-          "VLD0001",
+          CAN_ONLY_SPECIFY.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ValidationErr,
           "Can only specify 1 of: "
@@ -312,7 +314,7 @@ public class UniversalCmdTemplate extends AbstractCmdTemplate implements Cloneab
         if (!(argumentsParas.getValue() instanceof String[])
             || argumentsParas.getValue().length == 0) {
           throw new ValidateException(
-              "VLD0001",
+              STRING_ARRAY_RAW_VALUE.getErrorCode(),
               ErrorLevel.ERROR,
               CommonErrMsg.ValidationErr,
               argumentsParas.getParamName()
@@ -322,7 +324,7 @@ public class UniversalCmdTemplate extends AbstractCmdTemplate implements Cloneab
         String firstPara = argumentsParas.getValue()[0];
         if (StringUtils.startsWith(firstPara, "-")) {
           throw new CommandException(
-              "CMD0011",
+              ILLEGAL_ARGUMENT.getErrorCode(),
               ErrorLevel.ERROR,
               CommonErrMsg.ValidationErr,
               this.cmdType,
@@ -331,7 +333,7 @@ public class UniversalCmdTemplate extends AbstractCmdTemplate implements Cloneab
         File file = new File(firstPara);
         if (!file.exists() || !file.isFile()) {
           throw new ValidateException(
-              "VLD0001",
+              OPTION_ASSUME_SCRIPT.getErrorCode(),
               ErrorLevel.ERROR,
               CommonErrMsg.ValidationErr,
               "Argument: \'"
@@ -352,7 +354,7 @@ public class UniversalCmdTemplate extends AbstractCmdTemplate implements Cloneab
           || StringUtils.equalsIgnoreCase(modeOpt.getValue(), AppConstants.UJES_MODE)) {
         if (cnt2 > 1) {
           throw new ValidateException(
-              "VLD0001",
+              SPECIFY_AT_MOST.getErrorCode(),
               ErrorLevel.ERROR,
               CommonErrMsg.ValidationErr,
               "Can only specify at most one of linkis-cli option: \''"
@@ -363,7 +365,7 @@ public class UniversalCmdTemplate extends AbstractCmdTemplate implements Cloneab
         }
         if (cnt2 == 0) {
           throw new ValidateException(
-              "VLD0001",
+              SPECIFY_AT_LEASTT.getErrorCode(),
               ErrorLevel.ERROR,
               CommonErrMsg.ValidationErr,
               "Need to specify at least one of linkis-cli option: \'"

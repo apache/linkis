@@ -23,6 +23,8 @@ import org.apache.linkis.cli.common.exception.error.ErrorLevel;
 import org.apache.linkis.cli.core.exception.TransformerException;
 import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
 
+import static org.apache.linkis.cli.core.errorcode.LinkisCliApplicationErrorCodeSummary.INITLOG_IS_NOT;
+
 public class LinkisLogModel implements Model {
   private LinkisLogData data;
 
@@ -30,7 +32,7 @@ public class LinkisLogModel implements Model {
   public void buildModel(Object data) {
     if (!(data instanceof LinkisLogData)) {
       throw new TransformerException(
-          "TFM0010",
+          INITLOG_IS_NOT.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.TransformerException,
           "Failed to init LinkisLogModel: "

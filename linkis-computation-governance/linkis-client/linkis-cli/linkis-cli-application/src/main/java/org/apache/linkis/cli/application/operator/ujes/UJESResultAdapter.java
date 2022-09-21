@@ -42,6 +42,8 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import static org.apache.linkis.cli.core.errorcode.LinkisCliApplicationErrorCodeSummary.*;
+
 public class UJESResultAdapter implements LinkisOperResultAdapter {
   private Object result;
   private String[] resultsetArray;
@@ -49,7 +51,7 @@ public class UJESResultAdapter implements LinkisOperResultAdapter {
   public UJESResultAdapter(Object result) {
     if (!(result instanceof DWSResult) && !(result instanceof UJESResult)) {
       throw new TransformerException(
-          "TFM0001",
+          CORRECT_TYPE.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.TransformerException,
           "Input of UJESResultAdapter is not of correct type. Current type:"
@@ -391,7 +393,7 @@ public class UJESResultAdapter implements LinkisOperResultAdapter {
       ret = (List<LinkedHashMap<String, String>>) rawMetaData;
     } catch (Exception e) {
       throw new TransformerException(
-          "TFM0005",
+          CONVERT_RESULTSETMETA.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.TransformerException,
           "Failed to convert ResultSetMeta",
@@ -410,7 +412,7 @@ public class UJESResultAdapter implements LinkisOperResultAdapter {
       ret = (List<List<String>>) rawContent;
     } catch (ClassCastException e) {
       throw new TransformerException(
-          "TFM0007",
+          CONVERT_RESULTSE.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.TransformerException,
           "Failed to convert ResultSet",

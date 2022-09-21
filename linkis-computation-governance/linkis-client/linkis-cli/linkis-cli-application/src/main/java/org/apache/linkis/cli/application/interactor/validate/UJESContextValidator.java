@@ -27,12 +27,15 @@ import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
 
 import org.apache.commons.lang3.StringUtils;
 
+import static org.apache.linkis.cli.core.errorcode.LinkisCliApplicationErrorCodeSummary.NOT_A_INSTANCE_UJESCLIENT;
+import static org.apache.linkis.cli.core.errorcode.LinkisCliApplicationErrorCodeSummary.VALIDATION_FAILED_JOB;
+
 public class UJESContextValidator implements Validator {
   @Override
   public void doValidation(Object input) throws LinkisClientRuntimeException {
     if (!(input instanceof UJESClientContext)) {
       throw new ValidateException(
-          "VLD0009",
+          NOT_A_INSTANCE_UJESCLIENT.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ValidationErr,
           "Input of UJESContextValidator is not instance of UjesClientDriverContext");
@@ -69,7 +72,7 @@ public class UJESContextValidator implements Validator {
     }
     if (!ok) {
       throw new ValidateException(
-          "VLD0010",
+          VALIDATION_FAILED_JOB.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ValidationErr,
           "LinkisJob validation failed. Reason: " + reasonSb.toString());

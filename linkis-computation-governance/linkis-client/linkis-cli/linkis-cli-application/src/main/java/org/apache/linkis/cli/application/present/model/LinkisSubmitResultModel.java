@@ -26,6 +26,8 @@ import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
+import static org.apache.linkis.cli.core.errorcode.LinkisCliApplicationErrorCodeSummary.INITJOBDATAIMPL_IS_NOT;
+
 public class LinkisSubmitResultModel implements Model {
   private String jobId;
   private JobStatus status;
@@ -37,7 +39,7 @@ public class LinkisSubmitResultModel implements Model {
   public void buildModel(Object data) {
     if (!(data instanceof LinkisJobDataImpl)) {
       throw new TransformerException(
-          "TFM0010",
+          INITJOBDATAIMPL_IS_NOT.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.TransformerException,
           "Failed to init LinkisJobInfoModel: "

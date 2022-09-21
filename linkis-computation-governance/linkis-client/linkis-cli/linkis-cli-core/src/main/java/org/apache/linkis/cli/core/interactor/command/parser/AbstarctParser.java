@@ -41,6 +41,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.linkis.cli.core.errorcode.LinkisCliCoreErrorCodeSummary.DAILED_TO_INIT_PARSER;
+import static org.apache.linkis.cli.core.errorcode.LinkisCliCoreErrorCodeSummary.INTO_PARAMITEM;
 
 public abstract class AbstarctParser implements Parser {
   private static final Logger logger = LoggerFactory.getLogger(AbstarctParser.class);
@@ -91,7 +92,7 @@ public abstract class AbstarctParser implements Parser {
       ParamItem paramItem = optionToParamItem(option, params, mapper, mapperInfoSb);
       if (params.containsKey(paramItem.getKey())) {
         throw new TransformerException(
-            "TFM0012",
+            INTO_PARAMITEM.getErrorCode(),
             ErrorLevel.ERROR,
             CommonErrMsg.TransformerException,
             MessageFormat.format(
@@ -120,7 +121,7 @@ public abstract class AbstarctParser implements Parser {
     String key = oriKey;
     if (params.containsKey(oriKey)) {
       throw new TransformerException(
-          "TFM0012",
+          INTO_PARAMITEM.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.TransformerException,
           MessageFormat.format(

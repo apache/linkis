@@ -211,7 +211,83 @@ public enum LinkisCliApplicationErrorCodeSummary {
   USER_CONFIGURATION(
       "PRP0007",
       "User cannot specify non-customizable configuration: #  (用户不能指定不可定制的配置：#  )",
-      "User cannot specify non-customizable configuration: # (用户不能指定不可定制的配置：#  )");
+      "User cannot specify non-customizable configuration: # (用户不能指定不可定制的配置：#  )"),
+  CORRECT_TYPE(
+      "TFM0001",
+      "Input of UJESResultAdapter is not of correct type. Current type: # (UJESResultAdapter 的输入类型不正确。 当前类型： #)",
+      "Input of UJESResultAdapter is not of correct type. Current type: # (UJESResultAdapter 的输入类型不正确。 当前类型：# )"),
+  CONVERT_RESULTSETMETA(
+      "TFM0005",
+      "Failed to convert ResultSetMeta(ResultSetMeta 转换失败)",
+      "Failed to convert ResultSetMeta (ResultSetMeta 转换失败)"),
+  CONVERT_RESULTSE(
+      "TFM0007", "Failed to convert ResultSet(转换结果集失败)", "Failed to convert ResultSet(转换结果集失败)"),
+  INITJOBINFO_IS_NOT(
+      "TFM0010",
+      "Failed to init LinkisJobInfoModel: # is not instance of LinkisJobDataImpl(初始化 LinkisJobInfoModel 失败：# 不是 LinkisJobDataImpl 的实例)",
+      "Failed to init LinkisJobInfoModel: # is not instance of LinkisJobDataImpl(初始化 LinkisJobInfoModel 失败：# 不是 LinkisJobDataImpl 的实例)"),
+  INITJOBKILL_IS_NOT(
+      "TFM0010",
+      "Failed to init LinkisJobKillModel: # is not instance of LinkisJobDataImpl(初始化 LinkisJobKillModel 失败：# 不是 LinkisJobDataImpl 的实例)",
+      "Failed to init LinkisJobKillModel: # is not instance of LinkisJobDataImpl(初始化 LinkisJobKillModel 失败：# 不是 LinkisJobDataImpl 的实例)"),
+  INITLOG_IS_NOT(
+      "TFM0010",
+      "Failed to init LinkisLogModel: # is not instance of LinkisLogData(初始化 LinkisLogModel 失败：# 不是 LinkisLogData 的实例)",
+      "Failed to init LinkisLogModel: # is not instance of LinkisLogData(初始化 LinkisLogModel 失败：# 不是 LinkisLogData 的实例)"),
+  INITRESULTINFO_IS_NOT(
+      "TFM0010",
+      "Failed to init LinkisResultInfoModel: # is not instance of LinkisResultData(初始化 LinkisResultInfoModel 失败：# 不是 LinkisResultData 的实例)",
+      "Failed to init LinkisResultInfoModel: # is not instance of LinkisResultData(初始化 LinkisResultInfoModel 失败：# 不是 LinkisResultData 的实例)"),
+  INITRESULT_IS_NOT(
+      "TFM0010",
+      "Failed to init LinkisResultModel: # is not instance of LinkisResultData(初始化 LinkisResultModel 失败：# 不是 LinkisResultData 的实例)",
+      "Failed to init LinkisResultModel: # is not instance of LinkisResultData(初始化 LinkisResultModel 失败：# 不是 LinkisResultData 的实例)"),
+  INITJOBDATAIMPL_IS_NOT(
+      "TFM0010",
+      "Failed to init LinkisJobInfoModel: # is not instance of LinkisJobDataImpl(初始化 LinkisJobInfoModel 失败：# 不是 LinkisJobDataImpl 的实例)",
+      "Failed to init LinkisJobInfoModel: # is not instance of LinkisJobDataImpl(初始化 LinkisJobInfoModel 失败：# 不是 LinkisJobDataImpl 的实例)"),
+  CAN_ONLY_SPECIFY(
+      "VLD0001",
+      "Can only specify 1 of: ###(只能指定 1 个：###)",
+      "Can only specify 1 of: ###(只能指定 1 个：###)"),
+  STRING_ARRAY_RAW_VALUE(
+      "VLD0001",
+      "has raw-value but failed to convert it into String-array. Raw-value:###(具有原始值，但未能将其转换为字符串数组。 原始值：###)",
+      "has raw-value but failed to convert it into String-array. Raw-value:###(具有原始值，但未能将其转换为字符串数组。 原始值：###)"),
+  ILLEGAL_ARGUMENT(
+      "CMD0011", "Illegal argument::###(非法论据：：###)", "Illegal argument::###(非法论据：：###)"),
+  OPTION_ASSUME_SCRIPT(
+      "VLD0001",
+      "Argument:# is not a linkis-cli option. Assume it's script file, but no file named  is found (参数：# 不是 linkis-cli 选项。 假设它是脚本文件，但没有找到名为的文件)",
+      "Argument:# is not a linkis-cli option. Assume it's script file, but no file named  is found (参数：# 不是 linkis-cli 选项。 假设它是脚本文件，但没有找到名为的文件)"),
+  SPECIFY_AT_MOST(
+      "VLD0001",
+      "Can only specify at most one of linkis-cli option: ###(最多只能指定一个 linkis-cli 选项：)",
+      "Can only specify at most one of linkis-cli option: ###(最多只能指定一个 linkis-cli 选项：)"),
+  SPECIFY_AT_LEASTT(
+      "VLD0001",
+      "Need to specify at least one of linkis-cli option:# or  script-path and script-arguments (需要指定至少一个 linkis-cli 选项：# 或 script-path 和 script-arguments)",
+      "Need to specify at least one of linkis-cli option:# or  script-path and script-arguments (需要指定至少一个 linkis-cli 选项：# 或 script-path 和 script-arguments)"),
+  NOT_A_INSTANCE(
+      "VLD0007",
+      "Input of LinkisSubmitValidator is not instance of LinkisManageJob. Type: #(LinkisSubmitValidator 的输入不是 LinkisManageJob 的实例。 类型：#)",
+      "Input of LinkisSubmitValidator is not instance of LinkisManageJob. Type:# (LinkisSubmitValidator 的输入不是 LinkisManageJob 的实例。 类型：#)"),
+  VALIDATION_FAILED(
+      "VLD0008",
+      "LinkisJobMan validation failed. Reason: #(LinkisJobMan 验证失败。 原因：#)",
+      "LinkisJobMan validation failed. Reason: # (LinkisJobMan 验证失败。 原因：#)"),
+  NOT_A_INSTANCE_SUBMITJOB(
+      "VLD0007",
+      "Input of LinkisSubmitValidator is not instance of LinkisSubmitJob. Type: #(LinkisSubmitValidator 的输入不是 LinkisSubmitJob 的实例。 类型：#)",
+      "Input of LinkisSubmitValidator is not instance of LinkisSubmitJob. Type:# (LinkisSubmitValidator 的输入不是 LinkisSubmitJob 的实例。 类型：#)"),
+  NOT_A_INSTANCE_UJESCLIENT(
+      "VLD0009",
+      "Input of UJESContextValidator is not instance of UjesClientDriverContext. Type: #(UJESContextValidator 的输入不是 UjesClientDriverContext 的实例。 类型：#)",
+      "Input of UJESContextValidator is not instance of UjesClientDriverContext. Type:# (UJESContextValidator 的输入不是 UjesClientDriverContext 的实例。 类型：#)"),
+  VALIDATION_FAILED_JOB(
+      "VLD0010",
+      "LinkisJob validation failed. Reason: #(LinkisJob 验证失败。 原因：#)",
+      "LinkisJob validation failed. Reason: # (LinkisJob 验证失败。 原因：#)");
 
   /** error code(错误码) */
   private String errorCode;

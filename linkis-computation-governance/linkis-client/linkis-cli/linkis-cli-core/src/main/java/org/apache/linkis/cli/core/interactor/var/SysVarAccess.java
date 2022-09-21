@@ -29,6 +29,9 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.linkis.cli.core.errorcode.LinkisCliCoreErrorCodeSummary.BOTH_NULL;
+import static org.apache.linkis.cli.core.errorcode.LinkisCliCoreErrorCodeSummary.SAME_KEY_OCCURRED;
+
 public class SysVarAccess implements VarAccess {
   private static Logger logger = LoggerFactory.getLogger(SysVarAccess.class);
   private ClientProperties sysProp;
@@ -56,7 +59,7 @@ public class SysVarAccess implements VarAccess {
   public void checkInit() {
     if (this.sysProp == null && this.sysEnv == null) {
       throw new VarAccessException(
-          "VA0001",
+          BOTH_NULL.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.VarAccessInitErr,
           "sys_prop and sys_env are both null");
@@ -73,7 +76,7 @@ public class SysVarAccess implements VarAccess {
     Object o2 = sysEnv.get(key);
     if (o1 != null && o2 != null) {
       throw new VarAccessException(
-          "VA0002",
+          SAME_KEY_OCCURRED.getErrorCode(),
           ErrorLevel.WARN,
           CommonErrMsg.VarAccessErr,
           "same key occurred in sys_prop and sys_env. will use sys_prop");

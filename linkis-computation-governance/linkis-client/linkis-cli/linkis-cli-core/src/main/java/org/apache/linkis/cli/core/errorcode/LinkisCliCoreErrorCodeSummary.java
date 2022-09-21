@@ -141,7 +141,43 @@ public enum LinkisCliCoreErrorCodeSummary {
   IS_NOT_INITED(
       "PRP0001",
       "properties reader for source:#propsPath  is not inited. because of blank propsId or propsPath(source:#propsPath 的属性读取器未启动。 因为空白的 propsId 或 propsPath)",
-      "properties reader for source:#propsPath  is not inited. because of blank propsId or propsPath(source:#propsPath 的属性读取器未启动。 因为空白的 propsId 或 propsPath)");
+      "properties reader for source:#propsPath  is not inited. because of blank propsId or propsPath(source:#propsPath 的属性读取器未启动。 因为空白的 propsId 或 propsPath)"),
+  INTO_PARAMITEM(
+      "TFM0012",
+      "Failed to convert option into ParamItem: params contains duplicated identifier: #(无法将选项转换为 ParamItem：参数包含重复的标识符：)",
+      "Failed to convert option into ParamItem: params contains duplicated identifier: #(无法将选项转换为 ParamItem：参数包含重复的标识符：)"),
+  INIT_HELPINFOMODEL(
+      "TFM0010",
+      "Failed to init HelpInfoModel: # is not instance of  CmdTemplate (初始化 HelpInfoModel 失败：# 不是 CmdTemplate 的实例)",
+      "Failed to init HelpInfoModel: # is not instance of  CmdTemplate (初始化 HelpInfoModel 失败：# 不是 CmdTemplate 的实例)"),
+  NOT_A_INSTANCE_CMDTEMPLATE(
+      "VLD0006",
+      "Input of ParsedTplValidator is not instance of CmdTemplate. (LinkisSubmitValidator 的输入不是 CmdTemplate 的实例。)",
+      "Input of ParsedTplValidator is not instance of CmdTemplate. (LinkisSubmitValidator 的输入不是 CmdTemplate 的实例。 )"),
+  VALUE_CANNOT_BE_EMPTY(
+      "VLD0003",
+      "CmdOption value cannot be empty: paramName:#paramName  CmdType: #CmdType(CmdOption 值不能为空：paramName:#paramName CmdType:#CmdType)",
+      "CmdOption value cannot be empty: paramName:#paramName  CmdType: #CmdType(CmdOption 值不能为空：paramName:#paramName CmdType:#CmdType )"),
+  STDVARACCESS_IS_NOT_INITED(
+      "VA0003",
+      "stdVarAccess is not inited. cmdParams:#cmdParams defaultConf:#defaultConf subMapCache:subMapCache (未启动 stdVarAccess。 cmdParams:#cmdParams defaultConf:#defaultConf subMapCache:subMapCache)",
+      "stdVarAccess is not inited. cmdParams:#cmdParams defaultConf:#defaultConf subMapCache:subMapCache (未启动 stdVarAccess。 cmdParams:#cmdParams defaultConf:#defaultConf subMapCache:subMapCache)"),
+  VALUE_IS_NOT_STRING(
+      "VA0002",
+      "Cannot getVar #KEY  from config. Cause: value is not String (无法从配置中获取 Var #KEY。 原因：值不是字符串)",
+      "Cannot getVar #KEY  from config. Cause: value is not String (无法从配置中获取 Var #KEY。 原因：值不是字符串)"),
+  IN_NOT_SUPPORTED(
+      "VA0004",
+      "Cannot convertStringVal   to  : designated type is not supported(无法将StringVal 转换为：不支持指定类型)",
+      "Cannot convertStringVal   to  : designated type is not supported(无法将StringVal 转换为：不支持指定类型)"),
+  BOTH_NULL(
+      "VA0001",
+      "sys_prop and sys_env are both null(sys_prop 和 sys_env 都为空)",
+      "sys_prop and sys_env are both null(sys_prop 和 sys_env 都为空)"),
+  SAME_KEY_OCCURRED(
+      "VA0002",
+      "same key occurred in sys_prop and sys_env. will use sys_prop(sys_prop 和 sys_env 中出现了相同的键。 将使用 sys_prop)",
+      "same key occurred in sys_prop and sys_env. will use sys_prop(sys_prop 和 sys_env 中出现了相同的键。 将使用 sys_prop)");
 
   /** error code(错误码) */
   private String errorCode;

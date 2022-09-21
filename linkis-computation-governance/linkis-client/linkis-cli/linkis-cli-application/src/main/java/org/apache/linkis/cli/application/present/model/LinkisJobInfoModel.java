@@ -28,6 +28,8 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.util.Date;
 
+import static org.apache.linkis.cli.core.errorcode.LinkisCliApplicationErrorCodeSummary.INITJOBINFO_IS_NOT;
+
 public class LinkisJobInfoModel implements Model {
 
   private String cid;
@@ -60,7 +62,7 @@ public class LinkisJobInfoModel implements Model {
   public void buildModel(Object data) {
     if (!(data instanceof LinkisJobDataImpl)) {
       throw new TransformerException(
-          "TFM0010",
+          INITJOBINFO_IS_NOT.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.TransformerException,
           "Failed to init LinkisJobInfoModel: "

@@ -24,6 +24,8 @@ import org.apache.linkis.cli.common.exception.error.ErrorLevel;
 import org.apache.linkis.cli.core.exception.TransformerException;
 import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
 
+import static org.apache.linkis.cli.core.errorcode.LinkisCliApplicationErrorCodeSummary.INITRESULTINFO_IS_NOT;
+
 public class LinkisResultInfoModel implements Model {
   private String jobID;
   private String execID;
@@ -37,7 +39,7 @@ public class LinkisResultInfoModel implements Model {
   public void buildModel(Object data) {
     if (!(data instanceof LinkisResultData)) {
       throw new TransformerException(
-          "TFM0010",
+          INITRESULTINFO_IS_NOT.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.TransformerException,
           "Failed to init LinkisResultInfoModel: "

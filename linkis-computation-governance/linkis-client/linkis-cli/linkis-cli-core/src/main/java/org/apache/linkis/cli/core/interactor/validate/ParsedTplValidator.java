@@ -31,6 +31,9 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.linkis.cli.core.errorcode.LinkisCliCoreErrorCodeSummary.NOT_A_INSTANCE_CMDTEMPLATE;
+import static org.apache.linkis.cli.core.errorcode.LinkisCliCoreErrorCodeSummary.VALUE_CANNOT_BE_EMPTY;
+
 /**
  * 1. Check if there is missing or unknown option. 2. Call checkParam method for command-specific
  * validation.
@@ -42,7 +45,7 @@ public class ParsedTplValidator implements Validator {
   public void doValidation(Object input) throws CommandException {
     if (!(input instanceof CmdTemplate)) {
       throw new ValidateException(
-          "VLD0006",
+          NOT_A_INSTANCE_CMDTEMPLATE.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ValidationErr,
           "Input of ParsedTplValidator is not instance of CmdTemplate");
@@ -68,7 +71,7 @@ public class ParsedTplValidator implements Validator {
     for (CmdOption<?> cmdOption : options) {
       if (!cmdOption.hasVal() && !cmdOption.isOptional()) {
         throw new ValidateException(
-            "VLD0003",
+            VALUE_CANNOT_BE_EMPTY.getErrorCode(),
             ErrorLevel.ERROR,
             CommonErrMsg.ValidationErr,
             "CmdOption value cannot be empty: paramName:"

@@ -386,9 +386,9 @@ public class DataSourceInfoServiceTest {
     dataSource.setId(1l);
     dataSource.setCreateUser("test");
     dataSourceList.add(dataSource);
-    Mockito.when(dataSourceDao.selectByIds(Arrays.asList(1l), "test")).thenReturn(dataSourceList);
+    Mockito.when(dataSourceDao.selectByIds(Arrays.asList(1l))).thenReturn(dataSourceList);
 
-    List<DataSource> list = dataSourceInfoService.queryDataSourceInfo(Arrays.asList(1l), "test");
+    List<DataSource> list = dataSourceInfoService.queryDataSourceInfo(Arrays.asList(1l));
     assertTrue(CollectionUtils.isNotEmpty(list));
     assertEquals(dataSourceList.get(0).getId(), 1l);
   }

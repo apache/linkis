@@ -699,11 +699,7 @@ public class DataSourceCoreRestfulApi {
         return RestfulApiHelper.doAndResponse(
                 () -> {
                     List ids = new ObjectMapper().readValue(idsJson, List.class);
-                    String permissionUser = SecurityFilter.getLoginUsername(req);
-                    if (AuthContext.isAdministrator(permissionUser)) {
-                        permissionUser = null;
-                    }
-                    List<DataSource> dataSourceList = dataSourceInfoService.queryDataSourceInfo(ids, permissionUser);
+                    List<DataSource> dataSourceList = dataSourceInfoService.queryDataSourceInfo(ids);
                     return Message.ok()
                             .data("queryList", dataSourceList)
                             .data("totalPage", dataSourceList.size());

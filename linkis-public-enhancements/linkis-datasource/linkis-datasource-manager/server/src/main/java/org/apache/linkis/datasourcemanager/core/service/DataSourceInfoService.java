@@ -117,7 +117,7 @@ public interface DataSourceInfoService {
    * @param ids
    * @return
    */
-  List<DataSource> queryDataSourceInfo(List ids, String permissionUser);
+  List<DataSource> queryDataSourceInfo(List ids);
 
   /**
    * Save data source environment

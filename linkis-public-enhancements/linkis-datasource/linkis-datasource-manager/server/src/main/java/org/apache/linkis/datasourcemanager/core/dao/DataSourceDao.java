@@ -101,8 +101,7 @@ public interface DataSourceDao {
    * @param ids
    * @return
    */
-  List<DataSource> selectByIds(
-      @Param("ids") List ids, @Param("permissionUser") String permissionUser);
+  List<DataSource> selectByIds(@Param("ids") List ids);
 
   /**
    * update published version id

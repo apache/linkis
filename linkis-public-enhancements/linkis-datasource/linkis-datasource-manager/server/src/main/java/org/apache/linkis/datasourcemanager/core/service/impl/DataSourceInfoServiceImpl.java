@@ -255,8 +255,8 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
   }
 
   @Override
-  public List<DataSource> queryDataSourceInfo(List ids, String permissionUser) {
-    List<DataSource> queryList = dataSourceDao.selectByIds(ids, permissionUser);
+  public List<DataSource> queryDataSourceInfo(List ids) {
+    List<DataSource> queryList = dataSourceDao.selectByIds(ids);
     return queryList;
   }
 

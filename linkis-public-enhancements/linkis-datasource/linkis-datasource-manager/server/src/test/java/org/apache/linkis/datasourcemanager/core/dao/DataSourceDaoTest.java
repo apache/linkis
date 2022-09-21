@@ -207,7 +207,7 @@ class DataSourceDaoTest extends BaseDaoTest {
     dataSource.setDataSourceName("unitTest");
     dataSource.setDataSourceTypeId(1l);
     dataSource.setCreateUser("test");
-    List<DataSource> list = dataSourceDao.selectByIds(Arrays.asList(dataSource.getId()), "test");
+    List<DataSource> list = dataSourceDao.selectByIds(Arrays.asList(dataSource.getId()));
     assertTrue(CollectionUtils.isNotEmpty(list));
   }
 }

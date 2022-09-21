@@ -37,30 +37,58 @@ public class AMErrorExceptionTest {
 
   @Test
   public void testSetAMErrorCode() {
+    int c1 = QUERY_PARAM_NULL.getCode();
     QUERY_PARAM_NULL.setCode(0);
     assertEquals(0, QUERY_PARAM_NULL.getCode());
+    QUERY_PARAM_NULL.setCode(c1);
+
+    int c2 = UNSUPPORT_VALUE.getCode();
     UNSUPPORT_VALUE.setCode(0);
     assertEquals(0, UNSUPPORT_VALUE.getCode());
+    UNSUPPORT_VALUE.setCode(c2);
+
+    int c3 = PARAM_ERROR.getCode();
     PARAM_ERROR.setCode(0);
     assertEquals(0, PARAM_ERROR.getCode());
+    PARAM_ERROR.setCode(c3);
+
+    int c4 = NOT_EXISTS_ENGINE_CONN.getCode();
     NOT_EXISTS_ENGINE_CONN.setCode(0);
     assertEquals(0, NOT_EXISTS_ENGINE_CONN.getCode());
+    NOT_EXISTS_ENGINE_CONN.setCode(c4);
+
+    int c5 = AM_CONF_ERROR.getCode();
     AM_CONF_ERROR.setCode(0);
     assertEquals(0, AM_CONF_ERROR.getCode());
+    AM_CONF_ERROR.setCode(c5);
   }
 
   @Test
   public void testSetAMErrorMessage() {
+    String m1 = QUERY_PARAM_NULL.getMessage();
     QUERY_PARAM_NULL.setMessage("test");
     assertEquals("test", QUERY_PARAM_NULL.getMessage());
+    QUERY_PARAM_NULL.setMessage(m1);
+
+    String m2 = UNSUPPORT_VALUE.getMessage();
     UNSUPPORT_VALUE.setMessage("test");
     assertEquals("test", UNSUPPORT_VALUE.getMessage());
+    UNSUPPORT_VALUE.setMessage(m2);
+
+    String m3 = PARAM_ERROR.getMessage();
     PARAM_ERROR.setMessage("test");
     assertEquals("test", PARAM_ERROR.getMessage());
+    PARAM_ERROR.setMessage(m3);
+
+    String m4 = NOT_EXISTS_ENGINE_CONN.getMessage();
     NOT_EXISTS_ENGINE_CONN.setMessage("test");
     assertEquals("test", NOT_EXISTS_ENGINE_CONN.getMessage());
+    NOT_EXISTS_ENGINE_CONN.setMessage(m4);
+
+    String m5 = AM_CONF_ERROR.getMessage();
     AM_CONF_ERROR.setMessage("test");
     assertEquals("test", AM_CONF_ERROR.getMessage());
+    AM_CONF_ERROR.setMessage(m5);
   }
 
   @Test
@@ -78,7 +106,7 @@ public class AMErrorExceptionTest {
     assertEquals(21002, UNSUPPORT_VALUE.getCode());
     assertEquals(210003, PARAM_ERROR.getCode());
     assertEquals(210003, NOT_EXISTS_ENGINE_CONN.getCode());
-    assertEquals(210003, AM_CONF_ERROR.getCode());
+    assertEquals(210004, AM_CONF_ERROR.getCode());
   }
 
   @Test

@@ -72,7 +72,7 @@ public abstract class ParamKeyMapper {
           PARAMMAPPER_DIFFERENT_KEY.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ParserParseErr,
-          "ParamMapper should not map different keys into same key. Key is: " + targetKey);
+          PARAMMAPPER_DIFFERENT_KEY.getErrorDesc() + targetKey);
     } else {
       this.mapperRules.put(key, targetKey);
     }
@@ -104,7 +104,7 @@ public abstract class ParamKeyMapper {
             PARAMMAPPER_DIFFERENT_KEY.getErrorCode(),
             ErrorLevel.ERROR,
             CommonErrMsg.ParserParseErr,
-            "ParamMapper should not map different keys into same key. Key is: " + targetKey);
+            PARAMMAPPER_DIFFERENT_KEY.getErrorDesc() + targetKey);
       } else {
         resultMap.put(targetKey, entry.getValue());
       }

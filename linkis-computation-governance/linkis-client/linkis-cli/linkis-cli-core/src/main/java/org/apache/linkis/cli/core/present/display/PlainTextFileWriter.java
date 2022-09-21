@@ -38,7 +38,7 @@ public class PlainTextFileWriter implements DisplayOperator {
           INSTANCE_FILEDISPLAYDATA.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.PresentDriverErr,
-          "input data is not instance of FileDisplayData");
+          INSTANCE_FILEDISPLAYDATA.getErrorDesc());
     }
 
     String pathName = ((FileDisplayData) data).getPathName();
@@ -57,7 +57,7 @@ public class PlainTextFileWriter implements DisplayOperator {
             CANNOT_MKDIR.getErrorCode(),
             ErrorLevel.ERROR,
             CommonErrMsg.PresentDriverErr,
-            "Cannot mkdir for path: " + dir.getAbsolutePath(),
+            CANNOT_MKDIR.getErrorDesc() + dir.getAbsolutePath(),
             e);
       }
     }
@@ -70,7 +70,7 @@ public class PlainTextFileWriter implements DisplayOperator {
             CANNOT_CREATE.getErrorCode(),
             ErrorLevel.ERROR,
             CommonErrMsg.PresentDriverErr,
-            "Cannot create file for path: " + file.getAbsolutePath(),
+            CANNOT_CREATE.getErrorDesc() + file.getAbsolutePath(),
             e);
       }
     }
@@ -88,7 +88,7 @@ public class PlainTextFileWriter implements DisplayOperator {
           CANNOT_WRITE.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.PresentDriverErr,
-          "Cannot write: " + file.getAbsolutePath(),
+          CANNOT_WRITE.getErrorDesc() + file.getAbsolutePath(),
           e);
 
     } finally {

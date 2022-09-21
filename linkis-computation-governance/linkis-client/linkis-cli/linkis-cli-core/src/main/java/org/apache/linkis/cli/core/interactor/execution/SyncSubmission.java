@@ -58,7 +58,7 @@ public class SyncSubmission implements Execution {
           EMPTY_JOBS_IS_SUBMITTED.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionErr,
-          "Null or empty Jobs is submitted to current execution");
+          EMPTY_JOBS_IS_SUBMITTED.getErrorDesc());
     }
 
     if (jobs.size() > 1) {
@@ -66,7 +66,7 @@ public class SyncSubmission implements Execution {
           MULTIPLE_JOBS_IS_NOT.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionErr,
-          "Multiple Jobs is not Supported by current execution");
+          MULTIPLE_JOBS_IS_NOT.getErrorDesc());
     }
 
     Job job = jobs.get(jobs.keySet().toArray(new String[jobs.size()])[0]);
@@ -156,7 +156,7 @@ public class SyncSubmission implements Execution {
           INSTANCE_ASYNCBACKENDJOB.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionErr,
-          "job is not instance of AsyncBackendJob");
+          INSTANCE_ASYNCBACKENDJOB.getErrorDesc());
     }
     AsyncBackendJob submitJob = (AsyncBackendJob) job;
 
@@ -168,7 +168,7 @@ public class SyncSubmission implements Execution {
           EXHAUSTED_CHECKING_NOT_SUBMITTED.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionErr,
-          "Retry exhausted checking job submission. Job is probably not submitted");
+          EXHAUSTED_CHECKING_NOT_SUBMITTED.getErrorDesc());
     } else {
       // Output that job is submitted
       StringBuilder infoBuilder = new StringBuilder();

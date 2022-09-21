@@ -114,10 +114,8 @@
 |linkis-cli-core|VA0004|Cannot convertStringVal   to  : designated type is not supported(无法将StringVal 转换为：不支持指定类型)|LinkisCliCoreErrorCodeSummary|
 |linkis-cli-core|VA0001|sys_prop and sys_env are both null(sys_prop 和 sys_env 都为空)|LinkisCliCoreErrorCodeSummary|
 |linkis-cli-core|VA0002|same key occurred in sys_prop and sys_env. will use sys_prop(sys_prop 和 sys_env 中出现了相同的键。 将使用 sys_prop)|LinkisCliCoreErrorCodeSummary|
-
-
-
-
+|linkis-cli-core|BLD0011| Authentication strategy  is not supported(不支持认证策略)|LinkisCliApplicationErrorCodeSummary|
+|linkis-cli-core|BLD0010|Cannot specify proxy-user when proxy-user-specification switch is off(代理用户规范开关关闭时无法指定代理用户)|LinkisCliApplicationErrorCodeSummary|
 
 
 

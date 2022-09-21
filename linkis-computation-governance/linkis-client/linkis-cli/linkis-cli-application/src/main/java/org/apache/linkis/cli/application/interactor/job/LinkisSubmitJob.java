@@ -238,7 +238,7 @@ public class LinkisSubmitJob extends LinkisJob
           JIBDATA_IS_NOT_LOG.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionErr,
-          "JobData is not LinkisLogData");
+          JIBDATA_IS_NOT_LOG.getErrorDesc());
     }
     LinkisLogData dataCopy;
     try {
@@ -248,7 +248,7 @@ public class LinkisSubmitJob extends LinkisJob
           LOGDATA_CLONEABLE.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionErr,
-          "logData is not Cloneable",
+          LOGDATA_CLONEABLE.getErrorDesc(),
           e);
     }
     dataCopy.setIncLogMode(true);
@@ -285,7 +285,7 @@ public class LinkisSubmitJob extends LinkisJob
           ABNORMAL_STATUS.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionErr,
-          "Job is in abnormal status: " + CommonUtils.GSON.toJson(data));
+          ABNORMAL_STATUS.getErrorDesc() + CommonUtils.GSON.toJson(data));
     }
   }
 }

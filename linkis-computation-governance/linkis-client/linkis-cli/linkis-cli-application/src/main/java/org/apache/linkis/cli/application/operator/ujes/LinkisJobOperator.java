@@ -82,7 +82,7 @@ public class LinkisJobOperator implements JobOperator {
           UJES_CLIENT_DRIVER.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionInitErr,
-          "UjesClientDriver is null");
+          UJES_CLIENT_DRIVER.getErrorDesc());
     }
   }
 
@@ -140,7 +140,7 @@ public class LinkisJobOperator implements JobOperator {
           SUBMIT_JOB.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionErr,
-          "Failed to submit job",
+          SUBMIT_JOB.getErrorDesc(),
           e);
     }
 
@@ -177,7 +177,7 @@ public class LinkisJobOperator implements JobOperator {
           USER_OR_JOBID_EXECID.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionErr,
-          "user or jobID is null");
+          USER_OR_JOBID_EXECID.getErrorDesc());
     }
     return new UJESResultAdapter(queryJobInfoInternal(user, taskID));
   }
@@ -189,7 +189,7 @@ public class LinkisJobOperator implements JobOperator {
           USER_OR_JOBID_EXECID.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionErr,
-          "user or jobID or execID is null");
+          USER_OR_JOBID_EXECID.getErrorDesc());
     }
     checkInit();
     JobExecuteResult executeResult = new JobExecuteResult();

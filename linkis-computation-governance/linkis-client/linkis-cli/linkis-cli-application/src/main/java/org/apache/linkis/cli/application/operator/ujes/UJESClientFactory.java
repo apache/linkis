@@ -71,7 +71,7 @@ public class UJESClientFactory {
           CANNOT_INIT_UJE.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionInitErr,
-          "Cannot init UJESClient",
+          CANNOT_INIT_UJE.getErrorDesc(),
           e);
     }
   }
@@ -116,7 +116,7 @@ public class UJESClientFactory {
           CANNOT_INIT_DWS.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionInitErr,
-          "Cannot init DWSClientConfig",
+          CANNOT_INIT_DWS.getErrorDesc(),
           e);
     }
   }
@@ -161,7 +161,7 @@ public class UJESClientFactory {
           CANNOT_INIT_DWS.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionInitErr,
-          "Cannot init DWSClientConfig",
+          CANNOT_INIT_DWS.getErrorDesc(),
           e);
     }
   }
@@ -173,7 +173,7 @@ public class UJESClientFactory {
           LIENT_FACTORY.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.BuilderBuildErr,
-          "Cannot build UjesClientDriverContext: gatewayUrl is empty");
+          LIENT_FACTORY.getErrorDesc());
     }
 
     String authKey = stdVarAccess.getVar(String.class, AppKeys.LINKIS_COMMON_TOKEN_KEY);

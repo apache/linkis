@@ -42,7 +42,7 @@ public class Help implements Execution {
           MULTIPLE_JOBS_IS_NOT.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionInitErr,
-          "Multiple Jobs is not Supported by current execution");
+          MULTIPLE_JOBS_IS_NOT.getErrorDesc());
     }
 
     HelpInfoModel model = new HelpInfoModel();

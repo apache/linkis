@@ -61,7 +61,7 @@ public class LinkisManageJob extends LinkisJob
           SHOULD_BE_INSTANCE.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionInitErr,
-          "JobOperator of LinkisManageJob should be instance of LinkisJobOperator");
+          SHOULD_BE_INSTANCE.getErrorDesc());
     }
     return (LinkisJobOperator) super.getJobOperator();
   }
@@ -73,7 +73,7 @@ public class LinkisManageJob extends LinkisJob
           SHOULD_BE_INSTANCE.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionInitErr,
-          "JobOperator of LinkisManageJob should be instance of LinkisJobOperator");
+          SHOULD_BE_INSTANCE.getErrorDesc());
     }
     super.setOperator(operator);
   }
@@ -109,7 +109,7 @@ public class LinkisManageJob extends LinkisJob
           IS_NOT_INSTANCE_OF.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionErr,
-          "JobSubType is not instance of JobManSubType");
+          IS_NOT_INSTANCE_OF.getErrorDesc());
     }
     switch (subType) {
       case STATUS:
@@ -179,7 +179,7 @@ public class LinkisManageJob extends LinkisJob
           USER_OR_JOBID_EXECID.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionErr,
-          "user or jobID is null");
+          USER_OR_JOBID_EXECID.getErrorDesc());
     }
     data.updateByOperResult(getJobOperator().queryJobInfo(jobDesc.getUser(), jobDesc.getJobID()));
     startRetrieveLogInternal(data);
@@ -205,14 +205,14 @@ public class LinkisManageJob extends LinkisJob
           JIBDATA_IS_NOT_RESU.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionErr,
-          "JobData is not LinkisLogData");
+          JIBDATA_IS_NOT_RESU.getErrorDesc());
     }
     if (jobData.getUser() == null || jobData.getJobID() == null) {
       throw new LinkisClientExecutionException(
           USER_OR_JOBID_EXECID.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionErr,
-          "user or jobID is null");
+          USER_OR_JOBID_EXECID.getErrorDesc());
     }
     LinkisLogData logData = (LinkisLogData) jobData;
     if (logData.getJobStatus() != null) {
@@ -321,14 +321,14 @@ public class LinkisManageJob extends LinkisJob
           JIBDATA_IS_NOT_RESU.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionErr,
-          "JobData is not LinkisResultData");
+          JIBDATA_IS_NOT_RESU.getErrorDesc());
     }
     if (jobDesc.getUser() == null || jobDesc.getJobID() == null) {
       throw new LinkisClientExecutionException(
           USER_OR_JOBID_EXECID.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionErr,
-          "user or jobID is null");
+          USER_OR_JOBID_EXECID.getErrorDesc());
     }
     data.updateByOperResult(getJobOperator().queryJobInfo(jobDesc.getUser(), jobDesc.getJobID()));
     if (data.getJobStatus() == null) {
@@ -336,7 +336,7 @@ public class LinkisManageJob extends LinkisJob
           JOBSTATUS_IS_NULL.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionErr,
-          "jobStatus is null");
+          JOBSTATUS_IS_NULL.getErrorDesc());
     }
     LinkisResultData resultData = (LinkisResultData) data;
     if (!resultData.getJobStatus().isJobSuccess()
@@ -361,7 +361,7 @@ public class LinkisManageJob extends LinkisJob
           GOT_BLANK_RESULTLOCATION.getErrorCode(),
           ErrorLevel.WARN,
           CommonErrMsg.ExecutionErr,
-          "Got blank ResultLocation from server. Job may not have result-set. Will not try to retrieve any Result");
+          GOT_BLANK_RESULTLOCATION.getErrorDesc());
     }
 
     resultData.updateByOperResult(
@@ -373,7 +373,7 @@ public class LinkisManageJob extends LinkisJob
           GOT_NULL_OR_EMPTY.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionResultErr,
-          "Got null or empty ResultSetPaths");
+          GOT_NULL_OR_EMPTY.getErrorDesc());
     }
 
     try {
@@ -438,7 +438,7 @@ public class LinkisManageJob extends LinkisJob
             SOMETHING_FOES_WRONG.getErrorCode(),
             ErrorLevel.ERROR,
             CommonErrMsg.ExecutionResultErr,
-            "Something foes wrong. Got null as \'hasNextPage\'.");
+            SOMETHING_FOES_WRONG.getErrorDesc());
       }
       hasNextPage = data.hasNextResultPage();
 
@@ -455,14 +455,14 @@ public class LinkisManageJob extends LinkisJob
           USER_OR_JOBID_EXECID.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionErr,
-          "user or jobID is null");
+          USER_OR_JOBID_EXECID.getErrorDesc());
     }
     if (data.getJobStatus() == null) {
       throw new LinkisClientExecutionException(
           JOBSTATUS_IS_NULL.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionErr,
-          "jobStatus is null");
+          JOBSTATUS_IS_NULL.getErrorDesc());
     }
     String msg;
     if (data.getJobStatus().isJobCancelled()) {

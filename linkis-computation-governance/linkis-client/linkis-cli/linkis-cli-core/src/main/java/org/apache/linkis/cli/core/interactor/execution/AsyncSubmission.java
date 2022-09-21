@@ -54,7 +54,7 @@ public class AsyncSubmission implements Execution {
           EMPTY_JOBS_IS_SUBMITTED.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionInitErr,
-          "Null or empty Jobs is submitted to current execution");
+          EMPTY_JOBS_IS_SUBMITTED.getErrorDesc());
     }
 
     if (jobs.size() > 1) {
@@ -62,7 +62,7 @@ public class AsyncSubmission implements Execution {
           EMPTY_JOBS_IS_SUBMITTED.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionInitErr,
-          "Multiple Jobs is not Supported by current execution");
+          EMPTY_JOBS_IS_SUBMITTED.getErrorDesc());
     }
 
     Job job = jobs.get(jobs.keySet().toArray(new String[jobs.size()])[0]);
@@ -80,7 +80,7 @@ public class AsyncSubmission implements Execution {
           SUBEXECTYPE_SHOULD_NOT.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionInitErr,
-          "SubExecType should not be null");
+          SUBEXECTYPE_SHOULD_NOT.getErrorDesc());
     }
 
     try {

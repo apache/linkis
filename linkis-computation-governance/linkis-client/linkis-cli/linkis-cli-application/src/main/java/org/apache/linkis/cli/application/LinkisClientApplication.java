@@ -214,7 +214,7 @@ public class LinkisClientApplication {
                 USER_CONFIGURATION.getErrorCode(),
                 ErrorLevel.ERROR,
                 CommonErrMsg.PropsLoaderErr,
-                "User cannot specify non-customizable configuration: " + prop.getKey());
+                USER_CONFIGURATION.getErrorDesc() + prop.getKey());
           }
         }
       }

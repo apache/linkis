@@ -40,12 +40,12 @@ public enum LinkisCliCoreErrorCodeSummary {
       "failed to init parser: fitter is null(无法初始化解析器：fitter 为空)"),
   PARAMMAPPER_DIFFERENT_KEY(
       "CMD0020",
-      "ParamMapper should not map different keys into same key.(ParamMapper 不应将不同的键映射到同一个键。)",
-      "ParamMapper should not map different keys into same key.(ParamMapper 不应将不同的键映射到同一个键。)"),
+      "ParamMapper should not map different keys into same key. Key is:(ParamMapper 不应将不同的键映射到同一个键。)",
+      "ParamMapper should not map different keys into same key. Key is:(ParamMapper 不应将不同的键映射到同一个键。)"),
   MAKE_DEEP_COPY(
       "CMD0018",
-      "failed to make deep copy of template(未能制作模板的深拷贝)",
-      "failed to make deep copy of template(未能制作模板的深拷贝)"),
+      "failed to make deep copy of template:(未能制作模板的深拷贝:)",
+      "failed to make deep copy of template:(未能制作模板的深拷贝:)"),
   DESCRIBED_BY(
       "CMD0021",
       "Input should be a Map-entry described by kv-pairs. e.g. key1=value1(输入应该是由 kv-pairs 描述的 Map-entry。 例如 键1=值1)",
@@ -101,21 +101,19 @@ public enum LinkisCliCoreErrorCodeSummary {
   DRIVER_IS_NULL("PST0007", "Driver is null (驱动程序为空)", "Driver is null(驱动程序为空)"),
   DUPLICATE_DISPLAYOPERATOR(
       "PST0012",
-      "Attempting to register a duplicate DisplayOperator, name: #(尝试注册重复的 DisplayOperator，名称：#)",
-      "Attempting to register a duplicate DisplayOperator, name: #(尝试注册重复的 DisplayOperator，名称：#)"),
+      "Attempting to register a duplicate DisplayOperator, name: (尝试注册重复的 DisplayOperator，名称：)",
+      "Attempting to register a duplicate DisplayOperator, name: (尝试注册重复的 DisplayOperator，名称：)"),
   INSTANCE_FILEDISPLAYDATA(
       "PST0004",
       "input data is not instance of FileDisplayData(输入数据不是 FileDisplayData 的实例)",
       "input data is not instance of FileDisplayData(输入数据不是 FileDisplayData 的实例)"),
   CANNOT_MKDIR(
-      "PST0005",
-      "Cannot mkdir for path: #(无法为路径 mkdir：#)",
-      "Cannot mkdir for path: #(无法为路径 mkdir：#)"),
+      "PST0005", "Cannot mkdir for path: (无法为路径 mkdir：)", "Cannot mkdir for path: (无法为路径 mkdir：)"),
   CANNOT_CREATE(
       "PST0006",
-      "Cannot create file for path: #(无法为路径创建文件：#)",
-      "Cannot create file for path: #(无法为路径创建文件：#)"),
-  CANNOT_WRITE("PST0007", "Cannot write: #(不能写：#)", "Cannot write: #(不能写：#)"),
+      "Cannot create file for path: (无法为路径创建文件：)",
+      "Cannot create file for path: (无法为路径创建文件：)"),
+  CANNOT_WRITE("PST0007", "Cannot write: (不能写：)", "Cannot write: #(不能写：#)"),
   DATA_IS_NOT_INSTANCE(
       "PST0008",
       "input data is not instance of StdoutDisplayData(输入数据不是 StdoutDisplayData 的实例)",

@@ -90,7 +90,7 @@ public class StdPropsLoader implements PropertiesLoader {
           PROPERTIES_LOADER.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.PropsLoaderInitErr,
-          "properties loader is not inited because it contains no reader");
+          PROPERTIES_LOADER.getErrorDesc());
     }
   }
 }

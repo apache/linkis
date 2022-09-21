@@ -79,7 +79,7 @@ public class ExecutionUtils {
               SPECIFY.getErrorCode(),
               ErrorLevel.ERROR,
               CommonErrMsg.BuilderBuildErr,
-              "Cannot specify submit-user when user-specification switch is off");
+              SPECIFY.getErrorDesc());
         }
       } else {
         submitUsr = osUser;
@@ -105,7 +105,7 @@ public class ExecutionUtils {
       }
     } else {
       throw new BuilderException(
-          SHOULD_BE_THE_SAME.getErrorCode(),
+          AUTHENTICATION_STRATEGY.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.BuilderBuildErr,
           "Authentication strategy \'" + authenticationStrategy + "\' is not supported");
@@ -138,7 +138,7 @@ public class ExecutionUtils {
               SPECIFY.getErrorCode(),
               ErrorLevel.ERROR,
               CommonErrMsg.BuilderBuildErr,
-              "Cannot specify admin-user as proxy-user");
+              SPECIFY.getErrorDesc());
         }
       } else {
         proxyUsr = submitUsr;
@@ -152,10 +152,10 @@ public class ExecutionUtils {
       proxyUsr = stdVarAccess.getVar(String.class, AppKeys.JOB_COMMON_PROXY_USER);
       if (!StringUtils.equals(proxyUsr, submitUsr)) {
         throw new BuilderException(
-            SPECIFY.getErrorCode(),
+            SPECIFY_CANNOT.getErrorCode(),
             ErrorLevel.ERROR,
             CommonErrMsg.BuilderBuildErr,
-            "Cannot specify proxy-user when proxy-user-specification switch is off");
+            SPECIFY_CANNOT.getErrorDesc());
       }
     } else {
       proxyUsr = submitUsr;
@@ -190,14 +190,14 @@ public class ExecutionUtils {
           SPECIFY_SCRIPT.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.BuilderBuildErr,
-          "User specified script file does not exist: " + path,
+          SPECIFY_SCRIPT.getErrorDesc() + path,
           fe);
     } catch (Exception e) {
       throw new BuilderException(
           UNABLE_TO_READ.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.BuilderBuildErr,
-          "Cannot read user specified script file: " + path,
+          UNABLE_TO_READ.getErrorDesc() + path,
           e);
     }
   }

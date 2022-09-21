@@ -37,7 +37,7 @@ public class DisplayOperFactory {
           DUPLICATE_DISPLAYOPERATOR.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.PresenterInitErr,
-          "Attempting to register a duplicate DisplayOperator, name: " + mode.getName());
+          DUPLICATE_DISPLAYOPERATOR.getErrorDesc() + mode.getName());
     }
     operatorMap.put(mode.getName(), operator);
   }

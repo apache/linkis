@@ -165,14 +165,14 @@ public class LinkisOnceJob extends LinkisJob
           JIBDATA_IS_NOT_LOG.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionErr,
-          "JobData is not LinkisLogData");
+          JIBDATA_IS_NOT_LOG.getErrorDesc());
     }
     if (jobData.getUser() == null || jobData.getJobID() == null) {
       throw new LinkisClientExecutionException(
           USER_OR_JOBID_EXECID.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionErr,
-          "user or jobID is null");
+          USER_OR_JOBID_EXECID.getErrorDesc());
     }
     LinkisOnceJobData logData = jobData;
     if (logData.getJobStatus() != null) {

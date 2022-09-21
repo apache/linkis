@@ -41,7 +41,7 @@ public class CommandExceptionHandlerTest {
             GENERATE_TEMPLATE.getErrorCode(),
             ErrorLevel.ERROR,
             CommonErrMsg.TemplateGenErr,
-            "Failed to generate template.");
+            GENERATE_TEMPLATE.getErrorDesc());
     assertDoesNotThrow(() -> handler.handle(cmdException));
 
     String[] params = {"param1", "param2"};
@@ -51,7 +51,7 @@ public class CommandExceptionHandlerTest {
             ErrorLevel.ERROR,
             CommonErrMsg.TemplateGenErr,
             params,
-            "Failed to generate template.");
+            GENERATE_TEMPLATE.getErrorDesc());
     assertDoesNotThrow(() -> handler.handle(cmdException2));
 
     CommandException cmdException3 =
@@ -60,7 +60,7 @@ public class CommandExceptionHandlerTest {
             ErrorLevel.ERROR,
             CommonErrMsg.TemplateGenErr,
             TestCmdType.PRIMARY,
-            "Failed to generate template.");
+            GENERATE_TEMPLATE.getErrorDesc());
     assertDoesNotThrow(() -> handler.handle(cmdException3));
 
     CommandException cmdException4 =
@@ -70,7 +70,7 @@ public class CommandExceptionHandlerTest {
             CommonErrMsg.TemplateGenErr,
             TestCmdType.PRIMARY,
             params,
-            "Failed to generate template.");
+            GENERATE_TEMPLATE.getErrorDesc());
     assertDoesNotThrow(() -> handler.handle(cmdException4));
   }
 }

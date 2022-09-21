@@ -53,14 +53,14 @@ public class HelpInfoPresenter implements Presenter {
           IS_NOT_MODEL.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.PresenterErr,
-          "Input for HelpInfoPresenter is not instance of model");
+          IS_NOT_MODEL.getErrorDesc());
     }
     if (driver == null) {
       throw new PresenterException(
           DRIVER_IS_NULL.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.PresenterErr,
-          "Driver is null");
+          DRIVER_IS_NULL.getErrorDesc());
     }
     HelpInfoModel helpInfoModel = (HelpInfoModel) model;
 

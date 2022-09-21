@@ -69,7 +69,7 @@ public class JobManagement implements Execution {
           SUBEXECTYPE_SHOULD_NOT.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionInitErr,
-          "SubExecType should not be null");
+          SUBEXECTYPE_SHOULD_NOT.getErrorDesc());
     }
 
     try {

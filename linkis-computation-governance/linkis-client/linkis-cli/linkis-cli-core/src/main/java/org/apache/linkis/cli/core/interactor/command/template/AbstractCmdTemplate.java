@@ -368,7 +368,7 @@ public abstract class AbstractCmdTemplate implements CmdTemplate, Cloneable {
             MAKE_DEEP_COPY.getErrorCode(),
             ErrorLevel.ERROR,
             CommonErrMsg.ParserParseErr,
-            "failed to make deep copy of template: " + this.getCmdType(),
+            MAKE_DEEP_COPY.getErrorDesc() + this.getCmdType(),
             e);
       }
       if (fieldObj instanceof StdOption<?>
@@ -382,7 +382,7 @@ public abstract class AbstractCmdTemplate implements CmdTemplate, Cloneable {
               MAKE_DEEP_COPY.getErrorCode(),
               ErrorLevel.ERROR,
               CommonErrMsg.ParserParseErr,
-              "failed to make deep copy of template: " + this.getCmdType(),
+              MAKE_DEEP_COPY.getErrorDesc() + this.getCmdType(),
               e);
         }
         ret.options.add(opt);
@@ -402,7 +402,7 @@ public abstract class AbstractCmdTemplate implements CmdTemplate, Cloneable {
               MAKE_DEEP_COPY.getErrorCode(),
               ErrorLevel.ERROR,
               CommonErrMsg.ParserParseErr,
-              "failed to make deep copy of template: " + this.getCmdType(),
+              MAKE_DEEP_COPY.getErrorDesc() + this.getCmdType(),
               e);
         }
         ret.options.add(param);
@@ -423,7 +423,7 @@ public abstract class AbstractCmdTemplate implements CmdTemplate, Cloneable {
           MAKE_DEEP_COPY.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ParserParseErr,
-          "failed to make deep copy of template: " + this.getCmdType(),
+          MAKE_DEEP_COPY.getErrorDesc() + this.getCmdType(),
           e);
     }
 

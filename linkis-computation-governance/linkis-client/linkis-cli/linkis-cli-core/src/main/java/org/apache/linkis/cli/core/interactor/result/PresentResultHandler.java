@@ -44,7 +44,7 @@ public class PresentResultHandler implements ResultHandler {
           PRESENTER_OR_MODEL_IS_NOLL.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionResultErr,
-          "Presenter or model is null");
+          PRESENTER_OR_MODEL_IS_NOLL.getErrorDesc());
     }
   }
 

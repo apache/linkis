@@ -415,7 +415,7 @@ public class UJESResultAdapter implements LinkisOperResultAdapter {
           CONVERT_RESULTSE.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.TransformerException,
-          "Failed to convert ResultSet",
+          CONVERT_RESULTSE.getErrorDesc(),
           e);
     }
     return ret;

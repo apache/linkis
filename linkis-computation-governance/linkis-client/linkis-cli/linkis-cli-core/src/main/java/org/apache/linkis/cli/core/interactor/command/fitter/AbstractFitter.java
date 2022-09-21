@@ -182,7 +182,7 @@ public abstract class AbstractFitter implements Fitter {
             SET_OPTION_VALUE.getErrorCode(),
             ErrorLevel.ERROR,
             CommonErrMsg.TemplateFitErr,
-            "Failed to set option value: optionMap contains objects that is not Option!");
+            SET_OPTION_VALUE.getErrorDesc());
       }
     } else {
       remains.add(arg);
@@ -223,7 +223,7 @@ public abstract class AbstractFitter implements Fitter {
           SET_PARAMETRT_VALUE.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.TemplateFitErr,
-          "Failed to set param value: parameters contains objects that is not Parameter!");
+          SET_PARAMETRT_VALUE.getErrorDesc());
     }
     Parameter<?> param = (Parameter<?>) cmdOption;
     if (param.accepctArrayValue()) {

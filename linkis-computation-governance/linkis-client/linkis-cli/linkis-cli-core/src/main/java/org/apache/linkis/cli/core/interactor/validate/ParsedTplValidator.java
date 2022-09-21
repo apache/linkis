@@ -48,7 +48,7 @@ public class ParsedTplValidator implements Validator {
           NOT_A_INSTANCE_CMDTEMPLATE.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ValidationErr,
-          "Input of ParsedTplValidator is not instance of CmdTemplate");
+          NOT_A_INSTANCE_CMDTEMPLATE.getErrorDesc());
     }
 
     CmdTemplate parsedTemplateCopy = (CmdTemplate) input;

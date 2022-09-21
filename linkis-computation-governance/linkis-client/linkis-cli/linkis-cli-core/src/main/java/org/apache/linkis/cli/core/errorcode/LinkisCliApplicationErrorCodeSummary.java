@@ -26,18 +26,26 @@ public enum LinkisCliApplicationErrorCodeSummary {
       "BLD0010",
       "Cannot specify admin-user as submit-user(无法将管理员用户指定为提交用户)",
       "Cannot specify admin-user as submit-user(无法将管理员用户指定为提交用户)"),
+  SPECIFY_CANNOT(
+      "BLD0010",
+      "Cannot specify proxy-user when proxy-user-specification switch is off(代理用户规范开关关闭时无法指定代理用户)",
+      "Cannot specify proxy-user when proxy-user-specification switch is off(代理用户规范开关关闭时无法指定代理用户)"),
   SHOULD_BE_THE_SAME(
       "BLD0011",
       "Submit-User should be the same as Auth-Key under Static-Authentication-Strategy (Submit-User 应与 Static-Authentication-Strategy 下的 Auth-Key 相同)",
       "Submit-User should be the same as Auth-Key under Static-Authentication-Strategy (Submit-User 应与 Static-Authentication-Strategy 下的 Auth-Key 相同)"),
+  AUTHENTICATION_STRATEGY(
+      "BLD0011",
+      "Authentication strategy  is not supported(不支持认证策略)",
+      "Authentication strategy  is not supported (不支持认证策略)"),
   SPECIFY_SCRIPT(
       "BLD0005",
       "User specified script file does not exist: (用户指定的脚本文件不存在)",
       "User specified script file does not exist: (用户指定的脚本文件不存在"),
   UNABLE_TO_READ(
       "BLD0006",
-      "Cannot read user specified script file(无法读取用户指定的脚本文件)",
-      "Cannot read user specified script file(无法读取用户指定的脚本文件)"),
+      "Cannot read user specified script file:(无法读取用户指定的脚本文件:)",
+      "Cannot read user specified script file:(无法读取用户指定的脚本文件:)"),
   SHOULD_BE_INSTANCE(
       "EXE0003",
       "JobOperator of LinkisManageJob should be instance of LinkisJobOperator(LinkisManageJob 的 JobOperator 应该是 LinkisJobOperator 的实例)",
@@ -88,7 +96,7 @@ public enum LinkisCliApplicationErrorCodeSummary {
       "logData is not Cloneable(logData 不可克隆)",
       " logData is not Cloneable(logData 不可克隆)"),
   ABNORMAL_STATUS(
-      "EXE0006", "Job is in abnormal status(作业处于异常状态)", " Job is in abnormal status(作业处于异常状态)"),
+      "EXE0006", "Job is in abnormal status:(作业处于异常状态:)", " Job is in abnormal status:(作业处于异常状态:)"),
   PROPERLY_INITIATED(
       "EXE0041",
       "onceJob is not properly initiated(onceJob 未正确启动)",
@@ -210,8 +218,8 @@ public enum LinkisCliApplicationErrorCodeSummary {
       "configuration root path specified by env variable:#  is empty.(env 变量指定的配置根路径：# 为空。)"),
   USER_CONFIGURATION(
       "PRP0007",
-      "User cannot specify non-customizable configuration: #  (用户不能指定不可定制的配置：#  )",
-      "User cannot specify non-customizable configuration: # (用户不能指定不可定制的配置：#  )"),
+      "User cannot specify non-customizable configuration: (用户不能指定不可定制的配置： )",
+      "User cannot specify non-customizable configuration: (用户不能指定不可定制的配置：)"),
   CORRECT_TYPE(
       "TFM0001",
       "Input of UJESResultAdapter is not of correct type. Current type: # (UJESResultAdapter 的输入类型不正确。 当前类型： #)",

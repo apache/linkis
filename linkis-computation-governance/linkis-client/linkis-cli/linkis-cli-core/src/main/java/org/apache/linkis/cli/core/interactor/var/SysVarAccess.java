@@ -62,7 +62,7 @@ public class SysVarAccess implements VarAccess {
           BOTH_NULL.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.VarAccessInitErr,
-          "sys_prop and sys_env are both null");
+          BOTH_NULL.getErrorDesc());
     }
   }
 
@@ -79,7 +79,7 @@ public class SysVarAccess implements VarAccess {
           SAME_KEY_OCCURRED.getErrorCode(),
           ErrorLevel.WARN,
           CommonErrMsg.VarAccessErr,
-          "same key occurred in sys_prop and sys_env. will use sys_prop");
+          SAME_KEY_OCCURRED.getErrorDesc());
     }
     Object ret = o1 != null ? o1 : o2;
     return clazz.cast(ret);

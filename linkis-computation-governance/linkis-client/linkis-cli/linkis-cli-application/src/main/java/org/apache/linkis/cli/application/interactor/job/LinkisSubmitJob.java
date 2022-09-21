@@ -66,7 +66,7 @@ public class LinkisSubmitJob extends LinkisJob
           SHOULD_BE_INSTANCE.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionInitErr,
-          "JobOperator of LinkisManageJob should be instance of LinkisJobOperator");
+          SHOULD_BE_INSTANCE.getErrorDesc());
     }
     return (LinkisJobOperator) super.getJobOperator();
   }
@@ -78,7 +78,7 @@ public class LinkisSubmitJob extends LinkisJob
           SHOULD_BE_INSTANCE.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionInitErr,
-          "JobOperator of LinkisManageJob should be instance of LinkisJobOperator");
+          SHOULD_BE_INSTANCE.getErrorDesc());
     }
     manageJob.setOperator(operator);
     super.setOperator(operator);

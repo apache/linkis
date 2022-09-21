@@ -173,9 +173,7 @@ public class LinkisClientApplication {
           ENV_IS_EMPTY.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.PropsLoaderErr,
-          "configuration root path specified by env variable: "
-              + AppKeys.CLIENT_CONFIG_ROOT_KEY
-              + " is empty.");
+          ENV_IS_EMPTY.getErrorDesc());
     }
 
     List<PropertiesReader> readersList =

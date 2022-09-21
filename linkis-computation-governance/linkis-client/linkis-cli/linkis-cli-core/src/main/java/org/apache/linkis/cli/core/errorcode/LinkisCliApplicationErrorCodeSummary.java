@@ -214,8 +214,8 @@ public enum LinkisCliApplicationErrorCodeSummary {
       " Linkis resultsets are visited in descending order or are not visited one-by-one(Linkis 结果集按降序访问或不逐一访问)"),
   ENV_IS_EMPTY(
       "PRP0007",
-      "configuration root path specified by env variable:#  is empty. (env 变量指定的配置根路径：# 为空。)",
-      "configuration root path specified by env variable:#  is empty.(env 变量指定的配置根路径：# 为空。)"),
+      "configuration root path specified by env variable:conf.root is empty. (env 变量指定的配置根路径：conf.root为空。)",
+      "configuration root path specified by env variable:conf.root  is empty.(env 变量指定的配置根路径：conf.root 为空。)"),
   USER_CONFIGURATION(
       "PRP0007",
       "User cannot specify non-customizable configuration: (用户不能指定不可定制的配置： )",

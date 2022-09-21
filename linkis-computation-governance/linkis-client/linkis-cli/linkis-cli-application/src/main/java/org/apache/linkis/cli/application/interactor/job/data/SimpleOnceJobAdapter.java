@@ -142,7 +142,7 @@ public class SimpleOnceJobAdapter implements LinkisLogData {
           PROPERLY_INITIATED.getErrorCode(),
           ErrorLevel.ERROR,
           CommonErrMsg.ExecutionErr,
-          "onceJob is not properly initiated");
+          PROPERLY_INITIATED.getErrorDesc());
     }
     ((SubmittableSimpleOnceJob) onceJob).submit();
   }

@@ -113,24 +113,18 @@ export default {
           ],
         },
         {
-          type: 'input',
+          type: 'v-jsoneditor',
           title: "参数",
           field: 'parameter',
           value: '',
           props: {
-            placeholder: "",
-            "type": "textarea",
-            "rows": 5
+            type: 'form-create',
+            height: "280px",
+            options: { 
+              mode: "code",
+              modes: ['code','tree'],
+            }
           },
-          validate: [
-            {
-              required: true,
-              message: `${this.$t(
-                'message.linkis.datasource.pleaseInput'
-              )}"参数"`,
-              trigger: 'blur',
-            },
-          ],
         }
       ]
     }
@@ -141,6 +135,7 @@ export default {
   methods: {
     getData(data){
       this.formData = {...data}
+      this.formData.parameter = JSON.parse(this.formData.parameter)
     }
   },
   watch: {

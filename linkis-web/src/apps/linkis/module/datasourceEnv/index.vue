@@ -247,6 +247,7 @@ export default {
     onModalOk(){
       this.$refs.errorCodeForm.formModel.submit((formData)=>{
         this.modalLoading = true
+        formData.parameter = JSON.stringify(formData.parameter)
         if(this.modalAddMode=='add') {
           add(formData).then((data)=>{
             console.log(data)

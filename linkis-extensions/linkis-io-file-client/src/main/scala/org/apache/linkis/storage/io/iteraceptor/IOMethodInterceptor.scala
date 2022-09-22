@@ -22,6 +22,12 @@ import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.manager.label.constant.LabelKeyConstant
 import org.apache.linkis.manager.label.entity.entrance.BindEngineLabel
 import org.apache.linkis.storage.domain.{FsPathListWithError, MethodEntity, MethodEntitySerializer}
+import org.apache.linkis.storage.errorcode.LinkisIoFileClientErrorCodeSummary.{
+  ENGINE_CLOSED_IO_ILLEGAL,
+  FAILED_TO_INIT_USER,
+  NO_USER_INFORMATION,
+  STORAGE_HAS_BEEN_CLOSED
+}
 import org.apache.linkis.storage.exception.{FSNotInitException, StorageErrorException}
 import org.apache.linkis.storage.io.client.IOClient
 import org.apache.linkis.storage.io.utils.IOClientUtils
@@ -40,7 +46,6 @@ import java.util
 
 import scala.beans.BeanProperty
 import scala.collection.JavaConverters._
-import scala.collection.mutable
 
 import com.google.gson.reflect.TypeToken
 
@@ -105,8 +110,8 @@ class IOMethodInterceptor(fsType: String) extends MethodInterceptor with Logging
   def initFS(methodName: String = "init"): Unit = {
     if (!properties.asScala.contains(StorageConfiguration.PROXY_USER.key)) {
       throw new StorageErrorException(
-        52002,
-        "no user set, we cannot get the permission information."
+        NO_USER_INFORMATION.getErrorCode,
+        NO_USER_INFORMATION.getErrorDesc
       )
     }
     bindEngineLabel.setIsJobGroupHead("true")
@@ -132,13 +137,17 @@ class IOMethodInterceptor(fsType: String) extends MethodInterceptor with Logging
       inited = true
       bindEngineLabel.setIsJobGroupEnd("false")
       bindEngineLabel.setIsJobGroupHead("false")
-    } else throw new StorageErrorException(52002, s"Failed to init FS for user:$getProxyUser ")
+    } else
+      throw new StorageErrorException(
+        FAILED_TO_INIT_USER.getErrorCode,
+        s"Failed to init FS for user:$getProxyUser "
+      )
   }
 
   def beforeOperation(): Unit = {
     if (closed) {
       throw new StorageErrorException(
-        52002,
+        ENGINE_CLOSED_IO_ILLEGAL.getErrorCode,
         s"$fsType storage($id) engine($bindEngineLabel) has been closed, IO operation was illegal."
       )
     }
@@ -160,7 +169,10 @@ class IOMethodInterceptor(fsType: String) extends MethodInterceptor with Logging
       methodProxy: MethodProxy
   ): AnyRef = {
     if (closed && method.getName != "close") {
-      throw new StorageErrorException(52002, s"$fsType storage has been closed.")
+      throw new StorageErrorException(
+        STORAGE_HAS_BEEN_CLOSED.getErrorCode,
+        s"$fsType storage has been closed."
+      )
     }
     if (System.currentTimeMillis() - lastAccessTime >= iOEngineExecutorMaxFreeTime) synchronized {
       method.getName match {

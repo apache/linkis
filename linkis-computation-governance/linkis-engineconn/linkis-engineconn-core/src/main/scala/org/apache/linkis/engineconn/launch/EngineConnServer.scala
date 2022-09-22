@@ -35,11 +35,11 @@ import org.apache.linkis.engineconn.core.execution.{
 import org.apache.linkis.engineconn.core.hook.ShutdownHook
 import org.apache.linkis.engineconn.core.util.EngineConnUtils
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
-import org.apache.linkis.governance.common.exception.engineconn.{
+import org.apache.linkis.governance.common.utils.EngineConnArgumentsParser
+import org.apache.linkis.governance.exception.engineconn.{
   EngineConnExecutorErrorCode,
   EngineConnExecutorErrorException
 }
-import org.apache.linkis.governance.common.utils.EngineConnArgumentsParser
 import org.apache.linkis.manager.engineplugin.common.launch.process.Environment
 import org.apache.linkis.manager.label.builder.factory.{
   LabelBuilderFactory,

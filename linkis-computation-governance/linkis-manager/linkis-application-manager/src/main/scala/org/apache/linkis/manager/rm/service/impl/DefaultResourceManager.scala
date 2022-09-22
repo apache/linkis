@@ -634,7 +634,12 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
       node.setServiceInstance(labelContainer.getEngineInstanceLabel.getServiceInstance)
       val metrics = nodeMetricManagerPersistence.getNodeMetrics(node)
       val status = if (null != metrics) {
-        NodeStatus.values()(metrics.getStatus)
+        val timeStatus = NodeStatus.values()(metrics.getStatus)
+        if (!NodeStatus.isCompleted(timeStatus)) {
+          NodeStatus.Failed
+        } else {
+          timeStatus
+        }
       } else {
         logger.warn(
           "EC {} status unknown",

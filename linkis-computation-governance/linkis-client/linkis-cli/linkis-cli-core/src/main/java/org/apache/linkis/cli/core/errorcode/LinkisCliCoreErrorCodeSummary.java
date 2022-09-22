@@ -58,8 +58,8 @@ public enum LinkisCliCoreErrorCodeSummary {
       "Null or empty Jobs is submitted to current execution.(将 Null 或空作业提交到当前执行。)"),
   BACKEND_NOT_ASYNC(
       "EXE0001",
-      "Backend for # does not support async(# 的后端不支持异步。)",
-      "Backend for # does not support async(# 的后端不支持异步。)"),
+      "Backend for does not support async(后端不支持异步。)",
+      "Backend for does not support async(后端不支持异步。)"),
   SUBEXECTYPE_SHOULD_NOT(
       "EXE0001",
       "SubExecType should not be null(SubExecType 不应为空。)",
@@ -70,8 +70,8 @@ public enum LinkisCliCoreErrorCodeSummary {
       "Multiple Jobs is not Supported by current execution(当前执行不支持多个作业。)"),
   BACKEND_NOT_MANAGEABLE(
       "EXE0001",
-      "Backend for # is not manageable(# 的后端不可管理。)",
-      "Backend for # is not manageable(# 的后端不可管理。)"),
+      "Backend for is not manageable( 后端不可管理。)",
+      "Backend for is not manageable(后端不可管理。)"),
   EXECUTOR_TYPE_IS_NOT(
       "EXE0002",
       "Executor Type: # is not Supported(执行器类型：# 不支持。)",

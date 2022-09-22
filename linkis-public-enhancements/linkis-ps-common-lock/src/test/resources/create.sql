@@ -13,10 +13,20 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+*/
+SET FOREIGN_KEY_CHECKS = 0;
 
-package org.apache.linkis.cs.client.exception
+-- ----------------------------
+-- Table structure for linkis_ps_variable_key_user
+-- ----------------------------
+DROP TABLE IF EXISTS `linkis_ps_common_lock`;
+CREATE TABLE `linkis_ps_common_lock` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `lock_object` varchar(255)  DEFAULT NULL,
+  `time_out` longtext ,
+  `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `lock_object` (`lock_object`)
+) ;
 
-import org.apache.linkis.common.exception.ErrorException
-
-case class ProtocolNotMatchException(errMsg: String) extends ErrorException(70059, errMsg)

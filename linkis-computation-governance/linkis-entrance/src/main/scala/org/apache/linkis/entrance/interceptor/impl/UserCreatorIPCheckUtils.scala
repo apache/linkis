@@ -22,17 +22,19 @@ import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.entrance.conf.EntranceConfiguration
 import org.apache.linkis.entrance.exception.EntranceErrorCode
 import org.apache.linkis.entrance.interceptor.exception.UserCreatorIPCheckException
+import org.apache.linkis.entrance.interceptor.impl.TenantLabelSetUtils.logger
 import org.apache.linkis.governance.common.entity.job.JobRequest
 import org.apache.linkis.governance.common.protocol.conf.{UserIpRequest, UserIpResponse}
 import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.rpc.Sender
+
 import org.apache.commons.lang3.StringUtils
 
 import java.lang
 import java.util.concurrent.TimeUnit
+
 import com.google.common.cache.{CacheBuilder, CacheLoader, LoadingCache}
-import org.apache.linkis.entrance.interceptor.impl.TenantLabelSetUtils.logger
 
 object UserCreatorIPCheckUtils extends Logging {
 
@@ -80,7 +82,12 @@ object UserCreatorIPCheckUtils extends Logging {
           // Judge if the cached data is not empty
           if (StringUtils.isNotBlank(cacheIp)) {
             if (!cacheIp.equals("*") && (!cacheIp.contains(jobIp))) {
-              logger.warn(" User IP blocking failed cacheIp :{} ,jobRequest:{} ,requestIp:{}", cacheIp, jobRequest.getId, jobIp)
+              logger.warn(
+                " User IP blocking failed cacheIp :{} ,jobRequest:{} ,requestIp:{}",
+                cacheIp,
+                jobRequest.getId,
+                jobIp
+              )
               throw new UserCreatorIPCheckException(
                 EntranceErrorCode.USER_IP_EXCEPTION.getErrCode,
                 EntranceErrorCode.USER_IP_EXCEPTION.getDesc

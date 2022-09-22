@@ -26,11 +26,12 @@ class UserCreatorIPCheckInterceptor extends EntranceInterceptor {
 
   /**
    * The apply function supplements the information of the incoming parameter task, making the
-   * content of the task more complete. Additional information includes
-   * Function is a supplement to the information of the passed in parameter task,
-   * making the content of this task more complete. Additional information includes: user IP address restrictions
+   * content of the task more complete. Additional information includes Function is a supplement to
+   * the information of the passed in parameter task, making the content of this task more complete.
+   * Additional information includes: user IP address restrictions
    */
   override def apply(jobRequest: JobRequest, logAppender: lang.StringBuilder): JobRequest = {
     UserCreatorIPCheckUtils.checkUserIp(jobRequest, logAppender)
   }
+
 }

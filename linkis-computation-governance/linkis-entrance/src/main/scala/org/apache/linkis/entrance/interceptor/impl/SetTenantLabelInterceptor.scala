@@ -27,8 +27,8 @@ class SetTenantLabelInterceptor extends EntranceInterceptor with Logging {
 
   /**
    * The apply function supplements the information of the incoming parameter task, making the
-   * content of the task more complete. Supplementary information includes:
-   * This Interceptor is mainly used to intercept userCreator and IP
+   * content of the task more complete. Supplementary information includes: This Interceptor is
+   * mainly used to intercept userCreator and IP
    */
   override def apply(jobRequest: JobRequest, logAppender: lang.StringBuilder): JobRequest = {
     TenantLabelSetUtils.checkTenantLabel(jobRequest, logAppender)

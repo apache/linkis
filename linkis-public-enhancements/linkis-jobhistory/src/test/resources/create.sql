@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS linkis_ps_job_history_detail (
   PRIMARY KEY (id)
 );
 
-DROP TABLE IF EXISTS linkis_ps_job_history_detail CASCADE;
+DROP TABLE IF EXISTS linkis_ps_job_history_group_history CASCADE;
 CREATE TABLE linkis_ps_job_history_group_history (
   id bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'Primary Key, auto increment',
   job_req_id varchar(64) DEFAULT NULL COMMENT 'job execId',

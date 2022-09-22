@@ -47,6 +47,16 @@
         </fileSet>
 
         <fileSet>
+            <directory>docker/</directory>
+            <outputDirectory>docker</outputDirectory>
+            <includes>
+                <include>**/*</include>
+            </includes>
+            <fileMode>0755</fileMode>
+            <lineEnding>unix</lineEnding>
+        </fileSet>
+
+        <fileSet>
             <directory>package/</directory>
             <outputDirectory>linkis-package</outputDirectory>
             <includes>

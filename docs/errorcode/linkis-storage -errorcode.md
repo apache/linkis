@@ -23,5 +23,6 @@
 |linkis-storage |52002|Failed to init FS for user:(为用户初始化 FS 失败：)|LinkisIoFileClientErrorCodeSummary|
 |linkis-storage |52002|has been closed, IO operation was illegal.(已经关闭，IO操作是非法的.)"|LinkisIoFileClientErrorCodeSummary|
 |linkis-storage |52002|storage has been closed.(存储已关闭.)|LinkisIoFileClientErrorCodeSummary|
+|linkis-storage |53001|please init first(请先初始化)|StorageErrorCode|
 
 

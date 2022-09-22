@@ -159,6 +159,13 @@ class PythonCodeParser extends SingleCodeParser with Logging {
         statementBuffer.append(l)
         recordBrackets(bracketStack, l.trim)
       case l if notDoc && l.startsWith("@") =>
+        if (
+            statementBuffer.nonEmpty && bracketStack.isEmpty && StringUtils
+              .isNotBlank(statementBuffer.last) && !statementBuffer.last.startsWith("@")
+        ) {
+          codeBuffer.append(statementBuffer.mkString("\n"))
+          statementBuffer.clear()
+        }
         statementBuffer.append(l)
         recordBrackets(bracketStack, l.trim)
       case l if notDoc && l.startsWith("else") => // LOG.info("I am else")
@@ -168,7 +175,10 @@ class PythonCodeParser extends SingleCodeParser with Logging {
         statementBuffer.append(l)
         recordBrackets(bracketStack, l.trim)
       case l if notDoc && StringUtils.isNotBlank(l) =>
-        if (statementBuffer.nonEmpty && bracketStack.isEmpty) {
+        if (
+            statementBuffer.nonEmpty && bracketStack.isEmpty && StringUtils
+              .isNotBlank(statementBuffer.last) && !statementBuffer.last.startsWith("@")
+        ) {
           codeBuffer.append(statementBuffer.mkString("\n"))
           statementBuffer.clear()
         }

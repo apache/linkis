@@ -27,7 +27,7 @@ class QueryConfigTest {
     val cacheMaxExpireHour = QueryConfig.CACHE_MAX_EXPIRE_HOUR.getValue
     val cacheDailyExpireEnable = QueryConfig.CACHE_DAILY_EXPIRE_ENABLED.getValue
     val cacheMaxSize = QueryConfig.CACHE_MAX_SIZE.getValue
-    val cacheCleaningIntervalMinute = QueryConfig.CACHE_CLEANING_INTERVAL_MINUTE
+    val cacheCleaningIntervalMinute = QueryConfig.CACHE_CLEANING_INTERVAL_MINUTE.getValue
 
     Assertions.assertTrue(cacheMaxExpireHour == 1L)
     Assertions.assertTrue(cacheDailyExpireEnable)

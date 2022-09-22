@@ -77,12 +77,12 @@ public enum LinkisCliApplicationErrorCodeSummary {
       "Got blank ResultLocation from server. Job may not have result-set. Will not try to retrieve any Result(从服务器获得空白 ResultLocation。 作业可能没有结果集。 不会尝试检索任何结果)"),
   GOT_NULL_OR_EMPTY(
       "EXE0039",
-      "Got null or empty ResultSetPaths(得到 null 或空的 ResultSetPaths)",
-      "Got null or empty ResultSetPaths(得到 null 或空的 ResultSetPaths)"),
+      "Got null or empty ResultSetPaths(ResultSetPaths 为null 或者空)",
+      "Got null or empty ResultSetPaths(ResultSetPaths 为null 或者空)"),
   SOMETHING_FOES_WRONG(
       "EXE0040",
-      "Something foes wrong. Got null as hasNextPage.(有什么不对劲的。 得到 null 作为 hasNextPage 。)",
-      "Something foes wrong. Got null as hasNextPage.(有什么不对劲的。 得到 null 作为 hasNextPage 。)"),
+      "Something foes wrong. Got null as hasNextPage.(可能异常，hasNextPage 可能为null)",
+      "Something foes wrong. Got null as hasNextPage.(可能异常，hasNextPage 可能为null)"),
   INSTANCE_IS_NULL(
       "EXE0040",
       "Instance of is null(Instance of is null)",

@@ -16,8 +16,8 @@
 |linkis-cli-core|EXE0034|JobData is not LinkisLogData(JobData 不是 LinkisLogData)|LinkisCliApplicationErrorCodeSummary|
 |linkis-cli-core|EXE0038|jobStatus is null(工作状态为空)|LinkisCliApplicationErrorCodeSummary|
 |linkis-cli-core|EXE0037|Got blank ResultLocation from server. Job may not have result-set. Will not try to retrieve any Result(从服务器获得空白 ResultLocation。 作业可能没有结果集。 不会尝试检索任何结果)|LinkisCliApplicationErrorCodeSummary|
-|linkis-cli-core|EXE0039|Got null or empty ResultSetPaths(得到 null 或空的 ResultSetPaths)|LinkisCliApplicationErrorCodeSummary|
-|linkis-cli-core|EXE0040|Something foes wrong. Got null as hasNextPage.(有什么不对劲的。 得到 null 作为 hasNextPage)|LinkisCliApplicationErrorCodeSummary|
+|linkis-cli-core|EXE0039|Got null or empty ResultSetPaths(ResultSetPaths 为null 或者空)|LinkisCliApplicationErrorCodeSummary|
+|linkis-cli-core|EXE0040|Something foes wrong. Got null as hasNextPage.(可能异常，hasNextPage 可能为null)|LinkisCliApplicationErrorCodeSummary|
 |linkis-cli-core|EXE0013|Cannot get jobStatus from server continuously for N seconds. Client aborted! Error message'.(无法连续 N 秒从服务器获取 jobStatus。 客户端中止！ 错误信息)|LinkisCliApplicationErrorCodeSummary|
 |linkis-cli-core|EXE0035|logData is not Cloneable(logData 不可克隆)|LinkisCliApplicationErrorCodeSummary|
 |linkis-cli-core|EXE0006|Job is in abnormal status(作业处于异常状态)|LinkisCliApplicationErrorCodeSummary|
@@ -83,10 +83,10 @@
 |linkis-cli-core|CMD0021|Input should be a Map-entry described by kv-pairs. e.g. key1=value1(输入应该是由 kv-pairs 描述的 Map-entry。 例如 键1=值1)|LinkisCliCoreErrorCodeSummary|
 |linkis-cli-core|CODE-001|Failed to generate template.(无法生成模板。)|LinkisCliCoreErrorCodeSummary|
 |linkis-cli-core|EXE0001|Null or empty Jobs is submitted to current execution.(将 Null 或空作业提交到当前执行。)|LinkisCliCoreErrorCodeSummary|
-|linkis-cli-core|EXE0001|Backend for # does not support async(# 的后端不支持异步。)|LinkisCliCoreErrorCodeSummary|
+|linkis-cli-core|EXE0001|Backend for # does not support async(后端不支持异步。)|LinkisCliCoreErrorCodeSummary|
 |linkis-cli-core|EXE0001|SubExecType should not be null(SubExecType 不应为空。)|LinkisCliCoreErrorCodeSummary|
 |linkis-cli-core|EXE0001|Multiple Jobs is not Supported by current execution(当前执行不支持多个作业。)|LinkisCliCoreErrorCodeSummary|
-|linkis-cli-core|EXE0001|Backend for # is not manageable(# 的后端不可管理。)|LinkisCliCoreErrorCodeSummary|
+|linkis-cli-core|EXE0001|Backend for # is not manageable(后端不可管理。)|LinkisCliCoreErrorCodeSummary|
 |linkis-cli-core|EXE0002|Executor Type: # is not Supported(执行器类型：# 不支持。)|LinkisCliCoreErrorCodeSummary|
 |linkis-cli-core|EXE0002|job is not instance of AsyncBackendJob(作业不是 AsyncBackendJob 的实例。)|LinkisCliCoreErrorCodeSummary|
 |linkis-cli-core|EXE0005|Retry exhausted checking job submission. Job is probably not submitted(重试用尽检查作业提交。 作业可能未提交。)|LinkisCliCoreErrorCodeSummary|

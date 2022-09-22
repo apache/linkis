@@ -20,6 +20,11 @@ package org.apache.linkis.manager.persistence.impl;
 import org.apache.linkis.manager.common.entity.persistence.PersistenceLabel;
 import org.apache.linkis.manager.dao.BaseDaoTest;
 
+import org.apache.linkis.manager.dao.LabelManagerMapper;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.sql.Date;
@@ -33,10 +38,11 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /** DefaultLabelManagerPersistence Tester */
-public class DefaultLabelManagerPersistenceTest extends BaseDaoTest {
+@ExtendWith(MockitoExtension.class)
+public class DefaultLabelManagerPersistenceTest {
 
-  @Autowired(required = true)
-  private DefaultLabelManagerPersistence defaultLabelManagerPersistence;
+  @InjectMocks
+  DefaultLabelManagerPersistence defaultLabelManagerPersistence;
 
   @BeforeEach
   @DisplayName("Each unit test method is executed once before execution")
@@ -52,7 +58,9 @@ public class DefaultLabelManagerPersistenceTest extends BaseDaoTest {
   public void after() throws Exception {}
 
   @Test
-  public void testGetLabelManagerMapper() throws Exception {}
+  public void testGetLabelManagerMapper() throws Exception {
+    LabelManagerMapper mapper = defaultLabelManagerPersistence.getLabelManagerMapper();
+  }
 
   @Test
   public void testSetLabelManagerMapper() throws Exception {
@@ -76,9 +84,6 @@ public class DefaultLabelManagerPersistenceTest extends BaseDaoTest {
 
   @Test
   public void testAddLabel() throws Exception {
-    // insert into `linkis_cg_manager_label` (`label_key`, `label_value`, `label_feature`,
-    // `label_value_size`, `update_time`, `create_time`)
-    // VALUES ('combined_userCreator_engineType','*-全局设置,*-*', 'OPTIONAL', 2, now(), now());
     PersistenceLabel label = new PersistenceLabel();
     label.setLabelKey("testLabelKey");
     String labelValue = "testLabelValue";

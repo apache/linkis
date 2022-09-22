@@ -44,7 +44,6 @@ public class HttpsUtil {
 
   public static UJESClientImpl client = new UJESClientImpl(dwsClientConfig);
 
-  // TODO   client 优化
   public static Map<String, Object> sendHttp(String url, Map<String, Object> properties)
       throws IOException {
     if (null == dwsClientConfig) {
@@ -54,7 +53,7 @@ public class HttpsUtil {
       client = new UJESClientImpl(dwsClientConfig);
     }
     EmsListAction build = EmsListAction.newBuilder().setUser("hadoop").build();
-    EmsListResult result = client.list(build);
+    EmsListResult result = client.listECM(build);
     return result.getResultMap();
   }
 

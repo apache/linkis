@@ -27,20 +27,19 @@ import org.apache.linkis.governance.common.protocol.conf.{UserIpRequest, UserIpR
 import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.rpc.Sender
-
 import org.apache.commons.lang3.StringUtils
 
 import java.lang
 import java.util.concurrent.TimeUnit
-
 import com.google.common.cache.{CacheBuilder, CacheLoader, LoadingCache}
+import org.apache.linkis.entrance.interceptor.impl.TenantLabelSetUtils.logger
 
 object UserCreatorIPCheckUtils extends Logging {
 
   private val configCache: LoadingCache[String, String] = CacheBuilder
     .newBuilder()
     .maximumSize(1000)
-    .refreshAfterWrite(EntranceConfiguration.USER_PARALLEL_REFLESH_TIME.getValue, TimeUnit.MINUTES)
+    .expireAfterWrite(EntranceConfiguration.USER_PARALLEL_REFLESH_TIME.getValue, TimeUnit.MINUTES)
     .build(new CacheLoader[String, String]() {
 
       override def load(userCreatorLabel: String): String = {
@@ -63,7 +62,7 @@ object UserCreatorIPCheckUtils extends Logging {
   def checkUserIp(jobRequest: JobRequest, logAppender: lang.StringBuilder): JobRequest = {
     // Get IP address
     val jobIp = jobRequest.getSource.get(TaskConstant.REQUEST_IP)
-    logger.info(s"start to checkTenantLabel $jobIp")
+    logger.debug(s"start to checkTenantLabel $jobIp")
     if (StringUtils.isNotBlank(jobIp)) {
       jobRequest match {
         case jobRequest: JobRequest =>
@@ -77,10 +76,11 @@ object UserCreatorIPCheckUtils extends Logging {
           // Obtain the IP address in the cache through user creator
           val cacheIp =
             configCache.get(LabelUtil.getUserCreatorLabel(jobRequest.getLabels).getStringValue)
-          logger.info("get cache cacheIp {} ", cacheIp)
+          logger.info("get cache cacheIp :{} ,jobRequest:{}", cacheIp, jobRequest.getId)
           // Judge if the cached data is not empty
           if (StringUtils.isNotBlank(cacheIp)) {
             if (!cacheIp.equals("*") && (!cacheIp.contains(jobIp))) {
+              logger.warn(" User IP blocking failed cacheIp :{} ,jobRequest:{} ,requestIp:{}", cacheIp, jobRequest.getId, jobIp)
               throw new UserCreatorIPCheckException(
                 EntranceErrorCode.USER_IP_EXCEPTION.getErrCode,
                 EntranceErrorCode.USER_IP_EXCEPTION.getDesc

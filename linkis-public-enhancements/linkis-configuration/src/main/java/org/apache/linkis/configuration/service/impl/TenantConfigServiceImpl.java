@@ -45,7 +45,7 @@ public class TenantConfigServiceImpl implements TenantConfigService {
   @Autowired private UserTenantMapper userTenantMapper;
 
   /**
-   * * 查询tenant配置表
+   * * Querying the tenant configuration table
    *
    * @param user
    * @param creator
@@ -61,7 +61,7 @@ public class TenantConfigServiceImpl implements TenantConfigService {
   }
 
   /**
-   * 根据id删除tenant
+   * Delete tenant By ID
    *
    * @param id
    */
@@ -75,7 +75,7 @@ public class TenantConfigServiceImpl implements TenantConfigService {
   }
 
   /**
-   * * 更新tenant
+   * Update tenant
    *
    * @param tenantVo
    */
@@ -91,7 +91,7 @@ public class TenantConfigServiceImpl implements TenantConfigService {
   }
 
   /**
-   * * 新增tenant
+   * Insert tenant
    *
    * @param tenantVo
    */
@@ -105,7 +105,7 @@ public class TenantConfigServiceImpl implements TenantConfigService {
 
   private void dataProcessing(TenantVo tenantVo) throws ConfigurationException {
     AtomicReference<Boolean> tenantResult = new AtomicReference<>(false);
-    // 参数校验
+    // Parameter verification
     if (StringUtils.isBlank(tenantVo.getCreator())) {
       throw new ConfigurationException("creator couldn't be empty ");
     }
@@ -121,7 +121,7 @@ public class TenantConfigServiceImpl implements TenantConfigService {
     if (StringUtils.isBlank(tenantVo.getTenantValue())) {
       throw new ConfigurationException("tenant couldn't be empty ");
     }
-    // 获取ECM列表的租户信息
+    // Obtain the tenant information of the ECM list
     Map<String, Object> resultmap = null;
     try {
       resultmap = HttpsUtil.sendHttp(null, null);
@@ -144,10 +144,10 @@ public class TenantConfigServiceImpl implements TenantConfigService {
                     }
                   });
         });
-    // 对比ecm tenant的值
+    // Compare the value of ecm tenant
     if (!tenantResult.get())
       throw new ConfigurationException("The ECM with the corresponding label was not found");
-    // tenantValue  开头需要包含  creator
+    // The beginning of tenantValue needs to contain creator
     String creator = tenantVo.getCreator().toLowerCase();
     String tenantValue = tenantVo.getTenantValue().toLowerCase().split("_")[0];
     if (!creator.equals(tenantValue))
@@ -157,7 +157,7 @@ public class TenantConfigServiceImpl implements TenantConfigService {
   @Override
   public Boolean checkUserCteator(String user, String creator, String tenantValue)
       throws ConfigurationException {
-    // 参数校验
+    // Parameter verification
     if (StringUtils.isBlank(creator)) {
       throw new ConfigurationException("creator couldn't be empty ");
     }

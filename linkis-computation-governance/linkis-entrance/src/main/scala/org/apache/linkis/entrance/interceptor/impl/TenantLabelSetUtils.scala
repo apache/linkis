@@ -43,7 +43,7 @@ object TenantLabelSetUtils extends Logging {
   private val userCreatorTenantCache: LoadingCache[String, String] = CacheBuilder
     .newBuilder()
     .maximumSize(1000)
-    .refreshAfterWrite(EntranceConfiguration.USER_PARALLEL_REFLESH_TIME.getValue, TimeUnit.MINUTES)
+    .expireAfterWrite(EntranceConfiguration.USER_PARALLEL_REFLESH_TIME.getValue, TimeUnit.MINUTES)
     .build(new CacheLoader[String, String]() {
 
       override def load(userCreatorLabel: String): String = {
@@ -83,14 +83,16 @@ object TenantLabelSetUtils extends Logging {
           // Get the tenant in the cache through user creator
           val tenant =
             userCreatorTenantCache.get(LabelUtil.getUserCreatorLabel(labels).getStringValue)
-          logger.info("get cache tenant {} ", tenant)
+          logger.info("get cache tenant :{} ,jobRequest:{}", tenant, jobRequest.getId)
           // Add cached data if it is not empty
           if (StringUtils.isNotBlank(tenant)) {
             val tenantLabel = LabelBuilderFactoryContext.getLabelBuilderFactory
               .createLabel[TenantLabel](LabelKeyConstant.TENANT_KEY)
             tenantLabel.setTenant(tenant)
             labels.add(tenantLabel)
-            LogUtils.generateInfo(s"Your task should be to set tenant label $tenant") + "\n"
+            logAppender.append(
+              LogUtils.generateInfo(s"Your task should be to set tenant label $tenant") + "\n"
+            )
           }
         }
       case _ => jobRequest

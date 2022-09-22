@@ -129,7 +129,7 @@ abstract class UJESClient extends Closeable {
     executeUJESJob(getPartitionStatisticInfoAction).asInstanceOf[GetPartitionStatisticInfoResult]
   }
 
-  def list(emsListAction: EmsListAction): EmsListResult = {
+  def listECM(emsListAction: EmsListAction): EmsListResult = {
     executeUJESJob(emsListAction).asInstanceOf[EmsListResult]
   }
 

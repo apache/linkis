@@ -45,7 +45,7 @@ public class UserIpConfigServiceImpl implements UserIpConfigService {
   @Autowired private UserIpMapper userIpMapper;
 
   /**
-   * * 创建IP数据
+   * * createUserIP
    *
    * @param userIpVo
    * @return
@@ -59,7 +59,7 @@ public class UserIpConfigServiceImpl implements UserIpConfigService {
   }
 
   /**
-   * 更新IP数据
+   * updateUserIP
    *
    * @param userIpVo
    */
@@ -75,7 +75,7 @@ public class UserIpConfigServiceImpl implements UserIpConfigService {
   }
 
   /**
-   * 删除IP
+   * deleteUserIP
    *
    * @param id
    */
@@ -90,7 +90,7 @@ public class UserIpConfigServiceImpl implements UserIpConfigService {
   }
 
   /**
-   * 查询IP集合
+   * Query IP Collection
    *
    * @return List<UserIpVo>
    * @param user
@@ -104,7 +104,7 @@ public class UserIpConfigServiceImpl implements UserIpConfigService {
   }
 
   private void dataProcessing(UserIpVo userIpVo) throws ConfigurationException {
-    // 参数校验
+    // Parameter verification
     if (StringUtils.isBlank(userIpVo.getCreator())) {
       throw new ConfigurationException("creator couldn't be empty ");
     }
@@ -120,7 +120,7 @@ public class UserIpConfigServiceImpl implements UserIpConfigService {
     if (StringUtils.isBlank(userIpVo.getDesc())) {
       throw new ConfigurationException("desc couldn't be empty ");
     }
-    // ip规则校验
+    // Ip rule verification
     String ipList = userIpVo.getIps();
     if (!ipList.equals("*")) {
       String[] split = ipList.split(",");
@@ -137,7 +137,7 @@ public class UserIpConfigServiceImpl implements UserIpConfigService {
 
   @Override
   public Boolean checkUserCteator(String user, String creator) throws ConfigurationException {
-    // 参数校验
+    // Parameter verification
     if (StringUtils.isBlank(creator)) {
       throw new ConfigurationException("creator couldn't be empty ");
     }

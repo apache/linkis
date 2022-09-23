@@ -18,6 +18,7 @@
 package org.apache.linkis.bml.client.impl
 
 import org.apache.linkis.bml.client.AbstractBmlClient
+import org.apache.linkis.bml.client.errorcode.LinkisBmlClientErrorCodeSummary._
 import org.apache.linkis.bml.common._
 import org.apache.linkis.bml.conf.BmlConfiguration._
 import org.apache.linkis.bml.http.HttpConf
@@ -69,7 +70,8 @@ class HttpBmlClient(
 
   private def createClientConfig(): DWSClientConfig = {
     val _serverUrl = if (StringUtils.isEmpty(serverUrl)) HttpConf.gatewayInstance else serverUrl
-    if (StringUtils.isEmpty(_serverUrl)) throw BmlClientFailException("serverUrl cannot be null.")
+    if (StringUtils.isEmpty(_serverUrl))
+      throw BmlClientFailException(SERVERUEL_CANNOT_BE_NULL.getErrorDesc)
     val config = if (properties == null) {
       new util.HashMap[String, Object]()
     } else {
@@ -198,9 +200,7 @@ class HttpBmlClient(
           "failed to copy inputStream and outputStream (inputStream和outputStream流copy失败)",
           e
         )
-        val exception = BmlClientFailException(
-          "failed to copy inputStream and outputStream (inputStream和outputStream流copy失败)"
-        )
+        val exception = BmlClientFailException(FAILED_COPY_INPUTSTREAM.getErrorDesc)
         exception.initCause(e)
         throw exception
       case t: Throwable =>
@@ -246,9 +246,7 @@ class HttpBmlClient(
           "failed to copy inputStream and outputStream (inputStream和outputStream流copy失败)",
           e
         )
-        val exception = BmlClientFailException(
-          "failed to copy inputStream and outputStream (inputStream和outputStream流copy失败)"
-        )
+        val exception = BmlClientFailException(FAILED_COPY_INPUTSTREAM.getErrorDesc)
         exception.initCause(e)
         throw e
       case t: Throwable =>

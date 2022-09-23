@@ -152,6 +152,32 @@ status()
 
 COMMAND=$1
 export SERVER_NAME=$2
+case $SERVER_NAME in
+  "cg-engineconnmanager"|"linkis-cg-engineconnmanager"|"engineconnmanager")
+    export SERVER_NAME="cg-engineconnmanager"
+    ;;
+  "cg-engineplugin"|"linkis-cg-engineplugin"|"engineplugin")
+    export SERVER_NAME="cg-engineplugin"
+    ;;
+  "cg-entrance"|"linkis-cg-entrance"|"entrance")
+    export SERVER_NAME="cg-entrance"
+    ;;
+  "cg-linkismanager"|"linkis-cg-linkismanager"|"linkismanager")
+    export SERVER_NAME="cg-linkismanager"
+    ;;
+  "mg-eureka"|"linkis-mg-eureka"|"eureka")
+    export SERVER_NAME="mg-eureka"
+    ;;
+  "mg-gateway"|"linkis-mg-gateway"|"gateway")
+    export SERVER_NAME="mg-gateway"
+    ;;
+  "ps-publicservice"|"linkis-ps-publicservice"|"publicservice")
+    export SERVER_NAME="ps-publicservice"
+    ;;
+  *)
+    ;;
+esac
+
 export SERVER_PID=$LINKIS_PID_DIR/linkis_$SERVER_NAME.pid
 case $COMMAND in
   start|stop|restart|status)

@@ -17,6 +17,8 @@
 
 package org.apache.linkis.common.utils
 
+import org.apache.commons.lang3.StringUtils
+
 import java.util.Hashtable
 
 import org.junit.jupiter.api.Assertions._
@@ -25,12 +27,13 @@ import org.junit.jupiter.api.Test
 class ClassUtilsTest {
 
   @Test private[utils] def testJarOfClass(): Unit = {
-    val hashTable = new Hashtable[String, String]()
-    val someClass = ClassUtils.jarOfClass(hashTable.getClass)
-    val uri = hashTable.getClass.getResource(
+
+    val someClass = ClassUtils.jarOfClass(classOf[StringUtils])
+    val uri = classOf[StringUtils].getResource(
       "/" +
-        hashTable.getClass.getName.replace('.', '/') + ".class"
+        classOf[StringUtils].getName.replace('.', '/') + ".class"
     )
+    println(s"StringutilsUri is $uri")
     assertEquals(
       Some(uri.toString.substring("jar:file:".length, uri.toString.indexOf("!"))),
       someClass

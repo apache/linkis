@@ -45,6 +45,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.linkis.configuration.errorcode.LinkisConfigurationErrorCodeSummary.*;
+
 @Service
 public class ConfigKeyServiceImpl implements ConfigKeyService {
 
@@ -62,13 +64,14 @@ public class ConfigKeyServiceImpl implements ConfigKeyService {
 
     if (StringUtils.isBlank(configKeyValue.getConfigValue())
         || StringUtils.isBlank(configKeyValue.getKey())) {
-      throw new ConfigurationException("key or value cannot be null");
+      throw new ConfigurationException(KEY_OR_VALUE_CANNOT.getErrorDesc());
     }
 
     LabelParameterParser.labelCheck(labelList);
     List<ConfigKey> configKeys = configMapper.seleteKeyByKeyName(configKeyValue.getKey());
     if (null == configKeys || configKeys.isEmpty()) {
-      throw new ConfigurationException("config key not exists: " + configKeyValue.getKey());
+      throw new ConfigurationException(
+          CONFIG_KEY_NOT_EXISTS.getErrorDesc() + configKeyValue.getKey());
     }
     ConfigKey configKey = configKeys.get(0);
     EngineTypeLabel engineTypeLabel = LabelUtil.getEngineTypeLabel(labelList);
@@ -117,10 +120,10 @@ public class ConfigKeyServiceImpl implements ConfigKeyService {
     try {
       combinedLabel = (CombinedLabel) combinedLabelBuilder.build("", labelList);
     } catch (LabelErrorException e) {
-      throw new ConfigurationException("Failed to build label", e);
+      throw new ConfigurationException(FAILED_TO_BUILD_LABEL.getErrorDesc(), e);
     }
     if (null == combinedLabel) {
-      throw new ConfigurationException("Failed to build label ,label is null");
+      throw new ConfigurationException(BUILD_LABEL_IS_NULL.getErrorDesc());
     }
     return combinedLabel;
   }
@@ -129,20 +132,21 @@ public class ConfigKeyServiceImpl implements ConfigKeyService {
   public List<ConfigValue> getConfigValue(String key, List<Label<?>> labelList)
       throws ConfigurationException {
     if (StringUtils.isBlank(key)) {
-      throw new ConfigurationException("configKey cannot be null");
+      throw new ConfigurationException(CONFIGKEY_CANNOT_BE_NULL.getErrorDesc());
     }
     LabelParameterParser.labelCheck(labelList);
     List<ConfigKey> configKeys = configMapper.seleteKeyByKeyName(key);
 
     if (null == configKeys || configKeys.isEmpty()) {
-      throw new ConfigurationException("config key not exists: " + key);
+      throw new ConfigurationException(CONFIG_KEY_NOT_EXISTS.getErrorDesc() + key);
     }
     CombinedLabel combinedLabel = getCombinedLabel(labelList);
 
     ConfigLabel configLabel =
         labelMapper.getLabelByKeyValue(combinedLabel.getLabelKey(), combinedLabel.getStringValue());
     if (null == configLabel || configLabel.getId() < 0) {
-      throw new ConfigurationException("label not exists: " + combinedLabel.getStringValue());
+      throw new ConfigurationException(
+          LABEL_NOT_EXISTS.getErrorDesc() + combinedLabel.getStringValue());
     }
     List<ConfigValue> configValues = new ArrayList<>();
     for (ConfigKey configKey : configKeys) {

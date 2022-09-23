@@ -18,6 +18,7 @@
 package org.apache.linkis.configuration.util
 
 import org.apache.linkis.common.conf.CommonVars
+import org.apache.linkis.configuration.errorcode.LinkisConfigurationErrorCodeSummary.THE_LABEL_PARAMETER_IS_EMPTY
 import org.apache.linkis.configuration.exception.ConfigurationException
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
@@ -89,7 +90,7 @@ object LabelParameterParser {
       }
       true
     } else {
-      throw new ConfigurationException("The label parameter is empty")
+      throw new ConfigurationException(THE_LABEL_PARAMETER_IS_EMPTY.getErrorDesc())
     }
   }
 

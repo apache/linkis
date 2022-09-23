@@ -32,4 +32,6 @@ public interface UserIpConfigService {
   List<UserIpVo> queryUserIPList(String user, String creator);
 
   Boolean checkUserCteator(String user, String creator) throws ConfigurationException;
+
+  UserIpVo queryUserIP(String user, String creator);
 }

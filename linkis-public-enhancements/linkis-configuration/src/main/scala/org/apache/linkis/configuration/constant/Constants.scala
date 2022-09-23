@@ -19,28 +19,26 @@ package org.apache.linkis.configuration.constant
 
 import org.apache.linkis.common.conf.CommonVars
 
-/**
- * Created by shangda on 2021/11/17.
- */
+
 object Constants {
 
   val LINKIS_API_VERSION: CommonVars[String] =
-    CommonVars[String]("wds.linkis.bml.api.version", "v1")
+    CommonVars[String]("wds.linkis.configuration.api.version", "v1")
 
   val AUTH_TOKEN_KEY: CommonVars[String] =
-    CommonVars[String]("wds.linkis.bml.auth.token.key", "Validation-Code")
+    CommonVars[String]("wds.linkis.configuration.auth.token.key", "Validation-Code")
 
   val AUTH_TOKEN_VALUE: CommonVars[String] =
-    CommonVars[String]("wds.linkis.bml.auth.token.value", "BML-AUTH")
+    CommonVars[String]("wds.linkis.configuration.auth.token.value", "BML-AUTH")
 
   val CONNECTION_MAX_SIZE: CommonVars[Int] =
-    CommonVars[Int]("wds.linkis.bml.connection.max.size", 10)
+    CommonVars[Int]("wds.linkis.configuration.connection.max.size", 10)
 
   val CONNECTION_TIMEOUT: CommonVars[Int] =
-    CommonVars[Int]("wds.linkis.bml.connection.timeout", 5 * 60 * 1000)
+    CommonVars[Int]("wds.linkis.configuration.connection.timeout", 5 * 60 * 1000)
 
   val CONNECTION_READ_TIMEOUT: CommonVars[Int] =
-    CommonVars[Int]("wds.linkis.bml.connection.read.timeout", 10 * 60 * 1000)
+    CommonVars[Int]("wds.linkis.configuration.connection.read.timeout", 10 * 60 * 1000)
 
   val AUTH_TOKEN_KEY_SHORT_NAME = "tokenKey"
   val AUTH_TOKEN_VALUE_SHORT_NAME = "tokenValue"

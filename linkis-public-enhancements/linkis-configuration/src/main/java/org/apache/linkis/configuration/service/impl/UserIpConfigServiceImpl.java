@@ -146,4 +146,9 @@ public class UserIpConfigServiceImpl implements UserIpConfigService {
     }
     return CollectionUtils.isNotEmpty(queryUserIPList(user, creator));
   }
+
+  @Override
+  public UserIpVo queryUserIP(String user, String creator) {
+    return userIpMapper.queryUserIP(user, creator);
+  }
 }

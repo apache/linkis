@@ -33,4 +33,6 @@ public interface TenantConfigService {
 
   Boolean checkUserCteator(String user, String creator, String tenantValue)
       throws ConfigurationException;
+
+  TenantVo queryTenant(String user, String creator);
 }

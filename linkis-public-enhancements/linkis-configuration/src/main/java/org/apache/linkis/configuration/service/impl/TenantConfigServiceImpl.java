@@ -169,4 +169,9 @@ public class TenantConfigServiceImpl implements TenantConfigService {
     }
     return CollectionUtils.isNotEmpty(queryTenantList(user, creator, tenantValue));
   }
+
+  @Override
+  public TenantVo queryTenant(String user, String creator) {
+    return userTenantMapper.queryTenant(user, creator);
+  }
 }

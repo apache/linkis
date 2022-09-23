@@ -1,6 +1,5 @@
 ## linkis-computation-orchestrator 配置
 
-
 | 模块名(服务名) | 参数名 | 默认值 | 描述 | 是否引用|
 | -------- | -------- | ----- |----- |  -----   |
 |linkis-computation-orchestrator|wds.linkis.computation.orchestrator.create.service |dss|orchestrator.create.service|
@@ -17,5 +16,3 @@
 |linkis-computation-orchestrator|wds.linkis.orchestrator.engine.lastupdate.timeout|5s| orchestrator.engine.lastupdate.timeout |
 |linkis-computation-orchestrator|wds.linkis.orchestrator.engine.timeout| 10s| orchestrator.engine.timeout|
 |linkis-computation-orchestrator|wds.linkis.orchestrator.engine.activity_monitor.interval|10s| orchestrator.engine.activity_monitor.interval||
- 
-

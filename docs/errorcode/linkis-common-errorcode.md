@@ -1,6 +1,5 @@
 ## linkis-common errorcode
 
-
 | 模块名(服务名) | 错误码  | 描述 | module|
 | -------- | -------- | ----- |-----|
 |linkis-common|11000|Engine failed to start（引擎启动失败）|hiveEngineConn|
@@ -10,9 +9,3 @@
 |linkis-common|20100|User is empty in the parameters of the request engine（请求引擎的参数中user为空）|EngineConnManager|
 |linkis-common|321|Failed to start under certain circumstances（在某种情况下启动失败）|EngineConnManager|
 |linkis-common|10000|Error code definition exceeds the maximum value or is less than the minimum value（错误码定义超过最大值或者小于最小值）|linkis-frame|
-
-
-
-
-
-

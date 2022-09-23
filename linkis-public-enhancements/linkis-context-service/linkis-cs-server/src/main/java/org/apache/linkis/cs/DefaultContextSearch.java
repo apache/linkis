@@ -34,6 +34,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.linkis.cs.errorcode.LinkisCsServerErrorCodeSummary.UNKNOWN_CONDITION_TYPE;
+
 public class DefaultContextSearch implements ContextSearch {
 
   private static Logger logger = LoggerFactory.getLogger(DefaultContextSearch.class);
@@ -84,6 +86,7 @@ public class DefaultContextSearch implements ContextSearch {
       return new ContextValueTypeConditionExecution(
           (ContextValueTypeCondition) condition, contextCacheService, contextID);
     }
-    throw new ContextSearchFailedException(1200001, "Unknown Condition Type");
+    throw new ContextSearchFailedException(
+        UNKNOWN_CONDITION_TYPE.getErrorCode(), UNKNOWN_CONDITION_TYPE.getErrorDesc());
   }
 }

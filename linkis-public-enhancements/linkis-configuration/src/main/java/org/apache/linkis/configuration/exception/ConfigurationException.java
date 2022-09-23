@@ -19,16 +19,18 @@ package org.apache.linkis.configuration.exception;
 
 import org.apache.linkis.common.exception.ErrorException;
 
+import static org.apache.linkis.configuration.errorcode.LinkisConfigurationErrorCodeSummary.BUILD_LABEL_ID;
+
 public class ConfigurationException extends ErrorException {
 
   public static final int CONFIGURATION_ERROR_CODE = 14100;
 
   public ConfigurationException(String message) {
-    super(14100, message);
+    super(BUILD_LABEL_ID.getErrorCode(), message);
   }
 
   public ConfigurationException(String message, Throwable throwable) {
-    super(14100, message);
+    super(BUILD_LABEL_ID.getErrorCode(), message);
     initCause(throwable);
   }
 }

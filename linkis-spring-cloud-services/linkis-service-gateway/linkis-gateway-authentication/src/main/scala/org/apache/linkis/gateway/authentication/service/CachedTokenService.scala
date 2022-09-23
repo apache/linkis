@@ -17,14 +17,13 @@
 
 package org.apache.linkis.gateway.authentication.service
 
-import org.apache.linkis.common.exception.ErrorException
 import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.gateway.authentication.bo.{Token, User}
-import org.apache.linkis.gateway.authentication.bo.Token
 import org.apache.linkis.gateway.authentication.bo.impl.TokenImpl
 import org.apache.linkis.gateway.authentication.conf.TokenConfiguration
 import org.apache.linkis.gateway.authentication.dao.TokenDao
 import org.apache.linkis.gateway.authentication.entity.TokenEntity
+import org.apache.linkis.gateway.authentication.errorcode.LinkisGwAuthenticationErrorCodeSummary._
 import org.apache.linkis.gateway.authentication.exception.{
   TokenAuthException,
   TokenNotExistException
@@ -54,7 +53,7 @@ class CachedTokenService extends TokenService {
         if (tokenEntity != null) {
           new TokenImpl().convertFrom(tokenEntity)
         } else {
-          throw new TokenNotExistException(15204, s"Invalid Token")
+          throw new TokenNotExistException(INVALID_TOKEN.getErrorCode, INVALID_TOKEN.getErrorDesc)
         }
       }
 
@@ -105,7 +104,7 @@ class CachedTokenService extends TokenService {
 
   private def loadTokenFromCache(tokenName: String): Token = {
     if (tokenName == null) {
-      throw new TokenAuthException(15205, "Token is null!")
+      throw new TokenAuthException(TOKEN_IS_NULL.getErrorCode, TOKEN_IS_NULL.getErrorDesc)
     }
     Utils.tryCatch(tokenCache.get(tokenName))(t =>
       t match {
@@ -113,9 +112,16 @@ class CachedTokenService extends TokenService {
           x.getCause match {
             case _: TokenNotExistException => null
             case _ =>
-              throw new TokenAuthException(15200, "Failed to load token from DB into cache!")
+              throw new TokenAuthException(
+                FAILED_TO_LOAD_TOKEN.getErrorCode,
+                FAILED_TO_LOAD_TOKEN.getErrorDesc
+              )
           }
-        case _ => throw new TokenAuthException(15200, "Failed to load token from DB into cache!")
+        case _ =>
+          throw new TokenAuthException(
+            FAILED_TO_LOAD_TOKEN.getErrorCode,
+            FAILED_TO_LOAD_TOKEN.getErrorDesc
+          )
       }
     )
   }
@@ -149,15 +155,18 @@ class CachedTokenService extends TokenService {
     var ok: Boolean = true
     if (!isTokenValid(tmpToken)) {
       ok = false
-      throw new TokenAuthException(15201, "Token is not valid or stale!")
+      throw new TokenAuthException(
+        TOKEN_VALID_OR_STALE.getErrorCode,
+        TOKEN_VALID_OR_STALE.getErrorDesc
+      )
     }
     if (!isTokenAcceptableWithUser(tmpToken, userName)) {
       ok = false
-      throw new TokenAuthException(15202, "Illegal TokenUser for Token!")
+      throw new TokenAuthException(ILLEGAL_TOKENUSER.getErrorCode, ILLEGAL_TOKENUSER.getErrorDesc)
     }
     if (!isTokenAcceptableWithHost(tmpToken, host)) {
       ok = false
-      throw new TokenAuthException(15203, "Illegal Host for Token!")
+      throw new TokenAuthException(ILLEGAL_HOST.getErrorCode, ILLEGAL_HOST.getErrorDesc)
     }
     ok
   }

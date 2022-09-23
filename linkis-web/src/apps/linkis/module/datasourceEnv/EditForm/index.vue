@@ -95,19 +95,20 @@ export default {
           ],
         },
         {
-          type: 'input',
-          title: "数据源ID",
-          field: 'datasourceTypeId',
+          type: "select",
+          field: "datasourceTypeId",
+          title: "数据源环境",
           value: '',
+          options: [],
           props: {
-            placeholder: "",
+            placement: "bottom",
           },
           validate: [
             {
               required: true,
               message: `${this.$t(
                 'message.linkis.datasource.pleaseInput'
-              )}"数据源ID"`,
+              )}"数据源环境"`,
               trigger: 'blur',
             },
           ],
@@ -131,7 +132,7 @@ export default {
               trigger: 'blur',
             },
           ],
-        }
+        },
       ]
     }
   },
@@ -141,7 +142,10 @@ export default {
   methods: {
     getData(data){
       this.formData = {...data}
-    }
+    },
+    changeSelector(options){
+      this.rule[3].options = [...options];
+    },
   },
   watch: {
     data: {

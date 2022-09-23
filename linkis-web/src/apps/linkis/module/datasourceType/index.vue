@@ -34,32 +34,43 @@
       <Col span="15">
       </Col>
     </Row>
-    <Table border size="small" align="center" :columns="tableColumnNum" :data="pageDatalist" max-height="420"
-      class="table-content">
-      <template slot-scope="{ row,index }" slot="action">
-        <ButtonGroup size="small">
-          <Button
-            :disabled="row.expire"
-            size="small"
-            type="primary"
-            @click="onTableEdit(row, index)"
-          >{{ $t('message.linkis.edit') }}
-          </Button
-          >
-          <Button
-            :disabled="row.expire"
-            size="small"
-            type="primary"
-            @click="onTableDelete(row, index)"
-          >
-            {{ $t('message.linkis.basedata.remove') }}
-          </Button>
-        </ButtonGroup>
-      </template>
-    </Table>
-    <div style="margin: 10px; overflow: hidden">
-      <div style="float: right">
-        <Page :page-size="page.pageSize" :total="page.totalSize" :current="page.pageNow" @on-change="changePage"></Page>
+    <div style="height: 600px">
+      <Table border size="small" align="center" :columns="tableColumnNum" :data="pageDatalist" max-height="450"
+        class="table-content">
+        <template slot-scope="{ row,index }" slot="action">
+          <ButtonGroup size="small">
+            <Button
+              :disabled="row.expire"
+              size="small"
+              type="primary"
+              @click="onTableEdit(row, index)"
+            >{{ $t('message.linkis.edit') }}
+            </Button
+            >
+            <Button
+              :disabled="row.expire"
+              size="small"
+              type="primary"
+              @click="onTableDelete(row, index)"
+            >
+              {{ $t('message.linkis.basedata.remove') }}
+            </Button>
+          </ButtonGroup>
+        </template>
+      </Table>
+    </div>
+    <div style="margin: 10px; overflow: hidden; textAlign: center">
+      <div>
+        <Page
+          :page-size="page.pageSize"
+          :total="page.totalSize"
+          :current="page.pageNow"
+          @on-change="changePage"
+          size="small"
+          show-total
+          show-elevator
+          :prev-text="$t('message.linkis.previousPage')" :next-text="$t('message.linkis.nextPage')"
+        ></Page>
       </div>
     </div>
     <Modal
@@ -145,10 +156,18 @@ export default {
         },
 
       ],
+      modalEditData: {
+        classifier: '',
+        description: '',
+        icon: '',
+        id: '',
+        layers: '',
+        name: '',
+        option: ''
+      },
       pageDatalist: [],
       modalShow: false,
       modalAddMode: 'add',
-      modalEditData: {},
       modalLoading: false
     };
   },
@@ -160,7 +179,7 @@ export default {
   },
   methods: {
     init() {
-      console.log(this.$route.query.isSkip);
+      //console.log(this.$route.query.isSkip);
     },
     load() {
       let params = {
@@ -178,25 +197,22 @@ export default {
       this.load()
     },
     onAdd(){
-      this.modalEditData={
-        id: "",
-        errorCode: "",
-        errorDesc: "",
-        errorRegex: '',
-      }
+      console.log(this.modalEditData)
       this.modalAddMode = 'add'
       this.modalShow = true
+      this.clearForm()
     },
     onTableEdit(row){
-      this.modalEditData = row
+      this.modalEditData = {...row}
+      //console.log(this.modalEditData)
       this.modalAddMode = 'edit'
       this.modalShow = true
     },
     onTableDelete(row){
-
+      //console.log(row)
       this.$Modal.confirm({
         title: "提示信息",
-        content: "确认是否删除该记录?",
+        content: `确定删除 ${row.name} 这条记录?`,
         onOk: ()=>{
           let params = {
             id: row.id
@@ -239,7 +255,7 @@ export default {
           })
         }else {
           edit(formData).then((data)=>{
-            console.log(data)
+
             if(data.result) {
               this.$Message.success({
                 duration: 3,
@@ -261,6 +277,11 @@ export default {
     onModalCancel(){
       this.modalLoading=false
       this.modalShow = false
+    },
+    clearForm(){
+      for(let key in this.modalEditData) {
+        this.modalEditData[key] = ''
+      }
     }
   },
 };

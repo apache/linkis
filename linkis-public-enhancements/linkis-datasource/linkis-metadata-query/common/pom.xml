@@ -54,6 +54,11 @@
       <artifactId>linkis-datasource-manager-common</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <!-- for jdk9 or higher -->
+    <dependency>
+      <groupId>jakarta.annotation</groupId>
+      <artifactId>jakarta.annotation-api</artifactId>
+    </dependency>
   </dependencies>
 
   <build>

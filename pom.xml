@@ -1234,7 +1234,7 @@
                 <exclude>**/restful/**/*Restful.java</exclude>
               </excludes>
 
-              <removeUnusedImports/>
+              <removeUnusedImports></removeUnusedImports>
             </java>
             <scala>
               <scalafmt>

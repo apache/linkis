@@ -40,7 +40,7 @@ class FsService extends Logging {
     if (FsCache.fsInfo.get(user) != null) {
       // The outer layer does not add more judgments, it is also ok, it is to lock the user's fs group.(外层不加多个判断也ok，都是要锁用户的fs组)
       FsCache.fsInfo.get(user) synchronized {
-        if (FsCache.fsInfo.get(user).filter(_.fs.fsName().equals(fsPath.getFsType)).isEmpty) {
+        if (!FsCache.fsInfo.get(user).exists(_.fs.fsName().equals(fsPath.getFsType))) {
           FsCache.fsInfo.get(user) += produceFSInfo(user, fsPath)
         } else {
           FsCache.fsInfo
@@ -52,14 +52,14 @@ class FsService extends Logging {
     } else {
       FsCache.fsInfo synchronized {
         if (FsCache.fsInfo.get(user) == null) {
-          FsCache.fsInfo.asScala += user -> ArrayBuffer(produceFSInfo(user, fsPath))
+          FsCache.fsInfo.put(user, ArrayBuffer(produceFSInfo(user, fsPath)))
         }
       }
       // (43-49) Prevent file and hdfs from entering 37 lines at the same time, causing 51 lines to report the cross mark
       // （43-49）防止file和hdfs同时进到37行，导致51行报下角标越界
-      if (FsCache.fsInfo.get(user).filter(_.fs.fsName().equals(fsPath.getFsType)).isEmpty) {
+      if (!FsCache.fsInfo.get(user).exists(_.fs.fsName().equals(fsPath.getFsType))) {
         FsCache.fsInfo.get(user) synchronized {
-          if (FsCache.fsInfo.get(user).filter(_.fs.fsName().equals(fsPath.getFsType)).isEmpty) {
+          if (!FsCache.fsInfo.get(user).exists(_.fs.fsName().equals(fsPath.getFsType))) {
             FsCache.fsInfo.get(user) += produceFSInfo(user, fsPath)
           }
         }

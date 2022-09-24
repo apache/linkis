@@ -105,7 +105,7 @@ class ECTaskEntranceInfoAccess extends ConnectionInfoAccess with Logging {
           "invalid data-type: " + request.getClass.getCanonicalName
         )
     }
-    JavaConverters.asScalaIteratorConverter(ret.iterator()).asScala.toList
+    ret.iterator().asScala.toList
   }
 
   private def getDWCServiceInstance(serviceInstance: SpringCloudServiceInstance): ServiceInstance =

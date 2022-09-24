@@ -118,7 +118,7 @@ class DefaultNodeLabelService extends NodeLabelService with Logging {
     val willBeAdd = newKeyList.diff(oldKeyList)
     val willBeUpdate = oldKeyList.diff(willBeDelete)
     val modifiableKeyList = LabelUtils.listAllUserModifiableLabel()
-    if (!CollectionUtils.isEmpty(willBeDelete.asJava)) {
+    if (null != willBeDelete && willBeDelete.nonEmpty) {
       nodeLabels.asScala.foreach(nodeLabel => {
         if (
             modifiableKeyList.contains(nodeLabel.getLabelKey) && willBeDelete
@@ -135,7 +135,7 @@ class DefaultNodeLabelService extends NodeLabelService with Logging {
      * update step:
      * 1.delete relations of old labels 2.add new relation between new labels and instance
      */
-    if (!CollectionUtils.isEmpty(willBeUpdate.asJava)) {
+    if (null != willBeDelete && willBeDelete.nonEmpty) {
       labels.asScala.foreach(label => {
         if (
             modifiableKeyList.contains(label.getLabelKey) && willBeUpdate
@@ -156,7 +156,7 @@ class DefaultNodeLabelService extends NodeLabelService with Logging {
         }
       })
     }
-    if (!CollectionUtils.isEmpty(willBeAdd.asJava)) {
+    if (null != willBeAdd && willBeAdd.nonEmpty) {
       labels.asScala
         .filter(label => willBeAdd.contains(label.getLabelKey))
         .foreach(label => {

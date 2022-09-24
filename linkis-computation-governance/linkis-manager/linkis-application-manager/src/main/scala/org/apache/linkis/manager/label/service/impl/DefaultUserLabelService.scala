@@ -65,7 +65,7 @@ class DefaultUserLabelService extends UserLabelService with Logging {
     // 4.找出重复key,删除这个relation
     duplicatedKeyLabel.foreach(l => {
       labelManagerPersistence.removeLabelFromUser(user, util.Arrays.asList(l.getId))
-      userRelationLabels.asScala.toList.asJava.remove(duplicatedKeyLabel.get)
+      userRelationLabels.remove(duplicatedKeyLabel.get)
     })
     // 5.插入新的relation 需要抛出duplicateKey异常，回滚
     labelManagerPersistence.addLabelToUser(user, util.Arrays.asList(dbLabel.getId))

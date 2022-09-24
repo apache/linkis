@@ -46,16 +46,6 @@ abstract class EntranceExecutorManager(groupFactory: GroupFactory)
     }
   }
 
-  protected def createMarkReq(jobReq: JobRequest): MarkReq = {
-    val markReq = new MarkReq
-    markReq.setCreateService(EntranceConfiguration.DEFAULT_CREATE_SERVICE.getValue)
-    // todo get default config from db
-    markReq.setProperties(jobReq.getParams)
-    markReq.setUser(jobReq.getExecuteUser)
-    markReq.setLabels(LabelUtils.labelsToMap(jobReq.getLabels))
-    markReq
-  }
-
   override def askExecutor(schedulerEvent: SchedulerEvent): Option[Executor] =
     schedulerEvent match {
       case job: Job =>
@@ -109,11 +99,8 @@ abstract class EntranceExecutorManager(groupFactory: GroupFactory)
       case job: EntranceJob =>
         job.getJobRequest match {
           case jobRequest: JobRequest =>
-            // CreateMarkReq
-            val markReq = createMarkReq(jobRequest)
-            // getMark
             val entranceEntranceExecutor =
-              new DefaultEntranceExecutor(idGenerator.incrementAndGet(), markReq, this)
+              new DefaultEntranceExecutor(idGenerator.incrementAndGet())
             // getEngineConn Executor
             job.getLogListener.foreach(
               _.onLogUpdate(job, "Your job is being scheduled by orchestrator.")

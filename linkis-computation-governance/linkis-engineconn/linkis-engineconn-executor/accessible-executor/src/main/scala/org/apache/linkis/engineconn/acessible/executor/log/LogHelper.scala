@@ -59,7 +59,6 @@ object LogHelper extends Logging {
       }
       if (logs != null && logs.size > 0) {
         val sb: StringBuilder = new StringBuilder
-        import scala.collection.JavaConverters._
         logs.asScala map (log => log + "\n") foreach sb.append
         logListener.onLogUpdate(TaskLogUpdateEvent(null, sb.toString))
       }

@@ -37,6 +37,7 @@ import org.apache.linkis.storage.resultset.ResultSetWriter
 import org.apache.commons.exec.CommandLine
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang3.{RandomStringUtils, StringUtils}
+import org.apache.spark.SparkConf
 import org.apache.spark.api.java.JavaSparkContext
 import org.apache.spark.sql.{DataFrame, SparkSession}
 import org.apache.spark.sql.execution.datasources.csv.UDF
@@ -89,9 +90,9 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
     }
   }
 
-  def getSparkConf: Unit = sc.getConf
+  def getSparkConf: SparkConf = sc.getConf
 
-  def getJavaSparkContext: Unit = new JavaSparkContext(sc)
+  def getJavaSparkContext: JavaSparkContext = new JavaSparkContext(sc)
 
   def getSparkSession: Object = if (sparkSession != null) sparkSession
   else () => throw new IllegalAccessException("not supported keyword spark in spark1.x versions")

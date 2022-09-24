@@ -94,5 +94,5 @@ object AbstractJobReq {
 }
 
 object JobReq {
-  def getDefaultPriority: Unit = 0
+  def getDefaultPriority: Int = 0
 }

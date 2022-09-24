@@ -98,20 +98,49 @@ export default {
           type: "select",
           field: "datasourceTypeId",
           title: "数据源环境",
-          value: '',
+          value: 1,
           options: [],
-          props: {
-            placement: "bottom",
-          },
           validate: [
             {
               required: true,
               message: `${this.$t(
                 'message.linkis.datasource.pleaseInput'
-              )}"数据源环境"`,
-              trigger: 'blur',
+              )}"数据源环境"`
             },
           ],
+        },
+        {
+          type: "radio",
+          title: "kerboros认证",
+          field: "keytab",
+          value: false,
+          options: [
+            {value: false,label: "否",disabled: false},
+            {value: true,label: "是",disabled: false},
+          ],
+          on: {
+            'on-change': () => {
+              this.rule[5].hidden = !this.rule[5].hidden;
+            }
+          }
+        },
+        {
+          type: "upload",
+          field: "pic",
+          title: "keytab",
+          value: [],
+          hidden: true,
+          props: {
+            uploadType: 'file',
+            action: "/api/rest_j/v1/bml/upload",
+            maxLength: 1,
+            multiple: false,
+            onSuccess: (res) =>{
+              let tmpParameter = this.formData.parameter ? JSON.parse(this.formData.parameter) : {};
+              tmpParameter.keytab = res.data.resourceId;
+              this.formData.parameter = JSON.stringify(tmpParameter);
+            }
+          },
         },
         {
           type: 'input',
@@ -150,10 +179,22 @@ export default {
   watch: {
     data: {
       handler(newV) {
+        this.rule[4].hidden = newV.datasourceTypeId == 4 ? false : true;
+        //console.log(this.rule[4], newV.datasourceTypeId)
+        if(this.rule[4].hidden) this.rule[5].hidden = true;
+        this.rule[5].hidden = !this.formData.keytab;
         this.getData(newV)
       },
       deep: true,
     },
+    formData: {
+      handler(newV){
+        this.rule[4].hidden = newV.datasourceTypeId == 4 ? false : true;
+        if(this.rule[4].hidden) this.rule[5].hidden = true;
+        this.rule[5].hidden = !this.formData.keytab;
+      },
+      deep: true
+    }
   },
 }
 </script>

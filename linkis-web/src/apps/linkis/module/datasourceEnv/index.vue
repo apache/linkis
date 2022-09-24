@@ -224,7 +224,7 @@ export default {
           this.pageDatalist = data.list.list
           this.page.totalSize = data.list.total
           let options = []
-
+          //console.log(this.pageDatalist)
           this.pageDatalist.map(item => { item.name = this.allEnv[item.datasourceTypeId - 1].name})
           this.allEnv.map(item => {
             options.push({value: +item.id, label: item.name})
@@ -243,8 +243,9 @@ export default {
       this.modalShow = true
     },
     onTableEdit(row){
+      row.keytab = JSON.parse(row.parameter).keytab ? true : false;
       this.modalEditData = {...row}
-      console.log(this.modalEditData)
+      //console.log(this.modalEditData)
       this.modalAddMode = 'edit'
       this.modalShow = true
     },
@@ -279,13 +280,16 @@ export default {
       for(let key in this.modalEditData) {
         this.modalEditData[key] = ''
       }
+      this.modalEditData.keytab = false;
     },
     onModalOk(){
       this.$refs.errorCodeForm.formModel.submit((formData)=>{
+        if('keytab' in formData) delete formData['keytab'];
+        if('pic' in formData) delete formData['pic'];
         this.modalLoading = true
         if(this.modalAddMode=='add') {
           add(formData).then((data)=>{
-            console.log(data)
+            //console.log(data)
             if(data.result) {
               this.$Message.success({
                 duration: 3,
@@ -300,7 +304,7 @@ export default {
           })
         }else {
           edit(formData).then((data)=>{
-            console.log(data)
+            //console.log(data)
             if(data.result) {
               this.$Message.success({
                 duration: 3,

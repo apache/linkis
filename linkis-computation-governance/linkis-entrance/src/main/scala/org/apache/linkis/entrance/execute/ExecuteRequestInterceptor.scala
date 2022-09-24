@@ -96,7 +96,7 @@ object RuntimePropertiesExecuteRequestInterceptor extends ExecuteRequestIntercep
   override def apply(requestTask: RequestTask, executeRequest: ExecuteRequest): RequestTask =
     executeRequest match {
       case runtime: RuntimePropertiesExecuteRequest =>
-        mapAsScalaMapConverter(runtime.properties).asScala.foreach { case (k, v) =>
+        runtime.properties.asScala.foreach { case (k, v) =>
           requestTask.data(k, v)
         }
         requestTask

@@ -83,6 +83,10 @@ class EngineExecutionContext(executor: ComputationExecutor, executorUser: String
       })
     }
 
+  /**
+   * Note: the writer will be closed at the end of the method
+   * @param resultSetWriter
+   */
   def sendResultSet(resultSetWriter: ResultSetWriter[_ <: MetaData, _ <: Record]): Unit = {
     logger.info("Start to send res to entrance")
     val fileName = new File(resultSetWriter.toFSPath.getPath).getName

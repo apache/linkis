@@ -53,7 +53,7 @@ public class JobHistoryQueryServiceTest {
     jobRequest.setErrorCode(0);
     jobRequest.setCreatedTime(new Date());
     jobRequest.setUpdatedTime(new Date());
-    jobRequest.setInstances("bd078:9104");
+    jobRequest.setInstances("127.0.0.1:9104");
     jobRequest.setMetrics(new HashMap<>());
     jobRequest.setExecutionCode("show databases;");
     jobRequest.setResultLocation("hdfs:///tmp/linkis/hadoop/linkis/20220714_185840/LINKISCLI/1");

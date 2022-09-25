@@ -53,7 +53,7 @@ public class JobHistoryMapperTest extends BaseDaoTest {
     jobHistory.setErrorCode(0);
     jobHistory.setCreatedTime(new Date());
     jobHistory.setUpdatedTime(new Date());
-    jobHistory.setInstances("bd078:9104");
+    jobHistory.setInstances("127.0.0.1:9104");
     jobHistory.setMetrics(
         "{\"scheduleTime\":\"2022-07-14T19:02:05+0800\",\"timeToOrchestrator\":\"2022-07-14T19:02:05+0800\",\"submitTime\":\"2022-07-14T19:02:04+0800\",\"yarnResource\":{\"application_1657595967414_0005\":{\"queueMemory\":1073741824,\"queueCores\":1,\"queueInstances\":0,\"jobStatus\":\"COMPLETED\",\"queue\":\"default\"}},\"completeTime\":\"2022-07-14T19:03:08+0800\"}");
     jobHistory.setEngineType("spark");

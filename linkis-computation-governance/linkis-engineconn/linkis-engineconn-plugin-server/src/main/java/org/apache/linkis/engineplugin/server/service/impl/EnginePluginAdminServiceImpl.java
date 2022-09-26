@@ -24,7 +24,7 @@ import org.apache.linkis.bml.protocol.Version;
 import org.apache.linkis.common.utils.ZipUtils;
 import org.apache.linkis.engineplugin.server.dao.EngineConnBmlResourceDao;
 import org.apache.linkis.engineplugin.server.entity.EngineConnBmlResource;
-import org.apache.linkis.engineplugin.server.localize.AbstractEngineConnBmlResourceGenerator;
+import org.apache.linkis.engineplugin.server.localize.DefaultEngineConnBmlResourceGenerator;
 import org.apache.linkis.engineplugin.server.restful.EnginePluginRestful;
 import org.apache.linkis.engineplugin.vo.EnginePluginBMLVo;
 
@@ -44,12 +44,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Service
-public class EnginePluginAdminService
+public class EnginePluginAdminServiceImpl
     implements org.apache.linkis.engineplugin.server.service.EnginePluginAdminService {
 
   private static final Logger log = LoggerFactory.getLogger(EnginePluginRestful.class);
   @Autowired private EngineConnBmlResourceDao engineConnBmlResourceDao;
-  @Autowired private AbstractEngineConnBmlResourceGenerator abstractEngineConnBmlResourceGenerator;
+  @Autowired private DefaultEngineConnBmlResourceGenerator defaultEngineConnBmlResourceGenerator;
 
   private BmlClient bmlClient = BmlClientFactory.createBmlClient();
 
@@ -87,7 +87,7 @@ public class EnginePluginAdminService
             // bmlClient.deleteResource(username,engineConnBmlResource.getBmlResourceId());
             engineConnBmlResourceDao.delete(engineConnBmlResource);
           });
-      String engineConnsHome = abstractEngineConnBmlResourceGenerator.getEngineConnsHome();
+      String engineConnsHome = defaultEngineConnBmlResourceGenerator.getEngineConnsHome();
       File file = new File(engineConnsHome + "/" + ecType);
       if (file.exists()) {
         deleteDir(file);
@@ -113,7 +113,7 @@ public class EnginePluginAdminService
 
   @Override
   public void uploadToECHome(MultipartFile mfile) {
-    String engineConnsHome = abstractEngineConnBmlResourceGenerator.getEngineConnsHome();
+    String engineConnsHome = defaultEngineConnBmlResourceGenerator.getEngineConnsHome();
     try {
       InputStream in = mfile.getInputStream();
       byte[] buffer = new byte[1024];

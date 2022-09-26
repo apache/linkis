@@ -18,14 +18,13 @@
 package org.apache.linkis.manager.engineplugin.python.errorcode;
 
 public enum LinkisPythonErrorCodeSummary {
-  INVALID_PYTHON_SESSION(
-      400201, "Invalid python session.(无效的 python 会话.)", "Invalid python session.(无效的 python 会话.)"),
+  PYTHON_EXECUTE_ERROR(41001, "", ""),
   PYSPARK_PROCESSS_STOPPED(
       60003,
       "Pyspark process  has stopped, query failed!(Pyspark 进程已停止，查询失败！)",
       "Pyspark process  has stopped, query failed!(Pyspark 进程已停止，查询失败！)"),
-  PYTHON_EXECUTE_ERROR(41001, "", "");
-
+  INVALID_PYTHON_SESSION(
+      400201, "Invalid python session.(无效的 python 会话.)", "Invalid python session.(无效的 python 会话.)");
   /** 错误码 */
   private int errorCode;
   /** 错误描述 */

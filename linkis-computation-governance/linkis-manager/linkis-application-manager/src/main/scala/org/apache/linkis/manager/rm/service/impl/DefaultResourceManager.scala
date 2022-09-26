@@ -251,11 +251,6 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
       wait: Long
   ): ResultResource = {
     val labelContainer = labelResourceService.enrichLabels(labels)
-    logger.debug(
-      "start processing request resource for labels {} and resource {}",
-      labelContainer,
-      resource
-    )
     // check resource with lock
     val requestResourceService = getRequestResourceService(resource.getResourceType)
     resource.setLockedResource(resource.getMinResource)
@@ -602,7 +597,7 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
           labelResourceMapping.getResourceOperationType.toString
         )
       } { case e: Exception =>
-        logger.error("Failed to roll back resource {}", labelResourceSet.mkString("\n"), e)
+        logger.error(s"Failed to roll back resource " + labelResourceSet.mkString("\n"), e)
       }
       resourceLockService.unLock(persistenceLock)
     }

@@ -17,7 +17,7 @@
 
 package org.apache.linkis.manager.rm.entity
 
-import org.apache.linkis.manager.common.entity.resource.{NodeResource, Resource}
+import org.apache.linkis.manager.common.entity.resource.Resource
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.rm.entity.ResourceOperationType.ResourceOperationType
 
@@ -30,7 +30,7 @@ class LabelResourceMapping(
   override def equals(obj: Any): Boolean = {
     obj match {
       case labelResourceMap: LabelResourceMapping =>
-        labelResourceMap.label.getStringValue.equals(label.getStringValue)
+        labelResourceMap.getLabel().getStringValue.equals(label.getStringValue)
       case _ => false
     }
   }

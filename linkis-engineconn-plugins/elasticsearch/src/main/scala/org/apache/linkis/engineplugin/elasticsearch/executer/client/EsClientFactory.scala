@@ -19,6 +19,7 @@ package org.apache.linkis.engineplugin.elasticsearch.executer.client
 
 import org.apache.linkis.common.conf.CommonVars
 import org.apache.linkis.engineplugin.elasticsearch.conf.ElasticSearchConfiguration._
+import org.apache.linkis.engineplugin.elasticsearch.errorcode.EasticsearchErrorCodeSummary.CLUSTER_IS_BLANK
 import org.apache.linkis.engineplugin.elasticsearch.exception.EsParamsIllegalException
 
 import org.apache.commons.lang3.StringUtils
@@ -81,11 +82,11 @@ object EsClientFactory {
   private def createRestClient(options: util.Map[String, String]): EsClient = {
     val clusterStr = options.get(ES_CLUSTER.key)
     if (StringUtils.isBlank(clusterStr)) {
-      throw EsParamsIllegalException("cluster is blank!")
+      throw EsParamsIllegalException(CLUSTER_IS_BLANK.getErrorDesc)
     }
     val cluster = getCluster(clusterStr)
     if (cluster.isEmpty) {
-      throw EsParamsIllegalException("cluster is empty!")
+      throw EsParamsIllegalException(CLUSTER_IS_BLANK.getErrorDesc)
     }
     val username = options.get(ES_USERNAME.key)
     val password = options.get(ES_PASSWORD.key)

@@ -18,6 +18,7 @@
 package org.apache.linkis.engineplugin.elasticsearch.executer.client.impl
 
 import org.apache.linkis.common.utils.Utils
+import org.apache.linkis.engineplugin.elasticsearch.errorcode.EasticsearchErrorCodeSummary.RESPONSE_FAIL_IS_EMPTY
 import org.apache.linkis.engineplugin.elasticsearch.exception.EsConvertResponseException
 import org.apache.linkis.engineplugin.elasticsearch.executer.client.{
   ElasticSearchJsonResponse,
@@ -25,7 +26,6 @@ import org.apache.linkis.engineplugin.elasticsearch.executer.client.{
   ElasticSearchTableResponse,
   ResponseHandler
 }
-import org.apache.linkis.engineplugin.elasticsearch.executer.client.ResponseHandler
 import org.apache.linkis.engineplugin.elasticsearch.executer.client.ResponseHandler._
 import org.apache.linkis.storage.domain._
 import org.apache.linkis.storage.resultset.table.TableRecord
@@ -53,9 +53,7 @@ class ResponseHandlerImpl extends ResponseHandler {
     val contentBytes = EntityUtils.toByteArray(response.getEntity)
 
     if (contentBytes == null || contentBytes.isEmpty) {
-      throw EsConvertResponseException(
-        "EsEngineExecutor convert response fail, response content is empty."
-      )
+      throw EsConvertResponseException(RESPONSE_FAIL_IS_EMPTY.getErrorDesc)
     }
 
     val jsonNode = Utils.tryCatch {

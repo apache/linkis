@@ -49,7 +49,8 @@ public class EnginePluginAdminServiceImpl implements EnginePluginAdminService {
 
   private static final Logger log = LoggerFactory.getLogger(EnginePluginRestful.class);
   @Autowired private EngineConnBmlResourceDao engineConnBmlResourceDao;
-  @Autowired private DefaultEngineConnBmlResourceGenerator defaultEngineConnBmlResourceGenerator;
+  private DefaultEngineConnBmlResourceGenerator defaultEngineConnBmlResourceGenerator =
+      new DefaultEngineConnBmlResourceGenerator();
 
   private BmlClient bmlClient = BmlClientFactory.createBmlClient();
 

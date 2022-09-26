@@ -74,7 +74,7 @@ public class DataSourceAdminRestfulApi {
             throws ErrorException {
         return RestfulApiHelper.doAndResponse(
                 () -> {
-                    String userName = ModuleUserUtils.getOperationUser(req, "rollBackEnginePlugin");
+                    String userName = ModuleUserUtils.getOperationUser(req, "insertJsonEnv");
                     if (!RestfulApiHelper.isAdminUser(userName)) {
                         return Message.error("User '" + userName + "' is not admin user[非管理员用户]");
                     }
@@ -107,7 +107,7 @@ public class DataSourceAdminRestfulApi {
             @RequestParam("system") String system,
             HttpServletRequest req)
             throws ErrorException {
-        String userName = ModuleUserUtils.getOperationUser(req, "rollBackEnginePlugin");
+        String userName = ModuleUserUtils.getOperationUser(req, "insertJsonEnvBatch");
         if (!RestfulApiHelper.isAdminUser(userName) && !permitSystemList.contains(system)) {
             return Message.error("User '" + userName + "' is not admin user[非管理员用户]");
         }
@@ -143,7 +143,7 @@ public class DataSourceAdminRestfulApi {
                 "Fail to insert data source environment[新增数据源环境失败]");
     }
 
-    @ApiOperation(value = "insertJsonEnvBatch", notes = "update batch json env", response = Message.class)
+    @ApiOperation(value = "updateJsonEnvBatch", notes = "update batch json env", response = Message.class)
     @ApiOperationSupport(ignoreParameters = {"dataSourceEnvList", "system"})
     @RequestMapping(value = "/env/json/batch", method = RequestMethod.PUT)
     public Message updateEnvBatch(
@@ -151,7 +151,7 @@ public class DataSourceAdminRestfulApi {
             @RequestParam("system") String system,
             HttpServletRequest request)
             throws ErrorException {
-        String userName = ModuleUserUtils.getOperationUser(request, "rollBackEnginePlugin");
+        String userName = ModuleUserUtils.getOperationUser(request, "updateJsonEnvBatch");
         if (!RestfulApiHelper.isAdminUser(userName) && !permitSystemList.contains(system)) {
             return Message.error("User '" + userName + "' is not admin user[非管理员用户]");
         }
@@ -241,7 +241,7 @@ public class DataSourceAdminRestfulApi {
     public Message removeEnvEntity(@PathVariable("envId") Long envId, HttpServletRequest request) {
         return RestfulApiHelper.doAndResponse(
                 () -> {
-                    String userName = ModuleUserUtils.getOperationUser(request, "rollBackEnginePlugin");
+                    String userName = ModuleUserUtils.getOperationUser(request, "removeEnvEntity");
                     if (!RestfulApiHelper.isAdminUser(userName)) {
                         return Message.error("User '" + userName + "' is not admin user[非管理员用户]");
                     }
@@ -270,7 +270,7 @@ public class DataSourceAdminRestfulApi {
             throws ErrorException {
         return RestfulApiHelper.doAndResponse(
                 () -> {
-                    String userName = ModuleUserUtils.getOperationUser(request, "rollBackEnginePlugin");
+                    String userName = ModuleUserUtils.getOperationUser(request, "updateJsonEnv");
                     if (!RestfulApiHelper.isAdminUser(userName)) {
                         return Message.error("User '" + userName + "' is not admin user[非管理员用户]");
                     }

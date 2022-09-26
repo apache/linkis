@@ -17,8 +17,6 @@
 
 package org.apache.linkis.storage.errorcode;
 
-import org.apache.linkis.common.errorcode.ErrorCodeUtils;
-
 public enum LinkisIoFileClientErrorCodeSummary {
   NO_USER_INFORMATION(
       52002,
@@ -43,7 +41,6 @@ public enum LinkisIoFileClientErrorCodeSummary {
   private String comment;
 
   LinkisIoFileClientErrorCodeSummary(int errorCode, String errorDesc, String comment) {
-    ErrorCodeUtils.validateErrorCode(errorCode, 20000, 24999);
     this.errorCode = errorCode;
     this.errorDesc = errorDesc;
     this.comment = comment;

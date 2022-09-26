@@ -23,6 +23,7 @@ import org.apache.linkis.datasource.client.request.GetInfoPublishedByDataSourceN
 import org.apache.linkis.datasourcemanager.common.domain.DataSource
 import org.apache.linkis.manager.engineplugin.jdbc.JdbcAuthType
 import org.apache.linkis.manager.engineplugin.jdbc.constant.JDBCEngineConnConstant
+import org.apache.linkis.manager.engineplugin.jdbc.errorcode.JDBCErrorCodeSummary._
 import org.apache.linkis.manager.engineplugin.jdbc.exception.JDBCParamsIllegalException
 
 import org.apache.commons.lang3.StringUtils
@@ -63,11 +64,17 @@ object JDBCMultiDatasourceParser extends Logging {
     val dsConnInfo = new util.HashMap[String, String]()
 
     if (strObjIsBlank(dataSource)) {
-      throw JDBCParamsIllegalException(s"Data source [$datasourceName] info not found!")
+      throw JDBCParamsIllegalException(
+        DATA_SOURCE_INFO_NOT_FOUND.getErrorCode,
+        DATA_SOURCE_INFO_NOT_FOUND.getErrorDesc.concat(" ").concat(s"[$datasourceName]")
+      )
     }
 
     if (dataSource.getPublishedVersionId == null || dataSource.getPublishedVersionId <= 0) {
-      throw JDBCParamsIllegalException(s"Data source [$datasourceName] not yet published!")
+      throw JDBCParamsIllegalException(
+        DATA_SOURCE_NOT_PUBLISHED.getErrorCode,
+        DATA_SOURCE_NOT_PUBLISHED.getErrorDesc.concat(" ").concat(s"[$datasourceName]")
+      )
     }
 
     var maxVersionId = "0"
@@ -77,7 +84,10 @@ object JDBCMultiDatasourceParser extends Logging {
     dsConnInfo.put(JDBCEngineConnConstant.JDBC_ENGINE_RUN_TIME_DS_MAX_VERSION_ID, maxVersionId)
 
     if (dataSource.isExpire) {
-      throw JDBCParamsIllegalException(s"Data source [$datasourceName] is expired!")
+      throw JDBCParamsIllegalException(
+        DATA_SOURCE_EXPIRED.getErrorCode,
+        DATA_SOURCE_EXPIRED.getErrorDesc.concat(" ").concat(s"[$datasourceName]")
+      )
     }
 
     if (
@@ -85,18 +95,27 @@ object JDBCMultiDatasourceParser extends Logging {
           dataSource.getDataSourceType.getName
         )
     ) {
-      throw JDBCParamsIllegalException("The data source jdbc type cannot be null!")
+      throw JDBCParamsIllegalException(
+        DATA_SOURCE_JDBC_TYPE_NOT_NULL.getErrorCode,
+        DATA_SOURCE_JDBC_TYPE_NOT_NULL.getErrorDesc
+      )
     }
 
     val dbType = dataSource.getDataSourceType.getName
     val dbConnParams = dataSource.getConnectParams
     if (dbConnParams == null || dbConnParams.isEmpty) {
-      throw JDBCParamsIllegalException("The data source jdbc connection info cannot be null!")
+      throw JDBCParamsIllegalException(
+        JDBC_CONNECTION_INFO_NOT_NULL.getErrorCode,
+        JDBC_CONNECTION_INFO_NOT_NULL.getErrorDesc
+      )
     }
 
     val driverClassName = dbConnParams.get(JDBCEngineConnConstant.DS_JDBC_DRIVER)
     if (strObjIsBlank(driverClassName)) {
-      throw JDBCParamsIllegalException("The data source jdbc driverClassName cannot be null!")
+      throw JDBCParamsIllegalException(
+        JDBC_DRIVER_CLASS_NAME_NOT_NULL.getErrorCode,
+        JDBC_DRIVER_CLASS_NAME_NOT_NULL.getErrorDesc
+      )
     }
 
     val jdbcUrl = createJdbcUrl(dbType, dbConnParams)
@@ -109,11 +128,17 @@ object JDBCMultiDatasourceParser extends Logging {
   def createJdbcUrl(dbType: String, dbConnParams: util.Map[String, Object]): String = {
     val host = dbConnParams.get(JDBCEngineConnConstant.DS_JDBC_HOST)
     if (strObjIsBlank(host)) {
-      throw JDBCParamsIllegalException("The data source jdbc connection host cannot be null!")
+      throw JDBCParamsIllegalException(
+        JDBC_HOST_NOT_NULL.getErrorCode,
+        JDBC_HOST_NOT_NULL.getErrorDesc
+      )
     }
     val port = dbConnParams.get(JDBCEngineConnConstant.DS_JDBC_PORT)
     if (strObjIsBlank(port)) {
-      throw JDBCParamsIllegalException("The data source jdbc connection port cannot be null!")
+      throw JDBCParamsIllegalException(
+        JDBC_PORT_NOT_NULL.getErrorCode,
+        JDBC_PORT_NOT_NULL.getErrorDesc
+      )
     }
     var jdbcUrl = s"jdbc:$dbType://$host:$port"
     val dbName = dbConnParams.get(JDBCEngineConnConstant.DS_JDBC_DB_NAME)
@@ -158,12 +183,14 @@ object JDBCMultiDatasourceParser extends Logging {
         authType = JdbcAuthType.KERBEROS
         if (strObjIsBlank(kerberosPrincipal)) {
           throw JDBCParamsIllegalException(
-            "In the jdbc authentication mode of kerberos, the kerberos principal cannot be empty!"
+            KERBEROS_PRINCIPAL_NOT_NULL.getErrorCode,
+            KERBEROS_PRINCIPAL_NOT_NULL.getErrorDesc
           )
         }
         if (strObjIsBlank(kerberosKeytab)) {
           throw JDBCParamsIllegalException(
-            "In the jdbc authentication mode of kerberos, the kerberos keytab cannot be empty!"
+            KERBEROS_KEYTAB_NOT_NULL.getErrorCode,
+            KERBEROS_KEYTAB_NOT_NULL.getErrorDesc
           )
         }
       } else {
@@ -203,7 +230,12 @@ object JDBCMultiDatasourceParser extends Logging {
           )
         }
       case _ =>
-        throw JDBCParamsIllegalException(s"Unsupported authentication type ${authType.getAuthType}")
+        throw JDBCParamsIllegalException(
+          UNSUPPORTED_AUTHENTICATION_TYPE.getErrorCode,
+          UNSUPPORTED_AUTHENTICATION_TYPE.getErrorDesc
+            .concat(" ")
+            .concat(s"${authType.getAuthType}")
+        )
     }
     dsConnInfo.put(JDBCEngineConnConstant.JDBC_AUTH_TYPE, authType.getAuthType)
     dsConnInfo

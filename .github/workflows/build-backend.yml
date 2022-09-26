@@ -34,11 +34,9 @@ jobs:
       with:
         distribution: 'adopt'
         java-version: 8
-
     - name: Build backend by maven
-      run: |
-          ./mvnw -N install
-          ./mvnw clean package
+      run:
+        ./mvnw clean package
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3.0.0
 #      with:

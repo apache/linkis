@@ -18,9 +18,7 @@
 package org.apache.linkis.httpclient.dws.exception
 
 import org.apache.linkis.common.exception.ErrorException
+import org.apache.linkis.httpclient.errorcode.LinkisGwHttpclientSupportErrorCodeSummary.CLIENTCONFIG_MUST
 
 class UnknownVersionException
-    extends ErrorException(
-      10901,
-      "ClientConfig must specify the DWS version(ClientConfig必须指定DWS版本)！"
-    )
+    extends ErrorException(CLIENTCONFIG_MUST.getErrorCode, CLIENTCONFIG_MUST.getErrorDesc)

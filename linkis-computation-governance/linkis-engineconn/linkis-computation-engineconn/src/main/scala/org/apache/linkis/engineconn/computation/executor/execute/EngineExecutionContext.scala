@@ -36,7 +36,7 @@ import org.apache.linkis.engineconn.executor.listener.{
   EngineConnSyncListenerBus,
   ExecutorListenerBusContext
 }
-import org.apache.linkis.governance.common.exception.engineconn.EngineConnExecutorErrorException
+import org.apache.linkis.governance.exception.engineconn.EngineConnExecutorErrorException
 import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.apache.linkis.scheduler.executer.{AliasOutputExecuteResponse, OutputExecuteResponse}
 import org.apache.linkis.storage.{LineMetaData, LineRecord}
@@ -83,6 +83,10 @@ class EngineExecutionContext(executor: ComputationExecutor, executorUser: String
       })
     }
 
+  /**
+   * Note: the writer will be closed at the end of the method
+   * @param resultSetWriter
+   */
   def sendResultSet(resultSetWriter: ResultSetWriter[_ <: MetaData, _ <: Record]): Unit = {
     logger.info("Start to send res to entrance")
     val fileName = new File(resultSetWriter.toFSPath.getPath).getName

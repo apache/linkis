@@ -113,14 +113,15 @@
     <zookeeper.version>3.5.9</zookeeper.version>
     <!-- hadoop 2.7 use curator 2.7.1, hadoop3.3 use curator 4.2.0-->
     <curator.version>2.7.1</curator.version>
-    <spring.version>5.2.22.RELEASE</spring.version>
-    <spring.boot.version>2.3.12.RELEASE</spring.boot.version>
     <guava.version>30.0-jre</guava.version>
     <netty.version>4.1.78.Final</netty.version>
+
+    <!-- json -->
     <gson.version>2.8.9</gson.version>
     <jackson-bom.version>2.12.7</jackson-bom.version>
     <!-- spark2.4 use 3.5.3, spark3.2 use 3.7.0-M11 -->
     <json4s.version>3.5.3</json4s.version>
+
     <jersey.version>1.19.4</jersey.version>
     <jersey.servlet.version>2.23.1</jersey.servlet.version>
     <jline.version>2.14.6</jline.version>
@@ -150,10 +151,19 @@
     <asm-bom.version>9.3</asm-bom.version>
     <slf4j.version>1.7.30</slf4j.version>
     <log4j2.version>2.17.2</log4j2.version>
+
+    <!-- jakarta -->
+    <annotation-api.version>1.3.5</annotation-api.version>
+
+    <!-- test -->
     <junit5.version>5.7.2</junit5.version>
     <mockito.version>3.9.0</mockito.version>
     <assertj.version>3.17.2</assertj.version>
     <h2.version>1.4.200</h2.version>
+
+    <!-- spring -->
+    <spring.version>5.2.22.RELEASE</spring.version>
+    <spring.boot.version>2.3.12.RELEASE</spring.boot.version>
 
     <!-- platform encoding override -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -216,11 +226,6 @@
         <groupId>org.apache.linkis</groupId>
         <artifactId>linkis-mybatis</artifactId>
         <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.google.code.gson</groupId>
-        <artifactId>gson</artifactId>
-        <version>${gson.version}</version>
       </dependency>
       <dependency>
         <groupId>com.thoughtworks.xstream</groupId>
@@ -364,6 +369,13 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
+
+      <!-- json -->
+      <dependency>
+        <groupId>com.google.code.gson</groupId>
+        <artifactId>gson</artifactId>
+        <version>${gson.version}</version>
+      </dependency>
       <dependency>
         <groupId>com.fasterxml.jackson</groupId>
         <artifactId>jackson-bom</artifactId>
@@ -397,6 +409,7 @@
         <artifactId>json4s-scalap_${scala.binary.version}</artifactId>
         <version>${json4s.version}</version>
       </dependency>
+
       <dependency>
         <groupId>com.sun.jersey</groupId>
         <artifactId>jersey-client</artifactId>
@@ -860,6 +873,34 @@
           </exclusion>
         </exclusions>
       </dependency>
+
+      <dependency>
+        <groupId>org.ow2.asm</groupId>
+        <artifactId>asm-bom</artifactId>
+        <version>${asm-bom.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>cglib</groupId>
+        <artifactId>cglib</artifactId>
+        <version>${cglib.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>redis.clients</groupId>
+        <artifactId>jedis</artifactId>
+        <version>${jedis.version}</version>
+      </dependency>
+
+      <!-- jakarta -->
+      <dependency>
+        <groupId>jakarta.annotation</groupId>
+        <artifactId>jakarta.annotation-api</artifactId>
+        <version>${annotation-api.version}</version>
+      </dependency>
+
+      <!-- spring -->
       <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-framework-bom</artifactId>
@@ -869,7 +910,7 @@
       </dependency>
       <dependency>
         <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
+        <artifactId>spring-boot-dependencies</artifactId>
         <version>${spring.boot.version}</version>
         <type>pom</type>
         <scope>import</scope>
@@ -881,25 +922,6 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
-      <dependency>
-        <groupId>cglib</groupId>
-        <artifactId>cglib</artifactId>
-        <version>${cglib.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.ow2.asm</groupId>
-        <artifactId>asm-bom</artifactId>
-        <version>${asm-bom.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-
-      <dependency>
-        <groupId>redis.clients</groupId>
-        <artifactId>jedis</artifactId>
-        <version>${jedis.version}</version>
-      </dependency>
-
     </dependencies>
   </dependencyManagement>
 

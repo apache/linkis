@@ -19,10 +19,8 @@ package org.apache.linkis.engineplugin.presto.exception
 
 import org.apache.linkis.common.exception.ErrorException
 
-case class PrestoStateInvalidException(message: String)
-    extends ErrorException(60011, message: String)
+case class PrestoStateInvalidException(errorCode: Int, message: String)
+    extends ErrorException(errorCode, message: String)
 
-case class PrestoClientException(message: String) extends ErrorException(60012, message: String)
-
-case class PrestoSourceGroupException(message: String)
-    extends ErrorException(60013, message: String)
+case class PrestoClientException(errorCode: Int, message: String)
+    extends ErrorException(errorCode, message: String)

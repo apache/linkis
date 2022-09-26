@@ -34,6 +34,7 @@ export default {
   },
   data() {
     return {
+      keyToName: {},
       formModel: {},
       formData: {},
       options: {
@@ -173,25 +174,30 @@ export default {
       this.formData = {...data}
     },
     changeSelector(options){
+      console.log('test', options)
       this.rule[3].options = [...options];
+      options.forEach(ele=> {
+        this.keyToName[ele.value] = ele.label;
+      })
     },
   },
   watch: {
     data: {
       handler(newV) {
-        this.rule[4].hidden = newV.datasourceTypeId == 4 ? false : true;
-        //console.log(this.rule[4], newV.datasourceTypeId)
-        if(this.rule[4].hidden) this.rule[5].hidden = true;
+        this.rule[4].hidden = this.keyToName[newV.datasourceTypeId] == 'hive' ? false : true;
         this.rule[5].hidden = !this.formData.keytab;
+        if(this.rule[4].hidden) this.rule[5].hidden = true;
         this.getData(newV)
       },
       deep: true,
     },
     formData: {
       handler(newV){
-        this.rule[4].hidden = newV.datasourceTypeId == 4 ? false : true;
+        console.log(this.keyToName)
+        this.rule[4].hidden = this.keyToName[newV.datasourceTypeId] == 'hive' ? false : true;
         if(this.rule[4].hidden) this.rule[5].hidden = true;
-        this.rule[5].hidden = !this.formData.keytab;
+        else if(this.formData.keytab && newV.datasourceTypeId == 4) this.rule[5].hidden = false;
+        else this.rule[5].hidden = true;
       },
       deep: true
     }

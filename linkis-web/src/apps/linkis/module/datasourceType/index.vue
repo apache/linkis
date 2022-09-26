@@ -77,7 +77,7 @@
       width="800"
       class="modal"
       v-model="modalShow"
-      :title="modalAddMode=='add'?'新增':'编辑'"
+      :title="modalAddMode=='add'? $t('message.linkis.basedata.add') : $t('message.linkis.basedata.edit')"
       :loading="modalLoading"
     >
       <div slot="footer">

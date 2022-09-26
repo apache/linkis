@@ -52,6 +52,9 @@ public class OracleMetaService extends AbstractMetaService<SqlConnection> {
 
     String database =
         String.valueOf(params.getOrDefault(SqlParamsMapper.PARAM_SQL_DATABASE.getValue(), ""));
+
+    String serviceName =
+        String.valueOf(params.getOrDefault(SqlParamsMapper.PARAM_SQL_SERVICE_NAME.getValue(), ""));
     Map<String, Object> extraParams = new HashMap<>();
     Object sqlParamObj = params.get(SqlParamsMapper.PARAM_SQL_EXTRA_PARAMS.getValue());
     if (null != sqlParamObj) {
@@ -72,7 +75,7 @@ public class OracleMetaService extends AbstractMetaService<SqlConnection> {
         password,
         database);
     return new MetadataConnection<>(
-        new SqlConnection(host, port, username, password, database, extraParams));
+        new SqlConnection(host, port, username, password, database, serviceName, extraParams));
   }
 
   @Override

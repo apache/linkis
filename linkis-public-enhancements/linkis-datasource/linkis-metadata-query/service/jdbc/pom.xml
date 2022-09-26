@@ -23,7 +23,7 @@
     <version>1.3.0</version>
   </parent>
 
-  <artifactId>linkis-metadata-query-service-mysql</artifactId>
+  <artifactId>linkis-metadata-query-service-jdbc</artifactId>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -60,13 +60,17 @@
       <groupId>com.clickhouse</groupId>
       <artifactId>clickhouse-jdbc</artifactId>
       <version>${clickhouse.version}</version>
-      <scope>provided</scope>
       <exclusions>
         <exclusion>
           <groupId>*</groupId>
           <artifactId>*</artifactId>
         </exclusion>
       </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <version>${postgresql.version}</version>
     </dependency>
   </dependencies>
 

@@ -83,7 +83,7 @@ public enum LinkisConfigurationErrorCodeSummary {
   private String comment;
 
   LinkisConfigurationErrorCodeSummary(int errorCode, String errorDesc, String comment) {
-    ErrorCodeUtils.validateErrorCode(errorCode, 20000, 24999);
+    ErrorCodeUtils.validateErrorCode(errorCode, 10000, 24999);
     this.errorCode = errorCode;
     this.errorDesc = errorDesc;
     this.comment = comment;

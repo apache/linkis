@@ -23,8 +23,6 @@ import static org.apache.linkis.configuration.errorcode.LinkisConfigurationError
 
 public class ConfigurationException extends ErrorException {
 
-  public static final int CONFIGURATION_ERROR_CODE = 14100;
-
   public ConfigurationException(String message) {
     super(BUILD_LABEL_ID.getErrorCode(), message);
   }

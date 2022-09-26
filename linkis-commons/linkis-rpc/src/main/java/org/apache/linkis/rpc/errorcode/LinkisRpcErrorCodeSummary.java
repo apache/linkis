@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 
-
 package org.apache.linkis.rpc.errorcode;
 
 public enum LinkisRpcErrorCodeSummary {

@@ -63,7 +63,8 @@ public class DefaultLockManagerPersistence implements LockManagerPersistence {
       List<PersistenceLock> lockers =
           lockManagerMapper.getLockersByLockObject(persistenceLock.getLockObject());
       if (lockers == null || lockers.isEmpty()) {
-        lockManagerMapper.lock(persistenceLock.getLockObject(), timeOut);
+        persistenceLock.setTimeOut(timeOut);
+        lockManagerMapper.lock(persistenceLock);
         return true;
       } else {
         logger.info(
@@ -78,11 +79,15 @@ public class DefaultLockManagerPersistence implements LockManagerPersistence {
 
   @Override
   public void unlock(PersistenceLock persistenceLock) {
-    List<PersistenceLock> lockers =
-        lockManagerMapper.getLockersByLockObject(persistenceLock.getLockObject());
-    if (lockers != null && !lockers.isEmpty()) {
-      for (PersistenceLock lock : lockers) {
-        lockManagerMapper.unlock(lock.getId());
+    if (persistenceLock.getId() > 0) {
+      lockManagerMapper.unlock(persistenceLock.getId());
+    } else {
+      List<PersistenceLock> lockers =
+          lockManagerMapper.getLockersByLockObject(persistenceLock.getLockObject());
+      if (lockers != null && !lockers.isEmpty()) {
+        for (PersistenceLock lock : lockers) {
+          lockManagerMapper.unlock(lock.getId());
+        }
       }
     }
   }

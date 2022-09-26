@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,22 +15,12 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.manager.dao;
+package org.apache.linkis.manager.rm.entity
 
-import org.apache.linkis.manager.common.entity.persistence.PersistenceLock;
+object ResourceOperationType extends Enumeration {
 
-import org.apache.ibatis.annotations.*;
+  type ResourceOperationType = Value
 
-import java.util.List;
+  val LOCK, USED, USED_RELEASE, LOCKER_RELEASE = Value
 
-@Mapper
-public interface LockManagerMapper {
-
-  int lock(PersistenceLock persistenceLock);
-
-  void unlock(@Param("id") Integer id);
-
-  List<PersistenceLock> getLockersByLockObject(@Param("lock_object") String lock_object);
-
-  List<PersistenceLock> getAll();
 }

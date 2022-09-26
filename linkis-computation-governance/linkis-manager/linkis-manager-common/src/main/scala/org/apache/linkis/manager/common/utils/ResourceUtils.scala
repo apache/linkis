@@ -37,18 +37,27 @@ object ResourceUtils {
 
   def toPersistenceResource(nodeResource: NodeResource): PersistenceResource = {
     val persistenceResource = new PersistenceResource
-    if (nodeResource.getMaxResource != null)
+    if (nodeResource.getMaxResource != null) {
       persistenceResource.setMaxResource(serializeResource(nodeResource.getMaxResource))
-    if (nodeResource.getMinResource != null)
+    }
+    if (nodeResource.getMinResource != null) {
       persistenceResource.setMinResource(serializeResource(nodeResource.getMinResource))
-    if (nodeResource.getLockedResource != null)
+    }
+    if (nodeResource.getLockedResource != null) {
       persistenceResource.setLockedResource(serializeResource(nodeResource.getLockedResource))
-    if (nodeResource.getExpectedResource != null)
+    }
+    if (nodeResource.getExpectedResource != null) {
       persistenceResource.setExpectedResource(serializeResource(nodeResource.getExpectedResource))
-    if (nodeResource.getLeftResource != null)
+    }
+    if (nodeResource.getLeftResource != null) {
       persistenceResource.setLeftResource(serializeResource(nodeResource.getLeftResource))
-    if (nodeResource.getUsedResource != null)
+    }
+    if (nodeResource.getUsedResource != null) {
       persistenceResource.setUsedResource(serializeResource(nodeResource.getUsedResource))
+    }
+    if (nodeResource.getId > 0) {
+      persistenceResource.setId(nodeResource.getId)
+    }
     persistenceResource.setResourceType(nodeResource.getResourceType.toString())
     persistenceResource
   }
@@ -56,23 +65,31 @@ object ResourceUtils {
   def fromPersistenceResource(persistenceResource: PersistenceResource): CommonNodeResource = {
     if (persistenceResource == null) return null
     val nodeResource = new CommonNodeResource
-    if (persistenceResource.getId != null) nodeResource.setId(persistenceResource.getId)
-    if (persistenceResource.getMaxResource != null)
+    if (persistenceResource.getId > 0) nodeResource.setId(persistenceResource.getId)
+    if (persistenceResource.getMaxResource != null) {
       nodeResource.setMaxResource(deserializeResource(persistenceResource.getMaxResource))
-    if (persistenceResource.getMinResource != null)
+    }
+    if (persistenceResource.getMinResource != null) {
       nodeResource.setMinResource(deserializeResource(persistenceResource.getMinResource))
-    if (persistenceResource.getLockedResource != null)
+    }
+    if (persistenceResource.getLockedResource != null) {
       nodeResource.setLockedResource(deserializeResource(persistenceResource.getLockedResource))
-    if (persistenceResource.getExpectedResource != null)
+    }
+    if (persistenceResource.getExpectedResource != null) {
       nodeResource.setExpectedResource(deserializeResource(persistenceResource.getExpectedResource))
-    if (persistenceResource.getLeftResource != null)
+    }
+    if (persistenceResource.getLeftResource != null) {
       nodeResource.setLeftResource(deserializeResource(persistenceResource.getLeftResource))
-    if (persistenceResource.getUsedResource != null)
+    }
+    if (persistenceResource.getUsedResource != null) {
       nodeResource.setUsedResource(deserializeResource(persistenceResource.getUsedResource))
-    if (persistenceResource.getCreateTime != null)
+    }
+    if (persistenceResource.getCreateTime != null) {
       nodeResource.setCreateTime(persistenceResource.getCreateTime)
-    if (persistenceResource.getUpdateTime != null)
+    }
+    if (persistenceResource.getUpdateTime != null) {
       nodeResource.setUpdateTime(persistenceResource.getUpdateTime)
+    }
     nodeResource.setResourceType(ResourceType.valueOf(persistenceResource.getResourceType))
     nodeResource
   }
@@ -80,23 +97,31 @@ object ResourceUtils {
   def fromPersistenceResourceAndUser(persistenceResource: PersistenceResource): UserResource = {
     if (persistenceResource == null) return null
     val nodeResource = new UserResource
-    if (persistenceResource.getId != null) nodeResource.setId(persistenceResource.getId)
-    if (persistenceResource.getMaxResource != null)
+    if (persistenceResource.getId > 0) nodeResource.setId(persistenceResource.getId)
+    if (persistenceResource.getMaxResource != null) {
       nodeResource.setMaxResource(deserializeResource(persistenceResource.getMaxResource))
-    if (persistenceResource.getMinResource != null)
+    }
+    if (persistenceResource.getMinResource != null) {
       nodeResource.setMinResource(deserializeResource(persistenceResource.getMinResource))
-    if (persistenceResource.getLockedResource != null)
+    }
+    if (persistenceResource.getLockedResource != null) {
       nodeResource.setLockedResource(deserializeResource(persistenceResource.getLockedResource))
-    if (persistenceResource.getExpectedResource != null)
+    }
+    if (persistenceResource.getExpectedResource != null) {
       nodeResource.setExpectedResource(deserializeResource(persistenceResource.getExpectedResource))
-    if (persistenceResource.getLeftResource != null)
+    }
+    if (persistenceResource.getLeftResource != null) {
       nodeResource.setLeftResource(deserializeResource(persistenceResource.getLeftResource))
-    if (persistenceResource.getUsedResource != null)
+    }
+    if (persistenceResource.getUsedResource != null) {
       nodeResource.setUsedResource(deserializeResource(persistenceResource.getUsedResource))
-    if (persistenceResource.getCreateTime != null)
+    }
+    if (persistenceResource.getCreateTime != null) {
       nodeResource.setCreateTime(persistenceResource.getCreateTime)
-    if (persistenceResource.getUpdateTime != null)
+    }
+    if (persistenceResource.getUpdateTime != null) {
       nodeResource.setUpdateTime(persistenceResource.getUpdateTime)
+    }
     nodeResource.setResourceType(ResourceType.valueOf(persistenceResource.getResourceType))
     nodeResource
   }
@@ -117,30 +142,35 @@ object ResourceUtils {
     if (resourceType.equals(ResourceType.LoadInstance)) {
       if (nodeResource.getResourceType.equals(ResourceType.DriverAndYarn)) {
         nodeResource.setResourceType(resourceType)
-        if (nodeResource.getMaxResource != null)
+        if (nodeResource.getMaxResource != null) {
           nodeResource.setMaxResource(
             nodeResource.getMaxResource.asInstanceOf[DriverAndYarnResource].loadInstanceResource
           )
-        if (nodeResource.getMinResource != null)
+        }
+        if (nodeResource.getMinResource != null) {
           nodeResource.setMinResource(
             nodeResource.getMinResource.asInstanceOf[DriverAndYarnResource].loadInstanceResource
           )
-        if (nodeResource.getUsedResource != null)
+        }
+        if (nodeResource.getUsedResource != null) {
           nodeResource.setUsedResource(
             nodeResource.getUsedResource.asInstanceOf[DriverAndYarnResource].loadInstanceResource
           )
-        if (nodeResource.getLockedResource != null)
+        }
+        if (nodeResource.getLockedResource != null) {
           nodeResource.setLockedResource(
             nodeResource.getLockedResource
               .asInstanceOf[DriverAndYarnResource]
               .loadInstanceResource
           )
-        if (nodeResource.getExpectedResource != null)
+        }
+        if (nodeResource.getExpectedResource != null) {
           nodeResource.setExpectedResource(
             nodeResource.getExpectedResource
               .asInstanceOf[DriverAndYarnResource]
               .loadInstanceResource
           )
+        }
         if (
             nodeResource.getLeftResource != null && nodeResource.getLeftResource
               .isInstanceOf[DriverAndYarnResource]

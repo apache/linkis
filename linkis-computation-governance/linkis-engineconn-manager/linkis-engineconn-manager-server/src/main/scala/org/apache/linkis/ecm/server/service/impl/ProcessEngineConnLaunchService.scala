@@ -22,10 +22,10 @@ import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.ecm.core.conf.ECMErrorCode
 import org.apache.linkis.ecm.core.engineconn.EngineConn
 import org.apache.linkis.ecm.core.launch.ProcessEngineConnLaunch
+import org.apache.linkis.ecm.errorcode.EngineconnServerErrorCodeSummary._
 import org.apache.linkis.ecm.server.LinkisECMApplication
 import org.apache.linkis.ecm.server.conf.ECMConfiguration
 import org.apache.linkis.ecm.server.conf.ECMConfiguration.MANAGER_SPRING_NAME
-import org.apache.linkis.ecm.server.errorcode.ECMErrorConstants
 import org.apache.linkis.ecm.server.exception.ECMErrorException
 import org.apache.linkis.ecm.server.listener.EngineConnStatusChangeEvent
 import org.apache.linkis.ecm.server.service.LocalDirsHandleService
@@ -142,20 +142,20 @@ abstract class ProcessEngineConnLaunchService extends AbstractEngineConnLaunchSe
     ) {
       case e: TimeoutException =>
         throw new ECMErrorException(
-          ECMErrorCode.EC_START_TIME_OUT,
-          s"wait for engineConn initial timeout(请求引擎超时，可能是因为队列资源不足导致，请重试) $engineConn ."
+          WAIT_FOR_ENGINECONN.getErrorCode,
+          WAIT_FOR_ENGINECONN.getErrorDesc + s" $engineConn ."
         )
       case e: InterruptedException => // 比如被ms cancel
         throw new ECMErrorException(
-          ECMErrorCode.EC_INTERRUPT_TIME_OUT,
-          s"wait for initial interrupted(请求引擎被中断，可能是因为你操作了引擎取消操作，请重试) $engineConn ."
+          WAIT_FOR_INITIAL.getErrorCode,
+          WAIT_FOR_INITIAL.getErrorDesc + s" $engineConn ."
         )
       case t: Throwable =>
         logger.error(s"unexpected error, now shutdown it.")
         throw t
     }
     if (engineConn.getStatus == ShuttingDown) {
-      throw new ECMErrorException(ECMErrorCode.EC_START_FAILED, errorMsg.toString())
+      throw new ECMErrorException(EC_START_FAILED.getErrorCode, errorMsg.toString())
     }
   }
 

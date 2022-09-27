@@ -23,6 +23,7 @@ import org.apache.linkis.common.utils.{Logging, Utils, ZipUtils}
 import org.apache.linkis.ecm.core.conf.ECMErrorCode
 import org.apache.linkis.ecm.core.engineconn.EngineConn
 import org.apache.linkis.ecm.core.launch.EngineConnManagerEnv
+import org.apache.linkis.ecm.errorcode.EngineconnServerErrorCodeSummary._
 import org.apache.linkis.ecm.server.conf.ECMConfiguration._
 import org.apache.linkis.ecm.server.exception.ECMErrorException
 import org.apache.linkis.ecm.server.service.{LocalDirsHandleService, ResourceLocalizationService}
@@ -182,8 +183,8 @@ class BmlResourceLocalizationService extends ResourceLocalizationService with Lo
           s"Not supported BmlResource visibility type: label. BmlResource: resourceId: $resourceId, version: $version, fileName: ${resource.getFileName}."
         )
         throw new ECMErrorException(
-          ECMErrorCode.EC_START_FAILED,
-          s"Not supported BmlResource visibility type: label(不支持的 BmlResource visibility 类型：label)."
+          NOT_SUPPORTED_TYPE.getErrorCode,
+          NOT_SUPPORTED_TYPE.getErrorDesc
         )
     }
   }

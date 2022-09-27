@@ -20,6 +20,7 @@ package org.apache.linkis.ecm.server.operator
 import org.apache.linkis.common.exception.LinkisCommonErrorException
 import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.ecm.core.conf.ECMErrorCode
+import org.apache.linkis.ecm.errorcode.EngineconnServerErrorCodeSummary._
 import org.apache.linkis.ecm.server.exception.ECMErrorException
 
 import java.io.File
@@ -56,7 +57,7 @@ class EngineConnYarnLogOperator extends EngineConnLogOperator {
     val rootLogDir = new File(engineConnLogDir)
     if (!rootLogDir.exists() || !rootLogDir.isDirectory) {
       throw new ECMErrorException(
-        ECMErrorCode.EC_FETCH_LOG_FAILED,
+        LOG_IS_NOT_EXISTS.getErrorCode,
         s"Log directory $rootLogDir is not exists."
       )
     }
@@ -97,7 +98,7 @@ class EngineConnYarnLogOperator extends EngineConnLogOperator {
     }
     if (!logPath.exists() || !logPath.isFile) {
       throw new ECMErrorException(
-        ECMErrorCode.EC_FETCH_LOG_FAILED,
+        LOGFILE_IS_NOT_EXISTS.getErrorCode,
         s"LogFile $logPath is not exists or is not a file."
       )
     }

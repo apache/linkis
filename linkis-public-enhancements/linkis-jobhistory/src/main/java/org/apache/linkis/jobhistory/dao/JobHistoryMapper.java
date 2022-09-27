@@ -47,7 +47,8 @@ public interface JobHistoryMapper {
       @Param("startDate") Date startDate,
       @Param("endDate") Date endDate,
       @Param("engineType") String engineType,
-      @Param("startId") Long startId);
+      @Param("startId") Long startId,
+      @Param("instance") String instance);
 
   List<JobHistory> searchWithUserCreator(
       @Param("id") Long id,
@@ -58,7 +59,8 @@ public interface JobHistoryMapper {
       @Param("startDate") Date startDate,
       @Param("endDate") Date endDate,
       @Param("engineType") String engineType,
-      @Param("startId") Long startId);
+      @Param("startId") Long startId,
+      @Param("instance") String instance);
 
   List<JobHistory> searchWithCreatorOnly(
       @Param("id") Long id,
@@ -69,7 +71,8 @@ public interface JobHistoryMapper {
       @Param("startDate") Date startDate,
       @Param("endDate") Date endDate,
       @Param("engineType") String engineType,
-      @Param("startId") Long startId);
+      @Param("startId") Long startId,
+      @Param("instance") String instance);
 
   Integer countUndoneTaskNoCreator(
       @Param("umUser") String username,

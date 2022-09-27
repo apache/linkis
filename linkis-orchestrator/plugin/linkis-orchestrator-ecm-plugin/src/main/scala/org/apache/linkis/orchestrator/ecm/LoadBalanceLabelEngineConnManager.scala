@@ -228,7 +228,7 @@ class LoadBalanceLabelEngineConnManager extends ComputationEngineConnManager wit
     }
   }
 
-  protected def getAllInstances(): Array[String] = MARK_CACHE_LOCKER.synchronized {
+  protected def getAllInstances(): Array[String] = {
     val instances = new ArrayBuffer[String]
     getMarkCache()
       .values()

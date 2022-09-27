@@ -631,110 +631,123 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
    */
   override def resourceReleased(labels: util.List[Label[_]]): Unit = {
     val labelContainer = labelResourceService.enrichLabels(labels)
-    val persistenceResource: PersistenceResource =
-      labelResourceService.getPersistenceResource(labelContainer.getEngineInstanceLabel)
-    val usedResource = ResourceUtils.fromPersistenceResource(persistenceResource)
-    if (usedResource == null) {
-      throw new RMErrorException(
-        RMErrorCode.LABEL_RESOURCE_NOT_FOUND.getCode,
-        s"No used resource found by engine ${labelContainer.getEngineInstanceLabel}"
-      )
-    }
-    logger.info(
-      s"resourceRelease ready:${labelContainer.getEngineInstanceLabel.getServiceInstance},current node resource${usedResource}"
-    )
-    val status = getNodeStatus(labelContainer.getEngineInstanceLabel)
-    Utils.tryCatch {
-      labelContainer.getResourceLabels.asScala
-        .filter(!_.isInstanceOf[EngineInstanceLabel])
-        .foreach { label =>
-          val persistenceLock = tryLockOneLabel(
-            label,
-            RMUtils.RM_RESOURCE_LOCK_WAIT_TIME.getValue,
-            labelContainer.getUserCreatorLabel.getUser
-          )
-          Utils.tryFinally {
-            val labelResource = labelResourceService.getLabelResource(label)
-            if (labelResource != null) {
-              if (label.isInstanceOf[EMInstanceLabel]) timeCheck(labelResource, usedResource)
-              if (
-                  null != usedResource.getUsedResource && usedResource.getUsedResource != Resource
-                    .initResource(usedResource.getResourceType)
-              ) {
-                labelResource.setUsedResource(
-                  labelResource.getUsedResource - usedResource.getUsedResource
-                )
-                labelResource.setLeftResource(
-                  labelResource.getLeftResource + usedResource.getUsedResource
-                )
-              }
-              if (
-                  null != usedResource.getLockedResource && usedResource.getLockedResource != Resource
-                    .initResource(usedResource.getResourceType)
-              ) {
-                labelResource.setLockedResource(
-                  labelResource.getLockedResource - usedResource.getLockedResource
-                )
-                labelResource.setLeftResource(
-                  labelResource.getLeftResource + usedResource.getLockedResource
-                )
-              }
-              labelResourceService.setLabelResource(
-                label,
-                labelResource,
-                labelContainer.getCombinedUserCreatorEngineTypeLabel.getStringValue
-              )
-              resourceCheck(label, labelResource)
-            }
-          } {
-            resourceLockService.unLock(persistenceLock)
-          }
 
-          val releasedResource = if (usedResource.getUsedResource != null) {
-            usedResource.getUsedResource
-          } else {
-            usedResource.getLockedResource
-          }
-          if (
-              label.getClass.isAssignableFrom(
-                labelContainer.getCombinedUserCreatorEngineTypeLabel.getClass
-              )
-          ) {
-            resourceLogService.recordUserResourceAction(
-              labelContainer,
-              persistenceResource.getTicketId,
-              ChangeType.ENGINE_CLEAR,
-              releasedResource,
-              status
+    val instanceLock = tryLockOneLabel(
+      labelContainer.getEngineInstanceLabel,
+      RMUtils.RM_RESOURCE_LOCK_WAIT_TIME.getValue,
+      labelContainer.getUserCreatorLabel.getUser
+    )
+    Utils.tryFinally {
+      val persistenceResource: PersistenceResource =
+        labelResourceService.getPersistenceResource(labelContainer.getEngineInstanceLabel)
+      val usedResource = ResourceUtils.fromPersistenceResource(persistenceResource)
+      if (usedResource == null) {
+        throw new RMErrorException(
+          RMErrorCode.LABEL_RESOURCE_NOT_FOUND.getCode,
+          s"No used resource found by engine ${labelContainer.getEngineInstanceLabel}"
+        )
+      }
+      logger.info(
+        s"resourceRelease ready:${labelContainer.getEngineInstanceLabel.getServiceInstance},current node resource${usedResource}"
+      )
+      val status = getNodeStatus(labelContainer.getEngineInstanceLabel)
+      Utils.tryCatch {
+        labelContainer.getResourceLabels.asScala
+          .filter(!_.isInstanceOf[EngineInstanceLabel])
+          .foreach { label =>
+            val persistenceLock = tryLockOneLabel(
+              label,
+              RMUtils.RM_RESOURCE_LOCK_WAIT_TIME.getValue,
+              labelContainer.getUserCreatorLabel.getUser
             )
+            Utils.tryFinally {
+              val labelResource = labelResourceService.getLabelResource(label)
+              if (labelResource != null) {
+                if (label.isInstanceOf[EMInstanceLabel]) timeCheck(labelResource, usedResource)
+                if (
+                    null != usedResource.getUsedResource && usedResource.getUsedResource != Resource
+                      .initResource(usedResource.getResourceType)
+                ) {
+                  labelResource.setUsedResource(
+                    labelResource.getUsedResource - usedResource.getUsedResource
+                  )
+                  labelResource.setLeftResource(
+                    labelResource.getLeftResource + usedResource.getUsedResource
+                  )
+                }
+                if (
+                    null != usedResource.getLockedResource && usedResource.getLockedResource != Resource
+                      .initResource(usedResource.getResourceType)
+                ) {
+                  labelResource.setLockedResource(
+                    labelResource.getLockedResource - usedResource.getLockedResource
+                  )
+                  labelResource.setLeftResource(
+                    labelResource.getLeftResource + usedResource.getLockedResource
+                  )
+                }
+                labelResourceService.setLabelResource(
+                  label,
+                  labelResource,
+                  labelContainer.getCombinedUserCreatorEngineTypeLabel.getStringValue
+                )
+                resourceCheck(label, labelResource)
+              }
+            } {
+              resourceLockService.unLock(persistenceLock)
+            }
+
+            val releasedResource = if (usedResource.getUsedResource != null) {
+              usedResource.getUsedResource
+            } else {
+              usedResource.getLockedResource
+            }
+            if (
+                label.getClass.isAssignableFrom(
+                  labelContainer.getCombinedUserCreatorEngineTypeLabel.getClass
+                )
+            ) {
+              resourceLogService.recordUserResourceAction(
+                labelContainer,
+                persistenceResource.getTicketId,
+                ChangeType.ENGINE_CLEAR,
+                releasedResource,
+                status
+              )
+            }
           }
-        }
-    } { case exception: Exception =>
-      logger.warn(
-        s"Failed to release resource label ${labelContainer.getEngineInstanceLabel.getStringValue}",
-        exception
-      )
-    }
-    val engineInstanceLabel = labelContainer.getEngineInstanceLabel
-    Utils.tryCatch {
-      labelResourceService.removeResourceByLabel(engineInstanceLabel)
-      resourceLogService.success(
-        ChangeType.ENGINE_CLEAR,
-        usedResource.getUsedResource,
-        engineInstanceLabel,
-        null
-      )
-    } {
-      case exception: Exception =>
-        resourceLogService.failed(
+      } { case exception: Exception =>
+        logger.warn(
+          s"Failed to release resource label ${labelContainer.getEngineInstanceLabel.getStringValue}",
+          exception
+        )
+      }
+      val engineInstanceLabel = labelContainer.getEngineInstanceLabel
+      Utils.tryCatch {
+        labelResourceService.removeResourceByLabel(engineInstanceLabel)
+        resourceLogService.success(
           ChangeType.ENGINE_CLEAR,
           usedResource.getUsedResource,
           engineInstanceLabel,
-          null,
-          exception
+          null
         )
-        throw exception
-      case _ =>
+      } {
+        case exception: Exception =>
+          resourceLogService.failed(
+            ChangeType.ENGINE_CLEAR,
+            usedResource.getUsedResource,
+            engineInstanceLabel,
+            null,
+            exception
+          )
+          throw exception
+        case _ =>
+      }
+    } {
+      logger.info(
+        s"Finished release instance ${labelContainer.getEngineInstanceLabel.getServiceInstance} resource"
+      )
+      resourceLockService.unLock(instanceLock)
     }
   }
 

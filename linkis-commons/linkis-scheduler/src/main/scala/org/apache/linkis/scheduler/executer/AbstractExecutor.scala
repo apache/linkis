@@ -18,6 +18,7 @@
 package org.apache.linkis.scheduler.executer
 
 import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.scheduler.errorcode.LinkisSchedulerErrorCodeSummary._
 import org.apache.linkis.scheduler.exception.SchedulerErrorException
 import org.apache.linkis.scheduler.executer.ExecutorState._
 import org.apache.linkis.scheduler.listener.ExecutorListener
@@ -48,7 +49,10 @@ abstract class AbstractExecutor(id: Long) extends Executor with Logging {
     if (_state == Busy) synchronized {
       if (_state == Busy) return f
     }
-    throw new SchedulerErrorException(20001, "%s is in state %s." format (toString, _state))
+    throw new SchedulerErrorException(
+      IS_IN_STATE.getErrorCode,
+      "%s is in state %s." format (toString, _state)
+    )
   }
 
   protected def ensureIdle[A](f: => A): A = ensureIdle(f, true)
@@ -63,19 +67,28 @@ abstract class AbstractExecutor(id: Long) extends Executor with Logging {
         }
       }
     }
-    throw new SchedulerErrorException(20001, "%s is in state %s." format (toString, _state))
+    throw new SchedulerErrorException(
+      IS_IN_STATE.getErrorCode,
+      "%s is in state %s." format (toString, _state)
+    )
   }
 
   protected def ensureAvailable[A](f: => A): A = {
     if (ExecutorState.isAvailable(_state)) synchronized {
       if (ExecutorState.isAvailable(_state)) return Utils.tryFinally(f)(callback())
     }
-    throw new SchedulerErrorException(20001, "%s is in state %s." format (toString, _state))
+    throw new SchedulerErrorException(
+      IS_IN_STATE.getErrorCode,
+      "%s is in state %s." format (toString, _state)
+    )
   }
 
   protected def whenAvailable[A](f: => A): A = {
     if (ExecutorState.isAvailable(_state)) return Utils.tryFinally(f)(callback())
-    throw new SchedulerErrorException(20001, "%s is in state %s." format (toString, _state))
+    throw new SchedulerErrorException(
+      IS_IN_STATE.getErrorCode,
+      "%s is in state %s." format (toString, _state)
+    )
   }
 
   protected def transition(state: ExecutorState) = this synchronized {

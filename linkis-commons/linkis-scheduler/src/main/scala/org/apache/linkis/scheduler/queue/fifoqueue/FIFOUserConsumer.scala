@@ -21,6 +21,7 @@ import org.apache.linkis.common.exception.{ErrorException, WarnException}
 import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.scheduler.SchedulerContext
+import org.apache.linkis.scheduler.errorcode.LinkisSchedulerErrorCodeSummary._
 import org.apache.linkis.scheduler.exception.SchedulerErrorException
 import org.apache.linkis.scheduler.executer.Executor
 import org.apache.linkis.scheduler.future.{BDPFuture, BDPFutureTask}
@@ -168,8 +169,8 @@ class FIFOUserConsumer(
           job.onFailure(
             "The request engine times out (请求引擎超时，可能是EngineConnManager 启动EngineConn失败导致，可以去查看看EngineConnManager的linkis.out和linkis.log日志).",
             new SchedulerErrorException(
-              11055,
-              "The request engine times out (请求引擎超时，可能是EngineConnManager 启动EngineConn失败导致，可以去观看EngineConnManager的linkis.out和linkis.log日志)."
+              THE_REQUEST_ENGINE_TIMES_OUT.getErrorCode,
+              THE_REQUEST_ENGINE_TIMES_OUT.getErrorDesc
             )
           )
         case error: Throwable =>

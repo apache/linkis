@@ -25,6 +25,7 @@ import org.apache.linkis.engineconn.acessible.executor.listener.event.{
 import org.apache.linkis.engineconn.executor.entity.SensibleExecutor
 import org.apache.linkis.engineconn.executor.listener.ExecutorListenerBusContext
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
+import org.apache.linkis.scheduler.errorcode.LinkisSchedulerErrorCodeSummary._
 import org.apache.linkis.scheduler.exception.SchedulerErrorException
 
 abstract class AccessibleExecutor extends SensibleExecutor {
@@ -46,7 +47,10 @@ abstract class AccessibleExecutor extends SensibleExecutor {
     if (isBusy) synchronized {
       if (isBusy) return f
     }
-    throw new SchedulerErrorException(20001, "%s is in status %s." format (toString, getStatus))
+    throw new SchedulerErrorException(
+      IS_IN_STATE.getErrorCode,
+      "%s is in status %s." format (toString, getStatus)
+    )
   }
 
   def ensureIdle[A](f: => A): A = ensureIdle(f, true)
@@ -61,19 +65,28 @@ abstract class AccessibleExecutor extends SensibleExecutor {
         }
       }
     }
-    throw new SchedulerErrorException(20001, "%s is in status %s." format (toString, getStatus))
+    throw new SchedulerErrorException(
+      IS_IN_STATE.getErrorCode,
+      "%s is in status %s." format (toString, getStatus)
+    )
   }
 
   def ensureAvailable[A](f: => A): A = {
     if (NodeStatus.isAvailable(getStatus)) synchronized {
       if (NodeStatus.isAvailable(getStatus)) return Utils.tryFinally(f)(callback())
     }
-    throw new SchedulerErrorException(20001, "%s is in status %s." format (toString, getStatus))
+    throw new SchedulerErrorException(
+      IS_IN_STATE.getErrorCode,
+      "%s is in status %s." format (toString, getStatus)
+    )
   }
 
   def whenAvailable[A](f: => A): A = {
     if (NodeStatus.isAvailable(getStatus)) return Utils.tryFinally(f)(callback())
-    throw new SchedulerErrorException(20001, "%s is in status %s." format (toString, getStatus))
+    throw new SchedulerErrorException(
+      IS_IN_STATE.getErrorCode,
+      "%s is in status %s." format (toString, getStatus)
+    )
   }
 
   protected def callback(): Unit

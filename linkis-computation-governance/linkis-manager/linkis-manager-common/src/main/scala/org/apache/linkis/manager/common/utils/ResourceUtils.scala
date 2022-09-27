@@ -55,7 +55,7 @@ object ResourceUtils {
     if (nodeResource.getUsedResource != null) {
       persistenceResource.setUsedResource(serializeResource(nodeResource.getUsedResource))
     }
-    if (nodeResource.getId > 0) {
+    if (nodeResource.getId != null && nodeResource.getId > 0) {
       persistenceResource.setId(nodeResource.getId)
     }
     persistenceResource.setResourceType(nodeResource.getResourceType.toString())

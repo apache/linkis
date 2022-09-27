@@ -198,9 +198,7 @@ class DefaultEngineCreateService
 
     // 2. NodeLabelService getNodesByLabel  获取EMNodeList
     val emScoreNodeList =
-      getEMService().getEMNodes(
-        emLabelList.asScala.filter(!_.isInstanceOf[EngineTypeLabel]).asJava
-      )
+      getEMService().getEMNodes(emLabelList.asScala.filter(!_.isInstanceOf[EngineTypeLabel]).asJava)
 
     // 3. 执行Select  比如负载过高，返回没有负载低的EM，每个规则如果返回为空就抛出异常
     val choseNode =
@@ -217,12 +215,8 @@ class DefaultEngineCreateService
     }
     val emNode = choseNode.get.asInstanceOf[EMNode]
     // 4. 请求资源
-    val (resourceTicketId, resource) = requestResource(
-      engineCreateRequest,
-      labelFilter.choseEngineLabel(labelList),
-      emNode,
-      timeout
-    )
+    val (resourceTicketId, resource) =
+      requestResource(engineCreateRequest, labelFilter.choseEngineLabel(labelList), emNode, timeout)
 
     // 5. 封装engineBuildRequest对象,并发送给EM进行执行
     val engineBuildRequest = EngineConnBuildRequestImpl(
@@ -244,9 +238,7 @@ class DefaultEngineCreateService
 
     val engineNode = Utils.tryCatch(getEMService().createEngine(engineBuildRequest, emNode)) {
       case t: Throwable =>
-        logger.info(
-          s"Failed to create ec($resourceTicketId) ask ecm ${emNode.getServiceInstance}"
-        )
+        logger.info(s"Failed to create ec($resourceTicketId) ask ecm ${emNode.getServiceInstance}")
         val failedEcNode = getEngineNodeManager.getEngineNode(oldServiceInstance)
         if (null == failedEcNode) {
           logger.info(s" engineConn is not exists in db: $oldServiceInstance ")
@@ -359,10 +351,7 @@ class DefaultEngineCreateService
         (ticketId, resource)
       case NotEnoughResource(reason) =>
         logger.warn(s"not engough resource: $reason")
-        throw new LinkisRetryException(
-          AMConstant.EM_ERROR_CODE,
-          s"not engough resource: : $reason"
-        )
+        throw new LinkisRetryException(AMConstant.EM_ERROR_CODE, s"not engough resource: : $reason")
     }
   }
 

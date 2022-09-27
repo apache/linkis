@@ -207,7 +207,8 @@ $> ./mvnw clean install -Pdocker \
    -Dmaven.javadoc.skip=true \
    -Dmaven.test.skip=true \
    -Dlinkis.build.web=true \
-   -Dlinkis.build.ldh=true
+   -Dlinkis.build.ldh=true \
+   -Dlinkis.build.with.jdbc=true
 ```
 
 By default, we download the pre-built binary distributions for each hadoop component from the official site of [Apache Archives](https://archive.apache.org/dist/), which can be very slow for members in some regions.
@@ -220,7 +221,7 @@ Run the following command to setup a local kubernetes cluster with LDH on it.
 $> sh ./scripts/create-kind-cluster.sh \
    && sh ./scripts/install-mysql.sh \
    && sh ./scripts/install-ldh.sh \
-   && sh ./scripts/install-charts.sh
+   && sh ./scripts/install-charts-with-ldh.sh
    
 ...
 
@@ -307,6 +308,10 @@ dataLength = 0
 numChildren = 0
 [zk: localhost:2181(CONNECTED) 1] quit
 
+# Run flink job on per-job cluster mode
+[root@ldh-96bdc757c-dnkbs /]# HADOOP_CLASSPATH=`hadoop classpath` flink run -t yarn-per-job /opt/ldh/current/flink/examples/streaming/TopSpeedWindowing.jar
+# Run flink job on session cluster mode,
+# A Flink session on YARN has been started when the LDH Pod starts
 [root@ldh-96bdc757c-dnkbs /]# flink run /opt/ldh/current/flink/examples/streaming/TopSpeedWindowing.jar
 Executing TopSpeedWindowing example with default input data set.
 Use --input to specify file input.

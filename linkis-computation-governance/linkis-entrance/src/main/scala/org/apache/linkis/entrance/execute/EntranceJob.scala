@@ -68,6 +68,12 @@ abstract class EntranceJob extends Job {
   //  private var resultSize = -1
   private var entranceContext: EntranceContext = _
 
+  private var updateMetrisFlag: Boolean = false
+
+  def getUpdateMetrisFlag: Boolean = this.updateMetrisFlag
+
+  def setUpdateMetrisFlag(updateDbFlag: Boolean): Unit = this.updateMetrisFlag = updateDbFlag
+
   /**
    * Record newest time that a client access status of this job Can be used to monitor client
    * status. e.g. server can detect if linkis-cli process has abnormally ended then kill the job
@@ -79,8 +85,7 @@ abstract class EntranceJob extends Job {
   ): Unit =
     this.entranceListenerBus = Option(entranceListenerBus)
 
-  def setProgressInfo(progressInfo: Array[JobProgressInfo]): Unit = this.progressInfo =
-    progressInfo
+  def setProgressInfo(progressInfo: Array[JobProgressInfo]): Unit = this.progressInfo = progressInfo
 
   def getProgressInfo: Array[JobProgressInfo] = this.progressInfo
 

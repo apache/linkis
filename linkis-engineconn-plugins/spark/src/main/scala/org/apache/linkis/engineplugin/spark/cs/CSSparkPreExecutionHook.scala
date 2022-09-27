@@ -20,10 +20,7 @@ package org.apache.linkis.engineplugin.spark.cs
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.cs.client.utils.ContextServiceUtils
 import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
-import org.apache.linkis.engineconn.core.exception.{
-  EngineConnErrorCode,
-  ExecutorHookFatalException
-}
+import org.apache.linkis.engineconn.core.exception.{EngineConnErrorCode, ExecutorHookFatalException}
 import org.apache.linkis.engineplugin.spark.extension.SparkPreExecutionHook
 
 import org.springframework.stereotype.Component

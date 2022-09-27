@@ -152,15 +152,12 @@ class PythonSession extends Logging {
     )
   }
 
-  def lazyInitGageWay(): Unit = {
+  def lazyInitGateway(): Unit = {
     if (process == null) synchronized {
       if (process == null) {
         Utils.tryThrow(initGateway) { t =>
           {
-            logger.error(
-              "initialize python executor failed, please ask administrator for help!",
-              t
-            )
+            logger.error("initialize python executor failed, please ask administrator for help!", t)
             Utils.tryAndWarn(close)
             throw t
           }

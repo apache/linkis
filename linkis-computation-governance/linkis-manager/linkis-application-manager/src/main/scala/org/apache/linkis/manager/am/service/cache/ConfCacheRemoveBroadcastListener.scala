@@ -57,9 +57,7 @@ class ConfCacheRemoveBroadcastListener extends BroadcastListener with Logging {
               s"success to clear cache about configuration of ${removeCacheConfRequest.engineTypeLabel.getStringValue}-${removeCacheConfRequest.userCreatorLabel.getStringValue}"
             )
           } else {
-            val request = RequestQueryGlobalConfig(
-              removeCacheConfRequest.userCreatorLabel.getUser
-            )
+            val request = RequestQueryGlobalConfig(removeCacheConfRequest.userCreatorLabel.getUser)
             cacheableRPCInterceptor.removeCache(request.toString)
             logger.info(
               s"success to clear cache about global configuration of ${removeCacheConfRequest.userCreatorLabel.getUser}"

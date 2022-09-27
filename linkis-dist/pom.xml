@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.apache.linkis</groupId>
     <artifactId>linkis</artifactId>
-    <version>1.2.0</version>
+    <version>1.3.0</version>
   </parent>
 
   <artifactId>linkis-dist</artifactId>
@@ -147,7 +147,6 @@
     <dependency>
       <groupId>commons-beanutils</groupId>
       <artifactId>commons-beanutils</artifactId>
-      <version>1.9.4</version>
     </dependency>
 
   </dependencies>
@@ -203,7 +202,6 @@
     <profile>
       <id>docker</id>
       <properties>
-        <image.build.type>dev</image.build.type>
         <image.base>centos:7</image.base>
         <image.base.web>nginx:1.19.6</image.base.web>
         <jdk.version>1.8.0-openjdk</jdk.version>
@@ -251,10 +249,6 @@
                       <arg value="--build-arg"></arg>
                       <arg value="LINKIS_VERSION=${project.version}"></arg>
                       <arg value="--build-arg"></arg>
-                      <arg value="MYSQL_JDBC_VERSION=${mysql.connector.version}"></arg>
-                      <arg value="--build-arg"></arg>
-                      <arg value="BUILD_TYPE=${image.build.type}"></arg>
-                      <arg value="--build-arg"></arg>
                       <arg value="LINKIS_SYSTEM_USER=${linkis.system.user}"></arg>
                       <arg value="--build-arg"></arg>
                       <arg value="LINKIS_SYSTEM_UID=${linkis.system.uid}"></arg>
@@ -269,6 +263,30 @@
                     <exec executable="docker" failonerror="true">
                       <arg value="tag"></arg>
                       <arg value="${project.parent.artifactId}:${project.version}"></arg>
+                      <arg value="${project.parent.artifactId}:dev"></arg>
+                    </exec>
+                  </target>
+                </configuration>
+              </execution>
+              <execution>
+                <id>build-linkis-image-with-mysql-jdbc</id>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+                <phase>install</phase>
+                <configuration>
+                  <target if="linkis.build.with.jdbc" name="linkis-image-with-jdbc">
+                    <echo message="Building linkis image with mysql jdbc ..."></echo>
+                    <exec executable="sh" failonerror="true">
+                      <env key="IMAGE_NAME" value="${project.parent.artifactId}:${project.version}-with-jdbc"></env>
+                      <env key="LINKIS_IMAGE" value="${project.parent.artifactId}:${project.version}"></env>
+                      <env key="LINKIS_HOME" value="${linkis.home}"></env>
+                      <env key="MYSQL_JDBC_VERSION" value="${mysql.connector.version}"></env>
+                      <arg value="${basedir}/docker/scripts/make-linikis-image-with-mysql-jdbc.sh"></arg>
+                    </exec>
+                    <exec executable="docker" failonerror="true">
+                      <arg value="tag"></arg>
+                      <arg value="${project.parent.artifactId}:${project.version}-with-jdbc"></arg>
                       <arg value="${project.parent.artifactId}:dev"></arg>
                     </exec>
                   </target>
@@ -347,8 +365,6 @@
                       <arg value="LINKIS_VERSION=${project.version}"></arg>
                       <arg value="--build-arg"></arg>
                       <arg value="MYSQL_JDBC_VERSION=${mysql.connector.version}"></arg>
-                      <arg value="--build-arg"></arg>
-                      <arg value="BUILD_TYPE=${image.build.type}"></arg>
                       <arg value="--build-arg"></arg>
                       <arg value="LINKIS_SYSTEM_USER=${linkis.system.user}"></arg>
                       <arg value="--build-arg"></arg>

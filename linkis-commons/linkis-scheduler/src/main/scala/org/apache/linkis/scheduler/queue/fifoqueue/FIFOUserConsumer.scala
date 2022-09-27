@@ -137,14 +137,10 @@ class FIFOUserConsumer(
               schedulerContext.getOrCreateExecutorManager.askExecutor(job, askDuration)
             ) {
               case warn: WarnException =>
-                job.getLogListener.foreach(
-                  _.onLogUpdate(job, LogUtils.generateWarn(warn.getDesc))
-                )
+                job.getLogListener.foreach(_.onLogUpdate(job, LogUtils.generateWarn(warn.getDesc)))
                 None
               case e: ErrorException =>
-                job.getLogListener.foreach(
-                  _.onLogUpdate(job, LogUtils.generateERROR(e.getMessage))
-                )
+                job.getLogListener.foreach(_.onLogUpdate(job, LogUtils.generateERROR(e.getMessage)))
                 throw e
               case error: Throwable =>
                 job.getLogListener.foreach(
@@ -161,9 +157,7 @@ class FIFOUserConsumer(
         executor.foreach { executor =>
           job.setExecutor(executor)
           job.future = executeService.submit(job)
-          job.getJobDaemon.foreach(jobDaemon =>
-            jobDaemon.future = executeService.submit(jobDaemon)
-          )
+          job.getJobDaemon.foreach(jobDaemon => jobDaemon.future = executeService.submit(jobDaemon))
           if (!isRetryJob) putToRunningJobs(job)
         }
       } {

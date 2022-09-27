@@ -24,10 +24,7 @@ import java.util
 
 object ErrorCodeMatcher extends Logging {
 
-  def errorMatch(
-      errorCodes: util.List[LinkisErrorCode],
-      log: String
-  ): Option[(String, String)] = {
+  def errorMatch(errorCodes: util.List[LinkisErrorCode], log: String): Option[(String, String)] = {
     Utils.tryCatch {
       import scala.collection.JavaConversions._
       errorCodes.foreach(e =>

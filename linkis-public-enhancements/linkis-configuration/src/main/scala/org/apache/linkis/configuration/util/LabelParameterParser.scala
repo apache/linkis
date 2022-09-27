@@ -22,11 +22,7 @@ import org.apache.linkis.configuration.exception.ConfigurationException
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import org.apache.linkis.manager.label.entity.Label
-import org.apache.linkis.manager.label.entity.engine.{
-  EngineType,
-  EngineTypeLabel,
-  UserCreatorLabel
-}
+import org.apache.linkis.manager.label.entity.engine.{EngineType, EngineTypeLabel, UserCreatorLabel}
 
 import org.springframework.util.CollectionUtils
 
@@ -88,9 +84,7 @@ object LabelParameterParser {
         case a: UserCreatorLabel => Unit
         case a: EngineTypeLabel => Unit
         case label =>
-          throw new ConfigurationException(
-            s"this type of label is not supported:${label.getClass}"
-          )
+          throw new ConfigurationException(s"this type of label is not supported:${label.getClass}")
       }
       true
     } else {

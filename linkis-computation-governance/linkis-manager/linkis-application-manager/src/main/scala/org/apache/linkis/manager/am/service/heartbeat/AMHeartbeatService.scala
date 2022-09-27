@@ -24,10 +24,7 @@ import org.apache.linkis.manager.common.conf.RMConfiguration
 import org.apache.linkis.manager.common.entity.metrics.AMNodeMetrics
 import org.apache.linkis.manager.common.monitor.ManagerMonitor
 import org.apache.linkis.manager.common.protocol.node.NodeHeartbeatMsg
-import org.apache.linkis.manager.persistence.{
-  NodeManagerPersistence,
-  NodeMetricManagerPersistence
-}
+import org.apache.linkis.manager.persistence.{NodeManagerPersistence, NodeMetricManagerPersistence}
 import org.apache.linkis.manager.service.common.metrics.MetricsConverter
 import org.apache.linkis.rpc.message.annotation.Receiver
 
@@ -73,9 +70,7 @@ class AMHeartbeatService extends HeartbeatService with Logging {
     logger.info(s"Am deal nodeHeartbeatMsg $nodeHeartbeatMsg")
     nodeMetrics.setHealthy(metricsConverter.convertHealthyInfo(nodeHeartbeatMsg.getHealthyInfo))
     nodeMetrics.setHeartBeatMsg(nodeHeartbeatMsg.getHeartBeatMsg)
-    nodeMetrics.setOverLoad(
-      metricsConverter.convertOverLoadInfo(nodeHeartbeatMsg.getOverLoadInfo)
-    )
+    nodeMetrics.setOverLoad(metricsConverter.convertOverLoadInfo(nodeHeartbeatMsg.getOverLoadInfo))
     nodeMetrics.setServiceInstance(nodeHeartbeatMsg.getServiceInstance)
     if (nodeHeartbeatMsg.getStatus != null) {
       nodeMetrics.setStatus(metricsConverter.convertStatus(nodeHeartbeatMsg.getStatus))

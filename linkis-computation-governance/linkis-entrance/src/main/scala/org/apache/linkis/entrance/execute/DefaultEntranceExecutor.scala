@@ -92,6 +92,11 @@ class DefaultEntranceExecutor(
       orchestratorFuture.operate[ProgressProcessor](DefaultProgressOperation.PROGRESS_NAME)
     progressProcessor.doOnObtain(progressInfoEvent => {
       if (null != entranceJob) {
+        JobHistoryHelper.updateJobRequestMetrics(
+          entranceJob.getJobRequest,
+          progressInfoEvent.resourceMap,
+          progressInfoEvent.infoMap
+        )
         val jobGroups = entranceJob.getJobGroups
         if (jobGroups.length > 0) {
           val subJobInfo = entranceJob.getRunningSubJob
@@ -109,11 +114,7 @@ class DefaultEntranceExecutor(
                 )
               }
               entranceJob.getProgressListener.foreach(
-                _.onProgressUpdate(
-                  entranceJob,
-                  totalProgress.toFloat,
-                  entranceJob.getProgressInfo
-                )
+                _.onProgressUpdate(entranceJob, totalProgress.toFloat, entranceJob.getProgressInfo)
               )
             } else {
               logger.error("Invalid runningIndex.")
@@ -121,18 +122,9 @@ class DefaultEntranceExecutor(
           }
         } else {
           entranceJob.getProgressListener.foreach(
-            _.onProgressUpdate(
-              entranceJob,
-              progressInfoEvent.progress,
-              entranceJob.getProgressInfo
-            )
+            _.onProgressUpdate(entranceJob, progressInfoEvent.progress, entranceJob.getProgressInfo)
           )
         }
-        JobHistoryHelper.updateJobRequestMetrics(
-          entranceJob.getJobRequest,
-          progressInfoEvent.resourceMap,
-          progressInfoEvent.infoMap
-        )
       }
     })
     progressProcessor
@@ -284,9 +276,7 @@ class DefaultEntranceExecutor(
     jobReqBuilder.setCodeLogicalUnit(codeLogicalUnit)
     jobReqBuilder.setLabels(entranceExecuteRequest.getLabels)
     jobReqBuilder.setExecuteUser(entranceExecuteRequest.executeUser())
-    jobReqBuilder.setParams(
-      entranceExecuteRequest.properties().asInstanceOf[util.Map[String, Any]]
-    )
+    jobReqBuilder.setParams(entranceExecuteRequest.properties().asInstanceOf[util.Map[String, Any]])
     jobReqBuilder.build()
   }
 

@@ -48,11 +48,7 @@ trait AbstractEngineConnExecution extends EngineConnExecution with Logging {
   ): Unit = {
     if (canExecute(engineCreationContext)) {
       logger.warn(s"${getClass.getName} is enabled, now step into it's execution.")
-      doExecution(
-        ExecutorManager.getInstance.getReportExecutor,
-        engineCreationContext,
-        engineConn
-      )
+      doExecution(ExecutorManager.getInstance.getReportExecutor, engineCreationContext, engineConn)
     } else {
       logger.warn(s"${getClass.getName} is disabled, skip it's execution.")
     }

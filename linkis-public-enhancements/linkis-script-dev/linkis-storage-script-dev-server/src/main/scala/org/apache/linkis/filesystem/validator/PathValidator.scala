@@ -75,8 +75,7 @@ class PathValidator extends Logging {
       case index: Int => {
         val proxyUser = paramNames.indexOf("proxyUser")
         if (proxyUser == -1 || StringUtils.isEmpty(args(proxyUser))) {
-          username =
-            ModuleUserUtils.getOperationUser(args(index).asInstanceOf[HttpServletRequest])
+          username = ModuleUserUtils.getOperationUser(args(index).asInstanceOf[HttpServletRequest])
         } else {
           // 增加proxyuser的判断
           username = args(proxyUser).toString
@@ -93,9 +92,7 @@ class PathValidator extends Logging {
     var userHdfsRootPath: String =
       WorkspaceUtil.suffixTuning(HDFS_USER_ROOT_PATH_PREFIX.getValue) +
         username + HDFS_USER_ROOT_PATH_SUFFIX.getValue
-    if (
-        !(path.contains(StorageUtils.FILE_SCHEMA)) && !(path.contains(StorageUtils.HDFS_SCHEMA))
-    ) {
+    if (!(path.contains(StorageUtils.FILE_SCHEMA)) && !(path.contains(StorageUtils.HDFS_SCHEMA))) {
       throw new WorkSpaceException(80025, "the path should contain schema")
     }
     userHdfsRootPath = StringUtils.trimTrailingCharacter(userHdfsRootPath, File.separatorChar)

@@ -18,10 +18,11 @@
 package org.apache.linkis.governance.common.exception
 
 import org.apache.linkis.common.exception.LinkisRetryException
+import org.apache.linkis.governance.errorcode.ComputationCommonErrorCodeSummary.JOB_CODE
 
 class LinkisJobRetryException(desc: String)
     extends LinkisRetryException(LinkisJobRetryException.JOB_RETRY_ERROR_CODE, desc)
 
 object LinkisJobRetryException {
-  val JOB_RETRY_ERROR_CODE = 25000
+  val JOB_RETRY_ERROR_CODE = JOB_CODE.getErrorCode
 }

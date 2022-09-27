@@ -18,6 +18,7 @@
 package org.apache.linkis.manager.common.protocol
 
 import org.apache.linkis.governance.common.exception.GovernanceErrorException
+import org.apache.linkis.governance.errorcode.ComputationCommonErrorCodeSummary.IS_NOT_EXISTS
 
 trait OperateRequest {
   val user: String
@@ -32,14 +33,21 @@ object OperateRequest {
     parameters
       .getOrElse(
         OperateRequest.OPERATOR_NAME_KEY,
-        throw new GovernanceErrorException(20031, s"$OPERATOR_NAME_KEY is not exists.")
+        throw new GovernanceErrorException(
+          IS_NOT_EXISTS.getErrorCode,
+          s"$OPERATOR_NAME_KEY is not exists."
+        )
       )
       .asInstanceOf[String]
 
   def getOperationName(parameters: java.util.Map[String, Any]): String =
     parameters.get(OperateRequest.OPERATOR_NAME_KEY) match {
       case v: String => v
-      case _ => throw new GovernanceErrorException(20031, s"$OPERATOR_NAME_KEY is not exists.")
+      case _ =>
+        throw new GovernanceErrorException(
+          IS_NOT_EXISTS.getErrorCode,
+          s"$OPERATOR_NAME_KEY is not exists."
+        )
     }
 
 }

@@ -19,6 +19,7 @@ package org.apache.linkis.governance.common.utils
 
 import org.apache.linkis.governance.common.entity.job.OnceExecutorContent
 import org.apache.linkis.governance.common.exception.GovernanceErrorException
+import org.apache.linkis.governance.errorcode.ComputationCommonErrorCodeSummary._
 import org.apache.linkis.protocol.constants.TaskConstant
 
 import java.util
@@ -34,7 +35,7 @@ object OnceExecutorContentUtils {
     val resourceIdLength = resourceId.length.toString.length
     if (resourceIdLength > LEN) {
       throw new GovernanceErrorException(
-        40108,
+        INVALID_RESOURCEID.getErrorCode,
         s"Invalid resourceId $resourceId, it is too length."
       )
     }
@@ -45,7 +46,7 @@ object OnceExecutorContentUtils {
   def valueToResource(resource: String): BmlResource = {
     if (!resource.startsWith(HEADER)) {
       throw new GovernanceErrorException(
-        40108,
+        INVALID_RESOURCEID_CONTAIN.getErrorCode,
         s"Invalid resource $resource, it doesn't contain $HEADER."
       )
     }

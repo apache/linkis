@@ -19,6 +19,7 @@ package org.apache.linkis.manager.common.operator
 
 import org.apache.linkis.common.utils.{ClassUtils, Logging}
 import org.apache.linkis.governance.common.exception.GovernanceErrorException
+import org.apache.linkis.governance.errorcode.ComputationCommonErrorCodeSummary._
 import org.apache.linkis.manager.common.protocol.OperateRequest
 
 trait OperatorFactory {
@@ -58,7 +59,11 @@ class OperatorFactoryImpl extends OperatorFactory with Logging {
   override def getOperatorRequest(parameters: Map[String, Any]): Operator = {
     val operatorName = getOperatorName(parameters)
     if (operators.contains(operatorName)) operators(operatorName)
-    else throw new GovernanceErrorException(20030, s"Cannot find operator named $operatorName.")
+    else
+      throw new GovernanceErrorException(
+        CANNOT_FIND_OPERATOR_NAMED.getErrorCode,
+        s"Cannot find operator named $operatorName."
+      )
   }
 
 }

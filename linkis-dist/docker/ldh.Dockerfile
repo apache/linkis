@@ -38,6 +38,9 @@ ARG LINKIS_VERSION=0.0.0
 
 RUN useradd -r -s /bin/bash -u 100001 -g root -G wheel hadoop
 
+# if you want to set specific yum repos conf file, you can put its at linkis-dist/docker/CentOS-Base.repo
+# and exec [COPY  apache-linkis-*-incubating-bin/docker/CentOS-Epel.repo  /etc/yum.repos.d/CentOS-Epel.repo]
+
 RUN yum install -y \
        vim unzip curl sudo krb5-workstation sssd crontabs net-tools python-pip \
        java-${JDK_VERSION}-${JDK_BUILD_REVISION} \

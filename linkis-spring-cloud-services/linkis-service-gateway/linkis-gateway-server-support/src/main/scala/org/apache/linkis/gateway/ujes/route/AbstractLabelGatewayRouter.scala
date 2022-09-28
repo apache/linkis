@@ -20,6 +20,7 @@ package org.apache.linkis.gateway.ujes.route
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.gateway.config.GatewayConfiguration
+import org.apache.linkis.gateway.errorcode.LinkisGatewayCoreErrorCodeSummary._
 import org.apache.linkis.gateway.exception.GatewayErrorException
 import org.apache.linkis.gateway.http.GatewayContext
 import org.apache.linkis.gateway.route.AbstractGatewayRouter
@@ -71,7 +72,7 @@ abstract class AbstractLabelGatewayRouter extends AbstractGatewayRouter with Log
       val candidateServices = insLabelService.searchInstancesByLabels(routeLabels)
       if (null == candidateServices || candidateServices.isEmpty) {
         throw new GatewayErrorException(
-          11011,
+          CANNOT_ROETE_SERVICE.getErrorCode,
           s"Cannot route to the corresponding service, URL: ${gatewayContext.getRequest.getRequestURI} RouteLabel: ${LabelUtils.Jackson
             .toJson(routeLabels, null)}"
         )
@@ -83,8 +84,8 @@ abstract class AbstractLabelGatewayRouter extends AbstractGatewayRouter with Log
     val instance = selectInstance(gatewayContext, canSelectInstances)
     if (null == instance || StringUtils.isBlank(instance.getInstance)) {
       throw new GatewayErrorException(
-        11011,
-        s"There are no services available in the registry URL: ${gatewayContext.getRequest.getRequestURI}"
+        NO_SERVICES_REGISTRY.getErrorCode,
+        NO_SERVICES_REGISTRY.getErrorDesc + s" ${gatewayContext.getRequest.getRequestURI}"
       )
     }
     instance

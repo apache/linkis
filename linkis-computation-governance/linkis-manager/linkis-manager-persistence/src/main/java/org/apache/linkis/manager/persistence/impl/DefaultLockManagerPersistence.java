@@ -72,7 +72,8 @@ public class DefaultLockManagerPersistence implements LockManagerPersistence {
         return false;
       }
     } catch (DataAccessException e) {
-      logger.warn("Failed to obtain lock:" + persistenceLock.getLockObject(), e);
+      logger.warn(
+          "Failed to obtain lock:{}, msg {}", persistenceLock.getLockObject(), e.getMessage());
       return false;
     }
   }

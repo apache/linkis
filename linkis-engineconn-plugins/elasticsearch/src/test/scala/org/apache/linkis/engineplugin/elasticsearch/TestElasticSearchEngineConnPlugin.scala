@@ -24,6 +24,7 @@ class TestElasticSearchEngineConnPlugin {
   @Test
   def testGetEngineResourceFactory: Unit = {
     val elasticSearchEngineConnPlugin = new ElasticSearchEngineConnPlugin
+    elasticSearchEngineConnPlugin.init(null)
     Assertions.assertNotNull(elasticSearchEngineConnPlugin.getEngineConnFactory)
     Assertions.assertNotNull(elasticSearchEngineConnPlugin.getEngineConnLaunchBuilder)
     Assertions.assertNotNull(elasticSearchEngineConnPlugin.getEngineResourceFactory)

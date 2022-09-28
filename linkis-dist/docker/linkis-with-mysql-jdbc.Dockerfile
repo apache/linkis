@@ -27,3 +27,5 @@ ARG MYSQL_JDBC_VERSION=8.0.28
 
 COPY mysql-connector-java-${MYSQL_JDBC_VERSION}.jar ${LINKIS_HOME}/lib/linkis-commons/public-module/
 COPY mysql-connector-java-${MYSQL_JDBC_VERSION}.jar ${LINKIS_HOME}/lib/linkis-spring-cloud-services/linkis-mg-gateway/
+
+ENV LANG C.UTF-8

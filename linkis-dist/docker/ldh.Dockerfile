@@ -70,10 +70,12 @@ RUN mkdir -p /etc/ldh \
     && ln -s /opt/ldh/${LINKIS_VERSION}/flink-${FLINK_VERSION} /opt/ldh/current/flink \
     && ln -s /opt/ldh/${LINKIS_VERSION}/apache-zookeeper-${ZOOKEEPER_VERSION}-bin /opt/ldh/current/zookeeper
 
-RUN curl -L -o /opt/ldh/current/hive/lib/mysql-connector-java-${MYSQL_JDBC_VERSION}.jar \
-            https://repo1.maven.org/maven2/mysql/mysql-connector-java/${MYSQL_JDBC_VERSION}/mysql-connector-java-${MYSQL_JDBC_VERSION}.jar \
-    && cp /opt/ldh/current/hive/lib/mysql-connector-java-${MYSQL_JDBC_VERSION}.jar /opt/ldh/current/spark/jars/
+# after create soft link
+ADD ldh-tars/mysql-connector-java-${MYSQL_JDBC_VERSION}.jar /opt/ldh/current/hive/lib/
+ADD ldh-tars/mysql-connector-java-${MYSQL_JDBC_VERSION}.jar /opt/ldh/current/spark/jars/
 
+
+ENV LANG C.UTF-8
 ENV JAVA_HOME /etc/alternatives/jre
 ENV PATH /opt/ldh/current/hadoop/bin:/opt/ldh/current/hive/bin:/opt/ldh/current/spark/bin:/opt/ldh/current/flink/bin:/opt/ldh/current/zookeeper/bin:$PATH
 ENV HADOOP_CONF_DIR=/etc/ldh/hadoop

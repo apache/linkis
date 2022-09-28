@@ -57,6 +57,7 @@ RUN mkdir -p /opt/tmp \
     && mkdir -p ${LINKIS_CONF_DIR} \
     && mkdir -p ${LINKIS_LOG_DIR}
 
+ENV LANG C.UTF-8
 ENV JAVA_HOME /etc/alternatives/jre
 ENV LINKIS_CONF_DIR ${LINKIS_CONF_DIR}
 ENV LINKIS_CLIENT_CONF_DIR ${LINKIS_CONF_DIR}

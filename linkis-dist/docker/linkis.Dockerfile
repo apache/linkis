@@ -66,7 +66,8 @@ ENV LINKIS_CONF_DIR ${LINKIS_CONF_DIR}
 ENV LINKIS_CLIENT_CONF_DIR ${LINKIS_CONF_DIR}
 ENV LINKIS_HOME ${LINKIS_HOME}
 
-ADD apache-linkis-${LINKIS_VERSION}-incubating-bin.tar.gz /opt/tmp/
+# can do some pre-operations
+ADD apache-linkis-${LINKIS_VERSION}-incubating-bin /opt/tmp/
 
 RUN mv /opt/tmp/linkis-package/* ${LINKIS_HOME}/ \
     && rm -rf /opt/tmp

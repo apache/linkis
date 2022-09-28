@@ -15,17 +15,19 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineplugin.elasticsearch.executer.client
+package org.apache.linkis.engineplugin.elasticsearch
 
-import org.apache.linkis.storage.domain.Column
-import org.apache.linkis.storage.resultset.table.TableRecord
+import org.junit.jupiter.api.{Assertions, Test}
 
-trait ElasticSearchResponse
+class TestElasticSearchEngineConnPlugin {
 
-case class ElasticSearchTableResponse(columns: Array[Column], records: Array[TableRecord])
-    extends ElasticSearchResponse
+  @Test
+  def testGetEngineResourceFactory: Unit = {
+    val elasticSearchEngineConnPlugin = new ElasticSearchEngineConnPlugin
+    Assertions.assertNotNull(elasticSearchEngineConnPlugin.getEngineConnFactory)
+    Assertions.assertNotNull(elasticSearchEngineConnPlugin.getEngineConnLaunchBuilder)
+    Assertions.assertNotNull(elasticSearchEngineConnPlugin.getEngineResourceFactory)
+    Assertions.assertNotNull(elasticSearchEngineConnPlugin.getDefaultLabels)
+  }
 
-case class ElasticSearchJsonResponse(value: String) extends ElasticSearchResponse
-
-case class ElasticSearchErrorResponse(message: String, body: String = null, cause: Throwable = null)
-    extends ElasticSearchResponse
+}

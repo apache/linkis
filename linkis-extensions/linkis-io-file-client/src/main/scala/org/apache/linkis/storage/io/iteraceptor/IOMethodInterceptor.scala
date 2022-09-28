@@ -22,12 +22,7 @@ import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.manager.label.constant.LabelKeyConstant
 import org.apache.linkis.manager.label.entity.entrance.BindEngineLabel
 import org.apache.linkis.storage.domain.{FsPathListWithError, MethodEntity, MethodEntitySerializer}
-import org.apache.linkis.storage.errorcode.LinkisIoFileClientErrorCodeSummary.{
-  ENGINE_CLOSED_IO_ILLEGAL,
-  FAILED_TO_INIT_USER,
-  NO_USER_INFORMATION,
-  STORAGE_HAS_BEEN_CLOSED
-}
+import org.apache.linkis.storage.errorcode.LinkisIoFileClientErrorCodeSummary._
 import org.apache.linkis.storage.exception.{FSNotInitException, StorageErrorException}
 import org.apache.linkis.storage.io.client.IOClient
 import org.apache.linkis.storage.io.utils.IOClientUtils
@@ -109,10 +104,7 @@ class IOMethodInterceptor(fsType: String) extends MethodInterceptor with Logging
 
   def initFS(methodName: String = "init"): Unit = {
     if (!properties.asScala.contains(StorageConfiguration.PROXY_USER.key)) {
-      throw new StorageErrorException(
-        NO_USER_INFORMATION.getErrorCode,
-        NO_USER_INFORMATION.getErrorDesc
-      )
+      throw new StorageErrorException(NO_PROXY_USER.getErrorCode, NO_PROXY_USER.getErrorDesc)
     }
     bindEngineLabel.setIsJobGroupHead("true")
     bindEngineLabel.setIsJobGroupEnd("false")
@@ -137,11 +129,12 @@ class IOMethodInterceptor(fsType: String) extends MethodInterceptor with Logging
       inited = true
       bindEngineLabel.setIsJobGroupEnd("false")
       bindEngineLabel.setIsJobGroupHead("false")
-    } else
+    } else {
       throw new StorageErrorException(
         FAILED_TO_INIT_USER.getErrorCode,
         s"Failed to init FS for user:$getProxyUser "
       )
+    }
   }
 
   def beforeOperation(): Unit = {

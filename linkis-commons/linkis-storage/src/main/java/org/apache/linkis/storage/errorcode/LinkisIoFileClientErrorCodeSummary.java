@@ -18,10 +18,10 @@
 package org.apache.linkis.storage.errorcode;
 
 public enum LinkisIoFileClientErrorCodeSummary {
-  NO_USER_INFORMATION(
+  NO_PROXY_USER(
       52002,
-      "no user set, we cannot get the permission information.(没有用户设置，我们无法获取权限信息.)",
-      "no user set, we cannot get the permission information.(没有用户设置，我们无法获取权限信息.)"),
+      "proxy user not set, can not get the permission information.(没有设置代理 proxy 用户，无法获取权限信息)",
+      "proxy user not set, can not get the permission information.(没有设置代理 proxy 用户，无法获取权限信息)"),
   FAILED_TO_INIT_USER(
       52002,
       "Failed to init FS for user:(为用户初始化 FS 失败：)",

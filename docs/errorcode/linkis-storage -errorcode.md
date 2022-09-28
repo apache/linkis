@@ -19,7 +19,7 @@
 |linkis-storage |52002|FS Can not proxy to:{}(FS 不能代理到：{}) |LinkisIoFileErrorCodeSummary|
 |linkis-storage |53003|not exists method {} in fs {}(方法不存在) |LinkisIoFileErrorCodeSummary|
 |linkis-storage |53002|The read method parameter cannot be empty(read方法参数不能为空)|LinkisIoFileErrorCodeSummary|
-|linkis-storage |52002|no user set, we cannot get the permission information.(没有用户设置，我们无法获取权限信息.)|LinkisIoFileClientErrorCodeSummary|
+|linkis-storage |52002|proxy user not set, can not get the permission information.(没有设置代理 proxy 用户，无法获取权限信息)|LinkisIoFileClientErrorCodeSummary|
 |linkis-storage |52002|Failed to init FS for user:(为用户初始化 FS 失败：)|LinkisIoFileClientErrorCodeSummary|
 |linkis-storage |52002|has been closed, IO operation was illegal.(已经关闭，IO操作是非法的.)"|LinkisIoFileClientErrorCodeSummary|
 |linkis-storage |52002|storage has been closed.(存储已关闭.)|LinkisIoFileClientErrorCodeSummary|

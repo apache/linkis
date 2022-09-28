@@ -38,12 +38,22 @@ ARG LINKIS_VERSION=0.0.0
 
 RUN useradd -r -s /bin/bash -u 100001 -g root -G wheel hadoop
 
+# if you want to set specific yum repos conf file, you can put its at linkis-dist/docker/CentOS-Base.repo
+# and exec [COPY  apache-linkis-*-incubating-bin/docker/CentOS-Epel.repo  /etc/yum.repos.d/CentOS-Epel.repo]
+
+# TODO: remove install mysql client when schema-init-tools is ready
 RUN yum install -y \
-       vim unzip curl sudo krb5-workstation sssd crontabs net-tools python-pip \
+       less ls vim unzip curl sudo krb5-workstation sssd crontabs python-pip glibc-common \
        java-${JDK_VERSION}-${JDK_BUILD_REVISION} \
        java-${JDK_VERSION}-devel-${JDK_BUILD_REVISION} \
        mysql \
     && yum clean all
+
+RUN cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
+    && localedef -c -f UTF-8 -i en_US en_US.UTF-8
+ENV LANG=en_US.UTF-8 LANGUAGE=en_US:zh LC_TIME=en_US.UTF-8
+ENV TZ="Asia/Shanghai"
+
 
 RUN sed -i "s#^%wheel.*#%wheel        ALL=(ALL)       NOPASSWD: ALL#g" /etc/sudoers
 
@@ -70,9 +80,12 @@ RUN mkdir -p /etc/ldh \
     && ln -s /opt/ldh/${LINKIS_VERSION}/flink-${FLINK_VERSION} /opt/ldh/current/flink \
     && ln -s /opt/ldh/${LINKIS_VERSION}/apache-zookeeper-${ZOOKEEPER_VERSION}-bin /opt/ldh/current/zookeeper
 
-RUN curl -L -o /opt/ldh/current/hive/lib/mysql-connector-java-${MYSQL_JDBC_VERSION}.jar \
-            https://repo1.maven.org/maven2/mysql/mysql-connector-java/${MYSQL_JDBC_VERSION}/mysql-connector-java-${MYSQL_JDBC_VERSION}.jar \
-    && cp /opt/ldh/current/hive/lib/mysql-connector-java-${MYSQL_JDBC_VERSION}.jar /opt/ldh/current/spark/jars/
+# after create soft link
+ADD ldh-tars/mysql-connector-java-${MYSQL_JDBC_VERSION}.jar /opt/ldh/current/hive/lib/
+ADD ldh-tars/mysql-connector-java-${MYSQL_JDBC_VERSION}.jar /opt/ldh/current/spark/jars/
+
+
+
 
 ENV JAVA_HOME /etc/alternatives/jre
 ENV PATH /opt/ldh/current/hadoop/bin:/opt/ldh/current/hive/bin:/opt/ldh/current/spark/bin:/opt/ldh/current/flink/bin:/opt/ldh/current/zookeeper/bin:$PATH

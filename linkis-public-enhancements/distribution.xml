@@ -27,20 +27,6 @@
     <includeBaseDirectory>false</includeBaseDirectory>
     <baseDirectory>linkis-public-enhancements</baseDirectory>
 
-    <fileSets>
-        <fileSet>
-            <directory>
-                ../linkis-datasource/linkis-metadata-query/server/target/out/lib/service
-            </directory>
-            <outputDirectory>
-                lib/service
-            </outputDirectory>
-            <includes>
-                <include>**/*</include>
-            </includes>
-        </fileSet>
-    </fileSets>
-
     <dependencySets>
         <dependencySet>
             <!-- Enable access to all projects in the current multimodule build! <useAllReactorProjects>true</useAllReactorProjects> -->
@@ -323,6 +309,17 @@
     </dependencySets>
 
     <fileSets>
+        <fileSet>
+            <directory>
+                ../linkis-datasource/linkis-metadata-query/server/target/out/lib/service
+            </directory>
+            <outputDirectory>
+                lib/service
+            </outputDirectory>
+            <includes>
+                <include>**/*</include>
+            </includes>
+        </fileSet>
         <fileSet>
             <directory>${basedir}/conf</directory>
             <includes>

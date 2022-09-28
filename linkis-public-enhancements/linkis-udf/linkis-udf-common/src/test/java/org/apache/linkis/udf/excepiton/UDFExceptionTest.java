@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,13 +15,19 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineplugin.openlookeng.exception;
+package org.apache.linkis.udf.excepiton;
 
-import org.apache.linkis.common.exception.ErrorException;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-public class OpenLooKengSourceGroupException extends ErrorException {
+public class UDFExceptionTest {
 
-  public OpenLooKengSourceGroupException(int errCode, String desc) {
-    super(errCode, desc);
+  @Test
+  @DisplayName("udfExceptionTest")
+  public void udfExceptionTest() {
+    String errorMsg = "udf is not exist";
+    UDFException udfException = new UDFException(errorMsg);
+    Assertions.assertEquals(errorMsg, udfException.getMessage());
   }
 }

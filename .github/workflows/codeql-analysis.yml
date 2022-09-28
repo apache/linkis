@@ -59,9 +59,8 @@ jobs:
 #      - name: Autobuild
 #        uses: github/codeql-action/autobuild@v2
       - name: Build
-        run: |
-            ./mvnw -N install
-            ./mvnw clean package
+        run:
+          ./mvnw clean package -Dmaven.test.skip=true
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v2

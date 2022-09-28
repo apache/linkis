@@ -25,6 +25,7 @@ import org.apache.linkis.engineconn.once.executor.{
   OperableOnceExecutor
 }
 import org.apache.linkis.engineconnplugin.sqoop.client.LinkisSqoopClient
+import org.apache.linkis.engineconnplugin.sqoop.client.errorcode.SqoopErrorCodeSummary.EXEC_SQOOP_CODE_ERROR
 import org.apache.linkis.engineconnplugin.sqoop.client.exception.JobExecutionException
 import org.apache.linkis.engineconnplugin.sqoop.context.{
   SqoopEngineConnContext,
@@ -73,7 +74,7 @@ class SqoopOnceCodeExecutor(
           setResponse(
             ErrorExecuteResponse(
               "Run code failed!",
-              new JobExecutionException("Exec Sqoop Code Error")
+              new JobExecutionException(EXEC_SQOOP_CODE_ERROR.getErrorDesc)
             )
           )
         }

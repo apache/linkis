@@ -3,8 +3,8 @@
 </h2>
 
 <p align="center">
-  <strong>Linkis builds a computation middleware layer to decouple the upper applications and the underlying data engines, 
-  provides standardized interfaces (REST, JDBC, WebSocket etc.) to easily connect to various underlying engines (Spark, Presto, Flink, etc.), 
+  <strong>Linkis builds a computation middleware layer to decouple the upper applications and the underlying data engines,
+  provides standardized interfaces (REST, JDBC, WebSocket etc.) to easily connect to various underlying engines (Spark, Presto, Flink, etc.),
   while enables cross engine context sharing, unified job& engine governance and orchestration.</strong>
 </p>
 <p align="center">
@@ -33,7 +33,7 @@
     <a target="_blank" href="https://github.com/apache/incubator-linkis/actions">
         <img src="https://github.com/apache/incubator-linkis/actions/workflows/build.yml/badge.svg" />
     </a>
-    
+
    <a target="_blank" href='https://github.com/apache/incubator-linkis'>
         <img src="https://img.shields.io/github/forks/apache/incubator-linkis.svg" alt="github forks"/>
    </a>
@@ -64,7 +64,6 @@ As a computation middleware, Linkis provides powerful connectivity, reuse, orche
 
 Since the first release of Linkis in 2019, it has accumulated more than **700** trial companies and **1000+** sandbox trial users, which involving diverse industries, from finance, banking, tele-communication, to manufactory, internet companies and so on. Lots of companies have already used Linkis as a unified entrance for the underlying computation and storage engines of the big data platform.
 
-
 ![linkis-intro-01](https://user-images.githubusercontent.com/7869972/148767375-aeb11b93-16ca-46d7-a30e-92fbefe2bd5e.png)
 
 ![linkis-intro-03](https://user-images.githubusercontent.com/7869972/148767380-c34f44b2-9320-4633-9ec8-662701f41d15.png)
@@ -72,11 +71,11 @@ Since the first release of Linkis in 2019, it has accumulated more than **700** 
 # Features
 
 - **Support for diverse underlying computation storage engines**  
-   - Currently supported computation/storage engines: Spark、Hive、Flink、Python、Pipeline、Sqoop、openLooKeng、Presto、ElasticSearch、JDBC, Shell, etc     
-   - Computation/storage engines to be supported: Trino (planned 1.3.1), SeaTunnel (planned 1.3.1), etc
-   - Supported scripting languages: SparkSQL、HiveQL、Python、Shell、Pyspark、R、Scala and JDBC, etc
+  - Currently supported computation/storage engines: Spark、Hive、Flink、Python、Pipeline、Sqoop、openLooKeng、Presto、ElasticSearch、JDBC, Shell, etc
+  - Computation/storage engines to be supported: Trino (planned 1.3.1), SeaTunnel (planned 1.3.1), etc
+  - Supported scripting languages: SparkSQL、HiveQL、Python、Shell、Pyspark、R、Scala and JDBC, etc
 
-- **Powerful task/request governance capabilities** With services such as Orchestrator, Label Manager and customized Spring Cloud Gateway, Linkis is able to provide multi-level labels based, cross-cluster/cross-IDC fine-grained routing, load balance, multi-tenancy, traffic control, resource control, and orchestration strategies like dual-active, active-standby, etc 
+- **Powerful task/request governance capabilities** With services such as Orchestrator, Label Manager and customized Spring Cloud Gateway, Linkis is able to provide multi-level labels based, cross-cluster/cross-IDC fine-grained routing, load balance, multi-tenancy, traffic control, resource control, and orchestration strategies like dual-active, active-standby, etc
 
 - **Support full stack computation/storage engine** As a computation middleware, it will receive, execute and manage tasks and requests for various computation storage engines, including batch tasks, interactive query tasks, real-time streaming tasks and storage tasks
 
@@ -106,7 +105,6 @@ Since the first release of Linkis in 2019, it has accumulated more than **700** 
 |Hadoop|Apache >=2.6.0, <br/>CDH >=5.4.0|ongoing|-|Hadoop EngineConn, supports Hadoop MR/YARN application|
 |TiSpark|1.1|ongoing|-|TiSpark EngineConn, supports querying TiDB with SparkSQL|
 
-
 # Ecosystem
 
 | Component | Description | Linkis 1.x(recommend 1.1.1) Compatible |
@@ -127,6 +125,7 @@ Please go to the [Linkis Releases Page](https://linkis.apache.org/download/main)
 # Compile and Deploy
 
 > For more detailed guidance see:
+>
 >- [[Backend Compile]](https://linkis.apache.org/docs/latest/development/linkis-compile-and-package)
 >- [[Management Console Build]](https://linkis.apache.org/docs/latest/development/web-build)
 
@@ -156,12 +155,13 @@ cd incubator-linkis/linkis-web
 npm install
 npm run build
 ```
- 
+
 Please refer to [Quick Deployment](https://linkis.apache.org/docs/latest/deployment/quick-deploy) to do the deployment.
 
 # Examples and Guidance
+
 - [User Manual](https://linkis.apache.org/docs/latest/user-guide/overview)
-- [Engine Usage Documents](https://linkis.apache.org/docs/latest/engine-usage/overview) 
+- [Engine Usage Documents](https://linkis.apache.org/docs/latest/engine-usage/overview)
 - [API Documents](https://linkis.apache.org/docs/latest/api/overview)
 
 # Documentation & Vedio
@@ -170,7 +170,9 @@ Please refer to [Quick Deployment](https://linkis.apache.org/docs/latest/deploym
 - Meetup videos on [Bilibili](https://space.bilibili.com/598542776?from=search&seid=14344213924133040656)
 
 # Architecture
+
 Linkis services could be divided into three categories: computation governance services, public enhancement services and microservice governance services
+
 - The computation governance services, support the 3 major stages of processing a task/request: submission -> preparation -> execution
 - The public enhancement services, including the material library service, context service, and data source service
 - The microservice governance services, including Spring Cloud Gateway, Eureka and Open Feign
@@ -189,14 +191,11 @@ For code and documentation contributions, please follow the [contribution guide]
 
 # Contact Us
 
-
 - Any questions or suggestions please kindly submit an [issue](https://github.com/apache/incubator-linkis/issues).  
 - By mail [dev@linkis.apache.org](mailto:dev@linkis.apache.org)
 - You can scan the QR code below to join our WeChat group to get more immediate response
 
 ![wechatgroup](https://linkis.apache.org/Images/wedatasphere_contact_01.png)
-
-
 
 # Who is Using Linkis
 

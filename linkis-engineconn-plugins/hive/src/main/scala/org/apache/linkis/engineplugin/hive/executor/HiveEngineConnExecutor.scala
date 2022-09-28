@@ -28,6 +28,7 @@ import org.apache.linkis.engineconn.core.EngineConnObject
 import org.apache.linkis.engineconn.executor.entity.ResourceFetchExecutor
 import org.apache.linkis.engineplugin.hive.conf.{Counters, HiveEngineConfiguration}
 import org.apache.linkis.engineplugin.hive.cs.CSHiveHelper
+import org.apache.linkis.engineplugin.hive.errorcode.HiveErrorCodeSummary.GET_FIELD_SCHEMAS_ERROR
 import org.apache.linkis.engineplugin.hive.exception.HiveQueryFailedException
 import org.apache.linkis.engineplugin.hive.progress.HiveProgressHelper
 import org.apache.linkis.governance.common.paser.SQLCodeParser
@@ -234,7 +235,11 @@ class HiveEngineConnExecutor(
         val fieldSchemas =
           if (hiveResponse.getSchema != null) hiveResponse.getSchema.getFieldSchemas
           else if (driver.getSchema != null) driver.getSchema.getFieldSchemas
-          else throw HiveQueryFailedException(41005, "cannot get the field schemas.")
+          else
+            throw HiveQueryFailedException(
+              GET_FIELD_SCHEMAS_ERROR.getErrorCode,
+              GET_FIELD_SCHEMAS_ERROR.getErrorDesc
+            )
 
         LOG.debug("fieldSchemas are " + fieldSchemas)
         if (fieldSchemas == null || isNoResultSql(realCode)) {

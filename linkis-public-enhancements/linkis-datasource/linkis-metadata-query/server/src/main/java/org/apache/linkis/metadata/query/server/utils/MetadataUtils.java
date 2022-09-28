@@ -38,6 +38,8 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.linkis.metadata.query.common.errorcode.LinkisMetadataQueryErrorCodeSummary.*;
+
 /** Metadata Utils */
 public class MetadataUtils {
 
@@ -55,8 +57,7 @@ public class MetadataUtils {
       final Constructor<?>[] constructors = metaServiceClass.getConstructors();
       if (constructors.length <= 0) {
         throw new MetaRuntimeException(
-            "No public constructor in meta service class: [" + metaServiceClass.getName() + "]",
-            null);
+            NO_CONSTRUCTOR_SERVICE.getErrorDesc() + "[" + metaServiceClass.getName() + "]", null);
       }
       List<Constructor<?>> acceptConstructor =
           Arrays.stream(constructors)
@@ -69,14 +70,11 @@ public class MetadataUtils {
           return (MetadataService) constructor.newInstance();
         } catch (Exception e) {
           throw new MetaRuntimeException(
-              "Unable to construct meta service class: [" + metaServiceClass.getName() + "]", e);
+              UNABLE_META_SERVICE.getErrorDesc() + "[" + metaServiceClass.getName() + "]", e);
         }
       } else {
         throw new MetaRuntimeException(
-            "Illegal arguments in constructor of meta service class: ["
-                + metaServiceClass.getName()
-                + "]",
-            null);
+            ILLEGAL_META_SERVICE.getErrorDesc() + "[" + metaServiceClass.getName() + "]", null);
       }
     } finally {
       Thread.currentThread().setContextClassLoader(storeClassLoader);

@@ -192,6 +192,10 @@ public class QueryRestfulApi {
         }
         if (StringUtils.isEmpty(instance)) {
             instance = null;
+        }else{
+            if (!QueryUtils.checkNameValid(instance)) {
+                return Message.error("Invalid instances : " + instance);
+            }
         }
         List<JobHistory> queryTasks = null;
         PageHelper.startPage(pageNow, pageSize);

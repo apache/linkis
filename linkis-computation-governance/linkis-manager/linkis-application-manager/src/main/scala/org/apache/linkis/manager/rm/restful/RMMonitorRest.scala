@@ -658,15 +658,13 @@ class RMMonitorRest extends Logging {
   }
 
   private def getEngineNodes(user: String, withResource: Boolean = false): Array[EngineNode] = {
-    val ListNodes = nodeManagerPersistence.getNodes(user)
-    val ListInstance = ListNodes.asScala.map(_.getServiceInstance)
-    val ListEngineNode = ListInstance.map(nodeManagerPersistence.getEngineNode)
-    val nodes = ListEngineNode.filter(_ != null).asJava
-    logger.info("ListNodes :{}", ListNodes)
-    logger.info("ListInstance :{}", ListInstance)
-    logger.info("ListEngineNode :{}", ListEngineNode)
-    logger.info("nodes :{}", nodes)
-
+    val nodes = nodeManagerPersistence
+      .getNodes(user)
+      .asScala
+      .map(_.getServiceInstance)
+      .map(nodeManagerPersistence.getEngineNode)
+      .filter(_ != null)
+      .asJava
     val metrics = nodeMetricManagerPersistence
       .getNodeMetrics(nodes)
       .asScala

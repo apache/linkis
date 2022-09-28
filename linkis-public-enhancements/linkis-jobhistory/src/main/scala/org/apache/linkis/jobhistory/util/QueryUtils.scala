@@ -49,7 +49,7 @@ object QueryUtils extends Logging {
   private val CHARSET = "utf-8"
   private val CODE_SPLIT = ";"
   private val LENGTH_SPLIT = "#"
-  private val NAME_REGEX = "^[a-zA-Z\\-\\d_\\.]+$"
+  private val NAME_REGEX = "^[a-zA-Z\\-\\d_\\.:]+$"
   private val nameRegexPattern = Pattern.compile(NAME_REGEX)
 
   private val dateFormatLocal = new ThreadLocal[SimpleDateFormat]() {

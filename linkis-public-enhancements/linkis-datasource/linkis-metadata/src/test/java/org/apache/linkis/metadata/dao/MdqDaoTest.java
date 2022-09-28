@@ -24,6 +24,8 @@ import org.apache.linkis.metadata.domain.mdq.po.MdqTable;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -144,13 +146,12 @@ public class MdqDaoTest extends BaseDaoTest {
     Assertions.assertNull(mdqTable);
   }
 
-  /*    @Test
+  @Test
   @DisplayName("insertFieldsTest")
-  public void insertFieldsTest(){
-      List<MdqField> list = new ArrayList<>(Arrays.asList(createMdpField()));
-      mdqDao.insertFields(list);
-      List<MdqField> mdqFields = mdqDao.listMdqFieldByTableId(1L);
-      Assertions.assertTrue(mdqFields.size() > 0);
-  }*/
-
+  public void insertFieldsTest() {
+    List<MdqField> list = new ArrayList<>(Arrays.asList(createMdpField()));
+    mdqDao.insertFields(list);
+    List<MdqField> mdqFields = mdqDao.listMdqFieldByTableId(1L);
+    Assertions.assertTrue(mdqFields.size() > 0);
+  }
 }

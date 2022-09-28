@@ -54,6 +54,7 @@ CREATE TABLE linkis_ps_datasource_field (
   is_partition_field tinyint(1) ,
   is_primary tinyint(1) ,
   length int(11) DEFAULT NULL,
+  mode_info varchar(128)  DEFAULT NULL,
   PRIMARY KEY (id)
 ) ;
 

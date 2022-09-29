@@ -31,11 +31,17 @@ ARG JDK_BUILD_REVISION=1.8.0.332.b09-1.el7_9
 
 # TODO: remove install mysql client when schema-init-tools is ready
 RUN yum install -y \
-       vim unzip curl sudo krb5-workstation sssd crontabs python-pip \
+       less ls vim unzip curl sudo krb5-workstation sssd crontabs python-pip glibc-common \
        java-${JDK_VERSION}-${JDK_BUILD_REVISION} \
        java-${JDK_VERSION}-devel-${JDK_BUILD_REVISION} \
        mysql \
     && yum clean all
+
+RUN cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
+    && localedef -c -f UTF-8 -i en_US en_US.UTF-8
+ENV LANG=en_US.UTF-8 LANGUAGE=en_US:zh LC_TIME=en_US.UTF-8
+ENV TZ="Asia/Shanghai"
+
 
 
 ######################################################################
@@ -60,14 +66,6 @@ RUN mkdir -p /opt/tmp \
     && mkdir -p ${LINKIS_CONF_DIR} \
     && mkdir -p ${LINKIS_LOG_DIR}
 
-RUN yum install -y kde-l10n-Chinese  glibc-common && yum clean all
-RUN localedef -c -f UTF-8 -i zh_CN zh_CN.utf8
-RUN export LANG=zh_CN.UTF-8
-RUN echo "export LANG=zh_CN.UTF-8" >> /etc/locale.conf
-ENV LANG zh_CN.UTF-8
-ENV LC_ALL zh_CN.UTF-8
-
-
 ENV JAVA_HOME /etc/alternatives/jre
 ENV LINKIS_CONF_DIR ${LINKIS_CONF_DIR}
 ENV LINKIS_CLIENT_CONF_DIR ${LINKIS_CONF_DIR}
@@ -77,6 +75,8 @@ ENV LINKIS_HOME ${LINKIS_HOME}
 ADD apache-linkis-${LINKIS_VERSION}-incubating-bin /opt/tmp/
 
 RUN mv /opt/tmp/linkis-package/* ${LINKIS_HOME}/ \
+    && mv  /opt/tmp/release-docs/LICENSE ${LINKIS_HOME}/LICENSE \
+    && mv  /opt/tmp/release-docs/NOTICE  ${LINKIS_HOME}/NOTICE \
     && rm -rf /opt/tmp
 
 RUN chmod g+w -R ${LINKIS_HOME} && chown ${LINKIS_SYSTEM_USER}:${LINKIS_SYSTEM_GROUP} -R ${LINKIS_HOME} \

@@ -29,6 +29,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.linkis.cs.common.errorcode.CsCommonErrorCodeSummary.FAILED_SERIALIZE_CONTEXTVALUE;
+
 public class ContextValueSerializer extends AbstractSerializer<CommonContextValue> {
 
   private static final Logger logger = LoggerFactory.getLogger(ContextValueSerializer.class);
@@ -50,7 +52,9 @@ public class ContextValueSerializer extends AbstractSerializer<CommonContextValu
       return CSCommonUtils.gson.toJson(map);
     } catch (Exception e) {
       logger.error("Failed to serialize contextValue: ", e);
-      throw new CSErrorException(97000, "Failed to serialize contextValue");
+      throw new CSErrorException(
+          FAILED_SERIALIZE_CONTEXTVALUE.getErrorCode(),
+          FAILED_SERIALIZE_CONTEXTVALUE.getErrorDesc());
     }
   }
 
@@ -68,7 +72,9 @@ public class ContextValueSerializer extends AbstractSerializer<CommonContextValu
       return commonContextValue;
     } catch (Exception e) {
       logger.error("Failed to deserialize contextValue: ", e);
-      throw new CSErrorException(97000, "Failed to serialize contextValue");
+      throw new CSErrorException(
+          FAILED_SERIALIZE_CONTEXTVALUE.getErrorCode(),
+          FAILED_SERIALIZE_CONTEXTVALUE.getErrorDesc());
     }
   }
 

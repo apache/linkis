@@ -19,7 +19,6 @@ package org.apache.linkis.cs.highavailable.ha.impl;
 
 import org.apache.linkis.common.ServiceInstance;
 import org.apache.linkis.cs.common.exception.CSErrorException;
-import org.apache.linkis.cs.highavailable.exception.CSErrorCode;
 import org.apache.linkis.cs.highavailable.ha.BackupInstanceGenerator;
 import org.apache.linkis.cs.highavailable.ha.ContextHAChecker;
 import org.apache.linkis.cs.highavailable.ha.instancealias.InstanceAliasManager;
@@ -36,6 +35,8 @@ import java.util.Random;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.linkis.cs.common.errorcode.CsCommonErrorCodeSummary.*;
+
 @Component
 public class BackupInstanceGeneratorImpl implements BackupInstanceGenerator {
   private static final Logger logger = LoggerFactory.getLogger(BackupInstanceGeneratorImpl.class);
@@ -51,7 +52,8 @@ public class BackupInstanceGeneratorImpl implements BackupInstanceGenerator {
     if (StringUtils.isNotBlank(haIDKey) && contextHAChecker.isHAIDValid(haIDKey)) {
       alias = contextHAChecker.parseHAIDFromKey(haIDKey).getBackupInstance();
     } else {
-      throw new CSErrorException(CSErrorCode.INVALID_HAID, "Invalid HAID :" + haIDKey);
+      throw new CSErrorException(
+          INVALID_HAID.getErrorCode(), INVALID_HAID.getErrorDesc() + haIDKey);
     }
     return alias;
   }
@@ -65,7 +67,7 @@ public class BackupInstanceGeneratorImpl implements BackupInstanceGenerator {
       logger.error(
           "Get Instance error, alias : {}, message : {}", mainInstanceAlias, e.getMessage());
       throw new CSErrorException(
-          CSErrorCode.INVALID_INSTANCE_ALIAS, e.getMessage() + ", alias : " + mainInstanceAlias);
+          INVALID_INSTANCE_ALIAS.getErrorCode(), e.getMessage() + ", alias : " + mainInstanceAlias);
     }
     List<ServiceInstance> allInstanceList = instanceAliasManager.getAllInstanceList();
     List<ServiceInstance> remainInstanceList = new ArrayList<>();

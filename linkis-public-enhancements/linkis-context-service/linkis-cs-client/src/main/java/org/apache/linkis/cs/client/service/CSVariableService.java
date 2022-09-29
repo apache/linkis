@@ -27,7 +27,6 @@ import org.apache.linkis.cs.common.entity.source.ContextID;
 import org.apache.linkis.cs.common.entity.source.ContextKey;
 import org.apache.linkis.cs.common.entity.source.ContextValue;
 import org.apache.linkis.cs.common.exception.CSErrorException;
-import org.apache.linkis.cs.common.exception.ErrorCode;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -36,6 +35,8 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.linkis.cs.common.errorcode.CsCommonErrorCodeSummary.DESERIALIZD_ERROR;
 
 public class CSVariableService implements VariableService {
 
@@ -71,8 +72,6 @@ public class CSVariableService implements VariableService {
       return rsList;
     } catch (Throwable e) {
       logger.error("Failed to get variable : " + contextIDStr, e);
-      // throw new CSErrorException(ErrorCode.DESERIALIZE_ERROR, "Failed to get variable : " +
-      // contextIDStr + "e : " + e.getMessage());
     }
     return rsList;
   }
@@ -94,7 +93,7 @@ public class CSVariableService implements VariableService {
           linkisVariable.getValue());
     } catch (ErrorException e) {
       logger.error("Deserialize error. e ");
-      throw new CSErrorException(ErrorCode.DESERIALIZE_ERROR, "Deserialize error. e : ", e);
+      throw new CSErrorException(DESERIALIZD_ERROR.getErrorCode(), "Deserialize error. e : ", e);
     }
   }
 

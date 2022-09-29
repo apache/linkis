@@ -32,7 +32,6 @@ import org.apache.linkis.cs.common.entity.source.ContextKey;
 import org.apache.linkis.cs.common.entity.source.ContextKeyValue;
 import org.apache.linkis.cs.common.entity.source.ContextValue;
 import org.apache.linkis.cs.common.exception.CSErrorException;
-import org.apache.linkis.cs.common.exception.ErrorCode;
 import org.apache.linkis.cs.common.utils.CSCommonUtils;
 
 import org.apache.commons.lang3.StringUtils;
@@ -42,6 +41,8 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.linkis.cs.common.errorcode.CsCommonErrorCodeSummary.*;
 
 public class CSTableService implements TableService {
 
@@ -110,7 +111,8 @@ public class CSTableService implements TableService {
       return rsList;
     } catch (ErrorException e) {
       logger.error("Deserialize contextID error. contextIDStr : " + contextIDStr);
-      throw new CSErrorException(ErrorCode.DESERIALIZE_ERROR, "getUpstreamTables error ", e);
+      throw new CSErrorException(
+          GET_UPSTREAM_TABLE_ERROR.getErrorCode(), GET_UPSTREAM_TABLE_ERROR.getErrorDesc(), e);
     }
   }
 
@@ -138,7 +140,8 @@ public class CSTableService implements TableService {
               csTable.getName());
       }
     } catch (ErrorException e) {
-      throw new CSErrorException(ErrorCode.DESERIALIZE_ERROR, "getUpstreamSuitableTable error ", e);
+      throw new CSErrorException(
+          GET_SUITABLE_ERROR.getErrorCode(), GET_SUITABLE_ERROR.getErrorDesc(), e);
     }
     return csTable;
   }
@@ -154,8 +157,7 @@ public class CSTableService implements TableService {
       return searchService.searchUpstreamKeyValue(
           contextID, nodeName, Integer.MAX_VALUE, CSTable.class);
     } catch (ErrorException e) {
-      throw new CSErrorException(
-          ErrorCode.DESERIALIZE_ERROR, "Failed to searchUpstreamTableKeyValue ", e);
+      throw new CSErrorException(FAILED_SEARCH.getErrorCode(), FAILED_SEARCH.getErrorDesc(), e);
     }
   }
 
@@ -180,7 +182,8 @@ public class CSTableService implements TableService {
           contextKeyStr,
           csTable.getName());
     } catch (ErrorException e) {
-      throw new CSErrorException(ErrorCode.DESERIALIZE_ERROR, "putCSTable error ", e);
+      throw new CSErrorException(
+          PUTCSTABLE_ERROR.getErrorCode(), PUTCSTABLE_ERROR.getErrorDesc(), e);
     }
   }
 
@@ -197,7 +200,8 @@ public class CSTableService implements TableService {
       }
       return getCSTable(contextID, contextKey);
     } catch (ErrorException e) {
-      throw new CSErrorException(ErrorCode.DESERIALIZE_ERROR, "getCSTable error ", e);
+      throw new CSErrorException(
+          GETCSTABLE_ERROR.getErrorCode(), GETCSTABLE_ERROR.getErrorDesc(), e);
     }
   }
 
@@ -240,8 +244,7 @@ public class CSTableService implements TableService {
       contextKey.setKey(CSCommonUtils.getTableKey(nodeName, tableName));
       putCSTable(contextIDStr, SerializeHelper.serializeContextKey(contextKey), csTable);
     } catch (ErrorException e) {
-      throw new CSErrorException(
-          ErrorCode.DESERIALIZE_ERROR, "Failed to register cs tmp table ", e);
+      throw new CSErrorException(FAILED_REGISTER.getErrorCode(), FAILED_REGISTER.getErrorDesc(), e);
     }
   }
 }

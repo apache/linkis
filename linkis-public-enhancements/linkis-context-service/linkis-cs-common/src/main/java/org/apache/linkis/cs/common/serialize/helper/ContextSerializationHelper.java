@@ -19,7 +19,6 @@ package org.apache.linkis.cs.common.serialize.helper;
 
 import org.apache.linkis.common.utils.ClassUtils;
 import org.apache.linkis.cs.common.exception.CSErrorException;
-import org.apache.linkis.cs.common.exception.ErrorCode;
 import org.apache.linkis.cs.common.serialize.ContextSerializer;
 
 import java.util.HashMap;
@@ -30,6 +29,9 @@ import java.util.Set;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.linkis.cs.common.errorcode.CsCommonErrorCodeSummary.CANNOT_DUOLICATED;
+import static org.apache.linkis.cs.common.errorcode.CsCommonErrorCodeSummary.FAILED_CONSTRUCT;
 
 public class ContextSerializationHelper extends AbstractSerializationHelper {
 
@@ -55,12 +57,12 @@ public class ContextSerializationHelper extends AbstractSerializationHelper {
             continue;
           } catch (IllegalAccessException e) {
             throw new CSErrorException(
-                ErrorCode.DESERIALIZE_ERROR, "Failed to construct contextSerializer", e);
+                FAILED_CONSTRUCT.getErrorCode(), FAILED_CONSTRUCT.getErrorDesc(), e);
           }
 
           if (contextSerializerMap.containsKey(contextSerializer.getType())) {
             throw new CSErrorException(
-                ErrorCode.DESERIALIZE_ERROR, "contextSerializer Type cannot be duplicated ");
+                CANNOT_DUOLICATED.getErrorCode(), CANNOT_DUOLICATED.getErrorDesc());
           }
           contextSerializerMap.put(contextSerializer.getType(), contextSerializer);
         }

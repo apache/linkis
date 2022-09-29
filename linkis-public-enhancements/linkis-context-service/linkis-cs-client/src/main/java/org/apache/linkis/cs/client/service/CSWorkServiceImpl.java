@@ -23,7 +23,6 @@ import org.apache.linkis.cs.client.utils.SerializeHelper;
 import org.apache.linkis.cs.common.entity.enumeration.WorkType;
 import org.apache.linkis.cs.common.entity.source.ContextID;
 import org.apache.linkis.cs.common.exception.CSErrorException;
-import org.apache.linkis.cs.common.exception.ErrorCode;
 import org.apache.linkis.cs.common.utils.CSCommonUtils;
 
 import java.util.ArrayList;
@@ -31,6 +30,8 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.linkis.cs.common.errorcode.CsCommonErrorCodeSummary.INITCONTEXTINFO_ERROR;
 
 public class CSWorkServiceImpl implements CSWorkService {
 
@@ -74,8 +75,8 @@ public class CSWorkServiceImpl implements CSWorkService {
           "InitContextInfo error. contextIDStr : {}, workTypes : {}" + contextIDStr,
           CSCommonUtils.gson.toJson(workTypes));
       throw new CSErrorException(
-          ErrorCode.DESERIALIZE_ERROR,
-          "InitContextInfo error. contextIDStr : "
+          INITCONTEXTINFO_ERROR.getErrorCode(),
+          INITCONTEXTINFO_ERROR.getErrorDesc()
               + contextIDStr
               + ", workTypes : "
               + CSCommonUtils.gson.toJson(workTypes),

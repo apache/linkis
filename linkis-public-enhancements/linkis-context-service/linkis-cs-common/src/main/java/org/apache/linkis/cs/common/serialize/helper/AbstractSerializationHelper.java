@@ -28,6 +28,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import static org.apache.linkis.cs.common.errorcode.CsCommonErrorCodeSummary.*;
+
 public abstract class AbstractSerializationHelper implements SerializationHelper {
 
   protected abstract Map<String, ContextSerializer> getContextSerializerMap();
@@ -50,9 +52,11 @@ public abstract class AbstractSerializationHelper implements SerializationHelper
     }
 
     if (null != obj) {
-      throw new CSErrorException(97001, "Failed to find Serializer of " + obj.getClass().getName());
+      throw new CSErrorException(
+          FAILED_FIND_SERIALIZER.getErrorCode(),
+          FAILED_FIND_SERIALIZER.getErrorDesc() + obj.getClass().getName());
     }
-    throw new CSErrorException(97001, "The obj not null");
+    throw new CSErrorException(OBJ_NOT_NULL.getErrorCode(), OBJ_NOT_NULL.getErrorDesc());
   }
 
   @Override
@@ -64,9 +68,10 @@ public abstract class AbstractSerializationHelper implements SerializationHelper
       return contextSerializer.deserialize(json);
     }
     if (StringUtils.isNotBlank(json)) {
-      throw new CSErrorException(97001, "Failed to find deserialize of " + json);
+      throw new CSErrorException(
+          FAILED_FIND_DESERIALIZE.getErrorCode(), FAILED_FIND_DESERIALIZE.getErrorDesc() + json);
     }
-    throw new CSErrorException(97001, "The json not null");
+    throw new CSErrorException(JSON_NOT_NULL.getErrorCode(), JSON_NOT_NULL.getErrorDesc());
   }
 
   @Override

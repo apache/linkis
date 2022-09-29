@@ -27,10 +27,11 @@ import org.apache.linkis.cs.common.entity.source.CommonContextValue;
 import org.apache.linkis.cs.common.entity.source.ContextID;
 import org.apache.linkis.cs.common.entity.source.ContextValue;
 import org.apache.linkis.cs.common.exception.CSErrorException;
-import org.apache.linkis.cs.common.exception.ErrorCode;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.linkis.cs.common.errorcode.CsCommonErrorCodeSummary.CREATE_HISTORY_ERROR;
 
 public class ContextHistoryClientServiceImpl implements ContextHistoryClientService {
 
@@ -64,7 +65,8 @@ public class ContextHistoryClientServiceImpl implements ContextHistoryClientServ
       }
       contextClient.createHistory(contextID, history);
     } catch (ErrorException e) {
-      throw new CSErrorException(ErrorCode.DESERIALIZE_ERROR, "createHistory error ", e);
+      throw new CSErrorException(
+          CREATE_HISTORY_ERROR.getErrorCode(), CREATE_HISTORY_ERROR.getErrorDesc(), e);
     }
   }
 }

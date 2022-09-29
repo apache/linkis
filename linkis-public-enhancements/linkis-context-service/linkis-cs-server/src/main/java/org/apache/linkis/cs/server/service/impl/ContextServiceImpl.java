@@ -46,6 +46,8 @@ import java.util.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import static org.apache.linkis.cs.common.errorcode.CsCommonErrorCodeSummary.TYPE_SCOPE_EMPTY;
+
 @Component
 public class ContextServiceImpl extends ContextService {
 
@@ -125,7 +127,8 @@ public class ContextServiceImpl extends ContextService {
     if (keyValue == null) {
       // 创建校验scope和tye
       if (contextKey.getContextScope() == null || contextKey.getContextType() == null) {
-        throw new CSErrorException(97000, "try to create context ,type or scope cannot be empty");
+        throw new CSErrorException(
+            TYPE_SCOPE_EMPTY.getErrorCode(), TYPE_SCOPE_EMPTY.getErrorDesc());
       }
       // 这里没有给出contextKeyvalue的具体实现,给个默认的persistence
       logger.warn(
@@ -181,7 +184,8 @@ public class ContextServiceImpl extends ContextService {
     if (keyValue == null) {
       if (contextKeyValue.getContextKey().getContextScope() == null
           || contextKeyValue.getContextKey().getContextType() == null) {
-        throw new CSErrorException(97000, "try to create context ,type or scope cannot be empty");
+        throw new CSErrorException(
+            TYPE_SCOPE_EMPTY.getErrorCode(), TYPE_SCOPE_EMPTY.getErrorDesc());
       }
       getPersistence().create(contextID, contextKeyValue);
     } else {

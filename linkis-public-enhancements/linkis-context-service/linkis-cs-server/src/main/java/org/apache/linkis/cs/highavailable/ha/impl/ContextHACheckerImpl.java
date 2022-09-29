@@ -23,7 +23,6 @@ import org.apache.linkis.cs.common.entity.source.HAContextID;
 import org.apache.linkis.cs.common.exception.CSErrorException;
 import org.apache.linkis.cs.common.utils.CSHighAvailableUtils;
 import org.apache.linkis.cs.highavailable.conf.ContextHighAvailableConf;
-import org.apache.linkis.cs.highavailable.exception.CSErrorCode;
 import org.apache.linkis.cs.highavailable.ha.ContextHAChecker;
 import org.apache.linkis.cs.highavailable.ha.instancealias.impl.InstanceAliasManagerImpl;
 
@@ -37,6 +36,8 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.linkis.cs.common.errorcode.CsCommonErrorCodeSummary.*;
 
 @Component
 public class ContextHACheckerImpl implements ContextHAChecker {
@@ -98,8 +99,8 @@ public class ContextHACheckerImpl implements ContextHAChecker {
         || StringUtils.isBlank(haContextID.getBackupInstance())
         || StringUtils.isBlank(haContextID.getContextId())) {
       throw new CSErrorException(
-          CSErrorCode.INVALID_HAID,
-          "Incomplete HAID Object cannot be encoded. mainInstance : "
+          HAID_CANNOT_ECCODEED.getErrorCode(),
+          HAID_CANNOT_ECCODEED.getErrorDesc()
               + haContextID.getInstance()
               + ", backupInstance : "
               + haContextID.getBackupInstance()
@@ -113,8 +114,8 @@ public class ContextHACheckerImpl implements ContextHAChecker {
     } else {
       logger.error("ConvertHAIDToHAKey error, invald HAID : " + haContextID.getContextId());
       throw new CSErrorException(
-          CSErrorCode.INVALID_HAID,
-          "ConvertHAIDToHAKey error, invald HAID : " + haContextID.getContextId());
+          CONVER_ERROT_INVALD_HAID.getErrorCode(),
+          CONVER_ERROT_INVALD_HAID.getErrorDesc() + haContextID.getContextId());
     }
   }
 
@@ -160,7 +161,8 @@ public class ContextHACheckerImpl implements ContextHAChecker {
     HAContextID haContextID = null;
     if (StringUtils.isBlank(haIDKey) || !CSHighAvailableUtils.checkHAIDBasicFormat(haIDKey)) {
       logger.error("Invalid haIDKey : " + haIDKey);
-      throw new CSErrorException(CSErrorCode.INVALID_HAID, "Invalid haIDKey : " + haIDKey);
+      throw new CSErrorException(
+          INVALID_HAIDKEY.getErrorCode(), INVALID_HAIDKEY.getErrorDesc() + haIDKey);
     }
     return CSHighAvailableUtils.decodeHAID(haIDKey);
   }

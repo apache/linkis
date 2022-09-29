@@ -41,6 +41,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.linkis.cs.common.errorcode.CsCommonErrorCodeSummary.*;
+
 public class PersistenceUtils {
 
   private static ObjectMapper json = BDPJettyServerHelper.jacksonJson();
@@ -102,7 +104,7 @@ public class PersistenceUtils {
       }
       return new Pair<>(s, extraFieldClass);
     } catch (Exception e) {
-      throw new CSErrorException(97000, "transfer bean failed:", e);
+      throw new CSErrorException(TRANSFER_BEAN.getErrorCode(), TRANSFER_BEAN.getErrorDesc(), e);
     }
   }
 
@@ -137,7 +139,7 @@ public class PersistenceUtils {
       }
       return t;
     } catch (Exception e) {
-      throw new CSErrorException(97000, "transfer bean failed:", e);
+      throw new CSErrorException(TRANSFER_BEAN.getErrorCode(), TRANSFER_BEAN.getErrorDesc(), e);
     }
   }
 
@@ -147,7 +149,7 @@ public class PersistenceUtils {
       try {
         return throwingFunction.accept(i);
       } catch (Exception e) {
-        throw new CSWarnException(97000, "execute failed,reason:", e);
+        throw new CSWarnException(EXECUTE_FAILED.getErrorCode(), EXECUTE_FAILED.getErrorDesc(), e);
       }
     };
   }

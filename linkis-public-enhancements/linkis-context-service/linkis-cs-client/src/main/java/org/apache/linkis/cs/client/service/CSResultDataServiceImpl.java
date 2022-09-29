@@ -27,7 +27,6 @@ import org.apache.linkis.cs.common.entity.source.ContextID;
 import org.apache.linkis.cs.common.entity.source.ContextKey;
 import org.apache.linkis.cs.common.entity.source.ContextValue;
 import org.apache.linkis.cs.common.exception.CSErrorException;
-import org.apache.linkis.cs.common.exception.ErrorCode;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -36,6 +35,8 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.linkis.cs.common.errorcode.CsCommonErrorCodeSummary.*;
 
 public class CSResultDataServiceImpl implements CSResultDataService {
 
@@ -79,8 +80,8 @@ public class CSResultDataServiceImpl implements CSResultDataService {
               + e.getMessage());
       logger.error("exception ", e);
       throw new CSErrorException(
-          ErrorCode.DESERIALIZE_ERROR,
-          "Deserialize failed, invalid contextId : "
+          DESERIALIZD_FAILED.getErrorCode(),
+          DESERIALIZD_FAILED.getErrorDesc()
               + contextIDStr
               + ", or contextKey : "
               + contextKeyStr
@@ -106,7 +107,7 @@ public class CSResultDataServiceImpl implements CSResultDataService {
     } catch (ErrorException e) {
       logger.error("Deserialize error. e ", e);
       throw new CSErrorException(
-          ErrorCode.DESERIALIZE_ERROR, "Deserialize error. e : " + e.getDesc());
+          DESERIALIZD_ERROR.getErrorCode(), "Deserialize error. e : " + e.getDesc());
     }
   }
 
@@ -129,7 +130,7 @@ public class CSResultDataServiceImpl implements CSResultDataService {
     } catch (ErrorException e) {
       logger.error("Deserialize contextID error. contextIDStr : " + contextIDStr, e);
       throw new CSErrorException(
-          ErrorCode.DESERIALIZE_ERROR,
+          CONTEXTID_ERROR.getErrorCode(),
           "Deserialize contextID error. contextIDStr : " + contextIDStr + "e : " + e.getDesc());
     }
   }

@@ -19,6 +19,7 @@ package org.apache.linkis.cs.highavailable.ha.instancealias.impl
 
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.cs.common.errorcode.CsCommonErrorCodeSummary._
 import org.apache.linkis.cs.common.exception.CSErrorException
 import org.apache.linkis.cs.highavailable.conf.ContextHighAvailableConf
 import org.apache.linkis.cs.highavailable.exception.CSErrorCode
@@ -89,7 +90,7 @@ class RouteLabelInstanceAliasConverter extends InstanceAliasConverter with Loggi
       } { case e: Exception =>
         val msg = s"GetLabelFromInstance for instance : ${instance} failed, ${e.getMessage}"
         logger.error(msg, e)
-        throw new CSErrorException(CSErrorCode.CS_RPC_ERROR, msg, e)
+        throw new CSErrorException(CS_RPC_ERROR.getErrorCode, msg, e)
       }
       if (null != labels && labels.size() > 0) {
         val routeLabels = labels.asScala
@@ -111,15 +112,18 @@ class RouteLabelInstanceAliasConverter extends InstanceAliasConverter with Loggi
         } else {
           val msg = s"No routeLabel got for instance : ${instance}"
           logger.error(msg)
-          throw new CSErrorException(CSErrorCode.INVALID_INSTANCE_ALIAS, msg)
+          throw new CSErrorException(INVALID_INSTANCE_ALIAS.getErrorCode, msg)
         }
       } else {
         val msg = s"Null routeLabel got for instance : ${instance}"
         logger.error(msg)
-        throw new CSErrorException(CSErrorCode.INVALID_INSTANCE_ALIAS, msg)
+        throw new CSErrorException(INVALID_INSTANCE_ALIAS.getErrorCode, msg)
       }
     } else {
-      throw new CSErrorException(CSErrorCode.INVALID_INSTANCE, "Invalid null instance.")
+      throw new CSErrorException(
+        INVALID_NULL_INSTANCE.getErrorCode,
+        INVALID_NULL_INSTANCE.getErrorDesc
+      )
     }
   }
 
@@ -139,7 +143,7 @@ class RouteLabelInstanceAliasConverter extends InstanceAliasConverter with Loggi
       } { case e: Exception =>
         val msg = s"GetInsFromLabel rpc failed : ${e.getMessage}"
         logger.error(msg, e)
-        throw new CSErrorException(CSErrorCode.CS_RPC_ERROR, msg, e)
+        throw new CSErrorException(CS_RPC_ERROR.getErrorCode, msg, e)
       }
       if (null != insList) {
         if (insList.size() >= 1) {
@@ -152,15 +156,18 @@ class RouteLabelInstanceAliasConverter extends InstanceAliasConverter with Loggi
         } else {
           val msg = s"Got no instances form alias ${alias}."
           logger.error(msg)
-          throw new CSErrorException(CSErrorCode.INVALID_INSTANCE, msg)
+          throw new CSErrorException(INVALID_INSTANCE_ALIAS.getErrorCode, msg)
         }
       } else {
         val msg = s"Got no instances form alias ${alias}."
         logger.error(msg)
-        throw new CSErrorException(CSErrorCode.INVALID_INSTANCE, msg)
+        throw new CSErrorException(INVALID_INSTANCE_CODE.getErrorCode, msg)
       }
     } else {
-      throw new CSErrorException(CSErrorCode.INVALID_INSTANCE_ALIAS, "Invalid null alias.")
+      throw new CSErrorException(
+        INVALID_NULL_INSTANCE.getErrorCode,
+        INVALID_NULL_INSTANCE.getErrorDesc
+      )
     }
   }
 

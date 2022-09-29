@@ -21,7 +21,6 @@ import org.apache.linkis.cs.common.entity.source.ContextID;
 import org.apache.linkis.cs.common.entity.source.HAContextID;
 import org.apache.linkis.cs.common.exception.CSErrorException;
 import org.apache.linkis.cs.highavailable.AbstractContextHAManager;
-import org.apache.linkis.cs.highavailable.exception.CSErrorCode;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -36,6 +35,8 @@ import java.util.Map;
 import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.linkis.cs.common.errorcode.CsCommonErrorCodeSummary.*;
 
 /**
  * 基于CGLib库实现的动态代理拦截器，拦截被代理方法的参数，在被代理方法之前和之后进行增强
@@ -89,8 +90,8 @@ public class MethodInterceptorImpl implements MethodInterceptor {
             } else {
               logger.error("Invalid HAID : " + pStr + " in method : " + method.getName());
               throw new CSErrorException(
-                  CSErrorCode.INVALID_HAID,
-                  "Invalid HAID : " + pStr + " in method : " + method.getName());
+                  INVALID_HAID.getErrorCode(),
+                  INVALID_HAID.getErrorDesc() + pStr + " in method : " + method.getName());
             }
           }
           break;
@@ -142,8 +143,8 @@ public class MethodInterceptorImpl implements MethodInterceptor {
               } else {
                 logger.error("Invalid HAContextID : " + gson.toJson(haContextID));
                 throw new CSErrorException(
-                    CSErrorCode.INVAID_HA_CONTEXTID,
-                    "Invalid HAContextID : " + gson.toJson(haContextID));
+                    INVAID_HA_CONTEXTID.getErrorCode(),
+                    INVAID_HA_CONTEXTID.getErrorDesc() + gson.toJson(haContextID));
               }
             }
           }
@@ -169,9 +170,8 @@ public class MethodInterceptorImpl implements MethodInterceptor {
             "ContextId of HAContextID instance cannot be numberic. contextId : "
                 + gson.toJson(contextID));
         throw new CSErrorException(
-            CSErrorCode.INVALID_CONTEXTID,
-            "ContextId of HAContextID instance cannot be numberic. contextId : "
-                + gson.toJson(contextID));
+            INVALID_CONTEXTID.getErrorCode(),
+            INVALID_CONTEXTID.getErrorDesc() + gson.toJson(contextID));
       }
     } else {
       if (HAContextID.class.isInstance(contextID)) {
@@ -187,8 +187,8 @@ public class MethodInterceptorImpl implements MethodInterceptor {
         } else {
           logger.error("Invalid haContextId. contextId : " + gson.toJson(contextID));
           throw new CSErrorException(
-              CSErrorCode.INVALID_HAID,
-              "Invalid haContextId. contextId : " + gson.toJson(contextID));
+              INVALID_HACONTEXTID_CONTEXTID.getErrorCode(),
+              INVALID_HACONTEXTID_CONTEXTID.getErrorDesc() + gson.toJson(contextID));
         }
       }
     }
@@ -249,7 +249,7 @@ public class MethodInterceptorImpl implements MethodInterceptor {
                   + " returns invalid haContextID : "
                   + gson.toJson(result));
           throw new CSErrorException(
-              CSErrorCode.INVALID_HAID,
+              GET_CONTEXTID_METHON.getErrorCode(),
               "GetContextID method : "
                   + method.getName()
                   + " returns invalid haContextID : "

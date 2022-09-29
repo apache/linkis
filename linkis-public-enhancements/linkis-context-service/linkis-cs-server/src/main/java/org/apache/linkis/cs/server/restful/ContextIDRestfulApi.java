@@ -54,6 +54,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
+import static org.apache.linkis.cs.common.errorcode.CsCommonErrorCodeSummary.CONTEXTID_CANNOT_EMPTY;
+import static org.apache.linkis.cs.common.errorcode.CsCommonErrorCodeSummary.ONLY_ADMINS_ALLOWED;
 import static org.apache.linkis.cs.common.utils.CSCommonUtils.localDatetimeToDate;
 
 @Api(tags = "cs(contextservice) recording operation")
@@ -87,7 +89,7 @@ public class ContextIDRestfulApi implements CsRestfulParent {
             HttpServletRequest req, @RequestParam(value = "contextId", required = false) String id)
             throws InterruptedException, CSErrorException {
         if (StringUtils.isEmpty(id)) {
-            throw new CSErrorException(97000, "contxtId cannot be empty");
+            throw new CSErrorException(CONTEXTID_CANNOT_EMPTY.getErrorCode(), CONTEXTID_CANNOT_EMPTY.getErrorDesc());
         }
         HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.GET, id);
         Message message = generateResponse(answerJob, "contextID");
@@ -104,7 +106,7 @@ public class ContextIDRestfulApi implements CsRestfulParent {
             throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
         ContextID contextID = getContextIDFromJsonNode(jsonNode);
         if (StringUtils.isEmpty(contextID.getContextId())) {
-            throw new CSErrorException(97000, "contxtId cannot be empty");
+            throw new CSErrorException(CONTEXTID_CANNOT_EMPTY.getErrorCode(), CONTEXTID_CANNOT_EMPTY.getErrorDesc());
         }
         HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.UPDATE, contextID);
         return generateResponse(answerJob, "");
@@ -137,7 +139,7 @@ public class ContextIDRestfulApi implements CsRestfulParent {
             throws InterruptedException, CSErrorException {
         String id = jsonNode.get("contextId").textValue();
         if (StringUtils.isEmpty(id)) {
-            throw new CSErrorException(97000, "contxtId cannot be empty");
+            throw new CSErrorException(CONTEXTID_CANNOT_EMPTY.getErrorCode(), CONTEXTID_CANNOT_EMPTY.getErrorDesc());
         }
         HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.REMOVE, id);
         return generateResponse(answerJob, "");
@@ -168,7 +170,7 @@ public class ContextIDRestfulApi implements CsRestfulParent {
             throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
         String username = ModuleUserUtils.getOperationUser(req);
         if (!Configuration.isAdmin(username)) {
-            throw new CSErrorException(97018, "Only station admins are allowed.");
+            throw new CSErrorException(ONLY_ADMINS_ALLOWED.getErrorCode(), ONLY_ADMINS_ALLOWED.getErrorDesc());
         }
         logger.info(
                 "user: {}, searchContextIDByTime : createTimeStart : {}, createTimeEnd : {}, updateTimeStart : {}, updateTimeEnd : {}, accessTimeStart : {}, accessTimeEnd : {}, pageNow : {}, pageSize : {}.",

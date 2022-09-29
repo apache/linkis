@@ -48,6 +48,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.linkis.cs.common.errorcode.CsCommonErrorCodeSummary.FAILED_GET_PROXY;
+
 @Component
 public abstract class ContextIDValueGeneratorImpl implements ContextIDValueGenerator {
 
@@ -93,7 +95,7 @@ public abstract class ContextIDValueGeneratorImpl implements ContextIDValueGener
     logger.info("Start to createContextIDValue of ContextID({}) ", contextID.getContextId());
 
     if (contextMapPersistence == null) {
-      throw new CSErrorException(97001, "Failed to get proxy of contextMapPersistence");
+      throw new CSErrorException(FAILED_GET_PROXY.getErrorCode(), FAILED_GET_PROXY.getErrorDesc());
     }
 
     List<ContextKeyValue> contextKeyValueList = contextMapPersistence.getAll(contextID);

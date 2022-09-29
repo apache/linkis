@@ -61,6 +61,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import static org.apache.linkis.cs.common.errorcode.CsCommonErrorCodeSummary.*;
 import static org.apache.linkis.cs.common.utils.CSCommonUtils.localDatetimeToDate;
 
 @Api(tags = "cs(contextservice) operation")
@@ -241,7 +242,7 @@ public class ContextRestfulApi implements CsRestfulParent {
                 || !jsonNode.get("idList").isArray()
                 || (jsonNode.get("idList").isArray()
                         && ((ArrayNode) jsonNode.get("idList")).size() == 0)) {
-            throw new CSErrorException(97000, "idList cannot be empty.");
+            throw new CSErrorException(IDLIST_CANNOT_EMPTY.getErrorCode(), IDLIST_CANNOT_EMPTY.getErrorDesc());
         }
         ArrayNode idArray = (ArrayNode) jsonNode.get("idList");
         logger.info("clearAllContextByID idList size : {}", idArray.size());
@@ -270,10 +271,10 @@ public class ContextRestfulApi implements CsRestfulParent {
             throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
         String username = ModuleUserUtils.getOperationUser(req);
         if (!Configuration.isAdmin(username)) {
-            throw new CSErrorException(97018, "Only station admins are allowed.");
+            throw new CSErrorException(ONLY_ADMINS_ALLOWED.getErrorCode(), ONLY_ADMINS_ALLOWED.getErrorDesc());
         }
         if (null == bodyMap || bodyMap.isEmpty()) {
-            throw new CSErrorException(97000, "idList cannot be empty.");
+            throw new CSErrorException(IDLIST_CANNOT_EMPTY.getErrorCode(), IDLIST_CANNOT_EMPTY.getErrorDesc());
         }
         Date createTimeStart = null;
         Date createTimeEnd = null;
@@ -312,8 +313,8 @@ public class ContextRestfulApi implements CsRestfulParent {
                 && null == updateTimeStart
                 && null == createTimeEnd) {
             throw new CSErrorException(
-                    97000,
-                    "createTimeStart, createTimeEnd, updateTimeStart, updateTimeEnd cannot be all null.");
+                    CANNOT_ALL_BLANK_FOUR.getErrorCode(),
+                    CANNOT_ALL_BLANK_FOUR.getErrorDesc());
         }
         logger.info(
                 "clearAllContextByTime: user : {}, createTimeStart : {}, createTimeEnd : {}, updateTimeStart : {}, updateTimeEnd : {}, accessTimeStart : {}, accessTimeEnd : {}, pageNow : {}, pageSize : {}.",

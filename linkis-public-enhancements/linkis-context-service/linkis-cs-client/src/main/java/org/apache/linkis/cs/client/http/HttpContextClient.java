@@ -54,6 +54,8 @@ import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.linkis.cs.common.errorcode.CsCommonErrorCodeSummary.*;
+
 /** Description: HttpContextClient是ContextClient的使用Http方式进行通信的具体实现 一般可以将其做成单例 */
 public class HttpContextClient extends AbstractContextClient {
 
@@ -729,9 +731,7 @@ public class HttpContextClient extends AbstractContextClient {
         && StringUtils.isBlank(updateTimeEnd)
         && StringUtils.isBlank(accessTimeStart)
         && StringUtils.isBlank(accessTimeEnd)) {
-      throw new CSErrorException(
-          97000,
-          " createTimeStart,  createTimeEnd,  updateTimeStart,  updateTimeEnd,  accessTimeStart,  accessTimeEnd cannot all be blank.");
+      throw new CSErrorException(CANNOT_ALL_BLANK.getErrorCode(), CANNOT_ALL_BLANK.getErrorDesc());
     }
     ContextSearchIDByTimeAction action = new ContextSearchIDByTimeAction();
     action.setParameter("createTimeStart", createTimeStart);
@@ -763,9 +763,12 @@ public class HttpContextClient extends AbstractContextClient {
         return new ArrayList<>();
       }
     } else if (null == result) {
-      throw new CSErrorException(80017, "Invalid null result ");
+      throw new CSErrorException(
+          INVALID_NULL_RESULT.getErrorCode(), INVALID_NULL_RESULT.getErrorDesc());
     } else {
-      throw new CSErrorException(80017, "Invalid result type : " + result.getClass().getName());
+      throw new CSErrorException(
+          INVALID_RESULT_TYPE.getErrorCode(),
+          INVALID_RESULT_TYPE.getErrorDesc() + result.getClass().getName());
     }
   }
 
@@ -799,9 +802,12 @@ public class HttpContextClient extends AbstractContextClient {
         return 0;
       }
     } else if (null == result) {
-      throw new CSErrorException(80017, "Invalid null result ");
+      throw new CSErrorException(
+          INVALID_NULL_RESULT.getErrorCode(), INVALID_NULL_RESULT.getErrorDesc());
     } else {
-      throw new CSErrorException(80017, "Invalid result type : " + result.getClass().getName());
+      throw new CSErrorException(
+          INVALID_RESULT_TYPE.getErrorCode(),
+          INVALID_RESULT_TYPE.getErrorDesc() + result.getClass().getName());
     }
   }
 
@@ -820,9 +826,7 @@ public class HttpContextClient extends AbstractContextClient {
         && StringUtils.isBlank(updateTimeEnd)
         && StringUtils.isBlank(accessTimeStart)
         && StringUtils.isBlank(accessTimeEnd)) {
-      throw new CSErrorException(
-          97000,
-          " createTimeStart,  createTimeEnd,  updateTimeStart,  updateTimeEnd,  accessTimeStart,  accessTimeEnd cannot all be blank.");
+      throw new CSErrorException(CANNOT_ALL_BLANK.getErrorCode(), CANNOT_ALL_BLANK.getErrorDesc());
     }
     DefaultContextPostAction action =
         ContextPostActionBuilder.of(ContextServerHttpConf.clearAllContextByTime())
@@ -848,9 +852,12 @@ public class HttpContextClient extends AbstractContextClient {
         return 0;
       }
     } else if (null == result) {
-      throw new CSErrorException(80017, "Invalid null result ");
+      throw new CSErrorException(
+          INVALID_NULL_RESULT.getErrorCode(), INVALID_NULL_RESULT.getErrorDesc());
     } else {
-      throw new CSErrorException(80017, "Invalid result type : " + result.getClass().getName());
+      throw new CSErrorException(
+          INVALID_RESULT_TYPE.getErrorCode(),
+          INVALID_RESULT_TYPE.getErrorDesc() + result.getClass().getName());
     }
   }
 
@@ -870,12 +877,13 @@ public class HttpContextClient extends AbstractContextClient {
       if (status != 0) {
         String errMsg = ((DWSResult) result).getMessage();
         LOGGER.error("request failed, err is  {}", errMsg);
-        throw new CSErrorException(80015, errMsg);
+        throw new CSErrorException(REQUEST_FAILED_ERRORCODE.getErrorCode(), errMsg);
       } else {
         return (DWSResult) result;
       }
     } else {
-      throw new CSErrorException(80015, "resulet is not instance of DWSResult");
+      throw new CSErrorException(
+          DWSRESULT_NOT_INSTANCE.getErrorCode(), DWSRESULT_NOT_INSTANCE.getErrorDesc());
     }
   }
 

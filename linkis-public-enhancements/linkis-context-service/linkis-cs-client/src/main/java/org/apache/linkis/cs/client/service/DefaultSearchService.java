@@ -26,7 +26,6 @@ import org.apache.linkis.cs.common.entity.source.ContextKey;
 import org.apache.linkis.cs.common.entity.source.ContextKeyValue;
 import org.apache.linkis.cs.common.entity.source.ContextValue;
 import org.apache.linkis.cs.common.exception.CSErrorException;
-import org.apache.linkis.cs.common.exception.ErrorCode;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -39,6 +38,8 @@ import java.util.Map;
 import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.linkis.cs.common.errorcode.CsCommonErrorCodeSummary.*;
 
 public class DefaultSearchService implements SearchService {
   private static final Logger logger = LoggerFactory.getLogger(DefaultSearchService.class);
@@ -59,7 +60,7 @@ public class DefaultSearchService implements SearchService {
     } catch (Exception e) {
       logger.error("Failed to get ContextValue: " + e.getMessage());
       throw new CSErrorException(
-          ErrorCode.GET_CONTEXT_VALUE_ERROR, "Failed to get ContextValue: ", e);
+          GET_CONTEXTVALUE_FAILED.getErrorCode(), GET_CONTEXTVALUE_FAILED.getErrorDesc(), e);
     }
 
     if (null == contextValue || null == contextValue.getValue()) {
@@ -68,7 +69,7 @@ public class DefaultSearchService implements SearchService {
       return (T) contextValue.getValue();
     } else {
       throw new CSErrorException(
-          ErrorCode.INVALID_CONTEXT_VALUE_TYPE, "Invalid Context Type : " + contextType);
+          INVALID_CONTEXT_TYPE.getErrorCode(), INVALID_CONTEXT_TYPE.getErrorDesc() + contextType);
     }
   }
 
@@ -82,8 +83,7 @@ public class DefaultSearchService implements SearchService {
         || null == contextValueType) {
       logger.error("ContextID or nodeName or contextValueType cannot be null.");
       throw new CSErrorException(
-          ErrorCode.INVALID_NULL_STRING,
-          "ContextID or nodeName or contextValueType cannot be null.");
+          INVALID_NULL_STRING.getErrorCode(), INVALID_NULL_STRING.getErrorDesc());
     }
     ContextClient contextClient = ContextClientFactory.getOrCreateContextClient();
     List<String> contains = new ArrayList<>();
@@ -98,7 +98,7 @@ public class DefaultSearchService implements SearchService {
     } catch (ErrorException e) {
       logger.error("Search context value error.");
       throw new CSErrorException(
-          ErrorCode.GET_CONTEXT_VALUE_ERROR, "Search context value error: ", e);
+          GET_CONTEXT_VALUE_ERROR.getErrorCode(), GET_CONTEXT_VALUE_ERROR.getErrorDesc(), e);
     }
     if (CollectionUtils.isEmpty(contextKeyValues)
         || null == contextKeyValues.get(0).getContextValue()) {
@@ -108,8 +108,8 @@ public class DefaultSearchService implements SearchService {
       return (T) contextKeyValues.get(0).getContextValue().getValue();
     } else {
       throw new CSErrorException(
-          ErrorCode.SEARCH_CONTEXT_VALUE_ERROR,
-          "Search value : "
+          SEARCH_CONTEXT_VALUE_ERROR.getErrorCode(),
+          SEARCH_CONTEXT_VALUE_ERROR.getErrorDesc()
               + gson.toJson(
                   contextKeyValues.get(0)
                       + " is not instance of class : "
@@ -151,7 +151,7 @@ public class DefaultSearchService implements SearchService {
               contextID, null, null, null, null, true, nodeName, num, contextValueTypes);
     } catch (ErrorException e) {
       throw new CSErrorException(
-          ErrorCode.GET_CONTEXT_VALUE_ERROR, "searchUpstreamContextMap error ", e);
+          SEARCH_CONTEXTMAP_ERROR.getErrorCode(), SEARCH_CONTEXTMAP_ERROR.getErrorDesc(), e);
     }
     if (CollectionUtils.isEmpty(contextKeyValueList)) {
       return null;
@@ -180,7 +180,7 @@ public class DefaultSearchService implements SearchService {
               contextID, null, null, null, null, true, nodeName, num, contextValueTypes);
     } catch (ErrorException e) {
       throw new CSErrorException(
-          ErrorCode.GET_CONTEXT_VALUE_ERROR, "searchUpstreamKeyValue error ", e);
+          SEARCH_UPSTREAM_ERROR.getErrorCode(), SEARCH_UPSTREAM_ERROR.getErrorDesc(), e);
     }
     return contextKeyValueList;
   }

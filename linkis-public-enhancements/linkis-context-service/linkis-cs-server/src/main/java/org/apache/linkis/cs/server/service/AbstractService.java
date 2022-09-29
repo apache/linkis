@@ -33,6 +33,9 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.linkis.cs.common.errorcode.CsCommonErrorCodeSummary.CANNOT_FIND_METHOD;
+import static org.apache.linkis.cs.common.errorcode.CsCommonErrorCodeSummary.CREATECONTEXTID_EXCEPTION;
+
 public abstract class AbstractService implements Service {
 
   protected final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -58,7 +61,10 @@ public abstract class AbstractService implements Service {
               .findFirst();
       Object response =
           first
-              .orElseThrow(() -> new CSErrorException(97000, "can not find a method to invoke"))
+              .orElseThrow(
+                  () ->
+                      new CSErrorException(
+                          CANNOT_FIND_METHOD.getErrorCode(), CANNOT_FIND_METHOD.getErrorDesc()))
               .invoke(this, params);
       if (job instanceof HttpAnswerJob) {
         HttpResponseProtocol responseProtocol = ((HttpAnswerJob) job).getResponseProtocol();
@@ -69,7 +75,7 @@ public abstract class AbstractService implements Service {
       }
     } catch (Exception e) {
       logger.error(String.format("execute %s service failed:", getName()), e);
-      throw new CSWarnException(97000, e.getMessage());
+      throw new CSWarnException(CREATECONTEXTID_EXCEPTION.getErrorCode(), e.getMessage());
     }
   }
 

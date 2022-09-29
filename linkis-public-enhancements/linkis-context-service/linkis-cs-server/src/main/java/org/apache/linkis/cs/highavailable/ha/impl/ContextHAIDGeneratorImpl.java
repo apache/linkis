@@ -23,7 +23,6 @@ import org.apache.linkis.cs.common.entity.source.CommonHAContextID;
 import org.apache.linkis.cs.common.entity.source.ContextID;
 import org.apache.linkis.cs.common.entity.source.HAContextID;
 import org.apache.linkis.cs.common.exception.CSErrorException;
-import org.apache.linkis.cs.highavailable.exception.CSErrorCode;
 import org.apache.linkis.cs.highavailable.ha.BackupInstanceGenerator;
 import org.apache.linkis.cs.highavailable.ha.ContextHAIDGenerator;
 import org.apache.linkis.cs.highavailable.ha.instancealias.InstanceAliasConverter;
@@ -36,6 +35,8 @@ import org.springframework.stereotype.Component;
 import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.linkis.cs.common.errorcode.CsCommonErrorCodeSummary.*;
 
 @Component
 public class ContextHAIDGeneratorImpl implements ContextHAIDGenerator {
@@ -57,14 +58,14 @@ public class ContextHAIDGeneratorImpl implements ContextHAIDGenerator {
     String mainInstanceAlias = instanceAliasConverter.instanceToAlias(mainInstance.getInstance());
     if (StringUtils.isBlank(mainInstanceAlias)) {
       logger.error("MainInstance cannot be null.");
-      throw new CSErrorException(
-          CSErrorCode.INVALID_INSTANCE, "MainInstance alias cannot be null.");
+      throw new CSErrorException(INVALID_INSTANCE.getErrorCode(), INVALID_INSTANCE.getErrorDesc());
     }
     String backupInstance = backupInstanceGenerator.chooseBackupInstance(mainInstanceAlias);
     if (StringUtils.isBlank(backupInstance)) {
       logger.error("Generate backupInstance cannot be null.");
       throw new CSErrorException(
-          CSErrorCode.GENERATE_BACKUP_INSTANCE_ERROR, "Generate backupInstance cannot be null.");
+          GENERATE_BACKUP_INSTANCE_ERROR.getErrorCode(),
+          GENERATE_BACKUP_INSTANCE_ERROR.getErrorDesc());
     }
     HAContextID haContextID =
         new CommonHAContextID(mainInstanceAlias, backupInstance, contextIDKey);

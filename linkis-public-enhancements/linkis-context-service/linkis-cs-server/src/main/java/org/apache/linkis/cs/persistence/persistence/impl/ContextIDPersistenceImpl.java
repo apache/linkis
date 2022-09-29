@@ -42,6 +42,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.linkis.cs.common.errorcode.CsCommonErrorCodeSummary.CREATECONTEXTID_EXCEPTION;
+
 @Component
 public class ContextIDPersistenceImpl implements ContextIDPersistence {
 
@@ -68,7 +70,7 @@ public class ContextIDPersistenceImpl implements ContextIDPersistence {
       return contextID;
     } catch (JsonProcessingException e) {
       logger.error("writeAsJson failed:", e);
-      throw new CSErrorException(97000, e.getMessage());
+      throw new CSErrorException(CREATECONTEXTID_EXCEPTION.getErrorCode(), e.getMessage());
     }
   }
 
@@ -127,7 +129,7 @@ public class ContextIDPersistenceImpl implements ContextIDPersistence {
       return contextID;
     } catch (IOException e) {
       logger.error("readJson failed:", e);
-      throw new CSErrorException(97000, e.getMessage());
+      throw new CSErrorException(CREATECONTEXTID_EXCEPTION.getErrorCode(), e.getMessage());
     }
   }
 

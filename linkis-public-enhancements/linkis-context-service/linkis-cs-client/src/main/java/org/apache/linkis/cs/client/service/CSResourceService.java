@@ -23,7 +23,6 @@ import org.apache.linkis.cs.common.entity.resource.BMLResource;
 import org.apache.linkis.cs.common.entity.source.ContextID;
 import org.apache.linkis.cs.common.entity.source.ContextKey;
 import org.apache.linkis.cs.common.exception.CSErrorException;
-import org.apache.linkis.cs.common.exception.ErrorCode;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -33,6 +32,8 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.linkis.cs.common.errorcode.CsCommonErrorCodeSummary.CONTEXTID_ERROR;
 
 public class CSResourceService implements ResourceService {
 
@@ -67,8 +68,8 @@ public class CSResourceService implements ResourceService {
     } catch (ErrorException e) {
       logger.error("Deserialize contextid error. contextID : " + contextIDStr + ", e ", e);
       throw new CSErrorException(
-          ErrorCode.DESERIALIZE_ERROR,
-          "Deserialize contextid error. contextID : " + contextIDStr + ", e " + e.getDesc());
+          CONTEXTID_ERROR.getErrorCode(),
+          CONTEXTID_ERROR.getErrorDesc() + contextIDStr + ", e " + e.getDesc());
     }
   }
 
@@ -90,8 +91,7 @@ public class CSResourceService implements ResourceService {
       return rsList;
     } catch (ErrorException e) {
       logger.error("Failed to get Resource: " + e.getMessage());
-      throw new CSErrorException(
-          ErrorCode.DESERIALIZE_ERROR, "Deserialize contextID error. contextIDStr : ", e);
+      throw new CSErrorException(CONTEXTID_ERROR.getErrorCode(), CONTEXTID_ERROR.getErrorDesc(), e);
     }
   }
 }

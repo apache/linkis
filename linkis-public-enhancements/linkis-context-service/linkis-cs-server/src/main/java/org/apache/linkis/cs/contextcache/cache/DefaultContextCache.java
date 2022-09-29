@@ -50,6 +50,7 @@ import com.google.common.cache.RemovalListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.linkis.cs.common.errorcode.CsCommonErrorCodeSummary.DESCRIBE_ID;
 import static org.apache.linkis.cs.listener.event.enumeration.OperateType.*;
 
 @Component
@@ -104,7 +105,7 @@ public class DefaultContextCache implements ContextCache, CSIDListener {
       String errorMsg =
           String.format("Failed to get contextIDValue of ContextID(%s)", contextID.getContextId());
       logger.error(errorMsg);
-      throw new CSErrorException(97001, errorMsg, e);
+      throw new CSErrorException(DESCRIBE_ID.getErrorCode(), errorMsg, e);
     }
   }
 

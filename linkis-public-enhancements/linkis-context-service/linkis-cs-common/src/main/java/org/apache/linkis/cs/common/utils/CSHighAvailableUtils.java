@@ -20,7 +20,6 @@ package org.apache.linkis.cs.common.utils;
 import org.apache.linkis.cs.common.entity.source.CommonHAContextID;
 import org.apache.linkis.cs.common.entity.source.HAContextID;
 import org.apache.linkis.cs.common.exception.CSErrorException;
-import org.apache.linkis.cs.common.exception.ErrorCode;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -30,6 +29,8 @@ import java.util.List;
 import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.linkis.cs.common.errorcode.CsCommonErrorCodeSummary.*;
 
 public class CSHighAvailableUtils {
 
@@ -83,8 +84,8 @@ public class CSHighAvailableUtils {
               + ", backupInstanceList : "
               + gson.toJson(backupInstanceList));
       throw new CSErrorException(
-          ErrorCode.INVALID_HAID_ENCODE_PARAMS,
-          "Cannot encodeHAIDKey, contextID : "
+          CANNOT_ENCODEHAIDKEY.getErrorCode(),
+          CANNOT_ENCODEHAIDKEY.getErrorDesc()
               + contextID
               + ", instance : "
               + instance
@@ -105,11 +106,12 @@ public class CSHighAvailableUtils {
 
   public static HAContextID decodeHAID(String haid) throws CSErrorException {
     if (StringUtils.isBlank(haid)) {
-      throw new CSErrorException(ErrorCode.INVALID_NULL_STRING, "HAIDKey cannot be empty.");
+      throw new CSErrorException(
+          HAIDKEY_CANNOT_EMPTY.getErrorCode(), HAIDKEY_CANNOT_EMPTY.getErrorDesc());
     }
     if (!checkHAIDBasicFormat(haid)) {
       logger.error("Invalid haid : " + haid);
-      throw new CSErrorException(ErrorCode.INVALID_HAID_STRING, "Invalid haid : " + haid);
+      throw new CSErrorException(INVALID_HAID.getErrorCode(), INVALID_HAID.getErrorDesc() + haid);
     }
     String[] partArr = haid.split(HAID_PART_DELEMETER);
     String[] insArr = partArr[0].split(HAID_INS_LEN_DELEMETER);
@@ -127,7 +129,7 @@ public class CSHighAvailableUtils {
     } catch (NumberFormatException e) {
       logger.error("Invalid haid : " + haid + ", " + e.getMessage());
       throw new CSErrorException(
-          ErrorCode.INVALID_HAID_STRING, "Invalid haid : " + haid + ", " + e.getMessage());
+          INVALID_HAID.getErrorCode(), INVALID_HAID.getErrorDesc() + haid + ", " + e.getMessage());
     }
     String instance = instanceList.remove(0);
     return new CommonHAContextID(instance, instanceList.get(0), contextID);

@@ -38,6 +38,8 @@ import com.github.pagehelper.PageInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.linkis.cs.common.errorcode.CsCommonErrorCodeSummary.CANNOT_DESERIZED_SOURCE;
+
 @Component
 public class ContextIDServiceImpl extends ContextIDService {
 
@@ -132,7 +134,7 @@ public class ContextIDServiceImpl extends ContextIDService {
               }));
     if (errList.size() > 0) {
       throw new CSErrorException(
-          97001,
+          CANNOT_DESERIZED_SOURCE.getErrorCode(),
           "There are "
               + errList.size()
               + " persistenceContextID that cannot be deserized from source.");

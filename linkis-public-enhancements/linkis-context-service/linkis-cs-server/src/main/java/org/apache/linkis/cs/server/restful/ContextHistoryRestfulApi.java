@@ -45,6 +45,9 @@ import io.swagger.annotations.ApiOperation;
 
 import java.io.IOException;
 
+import static org.apache.linkis.cs.common.errorcode.CsCommonErrorCodeSummary.CONTEXTID_CANNOT_EMPTY;
+import static org.apache.linkis.cs.common.errorcode.CsCommonErrorCodeSummary.HISTORY_CANNOT_EMPTY;
+
 @Api(tags = "cs(contextservice) history operation")
 @RestController
 @RequestMapping(path = "/contextservice")
@@ -67,10 +70,10 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
         ContextID contextID = getContextIDFromJsonNode(jsonNode);
         // source and contextid cannot be empty
         if (StringUtils.isEmpty(history.getSource())) {
-            throw new CSErrorException(97000, "history source cannot be empty");
+            throw new CSErrorException(HISTORY_CANNOT_EMPTY.getErrorCode(), HISTORY_CANNOT_EMPTY.getErrorDesc());
         }
         if (StringUtils.isEmpty(contextID.getContextId())) {
-            throw new CSErrorException(97000, "contxtId cannot be empty");
+            throw new CSErrorException(CONTEXTID_CANNOT_EMPTY.getErrorCode(), CONTEXTID_CANNOT_EMPTY.getErrorDesc());
         }
         HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.CREATE, contextID, history);
         return generateResponse(answerJob, "");
@@ -89,10 +92,10 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
         ContextID contextID = getContextIDFromJsonNode(jsonNode);
         // source and contextid cannot be empty
         if (StringUtils.isEmpty(history.getSource())) {
-            throw new CSErrorException(97000, "history source cannot be empty");
+            throw new CSErrorException(HISTORY_CANNOT_EMPTY.getErrorCode(), HISTORY_CANNOT_EMPTY.getErrorDesc());
         }
         if (StringUtils.isEmpty(contextID.getContextId())) {
-            throw new CSErrorException(97000, "contxtId cannot be empty");
+            throw new CSErrorException(CONTEXTID_CANNOT_EMPTY.getErrorCode(), CONTEXTID_CANNOT_EMPTY.getErrorDesc());
         }
         HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.REMOVE, contextID, history);
         return generateResponse(answerJob, "");
@@ -108,7 +111,7 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
             throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
         ContextID contextID = getContextIDFromJsonNode(jsonNode);
         if (StringUtils.isEmpty(contextID.getContextId())) {
-            throw new CSErrorException(97000, "contxtId cannot be empty");
+            throw new CSErrorException(CONTEXTID_CANNOT_EMPTY.getErrorCode(), CONTEXTID_CANNOT_EMPTY.getErrorDesc());
         }
         HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.GET, contextID);
         Message message = generateResponse(answerJob, "contextHistory");
@@ -129,10 +132,10 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
         ContextID contextID = getContextIDFromJsonNode(jsonNode);
         // source and contextid cannot be empty
         if (StringUtils.isEmpty(source)) {
-            throw new CSErrorException(97000, "history source cannot be empty");
+            throw new CSErrorException(HISTORY_CANNOT_EMPTY.getErrorCode(), HISTORY_CANNOT_EMPTY.getErrorDesc());
         }
         if (StringUtils.isEmpty(contextID.getContextId())) {
-            throw new CSErrorException(97000, "contxtId cannot be empty");
+            throw new CSErrorException(CONTEXTID_CANNOT_EMPTY.getErrorCode(), CONTEXTID_CANNOT_EMPTY.getErrorDesc());
         }
         HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.GET, contextID, source);
         Message message = generateResponse(answerJob, "contextHistory");
@@ -152,7 +155,7 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
         ContextID contextID = getContextIDFromJsonNode(jsonNode);
         String[] keywords = objectMapper.treeToValue(jsonNode.get("keywords"), String[].class);
         if (StringUtils.isEmpty(contextID.getContextId())) {
-            throw new CSErrorException(97000, "contxtId cannot be empty");
+            throw new CSErrorException(CONTEXTID_CANNOT_EMPTY.getErrorCode(), CONTEXTID_CANNOT_EMPTY.getErrorDesc());
         }
         HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.SEARCH, contextID, keywords);
         Message message = generateResponse(answerJob, "contextHistory");

@@ -23,7 +23,6 @@ import org.apache.linkis.cs.client.utils.SerializeHelper;
 import org.apache.linkis.cs.common.entity.source.ContextID;
 import org.apache.linkis.cs.common.entity.source.ContextKey;
 import org.apache.linkis.cs.common.exception.CSErrorException;
-import org.apache.linkis.cs.common.exception.ErrorCode;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -31,6 +30,8 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.linkis.cs.common.errorcode.CsCommonErrorCodeSummary.CONTEXTID_ERROR;
 
 public class CSMetaDataService implements MetaDataService {
 
@@ -65,8 +66,8 @@ public class CSMetaDataService implements MetaDataService {
     } catch (ErrorException e) {
       logger.error("Deserialize contextid error. contextID : " + contextIDStr + ", e ", e);
       throw new CSErrorException(
-          ErrorCode.DESERIALIZE_ERROR,
-          "Deserialize contextid error. contextID : " + contextIDStr + ", e " + e.getDesc());
+          CONTEXTID_ERROR.getErrorCode(),
+          CONTEXTID_ERROR.getErrorDesc() + contextIDStr + ", e " + e.getDesc());
     }
   }
 }

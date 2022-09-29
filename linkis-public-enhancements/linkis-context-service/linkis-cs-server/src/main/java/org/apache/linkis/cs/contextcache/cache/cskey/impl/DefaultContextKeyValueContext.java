@@ -47,6 +47,8 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.linkis.cs.common.errorcode.CsCommonErrorCodeSummary.SET_CONTEXTID_REPEATEDLY;
+
 @Component
 @Scope("prototype")
 public class DefaultContextKeyValueContext implements ContextKeyValueContext {
@@ -77,7 +79,8 @@ public class DefaultContextKeyValueContext implements ContextKeyValueContext {
       logger.error(
           "Do not set contextID repeatedly.The current context is {}",
           this.contextID.getContextId());
-      throw new CSWarnException(97001, "Do not set contextID repeatedly");
+      throw new CSWarnException(
+          SET_CONTEXTID_REPEATEDLY.getErrorCode(), SET_CONTEXTID_REPEATEDLY.getErrorDesc());
     }
   }
 

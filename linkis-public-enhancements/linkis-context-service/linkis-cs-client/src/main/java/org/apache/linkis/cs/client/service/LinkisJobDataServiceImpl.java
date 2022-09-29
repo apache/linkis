@@ -27,12 +27,14 @@ import org.apache.linkis.cs.common.entity.source.ContextID;
 import org.apache.linkis.cs.common.entity.source.ContextKey;
 import org.apache.linkis.cs.common.entity.source.ContextValue;
 import org.apache.linkis.cs.common.exception.CSErrorException;
-import org.apache.linkis.cs.common.exception.ErrorCode;
 
 import org.apache.commons.lang3.StringUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.linkis.cs.common.errorcode.CsCommonErrorCodeSummary.DESERIALIZD_ERROR;
+import static org.apache.linkis.cs.common.errorcode.CsCommonErrorCodeSummary.DESERIALIZD_FAILED;
 
 public class LinkisJobDataServiceImpl implements LinkisJobDataService {
 
@@ -84,8 +86,8 @@ public class LinkisJobDataServiceImpl implements LinkisJobDataService {
               + e.getMessage());
       logger.error("exception ", e);
       throw new CSErrorException(
-          ErrorCode.DESERIALIZE_ERROR,
-          "Deserialize failed, invalid contextId : "
+          DESERIALIZD_FAILED.getErrorCode(),
+          DESERIALIZD_FAILED.getErrorDesc()
               + contextIDStr
               + ", or contextKey : "
               + contextKeyStr
@@ -113,7 +115,7 @@ public class LinkisJobDataServiceImpl implements LinkisJobDataService {
     } catch (ErrorException e) {
       logger.error("Deserialize error. e ", e);
       throw new CSErrorException(
-          ErrorCode.DESERIALIZE_ERROR, "Deserialize error. e : " + e.getDesc());
+          DESERIALIZD_ERROR.getErrorCode(), "Deserialize error. e : " + e.getDesc());
     }
   }
 }

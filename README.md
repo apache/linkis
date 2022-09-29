@@ -132,23 +132,29 @@ Please go to the [Linkis Releases Page](https://linkis.apache.org/download/main)
 
 ```shell
 
+Note: If you want use `-Dlinkis.build.web=true` to build  linkis-web image, you need to compile linkis-web first.
+
 ## compile backend
 ### Mac OS/Linux
+
 # 1. When compiling for the first time, execute the following command first
 ./mvnw -N install
+
 # 2. make the linkis distribution package
 # - Option 1: make the linkis distribution package only
 ./mvnw clean install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
+
 # - Option 2: make the linkis distribution package and docker image
 #   - Option 2.1: image without mysql jdbc jars
 ./mvnw clean install -Pdocker -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
 #   - Option 2.2: image with mysql jdbc jars
 ./mvnw clean install -Pdocker -Dmaven.javadoc.skip=true -Dmaven.test.skip=true -Dlinkis.build.with.jdbc=true
+
 # - Option 3: linkis distribution package and docker image (included web)
 ./mvnw clean install -Pdocker -Dmaven.javadoc.skip=true -Dmaven.test.skip=true -Dlinkis.build.web=true
-# - Option 4: linkis distribution package and docker image (included web and ldh (hadoop all in one for test))
-./mvnw clean install -Pdocker -Dmaven.javadoc.skip=true -Dmaven.test.skip=true -Dlinkis.build.web=true -Dlinkis.build.ldh=true
 
+# - Option 4: linkis distribution package and docker image (included web and ldh (hadoop all in one for test))
+./mvnw clean install -Pdocker -Dmaven.javadoc.skip=true -Dmaven.test.skip=true -Dlinkis.build.web=true -Dlinkis.build.ldh=true -Dlinkis.build.with.jdbc=true
 
 ### Windows
 mvnw.cmd -N install
@@ -167,7 +173,8 @@ To solve this problem, we provide a script which can help to creating an custom 
 linkis image by yourself, the image created by this tool will be tagged as `linkis:with-jdbc` by default.
 
 ```shell
-$> LINKIS_IMAGE=linkis:1.3.0 ./linkis-dist/docker/scripts/make-linikis-image-with-mysql-jdbc.sh
+$> LINKIS_IMAGE=linkis:1.3.0 
+$> ./linkis-dist/docker/scripts/make-linikis-image-with-mysql-jdbc.sh
 
 #          build dir: ...
 #         base image: linkis:1.3.0

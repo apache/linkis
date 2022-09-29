@@ -78,7 +78,13 @@ ADD ldh-tars/mysql-connector-java-${MYSQL_JDBC_VERSION}.jar /opt/ldh/current/hiv
 ADD ldh-tars/mysql-connector-java-${MYSQL_JDBC_VERSION}.jar /opt/ldh/current/spark/jars/
 
 
-ENV LANG C.UTF-8
+RUN yum install -y kde-l10n-Chinese  glibc-common && yum clean all
+RUN localedef -c -f UTF-8 -i zh_CN zh_CN.utf8
+RUN export LANG=zh_CN.UTF-8
+RUN echo "export LANG=zh_CN.UTF-8" >> /etc/locale.conf
+ENV LANG zh_CN.UTF-8
+ENV LC_ALL zh_CN.UTF-8
+
 ENV JAVA_HOME /etc/alternatives/jre
 ENV PATH /opt/ldh/current/hadoop/bin:/opt/ldh/current/hive/bin:/opt/ldh/current/spark/bin:/opt/ldh/current/flink/bin:/opt/ldh/current/zookeeper/bin:$PATH
 ENV HADOOP_CONF_DIR=/etc/ldh/hadoop

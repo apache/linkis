@@ -60,7 +60,14 @@ RUN mkdir -p /opt/tmp \
     && mkdir -p ${LINKIS_CONF_DIR} \
     && mkdir -p ${LINKIS_LOG_DIR}
 
-ENV LANG C.UTF-8
+RUN yum install -y kde-l10n-Chinese  glibc-common && yum clean all
+RUN localedef -c -f UTF-8 -i zh_CN zh_CN.utf8
+RUN export LANG=zh_CN.UTF-8
+RUN echo "export LANG=zh_CN.UTF-8" >> /etc/locale.conf
+ENV LANG zh_CN.UTF-8
+ENV LC_ALL zh_CN.UTF-8
+
+
 ENV JAVA_HOME /etc/alternatives/jre
 ENV LINKIS_CONF_DIR ${LINKIS_CONF_DIR}
 ENV LINKIS_CLIENT_CONF_DIR ${LINKIS_CONF_DIR}

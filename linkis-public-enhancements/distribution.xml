@@ -314,7 +314,7 @@
                 ../linkis-datasource/linkis-metadata-query/server/target/out/lib/service
             </directory>
             <outputDirectory>
-                lib/service
+                lib/metadataquery-service
             </outputDirectory>
             <includes>
                 <include>**/*</include>

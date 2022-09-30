@@ -43,7 +43,7 @@ RUN useradd -r -s /bin/bash -u 100001 -g root -G wheel hadoop
 
 # TODO: remove install mysql client when schema-init-tools is ready
 RUN yum install -y \
-       less ls vim unzip curl sudo krb5-workstation sssd crontabs python-pip glibc-common \
+       less ls vim unzip curl sudo krb5-workstation sssd crontabs net-tools python-pip glibc-common \
        java-${JDK_VERSION}-${JDK_BUILD_REVISION} \
        java-${JDK_VERSION}-devel-${JDK_BUILD_REVISION} \
        mysql \

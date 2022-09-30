@@ -19,6 +19,7 @@ package org.apache.linkis.engineplugin.elasticsearch.executer.client.impl
 
 import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.engineplugin.elasticsearch.conf.ElasticSearchConfiguration
+import org.apache.linkis.engineplugin.elasticsearch.exception.EsConvertResponseException
 import org.apache.linkis.engineplugin.elasticsearch.executer.client.{
   ElasticSearchErrorResponse,
   ElasticSearchExecutor,
@@ -27,7 +28,15 @@ import org.apache.linkis.engineplugin.elasticsearch.executer.client.{
   EsClientFactory,
   ResponseHandler
 }
+import org.apache.linkis.engineplugin.elasticsearch.executer.client.ResponseHandler
 import org.apache.linkis.protocol.constants.TaskConstant
+import org.apache.linkis.scheduler.executer.{
+  AliasOutputExecuteResponse,
+  ErrorExecuteResponse,
+  ExecuteResponse,
+  SuccessExecuteResponse
+}
+import org.apache.linkis.server.JMap
 import org.apache.linkis.storage.utils.StorageUtils
 
 import java.util

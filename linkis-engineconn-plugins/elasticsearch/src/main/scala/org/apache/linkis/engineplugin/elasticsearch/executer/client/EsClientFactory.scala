@@ -28,7 +28,7 @@ import org.apache.http.client.CredentialsProvider
 import org.apache.http.impl.client.BasicCredentialsProvider
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder
 import org.apache.http.message.BasicHeader
-import org.apache.linkis.engineplugin.elasticsearch.errorcode.ElasticsearchErrorCodeSummary.CLUSTER_IS_BLANK
+
 import java.util
 import java.util.Map
 
@@ -81,11 +81,11 @@ object EsClientFactory {
   private def createRestClient(options: util.Map[String, String]): EsClient = {
     val clusterStr = options.get(ES_CLUSTER.key)
     if (StringUtils.isBlank(clusterStr)) {
-      throw EsParamsIllegalException(CLUSTER_IS_BLANK.getErrorDesc)
+      throw EsParamsIllegalException("cluster is blank!")
     }
     val cluster = getCluster(clusterStr)
     if (cluster.isEmpty) {
-      throw EsParamsIllegalException(CLUSTER_IS_BLANK.getErrorDesc)
+      throw EsParamsIllegalException("cluster is empty!")
     }
     val username = options.get(ES_USERNAME.key)
     val password = options.get(ES_PASSWORD.key)

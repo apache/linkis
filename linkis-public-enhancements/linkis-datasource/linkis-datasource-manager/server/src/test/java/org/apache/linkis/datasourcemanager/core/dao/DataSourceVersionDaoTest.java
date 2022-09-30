@@ -78,9 +78,9 @@ class DataSourceVersionDaoTest extends BaseDaoTest {
   @Disabled
   @Test
   void testSelectOneVersion() {
-    insertOne();
+    /*insertOne();
     String param = dataSourceVersionDao.selectOneVersion(1l, 2l);
-    assertTrue("a:b".equals(param));
+    assertTrue("a:b".equals(param));*/
   }
 
   @Test

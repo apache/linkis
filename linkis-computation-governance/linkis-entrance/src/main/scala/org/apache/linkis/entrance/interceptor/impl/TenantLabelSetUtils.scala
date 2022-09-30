@@ -83,7 +83,7 @@ object TenantLabelSetUtils extends Logging {
           // Get the tenant in the cache through user creator
           val tenant =
             userCreatorTenantCache.get(LabelUtil.getUserCreatorLabel(labels).getStringValue)
-          logger.info("get cache tenant :{} ,jobRequest:{}", tenant, jobRequest.getId)
+          logger.info("get cache tenant:" + tenant + ",jobRequest:" + jobRequest.getId)
           // Add cached data if it is not empty
           if (StringUtils.isNotBlank(tenant)) {
             val tenantLabel = LabelBuilderFactoryContext.getLabelBuilderFactory

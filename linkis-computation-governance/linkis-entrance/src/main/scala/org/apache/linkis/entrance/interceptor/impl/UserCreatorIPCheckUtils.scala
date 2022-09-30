@@ -22,7 +22,6 @@ import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.entrance.conf.EntranceConfiguration
 import org.apache.linkis.entrance.exception.EntranceErrorCode
 import org.apache.linkis.entrance.interceptor.exception.UserCreatorIPCheckException
-import org.apache.linkis.entrance.interceptor.impl.TenantLabelSetUtils.logger
 import org.apache.linkis.governance.common.entity.job.JobRequest
 import org.apache.linkis.governance.common.protocol.conf.{UserIpRequest, UserIpResponse}
 import org.apache.linkis.manager.label.utils.LabelUtil
@@ -78,7 +77,7 @@ object UserCreatorIPCheckUtils extends Logging {
           // Obtain the IP address in the cache through user creator
           val cacheIp =
             configCache.get(LabelUtil.getUserCreatorLabel(jobRequest.getLabels).getStringValue)
-          logger.info("get cache cacheIp :{} ,jobRequest:{}", cacheIp, jobRequest.getId)
+          logger.info("get cache cacheIp:" + cacheIp + ",jobRequest:" + jobRequest.getId)
           // Judge if the cached data is not empty
           if (StringUtils.isNotBlank(cacheIp)) {
             if (!cacheIp.equals("*") && (!cacheIp.contains(jobIp))) {

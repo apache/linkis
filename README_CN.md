@@ -126,8 +126,11 @@ Linkis 自 2019 年开源发布以来，已累计积累了 700 多家试验企�
 >- [后端编译打包 ](https://linkis.apache.org/zh-CN/docs/latest/development/linkis-compile-and-package)
 >- [管理台编译 ](https://linkis.apache.org/zh-CN/docs/latest/development/web-build)
 
+
+
 ```shell script
 ## 后端编译
+注意:如果使用 -Dlinkis.build.web=true 来构建web镜像，需要首先执行 管理台 linkis-web 的编译
 
 ### Mac OS/Linux 系统
 # 1. 首次编译，请执行如下命令
@@ -143,11 +146,12 @@ Linkis 自 2019 年开源发布以来，已累计积累了 700 多家试验企�
 # - 选项 3: 构建 Linkis 服务部署包和 Docker 镜像（包括 Web 控制台）
 ./mvnw clean install -Pdocker -Dmaven.javadoc.skip=true -Dmaven.test.skip=true -Dlinkis.build.web=true
 # - 选项 4: 仅构建 Linkis 服务部署包和 Docker 镜像（包括 Web 控制台和 LDH 镜像，LDH 镜像包换了多个预先配置和部署好的 Hadoop 组件，主要面向测试用途）
-./mvnw clean install -Pdocker -Dmaven.javadoc.skip=true -Dmaven.test.skip=true -Dlinkis.build.web=true -Dlinkis.build.ldh=true
+./mvnw clean install -Pdocker -Dmaven.javadoc.skip=true -Dmaven.test.skip=true -Dlinkis.build.web=true -Dlinkis.build.ldh=true -Dlinkis.build.with.jdbc=true
 
 ### Windows 系统
 mvnw.cmd -N install
 mvnw.cmd clean install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
+
 
 ## 管理台编译
 cd incubator-linkis/linkis-web
@@ -161,7 +165,8 @@ npm run build
 我们提供了一个脚本，它可以帮助你快速的基于官方的 Linkis 镜像创建一个集成了MySQL JDBC 的自定义镜像。 这个工具创建的镜像默认的名称是 `linkis:with-jdbc`。
 
 ```shell
-$> LINKIS_IMAGE=linkis:1.3.0 ./linkis-dist/docker/scripts/make-linikis-image-with-mysql-jdbc.sh
+$> LINKIS_IMAGE=linkis:1.3.0 
+$> ./linkis-dist/docker/scripts/make-linikis-image-with-mysql-jdbc.sh
 
 #          build dir: ...
 #         base image: linkis:1.3.0

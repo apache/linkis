@@ -167,7 +167,8 @@ To solve this problem, we provide a script which can help to creating an custom 
 linkis image by yourself, the image created by this tool will be tagged as `linkis:with-jdbc` by default.
 
 ```shell
-$> LINKIS_IMAGE=linkis:1.3.0 ./linkis-dist/docker/scripts/make-linikis-image-with-mysql-jdbc.sh
+$> LINKIS_IMAGE=linkis:1.3.0 
+$> ./linkis-dist/docker/scripts/make-linikis-image-with-mysql-jdbc.sh
 
 #          build dir: ...
 #         base image: linkis:1.3.0

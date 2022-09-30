@@ -18,5 +18,5 @@
 package org.apache.linkis.engineplugin.elasticsearch.exception
 
 import org.apache.linkis.common.exception.ErrorException
-
-case class EsConvertResponseException(errorMsg: String) extends ErrorException(70113, errorMsg)
+import org.apache.linkis.engineplugin.elasticsearch.errorcode.ElasticsearchErrorCodeSummary.CONVERT_RESPONSE_FAIL
+case class EsConvertResponseException(errorMsg: String) extends ErrorException(CONVERT_RESPONSE_FAIL.getErrorCode, errorMsg)

@@ -25,7 +25,7 @@ import org.apache.linkis.engineplugin.elasticsearch.executer.client.{
   ElasticSearchTableResponse,
   ResponseHandler
 }
-import org.apache.linkis.engineplugin.elasticsearch.executer.client.ResponseHandler
+import org.apache.linkis.engineplugin.elasticsearch.errorcode.ElasticsearchErrorCodeSummary._
 import org.apache.linkis.engineplugin.elasticsearch.executer.client.ResponseHandler._
 import org.apache.linkis.storage.domain._
 import org.apache.linkis.storage.resultset.table.TableRecord
@@ -54,7 +54,7 @@ class ResponseHandlerImpl extends ResponseHandler {
 
     if (contentBytes == null || contentBytes.isEmpty) {
       throw EsConvertResponseException(
-        "EsEngineExecutor convert response fail, response content is empty."
+        CONVERT_RESPONSE_FAIL.getErrorDesc
       )
     }
 

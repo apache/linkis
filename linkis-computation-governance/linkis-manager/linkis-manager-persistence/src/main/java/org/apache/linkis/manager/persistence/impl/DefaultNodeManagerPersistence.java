@@ -32,14 +32,21 @@ import org.apache.linkis.manager.exception.NodeInstanceNotFoundException;
 import org.apache.linkis.manager.exception.PersistenceErrorException;
 import org.apache.linkis.manager.persistence.NodeManagerPersistence;
 
+import org.apache.commons.collections.CollectionUtils;
+
 import org.springframework.dao.DuplicateKeyException;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import com.google.common.collect.Lists;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DefaultNodeManagerPersistence implements NodeManagerPersistence {
-
+  private Logger logger = LoggerFactory.getLogger(DefaultNodeManagerPersistence.class);
   private NodeManagerMapper nodeManagerMapper;
 
   private NodeMetricManagerMapper metricManagerMapper;
@@ -286,6 +293,68 @@ public class DefaultNodeManagerPersistence implements NodeManagerPersistence {
 
       amEngineNodeList.add(amEngineNode);
     }
+    return amEngineNodeList;
+  }
+
+  @Override
+  public List<EngineNode> getEngineNodeByInstanceList(List<ServiceInstance> serviceInstanceList)
+      throws PersistenceErrorException {
+    List<EngineNode> amEngineNodeList = new ArrayList<>();
+    // 限制每次查询数据库大小
+    List<List<ServiceInstance>> partition = Lists.partition(serviceInstanceList, 100);
+    // 分批查询
+    partition.forEach(
+        instanceList -> {
+          // 获取每批次ServiceInstance
+          List<String> collect =
+              instanceList.stream().map(ServiceInstance::getInstance).collect(Collectors.toList());
+          if (CollectionUtils.isNotEmpty(collect)) {
+            // 通过ServiceInstance 批量获取engineNode
+            List<PersistenceNode> engineNodeList = nodeManagerMapper.getNodesByInstances(collect);
+            // 通过ServiceInstance 批量获取emNode
+            List<PersistenceNode> emNodeList =
+                nodeManagerMapper.getEMNodeInstanceByEngineNodeList(collect);
+            if (CollectionUtils.isNotEmpty(engineNodeList)) {
+              // 组装数据amEngineNodeList
+              instanceList.forEach(
+                  serviceInstance -> {
+                    PersistenceNode engineNode =
+                        engineNodeList.stream()
+                            .filter(
+                                engineNodeInfo ->
+                                    engineNodeInfo
+                                        .getInstance()
+                                        .equals(serviceInstance.getInstance()))
+                            .findFirst()
+                            .orElse(new PersistenceNode());
+                    PersistenceNode emNode =
+                        emNodeList.stream()
+                            .filter(
+                                emNodeInfo ->
+                                    emNodeInfo.getInstance().equals(serviceInstance.getInstance()))
+                            .findFirst()
+                            .orElse(null);
+                    AMEngineNode amEngineNode = new AMEngineNode();
+                    amEngineNode.setServiceInstance(serviceInstance);
+                    amEngineNode.setOwner(engineNode.getOwner());
+                    amEngineNode.setMark(engineNode.getMark());
+                    amEngineNode.setStartTime(engineNode.getCreateTime());
+                    if (emNode != null) {
+                      ServiceInstance emServiceInstance = new ServiceInstance();
+                      emServiceInstance.setApplicationName(emNode.getName());
+                      emServiceInstance.setInstance(emNode.getInstance());
+                      AMEMNode amemNode = new AMEMNode();
+                      amemNode.setMark(emNode.getMark());
+                      amemNode.setOwner(emNode.getOwner());
+                      amemNode.setServiceInstance(emServiceInstance);
+                      amemNode.setStartTime(emNode.getCreateTime());
+                      amEngineNode.setEMNode(amemNode);
+                    }
+                    amEngineNodeList.add(amEngineNode);
+                  });
+            }
+          }
+        });
     return amEngineNodeList;
   }
 }

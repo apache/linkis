@@ -122,7 +122,7 @@ public interface NodeManagerMapper {
     @Result(property = "updateTime", column = "update_time"),
     @Result(property = "createTime", column = "create_time")
   })
-  List<PersistenceNode> getNodesByInstances(@Param("engineNodeIds") List<String> instances);
+  List<PersistenceNode> getNodesByInstances(@Param("instances") List<String> instances);
 
   @Insert(
       "insert into  linkis_cg_manager_engine_em (engine_instance, em_instance, update_time, create_time)"
@@ -150,4 +150,18 @@ public interface NodeManagerMapper {
 
   void updateNodeLabelRelation(
       @Param("tickedId") String tickedId, @Param("instance") String instance);
+
+  @Select(
+      "<script>"
+          + "select * from linkis_cg_manager_service_instance where instance in ( select engine_instance from linkis_cg_manager_engine_em where em_instance in ("
+          + "<foreach collection='instances' separator=',' item='instance'>"
+          + "#{instance} "
+          + "</foreach> "
+          + "))</script>")
+  @Results({
+    @Result(property = "updateTime", column = "update_time"),
+    @Result(property = "createTime", column = "create_time")
+  })
+  List<PersistenceNode> getEMNodeInstanceByEngineNodeList(
+      @Param("instances") List<String> instances);
 }

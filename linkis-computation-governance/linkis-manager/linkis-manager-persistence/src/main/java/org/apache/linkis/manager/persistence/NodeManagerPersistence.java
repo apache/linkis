@@ -114,4 +114,14 @@ public interface NodeManagerPersistence {
    */
   List<EngineNode> getEngineNodeByEM(ServiceInstance serviceInstance)
       throws PersistenceErrorException;
+
+  /**
+   * 1. 通过Engine的ServiceInstance，获取Engine的信息和EM信息(批量查询)
+   *
+   * @param serviceInstanceList
+   * @return
+   * @throws PersistenceErrorException
+   */
+  List<EngineNode> getEngineNodeByInstanceList(List<ServiceInstance> serviceInstanceList)
+      throws PersistenceErrorException;
 }

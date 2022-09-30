@@ -52,6 +52,7 @@ import org.apache.linkis.server.{BDPJettyServerHelper, Message}
 import org.apache.linkis.server.security.SecurityFilter
 import org.apache.linkis.server.utils.ModuleUserUtils
 
+import org.apache.commons.collections4.ListUtils
 import org.apache.commons.lang3.StringUtils
 
 import org.springframework.beans.factory.annotation.Autowired
@@ -658,13 +659,12 @@ class RMMonitorRest extends Logging {
   }
 
   private def getEngineNodes(user: String, withResource: Boolean = false): Array[EngineNode] = {
-    val nodes = nodeManagerPersistence
+    val serviceInstancelist = nodeManagerPersistence
       .getNodes(user)
       .asScala
       .map(_.getServiceInstance)
-      .map(nodeManagerPersistence.getEngineNode)
-      .filter(_ != null)
       .asJava
+    val nodes = nodeManagerPersistence.getEngineNodeByInstanceList(serviceInstancelist)
     val metrics = nodeMetricManagerPersistence
       .getNodeMetrics(nodes)
       .asScala

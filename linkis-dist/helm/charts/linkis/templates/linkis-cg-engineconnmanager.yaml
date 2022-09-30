@@ -180,6 +180,10 @@ spec:
             {{- if eq .Values.linkis.featureGates.localMode false }}
             - name: hadoop-conf
               mountPath: /etc/hadoop-conf
+            - name: hive-conf
+              mountPath: /etc/hive-conf
+            - name: spark-conf
+              mountPath: /etc/spark-conf
             {{- end }}
             - name: conf
               mountPath: {{ .Values.linkis.locations.confDir }}

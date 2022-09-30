@@ -19,7 +19,7 @@ package org.apache.linkis.cs.common.errorcode;
 
 public enum CsCommonErrorCodeSummary {
   INVALID_INSTANCE_ALIAS(70010, "", ""),
-  INVALID_NULL_INSTANCE(70010, "Invalid null instance(无效的空实例)", "Invalid null instance(无效的空实例)"),
+  INVALID_NULL_INSTANCE(70010, "Invalid null instance(无效的实例)", "Invalid null instance(无效的实例)"),
   HACONTEXTID_CANNOT_NULL(
       70011,
       "HaContextID cannot be null.(HaContextID 不能为空.)",
@@ -36,10 +36,6 @@ public enum CsCommonErrorCodeSummary {
       70011,
       "Invalid haContextId. contextId (haContextId 无效,上下文 ID):",
       "Invalid haContextId. contextId (haContextId 无效,上下文 ID):"),
-  INVALID_NULL_STRING(
-      70102,
-      "ContextID or nodeName or contextValueType cannot be null(ContextID 或 nodeName 或 contextValueType 不能为空)",
-      "ContextID or nodeName or contextValueType cannot be null(ContextID 或 nodeName 或 contextValueType 不能为空)"),
   INVALID_CONTEXTID(
       70013,
       "ContextId of HAContextID instance cannot be numberic, contextId (HAContextID 实例的 ContextId 不能是数字,上下文标识):",
@@ -56,7 +52,10 @@ public enum CsCommonErrorCodeSummary {
   INVAID_HA_CONTEXTID(
       70016, "Invalid HAContextID (无效的 HAContextID):", "Invalid HAContextID (无效的 HAContextID):"),
   CS_RPC_ERROR(70017, "", ""),
-
+  INVALID_NULL_STRING(
+      70102,
+      "ContextID or nodeName or contextValueType cannot be null(ContextID 或 nodeName 或 contextValueType 不能为空)",
+      "ContextID or nodeName or contextValueType cannot be null(ContextID 或 nodeName 或 contextValueType 不能为空)"),
   HAIDKEY_CANNOT_EMPTY(
       70107, "HAIDKey cannot be empty.(HAIDKey 不能为空.)", "HAIDKey cannot be empty.(HAIDKey 不能为空.)"),
   CANNOT_ENCODEHAIDKEY(
@@ -132,13 +131,13 @@ public enum CsCommonErrorCodeSummary {
       70112,
       "InitContextInfo error. contextIDStr(初始化上下文信息错误。上下文IDStr):",
       "InitContextInfo error. contextIDStr(初始化上下文信息错误。上下文IDStr):"),
-  INVALID_RESULT_TYPE(80017, "Invalid result type (结果类型无效):", "Invalid result type (结果类型无效):"),
-  INVALID_NULL_RESULT(80017, "Invalid null result (无效的结果)", "Invalid null result (无效的结果)"),
   REQUEST_FAILED_ERRORCODE(80015, "", ""),
   DWSRESULT_NOT_INSTANCE(
       80015,
       "resulet is not instance of DWSResult(resulet 不是 DWSResult 的实例)",
       "resulet is not instance of DWSResult(resulet 不是 DWSResult 的实例)"),
+  INVALID_RESULT_TYPE(80017, "Invalid result type (结果类型无效):", "Invalid result type (结果类型无效):"),
+  INVALID_NULL_RESULT(80017, "Invalid null result (无效的结果)", "Invalid null result (无效的结果)"),
   CANNOT_ALL_BLANK(
       97000,
       "createTimeStart,  createTimeEnd,  updateTimeStart,  updateTimeEnd,  accessTimeStart,  accessTimeEnd cannot all be blank.(createTimeStart、createTimeEnd、updateTimeStart、updateTimeEnd、accessTimeStart、accessTimeEnd 不能全部为空.)",

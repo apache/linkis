@@ -152,6 +152,10 @@ spec:
             {{- if eq .Values.linkis.featureGates.localMode false }}
             - name: HADOOP_CONF_DIR
               value: /etc/hadoop-conf
+            - name: HIVE_CONF_DIR
+              value: /etc/hive-conf
+            - name: SPARK_CONF_DIR
+              value: /etc/spark-conf
             {{- end }}
             - name: SERVER_HEAP_SIZE
               value: {{ .Values.cgEngineConnManager.jvmHeapSize }}
@@ -176,6 +180,10 @@ spec:
             {{- if eq .Values.linkis.featureGates.localMode false }}
             - name: hadoop-conf
               mountPath: /etc/hadoop-conf
+            - name: hive-conf
+              mountPath: /etc/hive-conf
+            - name: spark-conf
+              mountPath: /etc/spark-conf
             {{- end }}
             - name: conf
               mountPath: {{ .Values.linkis.locations.confDir }}

@@ -19,7 +19,6 @@ package org.apache.linkis.configuration.constant
 
 import org.apache.linkis.common.conf.CommonVars
 
-
 object Constants {
 
   val LINKIS_API_VERSION: CommonVars[String] =

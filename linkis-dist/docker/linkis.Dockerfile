@@ -26,13 +26,22 @@ FROM ${IMAGE_BASE} as linkis-base
 ARG JDK_VERSION=1.8.0-openjdk
 ARG JDK_BUILD_REVISION=1.8.0.332.b09-1.el7_9
 
+# if you want to set specific yum repos conf file, you can put its at linkis-dist/docker/CentOS-Base.repo
+# and exec [COPY  apache-linkis-*-incubating-bin/docker/CentOS-Epel.repo  /etc/yum.repos.d/CentOS-Epel.repo]
+
 # TODO: remove install mysql client when schema-init-tools is ready
 RUN yum install -y \
-       vim unzip curl sudo krb5-workstation sssd crontabs python-pip \
+       less ls vim unzip curl sudo krb5-workstation sssd crontabs python-pip glibc-common \
        java-${JDK_VERSION}-${JDK_BUILD_REVISION} \
        java-${JDK_VERSION}-devel-${JDK_BUILD_REVISION} \
        mysql \
     && yum clean all
+
+RUN cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
+    && localedef -c -f UTF-8 -i en_US en_US.UTF-8
+ENV LANG=en_US.UTF-8 LANGUAGE=en_US:zh LC_TIME=en_US.UTF-8
+ENV TZ="Asia/Shanghai"
+
 
 
 ######################################################################
@@ -62,9 +71,12 @@ ENV LINKIS_CONF_DIR ${LINKIS_CONF_DIR}
 ENV LINKIS_CLIENT_CONF_DIR ${LINKIS_CONF_DIR}
 ENV LINKIS_HOME ${LINKIS_HOME}
 
-ADD apache-linkis-${LINKIS_VERSION}-incubating-bin.tar.gz /opt/tmp/
+# can do some pre-operations
+ADD apache-linkis-${LINKIS_VERSION}-incubating-bin /opt/tmp/
 
 RUN mv /opt/tmp/linkis-package/* ${LINKIS_HOME}/ \
+    && mv  /opt/tmp/release-docs/LICENSE ${LINKIS_HOME}/LICENSE \
+    && mv  /opt/tmp/release-docs/NOTICE  ${LINKIS_HOME}/NOTICE \
     && rm -rf /opt/tmp
 
 RUN chmod g+w -R ${LINKIS_HOME} && chown ${LINKIS_SYSTEM_USER}:${LINKIS_SYSTEM_GROUP} -R ${LINKIS_HOME} \

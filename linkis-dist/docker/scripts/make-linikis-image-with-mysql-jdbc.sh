@@ -34,6 +34,13 @@ echo "# mysql jdbc version: ${MYSQL_JDBC_VERSION}"
 
 download ${MYSQL_JDBC_URL} ${MYSQL_JDBC_FILENAME} ${BUILD_DIR}
 
+echo "try to exec: docker build -f ${WORK_DIR}/../linkis-with-mysql-jdbc.Dockerfile \
+  -t ${IMAGE_NAME} \
+  --build-arg LINKIS_IMAGE=${LINKIS_IMAGE} \
+  --build-arg LINKIS_HOME=${LINKIS_HOME} \
+  --build-arg MYSQL_JDBC_VERSION=${MYSQL_JDBC_VERSION} \
+  ${BUILD_DIR}"
+
 docker build -f ${WORK_DIR}/../linkis-with-mysql-jdbc.Dockerfile \
   -t ${IMAGE_NAME} \
   --build-arg LINKIS_IMAGE=${LINKIS_IMAGE} \

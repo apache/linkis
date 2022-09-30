@@ -77,6 +77,26 @@
         </fileSet>
 
         <fileSet>
+            <directory>docker/</directory>
+            <outputDirectory>docker</outputDirectory>
+            <includes>
+                <include>**/*</include>
+            </includes>
+            <fileMode>0755</fileMode>
+            <lineEnding>unix</lineEnding>
+        </fileSet>
+
+        <fileSet>
+            <directory>helm/</directory>
+            <outputDirectory>helm</outputDirectory>
+            <includes>
+                <include>**/*</include>
+            </includes>
+            <fileMode>0755</fileMode>
+            <lineEnding>unix</lineEnding>
+        </fileSet>
+
+        <fileSet>
             <directory>../</directory>
             <outputDirectory></outputDirectory>
             <includes>

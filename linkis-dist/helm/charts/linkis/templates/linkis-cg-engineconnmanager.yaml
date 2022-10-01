@@ -112,6 +112,16 @@ spec:
             sources:
               - configMap:
                   name: {{ .Values.linkis.deps.hadoop.configMapName }}
+        - name: hive-conf
+          projected:
+            sources:
+              - configMap:
+                  name: {{ .Values.linkis.deps.hive.configMapName }}
+        - name: spark-conf
+          projected:
+            sources:
+              - configMap:
+                  name: {{ .Values.linkis.deps.spark.configMapName }}
         {{- end }}
       serviceAccountName: {{ include "linkis.serviceAccountName" . }}
       securityContext:

@@ -31,7 +31,7 @@ ARG JDK_BUILD_REVISION=1.8.0.332.b09-1.el7_9
 
 # TODO: remove install mysql client when schema-init-tools is ready
 RUN yum install -y \
-       less ls vim unzip curl sudo krb5-workstation sssd crontabs python-pip glibc-common \
+       less vim unzip curl sudo krb5-workstation sssd crontabs net-tools python-pip glibc-common \
        java-${JDK_VERSION}-${JDK_BUILD_REVISION} \
        java-${JDK_VERSION}-devel-${JDK_BUILD_REVISION} \
        mysql \
@@ -75,8 +75,11 @@ ENV LINKIS_HOME ${LINKIS_HOME}
 ADD apache-linkis-${LINKIS_VERSION}-incubating-bin /opt/tmp/
 
 RUN mv /opt/tmp/linkis-package/* ${LINKIS_HOME}/ \
-    && mv  /opt/tmp/release-docs/LICENSE ${LINKIS_HOME}/LICENSE \
-    && mv  /opt/tmp/release-docs/NOTICE  ${LINKIS_HOME}/NOTICE \
+    && mv /opt/tmp/LICENSE  ${LINKIS_HOME}/ \
+    && mv /opt/tmp/NOTICE   ${LINKIS_HOME}/ \
+    && mv /opt/tmp/DISCLAIMER ${LINKIS_HOME}/ \
+    && mv /opt/tmp/README.md  ${LINKIS_HOME}/ \
+    && mv /opt/tmp/README_CN.md  ${LINKIS_HOME}/ \
     && rm -rf /opt/tmp
 
 RUN chmod g+w -R ${LINKIS_HOME} && chown ${LINKIS_SYSTEM_USER}:${LINKIS_SYSTEM_GROUP} -R ${LINKIS_HOME} \

@@ -112,7 +112,7 @@ linkis:
       version: 2.7.2
       configMapName: hadoop-conf
     yarn:
-      restfulUrl: http://localhost:8080
+      restfulUrl: http://ldh.ldh.svc.cluster.local:8088
       authEnable: false
       authUser: hadoop
       authPassword: "123456"

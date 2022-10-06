@@ -270,7 +270,7 @@
                 linkis-package/lib/linkis-public-enhancements/linkis-ps-publicservice
             </outputDirectory>
             <includes>
-                <include>*.jar</include>
+                <include>**/*</include>
             </includes>
         </fileSet>
 

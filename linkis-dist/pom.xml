@@ -189,7 +189,7 @@
               <appendAssemblyId>false</appendAssemblyId>
               <attach>false</attach>
               <descriptors>
-                <descriptor>distribution.xml</descriptor>
+                <descriptor>src/main/assembly/distribution.xml</descriptor>
               </descriptors>
             </configuration>
           </execution>

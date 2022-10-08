@@ -80,7 +80,7 @@ private[rpc] class RPCReceiveRestful extends RPCReceiveRemote with Logging {
     val queueSize = BDP_RPC_RECEIVER_ASYN_QUEUE_CAPACITY.acquireNew
     val threadSize = BDP_RPC_RECEIVER_ASYN_CONSUMER_THREAD_MAX.acquireNew
     rpcReceiverListenerBus = new AsynRPCMessageBus(queueSize,
-      "RPC-Receiver-Asyn-Thread")(threadSize,
+      "RPC-Receiver-Async-Thread")(threadSize,
       BDP_RPC_RECEIVER_ASYN_CONSUMER_THREAD_FREE_TIME_MAX.getValue.toLong)
     logger.info(s"init RPCReceiverListenerBus with queueSize $queueSize and consumeThreadSize $threadSize.")
     rpcReceiverListenerBus.addListener(new RPCMessageEventListener {

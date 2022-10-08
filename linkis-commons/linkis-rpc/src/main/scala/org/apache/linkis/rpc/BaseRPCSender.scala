@@ -131,7 +131,7 @@ private[rpc] class BaseRPCSender extends Sender with Logging {
 
 private[rpc] object BaseRPCSender extends Logging {
   private val rpcSenderListenerBus = new AsynRPCMessageBus(BDP_RPC_SENDER_ASYN_QUEUE_CAPACITY.getValue,
-    "RPC-Sender-Asyn-Thread")(BDP_RPC_SENDER_ASYN_CONSUMER_THREAD_MAX.getValue,
+    "RPC-Sender-Async-Thread")(BDP_RPC_SENDER_ASYN_CONSUMER_THREAD_MAX.getValue,
     BDP_RPC_SENDER_ASYN_CONSUMER_THREAD_FREE_TIME_MAX.getValue.toLong)
   rpcSenderListenerBus.addListener(new RPCMessageEventListener {
     override def onEvent(event: RPCMessageEvent): Unit = Sender.getSender(event.serviceInstance).send(event.message)

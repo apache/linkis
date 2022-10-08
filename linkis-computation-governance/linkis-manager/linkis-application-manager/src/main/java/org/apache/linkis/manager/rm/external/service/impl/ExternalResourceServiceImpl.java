@@ -56,6 +56,8 @@ import com.google.common.cache.LoadingCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.linkis.manager.common.errorcode.ManagerCommonErrorCodeSummary.*;
+
 @Component
 public class ExternalResourceServiceImpl implements ExternalResourceService, InitializingBean {
 
@@ -163,7 +165,7 @@ public class ExternalResourceServiceImpl implements ExternalResourceService, Ini
         times++;
       }
     }
-    throw new RMErrorException(11006, errorMsg);
+    throw new RMErrorException(FAILED_REQUEST_RESOURCE.getErrorCode(), errorMsg);
   }
 
   @Override
@@ -188,15 +190,13 @@ public class ExternalResourceServiceImpl implements ExternalResourceService, Ini
       }
     } catch (ExecutionException e) {
       throw new RMErrorException(
-          110013,
-          "No suitable ExternalResourceProvider found for cluster: "
-              + realClusterLabel.getClusterName(),
+          NO_SUITABLE_CLUSTER.getErrorCode(),
+          NO_SUITABLE_CLUSTER.getErrorDesc() + realClusterLabel.getClusterName(),
           e);
     }
     throw new RMErrorException(
-        110013,
-        "No suitable ExternalResourceProvider found for cluster: "
-            + realClusterLabel.getClusterName());
+        NO_SUITABLE_CLUSTER.getErrorCode(),
+        NO_SUITABLE_CLUSTER.getErrorDesc() + realClusterLabel.getClusterName());
   }
 
   private ExternalResourceRequester getRequester(ResourceType resourceType)
@@ -207,7 +207,8 @@ public class ExternalResourceServiceImpl implements ExternalResourceService, Ini
       }
     }
     throw new RMErrorException(
-        110012, "No ExternalResourceRequester found for resource type: " + resourceType);
+        NO_FOUND_RESOURCE_TYPE.getErrorCode(),
+        NO_FOUND_RESOURCE_TYPE.getErrorDesc() + resourceType);
   }
 
   private ExternalResourceIdentifierParser getIdentifierParser(ResourceType resourceType)
@@ -218,6 +219,7 @@ public class ExternalResourceServiceImpl implements ExternalResourceService, Ini
       }
     }
     throw new RMErrorException(
-        110012, "No ExternalResourceIdentifierParser found for resource type: " + resourceType);
+        NO_FOUND_RESOURCE_TYPE.getErrorCode(),
+        NO_FOUND_RESOURCE_TYPE.getErrorDesc() + resourceType);
   }
 }

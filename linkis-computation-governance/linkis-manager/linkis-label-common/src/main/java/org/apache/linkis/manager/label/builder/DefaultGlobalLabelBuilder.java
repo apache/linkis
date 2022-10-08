@@ -18,7 +18,6 @@
 package org.apache.linkis.manager.label.builder;
 
 import org.apache.linkis.common.utils.ClassUtils;
-import org.apache.linkis.manager.label.constant.LabelConstant;
 import org.apache.linkis.manager.label.entity.InheritableLabel;
 import org.apache.linkis.manager.label.entity.Label;
 import org.apache.linkis.manager.label.entity.SerializableLabel;
@@ -41,6 +40,9 @@ import java.util.function.Function;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.linkis.manager.label.errorcode.LabelCommonErrorCodeSummary.FAILED_CONSTRUCT_INSTANCE;
+import static org.apache.linkis.manager.label.errorcode.LabelCommonErrorCodeSummary.FAILED_READ_INPUT_STREAM;
 
 /** To build different types of label */
 @SuppressWarnings(value = {"unchecked", "rawtypes"})
@@ -135,7 +137,7 @@ public class DefaultGlobalLabelBuilder extends AbstractGenericLabelBuilder {
           labelKey, null == valueInput ? "" : IOUtils.toString(valueInput), labelClass, valueTypes);
     } catch (IOException e) {
       throw new LabelErrorException(
-          LabelConstant.LABEL_BUILDER_ERROR_CODE, "Fail to read value input stream", e);
+          FAILED_READ_INPUT_STREAM.getErrorCode(), FAILED_READ_INPUT_STREAM.getErrorDesc(), e);
     }
   }
 
@@ -147,7 +149,7 @@ public class DefaultGlobalLabelBuilder extends AbstractGenericLabelBuilder {
           labelKey, null == valueInput ? "" : IOUtils.toString(valueInput), (Class<?>) labelClass);
     } catch (IOException e) {
       throw new LabelErrorException(
-          LabelConstant.LABEL_BUILDER_ERROR_CODE, "Fail to read value input stream", e);
+          FAILED_READ_INPUT_STREAM.getErrorCode(), FAILED_READ_INPUT_STREAM.getErrorDesc(), e);
     }
   }
 
@@ -285,8 +287,8 @@ public class DefaultGlobalLabelBuilder extends AbstractGenericLabelBuilder {
       return newLabel;
     } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
       throw new LabelErrorException(
-          LabelConstant.LABEL_BUILDER_ERROR_CODE,
-          "Fail to construct a label instance of [" + labelType.getSimpleName() + "]",
+          FAILED_CONSTRUCT_INSTANCE.getErrorCode(),
+          FAILED_CONSTRUCT_INSTANCE.getErrorDesc() + labelType.getSimpleName(),
           e);
     }
   }

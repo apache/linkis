@@ -19,18 +19,18 @@ package org.apache.linkis.engineconnplugin.flink.exception;
 
 import org.apache.linkis.common.exception.ErrorException;
 
-public class SqlParseException extends ErrorException {
+import static org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary.SQL_PARSE_ID;
 
-  public static final int ERROR_CODE = 16021;
+public class SqlParseException extends ErrorException {
 
   private static final long serialVersionUID = 1L;
 
   public SqlParseException(String message) {
-    super(ERROR_CODE, message);
+    super(SQL_PARSE_ID.getErrorCode(), message);
   }
 
   public SqlParseException(String message, Throwable e) {
-    super(ERROR_CODE, message);
+    super(SQL_PARSE_ID.getErrorCode(), message);
     this.initCause(e);
   }
 }

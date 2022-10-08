@@ -99,7 +99,8 @@ abstract class AbstractRPCServerLoader extends RPCServerLoader with Logging {
   override def getServiceInstances(applicationName: String): Array[ServiceInstance] =
     SpringCloudFeignConfigurationCache.getDiscoveryClient.getInstances(applicationName).iterator().map{ s =>
       val serviceInstance = getDWCServiceInstance(s)
-      serviceInstance.setApplicationName(applicationName) //必须set，因为spring.application.name是区分大小写的，但是Discovery可能不区分
+      // Must be set,because the `spring.application.name` is case sensitive, but Discovery may not
+      serviceInstance.setApplicationName(applicationName)
       serviceInstance
     }.toArray
 

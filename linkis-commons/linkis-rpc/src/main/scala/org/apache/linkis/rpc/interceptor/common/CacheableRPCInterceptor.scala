@@ -31,9 +31,13 @@ import java.util.concurrent.{Callable, TimeUnit}
 @Component
 class CacheableRPCInterceptor extends RPCInterceptor with Logging{
 
-  private val guavaCache: Cache[Any, Any] = CacheBuilder.newBuilder().concurrencyLevel(5)
-    .expireAfterAccess(RPCConfiguration.BDP_RPC_CACHE_CONF_EXPIRE_TIME.getValue, TimeUnit.MILLISECONDS).initialCapacity(20)  //TODO Make parameters(做成参数)
-    .maximumSize(1000).recordStats().removalListener(new RemovalListener[Any, Any] {
+  private val guavaCache: Cache[Any, Any] = CacheBuilder.newBuilder()
+    .concurrencyLevel(5)
+    .expireAfterAccess(RPCConfiguration.BDP_RPC_CACHE_CONF_EXPIRE_TIME.getValue, TimeUnit.MILLISECONDS)
+    //TODO Make parameters
+    .initialCapacity(20)
+    .maximumSize(1000)
+    .recordStats().removalListener(new RemovalListener[Any, Any] {
     override def onRemoval(removalNotification: RemovalNotification[Any, Any]): Unit = {
       logger.debug(s"CacheSender removed key => ${removalNotification.getKey}, value => ${removalNotification.getValue}.")
     }

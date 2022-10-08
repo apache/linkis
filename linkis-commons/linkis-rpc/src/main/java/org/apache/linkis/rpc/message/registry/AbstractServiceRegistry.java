@@ -51,10 +51,10 @@ public abstract class AbstractServiceRegistry implements ServiceRegistry {
     public void register(Object service) {
         String serviceName = AopUtils.getTargetClass(service).getName();
         synchronized (this.lock.intern(serviceName)) {
-            // 1.是否注册过
+            // 1.Have you registered?
             Object o = this.registedServieMap.get(serviceName);
             if (o != null) return;
-            // 2..解析
+            // 2.Parse
             Map<String, List<ServiceMethod>> serviceMethods = serviceParser.parse(service);
             serviceMethods.entrySet().stream()
                     .filter(entry -> entry.getValue().size() != 1)
@@ -65,7 +65,7 @@ public abstract class AbstractServiceRegistry implements ServiceRegistry {
                                                 "rpc receive method init error! find %s method for the request:%s, this type of rpc request will not be handled!",
                                                 entry.getValue().size(), entry.getKey()));
                             });
-            // 3.注册
+            // 3.register
             serviceMethods.forEach(this::register);
             this.registedServieMap.put(serviceName, service);
         }
@@ -78,9 +78,9 @@ public abstract class AbstractServiceRegistry implements ServiceRegistry {
      */
     @SuppressWarnings("all")
     private void register(String key, List<ServiceMethod> serviceMethods) {
-        // 防止相同key在不同service的并发注册
+        // Prevent concurrent registration of the same key in different services
         synchronized (this.lock.intern(key)) {
-            // 1.添加cache
+            // 1.add cache
             refreshServiceMethodCache(key, serviceMethods);
         }
     }

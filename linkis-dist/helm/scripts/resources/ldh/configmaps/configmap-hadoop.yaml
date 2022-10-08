@@ -572,6 +572,11 @@ data:
             <name>yarn.nodemanager.disk-health-checker.enable</name>
             <value>false</value>
         </property>
+        <property>
+           <name>yarn.resourcemanager.address</name>
+           <value>ldh.ldh.svc.cluster.local:8032</value>
+        </property>
+
     </configuration>
 
   fair-scheduler.xml: |

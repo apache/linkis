@@ -17,7 +17,6 @@
 
 package org.apache.linkis.common.utils
 
-import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.exception.{
   ErrorException,
   FatalException,
@@ -201,11 +200,7 @@ object Utils extends Logging {
   def getLocalHostname: String = InetAddress.getLocalHost.getHostAddress
 
   def getComputerName: String =
-    Utils.tryCatch(if (Configuration.IS_DOCKER_ENABLE.getValue) {
-      InetAddress.getLocalHost.getHostAddress
-    } else {
-      InetAddress.getLocalHost.getCanonicalHostName
-    })(t => sys.env("COMPUTERNAME"))
+    Utils.tryCatch(InetAddress.getLocalHost.getCanonicalHostName)(t => sys.env("COMPUTERNAME"))
 
   /**
    * Checks if event has occurred during some time period. This performs an exponential backoff to

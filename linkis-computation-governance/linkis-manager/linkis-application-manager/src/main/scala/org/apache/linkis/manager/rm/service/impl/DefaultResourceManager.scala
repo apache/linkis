@@ -18,7 +18,6 @@
 package org.apache.linkis.manager.rm.service.impl
 
 import org.apache.linkis.common.ServiceInstance
-import org.apache.linkis.common.exception.LinkisRetryException
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.manager.am.service.engine.EngineStopService
@@ -51,15 +50,8 @@ import org.apache.linkis.manager.rm.{
   ResourceInfo,
   ResultResource
 }
-import org.apache.linkis.manager.rm.domain.RMLabelContainer
 import org.apache.linkis.manager.rm.entity.{LabelResourceMapping, ResourceOperationType}
-import org.apache.linkis.manager.rm.entity.ResourceOperationType.{
-  LOCK,
-  LOCKER_RELEASE,
-  ResourceOperationType,
-  USED,
-  USED_RELEASE
-}
+import org.apache.linkis.manager.rm.entity.ResourceOperationType.{LOCK, USED}
 import org.apache.linkis.manager.rm.exception.{RMErrorCode, RMLockFailedRetryException}
 import org.apache.linkis.manager.rm.external.service.ExternalResourceService
 import org.apache.linkis.manager.rm.service.{
@@ -87,7 +79,6 @@ import com.google.common.collect.Lists
 @Component
 class DefaultResourceManager extends ResourceManager with Logging with InitializingBean {
 
-  private val gson = BDPJettyServerHelper.gson
   private val labelFactory = LabelBuilderFactoryContext.getLabelBuilderFactory
 
   @Autowired
@@ -195,34 +186,31 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
       LabelBuilderFactoryContext.getLabelBuilderFactory.createLabel(classOf[EMInstanceLabel])
     eMInstanceLabel.setServiceName(serviceInstance.getApplicationName)
     eMInstanceLabel.setInstance(serviceInstance.getInstance)
+    val ecNodes = nodeManagerPersistence.getEngineNodeByEM(serviceInstance).asScala
     val lock = tryLockOneLabel(eMInstanceLabel, -1, Utils.getJvmUser)
-    Utils.tryFinally {
-      Utils.tryCatch {
-        nodeManagerPersistence.getEngineNodeByEM(serviceInstance).asScala.foreach { engineNode =>
-          Utils.tryAndWarn {
-            engineNode.setLabels(nodeLabelService.getNodeLabels(engineNode.getServiceInstance))
-            engineStopService.engineConnInfoClear(engineNode)
-          }
-        }
-        labelResourceService.removeResourceByLabel(eMInstanceLabel)
-      } {
-        case exception: Exception =>
-          resourceLogService.failed(
-            ChangeType.ECM_CLEAR,
-            Resource.initResource(ResourceType.LoadInstance),
-            null,
-            eMInstanceLabel,
-            exception
-          )
-        case _ =>
-      }
-
-    } {
+    try {
+      labelResourceService.removeResourceByLabel(eMInstanceLabel)
+    } catch {
+      case exception: Exception =>
+        resourceLogService.failed(
+          ChangeType.ECM_CLEAR,
+          Resource.initResource(ResourceType.LoadInstance),
+          null,
+          eMInstanceLabel,
+          exception
+        )
+      case _ =>
+    } finally {
       resourceLockService.unLock(lock)
-      logger.info(
-        s"ECMResourceClear:${serviceInstance}, usedResource:${Resource.initResource(ResourceType.Default).toJson}"
-      )
+      logger.info(s"Finished to clear ecm resource:${serviceInstance}")
     }
+    ecNodes.foreach { engineNode =>
+      Utils.tryAndWarn {
+        engineNode.setLabels(nodeLabelService.getNodeLabels(engineNode.getServiceInstance))
+        engineStopService.engineConnInfoClear(engineNode)
+      }
+    }
+    logger.info(s"Finished to clear ec for ecm ${serviceInstance}")
   }
 
   /**

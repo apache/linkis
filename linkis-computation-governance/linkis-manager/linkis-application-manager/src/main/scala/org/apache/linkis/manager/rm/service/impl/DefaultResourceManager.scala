@@ -21,6 +21,7 @@ import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.exception.LinkisRetryException
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
+import org.apache.linkis.manager.am.service.engine.EngineStopService
 import org.apache.linkis.manager.common.conf.RMConfiguration
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.common.entity.node.{AMEMNode, AMEngineNode, InfoRMNode}
@@ -116,6 +117,9 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
   @Autowired
   private var nodeLabelService: NodeLabelService = _
 
+  @Autowired
+  private var engineStopService: EngineStopService = _
+
   private var requestResourceServices: Array[RequestResourceService] = _
 
   override def afterPropertiesSet(): Unit = {
@@ -194,12 +198,11 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
     val lock = tryLockOneLabel(eMInstanceLabel, -1, Utils.getJvmUser)
     Utils.tryFinally {
       Utils.tryCatch {
-        nodeManagerPersistence.getEngineNodeByEM(serviceInstance).asScala.foreach { node =>
-          val engineInstanceLabel = LabelBuilderFactoryContext.getLabelBuilderFactory
-            .createLabel(classOf[EngineInstanceLabel])
-          engineInstanceLabel.setInstance(node.getServiceInstance.getInstance)
-          engineInstanceLabel.setServiceName(node.getServiceInstance.getApplicationName)
-          labelResourceService.removeResourceByLabel(engineInstanceLabel)
+        nodeManagerPersistence.getEngineNodeByEM(serviceInstance).asScala.foreach { engineNode =>
+          Utils.tryAndWarn {
+            engineNode.setLabels(nodeLabelService.getNodeLabels(engineNode.getServiceInstance))
+            engineStopService.engineConnInfoClear(engineNode)
+          }
         }
         labelResourceService.removeResourceByLabel(eMInstanceLabel)
       } {
@@ -631,7 +634,12 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
    */
   override def resourceReleased(labels: util.List[Label[_]]): Unit = {
     val labelContainer = labelResourceService.enrichLabels(labels)
-
+    if (null == labelContainer.getEngineInstanceLabel) {
+      throw new RMErrorException(
+        RMErrorCode.LABEL_RESOURCE_NOT_FOUND.getCode,
+        "engine instance label is null"
+      )
+    }
     val instanceLock = tryLockOneLabel(
       labelContainer.getEngineInstanceLabel,
       RMUtils.RM_RESOURCE_LOCK_WAIT_TIME.getValue,

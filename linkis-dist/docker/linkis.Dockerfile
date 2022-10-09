@@ -56,6 +56,7 @@ ARG LINKIS_SYSTEM_UID="9001"
 ARG LINKIS_HOME=/opt/linkis
 ARG LINKIS_CONF_DIR=/etc/linkis-conf
 ARG LINKIS_LOG_DIR=/var/logs/linkis
+ARG LDH_HOME=/opt/ldh
 
 WORKDIR ${LINKIS_HOME}
 
@@ -64,7 +65,8 @@ RUN sed -i "s#^%wheel.*#%wheel        ALL=(ALL)       NOPASSWD: ALL#g" /etc/sudo
 
 RUN mkdir -p /opt/tmp \
     && mkdir -p ${LINKIS_CONF_DIR} \
-    && mkdir -p ${LINKIS_LOG_DIR}
+    && mkdir -p ${LINKIS_LOG_DIR} \
+    && mkdir -p ${LDH_HOME}
 
 ENV JAVA_HOME /etc/alternatives/jre
 ENV LINKIS_CONF_DIR ${LINKIS_CONF_DIR}
@@ -85,6 +87,7 @@ RUN mv /opt/tmp/linkis-package/* ${LINKIS_HOME}/ \
 RUN chmod g+w -R ${LINKIS_HOME} && chown ${LINKIS_SYSTEM_USER}:${LINKIS_SYSTEM_GROUP} -R ${LINKIS_HOME} \
     && chmod g+w -R ${LINKIS_CONF_DIR} && chown ${LINKIS_SYSTEM_USER}:${LINKIS_SYSTEM_GROUP} -R ${LINKIS_CONF_DIR}  \
     && chmod g+w -R ${LINKIS_LOG_DIR} && chown ${LINKIS_SYSTEM_USER}:${LINKIS_SYSTEM_GROUP} -R ${LINKIS_LOG_DIR} \
+    && chmod g+w -R ${LDH_HOME} && chown ${LINKIS_SYSTEM_USER}:${LINKIS_SYSTEM_GROUP} -R ${LDH_HOME} \
     && chmod a+x ${LINKIS_HOME}/bin/* \
     && chmod a+x ${LINKIS_HOME}/sbin/*
 

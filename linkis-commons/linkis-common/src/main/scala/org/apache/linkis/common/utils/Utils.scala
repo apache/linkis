@@ -17,6 +17,7 @@
 
 package org.apache.linkis.common.utils
 
+import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.exception.{
   ErrorException,
   FatalException,
@@ -32,7 +33,7 @@ import java.util.concurrent._
 import java.util.concurrent.atomic.AtomicInteger
 
 import scala.annotation.tailrec
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 import scala.concurrent.{ExecutionContext, ExecutionContextExecutorService}
 import scala.concurrent.duration.Duration
 import scala.util.control.ControlThrowable
@@ -200,7 +201,11 @@ object Utils extends Logging {
   def getLocalHostname: String = InetAddress.getLocalHost.getHostAddress
 
   def getComputerName: String =
-    Utils.tryCatch(InetAddress.getLocalHost.getCanonicalHostName)(t => sys.env("COMPUTERNAME"))
+    Utils.tryCatch(if (Configuration.IS_DOCKER_ENABLE.getValue) {
+      InetAddress.getLocalHost.getHostAddress
+    } else {
+      InetAddress.getLocalHost.getCanonicalHostName
+    })(t => sys.env("COMPUTERNAME"))
 
   /**
    * Checks if event has occurred during some time period. This performs an exponential backoff to
@@ -291,7 +296,7 @@ object Utils extends Logging {
    * @return
    */
   def exec(commandLine: List[String], maxWaitTime: Long): String = {
-    val pb = new ProcessBuilder(commandLine)
+    val pb = new ProcessBuilder(commandLine.asJava)
     pb.redirectErrorStream(true)
     pb.redirectInput(ProcessBuilder.Redirect.PIPE)
     val process = pb.start
@@ -322,7 +327,7 @@ object Utils extends Logging {
     lines.mkString("\n")
   }
 
-  def addShutdownHook(hook: => Unit): Unit = ShutdownUtils.addShutdownHook(hook)
+  def addShutdownHook(hook: => Unit): Unit = ShutdownHookManager.addShutdownHook(hook)
 
   def getClassInstance[T](className: String): T = {
     Utils.tryThrow(

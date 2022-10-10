@@ -27,6 +27,8 @@ LINKIS_INSTANCE_NAME=linkis-demo
 LINKIS_PORT_MAP_WEB="8088:8088"
 LINKIS_PORT_MAP_MG_EUREKA="20303:20303"
 
+LINKIS_PORT_MAP_MG_GATEWAY="9001:9001"
+
 #debug port
 
 LINKIS_DEBUG_PORT_MAP_MG_EUREKA="22101:5005"
@@ -63,19 +65,20 @@ start_port_forward_all() {
   DEBUG=$1
 
   start_port_forward web                     ${LINKIS_PORT_MAP_WEB}
-  start_port_forward mg-gateway              ${LINKIS_PORT_MAP_MG_EUREKA}
+  start_port_forward mg-eureka               ${LINKIS_PORT_MAP_MG_EUREKA}
+  start_port_forward mg-gateway              ${LINKIS_PORT_MAP_MG_GATEWAY}
 
   if [ "${DEBUG}" == "true" ]; then
 
-  start_port_forward mg-eureka              ${LINKIS_DEBUG_PORT_MAP_MG_EUREKA}
-  start_port_forward mg-gateway             ${LINKIS_DEBUG_PORT_MAP_MG_GATEWAY}
+    start_port_forward mg-eureka              ${LINKIS_DEBUG_PORT_MAP_MG_EUREKA}
+    start_port_forward mg-gateway             ${LINKIS_DEBUG_PORT_MAP_MG_GATEWAY}
 
-  start_port_forward ps-publicservice       ${LINKIS_DEBUG_PORT_MAP_PS_PUBLICSERVICE}
+    start_port_forward ps-publicservice       ${LINKIS_DEBUG_PORT_MAP_PS_PUBLICSERVICE}
 
-  start_port_forward cg-linkismanager       ${LINKIS_DEBUG_PORT_MAP_CG_LINKISMANAGER}
-  start_port_forward cg-entrance            ${LINKIS_DEBUG_PORT_MAP_CG_ENTRANCE}
-  start_port_forward cg-engineconnmanager   ${LINKIS_DEBUG_PORT_MAP_CG_ENGINECONNMANAGER}
-  start_port_forward cg-engineplugin        ${LINKIS_DEBUG_PORT_MAP_CG_ENGINEPLUGIN}
+    start_port_forward cg-linkismanager       ${LINKIS_DEBUG_PORT_MAP_CG_LINKISMANAGER}
+    start_port_forward cg-entrance            ${LINKIS_DEBUG_PORT_MAP_CG_ENTRANCE}
+    start_port_forward cg-engineconnmanager   ${LINKIS_DEBUG_PORT_MAP_CG_ENGINECONNMANAGER}
+    start_port_forward cg-engineplugin        ${LINKIS_DEBUG_PORT_MAP_CG_ENGINEPLUGIN}
   fi
 }
 
@@ -83,7 +86,8 @@ stop_port_forward_all() {
   DEBUG=$1
 
   stop_port_forward web                     ${LINKIS_PORT_MAP_WEB}
-  stop_port_forward mg-gateway              ${LINKIS_PORT_MAP_MG_EUREKA}
+  stop_port_forward mg-eureka               ${LINKIS_PORT_MAP_MG_EUREKA}
+  stop_port_forward mg-gateway              ${LINKIS_PORT_MAP_MG_GATEWAY}
 
   if [ "${DEBUG}" == "true" ]; then
 

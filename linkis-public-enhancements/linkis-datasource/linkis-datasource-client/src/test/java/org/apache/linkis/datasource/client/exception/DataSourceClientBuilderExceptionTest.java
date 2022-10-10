@@ -29,7 +29,6 @@ public class DataSourceClientBuilderExceptionTest {
 
     String errorDesc = "this is error";
     DataSourceClientBuilderException exception = new DataSourceClientBuilderException(errorDesc);
-    Assertions.assertTrue(exception.getErrCode() == 31000);
     Assertions.assertEquals(errorDesc, exception.getDesc());
   }
 }

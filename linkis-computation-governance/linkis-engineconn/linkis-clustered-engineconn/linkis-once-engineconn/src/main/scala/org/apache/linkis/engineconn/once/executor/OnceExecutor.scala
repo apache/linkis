@@ -209,6 +209,8 @@ trait ManageableOnceExecutor extends AccessibleExecutor with OnceExecutor with R
       msg,
       EngineConnObject.getEngineCreationContext.getTicketId
     )
+    Utils.tryAndWarn(Thread.sleep(500))
+    logger.info("To send release request to linkis manager")
     ManagerService.getManagerService.requestReleaseEngineConn(engineReleaseRequest)
     ShutdownHook.getShutdownHook.notifyStop()
   }

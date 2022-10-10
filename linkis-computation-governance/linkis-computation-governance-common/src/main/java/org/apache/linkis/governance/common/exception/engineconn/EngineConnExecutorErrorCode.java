@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.governance.exception.engineconn;
+package org.apache.linkis.governance.common.exception.engineconn;
 
 /**
  * ErrorCode of Engine start with 40000

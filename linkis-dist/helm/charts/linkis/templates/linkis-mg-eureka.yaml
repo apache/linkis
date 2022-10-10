@@ -100,6 +100,10 @@ spec:
             name: {{ include "linkis.fullname" . }}-linkis-config
         - name: log
           emptyDir: {}
+        - name: commonDir
+          hostPath:
+            path: {{ .Values.linkis.locations.commonDir }}
+            type: DirectoryOrCreate
       {{- if .Values.imagePullSecrets }}
       imagePullSecrets:
         {{ toYaml .Values.imagePullSecrets | indent 8 }}
@@ -116,7 +120,14 @@ spec:
             - /bin/bash
             - -ecx
             - >-
+              if [ ! -f {{ .Values.linkis.locations.homeDir }}/lib/linkis-commons/public-module/mysql-connector-java-*.jar ]
+              then
+                 cp {{ .Values.linkis.locations.commonDir }}/mysql-connector-java-*.jar {{ .Values.linkis.locations.homeDir }}/lib/linkis-commons/public-module/
+                 cp {{ .Values.linkis.locations.commonDir }}/mysql-connector-java-*.jar {{ .Values.linkis.locations.homeDir }}/lib/linkis-spring-cloud-services/linkis-mg-gateway/
+              fi
+
               RUN_IN_FOREGROUND=true {{ .Values.linkis.locations.homeDir }}/sbin/linkis-daemon.sh start mg-eureka
+
           ports:
             - name: "http"
               containerPort: {{ .Values.mgEureka.port }}
@@ -166,3 +177,5 @@ spec:
               mountPath: {{ .Values.linkis.locations.confDir }}
             - name: log
               mountPath: {{ .Values.linkis.locations.logDir }}
+            - name: commonDir
+              mountPath: {{ .Values.linkis.locations.commonDir }}

@@ -20,6 +20,8 @@ nodes:
     extraMounts:
       - hostPath: ${KIND_CLUSTER_HOST_PATH}
         containerPath: /data
+      - hostPath: ${KIND_COMMON_PATH}
+        containerPath: /data/common
 #  - role: worker
 #    extraMounts:
 #      - hostPath: ${KIND_CLUSTER_HOST_PATH}

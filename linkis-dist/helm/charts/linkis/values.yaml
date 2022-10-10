@@ -85,6 +85,7 @@ linkis:
     confDir: /etc/linkis-conf
     logDir: /var/logs/linkis
     runtimeDir: /opt/linkis-runtime
+    commonDir: /data/common
     # hostPath is a directory on the host machine.
     # In KinD cluster, it is actual a directory in KinD's
     # node container, which is specialized in KinD cluster

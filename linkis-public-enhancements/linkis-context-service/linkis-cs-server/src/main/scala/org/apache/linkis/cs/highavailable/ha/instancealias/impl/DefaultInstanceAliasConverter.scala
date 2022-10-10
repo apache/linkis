@@ -21,12 +21,10 @@ import org.apache.linkis.cs.highavailable.ha.instancealias.InstanceAliasConverte
 
 import org.apache.commons.lang3.StringUtils
 
-import org.springframework.stereotype.Component
-
 import java.util.Base64
 import java.util.regex.Pattern
 
-//@Component
+// @Component
 class DefaultInstanceAliasConverter extends InstanceAliasConverter {
 
   val pattern = Pattern.compile("[a-zA-Z\\d=\\+/]+")

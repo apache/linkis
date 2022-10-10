@@ -49,7 +49,7 @@ public class RouteLabel extends InheritableLabel<String> implements UserModifiab
     if (!StringUtils.isEmpty(stringValue)) {
       if (stringValue.split(SerializableLabel.VALUE_SEPARATOR).length != 1) {
         throw new LabelErrorException(
-            LABEL_ERROR_CODE.getErrorCode(), LABEL_ERROR_CODE.getErrorDesc() + VALUE_SEPARATOR);
+            LABEL_ERROR_CODE.getErrorCode(), LABEL_ERROR_CODE.getErrorDesc());
       }
     }
   }

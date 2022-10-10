@@ -79,8 +79,7 @@ public class UserCreatorLabel extends GenericLabel implements EngineNodeLabel, U
     if (!StringUtils.isEmpty(stringValue)) {
       if (stringValue.split(SerializableLabel.VALUE_SEPARATOR).length != 2) {
         throw new LabelErrorException(
-            LABEL_ERROR_CODE.getErrorCode(),
-            LABEL_ERROR_CODE.getErrorDesc() + VALUE_SEPARATOR + "隔开");
+            LABEL_ERROR_CODE.getErrorCode(), LABEL_ERROR_CODE.getErrorDesc());
       }
     }
   }

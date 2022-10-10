@@ -126,7 +126,7 @@ export default {
           }
         },
         {
-          type: "upload"
+          type: "upload",
           field: "pic",
           title: "keytab",
           value: [],

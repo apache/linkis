@@ -17,6 +17,8 @@
 
 WORK_DIR=`cd $(dirname $0); pwd -P`
 
+. ${WORK_DIR}/common.sh
+
 COMPONENT_NAME=$1
 
 LINKIS_KUBE_NAMESPACE=linkis
@@ -42,12 +44,18 @@ login_mysql() {
   POD_NAME=`kubectl get pods -n mysql -l app=mysql    -o jsonpath='{.items[0].metadata.name}'`
   kubectl exec -it -n mysql ${POD_NAME} -- bash
 }
-
+login_kind(){
+  echo "- login [kind]'s bash ..."
+  DOCKER_ID=`docker ps -aqf name=${KIND_CLUSTER_NAME}-control-plane`
+  docker exec -it ${DOCKER_ID} bash
+}
 
 if [ "${COMPONENT_NAME}" == "ldh" ]; then
   login_ldh ${COMPONENT_NAME}
 elif [ "${COMPONENT_NAME}" == "mysql" ]; then
   login_mysql ${COMPONENT_NAME}
+elif [ "${COMPONENT_NAME}" == "kind" ]; then
+  login_kind ${COMPONENT_NAME}
 else
    login ${COMPONENT_NAME}
 fi

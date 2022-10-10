@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.governance.exception.engineconn;
+package org.apache.linkis.governance.common.exception.engineconn;
 
 import org.apache.linkis.common.exception.ErrorException;
 

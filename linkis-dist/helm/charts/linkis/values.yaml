@@ -287,7 +287,7 @@ psPublicService:
 
 Web:
   replicas: 1
-  port: 8087
+  port: 8088
   prometheus:
     metricsPath: metrics
   annotations: {}

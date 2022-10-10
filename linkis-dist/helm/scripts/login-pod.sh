@@ -29,4 +29,27 @@ login() {
   kubectl exec -it -n ${LINKIS_KUBE_NAMESPACE} ${POD_NAME} -- bash
 }
 
-login ${COMPONENT_NAME}
+loginldh() {
+
+  echo "- login [ldh]'s bash ..."
+  POD_NAME=`kubectl get pods -n ldh -l app=ldh    -o jsonpath='{.items[0].metadata.name}'`
+  kubectl exec -it -n ldh ${POD_NAME} -- bash
+
+}
+
+loginmysql() {
+  echo "- login [mysql]'s bash ..."
+  POD_NAME=`kubectl get pods -n mysql -l app=mysql    -o jsonpath='{.items[0].metadata.name}'`
+  kubectl exec -it -n mysql ${POD_NAME} -- bash
+}
+
+
+if [ "${COMPONENT_NAME}" == "ldh" ]; then
+  loginldh ${COMPONENT_NAME}
+elif [ "${COMPONENT_NAME}" == "mysql" ]; then
+  loginmysql ${COMPONENT_NAME}
+else
+   login ${COMPONENT_NAME}
+fi
+
+

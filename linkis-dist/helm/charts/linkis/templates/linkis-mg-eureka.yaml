@@ -177,5 +177,5 @@ spec:
               mountPath: {{ .Values.linkis.locations.confDir }}
             - name: log
               mountPath: {{ .Values.linkis.locations.logDir }}
-            - name: commom
+            - name: common
               mountPath: {{ .Values.linkis.locations.commonDir }}

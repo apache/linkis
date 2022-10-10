@@ -56,8 +56,8 @@ abstract class AbstractScheduler extends Scheduler {
     index.map(getEventId(_, group.getGroupName)).foreach(event.setId)
     if (index.isEmpty) {
       throw new SchedulerErrorException(
-        THE_SUNMISSION_IS_FULL.getErrorCode,
-        THE_SUNMISSION_IS_FULL.getErrorDesc
+        JOB_QUEUE_IS_FULL.getErrorCode,
+        JOB_QUEUE_IS_FULL.getErrorDesc
       )
     }
   }

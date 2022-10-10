@@ -48,7 +48,7 @@ abstract class AccessibleExecutor extends SensibleExecutor {
       if (isBusy) return f
     }
     throw new SchedulerErrorException(
-      IS_IN_STATE.getErrorCode,
+      NODE_STATE_ERROR.getErrorCode,
       "%s is in status %s." format (toString, getStatus)
     )
   }
@@ -66,7 +66,7 @@ abstract class AccessibleExecutor extends SensibleExecutor {
       }
     }
     throw new SchedulerErrorException(
-      IS_IN_STATE.getErrorCode,
+      NODE_STATE_ERROR.getErrorCode,
       "%s is in status %s." format (toString, getStatus)
     )
   }
@@ -76,7 +76,7 @@ abstract class AccessibleExecutor extends SensibleExecutor {
       if (NodeStatus.isAvailable(getStatus)) return Utils.tryFinally(f)(callback())
     }
     throw new SchedulerErrorException(
-      IS_IN_STATE.getErrorCode,
+      NODE_STATE_ERROR.getErrorCode,
       "%s is in status %s." format (toString, getStatus)
     )
   }
@@ -84,7 +84,7 @@ abstract class AccessibleExecutor extends SensibleExecutor {
   def whenAvailable[A](f: => A): A = {
     if (NodeStatus.isAvailable(getStatus)) return Utils.tryFinally(f)(callback())
     throw new SchedulerErrorException(
-      IS_IN_STATE.getErrorCode,
+      NODE_STATE_ERROR.getErrorCode,
       "%s is in status %s." format (toString, getStatus)
     )
   }

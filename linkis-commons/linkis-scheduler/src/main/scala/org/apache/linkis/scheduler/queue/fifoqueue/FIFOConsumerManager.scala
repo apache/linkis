@@ -44,7 +44,7 @@ class FIFOConsumerManager(groupName: String) extends ConsumerManager {
         Utils.newCachedThreadPool(g.getMaxRunningJobs + 2, groupName + "-Thread-")
       case _ =>
         throw new SchedulerErrorException(
-          NEED_A_SUPPORTED.getErrorCode,
+          NEED_SUPPORTTED_GROUP.getErrorCode,
           s"FIFOConsumerManager need a FIFOGroup, but ${group.getClass} is supported."
         )
     }

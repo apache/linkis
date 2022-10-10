@@ -142,8 +142,8 @@ class ReadCacheConsumer(
     // index.map(getEventId(_, groupName)).foreach(job.setId)
     if (index.isEmpty) {
       throw new SchedulerErrorException(
-        THE_SUNMISSION_IS_FULL.getErrorCode,
-        THE_SUNMISSION_IS_FULL.getErrorDesc
+        JOB_QUEUE_IS_FULL.getErrorCode,
+        JOB_QUEUE_IS_FULL.getErrorDesc
       )
     }
   }

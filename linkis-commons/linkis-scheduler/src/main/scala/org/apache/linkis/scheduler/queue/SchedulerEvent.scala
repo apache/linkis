@@ -88,7 +88,7 @@ trait SchedulerEvent extends Logging {
   protected def transition(state: SchedulerEventState): Unit = synchronized {
     if (state.id < this.state.id && state != WaitForRetry) {
       throw new SchedulerErrorException(
-        TASK_STATUS_FLIP_STATE.getErrorCode,
+        TASK_STATUS_FLIP_ERROR.getErrorCode,
         s"Task status flip error! Cause: Failed to flip from ${this.state} to $state.（任务状态翻转出错！原因：不允许从${this.state} 翻转为$state.）"
       ) // 抛异常
     }

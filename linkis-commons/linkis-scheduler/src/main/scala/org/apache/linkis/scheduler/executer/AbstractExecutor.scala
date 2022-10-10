@@ -50,7 +50,7 @@ abstract class AbstractExecutor(id: Long) extends Executor with Logging {
       if (_state == Busy) return f
     }
     throw new SchedulerErrorException(
-      IS_IN_STATE.getErrorCode,
+      NODE_STATE_ERROR.getErrorCode,
       "%s is in state %s." format (toString, _state)
     )
   }
@@ -68,7 +68,7 @@ abstract class AbstractExecutor(id: Long) extends Executor with Logging {
       }
     }
     throw new SchedulerErrorException(
-      IS_IN_STATE.getErrorCode,
+      NODE_STATE_ERROR.getErrorCode,
       "%s is in state %s." format (toString, _state)
     )
   }
@@ -78,7 +78,7 @@ abstract class AbstractExecutor(id: Long) extends Executor with Logging {
       if (ExecutorState.isAvailable(_state)) return Utils.tryFinally(f)(callback())
     }
     throw new SchedulerErrorException(
-      IS_IN_STATE.getErrorCode,
+      NODE_STATE_ERROR.getErrorCode,
       "%s is in state %s." format (toString, _state)
     )
   }
@@ -86,7 +86,7 @@ abstract class AbstractExecutor(id: Long) extends Executor with Logging {
   protected def whenAvailable[A](f: => A): A = {
     if (ExecutorState.isAvailable(_state)) return Utils.tryFinally(f)(callback())
     throw new SchedulerErrorException(
-      IS_IN_STATE.getErrorCode,
+      NODE_STATE_ERROR.getErrorCode,
       "%s is in state %s." format (toString, _state)
     )
   }

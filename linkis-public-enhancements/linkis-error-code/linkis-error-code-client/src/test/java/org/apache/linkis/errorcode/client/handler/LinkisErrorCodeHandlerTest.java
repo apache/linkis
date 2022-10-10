@@ -39,7 +39,8 @@ public class LinkisErrorCodeHandlerTest {
   @DisplayName("handleTest")
   public void handleTest() {
 
-    String log = "60001,会话创建失败，ide 队列不存在，请检查队列设置是否正确";
+    String log =
+        "60001,Session creation failed. The ide queue does not exist. Please check whether the queue settings are correct";
     LinkisErrorCodeHandler instance = LinkisErrorCodeHandler.getInstance();
     List<ErrorCode> errorCodes = instance.handle(log);
     Assertions.assertNotNull(errorCodes);

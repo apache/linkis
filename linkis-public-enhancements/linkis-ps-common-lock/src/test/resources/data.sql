@@ -6,22 +6,17 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+*/
 
-package org.apache.linkis.engineplugin.openlookeng.exception;
+DELETE FROM linkis_ps_common_lock;
 
-import org.apache.linkis.common.exception.ErrorException;
+insert into linkis_ps_common_lock(`id`,`lock_object`,`time_out`,`update_time`,`create_time`) values (1,'hadoop-warehouse',1000000,now(),now());
 
-public class OpenLooKengSourceGroupException extends ErrorException {
 
-  public OpenLooKengSourceGroupException(int errCode, String desc) {
-    super(errCode, desc);
-  }
-}

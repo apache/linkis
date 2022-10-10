@@ -1,10 +1,9 @@
 ## linkis-computation-engineconn 配置
 
-
 | 模块名(服务名) | 参数名 | 默认值 | 描述 | 是否引用|
 | -------- | -------- | ----- |----- |  -----   |
 |linkis-computation-engineconn|wds.linkis.engine.resultSet.cache.max |0k|engine.resultSet.cache.max|
-|linkis-computation-engineconn|wds.linkis.engine.lock.expire.time|2 * 60 * 1000 |lock.expire.time|
+|linkis-computation-engineconn|wds.linkis.engine.lock.expire.time|2 *60* 1000 |lock.expire.time|
 |linkis-computation-engineconn|wds.linkis.engineconn.max.task.execute.num|0|task.execute.num|
 |linkis-computation-engineconn|wds.linkis.engineconn.progresss.fetch.interval-in-seconds| 5|interval-in-seconds|
 |linkis-computation-engineconn|wds.linkis.engineconn.udf.load.ignore|true |load.ignore|
@@ -22,7 +21,3 @@
 |linkis-computation-engineconn|linkis.ec.task.submit.wait.time.ms|22|wait.time.ms|
 |linkis-computation-engineconn|wds.linkis.bdp.hive.init.sql.enable| false |sql.enable|
 |linkis-computation-engineconn|wds.linkis.bdp.use.default.db.enable| true|db.enable|
-
-
-
-

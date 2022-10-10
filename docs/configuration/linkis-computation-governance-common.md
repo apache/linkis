@@ -1,8 +1,7 @@
 ## linkis-computation-governance-common  配置
 
-
 | 模块名(服务名) | 参数名 | 默认值 | 描述 |
-| -------- | -------- | ----- |----- | 
+| -------- | -------- | ----- |----- |
 |linkis-computation-governance-common|wds.linkis.rm| | wds.linkis.rm |
 |linkis-computation-governance-common|wds.linkis.spark.engine.version|2.4.3 |spark.engine.version|
 |linkis-computation-governance-common|wds.linkis.hive.engine.version| 1.2.1 |hive.engine.version|
@@ -19,6 +18,3 @@
 |linkis-computation-governance-common|wds.linkis.filesystem.hdfs.root.path| hdfs:///tmp/linkis/  | filesystem.hdfs.root.path  |
 |linkis-computation-governance-common|wds.linkis.engine.yarn.app.kill.scripts.path| /sbin/kill-yarn-jobs.sh |engine.yarn.app.kill.scripts.path|
 |linkis-computation-governance-common|wds.linkis.engineconn.env.keys|   | engineconn.env.keys  |
-
-
-

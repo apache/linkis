@@ -51,6 +51,9 @@ import com.cloudera.sqoop.manager.DefaultManagerFactory;
 import com.cloudera.sqoop.tool.SqoopTool;
 import com.cloudera.sqoop.util.OptionsFileUtil;
 
+import static org.apache.linkis.engineconnplugin.sqoop.client.errorcode.SqoopErrorCodeSummary.ERROR_IN_CLOSING;
+import static org.apache.linkis.engineconnplugin.sqoop.client.errorcode.SqoopErrorCodeSummary.UNABLE_TO_CLOSE;
+
 /**
  * Main entry-point for Sqoop Usage: hadoop jar (this_jar_name) com.cloudera.sqoop.Sqoop (options)
  * See the SqoopOptions class for options.
@@ -319,11 +322,10 @@ public class Sqoop extends Configured implements Tool {
         } catch (Exception e) {
           // Ignore
         }
-        throw new JobClosableException(
-            "Unable to close the mapReduce job related to cluster [" + cluster + "]", se);
+        throw new JobClosableException(UNABLE_TO_CLOSE.getErrorDesc() + "[" + cluster + "]", se);
       }
     } catch (IOException | SQLException e) {
-      throw new JobClosableException("Error in closing sqoop client", e);
+      throw new JobClosableException(ERROR_IN_CLOSING.getErrorDesc(), e);
     }
   }
 

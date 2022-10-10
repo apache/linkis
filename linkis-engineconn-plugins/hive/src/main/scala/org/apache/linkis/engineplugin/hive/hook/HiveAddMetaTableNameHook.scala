@@ -21,6 +21,7 @@ import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.engineconn.common.creation.EngineCreationContext
 import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
 import org.apache.linkis.engineconn.computation.executor.hook.ComputationExecutorHook
+import org.apache.linkis.engineplugin.hive.errorcode.HiveErrorCodeSummary.INVALID_VALUE
 import org.apache.linkis.engineplugin.hive.exception.HiveQueryFailedException
 
 import org.apache.commons.lang3.StringUtils
@@ -78,8 +79,8 @@ class HiveAddMetaTableNameHook extends ComputationExecutorHook with Logging {
                 engineExecutionContext.setEnableResultsetMetaWithTableName(boolValue)
               } { case e: IllegalArgumentException =>
                 throw HiveQueryFailedException(
-                  41006,
-                  s"Invalid value : ${value} in param [${mather.group()}]"
+                  INVALID_VALUE.getErrorCode,
+                  INVALID_VALUE.getErrorDesc.concat(s" : ${value} in param [${mather.group()}]")
                 )
               }
             }

@@ -46,9 +46,10 @@ object ECMUtils {
     }
     if (!response.isSuccess) throw new ECMErrorException(911115, "failed to downLoad(下载失败)")
     val map = new util.HashMap[String, Object]
-    map.asScala += "path" -> response.fullFilePath
-    map.asScala += "is" -> response.inputStream
-  }.asJava
+    map.put("path", response.fullFilePath)
+    map.put("is", response.inputStream)
+    map
+  }
 
   def downLoadBmlResourceToLocal(resource: BmlResource, userName: String, path: String)(implicit
       fs: FileSystem

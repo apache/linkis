@@ -119,7 +119,7 @@ spec:
             - /bin/bash
             - -ecx
             - >-
-              RUN_IN_FOREGROUND=true {{ .Values.linkis.locations.homeDir }}/sbin/linkis-daemon.sh start cg-linkismanager
+              RUN_IN_FOREGROUND=true LINKIS_EXTENDED_LIB={{.Values.linkis.locations.commonDir}}/extendlib {{ .Values.linkis.locations.homeDir }}/sbin/linkis-daemon.sh start cg-linkismanager
           ports:
             - name: "http"
               containerPort: {{ .Values.cgLinkisManager.port }}

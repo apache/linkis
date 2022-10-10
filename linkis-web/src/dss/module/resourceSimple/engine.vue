@@ -243,6 +243,8 @@ export default {
           return 'Datax';
         case 'openlookeng':
           return 'Openlookeng';
+        case 'elasticsearch':
+          return 'Elasticsearch';
         case 'Unlock':
           return this.$t('message.common.resourceSimple.KX')
         case 'Idle':

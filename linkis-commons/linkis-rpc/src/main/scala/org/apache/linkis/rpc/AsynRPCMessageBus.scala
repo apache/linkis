@@ -42,12 +42,12 @@ class AsynRPCMessageBus(capacity: Int, busName: String)(
   override protected val dropEvent: DropEvent = new DropEvent {
 
     override def onDropEvent(event: RPCMessageEvent): Unit = throw new DWCRPCRetryException(
-      "Asyn RPC Consumer Queue is full, please retry after some times."
+      "Async RPC Consumer Queue is full, please retry after some times."
     )
 
     override def onBusStopped(event: RPCMessageEvent): Unit = throw new RPCInitFailedException(
       RPCErrorConstants.RPC_INIT_ERROR,
-      "Asyn RPC Consumer Thread has stopped!"
+      "Async RPC Consumer Thread has stopped!"
     )
 
   }

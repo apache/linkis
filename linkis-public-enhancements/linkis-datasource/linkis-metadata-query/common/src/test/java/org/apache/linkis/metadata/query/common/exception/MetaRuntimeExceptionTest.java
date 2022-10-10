@@ -29,7 +29,6 @@ public class MetaRuntimeExceptionTest {
 
     String errorMsg = "Cannot find the keytab file in connect parameters";
     MetaRuntimeException exception = new MetaRuntimeException(errorMsg, new Exception());
-    Assertions.assertTrue(99900 == exception.getErrCode());
     Assertions.assertEquals(errorMsg, exception.getDesc());
   }
 }

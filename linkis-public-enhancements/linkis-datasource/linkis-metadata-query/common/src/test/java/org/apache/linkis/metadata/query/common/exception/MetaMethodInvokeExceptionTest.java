@@ -26,10 +26,9 @@ public class MetaMethodInvokeExceptionTest {
   @Test
   @DisplayName("metaMethodInvokeExceptionTest")
   public void metaMethodInvokeExceptionTest() {
-    String errorMsg = "Load meta service for mysql ail 加载 [mysql] 元数据服务失败";
+    String errorMsg = "Load meta service for mysql ail load [mysql] metadata service failed";
     MetaMethodInvokeException exception =
         new MetaMethodInvokeException(500, errorMsg, new Exception());
-    Assertions.assertTrue(exception.getErrCode() == 500);
     Assertions.assertEquals(errorMsg, exception.getDesc());
   }
 }

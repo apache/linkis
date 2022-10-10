@@ -120,12 +120,10 @@ spec:
             - /bin/bash
             - -ecx
             - >-
-              if [ ! -f {{ .Values.linkis.locations.homeDir }}/lib/linkis-commons/public-module/mysql-connector-java-*.jar ]
-              then
-                 cp {{ .Values.linkis.locations.commonDir }}/mysql-connector-java-*.jar {{ .Values.linkis.locations.homeDir }}/lib/linkis-commons/public-module/
-                 cp {{ .Values.linkis.locations.commonDir }}/mysql-connector-java-*.jar {{ .Values.linkis.locations.homeDir }}/lib/linkis-spring-cloud-services/linkis-mg-gateway/
-              fi
-
+              {{- if eq .Values.withJdbcDriverJar false }}
+                cp {{ .Values.linkis.locations.commonDir }}/mysql-connector-java-*.jar {{ .Values.linkis.locations.homeDir }}/lib/linkis-commons/public-module/
+                cp {{ .Values.linkis.locations.commonDir }}/mysql-connector-java-*.jar {{ .Values.linkis.locations.homeDir }}/lib/linkis-spring-cloud-services/linkis-mg-gateway/
+              {{- end }}
               RUN_IN_FOREGROUND=true {{ .Values.linkis.locations.homeDir }}/sbin/linkis-daemon.sh start mg-eureka
 
           ports:

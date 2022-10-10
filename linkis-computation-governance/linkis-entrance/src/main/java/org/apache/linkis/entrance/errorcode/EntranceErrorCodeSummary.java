@@ -22,8 +22,8 @@ public enum EntranceErrorCodeSummary {
   JOBREQ_NOT_NULL(20001, "JobReq can't be null(JobReq不能为空)", "JobReq can't be null(JobReq不能为空)"),
   LABEL_NOT_NULL(
       20001,
-      "userCreator label or engineType label cannot null(userCreator 标签或 engineType 标签不能为空)",
-      "userCreator label or engineType label cannot null(userCreator 标签或 engineType 标签不能为空)"),
+      "The label of userCreator or engineType cannot be null(标签 userCreator 或 engineType 不能为空)",
+      "The label of userCreator or engineType cannot be null(标签 userCreator 或 engineType 不能为空)"),
   NOT_CREATE_EXECUTOR(
       20001,
       "Task is not requestPersistTask, cannot to create Executor(Task不是requestPersistTask，不能创建Executor)",

@@ -4,7 +4,7 @@
 | -------- | -------- | ----- |-----|-----|
 |linkis-entrance |10000|Unsupported operation(不支持的操作)|UNSUPPORTED_OPERATION|EntranceErrorCodeSummary|
 |linkis-entrance |20001|JobReq can't be null(JobReq不能为空)|JOBREQ_NOT_NULL|EntranceErrorCodeSummary|
-|linkis-entrance |20001|userCreator label or engineType label cannot null(userCreator 标签或 engineType 标签不能为空)|LABEL_NOT_NULL|EntranceErrorCodeSummary|
+|linkis-entrance |20001|The label of userCreator or engineType cannot be null(标签 userCreator 或 engineType 不能为空)|LABEL_NOT_NULL|EntranceErrorCodeSummary|
 |linkis-entrance |20001|Task is not requestPersistTask, cannot to create Executor(Task不是requestPersistTask，不能创建Executor)|NOT_CREATE_EXECUTOR|EntranceErrorCodeSummary|
 |linkis-entrance |20001|Task is not EntranceJob, cannot to create Executor(Task 不是 EntranceJob，不能创建 Executor)|ENTRA_NOT_CREATE_EXECUTOR|EntranceErrorCodeSummary|
 |linkis-entrance |20004|JobRequest cannot be null, unable to do persist operation(JobRequest 不能为空，无法进行持久化操作)|JOBREQUEST_NOT_NULL|EntranceErrorCodeSummary|

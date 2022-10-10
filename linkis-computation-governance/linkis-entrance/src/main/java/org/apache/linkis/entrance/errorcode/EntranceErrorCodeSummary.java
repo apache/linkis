@@ -38,18 +38,21 @@ public enum EntranceErrorCodeSummary {
       20004,
       "JobRequest cannot be null, unable to do persist operation(JobRequest 不能为空，无法进行持久化操作)",
       "JobRequest cannot be null, unable to do persist operation(JobRequest 不能为空，无法进行持久化操作)"),
-  INSTANCE_NOT_NULL(20004, "instance can't be null(实例不能为空)", "instance can't be null(实例不能为空)"),
+  INSTANCE_NOT_NULL(
+      20004, "The instance can't be null(实例不能为空)", "The instance can't be null(实例不能为空)"),
   EXECUTEUSER_NOT_NULL(
-      20005, "execute user can't be null(执行用户不能为空)", "execute user can't be null(执行用户不能为空)"),
+      20005,
+      "The execute user can't be null(执行用户不能为空)",
+      "The execute user can't be null(执行用户不能为空)"),
 
   PARAM_NOT_NULL(
       20007,
-      "param executionCode can not be empty (参数 executionCode 不能为空)",
-      "param executionCode can not be empty (参数 executionCode 不能为空)"),
+      "The param executionCode can not be empty (参数 executionCode 不能为空)",
+      "The param executionCode can not be empty (参数 executionCode 不能为空)"),
   EXEC_SCRIP_NOT_NULL(
       20007,
-      "param executionCode and scriptPath can not be empty at the same time(参数 executionCode 和 scriptPath 不能同时为空)",
-      "param executionCode and scriptPath can not be empty at the same time(参数 executionCode 和 scriptPath 不能同时为空)"),
+      "The param executionCode and scriptPath can not be empty at the same time(参数 executionCode 和 scriptPath 不能同时为空)",
+      "The param executionCode and scriptPath can not be empty at the same time(参数 executionCode 和 scriptPath 不能同时为空)"),
 
   ONLY_CODE_SUPPORTED(
       20010,
@@ -65,15 +68,15 @@ public enum EntranceErrorCodeSummary {
       "Request jobHistory failed, reason: jobRespProtocol is null (请求jobHistory失败,原因:jobRespProtocol为null)"),
   READ_TASKS_FAILED(
       20011,
-      "read all tasks failed, reason (读取所有任务失败，原因):",
-      "read all tasks failed, reason (读取所有任务失败，原因):"),
+      "Read all tasks failed, reason (读取所有任务失败，原因):",
+      "Read all tasks failed, reason (读取所有任务失败，原因):"),
 
-  SENDER_RPC_FAILED(20020, "sender rpc failed(发件人 RPC 失败)", "sender rpc failed(发件人 RPC 失败)"),
+  SENDER_RPC_FAILED(20020, "Sender rpc failed(发件人 RPC 失败)", "Sender rpc failed(发件人 RPC 失败)"),
 
   FAILED_ANALYSIS_TASK(
       20039,
-      "failed to analysis task ! the reason is(分析任务失败！原因是):",
-      "failed to analysis task ! the reason is(分析任务失败！原因是):"),
+      "Failed to analysis task ! the reason is(分析任务失败！原因是):",
+      "Failed to analysis task ! the reason is(分析任务失败！原因是):"),
 
   INVALID_ENGINETYPE_NULL(
       20052,
@@ -92,27 +95,28 @@ public enum EntranceErrorCodeSummary {
       30009, "Submitting the query failed!(提交查询失败！)", "Submitting the query failed!(提交查询失败！)"),
   QUERY_STATUS_FAILED(
       50081,
-      "query from jobHistory status failed(从 jobHistory 状态查询失败)",
-      "query from jobHistory status failed(从 jobHistory 状态查询失败)"),
+      "Query from jobHistory status failed(从 jobHistory 状态查询失败)",
+      "Query from jobHistory status failed(从 jobHistory 状态查询失败)"),
   GET_QUERY_RESPONSE(
       50081,
-      "get query response incorrectly(错误地获取查询响应)",
-      "get query response incorrectly(错误地获取查询响应)"),
+      "Get query response incorrectly(错误地获取查询响应)",
+      "Get query response incorrectly(错误地获取查询响应)"),
   QUERY_TASKID_ERROR(
       50081,
-      "query taskId  error,taskId(查询 taskId 错误,taskId):",
-      "query taskId  error,taskId(查询 taskId 错误,taskId):"),
+      "Query taskId  error,taskId(查询 taskId 错误,taskId):",
+      "Query taskId  error,taskId(查询 taskId 错误,taskId):"),
   CORRECT_LIST_TYPR(
       50081,
-      "query from jobhistory not a correct List type taskId is(来自 jobhistory 的查询不是正确的列表类型 taskId 是):",
-      "query from jobhistory not a correct List type taskId is(来自 jobhistory 的查询不是正确的列表类型 taskId 是):"),
+      "Query from jobhistory with incorrect list type of taskId, the taskId is ( 从jobhistory 中查询的参数类型不正确,taskId为):",
+      "Query from jobhistory with incorrect list type of taskId, the taskId is ( 从jobhistory 中查询的参数类型不正确,taskId为):"),
   SHELL_BLACKLISTED_CODE(
       50081,
       "Shell code contains blacklisted code(shell中包含黑名单代码)",
       "Shell code contains blacklisted code(shell中包含黑名单代码)"),
   JOB_HISTORY_FAILED_ID(50081, "", ""),
 
-  LOGPATH_NOT_NULL(20301, "logPath cannot be empty(日志路径不能为空)", "logPath cannot be empty(日志路径不能为空)");
+  LOGPATH_NOT_NULL(
+      20301, "The logPath cannot be empty(日志路径不能为空)", "The logPath cannot be empty(日志路径不能为空)");
 
   /** (errorCode)错误码 */
   private int errorCode;

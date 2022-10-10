@@ -15,11 +15,32 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineplugin.elasticsearch.executer
+package org.apache.linkis.engineplugin.elasticsearch.executor.client
 
-object ElasticSearchExecutorOrder extends Enumeration {
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.engineplugin.elasticsearch.executor.client.impl.ElasticSearchExecutorImpl
+import org.apache.linkis.scheduler.executer.ExecuteResponse
 
-  type ElasticSearchExecutorOrder = Value
-  val SQL = Value(1)
-  val JSON = Value(3)
+import java.io.IOException
+import java.util
+
+import scala.collection.JavaConverters._
+
+trait ElasticSearchExecutor extends Logging {
+
+  @throws(classOf[IOException])
+  def open: Unit
+
+  def executeLine(code: String): ElasticSearchResponse
+
+  def close: Unit
+
+}
+
+object ElasticSearchExecutor {
+
+  def apply(runType: String, properties: util.Map[String, String]): ElasticSearchExecutor = {
+    new ElasticSearchExecutorImpl(runType, properties)
+  }
+
 }

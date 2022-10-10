@@ -15,32 +15,17 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineplugin.elasticsearch.executer.client
+package org.apache.linkis.engineplugin.elasticsearch.executor.client
 
-import org.apache.linkis.common.utils.Logging
-import org.apache.linkis.engineplugin.elasticsearch.executer.client.impl.ElasticSearchExecutorImpl
-import org.apache.linkis.scheduler.executer.ExecuteResponse
+import org.apache.linkis.storage.domain.Column
+import org.apache.linkis.storage.resultset.table.TableRecord
 
-import java.io.IOException
-import java.util
+trait ElasticSearchResponse
 
-import scala.collection.JavaConverters._
+case class ElasticSearchTableResponse(columns: Array[Column], records: Array[TableRecord])
+    extends ElasticSearchResponse
 
-trait ElasticSearchExecutor extends Logging {
+case class ElasticSearchJsonResponse(value: String) extends ElasticSearchResponse
 
-  @throws(classOf[IOException])
-  def open: Unit
-
-  def executeLine(code: String): ElasticSearchResponse
-
-  def close: Unit
-
-}
-
-object ElasticSearchExecutor {
-
-  def apply(runType: String, properties: util.Map[String, String]): ElasticSearchExecutor = {
-    new ElasticSearchExecutorImpl(runType, properties)
-  }
-
-}
+case class ElasticSearchErrorResponse(message: String, body: String = null, cause: Throwable = null)
+    extends ElasticSearchResponse

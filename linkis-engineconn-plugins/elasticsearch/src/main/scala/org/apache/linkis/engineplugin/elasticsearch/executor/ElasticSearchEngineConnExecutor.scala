@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineplugin.elasticsearch.executer
+package org.apache.linkis.engineplugin.elasticsearch.executor
 
 import org.apache.linkis.common.utils.{Logging, OverloadUtils, Utils}
 import org.apache.linkis.engineconn.common.conf.{EngineConnConf, EngineConnConstant}
@@ -29,13 +29,13 @@ import org.apache.linkis.engineplugin.elasticsearch.conf.{
   ElasticSearchConfiguration,
   ElasticSearchEngineConsoleConf
 }
-import org.apache.linkis.engineplugin.elasticsearch.executer.client.{
+import org.apache.linkis.engineplugin.elasticsearch.executor.client.{
   ElasticSearchErrorResponse,
   ElasticSearchExecutor,
   ElasticSearchJsonResponse,
   ElasticSearchTableResponse
 }
-import org.apache.linkis.engineplugin.elasticsearch.executer.client.ElasticSearchErrorResponse
+import org.apache.linkis.engineplugin.elasticsearch.executor.client.ElasticSearchErrorResponse
 import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
 import org.apache.linkis.manager.common.entity.resource.{
   CommonNodeResource,

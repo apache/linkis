@@ -100,7 +100,7 @@ spec:
             name: {{ include "linkis.fullname" . }}-linkis-config
         - name: log
           emptyDir: {}
-        - name: commonDir
+        - name: common
           hostPath:
             path: {{ .Values.linkis.locations.commonDir }}
             type: DirectoryOrCreate
@@ -177,5 +177,5 @@ spec:
               mountPath: {{ .Values.linkis.locations.confDir }}
             - name: log
               mountPath: {{ .Values.linkis.locations.logDir }}
-            - name: commonDir
+            - name: commom
               mountPath: {{ .Values.linkis.locations.commonDir }}

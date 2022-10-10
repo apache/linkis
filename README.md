@@ -133,9 +133,7 @@ Please go to the [Linkis Releases Page](https://linkis.apache.org/download/main)
 
 ## compile backend
 ### Mac OS/Linux
-# 1. When compiling for the first time, execute the following command first
-./mvnw -N install
-# 2. make the linkis distribution package
+# make the linkis distribution package
 # - Option 1: make the linkis distribution package only
 ./mvnw clean install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
 # - Option 2: make the linkis distribution package and docker image
@@ -145,9 +143,7 @@ Please go to the [Linkis Releases Page](https://linkis.apache.org/download/main)
 # - Option 4: linkis distribution package and docker image (included web and ldh (hadoop all in one for test))
 ./mvnw clean install -Pdocker -Dmaven.javadoc.skip=true -Dmaven.test.skip=true -Dlinkis.build.web=true -Dlinkis.build.ldh=true
 
-
 ### Windows
-mvnw.cmd -N install
 mvnw.cmd clean install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
 
 ## compile web

@@ -129,10 +129,14 @@ abstract class AbstractGatewayRouter extends GatewayRouter with Logging {
 }
 
 class DefaultGatewayRouter(var gatewayRouters: Array[GatewayRouter]) extends AbstractGatewayRouter {
+  var nullRouters = gatewayRouters.filter(x => x == null)
+  var notNullRouters = gatewayRouters.filter(x => x != null)
 
-  gatewayRouters = gatewayRouters.sortWith((left, right) => {
+  notNullRouters = notNullRouters.sortWith((left, right) => {
     left.order() < right.order()
   })
+
+  gatewayRouters = nullRouters.++(notNullRouters)
 
   private def findCommonService(parsedServiceId: String) = findService(
     parsedServiceId,

@@ -129,8 +129,8 @@ abstract class AbstractGatewayRouter extends GatewayRouter with Logging {
 }
 
 class DefaultGatewayRouter(var gatewayRouters: Array[GatewayRouter]) extends AbstractGatewayRouter {
-  var nullRouters = gatewayRouters.filter(x => x == null)
-  var notNullRouters = gatewayRouters.filter(x => x != null)
+  var nullRouters = gatewayRouters.filter(x => x == null || x.order() == null)
+  var notNullRouters = gatewayRouters.filter(x => x != null && x.order() != null)
 
   notNullRouters = notNullRouters.sortWith((left, right) => {
     left.order() < right.order()

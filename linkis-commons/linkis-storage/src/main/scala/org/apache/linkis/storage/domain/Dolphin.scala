@@ -18,6 +18,7 @@
 package org.apache.linkis.storage.domain
 
 import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.storage.errorcode.LinkisStorageErrorCodeSummary.FAILED_TO_READ_INTEGER
 import org.apache.linkis.storage.exception.StorageWarnException
 import org.apache.linkis.storage.utils.{StorageConfiguration, StorageUtils}
 
@@ -67,7 +68,10 @@ object Dolphin extends Logging {
   def readInt(inputStream: InputStream): Int = {
     val bytes = new Array[Byte](INT_LEN + 1)
     if (StorageUtils.readBytes(inputStream, bytes, INT_LEN) != INT_LEN) {
-      throw new StorageWarnException(51000, "failed to read integer(读取整数失败)")
+      throw new StorageWarnException(
+        FAILED_TO_READ_INTEGER.getErrorCode,
+        FAILED_TO_READ_INTEGER.getErrorDesc
+      )
     }
     getString(bytes, 0, INT_LEN).toInt
   }

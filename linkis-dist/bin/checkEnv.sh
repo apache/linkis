@@ -124,22 +124,10 @@ check_service_port
 SERVER_PORT=$ENGINECONNMANAGER_PORT
 check_service_port
 
-SERVER_PORT=$ENGINECONN_PLUGIN_SERVER_PORT
-check_service_port
-
 SERVER_PORT=$ENTRANCE_PORT
 check_service_port
 
 SERVER_PORT=$PUBLICSERVICE_PORT
-check_service_port
-
-SERVER_PORT=$CS_PORT
-check_service_port
-
-SERVER_PORT=$DATASOURCE_MANAGER_PORT
-check_service_port
-
-SERVER_PORT=$METADATA_QUERY_PORT
 check_service_port
 
 if [ "$portIsOccupy" = true ];then

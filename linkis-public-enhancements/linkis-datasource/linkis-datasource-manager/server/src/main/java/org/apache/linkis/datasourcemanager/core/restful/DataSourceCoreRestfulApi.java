@@ -60,6 +60,8 @@ import org.slf4j.LoggerFactory;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
 
+import static org.apache.linkis.datasourcemanager.common.errorcode.LinkisDatasourceManagerErrorCodeSummary.DATASOURCE_NOT_FOUND;
+
 @Api(tags = "data source core restful api")
 @RestController
 @RequestMapping(
@@ -258,8 +260,8 @@ public class DataSourceCoreRestfulApi {
                             dataSourceInfoService.getDataSourceInfoBrief(dataSourceId);
                     if (null == dataSource) {
                         throw new ErrorException(
-                                ServiceErrorCode.DATASOURCE_NOTFOUND_ERROR.getValue(),
-                                "datasource not found ");
+                                DATASOURCE_NOT_FOUND.getErrorCode(),
+                                DATASOURCE_NOT_FOUND.getErrorDesc());
                     }
                     if (!AuthContext.hasPermission(dataSource, userName)) {
                         return Message.error(

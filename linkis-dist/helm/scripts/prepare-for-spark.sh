@@ -14,8 +14,12 @@
 # limitations under the License.
 #
 #
+## Temporarily solve the problem that the spark submit client fails
+## and resolve the domain name of the yarn callback ecm when executing the spark on yarn task
 
 WORK_DIR=`cd $(dirname $0); pwd -P`
+
+## copy spark resource from ldh to linkis-cg-engineconnmanager
 
 LDH_POD_NAME=`kubectl get pods -n ldh -l app=ldh    -o jsonpath='{.items[0].metadata.name}'`
 kubectl cp -n ldh ${LDH_POD_NAME}:/opt/ldh/ ./ldh
@@ -34,7 +38,7 @@ kubectl exec -it -n linkis ${ECM_POD_NAME} -- bash -c "echo 'export SPARK_HOME=/
 kubectl exec -it -n linkis ${ECM_POD_NAME} -- bash -c "echo 'export PATH=\$SPARK_HOME/bin:\$PATH' |sudo tee --append  /etc/profile"
 kubectl exec -it -n linkis ${ECM_POD_NAME} -- bash -c "source /etc/profile"
 
-
+# add ecm dns for ldh pod
 ECM_POD_IP=`kubectl get pods -n linkis -l app.kubernetes.io/instance=linkis-demo-cg-engineconnmanager -o jsonpath='{.items[0].status.podIP}'`
 
 ECM_POD_SUBDOMAIN=`kubectl get pods -n linkis -l app.kubernetes.io/instance=linkis-demo-cg-engineconnmanager -o jsonpath='{.items[0].spec.subdomain}'`

@@ -1216,7 +1216,9 @@
           <version>${spotless-maven-plugin.version}</version>
           <configuration>
             <pom>
-              <sortPom></sortPom>
+              <sortPom>
+                <expandEmptyElements>false</expandEmptyElements>
+              </sortPom>
             </pom>
             <java>
               <googleJavaFormat>
@@ -1234,7 +1236,7 @@
                 <exclude>**/restful/**/*Restful.java</exclude>
               </excludes>
 
-              <removeUnusedImports></removeUnusedImports>
+              <removeUnusedImports/>
             </java>
             <scala>
               <scalafmt>
@@ -1250,8 +1252,9 @@
             <execution>
               <id>spotless-check</id>
               <goals>
-                <goal>check</goal>
+                <goal>apply</goal>
               </goals>
+              <phase>validate</phase>
             </execution>
           </executions>
         </plugin>

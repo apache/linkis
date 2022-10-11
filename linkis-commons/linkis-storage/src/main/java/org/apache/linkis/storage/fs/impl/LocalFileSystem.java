@@ -57,6 +57,8 @@ import java.util.Stack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.linkis.storage.errorcode.LinkisStorageErrorCodeSummary.TO_BE_UNKNOW;
+
 public class LocalFileSystem extends FileSystem {
 
   private static final Logger LOG = LoggerFactory.getLogger(LocalFileSystem.class);
@@ -233,7 +235,7 @@ public class LocalFileSystem extends FileSystem {
 
       } catch (NoSuchFileException e) {
         LOG.warn("File or folder does not exist or file name is garbled(文件或者文件夹不存在或者文件名乱码)", e);
-        throw new StorageWarnException(51001, e.getMessage());
+        throw new StorageWarnException(TO_BE_UNKNOW.getErrorCode(), e.getMessage());
       }
       return true;
     }
@@ -326,7 +328,7 @@ public class LocalFileSystem extends FileSystem {
       attr = Files.readAttributes(Paths.get(fsPath.getPath()), PosixFileAttributes.class);
     } catch (NoSuchFileException e) {
       LOG.warn("File or folder does not exist or file name is garbled(文件或者文件夹不存在或者文件名乱码)", e);
-      throw new StorageWarnException(51001, e.getMessage());
+      throw new StorageWarnException(TO_BE_UNKNOW.getErrorCode(), e.getMessage());
     }
 
     fsPath.setIsdir(attr.isDirectory());

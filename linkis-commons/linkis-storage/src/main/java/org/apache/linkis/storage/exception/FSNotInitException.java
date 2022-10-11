@@ -19,10 +19,12 @@ package org.apache.linkis.storage.exception;
 
 import org.apache.linkis.common.exception.WarnException;
 
+import static org.apache.linkis.storage.errorcode.LinkisStorageErrorCodeSummary.FSN_NOT_INIT_EXCEPTION;
+
 public class FSNotInitException extends WarnException {
 
   public FSNotInitException() {
-    super(52000, "FSNotInitException");
+    super(FSN_NOT_INIT_EXCEPTION.getErrorCode(), FSN_NOT_INIT_EXCEPTION.getErrorDesc());
   }
 
   public FSNotInitException(int errCode, String desc) {

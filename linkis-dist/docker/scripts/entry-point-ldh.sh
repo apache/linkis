@@ -34,6 +34,8 @@ hdfs dfs -mkdir -p /spark2-history
 hdfs dfs -chmod -R 777 /spark2-history
 hdfs dfs -mkdir -p /completed-jobs
 hdfs dfs -chmod -R 777 /completed-jobs
+hdfs dfs -chmod 777 /
+
 
 # - hive
 /opt/ldh/current/hive/bin/schematool -initSchema -dbType mysql
@@ -44,7 +46,7 @@ hdfs dfs -chmod -R 777 /completed-jobs
 /opt/ldh/current/spark/sbin/start-history-server.sh
 
 # flink
-/opt/ldh/current/flink/bin/yarn-session.sh --detached
+HADOOP_CLASSPATH=`hadoop classpath` /opt/ldh/current/flink/bin/yarn-session.sh --detached
 
 # zookeeper
 /opt/ldh/current/zookeeper/bin/zkServer.sh start

@@ -1,50 +1,49 @@
-Helm charts for Linkis 
+Linkis Helm Charts 组件
 ==========
 
 [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
 
-# Pre-requisites
-> Note: KinD is required only for development and testing.
-* [Kubernetes](https://kubernetes.io/docs/setup/), minimum version v1.21.0+
-* [Helm](https://helm.sh/docs/intro/install/), minimum version v3.0.0+.
-* [KinD](https://kind.sigs.k8s.io/docs/user/quick-start/), minimum version v0.11.0+.
+# 前置条件
+> 注意: 仅在开发和测试阶段才需要 KinD.
+* [Kubernetes](https://kubernetes.io/docs/setup/), 最低版本 v1.21.0+
+* [Helm](https://helm.sh/docs/intro/install/), 最低版本 v3.0.0+.
+* [KinD](https://kind.sigs.k8s.io/docs/user/quick-start/), 最低版本 v0.11.0+.
 
 
-# Installation
+# 安装流程
 
 ```shell
-# Deploy Apache Linkis on kubernetes, kubernetes 
-# namespace is 'linkis', helm release is 'linkis-demo'
+# 在 kubernetes 上安装 Apache Linkis, Linkis 会被部署在名为'linkis'的名字空间中，对应的 Helm Release 名为 'linkis-demo'
 
-# Option 1, use build-in script
+# 选项 1, 使用 Linkis 项目提供的脚本来部署
 $> ./scripts/install-charts.sh linkis linkis-demo
 
-# Option 2, use `helm` command line
+# 选项 2, 使用 Helm 命令来部署
 $> helm install --create-namespace -f ./charts/linkis/values.yaml --namespace linkis linkis-demo ./charts/linkis 
 ```
 
-# Uninstallation
+# 卸载流程
 
 ```shell
 $> helm delete --namespace linkis linkis-demo 
 ```
 
-# For developers
+# 开发者工具
 
-We recommend using [KinD](https://kind.sigs.k8s.io/docs/user/quick-start/) for development and testing. 
-KinD is a tool for running local Kubernetes clusters using Docker container as “Kubernetes nodes”.
+建议使用 [KinD](https://kind.sigs.k8s.io/docs/user/quick-start/) 来进行 Helm Charts 的开发和测试。KinD 是一个使用Docker容器作为 
+"Kubernetes节点" 来运行本地 Kubernetes 集群的工具。
 
-Follow the link below to install the KinD in your development environment.
+本地部署 KinD 工具的详细流程请参考如下文档:
 
 - [KinD Installation](https://kind.sigs.k8s.io/docs/user/quick-start/#installation)
 
-## Setup a local cluster for test
-Once after you have installed KinD, you can run the following command to setup a local kubernetes cluster and deploy an Apache Linkis cluster on it.
+## 部署 Linkis 组件进行测试
+当你已经在开发环境中完成了KinD的安装后，可以通过运行以下命令在开发机上拉起一个 kubernetes 集群，并在上面部署 Apache Linkis 组件。
+
 
 ```shell
-# It will deploy a MySQL instance in the KinD cluster,
-# then deploy an Apache Linkis cluster, which will use 
-# the MySQL instances above 
+# 以下命令会在 KinD 集群上部署一个 MySQL 实例，同时还会部署一个 Apache Linkis 实例，
+# 这个 Apache Linkis 实例会使用这个 MySQL 实例会作为后台数据库.
 $> sh ./scripts/create-kind-cluster.sh \
    && sh ./scripts/install-mysql.sh \
    && sh ./scripts/install-charts.sh
@@ -93,10 +92,10 @@ Enjoy!
 
 ```
 
-## Enable port-forward for jvm remote debug
+## 开启 port-forward，支持JVM 远程调试
 > INFO: [Understand how port-forward works.](https://kubernetes.io/docs/tasks/access-application-cluster/port-forward-access-application-cluster/)
 ```shell
-# start port-forward for all servers
+# 为每个 Apache Linkis 服务创建一个 port-forward 实例
 $> ./scripts/remote-debug-proxy.sh start
 - starting port-forwad for [web] with mapping [local->8087:8087->pod] ...
 - starting port-forwad for [mg-eureka] with mapping [local->5001:5005->pod] ...
@@ -110,11 +109,10 @@ $> ./scripts/remote-debug-proxy.sh start
 - starting port-forwad for [cg-engineconnmanager] with mapping [local->5009:5005->pod] ...
 - starting port-forwad for [cg-engineplugin] with mapping [local->5010:5005->pod] ...
 
-# Once the port-forward setup, you can configure the jvm remote debugger of you IDE 
-# to connect to the local port, which is mapping to a backend server port, and start
-# the remote debug process.
+# 一旦 port-forward 创建完成，你就可以通过设置 IDE 的配置，
+# 将 JVM 远程调试器连接到本地端口，来启动远程调试。
 
-# list exists port-forward instances
+# 获取 port-forward 实例列表
 $> sh ./scripts/remote-debug-proxy.sh list 
 hadoop            65439   0.0  0.1  5054328  30344 s013  S     8:01PM   0:00.13 kubectl port-forward -n linkis pod/linkis-demo-cg-engineplugin-548b8cf695-g4hnp 5010:5005 --address=0.0.0.0
 hadoop            65437   0.0  0.1  5054596  30816 s013  S     8:01PM   0:00.13 kubectl port-forward -n linkis pod/linkis-demo-cg-engineconnmanager-868d8d4d6f-dqt7d 5009:5005 --address=0.0.0.0
@@ -128,7 +126,7 @@ hadoop            65421   0.0  0.1  5058912  29996 s013  S     8:01PM   0:00.14 
 hadoop            65419   0.0  0.1  5051780  30564 s013  S     8:01PM   0:00.13 kubectl port-forward -n linkis pod/linkis-demo-mg-eureka-0 5001:5005 --address=0.0.0.0
 hadoop            65417   0.0  0.1  5067128  29876 s013  S     8:01PM   0:00.11 kubectl port-forward -n linkis pod/linkis-demo-web-5585ffcddb-swsvh 8087:8087 --address=0.0.0.0
 
-# stop all port-forward instances
+# 销毁所有 port-forward 实例
 $> sh ./scripts/remote-debug-proxy.sh stop
 - stopping port-forward for [web] with mapping [local->8087:8087->pod] ...
 - stopping port-forward for [mg-eureka] with mapping [local->5001:5005->pod] ...
@@ -144,13 +142,13 @@ $> sh ./scripts/remote-debug-proxy.sh stop
 
 ```
 
-## Enter into a backend server container
+## 登入 Linkis 服务的容器
 ```shell
-# Enter into the mg-gateway and submit a job with linkis-cli
+# 进入 mg-gateway 容器，使用=用 linkis-cli 提交一个作业
 $> sh ./scripts/login-pod.sh mg-gateway
 ``` 
 ```shell
-# in the mg-gateway container
+# mg-gateway 容器内
 bash-4.2$ ./bin/linkis-cli -engineType shell-1 -codeType shell -code "echo \"hello\" "  -submitUser hadoop -proxyUser hadoop
 
 =====Java Start Command=====
@@ -180,27 +178,27 @@ Your job is being scheduled by orchestrator.
 2022-07-31 16:24:25.024 INFO Your job is Running now. Please wait it to complete.
 ```
 
-## Destroy the local cluster
+## 销毁本地集群
 ```shell
-# Option 1: delete the helm release only
+# 选项 1: 仅删除 Helm Release
 $> helm delete --namespace linkis linkis-demo 
 
-# Option 2: destroy the KinD cluster, no need to delete
-# the helm release first
+# 选项 2: 销毁整个 KinD 集群 (不需要先删除 Helm Release)
 $> kind delete cluster --name test-helm
 ```
 
-## Test with LDH 
-We introduced a new image, called LDH (Linkis's hadoop all-in-one image), which provides a pseudo-distributed hadoop cluster for testing quickly. This image contains the following hadoop components, the default mode for engines in LDH is on-yarn.
-* Hadoop 2.7.2 , including HDFS and YARN
+## 使用 LDH 进行测试
+我们引入了一个新的镜像，叫做LDH（Linkis 的 hadoop 一体式镜像），它提供了一个伪分布式的 hadoop 集群，方便快速测试 On Hadoop 的部署模式。
+这个镜像包含以下多个 hadoop 组件，LDH 中引擎的默认模式是 on-yarn 的。
+* Hadoop 2.7.2 , 包括 HDFS and YARN
 * Hive 2.3.3
 * Spark 2.4.3
 * Flink 1.12.2
 * ZooKeeper 3.5.9
 
-> INFO: The hive in LDH image depends on external mysql, please deploy mysql first before deploying LDH.
+> 注意: LDH 这个中的 Hive 组件依赖一个外部的 MySQL 实例，请在部署 LDH 前先部署 MySQL 实例.
 
-To make an LDH image, please run the maven command on the root of the project as below
+请在项目根目录下运行如下 maven 命令，来构建 LDH 镜像 （当前仅支持 Linux 和 MacOS 系统）
 
 ```shell
 $> ./mvnw clean install -Pdocker \
@@ -211,13 +209,14 @@ $> ./mvnw clean install -Pdocker \
    -Dlinkis.build.with.jdbc=true
 ```
 
-By default, we download the pre-built binary distributions for each hadoop component from the official site of [Apache Archives](https://archive.apache.org/dist/), which can be very slow for members in some regions.
-Downloading the distributions from a faster mirror site manually and moving it into this directory `${HOME}/.linkis-build-cache` can solve this problem.
+默认情况下，我们从 [Apache Archives](https://archive.apache.org/dist/) 这个官方站点下载每个hadoop组件的预建二进制发行版。
+由于网络的问题，这中方式对某些地区的成员来说可能会非常缓慢。如果你有更快的站点，你可以手动从这些站点下载相应的包，并将其移动到如下这
+个目录`${HOME}/.linkis-build-cache` 来解决这个问题。
 
-Run the following command to setup a local kubernetes cluster with LDH on it.
+运行如下的命令来创建一个本地 kubernetes 集群，并在其上部署 LDH 实例。
 
 ```shell
-# create and deploy
+# 创建 KinD 集群，并部署 Linkis 和 LDH 实例
 $> sh ./scripts/create-kind-cluster.sh \
    && sh ./scripts/install-mysql.sh \
    && sh ./scripts/install-ldh.sh \
@@ -225,7 +224,7 @@ $> sh ./scripts/create-kind-cluster.sh \
    
 ...
 
-# take a try
+# 快速体验 LDH
 $> kubectl exec -it -n ldh $(kubectl get pod -n ldh -o jsonpath='{.items[0].metadata.name}') -- bash
 
 [root@ldh-96bdc757c-dnkbs /]# hdfs dfs -ls /
@@ -308,10 +307,10 @@ dataLength = 0
 numChildren = 0
 [zk: localhost:2181(CONNECTED) 1] quit
 
-# Run flink job on per-job cluster mode
+# 以 per-job cluster 模式启动 Flink 作业
 [root@ldh-96bdc757c-dnkbs /]# HADOOP_CLASSPATH=`hadoop classpath` flink run -t yarn-per-job /opt/ldh/current/flink/examples/streaming/TopSpeedWindowing.jar
-# Run flink job on session cluster mode,
-# A Flink session on YARN has been started when the LDH Pod starts
+# 以 session 模式启动 Flink 作业,
+# Flink session 在 LDH Pod 启动时会被启动了一个.
 [root@ldh-96bdc757c-dnkbs /]# flink run /opt/ldh/current/flink/examples/streaming/TopSpeedWindowing.jar
 Executing TopSpeedWindowing example with default input data set.
 Use --input to specify file input.
@@ -319,7 +318,7 @@ Printing result to stdout. Use --output to specify output path.
 ...
 ```
 
-You can access services of LDH in the kubernetes cluster with the endpoint `ldh.ldh.svc.cluster.local`, for example, access hdfs from your pod:
+你可以通过`ldh.ldh.svc.cluster.local`这个域名来访问kubernetes集群中的LDH服务，例如，从你的 pod中访问 LDH 中的 hdfs。
 
 ```shell
 [root@sample-pod /]# hdfs dfs -ls hdfs://ldh.ldh.svc.cluster.local:9000/
@@ -330,4 +329,4 @@ drwxrwxrwx   - root supergroup          0 2022-07-28 04:58 hdfs://ldh.ldh.svc.cl
 drwxr-xr-x   - root supergroup          0 2022-07-28 05:20 hdfs://ldh.ldh.svc.cluster.local:9000/user
 ```
 
-Finally, you can access the web ui with `kubectl port-forward` .
+最后，你可以用`kubectl port-forward`来访问 Linkis 的 Web 控制台。

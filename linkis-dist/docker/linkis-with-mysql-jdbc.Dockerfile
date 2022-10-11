@@ -1,3 +1,4 @@
+#
 # Licensed to the Apache Software Foundation (ASF) under one or more
 # contributor license agreements.  See the NOTICE file distributed with
 # this work for additional information regarding copyright ownership.
@@ -5,28 +6,24 @@
 # (the "License"); you may not use this file except in compliance with
 # the License.  You may obtain a copy of the License at
 #
-#   http://www.apache.org/licenses/LICENSE-2.0
+#    http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+#
 
-kind: Cluster
-apiVersion: kind.x-k8s.io/v1alpha4
-nodes:
-  - role: control-plane
-    extraMounts:
-      - hostPath: ${KIND_CLUSTER_HOST_PATH}
-        containerPath: /data
-      - hostPath: ${KIND_COMMON_PATH}
-        containerPath: /opt/common
-#  - role: worker
-#    extraMounts:
-#      - hostPath: ${KIND_CLUSTER_HOST_PATH}
-#        containerPath: /data
-#  - role: worker
-#    extraMounts:
-#      - hostPath: ${KIND_CLUSTER_HOST_PATH}
-#        containerPath: /data
+ARG LINKIS_IMAGE=linkis:dev
+
+######################################################################
+# linkis image with mysql jdbc
+######################################################################
+FROM ${LINKIS_IMAGE}
+
+ARG LINKIS_HOME=/opt/linkis
+ARG MYSQL_JDBC_VERSION=8.0.28
+
+COPY mysql-connector-java-${MYSQL_JDBC_VERSION}.jar ${LINKIS_HOME}/lib/linkis-commons/public-module/
+COPY mysql-connector-java-${MYSQL_JDBC_VERSION}.jar ${LINKIS_HOME}/lib/linkis-spring-cloud-services/linkis-mg-gateway/

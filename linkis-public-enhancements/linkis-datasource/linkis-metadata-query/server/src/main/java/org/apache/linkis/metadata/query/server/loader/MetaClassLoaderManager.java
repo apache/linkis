@@ -52,7 +52,8 @@ public class MetaClassLoaderManager {
   public static CommonVars<String> LIB_DIR =
       CommonVars.apply(
           "wds.linkis.server.mdm.service.lib.dir",
-          Configuration.getLinkisHome() + "/lib/linkis-public-enhancements/metadataquery-service");
+          Configuration.getLinkisHome()
+              + "/lib/linkis-public-enhancements/linkis-ps-publicservice/metadataquery-service");
   public static CommonVars<Integer> INSTANCE_EXPIRE_TIME =
       CommonVars.apply("wds.linkis.server.mdm.service.instance.expire-in-seconds", 60);
 

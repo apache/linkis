@@ -111,6 +111,10 @@ spec:
             sources:
             - configMap:
                 name: zookeeper-conf
+        - name: mysql-jar
+          hostPath:
+            path: /opt/common/extendlib
+            type: DirectoryOrCreate
       containers:
         - name: ldh
           image: linkis-ldh:${LDH_VERSION}
@@ -172,3 +176,5 @@ spec:
               mountPath: /etc/ldh/flink
             - name: zookeeper-conf
               mountPath: /etc/ldh/zookeeper
+            - name: mysql-jar
+              mountPath: /opt/common/extendlib

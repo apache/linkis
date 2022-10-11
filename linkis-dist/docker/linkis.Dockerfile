@@ -31,7 +31,7 @@ ARG JDK_BUILD_REVISION=1.8.0.332.b09-1.el7_9
 
 # TODO: remove install mysql client when schema-init-tools is ready
 RUN yum install -y \
-       less ls vim unzip curl sudo krb5-workstation sssd crontabs python-pip glibc-common \
+       less vim unzip curl sudo krb5-workstation sssd crontabs net-tools python-pip glibc-common \
        java-${JDK_VERSION}-${JDK_BUILD_REVISION} \
        java-${JDK_VERSION}-devel-${JDK_BUILD_REVISION} \
        mysql \
@@ -56,6 +56,7 @@ ARG LINKIS_SYSTEM_UID="9001"
 ARG LINKIS_HOME=/opt/linkis
 ARG LINKIS_CONF_DIR=/etc/linkis-conf
 ARG LINKIS_LOG_DIR=/var/logs/linkis
+ARG LDH_HOME=/opt/ldh
 
 WORKDIR ${LINKIS_HOME}
 
@@ -64,7 +65,8 @@ RUN sed -i "s#^%wheel.*#%wheel        ALL=(ALL)       NOPASSWD: ALL#g" /etc/sudo
 
 RUN mkdir -p /opt/tmp \
     && mkdir -p ${LINKIS_CONF_DIR} \
-    && mkdir -p ${LINKIS_LOG_DIR}
+    && mkdir -p ${LINKIS_LOG_DIR} \
+    && mkdir -p ${LDH_HOME}
 
 ENV JAVA_HOME /etc/alternatives/jre
 ENV LINKIS_CONF_DIR ${LINKIS_CONF_DIR}
@@ -75,13 +77,17 @@ ENV LINKIS_HOME ${LINKIS_HOME}
 ADD apache-linkis-${LINKIS_VERSION}-incubating-bin /opt/tmp/
 
 RUN mv /opt/tmp/linkis-package/* ${LINKIS_HOME}/ \
-    && mv  /opt/tmp/release-docs/LICENSE ${LINKIS_HOME}/LICENSE \
-    && mv  /opt/tmp/release-docs/NOTICE  ${LINKIS_HOME}/NOTICE \
+    && mv /opt/tmp/LICENSE  ${LINKIS_HOME}/ \
+    && mv /opt/tmp/NOTICE   ${LINKIS_HOME}/ \
+    && mv /opt/tmp/DISCLAIMER ${LINKIS_HOME}/ \
+    && mv /opt/tmp/README.md  ${LINKIS_HOME}/ \
+    && mv /opt/tmp/README_CN.md  ${LINKIS_HOME}/ \
     && rm -rf /opt/tmp
 
 RUN chmod g+w -R ${LINKIS_HOME} && chown ${LINKIS_SYSTEM_USER}:${LINKIS_SYSTEM_GROUP} -R ${LINKIS_HOME} \
     && chmod g+w -R ${LINKIS_CONF_DIR} && chown ${LINKIS_SYSTEM_USER}:${LINKIS_SYSTEM_GROUP} -R ${LINKIS_CONF_DIR}  \
     && chmod g+w -R ${LINKIS_LOG_DIR} && chown ${LINKIS_SYSTEM_USER}:${LINKIS_SYSTEM_GROUP} -R ${LINKIS_LOG_DIR} \
+    && chmod g+w -R ${LDH_HOME} && chown ${LINKIS_SYSTEM_USER}:${LINKIS_SYSTEM_GROUP} -R ${LDH_HOME} \
     && chmod a+x ${LINKIS_HOME}/bin/* \
     && chmod a+x ${LINKIS_HOME}/sbin/*
 

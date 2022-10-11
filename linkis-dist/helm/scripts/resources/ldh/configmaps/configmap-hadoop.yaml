@@ -530,136 +530,65 @@ data:
     #export YARN_ROUTER_OPTS=
   yarn-site.xml: |
     <configuration>
-       <property>
-           <name>yarn.nodemanager.aux-services</name>
-           <value>mapreduce_shuffle</value>
-       </property>
-       <!--
-       <property>
-           <name>yarn.nodemanager.disk-health-checker.enable</name>
-           <value>false</value>
-       </property>
-       -->
-    </configuration>
-  capacity-scheduler.xml: |
-    <configuration>
-
-      <property>
-        <name>yarn.scheduler.capacity.maximum-applications</name>
-        <value>10000</value>
-        <description>
-          Maximum number of applications that can be pending and running.
-        </description>
-      </property>
-
-      <property>
-        <name>yarn.scheduler.capacity.maximum-am-resource-percent</name>
-        <value>0.1</value>
-        <description>
-          Maximum percent of resources in the cluster which can be used to run
-          application masters i.e. controls number of concurrent running
-          applications.
-        </description>
-      </property>
-
-      <property>
-        <name>yarn.scheduler.capacity.resource-calculator</name>
-        <value>org.apache.hadoop.yarn.util.resource.DefaultResourceCalculator</value>
-        <description>
-          The ResourceCalculator implementation to be used to compare
-          Resources in the scheduler.
-          The default i.e. DefaultResourceCalculator only uses Memory while
-          DominantResourceCalculator uses dominant-resource to compare
-          multi-dimensional resources such as Memory, CPU etc.
-        </description>
-      </property>
-
-      <property>
-        <name>yarn.scheduler.capacity.root.queues</name>
-        <value>default</value>
-        <description>
-          The queues at the this level (root is the root queue).
-        </description>
-      </property>
-
-      <property>
-        <name>yarn.scheduler.capacity.root.default.capacity</name>
-        <value>100</value>
-        <description>Default queue target capacity.</description>
-      </property>
-
-      <property>
-        <name>yarn.scheduler.capacity.root.default.user-limit-factor</name>
-        <value>1</value>
-        <description>
-          Default queue user limit a percentage from 0.0 to 1.0.
-        </description>
-      </property>
-
-      <property>
-        <name>yarn.scheduler.capacity.root.default.maximum-capacity</name>
-        <value>100</value>
-        <description>
-          The maximum capacity of the default queue.
-        </description>
-      </property>
-
-      <property>
-        <name>yarn.scheduler.capacity.root.default.state</name>
-        <value>RUNNING</value>
-        <description>
-          The state of the default queue. State can be one of RUNNING or STOPPED.
-        </description>
-      </property>
-
-      <property>
-        <name>yarn.scheduler.capacity.root.default.acl_submit_applications</name>
-        <value>*</value>
-        <description>
-          The ACL of who can submit jobs to the default queue.
-        </description>
-      </property>
-
-      <property>
-        <name>yarn.scheduler.capacity.root.default.acl_administer_queue</name>
-        <value>*</value>
-        <description>
-          The ACL of who can administer jobs on the default queue.
-        </description>
-      </property>
-
-      <property>
-        <name>yarn.scheduler.capacity.node-locality-delay</name>
-        <value>40</value>
-        <description>
-          Number of missed scheduling opportunities after which the CapacityScheduler
-          attempts to schedule rack-local containers.
-          Typically this should be set to number of nodes in the cluster, By default is setting
-          approximately number of nodes in one rack which is 40.
-        </description>
-      </property>
-
-      <property>
-        <name>yarn.scheduler.capacity.queue-mappings</name>
-        <value></value>
-        <description>
-          A list of mappings that will be used to assign jobs to queues
-          The syntax for this list is [u|g]:[name]:[queue_name][,next mapping]*
-          Typically this list will be used to map users to queues,
-          for example, u:%user:%user maps all users to queues with the same name
-          as the user.
-        </description>
-      </property>
-
-      <property>
-        <name>yarn.scheduler.capacity.queue-mappings-override.enable</name>
-        <value>false</value>
-        <description>
-          If a queue mapping is present, will it override the value specified
-          by the user? This can be used by administrators to place jobs in queues
-          that are different than the one specified by the user.
-          The default is false.
-        </description>
-      </property>
+        <property>
+            <name>yarn.resourcemanager.scheduler.class</name>
+            <value>org.apache.hadoop.yarn.server.resourcemanager.scheduler.fair.FairScheduler</value>
+            <description>The class to use as the resource scheduler.</description>
+        </property>
+        <property>
+            <name>yarn.scheduler.fair.allocation.file</name>
+            <value>fair-scheduler.xml</value>
+            <description>Whether to use the username associated with the allocation as the default queue name, in the event that a queue name is not specified.</description>
+        </property>
+        <property>
+            <name>yarn.nodemanager.resource.memory-mb</name>
+            <value>56080</value>
+            <description>Amount of physical memory, in MB, that can be allocated for containers.</description>
+        </property>
+        <property>
+            <name>yarn.nodemanager.resource.cpu-vcores</name>
+            <value>30</value>
+            <description>Number of CPU cores that can be allocated for containers.</description>
+        </property>
+        <property>
+            <name>yarn.nodemanager.vmem-check-enabled</name>
+            <value>false</value>
+            <description>Whether virtual memory limits will be enforced for containers</description>
+        </property>
+        <property>
+            <name>yarn.nodemanager.vmem-pmem-ratio</name>
+            <value>10.1</value>
+            <description>Ratio between virtual memory to physical memory when
+                setting memory limits for containers. Container allocations are
+                expressed in terms of physical memory, and virtual memory usage
+                is allowed to exceed this allocation by this ratio.</description>
+        </property>
+        <property>
+            <name>yarn.nodemanager.aux-services</name>
+            <value>mapreduce_shuffle</value>
+            <description>the valid service name should only contain a-zA-Z0-9_ and can not start with numbers</description>
+        </property>
+        <property>
+            <name>yarn.nodemanager.disk-health-checker.enable</name>
+            <value>false</value>
+        </property>
+        <property>
+           <name>yarn.resourcemanager.address</name>
+           <value>ldh.ldh.svc.cluster.local:8032</value>
+        </property>
 
     </configuration>
+
+  fair-scheduler.xml: |
+    <allocations>
+      <queueMaxAMShareDefault>0.5</queueMaxAMShareDefault>
+      <queue name="root">
+        <queue name="default">
+          <maxRunningApps>3</maxRunningApps>
+          <weight>2</weight>
+          <schedulingPolicy>fair</schedulingPolicy>
+          <aclSubmitApps>*</aclSubmitApps>
+          <aclAdministerApps>*</aclAdministerApps>
+        </queue>
+      </queue>
+    </allocations>

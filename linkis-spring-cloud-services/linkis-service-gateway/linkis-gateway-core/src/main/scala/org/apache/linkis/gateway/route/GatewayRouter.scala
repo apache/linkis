@@ -129,6 +129,7 @@ abstract class AbstractGatewayRouter extends GatewayRouter with Logging {
 }
 
 class DefaultGatewayRouter(var gatewayRouters: Array[GatewayRouter]) extends AbstractGatewayRouter {
+
   if (gatewayRouters != null && gatewayRouters.nonEmpty) {
     val notNullRouters = gatewayRouters.filter(x => x != null)
     gatewayRouters = notNullRouters.sortWith((left, right) => {

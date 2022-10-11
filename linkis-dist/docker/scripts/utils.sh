@@ -15,29 +15,26 @@
 #
 #
 
+download() {
+  TAR_URL=$1
+  TAR_FILE=$2
+  HARD_LINK_ROOT=$3
+
+  if [ ! -f ${TAR_CACHE_ROOT}/${TAR_FILE} ]; then
+    echo "- downloading ${TAR_FILE} to ${TAR_CACHE_ROOT} from ${TAR_URL}"
+    curl -L ${TAR_URL} -o ${TAR_CACHE_ROOT}/${TAR_FILE}
+  else
+    echo "- ${TAR_FILE} already exists in ${TAR_CACHE_ROOT}, downloading skipped."
+  fi
+
+  echo "- cp: ${TAR_CACHE_ROOT}/${TAR_FILE} -> ${HARD_LINK_ROOT}/${TAR_FILE} "
+  rm -rf ${HARD_LINK_ROOT}/${TAR_FILE}
+  # ln maybe cause invalid cross-device link
+  cp  ${TAR_CACHE_ROOT}/${TAR_FILE}  ${HARD_LINK_ROOT}/${TAR_FILE}
+}
+
 WORK_DIR=`cd $(dirname $0); pwd -P`
 
-. ${WORK_DIR}/common.sh
-
-set -e
-
-LDH_VERSION=${LDH_VERSION-${LINKIS_IMAGE_TAG}}
-echo "# LDH version: ${LINKIS_IMAGE_TAG}"
-
-# load image
-if [ "X${KIND_LOAD_IMAGE}" == "Xtrue" ]; then
-  echo "# Loading LDH image ..."
-  kind load docker-image linkis-ldh:${LINKIS_IMAGE_TAG} --name ${KIND_CLUSTER_NAME}
-fi
-
-# deploy LDH
-echo "# Deploying LDH ..."
-set +e
-x=`kubectl get ns ldh 2> /dev/null`
-set -e
-if [ "X${x}" == "X" ]; then
-  kubectl create ns ldh
-fi
-kubectl apply -n ldh -f ${RESOURCE_DIR}/ldh/configmaps
-
-LDH_VERSION=${LDH_VERSION} envsubst < ${RESOURCE_DIR}/ldh/ldh.yaml | kubectl apply -n ldh -f -
+PROJECT_ROOT=${WORK_DIR}/../..
+PROJECT_TARGET=${PROJECT_ROOT}/target
+TAR_CACHE_ROOT=${HOME}/.linkis-build-cache

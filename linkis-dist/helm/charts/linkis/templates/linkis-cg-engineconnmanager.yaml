@@ -98,6 +98,10 @@ spec:
             name: {{ include "linkis.fullname" . }}-linkis-config
         - name: log
           emptyDir: {}
+        - name: common
+          hostPath:
+            path: {{ .Values.linkis.locations.commonDir }}
+            type: DirectoryOrCreate
         - name: runtime
           {{- if .Values.linkis.featureGates.localMode }}
           hostPath:
@@ -106,6 +110,7 @@ spec:
           {{- else }}
           emptyDir: {}
           {{- end }}
+
         {{- if eq .Values.linkis.featureGates.localMode false }}
         - name: hadoop-conf
           projected:
@@ -201,6 +206,8 @@ spec:
               mountPath: {{ .Values.linkis.locations.logDir }}
             - name: runtime
               mountPath: {{ .Values.linkis.locations.runtimeDir }}
+            - name: common
+              mountPath: {{ .Values.linkis.locations.commonDir }}
           resources:
             {{- toYaml .Values.cgEngineConnManager.resources | nindent 12 }}
       {{- with .Values.cgEngineConnManager.nodeSelector }}

@@ -98,6 +98,10 @@ spec:
             name: {{ include "linkis.fullname" . }}-linkis-config
         - name: log
           emptyDir: {}
+        - name: common
+          hostPath:
+            path: {{ .Values.linkis.locations.commonDir }}
+            type: DirectoryOrCreate
         - name: runtime
           {{- if .Values.linkis.featureGates.localMode }}
           hostPath:
@@ -168,6 +172,8 @@ spec:
               mountPath: {{ .Values.linkis.locations.logDir }}
             - name: runtime
               mountPath: {{ .Values.linkis.locations.runtimeDir }}
+            - name: common
+              mountPath: {{ .Values.linkis.locations.commonDir }}
           resources:
             {{- toYaml .Values.cgLinkisManager.resources | nindent 12 }}
       {{- with .Values.cgLinkisManager.nodeSelector }}

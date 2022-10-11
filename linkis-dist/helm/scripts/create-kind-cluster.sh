@@ -29,7 +29,7 @@ echo "# Creating KinD cluster ..."
 KIND_CLUSTER_HOST_PATH=${TMP_DIR}/data
 
 # Shared storage of some common dependent packages such as mysql-connector-java-*.jar
-# Values.linkis.locations.commonDir -> kind docker /data/common -> vm  ${KIND_COMMON_PATH}
+# Values.linkis.locations.commonDir -> kind docker /opt/data/common -> vm  ${KIND_COMMON_PATH}
 KIND_COMMON_PATH=/opt/data/common/
 
 mkdir -p ${KIND_CLUSTER_HOST_PATH}

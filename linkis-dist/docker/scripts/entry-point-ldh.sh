@@ -37,12 +37,13 @@ hdfs dfs -chmod -R 777 /completed-jobs
 hdfs dfs -chmod 777 /
 
 #copy mysql-connector-java-*.jar from shared directory
-mysql_connector_jar_path = /opt/ldh/current/hive/lib/mysql-connector-java-*.jar
+mysql_connector_jar_path=/opt/ldh/current/hive/lib/mysql-connector-java-*.jar
 jar_files=$(ls $mysql_connector_jar_path  2> /dev/null | wc -l);
 
 if [ "$jar_files" == "0" ] ;then  #if not exist
-  cp /opt/common/extendlib/mysql-connector-java-*.jar /opt/ldh/current/hive/lib/   ||true
-  cp /opt/common/extendlib/mysql-connector-java-*.jar /opt/ldh/current/spark/jars/ ||true
+  echo "try to copy mysql-connector-java-*.jar to /opt/ldh/current/hive/lib/ and /opt/ldh/current/spark/jars/"
+  cp /opt/common/extendlib/mysql-connector-java-*.jar /opt/ldh/current/hive/lib/
+  cp /opt/common/extendlib/mysql-connector-java-*.jar /opt/ldh/current/spark/jars/
 fi
 
 

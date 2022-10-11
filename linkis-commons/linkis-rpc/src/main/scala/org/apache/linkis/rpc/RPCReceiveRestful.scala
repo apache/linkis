@@ -24,6 +24,7 @@ import org.apache.linkis.rpc.conf.RPCConfiguration.{
   BDP_RPC_RECEIVER_ASYN_CONSUMER_THREAD_MAX,
   BDP_RPC_RECEIVER_ASYN_QUEUE_CAPACITY
 }
+import org.apache.linkis.rpc.errorcode.LinkisRpcErrorCodeSummary.TIMEOUT_PERIOD
 import org.apache.linkis.rpc.exception.DWCURIException
 import org.apache.linkis.rpc.transform.{RPCConsumer, RPCProduct}
 import org.apache.linkis.server.{catchIt, Message}
@@ -178,7 +179,7 @@ private[rpc] class RPCReceiveRestful extends RPCReceiveRemote with Logging {
   override def receiveAndReplyInMills(@RequestBody message: Message): Message = catchIt {
     val duration = message.getData.get("duration")
     if (duration == null || StringUtils.isEmpty(duration.toString)) {
-      throw new DWCURIException(10002, "The timeout period is not set!(超时时间未设置！)")
+      throw new DWCURIException(TIMEOUT_PERIOD.getErrorCode, TIMEOUT_PERIOD.getErrorDesc)
     }
     val timeout = Duration(duration.toString.toLong, TimeUnit.MILLISECONDS)
     receiveAndReplyWithMessage(message, _.receiveAndReply(_, timeout, _))

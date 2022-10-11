@@ -287,6 +287,7 @@ export default {
         if('keytab' in formData) delete formData['keytab'];
         if('pic' in formData) delete formData['pic'];
         this.modalLoading = true
+        formData.parameter = JSON.stringify(formData.parameter)
         if(this.modalAddMode=='add') {
           add(formData).then((data)=>{
             //console.log(data)

@@ -144,14 +144,17 @@ export default {
           },
         },
         {
-          type: 'input',
+          type: 'v-jsoneditor',
           title: "参数",
           field: 'parameter',
           value: '',
           props: {
-            placeholder: "",
-            "type": "textarea",
-            "rows": 5
+            type: 'form-create',
+            height: "280px",
+            options: { 
+              mode: "code",
+              modes: ['code','tree'],
+            }
           },
           validate: [
             {
@@ -172,6 +175,7 @@ export default {
   methods: {
     getData(data){
       this.formData = {...data}
+      this.formData.parameter = JSON.parse(this.formData.parameter)
     },
     changeSelector(options){
       console.log('test', options)

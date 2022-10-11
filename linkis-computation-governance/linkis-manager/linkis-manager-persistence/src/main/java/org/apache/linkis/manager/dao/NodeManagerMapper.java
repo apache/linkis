@@ -164,4 +164,17 @@ public interface NodeManagerMapper {
   })
   List<PersistenceNode> getEMNodeInstanceByEngineNodeList(
       @Param("instances") List<String> instances);
+
+  @Select(
+      "<script>"
+          + "select * from linkis_cg_manager_service_instance where owner in("
+          + "<foreach collection='owner' separator=',' item='owner'>"
+          + "#{owner} "
+          + "</foreach> "
+          + ")</script>")
+  @Results({
+    @Result(property = "updateTime", column = "update_time"),
+    @Result(property = "createTime", column = "create_time")
+  })
+  List<PersistenceNode> getNodeInstancesByOwnerList(@Param("owner") List<String> owner);
 }

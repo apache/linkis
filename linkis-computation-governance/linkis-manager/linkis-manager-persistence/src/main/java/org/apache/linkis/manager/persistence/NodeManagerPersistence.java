@@ -124,4 +124,13 @@ public interface NodeManagerPersistence {
    */
   List<EngineNode> getEngineNodeByInstanceList(List<ServiceInstance> serviceInstanceList)
       throws PersistenceErrorException;
+
+  /**
+   * 根据 ownerList 获取node列表
+   *
+   * @param owner
+   * @return
+   * @throws PersistenceErrorException
+   */
+  List<Node> getNodesByOwnerList(List<String> owner);
 }

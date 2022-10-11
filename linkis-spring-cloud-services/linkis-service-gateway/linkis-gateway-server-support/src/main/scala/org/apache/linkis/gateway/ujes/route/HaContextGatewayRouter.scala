@@ -166,7 +166,7 @@ object HaContextGatewayRouter {
   val CONTEXT_SERVICE_NAME: String =
     if (
         RPCConfiguration.ENABLE_PUBLIC_SERVICE.getValue && RPCConfiguration.PUBLIC_SERVICE_LIST
-          .exists(_.equalsIgnoreCase(RPCConfiguration.CONTEXT_SERVICE_REQUEST_PREFIX))
+          .contains(RPCConfiguration.CONTEXT_SERVICE_REQUEST_PREFIX)
     ) {
       RPCConfiguration.PUBLIC_SERVICE_APPLICATION_NAME.getValue
     } else {

@@ -129,14 +129,12 @@ abstract class AbstractGatewayRouter extends GatewayRouter with Logging {
 }
 
 class DefaultGatewayRouter(var gatewayRouters: Array[GatewayRouter]) extends AbstractGatewayRouter {
-  var nullRouters = gatewayRouters.filter(x => x == null || x.order() == null)
-  var notNullRouters = gatewayRouters.filter(x => x != null && x.order() != null)
-
-  notNullRouters = notNullRouters.sortWith((left, right) => {
-    left.order() < right.order()
-  })
-
-  gatewayRouters = nullRouters.++(notNullRouters)
+  if (gatewayRouters != null && gatewayRouters.nonEmpty) {
+    val notNullRouters = gatewayRouters.filter(x => x != null)
+    gatewayRouters = notNullRouters.sortWith((left, right) => {
+      left.order() < right.order()
+    })
+  }
 
   private def findCommonService(parsedServiceId: String) = findService(
     parsedServiceId,

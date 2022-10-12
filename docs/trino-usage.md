@@ -27,7 +27,7 @@ mvn clean install
 
 将 2.1 步编译出来的引擎包,位于
 ```bash
-${linkis_code_dir}/linkis-engineconn-plugins/jdbc/target/out/trino
+${linkis_code_dir}/linkis-engineconn-plugins/trino/target/out/trino
 ```
 上传到服务器的引擎目录下
 ```bash 
@@ -61,7 +61,8 @@ SET @ENGINE_NAME="trino";
 
 -- add trino engine to IDE
 insert into `linkis_cg_manager_label` (`label_key`, `label_value`, `label_feature`, `label_value_size`, `update_time`, `create_time`) VALUES ('combined_userCreator_engineType', @ENGINE_ALL, 'OPTIONAL', 2, now(), now());
-select @label_id := id from `linkis_cg_manager_label` where label_value = @ENGINE_ALL;
+insert into `linkis_cg_manager_label` (`label_key`, `label_value`, `label_feature`, `label_value_size`, `update_time`, `create_time`) VALUES ('combined_userCreator_engineType', @ENGINE_IDE, 'OPTIONAL', 2, now(), now());
+select @label_id := id from `linkis_cg_manager_label` where label_value = @ENGINE_IDE;
 insert into `linkis_ps_configuration_category` (`label_id`, `level`) VALUES (@label_id, 2);
 
 -- insert configuration key
@@ -124,9 +125,9 @@ INNER JOIN `linkis_cg_manager_label` label ON relation.engine_type_label_id = la
 ### 3.1 准备操作
 您需要配置Trino的连接信息，包括连接地址信息或用户名密码(如果启用)等信息。
 
-![ElasticSearch](https://user-images.githubusercontent.com/22620332/182787195-8051bf25-1e1e-47e5-ad88-4896278857f2.png)
+![Trino](https://user-images.githubusercontent.com/12693319/195242035-d7e22f2c-f116-46a8-b3c5-4e2dea2ce37d.png)
 
-图3-1 ElasticSearch配置信息
+图3-1 Trino配置信息
 
 您也可以再提交任务接口中的params.configuration.runtime进行修改即可
 ```shell

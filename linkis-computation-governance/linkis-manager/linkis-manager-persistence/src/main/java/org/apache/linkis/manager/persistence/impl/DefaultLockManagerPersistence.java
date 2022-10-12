@@ -22,6 +22,8 @@ import org.apache.linkis.manager.dao.LockManagerMapper;
 import org.apache.linkis.manager.persistence.LockManagerPersistence;
 import org.apache.linkis.manager.util.PersistenceManagerConf;
 
+import org.apache.commons.lang3.StringUtils;
+
 import org.springframework.dao.DataAccessException;
 
 import java.util.List;
@@ -46,16 +48,21 @@ public class DefaultLockManagerPersistence implements LockManagerPersistence {
   @Override
   public Boolean lock(PersistenceLock persistenceLock, Long timeOut) {
     long startTime = System.currentTimeMillis();
-    Boolean isLocked = tryLock(persistenceLock, timeOut);
-    while (!isLocked && System.currentTimeMillis() - startTime < timeOut) {
-      try {
-        Thread.sleep(PersistenceManagerConf.Distributed_lock_request_interval.getValue());
-        isLocked = tryLock(persistenceLock, timeOut);
-      } catch (InterruptedException e) {
-        logger.warn("lock waiting interrupted", e);
-      }
+    if (StringUtils.isBlank(persistenceLock.getLockObject())) {
+      return true;
     }
-    return isLocked;
+    synchronized (persistenceLock.getLockObject().intern()) {
+      Boolean isLocked = tryLock(persistenceLock, timeOut);
+      while (!isLocked && System.currentTimeMillis() - startTime < timeOut) {
+        try {
+          Thread.sleep(PersistenceManagerConf.Distributed_lock_request_interval.getValue());
+          isLocked = tryLock(persistenceLock, timeOut);
+        } catch (InterruptedException e) {
+          logger.warn("lock waiting interrupted", e);
+        }
+      }
+      return isLocked;
+    }
   }
 
   private boolean tryLock(PersistenceLock persistenceLock, Long timeOut) {

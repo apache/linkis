@@ -26,9 +26,7 @@ import java.util.List;
 
 public interface NodeMetricManagerMapper {
 
-  @Insert(
-      "insert into  linkis_cg_manager_service_instance_metrics (instance, instance_status, overload, heartbeat_msg,healthy_status,update_time,create_time)"
-          + "values(#{nodeMetrics.instance},#{nodeMetrics.status},#{nodeMetrics.overLoad},#{nodeMetrics.heartBeatMsg},#{nodeMetrics.healthy},now(),now())")
+
   void addNodeMetrics(@Param("nodeMetrics") PersistenceNodeMetrics nodeMetrics);
 
   @Select(

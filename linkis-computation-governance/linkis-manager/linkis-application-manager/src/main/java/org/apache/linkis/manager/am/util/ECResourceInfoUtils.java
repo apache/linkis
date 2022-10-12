@@ -61,8 +61,11 @@ public class ECResourceInfoUtils {
           resourceVo.setInstance(((Double) divermap.get("instance")).intValue());
           resourceVo.setCores(((Double) divermap.get("cpu")).intValue());
           String memoryStr = String.valueOf(map.get("memory"));
-          memoryStr = getScientific(memoryStr) ? memoryStr : "0";
-          resourceVo.setMemory(ByteTimeUtils.byteStringAsBytes(memoryStr));
+          long memorylong = 0;
+          if (!getScientific(memoryStr)) {
+            memorylong = ByteTimeUtils.byteStringAsBytes(memoryStr);
+          }
+          resourceVo.setMemory(memorylong);
           return resourceVo;
         } else {
           logger.warn("Compatible with old data ,{},{}", info.getLabelValue(), info);
@@ -70,9 +73,12 @@ public class ECResourceInfoUtils {
         }
       }
       String memoryStr = String.valueOf(map.get("memory"));
-      memoryStr = getScientific(memoryStr) ? memoryStr : "0";
+      long memorylong = 0;
+      if (!getScientific(memoryStr)) {
+        memorylong = ByteTimeUtils.byteStringAsBytes(memoryStr);
+      }
       resourceVo.setInstance(((Double) map.get("instance")).intValue());
-      resourceVo.setMemory(ByteTimeUtils.byteStringAsBytes(memoryStr));
+      resourceVo.setMemory(memorylong);
       Double core = null == map.get("cpu") ? (Double) map.get("cores") : (Double) map.get("cpu");
       resourceVo.setCores(core.intValue());
     }

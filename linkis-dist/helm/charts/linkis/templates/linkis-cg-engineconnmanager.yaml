@@ -59,7 +59,7 @@ spec:
   publishNotReadyAddresses: true
 ---
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: {{ include "linkis.fullname" . }}-cg-engineconnmanager
   labels:
@@ -71,22 +71,50 @@ metadata:
     {{- toYaml .Values.cgEngineConnManager.annotations | nindent 4 }}
   {{- end }}
 spec:
-  replicas: {{ .Values.cgEngineConnManager.replicas }}
+  serviceName: {{ include "linkis.fullname" . }}-cg-engineconnmanager-headless
   selector:
     matchLabels:
       {{- include "linkis.cgEngineConnManager.selectorLabels" . | nindent 6 }}
       app: {{ include "linkis.fullname" . }}-cg-engineconnmanager
+  replicas: {{ .Values.cgEngineConnManager.replicas }}
+  podManagementPolicy: {{ .Values.cgEngineConnManager.podManagementPolicy }}
+  updateStrategy:
+    type: {{ .Values.cgEngineConnManager.updateStrategy }}
   template:
     metadata:
-      {{- with .Values.cgEngineConnManager.annotations }}
-      annotations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
       labels:
         app: {{ include "linkis.fullname" . }}-cg-engineconnmanager
         version: {{ .Chart.AppVersion }}
         {{- include "linkis.cgEngineConnManager.selectorLabels" . | nindent 8 }}
+      {{- with .Values.cgEngineConnManager.annotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
     spec:
+      {{- if .Values.schedulerName }}
+      schedulerName: "{{ .Values.schedulerName }}"
+      {{- end }}
+      {{- if .Values.podSecurityContext }}
+      securityContext:
+{{ toYaml .Values.podSecurityContext | indent 8 }}
+      {{- end }}
+      {{- if or .Values.serviceAccount.create .Values.serviceAccount.name }}
+      serviceAccountName: "{{ template "linkis.serviceAccountName" . }}"
+      {{- end }}
+      automountServiceAccountToken: {{ .Values.serviceAccount.automountToken }}
+      terminationGracePeriodSeconds: {{ .Values.mgEureka.terminationGracePeriod }}
+      {{- with .Values.cgEngineConnManager.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.cgEngineConnManager.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.cgEngineConnManager.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       subdomain: {{ include "linkis.fullname" . }}-cg-engineconnmanager-headless
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -128,9 +156,6 @@ spec:
               - configMap:
                   name: {{ .Values.linkis.deps.spark.configMapName }}
         {{- end }}
-      serviceAccountName: {{ include "linkis.serviceAccountName" . }}
-      securityContext:
-        {{- toYaml .Values.cgEngineConnManager.podSecurityContext | nindent 8 }}
       containers:
         - name: "engineconnmanager"
           securityContext:
@@ -210,15 +235,3 @@ spec:
               mountPath: {{ .Values.linkis.locations.commonDir }}
           resources:
             {{- toYaml .Values.cgEngineConnManager.resources | nindent 12 }}
-      {{- with .Values.cgEngineConnManager.nodeSelector }}
-      nodeSelector:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.cgEngineConnManager.affinity }}
-      affinity:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.cgEngineConnManager.tolerations }}
-      tolerations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}

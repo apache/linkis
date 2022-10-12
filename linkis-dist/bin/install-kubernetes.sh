@@ -11,4 +11,4 @@ docker tag linkis:with-jdbc linkis:dev
 ../helm/scripts/install-mysql.shl
 ../helm/scripts/install-ldh.sh
 ../helm/scripts/install-linkis.sh
-kubectl get pods -a
+kubectl get pods -A

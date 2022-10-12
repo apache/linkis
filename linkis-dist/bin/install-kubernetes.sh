@@ -19,6 +19,7 @@ WORK_DIR=`cd $(dirname $0); pwd -P`
 MIRRORS="ghcr.io"
 COMMAND="pull-install"
 DEBUG=false
+WITH_LDH=false
 
 #help info
 help() {
@@ -31,6 +32,7 @@ help() {
     echo "Params         Describe"
     echo "-m,--mirrors   url (default:ghcr.io , eg: ghcr.dockerproxy.com)"
     echo "-d,--debug     print debug info"
+    echo "-l,--ldh       install linkis with ldh"
     echo ""
     echo "example:"
     echo "./install-kubernetes.sh pull                                   pull image with ghcr.io"
@@ -70,7 +72,11 @@ install-ldh(){
 }
 #linkis installation
 install-linkis(){
-    ../helm/scripts/install-linkis.sh
+    if [ $WITH_LDH = true ];then
+      ../helm/scripts/install-charts-with-ldh.sh
+    else
+      ../helm/scripts/install-linkis.sh
+    fi
 }
 #display pods
 display-pods(){

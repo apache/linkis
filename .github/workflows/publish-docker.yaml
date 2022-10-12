@@ -80,8 +80,18 @@ jobs:
         docker images
         docker tag linkis:${{ env.LINKIS_VERSION }} ${{ env.HUB }}/linkis:${{ env.DOCKER_VERSION }}
         docker push ${{ env.HUB }}/linkis:${{ env.DOCKER_VERSION }}
+        
+        docker tag linkis:${{ env.LINKIS_VERSION }} ${{ env.HUB }}/linkis:latest
+        docker push ${{ env.HUB }}/linkis:latest
+        
         docker tag linkis-web:${{ env.LINKIS_VERSION }} ${{ env.HUB }}/linkis-web:${{ env.DOCKER_VERSION }}
         docker push ${{ env.HUB }}/linkis-web:${{ env.DOCKER_VERSION }}
+        
+        docker tag linkis-web:${{ env.LINKIS_VERSION }} ${{ env.HUB }}/linkis-web:latest
+        docker push ${{ env.HUB }}/linkis-web:latest
 
         docker tag linkis-ldh:${{ env.LINKIS_VERSION }} ${{ env.HUB }}/linkis-ldh:${{ env.DOCKER_VERSION }}
         docker push ${{ env.HUB }}/linkis-ldh:${{ env.DOCKER_VERSION }}
+        
+        docker tag linkis-ldh:${{ env.LINKIS_VERSION }} ${{ env.HUB }}/linkis-ldh:latest
+        docker push ${{ env.HUB }}/linkis-ldh:latest

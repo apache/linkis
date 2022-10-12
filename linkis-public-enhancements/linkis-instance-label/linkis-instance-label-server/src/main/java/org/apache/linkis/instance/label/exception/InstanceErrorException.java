@@ -19,6 +19,8 @@ package org.apache.linkis.instance.label.exception;
 
 import org.apache.linkis.common.exception.ErrorException;
 
+import static org.apache.linkis.instance.label.errorcode.LinkisInstanceLabelErrorCodeSummary.Express_All;
+
 public class InstanceErrorException extends ErrorException {
 
   public InstanceErrorException(int errCode, String desc) {
@@ -31,6 +33,6 @@ public class InstanceErrorException extends ErrorException {
   }
 
   public InstanceErrorException(String desc) {
-    super(14100, desc);
+    super(Express_All.getErrorCode(), desc);
   }
 }

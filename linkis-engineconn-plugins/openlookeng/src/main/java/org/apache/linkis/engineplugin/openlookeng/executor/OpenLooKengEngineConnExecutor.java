@@ -80,6 +80,8 @@ import org.slf4j.LoggerFactory;
 
 import static org.apache.linkis.engineplugin.openlookeng.conf.OpenLooKengConfiguration.OPENLOOKENG_HTTP_CONNECT_TIME_OUT;
 import static org.apache.linkis.engineplugin.openlookeng.conf.OpenLooKengConfiguration.OPENLOOKENG_HTTP_READ_TIME_OUT;
+import static org.apache.linkis.engineplugin.openlookeng.errorcode.OpenLooKengErrorCodeSummary.OPENLOOKENG_CLIENT_ERROR;
+import static org.apache.linkis.engineplugin.openlookeng.errorcode.OpenLooKengErrorCodeSummary.OPENLOOKENG_STATUS_ERROR;
 
 public class OpenLooKengEngineConnExecutor extends ConcurrentComputationExecutor {
 
@@ -375,10 +377,11 @@ public class OpenLooKengEngineConnExecutor extends ConcurrentComputationExecutor
     } else if (statement.isClientAborted()) {
       LOG.warn("openlookeng statement is killed.");
     } else if (statement.isClientError()) {
-      throw new OpenLooKengClientException(60001, "openlookeng client error.");
+      throw new OpenLooKengClientException(
+          OPENLOOKENG_CLIENT_ERROR.getErrorCode(), OPENLOOKENG_CLIENT_ERROR.getErrorDesc());
     } else {
       throw new OpenLooKengStateInvalidException(
-          60002, "openlookeng status error. Statement is not finished.");
+          OPENLOOKENG_STATUS_ERROR.getErrorCode(), OPENLOOKENG_STATUS_ERROR.getErrorDesc());
     }
     return null;
   }

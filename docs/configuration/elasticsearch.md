@@ -1,6 +1,5 @@
 ## elasticsearch 配置
 
-
 | 模块名(服务名) | 参数名 | 默认值 | 描述 | 是否引用|
 | -------- | -------- | ----- |----- |  -----   |
 |elasticsearch|linkis.es.cluster|127.0.0.1:9200|cluster|
@@ -19,7 +18,3 @@
 |elasticsearch|linkis.resultSet.cache.max|512k|resultSet.cache.max|
 |elasticsearch|linkis.engineconn.concurrent.limit| 100 |engineconn.concurrent.limit|
 |elasticsearch|linkis.engineconn.io.version| 7.6.2| engineconn.io.version|
- 
- 
- 
-

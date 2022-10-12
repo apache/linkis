@@ -27,6 +27,7 @@ import org.apache.linkis.httpclient.authentication.{
 import org.apache.linkis.httpclient.dws.exception.AuthenticationFailedException
 import org.apache.linkis.httpclient.dws.request.DWSAuthenticationAction
 import org.apache.linkis.httpclient.dws.response.DWSAuthenticationResult
+import org.apache.linkis.httpclient.errorcode.LinkisGwHttpclientSupportErrorCodeSummary.AUTHTOKENVALUE_BE_EXISTS
 import org.apache.linkis.httpclient.request.{Action, UserAction, UserPwdAction}
 
 import org.apache.commons.lang3.StringUtils
@@ -64,9 +65,7 @@ class StaticAuthenticationStrategy(override protected val sessionMaxAliveTime: L
     def pwd: String = if (StringUtils.isNotBlank(getClientConfig.getAuthTokenValue)) {
       getClientConfig.getAuthTokenValue
     } else {
-      throw new AuthenticationFailedException(
-        "the value of authTokenValue in ClientConfig must be exists, since no password is found to login."
-      )
+      throw new AuthenticationFailedException(AUTHTOKENVALUE_BE_EXISTS.getErrorDesc)
     }
 
     requestAction match {
@@ -78,9 +77,7 @@ class StaticAuthenticationStrategy(override protected val sessionMaxAliveTime: L
         action.addRequestPayload("password", pwd)
       case _ =>
         if (StringUtils.isBlank(getClientConfig.getAuthTokenKey)) {
-          throw new AuthenticationFailedException(
-            "the value of authTokenKey in ClientConfig must be exists, since no user is found to login."
-          )
+          throw new AuthenticationFailedException(AUTHTOKENVALUE_BE_EXISTS.getErrorDesc)
         }
         action.addRequestPayload("userName", getClientConfig.getAuthTokenKey)
         action.addRequestPayload("password", pwd)

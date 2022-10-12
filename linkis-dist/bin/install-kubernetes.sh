@@ -148,7 +148,7 @@ main(){
 
     #argument parsing
     long_opts="debug,mirrors:"
-    getopt_cmd=$(getopt -o dm: --long "$long_opts" \
+    getopt_cmd=$(getopt -o dml: --long "$long_opts" \
                 -n $(basename $0) -- "$@") || \
                 { echo -e "\nERROR: Getopt failed. Extra args\n"; exit 1;}
 
@@ -157,6 +157,7 @@ main(){
         case "$1" in
             -d|--debug) DEBUG=true;;
             -m|--mirrors) MIRRORS=$2;;
+            -l|--ldh) WITH_LDH=true;;
             --) shift; break;;
         esac
         shift

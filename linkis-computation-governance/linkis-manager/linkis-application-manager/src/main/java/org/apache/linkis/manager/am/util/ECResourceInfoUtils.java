@@ -60,15 +60,19 @@ public class ECResourceInfoUtils {
           Map<String, Object> divermap = MapUtils.getMap(map, "driver");
           resourceVo.setInstance(((Double) divermap.get("instance")).intValue());
           resourceVo.setCores(((Double) divermap.get("cpu")).intValue());
-          resourceVo.setMemory(ByteTimeUtils.byteStringAsBytes(divermap.get("memory").toString()));
+          String memoryStr = String.valueOf(map.get("memory"));
+          memoryStr = getScientific(memoryStr) ? memoryStr : "0";
+          resourceVo.setMemory(ByteTimeUtils.byteStringAsBytes(memoryStr));
           return resourceVo;
         } else {
           logger.warn("Compatible with old data ,{},{}", info.getLabelValue(), info);
           return null; // Compatible with old data
         }
       }
+      String memoryStr = String.valueOf(map.get("memory"));
+      memoryStr = getScientific(memoryStr) ? memoryStr : "0";
       resourceVo.setInstance(((Double) map.get("instance")).intValue());
-      resourceVo.setMemory(ByteTimeUtils.byteStringAsBytes((map.get("memory").toString())));
+      resourceVo.setMemory(ByteTimeUtils.byteStringAsBytes(memoryStr));
       Double core = null == map.get("cpu") ? (Double) map.get("cores") : (Double) map.get("cpu");
       resourceVo.setCores(core.intValue());
     }
@@ -94,5 +98,11 @@ public class ECResourceInfoUtils {
     engineNode.setStartTime(ecInfo.getCreateTime());
     engineNode.setUpdateTime(ecInfo.getReleaseTime());
     return engineNode;
+  }
+
+  public static boolean getScientific(String input) {
+    String regx = "^((-?\\d+.?\\d*)[Ee]{1}(-?\\d+))$";
+    Pattern pattern = Pattern.compile(regx);
+    return pattern.matcher(input).matches();
   }
 }

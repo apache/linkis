@@ -17,6 +17,7 @@
 
 package org.apache.linkis.entrance.interceptor.impl
 
+import org.apache.linkis.entrance.conf.EntranceConfiguration
 import org.apache.linkis.entrance.interceptor.EntranceInterceptor
 import org.apache.linkis.governance.common.entity.job.JobRequest
 
@@ -31,7 +32,11 @@ class UserCreatorIPCheckInterceptor extends EntranceInterceptor {
    * Additional information includes: user IP address restrictions
    */
   override def apply(jobRequest: JobRequest, logAppender: lang.StringBuilder): JobRequest = {
-    UserCreatorIPCheckUtils.checkUserIp(jobRequest, logAppender)
+    if (EntranceConfiguration.CREATOR_IP_SWITCH.getValue) {
+      UserCreatorIPCheckUtils.checkUserIp(jobRequest, logAppender)
+    } else {
+      jobRequest
+    }
   }
 
 }

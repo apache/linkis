@@ -107,19 +107,6 @@ Since the first release of Linkis in 2019, it has accumulated more than **700** 
 |TiSpark|1.1|ongoing|-|TiSpark EngineConn, supports querying TiDB with SparkSQL|
 
 
-# Ecosystem
-
-| Component | Description | Linkis 1.x(recommend 1.1.1) Compatible |
-| --------------- | -------------------------------------------------------------------- | --------- |
-| [**DataSphereStudio**](https://github.com/WeBankFinTech/DataSphereStudio/blob/master/README.md) | DataSphere Studio (DSS for short) is WeDataSphere, a one-stop data application development management portal  | **DSS 1.0.1[released][Linkis recommend 1.1.1]** |
-| [**Scriptis**](https://github.com/WeBankFinTech/Scriptis) | Support online script writing such as SQL, Pyspark, HiveQL, etc., submit to [Linkis](https://github.com/apache/incubator-linkis) to perform data analysis web tools  | **In DSS 1.0.1[released]** |
-| [**Schedulis**](https://github.com/WeBankFinTech/Schedulis) | Workflow task scheduling system based on Azkaban secondary development, with financial-grade features such as high performance, high availability and multi-tenant resource isolation | **Schedulis0.6.2 [released]** |
-| [**Qualitis**](https://github.com/WeBankFinTech/Qualitis) | Data quality verification tool, providing data verification capabilities such as data integrity and correctness  |**Qualitis 0.9.1 [released]** |
-| [**Streamis**](https://github.com/WeBankFinTech/Streamis) | Streaming application development management tool. It supports the release of Flink Jar and Flink SQL, and provides the development, debugging and production management capabilities of streaming applications, such as: start-stop, status monitoring, checkpoint, etc| **Streamis 0.1.0 [released][Linkis recommend 1.1.0]** |
-| [**Exchangis**](https://github.com/WeBankFinTech/Exchangis) | A data exchange platform that supports data transmission between structured and unstructured heterogeneous data sources, the upcoming Exchangis1. 0, will be connected with DSS workflow | **Exchangis 1.0.0 [developing]**|
-| [**Visualis**](https://github.com/WeBankFinTech/Visualis) | A data visualization BI tool based on the second development of Davinci, an open source project of CreditEase, provides users with financial-level data visualization capabilities in terms of data security |  **Visualis 1.0.0[developing]**|
-| [**Prophecis**](https://github.com/WeBankFinTech/Prophecis) | A one-stop machine learning platform that integrates multiple open source machine learning frameworks. Prophecis' MLFlow can be connected to DSS workflow through AppConn | **Prophecis 0.3.0 [released]** |
-
 # Download
 
 Please go to the [Linkis Releases Page](https://linkis.apache.org/download/main) to download a compiled distribution or a source code package of Linkis.
@@ -175,16 +162,6 @@ linkis image by yourself, the image created by this tool will be tagged as `link
 ```shell
 $> LINKIS_IMAGE=linkis:1.3.0 
 $> ./linkis-dist/docker/scripts/make-linikis-image-with-mysql-jdbc.sh
-
-#          build dir: ...
-#         base image: linkis:1.3.0
-# mysql jdbc version: 8.0.28
-...                                                                                                                                                                                                                                                     0.0s
- => exporting to image                                                                                                                                                                                                                                                                                                                                                     0.0s
- => => exporting layers                                                                                                                                                                                                                                                                                                                                                    0.0s
- => => writing image sha256:3870df5500a71fcf879b5b7d5699c3c9804c7e03e33ad842e5d11f3504371fe8                                                                                                                                                                                                                                                                               0.0s
- => => naming to docker.io/library/linkis:with-jdbc                                                                                                                                                                                                                                                                                                                        0.0s
-# done, image: linkis:with-jdbc
 ```
 
 
@@ -226,7 +203,6 @@ For code and documentation contributions, please follow the [contribution guide]
 - You can scan the QR code below to join our WeChat group to get more immediate response
 
 ![wechatgroup](https://linkis.apache.org/Images/wedatasphere_contact_01.png)
-
 
 
 # Who is Using Linkis

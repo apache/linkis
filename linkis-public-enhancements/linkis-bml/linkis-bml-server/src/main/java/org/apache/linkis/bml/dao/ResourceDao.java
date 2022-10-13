@@ -20,8 +20,6 @@ package org.apache.linkis.bml.dao;
 import org.apache.linkis.bml.entity.Resource;
 
 import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
 import java.util.Map;
@@ -36,17 +34,12 @@ public interface ResourceDao {
 
   long uploadResource(Resource resource);
 
-  @Select(
-      "select exists(select * from `linkis_ps_bml_resources` where resource_id = #{resourceId}  and enable_flag = 1 )")
-  int checkExists(@Param("resourceId") String resourceId);
+  Integer checkExists(@Param("resourceId") String resourceId);
 
   Resource getResource(@Param("resourceId") String resourceId);
 
-  @Select("select owner from `linkis_ps_bml_resources` where resource_id = #{resourceId} ")
   String getUserByResourceId(@Param("resourceId") String resourceId);
 
-  @Update(
-      "update `linkis_ps_bml_resources` set owner = #{newOwner} where resource_id = #{resourceId} and owner=#{oldOwner}")
   void changeOwner(
       @Param("resourceId") String resourceId,
       @Param("oldOwner") String oldOwner,

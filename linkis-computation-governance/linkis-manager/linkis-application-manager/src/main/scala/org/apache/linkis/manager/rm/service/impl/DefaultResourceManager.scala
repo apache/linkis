@@ -449,11 +449,8 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
       labelContainer.getResourceLabels.asScala
         .filter(!_.isInstanceOf[EngineInstanceLabel])
         .foreach { label =>
-          val persistenceLock = tryLockOneLabel(
-            label,
-            RMUtils.RM_RESOURCE_LOCK_WAIT_TIME.getValue,
-            labelContainer.getUserCreatorLabel.getUser
-          )
+          val persistenceLock =
+            tryLockOneLabel(label, -1, labelContainer.getUserCreatorLabel.getUser)
           Utils.tryFinally {
             labelContainer.setCurrentLabel(label)
             val labelResource = labelResourceService.getLabelResource(label)
@@ -647,10 +644,11 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
         s"resourceRelease ready:${labelContainer.getEngineInstanceLabel.getServiceInstance},current node resource${usedResource}"
       )
       val status = getNodeStatus(labelContainer.getEngineInstanceLabel)
-      Utils.tryCatch {
-        labelContainer.getResourceLabels.asScala
-          .filter(!_.isInstanceOf[EngineInstanceLabel])
-          .foreach { label =>
+
+      labelContainer.getResourceLabels.asScala
+        .filter(!_.isInstanceOf[EngineInstanceLabel])
+        .foreach { label =>
+          Utils.tryCatch {
             val persistenceLock = tryLockOneLabel(
               label,
               RMUtils.RM_RESOURCE_LOCK_WAIT_TIME.getValue,
@@ -711,13 +709,13 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
                 status
               )
             }
+          } { case exception: Exception =>
+            logger.warn(
+              s"Failed to release resource label ${labelContainer.getEngineInstanceLabel.getStringValue}",
+              exception
+            )
           }
-      } { case exception: Exception =>
-        logger.warn(
-          s"Failed to release resource label ${labelContainer.getEngineInstanceLabel.getStringValue}",
-          exception
-        )
-      }
+        }
       val engineInstanceLabel = labelContainer.getEngineInstanceLabel
       Utils.tryCatch {
         labelResourceService.removeResourceByLabel(engineInstanceLabel)

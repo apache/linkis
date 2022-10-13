@@ -15,13 +15,17 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.manager;
+package org.apache.linkis.manager.dao;
 
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.context.annotation.*;
+import org.apache.linkis.manager.Scan;
 
-import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.annotation.Transactional;
 
-@EnableAutoConfiguration
-@MapperScan("org.apache.linkis.manager")
-public class Scan {}
+@SpringBootTest(classes = Scan.class)
+@Transactional
+@Rollback(true)
+@EnableTransactionManagement
+public class BaseDaoTest {}

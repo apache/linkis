@@ -18,14 +18,14 @@
 package org.apache.linkis.manager.dao;
 
 import org.apache.linkis.manager.common.entity.persistence.PersistenceNodeMetrics;
-
 import org.apache.linkis.manager.common.entity.persistence.PersistenceNodeMetricsEntity;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -47,24 +47,26 @@ class NodeMetricManagerMapperTest extends BaseDaoTest {
   @Test
   void checkInstanceExist() {
     addNodeMetrics();
-    int i=nodeMetricManagerMapper.checkInstanceExist("instance1");
+    int i = nodeMetricManagerMapper.checkInstanceExist("instance1");
     assertTrue(i >= 1);
   }
 
   @Test
   void getNodeMetricsByInstances() {
     addNodeMetrics();
-    List<String> list=new ArrayList<>();
+    List<String> list = new ArrayList<>();
     list.add("instance1");
-    List<PersistenceNodeMetrics> persistenceNodeMetrics=nodeMetricManagerMapper.getNodeMetricsByInstances(list);
-    assertTrue(persistenceNodeMetrics .size()>=1);
+    List<PersistenceNodeMetrics> persistenceNodeMetrics =
+        nodeMetricManagerMapper.getNodeMetricsByInstances(list);
+    assertTrue(persistenceNodeMetrics.size() >= 1);
   }
 
   @Test
   void getNodeMetricsByInstance() {
     addNodeMetrics();
-     PersistenceNodeMetrics persistenceNodeMetrics=nodeMetricManagerMapper.getNodeMetricsByInstance("instance1");
-    assertTrue(persistenceNodeMetrics!=null);
+    PersistenceNodeMetrics persistenceNodeMetrics =
+        nodeMetricManagerMapper.getNodeMetricsByInstance("instance1");
+    assertTrue(persistenceNodeMetrics != null);
   }
 
   @Test
@@ -76,8 +78,7 @@ class NodeMetricManagerMapperTest extends BaseDaoTest {
     nodeMetrics.setOverLoad("testoverloads");
     nodeMetrics.setHeartBeatMsg("testheartbeat_msgs");
     nodeMetrics.setHealthy("2s");
-    nodeMetricManagerMapper.updateNodeMetrics(nodeMetrics,"instance1");
-
+    nodeMetricManagerMapper.updateNodeMetrics(nodeMetrics, "instance1");
   }
 
   @Test
@@ -95,7 +96,7 @@ class NodeMetricManagerMapperTest extends BaseDaoTest {
   @Test
   void getAllNodeMetrics() {
     addNodeMetrics();
-    List<PersistenceNodeMetricsEntity> list=nodeMetricManagerMapper.getAllNodeMetrics();
-    assertTrue(list .size()>=1);
+    List<PersistenceNodeMetricsEntity> list = nodeMetricManagerMapper.getAllNodeMetrics();
+    assertTrue(list.size() >= 1);
   }
 }

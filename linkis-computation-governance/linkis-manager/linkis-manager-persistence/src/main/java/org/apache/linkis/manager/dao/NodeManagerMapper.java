@@ -67,7 +67,7 @@ public interface NodeManagerMapper {
   void updateNodeInstanceOverload(PersistenceNode persistenceNode);
 
   @Select("select id from  linkis_cg_manager_service_instance where instance = #{instance}")
-  Integer  getNodeInstanceId(@Param("instance") String instance);
+  Integer getNodeInstanceId(@Param("instance") String instance);
 
   @Select("select id from  linkis_cg_manager_service_instance where instance = #{instance}")
   Integer getIdByInstance(@Param("instance") String instance);
@@ -137,10 +137,10 @@ public interface NodeManagerMapper {
       @Param("engineNodeInstance") String engineNodeInstance,
       @Param("emNodeInstance") String emNodeInstance);
 
-/*  @Select("select engine_id from  linkis_cg_manager_engine_em where em_id = #{emId}")
+  /*  @Select("select engine_id from  linkis_cg_manager_engine_em where em_id = #{emId}")
   List<Integer> getEngineNodeIDsByEMId(@Param("emId") int emId);*/
 
-/*  @Select("select em_id from  linkis_cg_manager_engine_em where engine_id = #{engineNodeId}")
+  /*  @Select("select em_id from  linkis_cg_manager_engine_em where engine_id = #{engineNodeId}")
   int getEMIdByEngineId(@Param("engineNodeId") int engineNodeId);*/
 
   @Select("select id from linkis_cg_manager_service_instance where owner = #{owner}")

@@ -23,6 +23,7 @@ import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
 import org.apache.linkis.metadata.query.common.domain.MetaPartitionInfo;
 import org.apache.linkis.metadata.query.common.exception.MetaMethodInvokeException;
 import org.apache.linkis.metadata.query.server.service.MetadataQueryService;
+import org.apache.linkis.metadata.query.server.utils.MetadataUtils;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.security.SecurityFilter;
 
@@ -38,6 +39,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
 
 @RestController
 @RequestMapping(value = "/metadatamanager")
@@ -57,6 +59,10 @@ public class MetadataCoreRestful {
             if (StringUtils.isBlank(system)) {
                 return Message.error("'system' is missing[缺少系统名]");
             }
+            if (!MetadataUtils.nameRegexPattern.matcher(dataSourceId).matches()) {
+                return Message.error("'dataSourceId' is irregular[数据源错误]");
+            }
+
             List<String> databases =
                     metadataAppService.getDatabasesByDsId(
                             dataSourceId, system, SecurityFilter.getLoginUsername(request));
@@ -81,6 +87,12 @@ public class MetadataCoreRestful {
         try {
             if (StringUtils.isBlank(system)) {
                 return Message.error("'system' is missing[缺少系统名]");
+            }
+            if (!MetadataUtils.nameRegexPattern.matcher(database).matches()) {
+                return Message.error("'database' is irregular[数据库名称错误]");
+            }
+            if (!MetadataUtils.nameRegexPattern.matcher(dataSourceId).matches()) {
+                return Message.error("'dataSourceId' is irregular[数据源错误]");
             }
             List<String> tables =
                     metadataAppService.getTablesByDsId(
@@ -116,6 +128,16 @@ public class MetadataCoreRestful {
             if (StringUtils.isBlank(system)) {
                 return Message.error("'system' is missing[缺少系统名]");
             }
+            if (!MetadataUtils.nameRegexPattern.matcher(database).matches()) {
+                return Message.error("'database' is irregular[数据库名错误]");
+            }
+            if (!MetadataUtils.nameRegexPattern.matcher(table).matches()) {
+                return Message.error("'table' is irregular[表名错误]");
+            }
+            if (!MetadataUtils.nameRegexPattern.matcher(dataSourceId).matches()) {
+                return Message.error("'dataSourceId' is irregular[数据源错误]");
+            }
+
             Map<String, String> tableProps =
                     metadataAppService.getTablePropsByDsId(
                             dataSourceId,
@@ -156,6 +178,15 @@ public class MetadataCoreRestful {
             if (StringUtils.isBlank(system)) {
                 return Message.error("'system' is missing[缺少系统名]");
             }
+            if (!MetadataUtils.nameRegexPattern.matcher(database).matches()) {
+                return Message.error("'database' is irregular[数据库名错误]");
+            }
+            if (!MetadataUtils.nameRegexPattern.matcher(table).matches()) {
+                return Message.error("'table' is irregular[表名错误]");
+            }
+            if (!MetadataUtils.nameRegexPattern.matcher(dataSourceId).matches()) {
+                return Message.error("'dataSourceId' is irregular[数据源错误]");
+            }
             MetaPartitionInfo partitionInfo =
                     metadataAppService.getPartitionsByDsId(
                             dataSourceId,
@@ -194,6 +225,18 @@ public class MetadataCoreRestful {
         try {
             if (StringUtils.isBlank(system)) {
                 return Message.error("'system' is missing[缺少系统名]");
+            }
+            if (!MetadataUtils.nameRegexPattern.matcher(database).matches()) {
+                return Message.error("'database' is irregular[数据库名错误]");
+            }
+            if (!MetadataUtils.nameRegexPattern.matcher(table).matches()) {
+                return Message.error("'table' is irregular[表名错误]");
+            }
+            if (!MetadataUtils.nameRegexPattern.matcher(dataSourceId).matches()) {
+                return Message.error("'dataSourceId' is irregular[数据源错误]");
+            }
+            if (!MetadataUtils.nameRegexPattern.matcher(partition).matches()) {
+                return Message.error("'partition' is irregular[partition错误]");
             }
             Map<String, String> partitionProps =
                     metadataAppService.getPartitionPropsByDsId(
@@ -234,6 +277,15 @@ public class MetadataCoreRestful {
         try {
             if (StringUtils.isBlank(system)) {
                 return Message.error("'system' is missing[缺少系统名]");
+            }
+            if (!MetadataUtils.nameRegexPattern.matcher(database).matches()) {
+                return Message.error("'database' is irregular[数据库名错误]");
+            }
+            if (!MetadataUtils.nameRegexPattern.matcher(table).matches()) {
+                return Message.error("'table' is irregular[表名错误]");
+            }
+            if (!MetadataUtils.nameRegexPattern.matcher(dataSourceId).matches()) {
+                return Message.error("'dataSourceId' is irregular[数据源错误]");
             }
             List<MetaColumnInfo> columns =
                     metadataAppService.getColumnsByDsId(

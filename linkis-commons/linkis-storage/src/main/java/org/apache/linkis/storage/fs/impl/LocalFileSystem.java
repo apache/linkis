@@ -443,6 +443,7 @@ public class LocalFileSystem extends FileSystem {
     throw new IOException("only owner can rename path " + path);
   }
 
+  @Override
   public void close() throws IOException {}
 
   /** Utils method start */

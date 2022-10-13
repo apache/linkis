@@ -33,6 +33,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -46,6 +47,10 @@ public class MetadataUtils {
   private static final String CLASS_SUF_NAME = ".class";
 
   private static final Logger LOG = LoggerFactory.getLogger(MetadataUtils.class);
+
+  private static final String NAME_REGEX = "^[a-zA-Z\\-\\d_\\.]+$";
+
+  public static final Pattern nameRegexPattern = Pattern.compile(NAME_REGEX);
 
   public static MetadataService loadMetaService(
       Class<? extends MetadataService> metaServiceClass, ClassLoader metaServiceClassLoader) {

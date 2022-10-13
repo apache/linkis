@@ -59,6 +59,12 @@ class StorageResultSetWriter[K <: MetaData, V <: Record](
 
   private var proxyUser: String = StorageUtils.getJvmUser
 
+  private var fileCreated = false
+
+  private var closed = false
+
+  private val WRITER_LOCK = new Object()
+
   def getMetaData: MetaData = rMetaData
 
   def setProxyUser(proxyUser: String): Unit = {
@@ -74,16 +80,29 @@ class StorageResultSetWriter[K <: MetaData, V <: Record](
   }
 
   def createNewFile: Unit = {
+    if (!fileCreated) {
+      WRITER_LOCK.synchronized {
+        if (!fileCreated) {
     if (storePath != null && outputStream == null) {
       fs = FSFactory.getFsByProxyUser(storePath, proxyUser)
       fs.init(null)
       FileSystemUtils.createNewFile(storePath, proxyUser, true)
       outputStream = fs.write(storePath, true)
       logger.info(s"Succeed to create a new file:$storePath")
+            fileCreated = true
+          }
+        }
+      }
+    } else if (null != storePath && null == outputStream) {
+      logger.warn("outputStream had been set null, but createNewFile() was called again.")
     }
   }
 
   def writeLine(bytes: Array[Byte], cache: Boolean = false): Unit = {
+    if (closed) {
+      logger.error("the writer had been closed, but writeLine() was still called.")
+      return
+    }
     if (bytes.length > LinkisStorageConf.ROW_BYTE_MAX_LEN) {
       throw new IOException(
         s"A single row of data cannot exceed ${LinkisStorageConf.ROW_BYTE_MAX_LEN_STR}"
@@ -159,10 +178,23 @@ class StorageResultSetWriter[K <: MetaData, V <: Record](
         IOUtils.closeQuietly(outputStream)
         outputStream = null
       }
+      if (closed) {
+        logger.error("the writer had been closed, but close() was still called.")
+      } else {
+        WRITER_LOCK.synchronized {
+          if (!closed) {
+            closed = true
+          }
+        }
+      }
     }
   }
 
   override def flush(): Unit = {
+    if (closed) {
+      logger.error("the writer had been closed, but flush() was still called.")
+      return
+    }
     createNewFile
     if (outputStream != null) {
       if (buffer.nonEmpty) {

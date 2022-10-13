@@ -17,6 +17,7 @@
 
 package org.apache.linkis.metadata.query.server.utils;
 
+import org.apache.linkis.common.conf.CommonVars;
 import org.apache.linkis.metadata.query.common.exception.MetaRuntimeException;
 import org.apache.linkis.metadata.query.common.service.BaseMetadataService;
 
@@ -48,7 +49,8 @@ public class MetadataUtils {
 
   private static final Logger LOG = LoggerFactory.getLogger(MetadataUtils.class);
 
-  private static final String NAME_REGEX = "^[a-zA-Z\\-\\d_\\.]+$";
+  public static final String NAME_REGEX =
+      CommonVars.apply("wds.linkis.metadata.query.regex", "^[a-zA-Z\\-\\d_\\.=/:]+$").getValue();
 
   public static final Pattern nameRegexPattern = Pattern.compile(NAME_REGEX);
 

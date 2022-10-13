@@ -216,6 +216,7 @@ j2objc-annotations-1.3.jar
 jackson-annotations-2.13.4.jar
 jackson-core-2.13.4.jar
 jackson-core-asl-1.9.13.jar
+jackson-core-asl-1.9.2.jar
 jackson-databind-2.13.4.1.jar
 jackson-dataformat-cbor-2.13.4.jar
 jackson-dataformat-csv-2.13.4.jar
@@ -227,10 +228,13 @@ jackson-datatype-jdk8-2.13.4.jar
 jackson-datatype-joda-2.13.4.jar
 jackson-datatype-jsr310-2.13.4.jar
 jackson-jaxrs-1.9.13.jar
+jackson-jaxrs-1.9.2.jar
 jackson-mapper-asl-1.9.13.jar
+jackson-mapper-asl-1.9.2.jar
 jackson-module-parameter-names-2.13.4.jar
 jackson-module-scala_2.11-2.13.4.jar
 jackson-xc-1.9.13.jar
+jackson-xc-1.9.2.jar
 jakarta.activation-1.2.2.jar
 jakarta.activation-api-1.2.2.jar
 jakarta.annotation-api-1.3.5.jar

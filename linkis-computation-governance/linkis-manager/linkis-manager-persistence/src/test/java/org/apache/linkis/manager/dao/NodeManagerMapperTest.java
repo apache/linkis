@@ -42,6 +42,8 @@ class NodeManagerMapperTest extends BaseDaoTest {
     persistenceNode.setUpdator("testupdator2");
     persistenceNode.setCreator("testcreator2");
     nodeManagerMapper.addNodeInstance(persistenceNode);
+    PersistenceNode persistenceNodes = nodeManagerMapper.getNodeInstance("instance2");
+    assertTrue(persistenceNodes != null);
   }
 
   @Test
@@ -55,12 +57,16 @@ class NodeManagerMapperTest extends BaseDaoTest {
     persistenceNode.setUpdator("testupdator3");
     persistenceNode.setCreator("testcreator3");
     nodeManagerMapper.updateNodeInstance("instance2", persistenceNode);
+    PersistenceNode persistenceNodes = nodeManagerMapper.getNodeInstance("instance3");
+    assertTrue(persistenceNodes != null);
   }
 
   @Test
   void removeNodeInstance() {
     addNodeInstance();
     nodeManagerMapper.removeNodeInstance("instance2");
+    PersistenceNode persistenceNodes = nodeManagerMapper.getNodeInstance("instance2");
+    assertTrue(persistenceNodes == null);
   }
 
   @Test
@@ -88,6 +94,8 @@ class NodeManagerMapperTest extends BaseDaoTest {
     persistenceNode.setUpdator("testupdator3");
     persistenceNode.setCreator("testcreator3");
     nodeManagerMapper.updateNodeInstanceOverload(persistenceNode);
+    PersistenceNode persistenceNodes = nodeManagerMapper.getNodeInstance("instance2");
+    assertTrue(persistenceNode.getName().equals(persistenceNodes.getName()));
   }
 
   @Test

@@ -23,10 +23,12 @@ import org.apache.linkis.manager.common.entity.persistence.PersistenceResource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ResourceManagerMapperTest extends BaseDaoTest {
@@ -44,6 +46,10 @@ class ResourceManagerMapperTest extends BaseDaoTest {
     persistenceResource.setTicketId("1");
     persistenceResource.setResourceType("testtype");
     resourceManagerMapper.registerResource(persistenceResource);
+    PersistenceResource persistenceResources = resourceManagerMapper.getResourceById(1);
+    assertThat(persistenceResources.getId())
+        .usingRecursiveComparison()
+        .isEqualTo(persistenceResource.getId());
   }
 
   @Test
@@ -55,7 +61,11 @@ class ResourceManagerMapperTest extends BaseDaoTest {
     persistenceResource.setMinResource("mintestss");
     persistenceResource.setLeftResource("left");
     persistenceResource.setUsedResource("user");
+    persistenceResource.setResourceType("testtype");
+    persistenceResource.setUpdateTime(new Date());
     resourceManagerMapper.nodeResourceUpdate("1", persistenceResource);
+    PersistenceResource persistenceResources = resourceManagerMapper.getResourceById(1);
+    assertTrue(persistenceResources.getMaxResource() == persistenceResource.getMaxResource());
   }
 
   @Test
@@ -68,13 +78,21 @@ class ResourceManagerMapperTest extends BaseDaoTest {
     persistenceResource.setLeftResource("left");
     persistenceResource.setUsedResource("user");
     resourceManagerMapper.nodeResourceUpdateByResourceId(1, persistenceResource);
+    assertTrue(persistenceResource.getMaxResource() == persistenceResource.getMaxResource());
   }
 
   @Test
   void getNodeResourceUpdateResourceId() {
-    registerResource();
+    PersistenceResource persistenceResource = new PersistenceResource();
+    persistenceResource.setId(1);
+    persistenceResource.setMaxResource("testmax");
+    persistenceResource.setMinResource("mintest");
+    persistenceResource.setLeftResource("left");
+    persistenceResource.setUsedResource("user");
+    persistenceResource.setResourceType("testtype");
+    resourceManagerMapper.registerResource(persistenceResource);
     Integer i = resourceManagerMapper.getNodeResourceUpdateResourceId("instance1");
-    assertTrue(i == null);
+    assertTrue(i >= 1);
   }
 
   @Test
@@ -84,13 +102,19 @@ class ResourceManagerMapperTest extends BaseDaoTest {
 
   @Test
   void deleteResourceByInstance() {
+    registerResource();
     resourceManagerMapper.deleteResourceByInstance("instance1");
+    List<PersistenceResource> list =
+        resourceManagerMapper.getResourceByServiceInstance("instance1");
+    assertTrue(list.size() == 0);
   }
 
   @Test
   void deleteResourceByTicketId() {
     registerResource();
     resourceManagerMapper.deleteResourceByTicketId("1");
+    PersistenceResource persistenceResource = resourceManagerMapper.getNodeResourceByTicketId("1");
+    assertTrue(persistenceResource == null);
   }
 
   @Test
@@ -140,6 +164,8 @@ class ResourceManagerMapperTest extends BaseDaoTest {
     List<Integer> list = new ArrayList<>();
     list.add(1);
     resourceManagerMapper.deleteResourceById(list);
+    PersistenceResource persistenceResource = resourceManagerMapper.getResourceById(1);
+    assertTrue(persistenceResource == null);
   }
 
   @Test

@@ -42,6 +42,9 @@ class NodeMetricManagerMapperTest extends BaseDaoTest {
     nodeMetrics.setHeartBeatMsg("testheartbeat_msg");
     nodeMetrics.setHealthy("2");
     nodeMetricManagerMapper.addNodeMetrics(nodeMetrics);
+    PersistenceNodeMetrics persistenceNodeMetrics =
+        nodeMetricManagerMapper.getNodeMetricsByInstance("instance1");
+    assertTrue(persistenceNodeMetrics != null);
   }
 
   @Test
@@ -73,24 +76,32 @@ class NodeMetricManagerMapperTest extends BaseDaoTest {
   void updateNodeMetrics() {
     addNodeMetrics();
     PersistenceNodeMetrics nodeMetrics = new PersistenceNodeMetrics();
-    nodeMetrics.setInstance("instance2");
     nodeMetrics.setStatus(2);
     nodeMetrics.setOverLoad("testoverloads");
     nodeMetrics.setHeartBeatMsg("testheartbeat_msgs");
     nodeMetrics.setHealthy("2s");
     nodeMetricManagerMapper.updateNodeMetrics(nodeMetrics, "instance1");
+    PersistenceNodeMetrics persistenceNodeMetrics =
+        nodeMetricManagerMapper.getNodeMetricsByInstance("instance1");
+    assertTrue(persistenceNodeMetrics.getOverLoad().equals("testoverloads"));
   }
 
   @Test
   void deleteNodeMetrics() {
     addNodeMetrics();
     nodeMetricManagerMapper.deleteNodeMetrics("instance1");
+    PersistenceNodeMetrics persistenceNodeMetrics =
+        nodeMetricManagerMapper.getNodeMetricsByInstance("instance1");
+    assertTrue(persistenceNodeMetrics == null);
   }
 
   @Test
   void deleteNodeMetricsByInstance() {
     addNodeMetrics();
     nodeMetricManagerMapper.deleteNodeMetricsByInstance("instance1");
+    PersistenceNodeMetrics persistenceNodeMetrics =
+        nodeMetricManagerMapper.getNodeMetricsByInstance("instance1");
+    assertTrue(persistenceNodeMetrics == null);
   }
 
   @Test

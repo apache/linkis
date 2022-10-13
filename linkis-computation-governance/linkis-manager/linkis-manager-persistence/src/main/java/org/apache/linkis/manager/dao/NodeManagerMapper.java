@@ -67,10 +67,10 @@ public interface NodeManagerMapper {
   void updateNodeInstanceOverload(PersistenceNode persistenceNode);
 
   @Select("select id from  linkis_cg_manager_service_instance where instance = #{instance}")
-  int getNodeInstanceId(@Param("instance") String instance);
+  Integer  getNodeInstanceId(@Param("instance") String instance);
 
   @Select("select id from  linkis_cg_manager_service_instance where instance = #{instance}")
-  int getIdByInstance(@Param("instance") String instance);
+  Integer getIdByInstance(@Param("instance") String instance);
 
   @Select(
       "<script>"
@@ -79,7 +79,7 @@ public interface NodeManagerMapper {
           + "#{instance} "
           + "</foreach> "
           + ")</script>")
-  List<Integer> getNodeInstanceIds(@Param("serviceInstances") List<String> instances);
+  List<Integer> getNodeInstanceIds(@Param("instances") List<String> instances);
 
   @Select("select * from linkis_cg_manager_service_instance where instance = #{instance}")
   @Results({
@@ -122,7 +122,7 @@ public interface NodeManagerMapper {
     @Result(property = "updateTime", column = "update_time"),
     @Result(property = "createTime", column = "create_time")
   })
-  List<PersistenceNode> getNodesByInstances(@Param("engineNodeIds") List<String> instances);
+  List<PersistenceNode> getNodesByInstances(@Param("instances") List<String> instances);
 
   @Insert(
       "insert into  linkis_cg_manager_engine_em (engine_instance, em_instance, update_time, create_time)"
@@ -137,11 +137,11 @@ public interface NodeManagerMapper {
       @Param("engineNodeInstance") String engineNodeInstance,
       @Param("emNodeInstance") String emNodeInstance);
 
-  @Select("select engine_id from  linkis_cg_manager_engine_em where em_id = #{emId}")
-  List<Integer> getEngineNodeIDsByEMId(@Param("emId") int emId);
+/*  @Select("select engine_id from  linkis_cg_manager_engine_em where em_id = #{emId}")
+  List<Integer> getEngineNodeIDsByEMId(@Param("emId") int emId);*/
 
-  @Select("select em_id from  linkis_cg_manager_engine_em where engine_id = #{engineNodeId}")
-  int getEMIdByEngineId(@Param("engineNodeId") int engineNodeId);
+/*  @Select("select em_id from  linkis_cg_manager_engine_em where engine_id = #{engineNodeId}")
+  int getEMIdByEngineId(@Param("engineNodeId") int engineNodeId);*/
 
   @Select("select id from linkis_cg_manager_service_instance where owner = #{owner}")
   List<Integer> getNodeInstanceIdsByOwner(@Param("owner") String owner);

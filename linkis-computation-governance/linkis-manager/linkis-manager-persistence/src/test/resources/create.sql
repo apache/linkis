@@ -77,3 +77,50 @@ CREATE TABLE `linkis_cg_manager_label` (
   PRIMARY KEY (`id`)
 );
 INSERT INTO linkis_cg_manager_label (id,label_key,label_value,label_feature,label_value_size,update_time,create_time) VALUES (2,'combined_userCreator_engineType','*-LINKISCLI,*-*','OPTIONAL',2,'2022-03-28 01:31:08.0','2022-03-28 01:31:08.0');
+
+CREATE TABLE `linkis_cg_manager_service_instance_metrics` (
+  `instance` varchar(128)   NOT NULL,
+  `instance_status` int(11) DEFAULT NULL,
+  `overload` varchar(255)   DEFAULT NULL,
+  `heartbeat_msg` text  ,
+  `healthy_status` varchar(255)   DEFAULT NULL,
+  `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`instance`)
+) ;
+
+CREATE TABLE `linkis_cg_manager_service_instance` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `instance` varchar(128)    DEFAULT NULL,
+  `name` varchar(32)    DEFAULT NULL,
+  `owner` varchar(32)    DEFAULT NULL,
+  `mark` varchar(32)    DEFAULT NULL,
+  `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  `updator` varchar(32)    DEFAULT NULL,
+  `creator` varchar(32)    DEFAULT NULL,
+  PRIMARY KEY (`id`)
+);
+INSERT INTO  linkis_cg_manager_service_instance(`instance`, name, owner, mark, update_time, create_time, updator, creator)VALUES('instance1', 'testname', 'testowner', 'testmark', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'testupdator', 'testcreator');
+
+CREATE TABLE `linkis_cg_manager_engine_em` (
+  `id` int(20) NOT NULL AUTO_INCREMENT,
+  `engine_instance` varchar(128)     DEFAULT NULL,
+  `em_instance` varchar(128)     DEFAULT NULL,
+  `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ;
+
+INSERT INTO  linkis_cg_manager_engine_em (engine_instance,em_instance,update_time,create_time) VALUES ('instance1','instance1','2022-02-26 14:54:05.0','2022-02-26 14:54:05.0');
+
+
+CREATE TABLE `linkis_cg_manager_lock` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `lock_object` varchar(255)   DEFAULT NULL,
+  `time_out` longtext  ,
+  `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+);
+INSERT INTO linkis_cg_manager_lock(lock_object, time_out, update_time, create_time)VALUES('testjson', 1l, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);

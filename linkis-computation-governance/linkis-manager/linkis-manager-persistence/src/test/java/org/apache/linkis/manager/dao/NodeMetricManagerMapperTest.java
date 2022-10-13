@@ -2,9 +2,13 @@ package org.apache.linkis.manager.dao;
 
 import org.apache.linkis.manager.common.entity.persistence.PersistenceNodeMetrics;
 
+import org.apache.linkis.manager.common.entity.persistence.PersistenceNodeMetricsEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -15,26 +19,66 @@ class NodeMetricManagerMapperTest extends BaseDaoTest {
   @Test
   void addNodeMetrics() {
     PersistenceNodeMetrics nodeMetrics = new PersistenceNodeMetrics();
+    nodeMetrics.setInstance("instance1");
+    nodeMetrics.setStatus(1);
+    nodeMetrics.setOverLoad("testoverload");
+    nodeMetrics.setHeartBeatMsg("testheartbeat_msg");
+    nodeMetrics.setHealthy("2");
+    nodeMetricManagerMapper.addNodeMetrics(nodeMetrics);
   }
 
   @Test
-  void checkInstanceExist() {}
+  void checkInstanceExist() {
+    addNodeMetrics();
+    int i=nodeMetricManagerMapper.checkInstanceExist("instance1");
+    assertTrue(i >= 1);
+  }
 
   @Test
-  void getNodeMetricsByInstances() {}
+  void getNodeMetricsByInstances() {
+    addNodeMetrics();
+    List<String> list=new ArrayList<>();
+    list.add("instance1");
+    List<PersistenceNodeMetrics> persistenceNodeMetrics=nodeMetricManagerMapper.getNodeMetricsByInstances(list);
+    assertTrue(persistenceNodeMetrics .size()>=1);
+  }
 
   @Test
-  void getNodeMetricsByInstance() {}
+  void getNodeMetricsByInstance() {
+    addNodeMetrics();
+     PersistenceNodeMetrics persistenceNodeMetrics=nodeMetricManagerMapper.getNodeMetricsByInstance("instance1");
+    assertTrue(persistenceNodeMetrics!=null);
+  }
 
   @Test
-  void updateNodeMetrics() {}
+  void updateNodeMetrics() {
+    addNodeMetrics();
+    PersistenceNodeMetrics nodeMetrics = new PersistenceNodeMetrics();
+    nodeMetrics.setInstance("instance2");
+    nodeMetrics.setStatus(2);
+    nodeMetrics.setOverLoad("testoverloads");
+    nodeMetrics.setHeartBeatMsg("testheartbeat_msgs");
+    nodeMetrics.setHealthy("2s");
+    nodeMetricManagerMapper.updateNodeMetrics(nodeMetrics,"instance1");
+
+  }
 
   @Test
-  void deleteNodeMetrics() {}
+  void deleteNodeMetrics() {
+    addNodeMetrics();
+    nodeMetricManagerMapper.deleteNodeMetrics("instance1");
+  }
 
   @Test
-  void deleteNodeMetricsByInstance() {}
+  void deleteNodeMetricsByInstance() {
+    addNodeMetrics();
+    nodeMetricManagerMapper.deleteNodeMetricsByInstance("instance1");
+  }
 
   @Test
-  void getAllNodeMetrics() {}
+  void getAllNodeMetrics() {
+    addNodeMetrics();
+    List<PersistenceNodeMetricsEntity> list=nodeMetricManagerMapper.getAllNodeMetrics();
+    assertTrue(list .size()>=1);
+  }
 }

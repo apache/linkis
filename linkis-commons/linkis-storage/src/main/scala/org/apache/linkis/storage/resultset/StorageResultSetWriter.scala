@@ -83,12 +83,12 @@ class StorageResultSetWriter[K <: MetaData, V <: Record](
     if (!fileCreated) {
       WRITER_LOCK.synchronized {
         if (!fileCreated) {
-    if (storePath != null && outputStream == null) {
-      fs = FSFactory.getFsByProxyUser(storePath, proxyUser)
-      fs.init(null)
-      FileSystemUtils.createNewFile(storePath, proxyUser, true)
-      outputStream = fs.write(storePath, true)
-      logger.info(s"Succeed to create a new file:$storePath")
+          if (storePath != null && outputStream == null) {
+            fs = FSFactory.getFsByProxyUser(storePath, proxyUser)
+            fs.init(null)
+            FileSystemUtils.createNewFile(storePath, proxyUser, true)
+            outputStream = fs.write(storePath, true)
+            logger.info(s"Succeed to create a new file:$storePath")
             fileCreated = true
           }
         }

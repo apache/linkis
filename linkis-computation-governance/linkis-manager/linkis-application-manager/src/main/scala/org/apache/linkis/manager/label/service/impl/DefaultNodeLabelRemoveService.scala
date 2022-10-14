@@ -51,7 +51,10 @@ class DefaultNodeLabelRemoveService extends NodeLabelRemoveService with Logging 
         "ServiceInstance in request is null, please check label remove request!"
       )
     }
-    nodeLabelService.removeLabelsFromNode(nodeLabelRemoveRequest.getServiceInstance)
+    nodeLabelService.removeLabelsFromNode(
+      nodeLabelRemoveRequest.getServiceInstance,
+      nodeLabelRemoveRequest.isEngine
+    )
     val persistenceLabel = if (nodeLabelRemoveRequest.isEngine) {
       val engineLabel = labelFactory.createLabel(classOf[EngineInstanceLabel])
       engineLabel.setInstance(nodeLabelRemoveRequest.getServiceInstance.getInstance)

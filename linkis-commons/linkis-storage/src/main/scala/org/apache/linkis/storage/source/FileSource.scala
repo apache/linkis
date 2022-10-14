@@ -19,6 +19,7 @@ package org.apache.linkis.storage.source
 
 import org.apache.linkis.common.io._
 import org.apache.linkis.storage.conf.LinkisStorageConf
+import org.apache.linkis.storage.errorcode.LinkisStorageErrorCodeSummary.UNSUPPORTED_OPEN_FILE_TYPE
 import org.apache.linkis.storage.exception.StorageErrorException
 import org.apache.linkis.storage.resultset.{ResultSetFactory, ResultSetReader}
 import org.apache.linkis.storage.script.ScriptFsReader
@@ -89,8 +90,12 @@ object FileSource {
   }
 
   def create(fsPath: FsPath, fs: Fs): FileSource = {
-    if (!canRead(fsPath.getPath))
-      throw new StorageErrorException(54001, "Unsupported open file type(不支持打开的文件类型)")
+    if (!canRead(fsPath.getPath)) {
+      throw new StorageErrorException(
+        UNSUPPORTED_OPEN_FILE_TYPE.getErrorCode,
+        UNSUPPORTED_OPEN_FILE_TYPE.getErrorDesc
+      )
+    }
     if (isResultSet(fsPath)) {
       new ResultsetFileSource(Array(createResultSetFileSplit(fsPath, fs)))
     } else {
@@ -99,8 +104,12 @@ object FileSource {
   }
 
   def create(fsPath: FsPath, is: InputStream): FileSource = {
-    if (!canRead(fsPath.getPath))
-      throw new StorageErrorException(54001, "Unsupported open file type(不支持打开的文件类型)")
+    if (!canRead(fsPath.getPath)) {
+      throw new StorageErrorException(
+        UNSUPPORTED_OPEN_FILE_TYPE.getErrorCode,
+        UNSUPPORTED_OPEN_FILE_TYPE.getErrorDesc
+      )
+    }
     if (isResultSet(fsPath)) {
       new ResultsetFileSource(Array(createResultSetFileSplit(fsPath, is)))
     } else {

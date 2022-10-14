@@ -21,6 +21,7 @@ import org.apache.linkis.common.io.{Fs, FsPath}
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.hadoop.common.conf.HadoopConf
 import org.apache.linkis.storage.{LineMetaData, LineRecord}
+import org.apache.linkis.storage.errorcode.LinkisStorageErrorCodeSummary.CONFIGURATION_NOT_READ
 import org.apache.linkis.storage.exception.StorageFatalException
 import org.apache.linkis.storage.resultset.{ResultSetFactory, ResultSetReader, ResultSetWriter}
 
@@ -180,8 +181,8 @@ object StorageUtils extends Logging {
     // TODO IO-client mode need return false
     if (!confPath.exists() || confPath.isFile) {
       throw new StorageFatalException(
-        50001,
-        "HDFS configuration was not read, please configure hadoop.config.dir or add env:HADOOP_CONF_DIR"
+        CONFIGURATION_NOT_READ.getErrorCode,
+        CONFIGURATION_NOT_READ.getErrorDesc
       )
     } else true
   }

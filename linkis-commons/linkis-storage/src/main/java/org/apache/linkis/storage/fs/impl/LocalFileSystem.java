@@ -443,6 +443,7 @@ public class LocalFileSystem extends FileSystem {
     throw new IOException("only owner can rename path " + path);
   }
 
+  @Override
   public void close() throws IOException {}
 
   /** Utils method start */
@@ -463,7 +464,8 @@ public class LocalFileSystem extends FileSystem {
       return true;
     }
     String pathGroup = attr.group().getName();
-    if ((pathGroup.equals(user) || group.contains(pathGroup))
+    LOG.debug("pathGroup: {}, group: {}, permissions: {}", pathGroup, group, permissions);
+    if ((pathGroup.equals(user) || (group != null && group.contains(pathGroup)))
         && permissions.contains(groupPermission)) {
       return true;
     } else if (permissions.contains(otherPermission)) {

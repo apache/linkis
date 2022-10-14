@@ -38,7 +38,7 @@
         SELECT * FROM linkis_cg_manager_linkis_resources WHERE id = #{id}
     </select>
 
-    <insert id="registerResource" parameterType="org.apache.linkis.manager.common.entity.persistence.PersistenceResource">
+    <insert id="registerResource" parameterType="org.apache.linkis.manager.common.entity.persistence.PersistenceResource" useGeneratedKeys="true"  keyProperty = "id" keyColumn = "id">
         INSERT INTO  linkis_cg_manager_linkis_resources VALUES
         (#{id},#{maxResource},#{minResource},#{usedResource},#{leftResource},#{expectedResource},#{lockedResource},#{resourceType},#{ticketId},now(),now(),#{updator},#{creator})
     </insert>

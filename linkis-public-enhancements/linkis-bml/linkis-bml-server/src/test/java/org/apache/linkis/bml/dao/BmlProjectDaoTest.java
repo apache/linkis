@@ -43,7 +43,6 @@ class BmlProjectDaoTest extends BaseDaoTest {
     bmlProject.setCreator("creCreatorUser");
     bmlProject.setEnabled(1);
     bmlProject.setCreateTime(new Date());
-    bmlProject.setId(1);
     bmlProjectDao.createNewProject(bmlProject);
     BmlProject bmlProjects = bmlProjectDao.getBmlProject("testName");
     assertTrue(bmlProjects != null);

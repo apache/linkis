@@ -50,8 +50,7 @@ public interface BmlProjectDao {
   void attachResourceAndProject(
       @Param("projectId") Integer projectId, @Param("resourceId") String resourceId);
 
-  Integer checkIfExists(
-      @Param("projectId") Integer projectId, @Param("resourceId") String resourceId);
+  int checkIfExists(@Param("projectId") Integer projectId, @Param("resourceId") String resourceId);
 
   void deleteAllPriv(@Param("projectId") Integer projectId);
 }

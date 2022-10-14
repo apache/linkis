@@ -140,7 +140,7 @@ public class UserIpConfigrationRestfulApi {
         } catch (ConfigurationException e) {
             return Message.error("Failed to check-user-creator,msg:" + e.getMessage());
         }
-        return Message.ok().data("result", result);
+        return Message.ok().data("exist", result);
     }
 
 

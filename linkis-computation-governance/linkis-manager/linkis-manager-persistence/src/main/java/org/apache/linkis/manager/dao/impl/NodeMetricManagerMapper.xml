@@ -20,22 +20,6 @@
 
 <mapper namespace="org.apache.linkis.manager.dao.NodeMetricManagerMapper">
 
-    <!-- 增 -->
-<!--    <sql id="addNodeMetrics">-->
-<!--        `service_instance_id`,`status`,`overload`,`heartbeat_msg`,`healthy`,`serviceInstance`,`update_time`,`create_time`-->
-<!--    </sql>-->
-
-<!--    <insert id="addNodeMetrics" useGeneratedKeys="true" keyProperty="id"-->
-<!--            parameterType="org.apache.linkis.manager.common.entity.persistence.PersistenceNodeMetrics">-->
-<!--        INSERT INTO  linkis_cg_manager_service_instance_metrics(<include refid="addNodeMetrics"/>)-->
-<!--        VALUES (#{serviceInstanceId},#{status},#{overload},#{heartBeatMsg},#{healthy},#{serviceInstance},#{updateTime},#{createTime})-->
-<!--    </insert>-->
-
-    <!-- 删除 -->
-<!--    <delete id="deleteNodeMetrics">-->
-<!--        DELETE FROM  linkis_cg_manager_service_instance_metrics where service_instance_id = #{serviceInstanceId}-->
-<!--    </delete>-->
-
 
     <!-- 获取 -->
     <resultMap id="PersistenceNodeMetrics"

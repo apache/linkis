@@ -18,7 +18,9 @@
 package org.apache.linkis.entrance.exception
 
 import org.apache.linkis.common.exception.ErrorException
+import org.apache.linkis.entrance.errorcode.EntranceErrorCodeSummary._
 
 case class SensitiveTablesCheckException(errorMsg: String) extends ErrorException(50079, errorMsg)
 
-case class DangerousGramsCheckException(errorMsg: String) extends ErrorException(50081, errorMsg)
+case class DangerousGramsCheckException(errorMsg: String)
+    extends ErrorException(JOB_HISTORY_FAILED_ID.getErrorCode, errorMsg)

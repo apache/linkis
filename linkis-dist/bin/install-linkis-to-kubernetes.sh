@@ -41,6 +41,7 @@ help() {
     echo "pull-install   pull and install linkis images"
     echo "install        pull linkis images"
     echo "pull           pull linkis images"
+    echo "reset          delete the test-helm cluster of kind"
     echo "help           print help info"
     echo ""
     echo "Params         Describe"
@@ -50,11 +51,11 @@ help() {
     echo "-t             tag name "
     echo ""
     echo "example:"
-    echo "./install-kubernetes.sh pull -mghcr.dockerproxy.com           pull image with ghcr.io"
-    echo "./install-kubernetes.sh -tlatest                             pull image with tag"
-    echo "./install-kubernetes.sh pull -mghcr.dockerproxy.com           pull image with ghcr.dockerproxy.com or ghcr.nju.edu.cn"
-    echo "./install-kubernetes.sh install -mghcr.dockerproxy.com        install linkis to kind and kubernetes"
-    echo "./install-kubernetes.sh pull-install -mghcr.dockerproxy.com   pull image and install linkis to kind and kubernetes"
+    echo "./install-linkis-to-kubernetes.sh pull -mghcr.dockerproxy.com           pull image with ghcr.io"
+    echo "./install-linkis-to-kubernetes.sh -tlatest                              pull image with tag"
+    echo "./install-linkis-to-kubernetes.sh pull -mghcr.dockerproxy.com           pull image with ghcr.dockerproxy.com or ghcr.nju.edu.cn"
+    echo "./install-linkis-to-kubernetes.sh install -l -mghcr.dockerproxy.com     install linkis to kind and kubernetes with ldh"
+    echo "./install-linkis-to-kubernetes.sh pull-install -mghcr.dockerproxy.com   pull image and install linkis to kind and kubernetes"
 }
 
 #pull the container image of the linkis
@@ -112,6 +113,9 @@ install(){
     display_pods
 }
 
+reset(){
+    kind delete clusters test-helm
+}
 
 
 check_docker(){
@@ -197,6 +201,10 @@ main(){
 
     if [ $COMMAND = "pull" ]; then
         pull
+    fi
+
+    if [ $COMMAND = "reset" ]; then
+        reset
     fi
 
     if [ $COMMAND = "help" ]; then

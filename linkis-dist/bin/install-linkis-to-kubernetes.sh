@@ -99,7 +99,7 @@ install_linkis(){
 }
 #display pods
 display_pods(){
-    kubectl get pods -a
+    kubectl get pods -A
 }
 
 install(){

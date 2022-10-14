@@ -51,7 +51,7 @@ help() {
     echo "-t             tag name "
     echo ""
     echo "example:"
-    echo "./install-linkis-to-kubernetes.sh pull -mghcr.dockerproxy.com           pull image with ghcr.io"
+    echo "./install-linkis-to-kubernetes.sh pull                                  pull image with ghcr.io"
     echo "./install-linkis-to-kubernetes.sh -tlatest                              pull image with tag"
     echo "./install-linkis-to-kubernetes.sh pull -mghcr.dockerproxy.com           pull image with ghcr.dockerproxy.com or ghcr.nju.edu.cn"
     echo "./install-linkis-to-kubernetes.sh install -l -mghcr.dockerproxy.com     install linkis to kind and kubernetes with ldh"

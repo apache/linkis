@@ -24,6 +24,7 @@ import org.apache.linkis.engineconn.core.executor.ExecutorManager
 import org.apache.linkis.engineplugin.spark.common.{Kind, SparkScala}
 import org.apache.linkis.engineplugin.spark.config.SparkConfiguration
 import org.apache.linkis.engineplugin.spark.entity.SparkEngineSession
+import org.apache.linkis.engineplugin.spark.errorcode.SparkErrorCodeSummary._
 import org.apache.linkis.engineplugin.spark.exception.{
   ApplicationAlreadyStoppedException,
   ExecuteError,
@@ -127,7 +128,7 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long)
         }
       }
     } else {
-      throw new SparkSessionNullException(40006, "sparkILoop is null")
+      throw new SparkSessionNullException(SPARK_IS_NULL.getErrorCode, SPARK_IS_NULL.getErrorDesc)
     }
     Utils.waitUntil(
       () => sparkILoopInited && sparkILoop.intp != null,
@@ -182,8 +183,8 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long)
     if (sparkContext.isStopped) {
       logger.error("Spark application has already stopped, please restart it.")
       throw new ApplicationAlreadyStoppedException(
-        40004,
-        "Spark application has already stopped, please restart it."
+        SPARK_STOPPED.getErrorCode,
+        SPARK_STOPPED.getErrorDesc
       )
     }
     executeCount += 1
@@ -236,7 +237,13 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long)
           } else {
             logger.error("No error message is captured, please see the detailed log")
           }
-          ErrorExecuteResponse(errorMsg, ExecuteError(40005, "execute sparkScala failed!"))
+          ErrorExecuteResponse(
+            errorMsg,
+            ExecuteError(
+              EXECUTE_SPARKSCALA_FAILED.getErrorCode,
+              EXECUTE_SPARKSCALA_FAILED.getErrorDesc
+            )
+          )
       }
     }
     // reset the java stdout

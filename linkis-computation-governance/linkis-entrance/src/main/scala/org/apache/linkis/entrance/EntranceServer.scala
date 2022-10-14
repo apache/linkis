@@ -20,6 +20,7 @@ package org.apache.linkis.entrance
 import org.apache.linkis.common.exception.{ErrorException, LinkisException, LinkisRuntimeException}
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.entrance.cs.CSEntranceHelper
+import org.apache.linkis.entrance.errorcode.EntranceErrorCodeSummary._
 import org.apache.linkis.entrance.exception.{EntranceErrorException, SubmitFailedException}
 import org.apache.linkis.entrance.execute.EntranceJob
 import org.apache.linkis.entrance.log.LogReader
@@ -69,8 +70,8 @@ abstract class EntranceServer extends Logging {
       .persist(jobRequest)
     if (null == jobRequest.getId || jobRequest.getId <= 0) {
       throw new EntranceErrorException(
-        20052,
-        "Persist jobRequest error, please submit again later(存储Job异常，请稍后重新提交任务)"
+        PERSIST_JOBREQUEST_ERROR.getErrorCode,
+        PERSIST_JOBREQUEST_ERROR.getErrorDesc
       )
     }
     logger.info(s"received a request,convert $jobRequest")
@@ -85,19 +86,15 @@ abstract class EntranceServer extends Logging {
         case error: ErrorException => error
         case t1: Throwable =>
           val exception = new EntranceErrorException(
-            20039,
-            "failed to analysis task ! the reason is :" + ExceptionUtils.getRootCauseMessage(
-              t
-            ) + "(解析task失败！原因：" + ExceptionUtils.getRootCauseMessage(t)
+            FAILED_ANALYSIS_TASK.getErrorCode,
+            FAILED_ANALYSIS_TASK.getErrorDesc + ExceptionUtils.getRootCauseMessage(t)
           )
           exception.initCause(t1)
           exception
         case _ =>
           new EntranceErrorException(
-            20039,
-            "failed to analysis task ! the reason is :" + ExceptionUtils.getRootCauseMessage(
-              t
-            ) + "(解析task失败！原因：" + ExceptionUtils.getRootCauseMessage(t)
+            FAILED_ANALYSIS_TASK.getErrorCode,
+            FAILED_ANALYSIS_TASK.getErrorDesc + ExceptionUtils.getRootCauseMessage(t)
           )
       }
       jobRequest match {
@@ -171,8 +168,8 @@ abstract class EntranceServer extends Logging {
         case e: LinkisRuntimeException => e
         case t: Throwable =>
           new SubmitFailedException(
-            30009,
-            "Submitting the query failed!(提交查询失败！)" + ExceptionUtils.getRootCauseMessage(t),
+            SUBMITTING_QUERY_FAILED.getErrorCode,
+            SUBMITTING_QUERY_FAILED.getErrorDesc + ExceptionUtils.getRootCauseMessage(t),
             t
           )
       }

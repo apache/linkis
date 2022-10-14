@@ -1,5 +1,4 @@
-## 参数变化 
-
+## 参数变化
 
 | 模块名(服务名)| 类型  |     参数名                                                | 默认值             | 描述                                                    |
 | ----------- | ----- | -------------------------------------------------------- | ---------------- | ------------------------------------------------------- |
@@ -8,7 +7,7 @@
 |cg-engineplugin | 新增  |   wds.linkis.trino.http.connectTimeout    | 60 | 连接Trino服务器的超时时间 |
 |cg-engineplugin | 新增  |   wds.linkis.trino.http.readTimeout    | 60 | 等待Trino服务器返回数据的超时时间 |
 |cg-engineplugin | 新增  |   wds.linkis.trino.resultSet.cache.max    | 512k | Trino结果集缓冲区大小 |
-|cg-engineplugin | 新增  |   wds.linkis.trino.url    | http://127.0.0.1:8080 | Trino服务器URL |
+|cg-engineplugin | 新增  |   wds.linkis.trino.url    | <http://127.0.0.1:8080> | Trino服务器URL |
 |cg-engineplugin | 新增  |   wds.linkis.trino.user    | null | 用于连接Trino查询服务的用户名 |
 |cg-engineplugin | 新增  |   wds.linkis.trino.password    | null | 用于连接Trino查询服务的密码 |
 |cg-engineplugin | 新增  |   wds.linkis.trino.passwordCmd    | null | 用于连接Trino查询服务的密码回调命令 |
@@ -23,6 +22,7 @@
 |cg-engineplugin | 新增  |   wds.linkis.trino.ssl.truststore.password    | null | truststore密码 |
 
 ## 特性说明
+
 | 模块名(服务名)| 类型   | 特性                                                    |
 | ----------- | ---------------- | ------------------------------------------------------- |
 |linkis-metadata-query-service-mysql | 新增  |  基于mysql 模块融合dm，greenplum，kingbase，oracle，postgres，sqlserver ，协议和sql 区分开，metadata-query 反射多个数据源，基于mysql模块扩展，融合为一个模块。|

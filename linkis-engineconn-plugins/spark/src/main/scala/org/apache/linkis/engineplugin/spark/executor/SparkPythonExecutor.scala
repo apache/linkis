@@ -37,6 +37,7 @@ import org.apache.linkis.storage.resultset.ResultSetWriter
 import org.apache.commons.exec.CommandLine
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang3.{RandomStringUtils, StringUtils}
+import org.apache.spark.SparkConf
 import org.apache.spark.api.java.JavaSparkContext
 import org.apache.spark.sql.{DataFrame, SparkSession}
 import org.apache.spark.sql.execution.datasources.csv.UDF
@@ -89,9 +90,9 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
     }
   }
 
-  def getSparkConf: Unit = sc.getConf
+  def getSparkConf: SparkConf = sc.getConf
 
-  def getJavaSparkContext: Unit = new JavaSparkContext(sc)
+  def getJavaSparkContext: JavaSparkContext = new JavaSparkContext(sc)
 
   def getSparkSession: Object = if (sparkSession != null) sparkSession
   else () => throw new IllegalAccessException("not supported keyword spark in spark1.x versions")
@@ -253,12 +254,12 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
       lineOutputStream.ready()
       //      info("Spark scala executor reset new engineExecutorContext!")
     }
-    lazyInitGageWay()
+    lazyInitGateway()
     this.jobGroup = jobGroup
     executeLine(code)
   }
 
-  def lazyInitGageWay(): Unit = {
+  def lazyInitGateway(): Unit = {
     if (process == null) {
       Utils.tryThrow(initGateway) { t =>
         {
@@ -287,13 +288,13 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
     Await.result(promise.future, Duration.Inf)
     lineOutputStream.flush()
     val outStr = lineOutputStream.toString()
-    if (outStr.length > 0) {
+    if (outStr.nonEmpty) {
       val output = Utils.tryQuietly(
         ResultSetWriter
           .getRecordByRes(outStr, SparkConfiguration.SPARK_CONSOLE_OUTPUT_NUM.getValue)
       )
       val res = if (output != null) output.map(x => x.toString).toList.mkString("\n") else ""
-      if (res.length > 0) {
+      if (res.nonEmpty) {
         engineExecutionContext.appendStdout(s"result is $res")
       }
     }

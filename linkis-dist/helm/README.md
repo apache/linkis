@@ -1,37 +1,38 @@
-Helm charts for Linkis 
+Helm charts for Linkis
 ==========
 
 [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
 
 # Pre-requisites
+
 > Note: KinD is required only for development and testing.
+
 * [Kubernetes](https://kubernetes.io/docs/setup/), minimum version v1.21.0+
 * [Helm](https://helm.sh/docs/intro/install/), minimum version v3.0.0+.
 * [KinD](https://kind.sigs.k8s.io/docs/user/quick-start/), minimum version v0.11.0+.
 
-
 # Installation
 
 ```shell
-# Deploy Apache Linkis on kubernetes, kubernetes 
+# Deploy Apache Linkis on kubernetes, kubernetes
 # namespace is 'linkis', helm release is 'linkis-demo'
 
 # Option 1, use build-in script
 $> ./scripts/install-charts.sh linkis linkis-demo
 
 # Option 2, use `helm` command line
-$> helm install --create-namespace -f ./charts/linkis/values.yaml --namespace linkis linkis-demo ./charts/linkis 
+$> helm install --create-namespace -f ./charts/linkis/values.yaml --namespace linkis linkis-demo ./charts/linkis
 ```
 
 # Uninstallation
 
 ```shell
-$> helm delete --namespace linkis linkis-demo 
+$> helm delete --namespace linkis linkis-demo
 ```
 
 # For developers
 
-We recommend using [KinD](https://kind.sigs.k8s.io/docs/user/quick-start/) for development and testing. 
+We recommend using [KinD](https://kind.sigs.k8s.io/docs/user/quick-start/) for development and testing.
 KinD is a tool for running local Kubernetes clusters using Docker container as “Kubernetes nodes”.
 
 Follow the link below to install the KinD in your development environment.
@@ -39,23 +40,24 @@ Follow the link below to install the KinD in your development environment.
 - [KinD Installation](https://kind.sigs.k8s.io/docs/user/quick-start/#installation)
 
 ## Setup a local cluster for test
+
 Once after you have installed KinD, you can run the following command to setup a local kubernetes cluster and deploy an Apache Linkis cluster on it.
 
 ```shell
 # It will deploy a MySQL instance in the KinD cluster,
-# then deploy an Apache Linkis cluster, which will use 
-# the MySQL instances above 
+# then deploy an Apache Linkis cluster, which will use
+# the MySQL instances above
 $> sh ./scripts/create-kind-cluster.sh \
    && sh ./scripts/install-mysql.sh \
    && sh ./scripts/install-charts.sh
-   
+
 Creating cluster "test-helm" ...
- ✓ Ensuring node image (kindest/node:v1.21.1) 🖼 
+ ✓ Ensuring node image (kindest/node:v1.21.1) 🖼
  ✓ Preparing nodes 📦  
- ✓ Writing configuration 📜 
- ✓ Starting control-plane 🕹️ 
- ✓ Installing CNI 🔌 
- ✓ Installing StorageClass 💾 
+ ✓ Writing configuration 📜
+ ✓ Starting control-plane 🕹️
+ ✓ Installing CNI 🔌
+ ✓ Installing StorageClass 💾
 Set kubectl context to "kind-test-helm"
 You can now use your cluster with:
 
@@ -94,7 +96,9 @@ Enjoy!
 ```
 
 ## Enable port-forward for jvm remote debug
+
 > INFO: [Understand how port-forward works.](https://kubernetes.io/docs/tasks/access-application-cluster/port-forward-access-application-cluster/)
+
 ```shell
 # start port-forward for all servers
 $> ./scripts/remote-debug-proxy.sh start
@@ -110,12 +114,12 @@ $> ./scripts/remote-debug-proxy.sh start
 - starting port-forwad for [cg-engineconnmanager] with mapping [local->5009:5005->pod] ...
 - starting port-forwad for [cg-engineplugin] with mapping [local->5010:5005->pod] ...
 
-# Once the port-forward setup, you can configure the jvm remote debugger of you IDE 
+# Once the port-forward setup, you can configure the jvm remote debugger of you IDE
 # to connect to the local port, which is mapping to a backend server port, and start
 # the remote debug process.
 
 # list exists port-forward instances
-$> sh ./scripts/remote-debug-proxy.sh list 
+$> sh ./scripts/remote-debug-proxy.sh list
 hadoop            65439   0.0  0.1  5054328  30344 s013  S     8:01PM   0:00.13 kubectl port-forward -n linkis pod/linkis-demo-cg-engineplugin-548b8cf695-g4hnp 5010:5005 --address=0.0.0.0
 hadoop            65437   0.0  0.1  5054596  30816 s013  S     8:01PM   0:00.13 kubectl port-forward -n linkis pod/linkis-demo-cg-engineconnmanager-868d8d4d6f-dqt7d 5009:5005 --address=0.0.0.0
 hadoop            65435   0.0  0.1  5051256  31128 s013  S     8:01PM   0:00.14 kubectl port-forward -n linkis pod/linkis-demo-cg-entrance-7dc7b477d4-87fdt 5008:5005 --address=0.0.0.0
@@ -145,10 +149,12 @@ $> sh ./scripts/remote-debug-proxy.sh stop
 ```
 
 ## Enter into a backend server container
+
 ```shell
 # Enter into the mg-gateway and submit a job with linkis-cli
 $> sh ./scripts/login-pod.sh mg-gateway
-``` 
+```
+
 ```shell
 # in the mg-gateway container
 bash-4.2$ ./bin/./linkis-cli -engineType shell-1 -codeType shell -code "echo \"hello\" "  -submitUser hadoop -proxyUser hadoop
@@ -167,7 +173,7 @@ ExecId:exec_id018016linkis-cg-entrance10.244.0.13:9104LINKISCLI_hadoop_shell_0
 2022-07-31 16:24:24.024 INFO Program is substituting variables for you
 2022-07-31 16:24:24.024 INFO Variables substitution ended successfully
 2022-07-31 16:24:24.024 WARN The code you submit will not be limited by the limit
-Job with jobId : 1 and execID : LINKISCLI_hadoop_shell_0 submitted 
+Job with jobId : 1 and execID : LINKISCLI_hadoop_shell_0 submitted
 2022-07-31 16:24:25.024 INFO You have submitted a new job, script code (after variable substitution) is
 ************************************SCRIPT CODE************************************
 echo "hello"
@@ -181,17 +187,20 @@ Your job is being scheduled by orchestrator.
 ```
 
 ## Destroy the local cluster
+
 ```shell
 # Option 1: delete the helm release only
-$> helm delete --namespace linkis linkis-demo 
+$> helm delete --namespace linkis linkis-demo
 
 # Option 2: destroy the KinD cluster, no need to delete
 # the helm release first
 $> kind delete cluster --name test-helm
 ```
 
-## Test with LDH 
+## Test with LDH
+
 We introduced a new image, called LDH (Linkis's hadoop all-in-one image), which provides a pseudo-distributed hadoop cluster for testing quickly. This image contains the following hadoop components, the default mode for engines in LDH is on-yarn.
+
 * Hadoop 2.7.2 , including HDFS and YARN
 * Hive 2.3.3
 * Spark 2.4.3
@@ -221,7 +230,7 @@ $> sh ./scripts/create-kind-cluster.sh \
    && sh ./scripts/install-mysql.sh \
    && sh ./scripts/install-ldh.sh \
    && sh ./scripts/install-charts.sh
-   
+
 ...
 
 # take a try

@@ -52,6 +52,7 @@ import java.util.*;
         produces = {"application/json"})
 @RestController
 public class ECResourceInfoRestfulApi {
+
     @Autowired private ECResourceInfoService ecResourceInfoService;
 
     @ApiOperation(value = "get", notes = "get engineconn info ", response = Message.class)

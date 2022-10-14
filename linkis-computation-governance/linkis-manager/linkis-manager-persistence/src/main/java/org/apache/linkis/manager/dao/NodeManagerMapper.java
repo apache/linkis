@@ -67,10 +67,10 @@ public interface NodeManagerMapper {
   void updateNodeInstanceOverload(@Param("persistenceNode") PersistenceNode persistenceNode);
 
   @Select("select id from  linkis_cg_manager_service_instance where instance = #{instance}")
-  int getNodeInstanceId(@Param("instance") String instance);
+  Integer getNodeInstanceId(@Param("instance") String instance);
 
   @Select("select id from  linkis_cg_manager_service_instance where instance = #{instance}")
-  int getIdByInstance(@Param("instance") String instance);
+  Integer getIdByInstance(@Param("instance") String instance);
 
   @Select(
       "<script>"

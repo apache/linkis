@@ -37,7 +37,7 @@ object DWCArgumentsParser {
     val keyValueRegex = "([^=]+)=(.+)".r
     var i = 0
     val optionParser = new DWCArgumentsParser
-    while (i < args.length) {
+    while (i < args.length - 1) {
       args(i) match {
         case DWC_CONF | SPRING_CONF =>
           args(i + 1) match {

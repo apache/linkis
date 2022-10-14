@@ -17,21 +17,23 @@
 
 import api from '@/common/service/api';
 
+const dataSourceTypeBaseUrl = '/basedata-manager/datasource-type'
+
 const getList = (params)=> {
   console.log(params)
-  return api.fetch('/basedata_manager/datasource_type', params , 'get')
+  return api.fetch(dataSourceTypeBaseUrl, params , 'get')
 }
 
 const add = (data)=> {
-  return api.fetch('/basedata_manager/datasource_type', data , 'post')
+  return api.fetch(dataSourceTypeBaseUrl, data , 'post')
 }
 
 const edit = (data)=> {
-  return api.fetch('/basedata_manager/datasource_type', data , 'put')
+  return api.fetch(dataSourceTypeBaseUrl, data , 'put')
 }
 
 const del = (params)=> {
-  return api.fetch(`/basedata_manager/datasource_type/${params.id}`,'delete')
+  return api.fetch(`${dataSourceTypeBaseUrl}/${params.id}`,'delete')
 }
 
 export{

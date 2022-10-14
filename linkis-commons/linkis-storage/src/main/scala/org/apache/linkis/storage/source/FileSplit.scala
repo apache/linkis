@@ -63,7 +63,7 @@ class FileSplit(
   }
 
   def addParams(key: String, value: String): Unit = {
-    this.params.asScala += key -> value
+    this.params.put(key, value)
   }
 
   def `while`[M](m: MetaData => M, r: Record => Unit): M = {

@@ -50,8 +50,32 @@ class PythonCodeParseTest {
         |        .getOrCreate()
         |    return spark
         |""".stripMargin
-    val strings = parser.parse(pythonCode)
+    val strings = parser.parsePythonCode(pythonCode)
     assertTrue(strings.length == 8)
+  }
+
+  @Test
+  @DisplayName("testParsePythonWithDecorator")
+  def testParsePythonWithDecorator(): Unit = {
+    val parser = new PythonCodeParser
+    val pythonCode: String =
+      """
+        |import time
+        |def timmer(func):
+        |    def wrapper(*args, **kwargs):
+        |        start = time.time()
+        |        func(*args, **kwargs)
+        |        stop = time.time()
+        |        print('foo运行时长:', stop - start)
+        |    return wrapper
+        |@timmer
+        |def foo(x, y, z):
+        |    time.sleep(3)
+        |    print(f'x={x}, y={y}, z={z}')
+        |foo(1,2,3)
+        """.stripMargin
+    val strings = parser.parsePythonCode(pythonCode)
+    assertTrue(strings.length == 4)
   }
 
 }

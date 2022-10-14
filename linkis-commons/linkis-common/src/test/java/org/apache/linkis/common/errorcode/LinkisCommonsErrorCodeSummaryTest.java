@@ -45,31 +45,31 @@ class LinkisCommonsErrorCodeSummaryTest {
   @ParameterizedTest
   @EnumSource(LinkisCommonsErrorCodeSummary.class)
   void testGetErrorDesc(LinkisCommonsErrorCodeSummary linkisCommonsErrorCodeSummary) {
-    assertEquals("引擎启动失败", linkisCommonsErrorCodeSummary.getErrorDesc());
+    assertEquals("Engine start failed(引擎启动失败)", linkisCommonsErrorCodeSummary.getErrorDesc());
   }
 
   @ParameterizedTest
   @EnumSource(LinkisCommonsErrorCodeSummary.class)
   void testSetErrorDesc(LinkisCommonsErrorCodeSummary linkisCommonsErrorCodeSummary) {
-    assertEquals("引擎启动失败", linkisCommonsErrorCodeSummary.getErrorDesc());
+    assertEquals("Engine start failed(引擎启动失败)", linkisCommonsErrorCodeSummary.getErrorDesc());
     linkisCommonsErrorCodeSummary.setErrorDesc("testSetErrorDesc");
     assertEquals("testSetErrorDesc", linkisCommonsErrorCodeSummary.getErrorDesc());
-    linkisCommonsErrorCodeSummary.setErrorDesc("引擎启动失败");
+    linkisCommonsErrorCodeSummary.setErrorDesc("Engine start failed(引擎启动失败)");
   }
 
   @ParameterizedTest
   @EnumSource(LinkisCommonsErrorCodeSummary.class)
   void testGetComment(LinkisCommonsErrorCodeSummary linkisCommonsErrorCodeSummary) {
-    assertEquals("引擎启动失败", linkisCommonsErrorCodeSummary.getComment());
+    assertEquals("Engine start failed(引擎启动失败)", linkisCommonsErrorCodeSummary.getComment());
   }
 
   @ParameterizedTest
   @EnumSource(LinkisCommonsErrorCodeSummary.class)
   void testSetComment(LinkisCommonsErrorCodeSummary linkisCommonsErrorCodeSummary) {
-    assertEquals("引擎启动失败", linkisCommonsErrorCodeSummary.getComment());
+    assertEquals("Engine start failed(引擎启动失败)", linkisCommonsErrorCodeSummary.getComment());
     linkisCommonsErrorCodeSummary.setComment("testSetComment");
     assertEquals("testSetComment", linkisCommonsErrorCodeSummary.getComment());
-    linkisCommonsErrorCodeSummary.setComment("引擎启动失败");
+    linkisCommonsErrorCodeSummary.setComment("Engine start failed(引擎启动失败)");
   }
 
   @ParameterizedTest
@@ -95,7 +95,9 @@ class LinkisCommonsErrorCodeSummaryTest {
     assertEquals(
         "errorCode: 0, errorDesc:testSetErrorDesc", linkisCommonsErrorCodeSummary.toString());
     linkisCommonsErrorCodeSummary.setErrorCode(11000);
-    linkisCommonsErrorCodeSummary.setErrorDesc("引擎启动失败");
-    assertEquals("errorCode: 11000, errorDesc:引擎启动失败", linkisCommonsErrorCodeSummary.toString());
+    linkisCommonsErrorCodeSummary.setErrorDesc("Engine start failed(引擎启动失败)");
+    assertEquals(
+        "errorCode: 11000, errorDesc:Engine start failed(引擎启动失败)",
+        linkisCommonsErrorCodeSummary.toString());
   }
 }

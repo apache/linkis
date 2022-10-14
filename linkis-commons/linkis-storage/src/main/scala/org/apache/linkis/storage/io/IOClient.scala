@@ -18,6 +18,7 @@
 package org.apache.linkis.storage.io
 
 import org.apache.linkis.storage.domain.MethodEntity
+import org.apache.linkis.storage.errorcode.LinkisStorageErrorCodeSummary.MUST_REGISTER_TOC
 import org.apache.linkis.storage.exception.StorageErrorException
 
 import java.util.UUID
@@ -50,8 +51,8 @@ object IOClient {
   def getIOClient(): IOClient = {
     if (ioClient == null) {
       throw new StorageErrorException(
-        52004,
-        "You must register IOClient before you can use proxy mode.(必须先注册IOClient，才能使用代理模式)"
+        MUST_REGISTER_TOC.getErrorCode,
+        MUST_REGISTER_TOC.getErrorDesc
       )
     }
     ioClient

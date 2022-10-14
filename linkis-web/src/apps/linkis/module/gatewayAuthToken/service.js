@@ -17,21 +17,23 @@
 
 import api from '@/common/service/api';
 
+const authTokenBaseUrl = '/basedata-manager/gateway-auth-token'
+
 const getList = (params)=> {
   console.log(params)
-  return api.fetch('/basedata_manager/gateway_auth_token', params , 'get')
+  return api.fetch(authTokenBaseUrl, params , 'get')
 }
 
 const add = (data)=> {
-  return api.fetch('/basedata_manager/gateway_auth_token', data , 'post')
+  return api.fetch(authTokenBaseUrl, data , 'post')
 }
 
 const edit = (data)=> {
-  return api.fetch('/basedata_manager/gateway_auth_token', data , 'put')
+  return api.fetch(authTokenBaseUrl, data , 'put')
 }
 
 const del = (params)=> {
-  return api.fetch(`/basedata_manager/gateway_auth_token/${params.id}`,'delete')
+  return api.fetch(`${authTokenBaseUrl}/${params.id}`,'delete')
 }
 
 export{

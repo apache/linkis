@@ -19,6 +19,8 @@ package org.apache.linkis.manager;
 
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 
+import org.springframework.context.annotation.*;
+
 import org.mybatis.spring.annotation.MapperScan;
 
 @EnableAutoConfiguration

@@ -25,11 +25,9 @@ import org.apache.linkis.engineconn.once.executor.{
   OperableOnceExecutor
 }
 import org.apache.linkis.engineconnplugin.seatunnel.client.LinkisSeatunnelSparkClient
+import org.apache.linkis.engineconnplugin.seatunnel.client.errorcode.SeatunnelErrorCodeSummary.EXEC_SPARK_CODE_ERROR
 import org.apache.linkis.engineconnplugin.seatunnel.client.exception.JobExecutionException
-import org.apache.linkis.engineconnplugin.seatunnel.config.{
-  SeatunnelEnvConfiguration,
-  SeatunnelSparkEnvConfiguration
-}
+import org.apache.linkis.engineconnplugin.seatunnel.config.SeatunnelEnvConfiguration
 import org.apache.linkis.engineconnplugin.seatunnel.config.SeatunnelSparkEnvConfiguration._
 import org.apache.linkis.engineconnplugin.seatunnel.context.SeatunnelEngineConnContext
 import org.apache.linkis.engineconnplugin.seatunnel.util.SeatunnelUtils._
@@ -75,7 +73,7 @@ class SeatunnelSparkOnceCodeExecutor(
           setResponse(
             ErrorExecuteResponse(
               "Run code failed!",
-              new JobExecutionException("Exec Seatunnel Spark Code Error")
+              new JobExecutionException(EXEC_SPARK_CODE_ERROR.getErrorDesc)
             )
           )
           tryFailed()

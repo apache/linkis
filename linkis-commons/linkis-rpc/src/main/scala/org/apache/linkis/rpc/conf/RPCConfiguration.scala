@@ -51,6 +51,9 @@ object RPCConfiguration {
   val BDP_RPC_SENDER_ASYN_QUEUE_CAPACITY: CommonVars[Int] =
     CommonVars("wds.linkis.rpc.sender.asyn.queue.size.max", 2000)
 
+  val PUBLIC_SERVICE_APP_PREFIX: String =
+    CommonVars("wds.linkis.gateway.conf.publicservice.name", "linkis-ps-").getValue
+
   val ENABLE_PUBLIC_SERVICE: CommonVars[Boolean] =
     CommonVars("wds.linkis.gateway.conf.enable.publicservice", true)
 
@@ -62,6 +65,19 @@ object RPCConfiguration {
     "cs,contextservice,data-source-manager,metadataquery,metadatamanager,query,jobhistory,application,configuration,filesystem,udf,variable,microservice,errorcode,bml,datasource,basedata-manager"
   ).getValue.split(",")
 
+  val COMPUTATION_GOVERNANCE_APP_PREFIX: String =
+    CommonVars("linkis.gateway.conf.app.cg.prefix", "linkis-cg-").getValue
+
+  val LINKIS_MANAGER_SERVICE_MERGED: CommonVars[Boolean] =
+    CommonVars("linkis.gateway.conf.app.merge.cg.manager", true)
+
+  val LINKIS_MANAGER_APPLICATION_NAME: CommonVars[String] =
+    CommonVars("linkis.gateway.conf.app.cg.manager.name", "linkis-cg-linkismanager")
+
+  val LINKIS_MANAGER_SERVICE_LIST: Array[String] =
+    CommonVars("linkis.gateway.conf.app.cg.manager.list", "linkisManager,engineplugin").getValue
+      .split(",")
+
   val METADATAQUERY_SERVICE_APPLICATION_NAME: CommonVars[String] =
     CommonVars("wds.linkis.gateway.conf.publicservice.name", "linkis-ps-metadataquery")
 
@@ -69,9 +85,6 @@ object RPCConfiguration {
     "wds.linkis.gateway.conf.metadataquery.list",
     "metadatamanager,metadataquery"
   ).getValue.split(",")
-
-  val PUBLIC_SERVICE_APP_PREFIX: String =
-    CommonVars("wds.linkis.gateway.conf.publicservice.name", "linkis-ps-").getValue
 
   val BDP_RPC_INSTANCE_ALIAS_SERVICE_REFRESH_INTERVAL: CommonVars[TimeType] =
     CommonVars("wds.linkis.rpc.instancealias.refresh.interval", new TimeType("3s"))

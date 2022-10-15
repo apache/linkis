@@ -1,6 +1,5 @@
 ## linkis-storage 配置
 
-
 | 模块名(服务名) | 参数名 | 默认值 | 描述 | 是否引用|
 | -------- | -------- | ----- |----- |  -----   |
 |linkis-storage|wds.linkis.storage.proxy.user| | storage.proxy.user |true|
@@ -16,7 +15,7 @@
 |linkis-storage|wds.linkis.storage.is.share.node|true |share.node|true|
 |linkis-storage|wds.linkis.storage.enable.io.proxy|false| proxy |true|
 |linkis-storage|wds.linkis.storage.io.user|root |io.user |true|
-|linkis-storage|wds.linkis.storage.io.fs.num| 1000 * 60 * 10   |fs.num  |true|
+|linkis-storage|wds.linkis.storage.io.fs.num| 1000 *60* 10   |fs.num  |true|
 |linkis-storage|wds.linkis.storage.io.read.fetch.size|  100k |fetch.size |true|
 |linkis-storage|wds.linkis.storage.io.write.cache.size |64k | cache.size  |true|
 |linkis-storage|wds.linkis.storage.io.default.creator|  IDE| default.creator |true|
@@ -30,6 +29,3 @@
 |linkis-storage|wds.linkis.hdfs.rest.errs|  |rest.errs|true|
 |linkis-storage|wds.linkis.resultset.row.max.str | 2m  | max.str |true|
 |linkis-storage|wds.linkis.storage.file.type | dolphin,sql,scala,py,hql,python,out,log,text,sh,jdbc,ngql,psql,fql,tsql | file.type |true|
-
-
-

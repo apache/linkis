@@ -9,7 +9,7 @@
 |linkis-common|wds.linkis.prometheus.enable|false|prometheus.enable|true|
 |linkis-common|wds.linkis.prometheus.endpoint| /actuator/prometheus|prometheus.endpoint  |true|
 |linkis-common|wds.linkis.home|false| test.mode  |true|
-|linkis-common|wds.linkis.gateway.url|http://127.0.0.1:9001/|gateway.url|true|
+|linkis-common|wds.linkis.gateway.url|<http://127.0.0.1:9001/>|gateway.url|true|
 |linkis-common|wds.linkis.reflect.scan.package| org.apache.linkis,com.webank.wedatasphere |scan.package  |true|
 |linkis-common|wds.linkis.console.configuration.application.name|linkis-ps-configuration|configuration.application.name|true|
 |linkis-common|wds.linkis.console.variable.application.name|linkis-ps-publicservice|variable.application.name|true|

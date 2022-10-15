@@ -25,6 +25,8 @@ import org.apache.linkis.engineconn.executor.entity.LabelExecutor
 import org.apache.linkis.engineplugin.hive.common.HiveUtils
 import org.apache.linkis.engineplugin.hive.conf.HiveEngineConfiguration
 import org.apache.linkis.engineplugin.hive.entity.HiveSession
+import org.apache.linkis.engineplugin.hive.errorcode.HiveErrorCodeSummary.CREATE_HIVE_EXECUTOR_ERROR
+import org.apache.linkis.engineplugin.hive.errorcode.HiveErrorCodeSummary.HIVE_EXEC_JAR_ERROR
 import org.apache.linkis.engineplugin.hive.exception.HiveSessionStartFailedException
 import org.apache.linkis.engineplugin.hive.executor.HiveEngineConnExecutor
 import org.apache.linkis.hadoop.common.utils.HDFSUtils
@@ -62,7 +64,10 @@ class HiveEngineConnFactory extends ComputationSingleExecutorEngineConnFactory w
           hiveSession.baos
         )
       case _ =>
-        throw HiveSessionStartFailedException(40012, "Failed to create hive executor")
+        throw HiveSessionStartFailedException(
+          CREATE_HIVE_EXECUTOR_ERROR.getErrorCode,
+          CREATE_HIVE_EXECUTOR_ERROR.getErrorDesc
+        )
     }
   }
 
@@ -77,8 +82,8 @@ class HiveEngineConnFactory extends ComputationSingleExecutorEngineConnFactory w
         .jarOfClass(classOf[Driver])
         .getOrElse(
           throw HiveSessionStartFailedException(
-            40012,
-            "cannot find hive-exec.jar, start session failed!"
+            HIVE_EXEC_JAR_ERROR.getErrorCode,
+            HIVE_EXEC_JAR_ERROR.getErrorDesc
           )
         )
     )

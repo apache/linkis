@@ -43,9 +43,9 @@ class JobTimeoutManager extends Logging {
 
   def add(jobKey: String, job: EntranceJob): Unit = {
     logger.info(s"Adding timeout job: ${job.getId()}")
-    if (!timeoutJobByName.asScala.contains(jobKey)) {
+    if (!timeoutJobByName.containsKey(jobKey)) {
       synchronized {
-        if (!timeoutJobByName.asScala.contains(jobKey)) {
+        if (!timeoutJobByName.containsKey(jobKey)) {
           timeoutJobByName.put(jobKey, job)
         }
       }
@@ -65,7 +65,7 @@ class JobTimeoutManager extends Logging {
   }
 
   def jobExist(jobKey: String): Boolean = {
-    timeoutJobByName.asScala.contains(jobKey)
+    timeoutJobByName.containsKey(jobKey)
   }
 
   def jobCompleteDelete(jobkey: String): Unit = {
@@ -154,9 +154,9 @@ object JobTimeoutManager {
   // If the timeout label set by the user is invalid, execution is not allowed
   def checkTimeoutLabel(labels: util.Map[String, Label[_]]): Unit = {
     val jobQueuingTimeoutLabel =
-      labels.asScala.getOrElse(LabelKeyConstant.JOB_QUEUING_TIMEOUT_KEY, null)
+      labels.getOrDefault(LabelKeyConstant.JOB_QUEUING_TIMEOUT_KEY, null)
     val jobRunningTimeoutLabel =
-      labels.asScala.getOrElse(LabelKeyConstant.JOB_RUNNING_TIMEOUT_KEY, null)
+      labels.getOrDefault(LabelKeyConstant.JOB_RUNNING_TIMEOUT_KEY, null)
     val posNumPattern = "^[0-9]+$"
     if (
         (null != jobQueuingTimeoutLabel && !jobQueuingTimeoutLabel.getStringValue.matches(

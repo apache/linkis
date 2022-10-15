@@ -18,6 +18,11 @@
 package org.apache.linkis.httpclient.exception
 
 import org.apache.linkis.common.exception.ErrorException
+import org.apache.linkis.httpclient.errorcode.LinkisHttpclientErrorCodeSummary.MESSAGE_PARSE_EXCEPTION
+import org.apache.linkis.httpclient.errorcode.LinkisHttpclientErrorCodeSummary.METHOD_NOT_SUPPORT_EXCEPTION
 
-class HttpMessageParseException(errorDesc: String) extends ErrorException(10900, errorDesc)
-class HttpMethodNotSupportException(errorDesc: String) extends ErrorException(10902, errorDesc)
+class HttpMessageParseException(errorDesc: String)
+    extends ErrorException(MESSAGE_PARSE_EXCEPTION.getErrorCode, errorDesc)
+
+class HttpMethodNotSupportException(errorDesc: String)
+    extends ErrorException(METHOD_NOT_SUPPORT_EXCEPTION.getErrorCode, errorDesc)

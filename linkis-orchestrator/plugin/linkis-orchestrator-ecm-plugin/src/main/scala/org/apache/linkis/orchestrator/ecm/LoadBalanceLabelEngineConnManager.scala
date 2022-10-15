@@ -233,7 +233,7 @@ class LoadBalanceLabelEngineConnManager extends ComputationEngineConnManager wit
     getMarkCache()
       .values()
       .asScala
-      .foreach(_.asScala.foreach(s => instances.asJava.add(s.getInstance)))
+      .foreach(_.asScala.foreach(s => instances.append(s.getInstance)))
     instances.toArray
   }
 

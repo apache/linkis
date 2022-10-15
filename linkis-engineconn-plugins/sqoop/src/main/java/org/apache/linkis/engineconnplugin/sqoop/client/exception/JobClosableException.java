@@ -19,18 +19,18 @@ package org.apache.linkis.engineconnplugin.sqoop.client.exception;
 
 import org.apache.linkis.common.exception.ErrorException;
 
+import static org.apache.linkis.engineconnplugin.sqoop.client.errorcode.SqoopErrorCodeSummary.ERROR_IN_CLOSING_ID;
+
 /** Exception in closing/destroying the job */
 public class JobClosableException extends ErrorException {
   private static final long serialVersionUID = 1L;
 
-  public static final int ERROR_CODE = 16025;
-
   public JobClosableException(String message) {
-    super(ERROR_CODE, message);
+    super(ERROR_IN_CLOSING_ID.getErrorCode(), message);
   }
 
   public JobClosableException(String message, Throwable e) {
-    super(ERROR_CODE, message);
+    super(ERROR_IN_CLOSING_ID.getErrorCode(), message);
     this.initCause(e);
   }
 }

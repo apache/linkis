@@ -20,6 +20,7 @@ package org.apache.linkis.entrance.execute
 import org.apache.linkis.common.exception.WarnException
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.entrance.conf.EntranceConfiguration
+import org.apache.linkis.entrance.errorcode.EntranceErrorCodeSummary._
 import org.apache.linkis.entrance.exception.EntranceErrorException
 import org.apache.linkis.entrance.job.EntranceExecutionJob
 import org.apache.linkis.governance.common.entity.job.JobRequest
@@ -44,16 +45,6 @@ abstract class EntranceExecutorManager(groupFactory: GroupFactory)
     if (null != executor) {
       executor.close()
     }
-  }
-
-  protected def createMarkReq(jobReq: JobRequest): MarkReq = {
-    val markReq = new MarkReq
-    markReq.setCreateService(EntranceConfiguration.DEFAULT_CREATE_SERVICE.getValue)
-    // todo get default config from db
-    markReq.setProperties(jobReq.getParams)
-    markReq.setUser(jobReq.getExecuteUser)
-    markReq.setLabels(LabelUtils.labelsToMap(jobReq.getLabels))
-    markReq
   }
 
   override def askExecutor(schedulerEvent: SchedulerEvent): Option[Executor] =
@@ -109,11 +100,8 @@ abstract class EntranceExecutorManager(groupFactory: GroupFactory)
       case job: EntranceJob =>
         job.getJobRequest match {
           case jobRequest: JobRequest =>
-            // CreateMarkReq
-            val markReq = createMarkReq(jobRequest)
-            // getMark
             val entranceEntranceExecutor =
-              new DefaultEntranceExecutor(idGenerator.incrementAndGet(), markReq, this)
+              new DefaultEntranceExecutor(idGenerator.incrementAndGet())
             // getEngineConn Executor
             job.getLogListener.foreach(
               _.onLogUpdate(job, "Your job is being scheduled by orchestrator.")
@@ -128,14 +116,14 @@ abstract class EntranceExecutorManager(groupFactory: GroupFactory)
             entranceEntranceExecutor
           case _ =>
             throw new EntranceErrorException(
-              20001,
-              "Task is not requestPersistTask, cannot to create Executor"
+              NOT_CREATE_EXECUTOR.getErrorCode,
+              NOT_CREATE_EXECUTOR.getErrorDesc
             )
         }
       case _ =>
         throw new EntranceErrorException(
-          20001,
-          "Task is not EntranceJob, cannot to create Executor"
+          ENTRA_NOT_CREATE_EXECUTOR.getErrorCode,
+          ENTRA_NOT_CREATE_EXECUTOR.getErrorDesc
         )
     }
 

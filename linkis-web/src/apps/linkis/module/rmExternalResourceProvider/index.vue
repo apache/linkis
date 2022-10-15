@@ -66,7 +66,7 @@
       width="800"
       class="modal"
       v-model="modalShow"
-      :title="modalAddMode=='add'?'新增':'编辑'"
+      :title="modalAddMode=='add'?$t('message.linkis.basedata.add') : $t('message.linkis.basedata.edit')"
       :loading="modalLoading"
     >
       <div slot="footer">
@@ -210,6 +210,7 @@ export default {
     onModalOk(){
       this.$refs.errorCodeForm.formModel.submit((formData)=>{
         this.modalLoading = true
+        formData.config = JSON.stringify(formData.config)
         if(this.modalAddMode=='add') {
           add(formData).then((data)=>{
             console.log(data)

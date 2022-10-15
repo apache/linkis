@@ -71,33 +71,35 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
   override def reuseEngine(engineReuseRequest: EngineReuseRequest, sender: Sender): EngineNode = {
     logger.info(s"Start to reuse Engine for request: $engineReuseRequest")
     val labelBuilderFactory = LabelBuilderFactoryContext.getLabelBuilderFactory
-    var labelList: util.List[Label[_]] = LabelUtils.distinctLabel(
-      labelBuilderFactory.getLabels(engineReuseRequest.getLabels),
-      userLabelService.getUserLabels(engineReuseRequest.getUser)
-    )
+    val labelList = LabelUtils
+      .distinctLabel(
+        labelBuilderFactory.getLabels(engineReuseRequest.getLabels),
+        userLabelService.getUserLabels(engineReuseRequest.getUser)
+      )
+      .asScala
 
     val exclusionInstances: Array[String] =
-      labelList.asScala.find(_.isInstanceOf[ReuseExclusionLabel]) match {
+      labelList.find(_.isInstanceOf[ReuseExclusionLabel]) match {
         case Some(l) =>
           l.asInstanceOf[ReuseExclusionLabel].getInstances
         case None =>
           Array.empty[String]
       }
 
-    labelList = labelList.asScala.filter(_.isInstanceOf[EngineNodeLabel]).asJava
+    var filterLabelList = labelList.filter(_.isInstanceOf[EngineNodeLabel]).asJava
 
     val engineConnAliasLabel = labelBuilderFactory.createLabel(classOf[AliasServiceInstanceLabel])
     engineConnAliasLabel.setAlias(GovernanceCommonConf.ENGINE_CONN_SPRING_NAME.getValue)
-    labelList.add(engineConnAliasLabel)
+    filterLabelList.add(engineConnAliasLabel)
 
     // label chooser
     if (null != engineReuseLabelChoosers) {
       engineReuseLabelChoosers.asScala.foreach { chooser =>
-        labelList = chooser.chooseLabels(labelList)
+        filterLabelList = chooser.chooseLabels(filterLabelList)
       }
     }
 
-    val instances = nodeLabelService.getScoredNodeMapsByLabels(labelList)
+    val instances = nodeLabelService.getScoredNodeMapsByLabels(filterLabelList)
 
     if (null != instances && null != exclusionInstances && exclusionInstances.nonEmpty) {
       val instancesKeys = instances.asScala.keys.toArray

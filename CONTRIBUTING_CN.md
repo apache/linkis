@@ -1,9 +1,8 @@
 # 如何参与项目贡献
 
-> 更多信息可以见官网[如何参与项目贡献 ](https://linkis.apache.org/community/how-to-contribute)
+> 更多信息可以见官网[如何参与项目贡献](https://linkis.apache.org/community/how-to-contribute)
 
 非常感谢贡献 Linkis 项目！在参与贡献之前，请仔细阅读以下指引。
-
 
 ## 一、贡献范畴
 
@@ -21,27 +20,28 @@
 
 ### 1.4 文档改进
 
-Linkis 文档位于[Linkis 官网 ](https://linkis.apache.org/zh-CN/docs/latest/introduction/) ，文档的补充完善对于 Linkis 的发展也至关重要。
+Linkis 文档位于[Linkis 官网](https://linkis.apache.org/zh-CN/docs/latest/introduction/) ，文档的补充完善对于 Linkis 的发展也至关重要。
 
 ### 1.5 其他
-包括参与和帮助组织社区交流、社区运营活动等，其他能够帮助 Linkis 项目和社区的活动。
 
+包括参与和帮助组织社区交流、社区运营活动等，其他能够帮助 Linkis 项目和社区的活动。
 
 ## 二、贡献流程
 
 ### 2.1 分支结构
 
 Linkis 源码可能会产生一些临时分支，但真正有明确意义的只有以下三个分支：  
+
 - master: 最近一次稳定 release 的源码，偶尔会多几次 hotfix 提交；
-- release-*: 稳定的 release 版本； 
+- release-*: 稳定的 release 版本；
 - dev-*: 主要开发分支；
 
-#### 2.1.1 概念 
+#### 2.1.1 概念
 
-- Upstream 仓库:https://github.com/apache/incubator-linkis linkis 的 apache 仓库文中称为 Upstream 仓库   
-- Fork 仓库: 从 https://github.com/apache/incubator-linkis fork 到自己个人仓库 称为 Fork 仓库  
+- Upstream 仓库:<https://github.com/apache/incubator-linkis> linkis 的 apache 仓库文中称为 Upstream 仓库
+- Fork 仓库: 从 <https://github.com/apache/incubator-linkis> fork 到自己个人仓库 称为 Fork 仓库  
 
-#### 2.1.2 同步 Upstream 仓库分支最新代码到自己的 Fork 仓库   
+#### 2.1.2 同步 Upstream 仓库分支最新代码到自己的 Fork 仓库
 
 - step1 进入用户项目页面,选中要更新的分支  
 - step2 点击 code 下载按钮下方的 Fetch upstream,选择 Fetch and merge (如自己的 Fork 仓库  该分支不小心污染了，可以删除该分支后，同步 Upstream 仓库新分支到自己的 Fork 仓库  ，参见指引[同步 Upstream 仓库分支最新代码到自己的 Fork 仓库  ](#213-同步 Upstream 仓库新分支到自己的 Fork 仓库  ))
@@ -58,47 +58,58 @@ Linkis 源码可能会产生一些临时分支，但真正有明确意义的只�
 ```shell script
 git remote add apache git@github.com:apache/incubator-linkis.git
 ```
+
 - step2 拉去 apache 镜像信息到本地  
 
 ```shell script
 git fetch apache
 ```
+
 - step3 根据需要同步的新分支来创建本地分支
 
 ```shell script
 git checkout -b dev-1.1.4 apache/dev-1.1.4
 ```
+
 - step4 把本地分支 push 到自己的仓库,如果自己的仓库没有 dev-1.1.4 分支，则会创建 dev-1.1.4 分支  
+
 ```shell script
 git push origin dev-1.1.4:dev-1.1.4
 ```
+
 - step5 删除 upstream 的分支
+
 ```shell script
 git remote remove apache
 ```
+
 - step6 更新分支
+
 ```shell script
 git pull
 ```
 
-#### 2.1.4 一个 pr 的流程 
+#### 2.1.4 一个 pr 的流程
 
 - step1 确认当前开发的基础分支（一般是当前进行的中版本，如当前社区开发中的版本 1.1.0，那么分支就是 dev-1.1.0，不确定的话可以在社区群里问下或则在 issue 中@相关同学）
 
 - step2 同步 Upstream 仓库分支最新代码到自己的 Fork 仓库 分支,参见指引 [2.1.2 同步 Upstream 仓库分支最新代码到自己的 Fork 仓库 ]
 
 - step3 基于开发分支，拉取新 fix/feature 分支 (不要直接在原分支上修改，如果后续 pr 以 squash 方式 merge 后，提交的 commit 记录会被合并成一个)
+
 ```shell script
 git checkout -b dev-1.1.4-fix  dev-1.1.4
 git push origin dev-1.1.4-fix:dev-1.1.4-fix
 ```
+
 - step4  进行开发
-- step5  提交 pr(如果是正在进行中,开发还未完全结束，请在 pr 标题上加上 WIP 标识 如 `[WIP] Dev 1.1.1 Add junit test code for [linkis-common] ` ;关联对应的 issue 等)
+- step5  提交 pr(如果是正在进行中,开发还未完全结束，请在 pr 标题上加上 WIP 标识 如 `[WIP] Dev 1.1.1 Add junit test code for [linkis-common]` ;关联对应的 issue 等)
 - step6  等待被合并
-- step7  删除 fix/future 分支 (可以在 github 页面上进行操作) 
+- step7  删除 fix/future 分支 (可以在 github 页面上进行操作)
+
 ```shell script
-git branch -d dev-1.1.4-fix 
-git push 
+git branch -d dev-1.1.4-fix
+git push
 ```
 
 请注意：大特性的 dev 分支，在命名时除了版本号，还会加上相应的命名说明，如：dev-0.10.0-flink，指 0.10.0 的 flink 特性开发分支。
@@ -128,7 +139,7 @@ git push origin dev-fix dev-fix
 
 - 如果您还不知道怎样向开源项目发起 PR，请参考[About pull requests](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/about-pull-requests)
 - 无论是 Bug 修复，还是新功能开发，请将 PR 提交到 dev-* 分支
-- PR 和提交名称遵循 `<type>(<scope>): <subject>` 原则，详情可以参考[Commit message 和 Change log 编写指南 ](https://linkis.apache.org/zh-CN/community/development-specification/commit-message) 
+- PR 和提交名称遵循 `<type>(<scope>): <subject>` 原则，详情可以参考[Commit message 和 Change log 编写指南](https://linkis.apache.org/zh-CN/community/development-specification/commit-message)
 - 如果 PR 中包含新功能，理应将文档更新包含在本次 PR 中
 - 如果本次 PR 尚未准备好合并，请在名称头部加上 [WIP] 前缀（WIP = work-in-progress）
 - 所有提交到 dev-* 分支的提交至少需要经过一次 Review 才可以被合并

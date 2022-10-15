@@ -1,6 +1,5 @@
 ## flink 配置
 
-
 | 模块名(服务名) | 参数名 | 默认值 | 描述 | 是否引用|
 | -------- | -------- | ----- |----- |  -----   |
 |flink|flink.client.memory |1024|client.memory |
@@ -50,4 +49,3 @@
 |flink|linkis.flink.params.placeholder.blank|\\0x001  |params.placeholder.blank|
 |flink|linkis.flink.hudi.enable|false  | hudi.enable|
 |flink|linkis.flink.hudi.extra.yarn.classpath|   |hudi.extra.yarn.classpath|
- 

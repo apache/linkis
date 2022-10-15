@@ -63,9 +63,6 @@ jobs:
           npm run build
     - name: Build backend by maven
       run: |
-          ./mvnw -N install
-    - name: Build backend by maven
-      run: |
           ./mvnw install -Pdocker -Dmaven.javadoc.skip=true -Dmaven.test.skip=true -Dlinkis.build.web=true -Dimage.build.type=release
     - name: Log in to the Container registry
       uses: docker/login-action@v1.10.0
